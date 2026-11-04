@@ -3,7 +3,7 @@
   "reviews": [
     {
       "path": "backend/src/ai/attachments.ts",
-      "sourceSha256": "c50dc741653646df6b6dddc6ec1ba4337fa3b3a48a94b5d9a66afe52b81cbd46",
+      "sourceSha256": "b1c7911aa41d59bfcc1e57f6925a4c705548787cdb81aba14100e78fe5432f45",
       "callIds": [
         "097f3b056977288927ab",
         "a014c3fc158d8544965e",
@@ -29,7 +29,19 @@
         ],
         "disposition": "NOT_PERSISTENCE"
       },
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json",
+      "reboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "baseSourceSha256": "c50dc741653646df6b6dddc6ec1ba4337fa3b3a48a94b5d9a66afe52b81cbd46",
+        "baseCallIds": [
+          "097f3b056977288927ab",
+          "a014c3fc158d8544965e",
+          "6dad3dd6bb66b6180fa5"
+        ],
+        "verification": "Each reviewed call chain and its whole enclosing function are byte-identical to the reviewed main version; only code outside the reviewed calls changed."
+      }
     },
     {
       "path": "backend/src/ai/benchmarkRunner.ts",
@@ -874,11 +886,11 @@
     },
     {
       "path": "backend/src/ai/parallelApproval.ts",
-      "sourceSha256": "84b38d89d19071027dd6be660a9f7e3bfbb15524250f5fa8a637b7a51e32d3a8",
+      "sourceSha256": "3d6cc51f24257eeb6fa33d2dad97b764bf9751b929a44f09eb4e8a25edbfce48",
       "callIds": [
-        "e083a05a80e8dc902042",
-        "55516bb57f1a233bf481",
-        "8c17e0596e9108831a35"
+        "94daa137021764170d8d",
+        "2f73dcc10dc324e2879e",
+        "d579ef4bc0119bb2f271"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "The original context comes only from the canonical native permit. Exact user_id predicates scope the executing grant and current run/worker generation. Grant, owner, immutable digest, expiry and effect receipt are rechecked before and after provider waits and immediately after DNS before any public connection.",
@@ -903,18 +915,30 @@
         ],
         "disposition": "SCOPED_BOUNDARY"
       },
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json",
+      "reboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "baseSourceSha256": "84b38d89d19071027dd6be660a9f7e3bfbb15524250f5fa8a637b7a51e32d3a8",
+        "baseCallIds": [
+          "e083a05a80e8dc902042",
+          "55516bb57f1a233bf481",
+          "8c17e0596e9108831a35"
+        ],
+        "verification": "Reviewed call chains are byte-identical to the reviewed main version. The enclosing function changed, and the change was reviewed by diff: Manual diff review: additive research-answer chain after the existing permit/owner/digest check(); check() still runs before saveResearchResult and before the model answer; retrieval-only guard added; the one new scanner candidate is Uint8Array.from(page.bytes), a native byte conversion. The reviewed calls and their predicates are unchanged."
+      }
     },
     {
       "path": "backend/src/ai/parallelDispatch.ts",
-      "sourceSha256": "f52ba2b8ecf260f0ea48e13272f87cd96bd6dc301f38d3600cbc08e1fc4252d3",
+      "sourceSha256": "ff1e01472174b83d678068b5f6a635d2b9b12fa456a6912d4eecb2fb6c37501c",
       "callIds": [
-        "45b3d2d19b57580957f7",
-        "143402b49edb820c5168",
-        "9ef0b2228cd77febbf7c",
-        "a1e8df4a00affe8b85d4",
-        "6a4aaeb29c94369cd778",
-        "316e1774bccfc8148739"
+        "c614aff1a7ef600eaeb1",
+        "b9779c8b122b57f53256",
+        "2431b77b0e6d6023a274",
+        "c251576c197571657419",
+        "5b5968c3074825aa583f",
+        "289a623b636b08296aed"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Original issued TenantContext fixes actor/user, current project ownership and optional issued worker generation are rechecked. The exact owner and operation enter the existing reserve_xroga_provider_budget and settle_xroga_provider_budget RPCs, with complete reservation/settlement receipts checked. The same canonical billing cycles, policy, holds and reconciliation are used. No alternate ledger or user-ID context fallback is introduced.",
@@ -995,7 +1019,22 @@
         ],
         "disposition": "REVIEWED_GAP"
       },
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json",
+      "reboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "baseSourceSha256": "f52ba2b8ecf260f0ea48e13272f87cd96bd6dc301f38d3600cbc08e1fc4252d3",
+        "baseCallIds": [
+          "45b3d2d19b57580957f7",
+          "143402b49edb820c5168",
+          "9ef0b2228cd77febbf7c",
+          "a1e8df4a00affe8b85d4",
+          "6a4aaeb29c94369cd778",
+          "316e1774bccfc8148739"
+        ],
+        "verification": "Reviewed call chains are byte-identical to the reviewed main version. The enclosing function changed, and the change was reviewed by diff: Manual diff review: removes the generative responses operation and its Bearer fetch (retrieval-only), so outbound egress is narrowed. The reviewed persistence calls and predicates are unchanged."
+      }
     },
     {
       "path": "backend/src/ai/patchWorkspace.ts",
@@ -1024,9 +1063,9 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "0168bc57563dbc535012982e5c6680fd3ebb40c7595fb67620e1ca60284df9b4",
+      "sourceSha256": "d3742ca4dccc50daf99aa71d9896449957dde73798dc6d7c2a9c5ca5536cff32",
       "callIds": [
-        "c3617170cdd8b722b96f"
+        "4431005001a8d288051f"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -2501,13 +2540,23 @@
         ],
         "disposition": "NOT_PERSISTENCE"
       },
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json",
+      "reboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "baseSourceSha256": "0168bc57563dbc535012982e5c6680fd3ebb40c7595fb67620e1ca60284df9b4",
+        "baseCallIds": [
+          "c3617170cdd8b722b96f"
+        ],
+        "verification": "Reviewed call chains are byte-identical to the reviewed main version. The enclosing function changed, and the change was reviewed by diff: Manual diff review: the reviewed calls are two native Array.from(byPath.values()) conversions; their expressions are byte-identical and no changed line touches them. Other changes in this large function (answer budget, imports, completion fields) do not."
+      }
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "0168bc57563dbc535012982e5c6680fd3ebb40c7595fb67620e1ca60284df9b4",
+      "sourceSha256": "d3742ca4dccc50daf99aa71d9896449957dde73798dc6d7c2a9c5ca5536cff32",
       "callIds": [
-        "2e78e5aba21ba282d65c"
+        "ce02ccc6a928e44634de"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -3982,7 +4031,17 @@
         ],
         "disposition": "NOT_PERSISTENCE"
       },
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json",
+      "reboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "baseSourceSha256": "0168bc57563dbc535012982e5c6680fd3ebb40c7595fb67620e1ca60284df9b4",
+        "baseCallIds": [
+          "2e78e5aba21ba282d65c"
+        ],
+        "verification": "Reviewed call chains are byte-identical to the reviewed main version. The enclosing function changed, and the change was reviewed by diff: Manual diff review: the reviewed calls are two native Array.from(byPath.values()) conversions; their expressions are byte-identical and no changed line touches them. Other changes in this large function (answer budget, imports, completion fields) do not."
+      }
     },
     {
       "path": "backend/src/ai/projectMemory.ts",
@@ -4366,10 +4425,10 @@
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "sourceSha256": "6827c7f21bcdac5b366d6ccb88f5d01acfeb3a8ee930cebaba353734ce82e086",
+      "sourceSha256": "ccec1009a57392366b476c85f0c6ae703709b1ea4cbbe1a4b760645b1db6bb35",
       "callIds": [
-        "aae055d92faa16ae4e2e",
-        "54326930ab9ec884b6cd"
+        "255ea9744a9343d6feaf",
+        "e4d8bf4fcb8f6422f53a"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "No active production consumer exists for this export and none is invented. Every callable invocation now requires the original WeakSet-issued tenant context before SDK access. syncPlanBudget derives only that subject, delegates the unchanged fixed service-only set_user_ai_plan_budget RPC and reads the existing owner-bound validated usage row to confirm exact tier/budget before touching its local usage floor. activatePaidCycle requires its input subject to equal that issued actor and snapshots all input, including Dates, before waits. Its unchanged canonical service-only activation routine retains owner-keyed advisory serialization and returns the paid cycle. The helper validates exact original subject, UUID, paid kind, evidence reference and captured period before reading only that same subject status. All other accounting/pacing/read functions and module bytes are independently identical to accepted5722.",
@@ -5230,22 +5289,33 @@
         ],
         "disposition": "SCOPED_BOUNDARY"
       },
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json",
+      "reboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "baseSourceSha256": "6827c7f21bcdac5b366d6ccb88f5d01acfeb3a8ee930cebaba353734ce82e086",
+        "baseCallIds": [
+          "aae055d92faa16ae4e2e",
+          "54326930ab9ec884b6cd"
+        ],
+        "verification": "Each reviewed call chain and its whole enclosing function are byte-identical to the reviewed main version; only code outside the reviewed calls changed."
+      }
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "sourceSha256": "6827c7f21bcdac5b366d6ccb88f5d01acfeb3a8ee930cebaba353734ce82e086",
+      "sourceSha256": "ccec1009a57392366b476c85f0c6ae703709b1ea4cbbe1a4b760645b1db6bb35",
       "callIds": [
-        "53446e75ca49c95522af",
-        "4c4451bbec61aecb23d3",
-        "9d05c85f5bfac4989a75",
-        "469b0a4a0957a0d982b1",
-        "4a9c1469b879166fe52c",
-        "0b3ff8ce7a456a8a2acf",
-        "f6f4b355a8c80fc166f4",
-        "c2adb020f37811ce7849",
-        "9d0558fe12707a8a2949",
-        "65acb9b03435995fdeb0"
+        "b9d50643ad7fda897932",
+        "67400600da71ba2124eb",
+        "c985fa5fee1ee7d5c6f2",
+        "b57f79f0d091e2d52575",
+        "4150f3451a1cef23bc00",
+        "be62ab94e9a3c042c183",
+        "ee7f1f1315d6867c3e17",
+        "7b462edee6e0deb442d8",
+        "72838b3e50b0a2167d93",
+        "53502198a107866bdd54"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Active public consumers are authenticated billing/dashboard/phase1 handlers and their existing BillingService wrapper, using req.userId. Internal reservation failure and pacing retain that original server actor. The fixed ensure_xroga_free_cycle call supplies only this owner and cannot choose a paid plan or amount. The decisive cycle read applies exact user_id before selecting the latest bounded entitlement fields. Current cycle state is mapped only from that owner row. Paid membership/activation authority is handled elsewhere and is not inferred from this status helper.\nThe sole production setUsagePacing consumer is the auth-mounted billing pacing route. Owner comes from req.userId, never body/query/context-shaped JSON. Zod bounds pacing and confirmation. Primitive owner is retained across the same-owner entitlement preflight and fixed service-only set_xroga_usage_pacing RPC. The current cycle mutation remains constrained to that owner. Actual HTTP test authenticates two real isolated actors, confirms only owner cycle changes, foreign body substitution cannot grant paid pacing, unauthenticated and malformed/unconfirmed requests cannot mutate either cycle.\nThe selected reserve and settle calls have no public endpoint of their own. Production reservation consumers use the original pipeline/server userId or authenticated phase1/business read/action/planner actor. The issued run/worker and confirmation producer chains remain independently checked by their existing proofs. withProviderReservation retains that owner with its reservation through execute and settle. Reserve sends exact owner plus idempotency/model/purpose/amount, and validates the full returned owner/intent/version/status tuple. Settlement sends original owner plus exact reservation ID and validates owner, model, price, amount, usage counts and provider receipt. SQL scopes reservation and settlement to that owner and serializes current reservation/cycle accounting. No body-supplied reservation owner or another actor reservation can settle.",
@@ -6262,16 +6332,35 @@
         ],
         "disposition": "SCOPED_BOUNDARY"
       },
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json",
+      "reboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "baseSourceSha256": "6827c7f21bcdac5b366d6ccb88f5d01acfeb3a8ee930cebaba353734ce82e086",
+        "baseCallIds": [
+          "53446e75ca49c95522af",
+          "4c4451bbec61aecb23d3",
+          "9d05c85f5bfac4989a75",
+          "469b0a4a0957a0d982b1",
+          "4a9c1469b879166fe52c",
+          "0b3ff8ce7a456a8a2acf",
+          "f6f4b355a8c80fc166f4",
+          "c2adb020f37811ce7849",
+          "9d0558fe12707a8a2949",
+          "65acb9b03435995fdeb0"
+        ],
+        "verification": "Reviewed call chains are byte-identical to the reviewed main version. The enclosing function changed, and the change was reviewed by diff: Manual diff review: adds assertActiveModelId, assertProviderEnabled and assertModelSelection before reservation and Zurelay cost accounting (inclusive reasoning tokens, cache rates, ceil). The reserve and cycle RPC calls and their user binding are unchanged."
+      }
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "sourceSha256": "6827c7f21bcdac5b366d6ccb88f5d01acfeb3a8ee930cebaba353734ce82e086",
+      "sourceSha256": "ccec1009a57392366b476c85f0c6ae703709b1ea4cbbe1a4b760645b1db6bb35",
       "callIds": [
-        "9cce2ff19e247ce9c5d5",
-        "670197ad89640f5a6242",
-        "774dd446f08cb58fbc9b",
-        "706f26c27c2b32064580"
+        "63cd9db82a553901aa87",
+        "54b682f70bf2fc2118d6",
+        "cc73aacc720688126189",
+        "39946f9c942d63422513"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Reservation fallback retains the same original userId of reserveProviderBudget and passes it to fixed ensure_xroga_free_cycle only after missing-active-cycle error. It cannot choose a paid amount or a different account. Failed reservation finalization is private to withProviderReservation flow, which retains the same owner and reservation captured before execute. The release RPC matches both reservation ID and owner and locks that exact owner cycle before accounting. Definite pre-completion failures release only this hold, uncertain outcomes retain it. Logging a failed foreign release does not grant success or mutate rows.",
@@ -7256,13 +7345,26 @@
         ],
         "disposition": "SCOPED_BOUNDARY"
       },
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json",
+      "reboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "baseSourceSha256": "6827c7f21bcdac5b366d6ccb88f5d01acfeb3a8ee930cebaba353734ce82e086",
+        "baseCallIds": [
+          "9cce2ff19e247ce9c5d5",
+          "670197ad89640f5a6242",
+          "774dd446f08cb58fbc9b",
+          "706f26c27c2b32064580"
+        ],
+        "verification": "Reviewed call chains are byte-identical to the reviewed main version. The enclosing function changed, and the change was reviewed by diff: Manual diff review: adds assertActiveModelId, assertProviderEnabled and assertModelSelection before reservation and Zurelay cost accounting (inclusive reasoning tokens, cache rates, ceil). The reserve and cycle RPC calls and their user binding are unchanged."
+      }
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "sourceSha256": "6827c7f21bcdac5b366d6ccb88f5d01acfeb3a8ee930cebaba353734ce82e086",
+      "sourceSha256": "ccec1009a57392366b476c85f0c6ae703709b1ea4cbbe1a4b760645b1db6bb35",
       "callIds": [
-        "536064ea8ac2c56348ec"
+        "1205a7c3e1be5c28184e"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "The Operations-only reservation boundary receives the issued actor and immutable admitted action. Its service-only database routine locks and rechecks actor membership, owner, project, approval, lease, action snapshot, normal entitlement and the admitted action ceiling before returning an exact owner-bound reservation receipt.",
@@ -7384,13 +7486,23 @@
         ],
         "disposition": "REVIEWED_GAP"
       },
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json",
+      "reboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "baseSourceSha256": "6827c7f21bcdac5b366d6ccb88f5d01acfeb3a8ee930cebaba353734ce82e086",
+        "baseCallIds": [
+          "536064ea8ac2c56348ec"
+        ],
+        "verification": "Reviewed call chains are byte-identical to the reviewed main version. The enclosing function changed, and the change was reviewed by diff: Manual diff review: adds assertActiveModelId, assertProviderEnabled and assertModelSelection before reservation and Zurelay cost accounting (inclusive reasoning tokens, cache rates, ceil). The reserve and cycle RPC calls and their user binding are unchanged."
+      }
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "sourceSha256": "6827c7f21bcdac5b366d6ccb88f5d01acfeb3a8ee930cebaba353734ce82e086",
+      "sourceSha256": "ccec1009a57392366b476c85f0c6ae703709b1ea4cbbe1a4b760645b1db6bb35",
       "callIds": [
-        "2a28f5bad97e04e53770"
+        "22a30ae3b808f4792a78"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "The Operations-only reservation boundary receives the issued actor and immutable admitted action. Its service-only database routine locks and rechecks actor membership, owner, project, approval, lease, action snapshot, normal entitlement and the admitted action ceiling before returning an exact owner-bound reservation receipt.",
@@ -7512,13 +7624,23 @@
         ],
         "disposition": "REVIEWED_GAP"
       },
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json",
+      "reboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "baseSourceSha256": "6827c7f21bcdac5b366d6ccb88f5d01acfeb3a8ee930cebaba353734ce82e086",
+        "baseCallIds": [
+          "2a28f5bad97e04e53770"
+        ],
+        "verification": "Reviewed call chains are byte-identical to the reviewed main version. The enclosing function changed, and the change was reviewed by diff: Manual diff review: adds assertActiveModelId, assertProviderEnabled and assertModelSelection before reservation and Zurelay cost accounting (inclusive reasoning tokens, cache rates, ceil). The reserve and cycle RPC calls and their user binding are unchanged."
+      }
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "sourceSha256": "6827c7f21bcdac5b366d6ccb88f5d01acfeb3a8ee930cebaba353734ce82e086",
+      "sourceSha256": "ccec1009a57392366b476c85f0c6ae703709b1ea4cbbe1a4b760645b1db6bb35",
       "callIds": [
-        "49aa84226917135702d4"
+        "6ff03e6d0feee9d7788b"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "The Operations-only reservation boundary receives the issued actor and immutable admitted action. Its service-only database routine locks and rechecks actor membership, owner, project, approval, lease, action snapshot, normal entitlement and the admitted action ceiling before returning an exact owner-bound reservation receipt.",
@@ -7640,13 +7762,23 @@
         ],
         "disposition": "REVIEWED_GAP"
       },
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json",
+      "reboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "baseSourceSha256": "6827c7f21bcdac5b366d6ccb88f5d01acfeb3a8ee930cebaba353734ce82e086",
+        "baseCallIds": [
+          "49aa84226917135702d4"
+        ],
+        "verification": "Reviewed call chains are byte-identical to the reviewed main version. The enclosing function changed, and the change was reviewed by diff: Manual diff review: adds assertActiveModelId, assertProviderEnabled and assertModelSelection before reservation and Zurelay cost accounting (inclusive reasoning tokens, cache rates, ceil). The reserve and cycle RPC calls and their user binding are unchanged."
+      }
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "sourceSha256": "6827c7f21bcdac5b366d6ccb88f5d01acfeb3a8ee930cebaba353734ce82e086",
+      "sourceSha256": "ccec1009a57392366b476c85f0c6ae703709b1ea4cbbe1a4b760645b1db6bb35",
       "callIds": [
-        "7e2f36090a4523cf0a8d"
+        "8518b222919073114544"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "The Operations-only reservation boundary receives the issued actor and immutable admitted action. Its service-only database routine locks and rechecks actor membership, owner, project, approval, lease, action snapshot, normal entitlement and the admitted action ceiling before returning an exact owner-bound reservation receipt.",
@@ -7768,7 +7900,17 @@
         ],
         "disposition": "REVIEWED_GAP"
       },
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json",
+      "reboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "baseSourceSha256": "6827c7f21bcdac5b366d6ccb88f5d01acfeb3a8ee930cebaba353734ce82e086",
+        "baseCallIds": [
+          "7e2f36090a4523cf0a8d"
+        ],
+        "verification": "Reviewed call chains are byte-identical to the reviewed main version. The enclosing function changed, and the change was reviewed by diff: Manual diff review: adds assertActiveModelId, assertProviderEnabled and assertModelSelection before reservation and Zurelay cost accounting (inclusive reasoning tokens, cache rates, ceil). The reserve and cycle RPC calls and their user binding are unchanged."
+      }
     },
     {
       "path": "backend/src/ai/providerHealthStore.ts",
@@ -7844,10 +7986,10 @@
     },
     {
       "path": "backend/src/ai/quota.ts",
-      "sourceSha256": "a2b3f404004691fd201dadcd241a46d2d33b9b33a26a09b0cdfbb0cca76a01e4",
+      "sourceSha256": "33f0ab8cf98b74e9e1fcd3519c1a158cf20a3f0a6269a1128ea9a39e0c37e98d",
       "callIds": [
-        "7632727b3c8b02cf14d5",
-        "77bc9a9a205796da009c"
+        "fec7557265d1bdbb43bb",
+        "4af9883650ce37539f5e"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "No active production consumer exists for this export and none is invented. Every callable invocation now requires the original WeakSet-issued tenant context before SDK access. syncPlanBudget derives only that subject, delegates the unchanged fixed service-only set_user_ai_plan_budget RPC and reads the existing owner-bound validated usage row to confirm exact tier/budget before touching its local usage floor. activatePaidCycle requires its input subject to equal that issued actor and snapshots all input, including Dates, before waits. Its unchanged canonical service-only activation routine retains owner-keyed advisory serialization and returns the paid cycle. The helper validates exact original subject, UUID, paid kind, evidence reference and captured period before reading only that same subject status. All other accounting/pacing/read functions and module bytes are independently identical to accepted5722.",
@@ -8023,14 +8165,25 @@
         ],
         "disposition": "SCOPED_BOUNDARY"
       },
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json",
+      "reboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "baseSourceSha256": "a2b3f404004691fd201dadcd241a46d2d33b9b33a26a09b0cdfbb0cca76a01e4",
+        "baseCallIds": [
+          "7632727b3c8b02cf14d5",
+          "77bc9a9a205796da009c"
+        ],
+        "verification": "Each reviewed call chain and its whole enclosing function are byte-identical to the reviewed main version; only code outside the reviewed calls changed."
+      }
     },
     {
       "path": "backend/src/ai/quota.ts",
-      "sourceSha256": "a2b3f404004691fd201dadcd241a46d2d33b9b33a26a09b0cdfbb0cca76a01e4",
+      "sourceSha256": "33f0ab8cf98b74e9e1fcd3519c1a158cf20a3f0a6269a1128ea9a39e0c37e98d",
       "callIds": [
-        "e490c31dcee80b1d1915",
-        "77af2b12d27cb727addf"
+        "4c53a5a5952dfc028e28",
+        "9d1e5d4bb3e0ba4cd9c5"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Usage admission reads one exact server-actor row, validates returned owner, known plan, period and finite nonnegative numeric evidence. Missing configuration, missing row, malformed values and transport/store errors fail closed with QUOTA_UNAVAILABLE503. No paid default or memory entitlement override. This read is not a spend reservation.",
@@ -8067,16 +8220,27 @@
         ],
         "disposition": "SCOPED_BOUNDARY"
       },
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json",
+      "reboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "baseSourceSha256": "a2b3f404004691fd201dadcd241a46d2d33b9b33a26a09b0cdfbb0cca76a01e4",
+        "baseCallIds": [
+          "e490c31dcee80b1d1915",
+          "77af2b12d27cb727addf"
+        ],
+        "verification": "Each reviewed call chain and its whole enclosing function are byte-identical to the reviewed main version; only code outside the reviewed calls changed."
+      }
     },
     {
       "path": "backend/src/ai/quota.ts",
-      "sourceSha256": "a2b3f404004691fd201dadcd241a46d2d33b9b33a26a09b0cdfbb0cca76a01e4",
+      "sourceSha256": "33f0ab8cf98b74e9e1fcd3519c1a158cf20a3f0a6269a1128ea9a39e0c37e98d",
       "callIds": [
-        "e8076c86facca1bb0721",
-        "baee9857b82180aaf497",
-        "611df8756b24bd23b167",
-        "fb624c5ca127ce5d4da8"
+        "4a20d5d6f72416b0cc1e",
+        "5b0856b8bbdf8ca461f6",
+        "2cfc66d7ab285d2bb5d2",
+        "d0c04a1fb4d28114ae3d"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "The actual producer set is the issued-owner pipeline and server business/agent/planner callbacks already traced for provider reservations. No route accepts a meter userId from the client. The selected method parameters are immutable primitives. readUsageRow first verifies exact original owner and current configured durable evidence. All three fixed increment/model/ledger RPCs retain exactly that owner and current period, and the final getUsage uses the same owner. Authenticated status separately obtains requireUserId(req), not a query actor. Browser roles have no execute grant on the exact legacy RPC signatures.",
@@ -8259,7 +8423,20 @@
         ],
         "disposition": "SCOPED_BOUNDARY"
       },
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json",
+      "reboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "baseSourceSha256": "a2b3f404004691fd201dadcd241a46d2d33b9b33a26a09b0cdfbb0cca76a01e4",
+        "baseCallIds": [
+          "e8076c86facca1bb0721",
+          "baee9857b82180aaf497",
+          "611df8756b24bd23b167",
+          "fb624c5ca127ce5d4da8"
+        ],
+        "verification": "Each reviewed call chain and its whole enclosing function are byte-identical to the reviewed main version; only code outside the reviewed calls changed."
+      }
     },
     {
       "path": "backend/src/ai/repositoryTools.ts",
@@ -15215,12 +15392,12 @@
     },
     {
       "path": "backend/src/routes/messageShares.ts",
-      "sourceSha256": "6ca440f7db2d4a533b0f68d802033931a1dfd59bdccf8eb539981232032e7609",
+      "sourceSha256": "e69821ae544aecfe8073586f737f2e39e9344360c034705f41f005d457427ac1",
       "callIds": [
-        "97e6ac3f5cd22355e41a",
-        "1606c380951aa6ff48dc",
-        "513e9d97f392e5aaed6b",
-        "315837313f6ec4f1eaa4"
+        "c9a009f6baa9e3a3bbad",
+        "000d28d21ea7dba70f24",
+        "2f60349dbbab02755103",
+        "c4dcd4d97035ff02f08f"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Create/revoke use authMiddleware and issued context. Create stores server req.userId; revoke constrains token, owner_id and unrevoked state. Submitted content grants no authority over other resources.",
@@ -15246,14 +15423,27 @@
         ],
         "disposition": "SCOPED_BOUNDARY"
       },
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json",
+      "reboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "baseSourceSha256": "6ca440f7db2d4a533b0f68d802033931a1dfd59bdccf8eb539981232032e7609",
+        "baseCallIds": [
+          "97e6ac3f5cd22355e41a",
+          "1606c380951aa6ff48dc",
+          "513e9d97f392e5aaed6b",
+          "315837313f6ec4f1eaa4"
+        ],
+        "verification": "Each reviewed call chain and its whole enclosing function are byte-identical to the reviewed main version; only code outside the reviewed calls changed."
+      }
     },
     {
       "path": "backend/src/routes/messageShares.ts",
-      "sourceSha256": "6ca440f7db2d4a533b0f68d802033931a1dfd59bdccf8eb539981232032e7609",
+      "sourceSha256": "e69821ae544aecfe8073586f737f2e39e9344360c034705f41f005d457427ac1",
       "callIds": [
-        "461bb34f363365a7f618",
-        "b31e0312443acd703258"
+        "db7f2c7b53d05936f3da",
+        "ea4d7ecf3043636a2883"
       ],
       "disposition": "NARROW_EXCEPTION",
       "authority": "Validated random token and unrevoked row identify the share. Named message_share_resolution exception is followed by verified viewer equality for private visibility; public access is explicit owner opt-in.",
@@ -15277,7 +15467,18 @@
         ],
         "disposition": "NARROW_EXCEPTION"
       },
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json",
+      "reboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "baseSourceSha256": "6ca440f7db2d4a533b0f68d802033931a1dfd59bdccf8eb539981232032e7609",
+        "baseCallIds": [
+          "461bb34f363365a7f618",
+          "b31e0312443acd703258"
+        ],
+        "verification": "Each reviewed call chain and its whole enclosing function are byte-identical to the reviewed main version; only code outside the reviewed calls changed."
+      }
     },
     {
       "path": "backend/src/routes/notifications.ts",
@@ -15399,9 +15600,9 @@
     },
     {
       "path": "backend/src/routes/phase1.ts",
-      "sourceSha256": "ee77d657398ee4ed6a9322281c46c6ef17fe366e23dbd323c11560dd01cf88a8",
+      "sourceSha256": "91b55da6a6beca61715b829c0087b10f90d2cc5bb7e2b7bce5500fbca50b2b7d",
       "callIds": [
-        "fb2bffffc91cc072976a"
+        "fa04b8d8f9413c194ec5"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in toolUiLink. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -15536,7 +15737,17 @@
         ],
         "disposition": "NOT_PERSISTENCE"
       },
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json",
+      "reboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "baseSourceSha256": "ee77d657398ee4ed6a9322281c46c6ef17fe366e23dbd323c11560dd01cf88a8",
+        "baseCallIds": [
+          "fb2bffffc91cc072976a"
+        ],
+        "verification": "Each reviewed call chain and its whole enclosing function are byte-identical to the reviewed main version; only code outside the reviewed calls changed."
+      }
     },
     {
       "path": "backend/src/routes/profile.ts",
@@ -17879,18 +18090,18 @@
     },
     {
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "sourceSha256": "40e88fdceed4ff5f571c8ea71ae86d2dfb53f537d8a3a5ff8f4d915ecc068abe",
+      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec",
       "callIds": [
-        "99ba24aefa7f2c2f6de9",
-        "3c64dc5d4a7058fb12f8",
-        "fc3b3f4bab00e81fbc31",
-        "94f936dfc30fe898eebe",
-        "1f375890c653535bb84b",
-        "9614e2de1a77eacffe05",
-        "b3a2b5af5ead58408dba",
-        "1f7c11b7359e0958073e",
-        "a992f061331cff4e8d50",
-        "7ddf1ddcae5c5661a52a"
+        "df7eec626e3acd881448",
+        "287e2fe0dabebc523a36",
+        "3a763a5523dac73c10d4",
+        "46aca4c01b2d3d90acad",
+        "85b1d7461e8691468225",
+        "545cee9f47055ec5d761",
+        "7231d508555849d87d32",
+        "8609662e7417659e88ca",
+        "2714b6af44879d208f97",
+        "a1b9e751df5bc764909d"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Only production create consumer is authenticated phase1 prepared execution returning confirmation_required, with original server userId and verified digest. Read/cancel/confirm handlers use requireUserId(req), never body owner. Reads and mutations bind exact confirmation ID plus owner. Expiry is private and takes only the already owner-filtered row. Cancellation can change only pending status for that owner. Confirm compares display identity, full reviewed plan/digest and expiry, then uses the existing service-only locked claim. A claimed receipt must retain original actor, identity, plan and timestamps. Terminal finish remains independently bound to the exact immutable claim. Invalid canonical digest fails before metadata/account/provider calls, then persists only this claim failure. No remote action is executed by these tests.",
@@ -18091,13 +18302,32 @@
         ],
         "disposition": "SCOPED_BOUNDARY"
       },
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json",
+      "reboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "baseSourceSha256": "40e88fdceed4ff5f571c8ea71ae86d2dfb53f537d8a3a5ff8f4d915ecc068abe",
+        "baseCallIds": [
+          "99ba24aefa7f2c2f6de9",
+          "3c64dc5d4a7058fb12f8",
+          "fc3b3f4bab00e81fbc31",
+          "94f936dfc30fe898eebe",
+          "1f375890c653535bb84b",
+          "9614e2de1a77eacffe05",
+          "b3a2b5af5ead58408dba",
+          "1f7c11b7359e0958073e",
+          "a992f061331cff4e8d50",
+          "7ddf1ddcae5c5661a52a"
+        ],
+        "verification": "Reviewed call chains are byte-identical to the reviewed main version. The enclosing function changed, and the change was reviewed by diff: Manual diff review: adds requireResearchResultStorage and requireModelResultStorage guards and saves the execution result after it through tenant-context storage. The reviewed claim, authorize and confirmation calls are unchanged."
+      }
     },
     {
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "sourceSha256": "40e88fdceed4ff5f571c8ea71ae86d2dfb53f537d8a3a5ff8f4d915ecc068abe",
+      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec",
       "callIds": [
-        "b01c22a391468e45cbe8"
+        "7435325dc6f8734b9505"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Authenticated phase1 confirmation route passes requireUserId and explicit confirmation UUID. The service reads owner-filtered plan and validates displayed metadata. Service-only claim locks the same owner/ID and compares full plan, digest, expiry, display metadata and pending state, then checks clock_timestamp after lock acquisition before marking executing.",
@@ -18161,13 +18391,23 @@
         ],
         "disposition": "SCOPED_BOUNDARY"
       },
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json",
+      "reboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "baseSourceSha256": "40e88fdceed4ff5f571c8ea71ae86d2dfb53f537d8a3a5ff8f4d915ecc068abe",
+        "baseCallIds": [
+          "b01c22a391468e45cbe8"
+        ],
+        "verification": "Reviewed call chains are byte-identical to the reviewed main version. The enclosing function changed, and the change was reviewed by diff: Manual diff review: adds requireResearchResultStorage and requireModelResultStorage guards and saves the execution result after it through tenant-context storage. The reviewed claim, authorize and confirmation calls are unchanged."
+      }
     },
     {
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "sourceSha256": "40e88fdceed4ff5f571c8ea71ae86d2dfb53f537d8a3a5ff8f4d915ecc068abe",
+      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec",
       "callIds": [
-        "8f3d42e8e45d7fb2252a"
+        "319518470d46e4577f12"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Only the existing confirmed-action executor passes its original admin client, verified server owner and exact claimed row. Service-only terminal transaction locks owner/ID and compares full plan, display metadata, original expiry/creation and claimed_at before consumed/failed status, with immutable exact replay. No provider execution, lease extension or confirmation reuse.",
@@ -18231,13 +18471,23 @@
         ],
         "disposition": "SCOPED_BOUNDARY"
       },
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json",
+      "reboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "baseSourceSha256": "40e88fdceed4ff5f571c8ea71ae86d2dfb53f537d8a3a5ff8f4d915ecc068abe",
+        "baseCallIds": [
+          "8f3d42e8e45d7fb2252a"
+        ],
+        "verification": "Each reviewed call chain and its whole enclosing function are byte-identical to the reviewed main version; only code outside the reviewed calls changed."
+      }
     },
     {
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "sourceSha256": "40e88fdceed4ff5f571c8ea71ae86d2dfb53f537d8a3a5ff8f4d915ecc068abe",
+      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec",
       "callIds": [
-        "16c8e03100d592b72118"
+        "a2737e6413bb535344c8"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "The dispatch closure captures the original issued actor and exact claimed owner/plan. The private cancellation helper is reachable only from authenticated owner-filtered cancellation. Service-only RPCs bind owner and exact row under lock. Database verification remains pending for this changed source.",
@@ -18287,13 +18537,23 @@
         ],
         "disposition": "REVIEWED_GAP"
       },
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json",
+      "reboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "baseSourceSha256": "40e88fdceed4ff5f571c8ea71ae86d2dfb53f537d8a3a5ff8f4d915ecc068abe",
+        "baseCallIds": [
+          "16c8e03100d592b72118"
+        ],
+        "verification": "Each reviewed call chain and its whole enclosing function are byte-identical to the reviewed main version; only code outside the reviewed calls changed."
+      }
     },
     {
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "sourceSha256": "40e88fdceed4ff5f571c8ea71ae86d2dfb53f537d8a3a5ff8f4d915ecc068abe",
+      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec",
       "callIds": [
-        "402d88eda8e20ef83be0"
+        "a794b7db009e04b8617a"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "The dispatch closure captures the original issued actor and exact claimed owner/plan. The private cancellation helper is reachable only from authenticated owner-filtered cancellation. Service-only RPCs bind owner and exact row under lock. Database verification remains pending for this changed source.",
@@ -18343,13 +18603,23 @@
         ],
         "disposition": "REVIEWED_GAP"
       },
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json",
+      "reboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "baseSourceSha256": "40e88fdceed4ff5f571c8ea71ae86d2dfb53f537d8a3a5ff8f4d915ecc068abe",
+        "baseCallIds": [
+          "402d88eda8e20ef83be0"
+        ],
+        "verification": "Each reviewed call chain and its whole enclosing function are byte-identical to the reviewed main version; only code outside the reviewed calls changed."
+      }
     },
     {
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "sourceSha256": "40e88fdceed4ff5f571c8ea71ae86d2dfb53f537d8a3a5ff8f4d915ecc068abe",
+      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec",
       "callIds": [
-        "ab85b8388bbce761729d"
+        "b4a46938a0dec4c5f10c"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "The dispatch closure captures the original issued actor and exact claimed owner/plan. The private cancellation helper is reachable only from authenticated owner-filtered cancellation. Service-only RPCs bind owner and exact row under lock. Database verification remains pending for this changed source.",
@@ -18399,7 +18669,17 @@
         ],
         "disposition": "REVIEWED_GAP"
       },
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json",
+      "reboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "baseSourceSha256": "40e88fdceed4ff5f571c8ea71ae86d2dfb53f537d8a3a5ff8f4d915ecc068abe",
+        "baseCallIds": [
+          "ab85b8388bbce761729d"
+        ],
+        "verification": "Reviewed call chains are byte-identical to the reviewed main version. The enclosing function changed, and the change was reviewed by diff: Manual diff review: adds requireResearchResultStorage and requireModelResultStorage guards and saves the execution result after it through tenant-context storage. The reviewed claim, authorize and confirmation calls are unchanged."
+      }
     },
     {
       "path": "backend/src/services/integrations/composioControl.ts",
@@ -20499,10 +20779,10 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+      "sourceSha256": "845f195f835dd9dae9955a7e9ccd2c7d0a86ddfee917299e951fe99d289d3448",
       "callIds": [
-        "3d61f3f5ae6402c20b58",
-        "64f0d9db49a13b562831"
+        "3db57fbadafb852f2b06",
+        "f22dea761a758bf97124"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "The four inspected decryptApiKey receivers convert ciphertext components with Buffer.from, not a database or Storage client.",
@@ -20541,13 +20821,24 @@
         ],
         "disposition": "NOT_PERSISTENCE"
       },
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json",
+      "reboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "baseSourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+        "baseCallIds": [
+          "3d61f3f5ae6402c20b58",
+          "64f0d9db49a13b562831"
+        ],
+        "verification": "Each reviewed call chain and its whole enclosing function are byte-identical to the reviewed main version; only code outside the reviewed calls changed."
+      }
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+      "sourceSha256": "845f195f835dd9dae9955a7e9ccd2c7d0a86ddfee917299e951fe99d289d3448",
       "callIds": [
-        "8784feaf266f3ae5d72e"
+        "3ca6cdd6e98ce6d60f41"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "The existing CWS callback starts and consumes the original issued-owner PKCE session, then captures prepareUserProviderKeyWrite for that exact owner and cws_oauth provider. The process-local unforgeable admission holds owner/provider/env plus canonical revision and OAuth-receipt flag. The shared save client is used only after matching that handle. OAuth receipt selects the fixed save_cws_oauth_key_if_current RPC. Both save branches encrypt with the existing envelope and require true CAS receipt before optional owner mirror. No browser value can choose the owner of that callback. Ordinary BYOK callers retain their separate exact-owner CAS and HTTP proof.",
@@ -20660,11 +20951,21 @@
         ],
         "disposition": "SCOPED_BOUNDARY"
       },
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json",
+      "reboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "baseSourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+        "baseCallIds": [
+          "8784feaf266f3ae5d72e"
+        ],
+        "verification": "Each reviewed call chain and its whole enclosing function are byte-identical to the reviewed main version; only code outside the reviewed calls changed."
+      }
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+      "sourceSha256": "845f195f835dd9dae9955a7e9ccd2c7d0a86ddfee917299e951fe99d289d3448",
       "callIds": [
         "b101c0c287c875bae159"
       ],
@@ -20758,13 +21059,23 @@
         ],
         "disposition": "SCOPED_BOUNDARY"
       },
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json",
+      "reboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "baseSourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+        "baseCallIds": [
+          "b101c0c287c875bae159"
+        ],
+        "verification": "Each reviewed call chain and its whole enclosing function are byte-identical to the reviewed main version; only code outside the reviewed calls changed."
+      }
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+      "sourceSha256": "845f195f835dd9dae9955a7e9ccd2c7d0a86ddfee917299e951fe99d289d3448",
       "callIds": [
-        "1c2765565427d7a39f41"
+        "9592603e00571b9aa936"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
@@ -20804,14 +21115,24 @@
         ],
         "disposition": "SCOPED_BOUNDARY"
       },
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json",
+      "reboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "baseSourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+        "baseCallIds": [
+          "1c2765565427d7a39f41"
+        ],
+        "verification": "Each reviewed call chain and its whole enclosing function are byte-identical to the reviewed main version; only code outside the reviewed calls changed."
+      }
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+      "sourceSha256": "845f195f835dd9dae9955a7e9ccd2c7d0a86ddfee917299e951fe99d289d3448",
       "callIds": [
-        "c135db5a5ea7536cfe6f",
-        "bfd902ca64f5f7780a21"
+        "9f636ef2e5cee499b1b9",
+        "37a9465bd24fabfe5070"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
@@ -20854,13 +21175,24 @@
         ],
         "disposition": "SCOPED_BOUNDARY"
       },
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json",
+      "reboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "baseSourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+        "baseCallIds": [
+          "c135db5a5ea7536cfe6f",
+          "bfd902ca64f5f7780a21"
+        ],
+        "verification": "Each reviewed call chain and its whole enclosing function are byte-identical to the reviewed main version; only code outside the reviewed calls changed."
+      }
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+      "sourceSha256": "845f195f835dd9dae9955a7e9ccd2c7d0a86ddfee917299e951fe99d289d3448",
       "callIds": [
-        "726ceac5ed6ed44f0821"
+        "6d28ef52991929f03d5d"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Exact-row revocation RPC only. Authenticated integration and Supabase disconnect routes supply req.userId. Private helper admits validated provider or exact delete-only legacy alias, calls service-only revoke_provider_key and requires true receipt. SQL binds owner/provider, clears credentials, retains revoked tombstone and rotates revision atomically.",
@@ -20904,13 +21236,23 @@
         ],
         "disposition": "SCOPED_BOUNDARY"
       },
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json",
+      "reboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "baseSourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+        "baseCallIds": [
+          "726ceac5ed6ed44f0821"
+        ],
+        "verification": "Each reviewed call chain and its whole enclosing function are byte-identical to the reviewed main version; only code outside the reviewed calls changed."
+      }
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+      "sourceSha256": "845f195f835dd9dae9955a7e9ccd2c7d0a86ddfee917299e951fe99d289d3448",
       "callIds": [
-        "37cfa6ca45abf19a23eb"
+        "ad9bfb649fa71faf105f"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "The existing CWS callback starts and consumes the original issued-owner PKCE session, then captures prepareUserProviderKeyWrite for that exact owner and cws_oauth provider. The process-local unforgeable admission holds owner/provider/env plus canonical revision and OAuth-receipt flag. The shared save client is used only after matching that handle. OAuth receipt selects the fixed save_cws_oauth_key_if_current RPC. Both save branches encrypt with the existing envelope and require true CAS receipt before optional owner mirror. No browser value can choose the owner of that callback. Ordinary BYOK callers retain their separate exact-owner CAS and HTTP proof.",
@@ -20984,14 +21326,24 @@
         ],
         "disposition": "SCOPED_BOUNDARY"
       },
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json",
+      "reboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "baseSourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+        "baseCallIds": [
+          "37cfa6ca45abf19a23eb"
+        ],
+        "verification": "Each reviewed call chain and its whole enclosing function are byte-identical to the reviewed main version; only code outside the reviewed calls changed."
+      }
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+      "sourceSha256": "845f195f835dd9dae9955a7e9ccd2c7d0a86ddfee917299e951fe99d289d3448",
       "callIds": [
-        "fe37d49899df3732b5cc",
-        "ef2d01aaa4ae1572ad53"
+        "ac2bc0bf079ef4f86bca",
+        "d81f7e29ed7eb8f08321"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Private saveKeyToStorage is called only after the existing exact owner/provider/revision CAS succeeds. Canonical row owner and fixed sanitized provider select owner/vault-provider.json. Private load/list helpers have no independent public caller and re-read that exact owner/provider canonical authority after download, never letting absent authority or an orphan object grant a secret. The authenticated integrations route overwrites actor from server req.userId for saves and metadata reads, and supplies original req.tenantContext for disconnect. No body actor chooses a row. Category custom reads stay within that owner, named reads select exact provider. Deployment-env selection uses that same owner and rejects invalid/misbound provider metadata and public secret aliases. Bulk deletion requires issued context and completely enumerates owner-only DB and private object pages before individually recording owner/provider tombstones and removing exact owner paths. Provider/caller lifecycle at other source files remains independent.",
@@ -21080,13 +21432,24 @@
         ],
         "disposition": "SCOPED_BOUNDARY"
       },
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json",
+      "reboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "baseSourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+        "baseCallIds": [
+          "fe37d49899df3732b5cc",
+          "ef2d01aaa4ae1572ad53"
+        ],
+        "verification": "Each reviewed call chain and its whole enclosing function are byte-identical to the reviewed main version; only code outside the reviewed calls changed."
+      }
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+      "sourceSha256": "845f195f835dd9dae9955a7e9ccd2c7d0a86ddfee917299e951fe99d289d3448",
       "callIds": [
-        "91c17cc8f6bff705b598"
+        "8eac683151d9c952eab2"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Node Buffer.from decodes a supplied JWT payload for negative project-ref mismatch detection. The receiver is Buffer, not a database/Storage client, and no side effect occurs in this expression.",
@@ -21122,13 +21485,23 @@
         ],
         "disposition": "NOT_PERSISTENCE"
       },
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json",
+      "reboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "baseSourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+        "baseCallIds": [
+          "91c17cc8f6bff705b598"
+        ],
+        "verification": "Each reviewed call chain and its whole enclosing function are byte-identical to the reviewed main version; only code outside the reviewed calls changed."
+      }
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+      "sourceSha256": "845f195f835dd9dae9955a7e9ccd2c7d0a86ddfee917299e951fe99d289d3448",
       "callIds": [
-        "b8a2f76b780dc05a1342"
+        "296b65797dd85b9aae09"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "snapshotSupabaseRows is private and called only by prepareSupabaseBundleWrite and readUserSupabaseBundle. Canonical readers use original server owner from authenticated integration/status/publish routes, the issued-owner pipeline, or their same-owner provisioning wrappers. connectUserSupabase requires the issued context. OAuth and explicit one-click preparation retain that original req.userId and capture admission before remote work. The query is the fixed four provider rows with exact user_id and validates every returned owner, provider, metadata and revision. Normal reads never download orphan authority. Only explicit reconnect inspects that owner private object path, strips association claims and rechecks current revisions after the downloads. A read-only snapshot cannot activate these bytes. The later save uses the separately accepted opaque admission and atomic generation transaction.",
@@ -21211,13 +21584,23 @@
         ],
         "disposition": "SCOPED_BOUNDARY"
       },
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json",
+      "reboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "baseSourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+        "baseCallIds": [
+          "b8a2f76b780dc05a1342"
+        ],
+        "verification": "Each reviewed call chain and its whole enclosing function are byte-identical to the reviewed main version; only code outside the reviewed calls changed."
+      }
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+      "sourceSha256": "845f195f835dd9dae9955a7e9ccd2c7d0a86ddfee917299e951fe99d289d3448",
       "callIds": [
-        "bf70a476decc73712608"
+        "f15dce6c928b922d9010"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "snapshotSupabaseRows is private and called only by prepareSupabaseBundleWrite and readUserSupabaseBundle. Canonical readers use original server owner from authenticated integration/status/publish routes, the issued-owner pipeline, or their same-owner provisioning wrappers. connectUserSupabase requires the issued context. OAuth and explicit one-click preparation retain that original req.userId and capture admission before remote work. The query is the fixed four provider rows with exact user_id and validates every returned owner, provider, metadata and revision. Normal reads never download orphan authority. Only explicit reconnect inspects that owner private object path, strips association claims and rechecks current revisions after the downloads. A read-only snapshot cannot activate these bytes. The later save uses the separately accepted opaque admission and atomic generation transaction.",
@@ -21300,13 +21683,23 @@
         ],
         "disposition": "SCOPED_BOUNDARY"
       },
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json",
+      "reboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "baseSourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+        "baseCallIds": [
+          "bf70a476decc73712608"
+        ],
+        "verification": "Each reviewed call chain and its whole enclosing function are byte-identical to the reviewed main version; only code outside the reviewed calls changed."
+      }
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+      "sourceSha256": "845f195f835dd9dae9955a7e9ccd2c7d0a86ddfee917299e951fe99d289d3448",
       "callIds": [
-        "fc6a606bde6698305460"
+        "d711530da125fbdb8af8"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "snapshotSupabaseRows is private and called only by prepareSupabaseBundleWrite and readUserSupabaseBundle. Canonical readers use original server owner from authenticated integration/status/publish routes, the issued-owner pipeline, or their same-owner provisioning wrappers. connectUserSupabase requires the issued context. OAuth and explicit one-click preparation retain that original req.userId and capture admission before remote work. The query is the fixed four provider rows with exact user_id and validates every returned owner, provider, metadata and revision. Normal reads never download orphan authority. Only explicit reconnect inspects that owner private object path, strips association claims and rechecks current revisions after the downloads. A read-only snapshot cannot activate these bytes. The later save uses the separately accepted opaque admission and atomic generation transaction.",
@@ -21389,13 +21782,23 @@
         ],
         "disposition": "SCOPED_BOUNDARY"
       },
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json",
+      "reboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "baseSourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+        "baseCallIds": [
+          "fc6a606bde6698305460"
+        ],
+        "verification": "Each reviewed call chain and its whole enclosing function are byte-identical to the reviewed main version; only code outside the reviewed calls changed."
+      }
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+      "sourceSha256": "845f195f835dd9dae9955a7e9ccd2c7d0a86ddfee917299e951fe99d289d3448",
       "callIds": [
-        "a48ccd229f5da7688e01"
+        "bac66807e08081335d38"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected exact receiver: Node Buffer.from decodes a JWT payload in memory for project/role consistency only. It performs no database or Storage operation and does not verify the JWT signature.",
@@ -21431,13 +21834,23 @@
         ],
         "disposition": "NOT_PERSISTENCE"
       },
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json",
+      "reboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "baseSourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+        "baseCallIds": [
+          "a48ccd229f5da7688e01"
+        ],
+        "verification": "Each reviewed call chain and its whole enclosing function are byte-identical to the reviewed main version; only code outside the reviewed calls changed."
+      }
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+      "sourceSha256": "845f195f835dd9dae9955a7e9ccd2c7d0a86ddfee917299e951fe99d289d3448",
       "callIds": [
-        "1efd8ec34ba641c03034"
+        "deb75dc520e1b72f0f8c"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected exact receiver: Node Buffer.from decodes a JWT payload in memory for project/role consistency only. It performs no database or Storage operation and does not verify the JWT signature.",
@@ -21473,13 +21886,23 @@
         ],
         "disposition": "NOT_PERSISTENCE"
       },
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json",
+      "reboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "baseSourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+        "baseCallIds": [
+          "1efd8ec34ba641c03034"
+        ],
+        "verification": "Each reviewed call chain and its whole enclosing function are byte-identical to the reviewed main version; only code outside the reviewed calls changed."
+      }
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+      "sourceSha256": "845f195f835dd9dae9955a7e9ccd2c7d0a86ddfee917299e951fe99d289d3448",
       "callIds": [
-        "d68b6df592d887684c6f"
+        "311e5def04fe94e7b0cd"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Existing Supabase vault bundle helpers snapshot exact owner-scoped four rows and missing legacy objects without mutation, recheck revisions after mirror reads, and issue immutable admission. Atomic save locks fixed provider order, validates every expected revision and commits one common association generation or rolls back all rows. PAT stays account scoped.",
@@ -21515,13 +21938,23 @@
         ],
         "disposition": "SCOPED_BOUNDARY"
       },
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json",
+      "reboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "baseSourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+        "baseCallIds": [
+          "d68b6df592d887684c6f"
+        ],
+        "verification": "Each reviewed call chain and its whole enclosing function are byte-identical to the reviewed main version; only code outside the reviewed calls changed."
+      }
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+      "sourceSha256": "845f195f835dd9dae9955a7e9ccd2c7d0a86ddfee917299e951fe99d289d3448",
       "callIds": [
-        "d2968f7d0b0673e4e552"
+        "c3be2940c4b9c47c10ab"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Existing Supabase vault bundle helpers snapshot exact owner-scoped four rows and missing legacy objects without mutation, recheck revisions after mirror reads, and issue immutable admission. Atomic save locks fixed provider order, validates every expected revision and commits one common association generation or rolls back all rows. PAT stays account scoped.",
@@ -21557,11 +21990,21 @@
         ],
         "disposition": "SCOPED_BOUNDARY"
       },
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json",
+      "reboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "baseSourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+        "baseCallIds": [
+          "d2968f7d0b0673e4e552"
+        ],
+        "verification": "Each reviewed call chain and its whole enclosing function are byte-identical to the reviewed main version; only code outside the reviewed calls changed."
+      }
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+      "sourceSha256": "845f195f835dd9dae9955a7e9ccd2c7d0a86ddfee917299e951fe99d289d3448",
       "callIds": [
         "feecde5ebb7ae5f4ad78",
         "5e37205582073bfc30c9",
@@ -21569,17 +22012,17 @@
         "c0cad7450906cef3fce8",
         "125d1fa1b446def91170",
         "56f1365c1095ea75af85",
-        "5f84595697b6399ed442",
-        "30d93bb175651c6091b1",
-        "6021c31eedb4e0085d2b",
-        "c36354753e5d659f1133",
-        "36190833aa1b3b96e8ee",
-        "cac7d32579dae1ccf84c",
-        "a497ca44a05b78d07e6c",
-        "977606a7b1f57d55adb2",
-        "4c3d52cdd8d4da245c3a",
-        "fa50fc7afb1cc2af0bfe",
-        "aa227a13e3f851a147cb"
+        "5f90e5a0a656a5419d4c",
+        "be3e39ffd9ce85f9f0e5",
+        "7260159d581155b2eefd",
+        "b9e760357c2ccb328c9e",
+        "53a7e1a96e0bec62bee6",
+        "8aeaf3c0596fedee163b",
+        "54fe7392c0d3794b89ac",
+        "2822acbf204a25662121",
+        "8d2404e2cdaa0f3994f6",
+        "b863485d9bc095d1af1d",
+        "0308587643cc5bf6e77a"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Private saveKeyToStorage is called only after the existing exact owner/provider/revision CAS succeeds. Canonical row owner and fixed sanitized provider select owner/vault-provider.json. Private load/list helpers have no independent public caller and re-read that exact owner/provider canonical authority after download, never letting absent authority or an orphan object grant a secret. The authenticated integrations route overwrites actor from server req.userId for saves and metadata reads, and supplies original req.tenantContext for disconnect. No body actor chooses a row. Category custom reads stay within that owner, named reads select exact provider. Deployment-env selection uses that same owner and rejects invalid/misbound provider metadata and public secret aliases. Bulk deletion requires issued context and completely enumerates owner-only DB and private object pages before individually recording owner/provider tombstones and removing exact owner paths. Provider/caller lifecycle at other source files remains independent.",
@@ -21752,13 +22195,39 @@
         ],
         "disposition": "SCOPED_BOUNDARY"
       },
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json",
+      "reboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "baseSourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+        "baseCallIds": [
+          "feecde5ebb7ae5f4ad78",
+          "5e37205582073bfc30c9",
+          "018c071575ceb3f8516a",
+          "c0cad7450906cef3fce8",
+          "125d1fa1b446def91170",
+          "56f1365c1095ea75af85",
+          "5f84595697b6399ed442",
+          "30d93bb175651c6091b1",
+          "6021c31eedb4e0085d2b",
+          "c36354753e5d659f1133",
+          "36190833aa1b3b96e8ee",
+          "cac7d32579dae1ccf84c",
+          "a497ca44a05b78d07e6c",
+          "977606a7b1f57d55adb2",
+          "4c3d52cdd8d4da245c3a",
+          "fa50fc7afb1cc2af0bfe",
+          "aa227a13e3f851a147cb"
+        ],
+        "verification": "Each reviewed call chain and its whole enclosing function are byte-identical to the reviewed main version; only code outside the reviewed calls changed."
+      }
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+      "sourceSha256": "845f195f835dd9dae9955a7e9ccd2c7d0a86ddfee917299e951fe99d289d3448",
       "callIds": [
-        "1f040da6c68c16cd33e2"
+        "9969d86ce8c62d31fab3"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "This persistence expression belongs to the Phase3 authority or CredentialVault cutover. The exact caller remains bound to current source and retains its original actor, owner, project and parent checks. It receives no inherited Phase2 certification.",
@@ -21792,13 +22261,23 @@
         ],
         "disposition": "REVIEWED_GAP"
       },
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json",
+      "reboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "baseSourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+        "baseCallIds": [
+          "1f040da6c68c16cd33e2"
+        ],
+        "verification": "Each reviewed call chain and its whole enclosing function are byte-identical to the reviewed main version; only code outside the reviewed calls changed."
+      }
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+      "sourceSha256": "845f195f835dd9dae9955a7e9ccd2c7d0a86ddfee917299e951fe99d289d3448",
       "callIds": [
-        "c0b89211921517abfb82"
+        "32cde0d22576e3a58695"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "This persistence expression belongs to the Phase3 authority or CredentialVault cutover. The exact caller remains bound to current source and retains its original actor, owner, project and parent checks. It receives no inherited Phase2 certification.",
@@ -21832,13 +22311,23 @@
         ],
         "disposition": "REVIEWED_GAP"
       },
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json",
+      "reboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "baseSourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+        "baseCallIds": [
+          "c0b89211921517abfb82"
+        ],
+        "verification": "Each reviewed call chain and its whole enclosing function are byte-identical to the reviewed main version; only code outside the reviewed calls changed."
+      }
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+      "sourceSha256": "845f195f835dd9dae9955a7e9ccd2c7d0a86ddfee917299e951fe99d289d3448",
       "callIds": [
-        "6a42e1dbe625c387daee"
+        "7c1d10db11574d36e94f"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "This persistence expression belongs to the Phase3 authority or CredentialVault cutover. The exact caller remains bound to current source and retains its original actor, owner, project and parent checks. It receives no inherited Phase2 certification.",
@@ -21872,13 +22361,23 @@
         ],
         "disposition": "REVIEWED_GAP"
       },
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json",
+      "reboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "baseSourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+        "baseCallIds": [
+          "6a42e1dbe625c387daee"
+        ],
+        "verification": "Each reviewed call chain and its whole enclosing function are byte-identical to the reviewed main version; only code outside the reviewed calls changed."
+      }
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+      "sourceSha256": "845f195f835dd9dae9955a7e9ccd2c7d0a86ddfee917299e951fe99d289d3448",
       "callIds": [
-        "f7171c690025f6a4bdde"
+        "8ff23600c25a7e4d3d16"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "This persistence expression belongs to the Phase3 authority or CredentialVault cutover. The exact caller remains bound to current source and retains its original actor, owner, project and parent checks. It receives no inherited Phase2 certification.",
@@ -21912,13 +22411,23 @@
         ],
         "disposition": "REVIEWED_GAP"
       },
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json",
+      "reboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "baseSourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+        "baseCallIds": [
+          "f7171c690025f6a4bdde"
+        ],
+        "verification": "Each reviewed call chain and its whole enclosing function are byte-identical to the reviewed main version; only code outside the reviewed calls changed."
+      }
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+      "sourceSha256": "845f195f835dd9dae9955a7e9ccd2c7d0a86ddfee917299e951fe99d289d3448",
       "callIds": [
-        "88c53c3d219aa201d578"
+        "c002e237c5633032ecd2"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "This persistence expression belongs to the Phase3 authority or CredentialVault cutover. The exact caller remains bound to current source and retains its original actor, owner, project and parent checks. It receives no inherited Phase2 certification.",
@@ -21952,13 +22461,23 @@
         ],
         "disposition": "REVIEWED_GAP"
       },
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json",
+      "reboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "baseSourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+        "baseCallIds": [
+          "88c53c3d219aa201d578"
+        ],
+        "verification": "Each reviewed call chain and its whole enclosing function are byte-identical to the reviewed main version; only code outside the reviewed calls changed."
+      }
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+      "sourceSha256": "845f195f835dd9dae9955a7e9ccd2c7d0a86ddfee917299e951fe99d289d3448",
       "callIds": [
-        "dc1960ee19b048e0649c"
+        "0a5c1d8757f121551305"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "This persistence expression belongs to the Phase3 authority or CredentialVault cutover. The exact caller remains bound to current source and retains its original actor, owner, project and parent checks. It receives no inherited Phase2 certification.",
@@ -21992,7 +22511,17 @@
         ],
         "disposition": "REVIEWED_GAP"
       },
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json",
+      "reboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "baseSourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+        "baseCallIds": [
+          "dc1960ee19b048e0649c"
+        ],
+        "verification": "Each reviewed call chain and its whole enclosing function are byte-identical to the reviewed main version; only code outside the reviewed calls changed."
+      }
     },
     {
       "path": "backend/src/services/integrations/vercelAuth.ts",
@@ -24433,10 +24962,10 @@
     },
     {
       "path": "backend/src/storage/storageService.ts",
-      "sourceSha256": "91e045a4bb607e6272e8fce5a8b05396447b901fe2ce9141f077b2f76c07a596",
+      "sourceSha256": "9b6fd08f5407c7de10027a0d2b539eb764aac415d083475287419508d8439cd3",
       "callIds": [
         "b637f160fd115523b1d0",
-        "dae5b79a54ea23e6076e"
+        "408df880f4777b2507fb"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Exactly the listed native Buffer.from conversions calculate source/Git hashes, encode source for the approved provider request or decode bounded provider JSON. They do not select a database, bucket, tenant, grant or table.",
@@ -24451,7 +24980,18 @@
           "marker": "production Builder wiring retains exact approved GitHub publication"
         }
       ],
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json",
+      "reboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "baseSourceSha256": "91e045a4bb607e6272e8fce5a8b05396447b901fe2ce9141f077b2f76c07a596",
+        "baseCallIds": [
+          "b637f160fd115523b1d0",
+          "dae5b79a54ea23e6076e"
+        ],
+        "verification": "Each reviewed call chain and its whole enclosing function are byte-identical to the reviewed main version; only code outside the reviewed calls changed."
+      }
     },
     {
       "path": "backend/src/synthesis/delivery/projectDeliveryService.ts",
@@ -27872,9 +28412,9 @@
     },
     {
       "path": "frontend/src/lib/formatAiMarkdown.tsx",
-      "sourceSha256": "074635d63bbbd514febd9eda9219c5d1404bacaed0226859bb9f6511d115189d",
+      "sourceSha256": "d80e1ce5489b7326a5c0834759b84d9a0d276fe5de4826a5540875d4357162c1",
       "callIds": [
-        "f40cf50a136b33e64174"
+        "cdc742944930c390a470"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in decodeBase64UrlUtf8, with no database or Storage client receiver.",
@@ -27900,7 +28440,17 @@
         ],
         "disposition": "NOT_PERSISTENCE"
       },
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json",
+      "reboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "baseSourceSha256": "074635d63bbbd514febd9eda9219c5d1404bacaed0226859bb9f6511d115189d",
+        "baseCallIds": [
+          "f40cf50a136b33e64174"
+        ],
+        "verification": "Each reviewed call chain and its whole enclosing function are byte-identical to the reviewed main version; only code outside the reviewed calls changed."
+      }
     },
     {
       "path": "frontend/src/lib/landingOutcome.ts",
@@ -28542,6 +29092,27 @@
           "marker": "Buffer.from(req.body)"
         }
       ]
+    },
+    {
+      "path": "backend/src/ai/parallelApproval.ts",
+      "sourceSha256": "3d6cc51f24257eeb6fa33d2dad97b764bf9751b929a44f09eb4e8a25edbfce48",
+      "callIds": [
+        "cb2ef3964f21b673e523"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Inspected the receiver and surrounding expression in executeParallelNativeAction. This specific call uses the built-in Uint8Array.from conversion of already fetched public document bytes for the PDF parser, not the adjacent database, object storage or provider transport.",
+      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Public egress, document size and parsing limits, resource authority and downstream actions retain their separate security obligations.",
+      "evidence": [
+        {
+          "path": "backend/src/ai/parallelApproval.ts",
+          "marker": "pdfParse(Uint8Array.from(page.bytes),{max:5})"
+        }
+      ],
+      "reviewedOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374"
+      }
     }
   ],
   "retiredSourceReviews": [

@@ -1,0 +1,884 @@
+{
+  "prNumber": 922,
+  "baseRef": "origin/main",
+  "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+  "method": "For each stale review record every reviewed call id is located in the base (main) version of the file. The call must map to exactly one call in the branch version with the same enclosing function, kind, target and ordinal among identical triples. The whole call chain (including predicates) must be byte-identical, and so must its whole enclosing function. Otherwise the record is NOT re-bound.",
+  "rebound": [
+    {
+      "path": "backend/src/ai/attachments.ts",
+      "disposition": "NOT_PERSISTENCE",
+      "baseSourceSha256": "c50dc741653646df6b6dddc6ec1ba4337fa3b3a48a94b5d9a66afe52b81cbd46",
+      "newSourceSha256": "b1c7911aa41d59bfcc1e57f6925a4c705548787cdb81aba14100e78fe5432f45",
+      "baseCallIds": [
+        "097f3b056977288927ab",
+        "a014c3fc158d8544965e",
+        "6dad3dd6bb66b6180fa5"
+      ],
+      "newCallIds": [
+        "097f3b056977288927ab",
+        "a014c3fc158d8544965e",
+        "6dad3dd6bb66b6180fa5"
+      ],
+      "enclosingFunctionChanged": false
+    },
+    {
+      "path": "backend/src/ai/parallelApproval.ts",
+      "disposition": "SCOPED_BOUNDARY",
+      "baseSourceSha256": "84b38d89d19071027dd6be660a9f7e3bfbb15524250f5fa8a637b7a51e32d3a8",
+      "newSourceSha256": "3d6cc51f24257eeb6fa33d2dad97b764bf9751b929a44f09eb4e8a25edbfce48",
+      "baseCallIds": [
+        "e083a05a80e8dc902042",
+        "55516bb57f1a233bf481",
+        "8c17e0596e9108831a35"
+      ],
+      "newCallIds": [
+        "94daa137021764170d8d",
+        "2f73dcc10dc324e2879e",
+        "d579ef4bc0119bb2f271"
+      ],
+      "enclosingFunctionChanged": true,
+      "manualReview": "Manual diff review: additive research-answer chain after the existing permit/owner/digest check(); check() still runs before saveResearchResult and before the model answer; retrieval-only guard added; the one new scanner candidate is Uint8Array.from(page.bytes), a native byte conversion. The reviewed calls and their predicates are unchanged."
+    },
+    {
+      "path": "backend/src/ai/parallelDispatch.ts",
+      "disposition": "REVIEWED_GAP",
+      "baseSourceSha256": "f52ba2b8ecf260f0ea48e13272f87cd96bd6dc301f38d3600cbc08e1fc4252d3",
+      "newSourceSha256": "ff1e01472174b83d678068b5f6a635d2b9b12fa456a6912d4eecb2fb6c37501c",
+      "baseCallIds": [
+        "45b3d2d19b57580957f7",
+        "143402b49edb820c5168",
+        "9ef0b2228cd77febbf7c",
+        "a1e8df4a00affe8b85d4",
+        "6a4aaeb29c94369cd778",
+        "316e1774bccfc8148739"
+      ],
+      "newCallIds": [
+        "c614aff1a7ef600eaeb1",
+        "b9779c8b122b57f53256",
+        "2431b77b0e6d6023a274",
+        "c251576c197571657419",
+        "5b5968c3074825aa583f",
+        "289a623b636b08296aed"
+      ],
+      "enclosingFunctionChanged": true,
+      "manualReview": "Manual diff review: removes the generative responses operation and its Bearer fetch (retrieval-only), so outbound egress is narrowed. The reviewed persistence calls and predicates are unchanged."
+    },
+    {
+      "path": "backend/src/ai/pipeline.ts",
+      "disposition": "NOT_PERSISTENCE",
+      "baseSourceSha256": "0168bc57563dbc535012982e5c6680fd3ebb40c7595fb67620e1ca60284df9b4",
+      "newSourceSha256": "d3742ca4dccc50daf99aa71d9896449957dde73798dc6d7c2a9c5ca5536cff32",
+      "baseCallIds": [
+        "c3617170cdd8b722b96f"
+      ],
+      "newCallIds": [
+        "4431005001a8d288051f"
+      ],
+      "enclosingFunctionChanged": true,
+      "manualReview": "Manual diff review: the reviewed calls are two native Array.from(byPath.values()) conversions; their expressions are byte-identical and no changed line touches them. Other changes in this large function (answer budget, imports, completion fields) do not."
+    },
+    {
+      "path": "backend/src/ai/pipeline.ts",
+      "disposition": "NOT_PERSISTENCE",
+      "baseSourceSha256": "0168bc57563dbc535012982e5c6680fd3ebb40c7595fb67620e1ca60284df9b4",
+      "newSourceSha256": "d3742ca4dccc50daf99aa71d9896449957dde73798dc6d7c2a9c5ca5536cff32",
+      "baseCallIds": [
+        "2e78e5aba21ba282d65c"
+      ],
+      "newCallIds": [
+        "ce02ccc6a928e44634de"
+      ],
+      "enclosingFunctionChanged": true,
+      "manualReview": "Manual diff review: the reviewed calls are two native Array.from(byPath.values()) conversions; their expressions are byte-identical and no changed line touches them. Other changes in this large function (answer budget, imports, completion fields) do not."
+    },
+    {
+      "path": "backend/src/ai/providerBudget.ts",
+      "disposition": "SCOPED_BOUNDARY",
+      "baseSourceSha256": "6827c7f21bcdac5b366d6ccb88f5d01acfeb3a8ee930cebaba353734ce82e086",
+      "newSourceSha256": "ccec1009a57392366b476c85f0c6ae703709b1ea4cbbe1a4b760645b1db6bb35",
+      "baseCallIds": [
+        "aae055d92faa16ae4e2e",
+        "54326930ab9ec884b6cd"
+      ],
+      "newCallIds": [
+        "255ea9744a9343d6feaf",
+        "e4d8bf4fcb8f6422f53a"
+      ],
+      "enclosingFunctionChanged": false
+    },
+    {
+      "path": "backend/src/ai/providerBudget.ts",
+      "disposition": "SCOPED_BOUNDARY",
+      "baseSourceSha256": "6827c7f21bcdac5b366d6ccb88f5d01acfeb3a8ee930cebaba353734ce82e086",
+      "newSourceSha256": "ccec1009a57392366b476c85f0c6ae703709b1ea4cbbe1a4b760645b1db6bb35",
+      "baseCallIds": [
+        "53446e75ca49c95522af",
+        "4c4451bbec61aecb23d3",
+        "9d05c85f5bfac4989a75",
+        "469b0a4a0957a0d982b1",
+        "4a9c1469b879166fe52c",
+        "0b3ff8ce7a456a8a2acf",
+        "f6f4b355a8c80fc166f4",
+        "c2adb020f37811ce7849",
+        "9d0558fe12707a8a2949",
+        "65acb9b03435995fdeb0"
+      ],
+      "newCallIds": [
+        "b9d50643ad7fda897932",
+        "67400600da71ba2124eb",
+        "c985fa5fee1ee7d5c6f2",
+        "b57f79f0d091e2d52575",
+        "4150f3451a1cef23bc00",
+        "be62ab94e9a3c042c183",
+        "ee7f1f1315d6867c3e17",
+        "7b462edee6e0deb442d8",
+        "72838b3e50b0a2167d93",
+        "53502198a107866bdd54"
+      ],
+      "enclosingFunctionChanged": true,
+      "manualReview": "Manual diff review: adds assertActiveModelId, assertProviderEnabled and assertModelSelection before reservation and Zurelay cost accounting (inclusive reasoning tokens, cache rates, ceil). The reserve and cycle RPC calls and their user binding are unchanged."
+    },
+    {
+      "path": "backend/src/ai/providerBudget.ts",
+      "disposition": "SCOPED_BOUNDARY",
+      "baseSourceSha256": "6827c7f21bcdac5b366d6ccb88f5d01acfeb3a8ee930cebaba353734ce82e086",
+      "newSourceSha256": "ccec1009a57392366b476c85f0c6ae703709b1ea4cbbe1a4b760645b1db6bb35",
+      "baseCallIds": [
+        "9cce2ff19e247ce9c5d5",
+        "670197ad89640f5a6242",
+        "774dd446f08cb58fbc9b",
+        "706f26c27c2b32064580"
+      ],
+      "newCallIds": [
+        "63cd9db82a553901aa87",
+        "54b682f70bf2fc2118d6",
+        "cc73aacc720688126189",
+        "39946f9c942d63422513"
+      ],
+      "enclosingFunctionChanged": true,
+      "manualReview": "Manual diff review: adds assertActiveModelId, assertProviderEnabled and assertModelSelection before reservation and Zurelay cost accounting (inclusive reasoning tokens, cache rates, ceil). The reserve and cycle RPC calls and their user binding are unchanged."
+    },
+    {
+      "path": "backend/src/ai/providerBudget.ts",
+      "disposition": "REVIEWED_GAP",
+      "baseSourceSha256": "6827c7f21bcdac5b366d6ccb88f5d01acfeb3a8ee930cebaba353734ce82e086",
+      "newSourceSha256": "ccec1009a57392366b476c85f0c6ae703709b1ea4cbbe1a4b760645b1db6bb35",
+      "baseCallIds": [
+        "536064ea8ac2c56348ec"
+      ],
+      "newCallIds": [
+        "1205a7c3e1be5c28184e"
+      ],
+      "enclosingFunctionChanged": true,
+      "manualReview": "Manual diff review: adds assertActiveModelId, assertProviderEnabled and assertModelSelection before reservation and Zurelay cost accounting (inclusive reasoning tokens, cache rates, ceil). The reserve and cycle RPC calls and their user binding are unchanged."
+    },
+    {
+      "path": "backend/src/ai/providerBudget.ts",
+      "disposition": "REVIEWED_GAP",
+      "baseSourceSha256": "6827c7f21bcdac5b366d6ccb88f5d01acfeb3a8ee930cebaba353734ce82e086",
+      "newSourceSha256": "ccec1009a57392366b476c85f0c6ae703709b1ea4cbbe1a4b760645b1db6bb35",
+      "baseCallIds": [
+        "2a28f5bad97e04e53770"
+      ],
+      "newCallIds": [
+        "22a30ae3b808f4792a78"
+      ],
+      "enclosingFunctionChanged": true,
+      "manualReview": "Manual diff review: adds assertActiveModelId, assertProviderEnabled and assertModelSelection before reservation and Zurelay cost accounting (inclusive reasoning tokens, cache rates, ceil). The reserve and cycle RPC calls and their user binding are unchanged."
+    },
+    {
+      "path": "backend/src/ai/providerBudget.ts",
+      "disposition": "REVIEWED_GAP",
+      "baseSourceSha256": "6827c7f21bcdac5b366d6ccb88f5d01acfeb3a8ee930cebaba353734ce82e086",
+      "newSourceSha256": "ccec1009a57392366b476c85f0c6ae703709b1ea4cbbe1a4b760645b1db6bb35",
+      "baseCallIds": [
+        "49aa84226917135702d4"
+      ],
+      "newCallIds": [
+        "6ff03e6d0feee9d7788b"
+      ],
+      "enclosingFunctionChanged": true,
+      "manualReview": "Manual diff review: adds assertActiveModelId, assertProviderEnabled and assertModelSelection before reservation and Zurelay cost accounting (inclusive reasoning tokens, cache rates, ceil). The reserve and cycle RPC calls and their user binding are unchanged."
+    },
+    {
+      "path": "backend/src/ai/providerBudget.ts",
+      "disposition": "REVIEWED_GAP",
+      "baseSourceSha256": "6827c7f21bcdac5b366d6ccb88f5d01acfeb3a8ee930cebaba353734ce82e086",
+      "newSourceSha256": "ccec1009a57392366b476c85f0c6ae703709b1ea4cbbe1a4b760645b1db6bb35",
+      "baseCallIds": [
+        "7e2f36090a4523cf0a8d"
+      ],
+      "newCallIds": [
+        "8518b222919073114544"
+      ],
+      "enclosingFunctionChanged": true,
+      "manualReview": "Manual diff review: adds assertActiveModelId, assertProviderEnabled and assertModelSelection before reservation and Zurelay cost accounting (inclusive reasoning tokens, cache rates, ceil). The reserve and cycle RPC calls and their user binding are unchanged."
+    },
+    {
+      "path": "backend/src/ai/quota.ts",
+      "disposition": "SCOPED_BOUNDARY",
+      "baseSourceSha256": "a2b3f404004691fd201dadcd241a46d2d33b9b33a26a09b0cdfbb0cca76a01e4",
+      "newSourceSha256": "33f0ab8cf98b74e9e1fcd3519c1a158cf20a3f0a6269a1128ea9a39e0c37e98d",
+      "baseCallIds": [
+        "7632727b3c8b02cf14d5",
+        "77bc9a9a205796da009c"
+      ],
+      "newCallIds": [
+        "fec7557265d1bdbb43bb",
+        "4af9883650ce37539f5e"
+      ],
+      "enclosingFunctionChanged": false
+    },
+    {
+      "path": "backend/src/ai/quota.ts",
+      "disposition": "SCOPED_BOUNDARY",
+      "baseSourceSha256": "a2b3f404004691fd201dadcd241a46d2d33b9b33a26a09b0cdfbb0cca76a01e4",
+      "newSourceSha256": "33f0ab8cf98b74e9e1fcd3519c1a158cf20a3f0a6269a1128ea9a39e0c37e98d",
+      "baseCallIds": [
+        "e490c31dcee80b1d1915",
+        "77af2b12d27cb727addf"
+      ],
+      "newCallIds": [
+        "4c53a5a5952dfc028e28",
+        "9d1e5d4bb3e0ba4cd9c5"
+      ],
+      "enclosingFunctionChanged": false
+    },
+    {
+      "path": "backend/src/ai/quota.ts",
+      "disposition": "SCOPED_BOUNDARY",
+      "baseSourceSha256": "a2b3f404004691fd201dadcd241a46d2d33b9b33a26a09b0cdfbb0cca76a01e4",
+      "newSourceSha256": "33f0ab8cf98b74e9e1fcd3519c1a158cf20a3f0a6269a1128ea9a39e0c37e98d",
+      "baseCallIds": [
+        "e8076c86facca1bb0721",
+        "baee9857b82180aaf497",
+        "611df8756b24bd23b167",
+        "fb624c5ca127ce5d4da8"
+      ],
+      "newCallIds": [
+        "4a20d5d6f72416b0cc1e",
+        "5b0856b8bbdf8ca461f6",
+        "2cfc66d7ab285d2bb5d2",
+        "d0c04a1fb4d28114ae3d"
+      ],
+      "enclosingFunctionChanged": false
+    },
+    {
+      "path": "backend/src/routes/messageShares.ts",
+      "disposition": "SCOPED_BOUNDARY",
+      "baseSourceSha256": "6ca440f7db2d4a533b0f68d802033931a1dfd59bdccf8eb539981232032e7609",
+      "newSourceSha256": "e69821ae544aecfe8073586f737f2e39e9344360c034705f41f005d457427ac1",
+      "baseCallIds": [
+        "97e6ac3f5cd22355e41a",
+        "1606c380951aa6ff48dc",
+        "513e9d97f392e5aaed6b",
+        "315837313f6ec4f1eaa4"
+      ],
+      "newCallIds": [
+        "c9a009f6baa9e3a3bbad",
+        "000d28d21ea7dba70f24",
+        "2f60349dbbab02755103",
+        "c4dcd4d97035ff02f08f"
+      ],
+      "enclosingFunctionChanged": false
+    },
+    {
+      "path": "backend/src/routes/messageShares.ts",
+      "disposition": "NARROW_EXCEPTION",
+      "baseSourceSha256": "6ca440f7db2d4a533b0f68d802033931a1dfd59bdccf8eb539981232032e7609",
+      "newSourceSha256": "e69821ae544aecfe8073586f737f2e39e9344360c034705f41f005d457427ac1",
+      "baseCallIds": [
+        "461bb34f363365a7f618",
+        "b31e0312443acd703258"
+      ],
+      "newCallIds": [
+        "db7f2c7b53d05936f3da",
+        "ea4d7ecf3043636a2883"
+      ],
+      "enclosingFunctionChanged": false
+    },
+    {
+      "path": "backend/src/routes/phase1.ts",
+      "disposition": "NOT_PERSISTENCE",
+      "baseSourceSha256": "ee77d657398ee4ed6a9322281c46c6ef17fe366e23dbd323c11560dd01cf88a8",
+      "newSourceSha256": "91b55da6a6beca61715b829c0087b10f90d2cc5bb7e2b7bce5500fbca50b2b7d",
+      "baseCallIds": [
+        "fb2bffffc91cc072976a"
+      ],
+      "newCallIds": [
+        "fa04b8d8f9413c194ec5"
+      ],
+      "enclosingFunctionChanged": false
+    },
+    {
+      "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+      "disposition": "SCOPED_BOUNDARY",
+      "baseSourceSha256": "40e88fdceed4ff5f571c8ea71ae86d2dfb53f537d8a3a5ff8f4d915ecc068abe",
+      "newSourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec",
+      "baseCallIds": [
+        "99ba24aefa7f2c2f6de9",
+        "3c64dc5d4a7058fb12f8",
+        "fc3b3f4bab00e81fbc31",
+        "94f936dfc30fe898eebe",
+        "1f375890c653535bb84b",
+        "9614e2de1a77eacffe05",
+        "b3a2b5af5ead58408dba",
+        "1f7c11b7359e0958073e",
+        "a992f061331cff4e8d50",
+        "7ddf1ddcae5c5661a52a"
+      ],
+      "newCallIds": [
+        "df7eec626e3acd881448",
+        "287e2fe0dabebc523a36",
+        "3a763a5523dac73c10d4",
+        "46aca4c01b2d3d90acad",
+        "85b1d7461e8691468225",
+        "545cee9f47055ec5d761",
+        "7231d508555849d87d32",
+        "8609662e7417659e88ca",
+        "2714b6af44879d208f97",
+        "a1b9e751df5bc764909d"
+      ],
+      "enclosingFunctionChanged": true,
+      "manualReview": "Manual diff review: adds requireResearchResultStorage and requireModelResultStorage guards and saves the execution result after it through tenant-context storage. The reviewed claim, authorize and confirmation calls are unchanged."
+    },
+    {
+      "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+      "disposition": "SCOPED_BOUNDARY",
+      "baseSourceSha256": "40e88fdceed4ff5f571c8ea71ae86d2dfb53f537d8a3a5ff8f4d915ecc068abe",
+      "newSourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec",
+      "baseCallIds": [
+        "b01c22a391468e45cbe8"
+      ],
+      "newCallIds": [
+        "7435325dc6f8734b9505"
+      ],
+      "enclosingFunctionChanged": true,
+      "manualReview": "Manual diff review: adds requireResearchResultStorage and requireModelResultStorage guards and saves the execution result after it through tenant-context storage. The reviewed claim, authorize and confirmation calls are unchanged."
+    },
+    {
+      "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+      "disposition": "SCOPED_BOUNDARY",
+      "baseSourceSha256": "40e88fdceed4ff5f571c8ea71ae86d2dfb53f537d8a3a5ff8f4d915ecc068abe",
+      "newSourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec",
+      "baseCallIds": [
+        "8f3d42e8e45d7fb2252a"
+      ],
+      "newCallIds": [
+        "319518470d46e4577f12"
+      ],
+      "enclosingFunctionChanged": false
+    },
+    {
+      "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+      "disposition": "REVIEWED_GAP",
+      "baseSourceSha256": "40e88fdceed4ff5f571c8ea71ae86d2dfb53f537d8a3a5ff8f4d915ecc068abe",
+      "newSourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec",
+      "baseCallIds": [
+        "16c8e03100d592b72118"
+      ],
+      "newCallIds": [
+        "a2737e6413bb535344c8"
+      ],
+      "enclosingFunctionChanged": false
+    },
+    {
+      "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+      "disposition": "REVIEWED_GAP",
+      "baseSourceSha256": "40e88fdceed4ff5f571c8ea71ae86d2dfb53f537d8a3a5ff8f4d915ecc068abe",
+      "newSourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec",
+      "baseCallIds": [
+        "402d88eda8e20ef83be0"
+      ],
+      "newCallIds": [
+        "a794b7db009e04b8617a"
+      ],
+      "enclosingFunctionChanged": false
+    },
+    {
+      "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+      "disposition": "REVIEWED_GAP",
+      "baseSourceSha256": "40e88fdceed4ff5f571c8ea71ae86d2dfb53f537d8a3a5ff8f4d915ecc068abe",
+      "newSourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec",
+      "baseCallIds": [
+        "ab85b8388bbce761729d"
+      ],
+      "newCallIds": [
+        "b4a46938a0dec4c5f10c"
+      ],
+      "enclosingFunctionChanged": true,
+      "manualReview": "Manual diff review: adds requireResearchResultStorage and requireModelResultStorage guards and saves the execution result after it through tenant-context storage. The reviewed claim, authorize and confirmation calls are unchanged."
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "disposition": "NOT_PERSISTENCE",
+      "baseSourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+      "newSourceSha256": "845f195f835dd9dae9955a7e9ccd2c7d0a86ddfee917299e951fe99d289d3448",
+      "baseCallIds": [
+        "3d61f3f5ae6402c20b58",
+        "64f0d9db49a13b562831"
+      ],
+      "newCallIds": [
+        "3db57fbadafb852f2b06",
+        "f22dea761a758bf97124"
+      ],
+      "enclosingFunctionChanged": false
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "disposition": "SCOPED_BOUNDARY",
+      "baseSourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+      "newSourceSha256": "845f195f835dd9dae9955a7e9ccd2c7d0a86ddfee917299e951fe99d289d3448",
+      "baseCallIds": [
+        "8784feaf266f3ae5d72e"
+      ],
+      "newCallIds": [
+        "3ca6cdd6e98ce6d60f41"
+      ],
+      "enclosingFunctionChanged": false
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "disposition": "SCOPED_BOUNDARY",
+      "baseSourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+      "newSourceSha256": "845f195f835dd9dae9955a7e9ccd2c7d0a86ddfee917299e951fe99d289d3448",
+      "baseCallIds": [
+        "b101c0c287c875bae159"
+      ],
+      "newCallIds": [
+        "b101c0c287c875bae159"
+      ],
+      "enclosingFunctionChanged": false
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "disposition": "SCOPED_BOUNDARY",
+      "baseSourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+      "newSourceSha256": "845f195f835dd9dae9955a7e9ccd2c7d0a86ddfee917299e951fe99d289d3448",
+      "baseCallIds": [
+        "1c2765565427d7a39f41"
+      ],
+      "newCallIds": [
+        "9592603e00571b9aa936"
+      ],
+      "enclosingFunctionChanged": false
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "disposition": "SCOPED_BOUNDARY",
+      "baseSourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+      "newSourceSha256": "845f195f835dd9dae9955a7e9ccd2c7d0a86ddfee917299e951fe99d289d3448",
+      "baseCallIds": [
+        "c135db5a5ea7536cfe6f",
+        "bfd902ca64f5f7780a21"
+      ],
+      "newCallIds": [
+        "9f636ef2e5cee499b1b9",
+        "37a9465bd24fabfe5070"
+      ],
+      "enclosingFunctionChanged": false
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "disposition": "SCOPED_BOUNDARY",
+      "baseSourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+      "newSourceSha256": "845f195f835dd9dae9955a7e9ccd2c7d0a86ddfee917299e951fe99d289d3448",
+      "baseCallIds": [
+        "726ceac5ed6ed44f0821"
+      ],
+      "newCallIds": [
+        "6d28ef52991929f03d5d"
+      ],
+      "enclosingFunctionChanged": false
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "disposition": "SCOPED_BOUNDARY",
+      "baseSourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+      "newSourceSha256": "845f195f835dd9dae9955a7e9ccd2c7d0a86ddfee917299e951fe99d289d3448",
+      "baseCallIds": [
+        "37cfa6ca45abf19a23eb"
+      ],
+      "newCallIds": [
+        "ad9bfb649fa71faf105f"
+      ],
+      "enclosingFunctionChanged": false
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "disposition": "SCOPED_BOUNDARY",
+      "baseSourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+      "newSourceSha256": "845f195f835dd9dae9955a7e9ccd2c7d0a86ddfee917299e951fe99d289d3448",
+      "baseCallIds": [
+        "fe37d49899df3732b5cc",
+        "ef2d01aaa4ae1572ad53"
+      ],
+      "newCallIds": [
+        "ac2bc0bf079ef4f86bca",
+        "d81f7e29ed7eb8f08321"
+      ],
+      "enclosingFunctionChanged": false
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "disposition": "NOT_PERSISTENCE",
+      "baseSourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+      "newSourceSha256": "845f195f835dd9dae9955a7e9ccd2c7d0a86ddfee917299e951fe99d289d3448",
+      "baseCallIds": [
+        "91c17cc8f6bff705b598"
+      ],
+      "newCallIds": [
+        "8eac683151d9c952eab2"
+      ],
+      "enclosingFunctionChanged": false
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "disposition": "SCOPED_BOUNDARY",
+      "baseSourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+      "newSourceSha256": "845f195f835dd9dae9955a7e9ccd2c7d0a86ddfee917299e951fe99d289d3448",
+      "baseCallIds": [
+        "b8a2f76b780dc05a1342"
+      ],
+      "newCallIds": [
+        "296b65797dd85b9aae09"
+      ],
+      "enclosingFunctionChanged": false
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "disposition": "SCOPED_BOUNDARY",
+      "baseSourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+      "newSourceSha256": "845f195f835dd9dae9955a7e9ccd2c7d0a86ddfee917299e951fe99d289d3448",
+      "baseCallIds": [
+        "bf70a476decc73712608"
+      ],
+      "newCallIds": [
+        "f15dce6c928b922d9010"
+      ],
+      "enclosingFunctionChanged": false
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "disposition": "SCOPED_BOUNDARY",
+      "baseSourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+      "newSourceSha256": "845f195f835dd9dae9955a7e9ccd2c7d0a86ddfee917299e951fe99d289d3448",
+      "baseCallIds": [
+        "fc6a606bde6698305460"
+      ],
+      "newCallIds": [
+        "d711530da125fbdb8af8"
+      ],
+      "enclosingFunctionChanged": false
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "disposition": "NOT_PERSISTENCE",
+      "baseSourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+      "newSourceSha256": "845f195f835dd9dae9955a7e9ccd2c7d0a86ddfee917299e951fe99d289d3448",
+      "baseCallIds": [
+        "a48ccd229f5da7688e01"
+      ],
+      "newCallIds": [
+        "bac66807e08081335d38"
+      ],
+      "enclosingFunctionChanged": false
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "disposition": "NOT_PERSISTENCE",
+      "baseSourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+      "newSourceSha256": "845f195f835dd9dae9955a7e9ccd2c7d0a86ddfee917299e951fe99d289d3448",
+      "baseCallIds": [
+        "1efd8ec34ba641c03034"
+      ],
+      "newCallIds": [
+        "deb75dc520e1b72f0f8c"
+      ],
+      "enclosingFunctionChanged": false
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "disposition": "SCOPED_BOUNDARY",
+      "baseSourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+      "newSourceSha256": "845f195f835dd9dae9955a7e9ccd2c7d0a86ddfee917299e951fe99d289d3448",
+      "baseCallIds": [
+        "d68b6df592d887684c6f"
+      ],
+      "newCallIds": [
+        "311e5def04fe94e7b0cd"
+      ],
+      "enclosingFunctionChanged": false
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "disposition": "SCOPED_BOUNDARY",
+      "baseSourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+      "newSourceSha256": "845f195f835dd9dae9955a7e9ccd2c7d0a86ddfee917299e951fe99d289d3448",
+      "baseCallIds": [
+        "d2968f7d0b0673e4e552"
+      ],
+      "newCallIds": [
+        "c3be2940c4b9c47c10ab"
+      ],
+      "enclosingFunctionChanged": false
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "disposition": "SCOPED_BOUNDARY",
+      "baseSourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+      "newSourceSha256": "845f195f835dd9dae9955a7e9ccd2c7d0a86ddfee917299e951fe99d289d3448",
+      "baseCallIds": [
+        "feecde5ebb7ae5f4ad78",
+        "5e37205582073bfc30c9",
+        "018c071575ceb3f8516a",
+        "c0cad7450906cef3fce8",
+        "125d1fa1b446def91170",
+        "56f1365c1095ea75af85",
+        "5f84595697b6399ed442",
+        "30d93bb175651c6091b1",
+        "6021c31eedb4e0085d2b",
+        "c36354753e5d659f1133",
+        "36190833aa1b3b96e8ee",
+        "cac7d32579dae1ccf84c",
+        "a497ca44a05b78d07e6c",
+        "977606a7b1f57d55adb2",
+        "4c3d52cdd8d4da245c3a",
+        "fa50fc7afb1cc2af0bfe",
+        "aa227a13e3f851a147cb"
+      ],
+      "newCallIds": [
+        "feecde5ebb7ae5f4ad78",
+        "5e37205582073bfc30c9",
+        "018c071575ceb3f8516a",
+        "c0cad7450906cef3fce8",
+        "125d1fa1b446def91170",
+        "56f1365c1095ea75af85",
+        "5f90e5a0a656a5419d4c",
+        "be3e39ffd9ce85f9f0e5",
+        "7260159d581155b2eefd",
+        "b9e760357c2ccb328c9e",
+        "53a7e1a96e0bec62bee6",
+        "8aeaf3c0596fedee163b",
+        "54fe7392c0d3794b89ac",
+        "2822acbf204a25662121",
+        "8d2404e2cdaa0f3994f6",
+        "b863485d9bc095d1af1d",
+        "0308587643cc5bf6e77a"
+      ],
+      "enclosingFunctionChanged": false
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "disposition": "REVIEWED_GAP",
+      "baseSourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+      "newSourceSha256": "845f195f835dd9dae9955a7e9ccd2c7d0a86ddfee917299e951fe99d289d3448",
+      "baseCallIds": [
+        "1f040da6c68c16cd33e2"
+      ],
+      "newCallIds": [
+        "9969d86ce8c62d31fab3"
+      ],
+      "enclosingFunctionChanged": false
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "disposition": "REVIEWED_GAP",
+      "baseSourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+      "newSourceSha256": "845f195f835dd9dae9955a7e9ccd2c7d0a86ddfee917299e951fe99d289d3448",
+      "baseCallIds": [
+        "c0b89211921517abfb82"
+      ],
+      "newCallIds": [
+        "32cde0d22576e3a58695"
+      ],
+      "enclosingFunctionChanged": false
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "disposition": "REVIEWED_GAP",
+      "baseSourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+      "newSourceSha256": "845f195f835dd9dae9955a7e9ccd2c7d0a86ddfee917299e951fe99d289d3448",
+      "baseCallIds": [
+        "6a42e1dbe625c387daee"
+      ],
+      "newCallIds": [
+        "7c1d10db11574d36e94f"
+      ],
+      "enclosingFunctionChanged": false
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "disposition": "REVIEWED_GAP",
+      "baseSourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+      "newSourceSha256": "845f195f835dd9dae9955a7e9ccd2c7d0a86ddfee917299e951fe99d289d3448",
+      "baseCallIds": [
+        "f7171c690025f6a4bdde"
+      ],
+      "newCallIds": [
+        "8ff23600c25a7e4d3d16"
+      ],
+      "enclosingFunctionChanged": false
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "disposition": "REVIEWED_GAP",
+      "baseSourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+      "newSourceSha256": "845f195f835dd9dae9955a7e9ccd2c7d0a86ddfee917299e951fe99d289d3448",
+      "baseCallIds": [
+        "88c53c3d219aa201d578"
+      ],
+      "newCallIds": [
+        "c002e237c5633032ecd2"
+      ],
+      "enclosingFunctionChanged": false
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "disposition": "REVIEWED_GAP",
+      "baseSourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+      "newSourceSha256": "845f195f835dd9dae9955a7e9ccd2c7d0a86ddfee917299e951fe99d289d3448",
+      "baseCallIds": [
+        "dc1960ee19b048e0649c"
+      ],
+      "newCallIds": [
+        "0a5c1d8757f121551305"
+      ],
+      "enclosingFunctionChanged": false
+    },
+    {
+      "path": "backend/src/storage/storageService.ts",
+      "disposition": "NOT_PERSISTENCE",
+      "baseSourceSha256": "91e045a4bb607e6272e8fce5a8b05396447b901fe2ce9141f077b2f76c07a596",
+      "newSourceSha256": "9b6fd08f5407c7de10027a0d2b539eb764aac415d083475287419508d8439cd3",
+      "baseCallIds": [
+        "b637f160fd115523b1d0",
+        "dae5b79a54ea23e6076e"
+      ],
+      "newCallIds": [
+        "b637f160fd115523b1d0",
+        "408df880f4777b2507fb"
+      ],
+      "enclosingFunctionChanged": false
+    },
+    {
+      "path": "frontend/src/lib/formatAiMarkdown.tsx",
+      "disposition": "NOT_PERSISTENCE",
+      "baseSourceSha256": "074635d63bbbd514febd9eda9219c5d1404bacaed0226859bb9f6511d115189d",
+      "newSourceSha256": "d80e1ce5489b7326a5c0834759b84d9a0d276fe5de4826a5540875d4357162c1",
+      "baseCallIds": [
+        "f40cf50a136b33e64174"
+      ],
+      "newCallIds": [
+        "cdc742944930c390a470"
+      ],
+      "enclosingFunctionChanged": false
+    }
+  ],
+  "needsReview": [],
+  "newCandidates": [
+    {
+      "path": "backend/src/ai/parallelApproval.ts",
+      "id": "cb2ef3964f21b673e523",
+      "enclosing": "executeParallelNativeAction",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "line": 111,
+      "review": "NOT_PERSISTENCE: native Uint8Array.from(page.bytes) byte conversion for the PDF parser."
+    }
+  ],
+  "egressReviews": {
+    "rebound": [
+      {
+        "id": "038ced12b0f74e8d5e0f",
+        "file": "backend/src/ai/openaiCompat.ts",
+        "callee": "globalThis.fetch",
+        "previousCallSha256": "6703c4fb0f56a0c5ba51d850aeaae62ede1f65a40002556b6ee201b6618facc7",
+        "newCallSha256": "bbbf26a58be8e30ace8fcfaac921075adab2a85ca44b5d5b7c9f48a7ec48c8f3",
+        "previousSourceFileSha256": "23232ec16c61124e6d8a8366c7076b02336a6c6cd845a5aeba88fb6dd3a2602b",
+        "newSourceFileSha256": "daae1d83b060a6c98262b5c598dcbc07af2767f31b332e2dde4b9c57bec84021",
+        "manualReview": "Manual review of the Zurelay transport fetch in openaiCompat.ts: the fixed provider URL, the beforeDispatch authority binding and redirect:manual are retained. New: a durable per-key pacing lease before dispatch (production), request validation (validateZurelayRequest) before sending, an x-zurelay-fallback: off header so the provider cannot substitute models, and response verification of model, stream and request id afterwards. The lease is released on denial, 429 and redirect. Nothing widens the destination or credential exposure."
+      },
+      {
+        "id": "0e0e3527ad05d7405c68",
+        "file": "backend/src/ai/attachments.ts",
+        "callee": "boundedPublicGet",
+        "previousSourceFileSha256": "c50dc741653646df6b6dddc6ec1ba4337fa3b3a48a94b5d9a66afe52b81cbd46",
+        "newSourceFileSha256": "b1c7911aa41d59bfcc1e57f6925a4c705548787cdb81aba14100e78fe5432f45"
+      },
+      {
+        "id": "4c899876b9e3850af11b",
+        "file": "backend/src/ai/softwareAgent/xrogaAgentModel.ts",
+        "callee": "client.chat.completions.create",
+        "previousSourceFileSha256": "459e3b7fa76ff33e77c9968e628ddacbb4ae5dbcda77c9d8049492c665989b0f",
+        "newSourceFileSha256": "5edc02b67fe3c307ef6138137c5b6a7719d63ea2d31be37acf1721d86cee7e02"
+      },
+      {
+        "id": "31380a8d5b9454a98a98",
+        "file": "backend/src/ai/openaiCompat.ts",
+        "callee": "client.chat.completions.create",
+        "previousCallSha256": "fedd059e41f3487339705716fdb7a912b28962fccd7daa038b5fa87580cc0eca",
+        "newCallSha256": "8e82b633686ef353d4c6db063a70a5772fcf9350245bec5da9d8d86dc9cc769a",
+        "previousSourceFileSha256": "23232ec16c61124e6d8a8366c7076b02336a6c6cd845a5aeba88fb6dd3a2602b",
+        "newSourceFileSha256": "daae1d83b060a6c98262b5c598dcbc07af2767f31b332e2dde4b9c57bec84021",
+        "manualReview": "Manual review of the non-streaming SDK create call in openaiCompat.ts: same SDK client, model, messages, max_tokens, signal and transport guard. Reasoning and price controls now take the model id, and response_format comes from the strict planned schema. The destination and credential path are unchanged and remain enforced by the reviewed fetch transport."
+      },
+      {
+        "id": "9c345e07b723c086440e",
+        "file": "backend/src/ai/openaiCompat.ts",
+        "callee": "client.chat.completions.create",
+        "previousCallSha256": "947695aec368f03b9176f97c4a6f418234ba9b7a641099d4efcad35b0b4d5c30",
+        "newCallSha256": "6eb08ff947aaf655cbb9fac9f4af25c6e8fcb622517fc4343327edaf39a6eca9",
+        "previousSourceFileSha256": "23232ec16c61124e6d8a8366c7076b02336a6c6cd845a5aeba88fb6dd3a2602b",
+        "newSourceFileSha256": "daae1d83b060a6c98262b5c598dcbc07af2767f31b332e2dde4b9c57bec84021",
+        "manualReview": "Manual review of the streaming SDK create call in openaiCompat.ts: same client, model, messages, max_tokens and signal. Adds stream_options include_usage and the strict planned response_format. The destination and credential path are unchanged and remain enforced by the reviewed fetch transport."
+      },
+      {
+        "id": "9ea21a6fc8b8700460c0",
+        "file": "backend/src/workers/browserModelDispatch.ts",
+        "callee": "createModelProviderClient(endpoint,beforeDispatch).chat.completions.create",
+        "previousSourceFileSha256": "a72f9b301cdb0d9cb2d259d53c2df835ac97a74a5b0fc4ce75c8e8f673ee830d",
+        "newSourceFileSha256": "ffdf4df315ade2befc0aef670ab28bb3eab812b1ca3ec085b2e81b9761b7ce49"
+      },
+      {
+        "id": "c09bb8607fa4d00f23b7",
+        "file": "frontend/src/lib/api.ts",
+        "callee": "fetch",
+        "previousSourceFileSha256": "d6183bed6f64e0a0c01f43bd4cff42e21ef20e407f7b1ec7a032b3faa006b16a",
+        "newSourceFileSha256": "bf072296dc2828844620377cf54a58fafe4cbedfb1a796a8324b77b1f10aa0c0"
+      },
+      {
+        "id": "c7711580844b520345cf",
+        "file": "backend/src/services/integrations/userProviderKeys.ts",
+        "callee": "supabase.storage.from(KEY_BUCKET).upload",
+        "previousSourceFileSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+        "newSourceFileSha256": "845f195f835dd9dae9955a7e9ccd2c7d0a86ddfee917299e951fe99d289d3448"
+      },
+      {
+        "id": "5baa649b7c2c9b6b6f30",
+        "file": "backend/src/ai/parallelDispatch.ts",
+        "callee": "fetch",
+        "previousCallSha256": "0015b0c0aa7832d13a4d87175cb68ff30a90f397c0cb84c5899433e3f5c2ea41",
+        "newCallSha256": "ade692966fd2841f4d0085e6f92a67d22fbce46a10e9e449b0c50a9374f4d8f7",
+        "previousSourceFileSha256": "f52ba2b8ecf260f0ea48e13272f87cd96bd6dc301f38d3600cbc08e1fc4252d3",
+        "newSourceFileSha256": "ff1e01472174b83d678068b5f6a635d2b9b12fa456a6912d4eecb2fb6c37501c",
+        "manualReview": "Manual review of the Parallel fetch in parallelDispatch.ts: fixed api.parallel.ai destination and redirect:manual are retained; the generative responses operation and its Bearer header were removed, so only search and extract (x-api-key) remain, guarded by requireRetrievalOperation. Outbound egress is narrowed."
+      },
+      {
+        "id": "90c62dd04b83e45e1c68",
+        "file": "backend/src/ai/parallelApproval.ts",
+        "callee": "boundedPublicGet",
+        "previousSourceFileSha256": "84b38d89d19071027dd6be660a9f7e3bfbb15524250f5fa8a637b7a51e32d3a8",
+        "newSourceFileSha256": "3d6cc51f24257eeb6fa33d2dad97b764bf9751b929a44f09eb4e8a25edbfce48"
+      }
+    ],
+    "needsReview": [],
+    "retired": [
+      {
+        "id": "049adafdb79c93d85166",
+        "file": "backend/src/lib/gemini.ts",
+        "reason": "backend/src/lib/gemini.ts no longer makes any outbound call: geminiGenerate now throws MODEL_DESTINATION_DENIED (retired provider), so the reviewed Gemini fetch no longer exists and its review is retired. Egress surface reduced."
+      }
+    ]
+  }
+}

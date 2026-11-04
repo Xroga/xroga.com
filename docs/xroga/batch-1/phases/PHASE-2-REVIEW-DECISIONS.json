@@ -1327,7 +1327,7 @@
     },
     {
       "packetId": "B1-P2-d87d5c8270aa4666",
-      "sourceSha256": "b0ebeab3363ba2d2446ce8fe19b48910d4febbde409056b3e232dfc521b3277d",
+      "sourceSha256": "2e9c04a38f096a4b4d3711e53a3278d8850732e15014ee42b0a688e268275554",
       "executionStatus": "IN_PROGRESS",
       "finding": "FOREIGN_ADMIN_ROLE_RECEIPT_ACCEPTED_IN_ACTUAL_MIDDLEWARE_TRANSPORT_TEST_FIXED_VERIFIED_AT_7BE44030",
       "originalCriteria": [
@@ -1384,11 +1384,23 @@
           "Bind six narrow existing admin/readiness caller proofs and the two shared guard calls without certifying unrelated endpoints",
           "This does not promise retroactive revocation of already admitted reads, founder-exclusive/AAL2 policy, new grants,009 custody or production readiness"
         ]
+      },
+      "reboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "packetSourceRebinds": [
+          {
+            "path": "backend/src/routes/admin.ts",
+            "previousSha256": "b0ebeab3363ba2d2446ce8fe19b48910d4febbde409056b3e232dfc521b3277d",
+            "review": "File is byte-identical to origin/main; the hash is main's own recorded value."
+          }
+        ]
       }
     },
     {
       "packetId": "B1-P2-aca46b7ed6cc0fa7",
-      "sourceSha256": "3b46dea8f9649026d6bb5c9ad4601fa9f583c9f5c1d0ecc7025cf1009bcf51c3",
+      "sourceSha256": "44b17c766b33903fa2d63a54de394b05a69d2cc8385f17b5da0e9767dfe839ab",
       "executionStatus": "IN_PROGRESS",
       "finding": "EVENT_PARENT_VERIFIED_AT_397C_SECRET_RECEIPT_REJECTION_FIXED_VERIFIED_AT_7BE44030",
       "actorTrace": "The existing SupabaseProjectRuntimeStore.appendEvent inserts user/project/session values into the fixed event table. Current disposable catalog has only event PK and Auth-user FK, with owner-only browser SELECT policy. It has no session-parent relationship. A synthetic SQL probe using the exact original table definitions accepts an owner's event referencing a foreign session. This establishes a service-write parent gap, not a browser write bypass or foreign-payload disclosure. All eleven original store callers remain open unless separately proven.",
@@ -1478,6 +1490,13 @@
         "historicalSourceSha256": "592ed786e73af7eda5862d54f72ee5a4f298050fb232cedf1c3dda39a6bd12bb",
         "scope": "Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
         "currentSourceCertification": "NOT_INFERRED_REQUIRES_REGRESSION"
+      },
+      "reboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousSourceSha256": "3b46dea8f9649026d6bb5c9ad4601fa9f583c9f5c1d0ecc7025cf1009bcf51c3",
+        "review": "File is byte-identical to origin/main; the hash is main's own recorded value, replacing an older value carried by the integrated lines."
       }
     },
     {
@@ -1755,7 +1774,7 @@
     },
     {
       "packetId": "B1-P2-8c13793907db3388",
-      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+      "sourceSha256": "845f195f835dd9dae9955a7e9ccd2c7d0a86ddfee917299e951fe99d289d3448",
       "executionStatus": "IN_PROGRESS",
       "finding": "DEMONSTRATED_PROVISIONING_BUNDLE_ORPHAN_AUTHORITY_FIXED_PENDING_REAL_PRIVATE_OBJECT_PROOF",
       "actualVerification": {
@@ -1825,11 +1844,23 @@
         "ref": "b0cd0ec31be56a8945ae41998563475237ed52fb",
         "sha256": "99a90ce870db5a6e55fff7a588384f8abb9ced3bf141ad7cd3d35522cf6a9785",
         "proof": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+      },
+      "reboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "packetSourceRebinds": [
+          {
+            "path": "backend/src/services/integrations/userProviderKeys.ts",
+            "previousSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+            "review": "Reviewed on PR 922: adds zurelay to the allowed provider list, the env-var map and the provider catalog (three constants). Key storage, ownership, encryption and every persistence function are unchanged; the strict call-and-function comparison of all 23 related caller reviews found them byte-identical."
+          }
+        ]
       }
     },
     {
       "packetId": "B1-P2-392b9b628a9b92be",
-      "sourceSha256": "751dbb7b995355ed7aeedb1ca2ba1326c387a8e7618b6c4d29cc56f6ef2ecb48",
+      "sourceSha256": "ccec1009a57392366b476c85f0c6ae703709b1ea4cbbe1a4b760645b1db6bb35",
       "executionStatus": "IN_PROGRESS",
       "finding": "DORMANT_ISSUED_OWNER_AND_EXACT_BUDGET_RECEIPTS_REPAIRED_PROOF_PENDING",
       "actualVerification": {
@@ -2145,6 +2176,13 @@
           "sha256": "33d078d8734d0ec27380a433811164c4b49eba62483e12f3c256e1a166e74876",
           "proof": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
         }
+      },
+      "reboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousSourceSha256": "751dbb7b995355ed7aeedb1ca2ba1326c387a8e7618b6c4d29cc56f6ef2ecb48",
+        "review": "Reviewed on PR 922: adds assertActiveModelId, assertProviderEnabled and assertModelSelection before reservation and Zurelay cost accounting; the reserve and cycle RPC calls and their user binding are unchanged. The related caller review records carry the same review."
       }
     },
     {
@@ -2392,7 +2430,7 @@
     },
     {
       "packetId": "B1-P2-d3895e94f03fa522",
-      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+      "sourceSha256": "845f195f835dd9dae9955a7e9ccd2c7d0a86ddfee917299e951fe99d289d3448",
       "executionStatus": "IN_PROGRESS",
       "finding": "DEMONSTRATED_ABSENT_BYOK_AUTHORITY_MIRROR_RESURRECTION_FIXED_VERIFIED_AT_7BE44030",
       "actorTrace": "Owner/provider-scoped database lookup must contain an active canonical credential. The legacy private download previously returned its encrypted payload when the post-download authority query found no row. It now denies that absence, while active canonical legacy envelopes and valid database-backed connections retain existing behavior.",
@@ -2443,6 +2481,18 @@
         "ref": "b0cd0ec31be56a8945ae41998563475237ed52fb",
         "sha256": "99a90ce870db5a6e55fff7a588384f8abb9ced3bf141ad7cd3d35522cf6a9785",
         "proof": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+      },
+      "reboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "packetSourceRebinds": [
+          {
+            "path": "backend/src/services/integrations/userProviderKeys.ts",
+            "previousSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+            "review": "Reviewed on PR 922: adds zurelay to the allowed provider list, the env-var map and the provider catalog (three constants). Key storage, ownership, encryption and every persistence function are unchanged; the strict call-and-function comparison of all 23 related caller reviews found them byte-identical."
+          }
+        ]
       }
     },
     {
@@ -2544,7 +2594,7 @@
       "relatedSourceBindings": [
         {
           "path": "backend/src/ai/pipeline.ts",
-          "sha256": "fa67a6ccaaca85b55c30405833f4f52cbe1959ed401b0de682f5567a9ad6c645",
+          "sha256": "d3742ca4dccc50daf99aa71d9896449957dde73798dc6d7c2a9c5ca5536cff32",
           "preGoogleMigrationSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
           "beforeDirectOutputSha256": "0168bc57563dbc535012982e5c6680fd3ebb40c7595fb67620e1ca60284df9b4",
           "beforeRichShareCompletionReviewSha256": "373180f86ff9ed02a7624d767374d214c14765ffcbf9a489b86d3bc26507e3b6",
@@ -2557,7 +2607,7 @@
         },
         {
           "path": "backend/src/routes/swarm.ts",
-          "sha256": "195f1d1872a3a7fc828c28c1df5613c78a7292b4905534826f2afdd8c1a17622",
+          "sha256": "d15e6178d0e9ae30c0b7a1b5cb42996d1ddcc41dc06fcbdd90c09fc125fcd098",
           "preGoogleMigrationSha256": "7ae4bf0e05640eefccbaf8868183fc5b4301788e58a022a3b1dd42955fd59478"
         },
         {
@@ -2652,6 +2702,23 @@
         "change": "User progress is appended only while the exact current attempt is running. Late terminal progress cannot mutate the snapshot already accepted by the existing database generation fence. Explicit failure enrichment, cancellation, authority, reservation and provider behavior are unchanged.",
         "proof": "Live Google document task produced its correct accounted result but final Job handoff could not repeat the mutated terminal snapshot. Focused regression reproduced the mutation before repair. Twelve run event, durable terminal learning, resume, cancellation and queued-admission tests pass on canonical Node22.",
         "acceptance": "SOURCE_CORRECTION_ONLY_LIVE_DURABLE_HANDOFF_RECHECK_PENDING"
+      },
+      "reboundOnBranch": {
+        "relatedSourceBindings": [
+          {
+            "path": "backend/src/ai/pipeline.ts",
+            "previousSha256": "fa67a6ccaaca85b55c30405833f4f52cbe1959ed401b0de682f5567a9ad6c645",
+            "review": "Reviewed on PR 922: changes are confined to the chat pipeline (answer output budget, response source fields, strict response format), builder fallback ordering limited to one distinct candidate, and swapping model ids for the approved Zurelay models. None touches worker project wait admission, project ownership preflight, attempt/generation/lease checks or checkpoint writes."
+          },
+          {
+            "path": "backend/src/routes/swarm.ts",
+            "previousSha256": "195f1d1872a3a7fc828c28c1df5613c78a7292b4905534826f2afdd8c1a17622",
+            "review": "File is byte-identical to origin/main; the hash is main's own recorded value."
+          }
+        ],
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374"
       }
     },
     {
@@ -2864,7 +2931,7 @@
     },
     {
       "packetId": "B1-P2-84b9011a0d2b4754",
-      "sourceSha256": "cebaa6b021717f0ca895806889d04ba31c0b4bd0e0026f4f440351d7cb7803c7",
+      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec",
       "executionStatus": "IN_PROGRESS",
       "finding": "UNCHANGED_CONFIRMATION_METADATA_BOUNDARY_TARGETED_POSITIVE_PROOF_PREPARED",
       "actorTrace": "The auth-mounted phase1 router obtains actor only from requireUserId(req). Create is reached only after the existing prepared execution returns confirmation_required. Read, cancel and confirm ignore request-body owner and apply exact server actor plus confirmation ID. Private expiry updates reuse only owner-bound rows. Claim binds full plan, digest, expiry and current pending status. The original finish routine binds immutable claimed identity and plan. No production code changed.",
@@ -2916,7 +2983,19 @@
         "ref": "7bde084cbb9f3ed93e0ce26b59b6cf37adae8e43",
         "sourceSha256": "40e88fdceed4ff5f571c8ea71ae86d2dfb53f537d8a3a5ff8f4d915ecc068abe"
       },
-      "researchHandoffReview": "Existing owner-scoped confirmation persistence and one-use claim stay intact. New native research evidence is privately stored before consumed acknowledgement. No historical proof promotion. New source authenticated storage and delivery acceptance remains required."
+      "researchHandoffReview": "Existing owner-scoped confirmation persistence and one-use claim stay intact. New native research evidence is privately stored before consumed acknowledgement. No historical proof promotion. New source authenticated storage and delivery acceptance remains required.",
+      "reboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "packetSourceRebinds": [
+          {
+            "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+            "previousSha256": "cebaa6b021717f0ca895806889d04ba31c0b4bd0e0026f4f440351d7cb7803c7",
+            "review": "Reviewed on PR 922: adds requireResearchResultStorage and requireModelResultStorage guards before execution and saves the execution result afterwards through tenant-context storage. The reviewed claim, authorize and confirmation calls are unchanged."
+          }
+        ]
+      }
     },
     {
       "packetId": "B1-P2-079a87ae5cea7b51",
@@ -3123,7 +3202,7 @@
     },
     {
       "packetId": "B1-P2-346186bea635be22",
-      "sourceSha256": "a2b3f404004691fd201dadcd241a46d2d33b9b33a26a09b0cdfbb0cca76a01e4",
+      "sourceSha256": "33f0ab8cf98b74e9e1fcd3519c1a158cf20a3f0a6269a1128ea9a39e0c37e98d",
       "executionStatus": "IN_PROGRESS",
       "finding": "DORMANT_ISSUED_OWNER_AND_EXACT_BUDGET_RECEIPTS_REPAIRED_PROOF_PENDING",
       "actorTrace": "All active accounting, pacing and read functions are byte-identical to accepted5722. Only the dormant export and context import change. Its callable contract now binds an original issued context and exact canonical persistence receipt. No active producer is invented or financial execution authorized.",
@@ -3167,6 +3246,13 @@
           "Exactly four usage writer/factory sites await proof. Two dormant syncPlanBudget caller sites remain unproven for original007 issuance and must not inherit this proof. Split accounting uncertainty and unified008 spending authority remain separately recorded, not certified.",
           "Require complete successful final-source disposable and repeated branch/integrated verification before manual or structured promotion"
         ]
+      },
+      "reboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousSourceSha256": "a2b3f404004691fd201dadcd241a46d2d33b9b33a26a09b0cdfbb0cca76a01e4",
+        "review": "One line added: the two approved Zurelay model ids are accepted by the model-id normalizer. No persistence, ownership or reservation logic changed (reviewed on PR 922)."
       }
     },
     {
@@ -3435,7 +3521,7 @@
     },
     {
       "packetId": "B1-P2-f8cb123dcb4c4a53",
-      "sourceSha256": "eb9fa4ddfef0a4098c061f6375f50c746820bdf070d1da7bd1d50548d56afb88",
+      "sourceSha256": "c942cc2588c0ffeb77eba5c789c05b03b1158d4ef8dd4ea29dbbf1041c76d280",
       "executionStatus": "IN_PROGRESS",
       "finding": "UNAVAILABLE_REVIEW_ONLY_CONSTRUCTOR_POLICY_AND_INDEPENDENT_RECIPIENT_PROOF_PENDING",
       "originalCriteria": [
@@ -3495,6 +3581,13 @@
       "beforeGoogleDeliveryBinding": {
         "sourceSha256": "77424e64b9331b83e961b4169d2bca8fb62c2a413cfc912c28d0ce0c1dcaefe0",
         "actorTrace": "Tenant construction still requires original issued context. Named global construction still accepts only the same17 actual data-operation keys. A separate explicit review-only constructor exception now documents its real receiving-path proof obligations, while its key is excluded from the accepted type and rejected at runtime before SDK construction. It grants no query or additional runtime capability. All actual receivers require independent proof, and neither SDK handle is an RLS sandbox."
+      },
+      "reboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousSourceSha256": "eb9fa4ddfef0a4098c061f6375f50c746820bdf070d1da7bd1d50548d56afb88",
+        "review": "File is byte-identical to origin/main; the hash is main's own recorded value, replacing an older value carried by the integrated lines."
       }
     },
     {
