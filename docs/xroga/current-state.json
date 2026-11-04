@@ -145717,7 +145717,7 @@
     {
       "id": "test-suite:99d86b50236029001c00",
       "sourcePath": "frontend/src/lib/workspaceComposerPolish20261021.test.ts",
-      "declaredTests": 4,
+      "declaredTests": 5,
       "skipLocations": [],
       "focusLocations": []
     },

@@ -9,6 +9,8 @@
   "changedFiles": [
     "frontend/src/app/globals.css",
     "frontend/src/lib/workspaceComposerPolish20261021.test.ts",
+    "docs/xroga/current-state.json",
+    "docs/xroga/current-state.md",
     "docs/xroga/missions/chatbar-response-width-20261104.json"
   ],
   "decisions": {
