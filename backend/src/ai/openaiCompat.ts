@@ -13,7 +13,8 @@ import { recordModelExecution } from './providerRuntime.js';
 import { ProviderPolicyError, requiredCodingTransport, assertModelProviderDestination, assertModelEnabled } from './providerPolicy.js';
 import {containsCredentialSecretText} from '../security/egress/dataClassification.js';
 import {publicHttpsUrl} from '../security/egress/urlPolicy.js';
-import {requireModelSdkAdmission,modelAdmissionDenied,MODEL_REDIRECT_AFTER_DISPATCH} from './modelSdkAdmission.js';
+import {requireModelSdkAdmission,modelAdmissionDenied,MODEL_REDIRECT_AFTER_DISPATCH,admittedModelReservation} from './modelSdkAdmission.js';
+import {acquireModelRequestLease,providerCooldownSeconds,releasePacingWithBody} from './providerPacing.js';
 import {DEFAULT_BUILDER_BUDGET} from './builderAttempt.js';
 import { CompletionDiagnostics, requirePublicCompletion } from './completionDiagnostics.js';
 import type { PresentationResponseFormat } from './responsePresentation.js';
@@ -181,7 +182,7 @@ export function resolveEndpoint(modelId: ModelId, credentialOverride?: string): 
   };
 }
 
-export function createModelProviderClient(endpoint: ResolvedEndpoint,beforeDispatch?:(wireBody:string)=>Promise<void>): OpenAI {
+export function createModelProviderClient(endpoint: ResolvedEndpoint,beforeDispatch?:(wireBody:string)=>Promise<void>,reservationGuard=beforeDispatch): OpenAI {
   publicHttpsUrl(endpoint.baseUrl);
   assertModelProviderDestination(endpoint.provider,endpoint.baseUrl);
   // The SDK wraps thrown fetch errors as retryable connection failures. Return
@@ -202,24 +203,43 @@ export function createModelProviderClient(endpoint: ResolvedEndpoint,beforeDispa
       // before an operator disabled the provider. Never send those bytes first.
       try { assertModelProviderDestination(endpoint.provider,endpoint.baseUrl); }
       catch { return deniedResponse('MODEL_DESTINATION_DENIED'); }
+      let lease:Awaited<ReturnType<typeof acquireModelRequestLease>>|undefined;
+      let cooldown=0;
+      const release=async()=>{try{await lease?.release(cooldown);}catch{console.warn('[model-pacing] release unavailable; bounded lease remains conservative');}};
+      if(process.env.NODE_ENV==='production'){
+        try{
+          const binding=admittedModelReservation(reservationGuard);
+          lease=await acquireModelRequestLease({binding,credential:endpoint.apiKey,signal:init.signal as AbortSignal|undefined});
+        }catch{
+          return Response.json({error:{message:'Model request capacity is temporarily busy. No provider retry was made.',code:'MODEL_PROVIDER_BUSY'}},
+            {status:429,headers:{'x-should-retry':'false','retry-after':'60'}}) as unknown as Awaited<ReturnType<NonNullable<ClientOptions['fetch']>>>;
+        }
+      }
       try {
         if (!beforeDispatch) modelAdmissionDenied();
         validateZurelayRequest(JSON.parse(init.body), endpoint.apiModel);
         await beforeDispatch(init.body);
       }
       catch {
+        await release();
         // Let the SDK preserve the local policy code, rather than wrapping a
         // thrown fetch error as a retryable/uncertain provider connection error.
         return deniedResponse('MODEL_DISPATCH_BINDING_DENIED');
       }
       const headers = new Headers(init.headers as Record<string, string>);
       headers.set('x-zurelay-fallback', 'off');
-      const response=await globalThis.fetch(url,{method:'POST',body:init.body,
-        headers,signal:init.signal as AbortSignal|undefined,redirect:'manual'});
+      let response:Response;
+      try{
+        const signal=AbortSignal.any([...(init.signal?[init.signal as AbortSignal]:[]),AbortSignal.timeout(180_000)]);
+        response=await globalThis.fetch(url,{method:'POST',body:init.body,headers,signal,redirect:'manual'});
+      }catch(error){await release();throw error;}
+      if(response.status===429){cooldown=providerCooldownSeconds(response.headers.get('retry-after'));await release();}
       if(response.redirected||(response.status>=300&&response.status<400)){
         await response.body?.cancel().catch(()=>undefined);
+        await release();
         return deniedResponse('MODEL_DESTINATION_DENIED',true);
       }
+      if(lease)response=releasePacingWithBody(response,release);
       // SDK v4's Node typings require node-fetch-only convenience methods, but
       // its chat JSON/SSE parser consumes the standard Response surface. Keep
       // this Node22 interoperability cast at the transport boundary and test
@@ -234,6 +254,7 @@ export function createModelProviderClient(endpoint: ResolvedEndpoint,beforeDispa
         return verified as unknown as Awaited<ReturnType<NonNullable<ClientOptions['fetch']>>>;
       } catch {
         await response.body?.cancel().catch(() => undefined);
+        await release();
         return deniedResponse('MODEL_DESTINATION_DENIED', true);
       }
     },
@@ -307,7 +328,7 @@ export async function chatCompletion(
       assertProviderControls(wire,modelId,endpoint.provider,opts.reasoningMode);
       if(!isDeepStrictEqual(JSON.parse(wire).response_format,responseFormat))modelAdmissionDenied();
       await opts.beforeDispatch!(wire);checkCancellation();
-    });
+    },opts.beforeDispatch);
     const completion = await withProviderTemperature(modelId === 'claude_sonnet_5_5' ? undefined : opts.temperature ?? 0.4, (temperature) =>
       client.chat.completions.create(
         {
@@ -393,7 +414,7 @@ export async function chatCompletionStream(
       assertProviderControls(wire,modelId,endpoint.provider,opts.reasoningMode);
       if(!isDeepStrictEqual(JSON.parse(wire).response_format,responseFormat))modelAdmissionDenied();
       await opts.beforeDispatch!(wire);checkCancellation();
-    });
+    },opts.beforeDispatch);
     if (opts.signal?.aborted) {
       const err = new Error('Build cancelled') as Error & { code?: string };
       err.code = 'BUILD_CANCELLED';

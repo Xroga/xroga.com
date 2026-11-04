@@ -2,6 +2,13 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { publicRuntimeFailure, RuntimeFailure } from './runtimeFailure.js';
 
+test('a genuine provider 429 is a truthful rate-limit error without raw provider data or automatic retry',()=>{
+  const result=publicRuntimeFailure(Object.assign(Error('secret provider response'),{status:429}));
+  assert.equal(result.status,429);assert.equal(result.body.code,'PROVIDER_UNAVAILABLE');
+  assert.equal(result.body.retryable,false);assert.match(result.body.error,/rate limited/);
+  assert.doesNotMatch(result.body.error,/secret provider response/);
+});
+
 test('only a real safety decision returns safety language', () => {
   const safety = publicRuntimeFailure(new RuntimeFailure('SAFETY_BLOCKED', 'This request is blocked by the safety policy.'));
   assert.equal(safety.status, 422);

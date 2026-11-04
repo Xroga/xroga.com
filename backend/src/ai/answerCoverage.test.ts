@@ -1,8 +1,33 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { prepareAnswerCoverage, requestedAnswerObligations } from './answerCoverage.js';
+import { prepareAnswerCoverage, requestedAnswerObligations, requiredAccessBoundarySupport } from './answerCoverage.js';
 import { createPresentationProjection, presentationRequestInstructions, type PresentationPlan } from './responsePresentation.js';
 import {readFileSync} from 'node:fs';
+
+test('persistent access-boundary systems need ownership records and a scope contrast independently of component roles',()=>{
+  for(const prompt of [
+    'Explain a small multi-tenant SaaS architecture using Next.js, Supabase and Stripe. Include a useful architecture diagram and describe tenant isolation and the role of each component. This is an explanation only, do not build or execute anything.',
+    'Describe the architecture of a document database for isolated organizations, with organization-scoped records.',
+  ]){
+    const plan:PresentationPlan=[{kind:'table',heading:'Component roles',instruction:'Describe component responsibilities.',covers:['roles']}];
+    const result=prepareAnswerCoverage(prompt,plan,[{id:'roles',description:'Explain component responsibilities.',origin:'requested',formats:['table']}]);
+    assert.equal(result.coverage.complete,true);
+    assert.ok(result.plan.some(s=>s.kind==='table'&&s.covers?.includes('support-ownership-records')));
+    assert.ok(result.plan.some(s=>s.kind==='cards'&&s.covers?.includes('support-access-contrast')));
+    assert.ok(!result.plan[0].covers?.includes('support-ownership-records'),'A role table cannot satisfy the ownership data structure');
+    const support=result.requirements.filter(r=>r.id.startsWith('support-'));
+    assert.ok(support.every(r=>r.origin==='necessary-support'&&!r.sourceQuote),'Derived support never invents a user quotation');
+  }
+});
+
+test('access support respects narrow, stateless and explicitly excluded presentations',()=>{
+  for(const prompt of ['What does tenant isolation mean?','Explain a stateless multi-tenant architecture without storage.',
+    'Explain a multi-tenant SaaS architecture without a database schema and without comparison cards.'])
+    assert.deepEqual(requiredAccessBoundarySupport(prompt),[]);
+  const prompt='Explain a multi-tenant SaaS architecture.';
+  const first=prepareAnswerCoverage(prompt);const second=prepareAnswerCoverage(prompt,first.plan,first.requirements);
+  assert.deepEqual(second,first,'The same requirements cannot spawn duplicate support sections');
+});
 
 test('explicit missing diagram, comparison and schema demands cannot disappear behind a valid role table',()=>{
   const prompt='Explain a shared application. Include an architecture diagram. Compare access for two organizations using comparison cards. Show a proposed database schema table.';

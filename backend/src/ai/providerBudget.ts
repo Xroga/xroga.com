@@ -511,7 +511,7 @@ export async function withOperationsProviderReservation<T extends ProviderUsageR
         const current=await reserveOperationsProviderBudget(bound);
         if(!active||!isDeepStrictEqual(current,reservation))modelAdmissionDenied();
       };
-      sdk=registerModelSdkAdmission(beforeDispatch,bound.modelId,undefined);
+      sdk=registerModelSdkAdmission(beforeDispatch,bound.modelId,undefined,{userId:bound.ownerId,reservationId:reservation.id});
       dispatch={payload,credentialOverride:undefined,beforeDispatch};
     }
     const result = await bound.execute(dispatch);
@@ -625,7 +625,7 @@ export async function withProviderReservation<T extends ProviderUsageResult>(inp
   maximumOutputTokens: number;
   purpose?: BudgetPurpose;
   idempotencyKey?: string;
-  execute: () => Promise<T>;
+  execute: (reservation:ProviderReservation) => Promise<T>;
 }): Promise<T> {
   let reservation: ProviderReservation;
   try { reservation = await reserveProviderBudget(input); }
@@ -638,7 +638,7 @@ export async function withProviderReservation<T extends ProviderUsageResult>(inp
   }
   let providerCompleted = false;
   try {
-    const result = await input.execute();
+    const result = await input.execute(reservation);
     providerCompleted = true;
     await settleProviderBudget({ userId: input.userId, modelId: input.modelId, reservation, result });
     return result;

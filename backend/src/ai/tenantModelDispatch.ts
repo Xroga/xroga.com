@@ -151,7 +151,7 @@ export async function withTenantModelReservation<T extends ProviderUsageResult>(
   const result=await withProviderReservation({userId:context.userId,modelId,
     escalation: scope.escalation,
     estimatedInputTokens,maximumOutputTokens,purpose,idempotencyKey:input.idempotencyKey,
-    execute:async()=>{
+    execute:async(reservation)=>{
       let active=true;
       try{
         // Read/decrypt through the canonical vault consumer only AFTER budget
@@ -182,7 +182,7 @@ export async function withTenantModelReservation<T extends ProviderUsageResult>(
           if (modelId === 'claude_sonnet_5_5') await consumeAuthorityPermit(scope.escalation!.permit, scope.escalation!.binding);
           if(!active)denied();
         };
-        sdk=registerModelSdkAdmission(beforeDispatch,modelId,credential??undefined);
+        sdk=registerModelSdkAdmission(beforeDispatch,modelId,credential??undefined,{userId:context.userId,reservationId:reservation.id});
         const result=await execute({payload:structuredClone(payload),credentialOverride:credential??undefined,beforeDispatch});
         const completed=sdk.completion()?.result;
         if(completed&&['inputTokens','outputTokens','cachedInputTokens','reasoningTokens','providerRequestId','providerCostMicroUsd'].some(key=>

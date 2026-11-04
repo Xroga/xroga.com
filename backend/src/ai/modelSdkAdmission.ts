@@ -11,6 +11,7 @@ interface Admission {
   modelId:ModelId;
   credentialOverride:string|undefined;
   used:boolean;
+  reservation?: {userId:string;reservationId:string};
   completion?:{result:SdkCompletion;publish:()=>void;checkCancellation:()=>void};
 }
 const issued=new WeakMap<ModelWireGuard,Admission>();
@@ -22,13 +23,21 @@ export function modelAdmissionDenied():never {
  * reservation. A callback supplied by a request, cloned object or plain user ID
  * is never an admission. This is one request lifetime, not another authority,
  * tenant context, vault, budget or ledger. Production issuers are source-tested. */
-export function registerModelSdkAdmission(guard:ModelWireGuard,modelId:ModelId,credentialOverride:string|undefined){
+export function registerModelSdkAdmission(guard:ModelWireGuard,modelId:ModelId,credentialOverride:string|undefined,reservation?:{userId:string;reservationId:string}){
   if(issued.has(guard))modelAdmissionDenied();
-  const admission:Admission={modelId,credentialOverride,used:false};issued.set(guard,admission);
+  const admission:Admission={modelId,credentialOverride,used:false,reservation:reservation?{...reservation}:undefined};issued.set(guard,admission);
   return {
     revoke(){issued.delete(guard);},
     completion(){return admission.completion;},
   };
+}
+
+/** Transport pacing accepts only the canonical reservation behind this issued
+ * one-use SDK admission. Caller-supplied IDs never create an admission. */
+export function admittedModelReservation(guard:ModelWireGuard|undefined){
+  const admission=guard?issued.get(guard):undefined;
+  if(!admission?.used||!admission.reservation)modelAdmissionDenied();
+  return {...admission.reservation};
 }
 
 export function requireModelSdkAdmission(guard:ModelWireGuard|undefined,modelId:ModelId,credentialOverride:string|undefined){
