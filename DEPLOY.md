@@ -125,9 +125,8 @@ fly secrets set -a xroga-api \
 ```
 
 AI stack notes:
-- **DeepSeek V4 Flash** → OpenRouter only via `OPENROUTER_API_KEY`
-- **Kimi K3** → official Moonshot `KIMI_API_KEY` (not OpenRouter)
-- **GLM-5.3 / GLM-5.3 Flash** → official Zhipu `GLM_API_KEY` (not OpenRouter)
+- **Text models** → exactly two, both through Zurelay with `ZURELAY_API_KEY`: **DeepSeek V4.1 Flash 1017** (default) and **Claude Sonnet 5.5** (task-bound escalation only)
+- Kimi, GLM, Moonshot, Zhipu and OpenRouter are retired from execution. Do not set their keys; old route names survive only as immutable accounting records
 - **Private Grok 4.3 X retrieval** → official xAI `XAI_API_KEY`, native `x_search` only
 - **Normal public-web retrieval** → Parallel `PARALLEL_API_KEY`
 - Do **not** set `DEEPSEEK_API_KEY` — it is unused

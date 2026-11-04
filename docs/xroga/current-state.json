@@ -5034,6 +5034,7 @@
         "backend/src/ai/softwareAgent/xrogaAgentModelEgress.test.ts:6",
         "backend/src/ai/sonnetApproval.ts:15",
         "backend/src/ai/tenantModelDispatch.ts:12",
+        "backend/src/ai/twoModelContract.test.ts:3",
         "backend/src/ai/universal/semanticRequestPlanner.ts:7",
         "backend/src/ai/zurelayPolicy.test.ts:3",
         "backend/src/ai/zurelayWire.ts:1",
@@ -5081,6 +5082,7 @@
         "backend/src/ai/providerPolicy.test.ts",
         "backend/src/ai/quota.test.ts",
         "backend/src/ai/softwareAgent/xrogaAgentModelEgress.test.ts",
+        "backend/src/ai/twoModelContract.test.ts",
         "backend/src/ai/zurelayPolicy.test.ts",
         "backend/src/hardening/launchHardening.test.ts",
         "backend/src/operations/benchmarkAdapter.test.ts"
@@ -7352,6 +7354,7 @@
         "backend/src/ai/providerCostTiers.ts:1",
         "backend/src/ai/providerPolicy.test.ts:3",
         "backend/src/ai/tenantModelDispatch.ts:8",
+        "backend/src/ai/twoModelContract.test.ts:4",
         "backend/src/ai/zurelayEscalation.test.ts:7",
         "backend/src/ai/zurelayPolicy.test.ts:4",
         "backend/src/ai/zurelayWire.ts:2",
@@ -7382,6 +7385,7 @@
         "backend/src/ai/disabledProviderDispatch.test.ts",
         "backend/src/ai/measuredEvidence.test.ts",
         "backend/src/ai/providerPolicy.test.ts",
+        "backend/src/ai/twoModelContract.test.ts",
         "backend/src/ai/zurelayEscalation.test.ts",
         "backend/src/ai/zurelayPolicy.test.ts",
         "backend/src/hardening/launchHardening.test.ts",
@@ -144050,6 +144054,13 @@
       "id": "test-suite:d7d027afaee0a76fde79",
       "sourcePath": "backend/src/ai/tenantModelDispatch.test.ts",
       "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:d97d80b967ebc4c536a3",
+      "sourcePath": "backend/src/ai/twoModelContract.test.ts",
+      "declaredTests": 3,
       "skipLocations": [],
       "focusLocations": []
     },
