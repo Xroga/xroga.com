@@ -60081,6 +60081,95 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:c1393714812925628a01",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/app/build/[slug]/page.tsx",
+      "sha256": "1bcad7e1a1f61090f4ab79c7c27a0117f7c70bd4972b50107665035df6ed8883",
+      "symbols": [
+        "Page",
+        "evidence",
+        "generateMetadata",
+        "generateStaticParams",
+        "p"
+      ],
+      "imports": [
+        "@/components/seo/EditorialPage",
+        "@/lib/seo",
+        "@/lib/seoGrowthContent",
+        "@/lib/seoPhase2Content",
+        "next/navigation"
+      ],
+      "runtimeImports": [
+        "frontend/src/components/seo/EditorialPage.tsx",
+        "frontend/src/lib/seo.ts",
+        "frontend/src/lib/seoGrowthContent.ts",
+        "frontend/src/lib/seoPhase2Content.ts"
+      ],
+      "entryPoints": [
+        "frontend/src/app/build/[slug]/page.tsx"
+      ],
+      "callers": [],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "next/navigation"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [
+        "frontend/src/app/build/[slug]/page.tsx#BUILD_GUIDE_EVIDENCE",
+        "frontend/src/app/build/[slug]/page.tsx#evidence"
+      ],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:f2fde7e7dec633d17719",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/app/build/page.tsx",
+      "sha256": "f6d19ebc4cea4c9a8ca475675e9612c633b3d32570239c9a001fa307e71186bf",
+      "symbols": [
+        "Page",
+        "metadata"
+      ],
+      "imports": [
+        "@/components/seo/EditorialPage",
+        "@/lib/seo",
+        "@/lib/seoGrowthContent"
+      ],
+      "runtimeImports": [
+        "frontend/src/components/seo/EditorialPage.tsx",
+        "frontend/src/lib/seo.ts",
+        "frontend/src/lib/seoGrowthContent.ts"
+      ],
+      "entryPoints": [
+        "frontend/src/app/build/page.tsx"
+      ],
+      "callers": [],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:f2478fd4eddb5dd7984c",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/app/changelog/feed.xml/route.ts",
@@ -89033,6 +89122,8 @@
         "frontend/src/app/blog/page.tsx",
         "frontend/src/app/build-with/[slug]/page.tsx",
         "frontend/src/app/build-with/page.tsx",
+        "frontend/src/app/build/[slug]/page.tsx",
+        "frontend/src/app/build/page.tsx",
         "frontend/src/app/compare/[slug]/page.tsx",
         "frontend/src/app/compare/page.tsx",
         "frontend/src/app/learn/page.tsx",
@@ -89052,6 +89143,8 @@
         "frontend/src/app/blog/page.tsx:1",
         "frontend/src/app/build-with/[slug]/page.tsx:1",
         "frontend/src/app/build-with/page.tsx:1",
+        "frontend/src/app/build/[slug]/page.tsx:1",
+        "frontend/src/app/build/page.tsx:1",
         "frontend/src/app/compare/[slug]/page.tsx:4",
         "frontend/src/app/compare/page.tsx:1",
         "frontend/src/app/learn/page.tsx:1",
@@ -89198,6 +89291,8 @@
         "frontend/src/app/blog/page.tsx",
         "frontend/src/app/build-with/[slug]/page.tsx",
         "frontend/src/app/build-with/page.tsx",
+        "frontend/src/app/build/[slug]/page.tsx",
+        "frontend/src/app/build/page.tsx",
         "frontend/src/app/compare/[slug]/page.tsx",
         "frontend/src/app/compare/page.tsx",
         "frontend/src/app/learn/page.tsx",
@@ -100378,6 +100473,8 @@
         "frontend/src/app/build-saas-with-ai/page.tsx",
         "frontend/src/app/build-with/[slug]/page.tsx",
         "frontend/src/app/build-with/page.tsx",
+        "frontend/src/app/build/[slug]/page.tsx",
+        "frontend/src/app/build/page.tsx",
         "frontend/src/app/changelog/page.tsx",
         "frontend/src/app/community/page.tsx",
         "frontend/src/app/compare/[slug]/page.tsx",
@@ -102404,6 +102501,8 @@
         "frontend/src/app/build-saas-with-ai/page.tsx",
         "frontend/src/app/build-with/[slug]/page.tsx",
         "frontend/src/app/build-with/page.tsx",
+        "frontend/src/app/build/[slug]/page.tsx",
+        "frontend/src/app/build/page.tsx",
         "frontend/src/app/changelog/page.tsx",
         "frontend/src/app/community/page.tsx",
         "frontend/src/app/compare/[slug]/page.tsx",
@@ -102787,6 +102886,8 @@
         "frontend/src/app/blog/page.tsx",
         "frontend/src/app/build-with/[slug]/page.tsx",
         "frontend/src/app/build-with/page.tsx",
+        "frontend/src/app/build/[slug]/page.tsx",
+        "frontend/src/app/build/page.tsx",
         "frontend/src/app/changelog/feed.xml/route.ts",
         "frontend/src/app/compare/[slug]/page.tsx",
         "frontend/src/app/compare/page.tsx",
@@ -108903,6 +109004,8 @@
         "frontend/src/app/build-saas-with-ai/page.tsx",
         "frontend/src/app/build-with/[slug]/page.tsx",
         "frontend/src/app/build-with/page.tsx",
+        "frontend/src/app/build/[slug]/page.tsx",
+        "frontend/src/app/build/page.tsx",
         "frontend/src/app/changelog/page.tsx",
         "frontend/src/app/community/page.tsx",
         "frontend/src/app/compare/[slug]/page.tsx",
@@ -108962,6 +109065,8 @@
         "frontend/src/app/build-saas-with-ai/page.tsx:1",
         "frontend/src/app/build-with/[slug]/page.tsx:1",
         "frontend/src/app/build-with/page.tsx:1",
+        "frontend/src/app/build/[slug]/page.tsx:1",
+        "frontend/src/app/build/page.tsx:1",
         "frontend/src/app/changelog/page.tsx:4",
         "frontend/src/app/community/page.tsx:4",
         "frontend/src/app/compare/[slug]/page.tsx:26",
@@ -109201,6 +109306,8 @@
         "frontend/src/app/blog/page.tsx",
         "frontend/src/app/build-with/[slug]/page.tsx",
         "frontend/src/app/build-with/page.tsx",
+        "frontend/src/app/build/[slug]/page.tsx",
+        "frontend/src/app/build/page.tsx",
         "frontend/src/app/changelog/feed.xml/route.ts",
         "frontend/src/app/compare/[slug]/page.tsx",
         "frontend/src/app/compare/page.tsx",
@@ -109214,6 +109321,8 @@
         "frontend/src/app/blog/page.tsx:2",
         "frontend/src/app/build-with/[slug]/page.tsx:1",
         "frontend/src/app/build-with/page.tsx:1",
+        "frontend/src/app/build/[slug]/page.tsx:1",
+        "frontend/src/app/build/page.tsx:1",
         "frontend/src/app/compare/[slug]/page.tsx:22",
         "frontend/src/app/compare/page.tsx:2",
         "frontend/src/app/vibe-coding/page.tsx:1",
@@ -109275,6 +109384,8 @@
         "frontend/src/app/blog/page.tsx",
         "frontend/src/app/build-with/[slug]/page.tsx",
         "frontend/src/app/build-with/page.tsx",
+        "frontend/src/app/build/[slug]/page.tsx",
+        "frontend/src/app/build/page.tsx",
         "frontend/src/app/changelog/feed.xml/route.ts",
         "frontend/src/app/compare/[slug]/page.tsx",
         "frontend/src/app/compare/page.tsx",
@@ -109283,6 +109394,7 @@
       ],
       "callers": [
         "frontend/src/app/build-with/[slug]/page.tsx:1",
+        "frontend/src/app/build/[slug]/page.tsx:1",
         "frontend/src/lib/seoGrowthContent.ts:9"
       ],
       "reachable": true,

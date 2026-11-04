@@ -19923,6 +19923,14 @@
       "sha256": "ffb2f17cb02c48b85e110e40d697896956724cf096c013a35b7ec6706eff262c"
     },
     {
+      "path": "frontend/src/app/build/[slug]/page.tsx",
+      "sha256": "1bcad7e1a1f61090f4ab79c7c27a0117f7c70bd4972b50107665035df6ed8883"
+    },
+    {
+      "path": "frontend/src/app/build/page.tsx",
+      "sha256": "f6d19ebc4cea4c9a8ca475675e9612c633b3d32570239c9a001fa307e71186bf"
+    },
+    {
       "path": "frontend/src/app/changelog/feed.xml/route.ts",
       "sha256": "86ea5d644857e2cff0f645858fd2356d3f1f8f904b09d642af4aff757c3d2e35"
     },
