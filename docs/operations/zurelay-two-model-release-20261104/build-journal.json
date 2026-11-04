@@ -1,0 +1,13 @@
+{
+  "atUtc": "2026-11-04T16:30:50.696585+00:00",
+  "state": "SUBMITTED",
+  "source": "1a642656542b2e806550b4c7b68517c9df51b22f",
+  "imageTag": "us-east4-docker.pkg.dev/project-c40d4821-e647-4fa2-92d/cloud-run-source-deploy/xroga-api-release:zurelay-1a6426-1103",
+  "buildId": "8eb58b17-2c44-482c-bcdd-e8e56b9fecb6",
+  "status": "QUEUED",
+  "sourceStorage": {
+    "bucket": "project-c40d4821-e647-4fa2-92d_cloudbuild",
+    "generation": "1793809848479711",
+    "object": "source/1793809844.471229-df9b64030d584dce846af067682b69af.tgz"
+  }
+}

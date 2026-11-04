@@ -1,0 +1,17 @@
+{
+  "status": "PASS_GUARDED_ZERO_TRAFFIC_CONFIG_NOT_FULL_LIVE_ACCEPTANCE",
+  "atUtc": "2026-11-04T16:35:22.101369+00:00",
+  "source": "1a642656542b2e806550b4c7b68517c9df51b22f",
+  "digest": "sha256:95bf9927320c5ea223b09a97a801f448000db9997ddecf266088933b53389dfe",
+  "revision": "xroga-api-zurelay-1a6426-check2-1103",
+  "tag": "zurelay-1a6426-check2",
+  "minInstances": 0,
+  "maxInstances": 1,
+  "startupGuard": true,
+  "workerImageMatchesCandidate": true,
+  "voiceTagsPreserved": true,
+  "defaultRevision": "xroga-api-zurelay-3bed89-serving-1103",
+  "defaultPercent": 100,
+  "jobChanged": false,
+  "productionSqlApplied": false
+}

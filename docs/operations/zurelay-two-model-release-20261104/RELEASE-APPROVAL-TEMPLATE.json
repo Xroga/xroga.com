@@ -20,7 +20,7 @@
   "expiresAtUtc": "2026-11-04T00:30:00+00:00",
   "maintenanceStarted": false,
   "ownerDecision": null,
-  "priorPackageId": "zurelay-two-model-1a642656-20261104",
+  "priorPackageId": "zurelay-product-rate-recheck-76c158aa-20261104",
   "priorFailedRequestId": "req_BuVn7BX9g8U8tSYAK6jYhcwi",
   "conservativelyConsumedModelMicroUsd": 188
 }

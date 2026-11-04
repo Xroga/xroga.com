@@ -1,0 +1,21 @@
+{
+  "atUtc": "2026-11-04T16:34:02.269004+00:00",
+  "source": "1a642656542b2e806550b4c7b68517c9df51b22f",
+  "digest": "sha256:95bf9927320c5ea223b09a97a801f448000db9997ddecf266088933b53389dfe",
+  "image": "us-east4-docker.pkg.dev/project-c40d4821-e647-4fa2-92d/cloud-run-source-deploy/xroga-api-release@sha256:95bf9927320c5ea223b09a97a801f448000db9997ddecf266088933b53389dfe",
+  "buildId": "8eb58b17-2c44-482c-bcdd-e8e56b9fecb6",
+  "buildStatus": "SUCCESS",
+  "buildStart": "2026-11-04T16:30:58.314960041Z",
+  "buildFinish": "2026-11-04T16:33:33.061480Z",
+  "sourceStorage": {
+    "bucket": "project-c40d4821-e647-4fa2-92d_cloudbuild",
+    "generation": "1793809848479711",
+    "object": "source/1793809844.471229-df9b64030d584dce846af067682b69af.tgz"
+  },
+  "ociRevisionLabelVerified": true,
+  "bakedSourceVerified": true,
+  "platform": "linux/amd64",
+  "compressedBytes": 154751494,
+  "configDigest": "sha256:abdd581fcdbb9acc295abd008267981e73396b680bd0fa99fff05ef3b5ac1f23",
+  "productionChanged": false
+}
