@@ -617,7 +617,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                     prompt={promptByAssistantId.get(msg.id)}
                     streaming={msg.id === animatingId && loading}
                     controls={msg.buildStopped || msg.capacityUnavailable || msg.updateTrail ? taskControls : undefined}
-                    activity={operationRows.length ? <TerminalLiveActivity activity={operationRows} requestText={messagePrompt} /> : undefined}>
+                    activity={operationRows.length ? <TerminalLiveActivity activity={operationRows} /> : undefined}>
                     {msg.role === 'assistant' ? answer : null}
                   </ConversationTurnV2>
                 ) : <>
@@ -660,7 +660,6 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                           <TerminalLiveActivity
                             activity={msg.executionActivity}
                             thinkingSteps={msg.thinkingSteps}
-                            requestText={messagePrompt}
                           />
                         ) : loading &&
                           msg.id === (buildPanelMessageId ?? animatingId) &&
@@ -670,7 +669,6 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                             pending
                             pendingIntent={pendingIntent}
                             pendingLabel={pendingActivityLabel}
-                            requestText={messagePrompt}
                           />
                         ) : null}
                         {taskControls}
