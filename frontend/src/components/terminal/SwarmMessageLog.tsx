@@ -96,7 +96,12 @@ function transcriptScrollRoot(): HTMLElement {
 }
 
 export function SwarmMessageLog({ compact, incognito = false, chromeless = false }: SwarmMessageLogProps) {
-  const conversationV2 = useResponseExperienceEnabled();
+  // Keep the familiar workspace transcript and composer presentation by default.
+  // Rich response blocks remain available through ResponseExperienceGate below.
+  // Whole-conversation V2 styling is an explicit rollout opt-in, never a side
+  // effect of being signed in (which changed the toolbar/composer appearance).
+  const conversationV2 = useResponseExperienceEnabled() &&
+    process.env.NEXT_PUBLIC_XROGA_WHOLE_CONVERSATION_V2 === 'enabled';
   const { messages, sessionId, sessionRestoring, loading, animatingId, swarmNegotiationPhase, swarmTodos, terminalRun, setPrompt, deleteTurn, updateFeatureOutput, retryStoppedBuild, retryWithFullPower, heavyBuildActive, heavyAssistantId } =
     useTerminalChat();
   const [rollbackId, setRollbackId] = useState<string | null>(null);
