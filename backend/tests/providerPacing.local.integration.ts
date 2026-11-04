@@ -80,4 +80,17 @@ test('real PostgreSQL provider admission excludes competing workers, fences repl
   // Metadata-only expansion can coexist with the prior application and is
   // idempotent during preparation. This is not full hosted Supabase acceptance.
   await pool.query(sql);
+  // Rollback: removes only the admission machinery, leaves every financial amount and row, and is repeatable.
+  const rollback=readFileSync(new URL('../../docs/operations/zurelay-product-pacing-20261104/provider-request-pacing.rollback.sql',import.meta.url),'utf8');
+  await pool.query(rollback);
+  const gone=(await pool.query(`SELECT to_regprocedure('public.claim_xroga_model_request(uuid,uuid,text,uuid)') AS claim,
+    to_regprocedure('public.release_xroga_model_request(text,uuid,integer)') AS rel,to_regclass('public.xroga_model_request_capacity') AS cap,
+    (SELECT count(*) FROM information_schema.columns WHERE table_schema='public' AND table_name='xroga_provider_reservations'
+      AND column_name IN ('dispatch_admission_id','dispatch_admitted_at'))::int AS cols`)).rows[0];
+  assert.deepEqual(gone,{claim:null,rel:null,cap:null,cols:0},'Rollback removes functions, capacity table and fence columns');
+  const after=(await pool.query('SELECT count(*)::int AS n,sum(reserved_micro_usd)::int AS reserved,sum(coalesce(settled_micro_usd,0))::int AS settled FROM public.xroga_provider_reservations')).rows[0];
+  assert.deepEqual(after,{n:32,reserved:32_000,settled:0},'Rollback leaves reservations and accounting untouched');
+  await pool.query(rollback);
+  await pool.query(sql);
+  assert.equal((await claim(30)).granted,true,'The forward migration can be re-applied after a rollback');
 });
