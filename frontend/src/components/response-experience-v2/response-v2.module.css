@@ -237,3 +237,18 @@
 .semanticUnit[data-role=resource] .prose > ul > li:last-child { border-block-end:0; }
 .semanticUnit[data-role=resource] .prose > ul > li > a:first-child { font-weight:600; color:var(--v2-ink); }
 .semanticUnit[data-role=resource] .prose > ul > li > a:first-child > svg { position:absolute; inset-inline-start:0; top:20px; width:20px; height:20px; }
+
+/* Semantic status colours. Text colour, tint and border all come from one tone, and the icon repeats the meaning. */
+.statusBadge { --tone:var(--v2-muted); display:inline-flex; align-items:center; gap:5px; padding:2px 9px; border:1px solid color-mix(in srgb,var(--tone) 42%,transparent); border-radius:999px; background:color-mix(in srgb,var(--tone) 13%,transparent); color:var(--tone); font-size:12.5px; font-weight:600; line-height:1.5; white-space:nowrap; vertical-align:middle; }
+.statusBadge[data-tone=success] { --tone:#34c38f; }
+.statusBadge[data-tone=danger] { --tone:#ef6a74; }
+.statusBadge[data-tone=warning] { --tone:#f2a33c; }
+.statusBadge[data-tone=info] { --tone:#6aa4f5; }
+.statusBadge[data-tone=warning] svg:only-child, .statusBadge[data-tone=warning] > svg:first-child { flex:none; }
+@media (prefers-reduced-motion: no-preference) { .statusBadge[data-tone=warning] > svg.lucide-loader-2, .statusBadge[data-tone=warning] > svg.lucide-loader-circle { animation:statusSpin 1.4s linear infinite; } }
+@keyframes statusSpin { to { transform:rotate(360deg); } }
+.notice[data-tone=success] { border-color:#34c38f; background:color-mix(in srgb,#34c38f 8%,transparent); }
+.notice[data-tone=info] { border-color:#6aa4f5; background:color-mix(in srgb,#6aa4f5 8%,transparent); }
+.notice[data-tone=warning] { border-color:#f2a33c; background:color-mix(in srgb,#f2a33c 9%,transparent); }
+.notice[data-tone=danger] { border-color:#ef6a74; background:color-mix(in srgb,#ef6a74 9%,transparent); }
+.notice { border-radius:0 10px 10px 0; padding-block:.5rem; }

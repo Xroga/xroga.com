@@ -9,9 +9,12 @@ import { safeLinkV2 } from './document';
 import { leadingEntityV2 } from './entityRegistry';
 import { SourceMarkV2 } from './SourceV2';
 import { EntityIdentityV2 } from './EntityIdentityV2';
+import { StatusBadgeV2 } from './StatusBadgeV2';
+import { statusToneV2 } from './status';
 
 function CellV2({ value, resourceLabel = false }: { value: string | number | boolean | null | undefined; resourceLabel?: boolean }) {
   if (value == null) return <>Unavailable</>;
+  if (typeof value === 'string' && statusToneV2(value) !== 'neutral') return <StatusBadgeV2 label={value} />;
   const entity = typeof value === 'string' ? leadingEntityV2(value) : undefined;
   // A table's authored row label uses the same verified identity as a role card.
   // Preserve Markdown links and ordinary descriptive cells exactly as authored.

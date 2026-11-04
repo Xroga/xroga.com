@@ -4,6 +4,7 @@ import type { ResponseNodeV2 } from './document';
 import { safeLinkV2 } from './document';
 import { SourceLinkV2, SourceMarkV2 } from './SourceV2';
 import styles from './response-v2.module.css';
+import { StatusBadgeV2 } from './StatusBadgeV2';
 
 /** Read-only source records. Never turn a search result into a verified offer. */
 export function ResourcesV2({ node }: { node: Extract<ResponseNodeV2, { kind: 'resources' }> }) {
@@ -11,7 +12,7 @@ export function ResourcesV2({ node }: { node: Extract<ResponseNodeV2, { kind: 'r
     <h4>{item.source && <SourceMarkV2 url={item.source.url} />}{item.title}</h4>
     {item.provider && <p className={styles.resourceMeta}>{item.provider}</p>}
     {item.summary && <p>{item.summary}</p>}
-    <p className={styles.resourceMeta}>{item.demo ? 'Demo' : item.status.replaceAll('-', ' ')}{item.source?.observedAt ? ` · Observed ${item.source.observedAt}` : ''}</p>
+    <p className={styles.resourceMeta}>{item.demo ? 'Demo' : <StatusBadgeV2 label={item.status.replaceAll('-', ' ')} />}{item.source?.observedAt ? ` · Observed ${item.source.observedAt}` : ''}</p>
     {item.images?.map((image, index) => {
       const permitted = safeRichImageUrl(image.url, image.rights, item.demo || item.status === 'demo');
       return <figure key={`${image.url}:${index}`}>{permitted ? <img src={permitted} alt={image.alt} loading="lazy" /> : safeLinkV2(image.url) ? <a href={safeLinkV2(image.url)} target="_blank" rel="noopener noreferrer">{image.alt}</a> : <span>{image.alt}</span>}{image.attribution && <figcaption>{image.attribution}</figcaption>}</figure>;
