@@ -63399,6 +63399,75 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:1dacf962de020747d05b",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/activity/ActivityTimeline.tsx",
+      "sha256": "6d0f3711f1703797619da1f5a0a14a73a0e3e48eae17d217792b789bdefae348",
+      "symbols": [
+        "ActivitySpinner",
+        "ActivityTimeline",
+        "ActivityTimelineProps",
+        "COMMANDLIKE",
+        "EARLIER_VISIBLE",
+        "FAMILY_ICON",
+        "HeaderIcon",
+        "Icon",
+        "RowDetails",
+        "SettledItem",
+        "duration",
+        "elapsed",
+        "expandable",
+        "hasDetails",
+        "hasLine",
+        "hidden",
+        "iconFor",
+        "isCommand",
+        "label",
+        "looksLikePath",
+        "running",
+        "shown",
+        "startedAt",
+        "steps",
+        "text",
+        "waiting"
+      ],
+      "imports": [
+        "./activity.module.css",
+        "@/lib/terminal/activityPresentation",
+        "@/lib/terminal/activityTimeline",
+        "lucide-react",
+        "react"
+      ],
+      "runtimeImports": [
+        "frontend/src/components/activity/activity.module.css",
+        "frontend/src/lib/terminal/activityTimeline.ts"
+      ],
+      "entryPoints": [
+        "frontend/src/app/(workspace)/workspace/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/terminal/TerminalLiveActivity.tsx:5"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "lucide-react",
+        "react"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:5d4eb094b2a135c887eb",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/analytics/GoogleTag.tsx",
@@ -91243,8 +91312,7 @@
       "callers": [
         "frontend/src/components/terminal/BlackHoleVButton.tsx:9",
         "frontend/src/components/terminal/MessageSuggestionChips.tsx:6",
-        "frontend/src/components/terminal/ReasoningAndFollowUps.tsx:5",
-        "frontend/src/components/terminal/TerminalLiveActivity.tsx:44"
+        "frontend/src/components/terminal/ReasoningAndFollowUps.tsx:5"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -92360,13 +92428,9 @@
       "runtimeImports": [
         "frontend/src/lib/utils.ts"
       ],
-      "entryPoints": [
-        "frontend/src/app/(workspace)/workspace/page.tsx"
-      ],
-      "callers": [
-        "frontend/src/components/terminal/TerminalLiveActivity.tsx:38"
-      ],
-      "reachable": true,
+      "entryPoints": [],
+      "callers": [],
+      "reachable": false,
       "persistenceDependencies": [],
       "externalProviderDependencies": [],
       "authBoundary": [],
@@ -92375,11 +92439,11 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [],
-      "state": "IMPLEMENTED_BUT_UNVERIFIED",
-      "confidence": "MEDIUM",
-      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
       "knownRisk": "Live provider state and full security behavior not established by static inventory.",
-      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
@@ -94196,7 +94260,7 @@
       "id": "surface:9c57a6290c71522141f5",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/SwarmMessageLog.tsx",
-      "sha256": "80703d51ce2d9ceefc09d6d2580dcda09d3c00940eafb8976cdedfd04408f720",
+      "sha256": "6b94706031b1bf808a09cf3ca0afbf545dbd50ab5696a128daf98400fa0b387f",
       "symbols": [
         "AGENT_STYLES",
         "SwarmMessageLog",
@@ -94749,75 +94813,37 @@
       "id": "surface:d57670e245a2278fa94d",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/TerminalLiveActivity.tsx",
-      "sha256": "9f4de56f0500862d10bd10dbc389825643fa73563002a8ca5bd9e1cbf28ec2aa",
+      "sha256": "49b93f7fe12f1677aa204790fa3a212626dd1ec4f4b112cbefce47d7933cf929",
       "symbols": [
-        "ActivityRow",
-        "DEFAULT_VISIBLE_ROWS",
-        "ICONS",
-        "Icon",
         "STALLED_AFTER_MS",
-        "TaskFamily",
         "TerminalLiveActivity",
         "TerminalLiveActivityProps",
         "active",
-        "appActions",
-        "capabilities",
-        "capabilitiesForIntent",
-        "checks",
-        "clean",
-        "complete",
-        "completed",
-        "count",
-        "duration",
-        "durationLabel",
-        "elapsed",
-        "errors",
-        "evidence",
-        "evidenceSummary",
-        "expandable",
-        "family",
-        "familyForKind",
-        "files",
-        "firstAt",
+        "id",
         "label",
-        "lastAt",
         "lastObservableAt",
-        "latest",
-        "minutes",
-        "output",
-        "plainChat",
-        "receiptLabel",
-        "receipts",
-        "request",
-        "requestPreview",
+        "legacy",
+        "model",
+        "note",
         "rows",
-        "searches",
-        "seconds",
+        "rowsFromThinkingSteps",
+        "shell",
+        "shown",
         "silentForMs",
-        "sources",
-        "stalled",
-        "state",
-        "stateLabel",
-        "stopped",
-        "timer",
-        "visible",
-        "visibleDetail"
+        "timer"
       ],
       "imports": [
-        "./BlackHoleMark",
-        "./ExecutionMotion",
+        "@/components/activity/ActivityTimeline",
         "@/lib/terminal/activityPresentation",
+        "@/lib/terminal/activityTimeline",
         "@/lib/terminal/executionIntent",
         "@/lib/terminal/terminalEvent",
-        "@/lib/utils",
-        "lucide-react",
         "react"
       ],
       "runtimeImports": [
-        "frontend/src/components/terminal/BlackHoleMark.tsx",
-        "frontend/src/components/terminal/ExecutionMotion.tsx",
+        "frontend/src/components/activity/ActivityTimeline.tsx",
         "frontend/src/lib/terminal/activityPresentation.ts",
-        "frontend/src/lib/utils.ts"
+        "frontend/src/lib/terminal/activityTimeline.ts"
       ],
       "entryPoints": [
         "frontend/src/app/(workspace)/workspace/page.tsx"
@@ -94828,19 +94854,13 @@
       "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
-        "lucide-react",
         "react"
       ],
       "authBoundary": [],
       "tenantBoundary": [],
       "approvalBoundary": [],
       "costBoundary": [],
-      "evidenceBoundary": [
-        "frontend/src/components/terminal/TerminalLiveActivity.tsx#evidence",
-        "frontend/src/components/terminal/TerminalLiveActivity.tsx#evidenceSummary",
-        "frontend/src/components/terminal/TerminalLiveActivity.tsx#receiptLabel",
-        "frontend/src/components/terminal/TerminalLiveActivity.tsx#receipts"
-      ],
+      "evidenceBoundary": [],
       "testCoverage": [],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -111483,7 +111503,7 @@
       ],
       "callers": [
         "frontend/src/components/terminal/SwarmMessageLog.tsx:15",
-        "frontend/src/components/terminal/TerminalLiveActivity.tsx:31",
+        "frontend/src/components/terminal/TerminalLiveActivity.tsx:6",
         "frontend/src/context/TerminalChatContext.tsx:14",
         "frontend/src/lib/terminal/activityPresentation.test.ts:4"
       ],
@@ -111501,7 +111521,87 @@
       ],
       "testCoverage": [
         "frontend/src/components/response-experience-v2/conversation.test.ts",
-        "frontend/src/lib/terminal/activityPresentation.test.ts"
+        "frontend/src/lib/terminal/activityPresentation.test.ts",
+        "frontend/src/lib/terminal/activityTimeline.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:b31ecdb496288a440eea",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/lib/terminal/activityTimeline.ts",
+      "sha256": "10ba3ba4eb7d545fc902ed44373c4595ae9a6e0384ed01b229baf668a6207943",
+      "symbols": [
+        "ActivityTimelineModel",
+        "BuildTimelineOptions",
+        "FAMILY_BY_KIND",
+        "TimelineFamily",
+        "TimelineItem",
+        "TimelineState",
+        "TimelineTone",
+        "active",
+        "allKind",
+        "base",
+        "buildActivityTimeline",
+        "durationOf",
+        "failed",
+        "family",
+        "familyOf",
+        "flush",
+        "formatElapsed",
+        "groupLabel",
+        "hours",
+        "isFailure",
+        "isFinished",
+        "items",
+        "known",
+        "label",
+        "live",
+        "liveLabel",
+        "minutes",
+        "n",
+        "otherActive",
+        "plural",
+        "row",
+        "run",
+        "runFamily",
+        "seconds",
+        "settled",
+        "shown",
+        "standalone",
+        "state",
+        "summariseSettled",
+        "toItem",
+        "toneOf",
+        "total"
+      ],
+      "imports": [
+        "./activityPresentation"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [
+        "frontend/src/app/(workspace)/workspace/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/activity/ActivityTimeline.tsx:9",
+        "frontend/src/components/terminal/TerminalLiveActivity.tsx:12",
+        "frontend/src/lib/terminal/activityTimeline.test.ts:4"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "frontend/src/lib/terminal/activityTimeline.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -112917,7 +113017,6 @@
         "frontend/src/components/terminal/TerminalBuildReport.tsx:5",
         "frontend/src/components/terminal/TerminalChatBar.tsx:24",
         "frontend/src/components/terminal/TerminalDock.tsx:16",
-        "frontend/src/components/terminal/TerminalLiveActivity.tsx:30",
         "frontend/src/components/terminal/TerminalSearchBar.tsx:12",
         "frontend/src/components/terminal/TerminalSkinPicker.tsx:10",
         "frontend/src/components/terminal/TextGeneratingAnimation.tsx:4",
@@ -149447,6 +149546,13 @@
       "id": "test-suite:af8c1e4b66497c1da6fc",
       "sourcePath": "frontend/src/lib/terminal/activityPresentation.test.ts",
       "declaredTests": 7,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:cd9d2501a4f9b3e7c770",
+      "sourcePath": "frontend/src/lib/terminal/activityTimeline.test.ts",
+      "declaredTests": 8,
       "skipLocations": [],
       "focusLocations": []
     },
