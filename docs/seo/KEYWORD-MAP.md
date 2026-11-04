@@ -9,7 +9,7 @@ Ranking pages are unknown unless identified in Search Console. All quantitative 
 | XROGA pricing | transactional | `/pricing` | unknown | live | low | keep plan facts current | high |
 | XROGA documentation | navigational | `/docs` | unknown | live | low | retain directory links | high |
 | AI coding agent | commercial | `/ai-coding-agent` | unknown | live | low | deepen with demonstrable workflows | high |
-| AI app builder | commercial | `/ai-app-builder` | unknown | live | low | distinguish app outcome from websites/SaaS | high |
+| Free AI app builder; AI app builder | commercial | `/ai-app-builder` | unknown | live | low | prioritize free AI app builder intent; explain plan limits, prompt-to-app workflow, code ownership and verification without keyword stuffing | high |
 | AI website builder | commercial | `/ai-website-builder` | unknown | live | low | own website-specific intent | medium |
 | build SaaS with AI | commercial | `/build-saas-with-ai` | unknown | live | low | own SaaS architecture intent | medium |
 | GitHub AI coding agent | commercial/task | `/github-ai-coding-agent` | unknown | live | low | own branch/commit/PR workflow | high |

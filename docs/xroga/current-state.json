@@ -82277,8 +82277,9 @@
       "id": "surface:d16ba204164dbff537bb",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/marketing/AiAppBuilderLanding.tsx",
-      "sha256": "e1eb7cb35b512811c0479a2b654d8761773ea46bdf80ec1e9a8580e1df1202e1",
+      "sha256": "68fed1d051aca5a4ae2d4d16ebb7d983af621601974ae1036b58d73fa9859c7b",
       "symbols": [
+        "APP_BUILDER_FAQS",
         "AiAppBuilderLanding",
         "FOOTER_GROUPS"
       ],
@@ -98233,7 +98234,7 @@
       "id": "surface:9e7f4761ff2aaa6132ab",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/capabilityPages.ts",
-      "sha256": "7733757da3fe9c24bcb1bec24e50e426957c3328151f5766dc4a81d92d1a3f0e",
+      "sha256": "d8fde4fdca780d6796991d4f1c9bd661f4fc6da6e1dc6dac088228ef75d0627e",
       "symbols": [
         "CAPABILITY_PAGES",
         "CapabilityPageData"
