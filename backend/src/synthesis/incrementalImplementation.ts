@@ -65,7 +65,7 @@ export const IMPLEMENTATION_ATTEMPT_TIMEOUT_MS = 60_000;
 export const IMPLEMENTATION_FILE_CONCURRENCY = 4;
 
 /** One primary route plus one fallback per logical generation unit. */
-export const MAX_CANDIDATE_ATTEMPTS_PER_UNIT = 2;
+export const MAX_CANDIDATE_ATTEMPTS_PER_UNIT = 1;
 
 /** A repair may touch only a small, existing slice of the validated snapshot. */
 export const MAX_REPAIR_FILES = 4;
@@ -477,7 +477,7 @@ async function completeWithFallback(input: {
   // therefore hold the request open for four minutes before the next batch even started.
   // The ranked route plus one fallback is enough to distinguish an isolated provider issue
   // from an unavailable generation step while keeping the run inside its request deadline.
-  for (const candidate of input.candidates) {
+  for (const candidate of input.candidates.slice(0, 1)) {
     if (input.unavailableCandidates?.has(candidate.modelId)) {
       failures.push(`${candidate.modelId} was unavailable earlier in this implementation run`);
       continue;
@@ -593,7 +593,7 @@ export async function implementIncrementally(input: {
         ? `\n\nCurrent contents of ${entry.path}:\n<current-file>\n${current.content}\n</current-file>`
         : '\n\nThis is a new file; there are no current contents.';
       const reply = await completeWithFallback({
-        candidates: rotateImplementationCandidates(input.candidates, index),
+        candidates: input.candidates,
         messages: [
           { role: 'system', content: FILE_SYSTEM },
           {

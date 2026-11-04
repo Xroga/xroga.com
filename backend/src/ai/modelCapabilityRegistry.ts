@@ -1,6 +1,6 @@
 import { getSecret } from '../config/envSecrets.js';
 import { isCodingModel } from './providerPolicy.js';
-import { MODELS, resolveModelSpec, type ModelId } from './models.js';
+import { MODELS, ACTIVE_MODEL_IDS, resolveModelSpec, type ModelId, type ActiveModelId } from './models.js';
 import { getModelRuntimeHealth, type ModelRuntimeHealth } from './providerRuntime.js';
 import { getRouterAdminConfig } from './routerConfig.js';
 import { configuredApiModel } from './openaiCompat.js';
@@ -61,66 +61,11 @@ export interface RuntimeModelCapability {
  * if the filter were ever removed is not a prior worth keeping.
  */
 const UNVERIFIED_PRIOR_STRENGTHS: Record<
-  ModelId,
+  ActiveModelId,
   Record<ModelCapability, number>
 > = {
-  kimi_k3: {
-    coding: 9,
-    repository_analysis: 10,
-    architecture: 10,
-    research: 5,
-    review: 9,
-    debugging: 8,
-    security_review: 8,
-    ui_generation: 8,
-    structured_output: 8,
-    tool_calls: 8,
-    streaming: 9,
-  },
-
-  // Serious engineering route.
-  glm_5_3: {
-    coding: 10,
-    repository_analysis: 10,
-    architecture: 9,
-    research: 4,
-    review: 9,
-    debugging: 10,
-    security_review: 8,
-    ui_generation: 8,
-    structured_output: 9,
-    tool_calls: 9,
-    streaming: 9,
-  },
-
-  // Normal high-volume engineering route.
-  glm_5_3_flash: {
-    coding: 9,
-    repository_analysis: 8,
-    architecture: 7,
-    research: 4,
-    review: 7,
-    debugging: 8,
-    security_review: 6,
-    ui_generation: 8,
-    structured_output: 9,
-    tool_calls: 9,
-    streaming: 10,
-  },
-
-  deepseek_v4_flash: {
-    coding: 7,
-    repository_analysis: 5,
-    architecture: 4,
-    research: 3,
-    review: 5,
-    debugging: 8,
-    security_review: 4,
-    ui_generation: 7,
-    structured_output: 8,
-    tool_calls: 6,
-    streaming: 10,
-  },
+  deepseek_v4_1_flash_1017: { coding:8,repository_analysis:8,architecture:8,research:8,review:8,debugging:8,security_review:8,ui_generation:8,structured_output:8,tool_calls:8,streaming:8 },
+  claude_sonnet_5_5: { coding:8,repository_analysis:8,architecture:8,research:8,review:8,debugging:8,security_review:8,ui_generation:8,structured_output:8,tool_calls:8,streaming:8 },
 
 };
 
@@ -130,30 +75,7 @@ const UNVERIFIED_PRIOR_STRENGTHS: Record<
  * Every chain is closed over the four active engineering models. Retrieval providers are not
  * represented here and therefore cannot become fallbacks.
  */
-const FALLBACKS: Record<
-  ModelId,
-  ModelId[]
-> = {
-  kimi_k3: [
-    'glm_5_3',
-    'glm_5_3_flash',
-  ],
-
-  glm_5_3: [
-    'glm_5_3_flash',
-    'kimi_k3',
-  ],
-
-  glm_5_3_flash: [
-    'glm_5_3',
-    'kimi_k3',
-  ],
-
-  deepseek_v4_flash: [
-    'glm_5_3_flash',
-    'glm_5_3',
-  ],
-};
+const FALLBACKS: Partial<Record<ModelId, ModelId[]>> = {};
 
 function configured(id: ModelId): boolean {
   const def = MODELS[id];
@@ -176,7 +98,7 @@ function configured(id: ModelId): boolean {
  */
 export function getRuntimeModelRegistry(): RuntimeModelCapability[] {
   const admin = getRouterAdminConfig();
-  return (Object.keys(MODELS) as ModelId[]).flatMap((id) => {
+  return ACTIVE_MODEL_IDS.flatMap((id) => {
     const def = MODELS[id];
     const spec = resolveModelSpec(id);
     if (!spec) return [];
@@ -187,7 +109,7 @@ export function getRuntimeModelRegistry(): RuntimeModelCapability[] {
       apiModel: spec.apiModel,
       configured: configured(id),
       credentialSource: configured(id) ? 'platform' : 'none',
-      enabled: admin.allowedModels.includes(id) && admin.enabledProviders.includes(def.provider),
+      enabled: id === 'deepseek_v4_1_flash_1017' && admin.allowedModels.includes(id) && admin.enabledProviders.includes(def.provider),
       health,
       contextWindow: spec.contextWindow,
       maximumSafeRequestTokens: Math.floor(spec.contextWindow * 0.8),
@@ -198,9 +120,9 @@ export function getRuntimeModelRegistry(): RuntimeModelCapability[] {
         admin.providerBudgetUsd[def.provider] ?? def.budgetUsd,
       strengths: UNVERIFIED_PRIOR_STRENGTHS[id],
       suitableTaskClasses:
-        id === 'kimi_k3'
+        id === 'claude_sonnet_5_5'
             ? ['repository_analysis', 'architecture', 'multi_file_implementation']
-            : id === 'glm_5_3'
+            : id === 'deepseek_v4_1_flash_1017'
               ? ['software_engineering', 'feature_development', 'bug_fixing']
               : ['focused_code_edit', 'validation_repair', 'test_generation'],
       unsuitableTaskClasses:
@@ -213,7 +135,7 @@ export function getRuntimeModelRegistry(): RuntimeModelCapability[] {
       preferredFallbacks: [
         ...new Set([
           ...admin.fallbackOrder.filter((fallback) => fallback !== id),
-          ...FALLBACKS[id],
+          ...(FALLBACKS[id] ?? []),
         ]),
       ].filter((fallback) => (isCodingModel(id) ? isCodingModel(fallback) : true)),
       supports: {

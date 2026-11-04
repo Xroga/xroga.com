@@ -387,6 +387,7 @@ async function waitForPersistedSwarmRun(
 
   let lastSequence =
     afterSequence;
+  let notedHistoryGap = false;
 
   while (
     Date.now() <
@@ -499,6 +500,16 @@ async function waitForPersistedSwarmRun(
     const run =
       await response.json() as
         SwarmRunSummary;
+    // The server keeps only the most recent events. If it reports that some between our cursor and the oldest it still holds are gone, say so once
+    // instead of presenting the jump as an unbroken history.
+    if (run.eventsTruncated && !notedHistoryGap) {
+      notedHistoryGap = true;
+      options.onProgress?.({
+        agent: 'runtime',
+        status: 'running',
+        message: 'Some earlier progress is no longer available. Showing the latest steps.',
+      });
+    }
 
     for (
       const event of
@@ -5796,6 +5807,12 @@ export interface SwarmRunSummary {
 
   lastSequence?:
     number;
+
+  /** Oldest event the server still retains; absent on older servers. */
+  firstRetainedSequence?: number | null;
+
+  /** True when events between the requested cursor and the oldest retained event are no longer available. */
+  eventsTruncated?: boolean;
 }
 
 export interface DashboardSummary {
@@ -6677,4 +6694,17 @@ export interface AnalyticsDashboard {
     marketplacePurchases:
       number;
   };
+}
+
+/** Downloads a file from an authenticated API route (a patch or ZIP), with the signed-in session; errors are the same ApiError as apiFetch. */
+export async function apiDownload(path: string): Promise<{ blob: Blob; filename: string | null }> {
+  const accessToken = await getAccessToken();
+  let res: Response;
+  try { res = await fetchApiResponse(`${API_URL}${path}`, { headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : {} }); }
+  catch (error) { if (error instanceof ApiError) throw error; throw new ApiError('Cannot reach the Xroga API. Check your connection and try again.', 0, { code: 'NETWORK_ERROR' }); }
+  if (!res.ok) {
+    const data = (await res.json().catch(() => ({}))) as Record<string, unknown>;
+    throw new ApiError(typeof data.error === 'string' ? data.error : 'Download failed', res.status, data);
+  }
+  return { blob: await res.blob(), filename: /filename="([^"]+)"/.exec(res.headers.get('content-disposition') ?? '')?.[1] ?? null };
 }

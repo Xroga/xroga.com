@@ -85,6 +85,15 @@ export function RuntimePreviewControls({
 
   return (
     <>
+      {preview.status === 'ready' && preview.sourceState === 'stale' ? (
+        <span
+          role="status"
+          className="px-1.5 text-[10px] font-semibold text-amber-500"
+          title="This preview was started from an earlier saved version of your project. Restart it to see the latest."
+        >
+          Older version
+        </span>
+      ) : null}
       <button
         type="button"
         onClick={

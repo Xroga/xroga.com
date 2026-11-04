@@ -236,7 +236,7 @@ async function executeWithLease(record: BrowserRunRecord, runId: string, deps: B
     task.completedAt=new Date().toISOString();state.updatedAt=task.completedAt;
     state.blockers=[...state.blockers,task.blocker];
     await deps.leases.assertCurrent(current());
-    await deps.runs.stateStore(owner).save(state);
+    await deps.runs.stateStore(owner,current).save(state);
     return 'finished';
   }
   const handler=handlerFor(context,{allowedOrigins:spec.allowedOrigins,startUrl:spec.startUrl,limits:spec.limits as unknown as BrowserJobLimits,plan,driveProject:spec.driveProject},deps,async()=>{
@@ -256,7 +256,7 @@ async function executeWithLease(record: BrowserRunRecord, runId: string, deps: B
   renewer.unref?.();
   try {
     const resumed = await recoverRunWithLeases(record.state, deps.leases, record.tenantId);
-    await new ExecutionScheduler(deps.runs.stateStore(record.userId)).run(resumed.state, { browser_automation: handler }, abort.signal);
+    await new ExecutionScheduler(deps.runs.stateStore(record.userId,current)).run(resumed.state, { browser_automation: handler }, abort.signal);
     return 'finished';
   } finally {
     clearInterval(timer); clearInterval(renewer);

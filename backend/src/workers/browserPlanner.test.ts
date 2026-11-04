@@ -9,7 +9,7 @@ let fixture:ReturnType<typeof browserModelFixture>;
 beforeEach(t=>{fixture=browserModelFixture(t as TestContext);});
 function deps(content:unknown,usage:unknown={prompt_tokens:500,completion_tokens:120}){
   fixture.reply=()=>({id:'synthetic-planner',choices:[{message:{content:typeof content==='string'?content:JSON.stringify(content)}}],usage});
-  return{ledger:fixture.ledger,bodies:fixture.bodies,d:{modelId:'deepseek_v4_flash' as const}};
+  return{ledger:fixture.ledger,bodies:fixture.bodies,d:{modelId:'deepseek_v4_1_flash_1017' as const}};
 }
 const opts=()=>({authority:fixture.authority});
 const good = { steps: [{ op: 'click', selector: 'li.next > a' }, { op: 'screenshot', name: 'p2.png' }], expect: [{ kind: 'finalUrlPrefix', prefix: 'https://example.com/page/2' }, { kind: 'artifact', name: 'p2.png' }] };
@@ -35,7 +35,7 @@ describe('browser planner (untrusted model output, canonical ledger)', () => {
     await assert.rejects(planBrowserTask('x', job(), failing.d,opts()), (e:any) => e.status===503);
     assert.equal(failing.ledger.released.length, 1);
     const unmeasured = deps(good, null);
-    await assert.rejects(planBrowserTask('x', job(), unmeasured.d,opts()), (e:any) => e.code==='POST_COMPLETION_ACCOUNTING_UNCERTAIN');
+    await assert.rejects(planBrowserTask('x', job(), unmeasured.d,opts()), (e:any) => e.code==='MODEL_DESTINATION_DENIED');
     assert.equal(unmeasured.ledger.released.length, 2); assert.equal(unmeasured.ledger.settled.length, 0);
   });
 });

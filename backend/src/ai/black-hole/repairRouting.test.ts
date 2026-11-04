@@ -13,27 +13,20 @@ import {
 } from './registry.js';
 
 test(
-  'repair assignments follow the new GLM stack',
+  'repair assignments use one default with no implicit premium authority',
   () => {
     assert.deepEqual(
       routeRepair(
         'type_error',
       ).preferredModels,
-      [
-        'deepseek_v4_flash',
-        'glm_5_3_flash',
-      ],
+      ['deepseek_v4_1_flash_1017'],
     );
 
     assert.deepEqual(
       routeRepair(
         'structural_failure',
       ).preferredModels,
-      [
-        'glm_5_3',
-        'kimi_k3',
-        'glm_5_3_flash',
-      ],
+      ['deepseek_v4_1_flash_1017'],
     );
 
     const visual =
@@ -43,9 +36,7 @@ test(
 
     assert.deepEqual(
       visual.preferredModels,
-      [
-        'glm_5_3_flash',
-      ],
+      ['deepseek_v4_1_flash_1017'],
     );
 
     assert.equal(
@@ -114,59 +105,59 @@ test(
       routeRepair(
         'lint_error',
       ).preferredModels[0],
-      'deepseek_v4_flash',
+      'deepseek_v4_1_flash_1017',
     );
 
     assert.equal(
       routeRepair(
         'type_error',
       ).preferredModels[0],
-      'deepseek_v4_flash',
+      'deepseek_v4_1_flash_1017',
     );
   },
 );
 
 test(
-  'normal repair starts with GLM-5.3 Flash',
+  'normal repair uses the default',
   () => {
     assert.equal(
       routeRepair(
         'test_failure',
       ).preferredModels[0],
-      'glm_5_3_flash',
+      'deepseek_v4_1_flash_1017',
     );
 
     assert.equal(
       routeRepair(
         'runtime_error',
       ).preferredModels[0],
-      'glm_5_3_flash',
+      'deepseek_v4_1_flash_1017',
     );
 
     assert.equal(
       routeRepair(
         'deployment_failure',
       ).preferredModels[0],
-      'glm_5_3_flash',
+      'deepseek_v4_1_flash_1017',
     );
   },
 );
 
 test(
-  'structural and security repair start with GLM-5.3',
+  'structural and security repair cannot implicitly purchase premium',
   () => {
     assert.equal(
       routeRepair(
         'structural_failure',
       ).preferredModels[0],
-      'glm_5_3',
+      'deepseek_v4_1_flash_1017',
     );
 
     assert.equal(
       routeRepair(
         'security_finding',
       ).preferredModels[0],
-      'glm_5_3',
+      'deepseek_v4_1_flash_1017',
     );
   },
 );

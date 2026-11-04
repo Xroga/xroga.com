@@ -68,8 +68,8 @@ export async function summarizeRepoForUpdates(
 
   const modelId: ModelId =
     needsSeniorContext
-      ? 'glm_5_3'
-      : 'glm_5_3_flash';
+      ? 'deepseek_v4_1_flash_1017'
+      : 'deepseek_v4_1_flash_1017';
 
   const listing =
     opts.paths

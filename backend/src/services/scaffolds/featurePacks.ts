@@ -274,7 +274,7 @@ export function buildAgentFeatureFiles(slug: string): ProjectFile[] {
       path: 'lib/agent/runner.ts',
       content: `/**
  * Automation agent runner — real control flow, honest scope.
- * Runs on YOUR Vercel with YOUR OpenAI key from env.
+ * Runs on YOUR Vercel with YOUR Zurelay key from env.
  * Scaffolded worker — not a guaranteed always-on ops team.
  */
 
@@ -299,26 +299,24 @@ export type AgentRunInput = {
 };
 
 async function callLlm(goal: string, context?: string): Promise<{ text: string; model: string }> {
-  const key = process.env.OPENAI_API_KEY || process.env.OPENROUTER_API_KEY;
+  const key = process.env.ZURELAY_API_KEY;
   if (!key) {
-    return {
-      text:
-        'No OPENAI_API_KEY / OPENROUTER_API_KEY in env. Save it in Xroga Integrations so Vercel can run this agent.',
-      model: 'none',
-    };
+    throw new Error('Configure the application-owned Zurelay credential before using this feature.');
   }
   const base =
-    process.env.OPENAI_BASE_URL ||
-    (process.env.OPENROUTER_API_KEY ? 'https://openrouter.ai/api/v1' : 'https://api.openai.com/v1');
-  const model = process.env.AGENT_MODEL || 'gpt-4o-mini';
+    'https://api.zurelay.com/v1';
+  const model = 'deepseek-v4.1-flash-1017';
   const res = await fetch(\`\${base}/chat/completions\`, {
     method: 'POST',
     headers: {
       Authorization: \`Bearer \${key}\`,
       'Content-Type': 'application/json',
+      'x-zurelay-fallback': 'off',
     },
+    redirect: 'error',
     body: JSON.stringify({
       model,
+      max_tokens: 2048,
       temperature: 0.2,
       messages: [
         {
@@ -334,14 +332,23 @@ async function callLlm(goal: string, context?: string): Promise<{ text: string; 
     }),
   });
   if (!res.ok) {
-    const errText = await res.text();
-    throw new Error(\`LLM error \${res.status}: \${errText.slice(0, 200)}\`);
+    throw new Error('The configured AI provider could not complete this request.');
   }
   const data = (await res.json()) as {
-    choices?: Array<{ message?: { content?: string } }>;
+    model?: string;
+    usage?: { prompt_tokens?: number; completion_tokens?: number; total_tokens?: number };
+    choices?: Array<{ message?: { content?: string }; finish_reason?: string }>;
   };
+  const usage = data.usage;
+  if (data.model !== model || res.headers.get('x-zurelay-model') !== model || !res.headers.get('x-request-id')
+    || res.headers.has('x-zurelay-routed-from') || (res.headers.get('x-zurelay-stopped') && res.headers.get('x-zurelay-stopped') !== 'false')
+    || !usage || ![usage.prompt_tokens,usage.completion_tokens,usage.total_tokens].every(n=>Number.isSafeInteger(n) && Number(n)>=0)
+    || usage.total_tokens !== Number(usage.prompt_tokens)+Number(usage.completion_tokens)
+    || data.choices?.[0]?.finish_reason !== 'stop' || !data.choices[0].message?.content?.trim()) {
+    throw new Error('AI completion could not be verified. No automatic retry was made.');
+  }
   return {
-    text: data.choices?.[0]?.message?.content?.trim() || '(empty)',
+    text: data.choices[0].message!.content!.trim(),
     model,
   };
 }
@@ -569,7 +576,7 @@ Xroga scaffolds a **real agent loop** on your stack:
 ## Setup (easy)
 
 1. Authorize GitHub + Vercel in Xroga
-2. Save \`OPENAI_API_KEY\` (or OpenRouter) in Integrations — synced to Vercel when possible
+2. Save \`ZURELAY_API_KEY\` in Integrations — synced to Vercel when possible
 3. Optional: \`AGENT_CRON_SECRET\` / \`CRON_SECRET\` + \`AGENT_CRON_GOAL\`
 4. Ship — then open the live site and click **Run agent**
 

@@ -1,5 +1,6 @@
 import type {
   LivePreviewStatus,
+  PreviewSourceState,
 } from './types.js';
 
 export interface LivePreviewStatusFacts {
@@ -51,4 +52,16 @@ export function livePreviewStatusFromFacts(
   }
 
   return 'ready';
+}
+
+/**
+ * Whether a running preview shows the latest saved source. Only a recorded, matching fingerprint is "current"; a different one is "stale"; a runtime
+ * bound before the fingerprint was recorded is "unknown" and is never assumed to be current.
+ */
+export function previewSourceState(
+  boundFingerprint: string | undefined | null,
+  latestFingerprint: string | undefined | null,
+): PreviewSourceState {
+  if (!boundFingerprint || !latestFingerprint) return 'unknown';
+  return boundFingerprint === latestFingerprint ? 'current' : 'stale';
 }

@@ -31,20 +31,7 @@ export async function gatherResearch(query: string, userId?: string, dispatchSco
   const q = redactSecrets(query).trim().slice(0, 2_000);
   if (!q) return { query: q, summary: '', sources: [], provider: 'none' };
 
-  const wantsX =
-    /\b(x\.com|twitter|#\w+|trending|hackathon|okx|#okxai|crypto\s*news|breaking)\b/i.test(q);
-
-  const xaiKey = getSecret('XAI_API_KEY');
-  if (wantsX && xaiKey) {
-    try {
-      const result = await grokLiveSearch(q, xaiKey, { includeX: true, forceX: true });
-      const bundle = result.bundle;
-      if (bundle.summary.trim() || bundle.sources.length) return bundle;
-    } catch (err) {
-      if(isTerminalModelFailure(err))throw err;
-      console.warn('[research] X search failed:', normalizeProviderError(err).safeMessage);
-    }
-  }
+  // Search is retrieval only. All synthesis uses the canonical Zurelay model path.
 
   if (userId && getSecret('PARALLEL_API_KEY')) {
     try {
@@ -86,97 +73,7 @@ export async function grokLiveSearch(
   outputTokens: number;
   providerRequestId?: string;
 }> {
-  const apiModel = process.env.GROK_SEARCH_MODEL?.trim() || 'grok-4.3';
-  const tools: Array<Record<string, unknown>> = [{ type: 'x_search' }];
-
-  const body = {
-    model: apiModel,
-    instructions:
-      'Return compact evidence from X posts and official X accounts. Preserve citations. Return plain text.',
-    input: `Research with X Search only. Include recent relevant posts and official accounts.\n\n${query}`,
-    tools,
-    temperature: 0.2,
-    max_output_tokens: 500,
-  };
-
-  const res = await request('https://api.x.ai/v1/responses', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(body),
-    signal: AbortSignal.timeout(30_000),
-  });
-
-  if (!res.ok) {
-    throw Object.assign(new Error('Grok search request failed'), { status: res.status });
-  }
-
-  const data = (await res.json()) as {
-    id?: string;
-    output?: Array<{
-      content?: Array<{
-        type?: string;
-        text?: string;
-        annotations?: Array<{ type?: string; url?: string; title?: string }>;
-      }>;
-    }>;
-    citations?: Array<string | { url?: string; title?: string }>;
-    usage?: { input_tokens?: number; output_tokens?: number; num_sources_used?: number };
-  };
-
-  const contentItems = (data.output ?? []).flatMap((item) => item.content ?? []);
-  const summary = contentItems
-    .filter((item) => item.type === 'output_text' && typeof item.text === 'string')
-    .map((item) => item.text)
-    .join('\n')
-    .trim();
-  const citationCandidates = [
-    ...(data.citations ?? []).map((citation) =>
-      typeof citation === 'string' ? { url: citation } : citation,
-    ),
-    ...contentItems.flatMap((item) => item.annotations ?? []),
-  ];
-  const citationUrls = [...new Set(citationCandidates.map((citation) => citation.url))]
-    .filter((value): value is string => {
-      if (typeof value !== 'string') return false;
-      try {
-        validateResearchUrl(value);
-        const host = new URL(value).hostname.toLowerCase();
-        return host === 'x.com' || host.endsWith('.x.com') || host === 'twitter.com' || host.endsWith('.twitter.com');
-      } catch { return false; }
-    });
-
-  const urlSources: ResearchSource[] = citationUrls.slice(0, 12).map((url) => ({
-    title: hostTitle(url),
-    url,
-    snippet: summary.slice(0, 280),
-    source: /x\.com|twitter\.com/i.test(url) ? 'x' : 'web',
-  }));
-
-  // An uncited model summary is not durable research evidence.
-  if (!urlSources.length) {
-    return {
-      bundle: { query, summary: '', sources: [], provider: 'none' },
-      inputTokens: data.usage?.input_tokens ?? Math.max(1, Math.ceil(query.length / 4)),
-      outputTokens: data.usage?.output_tokens ?? Math.max(1, Math.ceil(summary.length / 4)),
-      providerRequestId: data.id,
-    };
-  }
-
-  return {
-    bundle: {
-      query,
-      summary: summary.slice(0, 4000),
-      sources: urlSources,
-      provider: 'grok_live',
-      includedXSearch: true,
-    },
-    inputTokens: data.usage?.input_tokens ?? Math.max(1, Math.ceil(query.length / 4)),
-    outputTokens: data.usage?.output_tokens ?? Math.max(1, Math.ceil(summary.length / 4)),
-    providerRequestId: data.id,
-  };
+  throw Object.assign(new Error('This historical generative research provider is retired.'), {code:'MODEL_DESTINATION_DENIED', status:400});
 }
 
 function hostTitle(url: string): string {

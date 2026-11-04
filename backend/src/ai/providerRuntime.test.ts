@@ -45,7 +45,7 @@ describe('provider runtime health', () => {
 
     await assert.rejects(
       executeWithProviderFallback({
-        routes: ['deepseek_v4_flash', 'glm_5_3_flash'],
+        routes: ['deepseek_v4_1_flash_1017', 'glm_5_3_flash'],
         maximumAttemptsPerRoute: 1,
         execute: async (model) => {
           calls.push(model);
@@ -63,7 +63,7 @@ describe('provider runtime health', () => {
       },
     );
 
-    assert.deepEqual(calls, ['deepseek_v4_flash']);
+    assert.deepEqual(calls, ['deepseek_v4_1_flash_1017']);
   });
 
   it('opens a circuit after repeated failures and recovers after the window', () => {
@@ -88,24 +88,16 @@ describe('provider runtime health', () => {
     assert.equal('prompt' in value, false);
   });
 
-  it('falls back after rate limits and returns only one successful result', async () => {
+  it('never retries or substitutes another model after a possibly charged rate-limit failure', async () => {
     const calls: string[] = [];
-    const result = await executeWithProviderFallback({
-      routes: ['kimi_k3', 'glm_5_3'], maximumAttemptsPerRoute: 1,
-      execute: async (model) => {
-        calls.push(model);
-        if (model === 'kimi_k3') throw Object.assign(new Error('rate limit'), { status: 429 });
-        return { patch: 'single mutation' };
-      },
-    });
-    assert.equal(result.modelId, 'glm_5_3');
-    assert.deepEqual(calls, ['kimi_k3', 'glm_5_3']);
-    assert.equal(result.value.patch, 'single mutation');
+    await assert.rejects(executeWithProviderFallback({routes:['deepseek_v4_1_flash_1017','claude_sonnet_5_5'],maximumAttemptsPerRoute:3,
+      execute:async model=>{calls.push(model);throw Object.assign(new Error('rate limit'),{status:429});}}),{code:'PROVIDER_UNAVAILABLE'});
+    assert.deepEqual(calls,['deepseek_v4_1_flash_1017']);
   });
 
   it('does not duplicate health events when the provider transport records them', async () => {
     const result = await executeWithProviderFallback({
-      routes: ['deepseek_v4_flash'],
+      routes: ['deepseek_v4_1_flash_1017'],
       maximumAttemptsPerRoute: 1,
       recordHealth: false,
       execute: async (model) => {
@@ -115,7 +107,7 @@ describe('provider runtime health', () => {
     }).catch(() => null);
 
     assert.equal(result, null);
-    const health = getModelRuntimeHealth('deepseek_v4_flash');
+    const health = getModelRuntimeHealth('deepseek_v4_1_flash_1017');
     assert.equal(health.failures, 1);
     assert.equal(health.consecutiveFailures, 1);
     assert.equal(health.status, 'degraded');
@@ -129,7 +121,7 @@ describe('provider runtime health', () => {
       resetModelRuntimeHealth();
       let calls = 0;
       await assert.rejects(() => executeWithProviderFallback({
-        routes: ['kimi_k3'], maximumAttemptsPerRoute: 3, execute: async () => { calls += 1; throw error; },
+        routes: ['deepseek_v4_1_flash_1017'], maximumAttemptsPerRoute: 3, execute: async () => { calls += 1; throw error; },
       }));
       assert.equal(calls, 1);
     }
@@ -137,7 +129,7 @@ describe('provider runtime health', () => {
 
   it('classifies timeout, opens the circuit, and reports all-provider failure safely', async () => {
     await assert.rejects(() => executeWithProviderFallback({
-      routes: ['deepseek_v4_flash'], timeoutMs: 5, maximumAttemptsPerRoute: 1,
+      routes: ['deepseek_v4_1_flash_1017'], timeoutMs: 5, maximumAttemptsPerRoute: 1,
       execute: async (_model, signal) => new Promise((_resolve, reject) => signal.addEventListener('abort', () => reject(new Error('timed out')), { once: true })),
     }), (error: unknown) => {
       const typed = error as { code?: string; message?: string; details?: { failures?: Array<{ kind?: string }> } };
@@ -146,7 +138,7 @@ describe('provider runtime health', () => {
       assert.deepEqual(typed.details?.failures?.map((failure) => failure.kind), ['timeout']);
       return true;
     });
-    const health = getModelRuntimeHealth('deepseek_v4_flash');
+    const health = getModelRuntimeHealth('deepseek_v4_1_flash_1017');
     assert.equal(health.lastFailureKind, 'timeout');
   });
 });

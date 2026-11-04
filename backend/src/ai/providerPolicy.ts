@@ -1,57 +1,43 @@
-/**
- * The canonical coding/research provider split.
- *
- * Command 3 §7 divides providers into two categories with different authority. Coding
- * providers may perform software engineering. Research providers may retrieve external
- * facts and nothing else — they never generate project files, never receive repository
- * mutation tools, and never appear in a coding fallback chain.
- *
- * This module is the single place that answers "may this model write code?". Routing sites
- * import from here rather than re-deriving the answer, so a future model added to the
- * registry is refused by default instead of silently inheriting coding authority.
- *
- * Note on `router.ts`: its non-coding routes assign Grok to a field named `builder`. That
- * is a naming artifact — those branches run only when `classification.requiresCoding` is
- * false, so they are chat/research responders, not engineering. They are left alone
- * deliberately; changing them would break chat and research routing without serving the
- * policy.
- */
+/** Canonical two-model generation policy. Retrieval retains its own authority
+ * and accounting boundary. Historical model records never grant execution. */
 
-import type { ModelId } from './models.js';
+import { assertActiveModelId, ZURELAY_BASE_URL, type ModelId } from './models.js';
+import { getRouterAdminConfig } from './routerConfig.js';
+import { authorityModelSpendLimit } from '../security/authority/enforce.js';
+import type { AuthorityPermit, AuthorityDispatchBinding } from '../security/authority/types.js';
+
+export interface ModelEscalation {
+  reason: 'complex_multifile_debug' | 'prior_verified_failure' | 'deep_security_review' | 'user_requested_complex_work';
+  taskId: string;
+  permit: AuthorityPermit;
+  binding: AuthorityDispatchBinding;
+}
+export function assertModelSelection(modelId: ModelId, maximumCostMicroUsd: number, escalation?: ModelEscalation): void {
+  assertModelEnabled(modelId);
+  if (modelId !== 'claude_sonnet_5_5') return;
+  if (!escalation || !['complex_multifile_debug','prior_verified_failure','deep_security_review','user_requested_complex_work'].includes(escalation.reason)
+    || !escalation.taskId || !Number.isSafeInteger(maximumCostMicroUsd) || maximumCostMicroUsd <= 0
+    || maximumCostMicroUsd > authorityModelSpendLimit(escalation.permit, escalation.binding, escalation.taskId)) {
+    throw Object.assign(new Error('Complex engineering requires a current task-bound Sonnet spending grant.'), { code:'MODEL_DISPATCH_BINDING_DENIED', status:403 });
+  }
+}
+export function assertModelEnabled(modelId: ModelId): void {
+  assertActiveModelId(modelId);
+  const policy = getRouterAdminConfig();
+  if (!policy.allowedModels.includes(modelId) || !policy.enabledProviders.includes('zurelay')) {
+    throw Object.assign(new Error('This model is disabled by execution policy.'), { code:'MODEL_DESTINATION_DENIED', status:400 });
+  }
+}
 
 /**
  * Providers permitted to perform software-engineering work, with their required transport.
  *
- * The map is total over `ModelId`, so adding a generic model without an explicit approved
- * transport is a compile-time error.
+ * Historical ModelId members intentionally have no executable transport.
  */
 export const CODING_MODEL_TRANSPORT = {
-  kimi_k3: 'moonshot',
-  glm_5_3: 'zhipu',
-  glm_5_3_flash: 'zhipu',
-  deepseek_v4_flash: 'openrouter',
-} as const satisfies Record<ModelId, string>;
-
-/**
- * Compile-time proof that every runtime model above is spelled like a real `ModelId`.
- *
- * Unused at runtime and deliberately so: its only job is to fail the build if one of these
- * keys is ever mistyped, which the widened `satisfies` above no longer catches on its own.
- */
-const MODEL_ID_TRANSPORT_COVERAGE: Partial<Record<ModelId, string>> = {
-  kimi_k3:
-    CODING_MODEL_TRANSPORT.kimi_k3,
-
-  glm_5_3:
-    CODING_MODEL_TRANSPORT.glm_5_3,
-
-  glm_5_3_flash:
-    CODING_MODEL_TRANSPORT.glm_5_3_flash,
-
-  deepseek_v4_flash:
-    CODING_MODEL_TRANSPORT.deepseek_v4_flash,
-};
-void MODEL_ID_TRANSPORT_COVERAGE;
+  deepseek_v4_1_flash_1017: 'zurelay',
+  claude_sonnet_5_5: 'zurelay',
+} as const satisfies Partial<Record<ModelId, string>>;
 
 export type CodingModelId = keyof typeof CODING_MODEL_TRANSPORT;
 
@@ -67,7 +53,7 @@ export type ResearchModelId = keyof typeof RESEARCH_MODEL_TRANSPORT;
  * policy tests can assert it explicitly rather than passing because the identifier does
  * not happen to exist — an absence that a future integration could quietly end.
  */
-const CODING_IDS = new Set<string>(Object.keys(CODING_MODEL_TRANSPORT));
+const CODING_IDS = new Set<string>(['deepseek_v4_1_flash_1017', 'claude_sonnet_5_5']);
 const RESEARCH_IDS = new Set<string>(Object.keys(RESEARCH_MODEL_TRANSPORT));
 
 /**
@@ -90,13 +76,21 @@ export function requiredCodingTransport(modelId: string): string | null {
   return isCodingModel(modelId) ? CODING_MODEL_TRANSPORT[modelId] : null;
 }
 
+/** Disabled providers must be denied even when a legacy caller bypasses ranking.
+ * Keep historical model IDs and accounting intact. This grants no routing fallback. */
+export function assertProviderEnabled(provider: string): void {
+  if (provider !== 'zurelay' || !getRouterAdminConfig().enabledProviders.some(enabled => enabled === provider)) {
+    throw Object.assign(new Error('This model provider is disabled by execution policy.'),
+      { code: 'MODEL_DESTINATION_DENIED', status: 400 });
+  }
+}
+
 /** Provider identity binds both its credential namespace and exact API base.
  * This is separate from model-id configuration and cannot be supplied by a prompt. */
 export function assertModelProviderDestination(provider: string, baseUrl: string, secretName?: string): void {
+  assertProviderEnabled(provider);
   const allowed:Record<string,{url:string;secret:string}>={
-    moonshot:{url:'https://api.moonshot.ai/v1',secret:'KIMI_API_KEY'},
-    zhipu:{url:'https://open.bigmodel.cn/api/paas/v4',secret:'GLM_API_KEY'},
-    openrouter:{url:'https://openrouter.ai/api/v1',secret:'OPENROUTER_API_KEY'},
+    zurelay:{url:ZURELAY_BASE_URL,secret:'ZURELAY_API_KEY'},
   };
   const expected=allowed[provider];
   if(!expected||baseUrl!==expected.url||(secretName!==undefined&&secretName!==expected.secret)){

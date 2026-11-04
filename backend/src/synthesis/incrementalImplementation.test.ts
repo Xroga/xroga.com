@@ -54,7 +54,7 @@ function fakeCompletion(
   return fn;
 }
 
-const CANDIDATES = [{ modelId: 'glm_5_3_flash' }, { modelId: 'glm_5_3' }, { modelId: 'kimi_k3' }];
+const CANDIDATES = [{ modelId: 'deepseek_v4_1_flash_1017' }, { modelId: 'claude_sonnet_5_5' }, { modelId: 'deepseek_v4_1_flash_1017' }];
 
 test('candidate lanes serialize one provider while different providers keep useful concurrency', async () => {
   const runCandidate = createCandidateLaneRunner();
@@ -73,20 +73,20 @@ test('candidate lanes serialize one provider while different providers keep usef
     globalActive -= 1;
   });
 
-  await Promise.all([work('glm_5_3_flash'), work('glm_5_3_flash'), work('kimi_k3')]);
-  assert.equal(peak.get('glm_5_3_flash'), 1);
-  assert.equal(peak.get('kimi_k3'), 1);
+  await Promise.all([work('deepseek_v4_1_flash_1017'), work('deepseek_v4_1_flash_1017'), work('claude_sonnet_5_5')]);
+  assert.equal(peak.get('claude_sonnet_5_5'), 1);
+  assert.equal(peak.get('deepseek_v4_1_flash_1017'), 1);
   assert.equal(globalPeak, 2);
 });
 
 test('a concurrent batch is distributed across the approved routes without widening it', () => {
   assert.deepEqual(
     rotateImplementationCandidates(CANDIDATES, 1).map((candidate) => candidate.modelId),
-    ['glm_5_3', 'kimi_k3', 'glm_5_3_flash'],
+    ['claude_sonnet_5_5', 'deepseek_v4_1_flash_1017', 'deepseek_v4_1_flash_1017'],
   );
   assert.deepEqual(
     rotateImplementationCandidates(CANDIDATES, 4).map((candidate) => candidate.modelId),
-    ['glm_5_3', 'kimi_k3', 'glm_5_3_flash'],
+    ['claude_sonnet_5_5', 'deepseek_v4_1_flash_1017', 'deepseek_v4_1_flash_1017'],
   );
   assert.deepEqual(rotateImplementationCandidates([], 9), []);
 });
@@ -99,8 +99,8 @@ test('independent file generation uses conservative bounded concurrency', () => 
   assert.equal(IMPLEMENTATION_FILE_CONCURRENCY, 4);
 });
 
-test('one logical generation unit uses only the primary route and one fallback', () => {
-  assert.equal(MAX_CANDIDATE_ATTEMPTS_PER_UNIT, 2);
+test('one logical generation unit cannot buy an unapproved fallback', () => {
+  assert.equal(MAX_CANDIDATE_ATTEMPTS_PER_UNIT, 1);
 });
 
 test('an explicitly named existing file skips the manifest call and receives its current content', async () => {
@@ -126,53 +126,19 @@ test('an explicitly named existing file skips the manifest call and receives its
   assert.equal(complete.calls.length, 1, 'the exact repository path already determines the change plan');
 });
 
-test('an explicit preserve instruction falls back when a model drops an existing symbol', async () => {
-  const current = { path: 'normalize.py', content: 'def normalize_whitespace(text: str) -> str:\n    return " ".join(text.split())\n' };
-  assert.equal(
-    preservesRequiredSymbols(
-      'Preserve every existing function unchanged.',
-      current,
-      'def normalize_unique_lines(text: str) -> list[str]:\n    return []\n',
-    ),
-    false,
-  );
-
-  const complete = fakeCompletion((model) => ({
-    text: model === 'glm_5_3_flash'
-      ? 'def normalize_unique_lines(text: str) -> list[str]:\n    return []\n'
-      : `${current.content}\ndef normalize_unique_lines(text: str) -> list[str]:\n    return []\n`,
-  }));
-  const files = await implementIncrementally({
-    brief: 'Update only normalize.py. Preserve every existing function unchanged.',
-    candidates: CANDIDATES,
-    existingFiles: [current],
-    complete,
-  });
-
-  assert.match(files[0]!.content, /def normalize_whitespace/);
-  assert.match(files[0]!.content, /def normalize_unique_lines/);
-  assert.deepEqual(complete.calls.map((call) => call.modelId), ['glm_5_3_flash', 'glm_5_3']);
+test('an explicit preserve instruction rejects a dropped symbol without authorizing another model',async()=>{
+  const current={path:'normalize.py',content:'def normalize_whitespace(text):\n    return text\n'};
+  const complete=fakeCompletion(()=>({text:'def replacement():\n    return 1\n'}));
+  await assert.rejects(implementIncrementally({brief:'Update only normalize.py. Preserve every existing function unchanged.',candidates:CANDIDATES,existingFiles:[current],complete}),IncrementalImplementationError);
+  assert.equal(complete.calls.length,1);assert.equal(current.content,'def normalize_whitespace(text):\n    return text\n');
 });
 
-test('raw preservation constraints survive a canonical implementation-plan summary', async () => {
-  const current = { path: 'normalize.py', content: 'def normalize_whitespace(text: str) -> str:\n    return " ".join(text.split())\n' };
-  const complete = fakeCompletion((model) => ({
-    text: model === 'glm_5_3_flash'
-      ? 'def normalize_unique_lines(text: str) -> list[str]:\n    return []\n'
-      : `${current.content}\ndef normalize_unique_lines(text: str) -> list[str]:\n    return []\n`,
-  }));
-
-  const files = await implementIncrementally({
-    brief: 'Modify the normalization utility according to the accepted plan.',
-    originalRequest: 'Update only normalize.py. Preserve every existing function unchanged.',
-    candidates: CANDIDATES,
-    existingFiles: [current],
-    complete,
-  });
-
-  assert.match(files[0]!.content, /def normalize_whitespace/);
-  assert.deepEqual(complete.calls.map((call) => call.modelId), ['glm_5_3_flash', 'glm_5_3']);
-  assert.match(complete.calls[0]!.user, /Preserve every existing function unchanged/);
+test('raw preservation constraints reach the selected model and a valid change retains the original symbol',async()=>{
+  const current={path:'normalize.py',content:'def normalize_whitespace(text):\n    return text\n'};
+  const complete=fakeCompletion(()=>({text:current.content+'\ndef normalize_unique_lines(text):\n    return text\n'}));
+  const files=await implementIncrementally({brief:'Modify the normalization utility according to the accepted plan.',originalRequest:'Update only normalize.py. Preserve every existing function unchanged.',candidates:CANDIDATES,existingFiles:[current],complete});
+  assert.match(files[0].content,/def normalize_whitespace/);assert.match(files[0].content,/def normalize_unique_lines/);
+  assert.equal(complete.calls.length,1);assert.match(complete.calls[0].user,/Preserve every existing function unchanged/);
 });
 
 test('existing-file matching uses path boundaries and never guesses unknown files', () => {
@@ -219,44 +185,21 @@ test('each file call names only the file it must write', async () => {
   assert.match(fileCalls[0]!.user, /src\/main\.rs — entry point/);
 });
 
-test('a truncated file falls back to the next model rather than losing the project', async () => {
-  // The exact production failure, now costing one call instead of everything.
-  const complete = fakeCompletion((modelId, system) => {
-    if (system.includes('planning the file list')) return { text: PLAN };
-    if (modelId === 'glm_5_3_flash') return { text: 'fn main() { prin', finishReason: 'length' };
-    return { text: 'fn main() {}' };
-  });
-
-  const files = await implementIncrementally({ brief: 'b', candidates: CANDIDATES, complete });
-  assert.equal(files.length, 3);
-  for (const file of files) assert.equal(file.content, 'fn main() {}');
+test('a truncated file stops generation without accepting partial source or substituting a model',async()=>{
+  const complete=fakeCompletion((_model,system)=>system.includes('planning the file list')?{text:PLAN}:{text:'fn main() { prin',finishReason:'length'});
+  await assert.rejects(implementIncrementally({brief:'b',candidates:CANDIDATES,complete}),IncrementalImplementationError);
+  assert.ok(complete.calls.every(c=>c.modelId==='deepseek_v4_1_flash_1017'));
 });
 
-test('an unavailable provider is quarantined for the rest of one implementation run', async () => {
-  const quarantinedPlan = JSON.stringify({
-    files: Array.from({ length: IMPLEMENTATION_FILE_CONCURRENCY + 1 }, (_, index) => ({
-      path: `src/file-${index}.ts`,
-      purpose: `unit ${index}`,
-    })),
-  });
-  const complete = fakeCompletion((modelId, system) => {
-    if (system.includes('planning the file list')) return { text: quarantinedPlan };
-    if (modelId === 'glm_5_3_flash') throw new Error('provider temporarily unavailable');
-    return { text: 'file body' };
-  });
-
-  const files = await implementIncrementally({ brief: 'b', candidates: CANDIDATES, complete });
-  assert.equal(files.length, IMPLEMENTATION_FILE_CONCURRENCY + 1);
-  const unavailableCalls = complete.calls.filter((call) => call.modelId === 'glm_5_3_flash');
-  assert.ok(unavailableCalls.length >= 2 && unavailableCalls.length <= IMPLEMENTATION_FILE_CONCURRENCY + 1);
-  assert.equal(
-    unavailableCalls.some((call) => call.user.includes(`Write exactly this one file: src/file-${IMPLEMENTATION_FILE_CONCURRENCY}.ts`)),
-    false,
-    'a later batch must skip the provider quarantined by the first concurrent batch',
-  );
+test('an unavailable selected provider cannot send a later batch or purchase an alternate model',async()=>{
+  const plan=JSON.stringify({files:Array.from({length:IMPLEMENTATION_FILE_CONCURRENCY+1},(_,i)=>({path:'src/file-'+i+'.ts',purpose:'unit'}))});
+  const complete=fakeCompletion((_model,system)=>{if(system.includes('planning the file list'))return{text:plan};throw Object.assign(new Error('provider temporarily unavailable'),{status:503});});
+  await assert.rejects(implementIncrementally({brief:'b',candidates:CANDIDATES,complete}),IncrementalImplementationError);
+  assert.ok(complete.calls.every(c=>c.modelId==='deepseek_v4_1_flash_1017'));
+  assert.equal(complete.calls.some(c=>c.user.includes('Write exactly this one file: src/file-'+IMPLEMENTATION_FILE_CONCURRENCY+'.ts')),false);
 });
 
-test('two independent files are generated concurrently while result order stays deterministic', async () => {
+test('files sharing the selected model retain its conservative lane and deterministic order', async () => {
   let active = 0;
   let peak = 0;
   const complete = (async (_modelId: string, messages: ChatMessage[]) => {
@@ -274,30 +217,16 @@ test('two independent files are generated concurrently while result order stays 
   }) as CompletionFn;
 
   const files = await implementIncrementally({ brief: 'b', candidates: CANDIDATES, complete });
-  assert.equal(peak, Math.min(PLAN_FILE_COUNT, IMPLEMENTATION_FILE_CONCURRENCY));
+  assert.equal(peak, 1);
   assert.deepEqual(files.map((file) => file.path), ['Cargo.toml', 'src/main.rs', 'README.md']);
   assert.deepEqual(files.map((file) => file.content), ['Cargo.toml', 'src/main.rs', 'README.md']);
 });
 
-test('a failure names the file and both bounded model attempts', async () => {
-  const complete = fakeCompletion((modelId, system) => {
-    if (system.includes('planning the file list')) return { text: PLAN };
-    if (modelId === 'glm_5_3_flash') return { text: '', finishReason: 'length' };
-    if (modelId === 'glm_5_3') return { text: '   ' };
-    return { text: '' };
+test('a failure names the selected file and bounded attempt without a hidden alternate',async()=>{
+  const complete=fakeCompletion((_model,system)=>system.includes('planning the file list')?{text:PLAN}:{text:'',finishReason:'length'});
+  await assert.rejects(implementIncrementally({brief:'b',candidates:CANDIDATES,complete}),(error:unknown)=>{
+    assert.ok(error instanceof IncrementalImplementationError);assert.match(error.message,/file Cargo\.toml/);assert.match(error.message,/deepseek_v4_1_flash_1017 was cut off/);assert.doesNotMatch(error.message,/claude_sonnet/);return true;
   });
-
-  await assert.rejects(
-    implementIncrementally({ brief: 'b', candidates: CANDIDATES, complete }),
-    (error: unknown) => {
-      assert.ok(error instanceof IncrementalImplementationError);
-      assert.match(error.message, /file Cargo\.toml/);
-      assert.match(error.message, /glm_5_3_flash was cut off/);
-      assert.match(error.message, /glm_5_3/);
-      assert.doesNotMatch(error.message, /kimi_k3/, 'a third route must not extend one file past its bounded fallback');
-      return true;
-    },
-  );
 });
 
 test('a partial project is never returned', async () => {
@@ -361,16 +290,10 @@ test('repair responses cannot add files, widen past the cap, or drop existing de
   assert.deepEqual(parseRepairFiles('{"files":[{"path":"module.py","content":"def replacement():\\n    return 2"}]}', existing), []);
 });
 
-test('an unusable plan falls back before any file is attempted', async () => {
-  const complete = fakeCompletion((modelId, system) => {
-    if (!system.includes('planning the file list')) return { text: 'body' };
-    return modelId === 'glm_5_3_flash' ? { text: 'not json at all' } : { text: PLAN };
-  });
-
-  const files = await implementIncrementally({ brief: 'b', candidates: CANDIDATES, complete });
-  assert.equal(files.length, 3);
-  assert.equal(complete.calls[0]!.modelId, 'glm_5_3_flash');
-  assert.equal(complete.calls[1]!.modelId, 'glm_5_3');
+test('an unusable plan stops before any file or unapproved alternate is attempted',async()=>{
+  const complete=fakeCompletion(()=>({text:'not json at all'}));
+  await assert.rejects(implementIncrementally({brief:'b',candidates:CANDIDATES,complete}),IncrementalImplementationError);
+  assert.equal(complete.calls.length,1);assert.equal(complete.calls[0].modelId,'deepseek_v4_1_flash_1017');
 });
 
 test('one unsafe path rejects the whole plan rather than being filtered out', () => {

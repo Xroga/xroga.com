@@ -1,0 +1,112 @@
+{
+  "version": "1.0",
+  "missionId": "RESPONSE-V2-RICH-SHARE-BACKEND-20261102",
+  "baseSha": "93474a05881c8ff171fc9ae371ef04d76a780ff3",
+  "requirementIds": [
+    "XR-MISSION-054",
+    "XR-MISSION-055"
+  ],
+  "state": "IN_PROGRESS",
+  "risk": "high",
+  "scope": "Backward-compatible text projection of read-only rich Share snapshots, explicit current-membership guidance in the existing model request, and enforcement of existing operator provider/model restrictions during planner selection. No new endpoint, SQL, model request, production routing configuration or accounting change.",
+  "changedFiles": [
+    "backend/src/ai/prompts.ts",
+    "backend/src/ai/richResponsePrompt.test.ts",
+    "backend/src/lib/richShareSnapshot.ts",
+    "backend/src/lib/richShareSnapshot.test.ts",
+    "backend/src/routes/messageShares.ts",
+    "backend/src/security/tenantIsolation.local.integration.ts",
+    "docs/xroga/evidence/response-v2-rich-share/source-review.json",
+    "backend/src/ai/universal/semanticRequestPlanner.ts",
+    "backend/src/ai/universal/semanticRequestPlanner.test.ts"
+  ],
+  "decisions": {
+    "keep": [
+      "Existing Share ownership, explicit visibility, revocation, size limits and database",
+      "Current API/Job pair, microphone, model ledger and recovery assets"
+    ],
+    "extend": [
+      "Read-only rich snapshot projection and current-membership answer guidance"
+    ],
+    "replace": [],
+    "deprecate": []
+  },
+  "schemaImpact": {
+    "changed": false,
+    "migrations": [],
+    "rollout": "No schema migration. Existing text column stores the bounded snapshot.",
+    "rollback": "Retain snapshots and the compatible frontend decoder. Restore the reviewed paired release without deleting data."
+  },
+  "securityImpact": {
+    "auth": {
+      "changed": false,
+      "description": "Verified identity and private-share owner checks are unchanged."
+    },
+    "tenant": {
+      "changed": false,
+      "description": "Persistence expressions and cross-tenant denial are preserved and regression tested."
+    },
+    "approval": {
+      "changed": false,
+      "description": "No new action authority. Exact-source production release remains separately controlled."
+    },
+    "credentials": {
+      "changed": false,
+      "description": "No credential access or transfer is added."
+    },
+    "egress": {
+      "changed": false,
+      "description": "No new transport or destination. Snapshot content is selected through existing Share visibility controls."
+    },
+    "cost": {
+      "changed": true,
+      "description": "The planner now honors existing disabled-provider and allowed-model controls before selecting a hedge. No production configuration, reservation amount, paid call, service or infrastructure is changed."
+    },
+    "billing": {
+      "changed": false,
+      "description": "Unknown GLM reservation remains held and no financial-history mutation is performed."
+    }
+  },
+  "tests": [
+    {
+      "command": "node --import tsx --test backend/src/lib/richShareSnapshot.test.ts backend/src/ai/richResponsePrompt.test.ts",
+      "scope": "Literal legacy fallback, bounded snapshot projection and current-membership guidance",
+      "negative": true,
+      "reference": "backend/src/lib/richShareSnapshot.test.ts"
+    },
+    {
+      "command": "existing isolated authenticated CI",
+      "scope": "Actual private Share persistence, owner-only read, foreign-tenant denial and revocation",
+      "negative": true,
+      "reference": "backend/src/security/tenantIsolation.local.integration.ts"
+    }
+  ],
+  "architecture": {
+    "change": "extends_canonical",
+    "reason": "Existing Share storage and model request are extended. No scheduler, API or persistence system is added.",
+    "rfc": null
+  },
+  "rollout": "Require exact-source CI, authenticated staging evidence and source-pinned paired release approval. Preserve the serving f803 pair until acceptance.",
+  "rollback": "Use the existing guarded API/Job recovery process with a compatible frontend. Preserve all stored response data and the legacy renderer.",
+  "knownGaps": [
+    "Fresh corrected-model acceptance is not established by prompt or unit tests.",
+    "Unknown GLM usage still blocks further paid acceptance under the existing package.",
+    "No production deployment of this source has occurred."
+  ],
+  "placeholderClaimsRemaining": [],
+  "evidenceRefs": [
+    "docs/xroga/evidence/response-v2-rich-share/source-review.json"
+  ],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "BLOCKED",
+    "blockers": [
+      "Exact-source CI, live rich Share acceptance, corrected new-answer acceptance and reviewed release approval are pending."
+    ],
+    "authenticatedE2e": "BLOCKED",
+    "stagedSecurity": "BLOCKED",
+    "liveUrl": null,
+    "deployedSha": null
+  }
+}

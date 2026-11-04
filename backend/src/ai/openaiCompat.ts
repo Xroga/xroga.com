@@ -3,19 +3,24 @@ import { isDeepStrictEqual } from 'node:util';
 import { getSecret } from '../config/envSecrets.js';
 import {
   MODELS,
-  OPENROUTER_BASE_URL,
+  ACTIVE_MODEL_IDS,
+  assertActiveModelId,
   modelConfigurationIssues,
   resolveModelSpec,
   type ModelId,
 } from './models.js';
 import { recordModelExecution } from './providerRuntime.js';
-import { ProviderPolicyError, requiredCodingTransport, assertModelProviderDestination } from './providerPolicy.js';
-import { withTemperatureFallback } from './temperatureCompat.js';
+import { ProviderPolicyError, requiredCodingTransport, assertModelProviderDestination, assertModelEnabled } from './providerPolicy.js';
 import {containsCredentialSecretText} from '../security/egress/dataClassification.js';
 import {publicHttpsUrl} from '../security/egress/urlPolicy.js';
 import {requireModelSdkAdmission,modelAdmissionDenied,MODEL_REDIRECT_AFTER_DISPATCH} from './modelSdkAdmission.js';
 import {DEFAULT_BUILDER_BUDGET} from './builderAttempt.js';
-import { CompletionDiagnostics, requirePublicCompletion, providerCostMicroUsd } from './completionDiagnostics.js';
+import { CompletionDiagnostics, requirePublicCompletion } from './completionDiagnostics.js';
+import type { PresentationResponseFormat } from './responsePresentation.js';
+import { validateZurelayRequest, verifyZurelayResponse } from './zurelayWire.js';
+
+// No compatibility retry can replay a possibly charged request.
+const withProviderTemperature = <T>(temperature: number | undefined, execute: (value: number | undefined) => Promise<T>) => execute(temperature);
 
 export type ContentPart =
   | { type: 'text'; text: string }
@@ -45,6 +50,8 @@ export interface ChatResult {
   provider: string;
   inputTokens: number;
   outputTokens: number;
+  cachedInputTokens?: number;
+  reasoningTokens?: number;
   totalTokens: number;
   providerRequestId?: string;
 }
@@ -56,39 +63,34 @@ interface ResolvedEndpoint {
   provider: string;
   defaultHeaders?: Record<string, string>;
 }
+const transportReceipts = new WeakMap<object, {requestId:string;model:string}>();
+export function modelTransportReceipt(endpoint: ResolvedEndpoint): {requestId:string;model:string} {
+  const receipt=transportReceipts.get(endpoint);
+  if (!receipt || receipt.model !== endpoint.apiModel) throw Object.assign(new Error('Provider receipt is unavailable.'), {code:'POST_COMPLETION_ACCOUNTING_UNCERTAIN',retryable:false});
+  return {...receipt};
+}
 
 export type ReasoningMode = 'default' | 'none';
 
-/**
- * Provider-supported controls for calls that need direct public output rather than a
- * long hidden reasoning phase. Keep this explicit and provider-scoped: forwarding an
- * invented compatibility parameter to Moonshot (or another provider) can turn a healthy
- * fallback into a 400 response.
- */
+/** Documented Zurelay nonthinking mode for compact DeepSeek output. Sonnet
+ * cannot disable thinking with `none`, so never send it for that model. */
 export function providerReasoningControls(
   provider: string,
   mode: ReasoningMode = 'default',
+  modelId?: ModelId,
 ): Record<string, unknown> {
-  if (mode === 'default') return {};
-  if (provider === 'zhipu') {
-    return { thinking: { type: 'disabled' } };
-  }
-  if (provider === 'openrouter') {
-    return { reasoning: { effort: 'none', exclude: true } };
-  }
+  if(provider==='zurelay' && mode==='none' && modelId==='deepseek_v4_1_flash_1017')return {reasoning_effort:'none'};
   return {};
 }
 
 export function providerPriceControls(modelId: ModelId, provider: string): Record<string, unknown> {
-  if (provider !== 'openrouter' || modelId !== 'deepseek_v4_flash') return {};
-  const model = MODELS[modelId];
-  return { provider: { max_price: { prompt: model.inputUsdPer1M, completion: model.outputUsdPer1M, request: 0 }, require_parameters: true } };
+  return {};
 }
 
 /** Verify controls on the serialized request before any provider bytes leave. */
 export function assertProviderControls(wireBody: string, modelId: ModelId, provider: string, mode?: ReasoningMode): void {
   const wire = JSON.parse(wireBody) as Record<string, unknown>;
-  const expected = { ...providerPriceControls(modelId, provider), ...providerReasoningControls(provider, mode) };
+  const expected = { ...providerPriceControls(modelId, provider), ...providerReasoningControls(provider, mode,modelId) };
   for (const [key, value] of Object.entries(expected)) if (!isDeepStrictEqual(wire[key], value)) modelAdmissionDenied();
 }
 
@@ -122,21 +124,9 @@ export class ModelNotConfiguredError extends Error {
   }
 }
 
-function openRouterHeaders(): Record<string, string> {
-  const referer = process.env.FRONTEND_URL || 'https://xroga.com';
-  return {
-    'HTTP-Referer': referer,
-    'X-Title': 'Xroga AI Swarm',
-  };
-}
-
-/**
- * Resolve API endpoint for a model.
- * - DeepSeek → OpenRouter ONLY (OPENROUTER_API_KEY)
- * - Kimi → Moonshot official (KIMI_API_KEY)
- * - GLM → Zhipu official (GLM_API_KEY)
- */
 export function resolveEndpoint(modelId: ModelId, credentialOverride?: string): ResolvedEndpoint {
+  assertActiveModelId(modelId);
+  assertModelEnabled(modelId);
   const def = MODELS[modelId];
 
   // §7's transport binding, enforced rather than described.
@@ -179,23 +169,6 @@ export function resolveEndpoint(modelId: ModelId, credentialOverride?: string): 
   }
   const apiModel = spec.apiModel;
 
-  if (def.provider === 'openrouter') {
-    const orKey = credentialOverride?.trim() || getSecret('OPENROUTER_API_KEY');
-    if (!orKey) {
-      throw new Error(
-        `OPENROUTER_API_KEY is not configured (required for ${apiModel}). ` +
-          'DeepSeek runs only via OpenRouter — DEEPSEEK_API_KEY is not used.',
-      );
-    }
-    return {
-      apiKey: orKey,
-      baseUrl: OPENROUTER_BASE_URL,
-      apiModel,
-      provider: 'openrouter',
-      defaultHeaders: openRouterHeaders(),
-    };
-  }
-
   const apiKey = credentialOverride?.trim() || getSecret(def.secretKey);
   if (!apiKey) {
     throw new Error(`${def.secretKey} is not configured on the server`);
@@ -220,19 +193,29 @@ export function createModelProviderClient(endpoint: ResolvedEndpoint,beforeDispa
     apiKey: endpoint.apiKey,
     baseURL: endpoint.baseUrl,
     timeout: 180_000,
-    maxRetries: 1,
-    defaultHeaders: endpoint.defaultHeaders,
+    maxRetries: 0,
+    defaultHeaders: { ...endpoint.defaultHeaders, 'x-zurelay-fallback': 'off' },
     fetch:async (input,init)=>{
       const url=new URL(typeof input==='string'?input:'url' in input?input.url:input.href);
       if(url.href!==endpoint.baseUrl+'/chat/completions'||init?.method?.toUpperCase()!=='POST'||typeof init.body!=='string')return deniedResponse('MODEL_DESTINATION_DENIED');
-      try { await beforeDispatch?.(init.body); }
+      // Recheck at every wire attempt, including SDK retries and clients created
+      // before an operator disabled the provider. Never send those bytes first.
+      try { assertModelProviderDestination(endpoint.provider,endpoint.baseUrl); }
+      catch { return deniedResponse('MODEL_DESTINATION_DENIED'); }
+      try {
+        if (!beforeDispatch) modelAdmissionDenied();
+        validateZurelayRequest(JSON.parse(init.body), endpoint.apiModel);
+        await beforeDispatch(init.body);
+      }
       catch {
         // Let the SDK preserve the local policy code, rather than wrapping a
         // thrown fetch error as a retryable/uncertain provider connection error.
         return deniedResponse('MODEL_DISPATCH_BINDING_DENIED');
       }
+      const headers = new Headers(init.headers as Record<string, string>);
+      headers.set('x-zurelay-fallback', 'off');
       const response=await globalThis.fetch(url,{method:'POST',body:init.body,
-        headers:init.headers as NonNullable<Parameters<typeof fetch>[1]>['headers'],signal:init.signal as AbortSignal|undefined,redirect:'manual'});
+        headers,signal:init.signal as AbortSignal|undefined,redirect:'manual'});
       if(response.redirected||(response.status>=300&&response.status<400)){
         await response.body?.cancel().catch(()=>undefined);
         return deniedResponse('MODEL_DESTINATION_DENIED',true);
@@ -241,7 +224,18 @@ export function createModelProviderClient(endpoint: ResolvedEndpoint,beforeDispa
       // its chat JSON/SSE parser consumes the standard Response surface. Keep
       // this Node22 interoperability cast at the transport boundary and test
       // both actual SDK parsers, rather than invent those methods or metadata.
-      return response as unknown as Awaited<ReturnType<NonNullable<ClientOptions['fetch']>>>;
+      try {
+        const verified = await verifyZurelayResponse(response, endpoint.apiModel, JSON.parse(init.body).stream === true);
+        if (verified.ok) {
+          const requestId=verified.headers.get('x-request-id')!;
+          if (containsCredentialSecretText(requestId) || (endpoint.apiKey.length >= 8 && requestId.includes(endpoint.apiKey))) throw Error('Invalid trace');
+          transportReceipts.set(endpoint,{requestId,model:endpoint.apiModel});
+        }
+        return verified as unknown as Awaited<ReturnType<NonNullable<ClientOptions['fetch']>>>;
+      } catch {
+        await response.body?.cancel().catch(() => undefined);
+        return deniedResponse('MODEL_DESTINATION_DENIED', true);
+      }
     },
   });
 }
@@ -287,6 +281,7 @@ export async function chatCompletion(
     maxTokens?: number;
     temperature?: number;
     json?: boolean;
+    responseFormat?: PresentationResponseFormat;
     /** Provider-specific reasoning control for compact structured workloads. */
     reasoningMode?: ReasoningMode;
     signal?: AbortSignal;
@@ -295,30 +290,34 @@ export async function chatCompletion(
   } = {},
 ): Promise<ChatResult> {
   const started = Date.now();
-  opts={...opts};
+  opts={...opts,...(opts.responseFormat ? {responseFormat:structuredClone(opts.responseFormat)} : {})};
   try {
     const admission=requireModelSdkAdmission(opts.beforeDispatch,modelId,opts.credentialOverride);
     const checkCancellation=()=>{if(opts.signal?.aborted)throw Object.assign(Error('Build cancelled'),{name:'AbortError',code:'BUILD_CANCELLED'});};
     checkCancellation();
     const endpoint = resolveEndpoint(modelId, opts.credentialOverride);
+    const responseFormat = opts.responseFormat
+      ? process.env.ZURELAY_JSON_SCHEMA_VERIFIED === '1' ? opts.responseFormat : { type: 'json_object' as const }
+      : opts.json ? { type: 'json_object' as const } : undefined;
     messages=snapshotModelEgressPayload(messages,endpoint.apiKey);
     const client = createModelProviderClient(endpoint,async wire=>{
       checkCancellation();
       const current=resolveEndpoint(modelId,opts.credentialOverride);
       if(current.apiKey!==endpoint.apiKey||current.baseUrl!==endpoint.baseUrl||current.apiModel!==endpoint.apiModel||current.provider!==endpoint.provider)modelAdmissionDenied();
       assertProviderControls(wire,modelId,endpoint.provider,opts.reasoningMode);
+      if(!isDeepStrictEqual(JSON.parse(wire).response_format,responseFormat))modelAdmissionDenied();
       await opts.beforeDispatch!(wire);checkCancellation();
     });
-    const completion = await withTemperatureFallback(opts.temperature ?? 0.4, (temperature) =>
+    const completion = await withProviderTemperature(modelId === 'claude_sonnet_5_5' ? undefined : opts.temperature ?? 0.4, (temperature) =>
       client.chat.completions.create(
         {
           model: endpoint.apiModel,
           messages: messages as OpenAI.Chat.ChatCompletionMessageParam[],
           max_tokens: opts.maxTokens ?? 8192,
           ...(temperature === undefined ? {} : { temperature }),
-          ...providerReasoningControls(endpoint.provider, opts.reasoningMode),
+          ...providerReasoningControls(endpoint.provider, opts.reasoningMode,modelId),
           ...providerPriceControls(modelId, endpoint.provider),
-          ...(opts.json ? { response_format: { type: 'json_object' as const } } : {}),
+          ...(responseFormat ? { response_format: responseFormat } : {}),
         },
         opts.signal ? { signal: opts.signal } : undefined,
       ),
@@ -345,8 +344,9 @@ export async function chatCompletion(
       inputTokens,
       outputTokens,
       totalTokens: inputTokens + outputTokens,
-      providerRequestId: completion.id,
-      ...(endpoint.provider === 'openrouter' ? { providerCostMicroUsd: providerCostMicroUsd(completion.usage) } : {}),
+      cachedInputTokens: completion.usage?.prompt_tokens_details?.cached_tokens ?? 0,
+      reasoningTokens: completion.usage?.completion_tokens_details?.reasoning_tokens ?? 0,
+      providerRequestId: modelTransportReceipt(endpoint).requestId,
     };
     admission.complete(result,()=>{},checkCancellation);
     return Object.freeze(result);
@@ -369,24 +369,29 @@ export async function chatCompletionStream(
     reasoningMode?: ReasoningMode;
     /** Ask the compatible endpoint to constrain the response to one JSON object. */
     json?: boolean;
+    responseFormat?: PresentationResponseFormat;
     signal?: AbortSignal;
     credentialOverride?: string;
     beforeDispatch?: (wireBody:string)=>Promise<void>;
   } = {},
 ): Promise<ChatResult> {
   const started = Date.now();
-  opts={...opts};
+  opts={...opts,...(opts.responseFormat ? {responseFormat:structuredClone(opts.responseFormat)} : {})};
   try {
     const admission=requireModelSdkAdmission(opts.beforeDispatch,modelId,opts.credentialOverride);
     const checkCancellation=()=>{if(opts.signal?.aborted)throw Object.assign(Error('Build cancelled'),{name:'AbortError',code:'BUILD_CANCELLED'});};
     checkCancellation();
     const endpoint = resolveEndpoint(modelId, opts.credentialOverride);
+    const responseFormat = opts.responseFormat
+      ? process.env.ZURELAY_JSON_SCHEMA_VERIFIED === '1' ? opts.responseFormat : { type: 'json_object' as const }
+      : opts.json ? { type: 'json_object' as const } : undefined;
     messages=snapshotModelEgressPayload(messages,endpoint.apiKey);
     const client = createModelProviderClient(endpoint,async wire=>{
       checkCancellation();
       const current=resolveEndpoint(modelId,opts.credentialOverride);
       if(current.apiKey!==endpoint.apiKey||current.baseUrl!==endpoint.baseUrl||current.apiModel!==endpoint.apiModel||current.provider!==endpoint.provider)modelAdmissionDenied();
       assertProviderControls(wire,modelId,endpoint.provider,opts.reasoningMode);
+      if(!isDeepStrictEqual(JSON.parse(wire).response_format,responseFormat))modelAdmissionDenied();
       await opts.beforeDispatch!(wire);checkCancellation();
     });
     if (opts.signal?.aborted) {
@@ -394,19 +399,18 @@ export async function chatCompletionStream(
       err.code = 'BUILD_CANCELLED';
       throw err;
     }
-    // Some models refuse any temperature but their own default and answer 400.
-    // Retry once without the parameter rather than losing the run to it.
-    const stream = await withTemperatureFallback(opts.temperature ?? 0.4, (temperature) =>
+    // Sonnet accepts only its default temperature. Never retry a charged request.
+    const stream = await withProviderTemperature(modelId === 'claude_sonnet_5_5' ? undefined : opts.temperature ?? 0.4, (temperature) =>
       client.chat.completions.create(
         {
           model: endpoint.apiModel,
           messages: messages as OpenAI.Chat.ChatCompletionMessageParam[],
           max_tokens: opts.maxTokens ?? 8192,
           ...(temperature === undefined ? {} : { temperature }),
-          ...providerReasoningControls(endpoint.provider, opts.reasoningMode),
+          ...providerReasoningControls(endpoint.provider, opts.reasoningMode,modelId),
           ...providerPriceControls(modelId, endpoint.provider),
-          ...(endpoint.provider === 'openrouter' ? { stream_options: { include_usage: true } } : {}),
-          ...(opts.json ? { response_format: { type: 'json_object' as const } } : {}),
+          stream_options: { include_usage: true },
+          ...(responseFormat ? { response_format: responseFormat } : {}),
           stream: true,
         } as OpenAI.Chat.ChatCompletionCreateParamsStreaming,
         opts.signal ? { signal: opts.signal } : undefined,
@@ -415,16 +419,14 @@ export async function chatCompletionStream(
 
     let text = '';
     const diagnostics = new CompletionDiagnostics();
-    let providerRequestId: string | undefined;
     let finishReason: string | null = null;
     let inputTokens = messages.reduce((sum, m) => sum + contentTokenEstimate(m.content), 0);
     let outputTokens = 0;
-    let chargedMicroUsd: number | undefined;
+    let cachedInputTokens = 0, reasoningTokens = 0;
 
     try {
     for await (const chunk of stream) {
       diagnostics.observe(chunk, true);
-      providerRequestId ??= chunk.id;
       if (opts.signal?.aborted) {
         const err = new Error('Build cancelled') as Error & { code?: string };
         err.code = 'BUILD_CANCELLED';
@@ -454,7 +456,8 @@ export async function chatCompletionStream(
       if (chunk.usage) {
         inputTokens = chunk.usage.prompt_tokens ?? inputTokens;
         outputTokens = chunk.usage.completion_tokens ?? outputTokens;
-        if (endpoint.provider === 'openrouter') chargedMicroUsd = providerCostMicroUsd(chunk.usage) ?? chargedMicroUsd;
+        cachedInputTokens = chunk.usage.prompt_tokens_details?.cached_tokens ?? 0;
+        reasoningTokens = chunk.usage.completion_tokens_details?.reasoning_tokens ?? 0;
       }
     }
     } catch (error) {
@@ -475,8 +478,9 @@ export async function chatCompletionStream(
       inputTokens,
       outputTokens,
       totalTokens: inputTokens + outputTokens,
-      providerRequestId,
-      providerCostMicroUsd: chargedMicroUsd,
+      cachedInputTokens,
+      reasoningTokens,
+      providerRequestId: modelTransportReceipt(endpoint).requestId,
     };
     admission.complete(result,()=>opts.onDelta?.(text),checkCancellation);
     return Object.freeze(result);
@@ -509,18 +513,14 @@ export function estimateMessageTokens(messages: ChatMessage[]): number {
 
 export function modelKeyStatus(): Record<string, boolean> {
   return {
-    OPENROUTER_API_KEY: Boolean(getSecret('OPENROUTER_API_KEY')),
-    KIMI_API_KEY: Boolean(getSecret('KIMI_API_KEY')),
-    GLM_API_KEY: Boolean(getSecret('GLM_API_KEY')),
-    XAI_API_KEY: Boolean(getSecret('XAI_API_KEY')),
-    DEEPSEEK_VIA_OPENROUTER: Boolean(getSecret('OPENROUTER_API_KEY')),
+    ZURELAY_API_KEY: Boolean(getSecret('ZURELAY_API_KEY')),
   };
 }
 
 /** Which transport each model will use with current env */
 export function modelTransportStatus(): Record<string, string> {
   const out: Record<string, string> = {};
-  for (const id of Object.keys(MODELS) as ModelId[]) {
+  for (const id of ACTIVE_MODEL_IDS) {
     try {
       const ep = resolveEndpoint(id);
       out[id] = `${ep.provider}:${ep.apiModel}`;

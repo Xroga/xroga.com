@@ -6,6 +6,11 @@ import {requireOptionalOwnedDatabaseProject} from '../security/ownership.js';
 import {verifyAttachedGoogleIdentity} from '../synthesis/projectRuntime/googleFactory.js';
 import {type GoogleDispatchConfiguration,GoogleDispatchError,validateGoogleDispatchConfiguration} from './googleDispatch.js';
 import type {ChatAttachment} from '../ai/attachments.js';
+import {QUEUED_RUN_TTL_MS} from '../ai/runReconciler.js';
+import {selectFairly} from './fairSelection.js';
+
+/** Deliveries offered to the dispatcher per tick, and how many eligible rows are read to choose them from. */
+const DISPATCH_BATCH=10,DISCOVERY_WINDOW=100;
 
 export interface CanonicalQueuedInput {
   prompt:string;
@@ -15,6 +20,8 @@ export interface CanonicalQueuedInput {
   attachments?:ChatAttachment[];
   /** AI Product Builder project this run builds into. Ownership is re-verified by the worker before any run opens. */
   builderProjectId?:string;
+  /** Existing-project change this run executes. Ownership and the change-to-run link are re-verified by the worker before anything runs. */
+  existingSourceChangeId?:string;
 }
 export interface CanonicalDeliveryClaim {readonly deliveryId:string;readonly runId:string;readonly userId:string;readonly workerId:string;readonly generation:string;}
 const issuedClaims=new WeakMap<object,{input:CanonicalQueuedInput;context:TenantContext}>();
@@ -35,10 +42,11 @@ export class GoogleDeliveryStore {
   async enqueue(context:TenantContext,runId:string,value:CanonicalQueuedInput):Promise<string>{
     const actor=requireTenantContext(context);if(!uuid.test(runId)||!value.prompt.trim())return denied();
     if(value.builderProjectId!==undefined&&!uuid.test(value.builderProjectId))return denied();
+    if(value.existingSourceChangeId!==undefined&&!uuid.test(value.existingSourceChangeId))return denied();
     const client=getTenantSupabaseAdmin(actor);
     const projectId=await requireOptionalOwnedDatabaseProject(actor,value.projectId,client);
     const input:CanonicalQueuedInput=structuredClone({prompt:value.prompt,history:value.history,projectId,clientMeta:value.clientMeta,attachments:value.attachments,
-      builderProjectId:value.builderProjectId});
+      builderProjectId:value.builderProjectId,existingSourceChangeId:value.existingSourceChangeId});
     // Canonical JSON omits undefined values before comparing durable requests.
     const payload=JSON.parse(JSON.stringify(input));
     if(Buffer.byteLength(JSON.stringify(payload))>500000)return denied();
@@ -61,11 +69,17 @@ export class GoogleDeliveryStore {
     if(error||data!==true)return denied();
   }
   async pendingDeliveryIds():Promise<string[]>{
-    const {data,error}=await this.service().from('google_canonical_deliveries').select('id')
-      .eq('state','pending').eq('source_sha',this.c.sourceSha)
-      .gte('created_at',new Date(Date.now()-4*60*1000).toISOString()).order('created_at',{ascending:true}).limit(10);
+    const nowMs=Date.now();
+    const {data,error}=await this.service().from('google_canonical_deliveries').select('id,user_id,created_at')
+      .eq('source_sha',this.c.sourceSha)
+      // Keep the bounded selection aligned with the reconciler's queued-run wait. A launch whose lease expired with an unknown outcome is
+      // retried under the database's own five-attempt ceiling. The dispatcher still requires the database reservation and native identity.
+      .gte('created_at',new Date(nowMs-QUEUED_RUN_TTL_MS).toISOString()).lt('launch_attempts',5)
+      .or(`state.eq.pending,and(state.eq.launching,launch_lease_until.lt.${new Date(nowMs).toISOString()})`)
+      .order('created_at',{ascending:true}).limit(DISCOVERY_WINDOW);
     if(error||!Array.isArray(data)||data.some(row=>!uuid.test(row.id)))return denied();
-    return data.map(row=>row.id);
+    // Offer a bounded set that interleaves tenants, so one tenant's backlog cannot take every dispatch tick.
+    return selectFairly(data as Array<{id:string;user_id?:string|null;created_at?:string}>,DISPATCH_BATCH).map(row=>row.id);
   }
   async claim(deliveryId:string,workerId:string):Promise<CanonicalDeliveryClaim|null>{
     if(!uuid.test(deliveryId)||!uuid.test(workerId)||this.env.CLOUD_RUN_JOB!==this.c.job
@@ -79,8 +93,10 @@ export class GoogleDeliveryStore {
     const claim=Object.freeze({deliveryId,runId:data.runId,userId:data.userId,workerId,generation});
     const context=createTenantContext({userId:data.userId,via:'persisted_owner'});
     if(data.input.builderProjectId!==undefined&&(typeof data.input.builderProjectId!=='string'||!uuid.test(data.input.builderProjectId)))return denied();
+    if(data.input.existingSourceChangeId!==undefined&&(typeof data.input.existingSourceChangeId!=='string'||!uuid.test(data.input.existingSourceChangeId)))return denied();
     const input:CanonicalQueuedInput=structuredClone({prompt:data.input.prompt,history:data.input.history,projectId:data.input.projectId,
-      clientMeta:data.input.clientMeta,attachments:data.input.attachments,builderProjectId:data.input.builderProjectId});
+      clientMeta:data.input.clientMeta,attachments:data.input.attachments,builderProjectId:data.input.builderProjectId,
+      existingSourceChangeId:data.input.existingSourceChangeId});
     if(data.freshStart&&input.clientMeta?.resumeRun===true)input.clientMeta={...input.clientMeta,resumeRun:false};
     issuedClaims.set(claim,{context,input});return claim;
   }

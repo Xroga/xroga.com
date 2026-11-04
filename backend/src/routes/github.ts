@@ -5,6 +5,7 @@ import type { AuthRequest } from '../middleware/auth.js';
 import { requireTenantContext, requireResourceOwner, type TenantContext } from '../security/tenantContext.js';
 import { getTenantSupabaseAdmin } from '../security/serviceRoleGuard.js';
 import { createOAuthState, verifyOAuthState } from '../lib/oauthState.js';
+import { defaultExistingSourceService } from './existingSource.js';
 import { storePkceSession, consumePkceSession } from '../services/integrations/oauthPkceStore.js';
 import {
   getGitHubToken,
@@ -411,6 +412,8 @@ router.patch('/settings', async (req: AuthRequest, res) => {
 router.delete('/disconnect', async (req: AuthRequest, res) => {
   try {
     await clearGitHubConnection(req.userId!);
+    // Linked existing repositories stop reading at once: their access came from this connection.
+    await defaultExistingSourceService(requireTenantContext(req.tenantContext)).connectionRemoved(req.userId!).catch(() => undefined);
     res.json({ disconnected: true });
   } catch {
     res.status(503).json({ error: 'GitHub disconnect could not be fully completed. Retry shortly.' });

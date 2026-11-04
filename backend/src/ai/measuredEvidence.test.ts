@@ -114,7 +114,7 @@ test(
           () =>
             row({
               modelId:
-                'deepseek_v4_flash',
+                'deepseek_v4_1_flash_1017',
               benchmarkId:
                 CODING_BENCHMARK,
             }),
@@ -196,7 +196,7 @@ test(
 
       return [
         row({
-          modelId: 'kimi_k3',
+          modelId: 'claude_sonnet_5_5',
           benchmarkId:
             CODING_BENCHMARK,
         }),
@@ -245,7 +245,7 @@ test(
           { length: 10 },
           () =>
             row({
-              modelId: 'kimi_k3',
+              modelId: 'claude_sonnet_5_5',
               benchmarkId:
                 CODING_BENCHMARK,
               estimatedCostUsd: 0.5,
@@ -257,7 +257,7 @@ test(
           () =>
             row({
               modelId:
-                'deepseek_v4_flash',
+                'deepseek_v4_1_flash_1017',
               benchmarkId:
                 CODING_BENCHMARK,
               estimatedCostUsd: 0.01,
@@ -268,14 +268,14 @@ test(
     const choice = choose(
       evidence,
       [
-        'kimi_k3',
-        'deepseek_v4_flash',
+        'claude_sonnet_5_5',
+        'deepseek_v4_1_flash_1017',
       ],
     );
 
     assert.equal(
       choice.modelId,
-      'deepseek_v4_flash',
+      'deepseek_v4_1_flash_1017',
     );
 
     assert.equal(
@@ -302,7 +302,7 @@ test(
           () =>
             row({
               modelId:
-                'deepseek_v4_flash',
+                'deepseek_v4_1_flash_1017',
               benchmarkId:
                 CODING_BENCHMARK,
               estimatedCostUsd: 0.01,
@@ -313,8 +313,8 @@ test(
     const choice = choose(
       evidence,
       [
-        'kimi_k3',
-        'deepseek_v4_flash',
+        'claude_sonnet_5_5',
+        'deepseek_v4_1_flash_1017',
       ],
     );
 
@@ -342,7 +342,7 @@ test(
           { length: 10 },
           () =>
             row({
-              modelId: 'kimi_k3',
+              modelId: 'claude_sonnet_5_5',
               benchmarkId:
                 CODING_BENCHMARK,
               estimatedCostUsd: 0.5,
@@ -354,7 +354,7 @@ test(
           (_, index) =>
             row({
               modelId:
-                'deepseek_v4_flash',
+                'deepseek_v4_1_flash_1017',
               benchmarkId:
                 CODING_BENCHMARK,
               estimatedCostUsd: 0.01,
@@ -366,19 +366,19 @@ test(
     const choice = choose(
       evidence,
       [
-        'kimi_k3',
-        'deepseek_v4_flash',
+        'claude_sonnet_5_5',
+        'deepseek_v4_1_flash_1017',
       ],
     );
 
     assert.equal(
       choice.modelId,
-      'kimi_k3',
+      null,
     );
 
     assert.equal(
       choice.measured,
-      true,
+      false,
     );
   },
 );
@@ -394,8 +394,8 @@ test(
     const choice = choose(
       evidence,
       [
-        'kimi_k3',
-        'deepseek_v4_flash',
+        'claude_sonnet_5_5',
+        'deepseek_v4_1_flash_1017',
       ],
     );
 
@@ -425,7 +425,7 @@ test(
           { length: 10 },
           () =>
             row({
-              modelId: 'glm_5_3',
+              modelId: 'claude_sonnet_5_5',
               benchmarkId:
                 ARCHITECTURE_BENCHMARK,
             }),
@@ -435,8 +435,8 @@ test(
     const choice = choose(
       evidence,
       [
-        'kimi_k3',
-        'deepseek_v4_flash',
+        'claude_sonnet_5_5',
+        'deepseek_v4_1_flash_1017',
       ],
       'implementation',
     );
@@ -518,7 +518,7 @@ test(
       evidence,
       [
         'grok_4_5',
-        'kimi_k3',
+        'claude_sonnet_5_5',
       ],
     );
 
@@ -546,7 +546,7 @@ test(
     // GLM-5.3 Flash now has a known catalog identity.
     assert.equal(
       modelAvailability(
-        'glm_5_3_flash',
+        'deepseek_v4_1_flash_1017',
         {},
       ),
       'available',
@@ -575,7 +575,7 @@ test(
           () =>
             row({
               modelId:
-                'deepseek_v4_flash',
+                'deepseek_v4_1_flash_1017',
               benchmarkId:
                 CODING_BENCHMARK,
               succeeded: false,
@@ -598,7 +598,7 @@ test(
     const choice = choose(
       evidence,
       [
-        'deepseek_v4_flash',
+        'deepseek_v4_1_flash_1017',
       ],
     );
 
@@ -619,7 +619,7 @@ test(
           { length: 20 },
           () =>
             row({
-              modelId: 'kimi_k3',
+              modelId: 'claude_sonnet_5_5',
               benchmarkId:
                 CODING_BENCHMARK,
             }),
@@ -630,7 +630,7 @@ test(
       evidence.entries.every(
         (entry) =>
           entry.modelId ===
-          'kimi_k3',
+          'claude_sonnet_5_5',
       ),
       true,
     );
@@ -645,7 +645,7 @@ test(
     assert.equal(
       choice.modelId,
       null,
-      'kimi_k2_7 was routed to on kimi_k3 evidence',
+      'kimi_k2_7 was routed to on claude_sonnet_5_5 evidence',
     );
   },
 );

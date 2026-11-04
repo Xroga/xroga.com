@@ -33,6 +33,29 @@ async function started(store: InMemoryBuilderStore, runBuild: BuildRunner, cance
 }
 
 describe('builder cancellation', () => {
+  it('a delayed cancellation response cannot cancel the replacement build or clear its slot', async () => {
+    const store = new InMemoryBuilderStore();
+    let releaseCancellation!: () => void;
+    let cancellationStarted!: () => void;
+    const waiting = new Promise<void>(resolve => { cancellationStarted = resolve; });
+    const pending = new Promise<void>(resolve => { releaseCancellation = resolve; });
+    const { service, project } = await started(store, async () => null, async () => {
+      cancellationStarted(); await pending;
+    });
+    const first = await service.beginRun(OWNER, project.id, { runId: 'run-cancel-old-0001' });
+    const stopping = service.cancelBuild(OWNER, project.id);
+    await waiting;
+    // Another process finishes cancelling the old run and accepts a new one
+    // before this process receives the canonical cancellation acknowledgement.
+    await store.setStateForRun(OWNER, project.id, first.runId, 'cancelled', 'Stopped elsewhere.', null);
+    const replacement = await service.beginRun(OWNER, project.id, { runId: 'run-cancel-new-0002' });
+    releaseCancellation();
+    const late = await stopping;
+    assert.equal(late.cancelled, false);
+    assert.equal(late.state.project.state, 'generating');
+    assert.equal(late.state.project.activeRunId, replacement.runId);
+    assert.equal((await store.getProject(OWNER, project.id))!.activeRunId, replacement.runId);
+  });
   it('moves a running build to cancelled in one durable transition and frees the slot', async () => {
     const store = new InMemoryBuilderStore();
     const asked: string[] = [];
@@ -86,7 +109,7 @@ describe('builder cancellation', () => {
     await service.beginRun(OWNER, project.id, { runId: 'run-cccccccc' });
     await assert.rejects(service.cancelBuild(OTHER, project.id), (e) => e instanceof BuilderError && e.code === 'not_found');
     assert.equal((await store.getProject(OWNER, project.id))!.state, 'generating');
-    assert.equal(await store.cancelRun(OTHER, project.id, 'x'), null);
+    assert.equal(await store.cancelRun(OTHER, project.id, 'x', 'run-cccccccc'), null);
   });
 
   it('does not claim the build stopped when the stop request could not be saved, and leaves the project running so Stop can be retried', async () => {

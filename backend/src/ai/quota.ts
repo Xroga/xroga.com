@@ -55,6 +55,7 @@ function periodStart(): string {
 }
 
 export function poolRoleFor(modelId: ModelId): string {
+  if (modelId === 'deepseek_v4_1_flash_1017' || modelId === 'claude_sonnet_5_5') return modelId;
   if (modelId.startsWith('deepseek')) {
     return 'deepseek_v4';
   }

@@ -161,6 +161,8 @@ export interface AtomicWriteApi extends BranchApi, TreeApi, BranchProtectionApi 
     base: string;
     title: string;
     body: string;
+    /** Open as a draft. Omitted means an ordinary pull request (unchanged behaviour). */
+    draft?: boolean;
   }): Promise<PullRequestResult>;
 }
 
@@ -185,7 +187,7 @@ export interface AtomicWriteRequest {
   mutations: readonly MutationRequest[] | ((tree: StartingTree) => readonly MutationRequest[]);
   message: string;
   /** Set when a pull request should follow the write. */
-  pullRequest?: { base: string; title: string; body: string };
+  pullRequest?: { base: string; title: string; body: string; draft?: boolean };
   /**
    * The repository's default branch. Used to decide whether this write needs explicit
    * authorization. Omitted means the check falls back to the protection API alone.
@@ -578,6 +580,7 @@ export async function writeAtomically(
         base: request.pullRequest.base,
         title: request.pullRequest.title,
         body: request.pullRequest.body,
+        ...(request.pullRequest.draft ? { draft: true } : {}),
       });
     } catch (error) {
       record.pullRequestWarning =

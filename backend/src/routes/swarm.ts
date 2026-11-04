@@ -1,3 +1,4 @@
+import { normalizeCursor, replayRunEvents } from '../ai/eventReplay.js';
 import { Router } from 'express';
 import { randomUUID } from 'node:crypto';
 import type { AuthRequest } from '../middleware/auth.js';
@@ -414,7 +415,7 @@ router.get('/runs/:runId', async (req: AuthRequest, res) => {
   if (req.userId && run.userId !== req.userId) {
     return res.status(403).json({ error: 'Forbidden' });
   }
-  const afterSequence = Math.max(0, Number(req.query.afterSequence ?? 0) || 0);
+  const replay = replayRunEvents({ events: run.events, lastSequence: run.lastSequence }, normalizeCursor(req.query.afterSequence));
   res.json({
     id: run.id,
     prompt: run.prompt,
@@ -426,8 +427,11 @@ router.get('/runs/:runId', async (req: AuthRequest, res) => {
     completed_at: run.completed_at,
     iteration_count: run.iteration_count,
     messages: publicAiPayload(run.messages ?? []),
-    events: publicAiPayload(run.events.filter((event) => event.sequence > afterSequence)),
+    events: publicAiPayload(replay.events),
     lastSequence: run.lastSequence,
+    // additive: tells a reconnecting client when earlier events are no longer retained, instead of presenting a silent jump as continuous history
+    firstRetainedSequence: replay.firstRetainedSequence,
+    eventsTruncated: replay.truncated,
   });
 });
 

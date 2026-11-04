@@ -64,9 +64,10 @@ export interface BuilderStore {
   setStateForRun(userId: string, projectId: string, runId: string, state: BuilderProjectState, reason: string, nextActiveRunId: string | null): Promise<BuilderProject | null>;
   /**
    * Cancels the build holding the run slot: one compare-and-set that records `cancelled` and releases the slot. Reports `idle` (and
-   * changes nothing) when no build holds it, and null when the project is not found.
+   * changes nothing) when no build holds it or another run replaced the exact run whose engine cancellation was requested.
+   * Null when the project is not found. The expected run comes from the server's owned project read, never a request body.
    */
-  cancelRun(userId: string, projectId: string, reason: string): Promise<{ kind: 'cancelled'; project: BuilderProject; runId: string } | { kind: 'idle'; project: BuilderProject } | null>;
+  cancelRun(userId: string, projectId: string, reason: string, expectedRunId: string): Promise<{ kind: 'cancelled'; project: BuilderProject; runId: string } | { kind: 'idle'; project: BuilderProject } | null>;
   /** Records the strict readiness result for a revision of the preview ('ready' | 'failed'), or clears it. */
   markPreviewReadiness(userId: string, projectId: string, result: { revisionId: string; ready: boolean } | null): Promise<void>;
   /**
@@ -163,11 +164,11 @@ export class InMemoryBuilderStore implements BuilderStore {
     return this.setState(userId, projectId, state, reason, nextActiveRunId);
   }
 
-  async cancelRun(userId: string, projectId: string, reason: string) {
+  async cancelRun(userId: string, projectId: string, reason: string, expectedRunId: string) {
     const project = this.projects.get(projectId);
     if (!project || project.userId !== userId) return null;
     const active = (project.state === 'generating' || project.state === 'verifying') ? project.activeRunId : null;
-    if (active === null) return { kind: 'idle' as const, project: clone(project) };
+    if (active === null || active !== expectedRunId) return { kind: 'idle' as const, project: clone(project) };
     const next = await this.setState(userId, projectId, 'cancelled', reason, null);
     return { kind: 'cancelled' as const, project: next!, runId: active };
   }
@@ -375,12 +376,12 @@ export class SupabaseBuilderStore implements BuilderStore {
     return data ? toProject(data as ProjectRow) : null;
   }
 
-  async cancelRun(userId: string, projectId: string, reason: string) {
+  async cancelRun(userId: string, projectId: string, reason: string, expectedRunId: string) {
     const owner = this.owner(userId);
     const current = await this.getProject(owner, projectId);
     if (!current) return null;
     const active = (current.state === 'generating' || current.state === 'verifying') ? current.activeRunId : null;
-    if (active === null) return { kind: 'idle' as const, project: current };
+    if (active === null || active !== expectedRunId) return { kind: 'idle' as const, project: current };
     // One conditional UPDATE naming the run we read: if the build finished or was replaced in between, nothing changes.
     const { data, error } = await this.db()
       .from('builder_projects')

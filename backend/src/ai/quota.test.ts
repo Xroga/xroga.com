@@ -216,7 +216,7 @@ describe(
     );
 
     it(
-      'combined GLM family preserves the historical economic pool',
+      'historical GLM usage remains readable without new allocation',
       () => {
         const pools =
           dashboardModelPools(
@@ -234,12 +234,12 @@ describe(
 
         assert.equal(
           glm.totalLimit,
-          5_000_000,
+          0,
         );
 
         assert.equal(
           glm.budgetUsd,
-          14.5,
+          0,
         );
       },
     );

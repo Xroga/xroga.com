@@ -22,6 +22,9 @@ import { analyzeTask } from './black-hole/taskClass.js';
 import { assessBlackHoleComplexity } from './black-hole/complexity.js';
 import { MODELS, type ModelId } from './models.js';
 import { publicCompletionState } from './completionDiagnostics.js';
+import { assessPresentationCoverage, createPresentationProjection, presentationRequestInstructions, presentationResponseFormat, type PresentationResponseFormat } from './responsePresentation.js';
+import { prepareAnswerCoverage } from './answerCoverage.js';
+import {prepareSonnetConversation,requestedSonnetReason} from './sonnetApproval.js';
 import {
   buildVisionUserContent,
   chatCompletion,
@@ -69,7 +72,7 @@ import {
   type UsageSnapshot,
 } from './quota.js';
 import type { ResearchBundle } from './research.js';
-import { isBuildPrompt, routePrompt, type RouteDecision } from './router.js';
+import { isBuildPrompt, routePrompt, routeReadOnlyConversation, type RouteDecision } from './router.js';
 import {
   extractProjectFiles,
   extractSiteFiles,
@@ -385,6 +388,7 @@ export interface BuildClientMeta {
 
 export interface ChatPipelineResult {
   completion?: ReturnType<typeof publicCompletionState>;
+  responseSource?: { format: 'xroga-response-json-v1'; text: string; contract?: ReturnType<typeof prepareAnswerCoverage> };
   response: string;
   intent: string;
   usage: ReturnType<typeof usageToTokenUsage>;
@@ -412,11 +416,7 @@ export interface BuildPipelineResult {
 }
 
 const BUILDER_FALLBACKS: ModelId[] = [
-  'glm_5_3_flash',
-  'glm_5_3',
-  'kimi_k3',
-
-  'deepseek_v4_flash',
+  'deepseek_v4_1_flash_1017',
 ];
 
 /**
@@ -705,12 +705,16 @@ export async function callBuilderStream(
     maxTokens?: number;
     temperature?: number;
     reasoningMode?: import('./openaiCompat.js').ReasoningMode;
+    responseFormat?: PresentationResponseFormat;
     onDelta?: DeltaFn;
     userId?: string;
     tenantContext?: TenantContext;
     databaseProjectId?: string;
     modelRunAttempt?:AdmittedRunAttempt;
     modelRepository?:string|null;
+    modelConnectedAccountId?:string;
+    modelMaximumCostMicroUsd?:number;
+    modelRevalidateBeforeDispatch?:()=>Promise<void>;
     signal?: AbortSignal;
     onModelFallback?: (from: ModelId, to: ModelId) => void;
     credentialOverrides?: Partial<Record<ModelId, string>>;
@@ -740,13 +744,14 @@ export async function callBuilderStream(
 ): Promise<Awaited<ReturnType<typeof chatCompletionStream>>> {
   const context=requireTenantContext(opts.tenantContext);requireResourceOwner(context,opts.userId);
   messages=structuredClone(messages);
-  opts={...opts,credentialOverrides:opts.credentialOverrides?{...opts.credentialOverrides}:undefined};
+  opts={...opts,credentialOverrides:opts.credentialOverrides?{...opts.credentialOverrides}:undefined,
+    ...(opts.responseFormat ? { responseFormat: structuredClone(opts.responseFormat) } : {})};
   const healthAwareOrder = fallbackOrderForModel(preferred);
   const candidates = healthAwareOrder.length
     ? healthAwareOrder
     : [preferred, ...BUILDER_FALLBACKS.filter((m) => m !== preferred)];
   const maxAttempts = Math.max(1, opts.maxAttempts ?? candidates.length);
-  const order = candidates.slice(0, maxAttempts);
+  const order = [...new Set(candidates)].slice(0, Math.min(1, maxAttempts));
   let lastErr: Error | null = null;
   for (const modelId of order) {
     const attemptStartedAt = Date.now();
@@ -776,6 +781,7 @@ export async function callBuilderStream(
               maxTokens: opts.maxTokens,
               temperature: opts.temperature,
               reasoningMode: opts.reasoningMode,
+              responseFormat: opts.responseFormat,
               onDelta: (delta) => {
                 opts.onStreamDelta?.(delta);
                 opts.onDelta?.(delta);
@@ -793,8 +799,11 @@ export async function callBuilderStream(
       };
       const runAttempt = () =>
         withTenantModelReservation({scope:{context,userId:context.userId,projectId:opts.databaseProjectId,runAttempt:opts.modelRunAttempt,repository:opts.modelRepository,
-              connectedAccountId:opts.credentialOverrides?(opts.credentialOverrides[modelId]?`apikey_${provider}`:'platform'):undefined},
-              modelId,payload:{messages},estimatedInputTokens:estimateMessageTokens(messages),maximumOutputTokens:opts.maxTokens??8192,execute,validateResponse:opts.validateResponse});
+              connectedAccountId:opts.modelConnectedAccountId??(opts.credentialOverrides?(opts.credentialOverrides[modelId]?`apikey_${provider}`:'platform'):undefined),maximumCostMicroUsd:opts.modelMaximumCostMicroUsd,revalidateBeforeDispatch:opts.modelRevalidateBeforeDispatch},
+              modelId,payload:{messages,...(opts.responseFormat?{responseFormat:process.env.ZURELAY_JSON_SCHEMA_VERIFIED==='1'?opts.responseFormat:{type:'json_object'}}:{})},estimatedInputTokens:opts.modelMaximumCostMicroUsd!==undefined
+                ?Buffer.byteLength(JSON.stringify({messages,responseFormat:opts.responseFormat}),'utf8'):estimateMessageTokens(messages)
+                + (opts.responseFormat ? estimateMessageTokens([{ role: 'system', content: JSON.stringify(opts.responseFormat) }]) : 0),
+              maximumOutputTokens:opts.maxTokens??8192,execute,validateResponse:opts.validateResponse});
       return opts.onWaiting
         ? await withProgressHeartbeat(
             {
@@ -954,6 +963,8 @@ export async function runChatPipeline(opts: {
   onDelta?: DeltaFn;
   goalContract?: GoalContract;
   projectEvidence?: string;
+  /** Private server continuation, populated only by the exact native research adapter. */
+  approvedResearch?:{bundle:ResearchBundle;evidence:string};
 }): Promise<ChatPipelineResult> {
   requireResourceOwner(requireTenantContext(opts.tenantContext),opts.userId);
   const initialUsage = await assertHasQuota(opts.userId);
@@ -1009,7 +1020,7 @@ export async function runChatPipeline(opts: {
       modelId: result.modelId,
       route: {
         kind: pick.kind === 'document' ? 'file_analysis' : 'realtime',
-        converter: 'deepseek_v4_flash',
+        converter: 'deepseek_v4_1_flash_1017',
         builder: pick.modelId,
         useResearch: false,
         reason: pick.reason,
@@ -1018,21 +1029,13 @@ export async function runChatPipeline(opts: {
     };
   }
 
-  const inferredRoute = routePrompt(opts.prompt);
-  const semanticResearch = Boolean(
-    opts.goalContract?.requiredCapabilities.includes('research.public-web')
-    || opts.goalContract?.requiredCapabilities.includes('research.x')
-    || (opts.goalContract && opts.goalContract.freshnessRequirement !== 'NONE'),
-  );
-  const route: RouteDecision = opts.goalContract
-    ? {
-        ...inferredRoute,
-        kind: semanticResearch ? 'research' : 'chat',
-        builder: semanticResearch ? 'glm_5_3_flash' : 'deepseek_v4_flash',
-        useResearch: semanticResearch,
-        reason: 'The validated semantic goal contract selected this read-only execution path.',
-      }
-    : inferredRoute;
+  const route = routeReadOnlyConversation(opts.prompt, opts.goalContract);
+  if(requestedSonnetReason(opts.prompt)){
+    if(hasAttachments||route.kind==='research')throw new RuntimeFailure('CAPABILITY_UNSUPPORTED','The approved complex-model response supports text engineering work only. No alternate model or research request was made.');
+    const response=await prepareSonnetConversation(opts.modelScope??{context:requireTenantContext(opts.tenantContext),userId:opts.userId},opts.prompt,opts.history);
+    return {response,
+      intent:'model_approval',usage:usageToTokenUsage(initialUsage),webSources:[],modelId:route.builder,route};
+  }
 
   if (!opts.goalContract && isBuildPrompt(opts.prompt) && route.kind.startsWith('build')) {
     const err = new Error('USE_BUILD_PIPELINE');
@@ -1040,15 +1043,17 @@ export async function runChatPipeline(opts: {
     throw err;
   }
 
-  let research: ResearchBundle | null = null;
-  let researchBlock = '';
+  let research: ResearchBundle | null = opts.approvedResearch?.bundle??null;
+  let researchBlock = opts.approvedResearch?.evidence??'';
   let researchProviderFailed = false;
 
-  if (route.useResearch && !explicitlyDisablesResearch(opts.prompt)) {
+  if (!opts.approvedResearch&&route.useResearch && !explicitlyDisablesResearch(opts.prompt)) {
     try {
       const web = await runWebIntelligence({
         userId: opts.userId,
-        dispatchScope:{...opts.modelScope!,context:requireTenantContext(opts.tenantContext),userId:opts.userId,connectedAccountId:'platform'},
+        dispatchScope:{...opts.modelScope!,context:requireTenantContext(opts.tenantContext),userId:opts.userId,connectedAccountId:'platform',
+          researchAnswer:{prompt:opts.prompt,...(opts.history?{history:opts.history.slice(-12).map(h=>({role:h.role,content:h.content.slice(0,8000)}))}:{}),
+            ...(opts.goalContract?{goalContract:opts.goalContract}:{}),...(opts.projectEvidence?{projectEvidence:opts.projectEvidence}:{} )}},
         prompt: opts.prompt,
         ...(opts.goalContract
           ? { decision: webDecisionFromGoalContract(opts.goalContract) ?? undefined }
@@ -1116,25 +1121,43 @@ export async function runChatPipeline(opts: {
   const truthAuthorities = new Set<string>(['model:execute', 'sandbox:execute']);
   if (opts.projectEvidence) truthAuthorities.add('repository:read');
   if (research?.sources.length) truthAuthorities.add('network:public-read');
+  const answerContract = prepareAnswerCoverage(opts.prompt, opts.goalContract?.presentation, opts.goalContract?.answerObligations);
+  const presentation = answerContract.plan;
+  const projection = presentation?.length ? createPresentationProjection(presentation) : undefined;
+  const format = presentation?.length ? presentationResponseFormat(presentation) : undefined;
+  const system = `${currentPublicProductTruth(truthAuthorities)}\n\n${chatPresentationSystem(opts.prompt)}${presentation?.length ? `\n\n${presentationRequestInstructions(presentation)}` : ''}`;
   const result = await callBuilderStream(
     route.builder,
-    [{ role: 'system', content: `${chatPresentationSystem(opts.prompt)}\n\n${currentPublicProductTruth(truthAuthorities)}` }, ...historyMsgs, { role: 'user', content: userContent }],
+    [{ role: 'system', content: system }, ...historyMsgs, { role: 'user', content: userContent }],
     {
       userId: opts.userId,
-      maxTokens: route.kind === 'research' ? researchAnswerMaxTokens(opts.prompt) : 4096,
+      maxTokens: opts.approvedResearch?4096:route.kind === 'research' ? researchAnswerMaxTokens(opts.prompt) : 4096,
       reasoningMode: 'none',
+      responseFormat: format,
       tenantContext:opts.tenantContext,
       databaseProjectId:opts.modelScope?.projectId,modelRunAttempt:opts.modelScope?.runAttempt,modelRepository:opts.modelScope?.repository,
+      modelConnectedAccountId:opts.modelScope?.connectedAccountId,modelMaximumCostMicroUsd:opts.modelScope?.maximumCostMicroUsd,
+      modelRevalidateBeforeDispatch:opts.modelScope?.revalidateBeforeDispatch,
       temperature: 0.5,
-      onDelta: opts.onDelta,
+      onDelta: projection ? delta => { const visible = projection.append(delta); if (visible) opts.onDelta?.(visible); } : opts.onDelta,
     },
   );
 
   const usage = await getUsage(opts.userId);
 
+  const document = projection?.finish(result.text);
+  const response = document ? document.response || "Xroga couldn't finish the requested structured answer." : result.text;
+  const completion = publicCompletionState(result.finishReason, document?.reviewText ?? response);
+  // A valid semantic decision with invalid display metadata, or an incomplete
+  // document, is preserved as partial. Never repair it with another model call.
+  const presentationIncomplete = (document && !document.ok) || opts.goalContract?.presentationIssue === 'invalid'
+    || !answerContract.coverage.complete;
+
   return {
-    response: result.text,
-    completion: publicCompletionState(result.finishReason, result.text),
+    response,
+    completion: presentationIncomplete && result.finishReason === 'stop' && completion.status === 'complete'
+      ? { status: 'partial', reason: 'presentation_contract' } : completion,
+    ...(document ? { responseSource: { format: 'xroga-response-json-v1' as const, text: document.original, contract: answerContract } } : {}),
     intent: route.kind,
     usage: usageToTokenUsage(usage),
     webSources: research?.sources,
@@ -1166,6 +1189,8 @@ export async function runBuildPipeline(opts: {
 }): Promise<BuildPipelineResult> {
   const tenantContext=requireTenantContext(opts.tenantContext);
   requireResourceOwner(tenantContext,opts.userId);
+  if(requestedSonnetReason(opts.prompt))throw new RuntimeFailure('CAPABILITY_UNSUPPORTED',
+    'Sonnet requires the separate capped engineering-response approval in Workspace conversation. It cannot silently replace a model inside a repository build. No build or model request was started.');
   opts={...opts,userId:tenantContext.userId};
   const runId = opts.runId ?? randomUUID();
   const trace = new RunTrace(runId, opts.userId);
@@ -1374,7 +1399,7 @@ if(opts.deliveryClaim){
     return MODELS[modelId].provider;
   };
   const credentialOverrides: Partial<Record<ModelId, string>> = {};
-  await Promise.all((Object.keys(MODELS) as ModelId[]).map(async (modelId) => {
+  await Promise.all(getRuntimeModelRegistry().map(async ({id:modelId}) => {
     const key = await getUserProviderKey(
       opts.userId,
       providerKeyName(modelId),
@@ -1435,7 +1460,7 @@ if(opts.deliveryClaim){
     ['code_review', 'security_review'].includes(task.taskClass),
   );
 
-  const reviewerModel = reviewerTask?.selectedModel ?? 'deepseek_v4_flash';
+  const reviewerModel = reviewerTask?.selectedModel ?? 'deepseek_v4_1_flash_1017';
 
   const recoveredSynthesisArtifacts = canonicalRecovery
     ? synthesisArtifactsFromCanonicalState(canonicalRecovery.state)
@@ -2517,8 +2542,8 @@ publicationReason:
     await assertCanUseModel(
       opts.userId,
       prior.files.length >= 20 || route.kind === 'build_long_horizon'
-        ? 'glm_5_3'
-        : 'glm_5_3_flash',
+        ? 'deepseek_v4_1_flash_1017'
+        : 'deepseek_v4_1_flash_1017',
     );
     const memo = await summarizeRepoForUpdates({
       userId: opts.userId,
@@ -2676,7 +2701,7 @@ publicationReason:
     });
     try {
       const vision = await callBuilderStream(
-        'glm_5_3_flash',
+        'deepseek_v4_1_flash_1017',
         [
           { role: 'system', content: VISION_SYSTEM },
           {
@@ -2779,7 +2804,7 @@ publicationReason:
       outputTokens: 0,
     };
   } else {
-    await assertCanUseModel(opts.userId, 'deepseek_v4_flash');
+    await assertCanUseModel(opts.userId, 'deepseek_v4_1_flash_1017');
     converted = await convertUserRequest(
       opts.userId,
       converterRequest,
@@ -2845,7 +2870,7 @@ publicationReason:
         swarmTodos: todos('architect'),
       });
     } else {
-      await assertCanUseModel(opts.userId, 'deepseek_v4_flash');
+      await assertCanUseModel(opts.userId, 'deepseek_v4_1_flash_1017');
       // Cap Architect wait so a hung OpenRouter call cannot freeze the UI for 5+ minutes
       const ARCHITECT_MS = 45_000;
       const plan = await Promise.race([

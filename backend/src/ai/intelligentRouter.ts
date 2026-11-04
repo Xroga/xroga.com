@@ -9,6 +9,9 @@ import { getRouterAdminConfig, type RoutingMode } from './routerConfig.js';
 import { classifyTaskRequest, type TaskClassification } from '../lib/taskClassifier.js';
 import type { FailureCategory } from '../lib/recoveryPlanner.js';
 import { historicalModelQuality } from './routingOutcomes.js';
+import { assertModelSelection, type ModelEscalation } from './providerPolicy.js';
+import { estimateProviderReservationMicroUsd } from './providerBudget.js';
+import { isActiveModelId } from './models.js';
 
 export type RouterTaskClass =
   | 'request_understanding'
@@ -263,6 +266,7 @@ export function rankModelsForSubtask(
   );
   if (budgetCap < opts.requiredTokens) return [];
   return (opts.registry ?? getRuntimeModelRegistry())
+    .filter(model => isActiveModelId(model.id) && model.id !== 'claude_sonnet_5_5')
     .filter((model) => !excluded.has(model.id))
     .map((model) => ({
       id: model.id,
@@ -281,6 +285,8 @@ function taskRisk(taskClass: RouterTaskClass, highRisk: boolean): RoutedSubtask[
 }
 
 export function createIntelligentRoutePlan(input: {
+  /** Issued server authority, never a client/model boolean or routing hint. */
+  escalation?: ModelEscalation;
   prompt: string;
   mode?: RoutingMode;
   repositoryFiles?: ProjectFile[];
@@ -327,6 +333,16 @@ export function createIntelligentRoutePlan(input: {
       budget: input.budget,
     });
     if (!ranked.length) blockers.push(`No healthy configured model can execute ${taskClass} within the current budget and context limits.`);
+    let selectedModel = ranked[0] ?? null;
+    if (input.escalation && ['multi_file_implementation','runtime_debugging','build_debugging','bug_fixing','security_review'].includes(taskClass)) {
+      if (!classification.requiresCoding || !['high','critical'].includes(complexity.level)) {
+        throw Object.assign(new Error('Sonnet escalation is restricted to demonstrably complex engineering.'), {code:'MODEL_DISPATCH_BINDING_DENIED'});
+      }
+      assertModelSelection('claude_sonnet_5_5', estimateProviderReservationMicroUsd({modelId:'claude_sonnet_5_5',estimatedInputTokens:requiredTokens,maximumOutputTokens:requiredTokens}), input.escalation);
+      const premium = (input.registry ?? getRuntimeModelRegistry()).find(model => model.id === 'claude_sonnet_5_5');
+      if (!premium?.configured || premium.health.status === 'circuit_open') throw Object.assign(new Error('The authorized engineering model is unavailable.'), {code:'MODEL_NOT_CONFIGURED'});
+      selectedModel = 'claude_sonnet_5_5';
+    }
     return {
       id: `task-${index + 1}`,
       taskClass,
@@ -345,8 +361,8 @@ export function createIntelligentRoutePlan(input: {
         taskClass.includes('research') &&
         !taskClasses[index - 1]?.includes('research'),
       risk: taskRisk(taskClass, highRisk),
-      selectedModel: ranked[0] ?? null,
-      fallbackModels: ranked.slice(1, 4),
+      selectedModel,
+      fallbackModels: [],
       validation: taskClass.includes('research')
         ? ['source retrieval', 'citation presence']
         : taskClass.includes('review')

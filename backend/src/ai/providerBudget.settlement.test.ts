@@ -6,10 +6,10 @@ import { executeWithProviderFallback } from './providerRuntime.js';
 
 test('settlement requires an exact durable receipt and wrapper failures retain uncertain spend', async () => {
   const userId = '11111111-1111-4111-8111-111111111111';
-  const reservation = { id: '22222222-2222-4222-8222-222222222222', reservedMicroUsd: estimateProviderReservationMicroUsd({ modelId: 'kimi_k3', estimatedInputTokens: 100, maximumOutputTokens: 100 }), priceVersion: PROVIDER_PRICE_VERSION };
+  const reservation = { id: '22222222-2222-4222-8222-222222222222', reservedMicroUsd: estimateProviderReservationMicroUsd({ modelId: 'deepseek_v4_1_flash_1017', estimatedInputTokens: 100, maximumOutputTokens: 100 }), priceVersion: PROVIDER_PRICE_VERSION };
   const result: ProviderUsageResult = { providerRequestId: ' fixture-request ', inputTokens: 10, outputTokens: 20, cachedInputTokens: 2, reasoningTokens: 3, toolCalls: 1, searchCalls: 1 };
-  const actual = actualProviderCostMicroUsd({ modelId: 'kimi_k3', ...result });
-  const receipt = { id: reservation.id, user_id: userId, status: 'settled', internal_route: 'kimi_k3', price_version: PROVIDER_PRICE_VERSION,
+  const actual = actualProviderCostMicroUsd({ modelId: 'deepseek_v4_1_flash_1017', ...result });
+  const receipt = { id: reservation.id, user_id: userId, status: 'settled', internal_route: 'deepseek_v4_1_flash_1017', price_version: PROVIDER_PRICE_VERSION,
     reserved_micro_usd: reservation.reservedMicroUsd, settled_micro_usd: actual, provider_request_id: 'fixture-request',
     actual_input_tokens: 10, cached_input_tokens: 2, output_tokens: 20, reasoning_tokens: 3, tool_calls: 1, search_calls: 1 };
   let evidence: unknown = receipt;
@@ -45,7 +45,7 @@ test('settlement requires an exact durable receipt and wrapper failures retain u
     const address = server.address(); assert.ok(address && typeof address !== 'string');
     process.env.SUPABASE_URL = `http://127.0.0.1:${address.port}`;
     process.env.SUPABASE_SERVICE_ROLE_KEY = 'synthetic-loopback-only';
-    const settle = () => settleProviderBudget({ userId, modelId: 'kimi_k3', reservation, result });
+    const settle = () => settleProviderBudget({ userId, modelId: 'deepseek_v4_1_flash_1017', reservation, result });
     for (evidence of [null, {}, [], ...[
       { id: 'other' }, { user_id: 'other' }, { status: 'reserved' }, { status: 'released' },
       { internal_route: 'other' }, { price_version: 'other' }, { reserved_micro_usd: reservation.reservedMicroUsd + 1 },
@@ -57,7 +57,7 @@ test('settlement requires an exact durable receipt and wrapper failures retain u
     evidence = { ...receipt, settled_micro_usd: String(actual), reserved_micro_usd: String(reservation.reservedMicroUsd) };
     await settle();
     let executions = 0;
-    const run = (executeResult: ProviderUsageResult = result) => withProviderReservation({ userId, modelId: 'kimi_k3', estimatedInputTokens: 100, maximumOutputTokens: 100,
+    const run = (executeResult: ProviderUsageResult = result) => withProviderReservation({ userId, modelId: 'deepseek_v4_1_flash_1017', estimatedInputTokens: 100, maximumOutputTokens: 100,
       execute: async () => { executions++; return executeResult; } });
     evidence = null;
     await assert.rejects(run(), { code: 'POST_COMPLETION_ACCOUNTING_UNCERTAIN', retryable: false });
@@ -72,7 +72,7 @@ test('settlement requires an exact durable receipt and wrapper failures retain u
     assert.equal(executions, 3); assert.equal(holds, 3);
     assert.equal(settlementCalls, 23);
     evidence = null;
-    await assert.rejects(executeWithProviderFallback({routes:['kimi_k3','deepseek_v4_flash'],recordHealth:false,
+    await assert.rejects(executeWithProviderFallback({routes:['deepseek_v4_1_flash_1017','deepseek_v4_flash'],recordHealth:false,
       execute:async()=>run(),sleep:async()=>{throw new Error('Completed provider must not be retried');}}),
       {code:'POST_COMPLETION_ACCOUNTING_UNCERTAIN',retryable:false});
     assert.equal(executions,4);assert.equal(holds,4);assert.equal(settlementCalls,24);

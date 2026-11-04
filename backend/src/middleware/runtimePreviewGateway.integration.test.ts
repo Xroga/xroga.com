@@ -16,7 +16,7 @@ function read(port:number,path='/'){
   });
 }
 async function close(server:Server){server.closeAllConnections();await new Promise<void>(resolve=>server.close(()=>resolve()));}
-async function fixture(){
+async function fixture(admissionDelayMs=0){
   let upstreamHits=0,allowed=true,expiry=Date.now()+60000,authorityReads=0,throws=false;
   const upstream=createServer((req,res)=>{upstreamHits++;if(req.url==='/redirect'){res.writeHead(302,{location:`http://127.0.0.1:${upstreamPort}/asset?q=1`});res.end();}
     else if(req.url==='/cookies'){res.setHeader('set-cookie',['preview-session=synthetic; Domain=.xroga.com; Path=/; HttpOnly; Secure; SameSite=Lax','owned=synthetic; Path=/; Secure']);res.setHeader('clear-site-data','"cookies"');res.end('cookie fixture');}
@@ -25,6 +25,7 @@ async function fixture(){
   const upstreamPort=await listen(upstream);
   const resolver=async():Promise<PreviewTarget|null>=>{
     authorityReads++;if(throws)throw new Error('PRIVATE_DATABASE_CANARY');
+    if(admissionDelayMs)await new Promise(resolve=>setTimeout(resolve,admissionDelayMs));
     return allowed?{host:'127.0.0.1',port:upstreamPort,publicHost:host,expiresAt:expiry,revalidate:async()=>allowed}:null;
   };
   const app=express();app.use(createRuntimePreviewGateway(resolver));app.use((_req,res)=>res.status(404).end());
@@ -34,6 +35,25 @@ async function fixture(){
     expiresSoon:()=>{expiry=Date.now()+200;},unavailable:()=>{throws=true;},async cleanup(){for(const s of clients)s.terminate();for(const s of sockets.clients)s.terminate();sockets.close();await close(gateway);await close(upstream);}};
 }
 async function connect(f:Awaited<ReturnType<typeof fixture>>){const socket=new WebSocket(`ws://127.0.0.1:${f.port}/hmr?session=fixture`,{headers:{host}});f.clients.push(socket);await once(socket,'open');return socket;}
+
+test('slow admission still checks current authority before connecting',async()=>{
+  const allowed=await fixture(5200),revoked=await fixture(5200);
+  try{
+    const pending=read(revoked.port);setTimeout(()=>revoked.deny(),50);
+    const [good,bad]=await Promise.all([read(allowed.port),pending]);
+    assert.equal(good.status,200);assert.equal(allowed.hits,1);
+    assert.equal(bad.status,410);assert.equal(revoked.hits,0);
+  }finally{await Promise.all([allowed.cleanup(),revoked.cleanup()]);}
+});
+
+test('a stalled admission times out without connecting to the worker',async()=>{
+  const f=await fixture(15500);
+  try{
+    assert.equal((await read(f.port)).status,410);
+    await new Promise(resolve=>setTimeout(resolve,700));
+    assert.equal(f.hits,0);
+  }finally{await f.cleanup();}
+});
 
 test('real HTTP proxy retains paths and public origin and rewrites only the worker redirect',async()=>{
   const f=await fixture();try{

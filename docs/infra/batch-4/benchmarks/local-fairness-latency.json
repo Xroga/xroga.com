@@ -1,0 +1,117 @@
+{
+  "kind": "LOCAL_BENCHMARK_NOT_PRODUCTION_PERFORMANCE",
+  "generatedAt": "2026-10-29T14:53:48.056Z",
+  "machine": {
+    "logicalCores": 12,
+    "platform": "win32",
+    "node": "v24.18.0"
+  },
+  "launchCapacityPerTick": 2,
+  "selectionHelper": "function",
+  "fairness": [
+    {
+      "policy": "oldest-first",
+      "heavyBacklog": 20,
+      "lightTenants": 1,
+      "lightFirstLaunchTicks": [
+        11
+      ],
+      "lightWorstTick": 11,
+      "heavyFirstLaunchTick": 1
+    },
+    {
+      "policy": "tenant-interleaved",
+      "heavyBacklog": 20,
+      "lightTenants": 1,
+      "lightFirstLaunchTicks": [
+        1
+      ],
+      "lightWorstTick": 1,
+      "heavyFirstLaunchTick": 1
+    },
+    {
+      "policy": "oldest-first",
+      "heavyBacklog": 20,
+      "lightTenants": 5,
+      "lightFirstLaunchTicks": [
+        11,
+        11,
+        12,
+        12,
+        13
+      ],
+      "lightWorstTick": 13,
+      "heavyFirstLaunchTick": 1
+    },
+    {
+      "policy": "tenant-interleaved",
+      "heavyBacklog": 20,
+      "lightTenants": 5,
+      "lightFirstLaunchTicks": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "lightWorstTick": 5,
+      "heavyFirstLaunchTick": 1
+    },
+    {
+      "policy": "oldest-first",
+      "heavyBacklog": 60,
+      "lightTenants": 5,
+      "lightFirstLaunchTicks": [
+        31,
+        31,
+        32,
+        32,
+        33
+      ],
+      "lightWorstTick": 33,
+      "heavyFirstLaunchTick": 1
+    },
+    {
+      "policy": "tenant-interleaved",
+      "heavyBacklog": 60,
+      "lightTenants": 5,
+      "lightFirstLaunchTicks": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "lightWorstTick": 5,
+      "heavyFirstLaunchTick": 1
+    }
+  ],
+  "latency": [
+    {
+      "busyWorkerProcesses": 0,
+      "requests": 150,
+      "p50Ms": 16.84,
+      "p95Ms": 21.32,
+      "maxMs": 49.1
+    },
+    {
+      "busyWorkerProcesses": 11,
+      "requests": 150,
+      "p50Ms": 17.36,
+      "p95Ms": 24.96,
+      "maxMs": 41.23
+    },
+    {
+      "busyWorkerProcesses": 24,
+      "requests": 150,
+      "p50Ms": 17.18,
+      "p95Ms": 27.76,
+      "maxMs": 54.69
+    }
+  ],
+  "limitations": [
+    "Fairness is a model of dispatch ticks using the real selection code, not a deployed queue or wall-clock time.",
+    "Latency uses a local HTTP endpoint beside CPU-bound child processes on one machine; it does not measure Cloud Run, the API, the database or the network.",
+    "No SLO is derived from these numbers."
+  ]
+}

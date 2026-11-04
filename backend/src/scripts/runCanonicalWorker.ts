@@ -7,7 +7,7 @@ import {googleDispatchConfiguration} from '../workers/googleDispatch.js';
 import {initializeCredentialVaultForServer} from '../services/integrations/credentialVaultStartup.js';
 import {runBuildPipeline} from '../ai/pipeline.js';
 import {withRunAttempt,currentRunWorkerId,appendRunEvent,isRunCancellationRequested,
-  failRun,persistTerminalRunAuthority,hasAdmittedRunAttempt} from '../ai/runStore.js';
+  failRun,persistTerminalRunAuthority,hasAdmittedRunAttempt,completeRun} from '../ai/runStore.js';
 import {failInFlightRuns} from '../ai/runReconciler.js';
 import {notifyBuildComplete,notifyBuildFailed} from '../services/notificationService.js';
 import {openBuilderRun,closeBuilderRun} from '../builder/swarmBridge.js';
@@ -41,8 +41,20 @@ try{
     // AI Product Builder: a chat build into a durable project saves its revision through the run binding. The id in the queued input is
     // never trusted on its own; opening the run re-verifies the project against the persisted owner and takes its single run slot.
     let builderRun:BuilderRunBinding|null=null;
-    const {builderProjectId,...pipelineInput}=input;
+    const {builderProjectId,existingSourceChangeId,...pipelineInput}=input;
     try{
+      // Existing-project change: the same claim, run attempt, cancellation and terminal authority as a build, executing the change service.
+      if(existingSourceChangeId){
+        const {runExistingSourceChangeJob}=await import('../existingSource/change/canonicalJob.js');
+        const outcome=await runExistingSourceChangeJob({context,claim,changeId:existingSourceChangeId,signal:controller.signal,
+          progress:event=>{appendRunEvent(claim.runId,'progress',event);}});
+        completeRun(claim.runId,{output:{type:'existing_source_change',changeId:existingSourceChangeId,status:outcome.status},featureCategory:'existing_source_change',success:outcome.success});
+        const changeStatus=await persistTerminalRunAuthority(claim.runId,claim.userId);
+        if(changeStatus==='complete')await deliveryStore.recordResult(claim,outcome.success,null);
+        if(changeStatus==='cancelled'||controller.signal.aborted)throw new Error('CANONICAL_WORKER_STOPPED');
+        console.log(JSON.stringify({scope:'CANONICAL_GOOGLE_JOB',runId:claim.runId,status:changeStatus,sourceSha:config.sourceSha}));
+        return;
+      }
       builderRun=builderProjectId?await openBuilderRun(context,builderProjectId,claim.runId):null;
       const result=await runBuildPipeline({...pipelineInput,...(builderRun?{builder:builderRun}:{}),runId:claim.runId,userId:claim.userId,tenantContext:context,deliveryClaim:claim,
         signal:controller.signal,onProgress:event=>{appendRunEvent(claim.runId,'progress',event as Record<string,unknown>);},

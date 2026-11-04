@@ -1,3 +1,4 @@
+import {actualProviderCostMicroUsd} from '../providerBudget.js';
 import OpenAI from 'openai';
 import {randomUUID} from 'node:crypto';
 import {withTenantModelReservation,type TenantModelScope,type BoundModelDispatch} from '../tenantModelDispatch.js';
@@ -9,6 +10,7 @@ import {
   resolveEndpoint,
   snapshotModelEgressPayload,
   createModelProviderClient,
+  modelTransportReceipt,
 } from '../openaiCompat.js';
 
 import {
@@ -29,7 +31,6 @@ import {
 
 import {
   MODELS,
-  costUsdForTokens,
   type ModelId,
 } from '../models.js';
 
@@ -643,6 +644,30 @@ function estimateRequestTokens(
   );
 }
 
+/**
+ * OpenAI-compatible streams send a tool call's id and name only on its FIRST chunk; every later chunk carries just the index and the next
+ * fragment of the arguments. The agent SDK files a fragment under its tool-call id when it has one and under its index otherwise, so a
+ * fragment without the id became a second, nameless call and the real call kept empty arguments: every tool then received `{}`.
+ * Remembering the id per index keeps all fragments of one call together.
+ */
+export function createToolCallDeltaMapper(): (toolCall: {
+  index?: number;
+  id?: string | null;
+  function?: { name?: string | null; arguments?: string | null } | null;
+}) => { index: number | undefined; toolCallId: string | undefined; toolName: string | undefined; inputText: string | undefined } {
+  const idByIndex = new Map<number, string>();
+  return (toolCall) => {
+    if (toolCall.id && toolCall.index !== undefined) idByIndex.set(toolCall.index, toolCall.id);
+    const toolCallId = toolCall.id ?? (toolCall.index !== undefined ? idByIndex.get(toolCall.index) : undefined);
+    return {
+      index: toolCall.index,
+      toolCallId: toolCallId ?? undefined,
+      toolName: toolCall.function?.name ?? undefined,
+      inputText: toolCall.function?.arguments ?? undefined,
+    };
+  };
+}
+
 function finishReason(
   value:
     | string
@@ -802,6 +827,9 @@ async function runSingleModelTurn(
           const toolCallIds =
             new Set<string>();
 
+          const mapToolCallDelta =
+            createToolCallDeltaMapper();
+
           for await (
             const chunk of
             stream
@@ -852,19 +880,9 @@ async function runSingleModelTurn(
                 type:
                   'tool-call-delta',
 
-                index:
-                  toolCall.index,
-
-                toolCallId:
-                  toolCall.id,
-
-                toolName:
-                  toolCall.function
-                    ?.name,
-
-                inputText:
-                  toolCall.function
-                    ?.arguments,
+                ...mapToolCallDelta(
+                  toolCall,
+                ),
               } as AgentModelEvent);
             }
 
@@ -955,7 +973,7 @@ async function runSingleModelTurn(
 
             events,
 
-            providerRequestId,
+            providerRequestId: modelTransportReceipt(endpoint).requestId,
 
             inputTokens,
 
@@ -1191,7 +1209,7 @@ export function createXrogaAgentModel(
           await persistUsageAccounting(context,{
             receiptId:randomUUID(),modelId:turn.modelId,poolRole:poolRoleFor(turn.modelId),
             inputTokens:turn.inputTokens,outputTokens:turn.outputTokens,
-            costUsd:costUsdForTokens(turn.modelId,turn.inputTokens,turn.outputTokens),
+            costUsd:actualProviderCostMicroUsd(turn)/1_000_000,
           });
         } catch { throw new PostCompletionAccountingError(); }
 

@@ -24,7 +24,7 @@ test('malformed durable reservation evidence never reaches provider execution', 
       { id: 'fixture', reserved_micro_usd: 'invalid', price_version: PROVIDER_PRICE_VERSION },
       { id: 'fixture', reserved_micro_usd: 100000, price_version: 'unexpected-version' }]) {
       let executed = false;
-      await assert.rejects(withProviderReservation({ userId: '11111111-1111-4111-8111-111111111111', modelId: 'kimi_k3', estimatedInputTokens: 10, maximumOutputTokens: 10,
+      await assert.rejects(withProviderReservation({ userId: '11111111-1111-4111-8111-111111111111', modelId: 'deepseek_v4_1_flash_1017', estimatedInputTokens: 10, maximumOutputTokens: 10,
         execute: async () => { executed = true; return { inputTokens: 1, outputTokens: 1 }; } }), /reservation evidence is invalid/);
       assert.equal(executed, false);
     }
@@ -38,12 +38,12 @@ test('malformed durable reservation evidence never reaches provider execution', 
       { status: 'settled' }, { status: 'released' }, { status: 'pending_reconciliation' }]) {
       evidence = (body: Record<string, unknown>) => ({ ...receipt(body), ...mismatch });
       let executed = false;
-      await assert.rejects(withProviderReservation({ userId: '11111111-1111-4111-8111-111111111111', modelId: 'kimi_k3', estimatedInputTokens: 10, maximumOutputTokens: 10,
+      await assert.rejects(withProviderReservation({ userId: '11111111-1111-4111-8111-111111111111', modelId: 'deepseek_v4_1_flash_1017', estimatedInputTokens: 10, maximumOutputTokens: 10,
         execute: async () => { executed = true; return { inputTokens: 1, outputTokens: 1 }; } }), /reservation evidence is invalid/);
       assert.equal(executed, false);
     }
     evidence = (body: Record<string, unknown>) => ({ ...receipt(body), estimated_input_tokens: String(body.p_estimated_input_tokens) });
-    const input = { userId: '11111111-1111-4111-8111-111111111111', modelId: 'kimi_k3' as const, estimatedInputTokens: 10, maximumOutputTokens: 10, idempotencyKey: '33333333-3333-4333-8333-333333333333' };
+    const input = { userId: '11111111-1111-4111-8111-111111111111', modelId: 'deepseek_v4_1_flash_1017' as const, estimatedInputTokens: 10, maximumOutputTokens: 10, idempotencyKey: '33333333-3333-4333-8333-333333333333' };
     assert.deepEqual(await reserveProviderBudget(input), await reserveProviderBudget(input));
   } finally {
     if (previousUrl === undefined) delete process.env.SUPABASE_URL; else process.env.SUPABASE_URL = previousUrl;

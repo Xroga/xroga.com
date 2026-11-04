@@ -1,0 +1,31 @@
+{
+  "scope": "BROWSER_COORDINATOR_LOCAL_BYTE_CONVERSIONS_REVIEWED",
+  "base": "b86a037700631ab3a237da5c5d7da4f6034afd5d",
+  "path": "backend/src/workers/browserCoordinator.ts",
+  "beforeSourceSha256": "5cdf8b804acd65ec883a857b754729b18e75cf9be818683d8874cb7ba5487ee3",
+  "currentSourceSha256": "2351c2114aff76b4538d4e53608f629ed2782fc216599ff5a581f85ef1638df0",
+  "matches": [
+    {
+      "beforeId": "0c1f299ca46782708a80",
+      "afterId": "0c1f299ca46782708a80",
+      "expressionSha256": "588d58eeaa9ec1df8499a1524d20f8e56487d3f8db157e5d36a70fe8dc942ac9",
+      "expression": "Buffer.from(sig, 'hex')",
+      "disposition": "NOT_PERSISTENCE"
+    },
+    {
+      "beforeId": "7d95df757a672842a01e",
+      "afterId": "1f14463400589fcbae34",
+      "expressionSha256": "54f0af6135a5b20a26097bf77f3438530bea84e18c7c43f2fe3502004bfc0aec",
+      "expression": "Buffer.from(a.bytes)",
+      "disposition": "NOT_PERSISTENCE"
+    },
+    {
+      "beforeId": "a50f1b5fac8114e6973e",
+      "afterId": "1a0b0a9100f6e81cb05c",
+      "expressionSha256": "1d70cace37b0144d9dd6b6fed626672b69b27a6601490734ca3cb20e22559a96",
+      "expression": "Buffer.from(String(a.bytes), 'base64')",
+      "disposition": "NOT_PERSISTENCE"
+    }
+  ],
+  "semanticChange": "Only the signed job admission now rejects expired and nonpositive leases. These exact Buffer.from calls remain byte conversion, never persistence or authority."
+}

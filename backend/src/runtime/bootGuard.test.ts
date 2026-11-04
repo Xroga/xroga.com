@@ -5,9 +5,8 @@ import { describe, it } from 'node:test';
 /**
  * index.ts starts a server when imported, so the boot wiring cannot be exercised as a unit. This test pins the wiring itself.
  * Main's contract (kept in the Batch 1.5 integration): boot runs no schema DDL, /ready answers from the credential-vault and database
- * probes, and request logging never records query strings. The startup-policy and readiness evaluators in this directory are libraries
- * that are deliberately not wired into index.ts yet: they recognise production only by the Fly app name, so wiring them is part of the
- * Google Cloud cutover (docs/infra/batch-1.5/DEPLOYMENT-HOLD.md).
+ * probes, and request logging never records query strings. Existing startup-policy and readiness evaluators now gate the explicit
+ * Google deployment environment and enabled Drive dependencies, while preserving Batch 1's zero-traffic candidate guard.
  */
 const source = readFileSync(new URL('../index.ts', import.meta.url), 'utf8');
 
@@ -24,9 +23,14 @@ describe('boot duties follow main\'s contract', () => {
     assert.match(source, /if\s*\(\s*startupReconciliationAllowed\(process\.env\)\s*\)/);
   });
 
-  it('/ready answers from the credential-vault and database probes', () => {
+  it('/ready retains credential custody and uses environment, database and enabled Drive probes', () => {
     assert.match(source, /app\.get\('\/ready',\s*credentialVaultReadinessMiddleware\(/);
-    assert.match(source, /app\.get\('\/ready'[\s\S]{0,700}probeDatabaseReadiness\(\)/);
+    assert.match(source, /runReadiness\(apiProbes\(process\.env,\s*\{\s*database:\s*probeDatabaseReadiness,\s*databaseTls:\s*probeDatabaseTls\s*\}\)\)/);
+    assert.match(source, /reason:\s*failing\?\.reason\s*\?\?\s*'not_ready'/);
+  });
+
+  it('serving reconciliation also requires a positively identified writable deployment environment', () => {
+    assert.match(source, /if\s*\(startupReconciliationAllowed\(process\.env\)\)\s*\{\s*const startup = decideStartup\(process\.env\);\s*if \(startup\.duties\.reconcileOrphanedRuns\)/);
   });
 });
 

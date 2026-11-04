@@ -67,6 +67,10 @@ export interface RuntimePreviewState {
   message:
     string;
 
+  /** Whether the preview shows the latest saved source. Absent on older servers. */
+  sourceState?:
+    'current' | 'stale' | 'unknown';
+
   updatedAt:
     string;
 }

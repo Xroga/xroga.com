@@ -6,6 +6,7 @@ import {
   classifyTaskRequest,
   type TaskClassification,
 } from '../lib/taskClassifier.js';
+import type { GoalContract } from './universal/goalContract.js';
 
 export type TaskKind =
   | 'chat'
@@ -30,6 +31,19 @@ export interface RouteDecision {
 
   classification:
     TaskClassification;
+}
+
+/** The admitted semantic contract owns retrieval intent, not the synthesis provider. */
+export function routeReadOnlyConversation(
+  prompt: string,
+  goal?: Pick<GoalContract, 'requiredCapabilities' | 'freshnessRequirement'>,
+): RouteDecision {
+  const inferred = routePrompt(prompt);
+  if (!goal) return inferred;
+  const research = goal.requiredCapabilities.includes('research.public-web')
+    || goal.requiredCapabilities.includes('research.x') || goal.freshnessRequirement !== 'NONE';
+  return { ...inferred, kind: research ? 'research' : 'chat', builder: 'deepseek_v4_1_flash_1017',
+    useResearch: research, reason: 'The validated semantic goal contract selected this read-only execution path.' };
 }
 
 /**
@@ -93,8 +107,8 @@ export function routePrompt(
   if (PRINCIPAL_RE.test(text)) {
     return {
       kind: 'build_complex',
-      converter: 'deepseek_v4_flash',
-      builder: 'kimi_k3',
+      converter: 'deepseek_v4_1_flash_1017',
+      builder: 'deepseek_v4_1_flash_1017',
       useResearch: classification.requiresResearch,
       reason: 'Principal-level systems engineering task',
       classification,
@@ -116,16 +130,16 @@ export function routePrompt(
         'research',
 
       converter:
-        'deepseek_v4_flash',
+        'deepseek_v4_1_flash_1017',
 
       builder:
-        'glm_5_3_flash',
+        'deepseek_v4_1_flash_1017',
 
       useResearch:
         true,
 
       reason:
-        'External evidence is retrieved separately and synthesized by the efficient GLM route',
+        'External evidence is retrieved separately and synthesized by the primary DeepSeek route',
 
       classification,
     };
@@ -145,10 +159,10 @@ export function routePrompt(
         'file_analysis',
 
       converter:
-        'deepseek_v4_flash',
+        'deepseek_v4_1_flash_1017',
 
       builder:
-        'glm_5_3_flash',
+        'deepseek_v4_1_flash_1017',
 
       useResearch:
         false,
@@ -165,10 +179,10 @@ export function routePrompt(
       kind: 'chat',
 
       converter:
-        'deepseek_v4_flash',
+        'deepseek_v4_1_flash_1017',
 
       builder:
-        'deepseek_v4_flash',
+        'deepseek_v4_1_flash_1017',
 
       useResearch:
         classification.requiresResearch,
@@ -193,10 +207,10 @@ export function routePrompt(
         'build_long_horizon',
 
       converter:
-        'deepseek_v4_flash',
+        'deepseek_v4_1_flash_1017',
 
       builder:
-        'glm_5_3',
+        'deepseek_v4_1_flash_1017',
 
       useResearch:
         classification.requiresResearch,
@@ -228,10 +242,10 @@ export function routePrompt(
         'build_complex',
 
       converter:
-        'deepseek_v4_flash',
+        'deepseek_v4_1_flash_1017',
 
       builder:
-        'glm_5_3',
+        'deepseek_v4_1_flash_1017',
 
       useResearch:
         classification.requiresResearch,
@@ -257,10 +271,10 @@ export function routePrompt(
         'build_volume',
 
       converter:
-        'deepseek_v4_flash',
+        'deepseek_v4_1_flash_1017',
 
       builder:
-        'glm_5_3_flash',
+        'deepseek_v4_1_flash_1017',
 
       useResearch:
         classification.requiresResearch,
@@ -277,10 +291,10 @@ export function routePrompt(
       'build_volume',
 
     converter:
-      'deepseek_v4_flash',
+      'deepseek_v4_1_flash_1017',
 
     builder:
-      'glm_5_3_flash',
+      'deepseek_v4_1_flash_1017',
 
     useResearch:
       classification.requiresResearch,

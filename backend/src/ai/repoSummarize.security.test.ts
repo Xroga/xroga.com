@@ -9,14 +9,14 @@ import {withRunAttempt,createRunDurable,captureAdmittedRunAttempt} from './runSt
 import {setProviderHealthStore} from './providerRuntime.js';
 
 test('actual repository memo binds platform scope, worker, JSON payload and complexity accounting',async t=>{
-  const env={NODE_ENV:'test',SUPABASE_URL:'http://127.0.0.1:55438',SUPABASE_SERVICE_ROLE_KEY:'synthetic-only',GLM_API_KEY:'synthetic-platform'};
+  const env={NODE_ENV:'test',SUPABASE_URL:'http://127.0.0.1:55438',SUPABASE_SERVICE_ROLE_KEY:'synthetic-only',ZURELAY_API_KEY:'synthetic-platform'};
   const old=Object.fromEntries(Object.keys(env).map(k=>[k,process.env[k]]));Object.assign(process.env,env);
   setProviderHealthStore({load:async()=>[],save:async()=>{}});t.after(()=>setProviderHealthStore(null));
   t.after(()=>{for(const k of Object.keys(env)){if(old[k]===undefined)delete process.env[k];else process.env[k]=old[k];}});
   const owner=randomUUID(),foreign=randomUUID(),project=randomUUID(),runId=randomUUID();
   const context=createTenantContext({userId:owner,via:'remote_getuser'}),metadata={type:'user_api_key',vault_revision:randomUUID()};
-  const token=await runtimeCredentialVault().seal(context,{tenant:owner,owner,provider:'zhipu',account:'apikey_zhipu',credentialType:'user_api_key',recordId:'apikey_zhipu',revision:metadata.vault_revision,scope:'user-provider-key'},'synthetic-current-user-key');
-  const original={user_id:owner,provider:'apikey_zhipu',access_token:token,metadata,credential_revision:randomUUID()};
+  const token=await runtimeCredentialVault().seal(context,{tenant:owner,owner,provider:'zurelay',account:'apikey_zurelay',credentialType:'user_api_key',recordId:'apikey_zurelay',revision:metadata.vault_revision,scope:'user-provider-key'},'synthetic-current-user-key');
+  const original={user_id:owner,provider:'apikey_zurelay',access_token:token,metadata,credential_revision:randomUUID()};
   let row=structuredClone(original),mode='ok',effects=0,projectReads=0,receipts=0;
   const requests:string[]=[];
   let run:Record<string,unknown>={};
@@ -34,12 +34,12 @@ test('actual repository memo binds platform scope, worker, JSON payload and comp
   t.mock.method(globalThis,'fetch',async(input:Parameters<typeof fetch>[0],init?:RequestInit)=>{
     const url=new URL(String(input)),body=init?.body?JSON.parse(String(init.body)):{};
     requests.push(url.pathname);
-    if(url.origin==='https://open.bigmodel.cn'){
+    if(url.origin==='https://api.zurelay.com'){
       effects++;assert.equal(new Headers(init?.headers).get('authorization'),'Bearer synthetic-platform');
       assert.doesNotMatch(JSON.stringify(body),/foreign source|SYNTHETIC_CREDENTIAL/);
       assert.match(JSON.stringify(body),/original owned source/);assert.equal(body.max_tokens,700);
       if(mode==='providerFailure')return Response.json({error:{message:'SYNTHETIC_CREDENTIAL must not reach logs'}},{status:400});
-      return Response.json({id:'synthetic-memo-receipt',choices:[{message:{content:'Owned repository memo'},finish_reason:'stop'}],usage:{prompt_tokens:8,completion_tokens:4}});
+      return Response.json({id:'synthetic-memo-receipt',choices:[{message:{content:'Owned repository memo'},finish_reason:'stop'}],model:'deepseek-v4.1-flash-1017',usage:{prompt_tokens:8,completion_tokens:4,total_tokens:12}},{headers:{'x-request-id':'synthetic-memo-receipt','x-zurelay-model':'deepseek-v4.1-flash-1017'}});
     }
     assert.equal(url.origin,env.SUPABASE_URL,'No real external transport is allowed');
     if(url.pathname==='/rest/v1/model_provider_health')return Response.json(null);
@@ -53,7 +53,7 @@ test('actual repository memo binds platform scope, worker, JSON payload and comp
       return Response.json(mode==='foreignProject'||url.searchParams.get('id')!=='eq.'+project?null:{id:project,user_id:owner,github_repo_name:mode==='repoChanged'?'foreign/repo':null});
     }
     if(url.pathname==='/rest/v1/user_integrations'){
-      assert.equal(url.searchParams.get('user_id'),'eq.'+owner);assert.equal(url.searchParams.get('provider'),'eq.apikey_zhipu');
+      assert.equal(url.searchParams.get('user_id'),'eq.'+owner);assert.equal(url.searchParams.get('provider'),'eq.apikey_zurelay');
       return Response.json(mode==='foreignCredential'?{...row,user_id:foreign}:row);
     }
     if(url.pathname.endsWith('/reserve_xroga_provider_budget')){
@@ -86,8 +86,8 @@ test('actual repository memo binds platform scope, worker, JSON payload and comp
   for(const failing of ['foreignProject','repoChanged','repoAtBudget','staleRun','mutatedWire']){
     reset(failing);run={...current};const before:number=effects;await assert.rejects(summarizeRepoForUpdates(options()));assert.equal(effects,before,failing);
   }
-  // This model uses the existing platform Zhipu account. Zhipu BYOK is not in
-  // the canonical admitted credential-provider list. Never invent it for tests.
+  // This model uses the explicit platform Zurelay account. An unselected user key cannot change
+  // this request account.
   // Revoking or rotating an unselected user row must not retarget the request.
   for(const change of [{metadata:{...metadata,revoked:true}},{credential_revision:randomUUID()}]){
     reset();run={...current};row={...row,...change};await summarizeRepoForUpdates(options());
