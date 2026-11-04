@@ -193,7 +193,7 @@ function toolkitLabel(
     );
 }
 
-function BusinessActionConfirmationInline({
+export function BusinessActionConfirmationInline({
   confirmationId,
 }: {
   confirmationId:

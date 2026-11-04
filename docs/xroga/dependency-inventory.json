@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "9a0e5e7af9d5cb2971f23d26c4e42c6f73321f43",
+  "source_sha": "1a642656542b2e806550b4c7b68517c9df51b22f",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -22267,6 +22267,10 @@
       "sha256": "4d2b818a1f380ffef34ab2940112877c002df6b3ff1e83f89af4e2f723e21a86"
     },
     {
+      "path": "frontend/src/components/terminal/RequiredInteractionCards.tsx",
+      "sha256": "631f0e8237ad7fef685c872d4a80e124f4051733acb6b969f0c0cba72861eaeb"
+    },
+    {
       "path": "frontend/src/components/terminal/ResponseSources.tsx",
       "sha256": "0fd186c17e5d8ab081a61db58f16e171de43d5d8cc66727caccab5245f1a5fc7"
     },
@@ -22296,7 +22300,7 @@
     },
     {
       "path": "frontend/src/components/terminal/SwarmMessageLog.tsx",
-      "sha256": "285c76c0e0e3a054e95fca8561ca096334f1fd9959e5f6d2ea2f92dd1055a66d"
+      "sha256": "28cac606e3e69ae6bd8b2960ebeea04d1b4fb8f804d6274f7636f68014ffd05a"
     },
     {
       "path": "frontend/src/components/terminal/TerminalBuildReport.tsx",
@@ -22892,7 +22896,7 @@
     },
     {
       "path": "frontend/src/lib/formatAiMarkdown.tsx",
-      "sha256": "d80e1ce5489b7326a5c0834759b84d9a0d276fe5de4826a5540875d4357162c1"
+      "sha256": "dba219fea184b59714d2c36619d1c58bd3273e6b232c9d1b4b53e3427bc16fdf"
     },
     {
       "path": "frontend/src/lib/gameBuilderContent.ts",
@@ -23437,6 +23441,10 @@
     {
       "path": "frontend/src/lib/terminal/executionIntent.ts",
       "sha256": "f0ec2bd7ec9a5e9c460e33be29a83f45faec46588d29c54b06d858df225df487"
+    },
+    {
+      "path": "frontend/src/lib/terminal/requiredInteractions.ts",
+      "sha256": "2bb1ee91a5708d8ef2e8af15fe313903d708e849fb74332dad01081378a745a1"
     },
     {
       "path": "frontend/src/lib/terminal/terminalEvent.ts",
@@ -37925,7 +37933,7 @@
     },
     {
       "path": "frontend/src/components/terminal/SwarmMessageLog.tsx",
-      "line": 223,
+      "line": 225,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -38465,6 +38473,13 @@
     {
       "path": "frontend/src/lib/terminal/activityPresentation.ts",
       "line": 235,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/lib/terminal/requiredInteractions.ts",
+      "line": 45,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

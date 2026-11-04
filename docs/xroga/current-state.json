@@ -75928,7 +75928,7 @@
         "frontend/src/components/terminal/FullscreenPreviewModal.tsx:7",
         "frontend/src/components/terminal/MessageBubbleActions.tsx:9",
         "frontend/src/components/terminal/MessageShareModal.tsx:20",
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:54",
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:56",
         "frontend/src/components/terminal/TerminalSkinPicker.tsx:7",
         "frontend/src/components/terminal/WorkspaceLauncher.tsx:3",
         "frontend/src/components/terminal/WorkspacePeopleControls.tsx:12",
@@ -76965,7 +76965,7 @@
         "frontend/src/components/terminal/BuildCodeSandbox.tsx:10",
         "frontend/src/components/terminal/DevWorkspacePanel.tsx:35",
         "frontend/src/components/terminal/FullscreenPreviewModal.tsx:8",
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:55"
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:57"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -77940,7 +77940,7 @@
         "frontend/src/components/terminal/BuildCodeSandbox.tsx:11",
         "frontend/src/components/terminal/DevWorkspacePanel.tsx:36",
         "frontend/src/components/terminal/FullscreenPreviewModal.tsx:9",
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:56"
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:58"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -92223,7 +92223,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:44",
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:46",
         "frontend/src/lib/chatTurnRail.test.ts:4",
         "frontend/src/lib/workspaceRouteIsolation20261021.test.ts:47"
       ],
@@ -93981,6 +93981,48 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:c52910d6fe499184d5e0",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/terminal/RequiredInteractionCards.tsx",
+      "sha256": "631f0e8237ad7fef685c872d4a80e124f4051733acb6b969f0c0cba72861eaeb",
+      "symbols": [
+        "RequiredInteractionCards"
+      ],
+      "imports": [
+        "@/lib/formatAiMarkdown",
+        "@/lib/terminal/requiredInteractions",
+        "lucide-react"
+      ],
+      "runtimeImports": [
+        "frontend/src/lib/formatAiMarkdown.tsx"
+      ],
+      "entryPoints": [
+        "frontend/src/app/(workspace)/workspace/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:44"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "lucide-react"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [
+        "frontend/src/components/terminal/RequiredInteractionCards.tsx#BusinessActionConfirmationInline"
+      ],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:859f5b3947969d0e6ac1",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/ResponseSources.tsx",
@@ -94350,7 +94392,7 @@
       "id": "surface:9c57a6290c71522141f5",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/SwarmMessageLog.tsx",
-      "sha256": "285c76c0e0e3a054e95fca8561ca096334f1fd9959e5f6d2ea2f92dd1055a66d",
+      "sha256": "28cac606e3e69ae6bd8b2960ebeea04d1b4fb8f804d6274f7636f68014ffd05a",
       "symbols": [
         "AGENT_STYLES",
         "SwarmMessageLog",
@@ -94453,6 +94495,7 @@
         "./MessageBubbleActions",
         "./MessageSuggestionChips",
         "./ReasoningAndFollowUps",
+        "./RequiredInteractionCards",
         "./ResponseSources",
         "./StoppedBuildResumeCard",
         "./TerminalLiveActivity",
@@ -94482,6 +94525,7 @@
         "@/lib/rollbackProjectUpdate",
         "@/lib/terminal/activityPresentation",
         "@/lib/terminal/executionIntent",
+        "@/lib/terminal/requiredInteractions",
         "@/lib/utils",
         "@/lib/workspacePersistence",
         "@/lib/xrogaShareableOutput",
@@ -94513,6 +94557,7 @@
         "frontend/src/components/terminal/MessageBubbleActions.tsx",
         "frontend/src/components/terminal/MessageSuggestionChips.tsx",
         "frontend/src/components/terminal/ReasoningAndFollowUps.tsx",
+        "frontend/src/components/terminal/RequiredInteractionCards.tsx",
         "frontend/src/components/terminal/ResponseSources.tsx",
         "frontend/src/components/terminal/StoppedBuildResumeCard.tsx",
         "frontend/src/components/terminal/TerminalLiveActivity.tsx",
@@ -94531,6 +94576,7 @@
         "frontend/src/lib/rollbackProjectUpdate.ts",
         "frontend/src/lib/terminal/activityPresentation.ts",
         "frontend/src/lib/terminal/executionIntent.ts",
+        "frontend/src/lib/terminal/requiredInteractions.ts",
         "frontend/src/lib/utils.ts",
         "frontend/src/lib/workspacePersistence.ts",
         "frontend/src/lib/xrogaShareableOutput.ts",
@@ -94561,7 +94607,9 @@
       "tenantBoundary": [],
       "approvalBoundary": [],
       "costBoundary": [],
-      "evidenceBoundary": [],
+      "evidenceBoundary": [
+        "frontend/src/components/terminal/SwarmMessageLog.tsx#requiredInteractionsFromEvents"
+      ],
       "testCoverage": [],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -95616,7 +95664,7 @@
       ],
       "callers": [
         "frontend/src/components/dashboard/DashboardView.tsx:19",
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:53"
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:55"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -95686,7 +95734,7 @@
       ],
       "callers": [
         "frontend/src/components/dashboard/DashboardView.tsx:6",
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:50"
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:52"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -103661,7 +103709,7 @@
       "id": "surface:015cc267f70323e72e46",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/formatAiMarkdown.tsx",
-      "sha256": "d80e1ce5489b7326a5c0834759b84d9a0d276fe5de4826a5540875d4357162c1",
+      "sha256": "dba219fea184b59714d2c36619d1c58bd3273e6b232c9d1b4b53e3427bc16fdf",
       "symbols": [
         "AppMark",
         "BusinessActionConfirmationInline",
@@ -103776,6 +103824,7 @@
       ],
       "callers": [
         "frontend/src/components/terminal/ReasoningAndFollowUps.tsx:12",
+        "frontend/src/components/terminal/RequiredInteractionCards.tsx:4",
         "frontend/src/components/terminal/XrogaBlockView.tsx:14",
         "frontend/src/lib/formatAiMarkdown.test.ts:5",
         "frontend/src/lib/plainAiText.tsx:4",
@@ -108489,7 +108538,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:45",
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:47",
         "frontend/src/components/terminal/WorkspaceIdentityMenu.tsx:23"
       ],
       "reachable": true,
@@ -111896,6 +111945,64 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:a91eaf7f089c8dce4b1c",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/lib/terminal/requiredInteractions.ts",
+      "sha256": "2bb1ee91a5708d8ef2e8af15fe313903d708e849fb74332dad01081378a745a1",
+      "symbols": [
+        "RequiredInteraction",
+        "RequiredInteractionStatus",
+        "UUID",
+        "at",
+        "byId",
+        "canonical",
+        "event",
+        "id",
+        "isConfirmationId",
+        "key",
+        "openInteractions",
+        "outcome",
+        "previous",
+        "requiredInteractionsFromEvents",
+        "status",
+        "statusOf"
+      ],
+      "imports": [
+        "./terminalEvent"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [
+        "frontend/src/app/(workspace)/workspace/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:45",
+        "frontend/src/lib/terminal/requiredInteractions.test.ts:4"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [
+        "frontend/src/lib/terminal/requiredInteractions.ts#isConfirmationId"
+      ],
+      "costBoundary": [],
+      "evidenceBoundary": [
+        "frontend/src/lib/terminal/requiredInteractions.ts#TerminalEvent",
+        "frontend/src/lib/terminal/requiredInteractions.ts#event",
+        "frontend/src/lib/terminal/requiredInteractions.ts#requiredInteractionsFromEvents"
+      ],
+      "testCoverage": [
+        "frontend/src/lib/terminal/requiredInteractions.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:635b3afc121c22673a6a",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/terminal/terminalEvent.ts",
@@ -111939,6 +112046,7 @@
         "frontend/src/lib/goldenJourneyRendering.test.ts",
         "frontend/src/lib/terminal/activityPresentation.test.ts",
         "frontend/src/lib/terminal/liveActivity.test.ts",
+        "frontend/src/lib/terminal/requiredInteractions.test.ts",
         "frontend/src/lib/terminal/terminalEventModel.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -115920,7 +116028,7 @@
         "frontend/src/components/terminal/ProjectWorkspaceRail.tsx:4",
         "frontend/src/components/terminal/RepoContextBar.tsx:32",
         "frontend/src/components/terminal/RuntimeLogsButton.tsx:20",
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:49",
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:51",
         "frontend/src/components/terminal/TerminalDock.tsx:17",
         "frontend/src/components/terminal/VercelDeployButton.tsx:6",
         "frontend/src/components/terminal/WorkspaceIdentityMenu.tsx:24",
@@ -138559,9 +138667,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:b06b57da9bec829297e8",
+      "id": "finding:29bdeb4d18f0f6d25bf7",
       "sourcePath": "frontend/src/components/terminal/SwarmMessageLog.tsx",
-      "line": 431,
+      "line": 433,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -138859,7 +138967,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:5ca75b0cd12ba20b8c8e",
+      "id": "finding:d165d20c9643443787c0",
       "sourcePath": "frontend/src/lib/formatAiMarkdown.tsx",
       "line": 1340,
       "kind": "PLACEHOLDER",
@@ -138869,7 +138977,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:07ea75c8bc9d79df51fb",
+      "id": "finding:4ac404723f4811d922d3",
       "sourcePath": "frontend/src/lib/formatAiMarkdown.tsx",
       "line": 1341,
       "kind": "PLACEHOLDER",
@@ -142519,14 +142627,14 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:ea5ee1920c2135bde28f",
+      "id": "frontend-call:155ace400d5f40c03c7f",
       "sourcePath": "frontend/src/lib/formatAiMarkdown.tsx",
       "line": 1010,
       "callee": "api.phase1.plan",
       "reachable": true
     },
     {
-      "id": "frontend-call:b2e17e0929ef659e6d35",
+      "id": "frontend-call:e1fd4dd910feffb613e9",
       "sourcePath": "frontend/src/lib/formatAiMarkdown.tsx",
       "line": 1046,
       "callee": "api.phase1.chat",
@@ -149782,6 +149890,13 @@
     {
       "id": "test-suite:40ea852b01c026961485",
       "sourcePath": "frontend/src/lib/terminal/plainResponseUi.test.ts",
+      "declaredTests": 7,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:246533bb926b8f897d10",
+      "sourcePath": "frontend/src/lib/terminal/requiredInteractions.test.ts",
       "declaredTests": 7,
       "skipLocations": [],
       "focusLocations": []
