@@ -604,6 +604,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                 key={msg.id}
                 ref={(el) => { messageRefs.current[msg.id] = el; }}
                 data-turn-id={msg.role === 'user' || msg.role === 'assistant' ? msg.id : undefined}
+                data-message-role={msg.role}
                 className={cn(
                   'xv-terminal-turn group flex gap-2',
                   msg.role === 'user' ? 'flex-row-reverse' : 'flex-row',
