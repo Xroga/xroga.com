@@ -617,7 +617,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                     prompt={promptByAssistantId.get(msg.id)}
                     streaming={msg.id === animatingId && loading}
                     controls={msg.buildStopped || msg.capacityUnavailable || msg.updateTrail ? taskControls : undefined}
-                    activity={operationRows.length ? <TerminalLiveActivity activity={operationRows} /> : undefined}>
+                    activity={operationRows.length ? <TerminalLiveActivity activity={operationRows} run={currentTurn ? terminalRun : undefined} /> : undefined}>
                     {msg.role === 'assistant' ? answer : null}
                   </ConversationTurnV2>
                 ) : <>

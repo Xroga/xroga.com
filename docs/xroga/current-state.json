@@ -94260,7 +94260,7 @@
       "id": "surface:9c57a6290c71522141f5",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/SwarmMessageLog.tsx",
-      "sha256": "6b94706031b1bf808a09cf3ca0afbf545dbd50ab5696a128daf98400fa0b387f",
+      "sha256": "285c76c0e0e3a054e95fca8561ca096334f1fd9959e5f6d2ea2f92dd1055a66d",
       "symbols": [
         "AGENT_STYLES",
         "SwarmMessageLog",
