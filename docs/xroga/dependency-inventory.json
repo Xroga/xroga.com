@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "ffabdcf01becbf6661999aff6c815e2f14852dd6",
+  "source_sha": "10926a08bb53ca31a0660adfb194555dbe92f5d3",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -20211,6 +20211,10 @@
       "sha256": "56a5f6e32820a6f15fd83c12ff2700096c496310767cc038091ed033e46ee2d9"
     },
     {
+      "path": "frontend/src/components/activity/ActivityTimeline.tsx",
+      "sha256": "6d0f3711f1703797619da1f5a0a14a73a0e3e48eae17d217792b789bdefae348"
+    },
+    {
       "path": "frontend/src/components/analytics/GoogleTag.tsx",
       "sha256": "cd4855a58446c02278ed51305a6d760da3a8a5205c26fdfa08b4bcac017d797c"
     },
@@ -22284,7 +22288,7 @@
     },
     {
       "path": "frontend/src/components/terminal/SwarmMessageLog.tsx",
-      "sha256": "80703d51ce2d9ceefc09d6d2580dcda09d3c00940eafb8976cdedfd04408f720"
+      "sha256": "285c76c0e0e3a054e95fca8561ca096334f1fd9959e5f6d2ea2f92dd1055a66d"
     },
     {
       "path": "frontend/src/components/terminal/TerminalBuildReport.tsx",
@@ -22300,7 +22304,7 @@
     },
     {
       "path": "frontend/src/components/terminal/TerminalLiveActivity.tsx",
-      "sha256": "9f4de56f0500862d10bd10dbc389825643fa73563002a8ca5bd9e1cbf28ec2aa"
+      "sha256": "49b93f7fe12f1677aa204790fa3a212626dd1ec4f4b112cbefce47d7933cf929"
     },
     {
       "path": "frontend/src/components/terminal/TerminalSearchBar.tsx",
@@ -23409,6 +23413,10 @@
     {
       "path": "frontend/src/lib/terminal/activityPresentation.ts",
       "sha256": "9691f43d3dd244e8ab5b7d4c27eedae9ab41f4e4d1ca530476ef86d1bca388f6"
+    },
+    {
+      "path": "frontend/src/lib/terminal/activityTimeline.ts",
+      "sha256": "10ba3ba4eb7d545fc902ed44373c4595ae9a6e0384ed01b229baf668a6207943"
     },
     {
       "path": "frontend/src/lib/terminal/dictation.ts",
@@ -37190,6 +37198,13 @@
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
+      "path": "frontend/src/components/activity/ActivityTimeline.tsx",
+      "line": 32,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
       "path": "frontend/src/components/automations/BrowserRun.tsx",
       "line": 17,
       "scope": "MODULE_LIFETIME",
@@ -37899,13 +37914,6 @@
     {
       "path": "frontend/src/components/terminal/SwarmMessageLog.tsx",
       "line": 223,
-      "scope": "FUNCTION_LOCAL",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "frontend/src/components/terminal/TerminalLiveActivity.tsx",
-      "line": 177,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
