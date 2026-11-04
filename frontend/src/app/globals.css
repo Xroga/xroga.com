@@ -14870,3 +14870,17 @@ body.theme-beige .xv-plugins-popover, body.theme-beige .xv-sidebar-hover-menu__c
 .xv-terminal-dock .xv-kimi-composer-frame[data-composer-frame="single"] .xv-companion-blackhole > button:hover {
   background:transparent!important;
 }
+
+/* Match the active composer to the 56rem response column without widening the starter. */
+.xv-terminal-dock[data-workspace-state='conversation'] .xv-terminal-dock-inner,
+body:not(.xv-workspace-expanded-active) .xv-terminal-dock--workspace-split[data-workspace-state='conversation'] .xv-terminal-dock-inner,
+body.xv-terminal-fullscreen-active:not(.xv-workspace-expanded-active) .xv-terminal-dock--workspace-split.xv-terminal-dock--fullscreen[data-workspace-state='conversation'] .xv-terminal-dock-inner {
+  width: 100% !important;
+  max-width: calc(56rem + 3rem) !important;
+}
+.xv-terminal-dock[data-workspace-state='conversation'] .xv-kimi-composer-frame[data-composer-frame='single'] {
+  box-sizing: border-box;
+  width: 100% !important;
+  min-width: 0;
+  max-width: 56rem !important;
+}
