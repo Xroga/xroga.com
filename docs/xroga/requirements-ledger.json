@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "7760f91c80a4a10471963cb0efc05a9f0af0beb3",
+  "source_sha": "c6b2f05ed5f07ee188bdbaa7afd29891070b584f",
   "assessment": "AVAILABLE_SOURCE_RECONCILIATION",
   "requirements": [
     {
@@ -2093,6 +2093,8 @@
         "backend/src/sandbox/google/gceMachineControl.ts",
         "backend/src/sandbox/google/gceSshTransport.ts",
         "backend/src/sandbox/google/googleSandbox.ts",
+        "backend/src/sandbox/google/orphanReconciler.ts",
+        "backend/src/sandbox/meteredExecution.ts",
         "backend/src/sandbox/remoteSandbox.ts",
         "backend/src/sandbox/sandboxEnvironment.ts",
         "backend/src/sandbox/sandboxProviders.ts",

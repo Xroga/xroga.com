@@ -681,36 +681,36 @@
       "id": "B1-P2-fba3a9a069050e3f",
       "family": "other-source-bound-boundaries",
       "sourcePath": "backend/src/routes/github.ts",
-      "sourceSha256": "e36f844e09dfd35789b6052ecaef7429ea55da2f2b70675299b2e8c17f92eb23",
+      "sourceSha256": "255f72f2b65bcd9e5bb29547b693a42d39feb928860de4985f0c3b4e86927587",
       "baselineCallerIds": [
         "8a4f5a61a698f969e941",
         "7ea068acaab899c1c99e",
         "b4f7c7e759ffc010fe2f"
       ],
       "currentCallerIds": [
-        "e7cc8bded28a4afc05db",
-        "f2da94bb96f753a44a0d",
-        "286d73d18019adf7e9b7"
+        "00b4abee5947d5d37003",
+        "e14dae5046bba8d9343f",
+        "a9b3c4d80ff636038058"
       ],
       "mapping": [
         {
           "baselineCallerId": "8a4f5a61a698f969e941",
           "currentCallerIds": [
-            "e7cc8bded28a4afc05db"
+            "00b4abee5947d5d37003"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "7ea068acaab899c1c99e",
           "currentCallerIds": [
-            "f2da94bb96f753a44a0d"
+            "e14dae5046bba8d9343f"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "b4f7c7e759ffc010fe2f",
           "currentCallerIds": [
-            "286d73d18019adf7e9b7"
+            "a9b3c4d80ff636038058"
           ],
           "change": "RETAINED"
         }
@@ -736,7 +736,7 @@
         {
           "path": "backend/src/routes/github.ts",
           "marker": "repo_strategy",
-          "sourceSha256": "e36f844e09dfd35789b6052ecaef7429ea55da2f2b70675299b2e8c17f92eb23",
+          "sourceSha256": "255f72f2b65bcd9e5bb29547b693a42d39feb928860de4985f0c3b4e86927587",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -1127,7 +1127,7 @@
       "id": "B1-P2-d87d5c8270aa4666",
       "family": "other-source-bound-boundaries",
       "sourcePath": "backend/src/routes/admin.ts",
-      "sourceSha256": "b0ebeab3363ba2d2446ce8fe19b48910d4febbde409056b3e232dfc521b3277d",
+      "sourceSha256": "2e9c04a38f096a4b4d3711e53a3278d8850732e15014ee42b0a688e268275554",
       "baselineCallerIds": [
         "900b714de6b6407ee20d",
         "8f0a6deb321279d0013d",
@@ -1175,7 +1175,7 @@
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
       "semanticProgress": {
         "packetId": "B1-P2-d87d5c8270aa4666",
-        "sourceSha256": "b0ebeab3363ba2d2446ce8fe19b48910d4febbde409056b3e232dfc521b3277d",
+        "sourceSha256": "2e9c04a38f096a4b4d3711e53a3278d8850732e15014ee42b0a688e268275554",
         "executionStatus": "IN_PROGRESS",
         "finding": "FOREIGN_ADMIN_ROLE_RECEIPT_ACCEPTED_IN_ACTUAL_MIDDLEWARE_TRANSPORT_TEST_FIXED_VERIFIED_AT_7BE44030",
         "originalCriteria": [
@@ -1232,6 +1232,18 @@
             "Bind six narrow existing admin/readiness caller proofs and the two shared guard calls without certifying unrelated endpoints",
             "This does not promise retroactive revocation of already admitted reads, founder-exclusive/AAL2 policy, new grants,009 custody or production readiness"
           ]
+        },
+        "reboundOnBranch": {
+          "prNumber": 922,
+          "baseRef": "origin/main",
+          "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+          "packetSourceRebinds": [
+            {
+              "path": "backend/src/routes/admin.ts",
+              "previousSha256": "b0ebeab3363ba2d2446ce8fe19b48910d4febbde409056b3e232dfc521b3277d",
+              "review": "File is byte-identical to origin/main; the hash is main's own recorded value."
+            }
+          ]
         }
       },
       "actor": {
@@ -1251,7 +1263,7 @@
         {
           "path": "backend/src/routes/admin.ts",
           "marker": "authorized_platform_errors",
-          "sourceSha256": "b0ebeab3363ba2d2446ce8fe19b48910d4febbde409056b3e232dfc521b3277d",
+          "sourceSha256": "2e9c04a38f096a4b4d3711e53a3278d8850732e15014ee42b0a688e268275554",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -2306,7 +2318,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real growth event replay cannot disclose a different project event",
-          "sourceSha256": "51e46db6343128f1e21a27aff3fb7d75c02d755d101ab374340b1e71c4ebc46d",
+          "sourceSha256": "ca10dcce1588319a590acc2c5db06294bb0ac47af4b81c3186b0dc9db03068f4",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -2483,7 +2495,7 @@
       "id": "B1-P2-84b9011a0d2b4754",
       "family": "approvals-external-actions",
       "sourcePath": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "sourceSha256": "cebaa6b021717f0ca895806889d04ba31c0b4bd0e0026f4f440351d7cb7803c7",
+      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec",
       "baselineCallerIds": [
         "c37a93be0605e64b3156",
         "94fb30ec710f32d062c2",
@@ -2497,85 +2509,85 @@
         "85d5a147aa59e4f62e68"
       ],
       "currentCallerIds": [
-        "5063984e8c997b66e324",
-        "4f84558e55d72a558c00",
-        "0d7ac55b299aff66161b",
-        "2b682298901e2f9f943b",
-        "7b807643d71d470e0f51",
-        "0248d18cc31a925c621c",
-        "66c23eb1e38ac8cb4bfc",
-        "10f00d8450df264b93d4",
-        "f842a5afc2b542487f43",
-        "d2879953777f5ac8d2ba"
+        "df7eec626e3acd881448",
+        "287e2fe0dabebc523a36",
+        "3a763a5523dac73c10d4",
+        "46aca4c01b2d3d90acad",
+        "85b1d7461e8691468225",
+        "545cee9f47055ec5d761",
+        "7231d508555849d87d32",
+        "8609662e7417659e88ca",
+        "2714b6af44879d208f97",
+        "a1b9e751df5bc764909d"
       ],
       "mapping": [
         {
           "baselineCallerId": "c37a93be0605e64b3156",
           "currentCallerIds": [
-            "5063984e8c997b66e324"
+            "df7eec626e3acd881448"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "94fb30ec710f32d062c2",
           "currentCallerIds": [
-            "4f84558e55d72a558c00"
+            "287e2fe0dabebc523a36"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "36d0fbfc5ddf864ad6ea",
           "currentCallerIds": [
-            "0d7ac55b299aff66161b"
+            "3a763a5523dac73c10d4"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "bda77ff34ad9e973cbde",
           "currentCallerIds": [
-            "2b682298901e2f9f943b"
+            "46aca4c01b2d3d90acad"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "a1e1f647efb6e7002993",
           "currentCallerIds": [
-            "7b807643d71d470e0f51"
+            "85b1d7461e8691468225"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "7c2970e3ea0940d5d136",
           "currentCallerIds": [
-            "0248d18cc31a925c621c"
+            "545cee9f47055ec5d761"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "986c86eebabfae033939",
           "currentCallerIds": [
-            "66c23eb1e38ac8cb4bfc"
+            "7231d508555849d87d32"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "884cad1975974abc0599",
           "currentCallerIds": [
-            "10f00d8450df264b93d4"
+            "8609662e7417659e88ca"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "b6708d08741254f6da06",
           "currentCallerIds": [
-            "f842a5afc2b542487f43"
+            "2714b6af44879d208f97"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "85d5a147aa59e4f62e68",
           "currentCallerIds": [
-            "d2879953777f5ac8d2ba"
+            "a1b9e751df5bc764909d"
           ],
           "change": "RETAINED"
         }
@@ -2585,7 +2597,7 @@
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
       "semanticProgress": {
         "packetId": "B1-P2-84b9011a0d2b4754",
-        "sourceSha256": "cebaa6b021717f0ca895806889d04ba31c0b4bd0e0026f4f440351d7cb7803c7",
+        "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec",
         "executionStatus": "IN_PROGRESS",
         "finding": "UNCHANGED_CONFIRMATION_METADATA_BOUNDARY_TARGETED_POSITIVE_PROOF_PREPARED",
         "actorTrace": "The auth-mounted phase1 router obtains actor only from requireUserId(req). Create is reached only after the existing prepared execution returns confirmation_required. Read, cancel and confirm ignore request-body owner and apply exact server actor plus confirmation ID. Private expiry updates reuse only owner-bound rows. Claim binds full plan, digest, expiry and current pending status. The original finish routine binds immutable claimed identity and plan. No production code changed.",
@@ -2637,7 +2649,19 @@
           "ref": "7bde084cbb9f3ed93e0ce26b59b6cf37adae8e43",
           "sourceSha256": "40e88fdceed4ff5f571c8ea71ae86d2dfb53f537d8a3a5ff8f4d915ecc068abe"
         },
-        "researchHandoffReview": "Existing owner-scoped confirmation persistence and one-use claim stay intact. New native research evidence is privately stored before consumed acknowledgement. No historical proof promotion. New source authenticated storage and delivery acceptance remains required."
+        "researchHandoffReview": "Existing owner-scoped confirmation persistence and one-use claim stay intact. New native research evidence is privately stored before consumed acknowledgement. No historical proof promotion. New source authenticated storage and delivery acceptance remains required.",
+        "reboundOnBranch": {
+          "prNumber": 922,
+          "baseRef": "origin/main",
+          "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+          "packetSourceRebinds": [
+            {
+              "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+              "previousSha256": "cebaa6b021717f0ca895806889d04ba31c0b4bd0e0026f4f440351d7cb7803c7",
+              "review": "Reviewed on PR 922: adds requireResearchResultStorage and requireModelResultStorage guards before execution and saves the execution result afterwards through tenant-context storage. The reviewed claim, authorize and confirmation calls are unchanged."
+            }
+          ]
+        }
       },
       "actor": {
         "existingTrace": "Mounted phase1 routes use phase1AuthMiddleware and req.userId; confirmation reads and transitions constrain id/user_id, creation embeds that user. A pending claim precedes the external action. executePreparedBusinessAction recomputes the plan digest before provider metadata and permission resolution.",
@@ -2709,7 +2733,7 @@
       "id": "B1-P2-346186bea635be22",
       "family": "other-source-bound-boundaries",
       "sourcePath": "backend/src/ai/quota.ts",
-      "sourceSha256": "a2b3f404004691fd201dadcd241a46d2d33b9b33a26a09b0cdfbb0cca76a01e4",
+      "sourceSha256": "33f0ab8cf98b74e9e1fcd3519c1a158cf20a3f0a6269a1128ea9a39e0c37e98d",
       "baselineCallerIds": [
         "3faa7ece6a312b431802",
         "09c18505660bd25e7f05",
@@ -2719,53 +2743,53 @@
         "f1aaacc8e5daf32fdba1"
       ],
       "currentCallerIds": [
-        "7632727b3c8b02cf14d5",
-        "77bc9a9a205796da009c",
-        "e8076c86facca1bb0721",
-        "baee9857b82180aaf497",
-        "611df8756b24bd23b167",
-        "fb624c5ca127ce5d4da8"
+        "fec7557265d1bdbb43bb",
+        "4af9883650ce37539f5e",
+        "4a20d5d6f72416b0cc1e",
+        "5b0856b8bbdf8ca461f6",
+        "2cfc66d7ab285d2bb5d2",
+        "d0c04a1fb4d28114ae3d"
       ],
       "mapping": [
         {
           "baselineCallerId": "3faa7ece6a312b431802",
           "currentCallerIds": [
-            "7632727b3c8b02cf14d5"
+            "fec7557265d1bdbb43bb"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "09c18505660bd25e7f05",
           "currentCallerIds": [
-            "77bc9a9a205796da009c"
+            "4af9883650ce37539f5e"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "ab1702a45a7ccb57ac8f",
           "currentCallerIds": [
-            "e8076c86facca1bb0721"
+            "4a20d5d6f72416b0cc1e"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "1990f5c97beb40b8b783",
           "currentCallerIds": [
-            "baee9857b82180aaf497"
+            "5b0856b8bbdf8ca461f6"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "e27b9abaf3fe02c61229",
           "currentCallerIds": [
-            "611df8756b24bd23b167"
+            "2cfc66d7ab285d2bb5d2"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "f1aaacc8e5daf32fdba1",
           "currentCallerIds": [
-            "fb624c5ca127ce5d4da8"
+            "d0c04a1fb4d28114ae3d"
           ],
           "change": "RETAINED"
         }
@@ -2775,7 +2799,7 @@
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
       "semanticProgress": {
         "packetId": "B1-P2-346186bea635be22",
-        "sourceSha256": "a2b3f404004691fd201dadcd241a46d2d33b9b33a26a09b0cdfbb0cca76a01e4",
+        "sourceSha256": "33f0ab8cf98b74e9e1fcd3519c1a158cf20a3f0a6269a1128ea9a39e0c37e98d",
         "executionStatus": "IN_PROGRESS",
         "finding": "DORMANT_ISSUED_OWNER_AND_EXACT_BUDGET_RECEIPTS_REPAIRED_PROOF_PENDING",
         "actorTrace": "All active accounting, pacing and read functions are byte-identical to accepted5722. Only the dormant export and context import change. Its callable contract now binds an original issued context and exact canonical persistence receipt. No active producer is invented or financial execution authorized.",
@@ -2819,6 +2843,13 @@
             "Exactly four usage writer/factory sites await proof. Two dormant syncPlanBudget caller sites remain unproven for original007 issuance and must not inherit this proof. Split accounting uncertainty and unified008 spending authority remain separately recorded, not certified.",
             "Require complete successful final-source disposable and repeated branch/integrated verification before manual or structured promotion"
           ]
+        },
+        "reboundOnBranch": {
+          "prNumber": 922,
+          "baseRef": "origin/main",
+          "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+          "previousSourceSha256": "a2b3f404004691fd201dadcd241a46d2d33b9b33a26a09b0cdfbb0cca76a01e4",
+          "review": "One line added: the two approved Zurelay model ids are accepted by the model-id normalizer. No persistence, ownership or reservation logic changed (reviewed on PR 922)."
         }
       },
       "actor": {
@@ -2841,7 +2872,7 @@
         {
           "path": "backend/src/ai/quota.ts",
           "marker": "export async function recordUsage",
-          "sourceSha256": "a2b3f404004691fd201dadcd241a46d2d33b9b33a26a09b0cdfbb0cca76a01e4",
+          "sourceSha256": "33f0ab8cf98b74e9e1fcd3519c1a158cf20a3f0a6269a1128ea9a39e0c37e98d",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -3398,7 +3429,7 @@
       "id": "B1-P2-392b9b628a9b92be",
       "family": "billing-budget",
       "sourcePath": "backend/src/ai/providerBudget.ts",
-      "sourceSha256": "751dbb7b995355ed7aeedb1ca2ba1326c387a8e7618b6c4d29cc56f6ef2ecb48",
+      "sourceSha256": "ccec1009a57392366b476c85f0c6ae703709b1ea4cbbe1a4b760645b1db6bb35",
       "baselineCallerIds": [
         "00d351afbe045a136c66",
         "254a91383e3a8af0310b",
@@ -3418,133 +3449,133 @@
         "3fc72ec34d884b871909"
       ],
       "currentCallerIds": [
-        "bebfcf0f4ba426a71be1",
-        "67b1241b9b70b5f136ae",
-        "33169c5e9ad22ce0655f",
-        "7836681966b6d9215ec8",
-        "86106178c4a136dd921d",
-        "26e1c49e68e89b7b14bd",
-        "5c9be0f2e0f652c62e49",
-        "597ad99cc551e28182ea",
-        "5b2500bca0819c0cfbca",
-        "48608e9c8e68e6683453",
-        "0aa6642b9d69de06f3b2",
-        "64c63cbd2cbdc0d0e6f6",
-        "298b5f4095b683f456b6",
-        "e052915067b01ca6077d",
-        "54e741be8699adc0e781",
-        "f4a361a7bbed04369e1b"
+        "255ea9744a9343d6feaf",
+        "e4d8bf4fcb8f6422f53a",
+        "b9d50643ad7fda897932",
+        "67400600da71ba2124eb",
+        "c985fa5fee1ee7d5c6f2",
+        "b57f79f0d091e2d52575",
+        "4150f3451a1cef23bc00",
+        "be62ab94e9a3c042c183",
+        "ee7f1f1315d6867c3e17",
+        "7b462edee6e0deb442d8",
+        "63cd9db82a553901aa87",
+        "54b682f70bf2fc2118d6",
+        "72838b3e50b0a2167d93",
+        "53502198a107866bdd54",
+        "cc73aacc720688126189",
+        "39946f9c942d63422513"
       ],
       "mapping": [
         {
           "baselineCallerId": "00d351afbe045a136c66",
           "currentCallerIds": [
-            "bebfcf0f4ba426a71be1"
+            "255ea9744a9343d6feaf"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "254a91383e3a8af0310b",
           "currentCallerIds": [
-            "67b1241b9b70b5f136ae"
+            "e4d8bf4fcb8f6422f53a"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "590df28cdc2b297e03b6",
           "currentCallerIds": [
-            "33169c5e9ad22ce0655f"
+            "b9d50643ad7fda897932"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "39a1f4163240597da04d",
           "currentCallerIds": [
-            "7836681966b6d9215ec8"
+            "67400600da71ba2124eb"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "613d8e71ddafb0d6bd0c",
           "currentCallerIds": [
-            "86106178c4a136dd921d"
+            "c985fa5fee1ee7d5c6f2"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "a80e4804742dfd6bcc0a",
           "currentCallerIds": [
-            "26e1c49e68e89b7b14bd"
+            "b57f79f0d091e2d52575"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "6285818c6e8220770b29",
           "currentCallerIds": [
-            "5c9be0f2e0f652c62e49"
+            "4150f3451a1cef23bc00"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "090fe734dc5d1d3dc6e3",
           "currentCallerIds": [
-            "597ad99cc551e28182ea"
+            "be62ab94e9a3c042c183"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "3f66673813dee0d85b85",
           "currentCallerIds": [
-            "5b2500bca0819c0cfbca"
+            "ee7f1f1315d6867c3e17"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "746985044f7d3ee62aff",
           "currentCallerIds": [
-            "48608e9c8e68e6683453"
+            "7b462edee6e0deb442d8"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "e030677c7ecb6b0dd90e",
           "currentCallerIds": [
-            "0aa6642b9d69de06f3b2"
+            "63cd9db82a553901aa87"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "e35278adbe80b78c8d41",
           "currentCallerIds": [
-            "64c63cbd2cbdc0d0e6f6"
+            "54b682f70bf2fc2118d6"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "b5a82155e981259a207e",
           "currentCallerIds": [
-            "298b5f4095b683f456b6"
+            "72838b3e50b0a2167d93"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "564673e6f6b21c690fce",
           "currentCallerIds": [
-            "e052915067b01ca6077d"
+            "53502198a107866bdd54"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "5ed8ef26b72e26561f26",
           "currentCallerIds": [
-            "54e741be8699adc0e781"
+            "cc73aacc720688126189"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "3fc72ec34d884b871909",
           "currentCallerIds": [
-            "f4a361a7bbed04369e1b"
+            "39946f9c942d63422513"
           ],
           "change": "RETAINED"
         }
@@ -3554,7 +3585,7 @@
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
       "semanticProgress": {
         "packetId": "B1-P2-392b9b628a9b92be",
-        "sourceSha256": "751dbb7b995355ed7aeedb1ca2ba1326c387a8e7618b6c4d29cc56f6ef2ecb48",
+        "sourceSha256": "ccec1009a57392366b476c85f0c6ae703709b1ea4cbbe1a4b760645b1db6bb35",
         "executionStatus": "IN_PROGRESS",
         "finding": "DORMANT_ISSUED_OWNER_AND_EXACT_BUDGET_RECEIPTS_REPAIRED_PROOF_PENDING",
         "actualVerification": {
@@ -3870,6 +3901,13 @@
             "sha256": "33d078d8734d0ec27380a433811164c4b49eba62483e12f3c256e1a166e74876",
             "proof": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
           }
+        },
+        "reboundOnBranch": {
+          "prNumber": 922,
+          "baseRef": "origin/main",
+          "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+          "previousSourceSha256": "751dbb7b995355ed7aeedb1ca2ba1326c387a8e7618b6c4d29cc56f6ef2ecb48",
+          "review": "Reviewed on PR 922: adds assertActiveModelId, assertProviderEnabled and assertModelSelection before reservation and Zurelay cost accounting; the reserve and cycle RPC calls and their user binding are unchanged. The related caller review records carry the same review."
         }
       },
       "actor": {
@@ -3900,14 +3938,14 @@
         {
           "path": "backend/src/ai/providerBudget.evidence.test.ts",
           "marker": "malformed durable reservation evidence never reaches provider execution",
-          "sourceSha256": "6e765f2edf2d0dd4c343f9e938a653bfd703868e7e0ae767de2549cf2b72c6ab",
+          "sourceSha256": "56e2c4cc4033ce5c8df4cba4fcd25a1b681c3ad517de6fe1d88cf4a55bfbb088",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
         {
           "path": "backend/src/ai/providerBudget.test.ts",
           "marker": "production cannot authorize provider execution using process-memory accounting",
-          "sourceSha256": "5d8b4af6f8450d65b0d5669438869bc812e9cd4f0ac25552f18c5270e7f559f8",
+          "sourceSha256": "61f6b5dc1fb040e3ffb60efab7693d515181ee1c1bd1279981a2d800dc54ffce",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -4029,7 +4067,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real durable database file delivery is owner-only",
-          "sourceSha256": "51e46db6343128f1e21a27aff3fb7d75c02d755d101ab374340b1e71c4ebc46d",
+          "sourceSha256": "ca10dcce1588319a590acc2c5db06294bb0ac47af4b81c3186b0dc9db03068f4",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -4191,7 +4229,7 @@
         {
           "path": "backend/src/middleware/runtimePreviewGateway.ts",
           "marker": "const target = authorizedPreviewTarget(grant, session);",
-          "sourceSha256": "e77261c31101ceadbe7ed0833b0afa69e9e2a16d79491daf62ead41c312f755f",
+          "sourceSha256": "e1d2fda6b417aee092e86f40ed141822b54a9e46e83ca5594e9ac15f2557ec5f",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -5027,7 +5065,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real community API rejects cross-author mixed-field privilege escalation without partial writes",
-          "sourceSha256": "51e46db6343128f1e21a27aff3fb7d75c02d755d101ab374340b1e71c4ebc46d",
+          "sourceSha256": "ca10dcce1588319a590acc2c5db06294bb0ac47af4b81c3186b0dc9db03068f4",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -5047,7 +5085,7 @@
       "id": "B1-P2-aca46b7ed6cc0fa7",
       "family": "projects-files-runtime",
       "sourcePath": "backend/src/synthesis/projectRuntime/store.ts",
-      "sourceSha256": "3b46dea8f9649026d6bb5c9ad4601fa9f583c9f5c1d0ecc7025cf1009bcf51c3",
+      "sourceSha256": "44b17c766b33903fa2d63a54de394b05a69d2cc8385f17b5da0e9767dfe839ab",
       "baselineCallerIds": [
         "8fc7cf5dd562db7dcd3a",
         "ed5cdf592a4a0494dc20",
@@ -5062,93 +5100,93 @@
         "2a229397c50f1425b1b5"
       ],
       "currentCallerIds": [
-        "a7a1747d2192d62b505b",
-        "4623023af1a7fe9573f6",
-        "dfd2b022b39413db1561",
-        "6da2a4d0d15144e0aad0",
-        "2a0d2f322b23c157502d",
-        "e49e4b26ba7d2860dc41",
-        "a2f0c39a047770542a8b",
-        "492e2a6c5aee7adbc460",
-        "7f42805766f9e4a7622d",
-        "32701c89f04a3536291d",
-        "18ace9b81c3f92c7fa17"
+        "a864bc5998ad30044406",
+        "705840502528b9097f92",
+        "794f2986baf15127a5e5",
+        "2660919ebdd0c11227d5",
+        "b2f45a155f1f9ed6ccee",
+        "952e2977dbbd8adc9b21",
+        "d37aef8db513054ed541",
+        "1244fa5f77d64178a682",
+        "358bbf620757dbdc20c7",
+        "7e1732412cef6d6c7465",
+        "86f871c90f683c44c842"
       ],
       "mapping": [
         {
           "baselineCallerId": "8fc7cf5dd562db7dcd3a",
           "currentCallerIds": [
-            "a7a1747d2192d62b505b"
+            "a864bc5998ad30044406"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "ed5cdf592a4a0494dc20",
           "currentCallerIds": [
-            "4623023af1a7fe9573f6"
+            "705840502528b9097f92"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "530ec12058ab9d32794b",
           "currentCallerIds": [
-            "dfd2b022b39413db1561"
+            "794f2986baf15127a5e5"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "419bf279075e606b8b1f",
           "currentCallerIds": [
-            "6da2a4d0d15144e0aad0"
+            "2660919ebdd0c11227d5"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "8da826b4f1382152e9e9",
           "currentCallerIds": [
-            "2a0d2f322b23c157502d"
+            "b2f45a155f1f9ed6ccee"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "05696d559ec8d6305a1f",
           "currentCallerIds": [
-            "e49e4b26ba7d2860dc41"
+            "952e2977dbbd8adc9b21"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "3fbff43474088305493a",
           "currentCallerIds": [
-            "a2f0c39a047770542a8b"
+            "d37aef8db513054ed541"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "7abc56c35732ad79279a",
           "currentCallerIds": [
-            "492e2a6c5aee7adbc460"
+            "1244fa5f77d64178a682"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "b9522163f553d5a418ed",
           "currentCallerIds": [
-            "7f42805766f9e4a7622d"
+            "358bbf620757dbdc20c7"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "1d714d1647e2c5f6a436",
           "currentCallerIds": [
-            "32701c89f04a3536291d"
+            "7e1732412cef6d6c7465"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "2a229397c50f1425b1b5",
           "currentCallerIds": [
-            "18ace9b81c3f92c7fa17"
+            "86f871c90f683c44c842"
           ],
           "change": "RETAINED"
         }
@@ -5158,7 +5196,7 @@
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
       "semanticProgress": {
         "packetId": "B1-P2-aca46b7ed6cc0fa7",
-        "sourceSha256": "3b46dea8f9649026d6bb5c9ad4601fa9f583c9f5c1d0ecc7025cf1009bcf51c3",
+        "sourceSha256": "44b17c766b33903fa2d63a54de394b05a69d2cc8385f17b5da0e9767dfe839ab",
         "executionStatus": "IN_PROGRESS",
         "finding": "EVENT_PARENT_VERIFIED_AT_397C_SECRET_RECEIPT_REJECTION_FIXED_VERIFIED_AT_7BE44030",
         "actorTrace": "The existing SupabaseProjectRuntimeStore.appendEvent inserts user/project/session values into the fixed event table. Current disposable catalog has only event PK and Auth-user FK, with owner-only browser SELECT policy. It has no session-parent relationship. A synthetic SQL probe using the exact original table definitions accepts an owner's event referencing a foreign session. This establishes a service-write parent gap, not a browser write bypass or foreign-payload disclosure. All eleven original store callers remain open unless separately proven.",
@@ -5248,6 +5286,13 @@
           "historicalSourceSha256": "592ed786e73af7eda5862d54f72ee5a4f298050fb232cedf1c3dda39a6bd12bb",
           "scope": "Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
           "currentSourceCertification": "NOT_INFERRED_REQUIRES_REGRESSION"
+        },
+        "reboundOnBranch": {
+          "prNumber": 922,
+          "baseRef": "origin/main",
+          "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+          "previousSourceSha256": "3b46dea8f9649026d6bb5c9ad4601fa9f583c9f5c1d0ecc7025cf1009bcf51c3",
+          "review": "File is byte-identical to origin/main; the hash is main's own recorded value, replacing an older value carried by the integrated lines."
         }
       },
       "actor": {
@@ -5275,14 +5320,14 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real revision restore rejects mismatched snapshot identities before restore or fork writes",
-          "sourceSha256": "51e46db6343128f1e21a27aff3fb7d75c02d755d101ab374340b1e71c4ebc46d",
+          "sourceSha256": "ca10dcce1588319a590acc2c5db06294bb0ac47af4b81c3186b0dc9db03068f4",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
         {
           "path": "backend/src/synthesis/projectRuntime/store.owner.test.ts",
           "marker": "revision restore rejects foreign owner, project, run and malformed snapshot/contract without replacing identifiers",
-          "sourceSha256": "11f78ce35ce587fe4c68caa48d7e69ddbc296e8f85c392a9b276feccd0fb4aea",
+          "sourceSha256": "8d54794044ab6f5a140afe5c8215743539c4bda2bb17e1c7928a0fc554868e85",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -5388,7 +5433,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real revision restore rejects mismatched snapshot identities before restore or fork writes",
-          "sourceSha256": "51e46db6343128f1e21a27aff3fb7d75c02d755d101ab374340b1e71c4ebc46d",
+          "sourceSha256": "ca10dcce1588319a590acc2c5db06294bb0ac47af4b81c3186b0dc9db03068f4",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -5710,7 +5755,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real failed-build notification cannot disclose raw backend diagnostic text",
-          "sourceSha256": "51e46db6343128f1e21a27aff3fb7d75c02d755d101ab374340b1e71c4ebc46d",
+          "sourceSha256": "ca10dcce1588319a590acc2c5db06294bb0ac47af4b81c3186b0dc9db03068f4",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -5902,7 +5947,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real profile column grants reject self-promotion",
-          "sourceSha256": "51e46db6343128f1e21a27aff3fb7d75c02d755d101ab374340b1e71c4ebc46d",
+          "sourceSha256": "ca10dcce1588319a590acc2c5db06294bb0ac47af4b81c3186b0dc9db03068f4",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -6336,7 +6381,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "Legitimate membership must remain visible",
-          "sourceSha256": "51e46db6343128f1e21a27aff3fb7d75c02d755d101ab374340b1e71c4ebc46d",
+          "sourceSha256": "ca10dcce1588319a590acc2c5db06294bb0ac47af4b81c3186b0dc9db03068f4",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -6625,7 +6670,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant",
-          "sourceSha256": "51e46db6343128f1e21a27aff3fb7d75c02d755d101ab374340b1e71c4ebc46d",
+          "sourceSha256": "ca10dcce1588319a590acc2c5db06294bb0ac47af4b81c3186b0dc9db03068f4",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -6722,7 +6767,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "generated external-project memory SQL denies browser roles",
-          "sourceSha256": "51e46db6343128f1e21a27aff3fb7d75c02d755d101ab374340b1e71c4ebc46d",
+          "sourceSha256": "ca10dcce1588319a590acc2c5db06294bb0ac47af4b81c3186b0dc9db03068f4",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -6847,7 +6892,7 @@
         {
           "path": "backend/src/ai/pipeline.ts",
           "marker": "loadSessionHistory(opts.userId",
-          "sourceSha256": "fa67a6ccaaca85b55c30405833f4f52cbe1959ed401b0de682f5567a9ad6c645",
+          "sourceSha256": "d3742ca4dccc50daf99aa71d9896449957dde73798dc6d7c2a9c5ca5536cff32",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -6974,7 +7019,7 @@
         {
           "path": "backend/src/ai/pipeline.ts",
           "marker": "const saved = await setProjectMemoryDurable({",
-          "sourceSha256": "fa67a6ccaaca85b55c30405833f4f52cbe1959ed401b0de682f5567a9ad6c645",
+          "sourceSha256": "d3742ca4dccc50daf99aa71d9896449957dde73798dc6d7c2a9c5ca5536cff32",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -7202,7 +7247,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real Whop fulfillment rolls back foreign membership collisions",
-          "sourceSha256": "51e46db6343128f1e21a27aff3fb7d75c02d755d101ab374340b1e71c4ebc46d",
+          "sourceSha256": "ca10dcce1588319a590acc2c5db06294bb0ac47af4b81c3186b0dc9db03068f4",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -7912,7 +7957,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real credential writer refuses a public bucket",
-          "sourceSha256": "51e46db6343128f1e21a27aff3fb7d75c02d755d101ab374340b1e71c4ebc46d",
+          "sourceSha256": "ca10dcce1588319a590acc2c5db06294bb0ac47af4b81c3186b0dc9db03068f4",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -8019,7 +8064,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real credential writer refuses a public bucket",
-          "sourceSha256": "51e46db6343128f1e21a27aff3fb7d75c02d755d101ab374340b1e71c4ebc46d",
+          "sourceSha256": "ca10dcce1588319a590acc2c5db06294bb0ac47af4b81c3186b0dc9db03068f4",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -8066,14 +8111,14 @@
       "id": "B1-P2-f8cb123dcb4c4a53",
       "family": "other-source-bound-boundaries",
       "sourcePath": "backend/src/security/serviceRoleGuard.ts",
-      "sourceSha256": "eb9fa4ddfef0a4098c061f6375f50c746820bdf070d1da7bd1d50548d56afb88",
+      "sourceSha256": "c942cc2588c0ffeb77eba5c789c05b03b1158d4ef8dd4ea29dbbf1041c76d280",
       "baselineCallerIds": [
         "d84df34ff692e4fb31c1",
         "bda2ddc16c7864ef18d8"
       ],
       "currentCallerIds": [
         "d84df34ff692e4fb31c1",
-        "cfcd9a8afee3dabccf13"
+        "b41f1945ffa218ebbb70"
       ],
       "mapping": [
         {
@@ -8086,7 +8131,7 @@
         {
           "baselineCallerId": "bda2ddc16c7864ef18d8",
           "currentCallerIds": [
-            "cfcd9a8afee3dabccf13"
+            "b41f1945ffa218ebbb70"
           ],
           "change": "RETAINED"
         }
@@ -8096,7 +8141,7 @@
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
       "semanticProgress": {
         "packetId": "B1-P2-f8cb123dcb4c4a53",
-        "sourceSha256": "eb9fa4ddfef0a4098c061f6375f50c746820bdf070d1da7bd1d50548d56afb88",
+        "sourceSha256": "c942cc2588c0ffeb77eba5c789c05b03b1158d4ef8dd4ea29dbbf1041c76d280",
         "executionStatus": "IN_PROGRESS",
         "finding": "UNAVAILABLE_REVIEW_ONLY_CONSTRUCTOR_POLICY_AND_INDEPENDENT_RECIPIENT_PROOF_PENDING",
         "originalCriteria": [
@@ -8156,6 +8201,13 @@
         "beforeGoogleDeliveryBinding": {
           "sourceSha256": "77424e64b9331b83e961b4169d2bca8fb62c2a413cfc912c28d0ce0c1dcaefe0",
           "actorTrace": "Tenant construction still requires original issued context. Named global construction still accepts only the same17 actual data-operation keys. A separate explicit review-only constructor exception now documents its real receiving-path proof obligations, while its key is excluded from the accepted type and rejected at runtime before SDK construction. It grants no query or additional runtime capability. All actual receivers require independent proof, and neither SDK handle is an RLS sandbox."
+        },
+        "reboundOnBranch": {
+          "prNumber": 922,
+          "baseRef": "origin/main",
+          "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+          "previousSourceSha256": "eb9fa4ddfef0a4098c061f6375f50c746820bdf070d1da7bd1d50548d56afb88",
+          "review": "File is byte-identical to origin/main; the hash is main's own recorded value, replacing an older value carried by the integrated lines."
         }
       },
       "actor": {
@@ -8503,7 +8555,7 @@
         "relatedSourceBindings": [
           {
             "path": "backend/src/ai/pipeline.ts",
-            "sha256": "fa67a6ccaaca85b55c30405833f4f52cbe1959ed401b0de682f5567a9ad6c645",
+            "sha256": "d3742ca4dccc50daf99aa71d9896449957dde73798dc6d7c2a9c5ca5536cff32",
             "preGoogleMigrationSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
             "beforeDirectOutputSha256": "0168bc57563dbc535012982e5c6680fd3ebb40c7595fb67620e1ca60284df9b4",
             "beforeRichShareCompletionReviewSha256": "373180f86ff9ed02a7624d767374d214c14765ffcbf9a489b86d3bc26507e3b6",
@@ -8516,7 +8568,7 @@
           },
           {
             "path": "backend/src/routes/swarm.ts",
-            "sha256": "195f1d1872a3a7fc828c28c1df5613c78a7292b4905534826f2afdd8c1a17622",
+            "sha256": "d15e6178d0e9ae30c0b7a1b5cb42996d1ddcc41dc06fcbdd90c09fc125fcd098",
             "preGoogleMigrationSha256": "7ae4bf0e05640eefccbaf8868183fc5b4301788e58a022a3b1dd42955fd59478"
           },
           {
@@ -8611,6 +8663,23 @@
           "change": "User progress is appended only while the exact current attempt is running. Late terminal progress cannot mutate the snapshot already accepted by the existing database generation fence. Explicit failure enrichment, cancellation, authority, reservation and provider behavior are unchanged.",
           "proof": "Live Google document task produced its correct accounted result but final Job handoff could not repeat the mutated terminal snapshot. Focused regression reproduced the mutation before repair. Twelve run event, durable terminal learning, resume, cancellation and queued-admission tests pass on canonical Node22.",
           "acceptance": "SOURCE_CORRECTION_ONLY_LIVE_DURABLE_HANDOFF_RECHECK_PENDING"
+        },
+        "reboundOnBranch": {
+          "relatedSourceBindings": [
+            {
+              "path": "backend/src/ai/pipeline.ts",
+              "previousSha256": "fa67a6ccaaca85b55c30405833f4f52cbe1959ed401b0de682f5567a9ad6c645",
+              "review": "Reviewed on PR 922: changes are confined to the chat pipeline (answer output budget, response source fields, strict response format), builder fallback ordering limited to one distinct candidate, and swapping model ids for the approved Zurelay models. None touches worker project wait admission, project ownership preflight, attempt/generation/lease checks or checkpoint writes."
+            },
+            {
+              "path": "backend/src/routes/swarm.ts",
+              "previousSha256": "195f1d1872a3a7fc828c28c1df5613c78a7292b4905534826f2afdd8c1a17622",
+              "review": "File is byte-identical to origin/main; the hash is main's own recorded value."
+            }
+          ],
+          "prNumber": 922,
+          "baseRef": "origin/main",
+          "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374"
         }
       },
       "actor": {
@@ -8662,7 +8731,7 @@
       "id": "B1-P2-8c13793907db3388",
       "family": "credentials-oauth",
       "sourcePath": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+      "sourceSha256": "845f195f835dd9dae9955a7e9ccd2c7d0a86ddfee917299e951fe99d289d3448",
       "baselineCallerIds": [
         "c3f2ca136ccab92884f3",
         "8466decbcb9ca41d5da8",
@@ -8690,18 +8759,18 @@
         "c0cad7450906cef3fce8",
         "125d1fa1b446def91170",
         "56f1365c1095ea75af85",
-        "8784feaf266f3ae5d72e",
-        "5f84595697b6399ed442",
-        "30d93bb175651c6091b1",
-        "6021c31eedb4e0085d2b",
-        "c36354753e5d659f1133",
-        "36190833aa1b3b96e8ee",
-        "cac7d32579dae1ccf84c",
-        "a497ca44a05b78d07e6c",
-        "977606a7b1f57d55adb2",
-        "4c3d52cdd8d4da245c3a",
-        "fa50fc7afb1cc2af0bfe",
-        "aa227a13e3f851a147cb"
+        "3ca6cdd6e98ce6d60f41",
+        "5f90e5a0a656a5419d4c",
+        "be3e39ffd9ce85f9f0e5",
+        "7260159d581155b2eefd",
+        "b9e760357c2ccb328c9e",
+        "53a7e1a96e0bec62bee6",
+        "8aeaf3c0596fedee163b",
+        "54fe7392c0d3794b89ac",
+        "2822acbf204a25662121",
+        "8d2404e2cdaa0f3994f6",
+        "b863485d9bc095d1af1d",
+        "0308587643cc5bf6e77a"
       ],
       "mapping": [
         {
@@ -8749,84 +8818,84 @@
         {
           "baselineCallerId": "aad6224f275c7da17b55",
           "currentCallerIds": [
-            "8784feaf266f3ae5d72e"
+            "3ca6cdd6e98ce6d60f41"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "c8806caee1b6dcf5dffe",
           "currentCallerIds": [
-            "5f84595697b6399ed442"
+            "5f90e5a0a656a5419d4c"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "8a0eb63ebffa141243f3",
           "currentCallerIds": [
-            "30d93bb175651c6091b1"
+            "be3e39ffd9ce85f9f0e5"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "e6d9a5693ccddad6699b",
           "currentCallerIds": [
-            "6021c31eedb4e0085d2b"
+            "7260159d581155b2eefd"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "6de4d56764f41d3a11bc",
           "currentCallerIds": [
-            "c36354753e5d659f1133"
+            "b9e760357c2ccb328c9e"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "57c1b65d21f7ad3e10e9",
           "currentCallerIds": [
-            "36190833aa1b3b96e8ee"
+            "53a7e1a96e0bec62bee6"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "dceb9a28d0e6cf3e0163",
           "currentCallerIds": [
-            "cac7d32579dae1ccf84c"
+            "8aeaf3c0596fedee163b"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "66faab8392a58be8ebaa",
           "currentCallerIds": [
-            "a497ca44a05b78d07e6c"
+            "54fe7392c0d3794b89ac"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "4fd45320f2922de4093b",
           "currentCallerIds": [
-            "977606a7b1f57d55adb2"
+            "2822acbf204a25662121"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "e24569ab9a41af1806a7",
           "currentCallerIds": [
-            "4c3d52cdd8d4da245c3a"
+            "8d2404e2cdaa0f3994f6"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "daa98fe8de4afd945ac5",
           "currentCallerIds": [
-            "fa50fc7afb1cc2af0bfe"
+            "b863485d9bc095d1af1d"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "219ebcffd2df24f5d96c",
           "currentCallerIds": [
-            "aa227a13e3f851a147cb"
+            "0308587643cc5bf6e77a"
           ],
           "change": "RETAINED"
         }
@@ -8836,7 +8905,7 @@
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
       "semanticProgress": {
         "packetId": "B1-P2-8c13793907db3388",
-        "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+        "sourceSha256": "845f195f835dd9dae9955a7e9ccd2c7d0a86ddfee917299e951fe99d289d3448",
         "executionStatus": "IN_PROGRESS",
         "finding": "DEMONSTRATED_PROVISIONING_BUNDLE_ORPHAN_AUTHORITY_FIXED_PENDING_REAL_PRIVATE_OBJECT_PROOF",
         "actualVerification": {
@@ -8906,6 +8975,18 @@
           "ref": "b0cd0ec31be56a8945ae41998563475237ed52fb",
           "sha256": "99a90ce870db5a6e55fff7a588384f8abb9ced3bf141ad7cd3d35522cf6a9785",
           "proof": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+        },
+        "reboundOnBranch": {
+          "prNumber": 922,
+          "baseRef": "origin/main",
+          "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+          "packetSourceRebinds": [
+            {
+              "path": "backend/src/services/integrations/userProviderKeys.ts",
+              "previousSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+              "review": "Reviewed on PR 922: adds zurelay to the allowed provider list, the env-var map and the provider catalog (three constants). Key storage, ownership, encryption and every persistence function are unchanged; the strict call-and-function comparison of all 23 related caller reviews found them byte-identical."
+            }
+          ]
         }
       },
       "actor": {
@@ -8993,7 +9074,7 @@
       "id": "B1-P2-d3895e94f03fa522",
       "family": "credentials-oauth",
       "sourcePath": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+      "sourceSha256": "845f195f835dd9dae9955a7e9ccd2c7d0a86ddfee917299e951fe99d289d3448",
       "baselineCallerIds": [
         "00329f071464b8e43b18"
       ],
@@ -9014,7 +9095,7 @@
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
       "semanticProgress": {
         "packetId": "B1-P2-d3895e94f03fa522",
-        "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+        "sourceSha256": "845f195f835dd9dae9955a7e9ccd2c7d0a86ddfee917299e951fe99d289d3448",
         "executionStatus": "IN_PROGRESS",
         "finding": "DEMONSTRATED_ABSENT_BYOK_AUTHORITY_MIRROR_RESURRECTION_FIXED_VERIFIED_AT_7BE44030",
         "actorTrace": "Owner/provider-scoped database lookup must contain an active canonical credential. The legacy private download previously returned its encrypted payload when the post-download authority query found no row. It now denies that absence, while active canonical legacy envelopes and valid database-backed connections retain existing behavior.",
@@ -9065,6 +9146,18 @@
           "ref": "b0cd0ec31be56a8945ae41998563475237ed52fb",
           "sha256": "99a90ce870db5a6e55fff7a588384f8abb9ced3bf141ad7cd3d35522cf6a9785",
           "proof": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+        },
+        "reboundOnBranch": {
+          "prNumber": 922,
+          "baseRef": "origin/main",
+          "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+          "packetSourceRebinds": [
+            {
+              "path": "backend/src/services/integrations/userProviderKeys.ts",
+              "previousSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+              "review": "Reviewed on PR 922: adds zurelay to the allowed provider list, the env-var map and the provider catalog (three constants). Key storage, ownership, encryption and every persistence function are unchanged; the strict call-and-function comparison of all 23 related caller reviews found them byte-identical."
+            }
+          ]
         }
       },
       "actor": {
@@ -9136,18 +9229,18 @@
       "id": "B1-P2-bee64099846891d0",
       "family": "credentials-oauth",
       "sourcePath": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+      "sourceSha256": "845f195f835dd9dae9955a7e9ccd2c7d0a86ddfee917299e951fe99d289d3448",
       "baselineCallerIds": [
         "3fd4baa9d381d8e8ebdb"
       ],
       "currentCallerIds": [
-        "37cfa6ca45abf19a23eb"
+        "ad9bfb649fa71faf105f"
       ],
       "mapping": [
         {
           "baselineCallerId": "3fd4baa9d381d8e8ebdb",
           "currentCallerIds": [
-            "37cfa6ca45abf19a23eb"
+            "ad9bfb649fa71faf105f"
           ],
           "change": "RETAINED"
         }
@@ -9218,27 +9311,27 @@
       "id": "B1-P2-ee04e35f1fc33a98",
       "family": "credentials-oauth",
       "sourcePath": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+      "sourceSha256": "845f195f835dd9dae9955a7e9ccd2c7d0a86ddfee917299e951fe99d289d3448",
       "baselineCallerIds": [
         "bffd24f4371afe0068ce",
         "c0a660520b23bcf21065"
       ],
       "currentCallerIds": [
-        "fe37d49899df3732b5cc",
-        "ef2d01aaa4ae1572ad53"
+        "ac2bc0bf079ef4f86bca",
+        "d81f7e29ed7eb8f08321"
       ],
       "mapping": [
         {
           "baselineCallerId": "bffd24f4371afe0068ce",
           "currentCallerIds": [
-            "fe37d49899df3732b5cc"
+            "ac2bc0bf079ef4f86bca"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "c0a660520b23bcf21065",
           "currentCallerIds": [
-            "ef2d01aaa4ae1572ad53"
+            "d81f7e29ed7eb8f08321"
           ],
           "change": "RETAINED"
         }
@@ -9310,18 +9403,18 @@
       "id": "B1-P2-0814a4d254cfad84",
       "family": "credentials-oauth",
       "sourcePath": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+      "sourceSha256": "845f195f835dd9dae9955a7e9ccd2c7d0a86ddfee917299e951fe99d289d3448",
       "baselineCallerIds": [
         "616340b0d7522ddd6992"
       ],
       "currentCallerIds": [
-        "b8a2f76b780dc05a1342"
+        "296b65797dd85b9aae09"
       ],
       "mapping": [
         {
           "baselineCallerId": "616340b0d7522ddd6992",
           "currentCallerIds": [
-            "b8a2f76b780dc05a1342"
+            "296b65797dd85b9aae09"
           ],
           "change": "RETAINED"
         }
@@ -9392,18 +9485,18 @@
       "id": "B1-P2-4f31a2595f724ac7",
       "family": "credentials-oauth",
       "sourcePath": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+      "sourceSha256": "845f195f835dd9dae9955a7e9ccd2c7d0a86ddfee917299e951fe99d289d3448",
       "baselineCallerIds": [
         "20831c35d677b0bb0980"
       ],
       "currentCallerIds": [
-        "bf70a476decc73712608"
+        "f15dce6c928b922d9010"
       ],
       "mapping": [
         {
           "baselineCallerId": "20831c35d677b0bb0980",
           "currentCallerIds": [
-            "bf70a476decc73712608"
+            "f15dce6c928b922d9010"
           ],
           "change": "RETAINED"
         }
@@ -9474,18 +9567,18 @@
       "id": "B1-P2-2114492823658128",
       "family": "credentials-oauth",
       "sourcePath": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+      "sourceSha256": "845f195f835dd9dae9955a7e9ccd2c7d0a86ddfee917299e951fe99d289d3448",
       "baselineCallerIds": [
         "f18023f7a692ccdd61fe"
       ],
       "currentCallerIds": [
-        "fc6a606bde6698305460"
+        "d711530da125fbdb8af8"
       ],
       "mapping": [
         {
           "baselineCallerId": "f18023f7a692ccdd61fe",
           "currentCallerIds": [
-            "fc6a606bde6698305460"
+            "d711530da125fbdb8af8"
           ],
           "change": "RETAINED"
         }

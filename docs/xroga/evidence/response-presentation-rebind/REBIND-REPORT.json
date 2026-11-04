@@ -880,5 +880,850 @@
         "reason": "backend/src/lib/gemini.ts no longer makes any outbound call: geminiGenerate now throws MODEL_DESTINATION_DENIED (retired provider), so the reviewed Gemini fetch no longer exists and its review is retired. Egress surface reduced."
       }
     ]
+  },
+  "phaseThreeContinuation": {
+    "prNumber": 922,
+    "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+    "mapped": [
+      {
+        "previousCallerId": "74229d60e093f2e44542",
+        "oldCurrentCallerId": "78696e27dd5c1ca37c3a",
+        "newCurrentCallerId": "fa04b8d8f9413c194ec5",
+        "path": "backend/src/routes/phase1.ts",
+        "enclosing": "toolUiLink",
+        "sourceRef": "4830b424",
+        "enclosingFunctionChanged": false
+      },
+      {
+        "previousCallerId": "c37a93be0605e64b3156",
+        "oldCurrentCallerId": "5063984e8c997b66e324",
+        "newCurrentCallerId": "df7eec626e3acd881448",
+        "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+        "enclosing": "expireIfNeeded",
+        "sourceRef": "4830b424",
+        "enclosingFunctionChanged": false
+      },
+      {
+        "previousCallerId": "94fb30ec710f32d062c2",
+        "oldCurrentCallerId": "4f84558e55d72a558c00",
+        "newCurrentCallerId": "287e2fe0dabebc523a36",
+        "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+        "enclosing": "expireIfNeeded",
+        "sourceRef": "4830b424",
+        "enclosingFunctionChanged": false
+      },
+      {
+        "previousCallerId": "36d0fbfc5ddf864ad6ea",
+        "oldCurrentCallerId": "0d7ac55b299aff66161b",
+        "newCurrentCallerId": "3a763a5523dac73c10d4",
+        "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+        "enclosing": "createBusinessActionConfirmation",
+        "sourceRef": "4830b424",
+        "enclosingFunctionChanged": false
+      },
+      {
+        "previousCallerId": "bda77ff34ad9e973cbde",
+        "oldCurrentCallerId": "2b682298901e2f9f943b",
+        "newCurrentCallerId": "46aca4c01b2d3d90acad",
+        "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+        "enclosing": "createBusinessActionConfirmation",
+        "sourceRef": "4830b424",
+        "enclosingFunctionChanged": false
+      },
+      {
+        "previousCallerId": "a1e1f647efb6e7002993",
+        "oldCurrentCallerId": "7b807643d71d470e0f51",
+        "newCurrentCallerId": "85b1d7461e8691468225",
+        "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+        "enclosing": "getBusinessActionConfirmation",
+        "sourceRef": "4830b424",
+        "enclosingFunctionChanged": false
+      },
+      {
+        "previousCallerId": "7c2970e3ea0940d5d136",
+        "oldCurrentCallerId": "0248d18cc31a925c621c",
+        "newCurrentCallerId": "545cee9f47055ec5d761",
+        "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+        "enclosing": "getBusinessActionConfirmation",
+        "sourceRef": "4830b424",
+        "enclosingFunctionChanged": false
+      },
+      {
+        "previousCallerId": "986c86eebabfae033939",
+        "oldCurrentCallerId": "66c23eb1e38ac8cb4bfc",
+        "newCurrentCallerId": "7231d508555849d87d32",
+        "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+        "enclosing": "cancelBusinessActionConfirmation",
+        "sourceRef": "4830b424",
+        "enclosingFunctionChanged": false
+      },
+      {
+        "previousCallerId": "884cad1975974abc0599",
+        "oldCurrentCallerId": "10f00d8450df264b93d4",
+        "newCurrentCallerId": "8609662e7417659e88ca",
+        "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+        "enclosing": "cancelBusinessActionConfirmation",
+        "sourceRef": "4830b424",
+        "enclosingFunctionChanged": false
+      },
+      {
+        "previousCallerId": "1a3d2ad705ca358ebbe3",
+        "oldCurrentCallerId": "faf31e8057d6b9c3795f",
+        "newCurrentCallerId": "319518470d46e4577f12",
+        "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+        "enclosing": "finishClaimedConfirmation",
+        "sourceRef": "4830b424",
+        "enclosingFunctionChanged": false
+      },
+      {
+        "previousCallerId": "b6708d08741254f6da06",
+        "oldCurrentCallerId": "f842a5afc2b542487f43",
+        "newCurrentCallerId": "2714b6af44879d208f97",
+        "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+        "enclosing": "confirmBusinessAction",
+        "sourceRef": "4830b424",
+        "enclosingFunctionChanged": true
+      },
+      {
+        "previousCallerId": "85d5a147aa59e4f62e68",
+        "oldCurrentCallerId": "d2879953777f5ac8d2ba",
+        "newCurrentCallerId": "a1b9e751df5bc764909d",
+        "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+        "enclosing": "confirmBusinessAction",
+        "sourceRef": "4830b424",
+        "enclosingFunctionChanged": true
+      },
+      {
+        "previousCallerId": "bbf934631616a292169c",
+        "oldCurrentCallerId": "6df5deb0f6f628c7d1b4",
+        "newCurrentCallerId": "7435325dc6f8734b9505",
+        "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+        "enclosing": "confirmBusinessAction",
+        "sourceRef": "4830b424",
+        "enclosingFunctionChanged": true
+      },
+      {
+        "previousCallerId": "c7d109715d2f37cc95b2",
+        "oldCurrentCallerId": "f40cf50a136b33e64174",
+        "newCurrentCallerId": "cdc742944930c390a470",
+        "path": "frontend/src/lib/formatAiMarkdown.tsx",
+        "enclosing": "decodeBase64UrlUtf8",
+        "sourceRef": "76c158aa",
+        "enclosingFunctionChanged": false
+      },
+      {
+        "previousCallerId": "046674e946dedc2dbd0a",
+        "oldCurrentCallerId": "bebfcf0f4ba426a71be1",
+        "newCurrentCallerId": "255ea9744a9343d6feaf",
+        "path": "backend/src/ai/providerBudget.ts",
+        "enclosing": "activatePaidCycle",
+        "sourceRef": "4830b424",
+        "enclosingFunctionChanged": false
+      },
+      {
+        "previousCallerId": "f7d8e33dac1c0de787f8",
+        "oldCurrentCallerId": "67b1241b9b70b5f136ae",
+        "newCurrentCallerId": "e4d8bf4fcb8f6422f53a",
+        "path": "backend/src/ai/providerBudget.ts",
+        "enclosing": "activatePaidCycle",
+        "sourceRef": "4830b424",
+        "enclosingFunctionChanged": false
+      },
+      {
+        "previousCallerId": "2384f6f1c188f4f6ce83",
+        "oldCurrentCallerId": "33169c5e9ad22ce0655f",
+        "newCurrentCallerId": "b9d50643ad7fda897932",
+        "path": "backend/src/ai/providerBudget.ts",
+        "enclosing": "getProviderEntitlementStatus",
+        "sourceRef": "4830b424",
+        "enclosingFunctionChanged": false
+      },
+      {
+        "previousCallerId": "03557d58e528c5852636",
+        "oldCurrentCallerId": "7836681966b6d9215ec8",
+        "newCurrentCallerId": "67400600da71ba2124eb",
+        "path": "backend/src/ai/providerBudget.ts",
+        "enclosing": "getProviderEntitlementStatus",
+        "sourceRef": "4830b424",
+        "enclosingFunctionChanged": false
+      },
+      {
+        "previousCallerId": "e2e547f8796cd0aad243",
+        "oldCurrentCallerId": "86106178c4a136dd921d",
+        "newCurrentCallerId": "c985fa5fee1ee7d5c6f2",
+        "path": "backend/src/ai/providerBudget.ts",
+        "enclosing": "getProviderEntitlementStatus",
+        "sourceRef": "4830b424",
+        "enclosingFunctionChanged": false
+      },
+      {
+        "previousCallerId": "f602ab2d6bfebc170a02",
+        "oldCurrentCallerId": "26e1c49e68e89b7b14bd",
+        "newCurrentCallerId": "b57f79f0d091e2d52575",
+        "path": "backend/src/ai/providerBudget.ts",
+        "enclosing": "getProviderEntitlementStatus",
+        "sourceRef": "4830b424",
+        "enclosingFunctionChanged": false
+      },
+      {
+        "previousCallerId": "8a48ae3957449eee9587",
+        "oldCurrentCallerId": "5c9be0f2e0f652c62e49",
+        "newCurrentCallerId": "4150f3451a1cef23bc00",
+        "path": "backend/src/ai/providerBudget.ts",
+        "enclosing": "setUsagePacing",
+        "sourceRef": "4830b424",
+        "enclosingFunctionChanged": false
+      },
+      {
+        "previousCallerId": "685bdab3b4b31bd28d43",
+        "oldCurrentCallerId": "597ad99cc551e28182ea",
+        "newCurrentCallerId": "be62ab94e9a3c042c183",
+        "path": "backend/src/ai/providerBudget.ts",
+        "enclosing": "setUsagePacing",
+        "sourceRef": "4830b424",
+        "enclosingFunctionChanged": false
+      },
+      {
+        "previousCallerId": "9a847ab5769bb707c1f2",
+        "oldCurrentCallerId": "5b2500bca0819c0cfbca",
+        "newCurrentCallerId": "ee7f1f1315d6867c3e17",
+        "path": "backend/src/ai/providerBudget.ts",
+        "enclosing": "reserveProviderBudget",
+        "sourceRef": "4830b424",
+        "enclosingFunctionChanged": true
+      },
+      {
+        "previousCallerId": "e489f9a48f400005cb2d",
+        "oldCurrentCallerId": "48608e9c8e68e6683453",
+        "newCurrentCallerId": "7b462edee6e0deb442d8",
+        "path": "backend/src/ai/providerBudget.ts",
+        "enclosing": "reserveProviderBudget",
+        "sourceRef": "4830b424",
+        "enclosingFunctionChanged": true
+      },
+      {
+        "previousCallerId": "d9435c22813b64a1f1f5",
+        "oldCurrentCallerId": "0aa6642b9d69de06f3b2",
+        "newCurrentCallerId": "63cd9db82a553901aa87",
+        "path": "backend/src/ai/providerBudget.ts",
+        "enclosing": "reserveProviderBudget",
+        "sourceRef": "4830b424",
+        "enclosingFunctionChanged": true
+      },
+      {
+        "previousCallerId": "1d3ef9e110d2f000f590",
+        "oldCurrentCallerId": "64c63cbd2cbdc0d0e6f6",
+        "newCurrentCallerId": "54b682f70bf2fc2118d6",
+        "path": "backend/src/ai/providerBudget.ts",
+        "enclosing": "reserveProviderBudget",
+        "sourceRef": "4830b424",
+        "enclosingFunctionChanged": true
+      },
+      {
+        "previousCallerId": "0b24ee0eecebdda0e6f3",
+        "oldCurrentCallerId": "298b5f4095b683f456b6",
+        "newCurrentCallerId": "72838b3e50b0a2167d93",
+        "path": "backend/src/ai/providerBudget.ts",
+        "enclosing": "settleProviderBudget",
+        "sourceRef": "4830b424",
+        "enclosingFunctionChanged": false
+      },
+      {
+        "previousCallerId": "ace18dec175b4875e7f7",
+        "oldCurrentCallerId": "e052915067b01ca6077d",
+        "newCurrentCallerId": "53502198a107866bdd54",
+        "path": "backend/src/ai/providerBudget.ts",
+        "enclosing": "settleProviderBudget",
+        "sourceRef": "4830b424",
+        "enclosingFunctionChanged": false
+      },
+      {
+        "previousCallerId": "c07b5b1f63ae0e361ae7",
+        "oldCurrentCallerId": "54e741be8699adc0e781",
+        "newCurrentCallerId": "cc73aacc720688126189",
+        "path": "backend/src/ai/providerBudget.ts",
+        "enclosing": "finishFailedProviderReservation",
+        "sourceRef": "4830b424",
+        "enclosingFunctionChanged": false
+      },
+      {
+        "previousCallerId": "fba07b765dafacccf133",
+        "oldCurrentCallerId": "f4a361a7bbed04369e1b",
+        "newCurrentCallerId": "39946f9c942d63422513",
+        "path": "backend/src/ai/providerBudget.ts",
+        "enclosing": "finishFailedProviderReservation",
+        "sourceRef": "4830b424",
+        "enclosingFunctionChanged": false
+      },
+      {
+        "previousCallerId": "bf25908290a49aa14bd7",
+        "oldCurrentCallerId": "3d61f3f5ae6402c20b58",
+        "newCurrentCallerId": "3db57fbadafb852f2b06",
+        "path": "backend/src/services/integrations/userProviderKeys.ts",
+        "enclosing": "decryptApiKey",
+        "sourceRef": "4830b424",
+        "enclosingFunctionChanged": false
+      },
+      {
+        "previousCallerId": "399344f16bc489f1e5b1",
+        "oldCurrentCallerId": "64f0d9db49a13b562831",
+        "newCurrentCallerId": "f22dea761a758bf97124",
+        "path": "backend/src/services/integrations/userProviderKeys.ts",
+        "enclosing": "decryptApiKey",
+        "sourceRef": "4830b424",
+        "enclosingFunctionChanged": false
+      },
+      {
+        "previousCallerId": "a2b9af9cc94fc4528e67",
+        "oldCurrentCallerId": "c135db5a5ea7536cfe6f",
+        "newCurrentCallerId": "9f636ef2e5cee499b1b9",
+        "path": "backend/src/services/integrations/userProviderKeys.ts",
+        "enclosing": "prepareUserProviderKeyWrite",
+        "sourceRef": "4830b424",
+        "enclosingFunctionChanged": false
+      },
+      {
+        "previousCallerId": "973e39406d138c83edea",
+        "oldCurrentCallerId": "bfd902ca64f5f7780a21",
+        "newCurrentCallerId": "37a9465bd24fabfe5070",
+        "path": "backend/src/services/integrations/userProviderKeys.ts",
+        "enclosing": "prepareUserProviderKeyWrite",
+        "sourceRef": "4830b424",
+        "enclosingFunctionChanged": false
+      },
+      {
+        "previousCallerId": "ee377e28847a820d3e60",
+        "oldCurrentCallerId": "8784feaf266f3ae5d72e",
+        "newCurrentCallerId": "3ca6cdd6e98ce6d60f41",
+        "path": "backend/src/services/integrations/userProviderKeys.ts",
+        "enclosing": "saveUserProviderKey",
+        "sourceRef": "4830b424",
+        "enclosingFunctionChanged": false
+      },
+      {
+        "previousCallerId": "77b006f82faf88017a2c",
+        "oldCurrentCallerId": "37cfa6ca45abf19a23eb",
+        "newCurrentCallerId": "ad9bfb649fa71faf105f",
+        "path": "backend/src/services/integrations/userProviderKeys.ts",
+        "enclosing": "saveUserProviderKey",
+        "sourceRef": "4830b424",
+        "enclosingFunctionChanged": false
+      },
+      {
+        "previousCallerId": "5a80567257e34b837a33",
+        "oldCurrentCallerId": "1c2765565427d7a39f41",
+        "newCurrentCallerId": "9592603e00571b9aa936",
+        "path": "backend/src/services/integrations/userProviderKeys.ts",
+        "enclosing": "saveUserProviderKey",
+        "sourceRef": "4830b424",
+        "enclosingFunctionChanged": false
+      },
+      {
+        "previousCallerId": "912679b2d70aeb54860e",
+        "oldCurrentCallerId": "5f84595697b6399ed442",
+        "newCurrentCallerId": "5f90e5a0a656a5419d4c",
+        "path": "backend/src/services/integrations/userProviderKeys.ts",
+        "enclosing": "listUserProviderKeys",
+        "sourceRef": "4830b424",
+        "enclosingFunctionChanged": false
+      },
+      {
+        "previousCallerId": "8e483e5db88e334d4fd9",
+        "oldCurrentCallerId": "30d93bb175651c6091b1",
+        "newCurrentCallerId": "be3e39ffd9ce85f9f0e5",
+        "path": "backend/src/services/integrations/userProviderKeys.ts",
+        "enclosing": "listUserProviderKeys",
+        "sourceRef": "4830b424",
+        "enclosingFunctionChanged": false
+      },
+      {
+        "previousCallerId": "2714bcb8dd844631154a",
+        "oldCurrentCallerId": "6021c31eedb4e0085d2b",
+        "newCurrentCallerId": "7260159d581155b2eefd",
+        "path": "backend/src/services/integrations/userProviderKeys.ts",
+        "enclosing": "deleteUserProviderKey",
+        "sourceRef": "4830b424",
+        "enclosingFunctionChanged": false
+      },
+      {
+        "previousCallerId": "b11077c6032271361558",
+        "oldCurrentCallerId": "c36354753e5d659f1133",
+        "newCurrentCallerId": "b9e760357c2ccb328c9e",
+        "path": "backend/src/services/integrations/userProviderKeys.ts",
+        "enclosing": "deleteUserProviderKey",
+        "sourceRef": "4830b424",
+        "enclosingFunctionChanged": false
+      },
+      {
+        "previousCallerId": "9f316f0cfad5794c27c5",
+        "oldCurrentCallerId": "fe37d49899df3732b5cc",
+        "newCurrentCallerId": "ac2bc0bf079ef4f86bca",
+        "path": "backend/src/services/integrations/userProviderKeys.ts",
+        "enclosing": "listCustomRowsForRevocation",
+        "sourceRef": "4830b424",
+        "enclosingFunctionChanged": false
+      },
+      {
+        "previousCallerId": "965d682f9f5d530bb929",
+        "oldCurrentCallerId": "ef2d01aaa4ae1572ad53",
+        "newCurrentCallerId": "d81f7e29ed7eb8f08321",
+        "path": "backend/src/services/integrations/userProviderKeys.ts",
+        "enclosing": "listCustomRowsForRevocation",
+        "sourceRef": "4830b424",
+        "enclosingFunctionChanged": false
+      },
+      {
+        "previousCallerId": "208413eede9db532d440",
+        "oldCurrentCallerId": "36190833aa1b3b96e8ee",
+        "newCurrentCallerId": "53a7e1a96e0bec62bee6",
+        "path": "backend/src/services/integrations/userProviderKeys.ts",
+        "enclosing": "revokeProviderRow",
+        "sourceRef": "4830b424",
+        "enclosingFunctionChanged": false
+      },
+      {
+        "previousCallerId": "76af43fa48bf2989a7da",
+        "oldCurrentCallerId": "726ceac5ed6ed44f0821",
+        "newCurrentCallerId": "6d28ef52991929f03d5d",
+        "path": "backend/src/services/integrations/userProviderKeys.ts",
+        "enclosing": "revokeProviderRow",
+        "sourceRef": "4830b424",
+        "enclosingFunctionChanged": false
+      },
+      {
+        "previousCallerId": "4bbd68abc608cd40cf5e",
+        "oldCurrentCallerId": "cac7d32579dae1ccf84c",
+        "newCurrentCallerId": "8aeaf3c0596fedee163b",
+        "path": "backend/src/services/integrations/userProviderKeys.ts",
+        "enclosing": "revokeProviderRow",
+        "sourceRef": "4830b424",
+        "enclosingFunctionChanged": false
+      },
+      {
+        "previousCallerId": "b13ab17aa7429003241b",
+        "oldCurrentCallerId": "a497ca44a05b78d07e6c",
+        "newCurrentCallerId": "54fe7392c0d3794b89ac",
+        "path": "backend/src/services/integrations/userProviderKeys.ts",
+        "enclosing": "getUserProviderKey",
+        "sourceRef": "4830b424",
+        "enclosingFunctionChanged": false
+      },
+      {
+        "previousCallerId": "281beef588e15d39be66",
+        "oldCurrentCallerId": "977606a7b1f57d55adb2",
+        "newCurrentCallerId": "2822acbf204a25662121",
+        "path": "backend/src/services/integrations/userProviderKeys.ts",
+        "enclosing": "getUserProviderKey",
+        "sourceRef": "4830b424",
+        "enclosingFunctionChanged": false
+      },
+      {
+        "previousCallerId": "251a8f22c720652f36a5",
+        "oldCurrentCallerId": "4c3d52cdd8d4da245c3a",
+        "newCurrentCallerId": "8d2404e2cdaa0f3994f6",
+        "path": "backend/src/services/integrations/userProviderKeys.ts",
+        "enclosing": "getUserProviderKey",
+        "sourceRef": "4830b424",
+        "enclosingFunctionChanged": false
+      },
+      {
+        "previousCallerId": "0671bfb9368569581fba",
+        "oldCurrentCallerId": "fa50fc7afb1cc2af0bfe",
+        "newCurrentCallerId": "b863485d9bc095d1af1d",
+        "path": "backend/src/services/integrations/userProviderKeys.ts",
+        "enclosing": "resolveProviderEnvForDeploy",
+        "sourceRef": "4830b424",
+        "enclosingFunctionChanged": false
+      },
+      {
+        "previousCallerId": "7dd7b79ecd7c4840a960",
+        "oldCurrentCallerId": "aa227a13e3f851a147cb",
+        "newCurrentCallerId": "0308587643cc5bf6e77a",
+        "path": "backend/src/services/integrations/userProviderKeys.ts",
+        "enclosing": "resolveProviderEnvForDeploy",
+        "sourceRef": "4830b424",
+        "enclosingFunctionChanged": false
+      },
+      {
+        "previousCallerId": "c0ae76586326abbbba08",
+        "oldCurrentCallerId": "b8a2f76b780dc05a1342",
+        "newCurrentCallerId": "296b65797dd85b9aae09",
+        "path": "backend/src/services/integrations/userProviderKeys.ts",
+        "enclosing": "snapshotSupabaseRows",
+        "sourceRef": "4830b424",
+        "enclosingFunctionChanged": false
+      },
+      {
+        "previousCallerId": "27483f27b03af7e1669b",
+        "oldCurrentCallerId": "bf70a476decc73712608",
+        "newCurrentCallerId": "f15dce6c928b922d9010",
+        "path": "backend/src/services/integrations/userProviderKeys.ts",
+        "enclosing": "snapshotSupabaseRows",
+        "sourceRef": "4830b424",
+        "enclosingFunctionChanged": false
+      },
+      {
+        "previousCallerId": "78fbb99c106916e565c3",
+        "oldCurrentCallerId": "fc6a606bde6698305460",
+        "newCurrentCallerId": "d711530da125fbdb8af8",
+        "path": "backend/src/services/integrations/userProviderKeys.ts",
+        "enclosing": "snapshotSupabaseRows",
+        "sourceRef": "4830b424",
+        "enclosingFunctionChanged": false
+      },
+      {
+        "previousCallerId": "4b2e42e58a10751072e2",
+        "oldCurrentCallerId": "a48ccd229f5da7688e01",
+        "newCurrentCallerId": "bac66807e08081335d38",
+        "path": "backend/src/services/integrations/userProviderKeys.ts",
+        "enclosing": "legacyJwtMatches",
+        "sourceRef": "4830b424",
+        "enclosingFunctionChanged": false
+      },
+      {
+        "previousCallerId": "f5f03db18b208dcd4855",
+        "oldCurrentCallerId": "1efd8ec34ba641c03034",
+        "newCurrentCallerId": "deb75dc520e1b72f0f8c",
+        "path": "backend/src/services/integrations/userProviderKeys.ts",
+        "enclosing": "saveSupabaseBundle",
+        "sourceRef": "4830b424",
+        "enclosingFunctionChanged": false
+      },
+      {
+        "previousCallerId": "bf2f29e05f610d929567",
+        "oldCurrentCallerId": "d68b6df592d887684c6f",
+        "newCurrentCallerId": "311e5def04fe94e7b0cd",
+        "path": "backend/src/services/integrations/userProviderKeys.ts",
+        "enclosing": "saveSupabaseBundle",
+        "sourceRef": "4830b424",
+        "enclosingFunctionChanged": false
+      },
+      {
+        "previousCallerId": "8eadb3d8b716ca3f7120",
+        "oldCurrentCallerId": "d2968f7d0b0673e4e552",
+        "newCurrentCallerId": "c3be2940c4b9c47c10ab",
+        "path": "backend/src/services/integrations/userProviderKeys.ts",
+        "enclosing": "saveSupabaseBundle",
+        "sourceRef": "4830b424",
+        "enclosingFunctionChanged": false
+      },
+      {
+        "previousCallerId": "dcde97f1e49cda370789",
+        "oldCurrentCallerId": "91c17cc8f6bff705b598",
+        "newCurrentCallerId": "8eac683151d9c952eab2",
+        "path": "backend/src/services/integrations/userProviderKeys.ts",
+        "enclosing": "connectUserSupabase",
+        "sourceRef": "4830b424",
+        "enclosingFunctionChanged": false
+      }
+    ],
+    "unmapped": [],
+    "takenFromMain": [
+      {
+        "previousCallerId": "8fc7cf5dd562db7dcd3a",
+        "oldCurrentCallerId": "a7a1747d2192d62b505b",
+        "newCurrentCallerId": "a864bc5998ad30044406"
+      },
+      {
+        "previousCallerId": "ed5cdf592a4a0494dc20",
+        "oldCurrentCallerId": "4623023af1a7fe9573f6",
+        "newCurrentCallerId": "705840502528b9097f92"
+      },
+      {
+        "previousCallerId": "4405d6096d2e71e981b2",
+        "oldCurrentCallerId": "af204e0e037ebe211a63",
+        "newCurrentCallerId": "601d86d506f90f4af7b4"
+      },
+      {
+        "previousCallerId": "98d184ab88f7ab61318b",
+        "oldCurrentCallerId": "1bb48a0fd529036dbd67",
+        "newCurrentCallerId": "1145e419d776dc7df9c2"
+      },
+      {
+        "previousCallerId": "60631ccec69849a4ead7",
+        "oldCurrentCallerId": "0053e3638ad34a6cbb95",
+        "newCurrentCallerId": "cc1d5d8e1cb0c92c86db"
+      },
+      {
+        "previousCallerId": "56973b18bffeba04db38",
+        "oldCurrentCallerId": "1d84483f4cae80e8b954",
+        "newCurrentCallerId": "6d3a8c300b6a8f18fbb5"
+      },
+      {
+        "previousCallerId": "530ec12058ab9d32794b",
+        "oldCurrentCallerId": "dfd2b022b39413db1561",
+        "newCurrentCallerId": "794f2986baf15127a5e5"
+      },
+      {
+        "previousCallerId": "0aa7bcbcf75b4fc1eceb",
+        "oldCurrentCallerId": "1f977fbbb1102e6dac1d",
+        "newCurrentCallerId": "6c6c1e09597d26afcf99"
+      },
+      {
+        "previousCallerId": "b5d3e5c94e9160b42afb",
+        "oldCurrentCallerId": "b404673ae5984ef51dee",
+        "newCurrentCallerId": "4b4714060afccfa2aed1"
+      },
+      {
+        "previousCallerId": "419bf279075e606b8b1f",
+        "oldCurrentCallerId": "6da2a4d0d15144e0aad0",
+        "newCurrentCallerId": "2660919ebdd0c11227d5"
+      },
+      {
+        "previousCallerId": "8da826b4f1382152e9e9",
+        "oldCurrentCallerId": "2a0d2f322b23c157502d",
+        "newCurrentCallerId": "b2f45a155f1f9ed6ccee"
+      },
+      {
+        "previousCallerId": "6fb334291b6218b12f4c",
+        "oldCurrentCallerId": "e49e4b26ba7d2860dc41",
+        "newCurrentCallerId": "952e2977dbbd8adc9b21"
+      },
+      {
+        "previousCallerId": "f4643ffb0f1224d7da80",
+        "oldCurrentCallerId": "a2f0c39a047770542a8b",
+        "newCurrentCallerId": "d37aef8db513054ed541"
+      },
+      {
+        "previousCallerId": "67ce8a604d6d6502cc94",
+        "oldCurrentCallerId": "492e2a6c5aee7adbc460",
+        "newCurrentCallerId": "1244fa5f77d64178a682"
+      },
+      {
+        "previousCallerId": "87f57b0ac97d6b473fa3",
+        "oldCurrentCallerId": "7f42805766f9e4a7622d",
+        "newCurrentCallerId": "358bbf620757dbdc20c7"
+      },
+      {
+        "previousCallerId": "99b6b7ce0de9df1778a6",
+        "oldCurrentCallerId": "32701c89f04a3536291d",
+        "newCurrentCallerId": "7e1732412cef6d6c7465"
+      },
+      {
+        "previousCallerId": "8bea5ef54bd825f8e224",
+        "oldCurrentCallerId": "18ace9b81c3f92c7fa17",
+        "newCurrentCallerId": "86f871c90f683c44c842"
+      },
+      {
+        "previousCallerId": "149b3684632af4931199",
+        "oldCurrentCallerId": "0e4c41c7ca91a4914c3f",
+        "newCurrentCallerId": "6379dcdeb795d49645a2"
+      }
+    ]
+  },
+  "phaseTwoDecisionRemappings": {
+    "prNumber": 922,
+    "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+    "takenFromMain": [
+      {
+        "previousCallerId": "05696d559ec8d6305a1f",
+        "old": "e49e4b26ba7d2860dc41",
+        "new": "952e2977dbbd8adc9b21"
+      },
+      {
+        "previousCallerId": "3fbff43474088305493a",
+        "old": "a2f0c39a047770542a8b",
+        "new": "d37aef8db513054ed541"
+      },
+      {
+        "previousCallerId": "7abc56c35732ad79279a",
+        "old": "492e2a6c5aee7adbc460",
+        "new": "1244fa5f77d64178a682"
+      },
+      {
+        "previousCallerId": "b9522163f553d5a418ed",
+        "old": "7f42805766f9e4a7622d",
+        "new": "358bbf620757dbdc20c7"
+      },
+      {
+        "previousCallerId": "1d714d1647e2c5f6a436",
+        "old": "32701c89f04a3536291d",
+        "new": "7e1732412cef6d6c7465"
+      },
+      {
+        "previousCallerId": "2a229397c50f1425b1b5",
+        "old": "18ace9b81c3f92c7fa17",
+        "new": "86f871c90f683c44c842"
+      }
+    ],
+    "mapped": [
+      {
+        "previousCallerId": "3faa7ece6a312b431802",
+        "old": "7632727b3c8b02cf14d5",
+        "new": "fec7557265d1bdbb43bb",
+        "path": "backend/src/ai/quota.ts",
+        "enclosing": "syncPlanBudget",
+        "enclosingFunctionChanged": false
+      },
+      {
+        "previousCallerId": "09c18505660bd25e7f05",
+        "old": "77bc9a9a205796da009c",
+        "new": "4af9883650ce37539f5e",
+        "path": "backend/src/ai/quota.ts",
+        "enclosing": "syncPlanBudget",
+        "enclosingFunctionChanged": false
+      },
+      {
+        "previousCallerId": "ab1702a45a7ccb57ac8f",
+        "old": "e8076c86facca1bb0721",
+        "new": "4a20d5d6f72416b0cc1e",
+        "path": "backend/src/ai/quota.ts",
+        "enclosing": "recordUsage",
+        "enclosingFunctionChanged": false
+      },
+      {
+        "previousCallerId": "1990f5c97beb40b8b783",
+        "old": "baee9857b82180aaf497",
+        "new": "5b0856b8bbdf8ca461f6",
+        "path": "backend/src/ai/quota.ts",
+        "enclosing": "recordUsage",
+        "enclosingFunctionChanged": false
+      },
+      {
+        "previousCallerId": "e27b9abaf3fe02c61229",
+        "old": "611df8756b24bd23b167",
+        "new": "2cfc66d7ab285d2bb5d2",
+        "path": "backend/src/ai/quota.ts",
+        "enclosing": "recordUsage",
+        "enclosingFunctionChanged": false
+      },
+      {
+        "previousCallerId": "f1aaacc8e5daf32fdba1",
+        "old": "fb624c5ca127ce5d4da8",
+        "new": "d0c04a1fb4d28114ae3d",
+        "path": "backend/src/ai/quota.ts",
+        "enclosing": "recordUsage",
+        "enclosingFunctionChanged": false
+      },
+      {
+        "previousCallerId": "00d351afbe045a136c66",
+        "old": "bebfcf0f4ba426a71be1",
+        "new": "255ea9744a9343d6feaf",
+        "path": "backend/src/ai/providerBudget.ts",
+        "enclosing": "activatePaidCycle",
+        "enclosingFunctionChanged": false
+      },
+      {
+        "previousCallerId": "254a91383e3a8af0310b",
+        "old": "67b1241b9b70b5f136ae",
+        "new": "e4d8bf4fcb8f6422f53a",
+        "path": "backend/src/ai/providerBudget.ts",
+        "enclosing": "activatePaidCycle",
+        "enclosingFunctionChanged": false
+      },
+      {
+        "previousCallerId": "590df28cdc2b297e03b6",
+        "old": "33169c5e9ad22ce0655f",
+        "new": "b9d50643ad7fda897932",
+        "path": "backend/src/ai/providerBudget.ts",
+        "enclosing": "getProviderEntitlementStatus",
+        "enclosingFunctionChanged": false
+      },
+      {
+        "previousCallerId": "39a1f4163240597da04d",
+        "old": "7836681966b6d9215ec8",
+        "new": "67400600da71ba2124eb",
+        "path": "backend/src/ai/providerBudget.ts",
+        "enclosing": "getProviderEntitlementStatus",
+        "enclosingFunctionChanged": false
+      },
+      {
+        "previousCallerId": "613d8e71ddafb0d6bd0c",
+        "old": "86106178c4a136dd921d",
+        "new": "c985fa5fee1ee7d5c6f2",
+        "path": "backend/src/ai/providerBudget.ts",
+        "enclosing": "getProviderEntitlementStatus",
+        "enclosingFunctionChanged": false
+      },
+      {
+        "previousCallerId": "a80e4804742dfd6bcc0a",
+        "old": "26e1c49e68e89b7b14bd",
+        "new": "b57f79f0d091e2d52575",
+        "path": "backend/src/ai/providerBudget.ts",
+        "enclosing": "getProviderEntitlementStatus",
+        "enclosingFunctionChanged": false
+      },
+      {
+        "previousCallerId": "6285818c6e8220770b29",
+        "old": "5c9be0f2e0f652c62e49",
+        "new": "4150f3451a1cef23bc00",
+        "path": "backend/src/ai/providerBudget.ts",
+        "enclosing": "setUsagePacing",
+        "enclosingFunctionChanged": false
+      },
+      {
+        "previousCallerId": "090fe734dc5d1d3dc6e3",
+        "old": "597ad99cc551e28182ea",
+        "new": "be62ab94e9a3c042c183",
+        "path": "backend/src/ai/providerBudget.ts",
+        "enclosing": "setUsagePacing",
+        "enclosingFunctionChanged": false
+      },
+      {
+        "previousCallerId": "3f66673813dee0d85b85",
+        "old": "5b2500bca0819c0cfbca",
+        "new": "ee7f1f1315d6867c3e17",
+        "path": "backend/src/ai/providerBudget.ts",
+        "enclosing": "reserveProviderBudget",
+        "enclosingFunctionChanged": true
+      },
+      {
+        "previousCallerId": "746985044f7d3ee62aff",
+        "old": "48608e9c8e68e6683453",
+        "new": "7b462edee6e0deb442d8",
+        "path": "backend/src/ai/providerBudget.ts",
+        "enclosing": "reserveProviderBudget",
+        "enclosingFunctionChanged": true
+      },
+      {
+        "previousCallerId": "e030677c7ecb6b0dd90e",
+        "old": "0aa6642b9d69de06f3b2",
+        "new": "63cd9db82a553901aa87",
+        "path": "backend/src/ai/providerBudget.ts",
+        "enclosing": "reserveProviderBudget",
+        "enclosingFunctionChanged": true
+      },
+      {
+        "previousCallerId": "e35278adbe80b78c8d41",
+        "old": "64c63cbd2cbdc0d0e6f6",
+        "new": "54b682f70bf2fc2118d6",
+        "path": "backend/src/ai/providerBudget.ts",
+        "enclosing": "reserveProviderBudget",
+        "enclosingFunctionChanged": true
+      },
+      {
+        "previousCallerId": "b5a82155e981259a207e",
+        "old": "298b5f4095b683f456b6",
+        "new": "72838b3e50b0a2167d93",
+        "path": "backend/src/ai/providerBudget.ts",
+        "enclosing": "settleProviderBudget",
+        "enclosingFunctionChanged": false
+      },
+      {
+        "previousCallerId": "564673e6f6b21c690fce",
+        "old": "e052915067b01ca6077d",
+        "new": "53502198a107866bdd54",
+        "path": "backend/src/ai/providerBudget.ts",
+        "enclosing": "settleProviderBudget",
+        "enclosingFunctionChanged": false
+      },
+      {
+        "previousCallerId": "5ed8ef26b72e26561f26",
+        "old": "54e741be8699adc0e781",
+        "new": "cc73aacc720688126189",
+        "path": "backend/src/ai/providerBudget.ts",
+        "enclosing": "finishFailedProviderReservation",
+        "enclosingFunctionChanged": false
+      },
+      {
+        "previousCallerId": "3fc72ec34d884b871909",
+        "old": "f4a361a7bbed04369e1b",
+        "new": "39946f9c942d63422513",
+        "path": "backend/src/ai/providerBudget.ts",
+        "enclosing": "finishFailedProviderReservation",
+        "enclosingFunctionChanged": false
+      }
+    ],
+    "unmapped": []
   }
 }

@@ -1,6 +1,6 @@
 # Repository evidence gaps
 
-Source SHA: `7760f91c80a4a10471963cb0efc05a9f0af0beb3`. These are pre-existing findings, not changes made by Command 001.
+Source SHA: `c6b2f05ed5f07ee188bdbaa7afd29891070b584f`. These are pre-existing findings, not changes made by Command 001.
 
 - OAuth credentials and PKCE state persist in `oauthPkceStore.ts` database fields and a storage mirror. Command 009 must establish encryption, expiry and one-use semantics with verified KMS before cutover.
 - Auth middleware can return internal configuration/error text. Repair and test safe public errors in Command 007.
@@ -24,4 +24,6 @@ Source SHA: `7760f91c80a4a10471963cb0efc05a9f0af0beb3`. These are pre-existing f
 - Computed route paths, runtime registrations, Docker/worker commands and dynamic nonliteral imports require explicit manual reconciliation.
 - No production credentials or customer data were read; live behavior remains unverified in this command.
 - Static imports do not prove provider availability or authorization correctness.
+- Unresolved local import scripts/batch3/live-github-check.ts:22 -> ../../backend/src/existingSource/change/localProcessPort.testsupport.js
+- Unresolved local import scripts/batch3/local-supabase-check.ts:17 -> ../../backend/src/existingSource/change/localProcessPort.testsupport.js
 - Unresolved local import scripts/render-software-art.mjs:17 -> ../node_modules/playwright/index.mjs

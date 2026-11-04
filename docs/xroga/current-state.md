@@ -6,15 +6,15 @@ This inventory records static source and call-path evidence. A mounted endpoint 
 
 ## Counts
 
-- surfaces: 1797
+- surfaces: 1847
 - routeRegistrations: 381
 - routes: 319
 - reachableRoutes: 236
 - queues: 4
 - migrations: 161
 - workflows: 21
-- testSuites: 1042
-- declaredTests: 7114
+- testSuites: 1084
+- declaredTests: 7279
 - classifiedMarkers: 403
 - reachableMarkers: 337
 - absentRequiredPaths: 5
@@ -78,7 +78,7 @@ This inventory records static source and call-path evidence. A mounted endpoint 
 - **cost_accounting**: backend/src/ai/providerBudget.ts, backend/src/ai/quota.ts, backend/src/ai/universal/costLedger.ts, backend/src/services/BillingService.ts. Multiple related boundaries exist. This is a review candidate, not a conclusion that implementations are redundant; compare callers, authority, durability and evidence before changing architecture.
 - **credential_persistence**: backend/src/services/integrations/githubTokenStore.ts, backend/src/services/integrations/oauthPkceStore.ts, backend/src/services/publish/chromeWebStore.ts, backend/src/services/publish/easCredentials.ts, backend/src/services/publish/electronSecrets.ts, frontend/src/components/integrations/CustomCredentialsSection.tsx. Multiple related boundaries exist. This is a review candidate, not a conclusion that implementations are redundant; compare callers, authority, durability and evidence before changing architecture.
 - **browser_execution**: backend/src/lib/browserbase.ts, backend/src/middleware/runtimePreviewGateway.ts, backend/src/sandbox/flyMachineSandbox.ts, backend/src/sandbox/remoteSandbox.ts, backend/src/synthesis/browserVerificationAdapter.ts. Multiple related boundaries exist. This is a review candidate, not a conclusion that implementations are redundant; compare callers, authority, durability and evidence before changing architecture.
-- **completion_semantics**: backend/src/ai/measuredEvidence.ts, backend/src/ai/softwareAgent/completionGate.ts, backend/src/ai/verificationLifecycle.ts, backend/src/operations/completionGate.ts, backend/src/synthesis/webVerificationGate.ts, frontend/src/lib/verificationLifecycle.ts. Multiple related boundaries exist. This is a review candidate, not a conclusion that implementations are redundant; compare callers, authority, durability and evidence before changing architecture.
+- **completion_semantics**: backend/src/ai/completionDiagnostics.ts, backend/src/ai/measuredEvidence.ts, backend/src/ai/softwareAgent/completionGate.ts, backend/src/ai/verificationLifecycle.ts, backend/src/operations/completionGate.ts, backend/src/synthesis/webVerificationGate.ts, frontend/src/lib/verificationLifecycle.ts. Multiple related boundaries exist. This is a review candidate, not a conclusion that implementations are redundant; compare callers, authority, durability and evidence before changing architecture.
 
 ## Reproduction
 
