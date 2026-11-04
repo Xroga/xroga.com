@@ -1,22 +1,22 @@
 # Xroga repository truth map
 
-Source SHA: `7760f91c80a4a10471963cb0efc05a9f0af0beb3`. Branch observed: `codex/zurelay-response-contract-20261103`. Audit started: 2026-11-03T20:57:16.272Z.
+Source SHA: `c6b2f05ed5f07ee188bdbaa7afd29891070b584f`. Branch observed: `feat/mic-mobile-main-20261031`. Audit started: 2026-10-31T01:28:02.145Z.
 
 This inventory records static source and call-path evidence. A mounted endpoint is reachable in source; that does not certify live success, tenant safety, approval enforcement, or completion. All implementation surfaces retain an unverified/partial/placeholder state until their own acceptance tests establish behavior. No architecture was replaced and no production operations were performed.
 
 ## Counts
 
-- surfaces: 1776
-- routeRegistrations: 351
-- routes: 294
+- surfaces: 1797
+- routeRegistrations: 381
+- routes: 319
 - reachableRoutes: 236
 - queues: 4
-- migrations: 155
+- migrations: 161
 - workflows: 21
-- testSuites: 1026
-- declaredTests: 6851
-- classifiedMarkers: 394
-- reachableMarkers: 331
+- testSuites: 1042
+- declaredTests: 7114
+- classifiedMarkers: 403
+- reachableMarkers: 337
 - absentRequiredPaths: 5
 - duplicateIds: 0
 
@@ -78,7 +78,7 @@ This inventory records static source and call-path evidence. A mounted endpoint 
 - **cost_accounting**: backend/src/ai/providerBudget.ts, backend/src/ai/quota.ts, backend/src/ai/universal/costLedger.ts, backend/src/services/BillingService.ts. Multiple related boundaries exist. This is a review candidate, not a conclusion that implementations are redundant; compare callers, authority, durability and evidence before changing architecture.
 - **credential_persistence**: backend/src/services/integrations/githubTokenStore.ts, backend/src/services/integrations/oauthPkceStore.ts, backend/src/services/publish/chromeWebStore.ts, backend/src/services/publish/easCredentials.ts, backend/src/services/publish/electronSecrets.ts, frontend/src/components/integrations/CustomCredentialsSection.tsx. Multiple related boundaries exist. This is a review candidate, not a conclusion that implementations are redundant; compare callers, authority, durability and evidence before changing architecture.
 - **browser_execution**: backend/src/lib/browserbase.ts, backend/src/middleware/runtimePreviewGateway.ts, backend/src/sandbox/flyMachineSandbox.ts, backend/src/sandbox/remoteSandbox.ts, backend/src/synthesis/browserVerificationAdapter.ts. Multiple related boundaries exist. This is a review candidate, not a conclusion that implementations are redundant; compare callers, authority, durability and evidence before changing architecture.
-- **completion_semantics**: backend/src/ai/completionDiagnostics.ts, backend/src/ai/measuredEvidence.ts, backend/src/ai/softwareAgent/completionGate.ts, backend/src/ai/verificationLifecycle.ts, backend/src/operations/completionGate.ts, backend/src/synthesis/webVerificationGate.ts, frontend/src/lib/verificationLifecycle.ts. Multiple related boundaries exist. This is a review candidate, not a conclusion that implementations are redundant; compare callers, authority, durability and evidence before changing architecture.
+- **completion_semantics**: backend/src/ai/measuredEvidence.ts, backend/src/ai/softwareAgent/completionGate.ts, backend/src/ai/verificationLifecycle.ts, backend/src/operations/completionGate.ts, backend/src/synthesis/webVerificationGate.ts, frontend/src/lib/verificationLifecycle.ts. Multiple related boundaries exist. This is a review candidate, not a conclusion that implementations are redundant; compare callers, authority, durability and evidence before changing architecture.
 
 ## Reproduction
 
@@ -91,4 +91,6 @@ The JSON includes every discovered registration, source module, scheduler, migra
 - Computed route paths, runtime registrations, Docker/worker commands and dynamic nonliteral imports require explicit manual reconciliation.
 - No production credentials or customer data were read; live behavior remains unverified in this command.
 - Static imports do not prove provider availability or authorization correctness.
+- Unresolved local import scripts/batch3/live-github-check.ts:22 -> ../../backend/src/existingSource/change/localProcessPort.testsupport.js
+- Unresolved local import scripts/batch3/local-supabase-check.ts:17 -> ../../backend/src/existingSource/change/localProcessPort.testsupport.js
 - Unresolved local import scripts/render-software-art.mjs:17 -> ../node_modules/playwright/index.mjs

@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "7ab269887501534066423cc0ac0d0431846ee6465df94fd050c8fcde663cbcf7",
+  "sourceTreeDigest": "d04f8dc327dfb19f603874760595ecc739a436904cc0f58dfc25036dde86f4aa",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -38,7 +38,7 @@
     {
       "id": "038ced12b0f74e8d5e0f",
       "file": "backend/src/ai/openaiCompat.ts",
-      "line": 234,
+      "line": 218,
       "entryPoint": "createModelProviderClient",
       "transport": "fetch",
       "callee": "globalThis.fetch",
@@ -58,7 +58,7 @@
         {
           "path": "backend/src/ai/openaiCompat.egress.test.ts",
           "marker": "real SDK completion and streaming use only the approved endpoint and refuse redirects",
-          "sha256": "c013b4bb607cf023790daec71ad5e7d43e5326403bff05e5f1f295fabfede9de"
+          "sha256": "ac510fdfcecca4dabd9bd5642117499f95d5155cb85a3499abf4e54072b0359c"
         },
         {
           "path": "docs/xroga/evidence/command-010/REAL-REDIRECT-TRANSPORT-PROOF.json",
@@ -75,11 +75,11 @@
     {
       "id": "31380a8d5b9454a98a98",
       "file": "backend/src/ai/openaiCompat.ts",
-      "line": 313,
+      "line": 296,
       "entryPoint": "chatCompletion",
       "transport": "provider-sdk",
       "callee": "client.chat.completions.create",
-      "callSha256": "e7967923786a9678929ac76c86e28e2fa47de4de88b6a1f2c9a2aba1484336f6",
+      "callSha256": "fedd059e41f3487339705716fdb7a912b28962fccd7daa038b5fa87580cc0eca",
       "destination": "DYNAMIC_OR_SDK_INTERNAL",
       "trust": "SHARED_JSON_SDK_DISPATCH_AND_ACCOUNTING_ONLY_NOT_UPSTREAM_PROVENANCE_OR_TOOL_CERTIFICATION",
       "tenantAuthority": "PRIVATE_REQUEST_ADMISSION_FROM_CANONICAL_TENANT_OR_OPERATIONS_RESERVATION_OR_EXISTING_BOUNDED_ANONYMOUS_GUEST_LEASE_EACH_WIRE_RECHECKS_CURRENT_BINDING_COMPLETION_REQUIRES_SETTLEMENT_AND_ATOMIC_RECEIPT_OR_VERIFIED_CONSERVATIVE_GUEST_BUDGET_NO_RAW_ID_OR_CALLBACK_AUTHORITY",
@@ -117,11 +117,11 @@
     {
       "id": "9c345e07b723c086440e",
       "file": "backend/src/ai/openaiCompat.ts",
-      "line": 400,
+      "line": 402,
       "entryPoint": "chatCompletionStream",
       "transport": "provider-sdk",
       "callee": "client.chat.completions.create",
-      "callSha256": "52730c15b2b7368bbe4f4e4ad09116a7d6004a026fd13054f8e05e6b409168ca",
+      "callSha256": "947695aec368f03b9176f97c4a6f418234ba9b7a641099d4efcad35b0b4d5c30",
       "destination": "DYNAMIC_OR_SDK_INTERNAL",
       "trust": "SHARED_SSE_SDK_DISPATCH_AND_DEFERRED_ACCOUNTED_PUBLICATION_ONLY_NOT_UPSTREAM_PROVENANCE_OR_TOOL_CERTIFICATION",
       "tenantAuthority": "PRIVATE_REQUEST_ADMISSION_FROM_CANONICAL_TENANT_OR_OPERATIONS_RESERVATION_EACH_WIRE_RECHECKS_CURRENT_OWNER_PROJECT_RUN_CREDENTIAL_AUTHORITY_BINDING_NO_PUBLIC_DELTAS_UNTIL_SETTLEMENT_AND_EXACT_ATOMIC_RECEIPT_CANCELLATION_REVOCATION_AND_PUBLICATION_FAILURE_CANNOT_RETRY_MODEL",
@@ -179,7 +179,7 @@
         {
           "path": "backend/src/ai/parallelWeb.security.test.ts",
           "marker": "actual Parallel entries enforce issued context, current owner, egress, canonical holds and exact settlement",
-          "sha256": "0d178e53fef889e52bfa4ad58aeb53f466d9bcd3b992ee9ba18255a43127c640"
+          "sha256": "40a9c47c0f61e5894bcc787e72738b44e1ec1b23dcdf652b44e6708b8ff706f2"
         }
       ]
     },
@@ -206,14 +206,14 @@
         {
           "path": "backend/src/ai/parallelWeb.security.test.ts",
           "marker": "actual Parallel entries enforce issued context, current owner, egress, canonical holds and exact settlement",
-          "sha256": "0d178e53fef889e52bfa4ad58aeb53f466d9bcd3b992ee9ba18255a43127c640"
+          "sha256": "40a9c47c0f61e5894bcc787e72738b44e1ec1b23dcdf652b44e6708b8ff706f2"
         }
       ]
     },
     {
       "id": "4c899876b9e3850af11b",
       "file": "backend/src/ai/softwareAgent/xrogaAgentModel.ts",
-      "line": 740,
+      "line": 764,
       "entryPoint": "execute",
       "transport": "provider-sdk",
       "callee": "client.chat.completions.create",
@@ -1745,12 +1745,12 @@
         {
           "path": "backend/src/middleware/runtimePreviewGateway.integration.test.ts",
           "marker": "real WebSocket messages and authorized reconnect work, then expiry closes both channels and rejects reconnect",
-          "sha256": "4b891cbc10afd95419cb1660ea0a4c7875feda09e579e4a76885245a0026fe11"
+          "sha256": "101a81f1b20f8ea86d622e75062891844928c77347bf3c1baab25d39f1f7c8db"
         },
         {
           "path": "backend/src/middleware/runtimePreviewGateway.integration.test.ts",
           "marker": "untrusted Preview response cannot set parent-domain cookies or clear the main application cookies",
-          "sha256": "4b891cbc10afd95419cb1660ea0a4c7875feda09e579e4a76885245a0026fe11"
+          "sha256": "101a81f1b20f8ea86d622e75062891844928c77347bf3c1baab25d39f1f7c8db"
         },
         {
           "path": "backend/src/middleware/runtimePreviewGateway.security.test.ts",
@@ -1802,12 +1802,12 @@
         {
           "path": "backend/src/middleware/runtimePreviewGateway.integration.test.ts",
           "marker": "real WebSocket messages and authorized reconnect work, then expiry closes both channels and rejects reconnect",
-          "sha256": "4b891cbc10afd95419cb1660ea0a4c7875feda09e579e4a76885245a0026fe11"
+          "sha256": "101a81f1b20f8ea86d622e75062891844928c77347bf3c1baab25d39f1f7c8db"
         },
         {
           "path": "backend/src/middleware/runtimePreviewGateway.integration.test.ts",
           "marker": "untrusted Preview response cannot set parent-domain cookies or clear the main application cookies",
-          "sha256": "4b891cbc10afd95419cb1660ea0a4c7875feda09e579e4a76885245a0026fe11"
+          "sha256": "101a81f1b20f8ea86d622e75062891844928c77347bf3c1baab25d39f1f7c8db"
         },
         {
           "path": "backend/src/middleware/runtimePreviewGateway.security.test.ts",
@@ -1859,12 +1859,12 @@
         {
           "path": "backend/src/middleware/runtimePreviewGateway.integration.test.ts",
           "marker": "real WebSocket messages and authorized reconnect work, then expiry closes both channels and rejects reconnect",
-          "sha256": "4b891cbc10afd95419cb1660ea0a4c7875feda09e579e4a76885245a0026fe11"
+          "sha256": "101a81f1b20f8ea86d622e75062891844928c77347bf3c1baab25d39f1f7c8db"
         },
         {
           "path": "backend/src/middleware/runtimePreviewGateway.integration.test.ts",
           "marker": "untrusted Preview response cannot set parent-domain cookies or clear the main application cookies",
-          "sha256": "4b891cbc10afd95419cb1660ea0a4c7875feda09e579e4a76885245a0026fe11"
+          "sha256": "101a81f1b20f8ea86d622e75062891844928c77347bf3c1baab25d39f1f7c8db"
         },
         {
           "path": "backend/src/middleware/runtimePreviewGateway.security.test.ts",
@@ -1916,12 +1916,12 @@
         {
           "path": "backend/src/middleware/runtimePreviewGateway.integration.test.ts",
           "marker": "real WebSocket messages and authorized reconnect work, then expiry closes both channels and rejects reconnect",
-          "sha256": "4b891cbc10afd95419cb1660ea0a4c7875feda09e579e4a76885245a0026fe11"
+          "sha256": "101a81f1b20f8ea86d622e75062891844928c77347bf3c1baab25d39f1f7c8db"
         },
         {
           "path": "backend/src/middleware/runtimePreviewGateway.integration.test.ts",
           "marker": "untrusted Preview response cannot set parent-domain cookies or clear the main application cookies",
-          "sha256": "4b891cbc10afd95419cb1660ea0a4c7875feda09e579e4a76885245a0026fe11"
+          "sha256": "101a81f1b20f8ea86d622e75062891844928c77347bf3c1baab25d39f1f7c8db"
         },
         {
           "path": "backend/src/middleware/runtimePreviewGateway.security.test.ts",
@@ -1973,12 +1973,12 @@
         {
           "path": "backend/src/middleware/runtimePreviewGateway.integration.test.ts",
           "marker": "real WebSocket messages and authorized reconnect work, then expiry closes both channels and rejects reconnect",
-          "sha256": "4b891cbc10afd95419cb1660ea0a4c7875feda09e579e4a76885245a0026fe11"
+          "sha256": "101a81f1b20f8ea86d622e75062891844928c77347bf3c1baab25d39f1f7c8db"
         },
         {
           "path": "backend/src/middleware/runtimePreviewGateway.integration.test.ts",
           "marker": "untrusted Preview response cannot set parent-domain cookies or clear the main application cookies",
-          "sha256": "4b891cbc10afd95419cb1660ea0a4c7875feda09e579e4a76885245a0026fe11"
+          "sha256": "101a81f1b20f8ea86d622e75062891844928c77347bf3c1baab25d39f1f7c8db"
         },
         {
           "path": "backend/src/middleware/runtimePreviewGateway.security.test.ts",
@@ -2030,12 +2030,12 @@
         {
           "path": "backend/src/middleware/runtimePreviewGateway.integration.test.ts",
           "marker": "real WebSocket messages and authorized reconnect work, then expiry closes both channels and rejects reconnect",
-          "sha256": "4b891cbc10afd95419cb1660ea0a4c7875feda09e579e4a76885245a0026fe11"
+          "sha256": "101a81f1b20f8ea86d622e75062891844928c77347bf3c1baab25d39f1f7c8db"
         },
         {
           "path": "backend/src/middleware/runtimePreviewGateway.integration.test.ts",
           "marker": "untrusted Preview response cannot set parent-domain cookies or clear the main application cookies",
-          "sha256": "4b891cbc10afd95419cb1660ea0a4c7875feda09e579e4a76885245a0026fe11"
+          "sha256": "101a81f1b20f8ea86d622e75062891844928c77347bf3c1baab25d39f1f7c8db"
         },
         {
           "path": "backend/src/middleware/runtimePreviewGateway.security.test.ts",
@@ -2094,7 +2094,7 @@
     {
       "id": "35923d1b52d197c378e1",
       "file": "backend/src/routes/github.ts",
-      "line": 116,
+      "line": 117,
       "entryPoint": "githubIdentityRequest",
       "transport": "fetch",
       "callee": "fetch",
@@ -2201,11 +2201,6 @@
           "path": "backend/src/routes/voiceFree.security.test.ts",
           "marker": "free speech route preserves original actor, credential, reservation and publication boundaries",
           "sha256": "77da96d82d190edc1a625db5d0c8e2e5af896624b520dc610545ae587f424ddc"
-        },
-        {
-          "path": "docs/xroga/evidence/local-voice-20261030/free-source-boundary.json",
-          "marker": "ONLY_EXACT_FREE_VOICE_ADMISSION_AND_CHANGED_VOICE_NATIVE_CONVERSIONS",
-          "sha256": "4715d07866813f677ef2eee7beca59c63adc0878e4d3df213b88aadb9f4b8f04"
         }
       ]
     },
@@ -3686,7 +3681,7 @@
     {
       "id": "029dd2519ec9f725ab50",
       "file": "backend/src/workers/browserCoordinator.ts",
-      "line": 109,
+      "line": 110,
       "entryPoint": "createCoordinatorServer",
       "transport": "send",
       "callee": "send",
@@ -3712,13 +3707,18 @@
           "path": "backend/src/workers/containerWorkerProtocol.security.test.ts",
           "marker": "actual container adapter keeps commands shell-free",
           "sha256": "8fed93569633e2293dc2fc79a36bfaed4704039940c04518fe0b2fe9e94cff7a"
+        },
+        {
+          "path": "backend/src/workers/browserCoordinatorHost.test.ts",
+          "marker": "rejects invalid jobs before container dispatch",
+          "sha256": "c52f6316185bd1981492c62caa8f36d9f110a60dc3499a817086765d5d2c7efe"
         }
       ]
     },
     {
       "id": "ca7da3b05f176d7343a1",
       "file": "backend/src/workers/browserCoordinator.ts",
-      "line": 115,
+      "line": 116,
       "entryPoint": "createCoordinatorServer",
       "transport": "send",
       "callee": "send",
@@ -3744,13 +3744,18 @@
           "path": "backend/src/workers/containerWorkerProtocol.security.test.ts",
           "marker": "actual container adapter keeps commands shell-free",
           "sha256": "8fed93569633e2293dc2fc79a36bfaed4704039940c04518fe0b2fe9e94cff7a"
+        },
+        {
+          "path": "backend/src/workers/browserCoordinatorHost.test.ts",
+          "marker": "rejects invalid jobs before container dispatch",
+          "sha256": "c52f6316185bd1981492c62caa8f36d9f110a60dc3499a817086765d5d2c7efe"
         }
       ]
     },
     {
       "id": "54a477bc6105cf4a0615",
       "file": "backend/src/workers/browserCoordinator.ts",
-      "line": 117,
+      "line": 118,
       "entryPoint": "createCoordinatorServer",
       "transport": "send",
       "callee": "send",
@@ -3776,6 +3781,11 @@
           "path": "backend/src/workers/containerWorkerProtocol.security.test.ts",
           "marker": "actual container adapter keeps commands shell-free",
           "sha256": "8fed93569633e2293dc2fc79a36bfaed4704039940c04518fe0b2fe9e94cff7a"
+        },
+        {
+          "path": "backend/src/workers/browserCoordinatorHost.test.ts",
+          "marker": "rejects invalid jobs before container dispatch",
+          "sha256": "c52f6316185bd1981492c62caa8f36d9f110a60dc3499a817086765d5d2c7efe"
         }
       ]
     },
@@ -3824,7 +3834,7 @@
     {
       "id": "f6a75877b1bf49789cea",
       "file": "backend/src/workers/browserRunDispatch.ts",
-      "line": 80,
+      "line": 82,
       "entryPoint": "dispatch",
       "transport": "fetch",
       "callee": "this.deps.fetch",
@@ -3839,7 +3849,7 @@
         {
           "path": "backend/src/workers/browserRunDispatch.test.ts",
           "marker": "redirect",
-          "sha256": "95387ffd28abe1f9ae7c4bf4d981f97fe0fa7f8e3ba2883b60cace91ad4e5686"
+          "sha256": "7dcf7b5a35fb767e793bd9ac6ffc01c871e439208132035ad6cf4bfdee67ef6b"
         },
         {
           "path": "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
@@ -4270,10 +4280,7 @@
         {
           "path": "frontend/e2e/phase4-admin-share.security.mjs",
           "marker": "authorized admin, bounded shares and private range delivery keep their contracts and denial results stay private",
-          "sha256": "0b408b0cead5f45988f086a998e822cab8d0a7da828db3cb2feb21e8c7a2e1d3",
-          "beforeRichShareFixtureSha256": "9768cffa49a8b13925506e35b9a5e52e7468129590fb2178396691caec5b2d23",
-          "continuity": "Original two transport tests and every assertion unchanged. Real pure Share validators and additive API-version compatibility test now load in a shared VM realm. UI-only component remains outside transport fixture.",
-          "beforeZurelayCoverageFixtureSha256": "ed2f9f335df6716e2fbe2934839021485668bbd0929452d4567350edf166246e"
+          "sha256": "9768cffa49a8b13925506e35b9a5e52e7468129590fb2178396691caec5b2d23"
         }
       ]
     },
@@ -4489,7 +4496,7 @@
     {
       "id": "c09bb8607fa4d00f23b7",
       "file": "frontend/src/lib/api.ts",
-      "line": 1437,
+      "line": 1448,
       "entryPoint": "fetchApiResponse",
       "transport": "fetch",
       "callee": "fetch",
@@ -4539,13 +4546,7 @@
         {
           "path": "frontend/e2e/phase4-api-clients.security.mjs",
           "marker": "actual Chromium opaque redirects are terminal before any outside request",
-          "sha256": "954f8ebae9fda01e6675124cdbd6910ed96660136f425bb1f15ac459d49f4481",
-          "beforeValidVoicePcmFixtureSha256": "af759ba89fcdf41e5cf6aaf74e3581fcbeb1a7b8487cad3259c065a5c2adcf22"
-        },
-        {
-          "path": "docs/operations/zurelay-two-model-20261103/API-TYPE-REVIEW.json",
-          "marker": "c09bb8607fa4d00f23b7",
-          "sha256": "fd59984bf3ccf8b589c50dd2434f8c49637b60480f6e67b669fb6ef931c9eaae"
+          "sha256": "954f8ebae9fda01e6675124cdbd6910ed96660136f425bb1f15ac459d49f4481"
         }
       ]
     },

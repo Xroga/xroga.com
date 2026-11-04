@@ -5,6 +5,7 @@ import { Mail } from 'lucide-react';
 import { AuthFlowFrame } from '@/components/auth/AuthFlowFrame';
 import { AuthGradientButton, AuthModernInput, AuthModernLabel } from '@/components/auth/AuthModern';
 import { createClient } from '@/lib/supabase/client';
+import { passwordRecoveryEnabled } from '@/lib/supabase/authRecovery';
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
@@ -14,6 +15,7 @@ export default function ForgotPasswordPage() {
 
   async function requestReset(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (!passwordRecoveryEnabled) return;
     setError(''); setPending(true);
     try {
       const { error: resetError } = await createClient().auth.resetPasswordForEmail(email.trim(), {
@@ -21,8 +23,8 @@ export default function ForgotPasswordPage() {
       });
       if (resetError && (resetError.status === 429 || /rate limit/i.test(resetError.message))) {
         setError('Please wait before requesting another reset email.');
-      } else if (resetError) {
-        setError('The reset email could not be sent. Please try again later or contact Xroga support.');
+      } else if (resetError && ((resetError.status ?? 0) >= 500 || /smtp|send|mailer/i.test(resetError.message))) {
+        setError('The reset email service is unavailable right now. Please try again later.');
       } else {
         // Do not reveal whether this address has an account.
         setSent(true);
@@ -30,6 +32,10 @@ export default function ForgotPasswordPage() {
     } catch {
       setError('The reset request could not be completed. Please try again.');
     } finally { setPending(false); }
+  }
+
+  if (!passwordRecoveryEnabled) {
+    return <AuthFlowFrame title="Password recovery unavailable" subtitle="Please contact Xroga support for help accessing your account."><p className="text-sm text-[var(--auth-text)]">Password reset emails are not available yet.</p></AuthFlowFrame>;
   }
 
   return <AuthFlowFrame title="Reset your password" subtitle="Enter your account email and we’ll send a secure reset link if an account exists.">

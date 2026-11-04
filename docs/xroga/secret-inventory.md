@@ -1,6 +1,6 @@
 # Secret and environment name inventory
 
-Values are forbidden. Source SHA: `63a6c6129d8a1e3ef998f4e7fce13e8d00c17c2b`. Names and source discovery do not prove that a capability is configured or accepted.
+Values are forbidden. Source SHA: `43ed343c2af35f49f7959684f7e692a04a750218`. Names and source discovery do not prove that a capability is configured or accepted.
 
 | Name | Classification | Requirement | Dependency |
 | --- | --- | --- | --- |
@@ -25,9 +25,9 @@ Values are forbidden. Source SHA: `63a6c6129d8a1e3ef998f4e7fce13e8d00c17c2b`. Na
 | CLOUDFLARE_R2_METADATA_READ_TOKEN | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | r2 |
 | CLOUDFLARE_R2_PRIVATE_BUCKET | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | r2, endpoint-127-0-0-1, endpoint-api-whop-com, endpoint-example-invalid, endpoint-public-example-invalid |
 | CLOUDFLARE_R2_SECRET_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | r2 |
-| CLOUDFLARE_VOICE_ACCOUNT_ID | PUBLIC_IDENTIFIER | OPTIONAL_OR_DEFAULTED | cloudflare-voice |
-| CLOUDFLARE_VOICE_API_TOKEN | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | cloudflare-voice |
-| CLOUDFLARE_VOICE_FREE_PLAN_CONFIRMED | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | cloudflare-voice |
+| CLOUDFLARE_VOICE_ACCOUNT_ID | PUBLIC_IDENTIFIER | OPTIONAL_OR_DEFAULTED | r2 |
+| CLOUDFLARE_VOICE_API_TOKEN | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | r2 |
+| CLOUDFLARE_VOICE_FREE_PLAN_CONFIRMED | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | r2 |
 | CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | CLOUD_RUN_EXECUTION | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-metadata-google-internal |
 | CLOUD_RUN_JOB | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-metadata-google-internal |
@@ -134,6 +134,7 @@ Values are forbidden. Source SHA: `63a6c6129d8a1e3ef998f4e7fce13e8d00c17c2b`. Na
 | NEXT_PUBLIC_XROGA_BROWSER_RUNS | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | frontend, endpoint-example-com, endpoint-your-website-com |
 | NEXT_PUBLIC_XROGA_BUILDER | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | frontend |
 | NEXT_PUBLIC_XROGA_DRIVE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | frontend |
+| NEXT_PUBLIC_XROGA_EXISTING_SOURCE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | frontend |
 | NODE_ENV | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | api, endpoint-127-0-0-1, endpoint-accounts-google-com, endpoint-api-github-com, endpoint-api-vercel-com, endpoint-backend-composio-dev, endpoint-chrome-google-com, endpoint-chromewebstore-googleapis-com, endpoint-github-com, endpoint-localhost, endpoint-oauth2-googleapis-com, endpoint-vercel-com, endpoint-www-googleapis-com, endpoint-xroga-api-fly-dev, endpoint-xrogaaicom-vercel-app |
 | OPENAI_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | runtime-controls-and-conditional-aliases |
 | OPENAI_TRANSCRIBE_MODEL | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-api-openai-com |
@@ -152,8 +153,6 @@ Values are forbidden. Source SHA: `63a6c6129d8a1e3ef998f4e7fce13e8d00c17c2b`. Na
 | REQUIRE_REMOTE_AUTH_CHECK | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-127-0-0-1, endpoint-api-github-com |
 | RESEND_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | runtime-controls-and-conditional-aliases |
 | RESPEECHER_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | runtime-controls-and-conditional-aliases |
-| RESPONSE_EXPERIENCE_V2 | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
-| RESPONSE_EXPERIENCE_V2_USERS | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | RIME_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | runtime-controls-and-conditional-aliases |
 | RUNWAY_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | endpoint-api-dev-runwayml-com |
 | SEMANTIC_PLANNER_TOTAL_TIMEOUT_MS | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
@@ -183,7 +182,7 @@ Values are forbidden. Source SHA: `63a6c6129d8a1e3ef998f4e7fce13e8d00c17c2b`. Na
 | SUPABASE_OAUTH_CLIENT_SECRET | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | supabase, endpoint-127-0-0-1, endpoint-api-supabase-com, endpoint-localhost |
 | SUPABASE_POOLER_HOST | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | supabase |
 | SUPABASE_PROJECT_REF | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | supabase |
-| SUPABASE_SERVICE_ROLE_KEY | SERVER_CREDENTIAL | REQUIRED_FOR_CORE_AUTH | supabase, endpoint-127-0-0-1, endpoint-api-parallel-ai, endpoint-api-whop-com, endpoint-example-invalid, endpoint-fixture-supabase-co, endpoint-fixtureproject-supabase-co, endpoint-github-com, endpoint-localhost, endpoint-public-example-invalid, endpoint-supabase-management-tests-invalid, endpoint-xroga-api-fly-dev, endpoint-xrogaaicom-vercel-app |
+| SUPABASE_SERVICE_ROLE_KEY | SERVER_CREDENTIAL | REQUIRED_FOR_CORE_AUTH | supabase, endpoint-127-0-0-1, endpoint-api-parallel-ai, endpoint-api-whop-com, endpoint-example-invalid, endpoint-fixture-supabase-co, endpoint-fixtureproject-supabase-co, endpoint-github-com, endpoint-public-example-invalid, endpoint-supabase-management-tests-invalid |
 | SUPABASE_URL | RUNTIME_CONFIGURATION | REQUIRED_FOR_CORE_AUTH | supabase, endpoint-127-0-0-1, endpoint-api-github-com, endpoint-api-vercel-com, endpoint-api-whop-com, endpoint-backend-composio-dev, endpoint-example-invalid, endpoint-fixture, endpoint-fixture-invalid, endpoint-fixture-supabase-co, endpoint-fixtureproject-supabase-co, endpoint-localhost, endpoint-open-bigmodel-cn, endpoint-public-example-invalid, endpoint-supabase-management-tests-invalid, endpoint-whop-com, endpoint-xroga-api-fly-dev, endpoint-xrogaaicom-vercel-app |
 | SystemRoot | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | TERM | SYSTEM_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
@@ -228,10 +227,16 @@ Values are forbidden. Source SHA: `63a6c6129d8a1e3ef998f4e7fce13e8d00c17c2b`. Na
 | XROGA_BROWSER_AI_MODEL | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_BROWSER_COORDINATOR_SECRET | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | runtime-controls-and-conditional-aliases |
 | XROGA_BROWSER_DISPATCH | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-metadata-google-internal |
+| XROGA_BROWSER_DISPATCH_DEADLINE_SECONDS | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-metadata-google-internal |
 | XROGA_BROWSER_EXECUTE_AUDIENCE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-metadata-google-internal |
 | XROGA_BROWSER_EXECUTE_SERVICE_ACCOUNT | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-metadata-google-internal |
 | XROGA_BROWSER_EXECUTE_URL | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-metadata-google-internal |
+| XROGA_BROWSER_HOST_BIND | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
+| XROGA_BROWSER_HOST_MAX_CONCURRENT | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
+| XROGA_BROWSER_IMAGE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_BROWSER_PLANNER_MODEL | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
+| XROGA_BROWSER_PROXY_IMAGE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
+| XROGA_BROWSER_REPO_ROOT | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_BROWSER_TASKS_LOCATION | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-metadata-google-internal |
 | XROGA_BROWSER_TASKS_PROJECT | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-metadata-google-internal |
 | XROGA_BROWSER_TASKS_QUEUE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-metadata-google-internal |
@@ -250,6 +255,14 @@ Values are forbidden. Source SHA: `63a6c6129d8a1e3ef998f4e7fce13e8d00c17c2b`. Na
 | XROGA_DRIVE_R2_ACCOUNT_ID | PUBLIC_IDENTIFIER | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_DRIVE_R2_BUCKET | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_DRIVE_R2_SECRET_ACCESS_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | runtime-controls-and-conditional-aliases |
+| XROGA_ENGINEERING_CAP_BROWSER_SECONDS | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
+| XROGA_ENGINEERING_CAP_SANDBOX_SECONDS | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
+| XROGA_ENGINEERING_CAP_STORAGE_BYTES | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
+| XROGA_ENGINEERING_CAP_WINDOW_SECONDS | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
+| XROGA_ENGINEERING_METERING | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
+| XROGA_ENGINEERING_RETENTION_DAYS | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
+| XROGA_ENGINEERING_SWEEP_AFTER_SECONDS | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
+| XROGA_EXISTING_SOURCE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_FLY_OIDC_IMAGE_DIGESTS | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_FLY_OIDC_ISSUER | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_FLY_OIDC_ORGANIZATION_ID | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
@@ -260,6 +273,8 @@ Values are forbidden. Source SHA: `63a6c6129d8a1e3ef998f4e7fce13e8d00c17c2b`. Na
 | XROGA_GCE_DEFAULT_IMAGE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | google-execution, endpoint-metadata-google-internal |
 | XROGA_GCE_MAX_INSTANCES | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | google-execution, endpoint-metadata-google-internal |
 | XROGA_GCE_NODE_IMAGE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | google-execution |
+| XROGA_GCE_ORPHAN_DEADLINE_SECONDS | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | google-execution |
+| XROGA_GCE_ORPHAN_SWEEP | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | google-execution |
 | XROGA_GCE_PROJECT | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | google-execution, endpoint-metadata-google-internal |
 | XROGA_GCE_PYTHON_IMAGE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | google-execution |
 | XROGA_GCE_RUST_IMAGE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | google-execution |
