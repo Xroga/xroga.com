@@ -10,5 +10,12 @@
       "destination": "/pricing",
       "permanent": false
     }
-  ]
+  ],
+  "git": {
+    "deploymentEnabled": {
+      "ops/*": false,
+      "docs/*": false,
+      "claude/ops-*": false
+    }
+  }
 }
