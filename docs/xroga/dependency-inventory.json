@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "fafc7c9697938931b35505296081fbf959690acb",
+  "source_sha": "8ed1d919398d30e54e61c29c859d54126502beb5",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -16376,7 +16376,7 @@
     },
     {
       "path": "backend/src/ai/answerCoverage.ts",
-      "sha256": "ec6d00c3e4a8c2a0683bb6d648acc4c19147708ccdd3057ddebc9f9367c4cb13"
+      "sha256": "84429cbd0b6b42e5e8699f522c5e12f1d97a2ebdd4724eeff7bd333acd41358c"
     },
     {
       "path": "backend/src/ai/architect.ts",
@@ -16665,6 +16665,10 @@
     {
       "path": "backend/src/ai/postCompletionAccounting.ts",
       "sha256": "3003abb6e5da9dd447dd7a713456d5b16027c735ce0e5897aa5c5f0510eae254"
+    },
+    {
+      "path": "backend/src/ai/presentationRelevance.ts",
+      "sha256": "6507731affff2ed540478e50ca93c009691cdf2d559c3218afb11bb0336323a6"
     },
     {
       "path": "backend/src/ai/progressHeartbeat.ts",
@@ -31185,7 +31189,7 @@
   "fallback_candidates": [
     {
       "path": "backend/src/ai/answerCoverage.ts",
-      "line": 82,
+      "line": 83,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -31893,6 +31897,27 @@
     {
       "path": "backend/src/ai/pipeline.ts",
       "line": 4793,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/presentationRelevance.ts",
+      "line": 40,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/presentationRelevance.ts",
+      "line": 41,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/presentationRelevance.ts",
+      "line": 54,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

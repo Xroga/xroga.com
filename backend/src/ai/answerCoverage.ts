@@ -1,3 +1,4 @@
+import { assessPresentationRelevance } from './presentationRelevance.js';
 import { assessPresentationCoverage, type AnswerObligations, type PresentationPlan } from './responsePresentation.js';
 
 /** A lower bound on explicit output requests, supplementing the semantic
@@ -88,5 +89,8 @@ export function prepareAnswerCoverage(prompt: string, presentation: Presentation
   }
   const coverage = assessPresentationCoverage(plan, requirements);
   if(quoteIssues.length){coverage.complete=false;coverage.issues.push(...quoteIssues);}
+  // Relevance is checked deterministically against the request itself. No model call and no rewriting.
+  const relevance = assessPresentationRelevance(prompt, plan, requirements);
+  if(!relevance.relevant){coverage.complete=false;coverage.issues.push(...relevance.issues);}
   return { version:'answer-coverage-v1' as const, plan, requirements, coverage };
 }

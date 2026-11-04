@@ -251,7 +251,7 @@
       "id": "surface:65cb0aba3b036f66089f",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/answerCoverage.ts",
-      "sha256": "ec6d00c3e4a8c2a0683bb6d648acc4c19147708ccdd3057ddebc9f9367c4cb13",
+      "sha256": "84429cbd0b6b42e5e8699f522c5e12f1d97a2ebdd4724eeff7bd333acd41358c",
       "symbols": [
         "boundary",
         "branching",
@@ -271,6 +271,7 @@
         "prepareAnswerCoverage",
         "quoteIssues",
         "quoted",
+        "relevance",
         "requestedAnswerObligations",
         "requests",
         "requiredAccessBoundarySupport",
@@ -283,9 +284,11 @@
         "topic"
       ],
       "imports": [
+        "./presentationRelevance.js",
         "./responsePresentation.js"
       ],
       "runtimeImports": [
+        "backend/src/ai/presentationRelevance.ts",
         "backend/src/ai/responsePresentation.ts"
       ],
       "entryPoints": [
@@ -294,7 +297,8 @@
       ],
       "callers": [
         "backend/src/ai/answerCoverage.test.ts:3",
-        "backend/src/ai/pipeline.ts:26"
+        "backend/src/ai/pipeline.ts:26",
+        "backend/src/ai/presentationRelevance.test.ts:4"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -307,7 +311,8 @@
         "backend/src/ai/answerCoverage.ts#evidence"
       ],
       "testCoverage": [
-        "backend/src/ai/answerCoverage.test.ts"
+        "backend/src/ai/answerCoverage.test.ts",
+        "backend/src/ai/presentationRelevance.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -4411,7 +4416,8 @@
       ],
       "entryPoints": [],
       "callers": [
-        "backend/src/ai/intentReasoning.test.ts:11"
+        "backend/src/ai/intentReasoning.test.ts:11",
+        "backend/src/ai/presentationRelevance.test.ts:5"
       ],
       "reachable": false,
       "persistenceDependencies": [],
@@ -4430,7 +4436,8 @@
         "backend/src/ai/intentReasoning.ts#isVerificationState"
       ],
       "testCoverage": [
-        "backend/src/ai/intentReasoning.test.ts"
+        "backend/src/ai/intentReasoning.test.ts",
+        "backend/src/ai/presentationRelevance.test.ts"
       ],
       "state": "DEAD_OR_UNREACHABLE",
       "confidence": "LOW",
@@ -6650,6 +6657,59 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:5067753b238c0c0bc55f",
+      "subsystem": "ai_execution",
+      "sourcePath": "backend/src/ai/presentationRelevance.ts",
+      "sha256": "6507731affff2ed540478e50ca93c009691cdf2d559c3218afb11bb0336323a6",
+      "symbols": [
+        "CUES",
+        "GUARDED",
+        "RelevanceDomain",
+        "RelevanceIssue",
+        "assessPresentationRelevance",
+        "detail",
+        "domain",
+        "hits",
+        "promptDomains",
+        "requested",
+        "richAndAlien",
+        "section",
+        "strong",
+        "text",
+        "travelPrompt",
+        "unique"
+      ],
+      "imports": [
+        "./responsePresentation.js"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
+      ],
+      "callers": [
+        "backend/src/ai/answerCoverage.ts:1",
+        "backend/src/ai/presentationRelevance.test.ts:3"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/ai/presentationRelevance.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:2181062b235c331df072",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/progressHeartbeat.ts",
@@ -8445,7 +8505,7 @@
       ],
       "callers": [
         "backend/src/ai/answerCoverage.test.ts:4",
-        "backend/src/ai/answerCoverage.ts:1",
+        "backend/src/ai/answerCoverage.ts:2",
         "backend/src/ai/openaiCompat.egress.test.ts:9",
         "backend/src/ai/pipeline.ts:25",
         "backend/src/ai/responseCoverage.test.ts:3",
@@ -8470,6 +8530,7 @@
       "testCoverage": [
         "backend/src/ai/answerCoverage.test.ts",
         "backend/src/ai/openaiCompat.egress.test.ts",
+        "backend/src/ai/presentationRelevance.test.ts",
         "backend/src/ai/responseCoverage.test.ts",
         "backend/src/ai/responsePresentation.limits.test.ts",
         "backend/src/ai/responsePresentation.test.ts",
@@ -143596,6 +143657,13 @@
       "id": "test-suite:eb18779c423fcf8f9c69",
       "sourcePath": "backend/src/ai/postCompletionAccounting.test.ts",
       "declaredTests": 3,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:673c1c4f2d2cfc4719dd",
+      "sourcePath": "backend/src/ai/presentationRelevance.test.ts",
+      "declaredTests": 7,
       "skipLocations": [],
       "focusLocations": []
     },
