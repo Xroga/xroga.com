@@ -53,6 +53,19 @@ export interface WebDecision {
   reason: string;
 }
 
+/** Automatic routing can choose focused research, but not the user-only Deep Research mode. */
+export function normalizeAutomaticWebAction(action: WebAction): WebAction {
+  return action === 'deep_research' ? 'research' : action;
+}
+
+/** A pasted URL list is not itself an instruction to retrieve or research. */
+function isBareUrlList(text: string): boolean {
+  const remainder = text
+    .replace(/https?:\/\/[^\s<>"')\]]+/gi, '')
+    .replace(/[\s,;:!?.|()\[\]{}\-—–]+/g, '');
+  return remainder.length === 0;
+}
+
 export interface WebIntelligenceResult {
   action: WebAction;
   evidence: string;
@@ -133,7 +146,7 @@ function parseDecision(
       : [];
 
     return {
-      action: value.action as WebAction,
+      action: normalizeAutomaticWebAction(value.action as WebAction),
 
       objective: redactSecrets(
         String(
@@ -245,6 +258,19 @@ export async function decideWebAction(input: {
 
   const knownUrls =
     extractUrls(input.prompt);
+
+  // URLs without an expressed task must not incur retrieval, approval, or LLM costs.
+  if (knownUrls.length && isBareUrlList(input.prompt)) {
+    return {
+      action: 'none',
+      objective: '',
+      queries: [],
+      urls: [],
+      sourcePolicy: 'any',
+      officialDomains: [],
+      reason: 'The user supplied URLs but did not request an action.',
+    };
+  }
 
   // No model call is needed to realize that
   // an explicit public URL should be read.
