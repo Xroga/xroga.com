@@ -14,16 +14,16 @@ import {actionPlanDigest,type BusinessActionPlan} from '../services/integrations
 import {nativeReleaseActor} from '../services/publish/nativeReleaseAdmission.js';
 import {requireModelProjectBinding,type TenantModelScope} from './tenantModelDispatch.js';
 import {requireAdmittedRunAttempt} from './runStore.js';
-import {boundedPublicGet,publicHttpsUrl} from '../security/egress/urlPolicy.js';
+import {publicHttpsUrl} from '../security/egress/urlPolicy.js';
 import {redactSecrets} from '../lib/truthfulExecution.js';
-import {createRequire} from 'node:module';
 import {researchAnswerRequestSchema,completeApprovedResearchAnswer,RESEARCH_ANSWER_MAXIMUM_MICRO_USD} from './researchAnswer.js';
 import {saveResearchResult} from '../services/integrations/researchResult.js';
-import {researchSearchMicroUsd,DEEPSEEK_SEARCH_URL} from './researchSearchProvider.js';
+import {DEEPSEEK_SEARCH_URL,DEEPSEEK_FETCH_URL} from './researchSearchProvider.js';
+import {retrievalMaximum,runApprovedRetrievalPlan,type RetrievalOperation,type RetrievalReceipt} from './researchRetrievalPlan.js';
+import {readRetrievalCache,writeRetrievalCache} from './researchRetrievalCache.js';
 
-const pdfParse=createRequire(import.meta.url)('pdf-parse/lib/pdf-parse.js') as (data:Uint8Array,options:{max:number})=>Promise<{text:string}>;
 function extractUrls(body:Record<string,unknown>):string[]{
- if(typeof body.objective!=='string'||body.objective.length>4000||!Array.isArray(body.urls)||body.urls.length<1||body.urls.length>10||Object.keys(body).some(k=>!['urls','objective'].includes(k)))throw denied();
+ if(typeof body.objective!=='string'||body.objective.length>4000||!Array.isArray(body.urls)||body.urls.length<1||body.urls.length>10||Object.keys(body).some(k=>!['urls','objective','research_kind','research_run_id'].includes(k)))throw denied();
  return body.urls.map(url=>{if(typeof url!=='string')throw denied();return publicHttpsUrl(url).href;});
 }
 
@@ -46,16 +46,15 @@ export async function prepareParallelApproval(scope:TenantModelScope,operation:O
  await requireModelProjectBinding(scope);
  const attempt=scope.runAttempt?requireAdmittedRunAttempt(scope.runAttempt):null;
  if(operation==='extract')extractUrls(body);
- const nonce=randomUUID(),issuedAt=new Date().toISOString(),amount=operation==='responses'?(body.reasoning as {effort?:string})?.effort==='medium'?50000:10000:operation==='extract'?0:researchSearchMicroUsd();
- const value:Omit<BusinessActionPlan,'planDigest'>={version:'1.0',sessionId:`trs_native_research_${nonce}`,useCase,toolkit,toolSlug:'XROGA_RESEARCH_'+operation.toUpperCase(),arguments:{operation,body:structuredClone(body),projectId:scope.projectId??null,repository:scope.repository??null,repositoryBound:scope.repository!==undefined,attempt:attempt?{...attempt}:null,maximumMicroUsd:amount},risk:'write',requiresConfirmation:true,forceConfirmation:true,summary:operation==='extract'?'Retrieve only the displayed public HTTPS URLs without authentication. DNS is pinned, redirects are refused, and no provider or model charge is made. URL query text may be private.':`Send only the displayed ${operation} request to the official DeepSeek Search API (retrieval only). Research text may contain private project or user information. Maximum provider charge is $${(amount/1e6).toFixed(5)}. The canonical budget must independently admit this charge.`,requiredScopes:['xroga:research-egress'],authority:{version:'1',userId:context.userId,tenantId:context.tenantId,connectedAccountId:operation==='extract'?'public-web:credential-free':'deepseek-search:platform',actionClass:'SENSITIVE_DATA_EXPORT',projectId:scope.projectId??null,runId:attempt?.runId??null,issuedAt,expiresAt:new Date(Date.parse(issuedAt)+15*60000).toISOString(),nonce,maxSpendMicroUsd:String(amount),currency:'USD'}};
+ const nonce=randomUUID(),issuedAt=new Date().toISOString(),amount=retrievalMaximum(operation as RetrievalOperation,body);
+ const value:Omit<BusinessActionPlan,'planDigest'>={version:'1.0',sessionId:`trs_native_research_${nonce}`,useCase,toolkit,toolSlug:'XROGA_RESEARCH_'+operation.toUpperCase(),arguments:{operation,body:structuredClone(body),projectId:scope.projectId??null,repository:scope.repository??null,repositoryBound:scope.repository!==undefined,attempt:attempt?{...attempt}:null,maximumMicroUsd:amount},risk:'write',requiresConfirmation:true,forceConfirmation:true,summary:`Send the displayed question and public URLs to the official DeepSeek Search/Fetch API for retrieval only. Maximum ${amount/750} retrieval operations at $0.00075 each. Manual research may select public pages from returned sources and refine searches with their public titles; automatic research uses at most two searches. These are untrusted data. No private URL, new provider, fallback or automatic retry is authorized. Maximum retrieval charge $${(amount/1e6).toFixed(5)}, subject to the canonical allowance and $1.25 paid monthly ceiling.`,requiredScopes:['xroga:research-egress'],authority:{version:'1',userId:context.userId,tenantId:context.tenantId,connectedAccountId:'deepseek-search:platform',actionClass:'SENSITIVE_DATA_EXPORT',projectId:scope.projectId??null,runId:attempt?.runId??null,issuedAt,expiresAt:new Date(Date.parse(issuedAt)+15*60000).toISOString(),nonce,maxSpendMicroUsd:String(amount),currency:'USD'}};
  if(scope.researchAnswer){
   const request=researchAnswerRequestSchema.parse(scope.researchAnswer);
   if(classifyOutboundData(request,'USER_PRIVATE').classification==='CREDENTIAL_SECRET')throw new EgressDenied('SECRET_EGRESS_DENIED');
   value.arguments.answerRequest=request;
   value.authority!.maxSpendMicroUsd=String(amount+RESEARCH_ANSWER_MAXIMUM_MICRO_USD);
   value.requiredScopes.push('xroga:research-synthesis');
-  value.summary=`${value.summary} Then send the displayed original question, conversation context and retrieved evidence to Zurelay for ONE DeepSeek answer, capped at $0.005. Total maximum $${((amount+RESEARCH_ANSWER_MAXIMUM_MICRO_USD)/1e6).toFixed(3)}. No tools, external actions, second search, model fallback or automatic retry. Both charges require canonical budget admission.`;
-  if(operation==='extract')value.summary=value.summary.replace('and no provider or model charge is made','and public retrieval has no provider charge');
+  value.summary=`${value.summary} Then send the displayed original question, conversation context and retrieved evidence to Zurelay for ONE DeepSeek answer, capped at $0.005. Total maximum $${((amount+RESEARCH_ANSWER_MAXIMUM_MICRO_USD)/1e6).toFixed(3)}. No tools, external actions, further retrieval after synthesis, model fallback or automatic retry. Both charges require canonical budget admission.`;
  }
  const proof=await runtimeCredentialVault().seal(context,identity(scope,nonce,unsigned(value)),digest(unsigned(value)));
  await requireModelProjectBinding(scope);signal?.throwIfAborted();value.scopeRequirements={nativeResearchProof:proof};
@@ -74,7 +73,7 @@ export async function executeParallelNativeAction(userId:string,plan:BusinessAct
  requireRetrievalOnly(operation);
  const answerRequest=withAnswer?researchAnswerRequestSchema.parse(args.answerRequest):undefined;
  if(!['search','extract','responses'].includes(operation)||plan.toolSlug!=='XROGA_RESEARCH_'+operation.toUpperCase()||!body||typeof body!=='object'||Array.isArray(body)||args.projectId!==scope.projectId||scope.currency!=='USD'||scope.maxSpendMicroUsd!==String(Number(args.maximumMicroUsd)+(withAnswer?RESEARCH_ANSWER_MAXIMUM_MICRO_USD:0))||typeof args.repositoryBound!=='boolean'||!isDeepStrictEqual(Object.keys(args).sort(),[...(withAnswer?['answerRequest']:[]),'attempt','body','maximumMicroUsd','operation','projectId','repository','repositoryBound']))throw denied();
- if(scope.connectedAccountId!==(operation==='extract'?'public-web:credential-free':'deepseek-search:platform')||operation==='extract'&&args.maximumMicroUsd!==0)throw denied();
+ if(scope.connectedAccountId!==('deepseek-search:platform')||args.maximumMicroUsd!==retrievalMaximum(operation as RetrievalOperation,body))throw denied();
  const modelScope:TenantModelScope={context,userId,...(scope.projectId?{projectId:scope.projectId}:{}),...(args.repositoryBound?{repository:args.repository as string|null}:{})};
  const proof=plan.scopeRequirements as{nativeResearchProof?:unknown}|undefined;
  if(!proof||!isDeepStrictEqual(Object.keys(proof),['nativeResearchProof'])||typeof proof.nativeResearchProof!=='string')throw denied();
@@ -89,7 +88,7 @@ export async function executeParallelNativeAction(userId:string,plan:BusinessAct
  };
  await check();const admission:ParallelAdmission=Object.freeze({marker:'native-research'}),state:State={scope:modelScope,operation,body:structuredClone(body),maximumMicroUsd:Number(args.maximumMicroUsd),active:true,check,begin:async()=>{
   if(started)throw denied();started=true;await check();
-  await enforceEgress({context,actionClass:scope.actionClass,destination:operation==='extract'?extractUrls(body)[0]:DEEPSEEK_SEARCH_URL,recipient:scope.connectedAccountId,purpose:'approved-exact-research',payload:{sessionId:plan.sessionId,useCase:plan.useCase,toolSlug:plan.toolSlug,arguments:args},declaredClass:'USER_PRIVATE',toolTrust:'SERVER_REGISTERED',binding,authorityPermit:permit},receipt=>persistSecurityDecision(context,receipt));
+  await enforceEgress({context,actionClass:scope.actionClass,destination:operation==='extract'?DEEPSEEK_FETCH_URL:DEEPSEEK_SEARCH_URL,recipient:scope.connectedAccountId,purpose:'approved-exact-research',payload:{sessionId:plan.sessionId,useCase:plan.useCase,toolSlug:plan.toolSlug,arguments:args},declaredClass:'USER_PRIVATE',toolTrust:'SERVER_REGISTERED',binding,authorityPermit:permit},receipt=>persistSecurityDecision(context,receipt));
   await consumeAuthorityPermit(permit,binding);consumed=true;await check();
  }};admitted.set(admission,state);
  const finish=async(raw:{ok:true;operation:Operation;result:unknown;trust:string})=>{
@@ -101,22 +100,33 @@ export async function executeParallelNativeAction(userId:string,plan:BusinessAct
   return {...raw,...answer};
  };
  try{
-  if(operation==='extract'){
-   const urls=extractUrls(body),results=[];await state.begin();
-   for(const url of urls){
-    await check();let page;
-    try{page=await boundedPublicGet(url,{maxBytes:2*1024*1024,timeoutMs:15000,maxRedirects:0,allowHttpErrors:true,beforeRequest:check});}catch{throw new EgressDenied('UNSAFE_DESTINATION');}
-    await check();let text:string;
-    if(page.statusCode===401||page.statusCode===403)throw new AuthorityError('PUBLIC_RESEARCH_ACCESS_DENIED');
-    if(page.statusCode<200||page.statusCode>=300)throw Object.assign(new Error('Public research document unavailable.'),{status:page.statusCode});
-    if(/^application\/pdf(?:;|$)/i.test(page.contentType)){try{const parsed=await pdfParse(Uint8Array.from(page.bytes),{max:5});text=parsed.text;}catch{throw new Error('Public PDF extraction unavailable.');}}
-    else if(/^(?:text\/(?:plain|html)|application\/(?:json|xml|xhtml\+xml))(?:;|$)/i.test(page.contentType))text=page.bytes.toString('utf8').replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1>/gi,'').replace(/<[^>]+>/g,' ');
-    else throw new EgressDenied('UNSAFE_DESTINATION');
-    await check();results.push({url:page.finalUrl,title:new URL(page.finalUrl).hostname,excerpts:[redactSecrets(text).trim().slice(0,1200)],trust:'UNTRUSTED_DATA'});
-   }
-   return await finish({ok:true,operation,result:{extract_id:'native-public-'+scope.nonce,results,usage:{providerMicroUsd:0},trust:'UNTRUSTED_DATA'},trust:'UNTRUSTED_DATA'});
-  }
-  const{executeParallelRequest}=await import('./parallelDispatch.js');const response=await executeParallelRequest({scope:modelScope,userId,operation,body,admission});return await finish({ok:true,operation,result:await response.json(),trust:'UNTRUSTED_DATA'});
+  const retrievalOperation=operation as RetrievalOperation;
+  await state.begin();
+  const cached=await readRetrievalCache(modelScope,retrievalOperation,body);
+  if(cached)return await finish({ok:true,operation,result:{...cached,cache_hit:true},trust:'UNTRUSTED_DATA'});
+  let dispatched=0;
+  const result=await runApprovedRetrievalPlan({operation:retrievalOperation,body,
+   execute:async(childOperation,childBody)=>{
+    await check();
+    if(++dispatched*750>state.maximumMicroUsd)throw denied();
+    const child:ParallelAdmission=Object.freeze({marker:'native-research'});
+    let childStarted=false;
+    const childState:State={scope:modelScope,operation:childOperation,body:structuredClone(childBody),
+     maximumMicroUsd:750,active:true,check,begin:async()=>{if(childStarted)throw denied();childStarted=true;await check();}};
+    admitted.set(child,childState);
+    try{
+     const {executeParallelRequest}=await import('./parallelDispatch.js');
+     const response=await executeParallelRequest({scope:modelScope,userId,operation:childOperation,body:childBody,admission:child});
+     return await response.json() as RetrievalReceipt;
+    }finally{childState.active=false;admitted.delete(child);}
+   },
+   progress:async(partial)=>{
+    await check();const raw={ok:true,operation,result:partial,trust:'UNTRUSTED_DATA'};
+    await saveResearchResult(context,permit!.grantId,JSON.stringify(raw),digest(raw),scope.projectId);
+   },
+  });
+  await writeRetrievalCache(modelScope,retrievalOperation,body,result);
+  return await finish({ok:true,operation,result,trust:'UNTRUSTED_DATA'});
  }
  finally{state.active=false;admitted.delete(admission);}
 }

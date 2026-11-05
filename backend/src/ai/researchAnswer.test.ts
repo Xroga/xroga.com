@@ -49,6 +49,13 @@ test('one exact research approval completes its original rich answer, saves evid
   assert.equal(url.origin,env.SUPABASE_URL,'All network is synthetic and bounded');
   if(url.pathname.endsWith('/user_token_usage'))return Response.json({user_id:owner,plan_tier:'spark',plan_budget_usd:20,quota_period_start:new Date().toISOString().slice(0,7)+'-01',input_tokens:0,output_tokens:0,spent_usd:0,rollover_usd:0,model_usage:{}});
   if(url.pathname.endsWith('/model_provider_health'))return Response.json(null);
+  if(url.pathname.endsWith('/xroga_private_retrieval_cache'))return Response.json(null);
+  if(url.pathname.endsWith('/put_xroga_private_retrieval_cache'))return Response.json(null);
+  if(url.pathname.endsWith('/reserve_xroga_deepseek_web')){
+   assert.equal(body.p_operation,'search');assert.equal(body.p_research_kind,'normal');assert.equal(body.p_user_id,owner);
+   const row={id:randomUUID(),user_id:owner,idempotency_key:body.p_idempotency_key,status:'reserved',purpose:'daily_work',internal_route:'web.deepseek_search',price_version:body.p_price_version,
+    estimated_input_tokens:0,maximum_output_tokens:0,reserved_micro_usd:750};reservations.set(row.id,row);return Response.json(row);
+  }
   if(url.pathname.endsWith('/reserve_xroga_provider_budget')){
    assert.ok(body.p_reservation_micro_usd<=(body.p_internal_route.startsWith('web.')?750:RESEARCH_ANSWER_MAXIMUM_MICRO_USD));
    const row={id:randomUUID(),user_id:owner,idempotency_key:body.p_idempotency_key,status:'reserved',purpose:body.p_purpose,internal_route:body.p_internal_route,price_version:body.p_price_version,
@@ -120,4 +127,12 @@ test('citation links always point at the retrieved source they number, never at 
  assert.match(out,/```\n\[1\]\(https:\/\/keep\.example\/code\)\n```/,'fenced code is never rewritten');
  assert.deepEqual(researchCitationIssues(bindCitationLinks('Claim [1](https://wrong.example) and [2].',sources),sources),[]);
  assert.ok(researchCitationIssues(bindCitationLinks('Claim [3](https://wrong.example).',sources),sources).includes('mismatched-source:3'),'an unmatched number is still reported');
+});
+
+
+test('all fifty retrieved pages retain their dates and high-numbered citations bind to the corresponding page',()=>{
+ const result=presentResearchResult({ok:true,operation:'search',result:{provider:'deepseek',results:Array.from({length:50},(_,i)=>({url:`https://example.com/docs/${i+1}`,title:`Page ${i+1}`,publish_date:'2026-11-05',excerpts:[`Public evidence ${i+1}`]}))}});
+ assert.equal(result.sources.length,50);assert.equal(result.omittedSourceCount,0);assert.equal(result.sources[49].publishedAt,'2026-11-05');
+ const answer=bindCitationLinks('Evidence from the last page [50](https://unretrieved.example/).',result.sources);
+ assert.match(answer,/\[50\]\(https:\/\/example\.com\/docs\/50\)/);assert.deepEqual(researchCitationIssues(answer,result.sources),[]);
 });

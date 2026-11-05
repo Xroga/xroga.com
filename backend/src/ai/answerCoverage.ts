@@ -55,6 +55,26 @@ export function requiredAccessBoundarySupport(prompt:string):AnswerObligations{
   return items;
 }
 
+/** A request that supplies several quantities and asks for a computed result is a worked scenario. It is answered with a
+ * compact key-figures table and an adjustable calculator on the user's own numbers, not with paragraphs of prose alone.
+ * Deterministic and conservative: needs at least three distinct figures plus a computing question, and never applies when
+ * the person asks for brevity or declines a calculator or table. No quantities are invented here; the model fills the
+ * sections from the numbers in the request. */
+export function quantitativeScenarioSupport(prompt: string): AnswerObligations {
+  const text = prompt.slice(0, 32_000);
+  const figures = new Set((text.match(/[$€£]\s?\d[\d,]*(?:\.\d+)?|\b\d[\d,]*(?:\.\d+)?\s?%|\b\d[\d,]*(?:\.\d+)?\s?(?:usd|eur|gbp|dollars?|shares?|units?|years?|months?|weeks?|days?|hours?|miles?|km|kg|lbs?)\b/gi) ?? []).map(value => value.replace(/[\s,]/g, '').toLowerCase()));
+  if (figures.size < 3) return [];
+  if (!/\b(?:how\s+(?:much|many|long)|what\s+(?:will|would|is|are|size|position|amount|payment|return)|calculate|compute|work\s+out|worth|total|cost|profit|loss|payment|interest|ratio|position\s+size|break[- ]?even|per\s+(?:month|year|share|unit))\b/i.test(text)) return [];
+  if (/\b(?:short\s+answer|briefly|in\s+one\s+(?:line|sentence)|just\s+the\s+(?:number|answer)|tl;?dr)\b/i.test(text)) return [];
+  const declines = (what: string) => new RegExp(`\\b(?:no|without|skip|avoid|don't|do not)\\s+(?:\\w+\\s+){0,2}${what}\\b`, 'i').test(text);
+  const items: AnswerObligations = [];
+  if (!declines('(?:tables?|figures)')) items.push({ id: 'support-key-figures', origin: 'necessary-support', formats: ['table'],
+    description: "Summarise the quantities the user supplied and the results computed from them as a compact two-column key-figures table (label and value, with units). Use only the user's numbers and values derived from them." });
+  if (!declines('calculators?')) items.push({ id: 'support-scenario-calculator', origin: 'necessary-support', formats: ['calculator'],
+    description: "Offer an adjustable calculator on the user's own quantities so they can change them and see the result. Apply one supported operation to inputs that already hold any earlier steps." });
+  return items;
+}
+
 /** Add genuinely requested representations to the existing reading-order plan.
  * Existing invalid bindings stay invalid. Content is still authored in the
  * same generation, never invented by this deterministic planning boundary. */
@@ -63,7 +83,8 @@ export function prepareAnswerCoverage(prompt: string, presentation: Presentation
   const normalize=(value:string)=>value.toLocaleLowerCase().replace(/\s+/g,' ').trim();
   const quoteIssues=requirements.filter(r=>r.sourceQuote&&!normalize(prompt).includes(normalize(r.sourceQuote)))
     .map(r=>`unbound-request-quote:${r.id}`);
-  for (const item of [...requestedAnswerObligations(prompt),...requiredAccessBoundarySupport(prompt)]) {
+  const scenario = quantitativeScenarioSupport(prompt);
+  for (const item of [...requestedAnswerObligations(prompt),...requiredAccessBoundarySupport(prompt),...scenario]) {
     const collision=requirements.find(r=>r.id===item.id);
     if(collision&&normalize(collision.sourceQuote??collision.description)!==normalize(item.sourceQuote??item.description)){
       let suffix=1;const original=item.id;
@@ -83,9 +104,14 @@ export function prepareAnswerCoverage(prompt: string, presentation: Presentation
     if (existing) { existing.covers = [...new Set([...(existing.covers ?? []), item.id])]; continue; }
     if (plan.length >= 8 || requirements.length > 16) continue;
     const kind = item.formats[0];
-    plan.push({kind,heading:item.id==='support-ownership-records'?'Data ownership and membership':item.id==='support-access-contrast'?'Access boundaries':kind === 'graph' ? 'Architecture and relationships' : kind === 'table' ? 'Requested structured details'
+    plan.push({kind,heading:item.id==='support-key-figures'?'Key figures':item.id==='support-scenario-calculator'?'Adjust the numbers':item.id==='support-ownership-records'?'Data ownership and membership':item.id==='support-access-contrast'?'Access boundaries':kind === 'graph' ? 'Architecture and relationships' : kind === 'table' ? 'Requested structured details'
       : kind === 'calculator' ? 'Explore the calculation' : kind === 'chart' ? 'Data and units' : kind === 'cards' ? 'Access comparison' : 'How it works',
       instruction:`Fulfil this ${item.origin==='requested'?'actual user requirement':'necessary explanation'} with substantive explanation and valid ${kind} data: ${item.description}. Preserve supplied values and label assumptions. If evidence is missing, explain the limitation without fabricating facts.`.slice(0,600),covers:[item.id]});
+  }
+  // A worked scenario whose plan has no prose section still leads with a written answer; visuals never stand alone.
+  if (scenario.length && plan.length < 8 && !plan.some(section => section.kind === 'prose')) {
+    const proseIds = requirements.filter(item => item.formats.length && item.formats.every(format => format === 'prose')).map(item => item.id);
+    plan.unshift({ kind: 'prose', heading: 'Short answer', instruction: 'Answer the question in one or two sentences with the key result, then explain the reasoning plainly and mention the main risks or assumptions.', covers: proseIds.length ? proseIds : [scenario[0].id] });
   }
   // Prose is the default carrier of any explanation. When the plan has a prose section, an obligation that asks only for
   // prose is carried by it even if the planner forgot to list that binding; a missing table, diagram, chart or

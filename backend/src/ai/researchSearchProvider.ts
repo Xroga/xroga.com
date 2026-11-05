@@ -12,6 +12,7 @@ import {getSecret} from '../config/envSecrets.js';
  * timed-out requests are not billed).
  */
 export const DEEPSEEK_SEARCH_URL = 'https://api.deepseek.com/v1/tools/search';
+export const DEEPSEEK_FETCH_URL = 'https://api.deepseek.com/v1/tools/fetch';
 export const DEEPSEEK_SEARCH_MICRO_USD = 750;
 /** DeepSeek accepts 1-128 characters for `query` and `ori_question`. */
 export const DEEPSEEK_QUERY_MAX = 128;
@@ -36,9 +37,20 @@ export function researchSearchMicroUsd(): number {
 
 /** One bounded DeepSeek request built from the already validated Parallel-shaped body. */
 export function deepseekSearchBody(body: { objective: string; search_queries: string[]; result_count?: unknown }): { query: string; count: SearchResultCount; ori_question?: string } {
-  const query = body.search_queries[0].trim().slice(0, DEEPSEEK_QUERY_MAX);
-  const question = body.objective.trim().slice(0, DEEPSEEK_QUERY_MAX);
+  const query = [...body.search_queries[0].trim()].slice(0, DEEPSEEK_QUERY_MAX).join('');
+  const question = [...body.objective.trim()].slice(0, DEEPSEEK_QUERY_MAX).join('');
+  if (!query) throw new Error('Empty DeepSeek search query');
   return { query, count: acceptedSearchResultCount(body.result_count), ...(question ? { ori_question: question } : {}) };
+}
+
+/** Fetch returns Markdown, not a synthesis or proof that a claim is true. */
+export function normaliseDeepseekFetch(raw: unknown, url: string, traceId: string | null) {
+  if (!raw || typeof raw !== 'object') throw new Error('Malformed provider result');
+  const page = raw as {title?: unknown; content?: unknown};
+  if (typeof page.title !== 'string' || typeof page.content !== 'string') throw new Error('Malformed provider result');
+  if (typeof traceId !== 'string' || !/^[A-Za-z0-9-]{8,200}$/.test(traceId)) throw new Error('Missing or unsafe provider request identity');
+  return {search_id: traceId, provider: 'deepseek' as const, results: page.content.trim() ? [{url, title: page.title,
+    publish_date: null, excerpts: [page.content.slice(0, 12_000)]}] : []};
 }
 
 interface DeepseekResult { url?: unknown; title?: unknown; summary?: unknown; snippet?: unknown; date?: unknown; site_name?: unknown }

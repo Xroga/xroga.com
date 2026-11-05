@@ -1,11 +1,12 @@
 import {randomUUID} from 'node:crypto';
+import {recordWebSpend} from './webBudget.js';
+import {readRetrievalCache} from './researchRetrievalCache.js';
 import {requireTenantContext,requireResourceOwner} from '../security/tenantContext.js';
 import {requireModelProjectBinding} from './tenantModelDispatch.js';
 import { executeParallelRequest } from './parallelDispatch.js';
 import type { TenantModelScope } from './tenantModelDispatch.js';
 import { redactSecrets } from '../lib/truthfulExecution.js';
 import {publicHttpsUrl} from '../security/egress/urlPolicy.js';
-import { recordWebSpend } from './webBudget.js';
 import {containsCredentialSecretText} from '../security/egress/dataClassification.js';
 import {EgressDenied} from '../security/egress/egressPolicy.js';
 
@@ -23,34 +24,6 @@ export interface ParallelResult {
   requestId?: string;
   needsConfirmation?: boolean;
   reviewUrl?: string;
-}
-
-/** Conservative, process-local, private-user cache. Never shared between tenants or users.
- * This is only an opportunistic performance optimization; it is NOT durable storage.
- * A separate consented and rights-reviewed persistent public cache is future work. */
-const privateSearchCache=new Map<string,{expires:number;result:ParallelResult}>();
-const CACHE_ENTRIES_MAX=256;
-function searchCacheKey(input:{userId:string;dispatchScope?:TenantModelScope;resultCount?:15|30|50},objective:string,queries:string[]):string|null{
-  const scope=input.dispatchScope,context=scope?.context;
-  if(!context||!scope)return null;
-  return JSON.stringify([context.tenantId,context.userId,input.userId,scope.projectId??null,
-    scope.repository??null,input.resultCount??15,objective,queries]);
-}
-function cachedSearch(key:string,forceRefresh:boolean):ParallelResult|null{
-  if(forceRefresh)return null;
-  const entry=privateSearchCache.get(key);
-  if(!entry)return null;
-  if(entry.expires<=Date.now()){privateSearchCache.delete(key);return null;}
-  privateSearchCache.delete(key);
-  privateSearchCache.set(key,entry);
-  return {answer:'',sources:entry.result.sources.map(s=>({...s})),requestId:entry.result.requestId};
-}
-function cacheSearch(key:string,value:ParallelResult,durationMs:number):void{
-  if(!value.sources.length)return;
-  privateSearchCache.delete(key);
-  privateSearchCache.set(key,{expires:Date.now()+durationMs,
-    result:{answer:'',sources:value.sources.map(s=>({...s})),requestId:value.requestId}});
-  while(privateSearchCache.size>CACHE_ENTRIES_MAX)privateSearchCache.delete(privateSearchCache.keys().next().value!);
 }
 
 async function pendingApproval(response:Response):Promise<ParallelResult|undefined>{
@@ -79,10 +52,7 @@ function safeText(value: string, max: number): string {
 }
 
 /**
- * Cheapest normal public-web operation.
- *
- * Official Parallel pricing:
- * Turbo = $0.001/request with default 10 results.
+ * Official DeepSeek Search. Each nonempty operation costs $0.00075.
  */
 export async function parallelSearch(input: {
   userId: string;
@@ -116,16 +86,17 @@ export async function parallelSearch(input: {
   // A cached result cannot bypass the current actor/project authorization.
   // Never put private prompts, authenticated sources or cross-user data in a shared cache.
   const scope=input.dispatchScope;
-  const key=searchCacheKey(input,objective,queries);
-  if(key&&scope){
-    requireResourceOwner(requireTenantContext(scope.context),input.userId);
-    await requireModelProjectBinding(scope);
-    const refresh=/\b(refresh|check again|search again|recheck|new results)\b/i.test(objective);
-    const hit=cachedSearch(key,refresh);
-    if(hit)return hit; // No new provider call, no new ledger charge.
+  const body={mode:'turbo',objective,search_queries:queries,result_count:input.resultCount??15,
+    research_kind:input.researchKind??'normal',research_run_id:input.researchRunId??randomUUID()};
+  if(scope){
+    input.signal?.throwIfAborted();
+    const hit=await readRetrievalCache(scope,'search',body);
+    input.signal?.throwIfAborted();
+    if(hit)return {answer:'',sources:hit.results.map(page=>({title:page.title||new URL(page.url).hostname,
+      url:page.url,snippet:(page.excerpts??[]).join('\n'),publishedAt:page.publish_date??undefined})),requestId:hit.search_id};
   }
 
-  const response = await executeParallelRequest({scope:input.dispatchScope,userId:input.userId,operation:'search',body:{mode:'turbo',objective,search_queries:queries,result_count:input.resultCount??15,research_kind:input.researchKind??'normal',research_run_id:input.researchRunId??randomUUID()},signal:input.signal});
+  const response = await executeParallelRequest({scope:input.dispatchScope,userId:input.userId,operation:'search',body,signal:input.signal});
   const pending=await pendingApproval(response);if(pending)return pending;
 
   if (!response.ok) {
@@ -164,29 +135,14 @@ export async function parallelSearch(input: {
         result.publish_date ?? undefined,
     }));
 
-  // Search now runs only through official DeepSeek Search, which the dispatcher already reserves and settles in the
-  // canonical provider ledger. The older Parallel-only usage table cannot label it, so it is not double-recorded.
-  if (data.provider !== 'deepseek') await recordWebSpend({
-    userId: input.userId,
-    provider: 'parallel',
-    operation: 'parallel_search_turbo',
-    microUsd: 1_000,
-    providerRequestId: data.search_id,
-  });
-
+  // The dispatcher already settled the canonical provider ledger.
   const result={answer:'',sources,requestId:data.search_id};
-  if(key){
-    const volatile=/\b(today|latest|breaking|live|now|current price|stock|weather|availability)\b/i.test(objective);
-    cacheSearch(key,result,volatile?60_000:10*60_000);
-  }
+
   return result;
 }
 
 /**
- * Known URL/page/PDF retrieval.
- *
- * Official Parallel pricing:
- * $0.001 per URL.
+ * Official DeepSeek Fetch. Each nonempty page costs $0.00075.
  */
 export async function parallelExtract(input: {
   userId: string;
@@ -207,7 +163,15 @@ export async function parallelExtract(input: {
     };
   }
 
-  const response = await executeParallelRequest({scope:input.dispatchScope,userId:input.userId,operation:'extract',body:{urls,objective:safeText(input.objective,4_000)},signal:input.signal});
+  const body={urls,objective:safeText(input.objective,4_000)};
+  if(input.dispatchScope){
+    input.signal?.throwIfAborted();
+    const hit=await readRetrievalCache(input.dispatchScope,'extract',body);
+    input.signal?.throwIfAborted();
+    if(hit)return {answer:'',sources:hit.results.map(page=>({title:page.title||new URL(page.url).hostname,
+      url:page.url,snippet:(page.excerpts??[]).join('\n'),publishedAt:page.publish_date??undefined})),requestId:hit.search_id};
+  }
+  const response = await executeParallelRequest({scope:input.dispatchScope,userId:input.userId,operation:'extract',body,signal:input.signal});
   const pending=await pendingApproval(response);if(pending)return pending;
 
   if (!response.ok) {
@@ -218,6 +182,7 @@ export async function parallelExtract(input: {
 
   const data = (await response.json()) as {
     extract_id?: string;
+    search_id?: string;
     results?: Array<{
       url?: string;
       title?: string;
@@ -247,18 +212,12 @@ export async function parallelExtract(input: {
         result.publish_date ?? undefined,
     }));
 
-  await recordWebSpend({
-    userId: input.userId,
-    provider: 'parallel',
-    operation: 'parallel_extract',
-    microUsd: urls.length * 1_000,
-    providerRequestId: data.extract_id,
-  });
+
 
   return {
     answer: '',
     sources,
-    requestId: data.extract_id,
+    requestId: data.search_id??data.extract_id,
   };
 }
 
