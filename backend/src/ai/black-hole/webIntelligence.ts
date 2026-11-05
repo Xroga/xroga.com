@@ -481,6 +481,7 @@ function toUiSources(
       title: source.title,
       url: source.url,
       snippet: source.snippet,
+      publishedAt: source.publishedAt,
 
       source:
         source.sourceType ===
