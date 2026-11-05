@@ -559,7 +559,7 @@ export async function runWebIntelligence(
   if (
     decision.action === 'read'
   ) {
-    provider = 'native_fetch';
+    provider = 'deepseek';
 
     const result =
       await parallelExtract({
