@@ -26,7 +26,7 @@ function publicPdfFixture(){
 }
 
 test('each Parallel provider entry denies raw user ID authorization before network dispatch',async t=>{
-  const prior=process.env.PARALLEL_API_KEY;process.env.PARALLEL_API_KEY='synthetic-private-provider-key';
+  const prior=process.env.DEEPSEEK_WEBSEARCH_FETCH_API;process.env.DEEPSEEK_WEBSEARCH_FETCH_API='synthetic-private-provider-key';
   let effects=0;
   t.mock.method(globalThis,'fetch',async()=>{effects++;return Response.json({search_id:'synthetic',extract_id:'synthetic',id:'synthetic',results:[],output:[]});});
   try {
@@ -35,13 +35,13 @@ test('each Parallel provider entry denies raw user ID authorization before netwo
       ['extract',()=>parallelExtract({userId:'11111111-1111-4111-8111-111111111111',objective:'public documentation',urls:['https://example.com/docs']})],
       ['responses',()=>parallelResponses({userId:'11111111-1111-4111-8111-111111111111',question:'public documentation',effort:'low'})],
     ] as const)await t.test(name,async()=>{await assert.rejects(run());assert.equal(effects,0);});
-  } finally {if(prior===undefined)delete process.env.PARALLEL_API_KEY;else process.env.PARALLEL_API_KEY=prior;}
+  } finally {if(prior===undefined)delete process.env.DEEPSEEK_WEBSEARCH_FETCH_API;else process.env.DEEPSEEK_WEBSEARCH_FETCH_API=prior;}
 });
 
 test('actual Parallel entries enforce issued context, current owner, egress, canonical holds and exact settlement',async t=>{
   const owner='11111111-1111-4111-8111-111111111111',other='22222222-2222-4222-8222-222222222222',project='33333333-3333-4333-8333-333333333333';
   const context=createTenantContext({userId:owner,via:'remote_getuser'}),scope={context,userId:owner,projectId:project};
-  const env={SUPABASE_URL:'http://127.0.0.1:55438',SUPABASE_SERVICE_ROLE_KEY:'synthetic-only',PARALLEL_API_KEY:'synthetic-platform-key',NODE_ENV:'test',XROGA_TEST_CREDENTIAL_KEK:Buffer.alloc(32,26).toString('base64url')};
+  const env={SUPABASE_URL:'http://127.0.0.1:55438',SUPABASE_SERVICE_ROLE_KEY:'synthetic-only',DEEPSEEK_WEBSEARCH_FETCH_API:'synthetic-platform-key',NODE_ENV:'test',XROGA_TEST_CREDENTIAL_KEK:Buffer.alloc(32,26).toString('base64url')};
   const prior=Object.fromEntries(Object.keys(env).map(k=>[k,process.env[k]]));Object.assign(process.env,env);
   const confirmations=nativeReleaseFixture(owner);resetCredentialVaultRuntimeForTests();
   const storage=harness();storage.repo.projects.set(project,owner);
@@ -54,18 +54,21 @@ test('actual Parallel entries enforce issued context, current owner, egress, can
   syncBuiltinESMExports();t.after(()=>{t.mock.restoreAll();syncBuiltinESMExports();});
   t.mock.method(globalThis,'fetch',async(input:Parameters<typeof fetch>[0],init?:RequestInit)=>{
     const url=new URL(String(input)),body=init?.body?JSON.parse(String(init.body)):{};
-    if(url.origin==='https://api.parallel.ai'){
+    if(url.origin==='https://api.deepseek.com'){
+      assert.equal(url.pathname,'/v1/tools/search');
       effects++;events.push('provider');assert.equal(init?.redirect,'manual');assert.ok(init?.signal);assert.doesNotMatch(JSON.stringify(body),/SYNTHETIC_CREDENTIAL|substituted/);
-      assert.equal(new Headers(init?.headers).get(url.pathname.endsWith('/responses')?'authorization':'x-api-key'),url.pathname.endsWith('/responses')?'Bearer synthetic-platform-key':'synthetic-platform-key');
+      assert.equal(new Headers(init?.headers).get('authorization'),'Bearer synthetic-platform-key');assert.equal(new Headers(init?.headers).get('x-api-key'),null);
+      assert.equal(typeof body.query,'string');assert.ok(body.query.length>=1&&body.query.length<=128);assert.equal(body.count,10);
       if(mode==='provider503')return Response.json({error:'synthetic outage'},{status:503});
       if(mode==='provider401'||mode==='provider403')return Response.json({error:'synthetic provider denial'},{status:mode==='provider401'?401:403});
       if(mode==='providerRedirect')return new Response(null,{status:307,headers:{location:'http://169.254.169.254/computeMetadata/v1/'}});
       if(mode==='lateCancel'){controller?.abort();if(confirmations.row)confirmations.row.status='cancelled';}
-      if(mode==='rotateAfterResponse')process.env.PARALLEL_API_KEY='synthetic-rotated-platform-key';
-      if(mode==='malformedResults')return Response.json({search_id:'synthetic-search',results:'untrusted malformed result'});
+      if(mode==='rotateAfterResponse')process.env.DEEPSEEK_WEBSEARCH_FETCH_API='synthetic-rotated-platform-key';
+      const receipt={headers:{'x-ds-trace-id':'synthetic-search-0001'}};
+      if(mode==='malformedResults')return Response.json({results:'untrusted malformed result'},receipt);
       if(mode==='missingProviderId')return Response.json({results:[]});
-      if(mode==='credentialProviderId')return Response.json({search_id:'SYNTHETIC_CREDENTIAL_PROVIDER_RECEIPT',results:[]});
-      return Response.json({search_id:'synthetic-search',extract_id:'synthetic-extract',id:'synthetic-response',results:[{url:'https://example.com/docs',title:'Docs',excerpts:['public fixture']}],output_text:'public response',output:[]});
+      if(mode==='credentialProviderId')return Response.json({results:[]},{headers:{'x-ds-trace-id':'SYNTHETIC_CREDENTIAL_PROVIDER_RECEIPT'}});
+      return Response.json({results:[{url:'https://example.com/docs',title:'Docs',summary:'public fixture',snippet:'public',date:null}]},receipt);
     }
     assert.equal(url.origin,env.SUPABASE_URL,'No unmocked network is allowed');
     if(url.pathname.endsWith('/business_action_confirmations')||/\/(claim_business_action_confirmation|authorize_business_action_dispatch|finish_business_action_confirmation)$/.test(url.pathname))return (await confirmations.database(url,init))!;
@@ -90,7 +93,7 @@ test('actual Parallel entries enforce issued context, current owner, egress, can
       if(mode==='reservationWrongOwner')return Response.json({...row,user_id:other});
       if(mode==='revokeAtReservation')ownerNow=other;
       if(mode==='cancelAtReservation'){controller?.abort();if(confirmations.row)confirmations.row.status='cancelled';}
-      if(mode==='rotateAtReservation')process.env.PARALLEL_API_KEY='synthetic-rotated-platform-key';
+      if(mode==='rotateAtReservation')process.env.DEEPSEEK_WEBSEARCH_FETCH_API='synthetic-rotated-platform-key';
       if(mode==='staleRunAtReservation'&&executionRow)executionRow={...executionRow,lease_generation:randomUUID()};
       mutate?.();return Response.json(row);
     }
@@ -144,7 +147,7 @@ test('actual Parallel entries enforce issued context, current owner, egress, can
       }
       const result=operation==='search'?await search():operation==='extract'?await complete(parallelExtract({userId:owner,dispatchScope:scope,objective:'read public docs',urls:['https://example.com/docs','https://example.com/faq']})):await complete(parallelResponses({userId:owner,dispatchScope:scope,question:'public docs',effort:operation as 'low'|'medium'}));
       assert.ok(result.requestId);if(operation==='extract'){assert.deepEqual(events,['egress']);assert.equal(publicOpens,2);continue;}assert.deepEqual(events,['egress','reserve','provider','settle']);
-      const row=[...reservations.values()].at(-1)!;assert.equal(row.reserved_micro_usd,1000);
+      const row=[...reservations.values()].at(-1)!;assert.equal(row.reserved_micro_usd,750);
     }
     await t.test('native URL retrieval denies private DNS, redirects and cancellation after DNS without delegated fetch',async()=>{
       for(const denied of ['privateDns','publicRedirect','cancelAtDns']){mode=denied;const prior=effects,opened=publicOpens;await assert.rejects(complete(parallelExtract({userId:owner,dispatchScope:scope,objective:'read public docs',urls:['https://example.com/docs']})));assert.equal(effects,prior);assert.equal(publicOpens,opened+(denied==='publicRedirect'?1:0));}mode='ok';
@@ -179,11 +182,11 @@ test('actual Parallel entries enforce issued context, current owner, egress, can
     await t.test('platform credential rotation invalidates reservation admission and publication',async()=>{
       try{
         for(const at of ['rotateAtReservation','rotateAfterResponse']){
-          process.env.PARALLEL_API_KEY=env.PARALLEL_API_KEY;mode=at;const before=effects;
+          process.env.DEEPSEEK_WEBSEARCH_FETCH_API=env.DEEPSEEK_WEBSEARCH_FETCH_API;mode=at;const before=effects;
           await assert.rejects(search(),error=>{assert.equal(isTerminalModelFailure(error),true,at);return true;});
           assert.equal(effects,before+(at==='rotateAtReservation'?0:1),at);
         }
-      }finally{process.env.PARALLEL_API_KEY=env.PARALLEL_API_KEY;}
+      }finally{process.env.DEEPSEEK_WEBSEARCH_FETCH_API=env.DEEPSEEK_WEBSEARCH_FETCH_API;}
     });
     mode='provider503';await assert.rejects(search(),/503/);mode='ok';assert.ok((await search()).requestId,'ordinary authorized recovery remains available');
     const mutable={userId:owner,dispatchScope:scope,objective:'public original',queries:['public original']};mutate=()=>{mutable.objective='substituted';mutable.queries[0]='substituted';};

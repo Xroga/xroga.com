@@ -90,8 +90,8 @@ describe('semantic request dispatch', () => {
   });
 
   it('keeps an explicit public web search out of connected-app discovery', () => {
-    const previousKey = process.env.PARALLEL_API_KEY;
-    process.env.PARALLEL_API_KEY = 'test-key';
+    const previousKey = process.env.DEEPSEEK_WEBSEARCH_FETCH_API;
+    process.env.DEEPSEEK_WEBSEARCH_FETCH_API = 'test-key';
     try {
       const misroutedGoal = goal({
         semanticIntent: 'INVESTIGATE',
@@ -110,14 +110,14 @@ describe('semantic request dispatch', () => {
       assert.equal(corrected.goalContract.freshnessRequirement, 'CURRENT_REQUIRED');
       assert.equal(corrected.dispatch, 'chat');
     } finally {
-      if (previousKey === undefined) delete process.env.PARALLEL_API_KEY;
-      else process.env.PARALLEL_API_KEY = previousKey;
+      if (previousKey === undefined) delete process.env.DEEPSEEK_WEBSEARCH_FETCH_API;
+      else process.env.DEEPSEEK_WEBSEARCH_FETCH_API = previousKey;
     }
   });
 
   it('reports provider unavailability instead of falling back to Composio for public search', () => {
-    const previousKey = process.env.PARALLEL_API_KEY;
-    delete process.env.PARALLEL_API_KEY;
+    const previousKey = process.env.DEEPSEEK_WEBSEARCH_FETCH_API;
+    delete process.env.DEEPSEEK_WEBSEARCH_FETCH_API;
     try {
       const corrected = enforceExplicitPublicResearchControls({
         goalContract: goal({ requiredCapabilities: ['business.read'] }),
@@ -130,7 +130,7 @@ describe('semantic request dispatch', () => {
       assert.equal(corrected.dispatch, 'blocked');
       assert.match(corrected.blockers.join(' '), /research.*provider.*not configured/i);
     } finally {
-      if (previousKey !== undefined) process.env.PARALLEL_API_KEY = previousKey;
+      if (previousKey !== undefined) process.env.DEEPSEEK_WEBSEARCH_FETCH_API = previousKey;
     }
   });
 

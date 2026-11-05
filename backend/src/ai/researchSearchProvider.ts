@@ -1,31 +1,29 @@
 import {getSecret} from '../config/envSecrets.js';
 
 /**
- * Which retrieval provider answers a governed public-web search, and its fixed per-request price.
+ * The only public-web search provider: official DeepSeek Search (POST https://api.deepseek.com/v1/tools/search).
  *
- * Official DeepSeek Search (POST https://api.deepseek.com/v1/tools/search) is a retrieval tool only. Its credential is
- * never used for chat, coding or presentation; Zurelay DeepSeek still writes every answer. DeepSeek is selected only
- * when the operator turned it on AND its dedicated credential is present, so a missing secret falls back to the
- * existing Parallel provider instead of failing research. Approval and dispatch both read this one function, so the
- * approved maximum and the charged amount can never disagree.
+ * It is a retrieval tool only. Its dedicated credential is never used for chat, coding or presentation; Zurelay
+ * DeepSeek still writes every answer. Parallel is no longer used. Without the DeepSeek credential, search is refused
+ * (truthful failure), never silently routed elsewhere. Approval and dispatch read the same price, so the approved
+ * maximum and the charged amount cannot disagree.
  *
- * Prices (micro-USD per successful request): DeepSeek $0.75 / 1,000 (docs: api-docs.deepseek.com/guides/search,
- * checked 2026-11-05; failed, empty and timed-out requests are not billed). Parallel Turbo $0.001.
+ * Price: $0.75 per 1,000 successful requests (api-docs.deepseek.com/guides/search, checked 2026-11-05; failed, empty and
+ * timed-out requests are not billed).
  */
-export type ResearchSearchProvider = 'deepseek' | 'parallel';
 export const DEEPSEEK_SEARCH_URL = 'https://api.deepseek.com/v1/tools/search';
 export const DEEPSEEK_SEARCH_MICRO_USD = 750;
-export const PARALLEL_SEARCH_MICRO_USD = 1000;
 /** DeepSeek accepts 1-128 characters for `query` and `ori_question`. */
 export const DEEPSEEK_QUERY_MAX = 128;
 export const DEEPSEEK_SEARCH_RESULTS = 10;
 
-export function researchSearchProvider(env: NodeJS.ProcessEnv = process.env): ResearchSearchProvider {
-  return env.XROGA_RESEARCH_SEARCH_PROVIDER === 'deepseek' && Boolean(getSecret('DEEPSEEK_WEBSEARCH_FETCH_API')) ? 'deepseek' : 'parallel';
+/** The dedicated server-side search credential, or undefined when research search is unavailable. */
+export function deepseekSearchCredential(): string | undefined {
+  return getSecret('DEEPSEEK_WEBSEARCH_FETCH_API') || undefined;
 }
 
-export function researchSearchMicroUsd(provider: ResearchSearchProvider = researchSearchProvider()): number {
-  return provider === 'deepseek' ? DEEPSEEK_SEARCH_MICRO_USD : PARALLEL_SEARCH_MICRO_USD;
+export function researchSearchMicroUsd(): number {
+  return DEEPSEEK_SEARCH_MICRO_USD;
 }
 
 /** One bounded DeepSeek request built from the already validated Parallel-shaped body. */

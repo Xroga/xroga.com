@@ -1,20 +1,18 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {researchSearchProvider,researchSearchMicroUsd,deepseekSearchBody,normaliseDeepseekSearch,DEEPSEEK_SEARCH_MICRO_USD,PARALLEL_SEARCH_MICRO_USD} from './researchSearchProvider.js';
+import {deepseekSearchCredential,researchSearchMicroUsd,deepseekSearchBody,normaliseDeepseekSearch,DEEPSEEK_SEARCH_MICRO_USD} from './researchSearchProvider.js';
 
-test('DeepSeek is used only when switched on and its own credential exists; otherwise Parallel keeps working', () => {
+test('search uses only the dedicated DeepSeek credential; without it search is unavailable, never rerouted', () => {
   const saved = process.env.DEEPSEEK_WEBSEARCH_FETCH_API;
   try {
     delete process.env.DEEPSEEK_WEBSEARCH_FETCH_API;
-    assert.equal(researchSearchProvider({ XROGA_RESEARCH_SEARCH_PROVIDER: 'deepseek' } as NodeJS.ProcessEnv), 'parallel');
+    assert.equal(deepseekSearchCredential(), undefined);
     process.env.DEEPSEEK_WEBSEARCH_FETCH_API = 'synthetic-deepseek-search-key';
-    assert.equal(researchSearchProvider({} as NodeJS.ProcessEnv), 'parallel');
-    assert.equal(researchSearchProvider({ XROGA_RESEARCH_SEARCH_PROVIDER: 'deepseek' } as NodeJS.ProcessEnv), 'deepseek');
+    assert.equal(deepseekSearchCredential(), 'synthetic-deepseek-search-key');
   } finally {
     if (saved === undefined) delete process.env.DEEPSEEK_WEBSEARCH_FETCH_API; else process.env.DEEPSEEK_WEBSEARCH_FETCH_API = saved;
   }
-  assert.equal(researchSearchMicroUsd('deepseek'), DEEPSEEK_SEARCH_MICRO_USD);
-  assert.equal(researchSearchMicroUsd('parallel'), PARALLEL_SEARCH_MICRO_USD);
+  assert.equal(researchSearchMicroUsd(), DEEPSEEK_SEARCH_MICRO_USD);
 });
 
 test('one bounded DeepSeek request respects the documented 128-character limits', () => {

@@ -1172,7 +1172,7 @@ export async function resolveRequestAuthorities(
 
   if (
     process.env
-      .PARALLEL_API_KEY
+      .DEEPSEEK_WEBSEARCH_FETCH_API
   ) {
     authorities.add(
       'network:public-read',

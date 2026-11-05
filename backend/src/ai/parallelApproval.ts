@@ -19,7 +19,7 @@ import {redactSecrets} from '../lib/truthfulExecution.js';
 import {createRequire} from 'node:module';
 import {researchAnswerRequestSchema,completeApprovedResearchAnswer,RESEARCH_ANSWER_MAXIMUM_MICRO_USD} from './researchAnswer.js';
 import {saveResearchResult} from '../services/integrations/researchResult.js';
-import {researchSearchMicroUsd} from './researchSearchProvider.js';
+import {researchSearchMicroUsd,DEEPSEEK_SEARCH_URL} from './researchSearchProvider.js';
 
 const pdfParse=createRequire(import.meta.url)('pdf-parse/lib/pdf-parse.js') as (data:Uint8Array,options:{max:number})=>Promise<{text:string}>;
 function extractUrls(body:Record<string,unknown>):string[]{
@@ -89,7 +89,7 @@ export async function executeParallelNativeAction(userId:string,plan:BusinessAct
  };
  await check();const admission:ParallelAdmission=Object.freeze({marker:'native-research'}),state:State={scope:modelScope,operation,body:structuredClone(body),maximumMicroUsd:Number(args.maximumMicroUsd),active:true,check,begin:async()=>{
   if(started)throw denied();started=true;await check();
-  await enforceEgress({context,actionClass:scope.actionClass,destination:operation==='extract'?extractUrls(body)[0]:`https://api.parallel.ai/v1/${operation}`,recipient:scope.connectedAccountId,purpose:'approved-exact-research',payload:{sessionId:plan.sessionId,useCase:plan.useCase,toolSlug:plan.toolSlug,arguments:args},declaredClass:'USER_PRIVATE',toolTrust:'SERVER_REGISTERED',binding,authorityPermit:permit},receipt=>persistSecurityDecision(context,receipt));
+  await enforceEgress({context,actionClass:scope.actionClass,destination:operation==='extract'?extractUrls(body)[0]:DEEPSEEK_SEARCH_URL,recipient:scope.connectedAccountId,purpose:'approved-exact-research',payload:{sessionId:plan.sessionId,useCase:plan.useCase,toolSlug:plan.toolSlug,arguments:args},declaredClass:'USER_PRIVATE',toolTrust:'SERVER_REGISTERED',binding,authorityPermit:permit},receipt=>persistSecurityDecision(context,receipt));
   await consumeAuthorityPermit(permit,binding);consumed=true;await check();
  }};admitted.set(admission,state);
  const finish=async(raw:{ok:true;operation:Operation;result:unknown;trust:string})=>{

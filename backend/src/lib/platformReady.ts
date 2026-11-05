@@ -70,9 +70,9 @@ export function computePlatformReady(): {
   id: 'research',
   label: 'Web intelligence',
   ok:
-    has('PARALLEL_API_KEY'),
+    has('DEEPSEEK_WEBSEARCH_FETCH_API'),
   required: true,
-  hint: 'PARALLEL_API_KEY',
+  hint: 'DEEPSEEK_WEBSEARCH_FETCH_API',
 },
     {
       id: 'billing',

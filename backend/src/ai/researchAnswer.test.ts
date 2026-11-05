@@ -26,7 +26,7 @@ test('research attribution binds canonical pages without treating code or chart 
 test('one exact research approval completes its original rich answer, saves evidence and cannot replay either provider',async t=>{
  const owner='11111111-1111-4111-8111-111111111111',foreign='22222222-2222-4222-8222-222222222222';
  const context=createTenantContext({userId:owner,via:'remote_getuser'});
- const env={NODE_ENV:'test',SUPABASE_URL:'http://127.0.0.1:55437',SUPABASE_SERVICE_ROLE_KEY:'synthetic-loopback',PARALLEL_API_KEY:'synthetic-retrieval',ZURELAY_API_KEY:'synthetic-model',ZURELAY_STREAM_USAGE_VERIFIED:'1'};
+ const env={NODE_ENV:'test',SUPABASE_URL:'http://127.0.0.1:55437',SUPABASE_SERVICE_ROLE_KEY:'synthetic-loopback',DEEPSEEK_WEBSEARCH_FETCH_API:'synthetic-retrieval',ZURELAY_API_KEY:'synthetic-model',ZURELAY_STREAM_USAGE_VERIFIED:'1'};
  const before=Object.fromEntries(Object.keys(env).map(k=>[k,process.env[k]]));Object.assign(process.env,env);
  const storage=harness(),confirmation=nativeReleaseFixture(owner),reservations=new Map<string,any>();setStorageServiceForTests(storage.svc);
  t.after(()=>{setStorageServiceForTests(undefined);for(const k of Object.keys(env)){if(before[k]===undefined)delete process.env[k];else process.env[k]=before[k];}});
@@ -34,9 +34,9 @@ test('one exact research approval completes its original rich answer, saves evid
  const raw=JSON.stringify({s0:{markdown:'The retrieved page documents the supplied option [1].',data:{columns:['Option','Evidence'],rows:[['Documented option','Public source excerpt [1]']]}}});
  t.mock.method(globalThis,'fetch',async(input:Parameters<typeof fetch>[0],init?:RequestInit)=>{
   const url=new URL(String(input)),body=init?.body?JSON.parse(String(init.body)):{};
-  if(url.origin==='https://api.parallel.ai'){
+  if(url.origin==='https://api.deepseek.com'&&url.pathname==='/v1/tools/search'){
    searches++;assert.equal(init?.redirect,'manual');assert.ok(!JSON.stringify(body).includes('answerRequest'));
-   return Response.json({search_id:'synthetic-search-'+searches,results:[{title:'Public documentation',url:'https://example.com/docs',excerpts:['Public source excerpt']},{title:'Same page',url:'https://example.com/docs#section',excerpts:['Public source excerpt']}]});
+   return Response.json({results:[{title:'Public documentation',url:'https://example.com/docs',summary:'Public source excerpt'},{title:'Same page',url:'https://example.com/docs#section',summary:'Public source excerpt'}]},{headers:{'x-ds-trace-id':'synthetic-search-'+searches}});
   }
   if(url.origin==='https://api.zurelay.com'){
    models++;assert.equal(body.model,'deepseek-v4.1-flash-1017');assert.equal(body.max_tokens,4096);assert.equal(new Headers(init?.headers).get('x-zurelay-fallback'),'off');
@@ -50,7 +50,7 @@ test('one exact research approval completes its original rich answer, saves evid
   if(url.pathname.endsWith('/user_token_usage'))return Response.json({user_id:owner,plan_tier:'spark',plan_budget_usd:20,quota_period_start:new Date().toISOString().slice(0,7)+'-01',input_tokens:0,output_tokens:0,spent_usd:0,rollover_usd:0,model_usage:{}});
   if(url.pathname.endsWith('/model_provider_health'))return Response.json(null);
   if(url.pathname.endsWith('/reserve_xroga_provider_budget')){
-   assert.ok(body.p_reservation_micro_usd<=(body.p_internal_route.startsWith('web.')?1000:RESEARCH_ANSWER_MAXIMUM_MICRO_USD));
+   assert.ok(body.p_reservation_micro_usd<=(body.p_internal_route.startsWith('web.')?750:RESEARCH_ANSWER_MAXIMUM_MICRO_USD));
    const row={id:randomUUID(),user_id:owner,idempotency_key:body.p_idempotency_key,status:'reserved',purpose:body.p_purpose,internal_route:body.p_internal_route,price_version:body.p_price_version,
     estimated_input_tokens:body.p_estimated_input_tokens,maximum_output_tokens:body.p_maximum_output_tokens,reserved_micro_usd:body.p_reservation_micro_usd};reservations.set(row.id,row);
    if(mode==='cancel-at-model-reservation'&&!body.p_internal_route.startsWith('web.'))confirmation.row!.status='cancelled';
@@ -77,7 +77,7 @@ test('one exact research approval completes its original rich answer, saves evid
  const pending=await runChatPipeline({userId:owner,tenantContext:context,prompt,goalContract:goal});
  assert.equal(pending.intent,'confirmation_required');assert.equal(searches,0);assert.equal(models,0);
  const id=confirmation.row!.id;
- assert.equal(confirmation.row!.plan.authority!.maxSpendMicroUsd,'6000');assert.match(String(confirmation.row!.summary),/ONE DeepSeek answer/);
+ assert.equal(confirmation.row!.plan.authority!.maxSpendMicroUsd,'5750');assert.match(String(confirmation.row!.summary),/ONE DeepSeek answer/);
  await assert.rejects(confirmBusinessAction(createTenantContext({userId:foreign,via:'remote_getuser'}),id));assert.equal(searches,0);
  await confirmBusinessAction(context,id);assert.equal(searches,1);assert.equal(models,1);assert.equal(unknown,0);
  const saved=await readResearchResult(context,await getBusinessActionConfirmation(owner,id));

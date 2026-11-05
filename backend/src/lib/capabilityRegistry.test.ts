@@ -28,11 +28,11 @@ describe('capability registry', () => {
     );
   });
 
-  it('marks Parallel web research available when PARALLEL_API_KEY is configured', () => {
+  it('marks Parallel web research available when DEEPSEEK_WEBSEARCH_FETCH_API is configured', () => {
     const capability = getCapability(
       'web_research',
       {
-        PARALLEL_API_KEY: 'configured',
+        DEEPSEEK_WEBSEARCH_FETCH_API: 'configured',
       },
     );
 
@@ -64,7 +64,7 @@ describe('capability registry', () => {
     const capability = getCapability(
       'web_research',
       {
-        PARALLEL_API_KEY: 'configured',
+        DEEPSEEK_WEBSEARCH_FETCH_API: 'configured',
         TAVILY_API_KEY: 'configured',
         SEARXNG_URL:
           'https://legacy.example.com',

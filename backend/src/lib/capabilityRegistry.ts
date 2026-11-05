@@ -160,7 +160,7 @@ const TEMPLATES: CapabilityTemplate[] = [
         'deep_research',
       ],
       requiredCredentials: [
-        'PARALLEL_API_KEY',
+        'DEEPSEEK_WEBSEARCH_FETCH_API',
       ],
       inputRequirements: [
         'Public research objective, search query, or public URL',

@@ -33,7 +33,7 @@ export async function gatherResearch(query: string, userId?: string, dispatchSco
 
   // Search is retrieval only. All synthesis uses the canonical Zurelay model path.
 
-  if (userId && getSecret('PARALLEL_API_KEY')) {
+  if (userId && getSecret('DEEPSEEK_WEBSEARCH_FETCH_API')) {
     try {
       const result = await parallelSearch({ userId, dispatchScope, objective: q, queries: [q] });
       const sources = result.sources.map((source) => ({

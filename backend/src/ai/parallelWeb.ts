@@ -118,8 +118,8 @@ export async function parallelSearch(input: {
         result.publish_date ?? undefined,
     }));
 
-  // Successful Turbo request = $0.001. A DeepSeek search is already reserved and settled in the canonical provider
-  // ledger by the dispatcher; the older Parallel-only usage table cannot label it, so it is not double-recorded here.
+  // Search now runs only through official DeepSeek Search, which the dispatcher already reserves and settles in the
+  // canonical provider ledger. The older Parallel-only usage table cannot label it, so it is not double-recorded.
   if (data.provider !== 'deepseek') await recordWebSpend({
     userId: input.userId,
     provider: 'parallel',

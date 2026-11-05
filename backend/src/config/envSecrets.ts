@@ -33,13 +33,11 @@ const ALIASES: Record<string, string[]> = {
   /**
    * Parallel official.
    *
-   * One key covers:
-   * - Search API
-   * - Extract API
-   * - Responses API
+   * Official DeepSeek Search & Fetch. Retrieval only: never used for chat, coding or presentation.
+   * Parallel is no longer used for search.
    */
-  PARALLEL_API_KEY: [
-    'PARALLEL_API_KEY',
+  DEEPSEEK_WEBSEARCH_FETCH_API: [
+    'DEEPSEEK_WEBSEARCH_FETCH_API',
   ],
 
   // -------------------------------------------------------------------------
@@ -290,9 +288,9 @@ export function getAiStackKeyStatus(): Record<string, boolean> {
   return {
     ZURELAY_API_KEY: hasSecret('ZURELAY_API_KEY'),
 
-    // General public web intelligence.
-    PARALLEL_API_KEY:
-      hasSecret('PARALLEL_API_KEY'),
+    // General public web intelligence (official DeepSeek Search).
+    DEEPSEEK_WEBSEARCH_FETCH_API:
+      hasSecret('DEEPSEEK_WEBSEARCH_FETCH_API'),
   };
 }
 

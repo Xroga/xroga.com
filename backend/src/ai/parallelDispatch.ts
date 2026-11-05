@@ -12,7 +12,7 @@ import {finishFailedProviderReservation,type ProviderReservation} from './provid
 import {PostCompletionAccountingError} from './postCompletionAccounting.js';
 import {WEB_PRICE_VERSION} from './webBudget.js';
 import {AuthorityError} from '../security/authority/enforce.js';
-import {researchSearchProvider,researchSearchMicroUsd,deepseekSearchBody,normaliseDeepseekSearch,DEEPSEEK_SEARCH_URL} from './researchSearchProvider.js';
+import {deepseekSearchCredential,researchSearchMicroUsd,deepseekSearchBody,normaliseDeepseekSearch,DEEPSEEK_SEARCH_URL} from './researchSearchProvider.js';
 
 type Operation='search'|'extract'|'responses';
 function requireRetrievalOperation(operation: string): void {
@@ -36,9 +36,8 @@ export async function executeParallelRequest(input:{scope:TenantModelScope|undef
   // One dispatch remains bound to the platform credential present at admission.
   // Rotation or removal cannot silently substitute a different credential after
   // ownership, audit, reservation or provider-response waits.
-  const provider=operation==='search'?researchSearchProvider():'parallel';
-  const providerCredential=()=>provider==='deepseek'?getSecret('DEEPSEEK_WEBSEARCH_FETCH_API'):getSecret('PARALLEL_API_KEY');
-  const credential=operation==='extract'?'native-credential-free':providerCredential();
+  // Public-web search uses only the dedicated official DeepSeek Search credential. Without it, search is refused.
+  const credential=operation==='extract'?'native-credential-free':deepseekSearchCredential();
   if(!credential)throw denied();
   const check=async()=>{
     signal?.throwIfAborted();requireResourceOwner(context,scope.userId);
@@ -51,7 +50,7 @@ export async function executeParallelRequest(input:{scope:TenantModelScope|undef
       if(error||!data||data.id!==attempt.runId||data.user_id!==context.userId||data.project_id!==(scope.projectId??null)
         ||data.status!=='running'||data.worker_id!==attempt.workerId||data.lease_generation!==attempt.generation)throw denied();
     }
-    if(operation!=='extract'&&(!credential||providerCredential()!==credential))throw denied();
+    if(operation!=='extract'&&(!credential||deepseekSearchCredential()!==credential))throw denied();
     await admission?.check();
     signal?.throwIfAborted();
   };
@@ -60,7 +59,7 @@ export async function executeParallelRequest(input:{scope:TenantModelScope|undef
     if(body.mode!=='turbo'||!Array.isArray(body.search_queries)||!body.search_queries.length||body.search_queries.length>3
       ||body.search_queries.some(q=>typeof q!=='string'||q.length>500)||typeof body.objective!=='string'||body.objective.length>4000
       ||Object.keys(body).some(k=>!['mode','objective','search_queries'].includes(k)))throw denied();
-    amount=researchSearchMicroUsd(provider);route=provider==='deepseek'?'deepseek_search':'parallel_search_turbo';
+    amount=researchSearchMicroUsd();route='deepseek_search';
   }else if(operation==='extract'){
     if(!Array.isArray(body.urls)||!body.urls.length||body.urls.length>4||body.urls.some(u=>typeof u!=='string')
       ||typeof body.objective!=='string'||body.objective.length>4000||Object.keys(body).some(k=>!['urls','objective'].includes(k)))throw denied();
@@ -68,7 +67,7 @@ export async function executeParallelRequest(input:{scope:TenantModelScope|undef
     units=body.urls.length;amount=0;route='native_public_extract';
   }else throw denied();
   await check();
-  const destination=provider==='deepseek'?DEEPSEEK_SEARCH_URL:`https://api.parallel.ai/v1/${operation}`;
+  const destination=DEEPSEEK_SEARCH_URL;
   if(!admission)return Response.json(await prepareParallelApproval(scope,operation,body,signal),{status:202});
   // Known URLs are fetched only by the credential-free DNS-pinned native path.
   if(operation==='extract')throw denied();
@@ -96,8 +95,8 @@ export async function executeParallelRequest(input:{scope:TenantModelScope|undef
   let completed=false,settledVerified=false;
   try{
     await check();
-    const response=await fetch(destination,{method:'POST',redirect:'manual',headers:provider==='deepseek'?{'Content-Type':'application/json',Authorization:`Bearer ${credential}`}:{'Content-Type':'application/json','x-api-key':credential},
-      body:JSON.stringify(provider==='deepseek'?deepseekSearchBody(body as {objective:string;search_queries:string[]}):body),signal:AbortSignal.any([AbortSignal.timeout(25000),...(signal?[signal]:[])])});
+    const response=await fetch(destination,{method:'POST',redirect:'manual',headers:{'Content-Type':'application/json',Authorization:`Bearer ${credential}`},
+      body:JSON.stringify(deepseekSearchBody(body as {objective:string;search_queries:string[]})),signal:AbortSignal.any([AbortSignal.timeout(25000),...(signal?[signal]:[])])});
     if(response.redirected||response.status>=300&&response.status<400){await response.body?.cancel().catch(()=>undefined);throw new EgressDenied('UNSAFE_DESTINATION');}
     if(response.status===401||response.status===403){await response.body?.cancel().catch(()=>undefined);throw new AuthorityError('PARALLEL_PROVIDER_AUTHORIZATION_DENIED');}
     if(!response.ok){void response.body?.cancel().catch(()=>undefined);throw Object.assign(new Error(`Parallel provider request failed (${response.status}).`),{status:response.status});}
@@ -107,8 +106,8 @@ export async function executeParallelRequest(input:{scope:TenantModelScope|undef
     finally{await reader?.cancel().catch(()=>undefined);reader?.releaseLock();}
     const received=Buffer.concat(chunks).toString('utf8');
     // DeepSeek results are normalised into the existing result shape; its receipt identity is the x-ds-trace-id header.
-    const data=provider==='deepseek'?normaliseDeepseekSearch(JSON.parse(received),response.headers.get('x-ds-trace-id')):JSON.parse(received);
-    const text=provider==='deepseek'?JSON.stringify(data):received,requestId=data?.[operation==='search'?'search_id':'id'];
+    const data=normaliseDeepseekSearch(JSON.parse(received),response.headers.get('x-ds-trace-id'));
+    const text=JSON.stringify(data),requestId=data.search_id;
     if(operation==='search'&&(!Array.isArray(data.results)||data.results.some((r:unknown)=>!r||typeof r!=='object'||typeof (r as {url?:unknown}).url!=='string'
       ||(r as {title?:unknown}).title!==undefined&&typeof (r as {title?:unknown}).title!=='string'
       ||(r as {excerpts?:unknown}).excerpts!==undefined&&(!Array.isArray((r as {excerpts?:unknown}).excerpts)||((r as {excerpts:unknown[]}).excerpts).some(v=>typeof v!=='string')))))throw new Error('Malformed provider result');

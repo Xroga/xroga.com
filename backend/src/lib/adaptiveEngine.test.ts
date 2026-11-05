@@ -57,7 +57,7 @@ describe('adaptive general-purpose engine', () => {
       'Research current official OAuth documentation with sources',
       '',
       {},
-      { PARALLEL_API_KEY: 'configured' },
+      { DEEPSEEK_WEBSEARCH_FETCH_API: 'configured' },
     );
     assert.equal(plan.classification.requiresResearch, true);
     assert.equal(plan.route.kind, 'research');

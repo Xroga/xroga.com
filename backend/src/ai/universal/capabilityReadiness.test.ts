@@ -5,8 +5,8 @@ import { currentProductTruth, currentPublicProductTruth } from './productTruth.j
 import { resolveRequestAuthorities } from './semanticRequestPlanner.js';
 
 test('the canonical registry distinguishes authorization, provider availability, and unsupported capabilities', () => {
-  const previousParallel = process.env.PARALLEL_API_KEY;
-  delete process.env.PARALLEL_API_KEY;
+  const previousParallel = process.env.DEEPSEEK_WEBSEARCH_FETCH_API;
+  delete process.env.DEEPSEEK_WEBSEARCH_FETCH_API;
   try {
     const authorities = new Set(['model:execute', 'sandbox:execute']);
     assert.equal(universalCapabilityRegistry.readiness('conversation.respond', authorities).state, 'READY');
@@ -15,8 +15,8 @@ test('the canonical registry distinguishes authorization, provider availability,
     assert.equal(universalCapabilityRegistry.readiness('research.x', authorities).state, 'PROVIDER_UNAVAILABLE');
     assert.equal(universalCapabilityRegistry.readiness('arbitrary.future-capability', authorities).state, 'UNSUPPORTED');
   } finally {
-    if (previousParallel === undefined) delete process.env.PARALLEL_API_KEY;
-    else process.env.PARALLEL_API_KEY = previousParallel;
+    if (previousParallel === undefined) delete process.env.DEEPSEEK_WEBSEARCH_FETCH_API;
+    else process.env.DEEPSEEK_WEBSEARCH_FETCH_API = previousParallel;
   }
 });
 

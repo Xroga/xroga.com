@@ -20,7 +20,7 @@ const capabilities = [
     icon: Globe2,
     label: 'Current web',
     title: 'Search when freshness matters.',
-    body: 'Xroga can route current-information questions to Parallel, retain useful source URLs, and keep retrieved text separate from trusted instructions.',
+    body: 'Xroga can search the live web for current-information questions, retain useful source URLs, and keep retrieved text separate from trusted instructions.',
     status: 'Working',
   },
   {
