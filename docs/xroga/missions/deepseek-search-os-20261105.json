@@ -34,6 +34,7 @@
     "docs/xroga/deployment-topology.md",
     "docs/xroga/deployment-topology.mmd",
     "docs/xroga/evidence/command-010/CURRENT-PROOF-METADATA-CONTINUATION-20261028.json",
+    "docs/xroga/evidence/command-010/MODEL-DISPATCH-PROOF.json",
     "docs/xroga/evidence/command-010/TRANSPORT-LIFETIME-PROOF.json",
     "docs/xroga/evidence/search-os-20261105/STAGING-TRANSACTION-CHECKS.json",
     "docs/xroga/evidence/search-os-20261105/TRANSPORT-LIFETIME-AT-77d70ff2.json",
@@ -148,9 +149,10 @@
   "rollout": "User explicitly authorized merge and paired Cloud Run/Vercel deployment after mandatory checks pass. Finish exact-source CI, verified database migration and real existing Free-account journeys before production promotion. Do not bypass failed gates.",
   "rollback": "Preserve Cloud Run xroga-api-zurelay-77d70f-serving-1105 and Vercel 7mS7G5BmU5jaKZXSkksPuquuQKth (77d70ff2). An older API rollback must disable retrieval to prevent bypass of the newly required paid caps; preserve generation, ledger rows and schema. Prepare and verify the compatible rollback revision before promotion.",
   "knownGaps": [
-    "Complete backend/frontend suites and isolated fresh/upgrade/concurrent database tests passed. Final exact-source CI and authenticated new-runtime journeys remain pending.",
+    "Backend 5349 and frontend 1477 tests, builds, type checks, isolated fresh/upgrade/concurrent database tests and seven checks on the persistently migrated staging schema passed. Exact-source final CI and new-runtime authenticated journeys remain pending.",
     "Browser normal chat on the serving Free account passed; Search OS continuation is not deployed.",
-    "GitHub connector is read-only (403 on blob creation); the existing authenticated owner browser is the source-publishing fallback."
+    "GitHub connector is read-only (403 on blob creation); the existing authenticated owner browser is the source-publishing fallback.",
+    "Vercel rejected the exact-source manual preview with api-deployments-free-per-day: retry in 24 hours. No paid plan upgrade or production promotion authorized while this failed check remains."
   ],
   "placeholderClaimsRemaining": [],
   "evidenceRefs": [
@@ -168,7 +170,7 @@
       "Exact-source automated and authenticated new-runtime release checks are still pending."
     ],
     "authenticatedE2e": "BLOCKED",
-    "stagedSecurity": "BLOCKED",
+    "stagedSecurity": "PASS",
     "liveUrl": null,
     "deployedSha": null
   }
