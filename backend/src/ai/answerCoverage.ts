@@ -87,10 +87,13 @@ export function prepareAnswerCoverage(prompt: string, presentation: Presentation
       : kind === 'calculator' ? 'Explore the calculation' : kind === 'chart' ? 'Data and units' : kind === 'cards' ? 'Access comparison' : 'How it works',
       instruction:`Fulfil this ${item.origin==='requested'?'actual user requirement':'necessary explanation'} with substantive explanation and valid ${kind} data: ${item.description}. Preserve supplied values and label assumptions. If evidence is missing, explain the limitation without fabricating facts.`.slice(0,600),covers:[item.id]});
   }
-  const coverage = assessPresentationCoverage(plan, requirements);
-  if(quoteIssues.length){coverage.complete=false;coverage.issues.push(...quoteIssues);}
   // Relevance is checked deterministically against the request itself. No model call and no rewriting.
+  // A section that drifts into another field is simply not planned. It never degrades the rest of a good answer
+  // into a warning, because the person did not ask for it and loses nothing when it is left out.
   const relevance = assessPresentationRelevance(prompt, plan, requirements);
-  if(!relevance.relevant){coverage.complete=false;coverage.issues.push(...relevance.issues);}
-  return { version:'answer-coverage-v1' as const, plan, requirements, coverage };
+  const drifting = new Set(relevance.detail.map(item => item.heading));
+  const kept = drifting.size ? plan.filter(section => !drifting.has(section.heading)) : plan;
+  const coverage = assessPresentationCoverage(kept, requirements);
+  if(quoteIssues.length){coverage.complete=false;coverage.issues.push(...quoteIssues);}
+  return { version:'answer-coverage-v1' as const, plan: kept, requirements, coverage, ...(drifting.size ? { omittedOffTopic: [...drifting] } : {}) };
 }

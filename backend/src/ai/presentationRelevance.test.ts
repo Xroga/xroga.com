@@ -52,11 +52,24 @@ test('subjects the request actually names are never treated as drift', () => {
   assert.equal(assessPresentationRelevance(saas, plan, [need('d', 'diagram', 'requested')]).relevant, true);
 });
 
-test('the coverage gate reports drift as incomplete instead of silently accepting it', () => {
+test('drift is left out of the plan and never turns a good answer into a warning', () => {
   const plan = [section('graph', 'Microservices map', 'API gateway, microservices and kubernetes for ticket booking.', ['s'])];
   const out = prepareAnswerCoverage(FLIGHT, plan, [need('s', 'support')]);
-  assert.equal(out.coverage.complete, false);
-  assert.ok(out.coverage.issues.some(issue => issue.startsWith('off-topic:software-architecture')), out.coverage.issues.join(','));
+  assert.deepEqual(out.omittedOffTopic, ['Microservices map']);
+  assert.equal(out.plan.length, 0);
+  assert.ok(!out.coverage.issues.some(issue => issue.startsWith('off-topic')), out.coverage.issues.join(','));
+});
+
+test('a database comparison for a SaaS is software even though it never says backend or endpoint', () => {
+  const prompt = 'Compare PostgreSQL, MySQL and SQLite for a small SaaS';
+  const plan = [
+    section('table', 'Side-by-side comparison', 'Compare the three on concurrency, operations, scaling and feature fit.', ['c']),
+    section('graph', 'Where the database sits', 'Show the frontend, backend, API gateway and database layers of a small SaaS.', ['s']),
+  ];
+  assert.equal(assessPresentationRelevance(prompt, plan, [need('c', 'comparison'), need('s', 'support')]).relevant, true);
+  const out = prepareAnswerCoverage(prompt, plan, [need('c', 'comparison'), need('s', 'support')]);
+  assert.equal(out.omittedOffTopic, undefined);
+  assert.equal(out.plan.length, 2);
 });
 
 test('explaining and executing the same subject are read as different outcomes', () => {

@@ -22,6 +22,15 @@ const CUES: Record<RelevanceDomain, RegExp[]> = {
   travel: [/\bflight(?:s)?\b/i, /\bairline(?:s)?\b/i, /\bairport(?:s)?\b/i, /\bitinerary\b/i, /\blayover\b/i, /\bbaggage\b/i, /\bhotel(?:s)?\b/i, /\bfare(?:s)?\b/i],
 };
 
+/**
+ * Words that put a request inside a field even though it never uses that field's own cue words. A request that
+ * compares PostgreSQL, MySQL and SQLite for a SaaS never says "backend" or "endpoint", yet it is plainly software.
+ */
+const PROMPT_FIELD: Partial<Record<RelevanceDomain, RegExp>> = {
+  'software-architecture': /\b(?:postgres(?:ql)?|mysql|sqlite|mariadb|mongo(?:db)?|redis|database|databases|saas|app|apps|application|website|web\s*app|api|apis|code|coding|software|framework|react|next\.?js|node|python|typescript|server|cloud|aws|gcp|azure|supabase|firebase|stripe|deploy(?:ment)?|hosting|startup|tech(?:nology)?\s+stack|stack|architecture|system|platform|product|build)\b/i,
+  'automation-workflow': /\b(?:saas|agency|business|sales|marketing|process|operations|app|apps|tool|tools|software|system|platform|automat\w*|workflow\w*|integrat\w*)\b/i,
+};
+
 /** Fields a plan section may bring in only when the request shows them. `travel` is checked in the other direction. */
 const GUARDED: RelevanceDomain[] = ['finance-trading', 'software-architecture', 'automation-workflow', 'medical'];
 
@@ -38,7 +47,7 @@ export interface RelevanceIssue { code: 'off-topic-section'; heading: string; do
 export function assessPresentationRelevance(prompt: string, plan: PresentationPlan, obligations: AnswerObligations = []): { relevant: boolean; issues: string[]; detail: RelevanceIssue[] } {
   const detail: RelevanceIssue[] = [];
   const requested = new Set(obligations.filter(item => item.origin === 'requested').map(item => item.id));
-  const promptDomains = new Set(GUARDED.filter(domain => hits(prompt, domain) >= 1));
+  const promptDomains = new Set(GUARDED.filter(domain => hits(prompt, domain) >= 1 || PROMPT_FIELD[domain]?.test(prompt)));
   // A request about travel never needs another field's machinery, even if a model considers it "supporting".
   const travelPrompt = hits(prompt, 'travel') >= 1;
   for (const section of plan) {
