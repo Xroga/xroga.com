@@ -1,3 +1,4 @@
+import {randomUUID} from 'node:crypto';
 import { executeParallelRequest } from './parallelDispatch.js';
 import type { TenantModelScope } from './tenantModelDispatch.js';
 import { redactSecrets } from '../lib/truthfulExecution.js';
@@ -60,6 +61,8 @@ export async function parallelSearch(input: {
   objective: string;
   queries: string[];
   resultCount?: 15 | 30 | 50;
+  researchKind?: 'normal' | 'automatic' | 'deep';
+  researchRunId?: string;
   signal?: AbortSignal;
 }): Promise<ParallelResult> {
   const objective = safeText(input.objective, 4_000);
@@ -80,7 +83,7 @@ export async function parallelSearch(input: {
     };
   }
 
-  const response = await executeParallelRequest({scope:input.dispatchScope,userId:input.userId,operation:'search',body:{mode:'turbo',objective,search_queries:queries,result_count:input.resultCount??15},signal:input.signal});
+  const response = await executeParallelRequest({scope:input.dispatchScope,userId:input.userId,operation:'search',body:{mode:'turbo',objective,search_queries:queries,result_count:input.resultCount??15,research_kind:input.researchKind??'normal',research_run_id:input.researchRunId??randomUUID()},signal:input.signal});
   const pending=await pendingApproval(response);if(pending)return pending;
 
   if (!response.ok) {
