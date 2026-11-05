@@ -38,6 +38,7 @@ export interface LightLaneChatResult {
  */
 export async function runLightLaneChat(opts: {
   prompt: string;
+  manualDeepResearch?: boolean;
   history: LightLaneHistoryTurn[];
   projectContext?: { repo: string; branch: string; projectRoot: string } | null;
   signal: AbortSignal;
@@ -51,7 +52,7 @@ export async function runLightLaneChat(opts: {
 
   try {
     const plan = await api.phase1.plan(opts.prompt, opts.history, undefined, opts.projectContext ?? null);
-    if (plan.directResponse) {
+    if (plan.directResponse && opts.manualDeepResearch !== true) {
       opts.onPartial(plan.directResponse);
       return { response: plan.directResponse, usage: plan.usage };
     }
@@ -69,7 +70,7 @@ export async function runLightLaneChat(opts: {
       await streamTextReveal(response, opts.onPartial, opts.signal);
       return { response, usage: plan.usage };
     }
-    const result = await api.phase1.chat(opts.prompt, opts.history, undefined, plan.goalContract);
+    const result = await api.phase1.chat(opts.prompt, opts.history, undefined, plan.goalContract, opts.manualDeepResearch === true);
     await streamTextReveal(result.response, opts.onPartial, opts.signal);
     return result;
   } catch (err) {
