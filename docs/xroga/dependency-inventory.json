@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "1b9250246b6b5b56fd46cd5491c039a2bba41aec",
+  "source_sha": "dea31f2e18ca6733579c5bc5fed2ca1b3f78c5fb",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -16395,7 +16395,7 @@
     },
     {
       "path": "backend/src/ai/answerCoverage.ts",
-      "sha256": "2c130e8fd85b653071982aa089a3fb28af3f2ca9188e0cd0211f6ce70ed0e875"
+      "sha256": "2fe459c10f9a575d285c711cae2551494dd89ee5af8f679d32dae8c680981d2d"
     },
     {
       "path": "backend/src/ai/architect.ts",
@@ -16655,7 +16655,7 @@
     },
     {
       "path": "backend/src/ai/parallelApproval.ts",
-      "sha256": "c72bec9226ead35223d858f83d44f044202ee4a5f1c33d4aefddecb292549f2e"
+      "sha256": "3ae113999caad00037882cbe3f1cc72a7536a13b53e74403bf849dbda77cfeca"
     },
     {
       "path": "backend/src/ai/parallelDispatch.ts",
@@ -16751,7 +16751,7 @@
     },
     {
       "path": "backend/src/ai/researchAnswer.ts",
-      "sha256": "d777c27a0082515c9701188596ea33d4475aa8e2c4719a5b638861c29a51e1c2"
+      "sha256": "c2ecfbb3624c8b779592d4f930aa216b4527f2e25939f49fa1f8d57becc54adc"
     },
     {
       "path": "backend/src/ai/researchSearchProvider.ts",
@@ -16767,7 +16767,7 @@
     },
     {
       "path": "backend/src/ai/responsePresentation.ts",
-      "sha256": "2e7b756c277785998558b0fb3cd8e4a476f9154b32f8dc5bf7c0cf0255919e30"
+      "sha256": "64ea2107dd893259c5c0d01afc0c2fbcfc108356066b54ea749a31a7345bb5c0"
     },
     {
       "path": "backend/src/ai/router.ts",
@@ -21903,7 +21903,7 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/calculations.ts",
-      "sha256": "48c43c52a20421552856b12c704961d465dcc7cf7499f86b8f5cbe7a122ec0cd"
+      "sha256": "b6baf7db4379c9a319dc1d49d34bb0c45d1701707e900d1be9ef2a39f91570ca"
     },
     {
       "path": "frontend/src/components/response-experience-v2/composition.ts",
@@ -23659,7 +23659,7 @@
     },
     {
       "path": "frontend/src/lib/xrogaResponseDocument.ts",
-      "sha256": "6f263b5d7d8194436759e58745f6a4f14964b78527080c0410e45a54b538db69"
+      "sha256": "5c3e231737c4c8e87ae75c80340f839d7a2183796d4f9b3d0d048262582b9811"
     },
     {
       "path": "frontend/src/lib/xrogaRichResultFixtures.ts",
@@ -31212,7 +31212,7 @@
     },
     {
       "path": "backend/src/ai/answerCoverage.ts",
-      "line": 94,
+      "line": 104,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

@@ -251,10 +251,11 @@
       "id": "surface:65cb0aba3b036f66089f",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/answerCoverage.ts",
-      "sha256": "2c130e8fd85b653071982aa089a3fb28af3f2ca9188e0cd0211f6ce70ed0e875",
+      "sha256": "2fe459c10f9a575d285c711cae2551494dd89ee5af8f679d32dae8c680981d2d",
       "symbols": [
         "boundary",
         "branching",
+        "carrier",
         "collision",
         "coverage",
         "drifting",
@@ -5309,7 +5310,7 @@
       "id": "surface:7d07dd00cd58533729b5",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/parallelApproval.ts",
-      "sha256": "c72bec9226ead35223d858f83d44f044202ee4a5f1c33d4aefddecb292549f2e",
+      "sha256": "3ae113999caad00037882cbe3f1cc72a7536a13b53e74403bf849dbda77cfeca",
       "symbols": [
         "Operation",
         "ParallelAdmission",
@@ -6526,7 +6527,7 @@
         "backend/src/ai/repositoryHydrationAuthority.test.ts:3",
         "backend/src/ai/repositoryReadFailure.test.ts:3",
         "backend/src/ai/researchAnswer.test.ts:5",
-        "backend/src/ai/researchAnswer.ts:46",
+        "backend/src/ai/researchAnswer.ts:56",
         "backend/src/ai/tenantModelDispatch.test.ts:8",
         "backend/src/ai/universal/resumeProjectContext.test.ts:54",
         "backend/src/builder/phase2Bridge.ts:5",
@@ -8194,11 +8195,13 @@
       "id": "surface:794bcc5ea45ebaad109e",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/researchAnswer.ts",
-      "sha256": "d777c27a0082515c9701188596ea33d4475aa8e2c4719a5b638861c29a51e1c2",
+      "sha256": "c2ecfbb3624c8b779592d4f930aa216b4527f2e25939f49fa1f8d57becc54adc",
       "symbols": [
         "RESEARCH_ANSWER_MAXIMUM_MICRO_USD",
         "ResearchAnswerRequest",
         "allowed",
+        "bindCitationLinks",
+        "bound",
         "canonical",
         "citationIssues",
         "completeApprovedResearchAnswer",
@@ -8216,6 +8219,7 @@
         "researchAnswerRequestSchema",
         "researchCitationIssues",
         "result",
+        "source",
         "sources",
         "strings",
         "u",
@@ -8484,7 +8488,7 @@
       "id": "surface:74760a8c78ac888599fd",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/responsePresentation.ts",
-      "sha256": "2e7b756c277785998558b0fb3cd8e4a476f9154b32f8dc5bf7c0cf0255919e30",
+      "sha256": "64ea2107dd893259c5c0d01afc0c2fbcfc108356066b54ea749a31a7345bb5c0",
       "symbols": [
         "AnswerObligations",
         "JsonSchema",
@@ -88146,7 +88150,7 @@
       "id": "surface:bc797240d03e041cba52",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/calculations.ts",
-      "sha256": "48c43c52a20421552856b12c704961d465dcc7cf7499f86b8f5cbe7a122ec0cd",
+      "sha256": "b6baf7db4379c9a319dc1d49d34bb0c45d1701707e900d1be9ef2a39f91570ca",
       "symbols": [
         "CalculatorNode",
         "calculateV2",
@@ -88162,6 +88166,7 @@
         "raw",
         "resolved",
         "result",
+        "tidy",
         "validDerivedResults",
         "value"
       ],
@@ -115268,7 +115273,7 @@
       "id": "surface:302352813d356af65f42",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/xrogaResponseDocument.ts",
-      "sha256": "6f263b5d7d8194436759e58745f6a4f14964b78527080c0410e45a54b538db69",
+      "sha256": "5c3e231737c4c8e87ae75c80340f839d7a2183796d4f9b3d0d048262582b9811",
       "symbols": [
         "EnhancedAiResponse",
         "MAX_PROTOCOL_CHARS",
@@ -143735,7 +143740,7 @@
     {
       "id": "test-suite:673c1c4f2d2cfc4719dd",
       "sourcePath": "backend/src/ai/presentationRelevance.test.ts",
-      "declaredTests": 8,
+      "declaredTests": 9,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -143910,7 +143915,7 @@
     {
       "id": "test-suite:d2498a6171b68795395c",
       "sourcePath": "backend/src/ai/researchAnswer.test.ts",
-      "declaredTests": 2,
+      "declaredTests": 3,
       "skipLocations": [],
       "focusLocations": []
     },
