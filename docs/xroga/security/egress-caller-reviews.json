@@ -3022,7 +3022,7 @@
     {
       "id": "c09bb8607fa4d00f23b7",
       "callSha256": "0f007db3755a07e13dfaf95ef36d99a6884d9a3cc3101513301f73201bd21224",
-      "sourceFileSha256": "bf072296dc2828844620377cf54a58fafe4cbedfb1a796a8324b77b1f10aa0c0",
+      "sourceFileSha256": "2b769c67ff03dbb40d3aeb82b203c06e34a49e9b77cea7abbfd9e554f99ab93d",
       "disposition": "VERIFIED_GUARD",
       "trust": "CONFIGURED_FIRST_PARTY_API_ORIGIN_ONLY_NO_REDIRECT_OR_CREDENTIAL_BODY_FORWARDING",
       "tenantAuthority": "EXISTING_BROWSER_SESSION_TOKEN_OR_GUEST_SESSION_ONLY_BACKEND_MUST_ENFORCE_ORIGINAL_ISSUED_ACTOR_OWNER_AND_ACTION_AUTHORITY_NO_UPSTREAM_PROMOTION",
@@ -3184,11 +3184,10 @@
         "fail": 0
       },
       "sourceFileReboundOnBranch": {
-        "prNumber": 922,
-        "baseRef": "origin/main",
-        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
-        "previousSourceFileSha256": "d6183bed6f64e0a0c01f43bd4cff42e21ef20e407f7b1ec7a032b3faa006b16a",
-        "verification": "The reviewed egress call hash (callSha256) and id are byte-identical to the reviewed main version. Only other code in the file changed."
+        "prNumber": 930,
+        "baseSha": "5485776cfce9d6e233f7a0e3cf33ef58996a931d",
+        "previousSourceFileSha256": "bf072296dc2828844620377cf54a58fafe4cbedfb1a796a8324b77b1f10aa0c0",
+        "verification": "The reviewed first-party fetch call ID and callSha256 are identical. Only Phase 1 chat request metadata (explicit manual Deep Research selection) and source-date typing changed; destination, redirect mode, user credential handling, and fetch invocation remain byte-identical. No new endpoint or external destination added."
       }
     },
     {
