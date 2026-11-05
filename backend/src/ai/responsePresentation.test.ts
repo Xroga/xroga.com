@@ -129,3 +129,23 @@ test('output budget scales with the planned sections and never exceeds the exist
   assert.equal(budget % 512, 0);
   assert.equal(presentedAnswerMaxTokens(Array.from({ length: 8 }, (_, i) => section('graph', i))), 8192);
 });
+
+test('a table, diagram or step list with no extra text is a complete section; only prose needs words', () => {
+  const plan: PresentationPlan = [
+    { kind: 'prose', heading: 'Short answer', instruction: 'One or two sentences.', covers: [] },
+    { kind: 'table', heading: 'Comparison', instruction: 'Compare the options.', covers: [] },
+    { kind: 'steps', heading: 'Steps', instruction: 'The ordered steps.', covers: [] },
+  ];
+  const raw = JSON.stringify({
+    s0: { markdown: 'Use PostgreSQL for most small SaaS products.', data: null },
+    s1: { markdown: '', data: { columns: ['Database', 'Concurrency'], rows: [['PostgreSQL', 'MVCC'], ['SQLite', 'Single writer']] } },
+    s2: { markdown: '', data: { steps: [{ title: 'Pick', description: 'Start with managed PostgreSQL.' }, { title: 'Review', description: 'Revisit at scale.' }] } },
+  });
+  const projection = createPresentationProjection(plan);
+  const final = projection.finish(raw);
+  assert.equal(final.ok, true);
+  assert.match(final.response, /"c0":"PostgreSQL","c1":"MVCC"/);
+  assert.match(final.response, /"type":"steps"/);
+  const emptyProse = JSON.stringify({ s0: { markdown: '  ', data: null }, s1: { markdown: '', data: { columns: ['A', 'B'], rows: [['x', 'y']] } }, s2: { markdown: '', data: { steps: [{ title: 'a', description: 'b' }, { title: 'c', description: 'd' }] } } });
+  assert.equal(createPresentationProjection(plan).finish(emptyProse).ok, false);
+});
