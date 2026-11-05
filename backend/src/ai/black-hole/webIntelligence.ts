@@ -620,7 +620,11 @@ export async function runWebIntelligence(
     const result =
       await parallelSearch({
         userId:input.userId,dispatchScope:input.dispatchScope,objective:decision.objective || input.prompt,
-        queries:decision.queries.length ? decision.queries : [redactSecrets(input.prompt).slice(0,500)],signal:input.signal,
+        queries:decision.queries.length ? decision.queries : [redactSecrets(input.prompt).slice(0,500)],
+        resultCount: decision.action === 'deep_research' ? 50 : 30,
+        researchKind: decision.action === 'deep_research' ? 'deep' : 'automatic',
+        researchRunId,
+        signal: input.signal,
       });
 
     if(result.needsConfirmation)return pendingResearch(decision,result.reviewUrl!);
@@ -643,9 +647,6 @@ export async function runWebIntelligence(
           decision.objective ||
           input.prompt,
 
-        resultCount: decision.action === 'deep_research' ? 50 : 30,
-        researchKind: decision.action === 'deep_research' ? 'deep' : 'automatic',
-        researchRunId,
         signal: input.signal,
       });
 
