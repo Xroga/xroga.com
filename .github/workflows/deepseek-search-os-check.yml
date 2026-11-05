@@ -23,6 +23,21 @@ jobs:
         run: npx tsx --test backend/src/ai/researchSearchProvider.test.ts backend/src/ai/black-hole/webSearchIntent.test.ts backend/src/ai/black-hole/webIntelligence.test.ts
       - name: Type-check workspace frontend
         run: npx tsc --noEmit --project frontend/tsconfig.json
+      - name: Inspect frozen semantic source bindings (diagnostic only)
+        run: |
+          node --input-type=module <<'NODE'
+          import {readFileSync,existsSync} from 'node:fs';
+          import {createHash} from 'node:crypto';
+          const hash=x=>createHash('sha256').update(x.replace(/\\r\\n/g,'\\n')).digest('hex');
+          const data=JSON.parse(readFileSync('docs/xroga/batch-1/phases/PHASE-2-REVIEW-DECISIONS.json','utf8'));
+          for(const decision of data.decisions??[]){
+            for(const binding of decision.relatedSourceBindings??[]){
+              if(!existsSync(binding.path)){console.log(JSON.stringify({packetId:decision.packetId,missing:binding.path}));continue;}
+              const current=hash(readFileSync(binding.path,'utf8'));
+              if(current!==binding.sha256)console.log(JSON.stringify({packetId:decision.packetId,path:binding.path,previous:binding.sha256,current}));
+            }
+          }
+          NODE
       - name: Print changed egress-review evidence (no automatic approval)
         run: |
           node --input-type=module <<'NODE'
