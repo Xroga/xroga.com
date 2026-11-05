@@ -512,7 +512,19 @@ export async function runWebIntelligence(
     manualDeepResearch?: boolean;
   },
 ): Promise<WebIntelligenceResult> {
-  const proposedDecision = input.decision ?? await decideWebAction(input);
+  // A trusted UI opt-in is the only path to manual Deep Research.
+  // Preserve the user's source policy from the validated goal contract.
+  const proposedDecision:WebDecision = input.manualDeepResearch === true
+    ? {
+        action:'deep_research',
+        objective:redactSecrets(input.prompt).slice(0,4000),
+        queries:[redactSecrets(input.prompt).slice(0,500)],
+        urls:[],
+        sourcePolicy:input.decision?.sourcePolicy??'any',
+        officialDomains:input.decision?.officialDomains??[],
+        reason:'Deep Research was explicitly enabled for this request.',
+      }
+    : input.decision ?? await decideWebAction(input);
   const decision = proposedDecision.action === 'deep_research' && input.manualDeepResearch !== true
     ? { ...proposedDecision, action: 'research' as const,
         reason: 'Manual Deep Research was not enabled.' }
