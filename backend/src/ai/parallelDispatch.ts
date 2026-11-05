@@ -12,7 +12,7 @@ import {finishFailedProviderReservation,type ProviderReservation} from './provid
 import {PostCompletionAccountingError} from './postCompletionAccounting.js';
 import {WEB_PRICE_VERSION} from './webBudget.js';
 import {AuthorityError} from '../security/authority/enforce.js';
-import {deepseekSearchCredential,researchSearchMicroUsd,deepseekSearchBody,normaliseDeepseekSearch,DEEPSEEK_SEARCH_URL} from './researchSearchProvider.js';
+import {deepseekSearchCredential,researchSearchMicroUsd,deepseekSearchBody,normaliseDeepseekSearch,acceptedSearchResultCount,DEEPSEEK_SEARCH_URL} from './researchSearchProvider.js';
 
 type Operation='search'|'extract'|'responses';
 function requireRetrievalOperation(operation: string): void {
@@ -58,7 +58,8 @@ export async function executeParallelRequest(input:{scope:TenantModelScope|undef
   if(operation==='search'){
     if(body.mode!=='turbo'||!Array.isArray(body.search_queries)||!body.search_queries.length||body.search_queries.length>3
       ||body.search_queries.some(q=>typeof q!=='string'||q.length>500)||typeof body.objective!=='string'||body.objective.length>4000
-      ||Object.keys(body).some(k=>!['mode','objective','search_queries'].includes(k)))throw denied();
+      ||Object.keys(body).some(k=>!['mode','objective','search_queries','result_count'].includes(k)))throw denied();
+    acceptedSearchResultCount(body.result_count);
     amount=researchSearchMicroUsd();route='deepseek_search';
   }else if(operation==='extract'){
     if(!Array.isArray(body.urls)||!body.urls.length||body.urls.length>4||body.urls.some(u=>typeof u!=='string')
