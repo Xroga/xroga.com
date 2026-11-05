@@ -2762,7 +2762,7 @@
       "relatedSourceBindings": [
         {
           "path": "backend/src/ai/pipeline.ts",
-          "sha256": "d3742ca4dccc50daf99aa71d9896449957dde73798dc6d7c2a9c5ca5536cff32",
+          "sha256": "9587d0c4ce3d9eb6aa06c4e771d062a6bec740bb250e0f25b0d6e27f1cd62af0",
           "preGoogleMigrationSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
           "beforeDirectOutputSha256": "0168bc57563dbc535012982e5c6680fd3ebb40c7595fb67620e1ca60284df9b4",
           "beforeRichShareCompletionReviewSha256": "373180f86ff9ed02a7624d767374d214c14765ffcbf9a489b86d3bc26507e3b6",
@@ -2771,6 +2771,12 @@
             "evidence": "docs/xroga/evidence/response-v2-rich-share/source-review.json",
             "authorityAndPersistenceUnchanged": true,
             "liveAcceptance": false
+          },
+          "searchOSSourceReview": {
+            "prNumber": 930,
+            "baseSha": "5485776cfce9d6e233f7a0e3cf33ef58996a931d",
+            "previousSha256": "d3742ca4dccc50daf99aa71d9896449957dde73798dc6d7c2a9c5ca5536cff32",
+            "scope": "Manual Deep Research boolean added to the read-only chat-research routing and existing authorized runWebIntelligence call. Existing tenant owner checks, coding execution contract, source persistence and external-action authorization remain unchanged. This rebinds the existing semantic review only; it is not production acceptance of new research functionality."
           }
         },
         {
