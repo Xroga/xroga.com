@@ -58,8 +58,15 @@ export async function executeParallelRequest(input:{scope:TenantModelScope|undef
   if(operation==='search'){
     if(body.mode!=='turbo'||!Array.isArray(body.search_queries)||!body.search_queries.length||body.search_queries.length>3
       ||body.search_queries.some(q=>typeof q!=='string'||q.length>500)||typeof body.objective!=='string'||body.objective.length>4000
-      ||Object.keys(body).some(k=>!['mode','objective','search_queries','result_count'].includes(k)))throw denied();
-    acceptedSearchResultCount(body.result_count);
+      ||Object.keys(body).some(k=>!['mode','objective','search_queries','result_count','research_kind','research_run_id'].includes(k)))throw denied();
+    const count=acceptedSearchResultCount(body.result_count);
+    const kind=body.research_kind;
+    if(!['normal','automatic','deep'].includes(String(kind)) ||
+      typeof body.research_run_id!=='string' ||
+      !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(body.research_run_id) ||
+      (kind==='normal'&&count!==15) ||
+      (kind==='automatic'&&count!==30) ||
+      (kind==='deep'&&count!==50))throw denied();
     amount=researchSearchMicroUsd();route='deepseek_search';
   }else if(operation==='extract'){
     if(!Array.isArray(body.urls)||!body.urls.length||body.urls.length>10||body.urls.some(u=>typeof u!=='string')
@@ -79,15 +86,16 @@ export async function executeParallelRequest(input:{scope:TenantModelScope|undef
   // user-ID fallback, memory budget or telemetry-as-accounting path here.
   if(!process.env.SUPABASE_SERVICE_ROLE_KEY)throw denied();
   const db=getTenantSupabaseAdmin(context),idempotencyKey=randomUUID(),internalRoute='web.'+route;
-  const reserve=()=>db.rpc('reserve_xroga_provider_budget',{p_user_id:context.userId,p_idempotency_key:idempotencyKey,p_purpose:'daily_work',p_internal_route:internalRoute,
-    p_price_version:WEB_PRICE_VERSION,p_estimated_input_tokens:0,p_maximum_output_tokens:0,p_reservation_micro_usd:amount});
-  let reserved;
-  try{
-    reserved=await reserve();
-    if(reserved.error&&/active_billing_cycle_required/i.test(reserved.error.message)){
-      const free=await db.rpc('ensure_xroga_free_cycle',{p_user_id:context.userId});if(free.error)throw denied();reserved=await reserve();
-    }
-  }catch{throw denied();}
+  // The new service-only RPC serializes the Pro web cap and per-mode quotas
+  // under the same billing-cycle lock as the canonical provider reservation.
+  const {data:reservedData,error:reserveError}=await db.rpc('reserve_xroga_deepseek_web',{
+    p_user_id:context.userId,
+    p_idempotency_key:idempotencyKey,
+    p_research_kind:body.research_kind,
+    p_research_run_id:body.research_run_id,
+    p_price_version:WEB_PRICE_VERSION,
+  });
+  const reserved={data:reservedData,error:reserveError};
   const row=reserved.data;
   if(reserved.error||!row||Array.isArray(row)||typeof row.id!=='string'||!/^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(row.id)
     ||row.user_id!==context.userId||row.idempotency_key!==idempotencyKey||row.internal_route!==internalRoute||row.purpose!=='daily_work'
