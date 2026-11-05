@@ -9,7 +9,7 @@
     {
       "path": "backend/src/ai/pipeline.ts",
       "historicalSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
-      "currentSha256": "d3742ca4dccc50daf99aa71d9896449957dde73798dc6d7c2a9c5ca5536cff32",
+      "currentSha256": "9587d0c4ce3d9eb6aa06c4e771d062a6bec740bb250e0f25b0d6e27f1cd62af0",
       "genericSdkPreviousCurrentBinding": {
         "reference": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
         "sha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
@@ -24,8 +24,8 @@
         "944a58bb15dca85b3ddd"
       ],
       "afterIds": [
-        "4431005001a8d288051f",
-        "ce02ccc6a928e44634de"
+        "cf5809399b339d0658fa",
+        "f6cdbff0ee08a4c2e31d"
       ],
       "unchangedNearestBlockSha256": [
         "121ecd46287fd271b61cc97e84d2b17dce2570e8b82f7a6bdf77a6e4b7133436",
@@ -4238,12 +4238,21 @@
           "bab7cb9676b8369a55a7"
         ],
         "basis": "Current hash and the current review ids were re-bound after the strict call-and-function comparison in REBIND-REPORT.json. The nearest-block hashes and every historical record are unchanged."
+      },
+      "searchOsPreviousCurrentBinding": {
+        "reference": "77d70ff2b95168f7030dd83ec6aacb0c9c4a960b",
+        "currentSha256": "d3742ca4dccc50daf99aa71d9896449957dde73798dc6d7c2a9c5ca5536cff32",
+        "afterIds": [
+          "4431005001a8d288051f",
+          "ce02ccc6a928e44634de"
+        ],
+        "scope": "EXACT_NATIVE_BLOCK_RECONCILIATION_NOT_NEW_SECURITY_ACCEPTANCE"
       }
     },
     {
       "path": "backend/src/routes/phase1.ts",
       "historicalSha256": "ff58f5c490ec150132c684e66ff60cfb2e63196cfc7144ce6938a8705f9b196b",
-      "currentSha256": "91b55da6a6beca61715b829c0087b10f90d2cc5bb7e2b7bce5500fbca50b2b7d",
+      "currentSha256": "34b577f7b90c801035d7f877e792a25a44449035b95e8ab78f7c5101959d80af",
       "businessModelContinuationBinding": {
         "reference": "b183079ec8a00cb4d7a29a95e8cdfb517da81acb",
         "previousCurrentSha256": "7ad7b1f7dde453a4065e15ba260998fe5841c6992724d03ee299b71c8380c0f5",
@@ -4464,6 +4473,14 @@
           "78696e27dd5c1ca37c3a"
         ],
         "basis": "Current hash and the current review ids were re-bound after the strict call-and-function comparison in REBIND-REPORT.json. The nearest-block hashes and every historical record are unchanged."
+      },
+      "searchOsPreviousCurrentBinding": {
+        "reference": "77d70ff2b95168f7030dd83ec6aacb0c9c4a960b",
+        "currentSha256": "91b55da6a6beca61715b829c0087b10f90d2cc5bb7e2b7bce5500fbca50b2b7d",
+        "afterIds": [
+          "fa04b8d8f9413c194ec5"
+        ],
+        "scope": "EXACT_NATIVE_BLOCK_RECONCILIATION_NOT_NEW_SECURITY_ACCEPTANCE"
       }
     },
     {
