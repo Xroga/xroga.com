@@ -41,6 +41,9 @@ BEGIN
   IF p_research_kind NOT IN ('normal','automatic','deep')
     OR p_research_run_id IS NULL OR p_price_version IS NULL OR length(p_price_version)>120
     THEN RAISE EXCEPTION 'invalid_web_retrieval_contract'; END IF;
+  -- Preserve the canonical lock ordering: advisory user lock first, then cycle row.
+  -- Otherwise concurrent model/search reservations could deadlock on inverse locks.
+  PERFORM pg_advisory_xact_lock(hashtextextended(p_user_id::text,45));
   SELECT * INTO v_cycle FROM public.xroga_billing_cycles
     WHERE user_id=p_user_id AND status='active' FOR UPDATE;
   IF NOT FOUND THEN RAISE EXCEPTION 'active_billing_cycle_required'; END IF;
