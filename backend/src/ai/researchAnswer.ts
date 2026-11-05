@@ -48,7 +48,7 @@ export function bindCitationLinks(response:string,sources:ReadonlyArray<{url:str
 export async function completeApprovedResearchAnswer(scope:TenantModelScope,request:ResearchAnswerRequest,raw:unknown,check:()=>Promise<void>){
  const input=researchAnswerRequestSchema.parse(request),evidence=presentResearchResult(raw);
  const goal=input.goalContract;
- const normalized=normalizeResearch(evidence.sources,{query:input.prompt,officialDomains:goal?.sourcePolicy.officialDomains,maxSources:12});
+ const normalized=normalizeResearch(evidence.sources,{query:input.prompt,officialDomains:goal?.sourcePolicy.officialDomains,maxSources:50});
  const sources=goal?.sourcePolicy.mode==='official_only'?normalized.sources.filter(s=>s.trust==='A_official'):normalized.sources;
  if(!sources.length)return {answerFailure:'NO_QUALIFYING_SOURCES' as const};
  const filtered={...normalized,sources,unavailable:false};
@@ -58,7 +58,7 @@ export async function completeApprovedResearchAnswer(scope:TenantModelScope,requ
   const result=await runChatPipeline({userId:scope.userId,tenantContext:scope.context,modelScope:{...scope,connectedAccountId:'platform',maximumCostMicroUsd:RESEARCH_ANSWER_MAXIMUM_MICRO_USD,revalidateBeforeDispatch:check},
    ...input,approvedResearch:{bundle:{query:input.prompt,summary:sources.map(s=>s.snippet).join('\n\n').slice(0,4000),
     sources:sources.map(s=>({title:s.title,url:s.url,snippet:s.snippet,source:s.sourceType==='x_post'?'x':'web'})),provider:'parallel'},
-    evidence:formatResearchAsEvidence(filtered)}});
+    evidence:formatResearchAsEvidence({...filtered,sources:filtered.sources.slice(0,12)})}});
   await check();
   const bound=bindCitationLinks(result.response,sources);
   const citationIssues=researchCitationIssues(bound,sources);
