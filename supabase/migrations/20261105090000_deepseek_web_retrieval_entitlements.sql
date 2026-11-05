@@ -34,7 +34,8 @@ DECLARE
   v_used bigint;
   v_runs bigint;
   v_in_run bigint;
-  v_is_known_run boolean;
+  v_run_max integer;
+  v_month_max integer;
 BEGIN
   IF auth.role()<>'service_role' THEN RAISE EXCEPTION 'service_role_required'; END IF;
   IF p_research_kind NOT IN ('normal','automatic','deep')
@@ -76,14 +77,23 @@ BEGIN
       WHERE c.cycle_id=v_cycle.id AND c.user_id=p_user_id
         AND c.research_kind=p_research_kind AND c.research_run_id=p_research_run_id
         AND r.status IN ('reserved','pending_reconciliation','settled');
-    IF v_in_run >= CASE WHEN p_research_kind='automatic' THEN 2 ELSE 5 END
-      THEN RAISE EXCEPTION 'research_run_operation_limit_exceeded'; END IF;
+    IF p_research_kind='automatic' THEN
+      v_run_max:=2;
+      v_month_max:=250;
+    ELSE
+      v_run_max:=5;
+      v_month_max:=90;
+    END IF;
+    IF v_in_run>=v_run_max THEN
+      RAISE EXCEPTION 'research_run_operation_limit_exceeded';
+    END IF;
     SELECT count(DISTINCT c.research_run_id) INTO v_runs FROM public.xroga_deepseek_web_calls c
       JOIN public.xroga_provider_reservations r ON r.id=c.reservation_id
       WHERE c.cycle_id=v_cycle.id AND c.user_id=p_user_id
         AND c.research_kind=p_research_kind AND r.status IN ('reserved','pending_reconciliation','settled');
-    IF v_in_run=0 AND v_runs>=CASE WHEN p_research_kind='automatic' THEN 250 ELSE 90 END
-      THEN RAISE EXCEPTION 'monthly_research_run_allowance_exceeded'; END IF;
+    IF v_in_run=0 AND v_runs>=v_month_max THEN
+      RAISE EXCEPTION 'monthly_research_run_allowance_exceeded';
+    END IF;
   END IF;
   -- This remains the canonical reservation: same transaction, same cycle lock,
   -- same model/sandbox budget authority. Failed statements roll back both records.
