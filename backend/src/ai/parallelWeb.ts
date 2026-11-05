@@ -1,4 +1,6 @@
 import {randomUUID} from 'node:crypto';
+import {requireTenantContext,requireResourceOwner} from '../security/tenantContext.js';
+import {requireModelProjectBinding} from './tenantModelDispatch.js';
 import { executeParallelRequest } from './parallelDispatch.js';
 import type { TenantModelScope } from './tenantModelDispatch.js';
 import { redactSecrets } from '../lib/truthfulExecution.js';
@@ -21,6 +23,34 @@ export interface ParallelResult {
   requestId?: string;
   needsConfirmation?: boolean;
   reviewUrl?: string;
+}
+
+/** Conservative, process-local, private-user cache. Never shared between tenants or users.
+ * This is only an opportunistic performance optimization; it is NOT durable storage.
+ * A separate consented and rights-reviewed persistent public cache is future work. */
+const privateSearchCache=new Map<string,{expires:number;result:ParallelResult}>();
+const CACHE_ENTRIES_MAX=256;
+function searchCacheKey(input:{userId:string;dispatchScope?:TenantModelScope;resultCount?:15|30|50},objective:string,queries:string[]):string|null{
+  const scope=input.dispatchScope,context=scope?.context;
+  if(!context||!scope)return null;
+  return JSON.stringify([context.tenantId,context.userId,input.userId,scope.projectId??null,
+    scope.repository??null,input.resultCount??15,objective,queries]);
+}
+function cachedSearch(key:string,forceRefresh:boolean):ParallelResult|null{
+  if(forceRefresh)return null;
+  const entry=privateSearchCache.get(key);
+  if(!entry)return null;
+  if(entry.expires<=Date.now()){privateSearchCache.delete(key);return null;}
+  privateSearchCache.delete(key);
+  privateSearchCache.set(key,entry);
+  return {answer:'',sources:entry.result.sources.map(s=>({...s})),requestId:entry.result.requestId};
+}
+function cacheSearch(key:string,value:ParallelResult,durationMs:number):void{
+  if(!value.sources.length)return;
+  privateSearchCache.delete(key);
+  privateSearchCache.set(key,{expires:Date.now()+durationMs,
+    result:{answer:'',sources:value.sources.map(s=>({...s})),requestId:value.requestId}});
+  while(privateSearchCache.size>CACHE_ENTRIES_MAX)privateSearchCache.delete(privateSearchCache.keys().next().value!);
 }
 
 async function pendingApproval(response:Response):Promise<ParallelResult|undefined>{
@@ -83,6 +113,18 @@ export async function parallelSearch(input: {
     };
   }
 
+  // A cached result cannot bypass the current actor/project authorization.
+  // Never put private prompts, authenticated sources or cross-user data in a shared cache.
+  const scope=input.dispatchScope;
+  const key=searchCacheKey(input,objective,queries);
+  if(key&&scope){
+    requireResourceOwner(requireTenantContext(scope.context),input.userId);
+    await requireModelProjectBinding(scope);
+    const refresh=/\\b(refresh|check again|search again|recheck|new results)\\b/i.test(objective);
+    const hit=cachedSearch(key,refresh);
+    if(hit)return hit; // No new provider call, no new ledger charge.
+  }
+
   const response = await executeParallelRequest({scope:input.dispatchScope,userId:input.userId,operation:'search',body:{mode:'turbo',objective,search_queries:queries,result_count:input.resultCount??15,research_kind:input.researchKind??'normal',research_run_id:input.researchRunId??randomUUID()},signal:input.signal});
   const pending=await pendingApproval(response);if(pending)return pending;
 
@@ -132,11 +174,12 @@ export async function parallelSearch(input: {
     providerRequestId: data.search_id,
   });
 
-  return {
-    answer: '',
-    sources,
-    requestId: data.search_id,
-  };
+  const result={answer:'',sources,requestId:data.search_id};
+  if(key){
+    const volatile=/\\b(today|latest|breaking|live|now|current price|stock|weather|availability)\\b/i.test(objective);
+    cacheSearch(key,result,volatile?60_000:10*60_000);
+  }
+  return result;
 }
 
 /**
