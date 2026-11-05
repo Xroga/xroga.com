@@ -152,7 +152,7 @@ export async function parallelExtract(input: {
 }): Promise<ParallelResult> {
   const urls = input.urls
     .map((url) => publicHttpsUrl(url).href)
-    .slice(0, 4);
+    .slice(0, 10);
 
   if (!urls.length) {
     return {
