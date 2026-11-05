@@ -1,6 +1,6 @@
 # Secret and environment name inventory
 
-Values are forbidden. Source SHA: `d07da730cbb34a0cfaa21e149713f76a7508715d`. Names and source discovery do not prove that a capability is configured or accepted.
+Values are forbidden. Source SHA: `1b9250246b6b5b56fd46cd5491c039a2bba41aec`. Names and source discovery do not prove that a capability is configured or accepted.
 
 | Name | Classification | Requirement | Dependency |
 | --- | --- | --- | --- |
@@ -44,7 +44,7 @@ Values are forbidden. Source SHA: `d07da730cbb34a0cfaa21e149713f76a7508715d`. Na
 | DEEPSEEK_FLASH_INPUT_USD_PER_1M | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | DEEPSEEK_FLASH_MODEL_ID | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | DEEPSEEK_FLASH_OUTPUT_USD_PER_1M | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
-| DEEPSEEK_WEBSEARCH_FETCH_API | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-api-deepseek-com, endpoint-api-parallel-ai |
+| DEEPSEEK_WEBSEARCH_FETCH_API | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-api-deepseek-com |
 | DESCRIPT_API_TOKEN | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | runtime-controls-and-conditional-aliases |
 | DID_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | runtime-controls-and-conditional-aliases |
 | E2E_BACKEND_URL | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-127-0-0-1, endpoint-api-whop-com, endpoint-example-invalid, endpoint-public-example-invalid |
@@ -139,7 +139,6 @@ Values are forbidden. Source SHA: `d07da730cbb34a0cfaa21e149713f76a7508715d`. Na
 | OPENAI_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | runtime-controls-and-conditional-aliases |
 | OPENAI_TRANSCRIBE_MODEL | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-api-openai-com |
 | OPENROUTER_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | historical-openrouter |
-| PARALLEL_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | endpoint-api-parallel-ai |
 | PATH | SYSTEM_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | PIAPI_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | runtime-controls-and-conditional-aliases |
 | PLAYWRIGHT_BROWSERS_PATH | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | google-execution |
@@ -184,7 +183,7 @@ Values are forbidden. Source SHA: `d07da730cbb34a0cfaa21e149713f76a7508715d`. Na
 | SUPABASE_OAUTH_CLIENT_SECRET | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | supabase, endpoint-127-0-0-1, endpoint-api-supabase-com, endpoint-localhost |
 | SUPABASE_POOLER_HOST | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | supabase |
 | SUPABASE_PROJECT_REF | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | supabase |
-| SUPABASE_SERVICE_ROLE_KEY | SERVER_CREDENTIAL | REQUIRED_FOR_CORE_AUTH | supabase, endpoint-127-0-0-1, endpoint-api-parallel-ai, endpoint-api-whop-com, endpoint-example-invalid, endpoint-fixture-supabase-co, endpoint-fixtureproject-supabase-co, endpoint-github-com, endpoint-public-example-invalid, endpoint-supabase-management-tests-invalid |
+| SUPABASE_SERVICE_ROLE_KEY | SERVER_CREDENTIAL | REQUIRED_FOR_CORE_AUTH | supabase, endpoint-127-0-0-1, endpoint-api-whop-com, endpoint-example-invalid, endpoint-fixture-supabase-co, endpoint-fixtureproject-supabase-co, endpoint-github-com, endpoint-public-example-invalid, endpoint-supabase-management-tests-invalid |
 | SUPABASE_URL | RUNTIME_CONFIGURATION | REQUIRED_FOR_CORE_AUTH | supabase, endpoint-127-0-0-1, endpoint-api-github-com, endpoint-api-vercel-com, endpoint-api-whop-com, endpoint-backend-composio-dev, endpoint-example-invalid, endpoint-fixture, endpoint-fixture-invalid, endpoint-fixture-supabase-co, endpoint-fixtureproject-supabase-co, endpoint-localhost, endpoint-public-example-invalid, endpoint-supabase-management-tests-invalid, endpoint-whop-com, endpoint-xroga-api-fly-dev, endpoint-xrogaaicom-vercel-app |
 | SystemRoot | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | TERM | SYSTEM_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
@@ -324,7 +323,6 @@ Values are forbidden. Source SHA: `d07da730cbb34a0cfaa21e149713f76a7508715d`. Na
 | XROGA_RELEASE_SHA | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | api, endpoint-127-0-0-1, endpoint-metadata-google-internal |
 | XROGA_REQUIRE_HIGH_RISK_REVIEW | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_REQUIRE_MANAGED_CUSTODY | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
-| XROGA_RESEARCH_SEARCH_PROVIDER | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-api-deepseek-com |
 | XROGA_ROUTING_MODE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_RUNTIME_ROLE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_SANDBOX_BROWSER_IMAGE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | google-execution, endpoint-127-0-0-1 |

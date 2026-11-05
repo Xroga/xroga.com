@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "056e73a76f915dfb6a9f0bc93c7f984b624832d8204f23ba49c63a5acf933b13",
+  "sourceTreeDigest": "ef23e5747a07667450ec1021a18f38aa381ff5f49d4790959bdf0b7b4334c73c",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -217,7 +217,7 @@
         {
           "path": "backend/src/ai/parallelWeb.security.test.ts",
           "marker": "actual Parallel entries enforce issued context, current owner, egress, canonical holds and exact settlement",
-          "sha256": "fa7325aecfd3a479d2eafd2ec82fe7c8367b00981c69490079b7df79a28ee6d4",
+          "sha256": "c070ac329948841c4cc4a74bf641ef747fd81aa64b8cc27600879a0def449ee9",
           "reboundOnBranch": {
             "previousSha256": "40a9c47c0f61e5894bcc787e72738b44e1ec1b23dcdf652b44e6708b8ff706f2"
           }
@@ -227,11 +227,11 @@
     {
       "id": "5baa649b7c2c9b6b6f30",
       "file": "backend/src/ai/parallelDispatch.ts",
-      "line": 99,
+      "line": 98,
       "entryPoint": "executeParallelRequest",
       "transport": "fetch",
       "callee": "fetch",
-      "callSha256": "c6c6be4c06c35a698053f33f82b775f23f47d8565bcd76af0450b7e998949dbd",
+      "callSha256": "8a4cf1df25bdb5d59e6f01020cc5be67cec679c8815a93cc5b5b594cc7a7fe28",
       "destination": "DYNAMIC_OR_SDK_INTERNAL",
       "trust": "FIXED_PARALLEL_API_WITH_PRODUCER_ATTESTED_EXACT_PRIVATE_EGRESS_APPROVAL",
       "tenantAuthority": "ORIGINAL_ACTOR_PROJECT_RUN_GENERATION_CURRENT_ONE_USE_CLAIM_SECRET_FLOOR_AND_CANONICAL_BUDGET_SETTLEMENT_NO_DENIAL_FALLBACK",
@@ -247,7 +247,7 @@
         {
           "path": "backend/src/ai/parallelWeb.security.test.ts",
           "marker": "actual Parallel entries enforce issued context, current owner, egress, canonical holds and exact settlement",
-          "sha256": "fa7325aecfd3a479d2eafd2ec82fe7c8367b00981c69490079b7df79a28ee6d4",
+          "sha256": "c070ac329948841c4cc4a74bf641ef747fd81aa64b8cc27600879a0def449ee9",
           "reboundOnBranch": {
             "previousSha256": "40a9c47c0f61e5894bcc787e72738b44e1ec1b23dcdf652b44e6708b8ff706f2"
           }

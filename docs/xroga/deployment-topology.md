@@ -1,6 +1,6 @@
 # Deployment topology, source and dated evidence
 
-Source SHA: `d07da730cbb34a0cfaa21e149713f76a7508715d`; exact current source/config hashes are in the JSON. Uncommitted source is not an accepted release.
+Source SHA: `1b9250246b6b5b56fd46cd5491c039a2bba41aec`; exact current source/config hashes are in the JSON. Uncommitted source is not an accepted release.
 
 | Dependency | Provider | State | Host/resource | Verification |
 | --- | --- | --- | --- | --- |
@@ -47,7 +47,6 @@ Source SHA: `d07da730cbb34a0cfaa21e149713f76a7508715d`; exact current source/con
 | endpoint-api-minimax-io | Source-defined endpoint api.minimax.io | CONFIGURED_BUT_UNVERIFIED | api.minimax.io | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-api-netlify-com | Source-defined endpoint api.netlify.com | CONFIGURED_BUT_UNVERIFIED | api.netlify.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-api-openai-com | Source-defined endpoint api.openai.com | CONFIGURED_BUT_UNVERIFIED | api.openai.com | NOT_INDEPENDENTLY_VERIFIED |
-| endpoint-api-parallel-ai | Source-defined endpoint api.parallel.ai | CONFIGURED_BUT_UNVERIFIED | api.parallel.ai | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-api-stripe-com | Source-defined endpoint api.stripe.com | CONFIGURED_BUT_UNVERIFIED | api.stripe.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-api-suno-ai | Source-defined endpoint api.suno.ai | CONFIGURED_BUT_UNVERIFIED | api.suno.ai | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-api-supabase-com | Source-defined endpoint api.supabase.com | CONFIGURED_BUT_UNVERIFIED | api.supabase.com | NOT_INDEPENDENTLY_VERIFIED |

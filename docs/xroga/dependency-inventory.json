@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "d07da730cbb34a0cfaa21e149713f76a7508715d",
+  "source_sha": "1b9250246b6b5b56fd46cd5491c039a2bba41aec",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -1453,8 +1453,7 @@
       "region": "Not verified",
       "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
       "secret_names": [
-        "DEEPSEEK_WEBSEARCH_FETCH_API",
-        "XROGA_RESEARCH_SEARCH_PROVIDER"
+        "DEEPSEEK_WEBSEARCH_FETCH_API"
       ],
       "inbound_callers": [
         "api or named source callers; operational reachability not inferred"
@@ -2025,46 +2024,6 @@
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
         "backend/src/routes/voice.ts"
-      ],
-      "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
-      "evidence_ids": []
-    },
-    {
-      "dependency_id": "endpoint-api-parallel-ai",
-      "provider": "Source-defined endpoint api.parallel.ai",
-      "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
-      "environment": "PRODUCTION",
-      "state": "CONFIGURED_BUT_UNVERIFIED",
-      "runtime_owner": "backend/API or explicitly proposed component",
-      "config_sources": [
-        "backend/src/ai/parallelApproval.ts",
-        "backend/src/ai/parallelDispatch.ts"
-      ],
-      "hostnames": [
-        "api.parallel.ai"
-      ],
-      "resource_id": null,
-      "region": "Not verified",
-      "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
-      "secret_names": [
-        "DEEPSEEK_WEBSEARCH_FETCH_API",
-        "PARALLEL_API_KEY",
-        "SUPABASE_SERVICE_ROLE_KEY"
-      ],
-      "inbound_callers": [
-        "api or named source callers; operational reachability not inferred"
-      ],
-      "outbound_dependencies": [],
-      "health_readiness": "Reference/asset hosts may need no service health check; adapter admission/liveness is unverified. No external action or paid health probe performed",
-      "timeout": "Adapter-specific; no fabricated central timeout",
-      "retry_policy": "Source-specific; no live retry test claimed",
-      "idempotency_expectation": "Required for consequential writes; verify canonical authority in Command 008",
-      "data_classification": "User data may be involved; tenant scope requires independent checks",
-      "failure_mode": "Safe user-facing failure required; internal details restricted",
-      "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
-      "observability_source": [
-        "backend/src/ai/parallelApproval.ts",
-        "backend/src/ai/parallelDispatch.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
       "evidence_ids": []
@@ -9345,9 +9304,12 @@
     {
       "name": "DEEPSEEK_WEBSEARCH_FETCH_API",
       "consuming_sources": [
-        "backend/src/ai/parallelDispatch.ts",
+        "backend/src/ai/research.ts",
         "backend/src/ai/researchSearchProvider.ts",
+        "backend/src/ai/universal/semanticRequestPlanner.ts",
+        "backend/src/capabilities/modules/publicResearch.ts",
         "backend/src/config/envSecrets.ts",
+        "backend/src/lib/capabilityRegistry.ts",
         "backend/src/lib/platformReady.ts"
       ],
       "environments": [
@@ -9358,12 +9320,13 @@
       "requiredness": "OPTIONAL_OR_DEFAULTED",
       "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
       "mechanisms": [
+        "DECLARED_SECRET_ALIAS",
         "REVIEWED_DYNAMIC_BINDING",
-        "SECRET_HELPER_CALL"
+        "SECRET_HELPER_CALL",
+        "STATIC_ENV_READER"
       ],
       "dependency_ids": [
-        "endpoint-api-deepseek-com",
-        "endpoint-api-parallel-ai"
+        "endpoint-api-deepseek-com"
       ]
     },
     {
@@ -11420,34 +11383,6 @@
       ]
     },
     {
-      "name": "PARALLEL_API_KEY",
-      "consuming_sources": [
-        "backend/src/ai/parallelDispatch.ts",
-        "backend/src/ai/research.ts",
-        "backend/src/ai/universal/semanticRequestPlanner.ts",
-        "backend/src/capabilities/modules/publicResearch.ts",
-        "backend/src/config/envSecrets.ts",
-        "backend/src/lib/capabilityRegistry.ts",
-        "backend/src/lib/platformReady.ts"
-      ],
-      "environments": [
-        "backend/operator or inherited system context"
-      ],
-      "secret_class": "SERVER_CREDENTIAL",
-      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
-      "requiredness": "CONDITIONAL_ON_CAPABILITY",
-      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
-      "mechanisms": [
-        "DECLARED_SECRET_ALIAS",
-        "REVIEWED_DYNAMIC_BINDING",
-        "SECRET_HELPER_CALL",
-        "STATIC_ENV_READER"
-      ],
-      "dependency_ids": [
-        "endpoint-api-parallel-ai"
-      ]
-    },
-    {
       "name": "PATH",
       "consuming_sources": [
         "backend/src/existingSource/change/__tests__/localProcessPort.ts",
@@ -12469,7 +12404,6 @@
       "dependency_ids": [
         "supabase",
         "endpoint-127-0-0-1",
-        "endpoint-api-parallel-ai",
         "endpoint-api-whop-com",
         "endpoint-example-invalid",
         "endpoint-fixture-supabase-co",
@@ -15525,25 +15459,6 @@
       ]
     },
     {
-      "name": "XROGA_RESEARCH_SEARCH_PROVIDER",
-      "consuming_sources": [
-        "backend/src/ai/researchSearchProvider.ts"
-      ],
-      "environments": [
-        "backend/operator or inherited system context"
-      ],
-      "secret_class": "RUNTIME_CONFIGURATION",
-      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
-      "requiredness": "OPTIONAL_OR_DEFAULTED",
-      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
-      "mechanisms": [
-        "STATIC_ENV_READER"
-      ],
-      "dependency_ids": [
-        "endpoint-api-deepseek-com"
-      ]
-    },
-    {
       "name": "XROGA_ROUTING_MODE",
       "consuming_sources": [
         "backend/src/ai/routerConfig.ts"
@@ -16740,15 +16655,15 @@
     },
     {
       "path": "backend/src/ai/parallelApproval.ts",
-      "sha256": "139198046d61c4eb3fe66eb5cd0bb9e385cc3fe2d5be7f344ef4b7b85259070d"
+      "sha256": "c72bec9226ead35223d858f83d44f044202ee4a5f1c33d4aefddecb292549f2e"
     },
     {
       "path": "backend/src/ai/parallelDispatch.ts",
-      "sha256": "8153b32a8f0162cfd04c4f819540abe08801ff12b5e0eb7c8b23f9fc0d9f15f0"
+      "sha256": "ac3f222a927506239ccb3a51c40ccc5acee7329ea117c36c8654d0a6b8cdb15a"
     },
     {
       "path": "backend/src/ai/parallelWeb.ts",
-      "sha256": "97c77b6f1026b332eafce6daafa36bdc5973ddf620b6252d9caabfe06423453f"
+      "sha256": "66ce32a8f635a29173790e296461c8146183a8da42044e0a0a5a17e0d13049bc"
     },
     {
       "path": "backend/src/ai/patchSafety.ts",
@@ -16832,7 +16747,7 @@
     },
     {
       "path": "backend/src/ai/research.ts",
-      "sha256": "c63672530ee853c7697bd02fa1f9f49d0cd53d309558683c28b9dd2ffcb5a91d"
+      "sha256": "9d3da3f252878821e8af7cc168f6b16928a870ecc891205e9242498663093da0"
     },
     {
       "path": "backend/src/ai/researchAnswer.ts",
@@ -16840,7 +16755,7 @@
     },
     {
       "path": "backend/src/ai/researchSearchProvider.ts",
-      "sha256": "46590516218d70c65681dd96ac376b9706d17f00a376515d2f3ac4fcc753f3c5"
+      "sha256": "ed99c4a95c9108f8f188ca2fd623bf4c54022a2691954c9b97ea8acbf344d0eb"
     },
     {
       "path": "backend/src/ai/resourceLedger.ts",
@@ -17092,7 +17007,7 @@
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "sha256": "588acdae11c2186af36c1f211a9358218dc2e3c19fd4b25d2127e8097ebfb9d2"
+      "sha256": "6ca81b0c9234195e6159d1e03735a21ce50d50cf1e8f71b53cb62199bf95cb26"
     },
     {
       "path": "backend/src/ai/usageAccounting.ts",
@@ -17340,7 +17255,7 @@
     },
     {
       "path": "backend/src/capabilities/modules/publicResearch.ts",
-      "sha256": "3a8beb891a9ecb3719e3d247aaa352c2edb15525a54bd8e31c2ad2ac06eeba0f"
+      "sha256": "488417890703e565d523f09bc57307c4171b85601d9c303b826d9f8727f9a8d4"
     },
     {
       "path": "backend/src/capabilities/modules/repositoryRead.ts",
@@ -17396,7 +17311,7 @@
     },
     {
       "path": "backend/src/config/envSecrets.ts",
-      "sha256": "9eb41bf00367e3405e915d368df6c64982f1e86474992e21559bb984d79973f7"
+      "sha256": "a4eb93d1156ebcb195ff8346dd8fd5dd0a3dce0e519ba74fa398e897d480093f"
     },
     {
       "path": "backend/src/config/galacticPlans.ts",
@@ -17688,7 +17603,7 @@
     },
     {
       "path": "backend/src/lib/capabilityRegistry.ts",
-      "sha256": "89ac1ded8dbbbcfddc9bf0d05f8cf10c330d7ab10fb80c421ab8f73130cdaec6"
+      "sha256": "6a7ad19865c53bd05ea37557b77ae009923b9ecefb66f4904a76d34404a9ca20"
     },
     {
       "path": "backend/src/lib/changeSafety.ts",
@@ -17764,7 +17679,7 @@
     },
     {
       "path": "backend/src/lib/platformReady.ts",
-      "sha256": "527ac9865c1abc4858a5461161ce9694b194e8a41622241a7cb8265180b0e59c"
+      "sha256": "814d20bb93906746e9daaf97d994c22f8c952f1b85e047c9e6f937c1d42651df"
     },
     {
       "path": "backend/src/lib/postgresConnect.ts",
@@ -21720,7 +21635,7 @@
     },
     {
       "path": "frontend/src/components/marketing/AiChatLanding.tsx",
-      "sha256": "48d515b44cee97f7ad482dd5d6a71cbd631a68af36dd1fa846b72811e1047c37"
+      "sha256": "d47866aec31b9de60c9174cd494851b5d80943b45659f21a1fddb2554ce0860d"
     },
     {
       "path": "frontend/src/components/marketing/AiChatLightspeed.tsx",
@@ -24414,7 +24329,7 @@
     },
     {
       "path": "backend/src/config/envSecrets.ts",
-      "line": 251,
+      "line": 249,
       "expression": "key",
       "status": "RESOLVED_FINITE_CATALOG",
       "names": [
@@ -24464,7 +24379,6 @@
         "NETLIFY_ACCESS_TOKEN",
         "OPENAI_API_KEY",
         "OPENROUTER_API_KEY",
-        "PARALLEL_API_KEY",
         "PIAPI_API_KEY",
         "REPLICATE_API_TOKEN",
         "RESPEECHER_API_KEY",
@@ -24492,7 +24406,7 @@
     },
     {
       "path": "backend/src/config/envSecrets.ts",
-      "line": 265,
+      "line": 263,
       "expression": "primary",
       "status": "RESOLVED_FINITE_CATALOG",
       "names": [
@@ -24542,7 +24456,6 @@
         "NETLIFY_ACCESS_TOKEN",
         "OPENAI_API_KEY",
         "OPENROUTER_API_KEY",
-        "PARALLEL_API_KEY",
         "PIAPI_API_KEY",
         "REPLICATE_API_TOKEN",
         "RESPEECHER_API_KEY",
@@ -24632,12 +24545,12 @@
       "names": [
         "BROWSERBASE_API_KEY",
         "DATABASE_URL",
+        "DEEPSEEK_WEBSEARCH_FETCH_API",
         "FAL_KEY",
         "LEMON_SQUEEZY_API_KEY",
         "MONGODB_URI",
         "NEON_DATABASE_URL",
         "OPENAI_API_KEY",
-        "PARALLEL_API_KEY",
         "REPLICATE_API_TOKEN",
         "RESEND_API_KEY",
         "STRIPE_SECRET_KEY",
@@ -24704,7 +24617,6 @@
         "NETLIFY_ACCESS_TOKEN",
         "OPENAI_API_KEY",
         "OPENROUTER_API_KEY",
-        "PARALLEL_API_KEY",
         "PIAPI_API_KEY",
         "REPLICATE_API_TOKEN",
         "RESPEECHER_API_KEY",
@@ -24782,7 +24694,6 @@
         "NETLIFY_ACCESS_TOKEN",
         "OPENAI_API_KEY",
         "OPENROUTER_API_KEY",
-        "PARALLEL_API_KEY",
         "PIAPI_API_KEY",
         "REPLICATE_API_TOKEN",
         "RESPEECHER_API_KEY",
@@ -24998,20 +24909,6 @@
       "credentialsInUrl": false
     },
     {
-      "hostname": "api.parallel.ai",
-      "protocol": "https:",
-      "path": "backend/src/ai/parallelApproval.ts",
-      "line": 92,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "api.parallel.ai",
-      "protocol": "https:",
-      "path": "backend/src/ai/parallelDispatch.ts",
-      "line": 71,
-      "credentialsInUrl": false
-    },
-    {
       "hostname": "github.com",
       "protocol": "https:",
       "path": "backend/src/ai/pipeline.ts",
@@ -25022,7 +24919,7 @@
       "hostname": "api.deepseek.com",
       "protocol": "https:",
       "path": "backend/src/ai/researchSearchProvider.ts",
-      "line": 16,
+      "line": 14,
       "credentialsInUrl": false
     },
     {
