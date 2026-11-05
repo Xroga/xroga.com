@@ -3,9 +3,16 @@ on:
   push:
     branches:
       - codex/deepseek-search-os-20261105
+  pull_request:
+    paths:
+      - 'backend/src/ai/**'
+      - 'backend/src/services/integrations/researchResult.ts'
+      - 'supabase/migrations/*deepseek*.sql'
+      - 'scripts/security/search-os/**'
+      - '.github/workflows/deepseek-search-os-check.yml'
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   backend-search-contracts:
@@ -21,69 +28,15 @@ jobs:
       - run: npm ci
       - name: Type check and compile backend
         run: npm run build --workspace backend
-      - name: Focused DeepSeek search and URL-intent regression tests
-        run: npx tsx --test backend/src/ai/researchSearchProvider.test.ts backend/src/ai/black-hole/webSearchIntent.test.ts backend/src/ai/black-hole/webIntelligence.test.ts
+      - name: Search, Fetch, bounded research, private cache and canonical approval regression
+        run: npx tsx --test backend/src/ai/researchSearchProvider.test.ts backend/src/ai/researchRetrievalPlan.test.ts backend/src/ai/researchRetrievalCache.test.ts backend/src/ai/researchAnswer.test.ts backend/src/ai/parallelWeb.security.test.ts backend/src/ai/black-hole/webSearchIntent.test.ts backend/src/ai/black-hole/webIntelligence.test.ts
       - name: Type-check workspace frontend
         run: npx tsc --noEmit --project frontend/tsconfig.json
-      - name: Inspect original native conversion review bindings (diagnostic only)
+      - name: Validate reviewed source, frozen register and inventories without mutating the branch
         run: |
-          node --input-type=module <<'NODE'
-          import {readFileSync,existsSync} from 'node:fs';
-          import {createHash} from 'node:crypto';
-          const hash=x=>createHash('sha256').update(x.replace(/\\r\\n/g,'\\n')).digest('hex');
-          const registry=JSON.parse(readFileSync('docs/xroga/security/caller-reviews.json','utf8'));
-          const paths=new Set(['backend/src/ai/pipeline.ts','backend/src/ai/research.ts','backend/src/ai/parallelWeb.ts','backend/src/ai/parallelDispatch.ts','frontend/src/lib/api.ts','frontend/src/context/TerminalChatContext.tsx','frontend/src/lib/runLightLaneChat.ts','frontend/src/components/terminal/TerminalChatBar.tsx']);
-          for(const review of registry.reviews??[]){
-            if(review.disposition!=='NOT_PERSISTENCE'||!paths.has(review.path)||!existsSync(review.path))continue;
-            const current=hash(readFileSync(review.path,'utf8'));
-            if(current!==review.sourceSha256)console.log(JSON.stringify({path:review.path,id:review.id,previous:review.sourceSha256,current,callIds:review.callIds,structuredOrigin:!!review.structuredOrigin}));
-          }
-          NODE
-      - name: Inspect frozen semantic source bindings (diagnostic only)
-        run: |
-          node --input-type=module <<'NODE'
-          import {readFileSync,existsSync} from 'node:fs';
-          import {createHash} from 'node:crypto';
-          const hash=x=>createHash('sha256').update(x.replace(/\\r\\n/g,'\\n')).digest('hex');
-          const data=JSON.parse(readFileSync('docs/xroga/batch-1/phases/PHASE-2-REVIEW-DECISIONS.json','utf8'));
-          for(const decision of data.decisions??[]){
-            for(const binding of decision.relatedSourceBindings??[]){
-              if(!existsSync(binding.path)){console.log(JSON.stringify({packetId:decision.packetId,missing:binding.path}));continue;}
-              const current=hash(readFileSync(binding.path,'utf8'));
-              if(current!==binding.sha256)console.log(JSON.stringify({packetId:decision.packetId,path:binding.path,previous:binding.sha256,current}));
-            }
-          }
-          NODE
-      - name: Print changed egress-review evidence (no automatic approval)
-        run: |
-          node --input-type=module <<'NODE'
-          import {inspectEgress} from './scripts/security/audit-egress-callers.mjs';
-          import {createHash} from 'node:crypto';
-          import {readFileSync} from 'node:fs';
-          const hash=s=>createHash('sha256').update(s.replace(/\\r\\n/g,'\\n')).digest('hex');
-          const reviews=JSON.parse(readFileSync('docs/xroga/security/egress-caller-reviews.json','utf8')).reviews;
-          for(const filename of ['backend/src/ai/parallelApproval.ts','backend/src/ai/parallelDispatch.ts','backend/src/ai/pipeline.ts','backend/src/routes/phase1.ts','frontend/src/context/TerminalChatContext.tsx','frontend/src/lib/api.ts']){
-            const file=readFileSync(filename,'utf8'),current=hash(file);
-            const entries=inspectEgress(filename,file);
-            for(const entry of entries){
-              const review=reviews.find(x=>x.id===entry.id);
-              if(!review||review.callSha256!==entry.callSha256||review.sourceFileSha256!==current)
-                console.log(JSON.stringify({file:filename,id:entry.id,old:review?.callSha256,new:entry.callSha256,oldFile:review?.sourceFileSha256,newFile:current,hasReview:!!review}));
-            }
-          }
-          NODE
-      - name: Generate exact-source egress inventory from independently reviewed callers
-        run: |
-          node scripts/security/audit-egress-callers.mjs --write
-          node scripts/xroga/phase-two.mjs --write
-          node scripts/xroga/inventory.mjs
-          git diff --stat -- docs/xroga/security/egress-callers.json docs/xroga/batch-1/phases/PHASE-2-CLOSURE-LEDGER.json docs/xroga/current-state.json docs/xroga/current-state-schema.json docs/xroga/current-state.md docs/xroga/blockers.md
-          git config user.name "xroga-ci"
-          git config user.email "noreply@users.noreply.github.com"
-          git add docs/xroga/security/egress-callers.json docs/xroga/batch-1/phases/PHASE-2-CLOSURE-LEDGER.json docs/xroga/current-state.json docs/xroga/current-state-schema.json docs/xroga/current-state.md docs/xroga/blockers.md
-          if ! git diff --cached --quiet; then
-            git commit -m "chore(governance): refresh verified Search OS source inventories"
-            git push origin HEAD:refs/heads/codex/deepseek-search-os-20261105
-          fi
-      - name: Confirm no code bypasses the canonical provider egress audit
-        run: node scripts/security/audit-egress-callers.mjs
+          node scripts/security/audit-tenant-policies.mjs
+          node scripts/security/audit-egress-callers.mjs
+          node scripts/xroga/phase-two.mjs
+          node scripts/xroga/inventory.mjs --check
+          node scripts/xroga/validate-requirements-ledger.mjs
+          node scripts/ci/validate-migrations.mjs
