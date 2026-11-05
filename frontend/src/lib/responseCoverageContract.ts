@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 // Bounded private recovery metadata from the existing answer request. This is
 // never executable UI, action authority or independent factual certification.
-const kind = z.enum(['prose','cards','table','graph','steps','chart','calculator']);
+const kind = z.enum(['prose','cards','table','graph','steps','chart','calculator','metrics','tabs']);
 export const responseCoverageContractSchema = z.object({
   version:z.literal('answer-coverage-v1'),
   plan:z.array(z.object({kind,heading:z.string().min(1).max(120).regex(/^[^\r\n]+$/),instruction:z.string().min(1).max(600),

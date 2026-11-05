@@ -83,7 +83,8 @@ export function prepareAnswerCoverage(prompt: string, presentation: Presentation
   const normalize=(value:string)=>value.toLocaleLowerCase().replace(/\s+/g,' ').trim();
   const quoteIssues=requirements.filter(r=>r.sourceQuote&&!normalize(prompt).includes(normalize(r.sourceQuote)))
     .map(r=>`unbound-request-quote:${r.id}`);
-  const scenario = quantitativeScenarioSupport(prompt);
+  // Add only what the plan lacks: a table or calculator the planner already planned is never planned twice.
+  const scenario = quantitativeScenarioSupport(prompt).filter(item => !plan.some(section => section.kind === item.formats[0]));
   for (const item of [...requestedAnswerObligations(prompt),...requiredAccessBoundarySupport(prompt),...scenario]) {
     const collision=requirements.find(r=>r.id===item.id);
     if(collision&&normalize(collision.sourceQuote??collision.description)!==normalize(item.sourceQuote??item.description)){

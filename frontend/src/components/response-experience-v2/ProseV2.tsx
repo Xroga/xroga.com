@@ -1,11 +1,12 @@
 'use client';
 
-import { isValidElement, lazy, Suspense, useId, useState, useEffect, type ReactNode } from 'react';
+import { isValidElement, lazy, Suspense, useId, useRef, useState, useEffect, type ReactNode } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
 import { normalizeMathDelimitersV2, remarkMathPresentationV2 } from './mathSyntax';
 import { Copy, Check } from 'lucide-react';
+import { highlightCode, isLightColor, type HighlightedToken } from '@/lib/codeHighlight';
 import { InlineImageV2, SourceLinkV2, SourceMarkV2 } from './SourceV2';
 import type { CitationSource } from '@/lib/xrogaCitations';
 import { remarkCitationsV2 } from './sourceRegistry';
@@ -27,10 +28,22 @@ export function CodeV2({ text, language }: { text: string; language?: string }) 
 function PlainCodeV2({ text, language }: { text: string; language?: string }) {
   const [copied, setCopied] = useState(false);
   const [failed, setFailed] = useState(false);
+  const [lines, setLines] = useState<HighlightedToken[][] | null>(null);
+  const [onDark, setOnDark] = useState(false);
+  const figure = useRef<HTMLElement>(null);
   useEffect(() => { setCopied(false); setFailed(false); }, [text]);
-  return <figure className={styles.code}><figcaption><span>{language || 'Code'}</span><button type="button" onClick={async () => {
+  // Highlight lazily. The plain code is shown immediately and stays if highlighting is unavailable for any reason.
+  useEffect(() => {
+    let cancelled = false;
+    setLines(null);
+    void highlightCode(text, language).then(result => { if (!cancelled) setLines(result); });
+    return () => { cancelled = true; };
+  }, [text, language]);
+  // The palette follows the theme actually in use: light text means a dark theme.
+  useEffect(() => { if (figure.current) setOnDark(isLightColor(getComputedStyle(figure.current).color)); }, [lines]);
+  return <figure ref={figure} className={styles.code}><figcaption><span>{language || 'Code'}</span><button type="button" onClick={async () => {
     try { await navigator.clipboard.writeText(text); setCopied(true); setFailed(false); } catch { setFailed(true); }
-  }}>{copied ? <Check size={14} /> : <Copy size={14} />}{copied ? 'Copied' : 'Copy code'}</button></figcaption><pre tabIndex={0}><code>{text}</code></pre>{failed && <p role="status">Copy unavailable. Select the code to copy it.</p>}</figure>;
+  }}>{copied ? <Check size={14} /> : <Copy size={14} />}{copied ? 'Copied' : 'Copy code'}</button></figcaption><pre tabIndex={0}><code>{lines ? lines.map((line, row) => <span key={row} className={styles.codeLine}>{line.map((token, index) => <span key={index} style={{ color: (onDark ? token.dark : token.light) || undefined }}>{token.content}</span>)}{row < lines.length - 1 ? '\n' : ''}</span>) : text}</code></pre>{failed && <p role="status">Copy unavailable. Select the code to copy it.</p>}</figure>;
 }
 
 export function ProseV2({ text, sources = [] }: { text: string; sources?: CitationSource[] }) {

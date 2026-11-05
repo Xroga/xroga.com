@@ -36,14 +36,15 @@
     "recharts": "^3.10.1",
     "remark-gfm": "^4.0.1",
     "remark-math": "6.0.0",
+    "remark-parse": "11.0.0",
     "sharp": "0.35.5",
+    "shiki": "4.6.0",
     "simple-icons": "^16.28.0",
     "tailwind-merge": "^3.6.0",
+    "unified": "11.0.5",
     "xroga": "file:..",
     "zod": "^4.6.5",
-    "zustand": "^5.0.14",
-    "remark-parse": "11.0.0",
-    "unified": "11.0.5"
+    "zustand": "^5.0.14"
   },
   "devDependencies": {
     "@types/katex": "^0.16.8",

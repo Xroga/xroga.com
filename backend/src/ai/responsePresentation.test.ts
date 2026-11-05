@@ -149,3 +149,38 @@ test('a table, diagram or step list with no extra text is a complete section; on
   const emptyProse = JSON.stringify({ s0: { markdown: '  ', data: null }, s1: { markdown: '', data: { columns: ['A', 'B'], rows: [['x', 'y']] } }, s2: { markdown: '', data: { steps: [{ title: 'a', description: 'b' }, { title: 'c', description: 'd' }] } } });
   assert.equal(createPresentationProjection(plan).finish(emptyProse).ok, false);
 });
+
+test('metrics and tabs project to the existing blocks, with tone as trend, and bad shapes are refused', () => {
+  const plan: PresentationPlan = [
+    { kind: 'prose', heading: 'Short answer', instruction: 'Answer.', covers: [] },
+    { kind: 'metrics', heading: 'Headline numbers', instruction: 'Profit, loss and ratio.', covers: [] },
+    { kind: 'tabs', heading: 'Strategies', instruction: 'Alternative strategies.', covers: [] },
+  ];
+  const ok = JSON.stringify({
+    s0: { markdown: 'The setup risks $5 to make $12.', data: null },
+    s1: { markdown: '', data: { metrics: [
+      { label: 'Max profit', value: '$350', unit: '', tone: 'positive' },
+      { label: 'Max loss', value: '$9,650', unit: '', tone: 'negative' },
+      { label: 'Reward-to-risk', value: '2.4 : 1', unit: '', tone: 'neutral' },
+    ] } },
+    s2: { markdown: '', data: { tabs: [{ label: 'Theta', content: 'Premium selling.' }, { label: 'Gamma', content: 'Directional spreads.' }] } },
+  });
+  const final = createPresentationProjection(plan).finish(ok);
+  assert.equal(final.ok, true);
+  assert.match(final.response, /"type":"metric-group"/);
+  assert.match(final.response, /"label":"Max profit","value":"\$350","trend":"up"/);
+  assert.match(final.response, /"label":"Max loss","value":"\$9,650","trend":"down"/);
+  assert.match(final.response, /"label":"Reward-to-risk","value":"2\.4 : 1","trend":"flat"/);
+  assert.match(final.response, /"type":"tabs"/);
+  assert.match(final.response, /"label":"Gamma","content":"Directional spreads\."/);
+  // One metric or one tab is not a comparison; an unknown tone or empty tab text is invalid.
+  const oneMetric = JSON.stringify({ s0: { markdown: 'x', data: null }, s1: { markdown: '', data: { metrics: [{ label: 'A', value: '1', unit: '', tone: 'neutral' }] } }, s2: { markdown: '', data: { tabs: [{ label: 'A', content: 'a' }, { label: 'B', content: 'b' }] } } });
+  assert.equal(createPresentationProjection(plan).finish(oneMetric).ok, false);
+  const badTone = JSON.stringify({ s0: { markdown: 'x', data: null }, s1: { markdown: '', data: { metrics: [{ label: 'A', value: '1', unit: '', tone: 'great' }, { label: 'B', value: '2', unit: '', tone: 'neutral' }] } }, s2: { markdown: '', data: { tabs: [{ label: 'A', content: 'a' }, { label: 'B', content: 'b' }] } } });
+  assert.equal(createPresentationProjection(plan).finish(badTone).ok, false);
+  const emptyTab = JSON.stringify({ s0: { markdown: 'x', data: null }, s1: { markdown: '', data: { metrics: [{ label: 'A', value: '1', unit: '', tone: 'neutral' }, { label: 'B', value: '2', unit: '', tone: 'neutral' }] } }, s2: { markdown: '', data: { tabs: [{ label: 'A', content: '' }, { label: 'B', content: 'b' }] } } });
+  assert.equal(createPresentationProjection(plan).finish(emptyTab).ok, false);
+  const schema = JSON.stringify(presentationResponseFormat(plan));
+  assert.match(schema, /"tone"/);
+  assert.match(schema, /"positive","negative","neutral"/);
+});

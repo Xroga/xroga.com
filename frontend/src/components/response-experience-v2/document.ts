@@ -21,7 +21,7 @@ export const nodeSchema = z.discriminatedUnion('kind', [
   base.extend({ kind: z.literal('chart'), shape: z.enum(['line', 'bar', 'area', 'pie', 'scatter']), xKey: label, series: z.array(series).min(1).max(8), rows: z.array(row).max(2_000), summary: text }),
   base.extend({ kind: z.literal('calculator'), operation: z.enum(['sum', 'difference', 'product', 'quotient', 'average', 'percentage', 'percentage-change', 'minimum', 'maximum']), inputs: z.array(z.object({ id: label, label, value: z.number().finite(), min: z.number().finite().optional(), max: z.number().finite().optional(), step: z.number().positive().optional(), unit: label.optional() })).min(1).max(12), resultLabel: label, unit: label.optional(), precision: z.number().int().min(0).max(8), derivedResults: z.array(calculatorDerivedResultSchema).max(8).optional() }),
   base.extend({ kind: z.literal('graph'), nodes: z.array(z.object({ id: label, label, detail: text.optional() })).max(100), edges: z.array(z.object({ source: label, target: label, label: label.optional() })).max(200) }),
-  base.extend({ kind: z.literal('metrics'), items: z.array(z.object({ id: label, label, value: scalar, unit: label.optional() })).max(30) }),
+  base.extend({ kind: z.literal('metrics'), items: z.array(z.object({ id: label, label, value: scalar, unit: label.optional(), tone: z.enum(['positive', 'negative', 'neutral']).optional() })).max(30) }),
   base.extend({ kind: z.literal('tabs'), items: z.array(z.object({ id: label, label, content: text })).min(1).max(12) }),
   base.extend({ kind: z.literal('citation'), label, url: text, excerpt: text.optional() }),
   base.extend({ kind: z.literal('notice'), text, tone: z.enum(['neutral', 'info', 'success', 'warning', 'danger']) }),
@@ -84,7 +84,7 @@ export function adaptResponseV2(input: ResponseInputV2, streaming = false): Adap
             case 'calculator': nodes.push({ ...common, kind: 'calculator', operation: b.operation, inputs: b.inputs, resultLabel: b.resultLabel, unit: b.resultUnit, precision: b.precision ?? 2, derivedResults: b.derivedResults }); break;
             case 'graph': nodes.push({ ...common, kind: 'graph', nodes: b.nodes, edges: b.edges }); break;
             case 'metric': nodes.push({ ...common, kind: 'metrics', items: [b.metric] }); break;
-            case 'metric-group': nodes.push({ ...common, kind: 'metrics', items: b.metrics }); break;
+            case 'metric-group': nodes.push({ ...common, kind: 'metrics', items: b.metrics.map(({ trend, change: _change, ...metric }) => ({ ...metric, ...(trend === 'up' ? { tone: 'positive' as const } : trend === 'down' ? { tone: 'negative' as const } : {}) })) }); break;
             case 'tabs': nodes.push({ ...common, kind: 'tabs', items: b.tabs }); break;
             case 'accordion': nodes.push({ ...common, kind: 'accordion', items: b.items }); break;
             case 'plan': case 'activity': case 'checklist': nodes.push({ ...common, kind: 'timeline', items: b.items }); break;
