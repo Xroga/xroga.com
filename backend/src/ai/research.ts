@@ -17,7 +17,7 @@ export interface ResearchBundle {
   query: string;
   summary: string;
   sources: ResearchSource[];
-  provider: 'parallel' | 'grok_x' | 'grok_live' | 'none';
+  provider: 'parallel' | 'deepseek' | 'grok_x' | 'grok_live' | 'none';
   /** True when live X (Twitter) search was requested via Grok. */
   includedXSearch?: boolean;
 }
@@ -40,19 +40,19 @@ export async function gatherResearch(query: string, userId?: string, dispatchSco
         title: source.title,
         url: source.url,
         snippet: source.snippet,
-        source: 'parallel',
+        source: 'web',
       }));
       if (sources.length) {
         return {
           query: q,
           summary: sources.map((source) => source.snippet).join('\n\n').slice(0, 4_000),
           sources,
-          provider: 'parallel',
+          provider: 'deepseek',
         };
       }
     } catch (err) {
       if(isTerminalModelFailure(err))throw err;
-      console.warn('[research] Parallel search failed:', normalizeProviderError(err).safeMessage);
+      console.warn('[research] DeepSeek Search failed:', normalizeProviderError(err).safeMessage);
     }
   }
 
