@@ -1,3 +1,4 @@
+import {randomUUID} from 'node:crypto';
 import {requireTenantContext,requireResourceOwner} from '../../security/tenantContext.js';
 import {
   explicitlyDisablesResearch,
@@ -530,6 +531,8 @@ export async function runWebIntelligence(
     };
   }
 
+  const researchRunId=randomUUID();
+
   let provider:
     | 'deepseek'
     | 'native_fetch'
@@ -595,6 +598,8 @@ export async function runWebIntelligence(
               ],
 
         resultCount: 15,
+        researchKind: 'normal',
+        researchRunId,
         signal: input.signal,
       });
 
@@ -639,6 +644,8 @@ export async function runWebIntelligence(
           input.prompt,
 
         resultCount: decision.action === 'deep_research' ? 50 : 30,
+        researchKind: decision.action === 'deep_research' ? 'deep' : 'automatic',
+        researchRunId,
         signal: input.signal,
       });
 
