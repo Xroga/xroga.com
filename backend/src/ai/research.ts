@@ -17,7 +17,7 @@ export interface ResearchBundle {
   query: string;
   summary: string;
   sources: ResearchSource[];
-  provider: 'parallel' | 'deepseek' | 'grok_x' | 'grok_live' | 'none';
+  provider: 'parallel' | 'native_fetch' | 'deepseek' | 'grok_x' | 'grok_live' | 'none';
   /** True when live X (Twitter) search was requested via Grok. */
   includedXSearch?: boolean;
 }
