@@ -5004,6 +5004,7 @@ concurrency:
 
         goalContract?:
           SemanticRequestPlan['goalContract'],
+        manualDeepResearch?: boolean,
       ) =>
         apiFetch<
           Phase1ChatResult
@@ -5035,6 +5036,7 @@ concurrency:
                       }
                     : {}
                 ),
+                manualDeepResearch: manualDeepResearch === true,
               }),
           },
         ),
