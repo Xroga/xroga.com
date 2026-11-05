@@ -15,7 +15,15 @@ export const DEEPSEEK_SEARCH_URL = 'https://api.deepseek.com/v1/tools/search';
 export const DEEPSEEK_SEARCH_MICRO_USD = 750;
 /** DeepSeek accepts 1-128 characters for `query` and `ori_question`. */
 export const DEEPSEEK_QUERY_MAX = 128;
-export const DEEPSEEK_SEARCH_RESULTS = 10;
+export type SearchResultCount = 15 | 30 | 50;
+export const DEEPSEEK_SEARCH_RESULTS: SearchResultCount = 15;
+
+/** Explicit, vetted output ceilings; search-result count is NOT billed request count. */
+export function acceptedSearchResultCount(value: unknown): SearchResultCount {
+  if (value === undefined) return DEEPSEEK_SEARCH_RESULTS;
+  if (value === 15 || value === 30 || value === 50) return value;
+  throw new Error('Unsupported DeepSeek Search result count');
+}
 
 /** The dedicated server-side search credential, or undefined when research search is unavailable. */
 export function deepseekSearchCredential(): string | undefined {
@@ -27,10 +35,10 @@ export function researchSearchMicroUsd(): number {
 }
 
 /** One bounded DeepSeek request built from the already validated Parallel-shaped body. */
-export function deepseekSearchBody(body: { objective: string; search_queries: string[] }): { query: string; count: number; ori_question?: string } {
+export function deepseekSearchBody(body: { objective: string; search_queries: string[]; result_count?: unknown }): { query: string; count: SearchResultCount; ori_question?: string } {
   const query = body.search_queries[0].trim().slice(0, DEEPSEEK_QUERY_MAX);
   const question = body.objective.trim().slice(0, DEEPSEEK_QUERY_MAX);
-  return { query, count: DEEPSEEK_SEARCH_RESULTS, ...(question ? { ori_question: question } : {}) };
+  return { query, count: acceptedSearchResultCount(body.result_count), ...(question ? { ori_question: question } : {}) };
 }
 
 interface DeepseekResult { url?: unknown; title?: unknown; summary?: unknown; snippet?: unknown; date?: unknown; site_name?: unknown }
