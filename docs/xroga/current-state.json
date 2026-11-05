@@ -251,7 +251,7 @@
       "id": "surface:65cb0aba3b036f66089f",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/answerCoverage.ts",
-      "sha256": "4ee83651baf8dddcc7dbd3cf9e7eb4ab500b3c9d423bf82cc3a7dd1e2c5f9788",
+      "sha256": "1d27081c5d7cf3c1c9a721d8332967e19d2471fee9dad9c7fe7444fd4ebd80f3",
       "symbols": [
         "boundary",
         "branching",
@@ -8494,7 +8494,7 @@
       "id": "surface:74760a8c78ac888599fd",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/responsePresentation.ts",
-      "sha256": "64ea2107dd893259c5c0d01afc0c2fbcfc108356066b54ea749a31a7345bb5c0",
+      "sha256": "5acb82ba7b77a16c50f711bec435dd3335df22ca01b8e70f7374a5af9f646138",
       "symbols": [
         "AnswerObligations",
         "JsonSchema",
@@ -87309,7 +87309,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/response-experience-v2/ProseV2.tsx:18",
+        "frontend/src/components/response-experience-v2/ProseV2.tsx:19",
         "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:16"
       ],
       "reachable": true,
@@ -87408,7 +87408,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/response-experience-v2/ProseV2.tsx:14"
+        "frontend/src/components/response-experience-v2/ProseV2.tsx:15"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -87616,19 +87616,25 @@
       "id": "surface:611cf58543cb117c4017",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/InteractiveV2.tsx",
-      "sha256": "60dfe4ffa745d9405a93f27231c07ddc99c49a0e340d164e1ac0b02a81a9b888",
+      "sha256": "c994acfc375d646b1bdefff3a5b7e78df9cee7e3a94daf868c76365fa3e041a8",
       "symbols": [
         "CalculatorV2",
         "Chart",
         "TabsV2",
         "axis",
+        "buttons",
+        "count",
         "curve",
         "fill",
         "id",
         "initial",
+        "key",
+        "next",
+        "onKeyDown",
         "restored",
         "result",
         "scope",
+        "select",
         "updateValues",
         "x"
       ],
@@ -87701,7 +87707,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/response-experience-v2/ProseV2.tsx:17"
+        "frontend/src/components/response-experience-v2/ProseV2.tsx:18"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -87726,15 +87732,17 @@
       "id": "surface:c37a54594bd9bc390b5b",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/ProseV2.tsx",
-      "sha256": "f0bba995948e2f513002d25085c7d08d09f59c9e68a903b991dd652d66e3559b",
+      "sha256": "aeeb7b35fe6bdeac647fb123ea27280eea329d0aad2e9fa960852d45f10abf75",
       "symbols": [
         "ArchitectureV2",
         "CodeV2",
         "MathV2",
         "PlainCodeV2",
         "ProseV2",
+        "cancelled",
         "data",
         "diagram",
+        "figure",
         "id",
         "match",
         "source"
@@ -87750,6 +87758,7 @@
         "./mathSyntax",
         "./response-v2.module.css",
         "./sourceRegistry",
+        "@/lib/codeHighlight",
         "@/lib/xrogaCitations",
         "lucide-react",
         "react",
@@ -87767,7 +87776,8 @@
         "frontend/src/components/response-experience-v2/entityRegistry.ts",
         "frontend/src/components/response-experience-v2/mathSyntax.ts",
         "frontend/src/components/response-experience-v2/response-v2.module.css",
-        "frontend/src/components/response-experience-v2/sourceRegistry.ts"
+        "frontend/src/components/response-experience-v2/sourceRegistry.ts",
+        "frontend/src/lib/codeHighlight.ts"
       ],
       "entryPoints": [
         "frontend/src/app/(workspace)/workspace/page.tsx",
@@ -87849,7 +87859,7 @@
       "id": "surface:8cc3d07125af060b5e53",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx",
-      "sha256": "55bab8336c936dbd51a920a3f4e32e2576887eb55eecfe19cb465cc0d365d51e",
+      "sha256": "51cae21547052e0eec2cc32da63f1ce8f02d9bab71cb59d6f715de66d88aa26e",
       "symbols": [
         "Calculator",
         "Chart",
@@ -88080,7 +88090,7 @@
         "frontend/src/components/response-experience-v2/ArchitectureV2.tsx:8",
         "frontend/src/components/response-experience-v2/DataV2.tsx:10",
         "frontend/src/components/response-experience-v2/EntityIdentityV2.tsx:5",
-        "frontend/src/components/response-experience-v2/ProseV2.tsx:9",
+        "frontend/src/components/response-experience-v2/ProseV2.tsx:10",
         "frontend/src/components/response-experience-v2/ResourcesV2.tsx:5",
         "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:6"
       ],
@@ -88441,7 +88451,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/response-experience-v2/ProseV2.tsx:16",
+        "frontend/src/components/response-experience-v2/ProseV2.tsx:17",
         "frontend/src/components/response-experience-v2/diagramSyntax.test.ts:3"
       ],
       "reachable": true,
@@ -88466,7 +88476,7 @@
       "id": "surface:1a11577c6b142e5e83f0",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/document.ts",
-      "sha256": "5c0415141a5e63e5af8974c5300e9b9f89a4e8d54ce32196afc09b2f565f267e",
+      "sha256": "8a06d82433d9790efafc0ef79bf590cc6f55f2217b487fa366946c563387f159",
       "symbols": [
         "AdaptedResponse",
         "ResponseDocumentV2",
@@ -88522,7 +88532,7 @@
         "frontend/src/components/response-experience-v2/DataV2.tsx:4",
         "frontend/src/components/response-experience-v2/DataV2.tsx:8",
         "frontend/src/components/response-experience-v2/EntityIdentityV2.tsx:3",
-        "frontend/src/components/response-experience-v2/ProseV2.tsx:12",
+        "frontend/src/components/response-experience-v2/ProseV2.tsx:13",
         "frontend/src/components/response-experience-v2/ResourcesV2.tsx:4",
         "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:3",
         "frontend/src/components/response-experience-v2/ResponseExperienceGate.tsx:4",
@@ -88603,7 +88613,7 @@
         "frontend/src/components/response-experience-v2/ArchitectureV2.tsx:7",
         "frontend/src/components/response-experience-v2/DataV2.tsx:9",
         "frontend/src/components/response-experience-v2/EntityIdentityV2.tsx:4",
-        "frontend/src/components/response-experience-v2/ProseV2.tsx:15",
+        "frontend/src/components/response-experience-v2/ProseV2.tsx:16",
         "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:11",
         "frontend/src/components/response-experience-v2/composition.ts:7",
         "frontend/src/components/response-experience-v2/document.test.ts:10",
@@ -89100,7 +89110,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/response-experience-v2/ProseV2.tsx:11",
+        "frontend/src/components/response-experience-v2/ProseV2.tsx:12",
         "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:7",
         "frontend/src/components/response-experience-v2/SourceV2.tsx:4",
         "frontend/src/components/response-experience-v2/composition.ts:6",
@@ -102436,6 +102446,70 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:320c458b2ea564fce2b6",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/lib/codeHighlight.ts",
+      "sha256": "6415a81bafc7ca52286e5d6c6a6703544db454ed4c2675016c71e08b68e3de6d",
+      "symbols": [
+        "ALIASES",
+        "ALLOWED",
+        "Engine",
+        "HighlightedToken",
+        "MAX_HIGHLIGHT_CHARACTERS",
+        "MAX_HIGHLIGHT_LINES",
+        "engine",
+        "getEngine",
+        "highlightCode",
+        "highlightLanguage",
+        "id",
+        "isLightColor",
+        "language",
+        "loadedLanguages",
+        "loader",
+        "match",
+        "name",
+        "shiki",
+        "shouldHighlight"
+      ],
+      "imports": [
+        "shiki/core",
+        "shiki/engine/javascript",
+        "shiki/langs",
+        "shiki/themes"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [
+        "frontend/src/app/(workspace)/workspace/page.tsx",
+        "frontend/src/app/share/[token]/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/response-experience-v2/ProseV2.tsx:9",
+        "frontend/src/lib/codeHighlight.test.ts:3"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "shiki/core",
+        "shiki/engine/javascript",
+        "shiki/langs",
+        "shiki/themes"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "frontend/src/lib/codeHighlight.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:7bf027a9b022ef424607",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/community.ts",
@@ -108566,7 +108640,7 @@
       "id": "surface:f319f818a1e220c70581",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/responseCoverageContract.ts",
-      "sha256": "457d87394e339b5613ede908e6b3b0f32548e92ce4d432f1e81f301b58642d0e",
+      "sha256": "1761107b1b67f0fcb8d3148691c02daef8a4688b24497c683fcf02bd2f446dba",
       "symbols": [
         "ResponseCoverageContract",
         "kind",
@@ -143841,7 +143915,7 @@
     {
       "id": "test-suite:673c1c4f2d2cfc4719dd",
       "sourcePath": "backend/src/ai/presentationRelevance.test.ts",
-      "declaredTests": 11,
+      "declaredTests": 12,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -144072,7 +144146,7 @@
     {
       "id": "test-suite:11a90210e320c1d28cb6",
       "sourcePath": "backend/src/ai/responsePresentation.test.ts",
-      "declaredTests": 10,
+      "declaredTests": 11,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -149000,7 +149074,7 @@
     {
       "id": "test-suite:4daf44fc649a3af61e3e",
       "sourcePath": "frontend/src/components/response-experience-v2/document.test.ts",
-      "declaredTests": 30,
+      "declaredTests": 31,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -149014,7 +149088,7 @@
     {
       "id": "test-suite:d9eeccf3b3da58cbd35c",
       "sourcePath": "frontend/src/components/response-experience-v2/exportText.test.ts",
-      "declaredTests": 8,
+      "declaredTests": 9,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -149274,6 +149348,13 @@
       "id": "test-suite:e27c529cbdfcc5179b2c",
       "sourcePath": "frontend/src/lib/cloudTerminalSessions.test.ts",
       "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:9f44aa3f2eb77836b4e8",
+      "sourcePath": "frontend/src/lib/codeHighlight.test.ts",
+      "declaredTests": 5,
       "skipLocations": [],
       "focusLocations": []
     },
