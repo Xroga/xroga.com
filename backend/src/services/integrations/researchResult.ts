@@ -15,7 +15,7 @@ const record = (v: unknown): Record<string, unknown> => v && typeof v === 'objec
 const text = (v: unknown): string => typeof v === 'string' ? redactSecrets(v) : '';
 const answerSchema=z.object({response:z.string().min(1).max(160_000),completion:z.object({status:z.enum(['complete','partial']),reason:z.string().max(200).optional()}).strict(),
  responseSource:z.object({format:z.literal('xroga-response-json-v1'),text:z.string().max(200_000),contract:z.unknown().optional()}).strict().optional(),
- webSources:z.array(z.object({title:z.string().max(4000),url:z.string().max(8000),snippet:z.string().max(12_000),source:z.string().max(100)}).strict()).max(12),
+ webSources:z.array(z.object({title:z.string().max(4000),url:z.string().max(8000),snippet:z.string().max(12_000),source:z.string().max(100),publishedAt:z.string().max(100).optional()}).strict()).max(50),
 }).strict();
 
 /** Readiness is checked before dispatch. Reading a receipt never invokes a provider. */
@@ -39,7 +39,7 @@ export interface ResearchResult {
   confirmationId: string;
   receiptId: string;
   text: string;
-  sources: Array<{ title: string; url: string; snippet: string; source: string }>;
+  sources: Array<{ title: string; url: string; snippet: string; source: string; publishedAt?: string }>;
   omittedSourceCount: number;
   answer?:z.infer<typeof answerSchema>;
   answerFailure?:string;
@@ -75,7 +75,8 @@ export function presentResearchResult(raw: unknown): Omit<ResearchResult, 'confi
       }
       seen.set(canonical, sources.length);
       sources.push({ title: text(item.title) || url.hostname, url: canonical,
-        snippet, source: 'parallel' });
+        snippet, source: data.provider === 'deepseek' ? 'deepseek' : 'parallel',
+        ...(typeof item.publish_date==='string'&&item.publish_date.trim()?{publishedAt:item.publish_date.trim().slice(0,100)}:{}) });
     } catch { omittedSourceCount++; }
   }
   const synthesis=envelope.answer===undefined?undefined:answerSchema.safeParse(envelope.answer);
