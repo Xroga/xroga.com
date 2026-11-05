@@ -1,0 +1,60 @@
+{
+  "version": 1,
+  "scope": "HOSTED_STAGING_TRANSACTION_CHECKS_NOT_NEW_RUNTIME_OR_PRODUCTION_ACCEPTANCE",
+  "observedAt": "2026-11-05T19:18:14Z",
+  "project": "dqxnatoessviphudbhei",
+  "projectName": "xroga-p3-staging-20261024",
+  "transport": "Existing authenticated Supabase SQL Editor in Codex browser",
+  "migration": {
+    "path": "supabase/migrations/20261105230000_deepseek_fetch_private_cache.sql",
+    "sha256": "7a809e88be2ee73c97d79616280b8d20e8f9eccdb2692e0e79d04c583c7a326f"
+  },
+  "test": {
+    "path": "scripts/security/search-os/staging-acceptance.sql",
+    "sha256": "a2ffcf11ee3c50eaf1260cedd839a571048cf2b4cd64dd68c7f0a5370727dc62"
+  },
+  "checks": [
+    {
+      "name": "1250000-exact-boundary-and-uncertain-holds",
+      "passed": true
+    },
+    {
+      "name": "authenticated-claim-rejected",
+      "passed": true
+    },
+    {
+      "name": "automatic-monthly-and-operation-limits",
+      "passed": true
+    },
+    {
+      "name": "deep-monthly-and-operation-limits",
+      "passed": true
+    },
+    {
+      "name": "normal-monthly-and-operation-limits",
+      "passed": true
+    },
+    {
+      "name": "private-cache-owner-key-isolation",
+      "passed": true
+    },
+    {
+      "name": "service-only-rpcs-and-private-tables",
+      "passed": true
+    }
+  ],
+  "syntheticRowsOnly": true,
+  "transaction": "BEGIN / ROLLBACK",
+  "retainedTestRows": false,
+  "productionChanges": false,
+  "providerCalls": 0,
+  "additionalPaidServices": 0,
+  "screenshots": [
+    "staging-paid-limits-final-source.jpg"
+  ],
+  "limitsOfProof": [
+    "SQL target schema and role/catalog tests; not a new-runtime authenticated HTTP journey.",
+    "Independent actual PostgreSQL fresh/upgrade, eight-worker quota and dollar-boundary concurrency, replay and direct role denial passed locally.",
+    "Full exact-source CI and Free-account Search/Fetch/research/cache/citation journeys remain mandatory."
+  ]
+}
