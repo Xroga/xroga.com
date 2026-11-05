@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "e5c691e0ca2cb477e50341c6fa8b109d5260fbe2",
+  "source_sha": "b614c1fade7dc8726dfaa2bd7fc6caf62aca5dc1",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -16800,8 +16800,12 @@
       "sha256": "41d41394517529873968222975159e930630e672a03f7f6d786507d63cee1a3d"
     },
     {
+      "path": "backend/src/ai/responseIcons.ts",
+      "sha256": "0d2dde472a29b68690ad56fa742cdd0d7fc86a2716c1cbd6d00cfe7befcdbe07"
+    },
+    {
       "path": "backend/src/ai/responsePresentation.ts",
-      "sha256": "be0a1f65b60a306794150f58849e35f1a4f460e722937af86fc53e3711676706"
+      "sha256": "4744123ca1eb6f3e9e2f299034433c2ad960f8896ad412dc25aea9c556b1e738"
     },
     {
       "path": "backend/src/ai/router.ts",
@@ -21897,7 +21901,7 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/EntityIdentityV2.tsx",
-      "sha256": "bf5b718c192a93efe94032be73912fb1d9430aee20fea109a4978cdf921da8b9"
+      "sha256": "5e6c0a6b5f641ccdb14456742c56d82ad77d4df94f06c335225391e5e96b2b8a"
     },
     {
       "path": "frontend/src/components/response-experience-v2/InteractiveV2.tsx",
@@ -21917,7 +21921,7 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx",
-      "sha256": "51cae21547052e0eec2cc32da63f1ce8f02d9bab71cb59d6f715de66d88aa26e"
+      "sha256": "38b47df213af474d0eaa949479b5b9f9c45a63bf2364234871553f4ecbbd46ad"
     },
     {
       "path": "frontend/src/components/response-experience-v2/ResponseExperienceGate.tsx",
@@ -21957,7 +21961,7 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/document.ts",
-      "sha256": "8a06d82433d9790efafc0ef79bf590cc6f55f2217b487fa366946c563387f159"
+      "sha256": "b8d0941f48fd4f685943b08bbb74f204775f6a52f282b946975238352c1a5567"
     },
     {
       "path": "frontend/src/components/response-experience-v2/entityRegistry.ts",
@@ -23308,6 +23312,10 @@
       "sha256": "1761107b1b67f0fcb8d3148691c02daef8a4688b24497c683fcf02bd2f446dba"
     },
     {
+      "path": "frontend/src/lib/responseIcons.ts",
+      "sha256": "ebfec683452e6c2cd0db22ad84c818c2139525160d62501b782da7105802d587"
+    },
+    {
       "path": "frontend/src/lib/restoreRepoTerminal.ts",
       "sha256": "3c09427854663ed1167ae86886cb71dd7656b704a07d7f670bde0745ad9f2be3"
     },
@@ -23649,7 +23657,7 @@
     },
     {
       "path": "frontend/src/lib/xrogaBlocks.ts",
-      "sha256": "d02d578de8f105212e655121bae3ef105f90f3d3495d676b69a2ead60c72a56c"
+      "sha256": "072a159e966f4a75dbe4470dac4fe3b9562956c456caff6dce3d2ae30486703a"
     },
     {
       "path": "frontend/src/lib/xrogaBrand.ts",
@@ -32175,28 +32183,21 @@
     },
     {
       "path": "backend/src/ai/responsePresentation.ts",
-      "line": 29,
+      "line": 30,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/responsePresentation.ts",
-      "line": 32,
+      "line": 33,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/responsePresentation.ts",
-      "line": 35,
-      "scope": "FUNCTION_LOCAL",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "backend/src/ai/responsePresentation.ts",
-      "line": 131,
+      "line": 36,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -32217,14 +32218,14 @@
     },
     {
       "path": "backend/src/ai/responsePresentation.ts",
-      "line": 140,
+      "line": 134,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/responsePresentation.ts",
-      "line": 143,
+      "line": 141,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -32232,6 +32233,13 @@
     {
       "path": "backend/src/ai/responsePresentation.ts",
       "line": 144,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/responsePresentation.ts",
+      "line": 145,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

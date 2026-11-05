@@ -8491,10 +8491,44 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:ba8208656fa4db69dbf9",
+      "subsystem": "ai_execution",
+      "sourcePath": "backend/src/ai/responseIcons.ts",
+      "sha256": "0d2dde472a29b68690ad56fa742cdd0d7fc86a2716c1cbd6d00cfe7befcdbe07",
+      "symbols": [
+        "RESPONSE_ICONS",
+        "ResponseIcon"
+      ],
+      "imports": [],
+      "runtimeImports": [],
+      "entryPoints": [
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
+      ],
+      "callers": [
+        "backend/src/ai/responsePresentation.ts:2"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:74760a8c78ac888599fd",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/responsePresentation.ts",
-      "sha256": "be0a1f65b60a306794150f58849e35f1a4f460e722937af86fc53e3711676706",
+      "sha256": "4744123ca1eb6f3e9e2f299034433c2ad960f8896ad412dc25aea9c556b1e738",
       "symbols": [
         "AnswerObligations",
         "JsonSchema",
@@ -8573,9 +8607,12 @@
         "wanted"
       ],
       "imports": [
+        "./responseIcons.js",
         "zod"
       ],
-      "runtimeImports": [],
+      "runtimeImports": [
+        "backend/src/ai/responseIcons.ts"
+      ],
       "entryPoints": [
         "backend/src/index.ts",
         "scripts/security/verify-oci-federation.ts"
@@ -87310,7 +87347,7 @@
       ],
       "callers": [
         "frontend/src/components/response-experience-v2/ProseV2.tsx:19",
-        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:16"
+        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:17"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -87360,7 +87397,7 @@
       ],
       "callers": [
         "frontend/src/components/response-experience-v2/InteractiveV2.tsx:11",
-        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:14"
+        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:15"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -87534,7 +87571,7 @@
       ],
       "callers": [
         "frontend/src/components/response-experience-v2/ChartV2.tsx:4",
-        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:15"
+        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:16"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -87562,7 +87599,7 @@
       "id": "surface:cbf66836e2d2562ae887",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/EntityIdentityV2.tsx",
-      "sha256": "bf5b718c192a93efe94032be73912fb1d9430aee20fea109a4978cdf921da8b9",
+      "sha256": "5e6c0a6b5f641ccdb14456742c56d82ad77d4df94f06c335225391e5e96b2b8a",
       "symbols": [
         "EntityIdentityV2",
         "content",
@@ -87663,8 +87700,8 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:17",
-        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:18"
+        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:18",
+        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:19"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -87859,12 +87896,13 @@
       "id": "surface:8cc3d07125af060b5e53",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx",
-      "sha256": "51cae21547052e0eec2cc32da63f1ce8f02d9bab71cb59d6f715de66d88aa26e",
+      "sha256": "38b47df213af474d0eaa949479b5b9f9c45a63bf2364234871553f4ecbbd46ad",
       "symbols": [
         "Calculator",
         "Chart",
         "ComposedPart",
         "Graph",
+        "Icon",
         "NodeView",
         "ResponseCanvasV2",
         "Table",
@@ -87897,6 +87935,7 @@
         "./loadPresentation",
         "./response-v2.module.css",
         "./sourceRegistry",
+        "@/lib/responseIcons",
         "react"
       ],
       "runtimeImports": [
@@ -87914,7 +87953,8 @@
         "frontend/src/components/response-experience-v2/entityRegistry.ts",
         "frontend/src/components/response-experience-v2/loadPresentation.ts",
         "frontend/src/components/response-experience-v2/response-v2.module.css",
-        "frontend/src/components/response-experience-v2/sourceRegistry.ts"
+        "frontend/src/components/response-experience-v2/sourceRegistry.ts",
+        "frontend/src/lib/responseIcons.ts"
       ],
       "entryPoints": [
         "frontend/src/app/(workspace)/workspace/page.tsx",
@@ -88343,7 +88383,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:12",
+        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:13",
         "frontend/src/components/response-experience-v2/composition.test.ts:4"
       ],
       "reachable": true,
@@ -88476,7 +88516,7 @@
       "id": "surface:1a11577c6b142e5e83f0",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/document.ts",
-      "sha256": "8a06d82433d9790efafc0ef79bf590cc6f55f2217b487fa366946c563387f159",
+      "sha256": "b8d0941f48fd4f685943b08bbb74f204775f6a52f282b946975238352c1a5567",
       "symbols": [
         "AdaptedResponse",
         "ResponseDocumentV2",
@@ -88546,6 +88586,7 @@
         "frontend/src/components/response-experience-v2/shareSnapshot.ts:1",
         "frontend/src/components/response-experience-v2/sourceRegistry.test.ts:4",
         "frontend/src/components/response-experience-v2/sourceRegistry.ts:2",
+        "frontend/src/lib/responseIcons.test.ts:5",
         "frontend/src/lib/responsePresentation.integration.test.ts:6"
       ],
       "reachable": true,
@@ -88565,6 +88606,7 @@
         "frontend/src/components/response-experience-v2/document.test.ts",
         "frontend/src/components/response-experience-v2/graphLayout.test.ts",
         "frontend/src/components/response-experience-v2/sourceRegistry.test.ts",
+        "frontend/src/lib/responseIcons.test.ts",
         "frontend/src/lib/responsePresentation.integration.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -88614,7 +88656,7 @@
         "frontend/src/components/response-experience-v2/DataV2.tsx:9",
         "frontend/src/components/response-experience-v2/EntityIdentityV2.tsx:4",
         "frontend/src/components/response-experience-v2/ProseV2.tsx:16",
-        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:11",
+        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:12",
         "frontend/src/components/response-experience-v2/composition.ts:7",
         "frontend/src/components/response-experience-v2/document.test.ts:10",
         "frontend/src/components/response-experience-v2/entityRegistry.test.ts:5"
@@ -88902,7 +88944,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:13",
+        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:14",
         "frontend/src/components/response-experience-v2/loadPresentation.test.ts:3"
       ],
       "reachable": true,
@@ -108684,6 +108726,49 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:304aa38efb1d590ff47e",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/lib/responseIcons.ts",
+      "sha256": "ebfec683452e6c2cd0db22ad84c818c2139525160d62501b782da7105802d587",
+      "symbols": [
+        "RESPONSE_ICON_MAP",
+        "responseIcon"
+      ],
+      "imports": [
+        "lucide-react"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [
+        "frontend/src/app/(workspace)/workspace/page.tsx",
+        "frontend/src/app/share/[token]/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:11",
+        "frontend/src/lib/responseIcons.test.ts:3"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "lucide-react"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [
+        "frontend/src/lib/responseIcons.ts#Receipt"
+      ],
+      "testCoverage": [
+        "frontend/src/lib/responseIcons.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:8046ef5c99216ec7338f",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/restoreRepoTerminal.ts",
@@ -114556,7 +114641,7 @@
       "id": "surface:9abd8d23db6426268ad2",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/xrogaBlocks.ts",
-      "sha256": "d02d578de8f105212e655121bae3ef105f90f3d3495d676b69a2ead60c72a56c",
+      "sha256": "072a159e966f4a75dbe4470dac4fe3b9562956c456caff6dce3d2ae30486703a",
       "symbols": [
         "XROGA_BLOCK_SCHEMA_VERSION",
         "XrogaApproval",
@@ -115553,6 +115638,7 @@
         "frontend/src/lib/modelHandoff.ts:1",
         "frontend/src/lib/researchHandoff.ts:2",
         "frontend/src/lib/responseCoverageContract.test.ts:3",
+        "frontend/src/lib/responseIcons.test.ts:4",
         "frontend/src/lib/responsePresentation.integration.test.ts:4",
         "frontend/src/lib/xrogaResponseDocument.test.ts:4",
         "frontend/src/lib/xrogaRichResults.test.ts:4"
@@ -115571,6 +115657,7 @@
         "frontend/src/components/response-experience-v2/exportText.test.ts",
         "frontend/src/components/response-experience-v2/shareSnapshot.test.ts",
         "frontend/src/lib/responseCoverageContract.test.ts",
+        "frontend/src/lib/responseIcons.test.ts",
         "frontend/src/lib/responsePresentation.integration.test.ts",
         "frontend/src/lib/xrogaResponseDocument.test.ts",
         "frontend/src/lib/xrogaRichResults.test.ts"
@@ -144146,7 +144233,7 @@
     {
       "id": "test-suite:11a90210e320c1d28cb6",
       "sourcePath": "backend/src/ai/responsePresentation.test.ts",
-      "declaredTests": 11,
+      "declaredTests": 12,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -149880,6 +149967,13 @@
       "id": "test-suite:7c11e457c656922ac724",
       "sourcePath": "frontend/src/lib/responseCoverageContract.test.ts",
       "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:87747b0f6eefad9d7607",
+      "sourcePath": "frontend/src/lib/responseIcons.test.ts",
+      "declaredTests": 3,
       "skipLocations": [],
       "focusLocations": []
     },
