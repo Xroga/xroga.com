@@ -9,6 +9,7 @@ export interface WebSourceItem {
   title: string;
   url: string;
   snippet: string;
+  publishedAt?: string;
   source?: string;
   thumbnailUrl?: string;
   siteDomain?: string;
