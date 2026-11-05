@@ -25,6 +25,20 @@ jobs:
         run: npx tsx --test backend/src/ai/researchSearchProvider.test.ts backend/src/ai/black-hole/webSearchIntent.test.ts backend/src/ai/black-hole/webIntelligence.test.ts
       - name: Type-check workspace frontend
         run: npx tsc --noEmit --project frontend/tsconfig.json
+      - name: Inspect original native conversion review bindings (diagnostic only)
+        run: |
+          node --input-type=module <<'NODE'
+          import {readFileSync,existsSync} from 'node:fs';
+          import {createHash} from 'node:crypto';
+          const hash=x=>createHash('sha256').update(x.replace(/\\r\\n/g,'\\n')).digest('hex');
+          const registry=JSON.parse(readFileSync('docs/xroga/security/caller-reviews.json','utf8'));
+          const paths=new Set(['backend/src/ai/pipeline.ts','backend/src/ai/research.ts','backend/src/ai/parallelWeb.ts','backend/src/ai/parallelDispatch.ts','frontend/src/lib/api.ts','frontend/src/context/TerminalChatContext.tsx','frontend/src/lib/runLightLaneChat.ts','frontend/src/components/terminal/TerminalChatBar.tsx']);
+          for(const review of registry.reviews??[]){
+            if(review.disposition!=='NOT_PERSISTENCE'||!paths.has(review.path)||!existsSync(review.path))continue;
+            const current=hash(readFileSync(review.path,'utf8'));
+            if(current!==review.sourceSha256)console.log(JSON.stringify({path:review.path,id:review.id,previous:review.sourceSha256,current,callIds:review.callIds,structuredOrigin:!!review.structuredOrigin}));
+          }
+          NODE
       - name: Inspect frozen semantic source bindings (diagnostic only)
         run: |
           node --input-type=module <<'NODE'
