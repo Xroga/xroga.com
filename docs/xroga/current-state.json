@@ -2,14 +2,14 @@
   "version": "1.0",
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
-    "branch": "feat/mic-mobile-main-20261031",
-    "sha": "c6b2f05ed5f07ee188bdbaa7afd29891070b584f",
-    "sourceTimestampUtc": "2026-10-31T04:15:58+05:00",
-    "auditStartedUtc": "2026-10-31T01:28:02.145Z",
+    "branch": "codex/deepseek-search-os-20261105",
+    "sha": "24a661a2da01020c848a69bf8389da644c9e7831",
+    "sourceTimestampUtc": "2026-11-05T23:39:50+05:00",
+    "auditStartedUtc": "2026-11-05T19:32:04.145Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
-    "node": "v24.18.0",
-    "npm": "11.16.0",
+    "node": "v22.21.1",
+    "npm": "10.9.4",
     "lockfiles": [
       "backend/package-lock.json",
       "deploy/browser-worker/package-lock.json",
@@ -25,6 +25,7 @@
       ".github/workflows/command3-auth-browser.yml",
       ".github/workflows/command4-authority.yml",
       ".github/workflows/community-security.yml",
+      ".github/workflows/deepseek-search-os-check.yml",
       ".github/workflows/feedback-rls.yml",
       ".github/workflows/fly-deploy.yml",
       ".github/workflows/fly-sandbox-browser-verification.yml",
@@ -251,16 +252,18 @@
       "id": "surface:65cb0aba3b036f66089f",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/answerCoverage.ts",
-      "sha256": "2fe459c10f9a575d285c711cae2551494dd89ee5af8f679d32dae8c680981d2d",
+      "sha256": "4ee83651baf8dddcc7dbd3cf9e7eb4ab500b3c9d423bf82cc3a7dd1e2c5f9788",
       "symbols": [
         "boundary",
         "branching",
         "carrier",
         "collision",
         "coverage",
+        "declines",
         "drifting",
         "evidence",
         "existing",
+        "figures",
         "item",
         "items",
         "kept",
@@ -272,6 +275,8 @@
         "persistent",
         "plan",
         "prepareAnswerCoverage",
+        "proseIds",
+        "quantitativeScenarioSupport",
         "quoteIssues",
         "quoted",
         "relevance",
@@ -280,10 +285,12 @@
         "requiredAccessBoundarySupport",
         "requirements",
         "result",
+        "scenario",
         "sentence",
         "sentences",
         "suffix",
         "system",
+        "text",
         "topic"
       ],
       "imports": [
@@ -2017,7 +2024,7 @@
       "id": "surface:0e78a2534aef2dadd6c0",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/black-hole/webIntelligence.ts",
-      "sha256": "1ed96ece032e5d48387485d493c2c5d3d0f08536ecdc8a34ec809e044df99d19",
+      "sha256": "e93f748837721d3246bcd35aab3a80092268b4f67e7c7b0e89cb7932db8614b2",
       "symbols": [
         "ACTIONS",
         "WebAction",
@@ -5319,7 +5326,7 @@
       "id": "surface:7d07dd00cd58533729b5",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/parallelApproval.ts",
-      "sha256": "da349e35d372b943dd59b8e9896f2c64b40cfd596089ef522040adbd630fc2ef",
+      "sha256": "c34b0453c737f0cb7c9d7f849e2f4be3bbabee5c92129a811110407ed4c3f2c0",
       "symbols": [
         "Operation",
         "ParallelAdmission",
@@ -5333,13 +5340,18 @@
         "args",
         "attempt",
         "body",
+        "cached",
         "check",
+        "child",
+        "childStarted",
+        "childState",
         "confirmation",
         "consumed",
         "context",
         "db",
         "denied",
         "digest",
+        "dispatched",
         "executeParallelNativeAction",
         "extractUrls",
         "finish",
@@ -5348,23 +5360,19 @@
         "modelScope",
         "nonce",
         "operation",
-        "page",
-        "parsed",
-        "pdfParse",
         "prepareParallelApproval",
         "proof",
+        "raw",
         "request",
         "requireParallelAdmission",
         "requireRetrievalOnly",
         "response",
-        "results",
+        "result",
+        "retrievalOperation",
         "started",
         "state",
-        "text",
         "toolkit",
         "unsigned",
-        "url",
-        "urls",
         "useCase",
         "value",
         "withAnswer"
@@ -5387,16 +5395,19 @@
         "../services/publish/nativeReleaseAdmission.js",
         "./parallelDispatch.js",
         "./researchAnswer.js",
+        "./researchRetrievalCache.js",
+        "./researchRetrievalPlan.js",
         "./researchSearchProvider.js",
         "./runStore.js",
         "./tenantModelDispatch.js",
         "node:crypto",
-        "node:module",
         "node:util"
       ],
       "runtimeImports": [
         "backend/src/ai/parallelDispatch.ts",
         "backend/src/ai/researchAnswer.ts",
+        "backend/src/ai/researchRetrievalCache.ts",
+        "backend/src/ai/researchRetrievalPlan.ts",
         "backend/src/ai/researchSearchProvider.ts",
         "backend/src/ai/runStore.ts",
         "backend/src/ai/tenantModelDispatch.ts",
@@ -5430,7 +5441,6 @@
       ],
       "externalProviderDependencies": [
         "node:crypto",
-        "node:module",
         "node:util"
       ],
       "authBoundary": [
@@ -5440,8 +5450,8 @@
         "backend/src/ai/parallelApproval.ts#identity"
       ],
       "tenantBoundary": [
-        "backend/src/ai/parallelApproval.ts:85 (user_id)",
-        "backend/src/ai/parallelApproval.ts:88 (user_id)"
+        "backend/src/ai/parallelApproval.ts:84 (user_id)",
+        "backend/src/ai/parallelApproval.ts:87 (user_id)"
       ],
       "approvalBoundary": [
         "backend/src/ai/parallelApproval.ts#actionPlanDigest",
@@ -5465,9 +5475,10 @@
       "id": "surface:78d9ec4b29ef687ea76d",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/parallelDispatch.ts",
-      "sha256": "c0e69c055b5f56a7157d32f192856ee17d5c00c31866c02cb3e8fe9513e060ff",
+      "sha256": "b25c7116e5fa6b4cf495c99fcbea82b2414becede847ed423e949780aff46683",
       "symbols": [
         "Operation",
+        "actualAmount",
         "admission",
         "amount",
         "attempt",
@@ -5503,6 +5514,7 @@
         "settledVerified",
         "signal",
         "size",
+        "target",
         "text",
         "units",
         "url"
@@ -5522,7 +5534,8 @@
         "./runStore.js",
         "./tenantModelDispatch.js",
         "./webBudget.js",
-        "node:crypto"
+        "node:crypto",
+        "node:dns/promises"
       ],
       "runtimeImports": [
         "backend/src/ai/parallelApproval.ts",
@@ -5545,22 +5558,23 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/parallelApproval.ts:119",
+        "backend/src/ai/parallelApproval.ts:118",
         "backend/src/ai/parallelWeb.security.test.ts:15",
-        "backend/src/ai/parallelWeb.ts:4"
+        "backend/src/ai/parallelWeb.ts:6"
       ],
       "reachable": true,
       "persistenceDependencies": [
         "swarm_runs"
       ],
       "externalProviderDependencies": [
-        "node:crypto"
+        "node:crypto",
+        "node:dns/promises"
       ],
       "authBoundary": [
         "backend/src/ai/parallelDispatch.ts#AuthorityError"
       ],
       "tenantBoundary": [
-        "backend/src/ai/parallelDispatch.ts:48 (user_id)"
+        "backend/src/ai/parallelDispatch.ts:51 (user_id)"
       ],
       "approvalBoundary": [
         "backend/src/ai/parallelDispatch.ts#prepareParallelApproval"
@@ -5586,42 +5600,33 @@
       "id": "surface:29af688b2fe1eb19f9b0",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/parallelWeb.ts",
-      "sha256": "32645873d238034ae3cdcb08b110c03674bb2195e19a6298e8de1ea2d8a35783",
+      "sha256": "ebdcf5dc139db9d654f3d0b83c1c7f2e11b816655b50952df5b8dd8e2e4a1460",
       "symbols": [
-        "CACHE_ENTRIES_MAX",
         "ParallelResult",
         "ParallelSource",
         "annotation",
         "answer",
-        "cacheSearch",
-        "cachedSearch",
+        "body",
         "contentItems",
-        "context",
         "data",
-        "entry",
         "hit",
         "item",
-        "key",
         "objective",
         "parallelExtract",
         "parallelResponses",
         "parallelSearch",
         "pending",
         "pendingApproval",
-        "privateSearchCache",
         "queries",
-        "refresh",
         "response",
         "result",
         "safePublicUrl",
         "safeText",
         "scope",
-        "searchCacheKey",
         "seen",
         "sources",
         "urls",
-        "value",
-        "volatile"
+        "value"
       ],
       "imports": [
         "../lib/truthfulExecution.js",
@@ -5630,12 +5635,14 @@
         "../security/egress/urlPolicy.js",
         "../security/tenantContext.js",
         "./parallelDispatch.js",
+        "./researchRetrievalCache.js",
         "./tenantModelDispatch.js",
         "./webBudget.js",
         "node:crypto"
       ],
       "runtimeImports": [
         "backend/src/ai/parallelDispatch.ts",
+        "backend/src/ai/researchRetrievalCache.ts",
         "backend/src/ai/tenantModelDispatch.ts",
         "backend/src/ai/webBudget.ts",
         "backend/src/lib/truthfulExecution.ts",
@@ -5651,7 +5658,8 @@
       "callers": [
         "backend/src/ai/black-hole/webIntelligence.ts:19",
         "backend/src/ai/parallelWeb.security.test.ts:8",
-        "backend/src/ai/research.ts:7"
+        "backend/src/ai/research.ts:7",
+        "backend/src/ai/researchRetrievalCache.test.ts:5"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -5666,7 +5674,8 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
-        "backend/src/ai/parallelWeb.security.test.ts"
+        "backend/src/ai/parallelWeb.security.test.ts",
+        "backend/src/ai/researchRetrievalCache.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -6903,7 +6912,7 @@
       "id": "surface:087b17b9e17fc86ddade",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/prompts.ts",
-      "sha256": "a536e5148ae6deffaba07f9353f8e23dcac088ca978e4475855c396cb500d683",
+      "sha256": "aad098c005e1052f5ec48cbbb29cf489b3b2c98dce92fddcfa599716dde0d407",
       "symbols": [
         "BRIEF_RESEARCH_RESPONSE_RE",
         "BUILDER_SYSTEM",
@@ -8223,7 +8232,7 @@
       "id": "surface:794bcc5ea45ebaad109e",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/researchAnswer.ts",
-      "sha256": "15cdb188c074805776195eb937d1c805c41e8545db3b1ec49c153524987df43d",
+      "sha256": "f596ec4c96a204867987bf41e52a2a725dc34e3891bc025c7ec2d92a038b1048",
       "symbols": [
         "RESEARCH_ANSWER_MAXIMUM_MICRO_USD",
         "ResearchAnswerRequest",
@@ -8274,7 +8283,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/parallelApproval.ts:20",
+        "backend/src/ai/parallelApproval.ts:19",
         "backend/src/ai/researchAnswer.test.ts:4"
       ],
       "reachable": true,
@@ -8303,11 +8312,165 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:4a006fa08a104a775add",
+      "subsystem": "ai_execution",
+      "sourcePath": "backend/src/ai/researchRetrievalCache.ts",
+      "sha256": "ce8c965512dad6d31ef1e1f1c6a9ecbdd5fb53ad1de38fcd376568555141c7d0",
+      "symbols": [
+        "activeScope",
+        "attempt",
+        "context",
+        "readRetrievalCache",
+        "result",
+        "retrievalCacheKey",
+        "retrievalRefreshRequested",
+        "retrievalTtlSeconds",
+        "validCachedRetrieval",
+        "writeRetrievalCache"
+      ],
+      "imports": [
+        "../security/egress/dataClassification.js",
+        "../security/egress/urlPolicy.js",
+        "../security/serviceRoleGuard.js",
+        "../security/tenantContext.js",
+        "./researchRetrievalPlan.js",
+        "./runStore.js",
+        "./tenantModelDispatch.js",
+        "node:crypto"
+      ],
+      "runtimeImports": [
+        "backend/src/ai/runStore.ts",
+        "backend/src/ai/tenantModelDispatch.ts",
+        "backend/src/security/egress/dataClassification.ts",
+        "backend/src/security/egress/urlPolicy.ts",
+        "backend/src/security/serviceRoleGuard.ts",
+        "backend/src/security/tenantContext.ts"
+      ],
+      "entryPoints": [
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
+      ],
+      "callers": [
+        "backend/src/ai/parallelApproval.ts:23",
+        "backend/src/ai/parallelWeb.ts:3",
+        "backend/src/ai/researchRetrievalCache.test.ts:4",
+        "backend/src/ai/researchRetrievalPlan.test.ts:5"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [
+        "swarm_runs",
+        "xroga_private_retrieval_cache"
+      ],
+      "externalProviderDependencies": [
+        "node:crypto"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [
+        "backend/src/ai/researchRetrievalCache.ts:15 (user_id)",
+        "backend/src/ai/researchRetrievalCache.ts:48 (user_id)"
+      ],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [
+        "backend/src/ai/researchRetrievalCache.ts#RetrievalReceipt"
+      ],
+      "testCoverage": [
+        "backend/src/ai/researchRetrievalCache.test.ts",
+        "backend/src/ai/researchRetrievalPlan.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:9c610151661921946364",
+      "subsystem": "ai_execution",
+      "sourcePath": "backend/src/ai/researchRetrievalPlan.ts",
+      "sha256": "026b7d52037925518507ce14e9d4a800f12d6070a718f3da24c7f649bfeab6df",
+      "symbols": [
+        "RetrievalKind",
+        "RetrievalOperation",
+        "RetrievalPage",
+        "RetrievalReceipt",
+        "base",
+        "batch",
+        "batches",
+        "call",
+        "count",
+        "fetchNext",
+        "fetched",
+        "first",
+        "focus",
+        "host",
+        "i",
+        "inspected",
+        "inspectedPages",
+        "key",
+        "kind",
+        "lastRequestId",
+        "maximum",
+        "ordered",
+        "page",
+        "previous",
+        "query",
+        "receipt",
+        "retrievalMaximum",
+        "retrievalOperationLimit",
+        "rows",
+        "runApprovedRetrievalPlan",
+        "search",
+        "snapshot",
+        "steps",
+        "url",
+        "value"
+      ],
+      "imports": [
+        "../security/egress/urlPolicy.js",
+        "./researchSearchProvider.js"
+      ],
+      "runtimeImports": [
+        "backend/src/ai/researchSearchProvider.ts",
+        "backend/src/security/egress/urlPolicy.ts"
+      ],
+      "entryPoints": [
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
+      ],
+      "callers": [
+        "backend/src/ai/parallelApproval.ts:22",
+        "backend/src/ai/researchRetrievalPlan.test.ts:3"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [
+        "backend/src/ai/researchRetrievalPlan.ts#RetrievalReceipt",
+        "backend/src/ai/researchRetrievalPlan.ts#receipt"
+      ],
+      "testCoverage": [
+        "backend/src/ai/researchRetrievalPlan.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:5f676989c84806ca6213",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/researchSearchProvider.ts",
-      "sha256": "5ddaf7ffadb834fbd394b79548848551d51340c3f747ec9aea0ee82dcbc67ac9",
+      "sha256": "56a59321e9c13779f12fc3e9c515b8c2f8cbed9637af7fb872d5229ed4b93db8",
       "symbols": [
+        "DEEPSEEK_FETCH_URL",
         "DEEPSEEK_QUERY_MAX",
         "DEEPSEEK_SEARCH_MICRO_USD",
         "DEEPSEEK_SEARCH_RESULTS",
@@ -8319,7 +8482,9 @@
         "deepseekSearchBody",
         "deepseekSearchCredential",
         "excerpt",
+        "normaliseDeepseekFetch",
         "normaliseDeepseekSearch",
+        "page",
         "query",
         "question",
         "r",
@@ -8337,8 +8502,10 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/parallelApproval.ts:22",
+        "backend/src/ai/parallelApproval.ts:21",
         "backend/src/ai/parallelDispatch.ts:15",
+        "backend/src/ai/researchRetrievalPlan.test.ts:4",
+        "backend/src/ai/researchRetrievalPlan.ts:2",
         "backend/src/ai/researchSearchProvider.test.ts:3"
       ],
       "reachable": true,
@@ -8352,6 +8519,7 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/ai/researchRetrievalPlan.test.ts",
         "backend/src/ai/researchSearchProvider.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -9077,6 +9245,7 @@
         "backend/src/ai/parallelWeb.security.test.ts:20",
         "backend/src/ai/pipeline.ts:90",
         "backend/src/ai/repoSummarize.security.test.ts:8",
+        "backend/src/ai/researchRetrievalCache.ts:8",
         "backend/src/ai/runReconciler.test.ts:12",
         "backend/src/ai/runStore.authority.test.ts:5",
         "backend/src/ai/runStore.cancellationRace.test.ts:5",
@@ -11978,10 +12147,11 @@
         "backend/src/ai/openaiCompat.egress.test.ts:8",
         "backend/src/ai/parallelApproval.ts:15",
         "backend/src/ai/parallelDispatch.ts:10",
-        "backend/src/ai/parallelWeb.ts:3",
+        "backend/src/ai/parallelWeb.ts:5",
         "backend/src/ai/pipeline.ts:6",
         "backend/src/ai/qa.ts:2",
         "backend/src/ai/repoSummarize.ts:18",
+        "backend/src/ai/researchRetrievalCache.ts:4",
         "backend/src/ai/softwareAgent/xrogaAgentModel.ts:4",
         "backend/src/ai/sonnetApproval.ts:12",
         "backend/src/ai/tenantModelDispatch.test.ts:6",
@@ -13352,7 +13522,7 @@
       "callers": [
         "backend/src/ai/parallelDispatch.ts:13",
         "backend/src/ai/parallelWeb.security.test.ts:11",
-        "backend/src/ai/parallelWeb.ts:8",
+        "backend/src/ai/parallelWeb.ts:2",
         "backend/src/security/webAccounting.local.integration.ts:7"
       ],
       "reachable": true,
@@ -24683,7 +24853,7 @@
         "backend/src/ai/black-hole/webIntelligence.ts:6",
         "backend/src/ai/executionRuntime.ts:2",
         "backend/src/ai/parallelApproval.ts:18",
-        "backend/src/ai/parallelWeb.ts:6",
+        "backend/src/ai/parallelWeb.ts:8",
         "backend/src/ai/pipeline.ts:219",
         "backend/src/ai/research.ts:5",
         "backend/src/ai/runTrace.ts:7",
@@ -33674,6 +33844,7 @@
         "backend/src/index.ts",
         "frontend/src/app/api/browser-view/route.ts",
         "frontend/src/app/api/image-fetch/route.ts",
+        "frontend/src/app/api/site-icon/route.ts",
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
@@ -33751,7 +33922,8 @@
         "backend/src/ai/openaiCompat.ts:14",
         "backend/src/ai/parallelApproval.ts:8",
         "backend/src/ai/parallelDispatch.ts:8",
-        "backend/src/ai/parallelWeb.ts:9",
+        "backend/src/ai/parallelWeb.ts:10",
+        "backend/src/ai/researchRetrievalCache.ts:6",
         "backend/src/ai/sonnetApproval.ts:17",
         "backend/src/ai/voiceBudget.ts:5",
         "backend/src/builder/hosting/authority.ts:4",
@@ -33852,7 +34024,7 @@
         "backend/src/ai/executionRuntime.test.ts:15",
         "backend/src/ai/parallelApproval.ts:9",
         "backend/src/ai/parallelDispatch.ts:5",
-        "backend/src/ai/parallelWeb.ts:10",
+        "backend/src/ai/parallelWeb.ts:11",
         "backend/src/ai/pipeline.ts:2",
         "backend/src/ai/providerRuntime.ts:5",
         "backend/src/ai/sonnetApproval.ts:18",
@@ -34191,8 +34363,11 @@
         "backend/src/ai/attachments.ts:7",
         "backend/src/ai/openaiCompat.ts:15",
         "backend/src/ai/parallelApproval.ts:17",
+        "backend/src/ai/parallelDispatch.ts:17",
         "backend/src/ai/parallelDispatch.ts:7",
-        "backend/src/ai/parallelWeb.ts:7",
+        "backend/src/ai/parallelWeb.ts:9",
+        "backend/src/ai/researchRetrievalCache.ts:5",
+        "backend/src/ai/researchRetrievalPlan.ts:1",
         "backend/src/lib/deployVerify.ts:1",
         "backend/src/lib/publishingProviderRequest.ts:1",
         "backend/src/lib/shipVerify.ts:6",
@@ -34506,6 +34681,7 @@
         "backend/src/ai/parallelApproval.ts:4",
         "backend/src/ai/parallelDispatch.ts:4",
         "backend/src/ai/providerHealthStore.ts:29",
+        "backend/src/ai/researchRetrievalCache.ts:3",
         "backend/src/ai/resourceLedger.ts:9",
         "backend/src/ai/resourceMeter.ts:18",
         "backend/src/ai/routingOutcomes.ts:2",
@@ -34630,7 +34806,7 @@
         "backend/src/ai/parallelApproval.ts:3",
         "backend/src/ai/parallelDispatch.ts:3",
         "backend/src/ai/parallelWeb.security.test.ts:9",
-        "backend/src/ai/parallelWeb.ts:2",
+        "backend/src/ai/parallelWeb.ts:4",
         "backend/src/ai/pipeline.ts:4",
         "backend/src/ai/postCompletionAccounting.ts:5",
         "backend/src/ai/providerBudget.test.ts:3",
@@ -34640,6 +34816,9 @@
         "backend/src/ai/repoSummarize.security.test.ts:6",
         "backend/src/ai/repoSummarize.ts:19",
         "backend/src/ai/researchAnswer.test.ts:9",
+        "backend/src/ai/researchRetrievalCache.test.ts:3",
+        "backend/src/ai/researchRetrievalCache.ts:2",
+        "backend/src/ai/researchRetrievalPlan.test.ts:6",
         "backend/src/ai/resourceLedger.test.ts:5",
         "backend/src/ai/resourceLedger.ts:10",
         "backend/src/ai/resourceMeter.ts:17",
@@ -34938,6 +35117,8 @@
         "backend/src/ai/quota.failure.test.ts",
         "backend/src/ai/repoSummarize.security.test.ts",
         "backend/src/ai/researchAnswer.test.ts",
+        "backend/src/ai/researchRetrievalCache.test.ts",
+        "backend/src/ai/researchRetrievalPlan.test.ts",
         "backend/src/ai/resourceLedger.test.ts",
         "backend/src/ai/routingOutcomes.receipt.test.ts",
         "backend/src/ai/softwareAgent/softwareAgentSdkBoundary.test.ts",
@@ -39628,7 +39809,7 @@
       "id": "surface:aac124d6e71fc0bcd5a6",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/researchResult.ts",
-      "sha256": "8382a77b8a23817d945873566354960b6e07412a12d57a73e3c06511ce811dda",
+      "sha256": "4f313ff53e2776bc643337a97f9d50dd82f59fc4ea35928fe6b87086c6db97cb",
       "symbols": [
         "MAX_BYTES",
         "ResearchResult",
@@ -39685,7 +39866,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/parallelApproval.ts:21",
+        "backend/src/ai/parallelApproval.ts:20",
         "backend/src/ai/researchAnswer.test.ts:14",
         "backend/src/ai/researchAnswer.test.ts:8",
         "backend/src/ai/researchAnswer.ts:4",
@@ -59429,6 +59610,52 @@
       "runtimeImports": [],
       "entryPoints": [
         "frontend/src/app/api/showcase/aura/health/route.ts"
+      ],
+      "callers": [],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "next/server"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:1fe0d43760349d0f04dd",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/app/api/site-icon/route.ts",
+      "sha256": "fee600696475e45a166efb0fe37d4b309b26a2911d7c68d2289542711982c111",
+      "symbols": [
+        "GET",
+        "bytes",
+        "domain",
+        "res",
+        "runtime",
+        "type"
+      ],
+      "imports": [
+        "@/lib/server/publicEgress",
+        "@/lib/siteIcon",
+        "@/lib/untrustedProxyResponse",
+        "next/server"
+      ],
+      "runtimeImports": [
+        "frontend/src/lib/server/publicEgress.ts",
+        "frontend/src/lib/siteIcon.ts",
+        "frontend/src/lib/untrustedProxyResponse.ts"
+      ],
+      "entryPoints": [
+        "frontend/src/app/api/site-icon/route.ts"
       ],
       "callers": [],
       "reachable": true,
@@ -88022,9 +88249,10 @@
       "id": "surface:f8646cfeb40e43123392",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/SourceV2.tsx",
-      "sha256": "0b08ce9a1828c41cdc58bfac8bf94dad46816bcdea5ed653331e21af20dd022e",
+      "sha256": "9296ca07d218634feaf57cae381fcfd3407a69c09f8e584668c4a4b4175905d7",
       "symbols": [
         "InlineImageV2",
+        "SiteLogoV2",
         "SourceLinkV2",
         "SourceMarkV2",
         "SourceRegistryContextV2",
@@ -109551,11 +109779,13 @@
       ],
       "entryPoints": [
         "frontend/src/app/api/browser-view/route.ts",
-        "frontend/src/app/api/image-fetch/route.ts"
+        "frontend/src/app/api/image-fetch/route.ts",
+        "frontend/src/app/api/site-icon/route.ts"
       ],
       "callers": [
         "frontend/src/app/api/browser-view/route.ts:3",
-        "frontend/src/app/api/image-fetch/route.ts:3"
+        "frontend/src/app/api/image-fetch/route.ts:3",
+        "frontend/src/app/api/site-icon/route.ts:3"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -110238,6 +110468,48 @@
       "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
       "knownRisk": "Live provider state and full security behavior not established by static inventory.",
       "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:b49e209a56228807c617",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/lib/siteIcon.ts",
+      "sha256": "9b250245715cacf9e3638a2301c0be0f68791521fbe14db3e47195f4c57f7890",
+      "symbols": [
+        "DOMAIN",
+        "ICON_HOST",
+        "MAX_ICON_BYTES",
+        "at",
+        "isIconDomain",
+        "sniffRasterImage"
+      ],
+      "imports": [],
+      "runtimeImports": [],
+      "entryPoints": [
+        "frontend/src/app/api/site-icon/route.ts"
+      ],
+      "callers": [
+        "frontend/src/app/api/site-icon/route.ts:4",
+        "frontend/src/lib/siteIcon.test.ts:3"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "declared-host:cdn.deepseek.com"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "frontend/src/lib/siteIcon.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
@@ -113009,11 +113281,13 @@
       ],
       "entryPoints": [
         "frontend/src/app/api/browser-view/route.ts",
-        "frontend/src/app/api/image-fetch/route.ts"
+        "frontend/src/app/api/image-fetch/route.ts",
+        "frontend/src/app/api/site-icon/route.ts"
       ],
       "callers": [
         "frontend/src/app/api/browser-view/route.ts:2",
         "frontend/src/app/api/image-fetch/route.ts:2",
+        "frontend/src/app/api/site-icon/route.ts:2",
         "frontend/src/lib/untrustedProxyResponse.test.ts:3"
       ],
       "reachable": true,
@@ -113047,7 +113321,8 @@
       "runtimeImports": [],
       "entryPoints": [
         "frontend/src/app/api/browser-view/route.ts",
-        "frontend/src/app/api/image-fetch/route.ts"
+        "frontend/src/app/api/image-fetch/route.ts",
+        "frontend/src/app/api/site-icon/route.ts"
       ],
       "callers": [
         "frontend/next.config.mjs:4",
@@ -118451,6 +118726,7 @@
         "scripts/local/run-task.mjs:7",
         "scripts/security/audit-tenant-policies.mjs:7",
         "scripts/security/dependency-advisories.mjs:7",
+        "scripts/security/search-os.database.test.mjs:2",
         "scripts/security/tenant-rls.database.test.mjs:9",
         "scripts/xroga/check-runtime-config.mjs:5",
         "scripts/xroga/golden-journeys.mjs:5",
@@ -118480,6 +118756,7 @@
       ],
       "testCoverage": [
         "scripts/ci/baseline.test.mjs",
+        "scripts/security/search-os.database.test.mjs",
         "scripts/security/tenant-rls.database.test.mjs",
         "scripts/xroga/runtime-config.test.mjs"
       ],
@@ -135823,6 +136100,13 @@
       "version": "20261105090000",
       "order": 162,
       "sha256": "0bae415909da3d057314c904bafad78345ebbd05e5b75ffe1db276171a325b2d"
+    },
+    {
+      "id": "migration:ac60236297e9099dc72a",
+      "sourcePath": "supabase/migrations/20261105230000_deepseek_fetch_private_cache.sql",
+      "version": "20261105230000",
+      "order": 163,
+      "sha256": "7a809e88be2ee73c97d79616280b8d20e8f9eccdb2692e0e79d04c583c7a326f"
     }
   ],
   "workflows": [
@@ -135905,12 +136189,15 @@
     {
       "id": "workflow:00045057b8dae4acca67",
       "sourcePath": ".github/workflows/deepseek-search-os-check.yml",
-      "sha256": "3f9c6dc7a40e972553bf33d41057d01d4e594f13fb0f2943ac2a6ff40897658b",
+      "sha256": "587b639792a0754115d54896b0dd338bd2aa23b596d9d923fa5e65d90e2d0fb5",
       "sourceEntrypoints": [
         "backend/src/ai/researchSearchProvider.test.ts",
+        "scripts/ci/validate-migrations.mjs",
         "scripts/security/audit-egress-callers.mjs",
+        "scripts/security/audit-tenant-policies.mjs",
         "scripts/xroga/inventory.mjs",
-        "scripts/xroga/phase-two.mjs"
+        "scripts/xroga/phase-two.mjs",
+        "scripts/xroga/validate-requirements-ledger.mjs"
       ],
       "hasSchedule": false
     },
@@ -136022,7 +136309,7 @@
     {
       "id": "workflow:78c19ecd7c4e5844f961",
       "sourcePath": ".github/workflows/xroga-tenant-security.yml",
-      "sha256": "85e19e642dc58c1d74068fe4c765ee9a7e8092b29ae1018f7bf44026620888e5",
+      "sha256": "866376b4bfb1564a56aa27de7baec5fb7bdf9d8cbb9eefe37198b6a52d9d2b73",
       "sourceEntrypoints": [
         "scripts/ci/prepare-pr-integration.mjs",
         "scripts/security/audit-credential-usage.mjs",
@@ -136031,6 +136318,7 @@
         "scripts/security/audit-egress-callers.test.mjs",
         "scripts/security/audit-tenant-policies.mjs",
         "scripts/security/audit-tenant-policies.test.mjs",
+        "scripts/security/search-os.database.test.mjs",
         "scripts/security/tenant-rls.database.test.mjs"
       ],
       "hasSchedule": false
@@ -143798,7 +144086,7 @@
     {
       "id": "test-suite:673c1c4f2d2cfc4719dd",
       "sourcePath": "backend/src/ai/presentationRelevance.test.ts",
-      "declaredTests": 9,
+      "declaredTests": 11,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -143973,7 +144261,7 @@
     {
       "id": "test-suite:d2498a6171b68795395c",
       "sourcePath": "backend/src/ai/researchAnswer.test.ts",
-      "declaredTests": 3,
+      "declaredTests": 4,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -143981,6 +144269,20 @@
       "id": "test-suite:23d8d42196f056421b09",
       "sourcePath": "backend/src/ai/researchLive.test.ts",
       "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:3e8654ca753f95383be0",
+      "sourcePath": "backend/src/ai/researchRetrievalCache.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:7a13f02884be4f4892f2",
+      "sourcePath": "backend/src/ai/researchRetrievalPlan.test.ts",
+      "declaredTests": 8,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -149928,6 +150230,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:241e940210fde14c5643",
+      "sourcePath": "frontend/src/lib/siteIcon.test.ts",
+      "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:ca925f41fbdb82f16d20",
       "sourcePath": "frontend/src/lib/softwareHeroType.test.ts",
       "declaredTests": 5,
@@ -150645,6 +150954,13 @@
       "id": "test-suite:7880f7d68bf575b7b99a",
       "sourcePath": "scripts/security/schema-catalog.test.mjs",
       "declaredTests": 3,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:34964b03b06b9c33b5ee",
+      "sourcePath": "scripts/security/search-os.database.test.mjs",
+      "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
     },

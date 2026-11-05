@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "dea31f2e18ca6733579c5bc5fed2ca1b3f78c5fb",
+  "source_sha": "24a661a2da01020c848a69bf8389da644c9e7831",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -2567,6 +2567,40 @@
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
         "frontend/src/components/homepage-next/phase1/providerMarks.ts"
+      ],
+      "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
+      "evidence_ids": []
+    },
+    {
+      "dependency_id": "endpoint-cdn-deepseek-com",
+      "provider": "Source-defined endpoint cdn.deepseek.com",
+      "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
+      "environment": "PRODUCTION",
+      "state": "CONFIGURED_BUT_UNVERIFIED",
+      "runtime_owner": "backend/API or explicitly proposed component",
+      "config_sources": [
+        "frontend/src/lib/siteIcon.ts"
+      ],
+      "hostnames": [
+        "cdn.deepseek.com"
+      ],
+      "resource_id": null,
+      "region": "Not verified",
+      "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
+      "secret_names": [],
+      "inbound_callers": [
+        "api or named source callers; operational reachability not inferred"
+      ],
+      "outbound_dependencies": [],
+      "health_readiness": "Reference/asset hosts may need no service health check; adapter admission/liveness is unverified. No external action or paid health probe performed",
+      "timeout": "Adapter-specific; no fabricated central timeout",
+      "retry_policy": "Source-specific; no live retry test claimed",
+      "idempotency_expectation": "Required for consequential writes; verify canonical authority in Command 008",
+      "data_classification": "User data may be involved; tenant scope requires independent checks",
+      "failure_mode": "Safe user-facing failure required; internal details restricted",
+      "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
+      "observability_source": [
+        "frontend/src/lib/siteIcon.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
       "evidence_ids": []
@@ -16239,6 +16273,11 @@
       "role": "Existing runtime/build/verification configuration"
     },
     {
+      "path": ".github/workflows/deepseek-search-os-check.yml",
+      "presence": "PRESENT",
+      "role": "Existing runtime/build/verification configuration"
+    },
+    {
       "path": ".github/workflows/feedback-rls.yml",
       "presence": "PRESENT",
       "role": "Existing runtime/build/verification configuration"
@@ -16338,6 +16377,10 @@
       "sha256": "0e07c0c0297bab03cbc8adf646ff1111ed04a8ec854b337237168d4d5f8e5f79"
     },
     {
+      "path": ".github/workflows/deepseek-search-os-check.yml",
+      "sha256": "587b639792a0754115d54896b0dd338bd2aa23b596d9d923fa5e65d90e2d0fb5"
+    },
+    {
       "path": ".github/workflows/feedback-rls.yml",
       "sha256": "f8e8eb43daa6d0ef6f94960143be6f484822732d825ff44f2830fd8b35b218a6"
     },
@@ -16387,7 +16430,7 @@
     },
     {
       "path": ".github/workflows/xroga-tenant-security.yml",
-      "sha256": "85e19e642dc58c1d74068fe4c765ee9a7e8092b29ae1018f7bf44026620888e5"
+      "sha256": "866376b4bfb1564a56aa27de7baec5fb7bdf9d8cbb9eefe37198b6a52d9d2b73"
     },
     {
       "path": "Dockerfile.api",
@@ -16395,7 +16438,7 @@
     },
     {
       "path": "backend/src/ai/answerCoverage.ts",
-      "sha256": "2fe459c10f9a575d285c711cae2551494dd89ee5af8f679d32dae8c680981d2d"
+      "sha256": "4ee83651baf8dddcc7dbd3cf9e7eb4ab500b3c9d423bf82cc3a7dd1e2c5f9788"
     },
     {
       "path": "backend/src/ai/architect.ts",
@@ -16491,7 +16534,7 @@
     },
     {
       "path": "backend/src/ai/black-hole/webIntelligence.ts",
-      "sha256": "d5924883b7e10022953a8dbf8401d1b2a5b4d39e0e304fafe2e66cf747aa2473"
+      "sha256": "e93f748837721d3246bcd35aab3a80092268b4f67e7c7b0e89cb7932db8614b2"
     },
     {
       "path": "backend/src/ai/buildImprovementMemory.ts",
@@ -16655,15 +16698,15 @@
     },
     {
       "path": "backend/src/ai/parallelApproval.ts",
-      "sha256": "3ae113999caad00037882cbe3f1cc72a7536a13b53e74403bf849dbda77cfeca"
+      "sha256": "c34b0453c737f0cb7c9d7f849e2f4be3bbabee5c92129a811110407ed4c3f2c0"
     },
     {
       "path": "backend/src/ai/parallelDispatch.ts",
-      "sha256": "ac3f222a927506239ccb3a51c40ccc5acee7329ea117c36c8654d0a6b8cdb15a"
+      "sha256": "b25c7116e5fa6b4cf495c99fcbea82b2414becede847ed423e949780aff46683"
     },
     {
       "path": "backend/src/ai/parallelWeb.ts",
-      "sha256": "66ce32a8f635a29173790e296461c8146183a8da42044e0a0a5a17e0d13049bc"
+      "sha256": "ebdcf5dc139db9d654f3d0b83c1c7f2e11b816655b50952df5b8dd8e2e4a1460"
     },
     {
       "path": "backend/src/ai/patchSafety.ts",
@@ -16679,7 +16722,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "d3742ca4dccc50daf99aa71d9896449957dde73798dc6d7c2a9c5ca5536cff32"
+      "sha256": "9587d0c4ce3d9eb6aa06c4e771d062a6bec740bb250e0f25b0d6e27f1cd62af0"
     },
     {
       "path": "backend/src/ai/postCompletionAccounting.ts",
@@ -16699,7 +16742,7 @@
     },
     {
       "path": "backend/src/ai/prompts.ts",
-      "sha256": "a536e5148ae6deffaba07f9353f8e23dcac088ca978e4475855c396cb500d683"
+      "sha256": "aad098c005e1052f5ec48cbbb29cf489b3b2c98dce92fddcfa599716dde0d407"
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
@@ -16747,15 +16790,23 @@
     },
     {
       "path": "backend/src/ai/research.ts",
-      "sha256": "9d3da3f252878821e8af7cc168f6b16928a870ecc891205e9242498663093da0"
+      "sha256": "9e3f1369432bc43977e3d29e5864c2c51556aa84cbe9edb670531c0e566b8f18"
     },
     {
       "path": "backend/src/ai/researchAnswer.ts",
-      "sha256": "c2ecfbb3624c8b779592d4f930aa216b4527f2e25939f49fa1f8d57becc54adc"
+      "sha256": "f596ec4c96a204867987bf41e52a2a725dc34e3891bc025c7ec2d92a038b1048"
+    },
+    {
+      "path": "backend/src/ai/researchRetrievalCache.ts",
+      "sha256": "ce8c965512dad6d31ef1e1f1c6a9ecbdd5fb53ad1de38fcd376568555141c7d0"
+    },
+    {
+      "path": "backend/src/ai/researchRetrievalPlan.ts",
+      "sha256": "026b7d52037925518507ce14e9d4a800f12d6070a718f3da24c7f649bfeab6df"
     },
     {
       "path": "backend/src/ai/researchSearchProvider.ts",
-      "sha256": "ed99c4a95c9108f8f188ca2fd623bf4c54022a2691954c9b97ea8acbf344d0eb"
+      "sha256": "56a59321e9c13779f12fc3e9c515b8c2f8cbed9637af7fb872d5229ed4b93db8"
     },
     {
       "path": "backend/src/ai/resourceLedger.ts",
@@ -18127,7 +18178,7 @@
     },
     {
       "path": "backend/src/routes/phase1.ts",
-      "sha256": "91b55da6a6beca61715b829c0087b10f90d2cc5bb7e2b7bce5500fbca50b2b7d"
+      "sha256": "34b577f7b90c801035d7f877e792a25a44449035b95e8ab78f7c5101959d80af"
     },
     {
       "path": "backend/src/routes/phase1BusinessPreflight.ts",
@@ -18779,7 +18830,7 @@
     },
     {
       "path": "backend/src/services/integrations/researchResult.ts",
-      "sha256": "8382a77b8a23817d945873566354960b6e07412a12d57a73e3c06511ce811dda"
+      "sha256": "4f313ff53e2776bc643337a97f9d50dd82f59fc4ea35928fe6b87086c6db97cb"
     },
     {
       "path": "backend/src/services/integrations/supabaseAccess.ts",
@@ -19860,6 +19911,10 @@
     {
       "path": "frontend/src/app/api/showcase/aura/health/route.ts",
       "sha256": "c1bd409fd77f9002cffeb2b45cef8419452cdb38ba80e939a1d6f3dc483c57ed"
+    },
+    {
+      "path": "frontend/src/app/api/site-icon/route.ts",
+      "sha256": "fee600696475e45a166efb0fe37d4b309b26a2911d7c68d2289542711982c111"
     },
     {
       "path": "frontend/src/app/auth/callback/route.ts",
@@ -21891,7 +21946,7 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/SourceV2.tsx",
-      "sha256": "0b08ce9a1828c41cdc58bfac8bf94dad46816bcdea5ed653331e21af20dd022e"
+      "sha256": "9296ca07d218634feaf57cae381fcfd3407a69c09f8e584668c4a4b4175905d7"
     },
     {
       "path": "frontend/src/components/response-experience-v2/StatusBadgeV2.tsx",
@@ -22299,7 +22354,7 @@
     },
     {
       "path": "frontend/src/components/terminal/ResponseSources.tsx",
-      "sha256": "0fd186c17e5d8ab081a61db58f16e171de43d5d8cc66727caccab5245f1a5fc7"
+      "sha256": "28e2f8a8b56ef46c21cf45b00b0f46436d59e817931cbf37c37a6b4a7cb64d05"
     },
     {
       "path": "frontend/src/components/terminal/RuntimeLogsButton.tsx",
@@ -22335,7 +22390,7 @@
     },
     {
       "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "sha256": "959ecdbdfe4da3c4cee1a79e2e4684f638df3ded77cf7ed9002bdafbd2ee8d0c"
+      "sha256": "43981cff009c478d0a8670d9c4a7c7de0340e9190f4a7015114d9de40046d1af"
     },
     {
       "path": "frontend/src/components/terminal/TerminalDock.tsx",
@@ -22383,7 +22438,7 @@
     },
     {
       "path": "frontend/src/components/terminal/WebSourcesPanel.tsx",
-      "sha256": "8cb2000ed030e5347f74d4f434d4392173bbad11f1851cd4eca90f68bb31eb86"
+      "sha256": "efbce27684a5861a0d0a919284cda364ab34adfd64ec7b1373e1a4afbada66d2"
     },
     {
       "path": "frontend/src/components/terminal/WorkspaceConnectionsStrip.tsx",
@@ -22659,7 +22714,7 @@
     },
     {
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "sha256": "e63361404059650e86323ce433c60037c52409a119beece8baf48acc90254c5b"
+      "sha256": "528de55e6f755a6b44d27003ac738c5f7f94890b24eb41a296fdcc33fb9cb009"
     },
     {
       "path": "frontend/src/context/TerminalScrollContext.tsx",
@@ -22707,7 +22762,7 @@
     },
     {
       "path": "frontend/src/lib/api.ts",
-      "sha256": "bf072296dc2828844620377cf54a58fafe4cbedfb1a796a8324b77b1f10aa0c0"
+      "sha256": "2b769c67ff03dbb40d3aeb82b203c06e34a49e9b77cea7abbfd9e554f99ab93d"
     },
     {
       "path": "frontend/src/lib/assistantCopy.ts",
@@ -23279,7 +23334,7 @@
     },
     {
       "path": "frontend/src/lib/runLightLaneChat.ts",
-      "sha256": "c56592637fe2a74c344c471dfc93b246133acba8db0882826b5e9cf595a80e83"
+      "sha256": "b7a37f8a75946009d4d4f8215658303346e40e41d5995bff79c30d0af79996a7"
     },
     {
       "path": "frontend/src/lib/safeDates.ts",
@@ -23287,7 +23342,7 @@
     },
     {
       "path": "frontend/src/lib/sanitizeChatMessages.ts",
-      "sha256": "08aed69e29becb483c25057b2fea1f9d2b27fbedb54dffb6b50cd74e194b4318"
+      "sha256": "dbe7f8d0f881822e75bdeb13224b8f29a9416c4573c2348fcba6d7bf553acee7"
     },
     {
       "path": "frontend/src/lib/scheduledFeedback.ts",
@@ -23364,6 +23419,10 @@
     {
       "path": "frontend/src/lib/siteHealthAudit.ts",
       "sha256": "8fffc4ba4413ae3ba0f5c99923fb7a8d01fb6b53193c191b24b38bae260c2f9a"
+    },
+    {
+      "path": "frontend/src/lib/siteIcon.ts",
+      "sha256": "9b250245715cacf9e3638a2301c0be0f68791521fbe14db3e47195f4c57f7890"
     },
     {
       "path": "frontend/src/lib/socialSharePack.ts",
@@ -24912,7 +24971,7 @@
       "hostname": "github.com",
       "protocol": "https:",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4064,
+      "line": 4067,
       "credentialsInUrl": false
     },
     {
@@ -24920,6 +24979,13 @@
       "protocol": "https:",
       "path": "backend/src/ai/researchSearchProvider.ts",
       "line": 14,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "api.deepseek.com",
+      "protocol": "https:",
+      "path": "backend/src/ai/researchSearchProvider.ts",
+      "line": 15,
       "credentialsInUrl": false
     },
     {
@@ -29581,7 +29647,7 @@
       "hostname": "www.google.com",
       "protocol": "https:",
       "path": "frontend/src/components/terminal/WebSourcesPanel.tsx",
-      "line": 27,
+      "line": 28,
       "credentialsInUrl": false
     },
     {
@@ -29679,7 +29745,7 @@
       "hostname": "github.com",
       "protocol": "https:",
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 4002,
+      "line": 4011,
       "credentialsInUrl": false
     },
     {
@@ -31083,6 +31149,13 @@
       "credentialsInUrl": false
     },
     {
+      "hostname": "cdn.deepseek.com",
+      "protocol": "https:",
+      "path": "frontend/src/lib/siteIcon.ts",
+      "line": 2,
+      "credentialsInUrl": false
+    },
+    {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "frontend/src/lib/socialSharePack.ts",
@@ -31205,7 +31278,7 @@
   "fallback_candidates": [
     {
       "path": "backend/src/ai/answerCoverage.ts",
-      "line": 83,
+      "line": 65,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -31213,6 +31286,13 @@
     {
       "path": "backend/src/ai/answerCoverage.ts",
       "line": 104,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/answerCoverage.ts",
+      "line": 130,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -31324,7 +31404,7 @@
     },
     {
       "path": "backend/src/ai/black-hole/webIntelligence.ts",
-      "line": 79,
+      "line": 92,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -31709,7 +31789,7 @@
     },
     {
       "path": "backend/src/ai/parallelWeb.ts",
-      "line": 279,
+      "line": 285,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -31884,42 +31964,42 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 1121,
+      "line": 1124,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 1519,
+      "line": 1522,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 2271,
+      "line": 2274,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3830,
+      "line": 3833,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4014,
+      "line": 4017,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4793,
+      "line": 4796,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -32109,6 +32189,34 @@
     {
       "path": "backend/src/ai/researchAnswer.ts",
       "line": 33,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/researchRetrievalPlan.ts",
+      "line": 36,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/researchRetrievalPlan.ts",
+      "line": 37,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/researchRetrievalPlan.ts",
+      "line": 41,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/researchRetrievalPlan.ts",
+      "line": 83,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -38058,14 +38166,14 @@
     },
     {
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 2046,
+      "line": 2049,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 2079,
+      "line": 2082,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
