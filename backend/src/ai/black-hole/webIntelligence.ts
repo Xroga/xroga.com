@@ -52,6 +52,18 @@ export interface WebDecision {
   reason: string;
 }
 
+/** Only explicit trusted opt-in can select Deep Research; AI inference is focused research. */
+export function automaticResearchAction(action: WebAction): WebAction {
+  return action === 'deep_research' ? 'research' : action;
+}
+
+/** Pasted URL lists with no task must not trigger external retrieval. */
+export function isBareUrlList(text: string): boolean {
+  return /https?:\/\/\S+/i.test(text) &&
+    text.replace(/https?:\/\/[^\s<>"')\]]+/gi, '')
+      .replace(/[\s,;:!?.|()\[\]{}\-—–]+/g, '').length === 0;
+}
+
 export interface WebIntelligenceResult {
   action: WebAction;
   evidence: string;
@@ -81,7 +93,7 @@ function extractUrls(
         /https?:\/\/[^\s<>"')\]]+/gi,
       ) ?? [],
     ),
-  ].slice(0, 4);
+  ].slice(0, 10);
 }
 
 function isXUrl(url: string): boolean {
@@ -132,7 +144,7 @@ function parseDecision(
       : [];
 
     return {
-      action: value.action as WebAction,
+      action: automaticResearchAction(value.action as WebAction),
 
       objective: redactSecrets(
         String(
@@ -158,7 +170,7 @@ function parseDecision(
       urls: Array.isArray(value.urls)
         ? value.urls
             .map(String)
-            .slice(0, 4)
+            .slice(0, 10)
         : [],
 
       sourcePolicy,
@@ -244,6 +256,12 @@ export async function decideWebAction(input: {
 
   const knownUrls =
     extractUrls(input.prompt);
+
+  if (knownUrls.length && isBareUrlList(input.prompt)) {
+    return { action: 'none', objective: '', queries: [], urls: [],
+      sourcePolicy: 'any', officialDomains: [],
+      reason: 'URLs were supplied without a requested action.' };
+  }
 
   // No model call is needed to realize that
   // an explicit public URL should be read.
@@ -489,10 +507,15 @@ export async function runWebIntelligence(
     officialDomains?: readonly string[];
     decision?: WebDecision;
     signal?: AbortSignal;
+    /** Explicit trusted UI flag; never inferred from prompt text. */
+    manualDeepResearch?: boolean;
   },
 ): Promise<WebIntelligenceResult> {
-  const decision =
-    input.decision ?? await decideWebAction(input);
+  const proposedDecision = input.decision ?? await decideWebAction(input);
+  const decision = proposedDecision.action === 'deep_research' && input.manualDeepResearch !== true
+    ? { ...proposedDecision, action: 'research' as const,
+        reason: 'Manual Deep Research was not enabled.' }
+    : proposedDecision;
 
   if (
     decision.action === 'none'
@@ -570,6 +593,7 @@ export async function runWebIntelligence(
                 ).slice(0, 500),
               ],
 
+        resultCount: 15,
         signal: input.signal,
       });
 
@@ -613,6 +637,7 @@ export async function runWebIntelligence(
           decision.objective ||
           input.prompt,
 
+        resultCount: decision.action === 'deep_research' ? 50 : 30,
         signal: input.signal,
       });
 
@@ -632,7 +657,7 @@ export async function runWebIntelligence(
         query: input.prompt,
         officialDomains:
           decision.officialDomains.length ? decision.officialDomains : input.officialDomains,
-        maxSources: 12,
+        maxSources: 50,
       },
     ), decision.sourcePolicy);
 
@@ -645,9 +670,7 @@ export async function runWebIntelligence(
   }
 
   let evidence =
-    formatResearchAsEvidence(
-      normalized,
-    );
+    formatResearchAsEvidence({ ...normalized, sources: normalized.sources.slice(0, 12) });
 
   if (answer) {
     evidence = [
