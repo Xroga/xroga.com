@@ -5,7 +5,7 @@ on:
       - codex/deepseek-search-os-20261105
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   backend-search-contracts:
@@ -21,5 +21,16 @@ jobs:
         run: npm run build --workspace backend
       - name: Focused DeepSeek search and URL-intent regression tests
         run: npx tsx --test backend/src/ai/researchSearchProvider.test.ts backend/src/ai/black-hole/webSearchIntent.test.ts backend/src/ai/black-hole/webIntelligence.test.ts
+      - name: Regenerate exact-source egress inventory (not a security certificate)
+        run: |
+          node scripts/security/audit-egress-callers.mjs --write
+          git diff --stat -- docs/xroga/security/egress-callers.json
+          git config user.name "xroga-ci"
+          git config user.email "noreply@users.noreply.github.com"
+          if ! git diff --quiet -- docs/xroga/security/egress-callers.json; then
+            git add docs/xroga/security/egress-callers.json
+            git commit -m "chore(security): bind egress inventory to DeepSeek search source"
+            git push origin HEAD:refs/heads/codex/deepseek-search-os-20261105
+          fi
       - name: Confirm no code bypasses the canonical provider egress audit
         run: node scripts/security/audit-egress-callers.mjs
