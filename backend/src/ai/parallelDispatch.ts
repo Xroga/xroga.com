@@ -105,7 +105,7 @@ export async function executeParallelRequest(input:{scope:TenantModelScope|undef
   try{
     await check();
     const response=await fetch(destination,{method:'POST',redirect:'manual',headers:{'Content-Type':'application/json',Authorization:`Bearer ${credential}`},
-      body:JSON.stringify(deepseekSearchBody(body as {objective:string;search_queries:string[]})),signal:AbortSignal.any([AbortSignal.timeout(25000),...(signal?[signal]:[])])});
+      body:JSON.stringify(deepseekSearchBody(body as {objective:string;search_queries:string[];result_count:unknown})),signal:AbortSignal.any([AbortSignal.timeout(25000),...(signal?[signal]:[])])});
     if(response.redirected||response.status>=300&&response.status<400){await response.body?.cancel().catch(()=>undefined);throw new EgressDenied('UNSAFE_DESTINATION');}
     if(response.status===401||response.status===403){await response.body?.cancel().catch(()=>undefined);throw new AuthorityError('PARALLEL_PROVIDER_AUTHORIZATION_DENIED');}
     if(!response.ok){void response.body?.cancel().catch(()=>undefined);throw Object.assign(new Error(`Parallel provider request failed (${response.status}).`),{status:response.status});}
