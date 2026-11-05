@@ -33,6 +33,16 @@ export function researchCitationIssues(response:string,sources:ReadonlyArray<{ur
  return [...new Set(issues)];
 }
 
+/** A numbered citation is only ever a pointer into the retrieved source list. The model must not choose a
+ * destination: every `[n](url)` whose number names a retrieved source is rewritten to that source's own verified URL, so a
+ * copied, shortened or altered link can never send a reader somewhere the evidence did not come from. A number with no
+ * source is left unchanged and is still reported by researchCitationIssues. Fenced code is never touched. */
+export function bindCitationLinks(response:string,sources:ReadonlyArray<{url:string}>):string{
+ return response.split(/(```[\s\S]*?```)/g).map((part,index)=>index%2?part:part.replace(/\[(\d{1,3})\]\(<?([^\s)>]+)>?\)/g,(whole,number:string)=>{
+  const source=sources[Number(number)-1];return source?`[${number}](${source.url})`:whole;
+ })).join('');
+}
+
 /** Runs inside the already claimed, exact research confirmation. This is the
  * original answer generation, not an extra formatting call or a retry loop. */
 export async function completeApprovedResearchAnswer(scope:TenantModelScope,request:ResearchAnswerRequest,raw:unknown,check:()=>Promise<void>){
@@ -50,8 +60,9 @@ export async function completeApprovedResearchAnswer(scope:TenantModelScope,requ
     sources:sources.map(s=>({title:s.title,url:s.url,snippet:s.snippet,source:s.sourceType==='x_post'?'x':'web'})),provider:'parallel'},
     evidence:formatResearchAsEvidence(filtered)}});
   await check();
-  const citationIssues=researchCitationIssues(result.response,sources);
-  return {answer:{response:result.response,completion:citationIssues.length?{status:'partial' as const,reason:'source_attribution'}:result.completion??{status:'partial' as const,reason:'unverified_completion'},
+  const bound=bindCitationLinks(result.response,sources);
+  const citationIssues=researchCitationIssues(bound,sources);
+  return {answer:{response:bound,completion:citationIssues.length?{status:'partial' as const,reason:'source_attribution'}:result.completion??{status:'partial' as const,reason:'unverified_completion'},
    ...(result.responseSource?{responseSource:result.responseSource}:{}),webSources:result.webSources??[]}};
  }catch(error){
   // The retrieval already succeeded. Preserve its evidence and any held or

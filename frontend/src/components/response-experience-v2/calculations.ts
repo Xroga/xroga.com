@@ -19,7 +19,9 @@ export function derivedCalculationsV2(node: CalculatorNode, values: Record<strin
     const derivedNode: CalculatorNode = { ...node, inputs, operation: item.operation, derivedResults: undefined };
     const raw = primary === null || !validDerivedResults(node) ? null : calculateV2(derivedNode, resolved);
     const value = raw === null ? null : item.rounding === 'floor' ? Math.floor(raw) : item.rounding === 'ceil' ? Math.ceil(raw) : item.rounding === 'round' ? Math.round(raw) : raw;
-    const expression = raw === null ? null : formulaV2(derivedNode, resolved);
+    // Display only: floating-point noise such as 9835.755000000001 is shown as 9835.755. The computed value is unchanged.
+    const tidy = (value: string) => /^-?\d+(\.\d+)?$/.test(value) ? String(Number(Number(value).toPrecision(12))) : value;
+    const expression = raw === null ? null : formulaV2(derivedNode, Object.fromEntries(Object.entries(resolved).map(([key, value]) => [key, tidy(value)])));
     return { ...item, value, formula: expression && item.rounding ? `${item.rounding}(${expression})` : expression };
   });
 }

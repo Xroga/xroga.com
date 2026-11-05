@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {randomUUID} from 'node:crypto';
-import {researchAnswerRequestSchema,RESEARCH_ANSWER_MAXIMUM_MICRO_USD,researchCitationIssues} from './researchAnswer.js';
+import {researchAnswerRequestSchema,RESEARCH_ANSWER_MAXIMUM_MICRO_USD,researchCitationIssues,bindCitationLinks} from './researchAnswer.js';
 import {runChatPipeline} from './pipeline.js';
 import {goalContractSchema} from './universal/goalContract.js';
 import {confirmBusinessAction,getBusinessActionConfirmation} from '../services/integrations/businessActionConfirmations.js';
@@ -109,4 +109,15 @@ test('one exact research approval completes its original rich answer, saves evid
  await assert.rejects(runChatPipeline({userId:owner,tenantContext:context,prompt,goalContract:goal,
   history:[{role:'user',content:'SYNTHETIC_CREDENTIAL_CANARY_MUST_NOT_LEAVE'}]}));
  assert.equal(searches,3);assert.equal(models,2);assert.equal(reservations.size,reservedBeforeSecret,'Credential-bearing continuation context cannot acquire approval or dispatch');
+});
+
+test('citation links always point at the retrieved source they number, never at a model-written address',()=>{
+ const sources=[{url:'https://nextjs.org/blog/next-16'},{url:'https://github.com/vercel/next.js/releases'}];
+ const out=bindCitationLinks('See [1](https://evil.example/x) and [2](<https://github.com/vercel/next.js/releases?x=1>), also [3](https://other.example/y).\n```\n[1](https://keep.example/code)\n```\n',sources);
+ assert.match(out,/\[1\]\(https:\/\/nextjs\.org\/blog\/next-16\)/);
+ assert.match(out,/\[2\]\(https:\/\/github\.com\/vercel\/next\.js\/releases\)/);
+ assert.match(out,/\[3\]\(https:\/\/other\.example\/y\)/,'a number with no retrieved source is left alone');
+ assert.match(out,/```\n\[1\]\(https:\/\/keep\.example\/code\)\n```/,'fenced code is never rewritten');
+ assert.deepEqual(researchCitationIssues(bindCitationLinks('Claim [1](https://wrong.example) and [2].',sources),sources),[]);
+ assert.ok(researchCitationIssues(bindCitationLinks('Claim [3](https://wrong.example).',sources),sources).includes('mismatched-source:3'),'an unmatched number is still reported');
 });

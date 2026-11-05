@@ -87,6 +87,16 @@ export function prepareAnswerCoverage(prompt: string, presentation: Presentation
       : kind === 'calculator' ? 'Explore the calculation' : kind === 'chart' ? 'Data and units' : kind === 'cards' ? 'Access comparison' : 'How it works',
       instruction:`Fulfil this ${item.origin==='requested'?'actual user requirement':'necessary explanation'} with substantive explanation and valid ${kind} data: ${item.description}. Preserve supplied values and label assumptions. If evidence is missing, explain the limitation without fabricating facts.`.slice(0,600),covers:[item.id]});
   }
+  // Prose is the default carrier of any explanation. When the plan has a prose section, an obligation that asks only for
+  // prose is carried by it even if the planner forgot to list that binding; a missing table, diagram, chart or
+  // calculator is never inferred this way. This is bookkeeping, not a repair: no text is changed or generated.
+  // Only a plan whose every section is already bound is touched; a malformed plan is kept exactly as received.
+  const carrier = plan.every(section => section.covers?.length) ? plan.find(section => section.kind === 'prose') : undefined;
+  if (carrier) for (const item of requirements) {
+    if (item.formats.length && item.formats.every(format => format === 'prose') && !plan.some(section => section.covers?.includes(item.id))) {
+      carrier.covers = [...(carrier.covers ?? []), item.id];
+    }
+  }
   // Relevance is checked deterministically against the request itself. No model call and no rewriting.
   // A section that drifts into another field is simply not planned. It never degrades the rest of a good answer
   // into a warning, because the person did not ask for it and loses nothing when it is left out.

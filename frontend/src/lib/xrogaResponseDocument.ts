@@ -266,9 +266,11 @@ export function enhanceAiResponse(content: string, documentId: string, completio
   const partialReason = completion?.status === 'partial' ? completion.reason : 'presentation_contract';
   if (rejected) blocks.push({ schemaVersion: 1, id: `${safeIdPart(documentId)}-completion`, type: 'notice', tone: 'warning',
     text: partialReason === 'presentation_contract'
-      ? 'This answer did not finish all required sections or included invalid visual data. Only validated content is shown, and the original response is retained for recovery. No automatic retry was made.'
+      ? 'Part of this answer could not be validated, so a visual may be missing or shown as plain text. The written explanation is kept and the original response is retained. No automatic retry was made.'
       : partialReason === 'authorization_review'
       ? 'Authorization guidance needs review. This answer contains a known unsafe authorization claim. Privileged database roles can bypass RLS, and JWT claims alone do not prove immediate revocation. Verify current server-owned tenant membership and permissions. The original answer is preserved. No automatic retry was made.'
+      : partialReason === 'source_attribution'
+      ? 'Some numbered citations could not be matched to a retrieved source. Linked citations are verified; treat any unlinked number as unverified. No automatic retry was made.'
       : partialReason === 'output_limit'
       ? 'This answer reached its output limit and is incomplete. The received content is preserved. No automatic retry was made.'
       : 'The provider did not confirm a complete answer. The received content is preserved. No automatic retry was made.' });

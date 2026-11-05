@@ -83,3 +83,21 @@ test('explaining and executing the same subject are read as different outcomes',
   assert.equal(outcome('Build automation number two.'), 'software_running_somewhere');
   assert.equal(outcome('Compare flight options from Dubai to New York and tell me the best airline'), 'a_question_answered');
 });
+
+test('a prose-only obligation the planner forgot to bind is carried by the prose section, but a missing visual is not', () => {
+  const prompt = 'If I invest $5,000 at 7% compounded yearly, how much will I have after 10 years?';
+  const plan = [section('prose', 'Answer', 'State the result.', ['ob1']), section('calculator', 'Calculation', 'Show the formula.', ['ob3'])];
+  const obligations: AnswerObligations = [
+    { id: 'ob1', description: 'the result', origin: 'requested', formats: ['prose'] },
+    { id: 'ob2', description: 'the assumptions', origin: 'necessary-support', formats: ['prose'] },
+    { id: 'ob3', description: 'the calculation', origin: 'requested', formats: ['calculator'] },
+  ];
+  const out = prepareAnswerCoverage(prompt, plan, obligations);
+  assert.equal(out.coverage.complete, true, out.coverage.issues.join(','));
+  assert.deepEqual(out.plan[0].covers, ['ob1', 'ob2']);
+  const noCalculator = prepareAnswerCoverage(prompt, [section('prose', 'Answer', 'State the result.', ['ob1'])], obligations);
+  assert.equal(noCalculator.coverage.complete, false);
+  assert.ok(noCalculator.coverage.issues.includes('missing:ob3:calculator'), noCalculator.coverage.issues.join(','));
+  const noProse = prepareAnswerCoverage(prompt, [section('calculator', 'Calculation', 'Show the formula.', ['ob3'])], obligations);
+  assert.ok(noProse.coverage.issues.includes('missing:ob1:prose'), 'without a prose section nothing carries the prose obligations');
+});
