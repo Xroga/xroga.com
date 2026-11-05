@@ -1,0 +1,175 @@
+{
+  "version": "1.0",
+  "missionId": "DEEPSEEK-SEARCH-OS-20261105",
+  "baseSha": "58e9d8c4835f7191da878e499eeb79071ea55d93",
+  "requirementIds": [
+    "XR-MISSION-055"
+  ],
+  "state": "IN_PROGRESS",
+  "risk": "high",
+  "scope": "Continue PR930 on the exact serving 77d70ff2 source: official DeepSeek Search/Fetch, conditional 15/30/50 results, up to ten supplied URLs, bounded approved manual research, private evidence cache, original answer continuation and paid retrieval caps. No new scheduler or provider fallback.",
+  "changedFiles": [
+    ".github/workflows/deepseek-search-os-check.yml",
+    ".github/workflows/xroga-tenant-security.yml",
+    "backend/src/ai/answerCoverage.ts",
+    "backend/src/ai/black-hole/webIntelligence.ts",
+    "backend/src/ai/parallelApproval.ts",
+    "backend/src/ai/parallelDispatch.ts",
+    "backend/src/ai/parallelWeb.security.test.ts",
+    "backend/src/ai/parallelWeb.ts",
+    "backend/src/ai/presentationRelevance.test.ts",
+    "backend/src/ai/prompts.ts",
+    "backend/src/ai/researchAnswer.test.ts",
+    "backend/src/ai/researchAnswer.ts",
+    "backend/src/ai/researchRetrievalCache.test.ts",
+    "backend/src/ai/researchRetrievalCache.ts",
+    "backend/src/ai/researchRetrievalPlan.test.ts",
+    "backend/src/ai/researchRetrievalPlan.ts",
+    "backend/src/ai/researchSearchProvider.ts",
+    "backend/src/services/integrations/researchResult.ts",
+    "docs/xroga/blockers.md",
+    "docs/xroga/current-state.json",
+    "docs/xroga/current-state.md",
+    "docs/xroga/dependency-inventory.json",
+    "docs/xroga/deployment-topology.md",
+    "docs/xroga/deployment-topology.mmd",
+    "docs/xroga/evidence/command-010/CURRENT-PROOF-METADATA-CONTINUATION-20261028.json",
+    "docs/xroga/evidence/command-010/TRANSPORT-LIFETIME-PROOF.json",
+    "docs/xroga/evidence/search-os-20261105/STAGING-TRANSACTION-CHECKS.json",
+    "docs/xroga/evidence/search-os-20261105/TRANSPORT-LIFETIME-AT-77d70ff2.json",
+    "docs/xroga/evidence/search-os-20261105/parallelWeb.security.AT-58e9d8c.txt",
+    "docs/xroga/missions/deepseek-search-os-20261105.json",
+    "docs/xroga/requirements-ledger.json",
+    "docs/xroga/requirements-ledger.md",
+    "docs/xroga/research/source-manifest.json",
+    "docs/xroga/research/source-reconciliation.md",
+    "docs/xroga/runtime-contract.md",
+    "docs/xroga/secret-inventory.md",
+    "docs/xroga/security/caller-reviews.json",
+    "docs/xroga/security/credential-usage-audit.json",
+    "docs/xroga/security/egress-caller-reviews.json",
+    "docs/xroga/security/egress-callers.json",
+    "docs/xroga/security/privileged-callers.json",
+    "docs/xroga/security/rls-audit.md",
+    "frontend/src/app/api/site-icon/route.ts",
+    "frontend/src/components/response-experience-v2/SourceV2.tsx",
+    "frontend/src/components/response-experience-v2/response-v2.module.css",
+    "frontend/src/lib/siteIcon.test.ts",
+    "frontend/src/lib/siteIcon.ts",
+    "scripts/security/search-os.database.test.mjs",
+    "scripts/security/search-os/source-review.json",
+    "scripts/security/search-os/staging-acceptance.sql",
+    "supabase/migrations/20261105230000_deepseek_fetch_private_cache.sql"
+  ],
+  "decisions": {
+    "keep": [
+      "Canonical execution, tenant context, exact approval/vault, accounting ledger, serving 77d70ff2 presentation and source icons"
+    ],
+    "extend": [
+      "Existing approved research action with a bounded evidence-led continuation; service-only private cache and canonical retrieval quota wrapper"
+    ],
+    "replace": [
+      "Native credential-free extraction in this research action with official dedicated-credential DeepSeek Fetch"
+    ],
+    "deprecate": [
+      "Incorrect Parallel pricing comments and workflow-generated source-review commits"
+    ]
+  },
+  "schemaImpact": {
+    "changed": true,
+    "migrations": [
+      "supabase/migrations/20261105090000_deepseek_web_retrieval_entitlements.sql",
+      "supabase/migrations/20261105230000_deepseek_fetch_private_cache.sql"
+    ],
+    "rollout": "Validate actual staged upgrade, role denial and quota transactions; then exact-source fresh/upgrade/concurrency checks. Additive migration before new runtime promotion. Preserve the existing five-argument Search signature. Production must receive both the previously staged original entitlement migration and this additive continuation in one verified transaction if either is absent.",
+    "rollback": "Keep ledger and cache data. Restore a verified compatible runtime; no destructive down migration or ledger deletion. If restoring the older 77d70ff2 runtime, retrieval must remain disabled until the canonical paid quota wrapper is restored."
+  },
+  "securityImpact": {
+    "auth": {
+      "changed": false,
+      "description": "No sign-in, role, MFA or user creation change. Use the existing authenticated Free account for browser journeys."
+    },
+    "tenant": {
+      "changed": true,
+      "description": "Owner-scoped private cache keys and query predicates with current project/repository/run validation before and after IO. No raw user-ID context issuer."
+    },
+    "approval": {
+      "changed": true,
+      "description": "One exact sealed plan authorizes a bounded 1/2/5 operation continuation or ten supplied page fetches, with final per-child claim checks."
+    },
+    "credentials": {
+      "changed": true,
+      "description": "Search/Fetch uses only existing DEEPSEEK_WEBSEARCH_FETCH_API; ZURELAY_API_KEY references existing xroga_models_zurelay. Values remain in protected server runtime."
+    },
+    "egress": {
+      "changed": true,
+      "description": "Official fixed-origin Search/Fetch, manual redirects, public URL DNS preflight only after approved admission, 25-second and 2MiB bounds. Provider-internal redirects remain a provider boundary."
+    },
+    "cost": {
+      "changed": true,
+      "description": "Every successful nonempty retrieval has one canonical 750-micro hold and exact receipt settlement; empty results settle zero, uncertainty remains held without retry."
+    },
+    "billing": {
+      "changed": true,
+      "description": "Preserve paid 650 normal operations, 250 automatic runs at two operations, 90 manual runs at five operations and 1250000 monthly micro-USD cap under the canonical cycle lock. Free access stays under its shared canonical entitlement."
+    }
+  },
+  "tests": [
+    {
+      "command": "npm run verify:baseline",
+      "scope": "Frozen complete credential-free backend/frontend and source-inventory regression; not authenticated production proof",
+      "negative": true,
+      "reference": "scripts/ci/run-baseline.mjs"
+    },
+    {
+      "command": "node node_modules/tsx/dist/cli.mjs --test backend/src/ai/researchRetrievalPlan.test.ts backend/src/ai/researchRetrievalCache.test.ts backend/src/ai/parallelWeb.security.test.ts backend/src/ai/researchAnswer.test.ts",
+      "scope": "Bounded Search/Fetch, owner/run revocation, no replay/fallback, canonical receipts, private cache and original answer continuation",
+      "negative": true,
+      "reference": "backend/src/ai/researchRetrievalCache.test.ts"
+    },
+    {
+      "command": "BEGIN; apply additive migration and scripts/security/search-os/staging-acceptance.sql; ROLLBACK;",
+      "scope": "Executed on dqxnatoessviphudbhei staging: 650/250/90, 1/2/5 operation limits, exact 1250000 cap including uncertain holds, service-only RPCs and private cache keys. Synthetic rows rolled back; no paid provider calls.",
+      "negative": true,
+      "reference": "scripts/security/search-os/staging-acceptance.sql"
+    },
+    {
+      "command": "node --test scripts/security/search-os.database.test.mjs",
+      "scope": "Actual isolated PostgreSQL prerequisite migrations, upgrade preservation, eight-client contention for the last operation and last 750 micro-USD, replay, Free ledger compatibility and actual public-role denials",
+      "negative": true,
+      "reference": "scripts/security/search-os.database.test.mjs"
+    }
+  ],
+  "architecture": {
+    "change": "extends_canonical",
+    "reason": "Continuation executes inside the original exact approved research action and rechecks its non-replayable claim before each child. It has no separate identity, scheduler, network authority or money ledger.",
+    "rfc": null
+  },
+  "rollout": "User explicitly authorized merge and paired Cloud Run/Vercel deployment after mandatory checks pass. Finish exact-source CI, verified database migration and real existing Free-account journeys before production promotion. Do not bypass failed gates.",
+  "rollback": "Preserve Cloud Run xroga-api-zurelay-77d70f-serving-1105 and Vercel 7mS7G5BmU5jaKZXSkksPuquuQKth (77d70ff2). An older API rollback must disable retrieval to prevent bypass of the newly required paid caps; preserve generation, ledger rows and schema. Prepare and verify the compatible rollback revision before promotion.",
+  "knownGaps": [
+    "Complete backend/frontend suites and isolated fresh/upgrade/concurrent database tests passed. Final exact-source CI and authenticated new-runtime journeys remain pending.",
+    "Browser normal chat on the serving Free account passed; Search OS continuation is not deployed.",
+    "GitHub connector is read-only (403 on blob creation); the existing authenticated owner browser is the source-publishing fallback."
+  ],
+  "placeholderClaimsRemaining": [],
+  "evidenceRefs": [
+    "scripts/security/search-os/source-review.json",
+    "scripts/security/search-os/staging-acceptance.sql",
+    "backend/src/ai/researchRetrievalCache.test.ts",
+    "supabase/migrations/20261105230000_deepseek_fetch_private_cache.sql",
+    "docs/xroga/evidence/search-os-20261105/STAGING-TRANSACTION-CHECKS.json"
+  ],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "BLOCKED",
+    "blockers": [
+      "Exact-source automated and authenticated new-runtime release checks are still pending."
+    ],
+    "authenticatedE2e": "BLOCKED",
+    "stagedSecurity": "BLOCKED",
+    "liveUrl": null,
+    "deployedSha": null
+  }
+}
