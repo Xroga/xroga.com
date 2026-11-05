@@ -19,6 +19,7 @@ import {redactSecrets} from '../lib/truthfulExecution.js';
 import {createRequire} from 'node:module';
 import {researchAnswerRequestSchema,completeApprovedResearchAnswer,RESEARCH_ANSWER_MAXIMUM_MICRO_USD} from './researchAnswer.js';
 import {saveResearchResult} from '../services/integrations/researchResult.js';
+import {researchSearchMicroUsd} from './researchSearchProvider.js';
 
 const pdfParse=createRequire(import.meta.url)('pdf-parse/lib/pdf-parse.js') as (data:Uint8Array,options:{max:number})=>Promise<{text:string}>;
 function extractUrls(body:Record<string,unknown>):string[]{
@@ -45,7 +46,7 @@ export async function prepareParallelApproval(scope:TenantModelScope,operation:O
  await requireModelProjectBinding(scope);
  const attempt=scope.runAttempt?requireAdmittedRunAttempt(scope.runAttempt):null;
  if(operation==='extract')extractUrls(body);
- const nonce=randomUUID(),issuedAt=new Date().toISOString(),amount=operation==='responses'?(body.reasoning as {effort?:string})?.effort==='medium'?50000:10000:operation==='extract'?0:1000;
+ const nonce=randomUUID(),issuedAt=new Date().toISOString(),amount=operation==='responses'?(body.reasoning as {effort?:string})?.effort==='medium'?50000:10000:operation==='extract'?0:researchSearchMicroUsd();
  const value:Omit<BusinessActionPlan,'planDigest'>={version:'1.0',sessionId:`trs_native_research_${nonce}`,useCase,toolkit,toolSlug:'XROGA_RESEARCH_'+operation.toUpperCase(),arguments:{operation,body:structuredClone(body),projectId:scope.projectId??null,repository:scope.repository??null,repositoryBound:scope.repository!==undefined,attempt:attempt?{...attempt}:null,maximumMicroUsd:amount},risk:'write',requiresConfirmation:true,forceConfirmation:true,summary:operation==='extract'?'Retrieve only the displayed public HTTPS URLs without authentication. DNS is pinned, redirects are refused, and no provider or model charge is made. URL query text may be private.':`Send only the displayed ${operation} request to Parallel. Research text may contain private project or user information. Maximum provider charge is $${(amount/1e6).toFixed(3)}. The canonical budget must independently admit this charge.`,requiredScopes:['xroga:research-egress'],authority:{version:'1',userId:context.userId,tenantId:context.tenantId,connectedAccountId:operation==='extract'?'public-web:credential-free':'parallel:platform',actionClass:'SENSITIVE_DATA_EXPORT',projectId:scope.projectId??null,runId:attempt?.runId??null,issuedAt,expiresAt:new Date(Date.parse(issuedAt)+15*60000).toISOString(),nonce,maxSpendMicroUsd:String(amount),currency:'USD'}};
  if(scope.researchAnswer){
   const request=researchAnswerRequestSchema.parse(scope.researchAnswer);
