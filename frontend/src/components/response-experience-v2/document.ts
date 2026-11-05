@@ -12,7 +12,7 @@ const base = z.object({ id: z.string().min(1).max(200), title: label.optional(),
 const column = z.object({ key: label, label });
 const series = z.object({ key: label, label });
 export const nodeSchema = z.discriminatedUnion('kind', [
-  base.extend({ kind: z.literal('cards'), items: z.array(z.object({ id: label, title: label, subtitle: label.optional(), description: text.optional(), badge: label.optional(), imageUrl: text.optional(), url: text.optional(), entityId: z.string().min(1).max(80).optional(), actionLabel: label.optional(), metrics: row.optional(), recommended: z.boolean().optional() })).min(1).max(24) }),
+  base.extend({ kind: z.literal('cards'), items: z.array(z.object({ id: label, title: label, subtitle: label.optional(), description: text.optional(), badge: label.optional(), icon: z.string().max(40).optional(), imageUrl: text.optional(), url: text.optional(), entityId: z.string().min(1).max(80).optional(), actionLabel: label.optional(), metrics: row.optional(), recommended: z.boolean().optional() })).min(1).max(24) }),
   base.extend({ kind: z.literal('resources'), items: z.array(xrogaRichResultSchema).min(1).max(35) }),
   base.extend({ kind: z.literal('images'), items: z.array(z.object({ id: label, label, url: text, caption: text.optional() })).max(40) }),
   base.extend({ kind: z.literal('prose'), text }),
@@ -26,7 +26,7 @@ export const nodeSchema = z.discriminatedUnion('kind', [
   base.extend({ kind: z.literal('citation'), label, url: text, excerpt: text.optional() }),
   base.extend({ kind: z.literal('notice'), text, tone: z.enum(['neutral', 'info', 'success', 'warning', 'danger']) }),
   base.extend({ kind: z.literal('accordion'), items: z.array(z.object({ id: label, title: label, content: text })).max(24) }),
-  base.extend({ kind: z.literal('timeline'), items: z.array(z.object({ id: label, label, detail: text.optional(), status: label.optional(), date: label.optional() })).max(100) }),
+  base.extend({ kind: z.literal('timeline'), items: z.array(z.object({ id: label, label, icon: z.string().max(40).optional(), detail: text.optional(), status: label.optional(), date: label.optional() })).max(100) }),
   base.extend({ kind: z.literal('progress'), items: z.array(z.object({ id: label, label, value: z.number().finite().nonnegative(), max: z.number().finite().positive(), detail: text.optional(), unit: label.optional(), status: label.optional() })).max(30) }),
 ]);
 export const responseDocumentSchema = z.object({ version: z.literal(2), id: label, originalText: text, streaming: z.boolean(), nodes: z.array(nodeSchema).max(100), sources: z.array(z.object({ title: label, url: text, snippet: text })).max(100) });

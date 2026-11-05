@@ -220,7 +220,7 @@ const checklistBlock = richBase.extend({
 });
 const stepsBlock = richBase.extend({
   type: z.literal('steps'), currentStepId: z.string().optional(),
-  steps: z.array(z.object({ id: z.string().min(1), title: z.string().min(1), description: z.string().optional(), status: z.enum(['pending', 'current', 'completed', 'failed']).optional() })).min(1),
+  steps: z.array(z.object({ id: z.string().min(1), title: z.string().min(1), description: z.string().optional(), icon: z.string().max(40).optional(), status: z.enum(['pending', 'current', 'completed', 'failed']).optional() })).min(1),
 });
 const scorecardBlock = richBase.extend({
   type: z.literal('scorecard'),
@@ -271,7 +271,7 @@ const cardGridBlock = richBase.extend({
     id: z.string().min(1), title: z.string().min(1), subtitle: z.string().optional(),
     description: z.string().optional(), badge: z.string().optional(), imageUrl: z.string().url().optional(),
     url: z.string().url().optional(), actionLabel: z.string().optional(),
-    entityId: z.string().min(1).max(80).optional(),
+    entityId: z.string().min(1).max(80).optional(), icon: z.string().max(40).optional(),
     metrics: z.record(z.string(), scalarValue).optional(),
   })).min(1).max(24),
 });

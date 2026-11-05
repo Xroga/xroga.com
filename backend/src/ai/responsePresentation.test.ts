@@ -184,3 +184,17 @@ test('metrics and tabs project to the existing blocks, with tone as trend, and b
   assert.match(schema, /"tone"/);
   assert.match(schema, /"positive","negative","neutral"/);
 });
+
+test('card and step icons pass through only from the approved Lucide list', () => {
+  const p: PresentationPlan = [{ kind: 'cards', heading: 'Options', instruction: 'Compare.' }, { kind: 'steps', heading: 'Plan', instruction: 'Order.' }];
+  const body = (icon: string | null) => JSON.stringify({
+    s0: { markdown: 'Options.', data: { cards: [{ title: 'House', subtitle: '3 bed', description: 'Detached home.', entityId: null, icon }] } },
+    s1: { markdown: 'Plan.', data: { steps: [{ title: 'Pre-approval', description: 'Get a letter.', icon }, { title: 'Offer', description: 'Submit it.', icon: null }] } },
+  });
+  const ok = createPresentationProjection(p).finish(body('home'));
+  assert.equal(ok.ok, true);
+  assert.match(ok.response, /"icon":"home"/);
+  assert.equal((ok.response.match(/"icon"/g) ?? []).length, 2, 'null icons are omitted');
+  assert.equal(createPresentationProjection(p).finish(body(null)).ok, true);
+  assert.equal(createPresentationProjection(p).finish(body('<script>alert(1)</script>')).ok, false);
+});
