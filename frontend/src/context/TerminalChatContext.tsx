@@ -560,7 +560,9 @@ interface TerminalChatContextValue {
     text?: string,
     fromQueue?: boolean,
     interrupt?: boolean,
-    attachments?: ChatAttachment[]
+    attachments?: ChatAttachment[],
+    resumeRunId?: string,
+    manualDeepResearch?: boolean
   ) => Promise<void>;
   stop: () => void;
   /** Continue a stopped build from checkpoint + GitHub (not from scratch) */
@@ -753,6 +755,7 @@ const submittedRequestLimit =
     interrupt?: boolean,
     attachments?: ChatAttachment[],
     resumeRunId?: string,
+    manualDeepResearch?: boolean,
   ) => Promise<void>
 >(async () => {});
   const queueRef = useRef<QueuedPrompt[]>([]);
@@ -2298,7 +2301,7 @@ const stopRequestedRunIdRef =
 
   /** Light lane while a heavy build runs — chat/planning without clearing todos. */
   const submitLightAlongsideHeavy = useCallback(
-    async (userPrompt: string) => {
+    async (userPrompt: string, manualDeepResearch = false) => {
       if (lightBusyRef.current) {
         enqueuePrompt(userPrompt, 'light');
         setPrompt('');
@@ -2338,6 +2341,7 @@ const stopRequestedRunIdRef =
         const activeContext = useProjectWorkspaceStore.getState().activeProjectContext;
         const result = await runLightLaneChat({
           prompt: displayPrompt,
+          manualDeepResearch,
           history,
           projectContext: activeContext
             ? {
@@ -2470,9 +2474,14 @@ const stopRequestedRunIdRef =
   interrupt = false,
   attachments?: ChatAttachment[],
   resumeRunId?: string,
+   manualDeepResearch = false,
 ) => {
       const userPrompt = (overrideText ?? prompt).trim();
       if (!userPrompt && !attachments?.length) return;
+      if (manualDeepResearch && (loading || attachments?.length)) {
+        toast.error('Start Deep Research with a text request after the current operation finishes.');
+        return;
+      }
 
       if (isGuest) {
         await submitGuestTurn(userPrompt, attachments);
@@ -2487,7 +2496,7 @@ const stopRequestedRunIdRef =
       // build it returns QUEUE_BUILD and the request is queued without executing
       // repository work concurrently with the active build.
       if (heavyJobActiveRef.current && !interrupt) {
-        await submitLightAlongsideHeavy(userPrompt);
+        await submitLightAlongsideHeavy(userPrompt,manualDeepResearch);
         return;
       }
 
