@@ -23,7 +23,7 @@ import {researchSearchMicroUsd,DEEPSEEK_SEARCH_URL} from './researchSearchProvid
 
 const pdfParse=createRequire(import.meta.url)('pdf-parse/lib/pdf-parse.js') as (data:Uint8Array,options:{max:number})=>Promise<{text:string}>;
 function extractUrls(body:Record<string,unknown>):string[]{
- if(typeof body.objective!=='string'||body.objective.length>4000||!Array.isArray(body.urls)||body.urls.length<1||body.urls.length>4||Object.keys(body).some(k=>!['urls','objective'].includes(k)))throw denied();
+ if(typeof body.objective!=='string'||body.objective.length>4000||!Array.isArray(body.urls)||body.urls.length<1||body.urls.length>10||Object.keys(body).some(k=>!['urls','objective'].includes(k)))throw denied();
  return body.urls.map(url=>{if(typeof url!=='string')throw denied();return publicHttpsUrl(url).href;});
 }
 
