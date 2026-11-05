@@ -44,8 +44,18 @@ BEGIN
   SELECT * INTO v_cycle FROM public.xroga_billing_cycles
     WHERE user_id=p_user_id AND status='active' FOR UPDATE;
   IF NOT FOUND THEN RAISE EXCEPTION 'active_billing_cycle_required'; END IF;
-  IF v_cycle.cycle_kind<>'paid' OR now()<v_cycle.starts_at OR now()>=v_cycle.ends_at
-    THEN RAISE EXCEPTION 'paid_web_retrieval_cycle_required'; END IF;
+  IF now()<v_cycle.starts_at OR now()>=v_cycle.ends_at
+    THEN RAISE EXCEPTION 'active_web_retrieval_cycle_required'; END IF;
+  -- Preserve existing Free-tier access under the canonical shared provider ledger.
+  -- The new $1.25 and 650/250/90 allowances apply only to paid cycles.
+  IF v_cycle.cycle_kind='free' THEN
+    RETURN public.reserve_xroga_provider_budget(
+      p_user_id,p_idempotency_key,'daily_work','web.deepseek_search',
+      p_price_version,0,0,750);
+  END IF;
+  IF v_cycle.cycle_kind<>'paid' THEN
+    RAISE EXCEPTION 'unsupported_web_retrieval_cycle';
+  END IF;
   SELECT * INTO v_existing FROM public.xroga_provider_reservations
     WHERE user_id=p_user_id AND idempotency_key=p_idempotency_key;
   IF FOUND THEN
