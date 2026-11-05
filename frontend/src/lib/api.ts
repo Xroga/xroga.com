@@ -6078,6 +6078,7 @@ export interface Phase1ChatResult {
 
       snippet:
         string;
+      publishedAt?: string;
 
       source:
         string;
