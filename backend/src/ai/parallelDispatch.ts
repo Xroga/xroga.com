@@ -62,7 +62,7 @@ export async function executeParallelRequest(input:{scope:TenantModelScope|undef
     acceptedSearchResultCount(body.result_count);
     amount=researchSearchMicroUsd();route='deepseek_search';
   }else if(operation==='extract'){
-    if(!Array.isArray(body.urls)||!body.urls.length||body.urls.length>4||body.urls.some(u=>typeof u!=='string')
+    if(!Array.isArray(body.urls)||!body.urls.length||body.urls.length>10||body.urls.some(u=>typeof u!=='string')
       ||typeof body.objective!=='string'||body.objective.length>4000||Object.keys(body).some(k=>!['urls','objective'].includes(k)))throw denied();
     for(const url of body.urls as string[])publicHttpsUrl(url);
     units=body.urls.length;amount=0;route='native_public_extract';
