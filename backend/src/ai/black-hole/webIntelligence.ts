@@ -531,7 +531,8 @@ export async function runWebIntelligence(
   }
 
   let provider:
-    | 'parallel'
+    | 'deepseek'
+    | 'native_fetch'
     | 'grok_x';
 
   let answer = '';
@@ -542,7 +543,7 @@ export async function runWebIntelligence(
   if (
     decision.action === 'read'
   ) {
-    provider = 'parallel';
+    provider = 'native_fetch';
 
     const result =
       await parallelExtract({
@@ -568,7 +569,7 @@ export async function runWebIntelligence(
   } else if (
     decision.action === 'search'
   ) {
-    provider = 'parallel';
+    provider = 'deepseek';
 
     const result =
       await parallelSearch({
@@ -609,7 +610,7 @@ export async function runWebIntelligence(
     decision.action ===
       'deep_research'
   ) {
-    provider = 'parallel';
+    provider = 'deepseek';
 
     const result =
       await parallelSearch({
