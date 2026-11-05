@@ -31,7 +31,7 @@ jobs:
           import {readFileSync} from 'node:fs';
           const hash=s=>createHash('sha256').update(s.replace(/\\r\\n/g,'\\n')).digest('hex');
           const reviews=JSON.parse(readFileSync('docs/xroga/security/egress-caller-reviews.json','utf8')).reviews;
-          for(const filename of ['backend/src/ai/parallelApproval.ts','backend/src/ai/parallelDispatch.ts','backend/src/ai/pipeline.ts','backend/src/routes/phase1.ts','frontend/src/context/TerminalChatContext.tsx']){
+          for(const filename of ['backend/src/ai/parallelApproval.ts','backend/src/ai/parallelDispatch.ts','backend/src/ai/pipeline.ts','backend/src/routes/phase1.ts','frontend/src/context/TerminalChatContext.tsx','frontend/src/lib/api.ts']){
             const file=readFileSync(filename,'utf8'),current=hash(file);
             const entries=inspectEgress(filename,file);
             for(const entry of entries){
