@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "03e83d1374593315110a3689e949c977b275ff47c6062706754e86163697ac68",
+  "sourceTreeDigest": "bc82f525d7c5b829e3838cdf5c7fd3875c3ee842efcf63916c642c463c70f8eb",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -227,17 +227,17 @@
     {
       "id": "5baa649b7c2c9b6b6f30",
       "file": "backend/src/ai/parallelDispatch.ts",
-      "line": 98,
+      "line": 107,
       "entryPoint": "executeParallelRequest",
       "transport": "fetch",
       "callee": "fetch",
-      "callSha256": "8a4cf1df25bdb5d59e6f01020cc5be67cec679c8815a93cc5b5b594cc7a7fe28",
+      "callSha256": "ff0014f0b5c941f223478e779d87f7940fceed8f218a46e5d3b6be41a86ffc71",
       "destination": "DYNAMIC_OR_SDK_INTERNAL",
-      "trust": "FIXED_PARALLEL_API_WITH_PRODUCER_ATTESTED_EXACT_PRIVATE_EGRESS_APPROVAL",
+      "trust": "FIXED_OFFICIAL_DEEPSEEK_SEARCH_STRUCTURAL_EGRESS_AND_BUDGET_REVIEW_NOT_LIVE_PROVIDER_PROOF",
       "tenantAuthority": "ORIGINAL_ACTOR_PROJECT_RUN_GENERATION_CURRENT_ONE_USE_CLAIM_SECRET_FLOOR_AND_CANONICAL_BUDGET_SETTLEMENT_NO_DENIAL_FALLBACK",
       "currentProtection": "NOT_CERTIFIED",
       "risk": "HIGH_RISK_PENDING_REVIEW",
-      "disposition": "VERIFIED_GUARD",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
       "evidence": [
         {
           "path": "docs/xroga/evidence/command-010/PARALLEL-APPROVAL-BOUNDARY-20261028.json",
