@@ -252,3 +252,14 @@
 .notice[data-tone=warning] { border-color:#f2a33c; background:color-mix(in srgb,#f2a33c 9%,transparent); }
 .notice[data-tone=danger] { border-color:#ef6a74; background:color-mix(in srgb,#ef6a74 9%,transparent); }
 .notice { border-radius:0 10px 10px 0; padding-block:.5rem; }
+
+/* A comparison with more than three columns reads as one card per row on a narrow screen, not a sideways scroll. */
+@media (max-width: 720px) {
+  .tableScroll[data-wide=true] { overflow-x: visible; }
+  .tableScroll[data-wide=true] table, .tableScroll[data-wide=true] tbody, .tableScroll[data-wide=true] tr, .tableScroll[data-wide=true] td { display: block; width: 100%; }
+  .tableScroll[data-wide=true] thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .tableScroll[data-wide=true] tr { border: 1px solid color-mix(in srgb, currentColor 16%, transparent); border-radius: 12px; padding: 10px 14px; margin-block: 10px; }
+  .tableScroll[data-wide=true] td { border: 0; padding: 6px 0; text-align: start; }
+  .tableScroll[data-wide=true] td:first-child { font-weight: 600; font-size: 1.05em; padding-block-end: 8px; }
+  .tableScroll[data-wide=true] td:not(:first-child)::before { content: attr(data-label); display: block; font-size: 0.78em; letter-spacing: 0.02em; opacity: 0.62; margin-block-end: 2px; }
+}
