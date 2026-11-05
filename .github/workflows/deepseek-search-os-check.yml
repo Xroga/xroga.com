@@ -1,0 +1,25 @@
+name: DeepSeek Search OS focused verification
+on:
+  push:
+    branches:
+      - codex/deepseek-search-os-20261105
+
+permissions:
+  contents: read
+
+jobs:
+  backend-search-contracts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .node-version
+          cache: npm
+      - run: npm ci
+      - name: Type check and compile backend
+        run: npm run build --workspace backend
+      - name: Focused DeepSeek search and URL-intent regression tests
+        run: npx tsx --test backend/src/ai/researchSearchProvider.test.ts backend/src/ai/black-hole/webSearchIntent.test.ts backend/src/ai/black-hole/webIntelligence.test.ts
+      - name: Confirm no code bypasses the canonical provider egress audit
+        run: node scripts/security/audit-egress-callers.mjs
