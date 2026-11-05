@@ -33,7 +33,7 @@ import { requiresGitHubForBuild } from '@/lib/messageHelpers';
 import { composerMaxHeightForViewport } from '@/lib/chatComposerSizing';
 import { useWorkspaceIdentity } from '@/components/layout/WorkspaceIdentityContext';
 import { useWorkspaceAuthGate } from '@/components/workspace/WorkspaceAuthGate';
-import { X, Folder, Puzzle } from 'lucide-react';
+import { X, Folder, Puzzle, BookOpenCheck } from 'lucide-react';
 import startStyles from '@/components/dashboard/WorkspaceNewTerminal.module.css';
 import { buildArtifactContextPreamble, useXrogaArtifactContext } from '@/lib/xrogaArtifactContext';
 import { appendVoiceTranscript } from '@/lib/terminal/voiceRecording';
@@ -103,6 +103,7 @@ export function TerminalChatBar({ starter = false }: { starter?: boolean }) {
   const [draft, setDraft] = useState(prompt);
   const [voiceEpoch, setVoiceEpoch] = useState(0);
   const [placeholderIndex, setPlaceholderIndex] = useState(0);
+  const [manualDeepResearch, setManualDeepResearch] = useState(false);
   const [shortcutIndex, setShortcutIndex] = useState(0);
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -286,6 +287,11 @@ export function TerminalChatBar({ starter = false }: { starter?: boolean }) {
     const raw = (textareaRef.current?.value ?? draft).trim();
     const text = autocorrectText(raw);
     if (!text && files.length === 0) return;
+    if (manualDeepResearch && (loading || files.length)) {
+      toast.error('Deep Research accepts a text request and cannot be queued with another task.');
+      return;
+    }
+    if (manualDeepResearch && isGuest) { requestAuthGate('limit'); return; }
     setVoiceEpoch(value => value + 1);
     setDraft(text);
     draftRef.current = text;
@@ -369,7 +375,10 @@ export function TerminalChatBar({ starter = false }: { starter?: boolean }) {
       false,
       false,
       attachments,
+      undefined,
+      manualDeepResearch,
     );
+    setManualDeepResearch(false);
     if (!loading) setSendState('launched');
   }
 
@@ -722,6 +731,16 @@ export function TerminalChatBar({ starter = false }: { starter?: boolean }) {
                       if (isGuest) { requestAuthGate('integration'); return; }
                       setIntegrationsOpen(true);
                     }}><Puzzle aria-hidden="true" /><span>Plugins</span></button>
+                    <button type="button" className={startStyles.tool} disabled={loading}
+                      aria-pressed={manualDeepResearch} aria-label="Deep Research"
+                      title={manualDeepResearch ? 'Deep Research enabled for this message' : 'Enable Deep Research for this message'}
+                      onClick={() => {
+                        if(isGuest){requestAuthGate('limit');return;}
+                        setManualDeepResearch(v=>!v);
+                      }}>
+                      <BookOpenCheck aria-hidden="true" />
+                      <span>{manualDeepResearch ? 'Deep Research ✓' : 'Deep Research'}</span>
+                    </button>
                   </div>
                 ) : null
               }
