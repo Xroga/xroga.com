@@ -24,7 +24,7 @@ function NodeView({ node, document, grouped = false, stacked = false }: { node: 
       const resources = node.items.every(item => !!resourceIdentityV2(item.title, item.url, item.entityId));
       return <section>{node.title && <h3 className={styles.blockTitle}>{node.title}</h3>}<div className={resources ? styles.roleRows : styles.comparisonCards}>{node.items.map(item => <section key={item.id} className={resources ? styles.roleRow : styles.comparisonCard}>
       {item.imageUrl && <InlineImageV2 src={item.imageUrl} alt={item.title} />}
-      <header>{(() => { const Icon = responseIcon(item.icon); return Icon ? <span className={styles.cardIcon} aria-hidden="true"><Icon size={18} strokeWidth={1.9} /></span> : null; })()}<h4><EntityIdentityV2 label={item.title} url={item.url} entityId={item.entityId} /></h4>{item.badge && <StatusBadgeV2 label={item.badge} />}</header>
+      <header><div className={styles.cardHead}>{(() => { const Icon = responseIcon(item.icon); return Icon ? <span className={styles.cardIcon} aria-hidden="true"><Icon size={18} strokeWidth={1.9} /></span> : null; })()}<h4><EntityIdentityV2 label={item.title} url={item.url} entityId={item.entityId} plain={!!responseIcon(item.icon)} /></h4></div>{item.badge && <StatusBadgeV2 label={item.badge} />}</header>
       {item.subtitle && <p className={styles.cardSubtitle}>{item.subtitle}</p>}
       {item.description && <ProseV2 text={item.description} sources={document.sources} />}
       {item.recommended && <p className={styles.cardSubtitle}>Suggested in this answer</p>}
