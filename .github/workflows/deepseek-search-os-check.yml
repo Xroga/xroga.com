@@ -5,7 +5,7 @@ on:
       - codex/deepseek-search-os-20261105
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   backend-search-contracts:
@@ -21,16 +21,25 @@ jobs:
         run: npm run build --workspace backend
       - name: Focused DeepSeek search and URL-intent regression tests
         run: npx tsx --test backend/src/ai/researchSearchProvider.test.ts backend/src/ai/black-hole/webSearchIntent.test.ts backend/src/ai/black-hole/webIntelligence.test.ts
-      - name: Regenerate exact-source egress inventory (not a security certificate)
+      - name: Type-check workspace frontend
+        run: npx tsc --noEmit --project frontend/tsconfig.json
+      - name: Print changed egress-review evidence (no automatic approval)
         run: |
-          node scripts/security/audit-egress-callers.mjs --write
-          git diff --stat -- docs/xroga/security/egress-callers.json
-          git config user.name "xroga-ci"
-          git config user.email "noreply@users.noreply.github.com"
-          if ! git diff --quiet -- docs/xroga/security/egress-callers.json; then
-            git add docs/xroga/security/egress-callers.json
-            git commit -m "chore(security): bind egress inventory to DeepSeek search source"
-            git push origin HEAD:refs/heads/codex/deepseek-search-os-20261105
-          fi
+          node --input-type=module <<'NODE'
+          import {inspectEgress} from './scripts/security/audit-egress-callers.mjs';
+          import {createHash} from 'node:crypto';
+          import {readFileSync} from 'node:fs';
+          const hash=s=>createHash('sha256').update(s.replace(/\\r\\n/g,'\\n')).digest('hex');
+          const reviews=JSON.parse(readFileSync('docs/xroga/security/egress-caller-reviews.json','utf8')).reviews;
+          for(const filename of ['backend/src/ai/parallelApproval.ts','backend/src/ai/parallelDispatch.ts','backend/src/ai/pipeline.ts','backend/src/routes/phase1.ts','frontend/src/context/TerminalChatContext.tsx']){
+            const file=readFileSync(filename,'utf8'),current=hash(file);
+            const entries=inspectEgress(filename,file);
+            for(const entry of entries){
+              const review=reviews.find(x=>x.id===entry.id);
+              if(!review||review.callSha256!==entry.callSha256||review.sourceFileSha256!==current)
+                console.log(JSON.stringify({file:filename,id:entry.id,old:review?.callSha256,new:entry.callSha256,oldFile:review?.sourceFileSha256,newFile:current,hasReview:!!review}));
+            }
+          }
+          NODE
       - name: Confirm no code bypasses the canonical provider egress audit
         run: node scripts/security/audit-egress-callers.mjs
