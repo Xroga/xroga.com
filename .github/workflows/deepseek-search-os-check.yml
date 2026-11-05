@@ -59,12 +59,14 @@ jobs:
       - name: Generate exact-source egress inventory from independently reviewed callers
         run: |
           node scripts/security/audit-egress-callers.mjs --write
-          git diff --stat -- docs/xroga/security/egress-callers.json
+          node scripts/xroga/phase-two.mjs --write
+          node scripts/xroga/inventory.mjs
+          git diff --stat -- docs/xroga/security/egress-callers.json docs/xroga/batch-1/phases/PHASE-2-CLOSURE-LEDGER.json docs/xroga/current-state.json docs/xroga/current-state-schema.json docs/xroga/current-state.md docs/xroga/blockers.md
           git config user.name "xroga-ci"
           git config user.email "noreply@users.noreply.github.com"
-          if ! git diff --quiet -- docs/xroga/security/egress-callers.json; then
-            git add docs/xroga/security/egress-callers.json
-            git commit -m "chore(security): refresh reviewed DeepSeek branch egress inventory"
+          git add docs/xroga/security/egress-callers.json docs/xroga/batch-1/phases/PHASE-2-CLOSURE-LEDGER.json docs/xroga/current-state.json docs/xroga/current-state-schema.json docs/xroga/current-state.md docs/xroga/blockers.md
+          if ! git diff --cached --quiet; then
+            git commit -m "chore(governance): refresh verified Search OS source inventories"
             git push origin HEAD:refs/heads/codex/deepseek-search-os-20261105
           fi
       - name: Confirm no code bypasses the canonical provider egress audit
