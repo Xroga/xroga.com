@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "c5336341ccf8c34c26e8494727b188e7be58817595647e5335247615ffa6ae5b",
+  "sourceTreeDigest": "056e73a76f915dfb6a9f0bc93c7f984b624832d8204f23ba49c63a5acf933b13",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -197,7 +197,7 @@
     {
       "id": "90c62dd04b83e45e1c68",
       "file": "backend/src/ai/parallelApproval.ts",
-      "line": 107,
+      "line": 108,
       "entryPoint": "executeParallelNativeAction",
       "transport": "boundedPublicGet",
       "callee": "boundedPublicGet",
@@ -227,11 +227,11 @@
     {
       "id": "5baa649b7c2c9b6b6f30",
       "file": "backend/src/ai/parallelDispatch.ts",
-      "line": 96,
+      "line": 99,
       "entryPoint": "executeParallelRequest",
       "transport": "fetch",
       "callee": "fetch",
-      "callSha256": "ade692966fd2841f4d0085e6f92a67d22fbce46a10e9e449b0c50a9374f4d8f7",
+      "callSha256": "c6c6be4c06c35a698053f33f82b775f23f47d8565bcd76af0450b7e998949dbd",
       "destination": "DYNAMIC_OR_SDK_INTERNAL",
       "trust": "FIXED_PARALLEL_API_WITH_PRODUCER_ATTESTED_EXACT_PRIVATE_EGRESS_APPROVAL",
       "tenantAuthority": "ORIGINAL_ACTOR_PROJECT_RUN_GENERATION_CURRENT_ONE_USE_CLAIM_SECRET_FLOOR_AND_CANONICAL_BUDGET_SETTLEMENT_NO_DENIAL_FALLBACK",

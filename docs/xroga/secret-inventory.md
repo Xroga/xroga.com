@@ -1,6 +1,6 @@
 # Secret and environment name inventory
 
-Values are forbidden. Source SHA: `2b1f002560c2b58eadd1aaba732fbb58edcf7d8f`. Names and source discovery do not prove that a capability is configured or accepted.
+Values are forbidden. Source SHA: `d07da730cbb34a0cfaa21e149713f76a7508715d`. Names and source discovery do not prove that a capability is configured or accepted.
 
 | Name | Classification | Requirement | Dependency |
 | --- | --- | --- | --- |
@@ -44,6 +44,7 @@ Values are forbidden. Source SHA: `2b1f002560c2b58eadd1aaba732fbb58edcf7d8f`. Na
 | DEEPSEEK_FLASH_INPUT_USD_PER_1M | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | DEEPSEEK_FLASH_MODEL_ID | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | DEEPSEEK_FLASH_OUTPUT_USD_PER_1M | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
+| DEEPSEEK_WEBSEARCH_FETCH_API | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-api-deepseek-com, endpoint-api-parallel-ai |
 | DESCRIPT_API_TOKEN | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | runtime-controls-and-conditional-aliases |
 | DID_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | runtime-controls-and-conditional-aliases |
 | E2E_BACKEND_URL | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-127-0-0-1, endpoint-api-whop-com, endpoint-example-invalid, endpoint-public-example-invalid |
@@ -323,6 +324,7 @@ Values are forbidden. Source SHA: `2b1f002560c2b58eadd1aaba732fbb58edcf7d8f`. Na
 | XROGA_RELEASE_SHA | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | api, endpoint-127-0-0-1, endpoint-metadata-google-internal |
 | XROGA_REQUIRE_HIGH_RISK_REVIEW | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_REQUIRE_MANAGED_CUSTODY | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
+| XROGA_RESEARCH_SEARCH_PROVIDER | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-api-deepseek-com |
 | XROGA_ROUTING_MODE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_RUNTIME_ROLE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_SANDBOX_BROWSER_IMAGE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | google-execution, endpoint-127-0-0-1 |

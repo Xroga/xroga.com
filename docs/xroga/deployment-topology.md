@@ -1,6 +1,6 @@
 # Deployment topology, source and dated evidence
 
-Source SHA: `2b1f002560c2b58eadd1aaba732fbb58edcf7d8f`; exact current source/config hashes are in the JSON. Uncommitted source is not an accepted release.
+Source SHA: `d07da730cbb34a0cfaa21e149713f76a7508715d`; exact current source/config hashes are in the JSON. Uncommitted source is not an accepted release.
 
 | Dependency | Provider | State | Host/resource | Verification |
 | --- | --- | --- | --- | --- |
@@ -32,6 +32,7 @@ Source SHA: `2b1f002560c2b58eadd1aaba732fbb58edcf7d8f`; exact current source/con
 | endpoint-api-m-sandbox-paypal-com | Source-defined endpoint api-m.sandbox.paypal.com | CONFIGURED_BUT_UNVERIFIED | api-m.sandbox.paypal.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-api-apify-com | Source-defined endpoint api.apify.com | CONFIGURED_BUT_UNVERIFIED | api.apify.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-api-cartesia-ai | Source-defined endpoint api.cartesia.ai | CONFIGURED_BUT_UNVERIFIED | api.cartesia.ai | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-api-deepseek-com | Source-defined endpoint api.deepseek.com | CONFIGURED_BUT_UNVERIFIED | api.deepseek.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-api-dev-runwayml-com | Source-defined endpoint api.dev.runwayml.com | CONFIGURED_BUT_UNVERIFIED | api.dev.runwayml.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-api-dicebear-com | Source-defined endpoint api.dicebear.com | CONFIGURED_BUT_UNVERIFIED | api.dicebear.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-api-elevenlabs-io | Source-defined endpoint api.elevenlabs.io | CONFIGURED_BUT_UNVERIFIED | api.elevenlabs.io | NOT_INDEPENDENTLY_VERIFIED |

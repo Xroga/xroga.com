@@ -886,11 +886,11 @@
     },
     {
       "path": "backend/src/ai/parallelApproval.ts",
-      "sourceSha256": "3d6cc51f24257eeb6fa33d2dad97b764bf9751b929a44f09eb4e8a25edbfce48",
+      "sourceSha256": "139198046d61c4eb3fe66eb5cd0bb9e385cc3fe2d5be7f344ef4b7b85259070d",
       "callIds": [
-        "94daa137021764170d8d",
-        "2f73dcc10dc324e2879e",
-        "d579ef4bc0119bb2f271"
+        "93a7b79b3c18e062aa60",
+        "033eceb86fa282679852",
+        "1b00bf42258723ffeb7e"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "The original context comes only from the canonical native permit. Exact user_id predicates scope the executing grant and current run/worker generation. Grant, owner, immutable digest, expiry and effect receipt are rechecked before and after provider waits and immediately after DNS before any public connection.",
@@ -931,14 +931,14 @@
     },
     {
       "path": "backend/src/ai/parallelDispatch.ts",
-      "sourceSha256": "ff1e01472174b83d678068b5f6a635d2b9b12fa456a6912d4eecb2fb6c37501c",
+      "sourceSha256": "8153b32a8f0162cfd04c4f819540abe08801ff12b5e0eb7c8b23f9fc0d9f15f0",
       "callIds": [
-        "c614aff1a7ef600eaeb1",
-        "b9779c8b122b57f53256",
-        "2431b77b0e6d6023a274",
-        "c251576c197571657419",
-        "5b5968c3074825aa583f",
-        "289a623b636b08296aed"
+        "39cad0fb85503233c930",
+        "631f549d5c619d69746a",
+        "9ab1b1ebb253677358c1",
+        "7b9099a711284096f8e4",
+        "c7ad8ff68f1760ad3d6a",
+        "4bb75b30ad6884919826"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Original issued TenantContext fixes actor/user, current project ownership and optional issued worker generation are rechecked. The exact owner and operation enter the existing reserve_xroga_provider_budget and settle_xroga_provider_budget RPCs, with complete reservation/settlement receipts checked. The same canonical billing cycles, policy, holds and reconciliation are used. No alternate ledger or user-ID context fallback is introduced.",
@@ -29099,9 +29099,9 @@
     },
     {
       "path": "backend/src/ai/parallelApproval.ts",
-      "sourceSha256": "3d6cc51f24257eeb6fa33d2dad97b764bf9751b929a44f09eb4e8a25edbfce48",
+      "sourceSha256": "139198046d61c4eb3fe66eb5cd0bb9e385cc3fe2d5be7f344ef4b7b85259070d",
       "callIds": [
-        "cb2ef3964f21b673e523"
+        "cfcce0dfbbf95b9f2e7a"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in executeParallelNativeAction. This specific call uses the built-in Uint8Array.from conversion of already fetched public document bytes for the PDF parser, not the adjacent database, object storage or provider transport.",

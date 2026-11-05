@@ -5309,7 +5309,7 @@
       "id": "surface:7d07dd00cd58533729b5",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/parallelApproval.ts",
-      "sha256": "3d6cc51f24257eeb6fa33d2dad97b764bf9751b929a44f09eb4e8a25edbfce48",
+      "sha256": "139198046d61c4eb3fe66eb5cd0bb9e385cc3fe2d5be7f344ef4b7b85259070d",
       "symbols": [
         "Operation",
         "ParallelAdmission",
@@ -5377,6 +5377,7 @@
         "../services/publish/nativeReleaseAdmission.js",
         "./parallelDispatch.js",
         "./researchAnswer.js",
+        "./researchSearchProvider.js",
         "./runStore.js",
         "./tenantModelDispatch.js",
         "node:crypto",
@@ -5386,6 +5387,7 @@
       "runtimeImports": [
         "backend/src/ai/parallelDispatch.ts",
         "backend/src/ai/researchAnswer.ts",
+        "backend/src/ai/researchSearchProvider.ts",
         "backend/src/ai/runStore.ts",
         "backend/src/ai/tenantModelDispatch.ts",
         "backend/src/lib/truthfulExecution.ts",
@@ -5428,8 +5430,8 @@
         "backend/src/ai/parallelApproval.ts#identity"
       ],
       "tenantBoundary": [
-        "backend/src/ai/parallelApproval.ts:84 (user_id)",
-        "backend/src/ai/parallelApproval.ts:87 (user_id)"
+        "backend/src/ai/parallelApproval.ts:85 (user_id)",
+        "backend/src/ai/parallelApproval.ts:88 (user_id)"
       ],
       "approvalBoundary": [
         "backend/src/ai/parallelApproval.ts#actionPlanDigest",
@@ -5453,7 +5455,7 @@
       "id": "surface:78d9ec4b29ef687ea76d",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/parallelDispatch.ts",
-      "sha256": "ff1e01472174b83d678068b5f6a635d2b9b12fa456a6912d4eecb2fb6c37501c",
+      "sha256": "8153b32a8f0162cfd04c4f819540abe08801ff12b5e0eb7c8b23f9fc0d9f15f0",
       "symbols": [
         "Operation",
         "admission",
@@ -5477,7 +5479,10 @@
         "internalRoute",
         "next",
         "operation",
+        "provider",
+        "providerCredential",
         "reader",
+        "received",
         "requestId",
         "requireRetrievalOperation",
         "reservation",
@@ -5505,6 +5510,7 @@
         "./parallelApproval.js",
         "./postCompletionAccounting.js",
         "./providerBudget.js",
+        "./researchSearchProvider.js",
         "./runStore.js",
         "./tenantModelDispatch.js",
         "./webBudget.js",
@@ -5514,6 +5520,7 @@
         "backend/src/ai/parallelApproval.ts",
         "backend/src/ai/postCompletionAccounting.ts",
         "backend/src/ai/providerBudget.ts",
+        "backend/src/ai/researchSearchProvider.ts",
         "backend/src/ai/runStore.ts",
         "backend/src/ai/tenantModelDispatch.ts",
         "backend/src/ai/webBudget.ts",
@@ -5530,7 +5537,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/parallelApproval.ts:118",
+        "backend/src/ai/parallelApproval.ts:119",
         "backend/src/ai/parallelWeb.security.test.ts:15",
         "backend/src/ai/parallelWeb.ts:1"
       ],
@@ -5545,7 +5552,7 @@
         "backend/src/ai/parallelDispatch.ts#AuthorityError"
       ],
       "tenantBoundary": [
-        "backend/src/ai/parallelDispatch.ts:46 (user_id)"
+        "backend/src/ai/parallelDispatch.ts:49 (user_id)"
       ],
       "approvalBoundary": [
         "backend/src/ai/parallelDispatch.ts#prepareParallelApproval"
@@ -5571,7 +5578,7 @@
       "id": "surface:29af688b2fe1eb19f9b0",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/parallelWeb.ts",
-      "sha256": "3e5487425cda5bb757853899353f17bc10e27e1d6f6abba7ea5a4d7cf599836b",
+      "sha256": "97c77b6f1026b332eafce6daafa36bdc5973ddf620b6252d9caabfe06423453f",
       "symbols": [
         "ParallelResult",
         "ParallelSource",
@@ -8257,6 +8264,65 @@
       ],
       "testCoverage": [
         "backend/src/ai/researchAnswer.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:5f676989c84806ca6213",
+      "subsystem": "ai_execution",
+      "sourcePath": "backend/src/ai/researchSearchProvider.ts",
+      "sha256": "46590516218d70c65681dd96ac376b9706d17f00a376515d2f3ac4fcc753f3c5",
+      "symbols": [
+        "DEEPSEEK_QUERY_MAX",
+        "DEEPSEEK_SEARCH_MICRO_USD",
+        "DEEPSEEK_SEARCH_RESULTS",
+        "DEEPSEEK_SEARCH_URL",
+        "DeepseekResult",
+        "PARALLEL_SEARCH_MICRO_USD",
+        "ResearchSearchProvider",
+        "date",
+        "deepseekSearchBody",
+        "excerpt",
+        "normaliseDeepseekSearch",
+        "query",
+        "question",
+        "r",
+        "researchSearchMicroUsd",
+        "researchSearchProvider",
+        "results"
+      ],
+      "imports": [
+        "../config/envSecrets.js"
+      ],
+      "runtimeImports": [
+        "backend/src/config/envSecrets.ts"
+      ],
+      "entryPoints": [
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
+      ],
+      "callers": [
+        "backend/src/ai/parallelApproval.ts:22",
+        "backend/src/ai/parallelDispatch.ts:15",
+        "backend/src/ai/researchSearchProvider.test.ts:3"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "declared-host:api.deepseek.com"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/ai/researchSearchProvider.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -17911,6 +17977,7 @@
         "backend/src/ai/openaiCompat.ts:3",
         "backend/src/ai/parallelDispatch.ts:2",
         "backend/src/ai/research.ts:1",
+        "backend/src/ai/researchSearchProvider.ts:1",
         "backend/src/lib/netlify.ts:2",
         "backend/src/lib/platformReady.ts:6",
         "backend/src/lib/vercel.ts:1",
@@ -143855,6 +143922,13 @@
       "id": "test-suite:23d8d42196f056421b09",
       "sourcePath": "backend/src/ai/researchLive.test.ts",
       "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:fc958963f2b7e8b93a94",
+      "sourcePath": "backend/src/ai/researchSearchProvider.test.ts",
+      "declaredTests": 4,
       "skipLocations": [],
       "focusLocations": []
     },
