@@ -2815,7 +2815,7 @@ const semanticSoftwareExecution =
 
 const directResponse =
   explicitResume ||
-  semanticSoftwareExecution
+  semanticSoftwareExecution || manualDeepResearch
     ? ''
     : semanticPlan
         .directResponse
@@ -2916,7 +2916,7 @@ if (
           setThinkingSteps([]);
 
           try {
-            const result = await api.phase1.chat(displayPrompt, history, attachments, semanticPlan.goalContract);
+            const result = await api.phase1.chat(displayPrompt, history, attachments, semanticPlan.goalContract, manualDeepResearch);
             const rawReply = (result.response || '').trim();
             fullReply = rawReply;
             // Empty Phase 1 must never leave a blank bubble or silently change execution paths.
