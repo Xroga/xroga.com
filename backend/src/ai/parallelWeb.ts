@@ -120,7 +120,7 @@ export async function parallelSearch(input: {
   if(key&&scope){
     requireResourceOwner(requireTenantContext(scope.context),input.userId);
     await requireModelProjectBinding(scope);
-    const refresh=/\\b(refresh|check again|search again|recheck|new results)\\b/i.test(objective);
+    const refresh=/\b(refresh|check again|search again|recheck|new results)\b/i.test(objective);
     const hit=cachedSearch(key,refresh);
     if(hit)return hit; // No new provider call, no new ledger charge.
   }
@@ -176,7 +176,7 @@ export async function parallelSearch(input: {
 
   const result={answer:'',sources,requestId:data.search_id};
   if(key){
-    const volatile=/\\b(today|latest|breaking|live|now|current price|stock|weather|availability)\\b/i.test(objective);
+    const volatile=/\b(today|latest|breaking|live|now|current price|stock|weather|availability)\b/i.test(objective);
     cacheSearch(key,result,volatile?60_000:10*60_000);
   }
   return result;
