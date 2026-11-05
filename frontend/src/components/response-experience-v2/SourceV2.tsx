@@ -25,10 +25,17 @@ export const SourceRegistryContextV2 = createContext<ReadonlyMap<string, Citatio
 export function sourceDomainV2(url: string): string {
   try { return new URL(url).hostname.replace(/^www\./, ''); } catch { return ''; }
 }
+/** The site's real logo, supplied by DeepSeek Search through the same-origin icon route. A site without one keeps the globe. */
+export function SiteLogoV2({ domain }: { domain: string }) {
+  const [failed, setFailed] = useState(false);
+  if (!domain || failed) return <Globe className={styles.sourceMark} size={13} aria-hidden="true" />;
+  return <img className={`${styles.sourceMark} ${styles.siteLogo}`} src={`/api/site-icon?d=${encodeURIComponent(domain)}`} width={14} height={14} alt="" loading="lazy" decoding="async" referrerPolicy="no-referrer" onError={() => setFailed(true)} />;
+}
 export function SourceMarkV2({ url }: { url: string }) {
   const domain = sourceDomainV2(url);
   const mark = Object.hasOwn(marks, domain) ? marks[domain as keyof typeof marks] : null;
-  return mark ? <svg className={styles.sourceMark} width="14" height="14" viewBox="0 0 24 24" fill={/^(000000|FFFFFF)$/i.test(mark.hex) ? 'currentColor' : `#${mark.hex}`} aria-hidden="true"><path d={mark.path} /></svg> : <Globe className={styles.sourceMark} size={13} aria-hidden="true" />;
+  if (mark) return <svg className={styles.sourceMark} width="14" height="14" viewBox="0 0 24 24" fill={/^(000000|FFFFFF)$/i.test(mark.hex) ? 'currentColor' : `#${mark.hex}`} aria-hidden="true"><path d={mark.path} /></svg>;
+  return <SiteLogoV2 domain={domain} />;
 }
 export function SourceLinkV2({ url, title, number }: { url: string; title: string; number?: number }) {
   const registry = useContext(SourceRegistryContextV2);

@@ -263,3 +263,6 @@
   .tableScroll[data-wide=true] td:first-child { font-weight: 600; font-size: 1.05em; padding-block-end: 8px; }
   .tableScroll[data-wide=true] td:not(:first-child)::before { content: attr(data-label); display: block; font-size: 0.78em; letter-spacing: 0.02em; opacity: 0.62; margin-block-end: 2px; }
 }
+
+/* Site logos from the source's own domain: small, rounded, never stretched. */
+.canvas .siteLogo { width:14px; height:14px; border-radius:3px; object-fit:contain; background:color-mix(in srgb, currentColor 6%, transparent); }
