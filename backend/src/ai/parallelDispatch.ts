@@ -37,8 +37,8 @@ export async function executeParallelRequest(input:{scope:TenantModelScope|undef
   // Rotation or removal cannot silently substitute a different credential after
   // ownership, audit, reservation or provider-response waits.
   const provider=operation==='search'?researchSearchProvider():'parallel';
-  const secretName=provider==='deepseek'?'DEEPSEEK_WEBSEARCH_FETCH_API':'PARALLEL_API_KEY';
-  const credential=operation==='extract'?'native-credential-free':getSecret(secretName);
+  const providerCredential=()=>provider==='deepseek'?getSecret('DEEPSEEK_WEBSEARCH_FETCH_API'):getSecret('PARALLEL_API_KEY');
+  const credential=operation==='extract'?'native-credential-free':providerCredential();
   if(!credential)throw denied();
   const check=async()=>{
     signal?.throwIfAborted();requireResourceOwner(context,scope.userId);
@@ -51,7 +51,7 @@ export async function executeParallelRequest(input:{scope:TenantModelScope|undef
       if(error||!data||data.id!==attempt.runId||data.user_id!==context.userId||data.project_id!==(scope.projectId??null)
         ||data.status!=='running'||data.worker_id!==attempt.workerId||data.lease_generation!==attempt.generation)throw denied();
     }
-    if(operation!=='extract'&&(!credential||getSecret(secretName)!==credential))throw denied();
+    if(operation!=='extract'&&(!credential||providerCredential()!==credential))throw denied();
     await admission?.check();
     signal?.throwIfAborted();
   };
