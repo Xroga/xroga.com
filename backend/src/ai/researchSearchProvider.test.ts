@@ -20,7 +20,10 @@ test('one bounded DeepSeek request respects the documented 128-character limits'
   const body = deepseekSearchBody({ objective: long, search_queries: [long, 'second query is not sent'] });
   assert.equal(body.query.length, 128);
   assert.equal(body.ori_question?.length, 128);
-  assert.equal(body.count, 10);
+  assert.equal(body.count, 15);
+  assert.equal(deepseekSearchBody({ objective: 'Compare models', search_queries: ['models'], result_count: 30 }).count, 30);
+  assert.equal(deepseekSearchBody({ objective: 'Deep research', search_queries: ['research'], result_count: 50 }).count, 50);
+  assert.throws(() => deepseekSearchBody({ objective: 'Invalid', search_queries: ['invalid'], result_count: 40 }), /Unsupported/);
   assert.deepEqual(Object.keys(deepseekSearchBody({ objective: '  ', search_queries: ['Next.js 15 release'] })).sort(), ['count', 'query']);
 });
 
