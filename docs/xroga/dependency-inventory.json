@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "dea31f2e18ca6733579c5bc5fed2ca1b3f78c5fb",
+  "source_sha": "8d339500a1d316a38c23f640ebe377a4be9df2ef",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -2567,6 +2567,40 @@
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
         "frontend/src/components/homepage-next/phase1/providerMarks.ts"
+      ],
+      "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
+      "evidence_ids": []
+    },
+    {
+      "dependency_id": "endpoint-cdn-deepseek-com",
+      "provider": "Source-defined endpoint cdn.deepseek.com",
+      "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
+      "environment": "PRODUCTION",
+      "state": "CONFIGURED_BUT_UNVERIFIED",
+      "runtime_owner": "backend/API or explicitly proposed component",
+      "config_sources": [
+        "frontend/src/lib/siteIcon.ts"
+      ],
+      "hostnames": [
+        "cdn.deepseek.com"
+      ],
+      "resource_id": null,
+      "region": "Not verified",
+      "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
+      "secret_names": [],
+      "inbound_callers": [
+        "api or named source callers; operational reachability not inferred"
+      ],
+      "outbound_dependencies": [],
+      "health_readiness": "Reference/asset hosts may need no service health check; adapter admission/liveness is unverified. No external action or paid health probe performed",
+      "timeout": "Adapter-specific; no fabricated central timeout",
+      "retry_policy": "Source-specific; no live retry test claimed",
+      "idempotency_expectation": "Required for consequential writes; verify canonical authority in Command 008",
+      "data_classification": "User data may be involved; tenant scope requires independent checks",
+      "failure_mode": "Safe user-facing failure required; internal details restricted",
+      "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
+      "observability_source": [
+        "frontend/src/lib/siteIcon.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
       "evidence_ids": []
@@ -16395,7 +16429,7 @@
     },
     {
       "path": "backend/src/ai/answerCoverage.ts",
-      "sha256": "2fe459c10f9a575d285c711cae2551494dd89ee5af8f679d32dae8c680981d2d"
+      "sha256": "4ee83651baf8dddcc7dbd3cf9e7eb4ab500b3c9d423bf82cc3a7dd1e2c5f9788"
     },
     {
       "path": "backend/src/ai/architect.ts",
@@ -16699,7 +16733,7 @@
     },
     {
       "path": "backend/src/ai/prompts.ts",
-      "sha256": "a536e5148ae6deffaba07f9353f8e23dcac088ca978e4475855c396cb500d683"
+      "sha256": "aad098c005e1052f5ec48cbbb29cf489b3b2c98dce92fddcfa599716dde0d407"
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
@@ -19862,6 +19896,10 @@
       "sha256": "c1bd409fd77f9002cffeb2b45cef8419452cdb38ba80e939a1d6f3dc483c57ed"
     },
     {
+      "path": "frontend/src/app/api/site-icon/route.ts",
+      "sha256": "fee600696475e45a166efb0fe37d4b309b26a2911d7c68d2289542711982c111"
+    },
+    {
       "path": "frontend/src/app/auth/callback/route.ts",
       "sha256": "77935986d1b721cbafb87a72b63429e1b2f969b52c3aecf48d90aedf5bc66d70"
     },
@@ -21891,7 +21929,7 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/SourceV2.tsx",
-      "sha256": "0b08ce9a1828c41cdc58bfac8bf94dad46816bcdea5ed653331e21af20dd022e"
+      "sha256": "9296ca07d218634feaf57cae381fcfd3407a69c09f8e584668c4a4b4175905d7"
     },
     {
       "path": "frontend/src/components/response-experience-v2/StatusBadgeV2.tsx",
@@ -23364,6 +23402,10 @@
     {
       "path": "frontend/src/lib/siteHealthAudit.ts",
       "sha256": "8fffc4ba4413ae3ba0f5c99923fb7a8d01fb6b53193c191b24b38bae260c2f9a"
+    },
+    {
+      "path": "frontend/src/lib/siteIcon.ts",
+      "sha256": "9b250245715cacf9e3638a2301c0be0f68791521fbe14db3e47195f4c57f7890"
     },
     {
       "path": "frontend/src/lib/socialSharePack.ts",
@@ -31083,6 +31125,13 @@
       "credentialsInUrl": false
     },
     {
+      "hostname": "cdn.deepseek.com",
+      "protocol": "https:",
+      "path": "frontend/src/lib/siteIcon.ts",
+      "line": 2,
+      "credentialsInUrl": false
+    },
+    {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "frontend/src/lib/socialSharePack.ts",
@@ -31205,7 +31254,7 @@
   "fallback_candidates": [
     {
       "path": "backend/src/ai/answerCoverage.ts",
-      "line": 83,
+      "line": 65,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -31213,6 +31262,13 @@
     {
       "path": "backend/src/ai/answerCoverage.ts",
       "line": 104,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/answerCoverage.ts",
+      "line": 130,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

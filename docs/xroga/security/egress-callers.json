@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "03e83d1374593315110a3689e949c977b275ff47c6062706754e86163697ac68",
+  "sourceTreeDigest": "443d5afe117906c58c990c74d840fc1f5db475ded4c1376b1f142d025fef4120",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -4316,6 +4316,33 @@
       ]
     },
     {
+      "id": "4f66984cbd60464e857e",
+      "file": "frontend/src/app/api/site-icon/route.ts",
+      "line": 17,
+      "entryPoint": "GET",
+      "transport": "boundedPublicGet",
+      "callee": "boundedPublicGet",
+      "callSha256": "36089949098e6e6b59627a3ff3c3a416442272ea92bc7a98e17a689f4eaedd62",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "URL_TRANSPORT_BOUNDARY_FIXED_HOST_NO_USER_DATA_SENT_RASTER_ONLY_NOT_FULL_ACTION_OR_TENANT_CERTIFICATION",
+      "tenantAuthority": "PUBLIC_CACHEABLE_LOGO_BY_VALIDATED_HOSTNAME_NO_TENANT_OR_USER_DATA_IN_REQUEST_OR_RESPONSE",
+      "currentProtection": "CENTRAL_PUBLIC_GET_CANDIDATE_NOT_SEMANTIC_CERTIFICATION",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "VERIFIED_GUARD",
+      "evidence": [
+        {
+          "path": "backend/src/security/boundedPublicGet.ts",
+          "marker": "admitPublicTarget",
+          "sha256": "899faefb611b6bd1ab4cdff6e66337def9d19d5d922b116a9a1e1b57f8372c94"
+        },
+        {
+          "path": "frontend/src/lib/siteIcon.test.ts",
+          "marker": "only a plain public hostname can be requested",
+          "sha256": "2916a37259e5450bd13865314cf09927e416524aff33b1544a5dc3107c3fb7b0"
+        }
+      ]
+    },
+    {
       "id": "4d6615378bab39e757f0",
       "file": "frontend/src/components/dashboard/ApiConnectionBanner.tsx",
       "line": 17,
@@ -4855,7 +4882,8 @@
         "83834d34bdcfc0b016bb",
         "7415b9c13ced3db60b0a",
         "be1e785f2ee1037bb1c0",
-        "651ba21f8a976701efbf"
+        "651ba21f8a976701efbf",
+        "4f66984cbd60464e857e"
       ]
     },
     {
@@ -5080,8 +5108,8 @@
     }
   ],
   "counts": {
-    "total": 149,
-    "reviewed": 149,
+    "total": 150,
+    "reviewed": 150,
     "pending": 0,
     "unresolvedHighRiskBypasses": 0
   }

@@ -1,6 +1,6 @@
 # Deployment topology, source and dated evidence
 
-Source SHA: `dea31f2e18ca6733579c5bc5fed2ca1b3f78c5fb`; exact current source/config hashes are in the JSON. Uncommitted source is not an accepted release.
+Source SHA: `8d339500a1d316a38c23f640ebe377a4be9df2ef`; exact current source/config hashes are in the JSON. Uncommitted source is not an accepted release.
 
 | Dependency | Provider | State | Host/resource | Verification |
 | --- | --- | --- | --- | --- |
@@ -60,6 +60,7 @@ Source SHA: `dea31f2e18ca6733579c5bc5fed2ca1b3f78c5fb`; exact current source/con
 | endpoint-brandland-zendesk-com | Source-defined endpoint brandland.zendesk.com | CONFIGURED_BUT_UNVERIFIED | brandland.zendesk.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-build-avax-network | Source-defined endpoint build.avax.network | CONFIGURED_BUT_UNVERIFIED | build.avax.network | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-calendly-com | Source-defined endpoint calendly.com | CONFIGURED_BUT_UNVERIFIED | calendly.com | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-cdn-deepseek-com | Source-defined endpoint cdn.deepseek.com | CONFIGURED_BUT_UNVERIFIED | cdn.deepseek.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-cdn-jsdelivr-net | Source-defined endpoint cdn.jsdelivr.net | CONFIGURED_BUT_UNVERIFIED | cdn.jsdelivr.net | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-cdn-simpleicons-org | Source-defined endpoint cdn.simpleicons.org | CONFIGURED_BUT_UNVERIFIED | cdn.simpleicons.org | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-chain-link | Source-defined endpoint chain.link | CONFIGURED_BUT_UNVERIFIED | chain.link | NOT_INDEPENDENTLY_VERIFIED |
@@ -241,4 +242,4 @@ Historical findings below remain as review obligations, not fresh observations. 
 - P1 RELEASE_CONTROLS_UNENFORCED: Observed main and Production/Preview lack platform protection/restrictions; mandatory user release gates still apply. Owner command: 010; RECORDED_PRE_EXISTING_RISK_NOT_WAIVED.
 - P2 HOST_TOOLCHAIN_DRIFT: Vercel project configured Node 24.x; canonical CI/API image is 22.21.1; Fly host test workflow has no explicit setup-node. Owner command: 006; RECORDED_PRE_EXISTING_RISK_NOT_WAIVED.
 
-1074 memory/filesystem candidates require semantic review. Static collections and scratch writes are not blanket durability defects or certificates. Source-defined optional hosts do not establish runtime reachability. No secrets, production rows, IAM, DNS, deployment or provider operation were changed by this inventory generation.
+1075 memory/filesystem candidates require semantic review. Static collections and scratch writes are not blanket durability defects or certificates. Source-defined optional hosts do not establish runtime reachability. No secrets, production rows, IAM, DNS, deployment or provider operation were changed by this inventory generation.

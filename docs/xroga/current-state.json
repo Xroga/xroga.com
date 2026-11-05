@@ -251,16 +251,18 @@
       "id": "surface:65cb0aba3b036f66089f",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/answerCoverage.ts",
-      "sha256": "2fe459c10f9a575d285c711cae2551494dd89ee5af8f679d32dae8c680981d2d",
+      "sha256": "4ee83651baf8dddcc7dbd3cf9e7eb4ab500b3c9d423bf82cc3a7dd1e2c5f9788",
       "symbols": [
         "boundary",
         "branching",
         "carrier",
         "collision",
         "coverage",
+        "declines",
         "drifting",
         "evidence",
         "existing",
+        "figures",
         "item",
         "items",
         "kept",
@@ -272,6 +274,8 @@
         "persistent",
         "plan",
         "prepareAnswerCoverage",
+        "proseIds",
+        "quantitativeScenarioSupport",
         "quoteIssues",
         "quoted",
         "relevance",
@@ -280,10 +284,12 @@
         "requiredAccessBoundarySupport",
         "requirements",
         "result",
+        "scenario",
         "sentence",
         "sentences",
         "suffix",
         "system",
+        "text",
         "topic"
       ],
       "imports": [
@@ -6875,7 +6881,7 @@
       "id": "surface:087b17b9e17fc86ddade",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/prompts.ts",
-      "sha256": "a536e5148ae6deffaba07f9353f8e23dcac088ca978e4475855c396cb500d683",
+      "sha256": "aad098c005e1052f5ec48cbbb29cf489b3b2c98dce92fddcfa599716dde0d407",
       "symbols": [
         "BRIEF_RESEARCH_RESPONSE_RE",
         "BUILDER_SYSTEM",
@@ -33643,6 +33649,7 @@
         "backend/src/index.ts",
         "frontend/src/app/api/browser-view/route.ts",
         "frontend/src/app/api/image-fetch/route.ts",
+        "frontend/src/app/api/site-icon/route.ts",
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
@@ -59397,6 +59404,52 @@
       "runtimeImports": [],
       "entryPoints": [
         "frontend/src/app/api/showcase/aura/health/route.ts"
+      ],
+      "callers": [],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "next/server"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:1fe0d43760349d0f04dd",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/app/api/site-icon/route.ts",
+      "sha256": "fee600696475e45a166efb0fe37d4b309b26a2911d7c68d2289542711982c111",
+      "symbols": [
+        "GET",
+        "bytes",
+        "domain",
+        "res",
+        "runtime",
+        "type"
+      ],
+      "imports": [
+        "@/lib/server/publicEgress",
+        "@/lib/siteIcon",
+        "@/lib/untrustedProxyResponse",
+        "next/server"
+      ],
+      "runtimeImports": [
+        "frontend/src/lib/server/publicEgress.ts",
+        "frontend/src/lib/siteIcon.ts",
+        "frontend/src/lib/untrustedProxyResponse.ts"
+      ],
+      "entryPoints": [
+        "frontend/src/app/api/site-icon/route.ts"
       ],
       "callers": [],
       "reachable": true,
@@ -87990,9 +88043,10 @@
       "id": "surface:f8646cfeb40e43123392",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/SourceV2.tsx",
-      "sha256": "0b08ce9a1828c41cdc58bfac8bf94dad46816bcdea5ed653331e21af20dd022e",
+      "sha256": "9296ca07d218634feaf57cae381fcfd3407a69c09f8e584668c4a4b4175905d7",
       "symbols": [
         "InlineImageV2",
+        "SiteLogoV2",
         "SourceLinkV2",
         "SourceMarkV2",
         "SourceRegistryContextV2",
@@ -109519,11 +109573,13 @@
       ],
       "entryPoints": [
         "frontend/src/app/api/browser-view/route.ts",
-        "frontend/src/app/api/image-fetch/route.ts"
+        "frontend/src/app/api/image-fetch/route.ts",
+        "frontend/src/app/api/site-icon/route.ts"
       ],
       "callers": [
         "frontend/src/app/api/browser-view/route.ts:3",
-        "frontend/src/app/api/image-fetch/route.ts:3"
+        "frontend/src/app/api/image-fetch/route.ts:3",
+        "frontend/src/app/api/site-icon/route.ts:3"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -110206,6 +110262,48 @@
       "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
       "knownRisk": "Live provider state and full security behavior not established by static inventory.",
       "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:b49e209a56228807c617",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/lib/siteIcon.ts",
+      "sha256": "9b250245715cacf9e3638a2301c0be0f68791521fbe14db3e47195f4c57f7890",
+      "symbols": [
+        "DOMAIN",
+        "ICON_HOST",
+        "MAX_ICON_BYTES",
+        "at",
+        "isIconDomain",
+        "sniffRasterImage"
+      ],
+      "imports": [],
+      "runtimeImports": [],
+      "entryPoints": [
+        "frontend/src/app/api/site-icon/route.ts"
+      ],
+      "callers": [
+        "frontend/src/app/api/site-icon/route.ts:4",
+        "frontend/src/lib/siteIcon.test.ts:3"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "declared-host:cdn.deepseek.com"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "frontend/src/lib/siteIcon.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
@@ -112977,11 +113075,13 @@
       ],
       "entryPoints": [
         "frontend/src/app/api/browser-view/route.ts",
-        "frontend/src/app/api/image-fetch/route.ts"
+        "frontend/src/app/api/image-fetch/route.ts",
+        "frontend/src/app/api/site-icon/route.ts"
       ],
       "callers": [
         "frontend/src/app/api/browser-view/route.ts:2",
         "frontend/src/app/api/image-fetch/route.ts:2",
+        "frontend/src/app/api/site-icon/route.ts:2",
         "frontend/src/lib/untrustedProxyResponse.test.ts:3"
       ],
       "reachable": true,
@@ -113015,7 +113115,8 @@
       "runtimeImports": [],
       "entryPoints": [
         "frontend/src/app/api/browser-view/route.ts",
-        "frontend/src/app/api/image-fetch/route.ts"
+        "frontend/src/app/api/image-fetch/route.ts",
+        "frontend/src/app/api/site-icon/route.ts"
       ],
       "callers": [
         "frontend/next.config.mjs:4",
@@ -143740,7 +143841,7 @@
     {
       "id": "test-suite:673c1c4f2d2cfc4719dd",
       "sourcePath": "backend/src/ai/presentationRelevance.test.ts",
-      "declaredTests": 9,
+      "declaredTests": 11,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -149866,6 +149967,13 @@
       "id": "test-suite:cdf10d5b5ccc72905cc9",
       "sourcePath": "frontend/src/lib/signingUi.security.test.ts",
       "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:241e940210fde14c5643",
+      "sourcePath": "frontend/src/lib/siteIcon.test.ts",
+      "declaredTests": 2,
       "skipLocations": [],
       "focusLocations": []
     },

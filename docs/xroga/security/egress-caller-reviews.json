@@ -4609,6 +4609,27 @@
           "sha256": "f7739c339fd6f7e17feba6ef782c476b4b73f7de4b9022a811897ad933029bfc"
         }
       ]
+    },
+    {
+      "id": "4f66984cbd60464e857e",
+      "callSha256": "36089949098e6e6b59627a3ff3c3a416442272ea92bc7a98e17a689f4eaedd62",
+      "sourceFileSha256": "fee600696475e45a166efb0fe37d4b309b26a2911d7c68d2289542711982c111",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "URL_TRANSPORT_BOUNDARY_FIXED_HOST_NO_USER_DATA_SENT_RASTER_ONLY_NOT_FULL_ACTION_OR_TENANT_CERTIFICATION",
+      "tenantAuthority": "PUBLIC_CACHEABLE_LOGO_BY_VALIDATED_HOSTNAME_NO_TENANT_OR_USER_DATA_IN_REQUEST_OR_RESPONSE",
+      "evidence": [
+        {
+          "path": "backend/src/security/boundedPublicGet.ts",
+          "marker": "admitPublicTarget",
+          "sha256": "899faefb611b6bd1ab4cdff6e66337def9d19d5d922b116a9a1e1b57f8372c94"
+        },
+        {
+          "path": "frontend/src/lib/siteIcon.test.ts",
+          "marker": "only a plain public hostname can be requested",
+          "sha256": "2916a37259e5450bd13865314cf09927e416524aff33b1544a5dc3107c3fb7b0"
+        }
+      ],
+      "reviewedOnBranch": "2026-11-05: GET /api/site-icon connects only to the fixed https://cdn.deepseek.com/site-icons/ host with a hostname that must match a plain public-domain pattern (no IP literals, ports, paths or credentials), through the governed boundedPublicGet with no redirects, a 96 KiB cap and a 6 s timeout. It sends no cookies, user text or identifiers, accepts a reply only when its bytes are a PNG, JPEG, GIF, WebP or ICO (never SVG or HTML), and caches the public logo."
     }
   ]
 }
