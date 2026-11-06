@@ -3974,17 +3974,33 @@
     "baseSource": "fe4062e08f52dcfe69e7954f5fb359fd7a83b1a4",
     "path": "frontend/src/lib/formatAiMarkdown.tsx",
     "beforeSha256": "dba219fea184b59714d2c36619d1c58bd3273e6b232c9d1b4b53e3427bc16fdf",
-    "currentSha256": "35c178a353037b5fbbfbef958c25b52f6df793c2928bb8d7d98342c6305d3784",
+    "currentSha256": "36ad50fa002983850ea4180bca7d1adaa50a083c7cf5f0a9564e748d493c8bc4",
     "beforeIds": [
       "ee548d3cf583cfcbdd91"
     ],
     "currentIds": [
-      "338a66de83af675586e9"
+      "bce2c9897906c37b0966"
     ],
     "unchangedFunction": "decodeBase64UrlUtf8",
     "unchangedFunctionSha256": "6ec75e19c4a80af8ab4ceafca3da5895fe75d7950d832bda437f3539967cb5f0",
     "scope": "EXACT_NATIVE_BYTE_CONVERSION_ONLY_NOT_NEW_SECURITY_ACCEPTANCE",
-    "review": "The only persistence scanner candidate is native Uint8Array.from in the byte decoder. Its complete function is byte-identical. The added confirmation event contains only its existing ID and triggers the existing owner-authenticated read-only receipt handoff; no provider replay or authority change."
+    "review": "The only persistence scanner candidate is native Uint8Array.from in the byte decoder. Its complete function is byte-identical. The added confirmation event contains only its existing ID and triggers the existing owner-authenticated read-only receipt handoff; no provider replay or authority change.",
+    "beforeNetworkReceiptRecovery": {
+      "baseSource": "fe4062e08f52dcfe69e7954f5fb359fd7a83b1a4",
+      "path": "frontend/src/lib/formatAiMarkdown.tsx",
+      "beforeSha256": "dba219fea184b59714d2c36619d1c58bd3273e6b232c9d1b4b53e3427bc16fdf",
+      "currentSha256": "35c178a353037b5fbbfbef958c25b52f6df793c2928bb8d7d98342c6305d3784",
+      "beforeIds": [
+        "ee548d3cf583cfcbdd91"
+      ],
+      "currentIds": [
+        "338a66de83af675586e9"
+      ],
+      "unchangedFunction": "decodeBase64UrlUtf8",
+      "unchangedFunctionSha256": "6ec75e19c4a80af8ab4ceafca3da5895fe75d7950d832bda437f3539967cb5f0",
+      "scope": "EXACT_NATIVE_BYTE_CONVERSION_ONLY_NOT_NEW_SECURITY_ACCEPTANCE",
+      "review": "The only persistence scanner candidate is native Uint8Array.from in the byte decoder. Its complete function is byte-identical. The added confirmation event contains only its existing ID and triggers the existing owner-authenticated read-only receipt handoff; no provider replay or authority change."
+    }
   },
   "previousProductionSourcePreserved": "77d70ff2b95168f7030dd83ec6aacb0c9c4a960b",
   "servingFrontendSourcePreserved": "179b53bf7a1326072bd12d3448d42bfb3b43057a",
@@ -4168,5 +4184,140 @@
     },
     "scope": "UI_PRECONDITION_CORRECTION_NOT_BACKEND_AUTHORITY_OR_SECURITY_ACCEPTANCE",
     "reason": "Actual authenticated Free browser testing of the HTTP Cache-Control documentation question with the Deep Research button selected incorrectly opened Connect GitHub before any semantic planner or research approval. Only the optional client repository precondition is skipped for trusted manual research UI intent. Existing guest sign-in, text-only/no concurrent work checks remain earlier and byte-identical. All call expressions, original submit arguments, backend semantic decision, actor/project/repository checks, approval digest, provider/model/accounting limits and no-retry rule are unchanged. A technical research question can now reach the same server planner without connecting a code repository; this grants no capability or execution permission. The exact Array.from(list) remains a native in-memory FileList conversion, not persistence. This narrow manual review preserves its entire former receipt and does not certify the whole component or alter historical acceptance."
+  },
+  "networkReceiptRecovery": {
+    "reference": "96017be95fe8121e9122ef7e23f0a27a94dcb860",
+    "bindings": [
+      {
+        "path": "frontend/src/lib/formatAiMarkdown.tsx",
+        "beforeSha256": "35c178a353037b5fbbfbef958c25b52f6df793c2928bb8d7d98342c6305d3784",
+        "currentSha256": "36ad50fa002983850ea4180bca7d1adaa50a083c7cf5f0a9564e748d493c8bc4",
+        "unchangedNonCallbackCallExpressionCount": 213,
+        "native": {
+          "originalReview": {
+            "path": "frontend/src/lib/formatAiMarkdown.tsx",
+            "sourceSha256": "35c178a353037b5fbbfbef958c25b52f6df793c2928bb8d7d98342c6305d3784",
+            "callIds": [
+              "338a66de83af675586e9"
+            ],
+            "disposition": "NOT_PERSISTENCE",
+            "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in decodeBase64UrlUtf8, with no database or Storage client receiver.",
+            "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh. Re-bound 2026-11-04: Diff from the reviewed source d80e1ce5489b is only `export` added to BusinessActionConfirmationInline so the V2 turn can render the existing confirmation review. The reviewed call (decodeBase64UrlUtf8 Array/Uint8Array conversion) is unchanged; no new call, receiver, persistence or egress was added.",
+            "evidence": [
+              {
+                "path": "frontend/src/lib/formatAiMarkdown.tsx",
+                "marker": "Uint8Array.from("
+              },
+              {
+                "path": "frontend/src/lib/formatAiMarkdown.tsx",
+                "marker": "export function BusinessActionConfirmationInline"
+              }
+            ],
+            "acceptedPhaseTwoReview": {
+              "sourceSha": "a21a82029276d38d53c9e17c580a15f57b653fe3",
+              "sourceSha256": "dd9715b63eeca3a39f7b82cb45d6520ed8aedecadc5b7d069f2ba73fc5fba8ac",
+              "callIds": [
+                "c7d109715d2f37cc95b2"
+              ]
+            },
+            "beforeCurrentMainIntegration": {
+              "ref": "92043b72c20e5a12636dee079d760a1e5708b48f",
+              "sourceSha256": "074635d63bbbd514febd9eda9219c5d1404bacaed0226859bb9f6511d115189d",
+              "callIds": [
+                "f40cf50a136b33e64174"
+              ],
+              "disposition": "NOT_PERSISTENCE"
+            },
+            "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json",
+            "reboundOnBranch": {
+              "prNumber": 922,
+              "baseRef": "origin/main",
+              "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+              "baseSourceSha256": "074635d63bbbd514febd9eda9219c5d1404bacaed0226859bb9f6511d115189d",
+              "baseCallIds": [
+                "f40cf50a136b33e64174"
+              ],
+              "verification": "Each reviewed call chain and its whole enclosing function are byte-identical to the reviewed main version; only code outside the reviewed calls changed."
+            },
+            "searchOsReceiptRefreshPriorReview": {
+              "path": "frontend/src/lib/formatAiMarkdown.tsx",
+              "sourceSha256": "dba219fea184b59714d2c36619d1c58bd3273e6b232c9d1b4b53e3427bc16fdf",
+              "callIds": [
+                "ee548d3cf583cfcbdd91"
+              ],
+              "disposition": "NOT_PERSISTENCE",
+              "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in decodeBase64UrlUtf8, with no database or Storage client receiver.",
+              "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh. Re-bound 2026-11-04: Diff from the reviewed source d80e1ce5489b is only `export` added to BusinessActionConfirmationInline so the V2 turn can render the existing confirmation review. The reviewed call (decodeBase64UrlUtf8 Array/Uint8Array conversion) is unchanged; no new call, receiver, persistence or egress was added.",
+              "evidence": [
+                {
+                  "path": "frontend/src/lib/formatAiMarkdown.tsx",
+                  "marker": "Uint8Array.from("
+                },
+                {
+                  "path": "frontend/src/lib/formatAiMarkdown.tsx",
+                  "marker": "export function BusinessActionConfirmationInline"
+                }
+              ],
+              "acceptedPhaseTwoReview": {
+                "sourceSha": "a21a82029276d38d53c9e17c580a15f57b653fe3",
+                "sourceSha256": "dd9715b63eeca3a39f7b82cb45d6520ed8aedecadc5b7d069f2ba73fc5fba8ac",
+                "callIds": [
+                  "c7d109715d2f37cc95b2"
+                ]
+              },
+              "beforeCurrentMainIntegration": {
+                "ref": "92043b72c20e5a12636dee079d760a1e5708b48f",
+                "sourceSha256": "074635d63bbbd514febd9eda9219c5d1404bacaed0226859bb9f6511d115189d",
+                "callIds": [
+                  "f40cf50a136b33e64174"
+                ],
+                "disposition": "NOT_PERSISTENCE"
+              },
+              "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json",
+              "reboundOnBranch": {
+                "prNumber": 922,
+                "baseRef": "origin/main",
+                "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+                "baseSourceSha256": "074635d63bbbd514febd9eda9219c5d1404bacaed0226859bb9f6511d115189d",
+                "baseCallIds": [
+                  "f40cf50a136b33e64174"
+                ],
+                "verification": "Each reviewed call chain and its whole enclosing function are byte-identical to the reviewed main version; only code outside the reviewed calls changed."
+              }
+            }
+          },
+          "before": {
+            "id": "338a66de83af675586e9",
+            "path": "frontend/src/lib/formatAiMarkdown.tsx",
+            "line": 641,
+            "enclosing": "decodeBase64UrlUtf8",
+            "kind": "TABLE_OR_BUCKET_CANDIDATE",
+            "target": "<dynamic>",
+            "ownerPredicateCandidate": false,
+            "review": "REVIEW_REQUIRED",
+            "sourceSha256": "35c178a353037b5fbbfbef958c25b52f6df793c2928bb8d7d98342c6305d3784"
+          },
+          "current": {
+            "id": "bce2c9897906c37b0966",
+            "path": "frontend/src/lib/formatAiMarkdown.tsx",
+            "line": 641,
+            "enclosing": "decodeBase64UrlUtf8",
+            "kind": "TABLE_OR_BUCKET_CANDIDATE",
+            "target": "<dynamic>",
+            "ownerPredicateCandidate": false,
+            "review": "REVIEW_REQUIRED",
+            "sourceSha256": "36ad50fa002983850ea4180bca7d1adaa50a083c7cf5f0a9564e748d493c8bc4"
+          }
+        }
+      },
+      {
+        "path": "frontend/src/context/TerminalChatContext.tsx",
+        "beforeSha256": "7a076819bf3ef227d59f385bb53caee68ca3ce1e67fa5fa555ce93d9e2d22325",
+        "currentSha256": "0cf55fdd9a9d438469777c92c7f72d8ec0cad0f0e2afcb72867d2d879fc8f330",
+        "unchangedNonCallbackCallExpressionCount": 987
+      }
+    ],
+    "scope": "READ_ONLY_OWNER_RECEIPT_RECOVERY_NOT_PROVIDER_RETRY_OR_AUTHORITY",
+    "reason": "Real normal-tier action f4094900-0bb7-40e8-917d-74ebe5c6aede completed and settled one Search and one model answer, but a lost browser POST response left the approval card. The existing ID-only receipt notification now runs in finally on success or failure, so the existing owner-authenticated GET can recover a completed result without another effect. The receipt effect also observes primitive session-restoration and session-ID state and waits while restoring, rather than missing a restored pending action. Existing in-flight coalescing, disposal and same-session/ID checks remain. All non-callback call expressions in both files are unchanged as a multiset, including the sole confirmation POST. The changed hook closures were reviewed explicitly: only the ID-only event position and primitive receipt-effect guard/dependencies change; no retry, new provider, role, storage or billing API was added. The complete native UTF-8 decoder is byte-identical and its entire prior disposition is preserved. Exact deployed UI recovery acceptance is blocked by Vercel api-deployments-free-per-day; this is source review, not live certification."
   }
 }
