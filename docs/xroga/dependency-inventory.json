@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "5c55c94c8ad8bd54750c25bcb687ac88f9e4f997",
+  "source_sha": "9f0b9e5bdeec0f3ad45497c2c787e849b0d4075b",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -16805,7 +16805,7 @@
     },
     {
       "path": "backend/src/ai/responsePresentation.ts",
-      "sha256": "245c0cf5013f49daa0933d1442c9d9a21692fbc5765539d6bee7b8c64105622f"
+      "sha256": "7430a99fa3b8635c69caaf40a0891d85e111ef0bd71ea811f9c346287197eafb"
     },
     {
       "path": "backend/src/ai/router.ts",
@@ -32211,28 +32211,14 @@
     },
     {
       "path": "backend/src/ai/responsePresentation.ts",
-      "line": 139,
+      "line": 143,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/responsePresentation.ts",
-      "line": 140,
-      "scope": "FUNCTION_LOCAL",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "backend/src/ai/responsePresentation.ts",
-      "line": 152,
-      "scope": "FUNCTION_LOCAL",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "backend/src/ai/responsePresentation.ts",
-      "line": 155,
+      "line": 144,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -32240,6 +32226,20 @@
     {
       "path": "backend/src/ai/responsePresentation.ts",
       "line": 156,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/responsePresentation.ts",
+      "line": 159,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/responsePresentation.ts",
+      "line": 160,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

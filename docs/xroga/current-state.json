@@ -8528,7 +8528,7 @@
       "id": "surface:74760a8c78ac888599fd",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/responsePresentation.ts",
-      "sha256": "245c0cf5013f49daa0933d1442c9d9a21692fbc5765539d6bee7b8c64105622f",
+      "sha256": "7430a99fa3b8635c69caaf40a0891d85e111ef0bd71ea811f9c346287197eafb",
       "symbols": [
         "AnswerObligations",
         "JsonSchema",
@@ -144237,7 +144237,7 @@
     {
       "id": "test-suite:11a90210e320c1d28cb6",
       "sourcePath": "backend/src/ai/responsePresentation.test.ts",
-      "declaredTests": 13,
+      "declaredTests": 14,
       "skipLocations": [],
       "focusLocations": []
     },
