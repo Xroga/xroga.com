@@ -31799,9 +31799,9 @@
     },
     {
       "path": "frontend/src/lib/formatAiMarkdown.tsx",
-      "sourceSha256": "35c178a353037b5fbbfbef958c25b52f6df793c2928bb8d7d98342c6305d3784",
+      "sourceSha256": "36ad50fa002983850ea4180bca7d1adaa50a083c7cf5f0a9564e748d493c8bc4",
       "callIds": [
-        "338a66de83af675586e9"
+        "bce2c9897906c37b0966"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in decodeBase64UrlUtf8, with no database or Storage client receiver.",
@@ -31886,6 +31886,101 @@
             "f40cf50a136b33e64174"
           ],
           "verification": "Each reviewed call chain and its whole enclosing function are byte-identical to the reviewed main version; only code outside the reviewed calls changed."
+        }
+      },
+      "beforeNetworkReceiptRecovery": {
+        "reference": "96017be95fe8121e9122ef7e23f0a27a94dcb860",
+        "review": {
+          "path": "frontend/src/lib/formatAiMarkdown.tsx",
+          "sourceSha256": "35c178a353037b5fbbfbef958c25b52f6df793c2928bb8d7d98342c6305d3784",
+          "callIds": [
+            "338a66de83af675586e9"
+          ],
+          "disposition": "NOT_PERSISTENCE",
+          "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in decodeBase64UrlUtf8, with no database or Storage client receiver.",
+          "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh. Re-bound 2026-11-04: Diff from the reviewed source d80e1ce5489b is only `export` added to BusinessActionConfirmationInline so the V2 turn can render the existing confirmation review. The reviewed call (decodeBase64UrlUtf8 Array/Uint8Array conversion) is unchanged; no new call, receiver, persistence or egress was added.",
+          "evidence": [
+            {
+              "path": "frontend/src/lib/formatAiMarkdown.tsx",
+              "marker": "Uint8Array.from("
+            },
+            {
+              "path": "frontend/src/lib/formatAiMarkdown.tsx",
+              "marker": "export function BusinessActionConfirmationInline"
+            }
+          ],
+          "acceptedPhaseTwoReview": {
+            "sourceSha": "a21a82029276d38d53c9e17c580a15f57b653fe3",
+            "sourceSha256": "dd9715b63eeca3a39f7b82cb45d6520ed8aedecadc5b7d069f2ba73fc5fba8ac",
+            "callIds": [
+              "c7d109715d2f37cc95b2"
+            ]
+          },
+          "beforeCurrentMainIntegration": {
+            "ref": "92043b72c20e5a12636dee079d760a1e5708b48f",
+            "sourceSha256": "074635d63bbbd514febd9eda9219c5d1404bacaed0226859bb9f6511d115189d",
+            "callIds": [
+              "f40cf50a136b33e64174"
+            ],
+            "disposition": "NOT_PERSISTENCE"
+          },
+          "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json",
+          "reboundOnBranch": {
+            "prNumber": 922,
+            "baseRef": "origin/main",
+            "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+            "baseSourceSha256": "074635d63bbbd514febd9eda9219c5d1404bacaed0226859bb9f6511d115189d",
+            "baseCallIds": [
+              "f40cf50a136b33e64174"
+            ],
+            "verification": "Each reviewed call chain and its whole enclosing function are byte-identical to the reviewed main version; only code outside the reviewed calls changed."
+          },
+          "searchOsReceiptRefreshPriorReview": {
+            "path": "frontend/src/lib/formatAiMarkdown.tsx",
+            "sourceSha256": "dba219fea184b59714d2c36619d1c58bd3273e6b232c9d1b4b53e3427bc16fdf",
+            "callIds": [
+              "ee548d3cf583cfcbdd91"
+            ],
+            "disposition": "NOT_PERSISTENCE",
+            "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in decodeBase64UrlUtf8, with no database or Storage client receiver.",
+            "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh. Re-bound 2026-11-04: Diff from the reviewed source d80e1ce5489b is only `export` added to BusinessActionConfirmationInline so the V2 turn can render the existing confirmation review. The reviewed call (decodeBase64UrlUtf8 Array/Uint8Array conversion) is unchanged; no new call, receiver, persistence or egress was added.",
+            "evidence": [
+              {
+                "path": "frontend/src/lib/formatAiMarkdown.tsx",
+                "marker": "Uint8Array.from("
+              },
+              {
+                "path": "frontend/src/lib/formatAiMarkdown.tsx",
+                "marker": "export function BusinessActionConfirmationInline"
+              }
+            ],
+            "acceptedPhaseTwoReview": {
+              "sourceSha": "a21a82029276d38d53c9e17c580a15f57b653fe3",
+              "sourceSha256": "dd9715b63eeca3a39f7b82cb45d6520ed8aedecadc5b7d069f2ba73fc5fba8ac",
+              "callIds": [
+                "c7d109715d2f37cc95b2"
+              ]
+            },
+            "beforeCurrentMainIntegration": {
+              "ref": "92043b72c20e5a12636dee079d760a1e5708b48f",
+              "sourceSha256": "074635d63bbbd514febd9eda9219c5d1404bacaed0226859bb9f6511d115189d",
+              "callIds": [
+                "f40cf50a136b33e64174"
+              ],
+              "disposition": "NOT_PERSISTENCE"
+            },
+            "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json",
+            "reboundOnBranch": {
+              "prNumber": 922,
+              "baseRef": "origin/main",
+              "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+              "baseSourceSha256": "074635d63bbbd514febd9eda9219c5d1404bacaed0226859bb9f6511d115189d",
+              "baseCallIds": [
+                "f40cf50a136b33e64174"
+              ],
+              "verification": "Each reviewed call chain and its whole enclosing function are byte-identical to the reviewed main version; only code outside the reviewed calls changed."
+            }
+          }
         }
       }
     },
