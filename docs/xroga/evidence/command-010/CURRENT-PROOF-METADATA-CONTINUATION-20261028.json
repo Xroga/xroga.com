@@ -6,7 +6,7 @@
       "path": "docs/xroga/evidence/command-010/TRANSPORT-LIFETIME-PROOF.json",
       "archive": "docs/xroga/evidence/command-010/historical/TRANSPORT-LIFETIME-PROOF-87e33b94.json",
       "historicalSha256": "9950d43b6acdd1c5ad4e4bf784ef5115d47af775141905e918525f4ac3cfb4a0",
-      "currentSha256": "ca03cb210bc98be0edbb86f062e51a82f83f66bf669ebab11600979b3af6c382",
+      "currentSha256": "9c96f1a5fbfa20b75e9ee1113d1d123b3d4e7972a2991d609136d70df0eb0529",
       "beforeAuraContinuationSha256": "70e9f401245efccf5abceeb405820c5d0b4f74895c4006a5353671c6b27c14c6",
       "beforeVoiceContinuationSha256": "8986e802f6e8a1435e18f4fe2bf6bcbad03d6ad907bca974721e70919e97b16e",
       "beforeNativePublicationSha256": "90dd03551344cf373a15e641ea37042614f54bb4dfe1dfbbe77d6ef832defd96",
@@ -31,7 +31,9 @@
       "beforeServing179b53ReceiptRefreshCurrentSha256": "b9afff4a6fdf9596111366ef3b55bbad2cccb69e602be1270513f45293a28249",
       "receiptRefreshContinuation": "scripts/security/search-os/source-review.json",
       "beforeExplicitUrlRoutingCurrentSha256": "8bc4ff674883c0267d392869008e092b08015a0312d36476d9dde004c3d3bc2b",
-      "explicitUrlRoutingContinuation": "scripts/security/search-os/source-review.json"
+      "explicitUrlRoutingContinuation": "scripts/security/search-os/source-review.json",
+      "beforeAutomaticEvidenceDepthCurrentSha256": "ca03cb210bc98be0edbb86f062e51a82f83f66bf669ebab11600979b3af6c382",
+      "automaticEvidenceDepthContinuation": "scripts/security/search-os/source-review.json"
     },
     {
       "path": "docs/xroga/evidence/command-010/SOURCE-LIFETIME-PROOF.json",

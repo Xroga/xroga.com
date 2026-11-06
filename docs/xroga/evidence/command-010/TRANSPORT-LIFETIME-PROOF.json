@@ -651,7 +651,7 @@
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "sha256": "6ca81b0c9234195e6159d1e03735a21ce50d50cf1e8f71b53cb62199bf95cb26",
+      "sha256": "e3d1056797980d14df2c56a39f22e0ec6a47a43c478adac2615292b829cf4d51",
       "beforeCurrentMetadataReconciliation": {
         "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
         "sha256": "1cd8184f146f76899fc3070dbb8a59fb847f03231a7ff35041e494fa61349102"
@@ -666,7 +666,26 @@
         "scope": "PRESERVED_PREVIOUS_SOURCE_BINDING_NOT_NEW_EXECUTION_PROOF"
       },
       "availabilityControlReview": "docs/xroga/evidence/response-v2-rich-share/source-review.json",
-      "previousSha256": "67682c5f8dec5148e95ae7e1aa4edb9e32ed0f243aba3f32e9eb3bcfdd32018d"
+      "previousSha256": "67682c5f8dec5148e95ae7e1aa4edb9e32ed0f243aba3f32e9eb3bcfdd32018d",
+      "beforeAutomaticEvidenceDepth": {
+        "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
+        "sha256": "6ca81b0c9234195e6159d1e03735a21ce50d50cf1e8f71b53cb62199bf95cb26",
+        "beforeCurrentMetadataReconciliation": {
+          "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
+          "sha256": "1cd8184f146f76899fc3070dbb8a59fb847f03231a7ff35041e494fa61349102"
+        },
+        "beforeCurrentMainIntegration": {
+          "sha256": "dd067a0d631929f595b3141b8bae5bbd785aefd14c84f1b12fd7b224bf086128",
+          "ref": "92043b72c20e5a12636dee079d760a1e5708b48f"
+        },
+        "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
+        "beforeProviderAvailabilityCorrection": {
+          "sha256": "b84aeadc18565ac0916ab5b1dd5d248e7f604e0f58a424563d1116dd65c88c9e",
+          "scope": "PRESERVED_PREVIOUS_SOURCE_BINDING_NOT_NEW_EXECUTION_PROOF"
+        },
+        "availabilityControlReview": "docs/xroga/evidence/response-v2-rich-share/source-review.json",
+        "previousSha256": "67682c5f8dec5148e95ae7e1aa4edb9e32ed0f243aba3f32e9eb3bcfdd32018d"
+      }
     },
     {
       "path": "backend/src/operations/benchmarkAdapter.ts",
@@ -1064,6 +1083,42 @@
     },
     "scope": "MANUAL_SOURCE_REVIEW_AND_REGRESSION_NOT_NEW_SECURITY_ACCEPTANCE",
     "reason": "The live ten-URL request was incorrectly replaced by a goal-summary Search. Before any retrieval, the original prompt now enters the existing deterministic decideWebAction URL/bare-list/no-retrieval branches. No model call is added for these inputs. The resulting exact URL body still passes the original canonical public URL validation, one-use approval, owner/project/run checks, official Fetch transport and per-operation accounting. The source policy takes the stricter original or validated-goal restriction. Manual UI research retains its explicit 5-operation plan. All existing provider call expressions and complete decision/denial functions are byte-identical. The actual erroneous Search approval was cancelled without retrieval; final authenticated URL/cache acceptance remains pending.",
+    "sourceReview": "scripts/security/search-os/source-review.json",
+    "newSourceCertified": false
+  },
+  "automaticEvidenceDepthContinuation": {
+    "baseSource": "a44b3f8b90560e936ea35064dd34dbc0e62616ab",
+    "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
+    "beforeSha256": "6ca81b0c9234195e6159d1e03735a21ce50d50cf1e8f71b53cb62199bf95cb26",
+    "currentSha256": "e3d1056797980d14df2c56a39f22e0ec6a47a43c478adac2615292b829cf4d51",
+    "unchangedAccountingAdmissionAndModelCalls": [
+      {
+        "name": "requireTenantContext",
+        "sha256": "cfd6fa0d7fae5e7d0e75c83acf4d4b5b4cd60f179dfc98cb559e235668a5ab39"
+      },
+      {
+        "name": "requireResourceOwner",
+        "sha256": "8e4aac821c44ae14c1d28e9eb75b3aa30abd94946753a49f1f442ff1d2346f93"
+      },
+      {
+        "name": "executeHedgedPlannerFallback",
+        "sha256": "4a99ea775e3456002870a4141edbb29be8777c9e12d54ed784536bfa9cab56f5"
+      },
+      {
+        "name": "resolveStructuredGoalContract",
+        "sha256": "bfbe5470a391b9cfeb353ec2961ca6817299199ad083bc8923fd9210c35f5e70"
+      },
+      {
+        "name": "withTenantModelReservation",
+        "sha256": "f3433fbb5256aba71acc807abcc9513ff061443a77274ecc504f1fce195f45d9"
+      },
+      {
+        "name": "chatCompletion",
+        "sha256": "6b9ab45956a00e99f42c4c660214a7fa9eec11d1a6db1590c10faccb00fd12ff"
+      }
+    ],
+    "scope": "SINGLE_CLASSIFICATION_INSTRUCTION_CHANGE_NOT_NEW_AUTHORITY_OR_ACCEPTANCE",
+    "reason": "Two live multi-source questions were both classified low, selecting one Search. The existing planner request now defines its existing contextComplexity field by evidence depth, while single lookups and supplied URLs stay low. High already maps to at most two approved Search operations and the automatic 250-run allowance. No extra classifier/model call, new field, provider, fallback, token ceiling, identity, privilege, execution capability or accounting path is added. Manual Deep Research remains a separate trusted UI boolean and its 90-run/5-operation bound. All relevant model, actor and accounting call expressions are byte-identical; all 64 focused routing/planner/Search OS tests and the backend build pass. Actual automatic 30-result acceptance remains required.",
     "sourceReview": "scripts/security/search-os/source-review.json",
     "newSourceCertified": false
   }
