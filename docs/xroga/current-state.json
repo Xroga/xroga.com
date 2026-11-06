@@ -6881,7 +6881,7 @@
       "id": "surface:087b17b9e17fc86ddade",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/prompts.ts",
-      "sha256": "b0211bef3c4fc5840b7f3a1fb69ba9e24d828b95a5673a16f7c8e87ea10da44f",
+      "sha256": "55d611c8e4210c8b342aa0eb457dd305a08e2cc9cbc620c2edc94e23074cbfcb",
       "symbols": [
         "BRIEF_RESEARCH_RESPONSE_RE",
         "BUILDER_SYSTEM",
@@ -8528,7 +8528,7 @@
       "id": "surface:74760a8c78ac888599fd",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/responsePresentation.ts",
-      "sha256": "7e16ea46e2c45bb3855222b9345b895417bd33a4eb005632fb2665150d2737d7",
+      "sha256": "dd4d6d6bd8b6cef2a4ecfc418ff7ebc4ba413fe44c2d079ea76832a37a55b5b6",
       "symbols": [
         "AnswerObligations",
         "GENERIC_HEADING",
@@ -8547,6 +8547,7 @@
         "calculator",
         "cell",
         "cellText",
+        "cells",
         "chart",
         "chartTypes",
         "columns",
@@ -8578,8 +8579,11 @@
         "inputs",
         "issues",
         "item",
+        "kept",
+        "keptIds",
         "knownIcon",
         "label",
+        "labelled",
         "markdown",
         "name",
         "next",
@@ -88266,7 +88270,7 @@
       "id": "surface:bc797240d03e041cba52",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/calculations.ts",
-      "sha256": "90ee2202f0a8ff79f651d8950ceb3b6f6dd5bc38586b26984acce360c813f008",
+      "sha256": "fb414af404e714f514519dd2ea99c6ac9edaccab52f2c1b7c09bbe1d00c4e7f9",
       "symbols": [
         "CalculatorNode",
         "calculateV2",
@@ -88531,7 +88535,7 @@
       "id": "surface:1a11577c6b142e5e83f0",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/document.ts",
-      "sha256": "f02d2a6b885bed29338990d15e32bbed317dc3bc7cf588986196529a940f441e",
+      "sha256": "ebbd4712fdf451a0e329aa6a3494c9b1cd904cb14ab22b7ee3b601ba24baf85f",
       "symbols": [
         "AdaptedResponse",
         "ResponseDocumentV2",
@@ -114656,7 +114660,7 @@
       "id": "surface:9abd8d23db6426268ad2",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/xrogaBlocks.ts",
-      "sha256": "924d3a623b0888ef1523b24b24f86fdd237a61bd87e0c956ba5acd0e00c51697",
+      "sha256": "c48faf63840bb621a696a09518c6e31054a8bd6c25bb9156788457a51a6b50e2",
       "symbols": [
         "XROGA_BLOCK_SCHEMA_VERSION",
         "XrogaApproval",
@@ -114869,7 +114873,7 @@
       "id": "surface:52c29bb3e1c1f0905b48",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/xrogaCalculations.ts",
-      "sha256": "aefd65d15096906bb808bdf0cb9bef2e4ee3378396b7a7c865e1d82268153cfc",
+      "sha256": "4ed6acbd36f52c3ba1b28d5ad727cfb37717db1a729d83b2f814aca7e02548aa",
       "symbols": [
         "CalculatorOperation",
         "calculateValues",
@@ -115551,7 +115555,7 @@
       "id": "surface:302352813d356af65f42",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/xrogaResponseDocument.ts",
-      "sha256": "565c5d92a6152acf76bd89498de775fc453855051421253bc06e81300a83ff5a",
+      "sha256": "cc6fc855d0175cc1d9b59a8ef6500cc4278981109f6a41cc5a635a2da1c15579",
       "symbols": [
         "EnhancedAiResponse",
         "MAX_PROTOCOL_CHARS",
@@ -144251,7 +144255,7 @@
     {
       "id": "test-suite:11a90210e320c1d28cb6",
       "sourcePath": "backend/src/ai/responsePresentation.test.ts",
-      "declaredTests": 18,
+      "declaredTests": 20,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -150642,7 +150646,7 @@
     {
       "id": "test-suite:71afe89f3737da73f63f",
       "sourcePath": "frontend/src/lib/xrogaCalculations.test.ts",
-      "declaredTests": 3,
+      "declaredTests": 4,
       "skipLocations": [],
       "focusLocations": []
     },
