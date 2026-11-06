@@ -1565,6 +1565,7 @@ router.post(
             history,
 
             attachments,
+            manualDeepResearch: req.body?.manualDeepResearch === true,
 
             goalContract:
               semanticGoal

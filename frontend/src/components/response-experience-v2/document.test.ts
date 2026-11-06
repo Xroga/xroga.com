@@ -255,8 +255,14 @@ test('essential answer sections and tables are not hidden in disclosure controls
   const interactions = readFileSync(new URL('./InteractiveV2.tsx', import.meta.url), 'utf8');
   assert.doesNotMatch(canvas.slice(0, canvas.indexOf('references.length > 0')), /<details|View source data/);
   assert.match(canvas, /<summary>References/);
-  assert.doesNotMatch(interactions, /node\.items\[selected\]|hidden=/);
+  // Tabs switch between alternative views, like any tab widget, and nothing else may be hidden. Every panel stays in the page
+  // (so assistive technology, keyboard users, Copy and export all reach it) and `hidden` is allowed only on a tab panel.
+  assert.doesNotMatch(interactions, /node\.items\[selected\]/);
+  assert.match(interactions, /role="tablist"/);
   assert.match(interactions, /node\.items\.map/);
+  const hiddenUses = interactions.match(/hidden=/g) ?? [];
+  assert.equal(hiddenUses.length, 1);
+  assert.match(interactions, /role="tabpanel"[^>]*hidden=\{index !== active\}/);
 });
 
 test('source-backed resources preserve supplied evidence without inventing price or availability', () => {
@@ -281,4 +287,20 @@ test('image captions and source lists survive adaptation and persisted reload', 
   assert.deepEqual(live.document.nodes, saved.document.nodes);
   assert.equal(saved.document.nodes[0].kind, 'images');
   assert.equal(saved.document.nodes[1].description, '2026-01-01');
+});
+
+test('metric tiles keep their meaning: a gain is positive, a loss is negative, anything else stays neutral', () => {
+  const metrics = [
+    { id: 'a', label: 'Max profit', value: '$350', trend: 'up' },
+    { id: 'b', label: 'Max loss', value: '$9,650', trend: 'down' },
+    { id: 'c', label: 'Ratio', value: '2.4 : 1', trend: 'flat' },
+    { id: 'd', label: 'Shares', value: '20' },
+  ];
+  const fence = ['```xroga-ui', JSON.stringify({ id: 's1', type: 'metric-group', metrics }), '```'].join('\n');
+  const enhanced = enhanceAiResponse(['Result', fence].join('\n'), 'metrics-tone');
+  const result = adaptResponseV2({ id: 'metrics-tone', content: enhanced.content, featureOutput: enhanced.output });
+  assert.ok(result.supported);
+  const node = result.document.nodes.find(item => item.kind === 'metrics');
+  assert.ok(node && node.kind === 'metrics');
+  assert.deepEqual(node.items.map(item => [item.label, item.tone]), [['Max profit', 'positive'], ['Max loss', 'negative'], ['Ratio', undefined], ['Shares', undefined]]);
 });

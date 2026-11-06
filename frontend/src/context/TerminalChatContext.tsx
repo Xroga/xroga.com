@@ -560,7 +560,9 @@ interface TerminalChatContextValue {
     text?: string,
     fromQueue?: boolean,
     interrupt?: boolean,
-    attachments?: ChatAttachment[]
+    attachments?: ChatAttachment[],
+    resumeRunId?: string,
+    manualDeepResearch?: boolean
   ) => Promise<void>;
   stop: () => void;
   /** Continue a stopped build from checkpoint + GitHub (not from scratch) */
@@ -753,6 +755,7 @@ const submittedRequestLimit =
     interrupt?: boolean,
     attachments?: ChatAttachment[],
     resumeRunId?: string,
+    manualDeepResearch?: boolean,
   ) => Promise<void>
 >(async () => {});
   const queueRef = useRef<QueuedPrompt[]>([]);
@@ -1356,14 +1359,16 @@ const stopRequestedRunIdRef =
 
   // Read-only receipt handoff. Focus/reopen retrieves saved evidence, never dispatches research.
   useEffect(() => {
-    if (isGuest || !sessionReady || !workspaceIdentity.userId || restoringRef.current) return;
+    if (isGuest || !sessionReady || sessionRestoring || !workspaceIdentity.userId || restoringRef.current) return;
     const pending = JSON.parse(researchPendingKey) as Array<{ messageId: string; confirmationId: string }>;
     if (!pending.length) return;
     let disposed = false;
     let inFlight = false;
+    let refreshAgain = false;
     const session = sessionIdRef.current;
     const refresh = async () => {
-      if (disposed || inFlight) return;
+      if (disposed) return;
+      if (inFlight) { refreshAgain = true; return; }
       inFlight = true;
       try {
         for (const message of pending) {
@@ -1387,12 +1392,24 @@ const stopRequestedRunIdRef =
             // Leave the original approval and context intact. No automatic provider retry.
           }
         }
-      } finally { inFlight = false; }
+      } finally {
+        inFlight = false;
+        if (refreshAgain && !disposed) { refreshAgain = false; void refresh(); }
+      }
     };
     void refresh();
     window.addEventListener('focus', refresh);
-    return () => { disposed = true; window.removeEventListener('focus', refresh); };
-  }, [isGuest, sessionReady, workspaceIdentity.userId, researchPendingKey]);
+    const receiptReady = (event: Event) => {
+      const id = (event as CustomEvent<{ confirmationId?: unknown }>).detail?.confirmationId;
+      if (typeof id === 'string' && pending.some(message => message.confirmationId === id)) void refresh();
+    };
+    window.addEventListener('xroga:action-receipt-ready', receiptReady);
+    return () => {
+      disposed = true;
+      window.removeEventListener('focus', refresh);
+      window.removeEventListener('xroga:action-receipt-ready', receiptReady);
+    };
+  }, [isGuest, sessionReady, sessionRestoring, liveSessionId, workspaceIdentity.userId, researchPendingKey]);
 
   /** Persist terminal history while user works — not only after submit completes */
   useEffect(() => {
@@ -2298,7 +2315,7 @@ const stopRequestedRunIdRef =
 
   /** Light lane while a heavy build runs — chat/planning without clearing todos. */
   const submitLightAlongsideHeavy = useCallback(
-    async (userPrompt: string) => {
+    async (userPrompt: string, manualDeepResearch = false) => {
       if (lightBusyRef.current) {
         enqueuePrompt(userPrompt, 'light');
         setPrompt('');
@@ -2338,6 +2355,7 @@ const stopRequestedRunIdRef =
         const activeContext = useProjectWorkspaceStore.getState().activeProjectContext;
         const result = await runLightLaneChat({
           prompt: displayPrompt,
+          manualDeepResearch,
           history,
           projectContext: activeContext
             ? {
@@ -2470,9 +2488,14 @@ const stopRequestedRunIdRef =
   interrupt = false,
   attachments?: ChatAttachment[],
   resumeRunId?: string,
+   manualDeepResearch = false,
 ) => {
       const userPrompt = (overrideText ?? prompt).trim();
       if (!userPrompt && !attachments?.length) return;
+      if (manualDeepResearch && (loading || attachments?.length)) {
+        toast.error('Start Deep Research with a text request after the current operation finishes.');
+        return;
+      }
 
       if (isGuest) {
         await submitGuestTurn(userPrompt, attachments);
@@ -2487,7 +2510,7 @@ const stopRequestedRunIdRef =
       // build it returns QUEUE_BUILD and the request is queued without executing
       // repository work concurrently with the active build.
       if (heavyJobActiveRef.current && !interrupt) {
-        await submitLightAlongsideHeavy(userPrompt);
+        await submitLightAlongsideHeavy(userPrompt,manualDeepResearch);
         return;
       }
 
@@ -2806,7 +2829,7 @@ const semanticSoftwareExecution =
 
 const directResponse =
   explicitResume ||
-  semanticSoftwareExecution
+  semanticSoftwareExecution || manualDeepResearch
     ? ''
     : semanticPlan
         .directResponse
@@ -2907,7 +2930,7 @@ if (
           setThinkingSteps([]);
 
           try {
-            const result = await api.phase1.chat(displayPrompt, history, attachments, semanticPlan.goalContract);
+            const result = await api.phase1.chat(displayPrompt, history, attachments, semanticPlan.goalContract, manualDeepResearch);
             const rawReply = (result.response || '').trim();
             fullReply = rawReply;
             // Empty Phase 1 must never leave a blank bubble or silently change execution paths.

@@ -132,6 +132,31 @@ test('production web intelligence preserves pending research approval and explic
     assert.equal(web.bundle,null);assert.equal(web.needsConfirmation,true);assert.equal(web.sourceCount,0);assert.match(web.reviewUrl!,/^\/dashboard\/actions\/confirm\/[a-f0-9-]{36}$/);
     assert.equal(urls.length,0);assert.equal(reservation,undefined);assert.match(web.evidence,/pending exact external-data approval/);
     assert.equal(urls.some((url) => /tavily|searx/i.test(url)), false);
+    const supplied = Array.from({length:10},(_,i)=>`https://docs.example.com/page-${i}`);
+    const prompt = `Read these ten public documentation URLs and cite each page.\n${supplied.join('\n')}`;
+    const goal = goalContractSchema.parse({version:'1.0',goal:'Summarize ten documentation pages.',desiredOutcome:'A cited numbered list.',
+      semanticIntent:'INVESTIGATE',requiredCapabilities:['research.public-web','conversation.respond'],freshnessRequirement:'PREFERRED',
+      sourcePolicy:{mode:'official_only',scope:'public_web',officialDomains:['example.com']},confidence:1,contextComplexity:'low'});
+    const decision = webDecisionFromGoalContract(goal)!;
+    assert.equal(decision.action,'search','Reproduce the semantic summary that previously lost the URLs');
+    const ten = await runWebIntelligence({userId:owner,dispatchScope,prompt,decision});
+    assert.equal(ten.needsConfirmation,true);
+    assert.equal(confirmations.row!.plan.arguments.operation,'extract');
+    assert.deepEqual((confirmations.row!.plan.arguments.body as {urls:string[]}).urls,supplied);
+    assert.equal(confirmations.row!.plan.arguments.maximumMicroUsd,7500);
+    assert.equal(urls.length,0,'Preparing the exact ten-page request must not call a provider');
+    assert.equal((await runWebIntelligence({userId:owner,dispatchScope,prompt:supplied.join('\n'),decision})).action,'none');
+    assert.equal((await runWebIntelligence({userId:owner,dispatchScope,prompt:'Do not search the web. Explain MVCC.',decision})).action,'none');
+    assert.equal(urls.length,0,'A model decision cannot override the original no-retrieval boundary');
+    const investigation = await runWebIntelligence({userId:owner,dispatchScope,
+      prompt:'Reconcile constraints across multiple independent current primary references.',
+      decision:webDecisionFromGoalContract({...goal,contextComplexity:'high'})!});
+    assert.equal(investigation.needsConfirmation,true);
+    const automaticBody = confirmations.row!.plan.arguments.body as Record<string,unknown>;
+    assert.equal(automaticBody.research_kind,'automatic');
+    assert.equal(automaticBody.result_count,30);
+    assert.equal(confirmations.row!.plan.arguments.maximumMicroUsd,1500);
+    assert.equal(urls.length,0,'Automatic depth still needs exact approval before either Search');
   } finally {
     resetCredentialVaultRuntimeForTests();for(const[k,v]of Object.entries(vaultEnv))if(v===undefined)delete process.env[k];else process.env[k]=v;
     globalThis.fetch = priorFetch;

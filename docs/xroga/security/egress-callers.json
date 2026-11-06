@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "03e83d1374593315110a3689e949c977b275ff47c6062706754e86163697ac68",
+  "sourceTreeDigest": "3f89d3d20878b85bc78565e9a0b05900bba214ab53fb3a29db92d4a97e02b903",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -195,49 +195,19 @@
       ]
     },
     {
-      "id": "90c62dd04b83e45e1c68",
-      "file": "backend/src/ai/parallelApproval.ts",
-      "line": 108,
-      "entryPoint": "executeParallelNativeAction",
-      "transport": "boundedPublicGet",
-      "callee": "boundedPublicGet",
-      "callSha256": "f2de81a8a454b092ec31470bbf964af50c74badbf8644e61fba47ff760f8013b",
-      "destination": "DYNAMIC_OR_SDK_INTERNAL",
-      "trust": "EXACT_APPROVED_CREDENTIAL_FREE_DNS_PINNED_DOCUMENT_READ_NO_DELEGATED_FETCH",
-      "tenantAuthority": "ORIGINAL_ACTOR_PROJECT_RUN_GENERATION_CURRENT_ONE_USE_CLAIM_SECRET_FLOOR_AND_CANONICAL_BUDGET_SETTLEMENT_NO_DENIAL_FALLBACK",
-      "currentProtection": "CENTRAL_PUBLIC_GET_CANDIDATE_NOT_SEMANTIC_CERTIFICATION",
-      "risk": "HIGH_RISK_PENDING_REVIEW",
-      "disposition": "VERIFIED_GUARD",
-      "evidence": [
-        {
-          "path": "docs/xroga/evidence/command-010/PARALLEL-APPROVAL-BOUNDARY-20261028.json",
-          "marker": "90c62dd04b83e45e1c68",
-          "sha256": "850381fd51ae6d892fac329962cf39b55e1bfcbacdd74614dd25abb15e1bbd2a"
-        },
-        {
-          "path": "backend/src/ai/parallelWeb.security.test.ts",
-          "marker": "actual Parallel entries enforce issued context, current owner, egress, canonical holds and exact settlement",
-          "sha256": "c070ac329948841c4cc4a74bf641ef747fd81aa64b8cc27600879a0def449ee9",
-          "reboundOnBranch": {
-            "previousSha256": "40a9c47c0f61e5894bcc787e72738b44e1ec1b23dcdf652b44e6708b8ff706f2"
-          }
-        }
-      ]
-    },
-    {
       "id": "5baa649b7c2c9b6b6f30",
       "file": "backend/src/ai/parallelDispatch.ts",
-      "line": 98,
+      "line": 115,
       "entryPoint": "executeParallelRequest",
       "transport": "fetch",
       "callee": "fetch",
-      "callSha256": "8a4cf1df25bdb5d59e6f01020cc5be67cec679c8815a93cc5b5b594cc7a7fe28",
+      "callSha256": "fb120e081333d655f1f3d447aa50b519b41c8cdaaf2a927189b30270834fa853",
       "destination": "DYNAMIC_OR_SDK_INTERNAL",
-      "trust": "FIXED_PARALLEL_API_WITH_PRODUCER_ATTESTED_EXACT_PRIVATE_EGRESS_APPROVAL",
+      "trust": "FIXED_OFFICIAL_DEEPSEEK_SEARCH_AND_FETCH_STRUCTURAL_EGRESS_AND_CANONICAL_BUDGET_REVIEW_NOT_LIVE_PROVIDER_PROOF",
       "tenantAuthority": "ORIGINAL_ACTOR_PROJECT_RUN_GENERATION_CURRENT_ONE_USE_CLAIM_SECRET_FLOOR_AND_CANONICAL_BUDGET_SETTLEMENT_NO_DENIAL_FALLBACK",
       "currentProtection": "NOT_CERTIFIED",
       "risk": "HIGH_RISK_PENDING_REVIEW",
-      "disposition": "VERIFIED_GUARD",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
       "evidence": [
         {
           "path": "docs/xroga/evidence/command-010/PARALLEL-APPROVAL-BOUNDARY-20261028.json",
@@ -247,10 +217,11 @@
         {
           "path": "backend/src/ai/parallelWeb.security.test.ts",
           "marker": "actual Parallel entries enforce issued context, current owner, egress, canonical holds and exact settlement",
-          "sha256": "c070ac329948841c4cc4a74bf641ef747fd81aa64b8cc27600879a0def449ee9",
+          "sha256": "f4020789466241e6a462807f9567644dc2c9e2ee61578ea947a38655e20d74f3",
           "reboundOnBranch": {
             "previousSha256": "40a9c47c0f61e5894bcc787e72738b44e1ec1b23dcdf652b44e6708b8ff706f2"
-          }
+          },
+          "searchOsPreviousSha256": "c070ac329948841c4cc4a74bf641ef747fd81aa64b8cc27600879a0def449ee9"
         }
       ]
     },
@@ -4316,6 +4287,33 @@
       ]
     },
     {
+      "id": "4f66984cbd60464e857e",
+      "file": "frontend/src/app/api/site-icon/route.ts",
+      "line": 17,
+      "entryPoint": "GET",
+      "transport": "boundedPublicGet",
+      "callee": "boundedPublicGet",
+      "callSha256": "36089949098e6e6b59627a3ff3c3a416442272ea92bc7a98e17a689f4eaedd62",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "URL_TRANSPORT_BOUNDARY_FIXED_HOST_NO_USER_DATA_SENT_RASTER_ONLY_NOT_FULL_ACTION_OR_TENANT_CERTIFICATION",
+      "tenantAuthority": "PUBLIC_CACHEABLE_LOGO_BY_VALIDATED_HOSTNAME_NO_TENANT_OR_USER_DATA_IN_REQUEST_OR_RESPONSE",
+      "currentProtection": "CENTRAL_PUBLIC_GET_CANDIDATE_NOT_SEMANTIC_CERTIFICATION",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "VERIFIED_GUARD",
+      "evidence": [
+        {
+          "path": "backend/src/security/boundedPublicGet.ts",
+          "marker": "admitPublicTarget",
+          "sha256": "899faefb611b6bd1ab4cdff6e66337def9d19d5d922b116a9a1e1b57f8372c94"
+        },
+        {
+          "path": "frontend/src/lib/siteIcon.test.ts",
+          "marker": "only a plain public hostname can be requested",
+          "sha256": "2916a37259e5450bd13865314cf09927e416524aff33b1544a5dc3107c3fb7b0"
+        }
+      ]
+    },
+    {
       "id": "4d6615378bab39e757f0",
       "file": "frontend/src/components/dashboard/ApiConnectionBanner.tsx",
       "line": 17,
@@ -4848,14 +4846,14 @@
       "scope": "GROUPING_NOT_SEMANTIC_CERTIFICATION",
       "callerIds": [
         "0e0e3527ad05d7405c68",
-        "90c62dd04b83e45e1c68",
         "42b94382bd37c3f50c6c",
         "eae67182cbfc4c6f9091",
         "cd9013aa3fb869fdac91",
         "83834d34bdcfc0b016bb",
         "7415b9c13ced3db60b0a",
         "be1e785f2ee1037bb1c0",
-        "651ba21f8a976701efbf"
+        "651ba21f8a976701efbf",
+        "4f66984cbd60464e857e"
       ]
     },
     {

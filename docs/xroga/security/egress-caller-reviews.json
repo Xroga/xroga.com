@@ -3022,7 +3022,7 @@
     {
       "id": "c09bb8607fa4d00f23b7",
       "callSha256": "0f007db3755a07e13dfaf95ef36d99a6884d9a3cc3101513301f73201bd21224",
-      "sourceFileSha256": "bf072296dc2828844620377cf54a58fafe4cbedfb1a796a8324b77b1f10aa0c0",
+      "sourceFileSha256": "2b769c67ff03dbb40d3aeb82b203c06e34a49e9b77cea7abbfd9e554f99ab93d",
       "disposition": "VERIFIED_GUARD",
       "trust": "CONFIGURED_FIRST_PARTY_API_ORIGIN_ONLY_NO_REDIRECT_OR_CREDENTIAL_BODY_FORWARDING",
       "tenantAuthority": "EXISTING_BROWSER_SESSION_TOKEN_OR_GUEST_SESSION_ONLY_BACKEND_MUST_ENFORCE_ORIGINAL_ISSUED_ACTOR_OWNER_AND_ACTION_AUTHORITY_NO_UPSTREAM_PROMOTION",
@@ -3184,11 +3184,10 @@
         "fail": 0
       },
       "sourceFileReboundOnBranch": {
-        "prNumber": 922,
-        "baseRef": "origin/main",
-        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
-        "previousSourceFileSha256": "d6183bed6f64e0a0c01f43bd4cff42e21ef20e407f7b1ec7a032b3faa006b16a",
-        "verification": "The reviewed egress call hash (callSha256) and id are byte-identical to the reviewed main version. Only other code in the file changed."
+        "prNumber": 930,
+        "baseSha": "5485776cfce9d6e233f7a0e3cf33ef58996a931d",
+        "previousSourceFileSha256": "bf072296dc2828844620377cf54a58fafe4cbedfb1a796a8324b77b1f10aa0c0",
+        "verification": "The reviewed first-party fetch call ID and callSha256 are identical. Only Phase 1 chat request metadata (explicit manual Deep Research selection) and source-date typing changed; destination, redirect mode, user credential handling, and fetch invocation remain byte-identical. No new endpoint or external destination added."
       }
     },
     {
@@ -4194,10 +4193,10 @@
     },
     {
       "id": "5baa649b7c2c9b6b6f30",
-      "callSha256": "8a4cf1df25bdb5d59e6f01020cc5be67cec679c8815a93cc5b5b594cc7a7fe28",
-      "sourceFileSha256": "ac3f222a927506239ccb3a51c40ccc5acee7329ea117c36c8654d0a6b8cdb15a",
-      "disposition": "VERIFIED_GUARD",
-      "trust": "FIXED_PARALLEL_API_WITH_PRODUCER_ATTESTED_EXACT_PRIVATE_EGRESS_APPROVAL",
+      "callSha256": "fb120e081333d655f1f3d447aa50b519b41c8cdaaf2a927189b30270834fa853",
+      "sourceFileSha256": "b25c7116e5fa6b4cf495c99fcbea82b2414becede847ed423e949780aff46683",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "trust": "FIXED_OFFICIAL_DEEPSEEK_SEARCH_AND_FETCH_STRUCTURAL_EGRESS_AND_CANONICAL_BUDGET_REVIEW_NOT_LIVE_PROVIDER_PROOF",
       "tenantAuthority": "ORIGINAL_ACTOR_PROJECT_RUN_GENERATION_CURRENT_ONE_USE_CLAIM_SECRET_FLOOR_AND_CANONICAL_BUDGET_SETTLEMENT_NO_DENIAL_FALLBACK",
       "evidence": [
         {
@@ -4208,10 +4207,11 @@
         {
           "path": "backend/src/ai/parallelWeb.security.test.ts",
           "marker": "actual Parallel entries enforce issued context, current owner, egress, canonical holds and exact settlement",
-          "sha256": "c070ac329948841c4cc4a74bf641ef747fd81aa64b8cc27600879a0def449ee9",
+          "sha256": "f4020789466241e6a462807f9567644dc2c9e2ee61578ea947a38655e20d74f3",
           "reboundOnBranch": {
             "previousSha256": "40a9c47c0f61e5894bcc787e72738b44e1ec1b23dcdf652b44e6708b8ff706f2"
-          }
+          },
+          "searchOsPreviousSha256": "c070ac329948841c4cc4a74bf641ef747fd81aa64b8cc27600879a0def449ee9"
         }
       ],
       "evidenceReboundOnBranch": {
@@ -4219,45 +4219,60 @@
         "reason": "Evidence files changed on the branch (Zurelay two-model and pacing work). Every marker is still present, and the backend AI tests that contain them pass (1,426 passed, 0 failed, 7 skipped). One marker text was updated because the same revokeDuringRetry assertion was reworded."
       },
       "callReboundOnBranch": {
-        "prNumber": 922,
-        "baseRef": "origin/main",
-        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
-        "previousCallSha256": "0015b0c0aa7832d13a4d87175cb68ff30a90f397c0cb84c5899433e3f5c2ea41",
-        "review": "Manual review of the Parallel fetch in parallelDispatch.ts: fixed api.parallel.ai destination and redirect:manual are retained; the generative responses operation and its Bearer header were removed, so only search and extract (x-api-key) remain, guarded by requireRetrievalOperation. Outbound egress is narrowed."
-      }
-    },
-    {
-      "id": "90c62dd04b83e45e1c68",
-      "callSha256": "f2de81a8a454b092ec31470bbf964af50c74badbf8644e61fba47ff760f8013b",
-      "sourceFileSha256": "3ae113999caad00037882cbe3f1cc72a7536a13b53e74403bf849dbda77cfeca",
-      "disposition": "VERIFIED_GUARD",
-      "trust": "EXACT_APPROVED_CREDENTIAL_FREE_DNS_PINNED_DOCUMENT_READ_NO_DELEGATED_FETCH",
-      "tenantAuthority": "ORIGINAL_ACTOR_PROJECT_RUN_GENERATION_CURRENT_ONE_USE_CLAIM_SECRET_FLOOR_AND_CANONICAL_BUDGET_SETTLEMENT_NO_DENIAL_FALLBACK",
-      "evidence": [
-        {
-          "path": "docs/xroga/evidence/command-010/PARALLEL-APPROVAL-BOUNDARY-20261028.json",
-          "marker": "90c62dd04b83e45e1c68",
-          "sha256": "850381fd51ae6d892fac329962cf39b55e1bfcbacdd74614dd25abb15e1bbd2a"
-        },
-        {
-          "path": "backend/src/ai/parallelWeb.security.test.ts",
-          "marker": "actual Parallel entries enforce issued context, current owner, egress, canonical holds and exact settlement",
-          "sha256": "c070ac329948841c4cc4a74bf641ef747fd81aa64b8cc27600879a0def449ee9",
-          "reboundOnBranch": {
-            "previousSha256": "40a9c47c0f61e5894bcc787e72738b44e1ec1b23dcdf652b44e6708b8ff706f2"
-          }
-        }
-      ],
-      "evidenceReboundOnBranch": {
-        "prNumber": 922,
-        "reason": "Evidence files changed on the branch (Zurelay two-model and pacing work). Every marker is still present, and the backend AI tests that contain them pass (1,426 passed, 0 failed, 7 skipped). One marker text was updated because the same revokeDuringRetry assertion was reworded."
+        "prNumber": 930,
+        "baseSha": "5485776cfce9d6e233f7a0e3cf33ef58996a931d",
+        "previousCallSha256": "8a4cf1df25bdb5d59e6f01020cc5be67cec679c8815a93cc5b5b594cc7a7fe28",
+        "review": "PR #930: manually reviewed the new fixed official DeepSeek Search POST: permitted 15/30/50 result count, URL constant, Bearer dedicated DeepSeek credential, no redirects, original actor/project/run approval check, atomic per-paid-user web limit and canonical settlement remain. This proves structural guards, NOT live upstream response or final production security acceptance."
       },
       "sourceFileReboundOnBranch": {
-        "prNumber": 922,
-        "baseRef": "origin/main",
-        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
-        "previousSourceFileSha256": "84b38d89d19071027dd6be660a9f7e3bfbb15524250f5fa8a637b7a51e32d3a8",
-        "verification": "The reviewed egress call hash (callSha256) and id are byte-identical to the reviewed main version. Only other code in the file changed."
+        "prNumber": 930,
+        "baseSha": "5485776cfce9d6e233f7a0e3cf33ef58996a931d",
+        "previousSourceFileSha256": "ac3f222a927506239ccb3a51c40ccc5acee7329ea117c36c8654d0a6b8cdb15a",
+        "verification": "PR #930: manually reviewed the new fixed official DeepSeek Search POST: permitted 15/30/50 result count, URL constant, Bearer dedicated DeepSeek credential, no redirects, original actor/project/run approval check, atomic per-paid-user web limit and canonical settlement remain. This proves structural guards, NOT live upstream response or final production security acceptance."
+      },
+      "searchOsBeforeContinuation": {
+        "id": "5baa649b7c2c9b6b6f30",
+        "callSha256": "ff0014f0b5c941f223478e779d87f7940fceed8f218a46e5d3b6be41a86ffc71",
+        "sourceFileSha256": "c0e69c055b5f56a7157d32f192856ee17d5c00c31866c02cb3e8fe9513e060ff",
+        "disposition": "REVIEWED_FIXED_DEPENDENCY",
+        "trust": "FIXED_OFFICIAL_DEEPSEEK_SEARCH_STRUCTURAL_EGRESS_AND_BUDGET_REVIEW_NOT_LIVE_PROVIDER_PROOF",
+        "tenantAuthority": "ORIGINAL_ACTOR_PROJECT_RUN_GENERATION_CURRENT_ONE_USE_CLAIM_SECRET_FLOOR_AND_CANONICAL_BUDGET_SETTLEMENT_NO_DENIAL_FALLBACK",
+        "evidence": [
+          {
+            "path": "docs/xroga/evidence/command-010/PARALLEL-APPROVAL-BOUNDARY-20261028.json",
+            "marker": "5baa649b7c2c9b6b6f30",
+            "sha256": "850381fd51ae6d892fac329962cf39b55e1bfcbacdd74614dd25abb15e1bbd2a"
+          },
+          {
+            "path": "backend/src/ai/parallelWeb.security.test.ts",
+            "marker": "actual Parallel entries enforce issued context, current owner, egress, canonical holds and exact settlement",
+            "sha256": "c070ac329948841c4cc4a74bf641ef747fd81aa64b8cc27600879a0def449ee9",
+            "reboundOnBranch": {
+              "previousSha256": "40a9c47c0f61e5894bcc787e72738b44e1ec1b23dcdf652b44e6708b8ff706f2"
+            }
+          }
+        ],
+        "evidenceReboundOnBranch": {
+          "prNumber": 922,
+          "reason": "Evidence files changed on the branch (Zurelay two-model and pacing work). Every marker is still present, and the backend AI tests that contain them pass (1,426 passed, 0 failed, 7 skipped). One marker text was updated because the same revokeDuringRetry assertion was reworded."
+        },
+        "callReboundOnBranch": {
+          "prNumber": 930,
+          "baseSha": "5485776cfce9d6e233f7a0e3cf33ef58996a931d",
+          "previousCallSha256": "8a4cf1df25bdb5d59e6f01020cc5be67cec679c8815a93cc5b5b594cc7a7fe28",
+          "review": "PR #930: manually reviewed the new fixed official DeepSeek Search POST: permitted 15/30/50 result count, URL constant, Bearer dedicated DeepSeek credential, no redirects, original actor/project/run approval check, atomic per-paid-user web limit and canonical settlement remain. This proves structural guards, NOT live upstream response or final production security acceptance."
+        },
+        "sourceFileReboundOnBranch": {
+          "prNumber": 930,
+          "baseSha": "5485776cfce9d6e233f7a0e3cf33ef58996a931d",
+          "previousSourceFileSha256": "ac3f222a927506239ccb3a51c40ccc5acee7329ea117c36c8654d0a6b8cdb15a",
+          "verification": "PR #930: manually reviewed the new fixed official DeepSeek Search POST: permitted 15/30/50 result count, URL constant, Bearer dedicated DeepSeek credential, no redirects, original actor/project/run approval check, atomic per-paid-user web limit and canonical settlement remain. This proves structural guards, NOT live upstream response or final production security acceptance."
+        }
+      },
+      "searchOsContinuation": {
+        "sourceReview": "scripts/security/search-os/source-review.json",
+        "scope": "MANUAL_SOURCE_REVIEW_NOT_LIVE_ACCEPTANCE",
+        "review": "Single fixed-origin Search/Fetch POST, exact dedicated credential, redirect/manual, 25-second/2MiB cap; URL public DNS preflight after approval, exact owner/project/run and child-body checks; at most 1/2/5 approved operations or 10 supplied pages; per-operation canonical 750-micro hold, exact zero/nonempty settlement, uncertain hold without replay."
       }
     },
     {
@@ -4609,6 +4624,27 @@
           "sha256": "f7739c339fd6f7e17feba6ef782c476b4b73f7de4b9022a811897ad933029bfc"
         }
       ]
+    },
+    {
+      "id": "4f66984cbd60464e857e",
+      "callSha256": "36089949098e6e6b59627a3ff3c3a416442272ea92bc7a98e17a689f4eaedd62",
+      "sourceFileSha256": "fee600696475e45a166efb0fe37d4b309b26a2911d7c68d2289542711982c111",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "URL_TRANSPORT_BOUNDARY_FIXED_HOST_NO_USER_DATA_SENT_RASTER_ONLY_NOT_FULL_ACTION_OR_TENANT_CERTIFICATION",
+      "tenantAuthority": "PUBLIC_CACHEABLE_LOGO_BY_VALIDATED_HOSTNAME_NO_TENANT_OR_USER_DATA_IN_REQUEST_OR_RESPONSE",
+      "evidence": [
+        {
+          "path": "backend/src/security/boundedPublicGet.ts",
+          "marker": "admitPublicTarget",
+          "sha256": "899faefb611b6bd1ab4cdff6e66337def9d19d5d922b116a9a1e1b57f8372c94"
+        },
+        {
+          "path": "frontend/src/lib/siteIcon.test.ts",
+          "marker": "only a plain public hostname can be requested",
+          "sha256": "2916a37259e5450bd13865314cf09927e416524aff33b1544a5dc3107c3fb7b0"
+        }
+      ],
+      "reviewedOnBranch": "2026-11-05: GET /api/site-icon connects only to the fixed https://cdn.deepseek.com/site-icons/ host with a hostname that must match a plain public-domain pattern (no IP literals, ports, paths or credentials), through the governed boundedPublicGet with no redirects, a 96 KiB cap and a 6 s timeout. It sends no cookies, user text or identifiers, accepts a reply only when its bytes are a PNG, JPEG, GIF, WebP or ICO (never SVG or HTML), and caches the public logo."
     }
   ]
 }

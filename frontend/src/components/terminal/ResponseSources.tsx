@@ -27,6 +27,7 @@ function SourceTile({ source, compact = false }: { source: VerifiedSource; compa
     <div className={styles.tileContent}>
       <span className={styles.kicker}><SourceLogo domain={source.domain} size={16} />{source.domain}</span>
       <a className={styles.title} href={sourceClickUrl(source.url) ?? source.url} target="_blank" rel="noopener noreferrer" aria-label={`Visit source: ${source.item.title}`}>{source.item.title}</a>
+      {!compact && source.item.publishedAt && !Number.isNaN(Date.parse(source.item.publishedAt)) ? <time dateTime={source.item.publishedAt} className={styles.kicker}>Published {new Date(source.item.publishedAt).toLocaleDateString()}</time> : null}
       {!compact && source.item.snippet ? <p className={styles.excerpt}>{cleanExcerpt(source.item.snippet)}</p> : null}
       {!compact ? <div className={styles.tileActions}><button type="button" onClick={async () => { try { await navigator.clipboard.writeText(source.item.snippet || source.item.title); setCopied(true); } catch { setCopied(false); } }}><span>{copied ? <Check size={13} /> : <Copy size={13} />}</span>{copied ? 'Copied' : 'Copy excerpt'}</button><a href={sourceClickUrl(source.url) ?? source.url} target="_blank" rel="noopener noreferrer">Visit source <ArrowUpRight size={14} /></a></div> : null}
     </div>

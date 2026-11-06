@@ -1,0 +1,42 @@
+name: DeepSeek Search OS focused verification
+on:
+  push:
+    branches:
+      - codex/deepseek-search-os-20261105
+  pull_request:
+    paths:
+      - 'backend/src/ai/**'
+      - 'backend/src/services/integrations/researchResult.ts'
+      - 'supabase/migrations/*deepseek*.sql'
+      - 'scripts/security/search-os/**'
+      - '.github/workflows/deepseek-search-os-check.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  backend-search-contracts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .node-version
+          cache: npm
+      - run: npm ci
+      - name: Type check and compile backend
+        run: npm run build --workspace backend
+      - name: Search, Fetch, bounded research, private cache and canonical approval regression
+        run: npx tsx --test backend/src/ai/researchSearchProvider.test.ts backend/src/ai/researchRetrievalPlan.test.ts backend/src/ai/researchRetrievalCache.test.ts backend/src/ai/researchAnswer.test.ts backend/src/ai/parallelWeb.security.test.ts backend/src/ai/black-hole/webSearchIntent.test.ts backend/src/ai/black-hole/webIntelligence.test.ts
+      - name: Type-check workspace frontend
+        run: npx tsc --noEmit --project frontend/tsconfig.json
+      - name: Validate reviewed source, frozen register and inventories without mutating the branch
+        run: |
+          node scripts/security/audit-tenant-policies.mjs
+          node scripts/security/audit-egress-callers.mjs
+          node scripts/xroga/phase-two.mjs
+          node scripts/xroga/inventory.mjs --check
+          node scripts/xroga/validate-requirements-ledger.mjs
+          node scripts/ci/validate-migrations.mjs

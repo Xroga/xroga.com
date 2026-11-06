@@ -1,5 +1,5 @@
 'use client';
-import { useId, useState, useContext, useEffect, lazy, Suspense, type CSSProperties } from 'react';
+import { useId, useRef, useState, useContext, useEffect, lazy, Suspense, type CSSProperties, type KeyboardEvent } from 'react';
 import { RotateCcw } from 'lucide-react';
 import type { ResponseNodeV2 } from './document';
 import type { CitationSource } from '@/lib/xrogaCitations';
@@ -52,9 +52,28 @@ export function CalculatorV2({ node }: { node: CalculatorNode }) {
 /** All authored sections remain visible. Navigation only moves focus. */
 export function TabsV2({ node, sources = [] }: { node: Extract<ResponseNodeV2, { kind: 'tabs' }>; sources?: CitationSource[] }) {
   const id = useId();
+  const [active, setActive] = useState(0);
+  const buttons = useRef<Array<HTMLButtonElement | null>>([]);
+  const count = node.items.length;
+  const select = (index: number, focus = false) => {
+    const next = (index + count) % count;
+    setActive(next);
+    if (focus) buttons.current[next]?.focus();
+  };
+  // WAI-ARIA tabs: arrows, Home and End move between tabs; only the selected panel is shown.
+  const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    const key = event.key === 'ArrowRight' || event.key === 'ArrowDown' ? active + 1 : event.key === 'ArrowLeft' || event.key === 'ArrowUp' ? active - 1
+      : event.key === 'Home' ? 0 : event.key === 'End' ? count - 1 : null;
+    if (key === null) return;
+    event.preventDefault();
+    select(key, true);
+  };
   return <section className={styles.tabSection}>
     {node.title && <h3 className={styles.blockTitle}>{node.title}</h3>}
-    <nav aria-label={node.title || 'Response sections'} className={styles.tabs}>{node.items.map((item, index) => <button key={item.id} type="button" onClick={() => document.getElementById(`${id}-${index}`)?.focus()}>{item.label}</button>)}</nav>
-    {node.items.map((item, index) => <section key={item.id} id={`${id}-${index}`} tabIndex={-1} className={styles.answerSection}><h4>{item.label}</h4><ProseV2 text={item.content} sources={sources} /></section>)}
+    <div role="tablist" aria-label={node.title || 'Response views'} className={styles.tabs} onKeyDown={onKeyDown}>
+      {node.items.map((item, index) => <button key={item.id} ref={element => { buttons.current[index] = element; }} type="button" role="tab" id={`${id}-tab-${index}`}
+        aria-selected={index === active} aria-controls={`${id}-panel-${index}`} tabIndex={index === active ? 0 : -1} onClick={() => select(index)}>{item.label}</button>)}
+    </div>
+    {node.items.map((item, index) => <section key={item.id} role="tabpanel" id={`${id}-panel-${index}`} aria-labelledby={`${id}-tab-${index}`} hidden={index !== active} tabIndex={0} className={styles.answerSection}><ProseV2 text={item.content} sources={sources} /></section>)}
   </section>;
 }

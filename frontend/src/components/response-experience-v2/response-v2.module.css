@@ -263,3 +263,24 @@
   .tableScroll[data-wide=true] td:first-child { font-weight: 600; font-size: 1.05em; padding-block-end: 8px; }
   .tableScroll[data-wide=true] td:not(:first-child)::before { content: attr(data-label); display: block; font-size: 0.78em; letter-spacing: 0.02em; opacity: 0.62; margin-block-end: 2px; }
 }
+
+/* Site logos from the source's own domain: small, rounded, never stretched. */
+.canvas .siteLogo { width:14px; height:14px; border-radius:3px; object-fit:contain; background:color-mix(in srgb, currentColor 6%, transparent); }
+
+/* Highlighted code keeps the exact characters and line breaks of the plain block. */
+.canvas .codeLine { display:inline; }
+
+/* Metric tiles: tone carries meaning (gain green, loss red); neutral stays restrained. A symbol and hidden text back up the color. */
+.metrics > div { padding: .85rem 1rem; border: 1px solid var(--v2-line); border-radius: 12px; background: var(--v2-wash); }
+.metrics > div[data-tone=positive] dd { color: #2f9e63; }
+.metrics > div[data-tone=negative] dd { color: #e5484d; }
+.metrics > div[data-tone=positive] { border-color: color-mix(in srgb, #2f9e63 38%, transparent); }
+.metrics > div[data-tone=negative] { border-color: color-mix(in srgb, #e5484d 38%, transparent); }
+
+/* The selected tab is a clear pill on any theme. */
+.tabs button[aria-selected=true] { background: color-mix(in srgb, var(--v2-ink) 16%, transparent); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--v2-ink) 22%, transparent); }
+.tabs button:not([aria-selected=true]):hover { background: color-mix(in srgb, var(--v2-ink) 7%, transparent); color: var(--v2-ink); }
+.cardIcon { display: inline-flex; align-items: center; justify-content: center; flex: none; width: 30px; height: 30px; border-radius: 9px; color: var(--accent, #6d5efc); background: color-mix(in srgb, var(--accent, #6d5efc) 12%, transparent); margin-right: 8px; }
+.cardHead { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.comparisonCard header>.cardHead { color: inherit; font-size: inherit; }
+.cardHead .cardIcon { margin-right: 0; }

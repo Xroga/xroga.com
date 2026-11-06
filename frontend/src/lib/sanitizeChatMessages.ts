@@ -51,6 +51,7 @@ function sanitizeWebSources(raw: unknown): ChatMessage['webSources'] {
       title: typeof s.title === 'string' ? s.title : 'Source',
       url: typeof s.url === 'string' ? s.url : '',
       snippet: typeof s.snippet === 'string' ? s.snippet : '',
+      publishedAt: typeof s.publishedAt === 'string' && !Number.isNaN(Date.parse(s.publishedAt)) ? s.publishedAt : undefined,
       source: typeof s.source === 'string' ? s.source : 'web',
       thumbnailUrl: typeof s.thumbnailUrl === 'string' ? safeSourceUrl(s.thumbnailUrl) ?? undefined : undefined,
       siteDomain: typeof s.siteDomain === 'string' ? s.siteDomain : undefined,

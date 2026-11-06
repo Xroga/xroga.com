@@ -345,6 +345,7 @@ export function BusinessActionConfirmationInline({
           setNotice(
             result.response,
           );
+
         } catch (
           error
         ) {
@@ -365,6 +366,11 @@ export function BusinessActionConfirmationInline({
             message,
           );
         } finally {
+          // A lost HTTP response can still have a durable completion receipt.
+          // This event only re-reads the owner-bound result; it never retries execution.
+          window.dispatchEvent(new CustomEvent('xroga:action-receipt-ready', {
+            detail: { confirmationId },
+          }));
           setBusy(
             null,
           );

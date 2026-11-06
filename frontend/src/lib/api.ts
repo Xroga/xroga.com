@@ -5004,6 +5004,7 @@ concurrency:
 
         goalContract?:
           SemanticRequestPlan['goalContract'],
+        manualDeepResearch?: boolean,
       ) =>
         apiFetch<
           Phase1ChatResult
@@ -5035,6 +5036,7 @@ concurrency:
                       }
                     : {}
                 ),
+                manualDeepResearch: manualDeepResearch === true,
               }),
           },
         ),
@@ -6076,6 +6078,7 @@ export interface Phase1ChatResult {
 
       snippet:
         string;
+      publishedAt?: string;
 
       source:
         string;

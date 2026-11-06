@@ -1,3 +1,4 @@
+import {randomUUID} from 'node:crypto';
 import {requireTenantContext,requireResourceOwner} from '../../security/tenantContext.js';
 import {
   explicitlyDisablesResearch,
@@ -52,6 +53,18 @@ export interface WebDecision {
   reason: string;
 }
 
+/** Only explicit trusted opt-in can select Deep Research; AI inference is focused research. */
+export function automaticResearchAction(action: WebAction): WebAction {
+  return action === 'deep_research' ? 'research' : action;
+}
+
+/** Pasted URL lists with no task must not trigger external retrieval. */
+export function isBareUrlList(text: string): boolean {
+  return /https?:\/\/\S+/i.test(text) &&
+    text.replace(/https?:\/\/[^\s<>"')\]]+/gi, '')
+      .replace(/[\s,;:!?.|()\[\]{}\-—–]+/g, '').length === 0;
+}
+
 export interface WebIntelligenceResult {
   action: WebAction;
   evidence: string;
@@ -81,7 +94,7 @@ function extractUrls(
         /https?:\/\/[^\s<>"')\]]+/gi,
       ) ?? [],
     ),
-  ].slice(0, 4);
+  ].slice(0, 10);
 }
 
 function isXUrl(url: string): boolean {
@@ -132,7 +145,7 @@ function parseDecision(
       : [];
 
     return {
-      action: value.action as WebAction,
+      action: automaticResearchAction(value.action as WebAction),
 
       objective: redactSecrets(
         String(
@@ -158,7 +171,7 @@ function parseDecision(
       urls: Array.isArray(value.urls)
         ? value.urls
             .map(String)
-            .slice(0, 4)
+            .slice(0, 10)
         : [],
 
       sourcePolicy,
@@ -244,6 +257,12 @@ export async function decideWebAction(input: {
 
   const knownUrls =
     extractUrls(input.prompt);
+
+  if (knownUrls.length && isBareUrlList(input.prompt)) {
+    return { action: 'none', objective: '', queries: [], urls: [],
+      sourcePolicy: 'any', officialDomains: [],
+      reason: 'URLs were supplied without a requested action.' };
+  }
 
   // No model call is needed to realize that
   // an explicit public URL should be read.
@@ -462,6 +481,7 @@ function toUiSources(
       title: source.title,
       url: source.url,
       snippet: source.snippet,
+      publishedAt: source.publishedAt,
 
       source:
         source.sourceType ===
@@ -489,10 +509,37 @@ export async function runWebIntelligence(
     officialDomains?: readonly string[];
     decision?: WebDecision;
     signal?: AbortSignal;
+    /** Explicit trusted UI flag; never inferred from prompt text. */
+    manualDeepResearch?: boolean;
   },
 ): Promise<WebIntelligenceResult> {
-  const decision =
-    input.decision ?? await decideWebAction(input);
+  // A semantic summary can omit the user's URL list. Resolve explicit input
+  // before that summary, using the existing deterministic, approval-only path.
+  // This also preserves bare-URL and no-retrieval refusals without another model.
+  const explicitDecision = input.manualDeepResearch !== true &&
+    (extractUrls(input.prompt).length > 0 || explicitlyDisablesResearch(input.prompt))
+    ? await decideWebAction(input) : undefined;
+  // A trusted UI opt-in is the only path to manual Deep Research.
+  // Preserve the user's source policy from the validated goal contract.
+  const proposedDecision:WebDecision = input.manualDeepResearch === true
+    ? {
+        action:'deep_research',
+        objective:redactSecrets(input.prompt).slice(0,4000),
+        queries:[redactSecrets(input.prompt).slice(0,500)],
+        urls:[],
+        sourcePolicy:input.decision?.sourcePolicy??'any',
+        officialDomains:input.decision?.officialDomains??[],
+        reason:'Deep Research was explicitly enabled for this request.',
+      }
+    : explicitDecision
+      ? { ...explicitDecision,
+          sourcePolicy: explicitDecision.sourcePolicy === 'official_only' || input.decision?.sourcePolicy === 'official_only' ? 'official_only' : 'any',
+          officialDomains: input.decision?.sourcePolicy === 'official_only' ? input.decision.officialDomains : explicitDecision.officialDomains }
+      : input.decision ?? await decideWebAction(input);
+  const decision = proposedDecision.action === 'deep_research' && input.manualDeepResearch !== true
+    ? { ...proposedDecision, action: 'research' as const,
+        reason: 'Manual Deep Research was not enabled.' }
+    : proposedDecision;
 
   if (
     decision.action === 'none'
@@ -507,8 +554,11 @@ export async function runWebIntelligence(
     };
   }
 
+  const researchRunId=randomUUID();
+
   let provider:
-    | 'parallel'
+    | 'deepseek'
+    | 'native_fetch'
     | 'grok_x';
 
   let answer = '';
@@ -519,7 +569,7 @@ export async function runWebIntelligence(
   if (
     decision.action === 'read'
   ) {
-    provider = 'parallel';
+    provider = 'deepseek';
 
     const result =
       await parallelExtract({
@@ -545,7 +595,7 @@ export async function runWebIntelligence(
   } else if (
     decision.action === 'search'
   ) {
-    provider = 'parallel';
+    provider = 'deepseek';
 
     const result =
       await parallelSearch({
@@ -570,6 +620,9 @@ export async function runWebIntelligence(
                 ).slice(0, 500),
               ],
 
+        resultCount: 15,
+        researchKind: 'normal',
+        researchRunId,
         signal: input.signal,
       });
 
@@ -585,12 +638,16 @@ export async function runWebIntelligence(
     decision.action ===
       'deep_research'
   ) {
-    provider = 'parallel';
+    provider = 'deepseek';
 
     const result =
       await parallelSearch({
         userId:input.userId,dispatchScope:input.dispatchScope,objective:decision.objective || input.prompt,
-        queries:decision.queries.length ? decision.queries : [redactSecrets(input.prompt).slice(0,500)],signal:input.signal,
+        queries:decision.queries.length ? decision.queries : [redactSecrets(input.prompt).slice(0,500)],
+        resultCount: decision.action === 'deep_research' ? 50 : 30,
+        researchKind: decision.action === 'deep_research' ? 'deep' : 'automatic',
+        researchRunId,
+        signal: input.signal,
       });
 
     if(result.needsConfirmation)return pendingResearch(decision,result.reviewUrl!);
@@ -632,7 +689,7 @@ export async function runWebIntelligence(
         query: input.prompt,
         officialDomains:
           decision.officialDomains.length ? decision.officialDomains : input.officialDomains,
-        maxSources: 12,
+        maxSources: 50,
       },
     ), decision.sourcePolicy);
 
@@ -645,9 +702,7 @@ export async function runWebIntelligence(
   }
 
   let evidence =
-    formatResearchAsEvidence(
-      normalized,
-    );
+    formatResearchAsEvidence({ ...normalized, sources: normalized.sources.slice(0, 12) });
 
   if (answer) {
     evidence = [

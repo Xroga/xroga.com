@@ -9,6 +9,7 @@ export interface WebSourceItem {
   title: string;
   url: string;
   snippet: string;
+  publishedAt?: string;
   source?: string;
   thumbnailUrl?: string;
   siteDomain?: string;
@@ -96,6 +97,7 @@ function SourceCard({ item, number }: { item: WebSourceItem; number: number }) {
         <p className="xv-web-source-card__title font-semibold line-clamp-2 group-hover:text-[var(--accent)] transition-colors">
           {item.title}
         </p>
+        {item.publishedAt && !Number.isNaN(Date.parse(item.publishedAt)) ? <time dateTime={item.publishedAt} className="block text-xs text-[var(--muted)]">Published {new Date(item.publishedAt).toLocaleDateString()}</time> : null}
         {item.snippet && !yt && (
           <p className="xv-web-source-card__snippet text-[var(--muted)] line-clamp-2 mt-1">{item.snippet}</p>
         )}

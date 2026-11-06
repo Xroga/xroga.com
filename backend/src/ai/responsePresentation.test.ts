@@ -86,7 +86,11 @@ test('calculator and fixed chart data project to the existing data-only controls
   assert.match(result.response, /"type":"chart"/);
   assert.match(result.response, /"x":60,"v0":1500/);
   assert.equal(/"status":"(?:completed|confirmed)"/.test(result.response), false);
-  assert.equal(createPresentationProjection(p).finish(raw.replace('"value":40', '"value":4000')).ok, false);
+  const outOfRange = createPresentationProjection(p).finish(raw.replace('"value":40', '"value":4000'));
+  assert.equal(outOfRange.ok, true, 'a bound that contradicts the value is dropped, the calculator is kept');
+  const block = JSON.parse(outOfRange.response.split('```xroga-ui')[1].split('```')[0].trim());
+  assert.equal(block.inputs.find((input: { id: string }) => input.id === 'tickets').value, 4000);
+  assert.equal(block.inputs.find((input: { id: string }) => input.id === 'tickets').min, undefined, 'no slider bounds remain for that input');
 });
 
 test('authored visual descriptions cannot evade the existing authorization warning', () => {
@@ -148,4 +152,90 @@ test('a table, diagram or step list with no extra text is a complete section; on
   assert.match(final.response, /"type":"steps"/);
   const emptyProse = JSON.stringify({ s0: { markdown: '  ', data: null }, s1: { markdown: '', data: { columns: ['A', 'B'], rows: [['x', 'y']] } }, s2: { markdown: '', data: { steps: [{ title: 'a', description: 'b' }, { title: 'c', description: 'd' }] } } });
   assert.equal(createPresentationProjection(plan).finish(emptyProse).ok, false);
+});
+
+test('metrics and tabs project to the existing blocks, with tone as trend, and bad shapes are refused', () => {
+  const plan: PresentationPlan = [
+    { kind: 'prose', heading: 'Short answer', instruction: 'Answer.', covers: [] },
+    { kind: 'metrics', heading: 'Headline numbers', instruction: 'Profit, loss and ratio.', covers: [] },
+    { kind: 'tabs', heading: 'Strategies', instruction: 'Alternative strategies.', covers: [] },
+  ];
+  const ok = JSON.stringify({
+    s0: { markdown: 'The setup risks $5 to make $12.', data: null },
+    s1: { markdown: '', data: { metrics: [
+      { label: 'Max profit', value: '$350', unit: '', tone: 'positive' },
+      { label: 'Max loss', value: '$9,650', unit: '', tone: 'negative' },
+      { label: 'Reward-to-risk', value: '2.4 : 1', unit: '', tone: 'neutral' },
+    ] } },
+    s2: { markdown: '', data: { tabs: [{ label: 'Theta', content: 'Premium selling.' }, { label: 'Gamma', content: 'Directional spreads.' }] } },
+  });
+  const final = createPresentationProjection(plan).finish(ok);
+  assert.equal(final.ok, true);
+  assert.match(final.response, /"type":"metric-group"/);
+  assert.match(final.response, /"label":"Max profit","value":"\$350","trend":"up"/);
+  assert.match(final.response, /"label":"Max loss","value":"\$9,650","trend":"down"/);
+  assert.match(final.response, /"label":"Reward-to-risk","value":"2\.4 : 1","trend":"flat"/);
+  assert.match(final.response, /"type":"tabs"/);
+  assert.match(final.response, /"label":"Gamma","content":"Directional spreads\."/);
+  // One metric or one tab is not a comparison; an unknown tone or empty tab text is invalid.
+  const oneMetric = JSON.stringify({ s0: { markdown: 'x', data: null }, s1: { markdown: '', data: { metrics: [{ label: 'A', value: '1', unit: '', tone: 'neutral' }] } }, s2: { markdown: '', data: { tabs: [{ label: 'A', content: 'a' }, { label: 'B', content: 'b' }] } } });
+  assert.equal(createPresentationProjection(plan).finish(oneMetric).ok, false);
+  const badTone = JSON.stringify({ s0: { markdown: 'x', data: null }, s1: { markdown: '', data: { metrics: [{ label: 'A', value: '1', unit: '', tone: 'great' }, { label: 'B', value: '2', unit: '', tone: 'neutral' }] } }, s2: { markdown: '', data: { tabs: [{ label: 'A', content: 'a' }, { label: 'B', content: 'b' }] } } });
+  assert.equal(createPresentationProjection(plan).finish(badTone).ok, false);
+  const emptyTab = JSON.stringify({ s0: { markdown: 'x', data: null }, s1: { markdown: '', data: { metrics: [{ label: 'A', value: '1', unit: '', tone: 'neutral' }, { label: 'B', value: '2', unit: '', tone: 'neutral' }] } }, s2: { markdown: '', data: { tabs: [{ label: 'A', content: '' }, { label: 'B', content: 'b' }] } } });
+  assert.equal(createPresentationProjection(plan).finish(emptyTab).ok, false);
+  const schema = JSON.stringify(presentationResponseFormat(plan));
+  assert.match(schema, /"tone"/);
+  assert.match(schema, /"positive","negative","neutral"/);
+});
+
+test('card and step icons pass through only from the approved Lucide list', () => {
+  const p: PresentationPlan = [{ kind: 'cards', heading: 'Options', instruction: 'Compare.' }, { kind: 'steps', heading: 'Plan', instruction: 'Order.' }];
+  const body = (icon: string | null) => JSON.stringify({
+    s0: { markdown: 'Options.', data: { cards: [{ title: 'House', subtitle: '3 bed', description: 'Detached home.', entityId: null, icon }] } },
+    s1: { markdown: 'Plan.', data: { steps: [{ title: 'Pre-approval', description: 'Get a letter.', icon }, { title: 'Offer', description: 'Submit it.', icon: null }] } },
+  });
+  const ok = createPresentationProjection(p).finish(body('home'));
+  assert.equal(ok.ok, true);
+  assert.match(ok.response, /"icon":"home"/);
+  assert.equal((ok.response.match(/"icon"/g) ?? []).length, 2, 'null icons are omitted');
+  assert.equal(createPresentationProjection(p).finish(body(null)).ok, true);
+  const unknown = createPresentationProjection(p).finish(body('<script>alert(1)</script>'));
+  assert.equal(unknown.ok, true, 'an unknown icon name never discards the visual');
+  assert.equal(/"icon"/.test(unknown.response), false, 'the unknown icon is dropped');
+  assert.equal(unknown.response.includes('<script>'), false, 'the markup never reaches the response');
+});
+
+test('a table row that is short of cells is padded with a dash, while a row with extra cells is still rejected', () => {
+  const p: PresentationPlan = [{ kind: 'table', heading: 'Costs', instruction: 'Compare costs.' }];
+  const body = (rows: string[][]) => JSON.stringify({ s0: { markdown: 'Costs.', data: { columns: ['Item', 'House', 'Condo'], rows } } });
+  const padded = createPresentationProjection(p).finish(body([['P&I', '$2,243', '$1,878'], ['HOA', 'none']]));
+  assert.equal(padded.ok, true);
+  assert.match(padded.response, /"c0":"HOA","c1":"none","c2":"—"/);
+  assert.equal(createPresentationProjection(p).finish(body([['P&I', '$2,243', '$1,878', 'extra']])).ok, false);
+});
+
+test('a diagram keeps its valid edges when the model adds a dangling or repeated one', () => {
+  const p: PresentationPlan = [{ kind: 'graph', heading: 'Flow', instruction: 'Show the flow.' }];
+  const body = JSON.stringify({ s0: { markdown: 'Flow.', data: { nodes: [{ id: 'a', label: 'Client' }, { id: 'b', label: 'API' }], edges: [{ id: 'e1', source: 'a', target: 'b', label: 'calls' }, { id: 'e2', source: 'a', target: 'zzz', label: 'ghost' }, { id: 'e3', source: 'a', target: 'b', label: 'calls' }] } } });
+  const result = createPresentationProjection(p).finish(body);
+  assert.equal(result.ok, true);
+  assert.equal((result.response.match(/"source":"a"/g) ?? []).length, 1, 'only the one valid edge remains');
+  const none = JSON.stringify({ s0: { markdown: 'Flow.', data: { nodes: [{ id: 'a', label: 'Client' }, { id: 'b', label: 'API' }], edges: [{ id: 'e1', source: 'a', target: 'zzz', label: 'ghost' }] } } });
+  assert.equal(createPresentationProjection(p).finish(none).ok, false, 'a diagram with no valid edge is still rejected');
+});
+
+test('table rows the model flattened, keyed by column, or wrote as numbers are repaired instead of discarded', () => {
+  const p: PresentationPlan = [{ kind: 'table', heading: 'Plan', instruction: 'Day plan.' }];
+  const run = (rows: unknown) => createPresentationProjection(p).finish(JSON.stringify({ s0: { markdown: 'Plan.', data: { columns: ['Day', 'Plan', 'Cost'], rows } } }));
+  const flat = run(['Day 1', 'Alfama', 'EUR 120', 'Day 2', 'Belem', 'EUR 90']);
+  assert.equal(flat.ok, true, 'flat rows are regrouped by the column count');
+  assert.match(flat.response, /"c0":"Day 2","c1":"Belem","c2":"EUR 90"/);
+  const keyed = run([{ Day: 'Day 1', Plan: 'Alfama', Cost: 120 }]);
+  assert.equal(keyed.ok, true, 'rows keyed by column are mapped to cells');
+  assert.match(keyed.response, /"c2":"120"/);
+  const numeric = run([['Day 1', 'Alfama', 120], ['Day 2', null, 90]]);
+  assert.equal(numeric.ok, true);
+  assert.match(numeric.response, /"c1":"—"|"c1":"—"/);
+  assert.equal(run(['Day 1', 'Alfama']).ok, false, 'a flat list that does not divide into rows is still rejected');
 });

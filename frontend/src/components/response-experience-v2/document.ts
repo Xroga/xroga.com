@@ -12,7 +12,7 @@ const base = z.object({ id: z.string().min(1).max(200), title: label.optional(),
 const column = z.object({ key: label, label });
 const series = z.object({ key: label, label });
 export const nodeSchema = z.discriminatedUnion('kind', [
-  base.extend({ kind: z.literal('cards'), items: z.array(z.object({ id: label, title: label, subtitle: label.optional(), description: text.optional(), badge: label.optional(), imageUrl: text.optional(), url: text.optional(), entityId: z.string().min(1).max(80).optional(), actionLabel: label.optional(), metrics: row.optional(), recommended: z.boolean().optional() })).min(1).max(24) }),
+  base.extend({ kind: z.literal('cards'), items: z.array(z.object({ id: label, title: label, subtitle: label.optional(), description: text.optional(), badge: label.optional(), icon: z.string().max(40).optional(), imageUrl: text.optional(), url: text.optional(), entityId: z.string().min(1).max(80).optional(), actionLabel: label.optional(), metrics: row.optional(), recommended: z.boolean().optional() })).min(1).max(24) }),
   base.extend({ kind: z.literal('resources'), items: z.array(xrogaRichResultSchema).min(1).max(35) }),
   base.extend({ kind: z.literal('images'), items: z.array(z.object({ id: label, label, url: text, caption: text.optional() })).max(40) }),
   base.extend({ kind: z.literal('prose'), text }),
@@ -21,12 +21,12 @@ export const nodeSchema = z.discriminatedUnion('kind', [
   base.extend({ kind: z.literal('chart'), shape: z.enum(['line', 'bar', 'area', 'pie', 'scatter']), xKey: label, series: z.array(series).min(1).max(8), rows: z.array(row).max(2_000), summary: text }),
   base.extend({ kind: z.literal('calculator'), operation: z.enum(['sum', 'difference', 'product', 'quotient', 'average', 'percentage', 'percentage-change', 'minimum', 'maximum']), inputs: z.array(z.object({ id: label, label, value: z.number().finite(), min: z.number().finite().optional(), max: z.number().finite().optional(), step: z.number().positive().optional(), unit: label.optional() })).min(1).max(12), resultLabel: label, unit: label.optional(), precision: z.number().int().min(0).max(8), derivedResults: z.array(calculatorDerivedResultSchema).max(8).optional() }),
   base.extend({ kind: z.literal('graph'), nodes: z.array(z.object({ id: label, label, detail: text.optional() })).max(100), edges: z.array(z.object({ source: label, target: label, label: label.optional() })).max(200) }),
-  base.extend({ kind: z.literal('metrics'), items: z.array(z.object({ id: label, label, value: scalar, unit: label.optional() })).max(30) }),
+  base.extend({ kind: z.literal('metrics'), items: z.array(z.object({ id: label, label, value: scalar, unit: label.optional(), tone: z.enum(['positive', 'negative', 'neutral']).optional() })).max(30) }),
   base.extend({ kind: z.literal('tabs'), items: z.array(z.object({ id: label, label, content: text })).min(1).max(12) }),
   base.extend({ kind: z.literal('citation'), label, url: text, excerpt: text.optional() }),
   base.extend({ kind: z.literal('notice'), text, tone: z.enum(['neutral', 'info', 'success', 'warning', 'danger']) }),
   base.extend({ kind: z.literal('accordion'), items: z.array(z.object({ id: label, title: label, content: text })).max(24) }),
-  base.extend({ kind: z.literal('timeline'), items: z.array(z.object({ id: label, label, detail: text.optional(), status: label.optional(), date: label.optional() })).max(100) }),
+  base.extend({ kind: z.literal('timeline'), items: z.array(z.object({ id: label, label, icon: z.string().max(40).optional(), detail: text.optional(), status: label.optional(), date: label.optional() })).max(100) }),
   base.extend({ kind: z.literal('progress'), items: z.array(z.object({ id: label, label, value: z.number().finite().nonnegative(), max: z.number().finite().positive(), detail: text.optional(), unit: label.optional(), status: label.optional() })).max(30) }),
 ]);
 export const responseDocumentSchema = z.object({ version: z.literal(2), id: label, originalText: text, streaming: z.boolean(), nodes: z.array(nodeSchema).max(100), sources: z.array(z.object({ title: label, url: text, snippet: text })).max(100) });
@@ -84,7 +84,7 @@ export function adaptResponseV2(input: ResponseInputV2, streaming = false): Adap
             case 'calculator': nodes.push({ ...common, kind: 'calculator', operation: b.operation, inputs: b.inputs, resultLabel: b.resultLabel, unit: b.resultUnit, precision: b.precision ?? 2, derivedResults: b.derivedResults }); break;
             case 'graph': nodes.push({ ...common, kind: 'graph', nodes: b.nodes, edges: b.edges }); break;
             case 'metric': nodes.push({ ...common, kind: 'metrics', items: [b.metric] }); break;
-            case 'metric-group': nodes.push({ ...common, kind: 'metrics', items: b.metrics }); break;
+            case 'metric-group': nodes.push({ ...common, kind: 'metrics', items: b.metrics.map(({ trend, change: _change, ...metric }) => ({ ...metric, ...(trend === 'up' ? { tone: 'positive' as const } : trend === 'down' ? { tone: 'negative' as const } : {}) })) }); break;
             case 'tabs': nodes.push({ ...common, kind: 'tabs', items: b.tabs }); break;
             case 'accordion': nodes.push({ ...common, kind: 'accordion', items: b.items }); break;
             case 'plan': case 'activity': case 'checklist': nodes.push({ ...common, kind: 'timeline', items: b.items }); break;

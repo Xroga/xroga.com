@@ -81,3 +81,13 @@ test('an unsafe authorization claim stays visibly unaccepted through persistence
   assert.ok(exported.endsWith(source));
   assert.ok(serializeAssistantCopy(exported).includes(source));
 });
+
+test('Copy and export include every tab, even the ones not currently selected on screen', () => {
+  const tabs = [{ id: 't1', label: 'Stop hit', content: 'You lose $100.' }, { id: 't2', label: 'Target hit', content: 'You gain $240.' }, { id: 't3', label: 'Break-even', content: 'About 29% wins.' }];
+  const fence = ['```xroga-ui', JSON.stringify({ id: 's2', type: 'tabs', tabs }), '```'].join(String.fromCharCode(10));
+  const enhanced = enhanceAiResponse(['Compare the exits', fence].join(String.fromCharCode(10)), 'export-tabs');
+  const text = responseTextV2({ id: 'export-tabs', content: enhanced.content, featureOutput: enhanced.output });
+  assert.ok(text);
+  for (const piece of ['Stop hit', 'You lose $100.', 'Target hit', 'You gain $240.', 'Break-even', 'About 29% wins.']) assert.ok(text.includes(piece), piece);
+});
+

@@ -12,7 +12,9 @@ import {finishFailedProviderReservation,type ProviderReservation} from './provid
 import {PostCompletionAccountingError} from './postCompletionAccounting.js';
 import {WEB_PRICE_VERSION} from './webBudget.js';
 import {AuthorityError} from '../security/authority/enforce.js';
-import {deepseekSearchCredential,researchSearchMicroUsd,deepseekSearchBody,normaliseDeepseekSearch,DEEPSEEK_SEARCH_URL} from './researchSearchProvider.js';
+import {deepseekSearchCredential,researchSearchMicroUsd,deepseekSearchBody,normaliseDeepseekSearch,normaliseDeepseekFetch,acceptedSearchResultCount,DEEPSEEK_SEARCH_URL,DEEPSEEK_FETCH_URL} from './researchSearchProvider.js';
+import {lookup} from 'node:dns/promises';
+import {admitPublicTarget} from '../security/egress/urlPolicy.js';
 
 type Operation='search'|'extract'|'responses';
 function requireRetrievalOperation(operation: string): void {
@@ -21,9 +23,9 @@ function requireRetrievalOperation(operation: string): void {
 const denied=()=>Object.assign(new Error('Research dispatch admission is unavailable.'),{code:'PROVIDER_RESERVATION_DENIED',retryable:false});
 const exact=(a:unknown,b:number)=>(typeof a==='number'||typeof a==='string'&&/^\d+$/.test(a))&&Number(a)===b&&Number.isSafeInteger(Number(a));
 
-/** Parallel's fixed per-request charges use the existing provider reservation
- * table and RPCs. This adapter adds no ledger, entitlement or identity issuer.
- * Pricing source: https://docs.parallel.ai/getting-started/pricing, 2026-10-27.
+/** Official DeepSeek Search and Fetch use canonical provider reservations.
+ * The service-only wrapper adds retrieval quotas, not a second money ledger.
+ * Pricing: https://api-docs.deepseek.com/guides/search/ (2026-11-05).
  * Shared caller provenance and provider-internal URL fetching remain separate
  * review obligations, never certified by this low-level transport alone.
  */
@@ -31,13 +33,14 @@ export async function executeParallelRequest(input:{scope:TenantModelScope|undef
   requireRetrievalOperation(input.operation);
   const context=requireTenantContext(input.scope?.context);requireResourceOwner(context,input.userId);
   const scope={...input.scope!,context},body=structuredClone(input.body),operation=input.operation,signal=input.signal;
+  if(containsCredentialSecretText(JSON.stringify(body)))throw new EgressDenied('SECRET_EGRESS_DENIED');
   const attempt=scope.runAttempt?requireAdmittedRunAttempt(scope.runAttempt):undefined;
   const admission=input.admission?requireParallelAdmission(input.admission,scope,operation,body):undefined;
   // One dispatch remains bound to the platform credential present at admission.
   // Rotation or removal cannot silently substitute a different credential after
   // ownership, audit, reservation or provider-response waits.
   // Public-web search uses only the dedicated official DeepSeek Search credential. Without it, search is refused.
-  const credential=operation==='extract'?'native-credential-free':deepseekSearchCredential();
+  const credential=deepseekSearchCredential();
   if(!credential)throw denied();
   const check=async()=>{
     signal?.throwIfAborted();requireResourceOwner(context,scope.userId);
@@ -50,7 +53,7 @@ export async function executeParallelRequest(input:{scope:TenantModelScope|undef
       if(error||!data||data.id!==attempt.runId||data.user_id!==context.userId||data.project_id!==(scope.projectId??null)
         ||data.status!=='running'||data.worker_id!==attempt.workerId||data.lease_generation!==attempt.generation)throw denied();
     }
-    if(operation!=='extract'&&(!credential||deepseekSearchCredential()!==credential))throw denied();
+    if(!credential||deepseekSearchCredential()!==credential)throw denied();
     await admission?.check();
     signal?.throwIfAborted();
   };
@@ -58,19 +61,31 @@ export async function executeParallelRequest(input:{scope:TenantModelScope|undef
   if(operation==='search'){
     if(body.mode!=='turbo'||!Array.isArray(body.search_queries)||!body.search_queries.length||body.search_queries.length>3
       ||body.search_queries.some(q=>typeof q!=='string'||q.length>500)||typeof body.objective!=='string'||body.objective.length>4000
-      ||Object.keys(body).some(k=>!['mode','objective','search_queries'].includes(k)))throw denied();
+      ||Object.keys(body).some(k=>!['mode','objective','search_queries','result_count','research_kind','research_run_id'].includes(k)))throw denied();
+    const count=acceptedSearchResultCount(body.result_count);
+    const kind=body.research_kind;
+    if(!['normal','automatic','deep'].includes(String(kind)) ||
+      typeof body.research_run_id!=='string' ||
+      !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(body.research_run_id) ||
+      (kind==='normal'&&count!==15) ||
+      (kind==='automatic'&&count!==30) ||
+      (kind==='deep'&&count!==50))throw denied();
     amount=researchSearchMicroUsd();route='deepseek_search';
   }else if(operation==='extract'){
-    if(!Array.isArray(body.urls)||!body.urls.length||body.urls.length>4||body.urls.some(u=>typeof u!=='string')
-      ||typeof body.objective!=='string'||body.objective.length>4000||Object.keys(body).some(k=>!['urls','objective'].includes(k)))throw denied();
-    for(const url of body.urls as string[])publicHttpsUrl(url);
-    units=body.urls.length;amount=0;route='native_public_extract';
+    if(!Array.isArray(body.urls)||!body.urls.length||body.urls.length>10||body.urls.some(u=>typeof u!=='string')
+      ||typeof body.objective!=='string'||body.objective.length>4000||Object.keys(body).some(k=>!['urls','objective','research_kind','research_run_id'].includes(k)))throw denied();
+    for(const url of body.urls as string[]) {
+      const target=publicHttpsUrl(url);
+      if(containsCredentialSecretText(url))throw new EgressDenied('SECRET_EGRESS_DENIED');
+      if(admission)await admitPublicTarget(target,host=>lookup(host,{all:true,verbatim:true}),AbortSignal.any([AbortSignal.timeout(5000),...(signal?[signal]:[])]));
+    }
+    if(admission && body.urls.length!==1)throw denied();
+    if(body.research_kind!==undefined&&!['normal','automatic','deep'].includes(String(body.research_kind)))throw denied();
+    units=body.urls.length;amount=researchSearchMicroUsd();route='deepseek_fetch';
   }else throw denied();
   await check();
-  const destination=DEEPSEEK_SEARCH_URL;
+  const destination=operation==='extract'?DEEPSEEK_FETCH_URL:DEEPSEEK_SEARCH_URL;
   if(!admission)return Response.json(await prepareParallelApproval(scope,operation,body,signal),{status:202});
-  // Known URLs are fetched only by the credential-free DNS-pinned native path.
-  if(operation==='extract')throw denied();
   if(admission.maximumMicroUsd!==amount)throw denied();
   await admission.begin();
   await check();
@@ -78,15 +93,17 @@ export async function executeParallelRequest(input:{scope:TenantModelScope|undef
   // user-ID fallback, memory budget or telemetry-as-accounting path here.
   if(!process.env.SUPABASE_SERVICE_ROLE_KEY)throw denied();
   const db=getTenantSupabaseAdmin(context),idempotencyKey=randomUUID(),internalRoute='web.'+route;
-  const reserve=()=>db.rpc('reserve_xroga_provider_budget',{p_user_id:context.userId,p_idempotency_key:idempotencyKey,p_purpose:'daily_work',p_internal_route:internalRoute,
-    p_price_version:WEB_PRICE_VERSION,p_estimated_input_tokens:0,p_maximum_output_tokens:0,p_reservation_micro_usd:amount});
-  let reserved;
-  try{
-    reserved=await reserve();
-    if(reserved.error&&/active_billing_cycle_required/i.test(reserved.error.message)){
-      const free=await db.rpc('ensure_xroga_free_cycle',{p_user_id:context.userId});if(free.error)throw denied();reserved=await reserve();
-    }
-  }catch{throw denied();}
+  // The new service-only RPC serializes the Pro web cap and per-mode quotas
+  // under the same billing-cycle lock as the canonical provider reservation.
+  const {data:reservedData,error:reserveError}=await db.rpc('reserve_xroga_deepseek_web',{
+    p_user_id:context.userId,
+    p_idempotency_key:idempotencyKey,
+    p_research_kind:body.research_kind??'normal',
+    p_research_run_id:body.research_run_id??randomUUID(),
+    p_price_version:WEB_PRICE_VERSION,
+    p_operation:operation==='extract'?'fetch':'search',
+  });
+  const reserved={data:reservedData,error:reserveError};
   const row=reserved.data;
   if(reserved.error||!row||Array.isArray(row)||typeof row.id!=='string'||!/^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(row.id)
     ||row.user_id!==context.userId||row.idempotency_key!==idempotencyKey||row.internal_route!==internalRoute||row.purpose!=='daily_work'
@@ -96,7 +113,7 @@ export async function executeParallelRequest(input:{scope:TenantModelScope|undef
   try{
     await check();
     const response=await fetch(destination,{method:'POST',redirect:'manual',headers:{'Content-Type':'application/json',Authorization:`Bearer ${credential}`},
-      body:JSON.stringify(deepseekSearchBody(body as {objective:string;search_queries:string[]})),signal:AbortSignal.any([AbortSignal.timeout(25000),...(signal?[signal]:[])])});
+      body:JSON.stringify(operation==='extract'?{url:(body.urls as string[])[0]}:deepseekSearchBody(body as {objective:string;search_queries:string[];result_count:unknown})),signal:AbortSignal.any([AbortSignal.timeout(25000),...(signal?[signal]:[])])});
     if(response.redirected||response.status>=300&&response.status<400){await response.body?.cancel().catch(()=>undefined);throw new EgressDenied('UNSAFE_DESTINATION');}
     if(response.status===401||response.status===403){await response.body?.cancel().catch(()=>undefined);throw new AuthorityError('PARALLEL_PROVIDER_AUTHORIZATION_DENIED');}
     if(!response.ok){void response.body?.cancel().catch(()=>undefined);throw Object.assign(new Error(`Parallel provider request failed (${response.status}).`),{status:response.status});}
@@ -106,17 +123,21 @@ export async function executeParallelRequest(input:{scope:TenantModelScope|undef
     finally{await reader?.cancel().catch(()=>undefined);reader?.releaseLock();}
     const received=Buffer.concat(chunks).toString('utf8');
     // DeepSeek results are normalised into the existing result shape; its receipt identity is the x-ds-trace-id header.
-    const data=normaliseDeepseekSearch(JSON.parse(received),response.headers.get('x-ds-trace-id'));
+    const data=operation==='extract'
+      ?normaliseDeepseekFetch(JSON.parse(received),(body.urls as string[])[0],response.headers.get('x-ds-trace-id'))
+      :normaliseDeepseekSearch(JSON.parse(received),response.headers.get('x-ds-trace-id'));
     const text=JSON.stringify(data),requestId=data.search_id;
+    // DeepSeek explicitly does not bill empty Search or content-less Fetch.
+    const actualAmount=data.results.length ? amount : 0;
     if(operation==='search'&&(!Array.isArray(data.results)||data.results.some((r:unknown)=>!r||typeof r!=='object'||typeof (r as {url?:unknown}).url!=='string'
       ||(r as {title?:unknown}).title!==undefined&&typeof (r as {title?:unknown}).title!=='string'
       ||(r as {excerpts?:unknown}).excerpts!==undefined&&(!Array.isArray((r as {excerpts?:unknown}).excerpts)||((r as {excerpts:unknown[]}).excerpts).some(v=>typeof v!=='string')))))throw new Error('Malformed provider result');
     if(typeof requestId!=='string'||!requestId.trim()||requestId!==requestId.trim()||requestId.length>500
       ||/[\x00-\x20\x7f]/.test(requestId)||containsCredentialSecretText(requestId))throw new Error('Missing or unsafe provider request identity');
-    const {data:settled,error}=await db.rpc('settle_xroga_provider_budget',{p_user_id:context.userId,p_reservation_id:reservation.id,p_actual_micro_usd:amount,p_provider_request_id:requestId,
+    const {data:settled,error}=await db.rpc('settle_xroga_provider_budget',{p_user_id:context.userId,p_reservation_id:reservation.id,p_actual_micro_usd:actualAmount,p_provider_request_id:requestId,
       p_actual_input_tokens:0,p_cached_input_tokens:0,p_output_tokens:0,p_reasoning_tokens:0,p_tool_calls:0,p_search_calls:units});
     if(error||!settled||settled.id!==reservation.id||settled.user_id!==context.userId||settled.status!=='settled'||settled.internal_route!==internalRoute
-      ||settled.price_version!==WEB_PRICE_VERSION||settled.provider_request_id!==requestId||!exact(settled.reserved_micro_usd,amount)||!exact(settled.settled_micro_usd,amount)
+      ||settled.price_version!==WEB_PRICE_VERSION||settled.provider_request_id!==requestId||!exact(settled.reserved_micro_usd,amount)||!exact(settled.settled_micro_usd,actualAmount)
       ||!exact(settled.actual_input_tokens,0)||!exact(settled.cached_input_tokens,0)||!exact(settled.output_tokens,0)||!exact(settled.reasoning_tokens,0)||!exact(settled.tool_calls,0)||!exact(settled.search_calls,units))throw new Error('Settlement receipt mismatch');
     settledVerified=true;
     await check();

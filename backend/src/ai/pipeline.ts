@@ -965,6 +965,8 @@ export async function runChatPipeline(opts: {
   projectEvidence?: string;
   /** Private server continuation, populated only by the exact native research adapter. */
   approvedResearch?:{bundle:ResearchBundle;evidence:string};
+  /** Explicit selection in the workspace composer, never inferred from prompt wording. */
+  manualDeepResearch?: boolean;
 }): Promise<ChatPipelineResult> {
   requireResourceOwner(requireTenantContext(opts.tenantContext),opts.userId);
   const initialUsage = await assertHasQuota(opts.userId);
@@ -1047,7 +1049,7 @@ export async function runChatPipeline(opts: {
   let researchBlock = opts.approvedResearch?.evidence??'';
   let researchProviderFailed = false;
 
-  if (!opts.approvedResearch&&route.useResearch && !explicitlyDisablesResearch(opts.prompt)) {
+  if (!opts.approvedResearch && (opts.manualDeepResearch === true || (route.useResearch && !explicitlyDisablesResearch(opts.prompt)))) {
     try {
       const web = await runWebIntelligence({
         userId: opts.userId,
@@ -1055,6 +1057,7 @@ export async function runChatPipeline(opts: {
           researchAnswer:{prompt:opts.prompt,...(opts.history?{history:opts.history.slice(-12).map(h=>({role:h.role,content:h.content.slice(0,8000)}))}:{}),
             ...(opts.goalContract?{goalContract:opts.goalContract}:{}),...(opts.projectEvidence?{projectEvidence:opts.projectEvidence}:{} )}},
         prompt: opts.prompt,
+        manualDeepResearch: opts.manualDeepResearch === true,
         ...(opts.goalContract
           ? { decision: webDecisionFromGoalContract(opts.goalContract) ?? undefined }
           : {}),

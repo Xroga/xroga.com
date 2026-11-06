@@ -6,10 +6,10 @@ import { SourceMarkV2 } from './SourceV2';
 import styles from './response-v2.module.css';
 
 /** Presentation-only identity, never a claim citation or permission. */
-export function EntityIdentityV2({ label, url, entityId }: { label: string; url?: string; entityId?: string }) {
+export function EntityIdentityV2({ label, url, entityId, plain }: { label: string; url?: string; entityId?: string; plain?: boolean }) {
   const identity = resourceIdentityV2(label, url, entityId);
   const destination = safeLinkV2(url ?? identity?.url ?? '');
-  const content = <>{identity ? <SourceMarkV2 url={identity.markUrl} /> : <Layers3 size={20} aria-hidden="true" />}<span>{label}</span></>;
+  const content = <>{identity ? <SourceMarkV2 url={identity.markUrl} /> : plain ? null : <Layers3 size={20} aria-hidden="true" />}<span>{label}</span></>;
   return destination
     ? <a className={styles.entityIdentity} href={destination} target="_blank" rel="noopener noreferrer" aria-label={label} data-entity-verified={!!identity}>{content}</a>
     : <span className={styles.entityIdentity}>{content}</span>;

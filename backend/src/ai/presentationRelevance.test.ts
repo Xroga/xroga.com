@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { assessPresentationRelevance } from './presentationRelevance.js';
-import { prepareAnswerCoverage } from './answerCoverage.js';
+import { prepareAnswerCoverage, quantitativeScenarioSupport } from './answerCoverage.js';
 import { readIntent } from './intentReasoning.js';
 import type { AnswerObligations, PresentationPlan } from './responsePresentation.js';
 
@@ -98,6 +98,39 @@ test('a prose-only obligation the planner forgot to bind is carried by the prose
   const noCalculator = prepareAnswerCoverage(prompt, [section('prose', 'Answer', 'State the result.', ['ob1'])], obligations);
   assert.equal(noCalculator.coverage.complete, false);
   assert.ok(noCalculator.coverage.issues.includes('missing:ob3:calculator'), noCalculator.coverage.issues.join(','));
-  const noProse = prepareAnswerCoverage(prompt, [section('calculator', 'Calculation', 'Show the formula.', ['ob3'])], obligations);
+  const noProse = prepareAnswerCoverage('Explain how compound interest works.', [section('calculator', 'Calculation', 'Show the formula.', ['ob3'])], obligations);
   assert.ok(noProse.coverage.issues.includes('missing:ob1:prose'), 'without a prose section nothing carries the prose obligations');
+});
+
+test('a worked numeric scenario gets key figures and an adjustable calculator, even when the planner chose prose only', () => {
+  const prompt = 'Explain the risk and reward of a trade with entry at $100, stop loss at $95 and target at $112. What position size risks 1% of a $10,000 account?';
+  const out = prepareAnswerCoverage(prompt, [], [{ id: 'ob1', description: 'Explain the risk and reward', origin: 'requested', formats: ['prose'] }]);
+  assert.deepEqual(out.plan.map(item => item.kind), ['prose', 'table', 'calculator']);
+  assert.deepEqual(out.plan.map(item => item.heading), ['Short answer', 'Key figures', 'Adjust the numbers']);
+  assert.equal(out.coverage.complete, true, out.coverage.issues.join(','));
+});
+
+test('the scenario rule stays out of the way of simple, brief or declined requests', () => {
+  assert.equal(quantitativeScenarioSupport('What is the capital of Australia?').length, 0);
+  assert.equal(quantitativeScenarioSupport('If I invest $5,000 for 10 years, how much? Short answer please.').length, 0);
+  assert.equal(quantitativeScenarioSupport('What does a 2:1 ratio mean in trading?').length, 0);
+  const noCalculator = quantitativeScenarioSupport('Entry $100, stop $95, target $112 and a 1% risk on $10,000: what position size? No calculator please.');
+  assert.deepEqual(noCalculator.map(item => item.id), ['support-key-figures']);
+  const both = quantitativeScenarioSupport('A loan of $20,000 at 6% for 5 years: what is the monthly payment?');
+  assert.deepEqual(both.map(item => item.id), ['support-key-figures', 'support-scenario-calculator']);
+});
+
+test('a table or calculator the planner already planned is never added a second time', () => {
+  const prompt = 'Explain the risk and reward of a trade with entry at $100, stop loss at $95 and target at $112. What position size risks 1% of a $10,000 account?';
+  const planned = [section('prose', 'Short answer', 'Answer.', ['ob1']), section('table', 'Trade math', 'Figures.', ['ob2']), section('calculator', 'Position size', 'Formula.', ['ob3'])];
+  const obligations: AnswerObligations = [
+    { id: 'ob1', description: 'explain', origin: 'requested', formats: ['prose'] },
+    { id: 'ob2', description: 'figures', origin: 'necessary-support', formats: ['table'] },
+    { id: 'ob3', description: 'position size', origin: 'requested', formats: ['calculator'] },
+  ];
+  const out = prepareAnswerCoverage(prompt, planned, obligations);
+  assert.deepEqual(out.plan.map(item => item.kind), ['prose', 'table', 'calculator']);
+  assert.equal(out.coverage.complete, true, out.coverage.issues.join(','));
+  const tableOnly = prepareAnswerCoverage(prompt, [planned[0], planned[1]], obligations.slice(0, 2));
+  assert.deepEqual(tableOnly.plan.map(item => item.kind), ['prose', 'table', 'calculator'], 'a missing calculator is still added');
 });

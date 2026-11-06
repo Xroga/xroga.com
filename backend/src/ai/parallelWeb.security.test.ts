@@ -55,10 +55,10 @@ test('actual Parallel entries enforce issued context, current owner, egress, can
   t.mock.method(globalThis,'fetch',async(input:Parameters<typeof fetch>[0],init?:RequestInit)=>{
     const url=new URL(String(input)),body=init?.body?JSON.parse(String(init.body)):{};
     if(url.origin==='https://api.deepseek.com'){
-      assert.equal(url.pathname,'/v1/tools/search');
+      assert.ok(['/v1/tools/search','/v1/tools/fetch'].includes(url.pathname));
       effects++;events.push('provider');assert.equal(init?.redirect,'manual');assert.ok(init?.signal);assert.doesNotMatch(JSON.stringify(body),/SYNTHETIC_CREDENTIAL|substituted/);
       assert.equal(new Headers(init?.headers).get('authorization'),'Bearer synthetic-platform-key');assert.equal(new Headers(init?.headers).get('x-api-key'),null);
-      assert.equal(typeof body.query,'string');assert.ok(body.query.length>=1&&body.query.length<=128);assert.equal(body.count,10);
+      if(url.pathname.endsWith('/search')){assert.equal(typeof body.query,'string');assert.ok([...body.query].length>=1&&[...body.query].length<=128);assert.equal(body.count,15);}else assert.match(body.url,/^https:\/\/example\.com\//);
       if(mode==='provider503')return Response.json({error:'synthetic outage'},{status:503});
       if(mode==='provider401'||mode==='provider403')return Response.json({error:'synthetic provider denial'},{status:mode==='provider401'?401:403});
       if(mode==='providerRedirect')return new Response(null,{status:307,headers:{location:'http://169.254.169.254/computeMetadata/v1/'}});
@@ -68,6 +68,7 @@ test('actual Parallel entries enforce issued context, current owner, egress, can
       if(mode==='malformedResults')return Response.json({results:'untrusted malformed result'},receipt);
       if(mode==='missingProviderId')return Response.json({results:[]});
       if(mode==='credentialProviderId')return Response.json({results:[]},{headers:{'x-ds-trace-id':'SYNTHETIC_CREDENTIAL_PROVIDER_RECEIPT'}});
+      if(url.pathname.endsWith('/fetch'))return Response.json({title:'Public fetched page',content:'public document fixture'},receipt);
       return Response.json({results:[{url:'https://example.com/docs',title:'Docs',summary:'public fixture',snippet:'public',date:null}]},receipt);
     }
     assert.equal(url.origin,env.SUPABASE_URL,'No unmocked network is allowed');
@@ -85,11 +86,13 @@ test('actual Parallel entries enforce issued context, current owner, egress, can
       if(mode==='auditFailure')return Response.json({message:'synthetic unavailable'},{status:503});
       return (await confirmations.database(url,init))!;
     }
-    if(url.pathname==='/rest/v1/rpc/reserve_xroga_provider_budget'){
-      events.push('reserve');assert.equal(body.p_user_id,owner);assert.equal(body.p_price_version,WEB_PRICE_VERSION);assert.equal(body.p_purpose,'daily_work');
+    if(url.pathname==='/rest/v1/xroga_private_retrieval_cache')return Response.json(null);
+    if(url.pathname==='/rest/v1/rpc/put_xroga_private_retrieval_cache')return Response.json(null);
+    if(url.pathname==='/rest/v1/rpc/reserve_xroga_deepseek_web'){
+      events.push('reserve');assert.equal(body.p_user_id,owner);assert.equal(body.p_price_version,WEB_PRICE_VERSION);assert.equal(body.p_research_kind,'normal');assert.ok(['search','fetch'].includes(body.p_operation));
       if(mode==='reservationFailure')return Response.json({message:'synthetic admission refusal'},{status:400});
-      const row={id:randomUUID(),user_id:owner,idempotency_key:body.p_idempotency_key,internal_route:body.p_internal_route,price_version:body.p_price_version,purpose:body.p_purpose,status:'reserved',
-        estimated_input_tokens:0,maximum_output_tokens:0,reserved_micro_usd:body.p_reservation_micro_usd};reservations.set(row.id,row);
+      const row={id:randomUUID(),user_id:owner,idempotency_key:body.p_idempotency_key,internal_route:'web.deepseek_'+body.p_operation,price_version:body.p_price_version,purpose:'daily_work',status:'reserved',
+        estimated_input_tokens:0,maximum_output_tokens:0,reserved_micro_usd:750};reservations.set(row.id,row);
       if(mode==='reservationWrongOwner')return Response.json({...row,user_id:other});
       if(mode==='revokeAtReservation')ownerNow=other;
       if(mode==='cancelAtReservation'){controller?.abort();if(confirmations.row)confirmations.row.status='cancelled';}
@@ -146,16 +149,20 @@ test('actual Parallel entries enforce issued context, current owner, egress, can
         continue;
       }
       const result=operation==='search'?await search():operation==='extract'?await complete(parallelExtract({userId:owner,dispatchScope:scope,objective:'read public docs',urls:['https://example.com/docs','https://example.com/faq']})):await complete(parallelResponses({userId:owner,dispatchScope:scope,question:'public docs',effort:operation as 'low'|'medium'}));
-      assert.ok(result.requestId);if(operation==='extract'){assert.deepEqual(events,['egress']);assert.equal(publicOpens,2);continue;}assert.deepEqual(events,['egress','reserve','provider','settle']);
+      assert.ok(result.requestId);if(operation==='extract'){assert.deepEqual(events,['egress','reserve','provider','settle','reserve','provider','settle']);assert.equal(publicOpens,0);continue;}assert.deepEqual(events,['egress','reserve','provider','settle']);
       const row=[...reservations.values()].at(-1)!;assert.equal(row.reserved_micro_usd,750);
     }
-    await t.test('native URL retrieval denies private DNS, redirects and cancellation after DNS without delegated fetch',async()=>{
-      for(const denied of ['privateDns','publicRedirect','cancelAtDns']){mode=denied;const prior=effects,opened=publicOpens;await assert.rejects(complete(parallelExtract({userId:owner,dispatchScope:scope,objective:'read public docs',urls:['https://example.com/docs']})));assert.equal(effects,prior);assert.equal(publicOpens,opened+(denied==='publicRedirect'?1:0));}mode='ok';
+    await t.test('official Fetch denies private DNS, provider redirects and cancellation before delegated retrieval',async()=>{
+      for(const denied of ['privateDns','providerRedirect','cancelAtDns']){
+        mode=denied;const prior=effects;
+        await assert.rejects(complete(parallelExtract({userId:owner,dispatchScope:scope,objective:'read public docs',urls:['https://example.com/docs']})));
+        assert.equal(effects,prior+(denied==='providerRedirect'?1:0));assert.equal(publicOpens,0);
+      }mode='ok';
     });
-    await t.test('native public PDF and fresh recovery keep supported reads with zero provider charge',async()=>{
+    await t.test('official Fetch has one canonical charge per page and never falls back after provider denial',async()=>{
       const extract=()=>complete(parallelExtract({userId:owner,dispatchScope:scope,objective:'read public docs',urls:['https://example.com/docs']}));
-      mode='publicPdf';const pdf=await extract();assert.match(pdf.result.results[0].excerpts[0],/Public PDF fixture/);assert.equal(pdf.result.usage.providerMicroUsd,0);
-      for(const denied of ['public503','public403','badContent']){mode=denied;await assert.rejects(extract());}
+      const before=effects;const page=await extract();assert.match(page.result.results[0].excerpts[0],/public document fixture/);assert.equal(effects,before+1);
+      for(const denied of ['provider503','provider403']){mode=denied;const prior=effects;await assert.rejects(extract());assert.equal(effects,prior+1);}
       mode='ok';assert.ok((await extract()).requestId);
     });
     for(const failure of ['foreignProject','auditFailure','reservationFailure','reservationWrongOwner','revokeAtReservation','cancelAtReservation','cancelAtAudit']){
