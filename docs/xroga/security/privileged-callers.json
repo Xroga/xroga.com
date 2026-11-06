@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "e9f3806660b2c9ad6a3e9eeb5b46998f02d0a157133ca719ee0e3484a4b505e8",
+  "reviewRegistrySha256": "758067652d501840f21f0a38e1a957647559d9173ba1ecc356432986e8c3d1cb",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -6344,7 +6344,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "1f74e27f92ebeba3b35a"
+        "id": "662990e43cb4a933c0e9"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -6384,7 +6384,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "ee548d3cf583cfcbdd91"
+        "id": "338a66de83af675586e9"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -7144,7 +7144,7 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "1f74e27f92ebeba3b35a"
+        "id": "662990e43cb4a933c0e9"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -10144,7 +10144,7 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "ee548d3cf583cfcbdd91"
+        "id": "338a66de83af675586e9"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -31569,7 +31569,7 @@
       }
     },
     {
-      "id": "1f74e27f92ebeba3b35a",
+      "id": "662990e43cb4a933c0e9",
       "path": "frontend/src/components/response-experience-v2/InteractiveV2.tsx",
       "line": 32,
       "enclosing": "CalculatorV2",
@@ -31577,7 +31577,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "60dfe4ffa745d9405a93f27231c07ddc99c49a0e340d164e1ac0b02a81a9b888"
+      "sourceSha256": "c994acfc375d646b1bdefff3a5b7e78df9cee7e3a94daf868c76365fa3e041a8"
     },
     {
       "id": "b7da7c544e1d23eb4355",
@@ -31954,15 +31954,15 @@
       }
     },
     {
-      "id": "ee548d3cf583cfcbdd91",
+      "id": "338a66de83af675586e9",
       "path": "frontend/src/lib/formatAiMarkdown.tsx",
-      "line": 635,
+      "line": 641,
       "enclosing": "decodeBase64UrlUtf8",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "dba219fea184b59714d2c36619d1c58bd3273e6b232c9d1b4b53e3427bc16fdf",
+      "sourceSha256": "35c178a353037b5fbbfbef958c25b52f6df793c2928bb8d7d98342c6305d3784",
       "semanticReview": {
         "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in decodeBase64UrlUtf8, with no database or Storage client receiver.",
         "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh. Re-bound 2026-11-04: Diff from the reviewed source d80e1ce5489b is only `export` added to BusinessActionConfirmationInline so the V2 turn can render the existing confirmation review. The reviewed call (decodeBase64UrlUtf8 Array/Uint8Array conversion) is unchanged; no new call, receiver, persistence or egress was added.",
