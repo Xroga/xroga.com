@@ -1359,7 +1359,7 @@ const stopRequestedRunIdRef =
 
   // Read-only receipt handoff. Focus/reopen retrieves saved evidence, never dispatches research.
   useEffect(() => {
-    if (isGuest || !sessionReady || !workspaceIdentity.userId || restoringRef.current) return;
+    if (isGuest || !sessionReady || sessionRestoring || !workspaceIdentity.userId || restoringRef.current) return;
     const pending = JSON.parse(researchPendingKey) as Array<{ messageId: string; confirmationId: string }>;
     if (!pending.length) return;
     let disposed = false;
@@ -1409,7 +1409,7 @@ const stopRequestedRunIdRef =
       window.removeEventListener('focus', refresh);
       window.removeEventListener('xroga:action-receipt-ready', receiptReady);
     };
-  }, [isGuest, sessionReady, workspaceIdentity.userId, researchPendingKey]);
+  }, [isGuest, sessionReady, sessionRestoring, liveSessionId, workspaceIdentity.userId, researchPendingKey]);
 
   /** Persist terminal history while user works — not only after submit completes */
   useEffect(() => {
