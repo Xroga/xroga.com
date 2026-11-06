@@ -88266,7 +88266,7 @@
       "id": "surface:bc797240d03e041cba52",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/calculations.ts",
-      "sha256": "e0d2831605a12dba4cd08c3ca7e84476879bfd68c7165457426c4cc33ab945bd",
+      "sha256": "90ee2202f0a8ff79f651d8950ceb3b6f6dd5bc38586b26984acce360c813f008",
       "symbols": [
         "CalculatorNode",
         "calculateV2",
@@ -88277,6 +88277,9 @@
         "formulaV2",
         "ids",
         "inputs",
+        "loanPayment",
+        "monthly",
+        "months",
         "numbers",
         "primary",
         "raw",
@@ -88287,12 +88290,9 @@
         "value"
       ],
       "imports": [
-        "./document",
-        "@/lib/xrogaCalculations"
+        "./document"
       ],
-      "runtimeImports": [
-        "frontend/src/lib/xrogaCalculations.ts"
-      ],
+      "runtimeImports": [],
       "entryPoints": [
         "frontend/src/app/(workspace)/workspace/page.tsx",
         "frontend/src/app/share/[token]/page.tsx"
@@ -114881,11 +114881,9 @@
       "runtimeImports": [],
       "entryPoints": [
         "frontend/src/app/(workspace)/workspace/page.tsx",
-        "frontend/src/app/os-preview/rich-results/page.tsx",
-        "frontend/src/app/share/[token]/page.tsx"
+        "frontend/src/app/os-preview/rich-results/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/response-experience-v2/calculations.ts:2",
         "frontend/src/components/terminal/XrogaUtilityBlockView.tsx:11",
         "frontend/src/lib/xrogaCalculations.test.ts:4"
       ],

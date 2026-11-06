@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "3ef7aa0f53df404629d2f9a89b6f1b632fcffd29",
+  "source_sha": "fc9938a7effd4f7fd8e4c6237fb8914f9a8c593c",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -21945,7 +21945,7 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/calculations.ts",
-      "sha256": "e0d2831605a12dba4cd08c3ca7e84476879bfd68c7165457426c4cc33ab945bd"
+      "sha256": "90ee2202f0a8ff79f651d8950ceb3b6f6dd5bc38586b26984acce360c813f008"
     },
     {
       "path": "frontend/src/components/response-experience-v2/composition.ts",
@@ -37832,14 +37832,14 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/calculations.ts",
-      "line": 6,
+      "line": 13,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/response-experience-v2/calculations.ts",
-      "line": 7,
+      "line": 14,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
