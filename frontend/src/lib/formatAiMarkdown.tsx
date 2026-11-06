@@ -345,6 +345,12 @@ export function BusinessActionConfirmationInline({
           setNotice(
             result.response,
           );
+
+          // The existing receipt handoff only reads the saved owner-bound result.
+          // Refresh it when this inline action finishes, without another search.
+          window.dispatchEvent(new CustomEvent('xroga:action-receipt-ready', {
+            detail: { confirmationId },
+          }));
         } catch (
           error
         ) {
