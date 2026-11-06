@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "31fe76a007b09b4ac320dd2c85bc8f23acf6d5af",
+  "source_sha": "3ef7aa0f53df404629d2f9a89b6f1b632fcffd29",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -16805,7 +16805,7 @@
     },
     {
       "path": "backend/src/ai/responsePresentation.ts",
-      "sha256": "136a3b51762f920d0b6ea303f474006ad7f507b76aa972268f19daff251ebfad"
+      "sha256": "7e16ea46e2c45bb3855222b9345b895417bd33a4eb005632fb2665150d2737d7"
     },
     {
       "path": "backend/src/ai/router.ts",
@@ -21885,7 +21885,7 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/ChartV2.tsx",
-      "sha256": "3f63bdd8ebc231c34f269bbe9dc4d354bdd047d263f8f092fb19b958372881e6"
+      "sha256": "320aaea32423759ce7edad6e4caa85219332c0693981f5636eacb4098b3d14e4"
     },
     {
       "path": "frontend/src/components/response-experience-v2/ComparisonV2.tsx",
@@ -21905,7 +21905,7 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/InteractiveV2.tsx",
-      "sha256": "c994acfc375d646b1bdefff3a5b7e78df9cee7e3a94daf868c76365fa3e041a8"
+      "sha256": "d48780c59ec06763103fb0de1b5d8d498135cd580cc87b207a204d3f6e34d8a0"
     },
     {
       "path": "frontend/src/components/response-experience-v2/MathV2.tsx",
@@ -21921,7 +21921,7 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx",
-      "sha256": "38b47df213af474d0eaa949479b5b9f9c45a63bf2364234871553f4ecbbd46ad"
+      "sha256": "bf3050cc0f54fc83964036cbca9c82d270708c72b4c61d8b29142ee06a5d6f78"
     },
     {
       "path": "frontend/src/components/response-experience-v2/ResponseExperienceGate.tsx",
@@ -23713,7 +23713,7 @@
     },
     {
       "path": "frontend/src/lib/xrogaResponseDocument.ts",
-      "sha256": "31d5515436612c8e082e1d162b4da22b767909667fb963ded7b118ccb6713ccb"
+      "sha256": "565c5d92a6152acf76bd89498de775fc453855051421253bc06e81300a83ff5a"
     },
     {
       "path": "frontend/src/lib/xrogaRichResultFixtures.ts",

@@ -8528,9 +8528,10 @@
       "id": "surface:74760a8c78ac888599fd",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/responsePresentation.ts",
-      "sha256": "136a3b51762f920d0b6ea303f474006ad7f507b76aa972268f19daff251ebfad",
+      "sha256": "7e16ea46e2c45bb3855222b9345b895417bd33a4eb005632fb2665150d2737d7",
       "symbols": [
         "AnswerObligations",
+        "GENERIC_HEADING",
         "JsonSchema",
         "Kind",
         "PRESENTATION_PLAN_INSTRUCTIONS",
@@ -8565,6 +8566,7 @@
         "escaped",
         "finite",
         "format",
+        "genericHeading",
         "graph",
         "i",
         "id",
@@ -87383,7 +87385,7 @@
       "id": "surface:0c8b0091101aa8b07903",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/ChartV2.tsx",
-      "sha256": "3f63bdd8ebc231c34f269bbe9dc4d354bdd047d263f8f092fb19b958372881e6",
+      "sha256": "320aaea32423759ce7edad6e4caa85219332c0693981f5636eacb4098b3d14e4",
       "symbols": [
         "ChartV2",
         "axes",
@@ -87663,7 +87665,7 @@
       "id": "surface:611cf58543cb117c4017",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/InteractiveV2.tsx",
-      "sha256": "c994acfc375d646b1bdefff3a5b7e78df9cee7e3a94daf868c76365fa3e041a8",
+      "sha256": "d48780c59ec06763103fb0de1b5d8d498135cd580cc87b207a204d3f6e34d8a0",
       "symbols": [
         "CalculatorV2",
         "Chart",
@@ -87906,7 +87908,7 @@
       "id": "surface:8cc3d07125af060b5e53",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx",
-      "sha256": "38b47df213af474d0eaa949479b5b9f9c45a63bf2364234871553f4ecbbd46ad",
+      "sha256": "bf3050cc0f54fc83964036cbca9c82d270708c72b4c61d8b29142ee06a5d6f78",
       "symbols": [
         "Calculator",
         "Chart",
@@ -115551,7 +115553,7 @@
       "id": "surface:302352813d356af65f42",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/xrogaResponseDocument.ts",
-      "sha256": "31d5515436612c8e082e1d162b4da22b767909667fb963ded7b118ccb6713ccb",
+      "sha256": "565c5d92a6152acf76bd89498de775fc453855051421253bc06e81300a83ff5a",
       "symbols": [
         "EnhancedAiResponse",
         "MAX_PROTOCOL_CHARS",
@@ -144251,7 +144253,7 @@
     {
       "id": "test-suite:11a90210e320c1d28cb6",
       "sourcePath": "backend/src/ai/responsePresentation.test.ts",
-      "declaredTests": 17,
+      "declaredTests": 18,
       "skipLocations": [],
       "focusLocations": []
     },
