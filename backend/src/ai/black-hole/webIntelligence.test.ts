@@ -148,6 +148,15 @@ test('production web intelligence preserves pending research approval and explic
     assert.equal((await runWebIntelligence({userId:owner,dispatchScope,prompt:supplied.join('\n'),decision})).action,'none');
     assert.equal((await runWebIntelligence({userId:owner,dispatchScope,prompt:'Do not search the web. Explain MVCC.',decision})).action,'none');
     assert.equal(urls.length,0,'A model decision cannot override the original no-retrieval boundary');
+    const investigation = await runWebIntelligence({userId:owner,dispatchScope,
+      prompt:'Reconcile constraints across multiple independent current primary references.',
+      decision:webDecisionFromGoalContract({...goal,contextComplexity:'high'})!});
+    assert.equal(investigation.needsConfirmation,true);
+    const automaticBody = confirmations.row!.plan.arguments.body as Record<string,unknown>;
+    assert.equal(automaticBody.research_kind,'automatic');
+    assert.equal(automaticBody.result_count,30);
+    assert.equal(confirmations.row!.plan.arguments.maximumMicroUsd,1500);
+    assert.equal(urls.length,0,'Automatic depth still needs exact approval before either Search');
   } finally {
     resetCredentialVaultRuntimeForTests();for(const[k,v]of Object.entries(vaultEnv))if(v===undefined)delete process.env[k];else process.env[k]=v;
     globalThis.fetch = priorFetch;
