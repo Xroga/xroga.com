@@ -251,7 +251,7 @@
       "id": "surface:65cb0aba3b036f66089f",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/answerCoverage.ts",
-      "sha256": "1d27081c5d7cf3c1c9a721d8332967e19d2471fee9dad9c7fe7444fd4ebd80f3",
+      "sha256": "9519e49f2e29f272f5ba02f1593696bf205097e9d3cec904680da1b7eb6660a3",
       "symbols": [
         "boundary",
         "branching",
@@ -8528,7 +8528,7 @@
       "id": "surface:74760a8c78ac888599fd",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/responsePresentation.ts",
-      "sha256": "e8e30e04c9e2cd821c42d06d8e1da694d44dd93c4b950756e26ea0506796016b",
+      "sha256": "5a6615ab129e14a7d3a2d79dc5d801c0c398a87873960af5e5d6fc9982abf6dc",
       "symbols": [
         "AnswerObligations",
         "JsonSchema",
@@ -8573,6 +8573,7 @@
         "inputs",
         "issues",
         "item",
+        "knownIcon",
         "label",
         "markdown",
         "name",
@@ -144236,7 +144237,7 @@
     {
       "id": "test-suite:11a90210e320c1d28cb6",
       "sourcePath": "backend/src/ai/responsePresentation.test.ts",
-      "declaredTests": 12,
+      "declaredTests": 13,
       "skipLocations": [],
       "focusLocations": []
     },
