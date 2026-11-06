@@ -86,7 +86,11 @@ test('calculator and fixed chart data project to the existing data-only controls
   assert.match(result.response, /"type":"chart"/);
   assert.match(result.response, /"x":60,"v0":1500/);
   assert.equal(/"status":"(?:completed|confirmed)"/.test(result.response), false);
-  assert.equal(createPresentationProjection(p).finish(raw.replace('"value":40', '"value":4000')).ok, false);
+  const outOfRange = createPresentationProjection(p).finish(raw.replace('"value":40', '"value":4000'));
+  assert.equal(outOfRange.ok, true, 'a bound that contradicts the value is dropped, the calculator is kept');
+  const block = JSON.parse(outOfRange.response.split('```xroga-ui')[1].split('```')[0].trim());
+  assert.equal(block.inputs.find((input: { id: string }) => input.id === 'tickets').value, 4000);
+  assert.equal(block.inputs.find((input: { id: string }) => input.id === 'tickets').min, undefined, 'no slider bounds remain for that input');
 });
 
 test('authored visual descriptions cannot evade the existing authorization warning', () => {
