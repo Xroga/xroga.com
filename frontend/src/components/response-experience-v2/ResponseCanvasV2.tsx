@@ -8,6 +8,7 @@ import { sourceRegistryV2 } from './sourceRegistry';
 import { ResourcesV2 } from './ResourcesV2';
 import { EntityIdentityV2 } from './EntityIdentityV2';
 import { StatusBadgeV2 } from './StatusBadgeV2';
+import { responseIcon } from '@/lib/responseIcons';
 import { resourceIdentityV2 } from './entityRegistry';
 import { composeResponseV2, layoutUnitV2, type SemanticPartV2 } from './composition';
 import { loadPresentation } from './loadPresentation';
@@ -23,7 +24,7 @@ function NodeView({ node, document, grouped = false, stacked = false }: { node: 
       const resources = node.items.every(item => !!resourceIdentityV2(item.title, item.url, item.entityId));
       return <section>{node.title && <h3 className={styles.blockTitle}>{node.title}</h3>}<div className={resources ? styles.roleRows : styles.comparisonCards}>{node.items.map(item => <section key={item.id} className={resources ? styles.roleRow : styles.comparisonCard}>
       {item.imageUrl && <InlineImageV2 src={item.imageUrl} alt={item.title} />}
-      <header><h4><EntityIdentityV2 label={item.title} url={item.url} entityId={item.entityId} /></h4>{item.badge && <StatusBadgeV2 label={item.badge} />}</header>
+      <header><div className={styles.cardHead}>{(() => { const Icon = responseIcon(item.icon); return Icon ? <span className={styles.cardIcon} aria-hidden="true"><Icon size={18} strokeWidth={1.9} /></span> : null; })()}<h4><EntityIdentityV2 label={item.title} url={item.url} entityId={item.entityId} plain={!!responseIcon(item.icon)} /></h4></div>{item.badge && <StatusBadgeV2 label={item.badge} />}</header>
       {item.subtitle && <p className={styles.cardSubtitle}>{item.subtitle}</p>}
       {item.description && <ProseV2 text={item.description} sources={document.sources} />}
       {item.recommended && <p className={styles.cardSubtitle}>Suggested in this answer</p>}
@@ -41,10 +42,10 @@ function NodeView({ node, document, grouped = false, stacked = false }: { node: 
     case 'tabs': return <Tabs key={JSON.stringify(node.items.map(item => item.id))} node={node} sources={document.sources} />;
     case 'graph': return <Graph node={node} />;
     case 'citation': return <section className={styles.source}><div><SourceLinkV2 url={node.url} title={node.label} /><h3>{node.label}</h3></div>{node.excerpt && <p>{node.excerpt}</p>}</section>;
-    case 'metrics': return <dl className={styles.metrics}>{node.items.map(item => <div key={item.id}><dt>{item.label}</dt><dd>{item.value == null ? 'Unavailable' : String(item.value)}{item.unit ? ` ${item.unit}` : ''}</dd></div>)}</dl>;
+    case 'metrics': return <dl className={styles.metrics}>{node.items.map(item => <div key={item.id} data-tone={item.tone ?? 'neutral'}><dt>{item.label}</dt><dd>{item.tone === 'positive' && <span aria-hidden="true">▲ </span>}{item.tone === 'negative' && <span aria-hidden="true">▼ </span>}{item.value == null ? 'Unavailable' : String(item.value)}{item.unit ? ` ${item.unit}` : ''}{item.tone === 'positive' && <span className={styles.visuallyHidden}> (gain)</span>}{item.tone === 'negative' && <span className={styles.visuallyHidden}> (loss or cost)</span>}</dd></div>)}</dl>;
     case 'notice': return <aside className={styles.notice} data-tone={node.tone}>{node.title && <h3>{node.title}</h3>}<ProseV2 text={node.text} sources={document.sources} /></aside>;
     case 'accordion': return <section>{node.title && <h3 className={styles.blockTitle}>{node.title}</h3>}{node.items.map(item => <section key={item.id} className={styles.disclosure}><h4>{item.title}</h4><ProseV2 text={item.content} sources={document.sources} /></section>)}</section>;
-    case 'timeline': return <section>{node.title && <h3 className={styles.blockTitle}>{node.title}</h3>}<ol className={styles.timeline}>{node.items.map(item => <li key={item.id}><div><strong>{item.label}</strong>{item.date && <time>{item.date}</time>}{item.status && <StatusBadgeV2 label={item.status} />}</div>{item.detail && <p>{item.detail}</p>}</li>)}</ol></section>;
+    case 'timeline': return <section>{node.title && <h3 className={styles.blockTitle}>{node.title}</h3>}<ol className={styles.timeline}>{node.items.map(item => <li key={item.id}><div>{(() => { const Icon = responseIcon(item.icon); return Icon ? <span className={styles.cardIcon} aria-hidden="true"><Icon size={16} strokeWidth={1.9} /></span> : null; })()}<strong>{item.label}</strong>{item.date && <time>{item.date}</time>}{item.status && <StatusBadgeV2 label={item.status} />}</div>{item.detail && <p>{item.detail}</p>}</li>)}</ol></section>;
     case 'progress': return <section className={styles.progress}>{node.title && <h3 className={styles.blockTitle}>{node.title}</h3>}{node.items.map(item => <div key={item.id}><label>{item.label}<progress aria-label={item.label} value={item.value} max={item.max} /></label><span>{item.value} / {item.max}{item.unit ? ` ${item.unit}` : ''}{item.status ? ` · ${item.status}` : ''}</span>{item.detail && <p>{item.detail}</p>}</div>)}</section>;
   }
 }
