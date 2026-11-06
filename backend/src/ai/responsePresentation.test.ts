@@ -224,3 +224,18 @@ test('a diagram keeps its valid edges when the model adds a dangling or repeated
   const none = JSON.stringify({ s0: { markdown: 'Flow.', data: { nodes: [{ id: 'a', label: 'Client' }, { id: 'b', label: 'API' }], edges: [{ id: 'e1', source: 'a', target: 'zzz', label: 'ghost' }] } } });
   assert.equal(createPresentationProjection(p).finish(none).ok, false, 'a diagram with no valid edge is still rejected');
 });
+
+test('table rows the model flattened, keyed by column, or wrote as numbers are repaired instead of discarded', () => {
+  const p: PresentationPlan = [{ kind: 'table', heading: 'Plan', instruction: 'Day plan.' }];
+  const run = (rows: unknown) => createPresentationProjection(p).finish(JSON.stringify({ s0: { markdown: 'Plan.', data: { columns: ['Day', 'Plan', 'Cost'], rows } } }));
+  const flat = run(['Day 1', 'Alfama', 'EUR 120', 'Day 2', 'Belem', 'EUR 90']);
+  assert.equal(flat.ok, true, 'flat rows are regrouped by the column count');
+  assert.match(flat.response, /"c0":"Day 2","c1":"Belem","c2":"EUR 90"/);
+  const keyed = run([{ Day: 'Day 1', Plan: 'Alfama', Cost: 120 }]);
+  assert.equal(keyed.ok, true, 'rows keyed by column are mapped to cells');
+  assert.match(keyed.response, /"c2":"120"/);
+  const numeric = run([['Day 1', 'Alfama', 120], ['Day 2', null, 90]]);
+  assert.equal(numeric.ok, true);
+  assert.match(numeric.response, /"c1":"—"|"c1":"—"/);
+  assert.equal(run(['Day 1', 'Alfama']).ok, false, 'a flat list that does not divide into rows is still rejected');
+});
