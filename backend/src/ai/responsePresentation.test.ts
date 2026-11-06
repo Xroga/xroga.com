@@ -202,3 +202,12 @@ test('card and step icons pass through only from the approved Lucide list', () =
   assert.equal(createPresentationProjection(p).finish(body(null)).ok, true);
   assert.equal(createPresentationProjection(p).finish(body('<script>alert(1)</script>')).ok, false);
 });
+
+test('a table row that is short of cells is padded with a dash, while a row with extra cells is still rejected', () => {
+  const p: PresentationPlan = [{ kind: 'table', heading: 'Costs', instruction: 'Compare costs.' }];
+  const body = (rows: string[][]) => JSON.stringify({ s0: { markdown: 'Costs.', data: { columns: ['Item', 'House', 'Condo'], rows } } });
+  const padded = createPresentationProjection(p).finish(body([['P&I', '$2,243', '$1,878'], ['HOA', 'none']]));
+  assert.equal(padded.ok, true);
+  assert.match(padded.response, /"c0":"HOA","c1":"none","c2":"—"/);
+  assert.equal(createPresentationProjection(p).finish(body([['P&I', '$2,243', '$1,878', 'extra']])).ok, false);
+});
