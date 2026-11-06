@@ -1,17 +1,17 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "758067652d501840f21f0a38e1a957647559d9173ba1ecc356432986e8c3d1cb",
+  "reviewRegistrySha256": "121f50a27394e4766dfa480f6c3eb89760ee2b5a3f82c727d635301110e1e8c9",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
     "privilegedFactorySites": 229,
-    "persistenceCandidates": 1002,
+    "persistenceCandidates": 1003,
     "ownerPredicateCandidates": 266,
     "reviewRequired": 151,
-    "reviewedCandidates": 851,
+    "reviewedCandidates": 852,
     "unresolvedSafetyCandidates": 194,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 23
@@ -20,7 +20,7 @@
     "REVIEW_REQUIRED": 151,
     "SCOPED_BOUNDARY": 553,
     "NARROW_EXCEPTION": 52,
-    "NOT_PERSISTENCE": 203,
+    "NOT_PERSISTENCE": 204,
     "REVIEWED_GAP": 43
   },
   "acceptance": {
@@ -29,7 +29,7 @@
     "scope": "COMMAND_007_CRITERION_EVIDENCE_NOT_BATCH_OR_PRODUCTION_ACCEPTANCE",
     "certifiedScopedPrivilegedCallers": 0,
     "verifiedCandidateBoundaries": 80,
-    "unresolvedCandidateBoundaries": 922,
+    "unresolvedCandidateBoundaries": 923,
     "criteria": [
       {
         "id": "XB01-C007-AC01",
@@ -3992,6 +3992,10 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
+        "id": "6c88f44d96b5b92317e5"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
         "id": "b0427411320aa0bef36a"
       },
       {
@@ -7552,6 +7556,10 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "6c88f44d96b5b92317e5"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "64b99cfd7d4a42c04576"
       },
       {
@@ -10157,11 +10165,11 @@
     ]
   },
   "reviewAgreement": {
-    "currentCallers": 1002,
+    "currentCallers": 1003,
     "structuredVerified": 80,
-    "structuredUnproven": 922,
+    "structuredUnproven": 923,
     "manualUnresolved": 194,
-    "manualUnsupported": 728,
+    "manualUnsupported": 729,
     "agreedVerified": 80,
     "proofAwaitingManualReconciliation": 0
   },
@@ -12423,6 +12431,31 @@
           {
             "path": "backend/tests/engineeringResourceLedger.local.integration.ts",
             "marker": "the table and functions are not reachable by anonymous or signed-in roles"
+          }
+        ]
+      }
+    },
+    {
+      "id": "6c88f44d96b5b92317e5",
+      "path": "backend/src/ai/responsePresentation.ts",
+      "line": 136,
+      "enclosing": "normalizeSectionData",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "199b5f4a4124aa8110fe1d6c504633c6dbb4291d7bf3ae2b17351b6e3f056cd2",
+      "semanticReview": {
+        "authority": "Manually inspected the exact Array.from receiver and complete normalizeSectionData function. This is the native Array constructor; its callback only slices an already supplied rows array into memory. It receives no database, object store, privileged client or tenant context.",
+        "reason": "The conservative from-method scanner finds the newly serving 7d6114 presentation repair. This exact call only groups table cells before the existing strict presentation validator. It has no IO or durable writes. This classification applies only to the native conversion, and certifies no retrieval, tenant, credential, billing or historical acceptance boundary.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/responsePresentation.ts",
+            "marker": "Array.from({ length: rows.length / columns.length }"
+          },
+          {
+            "path": "backend/src/ai/responsePresentation.test.ts",
+            "marker": "table rows the model flattened, keyed by column, or wrote as numbers are repaired instead of discarded"
           }
         ]
       }

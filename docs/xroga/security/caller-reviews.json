@@ -32501,6 +32501,26 @@
         }
       ],
       "searchOsReviewProof": "scripts/security/search-os/source-review.json"
+    },
+    {
+      "path": "backend/src/ai/responsePresentation.ts",
+      "sourceSha256": "199b5f4a4124aa8110fe1d6c504633c6dbb4291d7bf3ae2b17351b6e3f056cd2",
+      "callIds": [
+        "6c88f44d96b5b92317e5"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Manually inspected the exact Array.from receiver and complete normalizeSectionData function. This is the native Array constructor; its callback only slices an already supplied rows array into memory. It receives no database, object store, privileged client or tenant context.",
+      "reason": "The conservative from-method scanner finds the newly serving 7d6114 presentation repair. This exact call only groups table cells before the existing strict presentation validator. It has no IO or durable writes. This classification applies only to the native conversion, and certifies no retrieval, tenant, credential, billing or historical acceptance boundary.",
+      "evidence": [
+        {
+          "path": "backend/src/ai/responsePresentation.ts",
+          "marker": "Array.from({ length: rows.length / columns.length }"
+        },
+        {
+          "path": "backend/src/ai/responsePresentation.test.ts",
+          "marker": "table rows the model flattened, keyed by column, or wrote as numbers are repaired instead of discarded"
+        }
+      ]
     }
   ],
   "retiredSourceReviews": [
