@@ -200,5 +200,27 @@ test('card and step icons pass through only from the approved Lucide list', () =
   assert.match(ok.response, /"icon":"home"/);
   assert.equal((ok.response.match(/"icon"/g) ?? []).length, 2, 'null icons are omitted');
   assert.equal(createPresentationProjection(p).finish(body(null)).ok, true);
-  assert.equal(createPresentationProjection(p).finish(body('<script>alert(1)</script>')).ok, false);
+  const unknown = createPresentationProjection(p).finish(body('<script>alert(1)</script>'));
+  assert.equal(unknown.ok, true, 'an unknown icon name never discards the visual');
+  assert.equal(/"icon"/.test(unknown.response), false, 'the unknown icon is dropped');
+  assert.equal(unknown.response.includes('<script>'), false, 'the markup never reaches the response');
+});
+
+test('a table row that is short of cells is padded with a dash, while a row with extra cells is still rejected', () => {
+  const p: PresentationPlan = [{ kind: 'table', heading: 'Costs', instruction: 'Compare costs.' }];
+  const body = (rows: string[][]) => JSON.stringify({ s0: { markdown: 'Costs.', data: { columns: ['Item', 'House', 'Condo'], rows } } });
+  const padded = createPresentationProjection(p).finish(body([['P&I', '$2,243', '$1,878'], ['HOA', 'none']]));
+  assert.equal(padded.ok, true);
+  assert.match(padded.response, /"c0":"HOA","c1":"none","c2":"—"/);
+  assert.equal(createPresentationProjection(p).finish(body([['P&I', '$2,243', '$1,878', 'extra']])).ok, false);
+});
+
+test('a diagram keeps its valid edges when the model adds a dangling or repeated one', () => {
+  const p: PresentationPlan = [{ kind: 'graph', heading: 'Flow', instruction: 'Show the flow.' }];
+  const body = JSON.stringify({ s0: { markdown: 'Flow.', data: { nodes: [{ id: 'a', label: 'Client' }, { id: 'b', label: 'API' }], edges: [{ id: 'e1', source: 'a', target: 'b', label: 'calls' }, { id: 'e2', source: 'a', target: 'zzz', label: 'ghost' }, { id: 'e3', source: 'a', target: 'b', label: 'calls' }] } } });
+  const result = createPresentationProjection(p).finish(body);
+  assert.equal(result.ok, true);
+  assert.equal((result.response.match(/"source":"a"/g) ?? []).length, 1, 'only the one valid edge remains');
+  const none = JSON.stringify({ s0: { markdown: 'Flow.', data: { nodes: [{ id: 'a', label: 'Client' }, { id: 'b', label: 'API' }], edges: [{ id: 'e1', source: 'a', target: 'zzz', label: 'ghost' }] } } });
+  assert.equal(createPresentationProjection(p).finish(none).ok, false, 'a diagram with no valid edge is still rejected');
 });

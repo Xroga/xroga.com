@@ -132,5 +132,7 @@ export function prepareAnswerCoverage(prompt: string, presentation: Presentation
   const kept = drifting.size ? plan.filter(section => !drifting.has(section.heading)) : plan;
   const coverage = assessPresentationCoverage(kept, requirements);
   if(quoteIssues.length){coverage.complete=false;coverage.issues.push(...quoteIssues);}
+  // Only the issue codes are logged: the part after the first colon can hold a model-written heading or a user quote.
+  if(!coverage.complete)console.warn('[coverage] incomplete',{issues:coverage.issues.slice(0,12).map(item=>item.split(':').slice(0,item.startsWith('missing:')?3:1).join(':').replace(/[^A-Za-z0-9:_-]/g,'').slice(0,48))});
   return { version:'answer-coverage-v1' as const, plan: kept, requirements, coverage, ...(drifting.size ? { omittedOffTopic: [...drifting] } : {}) };
 }
