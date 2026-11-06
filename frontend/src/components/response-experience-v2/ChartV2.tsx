@@ -4,7 +4,7 @@ import type { ResponseNodeV2 } from './document';
 import { DataTableV2 } from './DataV2';
 import styles from './response-v2.module.css';
 const colors = ['#5087e8', '#ad7bc8', '#2a9a89', '#c78a34', '#cc687f', '#747bd1', '#4899ab', '#a7a142'];
-export default function ChartV2({ node, showSourceData = true, compact = false }: { node: Extract<ResponseNodeV2, { kind: 'chart' }>; showSourceData?: boolean; compact?: boolean }) {
+export default function ChartV2({ node, showSourceData = false, compact = false }: { node: Extract<ResponseNodeV2, { kind: 'chart' }>; showSourceData?: boolean; compact?: boolean }) {
   const axes = <><CartesianGrid stroke="currentColor" opacity={0.1} vertical={false} /><XAxis dataKey={node.xKey} tick={{ fill: 'currentColor', fontSize: 12 }} axisLine={false} tickLine={false} tickMargin={12} minTickGap={24} /><YAxis tick={{ fill: 'currentColor', fontSize: 12 }} axisLine={false} tickLine={false} width={52} tickMargin={8} /><Tooltip contentStyle={{ background: 'var(--card)', color: 'var(--foreground)', borderRadius: 8 }} /><Legend /></>;
   const properties = { data: node.rows, margin: { top: 16, right: 16, left: 0, bottom: 12 }, accessibilityLayer: true };
   const chart = node.shape === 'bar' ? <BarChart {...properties}>{axes}{node.series.map((s, i) => <Bar key={s.key} dataKey={s.key} name={s.label} fill={colors[i]} isAnimationActive={false} />)}</BarChart>

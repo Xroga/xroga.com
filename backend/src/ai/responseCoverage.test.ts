@@ -54,6 +54,6 @@ test('one invalid visual preserves explanations and later valid sections without
   assert.equal(result.original, raw);
   assert.match(result.response, /source explanation/);
   assert.match(result.response, /later caveat/);
-  assert.match(result.response, /could not be validated/);
+  assert.doesNotMatch(result.response, /could not be validated/, 'no implementation wording is shown to the person');
   assert.doesNotMatch(result.response, /```xroga-ui/);
 });

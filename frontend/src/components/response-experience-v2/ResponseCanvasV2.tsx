@@ -37,7 +37,7 @@ function NodeView({ node, document, grouped = false, stacked = false }: { node: 
     case 'images': return <section>{node.title && <h3 className={styles.blockTitle}>{node.title}</h3>}{node.items.map(item => <figure key={item.id}><InlineImageV2 src={item.url} alt={item.label} />{item.caption && <figcaption>{item.caption}</figcaption>}</figure>)}</section>;
     case 'code': return <><h3 className={styles.blockTitle}>{node.title}</h3><CodeV2 text={node.text} language={node.language} /></>;
     case 'table': return <Table node={node} stacked={stacked} />;
-    case 'chart': return <Chart node={node} showSourceData={!grouped} />;
+    case 'chart': return <Chart node={node} showSourceData={false} />;
     case 'calculator': return <Calculator key={JSON.stringify([node.operation, node.inputs])} node={node} />;
     case 'tabs': return <Tabs key={JSON.stringify(node.items.map(item => item.id))} node={node} sources={document.sources} />;
     case 'graph': return <Graph node={node} />;

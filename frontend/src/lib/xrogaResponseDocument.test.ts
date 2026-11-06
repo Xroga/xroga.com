@@ -21,7 +21,7 @@ test('received structured source and incomplete-section state survive save and r
   assert.deepEqual(saved.responseSource, responseSource);
   assert.equal(saved.sourceText, projected);
   assert.equal(saved.blocks[0].type, 'notice');
-  assert.match(saved.blocks[0].text, /could not be validated, so a visual may be missing.*No automatic retry/);
+  assert.match(saved.blocks[0].text, /may not cover every part of your request/);
   assert.equal(saved.blocks[1].type, 'narrative');
   assert.equal(saved.blocks[1].text, projected.trim());
   assert.equal(result.content.includes('"s0"'), false);

@@ -116,7 +116,7 @@ test('invalid quantitative controls retain their source without publishing an un
     assert.equal(final.ok, false);
     assert.equal(final.original, raw);
     assert.match(final.response, /Supplied scenario/);
-    assert.match(final.response, /could not be validated/);
+    assert.doesNotMatch(final.response, /could not be validated/, 'no implementation wording is shown to the person');
     assert.doesNotMatch(final.response, /```xroga-ui/);
   }
 });
@@ -258,4 +258,16 @@ test('a loan-payment calculator needs exactly three inputs and is kept when well
   assert.equal(ok.ok, true);
   assert.match(ok.response, /"operation":"loan-payment"/);
   assert.equal(run([input('loan', 'Loan amount', 344000, 0, 800000, 1000), input('rate', 'Annual rate %', 6.8, 0, 12, 0.1)]).ok, false);
+});
+
+test('layout labels are not shown as headings, while content headings are kept', () => {
+  const p: PresentationPlan = [{ kind: 'prose', heading: 'Short answer', instruction: 'Answer.' }, { kind: 'metrics', heading: 'Headline monthly numbers', instruction: 'Numbers.' }, { kind: 'prose', heading: 'House or condo: what you pay each month', instruction: 'Compare.' }];
+  const body = JSON.stringify({ s0: { markdown: 'The house costs about $2,242 a month.', data: null },
+    s1: { markdown: '', data: { metrics: [{ label: 'House', value: '$2,242', unit: '/mo', tone: 'neutral' }, { label: 'Condo', value: '$1,877', unit: '/mo', tone: 'neutral' }] } },
+    s2: { markdown: 'The condo is cheaper before HOA dues.', data: null } });
+  const result = createPresentationProjection(p).finish(body);
+  assert.equal(result.ok, true);
+  assert.doesNotMatch(result.response, /## Short answer/);
+  assert.doesNotMatch(result.response, /## Headline monthly numbers/);
+  assert.match(result.response, /## House or condo: what you pay each month/);
 });
