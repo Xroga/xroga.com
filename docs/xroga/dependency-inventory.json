@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "46761f4849c56204a0b63808958aeb7bfa67ec82",
+  "source_sha": "8b5ee9e8e82c99f2558e815e2a47f9e97e00376a",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -16534,7 +16534,7 @@
     },
     {
       "path": "backend/src/ai/black-hole/webIntelligence.ts",
-      "sha256": "e93f748837721d3246bcd35aab3a80092268b4f67e7c7b0e89cb7932db8614b2"
+      "sha256": "2f7483561f6bf54a2b426f4affe812ee6ffb2dfeeae3109d109be49d03e3c1a6"
     },
     {
       "path": "backend/src/ai/buildImprovementMemory.ts",
@@ -17062,7 +17062,7 @@
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "sha256": "6ca81b0c9234195e6159d1e03735a21ce50d50cf1e8f71b53cb62199bf95cb26"
+      "sha256": "e3d1056797980d14df2c56a39f22e0ec6a47a43c478adac2615292b829cf4d51"
     },
     {
       "path": "backend/src/ai/usageAccounting.ts",
