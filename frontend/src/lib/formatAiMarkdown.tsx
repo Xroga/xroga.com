@@ -346,11 +346,6 @@ export function BusinessActionConfirmationInline({
             result.response,
           );
 
-          // The existing receipt handoff only reads the saved owner-bound result.
-          // Refresh it when this inline action finishes, without another search.
-          window.dispatchEvent(new CustomEvent('xroga:action-receipt-ready', {
-            detail: { confirmationId },
-          }));
         } catch (
           error
         ) {
@@ -371,6 +366,11 @@ export function BusinessActionConfirmationInline({
             message,
           );
         } finally {
+          // A lost HTTP response can still have a durable completion receipt.
+          // This event only re-reads the owner-bound result; it never retries execution.
+          window.dispatchEvent(new CustomEvent('xroga:action-receipt-ready', {
+            detail: { confirmationId },
+          }));
           setBusy(
             null,
           );
