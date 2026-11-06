@@ -119,3 +119,18 @@ test('the scenario rule stays out of the way of simple, brief or declined reques
   const both = quantitativeScenarioSupport('A loan of $20,000 at 6% for 5 years: what is the monthly payment?');
   assert.deepEqual(both.map(item => item.id), ['support-key-figures', 'support-scenario-calculator']);
 });
+
+test('a table or calculator the planner already planned is never added a second time', () => {
+  const prompt = 'Explain the risk and reward of a trade with entry at $100, stop loss at $95 and target at $112. What position size risks 1% of a $10,000 account?';
+  const planned = [section('prose', 'Short answer', 'Answer.', ['ob1']), section('table', 'Trade math', 'Figures.', ['ob2']), section('calculator', 'Position size', 'Formula.', ['ob3'])];
+  const obligations: AnswerObligations = [
+    { id: 'ob1', description: 'explain', origin: 'requested', formats: ['prose'] },
+    { id: 'ob2', description: 'figures', origin: 'necessary-support', formats: ['table'] },
+    { id: 'ob3', description: 'position size', origin: 'requested', formats: ['calculator'] },
+  ];
+  const out = prepareAnswerCoverage(prompt, planned, obligations);
+  assert.deepEqual(out.plan.map(item => item.kind), ['prose', 'table', 'calculator']);
+  assert.equal(out.coverage.complete, true, out.coverage.issues.join(','));
+  const tableOnly = prepareAnswerCoverage(prompt, [planned[0], planned[1]], obligations.slice(0, 2));
+  assert.deepEqual(tableOnly.plan.map(item => item.kind), ['prose', 'table', 'calculator'], 'a missing calculator is still added');
+});

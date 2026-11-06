@@ -86,7 +86,11 @@ test('calculator and fixed chart data project to the existing data-only controls
   assert.match(result.response, /"type":"chart"/);
   assert.match(result.response, /"x":60,"v0":1500/);
   assert.equal(/"status":"(?:completed|confirmed)"/.test(result.response), false);
-  assert.equal(createPresentationProjection(p).finish(raw.replace('"value":40', '"value":4000')).ok, false);
+  const outOfRange = createPresentationProjection(p).finish(raw.replace('"value":40', '"value":4000'));
+  assert.equal(outOfRange.ok, true, 'a bound that contradicts the value is dropped, the calculator is kept');
+  const block = JSON.parse(outOfRange.response.split('```xroga-ui')[1].split('```')[0].trim());
+  assert.equal(block.inputs.find((input: { id: string }) => input.id === 'tickets').value, 4000);
+  assert.equal(block.inputs.find((input: { id: string }) => input.id === 'tickets').min, undefined, 'no slider bounds remain for that input');
 });
 
 test('authored visual descriptions cannot evade the existing authorization warning', () => {
@@ -148,4 +152,53 @@ test('a table, diagram or step list with no extra text is a complete section; on
   assert.match(final.response, /"type":"steps"/);
   const emptyProse = JSON.stringify({ s0: { markdown: '  ', data: null }, s1: { markdown: '', data: { columns: ['A', 'B'], rows: [['x', 'y']] } }, s2: { markdown: '', data: { steps: [{ title: 'a', description: 'b' }, { title: 'c', description: 'd' }] } } });
   assert.equal(createPresentationProjection(plan).finish(emptyProse).ok, false);
+});
+
+test('metrics and tabs project to the existing blocks, with tone as trend, and bad shapes are refused', () => {
+  const plan: PresentationPlan = [
+    { kind: 'prose', heading: 'Short answer', instruction: 'Answer.', covers: [] },
+    { kind: 'metrics', heading: 'Headline numbers', instruction: 'Profit, loss and ratio.', covers: [] },
+    { kind: 'tabs', heading: 'Strategies', instruction: 'Alternative strategies.', covers: [] },
+  ];
+  const ok = JSON.stringify({
+    s0: { markdown: 'The setup risks $5 to make $12.', data: null },
+    s1: { markdown: '', data: { metrics: [
+      { label: 'Max profit', value: '$350', unit: '', tone: 'positive' },
+      { label: 'Max loss', value: '$9,650', unit: '', tone: 'negative' },
+      { label: 'Reward-to-risk', value: '2.4 : 1', unit: '', tone: 'neutral' },
+    ] } },
+    s2: { markdown: '', data: { tabs: [{ label: 'Theta', content: 'Premium selling.' }, { label: 'Gamma', content: 'Directional spreads.' }] } },
+  });
+  const final = createPresentationProjection(plan).finish(ok);
+  assert.equal(final.ok, true);
+  assert.match(final.response, /"type":"metric-group"/);
+  assert.match(final.response, /"label":"Max profit","value":"\$350","trend":"up"/);
+  assert.match(final.response, /"label":"Max loss","value":"\$9,650","trend":"down"/);
+  assert.match(final.response, /"label":"Reward-to-risk","value":"2\.4 : 1","trend":"flat"/);
+  assert.match(final.response, /"type":"tabs"/);
+  assert.match(final.response, /"label":"Gamma","content":"Directional spreads\."/);
+  // One metric or one tab is not a comparison; an unknown tone or empty tab text is invalid.
+  const oneMetric = JSON.stringify({ s0: { markdown: 'x', data: null }, s1: { markdown: '', data: { metrics: [{ label: 'A', value: '1', unit: '', tone: 'neutral' }] } }, s2: { markdown: '', data: { tabs: [{ label: 'A', content: 'a' }, { label: 'B', content: 'b' }] } } });
+  assert.equal(createPresentationProjection(plan).finish(oneMetric).ok, false);
+  const badTone = JSON.stringify({ s0: { markdown: 'x', data: null }, s1: { markdown: '', data: { metrics: [{ label: 'A', value: '1', unit: '', tone: 'great' }, { label: 'B', value: '2', unit: '', tone: 'neutral' }] } }, s2: { markdown: '', data: { tabs: [{ label: 'A', content: 'a' }, { label: 'B', content: 'b' }] } } });
+  assert.equal(createPresentationProjection(plan).finish(badTone).ok, false);
+  const emptyTab = JSON.stringify({ s0: { markdown: 'x', data: null }, s1: { markdown: '', data: { metrics: [{ label: 'A', value: '1', unit: '', tone: 'neutral' }, { label: 'B', value: '2', unit: '', tone: 'neutral' }] } }, s2: { markdown: '', data: { tabs: [{ label: 'A', content: '' }, { label: 'B', content: 'b' }] } } });
+  assert.equal(createPresentationProjection(plan).finish(emptyTab).ok, false);
+  const schema = JSON.stringify(presentationResponseFormat(plan));
+  assert.match(schema, /"tone"/);
+  assert.match(schema, /"positive","negative","neutral"/);
+});
+
+test('card and step icons pass through only from the approved Lucide list', () => {
+  const p: PresentationPlan = [{ kind: 'cards', heading: 'Options', instruction: 'Compare.' }, { kind: 'steps', heading: 'Plan', instruction: 'Order.' }];
+  const body = (icon: string | null) => JSON.stringify({
+    s0: { markdown: 'Options.', data: { cards: [{ title: 'House', subtitle: '3 bed', description: 'Detached home.', entityId: null, icon }] } },
+    s1: { markdown: 'Plan.', data: { steps: [{ title: 'Pre-approval', description: 'Get a letter.', icon }, { title: 'Offer', description: 'Submit it.', icon: null }] } },
+  });
+  const ok = createPresentationProjection(p).finish(body('home'));
+  assert.equal(ok.ok, true);
+  assert.match(ok.response, /"icon":"home"/);
+  assert.equal((ok.response.match(/"icon"/g) ?? []).length, 2, 'null icons are omitted');
+  assert.equal(createPresentationProjection(p).finish(body(null)).ok, true);
+  assert.equal(createPresentationProjection(p).finish(body('<script>alert(1)</script>')).ok, false);
 });
