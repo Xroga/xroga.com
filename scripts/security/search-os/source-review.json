@@ -4086,5 +4086,87 @@
     ],
     "scope": "SINGLE_CLASSIFICATION_INSTRUCTION_CHANGE_NOT_NEW_AUTHORITY_OR_ACCEPTANCE",
     "reason": "Two live multi-source questions were both classified low, selecting one Search. The existing planner request now defines its existing contextComplexity field by evidence depth, while single lookups and supplied URLs stay low. High already maps to at most two approved Search operations and the automatic 250-run allowance. No extra classifier/model call, new field, provider, fallback, token ceiling, identity, privilege, execution capability or accounting path is added. Manual Deep Research remains a separate trusted UI boolean and its 90-run/5-operation bound. All relevant model, actor and accounting call expressions are byte-identical; all 64 focused routing/planner/Search OS tests and the backend build pass. Actual automatic 30-result acceptance remains required."
+  },
+  "manualResearchRepoGate": {
+    "reference": "a33c0dd15e12bf5203f47477a19f52dc46b2b45e",
+    "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
+    "beforeSha256": "43981cff009c478d0a8670d9c4a7c7de0340e9190f4a7015114d9de40046d1af",
+    "currentSha256": "2ff980dba66d42a6619005d32cb3428555d9a461565782ba36cd3b9e3b6e9c30",
+    "unchangedCallExpressions": 341,
+    "originalReview": {
+      "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
+      "sourceSha256": "43981cff009c478d0a8670d9c4a7c7de0340e9190f4a7015114d9de40046d1af",
+      "callIds": [
+        "76beac12fd8331db2743"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in TerminalChatBar, with no database or Storage client receiver.",
+      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+      "evidence": [
+        {
+          "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
+          "marker": "const incoming = Array.from(list).filter("
+        }
+      ],
+      "beforeCurrentMainIntegration": {
+        "ref": "92043b72c20e5a12636dee079d760a1e5708b48f",
+        "sourceSha256": "cb1ec7ba1923bc8b22029963c44f7a0b67435edf9615d0a9426ae3694a184860",
+        "callIds": [
+          "18f7c2043f2ceb0ebac3"
+        ],
+        "disposition": "NOT_PERSISTENCE"
+      },
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json",
+      "searchOsPriorReview": {
+        "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
+        "sourceSha256": "959ecdbdfe4da3c4cee1a79e2e4684f638df3ded77cf7ed9002bdafbd2ee8d0c",
+        "callIds": [
+          "01fce3ee8703d9146072"
+        ],
+        "disposition": "NOT_PERSISTENCE",
+        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in TerminalChatBar, with no database or Storage client receiver.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+        "evidence": [
+          {
+            "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
+            "marker": "const incoming = Array.from(list).filter("
+          }
+        ],
+        "beforeCurrentMainIntegration": {
+          "ref": "92043b72c20e5a12636dee079d760a1e5708b48f",
+          "sourceSha256": "cb1ec7ba1923bc8b22029963c44f7a0b67435edf9615d0a9426ae3694a184860",
+          "callIds": [
+            "18f7c2043f2ceb0ebac3"
+          ],
+          "disposition": "NOT_PERSISTENCE"
+        },
+        "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+      },
+      "searchOsReviewProof": "scripts/security/search-os/source-review.json"
+    },
+    "previousNativeCall": {
+      "id": "76beac12fd8331db2743",
+      "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
+      "line": 422,
+      "enclosing": "TerminalChatBar",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "43981cff009c478d0a8670d9c4a7c7de0340e9190f4a7015114d9de40046d1af"
+    },
+    "currentNativeCall": {
+      "id": "cadf98c6db9ed797be7e",
+      "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
+      "line": 424,
+      "enclosing": "TerminalChatBar",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "2ff980dba66d42a6619005d32cb3428555d9a461565782ba36cd3b9e3b6e9c30"
+    },
+    "scope": "UI_PRECONDITION_CORRECTION_NOT_BACKEND_AUTHORITY_OR_SECURITY_ACCEPTANCE",
+    "reason": "Actual authenticated Free browser testing of the HTTP Cache-Control documentation question with the Deep Research button selected incorrectly opened Connect GitHub before any semantic planner or research approval. Only the optional client repository precondition is skipped for trusted manual research UI intent. Existing guest sign-in, text-only/no concurrent work checks remain earlier and byte-identical. All call expressions, original submit arguments, backend semantic decision, actor/project/repository checks, approval digest, provider/model/accounting limits and no-retry rule are unchanged. A technical research question can now reach the same server planner without connecting a code repository; this grants no capability or execution permission. The exact Array.from(list) remains a native in-memory FileList conversion, not persistence. This narrow manual review preserves its entire former receipt and does not certify the whole component or alter historical acceptance."
   }
 }
