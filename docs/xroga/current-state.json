@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/deepseek-search-os-20261105",
-    "sha": "fe4062e08f52dcfe69e7954f5fb359fd7a83b1a4",
-    "sourceTimestampUtc": "2026-11-06T00:47:21+05:00",
-    "auditStartedUtc": "2026-11-06T10:10:07.049Z",
+    "sha": "c4e3f73e03da9bebd442a48c8eafa66464f6ab37",
+    "sourceTimestampUtc": "2026-11-06T15:21:54+05:00",
+    "auditStartedUtc": "2026-11-06T10:31:31.243Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -252,7 +252,7 @@
       "id": "surface:65cb0aba3b036f66089f",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/answerCoverage.ts",
-      "sha256": "1d27081c5d7cf3c1c9a721d8332967e19d2471fee9dad9c7fe7444fd4ebd80f3",
+      "sha256": "9519e49f2e29f272f5ba02f1593696bf205097e9d3cec904680da1b7eb6660a3",
       "symbols": [
         "boundary",
         "branching",
@@ -8720,7 +8720,7 @@
       "id": "surface:74760a8c78ac888599fd",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/responsePresentation.ts",
-      "sha256": "e8e30e04c9e2cd821c42d06d8e1da694d44dd93c4b950756e26ea0506796016b",
+      "sha256": "7430a99fa3b8635c69caaf40a0891d85e111ef0bd71ea811f9c346287197eafb",
       "symbols": [
         "AnswerObligations",
         "JsonSchema",
@@ -8765,6 +8765,7 @@
         "inputs",
         "issues",
         "item",
+        "knownIcon",
         "label",
         "markdown",
         "name",
@@ -144498,7 +144499,7 @@
     {
       "id": "test-suite:11a90210e320c1d28cb6",
       "sourcePath": "backend/src/ai/responsePresentation.test.ts",
-      "declaredTests": 12,
+      "declaredTests": 14,
       "skipLocations": [],
       "focusLocations": []
     },

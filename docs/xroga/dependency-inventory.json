@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "fe4062e08f52dcfe69e7954f5fb359fd7a83b1a4",
+  "source_sha": "c4e3f73e03da9bebd442a48c8eafa66464f6ab37",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -16438,7 +16438,7 @@
     },
     {
       "path": "backend/src/ai/answerCoverage.ts",
-      "sha256": "1d27081c5d7cf3c1c9a721d8332967e19d2471fee9dad9c7fe7444fd4ebd80f3"
+      "sha256": "9519e49f2e29f272f5ba02f1593696bf205097e9d3cec904680da1b7eb6660a3"
     },
     {
       "path": "backend/src/ai/architect.ts",
@@ -16822,7 +16822,7 @@
     },
     {
       "path": "backend/src/ai/responsePresentation.ts",
-      "sha256": "e8e30e04c9e2cd821c42d06d8e1da694d44dd93c4b950756e26ea0506796016b"
+      "sha256": "7430a99fa3b8635c69caaf40a0891d85e111ef0bd71ea811f9c346287197eafb"
     },
     {
       "path": "backend/src/ai/router.ts",
@@ -32256,42 +32256,42 @@
     },
     {
       "path": "backend/src/ai/responsePresentation.ts",
-      "line": 132,
+      "line": 138,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/responsePresentation.ts",
-      "line": 133,
+      "line": 143,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/responsePresentation.ts",
-      "line": 134,
+      "line": 144,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/responsePresentation.ts",
-      "line": 146,
+      "line": 156,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/responsePresentation.ts",
-      "line": 149,
+      "line": 159,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/responsePresentation.ts",
-      "line": 150,
+      "line": 160,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
