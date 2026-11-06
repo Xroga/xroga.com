@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/deepseek-search-os-20261105",
-    "sha": "8b5ee9e8e82c99f2558e815e2a47f9e97e00376a",
-    "sourceTimestampUtc": "2026-11-06T16:54:55+05:00",
-    "auditStartedUtc": "2026-11-06T11:55:37.860Z",
+    "sha": "fdc9fd3a9b9ba42eaccf1c68c2bf2b3459a70003",
+    "sourceTimestampUtc": "2026-11-06T17:41:04+05:00",
+    "auditStartedUtc": "2026-11-06T12:42:09.940Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -95128,7 +95128,7 @@
       "id": "surface:3a6e395bda32efc304e5",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "sha256": "43981cff009c478d0a8670d9c4a7c7de0340e9190f4a7015114d9de40046d1af",
+      "sha256": "2ff980dba66d42a6619005d32cb3428555d9a461565782ba36cd3b9e3b6e9c30",
       "symbols": [
         "COMPOSER_PLACEHOLDERS",
         "MIN_INPUT_H",
@@ -101258,7 +101258,7 @@
         "frontend/src/components/terminal/RepoWorkspaceGateModal.tsx:5",
         "frontend/src/components/terminal/TerminalChatBar.tsx:11",
         "frontend/src/components/terminal/TerminalChatBar.tsx:23",
-        "frontend/src/components/terminal/TerminalChatBar.tsx:334",
+        "frontend/src/components/terminal/TerminalChatBar.tsx:336",
         "frontend/src/components/terminal/VercelBuildGateModal.tsx:5",
         "frontend/src/components/terminal/VercelDeployButton.tsx:5",
         "frontend/src/components/terminal/WorkspaceConnectionsStrip.tsx:10",
@@ -107060,7 +107060,7 @@
       "callers": [
         "frontend/src/components/terminal/ImageStudioCard.tsx:26",
         "frontend/src/components/terminal/ReasoningAndFollowUps.tsx:6",
-        "frontend/src/components/terminal/TerminalChatBar.tsx:356",
+        "frontend/src/components/terminal/TerminalChatBar.tsx:358",
         "frontend/src/context/TerminalChatContext.tsx:59",
         "frontend/src/lib/phase1Routing.ts:2",
         "frontend/src/lib/workLanes.ts:2"
@@ -139341,9 +139341,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:ff5519b559ff8a1781f3",
+      "id": "finding:ad48791622ddd526cbb0",
       "sourcePath": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "line": 810,
+      "line": 812,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -139351,9 +139351,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:be31e8d89be0164779f1",
+      "id": "finding:82e1192be7c4a8a1af08",
       "sourcePath": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "line": 818,
+      "line": 820,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -139361,9 +139361,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:107ad0ee6e3f5aa20e69",
+      "id": "finding:557e35d1c21fb02cc1fd",
       "sourcePath": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "line": 818,
+      "line": 820,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -142780,23 +142780,23 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:b9aa90107fffe54c41ad",
+      "id": "frontend-call:4cf6eaca1de67c0c3b9f",
       "sourcePath": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "line": 590,
+      "line": 592,
       "callee": "api.github.status().then().catch",
       "reachable": true
     },
     {
-      "id": "frontend-call:843966175ed95b083521",
+      "id": "frontend-call:cae2b4aa606499e82541",
       "sourcePath": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "line": 590,
+      "line": 592,
       "callee": "api.github.status().then",
       "reachable": true
     },
     {
-      "id": "frontend-call:4f752480630a6026a921",
+      "id": "frontend-call:61d8ad23ff4d50050a79",
       "sourcePath": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "line": 590,
+      "line": 592,
       "callee": "api.github.status",
       "reachable": true
     },
