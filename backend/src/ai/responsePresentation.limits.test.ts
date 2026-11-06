@@ -7,7 +7,7 @@ test('backend rejects data outside the existing Workspace field and protocol bou
     ['cards', { cards: [{ title: 'Role', subtitle: 's'.repeat(501), description: 'Explanation' }] }],
     ['table', { columns: ['Field', 'Role'], rows: [['a'.repeat(10_001), 'Value']] }],
     ['graph', { nodes: [{ id: 'a', label: 'A' }, { id: 'b', label: 'B' }], edges: [{ id: 'edge', source: 'a', target: 'b', label: 'l'.repeat(501) }] }],
-    ['graph', { nodes: [{ id: 'a', label: 'A' }, { id: 'b', label: 'B' }], edges: [{ id: 'one', source: 'a', target: 'b', label: 'Read' }, { id: 'two', source: 'a', target: 'b', label: 'Read' }] }],
+    ['graph', { nodes: [{ id: 'a', label: 'A' }, { id: 'a', label: 'B' }], edges: [{ id: 'one', source: 'a', target: 'a', label: 'Read' }] }],
     ['table', { columns: ['Field', 'Role'], rows: Array.from({ length: 6 }, () => ['a'.repeat(9_000), 'Value']) }],
   ];
   for (const [kind, data] of cases) {
