@@ -1005,5 +1005,11 @@
     "reason": "Explicitly reviewed prior-to-current diff: pipeline passes only the validated manual Deep Research boolean into its existing issued-scope research call; web intelligence denies bare URL lists, restricts manual mode to explicit UI opt-in, preserves goal source policy and owner checks, selects 15/30/50 and immutable run UUID, reads at most ten supplied pages, labels official DeepSeek and preserves fifty source records with a bounded twelve-source synthesis context. Existing canonical execution, ownership, approval and accounting remain. One native boundedPublicGet research caller is removed and replaced by the separately reviewed official Fetch dispatcher; no remaining security obligation or historical accepted criterion is deleted.",
     "sourceReview": "scripts/security/search-os/source-review.json",
     "newSourceCertified": false
+  },
+  "beforeServingProduction179b53Counts": {
+    "total": 150,
+    "reviewed": 150,
+    "pending": 0,
+    "unresolvedHighRiskReviewCandidates": 0
   }
 }
