@@ -513,6 +513,12 @@ export async function runWebIntelligence(
     manualDeepResearch?: boolean;
   },
 ): Promise<WebIntelligenceResult> {
+  // A semantic summary can omit the user's URL list. Resolve explicit input
+  // before that summary, using the existing deterministic, approval-only path.
+  // This also preserves bare-URL and no-retrieval refusals without another model.
+  const explicitDecision = input.manualDeepResearch !== true &&
+    (extractUrls(input.prompt).length > 0 || explicitlyDisablesResearch(input.prompt))
+    ? await decideWebAction(input) : undefined;
   // A trusted UI opt-in is the only path to manual Deep Research.
   // Preserve the user's source policy from the validated goal contract.
   const proposedDecision:WebDecision = input.manualDeepResearch === true
@@ -525,7 +531,11 @@ export async function runWebIntelligence(
         officialDomains:input.decision?.officialDomains??[],
         reason:'Deep Research was explicitly enabled for this request.',
       }
-    : input.decision ?? await decideWebAction(input);
+    : explicitDecision
+      ? { ...explicitDecision,
+          sourcePolicy: explicitDecision.sourcePolicy === 'official_only' || input.decision?.sourcePolicy === 'official_only' ? 'official_only' : 'any',
+          officialDomains: input.decision?.sourcePolicy === 'official_only' ? input.decision.officialDomains : explicitDecision.officialDomains }
+      : input.decision ?? await decideWebAction(input);
   const decision = proposedDecision.action === 'deep_research' && input.manualDeepResearch !== true
     ? { ...proposedDecision, action: 'research' as const,
         reason: 'Manual Deep Research was not enabled.' }
