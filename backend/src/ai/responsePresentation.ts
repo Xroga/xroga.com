@@ -35,7 +35,8 @@ export function assessPresentationCoverage(plan: PresentationPlan, obligations?:
   }
   for (const item of obligations) for (const format of new Set(item.formats)) {
     const covered = plan.length === 0 && format === 'prose'
-      || plan.some(section => section.kind === format && section.covers?.includes(item.id))
+      // Tabs and steps both present ordered stages or alternatives (days, phases, options), so either satisfies the other.
+      || plan.some(section => (section.kind === format || (format === 'steps' && section.kind === 'tabs') || (format === 'tabs' && section.kind === 'steps')) && section.covers?.includes(item.id))
       // Every section carries its own written lead-in, so a requirement bound to any section already has its prose.
       || format === 'prose' && plan.some(section => section.covers?.includes(item.id));
     if (!covered) issues.push(`missing:${item.id}:${format}`);

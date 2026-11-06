@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createPresentationProjection, presentationPlanSchema, presentationRequestInstructions, presentationResponseFormat, type PresentationPlan } from './responsePresentation.js';
+import { assessPresentationCoverage, createPresentationProjection, presentationPlanSchema, presentationRequestInstructions, presentationResponseFormat, type PresentationPlan } from './responsePresentation.js';
 import {publicCompletionState} from './completionDiagnostics.js';
 
 const plan: PresentationPlan = [
@@ -238,4 +238,14 @@ test('table rows the model flattened, keyed by column, or wrote as numbers are r
   assert.equal(numeric.ok, true);
   assert.match(numeric.response, /"c1":"—"|"c1":"—"/);
   assert.equal(run(['Day 1', 'Alfama']).ok, false, 'a flat list that does not divide into rows is still rejected');
+});
+
+test('per-day tabs satisfy a steps requirement and steps satisfy a tabs requirement', () => {
+  const requirement = (id: string, formats: Array<'steps' | 'tabs'>) => ({ id, description: 'Day by day plan.', origin: 'requested' as const, formats });
+  const tabsPlan: PresentationPlan = [{ kind: 'tabs', heading: 'Days', instruction: 'One tab per day.', covers: ['days'] }];
+  assert.deepEqual(assessPresentationCoverage(tabsPlan, [requirement('days', ['steps'])]), { complete: true, issues: [] });
+  const stepsPlan: PresentationPlan = [{ kind: 'steps', heading: 'Days', instruction: 'In order.', covers: ['days'] }];
+  assert.deepEqual(assessPresentationCoverage(stepsPlan, [requirement('days', ['tabs'])]), { complete: true, issues: [] });
+  const unbound: PresentationPlan = [{ kind: 'tabs', heading: 'Days', instruction: 'One tab per day.', covers: ['other'] }];
+  assert.equal(assessPresentationCoverage(unbound, [requirement('days', ['steps']), requirement('other', ['tabs'])]).complete, false);
 });
