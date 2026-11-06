@@ -2,7 +2,7 @@
   "version": 1,
   "scope": "MANUAL_SOURCE_REVIEW_NOT_SECURITY_CERTIFICATION",
   "baseSource": "5485776cfce9d6e233f7a0e3cf33ef58996a931d",
-  "productionSourcePreserved": "77d70ff2b95168f7030dd83ec6aacb0c9c4a960b",
+  "productionSourcePreserved": "70cee16480e5debf7b1a1d1e496e291a78c016f6",
   "reviews": [
     {
       "original": {
@@ -3969,5 +3969,23 @@
       },
       "reason": "The boundedPublicGet invocation in executeParallelNativeAction was removed together with its native PDF path. Official Fetch now uses the separately reviewed fixed-origin dispatcher. Removing this absent invocation retires no remaining caller or independent security obligation; the complete historical record and original fixture are retained."
     }
-  ]
+  ],
+  "receiptRefresh": {
+    "baseSource": "fe4062e08f52dcfe69e7954f5fb359fd7a83b1a4",
+    "path": "frontend/src/lib/formatAiMarkdown.tsx",
+    "beforeSha256": "dba219fea184b59714d2c36619d1c58bd3273e6b232c9d1b4b53e3427bc16fdf",
+    "currentSha256": "35c178a353037b5fbbfbef958c25b52f6df793c2928bb8d7d98342c6305d3784",
+    "beforeIds": [
+      "ee548d3cf583cfcbdd91"
+    ],
+    "currentIds": [
+      "338a66de83af675586e9"
+    ],
+    "unchangedFunction": "decodeBase64UrlUtf8",
+    "unchangedFunctionSha256": "6ec75e19c4a80af8ab4ceafca3da5895fe75d7950d832bda437f3539967cb5f0",
+    "scope": "EXACT_NATIVE_BYTE_CONVERSION_ONLY_NOT_NEW_SECURITY_ACCEPTANCE",
+    "review": "The only persistence scanner candidate is native Uint8Array.from in the byte decoder. Its complete function is byte-identical. The added confirmation event contains only its existing ID and triggers the existing owner-authenticated read-only receipt handoff; no provider replay or authority change."
+  },
+  "previousProductionSourcePreserved": "77d70ff2b95168f7030dd83ec6aacb0c9c4a960b",
+  "servingFrontendSourcePreserved": "179b53bf7a1326072bd12d3448d42bfb3b43057a"
 }
