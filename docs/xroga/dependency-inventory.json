@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "bdd5234d09061563df717ca5fe2812ce8167dd90",
+  "source_sha": "5c55c94c8ad8bd54750c25bcb687ac88f9e4f997",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -16805,7 +16805,7 @@
     },
     {
       "path": "backend/src/ai/responsePresentation.ts",
-      "sha256": "5a6615ab129e14a7d3a2d79dc5d801c0c398a87873960af5e5d6fc9982abf6dc"
+      "sha256": "245c0cf5013f49daa0933d1442c9d9a21692fbc5765539d6bee7b8c64105622f"
     },
     {
       "path": "backend/src/ai/router.ts",

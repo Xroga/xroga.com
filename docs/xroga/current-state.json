@@ -8528,7 +8528,7 @@
       "id": "surface:74760a8c78ac888599fd",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/responsePresentation.ts",
-      "sha256": "5a6615ab129e14a7d3a2d79dc5d801c0c398a87873960af5e5d6fc9982abf6dc",
+      "sha256": "245c0cf5013f49daa0933d1442c9d9a21692fbc5765539d6bee7b8c64105622f",
       "symbols": [
         "AnswerObligations",
         "JsonSchema",
