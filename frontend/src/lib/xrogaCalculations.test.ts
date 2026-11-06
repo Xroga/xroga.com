@@ -31,3 +31,11 @@ test('loan-payment matches standard amortization and compound-growth matches yea
   assert.ok(Math.abs(calculateValues('compound-growth', [1000, 7, 20]) - 3869.68) < 0.01);
   assert.ok(Number.isNaN(calculateValues('compound-growth', [1000, 7])));
 });
+
+test('mortgage-payment takes price, down payment percent, rate and years', () => {
+  // $430,000 with 20% down is a $344,000 loan: about $2,242.76 a month at 6.8% over 30 years.
+  assert.ok(Math.abs(calculateValues('mortgage-payment', [430000, 20, 6.8, 30]) - 2242.76) < 0.5);
+  assert.ok(Math.abs(calculateValues('mortgage-payment', [360000, 20, 6.8, 30]) - 1877.6) < 0.5);
+  assert.ok(Math.abs(calculateValues('mortgage-payment', [430000, 100, 6.8, 30])) < 1e-9, 'a fully paid price leaves no payment');
+  assert.ok(Number.isNaN(calculateValues('mortgage-payment', [430000, 20, 6.8])));
+});

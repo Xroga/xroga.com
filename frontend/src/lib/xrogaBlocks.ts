@@ -154,7 +154,7 @@ const progressBlock = richBase.extend({ type: z.literal('progress'), progress: p
 const progressGroupBlock = richBase.extend({ type: z.literal('progress-group'), items: z.array(progressItem).min(1) });
 export const calculatorDerivedResultSchema = z.object({
   id: z.string().min(1).max(120), label: z.string().min(1).max(500),
-  operation: z.enum(['sum', 'difference', 'product', 'quotient', 'average', 'percentage', 'percentage-change', 'loan-payment', 'compound-growth', 'minimum', 'maximum']),
+  operation: z.enum(['sum', 'difference', 'product', 'quotient', 'average', 'percentage', 'percentage-change', 'loan-payment', 'compound-growth', 'mortgage-payment', 'minimum', 'maximum']),
   // References name an input or $result. Constants are finite authored values,
   // never executable expressions or references to another derived result.
   operands: z.array(z.union([z.string().min(1).max(120), z.number().finite()])).min(1).max(12),
@@ -163,7 +163,7 @@ export const calculatorDerivedResultSchema = z.object({
 });
 const calculatorBlock = richBase.extend({
   type: z.literal('calculator'),
-  operation: z.enum(['sum', 'difference', 'product', 'quotient', 'average', 'percentage', 'percentage-change', 'loan-payment', 'compound-growth', 'minimum', 'maximum']),
+  operation: z.enum(['sum', 'difference', 'product', 'quotient', 'average', 'percentage', 'percentage-change', 'loan-payment', 'compound-growth', 'mortgage-payment', 'minimum', 'maximum']),
   inputs: z.array(z.object({
     id: z.string().min(1), label: z.string().min(1), value: z.number(), min: z.number().optional(),
     max: z.number().optional(), step: z.number().positive().optional(), unit: z.string().optional(),

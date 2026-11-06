@@ -83,7 +83,8 @@ function canonicalRichBlock(value: unknown, documentId: string, index: number): 
     if (inputs.has('$result') || new Set(block.derivedResults.map(item => item.id)).size !== block.derivedResults.length ||
       block.derivedResults.some(item => item.operands.some(value => typeof value === 'string' && value !== '$result' && !inputs.has(value)) ||
         (['quotient', 'percentage', 'percentage-change'].includes(item.operation) && item.operands.length !== 2) ||
-        (['loan-payment', 'compound-growth'].includes(item.operation) && item.operands.length !== 3))) return null;
+        (['loan-payment', 'compound-growth'].includes(item.operation) && item.operands.length !== 3) ||
+        (item.operation === 'mortgage-payment' && item.operands.length !== 4))) return null;
   }
   if (block?.type === 'graph') {
     const ids = new Set(block.nodes.map(node => node.id));

@@ -8,6 +8,7 @@ export type CalculatorOperation =
   | 'percentage-change'
   | 'loan-payment'
   | 'compound-growth'
+  | 'mortgage-payment'
   | 'minimum'
   | 'maximum';
 
@@ -32,6 +33,7 @@ export function calculateValues(operation: CalculatorOperation, values: number[]
     case 'percentage-change': return values.length >= 2 && values[0] !== 0 ? ((values[1] - values[0]) / Math.abs(values[0])) * 100 : Number.NaN;
     case 'loan-payment': return values.length === 3 ? loanPayment(values[0], values[1], values[2]) : Number.NaN;
     case 'compound-growth': return values.length === 3 ? values[0] * Math.pow(1 + values[1] / 100, values[2]) : Number.NaN;
+    case 'mortgage-payment': return values.length === 4 ? loanPayment(values[0] * (1 - values[1] / 100), values[2], values[3]) : Number.NaN;
     case 'minimum': return Math.min(...values);
     case 'maximum': return Math.max(...values);
   }

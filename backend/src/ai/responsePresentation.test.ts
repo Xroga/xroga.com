@@ -212,7 +212,7 @@ test('a table row that is short of cells is padded with a dash, while a row with
   const padded = createPresentationProjection(p).finish(body([['P&I', '$2,243', '$1,878'], ['HOA', 'none']]));
   assert.equal(padded.ok, true);
   assert.match(padded.response, /"c0":"HOA","c1":"none","c2":"—"/);
-  assert.equal(createPresentationProjection(p).finish(body([['P&I', '$2,243', '$1,878', 'extra']])).ok, false);
+  assert.equal(createPresentationProjection(p).finish(body([['P&I', '$2,243', '$1,878', 'extra'], ['HOA', 'none', '$300']])).ok, false, 'rows of inconsistent width are still rejected');
 });
 
 test('a diagram keeps its valid edges when the model adds a dangling or repeated one', () => {
@@ -270,4 +270,25 @@ test('layout labels are not shown as headings, while content headings are kept',
   assert.doesNotMatch(result.response, /## Short answer/);
   assert.doesNotMatch(result.response, /## Headline monthly numbers/);
   assert.match(result.response, /## House or condo: what you pay each month/);
+});
+
+test('a mortgage calculator keeps its four inputs and ignores extra assumptions instead of being rejected', () => {
+  const p: PresentationPlan = [{ kind: 'calculator', heading: 'Adjust it', instruction: 'Monthly payment.' }];
+  const input = (id: string, label: string, value: number, min: number, max: number, step: number) => ({ id, label, value, unit: '', min, max, step });
+  const four = [input('price', 'Home price', 430000, 200000, 860000, 5000), input('down', 'Down payment %', 20, 0, 50, 1), input('rate', 'Rate %', 6.8, 3, 10, 0.1), input('years', 'Term in years', 30, 10, 30, 5)];
+  const run = (inputs: unknown[], derivedResults: unknown = null) => createPresentationProjection(p).finish(JSON.stringify({ s0: { markdown: 'Payment.', data: { operation: 'mortgage-payment', inputs, resultLabel: 'Monthly payment', resultUnit: 'USD', precision: 0, derivedResults } } }));
+  assert.equal(run(four).ok, true);
+  const extra = run([...four, input('tax', 'Property tax %', 1.8, 0, 4, 0.1)], [{ id: 'taxMonthly', label: 'Tax per month', operation: 'percentage', operands: ['price', 'tax'], rounding: null, unit: 'USD', precision: 0 }]);
+  assert.equal(extra.ok, true, 'extra assumptions are dropped, not fatal');
+  assert.equal((extra.response.match(/"id":"(price|down|rate|years|tax)"/g) ?? []).length, 4, 'only the four mortgage inputs remain');
+  assert.equal(/"id":"tax"/.test(extra.response), false);
+  assert.equal(run(four.slice(0, 3)).ok, false, 'fewer than four inputs is still invalid');
+});
+
+test('a table whose label column has no header gets one instead of being discarded', () => {
+  const p: PresentationPlan = [{ kind: 'table', heading: 'Costs', instruction: 'Compare costs.' }];
+  const result = createPresentationProjection(p).finish(JSON.stringify({ s0: { markdown: 'Costs.', data: { columns: ['House', 'Condo'], rows: [['Purchase price', '$430,000', '$360,000'], ['Down payment', '$86,000', '$72,000']] } } }));
+  assert.equal(result.ok, true);
+  assert.match(result.response, /"label":"Item"/);
+  assert.match(result.response, /"c0":"Purchase price","c1":"\$430,000","c2":"\$360,000"/);
 });

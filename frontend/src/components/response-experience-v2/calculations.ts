@@ -14,7 +14,8 @@ export function validDerivedResults(node: CalculatorNode): boolean {
   return !ids.has('$result') && new Set(derived.map(item => item.id)).size === derived.length &&
     derived.every(item => item.operands.every(value => typeof value === 'number' || value === '$result' || ids.has(value)) &&
       (!['quotient', 'percentage', 'percentage-change'].includes(item.operation) || item.operands.length === 2) &&
-      (!['loan-payment', 'compound-growth'].includes(item.operation) || item.operands.length === 3));
+      (!['loan-payment', 'compound-growth'].includes(item.operation) || item.operands.length === 3) &&
+      (item.operation !== 'mortgage-payment' || item.operands.length === 4));
 }
 
 /** One bounded arithmetic step over original inputs or the primary result.
@@ -49,6 +50,7 @@ export function formulaV2(node: CalculatorNode, values: Record<string, string>):
     case 'percentage-change': return `(${b} − ${a}) ÷ ${a} × 100`;
     case 'loan-payment': return `${a} × r ÷ (1 − (1 + r)^−n), r = ${b}% ÷ 12, n = ${inputs[2]} × 12`;
     case 'compound-growth': return `${a} × (1 + ${b}%)^${inputs[2]}`;
+    case 'mortgage-payment': return `loan = ${a} × (1 − ${b}%), then the standard monthly payment at ${inputs[2]}% over ${inputs[3]} years`;
     case 'minimum': return `min(${inputs.join(', ')})`;
     case 'maximum': return `max(${inputs.join(', ')})`;
   }
@@ -59,7 +61,7 @@ export function calculateV2(node: CalculatorNode, values: Record<string, string>
     return Number.isFinite(value) && (input.min == null || value >= input.min) && (input.max == null || value <= input.max) ? value : NaN;
   });
   if (!numbers.length || numbers.some(n => !Number.isFinite(n))) return null;
-  const [a, b, c] = numbers; let result: number;
+  const [a, b, c, d] = numbers; let result: number;
   switch (node.operation) {
     case 'sum': result = numbers.reduce((s, n) => s + n, 0); break;
     case 'difference': result = numbers.slice(1).reduce((s, n) => s - n, a); break;
@@ -70,6 +72,7 @@ export function calculateV2(node: CalculatorNode, values: Record<string, string>
     case 'percentage-change': result = numbers.length === 2 && a !== 0 ? (b - a) / a * 100 : NaN; break;
     case 'loan-payment': result = numbers.length === 3 ? loanPayment(a, b, c) : NaN; break;
     case 'compound-growth': result = numbers.length === 3 ? a * Math.pow(1 + b / 100, c) : NaN; break;
+    case 'mortgage-payment': result = numbers.length === 4 ? loanPayment(a * (1 - b / 100), c, d) : NaN; break;
     case 'minimum': result = Math.min(...numbers); break;
     case 'maximum': result = Math.max(...numbers); break;
   }
