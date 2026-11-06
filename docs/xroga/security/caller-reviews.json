@@ -31444,9 +31444,9 @@
     },
     {
       "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "sourceSha256": "43981cff009c478d0a8670d9c4a7c7de0340e9190f4a7015114d9de40046d1af",
+      "sourceSha256": "2ff980dba66d42a6619005d32cb3428555d9a461565782ba36cd3b9e3b6e9c30",
       "callIds": [
-        "76beac12fd8331db2743"
+        "cadf98c6db9ed797be7e"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in TerminalChatBar, with no database or Storage client receiver.",
@@ -31491,7 +31491,61 @@
         },
         "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
       },
-      "searchOsReviewProof": "scripts/security/search-os/source-review.json"
+      "searchOsReviewProof": "scripts/security/search-os/source-review.json",
+      "beforeManualResearchRepoGate": {
+        "reference": "a33c0dd15e12bf5203f47477a19f52dc46b2b45e",
+        "review": {
+          "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
+          "sourceSha256": "43981cff009c478d0a8670d9c4a7c7de0340e9190f4a7015114d9de40046d1af",
+          "callIds": [
+            "76beac12fd8331db2743"
+          ],
+          "disposition": "NOT_PERSISTENCE",
+          "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in TerminalChatBar, with no database or Storage client receiver.",
+          "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+          "evidence": [
+            {
+              "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
+              "marker": "const incoming = Array.from(list).filter("
+            }
+          ],
+          "beforeCurrentMainIntegration": {
+            "ref": "92043b72c20e5a12636dee079d760a1e5708b48f",
+            "sourceSha256": "cb1ec7ba1923bc8b22029963c44f7a0b67435edf9615d0a9426ae3694a184860",
+            "callIds": [
+              "18f7c2043f2ceb0ebac3"
+            ],
+            "disposition": "NOT_PERSISTENCE"
+          },
+          "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json",
+          "searchOsPriorReview": {
+            "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
+            "sourceSha256": "959ecdbdfe4da3c4cee1a79e2e4684f638df3ded77cf7ed9002bdafbd2ee8d0c",
+            "callIds": [
+              "01fce3ee8703d9146072"
+            ],
+            "disposition": "NOT_PERSISTENCE",
+            "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in TerminalChatBar, with no database or Storage client receiver.",
+            "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+            "evidence": [
+              {
+                "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
+                "marker": "const incoming = Array.from(list).filter("
+              }
+            ],
+            "beforeCurrentMainIntegration": {
+              "ref": "92043b72c20e5a12636dee079d760a1e5708b48f",
+              "sourceSha256": "cb1ec7ba1923bc8b22029963c44f7a0b67435edf9615d0a9426ae3694a184860",
+              "callIds": [
+                "18f7c2043f2ceb0ebac3"
+              ],
+              "disposition": "NOT_PERSISTENCE"
+            },
+            "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+          },
+          "searchOsReviewProof": "scripts/security/search-os/source-review.json"
+        }
+      }
     },
     {
       "path": "frontend/src/components/terminal/XrogaUtilityBlockView.tsx",
