@@ -7,7 +7,7 @@
   ],
   "state": "IN_PROGRESS",
   "risk": "high",
-  "scope": "Continue PR930 on the exact serving 70cee164 backend / 179b53bf frontend source: official DeepSeek Search/Fetch, conditional 15/30/50 results, up to ten supplied URLs, bounded approved manual research, private evidence cache, original answer continuation and paid retrieval caps. No new scheduler or provider fallback.",
+  "scope": "Continue PR930 on the exact serving 7d6114c8 backend / 179b53bf frontend source: official DeepSeek Search/Fetch, conditional 15/30/50 results, up to ten supplied URLs, bounded approved manual research, private evidence cache, original answer continuation and paid retrieval caps. No new scheduler or provider fallback.",
   "changedFiles": [
     ".github/workflows/deepseek-search-os-check.yml",
     ".github/workflows/xroga-tenant-security.yml",
@@ -172,6 +172,7 @@
   "rollout": "User explicitly authorized merge and paired Cloud Run/Vercel deployment after mandatory checks pass. Finish exact-source CI, verified database migration and real existing Free-account journeys before production promotion. Do not bypass failed gates.",
   "rollback": "Preserve the actual current Vercel179b53bf production and paired current Cloud Run API/worker image. Any rollback runtime that lacks the new distinct paid quota wrapper must have retrieval disabled. Keep ledger and additive schema; no destructive down migration.",
   "knownGaps": [
+    "Independent release moved serving API/worker to 7d6114c8 after final 7f366422 CI passed. Preserve its two table-presentation files and repeat exact final candidate gates before promotion. Existing signed-in production Free account reaches real automatic search, while the old frontend still omits saved citations; new preview authentication is waiting on approval of its one exact Supabase callback.",
     "Previous final candidate fe4062e passed both full CI baselines, security and golden browser checks. Preserve actual current backend70cee164 and frontend179b53bf source; uncached API probes are required because an unversioned health response was stale.",
     "Live explicit search produced a provider completion receipt but did not immediately render its saved answer. Added a read-only receipt notification with no paid replay; real acceptance after deployment remains mandatory.",
     "Live implicit freshness question failed with PLANNER_PROVIDER_UNAVAILABLE; provider diagnosis and successful real automatic/manual research acceptance remain pending.",
