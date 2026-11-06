@@ -8,16 +8,16 @@
     "observedTables": 118,
     "rlsEnabled": 118,
     "privilegedFactorySites": 226,
-    "persistenceCandidates": 998,
+    "persistenceCandidates": 999,
     "ownerPredicateCandidates": 262,
-    "reviewRequired": 151,
+    "reviewRequired": 152,
     "reviewedCandidates": 847,
-    "unresolvedSafetyCandidates": 195,
+    "unresolvedSafetyCandidates": 196,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 23
   },
   "outcomes": {
-    "REVIEW_REQUIRED": 151,
+    "REVIEW_REQUIRED": 152,
     "SCOPED_BOUNDARY": 547,
     "NARROW_EXCEPTION": 52,
     "NOT_PERSISTENCE": 204,
@@ -29,7 +29,7 @@
     "scope": "COMMAND_007_CRITERION_EVIDENCE_NOT_BATCH_OR_PRODUCTION_ACCEPTANCE",
     "certifiedScopedPrivilegedCallers": 0,
     "verifiedCandidateBoundaries": 80,
-    "unresolvedCandidateBoundaries": 918,
+    "unresolvedCandidateBoundaries": 919,
     "criteria": [
       {
         "id": "XB01-C007-AC01",
@@ -3976,6 +3976,10 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
+        "id": "6c88f44d96b5b92317e5"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
         "id": "b0427411320aa0bef36a"
       },
       {
@@ -6505,6 +6509,10 @@
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
         "id": "402df5dc06905306225a"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "6c88f44d96b5b92317e5"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -10125,10 +10133,10 @@
     ]
   },
   "reviewAgreement": {
-    "currentCallers": 998,
+    "currentCallers": 999,
     "structuredVerified": 80,
-    "structuredUnproven": 918,
-    "manualUnresolved": 195,
+    "structuredUnproven": 919,
+    "manualUnresolved": 196,
     "manualUnsupported": 723,
     "agreedVerified": 80,
     "proofAwaitingManualReconciliation": 0
@@ -12290,6 +12298,17 @@
           }
         ]
       }
+    },
+    {
+      "id": "6c88f44d96b5b92317e5",
+      "path": "backend/src/ai/responsePresentation.ts",
+      "line": 136,
+      "enclosing": "normalizeSectionData",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "199b5f4a4124aa8110fe1d6c504633c6dbb4291d7bf3ae2b17351b6e3f056cd2"
     },
     {
       "id": "64b99cfd7d4a42c04576",
