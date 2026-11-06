@@ -298,7 +298,9 @@ export function TerminalChatBar({ starter = false }: { starter?: boolean }) {
     setPrompt(text);
     lastExternalPrompt.current = text;
 
-    if (!(await ensureRepoWorkspace(text))) {
+    // Manual research reaches the server planner without requiring a code repository.
+    // This UI gate grants no backend execution, ownership or egress authority.
+    if (!manualDeepResearch && !(await ensureRepoWorkspace(text))) {
       setSendState('idle');
       return;
     }
