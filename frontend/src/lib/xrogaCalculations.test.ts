@@ -20,3 +20,14 @@ test('invalid arithmetic returns a non-finite result instead of executing code',
   assert.equal(Number.isNaN(calculateValues('percentage', [10, 0])), true);
   assert.equal(Number.isNaN(calculateValues('sum', [])), true);
 });
+
+test('loan-payment matches standard amortization and compound-growth matches yearly compounding', () => {
+  // $344,000 at 6.8% over 30 years: the published amortization payment is about $2,242.76 a month.
+  assert.ok(Math.abs(calculateValues('loan-payment', [344000, 6.8, 30]) - 2242.76) < 0.5);
+  assert.ok(Math.abs(calculateValues('loan-payment', [288000, 6.8, 30]) - 1877.6) < 0.5);
+  assert.equal(calculateValues('loan-payment', [1200, 0, 1]), 100);
+  assert.ok(Number.isNaN(calculateValues('loan-payment', [1000, 5, 0])));
+  assert.ok(Number.isNaN(calculateValues('loan-payment', [1000, 5])));
+  assert.ok(Math.abs(calculateValues('compound-growth', [1000, 7, 20]) - 3869.68) < 0.01);
+  assert.ok(Number.isNaN(calculateValues('compound-growth', [1000, 7])));
+});

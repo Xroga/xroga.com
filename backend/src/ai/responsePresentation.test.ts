@@ -249,3 +249,13 @@ test('per-day tabs satisfy a steps requirement and steps satisfy a tabs requirem
   const unbound: PresentationPlan = [{ kind: 'tabs', heading: 'Days', instruction: 'One tab per day.', covers: ['other'] }];
   assert.equal(assessPresentationCoverage(unbound, [requirement('days', ['steps']), requirement('other', ['tabs'])]).complete, false);
 });
+
+test('a loan-payment calculator needs exactly three inputs and is kept when well formed', () => {
+  const p: PresentationPlan = [{ kind: 'calculator', heading: 'Mortgage', instruction: 'Monthly payment.' }];
+  const run = (inputs: unknown[]) => createPresentationProjection(p).finish(JSON.stringify({ s0: { markdown: 'Payment.', data: { operation: 'loan-payment', inputs, resultLabel: 'Monthly payment', resultUnit: 'USD', precision: 2, derivedResults: null } } }));
+  const input = (id: string, label: string, value: number, min: number, max: number, step: number) => ({ id, label, value, unit: '', min, max, step });
+  const ok = run([input('loan', 'Loan amount', 344000, 0, 800000, 1000), input('rate', 'Annual rate %', 6.8, 0, 12, 0.1), input('years', 'Term in years', 30, 5, 40, 1)]);
+  assert.equal(ok.ok, true);
+  assert.match(ok.response, /"operation":"loan-payment"/);
+  assert.equal(run([input('loan', 'Loan amount', 344000, 0, 800000, 1000), input('rate', 'Annual rate %', 6.8, 0, 12, 0.1)]).ok, false);
+});
