@@ -1364,9 +1364,11 @@ const stopRequestedRunIdRef =
     if (!pending.length) return;
     let disposed = false;
     let inFlight = false;
+    let refreshAgain = false;
     const session = sessionIdRef.current;
     const refresh = async () => {
-      if (disposed || inFlight) return;
+      if (disposed) return;
+      if (inFlight) { refreshAgain = true; return; }
       inFlight = true;
       try {
         for (const message of pending) {
@@ -1390,11 +1392,23 @@ const stopRequestedRunIdRef =
             // Leave the original approval and context intact. No automatic provider retry.
           }
         }
-      } finally { inFlight = false; }
+      } finally {
+        inFlight = false;
+        if (refreshAgain && !disposed) { refreshAgain = false; void refresh(); }
+      }
     };
     void refresh();
     window.addEventListener('focus', refresh);
-    return () => { disposed = true; window.removeEventListener('focus', refresh); };
+    const receiptReady = (event: Event) => {
+      const id = (event as CustomEvent<{ confirmationId?: unknown }>).detail?.confirmationId;
+      if (typeof id === 'string' && pending.some(message => message.confirmationId === id)) void refresh();
+    };
+    window.addEventListener('xroga:action-receipt-ready', receiptReady);
+    return () => {
+      disposed = true;
+      window.removeEventListener('focus', refresh);
+      window.removeEventListener('xroga:action-receipt-ready', receiptReady);
+    };
   }, [isGuest, sessionReady, workspaceIdentity.userId, researchPendingKey]);
 
   /** Persist terminal history while user works — not only after submit completes */
