@@ -1,5 +1,12 @@
 import type { ResponseNodeV2 } from './document';
-import { loanPayment } from '@/lib/xrogaCalculations';
+
+/** Standard amortization: monthly payment for a loan amount, annual rate in percent and term in years. Kept local so this module has no other imports. */
+function loanPayment(principal: number, annualRatePercent: number, years: number): number {
+  const months = years * 12;
+  if (!(months > 0) || principal < 0 || annualRatePercent < 0) return NaN;
+  const monthly = annualRatePercent / 100 / 12;
+  return monthly === 0 ? principal / months : principal * monthly / (1 - Math.pow(1 + monthly, -months));
+}
 export type CalculatorNode = Extract<ResponseNodeV2, { kind: 'calculator' }>;
 export function validDerivedResults(node: CalculatorNode): boolean {
   const derived = node.derivedResults ?? [];
