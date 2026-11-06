@@ -3976,7 +3976,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "6c88f44d96b5b92317e5"
+        "id": "924f4bb25b7d92b514d3"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -6512,7 +6512,7 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "6c88f44d96b5b92317e5"
+        "id": "924f4bb25b7d92b514d3"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -12300,15 +12300,15 @@
       }
     },
     {
-      "id": "6c88f44d96b5b92317e5",
+      "id": "924f4bb25b7d92b514d3",
       "path": "backend/src/ai/responsePresentation.ts",
-      "line": 136,
+      "line": 137,
       "enclosing": "normalizeSectionData",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "199b5f4a4124aa8110fe1d6c504633c6dbb4291d7bf3ae2b17351b6e3f056cd2"
+      "sourceSha256": "136a3b51762f920d0b6ea303f474006ad7f507b76aa972268f19daff251ebfad"
     },
     {
       "id": "64b99cfd7d4a42c04576",

@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "964f30c0006679f546b984e7b6d68bfc1682a0c5",
+  "source_sha": "31fe76a007b09b4ac320dd2c85bc8f23acf6d5af",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -16733,7 +16733,7 @@
     },
     {
       "path": "backend/src/ai/prompts.ts",
-      "sha256": "aad098c005e1052f5ec48cbbb29cf489b3b2c98dce92fddcfa599716dde0d407"
+      "sha256": "b0211bef3c4fc5840b7f3a1fb69ba9e24d828b95a5673a16f7c8e87ea10da44f"
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
@@ -16805,7 +16805,7 @@
     },
     {
       "path": "backend/src/ai/responsePresentation.ts",
-      "sha256": "199b5f4a4124aa8110fe1d6c504633c6dbb4291d7bf3ae2b17351b6e3f056cd2"
+      "sha256": "136a3b51762f920d0b6ea303f474006ad7f507b76aa972268f19daff251ebfad"
     },
     {
       "path": "backend/src/ai/router.ts",
@@ -21945,7 +21945,7 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/calculations.ts",
-      "sha256": "b6baf7db4379c9a319dc1d49d34bb0c45d1701707e900d1be9ef2a39f91570ca"
+      "sha256": "e0d2831605a12dba4cd08c3ca7e84476879bfd68c7165457426c4cc33ab945bd"
     },
     {
       "path": "frontend/src/components/response-experience-v2/composition.ts",
@@ -21961,7 +21961,7 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/document.ts",
-      "sha256": "b8d0941f48fd4f685943b08bbb74f204775f6a52f282b946975238352c1a5567"
+      "sha256": "f02d2a6b885bed29338990d15e32bbed317dc3bc7cf588986196529a940f441e"
     },
     {
       "path": "frontend/src/components/response-experience-v2/entityRegistry.ts",
@@ -23657,7 +23657,7 @@
     },
     {
       "path": "frontend/src/lib/xrogaBlocks.ts",
-      "sha256": "072a159e966f4a75dbe4470dac4fe3b9562956c456caff6dce3d2ae30486703a"
+      "sha256": "924d3a623b0888ef1523b24b24f86fdd237a61bd87e0c956ba5acd0e00c51697"
     },
     {
       "path": "frontend/src/lib/xrogaBrand.ts",
@@ -23665,7 +23665,7 @@
     },
     {
       "path": "frontend/src/lib/xrogaCalculations.ts",
-      "sha256": "987cb6dda6e19eae140bc812c5df7033b73b03f5478cd1ba0caab536511d4c53"
+      "sha256": "aefd65d15096906bb808bdf0cb9bef2e4ee3378396b7a7c865e1d82268153cfc"
     },
     {
       "path": "frontend/src/lib/xrogaCapabilityManifest.ts",
@@ -23713,7 +23713,7 @@
     },
     {
       "path": "frontend/src/lib/xrogaResponseDocument.ts",
-      "sha256": "5c3e231737c4c8e87ae75c80340f839d7a2183796d4f9b3d0d048262582b9811"
+      "sha256": "31d5515436612c8e082e1d162b4da22b767909667fb963ded7b118ccb6713ccb"
     },
     {
       "path": "frontend/src/lib/xrogaRichResultFixtures.ts",
@@ -32204,14 +32204,7 @@
     },
     {
       "path": "backend/src/ai/responsePresentation.ts",
-      "line": 160,
-      "scope": "FUNCTION_LOCAL",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "backend/src/ai/responsePresentation.ts",
-      "line": 165,
+      "line": 161,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -32225,21 +32218,28 @@
     },
     {
       "path": "backend/src/ai/responsePresentation.ts",
-      "line": 178,
+      "line": 167,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/responsePresentation.ts",
-      "line": 181,
+      "line": 180,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/responsePresentation.ts",
-      "line": 182,
+      "line": 183,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/responsePresentation.ts",
+      "line": 184,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -37832,14 +37832,14 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/calculations.ts",
-      "line": 5,
+      "line": 6,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/response-experience-v2/calculations.ts",
-      "line": 6,
+      "line": 7,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -38728,13 +38728,6 @@
     },
     {
       "path": "frontend/src/lib/xrogaResponseDocument.ts",
-      "line": 88,
-      "scope": "FUNCTION_LOCAL",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "frontend/src/lib/xrogaResponseDocument.ts",
       "line": 89,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
@@ -38742,14 +38735,21 @@
     },
     {
       "path": "frontend/src/lib/xrogaResponseDocument.ts",
-      "line": 162,
+      "line": 90,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/lib/xrogaResponseDocument.ts",
-      "line": 195,
+      "line": 163,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/lib/xrogaResponseDocument.ts",
+      "line": 196,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

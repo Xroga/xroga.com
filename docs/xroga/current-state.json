@@ -6881,7 +6881,7 @@
       "id": "surface:087b17b9e17fc86ddade",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/prompts.ts",
-      "sha256": "aad098c005e1052f5ec48cbbb29cf489b3b2c98dce92fddcfa599716dde0d407",
+      "sha256": "b0211bef3c4fc5840b7f3a1fb69ba9e24d828b95a5673a16f7c8e87ea10da44f",
       "symbols": [
         "BRIEF_RESEARCH_RESPONSE_RE",
         "BUILDER_SYSTEM",
@@ -8528,7 +8528,7 @@
       "id": "surface:74760a8c78ac888599fd",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/responsePresentation.ts",
-      "sha256": "199b5f4a4124aa8110fe1d6c504633c6dbb4291d7bf3ae2b17351b6e3f056cd2",
+      "sha256": "136a3b51762f920d0b6ea303f474006ad7f507b76aa972268f19daff251ebfad",
       "symbols": [
         "AnswerObligations",
         "JsonSchema",
@@ -88264,7 +88264,7 @@
       "id": "surface:bc797240d03e041cba52",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/calculations.ts",
-      "sha256": "b6baf7db4379c9a319dc1d49d34bb0c45d1701707e900d1be9ef2a39f91570ca",
+      "sha256": "e0d2831605a12dba4cd08c3ca7e84476879bfd68c7165457426c4cc33ab945bd",
       "symbols": [
         "CalculatorNode",
         "calculateV2",
@@ -88285,9 +88285,12 @@
         "value"
       ],
       "imports": [
-        "./document"
+        "./document",
+        "@/lib/xrogaCalculations"
       ],
-      "runtimeImports": [],
+      "runtimeImports": [
+        "frontend/src/lib/xrogaCalculations.ts"
+      ],
       "entryPoints": [
         "frontend/src/app/(workspace)/workspace/page.tsx",
         "frontend/src/app/share/[token]/page.tsx"
@@ -88526,7 +88529,7 @@
       "id": "surface:1a11577c6b142e5e83f0",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/document.ts",
-      "sha256": "b8d0941f48fd4f685943b08bbb74f204775f6a52f282b946975238352c1a5567",
+      "sha256": "f02d2a6b885bed29338990d15e32bbed317dc3bc7cf588986196529a940f441e",
       "symbols": [
         "AdaptedResponse",
         "ResponseDocumentV2",
@@ -114651,7 +114654,7 @@
       "id": "surface:9abd8d23db6426268ad2",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/xrogaBlocks.ts",
-      "sha256": "072a159e966f4a75dbe4470dac4fe3b9562956c456caff6dce3d2ae30486703a",
+      "sha256": "924d3a623b0888ef1523b24b24f86fdd237a61bd87e0c956ba5acd0e00c51697",
       "symbols": [
         "XROGA_BLOCK_SCHEMA_VERSION",
         "XrogaApproval",
@@ -114864,18 +114867,23 @@
       "id": "surface:52c29bb3e1c1f0905b48",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/xrogaCalculations.ts",
-      "sha256": "987cb6dda6e19eae140bc812c5df7033b73b03f5478cd1ba0caab536511d4c53",
+      "sha256": "aefd65d15096906bb808bdf0cb9bef2e4ee3378396b7a7c865e1d82268153cfc",
       "symbols": [
         "CalculatorOperation",
-        "calculateValues"
+        "calculateValues",
+        "loanPayment",
+        "monthly",
+        "months"
       ],
       "imports": [],
       "runtimeImports": [],
       "entryPoints": [
         "frontend/src/app/(workspace)/workspace/page.tsx",
-        "frontend/src/app/os-preview/rich-results/page.tsx"
+        "frontend/src/app/os-preview/rich-results/page.tsx",
+        "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
+        "frontend/src/components/response-experience-v2/calculations.ts:2",
         "frontend/src/components/terminal/XrogaUtilityBlockView.tsx:11",
         "frontend/src/lib/xrogaCalculations.test.ts:4"
       ],
@@ -115543,7 +115551,7 @@
       "id": "surface:302352813d356af65f42",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/xrogaResponseDocument.ts",
-      "sha256": "5c3e231737c4c8e87ae75c80340f839d7a2183796d4f9b3d0d048262582b9811",
+      "sha256": "31d5515436612c8e082e1d162b4da22b767909667fb963ded7b118ccb6713ccb",
       "symbols": [
         "EnhancedAiResponse",
         "MAX_PROTOCOL_CHARS",
@@ -144243,7 +144251,7 @@
     {
       "id": "test-suite:11a90210e320c1d28cb6",
       "sourcePath": "backend/src/ai/responsePresentation.test.ts",
-      "declaredTests": 15,
+      "declaredTests": 17,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -150634,7 +150642,7 @@
     {
       "id": "test-suite:71afe89f3737da73f63f",
       "sourcePath": "frontend/src/lib/xrogaCalculations.test.ts",
-      "declaredTests": 2,
+      "declaredTests": 3,
       "skipLocations": [],
       "focusLocations": []
     },
