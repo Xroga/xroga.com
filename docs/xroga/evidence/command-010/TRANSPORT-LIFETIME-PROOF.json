@@ -247,7 +247,7 @@
     },
     {
       "path": "backend/src/ai/black-hole/webIntelligence.ts",
-      "sha256": "e93f748837721d3246bcd35aab3a80092268b4f67e7c7b0e89cb7932db8614b2",
+      "sha256": "2f7483561f6bf54a2b426f4affe812ee6ffb2dfeeae3109d109be49d03e3c1a6",
       "beforeCurrentMetadataReconciliation": {
         "path": "backend/src/ai/black-hole/webIntelligence.ts",
         "sha256": "f7ee10618d7993cc8e827b7f77d23eec06e663232d26a44c598a48825fbb6b7d"
@@ -256,6 +256,19 @@
       "searchOsPriorSourceBinding": {
         "sha256": "d5924883b7e10022953a8dbf8401d1b2a5b4d39e0e304fafe2e66cf747aa2473",
         "reference": "77d70ff2b95168f7030dd83ec6aacb0c9c4a960b"
+      },
+      "beforeExplicitUrlRouting": {
+        "path": "backend/src/ai/black-hole/webIntelligence.ts",
+        "sha256": "e93f748837721d3246bcd35aab3a80092268b4f67e7c7b0e89cb7932db8614b2",
+        "beforeCurrentMetadataReconciliation": {
+          "path": "backend/src/ai/black-hole/webIntelligence.ts",
+          "sha256": "f7ee10618d7993cc8e827b7f77d23eec06e663232d26a44c598a48825fbb6b7d"
+        },
+        "previousSha256": "caa40dd466ffccf48080888702e0de482301dbfcec9ecb9d13ffe82536e19c8e",
+        "searchOsPriorSourceBinding": {
+          "sha256": "d5924883b7e10022953a8dbf8401d1b2a5b4d39e0e304fafe2e66cf747aa2473",
+          "reference": "77d70ff2b95168f7030dd83ec6aacb0c9c4a960b"
+        }
       }
     },
     {
@@ -1011,5 +1024,47 @@
     "reviewed": 150,
     "pending": 0,
     "unresolvedHighRiskReviewCandidates": 0
+  },
+  "explicitUrlRoutingContinuation": {
+    "baseSource": "a44b3f8b90560e936ea35064dd34dbc0e62616ab",
+    "path": "backend/src/ai/black-hole/webIntelligence.ts",
+    "beforeSha256": "e93f748837721d3246bcd35aab3a80092268b4f67e7c7b0e89cb7932db8614b2",
+    "currentSha256": "2f7483561f6bf54a2b426f4affe812ee6ffb2dfeeae3109d109be49d03e3c1a6",
+    "unchangedExistingCalls": [
+      {
+        "name": "withTenantModelReservation",
+        "sha256": "2f21e311543cad23eb8fb4d073e118cdffe87e2de253d0a7e5d42e3bb3623e65"
+      },
+      {
+        "name": "chatCompletion",
+        "sha256": "2387fbc02ee6eaa4b867261dd0ea2af2c3df99322dfa24b9b5e9f943a61dda19"
+      },
+      {
+        "name": "parallelExtract",
+        "sha256": "6e7138090d96c9b2109b9982fccccaa3a1607a26d5b8e0fc20ca5c8d26dbe863"
+      },
+      {
+        "name": "parallelSearch",
+        "sha256": "b57445fdd9cf0cca6da99b9cd72426fdd2e9fbd46717a0fed5bc022a1abb2b9d"
+      },
+      {
+        "name": "parallelSearch",
+        "sha256": "f29d5477c40d8611470dd7ad48757035822ecfa550d3ce25fc18134e9f9bb096"
+      },
+      {
+        "name": "grokXSearch",
+        "sha256": "4b0e1f1b1833601b1d96c63045b74cc5224b5b7b29d1ac430d8ff7f5b5186cfb"
+      }
+    ],
+    "unchangedFunctions": {
+      "webDecisionFromGoalContract": "a148c5e5e1fd323a8454aaf40e3d8b18bc60d044726b6a6ec740154b7000c9fa",
+      "applyRequestedSourcePolicy": "2b89de25ccaf34bd31bd12746326f4c9ff6a40c7b4af40251b61b3fd6a28d7e6",
+      "decideWebAction": "3f9c1f184d4d57bcaa05f227f31b3e51b9476f05c1e28a2c52f3dabd9c87c329",
+      "grokXSearch": "103f31c99bd167a40823d9e2241f71ff2bc112623046812b906a85a85480b101"
+    },
+    "scope": "MANUAL_SOURCE_REVIEW_AND_REGRESSION_NOT_NEW_SECURITY_ACCEPTANCE",
+    "reason": "The live ten-URL request was incorrectly replaced by a goal-summary Search. Before any retrieval, the original prompt now enters the existing deterministic decideWebAction URL/bare-list/no-retrieval branches. No model call is added for these inputs. The resulting exact URL body still passes the original canonical public URL validation, one-use approval, owner/project/run checks, official Fetch transport and per-operation accounting. The source policy takes the stricter original or validated-goal restriction. Manual UI research retains its explicit 5-operation plan. All existing provider call expressions and complete decision/denial functions are byte-identical. The actual erroneous Search approval was cancelled without retrieval; final authenticated URL/cache acceptance remains pending.",
+    "sourceReview": "scripts/security/search-os/source-review.json",
+    "newSourceCertified": false
   }
 }
