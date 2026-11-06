@@ -62,6 +62,8 @@ const operationSchema = { type: 'string', enum: [...operations] };
 const chartTypes = ['line', 'bar', 'area', 'pie', 'scatter'] as const;
 const derivedSchema = object({ id: idLabel, label, operation: operationSchema, operands: array({ anyOf: [label, number] }, 1, 8), rounding: nullable({ type: 'string', enum: ['floor', 'ceil', 'round'] }), unit: unitText, precision: { type: 'integer', minimum: 0, maximum: 6 } });
 
+/** An icon is decoration: an unknown name is dropped, it never invalidates the visual that carries it. */
+const knownIcon = (icon: string | null | undefined): icon is string => !!icon && (RESPONSE_ICONS as readonly string[]).includes(icon);
 const dataSchemas: Record<Kind, JsonSchema> = {
   prose: { type: 'null' },
   cards: object({ cards: array(object({ title: label, subtitle: shortText, description: str, entityId: nullable(idLabel), icon: nullable({ type: 'string', enum: [...RESPONSE_ICONS] }) }), 1, 12) }),
@@ -75,10 +77,10 @@ const dataSchemas: Record<Kind, JsonSchema> = {
 };
 const validators = {
   prose: z.null(),
-  cards: z.object({ cards: z.array(z.object({ title: name, subtitle: z.string().max(500), description: text, entityId: identifier.nullable().optional(), icon: z.enum(RESPONSE_ICONS).nullable().optional() }).strict()).min(1).max(12) }).strict(),
+  cards: z.object({ cards: z.array(z.object({ title: name, subtitle: z.string().max(500), description: text, entityId: identifier.nullable().optional(), icon: z.string().max(60).nullable().optional() }).strict()).min(1).max(12) }).strict(),
   table: z.object({ columns: z.array(name).min(2).max(8), rows: z.array(z.array(z.string().max(10_000)).min(2).max(8)).min(1).max(40) }).strict(),
   graph: z.object({ nodes: z.array(z.object({ id: identifier, label: name }).strict()).min(2).max(20), edges: z.array(z.object({ id: identifier, source: identifier, target: identifier, label: z.string().max(500) }).strict()).min(1).max(40) }).strict(),
-  steps: z.object({ steps: z.array(z.object({ title: name, description: text, icon: z.enum(RESPONSE_ICONS).nullable().optional() }).strict()).min(2).max(16) }).strict(),
+  steps: z.object({ steps: z.array(z.object({ title: name, description: text, icon: z.string().max(60).nullable().optional() }).strict()).min(2).max(16) }).strict(),
   chart: z.object({ chartType: z.enum(chartTypes), xLabel: name, series: z.array(z.object({ label: name, unit: z.string().max(120) }).strict()).min(1).max(5), data: z.array(z.object({ x: z.union([name, finite]), values: z.array(finite).min(1).max(5) }).strict()).min(2).max(60) }).strict(),
   calculator: z.object({ operation: z.enum(operations), inputs: z.array(z.object({ id: identifier, label: name, value: finite, unit: z.string().max(120), min: finite.nullable(), max: finite.nullable(), step: finite.positive().nullable() }).strict()).min(1).max(8), resultLabel: name, resultUnit: z.string().max(120), precision: z.number().int().min(0).max(6), derivedResults: z.array(z.object({ id: identifier, label: name, operation: z.enum(operations), operands: z.array(z.union([name, finite])).min(1).max(8), rounding: z.enum(['floor', 'ceil', 'round']).nullable(), unit: z.string().max(120), precision: z.number().int().min(0).max(6) }).strict()).min(1).max(8).nullable() }).strict(),
   metrics: z.object({ metrics: z.array(z.object({ label: name, value: z.string().min(1).max(60), unit: z.string().max(40), tone: z.enum(['positive', 'negative', 'neutral']) }).strict()).min(2).max(8) }).strict(),
@@ -170,12 +172,12 @@ function projectSection(plan: PresentationPlan[number], raw: unknown, index: num
   let block: Record<string, unknown> | undefined;
   if (plan.kind === 'cards') {
     const { cards } = data as z.infer<typeof validators.cards>;
-    block = { type: 'card-grid', cards: cards.map(({ entityId, icon, ...card }, i) => ({ id: `${id}-${i + 1}`, ...card, ...(entityId ? { entityId } : {}), ...(icon ? { icon } : {}) })) };
+    block = { type: 'card-grid', cards: cards.map(({ entityId, icon, ...card }, i) => ({ id: `${id}-${i + 1}`, ...card, ...(entityId ? { entityId } : {}), ...(knownIcon(icon) ? { icon } : {}) })) };
   } else if (plan.kind === 'table') {
     const table = data as z.infer<typeof validators.table>;
     block = { type: 'table', columns: table.columns.map((column, i) => ({ key: `c${i}`, label: column, type: 'text' })), rows: table.rows.map(row => Object.fromEntries(row.map((cell, i) => [`c${i}`, cell]))) };
   } else if (plan.kind === 'graph') block = { type: 'graph', ...(data as z.infer<typeof validators.graph>) };
-  else if (plan.kind === 'steps') block = { type: 'steps', steps: (data as z.infer<typeof validators.steps>).steps.map(({ icon, ...step }, i) => ({ id: `${id}-${i + 1}`, ...step, ...(icon ? { icon } : {}) })) };
+  else if (plan.kind === 'steps') block = { type: 'steps', steps: (data as z.infer<typeof validators.steps>).steps.map(({ icon, ...step }, i) => ({ id: `${id}-${i + 1}`, ...step, ...(knownIcon(icon) ? { icon } : {}) })) };
   else if (plan.kind === 'chart') {
     const chart = data as z.infer<typeof validators.chart>;
     block = { type: 'chart', chartType: chart.chartType, xKey: 'x', data: chart.data.map(row => ({ x: row.x, ...Object.fromEntries(row.values.map((value, i) => [`v${i}`, value])) })), series: chart.series.map((series, i) => ({ key: `v${i}`, label: `${series.label}${series.unit ? ` (${series.unit})` : ''}` })), summary: `${chart.series.map(series => series.label).join(', ')} by ${chart.xLabel}` };

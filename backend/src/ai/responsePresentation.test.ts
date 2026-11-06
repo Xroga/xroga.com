@@ -200,7 +200,10 @@ test('card and step icons pass through only from the approved Lucide list', () =
   assert.match(ok.response, /"icon":"home"/);
   assert.equal((ok.response.match(/"icon"/g) ?? []).length, 2, 'null icons are omitted');
   assert.equal(createPresentationProjection(p).finish(body(null)).ok, true);
-  assert.equal(createPresentationProjection(p).finish(body('<script>alert(1)</script>')).ok, false);
+  const unknown = createPresentationProjection(p).finish(body('<script>alert(1)</script>'));
+  assert.equal(unknown.ok, true, 'an unknown icon name never discards the visual');
+  assert.equal(/"icon"/.test(unknown.response), false, 'the unknown icon is dropped');
+  assert.equal(unknown.response.includes('<script>'), false, 'the markup never reaches the response');
 });
 
 test('a table row that is short of cells is padded with a dash, while a row with extra cells is still rejected', () => {
