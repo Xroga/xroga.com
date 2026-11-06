@@ -1,6 +1,6 @@
 # Xroga repository truth map
 
-Source SHA: `fdc9fd3a9b9ba42eaccf1c68c2bf2b3459a70003`. Branch observed: `codex/deepseek-search-os-20261105`. Audit started: 2026-11-06T12:42:09.940Z.
+Source SHA: `fba8fd7e1f8c40749b4a95e094a741de68008aad`. Branch observed: `codex/deepseek-search-os-20261105`. Audit started: 2026-11-06T13:37:56.937Z.
 
 This inventory records static source and call-path evidence. A mounted endpoint is reachable in source; that does not certify live success, tenant safety, approval enforcement, or completion. All implementation surfaces retain an unverified/partial/placeholder state until their own acceptance tests establish behavior. No architecture was replaced and no production operations were performed.
 

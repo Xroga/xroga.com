@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/deepseek-search-os-20261105",
-    "sha": "fdc9fd3a9b9ba42eaccf1c68c2bf2b3459a70003",
-    "sourceTimestampUtc": "2026-11-06T17:41:04+05:00",
-    "auditStartedUtc": "2026-11-06T12:42:09.940Z",
+    "sha": "fba8fd7e1f8c40749b4a95e094a741de68008aad",
+    "sourceTimestampUtc": "2026-11-06T18:30:05+05:00",
+    "auditStartedUtc": "2026-11-06T13:37:56.937Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -99777,7 +99777,7 @@
       "id": "surface:c5f31b4c34d87af3ac75",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "sha256": "7a076819bf3ef227d59f385bb53caee68ca3ce1e67fa5fa555ce93d9e2d22325",
+      "sha256": "0cf55fdd9a9d438469777c92c7f72d8ec0cad0f0e2afcb72867d2d879fc8f330",
       "symbols": [
         "ChatMessage",
         "GENERIC_SWARM_FALLBACK",
@@ -104235,7 +104235,7 @@
       "id": "surface:015cc267f70323e72e46",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/formatAiMarkdown.tsx",
-      "sha256": "35c178a353037b5fbbfbef958c25b52f6df793c2928bb8d7d98342c6305d3784",
+      "sha256": "36ad50fa002983850ea4180bca7d1adaa50a083c7cf5f0a9564e748d493c8bc4",
       "symbols": [
         "AppMark",
         "BusinessActionConfirmationInline",
@@ -139501,7 +139501,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:9a2711ac734d406bbff1",
+      "id": "finding:2aac6689fa7d900762f9",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
       "line": 1935,
       "kind": "TODO",
@@ -139511,7 +139511,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:193f8921bfb155b5ce57",
+      "id": "finding:a5ed894cc3a3734f5785",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
       "line": 1937,
       "kind": "TODO",
@@ -139521,7 +139521,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:0e46b8ac9331fdea2279",
+      "id": "finding:4b549cd71887696758c8",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
       "line": 1937,
       "kind": "TODO",
@@ -139531,7 +139531,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:11acc2085c12f3c98f0f",
+      "id": "finding:3942bf9a35ac6fa8cc08",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
       "line": 3274,
       "kind": "TODO",
@@ -139631,7 +139631,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:b939f3e61e2043397fac",
+      "id": "finding:12692bf6cec28d15415d",
       "sourcePath": "frontend/src/lib/formatAiMarkdown.tsx",
       "line": 1346,
       "kind": "PLACEHOLDER",
@@ -139641,7 +139641,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:f7431ae11e6ed6c4ff1d",
+      "id": "finding:b079a4e980748117cdd8",
       "sourcePath": "frontend/src/lib/formatAiMarkdown.tsx",
       "line": 1347,
       "kind": "PLACEHOLDER",
@@ -142997,154 +142997,154 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:cf479bc9170cbf7c6ab5",
+      "id": "frontend-call:fece8c28cd3bb56f7a51",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
       "line": 1706,
       "callee": "api.swarm.cancelRun().then().catch",
       "reachable": true
     },
     {
-      "id": "frontend-call:dd749190c81660581562",
+      "id": "frontend-call:bb0e6d607be23abe7d8a",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
       "line": 1706,
       "callee": "api.swarm.cancelRun().then",
       "reachable": true
     },
     {
-      "id": "frontend-call:906a01fa73c3b9adfb45",
+      "id": "frontend-call:fe8467f99f08aaeb078a",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
       "line": 1706,
       "callee": "api.swarm.cancelRun",
       "reachable": true
     },
     {
-      "id": "frontend-call:f0964cb0a0f95778520a",
+      "id": "frontend-call:95390c9ba2df043f3d16",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
       "line": 1988,
       "callee": "api.billing.setPacing",
       "reachable": true
     },
     {
-      "id": "frontend-call:1895709b6a75d78889ab",
+      "id": "frontend-call:668c509207cff78e3259",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
       "line": 2800,
       "callee": "api.phase1.plan",
       "reachable": true
     },
     {
-      "id": "frontend-call:218dedda7432fd602f59",
+      "id": "frontend-call:4599b0c2836b6d528a36",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
       "line": 2854,
       "callee": "api.github.status().then().catch",
       "reachable": true
     },
     {
-      "id": "frontend-call:f2c09d2449d3aa15aa70",
+      "id": "frontend-call:4b6511011bf70382dbc5",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
       "line": 2854,
       "callee": "api.github.status().then",
       "reachable": true
     },
     {
-      "id": "frontend-call:6e102b02a6b794075bae",
+      "id": "frontend-call:19e18e21e4e50945e8fe",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
       "line": 2854,
       "callee": "api.github.status",
       "reachable": true
     },
     {
-      "id": "frontend-call:24877a133b779cab6ba6",
+      "id": "frontend-call:d58f94923466d6754b40",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
       "line": 2933,
       "callee": "api.phase1.chat",
       "reachable": true
     },
     {
-      "id": "frontend-call:453a39ede34db3d4662e",
+      "id": "frontend-call:f8e5eef59f300f6f0be7",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
       "line": 3300,
       "callee": "api.github.status().then",
       "reachable": true
     },
     {
-      "id": "frontend-call:5c304a383727655fa42e",
+      "id": "frontend-call:93be52c1c7bc08e7a859",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
       "line": 3300,
       "callee": "api.github.status",
       "reachable": true
     },
     {
-      "id": "frontend-call:e2dc2b765396bd2072ad",
+      "id": "frontend-call:b8ef2b0b010f0e767bd5",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
       "line": 3910,
       "callee": "api.swarm.saveConversation().catch",
       "reachable": true
     },
     {
-      "id": "frontend-call:bd4faf26522acff883fa",
+      "id": "frontend-call:03158b6d07f7882b226c",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
       "line": 3910,
       "callee": "api.swarm.saveConversation",
       "reachable": true
     },
     {
-      "id": "frontend-call:647fd7c4d7b7e544c0fc",
+      "id": "frontend-call:6322688d97a25a2dfe48",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
       "line": 3995,
       "callee": "api.swarm.saveConversation().catch",
       "reachable": true
     },
     {
-      "id": "frontend-call:31b9a6b38753c79dc3b4",
+      "id": "frontend-call:4ea68ade1191efd893ae",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
       "line": 3995,
       "callee": "api.swarm.saveConversation",
       "reachable": true
     },
     {
-      "id": "frontend-call:fa0d749cd838c5d2517e",
+      "id": "frontend-call:aee8a19a3ce533f4f01e",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
       "line": 4016,
       "callee": "api.github.updateSettings().catch",
       "reachable": true
     },
     {
-      "id": "frontend-call:8fd900914c37c2d5ce6d",
+      "id": "frontend-call:bd90ffdf9d334f9cadf5",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
       "line": 4016,
       "callee": "api.github.updateSettings",
       "reachable": true
     },
     {
-      "id": "frontend-call:6d0944b882757fd5cf62",
+      "id": "frontend-call:abe871dafa4bc2139259",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
       "line": 4018,
       "callee": "api.projects.create().then().catch",
       "reachable": true
     },
     {
-      "id": "frontend-call:a6325951cfe3292f3bcf",
+      "id": "frontend-call:0413abdf2842efeaf726",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
       "line": 4018,
       "callee": "api.projects.create().then",
       "reachable": true
     },
     {
-      "id": "frontend-call:197a316c4c87ee4a493e",
+      "id": "frontend-call:4e5ed85c862aaa07e82a",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
       "line": 4018,
       "callee": "api.projects.create",
       "reachable": true
     },
     {
-      "id": "frontend-call:9f0c1732751437182871",
+      "id": "frontend-call:a6d07dd433732432a06b",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
       "line": 4757,
       "callee": "api.github.status().then",
       "reachable": true
     },
     {
-      "id": "frontend-call:1ecfb83b0946272a323e",
+      "id": "frontend-call:ccccc73782c17c98ffeb",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
       "line": 4757,
       "callee": "api.github.status",
@@ -143291,14 +143291,14 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:f605d305745567cfdc83",
+      "id": "frontend-call:e1092ccd50f67fb71cf3",
       "sourcePath": "frontend/src/lib/formatAiMarkdown.tsx",
       "line": 1016,
       "callee": "api.phase1.plan",
       "reachable": true
     },
     {
-      "id": "frontend-call:36311cc1572351a8a545",
+      "id": "frontend-call:91ddc3e4511a4d487cd9",
       "sourcePath": "frontend/src/lib/formatAiMarkdown.tsx",
       "line": 1052,
       "callee": "api.phase1.chat",

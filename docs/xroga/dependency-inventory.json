@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "8b5ee9e8e82c99f2558e815e2a47f9e97e00376a",
+  "source_sha": "fba8fd7e1f8c40749b4a95e094a741de68008aad",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -22394,7 +22394,7 @@
     },
     {
       "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "sha256": "43981cff009c478d0a8670d9c4a7c7de0340e9190f4a7015114d9de40046d1af"
+      "sha256": "2ff980dba66d42a6619005d32cb3428555d9a461565782ba36cd3b9e3b6e9c30"
     },
     {
       "path": "frontend/src/components/terminal/TerminalDock.tsx",
@@ -22718,7 +22718,7 @@
     },
     {
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "sha256": "7a076819bf3ef227d59f385bb53caee68ca3ce1e67fa5fa555ce93d9e2d22325"
+      "sha256": "0cf55fdd9a9d438469777c92c7f72d8ec0cad0f0e2afcb72867d2d879fc8f330"
     },
     {
       "path": "frontend/src/context/TerminalScrollContext.tsx",
@@ -22986,7 +22986,7 @@
     },
     {
       "path": "frontend/src/lib/formatAiMarkdown.tsx",
-      "sha256": "35c178a353037b5fbbfbef958c25b52f6df793c2928bb8d7d98342c6305d3784"
+      "sha256": "36ad50fa002983850ea4180bca7d1adaa50a083c7cf5f0a9564e748d493c8bc4"
     },
     {
       "path": "frontend/src/lib/gameBuilderContent.ts",
