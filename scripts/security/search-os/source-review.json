@@ -2,7 +2,7 @@
   "version": 1,
   "scope": "MANUAL_SOURCE_REVIEW_NOT_SECURITY_CERTIFICATION",
   "baseSource": "5485776cfce9d6e233f7a0e3cf33ef58996a931d",
-  "productionSourcePreserved": "70cee16480e5debf7b1a1d1e496e291a78c016f6",
+  "productionSourcePreserved": "7d6114c8efc40499d9dc213a1673575db08a046f",
   "reviews": [
     {
       "original": {
@@ -3987,5 +3987,30 @@
     "review": "The only persistence scanner candidate is native Uint8Array.from in the byte decoder. Its complete function is byte-identical. The added confirmation event contains only its existing ID and triggers the existing owner-authenticated read-only receipt handoff; no provider replay or authority change."
   },
   "previousProductionSourcePreserved": "77d70ff2b95168f7030dd83ec6aacb0c9c4a960b",
-  "servingFrontendSourcePreserved": "179b53bf7a1326072bd12d3448d42bfb3b43057a"
+  "servingFrontendSourcePreserved": "179b53bf7a1326072bd12d3448d42bfb3b43057a",
+  "servingBackendContinuation": {
+    "previousServingSource": "70cee16480e5debf7b1a1d1e496e291a78c016f6",
+    "currentServingSource": "7d6114c8efc40499d9dc213a1673575db08a046f",
+    "nativeArrayConversionReview": {
+      "path": "backend/src/ai/responsePresentation.ts",
+      "sourceSha256": "199b5f4a4124aa8110fe1d6c504633c6dbb4291d7bf3ae2b17351b6e3f056cd2",
+      "callIds": [
+        "6c88f44d96b5b92317e5"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Manually inspected the exact Array.from receiver and complete normalizeSectionData function. This is the native Array constructor; its callback only slices an already supplied rows array into memory. It receives no database, object store, privileged client or tenant context.",
+      "reason": "The conservative from-method scanner finds the newly serving 7d6114 presentation repair. This exact call only groups table cells before the existing strict presentation validator. It has no IO or durable writes. This classification applies only to the native conversion, and certifies no retrieval, tenant, credential, billing or historical acceptance boundary.",
+      "evidence": [
+        {
+          "path": "backend/src/ai/responsePresentation.ts",
+          "marker": "Array.from({ length: rows.length / columns.length }"
+        },
+        {
+          "path": "backend/src/ai/responsePresentation.test.ts",
+          "marker": "table rows the model flattened, keyed by column, or wrote as numbers are repaired instead of discarded"
+        }
+      ]
+    },
+    "scope": "EXACT_NATIVE_CONVERSION_ONLY_NOT_NEW_SECURITY_ACCEPTANCE"
+  }
 }
