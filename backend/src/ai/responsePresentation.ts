@@ -136,6 +136,10 @@ function validateSection(plan: PresentationPlan[number], value: unknown): { mark
   if (plan.kind === 'graph') {
     const graph = data as z.infer<typeof validators.graph>;
     const ids = new Set(graph.nodes.map(node => node.id));
+    // Edges that point at a missing node, or repeat an earlier edge, are dropped; the rest of the diagram is kept.
+    graph.edges = graph.edges.filter((edge, i, all) => ids.has(edge.source) && ids.has(edge.target)
+      && all.findIndex(other => other.id === edge.id || (other.source === edge.source && other.target === edge.target && other.label === edge.label)) === i);
+    if (!graph.edges.length) throw Error('INVALID_GRAPH_CONNECTION');
     if (ids.size !== graph.nodes.length || new Set(graph.edges.map(edge => edge.id)).size !== graph.edges.length
       || new Set(graph.edges.map(edge => JSON.stringify([edge.source, edge.target, edge.label]))).size !== graph.edges.length
       || graph.edges.some(edge => !ids.has(edge.source) || !ids.has(edge.target))) throw Error('INVALID_GRAPH_CONNECTION');

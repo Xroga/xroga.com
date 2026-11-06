@@ -214,3 +214,13 @@ test('a table row that is short of cells is padded with a dash, while a row with
   assert.match(padded.response, /"c0":"HOA","c1":"none","c2":"—"/);
   assert.equal(createPresentationProjection(p).finish(body([['P&I', '$2,243', '$1,878', 'extra']])).ok, false);
 });
+
+test('a diagram keeps its valid edges when the model adds a dangling or repeated one', () => {
+  const p: PresentationPlan = [{ kind: 'graph', heading: 'Flow', instruction: 'Show the flow.' }];
+  const body = JSON.stringify({ s0: { markdown: 'Flow.', data: { nodes: [{ id: 'a', label: 'Client' }, { id: 'b', label: 'API' }], edges: [{ id: 'e1', source: 'a', target: 'b', label: 'calls' }, { id: 'e2', source: 'a', target: 'zzz', label: 'ghost' }, { id: 'e3', source: 'a', target: 'b', label: 'calls' }] } } });
+  const result = createPresentationProjection(p).finish(body);
+  assert.equal(result.ok, true);
+  assert.equal((result.response.match(/"source":"a"/g) ?? []).length, 1, 'only the one valid edge remains');
+  const none = JSON.stringify({ s0: { markdown: 'Flow.', data: { nodes: [{ id: 'a', label: 'Client' }, { id: 'b', label: 'API' }], edges: [{ id: 'e1', source: 'a', target: 'zzz', label: 'ghost' }] } } });
+  assert.equal(createPresentationProjection(p).finish(none).ok, false, 'a diagram with no valid edge is still rejected');
+});
