@@ -13,12 +13,13 @@ function JsonLd({ data }: { data: unknown }) {
 
 export function EditorialPage({
   path, title, description, eyebrow, intro, sections, breadcrumbs, related = [], sources = [],
-  updated, article = false, note, visuals = [], cta,
+  updated, article = false, note, visuals = [], cta, authorName, readingMinutes,
 }: {
   path: string; title: string; description: string; eyebrow: string; intro: string;
   sections: ContentSection[]; breadcrumbs: Crumb[]; related?: string[]; sources?: SourceLink[];
   updated?: string; article?: boolean; note?: string;
   visuals?: GrowthVisual[]; cta?: { label: string; href: string };
+  authorName?: string; readingMinutes?: number;
 }) {
   const url = `${SITE_URL}${path}`;
   const crumbs = [{ label: 'Home', href: '/' }, ...breadcrumbs];
@@ -26,8 +27,9 @@ export function EditorialPage({
     ? {
         '@context': 'https://schema.org', '@type': 'Article', '@id': `${url}#article`,
         headline: title, description, url, datePublished: updated ?? '2026-09-09', dateModified: updated ?? '2026-09-09',
-        author: { '@type': 'Person', name: 'Muhammad Ibrahim', url: `${SITE_URL}/about` },
+        author: authorName ? { '@type': 'Organization', name: authorName, url: `${SITE_URL}/about` } : { '@type': 'Person', name: 'Muhammad Ibrahim', url: `${SITE_URL}/about` },
         publisher: { '@id': ORGANIZATION_ID }, mainEntityOfPage: { '@id': `${url}#webpage` },
+        isAccessibleForFree: true,
         ...(visuals.find((visual) => visual.type === 'EDITORIAL_IMAGE' && visual.src)?.src
           ? { image: `${SITE_URL}${visuals.find((visual) => visual.type === 'EDITORIAL_IMAGE' && visual.src)?.src}` }
           : {}),
@@ -41,7 +43,7 @@ export function EditorialPage({
   };
 
   return (
-    <main className="xv-seo-page">
+    <main className={`xv-seo-page xv-seo-dark-editorial${readingMinutes ? ' xv-seo-longform' : ''}`}>
       <JsonLd data={pageSchema} />
       {article && <JsonLd data={buildWebPageJsonLd({ path, name: title, description })} />}
       <JsonLd data={breadcrumbSchema} />
@@ -53,7 +55,9 @@ export function EditorialPage({
           <header className="xv-seo-hero">
             <p className="xv-seo-eyebrow">{eyebrow}</p>
             <h1>{title}</h1>
+            {authorName && <p className="xv-seo-updated">By <Link href="/about">{authorName}</Link> · <time dateTime={updated}>{updated}</time>{readingMinutes ? ` · ${readingMinutes} min read` : ''}</p>}
             <p className="xv-seo-dek">{intro}</p>
+            {readingMinutes && visuals.map((visual) => <EvidenceFigure key={`${visual.type}-${visual.src ?? visual.caption}`} visual={visual} />)}
             <div className="xv-seo-actions">
               <Link href={cta?.href ?? '/auth/signup'}>{cta?.label ?? 'Start building free'}</Link>
               <Link href="/showcase">See working examples</Link>
@@ -62,7 +66,7 @@ export function EditorialPage({
           </header>
 
           {note && <aside className="xv-seo-note"><strong>Decision note</strong><p>{note}</p></aside>}
-          {visuals.map((visual) => <EvidenceFigure key={`${visual.type}-${visual.src ?? visual.caption}`} visual={visual} />)}
+          {!readingMinutes && visuals.map((visual) => <EvidenceFigure key={`${visual.type}-${visual.src ?? visual.caption}`} visual={visual} />)}
 
           <div className="xv-seo-layout">
             <aside className="xv-seo-toc" aria-label="On this page">
@@ -75,6 +79,7 @@ export function EditorialPage({
                   <p className="xv-seo-section-number">0{index + 1}</p>
                   <h2>{section.heading}</h2>
                   {section.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+                  {section.links && <p className="xv-seo-context-links">{section.links.map(({ href, label }) => <a key={href} href={href}>{label}</a>)}</p>}
                   {section.bullets && <ul>{section.bullets.map((bullet) => <li key={bullet}>{bullet}</li>)}</ul>}
                   {section.table && <div className="xv-seo-table-wrap"><table><caption>{section.table.caption}</caption><thead><tr>{section.table.columns.map((column) => <th scope="col" key={column}>{column}</th>)}</tr></thead><tbody>{section.table.rows.map((row) => <tr key={row.join('|')}>{row.map((cell, cellIndex) => cellIndex === 0 ? <th scope="row" key={cell}>{cell}</th> : <td key={`${cellIndex}-${cell}`}>{cell}</td>)}</tr>)}</tbody></table></div>}
                 </section>
@@ -108,7 +113,7 @@ export function EditorialHub({
   breadcrumbs?: Crumb[];
 }) {
   return (
-    <main className="xv-seo-page">
+    <main className="xv-seo-page xv-seo-dark-editorial">
       <JsonLd data={buildWebPageJsonLd({ path, name: title, description, type: 'CollectionPage' })} />
       <div className="xv-seo-shell">
         <nav className="xv-seo-crumbs" aria-label="Breadcrumb"><Link href="/">Home</Link>{breadcrumbs.map((crumb) => <span key={crumb.href}><i>/</i><Link href={crumb.href}>{crumb.label}</Link></span>)}</nav>

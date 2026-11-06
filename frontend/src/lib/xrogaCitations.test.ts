@@ -4,7 +4,7 @@ import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { createRequire } from 'node:module';
 import { FormattedAiMarkdown } from './formatAiMarkdown';
-import { remarkSourceCitations, safeSourceUrl } from './xrogaCitations';
+import { remarkSourceCitations, safeSourceUrl, sourceClickUrl } from './xrogaCitations';
 
 const nodeRequire = createRequire(__filename);
 nodeRequire.extensions['.css'] = (module) => { module.exports = { __esModule: true, default: new Proxy({}, { get: (_target, key) => String(key) }) }; };
@@ -48,12 +48,25 @@ test('the answer renderer shows an accessible source preview and exact source li
   }));
   assert.match(html, /Open source 1: Official report/);
   assert.match(html, /xv-citation-chip/);
-  assert.match(html, /https:\/\/example\.com\/report/);
+  assert.match(html, /https:\/\/example\.com\/report\?utm_source=xroga\.com/);
   assert.doesNotMatch(html, /More evidence/, 'unrelated source snippets must not flood the answer');
 });
 
 test('structured-output narrative retains the same inline citations as plain answers', () => {
   const html = renderToStaticMarkup(renderBlock({ schemaVersion: 1, id: 'answer', type: 'narrative', text: 'A verified claim [2].' }, undefined, sources));
   assert.match(html, /Open source 2: Second report/);
-  assert.match(html, /href="https:\/\/example\.org\/two"/);
+  assert.match(html, /href="https:\/\/example\.org\/two\?utm_source=xroga\.com"/);
+});
+
+test('source clicks carry Xroga attribution without altering the underlying evidence URLs', () => {
+  assert.equal(sourceClickUrl('https://example.com/report'), 'https://example.com/report?utm_source=xroga.com');
+  assert.equal(sourceClickUrl('https://example.com/report?lang=en#chapter'), 'https://example.com/report?lang=en&utm_source=xroga.com#chapter');
+  assert.equal(sourceClickUrl('https://example.com/report?utm_source=partner'), 'https://example.com/report?utm_source=partner');
+  assert.equal(sourceClickUrl('https://example.com/download?X-Amz-Signature=xyz'), 'https://example.com/download?X-Amz-Signature=xyz');
+  assert.equal(sourceClickUrl('https://xroga.com/blog/free-ai-app-builder'), 'https://xroga.com/blog/free-ai-app-builder');
+  assert.equal(sourceClickUrl('https://docs.xroga.com/guide'), 'https://docs.xroga.com/guide');
+  assert.equal(sourceClickUrl('javascript:alert(1)'), null);
+  assert.equal(sourceClickUrl('https://user:pass@example.com/private'), null);
+  assert.equal(sourceClickUrl(sourceClickUrl('https://example.org/two')!), 'https://example.org/two?utm_source=xroga.com');
+  assert.equal(sources[0]!.url, 'https://example.com/report', 'stored evidence remains canonical');
 });

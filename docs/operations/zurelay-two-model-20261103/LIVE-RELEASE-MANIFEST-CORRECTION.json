@@ -1,0 +1,9 @@
+{
+  "failedSource": "f5f70ae3b47fb583dfdbf08ae0f9831028dc6238",
+  "failedRun": 41701885745,
+  "failedJob": 126146993252,
+  "cause": "Two new review/verification documents were staged after source-manifest generation, so the unchanged canonical ledger check correctly rejected missing tracked document entries.",
+  "correction": "Stage this evidence first, regenerate only the existing requirements outputs, then run the unchanged validator. No application, tests, security policy, CI workflow or release caps change.",
+  "failureLogSha256": "5b2a11969c6175dd74521e05e2d024280a431c7cccee6f5b78b50332c5e7d46d",
+  "modelCalls": 0
+}

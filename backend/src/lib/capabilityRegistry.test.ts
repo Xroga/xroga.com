@@ -28,11 +28,11 @@ describe('capability registry', () => {
     );
   });
 
-  it('marks Parallel web research available when PARALLEL_API_KEY is configured', () => {
+  it('marks Parallel web research available when DEEPSEEK_WEBSEARCH_FETCH_API is configured', () => {
     const capability = getCapability(
       'web_research',
       {
-        PARALLEL_API_KEY: 'configured',
+        DEEPSEEK_WEBSEARCH_FETCH_API: 'configured',
       },
     );
 
@@ -64,7 +64,7 @@ describe('capability registry', () => {
     const capability = getCapability(
       'web_research',
       {
-        PARALLEL_API_KEY: 'configured',
+        DEEPSEEK_WEBSEARCH_FETCH_API: 'configured',
         TAVILY_API_KEY: 'configured',
         SEARXNG_URL:
           'https://legacy.example.com',
@@ -82,7 +82,7 @@ describe('capability registry', () => {
     );
   });
 
-  it('marks xAI X research available with canonical XAI_API_KEY', () => {
+  it('keeps retired X generation unavailable even with its historical key', () => {
     const capability = getCapability(
       'x_research',
       {
@@ -98,7 +98,7 @@ describe('capability registry', () => {
 
     assert.equal(
       xai?.availability,
-      'available',
+      'unavailable',
     );
 
     assert.deepEqual(
@@ -107,7 +107,7 @@ describe('capability registry', () => {
     );
   });
 
-  it('does not accept the retired GROK_API_KEY alias for xAI availability', () => {
+  it('neither historical key spelling can reactivate retired X generation', () => {
     const capability = getCapability(
       'x_research',
       {
@@ -123,7 +123,7 @@ describe('capability registry', () => {
 
     assert.equal(
       xai?.availability,
-      'requires_configuration',
+      'unavailable',
     );
   });
 

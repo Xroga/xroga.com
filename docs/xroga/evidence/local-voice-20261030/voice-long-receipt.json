@@ -1,0 +1,40 @@
+{
+  "scope": "ACTUAL_LOCAL_WASM_RECOGNITION_PUBLIC_FIXTURES_NOT_BROAD_LANGUAGE_CERTIFICATION",
+  "model": "onnx-community/whisper-small",
+  "revision": "36050c46d777d46dc4b5f43f6d90574fc38f8732",
+  "browser": "156.0.4314.50",
+  "results": [
+    {
+      "language": "en",
+      "fixtureUrl": "https://raw.githubusercontent.com/openai/whisper/main/tests/jfk.flac",
+      "fixtureSha256": "63a4b1e4c1dc655ac70961ffbf518acd249df237e5a0152faae9a4a836949715",
+      "reference": "And so my fellow Americans ask not what your country can do for you ask what you can do for your country",
+      "transcript": "And so my fellow Americans, ask not what your country can do for you, ask what you can do for your country. And so my fellow Americans, ask not what your country can do for you, ask what you can do for your country. And so my fellow Americans, ask not what your country can do for you, ask what you can do for your country. And so my fellow Americans, ask not what your country can do for you, ask what you can do for your country. And so, my fellow Americans, ask not what your country can do for you, ask what you can do for your country. And so, my fellow Americans, ask not what your country can do for you, ask what you can do for your country. And so my fellow Americans, ask not what your country can do for you, ask what you can do for your country. And so my fellow Americans, ask not what your country can do for you, ask what you can do for your country. And so, my fellow Americans, ask not what your country can do for you, ask what you can do for your country. And so, my fellow Americans, ask not what your country can do for you, ask what you can do for your country. And so my fellow Americans, ask not what your country can do for you, ask what you can do for your country. And so my fellow Americans, ask not what your country can do for you, ask what you can do for your country. And so my fellow Americans, ask not what your country can do for you, ask what you can do for your country.",
+      "wordErrorRate": null,
+      "longFixture": {
+        "repeats": 13,
+        "durationSeconds": 143,
+        "recognizedRepeats": 13
+      },
+      "durationMs": 585956,
+      "stages": [
+        {
+          "stage": "loading",
+          "time": 1793313624079
+        },
+        {
+          "stage": "transcribing",
+          "time": 1793313756499
+        }
+      ]
+    }
+  ],
+  "unavailableFixtures": [],
+  "audioUploads": 0,
+  "paidRequests": 0,
+  "requestOrigins": [
+    "http://127.0.0.1:54728",
+    "https://huggingface.co",
+    "https://us.aws.cdn.hf.co"
+  ]
+}

@@ -258,8 +258,8 @@ export function pickAttachmentModel(
 ): { modelId: ModelId; reason: string; kind: 'vision' | 'document' | 'mixed' } {
   if (prepared.hasImages && !prepared.hasDocuments) {
     return {
-      modelId: 'glm_5_3_flash',
-      reason: 'Image analysis → GLM-5.3 Flash multimodal',
+      modelId: 'deepseek_v4_1_flash_1017',
+      reason: 'Image analysis → configured default model, subject to verified modality support',
       kind: 'vision',
     };
   }
@@ -268,8 +268,8 @@ export function pickAttachmentModel(
     const chars = prepared.documents.reduce((n, d) => n + d.chars, 0);
     if (chars > 60_000 || /\b(long|entire|full)\b.*\b(doc|document|pdf|report)\b/i.test(prompt)) {
       return {
-        modelId: 'glm_5_3',
-        reason: 'Long document → GLM-5.3',
+        modelId: 'deepseek_v4_1_flash_1017',
+        reason: 'Long document → configured default model',
         kind: 'document',
       };
     }
@@ -278,22 +278,22 @@ export function pickAttachmentModel(
       !/\b(analyze|analyse|review|critique|summarize in depth|deep)\b/i.test(prompt)
     ) {
       return {
-        modelId: 'deepseek_v4_flash',
+        modelId: 'deepseek_v4_1_flash_1017',
         reason: 'Short doc → DeepSeek Flash',
         kind: 'document',
       };
     }
     return {
-      modelId: 'glm_5_3_flash',
-      reason: 'Document analysis → GLM-5.3 Flash',
+      modelId: 'deepseek_v4_1_flash_1017',
+      reason: 'Document analysis → configured default model',
       kind: 'document',
     };
   }
 
-  // The confirmed multimodal GLM route handles images and extracted document text.
+  // The verified default route handles images and extracted document text.
   return {
-    modelId: 'glm_5_3_flash',
-    reason: 'Mixed image + documents → GLM-5.3 Flash multimodal',
+    modelId: 'deepseek_v4_1_flash_1017',
+    reason: 'Mixed image + documents → configured default model, subject to verified modality support',
     kind: 'mixed',
   };
 }

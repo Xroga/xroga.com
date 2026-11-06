@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { answerObligationsSchema, assessPresentationCoverage, presentationPlanSchema } from '../responsePresentation.js';
 
 export const SEMANTIC_INTENTS = [
   'ANSWER',
@@ -116,6 +117,12 @@ export const goalContractSchema =
       .string()
       .trim()
       .min(1),
+
+    // Data-only composition for the same answer request. Stored older goals and
+    // non-conversational capabilities remain compatible without this field.
+    presentation: presentationPlanSchema.optional(),
+    answerObligations: answerObligationsSchema.optional(),
+    presentationIssue: z.literal('invalid').optional(),
 
     semanticIntent:
       z.enum(
@@ -293,6 +300,9 @@ const GOAL_KEYS =
     'version',
     'goal',
     'desiredOutcome',
+    'presentation',
+    'answerObligations',
+    'presentationIssue',
     'semanticIntent',
     'constraints',
     'acceptance',
@@ -664,6 +674,19 @@ export function normalizePlannerDecisionCandidate(
         ? decision
             .desiredOutcome
         : input.message,
+
+    // Invalid display metadata must not cause another paid planner call. Keep
+    // the valid semantic decision and report incomplete presentation instead.
+    ...(decision.presentation === undefined && decision.answerObligations === undefined ? {} : (() => {
+      const parsed = presentationPlanSchema.safeParse(decision.presentation);
+      const obligations = answerObligationsSchema.safeParse(decision.answerObligations);
+      return {
+        ...(parsed.success ? { presentation: parsed.data } : {}),
+        ...(obligations.success ? { answerObligations: obligations.data } : {}),
+        ...(!parsed.success || !obligations.success || !assessPresentationCoverage(parsed.data, obligations.data).complete
+          ? { presentationIssue: 'invalid' } : {}),
+      };
+    })()),
 
     semanticIntent:
       enumValue(

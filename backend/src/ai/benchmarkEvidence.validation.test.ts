@@ -33,9 +33,9 @@ test('malformed measurements cannot enter storage or routing evidence', async ()
 
 test('invalid direct caps fail before any execution and malformed outcome is never a pass', async () => {
   for (const change of [{ maximumCases: NaN }, { maximumCostUsd: Infinity }, { perCaseTimeoutMs: 0 }, { consecutiveFailureLimit: -1 }]) {
-    assert.throws(() => plan({}, ['kimi_k3'], { ...DEFAULT_CAPS, ...change }), /Invalid benchmark caps/);
+    assert.throws(() => plan({}, ['deepseek_v4_1_flash_1017'], { ...DEFAULT_CAPS, ...change }), /Invalid benchmark caps/);
   }
-  const report = await runBenchmarks({ selection: {}, models: ['kimi_k3'], caps: { ...DEFAULT_CAPS, maximumCases: 1 },
+  const report = await runBenchmarks({ selection: {}, models: ['deepseek_v4_1_flash_1017'], caps: { ...DEFAULT_CAPS, maximumCases: 1 },
     execute: async () => ({ ...valid, inputTokens: NaN }) });
   assert.equal(report.attempted, 1);
   assert.equal(report.succeeded, 0);
@@ -44,7 +44,7 @@ test('invalid direct caps fail before any execution and malformed outcome is nev
 
 test('storage failure reports uncertain persistence without repeating provider execution or leaking errors', async () => {
   let calls = 0;
-  const adapter = createBenchmarkAdapter({ models: () => ['kimi_k3'],
+  const adapter = createBenchmarkAdapter({ models: () => ['deepseek_v4_1_flash_1017'],
     executor: async () => { calls++; return valid; },
     store: { record: async () => { throw new Error('secret-db-token'); } } });
   const result = await adapter.execute('run_model_benchmark', { maximumCases: 2 });

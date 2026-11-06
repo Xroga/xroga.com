@@ -1,0 +1,192 @@
+TAP version 13
+# Subtest: single manual dictation control has no spoken commands, auto-send or conversation restart
+ok 1 - single manual dictation control has no spoken commands, auto-send or conversation restart
+  ---
+  duration_ms: 2.68
+  type: 'test'
+  ...
+# Subtest: composer preserves editable draft and scopes microphone to account, project and conversation
+ok 2 - composer preserves editable draft and scopes microphone to account, project and conversation
+  ---
+  duration_ms: 3.2776
+  type: 'test'
+  ...
+# Subtest: existing protected server route retains auto-detection and canonical accounting
+ok 3 - existing protected server route retains auto-detection and canonical accounting
+  ---
+  duration_ms: 1.1229
+  type: 'test'
+  ...
+# Subtest: preserves typed formatting, repeats and mixed-language words without heuristic deduplication
+ok 4 - preserves typed formatting, repeats and mixed-language words without heuristic deduplication
+  ---
+  duration_ms: 2.4955
+  type: 'test'
+  ...
+# Subtest: awaits last chunk and stop event, publishes complete recording once, releases tracks
+ok 5 - awaits last chunk and stop event, publishes complete recording once, releases tracks
+  ---
+  duration_ms: 4.2912
+  type: 'test'
+  ...
+# Subtest: cancel rejects and discards late events
+ok 6 - cancel rejects and discards late events
+  ---
+  duration_ms: 3.9107
+  type: 'test'
+  ...
+# Subtest: unexpected recorder termination fails instead of publishing partial speech
+ok 7 - unexpected recorder termination fails instead of publishing partial speech
+  ---
+  duration_ms: 0.853
+  type: 'test'
+  ...
+# Subtest: duration limit stops cleanly and preserves final audio, oversized data fails closed
+ok 8 - duration limit stops cleanly and preserves final audio, oversized data fails closed
+  ---
+  duration_ms: 198.8405
+  type: 'test'
+  ...
+# (node:38560) ExperimentalWarning: The MockTimers API is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: model preparation begins during capture and the ready worker serves repeated dictation
+ok 9 - model preparation begins during capture and the ready worker serves repeated dictation
+  ---
+  duration_ms: 10.451
+  type: 'test'
+  ...
+# Subtest: cancel terminates loading, rejects pending work and ignores stale replies
+ok 10 - cancel terminates loading, rejects pending work and ignores stale replies
+  ---
+  duration_ms: 18.1588
+  type: 'test'
+  ...
+# Subtest: idle public-model memory is released after two minutes
+ok 11 - idle public-model memory is released after two minutes
+  ---
+  duration_ms: 6.8872
+  type: 'test'
+  ...
+# Subtest: download failure is classified without raw provider errors or a false transcript
+ok 12 - download failure is classified without raw provider errors or a false transcript
+  ---
+  duration_ms: 0.9119
+  type: 'test'
+  ...
+# Subtest: a cached worker cannot deliver an earlier utterance to a new request
+ok 13 - a cached worker cannot deliver an earlier utterance to a new request
+  ---
+  duration_ms: 2.1478
+  type: 'test'
+  ...
+# Subtest: long speech partitions cover all audio once, retain the tail and prefer quiet boundaries
+ok 14 - long speech partitions cover all audio once, retain the tail and prefer quiet boundaries
+  ---
+  duration_ms: 46.8107
+  type: 'test'
+  ...
+# Subtest: on-device recognition preserves multilingual repeated text, publishes once and releases resources
+ok 15 - on-device recognition preserves multilingual repeated text, publishes once and releases resources
+  ---
+  duration_ms: 5.3536
+  type: 'test'
+  ...
+# Subtest: cancel during loading/inference terminates the worker and denies late transcripts
+ok 16 - cancel during loading/inference terminates the worker and denies late transcripts
+  ---
+  duration_ms: 4.2867
+  type: 'test'
+  ...
+# Subtest: download errors, malformed results, worker crashes and timeout preserve the draft
+ok 17 - download errors, malformed results, worker crashes and timeout preserve the draft
+  ---
+  duration_ms: 20.3748
+  type: 'test'
+  ...
+# Subtest: invalid, oversized, nonfinite and clipped samples never start a worker
+ok 18 - invalid, oversized, nonfinite and clipped samples never start a worker
+  ---
+  duration_ms: 78.5373
+  type: 'test'
+  ...
+# Subtest: browser codec overshoot is normalized before strict worker admission
+ok 19 - browser codec overshoot is normalized before strict worker admission
+  ---
+  duration_ms: 14.0049
+  type: 'test'
+  ...
+# Subtest: language detection selects only model language tokens and never silently defaults to English
+ok 20 - language detection selects only model language tokens and never silently defaults to English
+  ---
+  duration_ms: 0.7683
+  type: 'test'
+  ...
+# Subtest: decoder token exhaustion cannot be published as a complete transcript
+ok 21 - decoder token exhaustion cannot be published as a complete transcript
+  ---
+  duration_ms: 0.7443
+  type: 'test'
+  ...
+# Subtest: one interrupted public model download retries once and returns the real loaded instance
+ok 22 - one interrupted public model download retries once and returns the real loaded instance
+  ---
+  duration_ms: 6.0795
+  type: 'test'
+  ...
+# Subtest: repeated network failures stop after two attempts
+ok 23 - repeated network failures stop after two attempts
+  ---
+  duration_ms: 1.2592
+  type: 'test'
+  ...
+# Subtest: runtime/model failures are not retried as network failures
+ok 24 - runtime/model failures are not retried as network failures
+  ---
+  duration_ms: 0.5235
+  type: 'test'
+  ...
+# Subtest: WASM and model-download permissions are limited to the isolated voice runtime
+ok 25 - WASM and model-download permissions are limited to the isolated voice runtime
+  ---
+  duration_ms: 50.0383
+  type: 'test'
+  ...
+# Subtest: actual recording workflow publishes verified speech as editable text only
+ok 26 - actual recording workflow publishes verified speech as editable text only
+  ---
+  duration_ms: 166.8349
+  type: 'test'
+  ...
+# Subtest: local model and device failures preserve draft and release mic
+ok 27 - local model and device failures preserve draft and release mic
+  ---
+  duration_ms: 133.4709
+  type: 'test'
+  ...
+# Subtest: late permission response after session cancellation stops tracks and never uploads
+ok 28 - late permission response after session cancellation stops tracks and never uploads
+  ---
+  duration_ms: 19.6529
+  type: 'test'
+  ...
+# Subtest: late transcript after cancellation cannot publish into the next chat
+ok 29 - late transcript after cancellation cannot publish into the next chat
+  ---
+  duration_ms: 29.7044
+  type: 'test'
+  ...
+# Subtest: upstream model failure cannot log private input tensors from the actual worker
+ok 30 - upstream model failure cannot log private input tensors from the actual worker
+  ---
+  duration_ms: 199.6044
+  type: 'test'
+  ...
+1..30
+# tests 30
+# suites 0
+# pass 30
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 3158.8695

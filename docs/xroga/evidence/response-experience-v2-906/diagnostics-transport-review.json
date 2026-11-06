@@ -1,0 +1,12 @@
+{
+  "base": "9950a882a0b23ca5cdcb734d2a920135c23f69f4",
+  "path": "backend/src/ai/openaiCompat.ts",
+  "before": "23232ec16c61124e6d8a8366c7076b02336a6c6cd845a5aeba88fb6dd3a2602b",
+  "after": "44c89cd06d6b7d42e7de4bcb7e4d71c78961cf8f45de4fee2e5ff73de3c777e5",
+  "unchangedWireCallIds": [
+    "038ced12b0f74e8d5e0f",
+    "31380a8d5b9454a98a98",
+    "9c345e07b723c086440e"
+  ],
+  "review": "Metadata observation only. SDK wire calls, destination policy, admission, reservation and publication remain unchanged. Empty output is never accepted. Existing egress assertions retained; added admitted empty-response regression. No live recovery claimed."
+}

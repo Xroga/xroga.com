@@ -6,6 +6,9 @@ import { cache } from 'react';
 import { createClient } from '@/lib/supabase/server';
 import { SharedAnswerDownloads } from '@/components/terminal/SharedAnswerDownloads';
 import { API_URL, fetchApiResponse } from '@/lib/api';
+import SharedResponseV2 from '@/components/response-experience-v2/SharedResponseV2';
+import { readRichShareSnapshot, RICH_SHARE_PREFIX } from '@/components/response-experience-v2/shareSnapshot';
+import { responseV2Audience, responseV2Decision } from '@/components/response-experience-v2/access';
 
 export const dynamic = 'force-dynamic';
 
@@ -15,6 +18,8 @@ type PublicShare = {
   scope: 'response' | 'exchange';
   prompt: string;
   response: string;
+  richResponse?: string;
+  richUnavailable?: boolean;
 };
 
 type ShareResult =
@@ -53,7 +58,16 @@ const loadShare = cache(async (token: string): Promise<ShareResult> => {
     const share=payload?.share;
     if(!share||share.token!==token||!['public','private'].includes(share.visibility)||!['response','exchange'].includes(share.scope)
       ||typeof share.prompt!=='string'||share.prompt.length>20000||typeof share.response!=='string'||share.response.length>100000)return{status:'missing'};
-    return { status: 'ok', share };
+    // Current API exposes text plus an optional snapshot. Older compatible API
+    // revisions return the snapshot in response. Both retain the same share ACL.
+    const snapshot = typeof share.richResponse === 'string' ? share.richResponse : share.response;
+    const presentation = readRichShareSnapshot(snapshot);
+    const matchingText = !share.richResponse || presentation.text === share.response;
+    return { status: 'ok', share: { ...share,
+      response: share.response.startsWith(RICH_SHARE_PREFIX) ? presentation.text : share.response,
+      richResponse: presentation.document && matchingText ? snapshot : undefined,
+      richUnavailable: snapshot.startsWith(RICH_SHARE_PREFIX) && (!presentation.document || !matchingText),
+    } };
   } catch {
     return { status: 'missing' };
   }
@@ -67,10 +81,26 @@ export async function generateMetadata({ params }: { params: Promise<{ token: st
   return {
     title: 'Shared answer — Xroga',
     description: share.response.slice(0, 150),
-    // User-created shares are not curated editorial pages. Keep them out of the
-    // index even when the owner chooses a public link; links may still be followed.
     robots: { index: false, follow: true, noarchive: true },
   };
+}
+
+async function canPresentRichShare(): Promise<boolean> {
+  let richAllowed = false;
+    try {
+      const client = await createClient();
+      const { data: { user } } = await client.auth.getUser();
+      richAllowed = responseV2Audience(process.env.RESPONSE_EXPERIENCE_V2, user?.id ?? null, process.env.RESPONSE_EXPERIENCE_V2_USERS);
+      if (!richAllowed && (process.env.VERCEL_ENV === 'preview' || process.env.NODE_ENV === 'development' || process.env.RESPONSE_EXPERIENCE_V2 === 'founder')) {
+        const decision = await responseV2Decision(true, true, {
+          getUser: async () => user,
+          getRole: async () => { const { data, error } = await client.rpc('current_community_role'); return error ? null : data; },
+          getAal: async () => { const { data, error } = await client.auth.mfa.getAuthenticatorAssuranceLevel(); return error ? null : data.currentLevel; },
+        });
+        richAllowed = decision.allowed;
+      }
+    } catch { richAllowed = false; }
+  return richAllowed;
 }
 
 export default async function MessageSharePage({ params }: { params: Promise<{ token: string }> }) {
@@ -91,6 +121,7 @@ export default async function MessageSharePage({ params }: { params: Promise<{ t
     );
   }
   const { share } = result;
+  const richAllowed = Boolean(share.richResponse) && await canPresentRichShare();
 
   return (
     <main className="min-h-screen bg-[#f4f4f1] px-4 py-6 text-[#111] sm:px-6 sm:py-12 dark:bg-[#090a0d] dark:text-[#f5f5f3]">
@@ -114,7 +145,8 @@ export default async function MessageSharePage({ params }: { params: Promise<{ t
           )}
           <section className="px-5 py-6 sm:px-8 sm:py-8">
             <p className="mb-3 text-[10px] font-semibold uppercase tracking-[.16em] text-black/45 dark:text-white/45">Response</p>
-            <p className="whitespace-pre-wrap text-[15px] leading-7 text-black/90 dark:text-white/90">{share.response}</p>
+            {share.richUnavailable && <p role="status" className="mb-3 text-sm">The interactive view is unavailable. The complete saved text follows.</p>}
+            {richAllowed && share.richResponse ? <SharedResponseV2 snapshot={share.richResponse} text={share.response} /> : <p className="whitespace-pre-wrap text-[15px] leading-7 text-black/90 dark:text-white/90">{share.response}</p>}
             <SharedAnswerDownloads response={share.response} />
           </section>
         </article>

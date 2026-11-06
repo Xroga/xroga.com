@@ -1,3 +1,4 @@
+import {actualProviderCostMicroUsd} from '../providerBudget.js';
 import OpenAI from 'openai';
 import {randomUUID} from 'node:crypto';
 import {withTenantModelReservation,type TenantModelScope,type BoundModelDispatch} from '../tenantModelDispatch.js';
@@ -9,6 +10,7 @@ import {
   resolveEndpoint,
   snapshotModelEgressPayload,
   createModelProviderClient,
+  modelTransportReceipt,
 } from '../openaiCompat.js';
 
 import {
@@ -29,7 +31,6 @@ import {
 
 import {
   MODELS,
-  costUsdForTokens,
   type ModelId,
 } from '../models.js';
 
@@ -972,7 +973,7 @@ async function runSingleModelTurn(
 
             events,
 
-            providerRequestId,
+            providerRequestId: modelTransportReceipt(endpoint).requestId,
 
             inputTokens,
 
@@ -1208,7 +1209,7 @@ export function createXrogaAgentModel(
           await persistUsageAccounting(context,{
             receiptId:randomUUID(),modelId:turn.modelId,poolRole:poolRoleFor(turn.modelId),
             inputTokens:turn.inputTokens,outputTokens:turn.outputTokens,
-            costUsd:costUsdForTokens(turn.modelId,turn.inputTokens,turn.outputTokens),
+            costUsd:actualProviderCostMicroUsd(turn)/1_000_000,
           });
         } catch { throw new PostCompletionAccountingError(); }
 

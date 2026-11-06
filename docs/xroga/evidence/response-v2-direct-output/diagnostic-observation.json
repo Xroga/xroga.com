@@ -1,0 +1,70 @@
+{
+  "observedAt": "2026-11-01T21:39:48Z",
+  "scope": "REAL_NEW_AUTHENTICATED_PREVIEW_AGAINST_PRODUCTION_API_NOT_PRODUCT_ACCEPTANCE",
+  "deployed": {
+    "source": "4500d039721323ebc5351a9493d1d695e1d3e6e8",
+    "revision": "xroga-api-response-4500d0-serving-1102",
+    "imageDigest": "sha256:bb429763e6ac0c2791e31c88c3cb05dab70fb07ea8c417cfb3b552c23d7a6a7a",
+    "canonicalJob": "xroga-canonical-production",
+    "queue": "RUNNING",
+    "ready": true
+  },
+  "frontend": {
+    "candidate": "c940a4067da8fa67d18b2f0be1b38728f6a36113",
+    "production": "e8feb297673c856b34034d30851e0c0ba82561ac",
+    "promotion": false
+  },
+  "result": {
+    "prompt": "Founder architecture explanation only, no build or execution",
+    "submissions": 1,
+    "modelRequests": 2,
+    "reason": "Existing semantic planner plus answer, no formatting call",
+    "graphNodes": 4,
+    "graphEdges": 5,
+    "completeAnswer": false,
+    "finishReason": "length",
+    "completionTokens": 4096,
+    "reasoningTokens": 3467
+  },
+  "costs": {
+    "plannerProviderUsd": 0.0001895,
+    "answerProviderUsd": 0.00198405,
+    "totalProviderUsd": 0.00217355,
+    "existingLedgerMicroUsd": 1225,
+    "ledgerDiscrepancyUnreconciled": true,
+    "manualLedgerSQL": false,
+    "furtherModelCalls": 0
+  },
+  "evidence": {
+    "source": "Existing provider generation metadata GET only, no replay/content endpoint",
+    "privateReceiptsRetained": true
+  },
+  "correction": {
+    "modelUnchanged": true,
+    "outputLimitUnchanged": 4096,
+    "explicitExistingReasoningControl": "none",
+    "reportedCostPreferred": true,
+    "conservativeMissingCostFallback": true,
+    "serializedPriceCeilingsUsdPerMillion": {
+      "prompt": 0.6,
+      "completion": 1.32,
+      "request": 0
+    },
+    "publicPartialStatus": true,
+    "productionSQLRequired": "Existing source admission-fence singleton only, new exact-source approval required",
+    "newServices": false,
+    "newIAM": false
+  },
+  "gates": {
+    "focusedBackendJob": "ef6330c9-7d1e-4010-bb8f-45fd3889d8cf",
+    "backendTypeJob": "2b1d50ca-c94f-4e1e-94b6-cb1d5f9493d9",
+    "realFreshAcceptance": "PENDING_CORRECTED_SOURCE_RELEASE"
+  },
+  "recovery": {
+    "source": "fd3b663290cf150da51768171021860b032df025",
+    "revision": "xroga-api-response-fd3b66-serving-1101",
+    "imageDigest": "sha256:7c32bf09bbe6004b798e522d36841c5b2ecd22ab5d3b3b7731f716bb96f8d209",
+    "preserved": true
+  },
+  "knownOperationalWarning": "Optional storage housekeeping reconcile_not_scheduled warning, required readiness checks passed."
+}

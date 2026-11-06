@@ -1,0 +1,120 @@
+{
+  "base": "d7ce7def4ab94a72587907cb4f60690d7f288838",
+  "source": "df486e4de47aafe1094fcbf697df1732ee3a27e6",
+  "scope": "Three changed voice/composer native conversions only. No new security acceptance.",
+  "reviews": [
+    {
+      "previousReview": {
+        "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
+        "sourceSha256": "cb1ec7ba1923bc8b22029963c44f7a0b67435edf9615d0a9426ae3694a184860",
+        "callIds": [
+          "18f7c2043f2ceb0ebac3"
+        ],
+        "disposition": "NOT_PERSISTENCE",
+        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in TerminalChatBar, with no database or Storage client receiver.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+        "evidence": [
+          {
+            "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
+            "marker": "const incoming = Array.from(list).filter("
+          }
+        ],
+        "beforeCurrentMainIntegration": {
+          "ref": "92043b72c20e5a12636dee079d760a1e5708b48f",
+          "sourceSha256": "cb1ec7ba1923bc8b22029963c44f7a0b67435edf9615d0a9426ae3694a184860",
+          "callIds": [
+            "18f7c2043f2ceb0ebac3"
+          ],
+          "disposition": "NOT_PERSISTENCE"
+        },
+        "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+      },
+      "baseSourceSha256": "cb1ec7ba1923bc8b22029963c44f7a0b67435edf9615d0a9426ae3694a184860",
+      "currentSourceSha256": "959ecdbdfe4da3c4cee1a79e2e4684f638df3ded77cf7ed9002bdafbd2ee8d0c",
+      "currentCalls": [
+        {
+          "id": "01fce3ee8703d9146072",
+          "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
+          "line": 413,
+          "enclosing": "TerminalChatBar",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "<dynamic>",
+          "ownerPredicateCandidate": false,
+          "review": "REVIEW_REQUIRED",
+          "sourceSha256": "959ecdbdfe4da3c4cee1a79e2e4684f638df3ded77cf7ed9002bdafbd2ee8d0c"
+        }
+      ],
+      "decision": "Rebind only the unchanged addFiles native FileList-to-Array conversion. No adjacent upload, ownership, persistence or egress behavior is certified.",
+      "unchangedCallbackSha256": "15b91c4a9ee0c35d33f8884e5d58939776a01b102096a960688ee70a9714154f"
+    },
+    {
+      "previousReview": {
+        "path": "frontend/src/components/terminal/XrogaVoiceControl.tsx",
+        "sourceSha256": "315907fe42f81b824206adcd3a74fc82bfd3f89d514c6dd11a4c3687a9f4d26a",
+        "callIds": [
+          "19d3d07d6723c7afb8b6"
+        ],
+        "disposition": "NOT_PERSISTENCE",
+        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in VoiceWave, with no database or Storage client receiver.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+        "evidence": [
+          {
+            "path": "frontend/src/components/terminal/XrogaVoiceControl.tsx",
+            "marker": "{Array.from({ length: bars }, (_, index) => {"
+          }
+        ],
+        "beforeVoiceSecurityCorrection": {
+          "sourceSha256": "aa3541bab9beba30adcc495dae9cbf798133440ce85e2da45814de6a74dd21ad",
+          "callIds": [
+            "8f3c7995974f0b7357a6"
+          ]
+        },
+        "unchangedFunctionSha256": "bcaf1eb379e7bdaaaf780bef2cd4b979f53defaf835730db0744a1e011bde5de",
+        "beforeCurrentMainIntegration": {
+          "ref": "92043b72c20e5a12636dee079d760a1e5708b48f",
+          "sourceSha256": "315907fe42f81b824206adcd3a74fc82bfd3f89d514c6dd11a4c3687a9f4d26a",
+          "callIds": [
+            "19d3d07d6723c7afb8b6"
+          ],
+          "disposition": "NOT_PERSISTENCE"
+        },
+        "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+      },
+      "baseSourceSha256": "315907fe42f81b824206adcd3a74fc82bfd3f89d514c6dd11a4c3687a9f4d26a",
+      "currentSourceSha256": "fb6f4ba224dcd672b561bfe965fff3fbb1b493db68433c059776780694575d9e",
+      "currentCalls": [],
+      "decision": "Retire removed native Array.from conversion only. Historical review retained in this receipt and Git."
+    },
+    {
+      "previousReview": {
+        "path": "frontend/src/lib/terminal/voiceConversation.ts",
+        "sourceSha256": "c1994b036c070efc77940c78408a9206f3cf84a407aa86ea0315b91cc06c7278",
+        "callIds": [
+          "f69fd1fcf672d0451697"
+        ],
+        "disposition": "NOT_PERSISTENCE",
+        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in acceptMicStream, with no database or Storage client receiver.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+        "evidence": [
+          {
+            "path": "frontend/src/lib/terminal/voiceConversation.ts",
+            "marker": "Array.from(tracks).forEach((track) => track.stop());"
+          }
+        ],
+        "beforeCurrentMainIntegration": {
+          "ref": "92043b72c20e5a12636dee079d760a1e5708b48f",
+          "sourceSha256": "c1994b036c070efc77940c78408a9206f3cf84a407aa86ea0315b91cc06c7278",
+          "callIds": [
+            "f69fd1fcf672d0451697"
+          ],
+          "disposition": "NOT_PERSISTENCE"
+        },
+        "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+      },
+      "baseSourceSha256": "c1994b036c070efc77940c78408a9206f3cf84a407aa86ea0315b91cc06c7278",
+      "currentSourceSha256": null,
+      "currentCalls": [],
+      "decision": "Retire removed native Array.from conversion only. Historical review retained in this receipt and Git."
+    }
+  ]
+}

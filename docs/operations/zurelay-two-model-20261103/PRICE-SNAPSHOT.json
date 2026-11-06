@@ -1,0 +1,172 @@
+{
+  "version": "zurelay-2026-11-03-v2",
+  "observedAt": "2026-11-03T12:26:12.189Z",
+  "scope": "PUBLISHED_PRICES_NOT_MEASURED_PROVIDER_CHARGES",
+  "base": "https://api.zurelay.com/v1",
+  "endpoint": "/chat/completions",
+  "sources": [
+    "https://zurelay.com/models/deepseek-v4.1-flash-1017",
+    "https://zurelay.com/models/claude-sonnet-5-5",
+    "https://zurelay.com/docs/chat",
+    "https://zurelay.com/docs/billing"
+  ],
+  "models": [
+    {
+      "model": "deepseek-v4.1-flash-1017",
+      "inputUsdPerMillion": 0.03,
+      "outputUsdPerMillion": 0.12,
+      "cachedInputUsdPerMillion": 0.00074
+    },
+    {
+      "model": "claude-sonnet-5-5",
+      "inputUsdPerMillion": 0.79,
+      "outputUsdPerMillion": 3.95,
+      "cachedInputUsdPerMillion": 0.079,
+      "cacheWriteFiveMinutesUsdPerMillion": 0.9875,
+      "cacheWriteOneHourUsdPerMillion": 1.58
+    }
+  ],
+  "rules": [
+    "Terminal completion tokens include reasoning. Do not add reasoning a second time.",
+    "Sonnet cache writes remain refused until their usage representation is verified. Reservation conservatively allows twice normal input price.",
+    "No runtime price drift or provider request occurred. New reservations carry v2. Historical ledger versions and amounts remain unchanged.",
+    "The guide and earlier snapshot used 0.80/4.00/0.08 for Sonnet. The current provider page is 0.79/3.95/0.079. Settlement must not overstate the published charge."
+  ],
+  "sourcesChanged": [
+    {
+      "path": "backend/src/ai/models.ts",
+      "beforeSha256": "8fc77b2ba756fdb7fa9e89dd1fb9de22b9463813173711caccc81dab2e3f05c0",
+      "afterSha256": "901a9eaf9253a042659bc440edb8c79cfe7d1b4b30ae9d7ce839c09c74ae3645"
+    },
+    {
+      "path": "backend/src/ai/providerBudget.ts",
+      "beforeSha256": "eeb2e83b336d19d47bbf74bd44b96031b9af67151115b47be5eb9d2d7456eab2",
+      "afterSha256": "13b2ab65afb2c5d01e0dfab68391ba18b094c8fdc558f0ff8ae35c1c7e2e672c"
+    },
+    {
+      "path": "backend/src/ai/zurelayAccounting.test.ts",
+      "beforeSha256": "f86868ad9545b79b298228d880788460d01b60b41d2ad8627d2f10125f467bfe",
+      "afterSha256": "180a743de5793484bb7ce18f25389bbfa0b8e112e01666c0b78bce47cf3a4453"
+    },
+    {
+      "path": "backend/src/ai/zurelayEscalation.test.ts",
+      "beforeSha256": "1dfb74fac22f7d2a9e3217287e81d51cf048b57e7a40884e24b19eb1b26947e4",
+      "afterSha256": "3b4859e3ff2cba7bced0cf77ff51332406fad0c290e393df5832df1af20597d8"
+    },
+    {
+      "path": "backend/src/ai/providerBudget.test.ts",
+      "beforeSha256": "01f44880de1676868e65f73466b418c2d17f5e9a5a761304d39e85779222795e",
+      "afterSha256": "61f6b5dc1fb040e3ffb60efab7693d515181ee1c1bd1279981a2d800dc54ffce"
+    }
+  ],
+  "providerCalls": 0,
+  "modelSpendUsd": 0,
+  "persistenceExpressionsUnchanged": [
+    {
+      "beforeId": "6cfbe9972d40635c77a8",
+      "afterId": "255ea9744a9343d6feaf",
+      "callSha256": "c0743930c360577871f41f79aab76d0db4db895e39f23dd2bd1fe9106daa1401"
+    },
+    {
+      "beforeId": "dcf83540a5ea4f98eaf7",
+      "afterId": "e4d8bf4fcb8f6422f53a",
+      "callSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+    },
+    {
+      "beforeId": "c74a4fc883b24e8f3ae1",
+      "afterId": "b9d50643ad7fda897932",
+      "callSha256": "b491044ebe1b60bbb13107068fe51c114cd0443af45b058d1b176fe056a99469"
+    },
+    {
+      "beforeId": "f5d90a1357212b8e2323",
+      "afterId": "67400600da71ba2124eb",
+      "callSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+    },
+    {
+      "beforeId": "8fa4085f64c8be202d80",
+      "afterId": "c985fa5fee1ee7d5c6f2",
+      "callSha256": "6d6c902b6c84da24f40aa1650f802ee8882e82b5272fb5cc084814c63d835d05"
+    },
+    {
+      "beforeId": "3919d4d672b90a77ab7e",
+      "afterId": "b57f79f0d091e2d52575",
+      "callSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+    },
+    {
+      "beforeId": "65523661ee65e94b7c77",
+      "afterId": "4150f3451a1cef23bc00",
+      "callSha256": "a78a54ae4e2620785b9280daa6621dcc8669ac0bbc6900884d13a8c6b7839bf3"
+    },
+    {
+      "beforeId": "4aab58391970b6bb69b5",
+      "afterId": "be62ab94e9a3c042c183",
+      "callSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+    },
+    {
+      "beforeId": "74dbf1665c69fa2f4781",
+      "afterId": "ee7f1f1315d6867c3e17",
+      "callSha256": "f81e043496acfac4dd24216c73e8742804dda243ee9ee2a0cc717fa98955317b"
+    },
+    {
+      "beforeId": "d1c61227ff1a7f3b17d4",
+      "afterId": "7b462edee6e0deb442d8",
+      "callSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+    },
+    {
+      "beforeId": "bcf68b311f2241508be7",
+      "afterId": "63cd9db82a553901aa87",
+      "callSha256": "b62a796405bf587af9c871e445471680e1c7397c6086b98aaf0b7e7cb09d444f"
+    },
+    {
+      "beforeId": "40c42908ab5eacc6c81e",
+      "afterId": "54b682f70bf2fc2118d6",
+      "callSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+    },
+    {
+      "beforeId": "f7f2c1c015fc1c6fd489",
+      "afterId": "1205a7c3e1be5c28184e",
+      "callSha256": "1ddd595eb7f2ea1c5d03aeebb72a2e5d121e87445511c9298086211dd871e53b"
+    },
+    {
+      "beforeId": "44e10cd41dfbcb05869d",
+      "afterId": "22a30ae3b808f4792a78",
+      "callSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+    },
+    {
+      "beforeId": "10c29f29884c3b9c5614",
+      "afterId": "6ff03e6d0feee9d7788b",
+      "callSha256": "29a7114644ac5a760bf7e59ccb8e01d93b1a3c8efc87f0d69f4e705837f32ed6"
+    },
+    {
+      "beforeId": "b3f6377407a42fb11b4b",
+      "afterId": "8518b222919073114544",
+      "callSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+    },
+    {
+      "beforeId": "82581ecaee5163096193",
+      "afterId": "53fd7bc596b2faf2d20a",
+      "callSha256": "fd5b19821cdaf19811507e8703aecd2289a32af85ad242b366637d14f8889c7f"
+    },
+    {
+      "beforeId": "cb1c9a285a7c88c0db1d",
+      "afterId": "845594d2636c37e55039",
+      "callSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+    },
+    {
+      "beforeId": "54e86643a1c667724a64",
+      "afterId": "c7a9eb801789d331fe81",
+      "callSha256": "1003047e1837473bb764c6d9d0791784c215952d7347bd930019ff717f7c8eef"
+    },
+    {
+      "beforeId": "17ce743fa35f62e2a14d",
+      "afterId": "ac91a4c495ed3c2bfacc",
+      "callSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+    }
+  ],
+  "testReceipt": {
+    "job": "779c43b4-289c-4330-a616-a3db03ec883d",
+    "pass": 24,
+    "fail": 0,
+    "skips": 0
+  }
+}

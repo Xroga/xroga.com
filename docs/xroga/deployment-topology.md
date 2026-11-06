@@ -1,6 +1,6 @@
 # Deployment topology, source and dated evidence
 
-Source SHA: `43ed343c2af35f49f7959684f7e692a04a750218`; exact current source/config hashes are in the JSON. Uncommitted source is not an accepted release.
+Source SHA: `40ede014a42a5a6607d88f9041de51d5262ce546`; exact current source/config hashes are in the JSON. Uncommitted source is not an accepted release.
 
 | Dependency | Provider | State | Host/resource | Verification |
 | --- | --- | --- | --- | --- |
@@ -16,6 +16,11 @@ Source SHA: `43ed343c2af35f49f7959684f7e692a04a750218`; exact current source/con
 | browserbase | Browserbase | LEGACY | www.browserbase.com | NOT_INDEPENDENTLY_VERIFIED |
 | google-delivery | Google Cloud Tasks and Cloud Run Jobs | ACTIVE | cloudtasks.googleapis.com, run.googleapis.com | Observed evidence explicitly scoped below; not full journey certification |
 | cloudflare-workers-proposal | Cloudflare Workers | PROPOSED | Unknown/not applicable | NOT_INDEPENDENTLY_VERIFIED |
+| cloudflare-voice | Cloudflare Workers AI, Workers Free | PROPOSED | api.cloudflare.com | NOT_INDEPENDENTLY_VERIFIED |
+| zurelay-models | Zurelay | CONFIGURED_BUT_UNVERIFIED | api.zurelay.com | NOT_INDEPENDENTLY_VERIFIED |
+| historical-openrouter | OpenRouter | LEGACY | openrouter.ai | NOT_INDEPENDENTLY_VERIFIED |
+| historical-moonshot | Moonshot | LEGACY | api.moonshot.ai | NOT_INDEPENDENTLY_VERIFIED |
+| historical-zhipu | Zhipu | LEGACY | open.bigmodel.cn | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-127-0-0-1 | Source-defined endpoint 127.0.0.1 | LOCAL_ONLY | 127.0.0.1 | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-about-meta-com | Source-defined endpoint about.meta.com | CONFIGURED_BUT_UNVERIFIED | about.meta.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-accounts-google-com | Source-defined endpoint accounts.google.com | CONFIGURED_BUT_UNVERIFIED | accounts.google.com | NOT_INDEPENDENTLY_VERIFIED |
@@ -27,6 +32,7 @@ Source SHA: `43ed343c2af35f49f7959684f7e692a04a750218`; exact current source/con
 | endpoint-api-m-sandbox-paypal-com | Source-defined endpoint api-m.sandbox.paypal.com | CONFIGURED_BUT_UNVERIFIED | api-m.sandbox.paypal.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-api-apify-com | Source-defined endpoint api.apify.com | CONFIGURED_BUT_UNVERIFIED | api.apify.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-api-cartesia-ai | Source-defined endpoint api.cartesia.ai | CONFIGURED_BUT_UNVERIFIED | api.cartesia.ai | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-api-deepseek-com | Source-defined endpoint api.deepseek.com | CONFIGURED_BUT_UNVERIFIED | api.deepseek.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-api-dev-runwayml-com | Source-defined endpoint api.dev.runwayml.com | CONFIGURED_BUT_UNVERIFIED | api.dev.runwayml.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-api-dicebear-com | Source-defined endpoint api.dicebear.com | CONFIGURED_BUT_UNVERIFIED | api.dicebear.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-api-elevenlabs-io | Source-defined endpoint api.elevenlabs.io | CONFIGURED_BUT_UNVERIFIED | api.elevenlabs.io | NOT_INDEPENDENTLY_VERIFIED |
@@ -39,16 +45,13 @@ Source SHA: `43ed343c2af35f49f7959684f7e692a04a750218`; exact current source/con
 | endpoint-api-lumalabs-ai | Source-defined endpoint api.lumalabs.ai | CONFIGURED_BUT_UNVERIFIED | api.lumalabs.ai | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-api-machines-dev | Source-defined endpoint api.machines.dev | CONFIGURED_BUT_UNVERIFIED | api.machines.dev | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-api-minimax-io | Source-defined endpoint api.minimax.io | CONFIGURED_BUT_UNVERIFIED | api.minimax.io | NOT_INDEPENDENTLY_VERIFIED |
-| endpoint-api-moonshot-ai | Source-defined endpoint api.moonshot.ai | CONFIGURED_BUT_UNVERIFIED | api.moonshot.ai | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-api-netlify-com | Source-defined endpoint api.netlify.com | CONFIGURED_BUT_UNVERIFIED | api.netlify.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-api-openai-com | Source-defined endpoint api.openai.com | CONFIGURED_BUT_UNVERIFIED | api.openai.com | NOT_INDEPENDENTLY_VERIFIED |
-| endpoint-api-parallel-ai | Source-defined endpoint api.parallel.ai | CONFIGURED_BUT_UNVERIFIED | api.parallel.ai | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-api-stripe-com | Source-defined endpoint api.stripe.com | CONFIGURED_BUT_UNVERIFIED | api.stripe.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-api-suno-ai | Source-defined endpoint api.suno.ai | CONFIGURED_BUT_UNVERIFIED | api.suno.ai | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-api-supabase-com | Source-defined endpoint api.supabase.com | CONFIGURED_BUT_UNVERIFIED | api.supabase.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-api-vercel-com | Source-defined endpoint api.vercel.com | CONFIGURED_BUT_UNVERIFIED | api.vercel.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-api-whop-com | Source-defined endpoint api.whop.com | CONFIGURED_BUT_UNVERIFIED | api.whop.com | NOT_INDEPENDENTLY_VERIFIED |
-| endpoint-api-x-ai | Source-defined endpoint api.x.ai | CONFIGURED_BUT_UNVERIFIED | api.x.ai | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-appstoreconnect-apple-com | Source-defined endpoint appstoreconnect.apple.com | CONFIGURED_BUT_UNVERIFIED | appstoreconnect.apple.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-aptos-dev | Source-defined endpoint aptos.dev | CONFIGURED_BUT_UNVERIFIED | aptos.dev | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-asana-com | Source-defined endpoint asana.com | CONFIGURED_BUT_UNVERIFIED | asana.com | NOT_INDEPENDENTLY_VERIFIED |
@@ -57,12 +60,15 @@ Source SHA: `43ed343c2af35f49f7959684f7e692a04a750218`; exact current source/con
 | endpoint-brandland-zendesk-com | Source-defined endpoint brandland.zendesk.com | CONFIGURED_BUT_UNVERIFIED | brandland.zendesk.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-build-avax-network | Source-defined endpoint build.avax.network | CONFIGURED_BUT_UNVERIFIED | build.avax.network | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-calendly-com | Source-defined endpoint calendly.com | CONFIGURED_BUT_UNVERIFIED | calendly.com | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-cdn-deepseek-com | Source-defined endpoint cdn.deepseek.com | CONFIGURED_BUT_UNVERIFIED | cdn.deepseek.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-cdn-jsdelivr-net | Source-defined endpoint cdn.jsdelivr.net | CONFIGURED_BUT_UNVERIFIED | cdn.jsdelivr.net | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-cdn-simpleicons-org | Source-defined endpoint cdn.simpleicons.org | CONFIGURED_BUT_UNVERIFIED | cdn.simpleicons.org | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-chain-link | Source-defined endpoint chain.link | CONFIGURED_BUT_UNVERIFIED | chain.link | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-cheatsheetseries-owasp-org | Source-defined endpoint cheatsheetseries.owasp.org | CONFIGURED_BUT_UNVERIFIED | cheatsheetseries.owasp.org | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-chrome-google-com | Source-defined endpoint chrome.google.com | CONFIGURED_BUT_UNVERIFIED | chrome.google.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-chromewebstore-googleapis-com | Source-defined endpoint chromewebstore.googleapis.com | CONFIGURED_BUT_UNVERIFIED | chromewebstore.googleapis.com | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-cloud-google-com | Source-defined endpoint cloud.google.com | CONFIGURED_BUT_UNVERIFIED | cloud.google.com | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-cloudflare-com | Source-defined endpoint cloudflare.com | CONFIGURED_BUT_UNVERIFIED | cloudflare.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-coordinator | Source-defined endpoint coordinator | CONFIGURED_BUT_UNVERIFIED | coordinator | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-design-intuit-com | Source-defined endpoint design.intuit.com | CONFIGURED_BUT_UNVERIFIED | design.intuit.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-dev-whop-com | Source-defined endpoint dev.whop.com | CONFIGURED_BUT_UNVERIFIED | dev.whop.com | NOT_INDEPENDENTLY_VERIFIED |
@@ -70,11 +76,13 @@ Source SHA: `43ed343c2af35f49f7959684f7e692a04a750218`; exact current source/con
 | endpoint-developer-apple-com | Source-defined endpoint developer.apple.com | CONFIGURED_BUT_UNVERIFIED | developer.apple.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-developer-chrome-com | Source-defined endpoint developer.chrome.com | CONFIGURED_BUT_UNVERIFIED | developer.chrome.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-developer-godaddy-com | Source-defined endpoint developer.godaddy.com | CONFIGURED_BUT_UNVERIFIED | developer.godaddy.com | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-developer-mozilla-org | Source-defined endpoint developer.mozilla.org | CONFIGURED_BUT_UNVERIFIED | developer.mozilla.org | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-developers-brevo-com | Source-defined endpoint developers.brevo.com | CONFIGURED_BUT_UNVERIFIED | developers.brevo.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-developers-cloudflare-com | Source-defined endpoint developers.cloudflare.com | CONFIGURED_BUT_UNVERIFIED | developers.cloudflare.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-developers-google-com | Source-defined endpoint developers.google.com | CONFIGURED_BUT_UNVERIFIED | developers.google.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-developers-stellar-org | Source-defined endpoint developers.stellar.org | CONFIGURED_BUT_UNVERIFIED | developers.stellar.org | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-devpost-com | Source-defined endpoint devpost.com | CONFIGURED_BUT_UNVERIFIED | devpost.com | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-docker-com | Source-defined endpoint docker.com | CONFIGURED_BUT_UNVERIFIED | docker.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-docs-anthropic-com | Source-defined endpoint docs.anthropic.com | CONFIGURED_BUT_UNVERIFIED | docs.anthropic.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-docs-aws-amazon-com | Source-defined endpoint docs.aws.amazon.com | CONFIGURED_BUT_UNVERIFIED | docs.aws.amazon.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-docs-base44-com | Source-defined endpoint docs.base44.com | CONFIGURED_BUT_UNVERIFIED | docs.base44.com | NOT_INDEPENDENTLY_VERIFIED |
@@ -102,7 +110,6 @@ Source SHA: `43ed343c2af35f49f7959684f7e692a04a750218`; exact current source/con
 | endpoint-fonts-gstatic-com | Source-defined endpoint fonts.gstatic.com | CONFIGURED_BUT_UNVERIFIED | fonts.gstatic.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-freetheai-xyz | Source-defined endpoint freetheai.xyz | CONFIGURED_BUT_UNVERIFIED | freetheai.xyz | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-gemini-google-com | Source-defined endpoint gemini.google.com | CONFIGURED_BUT_UNVERIFIED | gemini.google.com | NOT_INDEPENDENTLY_VERIFIED |
-| endpoint-generativelanguage-googleapis-com | Source-defined endpoint generativelanguage.googleapis.com | CONFIGURED_BUT_UNVERIFIED | generativelanguage.googleapis.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-getfoundry-sh | Source-defined endpoint getfoundry.sh | CONFIGURED_BUT_UNVERIFIED | getfoundry.sh | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-github-com | Source-defined endpoint github.com | CONFIGURED_BUT_UNVERIFIED | github.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-hardhat-org | Source-defined endpoint hardhat.org | CONFIGURED_BUT_UNVERIFIED | hardhat.org | NOT_INDEPENDENTLY_VERIFIED |
@@ -121,17 +128,20 @@ Source SHA: `43ed343c2af35f49f7959684f7e692a04a750218`; exact current source/con
 | endpoint-memory-invalid | Source-defined endpoint memory.invalid | CONFIGURED_BUT_UNVERIFIED | memory.invalid | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-metadata-google-internal | Source-defined endpoint metadata.google.internal | CONFIGURED_BUT_UNVERIFIED | metadata.google.internal | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-mixpanel-com | Source-defined endpoint mixpanel.com | CONFIGURED_BUT_UNVERIFIED | mixpanel.com | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-n8n-io | Source-defined endpoint n8n.io | CONFIGURED_BUT_UNVERIFIED | n8n.io | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-neon-com | Source-defined endpoint neon.com | CONFIGURED_BUT_UNVERIFIED | neon.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-nextjs-org | Source-defined endpoint nextjs.org | CONFIGURED_BUT_UNVERIFIED | nextjs.org | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-nodejs-org | Source-defined endpoint nodejs.org | CONFIGURED_BUT_UNVERIFIED | nodejs.org | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-oauth2-googleapis-com | Source-defined endpoint oauth2.googleapis.com | CONFIGURED_BUT_UNVERIFIED | oauth2.googleapis.com | NOT_INDEPENDENTLY_VERIFIED |
-| endpoint-open-bigmodel-cn | Source-defined endpoint open.bigmodel.cn | CONFIGURED_BUT_UNVERIFIED | open.bigmodel.cn | NOT_INDEPENDENTLY_VERIFIED |
-| endpoint-openrouter-ai | Source-defined endpoint openrouter.ai | CONFIGURED_BUT_UNVERIFIED | openrouter.ai | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-packaging-python-org | Source-defined endpoint packaging.python.org | CONFIGURED_BUT_UNVERIFIED | packaging.python.org | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-paypal-com | Source-defined endpoint paypal.com | CONFIGURED_BUT_UNVERIFIED | paypal.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-play-google-com | Source-defined endpoint play.google.com | CONFIGURED_BUT_UNVERIFIED | play.google.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-pollinations-ai | Source-defined endpoint pollinations.ai | CONFIGURED_BUT_UNVERIFIED | pollinations.ai | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-polygon-technology | Source-defined endpoint polygon.technology | CONFIGURED_BUT_UNVERIFIED | polygon.technology | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-postgresql-org | Source-defined endpoint postgresql.org | CONFIGURED_BUT_UNVERIFIED | postgresql.org | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-posthog-com | Source-defined endpoint posthog.com | CONFIGURED_BUT_UNVERIFIED | posthog.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-public-example-invalid | Source-defined endpoint public.example.invalid | CONFIGURED_BUT_UNVERIFIED | public.example.invalid | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-python-org | Source-defined endpoint python.org | CONFIGURED_BUT_UNVERIFIED | python.org | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-railway-app | Source-defined endpoint railway.app | CONFIGURED_BUT_UNVERIFIED | railway.app | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-react-dev | Source-defined endpoint react.dev | CONFIGURED_BUT_UNVERIFIED | react.dev | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-registry-npmjs-org | Source-defined endpoint registry.npmjs.org | CONFIGURED_BUT_UNVERIFIED | registry.npmjs.org | NOT_INDEPENDENTLY_VERIFIED |
@@ -145,8 +155,10 @@ Source SHA: `43ed343c2af35f49f7959684f7e692a04a750218`; exact current source/con
 | endpoint-supabase-management-tests-invalid | Source-defined endpoint supabase-management-tests.invalid | CONFIGURED_BUT_UNVERIFIED | supabase-management-tests.invalid | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-supabase-com | Source-defined endpoint supabase.com | CONFIGURED_BUT_UNVERIFIED | supabase.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-support-bolt-new | Source-defined endpoint support.bolt.new | CONFIGURED_BUT_UNVERIFIED | support.bolt.new | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-temporal-io | Source-defined endpoint temporal.io | CONFIGURED_BUT_UNVERIFIED | temporal.io | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-token-actions-githubusercontent-com | Source-defined endpoint token.actions.githubusercontent.com | CONFIGURED_BUT_UNVERIFIED | token.actions.githubusercontent.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-twitter-com | Source-defined endpoint twitter.com | CONFIGURED_BUT_UNVERIFIED | twitter.com | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-typescriptlang-org | Source-defined endpoint typescriptlang.org | CONFIGURED_BUT_UNVERIFIED | typescriptlang.org | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-upload-wikimedia-org | Source-defined endpoint upload.wikimedia.org | CONFIGURED_BUT_UNVERIFIED | upload.wikimedia.org | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-uploads-github-com | Source-defined endpoint uploads.github.com | CONFIGURED_BUT_UNVERIFIED | uploads.github.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-v0-dev | Source-defined endpoint v0.dev | CONFIGURED_BUT_UNVERIFIED | v0.dev | NOT_INDEPENDENTLY_VERIFIED |
@@ -154,6 +166,7 @@ Source SHA: `43ed343c2af35f49f7959684f7e692a04a750218`; exact current source/con
 | endpoint-wa-me | Source-defined endpoint wa.me | CONFIGURED_BUT_UNVERIFIED | wa.me | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-web3-okx-com | Source-defined endpoint web3.okx.com | CONFIGURED_BUT_UNVERIFIED | web3.okx.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-whop-com | Source-defined endpoint whop.com | CONFIGURED_BUT_UNVERIFIED | whop.com | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-workspace-invalid | Source-defined endpoint workspace.invalid | CONFIGURED_BUT_UNVERIFIED | workspace.invalid | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-www-anchor-lang-com | Source-defined endpoint www.anchor-lang.com | CONFIGURED_BUT_UNVERIFIED | www.anchor-lang.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-www-anera-org | Source-defined endpoint www.anera.org | CONFIGURED_BUT_UNVERIFIED | www.anera.org | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-www-anthropic-com | Source-defined endpoint www.anthropic.com | CONFIGURED_BUT_UNVERIFIED | www.anthropic.com | NOT_INDEPENDENTLY_VERIFIED |
@@ -229,4 +242,4 @@ Historical findings below remain as review obligations, not fresh observations. 
 - P1 RELEASE_CONTROLS_UNENFORCED: Observed main and Production/Preview lack platform protection/restrictions; mandatory user release gates still apply. Owner command: 010; RECORDED_PRE_EXISTING_RISK_NOT_WAIVED.
 - P2 HOST_TOOLCHAIN_DRIFT: Vercel project configured Node 24.x; canonical CI/API image is 22.21.1; Fly host test workflow has no explicit setup-node. Owner command: 006; RECORDED_PRE_EXISTING_RISK_NOT_WAIVED.
 
-1027 memory/filesystem candidates require semantic review. Static collections and scratch writes are not blanket durability defects or certificates. Source-defined optional hosts do not establish runtime reachability. No secrets, production rows, IAM, DNS, deployment or provider operation were changed by this inventory generation.
+1078 memory/filesystem candidates require semantic review. Static collections and scratch writes are not blanket durability defects or certificates. Source-defined optional hosts do not establish runtime reachability. No secrets, production rows, IAM, DNS, deployment or provider operation were changed by this inventory generation.

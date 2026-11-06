@@ -5,7 +5,7 @@ import {withOperationsProviderReservation} from './providerBudget.js';
 import {chatCompletion,chatCompletionStream,type ChatMessage} from './openaiCompat.js';
 
 test('actual Operations generic SDK path rechecks the admitted-action reservation on each wire and requires settlement plus atomic accounting',async t=>{
-  const env={NODE_ENV:'test',SUPABASE_URL:'http://127.0.0.1:55439',SUPABASE_SERVICE_ROLE_KEY:'synthetic-loopback-only',GLM_API_KEY:'synthetic-ops-key'};
+  const env={NODE_ENV:'test',SUPABASE_URL:'http://127.0.0.1:55439',SUPABASE_SERVICE_ROLE_KEY:'synthetic-loopback-only',ZURELAY_API_KEY:'synthetic-ops-key',ZURELAY_STREAM_USAGE_VERIFIED:'1'};
   const previous=Object.fromEntries(Object.keys(env).map(k=>[k,process.env[k]]));Object.assign(process.env,env);
   t.after(()=>{for(const k of Object.keys(env))previous[k]===undefined?delete process.env[k]:process.env[k]=previous[k];});
   const owner='11111111-1111-4111-8111-111111111111',actor='22222222-2222-4222-8222-222222222222',action={id:randomUUID(),user_id:owner,requested_by:actor,status:'running'};
@@ -13,12 +13,12 @@ test('actual Operations generic SDK path rechecks the admitted-action reservatio
   let mode='ok',wire=0,reserves=0,atomic=0,revoked=false,reservation:Record<string,unknown>;
   t.mock.method(globalThis,'fetch',async(input:Parameters<typeof fetch>[0],init?:RequestInit)=>{
     const url=new URL(String(input)),b=JSON.parse(String(init?.body??'{}'));
-    if(url.origin==='https://open.bigmodel.cn'){
-      assert.equal(url.href,'https://open.bigmodel.cn/api/paas/v4/chat/completions');wire++;
+    if(url.origin==='https://api.zurelay.com'){
+      assert.equal(url.href,'https://api.zurelay.com/v1/chat/completions');wire++;
       assert.ok(reserves>=2,'Initial reservation and current pre-wire authority are both verified');
       if(mode==='revokedRetry'){revoked=true;return Response.json({error:{message:'Synthetic outage'}},{status:503});}
-      const result={id:'synthetic-ops-receipt',choices:[b.stream?{delta:{content:'Synthetic result'},finish_reason:'stop'}:{message:{content:'Synthetic result'},finish_reason:'stop'}],usage:{prompt_tokens:2,completion_tokens:2}};
-      return b.stream?new Response('data: '+JSON.stringify(result)+'\n\ndata: [DONE]\n\n',{headers:{'content-type':'text/event-stream'}}):Response.json(result);
+      const result={id:'synthetic-ops-receipt',model:'deepseek-v4.1-flash-1017',choices:[b.stream?{delta:{content:'Synthetic result'},finish_reason:'stop'}:{message:{content:'Synthetic result'},finish_reason:'stop'}],usage:{prompt_tokens:2,completion_tokens:2,total_tokens:4}};
+      return b.stream?new Response('data: '+JSON.stringify(result)+'\n\ndata: [DONE]\n\n',{headers:{'content-type':'text/event-stream','x-request-id':'synthetic-ops-receipt','x-zurelay-model':'deepseek-v4.1-flash-1017'}}):Response.json(result,{headers:{'x-request-id':'synthetic-ops-receipt','x-zurelay-model':'deepseek-v4.1-flash-1017'}});
     }
     assert.equal(url.origin,env.SUPABASE_URL);
     if(url.pathname.endsWith('/reserve_operations_provider_budget')){
@@ -41,10 +41,10 @@ test('actual Operations generic SDK path rechecks the admitted-action reservatio
   for(const invoke of [chatCompletion,chatCompletionStream]){
     for(const failure of ['ok','denied','revokedRetry','settlement','receipt']){
       mode=failure;revoked=false;reserves=0;reservation=undefined!;const deltas:string[]=[],before=wire,beforeAtomic=atomic;
-      const run=()=>withOperationsProviderReservation({ownerId:owner,actorId:actor,admittedAction:action,modelId:'glm_5_3_flash',estimatedInputTokens:100,maximumOutputTokens:64,idempotencyKey:randomUUID(),payload:{messages},
-        execute:d=>{assert.ok(d);return invoke('glm_5_3_flash',d.payload.messages as ChatMessage[],{maxTokens:64,beforeDispatch:d.beforeDispatch,credentialOverride:d.credentialOverride,onDelta:text=>deltas.push(text)});}});
+      const run=()=>withOperationsProviderReservation({ownerId:owner,actorId:actor,admittedAction:action,modelId:'deepseek_v4_1_flash_1017',estimatedInputTokens:100,maximumOutputTokens:64,idempotencyKey:randomUUID(),payload:{messages},
+        execute:d=>{assert.ok(d);return invoke('deepseek_v4_1_flash_1017',d.payload.messages as ChatMessage[],{maxTokens:64,beforeDispatch:d.beforeDispatch,credentialOverride:d.credentialOverride,onDelta:text=>deltas.push(text)});}});
       if(failure==='ok'){assert.equal((await run()).text,'Synthetic result');assert.equal(atomic,beforeAtomic+1);assert.equal(deltas.length,invoke===chatCompletionStream?1:0);}
-      else{await assert.rejects(run(),{code:failure==='denied'?'PROVIDER_RESERVATION_DENIED':failure==='revokedRetry'?'MODEL_DISPATCH_BINDING_DENIED':'POST_COMPLETION_ACCOUNTING_UNCERTAIN'});assert.equal(deltas.length,0);}
+      else{await assert.rejects(run(),failure==='revokedRetry'?{status:503}:{code:failure==='denied'?'PROVIDER_RESERVATION_DENIED':'POST_COMPLETION_ACCOUNTING_UNCERTAIN'});assert.equal(deltas.length,0);}
       assert.equal(wire,before+(failure==='denied'?0:1),'No unauthorized retry, fallback or unaccounted publication');
     }
   }

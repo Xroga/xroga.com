@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { ArrowDown, ArrowUp } from 'lucide-react';
 
@@ -21,6 +21,7 @@ import startStyles from '@/components/dashboard/WorkspaceNewTerminal.module.css'
 
 export function TerminalDock() {
   const dockRef = useRef<HTMLDivElement>(null);
+  const [hasScrolledTranscript, setHasScrolledTranscript] = useState(false);
 
   const pathname = usePathname();
 
@@ -100,6 +101,36 @@ export function TerminalDock() {
   const showStarterExperience =
     emptyWorkspace &&
     !workspaceOpen;
+
+  const dockBottom =
+    showStarterExperience || dashboardFullscreen
+      ? `${keyboardOffset}px`
+      : `calc(${keyboardOffset}px + max(14px, env(safe-area-inset-bottom)))`;
+
+  useEffect(() => {
+    if (!isDashboard) return;
+    const root = document.documentElement;
+    root.style.setProperty(
+      '--xv-dock-bottom',
+      dockSuppressed ? 'var(--xv-pane-bottom, 0px)' : dockBottom,
+    );
+    return () => {
+      root.style.removeProperty('--xv-dock-bottom');
+    };
+  }, [isDashboard, dockSuppressed, dockBottom]);
+
+  useEffect(() => {
+    if (!isDashboard || messages.length === 0) {
+      setHasScrolledTranscript(false);
+      return;
+    }
+    const transcript = document.querySelector<HTMLElement>('.xv-terminal-scroll');
+    if (!transcript) return;
+    const sync = () => setHasScrolledTranscript(transcript.scrollTop > 1);
+    sync();
+    transcript.addEventListener('scroll', sync, { passive: true });
+    return () => transcript.removeEventListener('scroll', sync);
+  }, [isDashboard, messages.length]);
 
   useEffect(() => {
     if (isDashboard && emptyWorkspace && chatbarHidden) {
@@ -181,8 +212,7 @@ export function TerminalDock() {
                 : 'var(--xv-boot-sidebar-width, 256px)'
               : '64px',
 
-          bottom:
-            keyboardOffset,
+          bottom: dockBottom,
           '--xv-start-keyboard': `${keyboardOffset}px`,
         } as React.CSSProperties
       }
@@ -191,6 +221,11 @@ export function TerminalDock() {
         showStarterExperience
           ? 'empty'
           : 'conversation'
+      }
+      data-response-scrolled={
+        messages.length > 0 && hasScrolledTranscript
+          ? 'true'
+          : 'false'
       }
       data-testid="persistent-terminal-dock"
     >

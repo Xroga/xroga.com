@@ -26,7 +26,7 @@ import type { ModelId } from './models.js';
  * cannot record a success nobody earned.
  */
 
-const CODING: readonly ModelId[] = ['kimi_k3', 'glm_5_3', 'glm_5_3_flash', 'deepseek_v4_flash'];
+const CODING: readonly ModelId[] = ['deepseek_v4_1_flash_1017','claude_sonnet_5_5'];
 const ALL: readonly ModelId[] = CODING;
 
 const pass: CaseOutcome = {
@@ -65,7 +65,7 @@ test('generic model benchmarks never execute private retrieval work', () => {
   const research = BENCHMARKS.find((benchmark) => benchmark.capability === 'research')!;
   const cases = selectCases({ benchmarkIds: [research.id] }, ALL);
   assert.deepEqual(cases, []);
-  assert.equal(modelMayRun('kimi_k3', 'research'), false);
+  assert.equal(modelMayRun('claude_sonnet_5_5', 'research'), false);
 });
 
 test('heavy benchmarks are excluded unless asked for', () => {
@@ -278,8 +278,8 @@ test('results from a run feed routing evidence end to end', async () => {
   // Without the runner the ledger stays empty and priors win forever.
   const coding = BENCHMARKS.find((benchmark) => benchmark.capability === 'coding')!;
   const report = await runBenchmarks({
-    selection: { benchmarkIds: [coding.id], models: ['deepseek_v4_flash'] },
-    models: ['deepseek_v4_flash'],
+    selection: { benchmarkIds: [coding.id], models: ['deepseek_v4_1_flash_1017'] },
+    models: ['deepseek_v4_1_flash_1017'],
     caps: { ...DEFAULT_CAPS, maximumCases: 6, maximumCostUsd: 100 },
     execute: async () => pass,
   });
@@ -290,12 +290,12 @@ test('results from a run feed routing evidence end to end', async () => {
     ...report.results,
   ]);
   assert.ok(ledger.length > 0, 'a completed run produced no routing evidence');
-  assert.equal(ledger[0]!.modelId, 'deepseek_v4_flash');
+  assert.equal(ledger[0]!.modelId, 'deepseek_v4_1_flash_1017');
   assert.equal(ledger[0]!.role, 'implementation');
 
   const choice = chooseCostAware({
     role: 'implementation',
-    candidates: ['deepseek_v4_flash'],
+    candidates: ['deepseek_v4_1_flash_1017'],
     evidence: ledger,
   });
   assert.ok(choice, 'measured evidence did not reach routing');

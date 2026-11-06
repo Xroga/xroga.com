@@ -37,14 +37,12 @@ test('C existing repository update is targeted and preserves unrelated code', as
   assert.equal(state.currentWorkingSnapshot.find((file) => file.path === 'unrelated.ts')?.content, 'keep');
 });
 
-test('D provider failure uses a compatible fallback without duplicate mutation', async () => {
-  resetModelRuntimeHealth(); let mutationCount = 0;
-  const result = await executeWithProviderFallback({ routes: ['kimi_k3', 'glm_5_3'], maximumAttemptsPerRoute: 1, execute: async (model) => {
-    if (model === 'kimi_k3') throw Object.assign(new Error('temporary provider failure'), { status: 503 });
-    return { content: 'patch' };
-  } });
-  if (result.value.content === 'patch') mutationCount += 1;
-  assert.equal(result.modelId, 'glm_5_3'); assert.equal(mutationCount, 1);
+test('D a provider failure stops before another model or mutation',async()=>{
+ resetModelRuntimeHealth();let calls=0,mutations=0;
+ await assert.rejects(async()=>{
+  await executeWithProviderFallback({routes:['deepseek_v4_1_flash_1017','claude_sonnet_5_5'],maximumAttemptsPerRoute:3,execute:async()=>{calls++;throw Object.assign(Error('Synthetic outage'),{status:503});}});
+  mutations++;
+ });assert.equal(calls,1);assert.equal(mutations,0);
 });
 
 test('E validation failure creates a bounded targeted repair and reruns validation', async () => {

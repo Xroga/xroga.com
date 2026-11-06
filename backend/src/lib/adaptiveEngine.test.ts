@@ -57,7 +57,7 @@ describe('adaptive general-purpose engine', () => {
       'Research current official OAuth documentation with sources',
       '',
       {},
-      { PARALLEL_API_KEY: 'configured' },
+      { DEEPSEEK_WEBSEARCH_FETCH_API: 'configured' },
     );
     assert.equal(plan.classification.requiresResearch, true);
     assert.equal(plan.route.kind, 'research');
@@ -76,20 +76,20 @@ describe('adaptive general-purpose engine', () => {
     assert.ok(plan.subtasks.some((task) => task.id === 'review'));
   });
 
-  it('requires and selects a distinct healthy reviewer for high-risk work', () => {
+  it('blocks high-risk work without separately authorized independent review', () => {
     const plan = createAdaptiveExecutionPlan(
       'Secure and deploy this application',
       '',
       {
         modelProviders: [
-          { id: 'kimi_k3', configured: true, healthy: true, supports: ['generate'] },
-          { id: 'glm_5_3', configured: true, healthy: true, supports: ['generate'] },
+          { id:'deepseek_v4_1_flash_1017',configured:true,healthy:true,supports:['generate'] },
+          { id:'claude_sonnet_5_5',configured:true,healthy:true,supports:['generate'] },
         ],
       },
       {},
     );
-    assert.equal(plan.route.primaryModel, 'glm_5_3');
-    assert.equal(plan.route.reviewerModel, 'kimi_k3');
+    assert.equal(plan.route.primaryModel,'deepseek_v4_1_flash_1017');
+    assert.equal(plan.route.reviewerModel,null);assert.equal(plan.status,'blocked');assert.ok(plan.blockers.some(text=>text.includes('distinct healthy review model')));
   });
 
   it('uses a healthy fallback after the preferred provider fails', () => {

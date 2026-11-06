@@ -91,9 +91,9 @@ describe('the capability router decides, not the legacy router', () => {
 
 describe('a run cannot report success without a real commit', () => {
   it('returns a blocked result without a commit or alternate interpretation after a security denial', async t => {
-    const prior = process.env.OPENROUTER_API_KEY;
-    process.env.OPENROUTER_API_KEY = 'synthetic-routing-only';
-    t.after(() => { if (prior === undefined) delete process.env.OPENROUTER_API_KEY; else process.env.OPENROUTER_API_KEY = prior; });
+    const prior = process.env.ZURELAY_API_KEY;
+    process.env.ZURELAY_API_KEY = 'synthetic-routing-only';
+    t.after(() => { if (prior === undefined) delete process.env.ZURELAY_API_KEY; else process.env.ZURELAY_API_KEY = prior; });
     let interpretations = 0, commits = 0;
     const result = await tryUniversalBuild({
       ...base, projectId: 'demo-project', flags: enabledForDemo, store: new InMemoryUniversalStore(),

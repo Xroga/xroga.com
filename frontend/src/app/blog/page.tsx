@@ -2,7 +2,7 @@ import { EditorialHub } from '@/components/seo/EditorialPage';
 import { BLOG_ARTICLES } from '@/lib/seoGrowthContent';
 import { buildMetadata } from '@/lib/seo';
 
-export const metadata = buildMetadata({ title: 'AI App Builder Guides: Web3, Crypto & Production | Xroga', description: 'Practical, source-conscious guides to AI app builders, blockchain apps, crypto products, repository ownership and production readiness.', path: '/blog' });
+export const metadata = buildMetadata({ title: 'AI App Builder Blog: Free Tools, Prompts & MVP Guides | Xroga', description: 'Practical guides to free AI app builders, choosing tools, building apps, writing prompts, and launching an MVP, plus Xroga’s existing software guides.', path: '/blog' });
 export default function Page() {
   return <EditorialHub path="/blog" title="Guides for building software with AI responsibly."
     description={metadata.description as string} eyebrow="Xroga learning library"

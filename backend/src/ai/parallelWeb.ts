@@ -90,6 +90,7 @@ export async function parallelSearch(input: {
 
   const data = (await response.json()) as {
     search_id?: string;
+    provider?: string;
     results?: Array<{
       url?: string;
       title?: string;
@@ -117,8 +118,9 @@ export async function parallelSearch(input: {
         result.publish_date ?? undefined,
     }));
 
-  // Successful Turbo request = $0.001.
-  await recordWebSpend({
+  // Search now runs only through official DeepSeek Search, which the dispatcher already reserves and settles in the
+  // canonical provider ledger. The older Parallel-only usage table cannot label it, so it is not double-recorded.
+  if (data.provider !== 'deepseek') await recordWebSpend({
     userId: input.userId,
     provider: 'parallel',
     operation: 'parallel_search_turbo',

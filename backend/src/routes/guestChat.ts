@@ -17,7 +17,7 @@ import {
   type ModelId,
 } from '../ai/models.js';
 import { normalizeProviderError,isTerminalModelFailure } from '../ai/providerRuntime.js';
-import { SAFE_RICH_OUTPUT_GUIDE } from '../ai/prompts.js';
+import { GUEST_RICH_OUTPUT_GUIDE } from '../ai/prompts.js';
 import {
   authMiddleware,
   type AuthRequest,
@@ -44,7 +44,7 @@ export const GUEST_SYSTEM = [
   'Never claim that a file, repository, deployment, integration, or external action was created or changed in guest mode.',
   'Never ask for passwords, API keys, tokens, or other secrets.',
   'If current or live information is required, say guest preview does not have live-web access rather than inventing freshness.',
-  SAFE_RICH_OUTPUT_GUIDE,
+  GUEST_RICH_OUTPUT_GUIDE,
   'Keep the response focused and useful. Do not mention internal model or provider names.',
 ].join('\n');
 
@@ -69,7 +69,7 @@ async function guestCompletion(messages: ChatMessage[],lease:GuestLease,prepaidT
   await requireCurrentGuestLease(lease);
   let wires=0;
   const callable = new Set(callableModelIds());
-  const candidates: ModelId[] = ['deepseek_v4_flash', 'glm_5_3_flash'];
+  const candidates: ModelId[] = ['deepseek_v4_1_flash_1017'];
 
   let lastError: unknown = null;
   for (const modelId of candidates) {

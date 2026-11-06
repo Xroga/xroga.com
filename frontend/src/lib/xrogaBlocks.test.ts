@@ -93,11 +93,13 @@ test('renderer registry covers foundation blocks and safely falls back for futur
 test('copy and activity UI use Lucide semantics and contain no dot status element', () => {
   const copy = readFileSync(new URL('../components/ui/InlineCopyButton.tsx', import.meta.url), 'utf8');
   const activity = readFileSync(new URL('../components/terminal/TerminalLiveActivity.tsx', import.meta.url), 'utf8');
+  const timeline = readFileSync(new URL('../components/activity/ActivityTimeline.tsx', import.meta.url), 'utf8');
   assert.match(copy, /<Copy/);
   assert.match(copy, /Copied/);
-  assert.doesNotMatch(activity, /xv-term-livedot/);
-  assert.match(activity, /ActivityRow/);
-  assert.match(activity, /aria-live="polite"/);
+  assert.doesNotMatch(`${activity}
+${timeline}`, /xv-term-livedot/);
+  assert.match(timeline, /from 'lucide-react'/);
+  assert.match(timeline, /aria-live="polite"/);
 });
 
 test('TerminalChatContext does not retain provider private reasoning in client state', () => {

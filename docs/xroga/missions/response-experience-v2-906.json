@@ -1,0 +1,253 @@
+{
+  "version": "1.0",
+  "missionId": "RESPONSE-EXPERIENCE-V2-906",
+  "baseSha": "0d270ec69bdcf130ff85ce27f524e1d0d1e59e23",
+  "requirementIds": [
+    "XR-MISSION-055"
+  ],
+  "state": "IN_PROGRESS",
+  "risk": "high",
+  "scope": "Independent response V2 with complete visible answers and source-backed rich presentation. Founder-authorized controlled authenticated-user rollout. Legacy renderer retained.",
+  "changedFiles": [
+    "backend/src/ai/responsePresentation.ts",
+    "frontend/src/lib/responsePresentation.integration.test.ts",
+    "backend/src/ai/prompts.ts",
+    "backend/src/ai/richResponsePrompt.test.ts",
+    "frontend/src/lib/xrogaBlocks.ts",
+    "frontend/src/lib/xrogaResponseDocument.ts",
+    "frontend/src/lib/xrogaResponseDocument.test.ts",
+    "frontend/src/lib/xrogaRichResults.test.ts",
+    "frontend/src/components/response-experience-v2/loadPresentation.ts",
+    "frontend/src/components/response-experience-v2/loadPresentation.test.ts",
+    "frontend/src/app/(workspace)/workspace/page.tsx",
+    "frontend/src/components/terminal/SwarmMessageLog.tsx",
+    "frontend/src/components/response-experience-v2/access.ts",
+    "frontend/src/components/response-experience-v2/calculations.ts",
+    "frontend/src/components/response-experience-v2/ChartV2.tsx",
+    "frontend/src/components/response-experience-v2/DataV2.tsx",
+    "frontend/src/components/response-experience-v2/document.test.ts",
+    "frontend/src/components/response-experience-v2/document.ts",
+    "frontend/src/components/response-experience-v2/InteractiveV2.tsx",
+    "frontend/src/components/response-experience-v2/MathV2.tsx",
+    "frontend/src/components/response-experience-v2/ProseV2.tsx",
+    "frontend/src/components/response-experience-v2/response-v2.module.css",
+    "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx",
+    "frontend/src/components/response-experience-v2/ResponseExperienceGate.tsx",
+    "frontend/src/components/response-experience-v2/specimens.ts",
+    "frontend/package.json",
+    "package-lock.json",
+    "frontend/src/components/response-experience-v2/mathSyntax.ts",
+    "frontend/src/components/response-experience-v2/mathSyntax.test.ts",
+    "frontend/package-lock.json",
+    "frontend/src/components/response-experience-v2/review/LocalReview.tsx",
+    "frontend/src/components/response-experience-v2/review/review.css",
+    "scripts/xroga/response-v2-preview.mjs",
+    "frontend/src/components/response-experience-v2/SourceV2.tsx",
+    "frontend/src/components/response-experience-v2/ResourcesV2.tsx",
+    "frontend/src/lib/formatAiMarkdown.test.ts",
+    "frontend/src/components/response-experience-v2/graphLayout.ts",
+    "frontend/src/components/response-experience-v2/graphLayout.test.ts",
+    "frontend/src/components/response-experience-v2/sourceRegistry.ts",
+    "frontend/src/components/response-experience-v2/sourceRegistry.test.ts",
+    "frontend/src/components/response-experience-v2/composition.ts",
+    "frontend/src/components/response-experience-v2/composition.test.ts",
+    "frontend/src/components/response-experience-v2/ComparisonV2.tsx",
+    "docs/operations/response-v2-semantic-design.md",
+    "frontend/src/components/response-experience-v2/ArchitectureV2.tsx",
+    "frontend/src/lib/assistantCopy.ts",
+    "frontend/src/lib/assistantCopy.test.ts",
+    "backend/src/services/integrations/researchResult.ts",
+    "backend/src/services/integrations/researchResult.test.ts",
+    "backend/src/services/integrations/businessActionConfirmations.ts",
+    "backend/src/routes/phase1.ts",
+    "backend/src/storage/repository.ts",
+    "backend/src/storage/postgresRepository.ts",
+    "backend/src/storage/storageService.ts",
+    "frontend/src/lib/researchHandoff.ts",
+    "frontend/src/lib/researchHandoff.test.ts",
+    "frontend/src/context/TerminalChatContext.tsx",
+    "backend/src/ai/universal/runtimeFailure.ts",
+    "backend/src/ai/universal/runtimeFailure.test.ts",
+    "backend/src/lib/messageShareText.ts",
+    "backend/src/lib/messageShareText.test.ts",
+    "backend/src/routes/messageShares.ts",
+    "frontend/src/components/response-experience-v2/ConversationTurnV2.tsx",
+    "frontend/src/components/terminal/MessageShareModal.tsx",
+    "frontend/src/lib/api.ts",
+    "frontend/src/lib/messageShare.ts",
+    "frontend/src/lib/messageShare.test.ts",
+    "backend/src/ai/openaiCompat.egress.test.ts",
+    "backend/src/ai/openaiCompat.ts",
+    "frontend/src/lib/semanticAgentRouting.test.ts",
+    "backend/src/ai/completionDiagnostics.ts",
+    "backend/src/ai/completionDiagnostics.test.ts",
+    "backend/src/security/frontendScope.local.integration.ts",
+    "frontend/e2e/batch01-founder-local.spec.ts",
+    "frontend/e2e/command3-auth.spec.ts",
+    "frontend/src/app/(shell)/layout.tsx",
+    "frontend/src/app/(workspace)/layout.tsx",
+    "frontend/src/app/auth/callback/route.ts",
+    "frontend/src/app/auth/contact/page.tsx",
+    "frontend/src/app/auth/forgot-password/page.tsx",
+    "frontend/src/app/auth/reset-password/page.tsx",
+    "frontend/src/app/onboarding/page.tsx",
+    "frontend/src/app/privacy/page.tsx",
+    "frontend/src/components/auth/AuthFlowFrame.tsx",
+    "frontend/src/components/auth/AuthGoogleIcon.tsx",
+    "frontend/src/components/auth/AuthModern.tsx",
+    "frontend/src/components/auth/AuthShell.module.css",
+    "frontend/src/components/auth/LoginForm.tsx",
+    "frontend/src/components/auth/SignupForm.tsx",
+    "frontend/src/components/auth/authSignupLayout.test.ts",
+    "frontend/src/lib/contactPhone.test.ts",
+    "frontend/src/lib/contactPhone.ts",
+    "frontend/src/lib/onboarding.test.ts",
+    "frontend/src/lib/publicUrlInventory.ts",
+    "frontend/src/lib/supabase/authErrors.test.ts",
+    "frontend/src/lib/supabase/authErrors.ts",
+    "frontend/src/lib/supabase/authLookupCost.test.ts",
+    "frontend/src/lib/supabase/authProviders.ts",
+    "frontend/src/lib/supabase/authRecovery.ts",
+    "frontend/src/lib/supabase/middleware.ts",
+    "frontend/src/lib/supabase/oauthReturn.test.ts",
+    "frontend/src/lib/supabase/oauthReturn.ts",
+    ".github/workflows/xroga-tenant-security.yml",
+    "supabase/migrations/20261028000100_contact_phone.sql",
+    "supabase/migrations/20261101160136_optional_contact_prompt.sql",
+    "backend/src/ai/models.ts",
+    "backend/src/ai/providerBudget.ts",
+    "backend/src/ai/providerBudget.test.ts",
+    "backend/src/ai/tenantModelDispatch.ts",
+    "backend/src/ai/openaiCompat.test.ts",
+    "frontend/src/lib/runLightLaneChat.ts",
+    "frontend/src/components/response-experience-v2/exportText.test.ts",
+    "backend/src/ai/quota.test.ts",
+    "frontend/src/components/response-experience-v2/entityRegistry.ts",
+    "frontend/src/components/response-experience-v2/entityRegistry.test.ts",
+    "frontend/src/components/response-experience-v2/diagramSyntax.ts",
+    "frontend/src/components/response-experience-v2/diagramSyntax.test.ts",
+    "backend/src/lib/richShareSnapshot.ts",
+    "backend/src/lib/richShareSnapshot.test.ts",
+    "frontend/src/app/share/[token]/page.tsx",
+    "frontend/src/components/response-experience-v2/shareSnapshot.ts",
+    "frontend/src/components/response-experience-v2/shareSnapshot.test.ts",
+    "frontend/src/components/response-experience-v2/SharedResponseV2.tsx",
+    "docs/xroga/evidence/response-v2-rich-share/source-review.json",
+    "backend/src/ai/pipeline.ts",
+    "backend/src/security/tenantIsolation.local.integration.ts",
+    "backend/src/ai/universal/semanticRequestPlanner.ts",
+    "backend/src/ai/universal/semanticRequestPlanner.test.ts",
+    "frontend/src/components/response-experience-v2/EntityIdentityV2.tsx",
+    "frontend/src/components/response-experience-v2/testdata/generated-saas-cd5541.json",
+    "backend/src/ai/responsePresentation.test.ts",
+    "frontend/src/components/response-experience-v2/testdata/captured-4c6319-role-table.json",
+    "scripts/xroga/test-response-table-resources.mjs",
+    "frontend/src/components/response-experience-v2/tableResources.test.ts"
+  ],
+  "decisions": {
+    "keep": [
+      "Legacy renderer untouched as fallback, existing streaming and persistence, production unchanged"
+    ],
+    "extend": [
+      "Read-only presentation audience and existing Workspace streaming contract"
+    ],
+    "replace": [
+      "Replace V2 adjacency grouping with syntax-derived sections, explicit evidence relationships and container-aware data layouts. Preserve original content and legacy rendering."
+    ],
+    "deprecate": []
+  },
+  "schemaImpact": {
+    "changed": true,
+    "migrations": [
+      "supabase/migrations/20261028000100_contact_phone.sql",
+      "supabase/migrations/20261101160136_optional_contact_prompt.sql"
+    ],
+    "rollout": "Preserve migration source from the already-serving e8feb297 auth release for isolated compatibility tests. This V2 release does not apply these migrations to production.",
+    "rollback": "No production schema change. Restore the compatible frontend deployment without reverting existing contact data or existing auth schema."
+  },
+  "securityImpact": {
+    "auth": {
+      "changed": true,
+      "description": "Server getUser validates the session for an explicit authenticated or canary presentation rollout. This grants no backend or admin access. Founder-only opt-in review retains confirmed identity, owner role and AAL2."
+    },
+    "tenant": {
+      "changed": true,
+      "description": "Approved research results are saved through existing private StorageService and returned only after issued actor context, owner-scoped confirmation, consumed receipt digest and project ownership checks. No wider permission or role grant."
+    },
+    "approval": {
+      "changed": true,
+      "description": "Research confirmation now requires private result storage before dispatch and persists the body before terminal success. Existing durable claims, approval scope and non-replay failure behavior remain. No automatic provider retry."
+    },
+    "credentials": {
+      "changed": false,
+      "description": "Existing boundary preserved, no provider calls or authorization change."
+    },
+    "egress": {
+      "changed": true,
+      "description": "Existing selected official API destination, secret rejection, redirect denial and tenant admission preserved. Price and reasoning controls are checked on serialized provider bytes. No new endpoint or credential."
+    },
+    "cost": {
+      "changed": true,
+      "description": "Existing model and output limit preserved. Forward the supported direct-output control and enforce catalogue price ceilings on the serialized request. Reserve conservatively and retain uncertain holds. No second formatting call or new provider."
+    },
+    "billing": {
+      "changed": true,
+      "description": "Settle validated provider usage.cost when supplied at integer micro-USD precision and bind it to the SDK completion and existing atomic receipt. Historical settled discrepancies are retained without manual financial SQL."
+    }
+  },
+  "tests": [
+    {
+      "command": "tsx --tsconfig frontend/tsconfig.json --test frontend/src/components/response-experience-v2/document.test.ts frontend/src/components/response-experience-v2/mathSyntax.test.ts",
+      "negative": true,
+      "scope": "Focused adapter, input, calculator, owner/AAL2 founder gate and standard math parser tests. Conflicting stream/completion text regression reproduced before correction.",
+      "reference": "docs/xroga/evidence/response-experience-v2-906/checkpoint.md"
+    },
+    {
+      "command": "node --import tsx --test backend/src/services/integrations/researchResult.test.ts frontend/src/lib/researchHandoff.test.ts",
+      "negative": true,
+      "scope": "Private storage receipt matching, cross-owner and revoked-project denial, page deduplication, exact conversation attachment and ordered blocks retained through reopen. Tests run separately within each workspace.",
+      "reference": "docs/xroga/evidence/response-experience-v2-906/live-generation-contract.md"
+    },
+    {
+      "command": "tsx --test backend/src/lib/messageShareText.test.ts backend/src/routes/messageShares.test.ts backend/src/ai/universal/runtimeFailure.test.ts",
+      "negative": true,
+      "scope": "Literal Share fidelity, unchanged owner/privacy controls and safe non-retrying empty-provider errors. No live-provider proof.",
+      "reference": "docs/xroga/evidence/response-experience-v2-906/fd3b-release-and-new-chat-20261102.md"
+    }
+  ],
+  "architecture": {
+    "change": "none",
+    "reason": "Existing single-answer prompt and renderer plus existing confirmation and private storage handoff. No new scheduler, provider, model-formatting call or database schema.",
+    "rfc": null
+  },
+  "rollout": "Production recovered to cd5541 API/Job and d86c8 frontend after failed bounded 4c6319/3fce acceptance. This table identity correction is development-only. Keep draft and preserve rollback.",
+  "rollback": "Retain cd5541 API/Job and d86c8 frontend, the legacy renderer and all earlier recovery assets. Existing SQL fence and drain procedure is required for a backend rollback.",
+  "knownGaps": [
+    "Fresh production generation on backend 4c6319/frontend 3fce045c failed full product acceptance and the cd5541/d86c8 recovery pair was restored.",
+    "Required obligation-to-answer coverage remains incomplete. The exact planner binding failure was not persisted, so its precise cause is not asserted as confirmed.",
+    "The cancelled Moonshot planner reservation has a new unresolved 38282 micro-USD hold. It and the historical GLM hold remain counted. Further paid acceptance is stopped.",
+    "Workshop, research and unrelated new-chat prompts remain unrun. Full fresh streaming, Copy/Share and product-quality acceptance are incomplete."
+  ],
+  "placeholderClaimsRemaining": [],
+  "evidenceRefs": [
+    "docs/xroga/evidence/response-experience-v2-906/checkpoint.md",
+    "docs/xroga/evidence/response-experience-v2-906/fd3b-release-and-new-chat-20261102.md",
+    "docs/xroga/evidence/response-v2-direct-output/diagnostic-observation.json",
+    "docs/xroga/evidence/response-v2-direct-output/provider-contract.md"
+  ],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "BLOCKED",
+    "blockers": [
+      "Fresh production generation on backend 4c6319/frontend 3fce045c failed full product acceptance and the cd5541/d86c8 recovery pair was restored.",
+      "Required obligation-to-answer coverage remains incomplete. The exact planner binding failure was not persisted, so its precise cause is not asserted as confirmed.",
+      "The cancelled Moonshot planner reservation has a new unresolved 38282 micro-USD hold. It and the historical GLM hold remain counted. Further paid acceptance is stopped.",
+      "Workshop, research and unrelated new-chat prompts remain unrun. Full fresh streaming, Copy/Share and product-quality acceptance are incomplete."
+    ],
+    "authenticatedE2e": "BLOCKED",
+    "stagedSecurity": "BLOCKED",
+    "liveUrl": null,
+    "deployedSha": null
+  }
+}
