@@ -1,0 +1,115 @@
+{
+  "version": "1.0",
+  "missionId": "CHROME-BROWSER-AUTOMATION-20261108",
+  "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+  "requirementIds": [
+    "XR-FAMILY-browser-execution"
+  ],
+  "state": "VERIFIED_SCOPE",
+  "risk": "high",
+  "scope": "Unpacked Manifest V3 development extension with an explicitly reviewed, local read task on the active Chrome tab. This mission does not include authenticated model planning, consequential actions, or a Web Store release.",
+  "changedFiles": [
+    "chrome-extension/README.md",
+    "chrome-extension/background.js",
+    "chrome-extension/icon-16.png",
+    "chrome-extension/icon-32.png",
+    "chrome-extension/manifest.json",
+    "chrome-extension/panel.css",
+    "chrome-extension/panel.html",
+    "chrome-extension/panel.mjs",
+    "chrome-extension/read-page.mjs",
+    "chrome-extension/task.mjs",
+    "tests/chrome-extension/browser.mjs",
+    "tests/chrome-extension/task.test.mjs",
+    "docs/xroga/missions/chrome-browser-automation-20261108.json"
+  ],
+  "decisions": {
+    "keep": [
+      "Canonical scheduler, hosted Browser Worker, model gateway and production services"
+    ],
+    "extend": [
+      "Chrome side panel and deterministic active-tab read executor for local development"
+    ],
+    "replace": [],
+    "deprecate": []
+  },
+  "schemaImpact": {
+    "changed": false,
+    "migrations": [],
+    "rollout": "No database changes. Load the extension unpacked in a test browser profile.",
+    "rollback": "Uninstall the unpacked extension."
+  },
+  "securityImpact": {
+    "auth": {
+      "changed": false,
+      "description": "No Xroga session, token exchange or new login surface."
+    },
+    "tenant": {
+      "changed": false,
+      "description": "No cross-tenant data handling or server access. The selected Chrome profile owns its tab."
+    },
+    "approval": {
+      "changed": true,
+      "description": "Explicit review for a local page read, bound to a tab, URL and document. No authority to write or spend."
+    },
+    "credentials": {
+      "changed": false,
+      "description": "No extension credentials or access to password fields, cookies or browser storage."
+    },
+    "egress": {
+      "changed": true,
+      "description": "Page content can move only from the user-approved tab into ephemeral local extension UI. The extension has no outbound data path."
+    },
+    "cost": {
+      "changed": false,
+      "description": "No cloud browser, worker service, model call or paid tool."
+    },
+    "billing": {
+      "changed": false,
+      "description": "No billing change."
+    }
+  },
+  "tests": [
+    {
+      "command": "node --test tests/chrome-extension/task.test.mjs",
+      "scope": "Four passing checks for local plan grammar, unsupported actions, URL scope and minimum permissions.",
+      "negative": true,
+      "reference": "tests/chrome-extension/task.test.mjs"
+    },
+    {
+      "command": "node tests/chrome-extension/browser.mjs",
+      "scope": "Passed in Chrome 156.0.8078.81 on isolated HTTPS fixtures. Verified real side-panel opening, rendered report through the same extension page, private fields excluded, cancellation, same-URL reload rejection, cross-origin denial and zero model calls.",
+      "negative": true,
+      "reference": "tests/chrome-extension/browser.mjs"
+    }
+  ],
+  "architecture": {
+    "change": "none",
+    "reason": "A local browser execution primitive has no scheduler, model dispatch, backend routes or authority for consequential actions.",
+    "rfc": null
+  },
+  "rollout": "Review the development branch and install unpacked in a test profile. Public release requires separate package, privacy and Chrome Web Store gates.",
+  "rollback": "Unload or remove the unpacked extension. There is no persisted task or server state to migrate.",
+  "knownGaps": [
+    "Authenticated model planning and the existing canonical approval integration remain to be implemented.",
+    "Meta Ads draft or publishing workflow has not been tested.",
+    "No Chrome Web Store review, public listing or production verification."
+  ],
+  "placeholderClaimsRemaining": [],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "BLOCKED",
+    "blockers": [
+      "Public release needs independent install/security review, privacy disclosures and Chrome Web Store submission."
+    ],
+    "authenticatedE2e": "NOT_APPLICABLE",
+    "stagedSecurity": "BLOCKED",
+    "liveUrl": null,
+    "deployedSha": null
+  },
+  "evidenceRefs": [
+    "tests/chrome-extension/task.test.mjs",
+    "tests/chrome-extension/browser.mjs"
+  ]
+}
