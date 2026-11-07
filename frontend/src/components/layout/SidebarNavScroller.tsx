@@ -3,12 +3,10 @@
 import { useCallback, useEffect, useRef, useState, type ReactNode, type RefObject } from 'react';
 import { cn } from '@/lib/utils';
 
-/** A compact progress control beside the native wheel/keyboard scroll surface. */
-export function SidebarNavScroller({ targetRef, children, className }: { targetRef: RefObject<HTMLElement>; children: ReactNode; className?: string }) {
-  return <div className={cn('xv-nav-scroller', className)}>
-    {children}
-    <CompactScrollIndicator targetRef={targetRef} controlsId="xv-sidebar-navigation" label="Sidebar" />
-  </div>;
+/** Native sidebar scrolling supports smooth wheel, trackpad, touch, keyboard and thumb dragging.
+ * The custom CompactScrollIndicator remains available for other pages. */
+export function SidebarNavScroller({ children, className }: { targetRef: RefObject<HTMLElement>; children: ReactNode; className?: string }) {
+  return <div className={cn('xv-nav-scroller', className)}>{children}</div>;
 }
 
 /** The short rail is intentionally independent of the content's scroll height. */
