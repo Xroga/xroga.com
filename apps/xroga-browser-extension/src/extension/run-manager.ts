@@ -333,7 +333,7 @@ export class RunManager {
         const actions = this.#canonicalActions.get(conversationId);
         if (actions && actions.length < 48) actions.push(body.row.tool);
       }
-    } else if (body.type === 'prompt_open' && body.prompt.kind === 'write') {
+    } else if (body.type === 'prompt_open' && body.prompt.kind === 'write-card') {
       postWorkspace({ type: 'activity', runId, status: 'approval-required' });
     } else if (body.type === 'run_status') {
       postWorkspace({ type: 'activity', runId, status: body.status });

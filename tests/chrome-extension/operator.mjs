@@ -186,6 +186,10 @@ try {
     throw error;
   });
   assert.equal(await panel.getByRole('button', { name: 'Always allow', exact: false }).count(), 0);
+  await workspace.waitForFunction(() => window.events.some(event => event[2] === 'approval-required'), undefined, {
+    timeout: 5_000,
+    polling: 100,
+  });
   assert.equal(browser.pages().some(page => page.url().startsWith(`${site}/received`)), false);
   await allow.click();
   await waitForFinish(3);
