@@ -32,3 +32,138 @@
 }
 @media (max-width:767px){[data-sidebar-work-organizer] .xv-sidebar-project-task{opacity:1}}
 .xv-sidebar-recents-section{margin-top:14px;padding-top:12px;border-top:1px solid color-mix(in srgb,var(--foreground) 12%,transparent)}
+
+/* Compact conversation rail: titles use the row width at rest, rather than
+   permanently reserving ~60px for secondary actions. No data/behavior changes. */
+[data-sidebar-work-organizer] {
+  padding-inline: 0;
+  margin-top: 10px;
+  font-family: var(--font-inter), "Segoe UI", Arial, sans-serif;
+}
+[data-sidebar-work-organizer] button {
+  font-family: inherit;
+}
+[data-sidebar-work-organizer] section h2 {
+  padding: 0 8px 7px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .01em;
+  text-transform: none;
+}
+[data-sidebar-work-organizer] .xv-sidebar-section-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  border-radius: 5px;
+  text-align: left;
+}
+[data-sidebar-work-organizer] .xv-sidebar-section-link:hover,
+[data-sidebar-work-organizer] .xv-sidebar-section-link:focus-visible {
+  color: var(--foreground);
+}
+[data-sidebar-work-organizer] .xv-sidebar-project-entry {
+  position: relative;
+  min-width: 0;
+}
+[data-sidebar-work-organizer] .xv-sidebar-expand-button {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 20px;
+  height: 30px;
+  padding: 2px;
+}
+[data-sidebar-work-organizer] .xv-sidebar-work-row {
+  position: relative;
+  width: 100%;
+  min-height: 33px;
+  gap: 0;
+  border-radius: 9px;
+}
+[data-sidebar-work-organizer] .xv-sidebar-work-row > button:first-child {
+  width: 100%;
+  min-height: 33px;
+  padding: 6px 9px;
+  font-family: var(--font-inter), "Segoe UI", Arial, sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.5;
+  letter-spacing: -.012em;
+}
+[data-sidebar-work-organizer] .xv-sidebar-work-actions {
+  position: absolute;
+  inset-inline-end: 3px;
+  top: 50%;
+  z-index: 1;
+  transform: translateY(-50%);
+  opacity: 0;
+  pointer-events: none;
+  padding: 2px;
+  border-radius: 7px;
+  background: var(--sidebar-bg, var(--background));
+}
+[data-sidebar-work-organizer] .xv-sidebar-work-row:is(:hover,:focus-within) .xv-sidebar-work-actions {
+  opacity: 1;
+  pointer-events: auto;
+}
+[data-sidebar-work-organizer] .xv-sidebar-work-row:is(:hover,:focus-within) > button:first-child {
+  padding-inline-end: 51px;
+}
+[data-sidebar-work-organizer] .xv-sidebar-project-entry .xv-sidebar-work-actions {
+  inset-inline-end: 28px;
+}
+[data-sidebar-work-organizer] .xv-sidebar-project-entry:is(:hover,:focus-within) .xv-sidebar-work-row > button:first-child {
+  padding-inline-end: 76px;
+}
+[data-sidebar-work-organizer] .xv-sidebar-project-entry > .xv-sidebar-project-task {
+  position: absolute;
+  inset-inline-end: 2px;
+  top: 3px;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 27px;
+  height: 27px;
+  padding: 0;
+  opacity: 0;
+  pointer-events: none;
+  border-radius: 7px;
+  background: var(--sidebar-bg, var(--background));
+}
+[data-sidebar-work-organizer] .xv-sidebar-project-entry:is(:hover,:focus-within) > .xv-sidebar-project-task {
+  opacity: 1;
+  pointer-events: auto;
+}
+[data-sidebar-work-organizer] .xv-sidebar-recents-section {
+  margin-top: 12px;
+  padding-top: 12px;
+}
+@media (prefers-reduced-motion: no-preference) {
+  [data-sidebar-work-organizer] .xv-sidebar-work-row:is(:hover,:focus-within) .xv-sidebar-long-title__content.is-overflowing {
+    animation: xv-sidebar-title-reveal var(--xv-title-duration, 12s) linear 1 forwards;
+  }
+}
+@keyframes xv-sidebar-title-reveal {
+  0%, 12% { transform: translateX(0); }
+  100% { transform: translateX(calc(-1 * var(--xv-title-travel))); }
+}
+/* Touch devices cannot hover: leave actions available and keep titles clear. */
+@media (hover: none), (pointer: coarse) {
+  [data-sidebar-work-organizer] .xv-sidebar-work-actions,
+  [data-sidebar-work-organizer] .xv-sidebar-project-entry > .xv-sidebar-project-task {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  [data-sidebar-work-organizer] .xv-sidebar-work-row > button:first-child {
+    padding-inline-end: 51px;
+  }
+  [data-sidebar-work-organizer] .xv-sidebar-project-entry .xv-sidebar-work-row > button:first-child {
+    padding-inline-end: 76px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-sidebar-work-organizer] .xv-sidebar-project-entry > .xv-sidebar-project-task,
+  [data-sidebar-work-organizer] .xv-sidebar-work-actions {
+    transition: none;
+  }
+}
