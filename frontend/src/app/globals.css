@@ -8793,8 +8793,7 @@ body.xv-terminal-fullscreen-active .xv-terminal-header {
 
 .xv-nav-scroller { position: relative; display: flex; flex-direction: column; min-height: 0; }
 
-.xv-sidebar-nav-scroll { scrollbar-width: none; -ms-overflow-style: none; }
-.xv-sidebar-nav-scroll::-webkit-scrollbar { width: 0; height: 0; display: none; }
+.xv-sidebar-nav-scroll { -ms-overflow-style: auto; }
 
 .xv-nav-arrow {
   position: absolute;
@@ -14588,13 +14587,41 @@ html.xv-home-scroll-lock body {
 }
 
 
-/* Short in-sidebar progress control; the nav keeps wheel and keyboard scrolling. */
+/* Native sidebar scrollbar: a subtle thumb with a real, platform-managed drag
+   target. Keep the nav independently scrollable and reclaim the old 22px gutter. */
 .xv-sidebar-nav-scroll.xv-sidebar-scroll-track {
-  scrollbar-width: none !important;
-  padding-right: 22px !important;
+  padding-right: 8px !important;
   overscroll-behavior-y: contain;
+  scrollbar-width: thin !important;
+  scrollbar-color: color-mix(in srgb, var(--foreground) 38%, transparent) transparent !important;
 }
-.xv-sidebar-nav-scroll.xv-sidebar-scroll-track::-webkit-scrollbar { display:none !important; width:0 !important; }
+.xv-sidebar-nav-scroll.xv-sidebar-scroll-track:hover,
+.xv-sidebar-nav-scroll.xv-sidebar-scroll-track:focus-within {
+  scrollbar-color: color-mix(in srgb, var(--foreground) 60%, transparent) transparent !important;
+}
+/* Fallback for browsers using the WebKit scrollbar pseudo-elements. */
+.xv-sidebar-nav-scroll.xv-sidebar-scroll-track::-webkit-scrollbar {
+  display: block !important;
+  width: 9px !important;
+  height: 9px !important;
+}
+.xv-sidebar-nav-scroll.xv-sidebar-scroll-track::-webkit-scrollbar-button {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+.xv-sidebar-nav-scroll.xv-sidebar-scroll-track::-webkit-scrollbar-track { background: transparent; }
+.xv-sidebar-nav-scroll.xv-sidebar-scroll-track::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--foreground) 38%, transparent);
+}
+.xv-sidebar-nav-scroll.xv-sidebar-scroll-track:hover::-webkit-scrollbar-thumb,
+.xv-sidebar-nav-scroll.xv-sidebar-scroll-track:focus-within::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--foreground) 60%, transparent);
+}
+@media (forced-colors: active) {
+  .xv-sidebar-nav-scroll.xv-sidebar-scroll-track { scrollbar-color: auto !important; }
+}
 .xv-nav-scroll-controls { position:absolute; right:3px; top:50%; transform:translateY(-50%); width:18px; display:flex; flex-direction:column; align-items:center; gap:3px; padding:4px 2px; border:1px solid var(--card-border); border-radius:999px; background:var(--sidebar-bg,var(--background)); box-shadow:0 4px 16px #0003; z-index:4; }
 .xv-nav-scroll-controls button { width:14px; height:14px; display:grid; place-items:center; border:0; background:transparent; color:var(--foreground); border-radius:50%; }
 .xv-nav-scroll-controls button:disabled { opacity:.25; }
