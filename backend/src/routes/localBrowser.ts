@@ -2,6 +2,7 @@ import { createHash, randomUUID } from 'node:crypto';
 import { Router, type Response } from 'express';
 import { z } from 'zod';
 import { createCanonicalExecutionState, type ExecutableTaskNode } from '../ai/executionRuntime.js';
+import { actualProviderCostMicroUsd } from '../ai/providerBudget.js';
 import type { AuthRequest } from '../middleware/auth.js';
 import { publicHttpsUrl } from '../security/boundedPublicGet.js';
 import { classifyOutboundData } from '../security/egress/dataClassification.js';
@@ -13,14 +14,29 @@ import type { Lease, LeaseStore } from '../workers/leaseStore.js';
 import { dispatchBrowserModel } from '../workers/browserModelDispatch.js';
 import { isTerminalRunStatus, PostgresBrowserRunStore, type BrowserRunRecord, type BrowserRunStore } from '../workers/browserRunStore.js';
 import { PostgresLeaseStore } from '../workers/postgresLeaseStore.js';
+import { readBrowserDocument } from './browserDocuments.js';
 
 const MODEL = 'deepseek_v4_1_flash_1017';
-const MAX_TURNS = 12;
+const MAX_TURNS = 120;
 const TURN_CEILING_MICROS = 3_000;
-const RUN_MS = 10 * 60_000;
-const limits = { ...BROWSER_RUN_DEFAULTS, maxDurationMs: RUN_MS, maxModelCostMicros: MAX_TURNS * TURN_CEILING_MICROS };
+const MAX_RUN_MICROS = 36_000;
+const MINUTE = 60_000;
+const MAX_GOAL = 16_000;
+const limits = { ...BROWSER_RUN_DEFAULTS, maxModelCostMicros: MAX_RUN_MICROS };
 const id = z.string().uuid();
-const startBody = z.object({ goal: z.string().trim().min(1).max(2_000), startUrl: z.string().max(2_048) }).strict();
+const startBody = z.object({
+  goal: z.string().trim().min(1).max(MAX_GOAL),
+  startUrl: z.string().max(2_048),
+  attachmentCount: z.number().int().min(0).max(5).default(0),
+}).strict();
+
+function runAllowance(goal: string, attachmentCount: number) {
+  const extended = attachmentCount > 0 || goal.length > 2_000;
+  const configuredTurns = Number(process.env.XROGA_LOCAL_BROWSER_MAX_TURNS);
+  const ceiling = Number.isInteger(configuredTurns) && configuredTurns >= 16
+    ? Math.min(configuredTurns, MAX_TURNS) : MAX_TURNS;
+  return { turns: Math.min(extended ? 100 : 48, ceiling), durationMs: (extended ? 90 : 40) * MINUTE };
+}
 const tool = z.object({
   type: z.literal('function'),
   function: z.object({
@@ -92,11 +108,11 @@ function publicStart(input: string) {
   }
 }
 
-function browserTask(goal: string): ExecutableTaskNode {
+function browserTask(goal: string, durationMs: number): ExecutableTaskNode {
   return {
     id: 'browser-1', objective: goal, operationType: 'browser_automation', requiredCapabilities: ['browser_automation'],
     selectedRuntime: 'local_chrome', selectedProvider: 'zurelay', selectedModel: MODEL, requiredContextReferences: [],
-    allowedFiles: [], expectedOutputSchema: {}, dependencies: [], riskLevel: 'medium', timeoutMs: RUN_MS,
+    allowedFiles: [], expectedOutputSchema: {}, dependencies: [], riskLevel: 'medium', timeoutMs: durationMs,
     retryPolicy: { maximumAttempts: 1, initialBackoffMs: 0, maximumBackoffMs: 0 },
     budget: { maximumUsd: limits.maxModelCostMicros / 1_000_000 }, validationMethod: ['local_browser_receipt'],
     evidenceRequirements: ['local_browser_receipt'], fallbackRoutes: [], status: 'pending', attempts: 0, evidence: [],
@@ -112,9 +128,19 @@ function localRecord(row: BrowserRunRecord | null, owner: string) {
 }
 
 function active(record: BrowserRunRecord) {
-  if (record.cancelRequested || isTerminalRunStatus(record.status) || Date.now() - Date.parse(record.state.createdAt) >= RUN_MS) {
+  if (record.cancelRequested || isTerminalRunStatus(record.status) || remainingMs(record) <= 0) {
     throw new BrowserRequestError(409, 'BROWSER_RUN_INACTIVE');
   }
+}
+
+function remainingMs(record: BrowserRunRecord) {
+  return Date.parse(record.state.createdAt) + Number(record.state.productManifest.localBrowserDurationMs ?? 10 * MINUTE) - Date.now();
+}
+
+function allowance(record: BrowserRunRecord) {
+  const turns = Number(record.state.productManifest.localBrowserTurn ?? 0);
+  const maxTurns = Number(record.state.productManifest.localBrowserMaxTurns ?? 12);
+  return { runId: record.runId, turns, maxTurns, remainingMs: Math.max(0, remainingMs(record)) };
 }
 
 export function createLocalBrowserRouter(resolve = configured, dispatch = dispatchBrowserModel) {
@@ -138,14 +164,17 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
     if (!lease) throw new BrowserRequestError(429, 'BROWSER_ADMISSION_BUSY');
     try {
       if (await runs.countActive(ctx.tenantId) >= 4) throw new BrowserRequestError(429, 'BROWSER_RUN_LIMIT');
+      const admitted = runAllowance(data.goal, data.attachmentCount);
       const state = createCanonicalExecutionState({
-        projectId: `user:${ctx.userId}`, requiredCapabilities: ['browser_automation'], tasks: [browserTask(data.goal)],
+        projectId: `user:${ctx.userId}`, requiredCapabilities: ['browser_automation'], tasks: [browserTask(data.goal, admitted.durationMs)],
       });
+      state.productManifest.localBrowserMaxTurns = admitted.turns;
+      state.productManifest.localBrowserDurationMs = admitted.durationMs;
       await runs.create({ tenantId: ctx.tenantId, userId: ctx.userId, state, spec: {
         executionTarget: 'local_chrome', goal: data.goal, startUrl, allowedOrigins: [new URL(startUrl).origin],
         limits, plan: null, driveProject: null,
       } });
-      return res.status(201).json({ runId: state.runId, maxTurns: MAX_TURNS });
+      return res.status(201).json({ runId: state.runId, turns: 0, maxTurns: admitted.turns, remainingMs: admitted.durationMs });
     } finally {
       await leases.release(lease).catch(() => undefined);
     }
@@ -156,12 +185,33 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
     return res.json({ account: ctx.userId });
   }));
 
+  router.post('/documents', route(async (req, res, { leases }) => {
+    const ctx = requireTenantContext(req.tenantContext);
+    const data = z.object({ name: z.string().max(200).regex(/\.(?:pdf|docx|xlsx)$/i),
+      base64: z.string().max(2_796_204).regex(/^[A-Za-z0-9+/]+={0,2}$/) }).strict().parse(req.body);
+    const bytes = Buffer.from(data.base64, 'base64');
+    if (bytes.length > 2 * 1024 * 1024 || bytes.toString('base64') !== data.base64) {
+      throw new BrowserRequestError(400, 'BROWSER_DOCUMENT_INVALID');
+    }
+    const lease = await leases.acquire({ tenantId: ctx.tenantId, runId: ctx.userId, taskId: 'local-chrome-document' },
+      `chrome-api-${randomUUID()}`, 30_000);
+    if (!lease) throw new BrowserRequestError(429, 'BROWSER_DOCUMENT_BUSY');
+    try {
+      const text = await readBrowserDocument(data.name, bytes);
+      return res.json({ text });
+    } catch {
+      throw new BrowserRequestError(422, 'BROWSER_DOCUMENT_UNREADABLE');
+    } finally {
+      await leases.release(lease).catch(() => undefined);
+    }
+  }));
+
   router.get('/runs/:runId', route(async (req, res, { runs }) => {
     const ctx = requireTenantContext(req.tenantContext);
     const row = localRecord(await runs.load(ctx.userId, id.parse(req.params.runId)), ctx.userId);
     const task = row.state.tasks[0]!;
-    const expired = !isTerminalRunStatus(row.status) && Date.now() - Date.parse(row.state.createdAt) >= RUN_MS;
-    return res.json({ runId: row.runId, status: expired ? 'interrupted' : row.status, turns: row.state.productManifest.localBrowserTurn ?? 0,
+    const expired = !isTerminalRunStatus(row.status) && remainingMs(row) <= 0;
+    return res.json({ ...allowance(row), status: expired ? 'interrupted' : row.status,
       cancelRequested: row.cancelRequested, result: task.output ?? null, evidence: task.evidence });
   }));
 
@@ -192,14 +242,21 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
     checkData(body.messages);
     const requestBytes = Buffer.byteLength(JSON.stringify(body));
     if (requestBytes > 96_000) throw new BrowserRequestError(400, 'BROWSER_CONTEXT_TOO_LARGE');
-    if (turn !== Number(row.state.productManifest.localBrowserTurn ?? 0) + 1) {
+    const admitted = allowance(row);
+    if (turn !== admitted.turns + 1) {
       throw new BrowserRequestError(409, 'BROWSER_TURN_REPLAY');
     }
+    if (turn > admitted.maxTurns) throw new BrowserRequestError(409, 'BROWSER_TURN_LIMIT');
+    // Charge the full per-turn ceiling until a settled provider receipt says otherwise.
+    // A crash or unknown charge cannot restore the allowance by resuming a task.
+    const priorSpend = Number(row.state.productManifest.localBrowserSpendMicros ?? admitted.turns * TURN_CEILING_MICROS);
+    if (priorSpend + TURN_CEILING_MICROS > MAX_RUN_MICROS) throw new BrowserRequestError(409, 'BROWSER_SPEND_LIMIT');
     const task = row.state.tasks[0]!;
     task.status = 'running';
     task.startedAt ??= new Date().toISOString();
     task.attempts = 1;
     row.state.productManifest.localBrowserTurn = turn;
+    row.state.productManifest.localBrowserSpendMicros = priorSpend + TURN_CEILING_MICROS;
     row.state.updatedAt = new Date().toISOString();
     await rt.runs.stateStore(ctx.userId, () => lease).save(row.state);
 
@@ -224,12 +281,25 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
       });
       const choice = result.choices?.[0];
       if (!choice?.message) throw new BrowserRequestError(502, 'BROWSER_MODEL_EMPTY');
+      const settled = actualProviderCostMicroUsd({
+        modelId: MODEL, inputTokens: result.usage.prompt_tokens, outputTokens: result.usage.completion_tokens,
+        cachedInputTokens: result.usage.prompt_tokens_details?.cached_tokens,
+        reasoningTokens: result.usage.completion_tokens_details?.reasoning_tokens,
+      });
+      await revalidate();
+      row.state.productManifest.localBrowserSpendMicros = priorSpend + settled;
+      await rt.runs.stateStore(ctx.userId, () => lease).save(row.state);
       return res.json({ id: result.id, model: MODEL, choice: { finish_reason: choice.finish_reason,
         message: { content: choice.message.content, tool_calls: choice.message.tool_calls } }, usage: result.usage });
     } finally {
       clearInterval(timer);
       res.off('close', disconnect);
     }
+  }));
+
+  router.post('/runs/:runId/resume', withLease(async (_req, res, _rt, row) => {
+    active(row);
+    return res.json(allowance(row));
   }));
 
   router.post('/runs/:runId/finish', withLease(async (req, res, { runs }, row, lease) => {

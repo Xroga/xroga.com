@@ -11,6 +11,13 @@ import { permissionLists } from './src/ui/manifest-permissions';
 // product's lists (WXT_PRODUCT_PERMISSIONS), to check the features without them.
 const autorun = !!process.env.WXT_AUTORUN_URL;
 const productPermissions = !autorun || !!process.env.WXT_PRODUCT_PERMISSIONS;
+const workspaceOrigin = process.env.WXT_XROGA_WORKSPACE_ORIGIN ?? 'https://xroga.com';
+if (
+  workspaceOrigin !== 'https://xroga.com' &&
+  !/^https:\/\/xrogaaicom-[a-z0-9-]+-xrogas-projects\.vercel\.app$/.test(workspaceOrigin)
+) {
+  throw new Error('Workspace pairing requires the production origin or an exact Xroga Preview origin.');
+}
 export default defineConfig({
   imports: false,
   // Unattended development builds (fixtures/autorun.mjs) go elsewhere, so dist/ stays a normal build.
@@ -42,7 +49,7 @@ export default defineConfig({
           action: { default_icon: 'icon-32.png', default_title: 'Open Xroga Browser Automation' },
           icons: { 16: 'icon-16.png', 32: 'icon-32.png' },
           // Chrome matches the path with its query. The listener validates the exact pathname.
-          externally_connectable: { matches: ['https://xroga.com/workspace*'], ids: [] },
+          externally_connectable: { matches: [`${workspaceOrigin}/workspace*`], ids: [] },
           content_security_policy: {
             extension_pages:
               "script-src 'self'; object-src 'self'; connect-src 'self' blob:; base-uri 'none'; form-action 'none'",
@@ -96,6 +103,7 @@ export default defineConfig({
   },
   vite: env => ({
     plugins: [react()],
+    define: { __XROGA_WORKSPACE_ORIGIN__: JSON.stringify(workspaceOrigin) },
     resolve: {
       alias: {
         '@xroga/runtime-background': resolve(

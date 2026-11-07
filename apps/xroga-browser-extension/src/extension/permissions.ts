@@ -6,6 +6,7 @@ import { decideWrite, siteRulesStorage } from '@src/store/settings';
 import type { SiteRuleEntry } from '@src/store/settings';
 import type { PermissionMode } from '@src/store/types';
 import { XROGA_PRODUCT } from '@src/xroga/product';
+import { WORKSPACE_URL } from '@src/xroga/workspace';
 
 export class Permissions {
   #rules: Record<string, SiteRuleEntry> = {};
@@ -41,7 +42,7 @@ export class Permissions {
   navigationPolicy() {
     return {
       allow: [],
-      deny: XROGA_PRODUCT ? ['xroga.com'] : [],
+      deny: XROGA_PRODUCT ? [...new Set(['xroga.com', new URL(WORKSPACE_URL).hostname])] : [],
       blocked: this.blockedSites(),
       publicHttps: XROGA_PRODUCT,
     };

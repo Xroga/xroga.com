@@ -106,7 +106,8 @@ export class MemoryBrowserRunStore implements BrowserRunStore {
   async isCancelRequested(runId: string): Promise<boolean> { return this.rows.get(runId)?.cancelRequested ?? false; }
   async countActive(tenantId: string): Promise<number> {
     return [...this.rows.values()].filter((r) => r.tenantId === tenantId && !isTerminalRunStatus(r.status)
-      && (r.spec.executionTarget !== 'local_chrome' || this.now() - Date.parse(r.state.createdAt) < 600_000)).length;
+      && (r.spec.executionTarget !== 'local_chrome' || this.now() - Date.parse(r.state.createdAt)
+        < Number(r.state.productManifest.localBrowserDurationMs ?? 600_000))).length;
   }
 
   async listRecoverable(staleMs: number, limit: number): Promise<BrowserRunRecord[]> {
@@ -199,7 +200,8 @@ export class PostgresBrowserRunStore implements BrowserRunStore {
   async countActive(tenantId: string): Promise<number> {
     const r = await this.pool.query<{ n: string }>(`select count(*)::text as n from public.browser_runs
       where tenant_id=$1 and status in ('queued','running')
-      and (spec->>'executionTarget' is distinct from 'local_chrome' or created_at > now() - interval '10 minutes')`, [tenantId]);
+      and (spec->>'executionTarget' is distinct from 'local_chrome' or created_at > now() -
+        coalesce((state->'productManifest'->>'localBrowserDurationMs')::integer, 600000) * interval '1 millisecond')`, [tenantId]);
     return Number(r.rows[0]?.n ?? 0);
   }
 

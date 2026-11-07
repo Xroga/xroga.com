@@ -38,13 +38,39 @@ function completionStream(value: Completion) {
   return new Response(body, { headers: { 'Content-Type': 'text/event-stream' } });
 }
 
-export async function startXrogaModelRun(goal: string, startUrl: string, signal: AbortSignal) {
-  const start = (await workspaceRequest('start', { goal, startUrl }, signal)) as { runId?: unknown };
+export async function startXrogaModelRun(
+  goal: string,
+  startUrl: string,
+  signal: AbortSignal,
+  attachmentCount: number,
+  resumeId?: string,
+) {
+  const start = (await (resumeId
+    ? workspaceRequest('resume', { runId: resumeId }, signal)
+    : workspaceRequest('start', { goal, startUrl, attachmentCount }, signal))) as {
+    runId?: string;
+    turns?: number;
+    maxTurns?: number;
+    remainingMs?: number;
+  };
   if (typeof start?.runId !== 'string' || !/^[0-9a-f-]{36}$/i.test(start.runId)) {
     throw new Error('Xroga did not admit the browser task.');
   }
   const runId = start.runId;
-  let turn = 0;
+  let turn = start.turns ?? 0;
+  const remainingTurns = (start.maxTurns ?? 12) - turn;
+  const remainingMs = start.remainingMs ?? 600_000;
+  if (
+    !Number.isSafeInteger(remainingTurns) ||
+    remainingTurns <= 0 ||
+    remainingTurns > 120 ||
+    !Number.isSafeInteger(remainingMs) ||
+    remainingMs <= 0 ||
+    remainingMs > 5_400_000 ||
+    (resumeId && resumeId !== runId)
+  ) {
+    throw new Error('This browser task has reached its time or turn limit.');
+  }
   const chat = createModel(
     { kind: 'openai-compatible', baseUrl: MODEL_URL, modelName: XROGA_MODEL, maxOutputTokens: 2_048 },
     {
@@ -82,12 +108,14 @@ export async function startXrogaModelRun(goal: string, startUrl: string, signal:
   const profile = resolveProfile({
     kind: 'openai-compatible',
     modelName: XROGA_MODEL,
-    overrides: { contextWindow: 16_000, maxOutput: 2_048, vision: false },
+    overrides: { contextWindow: 32_000, maxOutput: 2_048, vision: false },
   });
   const model: ResolvedModel = { ref: XROGA_REF, chat, profile, reasoning: 'none', reasoningDropped: true };
   return {
     runId,
     model,
+    remainingTurns,
+    remainingMs,
     async finish(status: 'completed' | 'failed' | 'cancelled', actions: string[], result?: string) {
       await workspaceRequest('finish', { runId, body: { status, actions, result: result?.slice(0, 12_000) } });
     },

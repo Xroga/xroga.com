@@ -15,7 +15,7 @@ type BridgeMessage = {
   type: string;
   id?: string;
   op?: string;
-  value?: { runId?: string; body?: unknown; goal?: string; startUrl?: string };
+  value?: { runId?: string; body?: unknown; goal?: string; startUrl?: string; attachmentCount?: number };
   runId?: string;
   status?: string;
   tool?: string;
@@ -24,12 +24,26 @@ type BridgeMessage = {
 type RunResult = { status: string; result?: { text?: string } | null };
 const API = '/api/browser/local';
 const UUID = /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i;
+const DOCUMENT = /\.(?:pdf|docx|xlsx)$/i;
+
+async function taskFile(file: File, token: string) {
+  const name = file.name.slice(0, 200);
+  const data = new Uint8Array(await file.arrayBuffer());
+  if (!DOCUMENT.test(name)) return { name, text: new TextDecoder('utf-8', { fatal: true }).decode(data) };
+  let bytes = '';
+  for (let i = 0; i < data.length; i += 32768) bytes += String.fromCharCode(...data.subarray(i, i + 32768));
+  const { text } = await apiFetch<{ text: string }>(`${API}/documents`, {
+    method: 'POST', body: JSON.stringify({ name, base64: btoa(bytes) }),
+  }, token);
+  return { name: `${name.slice(0, 196)}.txt`, text };
+}
 
 export function WorkspaceBrowserOperator({ extensionId }: { extensionId: string }) {
   const portRef = useRef<Port | null>(null);
   const activeRun = useRef('');
   const pairedToken = useRef('');
   const [goal, setGoal] = useState('');
+  const [files, setFiles] = useState<File[]>([]);
   const [target, setTarget] = useState('');
   const [paired, setPaired] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -116,24 +130,31 @@ export function WorkspaceBrowserOperator({ extensionId }: { extensionId: string 
           setBusy(false);
           return;
         }
+        if (message.type === 'paused' && message.runId === activeRun.current) {
+          setStatus('Browser task paused at a checkpoint. Continue from the Chrome side panel.');
+          setBusy(false);
+          return;
+        }
         if (message.type === 'abort' && message.id) requests.get(message.id)?.abort();
         if (message.type !== 'request' || typeof message.id !== 'string' || !UUID.test(message.id) || !message.value) return;
         const { id, op, value } = message;
         if (requests.has(id)) return;
         const isStart = op === 'start';
+        const isResume = op === 'resume' && !!value.runId && UUID.test(value.runId);
+        const isDocument = op === 'document';
         const isBound = !!value.runId && admitted.has(value.runId);
-        if (!isStart && (!isBound || (op !== 'turn' && op !== 'finish'))) {
+        if (!isStart && !isResume && !isDocument && (!isBound || (op !== 'turn' && op !== 'finish'))) {
           send({ type: 'result', id, ok: false });
           return;
         }
         const controller = new AbortController();
         requests.set(id, controller);
-        const path = isStart ? `${API}/runs` : `${API}/runs/${value.runId}/${op}`;
+        const path = isDocument ? `${API}/documents` : isStart ? `${API}/runs` : `${API}/runs/${value.runId}/${op}`;
         void apiFetch<{ runId?: string }>(path, {
           method: 'POST', signal: controller.signal,
-          body: JSON.stringify(isStart ? { goal: value.goal, startUrl: value.startUrl } : value.body),
+          body: JSON.stringify(isStart ? { goal: value.goal, startUrl: value.startUrl, attachmentCount: value.attachmentCount } : value.body),
         }, pairedToken.current).then(data => {
-          if (isStart && data.runId && UUID.test(data.runId)) admitted.add(data.runId);
+          if ((isStart || isResume) && data.runId && UUID.test(data.runId)) admitted.add(data.runId);
           send({ type: 'result', id, ok: true, value: data });
         }, () => send({ type: 'result', id, ok: false })).finally(() => requests.delete(id));
       });
@@ -159,10 +180,34 @@ export function WorkspaceBrowserOperator({ extensionId }: { extensionId: string 
         if (!portRef.current || busy) return;
         setBusy(true);
         setStatus('Opening a task tab in Chrome.');
-        portRef.current.postMessage({ type: 'start-task', goal, startUrl: target });
+        const port = portRef.current;
+        void (async () => {
+          const attachments = [];
+          // The parser admits one document at a time for this account.
+          for (const file of files) attachments.push(await taskFile(file, pairedToken.current));
+          if (port !== portRef.current) return;
+          if (attachments.some(file => !file.text.trim())) throw new Error('Empty attachment');
+          port.postMessage({ type: 'start-task', goal, startUrl: target, files: attachments });
+        })().catch(() => {
+          setBusy(false);
+          setStatus('Could not read a task file. Scanned or encrypted files need a text export.');
+        });
       }}>
         <label className="grid gap-1">Website or search<input className="rounded border bg-background p-2" value={target} onChange={event => setTarget(event.target.value)} maxLength={1800} required /></label>
-        <label className="grid gap-1">What should Xroga do?<textarea className="rounded border bg-background p-2" value={goal} onChange={event => setGoal(event.target.value)} maxLength={2000} required /></label>
+        <label className="grid gap-1">What should Xroga do?<textarea className="rounded border bg-background p-2" value={goal} onChange={event => setGoal(event.target.value)} maxLength={16000} required /></label>
+        <label className="grid gap-1">Task files <span className="text-xs">Up to five files, 2 MB each. PDF and Office files are sent to Xroga to extract text.</span>
+          <input type="file" multiple accept=".txt,.md,.csv,.tsv,.json,.pdf,.docx,.xlsx" disabled={busy} onChange={event => {
+            const selected = Array.from(event.target.files ?? []);
+            if (selected.length > 5 || selected.some(file => file.size > 2 * 1024 * 1024 ||
+              !/\.(?:txt|md|csv|tsv|json|pdf|docx|xlsx)$/i.test(file.name))) {
+              setFiles([]);
+              event.target.value = '';
+              setStatus('Choose up to five supported files, at most 2 MB each.');
+              return;
+            }
+            setFiles(selected);
+          }} />
+        </label>
         <div className="flex gap-2">
           <button type="submit" className="rounded border px-3 py-1" disabled={busy}>Start in Chrome</button>
           {busy && runId && <button type="button" className="rounded border px-3 py-1" onClick={() => {

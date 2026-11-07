@@ -56,7 +56,7 @@ export async function acquireModelRequestLease(input:{binding:PacingBinding;cred
 
 export function providerCooldownSeconds(value:string|null,now=Date.now()):number{
   const seconds=value&&/^\d+(?:\.\d+)?$/.test(value)?Number(value):value?(Date.parse(value)-now)/1000:60;
-  return Math.min(300,Math.max(60,Number.isFinite(seconds)?Math.ceil(seconds):60));
+  return Math.min(300,Math.max(1,Number.isFinite(seconds)?Math.ceil(seconds):60));
 }
 
 /** Hold the key's concurrency slot until the HTTP body finishes or is cancelled,

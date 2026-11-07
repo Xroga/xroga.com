@@ -112,11 +112,15 @@ export class RunManager {
    * until a panel has them, so a second restart before that does not lose them.
    */
   #returned = new Map<string, QueuedMessage[]>();
+  #connectionLost = new Set<string>();
 
   constructor() {
     if (XROGA_PRODUCT)
       onWorkspaceDisconnect(() => {
-        for (const id of this.#runs.keys()) this.#stop(id);
+        for (const id of this.#runs.keys()) {
+          this.#connectionLost.add(id);
+          this.#stop(id);
+        }
       });
     this.scope = new TabScope({
       blocked: () => this.permissions.blockedSites(),
@@ -328,8 +332,12 @@ export class RunManager {
     if (!runId) return;
     if (body.type === 'tool_execution_start' || body.type === 'tool_execution_end') {
       postWorkspace({ type: 'activity', runId, tool: body.row.tool, status: body.row.status });
-      if (body.type === 'tool_execution_end' && body.row.status === 'done' && body.row.tool !== 'done'
-        && (body.row.result as { ok?: unknown } | undefined)?.ok === true) {
+      if (
+        body.type === 'tool_execution_end' &&
+        body.row.status === 'done' &&
+        body.row.tool !== 'done' &&
+        (body.row.result as { ok?: unknown } | undefined)?.ok === true
+      ) {
         const actions = this.#canonicalActions.get(conversationId);
         if (actions && actions.length < 48) actions.push(body.row.tool);
       }
@@ -832,11 +840,11 @@ export class RunManager {
     const text = command.text.trim();
     if (
       XROGA_PRODUCT &&
-      (!workspacePaired() || !text || text.length > 2_000 || command.attachments.length || command.context.length)
+      (!workspacePaired() || !text || text.length > 16_000 || command.attachments.length > 5 || command.context.length)
     ) {
       this.journal.direct(command.conversationId, connection.sink, {
         type: 'error',
-        message: 'Connect Workspace and enter a browser task of up to 2,000 characters.',
+        message: 'Connect Workspace and enter a task of up to 16,000 characters with up to five files.',
       });
       return;
     }
@@ -951,6 +959,10 @@ export class RunManager {
       const kind = attachmentKind(blob.name, blob.mimeType);
       if ('refused' in kind) {
         warnings.push(`${blob.name}: ${kind.refused}`);
+        continue;
+      }
+      if (XROGA_PRODUCT && (kind.kind !== 'text' || blob.size > 2 * 1024 * 1024 || blob.data.size !== blob.size)) {
+        warnings.push('An unsupported task attachment was rejected.');
         continue;
       }
       if (blob.size > MAX_FILE) {
@@ -1302,7 +1314,7 @@ export class RunManager {
     const starting = pair ? Promise.resolve(pair) : livePair(conversationId);
     starting.catch(() => undefined);
     const controller = new AbortController();
-    const deadline = XROGA_PRODUCT ? setTimeout(() => controller.abort(), 10 * 60_000) : undefined;
+    let deadline: ReturnType<typeof setTimeout> | undefined;
     const runId = newId();
     let loopRef: AgentLoop | undefined;
     const done = (async () => {
@@ -1317,6 +1329,7 @@ export class RunManager {
         turns: 0,
         usage: ZERO_USAGE,
         debt: restore?.debt ?? [],
+        canonicalBrowserRunId: restore?.canonicalBrowserRunId,
         guards: restore?.guards ?? EMPTY_GUARDS,
         tabs: conversation.tabs,
         startedAt: now,
@@ -1342,7 +1355,18 @@ export class RunManager {
           const target = url && browserTarget(url);
           if (!goal || !target)
             throw new ModelUnavailable('Enter an HTTPS website or search before starting the task.');
-          canonical = await startXrogaModelRun(goal, target, controller.signal);
+          const attachmentCount =
+            user?.type === 'message' ? user.message.parts.filter(part => part.type === 'attachment').length : 0;
+          canonical = await startXrogaModelRun(
+            goal,
+            target,
+            controller.signal,
+            attachmentCount,
+            restore?.canonicalBrowserRunId,
+          );
+          record.canonicalBrowserRunId = canonical.runId;
+          await putRun(record);
+          deadline = setTimeout(() => controller.abort(), canonical.remainingMs);
           this.#canonicalRuns.set(conversationId, canonical.runId);
           this.#canonicalActions.set(conversationId, []);
           postWorkspace({ type: 'run', runId: canonical.runId });
@@ -1364,18 +1388,23 @@ export class RunManager {
           runId,
           startedAt: record.startedAt,
           model,
-          system: agentSystemPrompt({
-            responseLanguage: settings.responseLanguage,
-            tools: tools.map(t => t.name),
-            customInstructions: settings.customInstructions,
-          }),
+          system:
+            agentSystemPrompt({
+              responseLanguage: settings.responseLanguage,
+              tools: tools.map(t => t.name),
+              customInstructions: settings.customInstructions,
+            }) +
+            (canonical
+              ? '\nFor a consequential browser action, attempt the normal tool once so Chrome can display its scoped approval. The browser tool waits for the user before dispatch. Do not ask for a separate chat approval for the same action. Use ask_user for missing inputs and manual handover. For long tasks, check off each verified dependency and use read_attachment to recover relevant file sections before acting.'
+              : ''),
           tools,
           mode: () => this.#modes.get(conversationId) ?? conversation.mode,
           layer: layerPort(session, this.border),
           host: this.#host(conversationId, session),
           signal: controller.signal,
           emit: event => this.emit(conversationId, event),
-          turnCap: XROGA_PRODUCT ? Math.min(settings.turnCap, 12) : settings.turnCap,
+          turnCap: canonical ? Math.min(canonical.remainingTurns, settings.turnCap, 32) : settings.turnCap,
+          attachmentPreviewChars: canonical ? 8_000 : undefined,
           thumbnail,
           agentTool: (call, signal) => this.#agentTool(conversationId, call, signal),
           restore: restore ? { debt: restore.debt as DebtEntry[], guards: restore.guards } : undefined,
@@ -1400,7 +1429,11 @@ export class RunManager {
           await this.#notice(conversationId, STOPPED_BY_USER, 'info');
           await new RunWriter(conversationId, runId).appNote(STOPPED_NOTE);
         }
-        await this.#setStatus(record, end.status, end.reason);
+        await this.#setStatus(
+          record,
+          this.#connectionLost.has(conversationId) ? 'interrupted' : end.status,
+          end.reason,
+        );
         if (end.status !== 'stopped' && !(await this.#inView(conversationId))) {
           await notifyFinished(conversationId, end.outcome === 'success', (await this.scope.tabsOf(conversationId))[0]);
         }
@@ -1408,9 +1441,10 @@ export class RunManager {
         const message = error instanceof ModelUnavailable ? error.message : `The run failed: ${String(error)}`;
         await this.#notice(conversationId, message, 'error');
         record.outcome = 'failed';
-        await this.#setStatus(record, 'failed', message);
+        await this.#setStatus(record, this.#connectionLost.has(conversationId) ? 'interrupted' : 'failed', message);
       } finally {
         clearTimeout(deadline);
+        const connectionLost = this.#connectionLost.delete(conversationId);
         if (canonical) {
           const finishedRunId = canonical.runId;
           const actions = this.#canonicalActions.get(conversationId) ?? [];
@@ -1428,10 +1462,14 @@ export class RunManager {
               ? assistant.message.parts.flatMap(part => (part.type === 'text' ? [part.text] : [])).join('\n')
               : undefined);
           if (status === 'completed' && !result?.trim()) status = 'failed';
-          void canonical.finish(status, actions, status === 'completed' ? result : undefined).then(
-            () => postWorkspace({ type: 'finished', runId: finishedRunId }),
-            () => postWorkspace({ type: 'task-error', runId: finishedRunId }),
-          );
+          if (end?.status === 'capped' || end?.status === 'awaiting_user' || connectionLost) {
+            postWorkspace({ type: 'paused', runId: finishedRunId });
+          } else {
+            void canonical.finish(status, actions, status === 'completed' ? result : undefined).then(
+              () => postWorkspace({ type: 'finished', runId: finishedRunId }),
+              () => postWorkspace({ type: 'task-error', runId: finishedRunId }),
+            );
+          }
           this.#canonicalRuns.delete(conversationId);
           this.#canonicalActions.delete(conversationId);
         }

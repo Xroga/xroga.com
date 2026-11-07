@@ -57,7 +57,7 @@ export async function dispatchBrowserModel(input:{job:BrowserJob;authority:Brows
       const client=input.client?.();
       if(client&&client.model!==endpoint.apiModel)throw Object.assign(Error('Browser model destination changed.'),{code:'MODEL_DISPATCH_BINDING_DENIED'});
       await beforeDispatch(wire);
-      const completion=client?await client.create(request,{signal}):await createModelProviderClient(endpoint,beforeDispatch).chat.completions.create(request as never,{signal,maxRetries:0});
+      const completion=client?await client.create(request,{signal}):await createModelProviderClient(endpoint,beforeDispatch,dispatch.beforeDispatch).chat.completions.create(request as never,{signal,maxRetries:0});
       const inputTokens=completion?.usage?.prompt_tokens,outputTokens=completion?.usage?.completion_tokens;
       const reasoningTokens=completion?.usage?.completion_tokens_details?.reasoning_tokens??0;
       const providerRequestId=client ? completion?.id : modelTransportReceipt(endpoint).requestId;

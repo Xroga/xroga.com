@@ -41,6 +41,7 @@ export async function attachmentParts(
     /** Wraps page text with its site, for a selection; without it, selections wait. */
     wrapPage?: (text: string, site: string) => string;
     contextWindow: number;
+    maxInlineChars?: number;
     vision: boolean;
   },
 ): Promise<MessagePart[]> {
@@ -73,7 +74,11 @@ export async function attachmentParts(
       continue;
     }
     const text = await blob.data.text();
-    const budget = inlineBudget(options.contextWindow);
+    const windowBudget = inlineBudget(options.contextWindow);
+    const budget =
+      options.maxInlineChars === undefined
+        ? windowBudget
+        : Math.floor(Math.min(windowBudget, options.maxInlineChars) / files.length);
     const shown = text.slice(0, budget);
     const lines = [options.wrap(shown, { attachment: blob.name })];
     if (text.length > budget) {

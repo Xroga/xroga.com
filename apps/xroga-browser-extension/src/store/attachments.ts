@@ -3,6 +3,8 @@
 
 export const MAX_FILE = 25 * 1024 * 1024;
 export const MAX_CONVERSATION = 100 * 1024 * 1024;
+export const MAX_XROGA_FILES = 5;
+export const MAX_XROGA_FILE = 2 * 1024 * 1024;
 
 const IMAGE_TYPES = new Set(['image/png', 'image/jpeg', 'image/webp', 'image/gif']);
 const TEXT_TYPES = new Set([

@@ -68,6 +68,7 @@ export interface LoopOptions {
   signal: AbortSignal;
   emit: (event: AgentEvent) => void;
   turnCap: number;
+  attachmentPreviewChars?: number;
   /** The conversation's mode, for the page header; only the user changes it. */
   mode?: () => PermissionMode;
   now?: () => Date;
@@ -461,6 +462,7 @@ export class AgentLoop {
       wrapPage: (text, site) => this.options.layer.wrap(text, { site }),
       contextWindow: profile.contextWindow,
       vision: profile.vision,
+      maxInlineChars: this.options.attachmentPreviewChars,
     });
     const fresh = (await getEntries(this.options.conversationId)).find(e => e.id === user.id) as Entry | undefined;
     if (!fresh || fresh.type !== 'message') return;

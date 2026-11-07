@@ -83,6 +83,28 @@ describe('inlining at the start of a run', () => {
     expect(blind.filter(p => p.type === 'image')).toEqual([]);
   });
 
+  it('shares the Xroga inline ceiling across files and exposes the offset for each', async () => {
+    const c = await createConversation({ mode: 'ask' });
+    const first = await file(c.id, 'a.csv', 'text/csv', 'a'.repeat(5_000));
+    const second = await file(c.id, 'b.csv', 'text/csv', 'b'.repeat(5_000));
+    const parts = await attachmentParts([first, second], {
+      conversationId: c.id,
+      wrap,
+      contextWindow: 32_000,
+      maxInlineChars: 8_000,
+      vision: false,
+    });
+    const [, a, b] = parts as Array<Extract<MessagePart, { type: 'text' }>>;
+    for (const [part, char] of [
+      [a, 'a'],
+      [b, 'b'],
+    ] as const) {
+      expect(part.text).toContain(char.repeat(4_000));
+      expect(part.text).not.toContain(char.repeat(4_001));
+      expect(part.text).toContain('offset 4000 reads on');
+    }
+  });
+
   it('ignores a file of another conversation', async () => {
     const c = await createConversation({ mode: 'ask' });
     const other = await file('someone-else', 'secret.txt', 'text/plain', 'not yours');

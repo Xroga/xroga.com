@@ -214,6 +214,7 @@ export interface PendingPrompt {
 export interface RunRecord {
   conversationId: string;
   runId: string;
+  canonicalBrowserRunId?: string;
   leafEntryId: string | null;
   status: RunStatus;
   outcome?: 'success' | 'partial' | 'failed';

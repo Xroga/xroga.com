@@ -17,6 +17,8 @@
     "apps/xroga-browser-extension/src/side-panel/App.tsx",
     "backend/src/index.ts",
     "backend/src/routes/localBrowser.ts",
+    "backend/src/routes/browserDocuments.ts",
+    "docs/operations/zurelay-product-pacing-20261104/provider-request-capacity-v2.sql",
     "backend/src/workers/browserRunStore.ts",
     "backend/src/workers/browserModelDispatch.ts",
     "frontend/src/app/(workspace)/workspace/page.tsx",
@@ -30,10 +32,10 @@
     "deprecate": []
   },
   "schemaImpact": {
-    "changed": false,
-    "migrations": [],
-    "rollout": "Local Chrome rows use a new target value in the existing browser run spec JSON. Activate only on compatible frontend and API releases.",
-    "rollback": "Disable the local Chrome API flag and Workspace extension ID, preserving existing browser runs and ledger entries."
+    "changed": true,
+    "migrations": ["docs/operations/zurelay-product-pacing-20261104/provider-request-capacity-v2.sql"],
+    "rollout": "Apply the shared pacing expansion with legacy defaults before enabling a verified key pilot. Local Chrome run limits and usage use the existing state JSON. Activate only on compatible frontend and API releases.",
+    "rollback": "Restore the previous per-key interval and concurrency without clearing leases or ledger entries. Disable the local Chrome API flag and Workspace extension ID to stop new local runs."
   },
   "securityImpact": {
     "auth": { "changed": true, "description": "Workspace verifies an existing account before pairing and authenticates each API request. The browser service worker never holds the account bearer." },
@@ -42,19 +44,20 @@
     "credentials": { "changed": false, "description": "Xroga uses the existing platform model credential on the server." },
     "egress": { "changed": true, "description": "A paired Workspace tab relays bounded model turns through the authenticated Xroga API. The server rejects image, secret-bearing and oversized context." },
     "cost": { "changed": true, "description": "The enabled feature can spend through the existing provider ledger. Run and turn caps bound the route. Fixture tests spend zero." },
-    "billing": { "changed": false, "description": "The existing ledger admits and settles platform-funded Zurelay requests." }
+    "billing": { "changed": false, "description": "The existing ledger admits and settles platform-funded Zurelay requests. The task allowance uses the same receipt calculation and retains the full per-turn ceiling when the charge is unknown." }
   },
   "tests": [
     { "command": "node tests/chrome-extension/operator.mjs <playwright> <chrome> [temporary-profile-parent]", "scope": "Passed in Chrome 156 with a deterministic model. Verified both entry points, real navigation, a single-field GET form that needed one-time approval, and a stopped pending turn.", "negative": true, "reference": "tests/chrome-extension/operator.mjs" },
+    { "command": "node --import tsx tests/chrome-extension/operator.mjs <playwright> <chrome> <temporary-profile-parent> --live-zurelay", "scope": "The isolated Chrome probe uses the exact live Zurelay model with a synthetic site and Workspace bridge. Hosted authentication and settlement are separate acceptance requirements.", "negative": false, "reference": "tests/chrome-extension/operator.mjs" },
     { "command": "tsx --test backend/src/routes/localBrowser.test.ts", "scope": "Canonical owner binding, hosted recovery exclusion, input refusal, replay rejection and cancellation.", "negative": true, "reference": "backend/src/routes/localBrowser.test.ts" }
   ],
   "architecture": { "change": "extends_canonical", "reason": "Local Chrome uses the existing browser run records, execution leases and metered model dispatch, and hosted recovery skips this execution target.", "rfc": null },
   "rollout": "Keep the product disabled until integrated release gates and genuine model acceptance pass.",
   "rollback": "Disable the feature flags and disconnect or remove the extension.",
   "knownGaps": [
-    "Authenticated staging with real Zurelay, multi-user browser acceptance, and approved live website workflows are pending.",
+    "Authenticated staging with live ledger settlement, multi-user Chrome acceptance, and approved live website workflows are pending.",
     "Model vision remains disabled for browser tasks until this exact route passes privacy and modality acceptance.",
-    "A resumed local task starts a new backend attempt while preserving local interruption and action debt. Durable automatic cross-device resumption is unavailable.",
+    "Explicit resume preserves the same run ID, time and spend on the paired device. A full Chrome restart and re-pair still needs live acceptance.",
     "The repository-wide mission check inherits a stale voice mission ancestry reference."
   ],
   "placeholderClaimsRemaining": [],
@@ -62,7 +65,7 @@
   "claimsAllBatchCommandsComplete": false,
   "release": {
     "state": "BLOCKED",
-    "blockers": ["Authenticated staging, real Zurelay tool use and usage settlement, site-specific approvals and verified outcomes, and release approval."],
+    "blockers": ["Authenticated hosted staging, hosted settlement reconciliation, browser restart acceptance, site-specific outcomes, and source-pinned release approval."],
     "authenticatedE2e": "BLOCKED",
     "stagedSecurity": "BLOCKED",
     "liveUrl": null,

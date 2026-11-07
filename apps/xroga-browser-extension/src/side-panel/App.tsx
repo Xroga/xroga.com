@@ -12,7 +12,7 @@ import { applyTheme } from '@src/ui/theme';
 import { PanelClient, panelTabId } from './client';
 import { Composer, pickModel, sameModel } from './Composer';
 import type { LauncherItem, ModelChoice, PendingFile } from './Composer';
-import { attachmentKind, MAX_FILE } from '@src/store/attachments';
+import { attachmentKind, MAX_FILE, MAX_XROGA_FILE, MAX_XROGA_FILES } from '@src/store/attachments';
 import { voiceLanguage, voiceSetup } from '@src/ui/voice';
 import { transcribeAudio } from '@src/llm/transcribe';
 import { newId, putBlob } from '@src/store/conversations';
@@ -144,10 +144,34 @@ export function App() {
    */
   const attach = async (list: File[]) => {
     setAttachError(null);
-    for (const file of list) {
+    const available = MAX_XROGA_FILES - files.length;
+    if (XROGA_PRODUCT && list.length > available) setAttachError('Attach up to five files per task.');
+    for (let file of XROGA_PRODUCT ? list.slice(0, Math.max(0, available)) : list) {
+      if (XROGA_PRODUCT && /\.(?:pdf|docx|xlsx)$/i.test(file.name) && file.size <= MAX_XROGA_FILE) {
+        try {
+          let bytes = '';
+          const buffer = new Uint8Array(await file.arrayBuffer());
+          for (let i = 0; i < buffer.length; i += 32768) bytes += String.fromCharCode(...buffer.subarray(i, i + 32768));
+          const prepared = await chrome.runtime.sendMessage({
+            type: 'xroga.browser.document.v1',
+            name: file.name,
+            base64: btoa(bytes),
+          });
+          if (!prepared || typeof prepared.text !== 'string' || !prepared.text.trim())
+            throw new Error('Empty document');
+          file = new File([prepared.text], `${file.name}.txt`, { type: 'text/plain' });
+        } catch {
+          setAttachError(`Could not extract text from ${file.name}. Check Workspace pairing and file limits.`);
+          continue;
+        }
+      }
       const kind = attachmentKind(file.name, file.type);
       if ('refused' in kind) {
         setAttachError(t(`attach.refused.${kind.reason}`, { name: file.name }));
+        continue;
+      }
+      if (XROGA_PRODUCT && (kind.kind !== 'text' || file.size > MAX_XROGA_FILE)) {
+        setAttachError('This connection accepts text files up to 2 MB, including CSV and TSV.');
         continue;
       }
       if (file.size > MAX_FILE) {
@@ -328,6 +352,10 @@ export function App() {
     }
     if (text.trim() === '/new') return newChat();
     if (active && state.conversationId) {
+      if (XROGA_PRODUCT && files.length) {
+        setAttachError('Wait for this task to pause or finish before adding more files.');
+        return;
+      }
       client.send({
         type: 'queue',
         conversationId: state.conversationId,
@@ -670,7 +698,7 @@ export function App() {
         onRemoveQuote={index => setQuotes(current => current.filter((_, i) => i !== index))}
         transcribe={transcribe}
         onOpenSettings={section => void chrome.tabs.create({ url: chrome.runtime.getURL(`/options.html#${section}`) })}
-        onAttach={XROGA_PRODUCT ? undefined : list => void attach(list)}
+        onAttach={list => void attach(list)}
         onScreenshot={() =>
           client?.send({ type: 'screenshot-tab', tabId: client.tabId, conversationId: state.conversationId })
         }
