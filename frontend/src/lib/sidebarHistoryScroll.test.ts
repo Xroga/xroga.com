@@ -11,15 +11,18 @@ const STYLES = read('../styles/uiverse.css');
 const CAPABILITIES = read('../components/dashboard/UpcomingCapabilitySection.tsx');
 const ROCKET = read('../components/icons/animated/RocketIcon.tsx');
 
-test('a compact control scrolls the unified sidebar without a full-height native thumb', () => {
+test('sidebar uses a minimal native draggable scrollbar without an overlay control', () => {
   assert.match(NAV, /xv-sidebar-scroll-track/);
   assert.match(SCROLLER, /xv-nav-scroller/);
-  assert.match(SCROLLER, /CompactScrollIndicator[\s\S]*ChevronUp|ChevronUp[\s\S]*CompactScrollIndicator/);
-  assert.match(SCROLLER, /aria-controls=\{controlsId\}/);
-  assert.match(GLOBAL, /xv-nav-scroll-progress/);
-  assert.match(GLOBAL, /scrollbar-width: none !important/);
-  assert.doesNotMatch(HISTORY, /max-h-\[280px\]/);
-  assert.match(GLOBAL, /xv-repos-scroll \{ overflow: visible !important; max-height: none !important/);
+  const wrapper = SCROLLER.slice(0, SCROLLER.indexOf('export function CompactScrollIndicator'));
+  assert.doesNotMatch(wrapper, /<CompactScrollIndicator/, 'no narrow overlay thumb inside the sidebar');
+  assert.match(GLOBAL, /scrollbar-width: thin !important/);
+  assert.match(GLOBAL, /scrollbar-color: color-mix/);
+  assert.match(GLOBAL, /::-webkit-scrollbar-button/);
+  assert.match(GLOBAL, /overscroll-behavior-y: contain/);
+  assert.doesNotMatch(HISTORY, /max-h-\\[280px\\]/);
+  assert.match(GLOBAL, /xv-repos-scroll \\{ overflow: visible !important; max-height: none !important/);
+  assert.match(SCROLLER, /export function CompactScrollIndicator/, 'other pages still use their indicator');
 });
 
 test('projects precede conditional pinned items and recents with account-scoped durable pins', () => {
