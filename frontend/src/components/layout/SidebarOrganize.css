@@ -167,3 +167,43 @@
     transition: none;
   }
 }
+
+/* Quiet proportional scrollbar. Keeps wheel, drag, touch and arrow-key scrolling
+   while removing the large pill, arrow buttons and their text obstruction. */
+.xv-nav-scroll-minimal {
+  position: absolute;
+  inset-block: 10px;
+  inset-inline-end: 2px;
+  z-index: 4;
+  width: 7px;
+  padding: 0 1px;
+  opacity: .45;
+  transition: opacity 150ms ease;
+}
+.xv-nav-scroller:hover .xv-nav-scroll-minimal,
+.xv-nav-scroll-minimal:focus-within { opacity: 1; }
+.xv-nav-scroll-minimal__track {
+  position: relative;
+  display: block;
+  width: 5px;
+  height: 100%;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--foreground) 7%, transparent);
+  cursor: ns-resize;
+  touch-action: none;
+}
+.xv-nav-scroll-minimal__track > span {
+  position: absolute;
+  inset-inline: 0;
+  display: block;
+  min-height: 22px;
+  border-radius: inherit;
+  background: color-mix(in srgb, var(--foreground) 45%, transparent);
+}
+.xv-nav-scroll-minimal__track:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .xv-nav-scroll-minimal { transition: none; }
+}
