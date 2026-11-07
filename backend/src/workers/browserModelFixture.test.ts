@@ -10,7 +10,7 @@ export const ownedBrowserJob=(attempt=1)=>parseBrowserJob({version:1,tenantId:br
   allowedOrigins:['https://example.com'],startUrl:'https://example.com/',limits:{maxDurationMs:60000,maxNavigations:10,maxRedirects:1,maxPages:1,maxResponseBytes:1000000,maxArtifactBytes:1000000,maxModelCostMicros:2000000}});
 export function browserModelFixture(t:TestContext){
   const env={NODE_ENV:'test',SUPABASE_URL:'http://127.0.0.1:55436',SUPABASE_SERVICE_ROLE_KEY:'synthetic-db-service-key',
-    OPENROUTER_API_KEY:'synthetic-platform-model-key',GLM_API_KEY:'synthetic-platform-model-key',DEEPSEEK_V4_FLASH_MODEL_ID:'deepseek/deepseek-v4-flash'};
+    ZURELAY_API_KEY:'synthetic-platform-model-key'};
   const old=Object.fromEntries(Object.keys(env).map(k=>[k,process.env[k]]));Object.assign(process.env,env);
   t.after(()=>{for(const k of Object.keys(env)){if(old[k]===undefined)delete process.env[k];else process.env[k]=old[k];}});
   const context=createTenantContext({userId:browserOwner,via:'remote_getuser'});
@@ -21,10 +21,11 @@ export function browserModelFixture(t:TestContext){
     reply:(_body:any):any=>({id:'synthetic-browser-provider',choices:[{message:{content:'owned fixture'}}],usage:{prompt_tokens:1000,completion_tokens:200}})};
   t.mock.method(globalThis,'fetch',async(input:Parameters<typeof fetch>[0],init?:RequestInit)=>{
     const url=new URL(String(input));const body=init?.body?JSON.parse(String(init.body)):{};
-    if(['https://openrouter.ai','https://open.bigmodel.cn'].includes(url.origin)){
+    if(url.origin==='https://api.zurelay.com'){
+      assert.equal(url.pathname,'/v1/chat/completions');assert.equal(new Headers(init?.headers).get('x-zurelay-fallback'),'off');
       assert.equal(init?.redirect,'manual');bodies.push(body);
       assert.equal(new Headers(init?.headers).get('authorization'),'Bearer synthetic-platform-model-key');
-      const value=await fixture.reply(body);return value instanceof Response?value:Response.json(value);
+      const value=await fixture.reply(body);return value instanceof Response?value:Response.json({...value,model:body.model,...(value.usage?{usage:{...value.usage,total_tokens:value.usage.prompt_tokens+value.usage.completion_tokens}}:{})},{headers:{'x-request-id':value.id??'synthetic-browser-trace','x-zurelay-model':body.model}});
     }
     assert.equal(url.origin,env.SUPABASE_URL,'No uncontrolled transport is allowed');
     if(url.pathname==='/rest/v1/projects')return Response.json(fixture.owner===browserOwner?{id:browserProject}:null);

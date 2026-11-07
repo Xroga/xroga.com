@@ -1,0 +1,94 @@
+{
+  "scope": "SOURCE_BOUND_POLICY_AND_FIXTURE_CORRECTION_NOT_LIVE_ACCEPTANCE",
+  "reference": "10d6f51dc0816c0d78d0c1f8efb85d37d02297bd",
+  "observedCi": {
+    "run": "41631708730",
+    "source": "10d6f51dc0816c0d78d0c1f8efb85d37d02297bd",
+    "tests": 5284,
+    "pass": 5215,
+    "fail": 63,
+    "skips": 6
+  },
+  "sources": [
+    {
+      "path": "backend/src/lib/capabilityRegistry.test.ts",
+      "previousSha256": "a08015dff6952cd5d11069d6d659e0932ac85bfa0c4a6c046127268b64678ea1",
+      "currentSha256": "5dc278491797595998ce4d29d56af4dac0c632cf395d4fc0fbc49c6a77cafc9b"
+    },
+    {
+      "path": "backend/src/lib/capabilityRegistry.ts",
+      "previousSha256": "7a3c0d8d90c77e86c3e715aa05599fd5ef2906a63840031e7239c030a65378e9",
+      "currentSha256": "89ac1ded8dbbbcfddc9bf0d05f8cf10c330d7ab10fb80c421ab8f73130cdaec6"
+    },
+    {
+      "path": "backend/src/operations/benchmarkAdapter.test.ts",
+      "previousSha256": "df4aeb8001ff907a01184e7d3917ac08c01265a16adc6ff92e94ce9f7473a63d",
+      "currentSha256": "770a02820b8576ab15654af7ea237f98176f85137644983d33c3060d72659d68"
+    },
+    {
+      "path": "backend/src/security/confirmationMetadata.local.integration.ts",
+      "previousSha256": "ef3c329225da0a1de18d532b7566bb2eb56d263846eb9e2fbe8434377ea817e4",
+      "currentSha256": "0cf4b051b46d1d11a9573d3bef8d774dd22d15e8a586b18a1e027480660ef100"
+    },
+    {
+      "path": "backend/src/security/tenantIsolation.local.integration.ts",
+      "previousSha256": "51e46db6343128f1e21a27aff3fb7d75c02d755d101ab374340b1e71c4ebc46d",
+      "currentSha256": "ca10dcce1588319a590acc2c5db06294bb0ac47af4b81c3186b0dc9db03068f4"
+    },
+    {
+      "path": "backend/src/services/integrations/businessModelEgress.test.ts",
+      "previousSha256": "228f5d4d95377dfadf6f5af33c0998acd99701e65d3d0117bdacf3afe573d4fc",
+      "currentSha256": "bcef7f0712aa9a56727c3f32ebe3a59a7076a7ebfb0a5c1219dab084573a0e25"
+    },
+    {
+      "path": "backend/src/services/scaffolds/scaffolds.test.ts",
+      "previousSha256": "cf06beb659917ec472f283f7a008eb333006754e1ddce914a86246e1cb43c283",
+      "currentSha256": "024468160d3cf566ce7154f5cbd353aef85ce6a20831d42e519daf6099416bf7"
+    },
+    {
+      "path": "backend/src/synthesis/coherentImplementation.test.ts",
+      "previousSha256": "f9476da81c5df78caa61625fa099f375a601c896b14db4eb0a02767487d6bb58",
+      "currentSha256": "9d331d684c5997113735e145a5770f6d391fafe75bc625e02ac6bfbc02014648"
+    },
+    {
+      "path": "backend/src/synthesis/coherentImplementation.ts",
+      "previousSha256": "92f310a4bee2d7f762debce3e6a9f2351a2fb540fdb42248f55739bc3b7e70c8",
+      "currentSha256": "2fb40f8360bed39a7483af67e1ede2bd8f48172e5420f7275e8992485ba703ef"
+    },
+    {
+      "path": "backend/src/synthesis/incrementalImplementation.test.ts",
+      "previousSha256": "bbe36336d5457bf17b8d073747b65e13e7195a8d196ecb6760086f537b91c4fb",
+      "currentSha256": "e9ac5af90ed79bff19369f008516a120bf19f56cdae317343571423988121288"
+    },
+    {
+      "path": "backend/src/synthesis/incrementalImplementation.ts",
+      "previousSha256": "83521be1d68976af19a4e74f0517d94c1ef323821873a3b0c75967c2b9110b59",
+      "currentSha256": "922a46c183ff8fe101e9aea7b9d41c9aefa355ee3bb5b7aea929201ebd8515ff"
+    },
+    {
+      "path": "backend/src/synthesis/universalCanonicalTasks.test.ts",
+      "previousSha256": "3852f57526b43bac4af190bf3ad9feb90f319cb20c674266cb9c5f3fe44f9c9c",
+      "currentSha256": "bbd71ce4d4195371a81d7263c31bd3e447b9027b3ad3d1b61b4599e35182a829"
+    },
+    {
+      "path": "backend/src/synthesis/universalEntrypoint.test.ts",
+      "previousSha256": "00d5518e22b9ceb592f3938ca967f147a131e00aa6eececf5f062a42792c71d9",
+      "currentSha256": "26f7233d26b484cb080a4573f7e7d61d58a2aea6311d5df123e848191915310d"
+    }
+  ],
+  "review": [
+    "Coherent and per-file synthesis keep only the selected canonical model. Ordinary outages, invalid output and truncated individual files cannot purchase another model or retry. Existing bounded continuation of already validated missing source remains the same task and must use its canonical ledger authority.",
+    "Historical X research remains listed as explicitly unavailable, with no credentials or fallback. An old key cannot activate it.",
+    "Fixtures now exercise approved DeepSeek identities and real Zurelay JSON/usage headers. Negative tenant/owner/wire/accounting cases remain. Benchmark fixtures retain approval and cost checks.",
+    "Real database reservation tests preserve concurrency, changed-intent, foreign-settlement, idempotency and uncertain-hold assertions. They now explicitly reject historical Kimi and unapproved Sonnet before DB reservation. These two database cases await the corrected-source CI run.",
+    "No production data, SQL, keys, paid requests, release image or API/Job configuration was changed."
+  ],
+  "focusedTests": {
+    "correctedGroup": "df7c5d7a-f002-4a45-93a5-d9f8e265b35d",
+    "tests": 89,
+    "pass": 89,
+    "fail": 0,
+    "skips": 0
+  },
+  "gates": "Exact-source CI remains required. No current production or authenticated new-chat acceptance is claimed."
+}

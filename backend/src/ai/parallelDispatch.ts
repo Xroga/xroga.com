@@ -12,8 +12,12 @@ import {finishFailedProviderReservation,type ProviderReservation} from './provid
 import {PostCompletionAccountingError} from './postCompletionAccounting.js';
 import {WEB_PRICE_VERSION} from './webBudget.js';
 import {AuthorityError} from '../security/authority/enforce.js';
+import {deepseekSearchCredential,researchSearchMicroUsd,deepseekSearchBody,normaliseDeepseekSearch,DEEPSEEK_SEARCH_URL} from './researchSearchProvider.js';
 
 type Operation='search'|'extract'|'responses';
+function requireRetrievalOperation(operation: string): void {
+  if (operation !== 'search' && operation !== 'extract') throw Object.assign(new Error('Generative research uses the canonical Zurelay model path.'), {code:'MODEL_DESTINATION_DENIED',status:400});
+}
 const denied=()=>Object.assign(new Error('Research dispatch admission is unavailable.'),{code:'PROVIDER_RESERVATION_DENIED',retryable:false});
 const exact=(a:unknown,b:number)=>(typeof a==='number'||typeof a==='string'&&/^\d+$/.test(a))&&Number(a)===b&&Number.isSafeInteger(Number(a));
 
@@ -24,6 +28,7 @@ const exact=(a:unknown,b:number)=>(typeof a==='number'||typeof a==='string'&&/^\
  * review obligations, never certified by this low-level transport alone.
  */
 export async function executeParallelRequest(input:{scope:TenantModelScope|undefined;userId:string;operation:Operation;body:Record<string,unknown>;signal?:AbortSignal;admission?:ParallelAdmission}):Promise<Response>{
+  requireRetrievalOperation(input.operation);
   const context=requireTenantContext(input.scope?.context);requireResourceOwner(context,input.userId);
   const scope={...input.scope!,context},body=structuredClone(input.body),operation=input.operation,signal=input.signal;
   const attempt=scope.runAttempt?requireAdmittedRunAttempt(scope.runAttempt):undefined;
@@ -31,7 +36,8 @@ export async function executeParallelRequest(input:{scope:TenantModelScope|undef
   // One dispatch remains bound to the platform credential present at admission.
   // Rotation or removal cannot silently substitute a different credential after
   // ownership, audit, reservation or provider-response waits.
-  const credential=operation==='extract'?'native-credential-free':getSecret('PARALLEL_API_KEY');
+  // Public-web search uses only the dedicated official DeepSeek Search credential. Without it, search is refused.
+  const credential=operation==='extract'?'native-credential-free':deepseekSearchCredential();
   if(!credential)throw denied();
   const check=async()=>{
     signal?.throwIfAborted();requireResourceOwner(context,scope.userId);
@@ -44,7 +50,7 @@ export async function executeParallelRequest(input:{scope:TenantModelScope|undef
       if(error||!data||data.id!==attempt.runId||data.user_id!==context.userId||data.project_id!==(scope.projectId??null)
         ||data.status!=='running'||data.worker_id!==attempt.workerId||data.lease_generation!==attempt.generation)throw denied();
     }
-    if(operation!=='extract'&&(!credential||getSecret('PARALLEL_API_KEY')!==credential))throw denied();
+    if(operation!=='extract'&&(!credential||deepseekSearchCredential()!==credential))throw denied();
     await admission?.check();
     signal?.throwIfAborted();
   };
@@ -53,20 +59,15 @@ export async function executeParallelRequest(input:{scope:TenantModelScope|undef
     if(body.mode!=='turbo'||!Array.isArray(body.search_queries)||!body.search_queries.length||body.search_queries.length>3
       ||body.search_queries.some(q=>typeof q!=='string'||q.length>500)||typeof body.objective!=='string'||body.objective.length>4000
       ||Object.keys(body).some(k=>!['mode','objective','search_queries'].includes(k)))throw denied();
-    amount=1000;route='parallel_search_turbo';
+    amount=researchSearchMicroUsd();route='deepseek_search';
   }else if(operation==='extract'){
     if(!Array.isArray(body.urls)||!body.urls.length||body.urls.length>4||body.urls.some(u=>typeof u!=='string')
       ||typeof body.objective!=='string'||body.objective.length>4000||Object.keys(body).some(k=>!['urls','objective'].includes(k)))throw denied();
     for(const url of body.urls as string[])publicHttpsUrl(url);
     units=body.urls.length;amount=0;route='native_public_extract';
-  }else if(operation==='responses'){
-    const effort=(body.reasoning as {effort?:unknown})?.effort;
-    if(body.model!=='parallel'||typeof body.input!=='string'||body.input.length>10000||!['low','medium'].includes(String(effort))
-      ||Object.keys(body).some(k=>!['model','input','reasoning'].includes(k))||Object.keys(body.reasoning as object).some(k=>k!=='effort'))throw denied();
-    amount=effort==='medium'?50000:10000;route=effort==='medium'?'parallel_responses_medium':'parallel_responses_low';
   }else throw denied();
   await check();
-  const destination=`https://api.parallel.ai/v1/${operation}`;
+  const destination=DEEPSEEK_SEARCH_URL;
   if(!admission)return Response.json(await prepareParallelApproval(scope,operation,body,signal),{status:202});
   // Known URLs are fetched only by the credential-free DNS-pinned native path.
   if(operation==='extract')throw denied();
@@ -94,8 +95,8 @@ export async function executeParallelRequest(input:{scope:TenantModelScope|undef
   let completed=false,settledVerified=false;
   try{
     await check();
-    const response=await fetch(destination,{method:'POST',redirect:'manual',headers:{'Content-Type':'application/json',...(operation==='responses'?{Authorization:`Bearer ${credential}`}:{'x-api-key':credential})},
-      body:JSON.stringify(body),signal:AbortSignal.any([AbortSignal.timeout(operation==='responses'?45000:25000),...(signal?[signal]:[])])});
+    const response=await fetch(destination,{method:'POST',redirect:'manual',headers:{'Content-Type':'application/json',Authorization:`Bearer ${credential}`},
+      body:JSON.stringify(deepseekSearchBody(body as {objective:string;search_queries:string[]})),signal:AbortSignal.any([AbortSignal.timeout(25000),...(signal?[signal]:[])])});
     if(response.redirected||response.status>=300&&response.status<400){await response.body?.cancel().catch(()=>undefined);throw new EgressDenied('UNSAFE_DESTINATION');}
     if(response.status===401||response.status===403){await response.body?.cancel().catch(()=>undefined);throw new AuthorityError('PARALLEL_PROVIDER_AUTHORIZATION_DENIED');}
     if(!response.ok){void response.body?.cancel().catch(()=>undefined);throw Object.assign(new Error(`Parallel provider request failed (${response.status}).`),{status:response.status});}
@@ -103,11 +104,13 @@ export async function executeParallelRequest(input:{scope:TenantModelScope|undef
     const reader=response.body?.getReader();let size=0;const chunks:Uint8Array[]=[];
     try{if(!reader)throw new Error('Missing provider receipt');for(;;){const next=await reader.read();if(next.done)break;size+=next.value.length;if(size>2*1024*1024)throw new Error('Provider receipt too large');chunks.push(next.value);}}
     finally{await reader?.cancel().catch(()=>undefined);reader?.releaseLock();}
-    const text=Buffer.concat(chunks).toString('utf8'),data=JSON.parse(text),requestId=data?.[operation==='search'?'search_id':'id'];
+    const received=Buffer.concat(chunks).toString('utf8');
+    // DeepSeek results are normalised into the existing result shape; its receipt identity is the x-ds-trace-id header.
+    const data=normaliseDeepseekSearch(JSON.parse(received),response.headers.get('x-ds-trace-id'));
+    const text=JSON.stringify(data),requestId=data.search_id;
     if(operation==='search'&&(!Array.isArray(data.results)||data.results.some((r:unknown)=>!r||typeof r!=='object'||typeof (r as {url?:unknown}).url!=='string'
       ||(r as {title?:unknown}).title!==undefined&&typeof (r as {title?:unknown}).title!=='string'
       ||(r as {excerpts?:unknown}).excerpts!==undefined&&(!Array.isArray((r as {excerpts?:unknown}).excerpts)||((r as {excerpts:unknown[]}).excerpts).some(v=>typeof v!=='string')))))throw new Error('Malformed provider result');
-    if(operation==='responses'&&(data.output_text!==undefined&&typeof data.output_text!=='string'||data.output!==undefined&&!Array.isArray(data.output)))throw new Error('Malformed provider result');
     if(typeof requestId!=='string'||!requestId.trim()||requestId!==requestId.trim()||requestId.length>500
       ||/[\x00-\x20\x7f]/.test(requestId)||containsCredentialSecretText(requestId))throw new Error('Missing or unsafe provider request identity');
     const {data:settled,error}=await db.rpc('settle_xroga_provider_budget',{p_user_id:context.userId,p_reservation_id:reservation.id,p_actual_micro_usd:amount,p_provider_request_id:requestId,

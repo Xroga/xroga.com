@@ -31,6 +31,8 @@ import { cn } from '@/lib/utils';
 import { projectContextKey } from '@/lib/projectContext';
 import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
 import { SidebarMovingTitle } from '@/components/layout/SidebarMovingTitle';
+import { getActiveSidebarProject } from '@/lib/sidebarProjectTask';
+import { passiveRepositorySelection } from '@/lib/passiveRepositorySelection';
 
 const STORAGE_KEY = 'xroga-repo-context';
 const REPO_LIST_CACHE_KEY = 'xroga-repo-list-cache';
@@ -215,17 +217,8 @@ export function RepoContextBar({ outside, compact }: RepoContextBarProps) {
       const freshTerminal = hasFreshTerminalIntent();
 
       // A fresh repository intent must not silently rebind the previous repository.
-      const defaultRepo = freshTerminal
-        ? savedRepo && list.some((r) => r.fullName === savedRepo)
-          ? savedRepo
-          : null
-        : savedRepo && list.some((r) => r.fullName === savedRepo)
-          ? savedRepo
-          : snapshot.defaultRepo && list.some((r) => r.fullName === snapshot.defaultRepo)
-            ? snapshot.defaultRepo
-            : repoLocked
-              ? list[0]?.fullName ?? null
-              : null;
+      const defaultRepo = passiveRepositorySelection({repositories:list.map(r=>r.fullName),selected:savedRepo,
+        fresh:freshTerminal,projectSelected:!!getActiveSidebarProject(),defaultRepository:snapshot.defaultRepo,repositoryLocked:repoLocked});
 
       setSelectedRepo(defaultRepo);
       if (defaultRepo) {
@@ -236,7 +229,13 @@ export function RepoContextBar({ outside, compact }: RepoContextBarProps) {
         // in-memory context, so writing it here would silently replace the context the user
         // most recently chose elsewhere. Only bootstrap when no canonical context exists.
         if (!canonical) saveSelectedRepoContext({ repo: defaultRepo, branch: branchHint });
+        const selectionVersion = useProjectWorkspaceStore.getState().transitionVersion;
+        const sidebarProject = getActiveSidebarProject()?.projectId ?? null;
         const branch = await loadBranches(defaultRepo, branchHint);
+        // Clearing or switching a project while the network request is pending
+        // fences the old bootstrap. Never restore it after that explicit action.
+        if (!canonical && (useProjectWorkspaceStore.getState().transitionVersion !== selectionVersion
+          || (getActiveSidebarProject()?.projectId ?? null) !== sidebarProject)) return;
         if (!canonical) saveSelectedRepoContext({ repo: defaultRepo, branch });
         // Defer lite analyze so the repo picker paints first
         // Restore metadata silently. A reload should not replay a transient status

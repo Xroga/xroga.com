@@ -1,7 +1,6 @@
 import {
   chatCompletionStream,
   estimateTokens,
-  providerReasoningControls,
   type ChatMessage,
 } from '../ai/openaiCompat.js';
 import { runBuilderAttempt, classifyBuilderFailure, type BuilderAttemptFailure } from '../ai/builderAttempt.js';
@@ -20,7 +19,7 @@ export const COHERENT_CONTINUATION_MAX_TOKENS = 20_000;
 export const COHERENT_FIRST_TOKEN_TIMEOUT_MS = 60_000;
 export const COHERENT_ACTIVE_TIMEOUT_MS = 240_000;
 export const COHERENT_CONTEXT_TOKENS = 24_000;
-export const MAX_COHERENT_PROVIDER_ATTEMPTS = 2;
+export const MAX_COHERENT_PROVIDER_ATTEMPTS = 1;
 
 const MANIFEST_OPEN = '<<<XROGA_MANIFEST>>>';
 const MANIFEST_CLOSE = '<<<XROGA_END_MANIFEST>>>';
@@ -708,21 +707,9 @@ export async function implementCoherently(input: {
   let realAttempts = 0;
   let protocolCorrection: string | null = null;
 
-  // Keep the router's primary choice. For its single independent fallback, prefer an
-  // approved transport that documents a direct-output/no-reasoning request. A provider
-  // without that control remains eligible only when no controlled alternative exists;
-  // otherwise it can spend the entire bounded window on private reasoning and never emit
-  // the file protocol this stage requires.
-  const [primary, ...fallbacks] = input.candidates;
-  const directOutputScore = (candidate: ModelCandidate): number => {
-    const provider = MODELS[candidate.modelId as ModelId]?.provider;
-    return provider && Object.keys(providerReasoningControls(provider, 'none')).length ? 0 : 1;
-  };
-  const candidates = primary
-    ? [primary, ...fallbacks.map((candidate, index) => ({ candidate, index }))
-      .sort((left, right) => directOutputScore(left.candidate) - directOutputScore(right.candidate) || left.index - right.index)
-      .map(({ candidate }) => candidate)]
-    : [];
+  // Keep the canonical model decision. Failure does not authorize a different
+  // model, another paid attempt or an automatic premium escalation.
+  const candidates = input.candidates.slice(0, 1);
 
   for (const candidate of candidates) {
     if (unavailable.has(candidate.modelId)) continue;

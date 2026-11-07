@@ -62,7 +62,7 @@ test('official-only evidence excludes secondary sources before synthesis and UI'
 test('production web intelligence preserves pending research approval and explicitly denies unaccounted X research', async () => {
   const vaultEnv={NODE_ENV:process.env.NODE_ENV,XROGA_TEST_CREDENTIAL_KEK:process.env.XROGA_TEST_CREDENTIAL_KEK};process.env.NODE_ENV='test';process.env.XROGA_TEST_CREDENTIAL_KEK=Buffer.alloc(32,27).toString('base64url');resetCredentialVaultRuntimeForTests();
   const priorFetch = globalThis.fetch;
-  const priorParallel = process.env.PARALLEL_API_KEY;
+  const priorParallel = process.env.DEEPSEEK_WEBSEARCH_FETCH_API;
   const priorXai = process.env.XAI_API_KEY;
   const priorUrl=process.env.SUPABASE_URL,priorService=process.env.SUPABASE_SERVICE_ROLE_KEY;
   process.env.SUPABASE_URL='http://127.0.0.1:55439';process.env.SUPABASE_SERVICE_ROLE_KEY='synthetic-only';
@@ -73,7 +73,7 @@ test('production web intelligence preserves pending research approval and explic
   const urls: string[] = [];
   const bodies: Array<Record<string, unknown>> = [];
 
-  process.env.PARALLEL_API_KEY = 'parallel-test-key';
+  process.env.DEEPSEEK_WEBSEARCH_FETCH_API = 'parallel-test-key';
   process.env.XAI_API_KEY = 'xai-test-key';
 
   globalThis.fetch = (async (url, init) => {
@@ -137,8 +137,8 @@ test('production web intelligence preserves pending research approval and explic
     globalThis.fetch = priorFetch;
     if(priorUrl===undefined)delete process.env.SUPABASE_URL;else process.env.SUPABASE_URL=priorUrl;
     if(priorService===undefined)delete process.env.SUPABASE_SERVICE_ROLE_KEY;else process.env.SUPABASE_SERVICE_ROLE_KEY=priorService;
-    if (priorParallel === undefined) delete process.env.PARALLEL_API_KEY;
-    else process.env.PARALLEL_API_KEY = priorParallel;
+    if (priorParallel === undefined) delete process.env.DEEPSEEK_WEBSEARCH_FETCH_API;
+    else process.env.DEEPSEEK_WEBSEARCH_FETCH_API = priorParallel;
     if (priorXai === undefined) delete process.env.XAI_API_KEY;
     else process.env.XAI_API_KEY = priorXai;
   }

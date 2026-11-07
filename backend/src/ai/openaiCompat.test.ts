@@ -1,40 +1,21 @@
 import assert from 'node:assert/strict';
-import { describe, it } from 'node:test';
-import { providerReasoningControls, requireNonEmptyModelText } from './openaiCompat.js';
-
-describe('provider completion boundary', () => {
-  it('accepts a real non-empty completion', () => {
-    assert.equal(requireNonEmptyModelText('  generated files  ', 'kimi_k3'), 'generated files');
-  });
-
-  it('classifies an empty completion as a provider failure so fallback can continue', () => {
-    assert.throws(
-      () => requireNonEmptyModelText('   \n ', 'deepseek_v4_flash'),
-      (error: unknown) =>
-        error instanceof Error &&
-        (error as Error & { code?: string }).code === 'EMPTY_PROVIDER_RESPONSE',
-    );
-  });
+import {test} from 'node:test';
+import {providerReasoningControls,providerPriceControls,assertProviderControls,requireNonEmptyModelText} from './openaiCompat.js';
+import {validateZurelayRequest} from './zurelayWire.js';
+const id='deepseek_v4_1_flash_1017';
+test('nonempty text is preserved and empty text remains an explicit failure without fallback permission',()=>{
+ assert.equal(requireNonEmptyModelText('  answer  ',id),'answer');assert.throws(()=>requireNonEmptyModelText('   ',id),{code:'EMPTY_PROVIDER_RESPONSE'});
 });
-
-describe('direct-output reasoning controls', () => {
-  it('disables GLM thinking with the Zhipu-supported request shape', () => {
-    assert.deepEqual(providerReasoningControls('zhipu', 'none'), {
-      thinking: { type: 'disabled' },
-    });
-  });
-
-  it('disables and excludes reasoning through the OpenRouter-supported request shape', () => {
-    assert.deepEqual(providerReasoningControls('openrouter', 'none'), {
-      reasoning: { effort: 'none', exclude: true },
-    });
-  });
-
-  it('does not invent an unsupported Moonshot request parameter', () => {
-    assert.deepEqual(providerReasoningControls('moonshot', 'none'), {});
-  });
-
-  it('leaves ordinary model calls unchanged', () => {
-    assert.deepEqual(providerReasoningControls('zhipu'), {});
-  });
+test('compact DeepSeek output uses documented reasoning_effort none, without unsupported Sonnet controls',()=>{
+ assert.deepEqual(providerReasoningControls('zurelay','none',id),{reasoning_effort:'none'});
+ assert.deepEqual(providerReasoningControls('zurelay','default',id),{});
+ assert.deepEqual(providerReasoningControls('zurelay','none','claude_sonnet_5_5'),{});
+ assert.deepEqual(providerPriceControls(id,'zurelay'),{});
+});
+test('the serialized nonthinking control cannot be removed and hidden provider alternatives are refused',()=>{
+ const expected={...providerReasoningControls('zurelay','none',id)};
+ assert.doesNotThrow(()=>assertProviderControls(JSON.stringify(expected),id,'zurelay','none'));
+ for(const changed of [{},{reasoning_effort:'high'},{reasoning_effort:undefined}])assert.throws(()=>assertProviderControls(JSON.stringify(changed),id,'zurelay','none'),{code:'MODEL_DISPATCH_BINDING_DENIED'});
+ const request={model:'deepseek-v4.1-flash-1017',max_tokens:64,messages:[{role:'user',content:'Fixture'}],...expected};
+ for(const extra of [{provider:{max_price:{prompt:.03}}},{models:['claude-sonnet-5-5']},{routing:'auto'}])assert.throws(()=>validateZurelayRequest({...request,...extra},request.model),{code:'MODEL_DESTINATION_DENIED'});
 });

@@ -56,30 +56,30 @@ test('a benchmark maps to the role its evidence is filed under', () => {
 
 test('evidence is aggregated per model and per role', () => {
   const ledger = buildLedger([
-    result({ modelId: 'kimi_k3', benchmarkId: CODING_BENCHMARK }),
-    result({ modelId: 'deepseek_v4_flash', benchmarkId: CODING_BENCHMARK }),
+    result({ modelId: 'claude_sonnet_5_5', benchmarkId: CODING_BENCHMARK }),
+    result({ modelId: 'deepseek_v4_1_flash_1017', benchmarkId: CODING_BENCHMARK }),
   ]);
   assert.equal(ledger.length, 2);
-  assert.deepEqual([...ledger.map((e) => e.modelId)].sort(), ['deepseek_v4_flash', 'kimi_k3']);
+  assert.deepEqual([...ledger.map((e) => e.modelId)].sort(), ['claude_sonnet_5_5', 'deepseek_v4_1_flash_1017']);
   for (const entry of ledger) assert.equal(entry.role, 'implementation');
 });
 
 test('one model never inherits another model evidence', () => {
   // §12 forbids family-level evidence by name: Kimi K3 and Kimi K2.7 are different products.
   const ledger = buildLedger(
-    Array.from({ length: 10 }, () => result({ modelId: 'kimi_k3', benchmarkId: CODING_BENCHMARK })),
+    Array.from({ length: 10 }, () => result({ modelId: 'claude_sonnet_5_5', benchmarkId: CODING_BENCHMARK })),
   );
   assert.equal(ledger.length, 1);
-  assert.equal(ledger[0]!.modelId, 'kimi_k3');
+  assert.equal(ledger[0]!.modelId, 'claude_sonnet_5_5');
   assert.equal(ledger.some((entry) => entry.modelId === 'kimi_k2_7'), false);
 });
 
 test('failures stay in the denominator', () => {
   // A rate computed over successes alone is a count of successes wearing a percentage sign.
   const ledger = buildLedger([
-    ...Array.from({ length: 6 }, () => result({ modelId: 'kimi_k3', benchmarkId: CODING_BENCHMARK })),
+    ...Array.from({ length: 6 }, () => result({ modelId: 'claude_sonnet_5_5', benchmarkId: CODING_BENCHMARK })),
     ...Array.from({ length: 4 }, () =>
-      result({ modelId: 'kimi_k3', benchmarkId: CODING_BENCHMARK, succeeded: false }),
+      result({ modelId: 'claude_sonnet_5_5', benchmarkId: CODING_BENCHMARK, succeeded: false }),
     ),
   ]);
   assert.equal(ledger[0]!.samples, 10);
@@ -114,30 +114,30 @@ test('measured evidence changes which model routing picks', () => {
   // The whole point of the bridge: without it, a cheaper model could never earn the lead.
   const ledger = buildLedger([
     ...Array.from({ length: 10 }, () =>
-      result({ modelId: 'kimi_k3', benchmarkId: CODING_BENCHMARK, estimatedCostUsd: 0.5 }),
+      result({ modelId: 'claude_sonnet_5_5', benchmarkId: CODING_BENCHMARK, estimatedCostUsd: 0.5 }),
     ),
     ...Array.from({ length: 10 }, () =>
-      result({ modelId: 'deepseek_v4_flash', benchmarkId: CODING_BENCHMARK, estimatedCostUsd: 0.01 }),
+      result({ modelId: 'deepseek_v4_1_flash_1017', benchmarkId: CODING_BENCHMARK, estimatedCostUsd: 0.01 }),
     ),
   ]);
 
   const choice = chooseCostAware({
     role: 'implementation',
-    candidates: ['kimi_k3', 'deepseek_v4_flash'],
+    candidates: ['claude_sonnet_5_5', 'deepseek_v4_1_flash_1017'],
     evidence: ledger,
   })!;
-  assert.equal(choice.modelId, 'deepseek_v4_flash');
+  assert.equal(choice.modelId, 'deepseek_v4_1_flash_1017');
   assert.match(choice.reason, /least-expensive candidate with sufficient evidence/);
 });
 
-test('a cheap model that measures badly does not take the lead', () => {
+test('a model that measures badly cannot take the lead or purchase a premium fallback', () => {
   const ledger = buildLedger([
     ...Array.from({ length: 10 }, () =>
-      result({ modelId: 'kimi_k3', benchmarkId: CODING_BENCHMARK, estimatedCostUsd: 0.5 }),
+      result({ modelId: 'claude_sonnet_5_5', benchmarkId: CODING_BENCHMARK, estimatedCostUsd: 0.5 }),
     ),
     ...Array.from({ length: 10 }, (_, i) =>
       result({
-        modelId: 'deepseek_v4_flash',
+        modelId: 'deepseek_v4_1_flash_1017',
         benchmarkId: CODING_BENCHMARK,
         estimatedCostUsd: 0.01,
         succeeded: i < 3,
@@ -146,17 +146,17 @@ test('a cheap model that measures badly does not take the lead', () => {
   ]);
   const choice = chooseCostAware({
     role: 'implementation',
-    candidates: ['kimi_k3', 'deepseek_v4_flash'],
+    candidates: ['claude_sonnet_5_5', 'deepseek_v4_1_flash_1017'],
     evidence: ledger,
   })!;
-  assert.equal(choice.modelId, 'kimi_k3');
+  assert.equal(choice, null);
 });
 
 test('benchmark evidence alone cannot make a capability verified', () => {
   // Benchmarks contribute two of eight gates. The rest are facts about the system, not
   // about a model, and this deliberately cannot assert them.
   const ledger = buildLedger(
-    Array.from({ length: 20 }, () => result({ modelId: 'kimi_k3', benchmarkId: CODING_BENCHMARK })),
+    Array.from({ length: 20 }, () => result({ modelId: 'claude_sonnet_5_5', benchmarkId: CODING_BENCHMARK })),
   );
   const record = assessWithBenchmarks({
     kind: 'coding_role',
@@ -171,7 +171,7 @@ test('benchmark evidence alone cannot make a capability verified', () => {
 
 test('benchmark gates plus system gates can reach verified', () => {
   const ledger = buildLedger(
-    Array.from({ length: 20 }, () => result({ modelId: 'kimi_k3', benchmarkId: CODING_BENCHMARK })),
+    Array.from({ length: 20 }, () => result({ modelId: 'claude_sonnet_5_5', benchmarkId: CODING_BENCHMARK })),
   );
   const record = assessWithBenchmarks({
     kind: 'coding_role',
@@ -193,7 +193,7 @@ test('benchmark gates plus system gates can reach verified', () => {
 test('failing benchmarks do not satisfy the threshold gate', () => {
   const ledger = buildLedger(
     Array.from({ length: 20 }, () =>
-      result({ modelId: 'kimi_k3', benchmarkId: CODING_BENCHMARK, succeeded: false }),
+      result({ modelId: 'claude_sonnet_5_5', benchmarkId: CODING_BENCHMARK, succeeded: false }),
     ),
   );
   const gates = benchmarkGates(ledger, 'implementation');
@@ -209,8 +209,8 @@ test('no results yields no gates satisfied', () => {
 
 test('entries trace back to the benchmarks behind them', () => {
   const ledger = buildLedger([
-    result({ modelId: 'kimi_k3', benchmarkId: CODING_BENCHMARK }),
-    result({ modelId: 'kimi_k3', benchmarkId: CODING_BENCHMARK }),
+    result({ modelId: 'claude_sonnet_5_5', benchmarkId: CODING_BENCHMARK }),
+    result({ modelId: 'claude_sonnet_5_5', benchmarkId: CODING_BENCHMARK }),
   ]);
   assert.deepEqual(ledger[0]!.benchmarkIds, [CODING_BENCHMARK]);
   assert.ok(ledger[0]!.lastObservedAt);
@@ -231,7 +231,7 @@ test('a coding model never acquires a research score', () => {
   // The reverse of §7, and it matters just as much: a coding model scoring well on source
   // retrieval would justify routing research to a provider with no search grounding.
   const ledger = buildLedger([
-    result({ modelId: 'kimi_k3', benchmarkId: RESEARCH_BENCHMARK }),
+    result({ modelId: 'claude_sonnet_5_5', benchmarkId: RESEARCH_BENCHMARK }),
     result({ modelId: 'deepseek_v4_pro', benchmarkId: RESEARCH_BENCHMARK }),
   ]);
   assert.deepEqual(ledger, []);
@@ -242,7 +242,7 @@ test('architecture evidence reaches the architecture role', () => {
   // produce, so the role was permanently unmeasurable.
   assert.equal(roleForBenchmark(ARCHITECTURE_BENCHMARK), 'architecture');
   const ledger = buildLedger(
-    Array.from({ length: 6 }, () => result({ modelId: 'kimi_k3', benchmarkId: ARCHITECTURE_BENCHMARK })),
+    Array.from({ length: 6 }, () => result({ modelId: 'claude_sonnet_5_5', benchmarkId: ARCHITECTURE_BENCHMARK })),
   );
   assert.equal(ledger.length, 1);
   assert.equal(ledger[0]!.role, 'architecture');

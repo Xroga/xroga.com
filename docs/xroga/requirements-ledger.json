@@ -3498,6 +3498,7 @@
         "scripts/security/schema-catalog.mjs",
         "scripts/security/staging-preflight.mjs",
         "scripts/security/tenant-acceptance.mjs",
+        "scripts/security/verify-free-voice-ledger.ts",
         "scripts/security/verify-oci-federation.ts",
         "scripts/security/verify-oci-kms.ts",
         "scripts/security/verify-oci-wrong-workflow.ts"
@@ -3725,7 +3726,8 @@
       "current_state": "IMPLEMENTED_BUT_UNVERIFIED",
       "current_paths": [
         "backend/src/ai/runReconciler.ts",
-        "backend/src/lib/recoveryPlanner.ts"
+        "backend/src/lib/recoveryPlanner.ts",
+        "frontend/src/lib/supabase/recoverySession.ts"
       ],
       "implementation_owner_command": "MISSION-021",
       "priority": "P1",
@@ -3806,6 +3808,7 @@
       "classification": "backend",
       "current_state": "IMPLEMENTED_BUT_UNVERIFIED",
       "current_paths": [
+        "backend/src/ai/completionDiagnostics.ts",
         "backend/src/ai/softwareAgent/completionGate.ts",
         "backend/src/ai/verificationLifecycle.ts",
         "backend/src/lib/shipVerify.ts",

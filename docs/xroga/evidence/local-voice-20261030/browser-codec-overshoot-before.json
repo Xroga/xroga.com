@@ -1,0 +1,43 @@
+{
+  "scope": "CONTROLLED_PUBLIC_AUDIO_DIAGNOSTIC_NO_CUSTOMER_SESSION",
+  "origin": "https://xroga.com",
+  "expectedSource": "de95d68692a8594b50658eec4c4506a871acfce1",
+  "result": "FAIL",
+  "error": "Live voice control reported: Speech recognition could not finish on this device. Try a shorter recording or type your message. Your typed text is unchanged.",
+  "status": [
+    "Voice input unavailableSpeech recognition could not finish on this device. Try a shorter recording or type your message. Your typed text is unchanged."
+  ],
+  "capture": {
+    "decodes": [
+      {
+        "bytes": 186575,
+        "duration": 11.58,
+        "rate": 16000,
+        "channels": 1,
+        "peak": 1.015005350112915
+      }
+    ],
+    "workers": [],
+    "events": []
+  },
+  "networkFailures": [
+    {
+      "origin": "https://www.google-analytics.com",
+      "path": "/g/collect",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "origin": "https://www.google-analytics.com",
+      "path": "/g/collect",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "origin": "https://www.google-analytics.com",
+      "path": "/g/collect",
+      "error": "net::ERR_ABORTED"
+    }
+  ],
+  "voiceStages": [],
+  "runtimeFailures": [],
+  "diagnosticWorker": true
+}

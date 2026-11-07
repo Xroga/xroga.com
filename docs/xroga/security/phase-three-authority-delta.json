@@ -5,55 +5,146 @@
   "remappings": [
     {
       "previousCallerId": "74229d60e093f2e44542",
-      "currentCallerId": "fb2bffffc91cc072976a"
+      "currentCallerId": "fa04b8d8f9413c194ec5",
+      "beforeResearchHandoffCallerId": "fb2bffffc91cc072976a",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "78696e27dd5c1ca37c3a",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical and so is the whole enclosing function."
+      }
     },
     {
       "previousCallerId": "c37a93be0605e64b3156",
-      "currentCallerId": "99ba24aefa7f2c2f6de9"
+      "currentCallerId": "df7eec626e3acd881448",
+      "beforeResearchHandoffCallerId": "99ba24aefa7f2c2f6de9",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "5063984e8c997b66e324",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical and so is the whole enclosing function."
+      }
     },
     {
       "previousCallerId": "94fb30ec710f32d062c2",
-      "currentCallerId": "3c64dc5d4a7058fb12f8"
+      "currentCallerId": "287e2fe0dabebc523a36",
+      "beforeResearchHandoffCallerId": "3c64dc5d4a7058fb12f8",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "4f84558e55d72a558c00",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical and so is the whole enclosing function."
+      }
     },
     {
       "previousCallerId": "36d0fbfc5ddf864ad6ea",
-      "currentCallerId": "fc3b3f4bab00e81fbc31"
+      "currentCallerId": "3a763a5523dac73c10d4",
+      "beforeResearchHandoffCallerId": "fc3b3f4bab00e81fbc31",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "0d7ac55b299aff66161b",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical and so is the whole enclosing function."
+      }
     },
     {
       "previousCallerId": "bda77ff34ad9e973cbde",
-      "currentCallerId": "94f936dfc30fe898eebe"
+      "currentCallerId": "46aca4c01b2d3d90acad",
+      "beforeResearchHandoffCallerId": "94f936dfc30fe898eebe",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "2b682298901e2f9f943b",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical and so is the whole enclosing function."
+      }
     },
     {
       "previousCallerId": "a1e1f647efb6e7002993",
-      "currentCallerId": "1f375890c653535bb84b"
+      "currentCallerId": "85b1d7461e8691468225",
+      "beforeResearchHandoffCallerId": "1f375890c653535bb84b",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "7b807643d71d470e0f51",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical and so is the whole enclosing function."
+      }
     },
     {
       "previousCallerId": "7c2970e3ea0940d5d136",
-      "currentCallerId": "9614e2de1a77eacffe05"
+      "currentCallerId": "545cee9f47055ec5d761",
+      "beforeResearchHandoffCallerId": "9614e2de1a77eacffe05",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "0248d18cc31a925c621c",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical and so is the whole enclosing function."
+      }
     },
     {
       "previousCallerId": "986c86eebabfae033939",
-      "currentCallerId": "b3a2b5af5ead58408dba"
+      "currentCallerId": "7231d508555849d87d32",
+      "beforeResearchHandoffCallerId": "b3a2b5af5ead58408dba",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "66c23eb1e38ac8cb4bfc",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical and so is the whole enclosing function."
+      }
     },
     {
       "previousCallerId": "884cad1975974abc0599",
-      "currentCallerId": "1f7c11b7359e0958073e"
+      "currentCallerId": "8609662e7417659e88ca",
+      "beforeResearchHandoffCallerId": "1f7c11b7359e0958073e",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "10f00d8450df264b93d4",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical and so is the whole enclosing function."
+      }
     },
     {
       "previousCallerId": "1a3d2ad705ca358ebbe3",
-      "currentCallerId": "8f3d42e8e45d7fb2252a"
+      "currentCallerId": "319518470d46e4577f12",
+      "beforeResearchHandoffCallerId": "8f3d42e8e45d7fb2252a",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "faf31e8057d6b9c3795f",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical and so is the whole enclosing function."
+      }
     },
     {
       "previousCallerId": "b6708d08741254f6da06",
-      "currentCallerId": "a992f061331cff4e8d50"
+      "currentCallerId": "2714b6af44879d208f97",
+      "beforeResearchHandoffCallerId": "a992f061331cff4e8d50",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "f842a5afc2b542487f43",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical. The enclosing function changed on the branch; the reviewed call chain is byte-identical and the function diff was read in the persistence-review pass (see REBIND-REPORT.json)."
+      }
     },
     {
       "previousCallerId": "85d5a147aa59e4f62e68",
-      "currentCallerId": "7ddf1ddcae5c5661a52a"
+      "currentCallerId": "a1b9e751df5bc764909d",
+      "beforeResearchHandoffCallerId": "7ddf1ddcae5c5661a52a",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "d2879953777f5ac8d2ba",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical. The enclosing function changed on the branch; the reviewed call chain is byte-identical and the function diff was read in the persistence-review pass (see REBIND-REPORT.json)."
+      }
     },
     {
       "previousCallerId": "bbf934631616a292169c",
-      "currentCallerId": "b01c22a391468e45cbe8"
+      "currentCallerId": "7435325dc6f8734b9505",
+      "beforeResearchHandoffCallerId": "b01c22a391468e45cbe8",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "6df5deb0f6f628c7d1b4",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical. The enclosing function changed on the branch; the reviewed call chain is byte-identical and the function diff was read in the persistence-review pass (see REBIND-REPORT.json)."
+      }
     },
     {
       "previousCallerId": "840920438b3c862c0e91",
@@ -77,71 +168,173 @@
     },
     {
       "previousCallerId": "c7d109715d2f37cc95b2",
-      "currentCallerId": "f40cf50a136b33e64174"
+      "currentCallerId": "cdc742944930c390a470",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "f40cf50a136b33e64174",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical and so is the whole enclosing function."
+      }
     },
     {
       "previousCallerId": "046674e946dedc2dbd0a",
-      "currentCallerId": "aae055d92faa16ae4e2e"
+      "currentCallerId": "255ea9744a9343d6feaf",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "bebfcf0f4ba426a71be1",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical and so is the whole enclosing function."
+      }
     },
     {
       "previousCallerId": "f7d8e33dac1c0de787f8",
-      "currentCallerId": "54326930ab9ec884b6cd"
+      "currentCallerId": "e4d8bf4fcb8f6422f53a",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "67b1241b9b70b5f136ae",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical and so is the whole enclosing function."
+      }
     },
     {
       "previousCallerId": "2384f6f1c188f4f6ce83",
-      "currentCallerId": "53446e75ca49c95522af"
+      "currentCallerId": "b9d50643ad7fda897932",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "33169c5e9ad22ce0655f",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical and so is the whole enclosing function."
+      }
     },
     {
       "previousCallerId": "03557d58e528c5852636",
-      "currentCallerId": "4c4451bbec61aecb23d3"
+      "currentCallerId": "67400600da71ba2124eb",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "7836681966b6d9215ec8",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical and so is the whole enclosing function."
+      }
     },
     {
       "previousCallerId": "e2e547f8796cd0aad243",
-      "currentCallerId": "9d05c85f5bfac4989a75"
+      "currentCallerId": "c985fa5fee1ee7d5c6f2",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "86106178c4a136dd921d",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical and so is the whole enclosing function."
+      }
     },
     {
       "previousCallerId": "f602ab2d6bfebc170a02",
-      "currentCallerId": "469b0a4a0957a0d982b1"
+      "currentCallerId": "b57f79f0d091e2d52575",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "26e1c49e68e89b7b14bd",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical and so is the whole enclosing function."
+      }
     },
     {
       "previousCallerId": "8a48ae3957449eee9587",
-      "currentCallerId": "4a9c1469b879166fe52c"
+      "currentCallerId": "4150f3451a1cef23bc00",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "5c9be0f2e0f652c62e49",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical and so is the whole enclosing function."
+      }
     },
     {
       "previousCallerId": "685bdab3b4b31bd28d43",
-      "currentCallerId": "0b3ff8ce7a456a8a2acf"
+      "currentCallerId": "be62ab94e9a3c042c183",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "597ad99cc551e28182ea",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical and so is the whole enclosing function."
+      }
     },
     {
       "previousCallerId": "9a847ab5769bb707c1f2",
-      "currentCallerId": "f6f4b355a8c80fc166f4"
+      "currentCallerId": "ee7f1f1315d6867c3e17",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "5b2500bca0819c0cfbca",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical. The enclosing function changed on the branch; the reviewed call chain is byte-identical and the function diff was read in the persistence-review pass (see REBIND-REPORT.json)."
+      }
     },
     {
       "previousCallerId": "e489f9a48f400005cb2d",
-      "currentCallerId": "c2adb020f37811ce7849"
+      "currentCallerId": "7b462edee6e0deb442d8",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "48608e9c8e68e6683453",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical. The enclosing function changed on the branch; the reviewed call chain is byte-identical and the function diff was read in the persistence-review pass (see REBIND-REPORT.json)."
+      }
     },
     {
       "previousCallerId": "d9435c22813b64a1f1f5",
-      "currentCallerId": "9cce2ff19e247ce9c5d5"
+      "currentCallerId": "63cd9db82a553901aa87",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "0aa6642b9d69de06f3b2",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical. The enclosing function changed on the branch; the reviewed call chain is byte-identical and the function diff was read in the persistence-review pass (see REBIND-REPORT.json)."
+      }
     },
     {
       "previousCallerId": "1d3ef9e110d2f000f590",
-      "currentCallerId": "670197ad89640f5a6242"
+      "currentCallerId": "54b682f70bf2fc2118d6",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "64c63cbd2cbdc0d0e6f6",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical. The enclosing function changed on the branch; the reviewed call chain is byte-identical and the function diff was read in the persistence-review pass (see REBIND-REPORT.json)."
+      }
     },
     {
       "previousCallerId": "0b24ee0eecebdda0e6f3",
-      "currentCallerId": "9d0558fe12707a8a2949"
+      "currentCallerId": "72838b3e50b0a2167d93",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "298b5f4095b683f456b6",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical and so is the whole enclosing function."
+      }
     },
     {
       "previousCallerId": "ace18dec175b4875e7f7",
-      "currentCallerId": "65acb9b03435995fdeb0"
+      "currentCallerId": "53502198a107866bdd54",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "e052915067b01ca6077d",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical and so is the whole enclosing function."
+      }
     },
     {
       "previousCallerId": "c07b5b1f63ae0e361ae7",
-      "currentCallerId": "774dd446f08cb58fbc9b"
+      "currentCallerId": "cc73aacc720688126189",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "54e741be8699adc0e781",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical and so is the whole enclosing function."
+      }
     },
     {
       "previousCallerId": "fba07b765dafacccf133",
-      "currentCallerId": "706f26c27c2b32064580"
+      "currentCallerId": "39946f9c942d63422513",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "f4a361a7bbed04369e1b",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical and so is the whole enclosing function."
+      }
     },
     {
       "previousCallerId": "cd8790e39c3283f05482",
@@ -565,119 +758,293 @@
     },
     {
       "previousCallerId": "bf25908290a49aa14bd7",
-      "currentCallerId": "3d61f3f5ae6402c20b58"
+      "currentCallerId": "3db57fbadafb852f2b06",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "3d61f3f5ae6402c20b58",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical and so is the whole enclosing function."
+      }
     },
     {
       "previousCallerId": "399344f16bc489f1e5b1",
-      "currentCallerId": "64f0d9db49a13b562831"
+      "currentCallerId": "f22dea761a758bf97124",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "64f0d9db49a13b562831",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical and so is the whole enclosing function."
+      }
     },
     {
       "previousCallerId": "a2b9af9cc94fc4528e67",
-      "currentCallerId": "c135db5a5ea7536cfe6f"
+      "currentCallerId": "9f636ef2e5cee499b1b9",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "c135db5a5ea7536cfe6f",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical and so is the whole enclosing function."
+      }
     },
     {
       "previousCallerId": "973e39406d138c83edea",
-      "currentCallerId": "bfd902ca64f5f7780a21"
+      "currentCallerId": "37a9465bd24fabfe5070",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "bfd902ca64f5f7780a21",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical and so is the whole enclosing function."
+      }
     },
     {
       "previousCallerId": "ee377e28847a820d3e60",
-      "currentCallerId": "8784feaf266f3ae5d72e"
+      "currentCallerId": "3ca6cdd6e98ce6d60f41",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "8784feaf266f3ae5d72e",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical and so is the whole enclosing function."
+      }
     },
     {
       "previousCallerId": "77b006f82faf88017a2c",
-      "currentCallerId": "37cfa6ca45abf19a23eb"
+      "currentCallerId": "ad9bfb649fa71faf105f",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "37cfa6ca45abf19a23eb",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical and so is the whole enclosing function."
+      }
     },
     {
       "previousCallerId": "5a80567257e34b837a33",
-      "currentCallerId": "1c2765565427d7a39f41"
+      "currentCallerId": "9592603e00571b9aa936",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "1c2765565427d7a39f41",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical and so is the whole enclosing function."
+      }
     },
     {
       "previousCallerId": "912679b2d70aeb54860e",
-      "currentCallerId": "5f84595697b6399ed442"
+      "currentCallerId": "5f90e5a0a656a5419d4c",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "5f84595697b6399ed442",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical and so is the whole enclosing function."
+      }
     },
     {
       "previousCallerId": "8e483e5db88e334d4fd9",
-      "currentCallerId": "30d93bb175651c6091b1"
+      "currentCallerId": "be3e39ffd9ce85f9f0e5",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "30d93bb175651c6091b1",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical and so is the whole enclosing function."
+      }
     },
     {
       "previousCallerId": "2714bcb8dd844631154a",
-      "currentCallerId": "6021c31eedb4e0085d2b"
+      "currentCallerId": "7260159d581155b2eefd",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "6021c31eedb4e0085d2b",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical and so is the whole enclosing function."
+      }
     },
     {
       "previousCallerId": "b11077c6032271361558",
-      "currentCallerId": "c36354753e5d659f1133"
+      "currentCallerId": "b9e760357c2ccb328c9e",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "c36354753e5d659f1133",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical and so is the whole enclosing function."
+      }
     },
     {
       "previousCallerId": "9f316f0cfad5794c27c5",
-      "currentCallerId": "fe37d49899df3732b5cc"
+      "currentCallerId": "ac2bc0bf079ef4f86bca",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "fe37d49899df3732b5cc",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical and so is the whole enclosing function."
+      }
     },
     {
       "previousCallerId": "965d682f9f5d530bb929",
-      "currentCallerId": "ef2d01aaa4ae1572ad53"
+      "currentCallerId": "d81f7e29ed7eb8f08321",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "ef2d01aaa4ae1572ad53",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical and so is the whole enclosing function."
+      }
     },
     {
       "previousCallerId": "208413eede9db532d440",
-      "currentCallerId": "36190833aa1b3b96e8ee"
+      "currentCallerId": "53a7e1a96e0bec62bee6",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "36190833aa1b3b96e8ee",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical and so is the whole enclosing function."
+      }
     },
     {
       "previousCallerId": "76af43fa48bf2989a7da",
-      "currentCallerId": "726ceac5ed6ed44f0821"
+      "currentCallerId": "6d28ef52991929f03d5d",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "726ceac5ed6ed44f0821",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical and so is the whole enclosing function."
+      }
     },
     {
       "previousCallerId": "4bbd68abc608cd40cf5e",
-      "currentCallerId": "cac7d32579dae1ccf84c"
+      "currentCallerId": "8aeaf3c0596fedee163b",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "cac7d32579dae1ccf84c",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical and so is the whole enclosing function."
+      }
     },
     {
       "previousCallerId": "b13ab17aa7429003241b",
-      "currentCallerId": "a497ca44a05b78d07e6c"
+      "currentCallerId": "54fe7392c0d3794b89ac",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "a497ca44a05b78d07e6c",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical and so is the whole enclosing function."
+      }
     },
     {
       "previousCallerId": "281beef588e15d39be66",
-      "currentCallerId": "977606a7b1f57d55adb2"
+      "currentCallerId": "2822acbf204a25662121",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "977606a7b1f57d55adb2",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical and so is the whole enclosing function."
+      }
     },
     {
       "previousCallerId": "251a8f22c720652f36a5",
-      "currentCallerId": "4c3d52cdd8d4da245c3a"
+      "currentCallerId": "8d2404e2cdaa0f3994f6",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "4c3d52cdd8d4da245c3a",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical and so is the whole enclosing function."
+      }
     },
     {
       "previousCallerId": "0671bfb9368569581fba",
-      "currentCallerId": "fa50fc7afb1cc2af0bfe"
+      "currentCallerId": "b863485d9bc095d1af1d",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "fa50fc7afb1cc2af0bfe",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical and so is the whole enclosing function."
+      }
     },
     {
       "previousCallerId": "7dd7b79ecd7c4840a960",
-      "currentCallerId": "aa227a13e3f851a147cb"
+      "currentCallerId": "0308587643cc5bf6e77a",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "aa227a13e3f851a147cb",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical and so is the whole enclosing function."
+      }
     },
     {
       "previousCallerId": "c0ae76586326abbbba08",
-      "currentCallerId": "b8a2f76b780dc05a1342"
+      "currentCallerId": "296b65797dd85b9aae09",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "b8a2f76b780dc05a1342",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical and so is the whole enclosing function."
+      }
     },
     {
       "previousCallerId": "27483f27b03af7e1669b",
-      "currentCallerId": "bf70a476decc73712608"
+      "currentCallerId": "f15dce6c928b922d9010",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "bf70a476decc73712608",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical and so is the whole enclosing function."
+      }
     },
     {
       "previousCallerId": "78fbb99c106916e565c3",
-      "currentCallerId": "fc6a606bde6698305460"
+      "currentCallerId": "d711530da125fbdb8af8",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "fc6a606bde6698305460",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical and so is the whole enclosing function."
+      }
     },
     {
       "previousCallerId": "4b2e42e58a10751072e2",
-      "currentCallerId": "a48ccd229f5da7688e01"
+      "currentCallerId": "bac66807e08081335d38",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "a48ccd229f5da7688e01",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical and so is the whole enclosing function."
+      }
     },
     {
       "previousCallerId": "f5f03db18b208dcd4855",
-      "currentCallerId": "1efd8ec34ba641c03034"
+      "currentCallerId": "deb75dc520e1b72f0f8c",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "1efd8ec34ba641c03034",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical and so is the whole enclosing function."
+      }
     },
     {
       "previousCallerId": "bf2f29e05f610d929567",
-      "currentCallerId": "d68b6df592d887684c6f"
+      "currentCallerId": "311e5def04fe94e7b0cd",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "d68b6df592d887684c6f",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical and so is the whole enclosing function."
+      }
     },
     {
       "previousCallerId": "8eadb3d8b716ca3f7120",
-      "currentCallerId": "d2968f7d0b0673e4e552"
+      "currentCallerId": "c3be2940c4b9c47c10ab",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "d2968f7d0b0673e4e552",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical and so is the whole enclosing function."
+      }
     },
     {
       "previousCallerId": "dcde97f1e49cda370789",
-      "currentCallerId": "91c17cc8f6bff705b598"
+      "currentCallerId": "8eac683151d9c952eab2",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "91c17cc8f6bff705b598",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical and so is the whole enclosing function."
+      }
     },
     {
       "previousCallerId": "7202e4ceaf1fab023f7d",
@@ -725,75 +1092,183 @@
     },
     {
       "previousCallerId": "8fc7cf5dd562db7dcd3a",
-      "currentCallerId": "a864bc5998ad30044406"
+      "currentCallerId": "a864bc5998ad30044406",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "a7a1747d2192d62b505b",
+        "verification": "origin/main already maps this previous caller to this current caller, and the caller exists in the current register."
+      }
     },
     {
       "previousCallerId": "ed5cdf592a4a0494dc20",
-      "currentCallerId": "705840502528b9097f92"
+      "currentCallerId": "705840502528b9097f92",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "4623023af1a7fe9573f6",
+        "verification": "origin/main already maps this previous caller to this current caller, and the caller exists in the current register."
+      }
     },
     {
       "previousCallerId": "4405d6096d2e71e981b2",
-      "currentCallerId": "601d86d506f90f4af7b4"
+      "currentCallerId": "601d86d506f90f4af7b4",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "af204e0e037ebe211a63",
+        "verification": "origin/main already maps this previous caller to this current caller, and the caller exists in the current register."
+      }
     },
     {
       "previousCallerId": "98d184ab88f7ab61318b",
-      "currentCallerId": "1145e419d776dc7df9c2"
+      "currentCallerId": "1145e419d776dc7df9c2",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "1bb48a0fd529036dbd67",
+        "verification": "origin/main already maps this previous caller to this current caller, and the caller exists in the current register."
+      }
     },
     {
       "previousCallerId": "60631ccec69849a4ead7",
-      "currentCallerId": "cc1d5d8e1cb0c92c86db"
+      "currentCallerId": "cc1d5d8e1cb0c92c86db",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "0053e3638ad34a6cbb95",
+        "verification": "origin/main already maps this previous caller to this current caller, and the caller exists in the current register."
+      }
     },
     {
       "previousCallerId": "56973b18bffeba04db38",
-      "currentCallerId": "6d3a8c300b6a8f18fbb5"
+      "currentCallerId": "6d3a8c300b6a8f18fbb5",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "1d84483f4cae80e8b954",
+        "verification": "origin/main already maps this previous caller to this current caller, and the caller exists in the current register."
+      }
     },
     {
       "previousCallerId": "530ec12058ab9d32794b",
-      "currentCallerId": "794f2986baf15127a5e5"
+      "currentCallerId": "794f2986baf15127a5e5",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "dfd2b022b39413db1561",
+        "verification": "origin/main already maps this previous caller to this current caller, and the caller exists in the current register."
+      }
     },
     {
       "previousCallerId": "0aa7bcbcf75b4fc1eceb",
-      "currentCallerId": "6c6c1e09597d26afcf99"
+      "currentCallerId": "6c6c1e09597d26afcf99",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "1f977fbbb1102e6dac1d",
+        "verification": "origin/main already maps this previous caller to this current caller, and the caller exists in the current register."
+      }
     },
     {
       "previousCallerId": "b5d3e5c94e9160b42afb",
-      "currentCallerId": "4b4714060afccfa2aed1"
+      "currentCallerId": "4b4714060afccfa2aed1",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "b404673ae5984ef51dee",
+        "verification": "origin/main already maps this previous caller to this current caller, and the caller exists in the current register."
+      }
     },
     {
       "previousCallerId": "419bf279075e606b8b1f",
-      "currentCallerId": "2660919ebdd0c11227d5"
+      "currentCallerId": "2660919ebdd0c11227d5",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "6da2a4d0d15144e0aad0",
+        "verification": "origin/main already maps this previous caller to this current caller, and the caller exists in the current register."
+      }
     },
     {
       "previousCallerId": "8da826b4f1382152e9e9",
-      "currentCallerId": "b2f45a155f1f9ed6ccee"
+      "currentCallerId": "b2f45a155f1f9ed6ccee",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "2a0d2f322b23c157502d",
+        "verification": "origin/main already maps this previous caller to this current caller, and the caller exists in the current register."
+      }
     },
     {
       "previousCallerId": "6fb334291b6218b12f4c",
-      "currentCallerId": "952e2977dbbd8adc9b21"
+      "currentCallerId": "952e2977dbbd8adc9b21",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "e49e4b26ba7d2860dc41",
+        "verification": "origin/main already maps this previous caller to this current caller, and the caller exists in the current register."
+      }
     },
     {
       "previousCallerId": "f4643ffb0f1224d7da80",
-      "currentCallerId": "d37aef8db513054ed541"
+      "currentCallerId": "d37aef8db513054ed541",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "a2f0c39a047770542a8b",
+        "verification": "origin/main already maps this previous caller to this current caller, and the caller exists in the current register."
+      }
     },
     {
       "previousCallerId": "67ce8a604d6d6502cc94",
-      "currentCallerId": "1244fa5f77d64178a682"
+      "currentCallerId": "1244fa5f77d64178a682",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "492e2a6c5aee7adbc460",
+        "verification": "origin/main already maps this previous caller to this current caller, and the caller exists in the current register."
+      }
     },
     {
       "previousCallerId": "87f57b0ac97d6b473fa3",
-      "currentCallerId": "358bbf620757dbdc20c7"
+      "currentCallerId": "358bbf620757dbdc20c7",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "7f42805766f9e4a7622d",
+        "verification": "origin/main already maps this previous caller to this current caller, and the caller exists in the current register."
+      }
     },
     {
       "previousCallerId": "99b6b7ce0de9df1778a6",
-      "currentCallerId": "7e1732412cef6d6c7465"
+      "currentCallerId": "7e1732412cef6d6c7465",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "32701c89f04a3536291d",
+        "verification": "origin/main already maps this previous caller to this current caller, and the caller exists in the current register."
+      }
     },
     {
       "previousCallerId": "8bea5ef54bd825f8e224",
-      "currentCallerId": "86f871c90f683c44c842"
+      "currentCallerId": "86f871c90f683c44c842",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "18ace9b81c3f92c7fa17",
+        "verification": "origin/main already maps this previous caller to this current caller, and the caller exists in the current register."
+      }
     },
     {
       "previousCallerId": "149b3684632af4931199",
-      "currentCallerId": "6379dcdeb795d49645a2"
+      "currentCallerId": "6379dcdeb795d49645a2",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "0e4c41c7ca91a4914c3f",
+        "verification": "origin/main already maps this previous caller to this current caller, and the caller exists in the current register."
+      }
     }
   ],
   "retiredCalls": [
@@ -1187,5 +1662,6 @@
   "productionEffects": false,
   "currentPositionContinuation": "docs/xroga/evidence/command-010/GITHUB-ACTOR-SEMANTIC-POSITIONS-20261028.json",
   "previousPositionContinuation": "docs/xroga/evidence/command-010/CURRENT-SEMANTIC-POSITIONS-20261028.json",
-  "nativeCheckoutPositionContinuation": "docs/xroga/evidence/command-010/NATIVE-CHECKOUT-SOURCE-POSITIONS-20261028.json"
+  "nativeCheckoutPositionContinuation": "docs/xroga/evidence/command-010/NATIVE-CHECKOUT-SOURCE-POSITIONS-20261028.json",
+  "directOutputPositionContinuation": "docs/xroga/evidence/response-v2-direct-output/position-continuation.json"
 }

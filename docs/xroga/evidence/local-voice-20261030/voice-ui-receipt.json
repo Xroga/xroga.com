@@ -1,0 +1,27 @@
+{
+  "scope": "ISOLATED_REACT_CONTROL_REAL_RECORDER_SYNTHETIC_AUDIO_STUBBED_PROVIDER",
+  "results": [
+    {
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "manualSend": true,
+      "editableDraft": true,
+      "repeatAppend": true,
+      "tracksStopped": true,
+      "requests": 2
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "manualSend": true,
+      "editableDraft": true,
+      "repeatAppend": true,
+      "tracksStopped": true,
+      "requests": 2
+    }
+  ]
+}

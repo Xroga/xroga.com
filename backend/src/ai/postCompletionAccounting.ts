@@ -22,11 +22,12 @@ export function isPostCompletionAccountingError(error: unknown): error is PostCo
 /** Call only after provider completion. Each completed attempt, including a
  * malformed model result, has one receipt. Never replay the provider on failure.
  * Cross-request provider deduplication still requires upstream operation identity. */
-export async function recordCompletedProviderUsage(userId: string, modelId: ModelId, inputTokens: number, outputTokens: number): Promise<UsageSnapshot> {
+export async function recordCompletedProviderUsage(userId: string, modelId: ModelId, inputTokens: number, outputTokens: number, verifiedCostUsd?:number): Promise<UsageSnapshot> {
   try {
+    if(verifiedCostUsd!==undefined&&(!Number.isFinite(verifiedCostUsd)||verifiedCostUsd<0))throw new Error('Invalid usage cost');
     await persistUsageAccounting(createTenantContext({ userId, via: 'persisted_owner' }), {
       receiptId: randomUUID(), modelId, poolRole: poolRoleFor(modelId), inputTokens, outputTokens,
-      costUsd: costUsdForTokens(modelId, inputTokens, outputTokens),
+      costUsd: verifiedCostUsd ?? costUsdForTokens(modelId, inputTokens, outputTokens),
     });
     return await getUsage(userId);
   }

@@ -16,13 +16,13 @@ test('real SDK redirects cannot become retries or another provider fallback',asy
   await new Promise<void>(r=>sink.listen(0,'127.0.0.1',r));await new Promise<void>(r=>source.listen(0,'127.0.0.1',r));
   t.mock.method(globalThis,'fetch',async(input:Parameters<typeof fetch>[0],init?:RequestInit)=>{
     const origin=new URL(String(input)).origin;
-    if(origin==='https://openrouter.ai')return nativeFetch(`http://127.0.0.1:${(source.address() as AddressInfo).port}/`,init);
-    if(origin==='https://open.bigmodel.cn')fallback++;
+    if(origin==='https://api.zurelay.com')return nativeFetch(`http://127.0.0.1:${(source.address() as AddressInfo).port}/`,init);
+    if(origin==='https://openrouter.ai'||origin==='https://open.bigmodel.cn'||origin==='https://api.moonshot.ai')fallback++;
     return controlledFetch(input,init);
   });
   const messages=[{role:'user' as const,content:'owned fixture'}];
   try{
-    await assert.rejects(executeWithProviderFallback({routes:['deepseek_v4_flash','glm_5_3_flash'],maximumAttemptsPerRoute:1,recordHealth:false,
+    await assert.rejects(executeWithProviderFallback({routes:['deepseek_v4_1_flash_1017','claude_sonnet_5_5'],maximumAttemptsPerRoute:1,recordHealth:false,
       execute:modelId=>withTenantModelReservation({scope:{context:fixture.authority.context,userId:browserOwner,projectId:browserProject},modelId,payload:{messages},estimatedInputTokens:4,maximumOutputTokens:8,
         execute:d=>chatCompletion(modelId,d.payload.messages as typeof messages,{maxTokens:8,credentialOverride:d.credentialOverride,beforeDispatch:d.beforeDispatch})})}),{code:'MODEL_DESTINATION_DENIED'});
     assert.equal(initial,1);assert.equal(forwarded,0);assert.equal(fallback,0);

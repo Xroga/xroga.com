@@ -5,6 +5,29 @@ import {readFileSync} from 'node:fs';
 import {createRequire} from 'node:module';
 import vm from 'node:vm';
 const require=createRequire(new URL('../../package.json',import.meta.url)),ts=require('typescript');
+// Load the real pure presentation validators. The transport fixture continues
+// to replace UI-only leaves, never Share parsing or founder-access policy.
+const pureSources={
+  '@/components/response-experience-v2/shareSnapshot':'components/response-experience-v2/shareSnapshot.ts',
+  '@/components/response-experience-v2/access':'components/response-experience-v2/access.ts',
+  './document':'components/response-experience-v2/document.ts',
+  './calculations':'components/response-experience-v2/calculations.ts',
+  '@/lib/xrogaBlocks':'lib/xrogaBlocks.ts',
+  '@/lib/xrogaRichResults':'lib/xrogaRichResults.ts',
+  './xrogaRichResults':'lib/xrogaRichResults.ts',
+  './responseCoverageContract':'lib/responseCoverageContract.ts',
+  '@/lib/osFounderAccess':'lib/osFounderAccess.ts',
+};
+const pureCache=new Map();
+const pureContext=vm.createContext({URL,TextDecoder,console});
+function pureModule(id){
+  if(id==='zod')return require(id);
+  const path=pureSources[id];assert.ok(path,'Unexpected pure fixture dependency '+id);
+  if(pureCache.has(path))return pureCache.get(path);
+  const exports={};pureCache.set(path,exports);
+  const code=ts.transpileModule(readFileSync(new URL('../src/'+path,import.meta.url),'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;
+  vm.runInContext('(function(exports,require){'+code+'\n})',pureContext)(exports,pureModule);return exports;
+}
 function guard(origin){
   const source=readFileSync(new URL('../src/lib/api.ts',import.meta.url),'utf8'),ast=ts.createSourceFile('api.ts',source,ts.ScriptTarget.Latest,true);
   const declarations=ast.statements.filter(n=>ts.isFunctionDeclaration(n)&&n.name?.text==='fetchApiResponse'||ts.isClassDeclaration(n)&&n.name?.text==='ApiError');assert.equal(declarations.length,2);
@@ -17,7 +40,11 @@ function fixture(origin,authenticated=true){
   const client={createClient:async()=>({auth:{getSession:async()=>({data:{session}}),getUser:async()=>({data:{user:authenticated?{id:'11111111-1111-4111-8111-111111111111'}:null},error:null})}})};
   const common={'@/lib/api':api,'@/lib/supabase/client':{createClient:()=>({auth:{getSession:async()=>({data:{session}})}})},'@/lib/supabase/server':client,
     'react':{cache:f=>f,useState:value=>{const i=states.length;states.push(value);return[value,v=>{states[i]=v;}];},useCallback:f=>(load=f),useEffect(){}},
-    'react/jsx-runtime':{jsx:()=>null,jsxs:()=>null},'next/navigation':{notFound(){throw Error('missing');}},'next/image':{},'next/link':{},'@/components/terminal/SharedAnswerDownloads':{},'next/server':{NextResponse:{json:Response.json}}};
+    'react/jsx-runtime':{jsx:()=>null,jsxs:()=>null},'next/navigation':{notFound(){throw Error('missing');}},'next/image':{},'next/link':{},'@/components/terminal/SharedAnswerDownloads':{},
+    '@/components/response-experience-v2/SharedResponseV2':{default(){throw Error('UI rendering is outside this transport fixture');}},
+    '@/components/response-experience-v2/shareSnapshot':pureModule('@/components/response-experience-v2/shareSnapshot'),
+    '@/components/response-experience-v2/access':pureModule('@/components/response-experience-v2/access'),
+    'next/server':{NextResponse:{json:Response.json}}};
   function compile(path,suffix=''){
     const exports={},code=ts.transpileModule(readFileSync(new URL('../src/'+path,import.meta.url),'utf8')+suffix,{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022,jsx:ts.JsxEmit.ReactJSX}}).outputText;
     vm.runInNewContext(code,{exports,require:id=>{if(!(id in common))throw Error('Unexpected fixture dependency '+id);return common[id];},fetch,URL,URLSearchParams,AbortSignal,Buffer,Response,Headers,console,process:{env:{NEXT_PUBLIC_API_URL:origin,NODE_ENV:'test'}}});return exports;
@@ -61,5 +88,25 @@ test('authorized admin, bounded shares and private range delivery keep their con
     assert.equal((await f.loadPrivate('?link=one&link=two')).status,404);assert.equal(requests,0);
     for(mode of ['wrong-share','oversized'])assert.equal((await f.loadShare(token)).status,'missing');
     mode='403';assert.equal((await f.loadShare(token)).status,'private');const denied=await f.loadPrivate();assert.equal(denied.status,503);assert.ok(!(await denied.text()).includes('PRIVATE_PROVIDER_ERROR_CANARY'));
+  }finally{api.closeAllConnections();await new Promise(r=>api.close(r));}
+});
+
+test('real Share loader validates both snapshot API versions without changing text or making another request',async()=>{
+  const {richShareSnapshot}=pureModule('@/components/response-experience-v2/shareSnapshot');
+  const text='Original answer, with all original words.';
+  const snapshot=richShareSnapshot({id:'owned-answer',content:text},text);assert.ok(snapshot);
+  let calls=0,payload={token,visibility:'private',scope:'response',prompt:'',response:snapshot};
+  const api=createServer((_req,res)=>{calls++;res.writeHead(200,{'content-type':'application/json'}).end(JSON.stringify({share:payload}));});
+  await new Promise(r=>api.listen(0,'127.0.0.1',r));
+  try{
+    const f=fixture(`http://127.0.0.1:${api.address().port}`);
+    for(const response of [{response:snapshot},{response:text,richResponse:snapshot}]){
+      calls=0;payload={...payload,...response};const result=await f.loadShare(token);
+      assert.equal(result.status,'ok');assert.equal(result.share.response,text);assert.equal(result.share.richResponse,snapshot);
+      assert.equal(result.share.richUnavailable,false);assert.equal(calls,1);
+    }
+    payload={...payload,response:'Different authoritative text',richResponse:snapshot};
+    const mismatch=await f.loadShare(token);assert.equal(mismatch.share.response,payload.response);
+    assert.equal(mismatch.share.richResponse,undefined);assert.equal(mismatch.share.richUnavailable,true);
   }finally{api.closeAllConnections();await new Promise(r=>api.close(r));}
 });

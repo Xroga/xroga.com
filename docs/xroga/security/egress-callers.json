@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "d04f8dc327dfb19f603874760595ecc739a436904cc0f58dfc25036dde86f4aa",
+  "sourceTreeDigest": "d59a57ebdc1cbcca2ef99e9d2a64693d69eba5ec67cd02bc87581ba03268b377",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -38,11 +38,11 @@
     {
       "id": "038ced12b0f74e8d5e0f",
       "file": "backend/src/ai/openaiCompat.ts",
-      "line": 218,
+      "line": 234,
       "entryPoint": "createModelProviderClient",
       "transport": "fetch",
       "callee": "globalThis.fetch",
-      "callSha256": "6703c4fb0f56a0c5ba51d850aeaae62ede1f65a40002556b6ee201b6618facc7",
+      "callSha256": "bbbf26a58be8e30ace8fcfaac921075adab2a85ca44b5d5b7c9f48a7ec48c8f3",
       "destination": "DYNAMIC_OR_SDK_INTERNAL",
       "trust": "FIXED_PROVIDER_ENDPOINT_AND_NO_REDIRECT_ONLY_NOT_DNS_OR_FULL_EGRESS_CERTIFICATION",
       "tenantAuthority": "THREE_UPSTREAM_SDK_TENANT_ACCOUNT_AUTHORITY_AND_DATA_OBLIGATIONS_REMAIN_PENDING",
@@ -53,12 +53,19 @@
         {
           "path": "backend/src/ai/providerPolicy.ts",
           "marker": "assertModelProviderDestination",
-          "sha256": "c496870604060d04ede920af1a8b06e67ad0749c8330788568f96f4a0d6dea9f"
+          "sha256": "4438bad4524725c5afb48a9da2ea69d0b480465038551346ed4cf1433e9cae59",
+          "reboundOnBranch": {
+            "previousSha256": "c496870604060d04ede920af1a8b06e67ad0749c8330788568f96f4a0d6dea9f"
+          }
         },
         {
           "path": "backend/src/ai/openaiCompat.egress.test.ts",
           "marker": "real SDK completion and streaming use only the approved endpoint and refuse redirects",
-          "sha256": "ac510fdfcecca4dabd9bd5642117499f95d5155cb85a3499abf4e54072b0359c"
+          "sha256": "8a686f065bbd6b45bd94a332466dcd77799ed7d125947b9ec1b23296ceeb6c35",
+          "reboundOnBranch": {
+            "previousSha256": "0622d56b1885aad11d4f284da5aa055690e20d3661533aa59d0c9dd1c78cd499",
+            "note": "Re-bound 2026-11-05: the file gained single-response transport regression tests and a streaming-verified guard in the existing redirect test; the reviewed redirect-refusal assertions are unchanged."
+          }
         },
         {
           "path": "docs/xroga/evidence/command-010/REAL-REDIRECT-TRANSPORT-PROOF.json",
@@ -68,18 +75,21 @@
         {
           "path": "backend/src/ai/modelRedirectFallback.security.test.ts",
           "marker": "real SDK redirects cannot become retries or another provider fallback",
-          "sha256": "36172e6c457b960779d04020748d18cd13cee96dd131aceb07a7d2a6e729ff11"
+          "sha256": "b010447ae3b523cb0d7381b13676b7bb798d4c5c2e25751d72ccb014601c632c",
+          "reboundOnBranch": {
+            "previousSha256": "36172e6c457b960779d04020748d18cd13cee96dd131aceb07a7d2a6e729ff11"
+          }
         }
       ]
     },
     {
       "id": "31380a8d5b9454a98a98",
       "file": "backend/src/ai/openaiCompat.ts",
-      "line": 296,
+      "line": 335,
       "entryPoint": "chatCompletion",
       "transport": "provider-sdk",
       "callee": "client.chat.completions.create",
-      "callSha256": "fedd059e41f3487339705716fdb7a912b28962fccd7daa038b5fa87580cc0eca",
+      "callSha256": "8e82b633686ef353d4c6db063a70a5772fcf9350245bec5da9d8d86dc9cc769a",
       "destination": "DYNAMIC_OR_SDK_INTERNAL",
       "trust": "SHARED_JSON_SDK_DISPATCH_AND_ACCOUNTING_ONLY_NOT_UPSTREAM_PROVENANCE_OR_TOOL_CERTIFICATION",
       "tenantAuthority": "PRIVATE_REQUEST_ADMISSION_FROM_CANONICAL_TENANT_OR_OPERATIONS_RESERVATION_OR_EXISTING_BOUNDED_ANONYMOUS_GUEST_LEASE_EACH_WIRE_RECHECKS_CURRENT_BINDING_COMPLETION_REQUIRES_SETTLEMENT_AND_ATOMIC_RECEIPT_OR_VERIFIED_CONSERVATIVE_GUEST_BUDGET_NO_RAW_ID_OR_CALLBACK_AUTHORITY",
@@ -90,17 +100,28 @@
         {
           "path": "backend/src/ai/genericSdkAdmission.test.ts",
           "marker": "31380a8d5b9454a98a98",
-          "sha256": "3a3096915aaee0b27d14c17afce3c9a90960d18e9941883a5773c07431d1a6b0"
+          "sha256": "04eadb96dd91a21c26241a4e532fb136cfa60287b7b7adf305dd96486e5ab852",
+          "reboundOnBranch": {
+            "previousSha256": "3a3096915aaee0b27d14c17afce3c9a90960d18e9941883a5773c07431d1a6b0"
+          }
         },
         {
           "path": "backend/src/ai/tenantModelDispatch.test.ts",
           "marker": "Exactly one canonical atomic receipt per completion",
-          "sha256": "e06c723425fbc538baf84a6110a41c04ab87c6af80d0fe3708a3c4f62780fbfc"
+          "sha256": "e410d125c211ca7c753cf0259e86a32f4472a7f7e75e54d18ebb2650ed768d9d",
+          "reboundOnBranch": {
+            "previousSha256": "0e0c34ac9ba880a018e9a791d2b414e73170d493826609b934c25277d93d46f4",
+            "note": "Re-bound 2026-11-05: the fixture environment gained ZURELAY_STREAM_USAGE_VERIFIED=1 so the test still exercises the streaming transport after Zurelay answers moved to a single verified response by default; reviewed assertions are unchanged."
+          }
         },
         {
           "path": "backend/src/ai/operationsSdkAdmission.test.ts",
           "marker": "No unauthorized retry, fallback or unaccounted publication",
-          "sha256": "bc560e49f2defd60bcad74d99011bc2915c0f9980af8573974913624b5d92f87"
+          "sha256": "ced78c0b60030a167ea64de17bfd62c458128680808da196c52413b6bcac5512",
+          "reboundOnBranch": {
+            "previousSha256": "0bb5380368539941b9169d78c90cfcdab4d1b6636b4f19dd7b40e4704be6f049",
+            "note": "Re-bound 2026-11-05: the fixture environment gained ZURELAY_STREAM_USAGE_VERIFIED=1 so the test still exercises the streaming transport after Zurelay answers moved to a single verified response by default; reviewed assertions are unchanged."
+          }
         },
         {
           "path": "docs/xroga/evidence/command-010/REAL-REDIRECT-TRANSPORT-PROOF.json",
@@ -110,18 +131,21 @@
         {
           "path": "backend/src/ai/modelRedirectFallback.security.test.ts",
           "marker": "real SDK redirects cannot become retries or another provider fallback",
-          "sha256": "36172e6c457b960779d04020748d18cd13cee96dd131aceb07a7d2a6e729ff11"
+          "sha256": "b010447ae3b523cb0d7381b13676b7bb798d4c5c2e25751d72ccb014601c632c",
+          "reboundOnBranch": {
+            "previousSha256": "36172e6c457b960779d04020748d18cd13cee96dd131aceb07a7d2a6e729ff11"
+          }
         }
       ]
     },
     {
       "id": "9c345e07b723c086440e",
       "file": "backend/src/ai/openaiCompat.ts",
-      "line": 402,
+      "line": 430,
       "entryPoint": "chatCompletionStream",
       "transport": "provider-sdk",
       "callee": "client.chat.completions.create",
-      "callSha256": "947695aec368f03b9176f97c4a6f418234ba9b7a641099d4efcad35b0b4d5c30",
+      "callSha256": "6eb08ff947aaf655cbb9fac9f4af25c6e8fcb622517fc4343327edaf39a6eca9",
       "destination": "DYNAMIC_OR_SDK_INTERNAL",
       "trust": "SHARED_SSE_SDK_DISPATCH_AND_DEFERRED_ACCOUNTED_PUBLICATION_ONLY_NOT_UPSTREAM_PROVENANCE_OR_TOOL_CERTIFICATION",
       "tenantAuthority": "PRIVATE_REQUEST_ADMISSION_FROM_CANONICAL_TENANT_OR_OPERATIONS_RESERVATION_EACH_WIRE_RECHECKS_CURRENT_OWNER_PROJECT_RUN_CREDENTIAL_AUTHORITY_BINDING_NO_PUBLIC_DELTAS_UNTIL_SETTLEMENT_AND_EXACT_ATOMIC_RECEIPT_CANCELLATION_REVOCATION_AND_PUBLICATION_FAILURE_CANNOT_RETRY_MODEL",
@@ -132,17 +156,28 @@
         {
           "path": "backend/src/ai/genericSdkAdmission.test.ts",
           "marker": "9c345e07b723c086440e",
-          "sha256": "3a3096915aaee0b27d14c17afce3c9a90960d18e9941883a5773c07431d1a6b0"
+          "sha256": "04eadb96dd91a21c26241a4e532fb136cfa60287b7b7adf305dd96486e5ab852",
+          "reboundOnBranch": {
+            "previousSha256": "3a3096915aaee0b27d14c17afce3c9a90960d18e9941883a5773c07431d1a6b0"
+          }
         },
         {
           "path": "backend/src/ai/tenantModelDispatch.test.ts",
           "marker": "No successful stream publication without settlement and a valid atomic receipt",
-          "sha256": "e06c723425fbc538baf84a6110a41c04ab87c6af80d0fe3708a3c4f62780fbfc"
+          "sha256": "e410d125c211ca7c753cf0259e86a32f4472a7f7e75e54d18ebb2650ed768d9d",
+          "reboundOnBranch": {
+            "previousSha256": "0e0c34ac9ba880a018e9a791d2b414e73170d493826609b934c25277d93d46f4",
+            "note": "Re-bound 2026-11-05: the fixture environment gained ZURELAY_STREAM_USAGE_VERIFIED=1 so the test still exercises the streaming transport after Zurelay answers moved to a single verified response by default; reviewed assertions are unchanged."
+          }
         },
         {
           "path": "backend/src/ai/operationsSdkAdmission.test.ts",
           "marker": "No unauthorized retry, fallback or unaccounted publication",
-          "sha256": "bc560e49f2defd60bcad74d99011bc2915c0f9980af8573974913624b5d92f87"
+          "sha256": "ced78c0b60030a167ea64de17bfd62c458128680808da196c52413b6bcac5512",
+          "reboundOnBranch": {
+            "previousSha256": "0bb5380368539941b9169d78c90cfcdab4d1b6636b4f19dd7b40e4704be6f049",
+            "note": "Re-bound 2026-11-05: the fixture environment gained ZURELAY_STREAM_USAGE_VERIFIED=1 so the test still exercises the streaming transport after Zurelay answers moved to a single verified response by default; reviewed assertions are unchanged."
+          }
         },
         {
           "path": "docs/xroga/evidence/command-010/REAL-REDIRECT-TRANSPORT-PROOF.json",
@@ -152,14 +187,17 @@
         {
           "path": "backend/src/ai/modelRedirectFallback.security.test.ts",
           "marker": "real SDK redirects cannot become retries or another provider fallback",
-          "sha256": "36172e6c457b960779d04020748d18cd13cee96dd131aceb07a7d2a6e729ff11"
+          "sha256": "b010447ae3b523cb0d7381b13676b7bb798d4c5c2e25751d72ccb014601c632c",
+          "reboundOnBranch": {
+            "previousSha256": "36172e6c457b960779d04020748d18cd13cee96dd131aceb07a7d2a6e729ff11"
+          }
         }
       ]
     },
     {
       "id": "90c62dd04b83e45e1c68",
       "file": "backend/src/ai/parallelApproval.ts",
-      "line": 81,
+      "line": 108,
       "entryPoint": "executeParallelNativeAction",
       "transport": "boundedPublicGet",
       "callee": "boundedPublicGet",
@@ -179,18 +217,21 @@
         {
           "path": "backend/src/ai/parallelWeb.security.test.ts",
           "marker": "actual Parallel entries enforce issued context, current owner, egress, canonical holds and exact settlement",
-          "sha256": "40a9c47c0f61e5894bcc787e72738b44e1ec1b23dcdf652b44e6708b8ff706f2"
+          "sha256": "c070ac329948841c4cc4a74bf641ef747fd81aa64b8cc27600879a0def449ee9",
+          "reboundOnBranch": {
+            "previousSha256": "40a9c47c0f61e5894bcc787e72738b44e1ec1b23dcdf652b44e6708b8ff706f2"
+          }
         }
       ]
     },
     {
       "id": "5baa649b7c2c9b6b6f30",
       "file": "backend/src/ai/parallelDispatch.ts",
-      "line": 97,
+      "line": 98,
       "entryPoint": "executeParallelRequest",
       "transport": "fetch",
       "callee": "fetch",
-      "callSha256": "0015b0c0aa7832d13a4d87175cb68ff30a90f397c0cb84c5899433e3f5c2ea41",
+      "callSha256": "8a4cf1df25bdb5d59e6f01020cc5be67cec679c8815a93cc5b5b594cc7a7fe28",
       "destination": "DYNAMIC_OR_SDK_INTERNAL",
       "trust": "FIXED_PARALLEL_API_WITH_PRODUCER_ATTESTED_EXACT_PRIVATE_EGRESS_APPROVAL",
       "tenantAuthority": "ORIGINAL_ACTOR_PROJECT_RUN_GENERATION_CURRENT_ONE_USE_CLAIM_SECRET_FLOOR_AND_CANONICAL_BUDGET_SETTLEMENT_NO_DENIAL_FALLBACK",
@@ -206,14 +247,17 @@
         {
           "path": "backend/src/ai/parallelWeb.security.test.ts",
           "marker": "actual Parallel entries enforce issued context, current owner, egress, canonical holds and exact settlement",
-          "sha256": "40a9c47c0f61e5894bcc787e72738b44e1ec1b23dcdf652b44e6708b8ff706f2"
+          "sha256": "c070ac329948841c4cc4a74bf641ef747fd81aa64b8cc27600879a0def449ee9",
+          "reboundOnBranch": {
+            "previousSha256": "40a9c47c0f61e5894bcc787e72738b44e1ec1b23dcdf652b44e6708b8ff706f2"
+          }
         }
       ]
     },
     {
       "id": "4c899876b9e3850af11b",
       "file": "backend/src/ai/softwareAgent/xrogaAgentModel.ts",
-      "line": 764,
+      "line": 765,
       "entryPoint": "execute",
       "transport": "provider-sdk",
       "callee": "client.chat.completions.create",
@@ -232,13 +276,20 @@
         },
         {
           "path": "backend/src/ai/tenantModelDispatch.test.ts",
-          "marker": "SDK retry rechecks revocation",
-          "sha256": "e06c723425fbc538baf84a6110a41c04ab87c6af80d0fe3708a3c4f62780fbfc"
+          "marker": "A failed dispatch cannot retry after revocation or select another model",
+          "sha256": "e410d125c211ca7c753cf0259e86a32f4472a7f7e75e54d18ebb2650ed768d9d",
+          "reboundOnBranch": {
+            "previousSha256": "0e0c34ac9ba880a018e9a791d2b414e73170d493826609b934c25277d93d46f4",
+            "note": "Re-bound 2026-11-05: the fixture environment gained ZURELAY_STREAM_USAGE_VERIFIED=1 so the test still exercises the streaming transport after Zurelay answers moved to a single verified response by default; reviewed assertions are unchanged."
+          }
         },
         {
           "path": "backend/src/ai/softwareAgent/xrogaAgentModelEgress.test.ts",
           "marker": "Each completed turn must have one verified atomic receipt",
-          "sha256": "d14d602244ac9ceac7c31c2aa6c9f359eac10ff6a8aac0229d625aa8bc1cf348"
+          "sha256": "4a856135d1d90d75eced165539cab8b8ab06d6ad8e29a6335df3e5c878341de3",
+          "reboundOnBranch": {
+            "previousSha256": "d14d602244ac9ceac7c31c2aa6c9f359eac10ff6a8aac0229d625aa8bc1cf348"
+          }
         },
         {
           "path": "docs/xroga/evidence/command-010/REAL-REDIRECT-TRANSPORT-PROOF.json",
@@ -248,7 +299,10 @@
         {
           "path": "backend/src/ai/modelRedirectFallback.security.test.ts",
           "marker": "real SDK redirects cannot become retries or another provider fallback",
-          "sha256": "36172e6c457b960779d04020748d18cd13cee96dd131aceb07a7d2a6e729ff11"
+          "sha256": "b010447ae3b523cb0d7381b13676b7bb798d4c5c2e25751d72ccb014601c632c",
+          "reboundOnBranch": {
+            "previousSha256": "36172e6c457b960779d04020748d18cd13cee96dd131aceb07a7d2a6e729ff11"
+          }
         }
       ]
     },
@@ -865,38 +919,6 @@
         {
           "path": "docs/xroga/evidence/command-010/UNUSED-PROVIDER-ADAPTER-TRACE.json",
           "marker": "b2ed8e79cb82506d4aca",
-          "sha256": "087b43cd4a6aa4baf42f4601fb6f4172f9b1d4359fc5b7d9a40a3b0043b733fb"
-        },
-        {
-          "path": "backend/src/security/egress/unusedProviderAdapters.test.ts",
-          "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
-          "sha256": "a4f5065e2bc245adc6d85cbb389d4d16227719e1f2de49101c6b0c0f11af04a9"
-        }
-      ]
-    },
-    {
-      "id": "049adafdb79c93d85166",
-      "file": "backend/src/lib/gemini.ts",
-      "line": 20,
-      "entryPoint": "geminiGenerate",
-      "transport": "fetch",
-      "callee": "fetch",
-      "callSha256": "383ea650440cf0afcf9de3f2311e0d6d747e64c20fc00ee3929d335ceaa706c0",
-      "destination": "DYNAMIC_OR_SDK_INTERNAL",
-      "trust": "NO_CURRENT_PRODUCTION_IMPORT_OR_CALLER_OF_EXACT_LEGACY_MODULE",
-      "tenantAuthority": "SOURCE_REACHABILITY_ONLY_NO_PROVIDER_UPSTREAM_OR_FUTURE_CALLER_PROMOTION",
-      "currentProtection": "NOT_CERTIFIED",
-      "risk": "HIGH_RISK_PENDING_REVIEW",
-      "disposition": "DISABLED_WITH_PROOF",
-      "evidence": [
-        {
-          "path": "docs/xroga/evidence/command-010/integration-20261029/unused-provider-loader-AT-21193.txt",
-          "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
-          "sha256": "fcd5c55b7232a8b22e7319d0be03fbc49cc06a163a95ab450a62ab547b7e86bf"
-        },
-        {
-          "path": "docs/xroga/evidence/command-010/UNUSED-PROVIDER-ADAPTER-TRACE.json",
-          "marker": "049adafdb79c93d85166",
           "sha256": "087b43cd4a6aa4baf42f4601fb6f4172f9b1d4359fc5b7d9a40a3b0043b733fb"
         },
         {
@@ -3812,7 +3834,10 @@
         {
           "path": "backend/src/workers/browserSdkBoundary.security.test.ts",
           "marker": "actual SDK checks actor, current ownership, secret egress, reservation, cancellation and settlement",
-          "sha256": "b740b0523df44d8e8401d9910baa466cab7812b9e0eeff21d02bf470b849fd7f"
+          "sha256": "b9303eefbcea14026bc24031f6770b0dcb932ce28dc317013758400ba4d15996",
+          "reboundOnBranch": {
+            "previousSha256": "b740b0523df44d8e8401d9910baa466cab7812b9e0eeff21d02bf470b849fd7f"
+          }
         },
         {
           "path": "backend/src/workers/browserModelLifetime.security.test.ts",
@@ -3827,7 +3852,10 @@
         {
           "path": "backend/src/ai/modelRedirectFallback.security.test.ts",
           "marker": "real SDK redirects cannot become retries or another provider fallback",
-          "sha256": "36172e6c457b960779d04020748d18cd13cee96dd131aceb07a7d2a6e729ff11"
+          "sha256": "b010447ae3b523cb0d7381b13676b7bb798d4c5c2e25751d72ccb014601c632c",
+          "reboundOnBranch": {
+            "previousSha256": "36172e6c457b960779d04020748d18cd13cee96dd131aceb07a7d2a6e729ff11"
+          }
         }
       ]
     },
@@ -4280,7 +4308,37 @@
         {
           "path": "frontend/e2e/phase4-admin-share.security.mjs",
           "marker": "authorized admin, bounded shares and private range delivery keep their contracts and denial results stay private",
-          "sha256": "9768cffa49a8b13925506e35b9a5e52e7468129590fb2178396691caec5b2d23"
+          "sha256": "0b408b0cead5f45988f086a998e822cab8d0a7da828db3cb2feb21e8c7a2e1d3",
+          "reboundOnBranch": {
+            "previousSha256": "9768cffa49a8b13925506e35b9a5e52e7468129590fb2178396691caec5b2d23"
+          }
+        }
+      ]
+    },
+    {
+      "id": "4f66984cbd60464e857e",
+      "file": "frontend/src/app/api/site-icon/route.ts",
+      "line": 17,
+      "entryPoint": "GET",
+      "transport": "boundedPublicGet",
+      "callee": "boundedPublicGet",
+      "callSha256": "36089949098e6e6b59627a3ff3c3a416442272ea92bc7a98e17a689f4eaedd62",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "URL_TRANSPORT_BOUNDARY_FIXED_HOST_NO_USER_DATA_SENT_RASTER_ONLY_NOT_FULL_ACTION_OR_TENANT_CERTIFICATION",
+      "tenantAuthority": "PUBLIC_CACHEABLE_LOGO_BY_VALIDATED_HOSTNAME_NO_TENANT_OR_USER_DATA_IN_REQUEST_OR_RESPONSE",
+      "currentProtection": "CENTRAL_PUBLIC_GET_CANDIDATE_NOT_SEMANTIC_CERTIFICATION",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "VERIFIED_GUARD",
+      "evidence": [
+        {
+          "path": "backend/src/security/boundedPublicGet.ts",
+          "marker": "admitPublicTarget",
+          "sha256": "899faefb611b6bd1ab4cdff6e66337def9d19d5d922b116a9a1e1b57f8372c94"
+        },
+        {
+          "path": "frontend/src/lib/siteIcon.test.ts",
+          "marker": "only a plain public hostname can be requested",
+          "sha256": "2916a37259e5450bd13865314cf09927e416524aff33b1544a5dc3107c3fb7b0"
         }
       ]
     },
@@ -4824,7 +4882,8 @@
         "83834d34bdcfc0b016bb",
         "7415b9c13ced3db60b0a",
         "be1e785f2ee1037bb1c0",
-        "651ba21f8a976701efbf"
+        "651ba21f8a976701efbf",
+        "4f66984cbd60464e857e"
       ]
     },
     {
@@ -4851,7 +4910,6 @@
         "58bda0b6092997792af2",
         "a1701f06f690596fd2c0",
         "b2ed8e79cb82506d4aca",
-        "049adafdb79c93d85166",
         "f03cf7691ce072b34cea",
         "a5e73984a9c33257f782",
         "7e4752b5c0bc6bcc4090",

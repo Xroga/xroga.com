@@ -70,6 +70,17 @@ export function authorityContextForPermit(value: unknown,binding:AuthorityDispat
   return requireTenantContext(permits.get(value as object)!.context);
 }
 
+/** Reads a current canonical spend grant without issuing new authority. */
+export function authorityModelSpendLimit(value: unknown, binding: AuthorityDispatchBinding, taskId: string): number {
+  assertAuthorityPermit(value, binding);
+  const scope = permits.get(value as object)!.scope;
+  if (scope.actionClass !== 'PURCHASE_OR_SPEND' || scope.provider !== 'zurelay'
+    || scope.operation !== 'model.execute' || scope.runId !== taskId || scope.currency !== 'USD'
+    || !scope.maxSpendMicroUsd || !/^[1-9]\d{0,15}$/.test(scope.maxSpendMicroUsd)
+    || !Number.isSafeInteger(Number(scope.maxSpendMicroUsd))) denied('AUTHORITY_SPEND_BINDING_REQUIRED');
+  return Number(scope.maxSpendMicroUsd);
+}
+
 /** Called by the actual effect adapter after metadata/account waits. Mark used
  * before awaiting to prevent two in-process consumers racing one DB claim. */
 export async function consumeAuthorityPermit(value: unknown, binding: AuthorityDispatchBinding): Promise<void> {

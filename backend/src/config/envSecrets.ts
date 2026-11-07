@@ -1,25 +1,13 @@
-/**
- * Fly.io secret names for the active Xroga AI stack:
- *
- * OPENROUTER_API_KEY → DeepSeek V4 Flash ONLY
- * KIMI_API_KEY       → Moonshot official
- * GLM_API_KEY        → Z.ai / Zhipu official
- * XAI_API_KEY        → xAI official (Grok + native X Search)
- * PARALLEL_API_KEY   → Parallel official (Search / Extract / Responses)
- *
- * Important:
- *
- * - DeepSeek runs only through OpenRouter.
- * - Normal public-web intelligence runs only through Parallel.
- * - Native X/Twitter intelligence runs through xAI X Search.
- * - One XAI_API_KEY covers Grok inference + x_search.
- *
- * Provider secrets are resolved by their canonical active names.
- */
+/** Canonical server-only secret custody. ZURELAY_API_KEY is the only active
+ * generation credential. Retired provider aliases remain for historical records
+ * and approved recovery, never as aliases for the new provider's key. Parallel
+ * search/retrieval and the microphone have separate, unchanged credentials. */
 
 const ALIASES: Record<string, string[]> = {
+  // New custody namespace. Never alias a retired provider credential here.
+  ZURELAY_API_KEY: ['ZURELAY_API_KEY'],
   // -------------------------------------------------------------------------
-  // ACTIVE AI STACK
+  // HISTORICAL GENERATION NAMESPACES, NOT EXECUTION AUTHORITY
   // -------------------------------------------------------------------------
 
   OPENROUTER_API_KEY: [
@@ -37,7 +25,7 @@ const ALIASES: Record<string, string[]> = {
     'BIGMODEL_API_KEY',
   ],
 
-  /** xAI official, used only for private Grok 4.3 native x_search retrieval. */
+  /** Historical xAI custody only. Future generative/X model calls are retired. */
   XAI_API_KEY: [
     'XAI_API_KEY',
   ],
@@ -45,13 +33,11 @@ const ALIASES: Record<string, string[]> = {
   /**
    * Parallel official.
    *
-   * One key covers:
-   * - Search API
-   * - Extract API
-   * - Responses API
+   * Official DeepSeek Search & Fetch. Retrieval only: never used for chat, coding or presentation.
+   * Parallel is no longer used for search.
    */
-  PARALLEL_API_KEY: [
-    'PARALLEL_API_KEY',
+  DEEPSEEK_WEBSEARCH_FETCH_API: [
+    'DEEPSEEK_WEBSEARCH_FETCH_API',
   ],
 
   // -------------------------------------------------------------------------
@@ -300,25 +286,11 @@ export function getDeployKeyStatus(): Record<string, boolean> {
  */
 export function getAiStackKeyStatus(): Record<string, boolean> {
   return {
-    // DeepSeek via OpenRouter only.
-    OPENROUTER_API_KEY:
-      hasSecret('OPENROUTER_API_KEY'),
+    ZURELAY_API_KEY: hasSecret('ZURELAY_API_KEY'),
 
-    // Moonshot / Kimi.
-    KIMI_API_KEY:
-      hasSecret('KIMI_API_KEY'),
-
-    // Z.ai / GLM.
-    GLM_API_KEY:
-      hasSecret('GLM_API_KEY'),
-
-    // Grok + native X Search.
-    XAI_API_KEY:
-      hasSecret('XAI_API_KEY'),
-
-    // General public web intelligence.
-    PARALLEL_API_KEY:
-      hasSecret('PARALLEL_API_KEY'),
+    // General public web intelligence (official DeepSeek Search).
+    DEEPSEEK_WEBSEARCH_FETCH_API:
+      hasSecret('DEEPSEEK_WEBSEARCH_FETCH_API'),
   };
 }
 

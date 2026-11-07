@@ -11,31 +11,30 @@ function source(relativeUrl: string): string {
 test('AI responses use cardless task-aware transient feedback before real activity arrives', () => {
   const messageLog = source('../../components/terminal/SwarmMessageLog.tsx');
   const liveActivity = source('../../components/terminal/TerminalLiveActivity.tsx');
+  const timeline = source('../../components/activity/ActivityTimeline.tsx');
   const motion = source('../../components/terminal/ExecutionMotion.tsx');
 
   assert.doesNotMatch(messageLog, /TerminalRunStream|ResearchPagesLoader|waiting for first event/);
   assert.match(messageLog, /pendingIntent=\{pendingIntent\}/);
   assert.match(messageLog, /pendingLabel=\{pendingActivityLabel\}/);
-  assert.match(messageLog, /requestText=\{messagePrompt\}/);
   assert.match(messageLog, /isQuickConversationPrompt\(messagePrompt\)/);
   assert.match(liveActivity, /coalesceActivity\(run\.events\)/);
-  assert.match(liveActivity, /if \(!pending\) return thinkingSteps\.length/);
-  assert.match(liveActivity, /requestText/);
-  assert.match(liveActivity, /Your request/);
-  assert.match(liveActivity, /ExecutionShimmerText/);
-  assert.match(liveActivity, /BlackHoleMark/);
-  assert.doesNotMatch(liveActivity, /SearchScanner|UniversalExecutionOrb|Globe2/);
-  assert.match(liveActivity, /StalledDots/);
+  assert.match(liveActivity, /thinkingSteps/);
+  assert.match(liveActivity, /ActivityTimeline/);
   assert.match(liveActivity, /STALLED_AFTER_MS/);
+  // The redesign shows one quiet timeline: no request panel, no branding block and no capability claims.
+  assert.doesNotMatch(liveActivity, /Your request|BlackHoleMark|BlackHoleWordmark|ExecutionShimmerText|Ready to use|Observed:/);
+  assert.doesNotMatch(liveActivity, /SearchScanner|UniversalExecutionOrb|Globe2/);
   assert.match(motion, /ExecutionPulse/);
   assert.match(motion, /SearchScanner/);
   assert.match(motion, /UniversalExecutionOrb/);
   assert.match(motion, /StalledDots/);
   assert.doesNotMatch(liveActivity, /Connected · awaiting first update/);
   assert.doesNotMatch(liveActivity, /rounded-2xl border border-\[var\(--card-border\)\]/);
-  assert.match(liveActivity, /aria-label="Execution activity"/);
-  assert.match(liveActivity, /private model reasoning is not shown/i);
-  assert.doesNotMatch(liveActivity, /chain-of-thought is being generated|generating private model reasoning/i);
+  assert.match(timeline, /aria-label="Activity"/);
+  assert.match(timeline, /private model reasoning is never shown/i);
+  assert.doesNotMatch(`${liveActivity}
+${timeline}`, /chain-of-thought is being generated|generating private model reasoning/i);
 });
 
 test('the live transcript keeps pending UI separate from received execution rows', () => {
@@ -46,8 +45,8 @@ test('the live transcript keeps pending UI separate from received execution rows
   const code = liveActivity.replace(/\/\*[\s\S]*?\*\/|\/\/[^\n]*/g, '');
   assert.doesNotMatch(code, /percent|Math\.round\([^)]*100/i);
   assert.match(liveActivity, /run\.events/);
-  assert.match(liveActivity, /data-state="pending"/);
-  assert.match(liveActivity, /data-intent=\{pendingIntent\}/);
+  assert.match(liveActivity, /data-state=\{shell \? 'pending'/);
+  assert.match(liveActivity, /data-intent=\{shell \? pendingIntent/);
   assert.doesNotMatch(liveActivity, /Developer details/);
 });
 

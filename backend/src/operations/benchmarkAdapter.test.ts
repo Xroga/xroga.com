@@ -24,7 +24,7 @@ const passingCase: CaseExecutor = async () => ({
   outputTokens: 100,
 });
 
-const models = (): readonly ModelId[] => ['kimi_k3', 'glm_5_3'];
+const models = (): readonly ModelId[] => ['deepseek_v4_1_flash_1017'];
 
 test('a benchmark run cannot execute without confirmation and a second approval', () => {
   const definition = ACTION_DEFINITIONS.run_model_benchmark!;
@@ -112,7 +112,7 @@ test('an unrelated capability is refused rather than silently run', async () => 
 });
 
 test('the real executor refuses to start without the exact admitted action', async () => {
-  const adapter = createBenchmarkAdapter({ models: () => ['kimi_k3'] });
+  const adapter = createBenchmarkAdapter({ models: () => ['deepseek_v4_1_flash_1017'] });
   const result = await adapter.execute('run_model_benchmark', { maximumCases: 1, maximumCostUsd: 0.5 });
   assert.equal(result.status, 'blocked');
   assert.equal(result.errorCategory, 'authority_required');

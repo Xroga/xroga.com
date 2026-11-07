@@ -1,6 +1,7 @@
 import { adaptTrustedA2uiBlock } from './xrogaA2uiAdapter';
 import { modelBlockCapabilitySet } from './xrogaCapabilityManifest';
 import type { XrogaBlock, XrogaOutputDocument } from './xrogaBlocks';
+import { responseCoverageContractSchema } from './responseCoverageContract';
 
 const XROGA_UI_FENCE = /```xroga-ui\s*\n?([\s\S]*?)```/gi;
 const TABLE_DIVIDER = /^\s*\|?\s*:?-{3,}:?\s*(?:\|\s*:?-{3,}:?\s*)+\|?\s*$/;
@@ -59,34 +60,64 @@ function canonicalRichBlock(value: unknown, documentId: string, index: number): 
   }
   const candidate = {
     ...input,
+    // Preserve descriptions emitted by the existing primary model contract.
+    // Canonical detail wins when both fields are supplied. Validation still
+    // runs below, including the normal size and graph-reference bounds.
+    ...(input.type === 'graph' && Array.isArray(input.nodes) ? {
+      nodes: input.nodes.map(node => {
+        if (!node || typeof node !== 'object' || Array.isArray(node)) return node;
+        const item = node as Record<string, unknown>;
+        return item.detail === undefined && typeof item.subtitle === 'string'
+          ? { ...item, detail: item.subtitle } : item;
+      }),
+    } : {}),
     schemaVersion: 1,
     id: typeof input.id === 'string' && input.id.trim()
       ? safeIdPart(input.id)
       : `${safeIdPart(documentId)}-${safeIdPart(input.type)}-${index + 1}`,
     ...('state' in input ? {} : { state: 'ready' }),
   };
-  return adaptTrustedA2uiBlock(candidate);
+  const block = adaptTrustedA2uiBlock(candidate);
+  if (block?.type === 'calculator' && block.derivedResults) {
+    const inputs = new Set(block.inputs.map(input => input.id));
+    if (inputs.has('$result') || new Set(block.derivedResults.map(item => item.id)).size !== block.derivedResults.length ||
+      block.derivedResults.some(item => item.operands.some(value => typeof value === 'string' && value !== '$result' && !inputs.has(value)) ||
+        (['quotient', 'percentage', 'percentage-change'].includes(item.operation) && item.operands.length !== 2) ||
+        (['loan-payment', 'compound-growth'].includes(item.operation) && item.operands.length !== 3))) return null;
+  }
+  if (block?.type === 'graph') {
+    const ids = new Set(block.nodes.map(node => node.id));
+    const edges = new Set(block.edges.map(edge => JSON.stringify([edge.source, edge.target, edge.label ?? ''])));
+    // Reject at ingestion so persistence carries the explicit partial notice.
+    // Deferring this to V2 would silently switch the entire answer to legacy.
+    if (!ids.size || ids.size !== block.nodes.length || edges.size !== block.edges.length ||
+      block.edges.some(edge => !ids.has(edge.source) || !ids.has(edge.target))) return null;
+  }
+  return block;
 }
 
-function parseProtocolBlocks(content: string, documentId: string): XrogaBlock[] {
+function parseProtocolBlocks(content: string, documentId: string): { blocks: XrogaBlock[]; rejected: boolean } {
   const blocks: XrogaBlock[] = [];
+  let rejected = false;
   for (const match of content.matchAll(XROGA_UI_FENCE)) {
     if (blocks.length >= MAX_RICH_BLOCKS) break;
     const raw = match[1]?.trim() ?? '';
-    if (!raw || raw.length > MAX_PROTOCOL_CHARS) continue;
+    if (!raw || raw.length > MAX_PROTOCOL_CHARS) { rejected = true; continue; }
     try {
       const decoded = JSON.parse(raw) as unknown;
       const candidates = Array.isArray(decoded) ? decoded : [decoded];
+      if (!candidates.length || candidates.length > MAX_RICH_BLOCKS) rejected = true;
       for (const candidate of candidates) {
         if (blocks.length >= MAX_RICH_BLOCKS) break;
         const block = canonicalRichBlock(candidate, documentId, blocks.length);
         if (block) blocks.push(block);
+        else rejected = true;
       }
     } catch {
-      // The protocol is never rendered as prose. A malformed payload simply has no UI effect.
+      rejected = true;
     }
   }
-  return blocks;
+  return { blocks, rejected };
 }
 
 function splitTableRow(line: string): string[] {
@@ -109,20 +140,10 @@ function keyFor(label: string, index: number, used: Set<string>): string {
 
 function scalar(value: string): Scalar {
   const trimmed = value.trim();
-  if (!trimmed || /^(?:n\/a|null|—|-)$/i.test(trimmed)) return trimmed || null;
-  if (/^(?:true|false)$/i.test(trimmed)) return trimmed.toLowerCase() === 'true';
-  const numeric = trimmed
-    .replace(/^[$€£¥]\s*/, '')
-    .replace(/,/g, '')
-    .replace(/%$/, '')
-    .match(/^(-?\d+(?:\.\d+)?)\s*([kmb])?$/i);
-  if (numeric) {
-    const multiplier = numeric[2]?.toLowerCase() === 'k' ? 1_000
-      : numeric[2]?.toLowerCase() === 'm' ? 1_000_000
-        : numeric[2]?.toLowerCase() === 'b' ? 1_000_000_000
-          : 1;
-    return Number(numeric[1]) * multiplier;
-  }
+  // Preserve units, precision, leading zeroes and authored formatting. Only a
+  // lossless plain-number conversion may participate in an inferred chart.
+  const number = Number(trimmed);
+  if (trimmed && Number.isFinite(number) && String(number) === trimmed) return number;
   return trimmed;
 }
 
@@ -137,12 +158,25 @@ function precedingTableTitle(lines: string[], headerIndex: number, ordinal: numb
   return `Data table ${ordinal + 1}`;
 }
 
-function tableBlocksFromMarkdown(content: string, documentId: string): { content: string; blocks: XrogaBlock[] } {
+function tableBlocksFromMarkdown(content: string, documentId: string): { content: string; blocks: XrogaBlock[]; ordered: XrogaBlock[] } {
   const lines = content.split('\n');
   const removed = new Set<number>();
   const blocks: XrogaBlock[] = [];
+  const ordered: XrogaBlock[] = [];
+  let cursor = 0;
+  let codeFence: string | undefined;
+  const prose = (value: string) => {
+    if (value.trim()) ordered.push({ schemaVersion: 1, id: `${safeIdPart(documentId)}-text-${ordered.length}`, type: 'narrative', text: value.trim() });
+  };
 
   for (let index = 0; index < lines.length - 2 && blocks.length < MAX_RICH_BLOCKS; index += 1) {
+    const fence = lines[index]?.match(/^\s{0,3}(`{3,}|~{3,})/);
+    if (fence) {
+      if (!codeFence) codeFence = fence[1];
+      else if (fence[1]![0] === codeFence[0] && fence[1]!.length >= codeFence.length) codeFence = undefined;
+      continue;
+    }
+    if (codeFence) continue;
     if (!lines[index]?.includes('|') || !TABLE_DIVIDER.test(lines[index + 1] ?? '')) continue;
     const labels = splitTableRow(lines[index] ?? '');
     const dividers = splitTableRow(lines[index + 1] ?? '');
@@ -156,7 +190,8 @@ function tableBlocksFromMarkdown(content: string, documentId: string): { content
       rawRows.push(cells);
       end += 1;
     }
-    if (!rawRows.length) continue;
+    // Keep large tables as Markdown instead of silently truncating their rows.
+    if (!rawRows.length || rawRows.length > 250) continue;
 
     const used = new Set<string>();
     const keys = labels.map((label, column) => keyFor(label, column, used));
@@ -172,6 +207,8 @@ function tableBlocksFromMarkdown(content: string, documentId: string): { content
       return 'text' as const;
     });
 
+    prose(lines.slice(cursor, index).join('\n'));
+    const blockStart = blocks.length;
     blocks.push({
       schemaVersion: 1,
       id: `${safeIdPart(documentId)}-table-${blocks.length + 1}`,
@@ -203,37 +240,75 @@ function tableBlocksFromMarkdown(content: string, documentId: string): { content
     }
 
     for (let rowIndex = index; rowIndex < end; rowIndex += 1) removed.add(rowIndex);
+    ordered.push(...blocks.slice(blockStart));
+    cursor = end;
     index = end - 1;
   }
 
+  prose(lines.slice(cursor).join('\n'));
   return {
     content: compactWhitespace(lines.filter((_, index) => !removed.has(index)).join('\n')),
     blocks,
+    ordered,
   };
 }
 
 /** Convert a completed assistant answer into the canonical, persisted Xroga output document. */
-export function enhanceAiResponse(content: string, documentId: string): EnhancedAiResponse {
+export function enhanceAiResponse(content: string, documentId: string, completion?: { status: string; reason?: string }, received?: { format: string; text: string; contract?:unknown }): EnhancedAiResponse {
   const source = typeof content === 'string' ? content : '';
-  const protocolBlocks = parseProtocolBlocks(source, documentId);
-  const withoutProtocol = stripXrogaUiProtocol(source);
-  const markdown = tableBlocksFromMarkdown(withoutProtocol, documentId);
-  const richBlocks = [...markdown.blocks, ...protocolBlocks].slice(0, MAX_RICH_BLOCKS);
-  if (!richBlocks.length) return { content: withoutProtocol || source.trim() };
-
-  const narrative = compactWhitespace(markdown.content);
-  const blocks: XrogaBlock[] = [
-    ...(narrative
-      ? [{ schemaVersion: 1 as const, id: `${safeIdPart(documentId)}-narrative`, type: 'narrative' as const, text: narrative }]
-      : []),
-    ...richBlocks,
-  ];
+  if (source.length > 200_000) return { content: source };
+  const blocks: XrogaBlock[] = [];
+  let cursor = 0;
+  let segment = 0;
+  const contract = responseCoverageContractSchema.safeParse(received?.contract);
+  const responseSource = received?.format === 'xroga-response-json-v1' && typeof received.text === 'string' && received.text.length <= 200_000
+    ? { format: 'xroga-response-json-v1' as const, text: received.text,...(contract.success?{contract:contract.data}:{}) } : undefined;
+  let rejected = completion?.status === 'partial' || Boolean(received?.contract && (!contract.success || !contract.data.coverage.complete));
+  const partialReason = completion?.status === 'partial' ? completion.reason : 'presentation_contract';
+  if (rejected) blocks.push({ schemaVersion: 1, id: `${safeIdPart(documentId)}-completion`, type: 'notice', tone: 'warning',
+    text: partialReason === 'presentation_contract'
+      ? 'This answer may not cover every part of your request. The written explanation is complete as shown.'
+      : partialReason === 'authorization_review'
+      ? 'Authorization guidance needs review. This answer contains a known unsafe authorization claim. Privileged database roles can bypass RLS, and JWT claims alone do not prove immediate revocation. Verify current server-owned tenant membership and permissions. The original answer is preserved. No automatic retry was made.'
+      : partialReason === 'source_attribution'
+      ? 'Some numbered citations could not be matched to a retrieved source. Linked citations are verified; treat any unlinked number as unverified. No automatic retry was made.'
+      : partialReason === 'output_limit'
+      ? 'This answer reached its output limit and is incomplete. The received content is preserved. No automatic retry was made.'
+      : 'The provider did not confirm a complete answer. The received content is preserved. No automatic retry was made.' });
+  const appendText = (value: string) => blocks.push(...tableBlocksFromMarkdown(value, `${documentId}-${segment++}`).ordered);
+  for (const match of source.matchAll(XROGA_UI_FENCE)) {
+    appendText(source.slice(cursor, match.index));
+    const parsed = parseProtocolBlocks(match[0], `${documentId}-${segment++}`);
+    if (parsed.blocks.length) blocks.push(...parsed.blocks);
+    if (parsed.rejected || !parsed.blocks.length) {
+      rejected = true;
+      blocks.push({ schemaVersion: 1, id: `${safeIdPart(documentId)}-invalid-${segment}`, type: 'notice', tone: 'warning', text: 'This response included a visual that could not be validated. Its original data is preserved, but the visual is unavailable.' });
+    }
+    cursor = match.index! + match[0].length;
+  }
+  const tail = source.slice(cursor);
+  appendText(stripXrogaUiProtocol(tail));
+  if (/```xroga-ui\b/i.test(tail)) {
+    rejected = true;
+    blocks.push({ schemaVersion: 1, id: `${safeIdPart(documentId)}-incomplete`, type: 'notice', tone: 'warning', text: 'The visual data was incomplete. The original response is preserved, but this visual is unavailable.' });
+  }
+  if (!responseSource && !blocks.some(b => b.type !== 'narrative')) return { content: source.trim() };
+  // Match the renderer's bounded document contract. Overflow remains intact as
+  // original text rather than silently losing the remainder of an answer.
+  if (blocks.length > 100) return { content: source };
+  // Block IDs are local presentation identifiers, never action authority. Assign
+  // stable unique IDs so repeated model IDs cannot collide during reconciliation.
+  blocks.forEach((block, index) => { block.id = `${safeIdPart(documentId)}-block-${index + 1}`; });
+  const narrative = compactWhitespace(blocks.flatMap(b => b.type === 'narrative' ? [b.text] : []).join('\n\n'));
   return {
     content: narrative,
     output: {
       schemaVersion: 1,
       id: `response-${safeIdPart(documentId)}`,
-      status: 'completed',
+      status: rejected ? 'partial' : 'completed',
+      sourceText: source,
+      ...(responseSource ? { responseSource } : {}),
+      composition: 'source-order',
       blocks,
     },
   };

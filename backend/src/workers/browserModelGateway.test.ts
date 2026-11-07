@@ -8,7 +8,7 @@ import { BrowserModelError, createBrowserModelGateway } from './browserModelGate
 const job=ownedBrowserJob;
 let fixture:ReturnType<typeof browserModelFixture>;
 beforeEach(t=>{fixture=browserModelFixture(t as TestContext);});
-function harness(reply:(body:any)=>any,modelId:'deepseek_v4_flash'|'glm_5_3_flash'='deepseek_v4_flash'){
+function harness(reply:(body:any)=>any,modelId:'deepseek_v4_1_flash_1017'='deepseek_v4_1_flash_1017'){
   fixture.reply=reply;
   return{gw:createBrowserModelGateway({modelId}),ledger:fixture.ledger,bodies:fixture.bodies};
 }
@@ -21,7 +21,7 @@ describe('browser model gateway (Stagehand ClientLLM through the canonical ledge
     const r = await gw.generate({ systemPrompt: 'sys', messages: [{ role: 'user', content: [{ type: 'text', text: 'find next' }] }], responseFormat: { type: 'json_schema', name: 'Observe result', schema: { type: 'object' } } }, { job: job(), remainingMicros: 2_000_000, signal, authority:fixture.authority });
     assert.equal(ledger.reserved.length, 1); assert.equal(ledger.settled.length, 1); assert.equal(ledger.released.length, 0);
     assert.equal(ledger.settled[0].result.inputTokens, 1_000); assert.equal(ledger.settled[0].result.outputTokens, 200);
-    assert.equal(bodies[0].response_format.type, 'json_schema'); assert.equal(bodies[0].response_format.json_schema.name, 'Observe_result');
+    assert.equal(bodies[0].response_format.type,'json_object');assert.match(bodies[0].messages[0].content,/JSON Schema/);
     assert.equal(bodies[0].messages[0].role, 'system');
     assert.deepEqual((r.result as any).structuredContent, { elements: [{ selector: 'a.next' }] });
     assert.ok(r.costMicros > 0); assert.equal(r.inputTokens, 1_000);
@@ -44,8 +44,8 @@ describe('browser model gateway (Stagehand ClientLLM through the canonical ledge
     const { gw, ledger, bodies } = harness(() => ok('x'));
     const text = 'x'.repeat(600_000); // a large accessibility snapshot, as Stagehand sends
     const input = Math.ceil(JSON.stringify([{ role: 'user', content: [{ type: 'text', text }] }]).length / 3);
-    const small = estimateProviderReservationMicroUsd({ modelId: 'deepseek_v4_flash', estimatedInputTokens: input, maximumOutputTokens: 256 });
-    const full = estimateProviderReservationMicroUsd({ modelId: 'deepseek_v4_flash', estimatedInputTokens: input, maximumOutputTokens: 4_096 });
+    const small = estimateProviderReservationMicroUsd({ modelId: 'deepseek_v4_1_flash_1017', estimatedInputTokens: input, maximumOutputTokens: 256 });
+    const full = estimateProviderReservationMicroUsd({ modelId: 'deepseek_v4_1_flash_1017', estimatedInputTokens: input, maximumOutputTokens: 4_096 });
     assert.ok(full > small, 'the fixture must make output size matter');
     await gw.generate({ messages: [{ role: 'user', content: { type: 'text', text } }] }, { job: job(), remainingMicros: small, signal, authority:fixture.authority });
     assert.ok(bodies[0].max_tokens <= 256 && bodies[0].max_tokens >= 64, String(bodies[0].max_tokens));
@@ -59,12 +59,12 @@ describe('browser model gateway (Stagehand ClientLLM through the canonical ledge
     await assert.rejects(failing.gw.generate({ messages: [{ role: 'user', content: { type: 'text', text: 'x' } }] }, { job: job(), remainingMicros: 2_000_000, signal, authority:fixture.authority }), (e:any) => e.status===503);
     assert.equal(failing.ledger.released.length, 1); assert.equal(failing.ledger.settled.length, 0);
     const unmeasured = harness(() => ({ choices: [{ message: { content: 'x' } }] }));
-    await assert.rejects(unmeasured.gw.generate({ messages: [{ role: 'user', content: { type: 'text', text: 'x' } }] }, { job: job(), remainingMicros: 2_000_000, signal, authority:fixture.authority }), (e:any) => e.code==='POST_COMPLETION_ACCOUNTING_UNCERTAIN');
+    await assert.rejects(unmeasured.gw.generate({ messages: [{ role: 'user', content: { type: 'text', text: 'x' } }] }, { job: job(), remainingMicros: 2_000_000, signal, authority:fixture.authority }), (e:any) => e.code==='MODEL_DESTINATION_DENIED');
     assert.equal(unmeasured.ledger.released.length, 2); assert.equal(unmeasured.ledger.settled.length, 0);
   });
 
-  it('uses JSON mode plus the schema in the prompt for providers without strict json_schema (GLM, Kimi)', async () => {
-    const {gw,bodies}=harness(()=>ok('```json\n{"elements":[]}\n```'),'glm_5_3_flash');
+  it('uses JSON mode plus the schema in the prompt until exact Zurelay schema enforcement is verified', async () => {
+    const {gw,bodies}=harness(()=>ok('```json\n{"elements":[]}\n```'),'deepseek_v4_1_flash_1017');
     const r = await gw.generate({ messages: [{ role: 'user', content: { type: 'text', text: 'observe' } }], responseFormat: { type: 'json_schema', name: 'Observe', schema: { type: 'object', required: ['elements'] } } }, { job: job(), remainingMicros: 2_000_000, signal, authority:fixture.authority });
     assert.deepEqual(bodies[0].response_format, { type: 'json_object' });
     assert.match(bodies[0].messages[0].content, /JSON Schema/);
@@ -85,4 +85,10 @@ describe('browser model gateway (Stagehand ClientLLM through the canonical ledge
     assert.equal(bodies[0].messages[1].tool_calls[0].id, 'call_0'); assert.equal(bodies[0].messages[2].role, 'tool');
     assert.deepEqual((r.result as any).content, [{ type: 'tool_use', id: 'call_1', name: 'click', input: { selector: '#go' } }]);
   });
+  it('reports the same inclusive reasoning and cache-read price as the canonical settlement',async()=>{
+    const {gw,ledger}=harness(()=>({...ok('result'),usage:{prompt_tokens:1000,completion_tokens:200,prompt_tokens_details:{cached_tokens:500},completion_tokens_details:{reasoning_tokens:80}}}));
+    const result=await gw.generate({messages:[{role:'user',content:{type:'text',text:'owned fixture'}}]},{job:job(),remainingMicros:2000000,signal,authority:fixture.authority});
+    assert.equal(result.costMicros,40);assert.equal(result.outputTokens,200);assert.equal(ledger.atomic,1);
+  });
+
 });

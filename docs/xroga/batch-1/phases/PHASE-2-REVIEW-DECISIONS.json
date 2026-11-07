@@ -118,7 +118,13 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "project_runtime_secrets",
       "currentCallerId": "952e2977dbbd8adc9b21",
-      "reason": "Retain the original runtime secret operation and fixed owner-inclusive key after adding exact persistence receipt validation. Source offsets changed. This mechanical mapping does not certify actor provenance, custody or database verification."
+      "reason": "Retain the original runtime secret operation and fixed owner-inclusive key after adding exact persistence receipt validation. Source offsets changed. This mechanical mapping does not certify actor provenance, custody or database verification.",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "e49e4b26ba7d2860dc41",
+        "verification": "origin/main already maps this caller to this id and it exists in the current register."
+      }
     },
     {
       "previousCallerId": "3fbff43474088305493a",
@@ -128,7 +134,13 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "currentCallerId": "d37aef8db513054ed541",
-      "reason": "Retain the original runtime secret operation and fixed owner-inclusive key after adding exact persistence receipt validation. Source offsets changed. This mechanical mapping does not certify actor provenance, custody or database verification."
+      "reason": "Retain the original runtime secret operation and fixed owner-inclusive key after adding exact persistence receipt validation. Source offsets changed. This mechanical mapping does not certify actor provenance, custody or database verification.",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "a2f0c39a047770542a8b",
+        "verification": "origin/main already maps this caller to this id and it exists in the current register."
+      }
     },
     {
       "previousCallerId": "7abc56c35732ad79279a",
@@ -138,7 +150,13 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "project_runtime_secrets",
       "currentCallerId": "1244fa5f77d64178a682",
-      "reason": "Retain the original runtime secret operation and fixed owner-inclusive key after adding exact persistence receipt validation. Source offsets changed. This mechanical mapping does not certify actor provenance, custody or database verification."
+      "reason": "Retain the original runtime secret operation and fixed owner-inclusive key after adding exact persistence receipt validation. Source offsets changed. This mechanical mapping does not certify actor provenance, custody or database verification.",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "492e2a6c5aee7adbc460",
+        "verification": "origin/main already maps this caller to this id and it exists in the current register."
+      }
     },
     {
       "previousCallerId": "b9522163f553d5a418ed",
@@ -148,7 +166,13 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "currentCallerId": "358bbf620757dbdc20c7",
-      "reason": "Retain the original runtime secret operation and fixed owner-inclusive key after adding exact persistence receipt validation. Source offsets changed. This mechanical mapping does not certify actor provenance, custody or database verification."
+      "reason": "Retain the original runtime secret operation and fixed owner-inclusive key after adding exact persistence receipt validation. Source offsets changed. This mechanical mapping does not certify actor provenance, custody or database verification.",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "7f42805766f9e4a7622d",
+        "verification": "origin/main already maps this caller to this id and it exists in the current register."
+      }
     },
     {
       "previousCallerId": "1d714d1647e2c5f6a436",
@@ -158,7 +182,13 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "project_runtime_secrets",
       "currentCallerId": "7e1732412cef6d6c7465",
-      "reason": "Retain the original runtime secret operation and fixed owner-inclusive key after adding exact persistence receipt validation. Source offsets changed. This mechanical mapping does not certify actor provenance, custody or database verification."
+      "reason": "Retain the original runtime secret operation and fixed owner-inclusive key after adding exact persistence receipt validation. Source offsets changed. This mechanical mapping does not certify actor provenance, custody or database verification.",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "32701c89f04a3536291d",
+        "verification": "origin/main already maps this caller to this id and it exists in the current register."
+      }
     },
     {
       "previousCallerId": "2a229397c50f1425b1b5",
@@ -168,7 +198,13 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "currentCallerId": "86f871c90f683c44c842",
-      "reason": "Retain the original runtime secret operation and fixed owner-inclusive key after adding exact persistence receipt validation. Source offsets changed. This mechanical mapping does not certify actor provenance, custody or database verification."
+      "reason": "Retain the original runtime secret operation and fixed owner-inclusive key after adding exact persistence receipt validation. Source offsets changed. This mechanical mapping does not certify actor provenance, custody or database verification.",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "18ace9b81c3f92c7fa17",
+        "verification": "origin/main already maps this caller to this id and it exists in the current register."
+      }
     },
     {
       "previousCallerId": "05bb1afcf9e554e379ee",
@@ -809,222 +845,354 @@
     {
       "path": "backend/src/ai/quota.ts",
       "previousCallerId": "3faa7ece6a312b431802",
-      "currentCallerId": "7632727b3c8b02cf14d5",
+      "currentCallerId": "fec7557265d1bdbb43bb",
       "enclosing": "syncPlanBudget",
       "kind": "RPC_CANDIDATE",
       "target": "set_user_ai_plan_budget",
       "reviewPacketId": "B1-P2-346186bea635be22",
-      "reason": "Original issued tenant context and exact durable ownership receipt are added to this dormant callable contract. The original operation and service-only routine are retained. This source mapping is not a security promotion."
+      "reason": "Original issued tenant context and exact durable ownership receipt are added to this dormant callable contract. The original operation and service-only routine are retained. This source mapping is not a security promotion.",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "7632727b3c8b02cf14d5",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical and so is the whole enclosing function."
+      }
     },
     {
       "path": "backend/src/ai/quota.ts",
       "previousCallerId": "09c18505660bd25e7f05",
-      "currentCallerId": "77bc9a9a205796da009c",
+      "currentCallerId": "4af9883650ce37539f5e",
       "enclosing": "syncPlanBudget",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "reviewPacketId": "B1-P2-346186bea635be22",
-      "reason": "Original issued tenant context and exact durable ownership receipt are added to this dormant callable contract. The original operation and service-only routine are retained. This source mapping is not a security promotion."
+      "reason": "Original issued tenant context and exact durable ownership receipt are added to this dormant callable contract. The original operation and service-only routine are retained. This source mapping is not a security promotion.",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "77bc9a9a205796da009c",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical and so is the whole enclosing function."
+      }
     },
     {
       "path": "backend/src/ai/quota.ts",
       "previousCallerId": "ab1702a45a7ccb57ac8f",
-      "currentCallerId": "e8076c86facca1bb0721",
+      "currentCallerId": "4a20d5d6f72416b0cc1e",
       "enclosing": "recordUsage",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "reviewPacketId": "B1-P2-346186bea635be22",
-      "reason": "Only source positions change. The complete enclosing function and every module byte outside the explicitly repaired dormant export and its context import are identical to the accepted source. All prior tenant obligations remain, with new-source regression required."
+      "reason": "Only source positions change. The complete enclosing function and every module byte outside the explicitly repaired dormant export and its context import are identical to the accepted source. All prior tenant obligations remain, with new-source regression required.",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "e8076c86facca1bb0721",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical and so is the whole enclosing function."
+      }
     },
     {
       "path": "backend/src/ai/quota.ts",
       "previousCallerId": "1990f5c97beb40b8b783",
-      "currentCallerId": "baee9857b82180aaf497",
+      "currentCallerId": "5b0856b8bbdf8ca461f6",
       "enclosing": "recordUsage",
       "kind": "RPC_CANDIDATE",
       "target": "increment_user_token_usage",
       "reviewPacketId": "B1-P2-346186bea635be22",
-      "reason": "Only source positions change. The complete enclosing function and every module byte outside the explicitly repaired dormant export and its context import are identical to the accepted source. All prior tenant obligations remain, with new-source regression required."
+      "reason": "Only source positions change. The complete enclosing function and every module byte outside the explicitly repaired dormant export and its context import are identical to the accepted source. All prior tenant obligations remain, with new-source regression required.",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "baee9857b82180aaf497",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical and so is the whole enclosing function."
+      }
     },
     {
       "path": "backend/src/ai/quota.ts",
       "previousCallerId": "e27b9abaf3fe02c61229",
-      "currentCallerId": "611df8756b24bd23b167",
+      "currentCallerId": "2cfc66d7ab285d2bb5d2",
       "enclosing": "recordUsage",
       "kind": "RPC_CANDIDATE",
       "target": "merge_user_model_usage",
       "reviewPacketId": "B1-P2-346186bea635be22",
-      "reason": "Only source positions change. The complete enclosing function and every module byte outside the explicitly repaired dormant export and its context import are identical to the accepted source. All prior tenant obligations remain, with new-source regression required."
+      "reason": "Only source positions change. The complete enclosing function and every module byte outside the explicitly repaired dormant export and its context import are identical to the accepted source. All prior tenant obligations remain, with new-source regression required.",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "611df8756b24bd23b167",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical and so is the whole enclosing function."
+      }
     },
     {
       "path": "backend/src/ai/quota.ts",
       "previousCallerId": "f1aaacc8e5daf32fdba1",
-      "currentCallerId": "fb624c5ca127ce5d4da8",
+      "currentCallerId": "d0c04a1fb4d28114ae3d",
       "enclosing": "recordUsage",
       "kind": "RPC_CANDIDATE",
       "target": "insert_ai_usage_ledger",
       "reviewPacketId": "B1-P2-346186bea635be22",
-      "reason": "Only source positions change. The complete enclosing function and every module byte outside the explicitly repaired dormant export and its context import are identical to the accepted source. All prior tenant obligations remain, with new-source regression required."
+      "reason": "Only source positions change. The complete enclosing function and every module byte outside the explicitly repaired dormant export and its context import are identical to the accepted source. All prior tenant obligations remain, with new-source regression required.",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "fb624c5ca127ce5d4da8",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical and so is the whole enclosing function."
+      }
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
       "previousCallerId": "00d351afbe045a136c66",
-      "currentCallerId": "aae055d92faa16ae4e2e",
+      "currentCallerId": "255ea9744a9343d6feaf",
       "enclosing": "activatePaidCycle",
       "kind": "RPC_CANDIDATE",
       "target": "activate_xroga_paid_cycle",
       "reviewPacketId": "B1-P2-392b9b628a9b92be",
-      "reason": "Original issued tenant context and exact durable ownership receipt are added to this dormant callable contract. The original operation and service-only routine are retained. This source mapping is not a security promotion."
+      "reason": "Original issued tenant context and exact durable ownership receipt are added to this dormant callable contract. The original operation and service-only routine are retained. This source mapping is not a security promotion.",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "bebfcf0f4ba426a71be1",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical and so is the whole enclosing function."
+      }
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
       "previousCallerId": "254a91383e3a8af0310b",
-      "currentCallerId": "54326930ab9ec884b6cd",
+      "currentCallerId": "e4d8bf4fcb8f6422f53a",
       "enclosing": "activatePaidCycle",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "reviewPacketId": "B1-P2-392b9b628a9b92be",
-      "reason": "Original issued tenant context and exact durable ownership receipt are added to this dormant callable contract. The original operation and service-only routine are retained. This source mapping is not a security promotion."
+      "reason": "Original issued tenant context and exact durable ownership receipt are added to this dormant callable contract. The original operation and service-only routine are retained. This source mapping is not a security promotion.",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "67b1241b9b70b5f136ae",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical and so is the whole enclosing function."
+      }
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
       "previousCallerId": "590df28cdc2b297e03b6",
-      "currentCallerId": "53446e75ca49c95522af",
+      "currentCallerId": "b9d50643ad7fda897932",
       "enclosing": "getProviderEntitlementStatus",
       "kind": "RPC_CANDIDATE",
       "target": "ensure_xroga_free_cycle",
       "reviewPacketId": "B1-P2-392b9b628a9b92be",
-      "reason": "Only source positions change. The complete enclosing function and every module byte outside the explicitly repaired dormant export and its context import are identical to the accepted source. All prior tenant obligations remain, with new-source regression required."
+      "reason": "Only source positions change. The complete enclosing function and every module byte outside the explicitly repaired dormant export and its context import are identical to the accepted source. All prior tenant obligations remain, with new-source regression required.",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "33169c5e9ad22ce0655f",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical and so is the whole enclosing function."
+      }
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
       "previousCallerId": "39a1f4163240597da04d",
-      "currentCallerId": "4c4451bbec61aecb23d3",
+      "currentCallerId": "67400600da71ba2124eb",
       "enclosing": "getProviderEntitlementStatus",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "reviewPacketId": "B1-P2-392b9b628a9b92be",
-      "reason": "Only source positions change. The complete enclosing function and every module byte outside the explicitly repaired dormant export and its context import are identical to the accepted source. All prior tenant obligations remain, with new-source regression required."
+      "reason": "Only source positions change. The complete enclosing function and every module byte outside the explicitly repaired dormant export and its context import are identical to the accepted source. All prior tenant obligations remain, with new-source regression required.",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "7836681966b6d9215ec8",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical and so is the whole enclosing function."
+      }
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
       "previousCallerId": "613d8e71ddafb0d6bd0c",
-      "currentCallerId": "9d05c85f5bfac4989a75",
+      "currentCallerId": "c985fa5fee1ee7d5c6f2",
       "enclosing": "getProviderEntitlementStatus",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "xroga_billing_cycles",
       "reviewPacketId": "B1-P2-392b9b628a9b92be",
-      "reason": "Only source positions change. The complete enclosing function and every module byte outside the explicitly repaired dormant export and its context import are identical to the accepted source. All prior tenant obligations remain, with new-source regression required."
+      "reason": "Only source positions change. The complete enclosing function and every module byte outside the explicitly repaired dormant export and its context import are identical to the accepted source. All prior tenant obligations remain, with new-source regression required.",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "86106178c4a136dd921d",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical and so is the whole enclosing function."
+      }
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
       "previousCallerId": "a80e4804742dfd6bcc0a",
-      "currentCallerId": "469b0a4a0957a0d982b1",
+      "currentCallerId": "b57f79f0d091e2d52575",
       "enclosing": "getProviderEntitlementStatus",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "reviewPacketId": "B1-P2-392b9b628a9b92be",
-      "reason": "Only source positions change. The complete enclosing function and every module byte outside the explicitly repaired dormant export and its context import are identical to the accepted source. All prior tenant obligations remain, with new-source regression required."
+      "reason": "Only source positions change. The complete enclosing function and every module byte outside the explicitly repaired dormant export and its context import are identical to the accepted source. All prior tenant obligations remain, with new-source regression required.",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "26e1c49e68e89b7b14bd",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical and so is the whole enclosing function."
+      }
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
       "previousCallerId": "6285818c6e8220770b29",
-      "currentCallerId": "4a9c1469b879166fe52c",
+      "currentCallerId": "4150f3451a1cef23bc00",
       "enclosing": "setUsagePacing",
       "kind": "RPC_CANDIDATE",
       "target": "set_xroga_usage_pacing",
       "reviewPacketId": "B1-P2-392b9b628a9b92be",
-      "reason": "Only source positions change. The complete enclosing function and every module byte outside the explicitly repaired dormant export and its context import are identical to the accepted source. All prior tenant obligations remain, with new-source regression required."
+      "reason": "Only source positions change. The complete enclosing function and every module byte outside the explicitly repaired dormant export and its context import are identical to the accepted source. All prior tenant obligations remain, with new-source regression required.",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "5c9be0f2e0f652c62e49",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical and so is the whole enclosing function."
+      }
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
       "previousCallerId": "090fe734dc5d1d3dc6e3",
-      "currentCallerId": "0b3ff8ce7a456a8a2acf",
+      "currentCallerId": "be62ab94e9a3c042c183",
       "enclosing": "setUsagePacing",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "reviewPacketId": "B1-P2-392b9b628a9b92be",
-      "reason": "Only source positions change. The complete enclosing function and every module byte outside the explicitly repaired dormant export and its context import are identical to the accepted source. All prior tenant obligations remain, with new-source regression required."
+      "reason": "Only source positions change. The complete enclosing function and every module byte outside the explicitly repaired dormant export and its context import are identical to the accepted source. All prior tenant obligations remain, with new-source regression required.",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "597ad99cc551e28182ea",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical and so is the whole enclosing function."
+      }
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
       "previousCallerId": "3f66673813dee0d85b85",
-      "currentCallerId": "f6f4b355a8c80fc166f4",
+      "currentCallerId": "ee7f1f1315d6867c3e17",
       "enclosing": "reserveProviderBudget",
       "kind": "RPC_CANDIDATE",
       "target": "reserve_xroga_provider_budget",
       "reviewPacketId": "B1-P2-392b9b628a9b92be",
-      "reason": "Only source positions change. The complete enclosing function and every module byte outside the explicitly repaired dormant export and its context import are identical to the accepted source. All prior tenant obligations remain, with new-source regression required."
+      "reason": "Only source positions change. The complete enclosing function and every module byte outside the explicitly repaired dormant export and its context import are identical to the accepted source. All prior tenant obligations remain, with new-source regression required.",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "5b2500bca0819c0cfbca",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical; the enclosing function changed and its diff was read in the persistence-review pass."
+      }
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
       "previousCallerId": "746985044f7d3ee62aff",
-      "currentCallerId": "c2adb020f37811ce7849",
+      "currentCallerId": "7b462edee6e0deb442d8",
       "enclosing": "reserveProviderBudget",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "reviewPacketId": "B1-P2-392b9b628a9b92be",
-      "reason": "Only source positions change. The complete enclosing function and every module byte outside the explicitly repaired dormant export and its context import are identical to the accepted source. All prior tenant obligations remain, with new-source regression required."
+      "reason": "Only source positions change. The complete enclosing function and every module byte outside the explicitly repaired dormant export and its context import are identical to the accepted source. All prior tenant obligations remain, with new-source regression required.",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "48608e9c8e68e6683453",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical; the enclosing function changed and its diff was read in the persistence-review pass."
+      }
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
       "previousCallerId": "e030677c7ecb6b0dd90e",
-      "currentCallerId": "9cce2ff19e247ce9c5d5",
+      "currentCallerId": "63cd9db82a553901aa87",
       "enclosing": "reserveProviderBudget",
       "kind": "RPC_CANDIDATE",
       "target": "ensure_xroga_free_cycle",
       "reviewPacketId": "B1-P2-392b9b628a9b92be",
-      "reason": "Only source positions change. The complete enclosing function and every module byte outside the explicitly repaired dormant export and its context import are identical to the accepted source. All prior tenant obligations remain, with new-source regression required."
+      "reason": "Only source positions change. The complete enclosing function and every module byte outside the explicitly repaired dormant export and its context import are identical to the accepted source. All prior tenant obligations remain, with new-source regression required.",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "0aa6642b9d69de06f3b2",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical; the enclosing function changed and its diff was read in the persistence-review pass."
+      }
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
       "previousCallerId": "e35278adbe80b78c8d41",
-      "currentCallerId": "670197ad89640f5a6242",
+      "currentCallerId": "54b682f70bf2fc2118d6",
       "enclosing": "reserveProviderBudget",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "reviewPacketId": "B1-P2-392b9b628a9b92be",
-      "reason": "Only source positions change. The complete enclosing function and every module byte outside the explicitly repaired dormant export and its context import are identical to the accepted source. All prior tenant obligations remain, with new-source regression required."
+      "reason": "Only source positions change. The complete enclosing function and every module byte outside the explicitly repaired dormant export and its context import are identical to the accepted source. All prior tenant obligations remain, with new-source regression required.",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "64c63cbd2cbdc0d0e6f6",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical; the enclosing function changed and its diff was read in the persistence-review pass."
+      }
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
       "previousCallerId": "b5a82155e981259a207e",
-      "currentCallerId": "9d0558fe12707a8a2949",
+      "currentCallerId": "72838b3e50b0a2167d93",
       "enclosing": "settleProviderBudget",
       "kind": "RPC_CANDIDATE",
       "target": "settle_xroga_provider_budget",
       "reviewPacketId": "B1-P2-392b9b628a9b92be",
-      "reason": "Only source positions change. The complete enclosing function and every module byte outside the explicitly repaired dormant export and its context import are identical to the accepted source. All prior tenant obligations remain, with new-source regression required."
+      "reason": "Only source positions change. The complete enclosing function and every module byte outside the explicitly repaired dormant export and its context import are identical to the accepted source. All prior tenant obligations remain, with new-source regression required.",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "298b5f4095b683f456b6",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical and so is the whole enclosing function."
+      }
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
       "previousCallerId": "564673e6f6b21c690fce",
-      "currentCallerId": "65acb9b03435995fdeb0",
+      "currentCallerId": "53502198a107866bdd54",
       "enclosing": "settleProviderBudget",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "reviewPacketId": "B1-P2-392b9b628a9b92be",
-      "reason": "Only source positions change. The complete enclosing function and every module byte outside the explicitly repaired dormant export and its context import are identical to the accepted source. All prior tenant obligations remain, with new-source regression required."
+      "reason": "Only source positions change. The complete enclosing function and every module byte outside the explicitly repaired dormant export and its context import are identical to the accepted source. All prior tenant obligations remain, with new-source regression required.",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "e052915067b01ca6077d",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical and so is the whole enclosing function."
+      }
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
       "previousCallerId": "5ed8ef26b72e26561f26",
-      "currentCallerId": "774dd446f08cb58fbc9b",
+      "currentCallerId": "cc73aacc720688126189",
       "enclosing": "finishFailedProviderReservation",
       "kind": "RPC_CANDIDATE",
       "target": "release_xroga_provider_budget",
       "reviewPacketId": "B1-P2-392b9b628a9b92be",
-      "reason": "Only source positions change. The complete enclosing function and every module byte outside the explicitly repaired dormant export and its context import are identical to the accepted source. All prior tenant obligations remain, with new-source regression required."
+      "reason": "Only source positions change. The complete enclosing function and every module byte outside the explicitly repaired dormant export and its context import are identical to the accepted source. All prior tenant obligations remain, with new-source regression required.",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "54e741be8699adc0e781",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical and so is the whole enclosing function."
+      }
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
       "previousCallerId": "3fc72ec34d884b871909",
-      "currentCallerId": "706f26c27c2b32064580",
+      "currentCallerId": "39946f9c942d63422513",
       "enclosing": "finishFailedProviderReservation",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "reviewPacketId": "B1-P2-392b9b628a9b92be",
-      "reason": "Only source positions change. The complete enclosing function and every module byte outside the explicitly repaired dormant export and its context import are identical to the accepted source. All prior tenant obligations remain, with new-source regression required."
+      "reason": "Only source positions change. The complete enclosing function and every module byte outside the explicitly repaired dormant export and its context import are identical to the accepted source. All prior tenant obligations remain, with new-source regression required.",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentCallerId": "f4a361a7bbed04369e1b",
+        "verification": "Same enclosing function, kind, target and ordinal in the source that produced the previous id; the whole call chain is byte-identical and so is the whole enclosing function."
+      }
     },
     {
       "path": "backend/src/ai/routingOutcomes.ts",
@@ -1384,6 +1552,18 @@
           "Bind six narrow existing admin/readiness caller proofs and the two shared guard calls without certifying unrelated endpoints",
           "This does not promise retroactive revocation of already admitted reads, founder-exclusive/AAL2 policy, new grants,009 custody or production readiness"
         ]
+      },
+      "reboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "packetSourceRebinds": [
+          {
+            "path": "backend/src/routes/admin.ts",
+            "previousSha256": "b0ebeab3363ba2d2446ce8fe19b48910d4febbde409056b3e232dfc521b3277d",
+            "review": "File is byte-identical to origin/main; the hash is main's own recorded value."
+          }
+        ]
       }
     },
     {
@@ -1448,17 +1628,17 @@
       "current007Evidence": {
         "sourceSha": "7be4403096a3c782520a52464f544e36212c587e",
         "verifiedCurrentCallerIds": [
-          "a864bc5998ad30044406",
-          "705840502528b9097f92",
-          "794f2986baf15127a5e5",
-          "2660919ebdd0c11227d5",
-          "b2f45a155f1f9ed6ccee",
-          "952e2977dbbd8adc9b21",
-          "d37aef8db513054ed541",
-          "1244fa5f77d64178a682",
-          "358bbf620757dbdc20c7",
-          "7e1732412cef6d6c7465",
-          "86f871c90f683c44c842"
+          "a7a1747d2192d62b505b",
+          "4623023af1a7fe9573f6",
+          "dfd2b022b39413db1561",
+          "6da2a4d0d15144e0aad0",
+          "2a0d2f322b23c157502d",
+          "e49e4b26ba7d2860dc41",
+          "a2f0c39a047770542a8b",
+          "492e2a6c5aee7adbc460",
+          "7f42805766f9e4a7622d",
+          "32701c89f04a3536291d",
+          "18ace9b81c3f92c7fa17"
         ],
         "remainingCurrentCallerIds": [],
         "proofArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/result.json",
@@ -1478,6 +1658,13 @@
         "historicalSourceSha256": "592ed786e73af7eda5862d54f72ee5a4f298050fb232cedf1c3dda39a6bd12bb",
         "scope": "Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
         "currentSourceCertification": "NOT_INFERRED_REQUIRES_REGRESSION"
+      },
+      "reboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousSourceSha256": "3b46dea8f9649026d6bb5c9ad4601fa9f583c9f5c1d0ecc7025cf1009bcf51c3",
+        "review": "File is byte-identical to origin/main; the hash is main's own recorded value, replacing an older value carried by the integrated lines."
       }
     },
     {
@@ -1755,7 +1942,7 @@
     },
     {
       "packetId": "B1-P2-8c13793907db3388",
-      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+      "sourceSha256": "845f195f835dd9dae9955a7e9ccd2c7d0a86ddfee917299e951fe99d289d3448",
       "executionStatus": "IN_PROGRESS",
       "finding": "DEMONSTRATED_PROVISIONING_BUNDLE_ORPHAN_AUTHORITY_FIXED_PENDING_REAL_PRIVATE_OBJECT_PROOF",
       "actualVerification": {
@@ -1825,11 +2012,23 @@
         "ref": "b0cd0ec31be56a8945ae41998563475237ed52fb",
         "sha256": "99a90ce870db5a6e55fff7a588384f8abb9ced3bf141ad7cd3d35522cf6a9785",
         "proof": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+      },
+      "reboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "packetSourceRebinds": [
+          {
+            "path": "backend/src/services/integrations/userProviderKeys.ts",
+            "previousSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+            "review": "Reviewed on PR 922: adds zurelay to the allowed provider list, the env-var map and the provider catalog (three constants). Key storage, ownership, encryption and every persistence function are unchanged; the strict call-and-function comparison of all 23 related caller reviews found them byte-identical."
+          }
+        ]
       }
     },
     {
       "packetId": "B1-P2-392b9b628a9b92be",
-      "sourceSha256": "6827c7f21bcdac5b366d6ccb88f5d01acfeb3a8ee930cebaba353734ce82e086",
+      "sourceSha256": "ccec1009a57392366b476c85f0c6ae703709b1ea4cbbe1a4b760645b1db6bb35",
       "executionStatus": "IN_PROGRESS",
       "finding": "DORMANT_ISSUED_OWNER_AND_EXACT_BUDGET_RECEIPTS_REPAIRED_PROOF_PENDING",
       "actualVerification": {
@@ -1842,7 +2041,7 @@
         "browserTests": 3,
         "scope": "All eight actual parent-lock waits, misbound status variants, own replay, exact receipts, rollback and browser denial. Caller provenance for all16 operations remains independent."
       },
-      "actorTrace": "All active accounting, pacing and read functions are byte-identical to accepted5722. Only the dormant export and context import change. Its callable contract now binds an original issued context and exact canonical persistence receipt. No active producer is invented or financial execution authorized.",
+      "actorTrace": "Existing issued owner context, durable reservation, cycle-parent checks, exact SQL receipt validation and reconciliation holds remain. The active price catalogue version changes. Completed SDK usage may supply a validated integer provider charge instead of the former cheapest-endpoint estimate. Conservative fallback estimates, reported-cost bounds and no-retry accounting failures are covered by added regression tests. Persistence query expressions and target functions are unchanged. Historical parent-lock evidence is retained as historical, not new financial-source certification.",
       "invariant": "Current reservation and cycle owner must both match the admitted user before replay, settlement, release or uncertainty transition. A competing cycle-owner change that wins the row lock must deny without touching balances or the receipt. Preserve existing accounting and RPC defaults, no new engine or constraint/backfill.",
       "relatedSourceBindings": [
         {
@@ -1872,6 +2071,12 @@
           "path": "backend/src/security/budgetOwner.local.integration.ts",
           "type": "REAL_TWO_OWNER_CONCURRENT_REPLAY_ROLLBACK_BROWSER_PROOF_PREPARED",
           "result": "NOT_EXECUTED"
+        },
+        {
+          "path": "backend/src/ai/providerBudget.test.ts",
+          "type": "OBSERVED_CHARGE_RESERVATION_AND_VALIDATION_REGRESSION",
+          "result": "PASS_LOCAL_NOT_PRODUCTION_LEDGER_RECONCILIATION",
+          "scope": "Observed Relace charge covered by reservation, exact reported charge settlement and invalid-cost rejection. SDK test independently proves one request, terminal usage-only cost preservation and canonical settlement."
         }
       ],
       "remaining": [
@@ -1901,8 +2106,8 @@
           "60a088c3f2c03ec9402c"
         ],
         "proofArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/result.json",
-        "scope": "BYTE_IDENTICAL_EXISTING_FUNCTIONS_MAPPED_NOT_NEW_SOURCE_ACCEPTANCE",
-        "changedSourceRegression": "REQUIRED_BEFORE_NEW_SOURCE_ACCEPTANCE"
+        "scope": "HISTORICAL_PARENT_LOCK_AND_OWNER_EVIDENCE_NOT_NEW_CHARGE_SOURCE_ACCEPTANCE",
+        "changedSourceRegression": "EXACT_SOURCE_INTEGRATED_GATE_REQUIRED"
       },
       "historicalBeforeDormantBudgetOwnerRepair": {
         "packetId": "B1-P2-392b9b628a9b92be",
@@ -1982,6 +2187,170 @@
         "ref": "b0cd0ec31be56a8945ae41998563475237ed52fb",
         "sha256": "33d078d8734d0ec27380a433811164c4b49eba62483e12f3c256e1a166e74876",
         "proof": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+      },
+      "historicalBeforeDirectOutputAccounting": {
+        "packetId": "B1-P2-392b9b628a9b92be",
+        "sourceSha256": "6827c7f21bcdac5b366d6ccb88f5d01acfeb3a8ee930cebaba353734ce82e086",
+        "executionStatus": "IN_PROGRESS",
+        "finding": "DORMANT_ISSUED_OWNER_AND_EXACT_BUDGET_RECEIPTS_REPAIRED_PROOF_PENDING",
+        "actualVerification": {
+          "sourceSha": "aaefe24138ddfaa790751b46a49dde21c7499161",
+          "disposableRun": "39165967730",
+          "aggregateRun": "39165967766",
+          "integratedSha": "edd3b8759d301861e1a7b0cb27d707085e63fc8b",
+          "migrations": 120,
+          "securityTests": 160,
+          "browserTests": 3,
+          "scope": "All eight actual parent-lock waits, misbound status variants, own replay, exact receipts, rollback and browser denial. Caller provenance for all16 operations remains independent."
+        },
+        "actorTrace": "All active accounting, pacing and read functions are byte-identical to accepted5722. Only the dormant export and context import change. Its callable contract now binds an original issued context and exact canonical persistence receipt. No active producer is invented or financial execution authorized.",
+        "invariant": "Current reservation and cycle owner must both match the admitted user before replay, settlement, release or uncertainty transition. A competing cycle-owner change that wins the row lock must deny without touching balances or the receipt. Preserve existing accounting and RPC defaults, no new engine or constraint/backfill.",
+        "relatedSourceBindings": [
+          {
+            "path": "supabase/migrations/20261019000200_provider_budget_cycle_parent.sql",
+            "sha256": "34cf14100a03e4ac0178e18e55b623365dddc5728f71848680c515a46a780d2c"
+          }
+        ],
+        "evidence": [
+          {
+            "path": "supabase/migrations/20261019000200_provider_budget_cycle_parent.sql",
+            "type": "SYNTHETIC_SQL_PROBE",
+            "result": "THREE_PRE_FIX_MISSING_REJECTIONS_THEN21_ASSERTIONS_PASS_WITH_REAPPLY",
+            "scope": "Actual function definitions in PGlite, not real Supabase, real locks or production data"
+          },
+          {
+            "path": "backend/src/security/providerCycleParent.local.integration.ts",
+            "type": "DISPOSABLE_DATABASE_LOCK_TEST",
+            "result": "NOT_EXECUTED_AT_RECORD_CREATION",
+            "scope": "Misbound states, own concurrency/replay, exact balance/receipt, foreign/browser denial, four cycle-owner and four reservation-parent lock waits and rollback"
+          },
+          {
+            "path": "backend/src/ai/budgetOwnerBoundary.test.ts",
+            "type": "ORIGINAL_CONTEXT_AND_EXACT_RECEIPT_NEGATIVES",
+            "result": "PASS"
+          },
+          {
+            "path": "backend/src/security/budgetOwner.local.integration.ts",
+            "type": "REAL_TWO_OWNER_CONCURRENT_REPLAY_ROLLBACK_BROWSER_PROOF_PREPARED",
+            "result": "NOT_EXECUTED"
+          }
+        ],
+        "remaining": [
+          "Authenticate actual changed-source disposable and repeated branch/integrated regressions before any new four-caller security promotion",
+          "Full Phase3 spending/payment/approval authority remains separately mandatory. No real provider payment or grant is performed."
+        ],
+        "current007Evidence": {
+          "sourceSha": "7be4403096a3c782520a52464f544e36212c587e",
+          "verifiedCurrentCallerIds": [
+            "6f058d1957df9ddef58e",
+            "263d64635be54643daaf",
+            "28c7a352253f65a4d63b",
+            "ec7738731d0c6be00798",
+            "0882d94061fd33117251",
+            "ba74f371a047c8305b9a",
+            "9e5ee446a0fb192d8f39",
+            "3a904e92ac521ad89ef0",
+            "a50ebf735a3e2d6e8587",
+            "e5f59ad9b6097a1bb115"
+          ],
+          "remainingCurrentCallerIds": [
+            "1169e490665cdec7b3a3",
+            "2fbd469f16851f3b71ab",
+            "495469d5a798cf52f829",
+            "4ac1c2be7bfccf034c8e",
+            "8b8545e8ee1fbbfb3fbf",
+            "60a088c3f2c03ec9402c"
+          ],
+          "proofArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/result.json",
+          "scope": "BYTE_IDENTICAL_EXISTING_FUNCTIONS_MAPPED_NOT_NEW_SOURCE_ACCEPTANCE",
+          "changedSourceRegression": "REQUIRED_BEFORE_NEW_SOURCE_ACCEPTANCE"
+        },
+        "historicalBeforeDormantBudgetOwnerRepair": {
+          "packetId": "B1-P2-392b9b628a9b92be",
+          "sourceSha256": "55d3647f49948243cf1684c15ea08da2f757b1db2661517ac4466820c223a8f9",
+          "executionStatus": "IN_PROGRESS",
+          "finding": "DEMONSTRATED_MISBOUND_BUDGET_CYCLE_PARENT_FIXED_ACTUAL_LOCK_PROOF_VERIFIED",
+          "actualVerification": {
+            "sourceSha": "aaefe24138ddfaa790751b46a49dde21c7499161",
+            "disposableRun": "39165967730",
+            "aggregateRun": "39165967766",
+            "integratedSha": "edd3b8759d301861e1a7b0cb27d707085e63fc8b",
+            "migrations": 120,
+            "securityTests": 160,
+            "browserTests": 3,
+            "scope": "All eight actual parent-lock waits, misbound status variants, own replay, exact receipts, rollback and browser denial. Caller provenance for all16 operations remains independent."
+          },
+          "actorTrace": "Existing request/pipeline accounting callers and service-only RPCs remain unchanged. SQL formerly checked reservation.user_id but used cycle_id alone for balance mutation, or returned a replay without checking the cycle owner. A synthetic inconsistent reservation proved reserve accepting the foreign parent and settle/release changing its balance. This is a misbound-state authorization defect, not a claimed browser-created row or production exploit.",
+          "invariant": "Current reservation and cycle owner must both match the admitted user before replay, settlement, release or uncertainty transition. A competing cycle-owner change that wins the row lock must deny without touching balances or the receipt. Preserve existing accounting and RPC defaults, no new engine or constraint/backfill.",
+          "relatedSourceBindings": [
+            {
+              "path": "supabase/migrations/20261019000200_provider_budget_cycle_parent.sql",
+              "sha256": "34cf14100a03e4ac0178e18e55b623365dddc5728f71848680c515a46a780d2c"
+            }
+          ],
+          "evidence": [
+            {
+              "path": "supabase/migrations/20261019000200_provider_budget_cycle_parent.sql",
+              "type": "SYNTHETIC_SQL_PROBE",
+              "result": "THREE_PRE_FIX_MISSING_REJECTIONS_THEN21_ASSERTIONS_PASS_WITH_REAPPLY",
+              "scope": "Actual function definitions in PGlite, not real Supabase, real locks or production data"
+            },
+            {
+              "path": "backend/src/security/providerCycleParent.local.integration.ts",
+              "type": "DISPOSABLE_DATABASE_LOCK_TEST",
+              "result": "NOT_EXECUTED_AT_RECORD_CREATION",
+              "scope": "Misbound states, own concurrency/replay, exact balance/receipt, foreign/browser denial, four cycle-owner and four reservation-parent lock waits and rollback"
+            }
+          ],
+          "remaining": [
+            "Reconcile owner provenance for the remaining budget callers instead of treating this parent fix as all16 caller certification",
+            "Keep universal spend/settlement authority and dormant activatePaidCycle activation in Phase3"
+          ],
+          "current007Evidence": {
+            "sourceSha": "7be4403096a3c782520a52464f544e36212c587e",
+            "verifiedCurrentCallerIds": [
+              "590df28cdc2b297e03b6",
+              "39a1f4163240597da04d",
+              "613d8e71ddafb0d6bd0c",
+              "a80e4804742dfd6bcc0a",
+              "6285818c6e8220770b29",
+              "090fe734dc5d1d3dc6e3",
+              "3f66673813dee0d85b85",
+              "746985044f7d3ee62aff",
+              "b5a82155e981259a207e",
+              "564673e6f6b21c690fce"
+            ],
+            "remainingCurrentCallerIds": [
+              "00d351afbe045a136c66",
+              "254a91383e3a8af0310b",
+              "e030677c7ecb6b0dd90e",
+              "e35278adbe80b78c8d41",
+              "5ed8ef26b72e26561f26",
+              "3fc72ec34d884b871909"
+            ],
+            "proofArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/result.json",
+            "scope": "EXACT_CALLER_PROOF_NOT_WHOLE_PACKET_OR_LATER_PHASE_ACCEPTANCE",
+            "changedSourceRegression": "REQUIRED_BEFORE_NEW_SOURCE_ACCEPTANCE"
+          }
+        },
+        "phase3SourceDelta": {
+          "acceptedPhaseTwoSource": "a21a82029276d38d53c9e17c580a15f57b653fe3",
+          "historicalSourceSha256": "4c16b680db04feaff7a4ab3f1756c8fc668288f953760cfc8588d66d6a38bb1c",
+          "scope": "Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
+          "currentSourceCertification": "NOT_INFERRED_REQUIRES_REGRESSION"
+        },
+        "beforeCurrentMainIntegrationSource": {
+          "ref": "b0cd0ec31be56a8945ae41998563475237ed52fb",
+          "sha256": "33d078d8734d0ec27380a433811164c4b49eba62483e12f3c256e1a166e74876",
+          "proof": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+        }
+      },
+      "reboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousSourceSha256": "751dbb7b995355ed7aeedb1ca2ba1326c387a8e7618b6c4d29cc56f6ef2ecb48",
+        "review": "Reviewed on PR 922: adds assertActiveModelId, assertProviderEnabled and assertModelSelection before reservation and Zurelay cost accounting; the reserve and cycle RPC calls and their user binding are unchanged. The related caller review records carry the same review."
       }
     },
     {
@@ -2229,7 +2598,7 @@
     },
     {
       "packetId": "B1-P2-d3895e94f03fa522",
-      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+      "sourceSha256": "845f195f835dd9dae9955a7e9ccd2c7d0a86ddfee917299e951fe99d289d3448",
       "executionStatus": "IN_PROGRESS",
       "finding": "DEMONSTRATED_ABSENT_BYOK_AUTHORITY_MIRROR_RESURRECTION_FIXED_VERIFIED_AT_7BE44030",
       "actorTrace": "Owner/provider-scoped database lookup must contain an active canonical credential. The legacy private download previously returned its encrypted payload when the post-download authority query found no row. It now denies that absence, while active canonical legacy envelopes and valid database-backed connections retain existing behavior.",
@@ -2280,6 +2649,18 @@
         "ref": "b0cd0ec31be56a8945ae41998563475237ed52fb",
         "sha256": "99a90ce870db5a6e55fff7a588384f8abb9ced3bf141ad7cd3d35522cf6a9785",
         "proof": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+      },
+      "reboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "packetSourceRebinds": [
+          {
+            "path": "backend/src/services/integrations/userProviderKeys.ts",
+            "previousSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+            "review": "Reviewed on PR 922: adds zurelay to the allowed provider list, the env-var map and the provider catalog (three constants). Key storage, ownership, encryption and every persistence function are unchanged; the strict call-and-function comparison of all 23 related caller reviews found them byte-identical."
+          }
+        ]
       }
     },
     {
@@ -2381,8 +2762,16 @@
       "relatedSourceBindings": [
         {
           "path": "backend/src/ai/pipeline.ts",
-          "sha256": "0168bc57563dbc535012982e5c6680fd3ebb40c7595fb67620e1ca60284df9b4",
-          "preGoogleMigrationSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477"
+          "sha256": "d3742ca4dccc50daf99aa71d9896449957dde73798dc6d7c2a9c5ca5536cff32",
+          "preGoogleMigrationSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
+          "beforeDirectOutputSha256": "0168bc57563dbc535012982e5c6680fd3ebb40c7595fb67620e1ca60284df9b4",
+          "beforeRichShareCompletionReviewSha256": "373180f86ff9ed02a7624d767374d214c14765ffcbf9a489b86d3bc26507e3b6",
+          "richShareCompletionReview": {
+            "scope": "ONE_ARGUMENT_ADDITION_TO_EXISTING_NEGATIVE_COMPLETION_REVIEW",
+            "evidence": "docs/xroga/evidence/response-v2-rich-share/source-review.json",
+            "authorityAndPersistenceUnchanged": true,
+            "liveAcceptance": false
+          }
         },
         {
           "path": "backend/src/routes/swarm.ts",
@@ -2481,6 +2870,23 @@
         "change": "User progress is appended only while the exact current attempt is running. Late terminal progress cannot mutate the snapshot already accepted by the existing database generation fence. Explicit failure enrichment, cancellation, authority, reservation and provider behavior are unchanged.",
         "proof": "Live Google document task produced its correct accounted result but final Job handoff could not repeat the mutated terminal snapshot. Focused regression reproduced the mutation before repair. Twelve run event, durable terminal learning, resume, cancellation and queued-admission tests pass on canonical Node22.",
         "acceptance": "SOURCE_CORRECTION_ONLY_LIVE_DURABLE_HANDOFF_RECHECK_PENDING"
+      },
+      "reboundOnBranch": {
+        "relatedSourceBindings": [
+          {
+            "path": "backend/src/ai/pipeline.ts",
+            "previousSha256": "fa67a6ccaaca85b55c30405833f4f52cbe1959ed401b0de682f5567a9ad6c645",
+            "review": "Reviewed on PR 922: changes are confined to the chat pipeline (answer output budget, response source fields, strict response format), builder fallback ordering limited to one distinct candidate, and swapping model ids for the approved Zurelay models. None touches worker project wait admission, project ownership preflight, attempt/generation/lease checks or checkpoint writes."
+          },
+          {
+            "path": "backend/src/routes/swarm.ts",
+            "previousSha256": "195f1d1872a3a7fc828c28c1df5613c78a7292b4905534826f2afdd8c1a17622",
+            "review": "File is byte-identical to origin/main; the hash is main's own recorded value."
+          }
+        ],
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374"
       }
     },
     {
@@ -2693,7 +3099,7 @@
     },
     {
       "packetId": "B1-P2-84b9011a0d2b4754",
-      "sourceSha256": "40e88fdceed4ff5f571c8ea71ae86d2dfb53f537d8a3a5ff8f4d915ecc068abe",
+      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec",
       "executionStatus": "IN_PROGRESS",
       "finding": "UNCHANGED_CONFIRMATION_METADATA_BOUNDARY_TARGETED_POSITIVE_PROOF_PREPARED",
       "actorTrace": "The auth-mounted phase1 router obtains actor only from requireUserId(req). Create is reached only after the existing prepared execution returns confirmation_required. Read, cancel and confirm ignore request-body owner and apply exact server actor plus confirmation ID. Private expiry updates reuse only owner-bound rows. Claim binds full plan, digest, expiry and current pending status. The original finish routine binds immutable claimed identity and plan. No production code changed.",
@@ -2740,6 +3146,23 @@
         "ref": "b0cd0ec31be56a8945ae41998563475237ed52fb",
         "sha256": "9305dabc17c792c9a22dcd9a414252ce172879423ecfb71e9ff6fa64f1284a73",
         "proof": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+      },
+      "beforeResearchHandoff": {
+        "ref": "7bde084cbb9f3ed93e0ce26b59b6cf37adae8e43",
+        "sourceSha256": "40e88fdceed4ff5f571c8ea71ae86d2dfb53f537d8a3a5ff8f4d915ecc068abe"
+      },
+      "researchHandoffReview": "Existing owner-scoped confirmation persistence and one-use claim stay intact. New native research evidence is privately stored before consumed acknowledgement. No historical proof promotion. New source authenticated storage and delivery acceptance remains required.",
+      "reboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "packetSourceRebinds": [
+          {
+            "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+            "previousSha256": "cebaa6b021717f0ca895806889d04ba31c0b4bd0e0026f4f440351d7cb7803c7",
+            "review": "Reviewed on PR 922: adds requireResearchResultStorage and requireModelResultStorage guards before execution and saves the execution result afterwards through tenant-context storage. The reviewed claim, authorize and confirmation calls are unchanged."
+          }
+        ]
       }
     },
     {
@@ -2947,7 +3370,7 @@
     },
     {
       "packetId": "B1-P2-346186bea635be22",
-      "sourceSha256": "a2b3f404004691fd201dadcd241a46d2d33b9b33a26a09b0cdfbb0cca76a01e4",
+      "sourceSha256": "33f0ab8cf98b74e9e1fcd3519c1a158cf20a3f0a6269a1128ea9a39e0c37e98d",
       "executionStatus": "IN_PROGRESS",
       "finding": "DORMANT_ISSUED_OWNER_AND_EXACT_BUDGET_RECEIPTS_REPAIRED_PROOF_PENDING",
       "actorTrace": "All active accounting, pacing and read functions are byte-identical to accepted5722. Only the dormant export and context import change. Its callable contract now binds an original issued context and exact canonical persistence receipt. No active producer is invented or financial execution authorized.",
@@ -2991,6 +3414,13 @@
           "Exactly four usage writer/factory sites await proof. Two dormant syncPlanBudget caller sites remain unproven for original007 issuance and must not inherit this proof. Split accounting uncertainty and unified008 spending authority remain separately recorded, not certified.",
           "Require complete successful final-source disposable and repeated branch/integrated verification before manual or structured promotion"
         ]
+      },
+      "reboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousSourceSha256": "a2b3f404004691fd201dadcd241a46d2d33b9b33a26a09b0cdfbb0cca76a01e4",
+        "review": "One line added: the two approved Zurelay model ids are accepted by the model-id normalizer. No persistence, ownership or reservation logic changed (reviewed on PR 922)."
       }
     },
     {
@@ -3319,6 +3749,13 @@
       "beforeGoogleDeliveryBinding": {
         "sourceSha256": "77424e64b9331b83e961b4169d2bca8fb62c2a413cfc912c28d0ce0c1dcaefe0",
         "actorTrace": "Tenant construction still requires original issued context. Named global construction still accepts only the same17 actual data-operation keys. A separate explicit review-only constructor exception now documents its real receiving-path proof obligations, while its key is excluded from the accepted type and rejected at runtime before SDK construction. It grants no query or additional runtime capability. All actual receivers require independent proof, and neither SDK handle is an RLS sandbox."
+      },
+      "reboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousSourceSha256": "eb9fa4ddfef0a4098c061f6375f50c746820bdf070d1da7bd1d50548d56afb88",
+        "review": "File is byte-identical to origin/main; the hash is main's own recorded value, replacing an older value carried by the integrated lines."
       }
     },
     {

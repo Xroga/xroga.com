@@ -1,0 +1,31 @@
+{
+  "reference": "a9860e28c23063b3204ca6afd610bf5e2b6cef68",
+  "scope": "READ_ONLY_RICH_SHARE_WITH_UNCHANGED_STORAGE_ACL",
+  "records": [
+    {
+      "path": "backend/src/routes/messageShares.ts",
+      "beforeSha256": "b3aa4a3c9b4be0c9a393823e5188298f3fb5a839ae5aae03baabedd4b1dffa53",
+      "afterSha256": "e69821ae544aecfe8073586f737f2e39e9344360c034705f41f005d457427ac1",
+      "unchangedPersistenceCalls": 6
+    },
+    {
+      "path": "frontend/src/app/share/[token]/page.tsx",
+      "afterSha256": "02be162aa110db0a216d12681f621023bd0c5737a2c48f484a7244b856a7bb16",
+      "newReadOnlySelfRoleCallers": 1
+    },
+    {
+      "path": "backend/src/ai/pipeline.ts",
+      "beforeSha256": "373180f86ff9ed02a7624d767374d214c14765ffcbf9a489b86d3bc26507e3b6",
+      "afterSha256": "fa67a6ccaaca85b55c30405833f4f52cbe1959ed401b0de682f5567a9ad6c645",
+      "unchangedPersistenceExpressions": 2,
+      "scope": "Only received answer text is passed to the existing negative completion review. All model dispatch, identity, egress, accounting and approvals remain unchanged."
+    },
+    {
+      "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
+      "beforeSha256": "b84aeadc18565ac0916ab5b1dd5d248e7f604e0f58a424563d1116dd65c88c9e",
+      "afterSha256": "67682c5f8dec5148e95ae7e1aa4edb9e32ed0f243aba3f32e9eb3bcfdd32018d",
+      "scope": "Only existing router policy is consulted before planner model selection. Existing model transport, cancellation, egress, ledger and approval calls are unchanged. Additive tests cover disabled provider and allowlist rejection. No live acceptance inferred."
+    }
+  ],
+  "liveAcceptance": false
+}

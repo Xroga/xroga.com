@@ -1,0 +1,273 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { assessPresentationCoverage, createPresentationProjection, presentationPlanSchema, presentationRequestInstructions, presentationResponseFormat, type PresentationPlan } from './responsePresentation.js';
+import {publicCompletionState} from './completionDiagnostics.js';
+
+const plan: PresentationPlan = [
+  { kind: 'prose', heading: 'Explanation', instruction: 'Preserve supplied facts and code.' },
+  { kind: 'graph', heading: 'Relationships', instruction: 'Use supplied component relationships.' },
+  { kind: 'table', heading: 'Records', instruction: 'Use supplied fields.' },
+];
+const values = {
+  s0: { markdown: 'Keep `tenant_id` and \\(25 \\times 40 = 1000\\).\n\nمرحبا. A brace } and a quote " stay intact.', data: null },
+  s1: { markdown: 'The request reaches the application.', data: { nodes: [{ id: 'client', label: 'Client' }, { id: 'server', label: 'Server' }], edges: [{ id: 'request', source: 'client', target: 'server', label: 'Request' }] } },
+  s2: { markdown: 'These fields were supplied.', data: { columns: ['Field', 'Purpose'], rows: [['tenant_id', 'Tenant scope'], ['user_id', 'User identity']] } },
+};
+
+test('the same answer schema requires every planned section without domain-specific examples', () => {
+  const format = presentationResponseFormat(plan);
+  assert.deepEqual(format.json_schema.schema.required, ['s0', 's1', 's2']);
+  assert.equal(format.json_schema.strict, true);
+  assert.equal(format.json_schema.schema.additionalProperties, false);
+  assert.throws(() => presentationPlanSchema.parse([{ ...plan[0], kind: 'execute', authority: 'admin' }]));
+  assert.throws(() => presentationResponseFormat([]));
+});
+
+test('answer instructions avoid duplicate schemas and server-only coverage IDs while retaining the strict SDK contract', () => {
+  const covered = plan.map(section => ({ ...section, covers: ['server-coverage-id'] }));
+  const instruction = presentationRequestInstructions(covered, { includeSchema: false });
+  assert.match(instruction, /supplied response_format schema/);
+  for (const section of plan) { assert.ok(instruction.includes(section.heading)); assert.ok(instruction.includes(section.instruction)); }
+  assert.doesNotMatch(instruction, /server-coverage-id|JSON schema:|additionalProperties/);
+  assert.deepEqual(presentationResponseFormat(covered), presentationResponseFormat(plan));
+});
+
+test('streaming every character publishes ordered complete sections and retains the full original', () => {
+  const raw = JSON.stringify(values), projection = createPresentationProjection(plan);
+  let streamed = '';
+  for (const character of raw) streamed += projection.append(character);
+  const final = projection.finish(raw);
+  assert.equal(final.ok, true);
+  assert.equal(final.original, raw);
+  assert.equal(final.response, streamed);
+  assert.ok(final.response.includes(values.s0.markdown));
+  assert.ok(final.response.includes('tenant_id'));
+  assert.ok(final.response.indexOf('## Relationships') < final.response.indexOf('## Records'));
+  assert.match(final.response, /"source":"client","target":"server"/);
+  assert.match(final.response, /"c0":"tenant_id","c1":"Tenant scope"/);
+});
+
+test('omitted sections, duplicate keys, truncated streams and invalid graph references cannot pass', () => {
+  for (const raw of [
+    JSON.stringify({ s0: values.s0, s1: values.s1 }),
+    JSON.stringify(values).slice(0, -1),
+    JSON.stringify(values).replace('"target":"server"', '"target":"missing"'),
+    JSON.stringify(values).replace('"s1":', `"s0":${JSON.stringify(values.s0)},"s1":`),
+    JSON.stringify({ ...values, injected: { html: '<script>run()</script>' } }),
+  ]) {
+    const projection = createPresentationProjection(plan);
+    projection.append(raw);
+    const result = projection.finish(raw);
+    assert.equal(result.ok, false, raw);
+    assert.equal(result.original, raw);
+  }
+});
+
+test('out-of-order JSON properties wait for the explicit reading order, with no retraction', () => {
+  const raw = JSON.stringify({ s2: values.s2, s0: values.s0, s1: values.s1 });
+  const projection = createPresentationProjection(plan);
+  let streamed = '';
+  for (let i = 0; i < raw.length; i += 7) streamed += projection.append(raw.slice(i, i + 7));
+  const result = projection.finish(raw);
+  assert.equal(result.ok, true);
+  assert.equal(streamed, result.response);
+  assert.ok(result.response.indexOf('## Explanation') < result.response.indexOf('## Relationships'));
+});
+
+test('calculator and fixed chart data project to the existing data-only controls without inference', () => {
+  const p: PresentationPlan = [{ kind: 'calculator', heading: 'Your scenario', instruction: 'Use supplied values.' }, { kind: 'chart', heading: 'Fixed reference', instruction: 'Keep the supplied reference price.' }];
+  const raw = JSON.stringify({
+    s0: { markdown: '25 × 40 = 1,000 USD.', data: { operation: 'product', inputs: [{ id: 'price', label: 'Ticket price', value: 25, unit: 'USD', min: 0, max: 100, step: 1 }, { id: 'tickets', label: 'Tickets', value: 40, unit: 'tickets', min: 0, max: 200, step: 1 }], resultLabel: 'Revenue', resultUnit: 'USD', precision: 2, derivedResults: null } },
+    s1: { markdown: 'Fixed 25 USD per ticket.', data: { chartType: 'bar', xLabel: 'Tickets', series: [{ label: 'Revenue', unit: 'USD' }], data: [{ x: 20, values: [500] }, { x: 40, values: [1000] }, { x: 60, values: [1500] }] } },
+  });
+  const result = createPresentationProjection(p).finish(raw);
+  assert.equal(result.ok, true);
+  assert.match(result.response, /"type":"calculator"/);
+  assert.match(result.response, /"type":"chart"/);
+  assert.match(result.response, /"x":60,"v0":1500/);
+  assert.equal(/"status":"(?:completed|confirmed)"/.test(result.response), false);
+  const outOfRange = createPresentationProjection(p).finish(raw.replace('"value":40', '"value":4000'));
+  assert.equal(outOfRange.ok, true, 'a bound that contradicts the value is dropped, the calculator is kept');
+  const block = JSON.parse(outOfRange.response.split('```xroga-ui')[1].split('```')[0].trim());
+  assert.equal(block.inputs.find((input: { id: string }) => input.id === 'tickets').value, 4000);
+  assert.equal(block.inputs.find((input: { id: string }) => input.id === 'tickets').min, undefined, 'no slider bounds remain for that input');
+});
+
+test('authored visual descriptions cannot evade the existing authorization warning', () => {
+  const p: PresentationPlan = [{ kind: 'cards', heading: 'Boundary', instruction: 'Explain the permission boundary.' }];
+  const raw = JSON.stringify({ s0: { markdown: 'An explanation.', data: { cards: [{ title: 'Database', subtitle: 'Boundary', description: 'The service role enforces tenant RLS.' }] } } });
+  const result = createPresentationProjection(p).finish(raw);
+  assert.equal(result.ok, true, 'Shape validation does not certify factual safety');
+  assert.deepEqual(publicCompletionState('stop', result.reviewText), { status: 'partial', reason: 'authorization_review' });
+});
+
+test('invalid quantitative controls retain their source without publishing an unusable calculator', () => {
+  const p: PresentationPlan = [{ kind: 'calculator', heading: 'Scenario', instruction: 'Use supplied values.' }];
+  const data = { operation: 'product', inputs: [{ id: 'price', label: 'Price', value: 25, unit: 'USD', min: 0, max: 100, step: 1 }], resultLabel: 'Result', resultUnit: 'USD', precision: 2, derivedResults: null };
+  for (const changed of [
+    { ...data, operation: 'quotient' },
+    { ...data, inputs: [{ ...data.inputs[0], id: '$result' }] },
+    { ...data, derivedResults: [{ id: 'derived', label: 'Derived', operation: 'sum', operands: ['missing'], rounding: null, unit: 'USD', precision: 2 }] },
+  ]) {
+    const raw = JSON.stringify({ s0: { markdown: 'Supplied scenario.', data: changed } });
+    const projection = createPresentationProjection(p);
+    assert.equal(projection.append(raw), '');
+    const final = projection.finish(raw);
+    assert.equal(final.ok, false);
+    assert.equal(final.original, raw);
+    assert.match(final.response, /Supplied scenario/);
+    assert.doesNotMatch(final.response, /could not be validated/, 'no implementation wording is shown to the person');
+    assert.doesNotMatch(final.response, /```xroga-ui/);
+  }
+});
+
+test('output budget scales with the planned sections and never exceeds the existing ceiling', async () => {
+  const { presentedAnswerMaxTokens } = await import('./responsePresentation.js');
+  const section = (kind: 'prose' | 'graph' | 'table' | 'cards' | 'steps', i: number) => ({ kind, heading: `H${i}`, instruction: 'x' });
+  assert.equal(presentedAnswerMaxTokens(undefined), 4096);
+  assert.equal(presentedAnswerMaxTokens([]), 4096);
+  assert.equal(presentedAnswerMaxTokens([section('prose', 1)]), 4096);
+  const saas = [section('prose', 1), section('graph', 2), section('cards', 3), section('table', 4), section('steps', 5)];
+  const budget = presentedAnswerMaxTokens(saas);
+  assert.ok(budget > 4096 && budget <= 8192, String(budget));
+  assert.equal(budget % 512, 0);
+  assert.equal(presentedAnswerMaxTokens(Array.from({ length: 8 }, (_, i) => section('graph', i))), 8192);
+});
+
+test('a table, diagram or step list with no extra text is a complete section; only prose needs words', () => {
+  const plan: PresentationPlan = [
+    { kind: 'prose', heading: 'Short answer', instruction: 'One or two sentences.', covers: [] },
+    { kind: 'table', heading: 'Comparison', instruction: 'Compare the options.', covers: [] },
+    { kind: 'steps', heading: 'Steps', instruction: 'The ordered steps.', covers: [] },
+  ];
+  const raw = JSON.stringify({
+    s0: { markdown: 'Use PostgreSQL for most small SaaS products.', data: null },
+    s1: { markdown: '', data: { columns: ['Database', 'Concurrency'], rows: [['PostgreSQL', 'MVCC'], ['SQLite', 'Single writer']] } },
+    s2: { markdown: '', data: { steps: [{ title: 'Pick', description: 'Start with managed PostgreSQL.' }, { title: 'Review', description: 'Revisit at scale.' }] } },
+  });
+  const projection = createPresentationProjection(plan);
+  const final = projection.finish(raw);
+  assert.equal(final.ok, true);
+  assert.match(final.response, /"c0":"PostgreSQL","c1":"MVCC"/);
+  assert.match(final.response, /"type":"steps"/);
+  const emptyProse = JSON.stringify({ s0: { markdown: '  ', data: null }, s1: { markdown: '', data: { columns: ['A', 'B'], rows: [['x', 'y']] } }, s2: { markdown: '', data: { steps: [{ title: 'a', description: 'b' }, { title: 'c', description: 'd' }] } } });
+  assert.equal(createPresentationProjection(plan).finish(emptyProse).ok, false);
+});
+
+test('metrics and tabs project to the existing blocks, with tone as trend, and bad shapes are refused', () => {
+  const plan: PresentationPlan = [
+    { kind: 'prose', heading: 'Short answer', instruction: 'Answer.', covers: [] },
+    { kind: 'metrics', heading: 'Headline numbers', instruction: 'Profit, loss and ratio.', covers: [] },
+    { kind: 'tabs', heading: 'Strategies', instruction: 'Alternative strategies.', covers: [] },
+  ];
+  const ok = JSON.stringify({
+    s0: { markdown: 'The setup risks $5 to make $12.', data: null },
+    s1: { markdown: '', data: { metrics: [
+      { label: 'Max profit', value: '$350', unit: '', tone: 'positive' },
+      { label: 'Max loss', value: '$9,650', unit: '', tone: 'negative' },
+      { label: 'Reward-to-risk', value: '2.4 : 1', unit: '', tone: 'neutral' },
+    ] } },
+    s2: { markdown: '', data: { tabs: [{ label: 'Theta', content: 'Premium selling.' }, { label: 'Gamma', content: 'Directional spreads.' }] } },
+  });
+  const final = createPresentationProjection(plan).finish(ok);
+  assert.equal(final.ok, true);
+  assert.match(final.response, /"type":"metric-group"/);
+  assert.match(final.response, /"label":"Max profit","value":"\$350","trend":"up"/);
+  assert.match(final.response, /"label":"Max loss","value":"\$9,650","trend":"down"/);
+  assert.match(final.response, /"label":"Reward-to-risk","value":"2\.4 : 1","trend":"flat"/);
+  assert.match(final.response, /"type":"tabs"/);
+  assert.match(final.response, /"label":"Gamma","content":"Directional spreads\."/);
+  // One metric or one tab is not a comparison; an unknown tone or empty tab text is invalid.
+  const oneMetric = JSON.stringify({ s0: { markdown: 'x', data: null }, s1: { markdown: '', data: { metrics: [{ label: 'A', value: '1', unit: '', tone: 'neutral' }] } }, s2: { markdown: '', data: { tabs: [{ label: 'A', content: 'a' }, { label: 'B', content: 'b' }] } } });
+  assert.equal(createPresentationProjection(plan).finish(oneMetric).ok, false);
+  const badTone = JSON.stringify({ s0: { markdown: 'x', data: null }, s1: { markdown: '', data: { metrics: [{ label: 'A', value: '1', unit: '', tone: 'great' }, { label: 'B', value: '2', unit: '', tone: 'neutral' }] } }, s2: { markdown: '', data: { tabs: [{ label: 'A', content: 'a' }, { label: 'B', content: 'b' }] } } });
+  assert.equal(createPresentationProjection(plan).finish(badTone).ok, false);
+  const emptyTab = JSON.stringify({ s0: { markdown: 'x', data: null }, s1: { markdown: '', data: { metrics: [{ label: 'A', value: '1', unit: '', tone: 'neutral' }, { label: 'B', value: '2', unit: '', tone: 'neutral' }] } }, s2: { markdown: '', data: { tabs: [{ label: 'A', content: '' }, { label: 'B', content: 'b' }] } } });
+  assert.equal(createPresentationProjection(plan).finish(emptyTab).ok, false);
+  const schema = JSON.stringify(presentationResponseFormat(plan));
+  assert.match(schema, /"tone"/);
+  assert.match(schema, /"positive","negative","neutral"/);
+});
+
+test('card and step icons pass through only from the approved Lucide list', () => {
+  const p: PresentationPlan = [{ kind: 'cards', heading: 'Options', instruction: 'Compare.' }, { kind: 'steps', heading: 'Plan', instruction: 'Order.' }];
+  const body = (icon: string | null) => JSON.stringify({
+    s0: { markdown: 'Options.', data: { cards: [{ title: 'House', subtitle: '3 bed', description: 'Detached home.', entityId: null, icon }] } },
+    s1: { markdown: 'Plan.', data: { steps: [{ title: 'Pre-approval', description: 'Get a letter.', icon }, { title: 'Offer', description: 'Submit it.', icon: null }] } },
+  });
+  const ok = createPresentationProjection(p).finish(body('home'));
+  assert.equal(ok.ok, true);
+  assert.match(ok.response, /"icon":"home"/);
+  assert.equal((ok.response.match(/"icon"/g) ?? []).length, 2, 'null icons are omitted');
+  assert.equal(createPresentationProjection(p).finish(body(null)).ok, true);
+  const unknown = createPresentationProjection(p).finish(body('<script>alert(1)</script>'));
+  assert.equal(unknown.ok, true, 'an unknown icon name never discards the visual');
+  assert.equal(/"icon"/.test(unknown.response), false, 'the unknown icon is dropped');
+  assert.equal(unknown.response.includes('<script>'), false, 'the markup never reaches the response');
+});
+
+test('a table row that is short of cells is padded with a dash, while a row with extra cells is still rejected', () => {
+  const p: PresentationPlan = [{ kind: 'table', heading: 'Costs', instruction: 'Compare costs.' }];
+  const body = (rows: string[][]) => JSON.stringify({ s0: { markdown: 'Costs.', data: { columns: ['Item', 'House', 'Condo'], rows } } });
+  const padded = createPresentationProjection(p).finish(body([['P&I', '$2,243', '$1,878'], ['HOA', 'none']]));
+  assert.equal(padded.ok, true);
+  assert.match(padded.response, /"c0":"HOA","c1":"none","c2":"—"/);
+  assert.equal(createPresentationProjection(p).finish(body([['P&I', '$2,243', '$1,878', 'extra']])).ok, false);
+});
+
+test('a diagram keeps its valid edges when the model adds a dangling or repeated one', () => {
+  const p: PresentationPlan = [{ kind: 'graph', heading: 'Flow', instruction: 'Show the flow.' }];
+  const body = JSON.stringify({ s0: { markdown: 'Flow.', data: { nodes: [{ id: 'a', label: 'Client' }, { id: 'b', label: 'API' }], edges: [{ id: 'e1', source: 'a', target: 'b', label: 'calls' }, { id: 'e2', source: 'a', target: 'zzz', label: 'ghost' }, { id: 'e3', source: 'a', target: 'b', label: 'calls' }] } } });
+  const result = createPresentationProjection(p).finish(body);
+  assert.equal(result.ok, true);
+  assert.equal((result.response.match(/"source":"a"/g) ?? []).length, 1, 'only the one valid edge remains');
+  const none = JSON.stringify({ s0: { markdown: 'Flow.', data: { nodes: [{ id: 'a', label: 'Client' }, { id: 'b', label: 'API' }], edges: [{ id: 'e1', source: 'a', target: 'zzz', label: 'ghost' }] } } });
+  assert.equal(createPresentationProjection(p).finish(none).ok, false, 'a diagram with no valid edge is still rejected');
+});
+
+test('table rows the model flattened, keyed by column, or wrote as numbers are repaired instead of discarded', () => {
+  const p: PresentationPlan = [{ kind: 'table', heading: 'Plan', instruction: 'Day plan.' }];
+  const run = (rows: unknown) => createPresentationProjection(p).finish(JSON.stringify({ s0: { markdown: 'Plan.', data: { columns: ['Day', 'Plan', 'Cost'], rows } } }));
+  const flat = run(['Day 1', 'Alfama', 'EUR 120', 'Day 2', 'Belem', 'EUR 90']);
+  assert.equal(flat.ok, true, 'flat rows are regrouped by the column count');
+  assert.match(flat.response, /"c0":"Day 2","c1":"Belem","c2":"EUR 90"/);
+  const keyed = run([{ Day: 'Day 1', Plan: 'Alfama', Cost: 120 }]);
+  assert.equal(keyed.ok, true, 'rows keyed by column are mapped to cells');
+  assert.match(keyed.response, /"c2":"120"/);
+  const numeric = run([['Day 1', 'Alfama', 120], ['Day 2', null, 90]]);
+  assert.equal(numeric.ok, true);
+  assert.match(numeric.response, /"c1":"—"|"c1":"—"/);
+  assert.equal(run(['Day 1', 'Alfama']).ok, false, 'a flat list that does not divide into rows is still rejected');
+});
+
+test('per-day tabs satisfy a steps requirement and steps satisfy a tabs requirement', () => {
+  const requirement = (id: string, formats: Array<'steps' | 'tabs'>) => ({ id, description: 'Day by day plan.', origin: 'requested' as const, formats });
+  const tabsPlan: PresentationPlan = [{ kind: 'tabs', heading: 'Days', instruction: 'One tab per day.', covers: ['days'] }];
+  assert.deepEqual(assessPresentationCoverage(tabsPlan, [requirement('days', ['steps'])]), { complete: true, issues: [] });
+  const stepsPlan: PresentationPlan = [{ kind: 'steps', heading: 'Days', instruction: 'In order.', covers: ['days'] }];
+  assert.deepEqual(assessPresentationCoverage(stepsPlan, [requirement('days', ['tabs'])]), { complete: true, issues: [] });
+  const unbound: PresentationPlan = [{ kind: 'tabs', heading: 'Days', instruction: 'One tab per day.', covers: ['other'] }];
+  assert.equal(assessPresentationCoverage(unbound, [requirement('days', ['steps']), requirement('other', ['tabs'])]).complete, false);
+});
+
+test('a loan-payment calculator needs exactly three inputs and is kept when well formed', () => {
+  const p: PresentationPlan = [{ kind: 'calculator', heading: 'Mortgage', instruction: 'Monthly payment.' }];
+  const run = (inputs: unknown[]) => createPresentationProjection(p).finish(JSON.stringify({ s0: { markdown: 'Payment.', data: { operation: 'loan-payment', inputs, resultLabel: 'Monthly payment', resultUnit: 'USD', precision: 2, derivedResults: null } } }));
+  const input = (id: string, label: string, value: number, min: number, max: number, step: number) => ({ id, label, value, unit: '', min, max, step });
+  const ok = run([input('loan', 'Loan amount', 344000, 0, 800000, 1000), input('rate', 'Annual rate %', 6.8, 0, 12, 0.1), input('years', 'Term in years', 30, 5, 40, 1)]);
+  assert.equal(ok.ok, true);
+  assert.match(ok.response, /"operation":"loan-payment"/);
+  assert.equal(run([input('loan', 'Loan amount', 344000, 0, 800000, 1000), input('rate', 'Annual rate %', 6.8, 0, 12, 0.1)]).ok, false);
+});
+
+test('layout labels are not shown as headings, while content headings are kept', () => {
+  const p: PresentationPlan = [{ kind: 'prose', heading: 'Short answer', instruction: 'Answer.' }, { kind: 'metrics', heading: 'Headline monthly numbers', instruction: 'Numbers.' }, { kind: 'prose', heading: 'House or condo: what you pay each month', instruction: 'Compare.' }];
+  const body = JSON.stringify({ s0: { markdown: 'The house costs about $2,242 a month.', data: null },
+    s1: { markdown: '', data: { metrics: [{ label: 'House', value: '$2,242', unit: '/mo', tone: 'neutral' }, { label: 'Condo', value: '$1,877', unit: '/mo', tone: 'neutral' }] } },
+    s2: { markdown: 'The condo is cheaper before HOA dues.', data: null } });
+  const result = createPresentationProjection(p).finish(body);
+  assert.equal(result.ok, true);
+  assert.doesNotMatch(result.response, /## Short answer/);
+  assert.doesNotMatch(result.response, /## Headline monthly numbers/);
+  assert.match(result.response, /## House or condo: what you pay each month/);
+});

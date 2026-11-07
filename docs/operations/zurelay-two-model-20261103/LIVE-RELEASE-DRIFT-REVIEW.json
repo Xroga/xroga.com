@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "base": "2f80a744a406eb2ab7e86538bc382cc3000ef730",
+  "productionSource": "8745e3104f9e5f4423f6d80c1cd897ce995103c4",
+  "scope": "PRESERVE_REVIEWED_LIVE_PASSWORD_RECOVERY_AND_COMPOSER_PATCHES",
+  "records": [
+    {
+      "path": "frontend/src/app/auth/reset-password/page.tsx",
+      "sha256": "b4f7dd3e764f405ac820624e143d78a65acdc08ce83270256dc356ed1ed82333",
+      "sameAsLiveSource": "8745e3104f9e5f4423f6d80c1cd897ce995103c4"
+    },
+    {
+      "path": "frontend/src/app/globals.css",
+      "sha256": "316ce6e216f5e7363576537b317a12ee55ca20be325ab5260d0029ae45a9f4a6",
+      "sameAsLiveSource": "8745e3104f9e5f4423f6d80c1cd897ce995103c4"
+    },
+    {
+      "path": "frontend/src/components/terminal/TerminalDock.tsx",
+      "sha256": "cc72bc05e2437c3fb8649235be09213f88f59b4a2b429fd512d66e6bae3fa7af",
+      "sameAsLiveSource": "8745e3104f9e5f4423f6d80c1cd897ce995103c4"
+    },
+    {
+      "path": "frontend/src/lib/supabase/recoveryFlow20261103.test.ts",
+      "sha256": "b20c5869aeb6d68eb5f85b1250665edaa154d12f0b05bb723c187fb5e86d9ae7",
+      "sameAsLiveSource": "8745e3104f9e5f4423f6d80c1cd897ce995103c4"
+    },
+    {
+      "path": "frontend/src/lib/workspaceChatbarScrollBoundary20261103.test.ts",
+      "sha256": "15fac29903bdb13d2b79306256056c6efc3fba51083f0dba46810f9e372f10d5",
+      "sameAsLiveSource": "8745e3104f9e5f4423f6d80c1cd897ce995103c4"
+    }
+  ],
+  "review": [
+    "Password recovery now requires the email recovery token verified by Supabase auth.verifyOtp before displaying the password form. An ordinary signed-in session does not grant this UI state. Token is removed from the URL and never logged. Existing updateUser, strength, confirmation and signOut logic is preserved.",
+    "Composer safe-area spacing and transcript clip boundary are copied byte-for-byte from current production. No voice, provider, scheduler or ledger changes.",
+    "AST inventories detect no added persistence or generic egress callers in these files. The direct Supabase recovery call is manually reviewed here and remains limited to the existing authenticated Supabase client and recovery token."
+  ],
+  "modelCalls": 0,
+  "productionChanges": false,
+  "remaining": [
+    "Exact-source CI",
+    "Frontend source-pin amendment",
+    "Authenticated Preview and live release acceptance"
+  ]
+}

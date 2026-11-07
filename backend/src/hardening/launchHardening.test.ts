@@ -86,11 +86,11 @@ test('AREA 1 — a coding model whose registry entry drifts to another transport
   // The attack: one edit to `MODELS` reroutes a coding model — and the prompts and source
   // it carries — to a different vendor under a different key. Before this was enforced,
   // `requiredCodingTransport` had no production caller and nothing failed.
-  const definition = MODELS.kimi_k3 as { provider: string };
+  const definition = MODELS.deepseek_v4_1_flash_1017 as { provider: string };
   const original = definition.provider;
   definition.provider = 'openrouter';
   try {
-    assert.throws(() => resolveEndpoint('kimi_k3'), ProviderPolicyError);
+    assert.throws(() => resolveEndpoint('deepseek_v4_1_flash_1017'), ProviderPolicyError);
   } finally {
     definition.provider = original;
   }
@@ -123,8 +123,8 @@ test('AREA 1 — research providers cannot acquire coding authority', () => {
 });
 
 test('AREA 1 — a research model in a fallback chain is dropped, not ranked', () => {
-  const chain = [{ modelId: 'kimi_k3' }, { modelId: 'grok_4_5' }, { modelId: 'glm_5_3' }];
-  assert.deepEqual(codingModelsOnly(chain).map((c) => c.modelId), ['kimi_k3', 'glm_5_3']);
+  const chain = [{modelId:'deepseek_v4_1_flash_1017'},{modelId:'grok_4_5'},{modelId:'kimi_k3'},{modelId:'glm_5_3'},{modelId:'claude_sonnet_5_5'}];
+  assert.deepEqual(codingModelsOnly(chain).map(c=>c.modelId),['deepseek_v4_1_flash_1017','claude_sonnet_5_5']);
 });
 
 test('AREA 1 — an unrecognised model is refused by default rather than inheriting authority', () => {

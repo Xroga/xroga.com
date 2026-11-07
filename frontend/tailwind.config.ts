@@ -2,11 +2,16 @@ import type { Config } from "tailwindcss";
 import { TERMINAL_SKINS } from "./src/lib/theme";
 
 const config: Config = {
-  content: [
-    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
-  ],
+  // Resolve globs against this file, not the process working directory. A dev server started from the
+  // repository root (workspace tooling, an IDE preview) otherwise scans nothing and emits no utilities.
+  content: {
+    relative: true,
+    files: [
+      "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
+      "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
+      "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+    ],
+  },
   /**
    * The terminal skin classes live in `@layer utilities` and are composed at runtime
    * as `terminal-skin-${skin}`, so Tailwind's scanner never sees them literally and

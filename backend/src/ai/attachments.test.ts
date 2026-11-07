@@ -28,7 +28,7 @@ describe(
   'pickAttachmentModel',
   () => {
     it(
-      'routes images to GLM-5.3 Flash',
+      'selects the default for images subject to the separate modality gate',
       () => {
         const pick =
           pickAttachmentModel(
@@ -54,7 +54,7 @@ describe(
 
         assert.equal(
           pick.modelId,
-          'glm_5_3_flash',
+          'deepseek_v4_1_flash_1017',
         );
 
         assert.equal(
@@ -90,7 +90,7 @@ describe(
 
         assert.equal(
           pick.modelId,
-          'glm_5_3_flash',
+          'deepseek_v4_1_flash_1017',
         );
 
         assert.notEqual(
@@ -134,7 +134,7 @@ describe(
 
         assert.equal(
           pick.modelId,
-          'deepseek_v4_flash',
+          'deepseek_v4_1_flash_1017',
         );
       },
     );
@@ -169,7 +169,7 @@ describe(
 
         assert.equal(
           pick.modelId,
-          'glm_5_3_flash',
+          'deepseek_v4_1_flash_1017',
         );
       },
     );
@@ -203,7 +203,7 @@ describe(
 
         assert.equal(
           pick.modelId,
-          'glm_5_3',
+          'deepseek_v4_1_flash_1017',
         );
       },
     );
@@ -252,7 +252,7 @@ describe(
 
         assert.equal(
           pick.modelId,
-          'glm_5_3_flash',
+          'deepseek_v4_1_flash_1017',
         );
 
         assert.equal(

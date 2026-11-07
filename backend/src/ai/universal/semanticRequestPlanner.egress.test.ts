@@ -9,7 +9,7 @@ test('actual semantic planner carries issued actor, platform reservation and exa
   const foreign = '22222222-2222-4222-8222-222222222222';
   const context = createTenantContext({ userId: owner, via: 'remote_getuser' });
   const env = { NODE_ENV: 'test', SUPABASE_URL: 'http://127.0.0.1:55439', SUPABASE_SERVICE_ROLE_KEY: 'synthetic-loopback-only',
-    OPENROUTER_API_KEY: 'synthetic-platform-credential', DEEPSEEK_V4_FLASH_MODEL_ID: 'deepseek/deepseek-v4-flash' };
+    ZURELAY_API_KEY: 'synthetic-platform-credential' };
   const prior = Object.fromEntries(Object.keys(env).map(key => [key, process.env[key]]));
   Object.assign(process.env, env);
   t.after(() => { for (const key of Object.keys(env)) { if (prior[key] === undefined) delete process.env[key]; else process.env[key] = prior[key]; } });
@@ -21,16 +21,17 @@ test('actual semantic planner carries issued actor, platform reservation and exa
   t.mock.method(globalThis, 'fetch', async (input: Parameters<typeof fetch>[0], init?: RequestInit) => {
     const url = new URL(String(input));
     const body = init?.body ? JSON.parse(String(init.body)) : {};
-    if (url.origin === 'https://openrouter.ai') {
+    if (url.origin === 'https://api.zurelay.com') {
       effects++;
       assert.equal(reservations, settlements + 1);
-      assert.equal(new Headers(init?.headers).get('authorization'), 'Bearer ' + env.OPENROUTER_API_KEY);
+      assert.equal(new Headers(init?.headers).get('authorization'), 'Bearer ' + env.ZURELAY_API_KEY);
       assert.equal(init?.redirect, 'manual');
       assert.ok(body.messages.some((message: { content: string }) => message.content.includes('Explain a safe local parser')));
       assert.doesNotMatch(JSON.stringify(body), /synthetic-platform-credential/);
-      return Response.json({ id: 'synthetic-planner-result', choices: [{ message: { content: JSON.stringify({
+      assert.equal(new Headers(init?.headers).get('x-zurelay-fallback'),'off');assert.equal(body.model,'deepseek-v4.1-flash-1017');assert.equal(body.reasoning_effort,'none');
+      return Response.json({ id: 'synthetic-planner-result',model:'deepseek-v4.1-flash-1017', choices: [{ message: { content: JSON.stringify({
         semanticIntent: 'ANSWER', requiredCapabilities: ['conversation.respond'], freshnessRequirement: 'NONE', confidence: 0.9,
-      }) }, finish_reason: 'stop' }], usage: { prompt_tokens: 2, completion_tokens: 2 } });
+      }) }, finish_reason: 'stop' }], usage: { prompt_tokens: 2, completion_tokens: 2,total_tokens:4 } },{headers:{'x-request-id':'synthetic-planner-result','x-zurelay-model':'deepseek-v4.1-flash-1017'}});
     }
     assert.equal(url.origin, env.SUPABASE_URL, 'No unlisted transport is allowed');
     if (url.pathname === '/rest/v1/user_token_usage') {

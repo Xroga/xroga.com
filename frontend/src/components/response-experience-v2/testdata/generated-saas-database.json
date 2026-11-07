@@ -1,0 +1,185 @@
+{
+  "id": "generated-saas-database-regression",
+  "content": "# Multi-tenant SaaS: Next.js + Supabase + Stripe\n\n**Core model:** every tenant is a row in `tenants`. Membership is server-owned data in `memberships` (user_id, tenant_id, role). Every request resolves the tenant server-side, verifies membership for the authenticated user, then queries Supabase under a role that RLS constrains. Stripe is the source of truth for billing state, mirrored into `subscriptions` only after signature-verified, deduplicated webhook processing.\n\n## Proposed architecture\n\n**Roles:**\n- **Browser:** holds only the Supabase session token. Never holds the service-role key or Stripe secret.\n- **Next.js server:** the trust boundary. Resolves identity, authorizes tenant membership, and is the only place privileged keys are used.\n- **Supabase Auth:** issues and verifies sessions. `user_metadata` is user-editable, so it is never used for authorization.\n- **Postgres + RLS:** enforces tenant scoping on every query executed under a policy-bound role.\n- **Stripe:** authoritative billing state; the app mirrors it, it does not invent it.\n- **Webhook endpoint:** verifies the Stripe signature, durably records the event ID, then applies effects idempotently.\n\n## How Tenant A and Tenant B stay isolated\n\nIsolation rests on three layers that must all hold:\n\n1. **Server-side membership authorization.** For each request, the server takes the tenant from the URL or session, then queries `memberships` for `(auth.uid(), tenant_id)` using the authenticated user's identity. No membership means 403. A tenant header or cookie supplied by the client is a hint, not proof. The server never trusts a client-asserted tenant without this check.\n2. **RLS on tenant tables.** Policies compare the row's `tenant_id` against the caller's verified memberships, for example `tenant_id IN (SELECT tenant_id FROM memberships WHERE user_id = auth.uid())`. This applies to reads and writes. For writes, the `WITH CHECK` clause must also pin `tenant_id` so a user cannot insert or reassign a row into a tenant they do not belong to.\n3. **Privileged keys stay server-side.** The Supabase service-role key bypasses RLS. It is used only in trusted server code (for example webhook processing that must write subscription state), never shipped to the browser, and never used to serve ordinary user requests where RLS should apply. Stripe's secret key is likewise server-only.\n\nRLS applies to `tenants`, `memberships` (users see only their own rows), and `subscriptions` (read-only to members). `webhook_events` is written only by the privileged server path.\n\n## Subscription webhook flow\n\n1. **Receive** the raw body at a dedicated endpoint. Do not parse or trust it before verification.\n2. **Verify the signature** with the Stripe signing secret. Reject on failure.\n3. **Deduplicate** by inserting the Stripe event ID into `webhook_events` with a unique constraint. If the insert conflicts, the event was already seen, so acknowledge and stop. This is the durable guard against Stripe's at-least-once retries. An outbound `Idempotency-Key` on your own API calls does not replace this.\n4. **Apply the effect** idempotently: upsert `subscriptions` keyed by `stripe_subscription_id`, and handle out-of-order events by comparing timestamps or event ordering rather than blindly overwriting. For example, an older `updated` event should not overwrite a newer `deleted` state.\n5. **Confirm billing server-side** before granting access. Read the subscription status from your mirrored table (or re-fetch from Stripe) rather than trusting a client claim or a stale JWT claim.\n\n**Important limits:** RLS protects queries run under policy-bound roles. Service-role credentials bypass it, so privileged paths must re-check tenant ownership themselves. Server-managed JWT claims can be stale until token refresh, so do not promise instant revocation from claims alone. Membership changes should be checked against the database, not cached tokens.\n\n**Takeaway:** isolation is not one setting. It is server-side membership checks plus RLS plus keeping privileged keys off the client, and billing correctness is signature verification plus durable event deduplication plus server-side state confirmation.",
+  "featureOutput": {
+    "id": "response-8a143878-ab7e-4e77-ba9c-8774ff7a07a4",
+    "blocks": [
+      {
+        "id": "8a143878-ab7e-4e77-ba9c-8774ff7a07a4-block-1",
+        "text": "# Multi-tenant SaaS: Next.js + Supabase + Stripe\n\n**Core model:** every tenant is a row in `tenants`. Membership is server-owned data in `memberships` (user_id, tenant_id, role). Every request resolves the tenant server-side, verifies membership for the authenticated user, then queries Supabase under a role that RLS constrains. Stripe is the source of truth for billing state, mirrored into `subscriptions` only after signature-verified, deduplicated webhook processing.\n\n## Proposed architecture",
+        "type": "narrative",
+        "schemaVersion": 1
+      },
+      {
+        "id": "8a143878-ab7e-4e77-ba9c-8774ff7a07a4-block-2",
+        "type": "graph",
+        "edges": [
+          {
+            "id": "e1",
+            "label": "Authenticated request + tenant id",
+            "source": "browser",
+            "target": "next"
+          },
+          {
+            "id": "e2",
+            "label": "Verify session / JWT",
+            "source": "next",
+            "target": "auth"
+          },
+          {
+            "id": "e3",
+            "label": "Membership check, then tenant-scoped queries",
+            "source": "next",
+            "target": "db"
+          },
+          {
+            "id": "e4",
+            "label": "Create checkout / portal session (secret key, server only)",
+            "source": "next",
+            "target": "stripe"
+          },
+          {
+            "id": "e5",
+            "label": "Signed subscription events",
+            "source": "stripe",
+            "target": "webhook"
+          },
+          {
+            "id": "e6",
+            "label": "Dedupe event id, upsert subscription state",
+            "source": "webhook",
+            "target": "db"
+          }
+        ],
+        "nodes": [
+          {
+            "id": "browser",
+            "label": "Browser (Next.js client)"
+          },
+          {
+            "id": "next",
+            "label": "Next.js server (route handlers, server components)"
+          },
+          {
+            "id": "auth",
+            "label": "Supabase Auth"
+          },
+          {
+            "id": "db",
+            "label": "Postgres + RLS"
+          },
+          {
+            "id": "stripe",
+            "label": "Stripe"
+          },
+          {
+            "id": "webhook",
+            "label": "Webhook endpoint (signature verify + dedupe)"
+          }
+        ],
+        "state": "ready",
+        "title": "Proposed connected architecture",
+        "schemaVersion": 1
+      },
+      {
+        "id": "8a143878-ab7e-4e77-ba9c-8774ff7a07a4-block-3",
+        "text": "**Roles:**\n- **Browser:** holds only the Supabase session token. Never holds the service-role key or Stripe secret.\n- **Next.js server:** the trust boundary. Resolves identity, authorizes tenant membership, and is the only place privileged keys are used.\n- **Supabase Auth:** issues and verifies sessions. `user_metadata` is user-editable, so it is never used for authorization.\n- **Postgres + RLS:** enforces tenant scoping on every query executed under a policy-bound role.\n- **Stripe:** authoritative billing state; the app mirrors it, it does not invent it.\n- **Webhook endpoint:** verifies the Stripe signature, durably records the event ID, then applies effects idempotently.\n\n## How Tenant A and Tenant B stay isolated\n\nIsolation rests on three layers that must all hold:\n\n1. **Server-side membership authorization.** For each request, the server takes the tenant from the URL or session, then queries `memberships` for `(auth.uid(), tenant_id)` using the authenticated user's identity. No membership means 403. A tenant header or cookie supplied by the client is a hint, not proof. The server never trusts a client-asserted tenant without this check.\n2. **RLS on tenant tables.** Policies compare the row's `tenant_id` against the caller's verified memberships, for example `tenant_id IN (SELECT tenant_id FROM memberships WHERE user_id = auth.uid())`. This applies to reads and writes. For writes, the `WITH CHECK` clause must also pin `tenant_id` so a user cannot insert or reassign a row into a tenant they do not belong to.\n3. **Privileged keys stay server-side.** The Supabase service-role key bypasses RLS. It is used only in trusted server code (for example webhook processing that must write subscription state), never shipped to the browser, and never used to serve ordinary user requests where RLS should apply. Stripe's secret key is likewise server-only.",
+        "type": "narrative",
+        "schemaVersion": 1
+      },
+      {
+        "id": "8a143878-ab7e-4e77-ba9c-8774ff7a07a4-block-4",
+        "rows": [
+          {
+            "table": "tenants",
+            "purpose": "One row per tenant",
+            "key_columns": "id, name, created_at"
+          },
+          {
+            "table": "memberships",
+            "purpose": "Server-owned membership; drives authorization and RLS",
+            "key_columns": "user_id, tenant_id, role"
+          },
+          {
+            "table": "subscriptions",
+            "purpose": "Mirrored billing state, one active row per tenant",
+            "key_columns": "tenant_id, stripe_customer_id, stripe_subscription_id, status, current_period_end"
+          },
+          {
+            "table": "webhook_events",
+            "purpose": "Durable dedupe of Stripe events",
+            "key_columns": "stripe_event_id (unique), type, processed_at"
+          }
+        ],
+        "type": "database",
+        "state": "ready",
+        "title": "Core tables (illustrative)",
+        "columns": [
+          {
+            "key": "table",
+            "label": "Table"
+          },
+          {
+            "key": "key_columns",
+            "label": "Key columns"
+          },
+          {
+            "key": "purpose",
+            "label": "Purpose"
+          }
+        ],
+        "schemaVersion": 1
+      },
+      {
+        "id": "8a143878-ab7e-4e77-ba9c-8774ff7a07a4-block-5",
+        "text": "RLS applies to `tenants`, `memberships` (users see only their own rows), and `subscriptions` (read-only to members). `webhook_events` is written only by the privileged server path.\n\n## Subscription webhook flow",
+        "type": "narrative",
+        "schemaVersion": 1
+      },
+      {
+        "id": "8a143878-ab7e-4e77-ba9c-8774ff7a07a4-block-6",
+        "type": "steps",
+        "state": "ready",
+        "steps": [
+          {
+            "id": "s1",
+            "title": "Receive POST",
+            "status": "pending"
+          },
+          {
+            "id": "s2",
+            "title": "Verify Stripe signature",
+            "status": "pending"
+          },
+          {
+            "id": "s3",
+            "title": "Insert event id into webhook_events (unique)",
+            "status": "pending"
+          },
+          {
+            "id": "s4",
+            "title": "Apply effect idempotently",
+            "status": "pending"
+          },
+          {
+            "id": "s5",
+            "title": "Mark processed",
+            "status": "pending"
+          }
+        ],
+        "title": "Webhook processing",
+        "schemaVersion": 1
+      },
+      {
+        "id": "8a143878-ab7e-4e77-ba9c-8774ff7a07a4-block-7",
+        "text": "1. **Receive** the raw body at a dedicated endpoint. Do not parse or trust it before verification.\n2. **Verify the signature** with the Stripe signing secret. Reject on failure.\n3. **Deduplicate** by inserting the Stripe event ID into `webhook_events` with a unique constraint. If the insert conflicts, the event was already seen, so acknowledge and stop. This is the durable guard against Stripe's at-least-once retries. An outbound `Idempotency-Key` on your own API calls does not replace this.\n4. **Apply the effect** idempotently: upsert `subscriptions` keyed by `stripe_subscription_id`, and handle out-of-order events by comparing timestamps or event ordering rather than blindly overwriting. For example, an older `updated` event should not overwrite a newer `deleted` state.\n5. **Confirm billing server-side** before granting access. Read the subscription status from your mirrored table (or re-fetch from Stripe) rather than trusting a client claim or a stale JWT claim.\n\n**Important limits:** RLS protects queries run under policy-bound roles. Service-role credentials bypass it, so privileged paths must re-check tenant ownership themselves. Server-managed JWT claims can be stale until token refresh, so do not promise instant revocation from claims alone. Membership changes should be checked against the database, not cached tokens.\n\n**Takeaway:** isolation is not one setting. It is server-side membership checks plus RLS plus keeping privileged keys off the client, and billing correctness is signature verification plus durable event deduplication plus server-side state confirmation.",
+        "type": "narrative",
+        "schemaVersion": 1
+      }
+    ],
+    "status": "completed",
+    "sourceText": "# Multi-tenant SaaS: Next.js + Supabase + Stripe\n\n**Core model:** every tenant is a row in `tenants`. Membership is server-owned data in `memberships` (user_id, tenant_id, role). Every request resolves the tenant server-side, verifies membership for the authenticated user, then queries Supabase under a role that RLS constrains. Stripe is the source of truth for billing state, mirrored into `subscriptions` only after signature-verified, deduplicated webhook processing.\n\n## Proposed architecture\n\n```xroga-ui\n{\"type\":\"graph\",\"title\":\"Proposed connected architecture\",\"nodes\":[{\"id\":\"browser\",\"label\":\"Browser (Next.js client)\"},{\"id\":\"next\",\"label\":\"Next.js server (route handlers, server components)\"},{\"id\":\"auth\",\"label\":\"Supabase Auth\"},{\"id\":\"db\",\"label\":\"Postgres + RLS\"},{\"id\":\"stripe\",\"label\":\"Stripe\"},{\"id\":\"webhook\",\"label\":\"Webhook endpoint (signature verify + dedupe)\"}],\"edges\":[{\"id\":\"e1\",\"source\":\"browser\",\"target\":\"next\",\"label\":\"Authenticated request + tenant id\"},{\"id\":\"e2\",\"source\":\"next\",\"target\":\"auth\",\"label\":\"Verify session / JWT\"},{\"id\":\"e3\",\"source\":\"next\",\"target\":\"db\",\"label\":\"Membership check, then tenant-scoped queries\"},{\"id\":\"e4\",\"source\":\"next\",\"target\":\"stripe\",\"label\":\"Create checkout / portal session (secret key, server only)\"},{\"id\":\"e5\",\"source\":\"stripe\",\"target\":\"webhook\",\"label\":\"Signed subscription events\"},{\"id\":\"e6\",\"source\":\"webhook\",\"target\":\"db\",\"label\":\"Dedupe event id, upsert subscription state\"}]}\n```\n\n**Roles:**\n- **Browser:** holds only the Supabase session token. Never holds the service-role key or Stripe secret.\n- **Next.js server:** the trust boundary. Resolves identity, authorizes tenant membership, and is the only place privileged keys are used.\n- **Supabase Auth:** issues and verifies sessions. `user_metadata` is user-editable, so it is never used for authorization.\n- **Postgres + RLS:** enforces tenant scoping on every query executed under a policy-bound role.\n- **Stripe:** authoritative billing state; the app mirrors it, it does not invent it.\n- **Webhook endpoint:** verifies the Stripe signature, durably records the event ID, then applies effects idempotently.\n\n## How Tenant A and Tenant B stay isolated\n\nIsolation rests on three layers that must all hold:\n\n1. **Server-side membership authorization.** For each request, the server takes the tenant from the URL or session, then queries `memberships` for `(auth.uid(), tenant_id)` using the authenticated user's identity. No membership means 403. A tenant header or cookie supplied by the client is a hint, not proof. The server never trusts a client-asserted tenant without this check.\n2. **RLS on tenant tables.** Policies compare the row's `tenant_id` against the caller's verified memberships, for example `tenant_id IN (SELECT tenant_id FROM memberships WHERE user_id = auth.uid())`. This applies to reads and writes. For writes, the `WITH CHECK` clause must also pin `tenant_id` so a user cannot insert or reassign a row into a tenant they do not belong to.\n3. **Privileged keys stay server-side.** The Supabase service-role key bypasses RLS. It is used only in trusted server code (for example webhook processing that must write subscription state), never shipped to the browser, and never used to serve ordinary user requests where RLS should apply. Stripe's secret key is likewise server-only.\n\n```xroga-ui\n{\"type\":\"database\",\"title\":\"Core tables (illustrative)\",\"columns\":[{\"key\":\"table\",\"label\":\"Table\"},{\"key\":\"key_columns\",\"label\":\"Key columns\"},{\"key\":\"purpose\",\"label\":\"Purpose\"}],\"rows\":[{\"table\":\"tenants\",\"key_columns\":\"id, name, created_at\",\"purpose\":\"One row per tenant\"},{\"table\":\"memberships\",\"key_columns\":\"user_id, tenant_id, role\",\"purpose\":\"Server-owned membership; drives authorization and RLS\"},{\"table\":\"subscriptions\",\"key_columns\":\"tenant_id, stripe_customer_id, stripe_subscription_id, status, current_period_end\",\"purpose\":\"Mirrored billing state, one active row per tenant\"},{\"table\":\"webhook_events\",\"key_columns\":\"stripe_event_id (unique), type, processed_at\",\"purpose\":\"Durable dedupe of Stripe events\"}]}\n```\n\nRLS applies to `tenants`, `memberships` (users see only their own rows), and `subscriptions` (read-only to members). `webhook_events` is written only by the privileged server path.\n\n## Subscription webhook flow\n\n```xroga-ui\n{\"type\":\"steps\",\"title\":\"Webhook processing\",\"steps\":[{\"id\":\"s1\",\"title\":\"Receive POST\",\"status\":\"pending\"},{\"id\":\"s2\",\"title\":\"Verify Stripe signature\",\"status\":\"pending\"},{\"id\":\"s3\",\"title\":\"Insert event id into webhook_events (unique)\",\"status\":\"pending\"},{\"id\":\"s4\",\"title\":\"Apply effect idempotently\",\"status\":\"pending\"},{\"id\":\"s5\",\"title\":\"Mark processed\",\"status\":\"pending\"}]}\n```\n\n1. **Receive** the raw body at a dedicated endpoint. Do not parse or trust it before verification.\n2. **Verify the signature** with the Stripe signing secret. Reject on failure.\n3. **Deduplicate** by inserting the Stripe event ID into `webhook_events` with a unique constraint. If the insert conflicts, the event was already seen, so acknowledge and stop. This is the durable guard against Stripe's at-least-once retries. An outbound `Idempotency-Key` on your own API calls does not replace this.\n4. **Apply the effect** idempotently: upsert `subscriptions` keyed by `stripe_subscription_id`, and handle out-of-order events by comparing timestamps or event ordering rather than blindly overwriting. For example, an older `updated` event should not overwrite a newer `deleted` state.\n5. **Confirm billing server-side** before granting access. Read the subscription status from your mirrored table (or re-fetch from Stripe) rather than trusting a client claim or a stale JWT claim.\n\n**Important limits:** RLS protects queries run under policy-bound roles. Service-role credentials bypass it, so privileged paths must re-check tenant ownership themselves. Server-managed JWT claims can be stale until token refresh, so do not promise instant revocation from claims alone. Membership changes should be checked against the database, not cached tokens.\n\n**Takeaway:** isolation is not one setting. It is server-side membership checks plus RLS plus keeping privileged keys off the client, and billing correctness is signature verification plus durable event deduplication plus server-side state confirmation.",
+    "composition": "source-order",
+    "schemaVersion": 1
+  }
+}

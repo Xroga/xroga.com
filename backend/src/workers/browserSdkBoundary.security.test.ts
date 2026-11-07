@@ -10,7 +10,7 @@ test('both actual browser SDK boundaries deny raw job IDs before reserving or co
   const job=parseBrowserJob({version:1,tenantId:'t1',userId:'u1',projectId:'p1',runId:'r1',taskId:'k1',attempt:1,
     startUrl:'https://example.com/',allowedOrigins:['https://example.com'],limits:{maxDurationMs:60000,maxNavigations:5,maxRedirects:1,maxPages:1,maxResponseBytes:1000000,maxArtifactBytes:1000000,maxModelCostMicros:2000000}});
   let reservations=0,clients=0;
-  const deps={modelId:'deepseek_v4_flash' as const,reserve:async()=>{reservations++;return{id:'synthetic',reservedMicroUsd:2000000,priceVersion:'synthetic'};},
+  const deps={modelId:'deepseek_v4_1_flash_1017' as const,reserve:async()=>{reservations++;return{id:'synthetic',reservedMicroUsd:2000000,priceVersion:'synthetic'};},
     settle:async()=>{},release:async()=>{},client:()=>{clients++;return{model:'synthetic',create:async()=>({id:'fixture',usage:{prompt_tokens:1,completion_tokens:1},choices:[{message:{content:'{"steps":[{"op":"screenshot","name":"page.png"}],"expect":[{"kind":"artifact","name":"page.png"}]}'}}]})};}};
   for(const invoke of [()=>createBrowserModelGateway(deps).generate({messages:[{role:'user',content:{type:'text',text:'synthetic'}}]},
     {job,remainingMicros:2000000,signal:new AbortController().signal}),()=>planBrowserTask('synthetic',job,deps)]){
@@ -27,8 +27,8 @@ for(const boundary of ['gateway','planner'] as const){
     const success=()=>({id:'fixture-browser-completion',usage:{prompt_tokens:2,completion_tokens:2},choices:[{message:{content:JSON.stringify(plan)}}]});
     fixture.reply=success;
     const call=(authority=fixture.authority,selectedJob=job,signal=abort.signal)=>boundary==='gateway'
-      ?createBrowserModelGateway({modelId:'deepseek_v4_flash'}).generate(params,{job:selectedJob,remainingMicros:2000000,signal,authority})
-      :planBrowserTask(params.messages[0].content.text,selectedJob,{modelId:'deepseek_v4_flash'},{authority,signal});
+      ?createBrowserModelGateway({modelId:'deepseek_v4_1_flash_1017'}).generate(params,{job:selectedJob,remainingMicros:2000000,signal,authority})
+      :planBrowserTask(params.messages[0].content.text,selectedJob,{modelId:'deepseek_v4_1_flash_1017'},{authority,signal});
     await call();assert.equal(fixture.bodies.length,1);assert.equal(fixture.ledger.atomic,1);
     const noDispatch=async(invoke:()=>Promise<unknown>)=>{const before=fixture.bodies.length;await assert.rejects(invoke());assert.equal(fixture.bodies.length,before);};
     await noDispatch(()=>call({...fixture.authority,context:{...fixture.authority.context}}));
@@ -37,7 +37,7 @@ for(const boundary of ['gateway','planner'] as const){
     fixture.owner='22222222-2222-4222-8222-222222222222';await noDispatch(()=>call());fixture.owner=job.userId;
     fixture.beforeReserve=()=>{fixture.owner='22222222-2222-4222-8222-222222222222';};await noDispatch(()=>call());fixture.owner=job.userId;fixture.beforeReserve=()=>{};
     fixture.mode='reservationDenied';await noDispatch(()=>call());fixture.mode='ok';
-    params.messages[0].content.text=process.env.OPENROUTER_API_KEY!;await noDispatch(()=>call());params.messages[0].content.text='owned fixture';
+    params.messages[0].content.text=process.env.ZURELAY_API_KEY!;await noDispatch(()=>call());params.messages[0].content.text='owned fixture';
     const stopped=new AbortController();stopped.abort();await noDispatch(()=>call(fixture.authority,job,stopped.signal));
     const duringReserve=new AbortController();fixture.beforeReserve=()=>duringReserve.abort();await noDispatch(()=>call(fixture.authority,job,duringReserve.signal));fixture.beforeReserve=()=>{};
     const before=fixture.bodies.length;fixture.mode='settlementDenied';
@@ -45,11 +45,11 @@ for(const boundary of ['gateway','planner'] as const){
     const held=fixture.ledger.released.at(-1);assert.equal(held.p_pending_reconciliation,true);
     fixture.beforeSettle=()=>{fixture.owner='22222222-2222-4222-8222-222222222222';};
     await assert.rejects(call());fixture.beforeSettle=()=>{};fixture.owner=job.userId;
-    fixture.reply=()=>({...success(),id:process.env.OPENROUTER_API_KEY!});
-    await assert.rejects(call(),{code:'POST_COMPLETION_ACCOUNTING_UNCERTAIN'});fixture.reply=success;
+    fixture.reply=()=>({...success(),id:process.env.ZURELAY_API_KEY!});
+    await assert.rejects(call(),{code:'MODEL_DESTINATION_DENIED'});assert.equal(fixture.ledger.released.at(-1)?.p_pending_reconciliation,true,'Unsafe provider receipt retains unknown spend');fixture.reply=success;
     fixture.reply=()=>Response.json({error:{message:'synthetic unavailable'}},{status:503});
     await assert.rejects(call(),(error:any)=>error.status===503);
     fixture.reply=success;await call();
-    assert.equal(fixture.bodies.at(-1).model,'deepseek/deepseek-v4-flash','Authorized provider recovery retains the configured model');
+    assert.equal(fixture.bodies.at(-1).model,'deepseek-v4.1-flash-1017','Authorized provider recovery retains the configured model');
   });
 }

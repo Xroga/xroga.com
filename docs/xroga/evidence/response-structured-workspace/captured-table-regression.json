@@ -1,0 +1,19 @@
+{
+  "scope": "LOCAL_CAPTURED_COMPONENT_REGRESSION_NOT_PRODUCT_ACCEPTANCE",
+  "capturedBackendSource": "4c6319e2fc319ad0384ff3e77c07bc473a3652b2",
+  "capturedGenerationResult": "FAIL_PARTIAL",
+  "fixture": "frontend/src/components/response-experience-v2/testdata/captured-4c6319-role-table.json",
+  "implementation": "Qualified authored row labels share the existing verified product identity component in table and stacked layouts. Markdown links, unrelated description cells and lookalike names retain their safe behavior.",
+  "focusedTests": { "passed": 48, "job": "553d442b-6ca7-464a-ad5e-dfd8dd000234" },
+  "actualComponentRender": { "result": "PASS", "layouts": ["table", "stacked"], "authenticIdentityCountPerLayout": 6, "job": "4b4c2a3a-5c02-4121-9283-173c2fa61eaa" },
+  "ciDiscoverableRegression": { "result": "PASS", "job": "9a87e0b0-60f5-486b-b028-877689d8362a" },
+  "strictEgress": { "total": 150, "reviewed": 150, "pending": 0, "unresolvedHighRisk": 0, "job": "6e4b76ee-bc32-4da2-8e67-9da5cbfc7b70" },
+  "frontendTypecheck": { "result": "PASS", "job": "6ad70c6e-0d87-47ca-ad9c-e6da21dc00c3" },
+  "localToolchain": "Node 24.18.0. Canonical Node 22.21.1 exact-source CI remains independently required.",
+  "newModelOrApiCalls": 0,
+  "newPaidInfrastructure": false,
+  "legacyChanged": false,
+  "productionChangedByThisCorrection": false,
+  "overallResponseV2Acceptance": "FAIL_NOT_COMPLETE",
+  "remainingGaps": ["Complete obligation-to-answer coverage", "Unknown cancelled Moonshot usage remains reserved", "Fresh workshop/research/simple prompts stopped", "Fresh streaming and Copy/Share product acceptance incomplete"]
+}

@@ -17,7 +17,7 @@ export const SidebarMovingTitle = memo(function SidebarMovingTitle({ text }: { t
     return () => observer.disconnect();
   }, [text]);
   return <span ref={viewport} className="xv-sidebar-long-title" aria-label={text} title={text}
-    style={{ '--xv-title-travel': `${distance}px` } as CSSProperties}>
+    style={{ '--xv-title-travel': `${distance}px`, '--xv-title-duration': `${Math.min(26, Math.max(10, 8 + distance / 18)).toFixed(1)}s` } as CSSProperties}>
     <span className="xv-sidebar-long-title__rest" aria-hidden="true">{text}</span>
     <span ref={content} className={distance > 0 ? 'xv-sidebar-long-title__content is-overflowing' : 'xv-sidebar-long-title__content'}>{text}</span>
   </span>;
