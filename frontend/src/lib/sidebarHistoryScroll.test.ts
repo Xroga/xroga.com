@@ -20,8 +20,8 @@ test('sidebar uses a minimal native draggable scrollbar without an overlay contr
   assert.match(GLOBAL, /scrollbar-color: color-mix/);
   assert.match(GLOBAL, /::-webkit-scrollbar-button/);
   assert.match(GLOBAL, /overscroll-behavior-y: contain/);
-  assert.doesNotMatch(HISTORY, /max-h-\\[280px\\]/);
-  assert.match(GLOBAL, /xv-repos-scroll \\{ overflow: visible !important; max-height: none !important/);
+  assert.doesNotMatch(HISTORY, /max-h-\[280px\]/);
+  assert.match(GLOBAL, /xv-repos-scroll \{ overflow: visible !important; max-height: none !important/);
   assert.match(SCROLLER, /export function CompactScrollIndicator/, 'other pages still use their indicator');
 });
 
