@@ -1,0 +1,37 @@
+{
+  "reference": "ff2850de6f598563c5b6ff1ff5d484f5b8628b6c",
+  "scope": "UNCHANGED_PERSISTENCE_EXPRESSIONS_WITH_REVIEWED_LITERAL_TEXT_INPUT",
+  "records": [
+    {
+      "path": "backend/src/routes/messageShares.ts",
+      "beforeSha256": "6ca440f7db2d4a533b0f68d802033931a1dfd59bdccf8eb539981232032e7609",
+      "afterSha256": "b3aa4a3c9b4be0c9a393823e5188298f3fb5a839ae5aae03baabedd4b1dffa53",
+      "unchangedPersistenceCalls": 6,
+      "idMap": {
+        "97e6ac3f5cd22355e41a": "8b17459285690a49b155",
+        "1606c380951aa6ff48dc": "4bb5cd82397688351d8d",
+        "461bb34f363365a7f618": "acc2d6ec920ed57add31",
+        "b31e0312443acd703258": "b2954d5c32ecb797fbcb",
+        "513e9d97f392e5aaed6b": "15290800ba879fff883d",
+        "315837313f6ec4f1eaa4": "374ef098d8a33ca2b471"
+      }
+    },
+    {
+      "path": "frontend/src/context/TerminalChatContext.tsx",
+      "beforeSha256": "f8d9014730d3e4105bd826f5b8daeadae66b3e8e1a5e5ca7ea4debaf6176aad7",
+      "afterSha256": "78ef5eef3f6d867836b0d2882046e8f96215698664e46af4e9ed80f31e396bac",
+      "unchangedPersistenceCalls": 0,
+      "idMap": {}
+    }
+  ],
+  "liveAcceptance": false,
+  "transportReview": {
+    "path": "frontend/src/lib/api.ts",
+    "beforeSha256": "32dc22a8e533c4fc4e5f2faafbc19f9bc48c226ba9335a950258a3b810eca32d",
+    "afterSha256": "376301471cdb2fa9763ee31080aab5fb80ee70e279c4806340ad7cf889fa43c0",
+    "unchangedCallIds": [
+      "c09bb8607fa4d00f23b7"
+    ],
+    "scope": "OPTIONAL_TYPESCRIPT_BODY_FIELD_ONLY_TRANSPORT_UNCHANGED"
+  }
+}

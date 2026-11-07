@@ -82,9 +82,9 @@ export async function runArchitectPlan(opts: {
         content: `${opts.isUpdate ? 'INCREMENTAL UPDATE — plan only files that must change.\n' : ''}Builder brief:\n${opts.brief.slice(0, 6000)}\n\nUser request:\n${opts.userPrompt.slice(0, 2000)}`,
       },
     ];
-  const execute=(dispatch:BoundModelDispatch)=>chatCompletion('deepseek_v4_flash',
+  const execute=(dispatch:BoundModelDispatch)=>chatCompletion('deepseek_v4_1_flash_1017',
     dispatch.payload.messages as ChatMessage[],{maxTokens:1200,temperature:0.2,json:true,credentialOverride:dispatch.credentialOverride,beforeDispatch:dispatch.beforeDispatch});
-  const result = await withTenantModelReservation({scope,modelId:'deepseek_v4_flash',payload:{messages},
+  const result = await withTenantModelReservation({scope,modelId:'deepseek_v4_1_flash_1017',payload:{messages},
     estimatedInputTokens:estimateMessageTokens(messages),maximumOutputTokens:1200,purpose:'complexity',execute});
   const parsed = parsePlan(result.text);
   return {

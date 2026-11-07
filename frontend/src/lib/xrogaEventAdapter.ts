@@ -20,7 +20,21 @@ function number(value: unknown): number | undefined {
   return typeof value === 'number' && Number.isFinite(value) ? value : undefined;
 }
 
+const CONFIRM_LINK = /\/dashboard\/actions\/confirm\/([0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})(?![0-9a-f-])/gi;
+
+/**
+ * The pipeline announces an approval gate as a progress event with status `confirmation_required` and a review
+ * link. Exactly one well-formed confirmation id is accepted; anything else is just an ordinary activity update.
+ * The id is a pointer for the server-backed review, never an authorization.
+ */
+export function confirmationIdFromPayload(payload: Record<string, unknown>): string | null {
+  if (payload.status !== 'confirmation_required' || typeof payload.message !== 'string') return null;
+  const ids = [...new Set([...payload.message.matchAll(CONFIRM_LINK)].map(match => match[1].toLowerCase()))];
+  return ids.length === 1 ? ids[0] : null;
+}
+
 function genericType(rawEvent: string, payload: Record<string, unknown>): XrogaEventType {
+  if (confirmationIdFromPayload(payload)) return 'approval.requested';
   if (payload.needsGitHub === true || payload.needsVercel === true || payload.needsRepoPick === true) {
     return 'connection.required';
   }
@@ -42,7 +56,7 @@ function genericStatus(type: XrogaEventType): XrogaEventStatus {
   if (type.endsWith('.completed') || type === 'artifact.completed') return 'completed';
   if (type.endsWith('.cancelled')) return 'cancelled';
   if (type.endsWith('.interrupted')) return 'interrupted';
-  if (type.endsWith('.waiting')) return 'waiting';
+  if (type.endsWith('.waiting') || type === 'approval.requested') return 'waiting';
   return 'running';
 }
 
@@ -113,6 +127,7 @@ export function adaptToXrogaEvent(input: XrogaEventAdapterInput): XrogaCanonical
     artifactRefs: evidence?.previewId ? [evidence.previewId] : undefined,
     metadata: {
       rawEvent: input.rawEvent,
+      ...(type === 'approval.requested' && confirmationIdFromPayload(input.payload) ? { confirmationId: confirmationIdFromPayload(input.payload) } : {}),
       ...(evidence?.filePath ? { filePath: evidence.filePath } : {}),
       ...(evidence?.exitCode != null ? { exitCode: evidence.exitCode } : {}),
       ...(evidence?.durationMs != null ? { durationMs: evidence.durationMs } : {}),

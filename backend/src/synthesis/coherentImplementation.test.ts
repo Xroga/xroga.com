@@ -12,10 +12,10 @@ import {
 } from './coherentImplementation.js';
 
 const CANDIDATES = [
-  { modelId: 'glm_5_3_flash' },
-  { modelId: 'glm_5_3' },
-  { modelId: 'kimi_k3' },
-  { modelId: 'deepseek_v4_flash' },
+  { modelId: 'deepseek_v4_1_flash_1017' },
+  { modelId: 'claude_sonnet_5_5' },
+  { modelId: 'deepseek_v4_1_flash_1017' },
+  { modelId: 'deepseek_v4_1_flash_1017' },
 ];
 
 const contract = (paths: string[]) => ({
@@ -166,19 +166,10 @@ test('a continuation cannot repeat completed files or widen the validated manife
   assert.equal(mergeCoherentContinuation(first, frame('src/c.ts', 'outside')).status, 'invalid');
 });
 
-test('a provider failure uses one direct-output-capable fallback and never spends both attempts on one transport', async () => {
-  const paths = ['index.html'];
-  const complete = fakeCompletion((modelId) => {
-    if (modelId === 'glm_5_3_flash') {
-      const error = new Error('temporarily unavailable') as Error & { status?: number };
-      error.status = 503;
-      throw error;
-    }
-    return { text: bundle(paths, { 'index.html': '<h1>Works</h1>' }) };
-  });
-  const files = await implementCoherently({ brief: 'Create a page.', candidates: CANDIDATES, complete });
-  assert.equal(files[0]!.path, 'index.html');
-  assert.deepEqual(complete.calls.map((call) => call.modelId), ['glm_5_3_flash', 'deepseek_v4_flash']);
+test('a provider failure cannot authorize a second model or replay the selected provider', async () => {
+  const complete = fakeCompletion(() => { throw Object.assign(new Error('temporarily unavailable'),{status:503}); });
+  await assert.rejects(implementCoherently({brief:'Create a page.',candidates:CANDIDATES,complete}),CoherentImplementationError);
+  assert.deepEqual(complete.calls.map(call=>call.modelId),['deepseek_v4_1_flash_1017']);
 });
 
 test('a standard JSON object materializes one validated coherent project bundle', () => {
@@ -248,17 +239,10 @@ test('a complete content-only response derives its manifest instead of discardin
   assert.equal(parsed.contract?.project.runtime, 'unspecified');
 });
 
-test('a protocol-invalid primary gives the distinct fallback corrective evidence', async () => {
-  const complete = fakeCompletion((_model, messages, call) => {
-    if (call === 1) return { text: '{"notFiles":true}' };
-    assert.match(String(messages[1]?.content ?? ''), /Protocol correction from the previous bounded attempt/);
-    assert.match(String(messages[1]?.content ?? ''), /bundle manifest is missing or truncated/);
-    return { text: jsonBundle(['index.html'], { 'index.html': '<main>Recovered</main>' }) };
-  });
-
-  const files = await implementCoherently({ brief: 'Create the project.', candidates: CANDIDATES, complete });
-  assert.deepEqual(files, [{ path: 'index.html', content: '<main>Recovered</main>' }]);
-  assert.deepEqual(complete.calls.map((call) => call.modelId), ['glm_5_3_flash', 'deepseek_v4_flash']);
+test('invalid project protocol is retained as a failure without spending on an alternate model', async () => {
+  const complete = fakeCompletion(() => ({text:'{"notFiles":true}'}));
+  await assert.rejects(implementCoherently({brief:'Create the project.',candidates:CANDIDATES,complete}),CoherentImplementationError);
+  assert.deepEqual(complete.calls.map(call=>call.modelId),['deepseek_v4_1_flash_1017']);
 });
 
 test('normalization never turns a deletion or unsafe operation into a write', () => {
@@ -299,8 +283,8 @@ test('a physically truncated JSON response retains only fully closed file conten
 
 test('terminal-safe implementation failures omit provider identity but retain the failure stage', () => {
   const failure = new CoherentImplementationError('bounded routes failed', [
-    'glm_5_3_flash: bundle manifest is missing or truncated',
-    'deepseek_v4_flash: provider_rate_limit',
+    'deepseek_v4_1_flash_1017: bundle manifest is missing or truncated',
+    'deepseek_v4_1_flash_1017: provider_rate_limit',
   ]);
   assert.deepEqual(failure.safeReasons, [
     'the project bundle was incomplete',

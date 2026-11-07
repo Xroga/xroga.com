@@ -511,9 +511,9 @@ export class StorageService {
     return toPublicObject(await this.#owned(actor, objectId));
   }
 
-  async listObjects(actor: StorageActor, f: { projectId?: string | null; limit?: number; afterId?: string } = {}): Promise<PublicObject[]> {
+  async listObjects(actor: StorageActor, f: { safeFilename?: string; projectId?: string | null; limit?: number; afterId?: string } = {}): Promise<PublicObject[]> {
     if (f.projectId) await this.#authorizeProject(actor, f.projectId);
-    const rows = await this.#repo.listObjects(actor.tenantId, { projectId: f.projectId, states: ['READY'], limit: Math.min(f.limit ?? 100, 500), afterId: f.afterId });
+    const rows = await this.#repo.listObjects(actor.tenantId, { safeFilename: f.safeFilename, projectId: f.projectId, states: ['READY'], limit: Math.min(f.limit ?? 100, 500), afterId: f.afterId });
     return rows.filter((o) => o.ownerUserId === actor.userId).map(toPublicObject);
   }
 

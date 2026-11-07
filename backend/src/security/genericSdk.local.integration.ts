@@ -11,7 +11,7 @@ import {chatCompletion,chatCompletionStream,type ChatMessage} from '../ai/openai
 export function registerGenericSdkTests(admin:SupabaseClient):void{
   test('real generic JSON and SSE SDK callers settle once, require an exact atomic receipt and deny committed project transfer before wire',async t=>{
     assert.equal(process.env.CI,'true');assert.equal(process.env.XB01_DISPOSABLE_SUPABASE,'1');
-    assert.equal(process.env.SUPABASE_URL,'http://127.0.0.1:54321');assert.equal(process.env.GLM_API_KEY,undefined);
+    assert.equal(process.env.SUPABASE_URL,'http://127.0.0.1:54321');assert.equal(process.env.ZURELAY_API_KEY,undefined);
     const actors:string[]=[];
     t.after(async()=>{for(const actor of actors)assert.equal((await admin.auth.admin.deleteUser(actor)).error,null);});
     for(let i=0;i<2;i++){
@@ -23,17 +23,17 @@ export function registerGenericSdkTests(admin:SupabaseClient):void{
     assert.equal(created.error,null);assert.ok(created.data);const project=created.data.id as string;
     assert.equal((await admin.from('user_token_usage').upsert({user_id:owner,input_tokens:0,output_tokens:0,model_usage:{},spent_usd:0,
       rollover_usd:0,plan_tier:'free',plan_budget_usd:1.65,quota_period_start:new Date().toISOString().slice(0,7)+'-01'})).error,null);
-    process.env.GLM_API_KEY='synthetic-generic-sdk-key';t.after(()=>{delete process.env.GLM_API_KEY;});
+    process.env.ZURELAY_API_KEY='synthetic-generic-sdk-key';process.env.ZURELAY_STREAM_USAGE_VERIFIED='1';t.after(()=>{delete process.env.ZURELAY_API_KEY;delete process.env.ZURELAY_STREAM_USAGE_VERIFIED;});
     const nativeFetch=globalThis.fetch;let sends=0,mode='ok',atomicCalls=0,settlements=0;
     t.mock.method(globalThis,'fetch',async(input:Parameters<typeof fetch>[0],init?:RequestInit)=>{
       const url=new URL(typeof input==='string'?input:input instanceof URL?input.href:input.url);
-      if(url.origin==='https://open.bigmodel.cn'){
-        assert.equal(url.href,'https://open.bigmodel.cn/api/paas/v4/chat/completions');assert.equal(init?.redirect,'manual');
+      if(url.origin==='https://api.zurelay.com'){
+        assert.equal(url.href,'https://api.zurelay.com/v1/chat/completions');assert.equal(init?.redirect,'manual');
         assert.equal(new Headers(init?.headers).get('authorization'),'Bearer synthetic-generic-sdk-key');
-        const body=JSON.parse(String(init?.body));assert.equal(body.model,'glm-5.3-flash');
+        const body=JSON.parse(String(init?.body));assert.equal(body.model,'deepseek-v4.1-flash-1017');
         assert.doesNotMatch(String(init?.body),/synthetic-generic-sdk-key|SYNTHETIC_CREDENTIAL/);sends++;
-        const receipt={id:'synthetic-generic-'+randomUUID(),choices:[body.stream?{delta:{content:'synthetic owned result'},finish_reason:'stop'}:{message:{content:'synthetic owned result'},finish_reason:'stop'}],usage:{prompt_tokens:3,completion_tokens:2}};
-        return body.stream?new Response('data: '+JSON.stringify(receipt)+'\n\ndata: [DONE]\n\n',{headers:{'content-type':'text/event-stream'}}):Response.json(receipt);
+        const receipt={id:'synthetic-generic-'+randomUUID(),choices:[body.stream?{delta:{content:'synthetic owned result'},finish_reason:'stop'}:{message:{content:'synthetic owned result'},finish_reason:'stop'}],model:'deepseek-v4.1-flash-1017',usage:{prompt_tokens:3,completion_tokens:2,total_tokens:5}};
+        return body.stream?new Response('data: '+JSON.stringify(receipt)+'\n\ndata: [DONE]\n\n',{headers:{'content-type':'text/event-stream','x-request-id':'synthetic-integration-trace','x-zurelay-model':'deepseek-v4.1-flash-1017'}}):Response.json(receipt,{headers:{'x-request-id':'synthetic-integration-trace','x-zurelay-model':'deepseek-v4.1-flash-1017'}});
       }
       assert.equal(url.origin,process.env.SUPABASE_URL);
       const response=await nativeFetch(input,init);
@@ -53,8 +53,8 @@ export function registerGenericSdkTests(admin:SupabaseClient):void{
     const ledger=()=>admin.from('ai_usage_ledger').select('id,accounting_receipt_id,input_tokens,output_tokens').eq('user_id',owner).order('id');
     for(const invoke of [chatCompletion,chatCompletionStream]){
       const deltas:string[]=[];
-      const run=(signal?:AbortSignal)=>withTenantModelReservation({scope,modelId:'glm_5_3_flash',payload:{messages},estimatedInputTokens:100,maximumOutputTokens:64,
-        execute:d=>invoke('glm_5_3_flash',d.payload.messages as ChatMessage[],{maxTokens:64,credentialOverride:d.credentialOverride,beforeDispatch:d.beforeDispatch,signal,onDelta:text=>deltas.push(text)})});
+      const run=(signal?:AbortSignal)=>withTenantModelReservation({scope,modelId:'deepseek_v4_1_flash_1017',payload:{messages},estimatedInputTokens:100,maximumOutputTokens:64,
+        execute:d=>invoke('deepseek_v4_1_flash_1017',d.payload.messages as ChatMessage[],{maxTokens:64,credentialOverride:d.credentialOverride,beforeDispatch:d.beforeDispatch,signal,onDelta:text=>deltas.push(text)})});
       mode='ok';const beforeSend:number=sends,beforeAtomic:number=atomicCalls,beforeSettle:number=settlements;
       assert.equal((await run()).text,'synthetic owned result');assert.equal(sends,beforeSend+1);
       assert.equal(atomicCalls,beforeAtomic+1);assert.equal(settlements,beforeSettle+1);assert.equal(deltas.length,invoke===chatCompletionStream?1:0);

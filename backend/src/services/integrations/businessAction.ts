@@ -581,7 +581,9 @@ export function businessActionAuthorityScope(plan: BusinessActionPlan): Prepared
   }
   return { ...plan.authority, provider: normalizeToolkit(plan.toolkit), operation: plan.toolSlug,
     risk: plan.risk, planDigest: plan.planDigest,
-    targetDigest: preparedActionDigest({ sessionId: plan.sessionId, useCase: plan.useCase, toolSlug: plan.toolSlug, arguments: plan.arguments }) };
+    targetDigest: preparedActionDigest(plan.toolkit==='zurelay'&&plan.toolSlug==='model.execute'
+      ? plan.arguments.target
+      : { sessionId: plan.sessionId, useCase: plan.useCase, toolSlug: plan.toolSlug, arguments: plan.arguments }) };
 }
 
 function buildCandidatePayload(
@@ -1442,6 +1444,11 @@ export async function executePreparedBusinessAction(
   }
 
   input = { userId: input.userId, authorization: { ...input.authorization }, plan: snapshotBusinessActionPlan(input.plan), authorityPermit: input.authorityPermit };
+  if(input.plan.toolkit==='zurelay'){
+    const {executeSonnetAction}=await import('../../ai/sonnetApproval.js');
+    const result=await executeSonnetAction(input.userId,input.plan,input.authorityPermit);
+    return {status:'success',toolkit:input.plan.toolkit,toolSlug:input.plan.toolSlug,resultText:JSON.stringify(result),resultDigest:preparedActionDigest(result)};
+  }
   if(input.plan.toolkit==='xroga-native-billing'){
     // Native billing uses the same durable confirmation and original permit.
     // Never route its prepared payload through third-party tool discovery.

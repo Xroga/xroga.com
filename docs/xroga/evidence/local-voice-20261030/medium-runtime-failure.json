@@ -1,0 +1,11 @@
+{
+  "status": "FAIL_RUNTIME_NOT_SELECTED",
+  "model": "Xenova/whisper-medium",
+  "revision": "8c5b90880ab9f79487ab33613413431bf661d595",
+  "quantizedModelBytes": 776129634,
+  "environment": "Windows Edge 156.0.4314.50, CPU/WASM, bounded local job",
+  "observedError": "Model execution failed with numeric runtime error 1284783576 during input_features execution. Root cause not established.",
+  "paidRequests": 0,
+  "productionChanges": false,
+  "receipt": "local job ffdbb3c0-4568-4350-8679-61e301535926"
+}

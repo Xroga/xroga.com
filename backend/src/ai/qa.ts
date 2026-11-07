@@ -251,7 +251,7 @@ export function buildReviewBatches(
 export async function reviewBuildOutput(
   opts: ReviewBuildOutputOpts,
 ): Promise<ReviewBuildOutputResult> {
-  const model = opts.reviewerModel ?? 'deepseek_v4_flash';
+  const model = opts.reviewerModel ?? 'deepseek_v4_1_flash_1017';
   const emptyScope: ReviewScope = {
     examinedFiles: [],
     unexaminedFiles: opts.files?.map((f) => f.path) ?? [],

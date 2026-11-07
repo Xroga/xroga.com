@@ -43,7 +43,7 @@ export interface GatewayDeps {
 }
 
 /** Providers whose OpenAI-compatible API offers JSON mode but not strict json_schema. Stagehand still validates every answer against its schema. */
-const JSON_OBJECT_PROVIDERS = new Set(['zhipu', 'moonshot']);
+const JSON_OBJECT_PROVIDERS = new Set(['zurelay']);
 
 const MAX_REQUEST_CHARS = 2_000_000;
 const deterministicUuid = (parts: unknown[]) => {
@@ -104,7 +104,7 @@ export function createBrowserModelGateway(deps: GatewayDeps): BrowserModelGatewa
           ...(p.tools?.length?{tools:p.tools.map(t=>({type:'function',function:{name:t.name,description:t.description??'',parameters:t.inputSchema}})),...(p.toolChoice?.mode?{tool_choice:p.toolChoice.mode}:{})}:{})}});
       const inputTokens=completion.usage.prompt_tokens,outputTokens=completion.usage.completion_tokens;
       const reasoningTokens=completion.usage.completion_tokens_details?.reasoning_tokens??0;
-      const costMicros=actualProviderCostMicroUsd({modelId:deps.modelId,inputTokens,outputTokens:outputTokens-reasoningTokens,reasoningTokens});
+      const costMicros=actualProviderCostMicroUsd({modelId:deps.modelId,inputTokens,outputTokens,cachedInputTokens:completion.usage.prompt_tokens_details?.cached_tokens??0,reasoningTokens});
 
       const msg = completion?.choices?.[0]?.message ?? {};
       const usage = { inputTokens, outputTokens, totalTokens: inputTokens + outputTokens };

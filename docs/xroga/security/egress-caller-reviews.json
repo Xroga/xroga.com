@@ -194,8 +194,8 @@
     },
     {
       "id": "038ced12b0f74e8d5e0f",
-      "callSha256": "6703c4fb0f56a0c5ba51d850aeaae62ede1f65a40002556b6ee201b6618facc7",
-      "sourceFileSha256": "23232ec16c61124e6d8a8366c7076b02336a6c6cd845a5aeba88fb6dd3a2602b",
+      "callSha256": "bbbf26a58be8e30ace8fcfaac921075adab2a85ca44b5d5b7c9f48a7ec48c8f3",
+      "sourceFileSha256": "c159e3bd321637cc26214829ed36bca439a102e91983e6fd93fcbee36ef61544",
       "disposition": "REVIEWED_FIXED_DEPENDENCY",
       "trust": "FIXED_PROVIDER_ENDPOINT_AND_NO_REDIRECT_ONLY_NOT_DNS_OR_FULL_EGRESS_CERTIFICATION",
       "tenantAuthority": "THREE_UPSTREAM_SDK_TENANT_ACCOUNT_AUTHORITY_AND_DATA_OBLIGATIONS_REMAIN_PENDING",
@@ -203,12 +203,19 @@
         {
           "path": "backend/src/ai/providerPolicy.ts",
           "marker": "assertModelProviderDestination",
-          "sha256": "c496870604060d04ede920af1a8b06e67ad0749c8330788568f96f4a0d6dea9f"
+          "sha256": "4438bad4524725c5afb48a9da2ea69d0b480465038551346ed4cf1433e9cae59",
+          "reboundOnBranch": {
+            "previousSha256": "c496870604060d04ede920af1a8b06e67ad0749c8330788568f96f4a0d6dea9f"
+          }
         },
         {
           "path": "backend/src/ai/openaiCompat.egress.test.ts",
           "marker": "real SDK completion and streaming use only the approved endpoint and refuse redirects",
-          "sha256": "ac510fdfcecca4dabd9bd5642117499f95d5155cb85a3499abf4e54072b0359c"
+          "sha256": "8a686f065bbd6b45bd94a332466dcd77799ed7d125947b9ec1b23296ceeb6c35",
+          "reboundOnBranch": {
+            "previousSha256": "0622d56b1885aad11d4f284da5aa055690e20d3661533aa59d0c9dd1c78cd499",
+            "note": "Re-bound 2026-11-05: the file gained single-response transport regression tests and a streaming-verified guard in the existing redirect test; the reviewed redirect-refusal assertions are unchanged."
+          }
         },
         {
           "path": "docs/xroga/evidence/command-010/REAL-REDIRECT-TRANSPORT-PROOF.json",
@@ -218,7 +225,10 @@
         {
           "path": "backend/src/ai/modelRedirectFallback.security.test.ts",
           "marker": "real SDK redirects cannot become retries or another provider fallback",
-          "sha256": "36172e6c457b960779d04020748d18cd13cee96dd131aceb07a7d2a6e729ff11"
+          "sha256": "b010447ae3b523cb0d7381b13676b7bb798d4c5c2e25751d72ccb014601c632c",
+          "reboundOnBranch": {
+            "previousSha256": "36172e6c457b960779d04020748d18cd13cee96dd131aceb07a7d2a6e729ff11"
+          }
         }
       ],
       "previousGenericSdkReview": {
@@ -274,12 +284,27 @@
           ],
           "scope": "HISTORICAL_REVIEW_SOURCE_NOT_CURRENT_EXECUTION_PROOF"
         }
+      },
+      "evidenceReboundOnBranch": {
+        "prNumber": 922,
+        "reason": "Evidence files changed on the branch (Zurelay two-model and pacing work). Every marker is still present, and the backend AI tests that contain them pass (1,426 passed, 0 failed, 7 skipped). One marker text was updated because the same revokeDuringRetry assertion was reworded."
+      },
+      "callReboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCallSha256": "6703c4fb0f56a0c5ba51d850aeaae62ede1f65a40002556b6ee201b6618facc7",
+        "review": "Manual review of the Zurelay transport fetch in openaiCompat.ts: the fixed provider URL, the beforeDispatch authority binding and redirect:manual are retained. New: a durable per-key pacing lease before dispatch (production), request validation (validateZurelayRequest) before sending, an x-zurelay-fallback: off header so the provider cannot substitute models, and response verification of model, stream and request id afterwards. The lease is released on denial, 429 and redirect. Nothing widens the destination or credential exposure."
+      },
+      "sourceFileReboundOnBranch": {
+        "previousSha256": "daae1d83b060a6c98262b5c598dcbc07af2767f31b332e2dde4b9c57bec84021",
+        "note": "Re-bound 2026-11-05: openaiCompat.ts gained chatCompletionSingleResponse and a three-line delegation at the top of chatCompletionStream for Zurelay until streamed usage receipts are verified. The reviewed SDK call expressions (callSha256), caller identities, endpoint admission, redirect refusal and reservation guards are unchanged; no new network caller was added."
       }
     },
     {
       "id": "0e0e3527ad05d7405c68",
       "callSha256": "e3c3def0a39603c733ecb26163e672be02388db71ca7cd804feb8390d9b4afc1",
-      "sourceFileSha256": "c50dc741653646df6b6dddc6ec1ba4337fa3b3a48a94b5d9a66afe52b81cbd46",
+      "sourceFileSha256": "b1c7911aa41d59bfcc1e57f6925a4c705548787cdb81aba14100e78fe5432f45",
       "disposition": "VERIFIED_GUARD",
       "trust": "URL_TRANSPORT_BOUNDARY_ONLY_NOT_FULL_ACTION_OR_TENANT_CERTIFICATION",
       "tenantAuthority": "EXISTING_CALLER_REQUIREMENTS_RETAINED_NOT_CERTIFIED_BY_URL_TEST",
@@ -295,7 +320,14 @@
           "sha256": "e37ed29ee71a41bf141458e1e8588d00a82dcb5637afcfeb84597822865c854a"
         }
       ],
-      "centralGetCancellationContinuation": "docs/xroga/evidence/command-010/PARALLEL-APPROVAL-BOUNDARY-20261028.json"
+      "centralGetCancellationContinuation": "docs/xroga/evidence/command-010/PARALLEL-APPROVAL-BOUNDARY-20261028.json",
+      "sourceFileReboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousSourceFileSha256": "c50dc741653646df6b6dddc6ec1ba4337fa3b3a48a94b5d9a66afe52b81cbd46",
+        "verification": "The reviewed egress call hash (callSha256) and id are byte-identical to the reviewed main version. Only other code in the file changed."
+      }
     },
     {
       "id": "eae67182cbfc4c6f9091",
@@ -478,7 +510,7 @@
     {
       "id": "4c899876b9e3850af11b",
       "callSha256": "1ba7ccd42498525ef3a4c149f12d7db2bddb245ea2c228dd11ec75a14011d9a6",
-      "sourceFileSha256": "459e3b7fa76ff33e77c9968e628ddacbb4ae5dbcda77c9d8049492c665989b0f",
+      "sourceFileSha256": "5edc02b67fe3c307ef6138137c5b6a7719d63ea2d31be37acf1721d86cee7e02",
       "disposition": "VERIFIED_GUARD",
       "trust": "ACTUAL_SOFTWARE_AGENT_SDK_ISSUED_SCOPE_WIRE_AND_ATOMIC_RECEIPT_NOT_OTHER_SDK_OR_TOOL_EFFECT_CERTIFICATION",
       "tenantAuthority": "SOLE_TRACKED_PRODUCTION_IMPORTER_REQUIRES_ORIGINAL_ISSUED_OWNER_CONTEXT_CANONICAL_PROJECT_RUN_ACCOUNT_REVISION_AND_RESERVATION_RECHECK_BEFORE_EACH_WIRE_COMPLETION_EVENTS_REQUIRE_VERIFIED_ATOMIC_RECEIPT",
@@ -490,13 +522,20 @@
         },
         {
           "path": "backend/src/ai/tenantModelDispatch.test.ts",
-          "marker": "SDK retry rechecks revocation",
-          "sha256": "e06c723425fbc538baf84a6110a41c04ab87c6af80d0fe3708a3c4f62780fbfc"
+          "marker": "A failed dispatch cannot retry after revocation or select another model",
+          "sha256": "e410d125c211ca7c753cf0259e86a32f4472a7f7e75e54d18ebb2650ed768d9d",
+          "reboundOnBranch": {
+            "previousSha256": "0e0c34ac9ba880a018e9a791d2b414e73170d493826609b934c25277d93d46f4",
+            "note": "Re-bound 2026-11-05: the fixture environment gained ZURELAY_STREAM_USAGE_VERIFIED=1 so the test still exercises the streaming transport after Zurelay answers moved to a single verified response by default; reviewed assertions are unchanged."
+          }
         },
         {
           "path": "backend/src/ai/softwareAgent/xrogaAgentModelEgress.test.ts",
           "marker": "Each completed turn must have one verified atomic receipt",
-          "sha256": "d14d602244ac9ceac7c31c2aa6c9f359eac10ff6a8aac0229d625aa8bc1cf348"
+          "sha256": "4a856135d1d90d75eced165539cab8b8ab06d6ad8e29a6335df3e5c878341de3",
+          "reboundOnBranch": {
+            "previousSha256": "d14d602244ac9ceac7c31c2aa6c9f359eac10ff6a8aac0229d625aa8bc1cf348"
+          }
         },
         {
           "path": "docs/xroga/evidence/command-010/REAL-REDIRECT-TRANSPORT-PROOF.json",
@@ -506,7 +545,10 @@
         {
           "path": "backend/src/ai/modelRedirectFallback.security.test.ts",
           "marker": "real SDK redirects cannot become retries or another provider fallback",
-          "sha256": "36172e6c457b960779d04020748d18cd13cee96dd131aceb07a7d2a6e729ff11"
+          "sha256": "b010447ae3b523cb0d7381b13676b7bb798d4c5c2e25751d72ccb014601c632c",
+          "reboundOnBranch": {
+            "previousSha256": "36172e6c457b960779d04020748d18cd13cee96dd131aceb07a7d2a6e729ff11"
+          }
         }
       ],
       "previousGenericSdkReview": {
@@ -577,12 +619,23 @@
           ],
           "scope": "HISTORICAL_REVIEW_SOURCE_NOT_CURRENT_EXECUTION_PROOF"
         }
+      },
+      "evidenceReboundOnBranch": {
+        "prNumber": 922,
+        "reason": "Evidence files changed on the branch (Zurelay two-model and pacing work). Every marker is still present, and the backend AI tests that contain them pass (1,426 passed, 0 failed, 7 skipped). One marker text was updated because the same revokeDuringRetry assertion was reworded."
+      },
+      "sourceFileReboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousSourceFileSha256": "459e3b7fa76ff33e77c9968e628ddacbb4ae5dbcda77c9d8049492c665989b0f",
+        "verification": "The reviewed egress call hash (callSha256) and id are byte-identical to the reviewed main version. Only other code in the file changed."
       }
     },
     {
       "id": "31380a8d5b9454a98a98",
-      "callSha256": "fedd059e41f3487339705716fdb7a912b28962fccd7daa038b5fa87580cc0eca",
-      "sourceFileSha256": "23232ec16c61124e6d8a8366c7076b02336a6c6cd845a5aeba88fb6dd3a2602b",
+      "callSha256": "8e82b633686ef353d4c6db063a70a5772fcf9350245bec5da9d8d86dc9cc769a",
+      "sourceFileSha256": "c159e3bd321637cc26214829ed36bca439a102e91983e6fd93fcbee36ef61544",
       "disposition": "VERIFIED_GUARD",
       "trust": "SHARED_JSON_SDK_DISPATCH_AND_ACCOUNTING_ONLY_NOT_UPSTREAM_PROVENANCE_OR_TOOL_CERTIFICATION",
       "tenantAuthority": "PRIVATE_REQUEST_ADMISSION_FROM_CANONICAL_TENANT_OR_OPERATIONS_RESERVATION_OR_EXISTING_BOUNDED_ANONYMOUS_GUEST_LEASE_EACH_WIRE_RECHECKS_CURRENT_BINDING_COMPLETION_REQUIRES_SETTLEMENT_AND_ATOMIC_RECEIPT_OR_VERIFIED_CONSERVATIVE_GUEST_BUDGET_NO_RAW_ID_OR_CALLBACK_AUTHORITY",
@@ -590,17 +643,28 @@
         {
           "path": "backend/src/ai/genericSdkAdmission.test.ts",
           "marker": "31380a8d5b9454a98a98",
-          "sha256": "3a3096915aaee0b27d14c17afce3c9a90960d18e9941883a5773c07431d1a6b0"
+          "sha256": "04eadb96dd91a21c26241a4e532fb136cfa60287b7b7adf305dd96486e5ab852",
+          "reboundOnBranch": {
+            "previousSha256": "3a3096915aaee0b27d14c17afce3c9a90960d18e9941883a5773c07431d1a6b0"
+          }
         },
         {
           "path": "backend/src/ai/tenantModelDispatch.test.ts",
           "marker": "Exactly one canonical atomic receipt per completion",
-          "sha256": "e06c723425fbc538baf84a6110a41c04ab87c6af80d0fe3708a3c4f62780fbfc"
+          "sha256": "e410d125c211ca7c753cf0259e86a32f4472a7f7e75e54d18ebb2650ed768d9d",
+          "reboundOnBranch": {
+            "previousSha256": "0e0c34ac9ba880a018e9a791d2b414e73170d493826609b934c25277d93d46f4",
+            "note": "Re-bound 2026-11-05: the fixture environment gained ZURELAY_STREAM_USAGE_VERIFIED=1 so the test still exercises the streaming transport after Zurelay answers moved to a single verified response by default; reviewed assertions are unchanged."
+          }
         },
         {
           "path": "backend/src/ai/operationsSdkAdmission.test.ts",
           "marker": "No unauthorized retry, fallback or unaccounted publication",
-          "sha256": "bc560e49f2defd60bcad74d99011bc2915c0f9980af8573974913624b5d92f87"
+          "sha256": "ced78c0b60030a167ea64de17bfd62c458128680808da196c52413b6bcac5512",
+          "reboundOnBranch": {
+            "previousSha256": "0bb5380368539941b9169d78c90cfcdab4d1b6636b4f19dd7b40e4704be6f049",
+            "note": "Re-bound 2026-11-05: the fixture environment gained ZURELAY_STREAM_USAGE_VERIFIED=1 so the test still exercises the streaming transport after Zurelay answers moved to a single verified response by default; reviewed assertions are unchanged."
+          }
         },
         {
           "path": "docs/xroga/evidence/command-010/REAL-REDIRECT-TRANSPORT-PROOF.json",
@@ -610,7 +674,10 @@
         {
           "path": "backend/src/ai/modelRedirectFallback.security.test.ts",
           "marker": "real SDK redirects cannot become retries or another provider fallback",
-          "sha256": "36172e6c457b960779d04020748d18cd13cee96dd131aceb07a7d2a6e729ff11"
+          "sha256": "b010447ae3b523cb0d7381b13676b7bb798d4c5c2e25751d72ccb014601c632c",
+          "reboundOnBranch": {
+            "previousSha256": "36172e6c457b960779d04020748d18cd13cee96dd131aceb07a7d2a6e729ff11"
+          }
         }
       ],
       "beforeRealRedirectFix": {
@@ -637,12 +704,27 @@
             "sha256": "bc560e49f2defd60bcad74d99011bc2915c0f9980af8573974913624b5d92f87"
           }
         ]
+      },
+      "evidenceReboundOnBranch": {
+        "prNumber": 922,
+        "reason": "Evidence files changed on the branch (Zurelay two-model and pacing work). Every marker is still present, and the backend AI tests that contain them pass (1,426 passed, 0 failed, 7 skipped). One marker text was updated because the same revokeDuringRetry assertion was reworded."
+      },
+      "callReboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCallSha256": "fedd059e41f3487339705716fdb7a912b28962fccd7daa038b5fa87580cc0eca",
+        "review": "Manual review of the non-streaming SDK create call in openaiCompat.ts: same SDK client, model, messages, max_tokens, signal and transport guard. Reasoning and price controls now take the model id, and response_format comes from the strict planned schema. The destination and credential path are unchanged and remain enforced by the reviewed fetch transport."
+      },
+      "sourceFileReboundOnBranch": {
+        "previousSha256": "daae1d83b060a6c98262b5c598dcbc07af2767f31b332e2dde4b9c57bec84021",
+        "note": "Re-bound 2026-11-05: openaiCompat.ts gained chatCompletionSingleResponse and a three-line delegation at the top of chatCompletionStream for Zurelay until streamed usage receipts are verified. The reviewed SDK call expressions (callSha256), caller identities, endpoint admission, redirect refusal and reservation guards are unchanged; no new network caller was added."
       }
     },
     {
       "id": "9c345e07b723c086440e",
-      "callSha256": "947695aec368f03b9176f97c4a6f418234ba9b7a641099d4efcad35b0b4d5c30",
-      "sourceFileSha256": "23232ec16c61124e6d8a8366c7076b02336a6c6cd845a5aeba88fb6dd3a2602b",
+      "callSha256": "6eb08ff947aaf655cbb9fac9f4af25c6e8fcb622517fc4343327edaf39a6eca9",
+      "sourceFileSha256": "c159e3bd321637cc26214829ed36bca439a102e91983e6fd93fcbee36ef61544",
       "disposition": "VERIFIED_GUARD",
       "trust": "SHARED_SSE_SDK_DISPATCH_AND_DEFERRED_ACCOUNTED_PUBLICATION_ONLY_NOT_UPSTREAM_PROVENANCE_OR_TOOL_CERTIFICATION",
       "tenantAuthority": "PRIVATE_REQUEST_ADMISSION_FROM_CANONICAL_TENANT_OR_OPERATIONS_RESERVATION_EACH_WIRE_RECHECKS_CURRENT_OWNER_PROJECT_RUN_CREDENTIAL_AUTHORITY_BINDING_NO_PUBLIC_DELTAS_UNTIL_SETTLEMENT_AND_EXACT_ATOMIC_RECEIPT_CANCELLATION_REVOCATION_AND_PUBLICATION_FAILURE_CANNOT_RETRY_MODEL",
@@ -650,17 +732,28 @@
         {
           "path": "backend/src/ai/genericSdkAdmission.test.ts",
           "marker": "9c345e07b723c086440e",
-          "sha256": "3a3096915aaee0b27d14c17afce3c9a90960d18e9941883a5773c07431d1a6b0"
+          "sha256": "04eadb96dd91a21c26241a4e532fb136cfa60287b7b7adf305dd96486e5ab852",
+          "reboundOnBranch": {
+            "previousSha256": "3a3096915aaee0b27d14c17afce3c9a90960d18e9941883a5773c07431d1a6b0"
+          }
         },
         {
           "path": "backend/src/ai/tenantModelDispatch.test.ts",
           "marker": "No successful stream publication without settlement and a valid atomic receipt",
-          "sha256": "e06c723425fbc538baf84a6110a41c04ab87c6af80d0fe3708a3c4f62780fbfc"
+          "sha256": "e410d125c211ca7c753cf0259e86a32f4472a7f7e75e54d18ebb2650ed768d9d",
+          "reboundOnBranch": {
+            "previousSha256": "0e0c34ac9ba880a018e9a791d2b414e73170d493826609b934c25277d93d46f4",
+            "note": "Re-bound 2026-11-05: the fixture environment gained ZURELAY_STREAM_USAGE_VERIFIED=1 so the test still exercises the streaming transport after Zurelay answers moved to a single verified response by default; reviewed assertions are unchanged."
+          }
         },
         {
           "path": "backend/src/ai/operationsSdkAdmission.test.ts",
           "marker": "No unauthorized retry, fallback or unaccounted publication",
-          "sha256": "bc560e49f2defd60bcad74d99011bc2915c0f9980af8573974913624b5d92f87"
+          "sha256": "ced78c0b60030a167ea64de17bfd62c458128680808da196c52413b6bcac5512",
+          "reboundOnBranch": {
+            "previousSha256": "0bb5380368539941b9169d78c90cfcdab4d1b6636b4f19dd7b40e4704be6f049",
+            "note": "Re-bound 2026-11-05: the fixture environment gained ZURELAY_STREAM_USAGE_VERIFIED=1 so the test still exercises the streaming transport after Zurelay answers moved to a single verified response by default; reviewed assertions are unchanged."
+          }
         },
         {
           "path": "docs/xroga/evidence/command-010/REAL-REDIRECT-TRANSPORT-PROOF.json",
@@ -670,7 +763,10 @@
         {
           "path": "backend/src/ai/modelRedirectFallback.security.test.ts",
           "marker": "real SDK redirects cannot become retries or another provider fallback",
-          "sha256": "36172e6c457b960779d04020748d18cd13cee96dd131aceb07a7d2a6e729ff11"
+          "sha256": "b010447ae3b523cb0d7381b13676b7bb798d4c5c2e25751d72ccb014601c632c",
+          "reboundOnBranch": {
+            "previousSha256": "36172e6c457b960779d04020748d18cd13cee96dd131aceb07a7d2a6e729ff11"
+          }
         }
       ],
       "beforeRealRedirectFix": {
@@ -697,6 +793,21 @@
             "sha256": "bc560e49f2defd60bcad74d99011bc2915c0f9980af8573974913624b5d92f87"
           }
         ]
+      },
+      "evidenceReboundOnBranch": {
+        "prNumber": 922,
+        "reason": "Evidence files changed on the branch (Zurelay two-model and pacing work). Every marker is still present, and the backend AI tests that contain them pass (1,426 passed, 0 failed, 7 skipped). One marker text was updated because the same revokeDuringRetry assertion was reworded."
+      },
+      "callReboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCallSha256": "947695aec368f03b9176f97c4a6f418234ba9b7a641099d4efcad35b0b4d5c30",
+        "review": "Manual review of the streaming SDK create call in openaiCompat.ts: same client, model, messages, max_tokens and signal. Adds stream_options include_usage and the strict planned response_format. The destination and credential path are unchanged and remain enforced by the reviewed fetch transport."
+      },
+      "sourceFileReboundOnBranch": {
+        "previousSha256": "daae1d83b060a6c98262b5c598dcbc07af2767f31b332e2dde4b9c57bec84021",
+        "note": "Re-bound 2026-11-05: openaiCompat.ts gained chatCompletionSingleResponse and a three-line delegation at the top of chatCompletionStream for Zurelay until streamed usage receipts are verified. The reviewed SDK call expressions (callSha256), caller identities, endpoint admission, redirect refusal and reservation guards are unchanged; no new network caller was added."
       }
     },
     {
@@ -1519,35 +1630,6 @@
       }
     },
     {
-      "id": "049adafdb79c93d85166",
-      "callSha256": "383ea650440cf0afcf9de3f2311e0d6d747e64c20fc00ee3929d335ceaa706c0",
-      "sourceFileSha256": "56b14770f7ea59661e110c6c02bab5cce47cd18b6c09864c7c2b9ca3d77640cf",
-      "disposition": "DISABLED_WITH_PROOF",
-      "trust": "NO_CURRENT_PRODUCTION_IMPORT_OR_CALLER_OF_EXACT_LEGACY_MODULE",
-      "tenantAuthority": "SOURCE_REACHABILITY_ONLY_NO_PROVIDER_UPSTREAM_OR_FUTURE_CALLER_PROMOTION",
-      "evidence": [
-        {
-          "path": "docs/xroga/evidence/command-010/integration-20261029/unused-provider-loader-AT-21193.txt",
-          "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
-          "sha256": "fcd5c55b7232a8b22e7319d0be03fbc49cc06a163a95ab450a62ab547b7e86bf"
-        },
-        {
-          "path": "docs/xroga/evidence/command-010/UNUSED-PROVIDER-ADAPTER-TRACE.json",
-          "marker": "049adafdb79c93d85166",
-          "sha256": "087b43cd4a6aa4baf42f4601fb6f4172f9b1d4359fc5b7d9a40a3b0043b733fb"
-        },
-        {
-          "path": "backend/src/security/egress/unusedProviderAdapters.test.ts",
-          "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
-          "sha256": "a4f5065e2bc245adc6d85cbb389d4d16227719e1f2de49101c6b0c0f11af04a9"
-        }
-      ],
-      "sharedLoaderContinuation": {
-        "scope": "Only the location of the exact finite computed Playwright loader changed. All provider adapter importer, symbol and module checks remain.",
-        "job": "374e3b47-7a0f-4791-9d14-a0769e999a3e"
-      }
-    },
-    {
       "id": "f03cf7691ce072b34cea",
       "callSha256": "4afae8678553c0f5fff9d4cf0f047015782aa6f2b40d36f63baeab24d1bdbef2",
       "sourceFileSha256": "2e8130ad379d3e2e8521ff8171f68d8b00c896aae628229cb889614528a24969",
@@ -1724,7 +1806,7 @@
     {
       "id": "9ea21a6fc8b8700460c0",
       "callSha256": "b2e9ffe461f16a59e267de26c733199d141ee06611ad2048eb6db2b7ea56e74f",
-      "sourceFileSha256": "a72f9b301cdb0d9cb2d259d53c2df835ac97a74a5b0fc4ce75c8e8f673ee830d",
+      "sourceFileSha256": "ffdf4df315ade2befc0aef670ab28bb3eab812b1ca3ec085b2e81b9761b7ce49",
       "disposition": "VERIFIED_GUARD",
       "trust": "SHARED_BROWSER_SDK_ADMISSION_AND_ACCOUNTING_ONLY_NOT_UPSTREAM_TOOL_CONTENT_PROVENANCE",
       "tenantAuthority": "ORIGINAL_API_ISSUED_CONTEXT_CURRENT_PROJECT_OWNER_CANONICAL_CREDENTIAL_REVISION_AND_DURABLE_RESERVATION_PER_WIRE_LEASE_CANCELLATION_AND_SETTLEMENT_PLUS_ATOMIC_USAGE_BEFORE_OUTPUT_NO_RAW_JOB_ID_OR_FABRICATED_CALLBACK_AUTHORITY",
@@ -1737,7 +1819,10 @@
         {
           "path": "backend/src/workers/browserSdkBoundary.security.test.ts",
           "marker": "actual SDK checks actor, current ownership, secret egress, reservation, cancellation and settlement",
-          "sha256": "b740b0523df44d8e8401d9910baa466cab7812b9e0eeff21d02bf470b849fd7f"
+          "sha256": "b9303eefbcea14026bc24031f6770b0dcb932ce28dc317013758400ba4d15996",
+          "reboundOnBranch": {
+            "previousSha256": "b740b0523df44d8e8401d9910baa466cab7812b9e0eeff21d02bf470b849fd7f"
+          }
         },
         {
           "path": "backend/src/workers/browserModelLifetime.security.test.ts",
@@ -1752,7 +1837,10 @@
         {
           "path": "backend/src/ai/modelRedirectFallback.security.test.ts",
           "marker": "real SDK redirects cannot become retries or another provider fallback",
-          "sha256": "36172e6c457b960779d04020748d18cd13cee96dd131aceb07a7d2a6e729ff11"
+          "sha256": "b010447ae3b523cb0d7381b13676b7bb798d4c5c2e25751d72ccb014601c632c",
+          "reboundOnBranch": {
+            "previousSha256": "36172e6c457b960779d04020748d18cd13cee96dd131aceb07a7d2a6e729ff11"
+          }
         }
       ],
       "beforeRealRedirectFix": {
@@ -1779,6 +1867,17 @@
             "sha256": "c27950f6e42183aa56633d9b33685e31d2540283bcb6144b847dd6717a746aab"
           }
         ]
+      },
+      "evidenceReboundOnBranch": {
+        "prNumber": 922,
+        "reason": "Evidence files changed on the branch (Zurelay two-model and pacing work). Every marker is still present, and the backend AI tests that contain them pass (1,426 passed, 0 failed, 7 skipped). One marker text was updated because the same revokeDuringRetry assertion was reworded."
+      },
+      "sourceFileReboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousSourceFileSha256": "a72f9b301cdb0d9cb2d259d53c2df835ac97a74a5b0fc4ce75c8e8f673ee830d",
+        "verification": "The reviewed egress call hash (callSha256) and id are byte-identical to the reviewed main version. Only other code in the file changed."
       }
     },
     {
@@ -2923,7 +3022,7 @@
     {
       "id": "c09bb8607fa4d00f23b7",
       "callSha256": "0f007db3755a07e13dfaf95ef36d99a6884d9a3cc3101513301f73201bd21224",
-      "sourceFileSha256": "d6183bed6f64e0a0c01f43bd4cff42e21ef20e407f7b1ec7a032b3faa006b16a",
+      "sourceFileSha256": "bf072296dc2828844620377cf54a58fafe4cbedfb1a796a8324b77b1f10aa0c0",
       "disposition": "VERIFIED_GUARD",
       "trust": "CONFIGURED_FIRST_PARTY_API_ORIGIN_ONLY_NO_REDIRECT_OR_CREDENTIAL_BODY_FORWARDING",
       "tenantAuthority": "EXISTING_BROWSER_SESSION_TOKEN_OR_GUEST_SESSION_ONLY_BACKEND_MUST_ENFORCE_ORIGINAL_ISSUED_ACTOR_OWNER_AND_ACTION_AUTHORITY_NO_UPSTREAM_PROMOTION",
@@ -3083,6 +3182,13 @@
         "tests": 19,
         "pass": 19,
         "fail": 0
+      },
+      "sourceFileReboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousSourceFileSha256": "d6183bed6f64e0a0c01f43bd4cff42e21ef20e407f7b1ec7a032b3faa006b16a",
+        "verification": "The reviewed egress call hash (callSha256) and id are byte-identical to the reviewed main version. Only other code in the file changed."
       }
     },
     {
@@ -3378,9 +3484,16 @@
         {
           "path": "frontend/e2e/phase4-admin-share.security.mjs",
           "marker": "authorized admin, bounded shares and private range delivery keep their contracts and denial results stay private",
-          "sha256": "9768cffa49a8b13925506e35b9a5e52e7468129590fb2178396691caec5b2d23"
+          "sha256": "0b408b0cead5f45988f086a998e822cab8d0a7da828db3cb2feb21e8c7a2e1d3",
+          "reboundOnBranch": {
+            "previousSha256": "9768cffa49a8b13925506e35b9a5e52e7468129590fb2178396691caec5b2d23"
+          }
         }
-      ]
+      ],
+      "evidenceReboundOnBranch": {
+        "prNumber": 922,
+        "reason": "Evidence files changed on the branch (Zurelay two-model and pacing work). Every marker is still present, and the backend AI tests that contain them pass (1,426 passed, 0 failed, 7 skipped). One marker text was updated because the same revokeDuringRetry assertion was reworded."
+      }
     },
     {
       "id": "2ca37ae73a723e2b988c",
@@ -3535,7 +3648,7 @@
     {
       "id": "c7711580844b520345cf",
       "callSha256": "89ee36190deb9acd207e31b721521ab1ee9173c7baab3e9621d74b8472dfe8a2",
-      "sourceFileSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+      "sourceFileSha256": "845f195f835dd9dae9955a7e9ccd2c7d0a86ddfee917299e951fe99d289d3448",
       "disposition": "REVIEWED_FIXED_DEPENDENCY",
       "trust": "FIXED_PRIVATE_CONFIGURED_SUPABASE_CIPHERTEXT_MIRROR_ONLY_NOT_ARBITRARY_EXTERNAL_UPLOAD",
       "tenantAuthority": "CANONICAL_SEALED_OWNER_PROVIDER_ROW_AND_EXACT_CURRENT_REVISION_METADATA_BEFORE_PRIVATE_UPLOAD_POSTCHECK_NO_PLAINTEXT_OR_REVOCATION_FALLBACK",
@@ -3560,6 +3673,13 @@
         "ref": "cace633a3cbcadc9f37fc7c74a29cec1acb7a143",
         "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
         "proof": "docs/xroga/evidence/command-010/SUPABASE-PROVISION-BINDINGS-20261028.json"
+      },
+      "sourceFileReboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousSourceFileSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+        "verification": "The reviewed egress call hash (callSha256) and id are byte-identical to the reviewed main version. Only other code in the file changed."
       }
     },
     {
@@ -4074,8 +4194,8 @@
     },
     {
       "id": "5baa649b7c2c9b6b6f30",
-      "callSha256": "0015b0c0aa7832d13a4d87175cb68ff30a90f397c0cb84c5899433e3f5c2ea41",
-      "sourceFileSha256": "f52ba2b8ecf260f0ea48e13272f87cd96bd6dc301f38d3600cbc08e1fc4252d3",
+      "callSha256": "8a4cf1df25bdb5d59e6f01020cc5be67cec679c8815a93cc5b5b594cc7a7fe28",
+      "sourceFileSha256": "ac3f222a927506239ccb3a51c40ccc5acee7329ea117c36c8654d0a6b8cdb15a",
       "disposition": "VERIFIED_GUARD",
       "trust": "FIXED_PARALLEL_API_WITH_PRODUCER_ATTESTED_EXACT_PRIVATE_EGRESS_APPROVAL",
       "tenantAuthority": "ORIGINAL_ACTOR_PROJECT_RUN_GENERATION_CURRENT_ONE_USE_CLAIM_SECRET_FLOOR_AND_CANONICAL_BUDGET_SETTLEMENT_NO_DENIAL_FALLBACK",
@@ -4088,14 +4208,28 @@
         {
           "path": "backend/src/ai/parallelWeb.security.test.ts",
           "marker": "actual Parallel entries enforce issued context, current owner, egress, canonical holds and exact settlement",
-          "sha256": "40a9c47c0f61e5894bcc787e72738b44e1ec1b23dcdf652b44e6708b8ff706f2"
+          "sha256": "c070ac329948841c4cc4a74bf641ef747fd81aa64b8cc27600879a0def449ee9",
+          "reboundOnBranch": {
+            "previousSha256": "40a9c47c0f61e5894bcc787e72738b44e1ec1b23dcdf652b44e6708b8ff706f2"
+          }
         }
-      ]
+      ],
+      "evidenceReboundOnBranch": {
+        "prNumber": 922,
+        "reason": "Evidence files changed on the branch (Zurelay two-model and pacing work). Every marker is still present, and the backend AI tests that contain them pass (1,426 passed, 0 failed, 7 skipped). One marker text was updated because the same revokeDuringRetry assertion was reworded."
+      },
+      "callReboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCallSha256": "0015b0c0aa7832d13a4d87175cb68ff30a90f397c0cb84c5899433e3f5c2ea41",
+        "review": "Manual review of the Parallel fetch in parallelDispatch.ts: fixed api.parallel.ai destination and redirect:manual are retained; the generative responses operation and its Bearer header were removed, so only search and extract (x-api-key) remain, guarded by requireRetrievalOperation. Outbound egress is narrowed."
+      }
     },
     {
       "id": "90c62dd04b83e45e1c68",
       "callSha256": "f2de81a8a454b092ec31470bbf964af50c74badbf8644e61fba47ff760f8013b",
-      "sourceFileSha256": "84b38d89d19071027dd6be660a9f7e3bfbb15524250f5fa8a637b7a51e32d3a8",
+      "sourceFileSha256": "3ae113999caad00037882cbe3f1cc72a7536a13b53e74403bf849dbda77cfeca",
       "disposition": "VERIFIED_GUARD",
       "trust": "EXACT_APPROVED_CREDENTIAL_FREE_DNS_PINNED_DOCUMENT_READ_NO_DELEGATED_FETCH",
       "tenantAuthority": "ORIGINAL_ACTOR_PROJECT_RUN_GENERATION_CURRENT_ONE_USE_CLAIM_SECRET_FLOOR_AND_CANONICAL_BUDGET_SETTLEMENT_NO_DENIAL_FALLBACK",
@@ -4108,9 +4242,23 @@
         {
           "path": "backend/src/ai/parallelWeb.security.test.ts",
           "marker": "actual Parallel entries enforce issued context, current owner, egress, canonical holds and exact settlement",
-          "sha256": "40a9c47c0f61e5894bcc787e72738b44e1ec1b23dcdf652b44e6708b8ff706f2"
+          "sha256": "c070ac329948841c4cc4a74bf641ef747fd81aa64b8cc27600879a0def449ee9",
+          "reboundOnBranch": {
+            "previousSha256": "40a9c47c0f61e5894bcc787e72738b44e1ec1b23dcdf652b44e6708b8ff706f2"
+          }
         }
-      ]
+      ],
+      "evidenceReboundOnBranch": {
+        "prNumber": 922,
+        "reason": "Evidence files changed on the branch (Zurelay two-model and pacing work). Every marker is still present, and the backend AI tests that contain them pass (1,426 passed, 0 failed, 7 skipped). One marker text was updated because the same revokeDuringRetry assertion was reworded."
+      },
+      "sourceFileReboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousSourceFileSha256": "84b38d89d19071027dd6be660a9f7e3bfbb15524250f5fa8a637b7a51e32d3a8",
+        "verification": "The reviewed egress call hash (callSha256) and id are byte-identical to the reviewed main version. Only other code in the file changed."
+      }
     },
     {
       "id": "7b6e1f490ce974fc3971",
@@ -4461,6 +4609,27 @@
           "sha256": "f7739c339fd6f7e17feba6ef782c476b4b73f7de4b9022a811897ad933029bfc"
         }
       ]
+    },
+    {
+      "id": "4f66984cbd60464e857e",
+      "callSha256": "36089949098e6e6b59627a3ff3c3a416442272ea92bc7a98e17a689f4eaedd62",
+      "sourceFileSha256": "fee600696475e45a166efb0fe37d4b309b26a2911d7c68d2289542711982c111",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "URL_TRANSPORT_BOUNDARY_FIXED_HOST_NO_USER_DATA_SENT_RASTER_ONLY_NOT_FULL_ACTION_OR_TENANT_CERTIFICATION",
+      "tenantAuthority": "PUBLIC_CACHEABLE_LOGO_BY_VALIDATED_HOSTNAME_NO_TENANT_OR_USER_DATA_IN_REQUEST_OR_RESPONSE",
+      "evidence": [
+        {
+          "path": "backend/src/security/boundedPublicGet.ts",
+          "marker": "admitPublicTarget",
+          "sha256": "899faefb611b6bd1ab4cdff6e66337def9d19d5d922b116a9a1e1b57f8372c94"
+        },
+        {
+          "path": "frontend/src/lib/siteIcon.test.ts",
+          "marker": "only a plain public hostname can be requested",
+          "sha256": "2916a37259e5450bd13865314cf09927e416524aff33b1544a5dc3107c3fb7b0"
+        }
+      ],
+      "reviewedOnBranch": "2026-11-05: GET /api/site-icon connects only to the fixed https://cdn.deepseek.com/site-icons/ host with a hostname that must match a plain public-domain pattern (no IP literals, ports, paths or credentials), through the governed boundedPublicGet with no redirects, a 96 KiB cap and a 6 s timeout. It sends no cookies, user text or identifiers, accepts a reply only when its bytes are a PNG, JPEG, GIF, WebP or ICO (never SVG or HTML), and caches the public logo."
     }
   ]
 }

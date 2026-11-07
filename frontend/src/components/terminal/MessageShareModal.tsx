@@ -6,7 +6,7 @@ import { Check, Copy, Link2, LoaderCircle, X } from 'lucide-react';
 import { siFacebook, siReddit, siWhatsapp, siX } from 'simple-icons';
 import { api, type MessageShareRecord } from '@/lib/api';
 import {
-  cleanShareText,
+  prepareShareText,
   messageShareUrl,
   socialShareUrl,
   type MessageSharePlatform,
@@ -50,10 +50,15 @@ interface MessageShareModalProps {
   prompt?: string;
   response: string;
   contentLabel?: string;
+  /** V2 supplies a complete serialized answer. Do not parse its literals again. */
+  literalContent?: boolean;
+  /** Bounded read-only snapshot. The dialog and Copy still show the full text. */
+  richResponse?: string;
+  richResponseUnavailable?: boolean;
 }
 
-export function MessageShareModal({ open, onClose, prompt = '', response, contentLabel = 'answer' }: MessageShareModalProps) {
-  const hasPrompt = Boolean(cleanShareText(prompt));
+export function MessageShareModal({ open, onClose, prompt = '', response, contentLabel = 'answer', literalContent = false, richResponse, richResponseUnavailable = false }: MessageShareModalProps) {
+  const hasPrompt = Boolean(prepareShareText(prompt, literalContent).trim());
   const [scope, setScope] = useState<MessageShareScope>(hasPrompt ? 'exchange' : 'response');
   const [visibility, setVisibility] = useState<MessageShareVisibility>('private');
   const [created, setCreated] = useState<MessageShareRecord | null>(null);
@@ -61,8 +66,8 @@ export function MessageShareModal({ open, onClose, prompt = '', response, conten
   const [copied, setCopied] = useState(false);
   const [error, setError] = useState('');
 
-  const cleanPrompt = useMemo(() => cleanShareText(prompt), [prompt]);
-  const cleanResponse = useMemo(() => cleanShareText(response), [response]);
+  const cleanPrompt = useMemo(() => prepareShareText(prompt, literalContent), [prompt, literalContent]);
+  const cleanResponse = useMemo(() => prepareShareText(response, literalContent), [response, literalContent]);
   const url = created ? messageShareUrl(created.token) : '';
 
   useEffect(() => {
@@ -108,7 +113,8 @@ export function MessageShareModal({ open, onClose, prompt = '', response, conten
         visibility,
         scope,
         prompt: scope === 'exchange' ? cleanPrompt : undefined,
-        response: cleanResponse,
+        response: richResponse ?? cleanResponse,
+        literalContent,
       });
       setCreated(result.share);
       toast.success(visibility === 'private' ? 'Private link created' : 'Public link created');
@@ -196,6 +202,7 @@ export function MessageShareModal({ open, onClose, prompt = '', response, conten
           </div>
 
           {error && <p role="alert" className="rounded-lg bg-red-500/10 px-3 py-2 text-xs text-red-500">{error}</p>}
+          {richResponseUnavailable && <p role="status" className="text-xs text-[var(--text-secondary)]">Some interactive content can&apos;t be included in this Share format. The link will preserve the complete text.</p>}
 
           {!created ? (
             <button type="button" disabled={busy || !cleanResponse} onClick={() => void createLink()} className="flex h-10 w-full items-center justify-center gap-2 rounded-xl bg-[var(--accent)] text-xs font-semibold text-white transition hover:opacity-90 disabled:opacity-50">

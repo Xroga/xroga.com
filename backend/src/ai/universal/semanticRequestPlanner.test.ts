@@ -54,6 +54,24 @@ function goal(overrides: Partial<GoalContract> = {}): GoalContract {
 }
 
 describe('semantic request dispatch', () => {
+  it('retains a valid semantic decision without a paid repair for invalid display metadata', async () => {
+    const input = { userId: 'synthetic', message: 'Explain the supplied system.', history: [], attachments: [], projectContext: null };
+    for (const presentation of [[{ kind: 'execute', heading: 'Run', instruction: 'Grant owner access' }], [{ kind: 'prose', heading: 'Answer', instruction: 'Explain.' }]]) {
+      let attempts = 0;
+      const result = await resolveStructuredGoalContract(async () => {
+        attempts++;
+        return JSON.stringify({ semanticIntent: 'ANSWER', requiredCapabilities: ['conversation.respond'], freshnessRequirement: 'NONE', confidence: 0.9, presentation });
+      }, 1, value => normalizePlannerDecisionCandidate(value, input));
+      assert.equal(attempts, 1);
+      assert.deepEqual(result.requiredAuthorities, []);
+      assert.deepEqual(result.requiredCapabilities, ['conversation.respond']);
+      if (presentation[0].kind === 'execute') {
+        assert.equal(result.presentationIssue, 'invalid');
+        assert.equal(result.presentation, undefined);
+      } else assert.deepEqual(result.presentation, presentation);
+    }
+    assert.equal(goalContractSchema.safeParse({ ...goal(), presentation: [{ kind: 'prose', heading: 'Answer', instruction: 'Explain.', authority: 'owner' }] }).success, false);
+  });
   it('preserves read and action capabilities for an explicit multi-app request', () => {
     const previousKey = process.env.COMPOSIO_API_KEY;
     process.env.COMPOSIO_API_KEY = 'test-key';
@@ -72,8 +90,8 @@ describe('semantic request dispatch', () => {
   });
 
   it('keeps an explicit public web search out of connected-app discovery', () => {
-    const previousKey = process.env.PARALLEL_API_KEY;
-    process.env.PARALLEL_API_KEY = 'test-key';
+    const previousKey = process.env.DEEPSEEK_WEBSEARCH_FETCH_API;
+    process.env.DEEPSEEK_WEBSEARCH_FETCH_API = 'test-key';
     try {
       const misroutedGoal = goal({
         semanticIntent: 'INVESTIGATE',
@@ -92,14 +110,14 @@ describe('semantic request dispatch', () => {
       assert.equal(corrected.goalContract.freshnessRequirement, 'CURRENT_REQUIRED');
       assert.equal(corrected.dispatch, 'chat');
     } finally {
-      if (previousKey === undefined) delete process.env.PARALLEL_API_KEY;
-      else process.env.PARALLEL_API_KEY = previousKey;
+      if (previousKey === undefined) delete process.env.DEEPSEEK_WEBSEARCH_FETCH_API;
+      else process.env.DEEPSEEK_WEBSEARCH_FETCH_API = previousKey;
     }
   });
 
   it('reports provider unavailability instead of falling back to Composio for public search', () => {
-    const previousKey = process.env.PARALLEL_API_KEY;
-    delete process.env.PARALLEL_API_KEY;
+    const previousKey = process.env.DEEPSEEK_WEBSEARCH_FETCH_API;
+    delete process.env.DEEPSEEK_WEBSEARCH_FETCH_API;
     try {
       const corrected = enforceExplicitPublicResearchControls({
         goalContract: goal({ requiredCapabilities: ['business.read'] }),
@@ -112,7 +130,7 @@ describe('semantic request dispatch', () => {
       assert.equal(corrected.dispatch, 'blocked');
       assert.match(corrected.blockers.join(' '), /research.*provider.*not configured/i);
     } finally {
-      if (previousKey !== undefined) process.env.PARALLEL_API_KEY = previousKey;
+      if (previousKey !== undefined) process.env.DEEPSEEK_WEBSEARCH_FETCH_API = previousKey;
     }
   });
 
@@ -237,7 +255,7 @@ describe('software-build planner correction', () => {
           requiredCapabilities: ['software.implement', 'validation.run'],
         }),
       });
-    });
+    }, 1); // Explicit offline repair budget, never the active planner's default.
 
     assert.equal(attempts.length, 2);
     assert.match(attempts[1] ?? '', /business\.action cannot create a project Preview/i);
@@ -395,179 +413,53 @@ describe('semantic authority blockers', () => {
   });
 });
 
-describe('semantic planner provider fallback', () => {
-  it('does not hedge across tenant, authority, egress, stale execution or shared capacity refusal', async () => {
-    const denials = [new TenantAccessError(404, 'RESOURCE_NOT_FOUND'), new AuthorityError('AUTHORITY_EXPIRED'),
-      new EgressDenied('FOREIGN_FILE_OWNER'), Object.assign(Error('Stale execution'), { code: 'RUN_STATE_CONFLICT' }),
-      new RuntimeFailure('CAPABILITY_TEMPORARILY_UNAVAILABLE', 'Account capacity unavailable'), new PostCompletionAccountingError()];
-    for (const denial of denials) {
-      let calls = 0;
-      await assert.rejects(executeHedgedPlannerFallback({
-        routes: ['deepseek_v4_flash', 'glm_5_3_flash'], signal: new AbortController().signal,
-        routeTimeoutMs: 1_000, hedgeDelayMs: 100,
-        execute: async () => { calls++; throw denial; },
-      }), error => error === denial);
-      assert.equal(calls, 1);
+describe('semantic planner single-model delivery',()=>{
+  it('preserves tenant, authority, egress, stale execution and accounting denials without another request',async()=>{
+    const denials=[new TenantAccessError(404,'RESOURCE_NOT_FOUND'),new AuthorityError('AUTHORITY_EXPIRED'),new EgressDenied('FOREIGN_FILE_OWNER'),
+      Object.assign(Error('Stale execution'),{code:'RUN_STATE_CONFLICT'}),new PostCompletionAccountingError(),
+      ...['MODEL_DISPATCH_BINDING_DENIED','MODEL_CREDENTIAL_EGRESS_DENIED','MODEL_PAYLOAD_INVALID','MODEL_DESTINATION_DENIED'].map(code=>Object.assign(Error('Local denial'),{code}))];
+    for(const denial of denials){
+      const calls:string[]=[];
+      await assert.rejects(executeHedgedPlannerFallback({routes:['deepseek_v4_1_flash_1017','claude_sonnet_5_5'],signal:new AbortController().signal,
+        routeTimeoutMs:1000,hedgeDelayMs:0,execute:async model=>{calls.push(model);throw denial;}}),error=>error===denial);
+      assert.deepEqual(calls,['deepseek_v4_1_flash_1017']);
     }
   });
-
-  it('aborts an already running hedge when either route rejects local security authority', async () => {
-    for (const deniedModel of ['deepseek_v4_flash', 'glm_5_3_flash']) {
-      const denial = Object.assign(Error('Local policy denial'), { code: 'MODEL_DISPATCH_BINDING_DENIED' });
-      let rejectDenied!: (error: unknown) => void;
-      let competitorAborted = false;
-      const called: string[] = [];
-      await assert.rejects(executeHedgedPlannerFallback({
-        routes: ['deepseek_v4_flash', 'glm_5_3_flash'], signal: new AbortController().signal,
-        routeTimeoutMs: 1_000, hedgeDelayMs: 0,
-        execute: async (modelId, signal) => {
-          called.push(modelId);
-          if (modelId === deniedModel) {
-            return new Promise<string>((_resolve, reject) => {
-              rejectDenied = reject;
-              if (called.length === 2) rejectDenied(denial);
-            });
-          }
-          return new Promise<string>((_resolve, reject) => {
-            signal.addEventListener('abort', () => { competitorAborted = true; reject(Error('Cancelled hedge')); }, { once: true });
-            if (called.length === 2) rejectDenied(denial);
-          });
-        },
-      }), error => error === denial);
-      assert.equal(competitorAborted, true);
-      assert.deepEqual(called, ['deepseek_v4_flash', 'glm_5_3_flash']);
+  it('never purchases a hedge after a provider outage or a slow default request',async()=>{
+    for(const timeout of [false,true]){
+      const calls:string[]=[];let aborted=false;
+      await assert.rejects(executeHedgedPlannerFallback({routes:['deepseek_v4_1_flash_1017','claude_sonnet_5_5'],signal:new AbortController().signal,
+        routeTimeoutMs:10,hedgeDelayMs:0,execute:async(model,signal)=>{
+          calls.push(model);if(!timeout)throw Object.assign(Error('Service unavailable'),{status:503});
+          return new Promise<string>((resolve,reject)=>signal.addEventListener('abort',()=>{aborted=true;reject(Error('request timed out'));},{once:true}));
+        }}),{code:'PROVIDER_UNAVAILABLE'});
+      assert.deepEqual(calls,['deepseek_v4_1_flash_1017']);assert.equal(aborted,timeout);
     }
   });
-
-  it('still uses an approved fallback for an ordinary provider outage', async () => {
-    const called: string[] = [];
-    const result = await executeHedgedPlannerFallback({
-      routes: ['deepseek_v4_flash', 'glm_5_3_flash'], signal: new AbortController().signal,
-      routeTimeoutMs: 1_000, hedgeDelayMs: 100,
-      execute: async modelId => { called.push(modelId); if (called.length === 1) throw Object.assign(Error('Service unavailable'), { status: 503 }); return 'valid plan'; },
-    });
-    assert.equal(result.value, 'valid plan');
-    assert.deepEqual(called, ['deepseek_v4_flash', 'glm_5_3_flash']);
+  it('returns the first plan once and refuses a retired or premium planner before execution',async()=>{
+    let calls=0;
+    const input={routes:['deepseek_v4_1_flash_1017'] as const,signal:new AbortController().signal,routeTimeoutMs:1000,execute:async()=>{calls++;return 'plan';}};
+    assert.deepEqual(await executeHedgedPlannerFallback(input),{value:'plan',modelId:'deepseek_v4_1_flash_1017'});
+    for(const model of ['kimi_k3','glm_5_3','deepseek_v4_flash','claude_sonnet_5_5'] as const)await assert.rejects(executeHedgedPlannerFallback({...input,routes:[model]}),{code:'MODEL_DESTINATION_DENIED'});
+    assert.equal(calls,1);
   });
-
-  it('preserves local security denial identity and never starts another planning route', async () => {
-    for (const code of ['MODEL_DISPATCH_BINDING_DENIED', 'MODEL_CREDENTIAL_EGRESS_DENIED', 'MODEL_PAYLOAD_INVALID', 'MODEL_DESTINATION_DENIED']) {
-      const denial = Object.assign(new Error('Local policy denial'), { code });
-      const calls: string[] = [];
-      await assert.rejects(executeHedgedPlannerFallback({
-        routes: ['deepseek_v4_flash', 'glm_5_3_flash'],
-        signal: new AbortController().signal,
-        routeTimeoutMs: 1_000,
-        hedgeDelayMs: 100,
-        execute: async modelId => { calls.push(modelId); throw denial; },
-      }), error => error === denial);
-      assert.deepEqual(calls, ['deepseek_v4_flash']);
-    }
+  it('retains the bounded JSON decision controls and total deadline',()=>{
+    const signal=new AbortController().signal;
+    assert.deepEqual(semanticPlannerCompletionOptions(signal),{maxTokens:1500,temperature:0,json:true,reasoningMode:'none',signal});
+    assert.equal(SEMANTIC_PLANNER_ROUTE_TIMEOUT_MS,SEMANTIC_PLANNER_DEFAULT_TOTAL_TIMEOUT_MS);
+    assert.ok(SEMANTIC_PLANNER_MAX_TOTAL_TIMEOUT_MS<60000);
   });
-
-  it('spends the bounded planner budget on the JSON decision instead of hidden reasoning', () => {
-    const signal = new AbortController().signal;
-    assert.deepEqual(semanticPlannerCompletionOptions(signal), {
-      maxTokens: 1_500,
-      temperature: 0,
-      json: true,
-      reasoningMode: 'none',
-      signal,
-    });
+  it('uses only the default while honoring current operator policy and circuit health',()=>{
+    assert.deepEqual(interpreterModelOrder({}),['deepseek_v4_1_flash_1017']);
+    assert.deepEqual(selectPlannerRoutes({},()=>({status:'healthy'})),['deepseek_v4_1_flash_1017']);
+    for(const env of [{XROGA_DISABLED_PROVIDERS:'zurelay'},{XROGA_ALLOWED_MODELS:'kimi_k3'},{XROGA_ALLOWED_MODELS:'claude_sonnet_5_5'}])assert.throws(()=>interpreterModelOrder(env),/No configured model/);
+    assert.throws(()=>selectPlannerRoutes({},()=>({status:'circuit_open'})),{code:'PLANNER_PROVIDER_UNAVAILABLE'});
   });
-
-  it('uses every configured member of the approved model stack in stable order', () => {
-    const order = interpreterModelOrder({
-      DEEPSEEK_API_KEY: 'configured',
-      Z_AI_API_KEY: 'configured',
-      MOONSHOT_API_KEY: 'configured',
-    });
-    assert.deepEqual(order, ['deepseek_v4_flash', 'glm_5_3_flash', 'glm_5_3', 'kimi_k3']);
-  });
-
-  it('does not introduce a retired or private retrieval model', () => {
-    const source = readFileSync(new URL('./semanticRequestPlanner.ts', import.meta.url), 'utf8');
-    assert.doesNotMatch(source, /grok_4_3|grok-4\.3|kimi_k2_7|glm_5_2|deepseek_v4_pro|grok_4_5/);
-    assert.match(source, /executeWithProviderFallback/);
-  });
-
-  it('selects two healthy routes from the full stack instead of slicing open circuits', () => {
-    const env = {
-      DEEPSEEK_API_KEY: 'configured',
-      Z_AI_API_KEY: 'configured',
-      MOONSHOT_API_KEY: 'configured',
-    };
-    const routes = selectPlannerRoutes(env, (modelId) => ({
-      status: ['deepseek_v4_flash', 'glm_5_3_flash'].includes(modelId) ? 'circuit_open' : 'healthy',
-    }));
-    assert.deepEqual(routes, ['glm_5_3', 'kimi_k3']);
-  });
-
-  it('repairs one malformed semantic output and safely strips commentary fields', async () => {
-    let calls = 0;
-    const contract = await resolveStructuredGoalContract(async (hint) => {
-      calls += 1;
-      if (!hint) return 'not json at all';
-      return `Planning result:\n\`\`\`json\n${JSON.stringify({
-        ...goal({ semanticIntent: 'PROPOSE' }),
-        commentary: 'not part of the canonical contract',
-      })}\n\`\`\``;
-    });
-    assert.equal(calls, 2);
-    assert.equal(contract.semanticIntent, 'PROPOSE');
-    assert.equal('commentary' in contract, false);
-  });
-
-  it('caps semantic fallback to two routes and a bounded total deadline', () => {
-    const source = readFileSync(new URL('./semanticRequestPlanner.ts', import.meta.url), 'utf8');
-    assert.match(source, /selectPlannerRoutes\(\)/);
-    assert.match(source, /SEMANTIC_PLANNER_TOTAL_TIMEOUT_MS/);
-    assert.match(source, /correctionUsed \? 0 : 1/);
-    assert.doesNotMatch(source, /timeoutMs:\s*45_000/);
-    assert.equal(SEMANTIC_PLANNER_ROUTE_TIMEOUT_MS, SEMANTIC_PLANNER_DEFAULT_TOTAL_TIMEOUT_MS);
-    assert.ok(SEMANTIC_PLANNER_HEDGE_DELAY_MS < SEMANTIC_PLANNER_ROUTE_TIMEOUT_MS);
-    assert.ok(SEMANTIC_PLANNER_MAX_TOTAL_TIMEOUT_MS < 60_000);
-  });
-
-  it('hedges a slow primary route and cancels it when the fallback succeeds', async () => {
-    const called: string[] = [];
-    let primaryAborted = false;
-    const total = new AbortController();
-    const result = await executeHedgedPlannerFallback({
-      routes: ['deepseek_v4_flash', 'glm_5_3_flash'],
-      signal: total.signal,
-      routeTimeoutMs: 1_000,
-      hedgeDelayMs: 0,
-      execute: async (modelId, signal) => {
-        called.push(modelId);
-        if (modelId === 'glm_5_3_flash') return 'valid fallback plan';
-        return await new Promise<string>((_resolve, reject) => signal.addEventListener('abort', () => {
-          primaryAborted = true;
-          reject(Object.assign(new Error('cancelled'), { name: 'AbortError' }));
-        }, { once: true }));
-      },
-    });
-    assert.equal(result.value, 'valid fallback plan');
-    assert.equal(result.modelId, 'glm_5_3_flash');
-    assert.deepEqual(called, ['deepseek_v4_flash', 'glm_5_3_flash']);
-    assert.equal(primaryAborted, true);
-  });
-
-  it('does not spend a fallback call when the primary finishes before the hedge', async () => {
-    const called: string[] = [];
-    const total = new AbortController();
-    const result = await executeHedgedPlannerFallback({
-      routes: ['deepseek_v4_flash', 'glm_5_3_flash'],
-      signal: total.signal,
-      routeTimeoutMs: 1_000,
-      hedgeDelayMs: 100,
-      execute: async (modelId) => {
-        called.push(modelId);
-        return 'primary plan';
-      },
-    });
-    assert.equal(result.value, 'primary plan');
-    assert.deepEqual(called, ['deepseek_v4_flash']);
+  it('malformed semantic content cannot buy a second generation and valid content still parses',async()=>{
+    let calls=0;
+    await assert.rejects(resolveStructuredGoalContract(async()=>{calls++;return 'not JSON';}));assert.equal(calls,1);
+    const contract=await resolveStructuredGoalContract(async()=>JSON.stringify({...goal({semanticIntent:'PROPOSE'}),commentary:'not part of the contract'}));
+    assert.equal(contract.semanticIntent,'PROPOSE');assert.equal('commentary' in contract,false);
   });
 });
 

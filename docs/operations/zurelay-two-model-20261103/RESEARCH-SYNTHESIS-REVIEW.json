@@ -1,0 +1,237 @@
+{
+  "version": 1,
+  "scope": "OFFLINE_PRODUCT_DELTA_NOT_LIVE_ACCEPTANCE",
+  "reference": "25fb0d2868fe8a05b68097d8eb84dcf14b130cba",
+  "productionChanges": false,
+  "providerCalls": 0,
+  "additionalModelSpendUsd": 0,
+  "sources": [
+    {
+      "path": "backend/src/ai/parallelApproval.ts",
+      "beforeSha256": "def39dbda4385371528fc23c6a64870a7c4c16a850ff6c1ec7dab8f9accc99ae",
+      "currentSha256": "3d6cc51f24257eeb6fa33d2dad97b764bf9751b929a44f09eb4e8a25edbfce48",
+      "matches": [
+        {
+          "beforeId": "8c387dd179220b177433",
+          "afterId": "94daa137021764170d8d",
+          "kind": "PRIVILEGED_FACTORY",
+          "target": "getTenantSupabaseAdmin",
+          "enclosing": "executeParallelNativeAction",
+          "callSha256": "db9103d7fc52bea73acc9979c1f1845688e4deeab5df3cb88dcafb3bc4005b10"
+        },
+        {
+          "beforeId": "5735af54b91f357fe618",
+          "afterId": "2f73dcc10dc324e2879e",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "business_action_confirmations",
+          "enclosing": "executeParallelNativeAction",
+          "callSha256": "988e013708f48a00bb175b2a25d570898ec344958fb63062058458924c467242"
+        },
+        {
+          "beforeId": "942535244a14d9488093",
+          "afterId": "d579ef4bc0119bb2f271",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "swarm_runs",
+          "enclosing": "executeParallelNativeAction",
+          "callSha256": "5ff50937a10213dbdb22ea4076e4cbf8055539b925622c48e2255e425c955678"
+        },
+        {
+          "beforeId": "a15a28605feb7dbf597a",
+          "afterId": "cb2ef3964f21b673e523",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "<dynamic>",
+          "enclosing": "executeParallelNativeAction",
+          "callSha256": "32d7dc6aa5b8b548f81645ba6501fde844fde14015b85fd36b8e2be2e6775c80"
+        }
+      ],
+      "added": []
+    },
+    {
+      "path": "backend/src/ai/pipeline.ts",
+      "beforeSha256": "665b8a53b60566ca0dac364405430cc895904e38b4fbe2d136540caf44631eb5",
+      "currentSha256": "e738cff3883d991a5f74897cbf0b4c76543b53be5a7bed32c63e274fb24cebc2",
+      "matches": [
+        {
+          "beforeId": "c7daac24f3fb2d4a891c",
+          "afterId": "a79eaa3e95e0d228a2d5",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "<dynamic>",
+          "enclosing": "runBuildPipeline",
+          "callSha256": "361eaf2b8f804da3e7642f69e118157000f0678f948a6c99e9a7280d14caf329"
+        },
+        {
+          "beforeId": "fed5a5129060f9c4c78d",
+          "afterId": "61a4df8320fa01a381a3",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "<dynamic>",
+          "enclosing": "runBuildPipeline",
+          "callSha256": "361eaf2b8f804da3e7642f69e118157000f0678f948a6c99e9a7280d14caf329"
+        }
+      ],
+      "added": []
+    },
+    {
+      "path": "backend/src/ai/tenantModelDispatch.ts",
+      "beforeSha256": "71abd3fc8c328d158e96eb737aa7b100f93d08a754de6e7ecb0d79b193146708",
+      "currentSha256": "333a3ff87d65d02ad2ae0f90a98b143f121c5b32e82d46a7ae32c70c42e2bb10",
+      "matches": [
+        {
+          "beforeId": "402d25642e8693061c24",
+          "afterId": "e571aaf1d9e69339219d",
+          "kind": "PRIVILEGED_FACTORY",
+          "target": "getTenantSupabaseAdmin",
+          "enclosing": "requireModelProjectBinding",
+          "callSha256": "db9103d7fc52bea73acc9979c1f1845688e4deeab5df3cb88dcafb3bc4005b10"
+        },
+        {
+          "beforeId": "9c9c99ec2b28af8cb344",
+          "afterId": "92acd75cb009a202b61c",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "projects",
+          "enclosing": "requireModelProjectBinding",
+          "callSha256": "97847e28660d18238e4c1bb1c9b4bd261c3d24b6211ea19d8da572bc587e3051"
+        },
+        {
+          "beforeId": "d0df35ba9d0e32a15290",
+          "afterId": "3b78226da77b7e78f992",
+          "kind": "PRIVILEGED_FACTORY",
+          "target": "getTenantSupabaseAdmin",
+          "enclosing": "withTenantModelReservation",
+          "callSha256": "db9103d7fc52bea73acc9979c1f1845688e4deeab5df3cb88dcafb3bc4005b10"
+        },
+        {
+          "beforeId": "fb776e464860a5924572",
+          "afterId": "806c73ec27b8163a6313",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "swarm_runs",
+          "enclosing": "withTenantModelReservation",
+          "callSha256": "5ff50937a10213dbdb22ea4076e4cbf8055539b925622c48e2255e425c955678"
+        },
+        {
+          "beforeId": "0cdf94c3541e2e1387f3",
+          "afterId": "1836c6f18b69f6a5d8f5",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "user_integrations",
+          "enclosing": "withTenantModelReservation",
+          "callSha256": "a1fdd17b3ec1147a0bc3e6d245a27ae62e3970a768356688434d26535a9c7e25"
+        }
+      ],
+      "added": []
+    },
+    {
+      "path": "backend/src/services/integrations/researchResult.ts",
+      "beforeSha256": "c3ce5b1f29cdeb1f15214e35c4a79857235ebfee5ce3154d772752f867746c4d",
+      "currentSha256": "8382a77b8a23817d945873566354960b6e07412a12d57a73e3c06511ce811dda",
+      "matches": [
+        {
+          "beforeId": "8bf1e922eaec394aac9a",
+          "afterId": "ad1e9c1616482d93e008",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "<dynamic>",
+          "enclosing": "saveResearchResult",
+          "callSha256": "5cda89064e7f5d08b59adde319cae2c9ed5d31b752d08f2f6647d7cd4f4b2185"
+        }
+      ],
+      "added": []
+    },
+    {
+      "path": "backend/src/ai/researchAnswer.test.ts",
+      "beforeSha256": null,
+      "currentSha256": "60d145354d772446658c6fd5159ded7a00cedf9863c29616509b92a558134228",
+      "matches": [],
+      "added": [],
+      "beforeRegisteredCapabilityCorrection": "eefb463794b0938ee30f4cb557496c03d73ad57bb4d07c8a9b7f53a7384987aa",
+      "beforeFinalNegativeRegression": "03b386d4ec6e44f55872d3bf471efca9519895d05dc1ba108ca6e083850bd9a1"
+    },
+    {
+      "path": "backend/src/ai/researchAnswer.ts",
+      "beforeSha256": null,
+      "currentSha256": "d777c27a0082515c9701188596ea33d4475aa8e2c4719a5b638861c29a51e1c2",
+      "matches": [],
+      "added": [],
+      "beforeRegisteredCapabilityCorrection": "c976c7e52580c655db1e6c59ad41040ecd4d465ab0bf03df43d3032cd4f2550a",
+      "beforeFinalNegativeRegression": "2f2af55173469a16dd16dd1f92e4208d68cfa2ac3d8de84a8b2c18ec10004da6"
+    },
+    {
+      "path": "backend/src/ai/sonnetApproval.ts",
+      "beforeSha256": "d4b25e2509c9eb96f1274186e75f0d0ce7c5be3bb26b8c0d5cf2188b73a2ef68",
+      "currentSha256": "c22b87e73e8cead0d8833eaa355e36642ee7d06fbdff84d3699ba1672613691b",
+      "matches": [],
+      "added": []
+    },
+    {
+      "path": "backend/src/ai/sonnetApproval.test.ts",
+      "beforeSha256": "0ec4b15224edc9776d6395f4f13a856151d17dfc69d2725b4ccceee8b923b121",
+      "currentSha256": "420c49cb5e929cd85c045cd226f17954f3794afc6e6f27d51713d7b626ec2ae0",
+      "matches": [],
+      "added": []
+    }
+  ],
+  "review": [
+    "The exact sealed native research confirmation optionally authorizes its original DeepSeek answer as well as retrieval. Summary exposes the two destinations and sum of retrieval charge plus 5000 micro-USD model maximum. Existing legacy retrieval-only approvals cannot gain synthesis.",
+    "Both effects run under the same existing one-use durable claim. Raw source evidence is stored privately before inference. Current claim, owner, project and worker generation are revalidated after budget waits and before model bytes. No search, model or formatting retry is added.",
+    "Synthesis uses only the approved original question, context and validated returned sources. Normalizes/deduplicates sources, honors official-only policy, treats evidence as untrusted and uses the existing answer contract/pipeline. No tool or repository action is granted.",
+    "The canonical model ledger enforces a restrictive technical subcap with conservative UTF-8 input bound and fixed output maximum. Platform account, exact model, schema, credentials and normal user budget remain independently enforced.",
+    "Completed response and source JSON remain in existing private StorageService, matched to owner-scoped receipt digest. Saved reads do not infer or retrieve. Failed synthesis preserves the actual source evidence and uncertain/settled accounting without a replacement request. Returned citation metadata must refer to retrieved pages.",
+    "The approved read-only repository evidence capability uses its existing registered identifier repository.read. Captured authorized context is preserved without a new repository read or write. Positive schema regression covers this identifier.",
+    "Both explicit Sonnet and research continuation payloads reuse the canonical credential-secret classifier before approval. Sonnet rechecks it at execution, including pending older plans. Negative credential canaries create no approval, reservation or provider bytes.",
+    "Research citation indices and numeric source links must resolve to the actual retrieved canonical page. Ordinary code and numeric chart arrays are excluded. Missing or mismatched attribution marks the original answer partial, without deleting text, inventing citations or making a repair request. This is structural attribution, not proof of source entailment."
+  ],
+  "tests": [
+    {
+      "path": "backend/src/ai/researchAnswer.test.ts",
+      "sha256": "60d145354d772446658c6fd5159ded7a00cedf9863c29616509b92a558134228"
+    },
+    {
+      "path": "backend/src/services/integrations/researchResult.test.ts",
+      "sha256": "b1fead9ab69d18f91471ff69088e98a8fd1b9ee505d8584b192486e46b936040"
+    },
+    {
+      "path": "backend/src/ai/tenantModelDispatch.test.ts",
+      "sha256": "0e0c34ac9ba880a018e9a791d2b414e73170d493826609b934c25277d93d46f4"
+    },
+    {
+      "path": "backend/src/ai/zurelayPolicy.test.ts",
+      "sha256": "8f41738b88f519bb2acb6883eb9d77a2ee2ffce6de3f95f160f37ea95df63318"
+    },
+    {
+      "path": "backend/src/ai/sonnetApproval.test.ts",
+      "sha256": "420c49cb5e929cd85c045cd226f17954f3794afc6e6f27d51713d7b626ec2ae0"
+    }
+  ],
+  "remaining": [
+    "Final exact-source CI and isolated authenticated acceptance",
+    "Live Zurelay SSE and Sonnet behavior are not established by offline HTTP tests",
+    "Current approval key limits are custody/probe limits, not production allowances",
+    "Exact-source production release and bounded new-chat model/retrieval authority remain unapproved",
+    "The combined research/answer flow is verified offline only. Authenticated isolated and fresh live source-grounded acceptance remain required"
+  ],
+  "historicalHolds": {
+    "kimiUsd": "0.038282",
+    "glmUsd": "0.001385",
+    "mutation": "NONE"
+  },
+  "egress": [
+    {
+      "id": "90c62dd04b83e45e1c68",
+      "file": "backend/src/ai/parallelApproval.ts",
+      "sourceSha256": "3d6cc51f24257eeb6fa33d2dad97b764bf9751b929a44f09eb4e8a25edbfce48",
+      "callSha256": "f2de81a8a454b092ec31470bbf964af50c74badbf8644e61fba47ff760f8013b",
+      "previousReview": {
+        "id": "90c62dd04b83e45e1c68",
+        "callSha256": "f2de81a8a454b092ec31470bbf964af50c74badbf8644e61fba47ff760f8013b",
+        "sourceFileSha256": "def39dbda4385371528fc23c6a64870a7c4c16a850ff6c1ec7dab8f9accc99ae",
+        "disposition": "VERIFIED_GUARD",
+        "trust": "EXACT_APPROVED_CREDENTIAL_FREE_DNS_PINNED_DOCUMENT_READ_NO_DELEGATED_FETCH",
+        "tenantAuthority": "ORIGINAL_ACTOR_PROJECT_RUN_GENERATION_CURRENT_ONE_USE_CLAIM_SECRET_FLOOR_AND_CANONICAL_BUDGET_SETTLEMENT_NO_DENIAL_FALLBACK",
+        "evidence": [
+          {
+            "path": "docs/operations/zurelay-two-model-20261103/CALLER-REVIEW.json",
+            "marker": "90c62dd04b83e45e1c68",
+            "sha256": "70eb8b3acad05297d08ff549587a9904d8c6152f2d7374ec1ec6f931abb792b4"
+          }
+        ]
+      }
+    }
+  ]
+}

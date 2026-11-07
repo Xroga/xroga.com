@@ -47,7 +47,7 @@ export async function planBrowserTask(goal: string, job: BrowserJob, deps: Plann
     body:{max_tokens:maxOut,temperature:0,response_format:{type:'json_object'},messages:[{role:'system',content:PLANNER_SYSTEM_PROMPT},{role:'user',content:user}]}});
   const inputTokens=completion.usage.prompt_tokens,outputTokens=completion.usage.completion_tokens;
   const reasoningTokens=completion.usage.completion_tokens_details?.reasoning_tokens??0;
-  const costMicros=actualProviderCostMicroUsd({modelId:deps.modelId,inputTokens,outputTokens:outputTokens-reasoningTokens,reasoningTokens});
+  const costMicros=actualProviderCostMicroUsd({modelId:deps.modelId,inputTokens,outputTokens,cachedInputTokens:completion.usage.prompt_tokens_details?.cached_tokens??0,reasoningTokens});
 
   let raw: unknown;
   try { raw = JSON.parse(String(completion?.choices?.[0]?.message?.content ?? '')); } catch { throw new BrowserPlannerError('PLAN_INVALID', 'the planner did not return JSON'); }

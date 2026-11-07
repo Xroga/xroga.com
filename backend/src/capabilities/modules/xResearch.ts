@@ -11,9 +11,9 @@ export const xResearchCapability: CapabilityDescriptor = {
   effects: ['external'],
   requiredAuthorities: ['network:x-read' as never],
   risk: 'medium',
-  health: () => process.env.XAI_API_KEY ? 'available' : 'unavailable',
+  health: () => 'unavailable',
   cost: { meterId: 'provider.x-research', estimateMicroUsd: () => 1_000 },
   validateInput: (value) => Boolean(value && typeof value === 'object'),
   validateOutput: (value) => Boolean(value && typeof value === 'object'),
-  execute: async () => { throw new Error('research.x must be bound to the x_search-only adapter'); },
+  execute: async () => { throw Object.assign(new Error('Dedicated X search is unavailable under the current provider policy. Public web retrieval remains separate.'),{code:'MODEL_DESTINATION_DENIED'}); },
 };

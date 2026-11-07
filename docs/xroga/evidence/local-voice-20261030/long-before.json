@@ -1,0 +1,10 @@
+{
+  "recordedCause": "Strict repeated-phrase assertion failed under overlap-based recognition. Underlying language/model error versus merger behavior was not independently isolated.",
+  "observedRepeatedPhrases": 12,
+  "source": "a163fb600939171a31fb18953bc7589ca8d53a30",
+  "result": "FAIL",
+  "testSource": "53bdd6f9e2fcbe9419368166d9aaf43f50b68499",
+  "transcriptPreserved": false,
+  "scope": "PUBLIC_FIXTURE_LONG_RECOGNITION_FAILURE_NOT_CUSTOMER_AUDIO",
+  "expectedRepeatedPhrases": 13
+}

@@ -1,0 +1,35 @@
+{
+  "scope": "LOCAL_NATIVE_CPU_PUBLIC_FIXTURES_NOT_A_DEPLOYMENT",
+  "version": "v1.9.2",
+  "results": [
+    {
+      "language": "en",
+      "audioSha256": "63a4b1e4c1dc655ac70961ffbf518acd249df237e5a0152faae9a4a836949715",
+      "elapsedMs": 15781,
+      "exitCode": 0,
+      "reference": null,
+      "transcript": "And so my fellow Americans, ask not what your country can do for you, ask what you can do for your country.",
+      "detectedLanguage": "en"
+    },
+    {
+      "language": "hi_in",
+      "audioSha256": "eaf505bbf7f4ce5543af9242678b0a992f11d933a4878685b7bbfd817c4e422d",
+      "elapsedMs": 18047,
+      "exitCode": 0,
+      "reference": "मेजरकेन खाना भूमध्य सागर में समान क्षेत्रों की तरह रोटी सब्जियों और मांस विशेष रूप से सूअर का मांस पर आधारित है और जैतून के तेल का उपयोग करता है।",
+      "transcript": "मेजर किन खाना भूम दिसागर में समान शेटरों कितरा रोटी सबजींगो और मास, विशेश रुब से सुर का मास पर आदारित है, और जैतून के तेल का उप्योख करता है.",
+      "detectedLanguage": "hi"
+    },
+    {
+      "language": "ur_pk",
+      "audioSha256": "5e5bd3f594a86ab334f10c4878e748227c9ba344f058de8efce69eac7d7a0d20",
+      "elapsedMs": 17375,
+      "exitCode": 0,
+      "reference": "ان کے دور میں خفیف تلوُّث ایزا مسئلہ نہیں تھا جیسا کہ وہ آج ہے ان کی سکونت ایسے شہروں یا حوزات میں ہے جہا ں تک بآسانی پہنچا جا سکتا ہے بہ نسبت ان مقامات کے جو ماڈرن زمانے میں تعمیر کئے گئے",
+      "transcript": "ان کے دور میں خفیب تلویس ایزا مسئلہ نہیں تھا جیسا کہ وہ آج ہے ان کی سقونت ایسے شہروں یا حوزات میں ہے جہاں تک باسانی پہنچا جا سکتا ہے بنسپتین مقامات کے جو مادرن زمانے میں تعمیر کی گئے گئے",
+      "detectedLanguage": "ur"
+    }
+  ],
+  "modelRevision": "5359861c739e955e79d9a303bcbc70fb988958b1",
+  "modelSha256": "ae85e4a935d7a567bd102fe55afc16bb595bdb618e11b2fc7591bc08120411bb"
+}

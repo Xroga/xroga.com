@@ -25,6 +25,10 @@ test('keyword guesses cannot pre-empt or override the authenticated semantic pla
 
 test('a semantic build failure cannot be disguised as a generic chat fallback', () => {
   assert.match(context, /semanticBuildPlanned\s*=\s*runSwarmBuild/);
-  assert.match(context, /codeBuildActive\s*\|\|\s*semanticBuildPlanned/);
+  // Only the authenticated semantic decision establishes build intent. A word
+  // such as "code" in an explanation must not turn a chat error into a build.
+  assert.match(context, /\(semanticBuildPlanned\s*\?/);
+  assert.doesNotMatch(context, /codeBuildActive\s*\|\|\s*semanticBuildPlanned/);
+  assert.match(context, /Build could not start/);
   assert.match(context, /Request could not start/);
 });

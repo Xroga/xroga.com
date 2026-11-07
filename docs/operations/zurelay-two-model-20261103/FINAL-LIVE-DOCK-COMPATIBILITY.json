@@ -1,0 +1,71 @@
+{
+  "baseRelease": "63a6c6129d8a1e3ef998f4e7fce13e8d00c17c2b",
+  "production": "5c337e05fa0bf50de7ce161752709110b278a014",
+  "productionDeployment": "9YVdkEj6cnK38r6djSwsXzwSMHU5",
+  "scope": "PRESERVE_NEW_CONCURRENT_LIVE_DOCK_PATCH",
+  "records": [
+    {
+      "path": "frontend/src/app/globals.css",
+      "sha256": "68dedd6a6625cde2edbf7a3973fda53c104df5220909528066e0c83fdc741c5b",
+      "sameAsProduction": "5c337e05fa0bf50de7ce161752709110b278a014"
+    },
+    {
+      "path": "frontend/src/components/terminal/TerminalDock.tsx",
+      "sha256": "70d7d276623bc00339b82feac14516ee23ea0ffc2fd1196002587eee798a452b",
+      "sameAsProduction": "5c337e05fa0bf50de7ce161752709110b278a014"
+    },
+    {
+      "path": "frontend/src/lib/workspaceChatbarScrollBoundary20261103.test.ts",
+      "sha256": "ae169000081c5562c7fe1f2d092c152e9611db2d458ff37c1ea13324796b99c2",
+      "sameAsProduction": "5c337e05fa0bf50de7ce161752709110b278a014"
+    }
+  ],
+  "adjustedRegression": {
+    "path": "frontend/src/lib/sidebarComposerRegression20261023.test.ts",
+    "sha256": "2a4c5104740fe3e7e02c86f65c9105d46a2791ae092bbb9aca6c94f2ca99e047",
+    "review": "Require only the live bounded dock-bottom clip and reject the retired composer-height clipping. Real billing and usage assertions remain."
+  },
+  "review": "Two React effects manage the existing visual dock boundary and passive transcript scroll listener, with cleanup. Existing auth, API, model, microphone, ledger, scheduler, dependencies and budgets are unchanged. Theme fixes and password recovery remain preserved. Final exact-source gates and owner source amendment still required.",
+  "coordinationComment": "https://github.com/Xroga/xroga.com/issues/906#issuecomment-6613996869",
+  "providerCalls": 0,
+  "productionChangedByThisTask": false,
+  "verification": {
+    "job": "36c04159-03f3-47fd-8cf3-6ab60f8315bc",
+    "focusedTests": {
+      "tests": 9,
+      "pass": 9,
+      "fail": 0,
+      "skip": 0
+    },
+    "localTypecheck": "TIME_LIMIT_120_SECONDS_NOT_PASS",
+    "releaseTypecheck": "MANDATORY_EXACT_SOURCE_CI_REQUIRED_NO_LOCAL_PASS_CLAIM"
+  },
+  "runtimeInventoryReview": {
+    "reason": "The exact live TerminalDock source hash changed. Regenerate the unchanged canonical inventory rather than weakening its check.",
+    "changedSourceHashes": [
+      {
+        "path": "frontend/src/components/terminal/TerminalDock.tsx",
+        "sha256": "70d7d276623bc00339b82feac14516ee23ea0ffc2fd1196002587eee798a452b"
+      }
+    ],
+    "environmentNamesUnchanged": true,
+    "dependencyStatesUnchanged": true,
+    "risksUnchanged": true
+  },
+  "egressDigestCorrection": {
+    "failedGate": "https://github.com/Xroga/xroga.com/actions/runs/41715231722/job/126193374077",
+    "oldDigest": "c9b0ba0bece69f051513bd39f8b3358f244903bd0b6addefa824ad95429ee16b",
+    "newDigest": "7ab269887501534066423cc0ac0d0431846ee6465df94fd050c8fcde663cbcf7",
+    "changedField": "sourceTreeDigest ONLY",
+    "callerRowsUnchanged": true,
+    "reviewEvidenceUnchanged": true,
+    "dispositionsUnchanged": true,
+    "counts": {
+      "total": 150,
+      "reviewed": 150,
+      "pending": 0,
+      "unresolvedHighRiskBypasses": 0
+    },
+    "applicationCodeUnchangedFrom": "7760f91c80a4a10471963cb0efc05a9f0af0beb3"
+  }
+}

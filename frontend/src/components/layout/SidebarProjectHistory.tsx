@@ -1149,9 +1149,8 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
   return <div className="mt-2 mb-1 px-1.5" data-sidebar-work-organizer>
     <section aria-label="Projects" className="space-y-0.5">
       <div className="flex items-center justify-between gap-2">
-        <h2 className={sectionTitle}>Projects</h2>
+        <h2 className={sectionTitle}><button type="button" className="xv-sidebar-section-link" onClick={()=>router.push('/dashboard/projects')} aria-label="View all projects">Projects <ChevronRight size={13} aria-hidden="true"/></button></h2>
         <div className="flex items-center gap-2">
-          <button type="button" onClick={()=>router.push('/dashboard/projects')} className={secondary}>All projects</button>
           <button type="button" onClick={()=>{setEditor({mode:'new-project',kind:'project',id:'',title:'New project'});setEditorText('');}}
             className={secondary} aria-label="Create project"><Plus size={13} aria-hidden="true"/></button>
         </div>
@@ -1164,10 +1163,10 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
         const children=allProjectChats[p.id]?related:related.slice(0,3);
         const childSections=sections.filter(section=>section.project_id===p.id);
         return <div key={p.id} className="space-y-0.5">
-          <div className="flex items-center gap-0.5">
+          <div className="xv-sidebar-project-entry relative flex items-center gap-0.5">
             <button type="button" aria-label={expandedProject?'Collapse '+p.label:'Expand '+p.label}
               onClick={()=>setOpenFolders(prev=>({...prev,[p.id]:!expandedProject}))}
-              className="p-1 rounded-md text-[var(--muted)] hover:bg-[var(--foreground)]/5">
+              className="xv-sidebar-expand-button p-1 rounded-md text-[var(--muted)] hover:bg-[var(--foreground)]/5">
               {expandedProject?<ChevronDown size={13}/>:<ChevronRight size={13}/>}
             </button>
             <div className="min-w-0 flex-1">
@@ -1227,7 +1226,7 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
     </section>:null}
 
     {!isGuest?<section className="xv-sidebar-recents-section" aria-label="Recent conversations outside projects">
-      <div className="flex items-center justify-between gap-2"><h2 className={sectionTitle}>Recents</h2><span className="text-[9px] text-[var(--muted)]">Outside projects</span></div>
+      <div className="flex items-center justify-between gap-2"><h2 className={sectionTitle}>Recents</h2></div>
       {standaloneRecents.slice(0,shownRecents).map(session=>
         renderRow('conversation',session.id,conversationTitle(session),()=>void openSession(session),false))}
       {standaloneRecents.length===0?<p className="px-2 py-1 text-[10px] text-[var(--muted)]">Chats outside a project appear here.</p>:null}

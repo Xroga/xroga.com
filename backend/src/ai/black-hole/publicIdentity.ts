@@ -35,6 +35,9 @@ export const BLACK_HOLE_PUBLIC_NAME = 'Black Hole ∞';
 
 /** §30's forbidden list, verbatim, plus the transport hostnames that would give it away. */
 export const FORBIDDEN_PROVIDER_TOKENS: readonly string[] = [
+  'zurelay',
+  'claude',
+  'sonnet',
   'kimi',
   'moonshot',
   'glm',
@@ -62,6 +65,8 @@ export const FORBIDDEN_REASONING_KEYS: readonly string[] = [
 
 /** §31's personas. Retained for admin and migration compatibility, never for users. */
 export const MODEL_PERSONAS: readonly string[] = [
+  'Xroga Intelligence',
+  'Xroga Engineering',
   // Order matters: longer names first, so "Xroga Apex Efficient" is reported as itself rather
   // than as a match on the "Xroga Apex" prefix.
   'Xroga Apex Efficient',

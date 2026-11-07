@@ -1,0 +1,18 @@
+{
+  "scope": "PUBLIC_FIXTURE_V4_3_2_WEBGPU_FP32_Q4_NOT_PRODUCTION",
+  "results": [
+    {
+      "text": "And so my fellow Americans, ask not what your country can do for you, ask what you can do for your country.",
+      "recognitionMs": 36143,
+      "expectedPhrases": true
+    },
+    {
+      "text": "And so my fellow Americans, ask not what your country can do for you, ask what you can do for your country.",
+      "recognitionMs": 40815,
+      "expectedPhrases": true
+    }
+  ],
+  "diagnostics": [],
+  "setupMs": 537975,
+  "elapsedMs": 614934
+}

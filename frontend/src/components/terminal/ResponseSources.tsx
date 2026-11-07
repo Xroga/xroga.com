@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import Image from 'next/image';
 import { ArrowUpRight, BookOpenText, Check, ChevronRight, Copy, X } from 'lucide-react';
-import { safeSourceUrl } from '@/lib/xrogaCitations';
+import { safeSourceUrl, sourceClickUrl } from '@/lib/xrogaCitations';
 import type { WebSourceItem } from './WebSourcesPanel';
 import { SourceLogo } from './SourceLogo';
 import styles from './ResponseSources.module.css';
@@ -26,9 +26,9 @@ function SourceTile({ source, compact = false }: { source: VerifiedSource; compa
       : <SourceLogo domain={source.domain} size={42} className={styles.sourceLogo} />}
     <div className={styles.tileContent}>
       <span className={styles.kicker}><SourceLogo domain={source.domain} size={16} />{source.domain}</span>
-      <a className={styles.title} href={source.url} target="_blank" rel="noopener noreferrer" aria-label={`Visit source: ${source.item.title}`}>{source.item.title}</a>
+      <a className={styles.title} href={sourceClickUrl(source.url) ?? source.url} target="_blank" rel="noopener noreferrer" aria-label={`Visit source: ${source.item.title}`}>{source.item.title}</a>
       {!compact && source.item.snippet ? <p className={styles.excerpt}>{cleanExcerpt(source.item.snippet)}</p> : null}
-      {!compact ? <div className={styles.tileActions}><button type="button" onClick={async () => { try { await navigator.clipboard.writeText(source.item.snippet || source.item.title); setCopied(true); } catch { setCopied(false); } }}><span>{copied ? <Check size={13} /> : <Copy size={13} />}</span>{copied ? 'Copied' : 'Copy excerpt'}</button><a href={source.url} target="_blank" rel="noopener noreferrer">Visit source <ArrowUpRight size={14} /></a></div> : null}
+      {!compact ? <div className={styles.tileActions}><button type="button" onClick={async () => { try { await navigator.clipboard.writeText(source.item.snippet || source.item.title); setCopied(true); } catch { setCopied(false); } }}><span>{copied ? <Check size={13} /> : <Copy size={13} />}</span>{copied ? 'Copied' : 'Copy excerpt'}</button><a href={sourceClickUrl(source.url) ?? source.url} target="_blank" rel="noopener noreferrer">Visit source <ArrowUpRight size={14} /></a></div> : null}
     </div>
     {compact ? <ArrowUpRight className={styles.arrow} size={17} aria-hidden="true" /> : null}
   </article>;

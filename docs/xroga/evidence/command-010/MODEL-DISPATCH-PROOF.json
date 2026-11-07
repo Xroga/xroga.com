@@ -9,7 +9,7 @@
     {
       "path": "backend/src/ai/pipeline.ts",
       "historicalSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
-      "currentSha256": "0168bc57563dbc535012982e5c6680fd3ebb40c7595fb67620e1ca60284df9b4",
+      "currentSha256": "d3742ca4dccc50daf99aa71d9896449957dde73798dc6d7c2a9c5ca5536cff32",
       "genericSdkPreviousCurrentBinding": {
         "reference": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
         "sha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
@@ -24,8 +24,8 @@
         "944a58bb15dca85b3ddd"
       ],
       "afterIds": [
-        "c3617170cdd8b722b96f",
-        "2e78e5aba21ba282d65c"
+        "4431005001a8d288051f",
+        "ce02ccc6a928e44634de"
       ],
       "unchangedNearestBlockSha256": [
         "121ecd46287fd271b61cc97e84d2b17dce2570e8b82f7a6bdf77a6e4b7133436",
@@ -4227,12 +4227,23 @@
         },
         "githubPublicationContinuation": "docs/xroga/evidence/command-010/GITHUB-PUBLICATION-20261028.json"
       },
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json",
+      "beforeRichShareCurrentSha256": "373180f86ff9ed02a7624d767374d214c14765ffcbf9a489b86d3bc26507e3b6",
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentSha256": "fa67a6ccaaca85b55c30405833f4f52cbe1959ed401b0de682f5567a9ad6c645",
+        "previousAfterIds": [
+          "1dc5b14f8d4eb831d8bf",
+          "bab7cb9676b8369a55a7"
+        ],
+        "basis": "Current hash and the current review ids were re-bound after the strict call-and-function comparison in REBIND-REPORT.json. The nearest-block hashes and every historical record are unchanged."
+      }
     },
     {
       "path": "backend/src/routes/phase1.ts",
       "historicalSha256": "ff58f5c490ec150132c684e66ff60cfb2e63196cfc7144ce6938a8705f9b196b",
-      "currentSha256": "ee77d657398ee4ed6a9322281c46c6ef17fe366e23dbd323c11560dd01cf88a8",
+      "currentSha256": "91b55da6a6beca61715b829c0087b10f90d2cc5bb7e2b7bce5500fbca50b2b7d",
       "businessModelContinuationBinding": {
         "reference": "b183079ec8a00cb4d7a29a95e8cdfb517da81acb",
         "previousCurrentSha256": "7ad7b1f7dde453a4065e15ba260998fe5841c6992724d03ee299b71c8380c0f5",
@@ -4248,7 +4259,7 @@
         "ebede146c851a085d2b8"
       ],
       "afterIds": [
-        "fb2bffffc91cc072976a"
+        "fa04b8d8f9413c194ec5"
       ],
       "unchangedNearestBlockSha256": [
         "c2096dbdee542d663ba05ee31829f741533e7ae3a6bd6aae397ced85681a4286"
@@ -4436,7 +4447,24 @@
           }
         }
       },
-      "composioBoundaryContinuation": "docs/xroga/evidence/command-010/COMPOSIO-BOUNDARY-20261028.json"
+      "composioBoundaryContinuation": "docs/xroga/evidence/command-010/COMPOSIO-BOUNDARY-20261028.json",
+      "beforeResearchHandoff": {
+        "reference": "7bde084cbb9f3ed93e0ce26b59b6cf37adae8e43",
+        "currentSha256": "ee77d657398ee4ed6a9322281c46c6ef17fe366e23dbd323c11560dd01cf88a8",
+        "afterIds": [
+          "fb2bffffc91cc072976a"
+        ],
+        "scope": "HISTORICAL_BINDING_ONLY_NO_NEW_ACCEPTANCE"
+      },
+      "continuedOnBranch": {
+        "prNumber": 922,
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "previousCurrentSha256": "6fdd82d91f702447d22419a285cde70cf1c5f5bdce72bc76733364080e72ac91",
+        "previousAfterIds": [
+          "78696e27dd5c1ca37c3a"
+        ],
+        "basis": "Current hash and the current review ids were re-bound after the strict call-and-function comparison in REBIND-REPORT.json. The nearest-block hashes and every historical record are unchanged."
+      }
     },
     {
       "path": "backend/src/synthesis/universalEntrypoint.ts",

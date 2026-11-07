@@ -1,3 +1,5 @@
+import { readResearchResult } from '../services/integrations/researchResult.js';
+import {readModelResult} from '../services/integrations/modelResult.js';
 import {isTerminalModelFailure} from '../ai/providerRuntime.js';
 import { requireTenantContext } from '../security/tenantContext.js';
 import {
@@ -1581,6 +1583,11 @@ router.post(
           response:
             result.response,
 
+          completion:
+            result.completion,
+
+          ...(result.responseSource ? { responseSource: result.responseSource } : {}),
+
           intent:
             result.intent,
 
@@ -1901,9 +1908,27 @@ router.get(
           ),
         );
 
+      let researchResult = null;
+      let researchResultUnavailable = false;
+      let modelResult = null;
+      let modelResultUnavailable = false;
+      if(confirmation.toolkit==='zurelay'&&confirmation.status==='consumed'){
+        try{modelResult=await readModelResult(requireTenantContext(req.tenantContext),confirmation);}catch{modelResultUnavailable=true;}
+        modelResultUnavailable ||= modelResult===null;
+      }
+      if (confirmation.toolkit === 'xroga-native-research' && confirmation.status === 'consumed') {
+        try { researchResult = await readResearchResult(requireTenantContext(req.tenantContext), confirmation); }
+        catch { researchResultUnavailable = true; }
+        researchResultUnavailable ||= researchResult === null;
+      }
+
       return res.json(
         {
           confirmation,
+          researchResult,
+          researchResultUnavailable,
+          modelResult,
+          modelResultUnavailable,
         },
       );
     } catch (error) {

@@ -1,7 +1,7 @@
 import type { ModelId } from '../ai/models.js';
 import { requireModelSdkAdmission } from '../ai/modelSdkAdmission.js';
 import { withTenantModelReservation, requireModelProjectBinding } from '../ai/tenantModelDispatch.js';
-import { resolveEndpoint, createModelProviderClient, snapshotModelEgressPayload } from '../ai/openaiCompat.js';
+import { resolveEndpoint, createModelProviderClient, snapshotModelEgressPayload, modelTransportReceipt } from '../ai/openaiCompat.js';
 import { PostCompletionAccountingError } from '../ai/postCompletionAccounting.js';
 import { requireTenantContext, requireResourceOwner, type TenantContext } from '../security/tenantContext.js';
 import type { BrowserJob } from './browserJob.js';
@@ -59,11 +59,13 @@ export async function dispatchBrowserModel(input:{job:BrowserJob;authority:Brows
       const completion=client?await client.create(request,{signal}):await createModelProviderClient(endpoint,beforeDispatch).chat.completions.create(request as never,{signal,maxRetries:0});
       const inputTokens=completion?.usage?.prompt_tokens,outputTokens=completion?.usage?.completion_tokens;
       const reasoningTokens=completion?.usage?.completion_tokens_details?.reasoning_tokens??0;
-      const providerRequestId=completion?.id;
+      const providerRequestId=client ? completion?.id : modelTransportReceipt(endpoint).requestId;
       if(![inputTokens,outputTokens,reasoningTokens].every(n=>Number.isSafeInteger(n)&&n>=0)||reasoningTokens>outputTokens
         ||typeof providerRequestId!=='string'||! /^[A-Za-z0-9_.:/-]{1,200}$/.test(providerRequestId)
         ||containsCredentialSecretText(providerRequestId)||(endpoint.apiKey.length>=8&&providerRequestId.includes(endpoint.apiKey)))throw new PostCompletionAccountingError();
-      const usage={modelId:input.modelId,inputTokens,outputTokens:outputTokens-reasoningTokens,reasoningTokens,providerRequestId};
+      const cachedInputTokens=completion?.usage?.prompt_tokens_details?.cached_tokens??0;
+      if(!Number.isSafeInteger(cachedInputTokens)||cachedInputTokens<0||cachedInputTokens>inputTokens)throw new PostCompletionAccountingError();
+      const usage={modelId:input.modelId,inputTokens,outputTokens,cachedInputTokens,reasoningTokens,providerRequestId};
       admission.complete(usage,()=>{},checkCancellation);
       return {...usage,completion};
     }});

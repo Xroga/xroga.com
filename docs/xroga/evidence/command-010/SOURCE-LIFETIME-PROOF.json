@@ -351,7 +351,7 @@
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
       "beforeSha256": "99a90ce870db5a6e55fff7a588384f8abb9ced3bf141ad7cd3d35522cf6a9785",
-      "currentSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+      "currentSha256": "845f195f835dd9dae9955a7e9ccd2c7d0a86ddfee917299e951fe99d289d3448",
       "matches": [
         {
           "beforeId": "a6063fe099976dc970f7",
@@ -411,7 +411,7 @@
         },
         {
           "beforeId": "064e4bfd4f37af44215d",
-          "afterId": "3d61f3f5ae6402c20b58",
+          "afterId": "3db57fbadafb852f2b06",
           "enclosing": "decryptApiKey",
           "kind": "TABLE_OR_BUCKET_CANDIDATE",
           "target": "<dynamic>",
@@ -419,7 +419,7 @@
         },
         {
           "beforeId": "a17b512e046309335346",
-          "afterId": "64f0d9db49a13b562831",
+          "afterId": "f22dea761a758bf97124",
           "enclosing": "decryptApiKey",
           "kind": "TABLE_OR_BUCKET_CANDIDATE",
           "target": "<dynamic>",
@@ -427,7 +427,7 @@
         },
         {
           "beforeId": "9410f0207c086070cbe9",
-          "afterId": "1f040da6c68c16cd33e2",
+          "afterId": "9969d86ce8c62d31fab3",
           "enclosing": "openCanonicalProviderRow",
           "kind": "TABLE_OR_BUCKET_CANDIDATE",
           "target": "user_integrations",
@@ -435,7 +435,7 @@
         },
         {
           "beforeId": "7839b0a49e20e551f26b",
-          "afterId": "c0b89211921517abfb82",
+          "afterId": "32cde0d22576e3a58695",
           "enclosing": "openCanonicalProviderRow",
           "kind": "PRIVILEGED_FACTORY",
           "target": "getSupabaseAdmin",
@@ -443,7 +443,7 @@
         },
         {
           "beforeId": "985a191bb6a3829d93a3",
-          "afterId": "c135db5a5ea7536cfe6f",
+          "afterId": "9f636ef2e5cee499b1b9",
           "enclosing": "prepareUserProviderKeyWrite",
           "kind": "RPC_CANDIDATE",
           "target": "prepare_provider_key_write",
@@ -451,7 +451,7 @@
         },
         {
           "beforeId": "5de53ce023fae631bbe1",
-          "afterId": "bfd902ca64f5f7780a21",
+          "afterId": "37a9465bd24fabfe5070",
           "enclosing": "prepareUserProviderKeyWrite",
           "kind": "PRIVILEGED_FACTORY",
           "target": "getSupabaseAdmin",
@@ -459,7 +459,7 @@
         },
         {
           "beforeId": "60641ebebf916f3f47ab",
-          "afterId": "8784feaf266f3ae5d72e",
+          "afterId": "3ca6cdd6e98ce6d60f41",
           "enclosing": "saveUserProviderKey",
           "kind": "PRIVILEGED_FACTORY",
           "target": "getSupabaseAdmin",
@@ -467,7 +467,7 @@
         },
         {
           "beforeId": "ee7bb2f7b51795d5885a",
-          "afterId": "37cfa6ca45abf19a23eb",
+          "afterId": "ad9bfb649fa71faf105f",
           "enclosing": "saveUserProviderKey",
           "kind": "RPC_CANDIDATE",
           "target": "save_cws_oauth_key_if_current",
@@ -475,7 +475,7 @@
         },
         {
           "beforeId": "5325278cd77c5cf43ece",
-          "afterId": "1c2765565427d7a39f41",
+          "afterId": "9592603e00571b9aa936",
           "enclosing": "saveUserProviderKey",
           "kind": "RPC_CANDIDATE",
           "target": "save_provider_key_if_current",
@@ -483,7 +483,7 @@
         },
         {
           "beforeId": "ed5b917b1d684e7326d9",
-          "afterId": "6a42e1dbe625c387daee",
+          "afterId": "7c1d10db11574d36e94f",
           "enclosing": "migrateLegacyProviderKey",
           "kind": "PRIVILEGED_FACTORY",
           "target": "getTenantSupabaseAdmin",
@@ -491,7 +491,7 @@
         },
         {
           "beforeId": "02bcd9af68c7c3ac2c1e",
-          "afterId": "f7171c690025f6a4bdde",
+          "afterId": "8ff23600c25a7e4d3d16",
           "enclosing": "migrateLegacyProviderKey",
           "kind": "TABLE_OR_BUCKET_CANDIDATE",
           "target": "user_integrations",
@@ -500,7 +500,7 @@
         },
         {
           "beforeId": "b5dbe13cb2b6b496c93a",
-          "afterId": "88c53c3d219aa201d578",
+          "afterId": "c002e237c5633032ecd2",
           "enclosing": "migrateLegacyProviderKey",
           "kind": "RPC_CANDIDATE",
           "target": "migrate_provider_key_to_vault",
@@ -508,7 +508,7 @@
         },
         {
           "beforeId": "e0456ce0f2abfa813fb5",
-          "afterId": "dc1960ee19b048e0649c",
+          "afterId": "0a5c1d8757f121551305",
           "enclosing": "migrateLegacyProviderKey",
           "kind": "TABLE_OR_BUCKET_CANDIDATE",
           "target": "user_integrations",
@@ -517,7 +517,7 @@
         },
         {
           "beforeId": "2604632d4df816296c98",
-          "afterId": "5f84595697b6399ed442",
+          "afterId": "5f90e5a0a656a5419d4c",
           "enclosing": "listUserProviderKeys",
           "kind": "PRIVILEGED_FACTORY",
           "target": "getSupabaseAdmin",
@@ -525,7 +525,7 @@
         },
         {
           "beforeId": "90411ad954f04510350e",
-          "afterId": "30d93bb175651c6091b1",
+          "afterId": "be3e39ffd9ce85f9f0e5",
           "enclosing": "listUserProviderKeys",
           "kind": "TABLE_OR_BUCKET_CANDIDATE",
           "target": "user_integrations",
@@ -533,7 +533,7 @@
         },
         {
           "beforeId": "4d24d57fe7012dc5dd75",
-          "afterId": "6021c31eedb4e0085d2b",
+          "afterId": "7260159d581155b2eefd",
           "enclosing": "deleteUserProviderKey",
           "kind": "PRIVILEGED_FACTORY",
           "target": "getTenantSupabaseAdmin",
@@ -541,7 +541,7 @@
         },
         {
           "beforeId": "c14b11328e9369fa6e7f",
-          "afterId": "c36354753e5d659f1133",
+          "afterId": "b9e760357c2ccb328c9e",
           "enclosing": "deleteUserProviderKey",
           "kind": "TABLE_OR_BUCKET_CANDIDATE",
           "target": "user_integrations",
@@ -549,7 +549,7 @@
         },
         {
           "beforeId": "c06d3f691fef0e9a9320",
-          "afterId": "fe37d49899df3732b5cc",
+          "afterId": "ac2bc0bf079ef4f86bca",
           "enclosing": "listCustomRowsForRevocation",
           "kind": "PRIVILEGED_FACTORY",
           "target": "getTenantSupabaseAdmin",
@@ -557,7 +557,7 @@
         },
         {
           "beforeId": "d235d34aeef6e920a127",
-          "afterId": "ef2d01aaa4ae1572ad53",
+          "afterId": "d81f7e29ed7eb8f08321",
           "enclosing": "listCustomRowsForRevocation",
           "kind": "TABLE_OR_BUCKET_CANDIDATE",
           "target": "<dynamic>",
@@ -565,7 +565,7 @@
         },
         {
           "beforeId": "8716b1816d340d8ef220",
-          "afterId": "36190833aa1b3b96e8ee",
+          "afterId": "53a7e1a96e0bec62bee6",
           "enclosing": "revokeProviderRow",
           "kind": "PRIVILEGED_FACTORY",
           "target": "getTenantSupabaseAdmin",
@@ -573,7 +573,7 @@
         },
         {
           "beforeId": "b4fad07683df7604b45b",
-          "afterId": "726ceac5ed6ed44f0821",
+          "afterId": "6d28ef52991929f03d5d",
           "enclosing": "revokeProviderRow",
           "kind": "RPC_CANDIDATE",
           "target": "revoke_provider_key",
@@ -581,7 +581,7 @@
         },
         {
           "beforeId": "1ba202fc5a6dd57faf27",
-          "afterId": "cac7d32579dae1ccf84c",
+          "afterId": "8aeaf3c0596fedee163b",
           "enclosing": "revokeProviderRow",
           "kind": "TABLE_OR_BUCKET_CANDIDATE",
           "target": "<dynamic>",
@@ -589,7 +589,7 @@
         },
         {
           "beforeId": "22b15fbd9a04f1c32cb6",
-          "afterId": "a497ca44a05b78d07e6c",
+          "afterId": "54fe7392c0d3794b89ac",
           "enclosing": "getUserProviderKey",
           "kind": "PRIVILEGED_FACTORY",
           "target": "getSupabaseAdmin",
@@ -597,7 +597,7 @@
         },
         {
           "beforeId": "c10dcb70902c0260de04",
-          "afterId": "977606a7b1f57d55adb2",
+          "afterId": "2822acbf204a25662121",
           "enclosing": "getUserProviderKey",
           "kind": "TABLE_OR_BUCKET_CANDIDATE",
           "target": "user_integrations",
@@ -605,7 +605,7 @@
         },
         {
           "beforeId": "d402557729d7b229c33f",
-          "afterId": "4c3d52cdd8d4da245c3a",
+          "afterId": "8d2404e2cdaa0f3994f6",
           "enclosing": "getUserProviderKey",
           "kind": "TABLE_OR_BUCKET_CANDIDATE",
           "target": "user_integrations",
@@ -613,7 +613,7 @@
         },
         {
           "beforeId": "14b09354c0efcdc2fdbf",
-          "afterId": "fa50fc7afb1cc2af0bfe",
+          "afterId": "b863485d9bc095d1af1d",
           "enclosing": "resolveProviderEnvForDeploy",
           "kind": "PRIVILEGED_FACTORY",
           "target": "getSupabaseAdmin",
@@ -621,7 +621,7 @@
         },
         {
           "beforeId": "88d220a299b3576a5c37",
-          "afterId": "aa227a13e3f851a147cb",
+          "afterId": "0308587643cc5bf6e77a",
           "enclosing": "resolveProviderEnvForDeploy",
           "kind": "TABLE_OR_BUCKET_CANDIDATE",
           "target": "user_integrations",
@@ -629,7 +629,7 @@
         },
         {
           "beforeId": "8d454ae0583ff0b8a697",
-          "afterId": "b8a2f76b780dc05a1342",
+          "afterId": "296b65797dd85b9aae09",
           "enclosing": "snapshotSupabaseRows",
           "kind": "PRIVILEGED_FACTORY",
           "target": "getSupabaseAdmin",
@@ -637,7 +637,7 @@
         },
         {
           "beforeId": "e4b3729dbce70a455196",
-          "afterId": "bf70a476decc73712608",
+          "afterId": "f15dce6c928b922d9010",
           "enclosing": "snapshotSupabaseRows",
           "kind": "TABLE_OR_BUCKET_CANDIDATE",
           "target": "user_integrations",
@@ -645,7 +645,7 @@
         },
         {
           "beforeId": "e17cae98899a7ed70612",
-          "afterId": "fc6a606bde6698305460",
+          "afterId": "d711530da125fbdb8af8",
           "enclosing": "snapshotSupabaseRows",
           "kind": "TABLE_OR_BUCKET_CANDIDATE",
           "target": "<dynamic>",
@@ -653,7 +653,7 @@
         },
         {
           "beforeId": "37a3830ff80942ec3e00",
-          "afterId": "a48ccd229f5da7688e01",
+          "afterId": "bac66807e08081335d38",
           "enclosing": "legacyJwtMatches",
           "kind": "TABLE_OR_BUCKET_CANDIDATE",
           "target": "<dynamic>",
@@ -661,7 +661,7 @@
         },
         {
           "beforeId": "f59d11df4719c567f3ba",
-          "afterId": "1efd8ec34ba641c03034",
+          "afterId": "deb75dc520e1b72f0f8c",
           "enclosing": "saveSupabaseBundle",
           "kind": "TABLE_OR_BUCKET_CANDIDATE",
           "target": "<dynamic>",
@@ -669,7 +669,7 @@
         },
         {
           "beforeId": "2ee5ca9468b0a47bc429",
-          "afterId": "d68b6df592d887684c6f",
+          "afterId": "311e5def04fe94e7b0cd",
           "enclosing": "saveSupabaseBundle",
           "kind": "RPC_CANDIDATE",
           "target": "save_supabase_bundle_if_current",
@@ -677,7 +677,7 @@
         },
         {
           "beforeId": "f1c0b859e956f853f600",
-          "afterId": "d2968f7d0b0673e4e552",
+          "afterId": "c3be2940c4b9c47c10ab",
           "enclosing": "saveSupabaseBundle",
           "kind": "PRIVILEGED_FACTORY",
           "target": "getSupabaseAdmin",
@@ -685,7 +685,7 @@
         },
         {
           "beforeId": "30f1b688a8b8ec4f22c0",
-          "afterId": "91c17cc8f6bff705b598",
+          "afterId": "8eac683151d9c952eab2",
           "enclosing": "connectUserSupabase",
           "kind": "TABLE_OR_BUCKET_CANDIDATE",
           "target": "<dynamic>",
@@ -696,9 +696,17 @@
         "ref": "cace633a3cbcadc9f37fc7c74a29cec1acb7a143",
         "currentSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
         "proof": "docs/xroga/evidence/command-010/SUPABASE-PROVISION-BINDINGS-20261028.json"
+      },
+      "beforeZurelayBinding": {
+        "reference": "4c6319e2fc319ad0384ff3e77c07bc473a3652b2",
+        "sha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7"
       }
     }
   ],
   "reviewedSourceCallsOnly": "Unchanged call expressions map by kind, target and enclosing function. Duplicate expressions require an unchanged whole function. All new calls and function-level security obligations remain separate. Nested historical receipts are preserved.",
-  "acceptedPhaseTwoSource": "a21a82029276d38d53c9e17c580a15f57b653fe3"
+  "acceptedPhaseTwoSource": "a21a82029276d38d53c9e17c580a15f57b653fe3",
+  "zurelayReview": {
+    "path": "docs/operations/zurelay-two-model-20261103/PERSISTENCE-REVIEW.json",
+    "scope": "CURRENT_SOURCE_REVIEW_NOT_NEW_LIVE_ACCEPTANCE"
+  }
 }

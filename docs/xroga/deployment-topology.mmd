@@ -12,6 +12,11 @@ flowchart LR
   browserbase["Browserbase - LEGACY"]
   google_delivery["Google Cloud Tasks and Cloud Run Jobs - ACTIVE"]
   cloudflare_workers_proposal["Cloudflare Workers - PROPOSED"]
+  cloudflare_voice["Cloudflare Workers AI, Workers Free - PROPOSED"]
+  zurelay_models["Zurelay - CONFIGURED_BUT_UNVERIFIED"]
+  historical_openrouter["OpenRouter - LEGACY"]
+  historical_moonshot["Moonshot - LEGACY"]
+  historical_zhipu["Zhipu - LEGACY"]
   endpoint_127_0_0_1["Source-defined endpoint 127.0.0.1 - LOCAL_ONLY"]
   endpoint_about_meta_com["Source-defined endpoint about.meta.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_accounts_google_com["Source-defined endpoint accounts.google.com - CONFIGURED_BUT_UNVERIFIED"]
@@ -23,6 +28,7 @@ flowchart LR
   endpoint_api_m_sandbox_paypal_com["Source-defined endpoint api-m.sandbox.paypal.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_api_apify_com["Source-defined endpoint api.apify.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_api_cartesia_ai["Source-defined endpoint api.cartesia.ai - CONFIGURED_BUT_UNVERIFIED"]
+  endpoint_api_deepseek_com["Source-defined endpoint api.deepseek.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_api_dev_runwayml_com["Source-defined endpoint api.dev.runwayml.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_api_dicebear_com["Source-defined endpoint api.dicebear.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_api_elevenlabs_io["Source-defined endpoint api.elevenlabs.io - CONFIGURED_BUT_UNVERIFIED"]
@@ -35,16 +41,13 @@ flowchart LR
   endpoint_api_lumalabs_ai["Source-defined endpoint api.lumalabs.ai - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_api_machines_dev["Source-defined endpoint api.machines.dev - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_api_minimax_io["Source-defined endpoint api.minimax.io - CONFIGURED_BUT_UNVERIFIED"]
-  endpoint_api_moonshot_ai["Source-defined endpoint api.moonshot.ai - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_api_netlify_com["Source-defined endpoint api.netlify.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_api_openai_com["Source-defined endpoint api.openai.com - CONFIGURED_BUT_UNVERIFIED"]
-  endpoint_api_parallel_ai["Source-defined endpoint api.parallel.ai - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_api_stripe_com["Source-defined endpoint api.stripe.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_api_suno_ai["Source-defined endpoint api.suno.ai - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_api_supabase_com["Source-defined endpoint api.supabase.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_api_vercel_com["Source-defined endpoint api.vercel.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_api_whop_com["Source-defined endpoint api.whop.com - CONFIGURED_BUT_UNVERIFIED"]
-  endpoint_api_x_ai["Source-defined endpoint api.x.ai - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_appstoreconnect_apple_com["Source-defined endpoint appstoreconnect.apple.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_aptos_dev["Source-defined endpoint aptos.dev - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_asana_com["Source-defined endpoint asana.com - CONFIGURED_BUT_UNVERIFIED"]
@@ -53,12 +56,15 @@ flowchart LR
   endpoint_brandland_zendesk_com["Source-defined endpoint brandland.zendesk.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_build_avax_network["Source-defined endpoint build.avax.network - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_calendly_com["Source-defined endpoint calendly.com - CONFIGURED_BUT_UNVERIFIED"]
+  endpoint_cdn_deepseek_com["Source-defined endpoint cdn.deepseek.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_cdn_jsdelivr_net["Source-defined endpoint cdn.jsdelivr.net - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_cdn_simpleicons_org["Source-defined endpoint cdn.simpleicons.org - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_chain_link["Source-defined endpoint chain.link - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_cheatsheetseries_owasp_org["Source-defined endpoint cheatsheetseries.owasp.org - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_chrome_google_com["Source-defined endpoint chrome.google.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_chromewebstore_googleapis_com["Source-defined endpoint chromewebstore.googleapis.com - CONFIGURED_BUT_UNVERIFIED"]
+  endpoint_cloud_google_com["Source-defined endpoint cloud.google.com - CONFIGURED_BUT_UNVERIFIED"]
+  endpoint_cloudflare_com["Source-defined endpoint cloudflare.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_coordinator["Source-defined endpoint coordinator - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_design_intuit_com["Source-defined endpoint design.intuit.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_dev_whop_com["Source-defined endpoint dev.whop.com - CONFIGURED_BUT_UNVERIFIED"]
@@ -66,11 +72,13 @@ flowchart LR
   endpoint_developer_apple_com["Source-defined endpoint developer.apple.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_developer_chrome_com["Source-defined endpoint developer.chrome.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_developer_godaddy_com["Source-defined endpoint developer.godaddy.com - CONFIGURED_BUT_UNVERIFIED"]
+  endpoint_developer_mozilla_org["Source-defined endpoint developer.mozilla.org - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_developers_brevo_com["Source-defined endpoint developers.brevo.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_developers_cloudflare_com["Source-defined endpoint developers.cloudflare.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_developers_google_com["Source-defined endpoint developers.google.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_developers_stellar_org["Source-defined endpoint developers.stellar.org - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_devpost_com["Source-defined endpoint devpost.com - CONFIGURED_BUT_UNVERIFIED"]
+  endpoint_docker_com["Source-defined endpoint docker.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_docs_anthropic_com["Source-defined endpoint docs.anthropic.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_docs_aws_amazon_com["Source-defined endpoint docs.aws.amazon.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_docs_base44_com["Source-defined endpoint docs.base44.com - CONFIGURED_BUT_UNVERIFIED"]
@@ -98,7 +106,6 @@ flowchart LR
   endpoint_fonts_gstatic_com["Source-defined endpoint fonts.gstatic.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_freetheai_xyz["Source-defined endpoint freetheai.xyz - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_gemini_google_com["Source-defined endpoint gemini.google.com - CONFIGURED_BUT_UNVERIFIED"]
-  endpoint_generativelanguage_googleapis_com["Source-defined endpoint generativelanguage.googleapis.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_getfoundry_sh["Source-defined endpoint getfoundry.sh - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_github_com["Source-defined endpoint github.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_hardhat_org["Source-defined endpoint hardhat.org - CONFIGURED_BUT_UNVERIFIED"]
@@ -117,17 +124,20 @@ flowchart LR
   endpoint_memory_invalid["Source-defined endpoint memory.invalid - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_metadata_google_internal["Source-defined endpoint metadata.google.internal - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_mixpanel_com["Source-defined endpoint mixpanel.com - CONFIGURED_BUT_UNVERIFIED"]
+  endpoint_n8n_io["Source-defined endpoint n8n.io - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_neon_com["Source-defined endpoint neon.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_nextjs_org["Source-defined endpoint nextjs.org - CONFIGURED_BUT_UNVERIFIED"]
+  endpoint_nodejs_org["Source-defined endpoint nodejs.org - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_oauth2_googleapis_com["Source-defined endpoint oauth2.googleapis.com - CONFIGURED_BUT_UNVERIFIED"]
-  endpoint_open_bigmodel_cn["Source-defined endpoint open.bigmodel.cn - CONFIGURED_BUT_UNVERIFIED"]
-  endpoint_openrouter_ai["Source-defined endpoint openrouter.ai - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_packaging_python_org["Source-defined endpoint packaging.python.org - CONFIGURED_BUT_UNVERIFIED"]
+  endpoint_paypal_com["Source-defined endpoint paypal.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_play_google_com["Source-defined endpoint play.google.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_pollinations_ai["Source-defined endpoint pollinations.ai - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_polygon_technology["Source-defined endpoint polygon.technology - CONFIGURED_BUT_UNVERIFIED"]
+  endpoint_postgresql_org["Source-defined endpoint postgresql.org - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_posthog_com["Source-defined endpoint posthog.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_public_example_invalid["Source-defined endpoint public.example.invalid - CONFIGURED_BUT_UNVERIFIED"]
+  endpoint_python_org["Source-defined endpoint python.org - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_railway_app["Source-defined endpoint railway.app - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_react_dev["Source-defined endpoint react.dev - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_registry_npmjs_org["Source-defined endpoint registry.npmjs.org - CONFIGURED_BUT_UNVERIFIED"]
@@ -141,8 +151,10 @@ flowchart LR
   endpoint_supabase_management_tests_invalid["Source-defined endpoint supabase-management-tests.invalid - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_supabase_com["Source-defined endpoint supabase.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_support_bolt_new["Source-defined endpoint support.bolt.new - CONFIGURED_BUT_UNVERIFIED"]
+  endpoint_temporal_io["Source-defined endpoint temporal.io - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_token_actions_githubusercontent_com["Source-defined endpoint token.actions.githubusercontent.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_twitter_com["Source-defined endpoint twitter.com - CONFIGURED_BUT_UNVERIFIED"]
+  endpoint_typescriptlang_org["Source-defined endpoint typescriptlang.org - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_upload_wikimedia_org["Source-defined endpoint upload.wikimedia.org - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_uploads_github_com["Source-defined endpoint uploads.github.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_v0_dev["Source-defined endpoint v0.dev - CONFIGURED_BUT_UNVERIFIED"]
@@ -150,6 +162,7 @@ flowchart LR
   endpoint_wa_me["Source-defined endpoint wa.me - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_web3_okx_com["Source-defined endpoint web3.okx.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_whop_com["Source-defined endpoint whop.com - CONFIGURED_BUT_UNVERIFIED"]
+  endpoint_workspace_invalid["Source-defined endpoint workspace.invalid - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_www_anchor_lang_com["Source-defined endpoint www.anchor-lang.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_www_anera_org["Source-defined endpoint www.anera.org - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_www_anthropic_com["Source-defined endpoint www.anthropic.com - CONFIGURED_BUT_UNVERIFIED"]
@@ -198,6 +211,7 @@ flowchart LR
   api --> google_execution
   api --> google_delivery
   api --> credential_store
+  api --> cloudflare_voice
   credential_store --> supabase
   api -. "source host/reference; unverified" .-> endpoint_127_0_0_1
   frontend -. "source host/reference; unverified" .-> endpoint_about_meta_com
@@ -210,6 +224,7 @@ flowchart LR
   api -. "source host/reference; unverified" .-> endpoint_api_m_sandbox_paypal_com
   api -. "source host/reference; unverified" .-> endpoint_api_apify_com
   api -. "source host/reference; unverified" .-> endpoint_api_cartesia_ai
+  api -. "source host/reference; unverified" .-> endpoint_api_deepseek_com
   api -. "source host/reference; unverified" .-> endpoint_api_dev_runwayml_com
   frontend -. "source host/reference; unverified" .-> endpoint_api_dicebear_com
   api -. "source host/reference; unverified" .-> endpoint_api_elevenlabs_io
@@ -222,16 +237,13 @@ flowchart LR
   api -. "source host/reference; unverified" .-> endpoint_api_lumalabs_ai
   api -. "source host/reference; unverified" .-> endpoint_api_machines_dev
   api -. "source host/reference; unverified" .-> endpoint_api_minimax_io
-  api -. "source host/reference; unverified" .-> endpoint_api_moonshot_ai
   api -. "source host/reference; unverified" .-> endpoint_api_netlify_com
   api -. "source host/reference; unverified" .-> endpoint_api_openai_com
-  api -. "source host/reference; unverified" .-> endpoint_api_parallel_ai
   api -. "source host/reference; unverified" .-> endpoint_api_stripe_com
   api -. "source host/reference; unverified" .-> endpoint_api_suno_ai
   api -. "source host/reference; unverified" .-> endpoint_api_supabase_com
   api -. "source host/reference; unverified" .-> endpoint_api_vercel_com
   api -. "source host/reference; unverified" .-> endpoint_api_whop_com
-  api -. "source host/reference; unverified" .-> endpoint_api_x_ai
   api -. "source host/reference; unverified" .-> endpoint_appstoreconnect_apple_com
   frontend -. "source host/reference; unverified" .-> endpoint_aptos_dev
   frontend -. "source host/reference; unverified" .-> endpoint_asana_com
@@ -240,12 +252,15 @@ flowchart LR
   frontend -. "source host/reference; unverified" .-> endpoint_brandland_zendesk_com
   frontend -. "source host/reference; unverified" .-> endpoint_build_avax_network
   frontend -. "source host/reference; unverified" .-> endpoint_calendly_com
+  frontend -. "source host/reference; unverified" .-> endpoint_cdn_deepseek_com
   frontend -. "source host/reference; unverified" .-> endpoint_cdn_jsdelivr_net
   frontend -. "source host/reference; unverified" .-> endpoint_cdn_simpleicons_org
   frontend -. "source host/reference; unverified" .-> endpoint_chain_link
   frontend -. "source host/reference; unverified" .-> endpoint_cheatsheetseries_owasp_org
   api -. "source host/reference; unverified" .-> endpoint_chrome_google_com
   api -. "source host/reference; unverified" .-> endpoint_chromewebstore_googleapis_com
+  frontend -. "source host/reference; unverified" .-> endpoint_cloud_google_com
+  frontend -. "source host/reference; unverified" .-> endpoint_cloudflare_com
   api -. "source host/reference; unverified" .-> endpoint_coordinator
   frontend -. "source host/reference; unverified" .-> endpoint_design_intuit_com
   frontend -. "source host/reference; unverified" .-> endpoint_dev_whop_com
@@ -253,11 +268,13 @@ flowchart LR
   api -. "source host/reference; unverified" .-> endpoint_developer_apple_com
   frontend -. "source host/reference; unverified" .-> endpoint_developer_chrome_com
   api -. "source host/reference; unverified" .-> endpoint_developer_godaddy_com
+  frontend -. "source host/reference; unverified" .-> endpoint_developer_mozilla_org
   frontend -. "source host/reference; unverified" .-> endpoint_developers_brevo_com
   api -. "source host/reference; unverified" .-> endpoint_developers_cloudflare_com
   frontend -. "source host/reference; unverified" .-> endpoint_developers_google_com
   api -. "source host/reference; unverified" .-> endpoint_developers_stellar_org
   frontend -. "source host/reference; unverified" .-> endpoint_devpost_com
+  frontend -. "source host/reference; unverified" .-> endpoint_docker_com
   frontend -. "source host/reference; unverified" .-> endpoint_docs_anthropic_com
   api -. "source host/reference; unverified" .-> endpoint_docs_aws_amazon_com
   frontend -. "source host/reference; unverified" .-> endpoint_docs_base44_com
@@ -285,7 +302,6 @@ flowchart LR
   frontend -. "source host/reference; unverified" .-> endpoint_fonts_gstatic_com
   frontend -. "source host/reference; unverified" .-> endpoint_freetheai_xyz
   frontend -. "source host/reference; unverified" .-> endpoint_gemini_google_com
-  api -. "source host/reference; unverified" .-> endpoint_generativelanguage_googleapis_com
   api -. "source host/reference; unverified" .-> endpoint_getfoundry_sh
   api -. "source host/reference; unverified" .-> endpoint_github_com
   api -. "source host/reference; unverified" .-> endpoint_hardhat_org
@@ -304,17 +320,20 @@ flowchart LR
   api -. "source host/reference; unverified" .-> endpoint_memory_invalid
   api -. "source host/reference; unverified" .-> endpoint_metadata_google_internal
   frontend -. "source host/reference; unverified" .-> endpoint_mixpanel_com
+  frontend -. "source host/reference; unverified" .-> endpoint_n8n_io
   frontend -. "source host/reference; unverified" .-> endpoint_neon_com
   frontend -. "source host/reference; unverified" .-> endpoint_nextjs_org
+  frontend -. "source host/reference; unverified" .-> endpoint_nodejs_org
   api -. "source host/reference; unverified" .-> endpoint_oauth2_googleapis_com
-  api -. "source host/reference; unverified" .-> endpoint_open_bigmodel_cn
-  api -. "source host/reference; unverified" .-> endpoint_openrouter_ai
   frontend -. "source host/reference; unverified" .-> endpoint_packaging_python_org
+  frontend -. "source host/reference; unverified" .-> endpoint_paypal_com
   api -. "source host/reference; unverified" .-> endpoint_play_google_com
   frontend -. "source host/reference; unverified" .-> endpoint_pollinations_ai
   frontend -. "source host/reference; unverified" .-> endpoint_polygon_technology
+  frontend -. "source host/reference; unverified" .-> endpoint_postgresql_org
   frontend -. "source host/reference; unverified" .-> endpoint_posthog_com
   api -. "source host/reference; unverified" .-> endpoint_public_example_invalid
+  frontend -. "source host/reference; unverified" .-> endpoint_python_org
   frontend -. "source host/reference; unverified" .-> endpoint_railway_app
   frontend -. "source host/reference; unverified" .-> endpoint_react_dev
   api -. "source host/reference; unverified" .-> endpoint_registry_npmjs_org
@@ -328,8 +347,10 @@ flowchart LR
   api -. "source host/reference; unverified" .-> endpoint_supabase_management_tests_invalid
   frontend -. "source host/reference; unverified" .-> endpoint_supabase_com
   frontend -. "source host/reference; unverified" .-> endpoint_support_bolt_new
+  frontend -. "source host/reference; unverified" .-> endpoint_temporal_io
   api -. "source host/reference; unverified" .-> endpoint_token_actions_githubusercontent_com
   frontend -. "source host/reference; unverified" .-> endpoint_twitter_com
+  frontend -. "source host/reference; unverified" .-> endpoint_typescriptlang_org
   frontend -. "source host/reference; unverified" .-> endpoint_upload_wikimedia_org
   api -. "source host/reference; unverified" .-> endpoint_uploads_github_com
   frontend -. "source host/reference; unverified" .-> endpoint_v0_dev
@@ -337,6 +358,7 @@ flowchart LR
   frontend -. "source host/reference; unverified" .-> endpoint_wa_me
   frontend -. "source host/reference; unverified" .-> endpoint_web3_okx_com
   api -. "source host/reference; unverified" .-> endpoint_whop_com
+  frontend -. "source host/reference; unverified" .-> endpoint_workspace_invalid
   api -. "source host/reference; unverified" .-> endpoint_www_anchor_lang_com
   frontend -. "source host/reference; unverified" .-> endpoint_www_anera_org
   frontend -. "source host/reference; unverified" .-> endpoint_www_anthropic_com

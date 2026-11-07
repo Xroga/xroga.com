@@ -1,6 +1,5 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import OpenAI from 'openai';
 import {createXrogaAgentModel,type XrogaAgentModelInput} from './xrogaAgentModel.js';
 import {randomUUID} from 'node:crypto';
 import {getModelRuntimeHealth} from '../providerRuntime.js';
@@ -10,25 +9,32 @@ import {createTenantContext} from '../../security/tenantContext.js';
 test('SoftwareAgent SDK factory refuses missing, cloned or wrong-owner dispatch identity before any lookup',()=>{
   const userId='11111111-1111-4111-8111-111111111111';
   const context=createTenantContext({userId,via:'remote_getuser'});
-  const input={userId,modelId:'glm_5_3_flash' as const};
+  const input={userId,modelId:'deepseek_v4_1_flash_1017' as const};
   assert.throws(()=>createXrogaAgentModel(input as XrogaAgentModelInput),{code:'TENANT_AUTH_REQUIRED'});
   assert.throws(()=>createXrogaAgentModel({...input,dispatchScope:{context:{...context},userId}}),{code:'TENANT_AUTH_REQUIRED'});
   assert.throws(()=>createXrogaAgentModel({...input,dispatchScope:{context,userId:'22222222-2222-4222-8222-222222222222'}}),{code:'RESOURCE_NOT_FOUND'});
 });
 
 test('real SoftwareAgent factory preserves budgeted positive execution and rejects secret data before SDK dispatch',async t=>{
-  const names=['SUPABASE_URL','SUPABASE_SERVICE_ROLE_KEY','DATABASE_URL','NODE_ENV','GLM_API_KEY'];const previous=names.map(n=>process.env[n]);
+  const names=['SUPABASE_URL','SUPABASE_SERVICE_ROLE_KEY','DATABASE_URL','NODE_ENV','ZURELAY_API_KEY'];const previous=names.map(n=>process.env[n]);
   for(const n of names)delete process.env[n];process.env.NODE_ENV='test';
   process.env.SUPABASE_URL='http://127.0.0.1:55436';process.env.SUPABASE_SERVICE_ROLE_KEY='synthetic-only';
-  process.env.GLM_API_KEY='synthetic-provider-key';
+  process.env.ZURELAY_API_KEY='synthetic-provider-key';
   t.after(()=>{names.forEach((n,i)=>{if(previous[i]===undefined)delete process.env[n];else process.env[n]=previous[i];});});
   let calls=0,atomicReceipts=0,invalidReceipt=false,mutateAtQuota:(()=>void)|undefined;const sent:unknown[]=[];
   const reservations=new Map<string,Record<string,unknown>>(),releases:Record<string,unknown>[]=[];
   const owner='11111111-1111-4111-8111-111111111111';
   t.mock.method(globalThis,'fetch',async(input:Parameters<typeof fetch>[0],init?:RequestInit)=>{
-    const url=new URL(String(input));assert.equal(url.origin,'http://127.0.0.1:55436');
+    const url=new URL(String(input));
+    if(url.origin==='https://api.zurelay.com'){
+      calls++;assert.equal(url.pathname,'/v1/chat/completions');assert.equal(new Headers(init?.headers).get('authorization'),'Bearer synthetic-provider-key');assert.equal(new Headers(init?.headers).get('x-zurelay-fallback'),'off');
+      sent.push(JSON.parse(String(init?.body)));
+      const frame={id:'synthetic-software-agent-request',model:'deepseek-v4.1-flash-1017',choices:[{index:0,delta:{content:'ordinary result'},finish_reason:'stop'}],usage:{prompt_tokens:2,completion_tokens:2,total_tokens:4}};
+      return new Response('data: '+JSON.stringify(frame)+'\n\ndata: [DONE]\n\n',{headers:{'content-type':'text/event-stream','x-request-id':'synthetic-software-agent-request','x-zurelay-model':'deepseek-v4.1-flash-1017'}});
+    }
+    assert.equal(url.origin,'http://127.0.0.1:55436');
     if(url.pathname==='/rest/v1/model_provider_health'){
-      const row=JSON.parse(String(init?.body));assert.equal(row.model_id,'glm_5_3_flash');assert.ok(!JSON.stringify(row).includes('SYNTHETIC_CREDENTIAL'));return Response.json(null);
+      const row=JSON.parse(String(init?.body));assert.equal(row.model_id,'deepseek_v4_1_flash_1017');assert.ok(!JSON.stringify(row).includes('SYNTHETIC_CREDENTIAL'));return Response.json(null);
     }
     if(url.pathname==='/rest/v1/user_token_usage'){
       const mutate=mutateAtQuota;mutateAtQuota=undefined;mutate?.();
@@ -37,7 +43,7 @@ test('real SoftwareAgent factory preserves budgeted positive execution and rejec
     }
     const body=JSON.parse(String(init?.body));assert.equal(body.p_user_id,owner);
     if(url.pathname.endsWith('/reserve_xroga_provider_budget')){
-      assert.equal(body.p_internal_route,'glm_5_3_flash');
+      assert.equal(body.p_internal_route,'deepseek_v4_1_flash_1017');
       const row={id:randomUUID(),user_id:owner,status:'reserved',idempotency_key:body.p_idempotency_key,internal_route:body.p_internal_route,purpose:body.p_purpose,price_version:body.p_price_version,estimated_input_tokens:body.p_estimated_input_tokens,maximum_output_tokens:body.p_maximum_output_tokens,reserved_micro_usd:body.p_reservation_micro_usd};
       reservations.set(row.id,row);return Response.json(row);
     }
@@ -53,14 +59,9 @@ test('real SoftwareAgent factory preserves budgeted positive execution and rejec
     }
     assert.ok(['/rest/v1/rpc/increment_user_token_usage','/rest/v1/rpc/merge_user_model_usage','/rest/v1/rpc/insert_ai_usage_ledger'].includes(url.pathname));return Response.json(null);
   });
-  t.mock.method(OpenAI.prototype,'post',async function(this:OpenAI,_path:unknown,options:unknown){
-    calls++;assert.equal(this.baseURL,'https://open.bigmodel.cn/api/paas/v4');assert.equal(this.apiKey,'synthetic-provider-key');
-    sent.push((options as {body:unknown}).body);
-    return (async function*(){yield {id:'synthetic-software-agent-request',choices:[{delta:{content:'ordinary result'},finish_reason:'stop'}],usage:{prompt_tokens:2,completion_tokens:2}};})();
-  });
   const context=createTenantContext({userId:owner,via:'remote_getuser'});
   const dispatchScope={context,userId:owner,connectedAccountId:'platform'};
-  const model=createXrogaAgentModel({userId:owner,dispatchScope,modelId:'glm_5_3_flash',credentialOverride:'ignored-stale-override',maximumOutputTokens:64});
+  const model=createXrogaAgentModel({userId:owner,dispatchScope,modelId:'deepseek_v4_1_flash_1017',credentialOverride:'ignored-stale-override',maximumOutputTokens:64});
   async function collect(text:string,schemaProperty?:string){
     const tools=schemaProperty?[{name:'safe_read',description:'ordinary read',inputSchema:{type:'object',properties:{[schemaProperty]:{type:'string'}}}}]:[];
     const request={systemPrompt:'ordinary system instruction',messages:[{role:'user',content:[{type:'text',text}]}],tools} as Parameters<typeof model.stream>[0];
@@ -71,7 +72,7 @@ test('real SoftwareAgent factory preserves budgeted positive execution and rejec
   assert.equal(atomicReceipts,2,'Each completed turn must have one verified atomic receipt before yielding events');
   // Factory input is mutable upstream. A later route change must not attach the
   // captured user credential to another provider, run or accounting identity.
-  const mutable:XrogaAgentModelInput={userId:owner,dispatchScope:{...dispatchScope},modelId:'glm_5_3_flash',runId:'owned-run',credentialOverride:'ignored-stale-override',maximumOutputTokens:64};
+  const mutable:XrogaAgentModelInput={userId:owner,dispatchScope:{...dispatchScope},modelId:'deepseek_v4_1_flash_1017',runId:'owned-run',credentialOverride:'ignored-stale-override',maximumOutputTokens:64};
   const scopedModel=createXrogaAgentModel(mutable);
   mutable.modelId='deepseek_v4_flash';mutable.userId='22222222-2222-4222-8222-222222222222';mutable.runId='foreign-run';
   mutable.dispatchScope.userId='22222222-2222-4222-8222-222222222222';
@@ -84,7 +85,7 @@ test('real SoftwareAgent factory preserves budgeted positive execution and rejec
     await assert.rejects(collect(content),{code:'MODEL_CREDENTIAL_EGRESS_DENIED'});
   }
   await assert.rejects(collect('ordinary source','synthetic-provider-key'),{code:'MODEL_CREDENTIAL_EGRESS_DENIED'});
-  const def=MODELS.glm_5_3_flash,old={baseUrl:def.baseUrl,secretKey:def.secretKey};
+  const def=MODELS.deepseek_v4_1_flash_1017,old={baseUrl:def.baseUrl,secretKey:def.secretKey};
   try{
     for(const change of [{baseUrl:'https://unapproved.example/v1'}, {...old,secretKey:'KIMI_API_KEY' as const}]){
       Object.assign(def,change);
@@ -92,7 +93,7 @@ test('real SoftwareAgent factory preserves budgeted positive execution and rejec
     }
   }finally{Object.assign(def,old);}
   assert.equal(calls,3);assert.equal(releases.length,5);
-  assert.equal(getModelRuntimeHealth('glm_5_3_flash').status,'healthy');assert.equal(getModelRuntimeHealth('glm_5_3_flash').failures,0);
+  assert.equal(getModelRuntimeHealth('deepseek_v4_1_flash_1017').status,'healthy');assert.equal(getModelRuntimeHealth('deepseek_v4_1_flash_1017').failures,0);
   assert.ok(releases.every(row=>row.p_pending_reconciliation===false&&row.p_error_category==='invalid_request'),'A known pre-dispatch denial must release its budget, not retain an uncertain-provider hold');
   invalidReceipt=true;
   await assert.rejects(collect('ordinary source'),{code:'POST_COMPLETION_ACCOUNTING_UNCERTAIN'});

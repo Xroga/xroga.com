@@ -1,37 +1,34 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import { OAUTH_NEXT_COOKIE, safeAuthNextPath } from '@/lib/supabase/oauthReturn';
+import { OAUTH_NEXT_COOKIE } from '@/lib/supabase/oauthReturn';
+import { RECOVERY_COOKIE, RECOVERY_MAX_AGE_SECONDS, RECOVERY_PATH, redeemAuthCallback } from '@/lib/supabase/recoverySession';
 
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url);
-  const code = searchParams.get('code');
-  const tokenHash = searchParams.get('token_hash');
-  const recoveryType = searchParams.get('type');
-  const cookieNext = request.cookies.get(OAUTH_NEXT_COOKIE)?.value;
-  let decodedCookieNext: string | undefined;
-  try { decodedCookieNext = cookieNext ? decodeURIComponent(cookieNext) : undefined; } catch { decodedCookieNext = undefined; }
-  const requestedNext = searchParams.get('next') ?? decodedCookieNext;
-  const next = safeAuthNextPath(requestedNext, '/dashboard');
+  const supabase = await createClient();
+  const outcome = await redeemAuthCallback({
+    code: searchParams.get('code'),
+    tokenHash: searchParams.get('token_hash'),
+    type: searchParams.get('type'),
+    next: searchParams.get('next'),
+    cookieNext: request.cookies.get(OAUTH_NEXT_COOKIE)?.value,
+  }, supabase.auth);
 
-  if (code || (tokenHash && recoveryType === 'recovery')) {
-    const supabase = await createClient();
-    const { error } = code
-      ? await supabase.auth.exchangeCodeForSession(code)
-      : await supabase.auth.verifyOtp({ token_hash: tokenHash!, type: 'recovery' });
-    if (!error) {
-      if (next !== '/auth/reset-password') {
-        const { data: needsPhonePrompt, error: phonePromptError } = await supabase.rpc('needs_current_contact_phone_prompt');
-        if (!phonePromptError && needsPhonePrompt) {
-          const response = NextResponse.redirect(`${origin}/auth/contact?next=${encodeURIComponent(next)}`);
-          response.cookies.delete({ name: OAUTH_NEXT_COOKIE, path: '/auth/callback' });
-          return response;
-        }
-      }
-      const response = NextResponse.redirect(`${origin}${next}`);
-      response.cookies.delete({ name: OAUTH_NEXT_COOKIE, path: '/auth/callback' });
-      return response;
-    }
+  if (outcome.kind === 'failed') return NextResponse.redirect(`${origin}${outcome.path}`);
+
+  let path = outcome.path;
+  if (outcome.checkPhonePrompt) {
+    const { data: needsPhonePrompt, error: phonePromptError } = await supabase.rpc('needs_current_contact_phone_prompt');
+    if (!phonePromptError && needsPhonePrompt) path = `/auth/contact?next=${encodeURIComponent(outcome.path)}`;
   }
-
-  return NextResponse.redirect(`${origin}/auth/login?error=auth_callback_failed`);
+  const response = NextResponse.redirect(`${origin}${path}`);
+  response.cookies.delete({ name: OAUTH_NEXT_COOKIE, path: '/auth/callback' });
+  if (outcome.recoveryUserId) {
+    // Server-set proof that this exact user just redeemed a recovery link. Never readable by page scripts.
+    response.cookies.set({
+      name: RECOVERY_COOKIE, value: outcome.recoveryUserId, httpOnly: true, sameSite: 'lax',
+      secure: origin.startsWith('https:'), path: RECOVERY_PATH.replace('/reset-password', ''), maxAge: RECOVERY_MAX_AGE_SECONDS,
+    });
+  }
+  return response;
 }

@@ -1,0 +1,203 @@
+{
+  "id": "captured-cd5541-failed-acceptance",
+  "content": "## Overview\n\nThis is a conceptual design for a small multi-tenant SaaS, not a build. Three tiers sit behind one browser client. The **Next.js app layer** (App Router, server components, route handlers) is the only place that talks to privileged services. The **Supabase layer** provides Auth, Postgres with row-level security (RLS), and Storage. The **Stripe layer** provides Checkout, subscription billing, and webhooks. The browser never holds a service-role key or a Stripe secret; it authenticates against Supabase Auth and calls Next.js routes, which in turn call Supabase and Stripe server-side. Stripe reports billing state back through a webhook route in Next.js, which writes entitlement state into Supabase.\n\n## Architecture diagram\n\nThe diagram below is the proposed request and trust topology. The browser is untrusted. Next.js is the trusted server boundary. Supabase Postgres and Storage are the tenant-scoped data plane, and Stripe is the billing authority. The tenant boundary is drawn around Postgres rows and Storage buckets, because those are the assets that must be isolated per tenant.\n\n## Component roles\n\nEach component has one clear responsibility and one clear trust boundary. The key rule: anything holding a secret (Supabase service-role key, Stripe secret key, webhook signing secret) lives only on the Next.js server.\n\n## Tenant isolation\n\n**Tenant identity is not the same as user identity.** A verified user still needs a current, server-owned membership check before acting on a tenant. The chain is: authenticated user -> active tenant_memberships row for that user and the requested tenant -> permitted role/action -> tenant-scoped query. A missing or revoked membership denies access even if an old JWT still carries a tenant claim. JWT tenant claims may supply context but never replace the current gate. Never use user_metadata or raw_user_meta_data for authorization, because users can edit it; server-managed app_metadata can be stale until token refresh, so it is not a substitute for a live membership check either. User-supplied tenant headers are not proof of identity. The diagram in the previous section shows the browser and Next.js boundary; the membership gate sits inside Next.js before any tenant-scoped query is issued.\n\n## Request and billing flow\n\nThe end-to-end flow, from first sign-in to entitlement updates. Each step is a proposed behavior, not evidence of a running system.\n\n## Caveats\n\n**This is a conceptual design, not a build or an inspection of any implementation.** Several things must be verified before trusting it in production. RLS policies need explicit tests: a user in tenant A must fail to read, update, or delete tenant B rows, and must fail to insert rows claiming tenant B. Test with the actual roles the app uses, and remember that service-role/BYPASSRLS roles bypass RLS, so keep those keys server-side and authorize privileged queries independently. Never ship a service-role key or Stripe secret to the browser. Webhook handling needs signature verification, durable event-ID deduplication, and atomic commit of effects plus the processed marker (or a durable inbox/outbox with retries); an outbound Idempotency-Key does not replace webhook deduplication. Checkout Session metadata is not automatically present on every Invoice or Subscription event, so resolve customer/subscription IDs through a server-owned tenant mapping and set object-specific metadata explicitly where needed. Finally, confirm entitlement server-side before granting access, including for asynchronous payment methods.",
+  "featureOutput": {
+    "id": "response-1057ca6e-b5c9-49ad-b0d3-0c55ed9eec6c",
+    "blocks": [
+      {
+        "id": "1057ca6e-b5c9-49ad-b0d3-0c55ed9eec6c-block-1",
+        "text": "## Overview\n\nThis is a conceptual design for a small multi-tenant SaaS, not a build. Three tiers sit behind one browser client. The **Next.js app layer** (App Router, server components, route handlers) is the only place that talks to privileged services. The **Supabase layer** provides Auth, Postgres with row-level security (RLS), and Storage. The **Stripe layer** provides Checkout, subscription billing, and webhooks. The browser never holds a service-role key or a Stripe secret; it authenticates against Supabase Auth and calls Next.js routes, which in turn call Supabase and Stripe server-side. Stripe reports billing state back through a webhook route in Next.js, which writes entitlement state into Supabase.\n\n## Architecture diagram\n\nThe diagram below is the proposed request and trust topology. The browser is untrusted. Next.js is the trusted server boundary. Supabase Postgres and Storage are the tenant-scoped data plane, and Stripe is the billing authority. The tenant boundary is drawn around Postgres rows and Storage buckets, because those are the assets that must be isolated per tenant.",
+        "type": "narrative",
+        "schemaVersion": 1
+      },
+      {
+        "id": "1057ca6e-b5c9-49ad-b0d3-0c55ed9eec6c-block-2",
+        "type": "graph",
+        "edges": [
+          {
+            "id": "e1",
+            "label": "HTTPS with Supabase session cookie",
+            "source": "browser",
+            "target": "nextjs"
+          },
+          {
+            "id": "e2",
+            "label": "Sign-in, session verification",
+            "source": "nextjs",
+            "target": "supabase_auth"
+          },
+          {
+            "id": "e3",
+            "label": "User-scoped queries (RLS) and server-authorized privileged queries",
+            "source": "nextjs",
+            "target": "supabase_db"
+          },
+          {
+            "id": "e4",
+            "label": "Signed uploads/downloads scoped to tenant path",
+            "source": "nextjs",
+            "target": "supabase_storage"
+          },
+          {
+            "id": "e5",
+            "label": "Create Checkout Session, manage subscription (secret key, server-side)",
+            "source": "nextjs",
+            "target": "stripe"
+          },
+          {
+            "id": "e6",
+            "label": "Signed webhook events",
+            "source": "stripe",
+            "target": "webhook"
+          },
+          {
+            "id": "e7",
+            "label": "Write entitlement / subscription state for the tenant",
+            "source": "webhook",
+            "target": "supabase_db"
+          }
+        ],
+        "nodes": [
+          {
+            "id": "browser",
+            "label": "Browser (untrusted client)"
+          },
+          {
+            "id": "nextjs",
+            "label": "Next.js app (App Router, server components, route handlers)"
+          },
+          {
+            "id": "supabase_auth",
+            "label": "Supabase Auth"
+          },
+          {
+            "id": "supabase_db",
+            "label": "Supabase Postgres (tenant rows, RLS)"
+          },
+          {
+            "id": "supabase_storage",
+            "label": "Supabase Storage (per-tenant buckets/paths)"
+          },
+          {
+            "id": "stripe",
+            "label": "Stripe (Checkout, Billing, Webhooks)"
+          },
+          {
+            "id": "webhook",
+            "label": "Next.js webhook route (/api/stripe/webhook)"
+          }
+        ],
+        "state": "ready",
+        "schemaVersion": 1
+      },
+      {
+        "id": "1057ca6e-b5c9-49ad-b0d3-0c55ed9eec6c-block-3",
+        "text": "## Component roles\n\nEach component has one clear responsibility and one clear trust boundary. The key rule: anything holding a secret (Supabase service-role key, Stripe secret key, webhook signing secret) lives only on the Next.js server.",
+        "type": "narrative",
+        "schemaVersion": 1
+      },
+      {
+        "id": "1057ca6e-b5c9-49ad-b0d3-0c55ed9eec6c-block-4",
+        "type": "card-grid",
+        "cards": [
+          {
+            "id": "section-3-1",
+            "title": "Next.js app layer",
+            "subtitle": "Trusted server boundary",
+            "description": "App Router with server components and route handlers. Verifies the Supabase session, resolves the current tenant membership server-side, calls Supabase with the user's access token for user-scoped queries, and uses the service-role key only for narrowly authorized server operations. Creates Stripe Checkout Sessions and receives webhooks. Holds all secrets; the browser holds none."
+          },
+          {
+            "id": "section-3-2",
+            "title": "Supabase Auth",
+            "subtitle": "Identity provider",
+            "description": "Issues and refreshes user sessions and JWTs. Establishes who the user is. It does not by itself grant tenant access: identity is verified here, but permission to act on a tenant is a separate server-owned membership check. User-editable metadata is never used for authorization."
+          },
+          {
+            "id": "section-3-3",
+            "title": "Supabase Postgres + RLS",
+            "subtitle": "Tenant-scoped data plane",
+            "description": "Stores tenant data with a tenant_id on every tenant-scoped table. RLS policies bind rows to the authenticated user's current membership. RLS constrains only roles subject to its policies; service-role/BYPASSRLS roles can bypass it, so privileged queries must be independently authorized."
+          },
+          {
+            "id": "section-3-4",
+            "title": "Supabase Storage",
+            "subtitle": "Tenant-scoped files",
+            "description": "Stores uploads under per-tenant paths (for example tenant/{tenant_id}/...). Access is granted through signed URLs or storage policies that check membership, so one tenant cannot read another tenant's objects."
+          },
+          {
+            "id": "section-3-5",
+            "title": "Stripe Checkout / Billing",
+            "subtitle": "Billing authority",
+            "description": "Handles payment collection, subscriptions, invoices, and plan state. Next.js creates Checkout Sessions server-side with the tenant identified in object metadata. Stripe is the source of truth for payment state; the app mirrors entitlement into Supabase after verified events."
+          },
+          {
+            "id": "section-3-6",
+            "title": "Stripe webhooks",
+            "subtitle": "Asynchronous billing events",
+            "description": "Stripe posts signed events to a Next.js route. The route verifies the signature, deduplicates by event ID, and updates tenant entitlement. Delivery order is not guaranteed, so reconciliation reads current provider state rather than trusting event sequence."
+          }
+        ],
+        "state": "ready",
+        "schemaVersion": 1
+      },
+      {
+        "id": "1057ca6e-b5c9-49ad-b0d3-0c55ed9eec6c-block-5",
+        "text": "## Tenant isolation\n\n**Tenant identity is not the same as user identity.** A verified user still needs a current, server-owned membership check before acting on a tenant. The chain is: authenticated user -> active tenant_memberships row for that user and the requested tenant -> permitted role/action -> tenant-scoped query. A missing or revoked membership denies access even if an old JWT still carries a tenant claim. JWT tenant claims may supply context but never replace the current gate. Never use user_metadata or raw_user_meta_data for authorization, because users can edit it; server-managed app_metadata can be stale until token refresh, so it is not a substitute for a live membership check either. User-supplied tenant headers are not proof of identity. The diagram in the previous section shows the browser and Next.js boundary; the membership gate sits inside Next.js before any tenant-scoped query is issued.\n\n## Request and billing flow\n\nThe end-to-end flow, from first sign-in to entitlement updates. Each step is a proposed behavior, not evidence of a running system.",
+        "type": "narrative",
+        "schemaVersion": 1
+      },
+      {
+        "id": "1057ca6e-b5c9-49ad-b0d3-0c55ed9eec6c-block-6",
+        "type": "steps",
+        "state": "ready",
+        "steps": [
+          {
+            "id": "section-5-1",
+            "title": "Sign up / sign in",
+            "description": "The browser authenticates through Supabase Auth. Next.js receives and verifies the session, then reads the authenticated user's identity from the verified token."
+          },
+          {
+            "id": "section-5-2",
+            "title": "Create or join a tenant",
+            "description": "A server route creates the tenant and an active tenant_memberships row for the user. Membership is server-owned; the client cannot grant itself a role."
+          },
+          {
+            "id": "section-5-3",
+            "title": "Authenticated data access with RLS",
+            "description": "Next.js resolves the current membership for the requested tenant, then queries Postgres using the user's access token with a publishable/anon client key. RLS policies use USING for reads/updates/deletes and WITH CHECK for inserts/updates, binding row tenant_id to current membership. If tenant reassignment is forbidden, tenant_id is made immutable via restricted update columns, a trigger, or an explicitly authorized server operation."
+          },
+          {
+            "id": "section-5-4",
+            "title": "Start a subscription",
+            "description": "Next.js creates a Stripe Checkout Session server-side, with tenant and customer identifiers set explicitly in object metadata. The browser is redirected to Stripe; no secret key reaches the client."
+          },
+          {
+            "id": "section-5-5",
+            "title": "Webhook-driven entitlement update",
+            "description": "Stripe posts signed events to the Next.js webhook route. The route verifies the signature, resolves the tenant through a server-owned customer/subscription mapping, and writes entitlement state to Supabase. Local effects and the processed-event marker commit atomically, or a durable inbox with pending/processing/completed states and retries is used. Receipt is not completion; entitlement is granted only after verified payment state, including asynchronous payment methods."
+          },
+          {
+            "id": "section-5-6",
+            "title": "Reconciliation",
+            "description": "Because Stripe delivery order and event timestamps are not a reliable ordering guarantee, the app retrieves current provider state when reconciling billing and confirms entitlement server-side before granting access."
+          }
+        ],
+        "schemaVersion": 1
+      },
+      {
+        "id": "1057ca6e-b5c9-49ad-b0d3-0c55ed9eec6c-block-7",
+        "text": "## Caveats\n\n**This is a conceptual design, not a build or an inspection of any implementation.** Several things must be verified before trusting it in production. RLS policies need explicit tests: a user in tenant A must fail to read, update, or delete tenant B rows, and must fail to insert rows claiming tenant B. Test with the actual roles the app uses, and remember that service-role/BYPASSRLS roles bypass RLS, so keep those keys server-side and authorize privileged queries independently. Never ship a service-role key or Stripe secret to the browser. Webhook handling needs signature verification, durable event-ID deduplication, and atomic commit of effects plus the processed marker (or a durable inbox/outbox with retries); an outbound Idempotency-Key does not replace webhook deduplication. Checkout Session metadata is not automatically present on every Invoice or Subscription event, so resolve customer/subscription IDs through a server-owned tenant mapping and set object-specific metadata explicitly where needed. Finally, confirm entitlement server-side before granting access, including for asynchronous payment methods.",
+        "type": "narrative",
+        "schemaVersion": 1
+      }
+    ],
+    "status": "completed",
+    "sourceText": "## Overview\n\nThis is a conceptual design for a small multi-tenant SaaS, not a build. Three tiers sit behind one browser client. The **Next.js app layer** (App Router, server components, route handlers) is the only place that talks to privileged services. The **Supabase layer** provides Auth, Postgres with row-level security (RLS), and Storage. The **Stripe layer** provides Checkout, subscription billing, and webhooks. The browser never holds a service-role key or a Stripe secret; it authenticates against Supabase Auth and calls Next.js routes, which in turn call Supabase and Stripe server-side. Stripe reports billing state back through a webhook route in Next.js, which writes entitlement state into Supabase.\n\n## Architecture diagram\n\nThe diagram below is the proposed request and trust topology. The browser is untrusted. Next.js is the trusted server boundary. Supabase Postgres and Storage are the tenant-scoped data plane, and Stripe is the billing authority. The tenant boundary is drawn around Postgres rows and Storage buckets, because those are the assets that must be isolated per tenant.\n\n```xroga-ui\n{\"id\":\"section-2\",\"type\":\"graph\",\"nodes\":[{\"id\":\"browser\",\"label\":\"Browser (untrusted client)\"},{\"id\":\"nextjs\",\"label\":\"Next.js app (App Router, server components, route handlers)\"},{\"id\":\"supabase_auth\",\"label\":\"Supabase Auth\"},{\"id\":\"supabase_db\",\"label\":\"Supabase Postgres (tenant rows, RLS)\"},{\"id\":\"supabase_storage\",\"label\":\"Supabase Storage (per-tenant buckets/paths)\"},{\"id\":\"stripe\",\"label\":\"Stripe (Checkout, Billing, Webhooks)\"},{\"id\":\"webhook\",\"label\":\"Next.js webhook route (/api/stripe/webhook)\"}],\"edges\":[{\"id\":\"e1\",\"source\":\"browser\",\"target\":\"nextjs\",\"label\":\"HTTPS with Supabase session cookie\"},{\"id\":\"e2\",\"source\":\"nextjs\",\"target\":\"supabase_auth\",\"label\":\"Sign-in, session verification\"},{\"id\":\"e3\",\"source\":\"nextjs\",\"target\":\"supabase_db\",\"label\":\"User-scoped queries (RLS) and server-authorized privileged queries\"},{\"id\":\"e4\",\"source\":\"nextjs\",\"target\":\"supabase_storage\",\"label\":\"Signed uploads/downloads scoped to tenant path\"},{\"id\":\"e5\",\"source\":\"nextjs\",\"target\":\"stripe\",\"label\":\"Create Checkout Session, manage subscription (secret key, server-side)\"},{\"id\":\"e6\",\"source\":\"stripe\",\"target\":\"webhook\",\"label\":\"Signed webhook events\"},{\"id\":\"e7\",\"source\":\"webhook\",\"target\":\"supabase_db\",\"label\":\"Write entitlement / subscription state for the tenant\"}]}\n```\n\n## Component roles\n\nEach component has one clear responsibility and one clear trust boundary. The key rule: anything holding a secret (Supabase service-role key, Stripe secret key, webhook signing secret) lives only on the Next.js server.\n\n```xroga-ui\n{\"id\":\"section-3\",\"type\":\"card-grid\",\"cards\":[{\"id\":\"section-3-1\",\"title\":\"Next.js app layer\",\"subtitle\":\"Trusted server boundary\",\"description\":\"App Router with server components and route handlers. Verifies the Supabase session, resolves the current tenant membership server-side, calls Supabase with the user's access token for user-scoped queries, and uses the service-role key only for narrowly authorized server operations. Creates Stripe Checkout Sessions and receives webhooks. Holds all secrets; the browser holds none.\"},{\"id\":\"section-3-2\",\"title\":\"Supabase Auth\",\"subtitle\":\"Identity provider\",\"description\":\"Issues and refreshes user sessions and JWTs. Establishes who the user is. It does not by itself grant tenant access: identity is verified here, but permission to act on a tenant is a separate server-owned membership check. User-editable metadata is never used for authorization.\"},{\"id\":\"section-3-3\",\"title\":\"Supabase Postgres + RLS\",\"subtitle\":\"Tenant-scoped data plane\",\"description\":\"Stores tenant data with a tenant_id on every tenant-scoped table. RLS policies bind rows to the authenticated user's current membership. RLS constrains only roles subject to its policies; service-role/BYPASSRLS roles can bypass it, so privileged queries must be independently authorized.\"},{\"id\":\"section-3-4\",\"title\":\"Supabase Storage\",\"subtitle\":\"Tenant-scoped files\",\"description\":\"Stores uploads under per-tenant paths (for example tenant/{tenant_id}/...). Access is granted through signed URLs or storage policies that check membership, so one tenant cannot read another tenant's objects.\"},{\"id\":\"section-3-5\",\"title\":\"Stripe Checkout / Billing\",\"subtitle\":\"Billing authority\",\"description\":\"Handles payment collection, subscriptions, invoices, and plan state. Next.js creates Checkout Sessions server-side with the tenant identified in object metadata. Stripe is the source of truth for payment state; the app mirrors entitlement into Supabase after verified events.\"},{\"id\":\"section-3-6\",\"title\":\"Stripe webhooks\",\"subtitle\":\"Asynchronous billing events\",\"description\":\"Stripe posts signed events to a Next.js route. The route verifies the signature, deduplicates by event ID, and updates tenant entitlement. Delivery order is not guaranteed, so reconciliation reads current provider state rather than trusting event sequence.\"}]}\n```\n\n## Tenant isolation\n\n**Tenant identity is not the same as user identity.** A verified user still needs a current, server-owned membership check before acting on a tenant. The chain is: authenticated user -> active tenant_memberships row for that user and the requested tenant -> permitted role/action -> tenant-scoped query. A missing or revoked membership denies access even if an old JWT still carries a tenant claim. JWT tenant claims may supply context but never replace the current gate. Never use user_metadata or raw_user_meta_data for authorization, because users can edit it; server-managed app_metadata can be stale until token refresh, so it is not a substitute for a live membership check either. User-supplied tenant headers are not proof of identity. The diagram in the previous section shows the browser and Next.js boundary; the membership gate sits inside Next.js before any tenant-scoped query is issued.\n\n## Request and billing flow\n\nThe end-to-end flow, from first sign-in to entitlement updates. Each step is a proposed behavior, not evidence of a running system.\n\n```xroga-ui\n{\"id\":\"section-5\",\"type\":\"steps\",\"steps\":[{\"id\":\"section-5-1\",\"title\":\"Sign up / sign in\",\"description\":\"The browser authenticates through Supabase Auth. Next.js receives and verifies the session, then reads the authenticated user's identity from the verified token.\"},{\"id\":\"section-5-2\",\"title\":\"Create or join a tenant\",\"description\":\"A server route creates the tenant and an active tenant_memberships row for the user. Membership is server-owned; the client cannot grant itself a role.\"},{\"id\":\"section-5-3\",\"title\":\"Authenticated data access with RLS\",\"description\":\"Next.js resolves the current membership for the requested tenant, then queries Postgres using the user's access token with a publishable/anon client key. RLS policies use USING for reads/updates/deletes and WITH CHECK for inserts/updates, binding row tenant_id to current membership. If tenant reassignment is forbidden, tenant_id is made immutable via restricted update columns, a trigger, or an explicitly authorized server operation.\"},{\"id\":\"section-5-4\",\"title\":\"Start a subscription\",\"description\":\"Next.js creates a Stripe Checkout Session server-side, with tenant and customer identifiers set explicitly in object metadata. The browser is redirected to Stripe; no secret key reaches the client.\"},{\"id\":\"section-5-5\",\"title\":\"Webhook-driven entitlement update\",\"description\":\"Stripe posts signed events to the Next.js webhook route. The route verifies the signature, resolves the tenant through a server-owned customer/subscription mapping, and writes entitlement state to Supabase. Local effects and the processed-event marker commit atomically, or a durable inbox with pending/processing/completed states and retries is used. Receipt is not completion; entitlement is granted only after verified payment state, including asynchronous payment methods.\"},{\"id\":\"section-5-6\",\"title\":\"Reconciliation\",\"description\":\"Because Stripe delivery order and event timestamps are not a reliable ordering guarantee, the app retrieves current provider state when reconciling billing and confirms entitlement server-side before granting access.\"}]}\n```\n\n## Caveats\n\n**This is a conceptual design, not a build or an inspection of any implementation.** Several things must be verified before trusting it in production. RLS policies need explicit tests: a user in tenant A must fail to read, update, or delete tenant B rows, and must fail to insert rows claiming tenant B. Test with the actual roles the app uses, and remember that service-role/BYPASSRLS roles bypass RLS, so keep those keys server-side and authorize privileged queries independently. Never ship a service-role key or Stripe secret to the browser. Webhook handling needs signature verification, durable event-ID deduplication, and atomic commit of effects plus the processed marker (or a durable inbox/outbox with retries); an outbound Idempotency-Key does not replace webhook deduplication. Checkout Session metadata is not automatically present on every Invoice or Subscription event, so resolve customer/subscription IDs through a server-owned tenant mapping and set object-specific metadata explicitly where needed. Finally, confirm entitlement server-side before granting access, including for asynchronous payment methods.",
+    "composition": "source-order",
+    "schemaVersion": 1,
+    "responseSource": {
+      "text": "{\n  \"s0\": {\n    \"markdown\": \"This is a conceptual design for a small multi-tenant SaaS, not a build. Three tiers sit behind one browser client. The **Next.js app layer** (App Router, server components, route handlers) is the only place that talks to privileged services. The **Supabase layer** provides Auth, Postgres with row-level security (RLS), and Storage. The **Stripe layer** provides Checkout, subscription billing, and webhooks. The browser never holds a service-role key or a Stripe secret; it authenticates against Supabase Auth and calls Next.js routes, which in turn call Supabase and Stripe server-side. Stripe reports billing state back through a webhook route in Next.js, which writes entitlement state into Supabase.\",\n    \"data\": null\n  },\n  \"s1\": {\n    \"markdown\": \"The diagram below is the proposed request and trust topology. The browser is untrusted. Next.js is the trusted server boundary. Supabase Postgres and Storage are the tenant-scoped data plane, and Stripe is the billing authority. The tenant boundary is drawn around Postgres rows and Storage buckets, because those are the assets that must be isolated per tenant.\",\n    \"data\": {\n      \"nodes\": [\n        { \"id\": \"browser\", \"label\": \"Browser (untrusted client)\" },\n        { \"id\": \"nextjs\", \"label\": \"Next.js app (App Router, server components, route handlers)\" },\n        { \"id\": \"supabase_auth\", \"label\": \"Supabase Auth\" },\n        { \"id\": \"supabase_db\", \"label\": \"Supabase Postgres (tenant rows, RLS)\" },\n        { \"id\": \"supabase_storage\", \"label\": \"Supabase Storage (per-tenant buckets/paths)\" },\n        { \"id\": \"stripe\", \"label\": \"Stripe (Checkout, Billing, Webhooks)\" },\n        { \"id\": \"webhook\", \"label\": \"Next.js webhook route (/api/stripe/webhook)\" }\n      ],\n      \"edges\": [\n        { \"id\": \"e1\", \"source\": \"browser\", \"target\": \"nextjs\", \"label\": \"HTTPS with Supabase session cookie\" },\n        { \"id\": \"e2\", \"source\": \"nextjs\", \"target\": \"supabase_auth\", \"label\": \"Sign-in, session verification\" },\n        { \"id\": \"e3\", \"source\": \"nextjs\", \"target\": \"supabase_db\", \"label\": \"User-scoped queries (RLS) and server-authorized privileged queries\" },\n        { \"id\": \"e4\", \"source\": \"nextjs\", \"target\": \"supabase_storage\", \"label\": \"Signed uploads/downloads scoped to tenant path\" },\n        { \"id\": \"e5\", \"source\": \"nextjs\", \"target\": \"stripe\", \"label\": \"Create Checkout Session, manage subscription (secret key, server-side)\" },\n        { \"id\": \"e6\", \"source\": \"stripe\", \"target\": \"webhook\", \"label\": \"Signed webhook events\" },\n        { \"id\": \"e7\", \"source\": \"webhook\", \"target\": \"supabase_db\", \"label\": \"Write entitlement / subscription state for the tenant\" }\n      ]\n    }\n  },\n  \"s2\": {\n    \"markdown\": \"Each component has one clear responsibility and one clear trust boundary. The key rule: anything holding a secret (Supabase service-role key, Stripe secret key, webhook signing secret) lives only on the Next.js server.\",\n    \"data\": {\n      \"cards\": [\n        {\n          \"title\": \"Next.js app layer\",\n          \"subtitle\": \"Trusted server boundary\",\n          \"description\": \"App Router with server components and route handlers. Verifies the Supabase session, resolves the current tenant membership server-side, calls Supabase with the user's access token for user-scoped queries, and uses the service-role key only for narrowly authorized server operations. Creates Stripe Checkout Sessions and receives webhooks. Holds all secrets; the browser holds none.\"\n        },\n        {\n          \"title\": \"Supabase Auth\",\n          \"subtitle\": \"Identity provider\",\n          \"description\": \"Issues and refreshes user sessions and JWTs. Establishes who the user is. It does not by itself grant tenant access: identity is verified here, but permission to act on a tenant is a separate server-owned membership check. User-editable metadata is never used for authorization.\"\n        },\n        {\n          \"title\": \"Supabase Postgres + RLS\",\n          \"subtitle\": \"Tenant-scoped data plane\",\n          \"description\": \"Stores tenant data with a tenant_id on every tenant-scoped table. RLS policies bind rows to the authenticated user's current membership. RLS constrains only roles subject to its policies; service-role/BYPASSRLS roles can bypass it, so privileged queries must be independently authorized.\"\n        },\n        {\n          \"title\": \"Supabase Storage\",\n          \"subtitle\": \"Tenant-scoped files\",\n          \"description\": \"Stores uploads under per-tenant paths (for example tenant/{tenant_id}/...). Access is granted through signed URLs or storage policies that check membership, so one tenant cannot read another tenant's objects.\"\n        },\n        {\n          \"title\": \"Stripe Checkout / Billing\",\n          \"subtitle\": \"Billing authority\",\n          \"description\": \"Handles payment collection, subscriptions, invoices, and plan state. Next.js creates Checkout Sessions server-side with the tenant identified in object metadata. Stripe is the source of truth for payment state; the app mirrors entitlement into Supabase after verified events.\"\n        },\n        {\n          \"title\": \"Stripe webhooks\",\n          \"subtitle\": \"Asynchronous billing events\",\n          \"description\": \"Stripe posts signed events to a Next.js route. The route verifies the signature, deduplicates by event ID, and updates tenant entitlement. Delivery order is not guaranteed, so reconciliation reads current provider state rather than trusting event sequence.\"\n        }\n      ]\n    }\n  },\n  \"s3\": {\n    \"markdown\": \"**Tenant identity is not the same as user identity.** A verified user still needs a current, server-owned membership check before acting on a tenant. The chain is: authenticated user -> active tenant_memberships row for that user and the requested tenant -> permitted role/action -> tenant-scoped query. A missing or revoked membership denies access even if an old JWT still carries a tenant claim. JWT tenant claims may supply context but never replace the current gate. Never use user_metadata or raw_user_meta_data for authorization, because users can edit it; server-managed app_metadata can be stale until token refresh, so it is not a substitute for a live membership check either. User-supplied tenant headers are not proof of identity. The diagram in the previous section shows the browser and Next.js boundary; the membership gate sits inside Next.js before any tenant-scoped query is issued.\",\n    \"data\": null\n  },\n  \"s4\": {\n    \"markdown\": \"The end-to-end flow, from first sign-in to entitlement updates. Each step is a proposed behavior, not evidence of a running system.\",\n    \"data\": {\n      \"steps\": [\n        {\n          \"title\": \"Sign up / sign in\",\n          \"description\": \"The browser authenticates through Supabase Auth. Next.js receives and verifies the session, then reads the authenticated user's identity from the verified token.\"\n        },\n        {\n          \"title\": \"Create or join a tenant\",\n          \"description\": \"A server route creates the tenant and an active tenant_memberships row for the user. Membership is server-owned; the client cannot grant itself a role.\"\n        },\n        {\n          \"title\": \"Authenticated data access with RLS\",\n          \"description\": \"Next.js resolves the current membership for the requested tenant, then queries Postgres using the user's access token with a publishable/anon client key. RLS policies use USING for reads/updates/deletes and WITH CHECK for inserts/updates, binding row tenant_id to current membership. If tenant reassignment is forbidden, tenant_id is made immutable via restricted update columns, a trigger, or an explicitly authorized server operation.\"\n        },\n        {\n          \"title\": \"Start a subscription\",\n          \"description\": \"Next.js creates a Stripe Checkout Session server-side, with tenant and customer identifiers set explicitly in object metadata. The browser is redirected to Stripe; no secret key reaches the client.\"\n        },\n        {\n          \"title\": \"Webhook-driven entitlement update\",\n          \"description\": \"Stripe posts signed events to the Next.js webhook route. The route verifies the signature, resolves the tenant through a server-owned customer/subscription mapping, and writes entitlement state to Supabase. Local effects and the processed-event marker commit atomically, or a durable inbox with pending/processing/completed states and retries is used. Receipt is not completion; entitlement is granted only after verified payment state, including asynchronous payment methods.\"\n        },\n        {\n          \"title\": \"Reconciliation\",\n          \"description\": \"Because Stripe delivery order and event timestamps are not a reliable ordering guarantee, the app retrieves current provider state when reconciling billing and confirms entitlement server-side before granting access.\"\n        }\n      ]\n    }\n  },\n  \"s5\": {\n    \"markdown\": \"**This is a conceptual design, not a build or an inspection of any implementation.** Several things must be verified before trusting it in production. RLS policies need explicit tests: a user in tenant A must fail to read, update, or delete tenant B rows, and must fail to insert rows claiming tenant B. Test with the actual roles the app uses, and remember that service-role/BYPASSRLS roles bypass RLS, so keep those keys server-side and authorize privileged queries independently. Never ship a service-role key or Stripe secret to the browser. Webhook handling needs signature verification, durable event-ID deduplication, and atomic commit of effects plus the processed marker (or a durable inbox/outbox with retries); an outbound Idempotency-Key does not replace webhook deduplication. Checkout Session metadata is not automatically present on every Invoice or Subscription event, so resolve customer/subscription IDs through a server-owned tenant mapping and set object-specific metadata explicitly where needed. Finally, confirm entitlement server-side before granting access, including for asynchronous payment methods.\",\n    \"data\": null\n  }\n}",
+      "format": "xroga-response-json-v1"
+    }
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "scope": "ACTUAL_LOCAL_WASM_RECOGNITION_PUBLIC_FIXTURES_NOT_BROAD_LANGUAGE_CERTIFICATION",
+  "model": "onnx-community/whisper-small",
+  "revision": "36050c46d777d46dc4b5f43f6d90574fc38f8732",
+  "browser": "156.0.4314.50",
+  "results": [
+    {
+      "language": "en",
+      "fixtureUrl": "https://raw.githubusercontent.com/openai/whisper/main/tests/jfk.flac",
+      "fixtureSha256": "63a4b1e4c1dc655ac70961ffbf518acd249df237e5a0152faae9a4a836949715",
+      "reference": "And so my fellow Americans ask not what your country can do for you ask what you can do for your country",
+      "transcript": "And so my fellow Americans, ask not what your country can do for you, ask what you can do for your country.",
+      "wordErrorRate": 0,
+      "durationMs": 183296,
+      "stages": [
+        {
+          "stage": "loading",
+          "time": 1793310810817
+        },
+        {
+          "stage": "transcribing",
+          "time": 1793310953211
+        }
+      ]
+    },
+    {
+      "language": "hi_in",
+      "fixtureUrl": "https://huggingface.co/datasets/google/fleurs/viewer/hi_in/validation?row=0",
+      "fixtureSha256": "eaf505bbf7f4ce5543af9242678b0a992f11d933a4878685b7bbfd817c4e422d",
+      "reference": "मेजरकेन खाना भूमध्य सागर में समान क्षेत्रों की तरह रोटी सब्जियों और मांस विशेष रूप से सूअर का मांस पर आधारित है और जैतून के तेल का उपयोग करता है।",
+      "transcript": "मेजर किन खाना बूम दिसागर में समान शेतरों की तरा रोती सबजींगो और मास विशेश रूप से सूर का मास पर आदारित है और जैतून के तेल का अ प्योग करता है",
+      "wordErrorRate": 0.43333333333333335,
+      "durationMs": 57431,
+      "stages": [
+        {
+          "stage": "loading",
+          "time": 1793310994165
+        },
+        {
+          "stage": "transcribing",
+          "time": 1793311000201
+        }
+      ]
+    }
+  ],
+  "unavailableFixtures": [],
+  "audioUploads": 0,
+  "paidRequests": 0,
+  "requestOrigins": [
+    "http://127.0.0.1:65069",
+    "https://huggingface.co",
+    "https://us.aws.cdn.hf.co"
+  ]
+}

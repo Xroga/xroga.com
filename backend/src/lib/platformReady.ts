@@ -65,37 +65,14 @@ export function computePlatformReady(): {
       required: false,
       hint: 'Needed for one-click user Supabase connect',
     },
-    {
-      id: 'ai_openrouter',
-      label: 'OpenRouter (DeepSeek)',
-      ok: has('OPENROUTER_API_KEY'),
-      required: true,
-    },
-    {
-      id: 'ai_kimi',
-      label: 'Kimi / Moonshot',
-      ok: has('KIMI_API_KEY'),
-      required: true,
-    },
-    {
-      id: 'ai_glm',
-      label: 'GLM / Zhipu',
-      ok: has('GLM_API_KEY'),
-      required: true,
-    },
-    {
-      id: 'ai_grok',
-      label: 'Grok / xAI',
-      ok: has('XAI_API_KEY'),
-      required: true,
-    },
+    { id: 'ai_zurelay', label: 'Configured AI provider', ok: has('ZURELAY_API_KEY'), required: true },
     {
   id: 'research',
   label: 'Web intelligence',
   ok:
-    has('PARALLEL_API_KEY'),
+    has('DEEPSEEK_WEBSEARCH_FETCH_API'),
   required: true,
-  hint: 'PARALLEL_API_KEY',
+  hint: 'DEEPSEEK_WEBSEARCH_FETCH_API',
 },
     {
       id: 'billing',

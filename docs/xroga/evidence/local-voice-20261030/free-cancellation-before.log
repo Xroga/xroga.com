@@ -1,0 +1,418 @@
+TAP version 13
+# Subtest: actual voice route requires original actor and budget, and cannot retry provider authorization denial
+    # Subtest: raw user identity and missing durable reservation send no audio
+    ok 1 - raw user identity and missing durable reservation send no audio
+      ---
+      duration_ms: 131.031
+      type: 'test'
+      ...
+    # Subtest: provider 401 is terminal instead of a model fallback trigger
+    ok 2 - provider 401 is terminal instead of a model fallback trigger
+      ---
+      duration_ms: 47.817
+      type: 'test'
+      ...
+    # Subtest: 403 cannot publish or trigger model fallback
+    ok 3 - 403 cannot publish or trigger model fallback
+      ---
+      duration_ms: 26.8713
+      type: 'test'
+      ...
+    # Subtest: 400 cannot publish or trigger model fallback
+    ok 4 - 400 cannot publish or trigger model fallback
+      ---
+      duration_ms: 24.6551
+      type: 'test'
+      ...
+    # Subtest: 307 cannot publish or trigger model fallback
+    ok 5 - 307 cannot publish or trigger model fallback
+      ---
+      duration_ms: 15.9624
+      type: 'test'
+      ...
+    # Subtest: rotateAfterDispatch cannot publish or trigger model fallback
+    ok 6 - rotateAfterDispatch cannot publish or trigger model fallback
+      ---
+      duration_ms: 16.4009
+      type: 'test'
+      ...
+    # Subtest: missingUsage cannot publish or trigger model fallback
+    ok 7 - missingUsage cannot publish or trigger model fallback
+      ---
+      duration_ms: 23.5396
+      type: 'test'
+      ...
+    # Subtest: invalidUsage cannot publish or trigger model fallback
+    ok 8 - invalidUsage cannot publish or trigger model fallback
+      ---
+      duration_ms: 23.652
+      type: 'test'
+      ...
+    # Subtest: usageOverrun cannot publish or trigger model fallback
+    ok 9 - usageOverrun cannot publish or trigger model fallback
+      ---
+      duration_ms: 22.5576
+      type: 'test'
+      ...
+    # Subtest: fractionalUsage cannot publish or trigger model fallback
+    ok 10 - fractionalUsage cannot publish or trigger model fallback
+      ---
+      duration_ms: 18.7736
+      type: 'test'
+      ...
+    # Subtest: missingRequestId cannot publish or trigger model fallback
+    ok 11 - missingRequestId cannot publish or trigger model fallback
+      ---
+      duration_ms: 22.1515
+      type: 'test'
+      ...
+    # Subtest: secretTranscript cannot publish or trigger model fallback
+    ok 12 - secretTranscript cannot publish or trigger model fallback
+      ---
+      duration_ms: 52.5544
+      type: 'test'
+      ...
+    # Subtest: emptyText cannot publish or trigger model fallback
+    ok 13 - emptyText cannot publish or trigger model fallback
+      ---
+      duration_ms: 21.5807
+      type: 'test'
+      ...
+    # Subtest: settlementFailure cannot publish or trigger model fallback
+    ok 14 - settlementFailure cannot publish or trigger model fallback
+      ---
+      duration_ms: 17.0679
+      type: 'test'
+      ...
+    # Subtest: badSettlement cannot publish or trigger model fallback
+    ok 15 - badSettlement cannot publish or trigger model fallback
+      ---
+      duration_ms: 15.7529
+      type: 'test'
+      ...
+    # Subtest: foreignSettlement cannot publish or trigger model fallback
+    ok 16 - foreignSettlement cannot publish or trigger model fallback
+      ---
+      duration_ms: 12.302
+      type: 'test'
+      ...
+    # Subtest: usageFailure cannot publish or trigger model fallback
+    ok 17 - usageFailure cannot publish or trigger model fallback
+      ---
+      duration_ms: 16.9526
+      type: 'test'
+      ...
+    # Subtest: completedAuditFailure cannot publish or trigger model fallback
+    ok 18 - completedAuditFailure cannot publish or trigger model fallback
+      ---
+      duration_ms: 15.358
+      type: 'test'
+      ...
+    # Subtest: oversized cannot publish or trigger model fallback
+    ok 19 - oversized cannot publish or trigger model fallback
+      ---
+      duration_ms: 12.8266
+      type: 'test'
+      ...
+    # Subtest: malformed cannot publish or trigger model fallback
+    ok 20 - malformed cannot publish or trigger model fallback
+      ---
+      duration_ms: 22.1433
+      type: 'test'
+      ...
+    # Subtest: releaseFailure cannot publish or trigger model fallback
+    ok 21 - releaseFailure cannot publish or trigger model fallback
+      ---
+      duration_ms: 11.0716
+      type: 'test'
+      ...
+    # Subtest: original authorized request settles both canonical ledgers before response
+    ok 22 - original authorized request settles both canonical ledgers before response
+      ---
+      duration_ms: 16.3363
+      type: 'test'
+      ...
+    # Subtest: outageFirst uses a fresh reservation for each existing model
+    ok 23 - outageFirst uses a fresh reservation for each existing model
+      ---
+      duration_ms: 16.7693
+      type: 'test'
+      ...
+    # Subtest: whisperRecovery uses a fresh reservation for each existing model
+    ok 24 - whisperRecovery uses a fresh reservation for each existing model
+      ---
+      duration_ms: 23.8326
+      type: 'test'
+      ...
+    # Subtest: audit denial and forged PCM duration or hidden metadata prevent all dispatch
+    ok 25 - audit denial and forged PCM duration or hidden metadata prevent all dispatch
+      ---
+      duration_ms: 100.0599
+      type: 'test'
+      ...
+    # Subtest: cloned and foreign issued actor, failed reservation and rotated credential have no dispatch
+    ok 26 - cloned and foreign issued actor, failed reservation and rotated credential have no dispatch
+      ---
+      duration_ms: 28.6773
+      type: 'test'
+      ...
+    # Subtest: cancelAtReservation stops publication and all later model attempts
+    ok 27 - cancelAtReservation stops publication and all later model attempts
+      ---
+      duration_ms: 17.8837
+      type: 'test'
+      ...
+    # Subtest: cancelAtSettlement stops publication and all later model attempts
+    ok 28 - cancelAtSettlement stops publication and all later model attempts
+      ---
+      duration_ms: 16.8465
+      type: 'test'
+      ...
+    # Subtest: hungReservation cannot keep a cancelled request active or authorize fallback
+    ok 29 - hungReservation cannot keep a cancelled request active or authorize fallback
+      ---
+      duration_ms: 11.7366
+      type: 'test'
+      ...
+    # Subtest: hungProvider cannot keep a cancelled request active or authorize fallback
+    ok 30 - hungProvider cannot keep a cancelled request active or authorize fallback
+      ---
+      duration_ms: 12.1728
+      type: 'test'
+      ...
+    # Subtest: hungBody cannot keep a cancelled request active or authorize fallback
+    ok 31 - hungBody cannot keep a cancelled request active or authorize fallback
+      ---
+      duration_ms: 15.9427
+      type: 'test'
+      ...
+    # Subtest: hungUsage cannot keep a cancelled request active or authorize fallback
+    ok 32 - hungUsage cannot keep a cancelled request active or authorize fallback
+      ---
+      duration_ms: 14.9011
+      type: 'test'
+      ...
+    # Subtest: provider language metadata cannot expose held credentials
+    ok 33 - provider language metadata cannot expose held credentials
+      ---
+      duration_ms: 16.122
+      type: 'test'
+      ...
+    # Subtest: only exhausted ordinary availability attempts return the explicit recoverable result
+    ok 34 - only exhausted ordinary availability attempts return the explicit recoverable result
+      ---
+      duration_ms: 30.8734
+      type: 'test'
+      ...
+    1..34
+ok 1 - actual voice route requires original actor and budget, and cannot retry provider authorization denial
+  ---
+  duration_ms: 932.0512
+  type: 'test'
+  ...
+# Subtest: free speech route preserves original actor, credential, reservation and publication boundaries
+    # Subtest: valid free receipt settles and persists zero cost before one editable transcript
+    ok 1 - valid free receipt settles and persists zero cost before one editable transcript
+      ---
+      duration_ms: 179.0527
+      type: 'test'
+      ...
+    # Subtest: raw, fabricated and foreign actors cannot dispatch
+    ok 2 - raw, fabricated and foreign actors cannot dispatch
+      ---
+      duration_ms: 39.1206
+      type: 'test'
+      ...
+    # Subtest: unconfirmed free plan, malformed account and absent credential cannot dispatch
+    ok 3 - unconfirmed free plan, malformed account and absent credential cannot dispatch
+      ---
+      duration_ms: 33.9861
+      type: 'test'
+      ...
+    # Subtest: reservationDenied sends no audio
+    ok 4 - reservationDenied sends no audio
+      ---
+      duration_ms: 15.4229
+      type: 'test'
+      ...
+    # Subtest: wrongOwnerHold sends no audio
+    ok 5 - wrongOwnerHold sends no audio
+      ---
+      duration_ms: 17.8004
+      type: 'test'
+      ...
+    # Subtest: rotateAtReservation sends no audio
+    ok 6 - rotateAtReservation sends no audio
+      ---
+      duration_ms: 17.7625
+      type: 'test'
+      ...
+    # Subtest: admissionAuditDenied sends no audio
+    ok 7 - admissionAuditDenied sends no audio
+      ---
+      duration_ms: 17.1418
+      type: 'test'
+      ...
+    # Subtest: 401 cannot publish or use paid fallback
+    ok 8 - 401 cannot publish or use paid fallback
+      ---
+      duration_ms: 22.0216
+      type: 'test'
+      ...
+    # Subtest: 403 cannot publish or use paid fallback
+    ok 9 - 403 cannot publish or use paid fallback
+      ---
+      duration_ms: 26.0136
+      type: 'test'
+      ...
+    # Subtest: 429 cannot publish or use paid fallback
+    ok 10 - 429 cannot publish or use paid fallback
+      ---
+      duration_ms: 43.3534
+      type: 'test'
+      ...
+    # Subtest: 503 cannot publish or use paid fallback
+    ok 11 - 503 cannot publish or use paid fallback
+      ---
+      duration_ms: 24.8604
+      type: 'test'
+      ...
+    # Subtest: redirect cannot publish or use paid fallback
+    ok 12 - redirect cannot publish or use paid fallback
+      ---
+      duration_ms: 22.6201
+      type: 'test'
+      ...
+    # Subtest: malformed cannot publish or use paid fallback
+    ok 13 - malformed cannot publish or use paid fallback
+      ---
+      duration_ms: 19.1453
+      type: 'test'
+      ...
+    # Subtest: oversized cannot publish or use paid fallback
+    ok 14 - oversized cannot publish or use paid fallback
+      ---
+      duration_ms: 22.9356
+      type: 'test'
+      ...
+    # Subtest: rotateAfterDispatch cannot publish or use paid fallback
+    ok 15 - rotateAfterDispatch cannot publish or use paid fallback
+      ---
+      duration_ms: 14.796
+      type: 'test'
+      ...
+    # Subtest: revokeFreePlan cannot publish or use paid fallback
+    ok 16 - revokeFreePlan cannot publish or use paid fallback
+      ---
+      duration_ms: 17.5554
+      type: 'test'
+      ...
+    # Subtest: wrongDuration cannot publish or use paid fallback
+    ok 17 - wrongDuration cannot publish or use paid fallback
+      ---
+      duration_ms: 21.1362
+      type: 'test'
+      ...
+    # Subtest: missingRequestId cannot publish or use paid fallback
+    ok 18 - missingRequestId cannot publish or use paid fallback
+      ---
+      duration_ms: 16.0572
+      type: 'test'
+      ...
+    # Subtest: settlementDenied cannot publish or use paid fallback
+    ok 19 - settlementDenied cannot publish or use paid fallback
+      ---
+      duration_ms: 19.1389
+      type: 'test'
+      ...
+    # Subtest: wrongSettlement cannot publish or use paid fallback
+    ok 20 - wrongSettlement cannot publish or use paid fallback
+      ---
+      duration_ms: 16.2846
+      type: 'test'
+      ...
+    # Subtest: usageDenied cannot publish or use paid fallback
+    ok 21 - usageDenied cannot publish or use paid fallback
+      ---
+      duration_ms: 15.7733
+      type: 'test'
+      ...
+    # Subtest: completedAuditDenied cannot publish or use paid fallback
+    ok 22 - completedAuditDenied cannot publish or use paid fallback
+      ---
+      duration_ms: 16.4159
+      type: 'test'
+      ...
+    # Subtest: empty cannot publish or use paid fallback
+    ok 23 - empty cannot publish or use paid fallback
+      ---
+      duration_ms: 18.3951
+      type: 'test'
+      ...
+    # Subtest: secret cannot publish or use paid fallback
+    ok 24 - secret cannot publish or use paid fallback
+      ---
+      duration_ms: 28.4365
+      type: 'test'
+      ...
+    # Subtest: cancelAtReservation cannot resume after cancellation
+    not ok 25 - cancelAtReservation cannot resume after cancellation
+      ---
+      duration_ms: 52.5658
+      type: 'test'
+      location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-23\\g\\work\\xroga-voice-production\\backend\\src\\routes\\voiceFree.security.test.ts:1:8639'
+      failureType: 'testCodeFailure'
+      error: |-
+        Expected values to be strictly equal:
+
+        1 !== 0
+
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: 0
+      actual: 1
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-23\g\work\xroga-voice-production\backend\src\routes\voiceFree.security.test.ts:113:115)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-23\g\work\xroga-voice-production\backend\src\routes\voiceFree.security.test.ts:112:86)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    # Subtest: cancelAtSettlement cannot resume after cancellation
+    ok 26 - cancelAtSettlement cannot resume after cancellation
+      ---
+      duration_ms: 23.4944
+      type: 'test'
+      ...
+    # Subtest: hungProvider cannot resume after cancellation
+    ok 27 - hungProvider cannot resume after cancellation
+      ---
+      duration_ms: 16.333
+      type: 'test'
+      ...
+    # Subtest: silent and malformed PCM do not invoke a model
+    ok 28 - silent and malformed PCM do not invoke a model
+      ---
+      duration_ms: 19.7399
+      type: 'test'
+      ...
+    1..28
+not ok 2 - free speech route preserves original actor, credential, reservation and publication boundaries
+  ---
+  duration_ms: 835.5248
+  type: 'test'
+  location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-23\\g\\work\\xroga-voice-production\\backend\\src\\routes\\voiceFree.security.test.ts:1:882'
+  failureType: 'subtestsFailed'
+  error: '1 subtest failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+1..2
+# tests 64
+# suites 0
+# pass 62
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 7247.2684
