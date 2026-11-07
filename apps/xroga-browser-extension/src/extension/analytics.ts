@@ -53,7 +53,7 @@ import { upgradeFromOldVersion } from './upgrade';
 const MAX_TRIES = 3;
 const KEEP_DAYS = 7;
 
-const DESTINATION = destinationOf(import.meta.env);
+const DESTINATION = destinationOf({ WXT_AUTORUN_URL: import.meta.env.WXT_AUTORUN_URL });
 
 const local = chrome.storage.local;
 

@@ -5,7 +5,7 @@ Upstream: https://github.com/nanobrowser/nanobrowser
 Revision: f1e912d7c9e859eec6638702be920c78a8eff0ea
 License: Apache License, Version 2.0. See LICENSE.
 
-Xroga modified the package metadata, dependency resolution, build configuration,
-and worker entrypoint. The default build packages Xroga's local-read panel
-and a status-only Workspace message handler. The upstream fixture build remains
-available for engineering verification.
+Xroga modified the package and build configuration, side panel, model
+transport, Workspace connection, and local navigation and write policies.
+The default build runs the upstream browser controller and agent in Chrome.
+The upstream fixture build remains available for engineering verification.

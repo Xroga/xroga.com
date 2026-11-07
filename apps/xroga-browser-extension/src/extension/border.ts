@@ -201,6 +201,30 @@ export async function injectBorder(tabId: number, state: BorderState, documentId
   });
 }
 
+/** Display the point Chrome actually clicked, bound to the clicked document. */
+export async function showClickPoint(tabId: number, documentId: string, point: { x: number; y: number }): Promise<void> {
+  if (!Number.isFinite(point.x) || !Number.isFinite(point.y) || !(await settingsStorage.get())?.pageBorder) return;
+  await chrome.scripting.executeScript({
+    target: { tabId, documentIds: [documentId] },
+    args: [point.x, point.y],
+    func: (x: number, y: number) => {
+      if (document.visibilityState !== 'visible' || x < 0 || y < 0 || x > innerWidth || y > innerHeight) return;
+      const host = document.createElement('div');
+      host.setAttribute('aria-hidden', 'true');
+      host.inert = true;
+      host.style.cssText = `all:initial;position:fixed;left:${x}px;top:${y}px;width:0;height:0;pointer-events:none;z-index:2147483647`;
+      const marker = document.createElement('div');
+      marker.style.cssText = 'position:absolute;inset:-12px;width:24px;height:24px;border:2px solid #4d7fff;border-radius:50%;background:#4d7fff35;box-shadow:0 0 10px #4d7fff80;pointer-events:none';
+      host.attachShadow({ mode: 'closed' }).append(marker);
+      document.documentElement.append(host);
+      if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        marker.animate([{ transform: 'scale(.55)', opacity: 1 }, { transform: 'scale(1.5)', opacity: 0 }], { duration: 450, fill: 'forwards' });
+      }
+      setTimeout(() => host.remove(), 450);
+    },
+  });
+}
+
 /** New documents in a tab's top frame, and the Settings switch. Registered at worker start. */
 export function listenForBorder(border: PageBorder): void {
   chrome.webNavigation.onCommitted.addListener(details => {

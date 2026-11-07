@@ -2,17 +2,21 @@
 export const WORKSPACE_URL = 'https://xroga.com/workspace';
 const WORKSPACE_ORIGIN = new URL(WORKSPACE_URL).origin;
 
+export function isWorkspaceSender(sender: { origin?: string; url?: string; frameId?: number } | undefined) {
+  if (sender?.origin !== WORKSPACE_ORIGIN || sender.frameId !== 0 || typeof sender.url !== 'string') return false;
+  try {
+    const url = new URL(sender.url);
+    return url.origin === WORKSPACE_ORIGIN && url.pathname === '/workspace';
+  } catch {
+    return false;
+  }
+}
+
 export function getWorkspaceExtensionStatus(
   message: unknown,
   sender: { origin?: string; url?: string; frameId?: number },
 ) {
-  if (sender.origin !== WORKSPACE_ORIGIN || sender.frameId !== 0 || typeof sender.url !== 'string') return;
-  try {
-    const url = new URL(sender.url);
-    if (url.origin !== WORKSPACE_ORIGIN || url.pathname !== '/workspace') return;
-  } catch {
-    return;
-  }
+  if (!isWorkspaceSender(sender)) return;
   if (
     !message ||
     typeof message !== 'object' ||

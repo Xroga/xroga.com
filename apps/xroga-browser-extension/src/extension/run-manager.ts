@@ -67,6 +67,10 @@ import type { Sink } from './journal';
 import { livePair, ModelUnavailable, resolveModel } from './models';
 import { count, deleteKeepingChoices, noteActivity, observe, runEnded, runModel, runStarted } from './analytics';
 import { endOf } from './analytics-payload';
+import { onWorkspaceDisconnect, postWorkspace, workspacePaired } from '@src/xroga/bridge';
+import { startXrogaModelRun } from '@src/xroga/model';
+import { browserTarget } from '@src/xroga/navigation';
+import { XROGA_PRODUCT } from '@src/xroga/product';
 
 export interface PanelConnection {
   tabId: number | null;
@@ -92,6 +96,8 @@ export class RunManager {
   /** The mode of a conversation with a run, read by the page header each turn (the user may change it). */
   #modes = new Map<string, Conversation['mode']>();
   #records = new Map<string, RunRecord>();
+  #canonicalRuns = new Map<string, string>();
+  #canonicalActions = new Map<string, string[]>();
   readonly scope: TabScope;
   /** The glow on the pages a working run acts on. */
   readonly border: PageBorder;
@@ -108,6 +114,10 @@ export class RunManager {
   #returned = new Map<string, QueuedMessage[]>();
 
   constructor() {
+    if (XROGA_PRODUCT)
+      onWorkspaceDisconnect(() => {
+        for (const id of this.#runs.keys()) this.#stop(id);
+      });
     this.scope = new TabScope({
       blocked: () => this.permissions.blockedSites(),
       changed: (conversationId, added, removed) => void this.#scopeChanged(conversationId, added, removed),
@@ -141,7 +151,7 @@ export class RunManager {
     // A site the user blocks is refused in every open session at once.
     this.permissions.onBlockedChange(() => {
       for (const session of this.#sessions.values()) {
-        void session.setUrlPolicy({ allow: [], deny: [], blocked: this.permissions.blockedSites() });
+        void session.setUrlPolicy(this.permissions.navigationPolicy());
       }
     });
   }
@@ -274,7 +284,7 @@ export class RunManager {
     await this.permissions.ready();
     const session = createAgentSession(controller, {
       decideWrite: question => this.permissions.decide(this.#modes.get(conversationId) ?? 'ask', question),
-      urlPolicy: { allow: [], deny: [], blocked: this.permissions.blockedSites() },
+      urlPolicy: this.permissions.navigationPolicy(),
       // The watching rule: a tab becomes visible only while the user is on the conversation's tabs.
       reveal: () => this.scope.watching(conversationId),
       onTabJoined: (tabId, how) => {
@@ -305,9 +315,29 @@ export class RunManager {
     return this.#runs.has(conversationId);
   }
 
+  stopCanonical(runId: string): void {
+    for (const [conversation, canonical] of this.#canonicalRuns) {
+      if (canonical === runId) this.#stop(conversation);
+    }
+  }
+
   emit(conversationId: string, body: PanelEventBody): void {
     this.journal.emit(conversationId, body);
     observe(body);
+    const runId = this.#canonicalRuns.get(conversationId);
+    if (!runId) return;
+    if (body.type === 'tool_execution_start' || body.type === 'tool_execution_end') {
+      postWorkspace({ type: 'activity', runId, tool: body.row.tool, status: body.row.status });
+      if (body.type === 'tool_execution_end' && body.row.status === 'done' && body.row.tool !== 'done'
+        && (body.row.result as { ok?: unknown } | undefined)?.ok === true) {
+        const actions = this.#canonicalActions.get(conversationId);
+        if (actions && actions.length < 48) actions.push(body.row.tool);
+      }
+    } else if (body.type === 'prompt_open' && body.prompt.kind === 'write') {
+      postWorkspace({ type: 'activity', runId, status: 'approval-required' });
+    } else if (body.type === 'run_status') {
+      postWorkspace({ type: 'activity', runId, status: body.status });
+    }
   }
 
   /**
@@ -800,12 +830,26 @@ export class RunManager {
 
   async #send(connection: PanelConnection, command: Extract<PanelCommand, { type: 'send' }>): Promise<void> {
     const text = command.text.trim();
+    if (
+      XROGA_PRODUCT &&
+      (!workspacePaired() || !text || text.length > 2_000 || command.attachments.length || command.context.length)
+    ) {
+      this.journal.direct(command.conversationId, connection.sink, {
+        type: 'error',
+        message: 'Connect Workspace and enter a browser task of up to 2,000 characters.',
+      });
+      return;
+    }
     if (!text && !command.attachments.length && !command.context.some(c => c.kind === 'selection')) return;
     // A shortcut's start page is a web address on a site the user has not blocked.
     const startUrl = command.startUrl;
     if (startUrl) {
       await this.permissions.ready();
-      if (!isStartUrl(startUrl) || isBlockedSite(startUrl, this.permissions.blockedSites())) {
+      if (
+        !isStartUrl(startUrl) ||
+        (XROGA_PRODUCT && !browserTarget(startUrl)) ||
+        isBlockedSite(startUrl, this.permissions.blockedSites())
+      ) {
         this.journal.direct(command.conversationId, connection.sink, { type: 'error', message: 'shortcut.blocked' });
         return;
       }
@@ -1258,6 +1302,7 @@ export class RunManager {
     const starting = pair ? Promise.resolve(pair) : livePair(conversationId);
     starting.catch(() => undefined);
     const controller = new AbortController();
+    const deadline = XROGA_PRODUCT ? setTimeout(() => controller.abort(), 10 * 60_000) : undefined;
     const runId = newId();
     let loopRef: AgentLoop | undefined;
     const done = (async () => {
@@ -1283,8 +1328,26 @@ export class RunManager {
       void count('runs.started');
       await this.#setStatus(record, 'running');
       let end: LoopEnd | undefined;
+      let canonical: Awaited<ReturnType<typeof startXrogaModelRun>> | undefined;
       try {
-        const model = await resolveModel(await starting);
+        if (XROGA_PRODUCT) {
+          const branch = await activeBranch(conversationId);
+          const user = branch.findLast(entry => entry.type === 'message' && entry.message.role === 'user');
+          const goal =
+            user?.type === 'message'
+              ? user.message.parts.flatMap(part => (part.type === 'text' ? [part.text] : [])).join('\n')
+              : '';
+          const tabs = await this.scope.tabsOf(conversationId);
+          const url = tabs[0] === undefined ? undefined : (await chrome.tabs.get(tabs[0]))?.url;
+          const target = url && browserTarget(url);
+          if (!goal || !target)
+            throw new ModelUnavailable('Enter an HTTPS website or search before starting the task.');
+          canonical = await startXrogaModelRun(goal, target, controller.signal);
+          this.#canonicalRuns.set(conversationId, canonical.runId);
+          this.#canonicalActions.set(conversationId, []);
+          postWorkspace({ type: 'run', runId: canonical.runId });
+        }
+        const model = canonical?.model ?? (await resolveModel(await starting));
         const settings = (await settingsStorage.get()) ?? DEFAULT_SETTINGS;
         record.model = await runModel(model.ref);
         if (record.model) {
@@ -1312,7 +1375,7 @@ export class RunManager {
           host: this.#host(conversationId, session),
           signal: controller.signal,
           emit: event => this.emit(conversationId, event),
-          turnCap: settings.turnCap,
+          turnCap: XROGA_PRODUCT ? Math.min(settings.turnCap, 12) : settings.turnCap,
           thumbnail,
           agentTool: (call, signal) => this.#agentTool(conversationId, call, signal),
           restore: restore ? { debt: restore.debt as DebtEntry[], guards: restore.guards } : undefined,
@@ -1347,6 +1410,31 @@ export class RunManager {
         record.outcome = 'failed';
         await this.#setStatus(record, 'failed', message);
       } finally {
+        clearTimeout(deadline);
+        if (canonical) {
+          const finishedRunId = canonical.runId;
+          const actions = this.#canonicalActions.get(conversationId) ?? [];
+          let status: 'cancelled' | 'completed' | 'failed' = controller.signal.aborted
+            ? 'cancelled'
+            : end?.status === 'done' && end.outcome === 'success' && actions.length > 0
+              ? 'completed'
+              : 'failed';
+          const branch =
+            status === 'completed' && !end?.summary ? await activeBranch(conversationId).catch(() => []) : [];
+          const assistant = branch.findLast(entry => entry.type === 'message' && entry.message.role === 'assistant');
+          const result =
+            end?.summary ??
+            (assistant?.type === 'message'
+              ? assistant.message.parts.flatMap(part => (part.type === 'text' ? [part.text] : [])).join('\n')
+              : undefined);
+          if (status === 'completed' && !result?.trim()) status = 'failed';
+          void canonical.finish(status, actions, status === 'completed' ? result : undefined).then(
+            () => postWorkspace({ type: 'finished', runId: finishedRunId }),
+            () => postWorkspace({ type: 'task-error', runId: finishedRunId }),
+          );
+          this.#canonicalRuns.delete(conversationId);
+          this.#canonicalActions.delete(conversationId);
+        }
         runEnded(record, end ?? {});
         // A run that finished well counts towards the card that asks for a store rating.
         if (endOf(record.status, record.outcome) === 'success') {

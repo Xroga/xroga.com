@@ -15,6 +15,7 @@ import {
 } from '@src/store/settings';
 import type { LivePair } from '@src/store/types';
 import type { ResolvedModel } from '@src/agent/run';
+import { XROGA_PRODUCT } from '@src/xroga/product';
 
 export class ModelUnavailable extends Error {}
 
@@ -36,6 +37,7 @@ export async function livePair(conversationId: string | null): Promise<LivePair 
 }
 
 export async function resolveModel(pair: LivePair | null): Promise<ResolvedModel> {
+  if (XROGA_PRODUCT) throw new ModelUnavailable('Start an authorized browser task to use the Xroga model.');
   if (!pair) throw new ModelUnavailable('No model is chosen. Add one in Settings → Providers.');
   const ref = pair.model;
   const providers = await providersStorage.get();

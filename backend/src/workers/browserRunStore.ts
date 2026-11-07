@@ -21,6 +21,7 @@ export const isTerminalRunStatus = (s: BrowserRunStatus): boolean => TERMINAL.in
 
 /** Everything a worker needs to run the run; written once, after validation, and never client-supplied after that. */
 export interface BrowserRunSpec {
+  executionTarget?: 'local_chrome';
   goal: string;
   startUrl: string;
   allowedOrigins: string[];
@@ -103,11 +104,14 @@ export class MemoryBrowserRunStore implements BrowserRunStore {
   }
 
   async isCancelRequested(runId: string): Promise<boolean> { return this.rows.get(runId)?.cancelRequested ?? false; }
-  async countActive(tenantId: string): Promise<number> { return [...this.rows.values()].filter((r) => r.tenantId === tenantId && !isTerminalRunStatus(r.status)).length; }
+  async countActive(tenantId: string): Promise<number> {
+    return [...this.rows.values()].filter((r) => r.tenantId === tenantId && !isTerminalRunStatus(r.status)
+      && (r.spec.executionTarget !== 'local_chrome' || this.now() - Date.parse(r.state.createdAt) < 600_000)).length;
+  }
 
   async listRecoverable(staleMs: number, limit: number): Promise<BrowserRunRecord[]> {
     const cutoff = this.now() - staleMs;
-    return [...this.rows.values()].filter((r) => !isTerminalRunStatus(r.status) && r.touched <= cutoff).slice(0, limit).map((r) => this.copy(r));
+    return [...this.rows.values()].filter((r) => r.spec.executionTarget !== 'local_chrome' && !isTerminalRunStatus(r.status) && r.touched <= cutoff).slice(0, limit).map((r) => this.copy(r));
   }
 
   async markDispatched(runId: string): Promise<void> { const row = this.rows.get(runId); if (row) { row.dispatched = true; row.touched = this.now(); } }
@@ -193,13 +197,15 @@ export class PostgresBrowserRunStore implements BrowserRunStore {
   }
 
   async countActive(tenantId: string): Promise<number> {
-    const r = await this.pool.query<{ n: string }>('select count(*)::text as n from public.browser_runs where tenant_id=$1 and status in (\'queued\',\'running\')', [tenantId]);
+    const r = await this.pool.query<{ n: string }>(`select count(*)::text as n from public.browser_runs
+      where tenant_id=$1 and status in ('queued','running')
+      and (spec->>'executionTarget' is distinct from 'local_chrome' or created_at > now() - interval '10 minutes')`, [tenantId]);
     return Number(r.rows[0]?.n ?? 0);
   }
 
   async listRecoverable(staleMs: number, limit: number): Promise<BrowserRunRecord[]> {
     const r = await this.pool.query<Row>(
-      `select ${COLUMNS} from public.browser_runs where status in ('queued','running') and updated_at <= now() - ($1::text || ' milliseconds')::interval order by updated_at limit $2`,
+      `select ${COLUMNS} from public.browser_runs where status in ('queued','running') and spec->>'executionTarget' is distinct from 'local_chrome' and updated_at <= now() - ($1::text || ' milliseconds')::interval order by updated_at limit $2`,
       [String(Math.max(0, Math.floor(staleMs))), Math.max(1, Math.min(200, Math.floor(limit)))],
     );
     return r.rows.map(toRecord);

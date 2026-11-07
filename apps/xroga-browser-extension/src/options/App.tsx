@@ -14,10 +14,13 @@ import { DataSection } from './DataSection';
 import { AboutSection } from './AboutSection';
 import { Logo } from '@src/ui/icons';
 import { websiteUrl } from '@src/ui/links';
+import { XROGA_PRODUCT } from '@src/xroga/product';
 
 const SECTIONS: Array<{ id: string; label: MessageKey; render: () => JSX.Element }> = [
   { id: 'general', label: 'settings.nav.general', render: () => <GeneralSection /> },
-  { id: 'providers', label: 'settings.nav.providers', render: () => <ProvidersSection /> },
+  ...(XROGA_PRODUCT
+    ? []
+    : [{ id: 'providers', label: 'settings.nav.providers' as const, render: () => <ProvidersSection /> }]),
   { id: 'permissions', label: 'settings.nav.permissions', render: () => <PermissionsSection /> },
   { id: 'shortcuts', label: 'settings.nav.shortcuts', render: () => <ShortcutsSection /> },
   { id: 'memory', label: 'settings.nav.memory', render: () => <MemorySection /> },

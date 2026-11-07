@@ -1,4 +1,4 @@
-// Xroga modification: the distributable preview exposes only the reviewed local-read workflow.
+// Xroga packages the browser agent without its developer entry points.
 import { mkdir } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { defineConfig } from 'wxt';
@@ -11,22 +11,12 @@ import { permissionLists } from './src/ui/manifest-permissions';
 // product's lists (WXT_PRODUCT_PERMISSIONS), to check the features without them.
 const autorun = !!process.env.WXT_AUTORUN_URL;
 const productPermissions = !autorun || !!process.env.WXT_PRODUCT_PERMISSIONS;
-const localPreviewFiles = [
-  'panel.html',
-  'panel.css',
-  'panel.mjs',
-  'task.mjs',
-  'read-page.mjs',
-  'icon-16.png',
-  'icon-32.png',
-];
-
 export default defineConfig({
   imports: false,
   // Unattended development builds (fixtures/autorun.mjs) go elsewhere, so dist/ stays a normal build.
   outDir: !autorun ? 'dist' : productPermissions ? '.output/autorun-product' : '.output/autorun',
   outDirTemplate: '',
-  filterEntrypoints: autorun ? undefined : ['background'],
+  filterEntrypoints: autorun ? undefined : ['background', 'sidepanel', 'options', 'offscreen'],
   alias: {
     '@src': 'src',
   },
@@ -35,8 +25,9 @@ export default defineConfig({
     name: autorun ? '__MSG_extName__' : 'Xroga Browser Automation',
     description: autorun
       ? '__MSG_extDescription__'
-      : 'Review and collect the title, visible headings and links of a Chrome tab. Results stay on your device.',
-    ...(autorun ? { default_locale: 'en' } : { version: '0.1.0', version_name: '0.1.0 development preview' }),
+      : 'Use Xroga to work in your own Chrome tabs, with live actions and approval controls.',
+    default_locale: 'en',
+    ...(autorun ? {} : { version: '0.2.0', version_name: '0.2.0 development' }),
     minimum_chrome_version: '125',
     ...(autorun
       ? {
@@ -46,15 +37,15 @@ export default defineConfig({
           icons: { 128: 'icon-128.png' },
         }
       : {
-          permissions: ['activeTab', 'scripting', 'sidePanel'],
+          host_permissions: ['https://*/*'],
+          ...permissionLists('product'),
           action: { default_icon: 'icon-32.png', default_title: 'Open Xroga Browser Automation' },
           icons: { 16: 'icon-16.png', 32: 'icon-32.png' },
-          side_panel: { default_path: 'panel.html' },
           // Chrome matches the path with its query. The listener validates the exact pathname.
           externally_connectable: { matches: ['https://xroga.com/workspace*'], ids: [] },
           content_security_policy: {
             extension_pages:
-              "default-src 'self'; script-src 'self'; object-src 'self'; connect-src 'none'; base-uri 'none'; form-action 'none'",
+              "script-src 'self'; object-src 'self'; connect-src 'self' blob:; base-uri 'none'; form-action 'none'",
           },
         }),
     incognito: 'not_allowed',
@@ -65,7 +56,7 @@ export default defineConfig({
             'open-test-panel': { description: 'Open the browser control test panel (developers)' },
           },
         }
-      : {}),
+      : { commands: { 'open-panel': { suggested_key: { default: 'Alt+Shift+N' }, description: 'Open Xroga' } } }),
   },
   // `pnpm zip` packs dist/ into dist-zip/, outside the folder Chrome loads.
   zip: {
@@ -79,15 +70,16 @@ export default defineConfig({
     },
     'build:publicAssets': (_wxt, files) => {
       if (autorun) return;
-      files.splice(
-        0,
-        files.length,
-        ...localPreviewFiles.map(file => ({
-          absoluteSrc: resolve(import.meta.dirname, '../../chrome-extension', file),
-          relativeDest: file,
-        })),
-      );
-      for (const file of ['LICENSE', 'NOTICE', 'XROGA-PREVIEW.md']) {
+      for (const file of ['icon-16.png', 'icon-32.png']) {
+        const index = files.findIndex(entry => entry.relativeDest === file);
+        if (index >= 0) files.splice(index, 1);
+        files.push({ absoluteSrc: resolve(import.meta.dirname, '../../chrome-extension', file), relativeDest: file });
+      }
+      files.push({
+        absoluteSrc: resolve(import.meta.dirname, '../../chrome-extension/icon-32.png'),
+        relativeDest: 'xroga-icon.png',
+      });
+      for (const file of ['LICENSE', 'NOTICE', 'XROGA-OPERATOR.md']) {
         files.push({ absoluteSrc: resolve(import.meta.dirname, file), relativeDest: file });
       }
     },
@@ -99,7 +91,7 @@ export default defineConfig({
     'build:manifestGenerated': (_wxt, manifest) => {
       if (manifest.background) (manifest.background as { type?: string }).type = 'module';
       // No panel by default: the worker enables it per tab with a path.
-      if (autorun) delete (manifest as { side_panel?: unknown }).side_panel;
+      delete (manifest as { side_panel?: unknown }).side_panel;
     },
   },
   vite: env => ({
@@ -108,7 +100,7 @@ export default defineConfig({
       alias: {
         '@xroga/runtime-background': resolve(
           import.meta.dirname,
-          autorun ? 'src/xroga/fixture-background.ts' : 'src/xroga/preview-background.ts',
+          autorun ? 'src/xroga/fixture-background.ts' : 'src/xroga/agent-background.ts',
         ),
         // puppeteer-core 25 imports @puppeteer/browsers for the `channel` option, which is never used here.
         '@puppeteer/browsers': resolve(import.meta.dirname, 'src/browser-control/host/puppeteer-browsers-stub.ts'),

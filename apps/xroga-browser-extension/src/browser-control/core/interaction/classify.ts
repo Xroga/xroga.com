@@ -165,6 +165,7 @@ export function classify(input: ClassifyInput): Classification {
     for (const button of names) {
       const named = byName(button, facts.money, input.url);
       if (named) return { ...named, reason: `Enter submits the form through ${quote(button)}: ${named.reason}` };
+      if (SUBMIT_WORDS.test(button)) return { category: 'submit', reason: `Enter submits through ${quote(button)}` };
     }
     if (facts.form.search) return { category: null, reason: 'a search form' };
     return {
@@ -182,7 +183,7 @@ export function classify(input: ClassifyInput): Classification {
       reason: `it submits its form (${facts.form.method.toUpperCase()} ${quote(facts.form.action)})`,
     };
   }
-  if (SUBMIT_WORDS.test(name) && !facts.form?.search && !COOKIE_REJECT.test(name))
+  if (SUBMIT_WORDS.test(name) && !COOKIE_REJECT.test(name))
     return { category: 'submit', reason: `the name ${quote(name)} is submission vocabulary` };
   return { category: null, reason: 'not submit, pay or delete' };
 }

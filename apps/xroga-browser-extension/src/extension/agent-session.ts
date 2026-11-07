@@ -3,7 +3,8 @@
 // blocked sites and tab placement passed in.
 import type { Controller, Session, SessionConfig, TabsData } from '@src/browser-control';
 import type { LayerPort } from '@src/agent/ports';
-import type { PageBorder } from './border';
+import { showClickPoint, type PageBorder } from './border';
+import { XROGA_PRODUCT } from '@src/xroga/product';
 
 /** The extension's labels, defused wherever page text holds them. */
 export const AGENT_LABELS = ['[Nanobrowser note', 'browser-state', 'agent-notes', 'custom-instructions'];
@@ -42,8 +43,18 @@ function dialogOpen(session: Session, tabId: number): boolean {
 /** The loop's view of a session (src/agent/ports.ts). A screenshot fades the page border out first. */
 export function layerPort(session: Session, border?: Pick<PageBorder, 'around'>): LayerPort {
   return {
-    call: (tool, args, signal) => {
+    call: async (tool, args, signal) => {
       const run = () => session.call(tool, args, { signal });
+      if (XROGA_PRODUCT && tool === 'click') {
+        const tabId = screenshotTab(session, args);
+        const frame = tabId === null ? null : await chrome.webNavigation.getFrame({ tabId, frameId: 0 }).catch(() => null);
+        const result = await run();
+        const point = (result.data as { point?: { x: number; y: number } } | undefined)?.point;
+        if (result.ok && point && tabId !== null && frame?.documentId) {
+          void showClickPoint(tabId, frame.documentId, point).catch(() => undefined);
+        }
+        return result;
+      }
       if (tool !== 'screenshot' || !border) return run();
       const tabId = screenshotTab(session, args);
       if (tabId === null || dialogOpen(session, tabId)) return run();

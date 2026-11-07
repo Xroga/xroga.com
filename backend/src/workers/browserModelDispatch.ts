@@ -30,10 +30,11 @@ export function requireBrowserModelAuthority(job:BrowserJob,authority:BrowserMod
 
 export async function dispatchBrowserModel(input:{job:BrowserJob;authority:BrowserModelAuthority|undefined;signal:AbortSignal;
   modelId:ModelId;body:Record<string,unknown>&{messages:unknown;tools?:unknown};estimatedInputTokens:number;maximumOutputTokens:number;
-  idempotencyKey:string;client?:()=>BrowserModelClient}):Promise<any>{
+  idempotencyKey:string;client?:()=>BrowserModelClient;platformCostCeiling?:number}):Promise<any>{
   const job=structuredClone(input.job);
   const authority=requireBrowserModelAuthority(job,input.authority);
   const scope={context:authority.context,userId:authority.context.userId,
+    ...(input.platformCostCeiling!==undefined?{connectedAccountId:'platform',maximumCostMicroUsd:input.platformCostCeiling}:{}),
     ...(!job.projectId.startsWith('user:')?{projectId:job.projectId}:{})};
   const signal=input.signal,checkCancellation=()=>signal.throwIfAborted();
   const current=async()=>{checkCancellation();await authority.revalidate();checkCancellation();};

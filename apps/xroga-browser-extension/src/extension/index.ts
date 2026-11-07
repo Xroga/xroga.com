@@ -10,6 +10,7 @@ import { setUninstallPage } from './uninstall';
 import { openWhatsNew } from '@src/store/whats-new';
 import { WHATS_NEW, releaseOf } from '@src/ui/whats-new';
 import { DATA_REQUEST } from '@src/ui/protocol';
+import { XROGA_PRODUCT } from '@src/xroga/product';
 
 export const runManager = new RunManager();
 listenForPanels(runManager);
@@ -27,9 +28,9 @@ chrome.runtime.onInstalled.addListener(details => {
     }
   }
   // Analytics records a real install's week; autorun builds too, so their check can see it.
-  if (details.reason === 'install')
+  if (details.reason === 'install' && !XROGA_PRODUCT)
     void recordInstall().catch(error => console.error('[analytics] install failed', error));
-  if (details.reason !== 'install' || import.meta.env.WXT_AUTORUN_URL) return;
+  if (details.reason !== 'install' || import.meta.env.WXT_AUTORUN_URL || XROGA_PRODUCT) return;
   void addFirstShortcuts().catch(error => console.error('[install] first shortcut failed', error));
   void chrome.tabs.create({ url: chrome.runtime.getURL('/welcome.html') });
 });
@@ -47,8 +48,10 @@ chrome.runtime.onMessage.addListener((message: unknown, sender, reply) => {
 chrome.alarms?.onAlarm.addListener(() => undefined);
 void runManager.restore().catch(error => console.error('[runs] restore failed', error));
 // An update from the old Nanobrowser: its data is moved on the first start that finds it, whenever that comes.
-void upgradeFromOldVersion().catch(error => console.error('[upgrade] move failed', error));
-// Analytics waits for that move, then applies the old version's choice once; nothing is sent before.
-void analyticsReady();
-listenForSwitches();
-setUninstallPage();
+if (!XROGA_PRODUCT) {
+  void upgradeFromOldVersion().catch(error => console.error('[upgrade] move failed', error));
+  // Analytics waits for that move, then applies the old version's choice once; nothing is sent before.
+  void analyticsReady();
+  listenForSwitches();
+  setUninstallPage();
+}

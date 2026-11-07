@@ -5,6 +5,7 @@ import type { WriteDecision, WriteQuestion } from '@src/browser-control';
 import { decideWrite, siteRulesStorage } from '@src/store/settings';
 import type { SiteRuleEntry } from '@src/store/settings';
 import type { PermissionMode } from '@src/store/types';
+import { XROGA_PRODUCT } from '@src/xroga/product';
 
 export class Permissions {
   #rules: Record<string, SiteRuleEntry> = {};
@@ -37,8 +38,18 @@ export class Permissions {
       .map(([site]) => site);
   }
 
+  navigationPolicy() {
+    return {
+      allow: [],
+      deny: XROGA_PRODUCT ? ['xroga.com'] : [],
+      blocked: this.blockedSites(),
+      publicHttps: XROGA_PRODUCT,
+    };
+  }
+
   /** The answer to the layer for a classified write. */
   decide(mode: PermissionMode, question: WriteQuestion): WriteDecision {
+    if (XROGA_PRODUCT) return { decision: 'ask', canRemember: false };
     // A page with no host cannot hold a rule: a write there asks every time, in both modes.
     if (!question.site) return { decision: 'ask', canRemember: false };
     const entry = this.#rules[question.site];

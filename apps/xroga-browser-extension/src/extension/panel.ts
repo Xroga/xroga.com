@@ -20,5 +20,5 @@ chrome.commands.onCommand.addListener((command, tab) => {
   if (tab?.id === undefined) return;
   if (command === 'open-panel') openPanel(tab.id);
   // The layer's test panel is a developer tool; it has no button.
-  if (command === 'open-test-panel') openPanel(tab.id, TEST_PANEL_PATH);
+  if (import.meta.env.WXT_AUTORUN_URL && command === 'open-test-panel') openPanel(tab.id, TEST_PANEL_PATH);
 });

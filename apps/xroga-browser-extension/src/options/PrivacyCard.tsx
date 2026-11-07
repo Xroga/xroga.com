@@ -5,11 +5,21 @@ import { Switch } from '@src/ui/components';
 import { useStorage } from '@src/ui/hooks';
 import { t } from '@src/ui/i18n';
 import { SettingsCard, SettingsRow } from './SettingsCard';
+import { XROGA_PRODUCT } from '@src/xroga/product';
 
 export const PRIVACY_URL = 'https://github.com/nanobrowser/nanobrowser/blob/HEAD/PRIVACY.md';
 
 export function PrivacyCard() {
   const settings = useStorage(settingsStorage, DEFAULT_SETTINGS);
+  if (XROGA_PRODUCT)
+    return (
+      <SettingsCard title={t('privacy.title')}>
+        <p className="text-sm">
+          Browser actions run in Chrome. Task text and relevant page observations go to Xroga and its model provider
+          after Workspace connects. This extension does not send usage telemetry.
+        </p>
+      </SettingsCard>
+    );
   return (
     <SettingsCard title={t('privacy.title')} className="flex flex-col gap-6">
       <SettingsRow label={t('privacy.ping')} description={t('privacy.pingHint')}>

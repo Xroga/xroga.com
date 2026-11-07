@@ -68,6 +68,9 @@ describe('sensitivity classifier', () => {
     // A typeless <button> outside any form: no form owner, so not submit by type alone.
     expect(activate('Continue', { submitter: false, form: null })).toBeNull();
     expect(activate('Go', { submitter: true, form: form({ search: true }) })).toBeNull();
+    expect(activate('Submit application', { submitter: true, form: form({ method: 'get', search: true }) })).toBe(
+      'submit',
+    );
   });
 
   it('follows implicit submission for Enter in a field', () => {
@@ -88,7 +91,10 @@ describe('sensitivity classifier', () => {
         form: form({ hasSubmitButton: false, defaultButton: null, blockingFields: 1, fields: 1, method: 'post' }),
       }),
     ).toBe('submit');
-    expect(enter({ form: form({ search: true }) })).toBeNull();
+    expect(enter({ form: form({ search: true, defaultButton: { name: 'Search', disabled: false } }) })).toBeNull();
+    expect(enter({ form: form({ search: true, defaultButton: { name: 'Publish', disabled: false } }) })).toBe(
+      'submit',
+    );
     expect(enter({ form: form({ search: true, defaultButton: { name: 'Pay now', disabled: false } }) })).toBe('pay');
     expect(enter({ form: form({ search: true, defaultButton: { name: 'Delete all', disabled: false } }) })).toBe(
       'delete',

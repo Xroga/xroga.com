@@ -669,11 +669,10 @@ export function probeMain(): void {
         const method = (via?.getAttribute('formmethod') || formAttr(owner, 'method') || 'get').toLowerCase();
         const action = via?.hasAttribute('formaction') ? via.formAction : formProp(owner, 'action');
         const search =
-          formAttr(owner, 'role') === 'search' ||
-          !!owner.closest('[role=search], search') ||
-          elements.some(e => e.tagName === 'INPUT' && (e as HTMLInputElement).type === 'search') ||
-          // A single-field GET form is a search form, unless its one field is a textarea (a message, not a query).
-          (method === 'get' && fieldEls.length === 1 && fieldEls[0].tagName !== 'TEXTAREA');
+          method === 'get' &&
+          (formAttr(owner, 'role') === 'search' ||
+            !!owner.closest('[role=search], search') ||
+            elements.some(e => e.tagName === 'INPUT' && (e as HTMLInputElement).type === 'search'));
         form = {
           method,
           action,

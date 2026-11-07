@@ -6,6 +6,8 @@ import { siteOf } from './site';
 export interface UrlPolicy {
   allow: string[];
   deny: string[];
+  /** Xroga task sessions are restricted to HTTPS web pages and temporary blank tabs. */
+  publicHttps?: boolean;
   /**
    * Blocked sites, matched with `siteOf`: the exact host, so a row covers the same addresses as an Allow or Ask row.
    * The deny and allow lists keep their own rules for the test panel.
@@ -93,17 +95,37 @@ export function normalizePolicy(policy: UrlPolicy): UrlPolicy {
   return {
     allow: clean(policy.allow),
     deny: clean(policy.deny),
+    ...(policy.publicHttps ? { publicHttps: true } : {}),
     blocked: [...new Set((policy.blocked ?? []).map(siteKey).filter(Boolean))],
   };
 }
 
 export function allows(policy: UrlPolicy, url: string): boolean {
+  if (policy.publicHttps && url !== 'about:blank') {
+    try {
+      const parsed = new URL(url);
+      const host = parsed.hostname.replace(/\.$/, '');
+      if (
+        parsed.protocol !== 'https:' ||
+        parsed.username ||
+        parsed.password ||
+        parsed.port ||
+        !host.includes('.') ||
+        /^[\d.]+$/.test(host) ||
+        host.includes(':') ||
+        /\.(?:local|localhost|internal|home\.arpa)$/.test(host)
+      )
+        return false;
+    } catch {
+      return false;
+    }
+  }
   return !isBlockedSite(url, policy.blocked) && isUrlAllowed(url, policy.allow, policy.deny);
 }
 
 /** Layer 3 runs only when a list is configured; the always-blocked schemes are covered by layers 1, 2 and 4. */
 export function hasLists(policy: UrlPolicy): boolean {
-  return policy.allow.length > 0 || policy.deny.length > 0 || (policy.blocked?.length ?? 0) > 0;
+  return !!policy.publicHttps || policy.allow.length > 0 || policy.deny.length > 0 || (policy.blocked?.length ?? 0) > 0;
 }
 
 /** The most restrictive combination: a URL passes only if every policy allows it. */

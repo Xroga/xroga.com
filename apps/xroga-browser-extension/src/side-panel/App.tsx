@@ -34,6 +34,9 @@ import { useShortcuts } from '@src/ui/shortcuts';
 import { AutoNotice } from '@src/ui/auto-notice';
 import { HistoryIcon, LogoMark, NewChatIcon, SettingsIcon } from '@src/ui/icons';
 import { websiteUrl } from '@src/ui/links';
+import { XROGA_PRODUCT } from '@src/xroga/product';
+import { browserTarget } from '@src/xroga/navigation';
+import { XROGA_REF } from '@src/xroga/model';
 
 const NO_PROVIDERS: ProviderConfig[] = [];
 const NO_KEYS: Record<string, string> = {};
@@ -72,9 +75,10 @@ export function App() {
   // The no-model card waits for the providers to be read, so it does not flash while the panel opens.
   const providersRead = useSyncExternalStore(providersStorage.subscribe, () => providersStorage.getSnapshot() !== null);
   const apiKeys = useStorage(keysStorage, NO_KEYS);
-  const whatsNew = useWhatsNew();
+  const releaseNotes = useWhatsNew();
+  const whatsNew = XROGA_PRODUCT ? null : releaseNotes;
   // Voice input: the panel sends the recording to the chosen voice model's provider, with its key.
-  const voice = voiceSetup(settings, providers, apiKeys);
+  const voice = XROGA_PRODUCT ? null : voiceSetup(settings, providers, apiKeys);
   const transcribe = voice
     ? (audio: Uint8Array) => {
         client?.send({ type: 'voice-used' });
@@ -83,6 +87,20 @@ export function App() {
     : null;
   const [client, setClient] = useState<PanelClient | null>(null);
   const [failure, setFailure] = useState<string | null>(null);
+  const [paired, setPaired] = useState(false);
+  const [target, setTarget] = useState('');
+  const [targetError, setTargetError] = useState('');
+  useEffect(() => {
+    if (!XROGA_PRODUCT) return;
+    const refresh = () =>
+      void chrome.runtime.sendMessage({ type: 'xroga.browser.paired.v1' }).then(
+        result => setPaired(result === true),
+        () => setPaired(false),
+      );
+    refresh();
+    const timer = setInterval(refresh, 1_000);
+    return () => clearInterval(timer);
+  }, []);
   const [state, dispatch] = useReducer(reduce, INITIAL);
   // Mode, model and effort chosen before the first message of a new conversation.
   const [draftMode, setDraftMode] = useState<PermissionMode | null>(null);
@@ -177,14 +195,23 @@ export function App() {
 
   const models: ModelChoice[] = useMemo(
     () =>
-      providers.flatMap(p =>
-        p.models
-          .filter(m => !m.noToolCalling)
-          .map(m => {
-            const ref = { providerId: p.id, model: m.name };
-            return { ref, label: `${m.name} · ${p.name}`, name: m.name, capability: capabilityOf(providers, ref) };
-          }),
-      ),
+      XROGA_PRODUCT
+        ? [
+            {
+              ref: XROGA_REF,
+              label: 'DeepSeek V4.1 Flash · Xroga',
+              name: 'DeepSeek V4.1 Flash',
+              capability: 'none' as const,
+            },
+          ]
+        : providers.flatMap(p =>
+            p.models
+              .filter(m => !m.noToolCalling)
+              .map(m => {
+                const ref = { providerId: p.id, model: m.name };
+                return { ref, label: `${m.name} · ${p.name}`, name: m.name, capability: capabilityOf(providers, ref) };
+              }),
+          ),
     [providers],
   );
 
@@ -214,7 +241,7 @@ export function App() {
     void settingsStorage.set(s => ({ ...s, defaultModel: next.model, reasoning: next.reasoning }));
   };
   const active = isActive(state.status);
-  const ratingCard = useRatingCard(state.conversationId, state.startedAt, active, !!whatsNew);
+  const ratingCard = useRatingCard(state.conversationId, state.startedAt, active, XROGA_PRODUCT || !!whatsNew);
   /** Sends a command the user gave that starts a run; with the rating card showing, it is their Maybe later. */
   const startRun = (command: PanelCommand) => {
     if (ratingCard) ratingMovedOn();
@@ -284,6 +311,16 @@ export function App() {
     extra: { mode?: PermissionMode; model?: ModelRef; startUrl?: string; shortcut?: true } = {},
   ): void => {
     if (!client) return;
+    if (XROGA_PRODUCT) {
+      if (!paired) return;
+      const destination = target.trim() ? browserTarget(target) : undefined;
+      if (target.trim() && !destination) {
+        setTargetError('Enter an HTTPS website or a search query.');
+        return;
+      }
+      setTargetError('');
+      extra = { mode: 'ask', model: XROGA_REF, ...(destination ? { startUrl: destination } : {}) };
+    }
     // `/compact` compacts the conversation now, or at the next turn boundary of a run.
     if (text.trim() === '/compact') {
       if (state.conversationId) client.send({ type: 'compact', conversationId: state.conversationId });
@@ -313,10 +350,12 @@ export function App() {
       conversationId: state.conversationId,
       text,
       attachments: files.map(f => f.ref),
-      context: [
-        ...pendingTabs.map(p => ({ kind: 'tab' as const, tabId: p.tabId })),
-        ...quotes.map(q => ({ kind: 'selection' as const, ...q })),
-      ],
+      context: XROGA_PRODUCT
+        ? []
+        : [
+            ...pendingTabs.map(p => ({ kind: 'tab' as const, tabId: p.tabId })),
+            ...quotes.map(q => ({ kind: 'selection' as const, ...q })),
+          ],
       mode: extra.mode ?? mode,
       model: chosenModel,
       reasoning,
@@ -344,7 +383,12 @@ export function App() {
   const pinned = shortcuts.filter(s => s.pinned).slice(0, 3);
   const starters = pinned.length
     ? pinned.map(s => ({ key: s.id, label: s.description || `/${s.name}`, title: s.text, run: () => runShortcut(s) }))
-    : STARTERS.map(s => ({ key: s.label, label: t(s.label), title: t(s.text), run: () => sendMessage(t(s.text)) }));
+    : STARTERS.filter(s => !XROGA_PRODUCT || s.label !== 'panel.starter.star').map(s => ({
+        key: s.label,
+        label: t(s.label),
+        title: t(s.text),
+        run: () => sendMessage(t(s.text)),
+      }));
   const empty = !state.entries.length && !state.streaming;
 
   return (
@@ -360,7 +404,7 @@ export function App() {
           title={t('panel.website')}
           aria-label={t('panel.website')}
           className="ml-1 flex shrink-0 rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-nb-accent">
-          <LogoMark size={20} />
+          {XROGA_PRODUCT ? <img src="/xroga-icon.png" alt="" width="20" height="20" /> : <LogoMark size={20} />}
         </a>
         {/* The title is for screen readers only; the header shows the mark and three buttons. */}
         <h1 className="sr-only">{conversation?.title || t('panel.newChat')}</h1>
@@ -380,6 +424,60 @@ export function App() {
           <SettingsIcon />
         </IconButton>
       </header>
+      {XROGA_PRODUCT ? (
+        <div className="flex flex-col gap-2 border-b border-nb-border/60 px-3 py-2">
+          {paired ? (
+            <span className="text-xs text-nb-muted" role="status">
+              Workspace connected
+            </span>
+          ) : (
+            <button
+              type="button"
+              className="self-start rounded-md bg-nb-surface px-3 py-2 text-sm text-nb-fg"
+              onClick={() =>
+                void chrome.runtime.sendMessage({ type: 'xroga.browser.connect.v1' }).then(
+                  ok => setTargetError(ok ? '' : 'Could not open Workspace.'),
+                  () => setTargetError('Could not open Workspace.'),
+                )
+              }>
+              Connect Xroga Workspace
+            </button>
+          )}
+          <label className="flex flex-col gap-1 text-xs text-nb-muted">
+            Website or search
+            <input
+              value={target}
+              onChange={event => setTarget(event.target.value)}
+              disabled={active}
+              maxLength={1800}
+              placeholder="example.com or a search query"
+              className="rounded-md border border-nb-border bg-nb-bg p-2 text-sm text-nb-fg"
+            />
+          </label>
+          <button
+            type="button"
+            disabled={!target.trim() || !client || active}
+            className="self-start rounded-md border border-nb-border px-3 py-1 text-sm disabled:opacity-40"
+            onClick={() => {
+              const destination = browserTarget(target);
+              if (!destination || !client) {
+                setTargetError('Enter an HTTPS website or a search query.');
+                return;
+              }
+              void chrome.tabs.update(client.tabId, { url: destination }).then(
+                () => setTargetError(''),
+                () => setTargetError('Could not open the website.'),
+              );
+            }}>
+            Open website
+          </button>
+          {targetError ? (
+            <p role="alert" className="text-xs text-nb-muted">
+              {targetError}
+            </p>
+          ) : null}
+        </div>
+      ) : null}
       {confirmNewChat ? (
         <div className="flex items-center gap-2 border-b border-amber-200 bg-amber-50 px-3 py-1.5 text-xs text-amber-900 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-100">
           <span className="flex-1">{t('panel.newChatRunning')}</span>
@@ -415,16 +513,24 @@ export function App() {
       ) : (
         <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
           <div className="flex flex-1 flex-col items-center justify-center gap-3 p-6 text-center">
-            {state.loaded ? <LogoMark size={40} /> : null}
             {state.loaded ? (
-              <p className="max-w-xs text-[24px] font-normal leading-tight text-nb-fg">{t('panel.empty')}</p>
+              XROGA_PRODUCT ? (
+                <img src="/xroga-icon.png" alt="" width="40" height="40" />
+              ) : (
+                <LogoMark size={40} />
+              )
+            ) : null}
+            {state.loaded ? (
+              <p className="max-w-xs text-[24px] font-normal leading-tight text-nb-fg">
+                {XROGA_PRODUCT ? 'What should Xroga do in Chrome?' : t('panel.empty')}
+              </p>
             ) : (
               <p className="text-sm text-nb-muted">{t('panel.loading')}</p>
             )}
           </div>
           {/* With no model, the no-model card above the composer takes the quick start's place. */}
           {/* The quick start stays hidden while the What's new card shows. */}
-          {state.loaded && models.length && !whatsNew ? (
+          {state.loaded && models.length > 0 && (!XROGA_PRODUCT || paired) && !whatsNew ? (
             <ul className="flex flex-col items-start gap-2 px-3 pb-2" aria-label={t('panel.starters')}>
               {starters.map(s => (
                 <li key={s.key} className="max-w-full">
@@ -500,7 +606,7 @@ export function App() {
         mode={mode}
         model={model}
         models={models}
-        noModel={providersRead && !models.length}
+        noModel={XROGA_PRODUCT ? !paired : providersRead && !models.length}
         history={history}
         notice={
           <>
@@ -564,7 +670,7 @@ export function App() {
         onRemoveQuote={index => setQuotes(current => current.filter((_, i) => i !== index))}
         transcribe={transcribe}
         onOpenSettings={section => void chrome.tabs.create({ url: chrome.runtime.getURL(`/options.html#${section}`) })}
-        onAttach={list => void attach(list)}
+        onAttach={XROGA_PRODUCT ? undefined : list => void attach(list)}
         onScreenshot={() =>
           client?.send({ type: 'screenshot-tab', tabId: client.tabId, conversationId: state.conversationId })
         }
