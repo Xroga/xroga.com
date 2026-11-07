@@ -1,0 +1,11 @@
+Xroga Browser Automation
+
+The source includes Nanobrowser v0.3.0, from the Nanobrowser contributors.
+Upstream: https://github.com/nanobrowser/nanobrowser
+Revision: f1e912d7c9e859eec6638702be920c78a8eff0ea
+License: Apache License, Version 2.0. See LICENSE.
+
+Xroga modified the package metadata, dependency resolution, build configuration,
+and worker entrypoint. The default build packages Xroga's local-read panel
+and a status-only Workspace message handler. The upstream fixture build remains
+available for engineering verification.

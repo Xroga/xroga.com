@@ -8,7 +8,8 @@ import { fileURLToPath } from "node:url";
 const require = createRequire(import.meta.url);
 const { chromium } = require(process.argv[2] ? resolve(process.argv[2]) : "playwright");
 const chromeExecutable = process.argv[3];
-const extensionPath = fileURLToPath(new URL("../../chrome-extension", import.meta.url));
+const packaged = process.argv[4] === "--packaged";
+const extensionPath = fileURLToPath(new URL(packaged ? "../../apps/xroga-browser-extension/dist" : "../../chrome-extension", import.meta.url));
 const temporaryRoot = await realpath(tmpdir());
 const profile = await mkdtemp(join(temporaryRoot, "xroga-extension-"));
 let browser;
@@ -43,7 +44,8 @@ try {
   await browser.route(/^https?:\/\//, async (route) => {
     const url = new URL(route.request().url());
     requests.push(url.href);
-    if (url.origin === "https://xroga-fixture.test" || url.origin === "https://other-fixture.test") {
+    if (url.origin === "https://xroga-fixture.test" || url.origin === "https://other-fixture.test" ||
+        (packaged && url.origin === "https://xroga.com")) {
       await route.fulfill({ contentType: "text/html", body: fixture });
     } else {
       await route.abort();
@@ -126,8 +128,33 @@ try {
   assert.equal(await run.isVisible(), false);
   assert.deepEqual(new Set(requests.map((requestUrl) => new URL(requestUrl).origin)),
     new Set(["https://xroga-fixture.test", "https://other-fixture.test"]));
+  if (packaged) {
+    const manifest = await worker.evaluate(() => chrome.runtime.getManifest());
+    assert.equal(manifest.name, "Xroga Browser Automation");
+    assert.deepEqual([...manifest.permissions].sort(), ["activeTab", "scripting", "sidePanel"]);
+    assert.ok(!manifest.host_permissions?.length);
+    assert.equal(manifest.incognito, "not_allowed");
+    assert.match(manifest.content_security_policy.extension_pages, /connect-src 'none'/);
+
+    // All HTTPS requests are fulfilled or aborted locally, including this Workspace stand-in.
+    const detect = (page, type) => page.evaluate(({ extensionId, type }) => new Promise((done) => {
+      const runtime = globalThis.chrome?.runtime;
+      if (!runtime?.sendMessage) return done(null);
+      runtime.sendMessage(extensionId, { type }, (response) => {
+        const denied = runtime.lastError;
+        done(denied ? null : (response ?? null));
+      });
+    }), { extensionId: id, type });
+    await tab.goto("https://xroga.com/workspace?chat=test");
+    assert.deepEqual(await detect(tab, "xroga.browser.status.v1"), { protocol: 1, installed: true, paired: false });
+    assert.equal(await detect(tab, "xroga.browser.run"), null);
+    await tab.goto("https://xroga.com/workspace-lookalike");
+    assert.equal(await detect(tab, "xroga.browser.status.v1"), null);
+    await tab.goto("https://other-fixture.test/workspace");
+    assert.equal(await detect(tab, "xroga.browser.status.v1"), null);
+  }
   const { product } = await cdp.send("Browser.getVersion");
-  console.log(JSON.stringify({ result: "PASS", product, actualSidePanelOpened: true, browserAutomation: "isolated HTTPS fixture", modelCalls: 0, thirdPartyRequests: 0 }));
+  console.log(JSON.stringify({ result: "PASS", product, actualSidePanelOpened: true, browserAutomation: "isolated HTTPS fixture", workspaceDiscovery: packaged ? "passed on routed local fixture" : "not tested", modelCalls: 0, thirdPartyRequests: 0 }));
 } finally {
   try { await browser?.close(); }
   finally {
