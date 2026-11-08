@@ -14,7 +14,10 @@ const ROCKET = read('../components/icons/animated/RocketIcon.tsx');
 test('a compact control scrolls the unified sidebar without a full-height native thumb', () => {
   assert.match(NAV, /xv-sidebar-scroll-track/);
   assert.match(SCROLLER, /xv-nav-scroller/);
-  assert.match(SCROLLER, /CompactScrollIndicator[\s\S]*ChevronUp|ChevronUp[\s\S]*CompactScrollIndicator/);
+  assert.match(SCROLLER, /<CompactScrollIndicator targetRef=\{targetRef\} controlsId="xv-sidebar-navigation"/);
+  assert.match(SCROLLER, /role="scrollbar"/);
+  assert.match(SCROLLER, /event\.key === 'ArrowUp'[^\n]*scrollBy\(\{ top: -80 \}\)/);
+  assert.match(SCROLLER, /event\.key === 'ArrowDown'[^\n]*scrollBy\(\{ top: 80 \}\)/);
   assert.match(SCROLLER, /aria-controls=\{controlsId\}/);
   assert.match(GLOBAL, /xv-nav-scroll-progress/);
   assert.match(GLOBAL, /scrollbar-width: none !important/);
