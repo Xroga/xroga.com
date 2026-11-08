@@ -6,6 +6,7 @@ const read = (p: string) => readFileSync(new URL(p, import.meta.url), 'utf8');
 const NAV = read('../components/layout/Sidebar.tsx');
 const SCROLLER = read('../components/layout/SidebarNavScroller.tsx');
 const HISTORY = read('../components/layout/SidebarProjectHistory.tsx');
+const ACTION_MENU = read('../components/layout/SidebarActionMenu.tsx');
 const GLOBAL = read('../app/globals.css');
 const STYLES = read('../styles/uiverse.css');
 const CAPABILITIES = read('../components/dashboard/UpcomingCapabilitySection.tsx');
@@ -33,7 +34,9 @@ test('projects precede conditional pinned items and recents with account-scoped 
   assert.match(HISTORY, /xroga_sidebar_pins_v1:/);
   assert.match(HISTORY, /const accountId\s*=.*workspaceIdentity\.userId/);
   assert.match(HISTORY, /\{pinnedItems\.length>0\?<section/);
-  assert.match(HISTORY, /aria-label=\{saved\?'Unpin '\+label:'Pin '\+label\}/);
+  assert.match(HISTORY, /\{id:'pin',label:metaOf\(menu\.kind,menu\.id\)\?\.pin_order!=null\?'Unpin':'Pin'\}/);
+  assert.match(HISTORY, /if\(id==='pin'\)\{togglePin\(itemId,kind\);return;\}/);
+  assert.match(ACTION_MENU, /role="menuitem"[\s\S]*?<span>\{action\.label\}<\/span>/);
   assert.match(HISTORY, /changeSidebarMeta\(accountId,kind,id/);
   // PR836 explicitly includes pins in chronological Recents as well as Pinned.
   assert.match(HISTORY, /const recentConversations=activeItems;/);
