@@ -163,6 +163,7 @@ export function Composer({
   draft,
   onDraftUsed,
   onSend,
+  sendBlocked,
   onStop,
   onMode,
   onModel,
@@ -194,6 +195,7 @@ export function Composer({
   draft?: string;
   onDraftUsed?: () => void;
   onSend: (text: string) => void;
+  sendBlocked?: boolean;
   onStop: () => void;
   onMode: (mode: PermissionMode) => void;
   onModel: (model: ModelRef) => void;
@@ -386,6 +388,7 @@ export function Composer({
   }, [text]);
 
   const send = () => {
+    if (sendBlocked) return;
     const value = text.trim();
     if ((!value && !((files.length || quotes.length) && !active)) || !model) return;
     onSend(value);
@@ -656,7 +659,7 @@ export function Composer({
           ) : (
             <button
               type="button"
-              disabled={(!text.trim() && !files.length && !quotes.length) || !model}
+              disabled={sendBlocked || (!text.trim() && !files.length && !quotes.length) || !model}
               aria-label={t('composer.send')}
               title={t('composer.send')}
               className="flex size-7 shrink-0 items-center justify-center rounded-full bg-nb-accent text-white shadow-sm transition-colors hover:bg-nb-accent-strong disabled:opacity-40 disabled:shadow-none disabled:hover:bg-nb-accent"

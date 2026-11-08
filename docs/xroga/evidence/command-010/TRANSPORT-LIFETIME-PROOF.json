@@ -120,8 +120,8 @@
     }
   ],
   "counts": {
-    "total": 150,
-    "reviewed": 150,
+    "total": 155,
+    "reviewed": 155,
     "pending": 0,
     "unresolvedHighRiskReviewCandidates": 0
   },
@@ -215,7 +215,7 @@
     },
     {
       "path": "scripts/security/source-lifetime-bindings.test.mjs",
-      "sha256": "6c8352ce73e679c5be0cf5a01d598ac099bd8ad7348af4241f323d6f7f00740b",
+      "sha256": "7d3c3af8176a838c9b1f3de5e75630ca8c4d26e634d886ff8c0975d5157a9640",
       "previousGenericSdkBinding": {
         "reference": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
         "sha256": "71eaca46f240f51b1ac490fd9e137cafbe0d0423313991de7b1bc0f57e588bcb",
@@ -841,7 +841,7 @@
     },
     {
       "path": "backend/src/workers/browserCapability.ts",
-      "sha256": "7d2bab8d22905fdccca667481ce0be5c1a61ac799d0b117d098ce1768d0d5511",
+      "sha256": "f2a0fa5a5842e812a1ec600a2817c4b7394a8faf28873d8893a523d99bb78bb9",
       "beforeCurrentMainIntegration": {
         "sha256": "2b28ecd8b77c60677931c7303ea23e56a345fbb91f589ecfc5f6cce7cb3a4a28",
         "ref": "92043b72c20e5a12636dee079d760a1e5708b48f"
@@ -969,5 +969,12 @@
     "baseRef": "origin/main",
     "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
     "basis": "currentSourceBindings were re-bound to the branch sources after the egress register was re-verified call by call (REBIND-REPORT.json): every reviewed egress call hash is unchanged or manually reviewed, 149 of 149 reviewed, none pending. counts follow the regenerated egress inventory (one retired Gemini call). No acceptance is promoted."
+  },
+  "localChromeCurrentSourceReconciliation": {
+    "scope": "CURRENT_SOURCE_METADATA_NOT_NEW_SECURITY_ACCEPTANCE",
+    "previousProofSha256": "f7c19d49f9d3433032b7f5bc8a1489acbaab698e6e9b05953527cae38f4e1024",
+    "verifiedEgressCandidates": 155,
+    "guardChange": "Hosted browser execution rejects local Chrome runs before task or egress processing. Current model SDK caller was separately rebound.",
+    "workspacePortReview": "Five previously reviewed local Workspace port sends remain exact; the current source review binds those sends to the authenticated Workspace and existing API ownership fence."
   }
 }

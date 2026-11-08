@@ -28,7 +28,7 @@ Before activation, verify authenticated staging with two users, a real Zurelay r
 
 ### Issue #939 acceptance checkpoint
 
-Application source `89ef62ce` extends the existing Nanobrowser engine and canonical Workspace bridge. Pause leaves the original server run available. Chrome saves the final result before syncing it. If an action might already have gone through, recovery can inspect the site, but cannot repeat or dispatch another write in that run. Reopening or syncing does not reset the server's turn, time or spending limits.
+Application source `89ef62ce` extends the existing Nanobrowser engine and canonical Workspace bridge. Pause leaves the original server run available. Chrome saves the final result before syncing it. If an action might already have gone through, recovery can inspect the site, but cannot repeat or dispatch another write in that run. Reopening or syncing does not reset the server's turn, time or spending limits. The follow-up blocks sending, editing, restarting or retrying in the same conversation while a checkpoint is unresolved, and keeps the unsent draft intact.
 
 | Check | Status and evidence |
 | --- | --- |

@@ -559,7 +559,7 @@ export function App() {
           actions={
             state.conversationId && client
               ? {
-                  idle: !active,
+                  idle: !active && (!XROGA_PRODUCT || !['interrupted', 'capped'].includes(state.status)),
                   edit: (entryId, text) =>
                     startRun({ type: 'edit', conversationId: state.conversationId!, entryId, text }),
                   restart: entryId => startRun({ type: 'restart', conversationId: state.conversationId!, entryId }),
@@ -672,6 +672,7 @@ export function App() {
       />
       <Composer
         active={active}
+        sendBlocked={XROGA_PRODUCT && ['interrupted', 'capped'].includes(state.status)}
         mode={mode}
         model={model}
         models={models}

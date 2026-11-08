@@ -697,6 +697,11 @@ try {
     recovery.release();
     assert.deepEqual(recovery.ordinals, [1, 2, 3]);
     assert.equal(recovery.result, undefined);
+    await input.fill("Keep this draft until the checkpoint is resolved.");
+    await input.press("Enter");
+    assert.equal(await input.inputValue(), "Keep this draft until the checkpoint is resolved.");
+    assert.deepEqual(recovery.ordinals, [1, 2, 3]);
+    await input.fill("");
     await resume.click();
     await panel.getByText("Task saved locally. Resume to sync the result without rerunning any action.", { exact: true }).waitFor({ timeout: 25_000 }).catch(async error => {
       console.error("Recovery fixture state:", JSON.stringify({ ordinals: recovery.ordinals, finishAttempts: recovery.finishAttempts, events: await workspace.evaluate(() => window.events.slice(-12)), panel: (await panel.locator('body').innerText()).slice(-1200) }));

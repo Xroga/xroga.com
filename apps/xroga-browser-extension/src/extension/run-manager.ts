@@ -914,16 +914,12 @@ export class RunManager {
     let conversation: Conversation | undefined;
     if (command.conversationId) {
       conversation = await getConversation(command.conversationId);
-      if (XROGA_PRODUCT && conversation && !this.#runs.has(conversation.id)) {
-        const run = await getRun(conversation.id);
-        if (run?.canonicalBrowserRunId && ['interrupted', 'capped', 'awaiting_user'].includes(run.status)) {
-          this.journal.direct(conversation.id, connection.sink, {
-            type: 'error',
-            message: 'Resume or stop the saved task before sending another message in this conversation.',
-          });
-          return;
-        }
-      }
+      if (
+        conversation &&
+        !this.#runs.has(conversation.id) &&
+        !(await this.#canReplaceCheckpoint(connection, conversation.id))
+      )
+        return;
       if (conversation && !(await this.#takeUp(connection, conversation.id))) return;
     }
     if (!conversation) {
@@ -1059,6 +1055,7 @@ export class RunManager {
       this.journal.direct(conversationId, connection.sink, { type: 'error', message: 'run.stopFirst' });
       return;
     }
+    if (!(await this.#canReplaceCheckpoint(connection, conversationId))) return;
     if (!(await this.#takeUp(connection, conversationId))) return;
     const branch = await activeBranch(conversationId);
     const userMessages = branch.filter(
@@ -1083,6 +1080,17 @@ export class RunManager {
     }
     this.emit(conversationId, await this.snapshot(conversationId));
     this.#launch(conversationId);
+  }
+
+  async #canReplaceCheckpoint(connection: PanelConnection, conversationId: string): Promise<boolean> {
+    if (!XROGA_PRODUCT) return true;
+    const run = await getRun(conversationId);
+    if (!run?.canonicalBrowserRunId || !['interrupted', 'capped', 'awaiting_user'].includes(run.status)) return true;
+    this.journal.direct(conversationId, connection.sink, {
+      type: 'error',
+      message: 'Resume or stop the saved task before starting another run in this conversation.',
+    });
+    return false;
   }
 
   #deliverSelections(connection: PanelConnection, tabId: number): void {
