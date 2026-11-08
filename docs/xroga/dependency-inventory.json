@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "fc9938a7effd4f7fd8e4c6237fb8914f9a8c593c",
+  "source_sha": "d53c5f82f18263eb8f18e0683af5ea6abda80e41",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -91,6 +91,8 @@
         "GITHUB_SHA",
         "NODE_ENV",
         "PORT",
+        "XROGA_LOCAL_BROWSER_ALLOWED_USER_IDS",
+        "XROGA_LOCAL_BROWSER_ENABLED",
         "XROGA_PLATFORM_CONFIG_FILE",
         "XROGA_RELEASE_SHA"
       ],
@@ -8168,6 +8170,7 @@
         "backend/src/routes/businessAutomationWebhook.ts",
         "backend/src/routes/existingSource.ts",
         "backend/src/routes/guestChat.ts",
+        "backend/src/routes/localBrowser.ts",
         "backend/src/runtime/readiness.ts",
         "backend/src/runtime/startupPolicy.ts",
         "backend/src/sandbox/containerCancellation.local.integration.ts",
@@ -8331,6 +8334,7 @@
         "XROGA_GITHUB_BOT_EMAIL",
         "XROGA_GITHUB_BOT_NAME",
         "XROGA_LEGACY_CREDENTIAL_MIGRATION",
+        "XROGA_LOCAL_BROWSER_MAX_TURNS",
         "XROGA_MAX_REPAIR_ATTEMPTS",
         "XROGA_OCI_KMS_AUTH_MODE",
         "XROGA_OCI_KMS_ENDPOINT",
@@ -8396,6 +8400,7 @@
         "backend/src/routes/businessAutomationWebhook.ts",
         "backend/src/routes/existingSource.ts",
         "backend/src/routes/guestChat.ts",
+        "backend/src/routes/localBrowser.ts",
         "backend/src/runtime/readiness.ts",
         "backend/src/runtime/startupPolicy.ts",
         "backend/src/sandbox/containerCancellation.local.integration.ts",
@@ -11299,6 +11304,7 @@
         "backend/src/builder/qa/playwrightQaDriver.ts",
         "backend/src/index.ts",
         "backend/src/routes/github.ts",
+        "backend/src/routes/localBrowser.ts",
         "backend/src/runtime/startupPolicy.ts",
         "backend/src/sandbox/sandboxProviders.ts",
         "backend/src/scripts/runCanonicalWorker.ts",
@@ -15007,6 +15013,63 @@
       ]
     },
     {
+      "name": "XROGA_LOCAL_BROWSER_ALLOWED_USER_IDS",
+      "consuming_sources": [
+        "backend/src/routes/localBrowser.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "api"
+      ]
+    },
+    {
+      "name": "XROGA_LOCAL_BROWSER_ENABLED",
+      "consuming_sources": [
+        "backend/src/routes/localBrowser.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "api"
+      ]
+    },
+    {
+      "name": "XROGA_LOCAL_BROWSER_MAX_TURNS",
+      "consuming_sources": [
+        "backend/src/routes/localBrowser.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
       "name": "XROGA_MAX_REPAIR_ATTEMPTS",
       "consuming_sources": [
         "backend/src/ai/routerConfig.ts"
@@ -16405,7 +16468,7 @@
     },
     {
       "path": ".github/workflows/unit-tests.yml",
-      "sha256": "60d2f50de15081db9d42b125c4feb8229b9a809a316c88c0b3234a8c1652b84a"
+      "sha256": "eace08930be9fc40e3a163ca2d6de09890574f648a93dfa8c7106f89c140a822"
     },
     {
       "path": ".github/workflows/vercel-build-check.yml",
@@ -17617,7 +17680,7 @@
     },
     {
       "path": "backend/src/index.ts",
-      "sha256": "b062ce27a40145f293271908a325c44f740dd62d457b7c5be830acf2eb32b7c6"
+      "sha256": "986e8a7b52876f2f199ad815a89fd7c867a291121431bd8a0fb9b6f7d264df37"
     },
     {
       "path": "backend/src/lib/adaptiveOrchestrator.ts",
@@ -18056,6 +18119,10 @@
       "sha256": "a7ab9896df1a729f603a742a1951fd81357562d86ed289bcce64deca45a75f15"
     },
     {
+      "path": "backend/src/routes/browserDocuments.ts",
+      "sha256": "52b4445687ccae287d6c84bfefac85c463400915c5857c7d70f4b9a9a5cddfe3"
+    },
+    {
       "path": "backend/src/routes/browserRunInternal.ts",
       "sha256": "57042021416e917aa7256dadf11fa9d2c68c0520db0b0bc0255be9af35ba5ea1"
     },
@@ -18142,6 +18209,10 @@
     {
       "path": "backend/src/routes/integrations.ts",
       "sha256": "e6aab8dfd7f534aeb38932151f6ef807eb71447e4bc2b538e6d01b0585905a21"
+    },
+    {
+      "path": "backend/src/routes/localBrowser.ts",
+      "sha256": "873a0c1ae4876e25462a9b9e18772d456ee3334fd5e5dd4492e0775b3427d019"
     },
     {
       "path": "backend/src/routes/marketplace.ts",
@@ -19525,7 +19596,7 @@
     },
     {
       "path": "backend/src/workers/browserCapability.ts",
-      "sha256": "7d2bab8d22905fdccca667481ce0be5c1a61ac799d0b117d098ce1768d0d5511"
+      "sha256": "f2a0fa5a5842e812a1ec600a2817c4b7394a8faf28873d8893a523d99bb78bb9"
     },
     {
       "path": "backend/src/workers/browserCoordinator.ts",
@@ -19541,7 +19612,7 @@
     },
     {
       "path": "backend/src/workers/browserModelDispatch.ts",
-      "sha256": "ffdf4df315ade2befc0aef670ab28bb3eab812b1ca3ec085b2e81b9761b7ce49"
+      "sha256": "e113109ead824127c843bc27b7d07119fda3fae8e4ec0ddefd1abc177b79a63e"
     },
     {
       "path": "backend/src/workers/browserModelGateway.ts",
@@ -19565,7 +19636,7 @@
     },
     {
       "path": "backend/src/workers/browserRunStore.ts",
-      "sha256": "75054d2fd6ba5b567ea9f49a7c08027ed48c5149f00cc48b1b79eca32d935f86"
+      "sha256": "b3401b95677a25a74a1e964237c4a22d281e8c27da72fee9693e83557abca71f"
     },
     {
       "path": "backend/src/workers/browserTaskHandler.ts",
@@ -23793,7 +23864,7 @@
     },
     {
       "path": "scripts/xroga/runtime-facts.mjs",
-      "sha256": "4eabe36ba552b7e1e84d6a8004e33d66aa4af3adca49032a4757705ef277c1bd"
+      "sha256": "a722847267f4078221bc47f833104b9fe04baa1818ae383ce0e2c3b1720f7d9d"
     },
     {
       "path": "scripts/xroga/runtime-inventory.mjs",
@@ -25211,42 +25282,42 @@
       "hostname": "localhost",
       "protocol": "http:",
       "path": "backend/src/index.ts",
-      "line": 116,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "xroga.com",
-      "protocol": "https:",
-      "path": "backend/src/index.ts",
       "line": 117,
       "credentialsInUrl": false
     },
     {
-      "hostname": "www.xroga.com",
+      "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/index.ts",
       "line": 118,
       "credentialsInUrl": false
     },
     {
-      "hostname": "xrogaaicom.vercel.app",
+      "hostname": "www.xroga.com",
       "protocol": "https:",
       "path": "backend/src/index.ts",
       "line": 119,
       "credentialsInUrl": false
     },
     {
-      "hostname": "xroga-api.fly.dev",
+      "hostname": "xrogaaicom.vercel.app",
       "protocol": "https:",
       "path": "backend/src/index.ts",
       "line": 120,
       "credentialsInUrl": false
     },
     {
+      "hostname": "xroga-api.fly.dev",
+      "protocol": "https:",
+      "path": "backend/src/index.ts",
+      "line": 121,
+      "credentialsInUrl": false
+    },
+    {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/index.ts",
-      "line": 212,
+      "line": 213,
       "credentialsInUrl": false
     },
     {
@@ -34919,6 +34990,13 @@
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
+      "path": "backend/src/routes/browserDocuments.ts",
+      "line": 25,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
       "path": "backend/src/routes/capabilities.ts",
       "line": 46,
       "scope": "MODULE_LIFETIME",
@@ -37188,7 +37266,7 @@
     },
     {
       "path": "backend/src/workers/browserRunStore.ts",
-      "line": 75,
+      "line": 76,
       "scope": "INSTANCE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
