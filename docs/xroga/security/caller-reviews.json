@@ -27762,7 +27762,7 @@
     },
     {
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "sourceSha256": "403def6e0480eb4371f4c73261063c46af91996a8287e7722609c89d6e6ac237",
+      "sourceSha256": "d8246759c9fbbfa5a8a6705b9e1c293653dedf444c407a3eafc4a3f396a389e5",
       "callIds": [
         "a291f26c3c5001de01f9"
       ],
@@ -27787,7 +27787,7 @@
     },
     {
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "sourceSha256": "403def6e0480eb4371f4c73261063c46af91996a8287e7722609c89d6e6ac237",
+      "sourceSha256": "d8246759c9fbbfa5a8a6705b9e1c293653dedf444c407a3eafc4a3f396a389e5",
       "callIds": [
         "f8d5eaf0193282882763"
       ],

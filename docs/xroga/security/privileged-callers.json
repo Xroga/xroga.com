@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "7868c9afd3f271ed360635a6b7500b8178a2fb001bb2edbfa9731c2bf2b3469e",
+  "reviewRegistrySha256": "a428fe6764aaa7649ca8bc5f997a9e72b68ea8614b3c6f02edeabef39cc49e32",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -6320,7 +6320,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "8c71dcb20bf264df90bc"
+        "id": "200b04668ca02c97dfca"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -6332,11 +6332,11 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "6797a49e98ecf2091511"
+        "id": "72fcd2f98bbf5fa3e447"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "4fbfd0293636c69d00b0"
+        "id": "3fa4df917ef4142684ec"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -7136,15 +7136,15 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "8c71dcb20bf264df90bc"
+        "id": "200b04668ca02c97dfca"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "6797a49e98ecf2091511"
+        "id": "72fcd2f98bbf5fa3e447"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "4fbfd0293636c69d00b0"
+        "id": "3fa4df917ef4142684ec"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -31296,26 +31296,26 @@
       }
     },
     {
-      "id": "8c71dcb20bf264df90bc",
+      "id": "200b04668ca02c97dfca",
       "path": "frontend/src/components/layout/SidebarActionMenu.tsx",
-      "line": 36,
+      "line": 39,
       "enclosing": "SidebarActionMenu",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "017f18809ddcdcd868d74ad5b3e2f82ac2ced4b25a89c6bea904ace8b79204e8"
+      "sourceSha256": "758c6b8ac88bfbe790153c848b33ad90ce5a29a9d848c38fa3389d48adae35a1"
     },
     {
       "id": "a291f26c3c5001de01f9",
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 605,
+      "line": 606,
       "enclosing": "SidebarProjectHistory",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "403def6e0480eb4371f4c73261063c46af91996a8287e7722609c89d6e6ac237",
+      "sourceSha256": "d8246759c9fbbfa5a8a6705b9e1c293653dedf444c407a3eafc4a3f396a389e5",
       "semanticReview": {
         "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in SidebarProjectHistory, with no database or Storage client receiver.",
         "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
@@ -31330,13 +31330,13 @@
     {
       "id": "f8d5eaf0193282882763",
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 842,
+      "line": 843,
       "enclosing": "SidebarProjectHistory",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "403def6e0480eb4371f4c73261063c46af91996a8287e7722609c89d6e6ac237",
+      "sourceSha256": "d8246759c9fbbfa5a8a6705b9e1c293653dedf444c407a3eafc4a3f396a389e5",
       "semanticReview": {
         "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in SidebarProjectHistory, with no database or Storage client receiver.",
         "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
@@ -31349,26 +31349,26 @@
       }
     },
     {
-      "id": "6797a49e98ecf2091511",
+      "id": "72fcd2f98bbf5fa3e447",
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 1110,
+      "line": 1134,
       "enclosing": "saveEditor",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "projects",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "403def6e0480eb4371f4c73261063c46af91996a8287e7722609c89d6e6ac237"
+      "sourceSha256": "d8246759c9fbbfa5a8a6705b9e1c293653dedf444c407a3eafc4a3f396a389e5"
     },
     {
-      "id": "4fbfd0293636c69d00b0",
+      "id": "3fa4df917ef4142684ec",
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 1130,
+      "line": 1154,
       "enclosing": "saveEditor",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "xroga_sidebar_items",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "403def6e0480eb4371f4c73261063c46af91996a8287e7722609c89d6e6ac237"
+      "sourceSha256": "d8246759c9fbbfa5a8a6705b9e1c293653dedf444c407a3eafc4a3f396a389e5"
     },
     {
       "id": "92e2f9e84b8b9d7515b1",
