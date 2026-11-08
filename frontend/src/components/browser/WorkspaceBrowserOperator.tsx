@@ -133,21 +133,10 @@ export function WorkspaceBrowserOperator({ extensionId }: { extensionId?: string
       const connected = runtime.connect(extensionId, { name: 'xroga-browser-v1' });
       port = connected;
       pairedToken.current = token;
-      const { data: { subscription } } = createClient().auth.onAuthStateChange((event, next) => {
-        if (event === 'SIGNED_OUT' || (next?.user.id && next.user.id !== session.account)) {
-          pairedToken.current = '';
-          portRef.current = null;
-          setGoal('');
-          setStartUrl('');
-          setFiles([]);
-          for (const request of requests.values()) request.abort();
-          connected.disconnect();
-        }
-        else if (next?.user.id === session.account) pairedToken.current = next.access_token;
-      });
-      stopAuthListener = () => subscription.unsubscribe();
-      const send = (message: unknown) => { if (!disposed) { try { connected.postMessage(message); } catch { /* port closed */ } } };
-      connected.onDisconnect.addListener(() => {
+      let closed = false;
+      const clearConnection = () => {
+        if (closed) return;
+        closed = true;
         for (const request of requests.values()) request.abort();
         if (disposed) return;
         portRef.current = null;
@@ -161,9 +150,24 @@ export function WorkspaceBrowserOperator({ extensionId }: { extensionId?: string
         setActiveTool('');
         setResult('');
         if (!rejected) setStatus('Workspace disconnected. Connect again from the Chrome side panel.');
+      };
+      connected.onDisconnect.addListener(clearConnection);
+      const { data: { subscription } } = createClient().auth.onAuthStateChange((event, next) => {
+        if (closed || disposed) return;
+        if (event === 'SIGNED_OUT' || (next?.user.id && next.user.id !== session.account)) {
+          setGoal('');
+          setStartUrl('');
+          setFiles([]);
+          clearConnection();
+          connected.disconnect();
+        } else if (next?.user.id === session.account) {
+          pairedToken.current = next.access_token;
+        }
       });
+      stopAuthListener = () => subscription.unsubscribe();
+      const send = (message: unknown) => { if (!disposed && !closed) { try { connected.postMessage(message); } catch { /* port closed */ } } };
       connected.onMessage.addListener(message => {
-        if (disposed || !message || typeof message !== 'object') return;
+        if (disposed || closed || !message || typeof message !== 'object') return;
         if (message.type === 'pair-rejected' && message.status === 'account') {
           rejected = true;
           setStatus('This Chrome profile is linked to another Xroga account. Use a separate Chrome profile.');

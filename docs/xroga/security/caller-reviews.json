@@ -29120,10 +29120,10 @@
     },
     {
       "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
-      "sourceSha256": "2500a1f07a78f43f9ebee385642fac97743777253c045bce71eed6bf51002d9a",
+      "sourceSha256": "9a970ad831e3085d51dacae2ac200470a4a220400add4326a5d0fec5f51b55e4",
       "callIds": [
-        "a9e89dea32df3eb8a0b5",
-        "db86c426bed33eedc7ee"
+        "9a1aa074201d15f0e9b0",
+        "aeed73270fbd285f4446"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the exact receiver and complete expression. It is a built-in JavaScript data conversion with no persistence client or privilege transfer.",
