@@ -21,6 +21,7 @@ import { HomepageWorkspaceTour } from '@/components/homepage/HomepageWorkspaceTo
 import { AiAppBuilderPrompt } from './AiAppBuilderPrompt';
 import { AiAppBuilderWatercolor } from './AiAppBuilderWatercolor';
 import { AiAppBuilderFeatureTabs } from './AiAppBuilderFeatureTabs';
+import { AiAppBuilderSeoContent } from './AiAppBuilderSeoContent';
 import heroStyles from './AiAppBuilderHero.module.css';
 
 import type { CapabilityPageData } from '@/lib/capabilityPages';
@@ -119,6 +120,7 @@ export function AiAppBuilderLanding({
   />
 
   <div className="xab-shell xab-hero__body">
+          <p className="xab-hero__kicker">Free AI App Builder · Build, Test &amp; Launch</p>
           <h1 className="xab-hero__title">
             Describe an app.{' '}
             <span className="xab-accent">
@@ -156,8 +158,8 @@ export function AiAppBuilderLanding({
                 className="xab-h2"
                 id="xab-platform-heading"
               >
-                Design, build, and ship with AI
-                at the core
+                Build apps with AI. Test, connect,
+                and prepare to launch.
               </h2>
 
               <p className="xab-blue__lede">
@@ -460,6 +462,8 @@ export function AiAppBuilderLanding({
           </ScrollReveal>
         </div>
       </section>
+
+      <AiAppBuilderSeoContent />
 
       {/* =========================================================
           LIMITATIONS / CONTROL
