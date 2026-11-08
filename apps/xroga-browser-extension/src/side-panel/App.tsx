@@ -34,6 +34,7 @@ import { useShortcuts } from '@src/ui/shortcuts';
 import { AutoNotice } from '@src/ui/auto-notice';
 import { HistoryIcon, LogoMark, NewChatIcon, SettingsIcon } from '@src/ui/icons';
 import { websiteUrl } from '@src/ui/links';
+import { Plugins } from './Plugins';
 import { XROGA_PRODUCT } from '@src/xroga/product';
 import { XROGA_REF } from '@src/xroga/model';
 import { WORKSPACE_ENVIRONMENT } from '@src/xroga/workspace';
@@ -165,6 +166,8 @@ export function App() {
   /** A message held back because it looks like a card number. */
   const [held, setHeld] = useState<string | null>(null);
   /** Tabs picked with @ before the conversation exists; shared with the first message. */
+  const [pluginsOpen, setPluginsOpen] = useState(false);
+  const [stayOnTabFor, setStayOnTabFor] = useState<string>();
   const [pendingTabs, setPendingTabs] = useState<Array<{ tabId: number; title: string }>>([]);
   const [confirmNewChat, setConfirmNewChat] = useState(false);
   /** Text to put back into the composer: queued messages returned on Stop, or one taken back to edit. */
@@ -426,12 +429,10 @@ export function App() {
       conversationId: state.conversationId,
       text,
       attachments: files.map(f => f.ref),
-      context: XROGA_PRODUCT
-        ? []
-        : [
-            ...pendingTabs.map(p => ({ kind: 'tab' as const, tabId: p.tabId })),
-            ...quotes.map(q => ({ kind: 'selection' as const, ...q })),
-          ],
+      context: [
+        ...pendingTabs.map(p => ({ kind: 'tab' as const, tabId: p.tabId })),
+        ...(!XROGA_PRODUCT ? quotes.map(q => ({ kind: 'selection' as const, ...q })) : []),
+      ],
       mode: extra.mode ?? mode,
       model: chosenModel,
       reasoning,
@@ -654,6 +655,22 @@ export function App() {
         prompts={state.prompts}
         answer={(promptId, answer) => client?.send({ type: 'answer', promptId, answer })}
       />
+      {XROGA_PRODUCT && active && state.conversationId ? (
+        <div className="flex flex-wrap items-center gap-2 px-3 pb-1 text-xs text-nb-muted">
+          <button type="button" aria-pressed={stayOnTabFor !== state.conversationId}
+            className="rounded px-1 py-0.5 hover:bg-nb-surface"
+            onClick={() => {
+              if (!state.conversationId) return;
+              const follow = stayOnTabFor === state.conversationId;
+              setStayOnTabFor(follow ? undefined : state.conversationId);
+              client?.send({ type: 'follow-agent', conversationId: state.conversationId, follow });
+            }}>{stayOnTabFor === state.conversationId ? 'Stay on current tab' : 'Follow agent'}</button>
+          <button type="button" className="rounded px-1 py-0.5 underline hover:bg-nb-surface"
+            onClick={() => state.conversationId && client?.send({ type: 'jump-agent', conversationId: state.conversationId })}>
+            Jump to task tab
+          </button>
+        </div>
+      ) : null}
       <RunBar
         status={state.status}
         reason={state.reason}
@@ -682,14 +699,16 @@ export function App() {
         }
       />
       <TabBar
-        tabs={state.conversationId ? state.tabs : pendingTabs.map(p => ({ ...p, url: '', origin: 'user' as const }))}
+        tabs={XROGA_PRODUCT || !state.conversationId ? pendingTabs.map(p => ({ ...p, url: '', origin: 'user' as const })) : state.tabs}
         onUnshare={tabId => {
-          if (state.conversationId) client?.send({ type: 'unshare-tab', conversationId: state.conversationId, tabId });
+          if (!XROGA_PRODUCT && state.conversationId) client?.send({ type: 'unshare-tab', conversationId: state.conversationId, tabId });
           else setPendingTabs(tabs => tabs.filter(p => p.tabId !== tabId));
         }}
       />
+      {XROGA_PRODUCT ? <Plugins open={pluginsOpen} onOpenChange={setPluginsOpen} /> : null}
       <Composer
         active={active}
+        onPlugins={XROGA_PRODUCT ? () => setPluginsOpen(true) : undefined}
         sendBlocked={XROGA_PRODUCT && ['interrupted', 'capped'].includes(state.status)}
         mode={mode}
         model={model}
@@ -763,9 +782,9 @@ export function App() {
           client?.send({ type: 'screenshot-tab', tabId: client.tabId, conversationId: state.conversationId })
         }
         onRemoveFile={id => setFiles(current => current.filter(f => f.ref.id !== id))}
-        sharedTabs={[client?.tabId ?? -1, ...state.tabs.map(x => x.tabId), ...pendingTabs.map(p => p.tabId)]}
+        sharedTabs={[client?.tabId ?? -1, ...(!XROGA_PRODUCT ? state.tabs.map(x => x.tabId) : []), ...pendingTabs.map(p => p.tabId)]}
         onShareTab={tab => {
-          if (state.conversationId)
+          if (!XROGA_PRODUCT && state.conversationId)
             client?.send({ type: 'share-tab', conversationId: state.conversationId, tabId: tab.tabId });
           else setPendingTabs(tabs => [...tabs, tab]);
         }}

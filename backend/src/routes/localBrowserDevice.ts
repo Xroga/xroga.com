@@ -130,10 +130,11 @@ export function createLocalBrowserAuth(db = database, configured = browserDevice
     if (!req.headers.authorization?.startsWith('Bearer xroga_browser_')) return authMiddleware(req, res, next);
     const extensionId = configured();
     const taskPath = /^\/runs\/[0-9a-f-]{36}$/i;
-    const taskAction = /^\/runs\/[0-9a-f-]{36}\/(?:turn|resume|finish)$/i;
-    const permitted = (req.method === 'GET' && (req.path === '/session' || taskPath.test(req.path)))
+    const taskAction = /^\/runs\/[0-9a-f-]{36}\/(?:turn|resume|finish|plugin-search|plugin-read|plugin-review)$/i;
+    const pluginGet = /^\/plugins\/(?:catalog|connected|details\/[a-z0-9_-]{2,80})$/i;
+    const permitted = (req.method === 'GET' && (req.path === '/session' || taskPath.test(req.path) || pluginGet.test(req.path)))
       || (req.method === 'DELETE' && taskPath.test(req.path))
-      || (req.method === 'POST' && (req.path === '/runs' || req.path === '/documents' || taskAction.test(req.path)));
+      || (req.method === 'POST' && (req.path === '/runs' || req.path === '/documents' || req.path === '/plugins/link' || taskAction.test(req.path)));
     res.set('Cache-Control', 'no-store');
     if (!extensionId || !permitted || !bearer || !accessPattern.test(bearer) || !sameOrigin(req, extensionId)) {
       return res.status(401).json({ error: 'BROWSER_DEVICE_AUTH_REQUIRED' });

@@ -71,6 +71,8 @@ export type PanelCommand =
   | { type: 'delete'; conversationId: string; closeAgentTabs?: boolean }
   /** Export as Markdown: answered with an `export` event to this panel. */
   | { type: 'export'; conversationId: string }
+  | { type: 'follow-agent'; conversationId: string; follow: boolean }
+  | { type: 'jump-agent'; conversationId: string }
   | { type: 'share-tab' | 'unshare-tab'; conversationId: string; tabId: number }
   /** "Screenshot of this tab": taken through the layer, answered with an `attached` event. */
   | { type: 'screenshot-tab'; tabId: number; conversationId: string | null }
@@ -141,7 +143,7 @@ export type DisplayEntry =
 
 export interface OpenPrompt {
   id: string;
-  kind: 'write-card' | 'handover' | 'ask-takeover' | 'ask-input' | 'save-file' | 'confirm';
+  kind: 'write-card' | 'handover' | 'ask-takeover' | 'ask-input' | 'save-file' | 'confirm' | 'plugin-read';
   conversationId: string;
   tabId?: number;
   /** Everything the card shows; fixed titles and lines are the panel's own strings. */

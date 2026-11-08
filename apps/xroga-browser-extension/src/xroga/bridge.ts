@@ -21,7 +21,8 @@ interface WorkspaceMessage {
   value?: unknown;
 }
 
-type Operation = 'start' | 'resume' | 'turn' | 'finish' | 'document' | 'voice' | 'authorize-device';
+type Operation = 'start' | 'resume' | 'turn' | 'finish' | 'document' | 'voice' | 'authorize-device'
+  | 'plugin-search' | 'plugin-read' | 'plugin-review';
 type Pending = { succeed: (value: unknown) => void; fail: (error: Error) => void };
 type PairFailure = 'sign-in' | 'unavailable' | 'extension-id' | 'account' | 'failed';
 let pairing: { nonce: string; tabId: number; expires: number; started: number } | undefined;
@@ -144,6 +145,27 @@ export function listenForWorkspace(
     (message: { type?: string; name?: unknown; base64?: unknown; automatic?: boolean }, sender, reply) => {
       if (!panelSender(sender)) return;
       if (message?.type === STATUS) reply(workspacePaired());
+      if (message?.type === 'xroga.browser.plugins.v1') {
+        const input = message as typeof message & { op?: string; toolkit?: unknown; search?: unknown; cursor?: unknown };
+        void (async () => {
+          const device = await savedDevice();
+          if (!device || signingOut) return reply({ error: 'Sign in to Xroga to use plugins.' });
+          if (input.op === 'catalog') {
+            const query = new URLSearchParams();
+            if (typeof input.search === 'string') query.set('search', input.search.slice(0, 120));
+            if (typeof input.cursor === 'string') query.set('cursor', input.cursor.slice(0, 1000));
+            return reply(await deviceRequest(device, '/plugins/catalog?' + query.toString(), 'GET'));
+          }
+          if (input.op === 'connected') return reply(await deviceRequest(device, '/plugins/connected', 'GET'));
+          if (typeof input.toolkit === 'string' && /^[a-z0-9_-]{2,80}$/i.test(input.toolkit)) {
+            if (input.op === 'details') return reply(await deviceRequest(device, '/plugins/details/' + input.toolkit, 'GET'));
+            if (input.op === 'link') return reply(await deviceRequest(device, '/plugins/link', 'POST', { toolkit: input.toolkit }));
+          }
+          return reply({ error: 'Invalid plugin request.' });
+        })().catch(error => reply({ error: error?.code === 'BROWSER_PLUGIN_NOT_CONFIGURED'
+          ? 'Plugins are not configured on this release.' : 'Xroga could not load plugins. Check your connection and retry.' }));
+        return true;
+      }
       if (message?.type === 'xroga.browser.sign-out.v1' && deviceMode && !enrolling && !signingOut) {
         signingOut = true;
         void (async () => {
@@ -423,6 +445,9 @@ export async function workspaceRequest(op: Operation, value: unknown, signal?: A
       if (op !== 'start' && op !== 'document' && (!runId || !UUID.test(runId))) throw new Error('Invalid Xroga run.');
       return deviceRequest(device, path, 'POST', op === 'start' ? value : body, signal);
     }
+  }
+  if (op === 'plugin-search' || op === 'plugin-read' || op === 'plugin-review') {
+    throw new Error('Sign in to the Xroga extension to use connected apps.');
   }
   return relayRequest(op, value, signal);
 }

@@ -52,6 +52,7 @@ export async function startXrogaModelRun(
     turns?: number;
     maxTurns?: number;
     remainingMs?: number;
+    plugins?: boolean;
   };
   if (typeof start?.runId !== 'string' || !/^[0-9a-f-]{36}$/i.test(start.runId)) {
     throw new Error('Xroga did not admit the browser task.');
@@ -116,6 +117,7 @@ export async function startXrogaModelRun(
   return {
     runId,
     model,
+    plugins: start.plugins === true,
     remainingTurns,
     remainingMs,
     get requestInterrupted() {

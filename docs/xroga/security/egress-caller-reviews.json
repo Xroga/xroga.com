@@ -195,7 +195,7 @@
     {
       "id": "038ced12b0f74e8d5e0f",
       "callSha256": "bbbf26a58be8e30ace8fcfaac921075adab2a85ca44b5d5b7c9f48a7ec48c8f3",
-      "sourceFileSha256": "c159e3bd321637cc26214829ed36bca439a102e91983e6fd93fcbee36ef61544",
+      "sourceFileSha256": "3f76245300704d1efb1461cd7a30e52dfc7495e96471e174cbfddb9a9e3acfc9",
       "disposition": "REVIEWED_FIXED_DEPENDENCY",
       "trust": "FIXED_PROVIDER_ENDPOINT_AND_NO_REDIRECT_ONLY_NOT_DNS_OR_FULL_EGRESS_CERTIFICATION",
       "tenantAuthority": "THREE_UPSTREAM_SDK_TENANT_ACCOUNT_AUTHORITY_AND_DATA_OBLIGATIONS_REMAIN_PENDING",
@@ -635,7 +635,7 @@
     {
       "id": "31380a8d5b9454a98a98",
       "callSha256": "8e82b633686ef353d4c6db063a70a5772fcf9350245bec5da9d8d86dc9cc769a",
-      "sourceFileSha256": "c159e3bd321637cc26214829ed36bca439a102e91983e6fd93fcbee36ef61544",
+      "sourceFileSha256": "3f76245300704d1efb1461cd7a30e52dfc7495e96471e174cbfddb9a9e3acfc9",
       "disposition": "VERIFIED_GUARD",
       "trust": "SHARED_JSON_SDK_DISPATCH_AND_ACCOUNTING_ONLY_NOT_UPSTREAM_PROVENANCE_OR_TOOL_CERTIFICATION",
       "tenantAuthority": "PRIVATE_REQUEST_ADMISSION_FROM_CANONICAL_TENANT_OR_OPERATIONS_RESERVATION_OR_EXISTING_BOUNDED_ANONYMOUS_GUEST_LEASE_EACH_WIRE_RECHECKS_CURRENT_BINDING_COMPLETION_REQUIRES_SETTLEMENT_AND_ATOMIC_RECEIPT_OR_VERIFIED_CONSERVATIVE_GUEST_BUDGET_NO_RAW_ID_OR_CALLBACK_AUTHORITY",
@@ -724,7 +724,7 @@
     {
       "id": "9c345e07b723c086440e",
       "callSha256": "6eb08ff947aaf655cbb9fac9f4af25c6e8fcb622517fc4343327edaf39a6eca9",
-      "sourceFileSha256": "c159e3bd321637cc26214829ed36bca439a102e91983e6fd93fcbee36ef61544",
+      "sourceFileSha256": "3f76245300704d1efb1461cd7a30e52dfc7495e96471e174cbfddb9a9e3acfc9",
       "disposition": "VERIFIED_GUARD",
       "trust": "SHARED_SSE_SDK_DISPATCH_AND_DEFERRED_ACCOUNTED_PUBLICATION_ONLY_NOT_UPSTREAM_PROVENANCE_OR_TOOL_CERTIFICATION",
       "tenantAuthority": "PRIVATE_REQUEST_ADMISSION_FROM_CANONICAL_TENANT_OR_OPERATIONS_RESERVATION_EACH_WIRE_RECHECKS_CURRENT_OWNER_PROJECT_RUN_CREDENTIAL_AUTHORITY_BINDING_NO_PUBLIC_DELTAS_UNTIL_SETTLEMENT_AND_EXACT_ATOMIC_RECEIPT_CANCELLATION_REVOCATION_AND_PUBLICATION_FAILURE_CANNOT_RETRY_MODEL",
@@ -1804,9 +1804,9 @@
       }
     },
     {
-      "id": "0120190c0159cac3279d",
-      "callSha256": "4b3ae54effacf08255f84f1f01e6e0ca339a0cd2ea3cb90b0758bd00ab17371e",
-      "sourceFileSha256": "e113109ead824127c843bc27b7d07119fda3fae8e4ec0ddefd1abc177b79a63e",
+      "id": "06e6767d8c33bd9749a5",
+      "callSha256": "a4aad98ffb4587fb582ca6da6b5bb1ded28e8e0172bd2f8298c2f14ad789d629",
+      "sourceFileSha256": "ff4022afa5c3c031956a4eda38253e27c4f6ae3641f78d039085d60890ccb3c9",
       "disposition": "VERIFIED_GUARD",
       "trust": "SHARED_BROWSER_SDK_ADMISSION_AND_ACCOUNTING_ONLY_NOT_UPSTREAM_TOOL_CONTENT_PROVENANCE",
       "tenantAuthority": "ORIGINAL_API_ISSUED_CONTEXT_CURRENT_PROJECT_OWNER_CANONICAL_CREDENTIAL_REVISION_AND_DURABLE_RESERVATION_PER_WIRE_LEASE_CANCELLATION_AND_SETTLEMENT_PLUS_ATOMIC_USAGE_BEFORE_OUTPUT_NO_RAW_JOB_ID_OR_FABRICATED_CALLBACK_AUTHORITY",
@@ -1882,6 +1882,11 @@
       "callReboundOnBranch": {
         "previousId": "9ea21a6fc8b8700460c0",
         "review": "Retains the issued owner, current run/lease guard, classified immutable payload, durable reservation, zero retry and actual receipt. Passes the same canonical reservation callback as the pacing identity to the existing transport."
+      },
+      "rebinding": {
+        "previousCallerId": "0120190c0159cac3279d",
+        "previousCallSha256": "4b3ae54effacf08255f84f1f01e6e0ca339a0cd2ea3cb90b0758bd00ab17371e",
+        "reason": "Optional numeric timing callback only; endpoint, request, settlement and authority are unchanged."
       }
     },
     {
@@ -4656,7 +4661,7 @@
         {
           "path": "backend/src/routes/localBrowser.ts",
           "marker": "localRecord(await rt.runs.load(ctx.userId, runId), ctx.userId)",
-          "sha256": "5154db97a1a20fcd648822d26b49bae40dc25fc891909472a82081f09d34e204"
+          "sha256": "f77d53a8717e5bfc1011c4f108bc3fbe77f9951cb266380a480aafb6a59e24d5"
         }
       ],
       "browserCheckpointRebind": {
@@ -4686,7 +4691,7 @@
         {
           "path": "backend/src/routes/localBrowser.ts",
           "marker": "localRecord(await rt.runs.load(ctx.userId, runId), ctx.userId)",
-          "sha256": "5154db97a1a20fcd648822d26b49bae40dc25fc891909472a82081f09d34e204"
+          "sha256": "f77d53a8717e5bfc1011c4f108bc3fbe77f9951cb266380a480aafb6a59e24d5"
         }
       ],
       "browserCheckpointRebind": {
@@ -4716,7 +4721,7 @@
         {
           "path": "backend/src/routes/localBrowser.ts",
           "marker": "localRecord(await rt.runs.load(ctx.userId, runId), ctx.userId)",
-          "sha256": "5154db97a1a20fcd648822d26b49bae40dc25fc891909472a82081f09d34e204"
+          "sha256": "f77d53a8717e5bfc1011c4f108bc3fbe77f9951cb266380a480aafb6a59e24d5"
         }
       ],
       "browserCheckpointRebind": {
@@ -4746,7 +4751,7 @@
         {
           "path": "backend/src/routes/localBrowser.ts",
           "marker": "localRecord(await rt.runs.load(ctx.userId, runId), ctx.userId)",
-          "sha256": "5154db97a1a20fcd648822d26b49bae40dc25fc891909472a82081f09d34e204"
+          "sha256": "f77d53a8717e5bfc1011c4f108bc3fbe77f9951cb266380a480aafb6a59e24d5"
         }
       ],
       "browserCheckpointRebind": {
@@ -4776,7 +4781,7 @@
         {
           "path": "backend/src/routes/localBrowser.ts",
           "marker": "localRecord(await rt.runs.load(ctx.userId, runId), ctx.userId)",
-          "sha256": "5154db97a1a20fcd648822d26b49bae40dc25fc891909472a82081f09d34e204"
+          "sha256": "f77d53a8717e5bfc1011c4f108bc3fbe77f9951cb266380a480aafb6a59e24d5"
         }
       ],
       "browserCheckpointRebind": {
@@ -4848,7 +4853,7 @@
         {
           "path": "backend/src/routes/localBrowser.ts",
           "marker": "localRecord(await runs.load(ctx.userId, id.parse(req.params.runId)), ctx.userId)",
-          "sha256": "5154db97a1a20fcd648822d26b49bae40dc25fc891909472a82081f09d34e204"
+          "sha256": "f77d53a8717e5bfc1011c4f108bc3fbe77f9951cb266380a480aafb6a59e24d5"
         }
       ]
     }

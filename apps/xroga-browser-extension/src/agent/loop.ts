@@ -1180,6 +1180,10 @@ export class AgentLoop {
         ? await this.options.agentTool(call, signal)
         : { text: `error: ${call.toolName} is not available.`, isError: true };
       outcome = { call, kind, text: r.text, isError: r.isError };
+      if (call.toolName === 'plugin_read' && !r.isError && r.result && typeof r.result === 'object' &&
+          'pluginReceiptId' in r.result && typeof r.result.pluginReceiptId === 'string') {
+        outcome.result = { ok: true, text: '', data: { pluginReceiptId: r.result.pluginReceiptId } };
+      }
     } else {
       // Mutations return their diff; the model never sets `observe`.
       const sent = kind === 'mutate' && call.toolName !== 'tabs' ? { ...args, observe: 'diff' } : args;

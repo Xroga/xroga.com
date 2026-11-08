@@ -172,6 +172,7 @@ export function Composer({
   sharedTabs = [],
   files = [],
   onAttach,
+  onPlugins,
   onScreenshot,
   onRemoveFile,
   transcribe,
@@ -203,6 +204,7 @@ export function Composer({
   /** A tab picked with @. */
   onShareTab?: (tab: { tabId: number; title: string }) => void;
   sharedTabs?: number[];
+  onPlugins?: () => void;
   /** Files attached to the next message: from +, drop or paste. */
   files?: PendingFile[];
   onAttach?: (files: File[]) => void;
@@ -593,6 +595,15 @@ export function Composer({
                 }}
               />
             </>
+          ) : null}
+          {onPlugins ? (
+            <button type="button" className="flex h-7 items-center gap-1 rounded-lg px-1.5 text-xs text-nb-muted hover:bg-nb-surface hover:text-nb-fg"
+              onClick={onPlugins} aria-haspopup="dialog" aria-label="Plugins" title="Plugins">
+              <svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M15.4 5.6a2 2 0 1 0-3.4-1.4V6H8a2 2 0 0 0-2 2v3h-1a2 2 0 0 0 0 4h1v3a2 2 0 0 0 2 2h4v-1a2 2 0 0 1 4 0v1h2a2 2 0 0 0 2-2v-4h-1a2 2 0 0 1 0-4h1V8a2 2 0 0 0-2-2h-2.6Z" />
+              </svg>
+              <span className="max-[279px]:sr-only">Plugins</span>
+            </button>
           ) : null}
           {!XROGA_PRODUCT && (
             <ModeMenu

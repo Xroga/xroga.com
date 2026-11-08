@@ -203,11 +203,11 @@ export async function injectBorder(tabId: number, state: BorderState, documentId
   });
 }
 
-/** Paint a cue before dispatch, while the target document is still visible. */
+/** Paint feedback for an input Chrome accepted, on the current visible document. */
 export async function showActionPoint(
   tabId: number,
   point: { x: number; y: number },
-  kind: 'click' | 'type',
+  kind: 'click' | 'type' | 'scroll' | 'navigation' | 'tab',
 ): Promise<void> {
   if (!Number.isFinite(point.x) || !Number.isFinite(point.y)) return;
   const deadline = Date.now() + 240;
@@ -216,11 +216,11 @@ export async function showActionPoint(
     if (!((await settingsStorage.get()) ?? DEFAULT_SETTINGS).pageBorder) return;
     const frame = await chrome.webNavigation.getFrame({ tabId, frameId: 0 });
     if (!frame?.documentId) return;
-    const [drawn] = await chrome.scripting.executeScript({
+    await chrome.scripting.executeScript({
       target: { tabId, documentIds: [frame.documentId] },
       injectImmediately: true,
       args: [point.x, point.y, kind, deadline],
-      func: (x: number, y: number, action: 'click' | 'type', until: number) => {
+      func: (x: number, y: number, action: 'click' | 'type' | 'scroll' | 'navigation' | 'tab', until: number) => {
         if (
           Date.now() >= until ||
           document.visibilityState !== 'visible' ||
@@ -236,15 +236,22 @@ export async function showActionPoint(
         host.setAttribute('aria-hidden', 'true');
         host.setAttribute('data-xroga-action-point', '');
         host.inert = true;
-        host.style.cssText = `all:initial;position:fixed;left:${x}px;top:${y}px;width:0;height:0;pointer-events:none;z-index:2147483647`;
+        const isLocation = action === 'navigation' || action === 'tab';
+        host.style.cssText = 'all:initial;position:fixed;width:0;height:0;pointer-events:none;z-index:2147483647;' +
+          (isLocation ? 'right:12px;top:12px' : `left:${x}px;top:${y}px`);
         const root = host.attachShadow({ mode: 'closed' });
-        const label = action === 'type' ? 'Typing' : 'Clicking';
+        const label = { scroll: 'Scroll', type: 'Text field', click: 'Click', navigation: 'Page opened', tab: 'Task tab' }[action];
         root.innerHTML = `<style>
         svg { position:absolute;left:-2px;top:-2px;width:25px;height:29px;filter:drop-shadow(0 1px 3px #0b173c); }
-        span { position:absolute;${x > innerWidth - 120 ? 'right:5px' : 'left:18px'};${y > innerHeight - 56 ? 'bottom:12px' : 'top:21px'};
+        .ring { position:absolute;left:-12px;top:-12px;width:24px;height:24px;border:2px solid #529bff;border-radius:50%; }
+        @media (prefers-reduced-motion: no-preference) {
+          .ring { animation: xroga-ring 500ms ease-out both; }
+          @keyframes xroga-ring { from { transform:scale(.55); opacity:1; } to { transform:scale(1.6); opacity:0; } }
+        }
+        span { position:absolute;${isLocation ? 'right:0;top:0' : x > innerWidth - 120 ? 'right:5px' : 'left:18px'};${isLocation ? '' : y > innerHeight - 56 ? 'bottom:12px' : 'top:21px'};
           white-space:nowrap;background:#1759db;color:white;padding:4px 8px;border-radius:10px;
           border:1px solid #c8dbff;box-shadow:0 2px 8px #0005;font:600 12px system-ui; }
-      </style><svg viewBox="0 0 25 29" fill="none"><path d="M2 2v22l6-6 5 9 4-2-5-9h9L2 2Z" fill="#1769ff" stroke="white" stroke-width="1.5" stroke-linejoin="round"/></svg><span>Xroga · ${label}</span>`;
+      </style>${isLocation ? '' : '<i class="ring"></i><svg viewBox="0 0 25 29" fill="none"><path d="M2 2v22l6-6 5 9 4-2-5-9h9L2 2Z" fill="#1769ff" stroke="white" stroke-width="1.5" stroke-linejoin="round"/></svg>'}<span>Xroga · ${label}</span>`;
         overlay.__xrogaActionPoint = host;
         document.documentElement.append(host);
         setTimeout(() => {
@@ -254,7 +261,7 @@ export async function showActionPoint(
         return true;
       },
     });
-    if (drawn?.result) await new Promise<void>(resolve => setTimeout(resolve, 140));
+
   };
   try {
     await Promise.race([

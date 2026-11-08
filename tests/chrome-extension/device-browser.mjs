@@ -27,6 +27,7 @@ const turns = [];
 const workspaces = [];
 const requests = [];
 const proof = 'Violet telescope serial XR-649';
+const artifactDir = process.env.XROGA_BROWSER_QA_SCREENSHOTS;
 const workspaceOrigin = 'https://xroga.com';
 const apiOrigin = 'https://api.xroga.com';
 const site = 'https://example.com';
@@ -40,6 +41,7 @@ async function checkpoint(message) {
 Object.assign(process.env, {
   SUPABASE_URL: 'http://127.0.0.1:1', SUPABASE_JWT_SECRET: 'local-device-browser-fixture',
   SUPABASE_SERVICE_ROLE_KEY: '', REQUIRE_REMOTE_AUTH_CHECK: '0', XROGA_LOCAL_BROWSER_ALLOWED_USER_IDS: owner + ',' + other,
+  COMPOSIO_API_KEY: '',
 });
 await db.exec('create schema auth; create table auth.users (id uuid primary key); create role anon; create role authenticated; create role service_role;');
 await db.query('insert into auth.users values ($1), ($2)', [owner, other]);
@@ -89,7 +91,10 @@ app.get('/workspace', async (_req, res) => {
   ];
   res.type('html').send(lines.join('\n'));
 });
-app.get('/catalog', (_req, res) => res.type('html').send('<title>Unfamiliar Catalog</title><main><h1>Catalog</h1><p>' + proof + '</p></main>'));
+app.get('/catalog', (_req, res) => res.type('html').send(
+  '<title>Unfamiliar Catalog</title><main><h1>Catalog</h1><button>Reveal serial</button><p role="status"></p></main>' +
+  '<script>document.querySelector("button").onclick=()=>{document.body.dataset.actionVisibility=document.visibilityState;document.querySelector("p").textContent=' + JSON.stringify(proof) + ';};</script>',
+));
 app.use('/api/browser/local/device', createBrowserDeviceRouter(database, () => extensionId));
 const runs = new MemoryBrowserRunStore();
 const leases = new MemoryLeaseStore();
@@ -99,8 +104,12 @@ app.use('/api/browser/local', createLocalBrowserAuth(database, () => extensionId
     assert.ok(request.body.tools.some(item => item.function.name === 'snapshot'));
     const observed = JSON.stringify(request.body.messages).includes(proof);
     turns.push({ account: request.authority.context.userId, observed });
-    const name = observed ? 'done' : 'read';
-    const args = observed ? { outcome: 'success', summary: 'Verified catalog: ' + proof } : {};
+    const seesButton = request.body.messages.some(message => message.role === 'tool' && JSON.stringify(message.content).includes('Reveal serial'));
+    const name = observed ? 'done' : seesButton ? 'click' : 'snapshot';
+    // This fixture uses a separate panel tab. Give Chrome time to foreground the task tab as a real side panel would.
+    if (name === 'click' || name === 'done') await new Promise(resolve => setTimeout(resolve, 600));
+    const args = observed ? { outcome: 'success', summary: 'Verified catalog: ' + proof }
+      : seesButton ? { target: { role: 'button', name: 'Reveal serial' }, expect: { text: proof } } : {};
     const message = { tool_calls: [{ id: 'tool-' + turns.length, type: 'function', function: { name, arguments: JSON.stringify(args) } }] };
     return { id: 'fixture-' + turns.length, choices: [{ message, finish_reason: 'tool_calls' }],
       usage: { prompt_tokens: 80, completion_tokens: 15, total_tokens: 95 } };
@@ -152,7 +161,13 @@ const run = async (panel, text) => {
   const tab = browser.pages().find(page => page.url().startsWith(site));
   await tab?.bringToFront();
   await panel.locator('textarea').press('Enter');
+  await tab?.bringToFront();
   try {
+    assert.ok(tab);
+    await expect(tab.getByRole('status')).toHaveText(proof, { timeout: 15_000 });
+    await expect(tab.locator('body')).toHaveAttribute('data-action-visibility', 'visible');
+    await tab.locator('[data-xroga-action-point]').waitFor({ state: 'attached', timeout: 3_000 });
+    if (artifactDir) await tab.screenshot({ path: join(artifactDir, 'chrome-action-pointer.png') });
     await panel.getByText('Verified catalog: ' + proof, { exact: true }).waitFor({ timeout: 24_000 });
   } catch (error) {
     console.error(JSON.stringify({ turns, requests, panel: (await panel.locator('body').innerText()).slice(-1800) }));
@@ -167,7 +182,8 @@ try {
   await run(panel, 'Read the catalog and report its serial.');
   assert.deepEqual(workspaces, [owner]);
   assert.ok(turns.some(turn => turn.account === owner && turn.observed));
-  await checkpoint('Direct Chrome task returned observed catalog evidence');
+  await checkpoint('Direct Chrome click exposed the observed serial and showed the Xroga action pointer');
+  if (artifactDir) await panel.screenshot({ path: join(artifactDir, 'chrome-task-result.png') });
   await browser.close();
   await checkpoint('Chrome closed before restart');
   panel = await open();
@@ -175,14 +191,28 @@ try {
   await closeWorkspaceTabs();
   assert.deepEqual(workspaces, [owner], 'A full Chrome restart must not open Workspace again');
   await checkpoint('Full Chrome restart restored the direct session');
+  await panel.getByRole('button', { name: 'Plugins', exact: true }).click();
+  await expect(panel.getByRole('dialog', { name: 'Plugins' })).toBeVisible();
+  await expect(panel.getByRole('searchbox', { name: 'Search plugins' })).toBeVisible();
+  await expect(panel.getByRole('alert')).toContainText('not configured');
+  if (artifactDir) await panel.screenshot({ path: join(artifactDir, 'chrome-plugins-unavailable.png') });
+  await panel.keyboard.press('Escape');
   await panel.getByRole('button', { name: 'Sign out', exact: true }).click();
   await expect.poll(async () => (await db.query('select count(*)::int as n from public.local_browser_device_sessions')).rows[0].n).toBe(0);
   await checkpoint('Side panel sign-out revoked the device in the database');
   activeOwner = other;
-  // Restart the test browser after the extension worker reloads and reuse the same profile.
-  await Promise.race([browser.close(), new Promise(resolve => setTimeout(resolve, 4_000))]);
-  panel = await open();
-  await panel.getByRole('button', { name: 'Connect Xroga Workspace' }).click();
+  // Signing out reloads the extension worker. Reopen its panel in the same Chrome profile.
+  await panel.waitForEvent('close', { timeout: 1_500 }).catch(() => undefined);
+  panel = await browser.newPage();
+  panel.setDefaultTimeout(12_000);
+  const panelUrl = 'chrome-extension://' + extensionId + '/sidepanel.html';
+  const connect = panel.getByRole('button', { name: 'Connect Xroga Workspace' });
+  // The unpacked extension can be briefly unavailable while Chrome reloads its service worker.
+  await expect(async () => {
+    await panel.goto(panelUrl, { timeout: 3_000 });
+    await expect(connect).toBeVisible({ timeout: 1_000 });
+  }).toPass({ timeout: 12_000, intervals: [250, 500, 1_000] });
+  await connect.click();
   await signedIn(panel);
   await closeWorkspaceTabs();
   await panel.getByRole('button', { name: 'History', exact: true }).click();

@@ -54,7 +54,7 @@ export default defineConfig({
       ? '__MSG_extDescription__'
       : 'Use Xroga to work in your own Chrome tabs, with live actions and approval controls.',
     default_locale: 'en',
-    ...(autorun ? {} : { version: '0.2.7', ...(manifestKey ? { key: manifestKey } : {}) }),
+    ...(autorun ? {} : { version: '0.2.8', ...(manifestKey ? { key: manifestKey } : {}) }),
     minimum_chrome_version: '125',
     ...(autorun
       ? {

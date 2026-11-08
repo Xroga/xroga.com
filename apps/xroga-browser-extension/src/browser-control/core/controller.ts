@@ -73,7 +73,7 @@ export interface SessionConfig {
   /** A tab joined the session: the host places it (its group) and keeps it out of view as it sees fit. */
   onTabJoined?: (tabId: number, how: 'shared' | 'opened' | 'page-opened') => void;
   /** Optional host-owned visual cue. It carries coordinates only and never authorizes input. */
-  onActionPoint?: (tabId: number, point: { x: number; y: number }, kind: 'click' | 'type') => Promise<void>;
+  onActionPoint?: (tabId: number, point: { x: number; y: number }, kind: 'click' | 'type' | 'scroll') => Promise<void>;
   /**
    * Where `upload` may take files from, set by the host and absent from the protocol: local paths, bytes given with the
    * call, or both (the default). The extension's agent sessions take bytes only, so a model cannot name a file on the

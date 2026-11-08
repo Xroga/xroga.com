@@ -111,9 +111,9 @@ h3 {
   }
 }
 
-/* An answer in the transcript: the system's serif at reading size. Code stays monospaced. */
+/* Keep answers readable at narrow side-panel widths. Code stays monospaced. */
 .nb-answer {
-  @apply font-serif text-[15px] leading-[1.45];
+  @apply min-w-0 font-sans text-sm leading-relaxed;
 }
 
 .nb-markdown {
@@ -159,11 +159,11 @@ h3 {
   @apply overflow-x-auto rounded-lg border border-nb-border;
 }
 .nb-table {
-  @apply min-w-full border-collapse;
+  @apply w-full table-fixed border-collapse text-xs;
 }
 .nb-table th,
 .nb-table td {
-  @apply border-b border-nb-border px-3 py-1.5 text-left align-top;
+  @apply border-b border-nb-border break-words px-2 py-2 text-left align-top;
 }
 .nb-table tr:last-child td {
   @apply border-b-0;

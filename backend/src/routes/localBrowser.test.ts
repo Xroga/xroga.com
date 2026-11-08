@@ -38,6 +38,14 @@ test('local Chrome shares canonical ownership, turn fencing, cancellation and re
   const app = express();
   app.use(express.json());
   app.use(authMiddleware);
+  let pluginRevoked = false;
+  let pluginConfirmations = 0;
+  const approvalId = '00000000-0000-4000-8000-000000000003';
+  const receiptId = '00000000-0000-4000-8000-000000000004';
+  app.use((req: import('./localBrowserDevice.js').BrowserDeviceRequest, _res, next) => {
+    if (req.get('x-fixture-device') === '1') req.revalidateBrowserDevice = async () => !pluginRevoked;
+    next();
+  });
   app.use(createLocalBrowserRouter(() => ({ runs, leases }), async request => {
     await request.authority?.revalidate();
     assert.equal(request.modelId, 'deepseek_v4_1_flash_1017');
@@ -46,13 +54,44 @@ test('local Chrome shares canonical ownership, turn fencing, cancellation and re
     received.push({ runId: request.job.runId, idempotency: request.idempotencyKey, messages: request.body.messages });
     return { id: 'fixture-model', choices: [{ finish_reason: 'stop', message: { content: 'Read the catalog.' } }],
       usage: { prompt_tokens: 40, completion_tokens: 10, total_tokens: 50 } };
+  }, {
+    configured: () => true,
+    discover: async (user, _query, context) => {
+      assert.equal(user, owner);
+      assert.equal(context?.userId, owner);
+      return { sessionId: 'fixture-plugin-session', toolkits: [
+        { toolkit: 'googlesheets', connected: true, noAuth: false },
+        { toolkit: 'private_other_app', connected: false, noAuth: false },
+      ], tools: [
+        { slug: 'GOOGLESHEETS_LIST_ROWS', toolkit: 'googlesheets', risk: 'read', inputSchema: { type: 'object' } },
+        { slug: 'GOOGLESHEETS_DELETE_ROW', toolkit: 'googlesheets', risk: 'destructive', inputSchema: {} },
+        { slug: 'PRIVATE_OTHER_APP_LIST', toolkit: 'private_other_app', risk: 'read', inputSchema: {} },
+      ] } as Awaited<ReturnType<typeof import('../services/integrations/composioClient.js').searchComposioTools>>;
+    },
+    prepare: async (user, data) => {
+      assert.equal(user, owner);
+      assert.equal(data.sessionId, 'fixture-plugin-session');
+      assert.equal(data.toolSlug, 'GOOGLESHEETS_LIST_ROWS');
+      return { needsConfirmation: true, confirmation: { id: approvalId, summary: 'Read rows',
+        approval: { accountReference: 'fixture-user-connection' } } } as Awaited<ReturnType<typeof import('../services/integrations/composioClient.js').executeComposioReadTool>>;
+    },
+    confirm: async (context, id, expected) => {
+      assert.equal(context.userId, owner);
+      assert.equal(id, approvalId);
+      assert.deepEqual(expected, { toolkit: 'googlesheets', toolSlug: 'GOOGLESHEETS_LIST_ROWS' });
+      pluginConfirmations++;
+      return { confirmation: { receipt: { id: receiptId } }, execution: {
+        toolSlug: 'GOOGLESHEETS_LIST_ROWS', resultText: 'Verified fixture rows',
+      } } as Awaited<ReturnType<typeof import('../services/integrations/businessActionConfirmations.js').confirmBusinessAction>>;
+    },
+    cancel: async () => { throw new Error('Unexpected cancellation'); },
   }));
   const server = app.listen(0, '127.0.0.1');
   await once(server, 'listening');
   const address = server.address();
   assert.ok(address && typeof address !== 'string');
-  const send = (path: string, method = 'GET', data?: unknown, crossTenant = false) => fetch(`http://127.0.0.1:${address.port}${path}`, {
-    method, headers: { 'content-type': 'application/json', authorization: `Bearer ${crossTenant ? otherToken : ownerToken}` },
+  const send = (path: string, method = 'GET', data?: unknown, crossTenant = false, device = false) => fetch(`http://127.0.0.1:${address.port}${path}`, {
+    method, headers: { 'content-type': 'application/json', authorization: `Bearer ${crossTenant ? otherToken : ownerToken}`, ...(device ? { 'x-fixture-device': '1' } : {}) },
     body: data === undefined ? undefined : JSON.stringify(data),
   });
   try {
@@ -69,6 +108,36 @@ test('local Chrome shares canonical ownership, turn fencing, cancellation and re
     const request = { turn: 1, messages: [{ role: 'user', content: 'Read the catalog.' }] };
     assert.equal((await send(path, 'GET', undefined, true)).status, 404);
     assert.equal((await send(`${path}/turn`, 'POST', request, true)).status, 404);
+    assert.equal((await send('/plugins/catalog')).status, 403);
+    const pluginSearch = (device = true) => send(`${path}/plugin-search`, 'POST', { query: 'List spreadsheet rows' }, false, device);
+    const pluginRead = (slug: string) => send(`${path}/plugin-read`, 'POST', { slug, arguments: {} }, false, true);
+    const review = (run: string, crossTenant = false) =>
+      send(`${run}/plugin-review`, 'POST', { approvalId, decision: 'approve' }, crossTenant, true);
+    assert.equal((await pluginSearch(false)).status, 403);
+    assert.equal((await pluginRead('GOOGLESHEETS_LIST_ROWS')).status, 403);
+    const discovery = await pluginSearch();
+    assert.equal(discovery.status, 200);
+    assert.deepEqual((await discovery.json() as { tools: { slug: string }[] }).tools.map(item => item.slug), ['GOOGLESHEETS_LIST_ROWS']);
+    assert.equal((await pluginSearch()).status, 409);
+    assert.equal((await pluginRead('GOOGLESHEETS_DELETE_ROW')).status, 403);
+    const read = await pluginRead('GOOGLESHEETS_LIST_ROWS');
+    assert.equal(read.status, 200);
+    assert.equal((await read.json() as { approval: { id: string } }).approval.id, approvalId);
+    assert.equal(pluginConfirmations, 0);
+    assert.equal((await review(path, true)).status, 404);
+    const another = await send('/runs', 'POST', { goal: 'Unrelated run', startUrl: 'https://example.com' });
+    assert.equal(another.status, 201);
+    const { runId: anotherRun } = await another.json() as { runId: string };
+    assert.equal((await review('/runs/' + anotherRun)).status, 409);
+    pluginRevoked = true;
+    assert.equal((await review(path)).status, 403);
+    assert.equal(pluginConfirmations, 0);
+    pluginRevoked = false;
+    const approved = await review(path);
+    assert.equal(approved.status, 200);
+    assert.deepEqual(await approved.json(), { receiptId, result: 'Verified fixture rows' });
+    assert.equal((await review(path)).status, 409);
+    assert.equal(pluginConfirmations, 1);
     assert.deepEqual(await runs.listRecoverable(0, 10), []);
     assert.equal((await send(`${path}/turn`, 'POST', { ...request, messages: [{ role: 'user', content: [{ type: 'image_url', image_url: { url: 'https://example.com/private.png' } }] }] })).status, 400);
     assert.equal((await send(`${path}/turn`, 'POST', { ...request, messages: [{ role: 'user', content: 'Bearer example-secret-token' }] })).status, 400);

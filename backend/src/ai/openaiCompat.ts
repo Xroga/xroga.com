@@ -182,7 +182,8 @@ export function resolveEndpoint(modelId: ModelId, credentialOverride?: string): 
   };
 }
 
-export function createModelProviderClient(endpoint: ResolvedEndpoint,beforeDispatch?:(wireBody:string)=>Promise<void>,reservationGuard=beforeDispatch): OpenAI {
+export function createModelProviderClient(endpoint: ResolvedEndpoint,beforeDispatch?:(wireBody:string)=>Promise<void>,reservationGuard=beforeDispatch,
+  onTiming?: (phase: 'queue' | 'provider_headers', elapsedMs: number) => void): OpenAI {
   publicHttpsUrl(endpoint.baseUrl);
   assertModelProviderDestination(endpoint.provider,endpoint.baseUrl);
   // The SDK wraps thrown fetch errors as retryable connection failures. Return
@@ -206,6 +207,7 @@ export function createModelProviderClient(endpoint: ResolvedEndpoint,beforeDispa
       let lease:Awaited<ReturnType<typeof acquireModelRequestLease>>|undefined;
       let cooldown=0;
       const release=async()=>{try{await lease?.release(cooldown);}catch{console.warn('[model-pacing] release unavailable; bounded lease remains conservative');}};
+      const queuedAt = performance.now();
       if(process.env.NODE_ENV==='production'){
         try{
           const binding=admittedModelReservation(reservationGuard);
@@ -215,6 +217,7 @@ export function createModelProviderClient(endpoint: ResolvedEndpoint,beforeDispa
             {status:429,headers:{'x-should-retry':'false','retry-after':'60'}}) as unknown as Awaited<ReturnType<NonNullable<ClientOptions['fetch']>>>;
         }
       }
+      onTiming?.('queue', performance.now() - queuedAt);
       try {
         if (!beforeDispatch) modelAdmissionDenied();
         validateZurelayRequest(JSON.parse(init.body), endpoint.apiModel);
@@ -229,10 +232,12 @@ export function createModelProviderClient(endpoint: ResolvedEndpoint,beforeDispa
       const headers = new Headers(init.headers as Record<string, string>);
       headers.set('x-zurelay-fallback', 'off');
       let response:Response;
+      const providerStarted = performance.now();
       try{
         const signal=AbortSignal.any([...(init.signal?[init.signal as AbortSignal]:[]),AbortSignal.timeout(180_000)]);
         response=await globalThis.fetch(url,{method:'POST',body:init.body,headers,signal,redirect:'manual'});
       }catch(error){await release();throw error;}
+      onTiming?.('provider_headers', performance.now() - providerStarted);
       if(response.status===429){cooldown=providerCooldownSeconds(response.headers.get('retry-after'));await release();}
       if(response.redirected||(response.status>=300&&response.status<400)){
         await response.body?.cancel().catch(()=>undefined);

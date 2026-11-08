@@ -41,7 +41,11 @@
     "backend/src/routes/localBrowserDevice.ts",
     "supabase/migrations/20261108181114_local_browser_device_sessions.sql",
     "tests/chrome-extension/device-auth.mjs",
-    "tests/chrome-extension/device-browser.mjs"
+    "tests/chrome-extension/device-browser.mjs",
+    "backend/src/routes/localBrowserPlugins.ts",
+    "apps/xroga-browser-extension/src/side-panel/Plugins.tsx",
+    "apps/xroga-browser-extension/src/xroga/plugins.ts",
+    "backend/src/ai/openaiCompat.ts"
   ],
   "decisions": {
     "keep": [
@@ -155,7 +159,8 @@
     "The earlier authenticated Workspace-relay run settled seven live model turns at $0.001071. Standalone hosted authentication, live model settlement, hosted two-account isolation and approved live website workflows are pending.",
     "Model vision remains disabled for browser tasks until this exact route passes privacy and modality acceptance.",
     "Explicit resume uses the same run and spend allowance. Closed-Workspace execution and full-browser restart must also pass live provider-backed staging with the reviewed package.",
-    "The source ancestry of six inherited mission records is now bound to the actual squash that imported them. Historical source references are preserved; this metadata change does not certify unrelated missions."
+    "The source ancestry of six inherited mission records is now bound to the actual squash that imported them. Historical source references are preserved; this metadata change does not certify unrelated missions.",
+    "Connected app reads reuse the canonical account and exact confirmation. Hosted plugin and DeepSeek settlement, comparative latency, and connected writes are not accepted."
   ],
   "placeholderClaimsRemaining": [],
   "claimsFullProductCompletion": false,

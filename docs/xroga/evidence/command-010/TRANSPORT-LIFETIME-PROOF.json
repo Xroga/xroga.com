@@ -215,7 +215,7 @@
     },
     {
       "path": "scripts/security/source-lifetime-bindings.test.mjs",
-      "sha256": "7d3c3af8176a838c9b1f3de5e75630ca8c4d26e634d886ff8c0975d5157a9640",
+      "sha256": "52bab3d72c3d1afd62ba30988a7f946382bbae97b1885f85b02257f097d91508",
       "previousGenericSdkBinding": {
         "reference": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
         "sha256": "71eaca46f240f51b1ac490fd9e137cafbe0d0423313991de7b1bc0f57e588bcb",
@@ -270,7 +270,7 @@
     },
     {
       "path": "backend/src/ai/openaiCompat.ts",
-      "sha256": "c159e3bd321637cc26214829ed36bca439a102e91983e6fd93fcbee36ef61544",
+      "sha256": "3f76245300704d1efb1461cd7a30e52dfc7495e96471e174cbfddb9a9e3acfc9",
       "previousGenericSdkBinding": {
         "sha256": "0a418cef1bdbdadb77f14288c4298990900a111fbc0def0050756a9b146914ca",
         "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"

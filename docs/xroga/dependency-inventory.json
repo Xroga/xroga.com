@@ -9681,6 +9681,7 @@
         "backend/src/lib/platformReady.ts",
         "backend/src/routes/github.ts",
         "backend/src/routes/integrations.ts",
+        "backend/src/routes/localBrowserPlugins.ts",
         "backend/src/routes/phase1.ts",
         "backend/src/services/integrations/composioClient.ts",
         "backend/src/services/integrations/supabaseAuth.ts",
@@ -16813,7 +16814,7 @@
     },
     {
       "path": "backend/src/ai/openaiCompat.ts",
-      "sha256": "c159e3bd321637cc26214829ed36bca439a102e91983e6fd93fcbee36ef61544"
+      "sha256": "3f76245300704d1efb1461cd7a30e52dfc7495e96471e174cbfddb9a9e3acfc9"
     },
     {
       "path": "backend/src/ai/parallelApproval.ts",
@@ -18277,11 +18278,15 @@
     },
     {
       "path": "backend/src/routes/localBrowser.ts",
-      "sha256": "5154db97a1a20fcd648822d26b49bae40dc25fc891909472a82081f09d34e204"
+      "sha256": "f77d53a8717e5bfc1011c4f108bc3fbe77f9951cb266380a480aafb6a59e24d5"
     },
     {
       "path": "backend/src/routes/localBrowserDevice.ts",
-      "sha256": "12ad8df423db8241e0e90eed3d26b777fca399d82dbf5cb470fc107a1244b422"
+      "sha256": "10c10029be3e36ff9f3111f3077fba0ec56fa7a984f706bc0671ec3e1575c429"
+    },
+    {
+      "path": "backend/src/routes/localBrowserPlugins.ts",
+      "sha256": "548b9fdad565e09bc3bfa0f0962dfefd59ef9b6780aea3af8bf71977d78d3dbc"
     },
     {
       "path": "backend/src/routes/marketplace.ts",
@@ -19681,7 +19686,7 @@
     },
     {
       "path": "backend/src/workers/browserModelDispatch.ts",
-      "sha256": "e113109ead824127c843bc27b7d07119fda3fae8e4ec0ddefd1abc177b79a63e"
+      "sha256": "ff4022afa5c3c031956a4eda38253e27c4f6ae3641f78d039085d60890ccb3c9"
     },
     {
       "path": "backend/src/workers/browserModelGateway.ts",
@@ -25900,6 +25905,13 @@
     {
       "hostname": "xroga.com",
       "protocol": "https:",
+      "path": "backend/src/routes/localBrowserPlugins.ts",
+      "line": 79,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "xroga.com",
+      "protocol": "https:",
       "path": "backend/src/routes/phase1.ts",
       "line": 178,
       "credentialsInUrl": false
@@ -31914,7 +31926,7 @@
     },
     {
       "path": "backend/src/ai/openaiCompat.ts",
-      "line": 269,
+      "line": 274,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -35086,6 +35098,13 @@
     {
       "path": "backend/src/routes/guestChat.ts",
       "line": 71,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/routes/localBrowser.ts",
+      "line": 306,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
