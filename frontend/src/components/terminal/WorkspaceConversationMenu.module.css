@@ -1,0 +1,71 @@
+/* Header-only conversation navigation. No sidebar selectors are changed. */
+.root { position: relative; min-width: 0; max-width: 100%; flex: 0 1 auto; }
+.trigger {
+  min-width: 0; max-width: min(380px, 38vw); height: 32px; padding: 0 10px;
+  display: flex; align-items: center; justify-content: flex-start; gap: 12px;
+  border: 0; border-radius: 10px; background: transparent; cursor: pointer;
+  color: var(--foreground, #e7e3d8); font: inherit; font-size: 13px; font-weight: 670;
+  line-height: 1.2; text-align: left; letter-spacing: -0.01em;
+  transition: background-color 150ms ease;
+}
+.trigger:hover, .trigger[aria-expanded="true"] { background: var(--accent-dim, rgba(255,255,255,.07)); }
+.trigger:focus-visible, .newChat:focus-visible, .item:focus-visible, .searchBox:focus-within {
+  outline: 2px solid var(--accent, #d5b67b); outline-offset: 2px;
+}
+.title { min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.chevron, .chevronOpen { flex: 0 0 auto; opacity: .65; transition: transform 150ms ease; }
+.chevronOpen { transform: rotate(180deg); }
+.popover {
+  box-sizing: border-box; overflow: hidden; padding: 8px;
+  border: 1px solid var(--card-border, rgba(255,255,255,.12)); border-radius: 16px;
+  background: var(--card, #151515); color: var(--foreground, #ede5d5);
+  box-shadow: 0 18px 55px rgba(0,0,0,.3), 0 4px 16px rgba(0,0,0,.1);
+  font-family: var(--font-inter), system-ui, sans-serif;
+}
+.topRow { padding: 7px 7px 10px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.menuHeading { font-size: 12px; font-weight: 750; letter-spacing: .015em; }
+.newChat {
+  display: inline-flex; align-items: center; gap: 5px; flex: 0 0 auto;
+  padding: 7px 9px; border: none; border-radius: 9px; color: inherit;
+  background: var(--accent-dim, rgba(255,255,255,.07)); font-size: 11px;
+  font-weight: 650; cursor: pointer;
+}
+.newChat:hover { filter: brightness(1.1); }
+.searchBox {
+  display: flex; align-items: center; gap: 9px; height: 37px; margin: 0 5px 7px;
+  padding: 0 11px; color: var(--muted, #aaa); border: 1px solid var(--card-border, rgba(255,255,255,.12));
+  border-radius: 10px; background: var(--background, #101010);
+}
+.searchBox input {
+  flex: 1 1 auto; min-width: 0; width: 100%; outline: 0; border: none;
+  color: var(--foreground, #ede5d5); background: transparent;
+  font: inherit; font-size: 12px;
+}
+.searchBox input::placeholder { color: var(--muted, #999); opacity: .85; }
+.sectionHeading { padding: 12px 11px 7px; color: var(--muted, #a39d94); font-size: 10px; font-weight: 750; text-transform: uppercase; letter-spacing: .09em; }
+.list { max-height: min(390px, 52dvh); overflow: auto; overscroll-behavior: contain; padding: 0 2px 3px; }
+.item {
+  display: flex; align-items: center; gap: 10px; width: 100%; min-height: 43px;
+  padding: 8px 9px; border: none; border-radius: 10px; background: transparent;
+  color: inherit; text-align: left; font: inherit; font-size: 12px; cursor: pointer;
+  transition: background-color 120ms ease;
+}
+.item:hover, .item:focus-visible { background: var(--accent-dim, rgba(255,255,255,.065)); }
+.item.selected { background: var(--accent-dim, rgba(255,255,255,.065)); }
+.item:disabled { cursor: progress; opacity: .6; }
+.itemText { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.itemTitle { font-size: 12px; font-weight: 560; line-height: 1.35; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; }
+.itemSubtitle { font-size: 10px; line-height: 1.4; color: var(--muted, #999); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.chatIcon { flex: 0 0 auto; color: var(--muted, #b1aba0); opacity: .7; }
+.activeMark { flex: 0 0 auto; color: var(--accent, #d5b67b); }
+.loading { flex: 0 0 auto; animation: wsRecentSpin 750ms linear infinite; }
+.empty { min-height: 68px; display: flex; justify-content: center; align-items: center; gap: 9px; padding: 17px; font-size: 12px; text-align: center; line-height: 1.5; color: var(--muted, #aaa); }
+@keyframes wsRecentSpin { to { transform: rotate(360deg); } }
+@media (max-width: 750px) {
+  .trigger { max-width: min(235px, 44vw); font-size: 12px; padding: 0 6px; gap: 7px; }
+}
+@media (max-width: 410px) { .trigger { max-width: 31vw; } }
+@media (prefers-reduced-motion: reduce) {
+  .trigger, .chevron, .chevronOpen, .item { transition: none; }
+  .loading { animation: none; }
+}
