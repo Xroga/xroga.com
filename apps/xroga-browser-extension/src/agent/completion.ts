@@ -10,12 +10,18 @@ export interface DebtEntry extends DebtItem {
   rev: number;
 }
 
+export type DispatchEvidence = { receipt?: { dispatched?: unknown }; error?: { delivered?: unknown } };
+
+export function deliveryUnknown(result: DispatchEvidence | undefined): boolean {
+  return result?.error?.delivered === 'unknown' || result?.receipt?.dispatched === 'unknown';
+}
+
 /** Whether a page action's result leaves its outcome unseen. */
 export function createsDebt(tool: string, result: Result | undefined): boolean {
   if (!PAGE_ACTIONS.has(tool) || !result) return false;
-  if (!result.ok) return result.error?.delivered === true || result.error?.delivered === 'unknown';
+  if (deliveryUnknown(result)) return true;
+  if (!result.ok) return result.error?.delivered === true;
   const r = result.receipt;
-  if (r?.dispatched === 'unknown') return true;
   if (result.pageError || result.pending?.length) return true;
   if (
     r &&

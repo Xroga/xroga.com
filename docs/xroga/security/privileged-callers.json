@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "eb762252e2146566353911dfe23877af8f516a04fd5d5f087ef4183dd1a510be",
+  "reviewRegistrySha256": "f9693e9338236998b9ef5df6c775afffe7082aa6bedd482ad678049423bef585",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -10,17 +10,17 @@
     "privilegedFactorySites": 226,
     "persistenceCandidates": 1005,
     "ownerPredicateCandidates": 262,
-    "reviewRequired": 158,
-    "reviewedCandidates": 847,
-    "unresolvedSafetyCandidates": 202,
+    "reviewRequired": 156,
+    "reviewedCandidates": 849,
+    "unresolvedSafetyCandidates": 200,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 23
   },
   "outcomes": {
-    "REVIEW_REQUIRED": 158,
+    "REVIEW_REQUIRED": 156,
     "SCOPED_BOUNDARY": 547,
     "NARROW_EXCEPTION": 52,
-    "NOT_PERSISTENCE": 204,
+    "NOT_PERSISTENCE": 206,
     "REVIEWED_GAP": 44
   },
   "acceptance": {
@@ -6320,11 +6320,11 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "78d08cae1ba941ec3372"
+        "id": "aeed73270fbd285f4446"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "53e8224ab5eae93a7555"
+        "id": "9a1aa074201d15f0e9b0"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -7165,14 +7165,6 @@
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
         "id": "d28d6e2b0cc260eb3aa7"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "78d08cae1ba941ec3372"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "53e8224ab5eae93a7555"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -10128,6 +10120,14 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "aeed73270fbd285f4446"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "9a1aa074201d15f0e9b0"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "229f69845215b3f79181"
       },
       {
@@ -10184,8 +10184,8 @@
     "currentCallers": 1005,
     "structuredVerified": 80,
     "structuredUnproven": 925,
-    "manualUnresolved": 202,
-    "manualUnsupported": 723,
+    "manualUnresolved": 200,
+    "manualUnsupported": 725,
     "agreedVerified": 80,
     "proofAwaitingManualReconciliation": 0
   },
@@ -30965,26 +30965,54 @@
       }
     },
     {
-      "id": "78d08cae1ba941ec3372",
+      "id": "aeed73270fbd285f4446",
       "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
-      "line": 212,
+      "line": 284,
       "enclosing": "WorkspaceBrowserOperator",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "67ae537e26c8dce63adf12d566babd2b2a37a76fc6bac2585e514ef0ead4a540"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "9a970ad831e3085d51dacae2ac200470a4a220400add4326a5d0fec5f51b55e4",
+      "semanticReview": {
+        "authority": "Inspected the exact receiver and complete expression. It is a built-in JavaScript data conversion with no persistence client or privilege transfer.",
+        "reason": "Decodes the user-requested recording or enumerates user-selected File objects locally. Neither method is a database or storage invocation.",
+        "evidence": [
+          {
+            "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+            "marker": "Uint8Array.from(atob(encoded)"
+          },
+          {
+            "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+            "marker": "Array.from(event.target.files"
+          }
+        ]
+      }
     },
     {
-      "id": "53e8224ab5eae93a7555",
+      "id": "9a1aa074201d15f0e9b0",
       "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
-      "line": 282,
+      "line": 357,
       "enclosing": "WorkspaceBrowserOperator",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "67ae537e26c8dce63adf12d566babd2b2a37a76fc6bac2585e514ef0ead4a540"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "9a970ad831e3085d51dacae2ac200470a4a220400add4326a5d0fec5f51b55e4",
+      "semanticReview": {
+        "authority": "Inspected the exact receiver and complete expression. It is a built-in JavaScript data conversion with no persistence client or privilege transfer.",
+        "reason": "Decodes the user-requested recording or enumerates user-selected File objects locally. Neither method is a database or storage invocation.",
+        "evidence": [
+          {
+            "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+            "marker": "Uint8Array.from(atob(encoded)"
+          },
+          {
+            "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+            "marker": "Array.from(event.target.files"
+          }
+        ]
+      }
     },
     {
       "id": "229f69845215b3f79181",

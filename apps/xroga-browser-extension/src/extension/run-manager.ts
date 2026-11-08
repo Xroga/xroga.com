@@ -1608,6 +1608,7 @@ export class RunManager {
           restore: restore ? { debt: restore.debt as DebtEntry[], guards: restore.guards } : undefined,
           checkpointBase: resumed ? { turns: resumed.turns, usage: resumed.usage } : undefined,
           recoveryReadOnly,
+          protectUncertainWrites: !!canonical,
           takeSteering: () => {
             const queue = this.#queues.get(conversationId)?.splice(0) ?? [];
             if (queue.length) this.#emitQueue(conversationId);

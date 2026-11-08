@@ -1,6 +1,7 @@
 // Restoring a run after the worker restarted. Pure: it reads the run record and the branch and says what to write and
 // what to reopen. The worker calls no model and runs no tool on its own; a run continues only when the user acts.
 import type { Entry, EntryOf, PendingPrompt, RunRecord, RunStatus } from '@src/store/types';
+import { deliveryUnknown, type DispatchEvidence } from './completion';
 import { openCalls } from './records';
 import { kindOf } from './tools';
 
@@ -47,9 +48,8 @@ export function hasUncertainBrowserWrite(runId: string, branch: Entry[]): boolea
   );
   return branch.some(entry => {
     if (entry.type !== 'message' || entry.meta?.runId !== runId || entry.message.role !== 'tool') return false;
-    const result = entry.result as { receipt?: { dispatched?: unknown }; error?: { delivered?: unknown } } | undefined;
     return (
-      (result?.error?.delivered === 'unknown' || result?.receipt?.dispatched === 'unknown') &&
+      deliveryUnknown(entry.result as DispatchEvidence | undefined) &&
       entry.message.parts.some(part => part.type === 'tool-result' && mutations.has(part.toolCallId))
     );
   });

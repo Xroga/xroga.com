@@ -107,6 +107,29 @@ describe('what creates and clears debt', () => {
 });
 
 describe('done and verification debt', () => {
+  it.each([
+    ok('Ambiguous response', { receipt: receipt({ dispatched: 'unknown' }) }),
+    failed('INTERRUPTED', 'Ambiguous response', { delivered: 'unknown' }),
+  ])('stops browser writes as soon as a canonical run cannot confirm delivery', async result => {
+    const layer = new FakeLayer({ click: () => result, snapshot: () => ok('s', { page: page(4, 'full') }) });
+    const { end, texts } = await run(
+      [
+        { toolCalls: [call('click', { target: { ref: 'a1' } }, 'first'), call('click', { target: { ref: 'a1' } }, 'batch')] },
+        { toolCalls: [call('snapshot', {}, 'observe')] },
+        { toolCalls: [call('click', { target: { ref: 'a1' } }, 'replay')] },
+        doneCall('success', 'end'),
+      ],
+      layer,
+      { protectUncertainWrites: true },
+    );
+    expect(layer.calls.map(c => c.tool)).toEqual(['click', 'snapshot']);
+    expect(texts.first).toContain('Further changes were paused');
+    expect(texts.batch).toMatch(/^skipped/);
+    expect(texts.replay).toContain('an earlier write might have been delivered');
+    expect(end).toMatchObject({ status: 'done', outcome: 'partial' });
+    expect(end.summary).toContain('A browser action may have been delivered');
+  });
+
   it('refuses done(success) while debt is left, and accepts it after a read', async () => {
     const layer = new FakeLayer({ click: () => noEffect, snapshot: () => ok('s', { page: page(4, 'full') }) });
     const { end, texts } = await run(
