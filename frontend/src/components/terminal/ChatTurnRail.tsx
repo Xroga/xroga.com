@@ -115,6 +115,7 @@ interface ChatTurnRailProps {
 export function ChatTurnRail({ turns, activeId, onJump, conversationKey, className }: ChatTurnRailProps) {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [layout, setLayout] = useState({ left: 8, height: 800, navigable: false, width: 1366 });
+  const [railHost, setRailHost] = useState<HTMLElement | null>(null);
   const [mounted, setMounted] = useState(false);
   const [bookmarks, setBookmarks] = useState<{ key: string; ids: string[] }>({ key: '', ids: [] });
   const [pageStart, setPageStart] = useState(0);
@@ -124,17 +125,28 @@ export function ChatTurnRail({ turns, activeId, onJump, conversationKey, classNa
     const root = document.querySelector<HTMLElement>('.xv-terminal-scroll')
       ?? document.querySelector<HTMLElement>('main.flex-1.overflow-y-auto')
       ?? document.documentElement;
+    // In /workspace the conversation rail belongs to the terminal pane, NOT
+    // the viewport. The pane is already position:relative; a portal into it
+    // keeps the markers aligned as the sidebar changes the pane's width.
+    const host = root.closest<HTMLElement>('.xv-terminal-panel');
+    setRailHost(host);
     const place = () => {
-      const bounds = root.getBoundingClientRect();
       const scrollable = root.scrollHeight > root.clientHeight + 40;
+      // The pane's horizontal position is owned by CSS. Only measure its
+      // height; measuring left on each resize introduced delayed rail movement.
+      const left = host ? 8 : Math.max(4, Math.round(root.getBoundingClientRect().left + (window.innerWidth < 640 ? 3 : 8)));
+      const height = host ? Math.max(120, host.clientHeight - 16) : Math.max(120, window.innerHeight - 16);
       setLayout(previous => {
-        const next = { left: Math.max(4, Math.round(bounds.left + (window.innerWidth < 640 ? 3 : 8))), height: Math.max(120, window.innerHeight - 16), navigable: scrollable, width: window.innerWidth };
+        // Keep the marker count based on viewport width, so markers do not
+        // jump between pagination groups when just the sidebar is dragged.
+        const next = { left, height, navigable: scrollable, width: window.innerWidth };
         return previous.left === next.left && previous.height === next.height && previous.navigable === next.navigable && previous.width === next.width ? previous : next;
       });
     };
     place();
     const observer = new ResizeObserver(place);
     observer.observe(root);
+    if (host) observer.observe(host);
     window.addEventListener('resize', place);
     root.addEventListener('scroll', place, { passive: true });
     return () => { observer.disconnect(); window.removeEventListener('resize', place); root.removeEventListener('scroll', place); };
@@ -202,8 +214,8 @@ export function ChatTurnRail({ turns, activeId, onJump, conversationKey, classNa
   const markerTop = hoveredIndex >= 0 ? turnMarkerTop(hoveredIndex, visibleTurns.length, layout.height) : 0;
   return createPortal(
     <nav
-      className={cn('xv-chat-turn-rail xv-chat-turn-rail--dock', className)}
-      style={{ left: layout.left }}
+      className={cn('xv-chat-turn-rail xv-chat-turn-rail--dock', railHost && 'xv-chat-turn-rail--pane', className)}
+      style={railHost ? undefined : { left: layout.left }}
       aria-label="Conversation turn navigation"
       onMouseLeave={() => setHoveredId(null)}
       onBlurCapture={event => { if (!event.currentTarget.contains(event.relatedTarget)) setHoveredId(null); }}
@@ -257,6 +269,6 @@ export function ChatTurnRail({ turns, activeId, onJump, conversationKey, classNa
         {hoveredTurn.detail ? <p className="xv-chat-turn-preview-detail"><span aria-hidden="true">•</span>{hoveredTurn.detail}</p> : null}
       </div> : null}
     </nav>,
-    document.body,
+    railHost ?? document.body,
   );
 }

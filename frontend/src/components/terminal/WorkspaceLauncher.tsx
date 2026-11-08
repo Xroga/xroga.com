@@ -70,6 +70,7 @@ export function WorkspaceLauncher({ className, control = 'all' }: { className?: 
         onClick={() => setWorkspaceOpen(!workspaceOpen)}
         className="xv-ws-launch"
         title={workspaceOpen ? 'Close project edits' : 'Open project edits'}
+        aria-label={workspaceOpen ? 'Close project edits' : 'Open project edits'}
         aria-pressed={workspaceOpen}
       >
         {/* "Project edits" rather than "Workspace": the panel behind this button is the

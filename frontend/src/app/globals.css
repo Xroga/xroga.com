@@ -14929,3 +14929,58 @@ body.xv-sidebar-resizing * {
   cursor: col-resize !important;
   user-select: none !important;
 }
+
+/* The conversation markers belong to the chat pane, not the viewport. With
+   position:absolute they move in the same browser layout pass as the sidebar:
+   no delayed getBoundingClientRect/React state correction or second rail in
+   the sidebar. The existing body portal remains a fallback off /workspace. */
+.xv-chat-turn-rail.xv-chat-turn-rail--dock.xv-chat-turn-rail--pane {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  height: calc(100% - 16px);
+  z-index: 8;
+}
+
+/* The fixed composer already tracks the sidebar's CSS width variable. Its
+   previous 200ms left transition made it trail the actual drag boundary. */
+body.xv-sidebar-resizing .xv-terminal-dock {
+  transition-property: opacity !important;
+}
+
+/* Keep workspace chrome contained as its available width changes. Only the
+   optional project-edits label collapses at narrow desktop viewport widths;
+   its button retains an accessible label and tooltip. */
+.xv-workspace-header,
+.xv-workspace-header .xv-workspace-identity-cluster,
+.xv-workspace-header .xv-workspace-identity,
+.xv-workspace-header .xv-repo-name {
+  min-width: 0;
+  max-width: 100%;
+}
+.xv-workspace-header .xv-workspace-identity-cluster {
+  flex: 1 1 auto;
+  overflow: hidden;
+}
+.xv-workspace-header .xv-workspace-identity .xv-term-title {
+  min-width: 0;
+  max-width: 100%;
+}
+.xv-workspace-header .xv-workspace-header-tools {
+  flex: 0 0 auto;
+}
+@media (min-width: 1024px) and (max-width: 1200px) {
+  .xv-workspace-header {
+    gap: 0.35rem;
+    padding-inline: 0.5rem;
+  }
+  .xv-workspace-header .xv-ws-launch:not(.xv-ws-launch--icon) > span {
+    display: none;
+  }
+  .xv-workspace-header .xv-ws-launch:not(.xv-ws-launch--icon) {
+    min-width: 32px;
+    width: 32px;
+    padding-inline: 0;
+    justify-content: center;
+  }
+}
