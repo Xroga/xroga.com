@@ -34,3 +34,21 @@ test('profile footer has the real name, plan and square-rounded profile photo', 
   assert.match(sidebar, /className="rounded-\[10px\]"/);
   assert.match(sidebar, /xv-sidebar-profile-plan" title=\{userPlan\}/);
 });
+
+test('drag paints adjacent panes directly and persists sidebar width only on release', () => {
+  const handler = sidebar.slice(sidebar.indexOf('  function beginResize('), sidebar.indexOf('  function startResize(', sidebar.indexOf('  function beginResize(')));
+  assert.match(handler, /requestAnimationFrame\(paint\)/);
+  assert.match(handler, /sidebarFrameRef\.current\.style\.width = pixels/);
+  assert.match(handler, /sidebarPanelRef\.current\.style\.width = pixels/);
+  assert.match(handler, /if \(!active\) return/);
+  assert.match(handler, /function onCancel\(\) \{ finish\(false\); \}/);
+  assert.equal((handler.match(/setSidebarWidth\(/g) || []).length, 1);
+  assert.doesNotMatch(handler, /requestAnimationFrame\(\(\) =>.*setSidebarWidth/);
+  assert.match(sidebar, /ref=\{sidebarFrameRef\}/);
+  assert.match(sidebar, /ref=\{sidebarPanelRef\}/);
+});
+test('resize grip consists of strokes, not an obscuring background', () => {
+  assert.match(globalCss, /\.xv-sidebar-resize-handle > span \{[\s\S]*?repeating-linear-gradient/);
+  assert.match(globalCss, /\.xv-sidebar-resize-handle \{[\s\S]*?background: transparent !important/);
+  assert.match(globalCss, /\.xv-sidebar-edge-toggle:hover \{[\s\S]*?background: transparent/);
+});
