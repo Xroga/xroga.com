@@ -1,17 +1,17 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "7868c9afd3f271ed360635a6b7500b8178a2fb001bb2edbfa9731c2bf2b3469e",
+  "reviewRegistrySha256": "2e25eaa8ddfac132a4fb659d33230facd5d25ba6712626abcd6d8a3cc760ad02",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
     "privilegedFactorySites": 226,
-    "persistenceCandidates": 1001,
+    "persistenceCandidates": 1000,
     "ownerPredicateCandidates": 262,
     "reviewRequired": 152,
-    "reviewedCandidates": 849,
+    "reviewedCandidates": 848,
     "unresolvedSafetyCandidates": 196,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 23
@@ -20,7 +20,7 @@
     "REVIEW_REQUIRED": 152,
     "SCOPED_BOUNDARY": 547,
     "NARROW_EXCEPTION": 52,
-    "NOT_PERSISTENCE": 206,
+    "NOT_PERSISTENCE": 205,
     "REVIEWED_GAP": 44
   },
   "acceptance": {
@@ -29,7 +29,7 @@
     "scope": "COMMAND_007_CRITERION_EVIDENCE_NOT_BATCH_OR_PRODUCTION_ACCEPTANCE",
     "certifiedScopedPrivilegedCallers": 0,
     "verifiedCandidateBoundaries": 80,
-    "unresolvedCandidateBoundaries": 921,
+    "unresolvedCandidateBoundaries": 920,
     "criteria": [
       {
         "id": "XB01-C007-AC01",
@@ -6244,11 +6244,15 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "69f8238a08b53a415c89"
+        "id": "68a71e7e97bdbf681c01"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "1c780eb9958455f3963f"
+        "id": "9d65047091d93e2be208"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "87e3a00234e9c4c3008b"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -6304,11 +6308,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "a9e89dea32df3eb8a0b5"
-      },
-      {
-        "code": "MISSING_CALLER_REVIEW",
-        "id": "db86c426bed33eedc7ee"
+        "id": "b14757670cd7cae6bebc"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -6356,7 +6356,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "01fce3ee8703d9146072"
+        "id": "7afd23280a7f3c8a8a03"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -7084,15 +7084,15 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "5740af96dff28fda6f3f"
+        "id": "68a71e7e97bdbf681c01"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "69f8238a08b53a415c89"
+        "id": "9d65047091d93e2be208"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "1c780eb9958455f3963f"
+        "id": "87e3a00234e9c4c3008b"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -10088,11 +10088,7 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "a9e89dea32df3eb8a0b5"
-      },
-      {
-        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "db86c426bed33eedc7ee"
+        "id": "b14757670cd7cae6bebc"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -10120,7 +10116,7 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "01fce3ee8703d9146072"
+        "id": "7afd23280a7f3c8a8a03"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -10149,11 +10145,11 @@
     ]
   },
   "reviewAgreement": {
-    "currentCallers": 1001,
+    "currentCallers": 1000,
     "structuredVerified": 80,
-    "structuredUnproven": 921,
+    "structuredUnproven": 920,
     "manualUnresolved": 196,
-    "manualUnsupported": 725,
+    "manualUnsupported": 724,
     "agreedVerified": 80,
     "proofAwaitingManualReconciliation": 0
   },
@@ -30467,15 +30463,15 @@
       "sourceSha256": "44577045e394eb2a8183474d4516c4be72464f50567a92622757fed257625597"
     },
     {
-      "id": "5740af96dff28fda6f3f",
+      "id": "68a71e7e97bdbf681c01",
       "path": "frontend/src/app/(workspace)/layout.tsx",
-      "line": 23,
+      "line": 24,
       "enclosing": "WorkspaceLayout",
       "kind": "RPC_CANDIDATE",
       "target": "read_current_profile_setup",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "0c878ec62c92cb0529a52f985e39dfc50756ee0ad06f2dd4940c57724b46f8d0",
+      "sourceSha256": "4c1ca037b72ce3a2dadb443b207c20a9735905cbb2e09f774d537624f404469c",
       "semanticReview": {
         "authority": "These seven conservative inventory entries are genuine public-key server component or middleware queries, not service-role factories or false positives. The shared server creator uses only validated publishable configuration and verified Auth cookies. Three profile setup RPCs accept no owner argument, derive auth.uid() inside fixed SQL and return only that subject id/display name/onboarding. Pages check the returned subject and fail closed on query errors or mismatch. Public community profile column grants remain restrictive. Four current_community_role calls also take no owner argument and derive current identity from the validated JWT. Admin/community pages use current database role. Founder middleware and layout independently require configured founder identity, current role and real AAL2 before returning private HTML/RSC. Query owner/role fields grant nothing.",
         "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. One exact query per listed file. New actual Next HTTP fixture uses real local Auth-cookie issuance, distinct owner/member profiles and onboarding states, own dashboard/workspace metadata, completed versus pending onboarding, legitimate admin/community rendering and member denial despite forged query identity. Current role changes affect the same session. Real local TOTP admits the correct founder and demotion denies its still-AAL2 cookie, exercising both middleware and layout RPCs. Exact foreign profile remains unchanged. Installed Next streaming redirect markers are validated explicitly, while private founder denial remains strict403. No backend service-role or external account grant is inferred. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access. The current source differs from this historical review; mapping by unchanged caller signature and ordinal only preserves identity. Current-source security proof remains required.",
@@ -30496,26 +30492,26 @@
       }
     },
     {
-      "id": "69f8238a08b53a415c89",
+      "id": "9d65047091d93e2be208",
       "path": "frontend/src/app/(workspace)/layout.tsx",
-      "line": 28,
+      "line": 29,
       "enclosing": "WorkspaceLayout",
       "kind": "RPC_CANDIDATE",
       "target": "needs_current_contact_phone_prompt",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "0c878ec62c92cb0529a52f985e39dfc50756ee0ad06f2dd4940c57724b46f8d0"
+      "sourceSha256": "4c1ca037b72ce3a2dadb443b207c20a9735905cbb2e09f774d537624f404469c"
     },
     {
-      "id": "1c780eb9958455f3963f",
+      "id": "87e3a00234e9c4c3008b",
       "path": "frontend/src/app/(workspace)/workspace/page.tsx",
-      "line": 27,
+      "line": 25,
       "enclosing": "WorkspacePage",
       "kind": "RPC_CANDIDATE",
       "target": "current_community_role",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "38cd455f073cfd679346988398cafc5e0b78ad92eb674fb30073bd46b9b6afa9"
+      "sourceSha256": "fd429217773c90765e312d1ab1743e11bf3c86914354dedda9ea9b02a728dfec"
     },
     {
       "id": "83779ac5d4b86b4ed00a",
@@ -30889,51 +30885,22 @@
       }
     },
     {
-      "id": "a9e89dea32df3eb8a0b5",
+      "id": "b14757670cd7cae6bebc",
       "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
-      "line": 180,
+      "line": 348,
       "enclosing": "WorkspaceBrowserOperator",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "2500a1f07a78f43f9ebee385642fac97743777253c045bce71eed6bf51002d9a",
+      "sourceSha256": "82983bf0a836d2e284ffe35ddea6b182b42dcb64304a2a394e6becc9a46213c1",
       "semanticReview": {
         "authority": "Inspected the exact receiver and complete expression. It is a built-in JavaScript data conversion with no persistence client or privilege transfer.",
-        "reason": "Decodes the user-requested recording or enumerates user-selected File objects locally. Neither method is a database or storage invocation.",
+        "reason": "Decodes the user-requested recording locally. The byte conversion does not invoke a database or storage client.",
         "evidence": [
           {
             "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
             "marker": "Uint8Array.from(atob(encoded)"
-          },
-          {
-            "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
-            "marker": "Array.from(event.target.files"
-          }
-        ]
-      }
-    },
-    {
-      "id": "db86c426bed33eedc7ee",
-      "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
-      "line": 246,
-      "enclosing": "WorkspaceBrowserOperator",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "<dynamic>",
-      "ownerPredicateCandidate": false,
-      "review": "NOT_PERSISTENCE",
-      "sourceSha256": "2500a1f07a78f43f9ebee385642fac97743777253c045bce71eed6bf51002d9a",
-      "semanticReview": {
-        "authority": "Inspected the exact receiver and complete expression. It is a built-in JavaScript data conversion with no persistence client or privilege transfer.",
-        "reason": "Decodes the user-requested recording or enumerates user-selected File objects locally. Neither method is a database or storage invocation.",
-        "evidence": [
-          {
-            "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
-            "marker": "Uint8Array.from(atob(encoded)"
-          },
-          {
-            "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
-            "marker": "Array.from(event.target.files"
           }
         ]
       }
@@ -31677,15 +31644,15 @@
       "sourceSha256": "0fd186c17e5d8ab081a61db58f16e171de43d5d8cc66727caccab5245f1a5fc7"
     },
     {
-      "id": "01fce3ee8703d9146072",
+      "id": "7afd23280a7f3c8a8a03",
       "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "line": 413,
+      "line": 430,
       "enclosing": "TerminalChatBar",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "959ecdbdfe4da3c4cee1a79e2e4684f638df3ded77cf7ed9002bdafbd2ee8d0c",
+      "sourceSha256": "c2edaea30162f2313c6de6e121be4c68b0676b19014ed31da5c4cd98eddee839",
       "semanticReview": {
         "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in TerminalChatBar, with no database or Storage client receiver.",
         "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",

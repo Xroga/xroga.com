@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "0402f6749f1c57ad2a88699056fd6365c76b35d1",
+  "source_sha": "0e2f834f4bbbaa05726b6d8c948599f9f9c0a752",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -13974,7 +13974,7 @@
     {
       "name": "XROGA_CHROME_EXTENSION_ID",
       "consuming_sources": [
-        "frontend/src/app/(workspace)/workspace/page.tsx"
+        "frontend/src/app/(workspace)/layout.tsx"
       ],
       "environments": [
         "backend/operator or inherited system context"
@@ -19849,11 +19849,11 @@
     },
     {
       "path": "frontend/src/app/(workspace)/layout.tsx",
-      "sha256": "0c878ec62c92cb0529a52f985e39dfc50756ee0ad06f2dd4940c57724b46f8d0"
+      "sha256": "4c1ca037b72ce3a2dadb443b207c20a9735905cbb2e09f774d537624f404469c"
     },
     {
       "path": "frontend/src/app/(workspace)/workspace/page.tsx",
-      "sha256": "38cd455f073cfd679346988398cafc5e0b78ad92eb674fb30073bd46b9b6afa9"
+      "sha256": "fd429217773c90765e312d1ab1743e11bf3c86914354dedda9ea9b02a728dfec"
     },
     {
       "path": "frontend/src/app/about/page.tsx",
@@ -20437,7 +20437,7 @@
     },
     {
       "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
-      "sha256": "2500a1f07a78f43f9ebee385642fac97743777253c045bce71eed6bf51002d9a"
+      "sha256": "82983bf0a836d2e284ffe35ddea6b182b42dcb64304a2a394e6becc9a46213c1"
     },
     {
       "path": "frontend/src/components/browser/XrogaBrowser.tsx",
@@ -21609,7 +21609,7 @@
     },
     {
       "path": "frontend/src/components/layout/Sidebar.tsx",
-      "sha256": "156f3e2d8a75fc99e718d77f4b3311aad80a8243187ad53fdcb25e6a2a8fae90"
+      "sha256": "9796854efb77ad0c71044aa609bf2d5b4262f7614d0ef08c5674d56a5a2b6ea1"
     },
     {
       "path": "frontend/src/components/layout/SidebarActionMenu.tsx",
@@ -22401,7 +22401,7 @@
     },
     {
       "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "sha256": "959ecdbdfe4da3c4cee1a79e2e4684f638df3ded77cf7ed9002bdafbd2ee8d0c"
+      "sha256": "c2edaea30162f2313c6de6e121be4c68b0676b19014ed31da5c4cd98eddee839"
     },
     {
       "path": "frontend/src/components/terminal/TerminalDock.tsx",
@@ -37394,14 +37394,21 @@
     },
     {
       "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
-      "line": 79,
+      "line": 135,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
-      "line": 80,
+      "line": 136,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+      "line": 277,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
