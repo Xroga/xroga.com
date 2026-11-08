@@ -55,6 +55,7 @@ import mediaRouter from './routes/media.js';
 import driveRouter from './routes/drive.js';
 import browserRunsRouter from './routes/browserRuns.js';
 import localBrowserRouter from './routes/localBrowser.js';
+import { browserDeviceExtension, createBrowserDeviceRouter, createLocalBrowserAuth } from './routes/localBrowserDevice.js';
 import builderRouter from './routes/builder.js';
 import { resolveStorageConfig } from './storage/runtime.js';
 import capabilitiesRouter from './routes/capabilities.js';
@@ -143,7 +144,14 @@ const corsOptions: cors.CorsOptions = {
   allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'X-Xroga-Language'],
 };
 
-app.use(cors(corsOptions));
+app.use(cors((req, done) => {
+  const extensionId = browserDeviceExtension();
+  const origin = req.headers.origin;
+  if (extensionId && origin === 'chrome-extension://' + extensionId && /^\/api\/browser\/local(?:\/|$)/.test(req.url)) {
+    return done(null, { ...corsOptions, origin, credentials: false });
+  }
+  done(null, corsOptions);
+}));
 
 // Whop Standard Webhooks signatures cover the untouched raw body.
 app.use('/api/billing/webhook', billingWebhookRouter);
@@ -257,7 +265,8 @@ app.use('/api/showcase', authMiddleware, showcaseRouter);
 app.use('/api/media', authMiddleware, mediaRouter);
 app.use('/api/drive', authMiddleware, driveRouter);
 app.use('/api/browser/runs', authMiddleware, browserRunsRouter);
-app.use('/api/browser/local', authMiddleware, localBrowserRouter);
+app.use('/api/browser/local/device', createBrowserDeviceRouter());
+app.use('/api/browser/local', createLocalBrowserAuth(), localBrowserRouter);
 app.use('/api/builder', authMiddleware, builderRouter);
 app.use('/api/capabilities', authMiddleware, capabilitiesRouter);
 app.use('/api/debug', authMiddleware, debugRouter);

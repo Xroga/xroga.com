@@ -1,5 +1,4 @@
-// The user during a run: Continue after the turn cap, Resume after a restart, and the queue of messages typed while the
-// agent works. There is no Take over: Stop gives the page back to the user, and a message carries the task on.
+// Pause gives control back to the user without cancelling the canonical task. Resume is always explicit.
 import type { QueuedMessage, RunStatus } from '@src/store/types';
 import { t } from '@src/ui/i18n';
 
@@ -8,28 +7,53 @@ const button =
 
 export function RunBar({
   status,
+  reason,
   onContinue,
   onResume,
+  onPause,
+  onStop,
 }: {
   status: RunStatus;
+  reason?: string;
   onContinue: () => void;
   onResume: () => void;
+  onPause?: () => void;
+  onStop?: () => void;
 }) {
+  if (onPause && status === 'running') {
+    return (
+      <Bar text="Xroga is working in Chrome.">
+        <button type="button" className={button} onClick={onPause}>
+          Pause and take over
+        </button>
+      </Bar>
+    );
+  }
   if (status === 'capped') {
     return (
       <Bar text={t('run.capped')}>
         <button type="button" className={button} onClick={onContinue}>
           {t('run.continue')}
         </button>
+        {onStop && (
+          <button type="button" className={button} onClick={onStop}>
+            Stop
+          </button>
+        )}
       </Bar>
     );
   }
   if (status === 'interrupted') {
     return (
-      <Bar text={t('run.interrupted')}>
+      <Bar text={onPause ? (reason ?? 'Task paused. Review the page before continuing.') : t('run.interrupted')}>
         <button type="button" className={button} onClick={onResume}>
           {t('run.resume')}
         </button>
+        {onStop && (
+          <button type="button" className={button} onClick={onStop}>
+            Stop
+          </button>
+        )}
       </Bar>
     );
   }

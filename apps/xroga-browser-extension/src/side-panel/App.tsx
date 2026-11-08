@@ -34,15 +34,17 @@ import { useShortcuts } from '@src/ui/shortcuts';
 import { AutoNotice } from '@src/ui/auto-notice';
 import { HistoryIcon, LogoMark, NewChatIcon, SettingsIcon } from '@src/ui/icons';
 import { websiteUrl } from '@src/ui/links';
+import { Plugins } from './Plugins';
 import { XROGA_PRODUCT } from '@src/xroga/product';
 import { XROGA_REF } from '@src/xroga/model';
+import { WORKSPACE_ENVIRONMENT } from '@src/xroga/workspace';
 
 const NO_PROVIDERS: ProviderConfig[] = [];
 const NO_KEYS: Record<string, string> = {};
 const PAIR_ERRORS: Record<string, string> = {
   'sign-in': 'Sign in to Xroga in this Chrome profile to connect.',
   unavailable: 'Browser Automation is unavailable in this Workspace release.',
-  'extension-id': 'This Workspace release is configured for a different extension ID.',
+  'extension-id': `This copy is configured for ${WORKSPACE_ENVIRONMENT}. Load the Xroga extension package that matches this Workspace, then reconnect.`,
   account: 'This Chrome profile is linked to another Xroga account. Switch accounts or use a separate profile.',
   failed: 'Workspace couldn’t connect. Try connecting again.',
   timeout: 'Workspace didn’t respond. Check the Workspace tab for a message.',
@@ -108,10 +110,12 @@ export function App() {
   const releaseNotes = useWhatsNew();
   const whatsNew = XROGA_PRODUCT ? null : releaseNotes;
   const [paired, setPaired] = useState(false);
+  const [direct, setDirect] = useState(false);
+  const [voiceConnected, setVoiceConnected] = useState(false);
   // The Workspace bridge holds the signed-in voice session.
   const voice = XROGA_PRODUCT ? null : voiceSetup(settings, providers, apiKeys);
   const transcribe = XROGA_PRODUCT
-    ? paired
+    ? voiceConnected
       ? transcribeInWorkspace
       : null
     : voice
@@ -134,6 +138,8 @@ export function App() {
           if (wasPaired && !result?.paired) void autoConnect().catch(() => undefined);
           wasPaired = result?.paired === true;
           setPaired(result?.paired === true);
+          setDirect(result?.direct === true);
+          setVoiceConnected(result?.voice === true);
           setConnecting(result?.connecting === true);
           if (result?.paired) setConnectionError('');
           else if (typeof result?.failure === 'string')
@@ -141,6 +147,7 @@ export function App() {
         },
         () => {
           setPaired(false);
+          setVoiceConnected(false);
           setConnecting(false);
         },
       );
@@ -159,6 +166,8 @@ export function App() {
   /** A message held back because it looks like a card number. */
   const [held, setHeld] = useState<string | null>(null);
   /** Tabs picked with @ before the conversation exists; shared with the first message. */
+  const [pluginsOpen, setPluginsOpen] = useState(false);
+  const [stayOnTabFor, setStayOnTabFor] = useState<string>();
   const [pendingTabs, setPendingTabs] = useState<Array<{ tabId: number; title: string }>>([]);
   const [confirmNewChat, setConfirmNewChat] = useState(false);
   /** Text to put back into the composer: queued messages returned on Stop, or one taken back to edit. */
@@ -420,12 +429,10 @@ export function App() {
       conversationId: state.conversationId,
       text,
       attachments: files.map(f => f.ref),
-      context: XROGA_PRODUCT
-        ? []
-        : [
-            ...pendingTabs.map(p => ({ kind: 'tab' as const, tabId: p.tabId })),
-            ...quotes.map(q => ({ kind: 'selection' as const, ...q })),
-          ],
+      context: [
+        ...pendingTabs.map(p => ({ kind: 'tab' as const, tabId: p.tabId })),
+        ...(!XROGA_PRODUCT ? quotes.map(q => ({ kind: 'selection' as const, ...q })) : []),
+      ],
       mode: extra.mode ?? mode,
       model: chosenModel,
       reasoning,
@@ -497,11 +504,23 @@ export function App() {
       </header>
       {XROGA_PRODUCT ? (
         <div className="flex flex-col gap-2 border-b border-nb-border/60 px-3 py-2">
-          {paired ? (
-            <span role="status" className="text-xs text-nb-muted">
-              Workspace connected
-            </span>
-          ) : (
+          <span className="text-xs text-nb-muted">{WORKSPACE_ENVIRONMENT} · v{chrome.runtime.getManifest().version}</span>
+          {paired || direct ? (
+            <div className="flex items-center justify-between gap-2">
+              <span role="status" className="text-xs text-nb-muted">
+                {paired ? (direct ? 'Signed in to Xroga' : 'Workspace connected') : 'Xroga session unavailable'}
+              </span>
+              {direct && !connecting ? (
+                <button type="button" disabled={active} className="text-xs text-nb-muted hover:text-nb-fg"
+                  onClick={() => void chrome.runtime.sendMessage({ type: 'xroga.browser.sign-out.v1' }).then(ok => {
+                    if (!ok) setConnectionError('Could not revoke this device. Check your connection and try again.');
+                  }, () => setConnectionError('Could not revoke this device. Check your connection and try again.'))}>
+                  Sign out
+                </button>
+              ) : null}
+            </div>
+          ) : null}
+          {!paired ? (
             <button
               type="button"
               disabled={connecting}
@@ -528,7 +547,7 @@ export function App() {
                   ? 'Sign in to Xroga'
                   : 'Connect Xroga Workspace'}
             </button>
-          )}
+          ) : null}
           {connectionError ? (
             <p role="alert" className="text-xs text-nb-muted">
               {connectionError}
@@ -559,7 +578,7 @@ export function App() {
           actions={
             state.conversationId && client
               ? {
-                  idle: !active,
+                  idle: !active && (!XROGA_PRODUCT || !['interrupted', 'capped'].includes(state.status)),
                   edit: (entryId, text) =>
                     startRun({ type: 'edit', conversationId: state.conversationId!, entryId, text }),
                   restart: entryId => startRun({ type: 'restart', conversationId: state.conversationId!, entryId }),
@@ -636,10 +655,37 @@ export function App() {
         prompts={state.prompts}
         answer={(promptId, answer) => client?.send({ type: 'answer', promptId, answer })}
       />
+      {XROGA_PRODUCT && active && state.conversationId ? (
+        <div className="flex flex-wrap items-center gap-2 px-3 pb-1 text-xs text-nb-muted">
+          <button type="button" aria-pressed={stayOnTabFor !== state.conversationId}
+            className="rounded px-1 py-0.5 hover:bg-nb-surface"
+            onClick={() => {
+              if (!state.conversationId) return;
+              const follow = stayOnTabFor === state.conversationId;
+              setStayOnTabFor(follow ? undefined : state.conversationId);
+              client?.send({ type: 'follow-agent', conversationId: state.conversationId, follow });
+            }}>{stayOnTabFor === state.conversationId ? 'Stay on current tab' : 'Follow agent'}</button>
+          <button type="button" className="rounded px-1 py-0.5 underline hover:bg-nb-surface"
+            onClick={() => state.conversationId && client?.send({ type: 'jump-agent', conversationId: state.conversationId })}>
+            Jump to task tab
+          </button>
+        </div>
+      ) : null}
       <RunBar
         status={state.status}
+        reason={state.reason}
+        onStop={
+          XROGA_PRODUCT && paired
+            ? () => state.conversationId && client?.send({ type: 'stop', conversationId: state.conversationId })
+            : undefined
+        }
         onContinue={() => state.conversationId && startRun({ type: 'continue', conversationId: state.conversationId })}
         onResume={() => state.conversationId && startRun({ type: 'resume', conversationId: state.conversationId })}
+        onPause={
+          XROGA_PRODUCT && paired
+            ? () => state.conversationId && client?.send({ type: 'pause', conversationId: state.conversationId })
+            : undefined
+        }
       />
       <QueueList
         items={state.queue}
@@ -653,14 +699,17 @@ export function App() {
         }
       />
       <TabBar
-        tabs={state.conversationId ? state.tabs : pendingTabs.map(p => ({ ...p, url: '', origin: 'user' as const }))}
+        tabs={XROGA_PRODUCT || !state.conversationId ? pendingTabs.map(p => ({ ...p, url: '', origin: 'user' as const })) : state.tabs}
         onUnshare={tabId => {
-          if (state.conversationId) client?.send({ type: 'unshare-tab', conversationId: state.conversationId, tabId });
+          if (!XROGA_PRODUCT && state.conversationId) client?.send({ type: 'unshare-tab', conversationId: state.conversationId, tabId });
           else setPendingTabs(tabs => tabs.filter(p => p.tabId !== tabId));
         }}
       />
+      {XROGA_PRODUCT ? <Plugins open={pluginsOpen} onOpenChange={setPluginsOpen} /> : null}
       <Composer
         active={active}
+        onPlugins={XROGA_PRODUCT ? () => setPluginsOpen(true) : undefined}
+        sendBlocked={XROGA_PRODUCT && ['interrupted', 'capped'].includes(state.status)}
         mode={mode}
         model={model}
         models={models}
@@ -733,9 +782,9 @@ export function App() {
           client?.send({ type: 'screenshot-tab', tabId: client.tabId, conversationId: state.conversationId })
         }
         onRemoveFile={id => setFiles(current => current.filter(f => f.ref.id !== id))}
-        sharedTabs={[client?.tabId ?? -1, ...state.tabs.map(x => x.tabId), ...pendingTabs.map(p => p.tabId)]}
+        sharedTabs={[client?.tabId ?? -1, ...(!XROGA_PRODUCT ? state.tabs.map(x => x.tabId) : []), ...pendingTabs.map(p => p.tabId)]}
         onShareTab={tab => {
-          if (state.conversationId)
+          if (!XROGA_PRODUCT && state.conversationId)
             client?.send({ type: 'share-tab', conversationId: state.conversationId, tabId: tab.tabId });
           else setPendingTabs(tabs => [...tabs, tab]);
         }}

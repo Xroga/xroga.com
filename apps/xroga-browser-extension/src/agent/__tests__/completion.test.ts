@@ -107,6 +107,29 @@ describe('what creates and clears debt', () => {
 });
 
 describe('done and verification debt', () => {
+  it.each([
+    ok('Ambiguous response', { receipt: receipt({ dispatched: 'unknown' }) }),
+    failed('INTERRUPTED', 'Ambiguous response', { delivered: 'unknown' }),
+  ])('stops browser writes as soon as a canonical run cannot confirm delivery', async result => {
+    const layer = new FakeLayer({ click: () => result, snapshot: () => ok('s', { page: page(4, 'full') }) });
+    const { end, texts } = await run(
+      [
+        { toolCalls: [call('click', { target: { ref: 'a1' } }, 'first'), call('click', { target: { ref: 'a1' } }, 'batch')] },
+        { toolCalls: [call('snapshot', {}, 'observe')] },
+        { toolCalls: [call('click', { target: { ref: 'a1' } }, 'replay')] },
+        doneCall('success', 'end'),
+      ],
+      layer,
+      { protectUncertainWrites: true },
+    );
+    expect(layer.calls.map(c => c.tool)).toEqual(['click', 'snapshot']);
+    expect(texts.first).toContain('Further changes were paused');
+    expect(texts.batch).toMatch(/^skipped/);
+    expect(texts.replay).toContain('an earlier write might have been delivered');
+    expect(end).toMatchObject({ status: 'done', outcome: 'partial' });
+    expect(end.summary).toContain('A browser action may have been delivered');
+  });
+
   it('refuses done(success) while debt is left, and accepts it after a read', async () => {
     const layer = new FakeLayer({ click: () => noEffect, snapshot: () => ok('s', { page: page(4, 'full') }) });
     const { end, texts } = await run(
@@ -226,6 +249,25 @@ describe('guards', () => {
     const err = (id: string) => ({ toolCalls: [call('click', { target: { ref: id } }, id)] });
     const { end } = await run([err('a'), err('b'), err('c'), err('d'), err('e'), { text: 'Giving up.' }], layer);
     expect(end).toMatchObject({ status: 'failed', outcome: 'failed', reason: '5 calls in a row failed.' });
+  });
+
+  it('rechecks the current tab after a stale control and leaves the next action to the model', async () => {
+    const layer = new FakeLayer({
+      click: (_args, index) => index === 0 ? failed('STALE_DOCUMENT') : effect(5),
+      snapshot: () => ok('Fresh controls: [new] Filters', { page: page(4, 'full') }),
+    });
+    const { texts, end } = await run([
+      { toolCalls: [call('click', { target: { ref: 'old' }, tabId: 1 }, 'a')] },
+      { toolCalls: [call('click', { target: { ref: 'new' }, tabId: 1 }, 'b')] },
+      doneCall('success', 'd'),
+    ], layer, { protectUncertainWrites: true });
+    expect(layer.calls.map(({ tool, args: { target, tabId } }) => [tool, target ? { target, tabId } : { tabId }])).toEqual([
+      ['click', { target: { ref: 'old' }, tabId: 1 }],
+      ['snapshot', { tabId: 1 }],
+      ['click', { target: { ref: 'new' }, tabId: 1 }],
+    ]);
+    expect(texts.a).toContain('Fresh controls: [new] Filters');
+    expect(end.outcome).toBe('success');
   });
 
   it('caps the run at its turn limit, with the salvage summary', async () => {

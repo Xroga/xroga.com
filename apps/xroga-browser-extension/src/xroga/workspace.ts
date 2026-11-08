@@ -1,8 +1,11 @@
 // Xroga modification. Discovery is public information and conveys no task authority.
 declare const __XROGA_WORKSPACE_ORIGIN__: string | undefined;
+declare const __XROGA_BROWSER_API_ORIGIN__: string | undefined;
+export const BROWSER_API_ORIGIN = typeof __XROGA_BROWSER_API_ORIGIN__ === 'string' ? __XROGA_BROWSER_API_ORIGIN__ : '';
 const pinnedOrigin = typeof __XROGA_WORKSPACE_ORIGIN__ === 'string' ? __XROGA_WORKSPACE_ORIGIN__ : 'https://xroga.com';
 export const WORKSPACE_URL = `${pinnedOrigin}/workspace`;
-const WORKSPACE_ORIGIN = new URL(WORKSPACE_URL).origin;
+export const WORKSPACE_ORIGIN = new URL(WORKSPACE_URL).origin;
+export const WORKSPACE_ENVIRONMENT = WORKSPACE_ORIGIN === 'https://xroga.com' ? 'Production' : 'Staging Preview';
 
 export function isWorkspaceSender(sender: { origin?: string; url?: string; frameId?: number } | undefined) {
   if (sender?.origin !== WORKSPACE_ORIGIN || sender.frameId !== 0 || typeof sender.url !== 'string') return false;

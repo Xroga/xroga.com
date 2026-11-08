@@ -1,3 +1,11 @@
+# Xroga Browser Automation privacy
+
+Xroga Browser Automation uses the Nanobrowser engine. The upstream policy below describes the Nanobrowser distribution. The Xroga edition uses your Xroga account and routes task prompts and relevant bounded browser observations to Xroga's API for the selected model. Documents sent for extraction are processed by that API. The browser performs actions locally. Local task history and attachments are separated by Xroga account within a Chrome profile.
+
+The extension stores a browser-only device credential in trusted extension storage to maintain sign-in. The server stores its digest and enforces expiration and revocation. Use Sign out in the side panel to revoke access for this installation. Xroga records canonical run results, operational evidence and model usage on the server. Browser screenshot pixels are disabled for routine model turns.
+
+The Plugins panel uses existing Xroga connected accounts. The extension receives catalog metadata and connection status, and sign-in takes place on the connected service's hosted authorization flow. If an agent requests a connected read, the extension displays the account and requested inputs for review. Approved inputs are sent through Xroga to the connected service via Composio. Bounded results may be used as evidence by the task's model and retained in its account-scoped history. Connected app credentials are never sent to the extension or the model.
+
 # Privacy Policy for Nanobrowser
 
 ## Introduction

@@ -64,6 +64,8 @@ export const SUBMIT_WORDS = vocabulary(
     'submit',
     'send',
     'publish',
+    'deploy',
+    'launch campaign',
     'post',
     'confirm',
     'apply',
@@ -81,7 +83,7 @@ export const SUBMIT_WORDS = vocabulary(
 export const COOKIE_REJECT = /cookie|^reject\s+all$|^(?:拒绝所有|全部拒绝|拒绝全部)$/i;
 /** Granting access: protected, like a payment. */
 export const GRANT_WORDS = vocabulary(
-  ['authorize', 'authorise', 'allow access', 'grant access', 'give access'],
+  ['authorize', 'authorise', 'allow access', 'grant access', 'give access', 'assign role', 'make public'],
   ['授权', '允许访问', '授予访问'],
 );
 /** An affirmative label, which grants access on a consent page; "Allow" alone elsewhere is a cookie banner's. */

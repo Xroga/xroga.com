@@ -1,7 +1,7 @@
 {
   "version": "1.0",
   "missionId": "ZURELAY-RESPONSE-CONTRACT-20261103",
-  "baseSha": "60f50b35e40c40351b7ade5a5bb583bfcd773493",
+  "baseSha": "6ee13e4b9e2655efa161937903625353a75c7bea",
   "requirementIds": [
     "XR-MISSION-055"
   ],
@@ -119,6 +119,7 @@
   "rollout": "After all exact-source gates, request specific secure key/config and bounded provider-test approval, then reviewed paired API/Job fence and frontend promotion. No action in production from this checkpoint.",
   "rollback": "Preserve the current cd5541 API/Job and d86c frontend plus voice routing and ledger. The old image is not a verified Zurelay recovery. During a new-policy rollback keep model admission and queues closed until a compatible reviewed Zurelay pair is available. Never silently reactivate old providers.",
   "knownGaps": [
+    "Integration ancestry starts at 6ee13e4b, the squash that imported this mission. Its historical base 60f50b35e40c40351b7ade5a5bb583bfcd773493 remains a reference, not a release or acceptance claim.",
     "Exact-source CI and authenticated isolated pairing remain required.",
     "Offline Sonnet and research continuation tests do not establish actual provider behavior.",
     "The existing key has probe-only limits. Further model/retrieval spending and source-pinned production cutover remain unapproved.",

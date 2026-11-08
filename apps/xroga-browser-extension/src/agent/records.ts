@@ -3,7 +3,7 @@
 // never dispatched before its intent is on disk), the tool result when it returns, with the layer's structured result
 // beside the text the model saw.
 import type { Result } from '@src/browser-control';
-import { appendEntry, getRun, putRun } from '@src/store/conversations';
+import { appendEntry, updateRun } from '@src/store/conversations';
 import type {
   Entry,
   EntryOf,
@@ -112,7 +112,7 @@ export class RunWriter {
   ) {
     const parts: MessagePart[] = [{ type: 'tool-result', toolCallId, toolName, text, isError }];
     if (image) parts.push({ type: 'image', ...image });
-    return this.message({ role: 'tool', parts }, { result });
+    return this.message({ role: 'tool', parts }, { result, meta: {} });
   }
 
   ui(kind: EntryOf<'ui'>['kind'], data: unknown) {
@@ -125,11 +125,9 @@ export class RunWriter {
 
   /** Updates the run record with a patch, keeping what is not in it. */
   async run(patch: Partial<RunRecord>): Promise<RunRecord | undefined> {
-    const current = await getRun(this.conversationId);
-    if (!current || current.runId !== this.runId) return current;
-    const next = { ...current, ...patch };
-    await putRun(next);
-    return next;
+    return updateRun(this.conversationId, current =>
+      current?.runId === this.runId ? { ...current, ...patch } : current,
+    );
   }
 }
 

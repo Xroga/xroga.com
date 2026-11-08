@@ -7,6 +7,7 @@ import { UserCacheScopeBootstrap } from '@/components/bootstrap/UserCacheScopeBo
 import { WorkspaceIdentityProvider } from '@/components/layout/WorkspaceIdentityContext';
 import { normalizeOnboarding, shouldRouteToOnboarding } from '@/lib/onboarding';
 import { resolveUserDisplayName } from '@/lib/userDisplayName';
+import { WorkspaceBrowserOperator } from '@/components/browser/WorkspaceBrowserOperator';
 
 export const metadata: Metadata = {
   robots: { index: false, follow: false },
@@ -34,6 +35,7 @@ export default async function WorkspaceLayout({
 
   const displayName = resolveUserDisplayName(user, profile?.display_name, 'Guest');
   const status = user ? 'authenticated' : 'guest';
+  const extensionId = process.env.XROGA_CHROME_EXTENSION_ID;
 
   return (
     <>
@@ -51,12 +53,14 @@ export default async function WorkspaceLayout({
         email={user?.email ?? undefined}
       >
         <AppProviders>
+          <WorkspaceBrowserOperator extensionId={extensionId && /^[a-p]{32}$/.test(extensionId) ? extensionId : undefined}>
           <AppShell
             displayName={user ? displayName : undefined}
             email={user?.email ?? undefined}
           >
             {children}
           </AppShell>
+          </WorkspaceBrowserOperator>
         </AppProviders>
       </WorkspaceIdentityProvider>
     </>

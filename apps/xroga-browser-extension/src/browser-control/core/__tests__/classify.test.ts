@@ -46,6 +46,10 @@ describe('sensitivity classifier', () => {
     expect(activate('Cancel subscription')).toBe('delete');
     expect(activate('Remove item')).toBe('delete');
     expect(activate('Publish')).toBe('submit');
+    expect(activate('Deploy revision')).toBe('submit');
+    expect(activate('Launch campaign')).toBe('submit');
+    expect(activate('Assign role')).toBe('grant');
+    expect(activate('Make public')).toBe('grant');
     expect(activate('Send message')).toBe('submit');
     expect(activate('Show details')).toBeNull();
     expect(activate('Cancel')).toBeNull();

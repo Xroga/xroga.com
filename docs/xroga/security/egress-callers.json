@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "d59a57ebdc1cbcca2ef99e9d2a64693d69eba5ec67cd02bc87581ba03268b377",
+  "sourceTreeDigest": "90b0a5e999b99774bb49240c5400ee06c22e010926c7e06f48e5e7c41ad9c3e6",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -38,7 +38,7 @@
     {
       "id": "038ced12b0f74e8d5e0f",
       "file": "backend/src/ai/openaiCompat.ts",
-      "line": 234,
+      "line": 238,
       "entryPoint": "createModelProviderClient",
       "transport": "fetch",
       "callee": "globalThis.fetch",
@@ -85,7 +85,7 @@
     {
       "id": "31380a8d5b9454a98a98",
       "file": "backend/src/ai/openaiCompat.ts",
-      "line": 335,
+      "line": 340,
       "entryPoint": "chatCompletion",
       "transport": "provider-sdk",
       "callee": "client.chat.completions.create",
@@ -141,7 +141,7 @@
     {
       "id": "9c345e07b723c086440e",
       "file": "backend/src/ai/openaiCompat.ts",
-      "line": 430,
+      "line": 435,
       "entryPoint": "chatCompletionStream",
       "transport": "provider-sdk",
       "callee": "client.chat.completions.create",
@@ -3812,13 +3812,13 @@
       ]
     },
     {
-      "id": "9ea21a6fc8b8700460c0",
+      "id": "06e6767d8c33bd9749a5",
       "file": "backend/src/workers/browserModelDispatch.ts",
-      "line": 59,
+      "line": 63,
       "entryPoint": "dispatchBrowserModel",
       "transport": "provider-sdk",
-      "callee": "createModelProviderClient(endpoint,beforeDispatch).chat.completions.create",
-      "callSha256": "b2e9ffe461f16a59e267de26c733199d141ee06611ad2048eb6db2b7ea56e74f",
+      "callee": "createModelProviderClient(endpoint,beforeDispatch,dispatch.beforeDispatch,input.onTiming).chat.completions.create",
+      "callSha256": "a4aad98ffb4587fb582ca6da6b5bb1ded28e8e0172bd2f8298c2f14ad789d629",
       "destination": "DYNAMIC_OR_SDK_INTERNAL",
       "trust": "SHARED_BROWSER_SDK_ADMISSION_AND_ACCOUNTING_ONLY_NOT_UPSTREAM_TOOL_CONTENT_PROVENANCE",
       "tenantAuthority": "ORIGINAL_API_ISSUED_CONTEXT_CURRENT_PROJECT_OWNER_CANONICAL_CREDENTIAL_REVISION_AND_DURABLE_RESERVATION_PER_WIRE_LEASE_CANCELLATION_AND_SETTLEMENT_PLUS_ATOMIC_USAGE_BEFORE_OUTPUT_NO_RAW_JOB_ID_OR_FABRICATED_CALLBACK_AUTHORITY",
@@ -4339,6 +4339,252 @@
           "path": "frontend/src/lib/siteIcon.test.ts",
           "marker": "only a plain public hostname can be requested",
           "sha256": "2916a37259e5450bd13865314cf09927e416524aff33b1544a5dc3107c3fb7b0"
+        }
+      ]
+    },
+    {
+      "id": "5b19b5ab231e0280efc7",
+      "file": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+      "line": 230,
+      "entryPoint": "connect",
+      "transport": "send",
+      "callee": "send",
+      "callSha256": "65e08ee42f856fcd72b4dd58d04aec77dd1fadcae354cd26d35a2faa43737364",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "PAIRED_EXACT_EXTENSION_PORT_WITH_EXISTING_XROGA_ORIGIN_AND_BROWSER_RUN_READ_CHECK",
+      "tenantAuthority": "SAME_ACCOUNT_AUTHENTICATED_API_VERIFIES_RUN_BEFORE_REQUESTING_LOCAL_ACTIVITY",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "VERIFIED_GUARD",
+      "evidence": [
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": "const loadRun = () => apiFetch<RunResult>",
+          "sha256": "82983bf0a836d2e284ffe35ddea6b182b42dcb64304a2a394e6becc9a46213c1"
+        },
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": "checkingRun !== run",
+          "sha256": "82983bf0a836d2e284ffe35ddea6b182b42dcb64304a2a394e6becc9a46213c1"
+        },
+        {
+          "path": "backend/src/routes/localBrowser.ts",
+          "marker": "localRecord(await runs.load(ctx.userId, id.parse(req.params.runId)), ctx.userId)",
+          "sha256": "f77d53a8717e5bfc1011c4f108bc3fbe77f9951cb266380a480aafb6a59e24d5"
+        }
+      ]
+    },
+    {
+      "id": "6631f0cfac960ae10cff",
+      "file": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+      "line": 254,
+      "entryPoint": "connect",
+      "transport": "send",
+      "callee": "send",
+      "callSha256": "206706dbb61de5380fd1b4d123cfaaeff134ec6f18643bb9f3c9f7f3ddcde24e",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "BOUNDED_CHROME_EXTENSION_PORT_NO_HTTP_TRANSPORT_OR_SESSION_TOKEN_IN_RESPONSE",
+      "tenantAuthority": "Resume history is requested only for a run admitted by the signed-in Workspace API through the current Chrome port.",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "VERIFIED_GUARD",
+      "evidence": [
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": "if (message.type === 'run' && message.runId && admitted.has(message.runId))",
+          "sha256": "82983bf0a836d2e284ffe35ddea6b182b42dcb64304a2a394e6becc9a46213c1"
+        },
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": "else send({ type: 'activity-history', runId: message.runId })",
+          "sha256": "82983bf0a836d2e284ffe35ddea6b182b42dcb64304a2a394e6becc9a46213c1"
+        }
+      ]
+    },
+    {
+      "id": "e0aa33d2494c480caeb3",
+      "file": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+      "line": 264,
+      "entryPoint": "connect",
+      "transport": "send",
+      "callee": "send",
+      "callSha256": "3f0d26d4bf152dcc89783b04a195a6d4bf8c9093bb3a10c1454b4d596b59f152",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "BOUNDED_CHROME_EXTENSION_PORT_NO_HTTP_TRANSPORT_OR_SESSION_TOKEN_IN_RESPONSE",
+      "tenantAuthority": "Reconnected history is requested only after the API confirms the current account owns the exact run. The connection and run are checked again before sending.",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "VERIFIED_GUARD",
+      "evidence": [
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": "if (disposed || portRef.current !== connected || activeRun.current) return",
+          "sha256": "82983bf0a836d2e284ffe35ddea6b182b42dcb64304a2a394e6becc9a46213c1"
+        },
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": "send({ type: 'activity-history', runId: checkpoint })",
+          "sha256": "82983bf0a836d2e284ffe35ddea6b182b42dcb64304a2a394e6becc9a46213c1"
+        }
+      ]
+    },
+    {
+      "id": "96c8086ac0938c5c9190",
+      "file": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+      "line": 338,
+      "entryPoint": "connect",
+      "transport": "send",
+      "callee": "send",
+      "callSha256": "80ce304010538de36141c81697b2e04d5d62fe4ba24211324eb807875a83b163",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "BOUNDED_CHROME_EXTENSION_PORT_NO_HTTP_TRANSPORT_OR_SESSION_TOKEN_IN_RESPONSE",
+      "tenantAuthority": "Verified API account and one-time extension challenge. Exact Chrome port; no bearer or provider credential is sent. Turn requests remain bound to admission. Reconnected finalization uses the existing API owner and current lease checks.",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "VERIFIED_GUARD",
+      "evidence": [
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": "const connected = runtime.connect(extensionId, { name: 'xroga-browser-v1' })",
+          "sha256": "82983bf0a836d2e284ffe35ddea6b182b42dcb64304a2a394e6becc9a46213c1"
+        },
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": "if (!isStart && !isResume && !isDocument && !isVoice",
+          "sha256": "82983bf0a836d2e284ffe35ddea6b182b42dcb64304a2a394e6becc9a46213c1"
+        },
+        {
+          "path": "backend/src/routes/localBrowser.ts",
+          "marker": "localRecord(await rt.runs.load(ctx.userId, runId), ctx.userId)",
+          "sha256": "f77d53a8717e5bfc1011c4f108bc3fbe77f9951cb266380a480aafb6a59e24d5"
+        }
+      ]
+    },
+    {
+      "id": "3736829b4cae598c6292",
+      "file": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+      "line": 351,
+      "entryPoint": "connect",
+      "transport": "send",
+      "callee": "send",
+      "callSha256": "8dbda9699ab8293c740bb5d6ed43bd52c729d323ad44176699f254e1435f18fc",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "BOUNDED_CHROME_EXTENSION_PORT_NO_HTTP_TRANSPORT_OR_SESSION_TOKEN_IN_RESPONSE",
+      "tenantAuthority": "Verified API account and one-time extension challenge. Exact Chrome port; no bearer or provider credential is sent. Turn requests remain bound to admission. Reconnected finalization uses the existing API owner and current lease checks.",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "VERIFIED_GUARD",
+      "evidence": [
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": "const connected = runtime.connect(extensionId, { name: 'xroga-browser-v1' })",
+          "sha256": "82983bf0a836d2e284ffe35ddea6b182b42dcb64304a2a394e6becc9a46213c1"
+        },
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": "const bytes = Uint8Array.from(atob(encoded)",
+          "sha256": "82983bf0a836d2e284ffe35ddea6b182b42dcb64304a2a394e6becc9a46213c1"
+        },
+        {
+          "path": "backend/src/routes/localBrowser.ts",
+          "marker": "localRecord(await rt.runs.load(ctx.userId, runId), ctx.userId)",
+          "sha256": "f77d53a8717e5bfc1011c4f108bc3fbe77f9951cb266380a480aafb6a59e24d5"
+        }
+      ]
+    },
+    {
+      "id": "d8500d7e40e05a539e15",
+      "file": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+      "line": 352,
+      "entryPoint": "connect",
+      "transport": "send",
+      "callee": "send",
+      "callSha256": "80ce304010538de36141c81697b2e04d5d62fe4ba24211324eb807875a83b163",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "BOUNDED_CHROME_EXTENSION_PORT_NO_HTTP_TRANSPORT_OR_SESSION_TOKEN_IN_RESPONSE",
+      "tenantAuthority": "Verified API account and one-time extension challenge. Exact Chrome port; no bearer or provider credential is sent. Turn requests remain bound to admission. Reconnected finalization uses the existing API owner and current lease checks.",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "VERIFIED_GUARD",
+      "evidence": [
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": "const connected = runtime.connect(extensionId, { name: 'xroga-browser-v1' })",
+          "sha256": "82983bf0a836d2e284ffe35ddea6b182b42dcb64304a2a394e6becc9a46213c1"
+        },
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": "preparedPcm: true, expectedToken: pairedToken.current",
+          "sha256": "82983bf0a836d2e284ffe35ddea6b182b42dcb64304a2a394e6becc9a46213c1"
+        },
+        {
+          "path": "backend/src/routes/localBrowser.ts",
+          "marker": "localRecord(await rt.runs.load(ctx.userId, runId), ctx.userId)",
+          "sha256": "f77d53a8717e5bfc1011c4f108bc3fbe77f9951cb266380a480aafb6a59e24d5"
+        }
+      ]
+    },
+    {
+      "id": "5ad5a74f852db7524d8a",
+      "file": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+      "line": 365,
+      "entryPoint": "connect",
+      "transport": "send",
+      "callee": "send",
+      "callSha256": "26c50fda42001535cb70aac98a0d29a407fa8ea44ab454f87cbf7772b31fff4e",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "BOUNDED_CHROME_EXTENSION_PORT_NO_HTTP_TRANSPORT_OR_SESSION_TOKEN_IN_RESPONSE",
+      "tenantAuthority": "Verified API account and one-time extension challenge. Exact Chrome port; no bearer or provider credential is sent. Turn requests remain bound to admission. Reconnected finalization uses the existing API owner and current lease checks.",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "VERIFIED_GUARD",
+      "evidence": [
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": "const connected = runtime.connect(extensionId, { name: 'xroga-browser-v1' })",
+          "sha256": "82983bf0a836d2e284ffe35ddea6b182b42dcb64304a2a394e6becc9a46213c1"
+        },
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": "if ((isStart || isResume) && data.runId",
+          "sha256": "82983bf0a836d2e284ffe35ddea6b182b42dcb64304a2a394e6becc9a46213c1"
+        },
+        {
+          "path": "backend/src/routes/localBrowser.ts",
+          "marker": "localRecord(await rt.runs.load(ctx.userId, runId), ctx.userId)",
+          "sha256": "f77d53a8717e5bfc1011c4f108bc3fbe77f9951cb266380a480aafb6a59e24d5"
+        }
+      ]
+    },
+    {
+      "id": "d875c1fb0614082bd141",
+      "file": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+      "line": 366,
+      "entryPoint": "connect",
+      "transport": "send",
+      "callee": "send",
+      "callSha256": "80ce304010538de36141c81697b2e04d5d62fe4ba24211324eb807875a83b163",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "BOUNDED_CHROME_EXTENSION_PORT_NO_HTTP_TRANSPORT_OR_SESSION_TOKEN_IN_RESPONSE",
+      "tenantAuthority": "Verified API account and one-time extension challenge. Exact Chrome port; no bearer or provider credential is sent. Turn requests remain bound to admission. Reconnected finalization uses the existing API owner and current lease checks.",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "VERIFIED_GUARD",
+      "evidence": [
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": "const connected = runtime.connect(extensionId, { name: 'xroga-browser-v1' })",
+          "sha256": "82983bf0a836d2e284ffe35ddea6b182b42dcb64304a2a394e6becc9a46213c1"
+        },
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": "}, () => send({ type: 'result', id, ok: false })",
+          "sha256": "82983bf0a836d2e284ffe35ddea6b182b42dcb64304a2a394e6becc9a46213c1"
+        },
+        {
+          "path": "backend/src/routes/localBrowser.ts",
+          "marker": "localRecord(await rt.runs.load(ctx.userId, runId), ctx.userId)",
+          "sha256": "f77d53a8717e5bfc1011c4f108bc3fbe77f9951cb266380a480aafb6a59e24d5"
         }
       ]
     },
@@ -4981,7 +5227,7 @@
         "31380a8d5b9454a98a98",
         "9c345e07b723c086440e",
         "4c899876b9e3850af11b",
-        "9ea21a6fc8b8700460c0"
+        "06e6767d8c33bd9749a5"
       ]
     },
     {
@@ -5029,6 +5275,14 @@
         "944a5617b246ddcc7a6f",
         "33adb167ae3aa360df14",
         "f48e5f4e537c7e879b0a",
+        "5b19b5ab231e0280efc7",
+        "6631f0cfac960ae10cff",
+        "e0aa33d2494c480caeb3",
+        "96c8086ac0938c5c9190",
+        "3736829b4cae598c6292",
+        "d8500d7e40e05a539e15",
+        "5ad5a74f852db7524d8a",
+        "d875c1fb0614082bd141",
         "f9cea4897b39781b679b",
         "e8a0d676ee1d532a3be6",
         "13608654d27d029cbf04",
@@ -5108,8 +5362,8 @@
     }
   ],
   "counts": {
-    "total": 150,
-    "reviewed": 150,
+    "total": 158,
+    "reviewed": 158,
     "pending": 0,
     "unresolvedHighRiskBypasses": 0
   }

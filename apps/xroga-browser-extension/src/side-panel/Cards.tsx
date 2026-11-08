@@ -309,6 +309,22 @@ export function Cards({ prompts, answer }: { prompts: OpenPrompt[]; answer: (id:
             return <InputCard key={p.id} prompt={p} answer={reply} />;
           case 'confirm':
             return <ConfirmCard key={p.id} prompt={p} answer={reply} />;
+          case 'plugin-read':
+            return (
+              <Frame key={p.id} title="Approve connected app read" tone="agent">
+                <Line>{plain(p.data.summary)}</Line>
+                <Line muted>Account: {plain(p.data.account)}</Line>
+                {p.data.argumentsPreview ? (
+                  <pre className="max-h-36 overflow-auto whitespace-pre-wrap break-words rounded-md bg-nb-surface p-2 text-xs">
+                    {plain(p.data.argumentsPreview)}
+                  </pre>
+                ) : null}
+                <Buttons>
+                  <button type="button" className={primary} onClick={() => reply('approve')}>Allow this read</button>
+                  <button type="button" className={secondary} onClick={() => reply('deny')}>Deny</button>
+                </Buttons>
+              </Frame>
+            );
           case 'save-file':
             return <SaveFileCard key={p.id} prompt={p} answer={reply} />;
           default:

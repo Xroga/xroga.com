@@ -216,6 +216,13 @@ export interface RunRecord {
   runId: string;
   canonicalBrowserRunId?: string;
   canonicalBrowserActions?: string[];
+  /** A terminal outcome written before sending it. Recovery only resends this idempotent finalization. */
+  canonicalBrowserFinish?: {
+    status: 'completed' | 'failed' | 'cancelled';
+    actions: string[];
+    result?: string;
+    localStatus: RunStatus;
+  };
   leafEntryId: string | null;
   status: RunStatus;
   outcome?: 'success' | 'partial' | 'failed';

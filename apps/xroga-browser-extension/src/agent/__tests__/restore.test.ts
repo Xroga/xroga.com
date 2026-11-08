@@ -1,5 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import { INTERRUPTED_MUTATION, INTERRUPTED_READ, planRestore, SKIPPED_RESTART, takenOver } from '../restore';
+import {
+  completedBrowserTools,
+  hasUncertainBrowserWrite,
+  INTERRUPTED_MUTATION,
+  INTERRUPTED_READ,
+  planRestore,
+  SKIPPED_RESTART,
+  takenOver,
+} from '../restore';
 import type { Entry, EntryBody, RunRecord } from '@src/store/types';
 import { EMPTY_GUARDS, ZERO_USAGE } from '@src/store/types';
 
@@ -46,6 +54,55 @@ const run = (patch: Partial<RunRecord>): RunRecord => ({
 });
 
 describe('the restore plan', () => {
+  it('does not rebind an old numeric tab or reopen a canonical write prompt after restart', () => {
+    const plan = planRestore(
+      run({
+        status: 'awaiting_user',
+        canonicalBrowserRunId: 'canonical',
+        pendingPrompt: {
+          kind: 'handover',
+          request: { tabId: 1 },
+          answers: { toolCallId: 'x', partialResult: {} },
+          openedAt: '',
+        },
+      }),
+      [reply(['x', 'fill_form']), intent('x', 'fill_form')],
+    );
+    expect(plan.status).toBe('interrupted');
+    expect(plan.reopen).toBeUndefined();
+    expect(plan.results[0]?.text).toBe(INTERRUPTED_MUTATION);
+  });
+
+  it('scopes durable action receipts and unknown writes to their exact run', () => {
+    const withResult = (runId: string, id: string, tool: string, outcome: unknown) =>
+      ({
+        ...result(id, tool),
+        meta: { runId },
+        result: outcome,
+      }) as Entry;
+    const entries = [
+      intent('x', 'click'),
+      withResult('r', 'x', 'click', { ok: false, error: { delivered: 'unknown' } }),
+      withResult('r', 'y', 'read', { ok: true }),
+      withResult('r', 'z', 'click', { ok: true, receipt: { dispatched: false } }),
+      withResult('different-run', 'w', 'navigate', { ok: true }),
+    ];
+    expect(completedBrowserTools('r', entries)).toEqual(['read']);
+    expect(hasUncertainBrowserWrite('r', entries)).toBe(true);
+    expect(hasUncertainBrowserWrite('different-run', entries)).toBe(false);
+  });
+
+  it('rejects unknown dispatch even if the tool envelope says ok', () => {
+    const entry = {
+      ...result('x', 'click'),
+      meta: { runId: 'r' },
+      result: { ok: true, receipt: { dispatched: 'unknown' } },
+    } as Entry;
+    const branch = [intent('x', 'click'), entry];
+    expect(completedBrowserTools('r', branch)).toEqual([]);
+    expect(hasUncertainBrowserWrite('r', branch)).toBe(true);
+  });
+
   it('a running run becomes interrupted; an intent with no result is INTERRUPTED; a call that never started is skipped', () => {
     const branch = [
       reply(['a', 'snapshot'], ['b', 'click', { target: { ref: 'a1' } }], ['c', 'click']),

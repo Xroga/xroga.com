@@ -12,7 +12,7 @@ const { chromium } = require(
 const chrome = process.argv[3];
 const live = process.argv.includes("--live-zurelay");
 const formOnly = live && process.argv.includes("--form-only");
-const documentOnly = live && process.argv.includes("--document-only");
+const documentOnly = process.argv.includes("--document-only");
 const liveKey = live ? process.env.XROGA_CHROME_PROBE_KEY : undefined;
 delete process.env.XROGA_CHROME_PROBE_KEY;
 if (live)
@@ -34,6 +34,8 @@ const dist = fileURLToPath(
 const site = "https://operator-fixture.test";
 const searchOrigin = "https://www.google.com";
 const workspaceOrigin = "https://xroga.com";
+const fixtureOwner = "00000000-0000-4000-8000-000000000001";
+let fixtureAccount = fixtureOwner;
 const repo = fileURLToPath(new URL("../../", import.meta.url));
 const goal = "Open the catalog and report the published fixture price.";
 const answer = "The verified fixture price is $39.";
@@ -50,17 +52,25 @@ const runs = new Map();
 let voiceRequests = 0;
 const actionCues = new Set();
 let rejectPairing = !live;
+let useWorkspaceComponent = false;
 let browser;
 
-async function buildWorkspacePairingFailure() {
+async function buildWorkspaceComponent() {
   const { build } = require("esbuild");
   const result = await build({
     stdin: {
       contents: `
         import { createRoot } from 'react-dom/client';
-        import { WorkspaceBrowserOperator } from './frontend/src/components/browser/WorkspaceBrowserOperator';
-        const extensionId = new URL(location.href).searchParams.get('browserExtension');
-        createRoot(document.querySelector('#app')).render(<WorkspaceBrowserOperator extensionId={extensionId} />);
+        import { WorkspaceBrowserOperator, WorkspaceBrowserConnection, WorkspaceBrowserProgress, useWorkspaceBrowserOperator, isLocalChromeRequest } from './frontend/src/components/browser/WorkspaceBrowserOperator';
+        function Composer() {
+          const operator = useWorkspaceBrowserOperator();
+          return <main><WorkspaceBrowserProgress operator={operator} prompted={false} /><form onSubmit={event => {
+            event.preventDefault();
+            const text = String(new FormData(event.currentTarget).get('prompt'));
+            if (isLocalChromeRequest(text)) void operator?.start(text.slice('/chrome '.length), []);
+          }}><textarea name="prompt" aria-label="Message Xroga" /><button>Send prompt</button></form></main>;
+        }
+        createRoot(document.querySelector('#app')).render(<WorkspaceBrowserOperator extensionId={window.fixtureExtensionId}><WorkspaceBrowserConnection /><Composer /></WorkspaceBrowserOperator>);
       `,
       resolveDir: repo,
       loader: "tsx",
@@ -72,20 +82,38 @@ async function buildWorkspacePairingFailure() {
     plugins: [{
       name: "isolated-workspace-api",
       setup(plugin) {
-        plugin.onResolve({ filter: /^@\/lib\/(api|supabase\/client|voiceApi)$/ }, args => ({
+        plugin.onResolve({ filter: /^(?:@\/lib\/(api|supabase\/client|voiceApi)|next\/navigation)$/ }, args => ({
           path: args.path, namespace: "fixture",
         }));
         plugin.onLoad({ filter: /.*/, namespace: "fixture" }, args => {
+          if (args.path === "next/navigation") return { contents: "export const usePathname = () => '/workspace';" };
           if (args.path === "@/lib/api") return { contents: `
             export class ApiError extends Error { constructor(message, status) { super(message); this.status = status; } }
             export async function getAccessToken() { return 'fixture-authenticated-user'; }
-            export async function apiFetch(path) {
-              if (path !== '/api/browser/local/session') throw new Error('Unexpected request');
-              throw new ApiError('Not found', 404);
+            export async function apiFetch(path, options, token) {
+              if (token !== 'fixture-authenticated-user') throw new ApiError('Unauthorized', 401);
+              if (window.fixtureRejectPairing) throw new ApiError('Not found', 404);
+              if (path === '/api/browser/local/session') return { account: window.fixtureAccount };
+              if (path === '/api/browser/local/runs' && options?.method === 'POST') window.fixtureRunStarted = true;
+              const runs = '/api/browser/local/runs';
+              if (options.method === 'POST' && path === runs)
+                return window.fixtureBrowserRequest({ op: 'start', value: JSON.parse(options.body) });
+              if (path.startsWith(runs + '/')) {
+                const [runId, op] = path.slice(runs.length + 1).split('/');
+                if (!options.method && !op) return window.fixtureGetRun(runId);
+                if (options.method === 'POST' && op)
+                  return window.fixtureBrowserRequest({ op, value: { runId, body: JSON.parse(options.body) } });
+              }
+              throw new Error('Unexpected request');
             }
           ` };
           return { contents: `
-            export function createClient() { throw new Error('Pairing should stop on an unavailable API'); }
+            export function createClient() {
+              return { auth: { onAuthStateChange(callback) {
+                window.fixtureAuthChanged = callback;
+                return { data: { subscription: { unsubscribe() { delete window.fixtureAuthChanged; } } } };
+              } } };
+            }
             export function transcribeVoiceAudio() { throw new Error('Unexpected voice request'); }
           ` };
         });
@@ -170,7 +198,7 @@ function reply(run, request) {
     "";
   const ref = (label) => {
     const line = observation.split("\n").find((item) => item.includes(label));
-    const value = /\[([ae]\d+)\]/.exec(line ?? "")?.[1];
+    const value = /\[([a-z]+\d+)\]/.exec(line ?? "")?.[1];
     assert.ok(value, observation.slice(-2500));
     return { ref: value };
   };
@@ -180,7 +208,27 @@ function reply(run, request) {
     function: { name, arguments: JSON.stringify(args) },
   });
   let tool;
-  if (request.turn === 1) tool = call("snapshot", {});
+  if (run.goal === workbookGoal) {
+    if (request.turn === 1) {
+      const [, id, chars] = /\(id ([\w-]+)\) has (\d+) characters/.exec(history) ?? [];
+      assert.ok(id);
+      tool = call("read_attachment", { id, offset: Number(chars) - 550, maxChars: 550 });
+    } else if (request.turn === 2) {
+      assert.match(observation, /A602="Orion"\s+B602="7"/);
+      tool = call("snapshot", {});
+    } else if (request.turn === 3) tool = call("click", { target: ref("Browse catalog") });
+    else if (request.turn === 4) tool = call("click", { target: ref("Show products") });
+    else if (request.turn === 5) tool = call("wait", { text: "Orion product details" });
+    else if (request.turn === 6) tool = call("snapshot", {});
+    else if (request.turn === 7) tool = call("click", { target: ref("Orion product details") });
+    else if (request.turn === 8) tool = call("read", {});
+    else if (request.turn === 9) {
+      const price = Number(/Verified unit price: \$(\d+)/.exec(observation)?.[1]);
+      const quantity = Number(/B602=\\"(\d+)\\"/.exec(history)?.[1]);
+      assert.ok(price > 0 && quantity > 0);
+      tool = call("done", { outcome: "success", summary: `Orion, Orders!A602:B602: ${quantity} × $${price} = $${quantity * price}` });
+    }
+  } else if (request.turn === 1) tool = call("snapshot", {});
   else if (run.goal === formGoal) {
     if (request.turn === 2)
       tool = call("fill_form", {
@@ -221,7 +269,7 @@ function reply(run, request) {
 }
 
 try {
-  const workspaceFailureScript = live ? null : await buildWorkspacePairingFailure();
+  const workspaceComponent = live ? null : await buildWorkspaceComponent();
   if (!live) {
     const rate = 16_000;
     const wav = Buffer.alloc(44 + 4 * rate * 2);
@@ -254,6 +302,11 @@ try {
   const { id } = await cdp.send("Extensions.loadUnpacked", { path: dist });
   console.log("Agent extension loaded");
   if (!live) {
+    await browser.exposeFunction("fixtureGetRun", id => {
+      const run = runs.get(id);
+      assert.ok(run);
+      return { status: run.result?.status ?? "running", result: { text: run.result?.result } };
+    });
     await browser.exposeFunction("fixtureActionCue", action => actionCues.add(action));
     await browser.addInitScript(origin => {
       if (location.origin !== origin) return;
@@ -276,16 +329,17 @@ try {
         return { text: "Synthetic dictation draft" };
       }
       if (op === "start") {
+        const fixtureGoal = value.goal === `${goal} ${site}` ? goal : value.goal;
         assert.ok(
           [goal, formGoal, stopGoal, fileGoal, workbookGoal, recoveryGoal].includes(
-            value.goal,
+            fixtureGoal,
           ),
         );
         if (value.goal === fileGoal || value.goal === workbookGoal)
           assert.equal(value.attachmentCount, 1);
         const runId = globalThis.crypto.randomUUID();
         assert.ok([site, searchOrigin].includes(value.startUrl), "Persist only the starting origin");
-        runs.set(runId, { goal: value.goal, turns: [], startUrl: value.startUrl });
+        runs.set(runId, { goal: fixtureGoal, turns: [], startUrl: value.startUrl });
         return { runId, turns: 0, maxTurns: 48, remainingMs: 40 * 60_000 };
       }
       const run = runs.get(value.runId);
@@ -296,7 +350,11 @@ try {
       if (op === "turn") {
         if (run.goal === recoveryGoal) {
           (run.ordinals ??= []).push(value.body.turn);
-          if (value.body.turn === 3) throw new Error("Synthetic unknown provider receipt");
+          if (value.body.turn === 3) {
+            // Hang after the provider admission boundary, then pause from the actual side panel.
+            await new Promise(resolve => { run.release = resolve; });
+            throw new Error("Synthetic unknown provider receipt");
+          }
         }
         if (run.goal === stopGoal) {
           run.pending = true;
@@ -304,15 +362,27 @@ try {
             run.release = resolve;
           });
         }
-        return live && run.goal !== stopGoal
-          ? liveReply(run, value.body)
-          : reply(run, value.body);
+        try {
+          return live && run.goal !== stopGoal ? await liveReply(run, value.body) : reply(run, value.body);
+        } catch (error) {
+          if (!live && run.goal !== recoveryGoal) console.error("Fixture turn", value.body.turn, error.message);
+          throw error;
+        }
       }
       if (op === "resume" && run.goal === recoveryGoal) {
         assert.deepEqual(run.ordinals, [1, 2, 3]);
         return { runId: value.runId, turns: 3, maxTurns: 48, remainingMs: 39 * 60_000 };
       }
       if (op === "finish") {
+        if (run.goal === recoveryGoal && !(run.finishAttempts ?? 0)) {
+          run.finishAttempts = 1;
+          run.firstFinish = value.body;
+          throw new Error("Synthetic finalization acknowledgement lost");
+        }
+        if (run.goal === recoveryGoal) {
+          run.finishAttempts++;
+          assert.deepEqual(value.body, run.firstFinish, "Resend only the durable outcome");
+        }
         run.result = value.body;
         return { status: value.body.status };
       }
@@ -338,10 +408,14 @@ try {
       return route.fulfill({ contentType: "text/html", body });
     }
     if (url.origin === workspaceOrigin && url.pathname === "/workspace") {
-      if (rejectPairing) {
+      if (rejectPairing || useWorkspaceComponent) {
         return route.fulfill({
           contentType: "text/html",
-          body: `<!doctype html><div id="app"></div><script>${workspaceFailureScript.replaceAll("</script", "<\\/script")}</script>`,
+          body: `<!doctype html><div id="app"></div><script>
+            window.fixtureRejectPairing=${rejectPairing};
+            window.fixtureAccount=${JSON.stringify(fixtureAccount)};
+            window.fixtureExtensionId=${JSON.stringify(id)};
+            ${workspaceComponent.replaceAll("</script", "<\\/script")}</script>`,
         });
       }
       return route.fulfill({
@@ -352,15 +426,17 @@ try {
         const port = chrome.runtime.connect(query.get('browserExtension'), {name:'xroga-browser-v1'});
         window.events = [];
         window.startTask = (goal, startUrl, files) => port.postMessage({type:'start-task',goal,startUrl,files});
+        window.resumeTask = runId => port.postMessage({type:'resume-task',runId});
         port.onMessage.addListener(async m => {
           events.push(m.type === 'activity' ? [m.type,m.tool,m.status] : [m.type,m.runId]);
           if(m.type==='paired') document.querySelector('#state').textContent='paired';
+          if(m.type==='pair-rejected') document.querySelector('#state').textContent='account rejected';
           if(m.type==='request') {
             try { port.postMessage({type:'result',id:m.id,ok:true,value:await fixtureBrowserRequest(m)}); }
             catch (e) { document.querySelector('#state').textContent=e.message; port.postMessage({type:'result',id:m.id,ok:false}); }
           }
         });
-        port.postMessage({type:'pair',nonce:query.get('browserPair'),account:'00000000-0000-4000-8000-000000000001'});
+        port.postMessage({type:'pair',nonce:query.get('browserPair'),account:${JSON.stringify(fixtureAccount)}});
         </script>`,
       });
     }
@@ -391,6 +467,7 @@ try {
       });
     const pairingPages = browser.pages().filter(page => page.url().startsWith(`${workspaceOrigin}/workspace?`));
     assert.equal(pairingPages.length, 1);
+    await pairingPages[0].locator("summary").filter({hasText:"Browser Automation"}).click();
     await pairingPages[0].getByRole("status").filter({hasText:"Browser Automation is unavailable"}).waitFor();
     const [pairingTab] = await panel.evaluate(() => chrome.tabs.query({ url: "https://xroga.com/workspace*" }));
     assert.equal(pairingTab?.active, false);
@@ -523,7 +600,7 @@ try {
     );
     console.log(
       JSON.stringify({
-        scenario: "live-workbook-and-dynamic-catalog",
+        scenario: live ? "live-workbook-and-dynamic-catalog" : "fixture-workbook-and-dynamic-catalog",
         attachmentChars: text.length,
         result: run.result,
         costMicros: spentMicros,
@@ -661,20 +738,97 @@ try {
       stopRun.release();
     }
   }
-  if (!live) {
+  if (!live && !documentOnly) {
     await tab.goto(site);
     await input.fill(recoveryGoal);
     await input.press("Enter");
+    const pause = panel.getByRole("button", { name: "Pause and take over", exact: true });
+    await pause.waitFor({ timeout: 25_000 });
+    const claimDeadline = Date.now() + 20_000;
+    let recovery;
+    while (!recovery?.release && Date.now() < claimDeadline) {
+      recovery = [...runs.values()].find(run => run.goal === recoveryGoal);
+      if (!recovery?.release) await new Promise(resolve => setTimeout(resolve, 100));
+    }
+    assert.ok(recovery?.release, "the third request crossed the fixture provider admission boundary");
+    await pause.click();
     const resume = panel.getByRole("button", { name: "Resume", exact: true });
     await resume.waitFor({ timeout: 25_000 });
-    const recovery = [...runs.values()].find(run => run.goal === recoveryGoal);
+    recovery.release();
     assert.deepEqual(recovery.ordinals, [1, 2, 3]);
     assert.equal(recovery.result, undefined);
+    await input.fill("Keep this draft until the checkpoint is resolved.");
+    await input.press("Enter");
+    assert.equal(await input.inputValue(), "Keep this draft until the checkpoint is resolved.");
+    assert.deepEqual(recovery.ordinals, [1, 2, 3]);
+    await input.fill("");
     await resume.click();
-    await waitForFinish(5);
+    await panel.getByText("Task saved locally. Resume to sync the result without rerunning any action.", { exact: true }).waitFor({ timeout: 25_000 }).catch(async error => {
+      console.error("Recovery fixture state:", JSON.stringify({ ordinals: recovery.ordinals, finishAttempts: recovery.finishAttempts, events: await workspace.evaluate(() => window.events.slice(-12)), panel: (await panel.locator('body').innerText()).slice(-1200) }));
+      throw error;
+    });
+    assert.equal(recovery.result, undefined);
     assert.deepEqual(recovery.ordinals, [1, 2, 3, 4, 5, 6]);
+    const runId = [...runs.entries()].find(([, candidate]) => candidate === recovery)?.[0];
+    assert.ok(runId);
+
+    // Kill the actual Chrome service worker. Only the owner can re-pair this profile and sync the saved result.
+    const workerClient = await browser.newCDPSession(tab);
+    await workerClient.send("ServiceWorker.enable");
+    fixtureAccount = "00000000-0000-4000-8000-000000000002";
+    await workerClient.send("ServiceWorker.stopAllWorkers");
+    await workerClient.detach();
+    await workspace.close();
+    const reopening = browser.waitForEvent("page", { timeout: 20_000, predicate: page => page !== panel });
+    await tab.bringToFront();
+    await panel.reload();
+    workspace = await reopening;
+    await workspace.getByText("account rejected", { exact: true }).waitFor({ timeout: 15_000 });
+    assert.equal(recovery.finishAttempts, 1);
+
+    fixtureAccount = fixtureOwner;
+    await connect();
+    await workspace.getByText("paired", { exact: true }).waitFor({ timeout: 15_000 });
+    await workspace.waitForFunction(id => window.events.some(([type, run]) => type === 'checkpoint' && run === id), runId);
+    await workspace.evaluate(id => window.resumeTask(id), runId);
+    await waitForFinish(1);
+    assert.deepEqual(recovery.ordinals, [1, 2, 3, 4, 5, 6]);
+    assert.equal(recovery.finishAttempts, 2);
     assert.equal(recovery.result.status, "completed");
     assert.equal(recovery.result.actions.filter(action => action === "click").length, 1);
+    useWorkspaceComponent = true;
+    await workspace.goto(workspaceOrigin + "/workspace");
+    await workspace.getByText("Browser task completed", { exact: true }).waitFor({ timeout: 20_000 });
+    assert.equal(await workspace.getByRole("button", { name: "Start in Chrome" }).count(), 0);
+    await workspace.locator("summary").filter({hasText:"Chrome connected"}).waitFor();
+    await workspace.getByText("Browser activity", { exact: true }).click();
+    const activity = workspace.getByRole("list", { name: "Browser activity" });
+    await activity.waitFor();
+    assert.equal(await activity.getByText("Click control", { exact: false }).count(), 1);
+    assert.ok(await activity.getByText("Inspect page", { exact: false }).count());
+    assert.equal(recovery.finishAttempts, 2);
+    const priorRuns = runs.size;
+    await workspace.getByLabel("Message Xroga").fill(`/chrome ${goal} ${site}`);
+    await workspace.getByRole("button", { name: "Send prompt" }).click();
+    await workspace.waitForFunction(() => document.querySelector("main [role=status]")?.textContent === "Browser task completed" && window.fixtureRunStarted === true, undefined, { timeout: 25_000 });
+    await workspace.getByText("Browser task completed", { exact: true }).waitFor({ timeout: 25_000 }).catch(async error => {
+      console.error("Workspace dispatch", {
+        status: await workspace.getByRole("status").textContent(),
+        newRuns: JSON.stringify([...runs.values()].slice(priorRuns)),
+        pages: browser.pages().map(page => page.url()),
+      });
+      throw error;
+    });
+    assert.equal(runs.size, priorRuns + 1);
+    assert.equal([...runs.values()].at(-1).result.result, answer);
+    const newRunActivity = workspace.getByText("Browser activity", { exact: true });
+    await newRunActivity.waitFor();
+    if (!(await newRunActivity.evaluate(summary => summary.parentElement?.open))) await newRunActivity.click();
+    await activity.getByText("Click control", { exact: false }).waitFor();
+    assert.equal(await activity.getByText("Click control", { exact: false }).count(), 1);
+    await workspace.evaluate(() => window.fixtureAuthChanged('SIGNED_OUT', null));
+    await activity.waitFor({ state: "detached" });
+    assert.equal(await workspace.getByText(answer, { exact: true }).count(), 0);
     assert.ok(actionCues.has("click"), "The blue marker was visible when Chrome clicked");
     assert.ok(actionCues.has("input"), "The blue marker was visible when Chrome typed");
   }
@@ -687,7 +841,10 @@ try {
       cancelledPendingTurn: !documentOnly,
       voiceFixtureRequests: voiceRequests,
       actionCues: [...actionCues].sort(),
-      resumedWithoutReplay: !live,
+      resumedWithoutReplay: !live && !documentOnly,
+      restartAndAccountBoundary: !live && !documentOnly,
+      manualPauseAndResume: !live && !documentOnly,
+      workspaceReceiptRestoreAndSignOut: !live && !documentOnly,
       screenshotPixelsSentToModel: false,
       entryPoints: ["side panel", "Workspace fixture"],
       model: live ? providerModel : "deterministic fixture",

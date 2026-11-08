@@ -147,7 +147,9 @@ export function kindOf(tool: string, args: Record<string, unknown>): ToolKind {
   if (tool === 'done' || tool === 'ask_user') return 'control';
   if (tool === 'wait') return 'wait';
   if (tool === 'save_file') return 'state';
-  if (tool === 'read_attachment') return 'read';
+  if (tool === 'read_attachment' || tool === 'plugin_search') return 'read';
+  // An approved connected read can transmit private arguments. Fence it like a dispatched effect on recovery.
+  if (tool === 'plugin_read') return 'mutate';
   if (tool === 'tabs') return args.action === 'list' ? 'read' : 'mutate';
   const spec = TOOL_SPECS.find(s => s.name === tool);
   if (!spec) return 'mutate';

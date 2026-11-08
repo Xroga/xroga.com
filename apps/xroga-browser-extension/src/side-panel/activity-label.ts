@@ -69,7 +69,7 @@ export function maskArgs(args: unknown): unknown {
 }
 
 export function activityLine(row: ToolRow): ActivityLine {
-  const args = (row.args ?? {}) as Record<string, unknown>;
+  const args = (row.tool.startsWith('plugin_') ? {} : row.args ?? {}) as Record<string, unknown>;
   const result = row.result as LeanResult | undefined;
   const receipt = result?.receipt;
   // The receipt's target without its ref: "[a2] button «Send»" reads as "button «Send»".
@@ -77,7 +77,12 @@ export function activityLine(row: ToolRow): ActivityLine {
   const tags: string[] = [];
   const details: string[] = [];
   let label: string;
-  if (row.tool === 'navigate') {
+  if (row.tool === 'plugin_search') {
+    label = 'Find connected app tools';
+  } else if (row.tool === 'plugin_read') {
+    label = 'Read from connected app';
+    if (typeof result?.data?.pluginReceiptId === 'string') details.push('Xroga receipt: ' + result.data.pluginReceiptId);
+  } else if (row.tool === 'navigate') {
     const url = String(args.url ?? args.action ?? '');
     label = t('act.navigate', { url });
     // An address the agent wrote itself is marked as such.

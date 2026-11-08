@@ -325,6 +325,18 @@
       "tests": "backend/tests/engineeringResourceLedger.local.integration.ts",
       "evidence": "Batch 4 migration, development only and not applied to production. Exercised against a real disposable PostgreSQL: an override replaces the default for one owner only and applies even to a record-only category, clearing reverts, invalid values are rejected, and the table and functions are unreachable by anon and authenticated roles. Not a live Supabase receipt.",
       "productionChanges": false
+    },
+    {
+      "schema": "public",
+      "table_name": "local_browser_device_sessions",
+      "migration": "20261108181114_local_browser_device_sessions.sql",
+      "migrationSha256": "cecc94fa90df95543974fad939bd3a23a526f2bf4933369fc28e9e09abbb0bf3",
+      "authorizationMigration": "20261108181114_local_browser_device_sessions.sql",
+      "authorizationSha256": "cecc94fa90df95543974fad939bd3a23a526f2bf4933369fc28e9e09abbb0bf3",
+      "boundary": "RLS enabled. No table grant to PUBLIC, anon, authenticated or service_role. The backend PostgreSQL connection consumes a proof-bound one-use code and validates hashed scoped credentials and deadlines. Owner-only web revocation, secret-bound device revocation and auth-user deletion invalidate grants.",
+      "tests": "tests/chrome-extension/device-auth.mjs",
+      "evidence": "Disposable PostgreSQL WASM exercised the exact migration and API with two actors, including grants, expiry, concurrent exchange, scope, rotation of access tokens and revocation. Production roles and provider-backed staging acceptance remain separate.",
+      "productionChanges": false
     }
   ]
 }

@@ -1,4 +1,5 @@
 // Xroga packages the browser agent without its developer entry points.
+import { createHash, createPublicKey } from 'node:crypto';
 import { mkdir } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { defineConfig } from 'wxt';
@@ -11,7 +12,26 @@ import { permissionLists } from './src/ui/manifest-permissions';
 // product's lists (WXT_PRODUCT_PERMISSIONS), to check the features without them.
 const autorun = !!process.env.WXT_AUTORUN_URL;
 const productPermissions = !autorun || !!process.env.WXT_PRODUCT_PERMISSIONS;
+const manifestKey = process.env.WXT_XROGA_EXTENSION_PUBLIC_KEY?.trim();
+if (manifestKey) {
+  const key = Buffer.from(manifestKey, 'base64');
+  if (key.toString('base64') !== manifestKey || createPublicKey({ key, format: 'der', type: 'spki' }).asymmetricKeyType !== 'rsa') {
+    throw new Error('Use the public Chrome Web Store item key in DER SPKI base64 format.');
+  }
+  const id = createHash('sha256').update(key).digest('hex').slice(0, 32)
+    .replace(/[0-9a-f]/g, digit => String.fromCharCode(97 + parseInt(digit, 16)));
+  if (process.env.WXT_XROGA_EXPECTED_EXTENSION_ID !== id) {
+    throw new Error('The public key does not match the expected Xroga extension ID.');
+  }
+} else if (process.env.WXT_XROGA_EXPECTED_EXTENSION_ID) {
+  throw new Error('The expected Xroga extension ID requires its public manifest key.');
+}
 const workspaceOrigin = process.env.WXT_XROGA_WORKSPACE_ORIGIN ?? 'https://xroga.com';
+const staging = workspaceOrigin !== 'https://xroga.com';
+const apiOrigin = process.env.WXT_XROGA_BROWSER_API_ORIGIN ?? (staging ? '' : 'https://api.xroga.com');
+if (apiOrigin && (staging ? !/^https:\/\/(?:api\.xroga\.com|[a-z0-9-]+\.[a-z0-9-]+\.run\.app)$/.test(apiOrigin) : apiOrigin !== 'https://api.xroga.com')) {
+  throw new Error('Browser device auth requires an exact Xroga API origin.');
+}
 if (
   workspaceOrigin !== 'https://xroga.com' &&
   !/^https:\/\/xrogaaicom-[a-z0-9-]+-xrogas-projects\.vercel\.app$/.test(workspaceOrigin)
@@ -29,12 +49,12 @@ export default defineConfig({
   },
   manifest: {
     // The name, description and the strings Chrome shows itself follow Chrome's language (public/_locales).
-    name: autorun ? '__MSG_extName__' : 'Xroga Browser Automation',
+    name: autorun ? '__MSG_extName__' : staging ? 'Xroga Browser Automation (Staging)' : 'Xroga Browser Automation',
     description: autorun
       ? '__MSG_extDescription__'
       : 'Use Xroga to work in your own Chrome tabs, with live actions and approval controls.',
     default_locale: 'en',
-    ...(autorun ? {} : { version: '0.2.3' }),
+    ...(autorun ? {} : { version: '0.2.8', ...(manifestKey ? { key: manifestKey } : {}) }),
     minimum_chrome_version: '125',
     ...(autorun
       ? {
@@ -52,7 +72,7 @@ export default defineConfig({
           externally_connectable: { matches: [`${workspaceOrigin}/workspace*`], ids: [] },
           content_security_policy: {
             extension_pages:
-              "script-src 'self'; object-src 'self'; connect-src 'self' blob:; base-uri 'none'; form-action 'none'",
+              `script-src 'self'; object-src 'self'; connect-src 'self' blob:${apiOrigin ? ' ' + apiOrigin : ''}; base-uri 'none'; form-action 'none'`,
           },
         }),
     incognito: 'not_allowed',
@@ -67,7 +87,7 @@ export default defineConfig({
   },
   // `pnpm zip` packs dist/ into dist-zip/, outside the folder Chrome loads.
   zip: {
-    artifactTemplate: '../dist-zip/{{name}}-{{version}}.zip',
+    artifactTemplate: staging ? '../dist-zip/xroga-browser-extension-staging-{{version}}.zip' : '../dist-zip/{{name}}-{{version}}.zip',
     exclude: ['**/*.map'],
   },
   hooks: {
@@ -87,7 +107,7 @@ export default defineConfig({
         absoluteSrc: resolve(import.meta.dirname, '../../chrome-extension/icon-32.png'),
         relativeDest: 'xroga-icon.png',
       });
-      for (const file of ['LICENSE', 'NOTICE', 'XROGA-OPERATOR.md']) {
+      for (const file of ['LICENSE', 'NOTICE', 'XROGA-OPERATOR.md', 'INSTALL-XROGA.md', 'PRIVACY.md']) {
         files.push({ absoluteSrc: resolve(import.meta.dirname, file), relativeDest: file });
       }
     },
@@ -104,7 +124,7 @@ export default defineConfig({
   },
   vite: env => ({
     plugins: [react()],
-    define: { __XROGA_WORKSPACE_ORIGIN__: JSON.stringify(workspaceOrigin) },
+    define: { __XROGA_WORKSPACE_ORIGIN__: JSON.stringify(workspaceOrigin), __XROGA_BROWSER_API_ORIGIN__: JSON.stringify(apiOrigin) },
     resolve: {
       alias: {
         '@xroga/runtime-background': resolve(

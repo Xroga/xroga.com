@@ -88,8 +88,9 @@ async function focusForText(ctx: ToolContext, target: ResolvedTarget, timeoutMs?
         delivered: true,
       });
     }
-  } else await actionPoint(ctx, actionable.point, 'type');
+  }
   checkCancelled(ctx);
+  return actionable.point;
 }
 
 function guardedOf(target: ResolvedTarget): GuardedElement {
@@ -270,7 +271,7 @@ async function setText(
   args: SetArgs,
   gate: GateResult,
 ): Promise<ToolOutcome> {
-  await focusForText(ctx, target, args.timeoutMs);
+  const actionTarget = await focusForText(ctx, target, args.timeoutMs);
   const { cdp } = await ctx.attach();
   const probe = ctx.tab().probe!;
   const before = await stateOf(ctx, target);
@@ -314,6 +315,7 @@ async function setText(
             await cdp.send(undefined, 'Input.insertText', { text: value });
           }
         });
+        if (!masked) actionPoint(ctx, actionTarget, 'type');
         if (dialog && args.submit) interrupted(ctx, dialog, 'the value was inserted; Enter was not sent.');
         if (dialog) return { dialog };
         if (!args.submit) return {};
@@ -789,6 +791,7 @@ export async function type(ctx: ToolContext, args: TypeArgs): Promise<ToolOutcom
     let gate: GateResult;
     let judged: FocusedKey | null = null;
     let mode: KeyMode = 'none';
+    let actionTarget: Awaited<ReturnType<typeof focusForText>> | undefined;
     if (target) {
       // The target is editable: Space types a space, Enter may submit its form.
       mode = args.submit ? 'enter' : typedMode(args.text, false, await stateOf(ctx, target));
@@ -810,7 +813,7 @@ export async function type(ctx: ToolContext, args: TypeArgs): Promise<ToolOutcom
         target = gated.target;
       }
       gate = gated.gate;
-      await focusForText(ctx, target, args.timeoutMs);
+      actionTarget = await focusForText(ctx, target, args.timeoutMs);
     } else {
       await preflightKeys(ctx, null, modeOf);
       const gated = await gateFocused(ctx, 'type', modeOf, args.intent, true);
@@ -858,6 +861,7 @@ export async function type(ctx: ToolContext, args: TypeArgs): Promise<ToolOutcom
             );
           }
           const dialog = await keys.type(chars[i]);
+          if (i === 0 && actionTarget && !masked) actionPoint(ctx, actionTarget, 'type');
           if (dialog && (i < chars.length - 1 || args.submit))
             interrupted(ctx, dialog, `${i + 1} of ${chars.length} characters were sent; the rest was not.`);
           if (dialog) return { dialog };

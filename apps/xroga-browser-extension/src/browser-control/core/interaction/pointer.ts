@@ -216,7 +216,6 @@ export async function dispatchClick(
   point: Point,
   options: ClickOptions,
 ): Promise<PointerOutcome> {
-  await actionPoint(ctx, point, options.feedback ?? 'click');
   checkCancelled(ctx);
   const { cdp } = await ctx.attach();
   const tab = ctx.tab();
@@ -293,15 +292,16 @@ export async function dispatchClick(
     dialog.dispose();
   }
   const guards = await readGuards(ctx, target, ancestors).catch(() => null);
-  if (!guards) return { dispatched };
-  const cancelled = intercepted(target, guards, count);
+  const cancelled = guards && intercepted(target, guards, count);
   if (cancelled) throw cancelled;
-  return { dispatched, reachedTarget: guards.own.verdict === 'passed', guard: guards.own };
+  // Acknowledged input is distinct from reaching the intended target or changing page state.
+  if (dispatched === true) actionPoint(ctx, point, options.feedback ?? 'click');
+  return guards ? { dispatched, reachedTarget: guards.own.verdict === 'passed', guard: guards.own } : { dispatched };
 }
 
-export async function actionPoint(ctx: ToolContext, point: Point, kind: 'click' | 'type'): Promise<void> {
+export function actionPoint(ctx: ToolContext, point: Point, kind: 'click' | 'type' | 'scroll'): void {
   if (ctx.tabId !== null && ctx.session.hooks.onActionPoint) {
-    await ctx.session.hooks.onActionPoint(ctx.tabId, point, kind).catch(() => undefined);
+    void ctx.session.hooks.onActionPoint(ctx.tabId, point, kind).catch(() => undefined);
   }
 }
 
@@ -321,6 +321,7 @@ export async function dispatchWheel(
   const { cdp } = await ctx.attach();
   ctx.tab().actionSeq++;
   await cdp.send(undefined, 'Input.dispatchMouseEvent', { type: 'mouseWheel', x: point.x, y: point.y, deltaX, deltaY });
+  actionPoint(ctx, point, 'scroll');
   return { dispatched: true };
 }
 

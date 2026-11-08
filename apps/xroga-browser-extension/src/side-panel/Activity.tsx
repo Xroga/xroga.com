@@ -7,7 +7,7 @@ import type { ToolRow } from '@src/ui/protocol';
 import { t } from '@src/ui/i18n';
 import type { MessageKey } from '@src/ui/i18n';
 import { activityLine, maskArgs } from './activity-label';
-import { ChevronIcon, SpinnerIcon } from '@src/ui/icons';
+import { CheckIcon, ChevronIcon, CloseIcon, SpinnerIcon } from '@src/ui/icons';
 
 /** What a working run is doing: waiting for the model, running a tool, or waiting for the user's answer. */
 export type Phase = 'thinking' | 'working' | 'waiting';
@@ -93,6 +93,7 @@ export function Activity({ rows, phase, start, end }: { rows: ToolRow[]; phase?:
       ) : (
         <div className="flex items-center gap-1.5 py-0.5 text-nb-muted">{status}</div>
       )}
+      {phase && !open && rows.at(-1) ? <p className="truncate text-xs text-nb-muted">{activityLine(rows.at(-1)!).label}</p> : null}
       {open && rows.length ? (
         <ul className="flex flex-col gap-0.5 rounded-xl border border-nb-border bg-nb-bg px-2.5 py-1.5 text-xs shadow-sm">
           {rows.map(row => (
@@ -117,7 +118,8 @@ function Row({ row }: { row: ToolRow }) {
         className="flex items-start gap-1.5 rounded-md px-1 py-0.5 text-left hover:bg-nb-surface"
         onClick={() => setOpen(o => !o)}>
         <span aria-hidden className={`w-3 shrink-0 text-center font-semibold ${TONES[row.status]}`}>
-          {ICONS[row.status]}
+          {row.status === 'done' ? <CheckIcon size={13} /> : row.status === 'failed' ? <CloseIcon size={13} />
+            : row.status === 'running' ? <SpinnerIcon size={13} className="motion-safe:animate-spin" /> : ICONS[row.status]}
         </span>
         <span className="min-w-0 flex-1 break-words">
           {line.label}
@@ -142,7 +144,7 @@ function Row({ row }: { row: ToolRow }) {
       ))}
       {open ? (
         <div className="ml-5 flex flex-col gap-1 py-1">
-          {row.args !== undefined ? <Detail title={t('act.arguments')} value={maskArgs(row.args)} /> : null}
+          {row.args !== undefined && !row.tool.startsWith('plugin_') ? <Detail title={t('act.arguments')} value={maskArgs(row.args)} /> : null}
           {result?.receipt ? <Detail title={t('act.result')} value={result.receipt} /> : null}
           {result?.error?.hint ? <Detail title={t('act.hint')} value={result.error.hint} /> : null}
         </div>

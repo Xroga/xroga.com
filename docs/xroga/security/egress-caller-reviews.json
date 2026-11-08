@@ -195,7 +195,7 @@
     {
       "id": "038ced12b0f74e8d5e0f",
       "callSha256": "bbbf26a58be8e30ace8fcfaac921075adab2a85ca44b5d5b7c9f48a7ec48c8f3",
-      "sourceFileSha256": "c159e3bd321637cc26214829ed36bca439a102e91983e6fd93fcbee36ef61544",
+      "sourceFileSha256": "3f76245300704d1efb1461cd7a30e52dfc7495e96471e174cbfddb9a9e3acfc9",
       "disposition": "REVIEWED_FIXED_DEPENDENCY",
       "trust": "FIXED_PROVIDER_ENDPOINT_AND_NO_REDIRECT_ONLY_NOT_DNS_OR_FULL_EGRESS_CERTIFICATION",
       "tenantAuthority": "THREE_UPSTREAM_SDK_TENANT_ACCOUNT_AUTHORITY_AND_DATA_OBLIGATIONS_REMAIN_PENDING",
@@ -635,7 +635,7 @@
     {
       "id": "31380a8d5b9454a98a98",
       "callSha256": "8e82b633686ef353d4c6db063a70a5772fcf9350245bec5da9d8d86dc9cc769a",
-      "sourceFileSha256": "c159e3bd321637cc26214829ed36bca439a102e91983e6fd93fcbee36ef61544",
+      "sourceFileSha256": "3f76245300704d1efb1461cd7a30e52dfc7495e96471e174cbfddb9a9e3acfc9",
       "disposition": "VERIFIED_GUARD",
       "trust": "SHARED_JSON_SDK_DISPATCH_AND_ACCOUNTING_ONLY_NOT_UPSTREAM_PROVENANCE_OR_TOOL_CERTIFICATION",
       "tenantAuthority": "PRIVATE_REQUEST_ADMISSION_FROM_CANONICAL_TENANT_OR_OPERATIONS_RESERVATION_OR_EXISTING_BOUNDED_ANONYMOUS_GUEST_LEASE_EACH_WIRE_RECHECKS_CURRENT_BINDING_COMPLETION_REQUIRES_SETTLEMENT_AND_ATOMIC_RECEIPT_OR_VERIFIED_CONSERVATIVE_GUEST_BUDGET_NO_RAW_ID_OR_CALLBACK_AUTHORITY",
@@ -724,7 +724,7 @@
     {
       "id": "9c345e07b723c086440e",
       "callSha256": "6eb08ff947aaf655cbb9fac9f4af25c6e8fcb622517fc4343327edaf39a6eca9",
-      "sourceFileSha256": "c159e3bd321637cc26214829ed36bca439a102e91983e6fd93fcbee36ef61544",
+      "sourceFileSha256": "3f76245300704d1efb1461cd7a30e52dfc7495e96471e174cbfddb9a9e3acfc9",
       "disposition": "VERIFIED_GUARD",
       "trust": "SHARED_SSE_SDK_DISPATCH_AND_DEFERRED_ACCOUNTED_PUBLICATION_ONLY_NOT_UPSTREAM_PROVENANCE_OR_TOOL_CERTIFICATION",
       "tenantAuthority": "PRIVATE_REQUEST_ADMISSION_FROM_CANONICAL_TENANT_OR_OPERATIONS_RESERVATION_EACH_WIRE_RECHECKS_CURRENT_OWNER_PROJECT_RUN_CREDENTIAL_AUTHORITY_BINDING_NO_PUBLIC_DELTAS_UNTIL_SETTLEMENT_AND_EXACT_ATOMIC_RECEIPT_CANCELLATION_REVOCATION_AND_PUBLICATION_FAILURE_CANNOT_RETRY_MODEL",
@@ -1804,9 +1804,9 @@
       }
     },
     {
-      "id": "9ea21a6fc8b8700460c0",
-      "callSha256": "b2e9ffe461f16a59e267de26c733199d141ee06611ad2048eb6db2b7ea56e74f",
-      "sourceFileSha256": "ffdf4df315ade2befc0aef670ab28bb3eab812b1ca3ec085b2e81b9761b7ce49",
+      "id": "06e6767d8c33bd9749a5",
+      "callSha256": "a4aad98ffb4587fb582ca6da6b5bb1ded28e8e0172bd2f8298c2f14ad789d629",
+      "sourceFileSha256": "ff4022afa5c3c031956a4eda38253e27c4f6ae3641f78d039085d60890ccb3c9",
       "disposition": "VERIFIED_GUARD",
       "trust": "SHARED_BROWSER_SDK_ADMISSION_AND_ACCOUNTING_ONLY_NOT_UPSTREAM_TOOL_CONTENT_PROVENANCE",
       "tenantAuthority": "ORIGINAL_API_ISSUED_CONTEXT_CURRENT_PROJECT_OWNER_CANONICAL_CREDENTIAL_REVISION_AND_DURABLE_RESERVATION_PER_WIRE_LEASE_CANCELLATION_AND_SETTLEMENT_PLUS_ATOMIC_USAGE_BEFORE_OUTPUT_NO_RAW_JOB_ID_OR_FABRICATED_CALLBACK_AUTHORITY",
@@ -1878,6 +1878,15 @@
         "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
         "previousSourceFileSha256": "a72f9b301cdb0d9cb2d259d53c2df835ac97a74a5b0fc4ce75c8e8f673ee830d",
         "verification": "The reviewed egress call hash (callSha256) and id are byte-identical to the reviewed main version. Only other code in the file changed."
+      },
+      "callReboundOnBranch": {
+        "previousId": "9ea21a6fc8b8700460c0",
+        "review": "Retains the issued owner, current run/lease guard, classified immutable payload, durable reservation, zero retry and actual receipt. Passes the same canonical reservation callback as the pacing identity to the existing transport."
+      },
+      "rebinding": {
+        "previousCallerId": "0120190c0159cac3279d",
+        "previousCallSha256": "4b3ae54effacf08255f84f1f01e6e0ca339a0cd2ea3cb90b0758bd00ab17371e",
+        "reason": "Optional numeric timing callback only; endpoint, request, settlement and authority are unchanged."
       }
     },
     {
@@ -4630,6 +4639,223 @@
         }
       ],
       "reviewedOnBranch": "2026-11-05: GET /api/site-icon connects only to the fixed https://cdn.deepseek.com/site-icons/ host with a hostname that must match a plain public-domain pattern (no IP literals, ports, paths or credentials), through the governed boundedPublicGet with no redirects, a 96 KiB cap and a 6 s timeout. It sends no cookies, user text or identifiers, accepts a reply only when its bytes are a PNG, JPEG, GIF, WebP or ICO (never SVG or HTML), and caches the public logo."
+    },
+    {
+      "id": "96c8086ac0938c5c9190",
+      "callSha256": "80ce304010538de36141c81697b2e04d5d62fe4ba24211324eb807875a83b163",
+      "sourceFileSha256": "82983bf0a836d2e284ffe35ddea6b182b42dcb64304a2a394e6becc9a46213c1",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "BOUNDED_CHROME_EXTENSION_PORT_NO_HTTP_TRANSPORT_OR_SESSION_TOKEN_IN_RESPONSE",
+      "tenantAuthority": "Verified API account and one-time extension challenge. Exact Chrome port; no bearer or provider credential is sent. Turn requests remain bound to admission. Reconnected finalization uses the existing API owner and current lease checks.",
+      "evidence": [
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": "const connected = runtime.connect(extensionId, { name: 'xroga-browser-v1' })",
+          "sha256": "82983bf0a836d2e284ffe35ddea6b182b42dcb64304a2a394e6becc9a46213c1"
+        },
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": "if (!isStart && !isResume && !isDocument && !isVoice",
+          "sha256": "82983bf0a836d2e284ffe35ddea6b182b42dcb64304a2a394e6becc9a46213c1"
+        },
+        {
+          "path": "backend/src/routes/localBrowser.ts",
+          "marker": "localRecord(await rt.runs.load(ctx.userId, runId), ctx.userId)",
+          "sha256": "f77d53a8717e5bfc1011c4f108bc3fbe77f9951cb266380a480aafb6a59e24d5"
+        }
+      ],
+      "browserCheckpointRebind": {
+        "priorSource": "da483f922a0b28e0405446425860f821f84e11df",
+        "previousSourceFileSha256": "2500a1f07a78f43f9ebee385642fac97743777253c045bce71eed6bf51002d9a",
+        "scope": "Five identical local-port sends; GET owner verification and fenced finish added for reconnected runs."
+      }
+    },
+    {
+      "id": "3736829b4cae598c6292",
+      "callSha256": "8dbda9699ab8293c740bb5d6ed43bd52c729d323ad44176699f254e1435f18fc",
+      "sourceFileSha256": "82983bf0a836d2e284ffe35ddea6b182b42dcb64304a2a394e6becc9a46213c1",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "BOUNDED_CHROME_EXTENSION_PORT_NO_HTTP_TRANSPORT_OR_SESSION_TOKEN_IN_RESPONSE",
+      "tenantAuthority": "Verified API account and one-time extension challenge. Exact Chrome port; no bearer or provider credential is sent. Turn requests remain bound to admission. Reconnected finalization uses the existing API owner and current lease checks.",
+      "evidence": [
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": "const connected = runtime.connect(extensionId, { name: 'xroga-browser-v1' })",
+          "sha256": "82983bf0a836d2e284ffe35ddea6b182b42dcb64304a2a394e6becc9a46213c1"
+        },
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": "const bytes = Uint8Array.from(atob(encoded)",
+          "sha256": "82983bf0a836d2e284ffe35ddea6b182b42dcb64304a2a394e6becc9a46213c1"
+        },
+        {
+          "path": "backend/src/routes/localBrowser.ts",
+          "marker": "localRecord(await rt.runs.load(ctx.userId, runId), ctx.userId)",
+          "sha256": "f77d53a8717e5bfc1011c4f108bc3fbe77f9951cb266380a480aafb6a59e24d5"
+        }
+      ],
+      "browserCheckpointRebind": {
+        "priorSource": "da483f922a0b28e0405446425860f821f84e11df",
+        "previousSourceFileSha256": "2500a1f07a78f43f9ebee385642fac97743777253c045bce71eed6bf51002d9a",
+        "scope": "Five identical local-port sends; GET owner verification and fenced finish added for reconnected runs."
+      }
+    },
+    {
+      "id": "d8500d7e40e05a539e15",
+      "callSha256": "80ce304010538de36141c81697b2e04d5d62fe4ba24211324eb807875a83b163",
+      "sourceFileSha256": "82983bf0a836d2e284ffe35ddea6b182b42dcb64304a2a394e6becc9a46213c1",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "BOUNDED_CHROME_EXTENSION_PORT_NO_HTTP_TRANSPORT_OR_SESSION_TOKEN_IN_RESPONSE",
+      "tenantAuthority": "Verified API account and one-time extension challenge. Exact Chrome port; no bearer or provider credential is sent. Turn requests remain bound to admission. Reconnected finalization uses the existing API owner and current lease checks.",
+      "evidence": [
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": "const connected = runtime.connect(extensionId, { name: 'xroga-browser-v1' })",
+          "sha256": "82983bf0a836d2e284ffe35ddea6b182b42dcb64304a2a394e6becc9a46213c1"
+        },
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": "preparedPcm: true, expectedToken: pairedToken.current",
+          "sha256": "82983bf0a836d2e284ffe35ddea6b182b42dcb64304a2a394e6becc9a46213c1"
+        },
+        {
+          "path": "backend/src/routes/localBrowser.ts",
+          "marker": "localRecord(await rt.runs.load(ctx.userId, runId), ctx.userId)",
+          "sha256": "f77d53a8717e5bfc1011c4f108bc3fbe77f9951cb266380a480aafb6a59e24d5"
+        }
+      ],
+      "browserCheckpointRebind": {
+        "priorSource": "da483f922a0b28e0405446425860f821f84e11df",
+        "previousSourceFileSha256": "2500a1f07a78f43f9ebee385642fac97743777253c045bce71eed6bf51002d9a",
+        "scope": "Five identical local-port sends; GET owner verification and fenced finish added for reconnected runs."
+      }
+    },
+    {
+      "id": "5ad5a74f852db7524d8a",
+      "callSha256": "26c50fda42001535cb70aac98a0d29a407fa8ea44ab454f87cbf7772b31fff4e",
+      "sourceFileSha256": "82983bf0a836d2e284ffe35ddea6b182b42dcb64304a2a394e6becc9a46213c1",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "BOUNDED_CHROME_EXTENSION_PORT_NO_HTTP_TRANSPORT_OR_SESSION_TOKEN_IN_RESPONSE",
+      "tenantAuthority": "Verified API account and one-time extension challenge. Exact Chrome port; no bearer or provider credential is sent. Turn requests remain bound to admission. Reconnected finalization uses the existing API owner and current lease checks.",
+      "evidence": [
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": "const connected = runtime.connect(extensionId, { name: 'xroga-browser-v1' })",
+          "sha256": "82983bf0a836d2e284ffe35ddea6b182b42dcb64304a2a394e6becc9a46213c1"
+        },
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": "if ((isStart || isResume) && data.runId",
+          "sha256": "82983bf0a836d2e284ffe35ddea6b182b42dcb64304a2a394e6becc9a46213c1"
+        },
+        {
+          "path": "backend/src/routes/localBrowser.ts",
+          "marker": "localRecord(await rt.runs.load(ctx.userId, runId), ctx.userId)",
+          "sha256": "f77d53a8717e5bfc1011c4f108bc3fbe77f9951cb266380a480aafb6a59e24d5"
+        }
+      ],
+      "browserCheckpointRebind": {
+        "priorSource": "da483f922a0b28e0405446425860f821f84e11df",
+        "previousSourceFileSha256": "2500a1f07a78f43f9ebee385642fac97743777253c045bce71eed6bf51002d9a",
+        "scope": "Five identical local-port sends; GET owner verification and fenced finish added for reconnected runs."
+      }
+    },
+    {
+      "id": "d875c1fb0614082bd141",
+      "callSha256": "80ce304010538de36141c81697b2e04d5d62fe4ba24211324eb807875a83b163",
+      "sourceFileSha256": "82983bf0a836d2e284ffe35ddea6b182b42dcb64304a2a394e6becc9a46213c1",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "BOUNDED_CHROME_EXTENSION_PORT_NO_HTTP_TRANSPORT_OR_SESSION_TOKEN_IN_RESPONSE",
+      "tenantAuthority": "Verified API account and one-time extension challenge. Exact Chrome port; no bearer or provider credential is sent. Turn requests remain bound to admission. Reconnected finalization uses the existing API owner and current lease checks.",
+      "evidence": [
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": "const connected = runtime.connect(extensionId, { name: 'xroga-browser-v1' })",
+          "sha256": "82983bf0a836d2e284ffe35ddea6b182b42dcb64304a2a394e6becc9a46213c1"
+        },
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": "}, () => send({ type: 'result', id, ok: false })",
+          "sha256": "82983bf0a836d2e284ffe35ddea6b182b42dcb64304a2a394e6becc9a46213c1"
+        },
+        {
+          "path": "backend/src/routes/localBrowser.ts",
+          "marker": "localRecord(await rt.runs.load(ctx.userId, runId), ctx.userId)",
+          "sha256": "f77d53a8717e5bfc1011c4f108bc3fbe77f9951cb266380a480aafb6a59e24d5"
+        }
+      ],
+      "browserCheckpointRebind": {
+        "priorSource": "da483f922a0b28e0405446425860f821f84e11df",
+        "previousSourceFileSha256": "2500a1f07a78f43f9ebee385642fac97743777253c045bce71eed6bf51002d9a",
+        "scope": "Five identical local-port sends; GET owner verification and fenced finish added for reconnected runs."
+      }
+    },
+    {
+      "id": "6631f0cfac960ae10cff",
+      "callSha256": "206706dbb61de5380fd1b4d123cfaaeff134ec6f18643bb9f3c9f7f3ddcde24e",
+      "sourceFileSha256": "82983bf0a836d2e284ffe35ddea6b182b42dcb64304a2a394e6becc9a46213c1",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "BOUNDED_CHROME_EXTENSION_PORT_NO_HTTP_TRANSPORT_OR_SESSION_TOKEN_IN_RESPONSE",
+      "tenantAuthority": "Resume history is requested only for a run admitted by the signed-in Workspace API through the current Chrome port.",
+      "evidence": [
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": "if (message.type === 'run' && message.runId && admitted.has(message.runId))",
+          "sha256": "82983bf0a836d2e284ffe35ddea6b182b42dcb64304a2a394e6becc9a46213c1"
+        },
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": "else send({ type: 'activity-history', runId: message.runId })",
+          "sha256": "82983bf0a836d2e284ffe35ddea6b182b42dcb64304a2a394e6becc9a46213c1"
+        }
+      ],
+      "reviewedOnBranch": "Sends a run ID only to the paired Chrome extension. The session token, page content and the provider key are excluded. No network transport, provider request or external side effect follows from requesting the existing local receipt summary."
+    },
+    {
+      "id": "e0aa33d2494c480caeb3",
+      "callSha256": "3f0d26d4bf152dcc89783b04a195a6d4bf8c9093bb3a10c1454b4d596b59f152",
+      "sourceFileSha256": "82983bf0a836d2e284ffe35ddea6b182b42dcb64304a2a394e6becc9a46213c1",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "BOUNDED_CHROME_EXTENSION_PORT_NO_HTTP_TRANSPORT_OR_SESSION_TOKEN_IN_RESPONSE",
+      "tenantAuthority": "Reconnected history is requested only after the API confirms the current account owns the exact run. The connection and run are checked again before sending.",
+      "evidence": [
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": "if (disposed || portRef.current !== connected || activeRun.current) return",
+          "sha256": "82983bf0a836d2e284ffe35ddea6b182b42dcb64304a2a394e6becc9a46213c1"
+        },
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": "send({ type: 'activity-history', runId: checkpoint })",
+          "sha256": "82983bf0a836d2e284ffe35ddea6b182b42dcb64304a2a394e6becc9a46213c1"
+        }
+      ],
+      "reviewedOnBranch": "Sends a run ID only to the paired Chrome extension. The session token, page content and the provider key are excluded. No network transport, provider request or external side effect follows from requesting the existing local receipt summary."
+    },
+    {
+      "id": "5b19b5ab231e0280efc7",
+      "callSha256": "65e08ee42f856fcd72b4dd58d04aec77dd1fadcae354cd26d35a2faa43737364",
+      "sourceFileSha256": "82983bf0a836d2e284ffe35ddea6b182b42dcb64304a2a394e6becc9a46213c1",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "PAIRED_EXACT_EXTENSION_PORT_WITH_EXISTING_XROGA_ORIGIN_AND_BROWSER_RUN_READ_CHECK",
+      "tenantAuthority": "SAME_ACCOUNT_AUTHENTICATED_API_VERIFIES_RUN_BEFORE_REQUESTING_LOCAL_ACTIVITY",
+      "evidence": [
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": "const loadRun = () => apiFetch<RunResult>",
+          "sha256": "82983bf0a836d2e284ffe35ddea6b182b42dcb64304a2a394e6becc9a46213c1"
+        },
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": "checkingRun !== run",
+          "sha256": "82983bf0a836d2e284ffe35ddea6b182b42dcb64304a2a394e6becc9a46213c1"
+        },
+        {
+          "path": "backend/src/routes/localBrowser.ts",
+          "marker": "localRecord(await runs.load(ctx.userId, id.parse(req.params.runId)), ctx.userId)",
+          "sha256": "f77d53a8717e5bfc1011c4f108bc3fbe77f9951cb266380a480aafb6a59e24d5"
+        }
+      ]
     }
   ]
 }

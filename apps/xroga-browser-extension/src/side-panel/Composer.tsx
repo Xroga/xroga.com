@@ -163,6 +163,7 @@ export function Composer({
   draft,
   onDraftUsed,
   onSend,
+  sendBlocked,
   onStop,
   onMode,
   onModel,
@@ -171,6 +172,7 @@ export function Composer({
   sharedTabs = [],
   files = [],
   onAttach,
+  onPlugins,
   onScreenshot,
   onRemoveFile,
   transcribe,
@@ -194,6 +196,7 @@ export function Composer({
   draft?: string;
   onDraftUsed?: () => void;
   onSend: (text: string) => void;
+  sendBlocked?: boolean;
   onStop: () => void;
   onMode: (mode: PermissionMode) => void;
   onModel: (model: ModelRef) => void;
@@ -201,6 +204,7 @@ export function Composer({
   /** A tab picked with @. */
   onShareTab?: (tab: { tabId: number; title: string }) => void;
   sharedTabs?: number[];
+  onPlugins?: () => void;
   /** Files attached to the next message: from +, drop or paste. */
   files?: PendingFile[];
   onAttach?: (files: File[]) => void;
@@ -386,6 +390,7 @@ export function Composer({
   }, [text]);
 
   const send = () => {
+    if (sendBlocked) return;
     const value = text.trim();
     if ((!value && !((files.length || quotes.length) && !active)) || !model) return;
     onSend(value);
@@ -591,6 +596,15 @@ export function Composer({
               />
             </>
           ) : null}
+          {onPlugins ? (
+            <button type="button" className="flex h-7 items-center gap-1 rounded-lg px-1.5 text-xs text-nb-muted hover:bg-nb-surface hover:text-nb-fg"
+              onClick={onPlugins} aria-haspopup="dialog" aria-label="Plugins" title="Plugins">
+              <svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M15.4 5.6a2 2 0 1 0-3.4-1.4V6H8a2 2 0 0 0-2 2v3h-1a2 2 0 0 0 0 4h1v3a2 2 0 0 0 2 2h4v-1a2 2 0 0 1 4 0v1h2a2 2 0 0 0 2-2v-4h-1a2 2 0 0 1 0-4h1V8a2 2 0 0 0-2-2h-2.6Z" />
+              </svg>
+              <span className="max-[279px]:sr-only">Plugins</span>
+            </button>
+          ) : null}
           {!XROGA_PRODUCT && (
             <ModeMenu
               mode={mode}
@@ -656,7 +670,7 @@ export function Composer({
           ) : (
             <button
               type="button"
-              disabled={(!text.trim() && !files.length && !quotes.length) || !model}
+              disabled={sendBlocked || (!text.trim() && !files.length && !quotes.length) || !model}
               aria-label={t('composer.send')}
               title={t('composer.send')}
               className="flex size-7 shrink-0 items-center justify-center rounded-full bg-nb-accent text-white shadow-sm transition-colors hover:bg-nb-accent-strong disabled:opacity-40 disabled:shadow-none disabled:hover:bg-nb-accent"
