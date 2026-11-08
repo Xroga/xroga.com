@@ -14590,7 +14590,8 @@ html.xv-home-scroll-lock body {
 /* Native sidebar scrollbar: a subtle thumb with a real, platform-managed drag
    target. Keep the nav independently scrollable and reclaim the old 22px gutter. */
 .xv-sidebar-nav-scroll.xv-sidebar-scroll-track {
-  padding-right: 8px !important;
+  padding-right: 2px !important;
+  padding-left: 5px !important;
   overscroll-behavior-y: contain;
   scrollbar-width: thin !important;
   scrollbar-color: color-mix(in srgb, var(--foreground) 38%, transparent) transparent !important;
@@ -14911,4 +14912,16 @@ body.xv-terminal-fullscreen-active:not(.xv-workspace-expanded-active) .xv-termin
   min-width: 0;
   box-sizing: border-box;
   max-width: 56rem !important;
+}
+
+/* Workspace sidebar resize overlays rather than reflows the chat/tab canvas.
+   Other application pages keep the normal flex sidebar layout. */
+@media (min-width:1024px) {
+  .xv-workspace-resize-stable { position:relative; padding-inline-start:var(--xv-workspace-canvas-offset); }
+  .xv-workspace-resize-stable > .xv-sidebar-root {
+    position:absolute;
+    inset-block-start:0;
+    inset-inline-start:0;
+    z-index:20;
+  }
 }

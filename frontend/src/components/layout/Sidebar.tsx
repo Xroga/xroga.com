@@ -213,8 +213,10 @@ function guestGateReasonForHref(href: string): WorkspaceAuthGateReason | null {
 }
 
 function planLabel(tier?: string | null) {
-  if (!tier || tier === 'unpaid' || tier === 'free') return 'Free';
-  return 'Xroga Pro';
+  if (!tier || tier === 'unpaid' || tier === 'free') return 'Xroga Free';
+  if (tier === 'plus') return 'Xroga Plus';
+  if (tier === 'pro') return 'Xroga Pro';
+  return 'Xroga plan';
 }
 
 /**
@@ -266,23 +268,32 @@ export function Sidebar({ displayName, email }: SidebarProps) {
   const setSidebarWidth = useThemeStore((s) => s.setSidebarWidth);
   const terminalFullscreenRaw = useThemeStore((s) => s.terminalFullscreen);
   const planTier = useAppStore((s) => s.planTier);
+  const planName = useAppStore((s) => s.planName);
   const profile = useAppStore((s) => s.profile);
   const incognitoRaw = usePrivacyStore((s) => s.incognito);
   const incognito = hydrated && incognitoRaw;
   const terminalFullscreen = hydrated && terminalFullscreenRaw;
   const isMobile = useIsMobile();
   const avatarUrl = profile?.avatar_url;
-  const nameInitial = (profile?.display_name ?? displayName ?? 'U').charAt(0).toUpperCase();
-  const userName = incognito
-    ? 'Incognito'
-    : isGuest
-      ? 'Guest workspace'
-      : (profile?.display_name ?? displayName ?? 'User');
+  // Prefer actual saved profile names; the server fallback can be an email prefix.
+  const emailLocalPart = (email ?? workspaceIdentity.email ?? '').split('@')[0]?.trim().toLowerCase();
+  const savedName = profile?.display_name?.trim();
+  const routeName = (displayName ?? workspaceIdentity.displayName)?.trim();
+  const realName = savedName && !savedName.includes('@')
+    ? savedName
+    : routeName && !routeName.includes('@') && routeName.toLowerCase() !== emailLocalPart
+      ? routeName
+      : 'Xroga user';
+  const nameInitial = realName.charAt(0).toUpperCase();
+  const userName = incognito ? 'Incognito' : isGuest ? 'Guest workspace' : realName;
+  const namedPlan = planName?.trim();
   const userPlan = incognito
     ? 'Temporary session'
     : isGuest
       ? 'Preview session'
-      : planLabel(planTier);
+      : namedPlan
+        ? /^xroga\b/i.test(namedPlan) ? namedPlan : `Xroga ${namedPlan}`
+        : planLabel(planTier);
 
   // A pending hover-to-open must not fire into a sidebar that is no longer mounted —
   // navigating away mid-hover would otherwise leave the timer to run and set state on
@@ -572,7 +583,7 @@ export function Sidebar({ displayName, email }: SidebarProps) {
             </Link>
           </HoverTip>
         </div>
-      ) : displayName ? (
+      ) : !isGuest ? (
         <div ref={profileRowRef} className="xv-sidebar-rail-profile">
           {incognito ? (
             <IncognitoProfileBox size="sidebar" />
@@ -581,6 +592,7 @@ export function Sidebar({ displayName, email }: SidebarProps) {
               url={avatarUrl}
               initial={nameInitial}
               size="sidebarCompact"
+              className="rounded-[10px]"
               onClick={() => setAvatarPickerOpen(true)}
             />
           )}
@@ -628,7 +640,7 @@ export function Sidebar({ displayName, email }: SidebarProps) {
             </Link>
           </div>
         </div>
-      ) : displayName && navExpanded ? (
+      ) : !isGuest && navExpanded ? (
         <div ref={profileRowRef} className="xv-sidebar-profile-row flex items-center gap-2 px-2 py-1.5 rounded-xl">
           {incognito ? (
             <IncognitoProfileBox size="sidebar" />
@@ -637,17 +649,14 @@ export function Sidebar({ displayName, email }: SidebarProps) {
             url={avatarUrl}
             initial={nameInitial}
             size="sidebarCompact"
+            className="rounded-[10px]"
             onClick={() => setAvatarPickerOpen(true)}
           />
           )}
           <ProfileQuickMenu onLogout={handleLogout} anchorRef={profileRowRef} displayName={userName} email={email}>
             <span className="min-w-0 flex-1 text-left">
               <span className="block truncate text-[12px] font-medium leading-tight xv-sidebar-profile-name">{userName}</span>
-              {userPlan === 'Free' ? (
-                <UpgradeActionButton compact />
-              ) : (
-                <span className="block truncate text-[10px] xv-sidebar-profile-plan">{userPlan}</span>
-              )}
+              <span className="block truncate text-[10px] xv-sidebar-profile-plan" title={userPlan}>{userPlan}</span>
             </span>
             <span className="xv-profile-menu-caret" aria-hidden="true">›</span>
           </ProfileQuickMenu>
