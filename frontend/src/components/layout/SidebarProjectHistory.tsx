@@ -7,7 +7,7 @@ import { activateSidebarProject, clearActiveSidebarProject, getActiveSidebarProj
 import { clearSelectedRepoContext, consumeFreshTerminalIntent } from '@/lib/repoContext';
 import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
 import { useThemeStore } from '@/store/useThemeStore';
-import { Cloud, FolderOpen, GitBranch, ChevronDown, ChevronRight, Pin, PinOff, MoreHorizontal, Plus, ArrowUp, ArrowDown } from 'lucide-react';
+import { Cloud, FolderOpen, GitBranch, ChevronDown, ChevronRight, MoreHorizontal, Plus, ArrowUp, ArrowDown } from 'lucide-react';
 import { SidebarActionMenu, type SidebarActionId, type SidebarMenuAction } from './SidebarActionMenu';
 import { SidebarMovingTitle } from './SidebarMovingTitle';
 import './SidebarOrganize.css';
@@ -1022,7 +1022,6 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   },[accountId,pathname]);
   function renderRow(kind:SidebarKind,id:string,label:string,open:()=>void,pinned:boolean){
-    const saved=metaOf(kind,id)?.pin_order!=null;
     return <div key={kind+':'+id} className={cn('xv-sidebar-work-row group flex items-center gap-1 min-w-0 rounded-md hover:bg-[var(--foreground)]/[0.05]',
         (kind==='project'&&activeSidebarProjectId===id)||(kind==='conversation'&&activeSessionId===id)
           ? 'bg-[var(--foreground)]/[0.13] text-[var(--foreground)]' : '')}
@@ -1043,9 +1042,7 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
         <SidebarMovingTitle text={label}/>
       </button>
       <div className="xv-sidebar-work-actions shrink-0 flex items-center gap-0.5">
-        <button type="button" className="p-1 rounded-md hover:bg-[var(--foreground)]/10 focus-visible:outline-2 focus-visible:outline-[var(--accent)]"
-          aria-label={saved?'Unpin '+label:'Pin '+label} aria-pressed={saved}
-          onClick={()=>togglePin(id,kind)}><Pin size={12} fill={saved?'currentColor':'none'} aria-hidden="true"/></button>
+
         <button type="button" className="p-1 rounded-md hover:bg-[var(--foreground)]/10 focus-visible:outline-2 focus-visible:outline-[var(--accent)]"
           aria-label={'More options for '+label} aria-haspopup="menu" aria-expanded={menu?.id===id&&menu.kind===kind}
           onClick={event=>{const box=event.currentTarget.getBoundingClientRect();const edge=event.currentTarget.closest('.xv-sidebar-floating')?.getBoundingClientRect().right;setMenu({kind,id,x:(edge??box.right)+10,y:box.top});}}>
