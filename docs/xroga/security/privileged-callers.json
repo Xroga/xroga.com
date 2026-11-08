@@ -1,26 +1,26 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "ab0fcbd251c0d5f859a5d19bda625fed1f6b31ada2b5432bedf80cb4ad01fc3f",
+  "reviewRegistrySha256": "c34dbbe8ed9003be647e3dc58e0d7204e28ef66bc07763914fba9de3ed1f5bf5",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
     "privilegedFactorySites": 226,
-    "persistenceCandidates": 999,
+    "persistenceCandidates": 1003,
     "ownerPredicateCandidates": 262,
-    "reviewRequired": 152,
-    "reviewedCandidates": 847,
-    "unresolvedSafetyCandidates": 196,
+    "reviewRequired": 155,
+    "reviewedCandidates": 848,
+    "unresolvedSafetyCandidates": 199,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 23
   },
   "outcomes": {
-    "REVIEW_REQUIRED": 152,
+    "REVIEW_REQUIRED": 155,
     "SCOPED_BOUNDARY": 547,
     "NARROW_EXCEPTION": 52,
-    "NOT_PERSISTENCE": 204,
+    "NOT_PERSISTENCE": 205,
     "REVIEWED_GAP": 44
   },
   "acceptance": {
@@ -29,7 +29,7 @@
     "scope": "COMMAND_007_CRITERION_EVIDENCE_NOT_BATCH_OR_PRODUCTION_ACCEPTANCE",
     "certifiedScopedPrivilegedCallers": 0,
     "verifiedCandidateBoundaries": 80,
-    "unresolvedCandidateBoundaries": 919,
+    "unresolvedCandidateBoundaries": 923,
     "criteria": [
       {
         "id": "XB01-C007-AC01",
@@ -4700,6 +4700,18 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
+        "id": "49d80835a4c3c34ee32b"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "4b5a67879fe8cadd9429"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "6976a39ca0e1440bcce4"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
         "id": "3a0a65d6d673a33eaf05"
       },
       {
@@ -4733,6 +4745,10 @@
       {
         "code": "MISSING_CALLER_REVIEW",
         "id": "a9b3c4d80ff636038058"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "5df2ea611eb4f0af7872"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -6609,6 +6625,18 @@
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
         "id": "936bc3ebf11071ceb84e"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "49d80835a4c3c34ee32b"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "4b5a67879fe8cadd9429"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "6976a39ca0e1440bcce4"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -8548,6 +8576,10 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "5df2ea611eb4f0af7872"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "c9a009f6baa9e3a3bbad"
       },
       {
@@ -10133,11 +10165,11 @@
     ]
   },
   "reviewAgreement": {
-    "currentCallers": 999,
+    "currentCallers": 1003,
     "structuredVerified": 80,
-    "structuredUnproven": 919,
-    "manualUnresolved": 196,
-    "manualUnsupported": 723,
+    "structuredUnproven": 923,
+    "manualUnresolved": 199,
+    "manualUnsupported": 724,
     "agreedVerified": 80,
     "proofAwaitingManualReconciliation": 0
   },
@@ -19133,6 +19165,39 @@
       }
     },
     {
+      "id": "49d80835a4c3c34ee32b",
+      "path": "backend/src/routes/browserDocuments.ts",
+      "line": 19,
+      "enclosing": "officeArchive",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "52b4445687ccae287d6c84bfefac85c463400915c5857c7d70f4b9a9a5cddfe3"
+    },
+    {
+      "id": "4b5a67879fe8cadd9429",
+      "path": "backend/src/routes/browserDocuments.ts",
+      "line": 64,
+      "enclosing": "readBrowserDocument",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "52b4445687ccae287d6c84bfefac85c463400915c5857c7d70f4b9a9a5cddfe3"
+    },
+    {
+      "id": "6976a39ca0e1440bcce4",
+      "path": "backend/src/routes/browserDocuments.ts",
+      "line": 85,
+      "enclosing": "readBrowserDocument",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "52b4445687ccae287d6c84bfefac85c463400915c5857c7d70f4b9a9a5cddfe3"
+    },
+    {
       "id": "3a0a65d6d673a33eaf05",
       "path": "backend/src/routes/businessAutomationWebhook.ts",
       "line": 21,
@@ -19357,6 +19422,27 @@
           {
             "path": "backend/src/routes/github.ts",
             "marker": "repo_strategy"
+          }
+        ]
+      }
+    },
+    {
+      "id": "5df2ea611eb4f0af7872",
+      "path": "backend/src/routes/localBrowser.ts",
+      "line": 198,
+      "enclosing": "createLocalBrowserRouter",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "873a0c1ae4876e25462a9b9e18772d456ee3334fd5e5dd4492e0775b3427d019",
+      "semanticReview": {
+        "authority": "Inspected the exact receiver and complete expression. It is a built-in JavaScript data conversion with no persistence client or privilege transfer.",
+        "reason": "Decodes the already bounded document body into a local byte buffer. The scanner matches the built-in Buffer method name.",
+        "evidence": [
+          {
+            "path": "backend/src/routes/localBrowser.ts",
+            "marker": "Buffer.from(data.base64, 'base64')"
           }
         ]
       }

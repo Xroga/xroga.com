@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "d59a57ebdc1cbcca2ef99e9d2a64693d69eba5ec67cd02bc87581ba03268b377",
+  "sourceTreeDigest": "0c3b0b4b5165e90e5908e28a58bf84f4193415b84e699f8483980330d32d4de2",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -3812,13 +3812,13 @@
       ]
     },
     {
-      "id": "9ea21a6fc8b8700460c0",
+      "id": "0120190c0159cac3279d",
       "file": "backend/src/workers/browserModelDispatch.ts",
-      "line": 59,
+      "line": 60,
       "entryPoint": "dispatchBrowserModel",
       "transport": "provider-sdk",
-      "callee": "createModelProviderClient(endpoint,beforeDispatch).chat.completions.create",
-      "callSha256": "b2e9ffe461f16a59e267de26c733199d141ee06611ad2048eb6db2b7ea56e74f",
+      "callee": "createModelProviderClient(endpoint,beforeDispatch,dispatch.beforeDispatch).chat.completions.create",
+      "callSha256": "4b3ae54effacf08255f84f1f01e6e0ca339a0cd2ea3cb90b0758bd00ab17371e",
       "destination": "DYNAMIC_OR_SDK_INTERNAL",
       "trust": "SHARED_BROWSER_SDK_ADMISSION_AND_ACCOUNTING_ONLY_NOT_UPSTREAM_TOOL_CONTENT_PROVENANCE",
       "tenantAuthority": "ORIGINAL_API_ISSUED_CONTEXT_CURRENT_PROJECT_OWNER_CANONICAL_CREDENTIAL_REVISION_AND_DURABLE_RESERVATION_PER_WIRE_LEASE_CANCELLATION_AND_SETTLEMENT_PLUS_ATOMIC_USAGE_BEFORE_OUTPUT_NO_RAW_JOB_ID_OR_FABRICATED_CALLBACK_AUTHORITY",
@@ -4981,7 +4981,7 @@
         "31380a8d5b9454a98a98",
         "9c345e07b723c086440e",
         "4c899876b9e3850af11b",
-        "9ea21a6fc8b8700460c0"
+        "0120190c0159cac3279d"
       ]
     },
     {

@@ -29,6 +29,8 @@ jobs:
           node-version-file: '.node-version'
           cache: npm
       - run: npm ci
+        env:
+          ONNXRUNTIME_NODE_INSTALL_CUDA: skip
       - name: Bind audit inventory to the actual virtual merge
         if: github.event_name == 'pull_request'
         env:
