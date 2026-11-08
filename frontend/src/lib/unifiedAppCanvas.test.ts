@@ -19,15 +19,22 @@ test('workspace keeps a visible outside frame and preserves breathing room insid
   assert.match(UIVERSE, /--xv-sidebar-inset:\s*var\(--xv-app-gutter\)/);
 });
 
-test('desktop pages keep balanced side gutters while the workspace retains its own framing', () => {
-  assert.match(
-    UIVERSE,
-    /\.xv-app-stage:not\(\.xv-app-stage--fullscreen\)\s*\{[\s\S]*?padding:\s*var\(--xv-content-gutter-block\)\s*var\(--xv-content-gutter-inline\)\s*var\(--xv-content-gutter-block\)\s*0\s*!important/,
-  );
-  assert.match(
-    UIVERSE,
-    /\.xv-page-stage:not\(\.xv-page-fullscreen-stage\)\s*\{[\s\S]*?--xv-content-gutter-inline:\s*18px;[\s\S]*?padding:\s*var\(--xv-content-gutter-block\)\s*var\(--xv-content-gutter-inline\)\s*var\(--xv-content-gutter-block\)\s*var\(--xv-content-gutter-inline\)/,
-  );
+test('desktop framed sections share exact outer spacing with the workspace window', () => {
+  const desktopWorkspace = UIVERSE.match(/\.xv-app-stage:not\(\.xv-app-stage--fullscreen\)\s*\{([^}]*)\}/)?.[1] ?? '';
+  const desktopPages = UIVERSE.match(/\.xv-page-stage:not\(\.xv-page-fullscreen-stage\)\s*\{([^}]*)\}/)?.[1] ?? '';
+  const pageRoot = UIVERSE.match(/\.xv-page-stage\s*\{([^}]*)\}/)?.[1] ?? '';
+  const spacing = /padding:\s*var\(--xv-content-gutter-block\)\s*var\(--xv-content-gutter-inline\)\s*var\(--xv-content-gutter-block\)\s*0/;
+  assert.match(desktopWorkspace, spacing, 'workspace stage must retain its existing frame');
+  assert.match(desktopPages, spacing, 'other framed pages must match all four workspace insets');
+  assert.doesNotMatch(pageRoot, /--xv-content-gutter-(inline|block):/, 'page stage must inherit workspace tokens');
+  assert.doesNotMatch(desktopPages, /--xv-content-gutter-(inline|block):/, 'desktop pages must not override shared frame tokens');
+  assert.match(UIVERSE, /\.xv-page-surface\s*\{[\s\S]*?width:\s*min\(100%,\s*var\(--xv-app-canvas-max\)\)/);
+  assert.match(UIVERSE, /\.xv-workspace-shell\s*\{[\s\S]*?width:\s*min\(100%,\s*var\(--xv-app-canvas-max\)\)/);
+});
+
+test('shared outer frame does not remove mobile bottom navigation clearance or page scrolling', () => {
+  assert.match(UIVERSE, /\.xv-page-stage\s*\{[\s\S]*?calc\(var\(--xv-content-gutter-block\) \+ 4\.75rem\)/);
+  assert.match(UIVERSE, /\.xv-page-surface\s*\{[\s\S]*?overflow-y:\s*auto/);
 });
 
 test('workspace is rounded with a quiet outline and restrained elevation', () => {
