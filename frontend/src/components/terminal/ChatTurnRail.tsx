@@ -19,6 +19,13 @@ export function chatRailCapacity(viewportWidth: number, viewportHeight: number):
   const available = Math.max(6, Math.floor((viewportHeight - 84) / 11));
   return Math.min(target, available);
 }
+/** Show the real history index even for the first completed question/answer.
+ * buildChatTurns intentionally groups that pair into one navigation target.
+ */
+export function shouldShowChatTurnRail(totalTurns: number, visibleTurns: number, viewportWidth: number): boolean {
+  return totalTurns > 0 && visibleTurns > 0 && viewportWidth >= 360;
+}
+
 const STORAGE_PREFIX = 'xroga:conversation-bookmarks:v1:';
 
 export function bookmarkStorageKey(conversationKey: string): string {
@@ -215,7 +222,7 @@ export function ChatTurnRail({ turns, activeId, onJump, conversationKey, classNa
   // A history index is useful even when its transcript fits without scrolling.
   // The old navigable/scrollHeight gate could hide it entirely after pane changes.
   const anchor = <span ref={railAnchorRef} hidden aria-hidden="true" />;
-  if (!mounted || turns.length < 2 || visibleTurns.length < 2 || (layout.width < 360)) return anchor;
+  if (!mounted || !shouldShowChatTurnRail(turns.length, visibleTurns.length, layout.width)) return anchor;
 
   const markerTop = hoveredIndex >= 0 ? turnMarkerTop(hoveredIndex, visibleTurns.length, layout.height) : 0;
   return <>{anchor}{createPortal(
