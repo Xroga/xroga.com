@@ -356,6 +356,19 @@ export function Sidebar({ displayName, email }: SidebarProps) {
     let active = true;
     document.body.classList.add('xv-sidebar-resizing');
 
+    // Keep the sidebar, shell and fixed composer at the same live boundary.
+    // TerminalDock owns an inline CSS variable, so updating only the shell's
+    // variable would leave its composer behind during a drag.
+    function syncGeometry(pixels: string) {
+      const frame = sidebarFrameRef.current;
+      if (frame) {
+        frame.style.width = pixels;
+        frame.closest<HTMLElement>('[data-testid="workspace-shell"]')?.style.setProperty('--sidebar-width', pixels);
+      }
+      if (sidebarPanelRef.current) sidebarPanelRef.current.style.width = pixels;
+      document.querySelector<HTMLElement>('.xv-terminal-dock')?.style.setProperty('--sidebar-width', pixels);
+    }
+
     // The sidebar remains a flex sibling of the workspace; changing its real
     // frame width lets the browser size both panes together without repainting
     // the entire React conversation tree on every mouse move.
@@ -364,8 +377,7 @@ export function Sidebar({ displayName, email }: SidebarProps) {
       if (!active) return;
       const width = Math.min(SIDEBAR_MAX_WIDTH, Math.max(SIDEBAR_MIN_WIDTH, pendingWidth));
       const pixels = `${width}px`;
-      if (sidebarFrameRef.current) sidebarFrameRef.current.style.width = pixels;
-      if (sidebarPanelRef.current) sidebarPanelRef.current.style.width = pixels;
+      syncGeometry(pixels);
     }
     function onMove(ev: PointerEvent) {
       pendingWidth = startW + (ev.clientX - startX);
@@ -377,9 +389,7 @@ export function Sidebar({ displayName, email }: SidebarProps) {
       if (frame) cancelAnimationFrame(frame);
       frame = 0;
       if (!commit) {
-        const pixels = `${startW}px`;
-        if (sidebarFrameRef.current) sidebarFrameRef.current.style.width = pixels;
-        if (sidebarPanelRef.current) sidebarPanelRef.current.style.width = pixels;
+        syncGeometry(`${startW}px`);
       } else if (pendingWidth < SIDEBAR_MIN_WIDTH - 40) {
         toggleSidebar();
       } else {
