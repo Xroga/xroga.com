@@ -208,8 +208,7 @@ export function WorkspaceConversationMenu() {
     if (!canManage || !currentEntry) return;
     const url = conversationUrl();
     if (action === 'open') {
-      const opened = window.open(url, '_blank', 'noopener,noreferrer');
-      if (!opened) toast.error('Your browser blocked the new tab.');
+      window.open(url, '_blank', 'noopener,noreferrer');
       return;
     }
     if (action === 'share' && typeof navigator.share === 'function') {
