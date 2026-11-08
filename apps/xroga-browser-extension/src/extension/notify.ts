@@ -4,6 +4,7 @@
 // yet; without it, the toolbar badge is the only signal.
 import { siteOf } from '@src/browser-control';
 import type { OpenPrompt } from '@src/ui/protocol';
+import { XROGA_PRODUCT } from '@src/xroga/product';
 
 const tabOfNotification = new Map<string, number>();
 
@@ -38,9 +39,15 @@ export async function notifyFinished(conversationId: string, ok: boolean, tabId:
 
 async function show(id: string, message: string, tabId: number | undefined): Promise<void> {
   if (!globalThis.chrome?.notifications) return;
+  const title = XROGA_PRODUCT ? 'Xroga' : 'Nanobrowser';
   if (tabId !== undefined) tabOfNotification.set(id, tabId);
   await chrome.notifications
-    .create(id, { type: 'basic', iconUrl: chrome.runtime.getURL('/icon-128.png'), title: 'Nanobrowser', message })
+    .create(id, {
+      type: 'basic',
+      iconUrl: chrome.runtime.getURL('/icon-128.png'),
+      title,
+      message: message.replace('Nanobrowser', title),
+    })
     .catch(() => undefined);
 }
 

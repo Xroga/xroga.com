@@ -14,7 +14,8 @@ import { XROGA_PRODUCT } from '@src/xroga/product';
 
 export const runManager = new RunManager();
 listenForPanels(runManager);
-listenForSelections(runManager);
+if (!XROGA_PRODUCT) listenForSelections(runManager);
+else chrome.runtime.onInstalled.addListener(() => chrome.contextMenus.removeAll());
 // The watchdog alarm only wakes the worker; starting it is what restores an unfinished run.
 // The welcome page and the first shortcut on install. Unattended check builds are installed on every run, so they
 // skip both.

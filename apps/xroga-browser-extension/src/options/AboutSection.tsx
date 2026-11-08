@@ -3,23 +3,39 @@ import { SettingsCard } from './SettingsCard';
 import { t } from '@src/ui/i18n';
 import { LICENCES } from './licences';
 import { websiteUrl } from '@src/ui/links';
+import { XROGA_PRODUCT } from '@src/xroga/product';
 
 export function AboutSection() {
   const manifest = chrome.runtime.getManifest();
   return (
     <div className="flex flex-col gap-6">
       <h2 className="sr-only">{t('settings.nav.about')}</h2>
-      <SettingsCard title="Nanobrowser" className="flex flex-col gap-1">
+      <SettingsCard title={XROGA_PRODUCT ? 'Xroga Browser Automation' : 'Nanobrowser'} className="flex flex-col gap-1">
         <p className="text-sm">{t('about.version', { version: manifest.version })}</p>
-        <p className="text-sm text-nb-muted">{t('about.license', { license: 'Apache-2.0' })}</p>
+        <p className="text-sm text-nb-muted">
+          {XROGA_PRODUCT ? 'Browser extension license: Apache-2.0' : t('about.license', { license: 'Apache-2.0' })}
+        </p>
         <p className="text-sm">
           {t('about.website')}{' '}
           <a className="text-nb-link underline" href={websiteUrl('/', 'about')} target="_blank" rel="noreferrer">
-            nanobrowser.ai
+            {XROGA_PRODUCT ? 'xroga.com' : 'nanobrowser.ai'}
           </a>
         </p>
       </SettingsCard>
       <SettingsCard title={t('about.licences')}>
+        {XROGA_PRODUCT && (
+          <p className="mb-3 text-sm text-nb-muted">
+            Browser engine based on{' '}
+            <a
+              href="https://github.com/nanobrowser/nanobrowser"
+              target="_blank"
+              rel="noreferrer"
+              className="text-nb-link underline">
+              Nanobrowser
+            </a>
+            .
+          </p>
+        )}
         <ul className="flex flex-col gap-1 text-sm">
           {LICENCES.map(l => (
             <li key={l.name} className="flex flex-wrap gap-x-2">

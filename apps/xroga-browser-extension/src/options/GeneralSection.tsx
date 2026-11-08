@@ -11,6 +11,7 @@ import { KeyboardIcon } from '@src/ui/icons';
 import { LANGUAGE_NAMES, RESPONSE_LANGUAGES } from '@src/ui/language';
 import { ModeMenu } from '@src/ui/mode-menu';
 import { SettingsCard, SettingsRow } from './SettingsCard';
+import { XROGA_PRODUCT } from '@src/xroga/product';
 
 /**
  * The `open-panel` command's key. Chrome keeps it on its own page (chrome://extensions/shortcuts), so it is read again
@@ -98,23 +99,25 @@ export function GeneralSection() {
   return (
     <div className="flex flex-col gap-6">
       <h2 className="sr-only">{t('settings.nav.general')}</h2>
-      <SettingsCard title={t('general.agent')} className="flex flex-col gap-6">
-        <ModeSelect />
-        <SettingsRow label={t('agent.turnCap')} description={t('agent.turnCapHint')}>
-          <Input
-            aria-label={t('agent.turnCap')}
-            type="number"
-            min={5}
-            max={500}
-            className="w-24"
-            value={settings.turnCap}
-            onChange={e => {
-              const n = Math.round(Number(e.target.value));
-              if (Number.isFinite(n) && n >= 1) void settingsStorage.set(s => ({ ...s, turnCap: Math.min(500, n) }));
-            }}
-          />
-        </SettingsRow>
-      </SettingsCard>
+      {!XROGA_PRODUCT && (
+        <SettingsCard title={t('general.agent')} className="flex flex-col gap-6">
+          <ModeSelect />
+          <SettingsRow label={t('agent.turnCap')} description={t('agent.turnCapHint')}>
+            <Input
+              aria-label={t('agent.turnCap')}
+              type="number"
+              min={5}
+              max={500}
+              className="w-24"
+              value={settings.turnCap}
+              onChange={e => {
+                const n = Math.round(Number(e.target.value));
+                if (Number.isFinite(n) && n >= 1) void settingsStorage.set(s => ({ ...s, turnCap: Math.min(500, n) }));
+              }}
+            />
+          </SettingsRow>
+        </SettingsCard>
+      )}
       <SettingsCard title={t('general.language')} className="flex flex-col gap-6">
         <UiLanguageRow />
         <SettingsRow label={t('language.response')} description={t('language.responseHint')}>

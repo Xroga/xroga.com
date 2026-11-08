@@ -1,6 +1,10 @@
 # Xroga Browser Operator
 
-The default extension build uses the Nanobrowser agent and browser controller. Start a task in the Chrome side panel or from Browser Operator in the paired Workspace tab. Both paths use the same task execution and progress in Chrome. Browser actions execute on the device. Keep the paired Workspace tab open during a task.
+Type a task in the Xroga Chrome side panel or start it from Browser Operator in the paired Workspace. The side panel uses its current HTTPS tab when allowed. A task without an eligible page starts on the search home page. Browser actions execute on the device. Keep the paired Workspace tab open during a task.
+
+In Xroga Settings, save reusable workflows and custom instructions under Workflows. You can import a Markdown or text file, review the prompt, and save it for use from the composer with `/`. Tab groups and saving files are built in. Enable task notifications in Permissions if you want them.
+
+Click the microphone to record. Chrome asks for access the first time. When you stop, the paired Workspace sends the recording to Xroga's existing free transcription endpoint and inserts the returned text as an editable draft. Review the draft and send it yourself. The browser engine attribution and third-party licenses are in About and the packaged NOTICE.
 
 ## Development integration
 

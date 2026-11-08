@@ -22,8 +22,20 @@ const SECTIONS: Array<{ id: string; label: MessageKey; render: () => JSX.Element
     ? []
     : [{ id: 'providers', label: 'settings.nav.providers' as const, render: () => <ProvidersSection /> }]),
   { id: 'permissions', label: 'settings.nav.permissions', render: () => <PermissionsSection /> },
-  { id: 'shortcuts', label: 'settings.nav.shortcuts', render: () => <ShortcutsSection /> },
-  { id: 'memory', label: 'settings.nav.memory', render: () => <MemorySection /> },
+  {
+    id: 'shortcuts',
+    label: 'settings.nav.shortcuts',
+    render: () =>
+      XROGA_PRODUCT ? (
+        <div className="flex flex-col gap-6">
+          <ShortcutsSection />
+          <MemorySection />
+        </div>
+      ) : (
+        <ShortcutsSection />
+      ),
+  },
+  ...(XROGA_PRODUCT ? [] : [{ id: 'memory', label: 'settings.nav.memory' as const, render: () => <MemorySection /> }]),
   { id: 'data', label: 'settings.nav.data', render: () => <DataSection /> },
   { id: 'about', label: 'settings.nav.about', render: () => <AboutSection /> },
 ];
@@ -31,6 +43,7 @@ const SECTIONS: Array<{ id: string; label: MessageKey; render: () => JSX.Element
 /** The section the address names (`#data`), or the first. */
 function sectionFromHash(): string {
   const id = location.hash.slice(1).split('?')[0];
+  if (XROGA_PRODUCT && id === 'memory') return 'shortcuts';
   return SECTIONS.some(s => s.id === id) ? id : SECTIONS[0].id;
 }
 
@@ -56,17 +69,27 @@ export function App() {
     // sections as a plain list beside the cards with the open one on a filled pill, and the section's name only in
     // that list.
     <div className="nb-field min-h-full">
-      <div className="mx-auto flex min-h-full max-w-6xl flex-col px-3 py-5 sm:px-6 sm:py-8">
-        <header className="mb-6 sm:mb-10 sm:px-3">
-          <h1 className="flex flex-wrap items-center gap-x-3 gap-y-2 font-serif text-xl font-normal leading-tight sm:text-[28px]">
-            <Logo height={28} />
-            <span>{t('settings.title')}</span>
-          </h1>
+      <div className="mx-auto flex min-h-full max-w-5xl flex-col px-4 py-6 sm:px-8 sm:py-9">
+        <header className="mb-7 sm:mb-9">
+          {XROGA_PRODUCT ? (
+            <div className="flex items-center gap-3">
+              <img src="/icon-128.png" alt="" className="size-10" />
+              <div>
+                <h1 className="text-xl font-semibold leading-tight">{t('settings.title')}</h1>
+                <p className="mt-1 text-sm text-nb-muted">Xroga Browser Automation</p>
+              </div>
+            </div>
+          ) : (
+            <h1 className="flex items-center gap-3 font-serif text-xl sm:text-[28px]">
+              <Logo height={28} />
+              <span>{t('settings.title')}</span>
+            </h1>
+          )}
         </header>
         <div className="flex flex-col gap-6 sm:flex-row sm:gap-12">
           <nav
             aria-label={t('settings.title')}
-            className="flex shrink-0 flex-col gap-1 sm:sticky sm:top-8 sm:w-52 sm:self-start">
+            className="flex shrink-0 flex-wrap gap-1 sm:sticky sm:top-8 sm:w-40 sm:flex-col sm:self-start">
             {SECTIONS.map(s => (
               <Fragment key={s.id}>
                 {/* Help, a link to the website's help pages in a new tab, sits above About; it is not a section. */}

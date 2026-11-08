@@ -31,6 +31,7 @@ const dist = fileURLToPath(
   new URL("../../apps/xroga-browser-extension/dist", import.meta.url),
 );
 const site = "https://operator-fixture.test";
+const searchOrigin = "https://www.google.com";
 const workspaceOrigin = "https://xroga.com";
 const goal = "Open the catalog and report the published fixture price.";
 const answer = "The verified fixture price is $39.";
@@ -43,6 +44,7 @@ const fileGoal =
 const workbookGoal =
   "Use the final order row in the attached workbook. Open the catalog and follow its product link for the final price. Report the product, quantity, unit price and total.";
 const runs = new Map();
+let voiceRequests = 0;
 let browser;
 
 async function liveReply(run, request) {
@@ -173,6 +175,7 @@ try {
       "--enable-unsafe-extension-debugging",
       "--disable-background-networking",
       "--disable-background-timer-throttling",
+      ...(live ? [] : ["--use-fake-device-for-media-stream", "--use-fake-ui-for-media-stream"]),
     ],
     timeout: 20_000,
   });
@@ -184,6 +187,14 @@ try {
   await browser.exposeFunction(
     "fixtureBrowserRequest",
     async ({ op, value }) => {
+      if (op === "voice" && !live) {
+        const wav = Buffer.from(value.body, "base64");
+        assert.equal(wav.toString("ascii", 0, 4), "RIFF");
+        assert.equal(wav.toString("ascii", 8, 12), "WAVE");
+        assert.ok(wav.length > 512);
+        voiceRequests++;
+        return { text: "Synthetic dictation draft" };
+      }
       if (op === "start") {
         assert.ok(
           [goal, formGoal, stopGoal, fileGoal, workbookGoal].includes(
@@ -193,7 +204,8 @@ try {
         if (value.goal === fileGoal || value.goal === workbookGoal)
           assert.equal(value.attachmentCount, 1);
         const runId = globalThis.crypto.randomUUID();
-        runs.set(runId, { goal: value.goal, turns: [] });
+        assert.ok([site, searchOrigin].includes(value.startUrl), "Persist only the starting origin");
+        runs.set(runId, { goal: value.goal, turns: [], startUrl: value.startUrl });
         return { runId, turns: 0, maxTurns: 48, remainingMs: 40 * 60_000 };
       }
       const run = runs.get(value.runId);
@@ -221,7 +233,7 @@ try {
   );
   await browser.route(/^https?:\/\//, (route) => {
     const url = new URL(route.request().url());
-    if (url.origin === site) {
+    if (url.origin === site || (!live && url.origin === searchOrigin)) {
       const body =
         url.pathname === "/catalog"
           ? documentOnly
@@ -303,9 +315,39 @@ try {
       throw error;
     });
   console.log("Workspace fixture paired");
-  await panel.getByText("Workspace connected", { exact: true }).waitFor();
-  await panel.getByLabel("Website or search").fill(site);
+  await panel.getByRole("button", { name: "Connect Xroga Workspace" }).waitFor({ state: "hidden" });
+  assert.equal(await panel.getByLabel("Website or search").count(), 0);
   const input = panel.locator("textarea");
+  if (!live) {
+    const settings = await browser.newPage();
+    await settings.goto(`chrome-extension://${id}/options.html#permissions`);
+    await settings.getByText("Xroga Browser Automation", { exact: true }).waitFor();
+    const permissions = await settings.evaluate(() => chrome.permissions.getAll());
+    assert.ok(permissions.permissions.includes("tabGroups"));
+    assert.ok(permissions.permissions.includes("downloads"));
+    assert.ok(!permissions.permissions.includes("notifications"));
+    await settings.getByRole("button", { name: "General" }).click();
+    assert.equal(await settings.getByText("Maximum turns").count(), 0);
+    await settings.getByRole("button", { name: "Workflows" }).click();
+    await settings.getByText("Custom instructions", { exact: true }).waitFor();
+    await settings.getByRole("button", { name: "New shortcut" }).click();
+    await settings.locator('input[type="file"]').setInputFiles({
+      name: "SKILL.md", mimeType: "text/markdown",
+      buffer: Buffer.from("---\nname: product-research\ndescription: Review listings\n---\nCompare the public listings."),
+    });
+    await settings.getByRole("button", { name: "Save", exact: true }).click();
+    await settings.getByText("/product-research", { exact: true }).waitFor();
+    await settings.close();
+    await panel.bringToFront();
+    await panel.getByRole("button", { name: "Voice input" }).click();
+    const stopVoice = panel.getByRole("button", { name: "Stop recording" });
+    await stopVoice.waitFor();
+    await new Promise(resolve => setTimeout(resolve, 450));
+    await stopVoice.click();
+    await panel.waitForFunction(() => document.querySelector("textarea")?.value === "Synthetic dictation draft");
+    assert.equal(voiceRequests, 1);
+    assert.equal(runs.size, 0, "Dictation must not send a task");
+  }
   const waitForFinish = async (expected) => {
     await workspace
       .waitForFunction(
@@ -387,7 +429,7 @@ try {
       ({ goal, site, live }) =>
         window.startTask(
           goal,
-          site,
+          live ? site : undefined,
           live
             ? [
                 {
@@ -401,10 +443,11 @@ try {
     );
     await waitForFinish(2);
     assert.equal(
-      browser.pages().filter((page) => page.url() === `${site}/catalog`).length,
+      browser.pages().filter((page) => [`${site}/catalog`, `${searchOrigin}/catalog`].includes(page.url())).length,
       2,
     );
     assert.equal(runs.size, 2);
+    if (!live) assert.ok([...runs.values()].some(run => run.startUrl === searchOrigin));
     for (const run of runs.values()) {
       if (live) {
         assert.equal(run.result?.status, "completed");
@@ -428,7 +471,7 @@ try {
     }
   }
   if (!documentOnly) {
-    await panel.getByLabel("Website or search").fill(`${site}/apply`);
+    await tab.goto(`${site}/apply`);
     await input.fill(formGoal);
     await input.press("Enter");
     const allow = panel.getByRole("button", { name: "Allow", exact: true });
@@ -478,7 +521,7 @@ try {
         actions: ["snapshot", "fill_form", "read"],
       });
 
-    await panel.getByLabel("Website or search").fill(site);
+    await tab.goto(site);
     await input.fill(stopGoal);
     await input.press("Enter");
     const stop = panel.getByRole("button", { name: "Stop", exact: true });
@@ -506,6 +549,7 @@ try {
       product,
       approvedSubmission: !documentOnly,
       cancelledPendingTurn: !documentOnly,
+      voiceFixtureRequests: voiceRequests,
       entryPoints: ["side panel", "Workspace fixture"],
       model: live ? providerModel : "deterministic fixture",
       liveModelCalls: receipts.length,

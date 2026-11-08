@@ -6,5 +6,9 @@ import { XROGA_PRODUCT } from '@src/xroga/product';
 
 export const websiteUrl = (path: '/' | '/docs', place: 'side-panel' | 'settings' | 'about') =>
   XROGA_PRODUCT
-    ? 'https://xroga.com/workspace'
+    ? path === '/docs'
+      ? 'https://xroga.com/docs'
+      : place === 'about'
+        ? 'https://xroga.com'
+        : 'https://xroga.com/workspace'
     : `https://nanobrowser.ai${path}?utm_source=nanobrowser-extension&utm_medium=${place}`;

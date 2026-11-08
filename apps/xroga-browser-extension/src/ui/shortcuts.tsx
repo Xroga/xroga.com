@@ -1,11 +1,12 @@
 // Shortcuts in the panel and the settings page: the live list both use, and the editor of Settings → Shortcuts. Only
 // the user writes a shortcut, through this editor; no tool reaches the store.
 import { useEffect, useState } from 'react';
-import { checkShortcut, listShortcuts, onShortcutsChanged, saveShortcut } from '@src/store/shortcuts';
+import { checkShortcut, listShortcuts, onShortcutsChanged, parseSkillMd, saveShortcut } from '@src/store/shortcuts';
 import type { SavedShortcut, Shortcut } from '@src/store/shortcuts';
 import type { ModelRef, PermissionMode } from '@src/store/types';
 import { Button, Field, Input, Select } from './components';
 import { t } from './i18n';
+import { XROGA_PRODUCT } from '@src/xroga/product';
 
 /** The user's shortcuts, pinned first, kept current across the extension's pages. */
 export function useShortcuts(): SavedShortcut[] {
@@ -47,6 +48,27 @@ export function ShortcutEditor({
   const [draft, setDraft] = useState<ShortcutDraft>(initial);
   const [error, setError] = useState<string | null>(null);
   const set = (patch: Partial<ShortcutDraft>) => setDraft(d => ({ ...d, ...patch }));
+  const loadWorkflow = async (file: File) => {
+    try {
+      if (file.size > 65_536 || !/\.(?:md|txt)$/i.test(file.name)) throw new Error();
+      const content = new TextDecoder('utf-8', { fatal: true }).decode(await file.arrayBuffer());
+      const skill = parseSkillMd(content);
+      const text = (skill?.text ?? content).trim();
+      if (!text || text.length > 16_000) throw new Error();
+      set({
+        name: (skill?.name ?? file.name.replace(/\.[^.]+$/, ''))
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, '-')
+          .slice(0, 64)
+          .replace(/^-|-$/g, ''),
+        description: skill?.description.slice(0, 1024) ?? '',
+        text,
+      });
+      setError(null);
+    } catch {
+      setError('Choose a UTF-8 Markdown or text file with up to 16,000 characters of instructions.');
+    }
+  };
   return (
     <form
       className="flex flex-col gap-3"
@@ -57,7 +79,8 @@ export function ShortcutEditor({
             ...draft,
             name: draft.name.trim(),
             description: draft.description.trim(),
-            startUrl: draft.startUrl?.trim() || undefined,
+            startUrl: XROGA_PRODUCT ? undefined : draft.startUrl?.trim() || undefined,
+            ...(XROGA_PRODUCT ? { mode: undefined, model: undefined } : {}),
           };
           const others = (await listShortcuts()).filter(s => s.id !== draft.id);
           const problem = checkShortcut(shortcut, others);
@@ -66,6 +89,22 @@ export function ShortcutEditor({
           onDone(shortcut.name);
         })();
       }}>
+      {XROGA_PRODUCT && (
+        <label className="grid gap-1 text-sm">
+          Import a workflow file
+          <input
+            type="file"
+            accept=".md,.txt"
+            className="text-xs"
+            onChange={event => {
+              const file = event.target.files?.[0];
+              event.target.value = '';
+              if (file) void loadWorkflow(file);
+            }}
+          />
+          <span className="text-xs text-nb-muted">Review the instructions below and save before running.</span>
+        </label>
+      )}
       <Field label={t('shortcut.name')} hint={t('shortcut.nameHint', { name: draft.name || 'name' })}>
         {/* The "/" is drawn before the field and is not part of the name, so a typed or pasted one is dropped. */}
         <div className="flex items-center rounded-lg border border-nb-border bg-nb-bg focus-within:border-nb-accent focus-within:ring-2 focus-within:ring-nb-accent/25">
@@ -93,48 +132,53 @@ export function ShortcutEditor({
         <textarea
           aria-label={t('shortcut.text')}
           value={draft.text}
+          maxLength={XROGA_PRODUCT ? 16_000 : undefined}
           rows={5}
           className="rounded-lg border border-nb-border bg-nb-bg px-2.5 py-1.5 text-sm focus:border-nb-accent focus:outline-none focus:ring-2 focus:ring-nb-accent/25"
           onChange={e => set({ text: e.target.value })}
         />
       </Field>
-      <Field label={t('shortcut.startUrl')}>
-        <Input
-          aria-label={t('shortcut.startUrl')}
-          type="url"
-          placeholder="https://"
-          value={draft.startUrl ?? ''}
-          onChange={e => set({ startUrl: e.target.value })}
-        />
-      </Field>
-      <div className="flex flex-wrap gap-3">
-        <Field label={t('shortcut.mode')}>
-          <Select
-            aria-label={t('shortcut.mode')}
-            value={draft.mode ?? ''}
-            onChange={e => set({ mode: (e.target.value || undefined) as PermissionMode | undefined })}>
-            <option value="">{t('shortcut.keep')}</option>
-            <option value="ask">{t('composer.modeAsk')}</option>
-            <option value="auto">{t('composer.modeAuto')}</option>
-          </Select>
+      {!XROGA_PRODUCT && (
+        <Field label={t('shortcut.startUrl')}>
+          <Input
+            aria-label={t('shortcut.startUrl')}
+            type="url"
+            placeholder="https://"
+            value={draft.startUrl ?? ''}
+            onChange={e => set({ startUrl: e.target.value })}
+          />
         </Field>
-        <Field label={t('shortcut.model')}>
-          <Select
-            aria-label={t('shortcut.model')}
-            value={draft.model ? key(draft.model) : ''}
-            onChange={e => set({ model: models.find(m => key(m.ref) === e.target.value)?.ref })}>
-            <option value="">{t('shortcut.keep')}</option>
-            {draft.model && !models.some(m => key(m.ref) === key(draft.model!)) ? (
-              <option value={key(draft.model)}>{draft.model.model}</option>
-            ) : null}
-            {models.map(m => (
-              <option key={key(m.ref)} value={key(m.ref)}>
-                {m.label}
-              </option>
-            ))}
-          </Select>
-        </Field>
-      </div>
+      )}
+      {!XROGA_PRODUCT && (
+        <div className="flex flex-wrap gap-3">
+          <Field label={t('shortcut.mode')}>
+            <Select
+              aria-label={t('shortcut.mode')}
+              value={draft.mode ?? ''}
+              onChange={e => set({ mode: (e.target.value || undefined) as PermissionMode | undefined })}>
+              <option value="">{t('shortcut.keep')}</option>
+              <option value="ask">{t('composer.modeAsk')}</option>
+              <option value="auto">{t('composer.modeAuto')}</option>
+            </Select>
+          </Field>
+          <Field label={t('shortcut.model')}>
+            <Select
+              aria-label={t('shortcut.model')}
+              value={draft.model ? key(draft.model) : ''}
+              onChange={e => set({ model: models.find(m => key(m.ref) === e.target.value)?.ref })}>
+              <option value="">{t('shortcut.keep')}</option>
+              {draft.model && !models.some(m => key(m.ref) === key(draft.model!)) ? (
+                <option value={key(draft.model)}>{draft.model.model}</option>
+              ) : null}
+              {models.map(m => (
+                <option key={key(m.ref)} value={key(m.ref)}>
+                  {m.label}
+                </option>
+              ))}
+            </Select>
+          </Field>
+        </div>
+      )}
       {error ? (
         <p role="alert" className="text-xs text-red-700 dark:text-red-300">
           {error}

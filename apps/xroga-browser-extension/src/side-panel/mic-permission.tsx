@@ -8,6 +8,7 @@ import { DEFAULT_SETTINGS, settingsStorage } from '@src/store/settings';
 import { setLanguage, t, useLanguage } from '@src/ui/i18n';
 import { applyTheme, watchSystemTheme } from '@src/ui/theme';
 import { LogoMark, MicIcon } from '@src/ui/icons';
+import { XROGA_PRODUCT } from '@src/xroga/product';
 
 function MicPermission() {
   useLanguage();
@@ -39,7 +40,7 @@ function MicPermission() {
     <div className="nb-wave min-h-full px-4 pt-16">
       <main className="mx-auto flex max-w-sm flex-col items-center gap-4 rounded-2xl border border-nb-border bg-nb-bg p-8 text-center shadow-pop">
         <div className="flex items-center gap-2">
-          <LogoMark size={40} />
+          {XROGA_PRODUCT ? <img src="/icon-128.png" alt="" className="size-10" /> : <LogoMark size={40} />}
           <span className="flex size-10 items-center justify-center rounded-full bg-nb-surface text-nb-link">
             <MicIcon size={22} />
           </span>
@@ -69,6 +70,7 @@ function MicPermission() {
 
 const container = document.querySelector('#app-container');
 if (container) {
+  if (XROGA_PRODUCT) document.title = 'Xroga microphone access';
   watchSystemTheme();
   createRoot(container).render(<MicPermission />);
 }

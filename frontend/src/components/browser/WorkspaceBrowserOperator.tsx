@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { apiFetch, getAccessToken } from '@/lib/api';
 import { createClient } from '@/lib/supabase/client';
+import { transcribeVoiceAudio } from '@/lib/voiceApi';
 
 type Port = {
   postMessage(message: unknown): void;
@@ -44,7 +45,6 @@ export function WorkspaceBrowserOperator({ extensionId }: { extensionId: string 
   const pairedToken = useRef('');
   const [goal, setGoal] = useState('');
   const [files, setFiles] = useState<File[]>([]);
-  const [target, setTarget] = useState('');
   const [paired, setPaired] = useState(false);
   const [busy, setBusy] = useState(false);
   const [runId, setRunId] = useState('');
@@ -142,13 +142,26 @@ export function WorkspaceBrowserOperator({ extensionId }: { extensionId: string 
         const isStart = op === 'start';
         const isResume = op === 'resume' && !!value.runId && UUID.test(value.runId);
         const isDocument = op === 'document';
+        const isVoice = op === 'voice';
         const isBound = !!value.runId && admitted.has(value.runId);
-        if (!isStart && !isResume && !isDocument && (!isBound || (op !== 'turn' && op !== 'finish'))) {
+        if (!isStart && !isResume && !isDocument && !isVoice && (!isBound || (op !== 'turn' && op !== 'finish'))) {
           send({ type: 'result', id, ok: false });
           return;
         }
         const controller = new AbortController();
         requests.set(id, controller);
+        if (isVoice) {
+          void (async () => {
+            const encoded = value.body;
+            if (typeof encoded !== 'string' || encoded.length < 684 ||
+                encoded.length > 5_140_000 || !encoded.startsWith('UklGR')) throw new Error('Invalid recording');
+            const bytes = Uint8Array.from(atob(encoded), char => char.charCodeAt(0));
+            const text = await transcribeVoiceAudio(new Blob([bytes], { type: 'audio/wav' }), controller.signal,
+              { freeOnly: true, preparedPcm: true, expectedToken: pairedToken.current });
+            send({ type: 'result', id, ok: true, value: { text } });
+          })().catch(() => send({ type: 'result', id, ok: false })).finally(() => requests.delete(id));
+          return;
+        }
         const path = isDocument ? `${API}/documents` : isStart ? `${API}/runs` : `${API}/runs/${value.runId}/${op}`;
         void apiFetch<{ runId?: string }>(path, {
           method: 'POST', signal: controller.signal,
@@ -187,13 +200,12 @@ export function WorkspaceBrowserOperator({ extensionId }: { extensionId: string 
           for (const file of files) attachments.push(await taskFile(file, pairedToken.current));
           if (port !== portRef.current) return;
           if (attachments.some(file => !file.text.trim())) throw new Error('Empty attachment');
-          port.postMessage({ type: 'start-task', goal, startUrl: target, files: attachments });
+          port.postMessage({ type: 'start-task', goal, files: attachments });
         })().catch(() => {
           setBusy(false);
           setStatus('Could not read a task file. Scanned or encrypted files need a text export.');
         });
       }}>
-        <label className="grid gap-1">Website or search<input className="rounded border bg-background p-2" value={target} onChange={event => setTarget(event.target.value)} maxLength={1800} required /></label>
         <label className="grid gap-1">What should Xroga do?<textarea className="rounded border bg-background p-2" value={goal} onChange={event => setGoal(event.target.value)} maxLength={16000} required /></label>
         <label className="grid gap-1">Task files <span className="text-xs">Up to five files, 2 MB each. PDF and Office files are sent to Xroga to extract text.</span>
           <input type="file" multiple accept=".txt,.md,.csv,.tsv,.json,.pdf,.docx,.xlsx" disabled={busy} onChange={event => {

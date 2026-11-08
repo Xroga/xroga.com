@@ -2,6 +2,7 @@
 // taken from the English catalogue. A missing key falls back to English.
 import { useSyncExternalStore } from 'react';
 import en from './locales/en.json';
+import { XROGA_PRODUCT } from '@src/xroga/product';
 
 export type MessageKey = keyof typeof en;
 export type Language = 'en' | 'zh_CN' | 'zh_TW';
@@ -44,7 +45,14 @@ export function currentLanguage(): Language {
 
 /** A string by key, with `{name}` placeholders filled from `params`. */
 export function t(key: MessageKey, params?: Record<string, string | number>): string {
-  const template = catalogue[key] ?? en[key] ?? key;
+  const localized = catalogue[key] ?? en[key] ?? key;
+  const template = XROGA_PRODUCT
+    ? key === 'settings.nav.shortcuts'
+      ? 'Workflows'
+      : key === 'shortcuts.hint'
+        ? 'Save a task once and run it again from the composer by typing /.'
+        : localized.replaceAll('Nanobrowser v0.2', 'a previous version').replaceAll('Nanobrowser', 'Xroga')
+    : localized;
   if (!params) return template;
   return template.replace(/\{(\w+)\}/g, (match, name: string) => (name in params ? String(params[name]) : match));
 }

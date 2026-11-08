@@ -23,7 +23,7 @@ export default defineConfig({
   // Unattended development builds (fixtures/autorun.mjs) go elsewhere, so dist/ stays a normal build.
   outDir: !autorun ? 'dist' : productPermissions ? '.output/autorun-product' : '.output/autorun',
   outDirTemplate: '',
-  filterEntrypoints: autorun ? undefined : ['background', 'sidepanel', 'options', 'offscreen'],
+  filterEntrypoints: autorun ? undefined : ['background', 'sidepanel', 'options', 'offscreen', 'permission'],
   alias: {
     '@src': 'src',
   },
@@ -34,7 +34,7 @@ export default defineConfig({
       ? '__MSG_extDescription__'
       : 'Use Xroga to work in your own Chrome tabs, with live actions and approval controls.',
     default_locale: 'en',
-    ...(autorun ? {} : { version: '0.2.0', version_name: '0.2.0 development' }),
+    ...(autorun ? {} : { version: '0.2.1' }),
     minimum_chrome_version: '125',
     ...(autorun
       ? {
@@ -45,9 +45,9 @@ export default defineConfig({
         }
       : {
           host_permissions: ['https://*/*'],
-          ...permissionLists('product'),
+          ...permissionLists('xroga'),
           action: { default_icon: 'icon-32.png', default_title: 'Open Xroga Browser Automation' },
-          icons: { 16: 'icon-16.png', 32: 'icon-32.png' },
+          icons: { 16: 'icon-16.png', 32: 'icon-32.png', 48: 'xroga-icon-48.png', 128: 'icon-128.png' },
           // Chrome matches the path with its query. The listener validates the exact pathname.
           externally_connectable: { matches: [`${workspaceOrigin}/workspace*`], ids: [] },
           content_security_policy: {
@@ -77,10 +77,11 @@ export default defineConfig({
     },
     'build:publicAssets': (_wxt, files) => {
       if (autorun) return;
-      for (const file of ['icon-16.png', 'icon-32.png']) {
+      for (const file of ['icon-16.png', 'icon-32.png', 'icon-128.png']) {
         const index = files.findIndex(entry => entry.relativeDest === file);
         if (index >= 0) files.splice(index, 1);
-        files.push({ absoluteSrc: resolve(import.meta.dirname, '../../chrome-extension', file), relativeDest: file });
+        const src = file === 'icon-128.png' ? 'public/xroga-icon-128.png' : '../../chrome-extension/' + file;
+        files.push({ absoluteSrc: resolve(import.meta.dirname, src), relativeDest: file });
       }
       files.push({
         absoluteSrc: resolve(import.meta.dirname, '../../chrome-extension/icon-32.png'),

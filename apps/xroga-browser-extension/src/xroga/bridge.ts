@@ -15,7 +15,7 @@ interface WorkspaceMessage {
   value?: unknown;
 }
 
-type Operation = 'start' | 'resume' | 'turn' | 'finish' | 'document';
+type Operation = 'start' | 'resume' | 'turn' | 'finish' | 'document' | 'voice';
 type Pending = { succeed: (value: unknown) => void; fail: (error: Error) => void };
 let pairing: { nonce: string; tabId: number; expires: number } | undefined;
 let workspace: chrome.runtime.Port | undefined;
@@ -62,6 +62,19 @@ export function listenForWorkspace(
     (message: { type?: string; name?: unknown; base64?: unknown }, sender, reply) => {
       if (!panelSender(sender)) return;
       if (message?.type === STATUS) reply(workspacePaired());
+      if (
+        message?.type === 'xroga.browser.voice.v1' &&
+        typeof message.base64 === 'string' &&
+        message.base64.length >= 684 &&
+        message.base64.length <= 5_140_000 &&
+        message.base64.startsWith('UklGR')
+      ) {
+        void workspaceRequest('voice', { body: message.base64 }).then(
+          value => reply(value),
+          () => reply(null),
+        );
+        return true;
+      }
       if (
         message?.type === 'xroga.browser.document.v1' &&
         typeof message.name === 'string' &&
@@ -113,8 +126,8 @@ export function listenForWorkspace(
             typeof message.goal === 'string' &&
             message.goal.trim() &&
             message.goal.length <= 16_000 &&
-            typeof message.startUrl === 'string' &&
-            message.startUrl.length <= 2_048
+            (message.startUrl === undefined ||
+              (typeof message.startUrl === 'string' && message.startUrl.length <= 2_048))
           ) {
             const files = message.files ?? [];
             if (
@@ -134,7 +147,7 @@ export function listenForWorkspace(
               postWorkspace({ type: 'task-error' });
               return;
             }
-            void taskHandler?.(message.goal.trim(), message.startUrl, files).catch(() =>
+            void taskHandler?.(message.goal.trim(), message.startUrl ?? '', files).catch(() =>
               postWorkspace({ type: 'task-error' }),
             );
           }

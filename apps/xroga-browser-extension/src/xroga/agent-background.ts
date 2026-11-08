@@ -1,12 +1,12 @@
 import { runManager } from '@src/extension';
 import { listenForWorkspace, postWorkspace } from './bridge';
-import { browserTarget } from './navigation';
+import { SEARCH_HOME, browserTarget } from './navigation';
 import { XROGA_REF } from './model';
 import { putBlob } from '@src/store/conversations';
 
 listenForWorkspace(
   async (goal, rawTarget, files) => {
-    const target = browserTarget(rawTarget);
+    const target = rawTarget ? browserTarget(rawTarget) : SEARCH_HOME;
     if (!target) throw new Error('Enter a valid HTTPS address or search.');
     const tab = await chrome.tabs.create({ url: 'about:blank' });
     if (tab.id === undefined) throw new Error('Could not open Chrome tab.');

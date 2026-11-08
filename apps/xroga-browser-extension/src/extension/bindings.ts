@@ -5,8 +5,10 @@ import { siteOf } from '@src/browser-control';
 import type { RunStatus } from '@src/store/types';
 import type { ScopeTab } from '@src/ui/protocol';
 import { PANEL_PATH } from './panel';
+import { XROGA_PRODUCT } from '@src/xroga/product';
 
 const KEY = 'nb.scope';
+const GROUP_BRAND = XROGA_PRODUCT ? 'Xroga' : 'Nanobrowser';
 
 interface ScopeState {
   tabs: Record<string, { conversationId: string; origin: ScopeTab['origin'] }>;
@@ -210,7 +212,7 @@ export class TabScope {
       await chrome.tabGroups
         .update(group.groupId, {
           color: colorOf(conversationId),
-          title: `${PREFIX[status] ?? ''}Nanobrowser · ${short || 'chat'}`,
+          title: `${PREFIX[status] ?? ''}${GROUP_BRAND} · ${short || 'chat'}`,
         })
         .catch(() => undefined);
     }
@@ -264,7 +266,7 @@ export class TabScope {
         // Without the tabGroups permission the group keeps no title and Chrome's default colour.
         if (chrome.tabGroups) {
           await chrome.tabGroups
-            .update(groupId, { color: colorOf(conversationId), title: 'Nanobrowser' })
+            .update(groupId, { color: colorOf(conversationId), title: GROUP_BRAND })
             .catch(() => undefined);
         }
         state.groups[conversationId] = { groupId, windowId: tab.windowId };

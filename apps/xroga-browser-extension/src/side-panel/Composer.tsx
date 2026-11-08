@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import type { ModelRef, PermissionMode } from '@src/store/types';
 import type { AttachmentRef } from '@src/ui/protocol';
 import { Recorder, toWav } from '@src/ui/voice';
+import { XROGA_PRODUCT } from '@src/xroga/product';
 import { t } from '@src/ui/i18n';
 import type { MessageKey } from '@src/ui/i18n';
 import type { SavedShortcut } from '@src/store/shortcuts';
@@ -287,6 +288,7 @@ export function Composer({
       const send = latest.current.transcribe;
       if (!send) return needsModel();
       const said = await send(audio);
+      if (!alive.current) return;
       if (said) setText(before => (before.trim() ? `${before.replace(/\s+$/, '')} ${said}` : said));
       else setVoiceNotice({ title: 'composer.voiceNothingTitle', text: t('composer.voiceNothing') });
     } catch (error) {
@@ -589,19 +591,23 @@ export function Composer({
               />
             </>
           ) : null}
-          <ModeMenu
-            mode={mode}
-            onMode={onMode}
-            title={t('composer.modeShortcut', { keys: /Mac/i.test(navigator.userAgent) ? '⌘⇧P' : 'Ctrl+Shift+P' })}
-          />
-          <ModelMenu
-            models={models}
-            model={model}
-            reasoning={reasoning}
-            running={active}
-            onModel={onModel}
-            onReasoning={next => onReasoning?.(next)}
-          />
+          {!XROGA_PRODUCT && (
+            <ModeMenu
+              mode={mode}
+              onMode={onMode}
+              title={t('composer.modeShortcut', { keys: /Mac/i.test(navigator.userAgent) ? '⌘⇧P' : 'Ctrl+Shift+P' })}
+            />
+          )}
+          {!XROGA_PRODUCT && (
+            <ModelMenu
+              models={models}
+              model={model}
+              reasoning={reasoning}
+              running={active}
+              onModel={onModel}
+              onReasoning={next => onReasoning?.(next)}
+            />
+          )}
           <span className="flex-1" />
           {transcribe !== undefined ? (
             <>

@@ -69,7 +69,7 @@ import { count, deleteKeepingChoices, noteActivity, observe, runEnded, runModel,
 import { endOf } from './analytics-payload';
 import { onWorkspaceDisconnect, postWorkspace, workspacePaired } from '@src/xroga/bridge';
 import { startXrogaModelRun } from '@src/xroga/model';
-import { browserTarget } from '@src/xroga/navigation';
+import { SEARCH_HOME, browserTarget } from '@src/xroga/navigation';
 import { XROGA_PRODUCT } from '@src/xroga/product';
 
 export interface PanelConnection {
@@ -850,7 +850,11 @@ export class RunManager {
     }
     if (!text && !command.attachments.length && !command.context.some(c => c.kind === 'selection')) return;
     // A shortcut's start page is a web address on a site the user has not blocked.
-    const startUrl = command.startUrl;
+    let startUrl = command.startUrl;
+    if (XROGA_PRODUCT && !startUrl) {
+      const tab = await chrome.tabs.get(command.tabId).catch(() => null);
+      if (!tab?.url || !browserTarget(tab.url)) startUrl = SEARCH_HOME;
+    }
     if (startUrl) {
       await this.permissions.ready();
       if (
@@ -1353,13 +1357,13 @@ export class RunManager {
           const tabs = await this.scope.tabsOf(conversationId);
           const url = tabs[0] === undefined ? undefined : (await chrome.tabs.get(tabs[0]))?.url;
           const target = url && browserTarget(url);
-          if (!goal || !target)
-            throw new ModelUnavailable('Enter an HTTPS website or search before starting the task.');
+          if (!goal || !target || isBlockedSite(target, this.permissions.blockedSites()))
+            throw new ModelUnavailable('Chrome could not open an allowed HTTPS page for this task.');
           const attachmentCount =
             user?.type === 'message' ? user.message.parts.filter(part => part.type === 'attachment').length : 0;
           canonical = await startXrogaModelRun(
             goal,
-            target,
+            new URL(target).origin,
             controller.signal,
             attachmentCount,
             restore?.canonicalBrowserRunId,
@@ -1403,7 +1407,7 @@ export class RunManager {
           host: this.#host(conversationId, session),
           signal: controller.signal,
           emit: event => this.emit(conversationId, event),
-          turnCap: canonical ? Math.min(canonical.remainingTurns, settings.turnCap, 32) : settings.turnCap,
+          turnCap: canonical ? Math.min(canonical.remainingTurns, 32) : settings.turnCap,
           attachmentPreviewChars: canonical ? 8_000 : undefined,
           thumbnail,
           agentTool: (call, signal) => this.#agentTool(conversationId, call, signal),

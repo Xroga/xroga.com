@@ -35,11 +35,25 @@ import { AutoNotice } from '@src/ui/auto-notice';
 import { HistoryIcon, LogoMark, NewChatIcon, SettingsIcon } from '@src/ui/icons';
 import { websiteUrl } from '@src/ui/links';
 import { XROGA_PRODUCT } from '@src/xroga/product';
-import { browserTarget } from '@src/xroga/navigation';
 import { XROGA_REF } from '@src/xroga/model';
 
 const NO_PROVIDERS: ProviderConfig[] = [];
 const NO_KEYS: Record<string, string> = {};
+
+async function transcribeInWorkspace(audio: Uint8Array): Promise<string> {
+  let bytes = '';
+  for (let offset = 0; offset < audio.length; offset += 32_768) {
+    bytes += String.fromCharCode(...audio.subarray(offset, offset + 32_768));
+  }
+  const result: { text?: unknown } | null = await chrome.runtime.sendMessage({
+    type: 'xroga.browser.voice.v1',
+    base64: btoa(bytes),
+  });
+  if (typeof result?.text !== 'string' || result.text.length > 16_000) {
+    throw new Error('Xroga could not transcribe this recording. Check your Workspace connection.');
+  }
+  return result.text;
+}
 
 /** The starters a new conversation offers when no shortcut is pinned: a short label and the text it sends. */
 const STARTERS = [
@@ -79,17 +93,18 @@ export function App() {
   const whatsNew = XROGA_PRODUCT ? null : releaseNotes;
   // Voice input: the panel sends the recording to the chosen voice model's provider, with its key.
   const voice = XROGA_PRODUCT ? null : voiceSetup(settings, providers, apiKeys);
-  const transcribe = voice
-    ? (audio: Uint8Array) => {
-        client?.send({ type: 'voice-used' });
-        return transcribeAudio(voice, audio, { language: voiceLanguage(settings.dictationLanguage) });
-      }
-    : null;
+  const transcribe = XROGA_PRODUCT
+    ? transcribeInWorkspace
+    : voice
+      ? (audio: Uint8Array) => {
+          client?.send({ type: 'voice-used' });
+          return transcribeAudio(voice, audio, { language: voiceLanguage(settings.dictationLanguage) });
+        }
+      : null;
   const [client, setClient] = useState<PanelClient | null>(null);
   const [failure, setFailure] = useState<string | null>(null);
   const [paired, setPaired] = useState(false);
-  const [target, setTarget] = useState('');
-  const [targetError, setTargetError] = useState('');
+  const [connectionError, setConnectionError] = useState('');
   useEffect(() => {
     if (!XROGA_PRODUCT) return;
     const refresh = () =>
@@ -337,13 +352,7 @@ export function App() {
     if (!client) return;
     if (XROGA_PRODUCT) {
       if (!paired) return;
-      const destination = target.trim() ? browserTarget(target) : undefined;
-      if (target.trim() && !destination) {
-        setTargetError('Enter an HTTPS website or a search query.');
-        return;
-      }
-      setTargetError('');
-      extra = { mode: 'ask', model: XROGA_REF, ...(destination ? { startUrl: destination } : {}) };
+      extra = { mode: 'ask', model: XROGA_REF };
     }
     // `/compact` compacts the conversation now, or at the next turn boundary of a run.
     if (text.trim() === '/compact') {
@@ -434,6 +443,7 @@ export function App() {
           className="ml-1 flex shrink-0 rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-nb-accent">
           {XROGA_PRODUCT ? <img src="/xroga-icon.png" alt="" width="20" height="20" /> : <LogoMark size={20} />}
         </a>
+        {XROGA_PRODUCT && <span className="ml-1 text-sm font-semibold">Xroga</span>}
         {/* The title is for screen readers only; the header shows the mark and three buttons. */}
         <h1 className="sr-only">{conversation?.title || t('panel.newChat')}</h1>
         <span className="flex-1" />
@@ -452,56 +462,22 @@ export function App() {
           <SettingsIcon />
         </IconButton>
       </header>
-      {XROGA_PRODUCT ? (
+      {XROGA_PRODUCT && !paired ? (
         <div className="flex flex-col gap-2 border-b border-nb-border/60 px-3 py-2">
-          {paired ? (
-            <span className="text-xs text-nb-muted" role="status">
-              Workspace connected
-            </span>
-          ) : (
-            <button
-              type="button"
-              className="self-start rounded-md bg-nb-surface px-3 py-2 text-sm text-nb-fg"
-              onClick={() =>
-                void chrome.runtime.sendMessage({ type: 'xroga.browser.connect.v1' }).then(
-                  ok => setTargetError(ok ? '' : 'Could not open Workspace.'),
-                  () => setTargetError('Could not open Workspace.'),
-                )
-              }>
-              Connect Xroga Workspace
-            </button>
-          )}
-          <label className="flex flex-col gap-1 text-xs text-nb-muted">
-            Website or search
-            <input
-              value={target}
-              onChange={event => setTarget(event.target.value)}
-              disabled={active}
-              maxLength={1800}
-              placeholder="example.com or a search query"
-              className="rounded-md border border-nb-border bg-nb-bg p-2 text-sm text-nb-fg"
-            />
-          </label>
           <button
             type="button"
-            disabled={!target.trim() || !client || active}
-            className="self-start rounded-md border border-nb-border px-3 py-1 text-sm disabled:opacity-40"
-            onClick={() => {
-              const destination = browserTarget(target);
-              if (!destination || !client) {
-                setTargetError('Enter an HTTPS website or a search query.');
-                return;
-              }
-              void chrome.tabs.update(client.tabId, { url: destination }).then(
-                () => setTargetError(''),
-                () => setTargetError('Could not open the website.'),
-              );
-            }}>
-            Open website
+            className="self-start rounded-md bg-nb-surface px-3 py-2 text-sm text-nb-fg"
+            onClick={() =>
+              void chrome.runtime.sendMessage({ type: 'xroga.browser.connect.v1' }).then(
+                ok => setConnectionError(ok ? '' : 'Could not open Workspace.'),
+                () => setConnectionError('Could not open Workspace.'),
+              )
+            }>
+            Connect Xroga Workspace
           </button>
-          {targetError ? (
+          {connectionError ? (
             <p role="alert" className="text-xs text-nb-muted">
-              {targetError}
+              {connectionError}
             </p>
           ) : null}
         </div>

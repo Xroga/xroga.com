@@ -1,13 +1,14 @@
 // Additional browser permissions: Chrome permissions Nanobrowser asks for only when the user allows them (tab groups, notifications,
 // saving files). Settings → Permissions lists each with a green check once allowed, as the Microphone card does; the
 // welcome page's tips show one row. Allow asks Chrome for all of them in one dialog, from the click.
-import { Button } from '@src/ui/components';
+import { Button, Switch } from '@src/ui/components';
 import { t } from '@src/ui/i18n';
 import type { MessageKey } from '@src/ui/i18n';
 import { CheckIcon } from '@src/ui/icons';
 import { allGranted, requestOptionalPermissions, useGrantedPermissions } from '@src/ui/optional-permissions';
 import type { GrantedPermissions } from '@src/ui/optional-permissions';
 import { SettingsCard, SettingsRow } from './SettingsCard';
+import { XROGA_PRODUCT } from '@src/xroga/product';
 
 const FEATURES: Array<{ label: MessageKey; hint: MessageKey; allowed: (g: GrantedPermissions) => boolean }> = [
   { label: 'perm.features.tabGroups', hint: 'perm.features.tabGroupsHint', allowed: g => g.tabGroups },
@@ -46,6 +47,24 @@ function AllowButton() {
 /** Settings → Permissions: each feature with its check, and Allow while any is missing. */
 export function BrowserFeaturesCard() {
   const granted = useGrantedPermissions();
+  if (XROGA_PRODUCT)
+    return (
+      <SettingsCard title="Browser features" className="flex flex-col gap-5">
+        <SettingsRow label="Tab groups" description="Keep the tabs for each task together." icon={<Mark allowed />} />
+        <SettingsRow label="Save files" description="Save task results to Chrome Downloads." icon={<Mark allowed />} />
+        <SettingsRow label="Notifications" description="Get a notification when a task finishes or needs you.">
+          <Switch
+            aria-label="Task notifications"
+            checked={granted?.notifications ?? false}
+            disabled={!granted}
+            onChange={enabled => {
+              if (enabled) void requestOptionalPermissions(['notifications']);
+              else void chrome.permissions.remove({ permissions: ['notifications'] }).catch(() => false);
+            }}
+          />
+        </SettingsRow>
+      </SettingsCard>
+    );
   return (
     <SettingsCard
       title={t('perm.features.title')}

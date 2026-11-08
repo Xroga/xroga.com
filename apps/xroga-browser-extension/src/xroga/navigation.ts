@@ -1,3 +1,8 @@
+import { WORKSPACE_URL } from './workspace';
+
+export const SEARCH_HOME = 'https://www.google.com/';
+const WORKSPACE_ORIGIN = new URL(WORKSPACE_URL).origin;
+
 export function browserTarget(input: string): string | undefined {
   const value = input.trim();
   if (!value || value.length > 1_800) return;
@@ -16,7 +21,7 @@ export function browserTarget(input: string): string | undefined {
       /\.(?:local|localhost|internal|home\.arpa)$/.test(host)
     )
       return;
-    if (host === 'xroga.com' || host.endsWith('.xroga.com')) return;
+    if (host === 'xroga.com' || host.endsWith('.xroga.com') || target.origin === WORKSPACE_ORIGIN) return;
     return target.href;
   } catch {
     return;
