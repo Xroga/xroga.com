@@ -13,7 +13,7 @@ import { PanelClient, panelTabId } from './client';
 import { Composer, pickModel, sameModel } from './Composer';
 import type { LauncherItem, ModelChoice, PendingFile } from './Composer';
 import { attachmentKind, MAX_FILE, MAX_XROGA_FILE, MAX_XROGA_FILES } from '@src/store/attachments';
-import { voiceLanguage, voiceSetup } from '@src/ui/voice';
+import { voiceLanguage, voiceSetup, workspaceVoiceSegments } from '@src/ui/voice';
 import { transcribeAudio } from '@src/llm/transcribe';
 import { newId, putBlob } from '@src/store/conversations';
 import { INITIAL, isActive, reduce } from './state';
@@ -40,7 +40,7 @@ import { XROGA_REF } from '@src/xroga/model';
 const NO_PROVIDERS: ProviderConfig[] = [];
 const NO_KEYS: Record<string, string> = {};
 const PAIR_ERRORS: Record<string, string> = {
-  'sign-in': 'Sign in in the Workspace tab, then connect again.',
+  'sign-in': 'Sign in to Xroga in this Chrome profile to connect.',
   unavailable: 'Browser Automation is unavailable in this Workspace release.',
   'extension-id': 'This Workspace release is configured for a different extension ID.',
   account: 'This Chrome profile is linked to another Xroga account. Switch accounts or use a separate profile.',
@@ -48,7 +48,7 @@ const PAIR_ERRORS: Record<string, string> = {
   timeout: 'Workspace didn’t respond. Check the Workspace tab for a message.',
 };
 
-async function transcribeInWorkspace(audio: Uint8Array): Promise<string> {
+async function transcribeWorkspaceSegment(audio: Uint8Array): Promise<string> {
   let bytes = '';
   for (let offset = 0; offset < audio.length; offset += 32_768) {
     bytes += String.fromCharCode(...audio.subarray(offset, offset + 32_768));
@@ -61,6 +61,14 @@ async function transcribeInWorkspace(audio: Uint8Array): Promise<string> {
     throw new Error('Xroga could not transcribe this recording. Check your Workspace connection.');
   }
   return result.text;
+}
+
+async function transcribeInWorkspace(audio: Uint8Array): Promise<string> {
+  const transcript: string[] = [];
+  for (const segment of workspaceVoiceSegments(audio)) {
+    transcript.push(await transcribeWorkspaceSegment(segment));
+  }
+  return transcript.filter(Boolean).join(' ');
 }
 
 /** The starters a new conversation offers when no shortcut is pinned: a short label and the text it sends. */
@@ -99,10 +107,13 @@ export function App() {
   const apiKeys = useStorage(keysStorage, NO_KEYS);
   const releaseNotes = useWhatsNew();
   const whatsNew = XROGA_PRODUCT ? null : releaseNotes;
-  // Voice input: the panel sends the recording to the chosen voice model's provider, with its key.
+  const [paired, setPaired] = useState(false);
+  // The Workspace bridge holds the signed-in voice session.
   const voice = XROGA_PRODUCT ? null : voiceSetup(settings, providers, apiKeys);
   const transcribe = XROGA_PRODUCT
-    ? transcribeInWorkspace
+    ? paired
+      ? transcribeInWorkspace
+      : null
     : voice
       ? (audio: Uint8Array) => {
           client?.send({ type: 'voice-used' });
@@ -111,14 +122,17 @@ export function App() {
       : null;
   const [client, setClient] = useState<PanelClient | null>(null);
   const [failure, setFailure] = useState<string | null>(null);
-  const [paired, setPaired] = useState(false);
   const [connecting, setConnecting] = useState(false);
   const [connectionError, setConnectionError] = useState('');
   useEffect(() => {
     if (!XROGA_PRODUCT) return;
+    let wasPaired = false;
+    const autoConnect = () => chrome.runtime.sendMessage({ type: 'xroga.browser.connect.v1', automatic: true });
     const refresh = () =>
       void chrome.runtime.sendMessage({ type: 'xroga.browser.connection.v1' }).then(
         result => {
+          if (wasPaired && !result?.paired) void autoConnect().catch(() => undefined);
+          wasPaired = result?.paired === true;
           setPaired(result?.paired === true);
           setConnecting(result?.connecting === true);
           if (result?.paired) setConnectionError('');
@@ -130,6 +144,7 @@ export function App() {
           setConnecting(false);
         },
       );
+    void autoConnect().then(refresh, refresh);
     refresh();
     const timer = setInterval(refresh, 1_000);
     return () => clearInterval(timer);
@@ -507,7 +522,11 @@ export function App() {
                   },
                 );
               }}>
-              {connecting ? 'Connecting to Workspace…' : 'Connect Xroga Workspace'}
+              {connecting
+                ? 'Connecting to Workspace…'
+                : connectionError === PAIR_ERRORS['sign-in']
+                  ? 'Sign in to Xroga'
+                  : 'Connect Xroga Workspace'}
             </button>
           )}
           {connectionError ? (

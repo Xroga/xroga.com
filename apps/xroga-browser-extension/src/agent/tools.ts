@@ -122,11 +122,24 @@ export function allTools(agentTools: AgentTool[] = []): AgentTool[] {
 export function toolsForRun(options: {
   disabled?: readonly string[];
   vision: boolean;
+  localScreenshots?: boolean;
   agentTools?: AgentTool[];
 }): AgentTool[] {
-  return allTools(options.agentTools).filter(
-    t => (t.required || !options.disabled?.includes(t.name)) && (t.name !== 'screenshot' || options.vision),
-  );
+  return allTools(options.agentTools)
+    .filter(
+      t =>
+        (t.required || !options.disabled?.includes(t.name)) &&
+        (t.name !== 'screenshot' || options.vision || options.localScreenshots),
+    )
+    .map(t =>
+      t.name === 'screenshot' && options.localScreenshots && !options.vision
+        ? {
+            ...t,
+            description:
+              'Capture a redacted screenshot for the user to view locally. Use when requested or needed as evidence. You receive only capture metadata, so use snapshot or read to inspect the page.',
+          }
+        : t,
+    );
 }
 
 /** The kind of a call, for the execution policy. `tabs select` is ordered as a mutation. */

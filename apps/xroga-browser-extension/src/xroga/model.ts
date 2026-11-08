@@ -58,6 +58,7 @@ export async function startXrogaModelRun(
   }
   const runId = start.runId;
   let turn = start.turns ?? 0;
+  let requestInterrupted = false;
   const remainingTurns = (start.maxTurns ?? 12) - turn;
   const remainingMs = start.remainingMs ?? 600_000;
   if (
@@ -97,6 +98,7 @@ export async function startXrogaModelRun(
           return completionStream(value as Completion);
         } catch {
           // The server may already have charged or fenced this request. Never retry it.
+          requestInterrupted = !signal.aborted;
           return Response.json(
             { error: { message: 'The Xroga model request could not be completed or accounted for.' } },
             { status: 400 },
@@ -116,6 +118,9 @@ export async function startXrogaModelRun(
     model,
     remainingTurns,
     remainingMs,
+    get requestInterrupted() {
+      return requestInterrupted;
+    },
     async finish(status: 'completed' | 'failed' | 'cancelled', actions: string[], result?: string) {
       await workspaceRequest('finish', { runId, body: { status, actions, result: result?.slice(0, 12_000) } });
     },

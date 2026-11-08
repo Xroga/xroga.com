@@ -2,7 +2,7 @@
 // acts. The worker puts one small function into the top frame of those pages; it draws an element the layer does not
 // see (on <html>, no pointer events, hidden from accessibility, its content in a closed shadow root). The border goes
 // away when the run stops working, fades out for the model's screenshots, and can be turned off in Settings.
-import { settingsStorage } from '@src/store/settings';
+import { DEFAULT_SETTINGS, settingsStorage } from '@src/store/settings';
 import type { RunStatus } from '@src/store/types';
 
 export type BorderState = 'on' | 'hidden' | 'off';
@@ -116,6 +116,8 @@ export class PageBorder {
  * cannot see, so later calls find it (a closed shadow root cannot be reached from its host).
  */
 export function setBorder(state: BorderState): Promise<void> | void {
+  const overlay = globalThis as typeof globalThis & { __xrogaActionPoint?: HTMLElement };
+  if (state !== 'on') overlay.__xrogaActionPoint?.remove();
   const KEY = '__nanobrowserBorder';
   type Border = { host: HTMLElement; glow: HTMLElement; timer: ReturnType<typeof setInterval>; onHide: () => void };
   const g = globalThis as unknown as Record<string, Border | undefined>;
@@ -201,28 +203,69 @@ export async function injectBorder(tabId: number, state: BorderState, documentId
   });
 }
 
-/** Display the point Chrome actually clicked, bound to the clicked document. */
-export async function showClickPoint(tabId: number, documentId: string, point: { x: number; y: number }): Promise<void> {
-  if (!Number.isFinite(point.x) || !Number.isFinite(point.y) || !(await settingsStorage.get())?.pageBorder) return;
-  await chrome.scripting.executeScript({
-    target: { tabId, documentIds: [documentId] },
-    args: [point.x, point.y],
-    func: (x: number, y: number) => {
-      if (document.visibilityState !== 'visible' || x < 0 || y < 0 || x > innerWidth || y > innerHeight) return;
-      const host = document.createElement('div');
-      host.setAttribute('aria-hidden', 'true');
-      host.inert = true;
-      host.style.cssText = `all:initial;position:fixed;left:${x}px;top:${y}px;width:0;height:0;pointer-events:none;z-index:2147483647`;
-      const marker = document.createElement('div');
-      marker.style.cssText = 'position:absolute;inset:-12px;width:24px;height:24px;border:2px solid #4d7fff;border-radius:50%;background:#4d7fff35;box-shadow:0 0 10px #4d7fff80;pointer-events:none';
-      host.attachShadow({ mode: 'closed' }).append(marker);
-      document.documentElement.append(host);
-      if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        marker.animate([{ transform: 'scale(.55)', opacity: 1 }, { transform: 'scale(1.5)', opacity: 0 }], { duration: 450, fill: 'forwards' });
-      }
-      setTimeout(() => host.remove(), 450);
-    },
-  });
+/** Paint a cue before dispatch, while the target document is still visible. */
+export async function showActionPoint(
+  tabId: number,
+  point: { x: number; y: number },
+  kind: 'click' | 'type',
+): Promise<void> {
+  if (!Number.isFinite(point.x) || !Number.isFinite(point.y)) return;
+  const deadline = Date.now() + 240;
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const draw = async () => {
+    if (!((await settingsStorage.get()) ?? DEFAULT_SETTINGS).pageBorder) return;
+    const frame = await chrome.webNavigation.getFrame({ tabId, frameId: 0 });
+    if (!frame?.documentId) return;
+    const [drawn] = await chrome.scripting.executeScript({
+      target: { tabId, documentIds: [frame.documentId] },
+      injectImmediately: true,
+      args: [point.x, point.y, kind, deadline],
+      func: (x: number, y: number, action: 'click' | 'type', until: number) => {
+        if (
+          Date.now() >= until ||
+          document.visibilityState !== 'visible' ||
+          x < 0 ||
+          y < 0 ||
+          x > innerWidth ||
+          y > innerHeight
+        )
+          return false;
+        const overlay = globalThis as typeof globalThis & { __xrogaActionPoint?: HTMLElement };
+        overlay.__xrogaActionPoint?.remove();
+        const host = document.createElement('div');
+        host.setAttribute('aria-hidden', 'true');
+        host.setAttribute('data-xroga-action-point', '');
+        host.inert = true;
+        host.style.cssText = `all:initial;position:fixed;left:${x}px;top:${y}px;width:0;height:0;pointer-events:none;z-index:2147483647`;
+        const root = host.attachShadow({ mode: 'closed' });
+        const label = action === 'type' ? 'Typing' : 'Clicking';
+        root.innerHTML = `<style>
+        svg { position:absolute;left:-2px;top:-2px;width:25px;height:29px;filter:drop-shadow(0 1px 3px #0b173c); }
+        span { position:absolute;${x > innerWidth - 120 ? 'right:5px' : 'left:18px'};${y > innerHeight - 56 ? 'bottom:12px' : 'top:21px'};
+          white-space:nowrap;background:#1759db;color:white;padding:4px 8px;border-radius:10px;
+          border:1px solid #c8dbff;box-shadow:0 2px 8px #0005;font:600 12px system-ui; }
+      </style><svg viewBox="0 0 25 29" fill="none"><path d="M2 2v22l6-6 5 9 4-2-5-9h9L2 2Z" fill="#1769ff" stroke="white" stroke-width="1.5" stroke-linejoin="round"/></svg><span>Xroga · ${label}</span>`;
+        overlay.__xrogaActionPoint = host;
+        document.documentElement.append(host);
+        setTimeout(() => {
+          host.remove();
+          if (overlay.__xrogaActionPoint === host) delete overlay.__xrogaActionPoint;
+        }, 1600);
+        return true;
+      },
+    });
+    if (drawn?.result) await new Promise<void>(resolve => setTimeout(resolve, 140));
+  };
+  try {
+    await Promise.race([
+      draw(),
+      new Promise<void>(resolve => {
+        timer = setTimeout(resolve, 240);
+      }),
+    ]);
+  } finally {
+    clearTimeout(timer);
+  }
 }
 
 /** New documents in a tab's top frame, and the Settings switch. Registered at worker start. */

@@ -5,6 +5,7 @@ const STATUS = 'xroga.browser.paired.v1';
 const CONNECTION = 'xroga.browser.connection.v1';
 const PORT = 'xroga-browser-v1';
 const PAIR_KEY = 'xroga-browser-account';
+const PAIR_TAB_KEY = 'xroga-browser-workspace-tab';
 const UUID = /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i;
 
 interface WorkspaceMessage {
@@ -21,6 +22,9 @@ type Pending = { succeed: (value: unknown) => void; fail: (error: Error) => void
 type PairFailure = 'sign-in' | 'unavailable' | 'extension-id' | 'account' | 'failed';
 let pairing: { nonce: string; tabId: number; expires: number; started: number } | undefined;
 let pairFailure: PairFailure | undefined;
+let opening: Promise<void> | undefined;
+let autoAttempted = false;
+let pairTabId: number | undefined;
 let workspace: chrome.runtime.Port | undefined;
 const pending = new Map<string, Pending>();
 const disconnectHandlers = new Set<() => void>();
@@ -44,10 +48,33 @@ function panelSender(sender: chrome.runtime.MessageSender) {
   );
 }
 
-async function openPairing() {
+async function openPairing(manual: boolean) {
+  if (workspace) return;
+  if (!manual && autoAttempted) return;
+  autoAttempted = true;
+  if (opening) return opening;
+  if (pairing && Date.now() < pairing.expires && pairFailure !== 'failed' && pairFailure !== 'unavailable') {
+    if (manual && pairFailure === 'sign-in') await chrome.tabs.update(pairing.tabId, { active: true });
+    else if (!pairFailure && Date.now() - pairing.started < 25_000) return;
+  }
+  opening = startPairing().finally(() => {
+    opening = undefined;
+  });
+  return opening;
+}
+
+async function startPairing() {
   const nonce = crypto.randomUUID();
-  const tab = await chrome.tabs.create({ url: 'about:blank' });
+  const storedTab = pairTabId ?? (await chrome.storage.session.get(PAIR_TAB_KEY))[PAIR_TAB_KEY];
+  const previous = typeof storedTab === 'number' ? await chrome.tabs.get(storedTab).catch(() => undefined) : undefined;
+  // Only reuse a tab this extension opened, and only while it is still on Workspace.
+  const tab =
+    previous && isWorkspaceSender({ origin: new URL(WORKSPACE_URL).origin, url: previous.url, frameId: 0 })
+      ? previous
+      : await chrome.tabs.create({ url: 'about:blank', active: false });
   if (tab.id === undefined) throw new Error('Could not open Workspace.');
+  pairTabId = tab.id;
+  await chrome.storage.session.set({ [PAIR_TAB_KEY]: tab.id });
   const started = Date.now();
   pairing = { nonce, tabId: tab.id, started, expires: started + 5 * 60_000 };
   pairFailure = undefined;
@@ -68,8 +95,15 @@ export function listenForWorkspace(
 ) {
   taskHandler = start;
   cancelHandler = cancel;
+  chrome.tabs.onRemoved.addListener(tabId => {
+    if (tabId === pairTabId) {
+      pairTabId = undefined;
+      void chrome.storage.session.remove(PAIR_TAB_KEY).catch(() => undefined);
+    }
+    if (tabId === pairing?.tabId) pairing = undefined;
+  });
   chrome.runtime.onMessage.addListener(
-    (message: { type?: string; name?: unknown; base64?: unknown }, sender, reply) => {
+    (message: { type?: string; name?: unknown; base64?: unknown; automatic?: boolean }, sender, reply) => {
       if (!panelSender(sender)) return;
       if (message?.type === STATUS) reply(workspacePaired());
       if (message?.type === CONNECTION) {
@@ -107,7 +141,7 @@ export function listenForWorkspace(
         return true;
       }
       if (message?.type === CONNECT) {
-        void openPairing().then(
+        void openPairing(message.automatic !== true).then(
           () => reply(true),
           () => reply(false),
         );
@@ -219,6 +253,7 @@ export function listenForWorkspace(
           // Send first. A tab closed during storage I/O must never become the current port.
           port.postMessage({ type: 'paired' });
           workspace = port;
+          autoAttempted = false;
           pairFailure = undefined;
           clearTimeout(expires);
         })().catch(() => {

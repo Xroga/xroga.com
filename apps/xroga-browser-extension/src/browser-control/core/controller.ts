@@ -72,6 +72,8 @@ export interface SessionConfig {
   reveal?: (tabId: number | null) => boolean | Promise<boolean>;
   /** A tab joined the session: the host places it (its group) and keeps it out of view as it sees fit. */
   onTabJoined?: (tabId: number, how: 'shared' | 'opened' | 'page-opened') => void;
+  /** Optional host-owned visual cue. It carries coordinates only and never authorizes input. */
+  onActionPoint?: (tabId: number, point: { x: number; y: number }, kind: 'click' | 'type') => Promise<void>;
   /**
    * Where `upload` may take files from, set by the host and absent from the protocol: local paths, bytes given with the
    * call, or both (the default). The extension's agent sessions take bytes only, so a model cannot name a file on the
@@ -464,10 +466,18 @@ export class Session {
   readonly config: Required<
     Omit<
       SessionConfig,
-      'capabilities' | 'urlPolicy' | 'confirm' | 'boundary' | 'handover' | 'decideWrite' | 'reveal' | 'onTabJoined'
+      | 'capabilities'
+      | 'urlPolicy'
+      | 'confirm'
+      | 'boundary'
+      | 'handover'
+      | 'decideWrite'
+      | 'reveal'
+      | 'onTabJoined'
+      | 'onActionPoint'
     >
   >;
-  readonly hooks: Pick<SessionConfig, 'reveal' | 'onTabJoined'>;
+  readonly hooks: Pick<SessionConfig, 'reveal' | 'onTabJoined' | 'onActionPoint'>;
   readonly decideWrite: SessionConfig['decideWrite'];
   /** Fixed when the session is made: a session never gains or loses its hand-over policy. */
   readonly handover: boolean;
@@ -486,7 +496,7 @@ export class Session {
   ) {
     this.handover = config.handover ?? false;
     this.decideWrite = config.decideWrite;
-    this.hooks = { reveal: config.reveal, onTabJoined: config.onTabJoined };
+    this.hooks = { reveal: config.reveal, onTabJoined: config.onTabJoined, onActionPoint: config.onActionPoint };
     this.capabilities = new Set(this.#allowed(config.capabilities ?? []));
     this.config = {
       observeDefault: config.observeDefault ?? 'none',

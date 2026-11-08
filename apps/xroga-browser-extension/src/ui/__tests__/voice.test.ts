@@ -1,5 +1,14 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { downmix, encodeWav, Recorder, voiceLanguage, voiceSetup } from '../voice';
+import {
+  downmix,
+  encodeWav,
+  Recorder,
+  voiceLanguage,
+  voiceSetup,
+  WORKSPACE_SAMPLE_RATE,
+  workspaceVoiceSegments,
+} from '../voice';
+import { requireVoicePcm } from '../../../../../backend/src/ai/voicePcm';
 import type { ProviderConfig } from '@src/store/settings';
 
 const providers: ProviderConfig[] = [
@@ -48,6 +57,18 @@ describe('voice input', () => {
 
   it('averages channels into one', () => {
     expect([...downmix([new Float32Array([1, 0]), new Float32Array([0, 1])])]).toEqual([0.5, 0.5]);
+  });
+
+  it('sends 120 seconds as four bounded requests accepted by the live Workspace PCM validator', () => {
+    const input = new Float32Array(120 * WORKSPACE_SAMPLE_RATE).fill(0.2);
+    const segments = [...workspaceVoiceSegments(encodeWav(input, WORKSPACE_SAMPLE_RATE))];
+    expect(segments.map(chunk => requireVoicePcm(Buffer.from(chunk)).seconds)).toEqual([30, 30, 30, 30]);
+    expect(segments.every(chunk => Buffer.from(chunk).toString('base64').length < 5_140_000)).toBe(true);
+  });
+
+  it('skips silence and rejects the old 16 kHz format before sending any audio', () => {
+    expect([...workspaceVoiceSegments(encodeWav(new Float32Array(1000), WORKSPACE_SAMPLE_RATE))]).toEqual([]);
+    expect(() => [...workspaceVoiceSegments(encodeWav(new Float32Array(1000), 16_000))]).toThrow();
   });
 });
 

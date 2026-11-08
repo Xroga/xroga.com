@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtemp, realpath, rm } from "node:fs/promises";
+import { mkdtemp, realpath, rm, writeFile } from "node:fs/promises";
 import { createRequire } from "node:module";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
@@ -27,6 +27,7 @@ let spentMicros = 0;
 // Chrome's IndexedDB files can exceed Windows' path limit under a deeply nested job root.
 const root = await realpath(process.argv[4] ?? tmpdir());
 const profile = await mkdtemp(join(root, "xr-op-"));
+const audioFixture = join(profile, "dictation.wav");
 const dist = fileURLToPath(
   new URL("../../apps/xroga-browser-extension/dist", import.meta.url),
 );
@@ -40,12 +41,14 @@ const formGoal =
   "Enter Synthetic Applicant in the application, submit only after my approval, then read the receipt.";
 const formAnswer = "The fixture confirmed the application.";
 const stopGoal = "Stop this task before its pending model turn can act.";
+const recoveryGoal = "Open the catalog and verify the price even if a model request is interrupted.";
 const fileGoal =
   "Use the target product from the attached file. Follow the catalog link, find the listed price and report it.";
 const workbookGoal =
   "Use the final order row in the attached workbook. Open the catalog and follow its product link for the final price. Report the product, quantity, unit price and total.";
 const runs = new Map();
 let voiceRequests = 0;
+const actionCues = new Set();
 let rejectPairing = !live;
 let browser;
 
@@ -193,9 +196,15 @@ function reply(run, request) {
     }
   } else if (request.turn === 2) {
     tool = call("click", { target: ref("Browse catalog") });
+  } else if (run.goal === recoveryGoal) {
+    if (request.turn === 4) tool = call("snapshot", {});
+    if (request.turn === 5) tool = call("read", {});
+    if (request.turn === 6) tool = call("done", { outcome: "success", summary: answer });
   } else if (request.turn === 3) tool = call("read", {});
-  else if (request.turn === 4) {
+  else if (request.turn === 4) tool = call("screenshot", {});
+  else if (request.turn === 5) {
     assert.match(history, /Fixture price: \$39/);
+    assert.doesNotMatch(history, /image_url|data:image/);
     tool = call("done", { outcome: "success", summary: answer });
   }
   if (!tool) throw new Error("Unexpected extra model request");
@@ -213,6 +222,17 @@ function reply(run, request) {
 
 try {
   const workspaceFailureScript = live ? null : await buildWorkspacePairingFailure();
+  if (!live) {
+    const rate = 16_000;
+    const wav = Buffer.alloc(44 + 4 * rate * 2);
+    wav.write("RIFF"); wav.writeUInt32LE(wav.length - 8, 4); wav.write("WAVEfmt ", 8);
+    wav.writeUInt32LE(16, 16); wav.writeUInt16LE(1, 20); wav.writeUInt16LE(1, 22);
+    wav.writeUInt32LE(rate, 24); wav.writeUInt32LE(rate * 2, 28); wav.writeUInt16LE(2, 32);
+    wav.writeUInt16LE(16, 34); wav.write("data", 36); wav.writeUInt32LE(wav.length - 44, 40);
+    for (let i = 0; i < 4 * rate; i++)
+      wav.writeInt16LE(Math.round(4000 * Math.sin(2 * Math.PI * 440 * i / rate)), 44 + i * 2);
+    await writeFile(audioFixture, wav);
+  }
   browser = await chromium.launchPersistentContext(profile, {
     ...(chrome ? { executablePath: chrome } : { channel: "chromium" }),
     headless: false,
@@ -221,7 +241,9 @@ try {
       "--enable-unsafe-extension-debugging",
       "--disable-background-networking",
       "--disable-background-timer-throttling",
-      ...(live ? [] : ["--use-fake-device-for-media-stream", "--use-fake-ui-for-media-stream"]),
+      "--use-mock-keychain",
+      ...(live ? [] : ["--use-fake-device-for-media-stream", "--use-fake-ui-for-media-stream",
+        `--use-file-for-fake-audio-capture=${audioFixture}`]),
     ],
     timeout: 20_000,
   });
@@ -231,20 +253,31 @@ try {
   const cdp = await browser.browser().newBrowserCDPSession();
   const { id } = await cdp.send("Extensions.loadUnpacked", { path: dist });
   console.log("Agent extension loaded");
+  if (!live) {
+    await browser.exposeFunction("fixtureActionCue", action => actionCues.add(action));
+    await browser.addInitScript(origin => {
+      if (location.origin !== origin) return;
+      for (const event of ["click", "input"]) {
+        document.addEventListener(event, () => {
+          if (document.querySelector("[data-xroga-action-point]"))
+            void window.fixtureActionCue(event);
+        }, true);
+      }
+    }, site);
+  }
   await browser.exposeFunction(
     "fixtureBrowserRequest",
     async ({ op, value }) => {
       if (op === "voice" && !live) {
         const wav = Buffer.from(value.body, "base64");
-        assert.equal(wav.toString("ascii", 0, 4), "RIFF");
-        assert.equal(wav.toString("ascii", 8, 12), "WAVE");
-        assert.ok(wav.length > 512);
+        const { requireVoicePcm } = await import("../../backend/src/ai/voicePcm.ts");
+        assert.ok(requireVoicePcm(wav).seconds > 0);
         voiceRequests++;
         return { text: "Synthetic dictation draft" };
       }
       if (op === "start") {
         assert.ok(
-          [goal, formGoal, stopGoal, fileGoal, workbookGoal].includes(
+          [goal, formGoal, stopGoal, fileGoal, workbookGoal, recoveryGoal].includes(
             value.goal,
           ),
         );
@@ -261,6 +294,10 @@ try {
         "turns and results use the admitted canonical run identity",
       );
       if (op === "turn") {
+        if (run.goal === recoveryGoal) {
+          (run.ordinals ??= []).push(value.body.turn);
+          if (value.body.turn === 3) throw new Error("Synthetic unknown provider receipt");
+        }
         if (run.goal === stopGoal) {
           run.pending = true;
           await new Promise((resolve) => {
@@ -270,6 +307,10 @@ try {
         return live && run.goal !== stopGoal
           ? liveReply(run, value.body)
           : reply(run, value.body);
+      }
+      if (op === "resume" && run.goal === recoveryGoal) {
+        assert.deepEqual(run.ordinals, [1, 2, 3]);
+        return { runId: value.runId, turns: 3, maxTurns: 48, remainingMs: 39 * 60_000 };
       }
       if (op === "finish") {
         run.result = value.body;
@@ -338,7 +379,7 @@ try {
   const connect = () => panel.getByRole("button", { name: "Connect Xroga Workspace" })
     .evaluate((button) => button.click());
   if (!live) {
-    await connect();
+    // Opening the side panel attempts an authenticated handoff in the background.
     await panel.getByRole("alert").filter({hasText:"Browser Automation is unavailable"}).waitFor({timeout: 15_000})
       .catch(async error => {
         for (const page of browser.pages()) {
@@ -348,15 +389,14 @@ try {
         }
         throw error;
       });
-    for (const page of browser.pages()) {
-      if (page.url().startsWith(`${workspaceOrigin}/workspace?`)) {
-        await page.getByRole("status").filter({hasText:"Browser Automation is unavailable"}).waitFor();
-        await page.close();
-      }
-    }
+    const pairingPages = browser.pages().filter(page => page.url().startsWith(`${workspaceOrigin}/workspace?`));
+    assert.equal(pairingPages.length, 1);
+    await pairingPages[0].getByRole("status").filter({hasText:"Browser Automation is unavailable"}).waitFor();
+    const [pairingTab] = await panel.evaluate(() => chrome.tabs.query({ url: "https://xroga.com/workspace*" }));
+    assert.equal(pairingTab?.active, false);
     rejectPairing = false;
+    await connect();
   }
-  await connect();
   let workspace;
   const deadline = Date.now() + 15_000;
   while (!workspace && Date.now() < deadline) {
@@ -417,7 +457,11 @@ try {
     await stopVoice.waitFor();
     await new Promise(resolve => setTimeout(resolve, 450));
     await stopVoice.click();
-    await panel.waitForFunction(() => document.querySelector("textarea")?.value === "Synthetic dictation draft");
+    await panel.waitForFunction(() => document.querySelector("textarea")?.value === "Synthetic dictation draft", undefined, { timeout: 12_000 })
+      .catch(async error => {
+        console.error("Dictation fixture", { voiceRequests, alerts: await panel.getByRole("alert").allTextContents() });
+        throw error;
+      });
     assert.equal(voiceRequests, 1);
     assert.equal(runs.size, 0, "Dictation must not send a task");
   }
@@ -487,6 +531,7 @@ try {
     );
   } else if (!formOnly) {
     await input.fill(goal);
+    if (!live) await tab.bringToFront();
     await input.press("Enter");
     console.log("Side-panel task submitted");
     await waitForFinish(1);
@@ -534,11 +579,11 @@ try {
           ),
         );
       } else {
-        assert.deepEqual(run.turns, ["snapshot", "click", "read", "done"]);
+        assert.deepEqual(run.turns, ["snapshot", "click", "read", "screenshot", "done"]);
         assert.deepEqual(run.result, {
           status: "completed",
           result: answer,
-          actions: ["snapshot", "click", "read"],
+          actions: ["snapshot", "click", "read", "screenshot"],
         });
       }
     }
@@ -546,6 +591,7 @@ try {
   if (!documentOnly) {
     await tab.goto(`${site}/apply`);
     await input.fill(formGoal);
+    if (!live) await tab.bringToFront();
     await input.press("Enter");
     const allow = panel.getByRole("button", { name: "Allow", exact: true });
     await allow
@@ -615,6 +661,23 @@ try {
       stopRun.release();
     }
   }
+  if (!live) {
+    await tab.goto(site);
+    await input.fill(recoveryGoal);
+    await input.press("Enter");
+    const resume = panel.getByRole("button", { name: "Resume", exact: true });
+    await resume.waitFor({ timeout: 25_000 });
+    const recovery = [...runs.values()].find(run => run.goal === recoveryGoal);
+    assert.deepEqual(recovery.ordinals, [1, 2, 3]);
+    assert.equal(recovery.result, undefined);
+    await resume.click();
+    await waitForFinish(5);
+    assert.deepEqual(recovery.ordinals, [1, 2, 3, 4, 5, 6]);
+    assert.equal(recovery.result.status, "completed");
+    assert.equal(recovery.result.actions.filter(action => action === "click").length, 1);
+    assert.ok(actionCues.has("click"), "The blue marker was visible when Chrome clicked");
+    assert.ok(actionCues.has("input"), "The blue marker was visible when Chrome typed");
+  }
   const { product } = await cdp.send("Browser.getVersion");
   console.log(
     JSON.stringify({
@@ -623,6 +686,9 @@ try {
       approvedSubmission: !documentOnly,
       cancelledPendingTurn: !documentOnly,
       voiceFixtureRequests: voiceRequests,
+      actionCues: [...actionCues].sort(),
+      resumedWithoutReplay: !live,
+      screenshotPixelsSentToModel: false,
       entryPoints: ["side panel", "Workspace fixture"],
       model: live ? providerModel : "deterministic fixture",
       liveModelCalls: receipts.length,

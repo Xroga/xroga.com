@@ -79,6 +79,7 @@ export interface LoopOptions {
   takeSteering?: () => string[];
   /** Makes a small thumbnail of a screenshot for the activity block; none when absent. */
   thumbnail?: (base64: string, mimeType: string) => Promise<string | undefined>;
+  localScreenshots?: boolean;
   /** Runs an agent tool (read_attachment, save_file); `done` is the loop's own. */
   agentTool?: (
     call: ToolCallRequest,
@@ -112,6 +113,7 @@ export interface CallOutcome {
   done?: { outcome: 'success' | 'partial' | 'failed'; summary: string };
   /** The model's own screenshot, for a vision model. */
   image?: { data: string; mediaType: string; note: string; thumb?: string };
+  localThumbnail?: string;
   /** The call met a step that is the user's, and the user was handed it. */
   handover?: boolean;
 }
@@ -535,10 +537,12 @@ export class AgentLoop {
       if (verdict.nudge) notes.push(note(verdict.nudge));
       if (verdict.stop) this.#guardStop ??= { reason: verdict.stop, guard: verdict.guard ?? 'errors' };
     }
-    const image = await this.#withThumb(this.#screenshotImage(outcome));
+    const capture = await this.#withThumb(this.#screenshotImage(outcome));
+    const image = this.options.model.profile.vision ? capture : undefined;
+    const localThumbnail = this.options.localScreenshots && !image ? capture?.thumb : undefined;
     const text = cutText(outcome.text, RESULT_CAP, `… the result was cut at ${RESULT_CAP} characters.`);
     // A nudge is the extension's own line on the result that caused it, outside any boundary.
-    return { ...outcome, ...(image ? { image } : {}), text: [text, ...notes].join('\n') };
+    return { ...outcome, ...(image ? { image } : {}), localThumbnail, text: [text, ...notes].join('\n') };
   }
 
   /**
@@ -697,7 +701,11 @@ export class AgentLoop {
    * describes it either way. No screenshot is taken on its own: the model reads the page's text and asks for one.
    */
   #screenshotImage(outcome: CallOutcome): CallOutcome['image'] | undefined {
-    if (outcome.call.toolName !== 'screenshot' || !this.options.model.profile.vision) return undefined;
+    if (
+      outcome.call.toolName !== 'screenshot' ||
+      (!this.options.model.profile.vision && !this.options.localScreenshots)
+    )
+      return undefined;
     const data = outcome.result?.data as { base64?: string; mimeType?: string } | undefined;
     if (!outcome.result?.ok || !data?.base64) return undefined;
     return { data: data.base64, mediaType: data.mimeType ?? 'image/png', note: PAGE_IMAGE_LINE };
@@ -958,17 +966,18 @@ export class AgentLoop {
       status,
       ...(outcome ? { text: outcome.text, result: outcome.result ? storedResult(outcome.result) : undefined } : {}),
       ...(outcome?.result?.receipt?.allowedBy ? { allowedBy: outcome.result.receipt.allowedBy } : {}),
-      ...(outcome?.image?.thumb ? { thumbnail: outcome.image.thumb } : {}),
+      thumbnail: outcome?.image?.thumb ?? outcome?.localThumbnail,
     };
   }
 
   async #record(outcome: CallOutcome): Promise<void> {
+    const result = outcome.result ? storedResult(outcome.result) : undefined;
     await this.writer.toolResult(
       outcome.call.toolCallId,
       outcome.call.toolName,
       outcome.text,
       outcome.isError,
-      outcome.result ? storedResult(outcome.result) : undefined,
+      outcome.localThumbnail ? { ...(result as object), localThumbnail: outcome.localThumbnail } : result,
       outcome.image,
     );
     const status: ToolRow['status'] = outcome.skipped ? 'skipped' : outcome.isError ? 'failed' : 'done';

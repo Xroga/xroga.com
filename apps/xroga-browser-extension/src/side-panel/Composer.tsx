@@ -4,7 +4,7 @@
 import { useEffect, useRef, useState } from 'react';
 import type { ModelRef, PermissionMode } from '@src/store/types';
 import type { AttachmentRef } from '@src/ui/protocol';
-import { Recorder, toWav } from '@src/ui/voice';
+import { Recorder, toWav, WORKSPACE_SAMPLE_RATE } from '@src/ui/voice';
 import { XROGA_PRODUCT } from '@src/xroga/product';
 import { t } from '@src/ui/i18n';
 import type { MessageKey } from '@src/ui/i18n';
@@ -284,7 +284,7 @@ export function Composer({
     recorder.current = null;
     setPhase('transcribing');
     try {
-      const audio = await toWav(await current.stop());
+      const audio = await toWav(await current.stop(), XROGA_PRODUCT ? WORKSPACE_SAMPLE_RATE : undefined);
       const send = latest.current.transcribe;
       if (!send) return needsModel();
       const said = await send(audio);

@@ -1369,10 +1369,11 @@ export class RunManager {
             restore?.canonicalBrowserRunId,
           );
           record.canonicalBrowserRunId = canonical.runId;
+          record.canonicalBrowserActions = [...(restore?.canonicalBrowserActions ?? [])];
           await putRun(record);
           deadline = setTimeout(() => controller.abort(), canonical.remainingMs);
           this.#canonicalRuns.set(conversationId, canonical.runId);
-          this.#canonicalActions.set(conversationId, []);
+          this.#canonicalActions.set(conversationId, record.canonicalBrowserActions);
           postWorkspace({ type: 'run', runId: canonical.runId });
         }
         const model = canonical?.model ?? (await resolveModel(await starting));
@@ -1386,7 +1387,7 @@ export class RunManager {
         this.#modes.set(conversationId, conversation.mode);
         const session = await this.#openSession(conversationId);
         record.tabs = session.tabIds();
-        const tools = toolsForRun({ vision: model.profile.vision });
+        const tools = toolsForRun({ vision: model.profile.vision, localScreenshots: !!canonical });
         const loop = new AgentLoop({
           conversationId,
           runId,
@@ -1399,7 +1400,7 @@ export class RunManager {
               customInstructions: settings.customInstructions,
             }) +
             (canonical
-              ? '\nFor a consequential browser action, attempt the normal tool once so Chrome can display its scoped approval. The browser tool waits for the user before dispatch. Do not ask for a separate chat approval for the same action. Use ask_user for missing inputs and manual handover. For long tasks, check off each verified dependency and use read_attachment to recover relevant file sections before acting.'
+              ? '\nFor a consequential browser action, attempt the normal tool once so Chrome can display its scoped approval. Do not ask for a separate chat approval for that action. Use ask_user for missing inputs and manual handover. For long tasks, check off each verified dependency and use read_attachment for relevant file sections.\nWhen asked to apply a filter, change a sort, open results, or verify details, use the relevant controls and check their resulting state. When asked for top-ranked, bestselling, or comparable items, verify the selected sort or an explicit ranking label and report what that evidence actually supports. Position in search results, rating counts, sponsored placements, and bought counts alone do not prove rank. Open the relevant detail pages if required to verify the requested attributes. Cite only exact URLs observed on pages or in page links. Report which steps were completed, which were blocked, and any unverified claims separately. Never present a page read as an action you performed.'
               : ''),
           tools,
           mode: () => this.#modes.get(conversationId) ?? conversation.mode,
@@ -1407,9 +1408,10 @@ export class RunManager {
           host: this.#host(conversationId, session),
           signal: controller.signal,
           emit: event => this.emit(conversationId, event),
-          turnCap: canonical ? Math.min(canonical.remainingTurns, 32) : settings.turnCap,
+          turnCap: canonical?.remainingTurns ?? settings.turnCap,
           attachmentPreviewChars: canonical ? 8_000 : undefined,
           thumbnail,
+          localScreenshots: !!canonical,
           agentTool: (call, signal) => this.#agentTool(conversationId, call, signal),
           restore: restore ? { debt: restore.debt as DebtEntry[], guards: restore.guards } : undefined,
           takeSteering: () => {
@@ -1428,17 +1430,26 @@ export class RunManager {
         record.outcome = end.outcome;
         record.debt = loop.debt;
         record.guards = loop.guards.state;
-        if (end.status === 'failed' && end.reason) await this.#notice(conversationId, end.reason, 'error');
+        const paused = canonical?.requestInterrupted && end.status === 'failed';
+        const reason = paused
+          ? 'Xroga paused after a model request could not be verified. Resume to continue from the saved state.'
+          : end.reason;
+        if (end.status === 'failed' && reason) await this.#notice(conversationId, reason, paused ? 'info' : 'error');
         if (end.status === 'stopped') {
           await this.#notice(conversationId, STOPPED_BY_USER, 'info');
           await new RunWriter(conversationId, runId).appNote(STOPPED_NOTE);
         }
         await this.#setStatus(
           record,
-          this.#connectionLost.has(conversationId) ? 'interrupted' : end.status,
-          end.reason,
+          this.#connectionLost.has(conversationId) || paused ? 'interrupted' : end.status,
+          reason,
         );
-        if (end.status !== 'stopped' && !(await this.#inView(conversationId))) {
+        if (
+          end.status !== 'stopped' &&
+          !paused &&
+          !this.#connectionLost.has(conversationId) &&
+          !(await this.#inView(conversationId))
+        ) {
           await notifyFinished(conversationId, end.outcome === 'success', (await this.scope.tabsOf(conversationId))[0]);
         }
       } catch (error) {
@@ -1466,7 +1477,12 @@ export class RunManager {
               ? assistant.message.parts.flatMap(part => (part.type === 'text' ? [part.text] : [])).join('\n')
               : undefined);
           if (status === 'completed' && !result?.trim()) status = 'failed';
-          if (end?.status === 'capped' || end?.status === 'awaiting_user' || connectionLost) {
+          if (
+            end?.status === 'capped' ||
+            end?.status === 'awaiting_user' ||
+            connectionLost ||
+            canonical.requestInterrupted
+          ) {
             postWorkspace({ type: 'paused', runId: finishedRunId });
           } else {
             void canonical.finish(status, actions, status === 'completed' ? result : undefined).then(

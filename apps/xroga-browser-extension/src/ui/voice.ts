@@ -10,6 +10,8 @@ import type { ProviderConfig, Settings } from '@src/store/settings';
 export const MAX_RECORDING_MS = 120_000;
 /** Speech models work at 16 kHz; a two-minute clip is then under 4 MB. */
 export const SAMPLE_RATE = 16_000;
+/** Workspace's authenticated free dictation endpoint validates this exact PCM rate. */
+export const WORKSPACE_SAMPLE_RATE = 22_050;
 
 /** The voice model chosen in Settings, with its provider's key; null when none is chosen or it can no longer be used. */
 export function voiceSetup(
@@ -64,11 +66,38 @@ export function downmix(channels: Float32Array[]): Float32Array {
 }
 
 /** A recorded clip (WebM with Opus, as Chrome records it) as 16 kHz mono WAV: decoding at that rate resamples it. */
-export async function toWav(clip: Blob): Promise<Uint8Array> {
-  const context = new OfflineAudioContext(1, 1, SAMPLE_RATE);
+export async function toWav(clip: Blob, sampleRate = SAMPLE_RATE): Promise<Uint8Array> {
+  const context = new OfflineAudioContext(1, 1, sampleRate);
   const decoded = await context.decodeAudioData(await clip.arrayBuffer());
   const channels = Array.from({ length: decoded.numberOfChannels }, (_, i) => decoded.getChannelData(i));
-  return encodeWav(downmix(channels), SAMPLE_RATE);
+  return encodeWav(downmix(channels), sampleRate);
+}
+
+/** Send bounded PCM chunks to the same endpoint as Workspace dictation. */
+export function* workspaceVoiceSegments(wav: Uint8Array): Iterable<Uint8Array> {
+  const header = 44;
+  const chunkSize = 30 * WORKSPACE_SAMPLE_RATE * 2;
+  const data = new DataView(wav.buffer, wav.byteOffset, wav.byteLength);
+  if (wav.length < 512 || data.getUint32(24, true) !== WORKSPACE_SAMPLE_RATE || (wav.length - header) % 2 !== 0) {
+    throw new Error('Xroga could not prepare this recording.');
+  }
+  // Balance the chunk sizes so the last chunk never contains only a few samples.
+  const frames = (wav.length - header) / 2;
+  const step = Math.ceil(frames / Math.ceil((frames * 2) / chunkSize)) * 2;
+  for (let offset = header; offset < wav.length; offset += step) {
+    const pcm = wav.subarray(offset, offset + step);
+    const samples = new DataView(pcm.buffer, pcm.byteOffset, pcm.byteLength);
+    let energy = 0;
+    for (let i = 0; i < pcm.length; i += 2) energy += samples.getInt16(i, true) ** 2;
+    if (energy / (pcm.length / 2) < 256) continue;
+    const segment = new Uint8Array(header + pcm.length);
+    segment.set(wav.subarray(0, header));
+    segment.set(pcm, header);
+    const sizes = new DataView(segment.buffer);
+    sizes.setUint32(4, segment.length - 8, true);
+    sizes.setUint32(40, pcm.length, true);
+    yield segment;
+  }
 }
 
 /** Why a recording could not start: the microphone is not allowed, or there is none. */

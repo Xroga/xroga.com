@@ -83,6 +83,10 @@ export function toDisplay(branch: Entry[]): DisplayEntry[] {
           row.result = e.result;
           const image = e.message.parts.find(x => x.type === 'image');
           if (image?.type === 'image' && image.thumb) row.thumbnail = image.thumb;
+          const preview = (e.result as { localThumbnail?: unknown } | undefined)?.localThumbnail;
+          if (typeof preview === 'string' && /^data:image\/jpeg;base64,[A-Za-z0-9+/=]+$/.test(preview)) {
+            row.thumbnail = preview;
+          }
           const skipped = p.text.startsWith('skipped:');
           row.status = skipped ? 'skipped' : p.isError ? 'failed' : 'done';
         }

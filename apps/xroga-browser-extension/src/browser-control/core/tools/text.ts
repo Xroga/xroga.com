@@ -8,7 +8,7 @@ import type { ToolContext, ToolOutcome } from '../controller';
 import { axIdentity } from '../interaction/resolve';
 import type { ResolvedTarget } from '../interaction/resolve';
 import { waitForActionable } from '../interaction/actionability';
-import { dispatchClick } from '../interaction/pointer';
+import { actionPoint, dispatchClick } from '../interaction/pointer';
 import type { DialogInfo } from '../interaction/pointer';
 import { KeyGuard, KeyPresser } from '../interaction/key-guard';
 import type { GuardedElement, KeyGuardOptions } from '../interaction/key-guard';
@@ -81,14 +81,15 @@ async function focusForText(ctx: ToolContext, target: ResolvedTarget, timeoutMs?
   const actionable = await waitForActionable(ctx, target, { pointer: true, editable: true, budgetMs: timeoutMs });
   const state = await stateOf(ctx, target);
   if (!state.focused) {
-    const click = await dispatchClick(ctx, target, actionable.point, {});
+    const click = await dispatchClick(ctx, target, actionable.point, { feedback: 'type' });
     if (click.dialog) {
       recordDialog(ctx, click.dialog);
       throw new LayerError('MODAL_PENDING', 'A dialog opened when the field was focused; nothing was typed.', {
         delivered: true,
       });
     }
-  }
+  } else await actionPoint(ctx, actionable.point, 'type');
+  checkCancelled(ctx);
 }
 
 function guardedOf(target: ResolvedTarget): GuardedElement {

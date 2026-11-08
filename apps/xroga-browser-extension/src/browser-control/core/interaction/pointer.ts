@@ -5,6 +5,7 @@
 import { LayerError } from '../../protocol/errors';
 import type { GuardReport } from '../../probe';
 import type { ToolContext } from '../controller';
+import { checkCancelled } from '../controller';
 import type { CdpPort, FrameRecord } from '../ports';
 import type { Point } from '../geometry';
 import { assertAsShown } from './resolve';
@@ -96,6 +97,7 @@ async function readGuards(
 }
 
 export interface ClickOptions {
+  feedback?: 'click' | 'type';
   button?: 'left' | 'right' | 'middle';
   count?: number;
   modifiers?: string[];
@@ -214,6 +216,8 @@ export async function dispatchClick(
   point: Point,
   options: ClickOptions,
 ): Promise<PointerOutcome> {
+  await actionPoint(ctx, point, options.feedback ?? 'click');
+  checkCancelled(ctx);
   const { cdp } = await ctx.attach();
   const tab = ctx.tab();
   const ancestors = await armGuards(ctx, target);
@@ -293,6 +297,12 @@ export async function dispatchClick(
   const cancelled = intercepted(target, guards, count);
   if (cancelled) throw cancelled;
   return { dispatched, reachedTarget: guards.own.verdict === 'passed', guard: guards.own };
+}
+
+export async function actionPoint(ctx: ToolContext, point: Point, kind: 'click' | 'type'): Promise<void> {
+  if (ctx.tabId !== null && ctx.session.hooks.onActionPoint) {
+    await ctx.session.hooks.onActionPoint(ctx.tabId, point, kind).catch(() => undefined);
+  }
 }
 
 export async function dispatchHover(ctx: ToolContext, point: Point): Promise<PointerOutcome> {

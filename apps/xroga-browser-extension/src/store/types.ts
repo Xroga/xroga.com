@@ -215,6 +215,7 @@ export interface RunRecord {
   conversationId: string;
   runId: string;
   canonicalBrowserRunId?: string;
+  canonicalBrowserActions?: string[];
   leafEntryId: string | null;
   status: RunStatus;
   outcome?: 'success' | 'partial' | 'failed';
