@@ -33,6 +33,7 @@ const dist = fileURLToPath(
 const site = "https://operator-fixture.test";
 const searchOrigin = "https://www.google.com";
 const workspaceOrigin = "https://xroga.com";
+const repo = fileURLToPath(new URL("../../", import.meta.url));
 const goal = "Open the catalog and report the published fixture price.";
 const answer = "The verified fixture price is $39.";
 const formGoal =
@@ -45,7 +46,51 @@ const workbookGoal =
   "Use the final order row in the attached workbook. Open the catalog and follow its product link for the final price. Report the product, quantity, unit price and total.";
 const runs = new Map();
 let voiceRequests = 0;
+let rejectPairing = !live;
 let browser;
+
+async function buildWorkspacePairingFailure() {
+  const { build } = require("esbuild");
+  const result = await build({
+    stdin: {
+      contents: `
+        import { createRoot } from 'react-dom/client';
+        import { WorkspaceBrowserOperator } from './frontend/src/components/browser/WorkspaceBrowserOperator';
+        const extensionId = new URL(location.href).searchParams.get('browserExtension');
+        createRoot(document.querySelector('#app')).render(<WorkspaceBrowserOperator extensionId={extensionId} />);
+      `,
+      resolveDir: repo,
+      loader: "tsx",
+    },
+    jsx: "automatic",
+    bundle: true,
+    write: false,
+    define: { "process.env.NODE_ENV": '"production"' },
+    plugins: [{
+      name: "isolated-workspace-api",
+      setup(plugin) {
+        plugin.onResolve({ filter: /^@\/lib\/(api|supabase\/client|voiceApi)$/ }, args => ({
+          path: args.path, namespace: "fixture",
+        }));
+        plugin.onLoad({ filter: /.*/, namespace: "fixture" }, args => {
+          if (args.path === "@/lib/api") return { contents: `
+            export class ApiError extends Error { constructor(message, status) { super(message); this.status = status; } }
+            export async function getAccessToken() { return 'fixture-authenticated-user'; }
+            export async function apiFetch(path) {
+              if (path !== '/api/browser/local/session') throw new Error('Unexpected request');
+              throw new ApiError('Not found', 404);
+            }
+          ` };
+          return { contents: `
+            export function createClient() { throw new Error('Pairing should stop on an unavailable API'); }
+            export function transcribeVoiceAudio() { throw new Error('Unexpected voice request'); }
+          ` };
+        });
+      },
+    }],
+  });
+  return result.outputFiles[0].text;
+}
 
 async function liveReply(run, request) {
   const body = {
@@ -167,6 +212,7 @@ function reply(run, request) {
 }
 
 try {
+  const workspaceFailureScript = live ? null : await buildWorkspacePairingFailure();
   browser = await chromium.launchPersistentContext(profile, {
     ...(chrome ? { executablePath: chrome } : { channel: "chromium" }),
     headless: false,
@@ -180,6 +226,7 @@ try {
     timeout: 20_000,
   });
   console.log("Chrome started");
+  browser.on("page", page => page.on("pageerror", error => console.error("Fixture page error:", error.message)));
   const tab = browser.pages()[0];
   const cdp = await browser.browser().newBrowserCDPSession();
   const { id } = await cdp.send("Extensions.loadUnpacked", { path: dist });
@@ -250,6 +297,12 @@ try {
       return route.fulfill({ contentType: "text/html", body });
     }
     if (url.origin === workspaceOrigin && url.pathname === "/workspace") {
+      if (rejectPairing) {
+        return route.fulfill({
+          contentType: "text/html",
+          body: `<!doctype html><div id="app"></div><script>${workspaceFailureScript.replaceAll("</script", "<\\/script")}</script>`,
+        });
+      }
       return route.fulfill({
         contentType: "text/html",
         body: `<!doctype html><title>Workspace bridge fixture</title>
@@ -282,9 +335,28 @@ try {
   const panel = await browser.newPage();
   await tab.bringToFront();
   await panel.goto(`chrome-extension://${id}/sidepanel.html`);
-  await panel
-    .getByRole("button", { name: "Connect Xroga Workspace" })
+  const connect = () => panel.getByRole("button", { name: "Connect Xroga Workspace" })
     .evaluate((button) => button.click());
+  if (!live) {
+    await connect();
+    await panel.getByRole("alert").filter({hasText:"Browser Automation is unavailable"}).waitFor({timeout: 15_000})
+      .catch(async error => {
+        for (const page of browser.pages()) {
+          if (page === panel || page.url().startsWith(`${workspaceOrigin}/workspace?`)) {
+            console.error("Pairing fixture page:", (await page.locator("body").innerText()).slice(0, 500));
+          }
+        }
+        throw error;
+      });
+    for (const page of browser.pages()) {
+      if (page.url().startsWith(`${workspaceOrigin}/workspace?`)) {
+        await page.getByRole("status").filter({hasText:"Browser Automation is unavailable"}).waitFor();
+        await page.close();
+      }
+    }
+    rejectPairing = false;
+  }
+  await connect();
   let workspace;
   const deadline = Date.now() + 15_000;
   while (!workspace && Date.now() < deadline) {
@@ -315,6 +387,7 @@ try {
       throw error;
     });
   console.log("Workspace fixture paired");
+  await panel.getByRole("status").filter({ hasText: "Workspace connected" }).waitFor({timeout: 15_000});
   await panel.getByRole("button", { name: "Connect Xroga Workspace" }).waitFor({ state: "hidden" });
   assert.equal(await panel.getByLabel("Website or search").count(), 0);
   const input = panel.locator("textarea");

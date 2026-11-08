@@ -15,6 +15,7 @@ test('local Chrome shares canonical ownership, turn fencing, cancellation and re
   const env = {
     SUPABASE_URL: 'http://127.0.0.1:1', SUPABASE_JWT_SECRET: 'test-only-local-browser-signing-secret',
     SUPABASE_SERVICE_ROLE_KEY: '', REQUIRE_REMOTE_AUTH_CHECK: '0',
+    XROGA_LOCAL_BROWSER_ALLOWED_USER_IDS: `${owner},${other}`,
   };
   const before = Object.fromEntries(Object.keys(env).map(key => [key, process.env[key]]));
   Object.assign(process.env, env);
@@ -54,6 +55,10 @@ test('local Chrome shares canonical ownership, turn fencing, cancellation and re
   try {
     assert.equal((await fetch(`http://127.0.0.1:${address.port}/session`)).status, 401);
     assert.deepEqual(await (await send('/session')).json(), { account: owner });
+    process.env.XROGA_LOCAL_BROWSER_ALLOWED_USER_IDS = owner;
+    assert.equal((await send('/session', 'GET', undefined, true)).status, 403);
+    assert.equal((await send('/runs', 'POST', { goal: 'Denied', startUrl: 'https://example.com' }, true)).status, 403);
+    process.env.XROGA_LOCAL_BROWSER_ALLOWED_USER_IDS = env.XROGA_LOCAL_BROWSER_ALLOWED_USER_IDS;
     const started = await send('/runs', 'POST', { goal: 'Compare items', startUrl: 'https://example.com/catalog' });
     assert.equal(started.status, 201);
     const { runId } = await started.json() as { runId: string };

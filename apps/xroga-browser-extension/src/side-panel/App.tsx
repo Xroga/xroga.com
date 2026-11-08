@@ -39,6 +39,14 @@ import { XROGA_REF } from '@src/xroga/model';
 
 const NO_PROVIDERS: ProviderConfig[] = [];
 const NO_KEYS: Record<string, string> = {};
+const PAIR_ERRORS: Record<string, string> = {
+  'sign-in': 'Sign in in the Workspace tab, then connect again.',
+  unavailable: 'Browser Automation is unavailable in this Workspace release.',
+  'extension-id': 'This Workspace release is configured for a different extension ID.',
+  account: 'This Chrome profile is linked to another Xroga account. Switch accounts or use a separate profile.',
+  failed: 'Workspace couldn’t connect. Try connecting again.',
+  timeout: 'Workspace didn’t respond. Check the Workspace tab for a message.',
+};
 
 async function transcribeInWorkspace(audio: Uint8Array): Promise<string> {
   let bytes = '';
@@ -104,13 +112,23 @@ export function App() {
   const [client, setClient] = useState<PanelClient | null>(null);
   const [failure, setFailure] = useState<string | null>(null);
   const [paired, setPaired] = useState(false);
+  const [connecting, setConnecting] = useState(false);
   const [connectionError, setConnectionError] = useState('');
   useEffect(() => {
     if (!XROGA_PRODUCT) return;
     const refresh = () =>
-      void chrome.runtime.sendMessage({ type: 'xroga.browser.paired.v1' }).then(
-        result => setPaired(result === true),
-        () => setPaired(false),
+      void chrome.runtime.sendMessage({ type: 'xroga.browser.connection.v1' }).then(
+        result => {
+          setPaired(result?.paired === true);
+          setConnecting(result?.connecting === true);
+          if (result?.paired) setConnectionError('');
+          else if (typeof result?.failure === 'string')
+            setConnectionError(PAIR_ERRORS[result.failure] ?? PAIR_ERRORS.failed);
+        },
+        () => {
+          setPaired(false);
+          setConnecting(false);
+        },
       );
     refresh();
     const timer = setInterval(refresh, 1_000);
@@ -462,19 +480,36 @@ export function App() {
           <SettingsIcon />
         </IconButton>
       </header>
-      {XROGA_PRODUCT && !paired ? (
+      {XROGA_PRODUCT ? (
         <div className="flex flex-col gap-2 border-b border-nb-border/60 px-3 py-2">
-          <button
-            type="button"
-            className="self-start rounded-md bg-nb-surface px-3 py-2 text-sm text-nb-fg"
-            onClick={() =>
-              void chrome.runtime.sendMessage({ type: 'xroga.browser.connect.v1' }).then(
-                ok => setConnectionError(ok ? '' : 'Could not open Workspace.'),
-                () => setConnectionError('Could not open Workspace.'),
-              )
-            }>
-            Connect Xroga Workspace
-          </button>
+          {paired ? (
+            <span role="status" className="text-xs text-nb-muted">
+              Workspace connected
+            </span>
+          ) : (
+            <button
+              type="button"
+              disabled={connecting}
+              className="self-start rounded-md bg-nb-surface px-3 py-2 text-sm text-nb-fg"
+              onClick={() => {
+                setConnecting(true);
+                setConnectionError('');
+                void chrome.runtime.sendMessage({ type: 'xroga.browser.connect.v1' }).then(
+                  ok => {
+                    if (!ok) {
+                      setConnecting(false);
+                      setConnectionError('Could not open Workspace.');
+                    }
+                  },
+                  () => {
+                    setConnecting(false);
+                    setConnectionError('Could not open Workspace.');
+                  },
+                );
+              }}>
+              {connecting ? 'Connecting to Workspace…' : 'Connect Xroga Workspace'}
+            </button>
+          )}
           {connectionError ? (
             <p role="alert" className="text-xs text-nb-muted">
               {connectionError}

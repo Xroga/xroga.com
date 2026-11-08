@@ -2,6 +2,7 @@ import { getWorkspaceExtensionStatus, isWorkspaceSender, WORKSPACE_URL } from '.
 
 const CONNECT = 'xroga.browser.connect.v1';
 const STATUS = 'xroga.browser.paired.v1';
+const CONNECTION = 'xroga.browser.connection.v1';
 const PORT = 'xroga-browser-v1';
 const PAIR_KEY = 'xroga-browser-account';
 const UUID = /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i;
@@ -17,7 +18,9 @@ interface WorkspaceMessage {
 
 type Operation = 'start' | 'resume' | 'turn' | 'finish' | 'document' | 'voice';
 type Pending = { succeed: (value: unknown) => void; fail: (error: Error) => void };
-let pairing: { nonce: string; tabId: number; expires: number } | undefined;
+type PairFailure = 'sign-in' | 'unavailable' | 'extension-id' | 'account' | 'failed';
+let pairing: { nonce: string; tabId: number; expires: number; started: number } | undefined;
+let pairFailure: PairFailure | undefined;
 let workspace: chrome.runtime.Port | undefined;
 const pending = new Map<string, Pending>();
 const disconnectHandlers = new Set<() => void>();
@@ -45,11 +48,18 @@ async function openPairing() {
   const nonce = crypto.randomUUID();
   const tab = await chrome.tabs.create({ url: 'about:blank' });
   if (tab.id === undefined) throw new Error('Could not open Workspace.');
-  pairing = { nonce, tabId: tab.id, expires: Date.now() + 5 * 60_000 };
+  const started = Date.now();
+  pairing = { nonce, tabId: tab.id, started, expires: started + 5 * 60_000 };
+  pairFailure = undefined;
   const url = new URL(WORKSPACE_URL);
   url.searchParams.set('browserExtension', chrome.runtime.id);
   url.searchParams.set('browserPair', nonce);
-  await chrome.tabs.update(tab.id, { url: url.href });
+  try {
+    await chrome.tabs.update(tab.id, { url: url.href });
+  } catch (error) {
+    if (pairing?.nonce === nonce) pairing = undefined;
+    throw error;
+  }
 }
 
 export function listenForWorkspace(
@@ -62,6 +72,14 @@ export function listenForWorkspace(
     (message: { type?: string; name?: unknown; base64?: unknown }, sender, reply) => {
       if (!panelSender(sender)) return;
       if (message?.type === STATUS) reply(workspacePaired());
+      if (message?.type === CONNECTION) {
+        const waiting = pairing && Date.now() - pairing.started < 25_000;
+        reply({
+          paired: workspacePaired(),
+          connecting: !pairFailure && !!waiting,
+          failure: pairFailure ?? (pairing && !waiting ? 'timeout' : undefined),
+        });
+      }
       if (
         message?.type === 'xroga.browser.voice.v1' &&
         typeof message.base64 === 'string' &&
@@ -101,6 +119,22 @@ export function listenForWorkspace(
   chrome.runtime.onMessageExternal.addListener((message: unknown, sender, reply) => {
     const status = getWorkspaceExtensionStatus(message, sender);
     if (status) reply({ ...status, paired: workspace?.sender?.tab?.id === sender.tab?.id && !!workspace });
+    const failure = message as { type?: unknown; nonce?: unknown; reason?: unknown } | null;
+    if (
+      failure?.type === 'xroga.browser.pair-failed.v1' &&
+      isWorkspaceSender(sender) &&
+      pairing &&
+      sender.tab?.id === pairing.tabId &&
+      failure.nonce === pairing.nonce &&
+      Date.now() < pairing.expires &&
+      (failure.reason === 'sign-in' ||
+        failure.reason === 'unavailable' ||
+        failure.reason === 'extension-id' ||
+        failure.reason === 'failed')
+    ) {
+      pairFailure = failure.reason;
+      reply(true);
+    }
   });
   chrome.runtime.onConnectExternal.addListener(port => {
     if (port.name !== PORT || !isWorkspaceSender(port.sender) || port.sender?.tab?.id !== pairing?.tabId) {
@@ -175,14 +209,20 @@ export function listenForWorkspace(
         const account = message.account;
         void (async () => {
           const stored = (await chrome.storage.local.get(PAIR_KEY))[PAIR_KEY];
-          if (stored && stored !== account)
-            throw new Error('Use a separate Chrome profile for a different Xroga account.');
+          if (stored && stored !== account) {
+            pairFailure = 'account';
+            port.postMessage({ type: 'pair-rejected', status: 'account' });
+            port.disconnect();
+            return;
+          }
           await chrome.storage.local.set({ [PAIR_KEY]: account });
           // Send first. A tab closed during storage I/O must never become the current port.
           port.postMessage({ type: 'paired' });
           workspace = port;
+          pairFailure = undefined;
           clearTimeout(expires);
         })().catch(() => {
+          pairFailure = 'failed';
           try {
             port.disconnect();
           } catch {

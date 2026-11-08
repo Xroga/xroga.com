@@ -151,6 +151,12 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
       try {
         const rt = resolve();
         if (!rt) throw new BrowserRequestError(503, 'LOCAL_BROWSER_DISABLED');
+        const allowed = process.env.XROGA_LOCAL_BROWSER_ALLOWED_USER_IDS;
+        if (allowed !== undefined || process.env.NODE_ENV === 'production') {
+          const users = (allowed ?? '').split(',').map(user => user.trim());
+          const user = requireTenantContext(req.tenantContext).userId;
+          if (!users.includes(user)) throw new BrowserRequestError(403, 'LOCAL_BROWSER_ACCOUNT_NOT_ENABLED');
+        }
         return await handler(req, res, rt);
       } catch (error) { return sendError(res, error); }
     };

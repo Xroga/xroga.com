@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { apiFetch, getAccessToken } from '@/lib/api';
+import { ApiError, apiFetch, getAccessToken } from '@/lib/api';
 import { createClient } from '@/lib/supabase/client';
 import { transcribeVoiceAudio } from '@/lib/voiceApi';
 
@@ -25,6 +25,7 @@ type BridgeMessage = {
 type RunResult = { status: string; result?: { text?: string } | null };
 const API = '/api/browser/local';
 const UUID = /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i;
+const EXTENSION_ID = /^[a-p]{32}$/;
 const DOCUMENT = /\.(?:pdf|docx|xlsx)$/i;
 
 async function taskFile(file: File, token: string) {
@@ -39,13 +40,14 @@ async function taskFile(file: File, token: string) {
   return { name: `${name.slice(0, 196)}.txt`, text };
 }
 
-export function WorkspaceBrowserOperator({ extensionId }: { extensionId: string }) {
+export function WorkspaceBrowserOperator({ extensionId }: { extensionId?: string }) {
   const portRef = useRef<Port | null>(null);
   const activeRun = useRef('');
   const pairedToken = useRef('');
   const [goal, setGoal] = useState('');
   const [files, setFiles] = useState<File[]>([]);
   const [paired, setPaired] = useState(false);
+  const [pairingVisible, setPairingVisible] = useState(false);
   const [busy, setBusy] = useState(false);
   const [runId, setRunId] = useState('');
   const [activity, setActivity] = useState<string[]>([]);
@@ -56,18 +58,33 @@ export function WorkspaceBrowserOperator({ extensionId }: { extensionId: string 
     const url = new URL(location.href);
     const nonce = url.searchParams.get('browserPair');
     const requestedId = url.searchParams.get('browserExtension');
-    if (!nonce || !UUID.test(nonce) || requestedId !== extensionId) return;
-    const runtime = (window as Window & { chrome?: { runtime?: { connect: (id: string, options: { name: string }) => Port } } }).chrome?.runtime;
-    if (!runtime) { setStatus('Chrome could not find the Xroga extension.'); return; }
+    if (!nonce || !UUID.test(nonce) || !requestedId || !EXTENSION_ID.test(requestedId)) return;
+    setPairingVisible(true);
+    const runtime = (window as Window & { chrome?: { runtime?: {
+      connect: (id: string, options: { name: string }) => Port;
+      sendMessage: (id: string, message: unknown) => Promise<unknown>;
+    } } }).chrome?.runtime;
+    const failed = (reason: 'unavailable' | 'extension-id' | 'sign-in' | 'failed', message: string) => {
+      setStatus(message);
+      if (typeof runtime?.sendMessage === 'function') {
+        void runtime.sendMessage(requestedId, { type: 'xroga.browser.pair-failed.v1', nonce, reason }).catch(() => {});
+      }
+    };
+    if (!extensionId) { failed('unavailable', 'Browser Automation is unavailable in this Workspace release.'); return; }
+    if (requestedId !== extensionId) { failed('extension-id', 'This Workspace release is configured for a different extension ID.'); return; }
+    if (!runtime) { failed('failed', 'Chrome could not find the Xroga extension.'); return; }
     let disposed = false;
     let port: Port | undefined;
     let stopAuthListener: (() => void) | undefined;
     const requests = new Map<string, AbortController>();
     const admitted = new Set<string>();
+    let rejected = false;
     const connect = async () => {
       const token = await getAccessToken();
-      if (!token) throw new Error('Sign in to Xroga, then connect again from the Chrome side panel.');
+      if (disposed) return;
+      if (!token) { failed('sign-in', 'Sign in to Xroga, then connect again from the Chrome side panel.'); return; }
       const session = await apiFetch<{ account: string }>(`${API}/session`, {}, token);
+      if (!UUID.test(session.account)) throw new Error('Invalid account response');
       if (disposed) return;
       const connected = runtime.connect(extensionId, { name: 'xroga-browser-v1' });
       port = connected;
@@ -85,10 +102,15 @@ export function WorkspaceBrowserOperator({ extensionId }: { extensionId: string 
         pairedToken.current = '';
         setPaired(false);
         setBusy(false);
-        setStatus('Workspace disconnected. Connect again from the Chrome side panel.');
+        if (!rejected) setStatus('Workspace disconnected. Connect again from the Chrome side panel.');
       });
       connected.onMessage.addListener(message => {
         if (disposed || !message || typeof message !== 'object') return;
+        if (message.type === 'pair-rejected' && message.status === 'account') {
+          rejected = true;
+          setStatus('This Chrome profile is linked to another Xroga account. Use a separate Chrome profile.');
+          return;
+        }
         if (message.type === 'paired') {
           portRef.current = connected;
           setPaired(true);
@@ -173,7 +195,18 @@ export function WorkspaceBrowserOperator({ extensionId }: { extensionId: string 
       });
       connected.postMessage({ type: 'pair', nonce, account: session.account });
     };
-    void connect().catch(error => { if (!disposed) setStatus(error instanceof Error ? error.message : 'Could not connect Chrome.'); });
+    void connect().catch(error => {
+      if (disposed) return;
+      if (error instanceof ApiError && (error.status === 404 || error.status === 503)) {
+        failed('unavailable', 'Browser Automation is unavailable in this Workspace release.');
+      } else if (error instanceof ApiError && error.status === 401) {
+        failed('sign-in', 'Sign in to Xroga, then connect again from the Chrome side panel.');
+      } else if (error instanceof ApiError && error.status === 403) {
+        failed('unavailable', 'Browser Automation isn’t enabled for this Xroga account.');
+      } else {
+        failed('failed', 'Could not connect Chrome. Try connecting again from the side panel.');
+      }
+    });
     return () => {
       disposed = true;
       for (const request of requests.values()) request.abort();
@@ -184,8 +217,9 @@ export function WorkspaceBrowserOperator({ extensionId }: { extensionId: string 
     };
   }, [extensionId]);
 
+  if (!extensionId && !pairingVisible) return null;
   return (
-    <details className="fixed bottom-24 right-4 z-40 w-[min(24rem,calc(100vw-2rem))] rounded-xl border bg-background p-3 text-sm text-foreground shadow-lg" open={paired || undefined}>
+    <details className="fixed bottom-24 right-4 z-40 w-[min(24rem,calc(100vw-2rem))] rounded-xl border bg-background p-3 text-sm text-foreground shadow-lg" open={paired || pairingVisible || undefined}>
       <summary className="cursor-pointer font-medium">Browser Operator</summary>
       <p className="my-2 text-xs" role="status">{status}</p>
       {paired && <form className="grid gap-2" onSubmit={event => {

@@ -8,7 +8,7 @@ import { WorkspaceBrowserOperator } from '@/components/browser/WorkspaceBrowserO
 
 export const metadata = PAGE_SEO.dashboard;
 
-export default async function WorkspacePage({ searchParams }: { searchParams: Promise<{ responseV2?: string }> }) {
+export default async function WorkspacePage({ searchParams }: { searchParams: Promise<{ responseV2?: string; browserPair?: string; browserExtension?: string }> }) {
   const query = await searchParams;
   let authorizedUserId: string | null = null;
   let reviewStatus: string | null = null;
@@ -36,7 +36,8 @@ export default async function WorkspacePage({ searchParams }: { searchParams: Pr
     <DashboardErrorBoundary>
       {reviewStatus && <p role="status">{reviewStatus}</p>}
       <ResponseExperienceProvider authorizedUserId={authorizedUserId}><DashboardView /></ResponseExperienceProvider>
-      {extensionId && /^[a-p]{32}$/.test(extensionId) && <WorkspaceBrowserOperator extensionId={extensionId} />}
+      {(extensionId && /^[a-p]{32}$/.test(extensionId) || query.browserPair && query.browserExtension) &&
+        <WorkspaceBrowserOperator extensionId={extensionId && /^[a-p]{32}$/.test(extensionId) ? extensionId : undefined} />}
     </DashboardErrorBoundary>
   );
 }
