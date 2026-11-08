@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "366ec3abe99a949d585172069f3e0bbc582ca1ab545f44e3e5c9d4d9ab29a1e4",
+  "reviewRegistrySha256": "2e25eaa8ddfac132a4fb659d33230facd5d25ba6712626abcd6d8a3cc760ad02",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -6308,7 +6308,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "4481dd828debd0369489"
+        "id": "b14757670cd7cae6bebc"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -10088,7 +10088,7 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "4481dd828debd0369489"
+        "id": "b14757670cd7cae6bebc"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -30885,15 +30885,15 @@
       }
     },
     {
-      "id": "4481dd828debd0369489",
+      "id": "b14757670cd7cae6bebc",
       "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
-      "line": 312,
+      "line": 348,
       "enclosing": "WorkspaceBrowserOperator",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "efebc44546c3f94eb5f6b66cd22964866d16f70602d9c526985327295564a234",
+      "sourceSha256": "82983bf0a836d2e284ffe35ddea6b182b42dcb64304a2a394e6becc9a46213c1",
       "semanticReview": {
         "authority": "Inspected the exact receiver and complete expression. It is a built-in JavaScript data conversion with no persistence client or privilege transfer.",
         "reason": "Decodes the user-requested recording locally. The byte conversion does not invoke a database or storage client.",

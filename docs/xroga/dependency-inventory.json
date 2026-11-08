@@ -20437,7 +20437,7 @@
     },
     {
       "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
-      "sha256": "78ab70b1e0f278da3b9e68d6d4bbca0e8adcb9edb9520ea92ad5e796c3d605ac"
+      "sha256": "82983bf0a836d2e284ffe35ddea6b182b42dcb64304a2a394e6becc9a46213c1"
     },
     {
       "path": "frontend/src/components/browser/XrogaBrowser.tsx",
@@ -37408,7 +37408,7 @@
     },
     {
       "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
-      "line": 243,
+      "line": 277,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
