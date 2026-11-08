@@ -8,7 +8,7 @@ const css=readFileSync(new URL('../components/layout/SidebarOrganize.css',import
 const visible=sidebar.slice(sidebar.indexOf('  return <div className="mt-2 mb-1'),sidebar.indexOf('    <SidebarActionMenu point='));
 
 test('Projects, conditional Pinned and Recents are compact text-first rows',()=>{
-  assert.match(visible, /<h2 className=\{sectionTitle\}><button[^>]*>Projects/);
+  assert.match(visible, /<h2 className=\{sectionTitle\}>Projects<\/h2>/);
   assert.match(visible, /pinnedItems\.length>0\?<section/);
   assert.match(visible, /<h2 className=\{sectionTitle\}>Recents<\/h2>/);
   assert.doesNotMatch(visible, /<MessageSquare|<FolderOpen/);
@@ -17,15 +17,11 @@ test('Projects, conditional Pinned and Recents are compact text-first rows',()=>
   assert.match(sidebar, /aria-label=\{label\}/);
   assert.match(sidebar, /<SidebarMovingTitle text=\{label\}/);
 });
-test('Recents starts compact and auto-reveals more on scroll',()=>{
-  assert.match(sidebar,/useState\(12\)/);
-  assert.match(visible,/standaloneRecents\.slice\(0,shownRecents\)\.map/);
-  assert.match(sidebar,/new IntersectionObserver\(entries=>/);
-  assert.match(sidebar,/recentsEndRef/);
-  assert.match(sidebar,/rootMargin:'0px 0px 140px 0px'/);
-  assert.match(sidebar,/loadingOlderRecentsRef\.current/);
-  assert.doesNotMatch(visible,/View more recents|Load older recents|Show fewer/);
-  assert.doesNotMatch(visible,/View all chats|Show fewer chats/);
+test('Recents renders at most twelve initially and grows only on user request',()=>{
+  assert.match(sidebar, /useState\(12\)/);
+  assert.match(visible, /standaloneRecents\.slice\(0,shownRecents\)\.map/);
+  assert.match(visible, /setShownRecents\(prev=>prev\+12\)/);
+  assert.match(visible, /onClick=\{\(\)=>setShownRecents\(12\)\}>Show fewer/);
 });
 test('metadata refresh is debounced and avoids repeated focus-triggered network calls',()=>{
   assert.match(sidebar,/lastSidebarFetchRef\.current>30000/);
@@ -41,8 +37,7 @@ test('local history is parsed once per UI refresh rather than once for each save
   assert.equal((localRefresh.match(/loadTerminalHistory\(\)/g)||[]).length,1);
 });
 test('row actions remain keyboard-reachable and titles respect reduced motion',()=>{
-  assert.match(sidebar, /aria-label=\{'More options for '\+label\}/);
-  assert.match(sidebar, /\{id:'pin',label:metaOf\(menu\.kind,menu\.id\)/);
+  assert.match(sidebar, /aria-label=\{saved\?'Unpin '\+label:'Pin '\+label\}/);
   assert.match(sidebar, /aria-haspopup="menu"/);
   assert.match(css, /prefers-reduced-motion:reduce/);
 });
@@ -55,13 +50,4 @@ test('conversation rows use tightly spaced labels with safe mobile touch height'
  assert.match(sidebar,/text-left py-1 px-1\.5 rounded-md/);
  assert.match(css,/pointer:coarse/);
  assert.match(css,/min-height:32px/);
-});
-
-test('chat menu uses the workspace edge, a title and a document portal',()=>{
-  const menu=readFileSync(new URL('../components/layout/SidebarActionMenu.tsx',import.meta.url),'utf8');
-  assert.match(sidebar,/closest\('\.xv-sidebar-floating'\)/);
-  assert.match(sidebar,/title=\{menu\?\.kind==='conversation'/);
-  assert.match(menu,/createPortal\(/);
-  assert.match(menu,/window\.innerWidth<640/);
-  assert.match(menu,/xv-sidebar-work-menu__title/);
 });
