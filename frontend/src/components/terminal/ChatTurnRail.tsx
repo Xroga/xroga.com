@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState, type CSSProperties } from 'react';
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import { createPortal } from 'react-dom';
 import { Bookmark, ChevronDown, ChevronUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -116,19 +116,22 @@ export function ChatTurnRail({ turns, activeId, onJump, conversationKey, classNa
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [layout, setLayout] = useState({ left: 8, height: 800, navigable: false, width: 1366 });
   const [railHost, setRailHost] = useState<HTMLElement | null>(null);
+  const railAnchorRef = useRef<HTMLSpanElement>(null);
   const [mounted, setMounted] = useState(false);
   const [bookmarks, setBookmarks] = useState<{ key: string; ids: string[] }>({ key: '', ids: [] });
   const [pageStart, setPageStart] = useState(0);
 
   useEffect(() => {
     setMounted(true);
-    const root = document.querySelector<HTMLElement>('.xv-terminal-scroll')
+    const root = railAnchorRef.current?.closest<HTMLElement>('.xv-terminal-scroll')
+      ?? document.querySelector<HTMLElement>('.xv-terminal-scroll')
       ?? document.querySelector<HTMLElement>('main.flex-1.overflow-y-auto')
       ?? document.documentElement;
     // In /workspace the conversation rail belongs to the terminal pane, NOT
     // the viewport. The pane is already position:relative; a portal into it
     // keeps the markers aligned as the sidebar changes the pane's width.
-    const host = root.closest<HTMLElement>('.xv-terminal-panel');
+    const host = railAnchorRef.current?.closest<HTMLElement>('.xv-terminal-panel')
+      ?? root.closest<HTMLElement>('.xv-terminal-panel');
     setRailHost(host);
     const place = () => {
       const scrollable = root.scrollHeight > root.clientHeight + 40;
@@ -209,10 +212,13 @@ export function ChatTurnRail({ turns, activeId, onJump, conversationKey, classNa
     try { localStorage.setItem(bookmarkStorageKey(conversationKey), JSON.stringify(next)); } catch { /* Non-persistent storage fallback. */ }
   }
 
-  if (!mounted || turns.length < 2 || !layout.navigable || visibleTurns.length < 2 || (layout.width < 360)) return null;
+  // A history index is useful even when its transcript fits without scrolling.
+  // The old navigable/scrollHeight gate could hide it entirely after pane changes.
+  const anchor = <span ref={railAnchorRef} hidden aria-hidden="true" />;
+  if (!mounted || turns.length < 2 || visibleTurns.length < 2 || (layout.width < 360)) return anchor;
 
   const markerTop = hoveredIndex >= 0 ? turnMarkerTop(hoveredIndex, visibleTurns.length, layout.height) : 0;
-  return createPortal(
+  return <>{anchor}{createPortal(
     <nav
       className={cn('xv-chat-turn-rail xv-chat-turn-rail--dock', railHost && 'xv-chat-turn-rail--pane', className)}
       style={railHost ? undefined : { left: layout.left }}
@@ -270,5 +276,5 @@ export function ChatTurnRail({ turns, activeId, onJump, conversationKey, classNa
       </div> : null}
     </nav>,
     railHost ?? document.body,
-  );
+  )}</>;
 }
