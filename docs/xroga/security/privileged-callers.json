@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "7868c9afd3f271ed360635a6b7500b8178a2fb001bb2edbfa9731c2bf2b3469e",
+  "reviewRegistrySha256": "1df341767bc1cabbbaf72ef3d28ac7f111f15550087db12e3343a189b33e1bd5",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -6304,11 +6304,11 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "a9e89dea32df3eb8a0b5"
+        "id": "aeed73270fbd285f4446"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "db86c426bed33eedc7ee"
+        "id": "9a1aa074201d15f0e9b0"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -10088,11 +10088,11 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "a9e89dea32df3eb8a0b5"
+        "id": "aeed73270fbd285f4446"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "db86c426bed33eedc7ee"
+        "id": "9a1aa074201d15f0e9b0"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -30889,15 +30889,15 @@
       }
     },
     {
-      "id": "a9e89dea32df3eb8a0b5",
+      "id": "aeed73270fbd285f4446",
       "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
-      "line": 180,
+      "line": 284,
       "enclosing": "WorkspaceBrowserOperator",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "2500a1f07a78f43f9ebee385642fac97743777253c045bce71eed6bf51002d9a",
+      "sourceSha256": "9a970ad831e3085d51dacae2ac200470a4a220400add4326a5d0fec5f51b55e4",
       "semanticReview": {
         "authority": "Inspected the exact receiver and complete expression. It is a built-in JavaScript data conversion with no persistence client or privilege transfer.",
         "reason": "Decodes the user-requested recording or enumerates user-selected File objects locally. Neither method is a database or storage invocation.",
@@ -30914,15 +30914,15 @@
       }
     },
     {
-      "id": "db86c426bed33eedc7ee",
+      "id": "9a1aa074201d15f0e9b0",
       "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
-      "line": 246,
+      "line": 357,
       "enclosing": "WorkspaceBrowserOperator",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "2500a1f07a78f43f9ebee385642fac97743777253c045bce71eed6bf51002d9a",
+      "sourceSha256": "9a970ad831e3085d51dacae2ac200470a4a220400add4326a5d0fec5f51b55e4",
       "semanticReview": {
         "authority": "Inspected the exact receiver and complete expression. It is a built-in JavaScript data conversion with no persistence client or privilege transfer.",
         "reason": "Decodes the user-requested recording or enumerates user-selected File objects locally. Neither method is a database or storage invocation.",
