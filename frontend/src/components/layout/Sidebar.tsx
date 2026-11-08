@@ -1,5 +1,7 @@
 'use client';
 
+import { WorkspaceBrowserConnection } from '@/components/browser/WorkspaceBrowserOperator';
+
 import { useEffect, useState, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import Link from 'next/link';
@@ -812,6 +814,7 @@ export function Sidebar({ displayName, email }: SidebarProps) {
           ref={navScrollRef}
           className="xv-sidebar-nav-scroll xv-sidebar-scroll-track h-full p-2 overflow-y-auto overflow-x-hidden min-h-0"
         >
+          {!isGuest && !incognito && <WorkspaceBrowserConnection />}
           <div className="xv-sidebar-menu xv-sidebar-nav-v2">
               {navItems.filter(entry => isGroup(entry) || entry.href !== '/dashboard').map((entry) =>
                 isGroup(entry) && entry.id === 'more' ? (
