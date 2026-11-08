@@ -38,8 +38,10 @@ test('profile footer has the real name, plan and square-rounded profile photo', 
 test('drag paints adjacent panes directly and persists sidebar width only on release', () => {
   const handler = sidebar.slice(sidebar.indexOf('  function beginResize('), sidebar.indexOf('  function startResize(', sidebar.indexOf('  function beginResize(')));
   assert.match(handler, /requestAnimationFrame\(paint\)/);
-  assert.match(handler, /sidebarFrameRef\.current\.style\.width = pixels/);
+  assert.match(handler, /frame\.style\.width = pixels/);
   assert.match(handler, /sidebarPanelRef\.current\.style\.width = pixels/);
+  assert.match(handler, /\.xv-terminal-dock/);
+  assert.match(handler, /setProperty\('--sidebar-width', pixels\)/);
   assert.match(handler, /if \(!active\) return/);
   assert.match(handler, /function onCancel\(\) \{ finish\(false\); \}/);
   assert.equal((handler.match(/setSidebarWidth\(/g) || []).length, 1);
