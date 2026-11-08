@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "44597abf65a8d1253750a19db23332bc6fc9a921721946294238e4420c09c944",
+  "sourceTreeDigest": "1d295b292e2171b17977f001f89e6583943e6e03446b2e3f5a09bb8e0334b481",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -4345,7 +4345,61 @@
     {
       "id": "5b19b5ab231e0280efc7",
       "file": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+      "line": 192,
+      "entryPoint": "connect",
+      "transport": "send",
+      "callee": "send",
+      "callSha256": "206706dbb61de5380fd1b4d123cfaaeff134ec6f18643bb9f3c9f7f3ddcde24e",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "BOUNDED_CHROME_EXTENSION_PORT_NO_HTTP_TRANSPORT_OR_SESSION_TOKEN_IN_RESPONSE",
+      "tenantAuthority": "Resume history is requested only for a run admitted by the signed-in Workspace API through the current Chrome port.",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "VERIFIED_GUARD",
+      "evidence": [
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": "if (message.type === 'run' && message.runId && admitted.has(message.runId))",
+          "sha256": "9a970ad831e3085d51dacae2ac200470a4a220400add4326a5d0fec5f51b55e4"
+        },
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": "else send({ type: 'activity-history', runId: message.runId })",
+          "sha256": "9a970ad831e3085d51dacae2ac200470a4a220400add4326a5d0fec5f51b55e4"
+        }
+      ]
+    },
+    {
+      "id": "6631f0cfac960ae10cff",
+      "file": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
       "line": 202,
+      "entryPoint": "connect",
+      "transport": "send",
+      "callee": "send",
+      "callSha256": "3f0d26d4bf152dcc89783b04a195a6d4bf8c9093bb3a10c1454b4d596b59f152",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "BOUNDED_CHROME_EXTENSION_PORT_NO_HTTP_TRANSPORT_OR_SESSION_TOKEN_IN_RESPONSE",
+      "tenantAuthority": "Reconnected history is requested only after the API confirms the current account owns the exact run. The connection and run are checked again before sending.",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "VERIFIED_GUARD",
+      "evidence": [
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": "if (disposed || portRef.current !== connected || activeRun.current) return",
+          "sha256": "9a970ad831e3085d51dacae2ac200470a4a220400add4326a5d0fec5f51b55e4"
+        },
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": "send({ type: 'activity-history', runId: checkpoint })",
+          "sha256": "9a970ad831e3085d51dacae2ac200470a4a220400add4326a5d0fec5f51b55e4"
+        }
+      ]
+    },
+    {
+      "id": "e0aa33d2494c480caeb3",
+      "file": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+      "line": 274,
       "entryPoint": "connect",
       "transport": "send",
       "callee": "send",
@@ -4360,12 +4414,12 @@
         {
           "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
           "marker": "const connected = runtime.connect(extensionId, { name: 'xroga-browser-v1' })",
-          "sha256": "67ae537e26c8dce63adf12d566babd2b2a37a76fc6bac2585e514ef0ead4a540"
+          "sha256": "9a970ad831e3085d51dacae2ac200470a4a220400add4326a5d0fec5f51b55e4"
         },
         {
           "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
           "marker": "if (!isStart && !isResume && !isDocument && !isVoice",
-          "sha256": "67ae537e26c8dce63adf12d566babd2b2a37a76fc6bac2585e514ef0ead4a540"
+          "sha256": "9a970ad831e3085d51dacae2ac200470a4a220400add4326a5d0fec5f51b55e4"
         },
         {
           "path": "backend/src/routes/localBrowser.ts",
@@ -4375,9 +4429,9 @@
       ]
     },
     {
-      "id": "6631f0cfac960ae10cff",
+      "id": "96c8086ac0938c5c9190",
       "file": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
-      "line": 215,
+      "line": 287,
       "entryPoint": "connect",
       "transport": "send",
       "callee": "send",
@@ -4392,12 +4446,12 @@
         {
           "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
           "marker": "const connected = runtime.connect(extensionId, { name: 'xroga-browser-v1' })",
-          "sha256": "67ae537e26c8dce63adf12d566babd2b2a37a76fc6bac2585e514ef0ead4a540"
+          "sha256": "9a970ad831e3085d51dacae2ac200470a4a220400add4326a5d0fec5f51b55e4"
         },
         {
           "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
           "marker": "const bytes = Uint8Array.from(atob(encoded)",
-          "sha256": "67ae537e26c8dce63adf12d566babd2b2a37a76fc6bac2585e514ef0ead4a540"
+          "sha256": "9a970ad831e3085d51dacae2ac200470a4a220400add4326a5d0fec5f51b55e4"
         },
         {
           "path": "backend/src/routes/localBrowser.ts",
@@ -4407,9 +4461,9 @@
       ]
     },
     {
-      "id": "e0aa33d2494c480caeb3",
+      "id": "3736829b4cae598c6292",
       "file": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
-      "line": 216,
+      "line": 288,
       "entryPoint": "connect",
       "transport": "send",
       "callee": "send",
@@ -4424,12 +4478,12 @@
         {
           "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
           "marker": "const connected = runtime.connect(extensionId, { name: 'xroga-browser-v1' })",
-          "sha256": "67ae537e26c8dce63adf12d566babd2b2a37a76fc6bac2585e514ef0ead4a540"
+          "sha256": "9a970ad831e3085d51dacae2ac200470a4a220400add4326a5d0fec5f51b55e4"
         },
         {
           "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
           "marker": "preparedPcm: true, expectedToken: pairedToken.current",
-          "sha256": "67ae537e26c8dce63adf12d566babd2b2a37a76fc6bac2585e514ef0ead4a540"
+          "sha256": "9a970ad831e3085d51dacae2ac200470a4a220400add4326a5d0fec5f51b55e4"
         },
         {
           "path": "backend/src/routes/localBrowser.ts",
@@ -4439,9 +4493,9 @@
       ]
     },
     {
-      "id": "96c8086ac0938c5c9190",
+      "id": "d8500d7e40e05a539e15",
       "file": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
-      "line": 229,
+      "line": 301,
       "entryPoint": "connect",
       "transport": "send",
       "callee": "send",
@@ -4456,12 +4510,12 @@
         {
           "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
           "marker": "const connected = runtime.connect(extensionId, { name: 'xroga-browser-v1' })",
-          "sha256": "67ae537e26c8dce63adf12d566babd2b2a37a76fc6bac2585e514ef0ead4a540"
+          "sha256": "9a970ad831e3085d51dacae2ac200470a4a220400add4326a5d0fec5f51b55e4"
         },
         {
           "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
           "marker": "if ((isStart || isResume) && data.runId",
-          "sha256": "67ae537e26c8dce63adf12d566babd2b2a37a76fc6bac2585e514ef0ead4a540"
+          "sha256": "9a970ad831e3085d51dacae2ac200470a4a220400add4326a5d0fec5f51b55e4"
         },
         {
           "path": "backend/src/routes/localBrowser.ts",
@@ -4471,9 +4525,9 @@
       ]
     },
     {
-      "id": "3736829b4cae598c6292",
+      "id": "5ad5a74f852db7524d8a",
       "file": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
-      "line": 230,
+      "line": 302,
       "entryPoint": "connect",
       "transport": "send",
       "callee": "send",
@@ -4488,12 +4542,12 @@
         {
           "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
           "marker": "const connected = runtime.connect(extensionId, { name: 'xroga-browser-v1' })",
-          "sha256": "67ae537e26c8dce63adf12d566babd2b2a37a76fc6bac2585e514ef0ead4a540"
+          "sha256": "9a970ad831e3085d51dacae2ac200470a4a220400add4326a5d0fec5f51b55e4"
         },
         {
           "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
           "marker": "}, () => send({ type: 'result', id, ok: false })",
-          "sha256": "67ae537e26c8dce63adf12d566babd2b2a37a76fc6bac2585e514ef0ead4a540"
+          "sha256": "9a970ad831e3085d51dacae2ac200470a4a220400add4326a5d0fec5f51b55e4"
         },
         {
           "path": "backend/src/routes/localBrowser.ts",
@@ -5194,6 +5248,8 @@
         "e0aa33d2494c480caeb3",
         "96c8086ac0938c5c9190",
         "3736829b4cae598c6292",
+        "d8500d7e40e05a539e15",
+        "5ad5a74f852db7524d8a",
         "f9cea4897b39781b679b",
         "e8a0d676ee1d532a3be6",
         "13608654d27d029cbf04",
@@ -5273,8 +5329,8 @@
     }
   ],
   "counts": {
-    "total": 155,
-    "reviewed": 155,
+    "total": 157,
+    "reviewed": 157,
     "pending": 0,
     "unresolvedHighRiskBypasses": 0
   }
