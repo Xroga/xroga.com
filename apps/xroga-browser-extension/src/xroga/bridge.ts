@@ -1,10 +1,12 @@
 import { getWorkspaceExtensionStatus, isWorkspaceSender, WORKSPACE_URL } from './workspace';
+import { deviceProof, deviceRequest, directConfigured, directReady, enrollDevice, PAIR_KEY, DEVICE_PROFILE,
+  revokeDevice, savedDevice, verifyDevice } from './device';
 
 const CONNECT = 'xroga.browser.connect.v1';
 const STATUS = 'xroga.browser.paired.v1';
 const CONNECTION = 'xroga.browser.connection.v1';
 const PORT = 'xroga-browser-v1';
-const PAIR_KEY = 'xroga-browser-account';
+const SIGNED_OUT = 'xroga-browser-explicit-signout';
 const PAIR_TAB_KEY = 'xroga-browser-workspace-tab';
 const VERIFIED_TAB_KEY = 'xroga-browser-verified-workspace-tab';
 const UUID = /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i;
@@ -13,12 +15,13 @@ interface WorkspaceMessage {
   type?: string;
   nonce?: string;
   account?: string;
+  device?: boolean;
   id?: string;
   ok?: boolean;
   value?: unknown;
 }
 
-type Operation = 'start' | 'resume' | 'turn' | 'finish' | 'document' | 'voice';
+type Operation = 'start' | 'resume' | 'turn' | 'finish' | 'document' | 'voice' | 'authorize-device';
 type Pending = { succeed: (value: unknown) => void; fail: (error: Error) => void };
 type PairFailure = 'sign-in' | 'unavailable' | 'extension-id' | 'account' | 'failed';
 let pairing: { nonce: string; tabId: number; expires: number; started: number } | undefined;
@@ -27,6 +30,10 @@ let opening: Promise<void> | undefined;
 let autoAttempted = false;
 let pairTabId: number | undefined;
 let workspace: chrome.runtime.Port | undefined;
+let deviceMode = false;
+let enrolling = false;
+let signingOut = false;
+let restoredDevice = false;
 const pending = new Map<string, Pending>();
 const disconnectHandlers = new Set<() => void>();
 export type WorkspaceTextFile = { name: string; text: string };
@@ -37,7 +44,7 @@ let connectedHandler: (() => Promise<void>) | undefined;
 let activityHandler: ((runId: string) => Promise<void>) | undefined;
 
 export function workspacePaired() {
-  return !!workspace;
+  return !signingOut && !enrolling && (deviceMode ? directReady() : !!workspace);
 }
 export function onWorkspaceDisconnect(handler: () => void) {
   disconnectHandlers.add(handler);
@@ -53,6 +60,14 @@ function panelSender(sender: chrome.runtime.MessageSender) {
 }
 
 async function openPairing(manual: boolean) {
+  if (signingOut) return;
+  if (directConfigured() && await savedDevice()) {
+    deviceMode = true;
+    if (await verifyDevice() || !manual) return;
+    workspace?.disconnect();
+    workspace = undefined;
+  }
+  if (!manual && directConfigured() && (await chrome.storage.local.get(SIGNED_OUT))[SIGNED_OUT]) return;
   if (workspace) return;
   if (!manual && autoAttempted) return;
   autoAttempted = true;
@@ -129,13 +144,44 @@ export function listenForWorkspace(
     (message: { type?: string; name?: unknown; base64?: unknown; automatic?: boolean }, sender, reply) => {
       if (!panelSender(sender)) return;
       if (message?.type === STATUS) reply(workspacePaired());
+      if (message?.type === 'xroga.browser.sign-out.v1' && deviceMode && !enrolling && !signingOut) {
+        signingOut = true;
+        void (async () => {
+          await chrome.storage.local.set({ [SIGNED_OUT]: true });
+          for (const handler of disconnectHandlers) handler();
+          await revokeDevice();
+          await chrome.storage.session.remove([VERIFIED_TAB_KEY, PAIR_TAB_KEY]);
+          pairing = undefined;
+          workspace?.disconnect();
+          reply(true);
+          // Drop in-memory tabs, journals and panel subscriptions at the account boundary.
+          setTimeout(() => chrome.runtime.reload(), 50);
+        })().catch(() => { signingOut = false; reply(false); });
+        return true;
+      }
       if (message?.type === CONNECTION) {
-        const waiting = pairing && Date.now() - pairing.started < 25_000;
-        reply({
-          paired: workspacePaired(),
-          connecting: !pairFailure && !!waiting,
-          failure: pairFailure ?? (pairing && !waiting ? 'timeout' : undefined),
-        });
+        void (async () => {
+          if (directConfigured() && await savedDevice()) {
+            deviceMode = true;
+            const wasReady = directReady();
+            const ready = await verifyDevice();
+            if (ready && !restoredDevice) {
+              restoredDevice = true;
+              void connectedHandler?.().catch(() => undefined);
+            } else if (wasReady && !ready) {
+              for (const handler of disconnectHandlers) handler();
+            }
+          }
+          const waiting = pairing && Date.now() - pairing.started < 25_000;
+          reply({
+            paired: !signingOut && workspacePaired(),
+            direct: deviceMode,
+            voice: !!workspace,
+            connecting: enrolling || (!pairFailure && !!waiting),
+            failure: pairFailure ?? (pairing && !waiting ? 'timeout' : undefined),
+          });
+        })().catch(() => reply({ paired: false, connecting: false, failure: 'failed' }));
+        return true;
       }
       if (
         message?.type === 'xroga.browser.voice.v1' &&
@@ -181,7 +227,15 @@ export function listenForWorkspace(
     if (resume?.type === 'xroga.browser.reconnect.v1' && isWorkspaceSender(sender) && typeof tabId === 'number') {
       void (async () => {
         const stored = await chrome.storage.session.get(VERIFIED_TAB_KEY);
-        if (stored[VERIFIED_TAB_KEY] !== tabId || workspace || (pairing && Date.now() < pairing.expires)) return null;
+        const signedOut = directConfigured() && (await chrome.storage.local.get(SIGNED_OUT))[SIGNED_OUT];
+        if (signingOut || signedOut || workspace || (pairing && Date.now() < pairing.expires)) return null;
+        if (stored[VERIFIED_TAB_KEY] !== tabId) {
+          // After Chrome restarts there is no remembered tab. Only an enrolled,
+          // currently valid device can link an optional new Workspace tab.
+          if (!directConfigured() || !await savedDevice() || !await verifyDevice()) return null;
+          deviceMode = true;
+          if (signingOut || workspace || (pairing && Date.now() < pairing.expires)) return null;
+        }
         const started = Date.now();
         const nonce = crypto.randomUUID();
         pairing = { nonce, tabId, started, expires: started + 5 * 60_000 };
@@ -227,6 +281,7 @@ export function listenForWorkspace(
             if (message.ok === true) current.succeed(message.value);
             else current.fail(new Error('Workspace rejected the browser request.'));
           }
+          if (enrolling || signingOut) return;
           if (
             message.type === 'start-task' &&
             typeof message.goal === 'string' &&
@@ -300,9 +355,30 @@ export function listenForWorkspace(
             port.disconnect();
             return;
           }
-          await chrome.storage.local.set({ [PAIR_KEY]: account });
+          if (message.device && directConfigured()) {
+            workspace = port; // The pending port may answer only the authorization request until enrollment succeeds.
+            deviceMode = true;
+            enrolling = true;
+            try {
+              const saved = await savedDevice();
+              if (saved?.account !== account || !await verifyDevice()) {
+                const proof = await deviceProof();
+                const approval = await relayRequest('authorize-device', { body: proof.challenge });
+                await enrollDevice(account, proof.verifier, approval);
+              }
+              await chrome.storage.local.remove(SIGNED_OUT);
+              restoredDevice = true;
+            } finally {
+              enrolling = false;
+            }
+          } else {
+            if (deviceMode || (directConfigured() && (await chrome.storage.local.get(SIGNED_OUT))[SIGNED_OUT])) {
+              throw new Error('Standalone Xroga sign-in is unavailable on this Workspace.');
+            }
+            const profile = (await chrome.storage.local.get(DEVICE_PROFILE))[DEVICE_PROFILE];
+            await chrome.storage.local.set({ [PAIR_KEY]: account, [DEVICE_PROFILE]: profile ?? account });
+          }
           await chrome.storage.session.set({ [VERIFIED_TAB_KEY]: challenge.tabId });
-          // Send first. A tab closed during storage I/O must never become the current port.
           port.postMessage({ type: 'paired' });
           workspace = port;
           autoAttempted = false;
@@ -324,7 +400,7 @@ export function listenForWorkspace(
       if (workspace !== port) return;
       workspace = undefined;
       for (const request of pending.values()) request.fail(new Error('Workspace disconnected.'));
-      for (const handler of disconnectHandlers) handler();
+      if (!deviceMode) for (const handler of disconnectHandlers) handler();
     });
   });
 }
@@ -337,7 +413,21 @@ export function postWorkspace(value: Record<string, unknown>) {
   }
 }
 
-export function workspaceRequest(op: Operation, value: unknown, signal?: AbortSignal): Promise<unknown> {
+export async function workspaceRequest(op: Operation, value: unknown, signal?: AbortSignal): Promise<unknown> {
+  if (directConfigured() && op !== 'voice' && op !== 'authorize-device') {
+    const device = await savedDevice();
+    if (device || deviceMode) {
+      if (!device) throw new Error('Sign in to Xroga to run browser tasks.');
+      const { runId, body } = value as { runId?: string; body?: unknown };
+      const path = op === 'start' ? '/runs' : op === 'document' ? '/documents' : '/runs/' + runId + '/' + op;
+      if (op !== 'start' && op !== 'document' && (!runId || !UUID.test(runId))) throw new Error('Invalid Xroga run.');
+      return deviceRequest(device, path, 'POST', op === 'start' ? value : body, signal);
+    }
+  }
+  return relayRequest(op, value, signal);
+}
+
+function relayRequest(op: Operation, value: unknown, signal?: AbortSignal): Promise<unknown> {
   const port = workspace;
   if (!port) return Promise.reject(new Error('Connect the Xroga Workspace first.'));
   return new Promise((resolve, reject) => {

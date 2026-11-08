@@ -8169,6 +8169,7 @@
         "backend/src/routes/existingSource.ts",
         "backend/src/routes/guestChat.ts",
         "backend/src/routes/localBrowser.ts",
+        "backend/src/routes/localBrowserDevice.ts",
         "backend/src/runtime/readiness.ts",
         "backend/src/runtime/startupPolicy.ts",
         "backend/src/sandbox/containerCancellation.local.integration.ts",
@@ -8335,6 +8336,7 @@
         "XROGA_GITHUB_BOT_NAME",
         "XROGA_LEGACY_CREDENTIAL_MIGRATION",
         "XROGA_LOCAL_BROWSER_ALLOWED_USER_IDS",
+        "XROGA_LOCAL_BROWSER_DEVICE_EXTENSION_ID",
         "XROGA_LOCAL_BROWSER_ENABLED",
         "XROGA_LOCAL_BROWSER_MAX_TURNS",
         "XROGA_LOCAL_BROWSER_VISION_PROBE",
@@ -8404,6 +8406,7 @@
         "backend/src/routes/existingSource.ts",
         "backend/src/routes/guestChat.ts",
         "backend/src/routes/localBrowser.ts",
+        "backend/src/routes/localBrowserDevice.ts",
         "backend/src/runtime/readiness.ts",
         "backend/src/runtime/startupPolicy.ts",
         "backend/src/sandbox/containerCancellation.local.integration.ts",
@@ -11308,7 +11311,7 @@
         "backend/src/builder/qa/playwrightQaDriver.ts",
         "backend/src/index.ts",
         "backend/src/routes/github.ts",
-        "backend/src/routes/localBrowser.ts",
+        "backend/src/routes/localBrowserDevice.ts",
         "backend/src/runtime/startupPolicy.ts",
         "backend/src/sandbox/sandboxProviders.ts",
         "backend/src/scripts/runCanonicalWorker.ts",
@@ -15038,7 +15041,26 @@
     {
       "name": "XROGA_LOCAL_BROWSER_ALLOWED_USER_IDS",
       "consuming_sources": [
-        "backend/src/routes/localBrowser.ts"
+        "backend/src/routes/localBrowserDevice.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "XROGA_LOCAL_BROWSER_DEVICE_EXTENSION_ID",
+      "consuming_sources": [
+        "backend/src/routes/localBrowserDevice.ts"
       ],
       "environments": [
         "backend/operator or inherited system context"
@@ -15057,7 +15079,8 @@
     {
       "name": "XROGA_LOCAL_BROWSER_ENABLED",
       "consuming_sources": [
-        "backend/src/routes/localBrowser.ts"
+        "backend/src/routes/localBrowser.ts",
+        "backend/src/routes/localBrowserDevice.ts"
       ],
       "environments": [
         "backend/operator or inherited system context"
@@ -17722,7 +17745,7 @@
     },
     {
       "path": "backend/src/index.ts",
-      "sha256": "986e8a7b52876f2f199ad815a89fd7c867a291121431bd8a0fb9b6f7d264df37"
+      "sha256": "7b62495689940b518363a781c7cc2a88406d2a2b70c4105c8378c83ee8e93f52"
     },
     {
       "path": "backend/src/lib/adaptiveOrchestrator.ts",
@@ -18254,7 +18277,11 @@
     },
     {
       "path": "backend/src/routes/localBrowser.ts",
-      "sha256": "377b4ec8ac6314bafb15a51b59b7a61d0e6fa8d6f4aaf65bbf37452cc9413975"
+      "sha256": "5154db97a1a20fcd648822d26b49bae40dc25fc891909472a82081f09d34e204"
+    },
+    {
+      "path": "backend/src/routes/localBrowserDevice.ts",
+      "sha256": "12ad8df423db8241e0e90eed3d26b777fca399d82dbf5cb470fc107a1244b422"
     },
     {
       "path": "backend/src/routes/marketplace.ts",
@@ -20530,7 +20557,7 @@
     },
     {
       "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
-      "sha256": "78ab70b1e0f278da3b9e68d6d4bbca0e8adcb9edb9520ea92ad5e796c3d605ac"
+      "sha256": "82983bf0a836d2e284ffe35ddea6b182b42dcb64304a2a394e6becc9a46213c1"
     },
     {
       "path": "frontend/src/components/browser/XrogaBrowser.tsx",
@@ -25328,42 +25355,42 @@
       "hostname": "localhost",
       "protocol": "http:",
       "path": "backend/src/index.ts",
-      "line": 117,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "xroga.com",
-      "protocol": "https:",
-      "path": "backend/src/index.ts",
       "line": 118,
       "credentialsInUrl": false
     },
     {
-      "hostname": "www.xroga.com",
+      "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/index.ts",
       "line": 119,
       "credentialsInUrl": false
     },
     {
-      "hostname": "xrogaaicom.vercel.app",
+      "hostname": "www.xroga.com",
       "protocol": "https:",
       "path": "backend/src/index.ts",
       "line": 120,
       "credentialsInUrl": false
     },
     {
-      "hostname": "xroga-api.fly.dev",
+      "hostname": "xrogaaicom.vercel.app",
       "protocol": "https:",
       "path": "backend/src/index.ts",
       "line": 121,
       "credentialsInUrl": false
     },
     {
+      "hostname": "xroga-api.fly.dev",
+      "protocol": "https:",
+      "path": "backend/src/index.ts",
+      "line": 122,
+      "credentialsInUrl": false
+    },
+    {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/index.ts",
-      "line": 213,
+      "line": 221,
       "credentialsInUrl": false
     },
     {
@@ -37508,7 +37535,7 @@
     },
     {
       "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
-      "line": 243,
+      "line": 277,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

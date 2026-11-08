@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { createCanonicalExecutionState, type ExecutableTaskNode } from '../ai/executionRuntime.js';
 import { actualProviderCostMicroUsd } from '../ai/providerBudget.js';
 import { resolveModelSpec } from '../ai/models.js';
-import type { AuthRequest } from '../middleware/auth.js';
+import { browserDeviceExtension, localBrowserAccountAllowed, type BrowserDeviceRequest } from './localBrowserDevice.js';
 import { publicHttpsUrl } from '../security/boundedPublicGet.js';
 import { classifyOutboundData } from '../security/egress/dataClassification.js';
 import { requireTenantContext } from '../security/tenantContext.js';
@@ -162,17 +162,14 @@ function visionProbe(runId: string, turn: number, encoded: string) {
 
 export function createLocalBrowserRouter(resolve = configured, dispatch = dispatchBrowserModel) {
   const router = Router();
-  const route = (handler: (req: AuthRequest, res: Response, runtime: Runtime) => Promise<unknown>) =>
-    async (req: AuthRequest, res: Response) => {
+  const route = (handler: (req: BrowserDeviceRequest, res: Response, runtime: Runtime) => Promise<unknown>) =>
+    async (req: BrowserDeviceRequest, res: Response) => {
       res.set('Cache-Control', 'no-store');
       try {
         const rt = resolve();
         if (!rt) throw new BrowserRequestError(503, 'LOCAL_BROWSER_DISABLED');
-        const allowed = process.env.XROGA_LOCAL_BROWSER_ALLOWED_USER_IDS;
-        if (allowed !== undefined || process.env.NODE_ENV === 'production') {
-          const users = (allowed ?? '').split(',').map(user => user.trim());
-          const user = requireTenantContext(req.tenantContext).userId;
-          if (!users.includes(user)) throw new BrowserRequestError(403, 'LOCAL_BROWSER_ACCOUNT_NOT_ENABLED');
+        if (!localBrowserAccountAllowed(requireTenantContext(req.tenantContext).userId)) {
+          throw new BrowserRequestError(403, 'LOCAL_BROWSER_ACCOUNT_NOT_ENABLED');
         }
         return await handler(req, res, rt);
       } catch (error) { return sendError(res, error); }
@@ -205,7 +202,7 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
 
   router.get('/session', route(async (req, res) => {
     const ctx = requireTenantContext(req.tenantContext);
-    return res.json({ account: ctx.userId });
+    return res.json({ account: ctx.userId, deviceExtension: browserDeviceExtension() });
   }));
 
   router.post('/documents', route(async (req, res, { leases }) => {
@@ -244,7 +241,7 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
     return res.json({ outcome: await runs.requestCancel(ctx.userId, row.runId) });
   }));
 
-  const withLease = (handler: (req: AuthRequest, res: Response, rt: Runtime, record: BrowserRunRecord, lease: Lease) => Promise<unknown>) =>
+  const withLease = (handler: (req: BrowserDeviceRequest, res: Response, rt: Runtime, record: BrowserRunRecord, lease: Lease) => Promise<unknown>) =>
     route(async (req, res, rt) => {
       const ctx = requireTenantContext(req.tenantContext);
       const runId = id.parse(req.params.runId);
@@ -297,6 +294,9 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
     const job = parseBrowserJob({ version: 1, userId: ctx.userId, tenantId: ctx.tenantId, projectId: row.projectKey,
       runId: row.runId, taskId: task.id, attempt: 1, startUrl: row.spec.startUrl, allowedOrigins: row.spec.allowedOrigins, limits });
     const revalidate = async () => {
+      if (req.revalidateBrowserDevice && !await req.revalidateBrowserDevice()) {
+        throw new BrowserRequestError(403, 'BROWSER_DEVICE_REVOKED');
+      }
       await rt.leases.assertCurrent(lease);
       active(localRecord(await rt.runs.load(ctx.userId, row.runId), ctx.userId));
     };

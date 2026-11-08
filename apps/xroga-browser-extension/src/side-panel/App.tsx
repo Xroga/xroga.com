@@ -109,10 +109,12 @@ export function App() {
   const releaseNotes = useWhatsNew();
   const whatsNew = XROGA_PRODUCT ? null : releaseNotes;
   const [paired, setPaired] = useState(false);
+  const [direct, setDirect] = useState(false);
+  const [voiceConnected, setVoiceConnected] = useState(false);
   // The Workspace bridge holds the signed-in voice session.
   const voice = XROGA_PRODUCT ? null : voiceSetup(settings, providers, apiKeys);
   const transcribe = XROGA_PRODUCT
-    ? paired
+    ? voiceConnected
       ? transcribeInWorkspace
       : null
     : voice
@@ -135,6 +137,8 @@ export function App() {
           if (wasPaired && !result?.paired) void autoConnect().catch(() => undefined);
           wasPaired = result?.paired === true;
           setPaired(result?.paired === true);
+          setDirect(result?.direct === true);
+          setVoiceConnected(result?.voice === true);
           setConnecting(result?.connecting === true);
           if (result?.paired) setConnectionError('');
           else if (typeof result?.failure === 'string')
@@ -142,6 +146,7 @@ export function App() {
         },
         () => {
           setPaired(false);
+          setVoiceConnected(false);
           setConnecting(false);
         },
       );
@@ -499,11 +504,22 @@ export function App() {
       {XROGA_PRODUCT ? (
         <div className="flex flex-col gap-2 border-b border-nb-border/60 px-3 py-2">
           <span className="text-xs text-nb-muted">{WORKSPACE_ENVIRONMENT} · v{chrome.runtime.getManifest().version}</span>
-          {paired ? (
-            <span role="status" className="text-xs text-nb-muted">
-              Workspace connected
-            </span>
-          ) : (
+          {paired || direct ? (
+            <div className="flex items-center justify-between gap-2">
+              <span role="status" className="text-xs text-nb-muted">
+                {paired ? (direct ? 'Signed in to Xroga' : 'Workspace connected') : 'Xroga session unavailable'}
+              </span>
+              {direct && !connecting ? (
+                <button type="button" disabled={active} className="text-xs text-nb-muted hover:text-nb-fg"
+                  onClick={() => void chrome.runtime.sendMessage({ type: 'xroga.browser.sign-out.v1' }).then(ok => {
+                    if (!ok) setConnectionError('Could not revoke this device. Check your connection and try again.');
+                  }, () => setConnectionError('Could not revoke this device. Check your connection and try again.'))}>
+                  Sign out
+                </button>
+              ) : null}
+            </div>
+          ) : null}
+          {!paired ? (
             <button
               type="button"
               disabled={connecting}
@@ -530,7 +546,7 @@ export function App() {
                   ? 'Sign in to Xroga'
                   : 'Connect Xroga Workspace'}
             </button>
-          )}
+          ) : null}
           {connectionError ? (
             <p role="alert" className="text-xs text-nb-muted">
               {connectionError}

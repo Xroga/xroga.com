@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "74bdcb69d3c3ef37ee2367999c3b37e4cb2060f30ddf6fbe411224b64a19991b",
+  "reviewRegistrySha256": "f2e5fde9674cb6ea78c94c4ffe3d143444a671474c60da91603bf3d4f41c061a",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -4748,11 +4748,11 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "3e7976a1def3b3344e62"
+        "id": "d0a78138edfb01ec31b6"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "9e80d4faebce13dd4cd2"
+        "id": "5d212472a6528eee3498"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -6328,7 +6328,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "4481dd828debd0369489"
+        "id": "b14757670cd7cae6bebc"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -6656,11 +6656,11 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "3e7976a1def3b3344e62"
+        "id": "d0a78138edfb01ec31b6"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "9e80d4faebce13dd4cd2"
+        "id": "5d212472a6528eee3498"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -10128,7 +10128,7 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "4481dd828debd0369489"
+        "id": "b14757670cd7cae6bebc"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -19447,7 +19447,7 @@
       }
     },
     {
-      "id": "3e7976a1def3b3344e62",
+      "id": "d0a78138edfb01ec31b6",
       "path": "backend/src/routes/localBrowser.ts",
       "line": 151,
       "enclosing": "visionProbe",
@@ -19455,18 +19455,18 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "377b4ec8ac6314bafb15a51b59b7a61d0e6fa8d6f4aaf65bbf37452cc9413975"
+      "sourceSha256": "5154db97a1a20fcd648822d26b49bae40dc25fc891909472a82081f09d34e204"
     },
     {
-      "id": "9e80d4faebce13dd4cd2",
+      "id": "5d212472a6528eee3498",
       "path": "backend/src/routes/localBrowser.ts",
-      "line": 215,
+      "line": 212,
       "enclosing": "createLocalBrowserRouter",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "377b4ec8ac6314bafb15a51b59b7a61d0e6fa8d6f4aaf65bbf37452cc9413975"
+      "sourceSha256": "5154db97a1a20fcd648822d26b49bae40dc25fc891909472a82081f09d34e204"
     },
     {
       "id": "c9a009f6baa9e3a3bbad",
@@ -30980,15 +30980,15 @@
       }
     },
     {
-      "id": "4481dd828debd0369489",
+      "id": "b14757670cd7cae6bebc",
       "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
-      "line": 312,
+      "line": 348,
       "enclosing": "WorkspaceBrowserOperator",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "efebc44546c3f94eb5f6b66cd22964866d16f70602d9c526985327295564a234",
+      "sourceSha256": "82983bf0a836d2e284ffe35ddea6b182b42dcb64304a2a394e6becc9a46213c1",
       "semanticReview": {
         "authority": "Inspected the exact receiver and complete expression. It is a built-in JavaScript data conversion with no persistence client or privilege transfer.",
         "reason": "Decodes the user-requested recording locally. The byte conversion does not invoke a database or storage client.",

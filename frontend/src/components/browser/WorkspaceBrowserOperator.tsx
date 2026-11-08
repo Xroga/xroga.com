@@ -151,7 +151,7 @@ export function WorkspaceBrowserOperator({ extensionId, children }: { extensionI
       const token = await getAccessToken();
       if (disposed) return;
       if (!token) { failed('sign-in', 'Sign in to Xroga, then connect again from the Chrome side panel.'); return; }
-      const session = await apiFetch<{ account: string }>(`${API}/session`, {}, token);
+      const session = await apiFetch<{ account: string; deviceExtension?: string }>(`${API}/session`, {}, token);
       if (!UUID.test(session.account)) throw new Error('Invalid account response');
       if (disposed) return;
       const auth = createClient();
@@ -189,6 +189,8 @@ export function WorkspaceBrowserOperator({ extensionId, children }: { extensionI
         }
       });
       stopAuthListener = () => subscription.unsubscribe();
+      let checkingRun: string | undefined;
+      let finishedWhileChecking = false;
       const send = (message: unknown) => { if (!disposed && !closed) { try { connected.postMessage(message); } catch { /* port closed */ } } };
       connected.onMessage.addListener(message => {
         if (disposed || closed || !message || typeof message !== 'object') return;
@@ -209,6 +211,38 @@ export function WorkspaceBrowserOperator({ extensionId, children }: { extensionI
           url.searchParams.delete('browserExtension');
           history.replaceState(history.state, '', url);
           return;
+        }
+        if (message.type === 'run' && message.runId && UUID.test(message.runId) &&
+            !admitted.has(message.runId) && session.deviceExtension === extensionId) {
+          const run = message.runId;
+          if (checkingRun === run) return;
+          checkingRun = run;
+          finishedWhileChecking = false;
+          const loadRun = () => apiFetch<RunResult>(`${API}/runs/${run}`, {}, pairedToken.current);
+          void loadRun().then(async data => {
+            const current = finishedWhileChecking ? await loadRun() : data;
+            if (disposed || portRef.current !== connected || checkingRun !== run) return;
+            admitted.add(run);
+            activeRun.current = run;
+            setRunId(run);
+            setActivity([]);
+            setActiveTool('');
+            send({ type: 'activity-history', runId: run });
+            const terminal = ['completed', 'failed', 'cancelled', 'interrupted'].includes(current.status);
+            setBusy(!terminal && !current.cancelRequested);
+            setPaused(current.status === 'interrupted' && !current.cancelRequested);
+            setResult(current.result?.text ?? '');
+            setStatus(terminal ? `Browser task ${current.status}` : 'Browser task running');
+          }).catch(() => {
+            if (!disposed && checkingRun === run) {
+              setBusy(false);
+              setStatus('Chrome started a task that Workspace could not verify.');
+            }
+          }).finally(() => { if (checkingRun === run) checkingRun = undefined; });
+          return;
+        }
+        if (message.type === 'finished' && message.runId && message.runId === checkingRun) {
+          finishedWhileChecking = true;
         }
         if (message.type === 'run' && message.runId && admitted.has(message.runId)) {
           const changed = activeRun.current !== message.runId;
@@ -294,11 +328,13 @@ export function WorkspaceBrowserOperator({ extensionId, children }: { extensionI
         const isResume = op === 'resume' && !!value.runId && UUID.test(value.runId);
         const isDocument = op === 'document';
         const isVoice = op === 'voice';
+        const isDevice = op === 'authorize-device' && session.deviceExtension === extensionId &&
+          typeof value.body === 'string' && /^[A-Za-z0-9_-]{43}$/.test(value.body);
         // Finalizing a durable outbox after a reconnect may occur on a new authenticated port. The API's
         // ownership check and fenced idempotent finish still apply. Turns remain bound to start/resume.
         const isFinish = op === 'finish' && !!value.runId && UUID.test(value.runId);
         const isBound = !!value.runId && admitted.has(value.runId);
-        if (!isStart && !isResume && !isDocument && !isVoice && !isFinish && !(isBound && op === 'turn')) {
+        if (!isStart && !isResume && !isDocument && !isVoice && !isFinish && !isDevice && !(isBound && op === 'turn')) {
           send({ type: 'result', id, ok: false });
           return;
         }
@@ -316,10 +352,10 @@ export function WorkspaceBrowserOperator({ extensionId, children }: { extensionI
           })().catch(() => send({ type: 'result', id, ok: false })).finally(() => requests.delete(id));
           return;
         }
-        const path = isDocument ? `${API}/documents` : isStart ? `${API}/runs` : `${API}/runs/${value.runId}/${op}`;
+        const path = isDevice ? `${API}/device/authorize` : isDocument ? `${API}/documents` : isStart ? `${API}/runs` : `${API}/runs/${value.runId}/${op}`;
         void apiFetch<{ runId?: string }>(path, {
           method: 'POST', signal: controller.signal,
-          body: JSON.stringify(isStart ? { goal: value.goal, startUrl: value.startUrl, attachmentCount: value.attachmentCount } : value.body),
+          body: JSON.stringify(isDevice ? { extensionId, challenge: value.body } : isStart ? { goal: value.goal, startUrl: value.startUrl, attachmentCount: value.attachmentCount } : value.body),
         }, pairedToken.current).then(data => {
           if ((isStart || isResume) && data.runId && UUID.test(data.runId)) admitted.add(data.runId);
           if (isFinish && !activeRun.current && value.runId) {
@@ -329,7 +365,7 @@ export function WorkspaceBrowserOperator({ extensionId, children }: { extensionI
           send({ type: 'result', id, ok: true, value: data });
         }, () => send({ type: 'result', id, ok: false })).finally(() => requests.delete(id));
       });
-      connected.postMessage({ type: 'pair', nonce, account: session.account });
+      connected.postMessage({ type: 'pair', nonce, account: session.account, device: session.deviceExtension === extensionId });
     };
     void connect().catch(error => {
       if (disposed) return;

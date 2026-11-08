@@ -5259,7 +5259,7 @@
         "backend/src/ai/universal/semanticRequestPlanner.ts:1",
         "backend/src/ai/zurelayPolicy.test.ts:7",
         "backend/src/hardening/launchHardening.test.ts:19",
-        "backend/src/index.ts:71",
+        "backend/src/index.ts:72",
         "backend/src/operations/benchmarkAdapter.ts:35",
         "backend/src/routes/guestChat.ts:9",
         "backend/src/security/genericSdk.local.integration.ts:7",
@@ -7581,7 +7581,7 @@
         "backend/src/ai/softwareAgent/xrogaAgentModelEgress.test.ts:5",
         "backend/src/ai/tenantModelDispatch.test.ts:14",
         "backend/src/ai/universal/semanticRequestPlanner.ts:21",
-        "backend/src/index.ts:70",
+        "backend/src/index.ts:71",
         "backend/src/lib/resilience/callWithFallback.ts:4",
         "backend/src/lib/resilience/retry.test.ts:3",
         "backend/src/routes/guestChat.ts:19",
@@ -8925,7 +8925,7 @@
         "backend/src/ai/engineeringOperator.ts:11",
         "backend/src/ai/runReconciler.queue.test.ts:4",
         "backend/src/ai/runReconciler.test.ts:3",
-        "backend/src/index.ts:66",
+        "backend/src/index.ts:67",
         "backend/src/scripts/runCanonicalWorker.ts:11",
         "backend/src/security/tenantIsolation.local.integration.ts:26",
         "backend/src/workers/googleDeliveryMaintenance.ts:3",
@@ -9131,7 +9131,7 @@
         "backend/src/existingSource/change/canonical.ts:67",
         "backend/src/existingSource/change/canonicalJob.ts:29",
         "backend/src/existingSource/change/production.ts:41",
-        "backend/src/index.ts:62",
+        "backend/src/index.ts:63",
         "backend/src/routes/dashboard.ts:6",
         "backend/src/routes/existingSource.ts:214",
         "backend/src/routes/existingSource.ts:88",
@@ -22243,17 +22243,19 @@
       "id": "surface:c20200a666b149a045e3",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/index.ts",
-      "sha256": "986e8a7b52876f2f199ad815a89fd7c867a291121431bd8a0fb9b6f7d264df37",
+      "sha256": "7b62495689940b518363a781c7cc2a88406d2a2b70c4105c8378c83ee8e93f52",
       "symbols": [
         "active",
         "allowedOrigins",
         "app",
         "corsOptions",
         "credentialVaultReadiness",
+        "extensionId",
         "failing",
         "flySandbox",
         "health",
         "isAllowedOrigin",
+        "origin",
         "port",
         "remoteSandbox",
         "requestError",
@@ -22302,6 +22304,7 @@
         "./routes/influencer.js",
         "./routes/integrations.js",
         "./routes/localBrowser.js",
+        "./routes/localBrowserDevice.js",
         "./routes/marketplace.js",
         "./routes/media.js",
         "./routes/messageShares.js",
@@ -22382,6 +22385,7 @@
         "backend/src/routes/influencer.ts",
         "backend/src/routes/integrations.ts",
         "backend/src/routes/localBrowser.ts",
+        "backend/src/routes/localBrowserDevice.ts",
         "backend/src/routes/marketplace.ts",
         "backend/src/routes/media.ts",
         "backend/src/routes/messageShares.ts",
@@ -22440,6 +22444,7 @@
       ],
       "authBoundary": [
         "backend/src/index.ts#authMiddleware",
+        "backend/src/index.ts#createLocalBrowserAuth",
         "backend/src/index.ts#phase1AuthMiddleware",
         "backend/src/index.ts#supabaseOAuthRouter"
       ],
@@ -24326,7 +24331,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/index.ts:72",
+        "backend/src/index.ts:73",
         "backend/src/lib/safeHealth.test.ts:3"
       ],
       "reachable": true,
@@ -25240,7 +25245,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/index.ts:61",
+        "backend/src/index.ts:62",
         "backend/src/middleware/admin.test.ts:4",
         "backend/src/routes/admin.test.ts:15",
         "backend/src/routes/operations.ts:8"
@@ -25312,6 +25317,7 @@
         "backend/src/routes/community.ts:4",
         "backend/src/routes/guestChat.ts:21",
         "backend/src/routes/localBrowser.test.ts:7",
+        "backend/src/routes/localBrowserDevice.ts:4",
         "backend/src/routes/messageShares.ts:6",
         "backend/src/security/connectedAccountRoutes.local.integration.ts:5",
         "backend/src/security/githubConsumer.local.integration.ts:7",
@@ -25598,7 +25604,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/index.ts:84",
+        "backend/src/index.ts:85",
         "backend/src/middleware/runtimePreviewGateway.integration.test.ts:7",
         "backend/src/middleware/runtimePreviewGateway.security.test.ts:4",
         "backend/src/middleware/runtimePreviewGateway.transport.test.ts:9",
@@ -28518,7 +28524,7 @@
       "callers": [
         "backend/src/builder/cancel.test.ts:11",
         "backend/src/builder/conversation.test.ts:6",
-        "backend/src/index.ts:58",
+        "backend/src/index.ts:59",
         "backend/src/routes/builder.test.ts:10",
         "backend/src/routes/builderPhase2.test.ts:19",
         "backend/src/routes/builderPhase3.test.ts:9"
@@ -28922,7 +28928,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/index.ts:60"
+        "backend/src/index.ts:61"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -29186,7 +29192,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/index.ts:81"
+        "backend/src/index.ts:82"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -29685,7 +29691,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/index.ts:74"
+        "backend/src/index.ts:75"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -29960,7 +29966,7 @@
       "id": "surface:ebe50bb7a8e41b472951",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "sha256": "377b4ec8ac6314bafb15a51b59b7a61d0e6fa8d6f4aaf65bbf37452cc9413975",
+      "sha256": "5154db97a1a20fcd648822d26b49bae40dc25fc891909472a82081f09d34e204",
       "symbols": [
         "BrowserRequestError",
         "MAX_GOAL",
@@ -29974,7 +29980,6 @@
         "active",
         "admitted",
         "allowance",
-        "allowed",
         "browserTask",
         "bytes",
         "ceiling",
@@ -30030,8 +30035,6 @@
         "turnBody",
         "turns",
         "url",
-        "user",
-        "users",
         "visionProbe",
         "withLease"
       ],
@@ -30039,7 +30042,6 @@
         "../ai/executionRuntime.js",
         "../ai/models.js",
         "../ai/providerBudget.js",
-        "../middleware/auth.js",
         "../security/boundedPublicGet.js",
         "../security/egress/dataClassification.js",
         "../security/tenantContext.js",
@@ -30051,6 +30053,7 @@
         "../workers/leaseStore.js",
         "../workers/postgresLeaseStore.js",
         "./browserDocuments.js",
+        "./localBrowserDevice.js",
         "express",
         "node:crypto",
         "zod"
@@ -30060,6 +30063,7 @@
         "backend/src/ai/models.ts",
         "backend/src/ai/providerBudget.ts",
         "backend/src/routes/browserDocuments.ts",
+        "backend/src/routes/localBrowserDevice.ts",
         "backend/src/security/boundedPublicGet.ts",
         "backend/src/security/egress/dataClassification.ts",
         "backend/src/security/tenantContext.ts",
@@ -30084,9 +30088,7 @@
         "node:crypto",
         "zod"
       ],
-      "authBoundary": [
-        "backend/src/routes/localBrowser.ts#AuthRequest"
-      ],
+      "authBoundary": [],
       "tenantBoundary": [],
       "approvalBoundary": [
         "backend/src/routes/localBrowser.ts#digest"
@@ -30098,6 +30100,90 @@
       "testCoverage": [
         "backend/src/routes/localBrowser.test.ts"
       ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:a5bc9e855cb4673694bc",
+      "subsystem": "backend_routes",
+      "sourcePath": "backend/src/routes/localBrowserDevice.ts",
+      "sha256": "12ad8df423db8241e0e90eed3d26b777fca399d82dbf5cb470fc107a1244b422",
+      "symbols": [
+        "BrowserDeviceRequest",
+        "CredentialRow",
+        "Database",
+        "access",
+        "accessPattern",
+        "accessToken",
+        "bearer",
+        "browserDeviceExtension",
+        "code",
+        "configured",
+        "createBrowserDeviceRouter",
+        "createLocalBrowserAuth",
+        "created",
+        "data",
+        "database",
+        "deviceKey",
+        "error",
+        "extension",
+        "extensionId",
+        "hash",
+        "key",
+        "localBrowserAccountAllowed",
+        "owner",
+        "parsed",
+        "permitted",
+        "pool",
+        "result",
+        "route",
+        "router",
+        "row",
+        "sameOrigin",
+        "secret",
+        "taskAction",
+        "taskPath"
+      ],
+      "imports": [
+        "../middleware/auth.js",
+        "../security/tenantContext.js",
+        "../storage/runtime.js",
+        "express",
+        "node:crypto",
+        "zod"
+      ],
+      "runtimeImports": [
+        "backend/src/middleware/auth.ts",
+        "backend/src/security/tenantContext.ts",
+        "backend/src/storage/runtime.ts"
+      ],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
+      "callers": [
+        "backend/src/index.ts:58",
+        "backend/src/routes/localBrowser.ts:7"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "express",
+        "node:crypto",
+        "zod"
+      ],
+      "authBoundary": [
+        "backend/src/routes/localBrowserDevice.ts#authMiddleware",
+        "backend/src/routes/localBrowserDevice.ts#createLocalBrowserAuth"
+      ],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -30363,7 +30449,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/index.ts:73"
+        "backend/src/index.ts:74"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -30786,7 +30872,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/index.ts:80",
+        "backend/src/index.ts:81",
         "backend/src/security/runtimeProjectBinding.test.ts:11"
       ],
       "reachable": true,
@@ -31870,7 +31956,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/index.ts:82",
+        "backend/src/index.ts:83",
         "backend/src/routes/voice.security.test.ts:5",
         "backend/src/routes/voiceFree.security.test.ts:5"
       ],
@@ -32097,7 +32183,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/index.ts:68",
+        "backend/src/index.ts:69",
         "backend/src/runtime/readiness.test.ts:3"
       ],
       "reachable": true,
@@ -32209,7 +32295,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/index.ts:67",
+        "backend/src/index.ts:68",
         "backend/src/runtime/readiness.ts:14",
         "backend/src/runtime/startupPolicy.test.ts:3"
       ],
@@ -33177,7 +33263,7 @@
         "backend/src/existingSource/change/canonical.ts:67",
         "backend/src/existingSource/change/production.test.ts:4",
         "backend/src/existingSource/change/production.ts:22",
-        "backend/src/index.ts:76",
+        "backend/src/index.ts:77",
         "backend/src/sandbox/googleSelection.test.ts:4",
         "backend/src/sandbox/registryNetwork.test.ts:6",
         "backend/src/sandbox/sandboxIsolation.test.ts:5",
@@ -34782,7 +34868,7 @@
         "backend/src/existingSource/change/store.ts:2",
         "backend/src/existingSource/intelligence/codeIndexStore.ts:6",
         "backend/src/existingSource/store.ts:6",
-        "backend/src/index.ts:75",
+        "backend/src/index.ts:76",
         "backend/src/middleware/admin.ts:2",
         "backend/src/routes/admin.ts:2",
         "backend/src/routes/billingWebhook.ts:4",
@@ -34971,6 +35057,7 @@
         "backend/src/routes/githubTransport.security.test.ts:9",
         "backend/src/routes/integrations.ts:3",
         "backend/src/routes/localBrowser.ts:10",
+        "backend/src/routes/localBrowserDevice.ts:5",
         "backend/src/routes/messageShares.ts:5",
         "backend/src/routes/notifications.ts:3",
         "backend/src/routes/phase1.ts:4",
@@ -37702,7 +37789,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/index.ts:83",
+        "backend/src/index.ts:84",
         "backend/src/scripts/runCanonicalWorker.ts:7",
         "backend/src/services/integrations/credentialVaultStartup.test.ts:4",
         "backend/src/services/integrations/flyGoogleWorkloadIdentity.test.ts:9",
@@ -44808,7 +44895,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/index.ts:69",
+        "backend/src/index.ts:70",
         "backend/src/runtime/readiness.ts:12",
         "backend/src/storage/databaseTls.test.ts:9",
         "backend/src/storage/runtime.ts:3",
@@ -46197,10 +46284,11 @@
         "backend/src/ai/parallelWeb.security.test.ts:13",
         "backend/src/ai/researchAnswer.test.ts:12",
         "backend/src/ai/sonnetApproval.test.ts:7",
-        "backend/src/index.ts:59",
+        "backend/src/index.ts:60",
         "backend/src/routes/browserRuns.ts:20",
         "backend/src/routes/drive.ts:4",
         "backend/src/routes/localBrowser.ts:11",
+        "backend/src/routes/localBrowserDevice.ts:6",
         "backend/src/routes/storageReconcileScheduler.ts:3",
         "backend/src/runtime/readiness.ts:13",
         "backend/src/services/integrations/modelResult.ts:4",
@@ -65726,7 +65814,7 @@
       "id": "surface:46331a69bc5be52c0a7c",
       "subsystem": "browser_sandbox",
       "sourcePath": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
-      "sha256": "efebc44546c3f94eb5f6b66cd22964866d16f70602d9c526985327295564a234",
+      "sha256": "82983bf0a836d2e284ffe35ddea6b182b42dcb64304a2a394e6becc9a46213c1",
       "symbols": [
         "ACTIVITY_LIMIT",
         "API",
@@ -65751,6 +65839,7 @@
         "auth",
         "bytes",
         "changed",
+        "checkingRun",
         "checkpoint",
         "clearConnection",
         "closed",
@@ -65758,6 +65847,7 @@
         "connected",
         "control",
         "controller",
+        "current",
         "data",
         "detected",
         "disposed",
@@ -65765,10 +65855,12 @@
         "failed",
         "file",
         "finished",
+        "finishedWhileChecking",
         "history",
         "i",
         "initiatedByExtension",
         "isBound",
+        "isDevice",
         "isDocument",
         "isFinish",
         "isLocalChromeRequest",
@@ -65776,6 +65868,7 @@
         "isStart",
         "isVoice",
         "isWorkspace",
+        "loadRun",
         "name",
         "nonce",
         "operator",
@@ -65788,6 +65881,7 @@
         "request",
         "requestedId",
         "requests",
+        "run",
         "runtime",
         "send",
         "session",
@@ -65798,6 +65892,7 @@
         "steps",
         "stopAuthListener",
         "taskFile",
+        "terminal",
         "text",
         "token",
         "url",
@@ -121292,7 +121387,7 @@
       "id": "surface:a741178549139c6d7626",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/security/schema-catalog.mjs",
-      "sha256": "d2d6ccc2887ede3682a17cf1d1a630d52b8fe69528ee1f6684573b3c774b8dbf",
+      "sha256": "6d59a371139e501d3b3183982970d3a900a98de5be3386c351d3bd2fe3f19ff5",
       "symbols": [
         "assertDisposableSource",
         "collectSchemaCatalog",
@@ -124801,9 +124896,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:14cc70903533530c48a6",
+      "id": "registration:d96b332d525296d6fd24",
       "sourcePath": "backend/src/index.ts",
-      "line": 100,
+      "line": 101,
       "receiver": "app",
       "method": "use",
       "path": null,
@@ -124815,9 +124910,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:5e5bf966d57657f78b36",
+      "id": "registration:235776aef1a58f8da24c",
       "sourcePath": "backend/src/index.ts",
-      "line": 104,
+      "line": 105,
       "receiver": "app",
       "method": "use",
       "path": null,
@@ -124829,9 +124924,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:cc898dc6ca6963ad84e0",
+      "id": "registration:fbadd0c79033f0da1d11",
       "sourcePath": "backend/src/index.ts",
-      "line": 106,
+      "line": 107,
       "receiver": "app",
       "method": "use",
       "path": null,
@@ -124843,9 +124938,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:fd7ca9b4dcfda1abff5d",
+      "id": "registration:c912db6d92f5401836a1",
       "sourcePath": "backend/src/index.ts",
-      "line": 113,
+      "line": 114,
       "receiver": "app",
       "method": "use",
       "path": null,
@@ -124857,9 +124952,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:b4a60a04dab9cf002471",
+      "id": "registration:ffd58307a097a9a906bb",
       "sourcePath": "backend/src/index.ts",
-      "line": 146,
+      "line": 147,
       "receiver": "app",
       "method": "use",
       "path": null,
@@ -124871,9 +124966,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:14e808b42286f33deb3c",
+      "id": "registration:13ae992c3890dd63074e",
       "sourcePath": "backend/src/index.ts",
-      "line": 149,
+      "line": 157,
       "receiver": "app",
       "method": "use",
       "path": "/api/billing/webhook",
@@ -124885,9 +124980,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:4250968bd81865791d07",
+      "id": "registration:a1720b7cb057cf22bb21",
       "sourcePath": "backend/src/index.ts",
-      "line": 150,
+      "line": 158,
       "receiver": "app",
       "method": "use",
       "path": "/api/integrations/composio/webhook",
@@ -124899,9 +124994,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:34a0b4d3906b88819054",
+      "id": "registration:2baa3ea3c4fcbaa24689",
       "sourcePath": "backend/src/index.ts",
-      "line": 151,
+      "line": 159,
       "receiver": "app",
       "method": "use",
       "path": "/internal/business-automations",
@@ -124913,9 +125008,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:80f562e2710bceace5f0",
+      "id": "registration:d97cb7c7b90ad6fbf602",
       "sourcePath": "backend/src/index.ts",
-      "line": 152,
+      "line": 160,
       "receiver": "app",
       "method": "use",
       "path": "/internal/storage",
@@ -124927,9 +125022,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:ed892c18cb61b26811c8",
+      "id": "registration:f26278b2464d0fa8210d",
       "sourcePath": "backend/src/index.ts",
-      "line": 153,
+      "line": 161,
       "receiver": "app",
       "method": "use",
       "path": "/internal/browser",
@@ -124942,9 +125037,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:881e87a1cf504ff4b787",
+      "id": "registration:d6c61cda9e1d1d3d9790",
       "sourcePath": "backend/src/index.ts",
-      "line": 158,
+      "line": 166,
       "receiver": "app",
       "method": "use",
       "path": "/api/guest",
@@ -124957,9 +125052,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:4e76f2e98cb3d8ddc677",
+      "id": "registration:ea237b1f4464fe8a93cd",
       "sourcePath": "backend/src/index.ts",
-      "line": 161,
+      "line": 169,
       "receiver": "app",
       "method": "post",
       "path": "/internal/canonical-dispatch",
@@ -124972,9 +125067,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:eec9d189f6ca2e191a62",
+      "id": "registration:4ae36a11ce23a8d58e06",
       "sourcePath": "backend/src/index.ts",
-      "line": 163,
+      "line": 171,
       "receiver": "app",
       "method": "use",
       "path": null,
@@ -124986,9 +125081,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:faaa73d01277fb5073e5",
+      "id": "registration:2111658e1dc0ed3d1f9f",
       "sourcePath": "backend/src/index.ts",
-      "line": 165,
+      "line": 173,
       "receiver": "app",
       "method": "get",
       "path": "/",
@@ -124998,9 +125093,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:78a4723c56c46ad3797a",
+      "id": "registration:f78d2480900bec1aae6a",
       "sourcePath": "backend/src/index.ts",
-      "line": 180,
+      "line": 188,
       "receiver": "app",
       "method": "use",
       "path": "/api/project-runtime",
@@ -125013,9 +125108,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:7767341338398b640b9a",
+      "id": "registration:5bb637ca115905ff439d",
       "sourcePath": "backend/src/index.ts",
-      "line": 186,
+      "line": 194,
       "receiver": "app",
       "method": "use",
       "path": "/api/delivery",
@@ -125028,9 +125123,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:76c30e98ad24b250c410",
+      "id": "registration:0b230927a2a1877c24af",
       "sourcePath": "backend/src/index.ts",
-      "line": 192,
+      "line": 200,
       "receiver": "app",
       "method": "get",
       "path": "/health",
@@ -125040,9 +125135,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:5cf1c5f5b3557a5274d5",
+      "id": "registration:73b1c98eb82872be7a6d",
       "sourcePath": "backend/src/index.ts",
-      "line": 196,
+      "line": 204,
       "receiver": "app",
       "method": "get",
       "path": "/ready",
@@ -125054,9 +125149,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:3a286e5601994e77f123",
+      "id": "registration:842a52655407eb3421ad",
       "sourcePath": "backend/src/index.ts",
-      "line": 207,
+      "line": 215,
       "receiver": "app",
       "method": "get",
       "path": "/api/health",
@@ -125066,9 +125161,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:1f36001b4418c924b03d",
+      "id": "registration:e105ab98e2ac0116f6aa",
       "sourcePath": "backend/src/index.ts",
-      "line": 211,
+      "line": 219,
       "receiver": "app",
       "method": "get",
       "path": "/api/config",
@@ -125078,9 +125173,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:0d94245630882cc559e7",
+      "id": "registration:90282cdcecd2af185e07",
       "sourcePath": "backend/src/index.ts",
-      "line": 220,
+      "line": 228,
       "receiver": "app",
       "method": "use",
       "path": "/chat",
@@ -125092,9 +125187,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:c56ca69b4f950ecf6051",
+      "id": "registration:b4695b9929a02ab14550",
       "sourcePath": "backend/src/index.ts",
-      "line": 222,
+      "line": 230,
       "receiver": "app",
       "method": "use",
       "path": "/api/swarm",
@@ -125107,9 +125202,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:1688ca40f78d82969337",
+      "id": "registration:ba84b2ca807617de3e50",
       "sourcePath": "backend/src/index.ts",
-      "line": 223,
+      "line": 231,
       "receiver": "app",
       "method": "use",
       "path": "/api/v1",
@@ -125122,9 +125217,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:7f45cae101ed824189e4",
+      "id": "registration:40b862aff4dbe4736c48",
       "sourcePath": "backend/src/index.ts",
-      "line": 224,
+      "line": 232,
       "receiver": "app",
       "method": "use",
       "path": "/api/phase1",
@@ -125139,9 +125234,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:b65c1067139bb3804e14",
+      "id": "registration:2c7bf0fda5f97e48f5c6",
       "sourcePath": "backend/src/index.ts",
-      "line": 231,
+      "line": 239,
       "receiver": "app",
       "method": "use",
       "path": "/api/dashboard",
@@ -125154,9 +125249,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:0744be588cc308e9ea0a",
+      "id": "registration:02fadcbe04b4427dd71c",
       "sourcePath": "backend/src/index.ts",
-      "line": 232,
+      "line": 240,
       "receiver": "app",
       "method": "use",
       "path": "/api/tasks",
@@ -125169,9 +125264,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:2e5655a7be9178c44f75",
+      "id": "registration:cbae9a25a09c61a1057b",
       "sourcePath": "backend/src/index.ts",
-      "line": 233,
+      "line": 241,
       "receiver": "app",
       "method": "use",
       "path": "/api/referrals",
@@ -125184,9 +125279,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:90cc2556b28b9ceab2b5",
+      "id": "registration:167f880cf7305c61f0b4",
       "sourcePath": "backend/src/index.ts",
-      "line": 234,
+      "line": 242,
       "receiver": "app",
       "method": "use",
       "path": "/api/community",
@@ -125198,9 +125293,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:b1e80127d99a708c1b40",
+      "id": "registration:1b34449760f5ffe0cd76",
       "sourcePath": "backend/src/index.ts",
-      "line": 236,
+      "line": 244,
       "receiver": "app",
       "method": "use",
       "path": "/api/message-shares",
@@ -125212,9 +125307,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:b5dd93c48bbaf5f125c9",
+      "id": "registration:5b6b5b72377e6ce924c8",
       "sourcePath": "backend/src/index.ts",
-      "line": 237,
+      "line": 245,
       "receiver": "app",
       "method": "use",
       "path": "/api/token-distribution",
@@ -125227,9 +125322,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:68bc64f240fed7786cd6",
+      "id": "registration:1c9ea3b4a918ff7bbbc4",
       "sourcePath": "backend/src/index.ts",
-      "line": 238,
+      "line": 246,
       "receiver": "app",
       "method": "use",
       "path": "/api/marketplace",
@@ -125242,9 +125337,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:5c33c76a30567657f32b",
+      "id": "registration:0874ba8c3d9578a0f106",
       "sourcePath": "backend/src/index.ts",
-      "line": 239,
+      "line": 247,
       "receiver": "app",
       "method": "use",
       "path": "/api/influencer",
@@ -125257,9 +125352,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:e5fb34268e43cb630ee3",
+      "id": "registration:d4b79eccb3a4522e0608",
       "sourcePath": "backend/src/index.ts",
-      "line": 240,
+      "line": 248,
       "receiver": "app",
       "method": "use",
       "path": "/api/analytics",
@@ -125272,9 +125367,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:a52d23e811cf7b10d6ab",
+      "id": "registration:701f9155228dbbf3831f",
       "sourcePath": "backend/src/index.ts",
-      "line": 241,
+      "line": 249,
       "receiver": "app",
       "method": "use",
       "path": "/api/admin",
@@ -125288,9 +125383,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:3dba32ea7e4246779f5d",
+      "id": "registration:d7441f3e3c10dbdd18fe",
       "sourcePath": "backend/src/index.ts",
-      "line": 244,
+      "line": 252,
       "receiver": "app",
       "method": "use",
       "path": "/api/operations",
@@ -125303,9 +125398,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:2d77666c3c6fca0610bc",
+      "id": "registration:c3a12642c606f2a0481c",
       "sourcePath": "backend/src/index.ts",
-      "line": 245,
+      "line": 253,
       "receiver": "app",
       "method": "use",
       "path": "/api/growth",
@@ -125318,9 +125413,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:01cb290437da711b77df",
+      "id": "registration:9ae81212b7fba3c4ae30",
       "sourcePath": "backend/src/index.ts",
-      "line": 246,
+      "line": 254,
       "receiver": "app",
       "method": "get",
       "path": "/metrics",
@@ -125333,9 +125428,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:cbb2fa0a34097dd4287a",
+      "id": "registration:319713e3952dc6ec11e4",
       "sourcePath": "backend/src/index.ts",
-      "line": 250,
+      "line": 258,
       "receiver": "app",
       "method": "use",
       "path": "/api/voice",
@@ -125348,9 +125443,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:e12db8f25ab87c48f486",
+      "id": "registration:4bcd1446535a6a0bc7b3",
       "sourcePath": "backend/src/index.ts",
-      "line": 251,
+      "line": 259,
       "receiver": "app",
       "method": "use",
       "path": "/api/chat",
@@ -125363,9 +125458,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:24d3bcf743b29c9dadc8",
+      "id": "registration:ba9d6b465c673e065345",
       "sourcePath": "backend/src/index.ts",
-      "line": 252,
+      "line": 260,
       "receiver": "app",
       "method": "use",
       "path": "/api/projects",
@@ -125378,9 +125473,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:d81439d84d82ec0f3c1f",
+      "id": "registration:2e15135498b45c152844",
       "sourcePath": "backend/src/index.ts",
-      "line": 253,
+      "line": 261,
       "receiver": "app",
       "method": "use",
       "path": "/api/terminal-sessions",
@@ -125393,9 +125488,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:54a6f1c4d6661d525168",
+      "id": "registration:19973bbdd60fe289c763",
       "sourcePath": "backend/src/index.ts",
-      "line": 254,
+      "line": 262,
       "receiver": "app",
       "method": "use",
       "path": "/api/profile",
@@ -125408,9 +125503,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:b95d7708ab831ba49053",
+      "id": "registration:383869c82a1319f1e1ea",
       "sourcePath": "backend/src/index.ts",
-      "line": 256,
+      "line": 264,
       "receiver": "app",
       "method": "use",
       "path": "/api/showcase",
@@ -125423,9 +125518,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:42d826489bf12973f275",
+      "id": "registration:48349a52f2921d1643b5",
       "sourcePath": "backend/src/index.ts",
-      "line": 257,
+      "line": 265,
       "receiver": "app",
       "method": "use",
       "path": "/api/media",
@@ -125438,9 +125533,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:54d1c04cd7fa9dc861dd",
+      "id": "registration:c4e7470168136bf9242b",
       "sourcePath": "backend/src/index.ts",
-      "line": 258,
+      "line": 266,
       "receiver": "app",
       "method": "use",
       "path": "/api/drive",
@@ -125453,9 +125548,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:b18f6e63529df4cba371",
+      "id": "registration:2fcf7894fbbbf8531dce",
       "sourcePath": "backend/src/index.ts",
-      "line": 259,
+      "line": 267,
       "receiver": "app",
       "method": "use",
       "path": "/api/browser/runs",
@@ -125468,14 +125563,28 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:b0517abc94187c2a5171",
+      "id": "registration:d25ee5ee7b8c710f804d",
       "sourcePath": "backend/src/index.ts",
-      "line": 260,
+      "line": 268,
+      "receiver": "app",
+      "method": "use",
+      "path": "/api/browser/local/device",
+      "handlers": [
+        "createBrowserDeviceRouter()"
+      ],
+      "scope": "module",
+      "functionName": "<module>",
+      "inlineResponse": false
+    },
+    {
+      "id": "registration:2bec3aae2dd63855826e",
+      "sourcePath": "backend/src/index.ts",
+      "line": 269,
       "receiver": "app",
       "method": "use",
       "path": "/api/browser/local",
       "handlers": [
-        "authMiddleware",
+        "createLocalBrowserAuth()",
         "localBrowserRouter"
       ],
       "scope": "module",
@@ -125483,9 +125592,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:ed0572e05646d6fb760b",
+      "id": "registration:1d1e35d7b54577bbc02c",
       "sourcePath": "backend/src/index.ts",
-      "line": 261,
+      "line": 270,
       "receiver": "app",
       "method": "use",
       "path": "/api/builder",
@@ -125498,9 +125607,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:c70f6ef23bdd26729a9b",
+      "id": "registration:36463fbd9193ea18bf50",
       "sourcePath": "backend/src/index.ts",
-      "line": 262,
+      "line": 271,
       "receiver": "app",
       "method": "use",
       "path": "/api/capabilities",
@@ -125513,9 +125622,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:8035373dd14ef89a6087",
+      "id": "registration:796456423e40b4ce6285",
       "sourcePath": "backend/src/index.ts",
-      "line": 263,
+      "line": 272,
       "receiver": "app",
       "method": "use",
       "path": "/api/debug",
@@ -125528,9 +125637,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:f6165ffac616e6cba12c",
+      "id": "registration:f11013adfa04e396f7b7",
       "sourcePath": "backend/src/index.ts",
-      "line": 264,
+      "line": 273,
       "receiver": "app",
       "method": "use",
       "path": "/api/wellbeing",
@@ -125543,9 +125652,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:f1d383da07f5fb6ad67d",
+      "id": "registration:61d59d25650b29f1e6e3",
       "sourcePath": "backend/src/index.ts",
-      "line": 265,
+      "line": 274,
       "receiver": "app",
       "method": "use",
       "path": "/api/github",
@@ -125558,9 +125667,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:5eb65dd07cc023c2c0b5",
+      "id": "registration:f93f5605da5ef44b8783",
       "sourcePath": "backend/src/index.ts",
-      "line": 266,
+      "line": 275,
       "receiver": "app",
       "method": "use",
       "path": "/api/existing-source",
@@ -125573,9 +125682,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:579f1dc1497f7f6e9714",
+      "id": "registration:2bd264afbd5bd12619ee",
       "sourcePath": "backend/src/index.ts",
-      "line": 267,
+      "line": 276,
       "receiver": "app",
       "method": "use",
       "path": "/api/vercel",
@@ -125588,9 +125697,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:762b8e4219f176913f5c",
+      "id": "registration:52d6893014bbed30010f",
       "sourcePath": "backend/src/index.ts",
-      "line": 268,
+      "line": 277,
       "receiver": "app",
       "method": "use",
       "path": "/api/integrations",
@@ -125603,9 +125712,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:63ef2d5ca6c36922277b",
+      "id": "registration:04d4b1afb50bd37965be",
       "sourcePath": "backend/src/index.ts",
-      "line": 269,
+      "line": 278,
       "receiver": "app",
       "method": "use",
       "path": "/api/supabase",
@@ -125618,9 +125727,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:794c9ca3a1a8fe9fab97",
+      "id": "registration:1d5c6d7a152fbdb04a8b",
       "sourcePath": "backend/src/index.ts",
-      "line": 270,
+      "line": 279,
       "receiver": "app",
       "method": "use",
       "path": "/api/publish",
@@ -125633,9 +125742,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:fe984a6925de34dc455c",
+      "id": "registration:f57d40773a8ff3617012",
       "sourcePath": "backend/src/index.ts",
-      "line": 271,
+      "line": 280,
       "receiver": "app",
       "method": "get",
       "path": "/auth/github",
@@ -125647,9 +125756,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:32bb1cda53cb19299851",
+      "id": "registration:f1827ddd81e1759a8f81",
       "sourcePath": "backend/src/index.ts",
-      "line": 275,
+      "line": 284,
       "receiver": "app",
       "method": "use",
       "path": "/api/notifications",
@@ -125662,9 +125771,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:e016428b5f9612d91c92",
+      "id": "registration:a2e25187e8a923604f2d",
       "sourcePath": "backend/src/index.ts",
-      "line": 276,
+      "line": 285,
       "receiver": "app",
       "method": "use",
       "path": "/api/billing",
@@ -125677,9 +125786,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:fe2fc5d76ec8e08f693b",
+      "id": "registration:c786ecae35cf71d80d88",
       "sourcePath": "backend/src/index.ts",
-      "line": 278,
+      "line": 287,
       "receiver": "app",
       "method": "use",
       "path": null,
@@ -125689,9 +125798,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:eb8cd572e0d41165ba1d",
+      "id": "registration:2162bec49b94975b90aa",
       "sourcePath": "backend/src/index.ts",
-      "line": 282,
+      "line": 291,
       "receiver": "app",
       "method": "use",
       "path": null,
@@ -128331,9 +128440,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:8c0431fbead0e3fd1bed",
+      "id": "registration:94b9efa2c079632b7dd0",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 181,
+      "line": 178,
       "receiver": "router",
       "method": "post",
       "path": "/runs",
@@ -128345,9 +128454,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:8ccf5d9bc1e4649cc6c4",
+      "id": "registration:055e130288e15cff8185",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 206,
+      "line": 203,
       "receiver": "router",
       "method": "get",
       "path": "/session",
@@ -128359,9 +128468,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:3dce53184d075b81fbc1",
+      "id": "registration:1fc9dac212a56858962e",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 211,
+      "line": 208,
       "receiver": "router",
       "method": "post",
       "path": "/documents",
@@ -128373,9 +128482,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:d03560cdceaf2f335ee9",
+      "id": "registration:257960b227a064524fab",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 232,
+      "line": 229,
       "receiver": "router",
       "method": "get",
       "path": "/runs/:runId",
@@ -128387,9 +128496,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:033813bd79d1db024e8a",
+      "id": "registration:9db3c4fc7cfdb414e2fb",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 241,
+      "line": 238,
       "receiver": "router",
       "method": "delete",
       "path": "/runs/:runId",
@@ -128401,9 +128510,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:d4dd6746e97dbeb12232",
+      "id": "registration:e4eedce66c2eb03ef664",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 261,
+      "line": 258,
       "receiver": "router",
       "method": "post",
       "path": "/runs/:runId/turn",
@@ -128415,7 +128524,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:b9a7f4c0699986a5893a",
+      "id": "registration:5a71525fffd24cc02e31",
       "sourcePath": "backend/src/routes/localBrowser.ts",
       "line": 334,
       "receiver": "router",
@@ -128429,7 +128538,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:680a215aae5fc526a4e1",
+      "id": "registration:af50e1ec91ce6ebd9d1e",
       "sourcePath": "backend/src/routes/localBrowser.ts",
       "line": 339,
       "receiver": "router",
@@ -128440,6 +128549,90 @@
       ],
       "scope": "function",
       "functionName": "createLocalBrowserRouter",
+      "inlineResponse": false
+    },
+    {
+      "id": "registration:098531894a85f7279dd6",
+      "sourcePath": "backend/src/routes/localBrowserDevice.ts",
+      "line": 39,
+      "receiver": "router",
+      "method": "use",
+      "path": null,
+      "handlers": [],
+      "scope": "function",
+      "functionName": "createBrowserDeviceRouter",
+      "inlineResponse": true
+    },
+    {
+      "id": "registration:c2a36964c82db1675f8d",
+      "sourcePath": "backend/src/routes/localBrowserDevice.ts",
+      "line": 54,
+      "receiver": "router",
+      "method": "post",
+      "path": "/authorize",
+      "handlers": [
+        "authMiddleware",
+        "route()"
+      ],
+      "scope": "function",
+      "functionName": "createBrowserDeviceRouter",
+      "inlineResponse": false
+    },
+    {
+      "id": "registration:9be7269d11eaa65b59ac",
+      "sourcePath": "backend/src/routes/localBrowserDevice.ts",
+      "line": 72,
+      "receiver": "router",
+      "method": "post",
+      "path": "/exchange",
+      "handlers": [
+        "route()"
+      ],
+      "scope": "function",
+      "functionName": "createBrowserDeviceRouter",
+      "inlineResponse": false
+    },
+    {
+      "id": "registration:20ec88741685b865a7c2",
+      "sourcePath": "backend/src/routes/localBrowserDevice.ts",
+      "line": 91,
+      "receiver": "router",
+      "method": "post",
+      "path": "/refresh",
+      "handlers": [
+        "route()"
+      ],
+      "scope": "function",
+      "functionName": "createBrowserDeviceRouter",
+      "inlineResponse": false
+    },
+    {
+      "id": "registration:3ed568c2bcb3ea476a44",
+      "sourcePath": "backend/src/routes/localBrowserDevice.ts",
+      "line": 108,
+      "receiver": "router",
+      "method": "post",
+      "path": "/revoke",
+      "handlers": [
+        "route()"
+      ],
+      "scope": "function",
+      "functionName": "createBrowserDeviceRouter",
+      "inlineResponse": false
+    },
+    {
+      "id": "registration:1152a60c9c87921fdda7",
+      "sourcePath": "backend/src/routes/localBrowserDevice.ts",
+      "line": 117,
+      "receiver": "router",
+      "method": "delete",
+      "path": "/:deviceId",
+      "handlers": [
+        "authMiddleware",
+        "route()"
+      ],
+      "scope": "function",
+      "functionName": "createBrowserDeviceRouter",
       "inlineResponse": false
     },
     {
@@ -129836,7 +130029,7 @@
       "method": "POST",
       "path": "/api/billing/webhook/whop",
       "mountChain": [
-        "backend/src/index.ts:149"
+        "backend/src/index.ts:157"
       ],
       "authBoundary": [],
       "reachable": true,
@@ -129851,7 +130044,7 @@
       "method": "POST",
       "path": "/api/billing/webhook/lemon-squeezy",
       "mountChain": [
-        "backend/src/index.ts:149"
+        "backend/src/index.ts:157"
       ],
       "authBoundary": [],
       "reachable": true,
@@ -129866,7 +130059,7 @@
       "method": "POST",
       "path": "/api/billing/webhook/paddle",
       "mountChain": [
-        "backend/src/index.ts:149"
+        "backend/src/index.ts:157"
       ],
       "authBoundary": [],
       "reachable": true,
@@ -129881,7 +130074,7 @@
       "method": "POST",
       "path": "/api/integrations/composio/webhook",
       "mountChain": [
-        "backend/src/index.ts:150"
+        "backend/src/index.ts:158"
       ],
       "authBoundary": [],
       "reachable": true,
@@ -129896,7 +130089,7 @@
       "method": "POST",
       "path": "/internal/business-automations/tick",
       "mountChain": [
-        "backend/src/index.ts:151"
+        "backend/src/index.ts:159"
       ],
       "authBoundary": [],
       "reachable": true,
@@ -129911,7 +130104,7 @@
       "method": "POST",
       "path": "/internal/storage/reconcile",
       "mountChain": [
-        "backend/src/index.ts:152"
+        "backend/src/index.ts:160"
       ],
       "authBoundary": [],
       "reachable": false,
@@ -129926,7 +130119,7 @@
       "method": "POST",
       "path": "/internal/browser/execute",
       "mountChain": [
-        "backend/src/index.ts:153"
+        "backend/src/index.ts:161"
       ],
       "authBoundary": [],
       "reachable": false,
@@ -129941,7 +130134,7 @@
       "method": "POST",
       "path": "/internal/browser/recover",
       "mountChain": [
-        "backend/src/index.ts:153"
+        "backend/src/index.ts:161"
       ],
       "authBoundary": [],
       "reachable": false,
@@ -129956,7 +130149,7 @@
       "method": "POST",
       "path": "/api/guest/claim",
       "mountChain": [
-        "backend/src/index.ts:158"
+        "backend/src/index.ts:166"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -129973,7 +130166,7 @@
       "method": "POST",
       "path": "/api/guest/chat",
       "mountChain": [
-        "backend/src/index.ts:158"
+        "backend/src/index.ts:166"
       ],
       "authBoundary": [],
       "reachable": true,
@@ -129981,10 +130174,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:c6545251506633d5f457",
-      "registrationId": "registration:4e76f2e98cb3d8ddc677",
+      "id": "route:92da98f7cac0c3b9ec44",
+      "registrationId": "registration:ea237b1f4464fe8a93cd",
       "sourcePath": "backend/src/index.ts",
-      "line": 161,
+      "line": 169,
       "method": "POST",
       "path": "/internal/canonical-dispatch",
       "mountChain": [],
@@ -129994,10 +130187,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:2a3be7603629953e6fb6",
-      "registrationId": "registration:faaa73d01277fb5073e5",
+      "id": "route:2cf3730c14360b0977bf",
+      "registrationId": "registration:2111658e1dc0ed3d1f9f",
       "sourcePath": "backend/src/index.ts",
-      "line": 165,
+      "line": 173,
       "method": "GET",
       "path": "/",
       "mountChain": [],
@@ -130014,7 +130207,7 @@
       "method": "GET",
       "path": "/api/project-runtime/:projectId/logs",
       "mountChain": [
-        "backend/src/index.ts:180"
+        "backend/src/index.ts:188"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -130031,7 +130224,7 @@
       "method": "POST",
       "path": "/api/project-runtime/:projectId/restart",
       "mountChain": [
-        "backend/src/index.ts:180"
+        "backend/src/index.ts:188"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -130048,7 +130241,7 @@
       "method": "POST",
       "path": "/api/project-runtime/:projectId/stop",
       "mountChain": [
-        "backend/src/index.ts:180"
+        "backend/src/index.ts:188"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -130065,7 +130258,7 @@
       "method": "GET",
       "path": "/api/project-runtime/:projectId",
       "mountChain": [
-        "backend/src/index.ts:180"
+        "backend/src/index.ts:188"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -130082,7 +130275,7 @@
       "method": "GET",
       "path": "/api/delivery/:projectId/download.zip",
       "mountChain": [
-        "backend/src/index.ts:186"
+        "backend/src/index.ts:194"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -130099,7 +130292,7 @@
       "method": "GET",
       "path": "/api/delivery/:projectId",
       "mountChain": [
-        "backend/src/index.ts:186"
+        "backend/src/index.ts:194"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -130116,7 +130309,7 @@
       "method": "POST",
       "path": "/api/delivery/:projectId/publish",
       "mountChain": [
-        "backend/src/index.ts:186"
+        "backend/src/index.ts:194"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -130133,7 +130326,7 @@
       "method": "POST",
       "path": "/api/delivery/:projectId/deploy",
       "mountChain": [
-        "backend/src/index.ts:186"
+        "backend/src/index.ts:194"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -130143,10 +130336,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:f683d987c73fe668b9a6",
-      "registrationId": "registration:76c30e98ad24b250c410",
+      "id": "route:8189296d9f269998a2b3",
+      "registrationId": "registration:0b230927a2a1877c24af",
       "sourcePath": "backend/src/index.ts",
-      "line": 192,
+      "line": 200,
       "method": "GET",
       "path": "/health",
       "mountChain": [],
@@ -130156,10 +130349,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:cbd4274bbf387af6fe8b",
-      "registrationId": "registration:5cf1c5f5b3557a5274d5",
+      "id": "route:90f201ab5c7f3807d7f0",
+      "registrationId": "registration:73b1c98eb82872be7a6d",
       "sourcePath": "backend/src/index.ts",
-      "line": 196,
+      "line": 204,
       "method": "GET",
       "path": "/ready",
       "mountChain": [],
@@ -130169,10 +130362,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:8aedc99423364748bb40",
-      "registrationId": "registration:3a286e5601994e77f123",
+      "id": "route:728c1bf6e1c78a83dfe0",
+      "registrationId": "registration:842a52655407eb3421ad",
       "sourcePath": "backend/src/index.ts",
-      "line": 207,
+      "line": 215,
       "method": "GET",
       "path": "/api/health",
       "mountChain": [],
@@ -130182,10 +130375,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:110c238474852ea08c3a",
-      "registrationId": "registration:1f36001b4418c924b03d",
+      "id": "route:28b8551675f594cb631e",
+      "registrationId": "registration:e105ab98e2ac0116f6aa",
       "sourcePath": "backend/src/index.ts",
-      "line": 211,
+      "line": 219,
       "method": "GET",
       "path": "/api/config",
       "mountChain": [],
@@ -130202,7 +130395,7 @@
       "method": "ALL",
       "path": "/chat/*",
       "mountChain": [
-        "backend/src/index.ts:220",
+        "backend/src/index.ts:228",
         "backend/src/routes/simpleChat.ts#default-factory:createRetiredRouter"
       ],
       "authBoundary": [],
@@ -130218,7 +130411,7 @@
       "method": "POST",
       "path": "/api/swarm/execute",
       "mountChain": [
-        "backend/src/index.ts:222"
+        "backend/src/index.ts:230"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -130235,7 +130428,7 @@
       "method": "GET",
       "path": "/api/swarm/history",
       "mountChain": [
-        "backend/src/index.ts:222"
+        "backend/src/index.ts:230"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -130252,7 +130445,7 @@
       "method": "GET",
       "path": "/api/swarm/runs/:runId",
       "mountChain": [
-        "backend/src/index.ts:222"
+        "backend/src/index.ts:230"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -130269,7 +130462,7 @@
       "method": "POST",
       "path": "/api/swarm/runs/:runId/cancel",
       "mountChain": [
-        "backend/src/index.ts:222"
+        "backend/src/index.ts:230"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -130286,7 +130479,7 @@
       "method": "POST",
       "path": "/api/swarm/runs/:runId/conversation",
       "mountChain": [
-        "backend/src/index.ts:222"
+        "backend/src/index.ts:230"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -130303,7 +130496,7 @@
       "method": "PATCH",
       "path": "/api/swarm/runs/:runId/conversation",
       "mountChain": [
-        "backend/src/index.ts:222"
+        "backend/src/index.ts:230"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -130320,7 +130513,7 @@
       "method": "ALL",
       "path": "/api/v1/*",
       "mountChain": [
-        "backend/src/index.ts:223",
+        "backend/src/index.ts:231",
         "backend/src/routes/v1.ts#default-factory:createRetiredRouter"
       ],
       "authBoundary": [
@@ -130338,7 +130531,7 @@
       "method": "POST",
       "path": "/api/phase1/plan",
       "mountChain": [
-        "backend/src/index.ts:224"
+        "backend/src/index.ts:232"
       ],
       "authBoundary": [
         "phase1AuthMiddleware"
@@ -130355,7 +130548,7 @@
       "method": "POST",
       "path": "/api/phase1/plan",
       "mountChain": [
-        "backend/src/index.ts:224"
+        "backend/src/index.ts:232"
       ],
       "authBoundary": [
         "phase1AuthMiddleware"
@@ -130372,7 +130565,7 @@
       "method": "GET",
       "path": "/api/phase1/business-automations",
       "mountChain": [
-        "backend/src/index.ts:224"
+        "backend/src/index.ts:232"
       ],
       "authBoundary": [
         "phase1AuthMiddleware"
@@ -130389,7 +130582,7 @@
       "method": "GET",
       "path": "/api/phase1/business-automations/events",
       "mountChain": [
-        "backend/src/index.ts:224"
+        "backend/src/index.ts:232"
       ],
       "authBoundary": [
         "phase1AuthMiddleware"
@@ -130406,7 +130599,7 @@
       "method": "GET",
       "path": "/api/phase1/business-automations/triggers",
       "mountChain": [
-        "backend/src/index.ts:224"
+        "backend/src/index.ts:232"
       ],
       "authBoundary": [
         "phase1AuthMiddleware"
@@ -130423,7 +130616,7 @@
       "method": "POST",
       "path": "/api/phase1/business-automations",
       "mountChain": [
-        "backend/src/index.ts:224"
+        "backend/src/index.ts:232"
       ],
       "authBoundary": [
         "phase1AuthMiddleware"
@@ -130440,7 +130633,7 @@
       "method": "PATCH",
       "path": "/api/phase1/business-automations/:id",
       "mountChain": [
-        "backend/src/index.ts:224"
+        "backend/src/index.ts:232"
       ],
       "authBoundary": [
         "phase1AuthMiddleware"
@@ -130457,7 +130650,7 @@
       "method": "POST",
       "path": "/api/phase1/plan",
       "mountChain": [
-        "backend/src/index.ts:224"
+        "backend/src/index.ts:232"
       ],
       "authBoundary": [
         "phase1AuthMiddleware"
@@ -130474,7 +130667,7 @@
       "method": "POST",
       "path": "/api/phase1/chat",
       "mountChain": [
-        "backend/src/index.ts:224"
+        "backend/src/index.ts:232"
       ],
       "authBoundary": [
         "phase1AuthMiddleware"
@@ -130491,7 +130684,7 @@
       "method": "POST",
       "path": "/api/phase1/business-apps/:toolkit/connect-link",
       "mountChain": [
-        "backend/src/index.ts:224"
+        "backend/src/index.ts:232"
       ],
       "authBoundary": [
         "phase1AuthMiddleware"
@@ -130508,7 +130701,7 @@
       "method": "GET",
       "path": "/api/phase1/business-workflows/:id",
       "mountChain": [
-        "backend/src/index.ts:224"
+        "backend/src/index.ts:232"
       ],
       "authBoundary": [
         "phase1AuthMiddleware"
@@ -130525,7 +130718,7 @@
       "method": "POST",
       "path": "/api/phase1/business-workflows/:id/resume",
       "mountChain": [
-        "backend/src/index.ts:224"
+        "backend/src/index.ts:232"
       ],
       "authBoundary": [
         "phase1AuthMiddleware"
@@ -130542,7 +130735,7 @@
       "method": "POST",
       "path": "/api/phase1/business-workflows/:id/cancel",
       "mountChain": [
-        "backend/src/index.ts:224"
+        "backend/src/index.ts:232"
       ],
       "authBoundary": [
         "phase1AuthMiddleware"
@@ -130559,7 +130752,7 @@
       "method": "GET",
       "path": "/api/phase1/business-actions/confirmations/:id",
       "mountChain": [
-        "backend/src/index.ts:224"
+        "backend/src/index.ts:232"
       ],
       "authBoundary": [
         "phase1AuthMiddleware"
@@ -130576,7 +130769,7 @@
       "method": "POST",
       "path": "/api/phase1/business-actions/confirmations/:id/confirm",
       "mountChain": [
-        "backend/src/index.ts:224"
+        "backend/src/index.ts:232"
       ],
       "authBoundary": [
         "phase1AuthMiddleware"
@@ -130593,7 +130786,7 @@
       "method": "POST",
       "path": "/api/phase1/business-actions/confirmations/:id/cancel",
       "mountChain": [
-        "backend/src/index.ts:224"
+        "backend/src/index.ts:232"
       ],
       "authBoundary": [
         "phase1AuthMiddleware"
@@ -130610,7 +130803,7 @@
       "method": "GET",
       "path": "/api/phase1/usage",
       "mountChain": [
-        "backend/src/index.ts:224"
+        "backend/src/index.ts:232"
       ],
       "authBoundary": [
         "phase1AuthMiddleware"
@@ -130627,7 +130820,7 @@
       "method": "GET",
       "path": "/api/phase1/economics",
       "mountChain": [
-        "backend/src/index.ts:224"
+        "backend/src/index.ts:232"
       ],
       "authBoundary": [
         "phase1AuthMiddleware"
@@ -130644,7 +130837,7 @@
       "method": "POST",
       "path": "/api/phase1/emergency-tokens",
       "mountChain": [
-        "backend/src/index.ts:224"
+        "backend/src/index.ts:232"
       ],
       "authBoundary": [
         "phase1AuthMiddleware"
@@ -130661,7 +130854,7 @@
       "method": "GET",
       "path": "/api/phase1/health",
       "mountChain": [
-        "backend/src/index.ts:224"
+        "backend/src/index.ts:232"
       ],
       "authBoundary": [
         "phase1AuthMiddleware"
@@ -130678,7 +130871,7 @@
       "method": "GET",
       "path": "/api/phase1/quota-check",
       "mountChain": [
-        "backend/src/index.ts:224"
+        "backend/src/index.ts:232"
       ],
       "authBoundary": [
         "phase1AuthMiddleware"
@@ -130695,7 +130888,7 @@
       "method": "GET",
       "path": "/api/dashboard/platform-ready",
       "mountChain": [
-        "backend/src/index.ts:231"
+        "backend/src/index.ts:239"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -130712,7 +130905,7 @@
       "method": "GET",
       "path": "/api/dashboard/promo-access",
       "mountChain": [
-        "backend/src/index.ts:231"
+        "backend/src/index.ts:239"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -130729,7 +130922,7 @@
       "method": "GET",
       "path": "/api/dashboard/ship-analytics",
       "mountChain": [
-        "backend/src/index.ts:231"
+        "backend/src/index.ts:239"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -130746,7 +130939,7 @@
       "method": "GET",
       "path": "/api/dashboard/summary",
       "mountChain": [
-        "backend/src/index.ts:231"
+        "backend/src/index.ts:239"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -130763,7 +130956,7 @@
       "method": "POST",
       "path": "/api/dashboard/emergency-tokens",
       "mountChain": [
-        "backend/src/index.ts:231"
+        "backend/src/index.ts:239"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -130780,7 +130973,7 @@
       "method": "ALL",
       "path": "/api/tasks/*",
       "mountChain": [
-        "backend/src/index.ts:232",
+        "backend/src/index.ts:240",
         "backend/src/routes/tasks.ts#default-factory:createRetiredRouter"
       ],
       "authBoundary": [
@@ -130798,7 +130991,7 @@
       "method": "GET",
       "path": "/api/referrals/summary",
       "mountChain": [
-        "backend/src/index.ts:233"
+        "backend/src/index.ts:241"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -130815,7 +131008,7 @@
       "method": "POST",
       "path": "/api/referrals/apply",
       "mountChain": [
-        "backend/src/index.ts:233"
+        "backend/src/index.ts:241"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -130832,7 +131025,7 @@
       "method": "GET",
       "path": "/api/community/me",
       "mountChain": [
-        "backend/src/index.ts:234"
+        "backend/src/index.ts:242"
       ],
       "authBoundary": [
         "optionalAuthMiddleware"
@@ -130849,7 +131042,7 @@
       "method": "GET",
       "path": "/api/community/posts",
       "mountChain": [
-        "backend/src/index.ts:234"
+        "backend/src/index.ts:242"
       ],
       "authBoundary": [
         "optionalAuthMiddleware"
@@ -130866,7 +131059,7 @@
       "method": "GET",
       "path": "/api/community/posts/:postId",
       "mountChain": [
-        "backend/src/index.ts:234"
+        "backend/src/index.ts:242"
       ],
       "authBoundary": [
         "optionalAuthMiddleware"
@@ -130883,7 +131076,7 @@
       "method": "POST",
       "path": "/api/community/posts",
       "mountChain": [
-        "backend/src/index.ts:234"
+        "backend/src/index.ts:242"
       ],
       "authBoundary": [
         "optionalAuthMiddleware"
@@ -130900,7 +131093,7 @@
       "method": "PATCH",
       "path": "/api/community/posts/:postId",
       "mountChain": [
-        "backend/src/index.ts:234"
+        "backend/src/index.ts:242"
       ],
       "authBoundary": [
         "optionalAuthMiddleware"
@@ -130917,7 +131110,7 @@
       "method": "DELETE",
       "path": "/api/community/posts/:postId",
       "mountChain": [
-        "backend/src/index.ts:234"
+        "backend/src/index.ts:242"
       ],
       "authBoundary": [
         "optionalAuthMiddleware"
@@ -130934,7 +131127,7 @@
       "method": "POST",
       "path": "/api/community/posts/:postId/comments",
       "mountChain": [
-        "backend/src/index.ts:234"
+        "backend/src/index.ts:242"
       ],
       "authBoundary": [
         "optionalAuthMiddleware"
@@ -130951,7 +131144,7 @@
       "method": "PATCH",
       "path": "/api/community/comments/:commentId",
       "mountChain": [
-        "backend/src/index.ts:234"
+        "backend/src/index.ts:242"
       ],
       "authBoundary": [
         "optionalAuthMiddleware"
@@ -130968,7 +131161,7 @@
       "method": "DELETE",
       "path": "/api/community/comments/:commentId",
       "mountChain": [
-        "backend/src/index.ts:234"
+        "backend/src/index.ts:242"
       ],
       "authBoundary": [
         "optionalAuthMiddleware"
@@ -130985,7 +131178,7 @@
       "method": "PUT",
       "path": "/api/community/posts/:postId/vote",
       "mountChain": [
-        "backend/src/index.ts:234"
+        "backend/src/index.ts:242"
       ],
       "authBoundary": [
         "optionalAuthMiddleware"
@@ -131002,7 +131195,7 @@
       "method": "DELETE",
       "path": "/api/community/posts/:postId/vote",
       "mountChain": [
-        "backend/src/index.ts:234"
+        "backend/src/index.ts:242"
       ],
       "authBoundary": [
         "optionalAuthMiddleware"
@@ -131019,7 +131212,7 @@
       "method": "GET",
       "path": "/api/community/admin/summary",
       "mountChain": [
-        "backend/src/index.ts:234"
+        "backend/src/index.ts:242"
       ],
       "authBoundary": [
         "optionalAuthMiddleware"
@@ -131036,7 +131229,7 @@
       "method": "PATCH",
       "path": "/api/community/admin/posts/:postId",
       "mountChain": [
-        "backend/src/index.ts:234"
+        "backend/src/index.ts:242"
       ],
       "authBoundary": [
         "optionalAuthMiddleware"
@@ -131053,7 +131246,7 @@
       "method": "GET",
       "path": "/api/community/admin/posts/:postId/notes",
       "mountChain": [
-        "backend/src/index.ts:234"
+        "backend/src/index.ts:242"
       ],
       "authBoundary": [
         "optionalAuthMiddleware"
@@ -131070,7 +131263,7 @@
       "method": "POST",
       "path": "/api/community/admin/posts/:postId/notes",
       "mountChain": [
-        "backend/src/index.ts:234"
+        "backend/src/index.ts:242"
       ],
       "authBoundary": [
         "optionalAuthMiddleware"
@@ -131087,7 +131280,7 @@
       "method": "POST",
       "path": "/api/message-shares",
       "mountChain": [
-        "backend/src/index.ts:236"
+        "backend/src/index.ts:244"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -131104,7 +131297,7 @@
       "method": "GET",
       "path": "/api/message-shares/:token",
       "mountChain": [
-        "backend/src/index.ts:236"
+        "backend/src/index.ts:244"
       ],
       "authBoundary": [],
       "reachable": true,
@@ -131119,7 +131312,7 @@
       "method": "DELETE",
       "path": "/api/message-shares/:token",
       "mountChain": [
-        "backend/src/index.ts:236"
+        "backend/src/index.ts:244"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -131136,7 +131329,7 @@
       "method": "ALL",
       "path": "/api/token-distribution/*",
       "mountChain": [
-        "backend/src/index.ts:237",
+        "backend/src/index.ts:245",
         "backend/src/routes/tokenDistribution.ts#default-factory:createRetiredRouter"
       ],
       "authBoundary": [
@@ -131154,7 +131347,7 @@
       "method": "ALL",
       "path": "/api/marketplace/*",
       "mountChain": [
-        "backend/src/index.ts:238",
+        "backend/src/index.ts:246",
         "backend/src/routes/marketplace.ts#default-factory:createRetiredRouter"
       ],
       "authBoundary": [
@@ -131172,7 +131365,7 @@
       "method": "ALL",
       "path": "/api/influencer/*",
       "mountChain": [
-        "backend/src/index.ts:239",
+        "backend/src/index.ts:247",
         "backend/src/routes/influencer.ts#default-factory:createRetiredRouter"
       ],
       "authBoundary": [
@@ -131190,7 +131383,7 @@
       "method": "ALL",
       "path": "/api/analytics/*",
       "mountChain": [
-        "backend/src/index.ts:240",
+        "backend/src/index.ts:248",
         "backend/src/routes/analytics.ts#default-factory:createRetiredRouter"
       ],
       "authBoundary": [
@@ -131208,7 +131401,7 @@
       "method": "GET",
       "path": "/api/admin/platform-ready",
       "mountChain": [
-        "backend/src/index.ts:241"
+        "backend/src/index.ts:249"
       ],
       "authBoundary": [
         "adminMiddleware",
@@ -131227,7 +131420,7 @@
       "method": "GET",
       "path": "/api/admin/errors",
       "mountChain": [
-        "backend/src/index.ts:241"
+        "backend/src/index.ts:249"
       ],
       "authBoundary": [
         "adminMiddleware",
@@ -131246,7 +131439,7 @@
       "method": "GET",
       "path": "/api/admin/deployments",
       "mountChain": [
-        "backend/src/index.ts:241"
+        "backend/src/index.ts:249"
       ],
       "authBoundary": [
         "adminMiddleware",
@@ -131265,7 +131458,7 @@
       "method": "GET",
       "path": "/api/admin/engineering/diagnostics",
       "mountChain": [
-        "backend/src/index.ts:241",
+        "backend/src/index.ts:249",
         "backend/src/routes/admin.ts:68"
       ],
       "authBoundary": [
@@ -131285,7 +131478,7 @@
       "method": "GET",
       "path": "/api/admin/engineering/limits/:userId",
       "mountChain": [
-        "backend/src/index.ts:241",
+        "backend/src/index.ts:249",
         "backend/src/routes/admin.ts:68"
       ],
       "authBoundary": [
@@ -131305,7 +131498,7 @@
       "method": "PUT",
       "path": "/api/admin/engineering/limits/:userId/:category",
       "mountChain": [
-        "backend/src/index.ts:241",
+        "backend/src/index.ts:249",
         "backend/src/routes/admin.ts:68"
       ],
       "authBoundary": [
@@ -131325,7 +131518,7 @@
       "method": "DELETE",
       "path": "/api/admin/engineering/limits/:userId/:category",
       "mountChain": [
-        "backend/src/index.ts:241",
+        "backend/src/index.ts:249",
         "backend/src/routes/admin.ts:68"
       ],
       "authBoundary": [
@@ -131345,7 +131538,7 @@
       "method": "GET",
       "path": "/api/operations/readiness",
       "mountChain": [
-        "backend/src/index.ts:244"
+        "backend/src/index.ts:252"
       ],
       "authBoundary": [
         "adminMiddleware",
@@ -131363,7 +131556,7 @@
       "method": "GET",
       "path": "/api/operations/portfolio",
       "mountChain": [
-        "backend/src/index.ts:244"
+        "backend/src/index.ts:252"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -131380,7 +131573,7 @@
       "method": "GET",
       "path": "/api/operations/products/:projectId",
       "mountChain": [
-        "backend/src/index.ts:244"
+        "backend/src/index.ts:252"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -131397,7 +131590,7 @@
       "method": "GET",
       "path": "/api/operations/resources",
       "mountChain": [
-        "backend/src/index.ts:244"
+        "backend/src/index.ts:252"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -131414,7 +131607,7 @@
       "method": "GET",
       "path": "/api/operations/configuration",
       "mountChain": [
-        "backend/src/index.ts:244"
+        "backend/src/index.ts:252"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -131431,7 +131624,7 @@
       "method": "GET",
       "path": "/api/operations/slo",
       "mountChain": [
-        "backend/src/index.ts:244"
+        "backend/src/index.ts:252"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -131448,7 +131641,7 @@
       "method": "GET",
       "path": "/api/operations/providers",
       "mountChain": [
-        "backend/src/index.ts:244"
+        "backend/src/index.ts:252"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -131465,7 +131658,7 @@
       "method": "GET",
       "path": "/api/operations/actions",
       "mountChain": [
-        "backend/src/index.ts:244"
+        "backend/src/index.ts:252"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -131482,7 +131675,7 @@
       "method": "POST",
       "path": "/api/operations/actions",
       "mountChain": [
-        "backend/src/index.ts:244"
+        "backend/src/index.ts:252"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -131499,7 +131692,7 @@
       "method": "POST",
       "path": "/api/operations/actions/:actionId/approve",
       "mountChain": [
-        "backend/src/index.ts:244"
+        "backend/src/index.ts:252"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -131516,7 +131709,7 @@
       "method": "POST",
       "path": "/api/operations/actions/:actionId/confirm",
       "mountChain": [
-        "backend/src/index.ts:244"
+        "backend/src/index.ts:252"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -131533,7 +131726,7 @@
       "method": "POST",
       "path": "/api/operations/actions/:actionId/execute",
       "mountChain": [
-        "backend/src/index.ts:244"
+        "backend/src/index.ts:252"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -131550,7 +131743,7 @@
       "method": "GET",
       "path": "/api/operations/automation",
       "mountChain": [
-        "backend/src/index.ts:244"
+        "backend/src/index.ts:252"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -131567,7 +131760,7 @@
       "method": "POST",
       "path": "/api/operations/automation/rules",
       "mountChain": [
-        "backend/src/index.ts:244"
+        "backend/src/index.ts:252"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -131584,7 +131777,7 @@
       "method": "POST",
       "path": "/api/operations/automation/signals",
       "mountChain": [
-        "backend/src/index.ts:244"
+        "backend/src/index.ts:252"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -131601,7 +131794,7 @@
       "method": "GET",
       "path": "/api/operations/audit",
       "mountChain": [
-        "backend/src/index.ts:244"
+        "backend/src/index.ts:252"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -131618,7 +131811,7 @@
       "method": "GET",
       "path": "/api/operations/evidence",
       "mountChain": [
-        "backend/src/index.ts:244"
+        "backend/src/index.ts:252"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -131635,7 +131828,7 @@
       "method": "GET",
       "path": "/api/growth/overview",
       "mountChain": [
-        "backend/src/index.ts:245"
+        "backend/src/index.ts:253"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -131652,7 +131845,7 @@
       "method": "POST",
       "path": "/api/growth/events",
       "mountChain": [
-        "backend/src/index.ts:245"
+        "backend/src/index.ts:253"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -131669,7 +131862,7 @@
       "method": "POST",
       "path": "/api/growth/identities/link",
       "mountChain": [
-        "backend/src/index.ts:245"
+        "backend/src/index.ts:253"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -131686,7 +131879,7 @@
       "method": "POST",
       "path": "/api/growth/activation/definitions",
       "mountChain": [
-        "backend/src/index.ts:245"
+        "backend/src/index.ts:253"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -131703,7 +131896,7 @@
       "method": "POST",
       "path": "/api/growth/activation/evaluate",
       "mountChain": [
-        "backend/src/index.ts:245"
+        "backend/src/index.ts:253"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -131720,7 +131913,7 @@
       "method": "POST",
       "path": "/api/growth/recommendations/evaluate",
       "mountChain": [
-        "backend/src/index.ts:245"
+        "backend/src/index.ts:253"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -131737,7 +131930,7 @@
       "method": "POST",
       "path": "/api/growth/lifecycle/transition",
       "mountChain": [
-        "backend/src/index.ts:245"
+        "backend/src/index.ts:253"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -131754,7 +131947,7 @@
       "method": "POST",
       "path": "/api/growth/suppressions",
       "mountChain": [
-        "backend/src/index.ts:245"
+        "backend/src/index.ts:253"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -131771,7 +131964,7 @@
       "method": "POST",
       "path": "/api/growth/attribution",
       "mountChain": [
-        "backend/src/index.ts:245"
+        "backend/src/index.ts:253"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -131788,7 +131981,7 @@
       "method": "POST",
       "path": "/api/growth/segments",
       "mountChain": [
-        "backend/src/index.ts:245"
+        "backend/src/index.ts:253"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -131805,7 +131998,7 @@
       "method": "POST",
       "path": "/api/growth/campaigns",
       "mountChain": [
-        "backend/src/index.ts:245"
+        "backend/src/index.ts:253"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -131822,7 +132015,7 @@
       "method": "POST",
       "path": "/api/growth/campaigns/:campaignId/process",
       "mountChain": [
-        "backend/src/index.ts:245"
+        "backend/src/index.ts:253"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -131839,7 +132032,7 @@
       "method": "POST",
       "path": "/api/growth/experiments",
       "mountChain": [
-        "backend/src/index.ts:245"
+        "backend/src/index.ts:253"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -131856,7 +132049,7 @@
       "method": "POST",
       "path": "/api/growth/experiments/:experimentId/assign",
       "mountChain": [
-        "backend/src/index.ts:245"
+        "backend/src/index.ts:253"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -131873,7 +132066,7 @@
       "method": "POST",
       "path": "/api/growth/experiments/assignments/:assignmentId/expose",
       "mountChain": [
-        "backend/src/index.ts:245"
+        "backend/src/index.ts:253"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -131890,7 +132083,7 @@
       "method": "POST",
       "path": "/api/growth/experiments/:experimentId/outcomes",
       "mountChain": [
-        "backend/src/index.ts:245"
+        "backend/src/index.ts:253"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -131907,7 +132100,7 @@
       "method": "GET",
       "path": "/api/growth/experiments/:experimentId/result",
       "mountChain": [
-        "backend/src/index.ts:245"
+        "backend/src/index.ts:253"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -131917,10 +132110,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:7e296ca84646d47231df",
-      "registrationId": "registration:01cb290437da711b77df",
+      "id": "route:7c0b21fd548e3329d57c",
+      "registrationId": "registration:9ae81212b7fba3c4ae30",
       "sourcePath": "backend/src/index.ts",
-      "line": 246,
+      "line": 254,
       "method": "GET",
       "path": "/metrics",
       "mountChain": [],
@@ -131940,7 +132133,7 @@
       "method": "POST",
       "path": "/api/voice/transcribe-free",
       "mountChain": [
-        "backend/src/index.ts:250",
+        "backend/src/index.ts:258",
         "backend/src/routes/voice.ts:12"
       ],
       "authBoundary": [
@@ -131958,7 +132151,7 @@
       "method": "POST",
       "path": "/api/voice/transcribe",
       "mountChain": [
-        "backend/src/index.ts:250"
+        "backend/src/index.ts:258"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -131975,7 +132168,7 @@
       "method": "ALL",
       "path": "/api/chat/*",
       "mountChain": [
-        "backend/src/index.ts:251",
+        "backend/src/index.ts:259",
         "backend/src/routes/chat.ts#default-factory:createRetiredRouter"
       ],
       "authBoundary": [
@@ -131993,7 +132186,7 @@
       "method": "GET",
       "path": "/api/projects",
       "mountChain": [
-        "backend/src/index.ts:252"
+        "backend/src/index.ts:260"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -132010,7 +132203,7 @@
       "method": "GET",
       "path": "/api/projects/:id/files/:fileId/download",
       "mountChain": [
-        "backend/src/index.ts:252"
+        "backend/src/index.ts:260"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -132027,7 +132220,7 @@
       "method": "POST",
       "path": "/api/projects/:id/files/:fileId/link",
       "mountChain": [
-        "backend/src/index.ts:252"
+        "backend/src/index.ts:260"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -132044,7 +132237,7 @@
       "method": "DELETE",
       "path": "/api/projects/:id/files/:fileId/links",
       "mountChain": [
-        "backend/src/index.ts:252"
+        "backend/src/index.ts:260"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -132061,7 +132254,7 @@
       "method": "POST",
       "path": "/api/projects",
       "mountChain": [
-        "backend/src/index.ts:252"
+        "backend/src/index.ts:260"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -132078,7 +132271,7 @@
       "method": "DELETE",
       "path": "/api/projects/:id",
       "mountChain": [
-        "backend/src/index.ts:252"
+        "backend/src/index.ts:260"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -132095,7 +132288,7 @@
       "method": "GET",
       "path": "/api/projects/:id/files",
       "mountChain": [
-        "backend/src/index.ts:252"
+        "backend/src/index.ts:260"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -132112,7 +132305,7 @@
       "method": "GET",
       "path": "/api/projects/:id/code",
       "mountChain": [
-        "backend/src/index.ts:252"
+        "backend/src/index.ts:260"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -132129,7 +132322,7 @@
       "method": "GET",
       "path": "/api/projects/:id",
       "mountChain": [
-        "backend/src/index.ts:252"
+        "backend/src/index.ts:260"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -132146,7 +132339,7 @@
       "method": "GET",
       "path": "/api/terminal-sessions",
       "mountChain": [
-        "backend/src/index.ts:253"
+        "backend/src/index.ts:261"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -132163,7 +132356,7 @@
       "method": "GET",
       "path": "/api/terminal-sessions/:id",
       "mountChain": [
-        "backend/src/index.ts:253"
+        "backend/src/index.ts:261"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -132180,7 +132373,7 @@
       "method": "PUT",
       "path": "/api/terminal-sessions/:id",
       "mountChain": [
-        "backend/src/index.ts:253"
+        "backend/src/index.ts:261"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -132197,7 +132390,7 @@
       "method": "DELETE",
       "path": "/api/terminal-sessions/:id",
       "mountChain": [
-        "backend/src/index.ts:253"
+        "backend/src/index.ts:261"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -132214,7 +132407,7 @@
       "method": "GET",
       "path": "/api/profile",
       "mountChain": [
-        "backend/src/index.ts:254"
+        "backend/src/index.ts:262"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -132231,7 +132424,7 @@
       "method": "PATCH",
       "path": "/api/profile",
       "mountChain": [
-        "backend/src/index.ts:254"
+        "backend/src/index.ts:262"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -132248,7 +132441,7 @@
       "method": "DELETE",
       "path": "/api/profile",
       "mountChain": [
-        "backend/src/index.ts:254"
+        "backend/src/index.ts:262"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -132265,7 +132458,7 @@
       "method": "GET",
       "path": "/api/profile/activity",
       "mountChain": [
-        "backend/src/index.ts:254"
+        "backend/src/index.ts:262"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -132282,7 +132475,7 @@
       "method": "POST",
       "path": "/api/showcase/export",
       "mountChain": [
-        "backend/src/index.ts:256"
+        "backend/src/index.ts:264"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -132299,7 +132492,7 @@
       "method": "ALL",
       "path": "/api/media/*",
       "mountChain": [
-        "backend/src/index.ts:257",
+        "backend/src/index.ts:265",
         "backend/src/routes/media.ts#default-factory:createRetiredRouter"
       ],
       "authBoundary": [
@@ -132317,7 +132510,7 @@
       "method": "POST",
       "path": "/api/drive/uploads",
       "mountChain": [
-        "backend/src/index.ts:258"
+        "backend/src/index.ts:266"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -132334,7 +132527,7 @@
       "method": "POST",
       "path": "/api/drive/uploads/:id/parts",
       "mountChain": [
-        "backend/src/index.ts:258"
+        "backend/src/index.ts:266"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -132351,7 +132544,7 @@
       "method": "POST",
       "path": "/api/drive/uploads/:id/complete",
       "mountChain": [
-        "backend/src/index.ts:258"
+        "backend/src/index.ts:266"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -132368,7 +132561,7 @@
       "method": "GET",
       "path": "/api/drive/objects",
       "mountChain": [
-        "backend/src/index.ts:258"
+        "backend/src/index.ts:266"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -132385,7 +132578,7 @@
       "method": "GET",
       "path": "/api/drive/objects/:id",
       "mountChain": [
-        "backend/src/index.ts:258"
+        "backend/src/index.ts:266"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -132402,7 +132595,7 @@
       "method": "POST",
       "path": "/api/drive/objects/:id/download-url",
       "mountChain": [
-        "backend/src/index.ts:258"
+        "backend/src/index.ts:266"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -132419,7 +132612,7 @@
       "method": "DELETE",
       "path": "/api/drive/objects/:id",
       "mountChain": [
-        "backend/src/index.ts:258"
+        "backend/src/index.ts:266"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -132436,7 +132629,7 @@
       "method": "POST",
       "path": "/api/browser/runs",
       "mountChain": [
-        "backend/src/index.ts:259"
+        "backend/src/index.ts:267"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -132453,7 +132646,7 @@
       "method": "GET",
       "path": "/api/browser/runs/:runId",
       "mountChain": [
-        "backend/src/index.ts:259"
+        "backend/src/index.ts:267"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -132470,7 +132663,7 @@
       "method": "DELETE",
       "path": "/api/browser/runs/:runId",
       "mountChain": [
-        "backend/src/index.ts:259"
+        "backend/src/index.ts:267"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -132480,136 +132673,136 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:f9b35366987f0c5031af",
-      "registrationId": "registration:8c0431fbead0e3fd1bed",
+      "id": "route:e059f3a3b66ddf55b2df",
+      "registrationId": "registration:94b9efa2c079632b7dd0",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 181,
+      "line": 178,
       "method": "POST",
       "path": "/api/browser/local/runs",
       "mountChain": [
-        "backend/src/index.ts:260"
+        "backend/src/index.ts:269"
       ],
       "authBoundary": [
-        "authMiddleware"
+        "createLocalBrowserAuth()"
       ],
       "reachable": false,
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:0e7f5e43ca141449d44a",
-      "registrationId": "registration:8ccf5d9bc1e4649cc6c4",
+      "id": "route:1abeccdb1dea054d8f17",
+      "registrationId": "registration:055e130288e15cff8185",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 206,
+      "line": 203,
       "method": "GET",
       "path": "/api/browser/local/session",
       "mountChain": [
-        "backend/src/index.ts:260"
+        "backend/src/index.ts:269"
       ],
       "authBoundary": [
-        "authMiddleware"
+        "createLocalBrowserAuth()"
       ],
       "reachable": false,
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:ec3dda96d0d156c19e4d",
-      "registrationId": "registration:3dce53184d075b81fbc1",
+      "id": "route:b4a9cea72ae653ced593",
+      "registrationId": "registration:1fc9dac212a56858962e",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 211,
+      "line": 208,
       "method": "POST",
       "path": "/api/browser/local/documents",
       "mountChain": [
-        "backend/src/index.ts:260"
+        "backend/src/index.ts:269"
       ],
       "authBoundary": [
-        "authMiddleware"
+        "createLocalBrowserAuth()"
       ],
       "reachable": false,
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:437d9fd768f849b01d27",
-      "registrationId": "registration:d03560cdceaf2f335ee9",
+      "id": "route:ceb109c5fe5e5b7624eb",
+      "registrationId": "registration:257960b227a064524fab",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 232,
+      "line": 229,
       "method": "GET",
       "path": "/api/browser/local/runs/:runId",
       "mountChain": [
-        "backend/src/index.ts:260"
+        "backend/src/index.ts:269"
       ],
       "authBoundary": [
-        "authMiddleware"
+        "createLocalBrowserAuth()"
       ],
       "reachable": false,
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:515609591fdeab4c3a34",
-      "registrationId": "registration:033813bd79d1db024e8a",
+      "id": "route:0085a91e2fe23038afaa",
+      "registrationId": "registration:9db3c4fc7cfdb414e2fb",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 241,
+      "line": 238,
       "method": "DELETE",
       "path": "/api/browser/local/runs/:runId",
       "mountChain": [
-        "backend/src/index.ts:260"
+        "backend/src/index.ts:269"
       ],
       "authBoundary": [
-        "authMiddleware"
+        "createLocalBrowserAuth()"
       ],
       "reachable": false,
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:b71e5f8700b5738d6ca1",
-      "registrationId": "registration:d4dd6746e97dbeb12232",
+      "id": "route:b173fcda9a217398af62",
+      "registrationId": "registration:e4eedce66c2eb03ef664",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 261,
+      "line": 258,
       "method": "POST",
       "path": "/api/browser/local/runs/:runId/turn",
       "mountChain": [
-        "backend/src/index.ts:260"
+        "backend/src/index.ts:269"
       ],
       "authBoundary": [
-        "authMiddleware"
+        "createLocalBrowserAuth()"
       ],
       "reachable": false,
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:9300ff8c968a9cc02d85",
-      "registrationId": "registration:b9a7f4c0699986a5893a",
+      "id": "route:da357ac7716a4aff0581",
+      "registrationId": "registration:5a71525fffd24cc02e31",
       "sourcePath": "backend/src/routes/localBrowser.ts",
       "line": 334,
       "method": "POST",
       "path": "/api/browser/local/runs/:runId/resume",
       "mountChain": [
-        "backend/src/index.ts:260"
+        "backend/src/index.ts:269"
       ],
       "authBoundary": [
-        "authMiddleware"
+        "createLocalBrowserAuth()"
       ],
       "reachable": false,
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:dfb3a7863b73cc112266",
-      "registrationId": "registration:680a215aae5fc526a4e1",
+      "id": "route:8b80ac77ea52fd9751c0",
+      "registrationId": "registration:af50e1ec91ce6ebd9d1e",
       "sourcePath": "backend/src/routes/localBrowser.ts",
       "line": 339,
       "method": "POST",
       "path": "/api/browser/local/runs/:runId/finish",
       "mountChain": [
-        "backend/src/index.ts:260"
+        "backend/src/index.ts:269"
       ],
       "authBoundary": [
-        "authMiddleware"
+        "createLocalBrowserAuth()"
       ],
       "reachable": false,
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -132623,7 +132816,7 @@
       "method": "POST",
       "path": "/api/builder/projects",
       "mountChain": [
-        "backend/src/index.ts:261"
+        "backend/src/index.ts:270"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -132640,7 +132833,7 @@
       "method": "GET",
       "path": "/api/builder/projects",
       "mountChain": [
-        "backend/src/index.ts:261"
+        "backend/src/index.ts:270"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -132657,7 +132850,7 @@
       "method": "GET",
       "path": "/api/builder/conversations/:conversationId/project",
       "mountChain": [
-        "backend/src/index.ts:261"
+        "backend/src/index.ts:270"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -132674,7 +132867,7 @@
       "method": "GET",
       "path": "/api/builder/projects/:projectId",
       "mountChain": [
-        "backend/src/index.ts:261"
+        "backend/src/index.ts:270"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -132691,7 +132884,7 @@
       "method": "POST",
       "path": "/api/builder/projects/:projectId/cancel",
       "mountChain": [
-        "backend/src/index.ts:261"
+        "backend/src/index.ts:270"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -132708,7 +132901,7 @@
       "method": "GET",
       "path": "/api/builder/projects/:projectId/revisions",
       "mountChain": [
-        "backend/src/index.ts:261"
+        "backend/src/index.ts:270"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -132725,7 +132918,7 @@
       "method": "GET",
       "path": "/api/builder/projects/:projectId/revisions/:revisionId",
       "mountChain": [
-        "backend/src/index.ts:261"
+        "backend/src/index.ts:270"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -132742,7 +132935,7 @@
       "method": "GET",
       "path": "/api/builder/projects/:projectId/files",
       "mountChain": [
-        "backend/src/index.ts:261"
+        "backend/src/index.ts:270"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -132759,7 +132952,7 @@
       "method": "GET",
       "path": "/api/capabilities",
       "mountChain": [
-        "backend/src/index.ts:262"
+        "backend/src/index.ts:271"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -132776,7 +132969,7 @@
       "method": "POST",
       "path": "/api/capabilities/plan",
       "mountChain": [
-        "backend/src/index.ts:262"
+        "backend/src/index.ts:271"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -132793,7 +132986,7 @@
       "method": "ALL",
       "path": "/api/debug/*",
       "mountChain": [
-        "backend/src/index.ts:263",
+        "backend/src/index.ts:272",
         "backend/src/routes/debug.ts#default-factory:createRetiredRouter"
       ],
       "authBoundary": [
@@ -132811,7 +133004,7 @@
       "method": "ALL",
       "path": "/api/wellbeing/*",
       "mountChain": [
-        "backend/src/index.ts:264",
+        "backend/src/index.ts:273",
         "backend/src/routes/wellbeing.ts#default-factory:createRetiredRouter"
       ],
       "authBoundary": [
@@ -132829,7 +133022,7 @@
       "method": "GET",
       "path": "/api/github/oauth",
       "mountChain": [
-        "backend/src/index.ts:265"
+        "backend/src/index.ts:274"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -132846,7 +133039,7 @@
       "method": "GET",
       "path": "/api/github/oauth-config",
       "mountChain": [
-        "backend/src/index.ts:265"
+        "backend/src/index.ts:274"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -132863,7 +133056,7 @@
       "method": "GET",
       "path": "/api/github/redirect",
       "mountChain": [
-        "backend/src/index.ts:265"
+        "backend/src/index.ts:274"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -132880,7 +133073,7 @@
       "method": "POST",
       "path": "/api/github/connect",
       "mountChain": [
-        "backend/src/index.ts:265"
+        "backend/src/index.ts:274"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -132897,7 +133090,7 @@
       "method": "GET",
       "path": "/api/github/status",
       "mountChain": [
-        "backend/src/index.ts:265"
+        "backend/src/index.ts:274"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -132914,7 +133107,7 @@
       "method": "GET",
       "path": "/api/github/repos",
       "mountChain": [
-        "backend/src/index.ts:265"
+        "backend/src/index.ts:274"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -132931,7 +133124,7 @@
       "method": "GET",
       "path": "/api/github/repos/:owner/:repo/branches",
       "mountChain": [
-        "backend/src/index.ts:265"
+        "backend/src/index.ts:274"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -132948,7 +133141,7 @@
       "method": "PATCH",
       "path": "/api/github/settings",
       "mountChain": [
-        "backend/src/index.ts:265"
+        "backend/src/index.ts:274"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -132965,7 +133158,7 @@
       "method": "DELETE",
       "path": "/api/github/disconnect",
       "mountChain": [
-        "backend/src/index.ts:265"
+        "backend/src/index.ts:274"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -132982,7 +133175,7 @@
       "method": "GET",
       "path": "/api/github/analyze",
       "mountChain": [
-        "backend/src/index.ts:265"
+        "backend/src/index.ts:274"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -132999,7 +133192,7 @@
       "method": "GET",
       "path": "/api/github/repo-state",
       "mountChain": [
-        "backend/src/index.ts:265"
+        "backend/src/index.ts:274"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -133016,7 +133209,7 @@
       "method": "GET",
       "path": "/api/github/build-files",
       "mountChain": [
-        "backend/src/index.ts:265"
+        "backend/src/index.ts:274"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -133033,7 +133226,7 @@
       "method": "POST",
       "path": "/api/github/redeploy-preview",
       "mountChain": [
-        "backend/src/index.ts:265"
+        "backend/src/index.ts:274"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -133050,7 +133243,7 @@
       "method": "POST",
       "path": "/api/github/push-build",
       "mountChain": [
-        "backend/src/index.ts:265"
+        "backend/src/index.ts:274"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -133067,7 +133260,7 @@
       "method": "POST",
       "path": "/api/github/rollback",
       "mountChain": [
-        "backend/src/index.ts:265"
+        "backend/src/index.ts:274"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -133084,7 +133277,7 @@
       "method": "GET",
       "path": "/api/existing-source/repositories",
       "mountChain": [
-        "backend/src/index.ts:266"
+        "backend/src/index.ts:275"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -133101,7 +133294,7 @@
       "method": "POST",
       "path": "/api/existing-source/links",
       "mountChain": [
-        "backend/src/index.ts:266"
+        "backend/src/index.ts:275"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -133118,7 +133311,7 @@
       "method": "GET",
       "path": "/api/existing-source/links",
       "mountChain": [
-        "backend/src/index.ts:266"
+        "backend/src/index.ts:275"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -133135,7 +133328,7 @@
       "method": "GET",
       "path": "/api/existing-source/links/:id",
       "mountChain": [
-        "backend/src/index.ts:266"
+        "backend/src/index.ts:275"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -133152,7 +133345,7 @@
       "method": "POST",
       "path": "/api/existing-source/links/:id/refresh",
       "mountChain": [
-        "backend/src/index.ts:266"
+        "backend/src/index.ts:275"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -133169,7 +133362,7 @@
       "method": "DELETE",
       "path": "/api/existing-source/links/:id",
       "mountChain": [
-        "backend/src/index.ts:266"
+        "backend/src/index.ts:275"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -133186,7 +133379,7 @@
       "method": "GET",
       "path": "/api/existing-source/links/:id/directory",
       "mountChain": [
-        "backend/src/index.ts:266"
+        "backend/src/index.ts:275"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -133203,7 +133396,7 @@
       "method": "GET",
       "path": "/api/existing-source/links/:id/index",
       "mountChain": [
-        "backend/src/index.ts:266"
+        "backend/src/index.ts:275"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -133220,7 +133413,7 @@
       "method": "POST",
       "path": "/api/existing-source/links/:id/index",
       "mountChain": [
-        "backend/src/index.ts:266"
+        "backend/src/index.ts:275"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -133237,7 +133430,7 @@
       "method": "GET",
       "path": "/api/existing-source/links/:id/search",
       "mountChain": [
-        "backend/src/index.ts:266"
+        "backend/src/index.ts:275"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -133254,7 +133447,7 @@
       "method": "POST",
       "path": "/api/existing-source/links/:id/locate",
       "mountChain": [
-        "backend/src/index.ts:266"
+        "backend/src/index.ts:275"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -133271,7 +133464,7 @@
       "method": "GET",
       "path": "/api/existing-source/links/:id/neighborhood",
       "mountChain": [
-        "backend/src/index.ts:266"
+        "backend/src/index.ts:275"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -133288,7 +133481,7 @@
       "method": "POST",
       "path": "/api/existing-source/archives",
       "mountChain": [
-        "backend/src/index.ts:266"
+        "backend/src/index.ts:275"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -133305,7 +133498,7 @@
       "method": "POST",
       "path": "/api/existing-source/links/:id/changes",
       "mountChain": [
-        "backend/src/index.ts:266"
+        "backend/src/index.ts:275"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -133322,7 +133515,7 @@
       "method": "GET",
       "path": "/api/existing-source/links/:id/changes",
       "mountChain": [
-        "backend/src/index.ts:266"
+        "backend/src/index.ts:275"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -133339,7 +133532,7 @@
       "method": "GET",
       "path": "/api/existing-source/changes/:changeId",
       "mountChain": [
-        "backend/src/index.ts:266"
+        "backend/src/index.ts:275"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -133356,7 +133549,7 @@
       "method": "POST",
       "path": "/api/existing-source/changes/:changeId/cancel",
       "mountChain": [
-        "backend/src/index.ts:266"
+        "backend/src/index.ts:275"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -133373,7 +133566,7 @@
       "method": "POST",
       "path": "/api/existing-source/changes/:changeId/resume",
       "mountChain": [
-        "backend/src/index.ts:266"
+        "backend/src/index.ts:275"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -133390,7 +133583,7 @@
       "method": "POST",
       "path": "/api/existing-source/changes/:changeId/deliver",
       "mountChain": [
-        "backend/src/index.ts:266"
+        "backend/src/index.ts:275"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -133407,7 +133600,7 @@
       "method": "GET",
       "path": "/api/existing-source/changes/:changeId/export",
       "mountChain": [
-        "backend/src/index.ts:266"
+        "backend/src/index.ts:275"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -133424,7 +133617,7 @@
       "method": "GET",
       "path": "/api/existing-source/links/:id/file",
       "mountChain": [
-        "backend/src/index.ts:266"
+        "backend/src/index.ts:275"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -133441,7 +133634,7 @@
       "method": "GET",
       "path": "/api/vercel/oauth",
       "mountChain": [
-        "backend/src/index.ts:267"
+        "backend/src/index.ts:276"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -133458,7 +133651,7 @@
       "method": "POST",
       "path": "/api/vercel/connect",
       "mountChain": [
-        "backend/src/index.ts:267"
+        "backend/src/index.ts:276"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -133475,7 +133668,7 @@
       "method": "GET",
       "path": "/api/vercel/status",
       "mountChain": [
-        "backend/src/index.ts:267"
+        "backend/src/index.ts:276"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -133492,7 +133685,7 @@
       "method": "DELETE",
       "path": "/api/vercel/disconnect",
       "mountChain": [
-        "backend/src/index.ts:267"
+        "backend/src/index.ts:276"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -133509,7 +133702,7 @@
       "method": "GET",
       "path": "/api/vercel/projects",
       "mountChain": [
-        "backend/src/index.ts:267"
+        "backend/src/index.ts:276"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -133526,7 +133719,7 @@
       "method": "POST",
       "path": "/api/vercel/deploy",
       "mountChain": [
-        "backend/src/index.ts:267"
+        "backend/src/index.ts:276"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -133543,7 +133736,7 @@
       "method": "GET",
       "path": "/api/vercel/domains",
       "mountChain": [
-        "backend/src/index.ts:267"
+        "backend/src/index.ts:276"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -133560,7 +133753,7 @@
       "method": "POST",
       "path": "/api/vercel/domains",
       "mountChain": [
-        "backend/src/index.ts:267"
+        "backend/src/index.ts:276"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -133577,7 +133770,7 @@
       "method": "POST",
       "path": "/api/vercel/domains/verify",
       "mountChain": [
-        "backend/src/index.ts:267"
+        "backend/src/index.ts:276"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -133594,7 +133787,7 @@
       "method": "DELETE",
       "path": "/api/vercel/domains",
       "mountChain": [
-        "backend/src/index.ts:267"
+        "backend/src/index.ts:276"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -133611,7 +133804,7 @@
       "method": "GET",
       "path": "/api/integrations/ai-catalog",
       "mountChain": [
-        "backend/src/index.ts:268"
+        "backend/src/index.ts:277"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -133628,7 +133821,7 @@
       "method": "GET",
       "path": "/api/integrations/supabase/status",
       "mountChain": [
-        "backend/src/index.ts:268"
+        "backend/src/index.ts:277"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -133645,7 +133838,7 @@
       "method": "POST",
       "path": "/api/integrations/supabase/list-projects",
       "mountChain": [
-        "backend/src/index.ts:268"
+        "backend/src/index.ts:277"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -133662,7 +133855,7 @@
       "method": "POST",
       "path": "/api/integrations/supabase/one-click",
       "mountChain": [
-        "backend/src/index.ts:268"
+        "backend/src/index.ts:277"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -133679,7 +133872,7 @@
       "method": "POST",
       "path": "/api/integrations/supabase/connect",
       "mountChain": [
-        "backend/src/index.ts:268"
+        "backend/src/index.ts:277"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -133696,7 +133889,7 @@
       "method": "POST",
       "path": "/api/integrations/supabase/provision",
       "mountChain": [
-        "backend/src/index.ts:268"
+        "backend/src/index.ts:277"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -133713,7 +133906,7 @@
       "method": "GET",
       "path": "/api/integrations/provider-keys",
       "mountChain": [
-        "backend/src/index.ts:268"
+        "backend/src/index.ts:277"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -133730,7 +133923,7 @@
       "method": "POST",
       "path": "/api/integrations/provider-keys",
       "mountChain": [
-        "backend/src/index.ts:268"
+        "backend/src/index.ts:277"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -133747,7 +133940,7 @@
       "method": "DELETE",
       "path": "/api/integrations/provider-keys/:provider",
       "mountChain": [
-        "backend/src/index.ts:268"
+        "backend/src/index.ts:277"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -133764,7 +133957,7 @@
       "method": "POST",
       "path": "/api/integrations/sync-vercel-env",
       "mountChain": [
-        "backend/src/index.ts:268"
+        "backend/src/index.ts:277"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -133781,7 +133974,7 @@
       "method": "GET",
       "path": "/api/integrations/xroga-connect/permission-policy",
       "mountChain": [
-        "backend/src/index.ts:268"
+        "backend/src/index.ts:277"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -133798,7 +133991,7 @@
       "method": "PATCH",
       "path": "/api/integrations/xroga-connect/permission-policy",
       "mountChain": [
-        "backend/src/index.ts:268"
+        "backend/src/index.ts:277"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -133815,7 +134008,7 @@
       "method": "GET",
       "path": "/api/integrations/xroga-connect/status",
       "mountChain": [
-        "backend/src/index.ts:268"
+        "backend/src/index.ts:277"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -133832,7 +134025,7 @@
       "method": "GET",
       "path": "/api/integrations/xroga-connect/catalog",
       "mountChain": [
-        "backend/src/index.ts:268"
+        "backend/src/index.ts:277"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -133849,7 +134042,7 @@
       "method": "GET",
       "path": "/api/integrations/xroga-connect/catalog-categories",
       "mountChain": [
-        "backend/src/index.ts:268"
+        "backend/src/index.ts:277"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -133866,7 +134059,7 @@
       "method": "GET",
       "path": "/api/integrations/xroga-connect/catalog/:toolkit/tools",
       "mountChain": [
-        "backend/src/index.ts:268"
+        "backend/src/index.ts:277"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -133883,7 +134076,7 @@
       "method": "GET",
       "path": "/api/integrations/xroga-connect/catalog/:toolkit/triggers",
       "mountChain": [
-        "backend/src/index.ts:268"
+        "backend/src/index.ts:277"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -133900,7 +134093,7 @@
       "method": "GET",
       "path": "/api/integrations/xroga-connect/catalog/:toolkit",
       "mountChain": [
-        "backend/src/index.ts:268"
+        "backend/src/index.ts:277"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -133917,7 +134110,7 @@
       "method": "GET",
       "path": "/api/integrations/xroga-connect/tool-details/:toolSlug",
       "mountChain": [
-        "backend/src/index.ts:268"
+        "backend/src/index.ts:277"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -133934,7 +134127,7 @@
       "method": "POST",
       "path": "/api/integrations/xroga-connect/session",
       "mountChain": [
-        "backend/src/index.ts:268"
+        "backend/src/index.ts:277"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -133951,7 +134144,7 @@
       "method": "POST",
       "path": "/api/integrations/xroga-connect/search",
       "mountChain": [
-        "backend/src/index.ts:268"
+        "backend/src/index.ts:277"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -133968,7 +134161,7 @@
       "method": "POST",
       "path": "/api/integrations/xroga-connect/action-search",
       "mountChain": [
-        "backend/src/index.ts:268"
+        "backend/src/index.ts:277"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -133985,7 +134178,7 @@
       "method": "POST",
       "path": "/api/integrations/xroga-connect/toolkits",
       "mountChain": [
-        "backend/src/index.ts:268"
+        "backend/src/index.ts:277"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -134002,7 +134195,7 @@
       "method": "GET",
       "path": "/api/integrations/xroga-connect/custom-mcp",
       "mountChain": [
-        "backend/src/index.ts:268"
+        "backend/src/index.ts:277"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -134019,7 +134212,7 @@
       "method": "POST",
       "path": "/api/integrations/xroga-connect/custom-mcp",
       "mountChain": [
-        "backend/src/index.ts:268"
+        "backend/src/index.ts:277"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -134036,7 +134229,7 @@
       "method": "POST",
       "path": "/api/integrations/xroga-connect/custom-mcp/:toolkit/sync",
       "mountChain": [
-        "backend/src/index.ts:268"
+        "backend/src/index.ts:277"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -134053,7 +134246,7 @@
       "method": "DELETE",
       "path": "/api/integrations/xroga-connect/custom-mcp/:toolkit",
       "mountChain": [
-        "backend/src/index.ts:268"
+        "backend/src/index.ts:277"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -134070,7 +134263,7 @@
       "method": "POST",
       "path": "/api/integrations/xroga-connect/link",
       "mountChain": [
-        "backend/src/index.ts:268"
+        "backend/src/index.ts:277"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -134087,7 +134280,7 @@
       "method": "POST",
       "path": "/api/integrations/xroga-connect/execute",
       "mountChain": [
-        "backend/src/index.ts:268"
+        "backend/src/index.ts:277"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -134104,7 +134297,7 @@
       "method": "GET",
       "path": "/api/supabase/oauth",
       "mountChain": [
-        "backend/src/index.ts:269"
+        "backend/src/index.ts:278"
       ],
       "authBoundary": [
         "authMiddleware",
@@ -134122,7 +134315,7 @@
       "method": "GET",
       "path": "/api/supabase/status",
       "mountChain": [
-        "backend/src/index.ts:269"
+        "backend/src/index.ts:278"
       ],
       "authBoundary": [
         "authMiddleware",
@@ -134140,7 +134333,7 @@
       "method": "POST",
       "path": "/api/supabase/connect",
       "mountChain": [
-        "backend/src/index.ts:269"
+        "backend/src/index.ts:278"
       ],
       "authBoundary": [
         "authMiddleware",
@@ -134158,7 +134351,7 @@
       "method": "GET",
       "path": "/api/supabase/projects",
       "mountChain": [
-        "backend/src/index.ts:269"
+        "backend/src/index.ts:278"
       ],
       "authBoundary": [
         "authMiddleware",
@@ -134176,7 +134369,7 @@
       "method": "POST",
       "path": "/api/supabase/select-project",
       "mountChain": [
-        "backend/src/index.ts:269"
+        "backend/src/index.ts:278"
       ],
       "authBoundary": [
         "authMiddleware",
@@ -134194,7 +134387,7 @@
       "method": "POST",
       "path": "/api/supabase/create-project",
       "mountChain": [
-        "backend/src/index.ts:269"
+        "backend/src/index.ts:278"
       ],
       "authBoundary": [
         "authMiddleware",
@@ -134212,7 +134405,7 @@
       "method": "GET",
       "path": "/api/supabase/organizations",
       "mountChain": [
-        "backend/src/index.ts:269"
+        "backend/src/index.ts:278"
       ],
       "authBoundary": [
         "authMiddleware",
@@ -134230,7 +134423,7 @@
       "method": "DELETE",
       "path": "/api/supabase/disconnect",
       "mountChain": [
-        "backend/src/index.ts:269"
+        "backend/src/index.ts:278"
       ],
       "authBoundary": [
         "authMiddleware",
@@ -134248,7 +134441,7 @@
       "method": "GET",
       "path": "/api/publish/status",
       "mountChain": [
-        "backend/src/index.ts:270"
+        "backend/src/index.ts:279"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -134265,7 +134458,7 @@
       "method": "POST",
       "path": "/api/publish/expo-token",
       "mountChain": [
-        "backend/src/index.ts:270"
+        "backend/src/index.ts:279"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -134282,7 +134475,7 @@
       "method": "POST",
       "path": "/api/publish/verify-expo",
       "mountChain": [
-        "backend/src/index.ts:270"
+        "backend/src/index.ts:279"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -134299,7 +134492,7 @@
       "method": "POST",
       "path": "/api/publish/eas-project",
       "mountChain": [
-        "backend/src/index.ts:270"
+        "backend/src/index.ts:279"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -134316,7 +134509,7 @@
       "method": "GET",
       "path": "/api/publish/expo-apps",
       "mountChain": [
-        "backend/src/index.ts:270"
+        "backend/src/index.ts:279"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -134333,7 +134526,7 @@
       "method": "POST",
       "path": "/api/publish/eas-publish",
       "mountChain": [
-        "backend/src/index.ts:270"
+        "backend/src/index.ts:279"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -134350,7 +134543,7 @@
       "method": "POST",
       "path": "/api/publish/cws-credentials",
       "mountChain": [
-        "backend/src/index.ts:270"
+        "backend/src/index.ts:279"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -134367,7 +134560,7 @@
       "method": "POST",
       "path": "/api/publish/cws-oauth/start",
       "mountChain": [
-        "backend/src/index.ts:270"
+        "backend/src/index.ts:279"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -134384,7 +134577,7 @@
       "method": "POST",
       "path": "/api/publish/cws-oauth/callback",
       "mountChain": [
-        "backend/src/index.ts:270"
+        "backend/src/index.ts:279"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -134401,7 +134594,7 @@
       "method": "GET",
       "path": "/api/publish/cws-status",
       "mountChain": [
-        "backend/src/index.ts:270"
+        "backend/src/index.ts:279"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -134418,7 +134611,7 @@
       "method": "POST",
       "path": "/api/publish/sync-play-credentials",
       "mountChain": [
-        "backend/src/index.ts:270"
+        "backend/src/index.ts:279"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -134435,7 +134628,7 @@
       "method": "POST",
       "path": "/api/publish/sync-apple-credentials",
       "mountChain": [
-        "backend/src/index.ts:270"
+        "backend/src/index.ts:279"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -134452,7 +134645,7 @@
       "method": "POST",
       "path": "/api/publish/sync-electron-secrets",
       "mountChain": [
-        "backend/src/index.ts:270"
+        "backend/src/index.ts:279"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -134469,7 +134662,7 @@
       "method": "POST",
       "path": "/api/publish/sync-electron-secrets/:id/confirm",
       "mountChain": [
-        "backend/src/index.ts:270"
+        "backend/src/index.ts:279"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -134486,7 +134679,7 @@
       "method": "GET",
       "path": "/api/publish/eas-builds",
       "mountChain": [
-        "backend/src/index.ts:270"
+        "backend/src/index.ts:279"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -134496,10 +134689,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:8cc98a2c3c921c3d864e",
-      "registrationId": "registration:fe984a6925de34dc455c",
+      "id": "route:8a39d47fffe048ab5780",
+      "registrationId": "registration:f57d40773a8ff3617012",
       "sourcePath": "backend/src/index.ts",
-      "line": 271,
+      "line": 280,
       "method": "GET",
       "path": "/auth/github",
       "mountChain": [],
@@ -134518,7 +134711,7 @@
       "method": "GET",
       "path": "/api/notifications",
       "mountChain": [
-        "backend/src/index.ts:275"
+        "backend/src/index.ts:284"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -134535,7 +134728,7 @@
       "method": "GET",
       "path": "/api/notifications/unread-count",
       "mountChain": [
-        "backend/src/index.ts:275"
+        "backend/src/index.ts:284"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -134552,7 +134745,7 @@
       "method": "PATCH",
       "path": "/api/notifications/:id/read",
       "mountChain": [
-        "backend/src/index.ts:275"
+        "backend/src/index.ts:284"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -134569,7 +134762,7 @@
       "method": "PATCH",
       "path": "/api/notifications/read-all",
       "mountChain": [
-        "backend/src/index.ts:275"
+        "backend/src/index.ts:284"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -134586,7 +134779,7 @@
       "method": "DELETE",
       "path": "/api/notifications/:id",
       "mountChain": [
-        "backend/src/index.ts:275"
+        "backend/src/index.ts:284"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -134603,7 +134796,7 @@
       "method": "GET",
       "path": "/api/billing/plans",
       "mountChain": [
-        "backend/src/index.ts:276"
+        "backend/src/index.ts:285"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -134620,7 +134813,7 @@
       "method": "GET",
       "path": "/api/billing/status",
       "mountChain": [
-        "backend/src/index.ts:276"
+        "backend/src/index.ts:285"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -134637,7 +134830,7 @@
       "method": "GET",
       "path": "/api/billing/entitlement",
       "mountChain": [
-        "backend/src/index.ts:276"
+        "backend/src/index.ts:285"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -134654,7 +134847,7 @@
       "method": "POST",
       "path": "/api/billing/promotion/activate",
       "mountChain": [
-        "backend/src/index.ts:276"
+        "backend/src/index.ts:285"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -134671,7 +134864,7 @@
       "method": "POST",
       "path": "/api/billing/pacing",
       "mountChain": [
-        "backend/src/index.ts:276"
+        "backend/src/index.ts:285"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -134688,7 +134881,7 @@
       "method": "POST",
       "path": "/api/billing/checkout",
       "mountChain": [
-        "backend/src/index.ts:276"
+        "backend/src/index.ts:285"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -134705,7 +134898,7 @@
       "method": "POST",
       "path": "/api/billing/create-checkout",
       "mountChain": [
-        "backend/src/index.ts:276"
+        "backend/src/index.ts:285"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -134722,7 +134915,7 @@
       "method": "POST",
       "path": "/api/billing/checkout/:id/confirm",
       "mountChain": [
-        "backend/src/index.ts:276"
+        "backend/src/index.ts:285"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -134739,7 +134932,7 @@
       "method": "POST",
       "path": "/api/billing/manage",
       "mountChain": [
-        "backend/src/index.ts:276"
+        "backend/src/index.ts:285"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -134756,7 +134949,7 @@
       "method": "POST",
       "path": "/api/billing/portal",
       "mountChain": [
-        "backend/src/index.ts:276"
+        "backend/src/index.ts:285"
       ],
       "authBoundary": [
         "authMiddleware"
@@ -135232,6 +135425,75 @@
       "reachable": false,
       "state": "DEAD_OR_UNREACHABLE",
       "reason": "No mount chain from backend/src/index.ts; not treated as a reachable endpoint."
+    },
+    {
+      "id": "route-unmounted:4bed7b35c65096766afc",
+      "registrationId": "registration:c2a36964c82db1675f8d",
+      "sourcePath": "backend/src/routes/localBrowserDevice.ts",
+      "line": 54,
+      "method": "POST",
+      "path": "/authorize",
+      "mountChain": [],
+      "authBoundary": [
+        "authMiddleware"
+      ],
+      "reachable": false,
+      "state": "DEAD_OR_UNREACHABLE",
+      "reason": "No mount chain from backend/src/index.ts; not treated as a reachable endpoint."
+    },
+    {
+      "id": "route-unmounted:1a0b0ecd1d1076fcfd5b",
+      "registrationId": "registration:9be7269d11eaa65b59ac",
+      "sourcePath": "backend/src/routes/localBrowserDevice.ts",
+      "line": 72,
+      "method": "POST",
+      "path": "/exchange",
+      "mountChain": [],
+      "authBoundary": [],
+      "reachable": false,
+      "state": "DEAD_OR_UNREACHABLE",
+      "reason": "No mount chain from backend/src/index.ts; not treated as a reachable endpoint."
+    },
+    {
+      "id": "route-unmounted:e83f0189da466a7c980c",
+      "registrationId": "registration:20ec88741685b865a7c2",
+      "sourcePath": "backend/src/routes/localBrowserDevice.ts",
+      "line": 91,
+      "method": "POST",
+      "path": "/refresh",
+      "mountChain": [],
+      "authBoundary": [],
+      "reachable": false,
+      "state": "DEAD_OR_UNREACHABLE",
+      "reason": "No mount chain from backend/src/index.ts; not treated as a reachable endpoint."
+    },
+    {
+      "id": "route-unmounted:f8c36606454a74139847",
+      "registrationId": "registration:3ed568c2bcb3ea476a44",
+      "sourcePath": "backend/src/routes/localBrowserDevice.ts",
+      "line": 108,
+      "method": "POST",
+      "path": "/revoke",
+      "mountChain": [],
+      "authBoundary": [],
+      "reachable": false,
+      "state": "DEAD_OR_UNREACHABLE",
+      "reason": "No mount chain from backend/src/index.ts; not treated as a reachable endpoint."
+    },
+    {
+      "id": "route-unmounted:d158bc930fffb55eb360",
+      "registrationId": "registration:1152a60c9c87921fdda7",
+      "sourcePath": "backend/src/routes/localBrowserDevice.ts",
+      "line": 117,
+      "method": "DELETE",
+      "path": "/:deviceId",
+      "mountChain": [],
+      "authBoundary": [
+        "authMiddleware"
+      ],
+      "reachable": false,
+      "state": "DEAD_OR_UNREACHABLE",
+      "reason": "No mount chain from backend/src/index.ts; not treated as a reachable endpoint."
     }
   ],
   "queues": [
@@ -135327,7 +135589,7 @@
       "state": "IMPLEMENTED_BUT_UNVERIFIED"
     },
     {
-      "id": "schedule:f1544c2195c54c47252f",
+      "id": "schedule:d2989f00f9a0e38d933a",
       "sourcePath": "backend/src/routes/localBrowser.ts",
       "line": 306,
       "kind": "setInterval",
@@ -136724,6 +136986,13 @@
       "version": "20261101160136",
       "order": 161,
       "sha256": "c7465f9d2d5e2ed9ac329b4084f3d6253085d353e4716444225a402f128be731"
+    },
+    {
+      "id": "migration:92f9a447b76d4a79da3e",
+      "sourcePath": "supabase/migrations/20261108181114_local_browser_device_sessions.sql",
+      "version": "20261108181114",
+      "order": 162,
+      "sha256": "cecc94fa90df95543974fad939bd3a23a526f2bf4933369fc28e9e09abbb0bf3"
     }
   ],
   "workflows": [

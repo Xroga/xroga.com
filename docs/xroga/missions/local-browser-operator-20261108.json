@@ -2,10 +2,12 @@
   "version": "1.0",
   "missionId": "LOCAL-BROWSER-OPERATOR-20261108",
   "baseSha": "11a5e4f6f510d5de7772d1d191b98a0810a4d6ce",
-  "requirementIds": ["XR-FAMILY-browser-execution"],
+  "requirementIds": [
+    "XR-FAMILY-browser-execution"
+  ],
   "state": "IN_PROGRESS",
   "risk": "high",
-  "scope": "Run the local Chrome operator through canonical browser records, leases and metered DeepSeek. Improve the same-profile sign-in handoff, reuse Workspace dictation, show Chrome actions and preserve a resumable run after an interrupted model request.",
+  "scope": "Run the local Chrome operator through canonical browser records, leases and metered DeepSeek. Improve the same-profile sign-in handoff, reuse Workspace dictation, show Chrome actions and preserve a resumable run after an interrupted model request. Replace the ongoing Workspace relay dependency with revocable, browser-scoped device authentication while preserving the optional Workspace sidebar.",
   "changedFiles": [
     "apps/xroga-browser-extension/wxt.config.ts",
     "apps/xroga-browser-extension/src/browser-control/core/interaction/classify.ts",
@@ -30,44 +32,129 @@
     "backend/src/workers/browserModelDispatch.ts",
     "frontend/src/app/(workspace)/workspace/page.tsx",
     "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
-    "tests/chrome-extension/operator.mjs"
+    "tests/chrome-extension/operator.mjs",
+    "apps/xroga-browser-extension/src/xroga/device.ts",
+    "apps/xroga-browser-extension/src/xroga/workspace.ts",
+    "apps/xroga-browser-extension/src/store/db.ts",
+    "apps/xroga-browser-extension/INSTALL-XROGA.md",
+    "apps/xroga-browser-extension/PRIVACY.md",
+    "backend/src/routes/localBrowserDevice.ts",
+    "supabase/migrations/20261108181114_local_browser_device_sessions.sql",
+    "tests/chrome-extension/device-auth.mjs",
+    "tests/chrome-extension/device-browser.mjs"
   ],
   "decisions": {
-    "keep": ["Nanobrowser browser control, task loop, scoped tabs and recovery journal", "Existing Xroga account, model ledger, browser run and lease stores"],
-    "extend": ["Local Chrome execution target", "Background pairing through the existing same-profile Workspace session", "Workspace PCM dictation, Chrome-local action cues and redacted screenshot previews", "Explicit resumption after uncertain model completion"],
-    "replace": ["The limited page-reading default extension build"],
+    "keep": [
+      "Nanobrowser browser control, task loop, scoped tabs and recovery journal",
+      "Existing Xroga account, model ledger, browser run and lease stores"
+    ],
+    "extend": [
+      "Local Chrome execution target",
+      "Background pairing through the existing same-profile Workspace session",
+      "Workspace PCM dictation, Chrome-local action cues and redacted screenshot previews",
+      "Explicit resumption after uncertain model completion",
+      "Proof-bound one-time enrollment and revocable Chrome device sessions using the existing API and database",
+      "Authenticated optional Workspace link and owner-partitioned local history"
+    ],
+    "replace": [
+      "The limited page-reading default extension build"
+    ],
     "deprecate": []
   },
   "schemaImpact": {
     "changed": true,
-    "migrations": ["docs/operations/zurelay-product-pacing-20261104/provider-request-capacity-v2.sql"],
-    "rollout": "Apply the shared pacing expansion with legacy defaults before enabling a verified key pilot. Local Chrome run limits and usage use the existing state JSON. Activate only on compatible frontend and API releases.",
-    "rollback": "Restore the previous per-key interval and concurrency without clearing leases or ledger entries. Disable the local Chrome API flag and Workspace extension ID to stop new local runs."
+    "migrations": [
+      "docs/operations/zurelay-product-pacing-20261104/provider-request-capacity-v2.sql",
+      "supabase/migrations/20261108181114_local_browser_device_sessions.sql"
+    ],
+    "rollout": "Apply the shared pacing expansion with legacy defaults before enabling a verified key pilot. Local Chrome run limits and usage use the existing state JSON. Activate only on compatible frontend and API releases. The additive server-only device table must be replayed in an isolated staging database before setting the device extension ID.",
+    "rollback": "Restore the previous per-key interval and concurrency without clearing leases or ledger entries. Disable the local Chrome API flag and Workspace extension ID to stop new local runs. Clear the API device extension ID to disable new and existing device credentials. Retain the additive table and previous authenticated relay."
   },
   "securityImpact": {
-    "auth": { "changed": true, "description": "Workspace verifies an existing account before pairing and authenticates each API request. The browser service worker never holds the account bearer." },
-    "tenant": { "changed": true, "description": "Local browser runs, turn claims and result writes are owner scoped. The extension requires separate Chrome profiles for different Xroga accounts." },
-    "approval": { "changed": true, "description": "The extension retains the upstream user handover and requires one-off approval for classified writes without automatic site allowance." },
-    "credentials": { "changed": false, "description": "Xroga uses the existing platform model credential on the server." },
-    "egress": { "changed": true, "description": "A paired Workspace tab relays bounded model turns through the authenticated Xroga API. The server rejects image, secret-bearing and oversized context." },
-    "cost": { "changed": true, "description": "The enabled feature can spend through the existing provider ledger. Run and turn caps bound the route. Fixture tests spend zero." },
-    "billing": { "changed": false, "description": "The existing ledger admits and settles platform-funded Zurelay requests. The task allowance uses the same receipt calculation and retains the full per-turn ceiling when the charge is unknown." }
+    "auth": {
+      "changed": true,
+      "description": "Workspace verifies the existing account for one-use proof-bound enrollment. The extension renews five-minute API access with a revocable scoped device credential, and never receives the Workspace bearer."
+    },
+    "tenant": {
+      "changed": true,
+      "description": "Local browser runs, turn claims and results remain scoped to the validated owner. Explicit extension sign-out revokes its device credential. Browser history is partitioned by account and preserves the first owner’s prior data."
+    },
+    "approval": {
+      "changed": true,
+      "description": "The extension retains the upstream user handover and requires one-off approval for classified writes without automatic site allowance."
+    },
+    "credentials": {
+      "changed": true,
+      "description": "Device and access credential digests only on the server. The worker holds a bounded renewal credential in trusted extension storage and an access credential in memory."
+    },
+    "egress": {
+      "changed": true,
+      "description": "The extension worker uses an exact configured API origin for bounded browser model turns and document extraction. Workspace stays optional after enrollment. Screenshot model input remains restricted to the separately pinned probe."
+    },
+    "cost": {
+      "changed": true,
+      "description": "The enabled feature can spend through the existing provider ledger. Run and turn caps bound the route. Fixture tests spend zero."
+    },
+    "billing": {
+      "changed": false,
+      "description": "The existing ledger admits and settles platform-funded Zurelay requests. The task allowance uses the same receipt calculation and retains the full per-turn ceiling when the charge is unknown."
+    }
   },
   "tests": [
-    { "command": "node tests/chrome-extension/operator.mjs <playwright> <chrome> [temporary-profile-parent]", "scope": "Passed in Chrome 156 with a deterministic model. Verified background pairing, PCM dictation into the draft, real navigation, action cues at click and input, a redacted screenshot with no model egress, scoped form approval, cancellation and explicit resumption without a repeated click.", "negative": true, "reference": "tests/chrome-extension/operator.mjs" },
-    { "command": "node tests/chrome-extension/operator.mjs <playwright> <chrome> [temporary-profile-parent]", "scope": "Application source 89ef62ce passed in Chrome 151 with a deterministic model. Verified manual pause and same-run continuation, a lost final acknowledgement, actual service-worker termination, refusal of a second fixture account, and owner-only result sync without another model request or repeated click. Zero model spend.", "negative": true, "reference": "tests/chrome-extension/operator.mjs" },
-    { "command": "node tests/chrome-extension/operator.mjs <playwright> <chrome> [temporary-profile-parent]", "scope": "Version 0.2.4 passed in Chrome 151 with the real Workspace component and fixture auth/API/model. Verified same-tab reconnect, restored receipt history, a new Workspace-originated run, and removal of browser activity on sign-out.", "negative": true, "reference": "tests/chrome-extension/operator.mjs" },
-    { "command": "node --import tsx tests/chrome-extension/operator.mjs <playwright> <chrome> <temporary-profile-parent> --document-only", "scope": "Deterministic Chrome fixture used the canonical XLSX extractor, read beyond the inline context with cell references, waited for a dynamic product link, and verified the unit price and total.", "negative": false, "reference": "tests/chrome-extension/operator.mjs" },
-    { "command": "node --import tsx tests/chrome-extension/operator.mjs <playwright> <chrome> <temporary-profile-parent> --live-zurelay", "scope": "The isolated Chrome probe uses the exact live Zurelay model with a synthetic site and Workspace bridge. Hosted authentication and settlement are separate acceptance requirements.", "negative": false, "reference": "tests/chrome-extension/operator.mjs" },
-    { "command": "tsx --test backend/src/routes/localBrowser.test.ts", "scope": "Canonical owner binding, hosted recovery exclusion, input refusal, replay rejection and cancellation.", "negative": true, "reference": "backend/src/routes/localBrowser.test.ts" }
+    {
+      "command": "node tests/chrome-extension/operator.mjs <playwright> <chrome> [temporary-profile-parent]",
+      "scope": "Passed in Chrome 156 with a deterministic model. Verified background pairing, PCM dictation into the draft, real navigation, action cues at click and input, a redacted screenshot with no model egress, scoped form approval, cancellation and explicit resumption without a repeated click.",
+      "negative": true,
+      "reference": "tests/chrome-extension/operator.mjs"
+    },
+    {
+      "command": "node tests/chrome-extension/operator.mjs <playwright> <chrome> [temporary-profile-parent]",
+      "scope": "Application source 89ef62ce passed in Chrome 151 with a deterministic model. Verified manual pause and same-run continuation, a lost final acknowledgement, actual service-worker termination, refusal of a second fixture account, and owner-only result sync without another model request or repeated click. Zero model spend.",
+      "negative": true,
+      "reference": "tests/chrome-extension/operator.mjs"
+    },
+    {
+      "command": "node tests/chrome-extension/operator.mjs <playwright> <chrome> [temporary-profile-parent]",
+      "scope": "Version 0.2.4 passed in Chrome 151 with the real Workspace component and fixture auth/API/model. Verified same-tab reconnect, restored receipt history, a new Workspace-originated run, and removal of browser activity on sign-out.",
+      "negative": true,
+      "reference": "tests/chrome-extension/operator.mjs"
+    },
+    {
+      "command": "node --import tsx tests/chrome-extension/operator.mjs <playwright> <chrome> <temporary-profile-parent> --document-only",
+      "scope": "Deterministic Chrome fixture used the canonical XLSX extractor, read beyond the inline context with cell references, waited for a dynamic product link, and verified the unit price and total.",
+      "negative": false,
+      "reference": "tests/chrome-extension/operator.mjs"
+    },
+    {
+      "command": "node --import tsx tests/chrome-extension/operator.mjs <playwright> <chrome> <temporary-profile-parent> --live-zurelay",
+      "scope": "The isolated Chrome probe uses the exact live Zurelay model with a synthetic site and Workspace bridge. Hosted authentication and settlement are separate acceptance requirements.",
+      "negative": false,
+      "reference": "tests/chrome-extension/operator.mjs"
+    },
+    {
+      "command": "tsx --test backend/src/routes/localBrowser.test.ts",
+      "scope": "Canonical owner binding, hosted recovery exclusion, input refusal, replay rejection and cancellation.",
+      "negative": true,
+      "reference": "backend/src/routes/localBrowser.test.ts"
+    },
+    {
+      "command": "node --import tsx tests/chrome-extension/device-auth.mjs <pglite-entrypoint>",
+      "scope": "Exact migration and Express API in disposable PostgreSQL WASM, with two authenticated test actors, database role denials, concurrent proof-bound exchange, scoped tokens, expiry and revocation.",
+      "negative": true,
+      "reference": "tests/chrome-extension/device-auth.mjs"
+    }
   ],
-  "architecture": { "change": "extends_canonical", "reason": "Local Chrome uses the existing browser run records, execution leases and metered model dispatch, and hosted recovery skips this execution target.", "rfc": null },
+  "architecture": {
+    "change": "extends_canonical",
+    "reason": "Local Chrome uses the existing browser run records, execution leases and metered model dispatch, and hosted recovery skips this execution target.",
+    "rfc": null
+  },
   "rollout": "Keep the product disabled until integrated release gates and genuine model acceptance pass.",
   "rollback": "Disable the feature flags and disconnect or remove the extension.",
   "knownGaps": [
-    "Authenticated staging with live ledger settlement, multi-user Chrome acceptance, and approved live website workflows are pending.",
+    "The earlier authenticated Workspace-relay run settled seven live model turns at $0.001071. Standalone hosted authentication, live model settlement, hosted two-account isolation and approved live website workflows are pending.",
     "Model vision remains disabled for browser tasks until this exact route passes privacy and modality acceptance.",
-    "Explicit resume preserves the same run ID, time and spend on the paired device. A full Chrome restart and re-pair still needs live acceptance.",
+    "Explicit resume uses the same run and spend allowance. Closed-Workspace execution and full-browser restart must also pass live provider-backed staging with the reviewed package.",
     "The source ancestry of six inherited mission records is now bound to the actual squash that imported them. Historical source references are preserved; this metadata change does not certify unrelated missions."
   ],
   "placeholderClaimsRemaining": [],
@@ -75,11 +162,20 @@
   "claimsAllBatchCommandsComplete": false,
   "release": {
     "state": "BLOCKED",
-    "blockers": ["Authenticated hosted staging, hosted settlement reconciliation, browser restart acceptance, site-specific outcomes, and source-pinned release approval."],
+    "blockers": [
+      "Exact API, migration and Workspace staging configuration, official signed Chrome identity, standalone provider and ledger acceptance, and source-pinned production approval."
+    ],
     "authenticatedE2e": "BLOCKED",
     "stagedSecurity": "BLOCKED",
     "liveUrl": null,
     "deployedSha": null
   },
-  "evidenceRefs": ["apps/xroga-browser-extension/XROGA-OPERATOR.md", "tests/chrome-extension/operator.mjs", "backend/src/routes/localBrowser.test.ts"]
+  "evidenceRefs": [
+    "apps/xroga-browser-extension/XROGA-OPERATOR.md",
+    "tests/chrome-extension/operator.mjs",
+    "backend/src/routes/localBrowser.test.ts",
+    "apps/xroga-browser-extension/INSTALL-XROGA.md",
+    "tests/chrome-extension/device-auth.mjs",
+    "tests/chrome-extension/device-browser.mjs"
+  ]
 }
