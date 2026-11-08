@@ -3,6 +3,7 @@ import { test } from 'node:test';
 import { readFileSync } from 'node:fs';
 
 const sidebar=readFileSync(new URL('../components/layout/SidebarProjectHistory.tsx',import.meta.url),'utf8');
+const actionMenu=readFileSync(new URL('../components/layout/SidebarActionMenu.tsx',import.meta.url),'utf8');
 const title=readFileSync(new URL('../components/layout/SidebarMovingTitle.tsx',import.meta.url),'utf8');
 const css=readFileSync(new URL('../components/layout/SidebarOrganize.css',import.meta.url),'utf8');
 const visible=sidebar.slice(sidebar.indexOf('  return <div className="mt-2 mb-1'),sidebar.indexOf('    <SidebarActionMenu point='));
@@ -17,11 +18,16 @@ test('Projects, conditional Pinned and Recents are compact text-first rows',()=>
   assert.match(sidebar, /aria-label=\{label\}/);
   assert.match(sidebar, /<SidebarMovingTitle text=\{label\}/);
 });
-test('Recents renders at most twelve initially and grows only on user request',()=>{
-  assert.match(sidebar, /useState\(12\)/);
+test('Recents starts with twelve rows and loads more near the end of the sidebar',()=>{
+  assert.match(sidebar, /\[shownRecents,setShownRecents\] = useState\(12\)/);
   assert.match(visible, /standaloneRecents\.slice\(0,shownRecents\)\.map/);
-  assert.match(visible, /setShownRecents\(prev=>prev\+12\)/);
-  assert.match(visible, /onClick=\{\(\)=>setShownRecents\(12\)\}>Show fewer/);
+  assert.match(visible, /\(standaloneRecents\.length>shownRecents\|\|moreCloudSessions\|\|moreSidebarChats\)\s*\?<div ref=\{recentsEndRef\}/);
+  assert.match(sidebar, /sentinel\.closest<HTMLElement>\('\.xv-sidebar-nav-scroll'\)/);
+  assert.match(sidebar, /if\(!entries\[0\]\?\.isIntersecting\|\|loadingOlderRecentsRef\.current\)return/);
+  assert.match(sidebar, /setShownRecents\(count=>Math\.min\(standaloneRecents\.length,count\+24\)\)/);
+  assert.match(sidebar, /else\{void loadMoreRecents\(\);\}/);
+  assert.match(sidebar, /observer\.observe\(sentinel\)/);
+  assert.match(sidebar, /return\(\)=>observer\.disconnect\(\)/);
 });
 test('metadata refresh is debounced and avoids repeated focus-triggered network calls',()=>{
   assert.match(sidebar,/lastSidebarFetchRef\.current>30000/);
@@ -37,8 +43,10 @@ test('local history is parsed once per UI refresh rather than once for each save
   assert.equal((localRefresh.match(/loadTerminalHistory\(\)/g)||[]).length,1);
 });
 test('row actions remain keyboard-reachable and titles respect reduced motion',()=>{
-  assert.match(sidebar, /aria-label=\{saved\?'Unpin '\+label:'Pin '\+label\}/);
-  assert.match(sidebar, /aria-haspopup="menu"/);
+  assert.match(sidebar, /aria-label=\{'More options for '\+label\} aria-haspopup="menu"/);
+  assert.match(actionMenu, /querySelector<HTMLButtonElement>\('button:not\(\[disabled\]\)'\)\?\.focus/);
+  assert.match(actionMenu, /event\.key==='ArrowDown'\|\|event\.key==='ArrowUp'/);
+  assert.match(actionMenu, /<button type="button" role="menuitem"/);
   assert.match(css, /prefers-reduced-motion:reduce/);
 });
 
