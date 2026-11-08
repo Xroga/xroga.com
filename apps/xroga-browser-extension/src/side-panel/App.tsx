@@ -638,8 +638,19 @@ export function App() {
       />
       <RunBar
         status={state.status}
+        reason={state.reason}
+        onStop={
+          XROGA_PRODUCT && paired
+            ? () => state.conversationId && client?.send({ type: 'stop', conversationId: state.conversationId })
+            : undefined
+        }
         onContinue={() => state.conversationId && startRun({ type: 'continue', conversationId: state.conversationId })}
         onResume={() => state.conversationId && startRun({ type: 'resume', conversationId: state.conversationId })}
+        onPause={
+          XROGA_PRODUCT && paired
+            ? () => state.conversationId && client?.send({ type: 'pause', conversationId: state.conversationId })
+            : undefined
+        }
       />
       <QueueList
         items={state.queue}

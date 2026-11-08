@@ -44,4 +44,6 @@ listenForWorkspace(
     }
   },
   runId => runManager.stopCanonical(runId),
+  (type, runId) => runManager.controlCanonical(type, runId),
+  () => runManager.reportCanonicalCheckpoint(),
 );

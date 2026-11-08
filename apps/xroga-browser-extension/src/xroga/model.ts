@@ -121,8 +121,5 @@ export async function startXrogaModelRun(
     get requestInterrupted() {
       return requestInterrupted;
     },
-    async finish(status: 'completed' | 'failed' | 'cancelled', actions: string[], result?: string) {
-      await workspaceRequest('finish', { runId, body: { status, actions, result: result?.slice(0, 12_000) } });
-    },
   };
 }

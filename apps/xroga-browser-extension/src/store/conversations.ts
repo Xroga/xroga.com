@@ -164,6 +164,19 @@ export async function putRun(run: RunRecord): Promise<void> {
   await (await db()).put('runs', { ...run, updatedAt: now() });
 }
 
+/** Mutate a checkpoint inside one transaction so a stale queue or prompt cannot overwrite its run status. */
+export async function updateRun(
+  conversationId: string,
+  update: (current: RunRecord | undefined) => RunRecord | undefined,
+): Promise<RunRecord | undefined> {
+  const tx = (await db()).transaction('runs', 'readwrite');
+  const current = await tx.store.get(conversationId);
+  const next = update(current);
+  if (next && next !== current) await tx.store.put({ ...next, updatedAt: now() });
+  await tx.done;
+  return next;
+}
+
 export async function listRuns(): Promise<RunRecord[]> {
   return (await db()).getAll('runs');
 }

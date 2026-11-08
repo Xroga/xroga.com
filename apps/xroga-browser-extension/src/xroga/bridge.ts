@@ -31,6 +31,8 @@ const disconnectHandlers = new Set<() => void>();
 export type WorkspaceTextFile = { name: string; text: string };
 let taskHandler: ((goal: string, startUrl: string, files: WorkspaceTextFile[]) => Promise<void>) | undefined;
 let cancelHandler: ((runId: string) => void) | undefined;
+let controlHandler: ((type: 'pause-task' | 'resume-task', runId: string) => Promise<void>) | undefined;
+let connectedHandler: (() => Promise<void>) | undefined;
 
 export function workspacePaired() {
   return !!workspace;
@@ -92,9 +94,13 @@ async function startPairing() {
 export function listenForWorkspace(
   start: (goal: string, startUrl: string, files: WorkspaceTextFile[]) => Promise<void>,
   cancel: (runId: string) => void,
+  control: (type: 'pause-task' | 'resume-task', runId: string) => Promise<void>,
+  connected: () => Promise<void>,
 ) {
   taskHandler = start;
   cancelHandler = cancel;
+  controlHandler = control;
+  connectedHandler = connected;
   chrome.tabs.onRemoved.addListener(tabId => {
     if (tabId === pairTabId) {
       pairTabId = undefined;
@@ -222,6 +228,16 @@ export function listenForWorkspace(
           if (message.type === 'cancel-task' && typeof message.runId === 'string' && UUID.test(message.runId)) {
             cancelHandler?.(message.runId);
           }
+          if (
+            (message.type === 'pause-task' || message.type === 'resume-task') &&
+            typeof message.runId === 'string' &&
+            UUID.test(message.runId)
+          ) {
+            const runId = message.runId;
+            void controlHandler?.(message.type, runId).catch(() =>
+              postWorkspace({ type: 'resume-unavailable', runId }),
+            );
+          }
           return;
         }
         const challenge = pairing;
@@ -256,6 +272,7 @@ export function listenForWorkspace(
           autoAttempted = false;
           pairFailure = undefined;
           clearTimeout(expires);
+          void connectedHandler?.().catch(() => undefined);
         })().catch(() => {
           pairFailure = 'failed';
           try {

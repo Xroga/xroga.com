@@ -11,6 +11,46 @@ export const INTERRUPTED_MUTATION =
 export const SKIPPED_RESTART = 'skipped: the extension restarted before this call ran.';
 export const RESTART_NOTE = 'the browser connection restarted; all refs are invalid; take a snapshot first.';
 
+/** Read only results that were durably recorded for this run. Arguments, page text and credentials stay local. */
+export function completedBrowserTools(runId: string, branch: Entry[]): string[] {
+  const names: string[] = [];
+  for (const entry of branch) {
+    if (entry.type !== 'message' || entry.meta?.runId !== runId || entry.message.role !== 'tool') continue;
+    const result = entry.result as
+      { ok?: unknown; receipt?: { dispatched?: unknown; reachedTarget?: unknown } } | undefined;
+    if (result?.ok !== true || result.receipt?.dispatched === false || result.receipt?.reachedTarget === false)
+      continue;
+    for (const part of entry.message.parts) {
+      if (part.type === 'tool-result' && !part.isError && part.toolName !== 'done') names.push(part.toolName);
+      if (names.length === 48) return names;
+    }
+  }
+  return names;
+}
+
+/** An interrupted write has no safe replay key on an arbitrary third-party site. */
+export function hasUncertainBrowserWrite(runId: string, branch: Entry[]): boolean {
+  const mutations = new Set(
+    branch.flatMap(entry => {
+      if (
+        entry.type !== 'intent' ||
+        !['mutate', 'state'].includes(kindOf(entry.tool, (entry.args ?? {}) as Record<string, unknown>))
+      )
+        return [];
+      return [entry.toolCallId];
+    }),
+  );
+  return branch.some(entry => {
+    if (entry.type !== 'message' || entry.meta?.runId !== runId || entry.message.role !== 'tool') return false;
+    const result = entry.result as { ok?: unknown; error?: { delivered?: unknown } } | undefined;
+    return (
+      result?.ok === false &&
+      result.error?.delivered === 'unknown' &&
+      entry.message.parts.some(part => part.type === 'tool-result' && mutations.has(part.toolCallId))
+    );
+  });
+}
+
 export interface RestorePlan {
   /** Results for calls that have none (intents and calls that never started). */
   results: Array<{ toolCallId: string; toolName: string; text: string; isError: true }>;
@@ -30,7 +70,8 @@ export function takenOver(run: RunRecord): boolean {
 }
 
 export function planRestore(run: RunRecord, branch: Entry[]): RestorePlan {
-  const prompt = run.pendingPrompt;
+  // Canonical Chrome runs revalidate authority and tab scope before any handover. A stored numeric tab ID alone is not a binding.
+  const prompt = run.canonicalBrowserRunId ? undefined : run.pendingPrompt;
   const handoverCall = prompt?.kind === 'handover' ? prompt.answers?.toolCallId : undefined;
   const calls = openCalls(branch);
   const lastReply = [...branch]

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { ApiError, apiFetch, getAccessToken } from '@/lib/api';
 import { createClient } from '@/lib/supabase/client';
 import { transcribeVoiceAudio } from '@/lib/voiceApi';
@@ -22,7 +23,7 @@ type BridgeMessage = {
   tool?: string;
 };
 
-type RunResult = { status: string; result?: { text?: string } | null };
+type RunResult = { status: string; remainingMs?: number; cancelRequested?: boolean; result?: { text?: string } | null };
 const API = '/api/browser/local';
 const UUID = /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i;
 const EXTENSION_ID = /^[a-p]{32}$/;
@@ -48,13 +49,16 @@ export function WorkspaceBrowserOperator({ extensionId }: { extensionId?: string
   const [files, setFiles] = useState<File[]>([]);
   const [paired, setPaired] = useState(false);
   const [pairingVisible, setPairingVisible] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [paused, setPaused] = useState(false);
   const [runId, setRunId] = useState('');
   const [activity, setActivity] = useState<string[]>([]);
   const [result, setResult] = useState('');
   const [status, setStatus] = useState('Connect from the Xroga side panel in Chrome.');
 
   useEffect(() => {
+    setMounted(true);
     const url = new URL(location.href);
     const nonce = url.searchParams.get('browserPair');
     const requestedId = url.searchParams.get('browserExtension');
@@ -100,8 +104,10 @@ export function WorkspaceBrowserOperator({ extensionId }: { extensionId?: string
         if (disposed) return;
         portRef.current = null;
         pairedToken.current = '';
+        activeRun.current = '';
         setPaired(false);
         setBusy(false);
+        setPaused(false);
         if (!rejected) setStatus('Workspace disconnected. Connect again from the Chrome side panel.');
       });
       connected.onMessage.addListener(message => {
@@ -121,12 +127,29 @@ export function WorkspaceBrowserOperator({ extensionId }: { extensionId?: string
           return;
         }
         if (message.type === 'run' && message.runId && admitted.has(message.runId)) {
+          const changed = activeRun.current !== message.runId;
           activeRun.current = message.runId;
           setRunId(message.runId);
           setBusy(true);
-          setActivity([]);
-          setResult('');
+          setPaused(false);
+          if (changed) { setActivity([]); setResult(''); }
           setStatus('Browser task running');
+          return;
+        }
+        if (message.type === 'checkpoint' && message.runId && UUID.test(message.runId) && !activeRun.current) {
+          const checkpoint = message.runId;
+          void apiFetch<RunResult>(`${API}/runs/${checkpoint}`, {}, pairedToken.current).then(data => {
+            if (disposed || portRef.current !== connected || activeRun.current) return;
+            activeRun.current = checkpoint;
+            setRunId(checkpoint);
+            if (['completed', 'failed', 'cancelled'].includes(data.status)) {
+              setStatus(`Browser task ${data.status}`);
+              setResult(data.result?.text ?? '');
+              return;
+            }
+            setPaused(!data.cancelRequested);
+            setStatus(data.cancelRequested ? 'Browser task cancelled.' : 'Saved browser checkpoint. Resume to continue or sync a saved result.');
+          }).catch(() => { /* An unverified run is never shown or controlled. */ });
           return;
         }
         if (message.type === 'activity' && message.runId === activeRun.current && typeof message.status === 'string') {
@@ -140,21 +163,27 @@ export function WorkspaceBrowserOperator({ extensionId }: { extensionId?: string
         if (message.type === 'finished' && message.runId === activeRun.current && message.runId) {
           const finished = message.runId;
           void apiFetch<RunResult>(`${API}/runs/${finished}`, {}, pairedToken.current).then(data => {
-            if (disposed || activeRun.current !== finished) return;
+            if (disposed || portRef.current !== connected || activeRun.current !== finished) return;
             setStatus(`Browser task ${data.status}`);
             setResult(data.result?.text ?? '');
             setBusy(false);
+            setPaused(false);
           }).catch(() => { if (!disposed) { setStatus('Could not load the task result.'); setBusy(false); } });
           return;
         }
-        if (message.type === 'task-error') {
+        if (message.type === 'task-error' && (!message.runId || message.runId === activeRun.current)) {
           setStatus('The browser task stopped before it could report a result.');
           setBusy(false);
           return;
         }
         if (message.type === 'paused' && message.runId === activeRun.current) {
-          setStatus('Browser task paused at a checkpoint. Continue from the Chrome side panel.');
+          setStatus('Browser task paused at a checkpoint.');
           setBusy(false);
+          setPaused(true);
+          return;
+        }
+        if (message.type === 'resume-unavailable' && message.runId === activeRun.current) {
+          setStatus('Open the task page in Chrome and resume from the Xroga side panel.');
           return;
         }
         if (message.type === 'abort' && message.id) requests.get(message.id)?.abort();
@@ -165,8 +194,11 @@ export function WorkspaceBrowserOperator({ extensionId }: { extensionId?: string
         const isResume = op === 'resume' && !!value.runId && UUID.test(value.runId);
         const isDocument = op === 'document';
         const isVoice = op === 'voice';
+        // Finalizing a durable outbox after a reconnect may occur on a new authenticated port. The API's
+        // ownership check and fenced idempotent finish still apply. Turns remain bound to start/resume.
+        const isFinish = op === 'finish' && !!value.runId && UUID.test(value.runId);
         const isBound = !!value.runId && admitted.has(value.runId);
-        if (!isStart && !isResume && !isDocument && !isVoice && (!isBound || (op !== 'turn' && op !== 'finish'))) {
+        if (!isStart && !isResume && !isDocument && !isVoice && !isFinish && !(isBound && op === 'turn')) {
           send({ type: 'result', id, ok: false });
           return;
         }
@@ -190,6 +222,10 @@ export function WorkspaceBrowserOperator({ extensionId }: { extensionId?: string
           body: JSON.stringify(isStart ? { goal: value.goal, startUrl: value.startUrl, attachmentCount: value.attachmentCount } : value.body),
         }, pairedToken.current).then(data => {
           if ((isStart || isResume) && data.runId && UUID.test(data.runId)) admitted.add(data.runId);
+          if (isFinish && !activeRun.current && value.runId) {
+            activeRun.current = value.runId;
+            setRunId(value.runId);
+          }
           send({ type: 'result', id, ok: true, value: data });
         }, () => send({ type: 'result', id, ok: false })).finally(() => requests.delete(id));
       });
@@ -217,14 +253,14 @@ export function WorkspaceBrowserOperator({ extensionId }: { extensionId?: string
     };
   }, [extensionId]);
 
-  if (!extensionId && !pairingVisible) return null;
-  return (
-    <details className="fixed bottom-24 right-4 z-40 w-[min(24rem,calc(100vw-2rem))] rounded-xl border bg-background p-3 text-sm text-foreground shadow-lg" open={paired || pairingVisible || undefined}>
+  if (!mounted || (!extensionId && !pairingVisible)) return null;
+  return createPortal(
+    <details className="fixed bottom-24 right-4 z-50 max-h-[min(36rem,calc(100dvh-8rem))] w-[min(24rem,calc(100vw-2rem))] overflow-auto rounded-xl border bg-background p-3 text-sm text-foreground shadow-lg" open={paired || pairingVisible || undefined}>
       <summary className="cursor-pointer font-medium">Browser Operator</summary>
       <p className="my-2 text-xs" role="status">{status}</p>
       {paired && <form className="grid gap-2" onSubmit={event => {
         event.preventDefault();
-        if (!portRef.current || busy) return;
+        if (!portRef.current || busy || paused) return;
         setBusy(true);
         setStatus('Opening a task tab in Chrome.');
         const port = portRef.current;
@@ -255,16 +291,23 @@ export function WorkspaceBrowserOperator({ extensionId }: { extensionId?: string
           }} />
         </label>
         <div className="flex gap-2">
-          <button type="submit" className="rounded border px-3 py-1" disabled={busy}>Start in Chrome</button>
-          {busy && runId && <button type="button" className="rounded border px-3 py-1" onClick={() => {
+          <button type="submit" className="rounded border px-3 py-1" disabled={busy || paused}>Start in Chrome</button>
+          {busy && runId && <button type="button" className="rounded border px-3 py-1" onClick={() => portRef.current?.postMessage({ type: 'pause-task', runId })}>Pause</button>}
+          {paused && runId && <button type="button" className="rounded border px-3 py-1" onClick={() => portRef.current?.postMessage({ type: 'resume-task', runId })}>Resume</button>}
+          {(busy || paused) && runId && <button type="button" className="rounded border px-3 py-1" onClick={() => {
             portRef.current?.postMessage({ type: 'cancel-task', runId });
             setStatus('Stopping the browser task.');
-            void apiFetch(`${API}/runs/${runId}`, { method: 'DELETE' }, pairedToken.current).catch(() => setStatus('Chrome received Stop. The server could not confirm cancellation.'));
+            void apiFetch(`${API}/runs/${runId}`, { method: 'DELETE' }, pairedToken.current).then(() => {
+              if (activeRun.current !== runId) return;
+              setPaused(false);
+              setBusy(false);
+              setStatus(current => current === 'Stopping the browser task.' ? 'Cancellation requested.' : current);
+            }).catch(() => setStatus('Chrome received Stop. The server could not confirm cancellation.'));
           }}>Stop</button>}
         </div>
       </form>}
       {activity.length > 0 && <ol aria-label="Browser activity" className="mt-2 max-h-32 overflow-auto text-xs">{activity.map((line, index) => <li key={`${index}:${line}`}>{line}</li>)}</ol>}
       {result && <p className="mt-2 max-h-48 overflow-auto whitespace-pre-wrap">{result}</p>}
-    </details>
+    </details>, document.body,
   );
 }

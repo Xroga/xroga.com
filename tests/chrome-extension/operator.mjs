@@ -34,6 +34,8 @@ const dist = fileURLToPath(
 const site = "https://operator-fixture.test";
 const searchOrigin = "https://www.google.com";
 const workspaceOrigin = "https://xroga.com";
+const fixtureOwner = "00000000-0000-4000-8000-000000000001";
+let fixtureAccount = fixtureOwner;
 const repo = fileURLToPath(new URL("../../", import.meta.url));
 const goal = "Open the catalog and report the published fixture price.";
 const answer = "The verified fixture price is $39.";
@@ -296,7 +298,11 @@ try {
       if (op === "turn") {
         if (run.goal === recoveryGoal) {
           (run.ordinals ??= []).push(value.body.turn);
-          if (value.body.turn === 3) throw new Error("Synthetic unknown provider receipt");
+          if (value.body.turn === 3) {
+            // Hang after the provider admission boundary, then pause from the actual side panel.
+            await new Promise(resolve => { run.release = resolve; });
+            throw new Error("Synthetic unknown provider receipt");
+          }
         }
         if (run.goal === stopGoal) {
           run.pending = true;
@@ -313,6 +319,15 @@ try {
         return { runId: value.runId, turns: 3, maxTurns: 48, remainingMs: 39 * 60_000 };
       }
       if (op === "finish") {
+        if (run.goal === recoveryGoal && !(run.finishAttempts ?? 0)) {
+          run.finishAttempts = 1;
+          run.firstFinish = value.body;
+          throw new Error("Synthetic finalization acknowledgement lost");
+        }
+        if (run.goal === recoveryGoal) {
+          run.finishAttempts++;
+          assert.deepEqual(value.body, run.firstFinish, "Resend only the durable outcome");
+        }
         run.result = value.body;
         return { status: value.body.status };
       }
@@ -352,15 +367,17 @@ try {
         const port = chrome.runtime.connect(query.get('browserExtension'), {name:'xroga-browser-v1'});
         window.events = [];
         window.startTask = (goal, startUrl, files) => port.postMessage({type:'start-task',goal,startUrl,files});
+        window.resumeTask = runId => port.postMessage({type:'resume-task',runId});
         port.onMessage.addListener(async m => {
           events.push(m.type === 'activity' ? [m.type,m.tool,m.status] : [m.type,m.runId]);
           if(m.type==='paired') document.querySelector('#state').textContent='paired';
+          if(m.type==='pair-rejected') document.querySelector('#state').textContent='account rejected';
           if(m.type==='request') {
             try { port.postMessage({type:'result',id:m.id,ok:true,value:await fixtureBrowserRequest(m)}); }
             catch (e) { document.querySelector('#state').textContent=e.message; port.postMessage({type:'result',id:m.id,ok:false}); }
           }
         });
-        port.postMessage({type:'pair',nonce:query.get('browserPair'),account:'00000000-0000-4000-8000-000000000001'});
+        port.postMessage({type:'pair',nonce:query.get('browserPair'),account:${JSON.stringify(fixtureAccount)}});
         </script>`,
       });
     }
@@ -665,14 +682,53 @@ try {
     await tab.goto(site);
     await input.fill(recoveryGoal);
     await input.press("Enter");
+    const pause = panel.getByRole("button", { name: "Pause and take over", exact: true });
+    await pause.waitFor({ timeout: 25_000 });
+    const claimDeadline = Date.now() + 20_000;
+    let recovery;
+    while (!recovery?.release && Date.now() < claimDeadline) {
+      recovery = [...runs.values()].find(run => run.goal === recoveryGoal);
+      if (!recovery?.release) await new Promise(resolve => setTimeout(resolve, 100));
+    }
+    assert.ok(recovery?.release, "the third request crossed the fixture provider admission boundary");
+    await pause.click();
     const resume = panel.getByRole("button", { name: "Resume", exact: true });
     await resume.waitFor({ timeout: 25_000 });
-    const recovery = [...runs.values()].find(run => run.goal === recoveryGoal);
+    recovery.release();
     assert.deepEqual(recovery.ordinals, [1, 2, 3]);
     assert.equal(recovery.result, undefined);
     await resume.click();
-    await waitForFinish(5);
+    await panel.getByText("Task saved locally. Resume to sync the result without rerunning any action.", { exact: true }).waitFor({ timeout: 25_000 }).catch(async error => {
+      console.error("Recovery fixture state:", JSON.stringify({ ordinals: recovery.ordinals, finishAttempts: recovery.finishAttempts, events: await workspace.evaluate(() => window.events.slice(-12)), panel: (await panel.locator('body').innerText()).slice(-1200) }));
+      throw error;
+    });
+    assert.equal(recovery.result, undefined);
     assert.deepEqual(recovery.ordinals, [1, 2, 3, 4, 5, 6]);
+    const runId = [...runs.entries()].find(([, candidate]) => candidate === recovery)?.[0];
+    assert.ok(runId);
+
+    // Kill the actual Chrome service worker. Only the owner can re-pair this profile and sync the saved result.
+    const workerClient = await browser.newCDPSession(tab);
+    await workerClient.send("ServiceWorker.enable");
+    fixtureAccount = "00000000-0000-4000-8000-000000000002";
+    await workerClient.send("ServiceWorker.stopAllWorkers");
+    await workerClient.detach();
+    await workspace.close();
+    const reopening = browser.waitForEvent("page", { timeout: 20_000, predicate: page => page !== panel });
+    await tab.bringToFront();
+    await panel.reload();
+    workspace = await reopening;
+    await workspace.getByText("account rejected", { exact: true }).waitFor({ timeout: 15_000 });
+    assert.equal(recovery.finishAttempts, 1);
+
+    fixtureAccount = fixtureOwner;
+    await connect();
+    await workspace.getByText("paired", { exact: true }).waitFor({ timeout: 15_000 });
+    await workspace.waitForFunction(id => window.events.some(([type, run]) => type === 'checkpoint' && run === id), runId);
+    await workspace.evaluate(id => window.resumeTask(id), runId);
+    await waitForFinish(1);
+    assert.deepEqual(recovery.ordinals, [1, 2, 3, 4, 5, 6]);
+    assert.equal(recovery.finishAttempts, 2);
     assert.equal(recovery.result.status, "completed");
     assert.equal(recovery.result.actions.filter(action => action === "click").length, 1);
     assert.ok(actionCues.has("click"), "The blue marker was visible when Chrome clicked");
@@ -688,6 +744,8 @@ try {
       voiceFixtureRequests: voiceRequests,
       actionCues: [...actionCues].sort(),
       resumedWithoutReplay: !live,
+      restartAndAccountBoundary: !live,
+      manualPauseAndResume: !live,
       screenshotPixelsSentToModel: false,
       entryPoints: ["side panel", "Workspace fixture"],
       model: live ? providerModel : "deterministic fixture",

@@ -75,6 +75,10 @@ export interface LoopOptions {
   timeZone?: string;
   /** A run continued after Continue or Resume keeps the debt and guard state it had. */
   restore?: { debt: DebtEntry[]; guards: GuardState };
+  /** Persist cumulative progress without changing the canonical segment's remaining turn limit. */
+  checkpointBase?: { turns: number; usage: Usage };
+  /** Observe an uncertain action's outcome without dispatching another write in the same run. */
+  recoveryReadOnly?: boolean;
   /** Messages the user sent while the run worked, taken once each. */
   takeSteering?: () => string[];
   /** Makes a small thumbnail of a screenshot for the activity block; none when absent. */
@@ -507,6 +511,14 @@ export class AgentLoop {
     if (!this.#toolNames.has(call.toolName)) {
       return { call, kind, isError: true, text: `error: ${call.toolName} is not available in this run.` };
     }
+    if (this.options.recoveryReadOnly && (kind === 'mutate' || kind === 'state')) {
+      return {
+        call,
+        kind,
+        isError: true,
+        text: 'Refused: an earlier write might have been delivered. This recovery can only observe. Report what you can verify so the user can decide what to do next.',
+      };
+    }
     const args = (call.input ?? {}) as Record<string, unknown>;
     if (call.toolName === 'tabs' && args.action === 'close') {
       const tabId = (args.tabId as number | undefined) ?? this.#activeTab;
@@ -520,9 +532,10 @@ export class AgentLoop {
   /** After a call: hand-overs, guards, verification debt and the result cap. */
   async afterToolCall(given: CallOutcome): Promise<CallOutcome> {
     let outcome = given;
-    if (outcome.result?.error?.code === 'USER_STEP' && outcome.result.error.details)
+    if (!this.options.recoveryReadOnly && outcome.result?.error?.code === 'USER_STEP' && outcome.result.error.details)
       outcome = await this.#handOver(outcome);
-    else if (!outcome.skipped && !outcome.done) outcome = await this.#promptDialog(outcome);
+    else if (!this.options.recoveryReadOnly && !outcome.skipped && !outcome.done)
+      outcome = await this.#promptDialog(outcome);
     const page = outcome.result?.page;
     if (page) this.#seen.set(page.tabId, page.url);
     const notes: string[] = [];
@@ -678,8 +691,11 @@ export class AgentLoop {
 
   /** Accepts or refuses done: success is refused while debt is left. */
   async #judgeDone(call: ToolCallRequest, kind: ToolKind, args: Record<string, unknown>): Promise<CallOutcome> {
-    const outcomeArg = (['success', 'partial', 'failed'] as const).find(o => o === args.outcome) ?? 'partial';
+    const requested = (['success', 'partial', 'failed'] as const).find(o => o === args.outcome) ?? 'partial';
+    const outcomeArg = this.options.recoveryReadOnly && requested === 'success' ? 'partial' : requested;
     let summary = String(args.summary ?? '');
+    if (this.options.recoveryReadOnly)
+      summary += '\n\nAn interrupted action could not be confirmed. No further writes were attempted.';
     await this.#retireLostTabs();
     const open = this.#debt.filter(d => d.state === 'open');
     if (outcomeArg === 'success' && open.length) {
@@ -719,7 +735,13 @@ export class AgentLoop {
 
   /** After a turn: whether the run ends. */
   async finishTurn(reply: TurnResult, outcomes: CallOutcome[]): Promise<LoopEnd | null> {
-    await this.writer.run({ turns: this.#turns, debt: this.#debt, guards: this.guards.state });
+    const base = this.options.checkpointBase;
+    await this.writer.run({
+      turns: (base?.turns ?? 0) + this.#turns,
+      usage: addUsage(base?.usage ?? ZERO_USAGE, this.#usage),
+      debt: this.#debt,
+      guards: this.guards.state,
+    });
     const done = outcomes.find(o => o.done)?.done;
     if (done) {
       const status: RunStatus = done.outcome === 'failed' ? 'failed' : 'done';
@@ -727,7 +749,13 @@ export class AgentLoop {
     }
     if (this.#guardStop) return this.salvage(this.#guardStop.reason, `guard_${this.#guardStop.guard}`);
     if (!reply.toolCalls.length) {
-      if (!this.#mutated) return { status: 'done', outcome: 'success', usage: this.#usage, turns: this.#turns };
+      if (!this.#mutated)
+        return {
+          status: 'done',
+          outcome: this.options.recoveryReadOnly ? 'partial' : 'success',
+          usage: this.#usage,
+          turns: this.#turns,
+        };
       // Plain text after a mutation: one note, then partial.
       this.#plainEndings++;
       if (this.#plainEndings >= 2) {

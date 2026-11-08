@@ -1,7 +1,7 @@
 import 'fake-indexeddb/auto';
 import { afterEach, describe, expect, it } from 'vitest';
 import { IDBFactory } from 'fake-indexeddb';
-import { activeBranch, createConversation, getRun, putRun } from '@src/store/conversations';
+import { activeBranch, createConversation, getRun, putRun, updateRun } from '@src/store/conversations';
 import { closeDb } from '@src/store/db';
 import { EMPTY_GUARDS, ZERO_USAGE } from '@src/store/types';
 import { note, openCalls, RunWriter, storedResult } from '../records';
@@ -101,7 +101,12 @@ describe('run records', () => {
     };
     await putRun({ ...base, runId: 'r2' });
     expect(await new RunWriter(c.id, 'r1').run({ status: 'done' })).toMatchObject({ runId: 'r2', status: 'running' });
-    await new RunWriter(c.id, 'r2').run({ status: 'done', outcome: 'success' });
-    expect(await getRun(c.id)).toMatchObject({ status: 'done', outcome: 'success' });
+    const writer = new RunWriter(c.id, 'r2');
+    await Promise.all([
+      writer.run({ status: 'interrupted', reason: 'paused' }),
+      updateRun(c.id, current => current && { ...current, turns: 3 }),
+      writer.run({ outcome: 'partial' }),
+    ]);
+    expect(await getRun(c.id)).toMatchObject({ status: 'interrupted', reason: 'paused', turns: 3, outcome: 'partial' });
   });
 });

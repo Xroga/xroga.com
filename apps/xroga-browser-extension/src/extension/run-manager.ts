@@ -19,6 +19,7 @@ import {
   listRuns,
   newId,
   putRun,
+  updateRun,
   setLeaf,
   getBlob,
   listBlobs,
@@ -28,7 +29,13 @@ import {
 } from '@src/store/conversations';
 import { DEFAULT_SETTINGS, getLive, removeLive, setLive, settingsStorage } from '@src/store/settings';
 import { NOTE_LABEL, RunWriter } from '@src/agent/records';
-import { planRestore, RESTART_NOTE, takenOver } from '@src/agent/restore';
+import {
+  completedBrowserTools,
+  hasUncertainBrowserWrite,
+  planRestore,
+  RESTART_NOTE,
+  takenOver,
+} from '@src/agent/restore';
 import { runCompaction } from '@src/agent/compaction';
 import { attachmentKind, MAX_CONVERSATION, MAX_FILE } from '@src/agent/attachments';
 import { toModelMessages } from '@src/agent/context';
@@ -67,7 +74,7 @@ import type { Sink } from './journal';
 import { livePair, ModelUnavailable, resolveModel } from './models';
 import { count, deleteKeepingChoices, noteActivity, observe, runEnded, runModel, runStarted } from './analytics';
 import { endOf } from './analytics-payload';
-import { onWorkspaceDisconnect, postWorkspace, workspacePaired } from '@src/xroga/bridge';
+import { onWorkspaceDisconnect, postWorkspace, workspacePaired, workspaceRequest } from '@src/xroga/bridge';
 import { startXrogaModelRun } from '@src/xroga/model';
 import { SEARCH_HOME, browserTarget } from '@src/xroga/navigation';
 import { XROGA_PRODUCT } from '@src/xroga/product';
@@ -97,7 +104,6 @@ export class RunManager {
   #modes = new Map<string, Conversation['mode']>();
   #records = new Map<string, RunRecord>();
   #canonicalRuns = new Map<string, string>();
-  #canonicalActions = new Map<string, string[]>();
   readonly scope: TabScope;
   /** The glow on the pages a working run acts on. */
   readonly border: PageBorder;
@@ -113,6 +119,8 @@ export class RunManager {
    */
   #returned = new Map<string, QueuedMessage[]>();
   #connectionLost = new Set<string>();
+  #pauseRequested = new Set<string>();
+  #settling = new Set<string>();
 
   constructor() {
     if (XROGA_PRODUCT)
@@ -188,10 +196,10 @@ export class RunManager {
     // The queue is kept in the run record too, so a worker restart hands it back to the composer.
     const items = [...(this.#queues.get(conversationId) ?? [])];
     this.#queueWrites = this.#queueWrites
-      .then(async () => {
-        const run = await getRun(conversationId);
-        if (run && UNFINISHED.has(run.status)) await putRun({ ...run, steering: items });
-      })
+      .then(() =>
+        updateRun(conversationId, run => (run && UNFINISHED.has(run.status) ? { ...run, steering: items } : run)),
+      )
+      .then(() => undefined)
       .catch(() => undefined);
     this.emit(conversationId, {
       type: 'queue',
@@ -223,8 +231,14 @@ export class RunManager {
     // The card a run waits on is kept in its record, so a restart knows what to open again. The hand-over's own record,
     // with the call's partial result, is written by the loop.
     const newest = this.broker.promptsOf(conversationId).at(-1);
-    const stored = await getRun(conversationId);
-    if (stored && stored.runId === record.runId && stored.pendingPrompt?.kind !== 'handover') {
+    await updateRun(conversationId, stored => {
+      if (
+        !stored ||
+        stored.runId !== record.runId ||
+        stored.pendingPrompt?.kind === 'handover' ||
+        !['running', 'awaiting_user'].includes(stored.status)
+      )
+        return stored;
       const pendingPrompt =
         newest?.kind === 'write-card'
           ? { kind: 'write-card' as const, request: newest.data, openedAt: newest.openedAt }
@@ -239,8 +253,8 @@ export class RunManager {
                 openedAt: newest.openedAt,
               }
             : undefined;
-      await putRun({ ...stored, pendingPrompt });
-    }
+      return { ...stored, pendingPrompt };
+    });
     const status: RunStatus = open ? 'awaiting_user' : 'running';
     if (record.status !== status && (record.status === 'running' || record.status === 'awaiting_user')) {
       await this.#setStatus(record, status);
@@ -321,8 +335,40 @@ export class RunManager {
 
   stopCanonical(runId: string): void {
     for (const [conversation, canonical] of this.#canonicalRuns) {
-      if (canonical === runId) this.#stop(conversation);
+      if (canonical === runId) {
+        this.#pauseRequested.delete(conversation);
+        this.#stop(conversation);
+      }
     }
+  }
+
+  async reportCanonicalCheckpoint(): Promise<void> {
+    const saved = (await listRuns())
+      .filter(
+        run =>
+          run.canonicalBrowserRunId &&
+          (UNFINISHED.has(run.status) || run.status === 'capped' || run.status === 'interrupted'),
+      )
+      .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))[0];
+    if (saved) postWorkspace({ type: 'checkpoint', runId: saved.canonicalBrowserRunId });
+  }
+
+  async controlCanonical(type: 'pause-task' | 'resume-task', runId: string): Promise<void> {
+    const active = [...this.#canonicalRuns.entries()].find(([, id]) => id === runId)?.[0];
+    if (type === 'pause-task') {
+      if (active) {
+        this.#pauseRequested.add(active);
+        this.#stop(active);
+      }
+      return;
+    }
+    const record = (await listRuns()).find(run => run.canonicalBrowserRunId === runId);
+    if (!record || !['capped', 'interrupted'].includes(record.status)) return;
+    if (!record.canonicalBrowserFinish && !(await this.scope.tabsOf(record.conversationId)).length) {
+      postWorkspace({ type: 'resume-unavailable', runId });
+      return;
+    }
+    await this.#continue(record.conversationId, record.status, 'the user resumed in Workspace; observe before acting.');
   }
 
   emit(conversationId: string, body: PanelEventBody): void {
@@ -332,15 +378,6 @@ export class RunManager {
     if (!runId) return;
     if (body.type === 'tool_execution_start' || body.type === 'tool_execution_end') {
       postWorkspace({ type: 'activity', runId, tool: body.row.tool, status: body.row.status });
-      if (
-        body.type === 'tool_execution_end' &&
-        body.row.status === 'done' &&
-        body.row.tool !== 'done' &&
-        (body.row.result as { ok?: unknown } | undefined)?.ok === true
-      ) {
-        const actions = this.#canonicalActions.get(conversationId);
-        if (actions && actions.length < 48) actions.push(body.row.tool);
-      }
     } else if (body.type === 'prompt_open' && body.prompt.kind === 'write-card') {
       postWorkspace({ type: 'activity', runId, status: 'approval-required' });
     } else if (body.type === 'run_status') {
@@ -524,7 +561,15 @@ export class RunManager {
       case 'send':
         return this.#send(connection, command);
       case 'stop':
-        this.#stop(command.conversationId);
+        this.#pauseRequested.delete(command.conversationId);
+        if (this.#runs.has(command.conversationId)) this.#stop(command.conversationId);
+        else if (XROGA_PRODUCT) await this.#cancelParked(command.conversationId);
+        return;
+      case 'pause':
+        if (XROGA_PRODUCT && this.#canonicalRuns.has(command.conversationId)) {
+          this.#pauseRequested.add(command.conversationId);
+          this.#stop(command.conversationId);
+        }
         return;
       case 'queue': {
         const queue = this.#queues.get(command.conversationId) ?? [];
@@ -869,6 +914,16 @@ export class RunManager {
     let conversation: Conversation | undefined;
     if (command.conversationId) {
       conversation = await getConversation(command.conversationId);
+      if (XROGA_PRODUCT && conversation && !this.#runs.has(conversation.id)) {
+        const run = await getRun(conversation.id);
+        if (run?.canonicalBrowserRunId && ['interrupted', 'capped', 'awaiting_user'].includes(run.status)) {
+          this.journal.direct(conversation.id, connection.sink, {
+            type: 'error',
+            message: 'Resume or stop the saved task before sending another message in this conversation.',
+          });
+          return;
+        }
+      }
       if (conversation && !(await this.#takeUp(connection, conversation.id))) return;
     }
     if (!conversation) {
@@ -1290,36 +1345,122 @@ export class RunManager {
   async #setStatus(record: RunRecord, status: RunStatus, reason?: string): Promise<void> {
     record.status = status;
     record.reason = reason;
-    await putRun(record);
+    await updateRun(record.conversationId, current =>
+      current?.runId === record.runId
+        ? {
+            ...record,
+            steering: current.steering,
+            pendingPrompt: status === 'awaiting_user' ? current.pendingPrompt : undefined,
+          }
+        : record,
+    );
     const conversation = await updateConversation(record.conversationId, { status });
     this.emit(record.conversationId, { type: 'run_status', status, reason, startedAt: record.startedAt });
     await this.scope.status(record.conversationId, status, conversation?.title ?? '');
     void this.border.status(record.conversationId, status).catch(() => undefined);
   }
 
-  /** Continue and Resume: a new run on the same context, opened by a note. */
+  /** Continue an existing canonical run using its persisted local identity and context. */
   async #continue(conversationId: string, from: RunStatus, note: string): Promise<void> {
-    if (this.#runs.has(conversationId)) return;
-    const previous = await getRun(conversationId);
+    if (this.#settling.has(conversationId)) return;
+    let previous = await getRun(conversationId);
     if (previous?.status !== from) return;
+    // The persisted pause can appear before Chrome finishes detaching. Honor the user's click once cleanup completes.
+    const active = this.#runs.get(conversationId);
+    if (active) {
+      await active.done.catch(() => undefined);
+      previous = await getRun(conversationId);
+    }
+    if (previous?.status !== from || this.#runs.has(conversationId) || this.#settling.has(conversationId)) return;
+    if (previous.canonicalBrowserFinish) {
+      await this.#settleBrowserFinish(previous);
+      return;
+    }
     await this.#start(conversationId, { note, restore: previous });
   }
 
+  async #settleBrowserFinish(record: RunRecord, alreadyClaimed = false): Promise<void> {
+    const runId = record.canonicalBrowserRunId;
+    const finish = record.canonicalBrowserFinish;
+    if (!runId || !finish || (!alreadyClaimed && this.#settling.has(record.conversationId))) return;
+    this.#settling.add(record.conversationId);
+    try {
+      const { localStatus, ...body } = finish;
+      const value = (await workspaceRequest('finish', { runId, body })) as { status?: string } | undefined;
+      if (!value || !['completed', 'failed', 'cancelled'].includes(value.status ?? ''))
+        throw new Error('Run result not settled');
+      const status =
+        value.status === 'cancelled'
+          ? 'stopped'
+          : value.status === 'completed'
+            ? 'done'
+            : localStatus === 'done' && record.outcome === 'partial'
+              ? 'done'
+              : 'failed';
+      if (value.status === 'completed') record.outcome = 'success';
+      else if (value.status === 'cancelled') record.outcome = undefined;
+      record.canonicalBrowserFinish = undefined;
+      await this.#setStatus(record, status, record.reason);
+      postWorkspace({ type: 'finished', runId });
+    } catch {
+      record.canonicalBrowserFinish = finish;
+      await this.#setStatus(
+        record,
+        'interrupted',
+        'Task saved locally. Resume to sync the result without rerunning any action.',
+      );
+      postWorkspace({ type: 'paused', runId });
+    } finally {
+      this.#settling.delete(record.conversationId);
+    }
+  }
+
+  async #cancelParked(conversationId: string): Promise<void> {
+    const record = await getRun(conversationId);
+    if (
+      !record?.canonicalBrowserRunId ||
+      !['interrupted', 'capped', 'awaiting_user'].includes(record.status) ||
+      this.#runs.has(conversationId) ||
+      this.#settling.has(conversationId)
+    )
+      return;
+    if (record.canonicalBrowserFinish && record.canonicalBrowserFinish.status !== 'cancelled') {
+      await this.#notice(conversationId, 'This task has ended. Resume to sync its saved result.', 'info');
+      return;
+    }
+    this.#settling.add(conversationId);
+    try {
+      if (!record.canonicalBrowserFinish) {
+        const branch = await activeBranch(conversationId);
+        record.canonicalBrowserFinish = {
+          status: 'cancelled',
+          actions: completedBrowserTools(record.runId, branch),
+          localStatus: 'stopped',
+        };
+        await putRun(record);
+      }
+      await this.#settleBrowserFinish(record, true);
+    } finally {
+      this.#settling.delete(conversationId);
+    }
+  }
+
   async #start(conversationId: string, options: { note?: string; restore?: RunRecord } = {}): Promise<void> {
-    if (options.note) await new RunWriter(conversationId, 'note').appNote(options.note);
-    this.#launch(conversationId, options.restore);
+    this.#launch(conversationId, options.restore, undefined, options.note);
   }
 
   /**
    * Starts a run. Its model and effort are the pair given (the message's), or the live pair read now, before anything
    * awaits, so a choice made while the run starts applies to the next run.
    */
-  #launch(conversationId: string, restore?: RunRecord, pair?: LivePair): void {
+  #launch(conversationId: string, restore?: RunRecord, pair?: LivePair, note?: string): void {
+    if (this.#runs.has(conversationId) || this.#settling.has(conversationId)) return;
     const starting = pair ? Promise.resolve(pair) : livePair(conversationId);
     starting.catch(() => undefined);
     const controller = new AbortController();
     let deadline: ReturnType<typeof setTimeout> | undefined;
-    const runId = newId();
+    const resumed = restore?.canonicalBrowserRunId ? restore : undefined;
+    const runId = resumed?.runId ?? newId();
     let loopRef: AgentLoop | undefined;
     const done = (async () => {
       const conversation = (await getConversation(conversationId))!;
@@ -1330,26 +1471,37 @@ export class RunManager {
         leafEntryId: conversation.leafId,
         status: 'running',
         steering: [],
-        turns: 0,
-        usage: ZERO_USAGE,
+        turns: resumed?.turns ?? 0,
+        usage: resumed?.usage ?? ZERO_USAGE,
         debt: restore?.debt ?? [],
         canonicalBrowserRunId: restore?.canonicalBrowserRunId,
+        canonicalBrowserActions: resumed?.canonicalBrowserActions,
         guards: restore?.guards ?? EMPTY_GUARDS,
         tabs: conversation.tabs,
-        startedAt: now,
+        startedAt: resumed?.startedAt ?? now,
         updatedAt: now,
       };
       this.#records.set(conversationId, record);
       noteActivity('run');
       // Counted here, before the model resolves, since every run that starts is counted when it ends.
       void count('runs.started');
-      await this.#setStatus(record, 'running');
       let end: LoopEnd | undefined;
       let canonical: Awaited<ReturnType<typeof startXrogaModelRun>> | undefined;
+      let recoveryReadOnly = false;
+      let interrupted: ReturnType<typeof planRestore>['results'] = [];
       try {
+        if (!resumed) await this.#setStatus(record, 'running');
         if (XROGA_PRODUCT) {
           const branch = await activeBranch(conversationId);
-          const user = branch.findLast(entry => entry.type === 'message' && entry.message.role === 'user');
+          if (resumed) {
+            interrupted = planRestore(resumed, branch).results;
+            recoveryReadOnly =
+              hasUncertainBrowserWrite(runId, branch) ||
+              interrupted.some(result => result.text.includes('delivery unknown'));
+          }
+          const user = branch.findLast(
+            entry => entry.type === 'message' && entry.message.role === 'user' && !entry.appOwned,
+          );
           const goal =
             user?.type === 'message'
               ? user.message.parts.flatMap(part => (part.type === 'text' ? [part.text] : [])).join('\n')
@@ -1369,12 +1521,36 @@ export class RunManager {
             restore?.canonicalBrowserRunId,
           );
           record.canonicalBrowserRunId = canonical.runId;
-          record.canonicalBrowserActions = [...(restore?.canonicalBrowserActions ?? [])];
           await putRun(record);
           deadline = setTimeout(() => controller.abort(), canonical.remainingMs);
           this.#canonicalRuns.set(conversationId, canonical.runId);
-          this.#canonicalActions.set(conversationId, record.canonicalBrowserActions);
           postWorkspace({ type: 'run', runId: canonical.runId });
+        }
+        if (resumed) await this.#setStatus(record, 'running');
+        if (interrupted.length) {
+          const writer = new RunWriter(conversationId, runId);
+          for (const entry of interrupted) {
+            await writer.toolResult(entry.toolCallId, entry.toolName, entry.text, true, {
+              ok: false,
+              error: {
+                code: 'INTERRUPTED',
+                message: entry.text,
+                delivered: entry.text.includes('delivery unknown') ? 'unknown' : false,
+                hint: '',
+              },
+            });
+          }
+        }
+        if (note) await new RunWriter(conversationId, runId).appNote(note);
+        if (recoveryReadOnly) {
+          await new RunWriter(conversationId, runId).appNote(
+            'a previous write might have been delivered. Recovery is read-only. Inspect what can be verified, report uncertainty, and never claim that action completed.',
+          );
+          await this.#notice(
+            conversationId,
+            'A previous action might have gone through. Xroga will inspect the page without repeating it.',
+            'warn',
+          );
         }
         const model = canonical?.model ?? (await resolveModel(await starting));
         const settings = (await settingsStorage.get()) ?? DEFAULT_SETTINGS;
@@ -1414,6 +1590,8 @@ export class RunManager {
           localScreenshots: !!canonical,
           agentTool: (call, signal) => this.#agentTool(conversationId, call, signal),
           restore: restore ? { debt: restore.debt as DebtEntry[], guards: restore.guards } : undefined,
+          checkpointBase: resumed ? { turns: resumed.turns, usage: resumed.usage } : undefined,
+          recoveryReadOnly,
           takeSteering: () => {
             const queue = this.#queues.get(conversationId)?.splice(0) ?? [];
             if (queue.length) this.#emitQueue(conversationId);
@@ -1430,20 +1608,23 @@ export class RunManager {
         record.outcome = end.outcome;
         record.debt = loop.debt;
         record.guards = loop.guards.state;
-        const paused = canonical?.requestInterrupted && end.status === 'failed';
+        const pausedByUser = this.#pauseRequested.has(conversationId) && end.status !== 'done';
+        const paused = pausedByUser || (canonical?.requestInterrupted && end.status === 'failed');
         const reason = paused
-          ? 'Xroga paused after a model request could not be verified. Resume to continue from the saved state.'
+          ? pausedByUser
+            ? 'Paused. Resume to continue from the saved checkpoint.'
+            : 'Xroga paused after a model request could not be verified. Resume to continue from the saved state.'
           : end.reason;
         if (end.status === 'failed' && reason) await this.#notice(conversationId, reason, paused ? 'info' : 'error');
-        if (end.status === 'stopped') {
+        if (end.status === 'stopped' && !paused && !this.#connectionLost.has(conversationId)) {
           await this.#notice(conversationId, STOPPED_BY_USER, 'info');
           await new RunWriter(conversationId, runId).appNote(STOPPED_NOTE);
         }
-        await this.#setStatus(
-          record,
-          this.#connectionLost.has(conversationId) || paused ? 'interrupted' : end.status,
-          reason,
-        );
+        const localStatus = this.#connectionLost.has(conversationId) || paused ? 'interrupted' : end.status;
+        if (canonical && !['interrupted', 'capped', 'awaiting_user'].includes(localStatus)) {
+          record.status = localStatus;
+          record.reason = reason;
+        } else await this.#setStatus(record, localStatus, reason);
         if (
           end.status !== 'stopped' &&
           !paused &&
@@ -1456,20 +1637,32 @@ export class RunManager {
         const message = error instanceof ModelUnavailable ? error.message : `The run failed: ${String(error)}`;
         await this.#notice(conversationId, message, 'error');
         record.outcome = 'failed';
-        await this.#setStatus(record, this.#connectionLost.has(conversationId) ? 'interrupted' : 'failed', message);
+        await this.#setStatus(
+          record,
+          this.#connectionLost.has(conversationId) ||
+            this.#pauseRequested.has(conversationId) ||
+            (resumed && !canonical)
+            ? 'interrupted'
+            : 'failed',
+          message,
+        );
       } finally {
         clearTimeout(deadline);
+        this.broker.withdrawAll(conversationId);
         const connectionLost = this.#connectionLost.delete(conversationId);
+        const pausedByUser = this.#pauseRequested.delete(conversationId) && end?.status !== 'done';
         if (canonical) {
           const finishedRunId = canonical.runId;
-          const actions = this.#canonicalActions.get(conversationId) ?? [];
+          const branch = await activeBranch(conversationId).catch(() => []);
+          const actions = [...(record.canonicalBrowserActions ?? []), ...completedBrowserTools(runId, branch)].slice(
+            0,
+            48,
+          );
           let status: 'cancelled' | 'completed' | 'failed' = controller.signal.aborted
             ? 'cancelled'
             : end?.status === 'done' && end.outcome === 'success' && actions.length > 0
               ? 'completed'
               : 'failed';
-          const branch =
-            status === 'completed' && !end?.summary ? await activeBranch(conversationId).catch(() => []) : [];
           const assistant = branch.findLast(entry => entry.type === 'message' && entry.message.role === 'assistant');
           const result =
             end?.summary ??
@@ -1480,19 +1673,26 @@ export class RunManager {
           if (
             end?.status === 'capped' ||
             end?.status === 'awaiting_user' ||
+            pausedByUser ||
             connectionLost ||
             canonical.requestInterrupted
           ) {
             postWorkspace({ type: 'paused', runId: finishedRunId });
           } else {
-            void canonical.finish(status, actions, status === 'completed' ? result : undefined).then(
-              () => postWorkspace({ type: 'finished', runId: finishedRunId }),
-              () => postWorkspace({ type: 'task-error', runId: finishedRunId }),
-            );
+            record.canonicalBrowserFinish = {
+              status,
+              actions,
+              result: status === 'completed' ? result?.slice(0, 12_000) : undefined,
+              localStatus: record.status,
+            };
+            await this.#setStatus(record, 'interrupted', 'Syncing the saved result with Workspace.');
+            // Release the debugger before waiting for the network to settle the outcome.
+            await this.#closeSession(conversationId).catch(() => undefined);
+            await this.#settleBrowserFinish(record);
           }
           this.#canonicalRuns.delete(conversationId);
-          this.#canonicalActions.delete(conversationId);
         }
+        await this.#closeSession(conversationId).catch(() => undefined);
         runEnded(record, end ?? {});
         // A run that finished well counts towards the card that asks for a store rating.
         if (endOf(record.status, record.outcome) === 'success') {
@@ -1500,11 +1700,11 @@ export class RunManager {
         }
         this.#runs.delete(conversationId);
         this.#records.delete(conversationId);
-        this.broker.withdrawAll(conversationId);
-        // When a run ends the debugger is detached; the next run attaches again and starts fresh.
-        await this.#closeSession(conversationId);
         // A message queued as the run was ending is sent now, as the next message. Stop gave the queue back already.
-        if (!controller.signal.aborted) await this.#sendQueued(conversationId);
+        if (canonical && ['interrupted', 'capped', 'awaiting_user'].includes(record.status)) {
+          const returned = this.#queues.get(conversationId)?.splice(0) ?? [];
+          if (returned.length) this.#emitQueue(conversationId, returned);
+        } else if (!controller.signal.aborted) await this.#sendQueued(conversationId);
         // `/compact` that reached the run after its last turn is done now.
         if (loopRef?.compactionPending && !this.#runs.has(conversationId)) await this.#compact(conversationId);
       }
