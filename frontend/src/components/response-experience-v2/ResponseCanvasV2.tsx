@@ -12,11 +12,13 @@ import { responseIcon } from '@/lib/responseIcons';
 import { resourceIdentityV2 } from './entityRegistry';
 import { composeResponseV2, layoutUnitV2, type SemanticPartV2 } from './composition';
 import { loadPresentation } from './loadPresentation';
+import { workspaceVisualProgram } from '../response-openui/program';
 const Chart = lazy(() => loadPresentation(() => import('./ChartV2')));
 const Table = lazy(() => loadPresentation(() => import('./DataV2')).then(m => ({ default: m.DataTableV2 })));
 const Graph = lazy(() => loadPresentation(() => import('./ArchitectureV2')));
 const Calculator = lazy(() => loadPresentation(() => import('./InteractiveV2')).then(m => ({ default: m.CalculatorV2 })));
 const Tabs = lazy(() => loadPresentation(() => import('./InteractiveV2')).then(m => ({ default: m.TabsV2 })));
+const WorkspaceVisual = lazy(() => loadPresentation(() => import('../response-openui/WorkspaceVisual')));
 
 function NodeView({ node, document, grouped = false, stacked = false }: { node: ResponseNodeV2; document: ResponseDocumentV2; grouped?: boolean; stacked?: boolean }) {
   switch (node.kind) {
@@ -50,22 +52,28 @@ function NodeView({ node, document, grouped = false, stacked = false }: { node: 
   }
 }
 
-function ComposedPart({ part, document, width }: { part: SemanticPartV2; document: ResponseDocumentV2; width: number }) {
+function ComposedPart({ part, document, width, openUi }: { part: SemanticPartV2; document: ResponseDocumentV2; width: number; openUi: boolean }) {
   if (part.type === 'section') return <section className={styles.editorialSection} data-depth={part.level}>
-    <ComposedPart part={part.heading} document={document} width={width} />
-    <div className={styles.sectionBody}>{part.children.map(child => <ComposedPart key={child.id} part={child} document={document} width={width} />)}</div>
+    <ComposedPart part={part.heading} document={document} width={width} openUi={openUi} />
+    <div className={styles.sectionBody}>{part.children.map(child => <ComposedPart key={child.id} part={child} document={document} width={width} openUi={openUi} />)}</div>
   </section>;
   const layout = layoutUnitV2(part, width);
-  const node = part.node;
+  const node = { ...part.node, title: part.suppressRepeatedTitle ? undefined : displayTitleV2(part.node.title) };
+  const stacked = layout === 'stacked-comparison';
+  const fallback = <NodeView node={node} document={document} grouped={!!part.relatedData} stacked={stacked} />;
+  const useOpenUi = openUi && !document.streaming && (node.kind === 'table' || node.kind === 'chart' || node.kind === 'calculator');
+  const program = useOpenUi ? workspaceVisualProgram(node, stacked) : null;
   return <div className={`${layout === 'reading' ? styles.measure : styles.wide} ${styles.semanticUnit}`} data-role={part.role} data-layout={layout}>
     {node.description && !['calculator', 'graph'].includes(node.kind) && <ProseV2 text={node.description} sources={document.sources} />}
     <Suspense fallback={<p className={styles.loading} role="status">Loading presentation...</p>}>
-      <NodeView node={{ ...node, title: part.suppressRepeatedTitle ? undefined : displayTitleV2(node.title) }} document={document} grouped={!!part.relatedData} stacked={layout === 'stacked-comparison'} />
+      {program && useOpenUi
+        ? <WorkspaceVisual key={program} node={node} program={program} fallback={fallback} />
+        : fallback}
     </Suspense>
   </div>;
 }
 
-export default function ResponseCanvasV2({ document }: { document: ResponseDocumentV2 }) {
+export default function ResponseCanvasV2({ document, openUi = false }: { document: ResponseDocumentV2; openUi?: boolean }) {
   const root = useRef<HTMLElement>(null);
   const [width, setWidth] = useState(880);
   const composition = useMemo(() => composeResponseV2(document), [document]);
@@ -82,7 +90,7 @@ export default function ResponseCanvasV2({ document }: { document: ResponseDocum
   }, []);
   const references = composition.unplacedSourceKeys.flatMap(key => { const source = registry.get(key); return source ? [{ key, source }] : []; });
   return <SourceRegistryContextV2.Provider value={registry}><article ref={root} className={styles.canvas} data-response-v2="true" data-composition="semantic" aria-label="Xroga response" aria-busy={document.streaming}>
-    <div className={styles.editorialBody}>{composition.parts.map(part => <ComposedPart key={part.id} part={part} document={document} width={width} />)}</div>
+    <div className={styles.editorialBody}>{composition.parts.map(part => <ComposedPart key={part.id} part={part} document={document} width={width} openUi={openUi} />)}</div>
     {references.length > 0 && <details className={`${styles.sources} ${styles.measure}`}><summary>References - {references.length}</summary><ul>{references.map(({ key, source }) => <li key={key}><SourceLinkV2 url={source.url} title={source.title} /><a href={safeLinkV2(source.url)} target="_blank" rel="noopener noreferrer">{source.title}</a></li>)}</ul></details>}
     {document.streaming && <span className={styles.streaming} role="status">Receiving response</span>}
   </article></SourceRegistryContextV2.Provider>;
