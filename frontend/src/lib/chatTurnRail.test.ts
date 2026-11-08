@@ -92,3 +92,14 @@ test('mobile intelligence cards retain their independently verified sticky scrol
   assert.match(HOMEPAGE_CSS, /\.xv-intelligence__grid\{display:block;padding-bottom:8svh\}/);
   assert.match(HOMEPAGE_CSS, /position:sticky;top:calc\(4\.5rem \+ var\(--xv-stack-index\) \* \.48rem\)/);
 });
+
+test('workspace conversation markers are anchored to the pane, not delayed viewport coordinates', () => {
+  assert.match(RAIL, /root\.closest<HTMLElement>\('\.xv-terminal-panel'\)/);
+  assert.match(RAIL, /setRailHost\(host\)/);
+  assert.match(RAIL, /railHost \?\? document\.body/);
+  assert.match(RAIL, /style=\{railHost \? undefined : \{ left: layout\.left \}\}/);
+  assert.match(CSS, /\.xv-chat-turn-rail\.xv-chat-turn-rail--dock\.xv-chat-turn-rail--pane\s*\{\s*position: absolute/);
+  assert.match(CSS, /body\.xv-sidebar-resizing \.xv-terminal-dock\s*\{\s*transition-property: opacity !important/);
+  assert.match(CSS, /\.xv-workspace-header \.xv-workspace-identity-cluster\s*\{[\s\S]*?overflow: hidden/);
+  assert.match(CSS, /@media \(min-width: 1024px\) and \(max-width: 1200px\)/);
+});
