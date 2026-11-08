@@ -1,7 +1,7 @@
 {
   "version": "1.0",
   "missionId": "RESPONSE-PRESENTATION-CONTRACT-20261102",
-  "baseSha": "7a1b4da064c643a02e60dd61369fa741bf481499",
+  "baseSha": "6ee13e4b9e2655efa161937903625353a75c7bea",
   "requirementIds": [
     "XR-MISSION-054",
     "XR-MISSION-055"
@@ -95,6 +95,7 @@
   "rollout": "Development correction only. Live backend cd5541 and frontend d86c8 remain unchanged. New source requires final CI, exact-source paired-release approval and bounded fresh acceptance.",
   "rollback": "Retain cd5541 API/Job and d86c8 frontend, the legacy renderer and all earlier recovery assets. Existing SQL fence and drain procedure is required for a backend rollback.",
   "knownGaps": [
+    "Integration ancestry starts at 6ee13e4b, the squash that imported this mission. Its historical base 7a1b4da064c643a02e60dd61369fa741bf481499 remains a reference, not a release or acceptance claim.",
     "Fresh generation on the corrected source is not tested. The last cd5541 SaaS attempt failed full product acceptance.",
     "Exact-source CI and specific paired-release authorization for this new source are pending.",
     "Workshop, research and unrelated new-chat acceptance remain unrun."

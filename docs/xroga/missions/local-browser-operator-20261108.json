@@ -18,6 +18,9 @@
     "apps/xroga-browser-extension/src/side-panel/App.tsx",
     "apps/xroga-browser-extension/src/ui/voice.ts",
     "apps/xroga-browser-extension/src/agent/loop.ts",
+    "apps/xroga-browser-extension/src/agent/restore.ts",
+    "apps/xroga-browser-extension/src/store/conversations.ts",
+    "apps/xroga-browser-extension/src/side-panel/RunControls.tsx",
     "backend/src/index.ts",
     "backend/src/routes/localBrowser.ts",
     "backend/src/routes/browserDocuments.ts",
@@ -51,6 +54,7 @@
   },
   "tests": [
     { "command": "node tests/chrome-extension/operator.mjs <playwright> <chrome> [temporary-profile-parent]", "scope": "Passed in Chrome 156 with a deterministic model. Verified background pairing, PCM dictation into the draft, real navigation, action cues at click and input, a redacted screenshot with no model egress, scoped form approval, cancellation and explicit resumption without a repeated click.", "negative": true, "reference": "tests/chrome-extension/operator.mjs" },
+    { "command": "node tests/chrome-extension/operator.mjs <playwright> <chrome> [temporary-profile-parent]", "scope": "Application source 89ef62ce passed in Chrome 151 with a deterministic model. Verified manual pause and same-run continuation, a lost final acknowledgement, actual service-worker termination, refusal of a second fixture account, and owner-only result sync without another model request or repeated click. Zero model spend.", "negative": true, "reference": "tests/chrome-extension/operator.mjs" },
     { "command": "node --import tsx tests/chrome-extension/operator.mjs <playwright> <chrome> <temporary-profile-parent> --live-zurelay", "scope": "The isolated Chrome probe uses the exact live Zurelay model with a synthetic site and Workspace bridge. Hosted authentication and settlement are separate acceptance requirements.", "negative": false, "reference": "tests/chrome-extension/operator.mjs" },
     { "command": "tsx --test backend/src/routes/localBrowser.test.ts", "scope": "Canonical owner binding, hosted recovery exclusion, input refusal, replay rejection and cancellation.", "negative": true, "reference": "backend/src/routes/localBrowser.test.ts" }
   ],
@@ -61,7 +65,7 @@
     "Authenticated staging with live ledger settlement, multi-user Chrome acceptance, and approved live website workflows are pending.",
     "Model vision remains disabled for browser tasks until this exact route passes privacy and modality acceptance.",
     "Explicit resume preserves the same run ID, time and spend on the paired device. A full Chrome restart and re-pair still needs live acceptance.",
-    "The repository-wide mission check inherits a stale voice mission ancestry reference."
+    "The source ancestry of six inherited mission records is now bound to the actual squash that imported them. Historical source references are preserved; this metadata change does not certify unrelated missions."
   ],
   "placeholderClaimsRemaining": [],
   "claimsFullProductCompletion": false,

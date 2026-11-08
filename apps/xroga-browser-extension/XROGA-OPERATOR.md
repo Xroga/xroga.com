@@ -26,4 +26,18 @@ Use the isolated Chrome test to reproduce the two entry points with a determinis
 
 Before activation, verify authenticated staging with two users, a real Zurelay run settled by the hosted ledger, browser restart and re-pair, and each target site's approval and verification flow. Advertising and email publication require authorized test accounts and scoped consent. The development ZIP is for unpacked testing.
 
+### Issue #939 acceptance checkpoint
+
+Application source `89ef62ce` extends the existing Nanobrowser engine and canonical Workspace bridge. Pause leaves the original server run available. Chrome saves the final result before syncing it. If an action might already have gone through, recovery can inspect the site, but cannot repeat or dispatch another write in that run. Reopening or syncing does not reset the server's turn, time or spending limits.
+
+| Check | Status and evidence |
+| --- | --- |
+| Side panel and Workspace bridge | PASS in an isolated real Chrome 151 profile. Background pairing, approved form submission, public catalog research, document-driven tasks, cursor cues, local screenshot evidence and cancellation ran against fixtures. Workspace transport and the model were deterministic fixtures. |
+| Recovery and account boundary | PASS in Chrome. Paused after the third model turn was admitted, then resumed the same server run. After losing the final acknowledgement and stopping the service worker, the original owner re-paired and synced the saved result. Another fixture account was rejected. Exactly one catalog click was recorded across recovery, and the result sync made no new model request. This was a service-worker restart, not a full browser or device restart. |
+| Hosted API, DeepSeek and ledger | BLOCKED for release. The local route test covers owner binding, fencing, cancellation and storage. The current source has no new authenticated hosted run, no provider request or billing receipt, and no proof of the effective provider RPM. The isolated test cost $0 in model usage. |
+| Authorized external workflows | BLOCKED for release. No disposable Cloud Run deployment, Meta Ads draft or client-discovery result was accepted on a real site for this checkpoint. Use named test accounts and explicit approval for provisioning, publication, spend or outreach. |
+| Production compatibility | A local candidate, `e3d10e445ace3854e0912c1a4ec0b351ec26f558`, changes only `WorkspaceBrowserOperator.tsx` on the `da483f92` Workspace rollback source. It has not been deployed or passed exact-source release gates. The earlier `565bde32` stage would reintroduce a reverted sidebar release and must not be promoted. |
+
+For the hosted gate, stage only the operator patch on the verified serving Workspace source and its matching API. Keep the installed extension ID stable, use separate authorized Chrome profiles, and verify both ownership and access denial before spending model credits. Run one bounded read-only task with the exact DeepSeek model, record the canonical run ID and ledger settlement, and verify pause, re-pair, cancellation and restart in that same run. Then test the authorized external workflows individually. No staged frontend should reverse an unrelated production rollback.
+
 Rollback by disabling the backend flag and removing the Workspace extension ID. Disconnect or uninstall the Chrome extension to stop local tasks. The run and accounting records remain in the existing stores.

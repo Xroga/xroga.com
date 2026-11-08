@@ -1,23 +1,23 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "ab0fcbd251c0d5f859a5d19bda625fed1f6b31ada2b5432bedf80cb4ad01fc3f",
+  "reviewRegistrySha256": "eb762252e2146566353911dfe23877af8f516a04fd5d5f087ef4183dd1a510be",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
     "privilegedFactorySites": 226,
-    "persistenceCandidates": 999,
+    "persistenceCandidates": 1005,
     "ownerPredicateCandidates": 262,
-    "reviewRequired": 152,
+    "reviewRequired": 158,
     "reviewedCandidates": 847,
-    "unresolvedSafetyCandidates": 196,
+    "unresolvedSafetyCandidates": 202,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 23
   },
   "outcomes": {
-    "REVIEW_REQUIRED": 152,
+    "REVIEW_REQUIRED": 158,
     "SCOPED_BOUNDARY": 547,
     "NARROW_EXCEPTION": 52,
     "NOT_PERSISTENCE": 204,
@@ -29,7 +29,7 @@
     "scope": "COMMAND_007_CRITERION_EVIDENCE_NOT_BATCH_OR_PRODUCTION_ACCEPTANCE",
     "certifiedScopedPrivilegedCallers": 0,
     "verifiedCandidateBoundaries": 80,
-    "unresolvedCandidateBoundaries": 919,
+    "unresolvedCandidateBoundaries": 925,
     "criteria": [
       {
         "id": "XB01-C007-AC01",
@@ -4700,6 +4700,18 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
+        "id": "49d80835a4c3c34ee32b"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "4b5a67879fe8cadd9429"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "6976a39ca0e1440bcce4"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
         "id": "3a0a65d6d673a33eaf05"
       },
       {
@@ -4733,6 +4745,10 @@
       {
         "code": "MISSING_CALLER_REVIEW",
         "id": "a9b3c4d80ff636038058"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "5df2ea611eb4f0af7872"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -6248,7 +6264,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "16c2383298e67ee3f47a"
+        "id": "1c780eb9958455f3963f"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -6301,6 +6317,14 @@
       {
         "code": "MISSING_CALLER_REVIEW",
         "id": "d28d6e2b0cc260eb3aa7"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "78d08cae1ba941ec3372"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "53e8224ab5eae93a7555"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -6612,7 +6636,23 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "49d80835a4c3c34ee32b"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "4b5a67879fe8cadd9429"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "6976a39ca0e1440bcce4"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
         "id": "3a0a65d6d673a33eaf05"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "5df2ea611eb4f0af7872"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -7084,7 +7124,7 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "16c2383298e67ee3f47a"
+        "id": "1c780eb9958455f3963f"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -7125,6 +7165,14 @@
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
         "id": "d28d6e2b0cc260eb3aa7"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "78d08cae1ba941ec3372"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "53e8224ab5eae93a7555"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -10133,10 +10181,10 @@
     ]
   },
   "reviewAgreement": {
-    "currentCallers": 999,
+    "currentCallers": 1005,
     "structuredVerified": 80,
-    "structuredUnproven": 919,
-    "manualUnresolved": 196,
+    "structuredUnproven": 925,
+    "manualUnresolved": 202,
     "manualUnsupported": 723,
     "agreedVerified": 80,
     "proofAwaitingManualReconciliation": 0
@@ -11885,7 +11933,7 @@
       "target": "claim_xroga_model_request",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "1f0dc6734214d1fabb7b1398399bbfaa3d283196cafe1a4bce0ed9fed0dcf369"
+      "sourceSha256": "7df0dea199e4d1236eb256cdac6072eb9b39eae1ea155d4f87db1999c66997ac"
     },
     {
       "id": "a022aed0e53e6eb2d11c",
@@ -11896,7 +11944,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "1f0dc6734214d1fabb7b1398399bbfaa3d283196cafe1a4bce0ed9fed0dcf369"
+      "sourceSha256": "7df0dea199e4d1236eb256cdac6072eb9b39eae1ea155d4f87db1999c66997ac"
     },
     {
       "id": "960c2cafd137215ed23c",
@@ -11907,7 +11955,7 @@
       "target": "release_xroga_model_request",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "1f0dc6734214d1fabb7b1398399bbfaa3d283196cafe1a4bce0ed9fed0dcf369"
+      "sourceSha256": "7df0dea199e4d1236eb256cdac6072eb9b39eae1ea155d4f87db1999c66997ac"
     },
     {
       "id": "402df5dc06905306225a",
@@ -11918,7 +11966,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "1f0dc6734214d1fabb7b1398399bbfaa3d283196cafe1a4bce0ed9fed0dcf369"
+      "sourceSha256": "7df0dea199e4d1236eb256cdac6072eb9b39eae1ea155d4f87db1999c66997ac"
     },
     {
       "id": "4c53a5a5952dfc028e28",
@@ -19133,6 +19181,39 @@
       }
     },
     {
+      "id": "49d80835a4c3c34ee32b",
+      "path": "backend/src/routes/browserDocuments.ts",
+      "line": 19,
+      "enclosing": "officeArchive",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "52b4445687ccae287d6c84bfefac85c463400915c5857c7d70f4b9a9a5cddfe3"
+    },
+    {
+      "id": "4b5a67879fe8cadd9429",
+      "path": "backend/src/routes/browserDocuments.ts",
+      "line": 64,
+      "enclosing": "readBrowserDocument",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "52b4445687ccae287d6c84bfefac85c463400915c5857c7d70f4b9a9a5cddfe3"
+    },
+    {
+      "id": "6976a39ca0e1440bcce4",
+      "path": "backend/src/routes/browserDocuments.ts",
+      "line": 85,
+      "enclosing": "readBrowserDocument",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "52b4445687ccae287d6c84bfefac85c463400915c5857c7d70f4b9a9a5cddfe3"
+    },
+    {
       "id": "3a0a65d6d673a33eaf05",
       "path": "backend/src/routes/businessAutomationWebhook.ts",
       "line": 21,
@@ -19360,6 +19441,17 @@
           }
         ]
       }
+    },
+    {
+      "id": "5df2ea611eb4f0af7872",
+      "path": "backend/src/routes/localBrowser.ts",
+      "line": 198,
+      "enclosing": "createLocalBrowserRouter",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "873a0c1ae4876e25462a9b9e18772d456ee3334fd5e5dd4492e0775b3427d019"
     },
     {
       "id": "c9a009f6baa9e3a3bbad",
@@ -30491,15 +30583,15 @@
       "sourceSha256": "0c878ec62c92cb0529a52f985e39dfc50756ee0ad06f2dd4940c57724b46f8d0"
     },
     {
-      "id": "16c2383298e67ee3f47a",
+      "id": "1c780eb9958455f3963f",
       "path": "frontend/src/app/(workspace)/workspace/page.tsx",
-      "line": 25,
+      "line": 27,
       "enclosing": "WorkspacePage",
       "kind": "RPC_CANDIDATE",
       "target": "current_community_role",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "adbcbb1f07739cc85785e64c37c89d02fb26a602f29e42f10b49e69825a64195"
+      "sourceSha256": "38cd455f073cfd679346988398cafc5e0b78ad92eb674fb30073bd46b9b6afa9"
     },
     {
       "id": "83779ac5d4b86b4ed00a",
@@ -30871,6 +30963,28 @@
           }
         ]
       }
+    },
+    {
+      "id": "78d08cae1ba941ec3372",
+      "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+      "line": 212,
+      "enclosing": "WorkspaceBrowserOperator",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "67ae537e26c8dce63adf12d566babd2b2a37a76fc6bac2585e514ef0ead4a540"
+    },
+    {
+      "id": "53e8224ab5eae93a7555",
+      "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+      "line": 282,
+      "enclosing": "WorkspaceBrowserOperator",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "67ae537e26c8dce63adf12d566babd2b2a37a76fc6bac2585e514ef0ead4a540"
     },
     {
       "id": "229f69845215b3f79181",
@@ -31249,7 +31363,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "7daceb7dfb3cd3b1faf8b1f42f6e11243daf15afa78ff8fe076371ae510f9628",
+      "sourceSha256": "403def6e0480eb4371f4c73261063c46af91996a8287e7722609c89d6e6ac237",
       "semanticReview": {
         "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in SidebarProjectHistory, with no database or Storage client receiver.",
         "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
@@ -31270,7 +31384,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "7daceb7dfb3cd3b1faf8b1f42f6e11243daf15afa78ff8fe076371ae510f9628",
+      "sourceSha256": "403def6e0480eb4371f4c73261063c46af91996a8287e7722609c89d6e6ac237",
       "semanticReview": {
         "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in SidebarProjectHistory, with no database or Storage client receiver.",
         "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
@@ -31291,7 +31405,7 @@
       "target": "projects",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "7daceb7dfb3cd3b1faf8b1f42f6e11243daf15afa78ff8fe076371ae510f9628"
+      "sourceSha256": "403def6e0480eb4371f4c73261063c46af91996a8287e7722609c89d6e6ac237"
     },
     {
       "id": "4fbfd0293636c69d00b0",
@@ -31302,7 +31416,7 @@
       "target": "xroga_sidebar_items",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "7daceb7dfb3cd3b1faf8b1f42f6e11243daf15afa78ff8fe076371ae510f9628"
+      "sourceSha256": "403def6e0480eb4371f4c73261063c46af91996a8287e7722609c89d6e6ac237"
     },
     {
       "id": "92e2f9e84b8b9d7515b1",
