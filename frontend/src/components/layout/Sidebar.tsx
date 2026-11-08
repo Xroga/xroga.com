@@ -906,7 +906,7 @@ export function Sidebar({ displayName, email }: SidebarProps) {
       >
         <aside
   className={cn(
-    'xv-sidebar-floating xv-sidebar-hover relative z-40 flex flex-col shrink-0 overflow-hidden transition-[width,opacity] duration-200 opacity-100'
+    'xv-sidebar-floating xv-sidebar-hover relative z-40 flex flex-col shrink-0 overflow-hidden transition-opacity duration-150 opacity-100'
   )}
   style={{ width: asideWidth }}
 >
