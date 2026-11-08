@@ -1,17 +1,17 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "ab0fcbd251c0d5f859a5d19bda625fed1f6b31ada2b5432bedf80cb4ad01fc3f",
+  "reviewRegistrySha256": "7868c9afd3f271ed360635a6b7500b8178a2fb001bb2edbfa9731c2bf2b3469e",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
     "privilegedFactorySites": 226,
-    "persistenceCandidates": 999,
+    "persistenceCandidates": 1001,
     "ownerPredicateCandidates": 262,
     "reviewRequired": 152,
-    "reviewedCandidates": 847,
+    "reviewedCandidates": 849,
     "unresolvedSafetyCandidates": 196,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 23
@@ -20,7 +20,7 @@
     "REVIEW_REQUIRED": 152,
     "SCOPED_BOUNDARY": 547,
     "NARROW_EXCEPTION": 52,
-    "NOT_PERSISTENCE": 204,
+    "NOT_PERSISTENCE": 206,
     "REVIEWED_GAP": 44
   },
   "acceptance": {
@@ -29,7 +29,7 @@
     "scope": "COMMAND_007_CRITERION_EVIDENCE_NOT_BATCH_OR_PRODUCTION_ACCEPTANCE",
     "certifiedScopedPrivilegedCallers": 0,
     "verifiedCandidateBoundaries": 80,
-    "unresolvedCandidateBoundaries": 919,
+    "unresolvedCandidateBoundaries": 921,
     "criteria": [
       {
         "id": "XB01-C007-AC01",
@@ -6248,7 +6248,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "16c2383298e67ee3f47a"
+        "id": "1c780eb9958455f3963f"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -6301,6 +6301,14 @@
       {
         "code": "MISSING_CALLER_REVIEW",
         "id": "d28d6e2b0cc260eb3aa7"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "a9e89dea32df3eb8a0b5"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "db86c426bed33eedc7ee"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -7084,7 +7092,7 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "16c2383298e67ee3f47a"
+        "id": "1c780eb9958455f3963f"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -10080,6 +10088,14 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "a9e89dea32df3eb8a0b5"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "db86c426bed33eedc7ee"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "229f69845215b3f79181"
       },
       {
@@ -10133,11 +10149,11 @@
     ]
   },
   "reviewAgreement": {
-    "currentCallers": 999,
+    "currentCallers": 1001,
     "structuredVerified": 80,
-    "structuredUnproven": 919,
+    "structuredUnproven": 921,
     "manualUnresolved": 196,
-    "manualUnsupported": 723,
+    "manualUnsupported": 725,
     "agreedVerified": 80,
     "proofAwaitingManualReconciliation": 0
   },
@@ -30491,15 +30507,15 @@
       "sourceSha256": "0c878ec62c92cb0529a52f985e39dfc50756ee0ad06f2dd4940c57724b46f8d0"
     },
     {
-      "id": "16c2383298e67ee3f47a",
+      "id": "1c780eb9958455f3963f",
       "path": "frontend/src/app/(workspace)/workspace/page.tsx",
-      "line": 25,
+      "line": 27,
       "enclosing": "WorkspacePage",
       "kind": "RPC_CANDIDATE",
       "target": "current_community_role",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "adbcbb1f07739cc85785e64c37c89d02fb26a602f29e42f10b49e69825a64195"
+      "sourceSha256": "38cd455f073cfd679346988398cafc5e0b78ad92eb674fb30073bd46b9b6afa9"
     },
     {
       "id": "83779ac5d4b86b4ed00a",
@@ -30868,6 +30884,56 @@
           {
             "path": "frontend/src/components/billing/BillingSuccessExperience.tsx",
             "marker": "{Array.from({ length: 18 }, (_, index) => <i key={index} className=\"absolute h-2 w-2 animate-pulse rounded-full bg-[var(--accent)]\" style={{ left: `${5 + ((index * 37) % 90)}%`, top: `${8 + ((index * 23) % 80)}%`, animationDelay: `${index * 80}ms` }} />)}"
+          }
+        ]
+      }
+    },
+    {
+      "id": "a9e89dea32df3eb8a0b5",
+      "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+      "line": 180,
+      "enclosing": "WorkspaceBrowserOperator",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "2500a1f07a78f43f9ebee385642fac97743777253c045bce71eed6bf51002d9a",
+      "semanticReview": {
+        "authority": "Inspected the exact receiver and complete expression. It is a built-in JavaScript data conversion with no persistence client or privilege transfer.",
+        "reason": "Decodes the user-requested recording or enumerates user-selected File objects locally. Neither method is a database or storage invocation.",
+        "evidence": [
+          {
+            "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+            "marker": "Uint8Array.from(atob(encoded)"
+          },
+          {
+            "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+            "marker": "Array.from(event.target.files"
+          }
+        ]
+      }
+    },
+    {
+      "id": "db86c426bed33eedc7ee",
+      "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+      "line": 246,
+      "enclosing": "WorkspaceBrowserOperator",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "2500a1f07a78f43f9ebee385642fac97743777253c045bce71eed6bf51002d9a",
+      "semanticReview": {
+        "authority": "Inspected the exact receiver and complete expression. It is a built-in JavaScript data conversion with no persistence client or privilege transfer.",
+        "reason": "Decodes the user-requested recording or enumerates user-selected File objects locally. Neither method is a database or storage invocation.",
+        "evidence": [
+          {
+            "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+            "marker": "Uint8Array.from(atob(encoded)"
+          },
+          {
+            "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+            "marker": "Array.from(event.target.files"
           }
         ]
       }
@@ -31249,7 +31315,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "7daceb7dfb3cd3b1faf8b1f42f6e11243daf15afa78ff8fe076371ae510f9628",
+      "sourceSha256": "403def6e0480eb4371f4c73261063c46af91996a8287e7722609c89d6e6ac237",
       "semanticReview": {
         "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in SidebarProjectHistory, with no database or Storage client receiver.",
         "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
@@ -31270,7 +31336,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "7daceb7dfb3cd3b1faf8b1f42f6e11243daf15afa78ff8fe076371ae510f9628",
+      "sourceSha256": "403def6e0480eb4371f4c73261063c46af91996a8287e7722609c89d6e6ac237",
       "semanticReview": {
         "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in SidebarProjectHistory, with no database or Storage client receiver.",
         "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
@@ -31291,7 +31357,7 @@
       "target": "projects",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "7daceb7dfb3cd3b1faf8b1f42f6e11243daf15afa78ff8fe076371ae510f9628"
+      "sourceSha256": "403def6e0480eb4371f4c73261063c46af91996a8287e7722609c89d6e6ac237"
     },
     {
       "id": "4fbfd0293636c69d00b0",
@@ -31302,7 +31368,7 @@
       "target": "xroga_sidebar_items",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "7daceb7dfb3cd3b1faf8b1f42f6e11243daf15afa78ff8fe076371ae510f9628"
+      "sourceSha256": "403def6e0480eb4371f4c73261063c46af91996a8287e7722609c89d6e6ac237"
     },
     {
       "id": "92e2f9e84b8b9d7515b1",

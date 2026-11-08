@@ -27762,7 +27762,7 @@
     },
     {
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "sourceSha256": "7daceb7dfb3cd3b1faf8b1f42f6e11243daf15afa78ff8fe076371ae510f9628",
+      "sourceSha256": "403def6e0480eb4371f4c73261063c46af91996a8287e7722609c89d6e6ac237",
       "callIds": [
         "a291f26c3c5001de01f9"
       ],
@@ -27787,7 +27787,7 @@
     },
     {
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "sourceSha256": "7daceb7dfb3cd3b1faf8b1f42f6e11243daf15afa78ff8fe076371ae510f9628",
+      "sourceSha256": "403def6e0480eb4371f4c73261063c46af91996a8287e7722609c89d6e6ac237",
       "callIds": [
         "f8d5eaf0193282882763"
       ],
@@ -27872,7 +27872,7 @@
       "evidence": [
         {
           "path": "frontend/src/components/os-preview/Command2Sections.tsx",
-          "marker": "return <><div className=\"os-split\"><section className=\"os-panel\"><div className=\"os-field\"><label htmlFor=\"os-genome-search\">Search demo assets</label><input id=\"os-genome-search\" value={query} onChange={(e) => setQuery(e.target.value)}/></div><div className=\"os-field\"><label htmlFor=\"os-genome-category\">Category</label><select id=\"os-genome-category\" value={category} onChange={(e) => setCategory(e.target.value)}><option value=\"all\">All categories</option>{Array.from(new Set(DEMO_ASSETS.map((a) => a.category))).map((c) => <option key={c}>{c}</option>)}</select></div><div className=\"os-catalog-grid\">{filtered.map((a) => <button key={a.id} className={`os-catalog-item ${selected === a.id ? 'is-current' : ''}`} onClick={() => setSelected(a.id)}><strong>{a.name}</strong><small>{a.category} \u00b7 {a.trust.replaceAll('-',' ')}</small></button>)}</div></section><section className=\"os-panel\"><span className=\"os-eyebrow\">Provenance and trust</span><h2>{asset.name}</h2><p>{asset.detail}</p><ul className=\"os-list\"><li><strong>License</strong><small>{asset.license}</small></li><li><strong>Compatibility</strong><small>{asset.trust === 'approved-demo' ? 'Original fixture compatible with this preview.' : 'Not approved for composition.'}</small></li><li><strong>Certification evidence</strong><small>{asset.trust === 'approved-demo' ? 'Demo review only; no production certification.' : 'Rejected in this example.'}</small></li></ul><div className=\"os-field\"><label htmlFor=\"os-genome-approach\">Proposed approach</label><select id=\"os-genome-approach\" value={approach} onChange={(e) => setApproach(e.target.value)}>{['Reuse','Adapt','Compose','Generate'].map((a) => <option key={a}>{a}</option>)}</select></div><p role=\"status\">{asset.trust === 'approved-demo' ? `${approach} is available as a local design example. No code is imported.` : 'Composition blocked by the documented trust or dependency issue.'}</p></section></div><StoryTrail story=\"clinic\"/></>;"
+          "marker": "return <><div className=\"os-split\"><section className=\"os-panel\"><div className=\"os-field\"><label htmlFor=\"os-genome-search\">Search demo assets</label><input id=\"os-genome-search\" value={query} onChange={(e) => setQuery(e.target.value)}/></div><div className=\"os-field\"><label htmlFor=\"os-genome-category\">Category</label><select id=\"os-genome-category\" value={category} onChange={(e) => setCategory(e.target.value)}><option value=\"all\">All categories</option>{Array.from(new Set(DEMO_ASSETS.map((a) => a.category))).map((c) => <option key={c}>{c}</option>)}</select></div><div className=\"os-catalog-grid\">{filtered.map((a) => <button key={a.id} className={`os-catalog-item ${selected === a.id ? 'is-current' : ''}`} onClick={() => setSelected(a.id)}><strong>{a.name}</strong><small>{a.category} · {a.trust.replaceAll('-',' ')}</small></button>)}</div></section><section className=\"os-panel\"><span className=\"os-eyebrow\">Provenance and trust</span><h2>{asset.name}</h2><p>{asset.detail}</p><ul className=\"os-list\"><li><strong>License</strong><small>{asset.license}</small></li><li><strong>Compatibility</strong><small>{asset.trust === 'approved-demo' ? 'Original fixture compatible with this preview.' : 'Not approved for composition.'}</small></li><li><strong>Certification evidence</strong><small>{asset.trust === 'approved-demo' ? 'Demo review only; no production certification.' : 'Rejected in this example.'}</small></li></ul><div className=\"os-field\"><label htmlFor=\"os-genome-approach\">Proposed approach</label><select id=\"os-genome-approach\" value={approach} onChange={(e) => setApproach(e.target.value)}>{['Reuse','Adapt','Compose','Generate'].map((a) => <option key={a}>{a}</option>)}</select></div><p role=\"status\">{asset.trust === 'approved-demo' ? `${approach} is available as a local design example. No code is imported.` : 'Composition blocked by the documented trust or dependency issue.'}</p></section></div><StoryTrail story=\"clinic\"/></>;"
         }
       ],
       "beforeCurrentMainIntegration": {
@@ -29117,6 +29117,27 @@
         "baseRef": "origin/main",
         "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374"
       }
+    },
+    {
+      "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+      "sourceSha256": "2500a1f07a78f43f9ebee385642fac97743777253c045bce71eed6bf51002d9a",
+      "callIds": [
+        "a9e89dea32df3eb8a0b5",
+        "db86c426bed33eedc7ee"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Inspected the exact receiver and complete expression. It is a built-in JavaScript data conversion with no persistence client or privilege transfer.",
+      "reason": "Decodes the user-requested recording or enumerates user-selected File objects locally. Neither method is a database or storage invocation.",
+      "evidence": [
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": "Uint8Array.from(atob(encoded)"
+        },
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": "Array.from(event.target.files"
+        }
+      ]
     }
   ],
   "retiredSourceReviews": [
