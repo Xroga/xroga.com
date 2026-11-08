@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Sidebar } from './Sidebar';
 import { CompactScrollIndicator } from './SidebarNavScroller';
 import { MobileNav } from './MobileNav';
@@ -61,6 +61,15 @@ export function AppShell({ children, displayName, email }: AppShellProps) {
       ? `${sidebarWidth}px`
       : 'var(--xv-boot-sidebar-width, 216px)'
     : '64px';
+  // Capture this workspace's starting content offset exactly once after hydration.
+  // Resizing the overlay sidebar must not move the chat, tabs or workspace columns.
+  const [workspaceCanvasAnchor, setWorkspaceCanvasAnchor] = useState<number | null>(null);
+  useEffect(() => {
+    if (isDashboard && hydrated && workspaceCanvasAnchor === null) setWorkspaceCanvasAnchor(sidebarWidth);
+  }, [hydrated, isDashboard, sidebarWidth, workspaceCanvasAnchor]);
+  const canvasOffset = isDashboard && effectiveSidebarOpen
+    ? workspaceCanvasAnchor === null ? widthPx : `${workspaceCanvasAnchor}px`
+    : widthPx;
 
   // Keep the terminal skin aligned with the shell theme — but only while the skin is
   // still tracking it. This effect used to run unconditionally, which meant any skin
@@ -91,6 +100,7 @@ export function AppShell({ children, displayName, email }: AppShellProps) {
           <div
             className={cn(
               'flex terminal-layout overflow-x-hidden',
+              isDashboard && 'xv-workspace-resize-stable',
               // The workspace shell is measured against the viewport, so the column it
               // lives in must be exactly one viewport tall rather than "at least" —
               // `min-height` lets a tall child stretch the page, which is the same
@@ -103,7 +113,7 @@ export function AppShell({ children, displayName, email }: AppShellProps) {
                 ? 'xv-app-ground h-[100dvh] max-h-[100dvh] overflow-hidden'
                 : 'min-h-screen'
             )}
-            style={{ '--sidebar-width': widthPx } as React.CSSProperties}
+            style={{ '--sidebar-width': canvasOffset, '--xv-workspace-canvas-offset': canvasOffset } as React.CSSProperties}
             data-testid="workspace-shell"
             data-workspace-identity={workspaceIdentity.status}
           >
