@@ -16,11 +16,16 @@ test('project, pinned and recent labels fade instead of ellipsis and scroll on h
   assert.match(style, /width:16px/);
   assert.match(globalCss, /padding-right: 2px !important/);
 });
-test('workspace tabs and composer keep a stable canvas offset as sidebar resizes', () => {
-  assert.match(shell, /workspaceCanvasAnchor/);
-  assert.match(shell, /isDashboard && 'xv-workspace-resize-stable'/);
-  assert.match(globalCss, /\.xv-workspace-resize-stable > \.xv-sidebar-root/);
-  assert.match(globalCss, /padding-inline-start:var\(--xv-workspace-canvas-offset\)/);
+test('sidebar and workspace stay in the same responsive flex row when resizing', () => {
+  assert.match(shell, /'flex terminal-layout overflow-x-hidden'/);
+  assert.match(shell, /'xv-main-column flex-1 flex flex-col w-full min-w-0 max-w-full/);
+  assert.match(shell, /style=\{\{ '--sidebar-width': widthPx \} as React.CSSProperties\}/);
+  assert.doesNotMatch(shell, /workspaceCanvasAnchor|xv-workspace-resize-stable|canvasOffset/);
+  assert.doesNotMatch(globalCss, /\.xv-workspace-resize-stable/);
+  assert.match(sidebar, /'xv-sidebar-root relative hidden lg:block shrink-0'/);
+  assert.match(sidebar, /'xv-sidebar-floating xv-sidebar-hover relative z-40 flex flex-col shrink-0 overflow-hidden transition-opacity/);
+  assert.doesNotMatch(sidebar, /transition-\[width,opacity\]/);
+  assert.match(globalCss, /body.xv-sidebar-resizing/);
 });
 test('profile footer has the real name, plan and square-rounded profile photo', () => {
   assert.match(sidebar, /profile\?\.display_name\?\.trim\(\)/);
