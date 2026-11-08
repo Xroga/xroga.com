@@ -66,7 +66,7 @@ export interface LoopOptions {
   layer: LayerPort;
   host: HostPort;
   signal: AbortSignal;
-  emit: (event: AgentEvent) => void;
+  emit: (event: AgentEvent, resultEntry?: EntryOf<'message'>) => void;
   turnCap: number;
   attachmentPreviewChars?: number;
   /** The conversation's mode, for the page header; only the user changes it. */
@@ -1000,7 +1000,7 @@ export class AgentLoop {
 
   async #record(outcome: CallOutcome): Promise<void> {
     const result = outcome.result ? storedResult(outcome.result) : undefined;
-    await this.writer.toolResult(
+    const entry = await this.writer.toolResult(
       outcome.call.toolCallId,
       outcome.call.toolName,
       outcome.text,
@@ -1009,11 +1009,14 @@ export class AgentLoop {
       outcome.image,
     );
     const status: ToolRow['status'] = outcome.skipped ? 'skipped' : outcome.isError ? 'failed' : 'done';
-    this.options.emit({
-      type: 'tool_execution_end',
-      messageId: this.#replyId,
-      row: this.#row(outcome.call, status, outcome),
-    });
+    this.options.emit(
+      {
+        type: 'tool_execution_end',
+        messageId: this.#replyId,
+        row: this.#row(outcome.call, status, outcome),
+      },
+      entry,
+    );
   }
 
   /** Runs a reply's calls under the execution policy; every call gets a result. */

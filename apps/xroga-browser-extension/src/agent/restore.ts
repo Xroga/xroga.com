@@ -18,7 +18,12 @@ export function completedBrowserTools(runId: string, branch: Entry[]): string[] 
     if (entry.type !== 'message' || entry.meta?.runId !== runId || entry.message.role !== 'tool') continue;
     const result = entry.result as
       { ok?: unknown; receipt?: { dispatched?: unknown; reachedTarget?: unknown } } | undefined;
-    if (result?.ok !== true || result.receipt?.dispatched === false || result.receipt?.reachedTarget === false)
+    if (
+      result?.ok !== true ||
+      result.receipt?.dispatched === false ||
+      result.receipt?.dispatched === 'unknown' ||
+      result.receipt?.reachedTarget === false
+    )
       continue;
     for (const part of entry.message.parts) {
       if (part.type === 'tool-result' && !part.isError && part.toolName !== 'done') names.push(part.toolName);
@@ -42,10 +47,9 @@ export function hasUncertainBrowserWrite(runId: string, branch: Entry[]): boolea
   );
   return branch.some(entry => {
     if (entry.type !== 'message' || entry.meta?.runId !== runId || entry.message.role !== 'tool') return false;
-    const result = entry.result as { ok?: unknown; error?: { delivered?: unknown } } | undefined;
+    const result = entry.result as { receipt?: { dispatched?: unknown }; error?: { delivered?: unknown } } | undefined;
     return (
-      result?.ok === false &&
-      result.error?.delivered === 'unknown' &&
+      (result?.error?.delivered === 'unknown' || result?.receipt?.dispatched === 'unknown') &&
       entry.message.parts.some(part => part.type === 'tool-result' && mutations.has(part.toolCallId))
     );
   });

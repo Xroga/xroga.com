@@ -6,6 +6,7 @@ const CONNECTION = 'xroga.browser.connection.v1';
 const PORT = 'xroga-browser-v1';
 const PAIR_KEY = 'xroga-browser-account';
 const PAIR_TAB_KEY = 'xroga-browser-workspace-tab';
+const VERIFIED_TAB_KEY = 'xroga-browser-verified-workspace-tab';
 const UUID = /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i;
 
 interface WorkspaceMessage {
@@ -33,6 +34,7 @@ let taskHandler: ((goal: string, startUrl: string, files: WorkspaceTextFile[]) =
 let cancelHandler: ((runId: string) => void) | undefined;
 let controlHandler: ((type: 'pause-task' | 'resume-task', runId: string) => Promise<void>) | undefined;
 let connectedHandler: (() => Promise<void>) | undefined;
+let activityHandler: ((runId: string) => Promise<void>) | undefined;
 
 export function workspacePaired() {
   return !!workspace;
@@ -96,17 +98,25 @@ export function listenForWorkspace(
   cancel: (runId: string) => void,
   control: (type: 'pause-task' | 'resume-task', runId: string) => Promise<void>,
   connected: () => Promise<void>,
+  activity: (runId: string) => Promise<void>,
 ) {
   taskHandler = start;
   cancelHandler = cancel;
   controlHandler = control;
   connectedHandler = connected;
+  activityHandler = activity;
   chrome.tabs.onRemoved.addListener(tabId => {
     if (tabId === pairTabId) {
       pairTabId = undefined;
       void chrome.storage.session.remove(PAIR_TAB_KEY).catch(() => undefined);
     }
     if (tabId === pairing?.tabId) pairing = undefined;
+    void chrome.storage.session
+      .get(VERIFIED_TAB_KEY)
+      .then(async stored => {
+        if (stored[VERIFIED_TAB_KEY] === tabId) await chrome.storage.session.remove(VERIFIED_TAB_KEY);
+      })
+      .catch(() => undefined);
   });
   chrome.runtime.onMessage.addListener(
     (message: { type?: string; name?: unknown; base64?: unknown; automatic?: boolean }, sender, reply) => {
@@ -159,6 +169,20 @@ export function listenForWorkspace(
   chrome.runtime.onMessageExternal.addListener((message: unknown, sender, reply) => {
     const status = getWorkspaceExtensionStatus(message, sender);
     if (status) reply({ ...status, paired: workspace?.sender?.tab?.id === sender.tab?.id && !!workspace });
+    const resume = message as { type?: unknown } | null;
+    const tabId = sender.tab?.id;
+    if (resume?.type === 'xroga.browser.reconnect.v1' && isWorkspaceSender(sender) && typeof tabId === 'number') {
+      void (async () => {
+        const stored = await chrome.storage.session.get(VERIFIED_TAB_KEY);
+        if (stored[VERIFIED_TAB_KEY] !== tabId || workspace || (pairing && Date.now() < pairing.expires)) return null;
+        const started = Date.now();
+        const nonce = crypto.randomUUID();
+        pairing = { nonce, tabId, started, expires: started + 5 * 60_000 };
+        pairFailure = undefined;
+        return { nonce };
+      })().then(reply, () => reply(null));
+      return true;
+    }
     const failure = message as { type?: unknown; nonce?: unknown; reason?: unknown } | null;
     if (
       failure?.type === 'xroga.browser.pair-failed.v1' &&
@@ -175,6 +199,7 @@ export function listenForWorkspace(
       pairFailure = failure.reason;
       reply(true);
     }
+    return undefined;
   });
   chrome.runtime.onConnectExternal.addListener(port => {
     if (port.name !== PORT || !isWorkspaceSender(port.sender) || port.sender?.tab?.id !== pairing?.tabId) {
@@ -228,6 +253,9 @@ export function listenForWorkspace(
           if (message.type === 'cancel-task' && typeof message.runId === 'string' && UUID.test(message.runId)) {
             cancelHandler?.(message.runId);
           }
+          if (message.type === 'activity-history' && typeof message.runId === 'string' && UUID.test(message.runId)) {
+            void activityHandler?.(message.runId).catch(() => undefined);
+          }
           if (
             (message.type === 'pause-task' || message.type === 'resume-task') &&
             typeof message.runId === 'string' &&
@@ -266,6 +294,7 @@ export function listenForWorkspace(
             return;
           }
           await chrome.storage.local.set({ [PAIR_KEY]: account });
+          await chrome.storage.session.set({ [VERIFIED_TAB_KEY]: challenge.tabId });
           // Send first. A tab closed during storage I/O must never become the current port.
           port.postMessage({ type: 'paired' });
           workspace = port;

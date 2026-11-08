@@ -75,6 +75,7 @@ import { livePair, ModelUnavailable, resolveModel } from './models';
 import { count, deleteKeepingChoices, noteActivity, observe, runEnded, runModel, runStarted } from './analytics';
 import { endOf } from './analytics-payload';
 import { onWorkspaceDisconnect, postWorkspace, workspacePaired, workspaceRequest } from '@src/xroga/bridge';
+import { ACTIVITY_LIMIT, browserActivity } from '@src/xroga/activity';
 import { startXrogaModelRun } from '@src/xroga/model';
 import { SEARCH_HOME, browserTarget } from '@src/xroga/navigation';
 import { XROGA_PRODUCT } from '@src/xroga/product';
@@ -344,13 +345,17 @@ export class RunManager {
 
   async reportCanonicalCheckpoint(): Promise<void> {
     const saved = (await listRuns())
-      .filter(
-        run =>
-          run.canonicalBrowserRunId &&
-          (UNFINISHED.has(run.status) || run.status === 'capped' || run.status === 'interrupted'),
-      )
+      .filter(run => run.canonicalBrowserRunId)
       .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))[0];
     if (saved) postWorkspace({ type: 'checkpoint', runId: saved.canonicalBrowserRunId });
+  }
+
+  async reportCanonicalActivity(runId: string): Promise<void> {
+    const run = (await listRuns()).find(record => record.canonicalBrowserRunId === runId);
+    if (!run) return;
+    const branch = await activeBranch(run.conversationId);
+    const steps = branch.flatMap(entry => browserActivity(entry, run.runId) ?? []).slice(-ACTIVITY_LIMIT);
+    postWorkspace({ type: 'activity-history', runId, steps });
   }
 
   async controlCanonical(type: 'pause-task' | 'resume-task', runId: string): Promise<void> {
@@ -371,12 +376,15 @@ export class RunManager {
     await this.#continue(record.conversationId, record.status, 'the user resumed in Workspace; observe before acting.');
   }
 
-  emit(conversationId: string, body: PanelEventBody): void {
+  emit(conversationId: string, body: PanelEventBody, resultEntry?: EntryOf<'message'>): void {
     this.journal.emit(conversationId, body);
     observe(body);
     const runId = this.#canonicalRuns.get(conversationId);
     if (!runId) return;
-    if (body.type === 'tool_execution_start' || body.type === 'tool_execution_end') {
+    if (body.type === 'tool_execution_end' && resultEntry) {
+      const step = browserActivity(resultEntry, this.#records.get(conversationId)?.runId ?? '');
+      if (step) postWorkspace({ type: 'activity', runId, ...step });
+    } else if (body.type === 'tool_execution_start') {
       postWorkspace({ type: 'activity', runId, tool: body.row.tool, status: body.row.status });
     } else if (body.type === 'prompt_open' && body.prompt.kind === 'write-card') {
       postWorkspace({ type: 'activity', runId, status: 'approval-required' });
@@ -1591,7 +1599,7 @@ export class RunManager {
           layer: layerPort(session, this.border),
           host: this.#host(conversationId, session),
           signal: controller.signal,
-          emit: event => this.emit(conversationId, event),
+          emit: (event, entry) => this.emit(conversationId, event, entry),
           turnCap: canonical?.remainingTurns ?? settings.turnCap,
           attachmentPreviewChars: canonical ? 8_000 : undefined,
           thumbnail,

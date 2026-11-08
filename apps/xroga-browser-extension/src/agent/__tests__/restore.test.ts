@@ -92,6 +92,17 @@ describe('the restore plan', () => {
     expect(hasUncertainBrowserWrite('different-run', entries)).toBe(false);
   });
 
+  it('rejects unknown dispatch even if the tool envelope says ok', () => {
+    const entry = {
+      ...result('x', 'click'),
+      meta: { runId: 'r' },
+      result: { ok: true, receipt: { dispatched: 'unknown' } },
+    } as Entry;
+    const branch = [intent('x', 'click'), entry];
+    expect(completedBrowserTools('r', branch)).toEqual([]);
+    expect(hasUncertainBrowserWrite('r', branch)).toBe(true);
+  });
+
   it('a running run becomes interrupted; an intent with no result is INTERRUPTED; a call that never started is skipped', () => {
     const branch = [
       reply(['a', 'snapshot'], ['b', 'click', { target: { ref: 'a1' } }], ['c', 'click']),
