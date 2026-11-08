@@ -103,3 +103,14 @@ test('workspace conversation markers are anchored to the pane, not delayed viewp
   assert.match(CSS, /\.xv-workspace-header \.xv-workspace-identity-cluster\s*\{[\s\S]*?overflow: hidden/);
   assert.match(CSS, /@media \(min-width: 1024px\) and \(max-width: 1200px\)/);
 });
+
+test('workspace history rail is always present for multi-turn chats, even when transcript fits', () => {
+  assert.match(RAIL, /railAnchorRef = useRef<HTMLSpanElement>\(null\)/);
+  assert.match(RAIL, /railAnchorRef\.current\?\.closest<HTMLElement>\('\.xv-terminal-scroll'\)/);
+  assert.match(RAIL, /railAnchorRef\.current\?\.closest<HTMLElement>\('\.xv-terminal-panel'\)/);
+  assert.match(RAIL, /const anchor = <span ref=\{railAnchorRef\} hidden aria-hidden="true" \/>/);
+  assert.doesNotMatch(RAIL, /\|\| !layout\.navigable/);
+  assert.match(RAIL, /turns\.length < 2 \|\| visibleTurns\.length < 2/);
+  assert.match(RAIL, /railHost \?\? document\.body/);
+  assert.match(CSS, /\.xv-chat-turn-rail\.xv-chat-turn-rail--dock\.xv-chat-turn-rail--pane\s*\{\s*position: absolute/);
+});
