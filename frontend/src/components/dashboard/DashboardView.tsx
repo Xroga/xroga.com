@@ -17,6 +17,7 @@ import { useTerminalChat } from '@/context/TerminalChatContext';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
 import { useHydrated } from '@/hooks/useHydrated';
 import { WorkspaceIdentityMenu } from '@/components/terminal/WorkspaceIdentityMenu';
+import { WorkspaceConversationMenu } from '@/components/terminal/WorkspaceConversationMenu';
 import { AnimatedIcon } from '@/components/icons/animated/AnimatedIcon';
 import { ExpandIcon } from '@/components/icons/animated/ExpandIcon';
 import { MinimizeIcon } from '@/components/icons/animated/MinimizeIcon';
@@ -47,6 +48,7 @@ export function DashboardView() {
   const fullscreen = useThemeStore((s) => s.terminalFullscreen);
   const setTerminalFullscreen = useThemeStore((s) => s.setTerminalFullscreen);
   const workspaceOpenRaw = useProjectWorkspaceStore((s) => s.workspaceOpen);
+  const activeProject = useProjectWorkspaceStore((s) => s.activeProjectContext);
   const setWorkspaceOpen = useProjectWorkspaceStore((s) => s.setWorkspaceOpen);
   const workspaceOpen = hydrated && workspaceOpenRaw;
   const incognitoRaw = usePrivacyStore((s) => s.incognito);
@@ -232,9 +234,15 @@ export function DashboardView() {
             container on purpose: a title bar that scrolls away with the history is a
             document header, not a window chrome. */}
         <header className="xv-workspace-header" data-testid="terminal-identity-header">
-          <div className="xv-workspace-identity-cluster">
-            <WorkspaceIdentityMenu incognito={incognito} />
-
+          <div className="xv-workspace-identity-cluster" style={{ minWidth: 0, display: 'flex', alignItems: 'center', gap: 6 }}>
+            {incognito ? (
+              <WorkspaceIdentityMenu incognito />
+            ) : (
+              <>
+                <WorkspaceConversationMenu />
+                {activeProject ? <WorkspaceIdentityMenu /> : null}
+              </>
+            )}
           </div>
 
           {showNewTerminal ? <div className={startStyles.repoStatus}><RepoContextBar compact /></div> : null}
