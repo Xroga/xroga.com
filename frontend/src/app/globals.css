@@ -14984,3 +14984,63 @@ body.xv-sidebar-resizing .xv-terminal-dock {
     justify-content: center;
   }
 }
+
+/* Only the INNER sidebar scrollbar disappears. Wheel, trackpad, touch, keyboard
+   scrolling and the independent external conversation marker rail remain intact. */
+.xv-sidebar-nav-scroll.xv-sidebar-scroll-track {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none;
+  padding-right: 3px !important;
+}
+.xv-sidebar-nav-scroll.xv-sidebar-scroll-track::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+/* Account footer: no surrounding card, just the profile image in a rounded
+   square, alongside the user's real display name and plan. */
+.xv-sidebar-bottom .xv-sidebar-profile-row,
+.xv-sidebar-bottom .xv-profile-quick-trigger {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+.xv-sidebar-bottom .xv-profile-quick-trigger:is(:hover,:focus-visible) {
+  background: transparent !important;
+}
+.xv-sidebar-bottom .xv-user-profile-box {
+  border-radius: 10px !important;
+  overflow: hidden;
+  background: transparent !important;
+}
+.xv-sidebar-bottom .xv-user-profile-box img {
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  object-fit: cover;
+}
+.xv-sidebar-work-menu__title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-width: 0;
+  padding: 9px 10px 10px;
+  margin-bottom: 3px;
+  border-bottom: 1px solid color-mix(in srgb,var(--foreground) 12%,transparent);
+  font-size: 12px;
+  font-weight: 600;
+}
+.xv-sidebar-work-menu__title > span {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.xv-sidebar-work-menu__title > svg { flex: none; }
+.xv-sidebar-work-menu__divider {
+  height: 1px;
+  margin: 5px 8px;
+  background: color-mix(in srgb,var(--foreground) 11%,transparent);
+}
