@@ -58,24 +58,31 @@ async function openPairing(manual: boolean) {
   autoAttempted = true;
   if (opening) return opening;
   if (pairing && Date.now() < pairing.expires && pairFailure !== 'failed' && pairFailure !== 'unavailable') {
-    if (manual && pairFailure === 'sign-in') await chrome.tabs.update(pairing.tabId, { active: true });
-    else if (!pairFailure && Date.now() - pairing.started < 25_000) return;
+    if (manual && pairFailure === 'sign-in') {
+      await chrome.tabs.update(pairing.tabId, { active: true });
+      return;
+    }
+    if (!pairFailure && Date.now() - pairing.started < 25_000) return;
   }
-  opening = startPairing().finally(() => {
+  opening = startPairing(manual).finally(() => {
     opening = undefined;
   });
   return opening;
 }
 
-async function startPairing() {
+async function startPairing(manual: boolean) {
   const nonce = crypto.randomUUID();
   const storedTab = pairTabId ?? (await chrome.storage.session.get(PAIR_TAB_KEY))[PAIR_TAB_KEY];
   const previous = typeof storedTab === 'number' ? await chrome.tabs.get(storedTab).catch(() => undefined) : undefined;
-  // Only reuse a tab this extension opened, and only while it is still on Workspace.
-  const tab =
-    previous && isWorkspaceSender({ origin: new URL(WORKSPACE_URL).origin, url: previous.url, frameId: 0 })
-      ? previous
-      : await chrome.tabs.create({ url: 'about:blank', active: false });
+  const origin = new URL(WORKSPACE_URL).origin;
+  const isWorkspace = (url?: string) => isWorkspaceSender({ origin, url, frameId: 0 });
+  // A browser startup can leave our tab blank while its first navigation is pending.
+  // Only reuse our tab while both its committed and pending URLs are safe to replace.
+  const canReuse =
+    previous &&
+    (!previous.url || previous.url === 'about:blank' || isWorkspace(previous.url)) &&
+    (!previous.pendingUrl || previous.pendingUrl === 'about:blank' || isWorkspace(previous.pendingUrl));
+  const tab = canReuse ? previous : await chrome.tabs.create({ url: 'about:blank', active: false });
   if (tab.id === undefined) throw new Error('Could not open Workspace.');
   pairTabId = tab.id;
   await chrome.storage.session.set({ [PAIR_TAB_KEY]: tab.id });
@@ -86,7 +93,7 @@ async function startPairing() {
   url.searchParams.set('browserExtension', chrome.runtime.id);
   url.searchParams.set('browserPair', nonce);
   try {
-    await chrome.tabs.update(tab.id, { url: url.href });
+    await chrome.tabs.update(tab.id, { url: url.href, ...(manual ? { active: true } : {}) });
   } catch (error) {
     if (pairing?.nonce === nonce) pairing = undefined;
     throw error;
