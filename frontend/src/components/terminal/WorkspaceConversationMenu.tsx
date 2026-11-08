@@ -8,7 +8,6 @@ import { useWorkspaceIdentity } from '@/components/layout/WorkspaceIdentityConte
 import { AnchoredPortalPopover } from '@/components/ui/AnchoredPortalPopover';
 import { meaningfulSidebarTitle, loadSidebarChats, loadSidebarChatById, loadSidebarMeta } from '@/lib/sidebarOrganization';
 import { listCloudTerminalSessions, loadCloudTerminalSession } from '@/lib/cloudTerminalSessions';
-import { loadTerminalHistory } from '@/lib/terminalHistory';
 import { clearSelectedRepoContext, saveSelectedRepoContext } from '@/lib/repoContext';
 import { notifyGithubRepoContext } from '@/lib/githubProjectEvents';
 import { activateSidebarProject, clearActiveSidebarProject } from '@/lib/sidebarProjectTask';
