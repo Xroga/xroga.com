@@ -821,6 +821,10 @@ try {
     });
     assert.equal(runs.size, priorRuns + 1);
     assert.equal([...runs.values()].at(-1).result.result, answer);
+    const newRunActivity = workspace.getByText("Browser activity", { exact: true });
+    await newRunActivity.waitFor();
+    if (!(await newRunActivity.evaluate(summary => summary.parentElement?.open))) await newRunActivity.click();
+    await activity.getByText("Click control", { exact: false }).waitFor();
     assert.equal(await activity.getByText("Click control", { exact: false }).count(), 1);
     await workspace.evaluate(() => window.fixtureAuthChanged('SIGNED_OUT', null));
     await activity.waitFor({ state: "detached" });
