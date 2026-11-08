@@ -50,6 +50,7 @@ export function browserActivity(entry: Entry, runId: string) {
         receipt?: Receipt;
         error?: { delivered?: unknown };
         page?: { tabId?: unknown; rev?: unknown };
+        reobserved?: unknown;
       }
     | undefined;
   const tabId = result?.page?.tabId;
@@ -58,6 +59,7 @@ export function browserActivity(entry: Entry, runId: string) {
     stepId: entry.id,
     tool: part.toolName,
     status: outcome(result?.receipt, part.isError, result?.error?.delivered),
+    ...(result?.reobserved === true ? { reobserved: true } : {}),
     ...(typeof tabId === 'number' && Number.isSafeInteger(tabId) && tabId >= 0 ? { tabId } : {}),
     ...(typeof revision === 'number' && Number.isSafeInteger(revision) && revision >= 0 ? { revision } : {}),
   };

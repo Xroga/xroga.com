@@ -32,6 +32,14 @@ it('projects the persisted receipt for the exact run without sending page data o
   });
 });
 
+it('publishes a recheck without forwarding any of its page data', () => {
+  expect(browserActivity({
+    ...entry,
+    message: { role: 'tool', parts: [{ type: 'tool-result', toolCallId: 'provider-id', toolName: 'click', text: 'private text', isError: true }] },
+    result: { reobserved: true, error: { delivered: false, message: 'private error' }, snapshot: 'private page' },
+  }, 'run')).toEqual({ stepId: 'step', tool: 'click', status: 'failed', reobserved: true });
+});
+
 it.each([
   [{ dispatched: 'unknown', postcondition: { status: 'met' } }, 'uncertain'],
   [{ dispatched: true, reachedTarget: false }, 'failed'],

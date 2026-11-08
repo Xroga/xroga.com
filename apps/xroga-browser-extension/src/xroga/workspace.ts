@@ -3,6 +3,7 @@ declare const __XROGA_WORKSPACE_ORIGIN__: string | undefined;
 const pinnedOrigin = typeof __XROGA_WORKSPACE_ORIGIN__ === 'string' ? __XROGA_WORKSPACE_ORIGIN__ : 'https://xroga.com';
 export const WORKSPACE_URL = `${pinnedOrigin}/workspace`;
 const WORKSPACE_ORIGIN = new URL(WORKSPACE_URL).origin;
+export const WORKSPACE_ENVIRONMENT = WORKSPACE_ORIGIN === 'https://xroga.com' ? 'Production' : 'Staging Preview';
 
 export function isWorkspaceSender(sender: { origin?: string; url?: string; frameId?: number } | undefined) {
   if (sender?.origin !== WORKSPACE_ORIGIN || sender.frameId !== 0 || typeof sender.url !== 'string') return false;

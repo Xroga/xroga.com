@@ -121,6 +121,7 @@ export interface CallOutcome {
   /** The model's own screenshot, for a vision model. */
   image?: { data: string; mediaType: string; note: string; thumb?: string };
   localThumbnail?: string;
+  reobserved?: boolean;
   /** The call met a step that is the user's, and the user was handed it. */
   handover?: boolean;
 }
@@ -552,6 +553,7 @@ export class AgentLoop {
     const page = outcome.result?.page;
     if (page) this.#seen.set(page.tabId, page.url);
     const notes: string[] = [];
+    let observation = '';
     if (enteredRecovery) notes.push(note(`${UNCERTAIN_WRITE_SUMMARY} Inspect the page and report what you can verify.`));
     if (!outcome.skipped && !outcome.done && outcome.call.toolName !== 'done') {
       this.#trackDebt(outcome);
@@ -563,11 +565,25 @@ export class AgentLoop {
       );
       if (verdict.nudge) notes.push(note(verdict.nudge));
       if (verdict.stop) this.#guardStop ??= { reason: verdict.stop, guard: verdict.guard ?? 'errors' };
+      const args = (outcome.call.input ?? {}) as Record<string, unknown>;
+      const tabId = outcome.result?.page?.tabId ?? args.tabId ?? this.#activeTab;
+      if (this.options.protectUncertainWrites && verdict.reobserve && !this.#recoveryReadOnly &&
+          !this.options.signal.aborted && typeof tabId === 'number' && !outcome.result?.pending?.length) {
+        const fresh = await this.options.layer.call('snapshot', { tabId }, this.options.signal).catch(() => undefined);
+        if (fresh?.ok && fresh.page?.tabId === tabId) {
+          this.#seen.set(tabId, fresh.page.url);
+          observation = fresh.text;
+          outcome = { ...outcome, reobserved: true };
+          notes.push(note('The page was inspected again. Use the current controls and a different approach.'));
+        }
+      }
     }
     const capture = await this.#withThumb(this.#screenshotImage(outcome));
     const image = this.options.model.profile.vision ? capture : undefined;
     const localThumbnail = this.options.localScreenshots && !image ? capture?.thumb : undefined;
-    const text = cutText(outcome.text, RESULT_CAP, `… the result was cut at ${RESULT_CAP} characters.`);
+    const text = observation
+      ? [cutText(outcome.text, 1_200, '… action details cut.'), cutText(observation, RESULT_CAP - 1_201, '… page observation cut.')].join('\n')
+      : cutText(outcome.text, RESULT_CAP, `… the result was cut at ${RESULT_CAP} characters.`);
     // A nudge is the extension's own line on the result that caused it, outside any boundary.
     return { ...outcome, ...(image ? { image } : {}), localThumbnail, text: [text, ...notes].join('\n') };
   }
@@ -1030,7 +1046,10 @@ export class AgentLoop {
       outcome.call.toolName,
       outcome.text,
       outcome.isError,
-      outcome.localThumbnail ? { ...(result as object), localThumbnail: outcome.localThumbnail } : result,
+      outcome.localThumbnail || outcome.reobserved
+        ? { ...(result as object), ...(outcome.localThumbnail ? { localThumbnail: outcome.localThumbnail } : {}),
+          ...(outcome.reobserved ? { reobserved: true } : {}) }
+        : result,
       outcome.image,
     );
     const status: ToolRow['status'] = outcome.skipped ? 'skipped' : outcome.isError ? 'failed' : 'done';

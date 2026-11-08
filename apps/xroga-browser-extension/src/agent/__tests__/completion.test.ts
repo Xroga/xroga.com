@@ -251,6 +251,25 @@ describe('guards', () => {
     expect(end).toMatchObject({ status: 'failed', outcome: 'failed', reason: '5 calls in a row failed.' });
   });
 
+  it('rechecks the current tab after a stale control and leaves the next action to the model', async () => {
+    const layer = new FakeLayer({
+      click: (_args, index) => index === 0 ? failed('STALE_DOCUMENT') : effect(5),
+      snapshot: () => ok('Fresh controls: [new] Filters', { page: page(4, 'full') }),
+    });
+    const { texts, end } = await run([
+      { toolCalls: [call('click', { target: { ref: 'old' }, tabId: 1 }, 'a')] },
+      { toolCalls: [call('click', { target: { ref: 'new' }, tabId: 1 }, 'b')] },
+      doneCall('success', 'd'),
+    ], layer, { protectUncertainWrites: true });
+    expect(layer.calls.map(({ tool, args: { target, tabId } }) => [tool, target ? { target, tabId } : { tabId }])).toEqual([
+      ['click', { target: { ref: 'old' }, tabId: 1 }],
+      ['snapshot', { tabId: 1 }],
+      ['click', { target: { ref: 'new' }, tabId: 1 }],
+    ]);
+    expect(texts.a).toContain('Fresh controls: [new] Filters');
+    expect(end.outcome).toBe('success');
+  });
+
   it('caps the run at its turn limit, with the salvage summary', async () => {
     const layer = new FakeLayer();
     const read = (id: string) => ({ toolCalls: [call('read', { ref: id }, id)] });

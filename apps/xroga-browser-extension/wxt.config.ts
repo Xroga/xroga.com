@@ -12,6 +12,7 @@ import { permissionLists } from './src/ui/manifest-permissions';
 const autorun = !!process.env.WXT_AUTORUN_URL;
 const productPermissions = !autorun || !!process.env.WXT_PRODUCT_PERMISSIONS;
 const workspaceOrigin = process.env.WXT_XROGA_WORKSPACE_ORIGIN ?? 'https://xroga.com';
+const staging = workspaceOrigin !== 'https://xroga.com';
 if (
   workspaceOrigin !== 'https://xroga.com' &&
   !/^https:\/\/xrogaaicom-[a-z0-9-]+-xrogas-projects\.vercel\.app$/.test(workspaceOrigin)
@@ -29,12 +30,12 @@ export default defineConfig({
   },
   manifest: {
     // The name, description and the strings Chrome shows itself follow Chrome's language (public/_locales).
-    name: autorun ? '__MSG_extName__' : 'Xroga Browser Automation',
+    name: autorun ? '__MSG_extName__' : staging ? 'Xroga Browser Automation (Staging)' : 'Xroga Browser Automation',
     description: autorun
       ? '__MSG_extDescription__'
       : 'Use Xroga to work in your own Chrome tabs, with live actions and approval controls.',
     default_locale: 'en',
-    ...(autorun ? {} : { version: '0.2.5' }),
+    ...(autorun ? {} : { version: '0.2.6' }),
     minimum_chrome_version: '125',
     ...(autorun
       ? {
@@ -67,7 +68,7 @@ export default defineConfig({
   },
   // `pnpm zip` packs dist/ into dist-zip/, outside the folder Chrome loads.
   zip: {
-    artifactTemplate: '../dist-zip/{{name}}-{{version}}.zip',
+    artifactTemplate: staging ? '../dist-zip/xroga-browser-extension-staging-{{version}}.zip' : '../dist-zip/{{name}}-{{version}}.zip',
     exclude: ['**/*.map'],
   },
   hooks: {

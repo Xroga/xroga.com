@@ -36,13 +36,14 @@ import { HistoryIcon, LogoMark, NewChatIcon, SettingsIcon } from '@src/ui/icons'
 import { websiteUrl } from '@src/ui/links';
 import { XROGA_PRODUCT } from '@src/xroga/product';
 import { XROGA_REF } from '@src/xroga/model';
+import { WORKSPACE_ENVIRONMENT } from '@src/xroga/workspace';
 
 const NO_PROVIDERS: ProviderConfig[] = [];
 const NO_KEYS: Record<string, string> = {};
 const PAIR_ERRORS: Record<string, string> = {
   'sign-in': 'Sign in to Xroga in this Chrome profile to connect.',
   unavailable: 'Browser Automation is unavailable in this Workspace release.',
-  'extension-id': 'This Workspace release is configured for a different extension ID.',
+  'extension-id': `This copy is configured for ${WORKSPACE_ENVIRONMENT}. Load the Xroga extension package that matches this Workspace, then reconnect.`,
   account: 'This Chrome profile is linked to another Xroga account. Switch accounts or use a separate profile.',
   failed: 'Workspace couldn’t connect. Try connecting again.',
   timeout: 'Workspace didn’t respond. Check the Workspace tab for a message.',
@@ -497,6 +498,7 @@ export function App() {
       </header>
       {XROGA_PRODUCT ? (
         <div className="flex flex-col gap-2 border-b border-nb-border/60 px-3 py-2">
+          <span className="text-xs text-nb-muted">{WORKSPACE_ENVIRONMENT} · v{chrome.runtime.getManifest().version}</span>
           {paired ? (
             <span role="status" className="text-xs text-nb-muted">
               Workspace connected

@@ -302,6 +302,7 @@ Values are forbidden. Source SHA: `5454a02990501c096dad2199089845459f9b27bc`. Na
 | XROGA_LOCAL_BROWSER_ALLOWED_USER_IDS | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_LOCAL_BROWSER_ENABLED | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_LOCAL_BROWSER_MAX_TURNS | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
+| XROGA_LOCAL_BROWSER_VISION_PROBE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_MAX_REPAIR_ATTEMPTS | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_OCI_KMS_AUTH_MODE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_OCI_KMS_ENDPOINT | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |

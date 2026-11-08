@@ -13,15 +13,17 @@ export const ERROR_STOP = 5;
 export interface GuardVerdict {
   nudge?: string;
   stop?: string;
+  reobserve?: boolean;
   /** Which guard stopped the run. */
   guard?: 'errors' | 'no_effect';
 }
 
 const NO_EFFECT_TOOLS = new Set(['click', 'set', 'type', 'press', 'fill_form']);
 
-function targetKey(args: Record<string, unknown>): string | null {
-  const target = args.target ?? args.submit;
-  return target ? JSON.stringify(target) : null;
+function targetKey(args: Record<string, unknown>, result: Result | undefined): string | null {
+  const target = result?.receipt?.target?.replace(/^\[[^\]]+\] /, '') ?? args.target ?? args.submit;
+  const tab = result?.page?.tabId ?? args.tabId;
+  return target ? JSON.stringify([tab ?? null, target]) : null;
 }
 
 /** The signature of a call: tool, arguments (the agent's purpose left out) and what came of it. */
@@ -57,7 +59,10 @@ export class Guards {
     s.errorsInRow = isError ? s.errorsInRow + 1 : 0;
     if (s.errorsInRow >= ERROR_STOP) return { stop: `${ERROR_STOP} calls in a row failed.`, guard: 'errors' };
 
-    const key = NO_EFFECT_TOOLS.has(tool) ? targetKey(args) : null;
+    const key = NO_EFFECT_TOOLS.has(tool) ? targetKey(args, result) : null;
+    if (key && (result?.receipt?.postcondition?.status === 'met' || result?.receipt?.effect.verdict === 'changed')) {
+      delete s.noEffect[key];
+    }
     if (
       key &&
       result?.ok &&
@@ -72,10 +77,20 @@ export class Guards {
         const signals = result.receipt.effect.signals.join(' · ') || 'no signal';
         return {
           nudge: `${tool} on this target had no effect ${count} times (${signals}). Try another way, or ask the user.`,
+          reobserve: true,
         };
       }
     }
     const repeats = s.recent.filter(r => r === sig).length;
+    if (
+      NO_EFFECT_TOOLS.has(tool) &&
+      result?.error?.delivered === false &&
+      ['REF_NOT_PRESENTED', 'REF_UNKNOWN', 'STALE_DOCUMENT', 'NODE_DETACHED', 'TARGET_CHANGED',
+        'NOT_VISIBLE', 'NOT_STABLE', 'OBSCURED', 'INTERCEPTED', 'NO_MATCH'].includes(result.error.code) &&
+      repeats === 1
+    ) {
+      return { reobserve: true };
+    }
     if (repeats >= REPEAT_LIMIT) {
       return {
         nudge: `you made the same call with the same outcome ${repeats} times in your last ${REPEAT_WINDOW} calls. Try something else, or ask the user.`,

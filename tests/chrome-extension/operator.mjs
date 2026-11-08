@@ -61,8 +61,16 @@ async function buildWorkspaceComponent() {
     stdin: {
       contents: `
         import { createRoot } from 'react-dom/client';
-        import { WorkspaceBrowserOperator } from './frontend/src/components/browser/WorkspaceBrowserOperator';
-        createRoot(document.querySelector('#app')).render(<WorkspaceBrowserOperator extensionId={window.fixtureExtensionId} />);
+        import { WorkspaceBrowserOperator, WorkspaceBrowserConnection, WorkspaceBrowserProgress, useWorkspaceBrowserOperator, isLocalChromeRequest } from './frontend/src/components/browser/WorkspaceBrowserOperator';
+        function Composer() {
+          const operator = useWorkspaceBrowserOperator();
+          return <main><WorkspaceBrowserProgress operator={operator} prompted={false} /><form onSubmit={event => {
+            event.preventDefault();
+            const text = String(new FormData(event.currentTarget).get('prompt'));
+            if (isLocalChromeRequest(text)) void operator?.start(text.slice('/chrome '.length), []);
+          }}><textarea name="prompt" aria-label="Message Xroga" /><button>Send prompt</button></form></main>;
+        }
+        createRoot(document.querySelector('#app')).render(<WorkspaceBrowserOperator extensionId={window.fixtureExtensionId}><WorkspaceBrowserConnection /><Composer /></WorkspaceBrowserOperator>);
       `,
       resolveDir: repo,
       loader: "tsx",
@@ -74,10 +82,11 @@ async function buildWorkspaceComponent() {
     plugins: [{
       name: "isolated-workspace-api",
       setup(plugin) {
-        plugin.onResolve({ filter: /^@\/lib\/(api|supabase\/client|voiceApi)$/ }, args => ({
+        plugin.onResolve({ filter: /^(?:@\/lib\/(api|supabase\/client|voiceApi)|next\/navigation)$/ }, args => ({
           path: args.path, namespace: "fixture",
         }));
         plugin.onLoad({ filter: /.*/, namespace: "fixture" }, args => {
+          if (args.path === "next/navigation") return { contents: "export const usePathname = () => '/workspace';" };
           if (args.path === "@/lib/api") return { contents: `
             export class ApiError extends Error { constructor(message, status) { super(message); this.status = status; } }
             export async function getAccessToken() { return 'fixture-authenticated-user'; }
@@ -85,6 +94,7 @@ async function buildWorkspaceComponent() {
               if (token !== 'fixture-authenticated-user') throw new ApiError('Unauthorized', 401);
               if (window.fixtureRejectPairing) throw new ApiError('Not found', 404);
               if (path === '/api/browser/local/session') return { account: window.fixtureAccount };
+              if (path === '/api/browser/local/runs' && options?.method === 'POST') window.fixtureRunStarted = true;
               const runs = '/api/browser/local/runs';
               if (options.method === 'POST' && path === runs)
                 return window.fixtureBrowserRequest({ op: 'start', value: JSON.parse(options.body) });
@@ -319,16 +329,17 @@ try {
         return { text: "Synthetic dictation draft" };
       }
       if (op === "start") {
+        const fixtureGoal = value.goal === `${goal} ${site}` ? goal : value.goal;
         assert.ok(
           [goal, formGoal, stopGoal, fileGoal, workbookGoal, recoveryGoal].includes(
-            value.goal,
+            fixtureGoal,
           ),
         );
         if (value.goal === fileGoal || value.goal === workbookGoal)
           assert.equal(value.attachmentCount, 1);
         const runId = globalThis.crypto.randomUUID();
         assert.ok([site, searchOrigin].includes(value.startUrl), "Persist only the starting origin");
-        runs.set(runId, { goal: value.goal, turns: [], startUrl: value.startUrl });
+        runs.set(runId, { goal: fixtureGoal, turns: [], startUrl: value.startUrl });
         return { runId, turns: 0, maxTurns: 48, remainingMs: 40 * 60_000 };
       }
       const run = runs.get(value.runId);
@@ -456,6 +467,7 @@ try {
       });
     const pairingPages = browser.pages().filter(page => page.url().startsWith(`${workspaceOrigin}/workspace?`));
     assert.equal(pairingPages.length, 1);
+    await pairingPages[0].locator("summary").filter({hasText:"Browser Automation"}).click();
     await pairingPages[0].getByRole("status").filter({hasText:"Browser Automation is unavailable"}).waitFor();
     const [pairingTab] = await panel.evaluate(() => chrome.tabs.query({ url: "https://xroga.com/workspace*" }));
     assert.equal(pairingTab?.active, false);
@@ -787,15 +799,18 @@ try {
     useWorkspaceComponent = true;
     await workspace.goto(workspaceOrigin + "/workspace");
     await workspace.getByText("Browser task completed", { exact: true }).waitFor({ timeout: 20_000 });
+    assert.equal(await workspace.getByRole("button", { name: "Start in Chrome" }).count(), 0);
+    await workspace.locator("summary").filter({hasText:"Chrome connected"}).waitFor();
+    await workspace.getByText("Browser activity", { exact: true }).click();
     const activity = workspace.getByRole("list", { name: "Browser activity" });
     await activity.waitFor();
     assert.equal(await activity.getByText("Click control", { exact: false }).count(), 1);
     assert.ok(await activity.getByText("Inspect page", { exact: false }).count());
     assert.equal(recovery.finishAttempts, 2);
     const priorRuns = runs.size;
-    await workspace.getByLabel("What should Xroga do?").fill(goal);
-    await workspace.getByLabel("Starting site or search", { exact: false }).fill(site);
-    await workspace.getByRole("button", { name: "Start in Chrome" }).click();
+    await workspace.getByLabel("Message Xroga").fill(`/chrome ${goal} ${site}`);
+    await workspace.getByRole("button", { name: "Send prompt" }).click();
+    await workspace.waitForFunction(() => document.querySelector("main [role=status]")?.textContent === "Browser task completed" && window.fixtureRunStarted === true, undefined, { timeout: 25_000 });
     await workspace.getByText("Browser task completed", { exact: true }).waitFor({ timeout: 25_000 }).catch(async error => {
       console.error("Workspace dispatch", {
         status: await workspace.getByRole("status").textContent(),

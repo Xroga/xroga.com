@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
 import { once } from 'node:events';
 import { test } from 'node:test';
 import express from 'express';
@@ -16,6 +17,8 @@ test('local Chrome shares canonical ownership, turn fencing, cancellation and re
     SUPABASE_URL: 'http://127.0.0.1:1', SUPABASE_JWT_SECRET: 'test-only-local-browser-signing-secret',
     SUPABASE_SERVICE_ROLE_KEY: '', REQUIRE_REMOTE_AUTH_CHECK: '0',
     XROGA_LOCAL_BROWSER_ALLOWED_USER_IDS: `${owner},${other}`,
+    XROGA_LOCAL_BROWSER_VISION_PROBE: '',
+    ZURELAY_DEEPSEEK_VISION_VERIFIED: '',
   };
   const before = Object.fromEntries(Object.keys(env).map(key => [key, process.env[key]]));
   Object.assign(process.env, env);
@@ -31,7 +34,7 @@ test('local Chrome shares canonical ownership, turn fencing, cancellation and re
   const [ownerToken, otherToken] = await Promise.all([tokenFor(owner), tokenFor(other)]);
   const runs = new MemoryBrowserRunStore();
   const leases = new MemoryLeaseStore();
-  const received: Array<{ runId: string; idempotency: string }> = [];
+  const received: Array<{ runId: string; idempotency: string; messages: unknown }> = [];
   const app = express();
   app.use(express.json());
   app.use(authMiddleware);
@@ -40,7 +43,7 @@ test('local Chrome shares canonical ownership, turn fencing, cancellation and re
     assert.equal(request.modelId, 'deepseek_v4_1_flash_1017');
     assert.equal(request.platformCostCeiling, 3_000);
     assert.equal(request.body.stream, false);
-    received.push({ runId: request.job.runId, idempotency: request.idempotencyKey });
+    received.push({ runId: request.job.runId, idempotency: request.idempotencyKey, messages: request.body.messages });
     return { id: 'fixture-model', choices: [{ finish_reason: 'stop', message: { content: 'Read the catalog.' } }],
       usage: { prompt_tokens: 40, completion_tokens: 10, total_tokens: 50 } };
   }));
@@ -96,6 +99,29 @@ test('local Chrome shares canonical ownership, turn fencing, cancellation and re
     assert.equal(resumed.turns, 15);
     assert.equal((await send(`${longPath}/turn`, 'POST', { ...request, turn: 15 })).status, 409);
     assert.equal((await send(`${longPath}/turn`, 'POST', { ...request, turn: 16 })).status, 200);
+
+    const probeRun = await (await send('/runs', 'POST', { goal: 'Inspect a synthetic image', startUrl: 'https://example.com/' })).json() as { runId: string };
+    const probePath = `/runs/${probeRun.runId}/turn`;
+    const png = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+VODsAAAAASUVORK5CYII=';
+    const probe = { ...request, vision_probe_png: png, tools: [{ type: 'function',
+      function: { name: 'snapshot', parameters: { type: 'object', properties: {} } } }] };
+    assert.equal((await send(probePath, 'POST', probe)).status, 400);
+    const hash = createHash('sha256').update(Buffer.from(png, 'base64')).digest('hex');
+    process.env.XROGA_LOCAL_BROWSER_VISION_PROBE = `${probeRun.runId}:${hash}`;
+    assert.equal((await send(probePath, 'POST', probe)).status, 400);
+    process.env.ZURELAY_DEEPSEEK_VISION_VERIFIED = 'true';
+    assert.equal((await send(probePath, 'POST', probe, true)).status, 404);
+    assert.equal((await send(probePath, 'POST', { ...probe, vision_probe_png: png.replace('AAAB', 'AAAC') })).status, 400);
+    assert.equal((await send(probePath, 'POST', { ...probe, max_tokens: 513 })).status, 400);
+    assert.equal((await send(probePath, 'POST', probe)).status, 200);
+    assert.deepEqual(received.at(-1)?.messages, [{ role: 'user', content: [
+      { type: 'text', text: 'Read the catalog.' },
+      { type: 'image_url', image_url: { url: `data:image/png;base64,${png}`, detail: 'low' } },
+    ] }]);
+    assert.equal((await send(probePath, 'POST', probe)).status, 409);
+    const savedProbe = await runs.load(owner, probeRun.runId);
+    assert.ok(savedProbe);
+    assert.ok(!JSON.stringify(savedProbe).includes(png));
   } finally {
     await new Promise<void>((resolve, reject) => server.close(error => error ? reject(error) : resolve()));
   }

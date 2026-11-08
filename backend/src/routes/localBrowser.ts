@@ -3,6 +3,7 @@ import { Router, type Response } from 'express';
 import { z } from 'zod';
 import { createCanonicalExecutionState, type ExecutableTaskNode } from '../ai/executionRuntime.js';
 import { actualProviderCostMicroUsd } from '../ai/providerBudget.js';
+import { resolveModelSpec } from '../ai/models.js';
 import type { AuthRequest } from '../middleware/auth.js';
 import { publicHttpsUrl } from '../security/boundedPublicGet.js';
 import { classifyOutboundData } from '../security/egress/dataClassification.js';
@@ -62,6 +63,7 @@ const turnBody = z.object({
   tools: z.array(tool).max(32).optional(),
   tool_choice: z.enum(['auto', 'none', 'required']).optional(),
   max_tokens: z.number().int().min(1).max(4_096).optional(),
+  vision_probe_png: z.string().min(32).max(24_000).regex(/^[A-Za-z0-9+/]+={0,2}$/).optional(),
 }).strict();
 const endBody = z.object({
   status: z.enum(['completed', 'failed', 'cancelled']),
@@ -141,6 +143,21 @@ function allowance(record: BrowserRunRecord) {
   const turns = Number(record.state.productManifest.localBrowserTurn ?? 0);
   const maxTurns = Number(record.state.productManifest.localBrowserMaxTurns ?? 12);
   return { runId: record.runId, turns, maxTurns, remainingMs: Math.max(0, remainingMs(record)) };
+}
+
+// The operator pins one sanitized test capture to one already admitted run.
+// Ordinary browser turns cannot attach arbitrary pixel data or remote image URLs.
+function visionProbe(runId: string, turn: number, encoded: string) {
+  const bytes = Buffer.from(encoded, 'base64');
+  const hash = createHash('sha256').update(bytes).digest('hex');
+  if (turn !== 1 || process.env.XROGA_LOCAL_BROWSER_VISION_PROBE !== `${runId}:${hash}` ||
+      !resolveModelSpec(MODEL)?.supportsImages ||
+      bytes.toString('base64') !== encoded || bytes.length < 33 ||
+      bytes.subarray(0, 16).toString('hex') !== '89504e470d0a1a0a0000000d49484452' ||
+      ![bytes.readUInt32BE(16), bytes.readUInt32BE(20)].every(side => side > 0 && side <= 768)) {
+    throw new BrowserRequestError(400, 'BROWSER_VISION_PROBE_DENIED');
+  }
+  return { type: 'image_url', image_url: { url: `data:image/png;base64,${encoded}`, detail: 'low' } };
 }
 
 export function createLocalBrowserRouter(resolve = configured, dispatch = dispatchBrowserModel) {
@@ -244,9 +261,20 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
   router.post('/runs/:runId/turn', withLease(async (req, res, rt, row, lease) => {
     active(row);
     const ctx = requireTenantContext(req.tenantContext);
-    const { turn, ...body } = turnBody.parse(req.body);
+    const { turn, vision_probe_png: probe, ...body } = turnBody.parse(req.body);
     checkData(body.messages);
-    const requestBytes = Buffer.byteLength(JSON.stringify(body));
+    const image = probe ? visionProbe(row.runId, turn, probe) : undefined;
+    const prompt = body.messages.at(-1);
+    if (image && (!body.tools?.length || prompt?.role !== 'user' || !prompt.content || (body.max_tokens ?? 0) > 512)) {
+      throw new BrowserRequestError(400, 'BROWSER_VISION_PROBE_DENIED');
+    }
+    const messages = image && prompt
+      ? [...body.messages.slice(0, -1), { ...prompt, content: [
+        ...(typeof prompt.content === 'string' ? [{ type: 'text', text: prompt.content }] : prompt.content ?? []), image,
+      ] }]
+      : body.messages;
+    const maxTokens = image ? body.max_tokens ?? 512 : body.max_tokens ?? 2_048;
+    const requestBytes = Buffer.byteLength(JSON.stringify({ ...body, messages }));
     if (requestBytes > 96_000) throw new BrowserRequestError(400, 'BROWSER_CONTEXT_TOO_LARGE');
     const admitted = allowance(row);
     if (turn !== admitted.turns + 1) {
@@ -280,9 +308,9 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
     try {
       const result = await dispatch({ job, authority: { context: ctx, revalidate },
         modelId: MODEL, signal: AbortSignal.any([abort.signal, AbortSignal.timeout(80_000)]),
-        body: { ...body, stream: false, reasoning_effort: 'none', max_tokens: body.max_tokens ?? 2_048 },
+        body: { ...body, messages, stream: false, reasoning_effort: 'none', max_tokens: maxTokens },
         estimatedInputTokens: Math.ceil(requestBytes / 3),
-        maximumOutputTokens: body.max_tokens ?? 2_048, platformCostCeiling: TURN_CEILING_MICROS,
+        maximumOutputTokens: maxTokens, platformCostCeiling: TURN_CEILING_MICROS,
         idempotencyKey: `${digest.slice(0, 8)}-${digest.slice(8, 12)}-4${digest.slice(13, 16)}-8${digest.slice(17, 20)}-${digest.slice(20, 32)}`,
       });
       const choice = result.choices?.[0];

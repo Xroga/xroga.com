@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import { createPortal } from 'react-dom';
-import { CircleAlert, CircleCheck, MousePointer2 } from 'lucide-react';
+import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from 'react';
+import { usePathname } from 'next/navigation';
+import { Monitor } from 'lucide-react';
 import { ApiError, apiFetch, getAccessToken } from '@/lib/api';
 import { createClient } from '@/lib/supabase/client';
 import { transcribeVoiceAudio } from '@/lib/voiceApi';
@@ -42,14 +42,30 @@ const OUTCOMES: Record<string, string> = {
   done: 'Finished', dispatched: 'Sent to page', 'page-changed': 'Page changed', verified: 'Expected state observed',
   unmet: 'Expected state missing', uncertain: 'Delivery unknown', failed: 'Could not finish', skipped: 'Skipped',
 };
-type Activity = { stepId: string; tool: string; status: string };
+type Activity = { stepId: string; tool: string; status: string; reobserved?: boolean };
+type Operator = {
+  paired: boolean; connecting: boolean; error: boolean; status: string;
+  busy: boolean; runId: string; paused: boolean; activeTool: string; result: string; activity: Activity[];
+  connect: () => void; disconnect: () => void;
+  start: (goal: string, files: File[]) => Promise<boolean>;
+  control: (action: 'pause' | 'resume' | 'cancel') => void;
+};
+const BrowserOperatorContext = createContext<Operator | null>(null);
+export const useWorkspaceBrowserOperator = () => useContext(BrowserOperatorContext);
+
+export function isLocalChromeRequest(text: string) {
+  return /^\s*\/chrome(?:\s|$)/i.test(text) || (
+    /^\s*(?:please\s+)?(?:open|go|visit|find|research|prepare|check|run|use|draft|inspect|compare|search)\b/i.test(text) &&
+    /\b(?:in|using|with) my (?:local )?chrome(?: browser)?\b/i.test(text)
+  );
+}
 
 function activityStep(value: unknown): Activity[] {
   if (!value || typeof value !== 'object') return [];
-  const { stepId, tool, status } = value as Partial<Activity>;
+  const { stepId, tool, status, reobserved } = value as Partial<Activity>;
   if (typeof stepId !== 'string' || !UUID.test(stepId) || typeof tool !== 'string' || !Object.hasOwn(TOOLS, tool) ||
       typeof status !== 'string' || !Object.hasOwn(OUTCOMES, status)) return [];
-  return [{ stepId, tool, status }];
+  return [{ stepId, tool, status, ...(reobserved === true ? { reobserved } : {}) }];
 }
 
 async function taskFile(file: File, token: string) {
@@ -64,16 +80,17 @@ async function taskFile(file: File, token: string) {
   return { name: `${name.slice(0, 196)}.txt`, text };
 }
 
-export function WorkspaceBrowserOperator({ extensionId }: { extensionId?: string }) {
+export function WorkspaceBrowserOperator({ extensionId, children }: { extensionId?: string; children?: ReactNode }) {
+  const isWorkspace = usePathname() === '/workspace';
   const portRef = useRef<Port | null>(null);
   const activeRun = useRef('');
   const pairedToken = useRef('');
-  const [goal, setGoal] = useState('');
-  const [startUrl, setStartUrl] = useState('');
-  const [files, setFiles] = useState<File[]>([]);
   const [paired, setPaired] = useState(false);
   const [pairingVisible, setPairingVisible] = useState(false);
-  const [mounted, setMounted] = useState(false);
+  const [connecting, setConnecting] = useState(false);
+  const [connectionError, setConnectionError] = useState(false);
+  const [attempt, retry] = useState(0);
+  const [detached, setDetached] = useState(false);
   const [busy, setBusy] = useState(false);
   const [paused, setPaused] = useState(false);
   const [runId, setRunId] = useState('');
@@ -83,7 +100,8 @@ export function WorkspaceBrowserOperator({ extensionId }: { extensionId?: string
   const [status, setStatus] = useState('Connect from the Xroga side panel in Chrome.');
 
   useEffect(() => {
-    setMounted(true);
+    setPaired(false);
+    if (!isWorkspace || detached) return;
     const url = new URL(location.href);
     const requestedId = url.searchParams.get('browserExtension') ?? extensionId;
     let nonce = url.searchParams.get('browserPair');
@@ -94,6 +112,8 @@ export function WorkspaceBrowserOperator({ extensionId }: { extensionId?: string
       sendMessage: (id: string, message: unknown) => Promise<unknown>;
     } } }).chrome?.runtime;
     const failed = (reason: 'unavailable' | 'extension-id' | 'sign-in' | 'failed', message: string) => {
+      setConnecting(false);
+      setConnectionError(true);
       setStatus(message);
       if (nonce && requestedId && typeof runtime?.sendMessage === 'function') {
         void runtime.sendMessage(requestedId, { type: 'xroga.browser.pair-failed.v1', nonce, reason }).catch(() => {});
@@ -107,6 +127,8 @@ export function WorkspaceBrowserOperator({ extensionId }: { extensionId?: string
       }
       return;
     }
+    setConnecting(true);
+    setConnectionError(false);
     let disposed = false;
     let port: Port | undefined;
     let stopAuthListener: (() => void) | undefined;
@@ -117,11 +139,13 @@ export function WorkspaceBrowserOperator({ extensionId }: { extensionId?: string
       if (!initiatedByExtension) {
         const detected = await runtime.sendMessage(extensionId, { type: 'xroga.browser.status.v1' })
           .catch(() => null) as { installed?: boolean } | null;
-        if (disposed || detected?.installed !== true) return;
+        if (disposed) return;
+        if (detected?.installed !== true) { setConnecting(false); return; }
         setStatus('Xroga Browser Automation detected. Open its Chrome side panel to connect.');
         const reconnect = await runtime.sendMessage(extensionId, { type: 'xroga.browser.reconnect.v1' })
           .catch(() => null) as { nonce?: string } | null;
-        if (disposed || typeof reconnect?.nonce !== 'string' || !UUID.test(reconnect.nonce)) return;
+        if (disposed) return;
+        if (typeof reconnect?.nonce !== 'string' || !UUID.test(reconnect.nonce)) { setConnecting(false); return; }
         nonce = reconnect.nonce;
       }
       const token = await getAccessToken();
@@ -130,6 +154,8 @@ export function WorkspaceBrowserOperator({ extensionId }: { extensionId?: string
       const session = await apiFetch<{ account: string }>(`${API}/session`, {}, token);
       if (!UUID.test(session.account)) throw new Error('Invalid account response');
       if (disposed) return;
+      const auth = createClient();
+      if (!auth) throw new Error('Workspace authentication is unavailable');
       const connected = runtime.connect(extensionId, { name: 'xroga-browser-v1' });
       port = connected;
       pairedToken.current = token;
@@ -143,6 +169,7 @@ export function WorkspaceBrowserOperator({ extensionId }: { extensionId?: string
         pairedToken.current = '';
         activeRun.current = '';
         setPaired(false);
+        setConnecting(false);
         setBusy(false);
         setPaused(false);
         setRunId('');
@@ -152,12 +179,9 @@ export function WorkspaceBrowserOperator({ extensionId }: { extensionId?: string
         if (!rejected) setStatus('Workspace disconnected. Connect again from the Chrome side panel.');
       };
       connected.onDisconnect.addListener(clearConnection);
-      const { data: { subscription } } = createClient().auth.onAuthStateChange((event, next) => {
+      const { data: { subscription } } = auth.auth.onAuthStateChange((event, next) => {
         if (closed || disposed) return;
         if (event === 'SIGNED_OUT' || (next?.user.id && next.user.id !== session.account)) {
-          setGoal('');
-          setStartUrl('');
-          setFiles([]);
           clearConnection();
           connected.disconnect();
         } else if (next?.user.id === session.account) {
@@ -170,12 +194,16 @@ export function WorkspaceBrowserOperator({ extensionId }: { extensionId?: string
         if (disposed || closed || !message || typeof message !== 'object') return;
         if (message.type === 'pair-rejected' && message.status === 'account') {
           rejected = true;
+          setConnecting(false);
+          setConnectionError(true);
           setStatus('This Chrome profile is linked to another Xroga account. Use a separate Chrome profile.');
           return;
         }
         if (message.type === 'paired') {
           portRef.current = connected;
           setPaired(true);
+          setConnecting(false);
+          setConnectionError(false);
           setStatus('Chrome connected. Browser actions run on this device. Relevant page observations are sent to Xroga for model inference.');
           url.searchParams.delete('browserPair');
           url.searchParams.delete('browserExtension');
@@ -323,76 +351,111 @@ export function WorkspaceBrowserOperator({ extensionId }: { extensionId?: string
       portRef.current = null;
       pairedToken.current = '';
     };
-  }, [extensionId]);
+  }, [extensionId, isWorkspace, attempt, detached]);
 
-  if (!mounted || (!extensionId && !pairingVisible)) return null;
-  return createPortal(
-    <details className="fixed bottom-24 right-4 z-50 max-h-[min(36rem,calc(100dvh-8rem))] w-[min(24rem,calc(100vw-2rem))] overflow-auto rounded-xl border bg-background p-3 text-sm text-foreground shadow-lg" open={paired || pairingVisible || undefined}>
-      <summary className="cursor-pointer font-medium">Browser Operator</summary>
-      <p className="my-2 text-xs" role="status">{status}</p>
-      {paired && <form className="grid gap-2" onSubmit={event => {
-        event.preventDefault();
-        if (!portRef.current || busy || paused) return;
-        setBusy(true);
-        setStatus('Opening a task tab in Chrome.');
-        const port = portRef.current;
-        void (async () => {
-          const attachments = [];
-          // The parser admits one document at a time for this account.
-          for (const file of files) attachments.push(await taskFile(file, pairedToken.current));
-          if (port !== portRef.current) return;
-          if (attachments.some(file => !file.text.trim())) throw new Error('Empty attachment');
-          port.postMessage({ type: 'start-task', goal, startUrl: startUrl.trim() || undefined, files: attachments });
-        })().catch(() => {
-          setBusy(false);
-          setStatus('Could not read a task file. Scanned or encrypted files need a text export.');
-        });
-      }}>
-        <label className="grid gap-1">What should Xroga do?<textarea className="rounded border bg-background p-2" value={goal} onChange={event => setGoal(event.target.value)} maxLength={16000} required /></label>
-        <label className="grid gap-1">Starting site or search <span className="text-xs text-muted-foreground">Optional</span>
-          <input className="rounded border bg-background p-2" value={startUrl} onChange={event => setStartUrl(event.target.value)} maxLength={1800} disabled={busy} />
-        </label>
-        <label className="grid gap-1">Task files <span className="text-xs">Up to five files, 2 MB each. PDF and Office files are sent to Xroga to extract text.</span>
-          <input type="file" multiple accept=".txt,.md,.csv,.tsv,.json,.pdf,.docx,.xlsx" disabled={busy} onChange={event => {
-            const selected = Array.from(event.target.files ?? []);
-            if (selected.length > 5 || selected.some(file => file.size > 2 * 1024 * 1024 ||
-              !/\.(?:txt|md|csv|tsv|json|pdf|docx|xlsx)$/i.test(file.name))) {
-              setFiles([]);
-              event.target.value = '';
-              setStatus('Choose up to five supported files, at most 2 MB each.');
-              return;
-            }
-            setFiles(selected);
-          }} />
-        </label>
-        <div className="flex gap-2">
-          <button type="submit" className="rounded border px-3 py-1" disabled={busy || paused}>Start in Chrome</button>
-          {busy && runId && <button type="button" className="rounded border px-3 py-1" onClick={() => portRef.current?.postMessage({ type: 'pause-task', runId })}>Pause</button>}
-          {paused && runId && <button type="button" className="rounded border px-3 py-1" onClick={() => portRef.current?.postMessage({ type: 'resume-task', runId })}>Resume</button>}
-          {(busy || paused) && runId && <button type="button" className="rounded border px-3 py-1" onClick={() => {
-            portRef.current?.postMessage({ type: 'cancel-task', runId });
-            setStatus('Stopping the browser task.');
-            void apiFetch(`${API}/runs/${runId}`, { method: 'DELETE' }, pairedToken.current).then(() => {
-              if (activeRun.current !== runId) return;
-              setPaused(false);
-              setBusy(false);
-              setStatus(current => current === 'Stopping the browser task.' ? 'Cancellation requested.' : current);
-            }).catch(() => setStatus('Chrome received Stop. The server could not confirm cancellation.'));
-          }}>Stop</button>}
-        </div>
-      </form>}
-      {busy && activeTool && <p className="mt-2 text-xs">{activeTool} in progress</p>}
-      {activity.length > 0 && <ol aria-label="Browser activity" className="mt-2 max-h-40 space-y-1.5 overflow-auto text-xs">
-        {activity.map(step => {
-          const Icon = step.status === 'verified' ? CircleCheck
-            : ['uncertain', 'failed', 'unmet'].includes(step.status) ? CircleAlert : MousePointer2;
-          return <li key={step.stepId} className="flex items-start gap-2">
-            <Icon size={14} className="shrink-0" aria-hidden="true" />
-            <span>{TOOLS[step.tool]} <span className="text-muted-foreground">· {OUTCOMES[step.status]}</span></span>
-          </li>;
-        })}
-      </ol>}
-      {result && <p className="mt-2 max-h-48 overflow-auto whitespace-pre-wrap">{result}</p>}
-    </details>, document.body,
-  );
+  const starting = useRef(false);
+  async function start(goal: string, files: File[]) {
+    const port = portRef.current;
+    if (!paired || !port || busy || paused || starting.current) return false;
+    if (goal.length > 16_000 || files.length > 5 || files.some(file => file.size > 2 * 1024 * 1024 ||
+        !/\.(?:txt|md|csv|tsv|json|pdf|docx|xlsx)$/i.test(file.name))) {
+      setStatus('Use a task under 16,000 characters and up to five text, PDF, Word or Excel files, at most 2 MB each.');
+      return false;
+    }
+    starting.current = true;
+    setBusy(true);
+    setStatus('Preparing the task for Chrome.');
+    try {
+      const attachments = [];
+      for (const file of files) attachments.push(await taskFile(file, pairedToken.current));
+      if (port !== portRef.current) { setBusy(false); return false; }
+      if (attachments.some(file => !file.text.trim())) throw new Error('Empty attachment');
+      const startUrl = goal.match(/https:\/\/[^\s<>]+/i)?.[0];
+      port.postMessage({ type: 'start-task', goal, startUrl, files: attachments });
+      return true;
+    } catch {
+      setBusy(false);
+      setStatus('Could not prepare the task. For scanned or encrypted files, try a text export.');
+      return false;
+    } finally {
+      starting.current = false;
+    }
+  }
+
+  function control(action: 'pause' | 'resume' | 'cancel') {
+    if (!runId || !portRef.current) return;
+    portRef.current.postMessage({ type: action === 'cancel' ? 'cancel-task' : `${action}-task`, runId });
+    if (action !== 'cancel') return;
+    setStatus('Stopping the browser task.');
+    void apiFetch(`${API}/runs/${runId}`, { method: 'DELETE' }, pairedToken.current).then(() => {
+      if (activeRun.current !== runId) return;
+      setPaused(false);
+      setBusy(false);
+      setStatus(current => current === 'Stopping the browser task.' ? 'Cancellation requested.' : current);
+    }).catch(() => setStatus('Chrome received Stop. The server could not confirm cancellation.'));
+  }
+
+  const operator: Operator | null = isWorkspace && (extensionId || pairingVisible) ? {
+    paired, connecting, error: connectionError, status, busy, paused, runId, activeTool, activity, result, start, control,
+    connect: () => { setDetached(false); retry(value => value + 1); },
+    disconnect: () => {
+      portRef.current?.disconnect();
+      portRef.current = null;
+      pairedToken.current = '';
+      activeRun.current = '';
+      setPaired(false);
+      setBusy(false);
+      setPaused(false);
+      setConnecting(false);
+      setConnectionError(false);
+      setActivity([]);
+      setRunId('');
+      setActiveTool('');
+      setResult('');
+      setStatus('Workspace disconnected. Open the Xroga side panel to connect again.');
+      setDetached(true);
+    },
+  } : null;
+  return <BrowserOperatorContext.Provider value={operator}>{children}</BrowserOperatorContext.Provider>;
+}
+
+export function WorkspaceBrowserConnection() {
+  const operator = useWorkspaceBrowserOperator();
+  if (!operator) return null;
+  const state = operator.paired ? 'Chrome connected' : operator.connecting ? 'Connecting to extension' :
+    operator.error ? 'Connection needs attention' : 'Connect Chrome';
+  return <details className="mb-1 rounded-lg border border-[var(--card-border)] bg-[var(--surface-inset)] text-[var(--foreground)]">
+    <summary className="flex cursor-pointer list-none items-center gap-2 px-2 py-2 text-xs focus-visible:outline focus-visible:outline-2">
+      <Monitor aria-hidden size={14} className="shrink-0" />
+      <span className="min-w-0 flex-1"><span className="block font-medium">Browser Automation</span><span className="block truncate text-[var(--muted)]">{state}</span></span>
+      <span aria-hidden className={`h-2 w-2 shrink-0 rounded-full ${operator.paired ? 'bg-emerald-500' : operator.error ? 'bg-red-500' : operator.connecting ? 'animate-pulse bg-[var(--muted)]' : 'bg-[var(--muted)]'}`} />
+    </summary>
+    <div className="space-y-2 border-t border-[var(--card-border)] px-2 py-2 text-xs">
+
+      <p role="status" className="break-words text-[var(--muted)]">{operator.paired ? 'Browser tasks run in the Xroga extension on this device.' : operator.status}</p>
+      <button type="button" className="rounded border border-[var(--card-border)] px-2 py-1" disabled={operator.connecting || operator.busy}
+        onClick={operator.paired ? operator.disconnect : operator.connect}>{operator.paired ? 'Disconnect Workspace' : 'Reconnect'}</button>
+    </div>
+  </details>;
+}
+
+export function WorkspaceBrowserProgress({ operator, prompted }: { operator: Operator | null; prompted: boolean }) {
+  if (!operator) return prompted ? <p role="status" className="mb-2 text-xs text-[var(--muted)]">Browser Automation is unavailable in this Workspace. Your draft is still here.</p> : null;
+  if (!prompted && !operator.busy && !operator.runId) return null;
+  return <div className="mb-2 space-y-1 text-xs text-[var(--muted)]">
+    <p role="status">{!operator.paired && prompted && !operator.runId ? 'Open the Xroga extension side panel to connect Chrome. Your draft is still here.' : operator.status}</p>
+    {operator.activeTool && <p>{operator.activeTool} in progress</p>}
+    {operator.runId && (operator.busy || operator.paused) && <div className="flex flex-wrap gap-2">
+      {operator.busy && <button type="button" className="underline" onClick={() => operator.control('pause')}>Pause</button>}
+      {operator.paused && <button type="button" className="underline" onClick={() => operator.control('resume')}>Resume</button>}
+      <button type="button" className="underline" onClick={() => operator.control('cancel')}>Stop</button>
+    </div>}
+    {operator.activity.length > 0 && <details>
+      <summary className="cursor-pointer">Browser activity</summary>
+      <ol aria-label="Browser activity" className="max-h-32 space-y-1 overflow-auto">
+        {operator.activity.map(step => <li key={step.stepId}>{TOOLS[step.tool]} · {OUTCOMES[step.status]}{step.reobserved ? ' · Rechecked the page' : ''}</li>)}
+      </ol>
+    </details>}
+    {operator.result && <p className="max-h-44 overflow-auto whitespace-pre-wrap break-words text-[var(--foreground)]">{operator.result}</p>}
+  </div>;
 }
