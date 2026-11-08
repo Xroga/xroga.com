@@ -32,6 +32,8 @@ jobs:
           cache: 'npm'
 
       - name: Install and build frontend
+        env:
+          ONNXRUNTIME_NODE_INSTALL_CUDA: skip
         run: |
           # Shared canonical server-side guest accounting imports the backend
           # Redis client. Use the frozen monorepo install used by Vercel too.

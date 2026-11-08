@@ -32,6 +32,8 @@ jobs:
           node-version-file: '.node-version'
           cache: npm
       - run: npm ci
+        env:
+          ONNXRUNTIME_NODE_INSTALL_CUDA: skip
 
       - name: Verify frozen Phase 2 register before expensive regression
         run: |
@@ -77,6 +79,8 @@ jobs:
           node-version-file: '.node-version'
           cache: npm
       - run: npm ci
+        env:
+          ONNXRUNTIME_NODE_INSTALL_CUDA: skip
       - name: Verify and record the actual virtual merge inventory
         env:
           PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
