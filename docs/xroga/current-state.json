@@ -82671,7 +82671,7 @@
       "id": "surface:7a8e7b95107436c7fb17",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/layout/SidebarActionMenu.tsx",
-      "sha256": "017f18809ddcdcd868d74ad5b3e2f82ac2ced4b25a89c6bea904ace8b79204e8",
+      "sha256": "758c6b8ac88bfbe790153c848b33ad90ce5a29a9d848c38fa3389d48adae35a1",
       "symbols": [
         "Icon",
         "Icons",
@@ -82685,6 +82685,7 @@
         "menu",
         "options",
         "pointer",
+        "separator",
         "width"
       ],
       "imports": [
@@ -82859,7 +82860,7 @@
       "id": "surface:dae82b1420f0fd73a0bb",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "sha256": "403def6e0480eb4371f4c73261063c46af91996a8287e7722609c89d6e6ac237",
+      "sha256": "d8246759c9fbbfa5a8a6705b9e1c293653dedf444c407a3eafc4a3f396a389e5",
       "symbols": [
         "REPO_FILTERS",
         "RepoFilter",
@@ -82900,6 +82901,7 @@
         "direct",
         "dst",
         "e",
+        "edge",
         "error",
         "escape",
         "existing",
@@ -82934,6 +82936,7 @@
         "list",
         "live",
         "loadMoreRecents",
+        "loadingOlderRecentsRef",
         "local",
         "localHistory",
         "map",
@@ -82945,12 +82948,14 @@
         "metaOf",
         "migratedKey",
         "mode",
+        "more",
         "moreProjects",
         "n",
         "neighbor",
         "next",
         "nextEntries",
         "number",
+        "observer",
         "offCloud",
         "offset",
         "old",
@@ -82978,6 +82983,7 @@
         "push",
         "queue",
         "recentConversations",
+        "recentsEndRef",
         "rect",
         "refreshCloud",
         "refreshCloudNow",
@@ -82993,15 +82999,16 @@
         "restored",
         "restoredProject",
         "roomOnRight",
+        "root",
         "router",
         "s",
         "saveEditor",
-        "saved",
         "savedConversations",
         "sec",
         "secondary",
         "sectionTitle",
         "selected",
+        "sentinel",
         "session",
         "sessionIdRef",
         "source",
@@ -83114,8 +83121,8 @@
         "frontend/src/components/layout/SidebarProjectHistory.tsx#workspaceIdentity"
       ],
       "tenantBoundary": [
-        "frontend/src/components/layout/SidebarProjectHistory.tsx:1110 (user_id)",
-        "frontend/src/components/layout/SidebarProjectHistory.tsx:1130 (user_id)"
+        "frontend/src/components/layout/SidebarProjectHistory.tsx:1134 (user_id)",
+        "frontend/src/components/layout/SidebarProjectHistory.tsx:1154 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -138223,7 +138230,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:995cfdc1f98381429e6e",
+      "id": "finding:19476a39dc7ac0a878b3",
       "sourcePath": "frontend/src/components/layout/SidebarProjectHistory.tsx",
       "line": 179,
       "kind": "STUB",
@@ -138233,9 +138240,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:70621b1fa8ad1599da30",
+      "id": "finding:731536fbb9a1992e1e7e",
       "sourcePath": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 599,
+      "line": 600,
       "kind": "STUB",
       "reachable": true,
       "state": "PARTIAL",
@@ -138243,9 +138250,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:a04ab6ea3ef900398c2a",
+      "id": "finding:42c908cca2e662e337cb",
       "sourcePath": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 1261,
+      "line": 1281,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -138253,9 +138260,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:53f683df65944496a933",
+      "id": "finding:be3901f21b80881d68bf",
       "sourcePath": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 1284,
+      "line": 1304,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -141794,30 +141801,30 @@
       "reachable": false
     },
     {
-      "id": "frontend-call:8d3f1b59f2f2978a0ea4",
+      "id": "frontend-call:20111c90347af1d64c36",
       "sourcePath": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 984,
+      "line": 1010,
       "callee": "api.projects.get",
       "reachable": true
     },
     {
-      "id": "frontend-call:6bce97cc32bc3fffae77",
+      "id": "frontend-call:9a7f304dd427cd133eb4",
       "sourcePath": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 1115,
+      "line": 1139,
       "callee": "api.projects.create",
       "reachable": true
     },
     {
-      "id": "frontend-call:9b3a9f950983f2fdb9ba",
+      "id": "frontend-call:fd5791190be1adf9e9da",
       "sourcePath": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 1123,
+      "line": 1147,
       "callee": "api.projects.delete",
       "reachable": true
     },
     {
-      "id": "frontend-call:ba1e0944ece363ce9697",
+      "id": "frontend-call:f577d70af15acedf03dc",
       "sourcePath": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 1126,
+      "line": 1150,
       "callee": "api.terminalSessions.delete",
       "reachable": true
     },
