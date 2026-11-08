@@ -11,14 +11,14 @@ const STYLES = read('../styles/uiverse.css');
 const CAPABILITIES = read('../components/dashboard/UpcomingCapabilitySection.tsx');
 const ROCKET = read('../components/icons/animated/RocketIcon.tsx');
 
-test('sidebar uses a minimal native draggable scrollbar without an overlay control', () => {
+test('sidebar hides its internal scrollbar but stays normally scrollable', () => {
   assert.match(NAV, /xv-sidebar-scroll-track/);
   assert.match(SCROLLER, /xv-nav-scroller/);
   const wrapper = SCROLLER.slice(0, SCROLLER.indexOf('export function CompactScrollIndicator'));
   assert.doesNotMatch(wrapper, /<CompactScrollIndicator/, 'no narrow overlay thumb inside the sidebar');
-  assert.match(GLOBAL, /scrollbar-width: thin !important/);
-  assert.match(GLOBAL, /scrollbar-color: color-mix/);
-  assert.match(GLOBAL, /::-webkit-scrollbar-button/);
+  assert.match(GLOBAL, /scrollbar-width: none !important/);
+  assert.match(GLOBAL, /\.xv-sidebar-nav-scroll\.xv-sidebar-scroll-track::-webkit-scrollbar/);
+  assert.match(NAV, /overflow-y-auto overflow-x-hidden/);
   assert.match(GLOBAL, /overscroll-behavior-y: contain/);
   assert.doesNotMatch(HISTORY, /max-h-\[280px\]/);
   assert.match(GLOBAL, /xv-repos-scroll \{ overflow: visible !important; max-height: none !important/);
@@ -33,7 +33,7 @@ test('projects precede conditional pinned items and recents with account-scoped 
   assert.match(HISTORY, /xroga_sidebar_pins_v1:/);
   assert.match(HISTORY, /const accountId\s*=.*workspaceIdentity\.userId/);
   assert.match(HISTORY, /\{pinnedItems\.length>0\?<section/);
-  assert.match(HISTORY, /aria-label=\{saved\?'Unpin '\+label:'Pin '\+label\}/);
+  assert.match(HISTORY, /\{id:'pin',label:metaOf\(menu\.kind,menu\.id\)/);
   assert.match(HISTORY, /changeSidebarMeta\(accountId,kind,id/);
   // PR836 explicitly includes pins in chronological Recents as well as Pinned.
   assert.match(HISTORY, /const recentConversations=activeItems;/);

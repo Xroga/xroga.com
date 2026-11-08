@@ -7,7 +7,7 @@ import { activateSidebarProject, clearActiveSidebarProject, getActiveSidebarProj
 import { clearSelectedRepoContext, consumeFreshTerminalIntent } from '@/lib/repoContext';
 import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
 import { useThemeStore } from '@/store/useThemeStore';
-import { Cloud, FolderOpen, GitBranch, ChevronDown, ChevronRight, Pin, PinOff, MoreHorizontal, Plus, ArrowUp, ArrowDown } from 'lucide-react';
+import { Cloud, FolderOpen, GitBranch, ChevronDown, ChevronRight, MoreHorizontal, Plus, ArrowUp, ArrowDown } from 'lucide-react';
 import { SidebarActionMenu, type SidebarActionId, type SidebarMenuAction } from './SidebarActionMenu';
 import { SidebarMovingTitle } from './SidebarMovingTitle';
 import './SidebarOrganize.css';
@@ -198,7 +198,8 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
   const [shownProjects,setShownProjects] = useState(5);
   const [shownPins,setShownPins] = useState(10);
   const [shownRecents,setShownRecents] = useState(12);
-  const [allProjectChats,setAllProjectChats] = useState<Record<string,boolean>>({});
+  const recentsEndRef=useRef<HTMLDivElement>(null);
+  const loadingOlderRecentsRef=useRef(false);
   const [archivedOpen,setArchivedOpen] = useState(false);
   const [projectsHasMore,setProjectsHasMore] = useState(false);
   const [menu,setMenu] = useState<{kind:SidebarKind;id:string;x:number;y:number}|null>(null);
@@ -877,12 +878,14 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
   },[accountId,savedConversations,itemMeta,refreshSidebarData]);
 
   async function loadMoreRecents(){
-    if(!accountId)return;
+    if(!accountId||loadingOlderRecentsRef.current)return;
+    loadingOlderRecentsRef.current=true;
     try{
       const [oldCloud,oldChats]=await Promise.all([
         moreCloudSessions?listCloudTerminalSessions(undefined,{limit:100,offset:cloudSessions.length}):Promise.resolve([]),
         moreSidebarChats?loadSidebarChats(accountId,sidebarChats.length,200):Promise.resolve([])
       ]);
+      if(activeAccountRef.current!==accountId)return;
       setMoreCloudSessions(oldCloud.length>=100);
       setMoreSidebarChats(oldChats.length>=200);
       if(oldCloud.length)setCloudSessions(prev=>{
@@ -894,6 +897,7 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
         return [...byId.values()];
       });
     }catch(e){toast.error((e as Error).message||'Could not load older history');}
+    finally{loadingOlderRecentsRef.current=false;}
   }
   const organizedProjects = useMemo(()=>{
     const actual=accountProjects.map(p=>({id:p.id,label:p.name,repo:p.github_repo_name||null,actual:p}));
@@ -923,6 +927,27 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
     return !organizedProjects.some(project=>Boolean(project.repo&&project.repo===session.githubRepoName))
       && !accountProjects.some(project=>Boolean(project.github_repo_name&&project.github_repo_name===session.githubRepoName));
   });
+  // Progressive reveal within the existing sidebar scroll container. Older
+  // cloud pages are loaded automatically as the user reaches the end.
+  useEffect(()=>{
+    if(!expanded||isGuest)return;
+    const more=standaloneRecents.length>shownRecents||moreCloudSessions||moreSidebarChats;
+    const sentinel=recentsEndRef.current;
+    if(!more||!sentinel||typeof IntersectionObserver==='undefined')return;
+    const root=sentinel.closest<HTMLElement>('.xv-sidebar-nav-scroll');
+    if(!root)return;
+    const observer=new IntersectionObserver(entries=>{
+      if(!entries[0]?.isIntersecting||loadingOlderRecentsRef.current)return;
+      if(standaloneRecents.length>shownRecents){
+        setShownRecents(count=>Math.min(standaloneRecents.length,count+24));
+      }else{void loadMoreRecents();}
+    },{root,rootMargin:'0px 0px 140px 0px'});
+    observer.observe(sentinel);
+    return()=>observer.disconnect();
+    // Page boundary changes only; avoid rebinding during streamed messages.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[accountId,expanded,isGuest,shownRecents,standaloneRecents.length,moreCloudSessions,moreSidebarChats]);
+
   function conversationTitle(session:RepoSession){
     return metaOf('conversation',session.id)?.title_override ||
       meaningfulSidebarTitle(session.title,session.entry?.prompt||session.preview);
@@ -932,7 +957,8 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
   }
   const openMenu=(event:React.MouseEvent,kind:SidebarKind,id:string)=>{
     event.preventDefault();event.stopPropagation();
-    setMenu({kind,id,x:event.clientX,y:event.clientY});
+    const edge=(event.currentTarget as HTMLElement).closest('.xv-sidebar-floating')?.getBoundingClientRect().right;
+    setMenu({kind,id,x:(edge??event.clientX)+10,y:event.clientY});
   };
   function contextLink(kind:SidebarKind,id:string){
     if(kind==='project') return projectById(id)?.actual
@@ -996,7 +1022,6 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   },[accountId,pathname]);
   function renderRow(kind:SidebarKind,id:string,label:string,open:()=>void,pinned:boolean){
-    const saved=metaOf(kind,id)?.pin_order!=null;
     return <div key={kind+':'+id} className={cn('xv-sidebar-work-row group flex items-center gap-1 min-w-0 rounded-md hover:bg-[var(--foreground)]/[0.05]',
         (kind==='project'&&activeSidebarProjectId===id)||(kind==='conversation'&&activeSessionId===id)
           ? 'bg-[var(--foreground)]/[0.13] text-[var(--foreground)]' : '')}
@@ -1017,12 +1042,10 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
         <SidebarMovingTitle text={label}/>
       </button>
       <div className="xv-sidebar-work-actions shrink-0 flex items-center gap-0.5">
-        <button type="button" className="p-1 rounded-md hover:bg-[var(--foreground)]/10 focus-visible:outline-2 focus-visible:outline-[var(--accent)]"
-          aria-label={saved?'Unpin '+label:'Pin '+label} aria-pressed={saved}
-          onClick={()=>togglePin(id,kind)}><Pin size={12} fill={saved?'currentColor':'none'} aria-hidden="true"/></button>
+
         <button type="button" className="p-1 rounded-md hover:bg-[var(--foreground)]/10 focus-visible:outline-2 focus-visible:outline-[var(--accent)]"
           aria-label={'More options for '+label} aria-haspopup="menu" aria-expanded={menu?.id===id&&menu.kind===kind}
-          onClick={event=>{const box=event.currentTarget.getBoundingClientRect();setMenu({kind,id,x:box.right+8,y:box.top});}}>
+          onClick={event=>{const box=event.currentTarget.getBoundingClientRect();const edge=event.currentTarget.closest('.xv-sidebar-floating')?.getBoundingClientRect().right;setMenu({kind,id,x:(edge??box.right)+10,y:box.top});}}>
           <MoreHorizontal size={13} aria-hidden="true"/>
         </button>
       </div>
@@ -1067,9 +1090,10 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
     }
   }
   const menuActions:SidebarMenuAction[]=menu?[
-    {id:'share',label:'Share private link'},{id:'copy',label:'Copy link'},
-    {id:'open',label:'Open in new tab'},{id:'rename',label:'Rename'},
+    {id:'rename',label:'Rename'},
     {id:'pin',label:metaOf(menu.kind,menu.id)?.pin_order!=null?'Unpin':'Pin'},
+    {id:'share',label:'Share private link'},{id:'copy',label:'Copy link'},
+    {id:'open',label:'Open in new tab'},
     ...(menu.kind==='conversation'?[
       {id:'move-project' as const,label:'Move to project'},
       {id:'move-section' as const,label:'Move to section'},
@@ -1160,7 +1184,7 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
       {visiblePage(organizedProjects.filter(p=>!metaOf('project',p.id)?.archived_at),shownProjects).map(p=>{
         const related=getProjectChats(p);
         const expandedProject=openFolders[p.id]??Boolean(p.repo&&folders.some(f=>f.repo===p.repo&&f.key===selectedContextKey));
-        const children=allProjectChats[p.id]?related:related.slice(0,3);
+        const children=related;
         const childSections=sections.filter(section=>section.project_id===p.id);
         return <div key={p.id} className="space-y-0.5">
           <div className="xv-sidebar-project-entry relative flex items-center gap-0.5">
@@ -1190,16 +1214,12 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
               if(!grouped.length)return null;
               return <div key={section.id}>
                 <p className="px-2 py-0.5 text-[9px] font-medium text-[var(--muted)]">{section.title}</p>
-                {(allProjectChats[p.id]?grouped:grouped.slice(0,3)).map(session=>
+                {grouped.map(session=>
                   renderRow('conversation',session.id,conversationTitle(session),()=>void openSession(session),false))}
               </div>;
             })}
             {children.filter(session=>!metaOf('conversation',session.id)?.section_id).map(session=>
               renderRow('conversation',session.id,conversationTitle(session),()=>void openSession(session),false))}
-            {related.length>3&&!allProjectChats[p.id]?
-              <button type="button" className={secondary+' px-2 py-1'} onClick={()=>setAllProjectChats(prev=>({...prev,[p.id]:true}))}>View all chats</button>:null}
-            {allProjectChats[p.id]&&related.length>3?
-              <button type="button" className={secondary+' px-2 py-1'} onClick={()=>setAllProjectChats(prev=>({...prev,[p.id]:false}))}>Show fewer chats</button>:null}
             {related.length===0?<p className="px-2 py-1 text-[10px] text-[var(--muted)]">No saved conversations</p>:null}
           </div>:null}
         </div>;
@@ -1230,12 +1250,8 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
       {standaloneRecents.slice(0,shownRecents).map(session=>
         renderRow('conversation',session.id,conversationTitle(session),()=>void openSession(session),false))}
       {standaloneRecents.length===0?<p className="px-2 py-1 text-[10px] text-[var(--muted)]">Chats outside a project appear here.</p>:null}
-      {standaloneRecents.length>shownRecents?
-        <button type="button" className={secondary+' px-2 py-1'} onClick={()=>setShownRecents(prev=>prev+12)}>View more recents</button>
-        :moreCloudSessions||moreSidebarChats?<button type="button" className={secondary+' px-2 py-1'}
-          onClick={()=>void loadMoreRecents()}>Load older recents</button>:null}
-      {shownRecents>12?<button type="button" className={secondary+' px-2 py-1'}
-        onClick={()=>setShownRecents(12)}>Show fewer</button>:null}
+      {(standaloneRecents.length>shownRecents||moreCloudSessions||moreSidebarChats)
+        ?<div ref={recentsEndRef} className="h-px w-full" aria-hidden="true"/>:null}
       <button type="button" className={secondary+' px-2 py-1'} onClick={()=>setArchivedOpen(prev=>!prev)}
         aria-expanded={archivedOpen}>{archivedOpen?'Hide archive':'Archived items'}</button>
       {archivedOpen?itemMeta.filter(item=>item.archived_at!==null).map(item=>{
@@ -1249,7 +1265,11 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
       }):null}
     </section>:null}
 
-    <SidebarActionMenu point={menu?{x:menu.x,y:menu.y}:null} actions={openedMenu}
+    <SidebarActionMenu point={menu?{x:menu.x,y:menu.y}:null}
+       title={menu?.kind==='conversation'
+         ?conversationTitle(savedConversations.find(session=>session.id===menu.id)??{id:menu.id,title:'Untitled conversation',preview:'',updatedAt:'',cloudSynced:false,kind:'local',terminalNumber:0})
+         :menu?.kind==='project'?projectTitle(menu.id,projectById(menu.id)?.label||'Project'):''}
+       actions={openedMenu}
       onClose={()=>setMenu(null)} onSelect={id=>void handleMenuAction(id)}/>
 
     {editor&&typeof document!=='undefined'?createPortal(
