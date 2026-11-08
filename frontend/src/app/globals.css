@@ -3055,7 +3055,9 @@ body.theme-gray * {
     transform: translateX(10%);
   }
   .xv-sidebar-edge-toggle:hover {
-    background: rgba(74, 122, 255, 0.15);
+    /* No floating background over the workspace title at narrow widths. */
+    background: transparent;
+    box-shadow: none;
     color: var(--accent);
   }
 
@@ -3217,25 +3219,30 @@ body.theme-gray * {
     width: 12px;
     align-items: center;
     justify-content: center;
-    cursor: ew-resize;
+    cursor: col-resize;
     touch-action: none;
+    background: transparent !important;
+    border: 0;
+    box-shadow: none;
     outline: none;
   }
+  /* Only subtle grip lines, no painted chip behind the header text. */
   .xv-sidebar-resize-handle > span {
     width: 3px;
     height: 42px;
     border-radius: 999px;
-    background: color-mix(in srgb, var(--muted) 38%, transparent);
-    opacity: 0;
-    transform: scaleY(0.72);
-    transition: opacity 150ms ease, transform 150ms ease, background 150ms ease;
+    background: repeating-linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--muted) 62%, transparent) 0 3px,
+      transparent 3px 7px
+    );
+    opacity: 0.55;
+    transition: opacity 100ms ease;
   }
   .xv-sidebar-resize-handle:hover > span,
   .xv-sidebar-resize-handle:focus-visible > span,
   body.xv-sidebar-resizing .xv-sidebar-resize-handle > span {
     opacity: 1;
-    transform: scaleY(1);
-    background: var(--accent);
   }
   body.xv-sidebar-resizing,
   body.xv-sidebar-resizing * {
