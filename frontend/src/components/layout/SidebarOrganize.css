@@ -231,31 +231,3 @@
   [data-sidebar-work-organizer] .xv-sidebar-work-row > button:first-child { padding-inline-end:50px; }
   [data-sidebar-work-organizer] .xv-sidebar-project-entry .xv-sidebar-work-row > button:first-child { padding-inline-end:74px; }
 }
-
-/* Narrow widths do not reserve the old two-button action cluster: only the
-   three-dot menu remains, keeping as many title characters visible as possible. */
-[data-sidebar-work-organizer] .xv-sidebar-work-row > button:first-child {
-  min-width: 0;
-  flex: 1 1 auto;
-}
-[data-sidebar-work-organizer] .xv-sidebar-work-actions {
-  inset-inline-end: 1px;
-  padding: 2px 1px;
-}
-@media (hover: none), (pointer: coarse) {
-  [data-sidebar-work-organizer] .xv-sidebar-work-row > button:first-child {
-    padding-inline-end: 31px;
-  }
-  [data-sidebar-work-organizer] .xv-sidebar-project-entry .xv-sidebar-work-row > button:first-child {
-    padding-inline-end: 58px;
-  }
-}
-@media (hover: none) and (prefers-reduced-motion: no-preference) {
-  [data-sidebar-work-organizer] .xv-sidebar-work-row:active .xv-sidebar-long-title__content.is-overflowing {
-    visibility: visible;
-    animation: xv-sidebar-title-reveal var(--xv-title-duration,12s) linear 1 forwards;
-  }
-  [data-sidebar-work-organizer] .xv-sidebar-work-row:active .xv-sidebar-long-title__rest {
-    visibility: hidden;
-  }
-}
