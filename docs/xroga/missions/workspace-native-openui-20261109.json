@@ -1,0 +1,144 @@
+{
+  "version": "1.0",
+  "missionId": "WORKSPACE-NATIVE-OPENUI-20261109",
+  "baseSha": "6652ea3765540b2f78a7cf8bc4ac70e3d184b643",
+  "requirementIds": [
+    "XR-MISSION-054",
+    "XR-MISSION-055"
+  ],
+  "state": "IN_PROGRESS",
+  "risk": "medium",
+  "scope": "Build an independently evaluable DeepSeek to native OpenUI answer format before integrating it into authenticated Workspace.",
+  "changedFiles": [
+    "backend/package-lock.json",
+    "backend/package.json",
+    "backend/src/ai/nativeOpenUi.test.ts",
+    "backend/src/ai/nativeOpenUi.ts",
+    "backend/src/ai/nativeOpenUiCatalog.json",
+    "backend/src/ai/nativeOpenUiPrompt.ts",
+    "backend/src/index.ts",
+    "backend/src/routes/nativeOpenUiEvaluation.ts",
+    "docs/operations/native-openui/coverage.json",
+    "docs/operations/native-openui/prompt-suite.json",
+    "frontend/package-lock.json",
+    "frontend/package.json",
+    "frontend/src/app/native-answer-evaluation/page.tsx",
+    "frontend/src/components/native-openui/COPILOTKIT-LICENSE",
+    "frontend/src/components/native-openui/Evaluation.tsx",
+    "frontend/src/components/native-openui/NativeSurface.tsx",
+    "frontend/src/components/native-openui/Tabs.tsx",
+    "frontend/src/components/native-openui/evaluation.css",
+    "frontend/src/components/native-openui/library.tsx",
+    "frontend/src/components/native-openui/renderer-config.ts",
+    "frontend/src/components/native-openui/surface.css",
+    "frontend/src/components/native-openui/upstream/LICENSE",
+    "frontend/src/components/native-openui/upstream/components/chart.tsx",
+    "frontend/src/components/native-openui/upstream/components/components.css",
+    "frontend/src/components/native-openui/upstream/components/controls.tsx",
+    "frontend/src/components/native-openui/upstream/components/extra.tsx",
+    "frontend/src/components/native-openui/upstream/components/glyph.tsx",
+    "frontend/src/components/native-openui/upstream/components/layout.tsx",
+    "frontend/src/components/native-openui/upstream/components/markdown.tsx",
+    "frontend/src/components/native-openui/upstream/components/style.ts",
+    "frontend/src/components/native-openui/upstream/components/svg.tsx",
+    "frontend/src/components/native-openui/upstream/components/table.tsx",
+    "frontend/src/components/native-openui/upstream/components/text.tsx",
+    "frontend/src/components/native-openui/upstream/components/theme.css",
+    "frontend/src/components/native-openui/upstream/functions/numbers.ts",
+    "frontend/src/components/native-openui/upstream/functions/shared.ts",
+    "frontend/src/components/native-openui/upstream/functions/text.ts",
+    "package-lock.json",
+    "scripts/generate-native-openui-spec.mjs",
+    "scripts/verify-native-openui-browser.mjs"
+  ],
+  "decisions": {
+    "keep": [
+      "Current Workspace presentation, stored conversations, canonical provider and accounting"
+    ],
+    "extend": [
+      "Owner-only standalone evaluation and safe native model-authored presentation"
+    ],
+    "replace": [],
+    "deprecate": []
+  },
+  "schemaImpact": {
+    "changed": false,
+    "migrations": [],
+    "rollout": "Standalone route disabled unless explicitly configured. No stored messages or database schema changed.",
+    "rollback": "Unset evaluator configuration. Restore previous staging artifacts if needed."
+  },
+  "securityImpact": {
+    "auth": {
+      "changed": true,
+      "description": "New disabled-by-default evaluation path uses current verified founder identity, owner role and AAL2."
+    },
+    "tenant": {
+      "changed": false,
+      "description": "Existing issued tenant context and caller-scoped current role lookup; no cross-tenant data or application state mutation."
+    },
+    "approval": {
+      "changed": false,
+      "description": "Model output cannot confer authority; browser UI state changes are local."
+    },
+    "credentials": {
+      "changed": false,
+      "description": "Existing server provider and caller-scoped Auth client. No key or credential changes."
+    },
+    "egress": {
+      "changed": true,
+      "description": "New bounded evaluator reaches only the existing authenticated API, Auth project, canonical model and accounting. No renderer telemetry or model-directed external egress."
+    },
+    "cost": {
+      "changed": true,
+      "description": "One metered model answer per admitted evaluation; requires explicit staging spending decision."
+    },
+    "billing": {
+      "changed": false,
+      "description": "Uses canonical quota, reservation and provider usage settlement."
+    }
+  },
+  "tests": [
+    {
+      "command": "node node_modules/tsx/dist/cli.mjs --test backend/src/ai/nativeOpenUi.test.ts",
+      "scope": "Registry instructions, output framing, bounded parser, local state and untrusted-model abuse cases",
+      "negative": true,
+      "reference": "backend/src/ai/nativeOpenUi.test.ts"
+    },
+    {
+      "command": "node scripts/verify-native-openui-browser.mjs",
+      "scope": "Real Chrome fixtures across six viewport/theme combinations with control, accessibility and egress checks",
+      "negative": true,
+      "reference": "scripts/verify-native-openui-browser.mjs"
+    }
+  ],
+  "architecture": {
+    "change": "extends_canonical",
+    "reason": "New standalone presentation surface uses the existing model dispatch; no competing orchestration, database or provider.",
+    "rfc": null
+  },
+  "rollout": "No production deployment. Resolve source gates, then obtain approved authenticated isolated evaluator acceptance.",
+  "rollback": "Remove the evaluator environment settings. Workspace source remains unaffected.",
+  "knownGaps": [
+    "Live DeepSeek and provider-streaming verification pending.",
+    "Workspace persistence, Copy/Share/Reopen and migration pending the standalone live gate.",
+    "Main source-bound security and sidebar checks need reconciliation."
+  ],
+  "placeholderClaimsRemaining": [],
+  "evidenceRefs": [
+    "docs/operations/native-openui/ACCEPTANCE.md",
+    "docs/operations/native-openui/coverage.json",
+    "docs/operations/native-openui/prompt-suite.json"
+  ],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "BLOCKED",
+    "blockers": [
+      "Required source checks and authenticated bounded DeepSeek acceptance are pending."
+    ],
+    "authenticatedE2e": "BLOCKED",
+    "stagedSecurity": "BLOCKED",
+    "liveUrl": null,
+    "deployedSha": null
+  }
+}

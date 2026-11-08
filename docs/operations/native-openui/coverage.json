@@ -1,0 +1,416 @@
+{
+  "upstreams": {
+    "openui": "5afae00a507e7a96144ca39e446f9af86e5f779c",
+    "openIntelligentUi": "9df2e64bc44282f6305a47eb6dbbbd8f28139138",
+    "copilotKit": "c7815d9ac96f48fb3a64ad8c18e176a870c81763",
+    "skills": "045d7cf6d1986b85f9ebb36cd3e34cef0a7de0de"
+  },
+  "nativeComponents": [
+    "Col",
+    "Row",
+    "Box",
+    "Grid",
+    "Card",
+    "Carousel",
+    "Popover",
+    "Tabs",
+    "Divider",
+    "Spacer",
+    "Title",
+    "Text",
+    "Caption",
+    "Label",
+    "Badge",
+    "List",
+    "ListItem",
+    "Markdown",
+    "Quote",
+    "Code",
+    "Math",
+    "Form",
+    "Input",
+    "TextArea",
+    "Slider",
+    "Select",
+    "Checkbox",
+    "RadioGroup",
+    "SegmentedControl",
+    "DatePicker",
+    "Button",
+    "IconButton",
+    "Pressable",
+    "Flashcard",
+    "Source",
+    "Icon",
+    "Table",
+    "Chart",
+    "Svg",
+    "Circle",
+    "Ellipse",
+    "Rect",
+    "Line",
+    "Path",
+    "Polyline",
+    "Polygon",
+    "G",
+    "SvgText"
+  ],
+  "nativeFunctions": [
+    "Clamp",
+    "Convert",
+    "Lerp",
+    "Payment",
+    "Percent",
+    "Pow",
+    "Sqrt",
+    "Format",
+    "Plural"
+  ],
+  "copilotKitStandard": [
+    {
+      "name": "Box",
+      "disposition": "existing-equivalent",
+      "details": "Box"
+    },
+    {
+      "name": "Column",
+      "disposition": "existing-equivalent",
+      "details": "Col"
+    },
+    {
+      "name": "Row",
+      "disposition": "existing-equivalent",
+      "details": "Row"
+    },
+    {
+      "name": "Grid",
+      "disposition": "existing-equivalent",
+      "details": "Grid"
+    },
+    {
+      "name": "GridItem",
+      "disposition": "existing-equivalent",
+      "details": "Grid + Box"
+    },
+    {
+      "name": "Card",
+      "disposition": "existing-equivalent",
+      "details": "Card"
+    },
+    {
+      "name": "Flow",
+      "disposition": "existing-equivalent",
+      "details": "Col / Row / Grid"
+    },
+    {
+      "name": "FlowItem",
+      "disposition": "existing-equivalent",
+      "details": "Box"
+    },
+    {
+      "name": "Carousel",
+      "disposition": "existing-equivalent",
+      "details": "Carousel"
+    },
+    {
+      "name": "CarouselItem",
+      "disposition": "existing-equivalent",
+      "details": "Card in Carousel"
+    },
+    {
+      "name": "CarouselMediaItem",
+      "disposition": "excluded",
+      "details": "No authorized media asset resolver in this evaluator"
+    },
+    {
+      "name": "Spacer",
+      "disposition": "existing-equivalent",
+      "details": "Spacer"
+    },
+    {
+      "name": "Divider",
+      "disposition": "existing-equivalent",
+      "details": "Divider"
+    },
+    {
+      "name": "Tabs",
+      "disposition": "adapted-source",
+      "details": "Tabs"
+    },
+    {
+      "name": "Title",
+      "disposition": "existing-equivalent",
+      "details": "Title"
+    },
+    {
+      "name": "Text",
+      "disposition": "existing-equivalent",
+      "details": "Text"
+    },
+    {
+      "name": "Caption",
+      "disposition": "existing-equivalent",
+      "details": "Caption"
+    },
+    {
+      "name": "Label",
+      "disposition": "existing-equivalent",
+      "details": "Label"
+    },
+    {
+      "name": "Bold",
+      "disposition": "existing-equivalent",
+      "details": "Text/Markdown"
+    },
+    {
+      "name": "Italic",
+      "disposition": "existing-equivalent",
+      "details": "Text/Markdown"
+    },
+    {
+      "name": "Underline",
+      "disposition": "existing-equivalent",
+      "details": "Text emphasis where supported"
+    },
+    {
+      "name": "Strikethrough",
+      "disposition": "existing-equivalent",
+      "details": "Text/Markdown"
+    },
+    {
+      "name": "Badge",
+      "disposition": "existing-equivalent",
+      "details": "Badge"
+    },
+    {
+      "name": "Blockquote",
+      "disposition": "existing-equivalent",
+      "details": "Quote"
+    },
+    {
+      "name": "Code",
+      "disposition": "existing-equivalent",
+      "details": "Code"
+    },
+    {
+      "name": "Markdown",
+      "disposition": "existing-equivalent",
+      "details": "Markdown"
+    },
+    {
+      "name": "Math",
+      "disposition": "existing-equivalent",
+      "details": "Math"
+    },
+    {
+      "name": "ShimmerText",
+      "disposition": "existing-equivalent",
+      "details": "App-owned loading status"
+    },
+    {
+      "name": "Link",
+      "disposition": "existing-equivalent",
+      "details": "Source for vetted evidence URLs"
+    },
+    {
+      "name": "Tooltip",
+      "disposition": "existing-equivalent",
+      "details": "Popover"
+    },
+    {
+      "name": "Button",
+      "disposition": "existing-equivalent",
+      "details": "Button"
+    },
+    {
+      "name": "Pressable",
+      "disposition": "existing-equivalent",
+      "details": "Pressable"
+    },
+    {
+      "name": "Form",
+      "disposition": "existing-equivalent",
+      "details": "Form"
+    },
+    {
+      "name": "TextField",
+      "disposition": "existing-equivalent",
+      "details": "Input"
+    },
+    {
+      "name": "TextArea",
+      "disposition": "existing-equivalent",
+      "details": "TextArea"
+    },
+    {
+      "name": "Select",
+      "disposition": "existing-equivalent",
+      "details": "Select"
+    },
+    {
+      "name": "CheckBox",
+      "disposition": "existing-equivalent",
+      "details": "Checkbox"
+    },
+    {
+      "name": "Radio",
+      "disposition": "existing-equivalent",
+      "details": "RadioGroup"
+    },
+    {
+      "name": "RadioGroup",
+      "disposition": "existing-equivalent",
+      "details": "RadioGroup"
+    },
+    {
+      "name": "Slider",
+      "disposition": "existing-equivalent",
+      "details": "Slider"
+    },
+    {
+      "name": "SegmentedControl",
+      "disposition": "existing-equivalent",
+      "details": "SegmentedControl"
+    },
+    {
+      "name": "ChoicePicker",
+      "disposition": "existing-equivalent",
+      "details": "Select / RadioGroup"
+    },
+    {
+      "name": "DateTimeInput",
+      "disposition": "existing-equivalent",
+      "details": "DatePicker (date only)"
+    },
+    {
+      "name": "PulseIndicator",
+      "disposition": "existing-equivalent",
+      "details": "App-owned status or Badge"
+    },
+    {
+      "name": "FlashcardFlip",
+      "disposition": "existing-equivalent",
+      "details": "Flashcard"
+    },
+    {
+      "name": "Popover",
+      "disposition": "existing-equivalent",
+      "details": "Popover"
+    },
+    {
+      "name": "PopoverTrigger",
+      "disposition": "existing-equivalent",
+      "details": "Popover owns its trigger"
+    },
+    {
+      "name": "PopoverContent",
+      "disposition": "existing-equivalent",
+      "details": "Popover owns its content"
+    },
+    {
+      "name": "Modal",
+      "disposition": "existing-equivalent",
+      "details": "Popover for nonessential supporting content; no modal registered"
+    },
+    {
+      "name": "Table",
+      "disposition": "existing-equivalent",
+      "details": "Table"
+    },
+    {
+      "name": "TableSection",
+      "disposition": "existing-equivalent",
+      "details": "Table"
+    },
+    {
+      "name": "TableRow",
+      "disposition": "existing-equivalent",
+      "details": "Table"
+    },
+    {
+      "name": "TableCell",
+      "disposition": "existing-equivalent",
+      "details": "Table"
+    },
+    {
+      "name": "List",
+      "disposition": "existing-equivalent",
+      "details": "List"
+    },
+    {
+      "name": "ListItem",
+      "disposition": "existing-equivalent",
+      "details": "ListItem"
+    },
+    {
+      "name": "Chart",
+      "disposition": "existing-equivalent",
+      "details": "Chart"
+    },
+    {
+      "name": "Map",
+      "disposition": "excluded",
+      "details": "No authorized map/tiles provider in this evaluator"
+    },
+    {
+      "name": "Image",
+      "disposition": "excluded",
+      "details": "No authorized media asset resolver in this evaluator"
+    },
+    {
+      "name": "Icon",
+      "disposition": "existing-equivalent",
+      "details": "Icon"
+    },
+    {
+      "name": "Favicon",
+      "disposition": "existing-equivalent",
+      "details": "No remote favicon requests; use trusted Xroga source data when available"
+    },
+    {
+      "name": "Svg",
+      "disposition": "existing-equivalent",
+      "details": "Svg"
+    },
+    {
+      "name": "Video",
+      "disposition": "excluded",
+      "details": "No authorized media asset resolver in this evaluator"
+    },
+    {
+      "name": "AudioPlayer",
+      "disposition": "excluded",
+      "details": "No authorized media asset resolver in this evaluator"
+    },
+    {
+      "name": "HtmlView",
+      "disposition": "excluded",
+      "details": "Untrusted generated HTML excluded"
+    },
+    {
+      "name": "LinkCard",
+      "disposition": "existing-equivalent",
+      "details": "Source or Card with Source"
+    },
+    {
+      "name": "Citation",
+      "disposition": "existing-equivalent",
+      "details": "Source"
+    },
+    {
+      "name": "FollowUp",
+      "disposition": "existing-equivalent",
+      "details": "Workspace-owned action, not callable by model UI"
+    },
+    {
+      "name": "EntityCard",
+      "disposition": "existing-equivalent",
+      "details": "Card and Source, no executable entity actions"
+    },
+    {
+      "name": "ImageGrid",
+      "disposition": "excluded",
+      "details": "No authorized media asset resolver in this evaluator"
+    }
+  ]
+}

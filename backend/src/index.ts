@@ -31,6 +31,7 @@ import billingWebhookRouter from './routes/billingWebhook.js';
 import simpleChatRouter from './routes/simpleChat.js';
 import v1Router from './routes/v1.js';
 import phase1Router from './routes/phase1.js';
+import nativeOpenUiEvaluationRouter from './routes/nativeOpenUiEvaluation.js';
 import guestChatRouter from './routes/guestChat.js';
 import phase1BusinessPreflightRouter from './routes/phase1BusinessPreflight.js';
 import businessAutomationsRouter from './routes/businessAutomations.js';
@@ -227,6 +228,7 @@ app.use(
   businessAutomationsRouter,
   phase1Router,
 );
+app.use('/api/native-openui', nativeOpenUiEvaluationRouter);
 app.use('/api/dashboard', authMiddleware, dashboardRouter);
 app.use('/api/tasks', authMiddleware, tasksRouter);
 app.use('/api/referrals', authMiddleware, referralsRouter);

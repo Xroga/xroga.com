@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "fc9938a7effd4f7fd8e4c6237fb8914f9a8c593c",
+  "source_sha": "6652ea3765540b2f78a7cf8bc4ac70e3d184b643",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -8168,6 +8168,7 @@
         "backend/src/routes/businessAutomationWebhook.ts",
         "backend/src/routes/existingSource.ts",
         "backend/src/routes/guestChat.ts",
+        "backend/src/routes/nativeOpenUiEvaluation.ts",
         "backend/src/runtime/readiness.ts",
         "backend/src/runtime/startupPolicy.ts",
         "backend/src/sandbox/containerCancellation.local.integration.ts",
@@ -8187,6 +8188,7 @@
         "backend/src/workers/proxySidecar.ts",
         "frontend/src/app/(workspace)/workspace/page.tsx",
         "frontend/src/app/api/showcase/aura/chat/route.ts",
+        "frontend/src/app/native-answer-evaluation/page.tsx",
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "hostnames": [],
@@ -8248,6 +8250,8 @@
         "MODEL_CIRCUIT_RECOVERY_MS",
         "MONGODB_URI",
         "MORPH_API_KEY",
+        "NATIVE_OPENUI_EVALUATION_MAX_MICRO_USD",
+        "NATIVE_OPENUI_EVALUATOR_ID",
         "NEON_DATABASE_URL",
         "OPENAI_API_KEY",
         "PATH",
@@ -8396,6 +8400,7 @@
         "backend/src/routes/businessAutomationWebhook.ts",
         "backend/src/routes/existingSource.ts",
         "backend/src/routes/guestChat.ts",
+        "backend/src/routes/nativeOpenUiEvaluation.ts",
         "backend/src/runtime/readiness.ts",
         "backend/src/runtime/startupPolicy.ts",
         "backend/src/sandbox/containerCancellation.local.integration.ts",
@@ -8415,6 +8420,7 @@
         "backend/src/workers/proxySidecar.ts",
         "frontend/src/app/(workspace)/workspace/page.tsx",
         "frontend/src/app/api/showcase/aura/chat/route.ts",
+        "frontend/src/app/native-answer-evaluation/page.tsx",
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
@@ -10921,6 +10927,45 @@
       ]
     },
     {
+      "name": "NATIVE_OPENUI_EVALUATION_MAX_MICRO_USD",
+      "consuming_sources": [
+        "backend/src/routes/nativeOpenUiEvaluation.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "NATIVE_OPENUI_EVALUATOR_ID",
+      "consuming_sources": [
+        "backend/src/routes/nativeOpenUiEvaluation.ts",
+        "frontend/src/app/native-answer-evaluation/page.tsx"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
       "name": "NEON_DATABASE_URL",
       "consuming_sources": [
         "backend/src/lib/capabilityRegistry.ts"
@@ -11320,6 +11365,7 @@
         "frontend/src/components/dashboard/ApiConnectionBanner.tsx",
         "frontend/src/components/homepage-next/phase1/useOrchestration.ts",
         "frontend/src/components/homepage-next/s04/useScene.ts",
+        "frontend/src/components/native-openui/renderer-config.ts",
         "frontend/src/lib/api.ts"
       ],
       "environments": [
@@ -16684,6 +16730,14 @@
       "sha256": "901a9eaf9253a042659bc440edb8c79cfe7d1b4b30ae9d7ce839c09c74ae3645"
     },
     {
+      "path": "backend/src/ai/nativeOpenUi.ts",
+      "sha256": "382e4d1d9076a23b364fdaa2aff3dfb52694fecc44e4f78cdca43bbd1a478938"
+    },
+    {
+      "path": "backend/src/ai/nativeOpenUiPrompt.ts",
+      "sha256": "7bd53ad5ae6feaa058ccf03ec64eb776ed81a19c2f306478ebca7e0770d46786"
+    },
+    {
       "path": "backend/src/ai/openaiCompat.ts",
       "sha256": "c159e3bd321637cc26214829ed36bca439a102e91983e6fd93fcbee36ef61544"
     },
@@ -17617,7 +17671,7 @@
     },
     {
       "path": "backend/src/index.ts",
-      "sha256": "b062ce27a40145f293271908a325c44f740dd62d457b7c5be830acf2eb32b7c6"
+      "sha256": "7b3b0b45bf811d74b63bbc4258b73668599a1fb625388e3c0c8fbd557afa43fe"
     },
     {
       "path": "backend/src/lib/adaptiveOrchestrator.ts",
@@ -18154,6 +18208,10 @@
     {
       "path": "backend/src/routes/messageShares.ts",
       "sha256": "e69821ae544aecfe8073586f737f2e39e9344360c034705f41f005d457427ac1"
+    },
+    {
+      "path": "backend/src/routes/nativeOpenUiEvaluation.ts",
+      "sha256": "5a83042a4a47e4e742e85ceebb04f8eb3ddcfc91e6dd3f613081f8c32c33969a"
     },
     {
       "path": "backend/src/routes/notifications.ts",
@@ -20116,6 +20174,10 @@
       "sha256": "bae3b76f60214a12282ac932ad2ccd0f62da194a480e4b28da6ff24d1b90704b"
     },
     {
+      "path": "frontend/src/app/native-answer-evaluation/page.tsx",
+      "sha256": "418ea722245bcaea506cef7dfc5e292f91fd25516f16dd4f7682760c516d19c6"
+    },
+    {
       "path": "frontend/src/app/not-found.tsx",
       "sha256": "56f1fd35ef6913e084cb7d514770e2c954ec565b932e153fc0d8c17e06002889"
     },
@@ -20533,7 +20595,7 @@
     },
     {
       "path": "frontend/src/components/dashboard/DashboardView.tsx",
-      "sha256": "31218793ba7eadbcb863556c8df57565775f8ac23ba9007a4463dcf783d5ec6e"
+      "sha256": "1168d33a88e1b3a8ee3031136bc60172485ffaf155badf5b012752f0299ab2ab"
     },
     {
       "path": "frontend/src/components/dashboard/DashboardWelcome.tsx",
@@ -21585,7 +21647,7 @@
     },
     {
       "path": "frontend/src/components/layout/Sidebar.tsx",
-      "sha256": "c103d88e76e8b001be9ed2c5d32e09dda591faa69497d1e7a32b3729162320cb"
+      "sha256": "156f3e2d8a75fc99e718d77f4b3311aad80a8243187ad53fdcb25e6a2a8fae90"
     },
     {
       "path": "frontend/src/components/layout/SidebarActionMenu.tsx",
@@ -21597,15 +21659,15 @@
     },
     {
       "path": "frontend/src/components/layout/SidebarMovingTitle.tsx",
-      "sha256": "1abff744bd82506c8b18132613e20702dcee683185066b2eb41dcfa6a73064a7"
+      "sha256": "678b902d726647af8fb52e7ab1b7b5db15d042283dd62799f991a1da572dfea5"
     },
     {
       "path": "frontend/src/components/layout/SidebarNavScroller.tsx",
-      "sha256": "876418c9c2555c51d31cb25549bb84d0526df9a8fdda429c5e6b0b15c6f5fc01"
+      "sha256": "88b416a3164797ba1081419d50c97a58e809055a9edea69dcf8e7efd06cc6b17"
     },
     {
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "sha256": "7daceb7dfb3cd3b1faf8b1f42f6e11243daf15afa78ff8fe076371ae510f9628"
+      "sha256": "403def6e0480eb4371f4c73261063c46af91996a8287e7722609c89d6e6ac237"
     },
     {
       "path": "frontend/src/components/layout/SidebarSearchModal.tsx",
@@ -21665,11 +21727,15 @@
     },
     {
       "path": "frontend/src/components/marketing/AiAppBuilderLanding.tsx",
-      "sha256": "e1eb7cb35b512811c0479a2b654d8761773ea46bdf80ec1e9a8580e1df1202e1"
+      "sha256": "d349e01dd506f0ee950ef131a09a492d617e7a8e486e66d6b9e1cb4825bff171"
     },
     {
       "path": "frontend/src/components/marketing/AiAppBuilderPrompt.tsx",
       "sha256": "8cc1c60efe052177e6cb6c9888e28bafc625bb1582a6a26bc4897cd9ac0ff529"
+    },
+    {
+      "path": "frontend/src/components/marketing/AiAppBuilderSeoContent.tsx",
+      "sha256": "cfde1940f87dea9b8e463c9890f982de51a813c93a127a87f90d9f17741c94b8"
     },
     {
       "path": "frontend/src/components/marketing/AiAppBuilderWatercolor.tsx",
@@ -21730,6 +21796,78 @@
     {
       "path": "frontend/src/components/marketing/SoftwarePrompt.tsx",
       "sha256": "f95cfd8300505ad3bf09c36ab2c232b223e7da70f29cea2d3ab3ed2737a08d4b"
+    },
+    {
+      "path": "frontend/src/components/native-openui/Evaluation.tsx",
+      "sha256": "af5454037738f9865c2608f66c389e4ea52e19debbb5ffba0101b77294c33dac"
+    },
+    {
+      "path": "frontend/src/components/native-openui/NativeSurface.tsx",
+      "sha256": "b72feb4320d4571cfb492e572d199caa08ff8a8b13f424b7e2786718dce62d5f"
+    },
+    {
+      "path": "frontend/src/components/native-openui/Tabs.tsx",
+      "sha256": "7d31def2031bd99eaec52f99d53716d93a36238635db26730ff1d063394fc15f"
+    },
+    {
+      "path": "frontend/src/components/native-openui/library.tsx",
+      "sha256": "720f7bb95424e1116c86ee5204de7370c9bb9ed2d91632d272341083ccc32f81"
+    },
+    {
+      "path": "frontend/src/components/native-openui/renderer-config.ts",
+      "sha256": "4c5bb2ab1d43f464d7b34a6fc4f648e02d23bc13bec622df3bd825333f281874"
+    },
+    {
+      "path": "frontend/src/components/native-openui/upstream/components/chart.tsx",
+      "sha256": "d6ee89cad28563b329272a9f4271c2b20f6c358b1de6ea1f2fc34c16586a8afc"
+    },
+    {
+      "path": "frontend/src/components/native-openui/upstream/components/controls.tsx",
+      "sha256": "6fb1431d6b8476a8a4be7c18d9d9feba68a7bfa032de8c69807e08307355ad93"
+    },
+    {
+      "path": "frontend/src/components/native-openui/upstream/components/extra.tsx",
+      "sha256": "e299208bbe5eb29a71f4717cefe85edb605f445211c84a3eedba8fafb5b1c1d7"
+    },
+    {
+      "path": "frontend/src/components/native-openui/upstream/components/glyph.tsx",
+      "sha256": "d50c40153b5bd8039d4054cb52ddd85a05d5989eeeb77b47f35f05271671560f"
+    },
+    {
+      "path": "frontend/src/components/native-openui/upstream/components/layout.tsx",
+      "sha256": "3707aa0745b61887d74692a37b9c787d15d0d7c9b5c38dfb6c9ecfbdce0beb4f"
+    },
+    {
+      "path": "frontend/src/components/native-openui/upstream/components/markdown.tsx",
+      "sha256": "3040ec84df4fb5925fa5087df1cca52cd536777b0d3c76aa4e0a636d9d62bb56"
+    },
+    {
+      "path": "frontend/src/components/native-openui/upstream/components/style.ts",
+      "sha256": "5917e4877b60ce0ab2cb2ba2d82a5c87976df61757226af91cc0deb576c272c3"
+    },
+    {
+      "path": "frontend/src/components/native-openui/upstream/components/svg.tsx",
+      "sha256": "609d543f30ea118214894781ae241ba28e076ea49132cd79a54fb87cbb2245a4"
+    },
+    {
+      "path": "frontend/src/components/native-openui/upstream/components/table.tsx",
+      "sha256": "a7fb8a663758f10981afd868a375a40b56a93fb55a9bd1e17aa74710a8650b17"
+    },
+    {
+      "path": "frontend/src/components/native-openui/upstream/components/text.tsx",
+      "sha256": "fe813b0b1549d4d7ff3ec898fb0ff3dd34cd61df7a8a94bda86a18b4523b21a0"
+    },
+    {
+      "path": "frontend/src/components/native-openui/upstream/functions/numbers.ts",
+      "sha256": "a165969fc08879e326fb04041f377c1bb38fcf0d5a4570b8bf3291e8d36ae515"
+    },
+    {
+      "path": "frontend/src/components/native-openui/upstream/functions/shared.ts",
+      "sha256": "480202aecc2e893be42d995caa028bbb4607a9d806ab565a0a5158d184e38ba8"
+    },
+    {
+      "path": "frontend/src/components/native-openui/upstream/functions/text.ts",
+      "sha256": "bb07529302d391b27670a651f45383cc2fb77a1d3bcf6965ac37664257c39dcb"
     },
     {
       "path": "frontend/src/components/notifications/NotificationBell.tsx",
@@ -22221,7 +22359,7 @@
     },
     {
       "path": "frontend/src/components/terminal/ChatTurnRail.tsx",
-      "sha256": "6afcf033d68796efb15e3bcec771bec8840bda755b3b9f7ffe660e1ad40b843d"
+      "sha256": "a8cb247e4540341a102045b91342063fd1741bc5b712b41f50f38bcd979e8378"
     },
     {
       "path": "frontend/src/components/terminal/ChatbarQueueOutside.tsx",
@@ -22432,12 +22570,16 @@
       "sha256": "8e0b17b81dcdb750e39ecf274727996fc6a899a2c4eafbd5132b5fa9bf1e49ed"
     },
     {
+      "path": "frontend/src/components/terminal/WorkspaceConversationMenu.tsx",
+      "sha256": "56ffd86b127f7c4fc86305785b68cb3a1c1e82202d8a48e73b4d5a4177bd1513"
+    },
+    {
       "path": "frontend/src/components/terminal/WorkspaceIdentityMenu.tsx",
       "sha256": "267574d0f4175c1b1075d14c1a5c8e39de4a9c315101479d8edd8c3c8c894dd7"
     },
     {
       "path": "frontend/src/components/terminal/WorkspaceLauncher.tsx",
-      "sha256": "88725edfafa78eeb8e50129641166281becee1d7e81b99a86d7d10c2f0e9c867"
+      "sha256": "fb66177195fa8ac30107e287b33e186452aa7c3a4d46bf4c279ab8affa93e6f2"
     },
     {
       "path": "frontend/src/components/terminal/WorkspacePeopleControls.tsx",
@@ -22701,7 +22843,7 @@
     },
     {
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "sha256": "e63361404059650e86323ce433c60037c52409a119beece8baf48acc90254c5b"
+      "sha256": "88017b26b195c939a255d361cf3b903eb7a8faf806abe2ae6417326e7b0a9656"
     },
     {
       "path": "frontend/src/context/TerminalScrollContext.tsx",
@@ -22817,7 +22959,7 @@
     },
     {
       "path": "frontend/src/lib/capabilityPages.ts",
-      "sha256": "7733757da3fe9c24bcb1bec24e50e426957c3328151f5766dc4a81d92d1a3f0e"
+      "sha256": "a87bebf54942f456218cff340737efacfa6626b30749863b7d682d257801b343"
     },
     {
       "path": "frontend/src/lib/capacityMessage.ts",
@@ -25211,42 +25353,42 @@
       "hostname": "localhost",
       "protocol": "http:",
       "path": "backend/src/index.ts",
-      "line": 116,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "xroga.com",
-      "protocol": "https:",
-      "path": "backend/src/index.ts",
       "line": 117,
       "credentialsInUrl": false
     },
     {
-      "hostname": "www.xroga.com",
+      "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/index.ts",
       "line": 118,
       "credentialsInUrl": false
     },
     {
-      "hostname": "xrogaaicom.vercel.app",
+      "hostname": "www.xroga.com",
       "protocol": "https:",
       "path": "backend/src/index.ts",
       "line": 119,
       "credentialsInUrl": false
     },
     {
-      "hostname": "xroga-api.fly.dev",
+      "hostname": "xrogaaicom.vercel.app",
       "protocol": "https:",
       "path": "backend/src/index.ts",
       "line": 120,
       "credentialsInUrl": false
     },
     {
+      "hostname": "xroga-api.fly.dev",
+      "protocol": "https:",
+      "path": "backend/src/index.ts",
+      "line": 121,
+      "credentialsInUrl": false
+    },
+    {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/index.ts",
-      "line": 212,
+      "line": 213,
       "credentialsInUrl": false
     },
     {
@@ -29131,14 +29273,14 @@
       "hostname": "x.com",
       "protocol": "https:",
       "path": "frontend/src/components/marketing/AiAppBuilderLanding.tsx",
-      "line": 633,
+      "line": 637,
       "credentialsInUrl": false
     },
     {
       "hostname": "github.com",
       "protocol": "https:",
       "path": "frontend/src/components/marketing/AiAppBuilderLanding.tsx",
-      "line": 642,
+      "line": 646,
       "credentialsInUrl": false
     },
     {
@@ -29733,7 +29875,7 @@
       "hostname": "github.com",
       "protocol": "https:",
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 4002,
+      "line": 4012,
       "credentialsInUrl": false
     },
     {
@@ -31764,6 +31906,62 @@
     {
       "path": "backend/src/ai/modelCapabilityRegistry.ts",
       "line": 136,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/nativeOpenUi.ts",
+      "line": 9,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/nativeOpenUi.ts",
+      "line": 10,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/nativeOpenUi.ts",
+      "line": 11,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/nativeOpenUi.ts",
+      "line": 12,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/nativeOpenUi.ts",
+      "line": 34,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/nativeOpenUi.ts",
+      "line": 51,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/nativeOpenUi.ts",
+      "line": 73,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/nativeOpenUi.ts",
+      "line": 90,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -37782,6 +37980,41 @@
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
+      "path": "frontend/src/components/native-openui/NativeSurface.tsx",
+      "line": 19,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/components/native-openui/NativeSurface.tsx",
+      "line": 25,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/components/native-openui/library.tsx",
+      "line": 19,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/components/native-openui/upstream/components/chart.tsx",
+      "line": 292,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/components/native-openui/upstream/functions/shared.ts",
+      "line": 71,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
       "path": "frontend/src/components/os-preview/Command2Sections.tsx",
       "line": 123,
       "scope": "FUNCTION_LOCAL",
@@ -38014,14 +38247,14 @@
     },
     {
       "path": "frontend/src/components/terminal/ChatTurnRail.tsx",
-      "line": 155,
+      "line": 177,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/terminal/ChatTurnRail.tsx",
-      "line": 164,
+      "line": 186,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -38050,6 +38283,20 @@
     {
       "path": "frontend/src/components/terminal/SwarmMessageLog.tsx",
       "line": 225,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/components/terminal/WorkspaceConversationMenu.tsx",
+      "line": 105,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/components/terminal/WorkspaceConversationMenu.tsx",
+      "line": 106,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -38126,14 +38373,14 @@
     },
     {
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 2046,
+      "line": 2056,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 2079,
+      "line": 2089,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
