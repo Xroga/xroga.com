@@ -256,6 +256,10 @@ export function Sidebar({ displayName, email }: SidebarProps) {
   const profileRowRef = useRef<HTMLDivElement>(null);
   /** Set when a press on the edge toggle became a resize, so the click is ignored. */
   const edgeToggleDraggedRef = useRef(false);
+  // Resize against real DOM widths while dragging. Persist only on release so
+  // heavy workspace content does not rerender for every pointer movement.
+  const sidebarFrameRef = useRef<HTMLDivElement>(null);
+  const sidebarPanelRef = useRef<HTMLElement>(null);
   /** Pending hover-to-open, so leaving the mark before the delay cancels it. */
   const hoverOpenTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { setAvatarUrl, uploadAvatarFile } = useAvatarUpdate();
@@ -349,24 +353,58 @@ export function Sidebar({ displayName, email }: SidebarProps) {
     const startW = sidebarWidth;
     let pendingWidth = startW;
     let frame = 0;
+    let active = true;
     document.body.classList.add('xv-sidebar-resizing');
 
+    // Keep the sidebar, shell and fixed composer at the same live boundary.
+    // TerminalDock owns an inline CSS variable, so updating only the shell's
+    // variable would leave its composer behind during a drag.
+    function syncGeometry(pixels: string) {
+      const frame = sidebarFrameRef.current;
+      if (frame) {
+        frame.style.width = pixels;
+        frame.closest<HTMLElement>('[data-testid="workspace-shell"]')?.style.setProperty('--sidebar-width', pixels);
+      }
+      if (sidebarPanelRef.current) sidebarPanelRef.current.style.width = pixels;
+      document.querySelector<HTMLElement>('.xv-terminal-dock')?.style.setProperty('--sidebar-width', pixels);
+    }
+
+    // The sidebar remains a flex sibling of the workspace; changing its real
+    // frame width lets the browser size both panes together without repainting
+    // the entire React conversation tree on every mouse move.
+    function paint() {
+      frame = 0;
+      if (!active) return;
+      const width = Math.min(SIDEBAR_MAX_WIDTH, Math.max(SIDEBAR_MIN_WIDTH, pendingWidth));
+      const pixels = `${width}px`;
+      syncGeometry(pixels);
+    }
     function onMove(ev: PointerEvent) {
       pendingWidth = startW + (ev.clientX - startX);
-      if (!frame) frame = requestAnimationFrame(() => { frame = 0; setSidebarWidth(pendingWidth); });
+      if (!frame) frame = requestAnimationFrame(paint);
     }
-    function onUp() {
+    function finish(commit: boolean) {
+      if (!active) return;
+      active = false;
       if (frame) cancelAnimationFrame(frame);
-      if (pendingWidth < SIDEBAR_MIN_WIDTH - 40) toggleSidebar();
-      else setSidebarWidth(pendingWidth);
+      frame = 0;
+      if (!commit) {
+        syncGeometry(`${startW}px`);
+      } else if (pendingWidth < SIDEBAR_MIN_WIDTH - 40) {
+        toggleSidebar();
+      } else {
+        setSidebarWidth(pendingWidth);
+      }
       document.body.classList.remove('xv-sidebar-resizing');
       document.removeEventListener('pointermove', onMove);
       document.removeEventListener('pointerup', onUp);
-      document.removeEventListener('pointercancel', onUp);
+      document.removeEventListener('pointercancel', onCancel);
     }
+    function onUp() { finish(true); }
+    function onCancel() { finish(false); }
     document.addEventListener('pointermove', onMove);
     document.addEventListener('pointerup', onUp, { once: true });
-    document.addEventListener('pointercancel', onUp, { once: true });
+    document.addEventListener('pointercancel', onCancel, { once: true });
   }
 
   function startResize(e: React.PointerEvent<HTMLDivElement>) {
@@ -900,11 +938,13 @@ export function Sidebar({ displayName, email }: SidebarProps) {
         )}
 
       <div
+        ref={sidebarFrameRef}
         className={cn(compactStyles.compact, 'xv-sidebar-root relative hidden lg:block shrink-0', !effectiveSidebarOpen && 'is-collapsed')}
         onClickCapture={event => { if (!effectiveSidebarOpen && !terminalFullscreen) { event.preventDefault(); event.stopPropagation(); toggleSidebar(); } }}
         style={{ width: asideWidth }}
       >
         <aside
+  ref={sidebarPanelRef}
   className={cn(
     'xv-sidebar-floating xv-sidebar-hover relative z-40 flex flex-col shrink-0 overflow-hidden transition-opacity duration-150 opacity-100'
   )}
