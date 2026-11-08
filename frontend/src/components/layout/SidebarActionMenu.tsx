@@ -1,7 +1,7 @@
 'use client';
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { Fragment, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Archive, ArrowDown, ArrowUp, Copy, ExternalLink, FolderInput, FolderPlus, Pencil, Pin, PinOff, Share2, Trash2, X } from 'lucide-react';
+import { Archive, ArrowDown, ArrowUp, ChevronDown, Copy, ExternalLink, FolderInput, FolderPlus, Pencil, Pin, PinOff, Share2, Trash2, X } from 'lucide-react';
 
 export type SidebarActionId='share'|'copy'|'open'|'rename'|'pin'|'move-project'|'move-section'|'archive'|'delete'|'pin-up'|'pin-down';
 export type SidebarMenuAction={id:SidebarActionId;label:string;disabled?:boolean;danger?:boolean};
@@ -10,8 +10,9 @@ const Icons={
  'move-project':FolderInput,'move-section':FolderPlus,archive:Archive,delete:Trash2,
  'pin-up':ArrowUp,'pin-down':ArrowDown,
 } as const;
-export function SidebarActionMenu({point,actions,onClose,onSelect}:{
+export function SidebarActionMenu({point,title,actions,onClose,onSelect}:{
  point:{x:number;y:number}|null;
+ title?:string;
  actions:SidebarMenuAction[];
  onClose:()=>void;onSelect:(action:SidebarActionId)=>void;
 }){
@@ -22,9 +23,11 @@ export function SidebarActionMenu({point,actions,onClose,onSelect}:{
   const box=menu.current.getBoundingClientRect();
   const width=Math.min(box.width,window.innerWidth-24);
   const height=Math.min(box.height,window.innerHeight-24);
-  setPos({left:Math.max(12,Math.min(point.x,window.innerWidth-width-12)),
-   top:Math.max(12,Math.min(point.y,window.innerHeight-height-12))});
-  menu.current.querySelector<HTMLButtonElement>('button:not([disabled])')?.focus({preventScroll:true});
+  setPos(window.innerWidth<640
+   ? {left:Math.max(12,Math.round((window.innerWidth-width)/2)),top:Math.max(12,window.innerHeight-height-12)}
+   : {left:Math.max(12,Math.min(point.x,window.innerWidth-width-12)),
+      top:Math.max(12,Math.min(point.y,window.innerHeight-height-12))});
+ menu.current.querySelector<HTMLButtonElement>('button:not([disabled])')?.focus({preventScroll:true});
  },[point,actions.length]);
  useEffect(()=>{
   if(!point)return;
@@ -44,23 +47,30 @@ export function SidebarActionMenu({point,actions,onClose,onSelect}:{
     window.removeEventListener('scroll',onClose,true);window.removeEventListener('resize',onClose);};
  },[point,onClose]);
  if(!point||typeof document==='undefined')return null;
- return createPortal(<div ref={menu} role="menu" aria-label="Organize saved work"
+ return createPortal(<div ref={menu} role="menu" aria-label={title?'Actions for '+title:'Organize saved work'}
   className="xv-sidebar-work-menu" style={{position:'fixed',left:pos.left,top:pos.top,
-   width:'min(238px,calc(100vw - 24px))',maxHeight:'calc(100dvh - 24px)',overflowY:'auto',
+   width:'min(252px,calc(100vw - 24px))',maxHeight:'calc(100dvh - 24px)',overflowY:'auto',
    zIndex:10030,background:'var(--card)',color:'var(--foreground)',
    border:'1px solid var(--card-border)',borderRadius:12,padding:5,
    boxShadow:'0 14px 42px rgba(0,0,0,.24)',overscrollBehavior:'contain'}}>
-  {actions.map(action=>{
+  {title?<div className="xv-sidebar-work-menu__title" title={title}>
+   <span>{title}</span><ChevronDown size={13} aria-hidden="true"/>
+ </div>:null}
+ {actions.map(action=>{
    const Icon=action.id==='pin'&&action.label.startsWith('Unpin')?PinOff:Icons[action.id];
-   return <button type="button" role="menuitem" key={action.id} disabled={action.disabled}
-     onClick={()=>onSelect(action.id)}
-     className="xv-sidebar-work-menu__action"
-     style={{display:'flex',alignItems:'center',gap:10,width:'100%',padding:'9px 11px',
-      fontSize:12,textAlign:'left',borderRadius:8,color:action.danger?'var(--destructive,#f66)':'inherit',
-      opacity:action.disabled?.45:1}}>
-      <Icon size={15} aria-hidden="true"/><span>{action.label}</span>
-     </button>;
-  })}
-  <button type="button" aria-label="Close menu" className="sr-only" onClick={onClose}><X size={14}/></button>
+   const separator=action.id==='share'||action.id==='move-project'||action.id==='archive';
+   return <Fragment key={action.id}>
+     {separator?<div className="xv-sidebar-work-menu__divider" role="separator"/>:null}
+     <button type="button" role="menuitem" disabled={action.disabled}
+       onClick={()=>onSelect(action.id)}
+       className="xv-sidebar-work-menu__action"
+       style={{display:'flex',alignItems:'center',gap:10,width:'100%',padding:'9px 11px',
+        fontSize:12,textAlign:'left',borderRadius:8,color:action.danger?'var(--destructive,#f66)':'inherit',
+        opacity:action.disabled?.45:1}}>
+       <Icon size={15} aria-hidden="true"/><span>{action.label}</span>
+     </button>
+   </Fragment>;
+ })}
+ <button type="button" aria-label="Close menu" className="sr-only" onClick={onClose}><X size={14}/></button>
  </div>,document.body);
 }
