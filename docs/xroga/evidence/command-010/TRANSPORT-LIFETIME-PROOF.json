@@ -287,7 +287,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "d3742ca4dccc50daf99aa71d9896449957dde73798dc6d7c2a9c5ca5536cff32",
+      "sha256": "c5eee2fd7ac3c6211e1e0b53fa516357ef110a07504ff45c29111a4b5dbe6f43",
       "previousGenericSdkBinding": {
         "sha256": "e5b3b4a3dc538e708fa8c005a8da6584db01b3dd425833373d59decbd2bfcb93",
         "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
