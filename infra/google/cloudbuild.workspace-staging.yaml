@@ -38,14 +38,13 @@ steps:
 images:
   - '${_REPOSITORY}/xroga-api-migration:${_SOURCE_SHA}'
   - '${_REPOSITORY}/xroga-workspace-openui-staging:${_SOURCE_SHA}'
-artifacts:
-  objects:
-    location: 'gs://project-c40d4821-e647-4fa2-92d_cloudbuild/openui-workspace/${_SOURCE_SHA}/'
-    paths: [workspace-staging-manifest.json]
+# The frontend image contains the validated manifest at /app/workspace-staging-manifest.json.
+# Verify it against the successful Cloud Build record and both registry digests.
+# The builder needs no write access to the source archive bucket.
 substitutions:
   _SOURCE_SHA: ''
   _SUPABASE_PUBLISHABLE_KEY: ''
   _REPOSITORY: us-east4-docker.pkg.dev/project-c40d4821-e647-4fa2-92d/cloud-run-source-deploy
 options:
   logging: CLOUD_LOGGING_ONLY
-timeout: 1200s
+timeout: 900s

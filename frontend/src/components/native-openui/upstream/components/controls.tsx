@@ -442,15 +442,15 @@ const clock = (seconds: number) => {
 export const Timer = defineComponent({
   name: "Timer",
   props: z.object({
-    seconds: reactive(z.number()),
-    label: z.string().optional(),
+    seconds: reactive(z.number().min(0).max(3600)),
+    label: z.string().max(100).optional(),
   }),
-  description: "Countdown with start, pause and reset. It counts the bound seconds down to 0, so other statements can react, e.g. $left == 0.",
+  description: "User-started local countdown, at most 3600 seconds, with pause and reset. Bind a scalar such as $left to show a completion message. It is not a reminder or scheduled task.",
   component: function TimerView({ props, statementId }) {
     const field = useStateField(useFieldName(props.label, statementId), props.seconds);
     const streaming = useIsStreaming();
     const raw = typeof field.value === "number" ? field.value : Number(field.value);
-    const left = Number.isFinite(raw) ? Math.max(0, Math.floor(raw)) : 0;
+    const left = Number.isFinite(raw) ? Math.min(3600, Math.max(0, Math.floor(raw))) : 0;
     const [running, setRunning] = useState(false);
     // The ticking interval reads the latest value and setter, not the ones from when it started
     const live = useRef({ left, setValue: field.setValue });
@@ -459,7 +459,7 @@ export const Timer = defineComponent({
     const [startedAt, setStartedAt] = useState<number | null>(null);
 
     useEffect(() => {
-      if (!running) return;
+      if (!running || streaming) return;
       const id = setInterval(() => {
         const next = Math.max(0, live.current.left - 1);
         live.current.left = next;
@@ -467,7 +467,7 @@ export const Timer = defineComponent({
         if (next === 0) setRunning(false);
       }, 1000);
       return () => clearInterval(id);
-    }, [running]);
+    }, [running, streaming]);
 
     const toggle = () => {
       if (!running && startedAt === null) setStartedAt(left);

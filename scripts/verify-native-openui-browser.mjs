@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { createServer } from 'node:http';
 import { basename, resolve } from 'node:path';
 import { chromium } from 'playwright';
@@ -43,6 +43,10 @@ const cases = {
     '$end = "2028-03-01"',
     'root = Col([DatePicker($end, "End date"), Metric("Elapsed days", @DaysBetween("2028-02-28", $end)), Text(@AddMonths("2028-01-31", 1)), Button("Reset date", @Set($end, "2028-03-01"))])',
   ].join('\n') },
+  capabilities: { text: 'Practice with a local timer and review the supplied distribution.', program: [
+    '$seconds = 10',
+    'root = Col([Title("Practice and review"), Icon("plane", "lg", "info"), Timer($seconds, "Practice timer"), Text("First entries: " + @Slice("ABC", 0, 2)), Chart("bar", @Histogram([0, 1, 1, 4], 2, 0, 4), "key", ["value"])])',
+  ].join('\n') },
   stream: { text: 'The first section is available.', program: 'root = Col([Text("The first section is available.")])\ntail = Chart(' },
 };
 const compiled = await build({
@@ -62,11 +66,18 @@ const compiled = await build({
   loader: { '.woff2': 'dataurl', '.woff': 'dataurl', '.ttf': 'dataurl' },
 });
 const assets = new Map(compiled.outputFiles.map(file => ['/' + basename(file.path), file.contents]));
-const server = createServer((req, res) => {
+const server = createServer(async (req, res) => {
   const name = new URL(req.url, 'http://localhost').pathname;
   if (name === '/') {
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
     return res.end('<!doctype html><html lang="en"><head><title>Native OpenUI browser acceptance</title><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="stylesheet" href="/native.css"><style>body{margin:0} .native-evaluation-bar small{display:block;color:var(--iui-muted);font-size:13px}</style></head><body><main class="native-evaluation"><header class="native-evaluation-bar"><div><small>Xroga Workspace · Fixture</small><h1>Answer evaluation</h1></div></header><article class="native-evaluation-thread" id="root"></article></main><script type="module" src="/native.js"></script></body></html>');
+  }
+  if (/^\/native-icons\/lucide-1\.21\.0-\d{1,2}\.svg$/.test(name)) {
+    const file = await readFile(resolve('frontend/public', '.' + name)).catch(() => null);
+    if (file) {
+      res.setHeader('Content-Type', 'image/svg+xml');
+      return res.end(file);
+    }
   }
   if (!assets.has(name)) { res.statusCode = 404; return res.end(); }
   res.setHeader('Content-Type', name.endsWith('.js') ? 'text/javascript' : 'text/css');
@@ -192,6 +203,21 @@ try {
       await page.getByText('4', { exact: true }).waitFor();
       await page.getByRole('button', { name: 'Reset date' }).click();
       await page.getByText('2', { exact: true }).waitFor();
+      await open('capabilities');
+      const timer = page.getByRole('timer', { name: 'Practice timer' });
+      await timer.getByText('0:10').waitFor();
+      await timer.getByRole('button', { name: 'Start' }).click();
+      await timer.getByText('0:09').waitFor();
+      await timer.getByRole('button', { name: 'Pause' }).click();
+      await timer.getByRole('button', { name: 'Reset' }).click();
+      await timer.getByText('0:10').waitFor();
+      const icon = await page.locator('use[href$="#plane"]').getAttribute('href');
+      const sprite = await page.request.get(origin + icon.split('#')[0]);
+      assert.ok(sprite.ok());
+      assert.match(await sprite.text(), /<symbol id="plane"/);
+      await page.getByText('First entries: AB').waitFor();
+      await page.getByText('Chart data', { exact: true }).click();
+      await page.getByRole('cell', { name: '3', exact: true }).waitFor();
       await open('stream');
       assert.equal(await page.getByRole('region', { name: 'Answer', exact: true }).getAttribute('aria-busy'), 'true');
       await page.locator('.iui-text').getByText(cases.stream.text).waitFor();

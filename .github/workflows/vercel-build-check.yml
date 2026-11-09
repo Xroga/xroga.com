@@ -36,6 +36,8 @@ jobs:
           # Shared canonical server-side guest accounting imports the backend
           # Redis client. Use the frozen monorepo install used by Vercel too.
           npm ci
+          node scripts/generate-native-openui-spec.mjs --check
+          node scripts/generate-native-lucide-assets.mjs --check
           npm run lint --prefix frontend --workspaces=false
           npm run build --prefix frontend --workspaces=false
 
@@ -67,6 +69,7 @@ jobs:
           trap cleanup EXIT
           git archive "$SOURCE_SHA" | tar -x -C "$context"
           cd "$context"
+          node --test scripts/security/hosted-workspace-staging.test.mjs
           node --input-type=module <<'JS'
           import { writeFileSync } from 'node:fs';
           import { hostedWorkspaceManifest } from './scripts/security/hosted-workspace-staging.mjs';
@@ -78,6 +81,8 @@ jobs:
             --build-arg WORKSPACE_SUPABASE_PUBLISHABLE_KEY=sb_publishable_ci_fixture \
             -t "$image" .
           docker run -d --name "$name" -p 127.0.0.1:3217:8080 "$image"
+          docker cp "$name:/app/workspace-staging-manifest.json" "$RUNNER_TEMP/workspace-staging-manifest.json"
+          cmp workspace-staging-manifest.json "$RUNNER_TEMP/workspace-staging-manifest.json"
           curl --fail --retry 15 --retry-all-errors --retry-max-time 35 --max-time 4 --retry-delay 2 -sS http://localhost:3217/api/release |
             jq -e --arg sha "$SOURCE_SHA" '.release == $sha'
           status="$(curl -sS -o /dev/null -w '%{http_code}' -X POST http://localhost:3217/api/phase1/plan)"

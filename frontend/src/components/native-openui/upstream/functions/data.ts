@@ -124,3 +124,29 @@ export const Stats = defineFunction({
     return { count, min: sorted[0]!, max: sorted[count - 1]!, mean, median, stdev };
   },
 });
+
+// Open Intelligent UI's histogram (MIT), with bounded bins and stable labels.
+export const Histogram = defineFunction({
+  name: "Histogram",
+  description: 'Count supplied values into 1 to 40 equal-width bins. Use key and value for a chart. Optional min and max select the range.',
+  params: z.object({ values: numbers().max(160), bins: z.number().int().min(1).max(40), min: z.number().optional(), max: z.number().optional() }),
+  returns: z.array(z.object({ key: z.string(), value: z.number(), start: z.number(), end: z.number() })).max(40),
+  fn: ({ values: raw, bins, min, max }) => {
+    const values = finiteOnly(raw);
+    const low = min ?? (values.length ? Math.min(...values) : 0);
+    const high = max ?? (values.length ? Math.max(...values) : 1);
+    if (high < low) throw new Error("maximum must be at least the minimum");
+    if (high === low) return [{ key: String(low), value: values.filter(value => value === low).length, start: low, end: high }];
+    const width = finite((high - low) / bins);
+    if (width <= 0) throw new Error("range is too narrow for the requested bins");
+    const counts = Array<number>(bins).fill(0);
+    for (const value of values) {
+      if (value >= low && value <= high) counts[Math.min(bins - 1, Math.floor((value - low) / width))]++;
+    }
+    return counts.map((value, index) => {
+      const start = low + index * width;
+      const end = index === bins - 1 ? high : low + (index + 1) * width;
+      return { key: String(start), value, start, end };
+    });
+  },
+});

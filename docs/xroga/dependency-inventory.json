@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "246758c745cb2772ce827e358738197bee1a20e1",
+  "source_sha": "5d6a60475357520d0ca6c287b9a90061d17be666",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -16631,7 +16631,7 @@
     },
     {
       "path": ".github/workflows/vercel-build-check.yml",
-      "sha256": "d5c38af96c0ce209ebde45627c9b8f75f21e098062fa70ad08039e73faf3a69e"
+      "sha256": "86da16fa9031cb6d96b33c2639a55c50d28d0d8a03b923f881a2e147d702749b"
     },
     {
       "path": ".github/workflows/xroga-golden-journeys.yml",
@@ -16919,7 +16919,7 @@
     },
     {
       "path": "backend/src/ai/nativeOpenUiPrompt.ts",
-      "sha256": "b279d8722fb79f3d328167bd21df0d6aa1ff204854cb293f738bef0cfedf9718"
+      "sha256": "2b8fc097239f3250e49cf0fa7d310b4c02407ea0aef55c5b457846ecd866ffeb"
     },
     {
       "path": "backend/src/ai/nativeOpenUiRun.ts",
@@ -22043,7 +22043,7 @@
     },
     {
       "path": "frontend/src/components/native-openui/library.tsx",
-      "sha256": "2b0f2b54c66fa177bbfb4b31ba4fd75ee526e3daf8a2ac55696d7684672391b8"
+      "sha256": "22c8a0cb293086595ef11983166d0ec42a0e91cdbc8b9d5c1a059d68ec637592"
     },
     {
       "path": "frontend/src/components/native-openui/renderer-config.ts",
@@ -22055,7 +22055,7 @@
     },
     {
       "path": "frontend/src/components/native-openui/upstream/components/controls.tsx",
-      "sha256": "6fb1431d6b8476a8a4be7c18d9d9feba68a7bfa032de8c69807e08307355ad93"
+      "sha256": "9b1080ef66360c4172cdedad2ab58d82ba8980da0c81e742ed1dc754452a5811"
     },
     {
       "path": "frontend/src/components/native-openui/upstream/components/extra.tsx",
@@ -22063,7 +22063,7 @@
     },
     {
       "path": "frontend/src/components/native-openui/upstream/components/glyph.tsx",
-      "sha256": "d50c40153b5bd8039d4054cb52ddd85a05d5989eeeb77b47f35f05271671560f"
+      "sha256": "053692a89691a981255de2a03292a45ac39736f166b182d408e72006b102ef76"
     },
     {
       "path": "frontend/src/components/native-openui/upstream/components/layout.tsx",
@@ -22094,8 +22094,12 @@
       "sha256": "106e6636de0fecc62c85d2d8fd4d28a8f9c2b56a54fdcb168a5c48d56723609f"
     },
     {
+      "path": "frontend/src/components/native-openui/upstream/functions/collections.ts",
+      "sha256": "c03c2c0f0bb86ea5b178aee5370ac156335b536278d29e6bbf84df65a8f5626e"
+    },
+    {
       "path": "frontend/src/components/native-openui/upstream/functions/data.ts",
-      "sha256": "c61ea5552ded37a9b6aa18ab14065ab9a3909178cf815d38f014b106f9fbb837"
+      "sha256": "f77129d9982ebf8344c4118126f8f63d1aeb30cef2791ffb3a255a66320fad41"
     },
     {
       "path": "frontend/src/components/native-openui/upstream/functions/numbers.ts",
@@ -38358,7 +38362,7 @@
     },
     {
       "path": "frontend/src/components/native-openui/library.tsx",
-      "line": 24,
+      "line": 26,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

@@ -5319,7 +5319,7 @@
       "id": "surface:a67f0b1fa2dd0f11a67f",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiPrompt.ts",
-      "sha256": "b279d8722fb79f3d328167bd21df0d6aa1ff204854cb293f738bef0cfedf9718",
+      "sha256": "2b8fc097239f3250e49cf0fa7d310b4c02407ea0aef55c5b457846ecd866ffeb",
       "symbols": [
         "nativeOpenUiPlainPrompt",
         "nativeOpenUiPrompt"
@@ -86191,7 +86191,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/native-openui/library.tsx:16"
+        "frontend/src/components/native-openui/library.tsx:17"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -86264,7 +86264,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/native-openui/library.tsx:19"
+        "frontend/src/components/native-openui/library.tsx:21"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -86316,7 +86316,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/native-openui/library.tsx:21"
+        "frontend/src/components/native-openui/library.tsx:23"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -86567,7 +86567,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/native-openui/library.tsx:20"
+        "frontend/src/components/native-openui/library.tsx:22"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -86625,7 +86625,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/native-openui/library.tsx:18"
+        "frontend/src/components/native-openui/library.tsx:20"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -86651,7 +86651,7 @@
       "id": "surface:1bf86dec2f9f087bee07",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/library.tsx",
-      "sha256": "2b0f2b54c66fa177bbfb4b31ba4fd75ee526e3daf8a2ac55696d7684672391b8",
+      "sha256": "22c8a0cb293086595ef11983166d0ec42a0e91cdbc8b9d5c1a059d68ec637592",
       "symbols": [
         "AnswerSource",
         "EvidenceContext",
@@ -86672,10 +86672,12 @@
         "./upstream/components/extra",
         "./upstream/components/glyph",
         "./upstream/components/layout",
+        "./upstream/components/style",
         "./upstream/components/svg",
         "./upstream/components/table",
         "./upstream/components/text",
         "./upstream/functions/calendar",
+        "./upstream/functions/collections",
         "./upstream/functions/data",
         "./upstream/functions/numbers",
         "./upstream/functions/text",
@@ -86694,10 +86696,12 @@
         "frontend/src/components/native-openui/upstream/components/extra.tsx",
         "frontend/src/components/native-openui/upstream/components/glyph.tsx",
         "frontend/src/components/native-openui/upstream/components/layout.tsx",
+        "frontend/src/components/native-openui/upstream/components/style.ts",
         "frontend/src/components/native-openui/upstream/components/svg.tsx",
         "frontend/src/components/native-openui/upstream/components/table.tsx",
         "frontend/src/components/native-openui/upstream/components/text.tsx",
         "frontend/src/components/native-openui/upstream/functions/calendar.ts",
+        "frontend/src/components/native-openui/upstream/functions/collections.ts",
         "frontend/src/components/native-openui/upstream/functions/data.ts",
         "frontend/src/components/native-openui/upstream/functions/numbers.ts",
         "frontend/src/components/native-openui/upstream/functions/text.ts"
@@ -86895,7 +86899,7 @@
       "id": "surface:a849bd03e85ab44f9cab",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/controls.tsx",
-      "sha256": "6fb1431d6b8476a8a4be7c18d9d9feba68a7bfa032de8c69807e08307355ad93",
+      "sha256": "9b1080ef66360c4172cdedad2ab58d82ba8980da0c81e742ed1dc754452a5811",
       "symbols": [
         "Button",
         "Checkbox",
@@ -87089,17 +87093,21 @@
       "id": "surface:d11dd722ebd54cd3c052",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/glyph.tsx",
-      "sha256": "d50c40153b5bd8039d4054cb52ddd85a05d5989eeeb77b47f35f05271671560f",
+      "sha256": "053692a89691a981255de2a03292a45ac39736f166b182d408e72006b102ef76",
       "symbols": [
         "Glyph",
         "Icon",
         "icons",
-        "key"
+        "key",
+        "shard"
       ],
       "imports": [
+        "./lucide-catalog.json",
         "lucide-react"
       ],
-      "runtimeImports": [],
+      "runtimeImports": [
+        "frontend/src/components/native-openui/upstream/components/lucide-catalog.json"
+      ],
       "entryPoints": [
         "frontend/src/app/(workspace)/workspace/page.tsx",
         "frontend/src/app/native-answer-evaluation/page.tsx",
@@ -87318,6 +87326,7 @@
       "callers": [
         "frontend/src/components/native-openui/Editorial.tsx:6",
         "frontend/src/components/native-openui/Tabs.tsx:8",
+        "frontend/src/components/native-openui/library.tsx:12",
         "frontend/src/components/native-openui/upstream/components/controls.tsx:15",
         "frontend/src/components/native-openui/upstream/components/extra.tsx:12",
         "frontend/src/components/native-openui/upstream/components/layout.tsx:6",
@@ -87582,7 +87591,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/native-openui/library.tsx:15"
+        "frontend/src/components/native-openui/library.tsx:16"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -87604,24 +87613,93 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:31ae963287677f3a3a15",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/native-openui/upstream/functions/collections.ts",
+      "sha256": "c03c2c0f0bb86ea5b178aee5370ac156335b536278d29e6bbf84df65a8f5626e",
+      "symbols": [
+        "Chunk",
+        "Find",
+        "Includes",
+        "MixColor",
+        "Reverse",
+        "Slice",
+        "Take",
+        "a",
+        "b",
+        "channels",
+        "full",
+        "hex",
+        "items",
+        "k",
+        "literal",
+        "result",
+        "sequence",
+        "start",
+        "text"
+      ],
+      "imports": [
+        "./shared",
+        "@openuidev/react-lang",
+        "zod/v4"
+      ],
+      "runtimeImports": [
+        "frontend/src/components/native-openui/upstream/functions/shared.ts"
+      ],
+      "entryPoints": [
+        "frontend/src/app/(workspace)/workspace/page.tsx",
+        "frontend/src/app/native-answer-evaluation/page.tsx",
+        "frontend/src/app/share/[token]/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/native-openui/library.tsx:19",
+        "frontend/src/components/native-openui/upstream/functions/collections.test.ts:3"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "@openuidev/react-lang",
+        "zod/v4"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "frontend/src/components/native-openui/upstream/functions/collections.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:a71b520c02489d0f435a",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/upstream/functions/data.ts",
-      "sha256": "c61ea5552ded37a9b6aa18ab14065ab9a3909178cf815d38f014b106f9fbb837",
+      "sha256": "f77129d9982ebf8344c4118126f8f63d1aeb30cef2791ffb3a255a66320fad41",
       "symbols": [
         "Between",
         "Change",
         "Cumulative",
         "GroupBy",
+        "Histogram",
         "MovingAvg",
         "Stats",
         "Top",
         "averages",
         "compare",
         "count",
+        "counts",
         "defaultAgg",
+        "end",
         "finiteOnly",
+        "high",
         "keyValue",
+        "low",
         "mapField",
         "mean",
         "median",
@@ -87631,12 +87709,15 @@
         "sign",
         "sorted",
         "span",
+        "start",
         "stdev",
         "t",
         "total",
         "v",
+        "value",
         "values",
         "w",
+        "width",
         "x",
         "y"
       ],
@@ -87654,7 +87735,8 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/native-openui/library.tsx:17"
+        "frontend/src/components/native-openui/library.tsx:18",
+        "frontend/src/components/native-openui/upstream/functions/collections.test.ts:4"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -87667,7 +87749,9 @@
       "approvalBoundary": [],
       "costBoundary": [],
       "evidenceBoundary": [],
-      "testCoverage": [],
+      "testCoverage": [
+        "frontend/src/components/native-openui/upstream/functions/collections.test.ts"
+      ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -87722,7 +87806,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/native-openui/library.tsx:12"
+        "frontend/src/components/native-openui/library.tsx:13"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -87784,6 +87868,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
+        "frontend/src/components/native-openui/upstream/functions/collections.ts:3",
         "frontend/src/components/native-openui/upstream/functions/data.ts:3",
         "frontend/src/components/native-openui/upstream/functions/numbers.ts:3",
         "frontend/src/components/native-openui/upstream/functions/text.ts:3"
@@ -87850,7 +87935,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/native-openui/library.tsx:14"
+        "frontend/src/components/native-openui/library.tsx:15"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -107740,7 +107825,7 @@
         "frontend/src/app/api/private-files/[projectId]/[fileId]/route.ts:3",
         "frontend/src/app/share/[token]/page.tsx:11",
         "frontend/src/app/workspace-staging-transport/[...segments]/route.ts:1",
-        "scripts/security/hosted-workspace-staging.test.mjs:7"
+        "scripts/security/hosted-workspace-staging.test.mjs:8"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -113918,7 +114003,7 @@
         "frontend/next.config.mjs:4",
         "frontend/src/lib/supabase/authBuildRealm.test.ts:3",
         "frontend/src/lib/supabase/stagingAuthBuild.test.ts:3",
-        "scripts/security/hosted-workspace-staging.test.mjs:8"
+        "scripts/security/hosted-workspace-staging.test.mjs:9"
       ],
       "reachable": false,
       "persistenceDependencies": [],
@@ -121987,28 +122072,98 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:1287af05a7d0ff8c08f9",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "scripts/generate-native-lucide-assets.mjs",
+      "sha256": "b1d961fd21edbc121488e3c4a02c9eb34d475dbf5adcacb1945b644af5b403df",
+      "symbols": [
+        "attrs",
+        "catalog",
+        "check",
+        "count",
+        "directory",
+        "elements",
+        "entry",
+        "fields",
+        "groups",
+        "index",
+        "installed",
+        "markup",
+        "names",
+        "prefix",
+        "require",
+        "resolved",
+        "save",
+        "shard",
+        "svgAttribute",
+        "text",
+        "xml"
+      ],
+      "imports": [
+        "node:assert/strict",
+        "node:fs",
+        "node:module",
+        "node:path",
+        "node:url"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [
+        "scripts/generate-native-lucide-assets.mjs"
+      ],
+      "callers": [],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "node:assert/strict",
+        "node:fs",
+        "node:module",
+        "node:path",
+        "node:url"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:d6a3392b98f9da6b6102",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/generate-native-openui-spec.mjs",
-      "sha256": "8edc04c21f201cbd118de75663432c0d8d6b53afa4ebfcfb34395450626aca20",
+      "sha256": "3867b9545dd45a6f6cbb7a958f459644a8e1290dd71b8d63384b18598ce80a32",
       "symbols": [
+        "component",
+        "coverage",
         "expected",
         "file",
+        "fn",
         "module",
-        "run"
+        "run",
+        "spec"
       ],
       "imports": [
         "esbuild",
+        "node:assert/strict",
         "node:fs",
         "node:module"
       ],
       "runtimeImports": [],
-      "entryPoints": [],
+      "entryPoints": [
+        "scripts/generate-native-openui-spec.mjs"
+      ],
       "callers": [],
-      "reachable": false,
+      "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
         "esbuild",
+        "node:assert/strict",
         "node:fs",
         "node:module"
       ],
@@ -122018,11 +122173,11 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [],
-      "state": "DEAD_OR_UNREACHABLE",
-      "confidence": "LOW",
-      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
       "knownRisk": "Live provider state and full security behavior not established by static inventory.",
-      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
@@ -123845,15 +124000,20 @@
       "id": "surface:bd447efc6f4a92271280",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/security/hosted-workspace-staging.mjs",
-      "sha256": "f68dff00fd39ca79cfb9a500a226e4ecfa20f4e4df6bff824f7ab043982bf10d",
+      "sha256": "506c38ac36688be1e60095338360a13f269d3e082ac3681ec08d2d64cfda4fb0",
       "symbols": [
+        "actualSource",
+        "apiDigest",
+        "apiName",
         "hostedWorkspaceManifest",
         "imagePin",
         "isHostedWorkspaceRoute",
         "m",
+        "pin",
         "prefix",
         "repository",
         "requireHostedWorkspaceBuild",
+        "results",
         "reviewed",
         "routes",
         "stagingApiAudience",
@@ -123865,7 +124025,12 @@
         "stagingWebIdentity",
         "stagingWebOrigin",
         "stagingWebService",
-        "validateHostedWorkspaceStaging"
+        "uploaded",
+        "validateHostedWorkspaceStaging",
+        "verifyHostedWorkspaceBuildReceipt",
+        "webDigest",
+        "webImage",
+        "webName"
       ],
       "imports": [],
       "runtimeImports": [],
@@ -123894,9 +124059,14 @@
         "scripts/security/hosted-workspace-staging.mjs#stagingWebIdentity"
       ],
       "tenantBoundary": [],
-      "approvalBoundary": [],
+      "approvalBoundary": [
+        "scripts/security/hosted-workspace-staging.mjs#apiDigest",
+        "scripts/security/hosted-workspace-staging.mjs#webDigest"
+      ],
       "costBoundary": [],
-      "evidenceBoundary": [],
+      "evidenceBoundary": [
+        "scripts/security/hosted-workspace-staging.mjs#verifyHostedWorkspaceBuildReceipt"
+      ],
       "testCoverage": [
         "scripts/security/hosted-workspace-staging.test.mjs"
       ],
@@ -125384,7 +125554,7 @@
       "id": "surface:bd6af899f2dd9df930f6",
       "subsystem": "browser_sandbox",
       "sourcePath": "scripts/verify-native-openui-browser.mjs",
-      "sha256": "25b9444106a9035d2e7bb9f7c7127c12b2ab8e575422da640fc31ff3105f30c9",
+      "sha256": "64df060ffdc813c9459775c5f342a514c61dd433f194d42639797f0eb6c1cef3",
       "symbols": [
         "accessibility",
         "answerRegion",
@@ -125400,9 +125570,11 @@
         "errors",
         "evidence",
         "external",
+        "file",
         "fit",
         "graph",
         "graphAccessibility",
+        "icon",
         "metrics",
         "name",
         "open",
@@ -125417,9 +125589,11 @@
         "scale",
         "server",
         "slider",
+        "sprite",
         "stripe",
         "table",
         "theme",
+        "timer",
         "viewport"
       ],
       "imports": [
@@ -138400,7 +138574,7 @@
       "state": "IMPLEMENTED_BUT_UNVERIFIED"
     },
     {
-      "id": "schedule:586a6a4575f56b029440",
+      "id": "schedule:a568b6cf45368e6d4b6c",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/controls.tsx",
       "line": 463,
       "kind": "setInterval",
@@ -139848,8 +140022,12 @@
     {
       "id": "workflow:35f7d63a2c5b6c3706b8",
       "sourcePath": ".github/workflows/vercel-build-check.yml",
-      "sha256": "d5c38af96c0ce209ebde45627c9b8f75f21e098062fa70ad08039e73faf3a69e",
-      "sourceEntrypoints": [],
+      "sha256": "86da16fa9031cb6d96b33c2639a55c50d28d0d8a03b923f881a2e147d702749b",
+      "sourceEntrypoints": [
+        "scripts/generate-native-lucide-assets.mjs",
+        "scripts/generate-native-openui-spec.mjs",
+        "scripts/security/hosted-workspace-staging.test.mjs"
+      ],
       "hasSchedule": false
     },
     {
@@ -152970,6 +153148,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:8d5f5a565dcfe0f4efb1",
+      "sourcePath": "frontend/src/components/native-openui/upstream/functions/collections.test.ts",
+      "declaredTests": 3,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:7f47230fdf23681e489e",
       "sourcePath": "frontend/src/components/publish/MobilePublishPanel.approval.test.ts",
       "declaredTests": 1,
@@ -154736,7 +154921,7 @@
     {
       "id": "test-suite:6d7c44af47b84b62432f",
       "sourcePath": "scripts/security/hosted-workspace-staging.test.mjs",
-      "declaredTests": 4,
+      "declaredTests": 5,
       "skipLocations": [],
       "focusLocations": []
     },

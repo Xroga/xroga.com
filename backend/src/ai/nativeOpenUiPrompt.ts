@@ -29,6 +29,7 @@ export const nativeOpenUiPrompt = generateSystemPrompt({
       'For an ordered numeric series, check each named increase or decrease against its preceding point before writing it. Bind calculated deltas to the same data used by the chart when possible. If you cannot verify a trend description, show exact values and omit the trend claim.',
       'Distinguish a browser Supabase SSR client that must read session tokens from a server-only or backend-for-frontend design that owns an HTTP-only session. Do not claim browser Supabase SSR uses HTTP-only access or refresh tokens by default. For PostgreSQL RLS, distinguish normal user queries from privileged paths that can bypass policies.',
       'Prefer wrapping Row or responsive Grid and avoid fixed-width text. Charts need readable titles, axis labels and units. Use short labels and concise chart notes. Put assumptions below the calculation or diagram they qualify.',
+      'Use Lucide icon names in kebab case, such as plane or database. Icons can orient readers but do not replace a label. Timer is a user-started countdown for the current answer. Use Histogram only to summarize supplied numeric observations.',
     ],
     examples: [
       'root = Col([Title("Options"), Table(["Plan", "USD/month"], [["Basic", 10], ["Team", 25]])])',

@@ -96,3 +96,35 @@ export function hostedWorkspaceManifest(sourceSha, apiDigest) {
     },
   });
 }
+
+/**
+ * Verifies an operator's Cloud Build readback against the approved upload receipt
+ * and the manifest extracted from the frontend image at its immutable digest.
+ * @param {any} build
+ * @param {any} approval
+ * @param {unknown} manifest
+ */
+export function verifyHostedWorkspaceBuildReceipt(build, approval, manifest) {
+  const pin = validateHostedWorkspaceStaging(manifest);
+  const actualSource = build?.sourceProvenance?.resolvedStorageSource;
+  const uploaded = approval?.source;
+  if (build?.status !== 'SUCCESS' || !approval?.buildId || build.id !== approval.buildId
+    || pin.sourceSha !== approval.sourceSha || build.substitutions?._SOURCE_SHA !== pin.sourceSha
+    || !uploaded?.bucket || !uploaded?.object || !/^[0-9]+$/.test(String(uploaded?.generation))
+    || actualSource?.bucket !== uploaded.bucket || actualSource?.object !== uploaded.object
+    || String(actualSource?.generation) !== String(uploaded.generation)) {
+    throw new Error('Hosted Workspace build did not succeed with the approved source archive');
+  }
+
+  const results = build.results?.images;
+  if (!Array.isArray(results) || results.length !== 2) throw new Error('Expected two exact-source staging images');
+  const apiName = `${repository}/xroga-api-migration`;
+  const webName = `${repository}/${stagingWebService}`;
+  const apiDigest = results.find(image => image?.name === `${apiName}:${pin.sourceSha}`)?.digest;
+  const webDigest = results.find(image => image?.name === `${webName}:${pin.sourceSha}`)?.digest;
+  const webImage = `${webName}@${webDigest}`;
+  if (pin.api.image !== `${apiName}@${apiDigest}` || !imagePin(webImage, stagingWebService)) {
+    throw new Error('Hosted Workspace image digests do not match the approved source and embedded manifest');
+  }
+  return { sourceSha: pin.sourceSha, apiImage: pin.api.image, webImage };
+}

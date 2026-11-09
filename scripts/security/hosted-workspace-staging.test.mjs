@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   hostedWorkspaceManifest, requireHostedWorkspaceBuild, validateHostedWorkspaceStaging,
+  verifyHostedWorkspaceBuildReceipt,
   stagingAuthOrigin, stagingWebOrigin, stagingOperatorOrigin,
 } from './hosted-workspace-staging.mjs';
 import { forwardHostedWorkspace } from '../../frontend/src/lib/hostedWorkspaceBridge.mjs';
@@ -55,6 +56,36 @@ test('hosted auth build pins source, issuer, ledger, image digest and distinct p
     { NEXT_PUBLIC_API_URL: m.api.origin }, { NEXT_PUBLIC_SUPABASE_URL: 'https://nzenxdfumxrnsmybazmo.supabase.co' },
     { NEXT_PUBLIC_SUPABASE_ANON_KEY: 'sb_secret_test_only' }, { XROGA_RELEASE_SHA: 'c'.repeat(40) },
   ]) assert.throws(() => requireHostedWorkspaceBuild({ ...env, ...patch }, m));
+});
+
+test('hosted image provenance uses a successful build and its embedded manifest, without a bucket upload', () => {
+  const manifest = makeManifest();
+  const storageSource = { bucket: 'source-archive', object: 'source/archive.tar.gz', generation: '123' };
+  const approval = { buildId: 'reviewed-build', sourceSha: source, source: storageSource };
+  const apiName = manifest.api.image.split('@')[0];
+  const webName = apiName.replace('/xroga-api-migration', '/xroga-workspace-openui-staging');
+  const build = {
+    id: approval.buildId, status: 'SUCCESS', substitutions: { _SOURCE_SHA: source },
+    sourceProvenance: { resolvedStorageSource: storageSource },
+    results: { images: [
+      { name: `${apiName}:${source}`, digest: 'sha256:' + 'b'.repeat(64) },
+      { name: `${webName}:${source}`, digest: 'sha256:' + 'c'.repeat(64) },
+    ] },
+  };
+  assert.deepEqual(verifyHostedWorkspaceBuildReceipt(build, approval, manifest), {
+    sourceSha: source, apiImage: manifest.api.image, webImage: webName + '@sha256:' + 'c'.repeat(64),
+  });
+  for (const modify of [
+    value => { value.status = 'FAILURE'; },
+    value => { value.id = 'other-build'; },
+    value => { value.sourceProvenance.resolvedStorageSource.generation = '124'; },
+    value => { value.results.images[0].digest = 'sha256:' + 'd'.repeat(64); },
+    value => { value.results.images[1].name = webName + ':latest'; },
+  ]) {
+    const wrong = structuredClone(build);
+    modify(wrong);
+    assert.throws(() => verifyHostedWorkspaceBuildReceipt(wrong, approval, manifest));
+  }
 });
 
 test('disallowed methods, paths, origins and credentials fail before Google or Supabase', async () => {

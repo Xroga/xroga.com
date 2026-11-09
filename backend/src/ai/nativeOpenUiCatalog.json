@@ -142,6 +142,10 @@
         "signature": "ChoicePicker(value: $binding<string>, label: string, options: {value: string, label: string, description?: string}[])",
         "description": "Search named options and apply one choice to local presentation state. Useful when reviewing a scenario before changing a calculation. It never approves or performs an external action."
       },
+      "Timer": {
+        "signature": "Timer(seconds: $binding<number>, label?: string)",
+        "description": "User-started local countdown, at most 3600 seconds, with pause and reset. Bind a scalar such as $left to show a completion message. It is not a reminder or scheduled task."
+      },
       "Button": {
         "signature": "Button(label: string, action?: ActionExpression, variant?: \"solid\" | \"outline\" | \"soft\" | \"ghost\", color?: \"primary\" | \"danger\" | \"success\", size?: \"sm\" | \"md\" | \"lg\", icon?: string, disabled?: boolean, block?: boolean)",
         "description": "icon is a lucide name."
@@ -167,8 +171,8 @@
         "description": "An official product link and a concise explanation of its role. Use only for a product relevant to the user. This link is a reference, not retrieved evidence."
       },
       "Icon": {
-        "signature": "Icon(name: string)",
-        "description": "A Lucide icon for a label or section. Use only when it aids scanning."
+        "signature": "Icon(name: string, size?: \"sm\" | \"md\" | \"lg\" | \"xl\", color?: Color)",
+        "description": "An installed Lucide icon by kebab-case name, e.g. plane, wallet, microscope or calendar-days. Optional semantic color and size."
       },
       "Table": {
         "signature": "Table(columns: string[], rows: any[][])",
@@ -274,6 +278,7 @@
           "SegmentedControl",
           "DatePicker",
           "ChoicePicker",
+          "Timer",
           "Button",
           "IconButton",
           "Pressable",
@@ -345,6 +350,10 @@
         "signature": "GroupBy(rows: any[], key: string, field?: string, agg?: \"sum\" | \"avg\" | \"count\" | \"min\" | \"max\") → {key: string | number, value: number}[]",
         "description": "One row per distinct key, in first-seen order; value is agg of field (default \"sum\"), or the row count without a field"
       },
+      "Histogram": {
+        "signature": "Histogram(values: number[], bins: number, min?: number, max?: number) → {key: string, value: number, start: number, end: number}[]",
+        "description": "Count supplied values into 1 to 40 equal-width bins. Use key and value for a chart. Optional min and max select the range."
+      },
       "MovingAvg": {
         "signature": "MovingAvg(rows: any[], field: string, window: number) → any[]",
         "description": "Copy of the rows with field replaced by the average of its last window values (field \"\" for a list of numbers)"
@@ -372,6 +381,34 @@
       "StartOf": {
         "signature": "StartOf(date: string, unit: \"week\" | \"month\" | \"year\") → string",
         "description": "First day of the supplied YYYY-MM-DD date’s week (Monday), month or year."
+      },
+      "Chunk": {
+        "signature": "Chunk(list: any[], size: number) → any[][]",
+        "description": "Split a bounded local list into consecutive batches of the specified size."
+      },
+      "Find": {
+        "signature": "Find(list: any[], field: string, value: any) → any",
+        "description": "First local row whose field equals the supplied value, or null. Empty field compares the whole item."
+      },
+      "Includes": {
+        "signature": "Includes(list: any[] | string, item: any) → boolean",
+        "description": "Whether a local list contains a value, or a string contains the supplied text."
+      },
+      "MixColor": {
+        "signature": "MixColor(from: string, to: string, t: number) → string",
+        "description": "Blend two hex colors at a fraction t from 0 to 1 for a local tint. Keep text contrast and prefer semantic theme tokens for ordinary text."
+      },
+      "Reverse": {
+        "signature": "Reverse(list: any[]) → any[]",
+        "description": "A local list in reverse order without changing the original."
+      },
+      "Slice": {
+        "signature": "Slice(list: any[] | string, start: number, end?: number) → any[] | string",
+        "description": "Local items or text from start up to end (exclusive). Negative indices count from the end."
+      },
+      "Take": {
+        "signature": "Take(list: any[], n: number) → any[]",
+        "description": "First n items from a local list, or the last n when n is negative."
       }
     },
     "schema": {
@@ -483,6 +520,9 @@
         "ChoicePicker": {
           "$ref": "#/$defs/ChoicePicker"
         },
+        "Timer": {
+          "$ref": "#/$defs/Timer"
+        },
         "Button": {
           "$ref": "#/$defs/Button"
         },
@@ -577,6 +617,7 @@
         "SegmentedControl",
         "DatePicker",
         "ChoicePicker",
+        "Timer",
         "Button",
         "IconButton",
         "Pressable",
@@ -1703,6 +1744,25 @@
           "additionalProperties": false,
           "description": "Search named options and apply one choice to local presentation state. Useful when reviewing a scenario before changing a calculation. It never approves or performs an external action."
         },
+        "Timer": {
+          "type": "object",
+          "properties": {
+            "seconds": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 3600
+            },
+            "label": {
+              "type": "string",
+              "maxLength": 100
+            }
+          },
+          "required": [
+            "seconds"
+          ],
+          "additionalProperties": false,
+          "description": "User-started local countdown, at most 3600 seconds, with pause and reset. Bind a scalar such as $left to show a completion message. It is not a reminder or scheduled task."
+        },
         "Button": {
           "type": "object",
           "properties": {
@@ -1963,14 +2023,26 @@
           "properties": {
             "name": {
               "type": "string",
-              "maxLength": 50
+              "maxLength": 64
+            },
+            "size": {
+              "type": "string",
+              "enum": [
+                "sm",
+                "md",
+                "lg",
+                "xl"
+              ]
+            },
+            "color": {
+              "type": "string"
             }
           },
           "required": [
             "name"
           ],
           "additionalProperties": false,
-          "description": "A Lucide icon for a label or section. Use only when it aids scanning."
+          "description": "An installed Lucide icon by kebab-case name, e.g. plane, wallet, microscope or calendar-days. Optional semantic color and size."
         },
         "Table": {
           "type": "object",
@@ -2793,6 +2865,65 @@
             }
           }
         },
+        "Histogram": {
+          "description": "Count supplied values into 1 to 40 equal-width bins. Use key and value for a chart. Optional min and max select the range.",
+          "params": {
+            "type": "object",
+            "properties": {
+              "values": {
+                "maxItems": 160,
+                "type": "array",
+                "items": {
+                  "type": "number"
+                }
+              },
+              "bins": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 40
+              },
+              "min": {
+                "type": "number"
+              },
+              "max": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "values",
+              "bins"
+            ],
+            "additionalProperties": false
+          },
+          "returns": {
+            "maxItems": 40,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "key": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "number"
+                },
+                "start": {
+                  "type": "number"
+                },
+                "end": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "key",
+                "value",
+                "start",
+                "end"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
         "MovingAvg": {
           "description": "Copy of the rows with field replaced by the average of its last window values (field \"\" for a list of numbers)",
           "params": {
@@ -3013,6 +3144,221 @@
             "type": "string",
             "pattern": "^[1-9]\\d{3}-\\d{2}-\\d{2}$"
           }
+        },
+        "Chunk": {
+          "description": "Split a bounded local list into consecutive batches of the specified size.",
+          "params": {
+            "type": "object",
+            "properties": {
+              "list": {
+                "maxItems": 160,
+                "type": "array",
+                "items": {}
+              },
+              "size": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 160
+              }
+            },
+            "required": [
+              "list",
+              "size"
+            ],
+            "additionalProperties": false
+          },
+          "returns": {
+            "maxItems": 160,
+            "type": "array",
+            "items": {
+              "maxItems": 160,
+              "type": "array",
+              "items": {}
+            }
+          }
+        },
+        "Find": {
+          "description": "First local row whose field equals the supplied value, or null. Empty field compares the whole item.",
+          "params": {
+            "type": "object",
+            "properties": {
+              "list": {
+                "maxItems": 160,
+                "type": "array",
+                "items": {}
+              },
+              "field": {
+                "type": "string",
+                "maxLength": 120
+              },
+              "value": {}
+            },
+            "required": [
+              "list",
+              "field",
+              "value"
+            ],
+            "additionalProperties": false
+          },
+          "returns": {}
+        },
+        "Includes": {
+          "description": "Whether a local list contains a value, or a string contains the supplied text.",
+          "params": {
+            "type": "object",
+            "properties": {
+              "list": {
+                "anyOf": [
+                  {
+                    "maxItems": 160,
+                    "type": "array",
+                    "items": {}
+                  },
+                  {
+                    "type": "string",
+                    "maxLength": 8000
+                  }
+                ]
+              },
+              "item": {}
+            },
+            "required": [
+              "list",
+              "item"
+            ],
+            "additionalProperties": false
+          },
+          "returns": {
+            "type": "boolean"
+          }
+        },
+        "MixColor": {
+          "description": "Blend two hex colors at a fraction t from 0 to 1 for a local tint. Keep text contrast and prefer semantic theme tokens for ordinary text.",
+          "params": {
+            "type": "object",
+            "properties": {
+              "from": {
+                "type": "string",
+                "pattern": "^#?[\\da-f]{3}(?:[\\da-f]{3})?$"
+              },
+              "to": {
+                "type": "string",
+                "pattern": "^#?[\\da-f]{3}(?:[\\da-f]{3})?$"
+              },
+              "t": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "from",
+              "to",
+              "t"
+            ],
+            "additionalProperties": false
+          },
+          "returns": {
+            "type": "string",
+            "pattern": "^#?[\\da-f]{3}(?:[\\da-f]{3})?$"
+          }
+        },
+        "Reverse": {
+          "description": "A local list in reverse order without changing the original.",
+          "params": {
+            "type": "object",
+            "properties": {
+              "list": {
+                "maxItems": 160,
+                "type": "array",
+                "items": {}
+              }
+            },
+            "required": [
+              "list"
+            ],
+            "additionalProperties": false
+          },
+          "returns": {
+            "maxItems": 160,
+            "type": "array",
+            "items": {}
+          }
+        },
+        "Slice": {
+          "description": "Local items or text from start up to end (exclusive). Negative indices count from the end.",
+          "params": {
+            "type": "object",
+            "properties": {
+              "list": {
+                "anyOf": [
+                  {
+                    "maxItems": 160,
+                    "type": "array",
+                    "items": {}
+                  },
+                  {
+                    "type": "string",
+                    "maxLength": 8000
+                  }
+                ]
+              },
+              "start": {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              },
+              "end": {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": [
+              "list",
+              "start"
+            ],
+            "additionalProperties": false
+          },
+          "returns": {
+            "anyOf": [
+              {
+                "maxItems": 160,
+                "type": "array",
+                "items": {}
+              },
+              {
+                "type": "string",
+                "maxLength": 8000
+              }
+            ]
+          }
+        },
+        "Take": {
+          "description": "First n items from a local list, or the last n when n is negative.",
+          "params": {
+            "type": "object",
+            "properties": {
+              "list": {
+                "maxItems": 160,
+                "type": "array",
+                "items": {}
+              },
+              "n": {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": [
+              "list",
+              "n"
+            ],
+            "additionalProperties": false
+          },
+          "returns": {
+            "maxItems": 160,
+            "type": "array",
+            "items": {}
+          }
         }
       }
     },
@@ -3127,6 +3473,9 @@
       "ChoicePicker": {
         "$ref": "#/$defs/ChoicePicker"
       },
+      "Timer": {
+        "$ref": "#/$defs/Timer"
+      },
       "Button": {
         "$ref": "#/$defs/Button"
       },
@@ -3221,6 +3570,7 @@
       "SegmentedControl",
       "DatePicker",
       "ChoicePicker",
+      "Timer",
       "Button",
       "IconButton",
       "Pressable",
@@ -4347,6 +4697,25 @@
         "additionalProperties": false,
         "description": "Search named options and apply one choice to local presentation state. Useful when reviewing a scenario before changing a calculation. It never approves or performs an external action."
       },
+      "Timer": {
+        "type": "object",
+        "properties": {
+          "seconds": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 3600
+          },
+          "label": {
+            "type": "string",
+            "maxLength": 100
+          }
+        },
+        "required": [
+          "seconds"
+        ],
+        "additionalProperties": false,
+        "description": "User-started local countdown, at most 3600 seconds, with pause and reset. Bind a scalar such as $left to show a completion message. It is not a reminder or scheduled task."
+      },
       "Button": {
         "type": "object",
         "properties": {
@@ -4607,14 +4976,26 @@
         "properties": {
           "name": {
             "type": "string",
-            "maxLength": 50
+            "maxLength": 64
+          },
+          "size": {
+            "type": "string",
+            "enum": [
+              "sm",
+              "md",
+              "lg",
+              "xl"
+            ]
+          },
+          "color": {
+            "type": "string"
           }
         },
         "required": [
           "name"
         ],
         "additionalProperties": false,
-        "description": "A Lucide icon for a label or section. Use only when it aids scanning."
+        "description": "An installed Lucide icon by kebab-case name, e.g. plane, wallet, microscope or calendar-days. Optional semantic color and size."
       },
       "Table": {
         "type": "object",
@@ -5437,6 +5818,65 @@
           }
         }
       },
+      "Histogram": {
+        "description": "Count supplied values into 1 to 40 equal-width bins. Use key and value for a chart. Optional min and max select the range.",
+        "params": {
+          "type": "object",
+          "properties": {
+            "values": {
+              "maxItems": 160,
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            },
+            "bins": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 40
+            },
+            "min": {
+              "type": "number"
+            },
+            "max": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "values",
+            "bins"
+          ],
+          "additionalProperties": false
+        },
+        "returns": {
+          "maxItems": 40,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string"
+              },
+              "value": {
+                "type": "number"
+              },
+              "start": {
+                "type": "number"
+              },
+              "end": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "key",
+              "value",
+              "start",
+              "end"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
       "MovingAvg": {
         "description": "Copy of the rows with field replaced by the average of its last window values (field \"\" for a list of numbers)",
         "params": {
@@ -5656,6 +6096,221 @@
         "returns": {
           "type": "string",
           "pattern": "^[1-9]\\d{3}-\\d{2}-\\d{2}$"
+        }
+      },
+      "Chunk": {
+        "description": "Split a bounded local list into consecutive batches of the specified size.",
+        "params": {
+          "type": "object",
+          "properties": {
+            "list": {
+              "maxItems": 160,
+              "type": "array",
+              "items": {}
+            },
+            "size": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 160
+            }
+          },
+          "required": [
+            "list",
+            "size"
+          ],
+          "additionalProperties": false
+        },
+        "returns": {
+          "maxItems": 160,
+          "type": "array",
+          "items": {
+            "maxItems": 160,
+            "type": "array",
+            "items": {}
+          }
+        }
+      },
+      "Find": {
+        "description": "First local row whose field equals the supplied value, or null. Empty field compares the whole item.",
+        "params": {
+          "type": "object",
+          "properties": {
+            "list": {
+              "maxItems": 160,
+              "type": "array",
+              "items": {}
+            },
+            "field": {
+              "type": "string",
+              "maxLength": 120
+            },
+            "value": {}
+          },
+          "required": [
+            "list",
+            "field",
+            "value"
+          ],
+          "additionalProperties": false
+        },
+        "returns": {}
+      },
+      "Includes": {
+        "description": "Whether a local list contains a value, or a string contains the supplied text.",
+        "params": {
+          "type": "object",
+          "properties": {
+            "list": {
+              "anyOf": [
+                {
+                  "maxItems": 160,
+                  "type": "array",
+                  "items": {}
+                },
+                {
+                  "type": "string",
+                  "maxLength": 8000
+                }
+              ]
+            },
+            "item": {}
+          },
+          "required": [
+            "list",
+            "item"
+          ],
+          "additionalProperties": false
+        },
+        "returns": {
+          "type": "boolean"
+        }
+      },
+      "MixColor": {
+        "description": "Blend two hex colors at a fraction t from 0 to 1 for a local tint. Keep text contrast and prefer semantic theme tokens for ordinary text.",
+        "params": {
+          "type": "object",
+          "properties": {
+            "from": {
+              "type": "string",
+              "pattern": "^#?[\\da-f]{3}(?:[\\da-f]{3})?$"
+            },
+            "to": {
+              "type": "string",
+              "pattern": "^#?[\\da-f]{3}(?:[\\da-f]{3})?$"
+            },
+            "t": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "from",
+            "to",
+            "t"
+          ],
+          "additionalProperties": false
+        },
+        "returns": {
+          "type": "string",
+          "pattern": "^#?[\\da-f]{3}(?:[\\da-f]{3})?$"
+        }
+      },
+      "Reverse": {
+        "description": "A local list in reverse order without changing the original.",
+        "params": {
+          "type": "object",
+          "properties": {
+            "list": {
+              "maxItems": 160,
+              "type": "array",
+              "items": {}
+            }
+          },
+          "required": [
+            "list"
+          ],
+          "additionalProperties": false
+        },
+        "returns": {
+          "maxItems": 160,
+          "type": "array",
+          "items": {}
+        }
+      },
+      "Slice": {
+        "description": "Local items or text from start up to end (exclusive). Negative indices count from the end.",
+        "params": {
+          "type": "object",
+          "properties": {
+            "list": {
+              "anyOf": [
+                {
+                  "maxItems": 160,
+                  "type": "array",
+                  "items": {}
+                },
+                {
+                  "type": "string",
+                  "maxLength": 8000
+                }
+              ]
+            },
+            "start": {
+              "type": "integer",
+              "minimum": -9007199254740991,
+              "maximum": 9007199254740991
+            },
+            "end": {
+              "type": "integer",
+              "minimum": -9007199254740991,
+              "maximum": 9007199254740991
+            }
+          },
+          "required": [
+            "list",
+            "start"
+          ],
+          "additionalProperties": false
+        },
+        "returns": {
+          "anyOf": [
+            {
+              "maxItems": 160,
+              "type": "array",
+              "items": {}
+            },
+            {
+              "type": "string",
+              "maxLength": 8000
+            }
+          ]
+        }
+      },
+      "Take": {
+        "description": "First n items from a local list, or the last n when n is negative.",
+        "params": {
+          "type": "object",
+          "properties": {
+            "list": {
+              "maxItems": 160,
+              "type": "array",
+              "items": {}
+            },
+            "n": {
+              "type": "integer",
+              "minimum": -9007199254740991,
+              "maximum": 9007199254740991
+            }
+          },
+          "required": [
+            "list",
+            "n"
+          ],
+          "additionalProperties": false
+        },
+        "returns": {
+          "maxItems": 160,
+          "type": "array",
+          "items": {}
         }
       }
     }
