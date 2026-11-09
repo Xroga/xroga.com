@@ -321,6 +321,14 @@
         "signature": "Plural(n: number, word: string, plural?: string) → string",
         "description": "Count and word: @Plural(1, \"guest\") is \"1 guest\", 3 gives \"3 guests\"; plural defaults to word + \"s\""
       },
+      "Default": {
+        "signature": "Default(value?: any, fallback: any) → any",
+        "description": "value, or fallback when value is null, \"\" or not a number, e.g. an empty number input: @Default($weight, 0)"
+      },
+      "Duration": {
+        "signature": "Duration(seconds: number, style?: \"short\" | \"clock\") → string",
+        "description": "Seconds as text: \"short\" 1h 20m, 4m 05s, 45s (default); \"clock\" 1:20:00, 4:05"
+      },
       "Between": {
         "signature": "Between(rows: any[], field: string, min?: any, max?: any) → any[]",
         "description": "Rows whose field is from min to max, both included; compares numbers, or text such as \"YYYY-MM-DD\" dates. Leave min or max null for an open end"
@@ -348,6 +356,22 @@
       "Top": {
         "signature": "Top(rows: any[], field: string, n: number, direction?: \"desc\" | \"asc\") → any[]",
         "description": "The n rows with the largest field (\"asc\": the smallest)"
+      },
+      "AddDays": {
+        "signature": "AddDays(date: string, days: number) → string",
+        "description": "Add a whole number of days to a supplied YYYY-MM-DD calendar date. Negative values go backwards."
+      },
+      "AddMonths": {
+        "signature": "AddMonths(date: string, months: number) → string",
+        "description": "Add whole calendar months to a supplied YYYY-MM-DD date. Jan 31 plus one month is the last day of February."
+      },
+      "DaysBetween": {
+        "signature": "DaysBetween(from: string, to: string) → number",
+        "description": "Calendar days from one supplied YYYY-MM-DD date to another. Negative if the second date is earlier."
+      },
+      "StartOf": {
+        "signature": "StartOf(date: string, unit: \"week\" | \"month\" | \"year\") → string",
+        "description": "First day of the supplied YYYY-MM-DD date’s week (Monday), month or year."
       }
     },
     "schema": {
@@ -2596,6 +2620,46 @@
             "type": "string"
           }
         },
+        "Default": {
+          "description": "value, or fallback when value is null, \"\" or not a number, e.g. an empty number input: @Default($weight, 0)",
+          "params": {
+            "type": "object",
+            "properties": {
+              "value": {},
+              "fallback": {}
+            },
+            "required": [
+              "fallback"
+            ],
+            "additionalProperties": false
+          },
+          "returns": {}
+        },
+        "Duration": {
+          "description": "Seconds as text: \"short\" 1h 20m, 4m 05s, 45s (default); \"clock\" 1:20:00, 4:05",
+          "params": {
+            "type": "object",
+            "properties": {
+              "seconds": {
+                "type": "number"
+              },
+              "style": {
+                "type": "string",
+                "enum": [
+                  "short",
+                  "clock"
+                ]
+              }
+            },
+            "required": [
+              "seconds"
+            ],
+            "additionalProperties": false
+          },
+          "returns": {
+            "type": "string"
+          }
+        },
         "Between": {
           "description": "Rows whose field is from min to max, both included; compares numbers, or text such as \"YYYY-MM-DD\" dates. Leave min or max null for an open end",
           "params": {
@@ -2843,6 +2907,111 @@
           "returns": {
             "type": "array",
             "items": {}
+          }
+        },
+        "AddDays": {
+          "description": "Add a whole number of days to a supplied YYYY-MM-DD calendar date. Negative values go backwards.",
+          "params": {
+            "type": "object",
+            "properties": {
+              "date": {
+                "type": "string",
+                "pattern": "^[1-9]\\d{3}-\\d{2}-\\d{2}$"
+              },
+              "days": {
+                "type": "integer",
+                "minimum": -366000,
+                "maximum": 366000
+              }
+            },
+            "required": [
+              "date",
+              "days"
+            ],
+            "additionalProperties": false
+          },
+          "returns": {
+            "type": "string",
+            "pattern": "^[1-9]\\d{3}-\\d{2}-\\d{2}$"
+          }
+        },
+        "AddMonths": {
+          "description": "Add whole calendar months to a supplied YYYY-MM-DD date. Jan 31 plus one month is the last day of February.",
+          "params": {
+            "type": "object",
+            "properties": {
+              "date": {
+                "type": "string",
+                "pattern": "^[1-9]\\d{3}-\\d{2}-\\d{2}$"
+              },
+              "months": {
+                "type": "integer",
+                "minimum": -12000,
+                "maximum": 12000
+              }
+            },
+            "required": [
+              "date",
+              "months"
+            ],
+            "additionalProperties": false
+          },
+          "returns": {
+            "type": "string",
+            "pattern": "^[1-9]\\d{3}-\\d{2}-\\d{2}$"
+          }
+        },
+        "DaysBetween": {
+          "description": "Calendar days from one supplied YYYY-MM-DD date to another. Negative if the second date is earlier.",
+          "params": {
+            "type": "object",
+            "properties": {
+              "from": {
+                "type": "string",
+                "pattern": "^[1-9]\\d{3}-\\d{2}-\\d{2}$"
+              },
+              "to": {
+                "type": "string",
+                "pattern": "^[1-9]\\d{3}-\\d{2}-\\d{2}$"
+              }
+            },
+            "required": [
+              "from",
+              "to"
+            ],
+            "additionalProperties": false
+          },
+          "returns": {
+            "type": "number"
+          }
+        },
+        "StartOf": {
+          "description": "First day of the supplied YYYY-MM-DD date’s week (Monday), month or year.",
+          "params": {
+            "type": "object",
+            "properties": {
+              "date": {
+                "type": "string",
+                "pattern": "^[1-9]\\d{3}-\\d{2}-\\d{2}$"
+              },
+              "unit": {
+                "type": "string",
+                "enum": [
+                  "week",
+                  "month",
+                  "year"
+                ]
+              }
+            },
+            "required": [
+              "date",
+              "unit"
+            ],
+            "additionalProperties": false
+          },
+          "returns": {
+            "type": "string",
+            "pattern": "^[1-9]\\d{3}-\\d{2}-\\d{2}$"
           }
         }
       }
@@ -5095,6 +5264,46 @@
           "type": "string"
         }
       },
+      "Default": {
+        "description": "value, or fallback when value is null, \"\" or not a number, e.g. an empty number input: @Default($weight, 0)",
+        "params": {
+          "type": "object",
+          "properties": {
+            "value": {},
+            "fallback": {}
+          },
+          "required": [
+            "fallback"
+          ],
+          "additionalProperties": false
+        },
+        "returns": {}
+      },
+      "Duration": {
+        "description": "Seconds as text: \"short\" 1h 20m, 4m 05s, 45s (default); \"clock\" 1:20:00, 4:05",
+        "params": {
+          "type": "object",
+          "properties": {
+            "seconds": {
+              "type": "number"
+            },
+            "style": {
+              "type": "string",
+              "enum": [
+                "short",
+                "clock"
+              ]
+            }
+          },
+          "required": [
+            "seconds"
+          ],
+          "additionalProperties": false
+        },
+        "returns": {
+          "type": "string"
+        }
+      },
       "Between": {
         "description": "Rows whose field is from min to max, both included; compares numbers, or text such as \"YYYY-MM-DD\" dates. Leave min or max null for an open end",
         "params": {
@@ -5342,6 +5551,111 @@
         "returns": {
           "type": "array",
           "items": {}
+        }
+      },
+      "AddDays": {
+        "description": "Add a whole number of days to a supplied YYYY-MM-DD calendar date. Negative values go backwards.",
+        "params": {
+          "type": "object",
+          "properties": {
+            "date": {
+              "type": "string",
+              "pattern": "^[1-9]\\d{3}-\\d{2}-\\d{2}$"
+            },
+            "days": {
+              "type": "integer",
+              "minimum": -366000,
+              "maximum": 366000
+            }
+          },
+          "required": [
+            "date",
+            "days"
+          ],
+          "additionalProperties": false
+        },
+        "returns": {
+          "type": "string",
+          "pattern": "^[1-9]\\d{3}-\\d{2}-\\d{2}$"
+        }
+      },
+      "AddMonths": {
+        "description": "Add whole calendar months to a supplied YYYY-MM-DD date. Jan 31 plus one month is the last day of February.",
+        "params": {
+          "type": "object",
+          "properties": {
+            "date": {
+              "type": "string",
+              "pattern": "^[1-9]\\d{3}-\\d{2}-\\d{2}$"
+            },
+            "months": {
+              "type": "integer",
+              "minimum": -12000,
+              "maximum": 12000
+            }
+          },
+          "required": [
+            "date",
+            "months"
+          ],
+          "additionalProperties": false
+        },
+        "returns": {
+          "type": "string",
+          "pattern": "^[1-9]\\d{3}-\\d{2}-\\d{2}$"
+        }
+      },
+      "DaysBetween": {
+        "description": "Calendar days from one supplied YYYY-MM-DD date to another. Negative if the second date is earlier.",
+        "params": {
+          "type": "object",
+          "properties": {
+            "from": {
+              "type": "string",
+              "pattern": "^[1-9]\\d{3}-\\d{2}-\\d{2}$"
+            },
+            "to": {
+              "type": "string",
+              "pattern": "^[1-9]\\d{3}-\\d{2}-\\d{2}$"
+            }
+          },
+          "required": [
+            "from",
+            "to"
+          ],
+          "additionalProperties": false
+        },
+        "returns": {
+          "type": "number"
+        }
+      },
+      "StartOf": {
+        "description": "First day of the supplied YYYY-MM-DD date’s week (Monday), month or year.",
+        "params": {
+          "type": "object",
+          "properties": {
+            "date": {
+              "type": "string",
+              "pattern": "^[1-9]\\d{3}-\\d{2}-\\d{2}$"
+            },
+            "unit": {
+              "type": "string",
+              "enum": [
+                "week",
+                "month",
+                "year"
+              ]
+            }
+          },
+          "required": [
+            "date",
+            "unit"
+          ],
+          "additionalProperties": false
+        },
+        "returns": {
+          "type": "string",
+          "pattern": "^[1-9]\\d{3}-\\d{2}-\\d{2}$"
         }
       }
     }

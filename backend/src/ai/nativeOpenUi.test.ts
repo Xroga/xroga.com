@@ -4,6 +4,7 @@ import { NATIVE_UI_MARKER, splitNativeOpenUiAnswer, validateNativeOpenUi } from 
 import { nativeOpenUiPrompt } from './nativeOpenUiPrompt.js';
 import { buildNativeOpenUiShare, readNativeOpenUiShare } from './nativeOpenUiShare.js';
 import { readNativeOpenUiRun } from './nativeOpenUiRun.js';
+import { completeNativeWorkspaceAnswer, usesNativeWorkspacePresentation } from './nativeOpenUiWorkspace.js';
 
 test('the model gets instructions from the native registry and may answer in text', () => {
   for (const name of ['Col(', 'Chart(', 'Slider(', 'Svg(', 'Diagram(', 'Section(', 'Table(', 'Payment(', 'Source(']) assert.ok(nativeOpenUiPrompt.includes(name), name);
@@ -20,8 +21,34 @@ test('native layout, data and reactive arithmetic are accepted without a V2 tran
     'root = Col([Chart("bar", [{quarter: "Q1", revenue: 8}, {quarter: "Q2", revenue: 12}], "quarter", ["revenue"])])',
     '$amount = 100\nroot = Col([Slider($amount, 0, 500, 10, "Amount", "$"), Text("Total: $" + ($amount * 1.05)), Button("Reset", @Set($amount, 100))])',
     'root = Col([Text("From intake to build"), Svg([Line(5, 20, 95, 20)], "0 0 100 40")])',
+    'root = Col([Text(@AddMonths("2028-01-31", 1)), Metric("Elapsed days", @DaysBetween("2028-02-28", "2028-03-01"))])',
   ];
   for (const program of programs) assert.deepEqual(validateNativeOpenUi(program), { ok: true }, program);
+});
+
+test('native chat is a deploy-time DeepSeek flag independent of founder evaluation', () => {
+  const flag = { XROGA_NATIVE_OPENUI_WORKSPACE: '1' };
+  const deepSeek = 'deepseek_v4_1_flash_1017';
+  for (const environment of ['staging', 'production']) {
+    assert.equal(usesNativeWorkspacePresentation(deepSeek, { ...flag, XROGA_DEPLOYMENT_ENVIRONMENT: environment }), true);
+    assert.equal(usesNativeWorkspacePresentation(deepSeek, { XROGA_DEPLOYMENT_ENVIRONMENT: environment }), false);
+    assert.equal(usesNativeWorkspacePresentation('sonnet', { ...flag, XROGA_DEPLOYMENT_ENVIRONMENT: environment }), false);
+  }
+  assert.equal(usesNativeWorkspacePresentation(deepSeek, flag), false);
+});
+
+test('a settled document answer retains prose when presentation or evidence is incomplete', () => {
+  const prose = 'The uploaded agreement expires in 30 days.';
+  const program = 'root = Col([Text("The uploaded agreement expires in 30 days."), Source("source-1")])';
+  const raw = prose + NATIVE_UI_MARKER + program;
+  assert.deepEqual(completeNativeWorkspaceAnswer(raw, 'stop', new Set(['source-1'])), {
+    response: prose, completion: { status: 'complete' }, responseSource: { format: 'xroga-openui-v1', text: program },
+  });
+  assert.deepEqual(completeNativeWorkspaceAnswer(raw, 'stop'), {
+    response: prose, completion: { status: 'partial', reason: 'presentation_contract' },
+    responseSource: { format: 'xroga-openui-v1', text: '' },
+  });
+  assert.equal(completeNativeWorkspaceAnswer(raw, 'length', new Set(['source-1'])).responseSource.text, '');
 });
 
 test('untrusted UI cannot confer authority, invent evidence, or exhaust parser recursion', () => {

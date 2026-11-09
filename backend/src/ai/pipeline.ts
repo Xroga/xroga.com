@@ -22,7 +22,8 @@ import { analyzeTask } from './black-hole/taskClass.js';
 import { assessBlackHoleComplexity } from './black-hole/complexity.js';
 import { MODELS, type ModelId } from './models.js';
 import { publicCompletionState } from './completionDiagnostics.js';
-import { NATIVE_UI_FORMAT, splitNativeOpenUiAnswer, validateNativeOpenUi } from './nativeOpenUi.js';
+import { NATIVE_UI_FORMAT } from './nativeOpenUi.js';
+import { completeNativeWorkspaceAnswer, usesNativeWorkspacePresentation } from './nativeOpenUiWorkspace.js';
 import { nativeOpenUiPrompt } from './nativeOpenUiPrompt.js';
 import { assessPresentationCoverage, createPresentationProjection, presentationRequestInstructions, presentationResponseFormat, presentedAnswerMaxTokens, type PresentationResponseFormat } from './responsePresentation.js';
 import { prepareAnswerCoverage } from './answerCoverage.js';
@@ -978,7 +979,9 @@ export async function runChatPipeline(opts: {
   if (hasAttachments) {
     const prompt = defaultAttachmentPrompt(prepared, opts.prompt);
     const pick = pickAttachmentModel(prompt, prepared);
-    const system = prepared.hasImages ? VISION_SYSTEM : DOC_SYSTEM;
+    const native = usesNativeWorkspacePresentation(pick.modelId);
+    const attachmentSystem = prepared.hasImages ? VISION_SYSTEM : DOC_SYSTEM;
+    const system = native ? attachmentSystem + '\n\n' + nativeOpenUiPrompt : attachmentSystem;
 
     let userText = prompt;
     if (prepared.documentBlock) {
@@ -1009,14 +1012,19 @@ export async function runChatPipeline(opts: {
         tenantContext:opts.tenantContext,
         databaseProjectId:opts.modelScope?.projectId,modelRunAttempt:opts.modelScope?.runAttempt,modelRepository:opts.modelScope?.repository,
         temperature: 0.35,
-        onDelta: opts.onDelta,
+        modelConnectedAccountId:opts.modelScope?.connectedAccountId,modelMaximumCostMicroUsd:opts.modelScope?.maximumCostMicroUsd,
+        modelRevalidateBeforeDispatch:opts.modelScope?.revalidateBeforeDispatch,
+        // The native program is presentation data. Send only settled prose as a text event.
+        onDelta: native ? undefined : opts.onDelta,
       },
     );
 
     const usage = await getUsage(opts.userId);
 
+    const answer = native ? completeNativeWorkspaceAnswer(result.text, result.finishReason) : { response: result.text };
+    if (native) opts.onDelta?.(answer.response);
     return {
-      response: result.text,
+      ...answer,
       intent: pick.kind === 'document' ? 'file_analysis' : 'vision_analysis',
       usage: usageToTokenUsage(usage),
       modelId: result.modelId,
@@ -1124,10 +1132,7 @@ export async function runChatPipeline(opts: {
   if (opts.projectEvidence) truthAuthorities.add('repository:read');
   if (research?.sources.length) truthAuthorities.add('network:public-read');
   const answerContract = prepareAnswerCoverage(opts.prompt, opts.goalContract?.presentation, opts.goalContract?.answerObligations);
-  // This is a staging release switch, not a response or user classification.
-  const native = process.env.XROGA_DEPLOYMENT_ENVIRONMENT === 'staging'
-    && process.env.XROGA_NATIVE_OPENUI_WORKSPACE === '1'
-    && route.builder === 'deepseek_v4_1_flash_1017';
+  const native = usesNativeWorkspacePresentation(route.builder);
   const sources = research?.sources ?? [];
   const evidenceIds = new Set(sources.map((_, index) => 'source-' + (index + 1)));
   const sourceManifest = sources.length
@@ -1163,19 +1168,10 @@ export async function runChatPipeline(opts: {
   const usage = await getUsage(opts.userId);
 
   if (native) {
-    const { text, program } = splitNativeOpenUiAnswer(result.text);
-    const validation = program ? validateNativeOpenUi(program, evidenceIds) : undefined;
-    const response = text || "Xroga couldn't finish the requested answer.";
-    const completion = validation?.ok === false && validation.reason === 'authorization_review'
-      ? { status: 'partial' as const, reason: 'authorization_review' as const }
-      : publicCompletionState(result.finishReason, response);
-    const valid = text && validation?.ok && completion.status === 'complete';
-    opts.onDelta?.(response);
+    const answer = completeNativeWorkspaceAnswer(result.text, result.finishReason, evidenceIds);
+    opts.onDelta?.(answer.response);
     return {
-      response,
-      completion: (!text || (program && !valid)) && completion.status === 'complete'
-        ? { status: 'partial', reason: 'presentation_contract' } : completion,
-      responseSource: { format: NATIVE_UI_FORMAT, text: valid ? program : '' },
+      ...answer,
       intent: route.kind, usage: usageToTokenUsage(usage), webSources: research?.sources,
       modelId: result.modelId, route,
     };

@@ -71,13 +71,19 @@
     "Sqrt",
     "Format",
     "Plural",
+    "Default",
+    "Duration",
     "Between",
     "Change",
     "Cumulative",
     "GroupBy",
     "MovingAvg",
     "Stats",
-    "Top"
+    "Top",
+    "AddDays",
+    "AddMonths",
+    "DaysBetween",
+    "StartOf"
   ],
   "copilotKitStandard": [
     {
@@ -466,7 +472,7 @@
         "Chess and coach skill registries": "They depend on separate, domain-specific state and are outside the shared response contract.",
         "Random, Now, Today, Shuffle and Pick": "Saved snapshots should reproduce their inputs. No live clock or randomness in this registry.",
         "Pivot, Bucket, Histogram and allocation expansion": "Current staged tests cover bounded row operations. Output expansion and corner-case domains require their own limits.",
-        "Other list, date, formatting and color functions": "Not registered until their behavior and output size are covered under model-authored input."
+        "Other list, date, formatting and color functions": "See intelligentUiFunctionAudit for each pinned upstream export and the corresponding reason or verified registry binding."
       }
     },
     "CopilotKit": {
@@ -484,5 +490,560 @@
         "Remaining A2UI standard surfaces": "Each standard component has its own disposition in copilotKitStandard."
       }
     }
-  }
+  },
+  "intelligentUiFunctionAudit": [
+    {
+      "name": "Append",
+      "category": "lists",
+      "sourcePath": "src/lib/functions/lists.ts",
+      "license": "MIT",
+      "integration": "excluded-with-rationale",
+      "discoverable": false,
+      "reason": "Not registered: bounded output, nested evaluation and interactive rendering have not been verified. Use the bounded registered calculations or a static result."
+    },
+    {
+      "name": "Prepend",
+      "category": "lists",
+      "sourcePath": "src/lib/functions/lists.ts",
+      "license": "MIT",
+      "integration": "excluded-with-rationale",
+      "discoverable": false,
+      "reason": "Not registered: bounded output, nested evaluation and interactive rendering have not been verified. Use the bounded registered calculations or a static result."
+    },
+    {
+      "name": "Concat",
+      "category": "lists",
+      "sourcePath": "src/lib/functions/lists.ts",
+      "license": "MIT",
+      "integration": "excluded-with-rationale",
+      "discoverable": false,
+      "reason": "Not registered: bounded output, nested evaluation and interactive rendering have not been verified. Use the bounded registered calculations or a static result."
+    },
+    {
+      "name": "Remove",
+      "category": "lists",
+      "sourcePath": "src/lib/functions/lists.ts",
+      "license": "MIT",
+      "integration": "excluded-with-rationale",
+      "discoverable": false,
+      "reason": "Not registered: bounded output, nested evaluation and interactive rendering have not been verified. Use the bounded registered calculations or a static result."
+    },
+    {
+      "name": "RemoveAt",
+      "category": "lists",
+      "sourcePath": "src/lib/functions/lists.ts",
+      "license": "MIT",
+      "integration": "excluded-with-rationale",
+      "discoverable": false,
+      "reason": "Not registered: bounded output, nested evaluation and interactive rendering have not been verified. Use the bounded registered calculations or a static result."
+    },
+    {
+      "name": "Update",
+      "category": "lists",
+      "sourcePath": "src/lib/functions/lists.ts",
+      "license": "MIT",
+      "integration": "excluded-with-rationale",
+      "discoverable": false,
+      "reason": "Dynamic property writes need forbidden-key rejection and bounded result schemas."
+    },
+    {
+      "name": "Toggle",
+      "category": "lists",
+      "sourcePath": "src/lib/functions/lists.ts",
+      "license": "MIT",
+      "integration": "excluded-with-rationale",
+      "discoverable": false,
+      "reason": "Not registered: bounded output, nested evaluation and interactive rendering have not been verified. Use the bounded registered calculations or a static result."
+    },
+    {
+      "name": "Includes",
+      "category": "lists",
+      "sourcePath": "src/lib/functions/lists.ts",
+      "license": "MIT",
+      "integration": "excluded-with-rationale",
+      "discoverable": false,
+      "reason": "Not registered: bounded output, nested evaluation and interactive rendering have not been verified. Use the bounded registered calculations or a static result."
+    },
+    {
+      "name": "Find",
+      "category": "lists",
+      "sourcePath": "src/lib/functions/lists.ts",
+      "license": "MIT",
+      "integration": "excluded-with-rationale",
+      "discoverable": false,
+      "reason": "Not registered: bounded output, nested evaluation and interactive rendering have not been verified. Use the bounded registered calculations or a static result."
+    },
+    {
+      "name": "IndexOf",
+      "category": "lists",
+      "sourcePath": "src/lib/functions/lists.ts",
+      "license": "MIT",
+      "integration": "excluded-with-rationale",
+      "discoverable": false,
+      "reason": "Not registered: bounded output, nested evaluation and interactive rendering have not been verified. Use the bounded registered calculations or a static result."
+    },
+    {
+      "name": "Take",
+      "category": "lists",
+      "sourcePath": "src/lib/functions/lists.ts",
+      "license": "MIT",
+      "integration": "excluded-with-rationale",
+      "discoverable": false,
+      "reason": "Not registered: bounded output, nested evaluation and interactive rendering have not been verified. Use the bounded registered calculations or a static result."
+    },
+    {
+      "name": "Slice",
+      "category": "lists",
+      "sourcePath": "src/lib/functions/lists.ts",
+      "license": "MIT",
+      "integration": "excluded-with-rationale",
+      "discoverable": false,
+      "reason": "Not registered: bounded output, nested evaluation and interactive rendering have not been verified. Use the bounded registered calculations or a static result."
+    },
+    {
+      "name": "Unique",
+      "category": "lists",
+      "sourcePath": "src/lib/functions/lists.ts",
+      "license": "MIT",
+      "integration": "excluded-with-rationale",
+      "discoverable": false,
+      "reason": "Not registered: bounded output, nested evaluation and interactive rendering have not been verified. Use the bounded registered calculations or a static result."
+    },
+    {
+      "name": "Reverse",
+      "category": "lists",
+      "sourcePath": "src/lib/functions/lists.ts",
+      "license": "MIT",
+      "integration": "excluded-with-rationale",
+      "discoverable": false,
+      "reason": "Not registered: bounded output, nested evaluation and interactive rendering have not been verified. Use the bounded registered calculations or a static result."
+    },
+    {
+      "name": "Range",
+      "category": "lists",
+      "sourcePath": "src/lib/functions/lists.ts",
+      "license": "MIT",
+      "integration": "excluded-with-rationale",
+      "discoverable": false,
+      "reason": "Not registered: bounded output, nested evaluation and interactive rendering have not been verified. Use the bounded registered calculations or a static result."
+    },
+    {
+      "name": "Pick",
+      "category": "lists",
+      "sourcePath": "src/lib/functions/lists.ts",
+      "license": "MIT",
+      "integration": "excluded-with-rationale",
+      "discoverable": false,
+      "reason": "Random output changes on reopen. Use ChoicePicker."
+    },
+    {
+      "name": "Shuffle",
+      "category": "lists",
+      "sourcePath": "src/lib/functions/lists.ts",
+      "license": "MIT",
+      "integration": "excluded-with-rationale",
+      "discoverable": false,
+      "reason": "Random output changes on reopen. Use a supplied order."
+    },
+    {
+      "name": "Flatten",
+      "category": "lists",
+      "sourcePath": "src/lib/functions/lists.ts",
+      "license": "MIT",
+      "integration": "excluded-with-rationale",
+      "discoverable": false,
+      "reason": "Not registered: bounded output, nested evaluation and interactive rendering have not been verified. Use the bounded registered calculations or a static result."
+    },
+    {
+      "name": "Chunk",
+      "category": "lists",
+      "sourcePath": "src/lib/functions/lists.ts",
+      "license": "MIT",
+      "integration": "excluded-with-rationale",
+      "discoverable": false,
+      "reason": "Not registered: bounded output, nested evaluation and interactive rendering have not been verified. Use the bounded registered calculations or a static result."
+    },
+    {
+      "name": "Pow",
+      "category": "numbers",
+      "sourcePath": "src/lib/functions/numbers.ts",
+      "license": "MIT",
+      "integration": "native",
+      "discoverable": true,
+      "schema": "backend/src/ai/nativeOpenUiCatalog.json#spec.functions.Pow",
+      "evidence": "Registry schema only unless named in a component-family test"
+    },
+    {
+      "name": "Sqrt",
+      "category": "numbers",
+      "sourcePath": "src/lib/functions/numbers.ts",
+      "license": "MIT",
+      "integration": "native",
+      "discoverable": true,
+      "schema": "backend/src/ai/nativeOpenUiCatalog.json#spec.functions.Sqrt",
+      "evidence": "Registry schema only unless named in a component-family test"
+    },
+    {
+      "name": "Random",
+      "category": "numbers",
+      "sourcePath": "src/lib/functions/numbers.ts",
+      "license": "MIT",
+      "integration": "excluded-with-rationale",
+      "discoverable": false,
+      "reason": "Random output changes on reopen. Use supplied scenario inputs."
+    },
+    {
+      "name": "Clamp",
+      "category": "numbers",
+      "sourcePath": "src/lib/functions/numbers.ts",
+      "license": "MIT",
+      "integration": "native",
+      "discoverable": true,
+      "schema": "backend/src/ai/nativeOpenUiCatalog.json#spec.functions.Clamp",
+      "evidence": "Registry schema only unless named in a component-family test"
+    },
+    {
+      "name": "Percent",
+      "category": "numbers",
+      "sourcePath": "src/lib/functions/numbers.ts",
+      "license": "MIT",
+      "integration": "native",
+      "discoverable": true,
+      "schema": "backend/src/ai/nativeOpenUiCatalog.json#spec.functions.Percent",
+      "evidence": "Registry schema only unless named in a component-family test"
+    },
+    {
+      "name": "Lerp",
+      "category": "numbers",
+      "sourcePath": "src/lib/functions/numbers.ts",
+      "license": "MIT",
+      "integration": "native",
+      "discoverable": true,
+      "schema": "backend/src/ai/nativeOpenUiCatalog.json#spec.functions.Lerp",
+      "evidence": "Registry schema only unless named in a component-family test"
+    },
+    {
+      "name": "Allocate",
+      "category": "numbers",
+      "sourcePath": "src/lib/functions/numbers.ts",
+      "license": "MIT",
+      "integration": "excluded-with-rationale",
+      "discoverable": false,
+      "reason": "Rounding, zero weights and integer precision require domain-specific acceptance before budgeting can rely on it."
+    },
+    {
+      "name": "Payment",
+      "category": "numbers",
+      "sourcePath": "src/lib/functions/numbers.ts",
+      "license": "MIT",
+      "integration": "native",
+      "discoverable": true,
+      "schema": "backend/src/ai/nativeOpenUiCatalog.json#spec.functions.Payment",
+      "evidence": "Registry schema only unless named in a component-family test"
+    },
+    {
+      "name": "Convert",
+      "category": "numbers",
+      "sourcePath": "src/lib/functions/numbers.ts",
+      "license": "MIT",
+      "integration": "native",
+      "discoverable": true,
+      "schema": "backend/src/ai/nativeOpenUiCatalog.json#spec.functions.Convert",
+      "evidence": "Registry schema only unless named in a component-family test"
+    },
+    {
+      "name": "Format",
+      "category": "text",
+      "sourcePath": "src/lib/functions/text.ts",
+      "license": "MIT",
+      "integration": "native",
+      "discoverable": true,
+      "schema": "backend/src/ai/nativeOpenUiCatalog.json#spec.functions.Format",
+      "evidence": "Registry schema only unless named in a component-family test"
+    },
+    {
+      "name": "Join",
+      "category": "text",
+      "sourcePath": "src/lib/functions/text.ts",
+      "license": "MIT",
+      "integration": "excluded-with-rationale",
+      "discoverable": false,
+      "reason": "Not registered: bounded output, nested evaluation and interactive rendering have not been verified. Use the bounded registered calculations or a static result."
+    },
+    {
+      "name": "Plural",
+      "category": "text",
+      "sourcePath": "src/lib/functions/text.ts",
+      "license": "MIT",
+      "integration": "native",
+      "discoverable": true,
+      "schema": "backend/src/ai/nativeOpenUiCatalog.json#spec.functions.Plural",
+      "evidence": "Registry schema only unless named in a component-family test"
+    },
+    {
+      "name": "Pad",
+      "category": "text",
+      "sourcePath": "src/lib/functions/text.ts",
+      "license": "MIT",
+      "integration": "excluded-with-rationale",
+      "discoverable": false,
+      "reason": "Not registered: bounded output, nested evaluation and interactive rendering have not been verified. Use the bounded registered calculations or a static result."
+    },
+    {
+      "name": "Upper",
+      "category": "text",
+      "sourcePath": "src/lib/functions/text.ts",
+      "license": "MIT",
+      "integration": "excluded-with-rationale",
+      "discoverable": false,
+      "reason": "Not registered: bounded output, nested evaluation and interactive rendering have not been verified. Use the bounded registered calculations or a static result."
+    },
+    {
+      "name": "Lower",
+      "category": "text",
+      "sourcePath": "src/lib/functions/text.ts",
+      "license": "MIT",
+      "integration": "excluded-with-rationale",
+      "discoverable": false,
+      "reason": "Not registered: bounded output, nested evaluation and interactive rendering have not been verified. Use the bounded registered calculations or a static result."
+    },
+    {
+      "name": "Trim",
+      "category": "text",
+      "sourcePath": "src/lib/functions/text.ts",
+      "license": "MIT",
+      "integration": "excluded-with-rationale",
+      "discoverable": false,
+      "reason": "Not registered: bounded output, nested evaluation and interactive rendering have not been verified. Use the bounded registered calculations or a static result."
+    },
+    {
+      "name": "Capitalize",
+      "category": "text",
+      "sourcePath": "src/lib/functions/text.ts",
+      "license": "MIT",
+      "integration": "excluded-with-rationale",
+      "discoverable": false,
+      "reason": "Not registered: bounded output, nested evaluation and interactive rendering have not been verified. Use the bounded registered calculations or a static result."
+    },
+    {
+      "name": "Split",
+      "category": "text",
+      "sourcePath": "src/lib/functions/text.ts",
+      "license": "MIT",
+      "integration": "excluded-with-rationale",
+      "discoverable": false,
+      "reason": "Not registered: bounded output, nested evaluation and interactive rendering have not been verified. Use the bounded registered calculations or a static result."
+    },
+    {
+      "name": "Replace",
+      "category": "text",
+      "sourcePath": "src/lib/functions/text.ts",
+      "license": "MIT",
+      "integration": "excluded-with-rationale",
+      "discoverable": false,
+      "reason": "Not registered: bounded output, nested evaluation and interactive rendering have not been verified. Use the bounded registered calculations or a static result."
+    },
+    {
+      "name": "Duration",
+      "category": "text",
+      "sourcePath": "src/lib/functions/text.ts",
+      "license": "MIT",
+      "integration": "native",
+      "discoverable": true,
+      "schema": "backend/src/ai/nativeOpenUiCatalog.json#spec.functions.Duration",
+      "evidence": "Registry schema only unless named in a component-family test"
+    },
+    {
+      "name": "Default",
+      "category": "text",
+      "sourcePath": "src/lib/functions/text.ts",
+      "license": "MIT",
+      "integration": "native",
+      "discoverable": true,
+      "schema": "backend/src/ai/nativeOpenUiCatalog.json#spec.functions.Default",
+      "evidence": "Registry schema only unless named in a component-family test"
+    },
+    {
+      "name": "MixColor",
+      "category": "colors",
+      "sourcePath": "src/lib/functions/colors.ts",
+      "license": "MIT",
+      "integration": "excluded-with-rationale",
+      "discoverable": false,
+      "reason": "Arbitrary color output needs contrast and theme enforcement. Use the semantic palette."
+    },
+    {
+      "name": "Now",
+      "category": "dates",
+      "sourcePath": "src/lib/functions/dates.ts",
+      "license": "MIT",
+      "integration": "excluded-with-rationale",
+      "discoverable": false,
+      "reason": "Clock-dependent output changes on reopen. Use an explicit calendar date."
+    },
+    {
+      "name": "FormatDate",
+      "category": "dates",
+      "sourcePath": "src/lib/functions/dates.ts",
+      "license": "MIT",
+      "integration": "excluded-with-rationale",
+      "discoverable": false,
+      "reason": "Upstream timestamp display depends on viewer locale and timezone. Supported helpers use calendar dates only."
+    },
+    {
+      "name": "AddDays",
+      "category": "dates",
+      "sourcePath": "src/lib/functions/dates.ts",
+      "license": "MIT",
+      "integration": "adapted",
+      "discoverable": true,
+      "schema": "backend/src/ai/nativeOpenUiCatalog.json#spec.functions.AddDays",
+      "evidence": "calendar scenario in scripts/verify-native-openui-browser.mjs exercises DaysBetween and AddMonths; registry shape is generated for all four date helpers"
+    },
+    {
+      "name": "DaysBetween",
+      "category": "dates",
+      "sourcePath": "src/lib/functions/dates.ts",
+      "license": "MIT",
+      "integration": "adapted",
+      "discoverable": true,
+      "schema": "backend/src/ai/nativeOpenUiCatalog.json#spec.functions.DaysBetween",
+      "evidence": "calendar scenario in scripts/verify-native-openui-browser.mjs exercises DaysBetween and AddMonths; registry shape is generated for all four date helpers"
+    },
+    {
+      "name": "Today",
+      "category": "dates",
+      "sourcePath": "src/lib/functions/dates.ts",
+      "license": "MIT",
+      "integration": "excluded-with-rationale",
+      "discoverable": false,
+      "reason": "Clock-dependent output changes on reopen. Use an explicit calendar date."
+    },
+    {
+      "name": "AddMonths",
+      "category": "dates",
+      "sourcePath": "src/lib/functions/dates.ts",
+      "license": "MIT",
+      "integration": "adapted",
+      "discoverable": true,
+      "schema": "backend/src/ai/nativeOpenUiCatalog.json#spec.functions.AddMonths",
+      "evidence": "calendar scenario in scripts/verify-native-openui-browser.mjs exercises DaysBetween and AddMonths; registry shape is generated for all four date helpers"
+    },
+    {
+      "name": "MonthsBetween",
+      "category": "dates",
+      "sourcePath": "src/lib/functions/dates.ts",
+      "license": "MIT",
+      "integration": "excluded-with-rationale",
+      "discoverable": false,
+      "reason": "Upstream timestamp inputs are timezone-sensitive. Use DaysBetween for explicit dates."
+    },
+    {
+      "name": "StartOf",
+      "category": "dates",
+      "sourcePath": "src/lib/functions/dates.ts",
+      "license": "MIT",
+      "integration": "adapted",
+      "discoverable": true,
+      "schema": "backend/src/ai/nativeOpenUiCatalog.json#spec.functions.StartOf",
+      "evidence": "calendar scenario in scripts/verify-native-openui-browser.mjs exercises DaysBetween and AddMonths; registry shape is generated for all four date helpers"
+    },
+    {
+      "name": "GroupBy",
+      "category": "data",
+      "sourcePath": "src/lib/functions/data.ts",
+      "license": "MIT",
+      "integration": "native",
+      "discoverable": true,
+      "schema": "backend/src/ai/nativeOpenUiCatalog.json#spec.functions.GroupBy",
+      "evidence": "Registry schema only unless named in a component-family test"
+    },
+    {
+      "name": "Pivot",
+      "category": "data",
+      "sourcePath": "src/lib/functions/data.ts",
+      "license": "MIT",
+      "integration": "excluded-with-rationale",
+      "discoverable": false,
+      "reason": "Dynamic column keys need collision rejection and a bounded output matrix."
+    },
+    {
+      "name": "Top",
+      "category": "data",
+      "sourcePath": "src/lib/functions/data.ts",
+      "license": "MIT",
+      "integration": "native",
+      "discoverable": true,
+      "schema": "backend/src/ai/nativeOpenUiCatalog.json#spec.functions.Top",
+      "evidence": "Registry schema only unless named in a component-family test"
+    },
+    {
+      "name": "Between",
+      "category": "data",
+      "sourcePath": "src/lib/functions/data.ts",
+      "license": "MIT",
+      "integration": "native",
+      "discoverable": true,
+      "schema": "backend/src/ai/nativeOpenUiCatalog.json#spec.functions.Between",
+      "evidence": "Registry schema only unless named in a component-family test"
+    },
+    {
+      "name": "Bucket",
+      "category": "data",
+      "sourcePath": "src/lib/functions/data.ts",
+      "license": "MIT",
+      "integration": "excluded-with-rationale",
+      "discoverable": false,
+      "reason": "Not registered: bounded output, nested evaluation and interactive rendering have not been verified. Use the bounded registered calculations or a static result."
+    },
+    {
+      "name": "Cumulative",
+      "category": "data",
+      "sourcePath": "src/lib/functions/data.ts",
+      "license": "MIT",
+      "integration": "native",
+      "discoverable": true,
+      "schema": "backend/src/ai/nativeOpenUiCatalog.json#spec.functions.Cumulative",
+      "evidence": "Registry schema only unless named in a component-family test"
+    },
+    {
+      "name": "MovingAvg",
+      "category": "data",
+      "sourcePath": "src/lib/functions/data.ts",
+      "license": "MIT",
+      "integration": "native",
+      "discoverable": true,
+      "schema": "backend/src/ai/nativeOpenUiCatalog.json#spec.functions.MovingAvg",
+      "evidence": "Registry schema only unless named in a component-family test"
+    },
+    {
+      "name": "Change",
+      "category": "data",
+      "sourcePath": "src/lib/functions/data.ts",
+      "license": "MIT",
+      "integration": "native",
+      "discoverable": true,
+      "schema": "backend/src/ai/nativeOpenUiCatalog.json#spec.functions.Change",
+      "evidence": "Registry schema only unless named in a component-family test"
+    },
+    {
+      "name": "Histogram",
+      "category": "data",
+      "sourcePath": "src/lib/functions/data.ts",
+      "license": "MIT",
+      "integration": "excluded-with-rationale",
+      "discoverable": false,
+      "reason": "Not registered: bounded output, nested evaluation and interactive rendering have not been verified. Use the bounded registered calculations or a static result."
+    },
+    {
+      "name": "Stats",
+      "category": "data",
+      "sourcePath": "src/lib/functions/data.ts",
+      "license": "MIT",
+      "integration": "native",
+      "discoverable": true,
+      "schema": "backend/src/ai/nativeOpenUiCatalog.json#spec.functions.Stats",
+      "evidence": "Registry schema only unless named in a component-family test"
+    }
+  ]
 }

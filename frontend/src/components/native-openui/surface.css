@@ -96,6 +96,11 @@
 .native-answer-metric[data-tone="warning"] dd:first-of-type { color: var(--iui-warning); }
 .native-answer-metric[data-tone="danger"] dd:first-of-type { color: var(--iui-danger); }
 .native-answer-metric .native-answer-metric-note { margin-top: .25rem; color: var(--iui-muted); font-size: .8125rem; font-weight: 400; line-height: 1.4; letter-spacing: normal; }
+/* Two short results fit side by side even when a general-purpose Grid asks to stack.
+   Other grids retain their model-specified minimum column widths. */
+.xroga-native-openui .iui-grid:has(> .native-answer-metric:first-child + .native-answer-metric:last-child) {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 7rem), 1fr)) !important;
+}
 .native-answer-controls { min-width: 0; margin: 0; padding: .5rem 0 0; border: 0; }
 .native-answer-controls legend { padding: 0; font-size: .875rem; font-weight: 650; }
 .native-answer-controls-grid { display: grid; grid-template-columns: repeat(var(--control-columns, 1), minmax(0, 1fr)); align-items: end; gap: .75rem; }
@@ -123,7 +128,7 @@
 .native-diagram .react-flow__node.native-diagram-node-success { border-color: var(--iui-success); background: var(--iui-success-soft); }
 .native-diagram .react-flow__node.native-diagram-node-purple { border-color: var(--iui-purple); background: var(--iui-purple-soft); }
 .native-diagram .react-flow__node.native-diagram-node-warning { border-color: var(--iui-warning); background: var(--iui-warning-soft); }
-.native-diagram-node-title { display: flex; align-items: center; gap: .35rem; font-size: 14px; line-height: 1.3; font-weight: 650; }
+.native-diagram-node-title { display: flex; align-items: center; gap: .35rem; font-size: 14px; line-height: 1.3; font-weight: 650; overflow-wrap: anywhere; }
 .native-diagram-node-title svg { flex: 0 0 auto; }
 .native-diagram-node-detail { font-size: 12px; line-height: 1.35; color: var(--iui-muted); }
 .native-diagram .react-flow__handle { opacity: 0; }
@@ -132,6 +137,12 @@
 .native-diagram .react-flow__edge-text { fill: var(--iui-ink); font-size: 12px; }
 .native-diagram .react-flow__edge-textbg { fill: var(--iui-canvas); }
 .native-diagram .react-flow__controls-button { box-sizing: content-box; border-radius: 0; }
+.native-diagram-toolbar { display: flex; justify-content: flex-end; padding-top: .5rem; }
+.native-diagram-toolbar .react-flow__controls { position: static; margin: 0; }
+.native-diagram-toolbar .react-flow__controls-button {
+  background: var(--iui-canvas); color: var(--iui-ink); border-color: var(--native-line);
+}
+.native-diagram-toolbar .react-flow__controls-button:hover { background: var(--iui-surface-hover); }
 .native-diagram details ul { margin: .35rem 0 0; padding-inline-start: 1.2rem; color: var(--iui-muted); font-size: .875rem; }
 @media (max-width: 540px) {
   .native-answer-controls-grid { grid-template-columns: minmax(0, 1fr); }

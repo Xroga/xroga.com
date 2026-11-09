@@ -39,6 +39,10 @@ const cases = {
     'root = Col([ChoicePicker($choice, "Pricing scenario", [{value: "base", label: "Base"}, {value: "growth", label: "Growth"}, {value: "trial", label: "Trial"}, {value: "enterprise", label: "Enterprise"}, {value: "custom", label: "Custom"}]), Metric("Current total", $choice == "growth" ? 200 : 100), Metric("Mean from provided values", @Stats([100, 200, 300]).mean)])',
   ].join('\n') },
   rejected: { text: 'The original readable answer is retained.', program: 'root = Col([Source("unknown")])' },
+  calendar: { text: 'Adjust the end date to calculate elapsed days.', program: [
+    '$end = "2028-03-01"',
+    'root = Col([DatePicker($end, "End date"), Metric("Elapsed days", @DaysBetween("2028-02-28", $end)), Text(@AddMonths("2028-01-31", 1)), Button("Reset date", @Set($end, "2028-03-01"))])',
+  ].join('\n') },
   stream: { text: 'The first section is available.', program: 'root = Col([Text("The first section is available.")])\ntail = Chart(' },
 };
 const compiled = await build({
@@ -106,6 +110,10 @@ try {
       await open('revenue');
       const slider = page.getByRole('slider', { name: 'Attendees' });
       await slider.waitFor();
+      if (viewport.width === 390) {
+        const metrics = await page.locator('.native-answer-metric').evaluateAll(nodes => nodes.map(node => node.getBoundingClientRect().top));
+        assert.equal(metrics[0], metrics[1], 'Both calculator values should fit on one row at 390px');
+      }
       await slider.press('End');
       await page.getByText('$2,000', { exact: true }).waitFor();
       await page.getByRole('button', { name: 'Reset' }).click();
@@ -121,6 +129,10 @@ try {
       await graph.getByText('Billing webhook', { exact: true }).first().waitFor();
       await graph.locator('.react-flow__edge-path').first().waitFor();
       assert.equal(await graph.locator('.react-flow__edge-path').count(), 5);
+      if (viewport.width === 390) {
+        const scale = await graph.locator('.react-flow__viewport').evaluate(el => new DOMMatrixReadOnly(getComputedStyle(el).transform).a);
+        assert.ok(scale >= .85, 'Mobile diagram zoom should keep node labels legible: ' + scale);
+      }
       const renderedEdge = await graph.locator('.react-flow__edge-path').first().evaluate(path => ({
         length: path.getTotalLength(), stroke: getComputedStyle(path).stroke,
         overflow: getComputedStyle(path.ownerSVGElement).overflow,
@@ -166,6 +178,13 @@ try {
       await open('rejected');
       await page.getByText(cases.rejected.text).waitFor();
       assert.equal(await page.getByRole('link').count(), 0);
+      await open('calendar');
+      await page.getByText('2028-02-29', { exact: true }).waitFor();
+      await page.getByText('2', { exact: true }).waitFor();
+      await page.locator('input[type="date"]').fill('2028-03-03');
+      await page.getByText('4', { exact: true }).waitFor();
+      await page.getByRole('button', { name: 'Reset date' }).click();
+      await page.getByText('2', { exact: true }).waitFor();
       await open('stream');
       assert.equal(await page.getByRole('region', { name: 'Answer', exact: true }).getAttribute('aria-busy'), 'true');
       await page.locator('.iui-text').getByText(cases.stream.text).waitFor();

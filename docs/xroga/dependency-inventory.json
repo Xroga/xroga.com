@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "f7db243c19255f168f508fe166cc18787515e7ca",
+  "source_sha": "95d44f46d85dae3ed0346c9603f7e418a6420c06",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -4449,8 +4449,6 @@
         "GITHUB_OAUTH_CALLBACK_URL",
         "NODE_ENV",
         "SUPABASE_SERVICE_ROLE_KEY",
-        "XROGA_DEPLOYMENT_ENVIRONMENT",
-        "XROGA_NATIVE_OPENUI_WORKSPACE",
         "ZURELAY_JSON_SCHEMA_VERIFIED"
       ],
       "inbound_callers": [
@@ -8147,6 +8145,7 @@
         "backend/src/ai/black-hole/cutover.ts",
         "backend/src/ai/engineeringOperator.ts",
         "backend/src/ai/legacyBuilderAdapter.ts",
+        "backend/src/ai/nativeOpenUiWorkspace.ts",
         "backend/src/ai/providerRuntime.ts",
         "backend/src/ai/resourceMeter.ts",
         "backend/src/ai/routerConfig.ts",
@@ -8338,6 +8337,7 @@
         "XROGA_GITHUB_BOT_NAME",
         "XROGA_LEGACY_CREDENTIAL_MIGRATION",
         "XROGA_MAX_REPAIR_ATTEMPTS",
+        "XROGA_NATIVE_OPENUI_WORKSPACE",
         "XROGA_OCI_KMS_AUTH_MODE",
         "XROGA_OCI_KMS_ENDPOINT",
         "XROGA_OCI_KMS_KEY_ID",
@@ -8379,6 +8379,7 @@
         "backend/src/ai/black-hole/cutover.ts",
         "backend/src/ai/engineeringOperator.ts",
         "backend/src/ai/legacyBuilderAdapter.ts",
+        "backend/src/ai/nativeOpenUiWorkspace.ts",
         "backend/src/ai/providerRuntime.ts",
         "backend/src/ai/resourceMeter.ts",
         "backend/src/ai/routerConfig.ts",
@@ -14083,7 +14084,7 @@
     {
       "name": "XROGA_DEPLOYMENT_ENVIRONMENT",
       "consuming_sources": [
-        "backend/src/ai/pipeline.ts",
+        "backend/src/ai/nativeOpenUiWorkspace.ts",
         "backend/src/routes/nativeOpenUiEvaluation.ts",
         "backend/src/runtime/startupPolicy.ts",
         "frontend/src/app/native-answer-evaluation/page.tsx",
@@ -14100,8 +14101,7 @@
         "STATIC_ENV_READER"
       ],
       "dependency_ids": [
-        "endpoint-127-0-0-1",
-        "endpoint-github-com"
+        "endpoint-127-0-0-1"
       ]
     },
     {
@@ -15081,7 +15081,7 @@
     {
       "name": "XROGA_NATIVE_OPENUI_WORKSPACE",
       "consuming_sources": [
-        "backend/src/ai/pipeline.ts"
+        "backend/src/ai/nativeOpenUiWorkspace.ts"
       ],
       "environments": [
         "backend/operator or inherited system context"
@@ -15094,7 +15094,7 @@
         "STATIC_ENV_READER"
       ],
       "dependency_ids": [
-        "endpoint-github-com"
+        "runtime-controls-and-conditional-aliases"
       ]
     },
     {
@@ -16776,6 +16776,10 @@
       "sha256": "a1caceacb1b496cfd3547e88f327631a33be3ea279baa0c87b761e786db6d7e6"
     },
     {
+      "path": "backend/src/ai/nativeOpenUiWorkspace.ts",
+      "sha256": "fa4524bfc1d5c5450240778ad7ec3a601a1787bc08640009ef355de3cd5f49f4"
+    },
+    {
       "path": "backend/src/ai/openaiCompat.ts",
       "sha256": "c159e3bd321637cc26214829ed36bca439a102e91983e6fd93fcbee36ef61544"
     },
@@ -16805,7 +16809,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "c5eee2fd7ac3c6211e1e0b53fa516357ef110a07504ff45c29111a4b5dbe6f43"
+      "sha256": "07ab1714a6f3d3559d546e2172016cca626482f7a31857904f249fb27b1103af"
     },
     {
       "path": "backend/src/ai/postCompletionAccounting.ts",
@@ -21841,7 +21845,7 @@
     },
     {
       "path": "frontend/src/components/native-openui/Diagram.tsx",
-      "sha256": "a398171e7f258fad3b382b2c41d1d4d86c3a060fbb0f6d5ea2192f9eb6e508d7"
+      "sha256": "1bd6b732394a057e39fd8922a62f0c2fc99f8f81d71e9248eca4537e036e6111"
     },
     {
       "path": "frontend/src/components/native-openui/Editorial.tsx",
@@ -21869,7 +21873,7 @@
     },
     {
       "path": "frontend/src/components/native-openui/library.tsx",
-      "sha256": "3a5586552ef1e022906e8677240afe1ab05a0fb0c8942c53f40f05940e9333b4"
+      "sha256": "2b0f2b54c66fa177bbfb4b31ba4fd75ee526e3daf8a2ac55696d7684672391b8"
     },
     {
       "path": "frontend/src/components/native-openui/renderer-config.ts",
@@ -21914,6 +21918,10 @@
     {
       "path": "frontend/src/components/native-openui/upstream/components/text.tsx",
       "sha256": "873aae3e4abe68f12717a5442cfe9dabf9204c4960c16c5dd8a161d9b2de1b60"
+    },
+    {
+      "path": "frontend/src/components/native-openui/upstream/functions/calendar.ts",
+      "sha256": "106e6636de0fecc62c85d2d8fd4d28a8f9c2b56a54fdcb168a5c48d56723609f"
     },
     {
       "path": "frontend/src/components/native-openui/upstream/functions/data.ts",
@@ -25170,7 +25178,7 @@
       "hostname": "github.com",
       "protocol": "https:",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4100,
+      "line": 4096,
       "credentialsInUrl": false
     },
     {
@@ -32212,70 +32220,70 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 532,
+      "line": 533,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 562,
+      "line": 563,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 756,
+      "line": 757,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 1123,
+      "line": 1131,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 1132,
+      "line": 1137,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 1555,
+      "line": 1551,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 2307,
+      "line": 2303,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3866,
+      "line": 3862,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4050,
+      "line": 4046,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4829,
+      "line": 4825,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -38085,13 +38093,6 @@
     },
     {
       "path": "frontend/src/components/native-openui/Diagram.tsx",
-      "line": 48,
-      "scope": "FUNCTION_LOCAL",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "frontend/src/components/native-openui/Diagram.tsx",
       "line": 50,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
@@ -38099,7 +38100,14 @@
     },
     {
       "path": "frontend/src/components/native-openui/Diagram.tsx",
-      "line": 61,
+      "line": 52,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/components/native-openui/Diagram.tsx",
+      "line": 66,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -38120,7 +38128,7 @@
     },
     {
       "path": "frontend/src/components/native-openui/library.tsx",
-      "line": 23,
+      "line": 24,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

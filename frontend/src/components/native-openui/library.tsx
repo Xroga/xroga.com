@@ -11,7 +11,8 @@ import { svgComponents } from './upstream/components/svg';
 import { Glyph } from './upstream/components/glyph';
 import { Clamp, Convert, Lerp, Payment, Percent, Pow, Sqrt } from './upstream/functions/numbers';
 
-import { Format, Plural } from './upstream/functions/text';
+import { Default, Duration, Format, Plural } from './upstream/functions/text';
+import { AddDays, AddMonths, DaysBetween, StartOf } from './upstream/functions/calendar';
 import { ChoicePicker } from './ChoicePicker';
 import { Between, Change, Cumulative, GroupBy, MovingAvg, Stats, Top } from './upstream/functions/data';
 import { Tabs } from './Tabs';
@@ -51,7 +52,8 @@ export const library = createLibrary({
     Section, Metric, Controls, Diagram, Form, Input, TextArea, Slider, Select, Checkbox, RadioGroup, SegmentedControl, DatePicker, ChoicePicker,
     Button, IconButton, Pressable, Flashcard, Source, Resource, Icon, Table, Chart, ...svgComponents,
   ],
-  functions: [Clamp, Convert, Lerp, Payment, Percent, Pow, Sqrt, Format, Plural, Between, Change, Cumulative, GroupBy, MovingAvg, Stats, Top],
+  functions: [Clamp, Convert, Lerp, Payment, Percent, Pow, Sqrt, Format, Plural, Default, Duration,
+    Between, Change, Cumulative, GroupBy, MovingAvg, Stats, Top, AddDays, AddMonths, DaysBetween, StartOf],
   componentGroups: [
     { name: 'Editorial layout', components: ['Section', 'Metric', 'Col', 'Row', 'Grid', 'Title', 'Text', 'Caption', 'List', 'ListItem', 'Card', 'Quote', 'Badge', 'Source', 'Resource'] },
     { name: 'Data and technical answers', components: ['Table', 'Chart', 'Diagram', 'Math', 'Code', 'Svg', 'G', 'Circle', 'Ellipse', 'Rect', 'Line', 'Path', 'Polyline', 'Polygon', 'SvgText'] },

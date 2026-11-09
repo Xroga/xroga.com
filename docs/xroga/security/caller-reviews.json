@@ -1063,9 +1063,9 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "c5eee2fd7ac3c6211e1e0b53fa516357ef110a07504ff45c29111a4b5dbe6f43",
+      "sourceSha256": "07ab1714a6f3d3559d546e2172016cca626482f7a31857904f249fb27b1103af",
       "callIds": [
-        "7dc867931d0d296911dc"
+        "5b543818a91ad0c16240"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -2564,13 +2564,20 @@
           "d431d5067a3873deb9cb"
         ],
         "scope": "Same worker body and reviewed built-in Array.from expression. Native chat output review is separate."
+      },
+      "nativeOpenUiWorkspaceRebinding": {
+        "sourceSha256": "c5eee2fd7ac3c6211e1e0b53fa516357ef110a07504ff45c29111a4b5dbe6f43",
+        "callIds": [
+          "7dc867931d0d296911dc"
+        ],
+        "scope": "Byte-identical runBuildPipeline body; only the existing in-memory Array.from conversions were reindexed."
       }
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "c5eee2fd7ac3c6211e1e0b53fa516357ef110a07504ff45c29111a4b5dbe6f43",
+      "sourceSha256": "07ab1714a6f3d3559d546e2172016cca626482f7a31857904f249fb27b1103af",
       "callIds": [
-        "b11f02479d5943c73413"
+        "9ed969847167feb788b9"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -4069,6 +4076,13 @@
           "1f158fd95dae861dc678"
         ],
         "scope": "Same worker body and reviewed built-in Array.from expression. Native chat output review is separate."
+      },
+      "nativeOpenUiWorkspaceRebinding": {
+        "sourceSha256": "c5eee2fd7ac3c6211e1e0b53fa516357ef110a07504ff45c29111a4b5dbe6f43",
+        "callIds": [
+          "b11f02479d5943c73413"
+        ],
+        "scope": "Byte-identical runBuildPipeline body; only the existing in-memory Array.from conversions were reindexed."
       }
     },
     {

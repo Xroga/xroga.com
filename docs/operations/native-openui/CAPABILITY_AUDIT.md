@@ -1,0 +1,13 @@
+# Native Workspace capability audit
+
+[Machine-readable coverage](coverage.json) records the four pinned source revisions, the 54 registered components, 22 registered functions, 59 reviewed Open Intelligent UI functions and 69 reviewed CopilotKit catalog entries. The [generated registry](../../../backend/src/ai/nativeOpenUiCatalog.json) is the exact model-facing schema. A catalog disposition records the implementation decision, not live acceptance.
+
+| Upstream | Running integration | Evidence and limits |
+| --- | --- | --- |
+| OpenUI, `5afae00a` reference source, `@openuidev/lang-core` and `@openuidev/react-lang` pinned to 1.1.0 | Generated instructions, bounded Lang parsing, one React registry, validated rendering, local bindings and complete-prefix support. | Spec generation and backend validator tests. Prefix rendering is fixture-tested. The live Workspace route publishes a settled result rather than exposing raw provider token deltas. |
+| Open Intelligent UI, `9df2e64b` | Layout, text, cards, badges, popovers, carousel, SVG, charts, sortable tables, code, math, inputs, date picker, and local calculation functions. Its calendar helpers now support explicit ISO dates and deterministic UTC calendar arithmetic, including month-end handling. | Upstream source under the native surface retains MIT provenance. Chrome tests exercise chart data, sorting, keyboard slider, reset and date changes. Individual registry entries without interaction coverage remain schema-verified only. |
+| CopilotKit, `c7815d9a` | Tabs with keyboard selection, searchable ChoicePicker with Apply/Cancel, and local review state. The adapters are registered in OpenUI. | Chrome tests exercise tab semantics and draft/apply/cancel. The catalog’s existing-equivalent entries are compatibility findings, not additional CopilotKit runtime integrations. |
+
+Map tiles, route geometry and model-selected media remain provider-gated. No approved resolver binds those assets to this renderer’s trusted resource IDs. Travel answers can still use verified links, tables and explicit caveats. Existing file previews and downloads retain their own access boundary. Upstream HtmlView, unsolicited media playback, arbitrary URL loading, second runtimes and remote actions remain excluded. Clock- and random-dependent functions are excluded for deterministic replay. The coverage file lists the decision for each audited function; some boundedness, output-key and interaction cases remain pending.
+
+Reproduce: `node scripts/generate-native-openui-spec.mjs --check`, `node node_modules/tsx/dist/cli.mjs --test backend/src/ai/nativeOpenUi.test.ts`, and `node scripts/verify-native-openui-browser.mjs <output-dir>`. No credential or model charge is needed for these checks.
