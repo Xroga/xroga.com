@@ -1,0 +1,39 @@
+FROM node:22.21.1-slim AS build
+WORKDIR /app
+ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
+COPY . .
+RUN npm ci
+
+ARG XROGA_RELEASE_SHA
+ARG WORKSPACE_SUPABASE_PUBLISHABLE_KEY
+ENV CI=true XROGA_STAGING_AUTH_BUILD=1 XROGA_DEPLOYMENT_ENVIRONMENT=staging \
+    XROGA_STAGING_MANIFEST_PATH=/app/workspace-staging-manifest.json \
+    SUPABASE_URL=https://dqxnatoessviphudbhei.supabase.co \
+    NEXT_PUBLIC_SUPABASE_URL=https://dqxnatoessviphudbhei.supabase.co \
+    NEXT_PUBLIC_API_URL=http://localhost:3217 \
+    FRONTEND_URL=https://xroga-workspace-openui-staging-574998934848.us-east4.run.app \
+    XROGA_RELEASE_SHA=$XROGA_RELEASE_SHA NEXT_PUBLIC_SUPABASE_ANON_KEY=$WORKSPACE_SUPABASE_PUBLISHABLE_KEY \
+    NEXT_TELEMETRY_DISABLED=1
+RUN npm run build --workspace=frontend && test -f frontend/.next/standalone/frontend/server.js
+
+FROM node:22.21.1-slim
+WORKDIR /app
+ARG XROGA_RELEASE_SHA
+ARG WORKSPACE_SUPABASE_PUBLISHABLE_KEY
+ENV NODE_ENV=production PORT=8080 HOSTNAME=0.0.0.0 CI=true \
+    XROGA_STAGING_AUTH_BUILD=1 XROGA_WORKSPACE_STAGING_RUNTIME=1 XROGA_DEPLOYMENT_ENVIRONMENT=staging \
+    XROGA_STAGING_MANIFEST_PATH=/app/workspace-staging-manifest.json \
+    SUPABASE_URL=https://dqxnatoessviphudbhei.supabase.co \
+    NEXT_PUBLIC_SUPABASE_URL=https://dqxnatoessviphudbhei.supabase.co \
+    NEXT_PUBLIC_API_URL=http://localhost:3217 \
+    FRONTEND_URL=https://xroga-workspace-openui-staging-574998934848.us-east4.run.app \
+    XROGA_RELEASE_SHA=$XROGA_RELEASE_SHA NEXT_PUBLIC_SUPABASE_ANON_KEY=$WORKSPACE_SUPABASE_PUBLISHABLE_KEY \
+    NEXT_TELEMETRY_DISABLED=1
+LABEL org.opencontainers.image.revision=$XROGA_RELEASE_SHA
+COPY --from=build --chown=node:node /app/frontend/.next/standalone ./
+COPY --from=build --chown=node:node /app/frontend/.next/static ./frontend/.next/static
+COPY --from=build --chown=node:node /app/frontend/public ./frontend/public
+COPY --from=build --chown=node:node /app/workspace-staging-manifest.json ./
+USER node
+EXPOSE 8080
+CMD ["node", "frontend/server.js"]

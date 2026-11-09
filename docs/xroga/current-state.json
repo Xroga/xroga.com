@@ -57244,7 +57244,7 @@
       "id": "surface:00069db1d185a39243c5",
       "subsystem": "frontend",
       "sourcePath": "frontend/next.config.mjs",
-      "sha256": "daeb5a48b0dea31da2dd078e8d28f3d4d9b66ff27a5087cf91ba967d042dc5aa",
+      "sha256": "d0d1953d9d21bced387c3eb166023f464fc9d2723944c7674c25dee27907151f",
       "symbols": [
         "BROWSER_EMPLOYEES_DEMO_SOURCE",
         "CLARITY_DEMO_SOURCE",
@@ -57259,6 +57259,7 @@
         "driveStorageOrigin",
         "framableSecurityHeaders",
         "freshMarketingHeaders",
+        "hostedWorkspace",
         "isSafe",
         "nextConfig",
         "proxySecurityHeaders",
@@ -57268,6 +57269,7 @@
         "url"
       ],
       "imports": [
+        "../scripts/security/hosted-workspace-staging.mjs",
         "./redirects.mjs",
         "./src/lib/supabase/authBuildRealm.mjs",
         "./src/lib/untrustedProxyResponsePolicy.mjs",
@@ -57277,7 +57279,8 @@
       "runtimeImports": [
         "frontend/redirects.mjs",
         "frontend/src/lib/supabase/authBuildRealm.mjs",
-        "frontend/src/lib/untrustedProxyResponsePolicy.mjs"
+        "frontend/src/lib/untrustedProxyResponsePolicy.mjs",
+        "scripts/security/hosted-workspace-staging.mjs"
       ],
       "entryPoints": [],
       "callers": [
@@ -60027,7 +60030,7 @@
       "id": "surface:6902470de33da099aaf3",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/app/api/private-files/[projectId]/[fileId]/route.ts",
-      "sha256": "65f33f8ffaf2af3666cbd8a022e19c52389f7e691c4f9a84870cbf02d6861b76",
+      "sha256": "fd665a689140b289ba6af953a8ea7d19b24e05a22707fc42d417c563f4e2b35f",
       "symbols": [
         "GET",
         "base",
@@ -60035,6 +60038,7 @@
         "headers",
         "key",
         "links",
+        "options",
         "privateHeaders",
         "range",
         "response",
@@ -60045,10 +60049,12 @@
         "value"
       ],
       "imports": [
+        "@/lib/hostedWorkspaceBridge.mjs",
         "@/lib/supabase/server",
         "next/server"
       ],
       "runtimeImports": [
+        "frontend/src/lib/hostedWorkspaceBridge.mjs",
         "frontend/src/lib/supabase/server.ts"
       ],
       "entryPoints": [
@@ -63706,7 +63712,7 @@
       "id": "surface:9f51ed5a722f2b32376d",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/app/share/[token]/page.tsx",
-      "sha256": "ed682f46a448d0dfe7b3211f48a522ecb16f3bb07ccc608520fcec4d15dcb916",
+      "sha256": "6aa48c84cf820b9c0f740b695ea555bc70b8bae33cead4e42524aee6777b51b4",
       "symbols": [
         "MessageSharePage",
         "PublicShare",
@@ -63724,6 +63730,8 @@
         "matchingText",
         "native",
         "next",
+        "options",
+        "path",
         "payload",
         "presentation",
         "reader",
@@ -63744,6 +63752,7 @@
         "@/components/response-experience-v2/shareSnapshot",
         "@/components/terminal/SharedAnswerDownloads",
         "@/lib/api",
+        "@/lib/hostedWorkspaceBridge.mjs",
         "@/lib/supabase/server",
         "next",
         "next/image",
@@ -63759,6 +63768,7 @@
         "frontend/src/components/response-experience-v2/shareSnapshot.ts",
         "frontend/src/components/terminal/SharedAnswerDownloads.tsx",
         "frontend/src/lib/api.ts",
+        "frontend/src/lib/hostedWorkspaceBridge.mjs",
         "frontend/src/lib/supabase/server.ts"
       ],
       "entryPoints": [
@@ -64391,6 +64401,42 @@
       ],
       "entryPoints": [
         "frontend/src/app/vibe-coding/page.tsx"
+      ],
+      "callers": [],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:3ec9a54a6e25f09fa160",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/app/workspace-staging-transport/[...segments]/route.ts",
+      "sha256": "7e94e3dc87e134ef85791f2ad66702c566ea823c1c7df4acccd941c39d1a59a6",
+      "symbols": [
+        "dynamic",
+        "handle",
+        "runtime"
+      ],
+      "imports": [
+        "@/lib/hostedWorkspaceBridge.mjs"
+      ],
+      "runtimeImports": [
+        "frontend/src/lib/hostedWorkspaceBridge.mjs"
+      ],
+      "entryPoints": [
+        "frontend/src/app/workspace-staging-transport/[...segments]/route.ts"
       ],
       "callers": [],
       "reachable": true,
@@ -90788,7 +90834,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/app/share/[token]/page.tsx:11"
+        "frontend/src/app/share/[token]/page.tsx:12"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -90943,7 +90989,7 @@
       ],
       "callers": [
         "frontend/src/app/(workspace)/workspace/page.tsx:5",
-        "frontend/src/app/share/[token]/page.tsx:13",
+        "frontend/src/app/share/[token]/page.tsx:14",
         "frontend/src/components/response-experience-v2/document.test.ts:245",
         "frontend/src/components/response-experience-v2/document.test.ts:5"
       ],
@@ -91809,7 +91855,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/app/share/[token]/page.tsx:12",
+        "frontend/src/app/share/[token]/page.tsx:13",
         "frontend/src/components/response-experience-v2/ConversationTurnV2.tsx:9",
         "frontend/src/components/response-experience-v2/SharedResponseV2.tsx:4",
         "frontend/src/components/response-experience-v2/document.test.ts:11",
@@ -97373,7 +97419,7 @@
       "id": "surface:9c57a6290c71522141f5",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/SwarmMessageLog.tsx",
-      "sha256": "06cc463651dfb689b48c7ce38583204b0d696b69bccef785f308ea9f0fe54e92",
+      "sha256": "14fc3cdde3209c8eb834fe40b16ecac116b5b9ff85492e2da37c4f6608702112",
       "symbols": [
         "AGENT_STYLES",
         "SwarmMessageLog",
@@ -107636,6 +107682,94 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:0b212ee01191fe2ebdde",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/lib/hostedWorkspaceBridge.mjs",
+      "sha256": "af4ea3ae7116ad5cc88ad1611fa1a72b4cb99e69f9e9f16899d2b010d46537f6",
+      "symbols": [
+        "abort",
+        "authorization",
+        "body",
+        "bytes",
+        "chunks",
+        "claims",
+        "config",
+        "copyHeaders",
+        "denied",
+        "forwardHostedWorkspace",
+        "googleIdentity",
+        "guestShare",
+        "headers",
+        "health",
+        "hostedConfig",
+        "hostedWorkspaceRequest",
+        "key",
+        "manifest",
+        "matchesStagingIssuer",
+        "maxBodyBytes",
+        "method",
+        "next",
+        "origin",
+        "platform",
+        "reader",
+        "receipt",
+        "requestHeaders",
+        "response",
+        "responseHeaders",
+        "result",
+        "search",
+        "token",
+        "upstream",
+        "url",
+        "value"
+      ],
+      "imports": [
+        "../../../scripts/security/hosted-workspace-staging.mjs",
+        "node:fs"
+      ],
+      "runtimeImports": [
+        "scripts/security/hosted-workspace-staging.mjs"
+      ],
+      "entryPoints": [
+        "frontend/src/app/api/private-files/[projectId]/[fileId]/route.ts",
+        "frontend/src/app/share/[token]/page.tsx",
+        "frontend/src/app/workspace-staging-transport/[...segments]/route.ts"
+      ],
+      "callers": [
+        "frontend/src/app/api/private-files/[projectId]/[fileId]/route.ts:3",
+        "frontend/src/app/share/[token]/page.tsx:11",
+        "frontend/src/app/workspace-staging-transport/[...segments]/route.ts:1",
+        "scripts/security/hosted-workspace-staging.test.mjs:7"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "declared-host:metadata.google.internal",
+        "node:fs"
+      ],
+      "authBoundary": [
+        "frontend/src/lib/hostedWorkspaceBridge.mjs#authorization",
+        "frontend/src/lib/hostedWorkspaceBridge.mjs#googleIdentity"
+      ],
+      "tenantBoundary": [],
+      "approvalBoundary": [
+        "frontend/src/lib/hostedWorkspaceBridge.mjs#authorization"
+      ],
+      "costBoundary": [],
+      "evidenceBoundary": [
+        "frontend/src/lib/hostedWorkspaceBridge.mjs#receipt"
+      ],
+      "testCoverage": [
+        "scripts/security/hosted-workspace-staging.test.mjs"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:256bb1da47fb043b9359",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/hydrateLandingOutput.ts",
@@ -113756,7 +113890,7 @@
       "id": "surface:2cd2cfb40faa6f59e1b6",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/supabase/authBuildRealm.mjs",
-      "sha256": "002fc085825c866039ac9c3a76c4a818601fa7f7311717c71c81ddbfb14f4921",
+      "sha256": "ad9378e41979cdb2393a83a66be13affdb9301c0da9a247955e429b535a1883b",
       "symbols": [
         "localAuthProject",
         "localAuthUrl",
@@ -113770,16 +113904,19 @@
         "stagingAuthProject"
       ],
       "imports": [
+        "../../../../scripts/security/hosted-workspace-staging.mjs",
         "../../../../scripts/security/staging-preflight.mjs"
       ],
       "runtimeImports": [
+        "scripts/security/hosted-workspace-staging.mjs",
         "scripts/security/staging-preflight.mjs"
       ],
       "entryPoints": [],
       "callers": [
         "frontend/next.config.mjs:4",
         "frontend/src/lib/supabase/authBuildRealm.test.ts:3",
-        "frontend/src/lib/supabase/stagingAuthBuild.test.ts:3"
+        "frontend/src/lib/supabase/stagingAuthBuild.test.ts:3",
+        "scripts/security/hosted-workspace-staging.test.mjs:8"
       ],
       "reachable": false,
       "persistenceDependencies": [],
@@ -113792,7 +113929,8 @@
         "frontend/src/lib/supabase/authBuildRealm.mjs#productionAuthProject",
         "frontend/src/lib/supabase/authBuildRealm.mjs#resolveAuthBuildConfiguration",
         "frontend/src/lib/supabase/authBuildRealm.mjs#resolveAuthBuildRealm",
-        "frontend/src/lib/supabase/authBuildRealm.mjs#stagingAuthProject"
+        "frontend/src/lib/supabase/authBuildRealm.mjs#stagingAuthProject",
+        "frontend/src/lib/supabase/authBuildRealm.mjs#stagingAuthRef"
       ],
       "tenantBoundary": [],
       "approvalBoundary": [],
@@ -113800,7 +113938,8 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "frontend/src/lib/supabase/authBuildRealm.test.ts",
-        "frontend/src/lib/supabase/stagingAuthBuild.test.ts"
+        "frontend/src/lib/supabase/stagingAuthBuild.test.ts",
+        "scripts/security/hosted-workspace-staging.test.mjs"
       ],
       "state": "DEAD_OR_UNREACHABLE",
       "confidence": "LOW",
@@ -116235,7 +116374,7 @@
         "frontend/src/app/api/site-icon/route.ts"
       ],
       "callers": [
-        "frontend/next.config.mjs:5",
+        "frontend/next.config.mjs:6",
         "frontend/src/lib/untrustedProxyConfig.test.ts:3",
         "frontend/src/lib/untrustedProxyResponse.ts:2"
       ],
@@ -118847,17 +118986,19 @@
       "id": "surface:c97d84b7bce6d5239ff8",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/middleware.ts",
-      "sha256": "d219457fcf40ba40dab26615936c23ff8907b35082c50efed28297ce6e58a423",
+      "sha256": "c656f3ce4a5e4816ab47f3935dbce10ffb5b2a20ca5dbc5a7ce5b5cd531caed8",
       "symbols": [
         "config",
         "middleware"
       ],
       "imports": [
+        "../../scripts/security/hosted-workspace-staging.mjs",
         "@/lib/supabase/middleware",
         "next/server"
       ],
       "runtimeImports": [
-        "frontend/src/lib/supabase/middleware.ts"
+        "frontend/src/lib/supabase/middleware.ts",
+        "scripts/security/hosted-workspace-staging.mjs"
       ],
       "entryPoints": [
         "frontend/src/middleware.ts"
@@ -123690,6 +123831,72 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "scripts/security/disposable-supabase.test.mjs"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:bd447efc6f4a92271280",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "scripts/security/hosted-workspace-staging.mjs",
+      "sha256": "f68dff00fd39ca79cfb9a500a226e4ecfa20f4e4df6bff824f7ab043982bf10d",
+      "symbols": [
+        "hostedWorkspaceManifest",
+        "imagePin",
+        "isHostedWorkspaceRoute",
+        "m",
+        "prefix",
+        "repository",
+        "requireHostedWorkspaceBuild",
+        "reviewed",
+        "routes",
+        "stagingApiAudience",
+        "stagingAuthOrigin",
+        "stagingAuthRef",
+        "stagingOperatorOrigin",
+        "stagingProject",
+        "stagingRegion",
+        "stagingWebIdentity",
+        "stagingWebOrigin",
+        "stagingWebService",
+        "validateHostedWorkspaceStaging"
+      ],
+      "imports": [],
+      "runtimeImports": [],
+      "entryPoints": [
+        "frontend/src/app/api/private-files/[projectId]/[fileId]/route.ts",
+        "frontend/src/app/share/[token]/page.tsx",
+        "frontend/src/app/workspace-staging-transport/[...segments]/route.ts",
+        "frontend/src/middleware.ts"
+      ],
+      "callers": [
+        "frontend/next.config.mjs:5",
+        "frontend/src/lib/hostedWorkspaceBridge.mjs:2",
+        "frontend/src/lib/supabase/authBuildRealm.mjs:2",
+        "frontend/src/middleware.ts:3",
+        "scripts/security/hosted-workspace-staging.test.mjs:3"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "declared-host:localhost",
+        "declared-host:xroga-api-universal-staging-422lt7eujq-uk.a.run.app"
+      ],
+      "authBoundary": [
+        "scripts/security/hosted-workspace-staging.mjs#stagingAuthOrigin",
+        "scripts/security/hosted-workspace-staging.mjs#stagingAuthRef",
+        "scripts/security/hosted-workspace-staging.mjs#stagingWebIdentity"
+      ],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "scripts/security/hosted-workspace-staging.test.mjs"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -139639,7 +139846,7 @@
     {
       "id": "workflow:35f7d63a2c5b6c3706b8",
       "sourcePath": ".github/workflows/vercel-build-check.yml",
-      "sha256": "0b65b0c8f8e895298283a3d0bde43ce35b6775285f42306b54701fb24f237594",
+      "sha256": "c42456a1c32c901b67ea072935ae617efc0500fa0f93298e9681faf8a2b1300e",
       "sourceEntrypoints": [],
       "hasSchedule": false
     },
@@ -144289,9 +144496,9 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:f1bef6980e019a9d30c2",
+      "id": "frontend-call:d267eb957346378b710a",
       "sourcePath": "frontend/src/app/api/private-files/[projectId]/[fileId]/route.ts",
-      "line": 24,
+      "line": 29,
       "callee": "fetch",
       "reachable": true
     },
@@ -144317,9 +144524,9 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:6dd6b4af28f8fd268867",
+      "id": "frontend-call:d3a6a2f8566178f7c173",
       "sourcePath": "frontend/src/app/share/[token]/page.tsx",
-      "line": 44,
+      "line": 56,
       "callee": "fetchApiResponse",
       "reachable": true
     },
@@ -146652,6 +146859,27 @@
       "sourcePath": "frontend/src/lib/githubConnect.ts",
       "line": 32,
       "callee": "api.github.oauthUrl",
+      "reachable": true
+    },
+    {
+      "id": "frontend-call:333e883c68c14198b8a6",
+      "sourcePath": "frontend/src/lib/hostedWorkspaceBridge.mjs",
+      "line": 54,
+      "callee": "fetch",
+      "reachable": true
+    },
+    {
+      "id": "frontend-call:159a9cd83bf708e91c0a",
+      "sourcePath": "frontend/src/lib/hostedWorkspaceBridge.mjs",
+      "line": 105,
+      "callee": "fetch",
+      "reachable": true
+    },
+    {
+      "id": "frontend-call:043b43ecec88c0a30417",
+      "sourcePath": "frontend/src/lib/hostedWorkspaceBridge.mjs",
+      "line": 115,
+      "callee": "fetch",
       "reachable": true
     },
     {
@@ -154500,6 +154728,13 @@
       "id": "test-suite:56884ae799098ba6d5fc",
       "sourcePath": "scripts/security/evaluate-phase-three.test.mjs",
       "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:6d7c44af47b84b62432f",
+      "sourcePath": "scripts/security/hosted-workspace-staging.test.mjs",
+      "declaredTests": 4,
       "skipLocations": [],
       "focusLocations": []
     },

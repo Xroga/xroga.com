@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "38edad85dfd3363c926ead976e6141e36a5043603d95d9e7b96c332ea30cb94b",
+  "sourceTreeDigest": "1063a24ac0256e8a57b9af1b8ebddf861a12e35552315b3f2e20c9a2c308906e",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -4288,11 +4288,11 @@
     {
       "id": "9187c5480b950d1fad4d",
       "file": "frontend/src/app/api/private-files/[projectId]/[fileId]/route.ts",
-      "line": 24,
+      "line": 29,
       "entryPoint": "GET",
       "transport": "fetch",
       "callee": "fetch",
-      "callSha256": "d854fa7c0a76e83d07d74248b526a946c5e9628a5fc44bfcb7f703b72393dd4c",
+      "callSha256": "0d379b21a24c6f90895ae8cc24214ab222620b45b2dedfd9e30940c6ae08a515",
       "destination": "DYNAMIC_OR_SDK_INTERNAL",
       "trust": "FIXED_CONFIGURED_FIRST_PARTY_API_FILE_DOWNLOAD_ONLY_NO_ARBITRARY_ORIGIN_OR_PROVIDER_UPLOAD",
       "tenantAuthority": "REMOTE_VERIFIED_USER_BEFORE_SESSION_FORWARDING_BACKEND_REMAINS_CANONICAL_FILE_OWNER_LINK_EXPIRY_AND_REVOCATION_AUTHORITY_NO_NEW_GRANT",
@@ -4834,6 +4834,72 @@
       ]
     },
     {
+      "id": "9bcbd89af61af9d9c2e7",
+      "file": "frontend/src/lib/hostedWorkspaceBridge.mjs",
+      "line": 54,
+      "entryPoint": "googleIdentity",
+      "transport": "fetch",
+      "callee": "fetch",
+      "callSha256": "69183a141ad19e783f685f9775253e45397ca21b8e45fbf36e8bda227880dfde",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "GOOGLE_METADATA_ONLY_WITH_PINNED_STAGING_AUDIENCE",
+      "tenantAuthority": "WORKLOAD_IDENTITY_ONLY_NO_USER_TOKEN",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "VERIFIED_GUARD",
+      "evidence": [
+        {
+          "path": "scripts/security/hosted-workspace-staging.test.mjs",
+          "marker": "Google IAM and original user token stay separate",
+          "sha256": "0faedb0211c2131359f403e4a421b66382b01f168d4f879f21e9b6fc911e126d"
+        }
+      ]
+    },
+    {
+      "id": "49a49569b55d144f7a6d",
+      "file": "frontend/src/lib/hostedWorkspaceBridge.mjs",
+      "line": 105,
+      "entryPoint": "forwardHostedWorkspace",
+      "transport": "fetch",
+      "callee": "fetch",
+      "callSha256": "da6bfc623a007eed3e78f4f96bc3c5380edf422eaf335a62cad99ea667f02942",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "PINNED_PRIVATE_STAGING_HEALTH_NO_REDIRECT",
+      "tenantAuthority": "WORKLOAD_IDENTITY_ONLY_NO_USER_TOKEN",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "VERIFIED_GUARD",
+      "evidence": [
+        {
+          "path": "scripts/security/hosted-workspace-staging.test.mjs",
+          "marker": "Google IAM and original user token stay separate",
+          "sha256": "0faedb0211c2131359f403e4a421b66382b01f168d4f879f21e9b6fc911e126d"
+        }
+      ]
+    },
+    {
+      "id": "a609adccda5421076aa0",
+      "file": "frontend/src/lib/hostedWorkspaceBridge.mjs",
+      "line": 115,
+      "entryPoint": "forwardHostedWorkspace",
+      "transport": "fetch",
+      "callee": "fetch",
+      "callSha256": "76321677eab8b50bb630c570fefcde30d7972a323fb64ce6a832a1da1804486a",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "PINNED_PRIVATE_STAGING_API_METHOD_PATH_AND_ISSUER_BOUND",
+      "tenantAuthority": "ORIGINAL_USER_TOKEN_VERIFIED_BY_EXISTING_XROGA_AUTH_AND_TENANT_CHECKS",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "VERIFIED_GUARD",
+      "evidence": [
+        {
+          "path": "scripts/security/hosted-workspace-staging.test.mjs",
+          "marker": "Google IAM and original user token stay separate",
+          "sha256": "0faedb0211c2131359f403e4a421b66382b01f168d4f879f21e9b6fc911e126d"
+        }
+      ]
+    },
+    {
       "id": "3b970c32a8efb294a7fd",
       "file": "frontend/src/lib/imageStudioUtils.ts",
       "line": 66,
@@ -5103,6 +5169,9 @@
         "52851686fc818e0e4c5f",
         "d836bcd400bd13ddac6c",
         "c09bb8607fa4d00f23b7",
+        "9bcbd89af61af9d9c2e7",
+        "49a49569b55d144f7a6d",
+        "a609adccda5421076aa0",
         "3b970c32a8efb294a7fd",
         "20618341b2f95ca0ba5e",
         "805931ff0dc022677403",
@@ -5252,8 +5321,8 @@
     }
   ],
   "counts": {
-    "total": 155,
-    "reviewed": 155,
+    "total": 158,
+    "reviewed": 158,
     "pending": 0,
     "unresolvedHighRiskBypasses": 0
   }

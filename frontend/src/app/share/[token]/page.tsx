@@ -8,6 +8,7 @@ import { cache } from 'react';
 import { createClient } from '@/lib/supabase/server';
 import { SharedAnswerDownloads } from '@/components/terminal/SharedAnswerDownloads';
 import { API_URL, fetchApiResponse } from '@/lib/api';
+import { hostedWorkspaceRequest } from '@/lib/hostedWorkspaceBridge.mjs';
 import SharedResponseV2 from '@/components/response-experience-v2/SharedResponseV2';
 import { readRichShareSnapshot, RICH_SHARE_PREFIX } from '@/components/response-experience-v2/shareSnapshot';
 import { responseV2Audience, responseV2Decision } from '@/components/response-experience-v2/access';
@@ -41,14 +42,18 @@ const loadShare = cache(async (token: string): Promise<ShareResult> => {
       // Public shares do not depend on auth configuration. A private one will
       // correctly receive 403 below when no verified session can be forwarded.
     }
-    const response = await fetchApiResponse(`${API_URL}/api/message-shares/${encodeURIComponent(token)}`, {
+    const path = `/api/message-shares/${encodeURIComponent(token)}`;
+    const options = {
       cache: 'no-store',
       signal: AbortSignal.timeout(25000),
       headers: {
         Accept: 'application/json',
         ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
       },
-    });
+    } satisfies RequestInit;
+    const response = process.env.NEXT_PUBLIC_XROGA_WORKSPACE_STAGING_ORIGIN
+      ? await hostedWorkspaceRequest(new Request(`${API_URL}${path}`, options), path)
+      : await fetchApiResponse(`${API_URL}${path}`, options);
     if (!response.ok) {
       await response.body?.cancel().catch(()=>undefined);
       return { status: response.status===403?'private':'missing' };
@@ -164,14 +169,14 @@ export default async function MessageSharePage({ params }: { params: Promise<{ t
             <p className="mb-3 text-[10px] font-semibold uppercase tracking-[.16em] text-[var(--text-secondary)]">Response</p>
             {share.richUnavailable && <p role="status" className="mb-3 text-sm">The interactive view is unavailable. The complete saved text follows.</p>}
             {native ? <NativeWorkspaceAnswer answer={{ ...native, library: 'xroga-native-v1' }} sources={native.sources} /> : legacyRichAllowed && share.richResponse ? <SharedResponseV2 snapshot={share.richResponse} text={share.response} /> : <p className="whitespace-pre-wrap text-[15px] leading-7">{share.response}</p>}
-            {sources.length > 0 && <section aria-label="Sources" className="mt-5 border-t border-[var(--border-subtle)] pt-4">
-              <h2 className="text-sm font-semibold">Sources</h2>
+            {sources.length > 0 && <details className="mt-5 border-t border-[var(--border-subtle)] pt-4" open={!native?.program || undefined}>
+              <summary className="cursor-pointer text-sm font-semibold">Sources ({sources.length})</summary>
               <ul className="mt-2 space-y-2 text-sm">
                 {sources.map(source => <li key={source.url} className="break-words">
                   <a href={source.url} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">{source.title}</a>
                 </li>)}
               </ul>
-            </section>}
+            </details>}
             <SharedAnswerDownloads response={share.response} />
           </section>
         </article>

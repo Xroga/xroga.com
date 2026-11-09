@@ -3555,8 +3555,8 @@
     },
     {
       "id": "9187c5480b950d1fad4d",
-      "callSha256": "d854fa7c0a76e83d07d74248b526a946c5e9628a5fc44bfcb7f703b72393dd4c",
-      "sourceFileSha256": "65f33f8ffaf2af3666cbd8a022e19c52389f7e691c4f9a84870cbf02d6861b76",
+      "callSha256": "0d379b21a24c6f90895ae8cc24214ab222620b45b2dedfd9e30940c6ae08a515",
+      "sourceFileSha256": "fd665a689140b289ba6af953a8ea7d19b24e05a22707fc42d417c563f4e2b35f",
       "disposition": "REVIEWED_FIXED_DEPENDENCY",
       "trust": "FIXED_CONFIGURED_FIRST_PARTY_API_FILE_DOWNLOAD_ONLY_NO_ARBITRARY_ORIGIN_OR_PROVIDER_UPLOAD",
       "tenantAuthority": "REMOTE_VERIFIED_USER_BEFORE_SESSION_FORWARDING_BACKEND_REMAINS_CANONICAL_FILE_OWNER_LINK_EXPIRY_AND_REVOCATION_AUTHORITY_NO_NEW_GRANT",
@@ -3582,7 +3582,8 @@
       "evidenceReboundOnBranch": {
         "prNumber": 922,
         "reason": "Evidence files changed on the branch (Zurelay two-model and pacing work). Every marker is still present, and the backend AI tests that contain them pass (1,426 passed, 0 failed, 7 skipped). One marker text was updated because the same revokeDuringRetry assertion was reworded."
-      }
+      },
+      "hostedWorkspaceRebinding": "The existing production download still verifies the user and passes the same URL, headers, no-store, redirect denial and timeout. Isolated hosted builds call the separately reviewed bridge instead."
     },
     {
       "id": "2ca37ae73a723e2b988c",
@@ -4817,6 +4818,51 @@
           "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
           "marker": "}, () => send({ type: 'result', id, ok: false })",
           "sha256": "2500a1f07a78f43f9ebee385642fac97743777253c045bce71eed6bf51002d9a"
+        }
+      ]
+    },
+    {
+      "id": "9bcbd89af61af9d9c2e7",
+      "callSha256": "69183a141ad19e783f685f9775253e45397ca21b8e45fbf36e8bda227880dfde",
+      "sourceFileSha256": "af4ea3ae7116ad5cc88ad1611fa1a72b4cb99e69f9e9f16899d2b010d46537f6",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "GOOGLE_METADATA_ONLY_WITH_PINNED_STAGING_AUDIENCE",
+      "tenantAuthority": "WORKLOAD_IDENTITY_ONLY_NO_USER_TOKEN",
+      "evidence": [
+        {
+          "path": "scripts/security/hosted-workspace-staging.test.mjs",
+          "marker": "Google IAM and original user token stay separate",
+          "sha256": "0faedb0211c2131359f403e4a421b66382b01f168d4f879f21e9b6fc911e126d"
+        }
+      ]
+    },
+    {
+      "id": "49a49569b55d144f7a6d",
+      "callSha256": "da6bfc623a007eed3e78f4f96bc3c5380edf422eaf335a62cad99ea667f02942",
+      "sourceFileSha256": "af4ea3ae7116ad5cc88ad1611fa1a72b4cb99e69f9e9f16899d2b010d46537f6",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "PINNED_PRIVATE_STAGING_HEALTH_NO_REDIRECT",
+      "tenantAuthority": "WORKLOAD_IDENTITY_ONLY_NO_USER_TOKEN",
+      "evidence": [
+        {
+          "path": "scripts/security/hosted-workspace-staging.test.mjs",
+          "marker": "Google IAM and original user token stay separate",
+          "sha256": "0faedb0211c2131359f403e4a421b66382b01f168d4f879f21e9b6fc911e126d"
+        }
+      ]
+    },
+    {
+      "id": "a609adccda5421076aa0",
+      "callSha256": "76321677eab8b50bb630c570fefcde30d7972a323fb64ce6a832a1da1804486a",
+      "sourceFileSha256": "af4ea3ae7116ad5cc88ad1611fa1a72b4cb99e69f9e9f16899d2b010d46537f6",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "PINNED_PRIVATE_STAGING_API_METHOD_PATH_AND_ISSUER_BOUND",
+      "tenantAuthority": "ORIGINAL_USER_TOKEN_VERIFIED_BY_EXISTING_XROGA_AUTH_AND_TENANT_CHECKS",
+      "evidence": [
+        {
+          "path": "scripts/security/hosted-workspace-staging.test.mjs",
+          "marker": "Google IAM and original user token stay separate",
+          "sha256": "0faedb0211c2131359f403e4a421b66382b01f168d4f879f21e9b6fc911e126d"
         }
       ]
     }

@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { validateStagingManifest, assertStagingEnvironment, deploymentPlan } from './staging-preflight.mjs';
 import { requireR2TestConfiguration, inspectPrivateBucket, exercisePrivateCanary, runR2Check } from './r2-private-check.mjs';
+import './hosted-workspace-staging.test.mjs';
 const fixture = () => ({ version:1,environment:'staging',sourceSha:'a'.repeat(40),dataPolicy:'synthetic_only',ownerReview:{productionResourceInventoryComplete:true,productionBucketNames:['xroga-assets'],isolationEvidence:'https://example.invalid/operator-review'},api:{app:'xroga-api-staging',origin:'https://xroga-api-staging.fly.dev'},web:{projectId:'prj_FixtureOnly',origin:'https://xroga-staging-fixture.vercel.app'},auth:{app:'xroga-supabase-staging',origin:'https://xroga-supabase-staging.fly.dev',databaseMode:'isolated_self_hosted'},r2:{accountId:'b'.repeat(32),bucket:'xroga-security-staging',publicAccess:false,customDomains:[]},services:{billing:'disabled',externalProviders:'disabled',webhooks:'disabled',sandbox:'disabled'} });
 const metadata = { bucket:'xroga-security-staging',managedDomain:`pub-${'c'.repeat(32)}.r2.dev`,publicAccess:false,customDomains:0 };
 test('staging proposal deliberately fails closed until resources and isolation are reviewed',()=>{

@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "a9b4c3248c2ade265aa910597b68a6329224f797",
+  "source_sha": "6979ac85a48e7a4f53c343ba7e5b9cead6044289",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -39,6 +39,7 @@
         "NEXT_PUBLIC_XROGA_BUILDER",
         "NEXT_PUBLIC_XROGA_DRIVE",
         "NEXT_PUBLIC_XROGA_EXISTING_SOURCE",
+        "NEXT_PUBLIC_XROGA_WORKSPACE_STAGING_ORIGIN",
         "VERCEL_ENV",
         "VERCEL_GIT_COMMIT_SHA"
       ],
@@ -5030,7 +5031,8 @@
       "config_sources": [
         "backend/src/scripts/verifyGceExecution.ts",
         "backend/src/synthesis/projectRuntime/googleFactory.ts",
-        "backend/src/workers/browserRunDispatch.ts"
+        "backend/src/workers/browserRunDispatch.ts",
+        "frontend/src/lib/hostedWorkspaceBridge.mjs"
       ],
       "hostnames": [
         "metadata.google.internal"
@@ -5060,7 +5062,10 @@
         "XROGA_GCE_VERIFY_ONLY",
         "XROGA_GCE_ZONE",
         "XROGA_PROJECT_RUNTIME_PROVIDER",
-        "XROGA_RELEASE_SHA"
+        "XROGA_RELEASE_SHA",
+        "XROGA_STAGING_AUTH_BUILD",
+        "XROGA_STAGING_MANIFEST_PATH",
+        "XROGA_WORKSPACE_STAGING_RUNTIME"
       ],
       "inbound_callers": [
         "api or named source callers; operational reachability not inferred"
@@ -5076,7 +5081,8 @@
       "observability_source": [
         "backend/src/scripts/verifyGceExecution.ts",
         "backend/src/synthesis/projectRuntime/googleFactory.ts",
-        "backend/src/workers/browserRunDispatch.ts"
+        "backend/src/workers/browserRunDispatch.ts",
+        "frontend/src/lib/hostedWorkspaceBridge.mjs"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
       "evidence_ids": []
@@ -11344,6 +11350,27 @@
       ]
     },
     {
+      "name": "NEXT_PUBLIC_XROGA_WORKSPACE_STAGING_ORIGIN",
+      "consuming_sources": [
+        "frontend/src/app/api/private-files/[projectId]/[fileId]/route.ts",
+        "frontend/src/app/share/[token]/page.tsx",
+        "frontend/src/middleware.ts"
+      ],
+      "environments": [
+        "frontend build/browser/SSR"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "frontend"
+      ]
+    },
+    {
       "name": "NODE_ENV",
       "consuming_sources": [
         "backend/src/ai/guestBudget.ts",
@@ -15943,6 +15970,7 @@
     {
       "name": "XROGA_STAGING_AUTH_BUILD",
       "consuming_sources": [
+        "frontend/src/lib/hostedWorkspaceBridge.mjs",
         "frontend/src/lib/supabase/authBuildRealm.mjs"
       ],
       "environments": [
@@ -15956,7 +15984,27 @@
         "STATIC_ENV_READER"
       ],
       "dependency_ids": [
-        "endpoint-127-0-0-1"
+        "endpoint-127-0-0-1",
+        "endpoint-metadata-google-internal"
+      ]
+    },
+    {
+      "name": "XROGA_STAGING_MANIFEST_PATH",
+      "consuming_sources": [
+        "frontend/src/lib/hostedWorkspaceBridge.mjs"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "endpoint-metadata-google-internal"
       ]
     },
     {
@@ -16015,6 +16063,25 @@
       ],
       "dependency_ids": [
         "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "XROGA_WORKSPACE_STAGING_RUNTIME",
+      "consuming_sources": [
+        "frontend/src/lib/hostedWorkspaceBridge.mjs"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "endpoint-metadata-google-internal"
       ]
     },
     {
@@ -16564,7 +16631,7 @@
     },
     {
       "path": ".github/workflows/vercel-build-check.yml",
-      "sha256": "0b65b0c8f8e895298283a3d0bde43ce35b6775285f42306b54701fb24f237594"
+      "sha256": "c42456a1c32c901b67ea072935ae617efc0500fa0f93298e9681faf8a2b1300e"
     },
     {
       "path": ".github/workflows/xroga-golden-journeys.yml",
@@ -20076,7 +20143,7 @@
     },
     {
       "path": "frontend/src/app/api/private-files/[projectId]/[fileId]/route.ts",
-      "sha256": "65f33f8ffaf2af3666cbd8a022e19c52389f7e691c4f9a84870cbf02d6861b76"
+      "sha256": "fd665a689140b289ba6af953a8ea7d19b24e05a22707fc42d417c563f4e2b35f"
     },
     {
       "path": "frontend/src/app/api/release/route.ts",
@@ -20408,7 +20475,7 @@
     },
     {
       "path": "frontend/src/app/share/[token]/page.tsx",
-      "sha256": "ed682f46a448d0dfe7b3211f48a522ecb16f3bb07ccc608520fcec4d15dcb916"
+      "sha256": "6aa48c84cf820b9c0f740b695ea555bc70b8bae33cead4e42524aee6777b51b4"
     },
     {
       "path": "frontend/src/app/showcase/[slug]/page.tsx",
@@ -20469,6 +20536,10 @@
     {
       "path": "frontend/src/app/vibe-coding/page.tsx",
       "sha256": "da13331569c812f34d9e174fc0d33f6ee336ec8d76a7eec8f12fd62cd6b83697"
+    },
+    {
+      "path": "frontend/src/app/workspace-staging-transport/[...segments]/route.ts",
+      "sha256": "7e94e3dc87e134ef85791f2ad66702c566ea823c1c7df4acccd941c39d1a59a6"
     },
     {
       "path": "frontend/src/components/PlaceholderPage.tsx",
@@ -22676,7 +22747,7 @@
     },
     {
       "path": "frontend/src/components/terminal/SwarmMessageLog.tsx",
-      "sha256": "06cc463651dfb689b48c7ce38583204b0d696b69bccef785f308ea9f0fe54e92"
+      "sha256": "14fc3cdde3209c8eb834fe40b16ecac116b5b9ff85492e2da37c4f6608702112"
     },
     {
       "path": "frontend/src/components/terminal/TerminalBuildReport.tsx",
@@ -23331,6 +23402,10 @@
       "sha256": "d940ae4be7e994653b3e929c2bc2b35c1a5258f9fa0464a857d346f2e51caf30"
     },
     {
+      "path": "frontend/src/lib/hostedWorkspaceBridge.mjs",
+      "sha256": "af4ea3ae7116ad5cc88ad1611fa1a72b4cb99e69f9e9f16899d2b010d46537f6"
+    },
+    {
       "path": "frontend/src/lib/hydrateLandingOutput.ts",
       "sha256": "4b1a1a943bab25ba681bd5fd1d1cd8e8079bffe54cf5f143bd50462665626c29"
     },
@@ -23752,7 +23827,7 @@
     },
     {
       "path": "frontend/src/lib/supabase/authBuildRealm.mjs",
-      "sha256": "002fc085825c866039ac9c3a76c4a818601fa7f7311717c71c81ddbfb14f4921"
+      "sha256": "ad9378e41979cdb2393a83a66be13affdb9301c0da9a247955e429b535a1883b"
     },
     {
       "path": "frontend/src/lib/supabase/authCookiePolicy.ts",
@@ -24044,7 +24119,7 @@
     },
     {
       "path": "frontend/src/middleware.ts",
-      "sha256": "d219457fcf40ba40dab26615936c23ff8907b35082c50efed28297ce6e58a423"
+      "sha256": "c656f3ce4a5e4816ab47f3935dbce10ffb5b2a20ca5dbc5a7ce5b5cd531caed8"
     },
     {
       "path": "frontend/src/store/useAppStore.ts",
@@ -28133,7 +28208,7 @@
       "hostname": "api.xroga.com",
       "protocol": "https:",
       "path": "frontend/src/app/api/private-files/[projectId]/[fileId]/route.ts",
-      "line": 17,
+      "line": 18,
       "credentialsInUrl": false
     },
     {
@@ -30335,6 +30410,13 @@
       "credentialsInUrl": false
     },
     {
+      "hostname": "metadata.google.internal",
+      "protocol": "http:",
+      "path": "frontend/src/lib/hostedWorkspaceBridge.mjs",
+      "line": 52,
+      "credentialsInUrl": false
+    },
+    {
       "hostname": "cdn.simpleicons.org",
       "protocol": "https:",
       "path": "frontend/src/lib/integrationLogos.ts",
@@ -31521,7 +31603,7 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "frontend/src/lib/supabase/authBuildRealm.mjs",
-      "line": 4,
+      "line": 5,
       "credentialsInUrl": false
     },
     {
@@ -37737,7 +37819,7 @@
     },
     {
       "path": "frontend/src/app/share/[token]/page.tsx",
-      "line": 141,
+      "line": 146,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -38564,6 +38646,13 @@
     {
       "path": "frontend/src/components/terminal/SwarmMessageLog.tsx",
       "line": 226,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/components/terminal/SwarmMessageLog.tsx",
+      "line": 554,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

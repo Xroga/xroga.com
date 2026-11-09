@@ -1,0 +1,48 @@
+# Build only. Submit the reviewed git archive and record registry digests before
+# invoking Cloud Run. The only client config input is an isolated publishable key.
+steps:
+  - name: gcr.io/cloud-builders/docker
+    args: [build, --file=Dockerfile.api, '--build-arg=XROGA_RELEASE_SHA=${_SOURCE_SHA}', '--tag=${_REPOSITORY}/xroga-api-migration:${_SOURCE_SHA}', '.']
+  - name: gcr.io/cloud-builders/docker
+    entrypoint: sh
+    env: ['WORKSPACE_IMAGE=${_REPOSITORY}/xroga-api-migration:${_SOURCE_SHA}']
+    args:
+      - -ec
+      - docker push "$$WORKSPACE_IMAGE" > workspace-api-push.log
+  - name: node:22.21.1-slim
+    entrypoint: node
+    env: ['WORKSPACE_SOURCE_SHA=${_SOURCE_SHA}']
+    args:
+      - --input-type=module
+      - -e
+      - |
+        import {readFileSync, unlinkSync, writeFileSync} from 'node:fs';
+        import {hostedWorkspaceManifest} from './scripts/security/hosted-workspace-staging.mjs';
+        const log = readFileSync('workspace-api-push.log', 'utf8');
+        unlinkSync('workspace-api-push.log');
+        const digests = [...log.matchAll(/\bdigest: (sha256:[a-f0-9]{64}) size: \d+/g)];
+        if (digests.length !== 1) throw Error('Registry digest unavailable');
+        const digest = digests[0][1];
+        writeFileSync('workspace-staging-manifest.json', JSON.stringify(hostedWorkspaceManifest(process.env.WORKSPACE_SOURCE_SHA, digest)));
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - --file=infra/google/Dockerfile.workspace-staging
+      - --build-arg=XROGA_RELEASE_SHA=${_SOURCE_SHA}
+      - --build-arg=WORKSPACE_SUPABASE_PUBLISHABLE_KEY=${_SUPABASE_PUBLISHABLE_KEY}
+      - --tag=${_REPOSITORY}/xroga-workspace-openui-staging:${_SOURCE_SHA}
+      - .
+images:
+  - '${_REPOSITORY}/xroga-api-migration:${_SOURCE_SHA}'
+  - '${_REPOSITORY}/xroga-workspace-openui-staging:${_SOURCE_SHA}'
+artifacts:
+  objects:
+    location: 'gs://project-c40d4821-e647-4fa2-92d_cloudbuild/openui-workspace/${_SOURCE_SHA}/'
+    paths: [workspace-staging-manifest.json]
+substitutions:
+  _SOURCE_SHA: ''
+  _SUPABASE_PUBLISHABLE_KEY: ''
+  _REPOSITORY: us-east4-docker.pkg.dev/project-c40d4821-e647-4fa2-92d/cloud-run-source-deploy
+options:
+  logging: CLOUD_LOGGING_ONLY
+timeout: 1200s

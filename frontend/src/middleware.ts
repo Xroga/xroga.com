@@ -1,7 +1,11 @@
-import { type NextRequest } from 'next/server';
+import { NextResponse, type NextRequest } from 'next/server';
 import { updateSession } from '@/lib/supabase/middleware';
+import { isHostedWorkspaceRoute } from '../../scripts/security/hosted-workspace-staging.mjs';
 
 export async function middleware(request: NextRequest) {
+  // Keep these exact staging bearer requests on the API's JSON auth path.
+  if (process.env.NEXT_PUBLIC_XROGA_WORKSPACE_STAGING_ORIGIN
+    && isHostedWorkspaceRoute(request.nextUrl.pathname, request.method)) return NextResponse.next({ request });
   return await updateSession(request);
 }
 
