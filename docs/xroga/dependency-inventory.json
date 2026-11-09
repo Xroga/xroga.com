@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "6979ac85a48e7a4f53c343ba7e5b9cead6044289",
+  "source_sha": "bfad3db36b3a4b09ed4bfa410424cbda7090a832",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -16631,7 +16631,7 @@
     },
     {
       "path": ".github/workflows/vercel-build-check.yml",
-      "sha256": "c42456a1c32c901b67ea072935ae617efc0500fa0f93298e9681faf8a2b1300e"
+      "sha256": "ac50339876f5f6f421d67eb69efbbb141f052a9481885269a0f7b0ec5d59bd36"
     },
     {
       "path": ".github/workflows/xroga-golden-journeys.yml",

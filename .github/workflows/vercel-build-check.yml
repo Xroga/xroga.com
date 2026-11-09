@@ -58,6 +58,7 @@ jobs:
           image="workspace-staging-ci:$SOURCE_SHA"
           name="workspace-staging-ci-$SOURCE_SHA"
           cleanup() {
+            if [[ $? != 0 ]]; then docker logs "$name" 2>/dev/null || true; fi
             docker rm -f "$name" >/dev/null 2>&1 || true
             docker image rm "$image" >/dev/null 2>&1 || true
             rm -f workspace-staging-manifest.json
@@ -73,7 +74,7 @@ jobs:
             --build-arg WORKSPACE_SUPABASE_PUBLISHABLE_KEY=sb_publishable_ci_fixture \
             -t "$image" .
           docker run -d --name "$name" -p 127.0.0.1:3217:8080 "$image"
-          curl --fail --retry 15 --retry-connrefused --retry-delay 2 -sS http://localhost:3217/api/release |
+          curl --fail --retry 15 --retry-all-errors --retry-max-time 35 --max-time 4 --retry-delay 2 -sS http://localhost:3217/api/release |
             jq -e --arg sha "$SOURCE_SHA" '.release == $sha'
           status="$(curl -sS -o /dev/null -w '%{http_code}' -X POST http://localhost:3217/api/phase1/plan)"
           test "$status" = 401
