@@ -62,6 +62,7 @@ function fixture(origin,authenticated=true){
     '@/lib/hostedWorkspaceBridge.mjs':{hostedWorkspaceRequest},
     [nativeShareId]:pureModule(nativeShareId),
     '@/components/native-openui/NativeWorkspaceAnswer':{NativeWorkspaceAnswer(){throw Error('UI rendering is outside this transport fixture');}},
+    '@/components/terminal/SourceLogo':{SourceLogo(){throw Error('UI rendering is outside this transport fixture');}},
     'next/server':{NextResponse:{json:Response.json}}};
   function compile(path,suffix=''){
     const exports={},code=ts.transpileModule(readFileSync(new URL('../src/'+path,import.meta.url),'utf8')+suffix,{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022,jsx:ts.JsxEmit.ReactJSX}}).outputText;
