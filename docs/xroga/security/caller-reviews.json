@@ -1063,9 +1063,9 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "07ab1714a6f3d3559d546e2172016cca626482f7a31857904f249fb27b1103af",
+      "sourceSha256": "6934fe9714e36e4caa8cbdb93cc6f26d8e00039163f1804214e1fd975ae26471",
       "callIds": [
-        "5b543818a91ad0c16240"
+        "35f3549436f0298a207b"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -2571,13 +2571,20 @@
           "7dc867931d0d296911dc"
         ],
         "scope": "Byte-identical runBuildPipeline body; only the existing in-memory Array.from conversions were reindexed."
+      },
+      "nativePlainPromptRebinding": {
+        "sourceSha256": "07ab1714a6f3d3559d546e2172016cca626482f7a31857904f249fb27b1103af",
+        "callIds": [
+          "5b543818a91ad0c16240"
+        ],
+        "scope": "Byte-identical runBuildPipeline body; only source positions moved after changing read-only native prompt selection."
       }
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "07ab1714a6f3d3559d546e2172016cca626482f7a31857904f249fb27b1103af",
+      "sourceSha256": "6934fe9714e36e4caa8cbdb93cc6f26d8e00039163f1804214e1fd975ae26471",
       "callIds": [
-        "9ed969847167feb788b9"
+        "b48abe88189d416f59c4"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -4083,6 +4090,13 @@
           "b11f02479d5943c73413"
         ],
         "scope": "Byte-identical runBuildPipeline body; only the existing in-memory Array.from conversions were reindexed."
+      },
+      "nativePlainPromptRebinding": {
+        "sourceSha256": "07ab1714a6f3d3559d546e2172016cca626482f7a31857904f249fb27b1103af",
+        "callIds": [
+          "9ed969847167feb788b9"
+        ],
+        "scope": "Byte-identical runBuildPipeline body; only source positions moved after changing read-only native prompt selection."
       }
     },
     {

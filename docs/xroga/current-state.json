@@ -5318,8 +5318,9 @@
       "id": "surface:a67f0b1fa2dd0f11a67f",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiPrompt.ts",
-      "sha256": "8159e18f99873ea6eddfe2289507ead0bdb2dd08b20b999dcbb68ce1e054ddb0",
+      "sha256": "b279d8722fb79f3d328167bd21df0d6aa1ff204854cb293f738bef0cfedf9718",
       "symbols": [
+        "nativeOpenUiPlainPrompt",
         "nativeOpenUiPrompt"
       ],
       "imports": [
@@ -6366,7 +6367,7 @@
       "id": "surface:90932fa247bf4ae28450",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/pipeline.ts",
-      "sha256": "07ab1714a6f3d3559d546e2172016cca626482f7a31857904f249fb27b1103af",
+      "sha256": "6934fe9714e36e4caa8cbdb93cc6f26d8e00039163f1804214e1fd975ae26471",
       "symbols": [
         "ARCHITECT_MS",
         "BUILDER_FALLBACKS",
@@ -6585,6 +6586,7 @@
         "phase",
         "pick",
         "pkg",
+        "plainNative",
         "plan",
         "portable",
         "preferred",
@@ -40886,8 +40888,8 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:3873",
-        "backend/src/ai/pipeline.ts:3876",
+        "backend/src/ai/pipeline.ts:3880",
+        "backend/src/ai/pipeline.ts:3883",
         "backend/src/ai/projectMemory.ts:7",
         "backend/src/ai/sessionMemory.ts:7",
         "backend/src/builder/providerTransports.ts:10",
@@ -41160,7 +41162,7 @@
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:127",
-        "backend/src/ai/pipeline.ts:3872",
+        "backend/src/ai/pipeline.ts:3879",
         "backend/src/ai/tenantModelDispatch.ts:6",
         "backend/src/config/supabaseTransport.security.test.ts:6",
         "backend/src/routes/integrations.ts:19",

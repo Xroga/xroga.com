@@ -70,13 +70,17 @@ test('actual pipeline, completion and SoftwareAgent calls bind tenant, account r
         assert.equal(body.response_format,undefined,'Native OpenUI uses the same request, without the old JSON schema');
         assert.match(body.messages[0].content,/<<<XROGA_OPENUI_V1>>>/);
       }
+      if(mode==='native-plain') {
+        assert.match(body.messages[0].content,/readable Markdown/);
+        assert.doesNotMatch(body.messages[0].content,/<<<XROGA_OPENUI_V1>>>|Chart\(/);
+      }
       if(mode==='missingUsage')return Response.json({model:body.model,choices:[{message:{content:'must remain unpublished'},finish_reason:'stop'}]},
         {headers:{'x-request-id':'synthetic-unknown-usage','x-zurelay-model':body.model}});
       if(mode==='wrongModel')return Response.json({model:'unapproved-model',usage:{prompt_tokens:2,completion_tokens:2,total_tokens:4},choices:[]},
         {headers:{'x-request-id':'synthetic-wrong-model','x-zurelay-model':body.model}});
       if(mode==='droppedStream')return new Response('data: '+JSON.stringify({model:body.model,choices:[{delta:{content:'unconfirmed bytes'},finish_reason:null}]})+'\n\n',
         {headers:{'content-type':'text/event-stream','x-request-id':'synthetic-drop','x-zurelay-model':body.model}});
-      if(body.stream)return new Response('data: '+JSON.stringify({id:'synthetic-provider-receipt',choices:[{delta:{content:['presentation','native'].includes(mode)?receivedAnswer:'owned result'},finish_reason:'stop'}],model:'deepseek-v4.1-flash-1017',usage:{prompt_tokens:2,completion_tokens:2,total_tokens:4}})+'\n\ndata: [DONE]\n\n',{headers:{'content-type':'text/event-stream','x-request-id':'synthetic-provider-receipt','x-zurelay-model':'deepseek-v4.1-flash-1017'}});
+      if(body.stream)return new Response('data: '+JSON.stringify({id:'synthetic-provider-receipt',choices:[{delta:{content:['presentation','native','native-plain'].includes(mode)?receivedAnswer:'owned result'},finish_reason:'stop'}],model:'deepseek-v4.1-flash-1017',usage:{prompt_tokens:2,completion_tokens:2,total_tokens:4}})+'\n\ndata: [DONE]\n\n',{headers:{'content-type':'text/event-stream','x-request-id':'synthetic-provider-receipt','x-zurelay-model':'deepseek-v4.1-flash-1017'}});
       return Response.json({id:'synthetic-provider-receipt',choices:[{message:{content:'{"stack":"static","files":[],"notes":[]}'},finish_reason:'stop'}],model:'deepseek-v4.1-flash-1017',usage:{prompt_tokens:2,completion_tokens:2,total_tokens:4}},{headers:{'x-request-id':'synthetic-provider-receipt','x-zurelay-model':'deepseek-v4.1-flash-1017'}});
     }
     assert.equal(url.origin,env.SUPABASE_URL,'Unexpected transport is never allowed');
@@ -316,7 +320,7 @@ test('actual pipeline, completion and SoftwareAgent calls bind tenant, account r
   ] as const) {
     reset('native');resetModelRuntimeHealth();
     receivedAnswer=readable+'\n<<<XROGA_OPENUI_V1>>>\n'+program;
-    const before=effects,receipts=atomicReceipts;
+    const before:number=effects,receipts:number=atomicReceipts;
     const result=await runChatPipeline({userId:owner,tenantContext:context,modelScope:scope,prompt:'Explain the supplied workshop price. No external research.',
       ...(kind==='file'?{attachments:[{url:'data:text/plain;base64,'+Buffer.from(readable).toString('base64'),mimeType:'text/plain',name:'workshop.txt'}]}:{approvedResearch:research}),
       onDelta:text=>{assert.equal(atomicReceipts,receipts+1,'Publication must follow canonical settlement');assert.equal(text,readable);}});
@@ -328,6 +332,16 @@ test('actual pipeline, completion and SoftwareAgent calls bind tenant, account r
     if(kind==='file')assert.equal(result.intent,'file_analysis');
     else assert.deepEqual(result.webSources,[evidence]);
   }
+  reset('native-plain');resetModelRuntimeHealth();
+  receivedAnswer='Paris is the capital of France.';
+  const beforePlain:number=effects,receiptsPlain:number=atomicReceipts;
+  const plain=await runChatPipeline({userId:owner,tenantContext:context,modelScope:scope,prompt:'What is the capital of France?',goalContract:goalContractSchema.parse({
+    version:'1.0',goal:'Name the capital of France',desiredOutcome:'A concise answer',semanticIntent:'ANSWER',contextComplexity:'low',confidence:0.95,requiredCapabilities:['conversation.respond'],
+  })});
+  assert.deepEqual(plain.responseSource,{format:'xroga-openui-v1',text:''});
+  assert.equal(plain.response,receivedAnswer);
+  assert.equal(effects,beforePlain+1);
+  assert.equal(atomicReceipts,receiptsPlain+1);
 });
 
 test('local request security denial cannot fall through to a different provider or account',async()=>{

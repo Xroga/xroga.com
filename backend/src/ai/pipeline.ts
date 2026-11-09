@@ -24,7 +24,7 @@ import { MODELS, type ModelId } from './models.js';
 import { publicCompletionState } from './completionDiagnostics.js';
 import { NATIVE_UI_FORMAT } from './nativeOpenUi.js';
 import { completeNativeWorkspaceAnswer, usesNativeWorkspacePresentation } from './nativeOpenUiWorkspace.js';
-import { nativeOpenUiPrompt } from './nativeOpenUiPrompt.js';
+import { nativeOpenUiPlainPrompt, nativeOpenUiPrompt } from './nativeOpenUiPrompt.js';
 import { assessPresentationCoverage, createPresentationProjection, presentationRequestInstructions, presentationResponseFormat, presentedAnswerMaxTokens, type PresentationResponseFormat } from './responsePresentation.js';
 import { prepareAnswerCoverage } from './answerCoverage.js';
 import {prepareSonnetConversation,requestedSonnetReason} from './sonnetApproval.js';
@@ -1142,8 +1142,15 @@ export async function runChatPipeline(opts: {
   const presentation = native ? undefined : answerContract.plan;
   const projection = presentation?.length ? createPresentationProjection(presentation) : undefined;
   const format = presentation?.length ? presentationResponseFormat(presentation) : undefined;
+  // A confident prose-only answer does not need the full registry. Evidence,
+  // requested visual formats, or an uncertain plan keep the rich path available.
+  const plainNative = native && route.kind !== 'research' && !researchBlock && !opts.projectEvidence
+    && opts.goalContract?.semanticIntent === 'ANSWER' && opts.goalContract.contextComplexity === 'low'
+    && opts.goalContract.confidence >= 0.8 && !opts.goalContract.presentationIssue && answerContract.coverage.complete
+    && answerContract.plan.every(section => section.kind === 'prose')
+    && answerContract.requirements.every(item => item.formats.length > 0 && item.formats.every(kind => kind === 'prose'));
   const instructions = native
-    ? nativeOpenUiPrompt + sourceManifest
+    ? plainNative ? nativeOpenUiPlainPrompt : nativeOpenUiPrompt + sourceManifest
     : chatPresentationSystem(opts.prompt) + (presentation?.length ? '\n\n' + presentationRequestInstructions(presentation) : '');
   const system = currentPublicProductTruth(truthAuthorities) + '\n\n' + instructions;
   const result = await callBuilderStream(

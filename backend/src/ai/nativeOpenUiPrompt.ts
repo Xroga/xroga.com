@@ -1,6 +1,12 @@
 import { generateSystemPrompt, type LibrarySpec } from '@openuidev/lang-core';
 import catalog from './nativeOpenUiCatalog.json' with { type: 'json' };
 
+export const nativeOpenUiPlainPrompt = [
+  'Answer the actual request directly in readable Markdown. Do not output an OpenUI program for this prose-only turn.',
+  'Use only facts you can support. Qualify uncertain claims and distinguish supplied facts from examples.',
+  'Do not claim to fetch evidence or execute tools. Keep calculations consistent with the supplied numbers and units.',
+].join(' ');
+
 export const nativeOpenUiPrompt = generateSystemPrompt({
   library: catalog.spec as LibrarySpec,
   promptOptions: {
