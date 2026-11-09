@@ -315,7 +315,8 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   await expect(answer.getByText('$1,000', { exact: true })).toBeVisible();
   const turn = page.locator('[data-turn-id]').filter({ has: answer });
   await turn.getByRole('button', { name: 'Copy', exact: true }).click();
-  await expect.poll(() => page.evaluate(() => navigator.clipboard.readText())).toBe(reply);
+  await expect.poll(() => page.evaluate(async () => (await navigator.clipboard.readText()).replace(/\r\n/g, '\n')))
+    .toBe(`${reply}\n\nSources\n[1] ${source.title} (${source.url})`);
   expect(chatCalls).toBe(1);
 
   const sessionId = (await composer.getAttribute('data-draft-session'))!;
