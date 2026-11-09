@@ -7,39 +7,45 @@ const view = read('../components/dashboard/DashboardView.tsx');
 const menu = read('../components/terminal/WorkspaceConversationMenu.tsx');
 const styles = read('../components/terminal/WorkspaceConversationMenu.module.css');
 
-test('workspace header shows the active conversation title menu, preserving incognito and project identity', () => {
+test('workspace header keeps conversation actions and independent repository identity', () => {
   const header = view.slice(view.indexOf('<header className="xv-workspace-header"'), view.indexOf('</header>'));
   assert.match(header, /<WorkspaceConversationMenu\s*\/>/);
-  assert.match(header, /incognito\s*\?\s*\(/);
   assert.match(header, /<WorkspaceIdentityMenu incognito\s*\/>/);
   assert.match(header, /activeProject \? <WorkspaceIdentityMenu\s*\/> : null/);
   assert.doesNotMatch(header, /<SidebarProjectHistory/);
 });
 
-test('menu uses the active chat prompt rather than Black Hole as its title', () => {
+test('title shows real chat subject and prefixes only active GitHub or project contexts', () => {
   assert.match(menu, /messages\.find\(\(message\) => message\.role === 'user'\)/);
   assert.match(menu, /meaningfulSidebarTitle\(savedCurrentTitle, firstUserPrompt\)/);
-  assert.match(menu, /Open recent chats/);
-  assert.match(menu, /aria-expanded=\{open\}/);
+  assert.match(menu, /activeRepo \? `Repo ·/);
+  assert.match(menu, /projectName \? `Project ·/);
+  assert.match(menu, /contextPrefix \? `\$\{contextPrefix\} \/ \$\{displayTitle\}` : displayTitle/);
+  assert.match(menu, /getActiveSidebarProject\(accountId\)/);
+  assert.match(menu, /title=\{headerTitle\}/);
+  assert.match(menu, /Open conversation actions/);
 });
 
-test('recent chats come from real account-scoped cloud lists, with owner-checked restoration', () => {
+test('header dropdown contains only current-chat actions, not a redundant history browser', () => {
+  assert.match(menu, /ariaLabel="Conversation actions"/);
+  assert.match(menu, /role="menuitem".*type="button"/);
+  assert.match(menu, /beginEditor\('rename'\)/);
+  assert.match(menu, /togglePin\(\)/);
+  assert.match(menu, /beginEditor\('project'\)/);
+  assert.match(menu, /beginEditor\('delete'\)/);
+  assert.match(menu, /beginEditor\('archive'\)/);
+  assert.doesNotMatch(menu, /Search recent chats|New chat<\/button>|role="tablist"|role="tabpanel"|ariaLabel="Recent conversations"/);
+  assert.doesNotMatch(menu, /loadSidebarChats\(|listCloudTerminalSessions\(/);
+});
+
+test('management resolves the exact owner-scoped conversation, including old saved chats', () => {
   assert.match(menu, /status === 'authenticated' \? userId/);
-  assert.match(menu, /loadSidebarChats\(accountId, 0, 60\)/);
-  assert.match(menu, /listCloudTerminalSessions\(undefined, \{ limit: 80, offset: 0 \}\)/);
-  assert.match(menu, /meta\.get\(chat\.id\)\?\.archived_at/);
-  assert.match(menu, /loadSidebarChatById\(accountId, entry\.id\)/);
-  assert.match(menu, /loadCloudTerminalSession\(entry\.id\)/);
-  assert.match(menu, /await restoreTerminalSession\(/);
-  assert.doesNotMatch(menu, /loadTerminalHistory\(|(?:localStorage|sessionStorage)\.(?:getItem|setItem|removeItem)\(/);
-});
-
-test('dropdown supports accessible search, active item, mobile layout and escape/outside dismissal', () => {
-  assert.match(menu, /type="search"/);
-  assert.match(menu, /ariaLabel="Recent conversations"/);
-  assert.match(menu, /entry\.id === sessionId/);
+  assert.match(menu, /loadSidebarChatById\(accountId, sessionId\)/);
+  assert.match(menu, /loadCloudTerminalSession\(sessionId\)/);
+  assert.match(menu, /loadSidebarMeta\(accountId\)/);
+  assert.match(menu, /currentEntry && messages\.length/);
   assert.match(menu, /<AnchoredPortalPopover/);
-  assert.match(styles, /text-overflow: ellipsis/);
-  assert.match(styles, /@media \(max-width: 750px\)/);
+  assert.match(styles, /\.actionList\s*\{/);
+  assert.match(styles, /\.actionPane\s*\{[^}]*overflow-y: auto/);
   assert.match(styles, /prefers-reduced-motion: reduce/);
 });

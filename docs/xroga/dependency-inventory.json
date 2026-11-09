@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "2f21e98910521c11548379d11c66ad398c13626c",
+  "source_sha": "d8f044929bb9f22f5af43f8012b70ef54ac4abb6",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -22633,7 +22633,7 @@
     },
     {
       "path": "frontend/src/components/terminal/WorkspaceConversationMenu.tsx",
-      "sha256": "56ffd86b127f7c4fc86305785b68cb3a1c1e82202d8a48e73b4d5a4177bd1513"
+      "sha256": "a4ab64fe6dbf10123a71053f29f1a763cd96e3d206d916f302b5f479acb50c78"
     },
     {
       "path": "frontend/src/components/terminal/WorkspaceIdentityMenu.tsx",
@@ -38401,20 +38401,6 @@
     {
       "path": "frontend/src/components/terminal/SwarmMessageLog.tsx",
       "line": 226,
-      "scope": "FUNCTION_LOCAL",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "frontend/src/components/terminal/WorkspaceConversationMenu.tsx",
-      "line": 105,
-      "scope": "FUNCTION_LOCAL",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "frontend/src/components/terminal/WorkspaceConversationMenu.tsx",
-      "line": 106,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
