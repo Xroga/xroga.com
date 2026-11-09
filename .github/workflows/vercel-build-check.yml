@@ -57,19 +57,23 @@ jobs:
           set -euo pipefail
           image="workspace-staging-ci:$SOURCE_SHA"
           name="workspace-staging-ci-$SOURCE_SHA"
+          context="$(mktemp -d "${RUNNER_TEMP}/workspace-staging.XXXXXXXX")"
           cleanup() {
             if [[ $? != 0 ]]; then docker logs "$name" 2>/dev/null || true; fi
             docker rm -f "$name" >/dev/null 2>&1 || true
             docker image rm "$image" >/dev/null 2>&1 || true
-            rm -f workspace-staging-manifest.json
+            rm -rf -- "$context"
           }
           trap cleanup EXIT
+          git archive "$SOURCE_SHA" | tar -x -C "$context"
+          cd "$context"
           node --input-type=module <<'JS'
           import { writeFileSync } from 'node:fs';
           import { hostedWorkspaceManifest } from './scripts/security/hosted-workspace-staging.mjs';
           writeFileSync('workspace-staging-manifest.json', JSON.stringify(hostedWorkspaceManifest(process.env.SOURCE_SHA, 'sha256:' + 'b'.repeat(64))));
           JS
-          docker build -f infra/google/Dockerfile.workspace-staging \
+          cp infra/google/Dockerfile.workspace-staging.dockerignore .dockerignore
+          DOCKER_BUILDKIT=0 docker build -f infra/google/Dockerfile.workspace-staging \
             --build-arg "XROGA_RELEASE_SHA=$SOURCE_SHA" \
             --build-arg WORKSPACE_SUPABASE_PUBLISHABLE_KEY=sb_publishable_ci_fixture \
             -t "$image" .

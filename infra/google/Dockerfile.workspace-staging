@@ -2,7 +2,7 @@ FROM node:22.21.1-slim AS build
 WORKDIR /app
 ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
 COPY . .
-RUN npm ci
+RUN test -f frontend/package.json && npm ci
 
 ARG XROGA_RELEASE_SHA
 ARG WORKSPACE_SUPABASE_PUBLISHABLE_KEY

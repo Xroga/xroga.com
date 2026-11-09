@@ -16,7 +16,7 @@ steps:
       - --input-type=module
       - -e
       - |
-        import {readFileSync, unlinkSync, writeFileSync} from 'node:fs';
+        import {copyFileSync, readFileSync, unlinkSync, writeFileSync} from 'node:fs';
         import {hostedWorkspaceManifest} from './scripts/security/hosted-workspace-staging.mjs';
         const log = readFileSync('workspace-api-push.log', 'utf8');
         unlinkSync('workspace-api-push.log');
@@ -24,6 +24,9 @@ steps:
         if (digests.length !== 1) throw Error('Registry digest unavailable');
         const digest = digests[0][1];
         writeFileSync('workspace-staging-manifest.json', JSON.stringify(hostedWorkspaceManifest(process.env.WORKSPACE_SOURCE_SHA, digest)));
+        // The API has already been built and pushed. Give the legacy Docker
+        // builder the frontend context rules at the root it actually reads.
+        copyFileSync('infra/google/Dockerfile.workspace-staging.dockerignore', '.dockerignore');
   - name: gcr.io/cloud-builders/docker
     args:
       - build
