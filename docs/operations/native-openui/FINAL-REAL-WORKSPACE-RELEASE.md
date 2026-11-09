@@ -64,4 +64,6 @@ The private hosted deployment and all three regular Workspace prompts stopped at
 
 The repair keeps the reviewed manifest inside the frontend image. The new provenance check rejects unsuccessful builds, an unapproved source archive generation, a mismatched API digest or an unpinned frontend image. No IAM change or retry was used. Hosted authentication, private Share and file checks, real DeepSeek acceptance and the production cutover remain gated.
 
+Commit `011618da8710e35ef4d992c8fc7962b1c5e3dcf7` contains the provenance repair and capability expansion. Its local evidence covers generated schema and icon assets, 10 backend native-presentation tests, five hosted transport and provenance tests, three function tests, frontend and backend TypeScript checks, and 13 Chrome fixture scenarios at five widths in both themes. This new source has no approved hosted deployment window.
+
 Production readback was Workspace `6c4446953a84e533c1a7dd7acea23bce3de876ba`, API `92ec31a3369a0d8ca42d23d62f79d8f522b5fb9e` and canonical Job digest `sha256:c06b670cc2a6531499fc930552b07a737c1f739855e5bbfc181fc8fc3cf5643e`. Relative to the earlier frontend baseline, the live release added Work Packs and changed four surrounding Automations files. Preserve these changes alongside the previously identified Workspace menu changes in the post-acceptance reconciliation.
