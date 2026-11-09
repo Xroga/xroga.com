@@ -5,9 +5,10 @@ import { webUrl } from "./style";
 // Inline: **bold**, *italic*, ~~strike~~, `code`, [text](https://...).
 // Blocks: paragraphs, # headings, - and 1. lists, > quotes, ``` code, ---, | tables |.
 
-const INLINE = /(`[^`\n]+`)|(\*\*[^*\n]+?\*\*|__[^_\n]+?__)|(~~[^~\n]+?~~)|(\*[^*\s][^*\n]*?\*|_[^_\s][^_\n]*?_)|(\[[^\]\n]+\]\([^)\s]+\))/;
+const INLINE = /(`[^`\n]+`)|(\*\*[^*\n]+?\*\*|__[^_\n]+?__)|(~~[^~\n]+?~~)|(\*[^*\s][^*\n]*?\*|_[^_\s][^_\n]*?_)|(\[[^\]\n]+\]\([^)\s]+\))|(\[(\d{1,2})\])/;
+type RenderCitation = (number: number) => ReactNode;
 
-export function inline(text: string, key = "i"): ReactNode {
+export function inline(text: string, key = "i", renderCitation?: RenderCitation): ReactNode {
   const out: ReactNode[] = [];
   let rest = text;
   let n = 0;
@@ -21,15 +22,17 @@ export function inline(text: string, key = "i"): ReactNode {
     const token = m[0];
     const k = `${key}-${n++}`;
     if (m[1]) out.push(<code key={k} className="iui-code">{token.slice(1, -1)}</code>);
-    else if (m[2]) out.push(<strong key={k}>{inline(token.slice(2, -2), k)}</strong>);
-    else if (m[3]) out.push(<s key={k}>{inline(token.slice(2, -2), k)}</s>);
-    else if (m[4]) out.push(<em key={k}>{inline(token.slice(1, -1), k)}</em>);
+    else if (m[2]) out.push(<strong key={k}>{inline(token.slice(2, -2), k, renderCitation)}</strong>);
+    else if (m[3]) out.push(<s key={k}>{inline(token.slice(2, -2), k, renderCitation)}</s>);
+    else if (m[4]) out.push(<em key={k}>{inline(token.slice(1, -1), k, renderCitation)}</em>);
+    else if (m[6]) out.push(<Fragment key={k}>{renderCitation?.(Number(m[7])) ?? token}</Fragment>);
     else {
       const close = token.indexOf("](");
       const label = token.slice(1, close);
       const href = webUrl(token.slice(close + 2, -1));
+      const citation = /^\d{1,2}$/.test(label) ? renderCitation?.(Number(label)) : null;
       out.push(
-        href ? (
+        citation ? <Fragment key={k}>{citation}</Fragment> : href ? (
           <a key={k} className="iui-link" href={href} target="_blank" rel="noopener noreferrer">
             {inline(label, k)}
           </a>
@@ -115,20 +118,20 @@ function blocks(source: string): Block[] {
   return out;
 }
 
-export function MarkdownBlocks({ text }: { text: string }) {
+export function MarkdownBlocks({ text, renderCitation }: { text: string; renderCitation?: RenderCitation }) {
   return (
     <>
       {blocks(text).map((b, i) => {
         const k = `b${i}`;
         switch (b.kind) {
           case "p":
-            return <p key={k}>{inline(b.text, k)}</p>;
+            return <p key={k}>{inline(b.text, k, renderCitation)}</p>;
           case "quote":
-            return <blockquote key={k}>{inline(b.text, k)}</blockquote>;
+            return <blockquote key={k}>{inline(b.text, k, renderCitation)}</blockquote>;
           case "h":
             return (
               <div key={k} role="heading" aria-level={b.level + 1} className={`iui-md-h iui-md-h${b.level}`}>
-                {inline(b.text, k)}
+                {inline(b.text, k, renderCitation)}
               </div>
             );
           case "code":
@@ -140,7 +143,7 @@ export function MarkdownBlocks({ text }: { text: string }) {
           case "hr":
             return <hr key={k} className="iui-divider" />;
           case "list": {
-            const items = b.items.map((t, j) => <li key={j}>{inline(t, `${k}-${j}`)}</li>);
+            const items = b.items.map((t, j) => <li key={j}>{inline(t, `${k}-${j}`, renderCitation)}</li>);
             return b.ordered ? (
               <ol key={k} start={b.start}>
                 {items}
@@ -154,11 +157,11 @@ export function MarkdownBlocks({ text }: { text: string }) {
               <div key={k} className="iui-table-scroll">
                 <table className="iui-table">
                   <thead>
-                    <tr>{b.head.map((h, j) => <th key={j}>{inline(h, `${k}-h${j}`)}</th>)}</tr>
+                    <tr>{b.head.map((h, j) => <th key={j}>{inline(h, `${k}-h${j}`, renderCitation)}</th>)}</tr>
                   </thead>
                   <tbody>
                     {b.rows.map((r, j) => (
-                      <tr key={j}>{r.map((c, m) => <td key={m}>{inline(c, `${k}-${j}-${m}`)}</td>)}</tr>
+                      <tr key={j}>{r.map((c, m) => <td key={m}>{inline(c, `${k}-${j}-${m}`, renderCitation)}</td>)}</tr>
                     ))}
                   </tbody>
                 </table>

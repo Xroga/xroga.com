@@ -10,6 +10,7 @@ import { MessageSuggestionChips } from './MessageSuggestionChips';
 import { ModernResponseText } from './ReasoningAndFollowUps';
 import { FeatureOutputView } from './FeatureOutputView';
 import { readNativeWorkspaceAnswer, NativeWorkspaceAnswer, buildNativeOpenUiShare } from '@/components/native-openui/NativeWorkspaceAnswer';
+import { appendCitationReferences } from '@/lib/xrogaCitations';
 import { ConversationTurnV2 } from '@/components/response-experience-v2/ConversationTurnV2';
 import { responseTextV2 } from '@/components/response-experience-v2/exportText';
 import { conversationActivityV2 } from '@/components/response-experience-v2/conversation';
@@ -545,6 +546,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
             const nativeAnswer = msg.role === 'assistant' ? readNativeWorkspaceAnswer(msg.featureOutput) : undefined;
             const nativeShare = nativeAnswer && (nativeAnswer.program || msg.webSources?.length)
               ? buildNativeOpenUiShare(nativeAnswer.text, nativeAnswer.program ?? '', msg.webSources) : undefined;
+            const nativeCopy = nativeAnswer ? appendCitationReferences(nativeAnswer.text, msg.webSources) : undefined;
             const answer = nativeAnswer ? (
               <ChatErrorBoundary>
                 <NativeWorkspaceAnswer answer={nativeAnswer} sources={msg.webSources} />
@@ -632,7 +634,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                   <ConversationTurnV2 role={msg.role} content={msg.content}
                     message={msg}
                     richResponse={nativeShare}
-                    copyContent={nativeAnswer?.text ?? responseTextV2(msg) ?? [msg.content, shareableDocumentText(msg.featureOutput)].filter(Boolean).join('\n\n')}
+                    copyContent={nativeCopy ?? responseTextV2(msg) ?? [msg.content, shareableDocumentText(msg.featureOutput)].filter(Boolean).join('\n\n')}
                     prompt={promptByAssistantId.get(msg.id)}
                     streaming={msg.id === animatingId && loading}
                     controls={msg.buildStopped || msg.capacityUnavailable || msg.updateTrail || (currentTurn && openInteractionsForTurn(terminalRun.events, msg.content).length) ? <>{msg.buildStopped || msg.capacityUnavailable || msg.updateTrail ? taskControls : null}{currentTurn ? <RequiredInteractionCards interactions={openInteractionsForTurn(terminalRun.events, msg.content)} /> : null}</> : undefined}
@@ -698,7 +700,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                         <MessageBubbleActions
                           role="assistant"
                           richResponse={nativeShare}
-                          content={nativeAnswer?.text ?? [msg.content, shareableDocumentText(msg.featureOutput)].filter(Boolean).join('\n\n')}
+                          content={nativeCopy ?? [msg.content, shareableDocumentText(msg.featureOutput)].filter(Boolean).join('\n\n')}
                           messageId={msg.id}
                           createdAt={msg.createdAt}
                           prompt={promptByAssistantId.get(msg.id)}

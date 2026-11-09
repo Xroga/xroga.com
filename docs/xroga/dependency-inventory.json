@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "5d6a60475357520d0ca6c287b9a90061d17be666",
+  "source_sha": "7804c5fbff5871d91ad37043b12d21cde1ca6604",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -2580,6 +2580,7 @@
       "state": "CONFIGURED_BUT_UNVERIFIED",
       "runtime_owner": "backend/API or explicitly proposed component",
       "config_sources": [
+        "backend/src/ai/researchSearchProvider.ts",
         "frontend/src/lib/siteIcon.ts"
       ],
       "hostnames": [
@@ -2588,7 +2589,9 @@
       "resource_id": null,
       "region": "Not verified",
       "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
-      "secret_names": [],
+      "secret_names": [
+        "DEEPSEEK_WEBSEARCH_FETCH_API"
+      ],
       "inbound_callers": [
         "api or named source callers; operational reachability not inferred"
       ],
@@ -2601,6 +2604,7 @@
       "failure_mode": "Safe user-facing failure required; internal details restricted",
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
+        "backend/src/ai/researchSearchProvider.ts",
         "frontend/src/lib/siteIcon.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
@@ -6870,9 +6874,7 @@
       "state": "CONFIGURED_BUT_UNVERIFIED",
       "runtime_owner": "backend/API or explicitly proposed component",
       "config_sources": [
-        "frontend/src/components/layout/nav/MegaPreviews.tsx",
-        "frontend/src/components/terminal/SourceLogo.tsx",
-        "frontend/src/components/terminal/WebSourcesPanel.tsx"
+        "frontend/src/components/layout/nav/MegaPreviews.tsx"
       ],
       "hostnames": [
         "www.google.com"
@@ -6893,9 +6895,7 @@
       "failure_mode": "Safe user-facing failure required; internal details restricted",
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
-        "frontend/src/components/layout/nav/MegaPreviews.tsx",
-        "frontend/src/components/terminal/SourceLogo.tsx",
-        "frontend/src/components/terminal/WebSourcesPanel.tsx"
+        "frontend/src/components/layout/nav/MegaPreviews.tsx"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
       "evidence_ids": []
@@ -9381,7 +9381,8 @@
         "STATIC_ENV_READER"
       ],
       "dependency_ids": [
-        "endpoint-api-deepseek-com"
+        "endpoint-api-deepseek-com",
+        "endpoint-cdn-deepseek-com"
       ]
     },
     {
@@ -16919,7 +16920,7 @@
     },
     {
       "path": "backend/src/ai/nativeOpenUiPrompt.ts",
-      "sha256": "2b8fc097239f3250e49cf0fa7d310b4c02407ea0aef55c5b457846ecd866ffeb"
+      "sha256": "7adfb9ed3364ee04cca229d00450141691987362321cc1605312f70666bb155e"
     },
     {
       "path": "backend/src/ai/nativeOpenUiRun.ts",
@@ -16927,7 +16928,7 @@
     },
     {
       "path": "backend/src/ai/nativeOpenUiShare.ts",
-      "sha256": "7000e2f920ed8058aadf596c2205f6bcbb3898081942c5f363a687e454c3e69e"
+      "sha256": "f401334e4930b9fef2ff928360e3d861051dea5d1eb572c9cb14027744eb072c"
     },
     {
       "path": "backend/src/ai/nativeOpenUiWorkspace.ts",
@@ -17031,15 +17032,15 @@
     },
     {
       "path": "backend/src/ai/research.ts",
-      "sha256": "9d3da3f252878821e8af7cc168f6b16928a870ecc891205e9242498663093da0"
+      "sha256": "aa6bdd6450fabb91b48e0949fb8e7474a6d9e9a9a0958df5cc3756989ebb250f"
     },
     {
       "path": "backend/src/ai/researchAnswer.ts",
-      "sha256": "c2ecfbb3624c8b779592d4f930aa216b4527f2e25939f49fa1f8d57becc54adc"
+      "sha256": "c00a78a202fd82363673c0680a1895e93cd5a60d2090a06b9641b0328e5a2fca"
     },
     {
       "path": "backend/src/ai/researchSearchProvider.ts",
-      "sha256": "ed99c4a95c9108f8f188ca2fd623bf4c54022a2691954c9b97ea8acbf344d0eb"
+      "sha256": "1708a291bb1d10a78fecd67fae7d6fe2d510af67d3083b8c08eeb3aa260b5075"
     },
     {
       "path": "backend/src/ai/resourceLedger.ts",
@@ -19079,7 +19080,7 @@
     },
     {
       "path": "backend/src/services/integrations/researchResult.ts",
-      "sha256": "8382a77b8a23817d945873566354960b6e07412a12d57a73e3c06511ce811dda"
+      "sha256": "8b02d992fc703451a4cc942a8570dc3db7fe665742d87fc88fd96d53b44cf3e5"
     },
     {
       "path": "backend/src/services/integrations/supabaseAccess.ts",
@@ -20475,7 +20476,7 @@
     },
     {
       "path": "frontend/src/app/share/[token]/page.tsx",
-      "sha256": "6aa48c84cf820b9c0f740b695ea555bc70b8bae33cead4e42524aee6777b51b4"
+      "sha256": "1a3ed5f8accf91bdb421b5150eb679009d1557213a8e2ba81581e7800dd0dbc2"
     },
     {
       "path": "frontend/src/app/showcase/[slug]/page.tsx",
@@ -20607,7 +20608,7 @@
     },
     {
       "path": "frontend/src/components/automations/AutomationsWorkspace.tsx",
-      "sha256": "48fad7fbe60dcf3be7149f1ebe70eb5a29a24224da29c9fa8cb6b73f7ae2876d"
+      "sha256": "9e4c9981d117653ee8ddfb50d7166d282671829b673447deb91fa0194b990b76"
     },
     {
       "path": "frontend/src/components/automations/BrowserRun.tsx",
@@ -20623,7 +20624,7 @@
     },
     {
       "path": "frontend/src/components/automations/Connections.tsx",
-      "sha256": "8568c83e70ae2e0999212d8abcdeda323c9eda1c043974230489916603d0b706"
+      "sha256": "6ac074b2037e239ae6d66730ba8e90c4da38d388ee419cb4f6ba9732164b4b5a"
     },
     {
       "path": "frontend/src/components/automations/DraftSummary.tsx",
@@ -20636,6 +20637,10 @@
     {
       "path": "frontend/src/components/automations/Schedules.tsx",
       "sha256": "d11fd3c7525ef9b027d81523e6174a1747c6a236bdcf34100d8f89d4ee9a26df"
+    },
+    {
+      "path": "frontend/src/components/automations/WorkPacksGallery.tsx",
+      "sha256": "596cfca09e8c01ae6a2803d37b503e38891a4063701fad6247993b4577a3d371"
     },
     {
       "path": "frontend/src/components/automations/WorkflowEditor.tsx",
@@ -20652,6 +20657,10 @@
     {
       "path": "frontend/src/components/automations/useDrafts.ts",
       "sha256": "035de9b22ebb0bde61e753c72080c74d316dbd25ce8c2f5b3626426f59cc5a62"
+    },
+    {
+      "path": "frontend/src/components/automations/workPacksV2.ts",
+      "sha256": "75fd039a3292c3b16215a1904694d3cf6336ef5d88ccf387d74bbab7e3426b72"
     },
     {
       "path": "frontend/src/components/billing/BillingPageClient.tsx",
@@ -20807,7 +20816,7 @@
     },
     {
       "path": "frontend/src/components/dashboard/DashboardView.tsx",
-      "sha256": "1168d33a88e1b3a8ee3031136bc60172485ffaf155badf5b012752f0299ab2ab"
+      "sha256": "2aa86cd3a9091ca37d3a7bde797e5cacaf0284d3129187fa74644a87396edfcd"
     },
     {
       "path": "frontend/src/components/dashboard/DashboardWelcome.tsx",
@@ -21859,7 +21868,7 @@
     },
     {
       "path": "frontend/src/components/layout/Sidebar.tsx",
-      "sha256": "156f3e2d8a75fc99e718d77f4b3311aad80a8243187ad53fdcb25e6a2a8fae90"
+      "sha256": "a2b09887bb6d8c6586d4bbdea91fae6af311c2d2349ceb5eef157890002dfa96"
     },
     {
       "path": "frontend/src/components/layout/SidebarActionMenu.tsx",
@@ -22027,15 +22036,15 @@
     },
     {
       "path": "frontend/src/components/native-openui/NativeSurface.tsx",
-      "sha256": "cb4d502f651a778704a6048a7544f72284db76a46551cc775c29bc22f90b1189"
+      "sha256": "8dc394b0c941d0e39f50d45fdbb3ba648b64e57b2eaa60996a5e1d4bdae0cf72"
     },
     {
       "path": "frontend/src/components/native-openui/NativeWorkspaceAnswer.tsx",
-      "sha256": "5b9e4be204691a6da04ba9a853c92371e13194f7f9101abdd7570d4639cbb1ee"
+      "sha256": "8f61f59aa96ef5598c1fd72df3ddfe605c360c48b2a5f444aef5e5f639868bbb"
     },
     {
       "path": "frontend/src/components/native-openui/Resources.tsx",
-      "sha256": "de91b11be5c2c94aa6d68cab940a13d5e848aaa002ff49e0faf0ef0c7420724b"
+      "sha256": "245ebef80f672cc2ef3aa64400fae3c20aac19cc1d7ac06e3eb78919d5fb8096"
     },
     {
       "path": "frontend/src/components/native-openui/Tabs.tsx",
@@ -22043,7 +22052,7 @@
     },
     {
       "path": "frontend/src/components/native-openui/library.tsx",
-      "sha256": "22c8a0cb293086595ef11983166d0ec42a0e91cdbc8b9d5c1a059d68ec637592"
+      "sha256": "010ca8db78ca97b8d0950ded6b46b12ebbee94b84f28033408856f4940210220"
     },
     {
       "path": "frontend/src/components/native-openui/renderer-config.ts",
@@ -22071,7 +22080,7 @@
     },
     {
       "path": "frontend/src/components/native-openui/upstream/components/markdown.tsx",
-      "sha256": "3040ec84df4fb5925fa5087df1cca52cd536777b0d3c76aa4e0a636d9d62bb56"
+      "sha256": "bda644b1a85c53cb182bb83fb084eec5911fd44aadeaf76e2b31f27472a95588"
     },
     {
       "path": "frontend/src/components/native-openui/upstream/components/style.ts",
@@ -22723,7 +22732,7 @@
     },
     {
       "path": "frontend/src/components/terminal/ResponseSources.tsx",
-      "sha256": "0fd186c17e5d8ab081a61db58f16e171de43d5d8cc66727caccab5245f1a5fc7"
+      "sha256": "7eb3b6c914a202214c13f5e66ac4d7de19ec6eb18725995d5b40ffc82a23610a"
     },
     {
       "path": "frontend/src/components/terminal/RuntimeLogsButton.tsx",
@@ -22743,7 +22752,7 @@
     },
     {
       "path": "frontend/src/components/terminal/SourceLogo.tsx",
-      "sha256": "4ce9f501dbcecd540cc168638d497c3a2ce75608a2a27aee4efa10ef7cd09ae9"
+      "sha256": "e1bd467b8ba7a957a55d4d5a04e4141024e65fc994ad4c4decae6136ea2d97db"
     },
     {
       "path": "frontend/src/components/terminal/StoppedBuildResumeCard.tsx",
@@ -22751,7 +22760,7 @@
     },
     {
       "path": "frontend/src/components/terminal/SwarmMessageLog.tsx",
-      "sha256": "14fc3cdde3209c8eb834fe40b16ecac116b5b9ff85492e2da37c4f6608702112"
+      "sha256": "adfcd13cb11eba1234b895560342bf36e6407d6cf56ffb64d1317f890eb6f561"
     },
     {
       "path": "frontend/src/components/terminal/TerminalBuildReport.tsx",
@@ -22775,7 +22784,7 @@
     },
     {
       "path": "frontend/src/components/terminal/TerminalSkinPicker.tsx",
-      "sha256": "f5a62d44cea1dc5be69f2b257d681e375c728226b28908747b0d8c721d163077"
+      "sha256": "f4127b31f0c7b2c1b03675f29a56a54213e4e910000a911dabf711036ce8451e"
     },
     {
       "path": "frontend/src/components/terminal/TextGeneratingAnimation.tsx",
@@ -22807,7 +22816,7 @@
     },
     {
       "path": "frontend/src/components/terminal/WebSourcesPanel.tsx",
-      "sha256": "8cb2000ed030e5347f74d4f434d4392173bbad11f1851cd4eca90f68bb31eb86"
+      "sha256": "1f1912e5ce8ccf4e833b7725860fe671bff137480b268eccc613870fc514bbd8"
     },
     {
       "path": "frontend/src/components/terminal/WorkspaceConnectionsStrip.tsx",
@@ -22815,11 +22824,11 @@
     },
     {
       "path": "frontend/src/components/terminal/WorkspaceConversationMenu.tsx",
-      "sha256": "a4ab64fe6dbf10123a71053f29f1a763cd96e3d206d916f302b5f479acb50c78"
+      "sha256": "955bacc8703f2baf23655bc140e799456acef35ab77737c69ce6cfb3bb855df6"
     },
     {
       "path": "frontend/src/components/terminal/WorkspaceIdentityMenu.tsx",
-      "sha256": "267574d0f4175c1b1075d14c1a5c8e39de4a9c315101479d8edd8c3c8c894dd7"
+      "sha256": "ded2132f7d62a5e7241ad54cedc59afeabb2729ae49987f59b310c4aae6c9ca5"
     },
     {
       "path": "frontend/src/components/terminal/WorkspaceLauncher.tsx",
@@ -23407,7 +23416,7 @@
     },
     {
       "path": "frontend/src/lib/hostedWorkspaceBridge.mjs",
-      "sha256": "af4ea3ae7116ad5cc88ad1611fa1a72b4cb99e69f9e9f16899d2b010d46537f6"
+      "sha256": "04e20f2d85ec99b6aa287a3d620cb037aeca102b3ba9cd85b1e249756aec5523"
     },
     {
       "path": "frontend/src/lib/hydrateLandingOutput.ts",
@@ -23727,7 +23736,7 @@
     },
     {
       "path": "frontend/src/lib/sanitizeChatMessages.ts",
-      "sha256": "08aed69e29becb483c25057b2fea1f9d2b27fbedb54dffb6b50cd74e194b4318"
+      "sha256": "4ae1f0a2960da3694bf90a540d8d04e348c5ffa32bc365935def108124ce05d0"
     },
     {
       "path": "frontend/src/lib/scheduledFeedback.ts",
@@ -24063,7 +24072,7 @@
     },
     {
       "path": "frontend/src/lib/xrogaCitations.ts",
-      "sha256": "30323511a9d473cdc395952a17af6fbe8726e899f069e4cbb27d9a3f5b07a5a9"
+      "sha256": "27f4db99dbdd2c62856574da10e98aea945533f35bcfb5d9a95593ca312265a4"
     },
     {
       "path": "frontend/src/lib/xrogaConnect.ts",
@@ -24123,7 +24132,7 @@
     },
     {
       "path": "frontend/src/middleware.ts",
-      "sha256": "c656f3ce4a5e4816ab47f3935dbce10ffb5b2a20ca5dbc5a7ce5b5cd531caed8"
+      "sha256": "351846e952d1700742ae26bab4809f51f9de408eee31a5cda1727ef656e1ca65"
     },
     {
       "path": "frontend/src/store/useAppStore.ts",
@@ -25364,6 +25373,13 @@
       "protocol": "https:",
       "path": "backend/src/ai/researchSearchProvider.ts",
       "line": 14,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "cdn.deepseek.com",
+      "protocol": "https:",
+      "path": "backend/src/ai/researchSearchProvider.ts",
+      "line": 43,
       "credentialsInUrl": false
     },
     {
@@ -30015,24 +30031,10 @@
       "credentialsInUrl": false
     },
     {
-      "hostname": "www.google.com",
-      "protocol": "https:",
-      "path": "frontend/src/components/terminal/SourceLogo.tsx",
-      "line": 14,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "www.google.com",
-      "protocol": "https:",
-      "path": "frontend/src/components/terminal/WebSourcesPanel.tsx",
-      "line": 27,
-      "credentialsInUrl": false
-    },
-    {
       "hostname": "github.com",
       "protocol": "https:",
       "path": "frontend/src/components/terminal/WorkspaceIdentityMenu.tsx",
-      "line": 121,
+      "line": 114,
       "credentialsInUrl": false
     },
     {
@@ -32265,7 +32267,7 @@
     },
     {
       "path": "backend/src/ai/nativeOpenUiShare.ts",
-      "line": 23,
+      "line": 29,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -35996,7 +35998,14 @@
     },
     {
       "path": "backend/src/services/integrations/researchResult.ts",
-      "line": 57,
+      "line": 63,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/services/integrations/researchResult.ts",
+      "line": 102,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -37823,7 +37832,7 @@
     },
     {
       "path": "frontend/src/app/share/[token]/page.tsx",
-      "line": 146,
+      "line": 147,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -38348,14 +38357,14 @@
     },
     {
       "path": "frontend/src/components/native-openui/NativeSurface.tsx",
-      "line": 20,
+      "line": 21,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/native-openui/NativeSurface.tsx",
-      "line": 26,
+      "line": 27,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -38649,14 +38658,14 @@
     },
     {
       "path": "frontend/src/components/terminal/SwarmMessageLog.tsx",
-      "line": 226,
+      "line": 227,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/terminal/SwarmMessageLog.tsx",
-      "line": 554,
+      "line": 556,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

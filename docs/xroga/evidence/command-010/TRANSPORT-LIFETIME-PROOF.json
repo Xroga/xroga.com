@@ -873,15 +873,15 @@
     },
     {
       "path": "frontend/src/lib/hostedWorkspaceBridge.mjs",
-      "sha256": "af4ea3ae7116ad5cc88ad1611fa1a72b4cb99e69f9e9f16899d2b010d46537f6"
+      "sha256": "04e20f2d85ec99b6aa287a3d620cb037aeca102b3ba9cd85b1e249756aec5523"
     },
     {
       "path": "scripts/security/hosted-workspace-staging.mjs",
-      "sha256": "506c38ac36688be1e60095338360a13f269d3e082ac3681ec08d2d64cfda4fb0"
+      "sha256": "ee67109683ac75adefc4f8f2152233fa02f254697c83d7a6ef986ef144690b19"
     },
     {
       "path": "scripts/security/hosted-workspace-staging.test.mjs",
-      "sha256": "e1d8a45c599bfb1f7eabc0a58dbd46f70546ff70f1cabd16e44adf825d4eaa95"
+      "sha256": "e51ad4577251881cf451c0bbc70daf18f93a32bbca48e89993fbff7e307cb2ac"
     }
   ],
   "previousCallerCounts": {
@@ -1015,8 +1015,9 @@
     "callerIds": [
       "9bcbd89af61af9d9c2e7",
       "49a49569b55d144f7a6d",
-      "a609adccda5421076aa0"
+      "a609adccda5421076aa0",
+      "e88275f663bb87ce2556"
     ],
-    "scope": "Three isolated staging transport call sites individually reviewed. Credential-free negative tests cover source pin, caller token forwarding, issuer, destination, and redirect denial. Hosted and production acceptance remain unverified."
+    "scope": "Four isolated staging transport call sites reviewed. Negative tests bind origin, issuer, image, owner confirmation, toolkit, and redirect restrictions. No proof of live provider or production acceptance."
   }
 }

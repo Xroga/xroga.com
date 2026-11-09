@@ -965,7 +965,7 @@ export function Sidebar({ displayName, email }: SidebarProps) {
             onKeyDown={resizeWithKeyboard}
             className="xv-sidebar-resize-handle hidden lg:flex"
           >
-            <span aria-hidden="true" />
+            {/* Keep the accessible drag/keyboard resize handle, with no six-dot decoration. */}
           </div>
         ) : null}
       </div>

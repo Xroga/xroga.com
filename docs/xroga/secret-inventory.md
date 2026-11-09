@@ -1,6 +1,6 @@
 # Secret and environment name inventory
 
-Values are forbidden. Source SHA: `5d6a60475357520d0ca6c287b9a90061d17be666`. Names and source discovery do not prove that a capability is configured or accepted.
+Values are forbidden. Source SHA: `7804c5fbff5871d91ad37043b12d21cde1ca6604`. Names and source discovery do not prove that a capability is configured or accepted.
 
 | Name | Classification | Requirement | Dependency |
 | --- | --- | --- | --- |
@@ -44,7 +44,7 @@ Values are forbidden. Source SHA: `5d6a60475357520d0ca6c287b9a90061d17be666`. Na
 | DEEPSEEK_FLASH_INPUT_USD_PER_1M | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | DEEPSEEK_FLASH_MODEL_ID | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | DEEPSEEK_FLASH_OUTPUT_USD_PER_1M | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
-| DEEPSEEK_WEBSEARCH_FETCH_API | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-api-deepseek-com |
+| DEEPSEEK_WEBSEARCH_FETCH_API | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-api-deepseek-com, endpoint-cdn-deepseek-com |
 | DESCRIPT_API_TOKEN | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | runtime-controls-and-conditional-aliases |
 | DID_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | runtime-controls-and-conditional-aliases |
 | E2E_BACKEND_URL | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-127-0-0-1, endpoint-api-whop-com, endpoint-example-invalid, endpoint-public-example-invalid |

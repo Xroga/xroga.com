@@ -1,5 +1,5 @@
 import { readFileSync } from 'node:fs';
-import { isHostedWorkspaceRoute, requireHostedWorkspaceBuild } from '../../../scripts/security/hosted-workspace-staging.mjs';
+import { hostedResearchConfirmation, isHostedWorkspaceRoute, requireHostedWorkspaceBuild } from '../../../scripts/security/hosted-workspace-staging.mjs';
 const guestShare = /^\/api\/message-shares\/[A-Za-z0-9_-]{20,80}$/;
 const requestHeaders = ['authorization', 'content-type', 'accept', 'range', 'x-xroga-language'];
 const responseHeaders = ['content-type', 'content-disposition', 'content-range', 'accept-ranges', 'content-security-policy'];
@@ -74,7 +74,8 @@ export async function forwardHostedWorkspace(request, path, manifest, fetch = gl
     return denied(401);
   }
   const search = new URL(request.url).search;
-  if (search.length > 4096) return denied(400);
+  const research = hostedResearchConfirmation(path, method);
+  if (search.length > 4096 || (research && search)) return denied(400);
   if (request.body && !/^application\/json(?:\s*;|$)/i.test(request.headers.get('content-type') ?? '')) return denied(415);
   const headers = copyHeaders(request.headers, requestHeaders);
   const abort = AbortSignal.any([request.signal, AbortSignal.timeout(180000)]);
@@ -112,6 +113,23 @@ export async function forwardHostedWorkspace(request, path, manifest, fetch = gl
       return denied(503);
     }
     headers.set('X-Serverless-Authorization', platform);
+    if (research) {
+      // The shared action route may represent other toolkits. Read the immutable
+      // confirmation using the same owner JWT before admitting the one-use POST.
+      const detail = await fetch(new URL(research, manifest.api.origin), {
+        method: 'GET', headers, signal: abort, cache: 'no-store', redirect: 'error',
+      });
+      if (!detail.ok) {
+        await detail.body?.cancel().catch(() => undefined);
+        return denied(detail.status === 401 ? 401 : 404);
+      }
+      const record = await detail.json();
+      if (record?.confirmation?.toolkit !== 'xroga-native-research'
+        || record.confirmation.id !== research.split('/').at(-1)) return denied(404);
+      if (method === 'GET') return Response.json(record, { headers: {
+        'cache-control': 'private, no-store', 'x-content-type-options': 'nosniff',
+      } });
+    }
     const upstream = await fetch(new URL(path + search, manifest.api.origin), {
       method, headers, body, signal: abort, cache: 'no-store', redirect: 'manual',
     });

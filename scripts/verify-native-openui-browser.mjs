@@ -31,7 +31,8 @@ const cases = {
     ].join('\n'),
   },
   flow: { text: 'The API checks membership before reading tenant rows.', program: 'root = Col([Title("Tenant request path"), Text("The API checks membership before reading tenant rows."), Svg([Rect(2, 14, 95, 32, "surface", "muted", 0.8, 1, 6), SvgText("Verify membership", 49.5, 33, 9, "ink", "middle"), Line(103, 30, 145, 30, "muted", 1.2), Polygon("145,27 150,30 145,33", "muted"), Rect(155, 14, 93, 32, "surface", "muted", 0.8, 1, 6), SvgText("Read tenant rows", 201.5, 33, 9, "ink", "middle")], "0 0 250 60", "100%", null, "Verify membership before reading tenant rows"), List([ListItem("Check authenticated membership"), ListItem("Read rows under RLS")], "number")])' },
-  evidence: { text: 'PostgreSQL documents row-level security.', program: 'root = Col([Text("PostgreSQL documents row-level security."), Source("source-1")])' },
+  evidence: { text: 'PostgreSQL documents row-level security.', program: 'root = Col([Text(["PostgreSQL documents row-level security. ", Source("source-1")])])' },
+  fallbackCitations: { text: 'Check the documentation [2](https://untrusted.example/). Unknown [99] and code `[2]` are plain text.' },
   code: { text: 'TypeScript function returns the supplied constant.', program: 'root = Col([Code("const total: number = 42;", "typescript")])' },
   tabs: { text: 'Core recommendation remains visible.', program: 'root = Col([Text("Core recommendation remains visible."), Tabs("Scenarios", [{title: "Basic", content: [Text("Basic details")]}, {title: "Team", content: [Text("Team details")]}])])' },
   choice: { text: 'Compare local scenarios.', program: [
@@ -57,7 +58,7 @@ const compiled = await build({
       + 'const cases = ' + JSON.stringify(cases) + ';'
       + 'const q=new URL(location.href).searchParams; const name=q.get("case") || "short";'
       + 'document.body.dataset.theme=q.get("shellTheme") || q.get("theme") || "light"; document.querySelector("main").dataset.theme=q.get("theme") || "light";'
-      + 'const sources=[{id:"source-1",title:"PostgreSQL: Row Security Policies",url:"https://www.postgresql.org/docs/current/ddl-rowsecurity.html"}];'
+      + 'const sources=[{id:"source-1",title:"PostgreSQL: Row Security Policies",url:"https://www.postgresql.org/docs/current/ddl-rowsecurity.html"},{id:"source-2",title:"W3C Documentation",url:"https://www.w3.org/TR/"}];'
       + 'createRoot(document.getElementById("root")).render(<>{cases[name].prompt && <p className="native-evaluation-user">{cases[name].prompt}</p>}<div className="native-evaluation-answer-label">Xroga</div><NativeSurface answer={{...cases[name],format:"xroga-openui-v1",library:"xroga-native-v1"}} sources={sources} isStreaming={name==="stream"} /></>);',
   },
   outdir: 'native-assets', entryNames: 'native', chunkNames: 'native-chunk-[hash]', format: 'esm', splitting: true,
@@ -183,6 +184,15 @@ try {
       await open('evidence');
       const evidence = page.getByRole('link', { name: /PostgreSQL/ });
       assert.equal(await evidence.getAttribute('href'), 'https://www.postgresql.org/docs/current/ddl-rowsecurity.html');
+      assert.equal(await page.locator('p').filter({ hasText: 'PostgreSQL documents' }).getByRole('link').count(), 1);
+      await page.route('**/api/site-icon?d=w3.org', route => route.fulfill({ contentType: 'image/png',
+        body: Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4z8DwHwAFgAI/ScLttAAAAABJRU5ErkJggg==', 'base64') }));
+      await open('fallbackCitations');
+      const fallback = page.getByRole('link', { name: /W3C Documentation/ });
+      assert.equal(await fallback.getAttribute('href'), 'https://www.w3.org/TR/');
+      assert.equal(await fallback.locator('img').getAttribute('src'), '/api/site-icon?d=w3.org');
+      assert.equal(await page.getByRole('region', { name: 'Answer', exact: true }).getByRole('link').count(), 1);
+      assert.equal(await page.locator('code').getByText('[2]', { exact: true }).count(), 1);
       await open('choice');
       const choice = page.getByRole('group', { name: 'Pricing scenario' });
       await choice.getByRole('searchbox').fill('Grow');

@@ -4,6 +4,7 @@ import { defineComponent } from '@openuidev/react-lang';
 import { ArrowUpRight, Globe } from 'lucide-react';
 import { siCloudflare, siGithub, siNextdotjs, siPostgresql, siReact, siStripe, siSupabase, siVercel } from 'simple-icons';
 import { z } from 'zod/v4';
+import { SourceLogo } from '../terminal/SourceLogo';
 
 // Local CC0 Simple Icons artwork. Marks belong to their owners.
 const resources = {
@@ -18,7 +19,7 @@ const resources = {
 };
 const resourceKey = z.enum(['nextjs', 'supabase', 'stripe', 'postgresql', 'react', 'vercel', 'github', 'cloudflare']);
 
-function ResourceMark({ origin }: { origin: string }) {
+function ResourceMark({ origin, research = false }: { origin: string; research?: boolean }) {
   const hostname = origin.replace(/^www[.]/, '');
   const resource = Object.values(resources).find(item => {
     const domain = item.origin.replace(/^www[.]/, '');
@@ -26,12 +27,16 @@ function ResourceMark({ origin }: { origin: string }) {
   });
   return resource
     ? <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d={resource.mark.path} /></svg>
-    : <Globe size={15} aria-hidden="true" />;
+    : research ? <SourceLogo domain={hostname} size={15} /> : <Globe size={15} aria-hidden="true" />;
 }
 
-export function EvidenceChip({ url, title }: { url: URL; title: string }) {
-  return <a className="native-evidence-chip" href={url.href} target="_blank" rel="noopener noreferrer">
-    <ResourceMark origin={url.hostname} /><span>{title}</span><ArrowUpRight size={13} aria-hidden="true" />
+export function EvidenceChip({ href, title, siteName }: { href: string; title: string; siteName?: string }) {
+  let url: URL;
+  try { url = new URL(href); } catch { return null; }
+  if (!['https:', 'http:'].includes(url.protocol) || url.username || url.password) return null;
+  const domain = url.hostname.replace(/^www\./i, '');
+  return <a className="native-evidence-chip" href={url.href} target="_blank" rel="noopener noreferrer" title={title} aria-label={`${title} (${domain})`}>
+    <ResourceMark origin={domain} research /><span>{siteName || domain}</span><ArrowUpRight size={13} aria-hidden="true" />
   </a>;
 }
 

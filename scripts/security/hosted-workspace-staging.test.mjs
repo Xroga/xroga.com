@@ -146,3 +146,29 @@ test('wrong API source fails before forwarding and upstream redirects never esca
     assert.equal(actions, release === source ? 1 : 0);
   }
 });
+
+test('hosted confirmation admits only the exact owner-visible DeepSeek research action', async () => {
+  const id = '12345678-1234-1234-1234-123456789abc';
+  const base = '/api/phase1/business-actions/confirmations/' + id;
+  const manifest = makeManifest();
+  for (const [status, toolkit, actualId, allowed] of [
+    [200, 'xroga-native-research', id, true],
+    [200, 'connected-app', id, false],
+    [200, 'xroga-native-research', 'another-id', false],
+    [404, '', id, false],
+  ]) {
+    const actions = [];
+    const fetcher = async (url, options) => {
+      if (url.hostname === 'metadata.google.internal') return new Response('google.id.token', { headers: { 'Metadata-Flavor': 'Google' } });
+      if (url.pathname === '/health') return Response.json({ service: 'xroga-api', release: source });
+      actions.push([url.pathname, options.method, options.headers.get('Authorization')]);
+      if (url.pathname === base && options.method === 'GET') return Response.json({ confirmation: { id: actualId, toolkit } }, { status });
+      return Response.json({ ok: true });
+    };
+    const input = request();
+    const response = await forwardHostedWorkspace(input, base + '/confirm', manifest, fetcher);
+    assert.equal(response.status, allowed ? 200 : 404);
+    const token = input.headers.get('Authorization');
+    assert.deepEqual(actions, [[base, 'GET', token], ...(allowed ? [[base + '/confirm', 'POST', token]] : [])]);
+  }
+});

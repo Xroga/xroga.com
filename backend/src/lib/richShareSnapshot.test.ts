@@ -16,7 +16,7 @@ test('ordinary JSON answers, unknown versions and malformed or oversized values 
 
 test('a sourced native answer keeps citations through the share API even without widgets', () => {
   const text = 'Full answer with verified sources.';
-  const sources = [{ title: 'Primary evidence', url: 'https://example.com/evidence' }];
+  const sources = [{ title: 'Primary evidence', url: 'https://example.com/evidence', siteName: 'Primary publisher', publishedAt: '2026-11-08' }];
   const snapshot = buildNativeOpenUiShare(text, '', sources);
   assert.ok(snapshot);
   assert.deepEqual(projectRichShare(snapshot), { response: text, richResponse: snapshot });

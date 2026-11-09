@@ -57,7 +57,10 @@ export async function completeApprovedResearchAnswer(scope:TenantModelScope,requ
  try{
   const result=await runChatPipeline({userId:scope.userId,tenantContext:scope.context,modelScope:{...scope,connectedAccountId:'platform',maximumCostMicroUsd:RESEARCH_ANSWER_MAXIMUM_MICRO_USD,revalidateBeforeDispatch:check},
    ...input,approvedResearch:{bundle:{query:input.prompt,summary:sources.map(s=>s.snippet).join('\n\n').slice(0,4000),
-    sources:sources.map(s=>({title:s.title,url:s.url,snippet:s.snippet,source:s.sourceType==='x_post'?'x':'web'})),provider:'parallel'},
+    sources:sources.map(s=>{
+      const original=evidence.sources.find(source=>source.url===s.url);
+      return {...original,title:s.title,url:s.url,snippet:s.snippet,source:s.sourceType==='x_post'?'x':'web'};
+    }),provider:'parallel'},
     evidence:formatResearchAsEvidence(filtered)}});
   await check();
   const bound=bindCitationLinks(result.response,sources);

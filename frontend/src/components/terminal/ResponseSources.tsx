@@ -21,11 +21,13 @@ function cleanExcerpt(value: string): string {
 function SourceTile({ source, compact = false }: { source: VerifiedSource; compact?: boolean }) {
   const [copied, setCopied] = useState(false);
   const thumbnail = source.item.thumbnailUrl ? safeSourceUrl(source.item.thumbnailUrl) : null;
+  const { siteName, publishedAt } = source.item;
+  const date = publishedAt && Number.isFinite(Date.parse(publishedAt)) ? new Date(publishedAt).toISOString().slice(0, 10) : undefined;
   return <article className={styles.tile}>
     {thumbnail?.startsWith('https://') ? <span className={styles.thumbnail}><Image src={thumbnail} alt="Source page preview" width={84} height={72} loader={externalImageLoader} unoptimized /></span>
       : <SourceLogo domain={source.domain} size={42} className={styles.sourceLogo} />}
     <div className={styles.tileContent}>
-      <span className={styles.kicker}><SourceLogo domain={source.domain} size={16} />{source.domain}</span>
+      <span className={styles.kicker}><SourceLogo domain={source.domain} size={16} />{siteName || source.domain}{date ? <> · <time dateTime={date}>{date}</time></> : null}</span>
       <a className={styles.title} href={sourceClickUrl(source.url) ?? source.url} target="_blank" rel="noopener noreferrer" aria-label={`Visit source: ${source.item.title}`}>{source.item.title}</a>
       {!compact && source.item.snippet ? <p className={styles.excerpt}>{cleanExcerpt(source.item.snippet)}</p> : null}
       {!compact ? <div className={styles.tileActions}><button type="button" onClick={async () => { try { await navigator.clipboard.writeText(source.item.snippet || source.item.title); setCopied(true); } catch { setCopied(false); } }}><span>{copied ? <Check size={13} /> : <Copy size={13} />}</span>{copied ? 'Copied' : 'Copy excerpt'}</button><a href={sourceClickUrl(source.url) ?? source.url} target="_blank" rel="noopener noreferrer">Visit source <ArrowUpRight size={14} /></a></div> : null}
@@ -41,7 +43,7 @@ export function ResponseSources({ sources }: { sources: WebSourceItem[] }) {
   const verified: VerifiedSource[] = sources.flatMap((item) => {
     const url = safeSourceUrl(item.url);
     if (!url) return [];
-    return [{ item, url, domain: item.siteDomain || new URL(url).hostname.replace(/^www\./i, '') }];
+    return [{ item, url, domain: new URL(url).hostname.replace(/^www\./i, '') }];
   });
 
   useEffect(() => {

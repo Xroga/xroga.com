@@ -22,7 +22,7 @@ import { Diagram } from './Diagram';
 import { EvidenceChip, Resource } from './Resources';
 import { Controls, Metric, Section } from './Editorial';
 
-export type AnswerSource = { id: string; title: string; url: string };
+export type AnswerSource = { id: string; title: string; url: string; siteName?: string };
 export const EvidenceContext = createContext<ReadonlyMap<string, AnswerSource>>(new Map());
 export const Source = defineComponent({
   name: 'Source',
@@ -30,11 +30,7 @@ export const Source = defineComponent({
   props: z.object({ id: z.string().max(120) }),
   component: function EvidenceSource({ props }) {
     const source = useContext(EvidenceContext).get(props.id);
-    if (!source) return null;
-    let url: URL;
-    try { url = new URL(source.url); } catch { return null; }
-    if (!['https:', 'http:'].includes(url.protocol) || url.username || url.password) return null;
-    return <EvidenceChip url={url} title={source.title} />;
+    return source ? <EvidenceChip href={source.url} title={source.title} siteName={source.siteName} /> : null;
   },
 });
 

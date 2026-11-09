@@ -9,6 +9,14 @@ export const stagingWebOrigin = `https://${stagingWebService}-574998934848.${sta
 export const stagingOperatorOrigin = 'http://localhost:3217';
 export const stagingWebIdentity = `${stagingWebService}@${stagingProject}.iam.gserviceaccount.com`;
 const repository = `${stagingRegion}-docker.pkg.dev/${stagingProject}/cloud-run-source-deploy`;
+const researchConfirmationPath = /^(\/api\/phase1\/business-actions\/confirmations\/[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12})(\/confirm)?$/i;
+
+/** @param {string} path @param {string} method */
+export function hostedResearchConfirmation(path, method) {
+  const match = researchConfirmationPath.exec(path);
+  return match && (match[2] ? method === 'POST' : method === 'GET') ? match[1] : null;
+}
+
 /** @type {Array<[RegExp, string[]]>} */
 const routes = [
   [/^\/api\/phase1\/(?:plan|chat)$/, ['POST']],
@@ -23,7 +31,8 @@ const routes = [
 
 /** @param {string} path @param {string} method */
 export function isHostedWorkspaceRoute(path, method) {
-  return routes.some(([pattern, methods]) => pattern.test(path) && methods.includes(method));
+  return Boolean(hostedResearchConfirmation(path, method))
+    || routes.some(([pattern, methods]) => pattern.test(path) && methods.includes(method));
 }
 
 /** @param {unknown} value */

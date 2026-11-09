@@ -54,6 +54,9 @@ function sanitizeWebSources(raw: unknown): ChatMessage['webSources'] {
       source: typeof s.source === 'string' ? s.source : 'web',
       thumbnailUrl: typeof s.thumbnailUrl === 'string' ? safeSourceUrl(s.thumbnailUrl) ?? undefined : undefined,
       siteDomain: typeof s.siteDomain === 'string' ? s.siteDomain : undefined,
+      siteName: typeof s.siteName === 'string' ? s.siteName.slice(0, 120) : undefined,
+      siteIconDomain: typeof s.siteIconDomain === 'string' ? s.siteIconDomain.slice(0, 253) : undefined,
+      publishedAt: typeof s.publishedAt === 'string' ? s.publishedAt.slice(0, 50) : undefined,
       channelTitle: typeof s.channelTitle === 'string' ? s.channelTitle : undefined,
     }))
     .filter((s) => safeSourceUrl(s.url) !== null);

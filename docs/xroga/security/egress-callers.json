@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "580267adef9e5ce45cc8fb8d9e3b0e81ffd972a4c5dd45cfd638d484bf0e7d9a",
+  "sourceTreeDigest": "dd1c281fad713be557fc7f2756e029f4c638cde40fd9c421c0ba8dfd4ce02f1a",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -4851,14 +4851,14 @@
         {
           "path": "scripts/security/hosted-workspace-staging.test.mjs",
           "marker": "Google IAM and original user token stay separate",
-          "sha256": "e1d8a45c599bfb1f7eabc0a58dbd46f70546ff70f1cabd16e44adf825d4eaa95"
+          "sha256": "e51ad4577251881cf451c0bbc70daf18f93a32bbca48e89993fbff7e307cb2ac"
         }
       ]
     },
     {
       "id": "49a49569b55d144f7a6d",
       "file": "frontend/src/lib/hostedWorkspaceBridge.mjs",
-      "line": 105,
+      "line": 106,
       "entryPoint": "forwardHostedWorkspace",
       "transport": "fetch",
       "callee": "fetch",
@@ -4873,14 +4873,36 @@
         {
           "path": "scripts/security/hosted-workspace-staging.test.mjs",
           "marker": "Google IAM and original user token stay separate",
-          "sha256": "e1d8a45c599bfb1f7eabc0a58dbd46f70546ff70f1cabd16e44adf825d4eaa95"
+          "sha256": "e51ad4577251881cf451c0bbc70daf18f93a32bbca48e89993fbff7e307cb2ac"
         }
       ]
     },
     {
       "id": "a609adccda5421076aa0",
       "file": "frontend/src/lib/hostedWorkspaceBridge.mjs",
-      "line": 115,
+      "line": 119,
+      "entryPoint": "forwardHostedWorkspace",
+      "transport": "fetch",
+      "callee": "fetch",
+      "callSha256": "0dada8e6784a5bce39fbf1fa531b03ba551a31948812672d0398b222d8fcef74",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "PINNED_PRIVATE_STAGING_RESEARCH_CONFIRMATION_GET_NO_REDIRECT",
+      "tenantAuthority": "ORIGINAL_OWNER_JWT_VERIFIED_BY_EXISTING_XROGA_AUTH_AND_TENANT_CHECKS",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "VERIFIED_GUARD",
+      "evidence": [
+        {
+          "path": "scripts/security/hosted-workspace-staging.test.mjs",
+          "marker": "hosted confirmation admits only the exact owner-visible DeepSeek research action",
+          "sha256": "e51ad4577251881cf451c0bbc70daf18f93a32bbca48e89993fbff7e307cb2ac"
+        }
+      ]
+    },
+    {
+      "id": "e88275f663bb87ce2556",
+      "file": "frontend/src/lib/hostedWorkspaceBridge.mjs",
+      "line": 133,
       "entryPoint": "forwardHostedWorkspace",
       "transport": "fetch",
       "callee": "fetch",
@@ -4895,7 +4917,7 @@
         {
           "path": "scripts/security/hosted-workspace-staging.test.mjs",
           "marker": "Google IAM and original user token stay separate",
-          "sha256": "e1d8a45c599bfb1f7eabc0a58dbd46f70546ff70f1cabd16e44adf825d4eaa95"
+          "sha256": "e51ad4577251881cf451c0bbc70daf18f93a32bbca48e89993fbff7e307cb2ac"
         }
       ]
     },
@@ -5172,6 +5194,7 @@
         "9bcbd89af61af9d9c2e7",
         "49a49569b55d144f7a6d",
         "a609adccda5421076aa0",
+        "e88275f663bb87ce2556",
         "3b970c32a8efb294a7fd",
         "20618341b2f95ca0ba5e",
         "805931ff0dc022677403",
@@ -5321,8 +5344,8 @@
     }
   ],
   "counts": {
-    "total": 158,
-    "reviewed": 158,
+    "total": 159,
+    "reviewed": 159,
     "pending": 0,
     "unresolvedHighRiskBypasses": 0
   }

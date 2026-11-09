@@ -6,6 +6,7 @@ import { useMemo, useState } from 'react';
 import { EvidenceContext, library, type AnswerSource } from './library';
 import { MAX_PROGRAM_CHARS, validateNativeOpenUi } from '../../../../backend/src/ai/nativeOpenUi';
 import { MarkdownBlocks } from './upstream/components/markdown';
+import { EvidenceChip } from './Resources';
 import './upstream/components/theme.css';
 import './upstream/components/components.css';
 import '@xyflow/react/dist/style.css';
@@ -42,7 +43,10 @@ export function NativeSurface({ answer, sources, isStreaming = false }: {
             <Renderer response={accepted} isStreaming={isStreaming} library={library} publishObservability={false}
               onError={errors => { if (errors.some(error => error.severity !== 'warning')) setFailedProgram(accepted); }} />
           </EvidenceContext.Provider>
-        : <MarkdownBlocks text={answer.text} />}
+        : <MarkdownBlocks text={answer.text} renderCitation={number => {
+            const source = verified.get('source-' + number);
+            return source ? <EvidenceChip href={source.url} title={source.title} siteName={source.siteName} /> : null;
+          }} />}
     </section>
   );
 }

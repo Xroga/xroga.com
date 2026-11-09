@@ -4,6 +4,9 @@ export interface CitationSource {
   snippet: string;
   thumbnailUrl?: string;
   siteDomain?: string;
+  siteName?: string;
+  siteIconDomain?: string;
+  publishedAt?: string;
 }
 
 type MarkdownNode = {
@@ -36,6 +39,15 @@ export function sourceClickUrl(value: string): string | null {
   if ([...url.searchParams.keys()].some((key) => /^(?:x-amz-|x-goog-|signature$|sig$|token$|access_token$|policy$|key-pair-id$|expires$|awsaccesskeyid$)/i.test(key))) return safe;
   url.searchParams.set('utm_source', 'xroga.com');
   return url.href;
+}
+
+/** Keep the stable source numbers and exact destinations in copied native answers. */
+export function appendCitationReferences(text: string, sources?: ReadonlyArray<Pick<CitationSource, 'title' | 'url'>>): string {
+  const refs = sources?.flatMap(({ title, url }, index) => {
+    const safe = safeSourceUrl(url);
+    return safe ? [`[${index + 1}] ${title.replace(/\s+/g, ' ').trim()} (${safe})`] : [];
+  });
+  return refs?.length ? `${text}\n\nSources\n${refs.join('\n')}` : text;
 }
 
 /** Link only bare numeric citations in prose. Existing links and code remain untouched. */

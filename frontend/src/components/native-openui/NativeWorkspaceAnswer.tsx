@@ -4,6 +4,7 @@ import { lazy, Suspense } from 'react';
 import { parseXrogaOutput } from '@/lib/xrogaBlocks';
 import { ModernResponseText } from '@/components/terminal/ReasoningAndFollowUps';
 import type { NativeAnswer } from './NativeSurface';
+import type { CitationSource } from '@/lib/xrogaCitations';
 
 export { buildNativeOpenUiShare } from '../../../../backend/src/ai/nativeOpenUiShare';
 
@@ -22,8 +23,8 @@ export function readNativeWorkspaceAnswer(output: unknown): NativeAnswer | undef
   };
 }
 
-export function NativeWorkspaceAnswer({ answer, sources }: { answer: NativeAnswer; sources?: Array<{ title: string; url: string }> }) {
-  const fallback = <ModernResponseText content={answer.text} />;
+export function NativeWorkspaceAnswer({ answer, sources }: { answer: NativeAnswer; sources?: Array<Pick<CitationSource, 'title' | 'url' | 'siteName'> & Partial<CitationSource>> }) {
+  const fallback = <ModernResponseText content={answer.text} sources={sources?.map(source => ({ snippet: '', ...source }))} />;
   const evidence = sources?.map((source, index) => ({ ...source, id: 'source-' + (index + 1) }));
   return <Suspense fallback={fallback}><Surface answer={answer} sources={evidence} /></Suspense>;
 }

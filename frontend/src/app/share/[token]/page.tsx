@@ -1,5 +1,6 @@
 import { NATIVE_SHARE_PREFIX, readNativeOpenUiShare } from '../../../../../backend/src/ai/nativeOpenUiShare';
 import { NativeWorkspaceAnswer } from '@/components/native-openui/NativeWorkspaceAnswer';
+import { SourceLogo } from '@/components/terminal/SourceLogo';
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -172,8 +173,12 @@ export default async function MessageSharePage({ params }: { params: Promise<{ t
             {sources.length > 0 && <details className="mt-5 border-t border-[var(--border-subtle)] pt-4" open={!native?.program || undefined}>
               <summary className="cursor-pointer text-sm font-semibold">Sources ({sources.length})</summary>
               <ul className="mt-2 space-y-2 text-sm">
-                {sources.map(source => <li key={source.url} className="break-words">
-                  <a href={source.url} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">{source.title}</a>
+                {sources.map(source => <li key={source.url} className="flex items-start gap-2 break-words">
+                  <SourceLogo domain={new URL(source.url).hostname} size={16} />
+                  <span>
+                    <a href={source.url} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">{source.title}</a>
+                    {source.siteName || source.publishedAt ? <small className="block text-[var(--text-secondary)]">{[source.siteName, source.publishedAt].filter(Boolean).join(' · ')}</small> : null}
+                  </span>
                 </li>)}
               </ul>
             </details>}

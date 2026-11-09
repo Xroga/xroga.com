@@ -26,12 +26,12 @@ test('one bounded DeepSeek request respects the documented 128-character limits'
 
 test('DeepSeek results become the existing result shape with real URLs, dates and the trace receipt', () => {
   const out = normaliseDeepseekSearch({ results: [
-    { title: 'Next.js 15', url: 'https://nextjs.org/blog/next-15', summary: 'Long model summary', snippet: 'short', date: '2024-10-20T16:00:00+00:00', site_name: 'Next.js' },
-    { url: 'https://example.org/a', snippet: 'Only a snippet', date: 'not a date' },
+    { title: 'Next.js 15', url: 'https://nextjs.org/blog/next-15', summary: 'Long model summary', snippet: 'short', date: '2024-10-20T16:00:00+00:00', site_name: 'Next.js', site_icon: 'https://cdn.deepseek.com/site-icons/nextjs.org' },
+    { url: 'https://example.org/a', snippet: 'Only a snippet', date: 'not a date', site_icon: 'https://cdn.deepseek.com/site-icons/nextjs.org' },
   ] }, 'ef4ad084bbd155ace992b62bcef1f796');
   assert.equal(out.search_id, 'ef4ad084bbd155ace992b62bcef1f796');
   assert.equal(out.provider, 'deepseek');
-  assert.deepEqual(out.results[0], { url: 'https://nextjs.org/blog/next-15', title: 'Next.js 15', publish_date: '2024-10-20T16:00:00+00:00', excerpts: ['Long model summary'] });
+  assert.deepEqual(out.results[0], { url: 'https://nextjs.org/blog/next-15', title: 'Next.js 15', publish_date: '2024-10-20T16:00:00+00:00', excerpts: ['Long model summary'], site_name: 'Next.js', site_icon_domain: 'nextjs.org' });
   assert.deepEqual(out.results[1], { url: 'https://example.org/a', publish_date: null, excerpts: ['Only a snippet'] });
 });
 
