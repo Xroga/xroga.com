@@ -1697,6 +1697,7 @@ export async function apiFetch<
   } catch (
     err
   ) {
+    options.signal?.throwIfAborted();
     if(err instanceof ApiError&&err.data.code==='API_DESTINATION_DENIED')throw err;
     const raw =
       (
@@ -1733,6 +1734,7 @@ export async function apiFetch<
             res.statusText,
         }),
       );
+  options.signal?.throwIfAborted();
 
   if (
     !res.ok
@@ -4963,6 +4965,7 @@ concurrency:
             string,
             unknown
           >,
+        signal?: AbortSignal,
       ) =>
         apiFetch<
           SemanticRequestPlan
@@ -4970,6 +4973,7 @@ concurrency:
           '/api/phase1/plan',
 
           {
+            signal,
             method:
               'POST',
 
@@ -5004,6 +5008,7 @@ concurrency:
 
         goalContract?:
           SemanticRequestPlan['goalContract'],
+        signal?: AbortSignal,
       ) =>
         apiFetch<
           Phase1ChatResult
@@ -5011,6 +5016,7 @@ concurrency:
           '/api/phase1/chat',
 
           {
+            signal,
             method:
               'POST',
 

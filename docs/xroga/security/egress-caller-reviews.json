@@ -521,7 +521,7 @@
           "sha256": "29f6423cf26a0c1e3672cc7cf8861f6c978efef1773c6d39e39fff17604858c7"
         },
         {
-          "path": "backend/src/ai/tenantModelDispatch.test.ts",
+          "path": "docs/xroga/evidence/command-010/integration-20261029/tenantModelDispatch.test.ts-AT-3266b788.txt",
           "marker": "A failed dispatch cannot retry after revocation or select another model",
           "sha256": "e410d125c211ca7c753cf0259e86a32f4472a7f7e75e54d18ebb2650ed768d9d",
           "reboundOnBranch": {
@@ -561,7 +561,7 @@
             "sha256": "29f6423cf26a0c1e3672cc7cf8861f6c978efef1773c6d39e39fff17604858c7"
           },
           {
-            "path": "backend/src/ai/tenantModelDispatch.test.ts",
+            "path": "docs/xroga/evidence/command-010/integration-20261029/tenantModelDispatch.test.ts-AT-3266b788.txt",
             "marker": "SDK retry rechecks revocation",
             "sha256": "c3b3f0c500752064df2fcd5b921198adf36d5398077830c408d11725adecf651"
           },
@@ -587,7 +587,7 @@
             "sha256": "29f6423cf26a0c1e3672cc7cf8861f6c978efef1773c6d39e39fff17604858c7"
           },
           {
-            "path": "backend/src/ai/tenantModelDispatch.test.ts",
+            "path": "docs/xroga/evidence/command-010/integration-20261029/tenantModelDispatch.test.ts-AT-3266b788.txt",
             "marker": "SDK retry rechecks revocation",
             "sha256": "1ee79ced2c9d808a83452aa1bf922045b309ef030928af81de3f7004ef9fd897"
           },
@@ -607,7 +607,7 @@
               "sha256": "29f6423cf26a0c1e3672cc7cf8861f6c978efef1773c6d39e39fff17604858c7"
             },
             {
-              "path": "backend/src/ai/tenantModelDispatch.test.ts",
+              "path": "docs/xroga/evidence/command-010/integration-20261029/tenantModelDispatch.test.ts-AT-3266b788.txt",
               "marker": "SDK retry rechecks revocation",
               "sha256": "c3b3f0c500752064df2fcd5b921198adf36d5398077830c408d11725adecf651"
             },
@@ -649,7 +649,7 @@
           }
         },
         {
-          "path": "backend/src/ai/tenantModelDispatch.test.ts",
+          "path": "docs/xroga/evidence/command-010/integration-20261029/tenantModelDispatch.test.ts-AT-3266b788.txt",
           "marker": "Exactly one canonical atomic receipt per completion",
           "sha256": "e410d125c211ca7c753cf0259e86a32f4472a7f7e75e54d18ebb2650ed768d9d",
           "reboundOnBranch": {
@@ -694,7 +694,7 @@
             "sha256": "3a3096915aaee0b27d14c17afce3c9a90960d18e9941883a5773c07431d1a6b0"
           },
           {
-            "path": "backend/src/ai/tenantModelDispatch.test.ts",
+            "path": "docs/xroga/evidence/command-010/integration-20261029/tenantModelDispatch.test.ts-AT-3266b788.txt",
             "marker": "Exactly one canonical atomic receipt per completion",
             "sha256": "1ee79ced2c9d808a83452aa1bf922045b309ef030928af81de3f7004ef9fd897"
           },
@@ -738,7 +738,7 @@
           }
         },
         {
-          "path": "backend/src/ai/tenantModelDispatch.test.ts",
+          "path": "docs/xroga/evidence/command-010/integration-20261029/tenantModelDispatch.test.ts-AT-3266b788.txt",
           "marker": "No successful stream publication without settlement and a valid atomic receipt",
           "sha256": "e410d125c211ca7c753cf0259e86a32f4472a7f7e75e54d18ebb2650ed768d9d",
           "reboundOnBranch": {
@@ -783,7 +783,7 @@
             "sha256": "3a3096915aaee0b27d14c17afce3c9a90960d18e9941883a5773c07431d1a6b0"
           },
           {
-            "path": "backend/src/ai/tenantModelDispatch.test.ts",
+            "path": "docs/xroga/evidence/command-010/integration-20261029/tenantModelDispatch.test.ts-AT-3266b788.txt",
             "marker": "No successful stream publication without settlement and a valid atomic receipt",
             "sha256": "1ee79ced2c9d808a83452aa1bf922045b309ef030928af81de3f7004ef9fd897"
           },
@@ -3022,7 +3022,7 @@
     {
       "id": "c09bb8607fa4d00f23b7",
       "callSha256": "0f007db3755a07e13dfaf95ef36d99a6884d9a3cc3101513301f73201bd21224",
-      "sourceFileSha256": "c031bad2d5e144b32acafc58058ad62c9a8b43cda7cfa0739c899d068ae94967",
+      "sourceFileSha256": "9545e70a830e5d06082a7f4e7110b523feb1f7744a1641fa650131f275a2e381",
       "disposition": "VERIFIED_GUARD",
       "trust": "CONFIGURED_FIRST_PARTY_API_ORIGIN_ONLY_NO_REDIRECT_OR_CREDENTIAL_BODY_FORWARDING",
       "tenantAuthority": "EXISTING_BROWSER_SESSION_TOKEN_OR_GUEST_SESSION_ONLY_BACKEND_MUST_ENFORCE_ORIGINAL_ISSUED_ACTOR_OWNER_AND_ACTION_AUTHORITY_NO_UPSTREAM_PROMOTION",
@@ -3486,7 +3486,7 @@
           "sha256": "8ff4e33b2cd2742d55650800c74e25b3288c8a3bcb50948fd296eb5dbacdaaa5"
         },
         {
-          "path": "frontend/e2e/phase4-admin-share.security.mjs",
+          "path": "docs/xroga/evidence/command-010/integration-20261029/admin-share-AT-3266b788.mjs.txt",
           "marker": "authorized admin, bounded shares and private range delivery keep their contracts and denial results stay private",
           "sha256": "9e9ecfc6ca1a0d69986a6dd638f927a857883582187b8f1f2ea2fbc32e0e8df8",
           "reboundOnBranch": {

@@ -264,6 +264,7 @@ jobs:
             frontend/test-results/batch01-founder-evidence.json
             frontend/test-results/batch01-private-delivery-evidence.json
             frontend/test-results/proxy-origin-evidence.json
+            frontend/test-results/native-workspace/
             frontend/test-results/**/test-failed-*.png
             artifacts/batch-01-local-security/migration-history.json
             artifacts/batch-01-local-security/schema-catalog.json

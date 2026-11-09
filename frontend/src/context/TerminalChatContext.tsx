@@ -1404,6 +1404,7 @@ const stopRequestedRunIdRef =
     const timer = window.setTimeout(() => {
       // Sticky binding inside save/ensure — do not relocate #N when selected repo changes.
       saveTerminalHistorySession({
+        ownerId: workspaceIdentity.userId,
         sessionId: sessionIdRef.current,
         prompt,
         messages,
@@ -1424,7 +1425,7 @@ const stopRequestedRunIdRef =
       });
     }, 500);
     return () => window.clearTimeout(timer);
-  }, [sessionReady, prompt, messages, incognito, isGuest]);
+  }, [sessionReady, prompt, messages, incognito, isGuest, workspaceIdentity.userId]);
 
   /**
    * Soft stall WARNING only — never abort mid-build.
@@ -1638,6 +1639,16 @@ const stopRequestedRunIdRef =
 );
 
  const stop = useCallback(() => {
+  // A plain chat has no durable build run to cancel. End only this browser
+  // request, leaving any already-started provider settlement to the server.
+  if (!heavyJobActiveRef.current && !heavyBuildActiveRef.current && !activeRunIdRef.current) {
+    const request = abortRef.current;
+    if (request) {
+      interruptRef.current = true;
+      request.abort();
+      return;
+    }
+  }
   const runId =
     activeRunIdRef.current ??
     loadPendingBuildJobs().find(
@@ -1996,6 +2007,7 @@ const stopRequestedRunIdRef =
       // BEFORE wiping the live workspace — so clicking #1 later restores exact history.
       const priorId = sessionIdRef.current;
       saveTerminalHistorySession({
+        ownerId: workspaceIdentity.userId,
         sessionId: priorId,
         prompt,
         messages,
@@ -2037,7 +2049,7 @@ const stopRequestedRunIdRef =
     persistReadyRef.current = true;
     // Refresh Repositories sidebar so the prior terminal stays listed (not "lost").
     window.dispatchEvent(new CustomEvent('xroga-resume-workspace'));
-  }, [setSwarmRunning, messages, prompt, setSessionId]);
+  }, [setSwarmRunning, messages, prompt, setSessionId, workspaceIdentity.userId]);
 
   const discardCurrentChat = useCallback(() => {
     discardNextNewChatRef.current = true;
@@ -2412,6 +2424,7 @@ const stopRequestedRunIdRef =
               });
               const selected = getSelectedRepoContext();
               saveTerminalHistorySession({
+                ownerId: workspaceIdentity.userId,
                 sessionId: sessionIdRef.current,
                 prompt: displayPrompt,
                 messages: current,
@@ -2469,6 +2482,7 @@ const stopRequestedRunIdRef =
       refreshTokenUsage,
       setTokenUsage,
       heavyAssistantId,
+      workspaceIdentity.userId,
       processNextInQueue,
     ]
   );
@@ -2796,6 +2810,7 @@ const stopRequestedRunIdRef =
               }
             : null,
           { hasExistingPreview: Boolean(priorSite), isUpdate: isBuildUpdate },
+          controller.signal,
         );
         /*
  * Clicking Retry on a stopped build is explicit execution intent.
@@ -2917,7 +2932,7 @@ if (
           setThinkingSteps([]);
 
           try {
-            const result = await api.phase1.chat(displayPrompt, history, attachments, semanticPlan.goalContract);
+            const result = await api.phase1.chat(displayPrompt, history, attachments, semanticPlan.goalContract, controller.signal);
             const rawReply = (result.response || '').trim();
             fullReply = rawReply;
             // Empty Phase 1 must never leave a blank bubble or silently change execution paths.
@@ -3904,6 +3919,7 @@ active.applyBuild({
                     sessionId: sessionIdRef.current,
                   });
                   saveTerminalHistorySession({
+                    ownerId: workspaceIdentity.userId,
                     sessionId: sessionIdRef.current,
                     prompt: displayPrompt,
                     messages: updated,
@@ -4023,6 +4039,7 @@ active.applyBuild({
                 }
                 // Always persist history immediately for sidebar (don't wait for debounce)
                 saveTerminalHistorySession({
+                  ownerId: workspaceIdentity.userId,
                   sessionId: sessionIdRef.current,
                   prompt: displayPrompt,
                   messages: updated,
@@ -4322,6 +4339,7 @@ active.applyBuild({
             .incognito
         ) {
           saveTerminalHistorySession({
+            ownerId: workspaceIdentity.userId,
             sessionId:
               sessionIdRef.current,
 
@@ -4585,6 +4603,7 @@ active.applyBuild({
                 assistantMessageId: turn.assistantId,
               });
               saveTerminalHistorySession({
+                ownerId: workspaceIdentity.userId,
                 sessionId: sessionIdRef.current,
                 prompt: turn.text,
                 messages: current,
@@ -4658,7 +4677,7 @@ active.applyBuild({
 setTimeout(processNextInQueue, 50);
       }
     },
-    [prompt, loading, projectId, incognito, isGuest, messages, setSwarmRunning, refreshTokenUsage, enqueuePrompt, processNextInQueue, cleanupInProgressAssistant, pushSwarmTerminalLine, handleGitHubBuildBlocked, handleVercelBuildBlocked, setTokenUsage, submitGuestTurn, submitLightAlongsideHeavy, pushTerminalEvent, startTerminalRun]
+    [prompt, loading, projectId, incognito, isGuest, workspaceIdentity.userId, messages, setSwarmRunning, refreshTokenUsage, enqueuePrompt, processNextInQueue, cleanupInProgressAssistant, pushSwarmTerminalLine, handleGitHubBuildBlocked, handleVercelBuildBlocked, setTokenUsage, submitGuestTurn, submitLightAlongsideHeavy, pushTerminalEvent, startTerminalRun]
   );
 
   submitRef.current = submit;

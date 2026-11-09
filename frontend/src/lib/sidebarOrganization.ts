@@ -100,15 +100,18 @@ export async function deleteSidebarChat(userId:string,id:string):Promise<void>{
 
 /** Coalesce non-repository chat saves; never block message rendering on cloud I/O. */
 const pendingChats=new Map<string,ReturnType<typeof setTimeout>>();
-export function scheduleSidebarChatSave(entry:TerminalHistoryEntry):void{
- if(typeof window==='undefined'||entry.githubRepoName?.includes('/')||!entry.messages?.length) return;
- const prev=pendingChats.get(entry.id);
+export function scheduleSidebarChatSave(ownerId:string,entry:TerminalHistoryEntry):void{
+ if(typeof window==='undefined'||!ownerId||entry.githubRepoName?.includes('/')||!entry.messages?.length) return;
+ const key=ownerId+':'+entry.id;
+ const prev=pendingChats.get(key);
  if(prev) clearTimeout(prev);
- pendingChats.set(entry.id,setTimeout(()=>{
-  pendingChats.delete(entry.id);
+ pendingChats.set(key,setTimeout(()=>{
+  pendingChats.delete(key);
   void createClient().auth.getUser().then(async ({data,error})=>{
-    if(error||!data.user) return;
-    try{ await saveSidebarChat(data.user.id,entry); window.dispatchEvent(new Event('xroga-sidebar-chats-changed')); }
+    // A sign-out or account switch can happen while a save is debounced.
+    // Never reassign an existing draft to whoever signs in next.
+    if(error||data.user?.id!==ownerId) return;
+    try{ await saveSidebarChat(ownerId,entry); window.dispatchEvent(new Event('xroga-sidebar-chats-changed')); }
     catch(e){ console.warn('[sidebar] chat sync unavailable:',e); }
   });
  },1500));

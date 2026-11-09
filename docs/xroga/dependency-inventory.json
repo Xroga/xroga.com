@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "489b5eb291adf77450a7435b8d68db08f2ac487e",
+  "source_sha": "3266b788188ca23518e4d03213ac125114ae92f6",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -16433,7 +16433,7 @@
     },
     {
       "path": ".github/workflows/command3-auth-browser.yml",
-      "sha256": "e21d55f5fb11528b97e5eaee7e871ba8da879112075781e192e1b048d01375a9"
+      "sha256": "281182a82b05e9ff4216e56fcc8c4be9e0c119f37df2085e145ae64cf7db51ef"
     },
     {
       "path": ".github/workflows/command4-authority.yml",
@@ -22917,7 +22917,7 @@
     },
     {
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "sha256": "88017b26b195c939a255d361cf3b903eb7a8faf806abe2ae6417326e7b0a9656"
+      "sha256": "7b07f00b991243740b00b612212f191ecb260dfea8c804c937e8ef2fdf6efa3a"
     },
     {
       "path": "frontend/src/context/TerminalScrollContext.tsx",
@@ -22965,7 +22965,7 @@
     },
     {
       "path": "frontend/src/lib/api.ts",
-      "sha256": "c031bad2d5e144b32acafc58058ad62c9a8b43cda7cfa0739c899d068ae94967"
+      "sha256": "9545e70a830e5d06082a7f4e7110b523feb1f7744a1641fa650131f275a2e381"
     },
     {
       "path": "frontend/src/lib/assistantCopy.ts",
@@ -23545,7 +23545,7 @@
     },
     {
       "path": "frontend/src/lib/runLightLaneChat.ts",
-      "sha256": "c56592637fe2a74c344c471dfc93b246133acba8db0882826b5e9cf595a80e83"
+      "sha256": "9f60a9800aec28c9dd077f0bd4950975e4871634a01195ce475c3adb7d42c7c7"
     },
     {
       "path": "frontend/src/lib/safeDates.ts",
@@ -23617,7 +23617,7 @@
     },
     {
       "path": "frontend/src/lib/sidebarOrganization.ts",
-      "sha256": "4126ec733881661a0ec2a8cdc5678e4c4d177f01dd3e3533d5fa1a67ff463072"
+      "sha256": "ba55e2af09e339762f73ce7d825f02fee6227520ec5d3dbf7a53877f5abf771f"
     },
     {
       "path": "frontend/src/lib/sidebarProjectTask.ts",
@@ -23765,7 +23765,7 @@
     },
     {
       "path": "frontend/src/lib/terminalHistory.ts",
-      "sha256": "81058bf811fa1043fad7294bacd36f1e0aa1098a5f00c07e14e87ff82988a80b"
+      "sha256": "02f930e56efaa61c4ee1fef2b63987c4514d23b0be777f49cb368980090014c1"
     },
     {
       "path": "frontend/src/lib/terminalSearch.ts",
@@ -29949,7 +29949,7 @@
       "hostname": "github.com",
       "protocol": "https:",
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 4012,
+      "line": 4028,
       "credentialsInUrl": false
     },
     {
@@ -31475,7 +31475,7 @@
       "hostname": "github.com",
       "protocol": "https:",
       "path": "frontend/src/lib/terminalHistory.ts",
-      "line": 233,
+      "line": 235,
       "credentialsInUrl": false
     }
   ],
@@ -38524,14 +38524,14 @@
     },
     {
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 2056,
+      "line": 2068,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 2089,
+      "line": 2101,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -38930,21 +38930,21 @@
     },
     {
       "path": "frontend/src/lib/sidebarOrganization.ts",
-      "line": 141,
+      "line": 144,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/lib/sidebarOrganization.ts",
-      "line": 158,
+      "line": 161,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/lib/sidebarOrganization.ts",
-      "line": 159,
+      "line": 162,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

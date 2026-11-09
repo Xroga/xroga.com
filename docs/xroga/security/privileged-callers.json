@@ -6448,19 +6448,19 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "50a0f49e57786f999e73"
+        "id": "dafebb8feaa02bda2e9a"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "eebad1f4e73b01bd9e5d"
+        "id": "254229db0dc6b52086ad"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "27942300e7daaadc06fe"
+        "id": "237651fd2930dca377a8"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "19a37b099336607193eb"
+        "id": "f35280e87f898a66290e"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -7256,19 +7256,19 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "50a0f49e57786f999e73"
+        "id": "dafebb8feaa02bda2e9a"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "eebad1f4e73b01bd9e5d"
+        "id": "254229db0dc6b52086ad"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "27942300e7daaadc06fe"
+        "id": "237651fd2930dca377a8"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "19a37b099336607193eb"
+        "id": "f35280e87f898a66290e"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -32158,7 +32158,7 @@
       "target": "xroga_sidebar_items",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "4126ec733881661a0ec2a8cdc5678e4c4d177f01dd3e3533d5fa1a67ff463072"
+      "sourceSha256": "ba55e2af09e339762f73ce7d825f02fee6227520ec5d3dbf7a53877f5abf771f"
     },
     {
       "id": "bd0cc046439923e989ba",
@@ -32169,7 +32169,7 @@
       "target": "xroga_sidebar_sections",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "4126ec733881661a0ec2a8cdc5678e4c4d177f01dd3e3533d5fa1a67ff463072"
+      "sourceSha256": "ba55e2af09e339762f73ce7d825f02fee6227520ec5d3dbf7a53877f5abf771f"
     },
     {
       "id": "acc8432821b9b5b26c10",
@@ -32180,7 +32180,7 @@
       "target": "projects",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "4126ec733881661a0ec2a8cdc5678e4c4d177f01dd3e3533d5fa1a67ff463072"
+      "sourceSha256": "ba55e2af09e339762f73ce7d825f02fee6227520ec5d3dbf7a53877f5abf771f"
     },
     {
       "id": "d93b375d98daf8c8146e",
@@ -32191,7 +32191,7 @@
       "target": "xroga_sidebar_chats",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "4126ec733881661a0ec2a8cdc5678e4c4d177f01dd3e3533d5fa1a67ff463072"
+      "sourceSha256": "ba55e2af09e339762f73ce7d825f02fee6227520ec5d3dbf7a53877f5abf771f"
     },
     {
       "id": "1435d5679d9cfc68eda8",
@@ -32202,7 +32202,7 @@
       "target": "xroga_sidebar_chats",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "4126ec733881661a0ec2a8cdc5678e4c4d177f01dd3e3533d5fa1a67ff463072"
+      "sourceSha256": "ba55e2af09e339762f73ce7d825f02fee6227520ec5d3dbf7a53877f5abf771f"
     },
     {
       "id": "c86a835c30be0bcf1251",
@@ -32213,7 +32213,7 @@
       "target": "xroga_sidebar_chats",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "4126ec733881661a0ec2a8cdc5678e4c4d177f01dd3e3533d5fa1a67ff463072"
+      "sourceSha256": "ba55e2af09e339762f73ce7d825f02fee6227520ec5d3dbf7a53877f5abf771f"
     },
     {
       "id": "1b5ad169706fb2285a23",
@@ -32224,7 +32224,7 @@
       "target": "projects",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "4126ec733881661a0ec2a8cdc5678e4c4d177f01dd3e3533d5fa1a67ff463072"
+      "sourceSha256": "ba55e2af09e339762f73ce7d825f02fee6227520ec5d3dbf7a53877f5abf771f"
     },
     {
       "id": "c51d95ae33aa4d5dae44",
@@ -32235,7 +32235,7 @@
       "target": "xroga_sidebar_items",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "4126ec733881661a0ec2a8cdc5678e4c4d177f01dd3e3533d5fa1a67ff463072"
+      "sourceSha256": "ba55e2af09e339762f73ce7d825f02fee6227520ec5d3dbf7a53877f5abf771f"
     },
     {
       "id": "7de702fbc2b7b261b051",
@@ -32246,7 +32246,7 @@
       "target": "xroga_sidebar_items",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "4126ec733881661a0ec2a8cdc5678e4c4d177f01dd3e3533d5fa1a67ff463072"
+      "sourceSha256": "ba55e2af09e339762f73ce7d825f02fee6227520ec5d3dbf7a53877f5abf771f"
     },
     {
       "id": "02bb0163278413bfc4d4",
@@ -32257,7 +32257,7 @@
       "target": "xroga_sidebar_items",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "4126ec733881661a0ec2a8cdc5678e4c4d177f01dd3e3533d5fa1a67ff463072"
+      "sourceSha256": "ba55e2af09e339762f73ce7d825f02fee6227520ec5d3dbf7a53877f5abf771f"
     },
     {
       "id": "c16200354fe78e5df55b",
@@ -32268,7 +32268,7 @@
       "target": "xroga_sidebar_sections",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "4126ec733881661a0ec2a8cdc5678e4c4d177f01dd3e3533d5fa1a67ff463072"
+      "sourceSha256": "ba55e2af09e339762f73ce7d825f02fee6227520ec5d3dbf7a53877f5abf771f"
     },
     {
       "id": "db4a5917ca14f418b42b",
@@ -32279,7 +32279,7 @@
       "target": "xroga_sidebar_sections",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "4126ec733881661a0ec2a8cdc5678e4c4d177f01dd3e3533d5fa1a67ff463072"
+      "sourceSha256": "ba55e2af09e339762f73ce7d825f02fee6227520ec5d3dbf7a53877f5abf771f"
     },
     {
       "id": "2d4d10ceeaf02fe42f70",
@@ -32290,51 +32290,51 @@
       "target": "xroga_sidebar_chats",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "4126ec733881661a0ec2a8cdc5678e4c4d177f01dd3e3533d5fa1a67ff463072"
+      "sourceSha256": "ba55e2af09e339762f73ce7d825f02fee6227520ec5d3dbf7a53877f5abf771f"
     },
     {
-      "id": "50a0f49e57786f999e73",
+      "id": "dafebb8feaa02bda2e9a",
       "path": "frontend/src/lib/sidebarOrganization.ts",
-      "line": 119,
+      "line": 122,
       "enclosing": "swapSidebarPins",
       "kind": "RPC_CANDIDATE",
       "target": "xroga_swap_sidebar_pins",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "4126ec733881661a0ec2a8cdc5678e4c4d177f01dd3e3533d5fa1a67ff463072"
+      "sourceSha256": "ba55e2af09e339762f73ce7d825f02fee6227520ec5d3dbf7a53877f5abf771f"
     },
     {
-      "id": "eebad1f4e73b01bd9e5d",
+      "id": "254229db0dc6b52086ad",
       "path": "frontend/src/lib/sidebarOrganization.ts",
-      "line": 133,
+      "line": 136,
       "enclosing": "loadPinnedSidebarRecords",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "projects",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "4126ec733881661a0ec2a8cdc5678e4c4d177f01dd3e3533d5fa1a67ff463072"
+      "sourceSha256": "ba55e2af09e339762f73ce7d825f02fee6227520ec5d3dbf7a53877f5abf771f"
     },
     {
-      "id": "27942300e7daaadc06fe",
+      "id": "237651fd2930dca377a8",
       "path": "frontend/src/lib/sidebarOrganization.ts",
-      "line": 135,
+      "line": 138,
       "enclosing": "loadPinnedSidebarRecords",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "terminal_sessions",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "4126ec733881661a0ec2a8cdc5678e4c4d177f01dd3e3533d5fa1a67ff463072"
+      "sourceSha256": "ba55e2af09e339762f73ce7d825f02fee6227520ec5d3dbf7a53877f5abf771f"
     },
     {
-      "id": "19a37b099336607193eb",
+      "id": "f35280e87f898a66290e",
       "path": "frontend/src/lib/sidebarOrganization.ts",
-      "line": 137,
+      "line": 140,
       "enclosing": "loadPinnedSidebarRecords",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "xroga_sidebar_chats",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "4126ec733881661a0ec2a8cdc5678e4c4d177f01dd3e3533d5fa1a67ff463072"
+      "sourceSha256": "ba55e2af09e339762f73ce7d825f02fee6227520ec5d3dbf7a53877f5abf771f"
     },
     {
       "id": "66603d4f9153d6ce36e1",

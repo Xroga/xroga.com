@@ -12,6 +12,7 @@ const nativeShareId='../../../../../backend/src/ai/nativeOpenUiShare';
 const pureSources={
   [nativeShareId]:'../../backend/src/ai/nativeOpenUiShare.ts',
   './nativeOpenUi.js':'../../backend/src/ai/nativeOpenUi.ts',
+  './nativeOpenUiAccuracy.js':'../../backend/src/ai/nativeOpenUiAccuracy.ts',
   './answerAuthorizationReview.js':'../../backend/src/ai/answerAuthorizationReview.ts',
   '@/components/response-experience-v2/shareSnapshot':'components/response-experience-v2/shareSnapshot.ts',
   '@/components/response-experience-v2/access':'components/response-experience-v2/access.ts',
@@ -33,7 +34,13 @@ function pureModule(id){
   if(pureCache.has(path))return pureCache.get(path);
   const exports={};pureCache.set(path,exports);
   const code=ts.transpileModule(readFileSync(new URL('../src/'+path,import.meta.url),'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;
-  vm.runInContext('(function(exports,require){'+code+'\n})',pureContext)(exports,pureModule);return exports;
+  try {
+    vm.runInContext('(function(exports,require){'+code+'\n})',pureContext)(exports,pureModule);
+    return exports;
+  } catch (error) {
+    pureCache.delete(path);
+    throw error;
+  }
 }
 function guard(origin){
   const source=readFileSync(new URL('../src/lib/api.ts',import.meta.url),'utf8'),ast=ts.createSourceFile('api.ts',source,ts.ScriptTarget.Latest,true);

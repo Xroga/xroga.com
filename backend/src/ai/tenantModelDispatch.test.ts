@@ -20,7 +20,8 @@ import {withRunAttempt,createRunDurable,captureAdmittedRunAttempt} from './runSt
 
 test('actual pipeline, completion and SoftwareAgent calls bind tenant, account revision, payload and canonical reservation',async t=>{
   const env={SUPABASE_URL:'http://127.0.0.1:55437',SUPABASE_SERVICE_ROLE_KEY:'synthetic-loopback-only',NODE_ENV:'test',
-    ZURELAY_API_KEY:'synthetic-platform-key',ZURELAY_JSON_SCHEMA_VERIFIED:'1',ZURELAY_STREAM_USAGE_VERIFIED:'1'};
+    ZURELAY_API_KEY:'synthetic-platform-key',ZURELAY_JSON_SCHEMA_VERIFIED:'1',ZURELAY_STREAM_USAGE_VERIFIED:'1',
+    XROGA_NATIVE_OPENUI_WORKSPACE:'0',XROGA_DEPLOYMENT_ENVIRONMENT:'staging'};
   const old=Object.fromEntries(Object.keys(env).map(k=>[k,process.env[k]]));Object.assign(process.env,env);
   t.after(()=>{for(const k of Object.keys(env)){if(old[k]===undefined)delete process.env[k];else process.env[k]=old[k];}});
   const owner='11111111-1111-4111-8111-111111111111',foreign='22222222-2222-4222-8222-222222222222',project='33333333-3333-4333-8333-333333333333';
@@ -65,13 +66,17 @@ test('actual pipeline, completion and SoftwareAgent calls bind tenant, account r
         assert.equal(body.response_format.json_schema.strict,true);
         assert.deepEqual(body.response_format.json_schema.schema.required,['s0','s1']);
       }
+      if(mode==='native') {
+        assert.equal(body.response_format,undefined,'Native OpenUI uses the same request, without the old JSON schema');
+        assert.match(body.messages[0].content,/<<<XROGA_OPENUI_V1>>>/);
+      }
       if(mode==='missingUsage')return Response.json({model:body.model,choices:[{message:{content:'must remain unpublished'},finish_reason:'stop'}]},
         {headers:{'x-request-id':'synthetic-unknown-usage','x-zurelay-model':body.model}});
       if(mode==='wrongModel')return Response.json({model:'unapproved-model',usage:{prompt_tokens:2,completion_tokens:2,total_tokens:4},choices:[]},
         {headers:{'x-request-id':'synthetic-wrong-model','x-zurelay-model':body.model}});
       if(mode==='droppedStream')return new Response('data: '+JSON.stringify({model:body.model,choices:[{delta:{content:'unconfirmed bytes'},finish_reason:null}]})+'\n\n',
         {headers:{'content-type':'text/event-stream','x-request-id':'synthetic-drop','x-zurelay-model':body.model}});
-      if(body.stream)return new Response('data: '+JSON.stringify({id:'synthetic-provider-receipt',choices:[{delta:{content:mode==='presentation'?receivedAnswer:'owned result'},finish_reason:'stop'}],model:'deepseek-v4.1-flash-1017',usage:{prompt_tokens:2,completion_tokens:2,total_tokens:4}})+'\n\ndata: [DONE]\n\n',{headers:{'content-type':'text/event-stream','x-request-id':'synthetic-provider-receipt','x-zurelay-model':'deepseek-v4.1-flash-1017'}});
+      if(body.stream)return new Response('data: '+JSON.stringify({id:'synthetic-provider-receipt',choices:[{delta:{content:['presentation','native'].includes(mode)?receivedAnswer:'owned result'},finish_reason:'stop'}],model:'deepseek-v4.1-flash-1017',usage:{prompt_tokens:2,completion_tokens:2,total_tokens:4}})+'\n\ndata: [DONE]\n\n',{headers:{'content-type':'text/event-stream','x-request-id':'synthetic-provider-receipt','x-zurelay-model':'deepseek-v4.1-flash-1017'}});
       return Response.json({id:'synthetic-provider-receipt',choices:[{message:{content:'{"stack":"static","files":[],"notes":[]}'},finish_reason:'stop'}],model:'deepseek-v4.1-flash-1017',usage:{prompt_tokens:2,completion_tokens:2,total_tokens:4}},{headers:{'x-request-id':'synthetic-provider-receipt','x-zurelay-model':'deepseek-v4.1-flash-1017'}});
     }
     assert.equal(url.origin,env.SUPABASE_URL,'Unexpected transport is never allowed');
@@ -299,6 +304,30 @@ test('actual pipeline, completion and SoftwareAgent calls bind tenant, account r
   await assert.rejects(runChatPipeline({userId:owner,tenantContext:context,modelScope:scope,prompt:'Explain the supplied system.',goalContract:semantic}),
     (error:any)=>error.code==='MODEL_DISPATCH_BINDING_DENIED');
   assert.equal(effects,beforeSchemaDrift,'Replacing the admitted schema is denied before any provider bytes');
+
+  process.env.XROGA_NATIVE_OPENUI_WORKSPACE='1';
+  const readable='The workshop earns $25 per attendee.';
+  const evidence={title:'Workshop evidence',url:'https://example.com/workshop',snippet:readable,source:'parallel'};
+  const research={bundle:{query:'Workshop price',summary:readable,provider:'parallel' as const,sources:[evidence]},evidence:readable};
+  for (const [kind, program] of [
+    ['file','root = Col([Text("The workshop earns $25 per attendee."), Metric("Ticket price (USD)", 25)])'],
+    ['research','root = Col([Text("The workshop earns $25 per attendee."), Source("source-1")])'],
+    ['invalid-source','root = Col([Text("The workshop earns $25 per attendee."), Source("source-2")])'],
+  ] as const) {
+    reset('native');resetModelRuntimeHealth();
+    receivedAnswer=readable+'\n<<<XROGA_OPENUI_V1>>>\n'+program;
+    const before=effects,receipts=atomicReceipts;
+    const result=await runChatPipeline({userId:owner,tenantContext:context,modelScope:scope,prompt:'Explain the supplied workshop price. No external research.',
+      ...(kind==='file'?{attachments:[{url:'data:text/plain;base64,'+Buffer.from(readable).toString('base64'),mimeType:'text/plain',name:'workshop.txt'}]}:{approvedResearch:research}),
+      onDelta:text=>{assert.equal(atomicReceipts,receipts+1,'Publication must follow canonical settlement');assert.equal(text,readable);}});
+    assert.equal(result.response,readable);
+    assert.equal(effects,before+1);
+    assert.equal(atomicReceipts,receipts+1);
+    assert.deepEqual(result.responseSource,{format:'xroga-openui-v1',text:kind==='invalid-source'?'':program});
+    assert.deepEqual(result.completion,kind==='invalid-source'?{status:'partial',reason:'presentation_contract'}:{status:'complete'});
+    if(kind==='file')assert.equal(result.intent,'file_analysis');
+    else assert.deepEqual(result.webSources,[evidence]);
+  }
 });
 
 test('local request security denial cannot fall through to a different provider or account',async()=>{
