@@ -8,7 +8,7 @@
   ],
   "state": "IN_PROGRESS",
   "risk": "medium",
-  "scope": "Validate one adaptive DeepSeek to native OpenUI presentation and prepare the existing authenticated Workspace and share paths for staged acceptance.",
+  "scope": "Validate one native OpenUI presentation path in the regular authenticated Workspace and preserve existing production Chrome pairing, accounting, and browser files.",
   "changedFiles": [
     "backend/package-lock.json",
     "backend/package.json",
@@ -22,10 +22,20 @@
     "backend/src/ai/nativeOpenUiShare.ts",
     "backend/src/ai/nativeOpenUiWorkspace.ts",
     "backend/src/ai/pipeline.ts",
+    "backend/src/ai/tenantModelDispatch.test.ts",
     "backend/src/index.ts",
     "backend/src/lib/richShareSnapshot.test.ts",
     "backend/src/lib/richShareSnapshot.ts",
+    "backend/src/routes/browserDocuments.test.ts",
+    "backend/src/routes/browserDocuments.ts",
+    "backend/src/routes/localBrowser.test.ts",
+    "backend/src/routes/localBrowser.ts",
     "backend/src/routes/nativeOpenUiEvaluation.ts",
+    "backend/src/workers/browserCapability.ts",
+    "backend/src/workers/browserModelDispatch.ts",
+    "backend/src/workers/browserModelFixture.test.ts",
+    "backend/src/workers/browserModelGateway.test.ts",
+    "backend/src/workers/browserRunStore.ts",
     "docs/operations/native-openui/ACCEPTANCE.md",
     "docs/operations/native-openui/CAPABILITY_AUDIT.md",
     "docs/operations/native-openui/WORKSPACE_ACCEPTANCE.md",
@@ -37,9 +47,11 @@
     "frontend/next.config.mjs",
     "frontend/package-lock.json",
     "frontend/package.json",
+    "frontend/src/app/(workspace)/workspace/page.tsx",
     "frontend/src/app/native-answer-evaluation/page.tsx",
     "frontend/src/app/robots.ts",
     "frontend/src/app/share/[token]/page.tsx",
+    "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
     "frontend/src/components/native-openui/COPILOTKIT-LICENSE",
     "frontend/src/components/native-openui/ChoicePicker.tsx",
     "frontend/src/components/native-openui/Diagram.tsx",
@@ -66,26 +78,31 @@
     "frontend/src/components/native-openui/upstream/components/table.tsx",
     "frontend/src/components/native-openui/upstream/components/text.tsx",
     "frontend/src/components/native-openui/upstream/components/theme.css",
-    "frontend/src/components/native-openui/upstream/functions/data.ts",
     "frontend/src/components/native-openui/upstream/functions/calendar.ts",
+    "frontend/src/components/native-openui/upstream/functions/data.ts",
     "frontend/src/components/native-openui/upstream/functions/numbers.ts",
     "frontend/src/components/native-openui/upstream/functions/shared.ts",
     "frontend/src/components/native-openui/upstream/functions/text.ts",
     "frontend/src/components/response-experience-v2/ConversationTurnV2.tsx",
     "frontend/src/components/terminal/MessageBubbleActions.tsx",
     "frontend/src/components/terminal/SwarmMessageLog.tsx",
+    "frontend/src/context/TerminalChatContext.tsx",
     "frontend/src/lib/api.ts",
     "frontend/src/lib/publicUrlInventory.osPreview.test.ts",
     "frontend/src/lib/publicUrlInventory.ts",
+    "frontend/src/lib/runLightLaneChat.ts",
+    "frontend/src/lib/terminalHistory.ts",
     "frontend/src/lib/xrogaBlocks.ts",
     "frontend/src/lib/xrogaResponseDocument.ts",
     "package-lock.json",
     "scripts/generate-native-openui-spec.mjs",
+    "scripts/security/source-lifetime-bindings.test.mjs",
     "scripts/verify-native-openui-browser.mjs"
   ],
   "decisions": {
     "keep": [
-      "Current Workspace presentation, stored conversations, canonical provider and accounting"
+      "Current Workspace presentation, stored conversations, canonical provider and accounting",
+      "Existing account-scoped local Chrome API, current extension bridge and canonical browser model accounting from the verified serving sources"
     ],
     "extend": [
       "Owner-only standalone evaluation and safe native model-authored presentation for normal DeepSeek chat, research and attachments"
@@ -102,11 +119,11 @@
   "securityImpact": {
     "auth": {
       "changed": true,
-      "description": "New disabled-by-default evaluation path uses current verified founder identity, owner role and AAL2."
+      "description": "The evaluator stays founder/AAL2-only. Native Workspace uses ordinary authenticated admission. Saved native Share uses the existing owner/public visibility contract and preserves validated presentation independently of the legacy renderer flag. Live Chrome paths retain the exact serving authentication and extension-ID gates."
     },
     "tenant": {
       "changed": false,
-      "description": "Existing issued tenant context and caller-scoped current role lookup; no cross-tenant data or application state mutation."
+      "description": "Existing issued tenant context and caller-scoped current role lookup. Queued sidebar saves revalidate the original account before writing. Existing per-user file and browser-run boundaries remain in place."
     },
     "approval": {
       "changed": false,
@@ -118,11 +135,11 @@
     },
     "egress": {
       "changed": true,
-      "description": "New bounded evaluator reaches only the existing authenticated API, Auth project, canonical model and accounting. No renderer telemetry or model-directed external egress."
+      "description": "Existing reviewed transport retained. Chrome routes use the exact reviewed serving bridge and reserved model transport. Native rendering uses only reviewed client-side functions and existing source metadata."
     },
     "cost": {
       "changed": true,
-      "description": "One metered model answer per admitted evaluation; requires explicit staging spending decision."
+      "description": "Native answers use the existing metered Zurelay dispatch, with the existing planner counted separately. Four historical evaluator calls settled. No additional paid run is authorized by the completed window."
     },
     "billing": {
       "changed": false,
@@ -144,9 +161,15 @@
     },
     {
       "command": "npx playwright test -c frontend/playwright.config.ts command3-auth.spec.ts",
-      "scope": "Disposable authenticated Workspace restores an OpenUI answer, updates and resets its calculator, and denies cross-account conversation access.",
+      "scope": "Isolated authenticated Workspace composer, local interactions, Copy, Share, Reopen, real tenant boundaries and browser cancellation with deterministic model transport.",
       "negative": true,
       "reference": "frontend/e2e/command3-auth.spec.ts"
+    },
+    {
+      "command": "node --import tsx --test backend/src/routes/localBrowser.test.ts backend/src/routes/browserDocuments.test.ts backend/src/workers/browserModelGateway.test.ts",
+      "scope": "Existing serving Chrome pairing endpoints, bounded browser document reading, and canonical browser provider accounting regression",
+      "negative": true,
+      "reference": "backend/src/routes/localBrowser.test.ts"
     }
   ],
   "architecture": {
@@ -154,12 +177,12 @@
     "reason": "New standalone presentation surface uses the existing model dispatch; no competing orchestration, database or provider.",
     "rfc": null
   },
-  "rollout": "Standalone evaluation first under the approved four-call cap. Enable the Workspace switch only after the independently observed live gate and authorized staged release.",
+  "rollout": "Complete ordinary-user exact-source CI and matched private staging after the historical founder run. Enable Workspace native generation only after live acceptance and separately approved rollout.",
   "rollback": "Unset evaluator configuration and the Workspace native generation switch. Restore previous frontend and API artifacts if required. Persisted answers retain readable prose.",
   "knownGaps": [
-    "Live DeepSeek needs the approved existing Zurelay secret bound by reference to the isolated staging candidate. The four-call model budget is authorized.",
-    "Workspace and share are wired under the existing storage and access paths. Hosted end-to-end acceptance is pending.",
-    "The tenant audit and mission source integrity checks pass. Source-bound staged authorization and tenant security observations are pending."
+    "The four earlier evaluator slots settled at $0.000639. The staging window was closed; another paid run needs its own narrow authorization after exact-source local and CI checks.",
+    "Hosted regular-user Workspace, live provider corrections, final mobile/accessibility parity and live rollback remain unverified.",
+    "Current source restores Chrome pairing and browser documents from the live release; paired release checks and remaining independent tenant proof are not waived."
   ],
   "placeholderClaimsRemaining": [],
   "evidenceRefs": [
@@ -175,7 +198,7 @@
   "release": {
     "state": "BLOCKED",
     "blockers": [
-      "Isolated staging candidate, verified founder AAL2 session, exact-source CI and staged tenant security evidence remain outstanding."
+      "Ordinary-user hosted live inference and paired staging/release evidence remain outstanding. The earlier founder session and four settled receipts do not satisfy this gate."
     ],
     "authenticatedE2e": "BLOCKED",
     "stagedSecurity": "BLOCKED",

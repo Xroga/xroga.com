@@ -120,8 +120,8 @@
     }
   ],
   "counts": {
-    "total": 150,
-    "reviewed": 150,
+    "total": 155,
+    "reviewed": 155,
     "pending": 0,
     "unresolvedHighRiskReviewCandidates": 0
   },
@@ -215,7 +215,7 @@
     },
     {
       "path": "scripts/security/source-lifetime-bindings.test.mjs",
-      "sha256": "6c8352ce73e679c5be0cf5a01d598ac099bd8ad7348af4241f323d6f7f00740b",
+      "sha256": "7d3c3af8176a838c9b1f3de5e75630ca8c4d26e634d886ff8c0975d5157a9640",
       "previousGenericSdkBinding": {
         "reference": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
         "sha256": "71eaca46f240f51b1ac490fd9e137cafbe0d0423313991de7b1bc0f57e588bcb",
@@ -230,7 +230,11 @@
           "scope": "HISTORICAL_SOURCE_NOT_CURRENT_EXECUTION_PROOF"
         }
       },
-      "beforeBrowserSDKCardinalityReconciliationSha256": "441861e7507aea76299bd43e73325792e4cbe16f3414bf6ae5183ad055ae78b9"
+      "beforeBrowserSDKCardinalityReconciliationSha256": "441861e7507aea76299bd43e73325792e4cbe16f3414bf6ae5183ad055ae78b9",
+      "beforeLiveChromePreservation": {
+        "sha256": "6c8352ce73e679c5be0cf5a01d598ac099bd8ad7348af4241f323d6f7f00740b",
+        "ref": "3dcf7cc432a3ba446ef228008b2342be9beeebd4"
+      }
     },
     {
       "path": "backend/src/ai/architect.ts",
@@ -855,13 +859,17 @@
     },
     {
       "path": "backend/src/workers/browserCapability.ts",
-      "sha256": "7d2bab8d22905fdccca667481ce0be5c1a61ac799d0b117d098ce1768d0d5511",
+      "sha256": "f2a0fa5a5842e812a1ec600a2817c4b7394a8faf28873d8893a523d99bb78bb9",
       "beforeCurrentMainIntegration": {
         "sha256": "2b28ecd8b77c60677931c7303ea23e56a345fbb91f589ecfc5f6cce7cb3a4a28",
         "ref": "92043b72c20e5a12636dee079d760a1e5708b48f"
       },
       "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
-      "previousSha256": "5d75d311b49b606b3116dcc84e1284c30ce556a7f0f4a5ae530c406d0631aefa"
+      "previousSha256": "5d75d311b49b606b3116dcc84e1284c30ce556a7f0f4a5ae530c406d0631aefa",
+      "beforeLiveChromePreservation": {
+        "sha256": "7d2bab8d22905fdccca667481ce0be5c1a61ac799d0b117d098ce1768d0d5511",
+        "ref": "3dcf7cc432a3ba446ef228008b2342be9beeebd4"
+      }
     }
   ],
   "previousCallerCounts": {
@@ -983,5 +991,11 @@
     "baseRef": "origin/main",
     "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
     "basis": "currentSourceBindings were re-bound to the branch sources after the egress register was re-verified call by call (REBIND-REPORT.json): every reviewed egress call hash is unchanged or manually reviewed, 149 of 149 reviewed, none pending. counts follow the regenerated egress inventory (one retired Gemini call). No acceptance is promoted."
+  },
+  "liveChromePreservation": {
+    "backend": "92ec31a3369a0d8ca42d23d62f79d8f522b5fb9e",
+    "frontend": "23a1a48a2ee0018ed0c828f6347df9d0bef9c369",
+    "previousProofSha256": "c5dc2789581a52c827f1b03ad7fb78052704c0779a6d3611a2e0040df3f06385",
+    "scope": "Existing authenticated pairing and exact SDK pacing guard retained. This source review does not certify a hosted run."
   }
 }
