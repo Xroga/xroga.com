@@ -95446,7 +95446,7 @@
       "callers": [
         "frontend/src/components/terminal/SwarmMessageLog.tsx:48",
         "frontend/src/lib/chatTurnRail.test.ts:4",
-        "frontend/src/lib/workspaceRouteIsolation20261021.test.ts:47"
+        "frontend/src/lib/workspaceRouteIsolation20261021.test.ts:48"
       ],
       "reachable": true,
       "persistenceDependencies": [],
