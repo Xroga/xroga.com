@@ -240,7 +240,6 @@ export function DashboardView() {
             ) : (
               <>
                 <WorkspaceConversationMenu />
-                {activeProject ? <WorkspaceIdentityMenu /> : null}
               </>
             )}
           </div>
