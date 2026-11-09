@@ -1,5 +1,5 @@
 import { createParser, parseExpression, split, tokenize, type ASTNode, type LibraryJSONSchema } from '@openuidev/lang-core';
-import { requiresAuthorizationReview } from './answerAuthorizationReview.js';
+import { contradictsMonthlyChart, requiresNativeAuthorizationReview } from './nativeOpenUiAccuracy.js';
 import catalog from './nativeOpenUiCatalog.json' with { type: 'json' };
 
 export const NATIVE_UI_FORMAT = 'xroga-openui-v1' as const;
@@ -26,13 +26,13 @@ export function splitNativeOpenUiAnswer(raw: string, streaming = false) {
   return { text: text.trim(), program: '' };
 }
 
-export type NativeUiValidation = { ok: true } | { ok: false; reason: 'budget' | 'syntax' | 'authority' | 'reference' | 'schema' | 'authorization_review' };
+export type NativeUiValidation = { ok: true } | { ok: false; reason: 'budget' | 'syntax' | 'authority' | 'reference' | 'schema' | 'authorization_review' | 'data_review' };
 const reject = (reason: Extract<NativeUiValidation, { ok: false }>['reason']): NativeUiValidation => ({ ok: false, reason });
 
 /** Audit all statements, including unreachable ones, before letting the upstream
  * parser resolve references or evaluate expressions. Limit expanded work as well
  * as input size, so repeated references cannot multiply the runtime budget. */
-export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<string> = new Set()): NativeUiValidation {
+export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<string> = new Set(), prose = ''): NativeUiValidation {
   if (!program || program.length > MAX_PROGRAM_CHARS || program.includes("]]>")) return reject('budget');
   try {
     const tokens = tokenize(program);
@@ -96,7 +96,9 @@ export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<s
     const result = parseProgram.parse(program);
     if (result.queryStatements.length || result.mutationStatements.length) return reject('authority');
     if (!result.root || result.root.typeName !== 'Col' || result.meta.incomplete || result.meta.unresolved.length || result.meta.errors.length) return reject('schema');
-    if (requiresAuthorizationReview([...reviewStrings].join('\n'))) return reject('authorization_review');
+    const narrative = [prose, ...reviewStrings].join('\n');
+    if (requiresNativeAuthorizationReview(narrative)) return reject('authorization_review');
+    if (contradictsMonthlyChart(result.root, narrative)) return reject('data_review');
     return { ok: true };
   } catch { return reject('syntax'); }
 }

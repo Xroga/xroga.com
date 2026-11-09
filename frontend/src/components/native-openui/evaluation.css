@@ -6,6 +6,12 @@
   background: var(--iui-canvas);
   font: 400 1rem/1.6 system-ui, sans-serif;
 }
+.native-evaluation[data-theme="light"] {
+  background-color: #fff;
+}
+.native-evaluation[data-theme="dark"] {
+  background-color: #101114;
+}
 .native-evaluation, .native-evaluation * { box-sizing: border-box; }
 .native-evaluation-bar {
   display: flex;

@@ -52,7 +52,7 @@ const compiled = await build({
     contents: 'import {createRoot} from "react-dom/client"; import {NativeSurface} from "./frontend/src/components/native-openui/NativeSurface"; import "./frontend/src/components/native-openui/evaluation.css";'
       + 'const cases = ' + JSON.stringify(cases) + ';'
       + 'const q=new URL(location.href).searchParams; const name=q.get("case") || "short";'
-      + 'document.body.dataset.theme=q.get("theme") || "light"; document.querySelector("main").dataset.theme=document.body.dataset.theme;'
+      + 'document.body.dataset.theme=q.get("shellTheme") || q.get("theme") || "light"; document.querySelector("main").dataset.theme=q.get("theme") || "light";'
       + 'const sources=[{id:"source-1",title:"PostgreSQL: Row Security Policies",url:"https://www.postgresql.org/docs/current/ddl-rowsecurity.html"}];'
       + 'createRoot(document.getElementById("root")).render(<>{cases[name].prompt && <p className="native-evaluation-user">{cases[name].prompt}</p>}<div className="native-evaluation-answer-label">Xroga</div><NativeSurface answer={{...cases[name],format:"xroga-openui-v1",library:"xroga-native-v1"}} sources={sources} isStreaming={name==="stream"} /></>);',
   },
@@ -140,7 +140,14 @@ try {
       assert.ok(renderedEdge.length > 0 && renderedEdge.stroke !== 'none' && renderedEdge.overflow === 'visible', JSON.stringify(renderedEdge));
       await graph.getByRole('button', { name: /zoom in/i }).click();
       await graph.getByRole('button', { name: /fit view/i }).click();
-      await graph.getByText('Diagram relationships', { exact: true }).click();
+      const relationships = graph.locator('details');
+      if (viewport.width <= 390) {
+        assert.equal(await relationships.getAttribute('open'), '', 'Compact diagrams expose the relationship key immediately');
+        assert.equal(await graph.locator('.react-flow__edge-text').count(), 0, 'Compact diagrams do not overprint edge labels');
+      }
+      if (await relationships.getAttribute('open') === null) {
+        await graph.getByText('Diagram relationships', { exact: true }).click();
+      }
       await graph.getByText(/Stripe → Billing webhook/).waitFor();
       const stripe = page.getByRole('link', { name: 'Stripe', exact: true });
       assert.equal(await stripe.getAttribute('href'), 'https://stripe.com');
@@ -194,6 +201,17 @@ try {
       await context.close();
     }
   }
+  const paletteContext = await browser.newContext({ viewport: { width: 390, height: 844 } });
+  const palettePage = await paletteContext.newPage();
+  const answerRegion = palettePage.getByRole('region', { name: 'Answer', exact: true });
+  await palettePage.goto(origin + '/?case=short&theme=black');
+  await answerRegion.waitFor();
+  assert.equal(await answerRegion.evaluate(el => getComputedStyle(el).colorScheme), 'dark', 'The real Workspace black theme uses dark answer tokens');
+  await palettePage.goto(origin + '/?case=short&theme=light&shellTheme=black');
+  await answerRegion.waitFor();
+  assert.equal(await answerRegion.evaluate(el => getComputedStyle(el).colorScheme), 'light', 'Evaluator light mode remains readable inside a dark app shell');
+  assert.equal(await palettePage.locator('.native-evaluation').evaluate(el => getComputedStyle(el).backgroundColor), 'rgb(255, 255, 255)');
+  await paletteContext.close();
   const evidence = { mode: 'credential-free browser fixture', browser: browser.version(), entryBytes: Object.fromEntries(['/native.js','/native.css'].map(key => [key, assets.get(key).length])), lazyChunks: [...assets.keys()].filter(key => key.startsWith('/native-chunk-')).length, results };
   await writeFile(resolve(output, channel + '-native-browser-evidence.json'), JSON.stringify(evidence, null, 2) + '\n');
   process.stdout.write(JSON.stringify(evidence, null, 2) + '\n');

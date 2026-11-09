@@ -272,6 +272,8 @@ export function enhanceAiResponse(content: string, documentId: string, completio
       ? 'This answer may not cover every part of your request. The written explanation is complete as shown.'
       : partialReason === 'authorization_review'
       ? 'Authorization guidance needs review. This answer contains a known unsafe authorization claim. Privileged database roles can bypass RLS, and JWT claims alone do not prove immediate revocation. Verify current server-owned tenant membership and permissions. The original answer is preserved. No automatic retry was made.'
+      : partialReason === 'data_review'
+      ? 'The chart was withheld because a trend statement disagreed with the chart data. Check the supplied figures before relying on the explanation.'
       : partialReason === 'source_attribution'
       ? 'Some numbered citations could not be matched to a retrieved source. Linked citations are verified; treat any unlinked number as unverified. No automatic retry was made.'
       : partialReason === 'output_limit'

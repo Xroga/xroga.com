@@ -83,7 +83,8 @@
   --iui-photo-empty-icon: var(--iui-border-strong);
 }
 
-[data-theme="dark"] .xroga-native-openui, .native-evaluation[data-theme="dark"] {
+:is([data-theme="dark"], [data-theme="black"], [data-theme="gray"]) .xroga-native-openui:not(.native-evaluation[data-theme="light"] .xroga-native-openui),
+.native-evaluation[data-theme="dark"] {
   color-scheme: dark;
   --iui-ink: var(--openui-text-neutral-primary, #f4f4f5);
   --iui-canvas: var(--openui-foreground, #18181b);

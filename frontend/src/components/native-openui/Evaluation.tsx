@@ -115,6 +115,8 @@ export default function Evaluation({ slots }: { slots: Slot[] }) {
           <p className="native-evaluation-user">{turn.prompt}</p>
           {turn.answer && <>
             <div className="native-evaluation-answer-label">Xroga</div>
+            {turn.answer.fallbackReason === 'data_review' && <p className="native-evaluation-status" role="status">The chart was withheld because its data disagreed with the written trend.</p>}
+            {turn.answer.fallbackReason === 'authorization_review' && <p className="native-evaluation-status" role="status">Review the authorization guidance before using it.</p>}
             <Suspense fallback={<section className="xroga-native-openui"><MarkdownBlocks text={turn.answer.text} /></section>}>
               {turn.answer.program ? <NativeSurface answer={turn.answer} />
                 : <section className="xroga-native-openui" aria-label="Answer" dir="auto"><MarkdownBlocks text={turn.answer.text} /></section>}

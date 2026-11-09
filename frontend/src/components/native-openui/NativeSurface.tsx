@@ -24,17 +24,17 @@ export function NativeSurface({ answer, sources, isStreaming = false }: {
   const accepted = useMemo(() => {
     if (answer.library !== 'xroga-native-v1' || !answer.program || answer.program.length > MAX_PROGRAM_CHARS) return '';
     const ids = new Set(verified.keys());
-    if (validateNativeOpenUi(answer.program, ids).ok) return answer.program;
+    if (validateNativeOpenUi(answer.program, ids, answer.text).ok) return answer.program;
     if (!isStreaming) return '';
     let end = answer.program.length;
     for (let attempts = 0; attempts < 3; attempts += 1) {
       end = answer.program.lastIndexOf('\n', end - 1);
       if (end <= 0) break;
       const prefix = answer.program.slice(0, end);
-      if (validateNativeOpenUi(prefix, ids).ok) return prefix;
+      if (validateNativeOpenUi(prefix, ids, answer.text).ok) return prefix;
     }
     return '';
-  }, [answer.library, answer.program, verified, isStreaming]);
+  }, [answer.library, answer.program, answer.text, verified, isStreaming]);
   return (
     <section className="xroga-native-openui" aria-label="Answer" dir="auto" aria-busy={isStreaming}>
       {accepted && failedProgram !== accepted

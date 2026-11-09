@@ -54,6 +54,9 @@ function layout(props: z.infer<typeof diagramProps>, compact: boolean) {
   if (groups.some(group => group.length > 3)) return null;
 
   const rows = compact ? groups.flatMap(group => group.length === 3 ? [group.slice(0, 2), group.slice(2)] : [group]) : groups;
+  // Branching edges can share the same routing lane. Keep all connections and
+  // move their labels into a readable key rather than painting overlapping text.
+  const separateRelationships = compact || groups.some(group => group.length > 1) || props.links.length > rows.length - 1;
   const width = compact ? 138 : 190;
   const nodes: AnswerNode[] = rows.flatMap((group, y) => group.map((node, x) => ({
     id: node.id,
@@ -76,12 +79,12 @@ function layout(props: z.infer<typeof diagramProps>, compact: boolean) {
       target: link.to,
       sourceHandle: lateral ? (rightward ? 'right' : 'left') : upward ? 'top' : null,
       targetHandle: lateral ? (rightward ? 'left' : 'right') : upward ? 'bottom' : null,
-      label: link.label,
+      label: separateRelationships ? undefined : link.label,
       type: 'smoothstep',
       markerEnd: { type: MarkerType.ArrowClosed, width: 18, height: 18, color: 'var(--iui-muted)' },
     };
   });
-  return { nodes, edges, byId, rowCount: rows.length };
+  return { nodes, edges, byId, rowCount: rows.length, separateRelationships };
 }
 
 export const Diagram = defineComponent({
@@ -137,7 +140,7 @@ export const Diagram = defineComponent({
           <Controls showInteractive={false} orientation="horizontal" aria-label="Diagram zoom controls" />
         </div>
         </ReactFlowProvider>
-        <details>
+        <details open={result.separateRelationships || undefined}>
           <summary>Diagram relationships</summary>
           <ul>
             {props.links.map((link, index) => <li key={index}>

@@ -1,5 +1,6 @@
 import { publicCompletionState } from './completionDiagnostics.js';
 import { NATIVE_UI_FORMAT, splitNativeOpenUiAnswer, validateNativeOpenUi } from './nativeOpenUi.js';
+import { requiresNativeAuthorizationReview } from './nativeOpenUiAccuracy.js';
 
 /** Deployment-owned presentation choice; never reads a user role or client flag.
  * The paid founder evaluator has its own independent staging-only guard. */
@@ -15,11 +16,13 @@ export function completeNativeWorkspaceAnswer(
   evidenceIds?: ReadonlySet<string>,
 ) {
   const { text, program } = splitNativeOpenUiAnswer(raw);
-  const validation = program ? validateNativeOpenUi(program, evidenceIds) : undefined;
+  const validation = program ? validateNativeOpenUi(program, evidenceIds, text) : undefined;
   const response = text || "Xroga couldn't finish the requested answer.";
-  const completion = validation?.ok === false && validation.reason === 'authorization_review'
+  const completion = (validation?.ok === false && validation.reason === 'authorization_review') || requiresNativeAuthorizationReview(text)
     ? { status: 'partial' as const, reason: 'authorization_review' as const }
-    : publicCompletionState(finishReason, response);
+    : validation?.ok === false && validation.reason === 'data_review'
+      ? { status: 'partial' as const, reason: 'data_review' as const }
+      : publicCompletionState(finishReason, response);
   const valid = !!text && validation?.ok === true && completion.status === 'complete';
   return {
     response,

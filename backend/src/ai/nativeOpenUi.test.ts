@@ -74,6 +74,32 @@ test('native visual text receives the same unsafe authorization review as prose'
   assert.equal(buildNativeOpenUiShare('Read the security diagram.', unsafe), undefined);
 });
 
+test('a browser Supabase SSR session is distinct from an explicitly server-owned session', () => {
+  const inaccurate = 'Browser authenticates via Supabase Auth and receives an HTTP-only session cookie.';
+  const precise = 'For a server-only Supabase integration, use an HTTP-only cookie and keep all token handling on the server.';
+  for (const text of [inaccurate, precise]) {
+    const result = validateNativeOpenUi(`root = Col([Text(${JSON.stringify(text)})])`);
+    assert.deepEqual(result, text === inaccurate ? { ok: false, reason: 'authorization_review' } : { ok: true });
+  }
+  assert.deepEqual(completeNativeWorkspaceAnswer(inaccurate, 'stop').completion,
+    { status: 'partial', reason: 'authorization_review' });
+});
+
+test('an explicit monthly direction that conflicts with the displayed data is flagged', () => {
+  const accurate = 'February rose. March dipped.';
+  const inaccurate = 'The path is not smooth: February and March ease back before growth resumes.';
+  const rows = '[{month: "Jan", value: 12000}, {month: "Feb", value: 15500}, {month: "Mar", value: 14300}]';
+  const make = (text: string) => `rows = ${rows}\nroot = Col([Text(${JSON.stringify(text)}), Chart("line", rows, "month", ["value"])])`;
+  assert.deepEqual(validateNativeOpenUi(make(accurate)), { ok: true });
+  assert.deepEqual(validateNativeOpenUi(make(inaccurate)), { ok: false, reason: 'data_review' });
+  assert.deepEqual(validateNativeOpenUi(make(accurate), undefined, inaccurate), { ok: false, reason: 'data_review' });
+  const result = completeNativeWorkspaceAnswer(accurate + NATIVE_UI_MARKER + make(inaccurate), 'stop');
+  assert.equal(result.response, accurate);
+  assert.equal(result.responseSource.text, '');
+  assert.deepEqual(result.completion, { status: 'partial', reason: 'data_review' });
+  assert.deepEqual(validateNativeOpenUi(make('March increased from January.')), { ok: true });
+});
+
 test('the paid evaluator rejects non-staging, expired, repeated, and over-budget slots', () => {
   const now = Date.parse('2026-11-09T09:00:00Z');
   const first = { id: '01000000-0000-4000-8000-000000000001', label: 'Short answer', prompt: 'What is a tenant?' };

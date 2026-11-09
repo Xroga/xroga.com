@@ -11,7 +11,9 @@ The existing authenticated Workspace message flow owns input, attachments, model
 
 ## DeepSeek live results
 
-Status: **NOT_RUN**. Staging Supabase has the confirmed owner profile and no verified factor or AAL2 session. The exact-source tagged staging API with the existing managed Zurelay secret is not deployed. No new API key, budget change or production change was made. The four previously authorized slots, cases 1, 3, 4 and 5 of [the benchmark](parity-benchmark.json), remain unused. Recorded usage is 0 requests and USD 0.00, with no tokens, latency or provider receipts to report. The limit is USD 0.0025 per call and USD 0.01 combined, with no retries.
+Four authorized benchmark calls ran in the signed-in founder evaluator against isolated staging source `a7ea085af26270ce76e3f19f41e7008a848c12a7` on November 9, 2026. Each had a verified Zurelay DeepSeek model receipt and matched both Xroga accounting records. Total settlement: USD 0.000639. The replay of a settled slot was denied without a new reservation or charge. The staging tag and time-bounded secret grant were removed. No production traffic changed.
+
+The short answer and locally reactive workshop calculator passed their functional checks. The architecture answer contained all five requested boundaries and a connected diagram, but oversimplified browser Supabase SSR session cookies. The chart and table matched all six supplied revenue figures, but the prose misdescribed February's increase. Mobile viewing also exposed a contrast issue in the evaluator shell and overlapping diagram edge labels. The follow-up source adds local checks and renderer corrections for those findings. The four receipts belong to the staged source above, not this follow-up. Visual parity and real regular-user Workspace acceptance remain open.
 
 ## Release and rollback
 

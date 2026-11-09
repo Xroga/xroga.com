@@ -26,7 +26,7 @@
 .xroga-native-openui, .xroga-native-openui *, .xroga-native-openui *::before, .xroga-native-openui *::after { box-sizing: border-box; }
 
 .xroga-native-openui .iui-code-token { color: var(--iui-code-light, inherit); }
-[data-theme="dark"] .xroga-native-openui .iui-code-token { color: var(--iui-code-dark, inherit); }
+:is([data-theme="dark"], [data-theme="black"], [data-theme="gray"]) .xroga-native-openui:not(.native-evaluation[data-theme="light"] .xroga-native-openui) .iui-code-token { color: var(--iui-code-dark, inherit); }
 
 .xroga-native-openui {
   --native-accent: #195bd5;
@@ -42,7 +42,7 @@
   line-height: 1.65;
 }
 
-[data-theme="dark"] .xroga-native-openui {
+:is([data-theme="dark"], [data-theme="black"], [data-theme="gray"]) .xroga-native-openui:not(.native-evaluation[data-theme="light"] .xroga-native-openui) {
   --native-accent: #8bb8ff;
   --native-accent-soft: #202e48;
   --native-panel: #1e2128;

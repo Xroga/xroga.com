@@ -15,13 +15,13 @@ export function readNativeOpenUiShare(value: string) {
   try {
     const parsed = snapshot.safeParse(JSON.parse(value.slice(NATIVE_SHARE_PREFIX.length)));
     if (!parsed.success) return;
-    const { sources, program } = parsed.data;
+    const { sources, program, text } = parsed.data;
     if (sources.some(({ url }) => {
       const parsedUrl = new URL(url);
       return !['https:', 'http:'].includes(parsedUrl.protocol) || parsedUrl.username || parsedUrl.password;
     })) return;
     const ids = new Set(sources.map((_, index) => 'source-' + (index + 1)));
-    if (program ? validateNativeOpenUi(program, ids).ok : sources.length > 0) return parsed.data;
+    if (program ? validateNativeOpenUi(program, ids, text).ok : sources.length > 0) return parsed.data;
   } catch {
     // An invalid share is never executable UI.
   }
