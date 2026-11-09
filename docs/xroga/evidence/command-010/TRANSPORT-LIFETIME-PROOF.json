@@ -877,11 +877,11 @@
     },
     {
       "path": "scripts/security/hosted-workspace-staging.mjs",
-      "sha256": "f68dff00fd39ca79cfb9a500a226e4ecfa20f4e4df6bff824f7ab043982bf10d"
+      "sha256": "506c38ac36688be1e60095338360a13f269d3e082ac3681ec08d2d64cfda4fb0"
     },
     {
       "path": "scripts/security/hosted-workspace-staging.test.mjs",
-      "sha256": "0faedb0211c2131359f403e4a421b66382b01f168d4f879f21e9b6fc911e126d"
+      "sha256": "e1d8a45c599bfb1f7eabc0a58dbd46f70546ff70f1cabd16e44adf825d4eaa95"
     }
   ],
   "previousCallerCounts": {
