@@ -4832,7 +4832,7 @@
         {
           "path": "scripts/security/hosted-workspace-staging.test.mjs",
           "marker": "Google IAM and original user token stay separate",
-          "sha256": "0faedb0211c2131359f403e4a421b66382b01f168d4f879f21e9b6fc911e126d"
+          "sha256": "e1d8a45c599bfb1f7eabc0a58dbd46f70546ff70f1cabd16e44adf825d4eaa95"
         }
       ]
     },
@@ -4847,7 +4847,7 @@
         {
           "path": "scripts/security/hosted-workspace-staging.test.mjs",
           "marker": "Google IAM and original user token stay separate",
-          "sha256": "0faedb0211c2131359f403e4a421b66382b01f168d4f879f21e9b6fc911e126d"
+          "sha256": "e1d8a45c599bfb1f7eabc0a58dbd46f70546ff70f1cabd16e44adf825d4eaa95"
         }
       ]
     },
@@ -4862,7 +4862,7 @@
         {
           "path": "scripts/security/hosted-workspace-staging.test.mjs",
           "marker": "Google IAM and original user token stay separate",
-          "sha256": "0faedb0211c2131359f403e4a421b66382b01f168d4f879f21e9b6fc911e126d"
+          "sha256": "e1d8a45c599bfb1f7eabc0a58dbd46f70546ff70f1cabd16e44adf825d4eaa95"
         }
       ]
     }

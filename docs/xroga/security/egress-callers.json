@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "1063a24ac0256e8a57b9af1b8ebddf861a12e35552315b3f2e20c9a2c308906e",
+  "sourceTreeDigest": "580267adef9e5ce45cc8fb8d9e3b0e81ffd972a4c5dd45cfd638d484bf0e7d9a",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -4851,7 +4851,7 @@
         {
           "path": "scripts/security/hosted-workspace-staging.test.mjs",
           "marker": "Google IAM and original user token stay separate",
-          "sha256": "0faedb0211c2131359f403e4a421b66382b01f168d4f879f21e9b6fc911e126d"
+          "sha256": "e1d8a45c599bfb1f7eabc0a58dbd46f70546ff70f1cabd16e44adf825d4eaa95"
         }
       ]
     },
@@ -4873,7 +4873,7 @@
         {
           "path": "scripts/security/hosted-workspace-staging.test.mjs",
           "marker": "Google IAM and original user token stay separate",
-          "sha256": "0faedb0211c2131359f403e4a421b66382b01f168d4f879f21e9b6fc911e126d"
+          "sha256": "e1d8a45c599bfb1f7eabc0a58dbd46f70546ff70f1cabd16e44adf825d4eaa95"
         }
       ]
     },
@@ -4895,7 +4895,7 @@
         {
           "path": "scripts/security/hosted-workspace-staging.test.mjs",
           "marker": "Google IAM and original user token stay separate",
-          "sha256": "0faedb0211c2131359f403e4a421b66382b01f168d4f879f21e9b6fc911e126d"
+          "sha256": "e1d8a45c599bfb1f7eabc0a58dbd46f70546ff70f1cabd16e44adf825d4eaa95"
         }
       ]
     },
