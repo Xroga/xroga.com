@@ -123,12 +123,12 @@ export default async function MessageSharePage({ params }: { params: Promise<{ t
   if (result.status === 'private') {
     const next = encodeURIComponent(`/share/${token}`);
     return (
-      <main className="grid min-h-screen place-items-center bg-[#f4f4f1] px-4 text-[#111] dark:bg-[#090a0d] dark:text-[#f5f5f3]">
-        <section className="w-full max-w-sm rounded-[24px] bg-white p-6 text-center shadow-[0_30px_90px_-60px_rgba(0,0,0,.5)] dark:bg-[#111318]">
+      <main className="grid min-h-screen place-items-center bg-[var(--surface-page)] px-4 text-[var(--text-primary)]">
+        <section className="w-full max-w-sm rounded-[24px] border border-[var(--border-subtle)] bg-[var(--surface-raised)] p-6 text-center shadow-[var(--shadow-elevated)]">
           <Image src="/brand/xroga-orb-mark-v2.webp" alt="" width={34} height={34} className="mx-auto mb-4 rounded-xl" />
-          <h1 className="text-lg font-semibold">This share is private</h1>
-          <p className="mt-2 text-sm leading-6 text-black/55 dark:text-white/55">Only the Xroga account that created it can open this page.</p>
-          <Link href={`/auth/login?next=${next}`} className="mt-5 inline-flex h-10 items-center justify-center rounded-xl bg-[#111] px-4 text-xs font-semibold text-white dark:bg-white dark:text-[#111]">Continue with the owner account</Link>
+          <h1 className="text-lg font-semibold text-[var(--text-primary)]">This share is private</h1>
+          <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">Only the Xroga account that created it can open this page.</p>
+          <Link href={`/auth/login?next=${next}`} className="mt-5 inline-flex h-10 items-center justify-center rounded-xl bg-[var(--text-primary)] px-4 text-xs font-semibold text-[var(--surface-page)]">Continue with the owner account</Link>
         </section>
       </main>
     );
@@ -141,30 +141,30 @@ export default async function MessageSharePage({ params }: { params: Promise<{ t
   const sources = native ? [...new Map(native.sources.map(source => [source.url, source])).values()] : [];
 
   return (
-    <main className="min-h-screen bg-[#f4f4f1] px-4 py-6 text-[#111] sm:px-6 sm:py-12 dark:bg-[#090a0d] dark:text-[#f5f5f3]">
+    <main className="min-h-screen bg-[var(--surface-page)] px-4 py-6 text-[var(--text-primary)] sm:px-6 sm:py-12">
       <div className="mx-auto w-full max-w-3xl">
-        <header className="mb-4 flex items-center justify-between rounded-2xl border border-black/10 bg-white px-4 py-3 shadow-sm dark:border-white/10 dark:bg-[#111318]">
+        <header className="mb-4 flex items-center justify-between rounded-2xl border border-[var(--border-subtle)] bg-[var(--surface-raised)] px-4 py-3 shadow-sm">
           <Link href="/" className="flex items-center gap-2 text-sm font-semibold">
             <Image src="/brand/xroga-orb-mark-v2.webp" alt="" width={24} height={24} className="rounded-lg" />
             Xroga
           </Link>
-          <span className="rounded-full bg-black/5 px-2.5 py-1 text-[10px] font-medium uppercase tracking-[.12em] text-black/55 dark:bg-white/10 dark:text-white/55">
+          <span className="rounded-full bg-[var(--surface-inset)] px-2.5 py-1 text-[10px] font-medium uppercase tracking-[.12em] text-[var(--text-secondary)]">
             {share.visibility === 'private' ? 'Private link' : 'Public share'}
           </span>
         </header>
 
-        <article className="overflow-hidden rounded-[24px] border border-black/10 bg-white shadow-[0_30px_90px_-60px_rgba(0,0,0,.5)] dark:border-white/10 dark:bg-[#111318]">
+        <article className="overflow-hidden rounded-[24px] border border-[var(--border-subtle)] bg-[var(--surface-raised)] shadow-[var(--shadow-elevated)]">
           {share.scope === 'exchange' && share.prompt && (
-            <section className="border-b border-black/10 px-5 py-5 dark:border-white/10 sm:px-8 sm:py-7">
-              <p className="mb-2 text-[10px] font-semibold uppercase tracking-[.16em] text-black/45 dark:text-white/45">Prompt</p>
-              <p className="whitespace-pre-wrap text-sm leading-6 text-black/75 dark:text-white/75">{share.prompt}</p>
+            <section className="border-b border-[var(--border-subtle)] px-5 py-5 sm:px-8 sm:py-7">
+              <p className="mb-2 text-[10px] font-semibold uppercase tracking-[.16em] text-[var(--text-secondary)]">Prompt</p>
+              <p className="whitespace-pre-wrap text-sm leading-6">{share.prompt}</p>
             </section>
           )}
           <section className="px-5 py-6 sm:px-8 sm:py-8">
-            <p className="mb-3 text-[10px] font-semibold uppercase tracking-[.16em] text-black/45 dark:text-white/45">Response</p>
+            <p className="mb-3 text-[10px] font-semibold uppercase tracking-[.16em] text-[var(--text-secondary)]">Response</p>
             {share.richUnavailable && <p role="status" className="mb-3 text-sm">The interactive view is unavailable. The complete saved text follows.</p>}
-            {native ? <NativeWorkspaceAnswer answer={{ ...native, library: 'xroga-native-v1' }} sources={native.sources} /> : legacyRichAllowed && share.richResponse ? <SharedResponseV2 snapshot={share.richResponse} text={share.response} /> : <p className="whitespace-pre-wrap text-[15px] leading-7 text-black/90 dark:text-white/90">{share.response}</p>}
-            {sources.length > 0 && <section aria-label="Sources" className="mt-5 border-t border-black/10 pt-4 dark:border-white/10">
+            {native ? <NativeWorkspaceAnswer answer={{ ...native, library: 'xroga-native-v1' }} sources={native.sources} /> : legacyRichAllowed && share.richResponse ? <SharedResponseV2 snapshot={share.richResponse} text={share.response} /> : <p className="whitespace-pre-wrap text-[15px] leading-7">{share.response}</p>}
+            {sources.length > 0 && <section aria-label="Sources" className="mt-5 border-t border-[var(--border-subtle)] pt-4">
               <h2 className="text-sm font-semibold">Sources</h2>
               <ul className="mt-2 space-y-2 text-sm">
                 {sources.map(source => <li key={source.url} className="break-words">
@@ -176,7 +176,7 @@ export default async function MessageSharePage({ params }: { params: Promise<{ t
           </section>
         </article>
 
-        <p className="mt-4 text-center text-xs text-black/45 dark:text-white/45">
+        <p className="mt-4 text-center text-xs text-[var(--text-secondary)]">
           Shared exactly as selected. No reactions, view counts, or generated activity.
         </p>
       </div>

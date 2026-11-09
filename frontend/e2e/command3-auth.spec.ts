@@ -319,11 +319,17 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   expect(chatCalls).toBe(1);
 
   const sessionId = (await composer.getAttribute('data-draft-session'))!;
-  await expect.poll(async () => {
-    const saved = await admin.from('xroga_sidebar_chats').select('messages').eq('user_id', ownerId).eq('id', sessionId).maybeSingle();
+  const readSaved = async () => {
+    const saved = await admin.from('xroga_sidebar_chats').select('title,messages').eq('user_id', ownerId).eq('id', sessionId).maybeSingle();
     expect(saved.error).toBeNull();
-    return (saved.data?.messages as Array<{ featureOutput?: { responseSource?: { text?: string } } }> | undefined)?.some(message => message.featureOutput?.responseSource?.text === program);
-  }, { timeout: 20_000 }).toBe(true);
+    return saved.data;
+  };
+  await expect.poll(async () => ((await readSaved())?.messages as Array<{ featureOutput?: { responseSource?: { text?: string } } }> | undefined)
+    ?.some(message => message.featureOutput?.responseSource?.text === program), { timeout: 20_000 }).toBe(true);
+  const savedTitle = (await readSaved())?.title;
+  // Workspace titles for file-backed prompts retain the attachment marker.
+  // Reopen the exact persisted title rather than guessing from the draft alone.
+  expect(savedTitle).toContain(prompt);
 
   await mkdir('test-results/native-workspace', { recursive: true });
   for (const [width, theme] of [[1440, 'black'], [390, 'gray']] as const) {
@@ -352,9 +358,37 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   const other = await browser.newContext({ baseURL: workspaceOrigin });
   try {
     await ownerShare.goto(shareUrl);
-    await expect(ownerShare.getByRole('region', { name: 'Answer', exact: true }).getByRole('slider', { name: 'Attendees' })).toBeVisible();
-    await expect(ownerShare.getByRole('region', { name: 'Answer', exact: true }).getByRole('link', { name: /Workshop source fixture/ })).toHaveAttribute('href', source.url);
-    await ownerShare.screenshot({ path: 'test-results/native-workspace/owner-share.png' });
+    const sharedAnswer = ownerShare.getByRole('region', { name: 'Answer', exact: true });
+    await expect(sharedAnswer.getByRole('slider', { name: 'Attendees' })).toBeVisible();
+    await expect(sharedAnswer.getByRole('link', { name: /Workshop source fixture/ })).toHaveAttribute('href', source.url);
+    for (const [width, theme] of [[1440, 'black'], [390, 'white']] as const) {
+      await ownerShare.setViewportSize({ width, height: 900 });
+      await ownerShare.evaluate(value => {
+        document.documentElement.dataset.theme = value;
+        document.body.classList.remove('theme-black', 'theme-gray', 'theme-white', 'theme-beige');
+        document.body.classList.add('theme-' + value);
+      }, theme);
+      const contrast = await sharedAnswer.getByText(reply, { exact: true }).evaluate(node => {
+        const channels = (css: string) => css.match(/[\d.]+/g)?.map(Number) ?? [];
+        const over = (top: number[], bottom: number[]) => bottom.map((channel, i) =>
+          (top[i] ?? 0) * (top[3] ?? 1) + channel * (1 - (top[3] ?? 1)));
+        const luminance = (rgb: number[]) => rgb.reduce((sum, component, index) => {
+          const normalized = component / 255;
+          return sum + (normalized <= 0.04045 ? normalized / 12.92 : ((normalized + 0.055) / 1.055) ** 2.4)
+            * [0.2126, 0.7152, 0.0722][index];
+        }, 0);
+        const surfaces: number[][] = [];
+        for (let el: Element | null = node; el; el = el.parentElement) {
+          surfaces.unshift(channels(getComputedStyle(el).backgroundColor));
+        }
+        const bg = surfaces.reduce((under, above) => over(above, under), [255, 255, 255]);
+        const text = over(channels(getComputedStyle(node).color), bg);
+        const values = [luminance(bg), luminance(text)].sort((a, b) => b - a);
+        return (values[0] + 0.05) / (values[1] + 0.05);
+      });
+      expect(contrast).toBeGreaterThanOrEqual(4.5);
+      await ownerShare.screenshot({ path: `test-results/native-workspace/owner-share-${width}-${theme}.png` });
+    }
     const visitor = await other.newPage();
     await visitor.goto(shareUrl);
     await expect(visitor.getByRole('heading', { name: 'This share is private' })).toBeVisible();
@@ -368,7 +402,7 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   }
 
   await page.reload();
-  await openPersistedConversation(page, { id: sessionId, title: prompt, reply });
+  await openPersistedConversation(page, { id: sessionId, title: savedTitle!, reply });
   await expect(answer.getByText('$1,000', { exact: true })).toBeVisible();
   await send(followUp);
   await expect(page.getByRole('region', { name: 'Answer', exact: true }).getByText(followUpReply, { exact: true })).toBeVisible();
