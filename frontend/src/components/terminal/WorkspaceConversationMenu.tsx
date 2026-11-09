@@ -63,9 +63,10 @@ export function WorkspaceConversationMenu() {
   const displayTitle = sessionRestoring ? 'Opening conversation…' : activeTitle;
   // Context prefix only for active GitHub or project work. Other recent chats
   // display their conversation title directly, with no artificial label.
-  const contextPrefix = activeRepo ? `Repo · ${activeRepo.split('/').pop() || activeRepo}` :
+  const contextPrefix = activeRepo ? `Repo · ${(activeRepo.split('/').pop() || activeRepo).replace(/-20\d{6}-\d{6}$/, '')}` :
     projectName ? `Project · ${projectName}` : '';
-  const headerTitle = contextPrefix ? `${contextPrefix} / ${displayTitle}` : displayTitle;
+  const headerTitle = displayTitle === 'New chat' && contextPrefix ? contextPrefix : displayTitle;
+  const headerTooltip = contextPrefix ? `${contextPrefix} / ${displayTitle}` : displayTitle;
 
   const closeMenu = useCallback(() => {
     setOpen(false);
@@ -283,7 +284,7 @@ export function WorkspaceConversationMenu() {
   return (
     <div className={styles.root} data-testid="workspace-conversation-menu">
       <button ref={anchorRef} type="button" className={styles.trigger}
-        title={headerTitle}
+        title={headerTooltip}
         aria-label={`Conversation: ${headerTitle}. Open conversation actions`}
         aria-expanded={open} aria-haspopup="menu"
         onClick={() => setOpen((value) => !value)}>
@@ -291,11 +292,11 @@ export function WorkspaceConversationMenu() {
         <ChevronDown size={15} aria-hidden="true" className={open ? styles.chevronOpen : styles.chevron} />
       </button>
       <AnchoredPortalPopover open={open} onClose={closeMenu} anchorRef={anchorRef}
-        width={318} placement="bottom-start" ariaLabel="Conversation actions" className={styles.popover}>
+        width={306} placement="bottom-start" ariaLabel="Conversation actions" className={styles.popover}>
         <div className={styles.actionPane}>
           {activeRepo ? <WorkspaceIdentityMenu embedded onAction={closeMenu} /> : null}
           <div className={styles.compactHeading}>
-            <span className={styles.compactLabel} title={displayTitle}>Conversation actions</span>
+            <span className={styles.compactLabel} title={displayTitle}>Conversation</span>
             {accountId && currentEntry && messages.length && !fetching ? (
               <div className={styles.compactTools}>
                 <button role="menuitem" type="button" title="Rename conversation" aria-label="Rename conversation"
@@ -393,7 +394,7 @@ export function WorkspaceConversationMenu() {
                   onClick={() => void shareLink('copy')}><Copy size={15} aria-hidden="true" /><span>Copy link</span></button>
                 <button role="menuitem" type="button" className={styles.quickAction} disabled={!canManage}
                   title="Open in new tab" aria-label="Open in new tab"
-                  onClick={() => void shareLink('open')}><ExternalLink size={15} aria-hidden="true" /><span>Open tab</span></button>
+                  onClick={() => void shareLink('open')}><ExternalLink size={15} aria-hidden="true" /><span>Open</span></button>
               </div>
               <div role="separator" className={styles.actionDivider} />
               <div className={styles.bottomActions}>

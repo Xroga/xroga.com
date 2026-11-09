@@ -222,3 +222,59 @@
 .bottomActions { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:3px; }
 .bottomActions .subAction { justify-content:center; }
 @media (max-width:410px) { .compactHeading { min-height:31px; } }
+
+/* Opaque, compact popup: portal is mounted under body, not the workspace shell. */
+.popover {
+  --foreground: #f0f1f2;
+  --muted: #a4a8af;
+  --card-border: rgba(255,255,255,.11);
+  --accent-dim: rgba(255,255,255,.075);
+  --destructive: #e67873;
+  box-sizing: border-box;
+  padding: 7px;
+  font-family: var(--font-inter, Inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  background: #191a1d;
+  color: var(--foreground);
+  border: 1px solid rgba(255,255,255,.13);
+  border-radius: 14px;
+  box-shadow: 0 14px 40px rgba(0,0,0,.3), 0 2px 8px rgba(0,0,0,.12);
+}
+:global(body.theme-white) .popover {
+  --foreground: #1c2025;
+  --muted: #67707a;
+  --card-border: rgba(23,30,40,.12);
+  --accent-dim: rgba(23,30,40,.065);
+  --destructive: #bb3840;
+  background: #fff;
+  border-color: rgba(23,30,40,.14);
+  box-shadow: 0 14px 40px rgba(28,31,38,.12);
+}
+:global(body.theme-beige) .popover {
+  --foreground: #2b2925;
+  --muted: #786e60;
+  --card-border: rgba(57,47,34,.13);
+  --accent-dim: rgba(57,47,34,.065);
+  --destructive: #b33e36;
+  background: #f8f4ec;
+  border-color: rgba(57,47,34,.16);
+}
+:global(body.theme-gray) .popover { background: #242528; }
+.actionPane { max-height: min(76dvh, 420px); }
+.compactHeading { min-height: 31px; padding: 4px 8px 3px; }
+.compactLabel { font-size: 11px; text-transform: none; letter-spacing: 0; font-weight: 650; color: var(--muted); }
+.compactTools { gap: 2px; }
+.iconAction { width: 27px; height: 27px; border-radius: 7px; }
+.actionList { gap: 1px; padding: 1px 2px 4px; }
+.actionList .subAction { min-height: 32px; padding: 7px 9px; font-size: 11px; border-radius: 7px; }
+.actionDivider { margin: 4px 7px; background: var(--card-border); }
+.quickActions { gap: 3px; margin: 1px 0; }
+.quickAction { min-height: 32px; padding: 5px 2px; font-size: 11px; border-radius: 7px; }
+.quickAction > span { white-space: nowrap; }
+.bottomActions { gap: 4px; }
+.bottomActions .subAction { color: var(--muted); }
+.bottomActions .dangerText { color: var(--muted); }
+.bottomActions .dangerText:hover { background: rgba(220,65,65,.08); color: var(--destructive); }
+@media (max-width: 410px) {
+  .actionPane { max-height: min(70dvh, 420px); }
+  .popover { padding: 6px; }
+}
