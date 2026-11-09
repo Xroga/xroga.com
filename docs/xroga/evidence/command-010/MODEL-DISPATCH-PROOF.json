@@ -9,7 +9,7 @@
     {
       "path": "backend/src/ai/pipeline.ts",
       "historicalSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
-      "currentSha256": "c5eee2fd7ac3c6211e1e0b53fa516357ef110a07504ff45c29111a4b5dbe6f43",
+      "currentSha256": "07ab1714a6f3d3559d546e2172016cca626482f7a31857904f249fb27b1103af",
       "genericSdkPreviousCurrentBinding": {
         "reference": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
         "sha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
@@ -24,8 +24,8 @@
         "944a58bb15dca85b3ddd"
       ],
       "afterIds": [
-        "7dc867931d0d296911dc",
-        "b11f02479d5943c73413"
+        "5b543818a91ad0c16240",
+        "9ed969847167feb788b9"
       ],
       "unchangedNearestBlockSha256": [
         "121ecd46287fd271b61cc97e84d2b17dce2570e8b82f7a6bdf77a6e4b7133436",
@@ -4238,6 +4238,13 @@
           "bab7cb9676b8369a55a7"
         ],
         "basis": "Current hash and the current review ids were re-bound after the strict call-and-function comparison in REBIND-REPORT.json. The nearest-block hashes and every historical record are unchanged."
+      },
+      "beforeNativeWorkspaceRouting": {
+        "sourceSha256": "c5eee2fd7ac3c6211e1e0b53fa516357ef110a07504ff45c29111a4b5dbe6f43",
+        "afterIds": [
+          "7dc867931d0d296911dc",
+          "b11f02479d5943c73413"
+        ]
       }
     },
     {

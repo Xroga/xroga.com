@@ -287,7 +287,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "c5eee2fd7ac3c6211e1e0b53fa516357ef110a07504ff45c29111a4b5dbe6f43",
+      "sha256": "07ab1714a6f3d3559d546e2172016cca626482f7a31857904f249fb27b1103af",
       "previousGenericSdkBinding": {
         "sha256": "e5b3b4a3dc538e708fa8c005a8da6584db01b3dd425833373d59decbd2bfcb93",
         "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
@@ -563,7 +563,11 @@
         "scope": "PRESERVED_PREVIOUS_SOURCE_BINDING_NOT_NEW_EXECUTION_PROOF"
       },
       "richShareCorrectionReview": "Only existing negative-completion review receives the actual answer text. Source review confirms unchanged persistence expressions, authority and model transport.",
-      "previousSha256": "fa67a6ccaaca85b55c30405833f4f52cbe1959ed401b0de682f5567a9ad6c645"
+      "previousSha256": "fa67a6ccaaca85b55c30405833f4f52cbe1959ed401b0de682f5567a9ad6c645",
+      "beforeNativeWorkspaceRouting": {
+        "sourceSha256": "c5eee2fd7ac3c6211e1e0b53fa516357ef110a07504ff45c29111a4b5dbe6f43",
+        "scope": "Only chat presentation and use of the existing dispatch cap/revalidation changed. No additional outbound transport or authority."
+      }
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
