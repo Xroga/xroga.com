@@ -1063,9 +1063,9 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "0f2209ef1fbf0b7613a5ce964a3df5cf5df7ce4bff51160b0850c1bc2be2e016",
+      "sourceSha256": "c5eee2fd7ac3c6211e1e0b53fa516357ef110a07504ff45c29111a4b5dbe6f43",
       "callIds": [
-        "d431d5067a3873deb9cb"
+        "7dc867931d0d296911dc"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -2557,13 +2557,20 @@
           "4431005001a8d288051f"
         ],
         "scope": "Exact runBuildPipeline body unchanged; only existing built-in array conversions reindexed."
+      },
+      "nativeOpenUiAuthorizationReviewRebinding": {
+        "sourceSha256": "0f2209ef1fbf0b7613a5ce964a3df5cf5df7ce4bff51160b0850c1bc2be2e016",
+        "callIds": [
+          "d431d5067a3873deb9cb"
+        ],
+        "scope": "Same worker body and reviewed built-in Array.from expression. Native chat output review is separate."
       }
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "0f2209ef1fbf0b7613a5ce964a3df5cf5df7ce4bff51160b0850c1bc2be2e016",
+      "sourceSha256": "c5eee2fd7ac3c6211e1e0b53fa516357ef110a07504ff45c29111a4b5dbe6f43",
       "callIds": [
-        "1f158fd95dae861dc678"
+        "b11f02479d5943c73413"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -4055,6 +4062,13 @@
           "ce02ccc6a928e44634de"
         ],
         "scope": "Exact runBuildPipeline body unchanged; only existing built-in array conversions reindexed."
+      },
+      "nativeOpenUiAuthorizationReviewRebinding": {
+        "sourceSha256": "0f2209ef1fbf0b7613a5ce964a3df5cf5df7ce4bff51160b0850c1bc2be2e016",
+        "callIds": [
+          "1f158fd95dae861dc678"
+        ],
+        "scope": "Same worker body and reviewed built-in Array.from expression. Native chat output review is separate."
       }
     },
     {

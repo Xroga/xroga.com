@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "0266cfafe1daf991db9a69d0ee45c1fbb241a199",
+  "source_sha": "5a05b213e1b881935707004ff21c3e7f7673ab63",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -16500,6 +16500,10 @@
       "sha256": "c0e3624914c0c5a359dbf8ecdb951c7031513bf4766fe0eeb56668cf3a3720e1"
     },
     {
+      "path": "backend/src/ai/answerAuthorizationReview.ts",
+      "sha256": "b59ee59d403a4ab8776da6cc5e89530b9084063f442d6a19b94c6aa842fc9692"
+    },
+    {
       "path": "backend/src/ai/answerCoverage.ts",
       "sha256": "9519e49f2e29f272f5ba02f1593696bf205097e9d3cec904680da1b7eb6660a3"
     },
@@ -16657,7 +16661,7 @@
     },
     {
       "path": "backend/src/ai/completionDiagnostics.ts",
-      "sha256": "76634e478f5a4d14f7db7544084830115a9c823120d2a0aff1dd3106a9c116f9"
+      "sha256": "ea09be5d0e57692e5d3c17dd27cb34e38c4127439fe2402fa9b74f82daa0a045"
     },
     {
       "path": "backend/src/ai/contextPreparation.ts",
@@ -16757,7 +16761,7 @@
     },
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
-      "sha256": "382e4d1d9076a23b364fdaa2aff3dfb52694fecc44e4f78cdca43bbd1a478938"
+      "sha256": "f8d09e77d8ad782562127c3be637a2bdf29ae9089992ce6e66fedecb7dbed98a"
     },
     {
       "path": "backend/src/ai/nativeOpenUiPrompt.ts",
@@ -16801,7 +16805,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "0f2209ef1fbf0b7613a5ce964a3df5cf5df7ce4bff51160b0850c1bc2be2e016"
+      "sha256": "c5eee2fd7ac3c6211e1e0b53fa516357ef110a07504ff45c29111a4b5dbe6f43"
     },
     {
       "path": "backend/src/ai/postCompletionAccounting.ts",
@@ -18245,7 +18249,7 @@
     },
     {
       "path": "backend/src/routes/nativeOpenUiEvaluation.ts",
-      "sha256": "523af8a3dd239d8f76fdd6d008f4a91793b1663b5047d60d2e7d72994e9415df"
+      "sha256": "084057de3ee446190bda8b01d7ba5c45287da102f8e65e3977eff5777deb3515"
     },
     {
       "path": "backend/src/routes/notifications.ts",
@@ -21853,7 +21857,7 @@
     },
     {
       "path": "frontend/src/components/native-openui/NativeWorkspaceAnswer.tsx",
-      "sha256": "741e571dfadad29a74f7f1f292cb42967ebc9ba2ab7f44042a578de1708e6f9f"
+      "sha256": "5b9e4be204691a6da04ba9a853c92371e13194f7f9101abdd7570d4639cbb1ee"
     },
     {
       "path": "frontend/src/components/native-openui/Resources.tsx",
@@ -25166,7 +25170,7 @@
       "hostname": "github.com",
       "protocol": "https:",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4097,
+      "line": 4100,
       "credentialsInUrl": false
     },
     {
@@ -31970,13 +31974,6 @@
     },
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
-      "line": 9,
-      "scope": "MODULE_LIFETIME",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "backend/src/ai/nativeOpenUi.ts",
       "line": 10,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
@@ -31998,28 +31995,42 @@
     },
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
-      "line": 34,
+      "line": 13,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/nativeOpenUi.ts",
+      "line": 35,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
-      "line": 51,
+      "line": 52,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
-      "line": 73,
+      "line": 60,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
-      "line": 90,
+      "line": 75,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/nativeOpenUi.ts",
+      "line": 94,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -32236,35 +32247,35 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 1552,
+      "line": 1555,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 2304,
+      "line": 2307,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3863,
+      "line": 3866,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4047,
+      "line": 4050,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4826,
+      "line": 4829,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

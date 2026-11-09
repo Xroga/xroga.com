@@ -1,4 +1,5 @@
 import { createParser, parseExpression, split, tokenize, type ASTNode, type LibraryJSONSchema } from '@openuidev/lang-core';
+import { requiresAuthorizationReview } from './answerAuthorizationReview.js';
 import catalog from './nativeOpenUiCatalog.json' with { type: 'json' };
 
 export const NATIVE_UI_FORMAT = 'xroga-openui-v1' as const;
@@ -25,7 +26,7 @@ export function splitNativeOpenUiAnswer(raw: string, streaming = false) {
   return { text: text.trim(), program: '' };
 }
 
-export type NativeUiValidation = { ok: true } | { ok: false; reason: 'budget' | 'syntax' | 'authority' | 'reference' | 'schema' };
+export type NativeUiValidation = { ok: true } | { ok: false; reason: 'budget' | 'syntax' | 'authority' | 'reference' | 'schema' | 'authorization_review' };
 const reject = (reason: Extract<NativeUiValidation, { ok: false }>['reason']): NativeUiValidation => ({ ok: false, reason });
 
 /** Audit all statements, including unreachable ones, before letting the upstream
@@ -56,6 +57,7 @@ export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<s
     }
     if (symbols.get('root')?.k !== 'Comp') return reject('syntax');
     let budget = 6000;
+    const reviewStrings = new Set<string>();
     let reason: Extract<NativeUiValidation, { ok: false }>['reason'] = 'authority';
     function visit(node: ASTNode, active: Set<string>, depth = 0): boolean {
       if (--budget < 0 || depth > 28) { reason = 'budget'; return false; }
@@ -80,7 +82,9 @@ export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<s
         case 'Member': return safeKey(node.field) && next(node.obj);
         case 'Index': return node.index.k === 'Num' && node.index.v >= 0 && next(node.obj);
         case 'Num': return Number.isFinite(node.v) && Math.abs(node.v) <= 1e15;
-        case 'Str': return node.v.length <= 8000;
+        case 'Str':
+          reviewStrings.add(node.v);
+          return node.v.length <= 8000;
         case 'Bool': case 'Null': return true;
         default: return false;
       }
@@ -92,6 +96,7 @@ export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<s
     const result = parseProgram.parse(program);
     if (result.queryStatements.length || result.mutationStatements.length) return reject('authority');
     if (!result.root || result.root.typeName !== 'Col' || result.meta.incomplete || result.meta.unresolved.length || result.meta.errors.length) return reject('schema');
+    if (requiresAuthorizationReview([...reviewStrings].join('\n'))) return reject('authorization_review');
     return { ok: true };
   } catch { return reject('syntax'); }
 }

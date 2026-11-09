@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "125d9d6ae46cd46dac1fcadc00131947cd845acecf54b48b372146115dc722e8",
+  "reviewRegistrySha256": "aa31c0b7dc7ed25026a80f10e2beabbacae2fe0871ce96c8dc118fddf5067969",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -3816,11 +3816,11 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "d431d5067a3873deb9cb"
+        "id": "7dc867931d0d296911dc"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "1f158fd95dae861dc678"
+        "id": "b11f02479d5943c73413"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -4760,7 +4760,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "8c574a8062192c013fb2"
+        "id": "cb11155bd22f1b8da332"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -6636,7 +6636,7 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "8c574a8062192c013fb2"
+        "id": "cb11155bd22f1b8da332"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -7400,11 +7400,11 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "d431d5067a3873deb9cb"
+        "id": "7dc867931d0d296911dc"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "1f158fd95dae861dc678"
+        "id": "b11f02479d5943c73413"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -11101,15 +11101,15 @@
       }
     },
     {
-      "id": "d431d5067a3873deb9cb",
+      "id": "7dc867931d0d296911dc",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3865,
+      "line": 3868,
       "enclosing": "runBuildPipeline",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "0f2209ef1fbf0b7613a5ce964a3df5cf5df7ce4bff51160b0850c1bc2be2e016",
+      "sourceSha256": "c5eee2fd7ac3c6211e1e0b53fa516357ef110a07504ff45c29111a4b5dbe6f43",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -11122,15 +11122,15 @@
       }
     },
     {
-      "id": "1f158fd95dae861dc678",
+      "id": "b11f02479d5943c73413",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4049,
+      "line": 4052,
       "enclosing": "runBuildPipeline",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "0f2209ef1fbf0b7613a5ce964a3df5cf5df7ce4bff51160b0850c1bc2be2e016",
+      "sourceSha256": "c5eee2fd7ac3c6211e1e0b53fa516357ef110a07504ff45c29111a4b5dbe6f43",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -19552,15 +19552,15 @@
       }
     },
     {
-      "id": "8c574a8062192c013fb2",
+      "id": "cb11155bd22f1b8da332",
       "path": "backend/src/routes/nativeOpenUiEvaluation.ts",
-      "line": 64,
+      "line": 65,
       "enclosing": "<module>",
       "kind": "RPC_CANDIDATE",
       "target": "current_community_role",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "523af8a3dd239d8f76fdd6d008f4a91793b1663b5047d60d2e7d72994e9415df"
+      "sourceSha256": "084057de3ee446190bda8b01d7ba5c45287da102f8e65e3977eff5777deb3515"
     },
     {
       "id": "95aca8562235b1b02997",

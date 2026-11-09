@@ -12,6 +12,8 @@
   "changedFiles": [
     "backend/package-lock.json",
     "backend/package.json",
+    "backend/src/ai/answerAuthorizationReview.ts",
+    "backend/src/ai/completionDiagnostics.ts",
     "backend/src/ai/nativeOpenUi.test.ts",
     "backend/src/ai/nativeOpenUi.ts",
     "backend/src/ai/nativeOpenUiCatalog.json",
@@ -26,6 +28,7 @@
     "docs/operations/native-openui/coverage.json",
     "docs/operations/native-openui/parity-benchmark.json",
     "docs/operations/native-openui/prompt-suite.json",
+    "frontend/next.config.mjs",
     "frontend/package-lock.json",
     "frontend/package.json",
     "frontend/src/app/native-answer-evaluation/page.tsx",

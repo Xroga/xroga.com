@@ -6,7 +6,7 @@ This inventory records static source and call-path evidence. A mounted endpoint 
 
 ## Counts
 
-- surfaces: 1895
+- surfaces: 1896
 - routeRegistrations: 383
 - routes: 320
 - reachableRoutes: 237
@@ -14,7 +14,7 @@ This inventory records static source and call-path evidence. A mounted endpoint 
 - migrations: 161
 - workflows: 21
 - testSuites: 1097
-- declaredTests: 7375
+- declaredTests: 7376
 - classifiedMarkers: 418
 - reachableMarkers: 352
 - absentRequiredPaths: 5

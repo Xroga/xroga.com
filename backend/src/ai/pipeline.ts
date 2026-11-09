@@ -1164,9 +1164,12 @@ export async function runChatPipeline(opts: {
 
   if (native) {
     const { text, program } = splitNativeOpenUiAnswer(result.text);
-    const valid = program && result.finishReason === 'stop' && validateNativeOpenUi(program, evidenceIds).ok;
+    const validation = program ? validateNativeOpenUi(program, evidenceIds) : undefined;
     const response = text || "Xroga couldn't finish the requested answer.";
-    const completion = publicCompletionState(result.finishReason, response);
+    const completion = validation?.ok === false && validation.reason === 'authorization_review'
+      ? { status: 'partial' as const, reason: 'authorization_review' as const }
+      : publicCompletionState(result.finishReason, response);
+    const valid = text && validation?.ok && completion.status === 'complete';
     opts.onDelta?.(response);
     return {
       response,

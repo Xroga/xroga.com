@@ -12,12 +12,13 @@ const Surface = lazy(() => import('./NativeSurface').then(module => ({ default: 
 export function readNativeWorkspaceAnswer(output: unknown): NativeAnswer | undefined {
   if ((output as { responseSource?: { format?: unknown } } | null)?.responseSource?.format !== 'xroga-openui-v1') return;
   const document = parseXrogaOutput(output);
-  if (document?.responseSource?.format !== 'xroga-openui-v1' || !document.sourceText) return;
+  // The existing output view carries warnings and trusted sources on incomplete answers.
+  if (document?.responseSource?.format !== 'xroga-openui-v1' || document.status !== 'completed' || !document.sourceText) return;
   return {
     format: 'xroga-openui-v1',
     library: 'xroga-native-v1',
     text: document.sourceText,
-    ...(document.status === 'completed' && document.responseSource.text ? { program: document.responseSource.text } : {}),
+    ...(document.responseSource.text ? { program: document.responseSource.text } : {}),
   };
 }
 

@@ -39,6 +39,14 @@ test('untrusted UI cannot confer authority, invent evidence, or exhaust parser r
   assert.deepEqual(validateNativeOpenUi('root = Col([Source("s1")])', new Set(['s1'])), { ok: true });
 });
 
+test('native visual text receives the same unsafe authorization review as prose', () => {
+  const unsafe = 'root = Col([Text("A service-role session enforces tenant RLS.")])';
+  const safe = 'root = Col([Text("A service-role key can bypass RLS. Never expose it to browsers.")])';
+  assert.deepEqual(validateNativeOpenUi(unsafe), { ok: false, reason: 'authorization_review' });
+  assert.deepEqual(validateNativeOpenUi(safe), { ok: true });
+  assert.equal(buildNativeOpenUiShare('Read the security diagram.', unsafe), undefined);
+});
+
 test('the paid evaluator rejects non-staging, expired, repeated, and over-budget slots', () => {
   const now = Date.parse('2026-11-09T09:00:00Z');
   const first = { id: '01000000-0000-4000-8000-000000000001', label: 'Short answer', prompt: 'What is a tenant?' };

@@ -248,6 +248,59 @@
   ],
   "surfaces": [
     {
+      "id": "surface:c2fccc0bef93801eb55a",
+      "subsystem": "ai_execution",
+      "sourcePath": "backend/src/ai/answerAuthorizationReview.ts",
+      "sha256": "b59ee59d403a4ab8776da6cc5e89530b9084063f442d6a19b94c6aa842fc9692",
+      "symbols": [
+        "clientBillingAuthority",
+        "clientTenantAuthority",
+        "derivesTenantFromJwt",
+        "mentionsCurrentMembership",
+        "prose",
+        "requiresAuthorizationReview",
+        "sentences",
+        "serviceRoleSession"
+      ],
+      "imports": [],
+      "runtimeImports": [],
+      "entryPoints": [
+        "backend/src/index.ts",
+        "frontend/src/app/(workspace)/workspace/page.tsx",
+        "frontend/src/app/native-answer-evaluation/page.tsx",
+        "frontend/src/app/share/[token]/page.tsx",
+        "scripts/security/verify-oci-federation.ts"
+      ],
+      "callers": [
+        "backend/src/ai/completionDiagnostics.ts:2",
+        "backend/src/ai/nativeOpenUi.ts:2",
+        "backend/src/routes/nativeOpenUiEvaluation.ts:11"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [
+        "backend/src/ai/answerAuthorizationReview.ts#clientBillingAuthority",
+        "backend/src/ai/answerAuthorizationReview.ts#clientTenantAuthority",
+        "backend/src/ai/answerAuthorizationReview.ts#requiresAuthorizationReview"
+      ],
+      "tenantBoundary": [],
+      "approvalBoundary": [
+        "backend/src/ai/answerAuthorizationReview.ts#requiresAuthorizationReview"
+      ],
+      "costBoundary": [
+        "backend/src/ai/answerAuthorizationReview.ts#clientBillingAuthority"
+      ],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:65cb0aba3b036f66089f",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/answerCoverage.ts",
@@ -3192,33 +3245,27 @@
       "id": "surface:ef3623f65fc045e92013",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/completionDiagnostics.ts",
-      "sha256": "76634e478f5a4d14f7db7544084830115a9c823120d2a0aff1dd3106a9c116f9",
+      "sha256": "ea09be5d0e57692e5d3c17dd27cb34e38c4127439fe2402fa9b74f82daa0a045",
       "symbols": [
         "CompletionDiagnostics",
         "choice",
         "choices",
-        "clientBillingAuthority",
-        "clientTenantAuthority",
         "cost",
         "count",
-        "derivesTenantFromJwt",
         "key",
-        "mentionsCurrentMembership",
         "message",
-        "prose",
         "providerCostMicroUsd",
         "publicCompletionState",
         "receipt",
         "requirePublicCompletion",
-        "requiresAuthorizationReview",
-        "sentences",
-        "serviceRoleSession",
         "value"
       ],
       "imports": [
+        "./answerAuthorizationReview.js",
         "./postCompletionAccounting.js"
       ],
       "runtimeImports": [
+        "backend/src/ai/answerAuthorizationReview.ts",
         "backend/src/ai/postCompletionAccounting.ts"
       ],
       "entryPoints": [
@@ -3236,8 +3283,6 @@
       "persistenceDependencies": [],
       "externalProviderDependencies": [],
       "authBoundary": [
-        "backend/src/ai/completionDiagnostics.ts#clientBillingAuthority",
-        "backend/src/ai/completionDiagnostics.ts#clientTenantAuthority",
         "backend/src/ai/completionDiagnostics.ts#requiresAuthorizationReview"
       ],
       "tenantBoundary": [],
@@ -3245,7 +3290,6 @@
         "backend/src/ai/completionDiagnostics.ts#requiresAuthorizationReview"
       ],
       "costBoundary": [
-        "backend/src/ai/completionDiagnostics.ts#clientBillingAuthority",
         "backend/src/ai/completionDiagnostics.ts#cost",
         "backend/src/ai/completionDiagnostics.ts#providerCostMicroUsd"
       ],
@@ -5113,7 +5157,7 @@
       "id": "surface:456e62cb099b42e5c2a2",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUi.ts",
-      "sha256": "382e4d1d9076a23b364fdaa2aff3dfb52694fecc44e4f78cdca43bbd1a478938",
+      "sha256": "f8d09e77d8ad782562127c3be637a2bdf29ae9089992ce6e66fedecb7dbed98a",
       "symbols": [
         "MAX_PROGRAM_CHARS",
         "NATIVE_UI_FORMAT",
@@ -5134,6 +5178,7 @@
         "reason",
         "reject",
         "result",
+        "reviewStrings",
         "safeKey",
         "splitNativeOpenUiAnswer",
         "statement",
@@ -5147,10 +5192,12 @@
         "visit"
       ],
       "imports": [
+        "./answerAuthorizationReview.js",
         "./nativeOpenUiCatalog.json",
         "@openuidev/lang-core"
       ],
       "runtimeImports": [
+        "backend/src/ai/answerAuthorizationReview.ts",
         "backend/src/ai/nativeOpenUiCatalog.json"
       ],
       "entryPoints": [
@@ -5164,7 +5211,7 @@
         "backend/src/ai/nativeOpenUi.test.ts:3",
         "backend/src/ai/nativeOpenUiShare.ts:2",
         "backend/src/ai/pipeline.ts:25",
-        "backend/src/routes/nativeOpenUiEvaluation.ts:12",
+        "backend/src/routes/nativeOpenUiEvaluation.ts:13",
         "frontend/src/components/native-openui/NativeSurface.tsx:7"
       ],
       "reachable": true,
@@ -5172,9 +5219,13 @@
       "externalProviderDependencies": [
         "@openuidev/lang-core"
       ],
-      "authBoundary": [],
+      "authBoundary": [
+        "backend/src/ai/nativeOpenUi.ts#requiresAuthorizationReview"
+      ],
       "tenantBoundary": [],
-      "approvalBoundary": [],
+      "approvalBoundary": [
+        "backend/src/ai/nativeOpenUi.ts#requiresAuthorizationReview"
+      ],
       "costBoundary": [
         "backend/src/ai/nativeOpenUi.ts#budget"
       ],
@@ -5211,7 +5262,7 @@
       "callers": [
         "backend/src/ai/nativeOpenUi.test.ts:4",
         "backend/src/ai/pipeline.ts:26",
-        "backend/src/routes/nativeOpenUiEvaluation.ts:13"
+        "backend/src/routes/nativeOpenUiEvaluation.ts:14"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -5253,7 +5304,7 @@
       ],
       "callers": [
         "backend/src/ai/nativeOpenUi.test.ts:6",
-        "backend/src/routes/nativeOpenUiEvaluation.ts:14",
+        "backend/src/routes/nativeOpenUiEvaluation.ts:15",
         "frontend/src/app/native-answer-evaluation/page.tsx:4"
       ],
       "reachable": true,
@@ -6186,7 +6237,7 @@
       "id": "surface:90932fa247bf4ae28450",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/pipeline.ts",
-      "sha256": "0f2209ef1fbf0b7613a5ce964a3df5cf5df7ce4bff51160b0850c1bc2be2e016",
+      "sha256": "c5eee2fd7ac3c6211e1e0b53fa516357ef110a07504ff45c29111a4b5dbe6f43",
       "symbols": [
         "ARCHITECT_MS",
         "BUILDER_FALLBACKS",
@@ -12908,7 +12959,7 @@
         "backend/src/ai/universal/semanticRequestPlanner.test.ts:32",
         "backend/src/ai/universal/semanticRequestPlanner.ts:59",
         "backend/src/e2e/xrogaGoldenJourneys.test.ts:19",
-        "backend/src/routes/nativeOpenUiEvaluation.ts:11",
+        "backend/src/routes/nativeOpenUiEvaluation.ts:12",
         "backend/src/routes/phase1.ts:52"
       ],
       "reachable": true,
@@ -30269,7 +30320,7 @@
       "id": "surface:441ecd64fae023b97502",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/nativeOpenUiEvaluation.ts",
-      "sha256": "523af8a3dd239d8f76fdd6d008f4a91793b1663b5047d60d2e7d72994e9415df",
+      "sha256": "084057de3ee446190bda8b01d7ba5c45287da102f8e65e3977eff5777deb3515",
       "symbols": [
         "body",
         "bodySchema",
@@ -30298,6 +30349,7 @@
         "verifyFounder"
       ],
       "imports": [
+        "../ai/answerAuthorizationReview.js",
         "../ai/models.js",
         "../ai/nativeOpenUi.js",
         "../ai/nativeOpenUiPrompt.js",
@@ -30314,6 +30366,7 @@
         "zod"
       ],
       "runtimeImports": [
+        "backend/src/ai/answerAuthorizationReview.ts",
         "backend/src/ai/models.ts",
         "backend/src/ai/nativeOpenUi.ts",
         "backend/src/ai/nativeOpenUiPrompt.ts",
@@ -30341,10 +30394,13 @@
       ],
       "authBoundary": [
         "backend/src/routes/nativeOpenUiEvaluation.ts#authMiddleware",
-        "backend/src/routes/nativeOpenUiEvaluation.ts#identity"
+        "backend/src/routes/nativeOpenUiEvaluation.ts#identity",
+        "backend/src/routes/nativeOpenUiEvaluation.ts#requiresAuthorizationReview"
       ],
       "tenantBoundary": [],
-      "approvalBoundary": [],
+      "approvalBoundary": [
+        "backend/src/routes/nativeOpenUiEvaluation.ts#requiresAuthorizationReview"
+      ],
       "costBoundary": [
         "backend/src/routes/nativeOpenUiEvaluation.ts#actualProviderCostMicroUsd",
         "backend/src/routes/nativeOpenUiEvaluation.ts#withTenantModelReservation"
@@ -40698,8 +40754,8 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:3874",
         "backend/src/ai/pipeline.ts:3877",
+        "backend/src/ai/pipeline.ts:3880",
         "backend/src/ai/projectMemory.ts:7",
         "backend/src/ai/sessionMemory.ts:7",
         "backend/src/builder/providerTransports.ts:10",
@@ -40972,7 +41028,7 @@
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:126",
-        "backend/src/ai/pipeline.ts:3873",
+        "backend/src/ai/pipeline.ts:3876",
         "backend/src/ai/tenantModelDispatch.ts:6",
         "backend/src/config/supabaseTransport.security.test.ts:6",
         "backend/src/routes/integrations.ts:19",
@@ -56816,7 +56872,7 @@
       "id": "surface:00069db1d185a39243c5",
       "subsystem": "frontend",
       "sourcePath": "frontend/next.config.mjs",
-      "sha256": "15aa726c269bef1f557a8a5924a9e42d23aff6d1d9dea284c283866ea6956458",
+      "sha256": "daeb5a48b0dea31da2dd078e8d28f3d4d9b66ff27a5087cf91ba967d042dc5aa",
       "symbols": [
         "BROWSER_EMPLOYEES_DEMO_SOURCE",
         "CLARITY_DEMO_SOURCE",
@@ -56843,7 +56899,8 @@
         "./redirects.mjs",
         "./src/lib/supabase/authBuildRealm.mjs",
         "./src/lib/untrustedProxyResponsePolicy.mjs",
-        "node:fs"
+        "node:fs",
+        "node:url"
       ],
       "runtimeImports": [
         "frontend/redirects.mjs",
@@ -56870,7 +56927,8 @@
         "declared-host:www.clarity.ms",
         "declared-host:www.googletagmanager.com",
         "declared-host:xroga-drive-prod.f14d36fd540c59ad410272122edc1a7e.r2.cloudflarestorage.com",
-        "node:fs"
+        "node:fs",
+        "node:url"
       ],
       "authBoundary": [
         "frontend/next.config.mjs#authBuildConfiguration",
@@ -85908,7 +85966,7 @@
       "id": "surface:1815fe3ed39eb8d357c4",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/NativeWorkspaceAnswer.tsx",
-      "sha256": "741e571dfadad29a74f7f1f292cb42967ebc9ba2ab7f44042a578de1708e6f9f",
+      "sha256": "5b9e4be204691a6da04ba9a853c92371e13194f7f9101abdd7570d4639cbb1ee",
       "symbols": [
         "NativeWorkspaceAnswer",
         "Surface",
@@ -113186,7 +113244,7 @@
       ],
       "entryPoints": [],
       "callers": [
-        "frontend/next.config.mjs:3",
+        "frontend/next.config.mjs:4",
         "frontend/src/lib/supabase/authBuildRealm.test.ts:3",
         "frontend/src/lib/supabase/stagingAuthBuild.test.ts:3"
       ],
@@ -115642,7 +115700,7 @@
         "frontend/src/app/api/site-icon/route.ts"
       ],
       "callers": [
-        "frontend/next.config.mjs:4",
+        "frontend/next.config.mjs:5",
         "frontend/src/lib/untrustedProxyConfig.test.ts:3",
         "frontend/src/lib/untrustedProxyResponse.ts:2"
       ],
@@ -130468,9 +130526,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:fd1e6f86b22ad4682c43",
+      "id": "registration:c3e34ac06277f0ad9427",
       "sourcePath": "backend/src/routes/nativeOpenUiEvaluation.ts",
-      "line": 26,
+      "line": 27,
       "receiver": "router",
       "method": "post",
       "path": "/evaluate",
@@ -132687,10 +132745,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:77f137c12d904b851130",
-      "registrationId": "registration:fd1e6f86b22ad4682c43",
+      "id": "route:cec87a6e383be6fb8c28",
+      "registrationId": "registration:c3e34ac06277f0ad9427",
       "sourcePath": "backend/src/routes/nativeOpenUiEvaluation.ts",
-      "line": 26,
+      "line": 27,
       "method": "POST",
       "path": "/api/native-openui/evaluate",
       "mountChain": [
@@ -146633,7 +146691,7 @@
     {
       "id": "test-suite:2e491f4d2fcbc11f974c",
       "sourcePath": "backend/src/ai/nativeOpenUi.test.ts",
-      "declaredTests": 5,
+      "declaredTests": 6,
       "skipLocations": [],
       "focusLocations": []
     },

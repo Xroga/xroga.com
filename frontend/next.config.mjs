@@ -1,5 +1,6 @@
 import { nextRedirects } from './redirects.mjs';
 import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import { resolveAuthBuildConfiguration } from './src/lib/supabase/authBuildRealm.mjs';
 import {browserProxyHeaders,imageProxyHeaders} from './src/lib/untrustedProxyResponsePolicy.mjs';
 const stagingManifest=process.env.XROGA_STAGING_AUTH_BUILD==='1'?JSON.parse(readFileSync(process.env.XROGA_STAGING_MANIFEST_PATH??'', 'utf8')):undefined;
@@ -117,6 +118,14 @@ const nextConfig = {
   // Runtime hosting URLs/body/query parameters cannot redirect credentials.
   env: { NEXT_PUBLIC_XROGA_AUTH_PROJECT_REF: authBuildConfiguration.projectRef,NEXT_PUBLIC_XROGA_AUTH_BASE_URL:authBuildConfiguration.url },
   webpack(config, { isServer, webpack }) {
+    // The shared native validator is imported from backend source. With separate
+    // installs, its OpenUI dependency can otherwise resolve Zod 3's older v4
+    // compatibility entry. Keep all frontend v4 schemas on the frontend's
+    // pinned Zod 4. Unqualified Zod imports and the backend runtime are unchanged.
+    Object.assign(config.resolve.alias, {
+      'zod/v4$': fileURLToPath(import.meta.resolve('zod/v4')),
+      'zod/v4/core$': fileURLToPath(import.meta.resolve('zod/v4/core')),
+    });
     if (!isServer) {
       // PptxGenJS guards these Node-only imports at runtime, but webpack still
       // attempts to resolve their node: specifiers in the browser bundle.
