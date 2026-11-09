@@ -195,3 +195,12 @@
 @media (prefers-reduced-motion: reduce) {
   .groupChevron, .groupChevronOpen { transition: none; }
 }
+
+/* Workspace title dropdown now contains only current-conversation actions.
+   Keep it compact, keyboard reachable, and scrollable on short viewports. */
+.actionPane { max-height: min(78dvh, 550px); overflow-y: auto; overscroll-behavior: contain; }
+.actionList { display: flex; flex-direction: column; gap: 2px; padding: 5px 3px 7px; }
+.actionDivider { height: 1px; margin: 6px 9px; background: var(--card-border, rgba(255,255,255,.12)); }
+.actionList .subAction { min-height: 36px; }
+.actionList .subAction:focus-visible { outline: 2px solid var(--accent, #d5b67b); outline-offset: -2px; }
+@media (max-width: 410px) { .actionPane { max-height: min(70dvh, 550px); } }
