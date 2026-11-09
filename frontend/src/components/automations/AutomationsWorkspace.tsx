@@ -15,9 +15,11 @@ import {
 } from "lucide-react";
 import { useTerminalChat } from "@/context/TerminalChatContext";
 import { useWorkspaceIdentity } from "@/components/layout/WorkspaceIdentityContext";
-import { sections, packs, type Section } from "./catalog";
+import { sections, type Section } from "./catalog";
+import { curatedWorkPacks } from "./workPacksV2";
+import { WorkPacksGallery } from "./WorkPacksGallery";
 import { Activity, ActivityStrip, useRuns } from "./Activity";
-import { People, WorkPacks } from "./PeopleAndPacks";
+import { People } from "./PeopleAndPacks";
 import { Schedules } from "./Schedules";
 import { ConnectedAppAutomations } from "./ConnectedAppAutomations";
 import { BrowserStudio } from "./BrowserStudio";
@@ -287,27 +289,10 @@ function Workspace() {
             <a href="#work-packs">All Work Packs →</a>
           </div>
           <div className={styles.grid}>
-            {packs
-              .filter((p) =>
-                `${p.name} ${p.outcome}`
-                  .toLowerCase()
-                  .includes(search.toLowerCase()),
-              )
-              .slice(0, 3)
-              .map((p) => (
-                <a
-                  key={p.id}
-                  className={styles.card}
-                  href={`#work-packs/${p.id}`}
-                >
-                  <span className={styles.eyebrow}>
-                    {p.category} · Setup preview
-                  </span>
-                  <h3>{p.name}</h3>
-                  <p>{p.outcome}</p>
-                  <span>{p.employees.length} specialists · Guided setup →</span>
-                </a>
-              ))}
+            {curatedWorkPacks
+              .filter(p=>`${p.title} ${p.description}`.toLowerCase().includes(search.toLowerCase()))
+              .slice(0,3)
+              .map(p=><a key={p.id} className={styles.card} href={`#work-packs/${p.id}`}><span className={styles.eyebrow}>Work Pack · Guided setup</span><h3>{p.title}</h3><p>{p.description}</p><span>{p.requiredApps.length} apps · Explore →</span></a>)}
           </div>
           {!data.runs.length && <ActivityStrip data={data} />}
           <DraftSummary />
@@ -322,7 +307,7 @@ function Workspace() {
       {route.section === "scheduled-tasks" && <><ConnectedAppAutomations /><Schedules onSelect={select} /></>}
       {route.section === "ai-employees" && <People onSelect={select} />}
       {route.section === "work-packs" && (
-        <WorkPacks
+        <WorkPacksGallery
           key={route.detail || "catalog"}
           initialId={route.detail}
           onSelect={select}
