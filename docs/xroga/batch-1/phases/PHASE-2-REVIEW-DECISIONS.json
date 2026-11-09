@@ -2762,7 +2762,7 @@
       "relatedSourceBindings": [
         {
           "path": "backend/src/ai/pipeline.ts",
-          "sha256": "07ab1714a6f3d3559d546e2172016cca626482f7a31857904f249fb27b1103af",
+          "sha256": "6934fe9714e36e4caa8cbdb93cc6f26d8e00039163f1804214e1fd975ae26471",
           "nativeOpenUiSourceReview": {
             "previousSha256": "d3742ca4dccc50daf99aa71d9896449957dde73798dc6d7c2a9c5ca5536cff32",
             "finding": "The staging-only native OpenUI branch changes chat presentation and validates output after the same model dispatch and usage accounting. The full runBuildPipeline function and following worker source are byte-identical to the previously bound source. No admission, project ownership, checkpoint or worker proof changes.",
@@ -2781,6 +2781,10 @@
             "previousSha256": "c5eee2fd7ac3c6211e1e0b53fa516357ef110a07504ff45c29111a4b5dbe6f43",
             "scope": "Chat and attachments use existing metered dispatch. The worker body and its two reviewed local conversions remain byte-identical.",
             "liveAcceptance": false
+          },
+          "beforeNativePlainPrompt": {
+            "sourceSha256": "07ab1714a6f3d3559d546e2172016cca626482f7a31857904f249fb27b1103af",
+            "scope": "Only the instructions for high-confidence prose answers change. The worker body is byte-identical. Model dispatch, scope, reservation and settlement are unchanged. This rebind does not certify a live run."
           }
         },
         {

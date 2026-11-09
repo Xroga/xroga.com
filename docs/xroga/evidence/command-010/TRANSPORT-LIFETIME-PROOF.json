@@ -287,7 +287,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "07ab1714a6f3d3559d546e2172016cca626482f7a31857904f249fb27b1103af",
+      "sha256": "6934fe9714e36e4caa8cbdb93cc6f26d8e00039163f1804214e1fd975ae26471",
       "previousGenericSdkBinding": {
         "sha256": "e5b3b4a3dc538e708fa8c005a8da6584db01b3dd425833373d59decbd2bfcb93",
         "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
@@ -567,6 +567,10 @@
       "beforeNativeWorkspaceRouting": {
         "sourceSha256": "c5eee2fd7ac3c6211e1e0b53fa516357ef110a07504ff45c29111a4b5dbe6f43",
         "scope": "Only chat presentation and use of the existing dispatch cap/revalidation changed. No additional outbound transport or authority."
+      },
+      "beforeNativePlainPrompt": {
+        "sourceSha256": "07ab1714a6f3d3559d546e2172016cca626482f7a31857904f249fb27b1103af",
+        "scope": "Only the instructions for high-confidence prose answers change. The worker body is byte-identical. Model dispatch, scope, reservation and settlement are unchanged. This rebind does not certify a live run."
       }
     },
     {
@@ -608,7 +612,7 @@
     },
     {
       "path": "backend/src/ai/tenantModelDispatch.test.ts",
-      "sha256": "e410d125c211ca7c753cf0259e86a32f4472a7f7e75e54d18ebb2650ed768d9d",
+      "sha256": "0403decdadd5d6f6dbc7a61b1aad87f6927e2961e9f20fcf0b8d972bc27f8a96",
       "previousGenericSdkBinding": {
         "sha256": "acb7d3ee286d862c38e386380a20a7632415cd454510076abedca054016f2959",
         "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
@@ -621,7 +625,13 @@
           "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
         }
       },
-      "previousSha256": "e06c723425fbc538baf84a6110a41c04ab87c6af80d0fe3708a3c4f62780fbfc"
+      "previousSha256": "e06c723425fbc538baf84a6110a41c04ab87c6af80d0fe3708a3c4f62780fbfc",
+      "beforeNativeWorkspaceTests": {
+        "sha256": "e410d125c211ca7c753cf0259e86a32f4472a7f7e75e54d18ebb2650ed768d9d",
+        "reference": "3266b788188ca23518e4d03213ac125114ae92f6",
+        "archive": "docs/xroga/evidence/command-010/integration-20261029/tenantModelDispatch.test.ts-AT-3266b788.txt",
+        "scope": "Original regression snapshot retained. Current test adds opt-in native file, research, malformed source and plain response cases; historical evidence is not promoted."
+      }
     },
     {
       "path": "backend/src/ai/tenantModelDispatch.ts",
