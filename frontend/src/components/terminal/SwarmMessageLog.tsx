@@ -543,8 +543,8 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                         ) : null}
             </>;
             const nativeAnswer = msg.role === 'assistant' ? readNativeWorkspaceAnswer(msg.featureOutput) : undefined;
-            const nativeShare = nativeAnswer?.program
-              ? buildNativeOpenUiShare(nativeAnswer.text, nativeAnswer.program, msg.webSources) : undefined;
+            const nativeShare = nativeAnswer && (nativeAnswer.program || msg.webSources?.length)
+              ? buildNativeOpenUiShare(nativeAnswer.text, nativeAnswer.program ?? '', msg.webSources) : undefined;
             const answer = nativeAnswer ? (
               <ChatErrorBoundary>
                 <NativeWorkspaceAnswer answer={nativeAnswer} sources={msg.webSources} />

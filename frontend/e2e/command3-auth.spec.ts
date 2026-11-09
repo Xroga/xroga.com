@@ -106,7 +106,19 @@ test.beforeAll(async () => {
       kind: 'chat', status: 'complete', message_count: 2,
       messages: [
         { id: `${conversation.id}-input`, role: 'user', content: 'Isolated persisted conversation fixture', createdAt: Date.now() },
-        { id: `${conversation.id}-reply`, role: 'assistant', content: conversation.reply, createdAt: Date.now() },
+        { id: `${conversation.id}-reply`, role: 'assistant', content: conversation.reply, createdAt: Date.now(),
+          ...(key === 'second' ? { featureOutput: {
+            schemaVersion: 1,
+            id: `native-${conversation.id}`,
+            status: 'completed',
+            blocks: [],
+            sourceText: conversation.reply,
+            responseSource: { format: 'xroga-openui-v1', text: [
+              '$attendees = 40',
+              `root = Col([Text(${JSON.stringify(conversation.reply)}), Metric("Gross revenue", @Format($attendees * 25, "currency", 0, "USD")), Controls([Slider($attendees, 10, 80, 1, "Attendees"), Button("Reset", @Set($attendees, 40))], "Attendance")])`,
+            ].join('\n') },
+          } } : {}),
+        },
       ],
     })),
   ).select('user_id,id');
@@ -147,6 +159,13 @@ test('explicit hide preserves drafts without crossing real account and conversat
   await expect(composer).not.toHaveAttribute('data-draft-session', firstConversation!);
   await expect(header.getByRole('button', { name: 'Composer stays visible in a new workspace', exact: true })).toBeDisabled();
   await openPersistedConversation(page, conversations.second);
+  const nativeAnswer = page.getByRole('region', { name: 'Answer', exact: true });
+  const attendees = nativeAnswer.getByRole('slider', { name: 'Attendees' });
+  await expect(nativeAnswer.getByText('$1,000', { exact: true })).toBeVisible();
+  await attendees.press('End');
+  await expect(nativeAnswer.getByText('$2,000', { exact: true })).toBeVisible();
+  await nativeAnswer.getByRole('button', { name: 'Reset', exact: true }).click();
+  await expect(nativeAnswer.getByText('$1,000', { exact: true })).toBeVisible();
   await expect(composer).toHaveValue('');
   await composer.fill('');
   await header.getByRole('button', { name: 'Hide the chatbar', exact: true }).click();

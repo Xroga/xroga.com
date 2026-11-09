@@ -22,12 +22,14 @@
     "backend/src/ai/nativeOpenUiShare.ts",
     "backend/src/ai/pipeline.ts",
     "backend/src/index.ts",
+    "backend/src/lib/richShareSnapshot.test.ts",
     "backend/src/lib/richShareSnapshot.ts",
     "backend/src/routes/nativeOpenUiEvaluation.ts",
     "docs/operations/native-openui/ACCEPTANCE.md",
     "docs/operations/native-openui/coverage.json",
     "docs/operations/native-openui/parity-benchmark.json",
     "docs/operations/native-openui/prompt-suite.json",
+    "frontend/e2e/command3-auth.spec.ts",
     "frontend/e2e/phase4-admin-share.security.mjs",
     "frontend/next.config.mjs",
     "frontend/package-lock.json",
@@ -135,6 +137,12 @@
       "scope": "Browser fixtures across ten viewport and theme combinations with calculator, graph, accessibility and egress checks",
       "negative": true,
       "reference": "scripts/verify-native-openui-browser.mjs"
+    },
+    {
+      "command": "npx playwright test -c frontend/playwright.config.ts command3-auth.spec.ts",
+      "scope": "Disposable authenticated Workspace restores an OpenUI answer, updates and resets its calculator, and denies cross-account conversation access.",
+      "negative": true,
+      "reference": "frontend/e2e/command3-auth.spec.ts"
     }
   ],
   "architecture": {
@@ -145,7 +153,7 @@
   "rollout": "Standalone evaluation first under the approved four-call cap. Enable the Workspace switch only after the independently observed live gate and authorized staged release.",
   "rollback": "Unset evaluator configuration and the Workspace native generation switch. Restore previous frontend and API artifacts if required. Persisted answers retain readable prose.",
   "knownGaps": [
-    "Live DeepSeek is blocked by the missing approved staging-only Zurelay credential. The existing cloud secret is restricted to the production runtime.",
+    "Live DeepSeek needs the approved existing Zurelay secret bound by reference to the isolated staging candidate. The four-call model budget is authorized.",
     "Workspace and share are wired under the existing storage and access paths. Hosted end-to-end acceptance is pending.",
     "The tenant audit and mission source integrity checks pass. Source-bound staged authorization and tenant security observations are pending."
   ],
@@ -161,7 +169,7 @@
   "release": {
     "state": "BLOCKED",
     "blockers": [
-      "Dedicated isolated Zurelay credential, caller-scoped staging Auth configuration, exact-source CI and staged tenant security evidence remain outstanding."
+      "Isolated staging candidate, verified founder AAL2 session, exact-source CI and staged tenant security evidence remain outstanding."
     ],
     "authenticatedE2e": "BLOCKED",
     "stagedSecurity": "BLOCKED",

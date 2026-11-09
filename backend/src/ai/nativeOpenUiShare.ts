@@ -6,7 +6,7 @@ const shareLimit = 100_000;
 const snapshot = z.object({
   format: z.literal(NATIVE_UI_FORMAT),
   text: z.string().min(1).max(60_000),
-  program: z.string().min(1).max(MAX_PROGRAM_CHARS),
+  program: z.string().max(MAX_PROGRAM_CHARS),
   sources: z.array(z.object({ title: z.string().min(1).max(400), url: z.string().url().max(2048) }).strict()).max(30),
 }).strict();
 
@@ -21,7 +21,7 @@ export function readNativeOpenUiShare(value: string) {
       return !['https:', 'http:'].includes(parsedUrl.protocol) || parsedUrl.username || parsedUrl.password;
     })) return;
     const ids = new Set(sources.map((_, index) => 'source-' + (index + 1)));
-    if (validateNativeOpenUi(program, ids).ok) return parsed.data;
+    if (program ? validateNativeOpenUi(program, ids).ok : sources.length > 0) return parsed.data;
   } catch {
     // An invalid share is never executable UI.
   }
