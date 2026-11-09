@@ -49,8 +49,12 @@ test('drag paints adjacent panes directly and persists sidebar width only on rel
   assert.match(sidebar, /ref=\{sidebarFrameRef\}/);
   assert.match(sidebar, /ref=\{sidebarPanelRef\}/);
 });
-test('resize grip consists of strokes, not an obscuring background', () => {
-  assert.match(globalCss, /\.xv-sidebar-resize-handle > span \{[\s\S]*?repeating-linear-gradient/);
+test('sidebar resize has no six-dot ornament while drag and keyboard controls remain', () => {
+  assert.match(sidebar, /aria-label="Resize sidebar"/);
+  assert.match(sidebar, /onPointerDown=\{startResize\}/);
+  assert.match(sidebar, /onKeyDown=\{resizeWithKeyboard\}/);
+  assert.doesNotMatch(sidebar, /<span aria-hidden="true"\s*\/>\s*<\/div>\s*\) : null\}/);
+  assert.doesNotMatch(globalCss, /\.xv-sidebar-resize-handle > span \{/);
   assert.match(globalCss, /\.xv-sidebar-resize-handle \{[\s\S]*?background: transparent !important/);
   assert.match(globalCss, /\.xv-sidebar-edge-toggle:hover \{[\s\S]*?background: transparent/);
 });
