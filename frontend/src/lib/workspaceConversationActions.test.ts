@@ -8,18 +8,18 @@ const css = read('../components/terminal/WorkspaceConversationMenu.module.css');
 const context = read('../context/TerminalChatContext.tsx');
 const sidebar = read('../components/layout/SidebarProjectHistory.tsx');
 
-test('workspace title dropdown exposes compact Chats and Actions views, not a crowded flat action list', () => {
-  assert.match(menu, /role="tablist" aria-label="Conversation menu views"/);
-  assert.match(menu, /role="tab" aria-selected=\{tab === 'chats'\}/);
-  assert.match(menu, /role="tab" aria-selected=\{tab === 'actions'\}/);
-  assert.match(menu, /aria-expanded=\{expandedGroup === 'share'\}/);
-  assert.match(menu, /aria-expanded=\{expandedGroup === 'organize'\}/);
-  assert.match(menu, /aria-expanded=\{expandedGroup === 'more'\}/);
-  assert.match(menu, /setExpandedGroup\(\(previous\) => previous === group \? null : group\)/);
-  assert.doesNotMatch(menu, /Move to section|move-section/);
+test('workspace title dropdown directly exposes real conversation actions', () => {
+  assert.match(menu, /ariaLabel="Conversation actions"/);
+  assert.match(menu, /className=\{styles\.actionList\}/);
+  assert.match(menu, /beginEditor\('rename'\)/);
+  assert.match(menu, /beginEditor\('project'\)/);
+  assert.match(menu, /beginEditor\('archive'\)/);
+  assert.match(menu, /beginEditor\('delete'\)/);
+  assert.doesNotMatch(menu, /role="tablist"|Search recent chats|setTab\(/);
+  assert.doesNotMatch(menu, /New chat<\/button>|Move to section|move-section/);
 });
 
-test('workspace-only action groups contain real sharing, organization and management operations', () => {
+test('workspace direct actions reuse the existing sharing, organizing and management handlers', () => {
   for (const label of ['Share private link', 'Copy link', 'Open in new tab', 'Rename', 'Unpin', 'Pin', 'Move to project', 'Archive', 'Delete']) {
     assert.ok(menu.includes(label), `Missing action: ${label}`);
   }
@@ -47,10 +47,10 @@ test('destructive actions require confirmation, authorization, and do not restor
 test('the sidebar itself remains untouched and workspace actions are compact and accessible', () => {
   assert.match(sidebar, /<SidebarActionMenu/);
   assert.match(sidebar, /'move-section' as const/);
-  assert.match(css, /\.tabs\s*\{/);
-  assert.match(css, /\.groupButton\s*\{/);
+  assert.match(css, /\\.actionList\\s*\\{/);
+  assert.match(css, /\\.actionDivider\\s*\\{/);
   assert.match(css, /\.inlineEditor\s*\{/);
   assert.match(css, /\.dangerButton\s*\{/);
-  assert.match(css, /\.groupButton:focus-visible/);
+  assert.match(css, /\\.actionList \\.subAction:focus-visible/);
   assert.match(css, /prefers-reduced-motion: reduce/);
 });
