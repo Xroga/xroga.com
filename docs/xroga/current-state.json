@@ -2,10 +2,10 @@
   "version": "1.0",
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
-    "branch": "feat/mic-mobile-main-20261031",
-    "sha": "c6b2f05ed5f07ee188bdbaa7afd29891070b584f",
-    "sourceTimestampUtc": "2026-10-31T04:15:58+05:00",
-    "auditStartedUtc": "2026-10-31T01:28:02.145Z",
+    "branch": "",
+    "sha": "f7db243c19255f168f508fe166cc18787515e7ca",
+    "sourceTimestampUtc": "2026-11-09T18:27:26+05:00",
+    "auditStartedUtc": "2026-11-09T13:34:28.884Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
@@ -5331,7 +5331,7 @@
       "id": "surface:daedffd81adedfabf156",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiShare.ts",
-      "sha256": "4f913e344b462a2d41fb53432d6af793b3a408cd44493f7b94c78e38bbb5d463",
+      "sha256": "a1caceacb1b496cfd3547e88f327631a33be3ea279baa0c87b761e786db6d7e6",
       "symbols": [
         "NATIVE_SHARE_PREFIX",
         "buildNativeOpenUiShare",
@@ -5357,6 +5357,7 @@
       ],
       "callers": [
         "backend/src/ai/nativeOpenUi.test.ts:5",
+        "backend/src/lib/richShareSnapshot.test.ts:4",
         "backend/src/lib/richShareSnapshot.ts:1",
         "frontend/src/app/share/[token]/page.tsx:1",
         "frontend/src/components/native-openui/NativeWorkspaceAnswer.tsx:8"
@@ -5372,7 +5373,8 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
-        "backend/src/ai/nativeOpenUi.test.ts"
+        "backend/src/ai/nativeOpenUi.test.ts",
+        "backend/src/lib/richShareSnapshot.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -63331,7 +63333,7 @@
       "id": "surface:9f51ed5a722f2b32376d",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/app/share/[token]/page.tsx",
-      "sha256": "8aac4984ccc194d7bf42196af29c0287e02a17d5a92bd444347d5c552994b03a",
+      "sha256": "ffb7fca6206d420dd793899a3bc4fecb0b07d348652a6458154ac0979647c6b1",
       "symbols": [
         "MessageSharePage",
         "PublicShare",
@@ -63356,6 +63358,7 @@
         "richAllowed",
         "share",
         "snapshot",
+        "sources",
         "supabase",
         "wrapped"
       ],
@@ -96835,7 +96838,7 @@
       "id": "surface:9c57a6290c71522141f5",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/SwarmMessageLog.tsx",
-      "sha256": "f3f55ee622307ff792128e6066484f333a9daf73757cecd4c727e2356ef82594",
+      "sha256": "06cc463651dfb689b48c7ce38583204b0d696b69bccef785f308ea9f0fe54e92",
       "symbols": [
         "AGENT_STYLES",
         "SwarmMessageLog",
@@ -143038,86 +143041,86 @@
       "reachable": false
     },
     {
-      "id": "frontend-call:f6b0252e6ddd7ec455eb",
+      "id": "frontend-call:6e841cba0282307c6710",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 188,
+      "line": 207,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:6ffe5bcc2d52f649ca79",
+      "id": "frontend-call:2e49e0253d27c2a45cb9",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 191,
+      "line": 210,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:7e6c119085e86f88be83",
+      "id": "frontend-call:2c87eef95e3aed122bfe",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 956,
+      "line": 975,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:b887caa9147188158426",
+      "id": "frontend-call:96eb3d73155842defe13",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 957,
+      "line": 976,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:9dae23d4397c6ce47d69",
+      "id": "frontend-call:92e08243443dc2039379",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 962,
+      "line": 981,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:9ff182c421b3ef6ba4b1",
+      "id": "frontend-call:b6d8dc091082c0df5cf3",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 963,
+      "line": 982,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:7e697f898cba051f7401",
+      "id": "frontend-call:f8e37491081ebaa9f612",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 969,
+      "line": 988,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:541fb8b5aef83b0f4a9f",
+      "id": "frontend-call:633efdb4e329d52278d0",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 974,
+      "line": 993,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:d8ede470238063968bb6",
+      "id": "frontend-call:a92cd2a1c45b264602c6",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1022,
+      "line": 1041,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:8d7e369b1e1a2448d855",
+      "id": "frontend-call:455f3abf5d61e1f060af",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1023,
+      "line": 1042,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:fa0eb2d3c92f107f2512",
+      "id": "frontend-call:66e7fc02a025b3da71cf",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1030,
+      "line": 1049,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:37b66cb28e77b796dcea",
+      "id": "frontend-call:f6decf1c18fc35e257f2",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1044,
+      "line": 1063,
       "callee": "fetch",
       "reachable": false
     },
@@ -148222,7 +148225,7 @@
     {
       "id": "test-suite:0175e909907155f58619",
       "sourcePath": "backend/src/lib/richShareSnapshot.test.ts",
-      "declaredTests": 2,
+      "declaredTests": 3,
       "skipLocations": [],
       "focusLocations": []
     },

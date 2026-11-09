@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "d8f044929bb9f22f5af43f8012b70ef54ac4abb6",
+  "source_sha": "f7db243c19255f168f508fe166cc18787515e7ca",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -16773,7 +16773,7 @@
     },
     {
       "path": "backend/src/ai/nativeOpenUiShare.ts",
-      "sha256": "4f913e344b462a2d41fb53432d6af793b3a408cd44493f7b94c78e38bbb5d463"
+      "sha256": "a1caceacb1b496cfd3547e88f327631a33be3ea279baa0c87b761e786db6d7e6"
     },
     {
       "path": "backend/src/ai/openaiCompat.ts",
@@ -20309,7 +20309,7 @@
     },
     {
       "path": "frontend/src/app/share/[token]/page.tsx",
-      "sha256": "8aac4984ccc194d7bf42196af29c0287e02a17d5a92bd444347d5c552994b03a"
+      "sha256": "ffb7fca6206d420dd793899a3bc4fecb0b07d348652a6458154ac0979647c6b1"
     },
     {
       "path": "frontend/src/app/showcase/[slug]/page.tsx",
@@ -22569,7 +22569,7 @@
     },
     {
       "path": "frontend/src/components/terminal/SwarmMessageLog.tsx",
-      "sha256": "f3f55ee622307ff792128e6066484f333a9daf73757cecd4c727e2356ef82594"
+      "sha256": "06cc463651dfb689b48c7ce38583204b0d696b69bccef785f308ea9f0fe54e92"
     },
     {
       "path": "frontend/src/components/terminal/TerminalBuildReport.tsx",
@@ -37589,6 +37589,13 @@
     {
       "path": "frontend/src/app/(shell)/dashboard/projects/page.tsx",
       "line": 133,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/app/share/[token]/page.tsx",
+      "line": 139,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
