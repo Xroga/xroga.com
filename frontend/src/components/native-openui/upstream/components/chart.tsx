@@ -14,6 +14,7 @@ type Spec = {
   stacked: boolean;
   height: number;
   format: Format;
+  presentation?: { title?: string; xLabel?: string; yLabel?: string; note?: string };
 };
 
 const COLORS = 6;
@@ -280,16 +281,23 @@ const chartProps = z.object({
   currency: z.string().optional(),
   stacked: z.boolean().optional(),
   height: z.number().optional(),
+  presentation: z.object({
+    title: z.string().max(120).optional(),
+    xLabel: z.string().max(80).optional(),
+    yLabel: z.string().max(80).optional(),
+    note: z.string().max(240).optional(),
+  }).optional(),
 });
 
 function toSpec(props: z.infer<typeof chartProps>): Spec | null {
   const rows = ((Array.isArray(props.data) ? props.data : []) as unknown[]).filter((r): r is Row => !!r && typeof r === "object" && !Array.isArray(r));
   const first = rows[0];
   if (!first) return null;
-  const x = (props.x && props.x in first ? props.x : null) ?? Object.keys(first).find((k) => (props.type === "scatter" ? typeof first[k] === "number" : typeof first[k] === "string")) ?? Object.keys(first)[0];
-  const series = (props.series?.length ? props.series.filter((s) => typeof s === "string") : Object.keys(first).filter((k) => k !== x && typeof first[k] === "number")).slice(0, 8);
+  if (props.x && !Object.hasOwn(first, props.x)) return null;
+  const x = props.x ?? Object.keys(first).find((k) => (props.type === "scatter" ? typeof first[k] === "number" : typeof first[k] === "string")) ?? Object.keys(first)[0];
+  const series = (props.series?.length ? props.series.filter((s) => typeof s === "string") : Object.keys(first).filter((k) => k !== x && typeof first[k] === "number"));
   const type = (["bar", "line", "area", "pie", "donut", "scatter"] as const).includes(props.type) ? props.type : "bar";
-  if (!x || !series.length || rows.length > 120 || new Set(series).size !== series.length || series.includes(x)) return null;
+  if (!x || !series.length || series.length > COLORS || rows.length > 120 || new Set(series).size !== series.length || series.includes(x)) return null;
   const validNumber = (value: unknown): value is number => typeof value === "number" && Number.isFinite(value) && Math.abs(value) <= 1e15;
   if (rows.some(row => !Object.hasOwn(row, x) ||
     (type === "scatter" ? !validNumber(row[x]) : typeof row[x] !== "string" && !validNumber(row[x])) ||
@@ -305,25 +313,35 @@ function toSpec(props: z.infer<typeof chartProps>): Spec | null {
     stacked: !!props.stacked,
     height: Math.min(480, Math.max(140, props.height ?? 240)),
     format: makeFormat(props.format, props.currency),
+    presentation: props.presentation,
   };
 }
 
 export const Chart = defineComponent({
   name: "Chart",
   props: chartProps,
-  description: 'Rows of data; x is the category key (a number key for scatter), series the value keys (default: every number key). percent values are like 45; currency is a code like "EUR".',
+  description: 'Chart from exact numeric rows. Set x, series, and presentation labels with units. Scatter x is numeric. Percent values are like 45; use a currency code like "USD".',
   component: function ChartView({ props }) {
     const [ref, width] = useWidth();
     const spec = toSpec(props);
     if (!spec) return <p>Chart data is incomplete or unsuitable for this chart.</p>;
-    const pie = spec?.type === "pie" || spec?.type === "donut";
+    const pie = spec.type === "pie" || spec.type === "donut";
+    const labels = spec.presentation;
+    const columns = [spec.x, ...spec.series];
     return (
-      <figure className="iui-chart" ref={ref}>
-        {spec && width > 0 ? pie ? <Pie spec={spec} width={width} /> : spec.type === "scatter" ? <Scatter spec={spec} width={width} /> : <Cartesian spec={spec} width={width} /> : <div style={{ height: spec?.height ?? 240 }} />}
-        {!pie && <Legend series={spec.series} />}
+      <figure className="iui-chart">
+        {(labels?.title || labels?.yLabel) && <figcaption className="native-chart-caption">
+          {labels.title && <strong>{labels.title}</strong>}{labels.yLabel && <span>{labels.yLabel}</span>}
+        </figcaption>}
+        <div className="native-chart-frame" ref={ref}>
+          {width > 0 ? pie ? <Pie spec={spec} width={width} /> : spec.type === "scatter" ? <Scatter spec={spec} width={width} /> : <Cartesian spec={spec} width={width} /> : <div style={{ height: spec.height }} />}
+        </div>
+        {labels?.xLabel && <p className="native-chart-x-label">{labels.xLabel}</p>}
+        {!pie && (spec.series.length > 1 || !labels?.yLabel) && <Legend series={spec.series} />}
+        {labels?.note && <p className="native-chart-note">{labels.note}</p>}
         <details><summary>Chart data</summary><div className="iui-table-scroll" tabIndex={0} role="region" aria-label="Chart data table">
-          <table className="iui-table"><thead><tr>{[spec.x, ...spec.series].map(key => <th scope="col" key={key}>{key}</th>)}</tr></thead>
-          <tbody>{spec.rows.map((row, index) => <tr key={index}>{[spec.x, ...spec.series].map(key => <td key={key}>{String(row[key])}</td>)}</tr>)}</tbody></table>
+          <table className="iui-table"><thead><tr>{columns.map((key, index) => <th scope="col" key={key}>{index === 0 ? labels?.xLabel ?? key : spec.series.length === 1 ? labels?.yLabel ?? key : key}</th>)}</tr></thead>
+          <tbody>{spec.rows.map((row, index) => <tr key={index}>{columns.map(key => <td key={key}>{String(row[key])}</td>)}</tr>)}</tbody></table>
         </div></details>
       </figure>
     );

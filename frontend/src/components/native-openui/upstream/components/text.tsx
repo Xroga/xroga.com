@@ -45,7 +45,7 @@ export const Text = defineComponent({
     tabularNums: z.boolean().optional(),
     maxLines: z.number().optional(),
   }),
-  description: "Paragraph; supports **bold**, *italic*, `code` and [links](https://…). text may be a list mixing strings and inline components: [Icon(\"clock\", \"sm\"), \" 25 min · \", Badge(\"Easy\")].",
+  description: "Paragraph with bold, italic and code. Inline components can include Source, Icon, or Badge. Only use verified Source IDs for links.",
   component: ({ props, renderNode }) => {
     const lines = props.maxLines && props.maxLines > 0 ? Math.round(props.maxLines) : undefined;
     return (

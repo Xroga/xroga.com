@@ -53,7 +53,12 @@
     "Polyline",
     "Polygon",
     "G",
-    "SvgText"
+    "SvgText",
+    "Section",
+    "Metric",
+    "Controls",
+    "Diagram",
+    "Resource"
   ],
   "nativeFunctions": [
     "Clamp",
@@ -412,5 +417,11 @@
       "disposition": "excluded",
       "details": "No authorized media asset resolver in this evaluator"
     }
-  ]
+  ],
+  "nativeDiagram": {
+    "renderer": "React Flow from the existing workspace dependencies",
+    "input": "Validated OpenUI nodes and labeled links",
+    "interaction": "Zoom, pan, fit and text equivalent"
+  },
+  "resourceIdentity": "Static official domain mapping and local Simple Icons artwork. Unknown evidence domains use a neutral icon."
 }

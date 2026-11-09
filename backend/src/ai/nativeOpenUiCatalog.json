@@ -48,7 +48,7 @@
       },
       "Text": {
         "signature": "Text(text: string | Node[], size?: \"xs\" | \"sm\" | \"md\" | \"lg\", color?: Color, weight?: \"normal\" | \"medium\" | \"semibold\", italic?: boolean, lineThrough?: boolean, tabularNums?: boolean, maxLines?: number)",
-        "description": "Paragraph; supports **bold**, *italic*, `code` and [links](https://…). text may be a list mixing strings and inline components: [Icon(\"clock\", \"sm\"), \" 25 min · \", Badge(\"Easy\")]."
+        "description": "Paragraph with bold, italic and code. Inline components can include Source, Icon, or Badge. Only use verified Source IDs for links."
       },
       "Caption": {
         "signature": "Caption(text: string, color?: Color)",
@@ -86,9 +86,25 @@
         "signature": "Math(tex: string, inline?: boolean)",
         "description": "LaTeX formula, e.g. Math(\"E = mc^2\"); inline true to sit in a Text list."
       },
+      "Section": {
+        "signature": "Section(title: string, children: Node[], introduction?: string, icon?: string)",
+        "description": "A meaningful subsection. Group its explanation and relevant components together. Use a short heading and optional orientation sentence."
+      },
+      "Metric": {
+        "signature": "Metric(label: string, value: string | number, note?: string, tone?: \"neutral\" | \"info\" | \"success\" | \"warning\" | \"danger\")",
+        "description": "A prominent single measured or calculated value. Include the unit in a formatted value or the label. Use note for the basis. Tone denotes meaning, not verification."
+      },
+      "Controls": {
+        "signature": "Controls(children: Node[], label: string, columns?: number)",
+        "description": "Group related local inputs and reset controls. Name what the inputs change. Multiple columns stack at phone widths."
+      },
+      "Diagram": {
+        "signature": "Diagram(title: string, nodes: {id: string, label: string, level: number, detail?: string, tone?: \"neutral\" | \"info\" | \"success\" | \"purple\" | \"warning\", icon?: string}[], links: {from: string, to: string, label?: string}[], description: string)",
+        "description": "Connected technical diagram with labeled relationships and a concise text equivalent. Group peers on the same level (up to three per level); use increasing levels for downstream components. Choose role-specific tones and meaningful links, not a duplicate list."
+      },
       "Form": {
         "signature": "Form(children: Node[])",
-        "description": "Groups fields; their values go with any @ToAssistant inside."
+        "description": "Groups fields for local interaction. Use Controls for a named set of inputs."
       },
       "Input": {
         "signature": "Input(value: $binding<string | number>, label?: string, type?: \"text\" | \"number\", placeholder?: string)",
@@ -142,6 +158,10 @@
         "signature": "Source(id: string)",
         "description": "Link to one source by the exact evidence ID supplied by Xroga. Omit when no IDs were supplied."
       },
+      "Resource": {
+        "signature": "Resource(key: \"nextjs\" | \"supabase\" | \"stripe\" | \"postgresql\" | \"react\" | \"vercel\" | \"github\" | \"cloudflare\", role: string)",
+        "description": "An official product link and a concise explanation of its role. Use only for a product relevant to the user. This link is a reference, not retrieved evidence."
+      },
       "Icon": {
         "signature": "Icon(name: string)",
         "description": "A Lucide icon for a label or section. Use only when it aids scanning."
@@ -151,8 +171,8 @@
         "description": "Each row lists its cells in column order; a cell may be a component. Number columns align right."
       },
       "Chart": {
-        "signature": "Chart(type: \"bar\" | \"line\" | \"area\" | \"pie\" | \"donut\" | \"scatter\", data: Record<string, string | number>[], x?: string, series?: string[], format?: \"number\" | \"currency\" | \"percent\", currency?: string, stacked?: boolean, height?: number)",
-        "description": "Rows of data; x is the category key (a number key for scatter), series the value keys (default: every number key). percent values are like 45; currency is a code like \"EUR\"."
+        "signature": "Chart(type: \"bar\" | \"line\" | \"area\" | \"pie\" | \"donut\" | \"scatter\", data: Record<string, string | number>[], x?: string, series?: string[], format?: \"number\" | \"currency\" | \"percent\", currency?: string, stacked?: boolean, height?: number, presentation?: {title?: string, xLabel?: string, yLabel?: string, note?: string})",
+        "description": "Chart from exact numeric rows. Set x, series, and presentation labels with units. Scatter x is numeric. Percent values are like 45; use a currency code like \"USD\"."
       },
       "Svg": {
         "signature": "Svg(children: Node[], viewBox: string, width?: Length, height?: Length, label?: string)",
@@ -199,6 +219,8 @@
       {
         "name": "Editorial layout",
         "components": [
+          "Section",
+          "Metric",
           "Col",
           "Row",
           "Grid",
@@ -210,7 +232,8 @@
           "Card",
           "Quote",
           "Badge",
-          "Source"
+          "Source",
+          "Resource"
         ]
       },
       {
@@ -218,6 +241,7 @@
         "components": [
           "Table",
           "Chart",
+          "Diagram",
           "Math",
           "Code",
           "Svg",
@@ -235,6 +259,7 @@
       {
         "name": "Local interactions",
         "components": [
+          "Controls",
           "Form",
           "Slider",
           "Input",
@@ -359,6 +384,18 @@
         "Math": {
           "$ref": "#/$defs/Math"
         },
+        "Section": {
+          "$ref": "#/$defs/Section"
+        },
+        "Metric": {
+          "$ref": "#/$defs/Metric"
+        },
+        "Controls": {
+          "$ref": "#/$defs/Controls"
+        },
+        "Diagram": {
+          "$ref": "#/$defs/Diagram"
+        },
         "Form": {
           "$ref": "#/$defs/Form"
         },
@@ -400,6 +437,9 @@
         },
         "Source": {
           "$ref": "#/$defs/Source"
+        },
+        "Resource": {
+          "$ref": "#/$defs/Resource"
         },
         "Icon": {
           "$ref": "#/$defs/Icon"
@@ -463,6 +503,10 @@
         "Quote",
         "Code",
         "Math",
+        "Section",
+        "Metric",
+        "Controls",
+        "Diagram",
         "Form",
         "Input",
         "TextArea",
@@ -477,6 +521,7 @@
         "Pressable",
         "Flashcard",
         "Source",
+        "Resource",
         "Icon",
         "Table",
         "Chart",
@@ -880,7 +925,7 @@
             "text"
           ],
           "additionalProperties": false,
-          "description": "Paragraph; supports **bold**, *italic*, `code` and [links](https://…). text may be a list mixing strings and inline components: [Icon(\"clock\", \"sm\"), \" 25 min · \", Badge(\"Easy\")]."
+          "description": "Paragraph with bold, italic and code. Inline components can include Source, Icon, or Badge. Only use verified Source IDs for links."
         },
         "Caption": {
           "type": "object",
@@ -1057,6 +1102,198 @@
           "additionalProperties": false,
           "description": "LaTeX formula, e.g. Math(\"E = mc^2\"); inline true to sit in a Text list."
         },
+        "Section": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100
+            },
+            "children": {
+              "type": "array",
+              "items": {}
+            },
+            "introduction": {
+              "type": "string",
+              "maxLength": 450
+            },
+            "icon": {
+              "type": "string",
+              "maxLength": 48
+            }
+          },
+          "required": [
+            "title",
+            "children"
+          ],
+          "additionalProperties": false,
+          "description": "A meaningful subsection. Group its explanation and relevant components together. Use a short heading and optional orientation sentence."
+        },
+        "Metric": {
+          "type": "object",
+          "properties": {
+            "label": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 80
+            },
+            "value": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 100
+                },
+                {
+                  "type": "number"
+                }
+              ]
+            },
+            "note": {
+              "type": "string",
+              "maxLength": 160
+            },
+            "tone": {
+              "type": "string",
+              "enum": [
+                "neutral",
+                "info",
+                "success",
+                "warning",
+                "danger"
+              ]
+            }
+          },
+          "required": [
+            "label",
+            "value"
+          ],
+          "additionalProperties": false,
+          "description": "A prominent single measured or calculated value. Include the unit in a formatted value or the label. Use note for the basis. Tone denotes meaning, not verification."
+        },
+        "Controls": {
+          "type": "object",
+          "properties": {
+            "children": {
+              "type": "array",
+              "items": {}
+            },
+            "label": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 80
+            },
+            "columns": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 3
+            }
+          },
+          "required": [
+            "children",
+            "label"
+          ],
+          "additionalProperties": false,
+          "description": "Group related local inputs and reset controls. Name what the inputs change. Multiple columns stack at phone widths."
+        },
+        "Diagram": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 120
+            },
+            "nodes": {
+              "minItems": 2,
+              "maxItems": 12,
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "pattern": "^[a-z][a-z0-9-]{0,31}$"
+                  },
+                  "label": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 45
+                  },
+                  "level": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 5
+                  },
+                  "detail": {
+                    "type": "string",
+                    "maxLength": 66
+                  },
+                  "tone": {
+                    "type": "string",
+                    "enum": [
+                      "neutral",
+                      "info",
+                      "success",
+                      "purple",
+                      "warning"
+                    ]
+                  },
+                  "icon": {
+                    "type": "string",
+                    "maxLength": 36
+                  }
+                },
+                "required": [
+                  "id",
+                  "label",
+                  "level"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "links": {
+              "minItems": 1,
+              "maxItems": 18,
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "from": {
+                    "type": "string",
+                    "maxLength": 32
+                  },
+                  "to": {
+                    "type": "string",
+                    "maxLength": 32
+                  },
+                  "label": {
+                    "type": "string",
+                    "maxLength": 38
+                  }
+                },
+                "required": [
+                  "from",
+                  "to"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "description": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 360
+            }
+          },
+          "required": [
+            "title",
+            "nodes",
+            "links",
+            "description"
+          ],
+          "additionalProperties": false,
+          "description": "Connected technical diagram with labeled relationships and a concise text equivalent. Group peers on the same level (up to three per level); use increasing levels for downstream components. Choose role-specific tones and meaningful links, not a duplicate list."
+        },
         "Form": {
           "type": "object",
           "properties": {
@@ -1069,7 +1306,7 @@
             "children"
           ],
           "additionalProperties": false,
-          "description": "Groups fields; their values go with any @ToAssistant inside."
+          "description": "Groups fields for local interaction. Use Controls for a named set of inputs."
         },
         "Input": {
           "type": "object",
@@ -1581,6 +1818,35 @@
           "additionalProperties": false,
           "description": "Link to one source by the exact evidence ID supplied by Xroga. Omit when no IDs were supplied."
         },
+        "Resource": {
+          "type": "object",
+          "properties": {
+            "key": {
+              "type": "string",
+              "enum": [
+                "nextjs",
+                "supabase",
+                "stripe",
+                "postgresql",
+                "react",
+                "vercel",
+                "github",
+                "cloudflare"
+              ]
+            },
+            "role": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 180
+            }
+          },
+          "required": [
+            "key",
+            "role"
+          ],
+          "additionalProperties": false,
+          "description": "An official product link and a concise explanation of its role. Use only for a product relevant to the user. This link is a reference, not retrieved evidence."
+        },
         "Icon": {
           "type": "object",
           "properties": {
@@ -1677,6 +1943,28 @@
             },
             "height": {
               "type": "number"
+            },
+            "presentation": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "maxLength": 120
+                },
+                "xLabel": {
+                  "type": "string",
+                  "maxLength": 80
+                },
+                "yLabel": {
+                  "type": "string",
+                  "maxLength": 80
+                },
+                "note": {
+                  "type": "string",
+                  "maxLength": 240
+                }
+              },
+              "additionalProperties": false
             }
           },
           "required": [
@@ -1684,7 +1972,7 @@
             "data"
           ],
           "additionalProperties": false,
-          "description": "Rows of data; x is the category key (a number key for scatter), series the value keys (default: every number key). percent values are like 45; currency is a code like \"EUR\"."
+          "description": "Chart from exact numeric rows. Set x, series, and presentation labels with units. Scatter x is numeric. Percent values are like 45; use a currency code like \"USD\"."
         },
         "Svg": {
           "type": "object",
@@ -2292,6 +2580,18 @@
       "Math": {
         "$ref": "#/$defs/Math"
       },
+      "Section": {
+        "$ref": "#/$defs/Section"
+      },
+      "Metric": {
+        "$ref": "#/$defs/Metric"
+      },
+      "Controls": {
+        "$ref": "#/$defs/Controls"
+      },
+      "Diagram": {
+        "$ref": "#/$defs/Diagram"
+      },
       "Form": {
         "$ref": "#/$defs/Form"
       },
@@ -2333,6 +2633,9 @@
       },
       "Source": {
         "$ref": "#/$defs/Source"
+      },
+      "Resource": {
+        "$ref": "#/$defs/Resource"
       },
       "Icon": {
         "$ref": "#/$defs/Icon"
@@ -2396,6 +2699,10 @@
       "Quote",
       "Code",
       "Math",
+      "Section",
+      "Metric",
+      "Controls",
+      "Diagram",
       "Form",
       "Input",
       "TextArea",
@@ -2410,6 +2717,7 @@
       "Pressable",
       "Flashcard",
       "Source",
+      "Resource",
       "Icon",
       "Table",
       "Chart",
@@ -2813,7 +3121,7 @@
           "text"
         ],
         "additionalProperties": false,
-        "description": "Paragraph; supports **bold**, *italic*, `code` and [links](https://…). text may be a list mixing strings and inline components: [Icon(\"clock\", \"sm\"), \" 25 min · \", Badge(\"Easy\")]."
+        "description": "Paragraph with bold, italic and code. Inline components can include Source, Icon, or Badge. Only use verified Source IDs for links."
       },
       "Caption": {
         "type": "object",
@@ -2990,6 +3298,198 @@
         "additionalProperties": false,
         "description": "LaTeX formula, e.g. Math(\"E = mc^2\"); inline true to sit in a Text list."
       },
+      "Section": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "children": {
+            "type": "array",
+            "items": {}
+          },
+          "introduction": {
+            "type": "string",
+            "maxLength": 450
+          },
+          "icon": {
+            "type": "string",
+            "maxLength": 48
+          }
+        },
+        "required": [
+          "title",
+          "children"
+        ],
+        "additionalProperties": false,
+        "description": "A meaningful subsection. Group its explanation and relevant components together. Use a short heading and optional orientation sentence."
+      },
+      "Metric": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80
+          },
+          "value": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 100
+              },
+              {
+                "type": "number"
+              }
+            ]
+          },
+          "note": {
+            "type": "string",
+            "maxLength": 160
+          },
+          "tone": {
+            "type": "string",
+            "enum": [
+              "neutral",
+              "info",
+              "success",
+              "warning",
+              "danger"
+            ]
+          }
+        },
+        "required": [
+          "label",
+          "value"
+        ],
+        "additionalProperties": false,
+        "description": "A prominent single measured or calculated value. Include the unit in a formatted value or the label. Use note for the basis. Tone denotes meaning, not verification."
+      },
+      "Controls": {
+        "type": "object",
+        "properties": {
+          "children": {
+            "type": "array",
+            "items": {}
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80
+          },
+          "columns": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 3
+          }
+        },
+        "required": [
+          "children",
+          "label"
+        ],
+        "additionalProperties": false,
+        "description": "Group related local inputs and reset controls. Name what the inputs change. Multiple columns stack at phone widths."
+      },
+      "Diagram": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "nodes": {
+            "minItems": 2,
+            "maxItems": 12,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "pattern": "^[a-z][a-z0-9-]{0,31}$"
+                },
+                "label": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 45
+                },
+                "level": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 5
+                },
+                "detail": {
+                  "type": "string",
+                  "maxLength": 66
+                },
+                "tone": {
+                  "type": "string",
+                  "enum": [
+                    "neutral",
+                    "info",
+                    "success",
+                    "purple",
+                    "warning"
+                  ]
+                },
+                "icon": {
+                  "type": "string",
+                  "maxLength": 36
+                }
+              },
+              "required": [
+                "id",
+                "label",
+                "level"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "links": {
+            "minItems": 1,
+            "maxItems": 18,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "from": {
+                  "type": "string",
+                  "maxLength": 32
+                },
+                "to": {
+                  "type": "string",
+                  "maxLength": 32
+                },
+                "label": {
+                  "type": "string",
+                  "maxLength": 38
+                }
+              },
+              "required": [
+                "from",
+                "to"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 360
+          }
+        },
+        "required": [
+          "title",
+          "nodes",
+          "links",
+          "description"
+        ],
+        "additionalProperties": false,
+        "description": "Connected technical diagram with labeled relationships and a concise text equivalent. Group peers on the same level (up to three per level); use increasing levels for downstream components. Choose role-specific tones and meaningful links, not a duplicate list."
+      },
       "Form": {
         "type": "object",
         "properties": {
@@ -3002,7 +3502,7 @@
           "children"
         ],
         "additionalProperties": false,
-        "description": "Groups fields; their values go with any @ToAssistant inside."
+        "description": "Groups fields for local interaction. Use Controls for a named set of inputs."
       },
       "Input": {
         "type": "object",
@@ -3514,6 +4014,35 @@
         "additionalProperties": false,
         "description": "Link to one source by the exact evidence ID supplied by Xroga. Omit when no IDs were supplied."
       },
+      "Resource": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string",
+            "enum": [
+              "nextjs",
+              "supabase",
+              "stripe",
+              "postgresql",
+              "react",
+              "vercel",
+              "github",
+              "cloudflare"
+            ]
+          },
+          "role": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 180
+          }
+        },
+        "required": [
+          "key",
+          "role"
+        ],
+        "additionalProperties": false,
+        "description": "An official product link and a concise explanation of its role. Use only for a product relevant to the user. This link is a reference, not retrieved evidence."
+      },
       "Icon": {
         "type": "object",
         "properties": {
@@ -3610,6 +4139,28 @@
           },
           "height": {
             "type": "number"
+          },
+          "presentation": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string",
+                "maxLength": 120
+              },
+              "xLabel": {
+                "type": "string",
+                "maxLength": 80
+              },
+              "yLabel": {
+                "type": "string",
+                "maxLength": 80
+              },
+              "note": {
+                "type": "string",
+                "maxLength": 240
+              }
+            },
+            "additionalProperties": false
           }
         },
         "required": [
@@ -3617,7 +4168,7 @@
           "data"
         ],
         "additionalProperties": false,
-        "description": "Rows of data; x is the category key (a number key for scatter), series the value keys (default: every number key). percent values are like 45; currency is a code like \"EUR\"."
+        "description": "Chart from exact numeric rows. Set x, series, and presentation labels with units. Scatter x is numeric. Percent values are like 45; use a currency code like \"USD\"."
       },
       "Svg": {
         "type": "object",

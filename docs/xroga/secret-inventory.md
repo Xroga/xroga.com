@@ -1,6 +1,6 @@
 # Secret and environment name inventory
 
-Values are forbidden. Source SHA: `6652ea3765540b2f78a7cf8bc4ac70e3d184b643`. Names and source discovery do not prove that a capability is configured or accepted.
+Values are forbidden. Source SHA: `dba4e46bb4fe01e1a0562f0e4068f4499fb81faf`. Names and source discovery do not prove that a capability is configured or accepted.
 
 | Name | Classification | Requirement | Dependency |
 | --- | --- | --- | --- |
@@ -117,7 +117,7 @@ Values are forbidden. Source SHA: `6652ea3765540b2f78a7cf8bc4ac70e3d184b643`. Na
 | MONGODB_URI | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | MOONSHOT_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | historical-moonshot |
 | MORPH_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | runtime-controls-and-conditional-aliases |
-| NATIVE_OPENUI_EVALUATION_MAX_MICRO_USD | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
+| NATIVE_OPENUI_EVALUATION_RUN | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | NATIVE_OPENUI_EVALUATOR_ID | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | NEON_DATABASE_URL | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | runtime-controls-and-conditional-aliases |
 | NETLIFY_ACCESS_TOKEN | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | endpoint-api-github-com, endpoint-api-netlify-com, endpoint-api-vercel-com |

@@ -1,13 +1,15 @@
 import { notFound } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { authorizeFounderRequest } from '@/lib/osFounderAccess';
+import { readNativeOpenUiRun } from '../../../../backend/src/ai/nativeOpenUiRun';
 import Evaluation from '@/components/native-openui/Evaluation';
 
 export const dynamic = 'force-dynamic';
 
 export default async function NativeAnswerEvaluationPage() {
   const owner = process.env.NATIVE_OPENUI_EVALUATOR_ID;
-  if (!owner) notFound();
+  const run = readNativeOpenUiRun(process.env.XROGA_DEPLOYMENT_ENVIRONMENT, process.env.NATIVE_OPENUI_EVALUATION_RUN);
+  if (!owner || !run) notFound();
   const client = await createClient();
   const result = await authorizeFounderRequest({
     getUser: async () => {
@@ -24,5 +26,5 @@ export default async function NativeAnswerEvaluationPage() {
     },
   });
   if (!result.allowed) notFound();
-  return <Evaluation />;
+  return <Evaluation slots={run.slots} />;
 }

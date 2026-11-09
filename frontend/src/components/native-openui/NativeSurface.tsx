@@ -8,6 +8,7 @@ import { MAX_PROGRAM_CHARS, validateNativeOpenUi } from '../../../../backend/src
 import { MarkdownBlocks } from './upstream/components/markdown';
 import './upstream/components/theme.css';
 import './upstream/components/components.css';
+import '@xyflow/react/dist/style.css';
 import './surface.css';
 import 'katex/dist/katex.min.css';
 

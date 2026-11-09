@@ -5059,6 +5059,7 @@
         "backend/src/operations/benchmarkAdapter.ts:20",
         "backend/src/routes/browserRuns.ts:29",
         "backend/src/routes/guestChat.ts:14",
+        "backend/src/routes/nativeOpenUiEvaluation.ts:9",
         "backend/src/routes/phase1.ts:27",
         "backend/src/synthesis/coherentImplementation.ts:7",
         "backend/src/synthesis/universalEntrypoint.ts:98",
@@ -5158,7 +5159,7 @@
       ],
       "callers": [
         "backend/src/ai/nativeOpenUi.test.ts:3",
-        "backend/src/routes/nativeOpenUiEvaluation.ts:11",
+        "backend/src/routes/nativeOpenUiEvaluation.ts:12",
         "frontend/src/components/native-openui/NativeSurface.tsx:7"
       ],
       "reachable": true,
@@ -5187,7 +5188,7 @@
       "id": "surface:a67f0b1fa2dd0f11a67f",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiPrompt.ts",
-      "sha256": "7bd53ad5ae6feaa058ccf03ec64eb776ed81a19c2f306478ebca7e0770d46786",
+      "sha256": "ef43e79341669ecfab59592bb95570af0521fab54107266ffd4507f957014d5f",
       "symbols": [
         "nativeOpenUiPrompt"
       ],
@@ -5203,12 +5204,55 @@
       ],
       "callers": [
         "backend/src/ai/nativeOpenUi.test.ts:4",
-        "backend/src/routes/nativeOpenUiEvaluation.ts:12"
+        "backend/src/routes/nativeOpenUiEvaluation.ts:13"
       ],
       "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
         "@openuidev/lang-core"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/ai/nativeOpenUi.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:7d4884140c2f15e82e36",
+      "subsystem": "ai_execution",
+      "sourcePath": "backend/src/ai/nativeOpenUiRun.ts",
+      "sha256": "22c1f0e62ba1d2f34bde235234ce495a88654aab061100080a7c34b0f10bc8a4",
+      "symbols": [
+        "readNativeOpenUiRun",
+        "result",
+        "runSchema"
+      ],
+      "imports": [
+        "zod"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [
+        "backend/src/index.ts",
+        "frontend/src/app/native-answer-evaluation/page.tsx"
+      ],
+      "callers": [
+        "backend/src/ai/nativeOpenUi.test.ts:5",
+        "backend/src/routes/nativeOpenUiEvaluation.ts:14",
+        "frontend/src/app/native-answer-evaluation/page.tsx:4"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "zod"
       ],
       "authBoundary": [],
       "tenantBoundary": [],
@@ -7210,7 +7254,7 @@
         "backend/src/operations/operationsProviderBudget.local.integration.ts:6",
         "backend/src/routes/billing.ts:7",
         "backend/src/routes/dashboard.ts:4",
-        "backend/src/routes/nativeOpenUiEvaluation.ts:9",
+        "backend/src/routes/nativeOpenUiEvaluation.ts:10",
         "backend/src/routes/phase1.ts:31",
         "backend/src/security/budgetOwner.local.integration.ts:7",
         "backend/src/security/confirmationMetadata.local.integration.ts:8",
@@ -12792,7 +12836,7 @@
         "backend/src/ai/universal/semanticRequestPlanner.test.ts:32",
         "backend/src/ai/universal/semanticRequestPlanner.ts:59",
         "backend/src/e2e/xrogaGoldenJourneys.test.ts:19",
-        "backend/src/routes/nativeOpenUiEvaluation.ts:10",
+        "backend/src/routes/nativeOpenUiEvaluation.ts:11",
         "backend/src/routes/phase1.ts:52"
       ],
       "reachable": true,
@@ -30148,25 +30192,27 @@
       "id": "surface:441ecd64fae023b97502",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/nativeOpenUiEvaluation.ts",
-      "sha256": "5a83042a4a47e4e742e85ceebb04f8eb3ddcfc91e6dd3f613081f8c32c33969a",
+      "sha256": "523af8a3dd239d8f76fdd6d008f4a91793b1663b5047d60d2e7d72994e9415df",
       "symbols": [
         "body",
         "bodySchema",
         "cancel",
-        "cap",
         "context",
         "controller",
+        "currentRun",
+        "emit",
         "error",
-        "evaluationEnabled",
+        "externalModelId",
         "failure",
         "identity",
-        "maxCost",
         "messages",
         "modelId",
         "outputTokens",
         "owner",
         "result",
         "router",
+        "run",
+        "slot",
         "started",
         "supabase",
         "token",
@@ -30175,8 +30221,10 @@
         "verifyFounder"
       ],
       "imports": [
+        "../ai/models.js",
         "../ai/nativeOpenUi.js",
         "../ai/nativeOpenUiPrompt.js",
+        "../ai/nativeOpenUiRun.js",
         "../ai/openaiCompat.js",
         "../ai/providerBudget.js",
         "../ai/quota.js",
@@ -30189,8 +30237,10 @@
         "zod"
       ],
       "runtimeImports": [
+        "backend/src/ai/models.ts",
         "backend/src/ai/nativeOpenUi.ts",
         "backend/src/ai/nativeOpenUiPrompt.ts",
+        "backend/src/ai/nativeOpenUiRun.ts",
         "backend/src/ai/openaiCompat.ts",
         "backend/src/ai/providerBudget.ts",
         "backend/src/ai/quota.ts",
@@ -30220,7 +30270,6 @@
       "approvalBoundary": [],
       "costBoundary": [
         "backend/src/routes/nativeOpenUiEvaluation.ts#actualProviderCostMicroUsd",
-        "backend/src/routes/nativeOpenUiEvaluation.ts#maxCost",
         "backend/src/routes/nativeOpenUiEvaluation.ts#withTenantModelReservation"
       ],
       "evidenceBoundary": [
@@ -62172,21 +62221,24 @@
       "id": "surface:51ed64fac1f935f2d327",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/app/native-answer-evaluation/page.tsx",
-      "sha256": "418ea722245bcaea506cef7dfc5e292f91fd25516f16dd4f7682760c516d19c6",
+      "sha256": "f434f3f96bdba288bd025a088c239d02322cda2a4c48606d378ef9123eaf5ed5",
       "symbols": [
         "NativeAnswerEvaluationPage",
         "client",
         "dynamic",
         "owner",
-        "result"
+        "result",
+        "run"
       ],
       "imports": [
+        "../../../../backend/src/ai/nativeOpenUiRun",
         "@/components/native-openui/Evaluation",
         "@/lib/osFounderAccess",
         "@/lib/supabase/server",
         "next/navigation"
       ],
       "runtimeImports": [
+        "backend/src/ai/nativeOpenUiRun.ts",
         "frontend/src/components/native-openui/Evaluation.tsx",
         "frontend/src/lib/osFounderAccess.ts",
         "frontend/src/lib/supabase/server.ts"
@@ -85454,18 +85506,147 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:92ce2788e7a639e6a608",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/native-openui/Diagram.tsx",
+      "sha256": "a398171e7f258fad3b382b2c41d1d4d86c3a060fbb0f6d5ea2192f9eb6e508d7",
+      "symbols": [
+        "AnswerDiagramNode",
+        "AnswerNode",
+        "Diagram",
+        "byId",
+        "diagramLink",
+        "diagramNode",
+        "diagramProps",
+        "edges",
+        "from",
+        "groups",
+        "lateral",
+        "layout",
+        "levels",
+        "nodeTypes",
+        "nodes",
+        "positions",
+        "result",
+        "rightward",
+        "title",
+        "to"
+      ],
+      "imports": [
+        "./upstream/components/glyph",
+        "@openuidev/react-lang",
+        "@xyflow/react",
+        "react",
+        "zod/v4"
+      ],
+      "runtimeImports": [
+        "frontend/src/components/native-openui/upstream/components/glyph.tsx"
+      ],
+      "entryPoints": [
+        "frontend/src/app/native-answer-evaluation/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/native-openui/library.tsx:16"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "@openuidev/react-lang",
+        "@xyflow/react",
+        "react",
+        "zod/v4"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:e67e2018c5fc720f5a55",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/native-openui/Editorial.tsx",
+      "sha256": "b3f8ddb1cdbdcf0b70864454ecf48c4fea129df907da6c96a03d36d011ede00f",
+      "symbols": [
+        "Controls",
+        "Metric",
+        "Section"
+      ],
+      "imports": [
+        "./upstream/components/glyph",
+        "./upstream/components/markdown",
+        "./upstream/components/style",
+        "@openuidev/react-lang",
+        "react",
+        "zod/v4"
+      ],
+      "runtimeImports": [
+        "frontend/src/components/native-openui/upstream/components/glyph.tsx",
+        "frontend/src/components/native-openui/upstream/components/markdown.tsx",
+        "frontend/src/components/native-openui/upstream/components/style.ts"
+      ],
+      "entryPoints": [
+        "frontend/src/app/native-answer-evaluation/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/native-openui/library.tsx:18"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "@openuidev/react-lang",
+        "react",
+        "zod/v4"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:40d53f500aa0af64099a",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/Evaluation.tsx",
-      "sha256": "af5454037738f9865c2608f66c389e4ea52e19debbb5ffba0101b77294c33dac",
+      "sha256": "9eab6286857e376cf36b5558213b72074c8eb9bfa9b06851aeca089c2ddc7a8f",
       "symbols": [
         "Evaluation",
         "EvaluationResult",
         "NativeSurface",
+        "Phase",
         "Receipt",
+        "Slot",
+        "active",
+        "answer",
+        "buffer",
+        "controller",
+        "copyAnswer",
         "data",
+        "decoder",
+        "end",
         "error",
+        "frame",
+        "length",
+        "match",
+        "payload",
+        "readResult",
+        "reader",
         "response",
+        "selected",
         "submit",
         "token"
       ],
@@ -85476,6 +85657,7 @@
         "./upstream/components/markdown",
         "./upstream/components/theme.css",
         "@/lib/api",
+        "lucide-react",
         "react"
       ],
       "runtimeImports": [
@@ -85490,11 +85672,12 @@
         "frontend/src/app/native-answer-evaluation/page.tsx"
       ],
       "callers": [
-        "frontend/src/app/native-answer-evaluation/page.tsx:4"
+        "frontend/src/app/native-answer-evaluation/page.tsx:5"
       ],
       "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
+        "lucide-react",
         "react"
       ],
       "authBoundary": [],
@@ -85516,7 +85699,7 @@
       "id": "surface:169100c09d49c9650f7a",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/NativeSurface.tsx",
-      "sha256": "b72feb4320d4571cfb492e572d199caa08ff8a8b13f424b7e2786718dce62d5f",
+      "sha256": "8e99674307ceb656ab2597c80066ecc8087857c9cbff388bd212db94c1a81c7c",
       "symbols": [
         "NativeAnswer",
         "NativeSurface",
@@ -85536,6 +85719,7 @@
         "./upstream/components/markdown",
         "./upstream/components/theme.css",
         "@openuidev/react-lang",
+        "@xyflow/react/dist/style.css",
         "katex/dist/katex.min.css",
         "react"
       ],
@@ -85552,12 +85736,13 @@
         "frontend/src/app/native-answer-evaluation/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/native-openui/Evaluation.tsx:10"
+        "frontend/src/components/native-openui/Evaluation.tsx:12"
       ],
       "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
         "@openuidev/react-lang",
+        "@xyflow/react/dist/style.css",
         "katex/dist/katex.min.css",
         "react"
       ],
@@ -85568,6 +85753,57 @@
       "evidenceBoundary": [
         "frontend/src/components/native-openui/NativeSurface.tsx#EvidenceContext",
         "frontend/src/components/native-openui/NativeSurface.tsx#verified"
+      ],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:ea650eb6897255af86b6",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/native-openui/Resources.tsx",
+      "sha256": "de91b11be5c2c94aa6d68cab940a13d5e848aaa002ff49e0faf0ef0c7420724b",
+      "symbols": [
+        "EvidenceChip",
+        "Resource",
+        "ResourceMark",
+        "domain",
+        "hostname",
+        "resource",
+        "resourceKey",
+        "resources"
+      ],
+      "imports": [
+        "@openuidev/react-lang",
+        "lucide-react",
+        "simple-icons",
+        "zod/v4"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [
+        "frontend/src/app/native-answer-evaluation/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/native-openui/library.tsx:17"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "@openuidev/react-lang",
+        "lucide-react",
+        "simple-icons",
+        "zod/v4"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [
+        "frontend/src/components/native-openui/Resources.tsx#EvidenceChip"
       ],
       "testCoverage": [],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -85608,7 +85844,7 @@
         "frontend/src/app/native-answer-evaluation/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/native-openui/library.tsx:16"
+        "frontend/src/components/native-openui/library.tsx:15"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -85634,7 +85870,7 @@
       "id": "surface:1bf86dec2f9f087bee07",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/library.tsx",
-      "sha256": "720f7bb95424e1116c86ee5204de7370c9bb9ed2d91632d272341083ccc32f81",
+      "sha256": "a66cd674a6950e9b7623efd0090bf7124084422c4258e07d82b281495934efa4",
       "symbols": [
         "AnswerSource",
         "EvidenceContext",
@@ -85645,6 +85881,9 @@
         "url"
       ],
       "imports": [
+        "./Diagram",
+        "./Editorial",
+        "./Resources",
         "./Tabs",
         "./upstream/components/chart",
         "./upstream/components/controls",
@@ -85657,11 +85896,13 @@
         "./upstream/functions/numbers",
         "./upstream/functions/text",
         "@openuidev/react-lang",
-        "lucide-react",
         "react",
         "zod/v4"
       ],
       "runtimeImports": [
+        "frontend/src/components/native-openui/Diagram.tsx",
+        "frontend/src/components/native-openui/Editorial.tsx",
+        "frontend/src/components/native-openui/Resources.tsx",
         "frontend/src/components/native-openui/Tabs.tsx",
         "frontend/src/components/native-openui/upstream/components/chart.tsx",
         "frontend/src/components/native-openui/upstream/components/controls.tsx",
@@ -85684,7 +85925,6 @@
       "persistenceDependencies": [],
       "externalProviderDependencies": [
         "@openuidev/react-lang",
-        "lucide-react",
         "react",
         "zod/v4"
       ],
@@ -85693,6 +85933,7 @@
       "approvalBoundary": [],
       "costBoundary": [],
       "evidenceBoundary": [
+        "frontend/src/components/native-openui/library.tsx#EvidenceChip",
         "frontend/src/components/native-openui/library.tsx#EvidenceContext"
       ],
       "testCoverage": [],
@@ -85737,7 +85978,7 @@
       "id": "surface:54b82e40fb048a969cb3",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/chart.tsx",
-      "sha256": "d6ee89cad28563b329272a9f4271c2b20f6c358b1de6ea1f2fc34c16586a8afc",
+      "sha256": "1aab4befcc06f09c6883afa1f79def469c70ad94dd984e1554cd056655e1d310",
       "symbols": [
         "COLORS",
         "Cartesian",
@@ -85758,6 +85999,7 @@
         "box",
         "chartProps",
         "code",
+        "columns",
         "d",
         "each",
         "el",
@@ -85771,6 +86013,7 @@
         "items",
         "key",
         "label",
+        "labels",
         "large",
         "left",
         "lo",
@@ -85833,7 +86076,7 @@
         "frontend/src/app/native-answer-evaluation/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/native-openui/library.tsx:9"
+        "frontend/src/components/native-openui/library.tsx:8"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -85941,7 +86184,7 @@
         "frontend/src/app/native-answer-evaluation/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/native-openui/library.tsx:7"
+        "frontend/src/components/native-openui/library.tsx:6"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -86020,7 +86263,7 @@
         "frontend/src/app/native-answer-evaluation/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/native-openui/library.tsx:8"
+        "frontend/src/components/native-openui/library.tsx:7"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -86064,7 +86307,9 @@
         "frontend/src/app/native-answer-evaluation/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/native-openui/library.tsx:12",
+        "frontend/src/components/native-openui/Diagram.tsx:7",
+        "frontend/src/components/native-openui/Editorial.tsx:7",
+        "frontend/src/components/native-openui/library.tsx:11",
         "frontend/src/components/native-openui/upstream/components/controls.tsx:14",
         "frontend/src/components/native-openui/upstream/components/text.tsx:7"
       ],
@@ -86090,7 +86335,7 @@
       "id": "surface:f60271f3a570336ef22f",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/layout.tsx",
-      "sha256": "3707aa0745b61887d74692a37b9c787d15d0d7c9b5c38dfb6c9ecfbdce0beb4f",
+      "sha256": "6326be84c31b9982bf50afa99abd796c1dc34f0a7d8ddb00fce9945215bb32ef",
       "symbols": [
         "Box",
         "Card",
@@ -86124,7 +86369,7 @@
         "frontend/src/app/native-answer-evaluation/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/native-openui/library.tsx:5"
+        "frontend/src/components/native-openui/library.tsx:4"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -86191,7 +86436,8 @@
         "frontend/src/app/native-answer-evaluation/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/native-openui/Evaluation.tsx:6",
+        "frontend/src/components/native-openui/Editorial.tsx:8",
+        "frontend/src/components/native-openui/Evaluation.tsx:7",
         "frontend/src/components/native-openui/NativeSurface.tsx:8",
         "frontend/src/components/native-openui/upstream/components/extra.tsx:10",
         "frontend/src/components/native-openui/upstream/components/table.tsx:6",
@@ -86265,6 +86511,7 @@
         "frontend/src/app/native-answer-evaluation/page.tsx"
       ],
       "callers": [
+        "frontend/src/components/native-openui/Editorial.tsx:6",
         "frontend/src/components/native-openui/Tabs.tsx:8",
         "frontend/src/components/native-openui/upstream/components/controls.tsx:15",
         "frontend/src/components/native-openui/upstream/components/extra.tsx:12",
@@ -86340,7 +86587,7 @@
         "frontend/src/app/native-answer-evaluation/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/native-openui/library.tsx:11"
+        "frontend/src/components/native-openui/library.tsx:10"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -86395,7 +86642,7 @@
         "frontend/src/app/native-answer-evaluation/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/native-openui/library.tsx:10"
+        "frontend/src/components/native-openui/library.tsx:9"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -86421,7 +86668,7 @@
       "id": "surface:c0e107e03bc08dc07fad",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/text.tsx",
-      "sha256": "fe813b0b1549d4d7ff3ec898fb0ff3dd34cd61df7a8a94bda86a18b4523b21a0",
+      "sha256": "873aae3e4abe68f12717a5442cfe9dabf9204c4960c16c5dd8a161d9b2de1b60",
       "symbols": [
         "Badge",
         "Caption",
@@ -86466,7 +86713,7 @@
         "frontend/src/app/native-answer-evaluation/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/native-openui/library.tsx:6"
+        "frontend/src/components/native-openui/library.tsx:5"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -86534,7 +86781,7 @@
         "frontend/src/app/native-answer-evaluation/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/native-openui/library.tsx:13"
+        "frontend/src/components/native-openui/library.tsx:12"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -86657,7 +86904,7 @@
         "frontend/src/app/native-answer-evaluation/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/native-openui/library.tsx:15"
+        "frontend/src/components/native-openui/library.tsx:14"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -102703,7 +102950,7 @@
         "frontend/src/components/layout/SidebarProjectHistory.tsx:21",
         "frontend/src/components/layout/SidebarSearchModal.tsx:7",
         "frontend/src/components/library/LibraryWorkspace.tsx:6",
-        "frontend/src/components/native-openui/Evaluation.tsx:4",
+        "frontend/src/components/native-openui/Evaluation.tsx:5",
         "frontend/src/components/notifications/NotificationBell.tsx:6",
         "frontend/src/components/notifications/NotificationExperience.tsx:6",
         "frontend/src/components/notifications/SidebarNotificationCenter.tsx:9",
@@ -123909,13 +124156,14 @@
       "id": "surface:bd6af899f2dd9df930f6",
       "subsystem": "browser_sandbox",
       "sourcePath": "scripts/verify-native-openui-browser.mjs",
-      "sha256": "0de653dd38487bcb2f3a8bdc2cfc5143d2a052c8b8d11e05c1c29dee5b5b33bc",
+      "sha256": "00b09bbf9989233176c0677948f5a4c0a4c4fca84a2c0ee524911004509b075b",
       "symbols": [
         "accessibility",
         "assets",
         "basic",
         "browser",
         "cases",
+        "channel",
         "code",
         "compiled",
         "context",
@@ -123923,14 +124171,18 @@
         "evidence",
         "external",
         "fit",
+        "graph",
+        "graphAccessibility",
         "name",
         "open",
         "origin",
         "output",
         "page",
+        "renderedEdge",
         "results",
         "server",
         "slider",
+        "stripe",
         "table",
         "theme",
         "viewport"
@@ -123953,6 +124205,7 @@
         "@axe-core/playwright",
         "declared-host:127.0.0.1",
         "declared-host:localhost",
+        "declared-host:stripe.com",
         "declared-host:www.postgresql.org",
         "esbuild",
         "node:assert/strict",
@@ -129793,9 +130046,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:33d987856caad616f676",
+      "id": "registration:fd1e6f86b22ad4682c43",
       "sourcePath": "backend/src/routes/nativeOpenUiEvaluation.ts",
-      "line": 23,
+      "line": 26,
       "receiver": "router",
       "method": "post",
       "path": "/evaluate",
@@ -132012,10 +132265,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:a7b9f6e04921d86b17de",
-      "registrationId": "registration:33d987856caad616f676",
+      "id": "route:77f137c12d904b851130",
+      "registrationId": "registration:fd1e6f86b22ad4682c43",
       "sourcePath": "backend/src/routes/nativeOpenUiEvaluation.ts",
-      "line": 23,
+      "line": 26,
       "method": "POST",
       "path": "/api/native-openui/evaluate",
       "mountChain": [
@@ -143781,9 +144034,9 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:6f52ab9dbcfc67b60987",
+      "id": "frontend-call:40c0ab956af8b5b90305",
       "sourcePath": "frontend/src/components/native-openui/Evaluation.tsx",
-      "line": 30,
+      "line": 79,
       "callee": "fetchApiResponse",
       "reachable": true
     },
@@ -145948,7 +146201,7 @@
     {
       "id": "test-suite:2e491f4d2fcbc11f974c",
       "sourcePath": "backend/src/ai/nativeOpenUi.test.ts",
-      "declaredTests": 3,
+      "declaredTests": 4,
       "skipLocations": [],
       "focusLocations": []
     },

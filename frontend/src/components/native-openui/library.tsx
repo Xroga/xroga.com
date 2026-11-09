@@ -1,7 +1,6 @@
 import { createContext, useContext } from 'react';
 import { createLibrary, defineComponent } from '@openuidev/react-lang';
 import { z } from 'zod/v4';
-import { ArrowUpRight } from 'lucide-react';
 import { Box, Card, Col, Divider, Form, Grid, Row, Spacer } from './upstream/components/layout';
 import { Badge, Caption, Label, List, ListItem, Markdown, Text, Title } from './upstream/components/text';
 import { Button, Checkbox, DatePicker, IconButton, Input, Pressable, RadioGroup, SegmentedControl, Select, Slider, TextArea } from './upstream/components/controls';
@@ -14,6 +13,9 @@ import { Clamp, Convert, Lerp, Payment, Percent, Pow, Sqrt } from './upstream/fu
 
 import { Format, Plural } from './upstream/functions/text';
 import { Tabs } from './Tabs';
+import { Diagram } from './Diagram';
+import { EvidenceChip, Resource } from './Resources';
+import { Controls, Metric, Section } from './Editorial';
 
 export type AnswerSource = { id: string; title: string; url: string };
 export const EvidenceContext = createContext<ReadonlyMap<string, AnswerSource>>(new Map());
@@ -27,7 +29,7 @@ export const Source = defineComponent({
     let url: URL;
     try { url = new URL(source.url); } catch { return null; }
     if (!['https:', 'http:'].includes(url.protocol) || url.username || url.password) return null;
-    return <a className="iui-link" href={url.href} target="_blank" rel="noopener noreferrer">{source.title} <ArrowUpRight size={14} aria-hidden="true" /></a>;
+    return <EvidenceChip url={url} title={source.title} />;
   },
 });
 
@@ -44,13 +46,13 @@ export const library = createLibrary({
   components: [
     Col, Row, Box, Grid, Card, Carousel, Popover, Tabs, Divider, Spacer,
     Title, Text, Caption, Label, Badge, List, ListItem, Markdown, Quote, Code, MathBlock,
-    Form, Input, TextArea, Slider, Select, Checkbox, RadioGroup, SegmentedControl, DatePicker,
-    Button, IconButton, Pressable, Flashcard, Source, Icon, Table, Chart, ...svgComponents,
+    Section, Metric, Controls, Diagram, Form, Input, TextArea, Slider, Select, Checkbox, RadioGroup, SegmentedControl, DatePicker,
+    Button, IconButton, Pressable, Flashcard, Source, Resource, Icon, Table, Chart, ...svgComponents,
   ],
   functions: [Clamp, Convert, Lerp, Payment, Percent, Pow, Sqrt, Format, Plural],
   componentGroups: [
-    { name: 'Editorial layout', components: ['Col', 'Row', 'Grid', 'Title', 'Text', 'Caption', 'List', 'ListItem', 'Card', 'Quote', 'Badge', 'Source'] },
-    { name: 'Data and technical answers', components: ['Table', 'Chart', 'Math', 'Code', 'Svg', 'G', 'Circle', 'Ellipse', 'Rect', 'Line', 'Path', 'Polyline', 'Polygon', 'SvgText'] },
-    { name: 'Local interactions', components: ['Form', 'Slider', 'Input', 'TextArea', 'Select', 'Checkbox', 'RadioGroup', 'SegmentedControl', 'DatePicker', 'Button', 'IconButton', 'Pressable', 'Popover', 'Carousel', 'Tabs', 'Flashcard'] },
+    { name: 'Editorial layout', components: ['Section', 'Metric', 'Col', 'Row', 'Grid', 'Title', 'Text', 'Caption', 'List', 'ListItem', 'Card', 'Quote', 'Badge', 'Source', 'Resource'] },
+    { name: 'Data and technical answers', components: ['Table', 'Chart', 'Diagram', 'Math', 'Code', 'Svg', 'G', 'Circle', 'Ellipse', 'Rect', 'Line', 'Path', 'Polyline', 'Polygon', 'SvgText'] },
+    { name: 'Local interactions', components: ['Controls', 'Form', 'Slider', 'Input', 'TextArea', 'Select', 'Checkbox', 'RadioGroup', 'SegmentedControl', 'DatePicker', 'Button', 'IconButton', 'Pressable', 'Popover', 'Carousel', 'Tabs', 'Flashcard'] },
   ],
 });

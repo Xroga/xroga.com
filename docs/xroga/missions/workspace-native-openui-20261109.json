@@ -16,16 +16,22 @@
     "backend/src/ai/nativeOpenUi.ts",
     "backend/src/ai/nativeOpenUiCatalog.json",
     "backend/src/ai/nativeOpenUiPrompt.ts",
+    "backend/src/ai/nativeOpenUiRun.ts",
     "backend/src/index.ts",
     "backend/src/routes/nativeOpenUiEvaluation.ts",
+    "docs/operations/native-openui/ACCEPTANCE.md",
     "docs/operations/native-openui/coverage.json",
+    "docs/operations/native-openui/parity-benchmark.json",
     "docs/operations/native-openui/prompt-suite.json",
     "frontend/package-lock.json",
     "frontend/package.json",
     "frontend/src/app/native-answer-evaluation/page.tsx",
     "frontend/src/components/native-openui/COPILOTKIT-LICENSE",
+    "frontend/src/components/native-openui/Diagram.tsx",
+    "frontend/src/components/native-openui/Editorial.tsx",
     "frontend/src/components/native-openui/Evaluation.tsx",
     "frontend/src/components/native-openui/NativeSurface.tsx",
+    "frontend/src/components/native-openui/Resources.tsx",
     "frontend/src/components/native-openui/Tabs.tsx",
     "frontend/src/components/native-openui/evaluation.css",
     "frontend/src/components/native-openui/library.tsx",
@@ -106,7 +112,7 @@
     },
     {
       "command": "node scripts/verify-native-openui-browser.mjs",
-      "scope": "Real Chrome fixtures across six viewport/theme combinations with control, accessibility and egress checks",
+      "scope": "Browser fixtures across ten viewport and theme combinations with calculator, graph, accessibility and egress checks",
       "negative": true,
       "reference": "scripts/verify-native-openui-browser.mjs"
     }
@@ -119,7 +125,7 @@
   "rollout": "No production deployment. Resolve source gates, then obtain approved authenticated isolated evaluator acceptance.",
   "rollback": "Remove the evaluator environment settings. Workspace source remains unaffected.",
   "knownGaps": [
-    "Live DeepSeek and provider-streaming verification pending.",
+    "Live DeepSeek and provider-streaming verification await an authorized isolated staging target and provider binding.",
     "Workspace persistence, Copy/Share/Reopen and migration pending the standalone live gate.",
     "Main source-bound security and sidebar checks need reconciliation."
   ],
@@ -127,14 +133,15 @@
   "evidenceRefs": [
     "docs/operations/native-openui/ACCEPTANCE.md",
     "docs/operations/native-openui/coverage.json",
-    "docs/operations/native-openui/prompt-suite.json"
+    "docs/operations/native-openui/prompt-suite.json",
+    "docs/operations/native-openui/parity-benchmark.json"
   ],
   "claimsFullProductCompletion": false,
   "claimsAllBatchCommandsComplete": false,
   "release": {
     "state": "BLOCKED",
     "blockers": [
-      "Required source checks and authenticated bounded DeepSeek acceptance are pending."
+      "Isolated staging model and auth configuration, explicit capped inference authorization, and inherited source and security gates remain outstanding."
     ],
     "authenticatedE2e": "BLOCKED",
     "stagedSecurity": "BLOCKED",
