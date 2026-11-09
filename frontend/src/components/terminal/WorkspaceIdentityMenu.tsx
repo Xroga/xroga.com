@@ -3,12 +3,9 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   AlertTriangle,
-  Archive,
-  ChevronRight,
   Globe2,
   Loader2,
   Plus,
-  Settings2,
   Sparkles,
   Undo2,
 } from 'lucide-react';
@@ -17,7 +14,6 @@ import { GithubGlyphIcon } from '@/components/icons/animated/GithubGlyphIcon';
 import { TerminalPromptIcon } from '@/components/icons/animated/TerminalPromptIcon';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { api } from '@/lib/api';
-import { removeTerminalHistoryEntry } from '@/lib/terminalHistory';
 import { rollbackProjectUpdate } from '@/lib/rollbackProjectUpdate';
 import { useProjectWorkspaceStore, type ProjectWorkspaceStatus } from '@/store/useProjectWorkspaceStore';
 import { AnchoredPortalPopover } from '@/components/ui/AnchoredPortalPopover';
@@ -56,7 +52,7 @@ function formatRelative(timestamp: number | null): string {
 }
 
 export function WorkspaceIdentityMenu({ incognito = false, embedded = false, onAction }: { incognito?: boolean; embedded?: boolean; onAction?: () => void }) {
-  const { sessionId, setPrompt, startNewChat } = useTerminalChat();
+  const { setPrompt, startNewChat } = useTerminalChat();
   const activeProject = useProjectWorkspaceStore((state) => state.activeProjectContext);
   const deployUrl = useProjectWorkspaceStore((state) => state.deployUrl);
   const githubRepoUrl = useProjectWorkspaceStore((state) => state.githubRepoUrl);
@@ -67,7 +63,6 @@ export function WorkspaceIdentityMenu({ incognito = false, embedded = false, onA
   const lastFileTrail = useProjectWorkspaceStore((state) => state.lastFileTrail);
 
   const [open, setOpen] = useState(false);
-  const [settingsOpen, setSettingsOpen] = useState(false);
   const [undoBusy, setUndoBusy] = useState(false);
   const [syncConfidence, setSyncConfidence] = useState<SyncConfidence>('idle');
   const rootRef = useRef<HTMLDivElement>(null);
@@ -156,15 +151,6 @@ export function WorkspaceIdentityMenu({ incognito = false, embedded = false, onA
     toast.success(`New task started in ${repoIdentity.label}`);
   };
 
-  const archiveCurrentTask = () => {
-    const archivedId = sessionId;
-    startNewChat();
-    removeTerminalHistoryEntry(archivedId);
-    setOpen(false);
-    onAction?.();
-    toast.success('Task archived');
-  };
-
   const undoLastChange = async () => {
     if (!hasUndoData || !visibleCommitSha || !visiblePreviousFiles?.length) return;
     if (syncConfidence !== 'synced') {
@@ -221,7 +207,7 @@ export function WorkspaceIdentityMenu({ incognito = false, embedded = false, onA
 
   // Display-only shortening. Real GitHub identity, links and permissions remain unchanged.
   const compactRepoName = repoIdentity.label.replace(/-20\d{6}-\d{6}$/, '');
-  const projectActionClass = 'inline-flex min-w-0 items-center justify-center gap-1.5 rounded-lg px-1.5 py-2 text-[11px] font-medium text-[var(--muted)] transition-colors hover:bg-[var(--accent-dim)] hover:text-[var(--foreground)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--accent)]';
+  const projectActionClass = 'inline-flex min-w-0 items-center justify-center gap-1.5 rounded-lg px-1.5 py-1.5 text-[11px] font-medium text-[var(--muted)] transition-colors hover:bg-[var(--accent-dim)] hover:text-[var(--foreground)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--accent)]';
 
   const projectMenu = !repoIdentity.fullName ? (
     <div className="px-2 py-2">
@@ -236,17 +222,14 @@ export function WorkspaceIdentityMenu({ incognito = false, embedded = false, onA
         <div className="flex min-w-0 items-center gap-2">
           <GithubGlyphIcon size={15} className="shrink-0 opacity-70" />
           <button type="button" className="min-w-0 flex-1 truncate text-left text-[12px] font-semibold leading-5"
-            title={`Copy repository: ${repoIdentity.fullName}`}
+            title={`Copy repository: ${repoIdentity.fullName} · ${STATUS_LABEL[visibleStatus]}`}
             aria-label={`Copy repository name ${repoIdentity.fullName}`}
             onClick={() => void navigator.clipboard.writeText(repoIdentity.fullName)
               .then(() => toast.success('Repository name copied'))
               .catch(() => toast.error('Could not copy repository name'))}>
             {compactRepoName}
           </button>
-          <span title={syncText} className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-[var(--card-border)] px-1.5 py-0.5 text-[10px] font-medium text-[var(--muted)]">
-            <span className={`h-1.5 w-1.5 rounded-full ${statusDotClass(visibleStatus)}`} />
-            {STATUS_LABEL[visibleStatus]}
-          </span>
+
         </div>
         <div className="mt-0.5 flex min-w-0 items-center gap-1.5 pl-[23px] text-[10px] text-[var(--muted)]" title={repoIdentity.branch}>
           <span className="max-w-full truncate">{repoIdentity.branch || 'Default branch'}</span>
@@ -279,7 +262,7 @@ export function WorkspaceIdentityMenu({ incognito = false, embedded = false, onA
         </button>
       ) : null}
 
-      <div className={`grid gap-1 ${visibleDeployUrl ? 'grid-cols-2' : 'grid-cols-3'}`}>
+      <div className={`grid gap-1 ${visibleDeployUrl ? 'grid-cols-3' : 'grid-cols-2'}`}>
         {repoUrl ? (
           <button role="menuitem" type="button" title="Open on GitHub" aria-label="Open on GitHub"
             onClick={() => openExternal(repoUrl)} className={projectActionClass}>
@@ -296,21 +279,8 @@ export function WorkspaceIdentityMenu({ incognito = false, embedded = false, onA
           onClick={newProjectTask} className={projectActionClass}>
           <Plus className="h-3.5 w-3.5 shrink-0" aria-hidden="true" /><span>New task</span>
         </button>
-        <button role="menuitem" type="button" title="Project settings" aria-label="Project settings"
-          aria-expanded={settingsOpen} onClick={() => setSettingsOpen((value) => !value)} className={projectActionClass}>
-          <Settings2 className="h-3.5 w-3.5 shrink-0" aria-hidden="true" /><span>Settings</span>
-          <ChevronRight className={`h-3 w-3 shrink-0 transition-transform ${settingsOpen ? 'rotate-90' : ''}`} aria-hidden="true" />
-        </button>
       </div>
 
-      {settingsOpen ? (
-        <div className="mt-1 border-t border-[var(--card-border)] pt-1">
-          <button role="menuitem" type="button" onClick={archiveCurrentTask}
-            className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-left text-[11px] text-[var(--muted)] hover:bg-[var(--accent-dim)] hover:text-[var(--foreground)]">
-            <Archive className="h-3.5 w-3.5" aria-hidden="true" /><span>Archive current task</span>
-          </button>
-        </div>
-      ) : null}
     </div>
   );
 

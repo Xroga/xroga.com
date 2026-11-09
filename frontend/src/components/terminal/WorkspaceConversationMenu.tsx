@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Archive, ArrowLeft, Check, ChevronDown, Copy, ExternalLink, FolderInput, Loader2, Pencil, Pin, PinOff, Share2, Trash2 } from 'lucide-react';
+import { Archive, ArrowLeft, Check, ChevronDown, FolderInput, Loader2, Pencil, Pin, PinOff, Trash2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { useWorkspaceIdentity } from '@/components/layout/WorkspaceIdentityContext';
@@ -148,35 +148,6 @@ export function WorkspaceConversationMenu() {
 
   // All actions below apply to the active conversation, not the sidebar list.
   // A saved owner-scoped record must be present before any mutation is offered.
-  function conversationUrl(): string {
-    return `${window.location.origin}/workspace?conversation=${encodeURIComponent(sessionId)}`;
-  }
-
-  async function shareLink(action: 'share' | 'copy' | 'open') {
-    if (!canManage || !currentEntry) return;
-    const url = conversationUrl();
-    if (action === 'open') {
-      window.open(url, '_blank', 'noopener,noreferrer');
-      return;
-    }
-    if (action === 'share' && typeof navigator.share === 'function') {
-      try {
-        await navigator.share({ title: currentEntry.title, url });
-      } catch (err) {
-        if ((err as Error).name !== 'AbortError') toast.error('Could not share this conversation.');
-      }
-      return;
-    }
-    try {
-      await navigator.clipboard.writeText(url);
-      toast.success(action === 'share'
-        ? 'Private link copied. Only your signed-in account can open it.'
-        : 'Conversation link copied');
-    } catch {
-      toast.error('Could not copy the conversation link.');
-    }
-  }
-
   async function persistMetadata(changes: Partial<SidebarMeta>): Promise<boolean> {
     if (!accountId || !canManage || !currentEntry) return false;
     setBusyAction(true);
@@ -292,25 +263,9 @@ export function WorkspaceConversationMenu() {
         <ChevronDown size={15} aria-hidden="true" className={open ? styles.chevronOpen : styles.chevron} />
       </button>
       <AnchoredPortalPopover open={open} onClose={closeMenu} anchorRef={anchorRef}
-        width={306} placement="bottom-start" ariaLabel="Conversation actions" className={styles.popover}>
+        width={290} placement="bottom-start" ariaLabel="Conversation actions" className={styles.popover}>
         <div className={styles.actionPane}>
           {activeRepo ? <WorkspaceIdentityMenu embedded onAction={closeMenu} /> : null}
-          <div className={styles.compactHeading}>
-            <span className={styles.compactLabel} title={displayTitle}>Conversation</span>
-            {accountId && currentEntry && messages.length && !fetching ? (
-              <div className={styles.compactTools}>
-                <button role="menuitem" type="button" title="Rename conversation" aria-label="Rename conversation"
-                  className={styles.iconAction} disabled={!canManage}
-                  onClick={() => beginEditor('rename')}><Pencil size={15} aria-hidden="true" /></button>
-                <button role="menuitem" type="button" className={styles.iconAction}
-                  title={currentMeta?.pin_order != null ? 'Unpin conversation' : 'Pin conversation'}
-                  aria-label={currentMeta?.pin_order != null ? 'Unpin conversation' : 'Pin conversation'}
-                  disabled={!canManage} onClick={() => void togglePin()}>
-                  {currentMeta?.pin_order != null ? <PinOff size={15} aria-hidden="true" /> : <Pin size={15} aria-hidden="true" />}
-                </button>
-              </div>
-            ) : null}
-          </div>
           {!accountId ? (
             <p className={styles.actionHint}>Sign in to manage saved conversations.</p>
           ) : fetching ? (
@@ -383,19 +338,23 @@ export function WorkspaceConversationMenu() {
                   </div>
                 ) : (
             <div className={styles.actionList}>
+              <div className={styles.primaryActionRow} role="group" aria-label="Conversation editing and pinning">
+                <button role="menuitem" type="button" className={styles.primaryAction} disabled={!canManage}
+                  title="Rename conversation" aria-label="Rename conversation"
+                  onClick={() => beginEditor('rename')}>
+                  <Pencil size={15} aria-hidden="true" /><span>Edit</span>
+                </button>
+                <button role="menuitem" type="button" className={styles.primaryAction} disabled={!canManage}
+                  title={currentMeta?.pin_order != null ? 'Unpin conversation' : 'Pin conversation'}
+                  aria-label={currentMeta?.pin_order != null ? 'Unpin conversation' : 'Pin conversation'}
+                  aria-pressed={currentMeta?.pin_order != null}
+                  onClick={() => void togglePin()}>
+                  {currentMeta?.pin_order != null ? <PinOff size={15} aria-hidden="true" /> : <Pin size={15} aria-hidden="true" />}
+                  <span>{currentMeta?.pin_order != null ? 'Unpin' : 'Pin'}</span>
+                </button>
+              </div>
               <button role="menuitem" type="button" className={styles.subAction} disabled={!canManage}
                 onClick={() => beginEditor('project')}><FolderInput size={15} aria-hidden="true" /> Move to project</button>
-              <div className={styles.quickActions}>
-                <button role="menuitem" type="button" className={styles.quickAction} disabled={!canManage}
-                  title="Share private link" aria-label="Share private link"
-                  onClick={() => void shareLink('share')}><Share2 size={15} aria-hidden="true" /><span>Share</span></button>
-                <button role="menuitem" type="button" className={styles.quickAction} disabled={!canManage}
-                  title="Copy link" aria-label="Copy link"
-                  onClick={() => void shareLink('copy')}><Copy size={15} aria-hidden="true" /><span>Copy link</span></button>
-                <button role="menuitem" type="button" className={styles.quickAction} disabled={!canManage}
-                  title="Open in new tab" aria-label="Open in new tab"
-                  onClick={() => void shareLink('open')}><ExternalLink size={15} aria-hidden="true" /><span>Open</span></button>
-              </div>
               <div role="separator" className={styles.actionDivider} />
               <div className={styles.bottomActions}>
                 <button role="menuitem" type="button" className={styles.subAction} disabled={!canManage}
