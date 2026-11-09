@@ -165,3 +165,14 @@
 }
 .native-evidence-chip svg { flex: 0 0 auto; }
 .native-evidence-chip:hover { border-color: var(--native-accent); }
+
+.native-choice { min-width: 0; margin: 0; border: 1px solid var(--native-line); border-radius: 12px; padding: .75rem; }
+.native-choice legend { padding-inline: .35rem; font-weight: 650; }
+.native-choice input[type="search"] { width: 100%; margin-bottom: .5rem; border: 1px solid var(--native-line); border-radius: 8px; padding: .5rem; background: var(--native-panel); color: inherit; }
+.native-choice-options { display: grid; gap: .3rem; }
+.native-choice-options label { display: flex; align-items: baseline; gap: .55rem; padding-block: .25rem; cursor: pointer; }
+.native-choice small { color: var(--iui-muted); }
+.native-choice-options small { display: block; }
+.native-choice-actions { display: flex; flex-wrap: wrap; gap: .5rem; margin-block: .65rem; }
+.native-choice-actions button { min-height: 2.25rem; padding-inline: .7rem; border: 1px solid var(--native-line); border-radius: 8px; background: var(--native-panel); color: inherit; }
+.native-choice-actions button:disabled { opacity: .65; }

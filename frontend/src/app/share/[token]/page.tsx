@@ -1,3 +1,5 @@
+import { NATIVE_SHARE_PREFIX, readNativeOpenUiShare } from '../../../../../backend/src/ai/nativeOpenUiShare';
+import { NativeWorkspaceAnswer } from '@/components/native-openui/NativeWorkspaceAnswer';
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -61,6 +63,14 @@ const loadShare = cache(async (token: string): Promise<ShareResult> => {
     // Current API exposes text plus an optional snapshot. Older compatible API
     // revisions return the snapshot in response. Both retain the same share ACL.
     const snapshot = typeof share.richResponse === 'string' ? share.richResponse : share.response;
+    if (snapshot.startsWith(NATIVE_SHARE_PREFIX)) {
+      const native = readNativeOpenUiShare(snapshot);
+      return { status: 'ok', share: { ...share,
+        response: native?.text ?? share.response,
+        richResponse: native && (!share.richResponse || native.text === share.response) ? snapshot : undefined,
+        richUnavailable: !native || Boolean(share.richResponse && native.text !== share.response),
+      } };
+    }
     const presentation = readRichShareSnapshot(snapshot);
     const matchingText = !share.richResponse || presentation.text === share.response;
     return { status: 'ok', share: { ...share,
@@ -122,6 +132,7 @@ export default async function MessageSharePage({ params }: { params: Promise<{ t
   }
   const { share } = result;
   const richAllowed = Boolean(share.richResponse) && await canPresentRichShare();
+  const native = richAllowed && share.richResponse ? readNativeOpenUiShare(share.richResponse) : undefined;
 
   return (
     <main className="min-h-screen bg-[#f4f4f1] px-4 py-6 text-[#111] sm:px-6 sm:py-12 dark:bg-[#090a0d] dark:text-[#f5f5f3]">
@@ -146,7 +157,7 @@ export default async function MessageSharePage({ params }: { params: Promise<{ t
           <section className="px-5 py-6 sm:px-8 sm:py-8">
             <p className="mb-3 text-[10px] font-semibold uppercase tracking-[.16em] text-black/45 dark:text-white/45">Response</p>
             {share.richUnavailable && <p role="status" className="mb-3 text-sm">The interactive view is unavailable. The complete saved text follows.</p>}
-            {richAllowed && share.richResponse ? <SharedResponseV2 snapshot={share.richResponse} text={share.response} /> : <p className="whitespace-pre-wrap text-[15px] leading-7 text-black/90 dark:text-white/90">{share.response}</p>}
+            {native ? <NativeWorkspaceAnswer answer={{ ...native, library: 'xroga-native-v1' }} sources={native.sources} /> : richAllowed && share.richResponse ? <SharedResponseV2 snapshot={share.richResponse} text={share.response} /> : <p className="whitespace-pre-wrap text-[15px] leading-7 text-black/90 dark:text-white/90">{share.response}</p>}
             <SharedAnswerDownloads response={share.response} />
           </section>
         </article>

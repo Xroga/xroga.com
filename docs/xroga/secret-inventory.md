@@ -1,6 +1,6 @@
 # Secret and environment name inventory
 
-Values are forbidden. Source SHA: `dba4e46bb4fe01e1a0562f0e4068f4499fb81faf`. Names and source discovery do not prove that a capability is configured or accepted.
+Values are forbidden. Source SHA: `bc7bd7a56e50f1f1c7221d77d575b415139af041`. Names and source discovery do not prove that a capability is configured or accepted.
 
 | Name | Classification | Requirement | Dependency |
 | --- | --- | --- | --- |
@@ -250,7 +250,7 @@ Values are forbidden. Source SHA: `dba4e46bb4fe01e1a0562f0e4068f4499fb81faf`. Na
 | XROGA_CIRCUIT_FAILURE_THRESHOLD | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_CLEANUP_JOB_ID | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_CREDENTIAL_KMS_PROVIDER | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | credential-store |
-| XROGA_DEPLOYMENT_ENVIRONMENT | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-127-0-0-1 |
+| XROGA_DEPLOYMENT_ENVIRONMENT | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-127-0-0-1, endpoint-github-com |
 | XROGA_DEV_CREDENTIAL_KEK | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_DISABLED_PROVIDERS | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_DRIVE_PRESIGN_SIGN_LENGTH | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
@@ -301,6 +301,7 @@ Values are forbidden. Source SHA: `dba4e46bb4fe01e1a0562f0e4068f4499fb81faf`. Na
 | XROGA_LEARNING_ENABLED | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-127-0-0-1 |
 | XROGA_LEGACY_CREDENTIAL_MIGRATION | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_MAX_REPAIR_ATTEMPTS | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
+| XROGA_NATIVE_OPENUI_WORKSPACE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-github-com |
 | XROGA_OCI_KMS_AUTH_MODE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_OCI_KMS_ENDPOINT | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_OCI_KMS_KEY_ID | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | runtime-controls-and-conditional-aliases |

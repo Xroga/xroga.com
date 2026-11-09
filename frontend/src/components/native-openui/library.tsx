@@ -12,6 +12,8 @@ import { Glyph } from './upstream/components/glyph';
 import { Clamp, Convert, Lerp, Payment, Percent, Pow, Sqrt } from './upstream/functions/numbers';
 
 import { Format, Plural } from './upstream/functions/text';
+import { ChoicePicker } from './ChoicePicker';
+import { Between, Change, Cumulative, GroupBy, MovingAvg, Stats, Top } from './upstream/functions/data';
 import { Tabs } from './Tabs';
 import { Diagram } from './Diagram';
 import { EvidenceChip, Resource } from './Resources';
@@ -46,13 +48,13 @@ export const library = createLibrary({
   components: [
     Col, Row, Box, Grid, Card, Carousel, Popover, Tabs, Divider, Spacer,
     Title, Text, Caption, Label, Badge, List, ListItem, Markdown, Quote, Code, MathBlock,
-    Section, Metric, Controls, Diagram, Form, Input, TextArea, Slider, Select, Checkbox, RadioGroup, SegmentedControl, DatePicker,
+    Section, Metric, Controls, Diagram, Form, Input, TextArea, Slider, Select, Checkbox, RadioGroup, SegmentedControl, DatePicker, ChoicePicker,
     Button, IconButton, Pressable, Flashcard, Source, Resource, Icon, Table, Chart, ...svgComponents,
   ],
-  functions: [Clamp, Convert, Lerp, Payment, Percent, Pow, Sqrt, Format, Plural],
+  functions: [Clamp, Convert, Lerp, Payment, Percent, Pow, Sqrt, Format, Plural, Between, Change, Cumulative, GroupBy, MovingAvg, Stats, Top],
   componentGroups: [
     { name: 'Editorial layout', components: ['Section', 'Metric', 'Col', 'Row', 'Grid', 'Title', 'Text', 'Caption', 'List', 'ListItem', 'Card', 'Quote', 'Badge', 'Source', 'Resource'] },
     { name: 'Data and technical answers', components: ['Table', 'Chart', 'Diagram', 'Math', 'Code', 'Svg', 'G', 'Circle', 'Ellipse', 'Rect', 'Line', 'Path', 'Polyline', 'Polygon', 'SvgText'] },
-    { name: 'Local interactions', components: ['Controls', 'Form', 'Slider', 'Input', 'TextArea', 'Select', 'Checkbox', 'RadioGroup', 'SegmentedControl', 'DatePicker', 'Button', 'IconButton', 'Pressable', 'Popover', 'Carousel', 'Tabs', 'Flashcard'] },
+    { name: 'Local interactions', components: ['Controls', 'Form', 'Slider', 'Input', 'TextArea', 'Select', 'Checkbox', 'RadioGroup', 'SegmentedControl', 'DatePicker', 'ChoicePicker', 'Button', 'IconButton', 'Pressable', 'Popover', 'Carousel', 'Tabs', 'Flashcard'] },
   ],
 });

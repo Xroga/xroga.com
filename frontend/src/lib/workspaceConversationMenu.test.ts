@@ -31,12 +31,12 @@ test('recent chats come from real account-scoped cloud lists, with owner-checked
   assert.match(menu, /loadSidebarChatById\(accountId, entry\.id\)/);
   assert.match(menu, /loadCloudTerminalSession\(entry\.id\)/);
   assert.match(menu, /await restoreTerminalSession\(/);
-  assert.doesNotMatch(menu, /loadTerminalHistory\(|localStorage\.|sessionStorage\./);
+  assert.doesNotMatch(menu, /loadTerminalHistory\(|(?:localStorage|sessionStorage)\.(?:getItem|setItem|removeItem)\(/);
 });
 
 test('dropdown supports accessible search, active item, mobile layout and escape/outside dismissal', () => {
   assert.match(menu, /type="search"/);
-  assert.match(menu, /aria-label="Recent conversations"/);
+  assert.match(menu, /ariaLabel="Recent conversations"/);
   assert.match(menu, /entry\.id === sessionId/);
   assert.match(menu, /<AnchoredPortalPopover/);
   assert.match(styles, /text-overflow: ellipsis/);

@@ -262,7 +262,9 @@ export function enhanceAiResponse(content: string, documentId: string, completio
   let segment = 0;
   const contract = responseCoverageContractSchema.safeParse(received?.contract);
   const responseSource = received?.format === 'xroga-response-json-v1' && typeof received.text === 'string' && received.text.length <= 200_000
-    ? { format: 'xroga-response-json-v1' as const, text: received.text,...(contract.success?{contract:contract.data}:{}) } : undefined;
+    ? { format: 'xroga-response-json-v1' as const, text: received.text,...(contract.success?{contract:contract.data}:{}) }
+    : received?.format === 'xroga-openui-v1' && typeof received.text === 'string' && received.text.length <= 24_000
+      ? { format: 'xroga-openui-v1' as const, text: received.text } : undefined;
   let rejected = completion?.status === 'partial' || Boolean(received?.contract && (!contract.success || !contract.data.coverage.complete));
   const partialReason = completion?.status === 'partial' ? completion.reason : 'presentation_contract';
   if (rejected) blocks.push({ schemaVersion: 1, id: `${safeIdPart(documentId)}-completion`, type: 'notice', tone: 'warning',

@@ -138,6 +138,10 @@
         "signature": "DatePicker(value: $binding<string>, label?: string, min?: string, max?: string)",
         "description": "Dates are \"YYYY-MM-DD\"."
       },
+      "ChoicePicker": {
+        "signature": "ChoicePicker(value: $binding<string>, label: string, options: {value: string, label: string, description?: string}[])",
+        "description": "Search named options and apply one choice to local presentation state. Useful when reviewing a scenario before changing a calculation. It never approves or performs an external action."
+      },
       "Button": {
         "signature": "Button(label: string, action?: ActionExpression, variant?: \"solid\" | \"outline\" | \"soft\" | \"ghost\", color?: \"primary\" | \"danger\" | \"success\", size?: \"sm\" | \"md\" | \"lg\", icon?: string, disabled?: boolean, block?: boolean)",
         "description": "icon is a lucide name."
@@ -269,6 +273,7 @@
           "RadioGroup",
           "SegmentedControl",
           "DatePicker",
+          "ChoicePicker",
           "Button",
           "IconButton",
           "Pressable",
@@ -315,6 +320,34 @@
       "Plural": {
         "signature": "Plural(n: number, word: string, plural?: string) → string",
         "description": "Count and word: @Plural(1, \"guest\") is \"1 guest\", 3 gives \"3 guests\"; plural defaults to word + \"s\""
+      },
+      "Between": {
+        "signature": "Between(rows: any[], field: string, min?: any, max?: any) → any[]",
+        "description": "Rows whose field is from min to max, both included; compares numbers, or text such as \"YYYY-MM-DD\" dates. Leave min or max null for an open end"
+      },
+      "Change": {
+        "signature": "Change(current: number, previous: number) → number",
+        "description": "Percent change from previous to current, e.g. @Change(120, 100) is 20; null when previous is 0"
+      },
+      "Cumulative": {
+        "signature": "Cumulative(rows: any[], field: string) → any[]",
+        "description": "Copy of the rows with field replaced by its running total (field \"\" for a list of numbers)"
+      },
+      "GroupBy": {
+        "signature": "GroupBy(rows: any[], key: string, field?: string, agg?: \"sum\" | \"avg\" | \"count\" | \"min\" | \"max\") → {key: string | number, value: number}[]",
+        "description": "One row per distinct key, in first-seen order; value is agg of field (default \"sum\"), or the row count without a field"
+      },
+      "MovingAvg": {
+        "signature": "MovingAvg(rows: any[], field: string, window: number) → any[]",
+        "description": "Copy of the rows with field replaced by the average of its last window values (field \"\" for a list of numbers)"
+      },
+      "Stats": {
+        "signature": "Stats(values: number[]) → {count: number, min: number, max: number, mean: number, median: number, stdev: number}",
+        "description": "Summary of numbers, all zeros for an empty list"
+      },
+      "Top": {
+        "signature": "Top(rows: any[], field: string, n: number, direction?: \"desc\" | \"asc\") → any[]",
+        "description": "The n rows with the largest field (\"asc\": the smallest)"
       }
     },
     "schema": {
@@ -423,6 +456,9 @@
         "DatePicker": {
           "$ref": "#/$defs/DatePicker"
         },
+        "ChoicePicker": {
+          "$ref": "#/$defs/ChoicePicker"
+        },
         "Button": {
           "$ref": "#/$defs/Button"
         },
@@ -516,6 +552,7 @@
         "RadioGroup",
         "SegmentedControl",
         "DatePicker",
+        "ChoicePicker",
         "Button",
         "IconButton",
         "Pressable",
@@ -1592,6 +1629,56 @@
           "additionalProperties": false,
           "description": "Dates are \"YYYY-MM-DD\"."
         },
+        "ChoicePicker": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "string",
+              "maxLength": 80
+            },
+            "label": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 80
+            },
+            "options": {
+              "minItems": 2,
+              "maxItems": 16,
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "value": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 80
+                  },
+                  "label": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 80
+                  },
+                  "description": {
+                    "type": "string",
+                    "maxLength": 140
+                  }
+                },
+                "required": [
+                  "value",
+                  "label"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": [
+            "value",
+            "label",
+            "options"
+          ],
+          "additionalProperties": false,
+          "description": "Search named options and apply one choice to local presentation state. Useful when reviewing a scenario before changing a calculation. It never approves or performs an external action."
+        },
         "Button": {
           "type": "object",
           "properties": {
@@ -2508,6 +2595,255 @@
           "returns": {
             "type": "string"
           }
+        },
+        "Between": {
+          "description": "Rows whose field is from min to max, both included; compares numbers, or text such as \"YYYY-MM-DD\" dates. Leave min or max null for an open end",
+          "params": {
+            "type": "object",
+            "properties": {
+              "rows": {
+                "maxItems": 160,
+                "type": "array",
+                "items": {}
+              },
+              "field": {
+                "type": "string"
+              },
+              "min": {},
+              "max": {}
+            },
+            "required": [
+              "rows",
+              "field"
+            ],
+            "additionalProperties": false
+          },
+          "returns": {
+            "type": "array",
+            "items": {}
+          }
+        },
+        "Change": {
+          "description": "Percent change from previous to current, e.g. @Change(120, 100) is 20; null when previous is 0",
+          "params": {
+            "type": "object",
+            "properties": {
+              "current": {
+                "type": "number"
+              },
+              "previous": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "current",
+              "previous"
+            ],
+            "additionalProperties": false
+          },
+          "returns": {
+            "type": [
+              "number",
+              "null"
+            ]
+          }
+        },
+        "Cumulative": {
+          "description": "Copy of the rows with field replaced by its running total (field \"\" for a list of numbers)",
+          "params": {
+            "type": "object",
+            "properties": {
+              "rows": {
+                "maxItems": 160,
+                "type": "array",
+                "items": {}
+              },
+              "field": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "rows",
+              "field"
+            ],
+            "additionalProperties": false
+          },
+          "returns": {
+            "type": "array",
+            "items": {}
+          }
+        },
+        "GroupBy": {
+          "description": "One row per distinct key, in first-seen order; value is agg of field (default \"sum\"), or the row count without a field",
+          "params": {
+            "type": "object",
+            "properties": {
+              "rows": {
+                "maxItems": 160,
+                "type": "array",
+                "items": {}
+              },
+              "key": {
+                "type": "string"
+              },
+              "field": {
+                "type": "string"
+              },
+              "agg": {
+                "type": "string",
+                "enum": [
+                  "sum",
+                  "avg",
+                  "count",
+                  "min",
+                  "max"
+                ]
+              }
+            },
+            "required": [
+              "rows",
+              "key"
+            ],
+            "additionalProperties": false
+          },
+          "returns": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "key": {
+                  "type": [
+                    "string",
+                    "number"
+                  ]
+                },
+                "value": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "key",
+                "value"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "MovingAvg": {
+          "description": "Copy of the rows with field replaced by the average of its last window values (field \"\" for a list of numbers)",
+          "params": {
+            "type": "object",
+            "properties": {
+              "rows": {
+                "maxItems": 160,
+                "type": "array",
+                "items": {}
+              },
+              "field": {
+                "type": "string"
+              },
+              "window": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "rows",
+              "field",
+              "window"
+            ],
+            "additionalProperties": false
+          },
+          "returns": {
+            "type": "array",
+            "items": {}
+          }
+        },
+        "Stats": {
+          "description": "Summary of numbers, all zeros for an empty list",
+          "params": {
+            "type": "object",
+            "properties": {
+              "values": {
+                "maxItems": 160,
+                "type": "array",
+                "items": {
+                  "type": "number"
+                }
+              }
+            },
+            "required": [
+              "values"
+            ],
+            "additionalProperties": false
+          },
+          "returns": {
+            "type": "object",
+            "properties": {
+              "count": {
+                "type": "number"
+              },
+              "min": {
+                "type": "number"
+              },
+              "max": {
+                "type": "number"
+              },
+              "mean": {
+                "type": "number"
+              },
+              "median": {
+                "type": "number"
+              },
+              "stdev": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "count",
+              "min",
+              "max",
+              "mean",
+              "median",
+              "stdev"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "Top": {
+          "description": "The n rows with the largest field (\"asc\": the smallest)",
+          "params": {
+            "type": "object",
+            "properties": {
+              "rows": {
+                "maxItems": 160,
+                "type": "array",
+                "items": {}
+              },
+              "field": {
+                "type": "string"
+              },
+              "n": {
+                "type": "number"
+              },
+              "direction": {
+                "type": "string",
+                "enum": [
+                  "desc",
+                  "asc"
+                ]
+              }
+            },
+            "required": [
+              "rows",
+              "field",
+              "n"
+            ],
+            "additionalProperties": false
+          },
+          "returns": {
+            "type": "array",
+            "items": {}
+          }
         }
       }
     },
@@ -2619,6 +2955,9 @@
       "DatePicker": {
         "$ref": "#/$defs/DatePicker"
       },
+      "ChoicePicker": {
+        "$ref": "#/$defs/ChoicePicker"
+      },
       "Button": {
         "$ref": "#/$defs/Button"
       },
@@ -2712,6 +3051,7 @@
       "RadioGroup",
       "SegmentedControl",
       "DatePicker",
+      "ChoicePicker",
       "Button",
       "IconButton",
       "Pressable",
@@ -3788,6 +4128,56 @@
         "additionalProperties": false,
         "description": "Dates are \"YYYY-MM-DD\"."
       },
+      "ChoicePicker": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "maxLength": 80
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80
+          },
+          "options": {
+            "minItems": 2,
+            "maxItems": 16,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 80
+                },
+                "label": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 80
+                },
+                "description": {
+                  "type": "string",
+                  "maxLength": 140
+                }
+              },
+              "required": [
+                "value",
+                "label"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "value",
+          "label",
+          "options"
+        ],
+        "additionalProperties": false,
+        "description": "Search named options and apply one choice to local presentation state. Useful when reviewing a scenario before changing a calculation. It never approves or performs an external action."
+      },
       "Button": {
         "type": "object",
         "properties": {
@@ -4703,6 +5093,255 @@
         },
         "returns": {
           "type": "string"
+        }
+      },
+      "Between": {
+        "description": "Rows whose field is from min to max, both included; compares numbers, or text such as \"YYYY-MM-DD\" dates. Leave min or max null for an open end",
+        "params": {
+          "type": "object",
+          "properties": {
+            "rows": {
+              "maxItems": 160,
+              "type": "array",
+              "items": {}
+            },
+            "field": {
+              "type": "string"
+            },
+            "min": {},
+            "max": {}
+          },
+          "required": [
+            "rows",
+            "field"
+          ],
+          "additionalProperties": false
+        },
+        "returns": {
+          "type": "array",
+          "items": {}
+        }
+      },
+      "Change": {
+        "description": "Percent change from previous to current, e.g. @Change(120, 100) is 20; null when previous is 0",
+        "params": {
+          "type": "object",
+          "properties": {
+            "current": {
+              "type": "number"
+            },
+            "previous": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "current",
+            "previous"
+          ],
+          "additionalProperties": false
+        },
+        "returns": {
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      },
+      "Cumulative": {
+        "description": "Copy of the rows with field replaced by its running total (field \"\" for a list of numbers)",
+        "params": {
+          "type": "object",
+          "properties": {
+            "rows": {
+              "maxItems": 160,
+              "type": "array",
+              "items": {}
+            },
+            "field": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "rows",
+            "field"
+          ],
+          "additionalProperties": false
+        },
+        "returns": {
+          "type": "array",
+          "items": {}
+        }
+      },
+      "GroupBy": {
+        "description": "One row per distinct key, in first-seen order; value is agg of field (default \"sum\"), or the row count without a field",
+        "params": {
+          "type": "object",
+          "properties": {
+            "rows": {
+              "maxItems": 160,
+              "type": "array",
+              "items": {}
+            },
+            "key": {
+              "type": "string"
+            },
+            "field": {
+              "type": "string"
+            },
+            "agg": {
+              "type": "string",
+              "enum": [
+                "sum",
+                "avg",
+                "count",
+                "min",
+                "max"
+              ]
+            }
+          },
+          "required": [
+            "rows",
+            "key"
+          ],
+          "additionalProperties": false
+        },
+        "returns": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": [
+                  "string",
+                  "number"
+                ]
+              },
+              "value": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "key",
+              "value"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "MovingAvg": {
+        "description": "Copy of the rows with field replaced by the average of its last window values (field \"\" for a list of numbers)",
+        "params": {
+          "type": "object",
+          "properties": {
+            "rows": {
+              "maxItems": 160,
+              "type": "array",
+              "items": {}
+            },
+            "field": {
+              "type": "string"
+            },
+            "window": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "rows",
+            "field",
+            "window"
+          ],
+          "additionalProperties": false
+        },
+        "returns": {
+          "type": "array",
+          "items": {}
+        }
+      },
+      "Stats": {
+        "description": "Summary of numbers, all zeros for an empty list",
+        "params": {
+          "type": "object",
+          "properties": {
+            "values": {
+              "maxItems": 160,
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            }
+          },
+          "required": [
+            "values"
+          ],
+          "additionalProperties": false
+        },
+        "returns": {
+          "type": "object",
+          "properties": {
+            "count": {
+              "type": "number"
+            },
+            "min": {
+              "type": "number"
+            },
+            "max": {
+              "type": "number"
+            },
+            "mean": {
+              "type": "number"
+            },
+            "median": {
+              "type": "number"
+            },
+            "stdev": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "count",
+            "min",
+            "max",
+            "mean",
+            "median",
+            "stdev"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "Top": {
+        "description": "The n rows with the largest field (\"asc\": the smallest)",
+        "params": {
+          "type": "object",
+          "properties": {
+            "rows": {
+              "maxItems": 160,
+              "type": "array",
+              "items": {}
+            },
+            "field": {
+              "type": "string"
+            },
+            "n": {
+              "type": "number"
+            },
+            "direction": {
+              "type": "string",
+              "enum": [
+                "desc",
+                "asc"
+              ]
+            }
+          },
+          "required": [
+            "rows",
+            "field",
+            "n"
+          ],
+          "additionalProperties": false
+        },
+        "returns": {
+          "type": "array",
+          "items": {}
         }
       }
     }

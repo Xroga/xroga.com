@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { NATIVE_UI_MARKER, splitNativeOpenUiAnswer, validateNativeOpenUi } from './nativeOpenUi.js';
 import { nativeOpenUiPrompt } from './nativeOpenUiPrompt.js';
+import { buildNativeOpenUiShare, readNativeOpenUiShare } from './nativeOpenUiShare.js';
 import { readNativeOpenUiRun } from './nativeOpenUiRun.js';
 
 test('the model gets instructions from the native registry and may answer in text', () => {
@@ -48,4 +49,15 @@ test('the paid evaluator rejects non-staging, expired, repeated, and over-budget
   assert.equal(readNativeOpenUiRun('staging', JSON.stringify(run), Date.parse(run.expiresAt)), null);
   assert.equal(readNativeOpenUiRun('staging', JSON.stringify({ ...run, slots: [first, first] }), now), null);
   assert.equal(readNativeOpenUiRun('staging', JSON.stringify({ ...run, maximumTotalMicroUsd: 4_999 }), now), null);
+});
+
+test('native sharing round trips only a bounded presentation and explicit safe citations', () => {
+  const program = 'root = Col([Text("Answer"), Source("source-1")])';
+  const sources = [{ title: 'Primary evidence', url: 'https://example.com/evidence' }];
+  const saved = buildNativeOpenUiShare('Answer', program, sources);
+  assert.ok(saved);
+  assert.deepEqual(readNativeOpenUiShare(saved), { format: 'xroga-openui-v1', text: 'Answer', program, sources });
+  assert.equal(buildNativeOpenUiShare('Answer', program), undefined);
+  assert.equal(buildNativeOpenUiShare('Answer', program, [{ title: 'Unsafe', url: 'javascript:alert(1)' }]), undefined);
+  assert.equal(buildNativeOpenUiShare('Answer', 'root = Col([Button("Run", @ToAssistant("send"))])'), undefined);
 });

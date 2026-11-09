@@ -8,7 +8,7 @@ import styles from './conversation-v2.module.css';
 import type { ResponseInputV2 } from './document';
 import { richShareSnapshot } from './shareSnapshot';
 
-function TurnActions({ role, content, prompt, message }: { role: 'user' | 'assistant'; content: string; prompt?: string; message?: ResponseInputV2 }) {
+function TurnActions({ role, content, prompt, message, richResponse }: { role: 'user' | 'assistant'; content: string; prompt?: string; message?: ResponseInputV2; richResponse?: string }) {
   const [copyState, setCopyState] = useState<'idle' | 'copied' | 'failed'>('idle');
   const [sharing, setSharing] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout>>();
@@ -22,7 +22,7 @@ function TurnActions({ role, content, prompt, message }: { role: 'user' | 'assis
     } catch { setCopyState('failed'); }
   }
   if (!content.trim()) return null;
-  const snapshot = role === 'assistant' && message ? richShareSnapshot(message, serializeAssistantCopy(content)) : undefined;
+  const snapshot = richResponse ?? (role === 'assistant' && message ? richShareSnapshot(message, serializeAssistantCopy(content)) : undefined);
   return <>
     <div className={styles.actions} aria-label={role === 'user' ? 'Your message actions' : 'Answer actions'}>
       <button type="button" onClick={() => void copy()} aria-label={copyState === 'copied' ? 'Copied' : 'Copy message'} title="Copy message">{copyState === 'copied' ? <Check /> : <Copy />}</button>
@@ -35,9 +35,9 @@ function TurnActions({ role, content, prompt, message }: { role: 'user' | 'assis
 
 /** Whole-turn presentation only. Submission, approvals and task mutations remain
  * owned by the canonical Workspace and arrive as unchanged control slots. */
-export function ConversationTurnV2({ role, content, copyContent = content, prompt, message, streaming, activity, controls, children }: {
+export function ConversationTurnV2({ role, content, copyContent = content, prompt, message, richResponse, streaming, activity, controls, children }: {
   role: 'user' | 'assistant'; content: string; copyContent?: string; prompt?: string;
-  message?: ResponseInputV2;
+  message?: ResponseInputV2; richResponse?: string;
   streaming: boolean; activity?: ReactNode; controls?: ReactNode; children?: ReactNode;
 }) {
   const status = conversationStatusV2(streaming, content);
@@ -50,7 +50,7 @@ export function ConversationTurnV2({ role, content, copyContent = content, promp
       {status && <div className={styles.status} role="status"><span aria-hidden="true" />{status}</div>}
       {controls && <div className={styles.controls}>{controls}</div>}
       <div className={styles.answer}>{children}</div>
-      {!streaming && <TurnActions role={role} content={copyContent} prompt={prompt} message={message} />}
+      {!streaming && <TurnActions role={role} content={copyContent} prompt={prompt} message={message} richResponse={richResponse} />}
     </>}
   </div>;
 }

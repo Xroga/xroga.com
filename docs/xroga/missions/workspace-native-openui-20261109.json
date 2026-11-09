@@ -8,7 +8,7 @@
   ],
   "state": "IN_PROGRESS",
   "risk": "medium",
-  "scope": "Build an independently evaluable DeepSeek to native OpenUI answer format before integrating it into authenticated Workspace.",
+  "scope": "Validate one adaptive DeepSeek to native OpenUI presentation and prepare the existing authenticated Workspace and share paths for staged acceptance.",
   "changedFiles": [
     "backend/package-lock.json",
     "backend/package.json",
@@ -17,7 +17,10 @@
     "backend/src/ai/nativeOpenUiCatalog.json",
     "backend/src/ai/nativeOpenUiPrompt.ts",
     "backend/src/ai/nativeOpenUiRun.ts",
+    "backend/src/ai/nativeOpenUiShare.ts",
+    "backend/src/ai/pipeline.ts",
     "backend/src/index.ts",
+    "backend/src/lib/richShareSnapshot.ts",
     "backend/src/routes/nativeOpenUiEvaluation.ts",
     "docs/operations/native-openui/ACCEPTANCE.md",
     "docs/operations/native-openui/coverage.json",
@@ -26,11 +29,14 @@
     "frontend/package-lock.json",
     "frontend/package.json",
     "frontend/src/app/native-answer-evaluation/page.tsx",
+    "frontend/src/app/share/[token]/page.tsx",
     "frontend/src/components/native-openui/COPILOTKIT-LICENSE",
+    "frontend/src/components/native-openui/ChoicePicker.tsx",
     "frontend/src/components/native-openui/Diagram.tsx",
     "frontend/src/components/native-openui/Editorial.tsx",
     "frontend/src/components/native-openui/Evaluation.tsx",
     "frontend/src/components/native-openui/NativeSurface.tsx",
+    "frontend/src/components/native-openui/NativeWorkspaceAnswer.tsx",
     "frontend/src/components/native-openui/Resources.tsx",
     "frontend/src/components/native-openui/Tabs.tsx",
     "frontend/src/components/native-openui/evaluation.css",
@@ -50,9 +56,16 @@
     "frontend/src/components/native-openui/upstream/components/table.tsx",
     "frontend/src/components/native-openui/upstream/components/text.tsx",
     "frontend/src/components/native-openui/upstream/components/theme.css",
+    "frontend/src/components/native-openui/upstream/functions/data.ts",
     "frontend/src/components/native-openui/upstream/functions/numbers.ts",
     "frontend/src/components/native-openui/upstream/functions/shared.ts",
     "frontend/src/components/native-openui/upstream/functions/text.ts",
+    "frontend/src/components/response-experience-v2/ConversationTurnV2.tsx",
+    "frontend/src/components/terminal/MessageBubbleActions.tsx",
+    "frontend/src/components/terminal/SwarmMessageLog.tsx",
+    "frontend/src/lib/api.ts",
+    "frontend/src/lib/xrogaBlocks.ts",
+    "frontend/src/lib/xrogaResponseDocument.ts",
     "package-lock.json",
     "scripts/generate-native-openui-spec.mjs",
     "scripts/verify-native-openui-browser.mjs"
@@ -122,12 +135,12 @@
     "reason": "New standalone presentation surface uses the existing model dispatch; no competing orchestration, database or provider.",
     "rfc": null
   },
-  "rollout": "No production deployment. Resolve source gates, then obtain approved authenticated isolated evaluator acceptance.",
-  "rollback": "Remove the evaluator environment settings. Workspace source remains unaffected.",
+  "rollout": "Standalone evaluation first under the approved four-call cap. Enable the Workspace switch only after the independently observed live gate and authorized staged release.",
+  "rollback": "Unset evaluator configuration and the Workspace native generation switch. Restore previous frontend and API artifacts if required. Persisted answers retain readable prose.",
   "knownGaps": [
-    "Live DeepSeek and provider-streaming verification await an authorized isolated staging target and provider binding.",
-    "Workspace persistence, Copy/Share/Reopen and migration pending the standalone live gate.",
-    "Main source-bound security and sidebar checks need reconciliation."
+    "Live DeepSeek is blocked by the missing approved staging-only Zurelay credential. The existing cloud secret is restricted to the production runtime.",
+    "Workspace and share are wired under the existing storage and access paths. Hosted end-to-end acceptance is pending.",
+    "The tenant audit and mission source integrity checks pass. Source-bound staged authorization and tenant security observations are pending."
   ],
   "placeholderClaimsRemaining": [],
   "evidenceRefs": [
@@ -141,7 +154,7 @@
   "release": {
     "state": "BLOCKED",
     "blockers": [
-      "Isolated staging model and auth configuration, explicit capped inference authorization, and inherited source and security gates remain outstanding."
+      "Dedicated isolated Zurelay credential, caller-scoped staging Auth configuration, exact-source CI and staged tenant security evidence remain outstanding."
     ],
     "authenticatedE2e": "BLOCKED",
     "stagedSecurity": "BLOCKED",

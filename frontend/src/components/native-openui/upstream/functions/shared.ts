@@ -10,7 +10,7 @@ export function read(item: unknown, field: string): unknown {
   if (!field) return item;
   let cur: unknown = item;
   for (const key of field.split(".")) {
-    if (cur == null || typeof cur !== "object") return undefined;
+    if (cur == null || typeof cur !== "object" || !Object.hasOwn(cur, key)) return undefined;
     cur = (cur as Record<string, unknown>)[key];
   }
   return cur;

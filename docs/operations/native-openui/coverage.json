@@ -58,7 +58,8 @@
     "Metric",
     "Controls",
     "Diagram",
-    "Resource"
+    "Resource",
+    "ChoicePicker"
   ],
   "nativeFunctions": [
     "Clamp",
@@ -69,7 +70,14 @@
     "Pow",
     "Sqrt",
     "Format",
-    "Plural"
+    "Plural",
+    "Between",
+    "Change",
+    "Cumulative",
+    "GroupBy",
+    "MovingAvg",
+    "Stats",
+    "Top"
   ],
   "copilotKitStandard": [
     {
@@ -279,8 +287,8 @@
     },
     {
       "name": "ChoicePicker",
-      "disposition": "existing-equivalent",
-      "details": "Select / RadioGroup"
+      "disposition": "adapted-source",
+      "details": "Searchable native radio choices with a draft, Apply and Cancel. OpenUI scalar binding commits only after Apply. Browser fixture checks filtering, cancel and reactive recalculation."
     },
     {
       "name": "DateTimeInput",
@@ -423,5 +431,58 @@
     "input": "Validated OpenUI nodes and labeled links",
     "interaction": "Zoom, pan, fit and text equivalent"
   },
-  "resourceIdentity": "Static official domain mapping and local Simple Icons artwork. Unknown evidence domains use a neutral icon."
+  "resourceIdentity": "Static official domain mapping and local Simple Icons artwork. Unknown evidence domains use a neutral icon.",
+  "upstreamCapabilities": {
+    "OpenUI": {
+      "native": [
+        "Lang lexer and parser",
+        "Schema and generated model instructions",
+        "React registry and renderer",
+        "Local reactive state and actions",
+        "Validation of a complete streaming prefix"
+      ],
+      "integratedWithExisting": [
+        "Xroga transport, workspace, persistence, citations and owner-scoped sharing"
+      ],
+      "excluded": {
+        "AgentInterface and headless adapters": "Xroga already owns the conversation and streaming transport.",
+        "Gateway, Autofix and observability": "The authorized provider and ledger stay in Xroga. Avoid duplicate model calls and telemetry.",
+        "External Query, Mutation and tool calls": "Model presentation cannot grant execution authority.",
+        "Email, Vue, Svelte and Angular renderers": "This Workspace runs React and does not render UI through email."
+      }
+    },
+    "Open Intelligent UI": {
+      "native": [
+        "Layout, typography, list, badge and cards",
+        "Responsive table and chart",
+        "Forms and local controls",
+        "Code, math and SVG",
+        "Deterministic arithmetic, formatting and data functions in nativeFunctions"
+      ],
+      "excluded": {
+        "MapView, MapMarker and street routing": "Upstream MapLibre design loads tiles and optional routing. No approved staging tile or route provider.",
+        "Image and media": "The upstream catalog permits URL loading. Only Xroga-owned verified artifact surfaces have access checks; a native media resolver still needs review.",
+        "HtmlView": "No arbitrary HTML or execution in the answer.",
+        "Chess and coach skill registries": "They depend on separate, domain-specific state and are outside the shared response contract.",
+        "Random, Now, Today, Shuffle and Pick": "Saved snapshots should reproduce their inputs. No live clock or randomness in this registry.",
+        "Pivot, Bucket, Histogram and allocation expansion": "Current staged tests cover bounded row operations. Output expansion and corner-case domains require their own limits.",
+        "Other list, date, formatting and color functions": "Not registered until their behavior and output size are covered under model-authored input."
+      }
+    },
+    "CopilotKit": {
+      "native": [
+        "Standard Tabs",
+        "Standard searchable ChoicePicker",
+        "Draft / Apply / Cancel presentation interaction adapted from the interruption examples"
+      ],
+      "integratedWithExisting": [
+        "Workspace activity, approvals and task status remain owned by Xroga. No model-authored UI may approve a real operation."
+      ],
+      "excluded": {
+        "CopilotRuntime, useCoAgent and AG-UI transports": "A second model loop and state stream would compete with Xroga's authority and ledger.",
+        "Remote actions, useInterrupt and approval resumption": "The existing canonical Xroga approvals remain authoritative.",
+        "Remaining A2UI standard surfaces": "Each standard component has its own disposition in copilotKitStandard."
+      }
+    }
+  }
 }

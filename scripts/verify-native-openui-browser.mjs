@@ -34,6 +34,10 @@ const cases = {
   evidence: { text: 'PostgreSQL documents row-level security.', program: 'root = Col([Text("PostgreSQL documents row-level security."), Source("source-1")])' },
   code: { text: 'TypeScript function returns the supplied constant.', program: 'root = Col([Code("const total: number = 42;", "typescript")])' },
   tabs: { text: 'Core recommendation remains visible.', program: 'root = Col([Text("Core recommendation remains visible."), Tabs("Scenarios", [{title: "Basic", content: [Text("Basic details")]}, {title: "Team", content: [Text("Team details")]}])])' },
+  choice: { text: 'Compare local scenarios.', program: [
+    '$choice = "base"',
+    'root = Col([ChoicePicker($choice, "Pricing scenario", [{value: "base", label: "Base"}, {value: "growth", label: "Growth"}, {value: "trial", label: "Trial"}, {value: "enterprise", label: "Enterprise"}, {value: "custom", label: "Custom"}]), Metric("Current total", $choice == "growth" ? 200 : 100), Metric("Mean from provided values", @Stats([100, 200, 300]).mean)])',
+  ].join('\n') },
   rejected: { text: 'The original readable answer is retained.', program: 'root = Col([Source("unknown")])' },
   stream: { text: 'The first section is available.', program: 'root = Col([Text("The first section is available.")])\ntail = Chart(' },
 };
@@ -149,6 +153,16 @@ try {
       await open('evidence');
       const evidence = page.getByRole('link', { name: /PostgreSQL/ });
       assert.equal(await evidence.getAttribute('href'), 'https://www.postgresql.org/docs/current/ddl-rowsecurity.html');
+      await open('choice');
+      const choice = page.getByRole('group', { name: 'Pricing scenario' });
+      await choice.getByRole('searchbox').fill('Grow');
+      await choice.getByRole('radio', { name: 'Growth' }).check();
+      await page.getByText('Applied: Base').waitFor();
+      await choice.getByRole('button', { name: 'Cancel' }).click();
+      await choice.getByRole('radio', { name: 'Growth' }).check();
+      await choice.getByRole('button', { name: 'Apply choice' }).click();
+      await page.getByText('Applied: Growth').waitFor();
+      assert.equal(await page.getByText('200', { exact: true }).count(), 2);
       await open('rejected');
       await page.getByText(cases.rejected.text).waitFor();
       assert.equal(await page.getByRole('link').count(), 0);

@@ -22,6 +22,8 @@ import { analyzeTask } from './black-hole/taskClass.js';
 import { assessBlackHoleComplexity } from './black-hole/complexity.js';
 import { MODELS, type ModelId } from './models.js';
 import { publicCompletionState } from './completionDiagnostics.js';
+import { NATIVE_UI_FORMAT, splitNativeOpenUiAnswer, validateNativeOpenUi } from './nativeOpenUi.js';
+import { nativeOpenUiPrompt } from './nativeOpenUiPrompt.js';
 import { assessPresentationCoverage, createPresentationProjection, presentationRequestInstructions, presentationResponseFormat, presentedAnswerMaxTokens, type PresentationResponseFormat } from './responsePresentation.js';
 import { prepareAnswerCoverage } from './answerCoverage.js';
 import {prepareSonnetConversation,requestedSonnetReason} from './sonnetApproval.js';
@@ -388,7 +390,7 @@ export interface BuildClientMeta {
 
 export interface ChatPipelineResult {
   completion?: ReturnType<typeof publicCompletionState>;
-  responseSource?: { format: 'xroga-response-json-v1'; text: string; contract?: ReturnType<typeof prepareAnswerCoverage> };
+  responseSource?: { format: 'xroga-response-json-v1' | typeof NATIVE_UI_FORMAT; text: string; contract?: ReturnType<typeof prepareAnswerCoverage> };
   response: string;
   intent: string;
   usage: ReturnType<typeof usageToTokenUsage>;
@@ -1122,10 +1124,23 @@ export async function runChatPipeline(opts: {
   if (opts.projectEvidence) truthAuthorities.add('repository:read');
   if (research?.sources.length) truthAuthorities.add('network:public-read');
   const answerContract = prepareAnswerCoverage(opts.prompt, opts.goalContract?.presentation, opts.goalContract?.answerObligations);
-  const presentation = answerContract.plan;
+  // This is a staging release switch, not a response or user classification.
+  const native = process.env.XROGA_DEPLOYMENT_ENVIRONMENT === 'staging'
+    && process.env.XROGA_NATIVE_OPENUI_WORKSPACE === '1'
+    && route.builder === 'deepseek_v4_1_flash_1017';
+  const sources = research?.sources ?? [];
+  const evidenceIds = new Set(sources.map((_, index) => 'source-' + (index + 1)));
+  const sourceManifest = sources.length
+    ? '\n\nVerified research references available for Source(id):\n' + JSON.stringify(
+      sources.map((source, index) => ({ id: 'source-' + (index + 1), title: source.title })),
+    ) : '';
+  const presentation = native ? undefined : answerContract.plan;
   const projection = presentation?.length ? createPresentationProjection(presentation) : undefined;
   const format = presentation?.length ? presentationResponseFormat(presentation) : undefined;
-  const system = `${currentPublicProductTruth(truthAuthorities)}\n\n${chatPresentationSystem(opts.prompt)}${presentation?.length ? `\n\n${presentationRequestInstructions(presentation)}` : ''}`;
+  const instructions = native
+    ? nativeOpenUiPrompt + sourceManifest
+    : chatPresentationSystem(opts.prompt) + (presentation?.length ? '\n\n' + presentationRequestInstructions(presentation) : '');
+  const system = currentPublicProductTruth(truthAuthorities) + '\n\n' + instructions;
   const result = await callBuilderStream(
     route.builder,
     [{ role: 'system', content: system }, ...historyMsgs, { role: 'user', content: userContent }],
@@ -1139,11 +1154,29 @@ export async function runChatPipeline(opts: {
       modelConnectedAccountId:opts.modelScope?.connectedAccountId,modelMaximumCostMicroUsd:opts.modelScope?.maximumCostMicroUsd,
       modelRevalidateBeforeDispatch:opts.modelScope?.revalidateBeforeDispatch,
       temperature: 0.5,
-      onDelta: projection ? delta => { const visible = projection.append(delta); if (visible) opts.onDelta?.(visible); } : opts.onDelta,
+      // The provider adapter publishes only after canonical usage settlement.
+      onDelta: native ? undefined
+        : projection ? delta => { const visible = projection.append(delta); if (visible) opts.onDelta?.(visible); } : opts.onDelta,
     },
   );
 
   const usage = await getUsage(opts.userId);
+
+  if (native) {
+    const { text, program } = splitNativeOpenUiAnswer(result.text);
+    const valid = program && result.finishReason === 'stop' && validateNativeOpenUi(program, evidenceIds).ok;
+    const response = text || "Xroga couldn't finish the requested answer.";
+    const completion = publicCompletionState(result.finishReason, response);
+    opts.onDelta?.(response);
+    return {
+      response,
+      completion: (!text || (program && !valid)) && completion.status === 'complete'
+        ? { status: 'partial', reason: 'presentation_contract' } : completion,
+      responseSource: { format: NATIVE_UI_FORMAT, text: valid ? program : '' },
+      intent: route.kind, usage: usageToTokenUsage(usage), webSources: research?.sources,
+      modelId: result.modelId, route,
+    };
+  }
 
   const document = projection?.finish(result.text);
   const response = document ? document.response || "Xroga couldn't finish the requested structured answer." : result.text;

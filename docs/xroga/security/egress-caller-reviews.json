@@ -3022,7 +3022,7 @@
     {
       "id": "c09bb8607fa4d00f23b7",
       "callSha256": "0f007db3755a07e13dfaf95ef36d99a6884d9a3cc3101513301f73201bd21224",
-      "sourceFileSha256": "bf072296dc2828844620377cf54a58fafe4cbedfb1a796a8324b77b1f10aa0c0",
+      "sourceFileSha256": "7870af317edfb1bac816bb5b7f451ae55be3acbda2947fd26d6c200caa5f63aa",
       "disposition": "VERIFIED_GUARD",
       "trust": "CONFIGURED_FIRST_PARTY_API_ORIGIN_ONLY_NO_REDIRECT_OR_CREDENTIAL_BODY_FORWARDING",
       "tenantAuthority": "EXISTING_BROWSER_SESSION_TOKEN_OR_GUEST_SESSION_ONLY_BACKEND_MUST_ENFORCE_ORIGINAL_ISSUED_ACTOR_OWNER_AND_ACTION_AUTHORITY_NO_UPSTREAM_PROMOTION",
@@ -3189,6 +3189,10 @@
         "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
         "previousSourceFileSha256": "d6183bed6f64e0a0c01f43bd4cff42e21ef20e407f7b1ec7a032b3faa006b16a",
         "verification": "The reviewed egress call hash (callSha256) and id are byte-identical to the reviewed main version. Only other code in the file changed."
+      },
+      "nativeOpenUiRebinding": {
+        "sourceFileSha256": "bf072296dc2828844620377cf54a58fafe4cbedfb1a796a8324b77b1f10aa0c0",
+        "scope": "Original transport call AST and identifier are unchanged."
       }
     },
     {

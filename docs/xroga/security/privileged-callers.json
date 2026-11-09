@@ -1,23 +1,23 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "ab0fcbd251c0d5f859a5d19bda625fed1f6b31ada2b5432bedf80cb4ad01fc3f",
+  "reviewRegistrySha256": "125d9d6ae46cd46dac1fcadc00131947cd845acecf54b48b372146115dc722e8",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
     "privilegedFactorySites": 226,
-    "persistenceCandidates": 999,
+    "persistenceCandidates": 1004,
     "ownerPredicateCandidates": 262,
-    "reviewRequired": 152,
+    "reviewRequired": 157,
     "reviewedCandidates": 847,
-    "unresolvedSafetyCandidates": 196,
+    "unresolvedSafetyCandidates": 201,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 23
   },
   "outcomes": {
-    "REVIEW_REQUIRED": 152,
+    "REVIEW_REQUIRED": 157,
     "SCOPED_BOUNDARY": 547,
     "NARROW_EXCEPTION": 52,
     "NOT_PERSISTENCE": 204,
@@ -29,7 +29,7 @@
     "scope": "COMMAND_007_CRITERION_EVIDENCE_NOT_BATCH_OR_PRODUCTION_ACCEPTANCE",
     "certifiedScopedPrivilegedCallers": 0,
     "verifiedCandidateBoundaries": 80,
-    "unresolvedCandidateBoundaries": 919,
+    "unresolvedCandidateBoundaries": 924,
     "criteria": [
       {
         "id": "XB01-C007-AC01",
@@ -3816,11 +3816,11 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "4431005001a8d288051f"
+        "id": "d431d5067a3873deb9cb"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "ce02ccc6a928e44634de"
+        "id": "1f158fd95dae861dc678"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -4757,6 +4757,10 @@
       {
         "code": "MISSING_CALLER_REVIEW",
         "id": "c4dcd4d97035ff02f08f"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "8c574a8062192c013fb2"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -6276,6 +6280,10 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
+        "id": "a3f4a8c0cbb1a26dc957"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
         "id": "d4c73673998a3db5e517"
       },
       {
@@ -6284,7 +6292,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "d9642208258b6b210b66"
+        "id": "4b8ca0290c75b24ed85f"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -6329,6 +6337,18 @@
       {
         "code": "MISSING_CALLER_REVIEW",
         "id": "4fbfd0293636c69d00b0"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "3472a6307dab98e79124"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "38edd11cb4a9893a7442"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "40adbb3cf38b25222c41"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -6613,6 +6633,10 @@
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
         "id": "3a0a65d6d673a33eaf05"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "8c574a8062192c013fb2"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -7100,6 +7124,10 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "a3f4a8c0cbb1a26dc957"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
         "id": "d4c73673998a3db5e517"
       },
       {
@@ -7108,7 +7136,7 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "d9642208258b6b210b66"
+        "id": "4b8ca0290c75b24ed85f"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -7137,6 +7165,18 @@
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
         "id": "4fbfd0293636c69d00b0"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "3472a6307dab98e79124"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "38edd11cb4a9893a7442"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "40adbb3cf38b25222c41"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -7360,11 +7400,11 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "4431005001a8d288051f"
+        "id": "d431d5067a3873deb9cb"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "ce02ccc6a928e44634de"
+        "id": "1f158fd95dae861dc678"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -10133,10 +10173,10 @@
     ]
   },
   "reviewAgreement": {
-    "currentCallers": 999,
+    "currentCallers": 1004,
     "structuredVerified": 80,
-    "structuredUnproven": 919,
-    "manualUnresolved": 196,
+    "structuredUnproven": 924,
+    "manualUnresolved": 201,
     "manualUnsupported": 723,
     "agreedVerified": 80,
     "proofAwaitingManualReconciliation": 0
@@ -11061,15 +11101,15 @@
       }
     },
     {
-      "id": "4431005001a8d288051f",
+      "id": "d431d5067a3873deb9cb",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3832,
+      "line": 3865,
       "enclosing": "runBuildPipeline",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "d3742ca4dccc50daf99aa71d9896449957dde73798dc6d7c2a9c5ca5536cff32",
+      "sourceSha256": "0f2209ef1fbf0b7613a5ce964a3df5cf5df7ce4bff51160b0850c1bc2be2e016",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -11082,15 +11122,15 @@
       }
     },
     {
-      "id": "ce02ccc6a928e44634de",
+      "id": "1f158fd95dae861dc678",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4016,
+      "line": 4049,
       "enclosing": "runBuildPipeline",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "d3742ca4dccc50daf99aa71d9896449957dde73798dc6d7c2a9c5ca5536cff32",
+      "sourceSha256": "0f2209ef1fbf0b7613a5ce964a3df5cf5df7ce4bff51160b0850c1bc2be2e016",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -19510,6 +19550,17 @@
           }
         ]
       }
+    },
+    {
+      "id": "8c574a8062192c013fb2",
+      "path": "backend/src/routes/nativeOpenUiEvaluation.ts",
+      "line": 64,
+      "enclosing": "<module>",
+      "kind": "RPC_CANDIDATE",
+      "target": "current_community_role",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "523af8a3dd239d8f76fdd6d008f4a91793b1663b5047d60d2e7d72994e9415df"
     },
     {
       "id": "95aca8562235b1b02997",
@@ -30694,6 +30745,17 @@
       }
     },
     {
+      "id": "a3f4a8c0cbb1a26dc957",
+      "path": "frontend/src/app/native-answer-evaluation/page.tsx",
+      "line": 20,
+      "enclosing": "NativeAnswerEvaluationPage",
+      "kind": "RPC_CANDIDATE",
+      "target": "current_community_role",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "f434f3f96bdba288bd025a088c239d02322cda2a4c48606d378ef9123eaf5ed5"
+    },
+    {
       "id": "d4c73673998a3db5e517",
       "path": "frontend/src/app/onboarding/page.tsx",
       "line": 28,
@@ -30734,15 +30796,15 @@
       }
     },
     {
-      "id": "d9642208258b6b210b66",
+      "id": "4b8ca0290c75b24ed85f",
       "path": "frontend/src/app/share/[token]/page.tsx",
-      "line": 97,
+      "line": 107,
       "enclosing": "canPresentRichShare",
       "kind": "RPC_CANDIDATE",
       "target": "current_community_role",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "02be162aa110db0a216d12681f621023bd0c5737a2c48f484a7244b856a7bb16"
+      "sourceSha256": "f51955f6fec29680ddabf874c500c750350338a0bd0f45bbb6a6f74520ba4258"
     },
     {
       "id": "19620b924bbcbab333b0",
@@ -31249,7 +31311,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "7daceb7dfb3cd3b1faf8b1f42f6e11243daf15afa78ff8fe076371ae510f9628",
+      "sourceSha256": "403def6e0480eb4371f4c73261063c46af91996a8287e7722609c89d6e6ac237",
       "semanticReview": {
         "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in SidebarProjectHistory, with no database or Storage client receiver.",
         "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
@@ -31270,7 +31332,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "7daceb7dfb3cd3b1faf8b1f42f6e11243daf15afa78ff8fe076371ae510f9628",
+      "sourceSha256": "403def6e0480eb4371f4c73261063c46af91996a8287e7722609c89d6e6ac237",
       "semanticReview": {
         "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in SidebarProjectHistory, with no database or Storage client receiver.",
         "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
@@ -31291,7 +31353,7 @@
       "target": "projects",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "7daceb7dfb3cd3b1faf8b1f42f6e11243daf15afa78ff8fe076371ae510f9628"
+      "sourceSha256": "403def6e0480eb4371f4c73261063c46af91996a8287e7722609c89d6e6ac237"
     },
     {
       "id": "4fbfd0293636c69d00b0",
@@ -31302,7 +31364,7 @@
       "target": "xroga_sidebar_items",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "7daceb7dfb3cd3b1faf8b1f42f6e11243daf15afa78ff8fe076371ae510f9628"
+      "sourceSha256": "403def6e0480eb4371f4c73261063c46af91996a8287e7722609c89d6e6ac237"
     },
     {
       "id": "92e2f9e84b8b9d7515b1",
@@ -31345,6 +31407,39 @@
           }
         ]
       }
+    },
+    {
+      "id": "3472a6307dab98e79124",
+      "path": "frontend/src/components/native-openui/upstream/components/chart.tsx",
+      "line": 85,
+      "enclosing": "Cartesian",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "1aab4befcc06f09c6883afa1f79def469c70ad94dd984e1554cd056655e1d310"
+    },
+    {
+      "id": "38edd11cb4a9893a7442",
+      "path": "frontend/src/components/native-openui/upstream/components/chart.tsx",
+      "line": 184,
+      "enclosing": "axis",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "1aab4befcc06f09c6883afa1f79def469c70ad94dd984e1554cd056655e1d310"
+    },
+    {
+      "id": "40adbb3cf38b25222c41",
+      "path": "frontend/src/components/native-openui/upstream/components/style.ts",
+      "line": 41,
+      "enclosing": "<module>",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "5917e4877b60ce0ab2cb2ba2d82a5c87976df61757226af91cc0deb576c272c3"
     },
     {
       "id": "a5188cf19ad57cd05861",

@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "dba4e46bb4fe01e1a0562f0e4068f4499fb81faf",
+  "source_sha": "bc7bd7a56e50f1f1c7221d77d575b415139af041",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -4449,6 +4449,8 @@
         "GITHUB_OAUTH_CALLBACK_URL",
         "NODE_ENV",
         "SUPABASE_SERVICE_ROLE_KEY",
+        "XROGA_DEPLOYMENT_ENVIRONMENT",
+        "XROGA_NATIVE_OPENUI_WORKSPACE",
         "ZURELAY_JSON_SCHEMA_VERIFIED"
       ],
       "inbound_callers": [
@@ -14081,6 +14083,7 @@
     {
       "name": "XROGA_DEPLOYMENT_ENVIRONMENT",
       "consuming_sources": [
+        "backend/src/ai/pipeline.ts",
         "backend/src/routes/nativeOpenUiEvaluation.ts",
         "backend/src/runtime/startupPolicy.ts",
         "frontend/src/app/native-answer-evaluation/page.tsx",
@@ -14097,7 +14100,8 @@
         "STATIC_ENV_READER"
       ],
       "dependency_ids": [
-        "endpoint-127-0-0-1"
+        "endpoint-127-0-0-1",
+        "endpoint-github-com"
       ]
     },
     {
@@ -15072,6 +15076,25 @@
       ],
       "dependency_ids": [
         "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "XROGA_NATIVE_OPENUI_WORKSPACE",
+      "consuming_sources": [
+        "backend/src/ai/pipeline.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "endpoint-github-com"
       ]
     },
     {
@@ -16745,6 +16768,10 @@
       "sha256": "22c1f0e62ba1d2f34bde235234ce495a88654aab061100080a7c34b0f10bc8a4"
     },
     {
+      "path": "backend/src/ai/nativeOpenUiShare.ts",
+      "sha256": "4f913e344b462a2d41fb53432d6af793b3a408cd44493f7b94c78e38bbb5d463"
+    },
+    {
       "path": "backend/src/ai/openaiCompat.ts",
       "sha256": "c159e3bd321637cc26214829ed36bca439a102e91983e6fd93fcbee36ef61544"
     },
@@ -16774,7 +16801,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "d3742ca4dccc50daf99aa71d9896449957dde73798dc6d7c2a9c5ca5536cff32"
+      "sha256": "0f2209ef1fbf0b7613a5ce964a3df5cf5df7ce4bff51160b0850c1bc2be2e016"
     },
     {
       "path": "backend/src/ai/postCompletionAccounting.ts",
@@ -17834,7 +17861,7 @@
     },
     {
       "path": "backend/src/lib/richShareSnapshot.ts",
-      "sha256": "bbf7a23a87f5229c305fdf346afea769db172c0a32f58d66f84af7d2bca1354d"
+      "sha256": "7e763d26ec33f9733f745d2fec6e2b75ca61a70cfb3f940daf2594abe76a489f"
     },
     {
       "path": "backend/src/lib/runway.ts",
@@ -20278,7 +20305,7 @@
     },
     {
       "path": "frontend/src/app/share/[token]/page.tsx",
-      "sha256": "02be162aa110db0a216d12681f621023bd0c5737a2c48f484a7244b856a7bb16"
+      "sha256": "f51955f6fec29680ddabf874c500c750350338a0bd0f45bbb6a6f74520ba4258"
     },
     {
       "path": "frontend/src/app/showcase/[slug]/page.tsx",
@@ -21805,6 +21832,10 @@
       "sha256": "f95cfd8300505ad3bf09c36ab2c232b223e7da70f29cea2d3ab3ed2737a08d4b"
     },
     {
+      "path": "frontend/src/components/native-openui/ChoicePicker.tsx",
+      "sha256": "e85a6415d9b1813e40a28f83ad41f6c5fb46dcae93460eae59f9ce98453d2ab4"
+    },
+    {
       "path": "frontend/src/components/native-openui/Diagram.tsx",
       "sha256": "a398171e7f258fad3b382b2c41d1d4d86c3a060fbb0f6d5ea2192f9eb6e508d7"
     },
@@ -21821,6 +21852,10 @@
       "sha256": "8e99674307ceb656ab2597c80066ecc8087857c9cbff388bd212db94c1a81c7c"
     },
     {
+      "path": "frontend/src/components/native-openui/NativeWorkspaceAnswer.tsx",
+      "sha256": "741e571dfadad29a74f7f1f292cb42967ebc9ba2ab7f44042a578de1708e6f9f"
+    },
+    {
       "path": "frontend/src/components/native-openui/Resources.tsx",
       "sha256": "de91b11be5c2c94aa6d68cab940a13d5e848aaa002ff49e0faf0ef0c7420724b"
     },
@@ -21830,7 +21865,7 @@
     },
     {
       "path": "frontend/src/components/native-openui/library.tsx",
-      "sha256": "a66cd674a6950e9b7623efd0090bf7124084422c4258e07d82b281495934efa4"
+      "sha256": "3a5586552ef1e022906e8677240afe1ab05a0fb0c8942c53f40f05940e9333b4"
     },
     {
       "path": "frontend/src/components/native-openui/renderer-config.ts",
@@ -21877,12 +21912,16 @@
       "sha256": "873aae3e4abe68f12717a5442cfe9dabf9204c4960c16c5dd8a161d9b2de1b60"
     },
     {
+      "path": "frontend/src/components/native-openui/upstream/functions/data.ts",
+      "sha256": "c61ea5552ded37a9b6aa18ab14065ab9a3909178cf815d38f014b106f9fbb837"
+    },
+    {
       "path": "frontend/src/components/native-openui/upstream/functions/numbers.ts",
       "sha256": "a165969fc08879e326fb04041f377c1bb38fcf0d5a4570b8bf3291e8d36ae515"
     },
     {
       "path": "frontend/src/components/native-openui/upstream/functions/shared.ts",
-      "sha256": "480202aecc2e893be42d995caa028bbb4607a9d806ab565a0a5158d184e38ba8"
+      "sha256": "f85c67bb1b6e60e6333139f201af52281a0d8d51163fda55f0a514d4dd7d048a"
     },
     {
       "path": "frontend/src/components/native-openui/upstream/functions/text.ts",
@@ -22050,7 +22089,7 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/ConversationTurnV2.tsx",
-      "sha256": "3f38bc7c5d17a6d00d3874eb1b231aa006a1c64e9a888dedd0704734c3037430"
+      "sha256": "4603b4139ea0dbbbbd990af1240f33c87d9a77776aefbf01e0d5b7b9877d8adb"
     },
     {
       "path": "frontend/src/components/response-experience-v2/DataV2.tsx",
@@ -22450,7 +22489,7 @@
     },
     {
       "path": "frontend/src/components/terminal/MessageBubbleActions.tsx",
-      "sha256": "164be07d1359346d4b937e8e5281905fc4c26e944e3e987ef2f6985a36bd48a4"
+      "sha256": "8f999816f3e0abc0153a7468bde243696d1c11eb9c74814a9d64328b5430471a"
     },
     {
       "path": "frontend/src/components/terminal/MessageShareModal.tsx",
@@ -22526,7 +22565,7 @@
     },
     {
       "path": "frontend/src/components/terminal/SwarmMessageLog.tsx",
-      "sha256": "46620a18afa66deeb284cde5c4ca101b88509f249e48d331678aa302e5082c84"
+      "sha256": "f3f55ee622307ff792128e6066484f333a9daf73757cecd4c727e2356ef82594"
     },
     {
       "path": "frontend/src/components/terminal/TerminalBuildReport.tsx",
@@ -22910,7 +22949,7 @@
     },
     {
       "path": "frontend/src/lib/api.ts",
-      "sha256": "bf072296dc2828844620377cf54a58fafe4cbedfb1a796a8324b77b1f10aa0c0"
+      "sha256": "7870af317edfb1bac816bb5b7f451ae55be3acbda2947fd26d6c200caa5f63aa"
     },
     {
       "path": "frontend/src/lib/assistantCopy.ts",
@@ -23818,7 +23857,7 @@
     },
     {
       "path": "frontend/src/lib/xrogaBlocks.ts",
-      "sha256": "924d3a623b0888ef1523b24b24f86fdd237a61bd87e0c956ba5acd0e00c51697"
+      "sha256": "bc1122b2bfaa033b96ae306bcf50f95bf966abf5e69f33792d08e82f52885dc6"
     },
     {
       "path": "frontend/src/lib/xrogaBrand.ts",
@@ -23874,7 +23913,7 @@
     },
     {
       "path": "frontend/src/lib/xrogaResponseDocument.ts",
-      "sha256": "565c5d92a6152acf76bd89498de775fc453855051421253bc06e81300a83ff5a"
+      "sha256": "0617fb944a6c9374e8b398cd0535cf58bb8df386a3781df7ff40fa58cd93df55"
     },
     {
       "path": "frontend/src/lib/xrogaRichResultFixtures.ts",
@@ -25127,7 +25166,7 @@
       "hostname": "github.com",
       "protocol": "https:",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4064,
+      "line": 4097,
       "credentialsInUrl": false
     },
     {
@@ -31993,6 +32032,13 @@
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
+      "path": "backend/src/ai/nativeOpenUiShare.ts",
+      "line": 23,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
       "path": "backend/src/ai/openaiCompat.ts",
       "line": 269,
       "scope": "FUNCTION_LOCAL",
@@ -32155,63 +32201,70 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 530,
+      "line": 532,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 560,
+      "line": 562,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 754,
+      "line": 756,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 1121,
+      "line": 1123,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 1519,
+      "line": 1132,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 2271,
+      "line": 1552,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3830,
+      "line": 2304,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4014,
+      "line": 3863,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4793,
+      "line": 4047,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/pipeline.ts",
+      "line": 4826,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -38006,6 +38059,13 @@
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
+      "path": "frontend/src/components/native-openui/ChoicePicker.tsx",
+      "line": 19,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
       "path": "frontend/src/components/native-openui/Diagram.tsx",
       "line": 48,
       "scope": "FUNCTION_LOCAL",
@@ -38042,7 +38102,7 @@
     },
     {
       "path": "frontend/src/components/native-openui/library.tsx",
-      "line": 21,
+      "line": 23,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -38329,7 +38389,7 @@
     },
     {
       "path": "frontend/src/components/terminal/SwarmMessageLog.tsx",
-      "line": 225,
+      "line": 226,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
