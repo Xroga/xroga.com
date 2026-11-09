@@ -21,9 +21,9 @@ test('title shows real chat subject and prefixes only active GitHub or project c
   assert.match(menu, /meaningfulSidebarTitle\(savedCurrentTitle, firstUserPrompt\)/);
   assert.match(menu, /activeRepo \? `Repo ·/);
   assert.match(menu, /projectName \? `Project ·/);
-  assert.match(menu, /contextPrefix \? `\$\{contextPrefix\} \/ \$\{displayTitle\}` : displayTitle/);
+  assert.match(menu, /headerTooltip = contextPrefix \? /);
   assert.match(menu, /getActiveSidebarProject\(accountId\)/);
-  assert.match(menu, /title=\{headerTitle\}/);
+  assert.match(menu, /title=\{headerTooltip\}/);
   assert.match(menu, /Open conversation actions/);
 });
 
@@ -58,4 +58,13 @@ test('unified popup removes duplicate conversation title and uses icon-only rena
   assert.match(styles, /\.compactTools\s*\{/);
   assert.match(styles, /\.quickActions\s*\{/);
   assert.match(styles, /\.bottomActions\s*\{/);
+});
+
+test('popover uses opaque theme-aware surfaces and a smaller footprint', () => {
+  assert.match(menu, /width=\{306\}/);
+  assert.match(styles, /background:\s*#191a1d/);
+  assert.match(styles, /:global\(body\.theme-white\) \.popover/);
+  assert.match(styles, /:global\(body\.theme-beige\) \.popover/);
+  assert.match(styles, /font-family:\s*var\(--font-inter, Inter\)/);
+  assert.match(styles, /max-height:\s*min\(76dvh, 420px\)/);
 });
