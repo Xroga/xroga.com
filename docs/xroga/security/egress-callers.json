@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "06cba5c28c4a8c323c573cda16caa664580e72b06d5b5d8765cf5b071f41ffd3",
+  "sourceTreeDigest": "9fdd7aaf24373c6b80b45b89b699699d860161392f43b6c61151f70ce5ffd46e",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -4308,9 +4308,13 @@
         {
           "path": "frontend/e2e/phase4-admin-share.security.mjs",
           "marker": "authorized admin, bounded shares and private range delivery keep their contracts and denial results stay private",
-          "sha256": "0b408b0cead5f45988f086a998e822cab8d0a7da828db3cb2feb21e8c7a2e1d3",
+          "sha256": "9e9ecfc6ca1a0d69986a6dd638f927a857883582187b8f1f2ea2fbc32e0e8df8",
           "reboundOnBranch": {
             "previousSha256": "9768cffa49a8b13925506e35b9a5e52e7468129590fb2178396691caec5b2d23"
+          },
+          "nativeShareRebinding": {
+            "previousSha256": "0b408b0cead5f45988f086a998e822cab8d0a7da828db3cb2feb21e8c7a2e1d3",
+            "scope": "The private-file source and guarded caller are unchanged. The expanded fixture loads the real native parser while preserving all existing redirect, access and range assertions."
           }
         }
       ]

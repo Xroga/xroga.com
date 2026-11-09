@@ -28,6 +28,7 @@
     "docs/operations/native-openui/coverage.json",
     "docs/operations/native-openui/parity-benchmark.json",
     "docs/operations/native-openui/prompt-suite.json",
+    "frontend/e2e/phase4-admin-share.security.mjs",
     "frontend/next.config.mjs",
     "frontend/package-lock.json",
     "frontend/package.json",

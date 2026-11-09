@@ -3488,9 +3488,13 @@
         {
           "path": "frontend/e2e/phase4-admin-share.security.mjs",
           "marker": "authorized admin, bounded shares and private range delivery keep their contracts and denial results stay private",
-          "sha256": "0b408b0cead5f45988f086a998e822cab8d0a7da828db3cb2feb21e8c7a2e1d3",
+          "sha256": "9e9ecfc6ca1a0d69986a6dd638f927a857883582187b8f1f2ea2fbc32e0e8df8",
           "reboundOnBranch": {
             "previousSha256": "9768cffa49a8b13925506e35b9a5e52e7468129590fb2178396691caec5b2d23"
+          },
+          "nativeShareRebinding": {
+            "previousSha256": "0b408b0cead5f45988f086a998e822cab8d0a7da828db3cb2feb21e8c7a2e1d3",
+            "scope": "The private-file source and guarded caller are unchanged. The expanded fixture loads the real native parser while preserving all existing redirect, access and range assertions."
           }
         }
       ],

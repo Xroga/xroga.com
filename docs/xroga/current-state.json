@@ -63331,7 +63331,7 @@
       "id": "surface:9f51ed5a722f2b32376d",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/app/share/[token]/page.tsx",
-      "sha256": "f51955f6fec29680ddabf874c500c750350338a0bd0f45bbb6a6f74520ba4258",
+      "sha256": "8aac4984ccc194d7bf42196af29c0287e02a17d5a92bd444347d5c552994b03a",
       "symbols": [
         "MessageSharePage",
         "PublicShare",
@@ -63356,7 +63356,8 @@
         "richAllowed",
         "share",
         "snapshot",
-        "supabase"
+        "supabase",
+        "wrapped"
       ],
       "imports": [
         "../../../../../backend/src/ai/nativeOpenUiShare",
@@ -143138,86 +143139,114 @@
       "reachable": false
     },
     {
-      "id": "frontend-call:2bc1d830423769c23f6d",
+      "id": "frontend-call:2db500264a4b240a3bbb",
       "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 62,
+      "line": 71,
       "callee": "api.listen",
       "reachable": false
     },
     {
-      "id": "frontend-call:693d1e47af542cb79e97",
+      "id": "frontend-call:362662528784aff96a53",
       "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 64,
+      "line": 73,
       "callee": "api.address",
       "reachable": false
     },
     {
-      "id": "frontend-call:cec7ada23e266a9e1d2c",
+      "id": "frontend-call:1621c69433d4313674bc",
       "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 69,
+      "line": 78,
       "callee": "api.closeAllConnections",
       "reachable": false
     },
     {
-      "id": "frontend-call:b658962f7dbd978776ed",
+      "id": "frontend-call:b8a869c6c6ee2847ec7f",
       "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 69,
+      "line": 78,
       "callee": "api.close",
       "reachable": false
     },
     {
-      "id": "frontend-call:f9a929fe01d0b90cecc8",
+      "id": "frontend-call:fea46142378f7f8fcea9",
       "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 81,
+      "line": 90,
       "callee": "api.listen",
       "reachable": false
     },
     {
-      "id": "frontend-call:bd22332eee36cf749ed7",
+      "id": "frontend-call:356d2a3a003c67f65667",
       "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 83,
+      "line": 92,
       "callee": "api.address",
       "reachable": false
     },
     {
-      "id": "frontend-call:bb23f0d54200ada643f2",
-      "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 91,
-      "callee": "api.closeAllConnections",
-      "reachable": false
-    },
-    {
-      "id": "frontend-call:f11144dbc65339158b6d",
-      "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 91,
-      "callee": "api.close",
-      "reachable": false
-    },
-    {
-      "id": "frontend-call:7e8d5bff4e9f405e1ac9",
+      "id": "frontend-call:493d8887e6e4a4347979",
       "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
       "line": 100,
-      "callee": "api.listen",
-      "reachable": false
-    },
-    {
-      "id": "frontend-call:e11c443b676d2af910da",
-      "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 102,
-      "callee": "api.address",
-      "reachable": false
-    },
-    {
-      "id": "frontend-call:08abdb307c29b1ccc26b",
-      "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 111,
       "callee": "api.closeAllConnections",
       "reachable": false
     },
     {
-      "id": "frontend-call:595f6df0f99afd8344d9",
+      "id": "frontend-call:6e639772c03676bdeff7",
+      "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
+      "line": 100,
+      "callee": "api.close",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:e4ced8076fc3244e8e66",
+      "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
+      "line": 109,
+      "callee": "api.listen",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:57ce74e10b501f37c88d",
       "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
       "line": 111,
+      "callee": "api.address",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:81abd93eeb7e338f5852",
+      "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
+      "line": 120,
+      "callee": "api.closeAllConnections",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:5f4be1ba4d1722084b56",
+      "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
+      "line": 120,
+      "callee": "api.close",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:c8ad1af284bd9b5b04c1",
+      "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
+      "line": 133,
+      "callee": "api.listen",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:5ebd74440c43331e8fb3",
+      "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
+      "line": 135,
+      "callee": "api.address",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:8412ad2a306bcba1591b",
+      "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
+      "line": 158,
+      "callee": "api.closeAllConnections",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:1fe30a50d9a1b5d73422",
+      "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
+      "line": 158,
       "callee": "api.close",
       "reachable": false
     },
@@ -151703,7 +151732,7 @@
     {
       "id": "test-suite:40c1ec89cfed7e1ae20f",
       "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "declaredTests": 3,
+      "declaredTests": 4,
       "skipLocations": [],
       "focusLocations": []
     },

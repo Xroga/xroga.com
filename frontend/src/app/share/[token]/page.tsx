@@ -65,10 +65,13 @@ const loadShare = cache(async (token: string): Promise<ShareResult> => {
     const snapshot = typeof share.richResponse === 'string' ? share.richResponse : share.response;
     if (snapshot.startsWith(NATIVE_SHARE_PREFIX)) {
       const native = readNativeOpenUiShare(snapshot);
+      const wrapped = !share.richResponse && share.response.startsWith(NATIVE_SHARE_PREFIX);
+      if (wrapped && !native) return { status: 'missing' };
+      const matchingText = wrapped || native?.text === share.response;
       return { status: 'ok', share: { ...share,
-        response: native?.text ?? share.response,
-        richResponse: native && (!share.richResponse || native.text === share.response) ? snapshot : undefined,
-        richUnavailable: !native || Boolean(share.richResponse && native.text !== share.response),
+        response: wrapped && native ? native.text : share.response,
+        richResponse: native && matchingText ? snapshot : undefined,
+        richUnavailable: !native || !matchingText,
       } };
     }
     const presentation = readRichShareSnapshot(snapshot);
