@@ -278,3 +278,33 @@
   .actionPane { max-height: min(70dvh, 420px); }
   .popover { padding: 6px; }
 }
+
+/* Two clear conversation controls, followed by organization and destructive actions. */
+.primaryActionRow {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+  margin: 3px 4px 6px;
+}
+.primaryAction {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-width: 0;
+  min-height: 34px;
+  padding: 7px 8px;
+  border: 1px solid var(--card-border, rgba(255,255,255,.12));
+  border-radius: 9px;
+  background: var(--accent-dim, rgba(255,255,255,.075));
+  color: var(--foreground, #eee);
+  font: inherit;
+  font-size: 11px;
+  font-weight: 650;
+  cursor: pointer;
+}
+.primaryAction:hover { filter: brightness(1.16); }
+.primaryAction:focus-visible { outline: 2px solid var(--accent, #d5b67b); outline-offset: 2px; }
+.primaryAction:disabled { opacity: .45; cursor: not-allowed; }
+.primaryAction[aria-pressed="true"] { border-color: var(--accent, #d5b67b); }
+.actionPane { max-height: min(72dvh, 350px); }

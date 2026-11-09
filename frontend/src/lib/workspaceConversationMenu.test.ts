@@ -51,20 +51,31 @@ test('management resolves the exact owner-scoped conversation, including old sav
   assert.match(styles, /prefers-reduced-motion: reduce/);
 });
 
-test('unified popup removes duplicate conversation title and uses icon-only rename and pin', () => {
+test('unified popup has a full-width edit and pin button row without a heading', () => {
   assert.doesNotMatch(menu, /Current conversation/);
   assert.match(menu, /aria-label="Rename conversation"/);
   assert.match(menu, /'Pin conversation'/);
-  assert.match(styles, /\.compactTools\s*\{/);
-  assert.match(styles, /\.quickActions\s*\{/);
+  assert.match(menu, /className=\{styles\.primaryActionRow\}/);
+  assert.match(styles, /\.primaryActionRow\s*\{/);
+  assert.doesNotMatch(menu, /className=\{styles\.quickActions\}/);
+  assert.doesNotMatch(menu, /<span className=\{styles\.compactLabel\}/);
   assert.match(styles, /\.bottomActions\s*\{/);
 });
 
 test('popover uses opaque theme-aware surfaces and a smaller footprint', () => {
-  assert.match(menu, /width=\{306\}/);
+  assert.match(menu, /width=\{290\}/);
   assert.match(styles, /background:\s*#191a1d/);
   assert.match(styles, /:global\(body\.theme-white\) \.popover/);
   assert.match(styles, /:global\(body\.theme-beige\) \.popover/);
   assert.match(styles, /font-family:\s*var\(--font-inter, Inter\)/);
   assert.match(styles, /max-height:\s*min\(76dvh, 420px\)/);
+});
+
+test('Edit and Pin are two labeled side-by-side buttons before Move to project', () => {
+  const markup = menu.slice(menu.indexOf('className={styles.actionList}'));
+  assert.match(markup, /className=\{styles\.primaryActionRow\}/);
+  assert.match(markup, /<span>Edit<\/span>/);
+  assert.match(markup, /<span>\{currentMeta\?\.pin_order != null \? 'Unpin' : 'Pin'\}<\/span>/);
+  assert.ok(markup.indexOf('primaryActionRow') < markup.indexOf("beginEditor('project')"));
+  assert.doesNotMatch(markup, /shareLink\(|<span>Open<\/span>|Copy link/);
 });

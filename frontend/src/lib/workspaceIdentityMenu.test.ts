@@ -17,7 +17,7 @@ test('project identity menu exposes only real project actions', () => {
   assert.match(MENU, /Open on GitHub/);
   assert.match(MENU, /Open live site/);
   assert.match(MENU, /New task in this project/);
-  assert.match(MENU, /Project settings/);
+  assert.doesNotMatch(MENU, /title="Project settings"|Archive current task/);
   assert.doesNotMatch(MENU, />Pin</);
   assert.doesNotMatch(MENU, />Share</);
   assert.doesNotMatch(MENU, />Copy link</);
@@ -61,5 +61,11 @@ test('repo title truncates instead of wrapping and secondary project actions are
   assert.match(MENU, /projectActionClass/);
   assert.match(MENU, /grid-cols-3/);
   assert.match(MENU, /grid-cols-2/);
-  assert.match(MENU, /title="Project settings"/);
+  assert.doesNotMatch(MENU, /settingsOpen|setSettingsOpen|archiveCurrentTask/);
+});
+
+test('connected badge disappears so the repository name fills the header', () => {
+  assert.match(MENU, /Copy repository:.*STATUS_LABEL/);
+  assert.doesNotMatch(MENU, /\{STATUS_LABEL\[visibleStatus\]\}\s*<\/span>/);
+  assert.match(MENU, /grid-cols-3/);
 });
