@@ -47,10 +47,10 @@ test('destructive actions require confirmation, authorization, and do not restor
 test('the sidebar itself remains untouched and workspace actions are compact and accessible', () => {
   assert.match(sidebar, /<SidebarActionMenu/);
   assert.match(sidebar, /'move-section' as const/);
-  assert.match(css, /\\.actionList\\s*\\{/);
-  assert.match(css, /\\.actionDivider\\s*\\{/);
+  assert.match(css, /\.actionList\s*\{/);
+  assert.match(css, /\.actionDivider\s*\{/);
   assert.match(css, /\.inlineEditor\s*\{/);
   assert.match(css, /\.dangerButton\s*\{/);
-  assert.match(css, /\\.actionList \\.subAction:focus-visible/);
+  assert.match(css, /\.actionList \.subAction:focus-visible/);
   assert.match(css, /prefers-reduced-motion: reduce/);
 });
