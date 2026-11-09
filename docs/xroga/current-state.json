@@ -107736,6 +107736,7 @@
         "frontend/src/app/workspace-staging-transport/[...segments]/route.ts"
       ],
       "callers": [
+        "frontend/e2e/phase4-admin-share.security.mjs:8",
         "frontend/src/app/api/private-files/[projectId]/[fileId]/route.ts:3",
         "frontend/src/app/share/[token]/page.tsx:11",
         "frontend/src/app/workspace-staging-transport/[...segments]/route.ts:1",
@@ -107760,6 +107761,7 @@
         "frontend/src/lib/hostedWorkspaceBridge.mjs#receipt"
       ],
       "testCoverage": [
+        "frontend/e2e/phase4-admin-share.security.mjs",
         "scripts/security/hosted-workspace-staging.test.mjs"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -144153,114 +144155,114 @@
       "reachable": false
     },
     {
-      "id": "frontend-call:12914d8eba3d228aed1a",
-      "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 78,
-      "callee": "api.listen",
-      "reachable": false
-    },
-    {
-      "id": "frontend-call:3b83be287b9de44eeb4c",
+      "id": "frontend-call:0a5e8a81c15cab63d62a",
       "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
       "line": 80,
-      "callee": "api.address",
-      "reachable": false
-    },
-    {
-      "id": "frontend-call:5da062fc3184cb9883e9",
-      "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 85,
-      "callee": "api.closeAllConnections",
-      "reachable": false
-    },
-    {
-      "id": "frontend-call:d3ccf2dfdbd07909c875",
-      "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 85,
-      "callee": "api.close",
-      "reachable": false
-    },
-    {
-      "id": "frontend-call:96b532bd846f1788d846",
-      "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 97,
       "callee": "api.listen",
       "reachable": false
     },
     {
-      "id": "frontend-call:ddb8596234ec6ab64ed1",
+      "id": "frontend-call:f8e022d056d466223804",
+      "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
+      "line": 82,
+      "callee": "api.address",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:09de553b734082f900a2",
+      "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
+      "line": 87,
+      "callee": "api.closeAllConnections",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:29fd45dad65daddf78a5",
+      "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
+      "line": 87,
+      "callee": "api.close",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:744ab02431574bd5954f",
       "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
       "line": 99,
-      "callee": "api.address",
-      "reachable": false
-    },
-    {
-      "id": "frontend-call:e4c5fdd1a8bf7700f14c",
-      "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 107,
-      "callee": "api.closeAllConnections",
-      "reachable": false
-    },
-    {
-      "id": "frontend-call:7a7a05b07da4f1d7794b",
-      "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 107,
-      "callee": "api.close",
-      "reachable": false
-    },
-    {
-      "id": "frontend-call:359d719cde5cea0df874",
-      "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 116,
       "callee": "api.listen",
       "reachable": false
     },
     {
-      "id": "frontend-call:ba9989fea5467cc300e0",
+      "id": "frontend-call:a0cb1e2e9b5b921d71e9",
+      "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
+      "line": 101,
+      "callee": "api.address",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:1f3fa1fcc9cc02c96b40",
+      "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
+      "line": 109,
+      "callee": "api.closeAllConnections",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:c3eb2f63d6685ee7f4aa",
+      "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
+      "line": 109,
+      "callee": "api.close",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:02cd813bd3489508a9e3",
       "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
       "line": 118,
-      "callee": "api.address",
-      "reachable": false
-    },
-    {
-      "id": "frontend-call:bdc58646da52ada0f4f6",
-      "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 127,
-      "callee": "api.closeAllConnections",
-      "reachable": false
-    },
-    {
-      "id": "frontend-call:e827b2ef82a7ca714bd8",
-      "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 127,
-      "callee": "api.close",
-      "reachable": false
-    },
-    {
-      "id": "frontend-call:8c10645921fc72ea091d",
-      "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 140,
       "callee": "api.listen",
       "reachable": false
     },
     {
-      "id": "frontend-call:27e12c9ae91cef708b37",
+      "id": "frontend-call:be067cf442d039a743b0",
       "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 142,
+      "line": 120,
       "callee": "api.address",
       "reachable": false
     },
     {
-      "id": "frontend-call:30bdf313390af3ffe504",
+      "id": "frontend-call:c488d49a0ec1ac126a4f",
       "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 165,
+      "line": 129,
       "callee": "api.closeAllConnections",
       "reachable": false
     },
     {
-      "id": "frontend-call:851f8e2f97a24f19911a",
+      "id": "frontend-call:8b27d4e78d2c8de68af4",
       "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 165,
+      "line": 129,
+      "callee": "api.close",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:588792d7612e0edebf65",
+      "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
+      "line": 142,
+      "callee": "api.listen",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:73f1417027ab1e7ed7d8",
+      "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
+      "line": 144,
+      "callee": "api.address",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:bac509680547d016427d",
+      "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
+      "line": 167,
+      "callee": "api.closeAllConnections",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:53d1c1a98a34317e3f2a",
+      "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
+      "line": 167,
       "callee": "api.close",
       "reachable": false
     },

@@ -5,6 +5,7 @@ import {readFileSync} from 'node:fs';
 import {createRequire} from 'node:module';
 import vm from 'node:vm';
 import * as openUiLang from '@openuidev/lang-core';
+import { hostedWorkspaceRequest } from '../src/lib/hostedWorkspaceBridge.mjs';
 const require=createRequire(new URL('../../package.json',import.meta.url)),ts=require('typescript');
 // Load the real pure presentation validators. The transport fixture continues
 // to replace UI-only leaves, never Share parsing or founder-access policy.
@@ -58,6 +59,7 @@ function fixture(origin,authenticated=true){
     '@/components/response-experience-v2/SharedResponseV2':{default(){throw Error('UI rendering is outside this transport fixture');}},
     '@/components/response-experience-v2/shareSnapshot':pureModule('@/components/response-experience-v2/shareSnapshot'),
     '@/components/response-experience-v2/access':pureModule('@/components/response-experience-v2/access'),
+    '@/lib/hostedWorkspaceBridge.mjs':{hostedWorkspaceRequest},
     [nativeShareId]:pureModule(nativeShareId),
     '@/components/native-openui/NativeWorkspaceAnswer':{NativeWorkspaceAnswer(){throw Error('UI rendering is outside this transport fixture');}},
     'next/server':{NextResponse:{json:Response.json}}};
