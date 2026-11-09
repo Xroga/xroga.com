@@ -57,7 +57,7 @@ function formatRelative(timestamp: number | null): string {
   return new Date(timestamp).toLocaleDateString();
 }
 
-export function WorkspaceIdentityMenu({ incognito = false }: { incognito?: boolean }) {
+export function WorkspaceIdentityMenu({ incognito = false, embedded = false, onAction }: { incognito?: boolean; embedded?: boolean; onAction?: () => void }) {
   const { sessionId, setPrompt, startNewChat } = useTerminalChat();
   const activeProject = useProjectWorkspaceStore((state) => state.activeProjectContext);
   const deployUrl = useProjectWorkspaceStore((state) => state.deployUrl);
@@ -87,7 +87,7 @@ export function WorkspaceIdentityMenu({ incognito = false }: { incognito?: boole
   // Real GitHub sync confidence. Opening the menu may perform this cheap GitHub read,
   // but it never spends AI/model tokens.
   useEffect(() => {
-    if (!open || !repoIdentity.fullName || !visibleCommitSha) {
+    if (!(open || embedded) || !repoIdentity.fullName || !visibleCommitSha) {
       setSyncConfidence('idle');
       return;
     }
@@ -113,7 +113,7 @@ export function WorkspaceIdentityMenu({ incognito = false }: { incognito?: boole
     return () => {
       cancelled = true;
     };
-  }, [open, repoIdentity.branch, repoIdentity.fullName, visibleCommitSha]);
+  }, [open, embedded, repoIdentity.branch, repoIdentity.fullName, visibleCommitSha]);
 
   const repoUrl = useMemo(
     () =>
@@ -141,17 +141,20 @@ export function WorkspaceIdentityMenu({ incognito = false }: { incognito?: boole
     if (!url) return;
     window.open(url, '_blank', 'noopener,noreferrer');
     setOpen(false);
+    onAction?.();
   };
 
   const prepareProjectReview = () => {
     setPrompt(PROJECT_REVIEW_PROMPT);
     setOpen(false);
+    onAction?.();
     toast.success('Project review prompt is ready');
   };
 
   const newProjectTask = () => {
     startNewChat();
     setOpen(false);
+    onAction?.();
     toast.success(`New task started in ${repoIdentity.label}`);
   };
 
@@ -160,6 +163,7 @@ export function WorkspaceIdentityMenu({ incognito = false }: { incognito?: boole
     startNewChat();
     removeTerminalHistoryEntry(archivedId);
     setOpen(false);
+    onAction?.();
     toast.success('Task archived');
   };
 
@@ -217,40 +221,24 @@ export function WorkspaceIdentityMenu({ incognito = false }: { incognito?: boole
           ? 'Undo unavailable — cannot verify GitHub'
           : 'Undo last Xroga change';
 
-  return (
-    <div ref={rootRef} className="xv-workspace-identity">
-      <button
-        type="button"
-        className="xv-term-title xv-term-title--button"
-        aria-label={repoIdentity.fullName ? 'Project actions' : 'About Xroga Black Hole'}
-        onMouseEnter={() => { if (!repoIdentity.fullName) setOpen(true); }}
-        onClick={() => setOpen((value) => repoIdentity.fullName ? !value : true)}
-        aria-haspopup="menu"
-        aria-expanded={open}
-      >
-        <h3 className="xv-repo-name" title={repoIdentity.fullName}><SidebarMovingTitle text={repoIdentity.label} /></h3>
-
-      </button>
-
-      <AnchoredPortalPopover open={open} onClose={() => setOpen(false)} anchorRef={rootRef} placement="bottom-start" width={repoIdentity.fullName ? 290 : 236} ariaLabel={repoIdentity.fullName ? 'Project actions' : 'About Xroga Black Hole'}
-          className="absolute left-0 top-[calc(100%+.45rem)] z-[1000] overflow-hidden rounded-xl border border-[var(--card-border)] bg-[var(--card)] p-1.5 text-[var(--foreground)] shadow-[0_20px_60px_rgba(0,0,0,.28)]"
-        >
+  const projectMenu = (
+    <>
           {!repoIdentity.fullName ? <div className="px-2.5 py-2"><strong className="block text-xs">Xroga · Black Hole</strong><span className="mt-1 block text-[11px] text-[var(--muted)]">Super Intelligence</span><p className="mb-0 mt-2 text-[11px] leading-relaxed">Describe the work. Xroga selects available capabilities automatically.</p></div> : <>
-          <div className="px-2.5 pb-2 pt-2">
+          <div className="px-2 pb-1.5 pt-1.5">
             <div className="flex items-start gap-2.5">
               <div className="min-w-0 flex-1">
-                <button type="button" className="block w-full break-all text-left text-sm font-semibold" title="Copy full repository name" onClick={() => { if (repoIdentity.fullName) void navigator.clipboard.writeText(repoIdentity.fullName).then(() => toast.success('Repository name copied')).catch(() => toast.error('Could not copy repository name')); }}>{repoIdentity.fullName || repoIdentity.label}</button>
+                <button type="button" className="block w-full break-all text-left text-xs font-semibold" title="Copy full repository name" onClick={() => { if (repoIdentity.fullName) void navigator.clipboard.writeText(repoIdentity.fullName).then(() => toast.success('Repository name copied')).catch(() => toast.error('Could not copy repository name')); }}>{repoIdentity.fullName || repoIdentity.label}</button>
                 <p className="mt-0.5 break-all font-mono text-[10px] text-[var(--muted)]">
                   {repoIdentity.fullName || 'No GitHub repository'} · {repoIdentity.branch}
                 </p>
               </div>
-              <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-[var(--card-border)] px-2 py-1 text-[10px] font-medium">
+              <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-[var(--card-border)] px-1.5 py-0.5 text-[10px] font-medium">
                 <span className={`h-1.5 w-1.5 rounded-full ${statusDotClass(visibleStatus)}`} />
                 {STATUS_LABEL[visibleStatus]}
               </span>
             </div>
 
-            <div className="mt-2 flex items-center gap-1.5 text-[10px] text-[var(--muted)]">
+            <div className="mt-1 flex items-center gap-1.5 text-[10px] text-[var(--muted)]">
               {syncConfidence === 'checking' ? (
                 <Loader2 className="h-3 w-3 animate-spin" aria-hidden="true" />
               ) : syncConfidence === 'synced' ? (
@@ -273,7 +261,7 @@ export function WorkspaceIdentityMenu({ incognito = false }: { incognito?: boole
               type="button"
               disabled={!undoEnabled}
               onClick={() => void undoLastChange()}
-              className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-xs font-semibold transition hover:bg-[var(--accent-dim)] disabled:cursor-not-allowed disabled:opacity-45"
+              className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left text-xs font-semibold transition hover:bg-[var(--accent-dim)] disabled:cursor-not-allowed disabled:opacity-45"
             >
               {undoBusy || syncConfidence === 'checking' ? (
                 <Loader2 className="h-4 w-4 shrink-0 animate-spin" />
@@ -284,19 +272,10 @@ export function WorkspaceIdentityMenu({ incognito = false }: { incognito?: boole
             </button>
           ) : null}
 
-          <button
-            role="menuitem"
-            type="button"
-            onClick={prepareProjectReview}
-            className="flex w-full items-start gap-2.5 rounded-lg px-2.5 py-2 text-left transition hover:bg-[var(--accent-dim)]"
-          >
-            <Sparkles className="mt-0.5 h-4 w-4 shrink-0" />
-            <span className="min-w-0">
-              <span className="block text-xs font-semibold">Ask Xroga about this project</span>
-              <span className="mt-0.5 block text-[10px] text-[var(--muted)]">
-                Health, risks & what to do next
-              </span>
-            </span>
+          <button role="menuitem" type="button" onClick={prepareProjectReview} title="Health, risks & what to do next"
+            className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left text-xs transition hover:bg-[var(--accent-dim)]">
+            <Sparkles className="h-4 w-4 shrink-0" aria-hidden="true" />
+            <span>Ask Xroga about this project</span>
           </button>
 
           <div className="my-1 h-px bg-[var(--card-border)]" />
@@ -306,7 +285,7 @@ export function WorkspaceIdentityMenu({ incognito = false }: { incognito?: boole
               role="menuitem"
               type="button"
               onClick={() => openExternal(repoUrl)}
-              className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-xs transition hover:bg-[var(--accent-dim)]"
+              className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left text-xs transition hover:bg-[var(--accent-dim)]"
             >
               <GithubGlyphIcon size={16} className="shrink-0" />
               <span className="flex-1">Open on GitHub</span>
@@ -319,7 +298,7 @@ export function WorkspaceIdentityMenu({ incognito = false }: { incognito?: boole
               role="menuitem"
               type="button"
               onClick={() => openExternal(visibleDeployUrl)}
-              className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-xs transition hover:bg-[var(--accent-dim)]"
+              className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left text-xs transition hover:bg-[var(--accent-dim)]"
             >
               <Globe2 className="h-4 w-4 shrink-0" />
               <span className="flex-1">Open live site</span>
@@ -331,7 +310,7 @@ export function WorkspaceIdentityMenu({ incognito = false }: { incognito?: boole
             role="menuitem"
             type="button"
             onClick={newProjectTask}
-            className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-xs transition hover:bg-[var(--accent-dim)]"
+            className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left text-xs transition hover:bg-[var(--accent-dim)]"
           >
             <Plus className="h-4 w-4 shrink-0" />
             <span>New task in this project</span>
@@ -344,7 +323,7 @@ export function WorkspaceIdentityMenu({ incognito = false }: { incognito?: boole
             type="button"
             aria-expanded={settingsOpen}
             onClick={() => setSettingsOpen((value) => !value)}
-            className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-xs text-[var(--muted)] transition hover:bg-[var(--accent-dim)] hover:text-[var(--foreground)]"
+            className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left text-xs text-[var(--muted)] transition hover:bg-[var(--accent-dim)] hover:text-[var(--foreground)]"
           >
             <Settings2 className="h-4 w-4 shrink-0" />
             <span className="flex-1">Project settings</span>
@@ -367,6 +346,32 @@ export function WorkspaceIdentityMenu({ incognito = false }: { incognito?: boole
             </div>
           ) : null}
           </>}
+    </>
+  );
+
+  return embedded ? (
+    <section className="min-w-0 border-b border-[var(--card-border)] px-0.5 pb-1" aria-label="Connected project actions">
+      {projectMenu}
+    </section>
+  ) : (
+    <div ref={rootRef} className="xv-workspace-identity">
+      <button
+        type="button"
+        className="xv-term-title xv-term-title--button"
+        aria-label={repoIdentity.fullName ? 'Project actions' : 'About Xroga Black Hole'}
+        onMouseEnter={() => { if (!repoIdentity.fullName) setOpen(true); }}
+        onClick={() => setOpen((value) => repoIdentity.fullName ? !value : true)}
+        aria-haspopup="menu"
+        aria-expanded={open}
+      >
+        <h3 className="xv-repo-name" title={repoIdentity.fullName}><SidebarMovingTitle text={repoIdentity.label} /></h3>
+
+      </button>
+
+      <AnchoredPortalPopover open={open} onClose={() => setOpen(false)} anchorRef={rootRef} placement="bottom-start" width={repoIdentity.fullName ? 290 : 236} ariaLabel={repoIdentity.fullName ? 'Project actions' : 'About Xroga Black Hole'}
+          className="absolute left-0 top-[calc(100%+.45rem)] z-[1000] overflow-hidden rounded-xl border border-[var(--card-border)] bg-[var(--card)] p-1.5 text-[var(--foreground)] shadow-[0_20px_60px_rgba(0,0,0,.28)]"
+        >
+          {projectMenu}
       </AnchoredPortalPopover>
     </div>
   );
