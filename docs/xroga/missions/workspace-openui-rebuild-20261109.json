@@ -1,0 +1,70 @@
+{
+  "version": "1.0",
+  "missionId": "WORKSPACE-OPENUI-REBUILD-20261109",
+  "baseSha": "6652ea3765540b2f78a7cf8bc4ac70e3d184b643",
+  "requirementIds": ["XR-MISSION-054", "XR-MISSION-055"],
+  "state": "IN_PROGRESS",
+  "risk": "medium",
+  "scope": "Introduce OpenUI Lang and selected upstream Open Intelligent UI components in Workspace and authorized rich Share. Keep validated DeepSeek blocks as the source contract. Make presentation planning proportional to the request.",
+  "changedFiles": [
+    "backend/src/ai/responsePresentation.ts",
+    "frontend/package.json",
+    "frontend/package-lock.json",
+    "package-lock.json",
+    "frontend/src/app/(workspace)/workspace/page.tsx",
+    "frontend/src/app/share/[token]/page.tsx",
+    "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx",
+    "frontend/src/components/response-experience-v2/ResponseExperienceGate.tsx",
+    "frontend/src/components/response-openui/WorkspaceVisual.tsx",
+    "frontend/src/components/response-openui/program.ts"
+  ],
+  "decisions": {
+    "keep": ["Canonical DeepSeek answer and ledger", "Existing authorization and original response data", "Established diagram, citation, and large-table renderers"],
+    "extend": ["Authenticated presentation with an opt-in OpenUI renderer", "Trusted chart, table and calculator presentation"],
+    "replace": [],
+    "deprecate": []
+  },
+  "schemaImpact": {
+    "changed": false,
+    "migrations": [],
+    "rollout": "The current structured response and Share formats stay compatible.",
+    "rollback": "Disable RESPONSE_OPENUI on the reviewed deployment. Stored messages and exports require no conversion."
+  },
+  "securityImpact": {
+    "auth": {"changed": false, "description": "Uses the existing server-side Workspace and rich Share audience checks."},
+    "tenant": {"changed": false, "description": "Uses authorized response data already available to the existing renderer."},
+    "approval": {"changed": false, "description": "The library registers no external action handlers."},
+    "credentials": {"changed": false, "description": "The renderer receives data only."},
+    "egress": {"changed": false, "description": "Uses the same canonical provider request. OpenUI tool providers and runtime telemetry are disabled."},
+    "cost": {"changed": false, "description": "The renderer and calculator execute locally without an additional provider request."},
+    "billing": {"changed": false, "description": "Reservation, accounting and settlement are unchanged."}
+  },
+  "tests": [
+    {
+      "command": "tsx --tsconfig frontend/tsconfig.json --test frontend/src/components/response-openui/program.test.ts frontend/src/lib/responsePresentation.integration.test.ts",
+      "scope": "Literal projection, exact values, tool-expression isolation, fallback, and compatibility with the existing response lifecycle",
+      "negative": true,
+      "reference": "frontend/src/components/response-openui/program.test.ts"
+    }
+  ],
+  "architecture": {
+    "change": "extends_canonical",
+    "reason": "The OpenUI renderer consumes a local projection of the existing canonical response document. No chat or execution runtime is introduced.",
+    "rfc": null
+  },
+  "rollout": "Default off. Require exact-source CI and authenticated Preview acceptance before any production rollout.",
+  "rollback": "Disable RESPONSE_OPENUI and restore the previous reviewed release if necessary. Existing response presentation and data contracts remain available.",
+  "knownGaps": ["Fresh authenticated DeepSeek acceptance and measured provider costs are pending.", "Production rollout has not been approved or performed."],
+  "placeholderClaimsRemaining": [],
+  "evidenceRefs": ["frontend/src/components/response-openui/program.test.ts", "frontend/src/lib/responsePresentation.integration.test.ts"],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "BLOCKED",
+    "blockers": ["Exact-source CI, fresh authenticated acceptance and reviewed rollout authorization are required."],
+    "authenticatedE2e": "BLOCKED",
+    "stagedSecurity": "BLOCKED",
+    "liveUrl": null,
+    "deployedSha": null
+  }
+}

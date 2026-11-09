@@ -33,7 +33,7 @@ export default async function WorkspacePage({ searchParams }: { searchParams: Pr
   return (
     <DashboardErrorBoundary>
       {reviewStatus && <p role="status">{reviewStatus}</p>}
-      <ResponseExperienceProvider authorizedUserId={authorizedUserId}><DashboardView /></ResponseExperienceProvider>
+      <ResponseExperienceProvider authorizedUserId={authorizedUserId} openUi={process.env.RESPONSE_OPENUI === '1'}><DashboardView /></ResponseExperienceProvider>
     </DashboardErrorBoundary>
   );
 }
