@@ -20,7 +20,7 @@ From a frozen install using the repo's Node and npm versions:
 
 The Chrome fixture harness serves the actual presentation components over loopback. It checks eleven scenarios across 1440, 1280, 768, 390 and 320 CSS pixels in light and dark, keyboard calculator and reset, linked product marks, numeric sort, accessible chart data, connected diagram rendering and zoom, highlighted code, tabs, searchable review and reactive data, safe evidence links, fallback and a stream prefix. It blocks and records attempted off-origin requests. Its asset counts are from a minified esbuild fixture with inlined fonts, not Next.js transfer measurements.
 
-No live Zurelay request, paid staging build, production modification, authenticated Workspace check or deployment was performed for this branch. The parity benchmark preserves the 20 exact prompts. Two fresh ChatGPT baselines were captured and the corresponding Xroga fixture screenshots are separate evidence. There is no live head-to-head score yet. Stale caller review and squash ancestry references were reconciled with Git history. The audit's source integrity check does not establish staged tenant security.
+No live Zurelay request, paid staging build, production modification, authenticated Workspace check or deployment was performed for this branch. The parity benchmark preserves the 20 exact prompts. Fresh ChatGPT baselines for cases 1, 3, 4 and 5 were captured at 1440 and 390 CSS pixels. The Xroga fixture screenshots are separate evidence, not model outputs. There is no live head-to-head score yet. Stale caller review and squash ancestry references were reconciled with Git history. The audit's source integrity check does not establish staged tenant security.
 
 ## Independent live gate
 

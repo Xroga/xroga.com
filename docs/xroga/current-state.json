@@ -62298,11 +62298,12 @@
       "id": "surface:51ed64fac1f935f2d327",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/app/native-answer-evaluation/page.tsx",
-      "sha256": "f434f3f96bdba288bd025a088c239d02322cda2a4c48606d378ef9123eaf5ed5",
+      "sha256": "6dc29300a911c9f20694b283951730fb67a9570271544b236c61c3142a94159b",
       "symbols": [
         "NativeAnswerEvaluationPage",
         "client",
         "dynamic",
+        "metadata",
         "owner",
         "result",
         "run"
@@ -63196,7 +63197,7 @@
       "id": "surface:25e15d82443a5bd7e3ea",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/app/robots.ts",
-      "sha256": "d0f936240d4b11dbeb646f911ba9adb98554cd664ade5d22485374023908b46e",
+      "sha256": "84d6005fe7104289a07c526b910dce4d52315cbc5567f069d18e8e6ebce84d16",
       "symbols": [
         "privatePaths",
         "publicSearchCrawlers",
@@ -110228,7 +110229,7 @@
       "id": "surface:4a1f5385bc6d8ba1e88e",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/publicUrlInventory.ts",
-      "sha256": "39207af254d2a8a86ecbf99ea7f14378c4c7b956a87f1f0d0cf4a45a198c1f72",
+      "sha256": "bc52ce508695d9f321e0ccd6ab1e0dc2611ce1602501770d06fa9ce45f13fe46",
       "symbols": [
         "INDEXABLE_PUBLIC_URLS",
         "PUBLIC_URL_INVENTORY",

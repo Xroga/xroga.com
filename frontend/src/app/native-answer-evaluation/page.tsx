@@ -5,6 +5,7 @@ import { readNativeOpenUiRun } from '../../../../backend/src/ai/nativeOpenUiRun'
 import Evaluation from '@/components/native-openui/Evaluation';
 
 export const dynamic = 'force-dynamic';
+export const metadata = { robots: { index: false, follow: false } };
 
 export default async function NativeAnswerEvaluationPage() {
   const owner = process.env.NATIVE_OPENUI_EVALUATOR_ID;
