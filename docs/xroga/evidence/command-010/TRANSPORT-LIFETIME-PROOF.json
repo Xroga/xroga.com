@@ -120,8 +120,8 @@
     }
   ],
   "counts": {
-    "total": 155,
-    "reviewed": 155,
+    "total": 158,
+    "reviewed": 158,
     "pending": 0,
     "unresolvedHighRiskReviewCandidates": 0
   },
@@ -870,6 +870,18 @@
         "sha256": "7d2bab8d22905fdccca667481ce0be5c1a61ac799d0b117d098ce1768d0d5511",
         "ref": "3dcf7cc432a3ba446ef228008b2342be9beeebd4"
       }
+    },
+    {
+      "path": "frontend/src/lib/hostedWorkspaceBridge.mjs",
+      "sha256": "af4ea3ae7116ad5cc88ad1611fa1a72b4cb99e69f9e9f16899d2b010d46537f6"
+    },
+    {
+      "path": "scripts/security/hosted-workspace-staging.mjs",
+      "sha256": "f68dff00fd39ca79cfb9a500a226e4ecfa20f4e4df6bff824f7ab043982bf10d"
+    },
+    {
+      "path": "scripts/security/hosted-workspace-staging.test.mjs",
+      "sha256": "0faedb0211c2131359f403e4a421b66382b01f168d4f879f21e9b6fc911e126d"
     }
   ],
   "previousCallerCounts": {
@@ -997,5 +1009,14 @@
     "frontend": "23a1a48a2ee0018ed0c828f6347df9d0bef9c369",
     "previousProofSha256": "c5dc2789581a52c827f1b03ad7fb78052704c0779a6d3611a2e0040df3f06385",
     "scope": "Existing authenticated pairing and exact SDK pacing guard retained. This source review does not certify a hosted run."
+  },
+  "hostedWorkspaceStagingContinuation": {
+    "previousProofSha256": "7e8a157348ede2c414695ef4faa2cb8d2d5ccb5d95da9f2ddeaa99651883bb50",
+    "callerIds": [
+      "9bcbd89af61af9d9c2e7",
+      "49a49569b55d144f7a6d",
+      "a609adccda5421076aa0"
+    ],
+    "scope": "Three isolated staging transport call sites individually reviewed. Credential-free negative tests cover source pin, caller token forwarding, issuer, destination, and redirect denial. Hosted and production acceptance remain unverified."
   }
 }
