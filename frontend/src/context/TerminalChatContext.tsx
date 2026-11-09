@@ -567,6 +567,8 @@ interface TerminalChatContextValue {
   retryStoppedBuild: (assistantMessageId: string) => Promise<void>;
   retryWithFullPower: (assistantMessageId: string) => Promise<void>;
   startNewChat: () => void;
+  /** Reset an authorized deleted conversation without saving it again. */
+  discardCurrentChat: () => void;
   /** Restore session from workspace (e.g. jump from AI Media) */
   hydrateFromSession: () => void;
   /** Restore a saved terminal session exactly where the user left off */
@@ -1984,9 +1986,12 @@ const stopRequestedRunIdRef =
     await submitRef.current(original, false, false);
   }, [messages]);
 
+  const discardNextNewChatRef = useRef(false);
   const startNewChat = useCallback(() => {
+    const discard = discardNextNewChatRef.current;
+    discardNextNewChatRef.current = false;
     abortRef.current?.abort();
-    if (!usePrivacyStore.getState().incognito && messages.length > 0) {
+    if (!discard && !usePrivacyStore.getState().incognito && messages.length > 0) {
       // Keep prior chat under the selected GitHub repo (#N) in permanent account storage
       // BEFORE wiping the live workspace — so clicking #1 later restores exact history.
       const priorId = sessionIdRef.current;
@@ -2033,6 +2038,11 @@ const stopRequestedRunIdRef =
     // Refresh Repositories sidebar so the prior terminal stays listed (not "lost").
     window.dispatchEvent(new CustomEvent('xroga-resume-workspace'));
   }, [setSwarmRunning, messages, prompt, setSessionId]);
+
+  const discardCurrentChat = useCallback(() => {
+    discardNextNewChatRef.current = true;
+    startNewChat();
+  }, [startNewChat]);
 
   const deleteTurn = useCallback((assistantMessageId: string) => {
     setMessages((current) => {
@@ -4707,6 +4717,7 @@ setTimeout(processNextInQueue, 50);
         retryStoppedBuild,
         retryWithFullPower,
         startNewChat,
+        discardCurrentChat,
         hydrateFromSession,
         restoreTerminalSession,
         loadIsolatedThread,

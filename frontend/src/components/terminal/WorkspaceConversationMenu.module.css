@@ -69,3 +69,138 @@
   .trigger, .chevron, .chevronOpen, .item { transition: none; }
   .loading { animation: none; }
 }
+
+
+/* Two compact views: recent chats and current-conversation actions. */
+.tabs {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 4px;
+  padding: 3px;
+  margin: 3px 5px 8px;
+  border-radius: 10px;
+  background: var(--accent-dim, rgba(255, 255, 255, .055));
+}
+.tab {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 34px;
+  padding: 7px 12px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--muted, #999);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 650;
+  cursor: pointer;
+}
+.tabActive {
+  background: var(--card, #171717);
+  color: var(--foreground, #eee);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, .1);
+}
+.actionPane { padding: 4px 4px 6px; }
+.actionContext { padding: 11px 10px 12px; display: flex; flex-direction: column; gap: 4px; border-bottom: 1px solid var(--card-border, rgba(255,255,255,.09)); }
+.contextLabel {
+  display: block;
+  color: var(--muted, #999);
+  font-size: 10px;
+  font-weight: 680;
+  text-transform: uppercase;
+  letter-spacing: .075em;
+}
+.contextTitle { font-size: 12px; font-weight: 660; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.groupStack { padding: 7px 2px 0; display: flex; flex-direction: column; gap: 4px; }
+.groupButton {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 42px;
+  padding: 10px 12px;
+  border: 0;
+  border-radius: 9px;
+  color: var(--foreground, #eee);
+  background: transparent;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 620;
+  text-align: left;
+  cursor: pointer;
+}
+.groupButton:hover, .groupButton[aria-expanded="true"], .subAction:hover, .backButton:hover {
+  background: var(--accent-dim, rgba(255, 255, 255, .07));
+}
+.groupButton > span { flex: 1 1 auto; }
+.groupButton:disabled { opacity: .45; cursor: not-allowed; }
+.groupChevron, .groupChevronOpen { flex: 0 0 auto; color: var(--muted, #aaa); transition: transform .15s ease; }
+.groupChevronOpen { transform: rotate(90deg); }
+.groupItems {
+  margin: 0 2px 7px 12px;
+  padding: 2px 0 3px 10px;
+  border-left: 1px solid var(--card-border, rgba(255, 255, 255, .12));
+}
+.subAction {
+  width: 100%;
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 8px 11px;
+  border: 0;
+  border-radius: 8px;
+  color: var(--foreground, #eee);
+  background: transparent;
+  text-align: left;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+.subAction > svg { flex: 0 0 auto; }
+.subAction:disabled { cursor: progress; opacity: .5; }
+.groupNote { margin: 5px 8px 6px 11px; font-size: 10px; line-height: 1.5; color: var(--muted, #999); }
+.dangerText { color: var(--destructive, #ed625d); }
+.inlineEditor { padding: 13px 7px 10px; display: flex; flex-direction: column; gap: 12px; }
+.backButton { display: flex; align-items: center; gap: 6px; padding: 6px 7px; margin-left: -6px; align-self: flex-start; background: none; border: none; border-radius: 8px; color: var(--muted, #aaa); font-size: 11px; cursor: pointer; }
+.editInput {
+  width: 100%;
+  min-height: 38px;
+  padding: 8px 11px;
+  border: 1px solid var(--card-border, rgba(255,255,255,.16));
+  border-radius: 10px;
+  background: var(--background, #111);
+  color: var(--foreground, #eee);
+  font: inherit;
+  font-size: 12px;
+}
+.editInput:focus-visible { outline: 2px solid var(--accent, #d5b67b); outline-offset: 2px; }
+.editorButtons { display: flex; align-items: center; justify-content: flex-end; gap: 9px; }
+.cancelButton, .saveButton, .dangerButton { min-height: 34px; padding: 8px 13px; border: 0; border-radius: 9px; font: inherit; font-size: 11px; font-weight: 660; cursor: pointer; }
+.cancelButton { color: var(--foreground, #eee); background: var(--accent-dim, rgba(255,255,255,.08)); }
+.saveButton { color: var(--background, #111); background: var(--foreground, #eee); }
+.dangerButton { color: white; background: #c53732; }
+.saveButton:disabled, .dangerButton:disabled { opacity: .45; cursor: progress; }
+.confirmTitle { font-size: 13px; }
+.actionHint { margin: 0; padding: 8px; font-size: 11px; line-height: 1.6; color: var(--muted, #aaa); }
+.projectList { max-height: min(230px, 34dvh); overflow-y: auto; overscroll-behavior: contain; }
+.projectName { flex: 1 1 auto; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.tab:focus-visible, .groupButton:focus-visible, .subAction:focus-visible, .backButton:focus-visible,
+.cancelButton:focus-visible, .saveButton:focus-visible, .dangerButton:focus-visible {
+  outline: 2px solid var(--accent, #d5b67b); outline-offset: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .groupChevron, .groupChevronOpen { transition: none; }
+}
+
+/* Workspace title dropdown now contains only current-conversation actions.
+   Keep it compact, keyboard reachable, and scrollable on short viewports. */
+.actionPane { max-height: min(78dvh, 550px); overflow-y: auto; overscroll-behavior: contain; }
+.actionList { display: flex; flex-direction: column; gap: 2px; padding: 5px 3px 7px; }
+.actionDivider { height: 1px; margin: 6px 9px; background: var(--card-border, rgba(255,255,255,.12)); }
+.actionList .subAction { min-height: 36px; }
+.actionList .subAction:focus-visible { outline: 2px solid var(--accent, #d5b67b); outline-offset: -2px; }
+@media (max-width: 410px) { .actionPane { max-height: min(70dvh, 550px); } }
