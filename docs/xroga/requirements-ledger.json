@@ -3492,6 +3492,7 @@
         "scripts/security/feedback-rls.supabase.mjs",
         "scripts/security/full-supabase-history.mjs",
         "scripts/security/historical-share-fixture.mjs",
+        "scripts/security/hosted-workspace-staging.mjs",
         "scripts/security/proxy-origin-fixture.cjs",
         "scripts/security/r2-private-check.mjs",
         "scripts/security/refresh-phase-three-authority-delta.mjs",
