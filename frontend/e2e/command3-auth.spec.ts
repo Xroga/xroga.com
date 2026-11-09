@@ -333,6 +333,7 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
     expect(await answer.evaluate(el => el.scrollWidth - el.clientWidth)).toBeLessThanOrEqual(1);
     expect(await answer.evaluate(el => getComputedStyle(el).colorScheme)).toBe('dark');
     await answer.screenshot({ path: `test-results/native-workspace/composer-${width}-${theme}.png` });
+    await page.screenshot({ path: `test-results/native-workspace/workspace-${width}-${theme}.png` });
   }
   await page.setViewportSize({ width: 1440, height: 900 });
 
@@ -352,6 +353,8 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   try {
     await ownerShare.goto(shareUrl);
     await expect(ownerShare.getByRole('region', { name: 'Answer', exact: true }).getByRole('slider', { name: 'Attendees' })).toBeVisible();
+    await expect(ownerShare.getByRole('region', { name: 'Answer', exact: true }).getByRole('link', { name: /Workshop source fixture/ })).toHaveAttribute('href', source.url);
+    await ownerShare.screenshot({ path: 'test-results/native-workspace/owner-share.png' });
     const visitor = await other.newPage();
     await visitor.goto(shareUrl);
     await expect(visitor.getByRole('heading', { name: 'This share is private' })).toBeVisible();

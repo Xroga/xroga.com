@@ -135,7 +135,9 @@ export default async function MessageSharePage({ params }: { params: Promise<{ t
   }
   const { share } = result;
   const native = share.richResponse ? readNativeOpenUiShare(share.richResponse) : undefined;
-  const richAllowed = Boolean(share.richResponse && (!native || native.program)) && await canPresentRichShare();
+  // The API has already enforced the saved link's visibility. A validated
+  // native snapshot must reopen independently of the older V2 rollout flag.
+  const legacyRichAllowed = !native && Boolean(share.richResponse) && await canPresentRichShare();
   const sources = native ? [...new Map(native.sources.map(source => [source.url, source])).values()] : [];
 
   return (
@@ -161,7 +163,7 @@ export default async function MessageSharePage({ params }: { params: Promise<{ t
           <section className="px-5 py-6 sm:px-8 sm:py-8">
             <p className="mb-3 text-[10px] font-semibold uppercase tracking-[.16em] text-black/45 dark:text-white/45">Response</p>
             {share.richUnavailable && <p role="status" className="mb-3 text-sm">The interactive view is unavailable. The complete saved text follows.</p>}
-            {richAllowed && native ? <NativeWorkspaceAnswer answer={{ ...native, library: 'xroga-native-v1' }} sources={native.sources} /> : richAllowed && share.richResponse ? <SharedResponseV2 snapshot={share.richResponse} text={share.response} /> : <p className="whitespace-pre-wrap text-[15px] leading-7 text-black/90 dark:text-white/90">{share.response}</p>}
+            {native ? <NativeWorkspaceAnswer answer={{ ...native, library: 'xroga-native-v1' }} sources={native.sources} /> : legacyRichAllowed && share.richResponse ? <SharedResponseV2 snapshot={share.richResponse} text={share.response} /> : <p className="whitespace-pre-wrap text-[15px] leading-7 text-black/90 dark:text-white/90">{share.response}</p>}
             {sources.length > 0 && <section aria-label="Sources" className="mt-5 border-t border-black/10 pt-4 dark:border-white/10">
               <h2 className="text-sm font-semibold">Sources</h2>
               <ul className="mt-2 space-y-2 text-sm">
