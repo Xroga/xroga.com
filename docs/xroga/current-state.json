@@ -3244,9 +3244,10 @@
       "id": "surface:ef3623f65fc045e92013",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/completionDiagnostics.ts",
-      "sha256": "ea09be5d0e57692e5d3c17dd27cb34e38c4127439fe2402fa9b74f82daa0a045",
+      "sha256": "f6e0f012342797a279d4275801fcfa8b1c71a3ef3d76f9826cf1608c38d46129",
       "symbols": [
         "CompletionDiagnostics",
+        "PublicCompletionState",
         "choice",
         "choices",
         "cost",
