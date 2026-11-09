@@ -8,6 +8,7 @@ import { useWorkspaceIdentity } from '@/components/layout/WorkspaceIdentityConte
 import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
 import { getActiveSidebarProject, SIDEBAR_PROJECT_ACTIVE_EVENT, activateSidebarProject, clearActiveSidebarProject } from '@/lib/sidebarProjectTask';
 import { AnchoredPortalPopover } from '@/components/ui/AnchoredPortalPopover';
+import { WorkspaceIdentityMenu } from './WorkspaceIdentityMenu';
 import { meaningfulSidebarTitle, loadSidebarChatById, loadSidebarMeta, loadSidebarProjects, changeSidebarMeta, deleteSidebarChat, deleteSidebarMeta, type SidebarMeta, type SidebarProject } from '@/lib/sidebarOrganization';
 import { loadCloudTerminalSession } from '@/lib/cloudTerminalSessions';
 import { removeTerminalHistoryEntry } from '@/lib/terminalHistory';
@@ -290,11 +291,24 @@ export function WorkspaceConversationMenu() {
         <ChevronDown size={15} aria-hidden="true" className={open ? styles.chevronOpen : styles.chevron} />
       </button>
       <AnchoredPortalPopover open={open} onClose={closeMenu} anchorRef={anchorRef}
-        width={296} placement="bottom-start" ariaLabel="Conversation actions" className={styles.popover}>
+        width={318} placement="bottom-start" ariaLabel="Conversation actions" className={styles.popover}>
         <div className={styles.actionPane}>
-          <div className={styles.actionContext}>
-            <span className={styles.contextLabel}>Current conversation</span>
-            <span className={styles.contextTitle} title={displayTitle}>{displayTitle}</span>
+          {activeRepo ? <WorkspaceIdentityMenu embedded onAction={closeMenu} /> : null}
+          <div className={styles.compactHeading}>
+            <span className={styles.compactLabel} title={displayTitle}>Conversation actions</span>
+            {accountId && currentEntry && messages.length && !fetching ? (
+              <div className={styles.compactTools}>
+                <button role="menuitem" type="button" title="Rename conversation" aria-label="Rename conversation"
+                  className={styles.iconAction} disabled={!canManage}
+                  onClick={() => beginEditor('rename')}><Pencil size={15} aria-hidden="true" /></button>
+                <button role="menuitem" type="button" className={styles.iconAction}
+                  title={currentMeta?.pin_order != null ? 'Unpin conversation' : 'Pin conversation'}
+                  aria-label={currentMeta?.pin_order != null ? 'Unpin conversation' : 'Pin conversation'}
+                  disabled={!canManage} onClick={() => void togglePin()}>
+                  {currentMeta?.pin_order != null ? <PinOff size={15} aria-hidden="true" /> : <Pin size={15} aria-hidden="true" />}
+                </button>
+              </div>
+            ) : null}
           </div>
           {!accountId ? (
             <p className={styles.actionHint}>Sign in to manage saved conversations.</p>
@@ -369,26 +383,25 @@ export function WorkspaceConversationMenu() {
                 ) : (
             <div className={styles.actionList}>
               <button role="menuitem" type="button" className={styles.subAction} disabled={!canManage}
-                onClick={() => beginEditor('rename')}><Pencil size={15} aria-hidden="true" /> Rename</button>
-              <button role="menuitem" type="button" className={styles.subAction} disabled={!canManage}
-                onClick={() => void togglePin()}>
-                {currentMeta?.pin_order != null ? <PinOff size={15} aria-hidden="true" /> : <Pin size={15} aria-hidden="true" />}
-                {currentMeta?.pin_order != null ? 'Unpin' : 'Pin'}
-              </button>
-              <button role="menuitem" type="button" className={styles.subAction} disabled={!canManage}
                 onClick={() => beginEditor('project')}><FolderInput size={15} aria-hidden="true" /> Move to project</button>
+              <div className={styles.quickActions}>
+                <button role="menuitem" type="button" className={styles.quickAction} disabled={!canManage}
+                  title="Share private link" aria-label="Share private link"
+                  onClick={() => void shareLink('share')}><Share2 size={15} aria-hidden="true" /><span>Share</span></button>
+                <button role="menuitem" type="button" className={styles.quickAction} disabled={!canManage}
+                  title="Copy link" aria-label="Copy link"
+                  onClick={() => void shareLink('copy')}><Copy size={15} aria-hidden="true" /><span>Copy link</span></button>
+                <button role="menuitem" type="button" className={styles.quickAction} disabled={!canManage}
+                  title="Open in new tab" aria-label="Open in new tab"
+                  onClick={() => void shareLink('open')}><ExternalLink size={15} aria-hidden="true" /><span>Open tab</span></button>
+              </div>
               <div role="separator" className={styles.actionDivider} />
-              <button role="menuitem" type="button" className={styles.subAction} disabled={!canManage}
-                onClick={() => void shareLink('share')}><Share2 size={15} aria-hidden="true" /> Share private link</button>
-              <button role="menuitem" type="button" className={styles.subAction} disabled={!canManage}
-                onClick={() => void shareLink('copy')}><Copy size={15} aria-hidden="true" /> Copy link</button>
-              <button role="menuitem" type="button" className={styles.subAction} disabled={!canManage}
-                onClick={() => void shareLink('open')}><ExternalLink size={15} aria-hidden="true" /> Open in new tab</button>
-              <div role="separator" className={styles.actionDivider} />
-              <button role="menuitem" type="button" className={styles.subAction} disabled={!canManage}
-                onClick={() => beginEditor('archive')}><Archive size={15} aria-hidden="true" /> Archive</button>
-              <button role="menuitem" type="button" className={`${styles.subAction} ${styles.dangerText}`} disabled={!canManage}
-                onClick={() => beginEditor('delete')}><Trash2 size={15} aria-hidden="true" /> Delete</button>
+              <div className={styles.bottomActions}>
+                <button role="menuitem" type="button" className={styles.subAction} disabled={!canManage}
+                  onClick={() => beginEditor('archive')}><Archive size={15} aria-hidden="true" /> Archive</button>
+                <button role="menuitem" type="button" className={`${styles.subAction} ${styles.dangerText}`} disabled={!canManage}
+                  onClick={() => beginEditor('delete')}><Trash2 size={15} aria-hidden="true" /> Delete</button>
+              </div>
             </div>
           )}
         </div>
