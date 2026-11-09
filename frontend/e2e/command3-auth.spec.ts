@@ -148,7 +148,7 @@ test('setup remains retryable after a failed save and exits only after a durable
       else await route.continue();
     });
     await page.getByRole('button', { name: 'Skip setup', exact: true }).click();
-    await expect(page.getByRole('alert')).toContainText('Setup could not be saved');
+    await expect(page.getByRole('alert').filter({ hasText: 'Setup could not be saved. Please try again.' })).toBeVisible();
     await expect(page).toHaveURL(/\/onboarding$/);
     await page.unroute('**/api/profile');
 
