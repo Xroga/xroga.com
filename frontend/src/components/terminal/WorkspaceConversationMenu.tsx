@@ -1,18 +1,18 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Archive, ArrowLeft, Check, ChevronDown, ChevronRight, Copy, ExternalLink, FolderInput, Link2, Loader2, MessageSquareText, Pencil, Pin, PinOff, Plus, Search, Share2, Trash2 } from 'lucide-react';
+import { Archive, ArrowLeft, Check, ChevronDown, Copy, ExternalLink, FolderInput, Link2, Loader2, Pencil, Pin, PinOff, Share2, Trash2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { useWorkspaceIdentity } from '@/components/layout/WorkspaceIdentityContext';
+import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
+import { getActiveSidebarProject, SIDEBAR_PROJECT_ACTIVE_EVENT, activateSidebarProject, clearActiveSidebarProject } from '@/lib/sidebarProjectTask';
 import { AnchoredPortalPopover } from '@/components/ui/AnchoredPortalPopover';
-import { meaningfulSidebarTitle, loadSidebarChats, loadSidebarChatById, loadSidebarMeta, loadSidebarProjects, changeSidebarMeta, deleteSidebarChat, deleteSidebarMeta, type SidebarMeta, type SidebarProject } from '@/lib/sidebarOrganization';
-import { listCloudTerminalSessions, loadCloudTerminalSession } from '@/lib/cloudTerminalSessions';
+import { meaningfulSidebarTitle, loadSidebarChatById, loadSidebarMeta, loadSidebarProjects, changeSidebarMeta, deleteSidebarChat, deleteSidebarMeta, type SidebarMeta, type SidebarProject } from '@/lib/sidebarOrganization';
+import { loadCloudTerminalSession } from '@/lib/cloudTerminalSessions';
 import { removeTerminalHistoryEntry } from '@/lib/terminalHistory';
 import { api } from '@/lib/api';
-import { clearSelectedRepoContext, saveSelectedRepoContext } from '@/lib/repoContext';
-import { notifyGithubRepoContext } from '@/lib/githubProjectEvents';
-import { activateSidebarProject, clearActiveSidebarProject } from '@/lib/sidebarProjectTask';
+
 import styles from './WorkspaceConversationMenu.module.css';
 
 type RecentConversation = {
@@ -31,17 +31,15 @@ type RecentConversation = {
  */
 export function WorkspaceConversationMenu() {
   const { status, userId } = useWorkspaceIdentity();
-  const { sessionId, messages, loading, sessionRestoring, startNewChat, discardCurrentChat, restoreTerminalSession } = useTerminalChat();
+  const { sessionId, messages, loading, sessionRestoring, startNewChat, discardCurrentChat } = useTerminalChat();
+  const activeRepo = useProjectWorkspaceStore((state) => state.activeProjectContext?.repo || '');
   const accountId = status === 'authenticated' ? userId : undefined;
   const [open, setOpen] = useState(false);
-  const [query, setQuery] = useState('');
   const [recent, setRecent] = useState<RecentConversation[]>([]);
   const [fetching, setFetching] = useState(false);
-  const [switchingId, setSwitchingId] = useState<string | null>(null);
-  const [error, setError] = useState(false);
   const [metadata, setMetadata] = useState<SidebarMeta[]>([]);
-  const [tab, setTab] = useState<'chats' | 'actions'>('chats');
-  const [expandedGroup, setExpandedGroup] = useState<'share' | 'organize' | 'more' | null>(null);
+  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
+  const [projectName, setProjectName] = useState('');
   const [editor, setEditor] = useState<'rename' | 'project' | 'archive' | 'delete' | null>(null);
   const [editorText, setEditorText] = useState('');
   const [projects, setProjects] = useState<SidebarProject[]>([]);
@@ -56,18 +54,20 @@ export function WorkspaceConversationMenu() {
   );
   const currentEntry = recent.find((entry) => entry.id === sessionId);
   const currentMeta = metadata.find((item) => item.item_type === 'conversation' && item.item_id === sessionId);
-  const canManage = Boolean(accountId && currentEntry && messages.length && !loading && !sessionRestoring && !busyAction);
-  const savedCurrentTitle = currentEntry?.title;
+  const canManage = Boolean(accountId && currentEntry && messages.length && !loading && !sessionRestoring && !fetching && !busyAction);
+  const savedCurrentTitle = currentMeta?.title_override || currentEntry?.title;
   const activeTitle = firstUserPrompt
     ? meaningfulSidebarTitle(savedCurrentTitle, firstUserPrompt)
     : 'New chat';
   const displayTitle = sessionRestoring ? 'Opening conversation…' : activeTitle;
+  // Context prefix only for active GitHub or project work. Other recent chats
+  // display their conversation title directly, with no artificial label.
+  const contextPrefix = activeRepo ? `Repo · ${activeRepo.split('/').pop() || activeRepo}` :
+    projectName ? `Project · ${projectName}` : '';
+  const headerTitle = contextPrefix ? `${contextPrefix} / ${displayTitle}` : displayTitle;
 
   const closeMenu = useCallback(() => {
     setOpen(false);
-    setQuery('');
-    setTab('chats');
-    setExpandedGroup(null);
     setEditor(null);
     setEditorText('');
   }, []);
@@ -77,126 +77,72 @@ export function WorkspaceConversationMenu() {
     setRecent([]);
     setMetadata([]);
     setProjects([]);
-    setTab('chats');
-    setExpandedGroup(null);
     setEditor(null);
-    setError(false);
     setOpen(false);
     requestIdRef.current += 1;
   }, [accountId]);
 
+  // Use the same account-scoped project selection as the workspace sidebar.
+  useEffect(() => {
+    if (!accountId) { setSelectedProjectId(null); return; }
+    const sync = () => setSelectedProjectId(getActiveSidebarProject(accountId)?.projectId ?? null);
+    sync();
+    window.addEventListener(SIDEBAR_PROJECT_ACTIVE_EVENT, sync);
+    return () => window.removeEventListener(SIDEBAR_PROJECT_ACTIVE_EVENT, sync);
+  }, [accountId, sessionId]);
+
+  useEffect(() => {
+    const projectId = currentMeta?.project_id ?? selectedProjectId;
+    if (!accountId || !projectId || activeRepo) { setProjectName(''); return; }
+    let cancelled = false;
+    void loadSidebarProjects(accountId, 0, 100)
+      .then((items) => { if (!cancelled) setProjectName(items.find((item) => item.id === projectId)?.name || ''); })
+      .catch(() => { if (!cancelled) setProjectName(''); });
+    return () => { cancelled = true; };
+  }, [accountId, currentMeta?.project_id, selectedProjectId, activeRepo]);
+
+  // Header popup manages ONLY the active owner-scoped conversation; it does
+  // not fetch or render a second recent-chat browser.
   useEffect(() => {
     if (!open || !accountId) return;
     let cancelled = false;
     const currentRequest = ++requestIdRef.current;
     setFetching(true);
-    setError(false);
-    void Promise.allSettled([
-      loadSidebarChats(accountId, 0, 60),
-      listCloudTerminalSessions(undefined, { limit: 80, offset: 0 }),
-      loadSidebarMeta(accountId),
-    ]).then(([chatsResult, reposResult, metaResult]) => {
+    void (async () => {
+      const [chatResult, metaResult] = await Promise.allSettled([
+        loadSidebarChatById(accountId, sessionId),
+        loadSidebarMeta(accountId),
+      ]);
       if (cancelled || currentRequest !== requestIdRef.current) return;
-      const chats = chatsResult.status === 'fulfilled' ? chatsResult.value : [];
-      const repos = reposResult.status === 'fulfilled' ? reposResult.value : [];
-      const metadata = metaResult.status === 'fulfilled' ? metaResult.value : [];
-      setMetadata(metadata);
-      setError(chatsResult.status === 'rejected' && repos.length === 0);
-      const meta = new Map(metadata.filter((item) => item.item_type === 'conversation').map((item) => [item.item_id, item]));
-      const merged = new Map<string, RecentConversation>();
-
-      for (const chat of chats) {
-        if (!chat.id || chat.message_count < 1 || meta.get(chat.id)?.archived_at) continue;
-        const info = meta.get(chat.id);
-        merged.set(chat.id, {
-          id: chat.id,
-          title: meaningfulSidebarTitle(info?.title_override || chat.title, chat.prompt || chat.preview),
-          preview: chat.preview || chat.prompt || '',
-          updatedAt: chat.updated_at,
-          source: 'chat',
-          projectId: info?.project_id,
-        });
+      const meta = metaResult.status === 'fulfilled' ? metaResult.value : [];
+      setMetadata(meta);
+      const ownerMeta = meta.find((item) => item.item_type === 'conversation' && item.item_id === sessionId);
+      let current: RecentConversation | null = null;
+      if (chatResult.status === 'fulfilled' && chatResult.value?.messages?.length) {
+        const chat = chatResult.value;
+        current = {
+          id: chat.id, title: meaningfulSidebarTitle(ownerMeta?.title_override || chat.title, chat.prompt || chat.preview),
+          preview: chat.preview || chat.prompt || '', updatedAt: chat.updatedAt,
+          source: 'chat', projectId: ownerMeta?.project_id,
+        };
+      } else {
+        try {
+          const repo = await loadCloudTerminalSession(sessionId);
+          if (repo?.messages?.length) current = {
+            id: repo.id, title: meaningfulSidebarTitle(ownerMeta?.title_override || repo.title, repo.preview),
+            preview: repo.preview || '', updatedAt: repo.updatedAt, source: 'repo',
+            repo: repo.githubRepoName, branch: repo.githubBranch, projectId: ownerMeta?.project_id,
+          };
+        } catch { /* Unsaved chats have no owner-scoped record yet. */ }
       }
-      for (const repo of repos) {
-        if (!repo.id || repo.messageCount < 1 || meta.get(repo.id)?.archived_at) continue;
-        const info = meta.get(repo.id);
-        merged.set(repo.id, {
-          id: repo.id,
-          title: meaningfulSidebarTitle(info?.title_override || repo.title, repo.preview),
-          preview: repo.preview || '',
-          updatedAt: repo.updatedAt,
-          source: 'repo',
-          repo: repo.githubRepoName,
-          branch: repo.githubBranch,
-          projectId: info?.project_id,
-        });
-      }
-      const sorted = [...merged.values()].sort((a, b) =>
-        (Date.parse(b.updatedAt) || 0) - (Date.parse(a.updatedAt) || 0),
-      );
-      const visible = sorted.slice(0, 50);
-      const current = merged.get(sessionId);
-      if (current && !visible.some((item) => item.id === sessionId)) visible.push(current);
-      setRecent(visible);
+      if (!cancelled && currentRequest === requestIdRef.current) setRecent(current ? [current] : []);
+    })().catch(() => {
+      if (!cancelled && currentRequest === requestIdRef.current) setRecent([]);
     }).finally(() => {
       if (!cancelled && currentRequest === requestIdRef.current) setFetching(false);
     });
     return () => { cancelled = true; };
   }, [open, accountId, sessionId]);
-
-  const filtered = useMemo(() => {
-    const normalized = query.trim().toLowerCase();
-    if (!normalized) return recent.slice(0, 20);
-    return recent.filter((entry) =>
-      (entry.title + ' ' + entry.preview).toLowerCase().includes(normalized),
-    ).slice(0, 20);
-  }, [query, recent]);
-
-  async function selectConversation(entry: RecentConversation) {
-    if (!accountId || switchingId) return;
-    if (entry.id === sessionId && messages.length) { closeMenu(); return; }
-    setSwitchingId(entry.id);
-    try {
-      // Each record was returned by a user-scoped list. Fetch the actual
-      // transcript again from its owner-verified backend, never localStorage.
-      const full = entry.source === 'repo'
-        ? await loadCloudTerminalSession(entry.id)
-        : await loadSidebarChatById(accountId, entry.id);
-      if (!full?.messages?.length) {
-        toast.error('This conversation has no saved messages to restore.');
-        return;
-      }
-
-      if (full.githubRepoName?.includes('/')) {
-        saveSelectedRepoContext({
-          repo: full.githubRepoName,
-          branch: full.githubBranch || 'main',
-          projectRoot: full.projectRoot || '/',
-        });
-        notifyGithubRepoContext(full.githubRepoName, full.githubBranch || 'main');
-      } else {
-        clearSelectedRepoContext();
-      }
-      if (entry.projectId) activateSidebarProject(accountId, entry.projectId);
-      else clearActiveSidebarProject();
-
-      await restoreTerminalSession({
-        sessionId: full.id,
-        prompt: full.prompt,
-        messages: full.messages,
-        selectedId: full.id,
-        selectedLabel: entry.title,
-        source: 'projects',
-        jumpMessageId: full.messages[full.messages.length - 1]?.id,
-        githubRepoName: full.githubRepoName,
-      });
-      closeMenu();
-    } catch {
-      toast.error('Could not open this conversation. Please try again.');
-    } finally {
-      setSwitchingId(null);
-    }
-  }
 
   // All actions below apply to the active conversation, not the sidebar list.
   // A saved owner-scoped record must be present before any mutation is offered.
@@ -273,7 +219,6 @@ export function WorkspaceConversationMenu() {
   function beginEditor(mode: 'rename' | 'project' | 'archive' | 'delete') {
     if (!canManage) return;
     setEditor(mode);
-    setExpandedGroup(null);
     setEditorText(mode === 'rename' ? activeTitle : '');
     if (mode === 'project' && accountId) {
       setProjectsLoading(true);
@@ -334,96 +279,30 @@ export function WorkspaceConversationMenu() {
     }
   }
 
-  const toggleGroup = (group: 'share' | 'organize' | 'more') =>
-    setExpandedGroup((previous) => previous === group ? null : group);
-
   return (
     <div className={styles.root} data-testid="workspace-conversation-menu">
-      <button
-        ref={anchorRef}
-        type="button"
-        className={styles.trigger}
-        title={displayTitle}
-        aria-label={`Conversation: ${displayTitle}. Open recent chats`}
-        aria-expanded={open}
-        aria-haspopup="menu"
-        onClick={() => setOpen((value) => !value)}
-      >
-        <span className={styles.title}>{displayTitle}</span>
+      <button ref={anchorRef} type="button" className={styles.trigger}
+        title={headerTitle}
+        aria-label={`Conversation: ${headerTitle}. Open conversation actions`}
+        aria-expanded={open} aria-haspopup="menu"
+        onClick={() => setOpen((value) => !value)}>
+        <span className={styles.title}>{headerTitle}</span>
         <ChevronDown size={15} aria-hidden="true" className={open ? styles.chevronOpen : styles.chevron} />
       </button>
-
-      <AnchoredPortalPopover
-        open={open}
-        onClose={closeMenu}
-        anchorRef={anchorRef}
-        width={345}
-        placement="bottom-start"
-        ariaLabel="Recent conversations"
-        className={styles.popover}
-      >
-        <div className={styles.topRow}>
-          <span className={styles.menuHeading}>Conversations</span>
-          <button type="button" className={styles.newChat} role="menuitem"
-            onClick={() => { startNewChat(); closeMenu(); }} aria-label="New chat" title="New chat">
-            <Plus size={16} aria-hidden="true" /> New chat
-          </button>
-        </div>
-        {accountId ? (
-          <>
-            <div className={styles.tabs} role="tablist" aria-label="Conversation menu views">
-              <button type="button" role="tab" aria-selected={tab === 'chats'}
-                className={tab === 'chats' ? `${styles.tab} ${styles.tabActive}` : styles.tab}
-                onClick={() => { setTab('chats'); setEditor(null); setExpandedGroup(null); }}>
-                <MessageSquareText size={14} aria-hidden="true" /> Chats
-              </button>
-              <button type="button" role="tab" aria-selected={tab === 'actions'}
-                className={tab === 'actions' ? `${styles.tab} ${styles.tabActive}` : styles.tab}
-                onClick={() => { setTab('actions'); setEditor(null); setExpandedGroup(null); }}>
-                <ChevronDown size={14} aria-hidden="true" /> Actions
-              </button>
-            </div>
-            {tab === 'chats' ? (
-              <div role="tabpanel" aria-label="Recent chats">
-                <label className={styles.searchBox}>
-                  <Search size={15} aria-hidden="true" />
-                  <input value={query} onChange={(event) => setQuery(event.target.value)}
-                    type="search" placeholder="Search recent chats" aria-label="Search recent chats"
-                    autoComplete="off" />
-                </label>
-                <div className={styles.sectionHeading}>Recent</div>
-                <div className={styles.list}>
-                  {fetching ? (
-                    <div className={styles.empty}><Loader2 size={16} className={styles.loading} /> Loading conversations…</div>
-                  ) : filtered.length ? filtered.map((entry) => (
-                    <button type="button" role="menuitem" key={entry.id}
-                      className={entry.id === sessionId ? `${styles.item} ${styles.selected}` : styles.item}
-                      disabled={Boolean(switchingId) || loading || sessionRestoring || busyAction}
-                      title={entry.title} onClick={() => void selectConversation(entry)}>
-                      <MessageSquareText size={16} className={styles.chatIcon} aria-hidden="true" />
-                      <span className={styles.itemText}>
-                        <span className={styles.itemTitle}>{entry.title}</span>
-                        {entry.repo ? <span className={styles.itemSubtitle}>{entry.repo}</span> : null}
-                      </span>
-                      {switchingId === entry.id ? <Loader2 size={15} className={styles.loading} aria-hidden="true" /> :
-                        entry.id === sessionId ? <Check size={15} className={styles.activeMark} aria-label="Current conversation" /> : null}
-                    </button>
-                  )) : (
-                    <div className={styles.empty}>
-                      {error ? 'Could not load recent chats.' : query ? 'No matching conversations.' : 'No saved conversations yet.'}
-                    </div>
-                  )}
-                </div>
-              </div>
-            ) : (
-              <div role="tabpanel" aria-label="Current conversation actions" className={styles.actionPane}>
-                <div className={styles.actionContext}>
-                  <span className={styles.contextLabel}>Current conversation</span>
-                  <span className={styles.contextTitle}>{displayTitle}</span>
-                </div>
-                {!currentEntry || !messages.length ? (
-                  <p className={styles.actionHint}>Start or open a saved conversation to manage it.</p>
-                ) : editor === 'rename' ? (
+      <AnchoredPortalPopover open={open} onClose={closeMenu} anchorRef={anchorRef}
+        width={296} placement="bottom-start" ariaLabel="Conversation actions" className={styles.popover}>
+        <div className={styles.actionPane}>
+          <div className={styles.actionContext}>
+            <span className={styles.contextLabel}>Current conversation</span>
+            <span className={styles.contextTitle} title={displayTitle}>{displayTitle}</span>
+          </div>
+          {!accountId ? (
+            <p className={styles.actionHint}>Sign in to manage saved conversations.</p>
+          ) : fetching ? (
+            <p className={styles.actionHint}><Loader2 size={14} className={styles.loading} aria-hidden="true" /> Loading conversation actions…</p>
+          ) : !currentEntry || !messages.length ? (
+            <p className={styles.actionHint}>Open a saved conversation to rename, pin, move, archive or delete it.</p>
+          ) : editor === 'rename' ? (
                   <form className={styles.inlineEditor} onSubmit={(event) => { event.preventDefault(); void renameCurrent(); }}>
                     <button className={styles.backButton} type="button" onClick={() => setEditor(null)}>
                       <ArrowLeft size={14} aria-hidden="true" /> Back
@@ -488,63 +367,31 @@ export function WorkspaceConversationMenu() {
                     </div>
                   </div>
                 ) : (
-                  <div className={styles.groupStack}>
-                    <button type="button" className={styles.groupButton} disabled={!canManage}
-                      aria-expanded={expandedGroup === 'share'} onClick={() => toggleGroup('share')}>
-                      <Share2 size={16} aria-hidden="true" /><span>Share & links</span>
-                      <ChevronRight size={15} aria-hidden="true" className={expandedGroup === 'share' ? styles.groupChevronOpen : styles.groupChevron} />
-                    </button>
-                    {expandedGroup === 'share' ? <div className={styles.groupItems}>
-                      <button type="button" className={styles.subAction} disabled={busyAction} onClick={() => void shareLink('share')}>
-                        <Link2 size={15} aria-hidden="true" /> Share private link
-                      </button>
-                      <button type="button" className={styles.subAction} disabled={busyAction} onClick={() => void shareLink('copy')}>
-                        <Copy size={15} aria-hidden="true" /> Copy link
-                      </button>
-                      <button type="button" className={styles.subAction} disabled={busyAction} onClick={() => void shareLink('open')}>
-                        <ExternalLink size={15} aria-hidden="true" /> Open in new tab
-                      </button>
-                      <p className={styles.groupNote}>Links require your signed-in account.</p>
-                    </div> : null}
-
-                    <button type="button" className={styles.groupButton} disabled={!canManage}
-                      aria-expanded={expandedGroup === 'organize'} onClick={() => toggleGroup('organize')}>
-                      <FolderInput size={16} aria-hidden="true" /><span>Organize</span>
-                      <ChevronRight size={15} aria-hidden="true" className={expandedGroup === 'organize' ? styles.groupChevronOpen : styles.groupChevron} />
-                    </button>
-                    {expandedGroup === 'organize' ? <div className={styles.groupItems}>
-                      <button type="button" className={styles.subAction} disabled={busyAction} onClick={() => beginEditor('rename')}>
-                        <Pencil size={15} aria-hidden="true" /> Rename
-                      </button>
-                      <button type="button" className={styles.subAction} disabled={busyAction} onClick={() => void togglePin()}>
-                        {currentMeta?.pin_order != null ? <PinOff size={15} aria-hidden="true" /> : <Pin size={15} aria-hidden="true" />}
-                        {currentMeta?.pin_order != null ? 'Unpin' : 'Pin'}
-                      </button>
-                      <button type="button" className={styles.subAction} disabled={busyAction} onClick={() => beginEditor('project')}>
-                        <FolderInput size={15} aria-hidden="true" /> Move to project
-                      </button>
-                    </div> : null}
-
-                    <button type="button" className={styles.groupButton} disabled={!canManage}
-                      aria-expanded={expandedGroup === 'more'} onClick={() => toggleGroup('more')}>
-                      <Archive size={16} aria-hidden="true" /><span>More</span>
-                      <ChevronRight size={15} aria-hidden="true" className={expandedGroup === 'more' ? styles.groupChevronOpen : styles.groupChevron} />
-                    </button>
-                    {expandedGroup === 'more' ? <div className={styles.groupItems}>
-                      <button type="button" className={styles.subAction} disabled={busyAction} onClick={() => beginEditor('archive')}>
-                        <Archive size={15} aria-hidden="true" /> Archive
-                      </button>
-                      <button type="button" className={`${styles.subAction} ${styles.dangerText}`}
-                        disabled={busyAction} onClick={() => beginEditor('delete')}>
-                        <Trash2 size={15} aria-hidden="true" /> Delete
-                      </button>
-                    </div> : null}
-                  </div>
-                )}
-              </div>
-            )}
-          </>
-        ) : <div className={styles.empty}>Sign in to access your saved conversations.</div>}
+            <div className={styles.actionList}>
+              <button role="menuitem" type="button" className={styles.subAction} disabled={!canManage}
+                onClick={() => beginEditor('rename')}><Pencil size={15} aria-hidden="true" /> Rename</button>
+              <button role="menuitem" type="button" className={styles.subAction} disabled={!canManage}
+                onClick={() => void togglePin()}>
+                {currentMeta?.pin_order != null ? <PinOff size={15} aria-hidden="true" /> : <Pin size={15} aria-hidden="true" />}
+                {currentMeta?.pin_order != null ? 'Unpin' : 'Pin'}
+              </button>
+              <button role="menuitem" type="button" className={styles.subAction} disabled={!canManage}
+                onClick={() => beginEditor('project')}><FolderInput size={15} aria-hidden="true" /> Move to project</button>
+              <div role="separator" className={styles.actionDivider} />
+              <button role="menuitem" type="button" className={styles.subAction} disabled={!canManage}
+                onClick={() => void shareLink('share')}><Share2 size={15} aria-hidden="true" /> Share private link</button>
+              <button role="menuitem" type="button" className={styles.subAction} disabled={!canManage}
+                onClick={() => void shareLink('copy')}><Copy size={15} aria-hidden="true" /> Copy link</button>
+              <button role="menuitem" type="button" className={styles.subAction} disabled={!canManage}
+                onClick={() => void shareLink('open')}><ExternalLink size={15} aria-hidden="true" /> Open in new tab</button>
+              <div role="separator" className={styles.actionDivider} />
+              <button role="menuitem" type="button" className={styles.subAction} disabled={!canManage}
+                onClick={() => beginEditor('archive')}><Archive size={15} aria-hidden="true" /> Archive</button>
+              <button role="menuitem" type="button" className={`${styles.subAction} ${styles.dangerText}`} disabled={!canManage}
+                onClick={() => beginEditor('delete')}><Trash2 size={15} aria-hidden="true" /> Delete</button>
+            </div>
+          )}
+        </div>
       </AnchoredPortalPopover>
     </div>
   );
