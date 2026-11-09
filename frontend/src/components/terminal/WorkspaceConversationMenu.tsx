@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Archive, ArrowLeft, Check, ChevronDown, Copy, ExternalLink, FolderInput, Link2, Loader2, Pencil, Pin, PinOff, Share2, Trash2 } from 'lucide-react';
+import { Archive, ArrowLeft, Check, ChevronDown, Copy, ExternalLink, FolderInput, Loader2, Pencil, Pin, PinOff, Share2, Trash2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { useWorkspaceIdentity } from '@/components/layout/WorkspaceIdentityContext';
