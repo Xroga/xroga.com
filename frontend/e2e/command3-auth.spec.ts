@@ -131,6 +131,39 @@ test.afterAll(async () => {
   if (outsiderId) expect((await admin.auth.admin.deleteUser(outsiderId)).error).toBeNull();
 });
 
+test('setup remains retryable after a failed save and exits only after a durable skip', async ({ page }) => {
+  const previous = { status: 'completed', current_step: 'complete', backfilled: true };
+  const reset = await admin.from('profiles').update({ onboarding: { status: 'not_started' } }).eq('id', outsiderId);
+  expect(reset.error).toBeNull();
+  try {
+    await page.goto('/auth/login?next=%2Fworkspace');
+    const form = page.locator('form', { has: page.locator('#login-email') });
+    await form.locator('#login-email').fill(outsiderEmail);
+    await form.locator('#login-password').fill(password);
+    await form.getByRole('button', { name: 'Sign in' }).click();
+    await expect(page).toHaveURL(/\/onboarding$/, { timeout: AUTH_TRANSITION_TIMEOUT_MS });
+
+    await page.route('**/api/profile', async route => {
+      if (route.request().method() === 'PATCH') await route.abort('failed');
+      else await route.continue();
+    });
+    await page.getByRole('button', { name: 'Skip setup', exact: true }).click();
+    await expect(page.getByRole('alert')).toContainText('Setup could not be saved');
+    await expect(page).toHaveURL(/\/onboarding$/);
+    await page.unroute('**/api/profile');
+
+    await page.getByRole('button', { name: 'Skip setup', exact: true }).click();
+    await expect(page).toHaveURL(/\/workspace$/, { timeout: AUTH_TRANSITION_TIMEOUT_MS });
+    const saved = await admin.from('profiles').select('onboarding').eq('id', outsiderId).single();
+    expect(saved.error).toBeNull();
+    expect(saved.data?.onboarding).toMatchObject({ status: 'skipped', current_step: 'complete' });
+    await page.reload();
+    await expect(page).toHaveURL(/\/workspace$/);
+  } finally {
+    expect((await admin.from('profiles').update({ onboarding: previous }).eq('id', outsiderId)).error).toBeNull();
+  }
+});
+
 test('explicit hide preserves drafts without crossing real account and conversation boundaries', async ({ page }) => {
   async function login(email: string) {
     await page.goto('/auth/login', { waitUntil: 'domcontentloaded' });

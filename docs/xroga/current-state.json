@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "",
-    "sha": "95d44f46d85dae3ed0346c9603f7e418a6420c06",
-    "sourceTimestampUtc": "2026-11-09T18:35:35+05:00",
-    "auditStartedUtc": "2026-11-09T14:17:52.907Z",
+    "sha": "cc8dbdcf00033e5d33e1884a7a1d33cb1f6e46ca",
+    "sourceTimestampUtc": "2026-11-09T19:21:29+05:00",
+    "auditStartedUtc": "2026-11-09T14:26:36.213Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
@@ -87820,21 +87820,25 @@
       "id": "surface:6a0ce6f916c21e7b66d0",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/onboarding/OnboardingFlow.tsx",
-      "sha256": "70f8a888d615843a67688d020a52afbd386566527721bf816f4dc0e287e86fcb",
+      "sha256": "cd8bf750ae8491b30eae6e696846433beb47c59ccddda38b58f6823e43642ede",
       "symbols": [
         "BrandMark",
         "ORDER",
         "OnboardingFlow",
+        "SETUP_SAVE_TIMEOUT_MS",
         "WORKSPACE",
         "activeIndex",
         "cancelled",
         "connectGitHub",
         "connectVercel",
         "enterWorkspace",
+        "finishSetup",
+        "finishing",
         "githubConnected",
         "goTo",
         "items",
         "next",
+        "pendingWrite",
         "persist",
         "persistTimer",
         "result",
@@ -143160,86 +143164,86 @@
       "reachable": false
     },
     {
-      "id": "frontend-call:6e841cba0282307c6710",
+      "id": "frontend-call:11f96c6fa5b3df559573",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 207,
+      "line": 240,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:2e49e0253d27c2a45cb9",
+      "id": "frontend-call:bc349e8eeb323aabe210",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 210,
+      "line": 243,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:2c87eef95e3aed122bfe",
+      "id": "frontend-call:e57b0131c166620c5b15",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 975,
+      "line": 1008,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:96eb3d73155842defe13",
+      "id": "frontend-call:e2360dbff6a9d99313cf",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 976,
+      "line": 1009,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:92e08243443dc2039379",
+      "id": "frontend-call:a25de43173650837afb1",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 981,
+      "line": 1014,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:b6d8dc091082c0df5cf3",
+      "id": "frontend-call:5686226b103ea3263526",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 982,
+      "line": 1015,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:f8e37491081ebaa9f612",
+      "id": "frontend-call:426fbe91002c6d8b9dec",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 988,
+      "line": 1021,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:633efdb4e329d52278d0",
+      "id": "frontend-call:a510b4642862c31cdaf8",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 993,
+      "line": 1026,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:a92cd2a1c45b264602c6",
+      "id": "frontend-call:a073874a37f5c09c0f34",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1041,
+      "line": 1074,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:455f3abf5d61e1f060af",
+      "id": "frontend-call:45d6ae6bf0814491c7fe",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1042,
+      "line": 1075,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:66e7fc02a025b3da71cf",
+      "id": "frontend-call:fad404ecc7394cfde872",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1049,
+      "line": 1082,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:f6decf1c18fc35e257f2",
+      "id": "frontend-call:52c9bf6bcafac1bfb744",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1063,
+      "line": 1096,
       "callee": "fetch",
       "reachable": false
     },
@@ -144749,65 +144753,44 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:3487a7c1d8dd8dcdcc4f",
+      "id": "frontend-call:322e48e3751251019215",
       "sourcePath": "frontend/src/components/onboarding/OnboardingFlow.tsx",
-      "line": 66,
-      "callee": "api.profile.update().catch",
-      "reachable": true
-    },
-    {
-      "id": "frontend-call:0d72d3fda3b36cc757ae",
-      "sourcePath": "frontend/src/components/onboarding/OnboardingFlow.tsx",
-      "line": 66,
+      "line": 74,
       "callee": "api.profile.update",
       "reachable": true
     },
     {
-      "id": "frontend-call:3421983b534da84409a8",
+      "id": "frontend-call:6a71e631832c815ba746",
       "sourcePath": "frontend/src/components/onboarding/OnboardingFlow.tsx",
-      "line": 112,
+      "line": 119,
       "callee": "api.github.status().catch",
       "reachable": true
     },
     {
-      "id": "frontend-call:f5def7da2a96d62c88a8",
+      "id": "frontend-call:42b8382790818f63987c",
       "sourcePath": "frontend/src/components/onboarding/OnboardingFlow.tsx",
-      "line": 112,
+      "line": 119,
       "callee": "api.github.status",
       "reachable": true
     },
     {
-      "id": "frontend-call:60652f62b3a36991b835",
+      "id": "frontend-call:62aedf8eff77dfb3eb3e",
       "sourcePath": "frontend/src/components/onboarding/OnboardingFlow.tsx",
-      "line": 113,
+      "line": 120,
       "callee": "api.vercel.status().catch",
       "reachable": true
     },
     {
-      "id": "frontend-call:28cae5554bb6e3b9ed6c",
+      "id": "frontend-call:c51eff535fc9b69069ca",
       "sourcePath": "frontend/src/components/onboarding/OnboardingFlow.tsx",
-      "line": 113,
+      "line": 120,
       "callee": "api.vercel.status",
       "reachable": true
     },
     {
-      "id": "frontend-call:9f138f3b8a4bd2c6bd81",
+      "id": "frontend-call:e898450e456d2b4e91c1",
       "sourcePath": "frontend/src/components/onboarding/OnboardingFlow.tsx",
-      "line": 180,
-      "callee": "api.profile.update().catch().finally",
-      "reachable": true
-    },
-    {
-      "id": "frontend-call:4c419789b98ea2697cdb",
-      "sourcePath": "frontend/src/components/onboarding/OnboardingFlow.tsx",
-      "line": 180,
-      "callee": "api.profile.update().catch",
-      "reachable": true
-    },
-    {
-      "id": "frontend-call:3406a136ac0e7738a6af",
-      "sourcePath": "frontend/src/components/onboarding/OnboardingFlow.tsx",
-      "line": 180,
+      "line": 186,
       "callee": "api.profile.update",
       "reachable": true
     },
@@ -151723,7 +151706,7 @@
     {
       "id": "test-suite:967afee80eba90847db7",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "declaredTests": 2,
+      "declaredTests": 3,
       "skipLocations": [],
       "focusLocations": []
     },

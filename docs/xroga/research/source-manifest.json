@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "95d44f46d85dae3ed0346c9603f7e418a6420c06",
+  "source_sha": "cc8dbdcf00033e5d33e1884a7a1d33cb1f6e46ca",
   "hash_policy": "Exact preserved attachment bytes; repository text uses Git-canonical LF bytes for portable hashes and byte counts",
   "sources": [
     {
@@ -6234,9 +6234,9 @@
       "source_id": "SRC-3d3190a1571aa705",
       "filename": "current-state.json",
       "path_or_url": "docs/xroga/current-state.json",
-      "sha256": "1b6106559f8cdd6b83c2c0bc3c9772856d8c6a653cd26a9becfb333b61ea1f7c",
-      "byte_size": 5616951,
-      "modified_timestamp": "2026-11-09T14:17:53.422Z",
+      "sha256": "27cc75bf6612ceda07227fa74d05a95fc2c5e0f29648c738344612c01faaec16",
+      "byte_size": 5616362,
+      "modified_timestamp": "2026-11-09T14:26:37.092Z",
       "parse_status": "PARSED_JSON",
       "category": "REPOSITORY_DOCUMENT",
       "authority": "ADVISORY",
@@ -22978,9 +22978,9 @@
       "source_id": "SRC-6a0ce6f916c21e7b",
       "filename": "OnboardingFlow.tsx",
       "path_or_url": "frontend/src/components/onboarding/OnboardingFlow.tsx",
-      "sha256": "70f8a888d615843a67688d020a52afbd386566527721bf816f4dc0e287e86fcb",
-      "byte_size": 10053,
-      "modified_timestamp": "2026-10-01T08:52:13.392Z",
+      "sha256": "cd8bf750ae8491b30eae6e696846433beb47c59ccddda38b58f6823e43642ede",
+      "byte_size": 10942,
+      "modified_timestamp": "2026-11-09T14:25:37.761Z",
       "parse_status": "AST_METADATA",
       "category": "SOURCE_CODE",
       "authority": "CURRENT_CODE",

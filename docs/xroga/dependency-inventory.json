@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "95d44f46d85dae3ed0346c9603f7e418a6420c06",
+  "source_sha": "cc8dbdcf00033e5d33e1884a7a1d33cb1f6e46ca",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -21969,7 +21969,7 @@
     },
     {
       "path": "frontend/src/components/onboarding/OnboardingFlow.tsx",
-      "sha256": "70f8a888d615843a67688d020a52afbd386566527721bf816f4dc0e287e86fcb"
+      "sha256": "cd8bf750ae8491b30eae6e696846433beb47c59ccddda38b58f6823e43642ede"
     },
     {
       "path": "frontend/src/components/onboarding/WorkspacePreparationCard.tsx",
