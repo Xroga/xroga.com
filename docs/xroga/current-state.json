@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/workspace-inline-sources-20261110",
-    "sha": "b5f43822535c7c55f1aeec7c246d4101f92bc679",
-    "sourceTimestampUtc": "2026-11-11T01:24:03+05:00",
-    "auditStartedUtc": "2026-11-10T20:24:43.173Z",
+    "sha": "ddeed9674c677a12796159843c3ab1ed25619384",
+    "sourceTimestampUtc": "2026-11-11T01:47:12+05:00",
+    "auditStartedUtc": "2026-11-10T20:48:07.119Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
@@ -97915,7 +97915,7 @@
       "id": "surface:9c57a6290c71522141f5",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/SwarmMessageLog.tsx",
-      "sha256": "3106334d475cac8294dddef5edfdacf43d2f331cc5201a94648be48851799016",
+      "sha256": "4a79580965e66b24ed120ff3cb3462eeae846b1d6f4e8a6fd5437eb00c88659b",
       "symbols": [
         "AGENT_STYLES",
         "SwarmMessageLog",
@@ -155073,7 +155073,7 @@
     {
       "id": "test-suite:078f6241470c34fa2ea0",
       "sourcePath": "frontend/src/lib/workspaceChatbarScrollBoundary20261103.test.ts",
-      "declaredTests": 1,
+      "declaredTests": 2,
       "skipLocations": [],
       "focusLocations": []
     },

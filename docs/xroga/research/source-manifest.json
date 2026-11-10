@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "b5f43822535c7c55f1aeec7c246d4101f92bc679",
+  "source_sha": "ddeed9674c677a12796159843c3ab1ed25619384",
   "hash_policy": "Exact preserved attachment bytes; repository text uses Git-canonical LF bytes for portable hashes and byte counts",
   "sources": [
     {
@@ -6286,9 +6286,9 @@
       "source_id": "SRC-3d3190a1571aa705",
       "filename": "current-state.json",
       "path_or_url": "docs/xroga/current-state.json",
-      "sha256": "0d5cee99b5f1a5b794f4e95ad3fe474cddba8fef2fc1c96bbcced9ebc346b536",
+      "sha256": "d3e80b00a9b6e13722377c5a82235a8a57b451e310fd015ed4ad03c30b2ba046",
       "byte_size": 5672498,
-      "modified_timestamp": "2026-11-10T20:24:44.369Z",
+      "modified_timestamp": "2026-11-10T20:48:08.788Z",
       "parse_status": "PARSED_JSON",
       "category": "REPOSITORY_DOCUMENT",
       "authority": "ADVISORY",
@@ -25149,9 +25149,9 @@
       "source_id": "SRC-9c57a6290c715221",
       "filename": "SwarmMessageLog.tsx",
       "path_or_url": "frontend/src/components/terminal/SwarmMessageLog.tsx",
-      "sha256": "3106334d475cac8294dddef5edfdacf43d2f331cc5201a94648be48851799016",
-      "byte_size": 36075,
-      "modified_timestamp": "2026-11-10T18:48:38.788Z",
+      "sha256": "4a79580965e66b24ed120ff3cb3462eeae846b1d6f4e8a6fd5437eb00c88659b",
+      "byte_size": 36159,
+      "modified_timestamp": "2026-11-10T20:45:59.831Z",
       "parse_status": "AST_METADATA",
       "category": "SOURCE_CODE",
       "authority": "CURRENT_CODE",
