@@ -144772,7 +144772,7 @@
     {
       "id": "test-suite:d748c4a3a476cd87446f",
       "sourcePath": "apps/xroga-browser-extension/src/agent/__tests__/skills.test.ts",
-      "declaredTests": 9,
+      "declaredTests": 13,
       "skipLocations": [],
       "focusLocations": []
     },
