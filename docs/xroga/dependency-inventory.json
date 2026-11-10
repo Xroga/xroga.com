@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "2ead8d7f3d56d12eed2264e143cbfa7a23ef0252",
+  "source_sha": "196a899877c21c540a40aa180e0423a77b850d13",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -23096,7 +23096,7 @@
     },
     {
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "sha256": "7b07f00b991243740b00b612212f191ecb260dfea8c804c937e8ef2fdf6efa3a"
+      "sha256": "7034873ea0b10fdf1deb91145dd162ab570aaf64f81794291d0b42a75099a55f"
     },
     {
       "path": "frontend/src/context/TerminalScrollContext.tsx",
@@ -23364,7 +23364,7 @@
     },
     {
       "path": "frontend/src/lib/formatAiMarkdown.tsx",
-      "sha256": "dba219fea184b59714d2c36619d1c58bd3273e6b232c9d1b4b53e3427bc16fdf"
+      "sha256": "1e2deb18cb83176b8fef27331df8c612026ddf9ee67eabab8f465f4faa6315b3"
     },
     {
       "path": "frontend/src/lib/gameBuilderContent.ts",
@@ -23700,7 +23700,7 @@
     },
     {
       "path": "frontend/src/lib/researchHandoff.ts",
-      "sha256": "7d59b242748543a52f568e421114e816283d9c49691c4045fa5c7441c096f8ad"
+      "sha256": "9eeae9816ae0462dff96d514efa7249ebd5fda065c0530cf80fca0507dbf08af"
     },
     {
       "path": "frontend/src/lib/researchWait.ts",
@@ -30125,7 +30125,7 @@
       "hostname": "github.com",
       "protocol": "https:",
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 4028,
+      "line": 4048,
       "credentialsInUrl": false
     },
     {
@@ -30321,7 +30321,7 @@
       "hostname": "xroga.local",
       "protocol": "https:",
       "path": "frontend/src/lib/formatAiMarkdown.tsx",
-      "line": 130,
+      "line": 131,
       "credentialsInUrl": false
     },
     {
@@ -38756,14 +38756,14 @@
     },
     {
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 2068,
+      "line": 2088,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 2101,
+      "line": 2121,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -39099,7 +39099,7 @@
     },
     {
       "path": "frontend/src/lib/researchHandoff.ts",
-      "line": 68,
+      "line": 69,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

@@ -30,6 +30,7 @@ import {
 } from './oauthPopupResult';
 
 import { xrogaConnect } from './xrogaConnect';
+import { RESEARCH_RECEIPT_AVAILABLE } from './researchHandoff';
 
 function joinClasses(
   ...values:
@@ -345,6 +346,10 @@ export function BusinessActionConfirmationInline({
           setNotice(
             result.response,
           );
+          if (result.ok && result.toolkit === 'xroga-native-research' &&
+              result.confirmation.status === 'consumed' && result.confirmation.id === confirmationId) {
+            window.dispatchEvent(new CustomEvent(RESEARCH_RECEIPT_AVAILABLE, { detail: confirmationId }));
+          }
         } catch (
           error
         ) {

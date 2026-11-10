@@ -18,7 +18,7 @@ import { usePathname } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { streamSwarmExecute, apiFetch, ApiError, type ChatAttachment, api } from '@/lib/api';
 import { resolveBuilderProject, syncBuilderConversation } from '@/lib/builderChat';
-import { attachResearchResult, markResearchUnavailable, pendingResearchConfirmation, type ResearchHandoff } from '@/lib/researchHandoff';
+import { attachResearchResult, markResearchUnavailable, pendingResearchConfirmation, RESEARCH_RECEIPT_AVAILABLE, type ResearchHandoff } from '@/lib/researchHandoff';
 import {attachModelResult,markModelUnavailable,pendingModelConfirmation,type ModelHandoff} from '@/lib/modelHandoff';
 import { capacityUnavailableLine } from '@/lib/capacityMessage';
 import { buildCompletedChatHistory } from '@/lib/chatHistory';
@@ -1363,9 +1363,14 @@ const stopRequestedRunIdRef =
     if (!pending.length) return;
     let disposed = false;
     let inFlight = false;
+    let refreshQueued = false;
     const session = sessionIdRef.current;
     const refresh = async () => {
-      if (disposed || inFlight) return;
+      if (disposed || sessionIdRef.current !== session) return;
+      if (inFlight) {
+        refreshQueued = true;
+        return;
+      }
       inFlight = true;
       try {
         for (const message of pending) {
@@ -1389,11 +1394,26 @@ const stopRequestedRunIdRef =
             // Leave the original approval and context intact. No automatic provider retry.
           }
         }
-      } finally { inFlight = false; }
+      } finally {
+        inFlight = false;
+        if (refreshQueued && !disposed) {
+          refreshQueued = false;
+          void refresh();
+        }
+      }
+    };
+    const receiptAvailable = (event: Event) => {
+      const id: unknown = (event as CustomEvent<unknown>).detail;
+      if (typeof id === 'string' && pending.some(message => message.confirmationId === id)) void refresh();
     };
     void refresh();
     window.addEventListener('focus', refresh);
-    return () => { disposed = true; window.removeEventListener('focus', refresh); };
+    window.addEventListener(RESEARCH_RECEIPT_AVAILABLE, receiptAvailable);
+    return () => {
+      disposed = true;
+      window.removeEventListener('focus', refresh);
+      window.removeEventListener(RESEARCH_RECEIPT_AVAILABLE, receiptAvailable);
+    };
   }, [isGuest, sessionReady, workspaceIdentity.userId, researchPendingKey]);
 
   /** Persist terminal history while user works — not only after submit completes */

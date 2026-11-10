@@ -252,6 +252,12 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   const reviewed = 'Show the reviewed monthly chart.';
   const reviewedReply = 'Partial answer. The written summary disagreed with the plotted data, so it was withheld.';
   const reviewedProgram = 'root = Col([Markdown(' + JSON.stringify(reviewedReply) + '), Chart("bar", [{Month:"January", Value:12000}, {Month:"February", Value:15500}], "Month", ["Value"], "currency", "USD")])';
+  const research = 'Research the official evidence and cite it.';
+  const confirmationId = '221fe7f9-f0dd-4b12-b03a-bcb57a13f655';
+  const researchReply = 'The retrieved source describes the official policy [1].';
+  const researchSource = { title: 'Official policy fixture', siteName: 'Example publisher', url: 'https://example.com/policy', snippet: 'Documented policy.', source: 'web' };
+  const confirmation = { id: confirmationId, status: 'pending', summary: 'Retrieve one set of public results.', toolkit: 'xroga-native-research', risk: 'read',
+    approval: { accountReference: 'controlled fixture', operation: 'Search', actionDigest: 'a'.repeat(64), destination: 'official search', criticalParameters: {}, spendMaximumMicroUsd: '750', currency: 'USD' } };
   const source = { title: 'Workshop source fixture', url: 'https://example.com/workshop', snippet: 'USD 25 per attendee.', source: 'fixture' };
   const program = [
     '$attendees = 40',
@@ -298,6 +304,9 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
     }
     if (body.message === reviewed) {
       return route.fulfill({ headers: cors, json: { response: reviewedReply, completion: { status: 'partial', reason: 'data_review' }, responseSource: { format: 'xroga-openui-v1', text: reviewedProgram } } });
+    }
+    if (body.message === research) {
+      return route.fulfill({ headers: cors, json: { response: 'Research requires approval. [Review](/dashboard/actions/confirm/' + confirmationId + ')' } });
     }
     expect(body.message).toBe(malformed);
     return route.fulfill({ headers: cors, json: { response: fallback, completion: { status: 'complete' }, responseSource: { format: 'xroga-openui-v1', text: 'root = UnregisteredWidget("should never render")' } } });
@@ -435,10 +444,36 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   await expect(reviewedAnswer.getByRole('img', { name: /bar chart/ })).toBeVisible();
   await expect(reviewedAnswer.getByText(reviewedReply, { exact: true })).toBeVisible();
   await expect(page.getByText('Suggested next steps', { exact: true })).toHaveCount(0);
-  expect(chatCalls).toBe(5);
+  let confirmations = 0;
+  let receiptReads = 0;
+  await page.route('**/api/phase1/business-actions/confirmations/' + confirmationId + '**', async route => {
+    const request = route.request();
+    if (request.method() === 'OPTIONS') return route.fulfill({ status: 204, headers: cors });
+    if (new URL(request.url()).pathname.endsWith('/confirm')) {
+      expect(request.method()).toBe('POST');
+      confirmations++;
+      return route.fulfill({ headers: cors, json: { ok: true, toolkit: confirmation.toolkit,
+        confirmation: { ...confirmation, status: 'consumed' }, response: 'Completed.' } });
+    }
+    expect(request.method()).toBe('GET');
+    if (!confirmations) return route.fulfill({ headers: cors, json: { confirmation } });
+    receiptReads++;
+    return route.fulfill({ headers: cors, json: { confirmation: { ...confirmation, status: 'consumed' },
+      researchResult: { confirmationId, receiptId: confirmationId, text: '', omittedSourceCount: 0, sources: [researchSource],
+        answer: { response: researchReply, completion: { status: 'complete' }, webSources: [researchSource],
+          responseSource: { format: 'xroga-openui-v1', text: 'root = Col([Text(["The retrieved source describes the official policy. ", Source("source-1")])])' } } } } });
+  });
+  await send(research);
+  await page.getByRole('button', { name: 'Confirm action', exact: true }).click();
+  const researched = page.getByRole('region', { name: 'Answer', exact: true }).filter({ hasText: 'The retrieved source describes the official policy.' });
+  await expect(researched.getByRole('link', { name: /Official policy fixture/ })).toHaveAttribute('href', researchSource.url);
+  expect(confirmations).toBe(1);
+  expect(receiptReads).toBeGreaterThanOrEqual(1);
+  expect(receiptReads).toBeLessThanOrEqual(2);
+  expect(chatCalls).toBe(6);
   await writeFile('test-results/native-workspace/evidence.json', JSON.stringify({
     source: expectedRelease, route: '/workspace', auth: 'isolated Supabase ordinary accounts',
-    model: 'deterministic transport fixtures, zero provider calls', nativeActions: ['file handoff', 'citation link', 'keyboard calculator', 'copy readback', 'database save and reopen', 'private share owner/guest/other account', 'continuation', 'browser cancellation', 'client validation fallback', 'reviewed partial chart'],
+    model: 'deterministic transport fixtures, zero provider calls', nativeActions: ['file handoff', 'citation link', 'keyboard calculator', 'copy readback', 'database save and reopen', 'private share owner/guest/other account', 'continuation', 'browser cancellation', 'client validation fallback', 'reviewed partial chart', 'inline research receipt without refocus or redispatch'],
     viewports: [1440, 390], themes: ['black', 'gray'],
   }, null, 2));
 });
