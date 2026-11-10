@@ -9,6 +9,14 @@
   "changedFiles": [
     "frontend/src/components/terminal/SwarmMessageLog.tsx",
     "frontend/src/lib/workspaceChatbarScrollBoundary20261103.test.ts",
+    "docs/xroga/current-state.json",
+    "docs/xroga/current-state.md",
+    "docs/xroga/dependency-inventory.json",
+    "docs/xroga/deployment-topology.md",
+    "docs/xroga/research/source-manifest.json",
+    "docs/xroga/runtime-contract.md",
+    "docs/xroga/secret-inventory.md",
+    "docs/xroga/security/egress-callers.json",
     "docs/xroga/missions/assistant-inset-current-live-20261110.json"
   ],
   "decisions": {
