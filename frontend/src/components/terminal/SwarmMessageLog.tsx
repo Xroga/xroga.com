@@ -625,7 +625,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                 data-turn-id={msg.role === 'user' || msg.role === 'assistant' ? msg.id : undefined}
                 className={cn(
                   'xv-terminal-turn group flex gap-2',
-                  chromeless && msg.role === 'assistant' && 'box-border max-[600px]:ps-[18px]',
+                  chromeless && msg.role === 'assistant' && 'box-border ps-[18px]',
                   msg.role === 'user' ? 'flex-row-reverse' : 'flex-row',
                   msg.role === 'system' && 'justify-center',
                   searchHit === msg.id && 'ring-1 ring-[#006aff]/40 rounded-lg'

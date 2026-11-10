@@ -97706,7 +97706,7 @@
       "id": "surface:9c57a6290c71522141f5",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/SwarmMessageLog.tsx",
-      "sha256": "03e992bcd4282f9a406c8a7fecbb3b9bb92f5a9b301f7151ad26d821d9f147e8",
+      "sha256": "97c2bdb5e2ba9f39888fd028a74f8b1241766078f5a67e4ebc1adbf251a44192",
       "symbols": [
         "AGENT_STYLES",
         "SwarmMessageLog",
