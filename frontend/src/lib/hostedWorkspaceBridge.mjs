@@ -4,6 +4,7 @@ const guestShare = /^\/api\/message-shares\/[A-Za-z0-9_-]{20,80}$/;
 const requestHeaders = ['authorization', 'content-type', 'accept', 'range', 'x-xroga-language'];
 const responseHeaders = ['content-type', 'content-disposition', 'content-range', 'accept-ranges', 'content-security-policy'];
 const maxBodyBytes = 10 * 1024 * 1024;
+const usagePath = '/api/phase1/usage';
 let config;
 
 function hostedConfig() {
@@ -60,9 +61,23 @@ async function googleIdentity(audience, fetch) {
   return token;
 }
 
+/** Inspect only the platform token we just obtained. Cloud Run authenticates it.
+ * @param {string} token @param {string} audience @param {string} subject */
+function matchesPlatformBinding(token, audience, subject) {
+  try {
+    const claims = JSON.parse(Buffer.from(token.split('.')[1], 'base64url').toString('utf8'));
+    return /^[0-9]{12,24}$/.test(subject) && claims.sub === subject && claims.aud === audience
+      && (claims.iss === 'https://accounts.google.com' || claims.iss === 'accounts.google.com')
+      && Number.isSafeInteger(claims.exp) && claims.exp > Date.now() / 1000;
+  } catch {
+    return false;
+  }
+}
+
 /** @param {Request} request @param {string} path @param {ReturnType<typeof requireHostedWorkspaceBuild>} manifest
- * @param {typeof globalThis.fetch} [fetch] */
-export async function forwardHostedWorkspace(request, path, manifest, fetch = globalThis.fetch) {
+ * @param {typeof globalThis.fetch} [fetch]
+ * @param {{subject: string, emit: (record: object) => void}} [diagnostics] */
+export async function forwardHostedWorkspace(request, path, manifest, fetch = globalThis.fetch, diagnostics) {
   const method = request.method;
   if (!isHostedWorkspaceRoute(path, method)) return denied(404);
   const origin = request.headers.get('origin');
@@ -79,6 +94,12 @@ export async function forwardHostedWorkspace(request, path, manifest, fetch = gl
   if (request.body && !/^application\/json(?:\s*;|$)/i.test(request.headers.get('content-type') ?? '')) return denied(415);
   const headers = copyHeaders(request.headers, requestHeaders);
   const abort = AbortSignal.any([request.signal, AbortSignal.timeout(180000)]);
+  const probe = method === 'GET' && path === usagePath && !search ? diagnostics : undefined;
+  let phase = 'platform_identity';
+  let bindingMatches = false;
+  let healthStatus = null;
+  let releaseMatches = false;
+  let usageStatus = null;
 
   try {
     let body;
@@ -102,13 +123,22 @@ export async function forwardHostedWorkspace(request, path, manifest, fetch = gl
       body = Buffer.concat(chunks);
     }
     abort.throwIfAborted();
-    const platform = `Bearer ${await googleIdentity(manifest.api.audience, fetch)}`;
+    const token = await googleIdentity(manifest.api.audience, fetch);
+    if (probe) {
+      phase = 'platform_binding';
+      bindingMatches = matchesPlatformBinding(token, manifest.api.audience, probe.subject);
+      if (!bindingMatches) return denied(503);
+    }
+    const platform = `Bearer ${token}`;
+    phase = 'api_health';
     const health = await fetch(new URL('/health', manifest.api.origin), {
       headers: { 'X-Serverless-Authorization': platform },
       redirect: 'error', cache: 'no-store', signal: AbortSignal.any([abort, AbortSignal.timeout(5000)]),
     });
+    healthStatus = health.status;
     const receipt = health.ok ? await health.json() : null;
-    if (receipt?.service !== 'xroga-api' || receipt?.release !== manifest.api.sourceSha) {
+    releaseMatches = receipt?.service === 'xroga-api' && receipt?.release === manifest.api.sourceSha;
+    if (!releaseMatches) {
       await health.body?.cancel().catch(() => undefined);
       return denied(503);
     }
@@ -130,9 +160,11 @@ export async function forwardHostedWorkspace(request, path, manifest, fetch = gl
         'cache-control': 'private, no-store', 'x-content-type-options': 'nosniff',
       } });
     }
+    phase = 'api_usage';
     const upstream = await fetch(new URL(path + search, manifest.api.origin), {
       method, headers, body, signal: abort, cache: 'no-store', redirect: 'manual',
     });
+    usageStatus = upstream.status;
     if (upstream.redirected || (upstream.status >= 300 && upstream.status < 400)) {
       await upstream.body?.cancel().catch(() => undefined);
       return denied(502);
@@ -143,13 +175,26 @@ export async function forwardHostedWorkspace(request, path, manifest, fetch = gl
     return new Response(upstream.body, { status: upstream.status, headers: result });
   } catch {
     return denied(503);
+  } finally {
+    if (probe) {
+      try {
+        probe.emit({
+          event: 'hosted-workspace-signed-usage', source: manifest.sourceSha, phase,
+          bindingMatches, healthStatus, releaseMatches, usageStatus,
+        });
+      } catch { /* A missing log receipt blocks provider admission in the operator, not the signed read. */ }
+    }
   }
 }
 
 /** @param {Request} request @param {string} path */
 export function hostedWorkspaceRequest(request, path) {
   try {
-    return forwardHostedWorkspace(request, path, hostedConfig());
+    const manifest = hostedConfig();
+    const subject = process.env.XROGA_STAGING_INVOKER_SUBJECT;
+    return forwardHostedWorkspace(request, path, manifest, globalThis.fetch, subject === undefined ? undefined : {
+      subject, emit: record => console.info(JSON.stringify(record)),
+    });
   } catch {
     return denied(404);
   }

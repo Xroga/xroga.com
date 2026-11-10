@@ -4824,7 +4824,7 @@
     {
       "id": "9bcbd89af61af9d9c2e7",
       "callSha256": "69183a141ad19e783f685f9775253e45397ca21b8e45fbf36e8bda227880dfde",
-      "sourceFileSha256": "04e20f2d85ec99b6aa287a3d620cb037aeca102b3ba9cd85b1e249756aec5523",
+      "sourceFileSha256": "875600fbd44bee626eb8d6b6b984f5d4f5b2fca27b494c19d945d135363bff16",
       "disposition": "VERIFIED_GUARD",
       "trust": "GOOGLE_METADATA_ONLY_WITH_PINNED_STAGING_AUDIENCE",
       "tenantAuthority": "WORKLOAD_IDENTITY_ONLY_NO_USER_TOKEN",
@@ -4832,14 +4832,14 @@
         {
           "path": "scripts/security/hosted-workspace-staging.test.mjs",
           "marker": "Google IAM and original user token stay separate",
-          "sha256": "440e2810537f5dc55055aab04daf2e6a7a0f9b7b13fea30314030e06581fbe9b"
+          "sha256": "169d7f32d138c374caf6941453e9c026593ca7be002654ee4cf0cefa0835ed2e"
         }
       ]
     },
     {
       "id": "49a49569b55d144f7a6d",
       "callSha256": "da6bfc623a007eed3e78f4f96bc3c5380edf422eaf335a62cad99ea667f02942",
-      "sourceFileSha256": "04e20f2d85ec99b6aa287a3d620cb037aeca102b3ba9cd85b1e249756aec5523",
+      "sourceFileSha256": "875600fbd44bee626eb8d6b6b984f5d4f5b2fca27b494c19d945d135363bff16",
       "disposition": "VERIFIED_GUARD",
       "trust": "PINNED_PRIVATE_STAGING_HEALTH_NO_REDIRECT",
       "tenantAuthority": "WORKLOAD_IDENTITY_ONLY_NO_USER_TOKEN",
@@ -4847,14 +4847,14 @@
         {
           "path": "scripts/security/hosted-workspace-staging.test.mjs",
           "marker": "Google IAM and original user token stay separate",
-          "sha256": "440e2810537f5dc55055aab04daf2e6a7a0f9b7b13fea30314030e06581fbe9b"
+          "sha256": "169d7f32d138c374caf6941453e9c026593ca7be002654ee4cf0cefa0835ed2e"
         }
       ]
     },
     {
       "id": "e88275f663bb87ce2556",
       "callSha256": "76321677eab8b50bb630c570fefcde30d7972a323fb64ce6a832a1da1804486a",
-      "sourceFileSha256": "04e20f2d85ec99b6aa287a3d620cb037aeca102b3ba9cd85b1e249756aec5523",
+      "sourceFileSha256": "875600fbd44bee626eb8d6b6b984f5d4f5b2fca27b494c19d945d135363bff16",
       "disposition": "VERIFIED_GUARD",
       "trust": "PINNED_PRIVATE_STAGING_API_METHOD_PATH_AND_ISSUER_BOUND",
       "tenantAuthority": "ORIGINAL_USER_TOKEN_VERIFIED_BY_EXISTING_XROGA_AUTH_AND_TENANT_CHECKS",
@@ -4862,14 +4862,14 @@
         {
           "path": "scripts/security/hosted-workspace-staging.test.mjs",
           "marker": "Google IAM and original user token stay separate",
-          "sha256": "440e2810537f5dc55055aab04daf2e6a7a0f9b7b13fea30314030e06581fbe9b"
+          "sha256": "169d7f32d138c374caf6941453e9c026593ca7be002654ee4cf0cefa0835ed2e"
         }
       ]
     },
     {
       "id": "a609adccda5421076aa0",
       "callSha256": "0dada8e6784a5bce39fbf1fa531b03ba551a31948812672d0398b222d8fcef74",
-      "sourceFileSha256": "04e20f2d85ec99b6aa287a3d620cb037aeca102b3ba9cd85b1e249756aec5523",
+      "sourceFileSha256": "875600fbd44bee626eb8d6b6b984f5d4f5b2fca27b494c19d945d135363bff16",
       "disposition": "VERIFIED_GUARD",
       "trust": "PINNED_PRIVATE_STAGING_RESEARCH_CONFIRMATION_GET_NO_REDIRECT",
       "tenantAuthority": "ORIGINAL_OWNER_JWT_VERIFIED_BY_EXISTING_XROGA_AUTH_AND_TENANT_CHECKS",
@@ -4877,7 +4877,7 @@
         {
           "path": "scripts/security/hosted-workspace-staging.test.mjs",
           "marker": "hosted confirmation admits only the exact owner-visible DeepSeek research action",
-          "sha256": "440e2810537f5dc55055aab04daf2e6a7a0f9b7b13fea30314030e06581fbe9b"
+          "sha256": "169d7f32d138c374caf6941453e9c026593ca7be002654ee4cf0cefa0835ed2e"
         }
       ]
     }

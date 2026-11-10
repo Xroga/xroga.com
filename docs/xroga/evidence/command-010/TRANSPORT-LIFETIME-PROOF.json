@@ -879,7 +879,7 @@
     },
     {
       "path": "frontend/src/lib/hostedWorkspaceBridge.mjs",
-      "sha256": "04e20f2d85ec99b6aa287a3d620cb037aeca102b3ba9cd85b1e249756aec5523"
+      "sha256": "875600fbd44bee626eb8d6b6b984f5d4f5b2fca27b494c19d945d135363bff16"
     },
     {
       "path": "scripts/security/hosted-workspace-staging.mjs",
@@ -887,7 +887,7 @@
     },
     {
       "path": "scripts/security/hosted-workspace-staging.test.mjs",
-      "sha256": "440e2810537f5dc55055aab04daf2e6a7a0f9b7b13fea30314030e06581fbe9b"
+      "sha256": "169d7f32d138c374caf6941453e9c026593ca7be002654ee4cf0cefa0835ed2e"
     }
   ],
   "previousCallerCounts": {

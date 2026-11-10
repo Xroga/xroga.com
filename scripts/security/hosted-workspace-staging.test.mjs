@@ -155,6 +155,74 @@ test('wrong API source fails before forwarding and upstream redirects never esca
   }
 });
 
+test('signed usage reports the binding and outcome of the same authenticated request', async () => {
+  const manifest = makeManifest();
+  const subject = '123456789012345678901';
+  const issued = (overrides = {}) => 'google.' + Buffer.from(JSON.stringify({
+    sub: subject, aud: manifest.api.audience, iss: 'https://accounts.google.com',
+    exp: Math.floor(Date.now() / 1000) + 60, ...overrides,
+  })).toString('base64url') + '.signature';
+  for (const [name, options, expected] of [
+    ['ready', {}, [200, 'api_usage', true, 200, true, 200, 3]],
+    ['wrong principal', { claims: { sub: '999999999999999999999' } }, [503, 'platform_binding', false, null, false, null, 1]],
+    ['wrong audience', { claims: { aud: 'https://api.xroga.com' } }, [503, 'platform_binding', false, null, false, null, 1]],
+    ['expired identity', { claims: { exp: 1 } }, [503, 'platform_binding', false, null, false, null, 1]],
+    ['metadata failed', { metadata: 503 }, [503, 'platform_identity', false, null, false, null, 1]],
+    ['Cloud Run denied', { health: 403 }, [503, 'api_health', true, 403, false, null, 2]],
+    ['wrong API release', { release: 'wrong' }, [503, 'api_health', true, 200, false, null, 2]],
+    ['API denied user', { usage: 401 }, [401, 'api_usage', true, 200, true, 401, 3]],
+  ]) {
+    const records = [];
+    const requests = [];
+    const user = jwt();
+    const google = issued(options.claims);
+    const fetcher = async (url, init) => {
+      requests.push({ url, init });
+      if (url.hostname === 'metadata.google.internal') {
+        return new Response(google, { status: options.metadata ?? 200, headers: { 'Metadata-Flavor': 'Google' } });
+      }
+      if (url.pathname === '/health') {
+        return Response.json({ service: 'xroga-api', release: options.release ?? source }, { status: options.health ?? 200 });
+      }
+      return Response.json({ usage: 'synthetic private data' }, { status: options.usage ?? 200 });
+    };
+    const usage = '/api/phase1/usage';
+    const result = await forwardHostedWorkspace(request({ token: user, method: 'GET' }), usage, manifest, fetcher, {
+      subject, emit: record => records.push(record),
+    });
+    const [status, phase, bindingMatches, healthStatus, releaseMatches, usageStatus, calls] = expected;
+    assert.equal(result.status, status, name);
+    assert.equal(requests.length, calls, name);
+    assert.deepEqual(records, [{
+      event: 'hosted-workspace-signed-usage', source, phase, bindingMatches, healthStatus, releaseMatches, usageStatus,
+    }], name);
+    assert.equal(requests[0].url.searchParams.get('audience'), manifest.api.audience);
+    if (calls === 3) {
+      assert.equal(requests[2].init.headers.get('Authorization'), user);
+      assert.equal(requests[2].init.headers.get('X-Serverless-Authorization'), 'Bearer ' + google);
+    }
+    const logged = JSON.stringify(records);
+    for (const secret of [user, google, subject, 'synthetic private data']) assert.ok(!logged.includes(secret));
+    assert.equal(result.headers.get('x-serverless-authorization'), null);
+  }
+});
+
+test('unauthenticated and non-probe routes do not emit invocation diagnostics', async () => {
+  const manifest = makeManifest();
+  const diagnostics = { subject: '123456789012345678901', emit: () => assert.fail('unexpected diagnostic') };
+  let calls = 0;
+  const fetcher = async (url) => {
+    calls++;
+    if (url.hostname === 'metadata.google.internal') return new Response('google.id.token', { headers: { 'Metadata-Flavor': 'Google' } });
+    if (url.pathname === '/health') return Response.json({ service: 'xroga-api', release: source });
+    return Response.json({ accepted: true });
+  };
+  assert.equal((await forwardHostedWorkspace(request({ token: null, method: 'GET' }), '/api/phase1/usage', manifest, fetcher, diagnostics)).status, 401);
+  assert.equal(calls, 0);
+  assert.equal((await forwardHostedWorkspace(request(), planPath, manifest, fetcher, diagnostics)).status, 200);
+  assert.equal(calls, 3);
+});
+
 test('hosted confirmation admits only the exact owner-visible DeepSeek research action', async () => {
   const id = '12345678-1234-1234-1234-123456789abc';
   const base = '/api/phase1/business-actions/confirmations/' + id;
