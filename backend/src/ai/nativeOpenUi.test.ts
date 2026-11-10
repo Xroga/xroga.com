@@ -133,12 +133,17 @@ test('a monthly bar chart catches incorrect gain rankings and does not publish t
     "February's +$3,500 (+29.2%) is the largest percentage gain.",
     'February is the strongest percentage gain.',
     'June adds the most dollars.',
+    'Largest dollar increase: June.',
+    'Largest percentage increase: May → June.',
+    'March dips, then April through June accelerate sharply, with June the strongest month in both dollar and percentage terms.',
     'May is the second-largest dollar gain.',
     'Five of six months increased.',
     'March rose.',
   ]) assert.deepEqual(validateNativeOpenUi(make(claim)), { ok: false, reason: 'data_review' }, claim);
   assert.deepEqual(validateNativeOpenUi(make('February had the largest percentage gain since January.')), { ok: true });
   assert.deepEqual(validateNativeOpenUi(make('Of the first three months, February had the largest percentage gain.')), { ok: true });
+  assert.deepEqual(validateNativeOpenUi(make('June had the highest revenue level. Largest dollar increase: April. Largest percentage increase: March → April.')), { ok: true });
+  assert.deepEqual(validateNativeOpenUi(make('Revenue grows, with April the strongest month in both dollar and percentage terms.')), { ok: true });
   const result = completeNativeWorkspaceAnswer('June adds the most dollars.' + NATIVE_UI_MARKER + make(accurate), 'stop');
   assert.deepEqual(result.completion, { status: 'partial', reason: 'data_review' });
   assert.match(result.response, /written summary disagreed/i);

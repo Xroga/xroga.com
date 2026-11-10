@@ -80,6 +80,18 @@ export function contradictsMonthlyChart(root: unknown, prose: string): boolean {
     return [month, { amount: value - base, rate: base > 0 ? (value - base) / base : undefined }] as const;
   }));
   const plain = prose.replace(/[\x60*_]/g, '');
+  const rank = 'second[- ]largest|largest|biggest|strongest|highest';
+  const unit = 'percentage|percent|dollar|absolute';
+  const scope = 'since|from|versus|vs\\.?|compared|relative|after|before|until|among|within|excluding|year[- ]over[- ]year|yoy|at that point';
+  const rankDisagrees = (monthName: string, metric: 'amount' | 'rate', expected: number) => {
+    const candidate = changes.get(months.get(monthName.toLowerCase())!)?.[metric];
+    const values = [...changes.values()].map(row => row[metric]);
+    return candidate !== undefined && values.every(value => value !== undefined) &&
+      (candidate <= 0 || 1 + values.filter(value => value! > candidate).length !== expected);
+  };
+  const metricFor = (label?: string) => label?.toLowerCase().startsWith('percent') ? 'rate' : 'amount';
+  const expectedRank = (label?: string) => label?.toLowerCase().startsWith('second') ? 2 : 1;
+  const precedingClause = (index: number) => plain.slice(Math.max(0, index - 200), index).split(/[.!?;\n]/).at(-1) ?? '';
   const claims = new RegExp('(?:^|[.!?;:\\n])\\s*(' + monthList + ')\\s+(' + lower + '|' + higher +
     ')\\b(?!\\s+(?:from|versus|vs\\.?|compared|relative|since|year[- ]over[- ]year|yoy)\\b)', 'gi');
   for (const [, subject, verb] of plain.matchAll(claims)) {
@@ -94,20 +106,31 @@ export function contradictsMonthlyChart(root: unknown, prose: string): boolean {
   const rankClaim = new RegExp(
     '\\b(' + monthPattern + ')\\b(?:\\s+(?:is|was|has|had|adds|added|posts|posted|records|recorded|saw)|' +
     '[’\']s\\s+(?:gain|increase|rise|[+−-]?(?:[$€£]|USD\\s*)?[0-9,.]+(?:\\s*\\([+−-]?[0-9,.]+%\\))?)\\s+(?:is|was))' +
-    '\\s+(?:the\\s+)?(?:(second[- ]largest|largest|biggest|strongest)\\s+(percentage|percent|dollar|absolute)\\s+(?:gain|increase|rise)|most\\s+dollars)' +
-    '\\b(?!\\s+(?:since|from|versus|vs\\.?|compared|relative|after|before|until|among|within|excluding|year[- ]over[- ]year|yoy|at that point)\\b)', 'gi');
+    '\\s+(?:the\\s+)?(?:(' + rank + ')\\s+(' + unit + ')\\s+(?:gain|increase|rise)|most\\s+dollars)' +
+    '\\b(?!\\s+(?:' + scope + ')\\b)', 'gi');
   for (const match of plain.matchAll(rankClaim)) {
-    const [, monthName, rank, unit] = match;
-    const prefix = plain.slice(Math.max(0, match.index - 100), match.index).split(/[.!?;\n]/).at(-1) ?? '';
+    const [, monthName, rankLabel, unitLabel] = match;
+    const prefix = precedingClause(match.index);
     if (/\b(?:since|before|after|until|among|excluding|within|first|last|year[- ]over[- ]year|yoy)\b/i.test(prefix)) continue;
-    const change = changes.get(months.get(monthName.toLowerCase())!);
-    if (!change) continue;
-    const metric = unit?.toLowerCase().startsWith('percent') ? 'rate' : 'amount';
-    const values = [...changes.values()].map(row => row[metric]);
-    const candidate = change[metric];
-    if (candidate === undefined || values.some(value => value === undefined)) continue;
-    const expectedRank = rank?.toLowerCase().startsWith('second') ? 2 : 1;
-    if (candidate <= 0 || 1 + values.filter(value => value! > candidate).length !== expectedRank) return true;
+    if (rankDisagrees(monthName, metricFor(unitLabel), expectedRank(rankLabel))) return true;
+  }
+  const labelClaim = new RegExp(
+    '(?:^|[.!?;\\n])\\s*(?:[-•]\\s*)?(?:the\\s+)?(' + rank + ')\\s+(' + unit + ')\\s+(?:gain|increase|rise)\\s*:\\s*' +
+    '(?:' + monthPattern + '\\s*(?:→|->|to)\\s*)?(' + monthPattern + ')\\b(?!\\s+(?:' + scope + ')\\b)', 'gi');
+  for (const [, rankLabel, unitLabel, monthName] of plain.matchAll(labelClaim)) {
+    if (rankDisagrees(monthName, metricFor(unitLabel), expectedRank(rankLabel))) return true;
+  }
+  // When a trend sentence explicitly ranks both dollar and percentage growth,
+  // evaluate both metrics. "Strongest month" by revenue level alone is distinct.
+  const jointClaim = new RegExp(
+    '\\b(' + monthPattern + ')\\b(?:\\s+(?:was|is))?\\s+the\\s+(' + rank + ')\\s+month\\s+in\\s+both\\s+' +
+    '(?:dollar(?:s)? and (?:percentage|percent)|(?:percentage|percent) and dollar(?:s)?)\\s+terms\\b(?!\\s+(?:' + scope + ')\\b)', 'gi');
+  for (const match of plain.matchAll(jointClaim)) {
+    const [, monthName, rankLabel] = match;
+    const prefix = precedingClause(match.index);
+    if (!/\b(?:accelerat\w*|growth|gains?|increas\w*|rose|ris\w*|grew)\b/i.test(prefix) ||
+        /\b(?:since|before|after|until|among|excluding|within|first|last|year[- ]over[- ]year|yoy)\b/i.test(prefix)) continue;
+    if (rankDisagrees(monthName, 'amount', expectedRank(rankLabel)) || rankDisagrees(monthName, 'rate', expectedRank(rankLabel))) return true;
   }
   const counts = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve'];
   const count = '(\\d{1,2}|' + counts.join('|') + ')';
