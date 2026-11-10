@@ -30,6 +30,11 @@ export interface BorderPorts {
   enabled(): Promise<boolean>;
   /** Runs `setBorder(state, pointer)` in the tab's top frame, or in one document of it; resolves when it has. */
   inject(tabId: number, state: BorderState, documentId?: string, pointer?: PointerCommand): Promise<void>;
+  /**
+   * A page that cannot show the overlay (a blank tab, an error page, a browser page) is marked on the toolbar button instead, so
+   * the user still sees which tab Xroga works in. `true` while the task works there, `false` to clear it.
+   */
+  unreachable?(tabId: number, working: boolean): Promise<void>;
 }
 
 /** How long a screenshot waits for the border to fade out; past it, the capture goes ahead. */
@@ -196,7 +201,11 @@ export class PageBorder {
 
   /** Started and not waited for: a page with a dialog open holds an injection until the dialog closes. */
   #send(tabId: number, state: BorderState, documentId?: string, pointer?: PointerCommand): void {
-    void this.ports.inject(tabId, state, documentId, pointer).catch(() => undefined);
+    const mark = (working: boolean) => this.ports.unreachable?.(tabId, working).catch(() => undefined);
+    void this.ports
+      .inject(tabId, state, documentId, pointer)
+      .then(() => (state === 'on' ? mark(false) : undefined))
+      .catch(() => (state === 'on' ? mark(true) : mark(false)));
   }
 }
 

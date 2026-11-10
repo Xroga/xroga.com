@@ -71,6 +71,8 @@ function toolGuide(tools: string[]): string {
     lines.push('- find locates elements by role, name or text in the latest observation, without a full outline.');
   if (has('read')) lines.push('- read returns a page or an element as Markdown, for reading text.');
   if (has('fill_form')) lines.push('- fill_form sets several fields in order and can activate a submit control.');
+  if (has('enable_actions'))
+    lines.push('- enable_actions turns on clicking, typing, forms and scrolling. Call it only if the task needs one of them; reading and opening pages do not.');
   if (has('ask_user'))
     lines.push(
       '- ask_user asks the user a question (kind "input") or hands them a step (kind "takeover"). For a takeover, the message says only what the user should do now, in a short plain sentence, e.g. "Sign in to GitHub in this tab, then press Done." Do not repeat the task or say what you will do after.',

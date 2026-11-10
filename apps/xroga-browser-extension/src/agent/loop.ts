@@ -69,6 +69,8 @@ export interface LoopOptions {
   model: ResolvedModel;
   system: string;
   tools: AgentTool[];
+  /** The full tool list, when the run started with a smaller one; `enable_actions` switches to it. */
+  fullTools?: AgentTool[];
   layer: LayerPort;
   host: HostPort;
   signal: AbortSignal;
@@ -1192,6 +1194,11 @@ export class AgentLoop {
     let outcome: CallOutcome;
     if (call.toolName === 'done') {
       outcome = await this.#judgeDone(call, kind, args);
+    } else if (call.toolName === 'enable_actions' && this.options.fullTools) {
+      this.options.tools = this.options.fullTools;
+      this.#toolNames = new Set(this.options.tools.map(t => t.name));
+      this.options.fullTools = undefined;
+      outcome = { call, kind, text: 'The tools that click, type, fill forms, scroll and upload are now available. Take a snapshot before acting.', isError: false };
     } else if (call.toolName === 'upload') {
       // The model names attached files by id; the wrapper turns them into bytes for the layer.
       const { attachmentIds, ...rest } = args;
