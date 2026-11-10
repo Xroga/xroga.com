@@ -70,13 +70,20 @@ router.post('/push-subscription', async (req: AuthRequest, res) => {
     res.status(429).json({ error: 'This account has reached its device notification limit.' });
     return;
   }
-  const { error } = await supabase.from('notification_push_subscriptions').upsert({
-    endpoint: req.body.endpoint,
-    user_id: req.userId!,
+  const owned = existing?.some((item) => item.endpoint === req.body.endpoint) ?? false;
+  const values = {
     p256dh: req.body.keys.p256dh,
     auth_secret: req.body.keys.auth,
     updated_at: new Date().toISOString(),
-  }, { onConflict: 'endpoint' });
+  };
+  const { error } = owned
+    ? await supabase.from('notification_push_subscriptions').update(values)
+      .eq('endpoint', req.body.endpoint).eq('user_id', req.userId!)
+    : await supabase.from('notification_push_subscriptions').insert({
+      endpoint: req.body.endpoint,
+      user_id: req.userId!,
+      ...values,
+    });
   if (error) {
     res.status(503).json({ error: 'Push subscription could not be saved.' });
     return;

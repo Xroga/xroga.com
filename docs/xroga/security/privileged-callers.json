@@ -1,18 +1,18 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "43de4e446f9ba354f2d6de951f7c0a10ecec6f585c03d85090ae2d81340ab588",
+  "reviewRegistrySha256": "75a8436f66b375a3f037cd0bda865da3a290538e3a55e20ed192711d02dacbf5",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
     "privilegedFactorySites": 229,
-    "persistenceCandidates": 1018,
-    "ownerPredicateCandidates": 266,
+    "persistenceCandidates": 1019,
+    "ownerPredicateCandidates": 267,
     "reviewRequired": 160,
-    "reviewedCandidates": 858,
-    "unresolvedSafetyCandidates": 209,
+    "reviewedCandidates": 859,
+    "unresolvedSafetyCandidates": 210,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 23
   },
@@ -21,7 +21,7 @@
     "SCOPED_BOUNDARY": 547,
     "NARROW_EXCEPTION": 52,
     "NOT_PERSISTENCE": 210,
-    "REVIEWED_GAP": 49
+    "REVIEWED_GAP": 50
   },
   "acceptance": {
     "version": 1,
@@ -29,7 +29,7 @@
     "scope": "COMMAND_007_CRITERION_EVIDENCE_NOT_BATCH_OR_PRODUCTION_ACCEPTANCE",
     "certifiedScopedPrivilegedCallers": 0,
     "verifiedCandidateBoundaries": 80,
-    "unresolvedCandidateBoundaries": 938,
+    "unresolvedCandidateBoundaries": 939,
     "criteria": [
       {
         "id": "XB01-C007-AC01",
@@ -4900,39 +4900,43 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "49c06c5f5dedbb8357bf"
+        "id": "4052599c36bb1a154183"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "94700f4054edde4f93ff"
+        "id": "9dd5e0d47e2b5fcbd7ed"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "5776db83dd0f2287f933"
+        "id": "0173fa66f148bf107c9c"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "47ac0c22a431bc8820e3"
+        "id": "5756010c7ca215102e1e"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "378770b99fd2d093c8a9"
+        "id": "cc8a37cdf238cf59a99a"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "8a7f7c11d89690e8df03"
+        "id": "6687ae47bab37c501d74"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "72ee5f20e4c78f1ef9c5"
+        "id": "2fed6ca9cd27f6992d02"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "9a158b9a4f1de2c968fe"
+        "id": "75ba31f14c658b6995a8"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "394aa91707700665970a"
+        "id": "1a27090c7a9708d480e8"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "b010f789ba8fcc1a6231"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -6848,15 +6852,19 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "49c06c5f5dedbb8357bf"
+        "id": "4052599c36bb1a154183"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "94700f4054edde4f93ff"
+        "id": "9dd5e0d47e2b5fcbd7ed"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "5776db83dd0f2287f933"
+        "id": "0173fa66f148bf107c9c"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "5756010c7ca215102e1e"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -8876,27 +8884,27 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "47ac0c22a431bc8820e3"
+        "id": "cc8a37cdf238cf59a99a"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "378770b99fd2d093c8a9"
+        "id": "6687ae47bab37c501d74"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "8a7f7c11d89690e8df03"
+        "id": "2fed6ca9cd27f6992d02"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "72ee5f20e4c78f1ef9c5"
+        "id": "75ba31f14c658b6995a8"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "9a158b9a4f1de2c968fe"
+        "id": "1a27090c7a9708d480e8"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "394aa91707700665970a"
+        "id": "b010f789ba8fcc1a6231"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -10429,10 +10437,10 @@
     ]
   },
   "reviewAgreement": {
-    "currentCallers": 1018,
+    "currentCallers": 1019,
     "structuredVerified": 80,
-    "structuredUnproven": 938,
-    "manualUnresolved": 209,
+    "structuredUnproven": 939,
+    "manualUnresolved": 210,
     "manualUnsupported": 729,
     "agreedVerified": 80,
     "proofAwaitingManualReconciliation": 0
@@ -19935,7 +19943,7 @@
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "ba421d5eb5df96b93b8dfcab8177c0f72042e58e4412b41325f9063e3e058a39",
+      "sourceSha256": "7b91dfd72ae335226c3fb83c7ce2e7cb7902b7dd25b87565f7dcef917720c5db",
       "semanticReview": {
         "authority": "Router is mounted behind authMiddleware and re-derives userId from the issued immutable context before every route. List/count/read/read-all/delete use this actor, never request ownership. Every service-role factory has its fixed downstream notification query inspected.",
         "reason": "Real API tests show foreign-ID mutations are idempotent no-ops, own-ID marking works, foreign rows remain unread and cannot be listed through API or RLS. This certifies tenant scoping, not producer content provenance, historical redaction or instant access-token revocation.",
@@ -19956,7 +19964,7 @@
       "target": "notifications",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "ba421d5eb5df96b93b8dfcab8177c0f72042e58e4412b41325f9063e3e058a39",
+      "sourceSha256": "7b91dfd72ae335226c3fb83c7ce2e7cb7902b7dd25b87565f7dcef917720c5db",
       "semanticReview": {
         "authority": "Router is mounted behind authMiddleware and re-derives userId from the issued immutable context before every route. List/count/read/read-all/delete use this actor, never request ownership. Every service-role factory has its fixed downstream notification query inspected.",
         "reason": "Real API tests show foreign-ID mutations are idempotent no-ops, own-ID marking works, foreign rows remain unread and cannot be listed through API or RLS. This certifies tenant scoping, not producer content provenance, historical redaction or instant access-token revocation.",
@@ -19977,7 +19985,7 @@
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "ba421d5eb5df96b93b8dfcab8177c0f72042e58e4412b41325f9063e3e058a39",
+      "sourceSha256": "7b91dfd72ae335226c3fb83c7ce2e7cb7902b7dd25b87565f7dcef917720c5db",
       "semanticReview": {
         "authority": "Router is mounted behind authMiddleware and re-derives userId from the issued immutable context before every route. List/count/read/read-all/delete use this actor, never request ownership. Every service-role factory has its fixed downstream notification query inspected.",
         "reason": "Real API tests show foreign-ID mutations are idempotent no-ops, own-ID marking works, foreign rows remain unread and cannot be listed through API or RLS. This certifies tenant scoping, not producer content provenance, historical redaction or instant access-token revocation.",
@@ -19998,7 +20006,7 @@
       "target": "notifications",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "ba421d5eb5df96b93b8dfcab8177c0f72042e58e4412b41325f9063e3e058a39",
+      "sourceSha256": "7b91dfd72ae335226c3fb83c7ce2e7cb7902b7dd25b87565f7dcef917720c5db",
       "semanticReview": {
         "authority": "Router is mounted behind authMiddleware and re-derives userId from the issued immutable context before every route. List/count/read/read-all/delete use this actor, never request ownership. Every service-role factory has its fixed downstream notification query inspected.",
         "reason": "Real API tests show foreign-ID mutations are idempotent no-ops, own-ID marking works, foreign rows remain unread and cannot be listed through API or RLS. This certifies tenant scoping, not producer content provenance, historical redaction or instant access-token revocation.",
@@ -20019,10 +20027,10 @@
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "ba421d5eb5df96b93b8dfcab8177c0f72042e58e4412b41325f9063e3e058a39",
+      "sourceSha256": "7b91dfd72ae335226c3fb83c7ce2e7cb7902b7dd25b87565f7dcef917720c5db",
       "semanticReview": {
         "authority": "The new browser-push subscription routes are behind the existing auth middleware and derive userId from tenant context; each query visibly filters user_id or writes that user ID, but a source inspection alone is not authenticated tenant proof.",
-        "reason": "Isolated staging verifies private table grants and RLS, and endpoint validation rejects arbitrary hosts. Authenticated positive and cross-account negative API tests for these five new persistence calls are still required before promoting this manual review to a scoped boundary.",
+        "reason": "Isolated staging verifies private table grants and RLS, and endpoint validation rejects arbitrary hosts. Existing endpoint updates are owner-scoped; a new insert cannot overwrite another account's unique endpoint. Authenticated positive and cross-account negative API tests for these six new persistence calls are still required before promoting this manual review to a scoped boundary.",
         "evidence": [
           {
             "path": "backend/src/services/browserPushService.test.ts",
@@ -20040,10 +20048,10 @@
       "target": "notification_push_subscriptions",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "ba421d5eb5df96b93b8dfcab8177c0f72042e58e4412b41325f9063e3e058a39",
+      "sourceSha256": "7b91dfd72ae335226c3fb83c7ce2e7cb7902b7dd25b87565f7dcef917720c5db",
       "semanticReview": {
         "authority": "The new browser-push subscription routes are behind the existing auth middleware and derive userId from tenant context; each query visibly filters user_id or writes that user ID, but a source inspection alone is not authenticated tenant proof.",
-        "reason": "Isolated staging verifies private table grants and RLS, and endpoint validation rejects arbitrary hosts. Authenticated positive and cross-account negative API tests for these five new persistence calls are still required before promoting this manual review to a scoped boundary.",
+        "reason": "Isolated staging verifies private table grants and RLS, and endpoint validation rejects arbitrary hosts. Existing endpoint updates are owner-scoped; a new insert cannot overwrite another account's unique endpoint. Authenticated positive and cross-account negative API tests for these six new persistence calls are still required before promoting this manual review to a scoped boundary.",
         "evidence": [
           {
             "path": "backend/src/services/browserPushService.test.ts",
@@ -20053,60 +20061,18 @@
       }
     },
     {
-      "id": "49c06c5f5dedbb8357bf",
+      "id": "4052599c36bb1a154183",
       "path": "backend/src/routes/notifications.ts",
-      "line": 73,
-      "enclosing": "<module>",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "notification_push_subscriptions",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "ba421d5eb5df96b93b8dfcab8177c0f72042e58e4412b41325f9063e3e058a39",
-      "semanticReview": {
-        "authority": "The new browser-push subscription routes are behind the existing auth middleware and derive userId from tenant context; each query visibly filters user_id or writes that user ID, but a source inspection alone is not authenticated tenant proof.",
-        "reason": "Isolated staging verifies private table grants and RLS, and endpoint validation rejects arbitrary hosts. Authenticated positive and cross-account negative API tests for these five new persistence calls are still required before promoting this manual review to a scoped boundary.",
-        "evidence": [
-          {
-            "path": "backend/src/services/browserPushService.test.ts",
-            "marker": "rejects SSRF destinations"
-          }
-        ]
-      }
-    },
-    {
-      "id": "94700f4054edde4f93ff",
-      "path": "backend/src/routes/notifications.ts",
-      "line": 93,
-      "enclosing": "<module>",
-      "kind": "PRIVILEGED_FACTORY",
-      "target": "getTenantSupabaseAdmin",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "ba421d5eb5df96b93b8dfcab8177c0f72042e58e4412b41325f9063e3e058a39",
-      "semanticReview": {
-        "authority": "The new browser-push subscription routes are behind the existing auth middleware and derive userId from tenant context; each query visibly filters user_id or writes that user ID, but a source inspection alone is not authenticated tenant proof.",
-        "reason": "Isolated staging verifies private table grants and RLS, and endpoint validation rejects arbitrary hosts. Authenticated positive and cross-account negative API tests for these five new persistence calls are still required before promoting this manual review to a scoped boundary.",
-        "evidence": [
-          {
-            "path": "backend/src/services/browserPushService.test.ts",
-            "marker": "rejects SSRF destinations"
-          }
-        ]
-      }
-    },
-    {
-      "id": "5776db83dd0f2287f933",
-      "path": "backend/src/routes/notifications.ts",
-      "line": 94,
+      "line": 80,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "notification_push_subscriptions",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "ba421d5eb5df96b93b8dfcab8177c0f72042e58e4412b41325f9063e3e058a39",
+      "sourceSha256": "7b91dfd72ae335226c3fb83c7ce2e7cb7902b7dd25b87565f7dcef917720c5db",
       "semanticReview": {
         "authority": "The new browser-push subscription routes are behind the existing auth middleware and derive userId from tenant context; each query visibly filters user_id or writes that user ID, but a source inspection alone is not authenticated tenant proof.",
-        "reason": "Isolated staging verifies private table grants and RLS, and endpoint validation rejects arbitrary hosts. Authenticated positive and cross-account negative API tests for these five new persistence calls are still required before promoting this manual review to a scoped boundary.",
+        "reason": "Isolated staging verifies private table grants and RLS, and endpoint validation rejects arbitrary hosts. Existing endpoint updates are owner-scoped; a new insert cannot overwrite another account's unique endpoint. Authenticated positive and cross-account negative API tests for these six new persistence calls are still required before promoting this manual review to a scoped boundary.",
         "evidence": [
           {
             "path": "backend/src/services/browserPushService.test.ts",
@@ -20116,15 +20082,78 @@
       }
     },
     {
-      "id": "47ac0c22a431bc8820e3",
+      "id": "9dd5e0d47e2b5fcbd7ed",
       "path": "backend/src/routes/notifications.ts",
-      "line": 104,
+      "line": 82,
+      "enclosing": "<module>",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "notification_push_subscriptions",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "7b91dfd72ae335226c3fb83c7ce2e7cb7902b7dd25b87565f7dcef917720c5db",
+      "semanticReview": {
+        "authority": "The new browser-push subscription routes are behind the existing auth middleware and derive userId from tenant context; each query visibly filters user_id or writes that user ID, but a source inspection alone is not authenticated tenant proof.",
+        "reason": "Isolated staging verifies private table grants and RLS, and endpoint validation rejects arbitrary hosts. Existing endpoint updates are owner-scoped; a new insert cannot overwrite another account's unique endpoint. Authenticated positive and cross-account negative API tests for these six new persistence calls are still required before promoting this manual review to a scoped boundary.",
+        "evidence": [
+          {
+            "path": "backend/src/services/browserPushService.test.ts",
+            "marker": "rejects SSRF destinations"
+          }
+        ]
+      }
+    },
+    {
+      "id": "0173fa66f148bf107c9c",
+      "path": "backend/src/routes/notifications.ts",
+      "line": 100,
+      "enclosing": "<module>",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getTenantSupabaseAdmin",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "7b91dfd72ae335226c3fb83c7ce2e7cb7902b7dd25b87565f7dcef917720c5db",
+      "semanticReview": {
+        "authority": "The new browser-push subscription routes are behind the existing auth middleware and derive userId from tenant context; each query visibly filters user_id or writes that user ID, but a source inspection alone is not authenticated tenant proof.",
+        "reason": "Isolated staging verifies private table grants and RLS, and endpoint validation rejects arbitrary hosts. Existing endpoint updates are owner-scoped; a new insert cannot overwrite another account's unique endpoint. Authenticated positive and cross-account negative API tests for these six new persistence calls are still required before promoting this manual review to a scoped boundary.",
+        "evidence": [
+          {
+            "path": "backend/src/services/browserPushService.test.ts",
+            "marker": "rejects SSRF destinations"
+          }
+        ]
+      }
+    },
+    {
+      "id": "5756010c7ca215102e1e",
+      "path": "backend/src/routes/notifications.ts",
+      "line": 101,
+      "enclosing": "<module>",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "notification_push_subscriptions",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "7b91dfd72ae335226c3fb83c7ce2e7cb7902b7dd25b87565f7dcef917720c5db",
+      "semanticReview": {
+        "authority": "The new browser-push subscription routes are behind the existing auth middleware and derive userId from tenant context; each query visibly filters user_id or writes that user ID, but a source inspection alone is not authenticated tenant proof.",
+        "reason": "Isolated staging verifies private table grants and RLS, and endpoint validation rejects arbitrary hosts. Existing endpoint updates are owner-scoped; a new insert cannot overwrite another account's unique endpoint. Authenticated positive and cross-account negative API tests for these six new persistence calls are still required before promoting this manual review to a scoped boundary.",
+        "evidence": [
+          {
+            "path": "backend/src/services/browserPushService.test.ts",
+            "marker": "rejects SSRF destinations"
+          }
+        ]
+      }
+    },
+    {
+      "id": "cc8a37cdf238cf59a99a",
+      "path": "backend/src/routes/notifications.ts",
+      "line": 111,
       "enclosing": "<module>",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "ba421d5eb5df96b93b8dfcab8177c0f72042e58e4412b41325f9063e3e058a39",
+      "sourceSha256": "7b91dfd72ae335226c3fb83c7ce2e7cb7902b7dd25b87565f7dcef917720c5db",
       "semanticReview": {
         "authority": "Router is mounted behind authMiddleware and re-derives userId from the issued immutable context before every route. List/count/read/read-all/delete use this actor, never request ownership. Every service-role factory has its fixed downstream notification query inspected.",
         "reason": "Real API tests show foreign-ID mutations are idempotent no-ops, own-ID marking works, foreign rows remain unread and cannot be listed through API or RLS. This certifies tenant scoping, not producer content provenance, historical redaction or instant access-token revocation.",
@@ -20137,15 +20166,15 @@
       }
     },
     {
-      "id": "378770b99fd2d093c8a9",
+      "id": "6687ae47bab37c501d74",
       "path": "backend/src/routes/notifications.ts",
-      "line": 105,
+      "line": 112,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "notifications",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "ba421d5eb5df96b93b8dfcab8177c0f72042e58e4412b41325f9063e3e058a39",
+      "sourceSha256": "7b91dfd72ae335226c3fb83c7ce2e7cb7902b7dd25b87565f7dcef917720c5db",
       "semanticReview": {
         "authority": "Router is mounted behind authMiddleware and re-derives userId from the issued immutable context before every route. List/count/read/read-all/delete use this actor, never request ownership. Every service-role factory has its fixed downstream notification query inspected.",
         "reason": "Real API tests show foreign-ID mutations are idempotent no-ops, own-ID marking works, foreign rows remain unread and cannot be listed through API or RLS. This certifies tenant scoping, not producer content provenance, historical redaction or instant access-token revocation.",
@@ -20158,15 +20187,15 @@
       }
     },
     {
-      "id": "8a7f7c11d89690e8df03",
+      "id": "2fed6ca9cd27f6992d02",
       "path": "backend/src/routes/notifications.ts",
-      "line": 119,
+      "line": 126,
       "enclosing": "<module>",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "ba421d5eb5df96b93b8dfcab8177c0f72042e58e4412b41325f9063e3e058a39",
+      "sourceSha256": "7b91dfd72ae335226c3fb83c7ce2e7cb7902b7dd25b87565f7dcef917720c5db",
       "semanticReview": {
         "authority": "Router is mounted behind authMiddleware and re-derives userId from the issued immutable context before every route. List/count/read/read-all/delete use this actor, never request ownership. Every service-role factory has its fixed downstream notification query inspected.",
         "reason": "Real API tests show foreign-ID mutations are idempotent no-ops, own-ID marking works, foreign rows remain unread and cannot be listed through API or RLS. This certifies tenant scoping, not producer content provenance, historical redaction or instant access-token revocation.",
@@ -20179,15 +20208,15 @@
       }
     },
     {
-      "id": "72ee5f20e4c78f1ef9c5",
+      "id": "75ba31f14c658b6995a8",
       "path": "backend/src/routes/notifications.ts",
-      "line": 120,
+      "line": 127,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "notifications",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "ba421d5eb5df96b93b8dfcab8177c0f72042e58e4412b41325f9063e3e058a39",
+      "sourceSha256": "7b91dfd72ae335226c3fb83c7ce2e7cb7902b7dd25b87565f7dcef917720c5db",
       "semanticReview": {
         "authority": "Router is mounted behind authMiddleware and re-derives userId from the issued immutable context before every route. List/count/read/read-all/delete use this actor, never request ownership. Every service-role factory has its fixed downstream notification query inspected.",
         "reason": "Real API tests show foreign-ID mutations are idempotent no-ops, own-ID marking works, foreign rows remain unread and cannot be listed through API or RLS. This certifies tenant scoping, not producer content provenance, historical redaction or instant access-token revocation.",
@@ -20200,15 +20229,15 @@
       }
     },
     {
-      "id": "9a158b9a4f1de2c968fe",
+      "id": "1a27090c7a9708d480e8",
       "path": "backend/src/routes/notifications.ts",
-      "line": 134,
+      "line": 141,
       "enclosing": "<module>",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "ba421d5eb5df96b93b8dfcab8177c0f72042e58e4412b41325f9063e3e058a39",
+      "sourceSha256": "7b91dfd72ae335226c3fb83c7ce2e7cb7902b7dd25b87565f7dcef917720c5db",
       "semanticReview": {
         "authority": "Router is mounted behind authMiddleware and re-derives userId from the issued immutable context before every route. List/count/read/read-all/delete use this actor, never request ownership. Every service-role factory has its fixed downstream notification query inspected.",
         "reason": "Real API tests show foreign-ID mutations are idempotent no-ops, own-ID marking works, foreign rows remain unread and cannot be listed through API or RLS. This certifies tenant scoping, not producer content provenance, historical redaction or instant access-token revocation.",
@@ -20221,15 +20250,15 @@
       }
     },
     {
-      "id": "394aa91707700665970a",
+      "id": "b010f789ba8fcc1a6231",
       "path": "backend/src/routes/notifications.ts",
-      "line": 135,
+      "line": 142,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "notifications",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "ba421d5eb5df96b93b8dfcab8177c0f72042e58e4412b41325f9063e3e058a39",
+      "sourceSha256": "7b91dfd72ae335226c3fb83c7ce2e7cb7902b7dd25b87565f7dcef917720c5db",
       "semanticReview": {
         "authority": "Router is mounted behind authMiddleware and re-derives userId from the issued immutable context before every route. List/count/read/read-all/delete use this actor, never request ownership. Every service-role factory has its fixed downstream notification query inspected.",
         "reason": "Real API tests show foreign-ID mutations are idempotent no-ops, own-ID marking works, foreign rows remain unread and cannot be listed through API or RLS. This certifies tenant scoping, not producer content provenance, historical redaction or instant access-token revocation.",

@@ -30865,12 +30865,14 @@
       "id": "surface:4edcaf26389e9c51de18",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/notifications.ts",
-      "sha256": "ba421d5eb5df96b93b8dfcab8177c0f72042e58e4412b41325f9063e3e058a39",
+      "sha256": "7b91dfd72ae335226c3fb83c7ce2e7cb7902b7dd25b87565f7dcef917720c5db",
       "symbols": [
         "endpoint",
+        "owned",
         "publicKey",
         "router",
-        "supabase"
+        "supabase",
+        "values"
       ],
       "imports": [
         "../middleware/auth.js",
@@ -30906,10 +30908,11 @@
         "backend/src/routes/notifications.ts:15 (user_id)",
         "backend/src/routes/notifications.ts:31 (user_id)",
         "backend/src/routes/notifications.ts:63 (user_id)",
-        "backend/src/routes/notifications.ts:94 (user_id)",
-        "backend/src/routes/notifications.ts:105 (user_id)",
-        "backend/src/routes/notifications.ts:120 (user_id)",
-        "backend/src/routes/notifications.ts:135 (user_id)"
+        "backend/src/routes/notifications.ts:80 (user_id)",
+        "backend/src/routes/notifications.ts:101 (user_id)",
+        "backend/src/routes/notifications.ts:112 (user_id)",
+        "backend/src/routes/notifications.ts:127 (user_id)",
+        "backend/src/routes/notifications.ts:142 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -132030,7 +132033,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:03fe746b164287ca0667",
+      "id": "registration:1ab8eda5ec23ecf1742e",
       "sourcePath": "backend/src/routes/notifications.ts",
       "line": 53,
       "receiver": "router",
@@ -132042,9 +132045,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:df1cebb851074bc921d7",
+      "id": "registration:8961fd66d87ec0bd656a",
       "sourcePath": "backend/src/routes/notifications.ts",
-      "line": 87,
+      "line": 94,
       "receiver": "router",
       "method": "delete",
       "path": "/push-subscription",
@@ -132054,9 +132057,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:fb2db216cd43ab4a7be7",
+      "id": "registration:9eca8f8140ec5437f2ee",
       "sourcePath": "backend/src/routes/notifications.ts",
-      "line": 103,
+      "line": 110,
       "receiver": "router",
       "method": "patch",
       "path": "/:id/read",
@@ -132066,9 +132069,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:55e9ac7b3e8dee79aad1",
+      "id": "registration:9a7bcd205522b5aa7e10",
       "sourcePath": "backend/src/routes/notifications.ts",
-      "line": 118,
+      "line": 125,
       "receiver": "router",
       "method": "patch",
       "path": "/read-all",
@@ -132078,9 +132081,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:c277ad2f795620b010ef",
+      "id": "registration:ac63124e3453922f2a59",
       "sourcePath": "backend/src/routes/notifications.ts",
-      "line": 133,
+      "line": 140,
       "receiver": "router",
       "method": "delete",
       "path": "/:id",
@@ -138114,8 +138117,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:ddf5928442d45eeda886",
-      "registrationId": "registration:03fe746b164287ca0667",
+      "id": "route:81d9e67d9fbdfbbad9bb",
+      "registrationId": "registration:1ab8eda5ec23ecf1742e",
       "sourcePath": "backend/src/routes/notifications.ts",
       "line": 53,
       "method": "POST",
@@ -138131,10 +138134,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:89b61373242315e74e5f",
-      "registrationId": "registration:df1cebb851074bc921d7",
+      "id": "route:db78a2a62434c6619935",
+      "registrationId": "registration:8961fd66d87ec0bd656a",
       "sourcePath": "backend/src/routes/notifications.ts",
-      "line": 87,
+      "line": 94,
       "method": "DELETE",
       "path": "/api/notifications/push-subscription",
       "mountChain": [
@@ -138148,10 +138151,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:aada7dd3688552cb6feb",
-      "registrationId": "registration:fb2db216cd43ab4a7be7",
+      "id": "route:c777d5dd51f84f6d871f",
+      "registrationId": "registration:9eca8f8140ec5437f2ee",
       "sourcePath": "backend/src/routes/notifications.ts",
-      "line": 103,
+      "line": 110,
       "method": "PATCH",
       "path": "/api/notifications/:id/read",
       "mountChain": [
@@ -138165,10 +138168,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:ee263eb64437be924de6",
-      "registrationId": "registration:55e9ac7b3e8dee79aad1",
+      "id": "route:45cd74f21fe81910371b",
+      "registrationId": "registration:9a7bcd205522b5aa7e10",
       "sourcePath": "backend/src/routes/notifications.ts",
-      "line": 118,
+      "line": 125,
       "method": "PATCH",
       "path": "/api/notifications/read-all",
       "mountChain": [
@@ -138182,10 +138185,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:4efcbfad929323b2e087",
-      "registrationId": "registration:c277ad2f795620b010ef",
+      "id": "route:e20ed4de07299bf30ebf",
+      "registrationId": "registration:ac63124e3453922f2a59",
       "sourcePath": "backend/src/routes/notifications.ts",
-      "line": 133,
+      "line": 140,
       "method": "DELETE",
       "path": "/api/notifications/:id",
       "mountChain": [
