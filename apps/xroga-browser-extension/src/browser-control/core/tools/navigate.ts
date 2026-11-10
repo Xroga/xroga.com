@@ -17,13 +17,23 @@ import { quote } from '../text';
 const NAVIGATION_BUDGET_MS = 5_000;
 const NAVIGATION_TIMEOUT_MS = 30_000;
 
+/**
+ * An absolute address. A site written the way people say it ("example.com", "www.example.com/pricing") is read as https, so the
+ * agent never has to ask the user to open a site for it.
+ */
 function parseUrl(url: string): string {
+  const text = url.trim();
+  const candidate =
+    !/^[a-z][a-z0-9+.-]*:/i.test(text) && /^[^\s/?#]+\.[a-z]{2,}(?::\d+)?(?:[/?#]\S*)?$/i.test(text) ? `https://${text}` : text;
   try {
-    return new URL(url).href;
+    return new URL(candidate).href;
   } catch {
     throw new LayerError('INVALID_ARGUMENT', `Not an absolute URL: ${quote(url)}`);
   }
 }
+
+const NOT_ALLOWED_HINT =
+  ' Do not ask the user to open it. Tell the user this address is not available to Xroga and continue with what you can do, or finish.';
 
 /** Waits for Chrome's networkIdle lifecycle event of the main frame's next document, or the budget. */
 function trackReadiness(cdp: CdpPort, mainFrameId: () => string, start: number) {
@@ -143,7 +153,7 @@ export async function navigate(ctx: ToolContext, args: NavigateArgs): Promise<To
   // Layer 1: the destination is checked before any command is sent.
   if (args.url) {
     target = parseUrl(args.url);
-    if (!allowed(target)) throw new LayerError('URL_NOT_ALLOWED', `${quote(target)} is not allowed. Nothing was sent.`);
+    if (!allowed(target)) throw new LayerError('URL_NOT_ALLOWED', `${quote(target)} is not allowed. Nothing was sent.${NOT_ALLOWED_HINT}`);
   }
   let attachment: TabAttachment;
   try {
@@ -160,10 +170,10 @@ export async function navigate(ctx: ToolContext, args: NavigateArgs): Promise<To
     const entry = history.entries[history.currentIndex + (args.action === 'back' ? -1 : 1)];
     if (!entry) throw new LayerError('INVALID_ARGUMENT', `There is no page to go ${args.action} to`);
     target = entry.url;
-    if (!allowed(target)) throw new LayerError('URL_NOT_ALLOWED', `${quote(target)} is not allowed. Nothing was sent.`);
+    if (!allowed(target)) throw new LayerError('URL_NOT_ALLOWED', `${quote(target)} is not allowed. Nothing was sent.${NOT_ALLOWED_HINT}`);
   } else if (args.action === 'reload') {
     target = (await ctx.controller.host.tabs.get(tab.tabId))?.url ?? '';
-    if (!allowed(target)) throw new LayerError('URL_NOT_ALLOWED', `${quote(target)} is not allowed. Nothing was sent.`);
+    if (!allowed(target)) throw new LayerError('URL_NOT_ALLOWED', `${quote(target)} is not allowed. Nothing was sent.${NOT_ALLOWED_HINT}`);
   }
   const page = attachment.page;
   const result = await runNavigation(ctx, attachment, () =>
@@ -234,7 +244,7 @@ export async function openTab(ctx: ToolContext, args: TabsArgs): Promise<ToolOut
   const url = args.url ? parseUrl(args.url) : SAFE_URL;
   // Layer 1: the new tab belongs to this session only, so its policy decides.
   if (!allows(ctx.session.urlPolicy, url)) {
-    throw new LayerError('URL_NOT_ALLOWED', `${quote(url)} is not allowed. No tab was opened.`);
+    throw new LayerError('URL_NOT_ALLOWED', `${quote(url)} is not allowed. No tab was opened.${NOT_ALLOWED_HINT}`);
   }
   // In the background unless the host shows it, next to the tab the session works in.
   const tab = await ctx.controller.host.tabs.open(SAFE_URL, {
