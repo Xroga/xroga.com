@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "e346394223e1fc95a34543a869ae69b045dc44d3f4a92c896b43a59ff24e845b",
+  "sourceTreeDigest": "e58d32e3f783c2495e71e0a67ad9a902eff6f6522f34b50ea4528cf552aaba4f",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -4836,7 +4836,7 @@
     {
       "id": "9bcbd89af61af9d9c2e7",
       "file": "frontend/src/lib/hostedWorkspaceBridge.mjs",
-      "line": 54,
+      "line": 55,
       "entryPoint": "googleIdentity",
       "transport": "fetch",
       "callee": "fetch",
@@ -4851,14 +4851,14 @@
         {
           "path": "scripts/security/hosted-workspace-staging.test.mjs",
           "marker": "Google IAM and original user token stay separate",
-          "sha256": "440e2810537f5dc55055aab04daf2e6a7a0f9b7b13fea30314030e06581fbe9b"
+          "sha256": "169d7f32d138c374caf6941453e9c026593ca7be002654ee4cf0cefa0835ed2e"
         }
       ]
     },
     {
       "id": "49a49569b55d144f7a6d",
       "file": "frontend/src/lib/hostedWorkspaceBridge.mjs",
-      "line": 106,
+      "line": 134,
       "entryPoint": "forwardHostedWorkspace",
       "transport": "fetch",
       "callee": "fetch",
@@ -4873,14 +4873,14 @@
         {
           "path": "scripts/security/hosted-workspace-staging.test.mjs",
           "marker": "Google IAM and original user token stay separate",
-          "sha256": "440e2810537f5dc55055aab04daf2e6a7a0f9b7b13fea30314030e06581fbe9b"
+          "sha256": "169d7f32d138c374caf6941453e9c026593ca7be002654ee4cf0cefa0835ed2e"
         }
       ]
     },
     {
       "id": "a609adccda5421076aa0",
       "file": "frontend/src/lib/hostedWorkspaceBridge.mjs",
-      "line": 119,
+      "line": 149,
       "entryPoint": "forwardHostedWorkspace",
       "transport": "fetch",
       "callee": "fetch",
@@ -4895,14 +4895,14 @@
         {
           "path": "scripts/security/hosted-workspace-staging.test.mjs",
           "marker": "hosted confirmation admits only the exact owner-visible DeepSeek research action",
-          "sha256": "440e2810537f5dc55055aab04daf2e6a7a0f9b7b13fea30314030e06581fbe9b"
+          "sha256": "169d7f32d138c374caf6941453e9c026593ca7be002654ee4cf0cefa0835ed2e"
         }
       ]
     },
     {
       "id": "e88275f663bb87ce2556",
       "file": "frontend/src/lib/hostedWorkspaceBridge.mjs",
-      "line": 133,
+      "line": 164,
       "entryPoint": "forwardHostedWorkspace",
       "transport": "fetch",
       "callee": "fetch",
@@ -4917,7 +4917,7 @@
         {
           "path": "scripts/security/hosted-workspace-staging.test.mjs",
           "marker": "Google IAM and original user token stay separate",
-          "sha256": "440e2810537f5dc55055aab04daf2e6a7a0f9b7b13fea30314030e06581fbe9b"
+          "sha256": "169d7f32d138c374caf6941453e9c026593ca7be002654ee4cf0cefa0835ed2e"
         }
       ]
     },

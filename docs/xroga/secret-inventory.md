@@ -1,6 +1,6 @@
 # Secret and environment name inventory
 
-Values are forbidden. Source SHA: `ddeed9674c677a12796159843c3ab1ed25619384`. Names and source discovery do not prove that a capability is configured or accepted.
+Values are forbidden. Source SHA: `5121a757547e3773f630d2483c07106f41d6dd87`. Names and source discovery do not prove that a capability is configured or accepted.
 
 | Name | Classification | Requirement | Dependency |
 | --- | --- | --- | --- |
@@ -345,12 +345,13 @@ Values are forbidden. Source SHA: `ddeed9674c677a12796159843c3ab1ed25619384`. Na
 | XROGA_SANDBOX_WORKER_URL | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | google-execution |
 | XROGA_SOFTWARE_AGENT_V2 | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_SOFTWARE_AGENT_V2_SHADOW | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
-| XROGA_STAGING_AUTH_BUILD | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-127-0-0-1, endpoint-metadata-google-internal |
-| XROGA_STAGING_MANIFEST_PATH | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-metadata-google-internal |
+| XROGA_STAGING_AUTH_BUILD | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-127-0-0-1, endpoint-accounts-google-com, endpoint-metadata-google-internal |
+| XROGA_STAGING_INVOKER_SUBJECT | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-accounts-google-com, endpoint-metadata-google-internal |
+| XROGA_STAGING_MANIFEST_PATH | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-accounts-google-com, endpoint-metadata-google-internal |
 | XROGA_STORAGE_RECONCILE_MODE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_TEST_CREDENTIAL_KEK | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_TRUSTED_PROXY_HOPS | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
-| XROGA_WORKSPACE_STAGING_RUNTIME | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-metadata-google-internal |
+| XROGA_WORKSPACE_STAGING_RUNTIME | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-accounts-google-com, endpoint-metadata-google-internal |
 | YOUTUBE_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | endpoint-www-googleapis-com, endpoint-www-youtube-com |
 | ZHIPU_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | historical-zhipu |
 | ZURELAY_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | zurelay-models, endpoint-127-0-0-1 |

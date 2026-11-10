@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/workspace-inline-sources-20261110",
-    "sha": "ddeed9674c677a12796159843c3ab1ed25619384",
-    "sourceTimestampUtc": "2026-11-11T01:47:12+05:00",
-    "auditStartedUtc": "2026-11-10T20:48:07.119Z",
+    "sha": "5121a757547e3773f630d2483c07106f41d6dd87",
+    "sourceTimestampUtc": "2026-11-11T02:58:20+05:00",
+    "auditStartedUtc": "2026-11-10T21:59:16.428Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
@@ -108160,10 +108160,11 @@
       "id": "surface:0b212ee01191fe2ebdde",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/hostedWorkspaceBridge.mjs",
-      "sha256": "04e20f2d85ec99b6aa287a3d620cb037aeca102b3ba9cd85b1e249756aec5523",
+      "sha256": "875600fbd44bee626eb8d6b6b984f5d4f5b2fca27b494c19d945d135363bff16",
       "symbols": [
         "abort",
         "authorization",
+        "bindingMatches",
         "body",
         "bytes",
         "chunks",
@@ -108177,28 +108178,36 @@
         "guestShare",
         "headers",
         "health",
+        "healthStatus",
         "hostedConfig",
         "hostedWorkspaceRequest",
         "key",
         "manifest",
+        "matchesPlatformBinding",
         "matchesStagingIssuer",
         "maxBodyBytes",
         "method",
         "next",
         "origin",
+        "phase",
         "platform",
+        "probe",
         "reader",
         "receipt",
         "record",
+        "releaseMatches",
         "requestHeaders",
         "research",
         "response",
         "responseHeaders",
         "result",
         "search",
+        "subject",
         "token",
         "upstream",
         "url",
+        "usagePath",
+        "usageStatus",
         "value"
       ],
       "imports": [
@@ -108223,6 +108232,7 @@
       "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
+        "declared-host:accounts.google.com",
         "declared-host:metadata.google.internal",
         "node:fs"
       ],
@@ -147530,30 +147540,30 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:1d8c1dde3d66eaa84810",
+      "id": "frontend-call:e782fbc48716e3d18240",
       "sourcePath": "frontend/src/lib/hostedWorkspaceBridge.mjs",
-      "line": 54,
+      "line": 55,
       "callee": "fetch",
       "reachable": true
     },
     {
-      "id": "frontend-call:4973c4e5901e937509e4",
+      "id": "frontend-call:41a6129353c303d0b3a8",
       "sourcePath": "frontend/src/lib/hostedWorkspaceBridge.mjs",
-      "line": 106,
+      "line": 134,
       "callee": "fetch",
       "reachable": true
     },
     {
-      "id": "frontend-call:207d06188380f9e51236",
+      "id": "frontend-call:c63867d4067a593f6844",
       "sourcePath": "frontend/src/lib/hostedWorkspaceBridge.mjs",
-      "line": 119,
+      "line": 149,
       "callee": "fetch",
       "reachable": true
     },
     {
-      "id": "frontend-call:4782ce1516ba8908c50f",
+      "id": "frontend-call:4d788c807077ceaf1fdc",
       "sourcePath": "frontend/src/lib/hostedWorkspaceBridge.mjs",
-      "line": 133,
+      "line": 164,
       "callee": "fetch",
       "reachable": true
     },
@@ -155423,7 +155433,7 @@
     {
       "id": "test-suite:6d7c44af47b84b62432f",
       "sourcePath": "scripts/security/hosted-workspace-staging.test.mjs",
-      "declaredTests": 6,
+      "declaredTests": 8,
       "skipLocations": [],
       "focusLocations": []
     },

@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "ddeed9674c677a12796159843c3ab1ed25619384",
+  "source_sha": "5121a757547e3773f630d2483c07106f41d6dd87",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -1123,7 +1123,8 @@
       "config_sources": [
         "backend/src/lib/googleServiceToken.ts",
         "backend/src/services/publish/chromeWebStore.ts",
-        "backend/src/services/publish/expoCredentialMaterial.ts"
+        "backend/src/services/publish/expoCredentialMaterial.ts",
+        "frontend/src/lib/hostedWorkspaceBridge.mjs"
       ],
       "hostnames": [
         "accounts.google.com"
@@ -1133,7 +1134,11 @@
       "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
       "secret_names": [
         "FRONTEND_URL",
-        "NODE_ENV"
+        "NODE_ENV",
+        "XROGA_STAGING_AUTH_BUILD",
+        "XROGA_STAGING_INVOKER_SUBJECT",
+        "XROGA_STAGING_MANIFEST_PATH",
+        "XROGA_WORKSPACE_STAGING_RUNTIME"
       ],
       "inbound_callers": [
         "api or named source callers; operational reachability not inferred"
@@ -1149,7 +1154,8 @@
       "observability_source": [
         "backend/src/lib/googleServiceToken.ts",
         "backend/src/services/publish/chromeWebStore.ts",
-        "backend/src/services/publish/expoCredentialMaterial.ts"
+        "backend/src/services/publish/expoCredentialMaterial.ts",
+        "frontend/src/lib/hostedWorkspaceBridge.mjs"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
       "evidence_ids": []
@@ -5068,6 +5074,7 @@
         "XROGA_PROJECT_RUNTIME_PROVIDER",
         "XROGA_RELEASE_SHA",
         "XROGA_STAGING_AUTH_BUILD",
+        "XROGA_STAGING_INVOKER_SUBJECT",
         "XROGA_STAGING_MANIFEST_PATH",
         "XROGA_WORKSPACE_STAGING_RUNTIME"
       ],
@@ -15986,6 +15993,27 @@
       ],
       "dependency_ids": [
         "endpoint-127-0-0-1",
+        "endpoint-accounts-google-com",
+        "endpoint-metadata-google-internal"
+      ]
+    },
+    {
+      "name": "XROGA_STAGING_INVOKER_SUBJECT",
+      "consuming_sources": [
+        "frontend/src/lib/hostedWorkspaceBridge.mjs"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "endpoint-accounts-google-com",
         "endpoint-metadata-google-internal"
       ]
     },
@@ -16005,6 +16033,7 @@
         "STATIC_ENV_READER"
       ],
       "dependency_ids": [
+        "endpoint-accounts-google-com",
         "endpoint-metadata-google-internal"
       ]
     },
@@ -16082,6 +16111,7 @@
         "STATIC_ENV_READER"
       ],
       "dependency_ids": [
+        "endpoint-accounts-google-com",
         "endpoint-metadata-google-internal"
       ]
     },
@@ -23428,7 +23458,7 @@
     },
     {
       "path": "frontend/src/lib/hostedWorkspaceBridge.mjs",
-      "sha256": "04e20f2d85ec99b6aa287a3d620cb037aeca102b3ba9cd85b1e249756aec5523"
+      "sha256": "875600fbd44bee626eb8d6b6b984f5d4f5b2fca27b494c19d945d135363bff16"
     },
     {
       "path": "frontend/src/lib/hydrateLandingOutput.ts",
@@ -30439,7 +30469,14 @@
       "hostname": "metadata.google.internal",
       "protocol": "http:",
       "path": "frontend/src/lib/hostedWorkspaceBridge.mjs",
-      "line": 52,
+      "line": 53,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "accounts.google.com",
+      "protocol": "https:",
+      "path": "frontend/src/lib/hostedWorkspaceBridge.mjs",
+      "line": 70,
       "credentialsInUrl": false
     },
     {
