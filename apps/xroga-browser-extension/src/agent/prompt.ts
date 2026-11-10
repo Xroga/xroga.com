@@ -90,8 +90,16 @@ function toolGuide(tools: string[]): string {
 }
 
 /** The agent's prompt. */
+/** Every reply costs seconds of the user's time, so the agent is told to spend fewer of them. */
+export const EFFICIENCY = `## Working efficiently
+
+- Each reply takes several seconds. When the outline already shows every control you need, call several tools in one reply (for example fill_form with its submit control, then read) instead of one per reply.
+- An action's result shows what changed. Take another snapshot only when the page changed in a way the result does not show.
+- When a page was opened for you, its outline is already attached: act on it without asking for a snapshot first.
+- Finish with done as soon as you have seen the answer.`;
+
 export function agentSystemPrompt(options: PromptOptions = {}): string {
-  const sections = [ROLE, CONTRACT, PERMISSIONS, toolGuide(options.tools ?? [])];
+  const sections = [ROLE, CONTRACT, PERMISSIONS, toolGuide(options.tools ?? []), EFFICIENCY];
   const custom = options.customInstructions?.trim().slice(0, CUSTOM_INSTRUCTIONS_MAX).trim();
   if (custom) {
     // The user's own words, from Settings → Memory; no tool writes them.

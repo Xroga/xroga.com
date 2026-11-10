@@ -9,7 +9,7 @@ import { activeBranch, appendEntry, getEntries, newId, putEntry } from '@src/sto
 import type { Entry, EntryOf, GuardState, MessagePart, PermissionMode, RunStatus, Usage } from '@src/store/types';
 import { addUsage, ZERO_USAGE } from '@src/store/types';
 import type { AgentEvent, ToolRow } from '@src/ui/protocol';
-import { contextChars, toModelMessages } from './context';
+import { contextChars, elideStaleObservations, toModelMessages } from './context';
 import { directNavigation, type DirectNavigation } from './direct-url';
 import { browserState } from './header';
 import { assistantDisplay, userDisplay, userText } from './display';
@@ -371,7 +371,9 @@ export class AgentLoop {
   async prepareRequest(): Promise<Request> {
     const branch = await activeBranch(this.options.conversationId);
     const messages = this.transformContext(
-      toModelMessages(branch, { vision: this.options.model.profile.vision, unverified: this.#unverified() }),
+      elideStaleObservations(
+        toModelMessages(branch, { vision: this.options.model.profile.vision, unverified: this.#unverified() }),
+      ),
     );
     const tools = this.options.tools;
     const chars =

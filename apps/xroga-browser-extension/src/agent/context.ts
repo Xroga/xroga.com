@@ -187,3 +187,32 @@ export function contextChars(messages: ModelMessage[], system = ''): number {
   }
   return chars;
 }
+
+/** Tools whose result is a view of the page at that moment: a newer step makes it stale. Reads, finds and attachments are answers, and stay. */
+const OBSERVING = new Set([
+  'snapshot', 'click', 'set', 'type', 'press', 'fill_form', 'scroll', 'hover', 'navigate', 'tabs', 'wait', 'handle_dialog', 'upload',
+]);
+const STALE_NOTE = '\n… the page observation of this earlier step was left out; its refs are out of date. Take a snapshot for the current page.';
+
+/**
+ * The page views of earlier steps, shortened. A step's result carries the page as it was then, and every later step makes that view
+ * wrong: its refs no longer exist. Only the newest `keepLatest` results keep their full view; an older one keeps its first lines, which
+ * say what the action did. Answers (read, find, attachments) are never cut. Each result is cut once, when it becomes the third newest,
+ * and stays the same afterwards, so the earlier part of the request does not change from turn to turn.
+ */
+export function elideStaleObservations(messages: ModelMessage[], keepLatest = 2, headChars = 700, minChars = 1_600): ModelMessage[] {
+  const toolIndexes = messages.flatMap((m, i) => (m.role === 'tool' ? [i] : []));
+  const stale = new Set(toolIndexes.slice(0, Math.max(0, toolIndexes.length - keepLatest)));
+  if (!stale.size) return messages;
+  return messages.map((message, i) => {
+    if (!stale.has(i) || !Array.isArray(message.content)) return message;
+    const content = (message.content as Array<Record<string, unknown>>).map(part => {
+      const output = part.output as { type?: string; value?: unknown } | undefined;
+      if (part.type !== 'tool-result' || !OBSERVING.has(String(part.toolName)) || output?.type !== 'text') return part;
+      const value = String(output.value ?? '');
+      if (value.length <= minChars) return part;
+      return { ...part, output: { type: 'text', value: value.slice(0, headChars) + STALE_NOTE } };
+    });
+    return { ...message, content } as ModelMessage;
+  });
+}
