@@ -1247,6 +1247,10 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
           {editor.mode==='move-project'?<>
             <input autoFocus value={editorText} onChange={e=>setEditorText(e.target.value)} placeholder="Search projects" aria-label="Search destination projects"
               className="w-full rounded-lg border border-[var(--card-border)] bg-transparent p-2 text-xs"/>
+            <button type="button" className="w-full rounded-md px-2 py-2 text-left text-xs font-medium hover:bg-[var(--foreground)]/10"
+              onClick={()=>{void updateItem('conversation',editor.id,{project_id:null,section_id:null});setEditor(null);}}>
+              Move to Recents (no project)
+            </button>
             <div className="max-h-[220px] overflow-y-auto space-y-1">
               {allProjectOptions.filter(p=>p.name.toLowerCase().includes(editorText.toLowerCase())).map(project=>
                 <button key={project.id} type="button" className="w-full rounded-md px-2 py-2 text-left text-xs hover:bg-[var(--foreground)]/10"
