@@ -550,14 +550,6 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
             const answer = nativeAnswer ? (
               <ChatErrorBoundary>
                 <NativeWorkspaceAnswer answer={nativeAnswer} sources={msg.webSources} />
-                {msg.webSources?.length ? (
-                  <details className="mt-4 text-sm" open={!nativeAnswer.program || undefined}>
-                    <summary className="cursor-pointer py-2 text-[var(--text-secondary)]">
-                      Sources ({new Set(msg.webSources.map(source => source.url)).size})
-                    </summary>
-                    <ResponseSources sources={msg.webSources} />
-                  </details>
-                ) : null}
               </ChatErrorBoundary>
             ) : (
                         <ResponseExperienceGate message={msg} streaming={msg.id === animatingId && loading}>

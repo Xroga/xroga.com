@@ -1,4 +1,4 @@
-import { createContext, useContext } from 'react';
+import { useContext } from 'react';
 import { createLibrary, defineComponent } from '@openuidev/react-lang';
 import { z } from 'zod/v4';
 import { Box, Card, Col, Divider, Form, Grid, Row, Spacer } from './upstream/components/layout';
@@ -19,18 +19,18 @@ import { Between, Change, Cumulative, GroupBy, Histogram, MovingAvg, Stats, Top 
 import { Chunk, Find, Includes, MixColor, Reverse, Slice, Take } from './upstream/functions/collections';
 import { Tabs } from './Tabs';
 import { Diagram } from './Diagram';
-import { EvidenceChip, Resource } from './Resources';
+import { Resource } from './Resources';
+import { EvidenceContext } from './evidence';
+import { SourceCitation } from '../terminal/SourceCitation';
 import { Controls, Metric, Section } from './Editorial';
 
-export type AnswerSource = { id: string; title: string; url: string; siteName?: string };
-export const EvidenceContext = createContext<ReadonlyMap<string, AnswerSource>>(new Map());
 export const Source = defineComponent({
   name: 'Source',
   description: 'Link to one source by the exact evidence ID supplied by Xroga. Omit when no IDs were supplied.',
   props: z.object({ id: z.string().max(120) }),
   component: function EvidenceSource({ props }) {
     const source = useContext(EvidenceContext).get(props.id);
-    return source ? <EvidenceChip href={source.url} title={source.title} siteName={source.siteName} /> : null;
+    return source ? <SourceCitation source={source} /> : null;
   },
 });
 

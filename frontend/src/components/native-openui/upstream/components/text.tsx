@@ -6,6 +6,7 @@ import { Fragment } from "react";
 import { z } from "zod/v4";
 import { Glyph } from "./glyph";
 import { inline, MarkdownBlocks } from "./markdown";
+import { useRenderEvidenceCitation } from '../../evidence';
 import { children, color, cx, fg, webUrl } from "./style";
 
 const str = (value: unknown) => (value == null ? "" : String(value));
@@ -46,24 +47,23 @@ export const Text = defineComponent({
     maxLines: z.number().optional(),
   }),
   description: "Paragraph with bold, italic and code. Inline components can include Source, Icon, or Badge. Only use verified Source IDs for links.",
-  component: ({ props, renderNode }) => {
-    const lines = props.maxLines && props.maxLines > 0 ? Math.round(props.maxLines) : undefined;
+  component: function NativeText({ props, renderNode }) {
+    const renderCitation = useRenderEvidenceCitation();
     return (
       <p
-        className={cx("iui-text", props.size && `iui-text-${props.size}`, props.weight && `iui-weight-${props.weight}`, lines ? "iui-clamp" : undefined)}
+        className={cx("iui-text", props.size && `iui-text-${props.size}`, props.weight && `iui-weight-${props.weight}`)}
         style={{
           color: fg(props.color),
           fontStyle: props.italic ? "italic" : undefined,
           textDecoration: props.lineThrough ? "line-through" : undefined,
           fontVariantNumeric: props.tabularNums ? "tabular-nums" : undefined,
-          WebkitLineClamp: lines,
         }}
       >
         {Array.isArray(props.text)
           ? (props.text as unknown[]).flat().map((part, i) =>
-              isNode(part) ? <span key={i} className="iui-inline">{renderNode(part)}</span> : <Fragment key={i}>{inline(str(part), `t${i}`)}</Fragment>,
+              isNode(part) ? <span key={i} className="iui-inline">{renderNode(part)}</span> : <Fragment key={i}>{inline(str(part), `t${i}`, renderCitation)}</Fragment>,
             )
-          : inline(str(props.text))}
+          : inline(str(props.text), 'text', renderCitation)}
       </p>
     );
   },
@@ -181,9 +181,8 @@ export const Markdown = defineComponent({
   name: "Markdown",
   props: z.object({ text: z.string() }),
   description: "Prose with headings, lists, quotes, code and tables.",
-  component: ({ props }) => (
-    <div className="iui-markdown">
-      <MarkdownBlocks text={str(props.text)} />
-    </div>
-  ),
+  component: function NativeMarkdown({ props }) {
+    const renderCitation = useRenderEvidenceCitation();
+    return <div className="iui-markdown"><MarkdownBlocks text={str(props.text)} renderCitation={renderCitation} /></div>;
+  },
 });

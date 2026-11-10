@@ -85,7 +85,7 @@ function layout(props: z.infer<typeof diagramProps>, compact: boolean) {
       markerEnd: { type: MarkerType.ArrowClosed, width: 18, height: 18, color: 'var(--iui-muted)' },
     };
   });
-  return { nodes, edges, byId, rowCount: rows.length, separateRelationships };
+  return { nodes, edges, byId, rowCount: rows.length };
 }
 
 export const Diagram = defineComponent({
@@ -141,14 +141,14 @@ export const Diagram = defineComponent({
           <Controls showInteractive={false} orientation="horizontal" aria-label="Diagram zoom controls" />
         </div>
         </ReactFlowProvider>
-        <details open={result.separateRelationships || undefined}>
-          <summary>Diagram relationships</summary>
+        <div className="native-diagram-relationships">
+          <strong>Diagram relationships</strong>
           <ul>
             {props.links.map((link, index) => <li key={index}>
               {result.byId.get(link.from)?.label} → {result.byId.get(link.to)?.label}{link.label && ' · ' + link.label}
             </li>)}
           </ul>
-        </details>
+        </div>
       </figure>
     );
   },

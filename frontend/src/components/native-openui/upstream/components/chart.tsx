@@ -339,10 +339,10 @@ export const Chart = defineComponent({
         {labels?.xLabel && <p className="native-chart-x-label">{labels.xLabel}</p>}
         {!pie && (spec.series.length > 1 || !labels?.yLabel) && <Legend series={spec.series} />}
         {labels?.note && <p className="native-chart-note">{labels.note}</p>}
-        <details><summary>Chart data</summary><div className="iui-table-scroll" tabIndex={0} role="region" aria-label="Chart data table">
-          <table className="iui-table"><thead><tr>{columns.map((key, index) => <th scope="col" key={key}>{index === 0 ? labels?.xLabel ?? key : spec.series.length === 1 ? labels?.yLabel ?? key : key}</th>)}</tr></thead>
+        <div className="native-chart-data"><div className="iui-table-scroll" tabIndex={0} role="region" aria-label="Chart data table">
+          <table className="iui-table"><caption>Chart data</caption><thead><tr>{columns.map((key, index) => <th scope="col" key={key}>{index === 0 ? labels?.xLabel ?? key : spec.series.length === 1 ? labels?.yLabel ?? key : key}</th>)}</tr></thead>
           <tbody>{spec.rows.map((row, index) => <tr key={index}>{columns.map(key => <td key={key}>{String(row[key])}</td>)}</tr>)}</tbody></table>
-        </div></details>
+        </div></div>
       </figure>
     );
   },

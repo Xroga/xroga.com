@@ -3,10 +3,11 @@
 import './renderer-config';
 import { Renderer } from '@openuidev/react-lang';
 import { useMemo, useState } from 'react';
-import { EvidenceContext, library, type AnswerSource } from './library';
+import { library } from './library';
+import { EvidenceContext, type AnswerSource } from './evidence';
 import { MAX_PROGRAM_CHARS, validateNativeOpenUi } from '../../../../backend/src/ai/nativeOpenUi';
 import { MarkdownBlocks } from './upstream/components/markdown';
-import { EvidenceChip } from './Resources';
+import { SourceCitation } from '../terminal/SourceCitation';
 import './upstream/components/theme.css';
 import './upstream/components/components.css';
 import '@xyflow/react/dist/style.css';
@@ -45,7 +46,7 @@ export function NativeSurface({ answer, sources, isStreaming = false }: {
           </EvidenceContext.Provider>
         : <MarkdownBlocks text={answer.text} renderCitation={number => {
             const source = verified.get('source-' + number);
-            return source ? <EvidenceChip href={source.url} title={source.title} siteName={source.siteName} /> : null;
+            return source ? <SourceCitation source={source} number={number} /> : null;
           }} />}
     </section>
   );

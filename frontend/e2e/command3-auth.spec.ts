@@ -329,6 +329,7 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   await answer.getByRole('button', { name: 'Reset', exact: true }).click();
   await expect(answer.getByText('$1,000', { exact: true })).toBeVisible();
   const turn = page.locator('[data-turn-id]').filter({ has: answer });
+  await expect(turn.getByRole('region', { name: 'Sources', exact: true }).getByRole('link', { name: /Workshop source fixture/ })).toBeVisible();
   await turn.getByRole('button', { name: 'Copy', exact: true }).click();
   await expect.poll(() => page.evaluate(async () => (await navigator.clipboard.readText()).replace(/\r\n/g, '\n')))
     .toBe(`${reply}\n\nSources\n[1] ${source.title} (${source.url})`);
@@ -377,6 +378,7 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
     const sharedAnswer = ownerShare.getByRole('region', { name: 'Answer', exact: true });
     await expect(sharedAnswer.getByRole('slider', { name: 'Attendees' })).toBeVisible();
     await expect(sharedAnswer.getByRole('link', { name: /Workshop source fixture/ })).toHaveAttribute('href', source.url);
+    await expect(ownerShare.getByRole('region', { name: 'Sources', exact: true }).getByRole('link', { name: /Workshop source fixture/ })).toBeVisible();
     for (const [width, theme] of [[1440, 'black'], [390, 'white']] as const) {
       await ownerShare.setViewportSize({ width, height: 900 });
       await ownerShare.evaluate(value => {

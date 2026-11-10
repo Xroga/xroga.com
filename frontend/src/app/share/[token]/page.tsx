@@ -1,6 +1,5 @@
 import { NATIVE_SHARE_PREFIX, readNativeOpenUiShare } from '../../../../../backend/src/ai/nativeOpenUiShare';
 import { NativeWorkspaceAnswer } from '@/components/native-openui/NativeWorkspaceAnswer';
-import { SourceLogo } from '@/components/terminal/SourceLogo';
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -144,7 +143,6 @@ export default async function MessageSharePage({ params }: { params: Promise<{ t
   // The API has already enforced the saved link's visibility. A validated
   // native snapshot must reopen independently of the older V2 rollout flag.
   const legacyRichAllowed = !native && Boolean(share.richResponse) && await canPresentRichShare();
-  const sources = native ? [...new Map(native.sources.map(source => [source.url, source])).values()] : [];
 
   return (
     <main className="min-h-screen bg-[var(--surface-page)] px-4 py-6 text-[var(--text-primary)] sm:px-6 sm:py-12">
@@ -169,19 +167,7 @@ export default async function MessageSharePage({ params }: { params: Promise<{ t
           <section className="px-5 py-6 sm:px-8 sm:py-8">
             <p className="mb-3 text-[10px] font-semibold uppercase tracking-[.16em] text-[var(--text-secondary)]">Response</p>
             {share.richUnavailable && <p role="status" className="mb-3 text-sm">The interactive view is unavailable. The complete saved text follows.</p>}
-            {native ? <NativeWorkspaceAnswer answer={{ ...native, library: 'xroga-native-v1' }} sources={native.sources} /> : legacyRichAllowed && share.richResponse ? <SharedResponseV2 snapshot={share.richResponse} text={share.response} /> : <p className="whitespace-pre-wrap text-[15px] leading-7">{share.response}</p>}
-            {sources.length > 0 && <details className="mt-5 border-t border-[var(--border-subtle)] pt-4" open={!native?.program || undefined}>
-              <summary className="cursor-pointer text-sm font-semibold">Sources ({sources.length})</summary>
-              <ul className="mt-2 space-y-2 text-sm">
-                {sources.map(source => <li key={source.url} className="flex items-start gap-2 break-words">
-                  <SourceLogo domain={new URL(source.url).hostname} size={16} />
-                  <span>
-                    <a href={source.url} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">{source.title}</a>
-                    {source.siteName || source.publishedAt ? <small className="block text-[var(--text-secondary)]">{[source.siteName, source.publishedAt].filter(Boolean).join(' · ')}</small> : null}
-                  </span>
-                </li>)}
-              </ul>
-            </details>}
+            {native ? <NativeWorkspaceAnswer answer={{ ...native, library: 'xroga-native-v1' }} sources={native.sources} sourceReferral={false} /> : legacyRichAllowed && share.richResponse ? <SharedResponseV2 snapshot={share.richResponse} text={share.response} /> : <p className="whitespace-pre-wrap text-[15px] leading-7">{share.response}</p>}
             <SharedAnswerDownloads response={share.response} />
           </section>
         </article>

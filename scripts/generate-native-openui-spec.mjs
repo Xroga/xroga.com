@@ -6,7 +6,7 @@ import assert from 'node:assert/strict';
 const { outputFiles } = await build({
   entryPoints: ['frontend/src/components/native-openui/library.tsx'],
   bundle: true, platform: 'node', format: 'cjs', packages: 'external',
-  jsx: 'automatic', loader: { '.css': 'empty' }, write: false,
+  jsx: 'automatic', loader: { '.css': 'empty', '.module.css': 'empty' }, write: false,
 });
 const module = { exports: {} };
 const run = new Function('require', 'module', 'exports', outputFiles[0].text);

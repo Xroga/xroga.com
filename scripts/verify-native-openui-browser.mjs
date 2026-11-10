@@ -32,6 +32,7 @@ const cases = {
   },
   flow: { text: 'The API checks membership before reading tenant rows.', program: 'root = Col([Title("Tenant request path"), Text("The API checks membership before reading tenant rows."), Svg([Rect(2, 14, 95, 32, "surface", "muted", 0.8, 1, 6), SvgText("Verify membership", 49.5, 33, 9, "ink", "middle"), Line(103, 30, 145, 30, "muted", 1.2), Polygon("145,27 150,30 145,33", "muted"), Rect(155, 14, 93, 32, "surface", "muted", 0.8, 1, 6), SvgText("Read tenant rows", 201.5, 33, 9, "ink", "middle")], "0 0 250 60", "100%", null, "Verify membership before reading tenant rows"), List([ListItem("Check authenticated membership"), ListItem("Read rows under RLS")], "number")])' },
   evidence: { text: 'PostgreSQL documents row-level security.', program: 'root = Col([Text(["PostgreSQL documents row-level security. ", Source("source-1")])])' },
+  numericEvidence: { text: 'Official policy and documentation.', program: 'root = Col([Text("Official policy [3]."), Markdown("See documentation [2].")])' },
   fallbackCitations: { text: 'Check the documentation [2](https://untrusted.example/). Unknown [99] and code `[2]` are plain text.' },
   code: { text: 'TypeScript function returns the supplied constant.', program: 'root = Col([Code("const total: number = 42;", "typescript")])' },
   tabs: { text: 'Core recommendation remains visible.', program: 'root = Col([Text("Core recommendation remains visible."), Tabs("Scenarios", [{title: "Basic", content: [Text("Basic details")]}, {title: "Team", content: [Text("Team details")]}])])' },
@@ -54,12 +55,12 @@ const compiled = await build({
   stdin: {
     resolveDir: process.cwd(),
     loader: 'tsx',
-    contents: 'import {createRoot} from "react-dom/client"; import {NativeSurface} from "./frontend/src/components/native-openui/NativeSurface"; import "./frontend/src/components/native-openui/evaluation.css";'
+    contents: 'import {createRoot} from "react-dom/client"; import {NativeSurface} from "./frontend/src/components/native-openui/NativeSurface"; import {ResponseSources} from "./frontend/src/components/terminal/ResponseSources"; import "./frontend/src/components/native-openui/evaluation.css";'
       + 'const cases = ' + JSON.stringify(cases) + ';'
       + 'const q=new URL(location.href).searchParams; const name=q.get("case") || "short";'
       + 'document.body.dataset.theme=q.get("shellTheme") || q.get("theme") || "light"; document.querySelector("main").dataset.theme=q.get("theme") || "light";'
-      + 'const sources=[{id:"source-1",title:"PostgreSQL: Row Security Policies",url:"https://www.postgresql.org/docs/current/ddl-rowsecurity.html"},{id:"source-2",title:"W3C Documentation",url:"https://www.w3.org/TR/"}];'
-      + 'createRoot(document.getElementById("root")).render(<>{cases[name].prompt && <p className="native-evaluation-user">{cases[name].prompt}</p>}<div className="native-evaluation-answer-label">Xroga</div><NativeSurface answer={{...cases[name],format:"xroga-openui-v1",library:"xroga-native-v1"}} sources={sources} isStreaming={name==="stream"} /></>);',
+      + 'const sources=[{id:"source-1",title:"PostgreSQL: Row Security Policies",url:"https://www.postgresql.org/docs/current/ddl-rowsecurity.html"},{id:"source-2",title:"W3C Documentation",url:"https://www.w3.org/TR/"},{id:"source-3",title:"About keyword matching options",siteName:"Google Ads Help",url:"https://support.google.com/google-ads/answer/7478529"}];'
+      + 'createRoot(document.getElementById("root")).render(<>{cases[name].prompt && <p className="native-evaluation-user">{cases[name].prompt}</p>}<div className="native-evaluation-answer-label">Xroga</div><NativeSurface answer={{...cases[name],format:"xroga-openui-v1",library:"xroga-native-v1"}} sources={sources} isStreaming={name==="stream"} />{name==="numericEvidence" && <ResponseSources sources={[...sources, sources[0], ...[4,5,6].map(n => ({title:"Source "+n,url:"https://example.com/"+n})), {title:"Unsafe link",url:"javascript:alert(1)"}]} />}</>);',
   },
   outdir: 'native-assets', entryNames: 'native', chunkNames: 'native-chunk-[hash]', format: 'esm', splitting: true,
   write: false, bundle: true, jsx: 'automatic', minify: true,
@@ -130,7 +131,6 @@ try {
       await page.getByText('$2,000', { exact: true }).waitFor();
       await page.getByRole('button', { name: 'Reset' }).click();
       await page.getByText('$1,000', { exact: true }).waitFor();
-      await page.getByText('Chart data', { exact: true }).click();
       await page.getByRole('cell', { name: '1500', exact: true }).waitFor();
       const accessibility = await new AxeBuilder({ page }).analyze();
       assert.deepEqual(accessibility.violations.map(({id}) => id), []);
@@ -152,13 +152,9 @@ try {
       assert.ok(renderedEdge.length > 0 && renderedEdge.stroke !== 'none' && renderedEdge.overflow === 'visible', JSON.stringify(renderedEdge));
       await graph.getByRole('button', { name: /zoom in/i }).click();
       await graph.getByRole('button', { name: /fit view/i }).click();
-      const relationships = graph.locator('details');
+      assert.equal(await graph.locator('details').count(), 0);
       if (viewport.width <= 390) {
-        assert.equal(await relationships.getAttribute('open'), '', 'Compact diagrams expose the relationship key immediately');
         assert.equal(await graph.locator('.react-flow__edge-text').count(), 0, 'Compact diagrams do not overprint edge labels');
-      }
-      if (await relationships.getAttribute('open') === null) {
-        await graph.getByText('Diagram relationships', { exact: true }).click();
       }
       await graph.getByText(/Stripe → Billing webhook/).waitFor();
       const stripe = page.getByRole('link', { name: 'Stripe', exact: true });
@@ -193,6 +189,31 @@ try {
       assert.equal(await fallback.locator('img').getAttribute('src'), '/api/site-icon?d=w3.org');
       assert.equal(await page.getByRole('region', { name: 'Answer', exact: true }).getByRole('link').count(), 1);
       assert.equal(await page.locator('code').getByText('[2]', { exact: true }).count(), 1);
+      await open('numericEvidence');
+      const google = page.getByRole('region', { name: 'Answer', exact: true }).getByRole('link', { name: 'Open source 3: About keyword matching options' });
+      assert.equal(await google.innerText(), 'Google Ads Help');
+      assert.equal(await google.locator('svg path[fill="#4285F4"]').count(), 1);
+      const sourceList = page.getByRole('region', { name: 'Sources', exact: true });
+      assert.equal(await sourceList.getByRole('link').count(), 6);
+      assert.ok(await sourceList.getByRole('link', { name: 'Open source: Source 6' }).isVisible());
+      assert.equal(await sourceList.locator('button, summary').count(), 0);
+      const tooltip = page.getByRole('tooltip');
+      await google.hover();
+      await tooltip.getByText('About keyword matching options').waitFor();
+      assert.equal(await tooltip.getByText('Google Ads Help').count(), 1);
+      const popupBounds = await tooltip.boundingBox();
+      assert.ok(popupBounds.x >= 0 && popupBounds.x + popupBounds.width <= viewport.width);
+      if ((viewport.width === 1440 || viewport.width === 390) && theme === 'dark') {
+        await page.screenshot({ path: resolve(output, channel + '-inline-citation-' + viewport.width + '.png') });
+      }
+      await page.keyboard.press('Escape');
+      await tooltip.waitFor({ state: 'hidden' });
+      await google.focus();
+      await tooltip.waitFor();
+      assert.ok(await google.getAttribute('aria-describedby'));
+      await page.keyboard.press('Escape');
+      await tooltip.waitFor({ state: 'hidden' });
+      assert.equal(await page.getByRole('region', { name: 'Answer', exact: true }).getByRole('link', { name: 'Open source 2: W3C Documentation' }).count(), 1);
       await open('choice');
       const choice = page.getByRole('group', { name: 'Pricing scenario' });
       await choice.getByRole('searchbox').fill('Grow');
@@ -226,7 +247,6 @@ try {
       assert.ok(sprite.ok());
       assert.match(await sprite.text(), /<symbol id="plane"/);
       await page.getByText('First entries: AB').waitFor();
-      await page.getByText('Chart data', { exact: true }).click();
       await page.getByRole('cell', { name: '3', exact: true }).waitFor();
       await open('stream');
       assert.equal(await page.getByRole('region', { name: 'Answer', exact: true }).getAttribute('aria-busy'), 'true');
@@ -237,6 +257,20 @@ try {
       await context.close();
     }
   }
+  // Tap the source directly on mobile. Intercept the popup navigation at the
+  // browser context so the test proves the destination without network egress.
+  const touch = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true });
+  const touchPage = await touch.newPage();
+  const sourceUrl = 'https://support.google.com/google-ads/answer/7478529';
+  await touch.route(sourceUrl, route => route.fulfill({ contentType: 'text/html', body: '<h1>Source destination</h1>' }));
+  await touchPage.goto(origin + '/?case=numericEvidence&theme=dark');
+  const [destination] = await Promise.all([
+    touchPage.waitForEvent('popup'),
+    touchPage.getByRole('link', { name: 'Open source 3: About keyword matching options' }).tap(),
+  ]);
+  await destination.getByRole('heading', { name: 'Source destination' }).waitFor();
+  assert.equal(destination.url(), sourceUrl);
+  await touch.close();
   const paletteContext = await browser.newContext({ viewport: { width: 390, height: 844 } });
   const palettePage = await paletteContext.newPage();
   const answerRegion = palettePage.getByRole('region', { name: 'Answer', exact: true });

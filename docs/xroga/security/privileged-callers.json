@@ -1,23 +1,23 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "d725328f114038c33499ede2dc4c3d5c4cc48457bdfae508c89fcace9c693432",
+  "reviewRegistrySha256": "da2c81ed840e782e329d80ebaf70df627f1e3431197d9078ea7f0b4591d74eef",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
     "privilegedFactorySites": 226,
-    "persistenceCandidates": 1010,
+    "persistenceCandidates": 1009,
     "ownerPredicateCandidates": 262,
-    "reviewRequired": 157,
+    "reviewRequired": 156,
     "reviewedCandidates": 853,
-    "unresolvedSafetyCandidates": 201,
+    "unresolvedSafetyCandidates": 200,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 23
   },
   "outcomes": {
-    "REVIEW_REQUIRED": 157,
+    "REVIEW_REQUIRED": 156,
     "SCOPED_BOUNDARY": 547,
     "NARROW_EXCEPTION": 52,
     "NOT_PERSISTENCE": 210,
@@ -29,7 +29,7 @@
     "scope": "COMMAND_007_CRITERION_EVIDENCE_NOT_BATCH_OR_PRODUCTION_ACCEPTANCE",
     "certifiedScopedPrivilegedCallers": 0,
     "verifiedCandidateBoundaries": 80,
-    "unresolvedCandidateBoundaries": 930,
+    "unresolvedCandidateBoundaries": 929,
     "criteria": [
       {
         "id": "XB01-C007-AC01",
@@ -6308,7 +6308,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "32fb736242d6c45558cf"
+        "id": "958dfbd784ba9e4cc0c9"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -6388,15 +6388,11 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "85c28313536e49e5e2d3"
-      },
-      {
-        "code": "MISSING_CALLER_REVIEW",
         "id": "596fb6eb373b39279c3e"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "6a5f707e725aad757a40"
+        "id": "2aa4104e88385814af87"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -6416,7 +6412,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "8f79ed0414dde0a30453"
+        "id": "fccd4b3be4fb6d7b3e31"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -7160,7 +7156,7 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "32fb736242d6c45558cf"
+        "id": "958dfbd784ba9e4cc0c9"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -7212,11 +7208,7 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "85c28313536e49e5e2d3"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "6a5f707e725aad757a40"
+        "id": "2aa4104e88385814af87"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -10208,7 +10200,7 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "8f79ed0414dde0a30453"
+        "id": "fccd4b3be4fb6d7b3e31"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -10221,10 +10213,10 @@
     ]
   },
   "reviewAgreement": {
-    "currentCallers": 1010,
+    "currentCallers": 1009,
     "structuredVerified": 80,
-    "structuredUnproven": 930,
-    "manualUnresolved": 201,
+    "structuredUnproven": 929,
+    "manualUnresolved": 200,
     "manualUnsupported": 729,
     "agreedVerified": 80,
     "proofAwaitingManualReconciliation": 0
@@ -30952,15 +30944,15 @@
       }
     },
     {
-      "id": "32fb736242d6c45558cf",
+      "id": "958dfbd784ba9e4cc0c9",
       "path": "frontend/src/app/share/[token]/page.tsx",
-      "line": 116,
+      "line": 115,
       "enclosing": "canPresentRichShare",
       "kind": "RPC_CANDIDATE",
       "target": "current_community_role",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "1a3ed5f8accf91bdb421b5150eb679009d1557213a8e2ba81581e7800dd0dbc2"
+      "sourceSha256": "df622a35e0f0208ad80cad4ea639004cb8e8066414c6ecf4f418f2a7e69ffcea"
     },
     {
       "id": "19620b924bbcbab333b0",
@@ -31623,7 +31615,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "1aab4befcc06f09c6883afa1f79def469c70ad94dd984e1554cd056655e1d310"
+      "sourceSha256": "9325d074808912c08ec9d59c7c4b58b09b831a91ab07d9601e44d70b33bddbb8"
     },
     {
       "id": "38edd11cb4a9893a7442",
@@ -31634,7 +31626,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "1aab4befcc06f09c6883afa1f79def469c70ad94dd984e1554cd056655e1d310"
+      "sourceSha256": "9325d074808912c08ec9d59c7c4b58b09b831a91ab07d9601e44d70b33bddbb8"
     },
     {
       "id": "40adbb3cf38b25222c41",
@@ -31901,17 +31893,6 @@
       }
     },
     {
-      "id": "85c28313536e49e5e2d3",
-      "path": "frontend/src/components/terminal/ResponseSources.tsx",
-      "line": 59,
-      "enclosing": "ResponseSources",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "<dynamic>",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "7eb3b6c914a202214c13f5e66ac4d7de19ec6eb18725995d5b40ffc82a23610a"
-    },
-    {
       "id": "596fb6eb373b39279c3e",
       "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
       "line": 360,
@@ -31933,7 +31914,7 @@
       }
     },
     {
-      "id": "6a5f707e725aad757a40",
+      "id": "2aa4104e88385814af87",
       "path": "frontend/src/components/terminal/XrogaRichResultsView.tsx",
       "line": 203,
       "enclosing": "RichResultsContent",
@@ -31941,7 +31922,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "872ab28612bcce7b7b656e748219fa74242e133529e1b272fe865a8a8279f577"
+      "sourceSha256": "3a676aaf12473990570c41cb3dfb4b54cce4ff74ded53115c887fab98778d470"
     },
     {
       "id": "8e9b157c7d4fd26ad135",
@@ -32138,15 +32119,15 @@
       }
     },
     {
-      "id": "8f79ed0414dde0a30453",
+      "id": "fccd4b3be4fb6d7b3e31",
       "path": "frontend/src/lib/formatAiMarkdown.tsx",
-      "line": 640,
+      "line": 638,
       "enclosing": "decodeBase64UrlUtf8",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "1e2deb18cb83176b8fef27331df8c612026ddf9ee67eabab8f465f4faa6315b3",
+      "sourceSha256": "231169928fb8f5a9683adabf0525102c69c862733d02ccb1a4600146cd4d8cb8",
       "semanticReview": {
         "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in decodeBase64UrlUtf8, with no database or Storage client receiver.",
         "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh. Re-bound 2026-11-04: Diff from the reviewed source d80e1ce5489b is only `export` added to BusinessActionConfirmationInline so the V2 turn can render the existing confirmation review. The reviewed call (decodeBase64UrlUtf8 Array/Uint8Array conversion) is unchanged; no new call, receiver, persistence or egress was added.",

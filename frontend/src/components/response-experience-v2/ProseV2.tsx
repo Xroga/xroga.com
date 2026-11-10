@@ -58,7 +58,7 @@ export function ProseV2({ text, sources = [] }: { text: string; sources?: Citati
         if (href.startsWith('/')) return <a href={href}>{children}</a>;
         const match = /^\[(\d+)\]$/.exec(String(children));
         const source = match && sources[Number(match[1]) - 1];
-        if (source && safeLinkV2(source.url) === href) return <SourceLinkV2 url={href} title={source.title} number={Number(match![1])} />;
+        if (source && safeLinkV2(source.url) === href) return <SourceLinkV2 url={href} title={source.title} siteName={source.siteName} number={Number(match![1])} />;
         return <a href={href} target="_blank" rel="noopener noreferrer"><SourceMarkV2 url={href} /> {children}</a>;
       },
       img: ({ alt, src }) => <InlineImageV2 key={src} alt={alt} src={src} />,
