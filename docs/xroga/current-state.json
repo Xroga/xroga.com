@@ -2,10 +2,10 @@
   "version": "1.0",
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
-    "branch": "codex/workspace-inline-sources-20261110",
-    "sha": "5121a757547e3773f630d2483c07106f41d6dd87",
-    "sourceTimestampUtc": "2026-11-11T02:58:20+05:00",
-    "auditStartedUtc": "2026-11-10T21:59:16.428Z",
+    "branch": "codex/openui-live-skills-compatibility-20261111",
+    "sha": "cdb388503a3bf961b373e28843e882985ee4b9b6",
+    "sourceTimestampUtc": "2026-11-11T03:24:36+05:00",
+    "auditStartedUtc": "2026-11-10T22:30:52.816Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
@@ -82591,7 +82591,7 @@
       "id": "surface:c2786546b607faccd5cc",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/layout/AppShell.tsx",
-      "sha256": "9f1e4e747595fb5eb215a6a186f30fa44bd4661885d59b9e7b0894258bb34616",
+      "sha256": "dbce5f6ab1627fed981c30fd107aecce33180561622795796f8185acfedac134",
       "symbols": [
         "AppShell",
         "AppShellProps",
@@ -83525,7 +83525,7 @@
       "id": "surface:7da6f201c8b9c4811bef",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/layout/Sidebar.tsx",
-      "sha256": "0a285c329d08c67062b57ad1ba5bf2c5bf50027a2a32bac83e3735626854a528",
+      "sha256": "39efbd0c786649998ec6d6af5102887326ad1592f5005ba3a5eca40a99124bdb",
       "symbols": [
         "EDGE_DRAG_THRESHOLD_PX",
         "HOVER_OPEN_DELAY_MS",
@@ -84952,7 +84952,7 @@
       "id": "surface:94c857b6d7106a374360",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/library/LibraryWorkspace.tsx",
-      "sha256": "51fa82647e6c5eaaee2114bb2a2a620926290753427600dbc8ab1e573ddde908",
+      "sha256": "ae0f15a4f2d12c27f8ae92dc74335d5bd97048beb8f1f638ad5334f9e24bb562",
       "symbols": [
         "AccountLibraryWorkspace",
         "CurrentIcon",
@@ -84980,6 +84980,7 @@
       "imports": [
         "./LibraryFilePreview",
         "./LibraryWorkspace.module.css",
+        "./NativeSkillsDirectory",
         "@/components/layout/PageFullscreenFrame",
         "@/components/layout/WorkspaceIdentityContext",
         "@/hooks/useHydrated",
@@ -84995,6 +84996,7 @@
         "frontend/src/components/layout/WorkspaceIdentityContext.tsx",
         "frontend/src/components/library/LibraryFilePreview.tsx",
         "frontend/src/components/library/LibraryWorkspace.module.css",
+        "frontend/src/components/library/NativeSkillsDirectory.tsx",
         "frontend/src/hooks/useHydrated.ts",
         "frontend/src/lib/api.ts",
         "frontend/src/lib/showcase/registry.ts",
@@ -85026,6 +85028,109 @@
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
       "knownRisk": "Production source contains annotated mock/TODO/placeholder/simulation markers; individual findings classified separately.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:0895371da52480668762",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/library/NativeSkillsDirectory.tsx",
+      "sha256": "b936d823fdf858f0afad3a3d687a1bf3a11a9c6680ce50b5cb1396146915ae2d",
+      "symbols": [
+        "NativeSkillsDirectory",
+        "matches"
+      ],
+      "imports": [
+        "./NativeSkillsDirectory.module.css",
+        "@/lib/nativeWorkSkills",
+        "lucide-react",
+        "next/link",
+        "react"
+      ],
+      "runtimeImports": [
+        "frontend/src/components/library/NativeSkillsDirectory.module.css",
+        "frontend/src/lib/nativeWorkSkills.ts"
+      ],
+      "entryPoints": [
+        "frontend/src/app/(shell)/dashboard/library/page.tsx",
+        "frontend/src/app/(shell)/layout.tsx",
+        "frontend/src/app/(workspace)/layout.tsx",
+        "frontend/src/app/ai-app-builder/page.tsx",
+        "frontend/src/app/game-builder/page.tsx",
+        "frontend/src/app/software/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/library/LibraryWorkspace.tsx:14",
+        "frontend/src/components/library/NativeSkillsPicker.tsx:5"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "lucide-react",
+        "next/link",
+        "react"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Production source contains annotated mock/TODO/placeholder/simulation markers; individual findings classified separately.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:58708f59ab7abc0773f9",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/library/NativeSkillsPicker.tsx",
+      "sha256": "6f8a63b3cbd334f6361b9787bad76b3b4677e19befa2bbcbb709cd00437b0d0b",
+      "symbols": [
+        "NativeSkillsPicker",
+        "listener"
+      ],
+      "imports": [
+        "./NativeSkillsDirectory",
+        "./NativeSkillsPicker.module.css",
+        "@/lib/nativeWorkSkills",
+        "lucide-react",
+        "react",
+        "react-dom"
+      ],
+      "runtimeImports": [
+        "frontend/src/components/library/NativeSkillsDirectory.tsx",
+        "frontend/src/components/library/NativeSkillsPicker.module.css"
+      ],
+      "entryPoints": [
+        "frontend/src/app/(shell)/layout.tsx",
+        "frontend/src/app/(workspace)/layout.tsx",
+        "frontend/src/app/ai-app-builder/page.tsx",
+        "frontend/src/app/game-builder/page.tsx",
+        "frontend/src/app/software/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/terminal/ChatBarActionsMenu.tsx:15"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "lucide-react",
+        "react",
+        "react-dom"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
       "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
@@ -95091,7 +95196,7 @@
       "id": "surface:9e31be4cbf4607201de1",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/ChatBarActionsMenu.tsx",
-      "sha256": "caa7e448e518c7b41b2302b1f97414998ad975847bffba857995113934feb4e3",
+      "sha256": "a7dc712f71f0e7749c7dade52782ee8e75d82953b7122a090212d3741d787aff",
       "symbols": [
         "ChatBarActionsMenu",
         "ComposerInsertOptions",
@@ -95123,6 +95228,8 @@
         "./WorkspaceControls.module.css",
         "@/components/icons/animated/AnimatedIcon",
         "@/components/icons/animated/CirclePlayIcon",
+        "@/components/library/NativeSkillsPicker",
+        "@/lib/nativeWorkSkills",
         "@/lib/utils",
         "@/store/useComposerToolsStore",
         "lucide-react",
@@ -95132,7 +95239,9 @@
       "runtimeImports": [
         "frontend/src/components/icons/animated/AnimatedIcon.tsx",
         "frontend/src/components/icons/animated/CirclePlayIcon.tsx",
+        "frontend/src/components/library/NativeSkillsPicker.tsx",
         "frontend/src/components/terminal/WorkspaceControls.module.css",
+        "frontend/src/lib/nativeWorkSkills.ts",
         "frontend/src/lib/utils.ts",
         "frontend/src/store/useComposerToolsStore.ts"
       ],
@@ -98200,7 +98309,7 @@
       "id": "surface:3a6e395bda32efc304e5",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "sha256": "1ba12d5fa02c594c37d4dce9b120214619257eebd32d287e80efcd8c4813fa02",
+      "sha256": "0a89d45270f28d036dfd6a647a1b812b5661f58c82a6b975f21de8c3b115c05d",
       "symbols": [
         "COMPOSER_PLACEHOLDERS",
         "MIN_INPUT_H",
@@ -98296,6 +98405,7 @@
         "@/lib/chatComposerSizing",
         "@/lib/chatSuggestions",
         "@/lib/companion",
+        "@/lib/nativeWorkSkills",
         "@/lib/parseImageContent",
         "@/lib/repoContext",
         "@/lib/repoSessionsIndex",
@@ -98327,6 +98437,7 @@
         "frontend/src/lib/chatComposerSizing.ts",
         "frontend/src/lib/chatSuggestions.ts",
         "frontend/src/lib/companion.ts",
+        "frontend/src/lib/nativeWorkSkills.ts",
         "frontend/src/lib/parseImageContent.ts",
         "frontend/src/lib/repoContext.ts",
         "frontend/src/lib/repoSessionsIndex.ts",
@@ -104443,7 +104554,7 @@
         "frontend/src/components/terminal/RepoWorkspaceGateModal.tsx:5",
         "frontend/src/components/terminal/TerminalChatBar.tsx:11",
         "frontend/src/components/terminal/TerminalChatBar.tsx:22",
-        "frontend/src/components/terminal/TerminalChatBar.tsx:275",
+        "frontend/src/components/terminal/TerminalChatBar.tsx:300",
         "frontend/src/components/terminal/VercelBuildGateModal.tsx:5",
         "frontend/src/components/terminal/VercelDeployButton.tsx:5",
         "frontend/src/components/terminal/WorkspaceConnectionsStrip.tsx:10",
@@ -109653,6 +109764,52 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:432c73ac41620cedf0ed",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/lib/nativeWorkSkills.ts",
+      "sha256": "6203e6dc53733abb3c06079dc71e3ee40ca940a0d496715e61a1b5c8161bcefe",
+      "symbols": [
+        "NATIVE_WORK_SKILLS",
+        "NativeWorkSkill",
+        "buildNativeWorkSkillPrompt",
+        "nativeSkillWorkspaceHref",
+        "nativeWorkSkillById"
+      ],
+      "imports": [],
+      "runtimeImports": [],
+      "entryPoints": [
+        "frontend/src/app/(shell)/dashboard/library/page.tsx",
+        "frontend/src/app/(shell)/layout.tsx",
+        "frontend/src/app/(workspace)/layout.tsx",
+        "frontend/src/app/ai-app-builder/page.tsx",
+        "frontend/src/app/game-builder/page.tsx",
+        "frontend/src/app/software/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/library/NativeSkillsDirectory.tsx:5",
+        "frontend/src/components/terminal/ChatBarActionsMenu.tsx:16",
+        "frontend/src/components/terminal/TerminalChatBar.tsx:37",
+        "frontend/src/lib/nativeWorkSkills.test.ts:4"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "frontend/src/lib/nativeWorkSkills.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:025eefac750957473401",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/normalizeBuildSource.ts",
@@ -110374,7 +110531,7 @@
       "callers": [
         "frontend/src/components/terminal/ImageStudioCard.tsx:26",
         "frontend/src/components/terminal/ReasoningAndFollowUps.tsx:6",
-        "frontend/src/components/terminal/TerminalChatBar.tsx:297",
+        "frontend/src/components/terminal/TerminalChatBar.tsx:322",
         "frontend/src/context/TerminalChatContext.tsx:60",
         "frontend/src/lib/phase1Routing.ts:2",
         "frontend/src/lib/workLanes.ts:2"
@@ -142396,17 +142553,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:fbf1e8772373dc39627d",
-      "sourcePath": "frontend/src/components/layout/Sidebar.tsx",
-      "line": 183,
-      "kind": "COMING_SOON",
-      "reachable": true,
-      "state": "PARTIAL",
-      "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
-      "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
-    },
-    {
-      "id": "finding:d8e64ea85939c0056965",
+      "id": "finding:da8910eec46b603117d5",
       "sourcePath": "frontend/src/components/layout/Sidebar.tsx",
       "line": 184,
       "kind": "COMING_SOON",
@@ -142416,7 +142563,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:69df65f0fa0343d91e18",
+      "id": "finding:3e99212b7d1a11100dd6",
       "sourcePath": "frontend/src/components/layout/Sidebar.tsx",
       "line": 536,
       "kind": "SIMULATED",
@@ -142426,7 +142573,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:f37715e5984e8c7f50b5",
+      "id": "finding:c1cdf14e48529bbf1b70",
       "sourcePath": "frontend/src/components/layout/Sidebar.tsx",
       "line": 850,
       "kind": "COMING_SOON",
@@ -142496,10 +142643,30 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:00fff5c3dbdd978e96e8",
+      "id": "finding:7521f6aed94047865f26",
       "sourcePath": "frontend/src/components/library/LibraryWorkspace.tsx",
-      "line": 92,
+      "line": 94,
       "kind": "PLACEHOLDER",
+      "reachable": true,
+      "state": "PARTIAL",
+      "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
+      "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
+    },
+    {
+      "id": "finding:0fa77a0c864c8c16300a",
+      "sourcePath": "frontend/src/components/library/NativeSkillsDirectory.tsx",
+      "line": 18,
+      "kind": "PLACEHOLDER",
+      "reachable": true,
+      "state": "PARTIAL",
+      "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
+      "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
+    },
+    {
+      "id": "finding:ab204eeb2167cf8bf31d",
+      "sourcePath": "frontend/src/components/library/NativeSkillsDirectory.tsx",
+      "line": 29,
+      "kind": "SIMULATED",
       "reachable": true,
       "state": "PARTIAL",
       "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
@@ -143476,9 +143643,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:1db14d9aa7e8e587b6b3",
+      "id": "finding:91947726cbf5de9154fa",
       "sourcePath": "frontend/src/components/terminal/ChatBarActionsMenu.tsx",
-      "line": 385,
+      "line": 392,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -143566,9 +143733,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:bb65d500d9e49be3ef68",
+      "id": "finding:4b71cb04ad0afdce19bc",
       "sourcePath": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "line": 724,
+      "line": 749,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -143576,9 +143743,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:2b518125f3933badbecc",
+      "id": "finding:680c10be45ee013d4326",
       "sourcePath": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "line": 732,
+      "line": 757,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -143586,9 +143753,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:f23e34265e803b215bd5",
+      "id": "finding:88362f37263c3032c153",
       "sourcePath": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "line": 732,
+      "line": 757,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -146231,44 +146398,44 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:802861099a3684aa14d9",
+      "id": "frontend-call:4f428e528087d3997aae",
       "sourcePath": "frontend/src/components/library/LibraryWorkspace.tsx",
-      "line": 56,
+      "line": 58,
       "callee": "api.projects.list().then().catch",
       "reachable": true
     },
     {
-      "id": "frontend-call:9b51631813679a7fa93c",
+      "id": "frontend-call:6f831928b6ded256e7dc",
       "sourcePath": "frontend/src/components/library/LibraryWorkspace.tsx",
-      "line": 56,
+      "line": 58,
       "callee": "api.projects.list().then",
       "reachable": true
     },
     {
-      "id": "frontend-call:44565d127d75196f55cb",
+      "id": "frontend-call:0fe1c5757134383b427a",
       "sourcePath": "frontend/src/components/library/LibraryWorkspace.tsx",
-      "line": 56,
+      "line": 58,
       "callee": "api.projects.list",
       "reachable": true
     },
     {
-      "id": "frontend-call:b261ee817e260f5e18ab",
+      "id": "frontend-call:26721124cedf6408268b",
       "sourcePath": "frontend/src/components/library/LibraryWorkspace.tsx",
-      "line": 68,
+      "line": 70,
       "callee": "api.projects.files().then().catch",
       "reachable": true
     },
     {
-      "id": "frontend-call:2effcf18721cd75dc129",
+      "id": "frontend-call:d91641390c8d9331c198",
       "sourcePath": "frontend/src/components/library/LibraryWorkspace.tsx",
-      "line": 68,
+      "line": 70,
       "callee": "api.projects.files().then",
       "reachable": true
     },
     {
-      "id": "frontend-call:9ce858e9b473996693ae",
+      "id": "frontend-call:cb6df10019c09ddbe803",
       "sourcePath": "frontend/src/components/library/LibraryWorkspace.tsx",
-      "line": 68,
+      "line": 70,
       "callee": "api.projects.files",
       "reachable": true
     },
@@ -146980,44 +147147,44 @@
       "reachable": false
     },
     {
-      "id": "frontend-call:232b0146b126dd888771",
+      "id": "frontend-call:47915bd262d8978f5880",
       "sourcePath": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "line": 185,
+      "line": 210,
       "callee": "api.github.status().then().catch",
       "reachable": true
     },
     {
-      "id": "frontend-call:e378b26805d780049d96",
+      "id": "frontend-call:8f008dd5ae876e524eec",
       "sourcePath": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "line": 185,
+      "line": 210,
       "callee": "api.github.status().then",
       "reachable": true
     },
     {
-      "id": "frontend-call:0cb84f92125130d4d94d",
+      "id": "frontend-call:1e8c4774fd00847f1103",
       "sourcePath": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "line": 185,
+      "line": 210,
       "callee": "api.github.status",
       "reachable": true
     },
     {
-      "id": "frontend-call:f0cb8c160930c8235f21",
+      "id": "frontend-call:6b56677be31dc2f536d6",
       "sourcePath": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "line": 189,
+      "line": 214,
       "callee": "api.vercel.status().then().catch",
       "reachable": true
     },
     {
-      "id": "frontend-call:acb870dd1a39a61c0fe1",
+      "id": "frontend-call:060335933e29a065f58b",
       "sourcePath": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "line": 189,
+      "line": 214,
       "callee": "api.vercel.status().then",
       "reachable": true
     },
     {
-      "id": "frontend-call:a4ec456ab928ed888c85",
+      "id": "frontend-call:186795f2b3ac497b0859",
       "sourcePath": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "line": 189,
+      "line": 214,
       "callee": "api.vercel.status",
       "reachable": true
     },
@@ -154328,6 +154495,13 @@
       "id": "test-suite:fb15c47d176af7a1990f",
       "sourcePath": "frontend/src/lib/modelHandoff.test.ts",
       "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:91284802957ba100ee27",
+      "sourcePath": "frontend/src/lib/nativeWorkSkills.test.ts",
+      "declaredTests": 3,
       "skipLocations": [],
       "focusLocations": []
     },

@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "5121a757547e3773f630d2483c07106f41d6dd87",
+  "source_sha": "cdb388503a3bf961b373e28843e882985ee4b9b6",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -21834,7 +21834,7 @@
     },
     {
       "path": "frontend/src/components/layout/AppShell.tsx",
-      "sha256": "9f1e4e747595fb5eb215a6a186f30fa44bd4661885d59b9e7b0894258bb34616"
+      "sha256": "dbce5f6ab1627fed981c30fd107aecce33180561622795796f8185acfedac134"
     },
     {
       "path": "frontend/src/components/layout/BetaExpectationBanner.tsx",
@@ -21898,7 +21898,7 @@
     },
     {
       "path": "frontend/src/components/layout/Sidebar.tsx",
-      "sha256": "0a285c329d08c67062b57ad1ba5bf2c5bf50027a2a32bac83e3735626854a528"
+      "sha256": "39efbd0c786649998ec6d6af5102887326ad1592f5005ba3a5eca40a99124bdb"
     },
     {
       "path": "frontend/src/components/layout/SidebarActionMenu.tsx",
@@ -21966,7 +21966,15 @@
     },
     {
       "path": "frontend/src/components/library/LibraryWorkspace.tsx",
-      "sha256": "51fa82647e6c5eaaee2114bb2a2a620926290753427600dbc8ab1e573ddde908"
+      "sha256": "ae0f15a4f2d12c27f8ae92dc74335d5bd97048beb8f1f638ad5334f9e24bb562"
+    },
+    {
+      "path": "frontend/src/components/library/NativeSkillsDirectory.tsx",
+      "sha256": "b936d823fdf858f0afad3a3d687a1bf3a11a9c6680ce50b5cb1396146915ae2d"
+    },
+    {
+      "path": "frontend/src/components/library/NativeSkillsPicker.tsx",
+      "sha256": "6f8a63b3cbd334f6361b9787bad76b3b4677e19befa2bbcbb709cd00437b0d0b"
     },
     {
       "path": "frontend/src/components/magicui/globe.tsx",
@@ -22614,7 +22622,7 @@
     },
     {
       "path": "frontend/src/components/terminal/ChatBarActionsMenu.tsx",
-      "sha256": "caa7e448e518c7b41b2302b1f97414998ad975847bffba857995113934feb4e3"
+      "sha256": "a7dc712f71f0e7749c7dade52782ee8e75d82953b7122a090212d3741d787aff"
     },
     {
       "path": "frontend/src/components/terminal/ChatBarButtons.tsx",
@@ -22810,7 +22818,7 @@
     },
     {
       "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "sha256": "1ba12d5fa02c594c37d4dce9b120214619257eebd32d287e80efcd8c4813fa02"
+      "sha256": "0a89d45270f28d036dfd6a647a1b812b5661f58c82a6b975f21de8c3b115c05d"
     },
     {
       "path": "frontend/src/components/terminal/TerminalDock.tsx",
@@ -23563,6 +23571,10 @@
     {
       "path": "frontend/src/lib/modelHandoff.ts",
       "sha256": "f4e011fd3e7dc1effe2c74a0bfef81bede80ac4339731861ebfc972623b2f678"
+    },
+    {
+      "path": "frontend/src/lib/nativeWorkSkills.ts",
+      "sha256": "6203e6dc53733abb3c06079dc71e3ee40ca940a0d496715e61a1b5c8161bcefe"
     },
     {
       "path": "frontend/src/lib/normalizeBuildSource.ts",

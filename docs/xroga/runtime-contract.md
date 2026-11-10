@@ -1,6 +1,6 @@
 # Runtime and dependency contract
 
-Source SHA: `5121a757547e3773f630d2483c07106f41d6dd87`. Xroga retains its canonical scheduler, authority, budget ledger, vault and durable state. This inventory creates no competing execution system.
+Source SHA: `cdb388503a3bf961b373e28843e882985ee4b9b6`. Xroga retains its canonical scheduler, authority, budget ledger, vault and durable state. This inventory creates no competing execution system.
 
 ## Runtime classes
 

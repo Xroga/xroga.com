@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "ba02786744b8c228a35759470cfcc083e6f4659c82bcaa1661dfb47393935b38",
+  "reviewRegistrySha256": "341d30d42b1abc8aa6abd14156c30a00f4882e11dd9681886f44185b0dfa2f91",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -6388,7 +6388,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "596fb6eb373b39279c3e"
+        "id": "69d6ffd06737331aba28"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -10184,7 +10184,7 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "596fb6eb373b39279c3e"
+        "id": "69d6ffd06737331aba28"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -31893,15 +31893,15 @@
       }
     },
     {
-      "id": "596fb6eb373b39279c3e",
+      "id": "69d6ffd06737331aba28",
       "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "line": 360,
+      "line": 385,
       "enclosing": "TerminalChatBar",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "1ba12d5fa02c594c37d4dce9b120214619257eebd32d287e80efcd8c4813fa02",
+      "sourceSha256": "0a89d45270f28d036dfd6a647a1b812b5661f58c82a6b975f21de8c3b115c05d",
       "semanticReview": {
         "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in TerminalChatBar, with no database or Storage client receiver.",
         "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
