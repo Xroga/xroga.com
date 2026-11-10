@@ -191,7 +191,7 @@ export function WorkspaceShowcaseStarts({ className }: { className?: string }) {
   const autoOpenedRef = useRef(false);
 
   useEffect(() => {
-    setRecentSessions(loadTerminalHistory().filter((entry) => Boolean(entry.githubRepoName)).slice(0, 6));
+    setRecentSessions(loadTerminalHistory().slice(0, 6));
     let active = true;
     void api.github.listRepos().then(({ repos }) => {
       if (active) setRepositories(repos.slice(0, 8));
@@ -291,7 +291,7 @@ section.style.setProperty(
 
   const useTemplate = () => {
     if (!selectedTemplate) return;
-    const prompt = `${selectedTemplate.defaultBuildPrompt}\n\nBuild this as my own responsive product, preserve the strongest interaction patterns, push the finished code to my selected GitHub repository, and verify the result before reporting completion.`;
+    const prompt = `${selectedTemplate.defaultBuildPrompt}\n\nBuild this as my own responsive product, preserve the strongest interaction patterns, verify it in Xroga, and offer GitHub publishing only after I select and authorize a repository.`;
     setPrompt(prompt);
     setSelectedTemplate(null);
     window.setTimeout(() => {

@@ -561,8 +561,8 @@ export function Sidebar({ displayName, email }: SidebarProps) {
     useProjectWorkspaceStore.getState().setWorkspaceOpen(false);
     handleNavClick();
     router.push('/workspace');
-    // Signal the composer after the task reset. The canonical project stays selected;
-    // users clear it only through the separate "New product" control.
+    // Signal the composer after New Work clears the previous project
+    // and repository. Users can opt back into either in the same workspace.
     window.setTimeout(() => {
       window.dispatchEvent(new CustomEvent('xroga-request-new-terminal'));
     }, 80);
