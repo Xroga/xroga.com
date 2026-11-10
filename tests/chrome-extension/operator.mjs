@@ -22,6 +22,8 @@ if (live)
   );
 const providerModel = "deepseek-v4.1-flash-1017";
 const receipts = [];
+let pointerWaitVerified = false;
+let pointerAnchorVerified = false;
 let liveRequests = 0;
 let spentMicros = 0;
 // Chrome's IndexedDB files can exceed Windows' path limit under a deeply nested job root.
@@ -298,6 +300,11 @@ try {
   console.log("Chrome started");
   browser.on("page", page => page.on("pageerror", error => console.error("Fixture page error:", error.message)));
   const tab = browser.pages()[0];
+  // The on-page Xroga pointer, as the page can see it: its mode and its status (its content is in a closed shadow root).
+  const pointerState = () => tab.evaluate(() => {
+    const host = document.querySelector("[data-xroga-pointer]");
+    return host ? { mode: host.getAttribute("data-xroga-pointer"), status: host.getAttribute("data-xroga-status") } : null;
+  });
   const cdp = await browser.browser().newBrowserCDPSession();
   const { id } = await cdp.send("Extensions.loadUnpacked", { path: dist });
   console.log("Agent extension loaded");
@@ -730,10 +737,16 @@ try {
         await new Promise((resolve) => setTimeout(resolve, 100));
     }
     assert.ok(stopRun?.pending);
+    // The model is thinking and nothing has been clicked yet: past the 1.6 s the old pointer lasted, the pointer is still
+    // on the page with a neutral anchored status, not pointing at a control.
+    await new Promise(resolve => setTimeout(resolve, 2500));
+    assert.deepEqual(await pointerState(), { mode: "neutral", status: "Waiting for response" }, "the pointer stays through a model wait");
+    pointerWaitVerified = true;
     await stop.click();
     try {
       await waitForFinish(formOnly ? 2 : 4);
       assert.deepEqual(stopRun.result, { status: "cancelled", actions: [] });
+      await tab.waitForFunction(() => !document.querySelector("[data-xroga-pointer]"), undefined, { timeout: 5000 });
     } finally {
       stopRun.release();
     }
@@ -751,7 +764,12 @@ try {
       if (!recovery?.release) await new Promise(resolve => setTimeout(resolve, 100));
     }
     assert.ok(recovery?.release, "the third request crossed the fixture provider admission boundary");
+    // Actions have run in this task, so the pointer rests at the last verified point while the third model request waits.
+    await new Promise(resolve => setTimeout(resolve, 2500));
+    assert.deepEqual(await pointerState(), { mode: "point", status: "Waiting for response" }, "the pointer rests at the last verified action during a model wait");
+    pointerAnchorVerified = true;
     await pause.click();
+    await tab.waitForFunction(() => !document.querySelector("[data-xroga-pointer]"), undefined, { timeout: 5000 });
     const resume = panel.getByRole("button", { name: "Resume", exact: true });
     await resume.waitFor({ timeout: 25_000 });
     recovery.release();
@@ -841,6 +859,8 @@ try {
       cancelledPendingTurn: !documentOnly,
       voiceFixtureRequests: voiceRequests,
       actionCues: [...actionCues].sort(),
+      pointerStaysThroughModelWait: pointerWaitVerified,
+      pointerRestsAtLastActionDuringWait: pointerAnchorVerified,
       resumedWithoutReplay: !live && !documentOnly,
       restartAndAccountBoundary: !live && !documentOnly,
       manualPauseAndResume: !live && !documentOnly,

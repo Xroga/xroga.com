@@ -291,7 +291,10 @@ export function setBorder(state: BorderState, pointer?: PointerCommand | null): 
   }
   const { glow, ptr, chip, ring } = b;
   if (pointer) {
-    if (typeof pointer.label === 'string') chip.textContent = 'Xroga · ' + pointer.label;
+    if (typeof pointer.label === 'string') {
+      chip.textContent = 'Xroga · ' + pointer.label;
+      b.host.setAttribute('data-xroga-status', pointer.label);
+    }
     const { x, y } = pointer;
     if (typeof x === 'number' && typeof y === 'number' && Number.isFinite(x) && Number.isFinite(y)) {
       // The pointer always stays inside the visible page: a point outside it (the page scrolled or resized) is clamped to the edge.

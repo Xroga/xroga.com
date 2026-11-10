@@ -382,7 +382,8 @@ export class RunManager {
   #paintActivity(conversationId: string, body: PanelEventBody): void {
     const label =
       body.type === 'turn_start' ? 'Waiting for response'
-      : body.type === 'message_start' ? 'Planning next step'
+      // message_start fires as the request leaves, before any reply: only streamed text means the model is answering.
+      : body.type === 'message_update' ? 'Planning next step'
       : body.type === 'tool_execution_start' ? toolLabel(body.row.tool)
       : body.type === 'tool_execution_end' ? 'Analyzing page'
       : undefined;
