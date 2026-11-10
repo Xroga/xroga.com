@@ -5159,7 +5159,7 @@
       "id": "surface:456e62cb099b42e5c2a2",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUi.ts",
-      "sha256": "08062f0c40610ea5ce607bfc70f1724e2a6f8bba59c8df88cf27322ec5091995",
+      "sha256": "2f17f67798b61ed09e96dcc825af7eb2e7510aeffa16efd3c5ee519aba3d0e2e",
       "symbols": [
         "MAX_PROGRAM_CHARS",
         "NATIVE_UI_FORMAT",
@@ -5196,10 +5196,11 @@
         "pureFunctions",
         "reason",
         "record",
+        "recoverNativeMonthlyChart",
+        "recovered",
         "reject",
         "remaining",
         "result",
-        "reviewNativeMonthlyProse",
         "reviewStrings",
         "root",
         "row",
@@ -5273,10 +5274,11 @@
       "id": "surface:f8a39bc555632894e7fb",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiAccuracy.ts",
-      "sha256": "b318aa699165d2db3c13d748d36a67ca0421f98a78d4922c1b18d0e3b996df43",
+      "sha256": "643a30f8162cb8e9a66fccda355ff89c37fefde361f85823e00d595d4273adbd",
       "symbols": [
         "MonthlyPoint",
         "MonthlySeries",
+        "args",
         "base",
         "candidate",
         "change",
@@ -5287,8 +5289,10 @@
         "contradictsMonthlyChart",
         "count",
         "counts",
+        "data",
         "direction",
         "expectedRank",
+        "format",
         "fraction",
         "higher",
         "label",
@@ -5319,6 +5323,8 @@
         "rows",
         "seen",
         "series",
+        "text",
+        "unit",
         "value",
         "values"
       ],
@@ -5511,10 +5517,11 @@
       "id": "surface:93911e9946fd4b21d50d",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiWorkspace.ts",
-      "sha256": "9689d45cfb1ae66f2453c8cc29d554d3961902c1fcdca7a8e2c66ed19ef33bd8",
+      "sha256": "26f5a6ecf1029a2ff9f1219221fc04c5665a81ef3b973a1249374618bdd9574e",
       "symbols": [
         "completeNativeWorkspaceAnswer",
         "completion",
+        "recovered",
         "response",
         "usesNativeWorkspacePresentation",
         "valid",
@@ -86648,7 +86655,7 @@
       "id": "surface:1815fe3ed39eb8d357c4",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/NativeWorkspaceAnswer.tsx",
-      "sha256": "8f61f59aa96ef5598c1fd72df3ddfe605c360c48b2a5f444aef5e5f639868bbb",
+      "sha256": "941c78dc6fe6bfb821c013d332950b4e1412ac09c6ad20a0f20028dc5b80cc84",
       "symbols": [
         "NativeWorkspaceAnswer",
         "Surface",
@@ -97681,7 +97688,7 @@
       "id": "surface:9c57a6290c71522141f5",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/SwarmMessageLog.tsx",
-      "sha256": "adfcd13cb11eba1234b895560342bf36e6407d6cf56ffb64d1317f890eb6f561",
+      "sha256": "062502ced2cf3c8df965fb56c6af3153dc8691a6c6010fd0b563728cb696cf50",
       "symbols": [
         "AGENT_STYLES",
         "SwarmMessageLog",
@@ -118929,7 +118936,7 @@
       "id": "surface:302352813d356af65f42",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/xrogaResponseDocument.ts",
-      "sha256": "791450b4c87ccac4a623f8508700ce3ba5182e21c7d401619046ebe0bd5f6d56",
+      "sha256": "27f3ba8c113e0b4897268761e1adc8458e3040dd5fc6bd20afa939c9f2e25e9c",
       "symbols": [
         "EnhancedAiResponse",
         "MAX_PROTOCOL_CHARS",
@@ -144462,86 +144469,86 @@
       "reachable": false
     },
     {
-      "id": "frontend-call:1676990b3bd806f06d07",
+      "id": "frontend-call:0ee43b5c1d970fe5b518",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 448,
+      "line": 459,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:5b604d07043d3468458a",
+      "id": "frontend-call:d041cf5a7b4da27eb702",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 451,
+      "line": 462,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:32bc2ea4475eab59d1bc",
+      "id": "frontend-call:0f2fc7d03b28eae28fae",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1216,
+      "line": 1227,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:1186d37dc855fd45c148",
+      "id": "frontend-call:aeaf7d03249f76c25ff2",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1217,
+      "line": 1228,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:becab42f2e1d55e5e050",
+      "id": "frontend-call:2cccfdd08f822c3906f6",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1222,
+      "line": 1233,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:a180e066eae9c3ee48e7",
-      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1223,
-      "callee": "fetch",
-      "reachable": false
-    },
-    {
-      "id": "frontend-call:1166ed3b3105e9a74757",
-      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1229,
-      "callee": "fetch",
-      "reachable": false
-    },
-    {
-      "id": "frontend-call:7ebc20f61bf7385ad4e4",
+      "id": "frontend-call:86d67d106fdb10d5193f",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 1234,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:3c4924008d8c3315a49a",
+      "id": "frontend-call:36bd48fe5ada4e48fceb",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1282,
+      "line": 1240,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:7084e3b7a138cc23a28c",
+      "id": "frontend-call:dd1fe5ec255a7d421233",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1283,
+      "line": 1245,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:9f34e93f54e9d8627e2b",
+      "id": "frontend-call:7082a9a382ce1e783530",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1290,
+      "line": 1293,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:e7d93af712c4ff9c16e9",
+      "id": "frontend-call:3ec489a28d2e079741be",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1304,
+      "line": 1294,
+      "callee": "fetch",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:926b45ac9d750b3f6391",
+      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
+      "line": 1301,
+      "callee": "fetch",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:904099f948e284c424de",
+      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
+      "line": 1315,
       "callee": "fetch",
       "reachable": false
     },

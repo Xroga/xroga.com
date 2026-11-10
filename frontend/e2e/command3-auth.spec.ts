@@ -249,6 +249,9 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   const cancellation = 'Stop this pending fixture reply.';
   const malformed = 'Show the invalid-program fallback.';
   const fallback = 'This readable answer remains available.';
+  const reviewed = 'Show the reviewed monthly chart.';
+  const reviewedReply = 'Partial answer. The written summary disagreed with the plotted data, so it was withheld.';
+  const reviewedProgram = 'root = Col([Markdown(' + JSON.stringify(reviewedReply) + '), Chart("bar", [{Month:"January", Value:12000}, {Month:"February", Value:15500}], "Month", ["Value"], "currency", "USD")])';
   const source = { title: 'Workshop source fixture', url: 'https://example.com/workshop', snippet: 'USD 25 per attendee.', source: 'fixture' };
   const program = [
     '$attendees = 40',
@@ -292,6 +295,9 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
     if (body.message === cancellation) {
       await held;
       return route.fulfill({ headers: cors, json: { response: 'Cancelled fixture must never appear.' } }).catch(() => undefined);
+    }
+    if (body.message === reviewed) {
+      return route.fulfill({ headers: cors, json: { response: reviewedReply, completion: { status: 'partial', reason: 'data_review' }, responseSource: { format: 'xroga-openui-v1', text: reviewedProgram } } });
     }
     expect(body.message).toBe(malformed);
     return route.fulfill({ headers: cors, json: { response: fallback, completion: { status: 'complete' }, responseSource: { format: 'xroga-openui-v1', text: 'root = UnregisteredWidget("should never render")' } } });
@@ -424,10 +430,15 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   await expect(page.getByRole('region', { name: 'Answer', exact: true }).getByText(fallback, { exact: true })).toBeVisible();
   await expect(page.getByText('Cancelled fixture must never appear.', { exact: true })).toHaveCount(0);
   await expect(page.getByText('should never render', { exact: true })).toHaveCount(0);
-  expect(chatCalls).toBe(4);
+  await send(reviewed);
+  const reviewedAnswer = page.getByRole('region', { name: 'Answer', exact: true }).filter({ hasText: reviewedReply });
+  await expect(reviewedAnswer.getByRole('img', { name: /bar chart/ })).toBeVisible();
+  await expect(reviewedAnswer.getByText(reviewedReply, { exact: true })).toBeVisible();
+  await expect(page.getByText('Suggested next steps', { exact: true })).toHaveCount(0);
+  expect(chatCalls).toBe(5);
   await writeFile('test-results/native-workspace/evidence.json', JSON.stringify({
     source: expectedRelease, route: '/workspace', auth: 'isolated Supabase ordinary accounts',
-    model: 'deterministic transport fixtures, zero provider calls', nativeActions: ['file handoff', 'citation link', 'keyboard calculator', 'copy readback', 'database save and reopen', 'private share owner/guest/other account', 'continuation', 'browser cancellation', 'client validation fallback'],
+    model: 'deterministic transport fixtures, zero provider calls', nativeActions: ['file handoff', 'citation link', 'keyboard calculator', 'copy readback', 'database save and reopen', 'private share owner/guest/other account', 'continuation', 'browser cancellation', 'client validation fallback', 'reviewed partial chart'],
     viewports: [1440, 390], themes: ['black', 'gray'],
   }, null, 2));
 });

@@ -117,8 +117,9 @@ test('an explicit monthly direction that conflicts with the displayed data is fl
   assert.deepEqual(validateNativeOpenUi(make(inaccurate)), { ok: false, reason: 'data_review' });
   assert.deepEqual(validateNativeOpenUi(make(accurate), undefined, inaccurate), { ok: false, reason: 'data_review' });
   const result = completeNativeWorkspaceAnswer(accurate + NATIVE_UI_MARKER + make(inaccurate), 'stop');
-  assert.equal(result.response, accurate);
-  assert.equal(result.responseSource.text, '');
+  assert.match(result.response, /Partial answer/);
+  assert.match(result.responseSource.text, /Chart\("line"/);
+  assert.doesNotMatch(result.responseSource.text, /ease back/);
   assert.deepEqual(result.completion, { status: 'partial', reason: 'data_review' });
   assert.deepEqual(validateNativeOpenUi(make('March increased from January.')), { ok: true });
 });
@@ -144,7 +145,22 @@ test('a monthly bar chart catches incorrect gain rankings and does not publish t
   assert.match(result.response, /\| April \| 18800 \| 4500 \|/);
   assert.match(result.response, /\| June \| 25700 \| 3500 \|/);
   assert.doesNotMatch(result.response, /June adds the most/);
-  assert.equal(result.responseSource.text, '');
+  assert.match(result.responseSource.text, /Chart\("bar"/);
+  assert.match(result.responseSource.text, /"Month":"April","Value":18800/);
+  assert.doesNotMatch(result.responseSource.text, /June adds the most|strongest percentage gain/);
+  assert.deepEqual(validateNativeOpenUi(result.responseSource.text, undefined, result.response), { ok: true });
+  const snapshot = buildNativeOpenUiShare(result.response, result.responseSource.text);
+  assert.ok(snapshot);
+  assert.equal(readNativeOpenUiShare(snapshot)?.program, result.responseSource.text);
+  // No part of a program with an unverified source or dynamic chart is recovered.
+  for (const program of [
+    make('June adds the most dollars.').replace('Col([', 'Col([Source("unverified"), '),
+    '$dollars = 3500\n' + make('June adds the most dollars.').replace('value:15500', 'value:$dollars + 12000'),
+  ]) {
+    const checked = completeNativeWorkspaceAnswer('June adds the most dollars.' + NATIVE_UI_MARKER + program, 'stop');
+    assert.notEqual(checked.completion.status === 'partial' && checked.completion.reason, 'data_review');
+    assert.doesNotMatch(checked.responseSource.text, /Partial answer/);
+  }
 });
 
 test('the paid evaluator rejects non-staging, expired, repeated, and over-budget slots', () => {

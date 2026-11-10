@@ -102,9 +102,10 @@ export type NativeUiValidation = { ok: true } | { ok: false; reason: 'budget' | 
 const reject = (reason: Extract<NativeUiValidation, { ok: false }>['reason']): NativeUiValidation => ({ ok: false, reason });
 
 /** Used only after a schema-valid program reached the data-review gate. */
-export function reviewNativeMonthlyProse(program: string, prose: string): string {
+export function recoverNativeMonthlyChart(program: string) {
   const root = parseProgram.parse(program).root;
-  return contradictsMonthlyChart(root, prose) ? monthlyChartDataFallback(root) || prose : prose;
+  const recovered = monthlyChartDataFallback(root);
+  if (recovered && validateNativeOpenUi(recovered.program, new Set(), recovered.text).ok) return recovered;
 }
 
 /** Audit all statements, including unreachable ones, before letting the upstream

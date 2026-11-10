@@ -715,7 +715,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                           prompt={promptByAssistantId.get(msg.id)}
                         />
                       )}
-                      {suggestions && (
+                      {suggestions && !nativeAnswer && (
                         <MessageSuggestionChips
                           suggestions={suggestions}
                           onSelect={handleSuggestion}

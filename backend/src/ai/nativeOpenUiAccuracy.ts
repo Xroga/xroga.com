@@ -24,7 +24,7 @@ const lower = 'fell|falls|fall|dropped|drops|drop|declined|declines|decline|decr
 const higher = 'rose|rises|rise|increased|increases|increase|climbed|climbs|climb|grew|grows|grow';
 
 interface MonthlyPoint { month: number; value: number }
-interface MonthlySeries { points: MonthlyPoint[]; currency?: string }
+interface MonthlySeries { type: 'line' | 'bar'; points: MonthlyPoint[]; format: 'number' | 'currency' | 'percent'; currency?: string }
 
 /** Only one static, consecutive, single-series monthly line or bar chart can
  * establish an unambiguous month-over-month comparison. */
@@ -64,7 +64,10 @@ function monthlySeries(root: unknown): MonthlySeries | undefined {
     labels.add(month);
     points.push({ month, value });
   }
-  return { points, currency: chart.format === 'currency' && typeof chart.currency === 'string' && /^[A-Z]{3}$/.test(chart.currency) ? chart.currency : undefined };
+  const format = chart.format === 'currency' || chart.format === 'percent' ? chart.format : 'number';
+  return { type: chart.type, points, format, currency: format === 'currency'
+    ? typeof chart.currency === 'string' && /^[A-Za-z]{3}$/.test(chart.currency) ? chart.currency.toUpperCase() : 'USD'
+    : undefined };
 }
 
 /** Flag explicit direction and ranked-gain claims that conflict with the
@@ -120,12 +123,19 @@ export function contradictsMonthlyChart(root: unknown, prose: string): boolean {
   return false;
 }
 
-export function monthlyChartDataFallback(root: unknown): string {
+export function monthlyChartDataFallback(root: unknown): { text: string; program: string } | undefined {
   const series = monthlySeries(root);
-  if (!series) return '';
-  const label = series.currency ? 'Chart value (' + series.currency + ')' : 'Chart value';
+  if (!series) return;
+  const unit = series.currency ?? (series.format === 'percent' ? '%' : undefined);
+  const label = unit ? 'Chart value (' + unit + ')' : 'Chart value';
   const rows = series.points.map(({ month, value }, index) =>
     '| ' + monthNames[month] + ' | ' + value + ' | ' + (index ? Number((value - series.points[index - 1].value).toPrecision(15)) : '') + ' |');
-  return ['The written summary disagreed with the plotted data, so it was withheld. These are the chart values and changes from the preceding displayed month.',
+  const text = ['Partial answer. The written summary disagreed with the plotted data, so it was withheld. These are the chart values and changes from the preceding displayed month.',
     '', '| Month | ' + label + ' | Change |', '| --- | ---: | ---: |', ...rows].join('\n');
+  // Rebuild from numeric points, rather than carrying any model-authored
+  // title, note, state, sibling component or action into the reviewed answer.
+  const data = JSON.stringify(series.points.map(({ month, value }) => ({ Month: monthNames[month], Value: value })));
+  const args = [JSON.stringify(series.type), data, '"Month"', '["Value"]', JSON.stringify(series.format),
+    JSON.stringify(series.currency ?? null), 'false', '240', JSON.stringify({ xLabel: 'Month', yLabel: label })];
+  return { text, program: 'root = Col([Markdown(' + JSON.stringify(text) + '), Chart(' + args.join(', ') + ')])' };
 }

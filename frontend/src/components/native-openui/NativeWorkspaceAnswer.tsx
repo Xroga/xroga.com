@@ -13,8 +13,10 @@ const Surface = lazy(() => import('./NativeSurface').then(module => ({ default: 
 export function readNativeWorkspaceAnswer(output: unknown): NativeAnswer | undefined {
   if ((output as { responseSource?: { format?: unknown } } | null)?.responseSource?.format !== 'xroga-openui-v1') return;
   const document = parseXrogaOutput(output);
-  // The existing output view carries warnings and trusted sources on incomplete answers.
-  if (document?.responseSource?.format !== 'xroga-openui-v1' || document.status !== 'completed' || !document.sourceText) return;
+  // The only native program persisted for a partial answer is the backend's
+  // deterministic chart recovery. Its warning is in both prose and program.
+  if (document?.responseSource?.format !== 'xroga-openui-v1' || !document.sourceText ||
+      (document.status !== 'completed' && !(document.status === 'partial' && document.responseSource.text))) return;
   return {
     format: 'xroga-openui-v1',
     library: 'xroga-native-v1',

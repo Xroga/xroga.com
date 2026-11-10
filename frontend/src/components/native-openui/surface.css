@@ -195,12 +195,12 @@
   border-radius: .65rem;
   background: var(--native-panel);
   font-size: .8125rem;
-  max-inline-size: 100%;
+  max-inline-size: min(100%, 16rem);
   vertical-align: baseline;
   text-underline-offset: .15em;
 }
 .native-evidence-chip :is(svg, img) { flex: 0 0 auto; }
-.native-evidence-chip > span { overflow-wrap: anywhere; }
+.native-evidence-chip > span { min-inline-size: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .native-evidence-chip:hover { border-color: var(--native-accent); }
 
 .native-choice { min-width: 0; margin: 0; border: 1px solid var(--native-line); border-radius: 12px; padding: .75rem; }
