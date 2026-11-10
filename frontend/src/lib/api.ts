@@ -4442,6 +4442,15 @@ export const api = {
   },
 
   notifications: {
+    pushKey: () => apiFetch<{ publicKey: string }>('/api/notifications/push-key'),
+    subscribePush: (subscription: PushSubscriptionJSON) => apiFetch<{ subscribed: boolean }>(
+      '/api/notifications/push-subscription',
+      { method: 'POST', body: JSON.stringify(subscription) },
+    ),
+    unsubscribePush: (endpoint: string) => apiFetch<{ subscribed: boolean }>(
+      '/api/notifications/push-subscription',
+      { method: 'DELETE', body: JSON.stringify({ endpoint }) },
+    ),
     list:
       () =>
         apiFetch<
