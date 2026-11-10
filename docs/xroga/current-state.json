@@ -144728,6 +144728,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:daa420c85ada1bb773f8",
+      "sourcePath": "apps/xroga-browser-extension/src/agent/__tests__/timing.test.ts",
+      "declaredTests": 10,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:9642f262e967513f5a95",
       "sourcePath": "apps/xroga-browser-extension/src/browser-control/__tests__/scaffold.test.ts",
       "declaredTests": 2,
@@ -144870,7 +144877,7 @@
     {
       "id": "test-suite:316b5d843f93228e86f1",
       "sourcePath": "apps/xroga-browser-extension/src/extension/__tests__/border.test.ts",
-      "declaredTests": 14,
+      "declaredTests": 27,
       "skipLocations": [],
       "focusLocations": []
     },
