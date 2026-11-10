@@ -59,6 +59,12 @@
   },
   "tests": [
     {
+      "command": "node node_modules/@playwright/test/cli.js test -c frontend/playwright.config.ts workspace-new-terminal.spec.ts -g 'answer citations and table rows remain directly readable'",
+      "scope": "Built Workspace on desktop and mobile with intercepted guest chat. Verify inline citation focus, both table columns and the last row without pagination.",
+      "negative": true,
+      "reference": "frontend/e2e/workspace-new-terminal.spec.ts"
+    },
+    {
       "command": "node scripts/verify-native-openui-browser.mjs",
       "scope": "Chrome checks for source placement, branded preview, keyboard access, mobile direct tap, unsafe or duplicate sources, chart data and diagram relationships.",
       "negative": true,
@@ -105,6 +111,7 @@
     "docs/xroga/security/privileged-callers.json",
     "docs/xroga/security/rls-audit.md",
     "frontend/e2e/command3-auth.spec.ts",
+    "frontend/e2e/workspace-new-terminal.spec.ts",
     "frontend/src/app/share/[token]/page.tsx",
     "frontend/src/components/native-openui/Diagram.tsx",
     "frontend/src/components/native-openui/NativeSurface.tsx",
@@ -129,6 +136,7 @@
     "frontend/src/components/terminal/XrogaBlockView.tsx",
     "frontend/src/components/terminal/XrogaDecisionMatrixView.tsx",
     "frontend/src/components/terminal/XrogaOrganizerBlockView.tsx",
+    "frontend/src/components/terminal/XrogaRichBlockView.tsx",
     "frontend/src/components/terminal/XrogaRichResultsView.module.css",
     "frontend/src/components/terminal/XrogaRichResultsView.tsx",
     "frontend/src/lib/formatAiMarkdown.test.ts",
