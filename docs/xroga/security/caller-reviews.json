@@ -15482,18 +15482,18 @@
     },
     {
       "path": "backend/src/routes/notifications.ts",
-      "sourceSha256": "ba421d5eb5df96b93b8dfcab8177c0f72042e58e4412b41325f9063e3e058a39",
+      "sourceSha256": "7b91dfd72ae335226c3fb83c7ce2e7cb7902b7dd25b87565f7dcef917720c5db",
       "callIds": [
         "359cfba790c54b88250c",
         "b1f8356c782b4d851d58",
         "4cf1a1e8ccf9dfe563ec",
         "e92ef4114ace634a21d8",
-        "47ac0c22a431bc8820e3",
-        "378770b99fd2d093c8a9",
-        "8a7f7c11d89690e8df03",
-        "72ee5f20e4c78f1ef9c5",
-        "9a158b9a4f1de2c968fe",
-        "394aa91707700665970a"
+        "cc8a37cdf238cf59a99a",
+        "6687ae47bab37c501d74",
+        "2fed6ca9cd27f6992d02",
+        "75ba31f14c658b6995a8",
+        "1a27090c7a9708d480e8",
+        "b010f789ba8fcc1a6231"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Router is mounted behind authMiddleware and re-derives userId from the issued immutable context before every route. List/count/read/read-all/delete use this actor, never request ownership. Every service-role factory has its fixed downstream notification query inspected.",
@@ -15525,17 +15525,18 @@
     },
     {
       "path": "backend/src/routes/notifications.ts",
-      "sourceSha256": "ba421d5eb5df96b93b8dfcab8177c0f72042e58e4412b41325f9063e3e058a39",
+      "sourceSha256": "7b91dfd72ae335226c3fb83c7ce2e7cb7902b7dd25b87565f7dcef917720c5db",
       "callIds": [
         "451e5e119fb05d5ddb8f",
         "4f9439afecb04c3595a7",
-        "49c06c5f5dedbb8357bf",
-        "94700f4054edde4f93ff",
-        "5776db83dd0f2287f933"
+        "4052599c36bb1a154183",
+        "9dd5e0d47e2b5fcbd7ed",
+        "0173fa66f148bf107c9c",
+        "5756010c7ca215102e1e"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "The new browser-push subscription routes are behind the existing auth middleware and derive userId from tenant context; each query visibly filters user_id or writes that user ID, but a source inspection alone is not authenticated tenant proof.",
-      "reason": "Isolated staging verifies private table grants and RLS, and endpoint validation rejects arbitrary hosts. Authenticated positive and cross-account negative API tests for these five new persistence calls are still required before promoting this manual review to a scoped boundary.",
+      "reason": "Isolated staging verifies private table grants and RLS, and endpoint validation rejects arbitrary hosts. Existing endpoint updates are owner-scoped; a new insert cannot overwrite another account's unique endpoint. Authenticated positive and cross-account negative API tests for these six new persistence calls are still required before promoting this manual review to a scoped boundary.",
       "evidence": [
         {
           "path": "backend/src/services/browserPushService.test.ts",
