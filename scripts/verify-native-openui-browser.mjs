@@ -55,12 +55,12 @@ const compiled = await build({
   stdin: {
     resolveDir: process.cwd(),
     loader: 'tsx',
-    contents: 'import {createRoot} from "react-dom/client"; import {NativeSurface} from "./frontend/src/components/native-openui/NativeSurface"; import {ResponseSources} from "./frontend/src/components/terminal/ResponseSources"; import "./frontend/src/components/native-openui/evaluation.css";'
+    contents: 'import {createRoot} from "react-dom/client"; import {NativeSurface} from "./frontend/src/components/native-openui/NativeSurface"; import {ResponseSources} from "./frontend/src/components/terminal/ResponseSources"; import {ResponseSourceScope} from "./frontend/src/components/terminal/ResponseSourceScope"; import "./frontend/src/components/native-openui/evaluation.css";'
       + 'const cases = ' + JSON.stringify(cases) + ';'
       + 'const q=new URL(location.href).searchParams; const name=q.get("case") || "short";'
       + 'document.body.dataset.theme=q.get("shellTheme") || q.get("theme") || "light"; document.querySelector("main").dataset.theme=q.get("theme") || "light";'
       + 'const sources=[{id:"source-1",title:"PostgreSQL: Row Security Policies",url:"https://www.postgresql.org/docs/current/ddl-rowsecurity.html"},{id:"source-2",title:"W3C Documentation",url:"https://www.w3.org/TR/"},{id:"source-3",title:"About keyword matching options",siteName:"Google Ads Help",url:"https://support.google.com/google-ads/answer/7478529"}];'
-      + 'createRoot(document.getElementById("root")).render(<>{cases[name].prompt && <p className="native-evaluation-user">{cases[name].prompt}</p>}<div className="native-evaluation-answer-label">Xroga</div><NativeSurface answer={{...cases[name],format:"xroga-openui-v1",library:"xroga-native-v1"}} sources={sources} isStreaming={name==="stream"} />{name==="numericEvidence" && <ResponseSources sources={[...sources, sources[0], ...[4,5,6].map(n => ({title:"Source "+n,url:"https://example.com/"+n})), {title:"Unsafe link",url:"javascript:alert(1)"}]} />}</>);',
+      + 'createRoot(document.getElementById("root")).render(<ResponseSourceScope>{cases[name].prompt && <p className="native-evaluation-user">{cases[name].prompt}</p>}<div className="native-evaluation-answer-label">Xroga</div><NativeSurface answer={{...cases[name],format:"xroga-openui-v1",library:"xroga-native-v1"}} sources={sources} isStreaming={name==="stream"} />{name==="numericEvidence" && <ResponseSources sources={[...sources, sources[0], ...[4,5,6].map(n => ({title:"Source "+n,url:"https://example.com/"+n})), {title:"Unsafe link",url:"javascript:alert(1)"}]} />}</ResponseSourceScope>);',
   },
   outdir: 'native-assets', entryNames: 'native', chunkNames: 'native-chunk-[hash]', format: 'esm', splitting: true,
   write: false, bundle: true, jsx: 'automatic', minify: true,
@@ -194,15 +194,18 @@ try {
       assert.equal(await google.innerText(), 'Google Ads Help');
       assert.equal(await google.locator('svg path[fill="#4285F4"]').count(), 1);
       const sourceList = page.getByRole('region', { name: 'Sources', exact: true });
-      assert.equal(await sourceList.getByRole('link').count(), 6);
-      assert.ok(await sourceList.getByRole('link', { name: 'Open source: Source 6' }).isVisible());
+      await sourceList.getByRole('link', { name: /About keyword matching options/ }).waitFor({ state: 'hidden' });
+      assert.equal(await sourceList.getByRole('link').count(), 4);
+      assert.ok(await sourceList.getByRole('link', { name: 'Open source: example.com/6' }).isVisible());
       assert.equal(await sourceList.locator('button, summary').count(), 0);
       const tooltip = page.getByRole('tooltip');
       await google.hover();
       await tooltip.getByText('About keyword matching options').waitFor();
       assert.equal(await tooltip.getByText('Google Ads Help').count(), 1);
       const popupBounds = await tooltip.boundingBox();
+      const chipBounds = await google.boundingBox();
       assert.ok(popupBounds.x >= 0 && popupBounds.x + popupBounds.width <= viewport.width);
+      assert.ok(popupBounds.y >= chipBounds.y + chipBounds.height || popupBounds.y + popupBounds.height <= chipBounds.y);
       if ((viewport.width === 1440 || viewport.width === 390) && theme === 'dark') {
         await page.screenshot({ path: resolve(output, channel + '-inline-citation-' + viewport.width + '.png') });
       }
@@ -270,6 +273,7 @@ try {
   ]);
   await destination.getByRole('heading', { name: 'Source destination' }).waitFor();
   assert.equal(destination.url(), sourceUrl);
+  assert.equal(await touchPage.getByRole('tooltip').count(), 0);
   await touch.close();
   const paletteContext = await browser.newContext({ viewport: { width: 390, height: 844 } });
   const palettePage = await paletteContext.newPage();

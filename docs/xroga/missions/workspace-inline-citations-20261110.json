@@ -8,7 +8,7 @@
   ],
   "state": "VERIFIED_SCOPE",
   "risk": "low",
-  "scope": "Show clickable evidence beside its supporting text and remove disclosures that hide source lists, chart data, diagram relationships, and essential answer details.",
+  "scope": "Show clickable evidence beside supporting text, omit repeated footer destinations, and keep answer data visible with bounded large table scrolling.",
   "decisions": {
     "keep": [
       "Existing OpenUI and compatibility renderers, persisted answers, Share privacy, DeepSeek routing, and the same-origin icon route"
@@ -85,7 +85,7 @@
   "rollout": "Run exact-source CI and authenticate against the compatible staging frontend before promoting.",
   "rollback": "Restore the preceding compatible frontend. Stored programs and source records are unchanged.",
   "knownGaps": [
-    "The newly updated authenticated Workspace and Share checks have not been run against this exact candidate."
+    "A fresh DeepSeek turn and authenticated Workspace persistence and isolation still require the matched hosted candidate. Earlier provider receipts and fixture CI are recorded separately."
   ],
   "placeholderClaimsRemaining": [],
   "evidenceRefs": [
@@ -96,7 +96,7 @@
   "release": {
     "state": "BLOCKED",
     "blockers": [
-      "Exact-source CI and authenticated Workspace/Share acceptance have not been run for this frontend candidate."
+      "Verify the PR head checks and the matched authenticated staging route. Production promotion requires separate approval."
     ],
     "authenticatedE2e": "BLOCKED",
     "stagedSecurity": "NOT_APPLICABLE",
@@ -129,6 +129,7 @@
     "frontend/src/components/response-experience-v2/document.test.ts",
     "frontend/src/components/response-experience-v2/response-v2.module.css",
     "frontend/src/components/terminal/ResponseSources.module.css",
+    "frontend/src/components/terminal/ResponseSourceScope.tsx",
     "frontend/src/components/terminal/ResponseSources.tsx",
     "frontend/src/components/terminal/SourceCitation.module.css",
     "frontend/src/components/terminal/SourceCitation.tsx",
@@ -141,6 +142,8 @@
     "frontend/src/components/terminal/XrogaRichResultsView.tsx",
     "frontend/src/lib/formatAiMarkdown.test.ts",
     "frontend/src/lib/formatAiMarkdown.tsx",
+    "frontend/src/lib/terminal/responseSources.test.ts",
+    "frontend/src/lib/xrogaCitations.ts",
     "frontend/src/lib/xrogaCitations.test.ts",
     "frontend/src/styles/answerExperience.css",
     "scripts/generate-native-openui-spec.mjs",

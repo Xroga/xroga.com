@@ -25,6 +25,20 @@ export function safeSourceUrl(value: string): string | null {
   }
 }
 
+export function citationMetadata(source: Pick<CitationSource, 'title' | 'siteName'>, url: string) {
+  const destination = new URL(url);
+  const domain = destination.hostname.replace(/^www\./i, '');
+  const generic = /^source\s*(?:#?\d+)?$/i;
+  const providedName = source.siteName?.trim();
+  const knownName = domain === 'support.google.com' && destination.pathname.startsWith('/google-ads/')
+    ? 'Google Ads Help' : domain === 'ads.google.com' ? 'Google Ads' : domain;
+  const site = providedName && !generic.test(providedName) ? providedName : knownName;
+  const providedTitle = source.title.trim();
+  const path = destination.pathname === '/' ? '' : destination.pathname;
+  const title = providedTitle && !generic.test(providedTitle) ? providedTitle : site === domain ? domain + path : site;
+  return { domain, site, title };
+}
+
 
 /**
  * Mark only user-clicked, external research sources as Xroga referrals.

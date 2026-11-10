@@ -71,9 +71,17 @@ function TableRenderer({ block }: { block: TableBlock }) {
   const largeDataset = shouldVirtualizeRows(filteredRows.length);
   const rows = largeDataset || inlineTable ? table.getPrePaginationRowModel().rows : table.getRowModel().rows;
   const scrollRef = useRef<HTMLDivElement>(null);
-  const virtual = useVirtualizer({ count: largeDataset ? rows.length : 0, getScrollElement: () => scrollRef.current, estimateSize: () => 42, overscan: 8 });
+  const virtual = useVirtualizer({
+    count: largeDataset ? rows.length : 0,
+    getScrollElement: () => scrollRef.current,
+    getItemKey: index => rows[index]?.id ?? index,
+    estimateSize: () => 42,
+    overscan: 8,
+  });
   const virtualItems = largeDataset ? virtual.getVirtualItems() : [];
-  const visibleRows = largeDataset ? virtualItems.map((item) => ({ row: rows[item.index], key: item.key })) : rows.map((row) => ({ row, key: row.id }));
+  const visibleRows = largeDataset
+    ? virtualItems.map(({ index, key }) => ({ row: rows[index], key, index }))
+    : rows.map((row, index) => ({ row, key: row.id, index }));
   const topSpacer = largeDataset && virtualItems.length ? virtualItems[0].start : 0;
   const bottomSpacer = largeDataset && virtualItems.length ? virtual.getTotalSize() - virtualItems[virtualItems.length - 1].end : 0;
   const selectedIds = Object.keys(rowSelection).filter((key) => rowSelection[key]);
@@ -96,14 +104,23 @@ function TableRenderer({ block }: { block: TableBlock }) {
       <ExportButton label="Download XLSX" create={() => exportTableXlsx(block)} />
     </div>;
   return <Surface title={block.title ?? (block.type === 'spreadsheet' ? 'Spreadsheet' : block.type === 'database' ? 'Database' : 'Table')} description={block.description} state={block.state} variant="data-table" inlineTable={inlineTable}>
-    {!inlineTable && tools}
-    <div ref={scrollRef} className={largeDataset || !inlineTable ? 'max-h-[440px] overflow-auto' : 'overflow-x-auto'}>
+    {(!inlineTable || largeDataset) && tools}
+    <div ref={scrollRef} tabIndex={largeDataset ? 0 : undefined} role={largeDataset ? 'region' : undefined}
+      aria-label={largeDataset ? `${block.title ?? 'Table'} scroll area` : undefined}
+      className={largeDataset || !inlineTable ? 'max-h-[440px] overflow-auto' : 'overflow-x-auto'}>
       <table className={`w-full border-collapse text-left text-sm ${fitColumns ? 'table-fixed [overflow-wrap:anywhere]' : 'min-w-[560px]'}`}><thead className="sticky top-0 z-10 bg-[var(--background)]"><tr>{block.selectable !== false ? <th className="w-9 border-b border-[var(--border)] p-3"><span className="sr-only">Select</span></th> : null}{table.getHeaderGroups()[0]?.headers.map((header) => <th key={header.id} scope="col" className="border-b border-[var(--border)] p-3 text-xs font-semibold"><button type="button" onClick={header.column.getToggleSortingHandler()} className="text-start">{flexRender(header.column.columnDef.header, header.getContext())}{header.column.getIsSorted() ? (header.column.getIsSorted() === 'asc' ? ' ↑' : ' ↓') : null}</button></th>)}</tr></thead>
-        <tbody>{topSpacer > 0 ? <tr aria-hidden="true"><td colSpan={block.columns.length + (block.selectable !== false ? 1 : 0)} style={{ height: topSpacer }} /></tr> : null}{visibleRows.map(({ row, key }) => row ? <tr key={key} className="border-b border-[var(--border)]/70 hover:bg-black/[0.025] dark:hover:bg-white/[0.035]">{block.selectable !== false ? <td className="p-3"><input type="checkbox" aria-label={`Select row ${Number(row.id) + 1}`} checked={row.getIsSelected()} onChange={row.getToggleSelectedHandler()} /></td> : null}{row.getVisibleCells().map((cell) => <td key={cell.id} className="max-w-80 p-3 align-top">{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>)}</tr> : null)}{bottomSpacer > 0 ? <tr aria-hidden="true"><td colSpan={block.columns.length + (block.selectable !== false ? 1 : 0)} style={{ height: bottomSpacer }} /></tr> : null}</tbody></table>
+        <tbody>{topSpacer > 0 ? <tr aria-hidden="true"><td colSpan={block.columns.length + (block.selectable !== false ? 1 : 0)} style={{ height: topSpacer, padding: 0 }} /></tr> : null}
+          {visibleRows.map(({ row, key, index }) => row ? <tr key={key} data-index={largeDataset ? index : undefined}
+            ref={largeDataset ? virtual.measureElement : undefined}
+            className="border-b border-[var(--border)]/70 hover:bg-black/[0.025] dark:hover:bg-white/[0.035]">
+            {block.selectable !== false ? <td className="p-3"><input type="checkbox" aria-label={`Select row ${Number(row.id) + 1}`} checked={row.getIsSelected()} onChange={row.getToggleSelectedHandler()} /></td> : null}
+            {row.getVisibleCells().map((cell) => <td key={cell.id} className="max-w-80 p-3 align-top">{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>)}
+          </tr> : null)}
+          {bottomSpacer > 0 ? <tr aria-hidden="true"><td colSpan={block.columns.length + (block.selectable !== false ? 1 : 0)} style={{ height: bottomSpacer, padding: 0 }} /></tr> : null}</tbody></table>
       {largeDataset ? <span className="sr-only">Large dataset virtualization is active for {rows.length} rows.</span> : null}
     </div>
     <footer className="flex items-center justify-between gap-2 p-3 text-xs text-[var(--muted)]"><span>{filteredRows.length} rows</span>{largeDataset ? <span>Virtualized view</span> : !inlineTable && table.getPageCount() > 1 ? <div className="flex items-center gap-1"><button type="button" aria-label="Previous page" disabled={!table.getCanPreviousPage()} onClick={() => table.previousPage()} className="rounded-md border border-[var(--border)] p-1.5 disabled:opacity-40"><ChevronLeft className="h-4 w-4" /></button><span>Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}</span><button type="button" aria-label="Next page" disabled={!table.getCanNextPage()} onClick={() => table.nextPage()} className="rounded-md border border-[var(--border)] p-1.5 disabled:opacity-40"><ChevronRight className="h-4 w-4" /></button></div> : null}</footer>
-    {inlineTable && tools}
+    {inlineTable && !largeDataset && tools}
   </Surface>;
 }
 

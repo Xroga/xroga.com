@@ -22,6 +22,7 @@ import { StoppedBuildResumeCard } from './StoppedBuildResumeCard';
 import { CapacityUnavailableCard } from './CapacityUnavailableCard';
 import { UpdateFileTrail } from './UpdateFileTrail';
 import { ResponseSources } from './ResponseSources';
+import { ResponseSourceScope } from './ResponseSourceScope';
 import { webSourcesToRichResults } from '@/lib/xrogaWebResultAdapter';
 const XrogaRichResultsView = lazy(() => import('./XrogaRichResultsView').then((module) => ({ default: module.XrogaRichResultsView })));
 import { isCodeBuildProcessing } from '@/lib/codeBuildProcessing';
@@ -553,6 +554,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
               </ChatErrorBoundary>
             ) : (
                         <ResponseExperienceGate message={msg} streaming={msg.id === animatingId && loading}>
+                        <ResponseSourceScope>
                         {isRenderedFeature ? (
                           <ChatErrorBoundary>
                             <FeatureOutputView
@@ -605,6 +607,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                         {msg.webSources && msg.webSources.length > 0 ? (
                           <ResponseSources sources={msg.webSources} />
                         ) : null}
+                        </ResponseSourceScope>
                         </ResponseExperienceGate>
             );
             const currentTurn = loading && msg.id === (buildPanelMessageId ?? animatingId);

@@ -6,6 +6,7 @@ import { ModernResponseText } from '@/components/terminal/ReasoningAndFollowUps'
 import type { NativeAnswer } from './NativeSurface';
 import type { CitationSource } from '@/lib/xrogaCitations';
 import { ResponseSources } from '@/components/terminal/ResponseSources';
+import { ResponseSourceScope } from '@/components/terminal/ResponseSourceScope';
 
 export { buildNativeOpenUiShare } from '../../../../backend/src/ai/nativeOpenUiShare';
 
@@ -29,8 +30,8 @@ export function readNativeWorkspaceAnswer(output: unknown): NativeAnswer | undef
 export function NativeWorkspaceAnswer({ answer, sources, sourceReferral = true }: { answer: NativeAnswer; sources?: Array<Pick<CitationSource, 'title' | 'url' | 'siteName'> & Partial<CitationSource>>; sourceReferral?: boolean }) {
   const fallback = <ModernResponseText content={answer.text} sources={sources?.map(source => ({ snippet: '', ...source }))} />;
   const evidence = sources?.map((source, index) => ({ ...source, id: 'source-' + (index + 1) }));
-  return <>
+  return <ResponseSourceScope>
     <Suspense fallback={fallback}><Surface answer={answer} sources={evidence} /></Suspense>
     {sources?.length ? <ResponseSources sources={sources} referral={sourceReferral} /> : null}
-  </>;
+  </ResponseSourceScope>;
 }

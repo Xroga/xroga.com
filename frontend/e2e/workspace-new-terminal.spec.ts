@@ -74,6 +74,30 @@ test('answer citations and table rows remain directly readable on desktop and mo
   await expect(page.getByRole('tooltip')).toHaveCount(0);
 });
 
+test('large answer tables keep wrapped rows reachable in a bounded mobile viewport', async ({ page }) => {
+  const response = [
+    '| Item | Details |',
+    '| --- | --- |',
+    ...Array.from({ length: 110 }, (_, index) =>
+      `| Item ${index + 1} | ${index % 2 ? 'A longer description that wraps on narrow screens.' : 'Brief detail.'} |`),
+  ].join('\n');
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.route('**/api/guest/chat', route => route.fulfill({
+    headers: { 'access-control-allow-origin': '*' },
+    json: { response, guestSessionId: 'virtual-table-fixture', guest: { limit: 10, remaining: 9, resetAt: '2099-01-01T00:00:00Z' } },
+  }));
+  await page.goto('/workspace');
+  await page.locator('[data-terminal-composer]').fill('Show the large fixture table.');
+  await page.getByRole('button', { name: 'Send prompt', exact: true }).click();
+  const region = page.getByRole('region', { name: /scroll area/ });
+  await expect(region.getByRole('cell', { name: 'Item 1', exact: true })).toBeVisible({ timeout: 30_000 });
+  await expect(region.getByRole('cell', { name: 'Item 110', exact: true })).toHaveCount(0);
+  expect(await region.evaluate(node => node.clientHeight)).toBeLessThanOrEqual(440);
+  await region.press('End');
+  await expect(region.getByRole('cell', { name: 'Item 110', exact: true })).toBeInViewport();
+  await expect(page.getByRole('button', { name: 'Download CSV', exact: true })).toBeVisible();
+});
+
 test('canonical public composers preserve the approved Plus controls without a second composer', async ({ page }) => {
   await page.goto('/workspace');
   const composer = page.locator('[data-terminal-composer]');
