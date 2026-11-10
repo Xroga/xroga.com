@@ -96,7 +96,8 @@ export const EFFICIENCY = `## Working efficiently
 - Each reply takes several seconds. When the outline already shows every control you need, call several tools in one reply (for example fill_form with its submit control, then read) instead of one per reply.
 - An action's result shows what changed. Take another snapshot only when the page changed in a way the result does not show.
 - When a page was opened for you, its outline is already attached: act on it without asking for a snapshot first.
-- Finish with done as soon as you have seen the answer.`;
+- Finish with done as soon as you have seen the answer.
+- When you continue earlier work in this conversation (after a stop, a pause, a lost connection or a restart), pick up after the last step that was verified. Take one snapshot of the current page, then carry on. Do not redo finished steps or read finished pages again.`;
 
 export function agentSystemPrompt(options: PromptOptions = {}): string {
   const sections = [ROLE, CONTRACT, PERMISSIONS, toolGuide(options.tools ?? []), EFFICIENCY];

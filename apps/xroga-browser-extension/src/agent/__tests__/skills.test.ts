@@ -16,14 +16,20 @@ describe('skillsFor', () => {
 
   it('picks the advertising playbooks by platform and keeps them as drafts', () => {
     expect(ids('Analyze my Google Ads account and create a Search campaign')).toContain('google-ads');
-    expect(skillsSection('Create a Google Ads Search campaign')).toContain('Never enable a campaign');
+    const google = skillsSection('Create a Google Ads Search campaign for my car recovery business');
+    expect(google).toContain('Pick the campaign type from the business model');
+    expect(google).toContain('15 headlines');
+    expect(google).toContain('paused');
     expect(ids('Build a Meta Ads campaign for my store in Ads Manager')).toContain('meta-ads');
-    expect(skillsSection('Build a Meta Ads campaign')).toContain('draft or paused');
+    const meta = skillsSection('Build a Meta Ads campaign');
+    expect(meta).toContain('Events Manager');
+    expect(meta).toContain('draft or paused');
   });
 
-  it('picks cloud, database, code and debugging playbooks', () => {
+  it('picks cloud, database, shell, code and debugging playbooks', () => {
+    expect(skillsSection('Open Cloud Shell and run the gcloud describe command')).toContain('one command');
     expect(ids('Open Google Cloud and check the Cloud Run revision logs')).toContain('cloud');
-    expect(skillsSection('Look at the Supabase table list')).toContain('select with a limit');
+    expect(skillsSection('Look at the Supabase table list')).toContain('read-only select that has a limit');
     expect(ids('Fix the bug in the checkout code on GitHub')).toEqual(expect.arrayContaining(['code', 'debugging']));
     expect(skillsSection('Debug why the contact form is not working')).toContain('Reproduce the problem first');
   });
@@ -44,7 +50,7 @@ describe('skillsFor', () => {
     const picked = ids(everything);
     expect(picked.length).toBeLessThanOrEqual(4);
     expect(picked).toContain('long-task');
-    for (const skill of skillsFor(everything)) expect(skill.body.length).toBeLessThan(1_500);
+    for (const skill of skillsFor(everything)) expect(skill.body.length).toBeLessThan(3_200);
   });
 
   it('is the same text every time for the same request, so it can be cached', () => {

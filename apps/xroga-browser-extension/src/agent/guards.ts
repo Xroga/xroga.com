@@ -23,11 +23,24 @@ export interface GuardVerdict {
 const NO_EFFECT_TOOLS = new Set(['click', 'set', 'type', 'press', 'fill_form']);
 const LOOKING_TOOLS = new Set(['snapshot', 'read', 'find', 'screenshot']);
 
-/** How many of the newest recorded calls, in a row, only looked at a page. */
-function lookingStreak(recent: readonly string[]): number {
-  let streak = 0;
-  for (let i = recent.length - 1; i >= 0 && LOOKING_TOOLS.has(recent[i].split(' ')[0]); i--) streak++;
-  return streak;
+/** The tab a recorded look was at: its tabId, or the active tab when it named none. */
+function lookedAt(signature: string): string {
+  try {
+    const args = JSON.parse(signature.slice(signature.indexOf(' ') + 1, signature.lastIndexOf(' → '))) as { tabId?: unknown };
+    return String(args.tabId ?? 'active');
+  } catch {
+    return 'active';
+  }
+}
+
+/**
+ * The newest recorded calls, in a row, that only looked at a page, and how many different tabs they looked at. A task that reads
+ * many different pages is not a loop: only repeated looks at the same one or two pages are.
+ */
+function lookingStreak(recent: readonly string[]): { count: number; tabs: number } {
+  const looks: string[] = [];
+  for (let i = recent.length - 1; i >= 0 && LOOKING_TOOLS.has(recent[i].split(' ')[0]); i--) looks.push(recent[i]);
+  return { count: looks.length, tabs: new Set(looks.map(lookedAt)).size };
 }
 
 function targetKey(args: Record<string, unknown>, result: Result | undefined): string | null {
@@ -107,9 +120,10 @@ export class Guards {
       };
     }
     // Re-reading the page again and again is the other loop: every look is a model turn, and none of them moves the task on.
-    if (LOOKING_TOOLS.has(tool) && lookingStreak(s.recent) >= READ_STREAK_NUDGE) {
+    const looks = lookingStreak(s.recent);
+    if (LOOKING_TOOLS.has(tool) && looks.count >= READ_STREAK_NUDGE && looks.tabs <= 2) {
       return {
-        nudge: `your last ${lookingStreak(s.recent)} calls only looked at pages. Do not read the same page again: if you have what the task needs, finish with done; if a step is left, do it now.`,
+        nudge: `your last ${looks.count} calls only looked at the same page${looks.tabs > 1 ? 's' : ''}. Do not read it again: if you have what the task needs, finish with done; if a step is left, do it now.`,
       };
     }
     return {};

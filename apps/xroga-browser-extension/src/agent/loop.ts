@@ -45,7 +45,7 @@ export const IMAGES_DROPPED = 'This model did not take images; continuing withou
 export const STOPPED_BY_USER = 'Stopped · What should Nanobrowser do instead?';
 /** The note the model reads after Stop, so the next run knows the last one was cut short. */
 export const STOPPED_NOTE =
-  'the user stopped the run; the page may have changed. Follow their next message, and observe before acting.';
+  'the user stopped the run; the page may have changed. Follow their next message, and observe once before acting. If they ask you to continue, carry on after the last step that was verified in this conversation; do not start over or read finished work again.';
 
 /** Evidence screenshots kept per run. */
 const EVIDENCE_SHOT_LIMIT = 6;
