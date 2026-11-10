@@ -105,6 +105,8 @@
   },
   "changedFiles": [
     "docs/operations/native-openui/INLINE-CITATIONS-AND-VISIBLE-CONTENT.md",
+    "docs/xroga/current-state.json",
+    "docs/xroga/current-state.md",
     "docs/xroga/missions/workspace-inline-citations-20261110.json",
     "docs/xroga/security/caller-reviews.json",
     "docs/xroga/security/egress-callers.json",
