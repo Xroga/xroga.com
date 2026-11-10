@@ -112,26 +112,6 @@ export function TerminalChatBar({ starter = false }: { starter?: boolean }) {
   const composingRef = useRef(false);
   const lastExternalPrompt = useRef(prompt);
 
-  // Library → Workspace: the selected native Skill is placed in the existing
-  // composer, never auto-sent and never opened in a second chat/mode.
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const url = new URL(window.location.href);
-    const skill = nativeWorkSkillById(url.searchParams.get('nativeSkill'));
-    if (!skill || url.pathname !== '/workspace') return;
-    const scaffold = buildNativeWorkSkillPrompt(skill);
-    const existingDraft = draftRef.current.trim();
-    const next = existingDraft ? `${scaffold}\n\n${existingDraft}` : scaffold;
-    setSelectedTool({label:skill.title,category:'Native Skill',description:skill.description,tone:'purple',scaffold});
-    setDraft(next);
-    draftRef.current = next;
-    lastExternalPrompt.current = next;
-    setPrompt(next);
-    url.searchParams.delete('nativeSkill');
-    window.history.replaceState(window.history.state,'',url.pathname+url.search+url.hash);
-    window.setTimeout(()=>textareaRef.current?.focus(),80);
-  },[setPrompt]);
-
   // Sync only when parent injects a new prompt (prefill / clear) — never while typing
   useEffect(() => {
     if (prompt === lastExternalPrompt.current) return;
@@ -153,6 +133,27 @@ export function TerminalChatBar({ starter = false }: { starter?: boolean }) {
     }, 300);
     return () => window.clearTimeout(timer);
   }, [draft, prompt, setPrompt]);
+  // Library → Workspace: the selected native Skill is placed in the existing
+  // composer, never auto-sent and never opened in a second chat/mode.
+  useEffect(() => {
+    if (typeof window === 'undefined' || sessionRestoring) return;
+    const url = new URL(window.location.href);
+    const skill = nativeWorkSkillById(url.searchParams.get('nativeSkill'));
+    if (!skill || url.pathname !== '/workspace') return;
+    const scaffold = buildNativeWorkSkillPrompt(skill);
+    const existingDraft = draftRef.current.trim();
+    const next = existingDraft ? `${scaffold}\n\n${existingDraft}` : scaffold;
+    setSelectedTool({label:skill.title,category:'Native Skill',description:skill.description,tone:'purple',scaffold});
+    setDraft(next);
+    draftRef.current = next;
+    lastExternalPrompt.current = next;
+    setPrompt(next);
+    url.searchParams.delete('nativeSkill');
+    window.history.replaceState(window.history.state,'',url.pathname+url.search+url.hash);
+    window.setTimeout(()=>textareaRef.current?.focus(),80);
+  },[setPrompt,sessionRestoring]);
+
+
   const [integrationsOpen, setIntegrationsOpen] = useState(false);
   const pluginsButtonRef = useRef<HTMLButtonElement>(null);
   const [githubOpen, setGithubOpen] = useState(false);
