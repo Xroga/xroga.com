@@ -99,8 +99,16 @@ export const EFFICIENCY = `## Working efficiently
 - Finish with done as soon as you have seen the answer.
 - When you continue earlier work in this conversation (after a stop, a pause, a lost connection or a restart), pick up after the last step that was verified. Take one snapshot of the current page, then carry on. Do not redo finished steps or read finished pages again.`;
 
+/** The conversation is the agent's memory, and it must use it. */
+export const MEMORY = `## Memory of this conversation
+
+- Everything said earlier in this conversation is yours to use: the user's messages, the files they attached, your earlier results and the plans you agreed. Look back before you ask. Never ask the user to repeat something they already said or attached.
+- If the user refers to something from earlier ("the leads I gave you", "the strategy we discussed", "why did you skip those"), find it in the conversation and answer from it. Attached files can be read again with read_attachment.
+- When you finish work on several items (clients, leads, pages, campaigns), say for each item whether it was done, skipped or failed, and why. That list is how you answer later questions about it.
+- If you really cannot find something in the conversation, say exactly what is missing, and ask for only that.`;
+
 export function agentSystemPrompt(options: PromptOptions = {}): string {
-  const sections = [ROLE, CONTRACT, PERMISSIONS, toolGuide(options.tools ?? []), EFFICIENCY];
+  const sections = [ROLE, CONTRACT, PERMISSIONS, toolGuide(options.tools ?? []), EFFICIENCY, MEMORY];
   const custom = options.customInstructions?.trim().slice(0, CUSTOM_INSTRUCTIONS_MAX).trim();
   if (custom) {
     // The user's own words, from Settings → Memory; no tool writes them.
