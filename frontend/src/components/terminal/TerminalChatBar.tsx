@@ -40,7 +40,8 @@ import startStyles from '@/components/dashboard/WorkspaceNewTerminal.module.css'
 import { buildArtifactContextPreamble, useXrogaArtifactContext } from '@/lib/xrogaArtifactContext';
 import { appendVoiceTranscript } from '@/lib/terminal/voiceRecording';
 import { XrogaVoiceControl } from './XrogaVoiceControl';
-import { getSelectedRepoContext } from '@/lib/repoContext';
+import { getSelectedRepoContext, clearSelectedRepoContext, markFreshTerminalIntent } from '@/lib/repoContext';
+import { nativeWorkSkillById, buildNativeWorkSkillPrompt } from '@/lib/nativeWorkSkills';
 
 const MIN_INPUT_H = 32;
 const COMPOSER_PLACEHOLDERS = [
@@ -87,6 +88,7 @@ export function TerminalChatBar({ starter = false }: { starter?: boolean }) {
     loading,
     submit,
     stop,
+    startNewChat,
   } = useTerminalChat();
   const hydrated = useHydrated();
   const activeArtifactId = useXrogaArtifactContext((state) => state.activeArtifactId);
@@ -141,6 +143,28 @@ export function TerminalChatBar({ starter = false }: { starter?: boolean }) {
     }, 300);
     return () => window.clearTimeout(timer);
   }, [draft, prompt, setPrompt]);
+  // A Library Skill creates a fresh Recents conversation. A Skill chosen from
+  // the existing chatbar + menu instead remains attached to that conversation.
+  // Never submit merely because a Skill has been selected.
+  useEffect(() => {
+    if (typeof window === 'undefined' || sessionRestoring) return;
+    const url = new URL(window.location.href);
+    const skill = nativeWorkSkillById(url.searchParams.get('nativeSkill'));
+    if (!skill || url.pathname !== '/workspace') return;
+    const scaffold = buildNativeWorkSkillPrompt(skill);
+    startNewChat();
+    clearSelectedRepoContext();
+    markFreshTerminalIntent();
+    setSelectedTool({label: skill.title, category:'Native Skill', description:skill.description, tone:'purple', scaffold});
+    setDraft(scaffold);
+    draftRef.current = scaffold;
+    lastExternalPrompt.current = scaffold;
+    setPrompt(scaffold);
+    url.searchParams.delete('nativeSkill');
+    window.history.replaceState(window.history.state,'',url.pathname+url.search+url.hash);
+    window.setTimeout(()=>textareaRef.current?.focus(),80);
+  },[sessionRestoring,startNewChat,setPrompt]);
+
   const [integrationsOpen, setIntegrationsOpen] = useState(false);
   const pluginsButtonRef = useRef<HTMLButtonElement>(null);
   const [githubOpen, setGithubOpen] = useState(false);
@@ -242,6 +266,9 @@ export function TerminalChatBar({ starter = false }: { starter?: boolean }) {
     // Sandbox website/landing/chatbot/crypto builds must not be blocked by a flaky GitHub status
     // when the user already selected a repo in the footer (or when building a simple site).
     const p = (promptText || draftRef.current || prompt || '').trim();
+    // A native Xroga Skill uses internally available work capabilities only;
+    // it must not trigger the unrelated GitHub-repository connection gate.
+    if (p.startsWith('Xroga native work skill: ')) return true;
     // Advice / Q&A / research must never be blocked by the Connect-GitHub modal
     if (
       p &&

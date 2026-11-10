@@ -182,7 +182,7 @@ const navItems: NavEntry[] = [
       { href: '/dashboard/library#my-files', label: 'My Files', icon: Files, animated: LucideFolderOpenIcon, tip: 'Coming soon · Stored files', planned: true },
       { href: '/dashboard/library#artifacts', label: 'Artifacts', icon: FileText, animated: LucideFileTextIcon, tip: 'Coming soon · Saved deliverables', planned: true },
       { href: '/showcase', label: 'Templates', icon: LayoutTemplate, animated: LucideLayersIcon, tip: 'Browse existing Xroga templates.' },
-      { href: '/dashboard/library#skills', label: 'Skills', icon: BookOpen, animated: LucideBookTextIcon, tip: 'Coming soon · Reusable capabilities', planned: true },
+      { href: '/dashboard/library#skills', label: 'Skills', icon: BookOpen, animated: LucideBookTextIcon, tip: '40 ready-made jobs to start in your Workspace.' },
       { href: '/dashboard/library#xroga-drive', label: 'Xroga Drive', icon: HardDrive, animated: LucideHardDriveIcon, tip: 'Coming soon · Persistent personal storage', planned: true },
     ],
   },
