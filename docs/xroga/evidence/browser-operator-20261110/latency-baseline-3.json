@@ -1,0 +1,68 @@
+{
+  "product": "Chrome/151.0.7922.34",
+  "runs": 12,
+  "model": "deterministic fixture",
+  "samples": [
+    {
+      "cold": true,
+      "pointerVisibleMs": null,
+      "doneMs": 2515
+    },
+    {
+      "cold": false,
+      "pointerVisibleMs": null,
+      "doneMs": 2224
+    },
+    {
+      "cold": false,
+      "pointerVisibleMs": null,
+      "doneMs": 2107
+    },
+    {
+      "cold": false,
+      "pointerVisibleMs": null,
+      "doneMs": 2322
+    },
+    {
+      "cold": false,
+      "pointerVisibleMs": null,
+      "doneMs": 2450
+    },
+    {
+      "cold": false,
+      "pointerVisibleMs": null,
+      "doneMs": 2256
+    },
+    {
+      "cold": false,
+      "pointerVisibleMs": null,
+      "doneMs": 3690
+    },
+    {
+      "cold": false,
+      "pointerVisibleMs": null,
+      "doneMs": 4658
+    },
+    {
+      "cold": false,
+      "pointerVisibleMs": null,
+      "doneMs": 2238
+    },
+    {
+      "cold": false,
+      "pointerVisibleMs": null,
+      "doneMs": 2134
+    },
+    {
+      "cold": false,
+      "pointerVisibleMs": null,
+      "doneMs": 2131
+    },
+    {
+      "cold": false,
+      "pointerVisibleMs": null,
+      "doneMs": 2104
+    }
+  ],
+  "perf": []
+}
