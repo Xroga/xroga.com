@@ -165,6 +165,8 @@ export function LoginForm() {
         setError('Please wait a moment before requesting another sign-in link.');
       } else if (otpError && ((otpError.status ?? 0) >= 500 || /smtp|send|mailer/i.test(otpError.message))) {
         setError('The email service is unavailable right now. Please try again later.');
+      } else if (otpError && !/signups? not allowed|user not found/i.test(otpError.message)) {
+        setError(safeAuthError(otpError, 'The sign-in link could not be sent. Please try again.'));
       } else {
         // Same message whether or not the address has an account.
         setMagicSent(true);
