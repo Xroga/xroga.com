@@ -58,3 +58,22 @@ describe('skillsFor', () => {
     expect(skillsSection(request)).toBe(skillsSection(request));
   });
 });
+
+describe('connected apps and SEO', () => {
+  it('points the agent at plugin_search when the task names an app or a tool category', () => {
+    expect(ids('Pull my keyword rankings from Ahrefs and update the Notion page')).toContain('connected-apps');
+    expect(skillsSection('Use my connected apps to find the lead list')).toContain('plugin_search');
+    expect(skillsSection('Use my connected apps to find the lead list')).toContain('not available in this run');
+  });
+
+  it('gives SEO work an audit-first playbook that keeps publishing behind approval', () => {
+    const seo = skillsSection('Run an SEO audit of my site and plan AEO content');
+    expect(seo).toContain('Audit before you advise');
+    expect(seo).toContain('approval');
+    expect(ids('Do a site audit')).toContain('seo');
+  });
+
+  it('does not add either to a simple read task', () => {
+    expect(ids('Go to example.com and tell me the heading')).toEqual([]);
+  });
+});
