@@ -10,8 +10,9 @@ import type { Entry, EntryOf, GuardState, MessagePart, PermissionMode, RunStatus
 import { addUsage, ZERO_USAGE } from '@src/store/types';
 import type { AgentEvent, ToolRow } from '@src/ui/protocol';
 import { contextChars, toModelMessages } from './context';
+import { directNavigation, type DirectNavigation } from './direct-url';
 import { browserState } from './header';
-import { assistantDisplay, userDisplay } from './display';
+import { assistantDisplay, userDisplay, userText } from './display';
 import type { HostPort, LayerPort } from './ports';
 import { note, RunWriter, storedResult } from './records';
 import { clearsDebt, createsDebt, debtLabel, deliveryUnknown, refusal, unverifiedLines } from './completion';
@@ -411,6 +412,21 @@ export class AgentLoop {
    * The first request of a run: an outline of the active shared tab, if it is an ordinary web page, attached to the
    * user's message inside the boundary; and a note when the context holds refs of an earlier run.
    */
+  /** Opens the site a request names, before the first model turn. A failure is told to the model, which then decides what to do. */
+  async #openDirect(direct: DirectNavigation): Promise<void> {
+    const intent = `Open ${direct.url}`;
+    const result = direct.newTab
+      ? await this.options.layer.call('tabs', { action: 'open', url: direct.url, intent }, this.options.signal)
+      : await this.options.layer.call('navigate', { url: direct.url, intent }, this.options.signal);
+    if (result.ok) {
+      await this.writer.appNote(`${direct.url} was opened ${direct.newTab ? 'in a new tab' : 'in the current tab'} for this request. Its outline is attached.`);
+      return;
+    }
+    await this.writer.appNote(
+      `Opening ${direct.url} before the first step failed: ${result.error?.message ?? 'unknown error'} ${result.error?.hint ?? ''}`.trim(),
+    );
+  }
+
   async firstTurn(): Promise<void> {
     const branch = await activeBranch(this.options.conversationId);
     const earlierResults = branch.some(e => e.type === 'message' && e.message.role === 'tool');
@@ -420,6 +436,10 @@ export class AgentLoop {
       );
     }
     await this.#inlineAttachments();
+    // A request that names its site starts there: the address is in the words, so no model turn is spent on deciding it.
+    const asked = [...branch].reverse().find((e): e is EntryOf<'message'> => e.type === 'message' && e.message.role === 'user' && !e.appOwned);
+    const direct = asked && !earlierResults ? directNavigation(userText(asked)) : null;
+    if (direct) await this.#openDirect(direct);
     const tabs = await this.options.layer.tabs().catch(() => null);
     const active = tabs?.tabs.find(t => t.tabId === tabs.activeTabId);
     if (!active || !/^https?:/i.test(active.url)) return;
