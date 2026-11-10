@@ -147,7 +147,8 @@ describe('navigate removes its readiness listener', () => {
       const result = await session.call('navigate', { url: 'http://unresolvable.test/', tabId: 9 });
       expect(result.ok).toBe(false);
       // A failure in the network is not a fault of the layer.
-      expect(result.error).toMatchObject({ code: 'NAVIGATION_FAILED', delivered: 'unknown' });
+      // A Chrome network error means nothing was loaded: a failed read, not a possibly delivered write.
+      expect(result.error).toMatchObject({ code: 'NAVIGATION_FAILED', delivered: false });
       expect(result.error?.message).toContain('net::ERR_NAME_NOT_RESOLVED');
     }
     const lifecycle = (attachment.cdp.on as ReturnType<typeof vi.fn>).mock.calls

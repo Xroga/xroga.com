@@ -32,6 +32,39 @@ function parseUrl(url: string): string {
   }
 }
 
+/**
+ * Chrome's own network error for a navigation that never loaded ("net::ERR_NAME_NOT_RESOLVED"), named for what it means. Not a
+ * delivered action, and not worth repeating unchanged: the same address fails the same way until something outside the page changes.
+ */
+export function networkFailure(message: string): { code: string; message: string; hint: string } | undefined {
+  const code = /net::(ERR_[A-Z0-9_]+)/.exec(message)?.[1];
+  if (!code) return undefined;
+  const causes: Record<string, string> = {
+    ERR_NAME_NOT_RESOLVED: 'Chrome could not resolve the website name (DNS lookup failed)',
+    ERR_INTERNET_DISCONNECTED: 'Chrome reports that this computer is offline',
+    ERR_CONNECTION_REFUSED: 'the website refused the connection',
+    ERR_CONNECTION_RESET: 'the connection was reset',
+    ERR_CONNECTION_CLOSED: 'the connection was closed',
+    ERR_CONNECTION_TIMED_OUT: 'the connection timed out',
+    ERR_TIMED_OUT: 'the website did not answer in time',
+    ERR_ADDRESS_UNREACHABLE: 'the address cannot be reached from this network',
+    ERR_SSL_PROTOCOL_ERROR: 'the secure connection could not be set up',
+    ERR_BLOCKED_BY_CLIENT: 'a browser extension or setting blocked the request',
+    ERR_BLOCKED_BY_RESPONSE: 'the website blocked the request',
+    ERR_TOO_MANY_REDIRECTS: 'the website redirects in a loop',
+    ERR_ABORTED: 'the load was cancelled before it finished',
+  };
+  const cause = causes[code] ?? (code.startsWith('ERR_CERT_') ? 'the website certificate is not valid' : 'Chrome could not load the page');
+  return {
+    code,
+    message: `The page did not load: ${cause} (net::${code}). No page content was read and nothing on the page changed.`,
+    hint:
+      code === 'ERR_ABORTED'
+        ? 'Take a snapshot to see where the tab is, then continue.'
+        : 'Do not retry the same address. If another address for the same site is realistic (for example with or without www), try it once; otherwise tell the user the exact Chrome error and that the site could not be reached from this browser.',
+  };
+}
+
 const NOT_ALLOWED_HINT =
   ' Do not ask the user to open it. Tell the user this address is not available to Xroga and continue with what you can do, or finish.';
 
@@ -100,6 +133,11 @@ async function runNavigation(
       if (/timeout/i.test(message)) throw new LayerError('TIMEOUT', quote(message, 300), { delivered: 'unknown' });
       // The debugger detached or the tab left the session while it loaded: those errors say more.
       if (failure instanceof LayerError) throw failure;
+      const network = networkFailure(message);
+      if (network) {
+        // Chrome refused before any page request was handled: nothing was loaded or changed, so this is a plain read that failed.
+        throw new LayerError('NAVIGATION_FAILED', network.message, { delivered: false, hint: network.hint });
+      }
       throw new LayerError('NAVIGATION_FAILED', `The navigation failed: ${quote(message, 300)}`, {
         delivered: 'unknown',
       });
