@@ -8,6 +8,7 @@
   "scope": "Extend Xroga's existing notification stack and inbox with safe-area mobile cards, a soft success chime, and opt-in standards-based browser push after the page closes.",
   "changedFiles": [
     "backend/package.json",
+    ".gcloudignore",
     "package-lock.json",
     "backend/package-lock.json",
     "backend/src/routes/notifications.ts",
