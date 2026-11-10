@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "c873b3eb09a63cf8217aa05a21929d528d64af9a",
+  "source_sha": "411e8cbef4d7965a45dec7bc3ed00f6aacd5786c",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -16912,7 +16912,7 @@
     },
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
-      "sha256": "7b6c68c684e42ba3f28f04e120dc2562b5f0d35a679f34c6f8d54e07ab936c66"
+      "sha256": "87d88971b83b29fb477088dcee4b3faf75ec87b3ea0dfa85a85754cde1fbb8dc"
     },
     {
       "path": "backend/src/ai/nativeOpenUiAccuracy.ts",
@@ -32260,6 +32260,27 @@
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
       "line": 210,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/nativeOpenUi.ts",
+      "line": 236,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/nativeOpenUi.ts",
+      "line": 237,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/nativeOpenUi.ts",
+      "line": 243,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

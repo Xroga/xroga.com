@@ -5159,29 +5159,42 @@
       "id": "surface:456e62cb099b42e5c2a2",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUi.ts",
-      "sha256": "4f2f2ae1b024ffbd2e22960ff9997ff72e4cd73d80add7b8fead51409acf7361",
+      "sha256": "87d88971b83b29fb477088dcee4b3faf75ec87b3ea0dfa85a85754cde1fbb8dc",
       "symbols": [
         "MAX_PROGRAM_CHARS",
         "NATIVE_UI_FORMAT",
         "NATIVE_UI_LIBRARY",
         "NATIVE_UI_MARKER",
+        "NativeUiDiagnostic",
         "NativeUiValidation",
+        "PARTIAL_NATIVE_PRESENTATION_NOTE",
+        "ValidationStage",
         "add",
         "array",
         "budget",
+        "child",
         "children",
         "columns",
         "components",
+        "declaration",
+        "declarations",
         "deepSeekToolClosingSuffix",
+        "expression",
+        "fail",
         "firstBlock",
         "from",
+        "id",
+        "ids",
+        "included",
         "index",
+        "isolated",
         "key",
         "last",
         "lines",
         "link",
         "localActions",
         "marker",
+        "name",
         "names",
         "narrative",
         "nesting",
@@ -5190,12 +5203,14 @@
         "normalized",
         "operators",
         "parseProgram",
+        "pending",
         "presentation",
         "project",
         "props",
         "pureFunctions",
         "reason",
         "record",
+        "recoverIndependentNativeSections",
         "recoverNativeMonthlyChart",
         "recovered",
         "reject",
@@ -5206,7 +5221,9 @@
         "row",
         "safeKey",
         "scalar",
+        "sourceFor",
         "splitNativeOpenUiAnswer",
+        "stage",
         "statement",
         "statements",
         "supplementUnfinishedNativeProse",
@@ -5395,10 +5412,20 @@
       "id": "surface:a67f0b1fa2dd0f11a67f",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiPrompt.ts",
-      "sha256": "f216a9e7472eb67341314aefc6ca374ab3b9d10a832e04aeb94db6e1b766f67c",
+      "sha256": "d49d2f8a78dcc39c2412b965a6ff052ecc5885b072c03b50d795dd50fa953e16",
       "symbols": [
+        "allowed",
+        "buildNativeOpenUiPrompt",
+        "common",
+        "focusedComponents",
+        "interactive",
+        "library",
         "nativeOpenUiPlainPrompt",
-        "nativeOpenUiPrompt"
+        "nativeOpenUiPrompt",
+        "requested",
+        "selected",
+        "withoutSources",
+        "workspaceNativeOpenUiPrompt"
       ],
       "imports": [
         "./nativeOpenUiCatalog.json",
@@ -5540,10 +5567,11 @@
       "id": "surface:93911e9946fd4b21d50d",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiWorkspace.ts",
-      "sha256": "77ef17292b8459dcd2d0037bc6b8075d1c7007c2e6ed140869faadf1f8d56bb7",
+      "sha256": "9d389e86b4a647937a32bbff67830b824fec3a981fb8b1e5be2903a36aaa7a72",
       "symbols": [
         "completeNativeWorkspaceAnswer",
         "completion",
+        "independent",
         "recovered",
         "response",
         "reviewed",
@@ -6448,7 +6476,7 @@
       "id": "surface:90932fa247bf4ae28450",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/pipeline.ts",
-      "sha256": "912c808fdfff8dcf8238d798a78a1b29d329a70bcd0c471cc925c8bded41dbf8",
+      "sha256": "d981253fc491c75b4d2b90c6e080509aa541fd04d840276e133e81b39fe3eac6",
       "symbols": [
         "ARCHITECT_MS",
         "BUILDER_FALLBACKS",
@@ -6470,6 +6498,7 @@
         "architectBlock",
         "architectPlanSummary",
         "attachmentOnlyAnalyze",
+        "attachmentPlan",
         "attachmentSystem",
         "attempt",
         "attemptMessages",
@@ -41211,8 +41240,8 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:3881",
         "backend/src/ai/pipeline.ts:3884",
+        "backend/src/ai/pipeline.ts:3887",
         "backend/src/ai/projectMemory.ts:7",
         "backend/src/ai/sessionMemory.ts:7",
         "backend/src/builder/providerTransports.ts:10",
@@ -41485,7 +41514,7 @@
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:127",
-        "backend/src/ai/pipeline.ts:3880",
+        "backend/src/ai/pipeline.ts:3883",
         "backend/src/ai/tenantModelDispatch.ts:6",
         "backend/src/config/supabaseTransport.security.test.ts:6",
         "backend/src/routes/integrations.ts:19",
@@ -84442,7 +84471,7 @@
         "frontend/src/components/terminal/WorkspaceLauncher.tsx:10",
         "frontend/src/components/terminal/WorkspacePeopleControls.tsx:7",
         "frontend/src/components/workspace/WorkspaceAuthGate.tsx:23",
-        "frontend/src/context/TerminalChatContext.tsx:75"
+        "frontend/src/context/TerminalChatContext.tsx:74"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -86606,7 +86635,7 @@
       "id": "surface:169100c09d49c9650f7a",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/NativeSurface.tsx",
-      "sha256": "562f16a732b3f29e4bdad531bbb1f7673f3301e11e1e88e2bf9e61eec75fa6ac",
+      "sha256": "c9d7ad4d426bd8abeb107c3fa51492d63ff4f981b8cc39f62d98c560e6719736",
       "symbols": [
         "NativeAnswer",
         "NativeSurface",
@@ -86615,6 +86644,7 @@
         "end",
         "ids",
         "prefix",
+        "prose",
         "source",
         "verified"
       ],
@@ -86681,14 +86711,15 @@
       "id": "surface:1815fe3ed39eb8d357c4",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/NativeWorkspaceAnswer.tsx",
-      "sha256": "3f66d28a08da4453951e5fdba4161bef137fec29f8b4e3d61ad3a405ea32f1d3",
+      "sha256": "b4b1db43ee806827bdedee7328bab6c57328539662d02e4f1c2dd430de5b7033",
       "symbols": [
         "NativeWorkspaceAnswer",
         "Surface",
         "document",
         "evidence",
         "fallback",
-        "readNativeWorkspaceAnswer"
+        "readNativeWorkspaceAnswer",
+        "readNativeWorkspaceProse"
       ],
       "imports": [
         "../../../../backend/src/ai/nativeOpenUiShare",
@@ -96022,7 +96053,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/context/TerminalChatContext.tsx:79"
+        "frontend/src/context/TerminalChatContext.tsx:78"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -96079,7 +96110,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/context/TerminalChatContext.tsx:77"
+        "frontend/src/context/TerminalChatContext.tsx:76"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -97878,7 +97909,7 @@
       "id": "surface:9c57a6290c71522141f5",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/SwarmMessageLog.tsx",
-      "sha256": "b5d96439606725007b05c8d8fb161c3642d267093c7fc109ced0726651dd9aaf",
+      "sha256": "3106334d475cac8294dddef5edfdacf43d2f331cc5201a94648be48851799016",
       "symbols": [
         "AGENT_STYLES",
         "SwarmMessageLog",
@@ -97929,6 +97960,7 @@
         "middle",
         "nativeAnswer",
         "nativeCopy",
+        "nativeProse",
         "nativeShare",
         "next",
         "observer",
@@ -98820,7 +98852,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/context/TerminalChatContext.tsx:78"
+        "frontend/src/context/TerminalChatContext.tsx:77"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -102872,7 +102904,7 @@
         "frontend/src/components/layout/SidebarProjectHistory.tsx:62",
         "frontend/src/components/terminal/TerminalChatBar.tsx:30",
         "frontend/src/components/terminal/WorkspacePeopleControls.tsx:8",
-        "frontend/src/context/TerminalChatContext.tsx:76"
+        "frontend/src/context/TerminalChatContext.tsx:75"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -102912,7 +102944,7 @@
       "id": "surface:c5f31b4c34d87af3ac75",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "sha256": "9b717642fc22b53e2b44da817447b4a471f8135e5df18f36c4480d90c678cb2c",
+      "sha256": "fbca2b60c66ebd540b05c3de5a41a3fc33ab473aa56d8f943bb9df4f044c158b",
       "symbols": [
         "ChatMessage",
         "GENERIC_SWARM_FALLBACK",
@@ -103093,6 +103125,7 @@
         "onResume",
         "onVisibilityChange",
         "original",
+        "originatingSessionId",
         "outRepo",
         "output",
         "outputFollowUps",
@@ -103104,6 +103137,7 @@
         "pending",
         "pendingBuildRef",
         "persistReadyRef",
+        "phase1AnswerSettled",
         "phase1Err",
         "phaseSnapshot",
         "planTier",
@@ -103283,7 +103317,6 @@
         "@/lib/runLightLaneChat",
         "@/lib/semanticExecution",
         "@/lib/sidebarProjectTask",
-        "@/lib/streamText",
         "@/lib/supabase/client",
         "@/lib/swarm",
         "@/lib/syncRepoTerminalSessions",
@@ -103350,7 +103383,6 @@
         "frontend/src/lib/runLightLaneChat.ts",
         "frontend/src/lib/semanticExecution.ts",
         "frontend/src/lib/sidebarProjectTask.ts",
-        "frontend/src/lib/streamText.ts",
         "frontend/src/lib/supabase/client.ts",
         "frontend/src/lib/swarm.ts",
         "frontend/src/lib/syncRepoTerminalSessions.ts",
@@ -103611,7 +103643,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/context/TerminalChatContext.tsx:97"
+        "frontend/src/context/TerminalChatContext.tsx:96"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -104105,7 +104137,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/context/TerminalChatContext.tsx:50"
+        "frontend/src/context/TerminalChatContext.tsx:49"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -104761,7 +104793,7 @@
         "frontend/src/components/notifications/NotificationExperience.tsx:9",
         "frontend/src/components/notifications/SidebarNotificationCenter.tsx:4",
         "frontend/src/components/settings/NotificationsSettingsPanel.tsx:9",
-        "frontend/src/context/TerminalChatContext.tsx:98",
+        "frontend/src/context/TerminalChatContext.tsx:97",
         "frontend/src/hooks/useBuildCompletionAlerts.ts:5"
       ],
       "reachable": true,
@@ -104852,7 +104884,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/context/TerminalChatContext.tsx:60"
+        "frontend/src/context/TerminalChatContext.tsx:59"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -104894,7 +104926,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/context/TerminalChatContext.tsx:49"
+        "frontend/src/context/TerminalChatContext.tsx:48"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -105428,7 +105460,7 @@
         "frontend/src/components/dashboard/ChatArchiveList.tsx:7",
         "frontend/src/components/dashboard/MediaPageClient.tsx:19",
         "frontend/src/components/dashboard/TerminalHistoryView.tsx:21",
-        "frontend/src/context/TerminalChatContext.tsx:41",
+        "frontend/src/context/TerminalChatContext.tsx:40",
         "frontend/src/lib/exportUserData.ts:1"
       ],
       "reachable": true,
@@ -105590,7 +105622,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/context/TerminalChatContext.tsx:46",
+        "frontend/src/context/TerminalChatContext.tsx:45",
         "frontend/src/lib/codeBuildProcessing.ts:2",
         "frontend/src/lib/phase1Routing.ts:4",
         "frontend/src/lib/workLanes.ts:4"
@@ -105796,11 +105828,11 @@
       "callers": [
         "frontend/src/components/layout/SidebarProjectHistory.tsx:46",
         "frontend/src/components/terminal/WorkspaceConversationMenu.tsx:13",
-        "frontend/src/context/TerminalChatContext.tsx:2037",
+        "frontend/src/context/TerminalChatContext.tsx:2036",
         "frontend/src/lib/restoreRepoTerminal.ts:10",
         "frontend/src/lib/syncRepoTerminalSessions.ts:17",
         "frontend/src/lib/terminalHistory.ts:14",
-        "frontend/src/lib/terminalHistory.ts:283"
+        "frontend/src/lib/terminalHistory.ts:285"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -105849,7 +105881,7 @@
       ],
       "callers": [
         "frontend/src/components/terminal/SwarmMessageLog.tsx:28",
-        "frontend/src/context/TerminalChatContext.tsx:47",
+        "frontend/src/context/TerminalChatContext.tsx:46",
         "frontend/src/lib/workLanes.ts:11"
       ],
       "reachable": true,
@@ -106052,7 +106084,7 @@
         "frontend/src/components/companion/CompanionCustomizer.tsx:6",
         "frontend/src/components/terminal/HomepageChatBar.tsx:15",
         "frontend/src/components/terminal/TerminalChatBar.tsx:24",
-        "frontend/src/context/TerminalChatContext.tsx:95",
+        "frontend/src/context/TerminalChatContext.tsx:94",
         "frontend/src/lib/companion.costumes.test.ts:4",
         "frontend/src/lib/companionCrown.test.ts:4",
         "frontend/src/store/useCompanionStore.ts:5"
@@ -106292,7 +106324,7 @@
         "frontend/src/components/homepage-next/phase1/CommandBar.tsx:13",
         "frontend/src/components/homepage-next/s01/CapabilityFocus.tsx:19",
         "frontend/src/components/terminal/HomepageChatBar.tsx:5",
-        "frontend/src/context/TerminalChatContext.tsx:32"
+        "frontend/src/context/TerminalChatContext.tsx:31"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -107047,7 +107079,7 @@
       "callers": [
         "frontend/src/components/terminal/EngineeringArtifactView.tsx:3",
         "frontend/src/components/terminal/XrogaBlockView.tsx:9",
-        "frontend/src/context/TerminalChatContext.tsx:106",
+        "frontend/src/context/TerminalChatContext.tsx:105",
         "frontend/src/lib/api.ts:10",
         "frontend/src/lib/artifactRecovery.test.ts:4",
         "frontend/src/lib/engineeringArtifact.test.ts:4",
@@ -107780,7 +107812,7 @@
         "frontend/src/app/auth/github/callback/page.tsx:6",
         "frontend/src/components/integrations/GitHubConnect.tsx:11",
         "frontend/src/components/terminal/RepoContextBar.tsx:9",
-        "frontend/src/context/TerminalChatContext.tsx:80"
+        "frontend/src/context/TerminalChatContext.tsx:79"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -107831,10 +107863,10 @@
         "frontend/src/components/layout/SidebarProjectHistory.tsx:36",
         "frontend/src/components/terminal/RepoContextBar.tsx:21",
         "frontend/src/components/terminal/RepoWorkspaceGateModal.tsx:8",
-        "frontend/src/context/TerminalChatContext.tsx:1886",
-        "frontend/src/context/TerminalChatContext.tsx:3326",
-        "frontend/src/context/TerminalChatContext.tsx:62",
-        "frontend/src/context/TerminalChatContext.tsx:944",
+        "frontend/src/context/TerminalChatContext.tsx:1885",
+        "frontend/src/context/TerminalChatContext.tsx:3299",
+        "frontend/src/context/TerminalChatContext.tsx:61",
+        "frontend/src/context/TerminalChatContext.tsx:943",
         "frontend/src/lib/projectResume.ts:6"
       ],
       "reachable": true,
@@ -108660,8 +108692,8 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/context/TerminalChatContext.tsx:1337",
-        "frontend/src/context/TerminalChatContext.tsx:3961",
+        "frontend/src/context/TerminalChatContext.tsx:1336",
+        "frontend/src/context/TerminalChatContext.tsx:3934",
         "frontend/src/lib/rehydratePersistedMessages.ts:3"
       ],
       "reachable": true,
@@ -108778,7 +108810,7 @@
       ],
       "callers": [
         "frontend/src/components/terminal/LegacyLandingOutputView.tsx:5",
-        "frontend/src/context/TerminalChatContext.tsx:99",
+        "frontend/src/context/TerminalChatContext.tsx:98",
         "frontend/src/lib/landingOutcome.test.ts:3",
         "frontend/src/lib/recoveredBuildOutput.ts:2",
         "frontend/src/lib/rehydratePersistedMessages.ts:5",
@@ -109206,7 +109238,7 @@
       ],
       "callers": [
         "frontend/src/components/dashboard/MediaPageClient.tsx:18",
-        "frontend/src/context/TerminalChatContext.tsx:40"
+        "frontend/src/context/TerminalChatContext.tsx:39"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -109284,7 +109316,7 @@
       "callers": [
         "frontend/src/components/dashboard/MediaPageClient.tsx:8",
         "frontend/src/components/layout/MediaGalleryModal.tsx:6",
-        "frontend/src/context/TerminalChatContext.tsx:39",
+        "frontend/src/context/TerminalChatContext.tsx:38",
         "frontend/src/lib/exportUserData.ts:3",
         "frontend/src/lib/messageRehydration.ts:2"
       ],
@@ -109354,7 +109386,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/context/TerminalChatContext.tsx:48",
+        "frontend/src/context/TerminalChatContext.tsx:47",
         "frontend/src/lib/mergeBuildTodos.test.ts:3"
       ],
       "reachable": true,
@@ -109418,7 +109450,7 @@
       ],
       "callers": [
         "frontend/src/components/terminal/SwarmMessageLog.tsx:37",
-        "frontend/src/context/TerminalChatContext.tsx:68",
+        "frontend/src/context/TerminalChatContext.tsx:67",
         "frontend/src/lib/codeBuildProcessing.ts:3",
         "frontend/src/lib/messageHelpers.test.ts:3",
         "frontend/src/lib/phase1Routing.ts:3",
@@ -110327,7 +110359,7 @@
         "frontend/src/components/terminal/ImageStudioCard.tsx:26",
         "frontend/src/components/terminal/ReasoningAndFollowUps.tsx:6",
         "frontend/src/components/terminal/TerminalChatBar.tsx:297",
-        "frontend/src/context/TerminalChatContext.tsx:61",
+        "frontend/src/context/TerminalChatContext.tsx:60",
         "frontend/src/lib/phase1Routing.ts:2",
         "frontend/src/lib/workLanes.ts:2"
       ],
@@ -110458,7 +110490,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/context/TerminalChatContext.tsx:87",
+        "frontend/src/context/TerminalChatContext.tsx:86",
         "frontend/src/hooks/useBackgroundBuildJobs.ts:5",
         "frontend/src/hooks/useBuildCompletionAlerts.ts:7",
         "frontend/src/lib/pendingBuildJobs.test.ts:3"
@@ -111013,7 +111045,7 @@
       "callers": [
         "frontend/src/components/layout/SidebarProjectHistory.tsx:60",
         "frontend/src/components/terminal/RepoContextBar.tsx:31",
-        "frontend/src/context/TerminalChatContext.tsx:111",
+        "frontend/src/context/TerminalChatContext.tsx:110",
         "frontend/src/lib/projectContext.test.ts:3",
         "frontend/src/lib/projectResume.ts:9",
         "frontend/src/lib/terminal/freshProductIsolation.test.ts:4",
@@ -111352,7 +111384,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/context/TerminalChatContext.tsx:67",
+        "frontend/src/context/TerminalChatContext.tsx:66",
         "frontend/src/lib/chatMemory.ts:2",
         "frontend/src/lib/messageHelpers.ts:1",
         "frontend/src/lib/phase1Routing.ts:11",
@@ -111682,7 +111714,7 @@
         "frontend/src/app/vercel-ai-deployment/page.tsx"
       ],
       "callers": [
-        "frontend/src/context/TerminalChatContext.tsx:101",
+        "frontend/src/context/TerminalChatContext.tsx:100",
         "frontend/src/hooks/useBackgroundBuildJobs.ts:12",
         "frontend/src/lib/api.ts:14",
         "frontend/src/lib/artifactRecovery.test.ts:10",
@@ -111802,7 +111834,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/context/TerminalChatContext.tsx:1267",
+        "frontend/src/context/TerminalChatContext.tsx:1266",
         "frontend/src/lib/workspacePersistence.ts:148"
       ],
       "reachable": true,
@@ -111953,8 +111985,8 @@
         "frontend/src/components/terminal/RepoContextBar.tsx:216",
         "frontend/src/components/terminal/RepoWorkspaceGateModal.tsx:7",
         "frontend/src/components/terminal/TerminalChatBar.tsx:36",
-        "frontend/src/context/TerminalChatContext.tsx:1879",
-        "frontend/src/context/TerminalChatContext.tsx:51",
+        "frontend/src/context/TerminalChatContext.tsx:1878",
+        "frontend/src/context/TerminalChatContext.tsx:50",
         "frontend/src/lib/buildDefaultTodos.ts:2",
         "frontend/src/lib/chatArchive.ts:2",
         "frontend/src/lib/projectArchive.ts:1",
@@ -112034,7 +112066,7 @@
         "frontend/src/components/layout/SidebarProjectHistory.tsx:55",
         "frontend/src/components/terminal/RepoWorkspaceGateModal.tsx:9",
         "frontend/src/components/terminal/TerminalChatBar.tsx:27",
-        "frontend/src/context/TerminalChatContext.tsx:44",
+        "frontend/src/context/TerminalChatContext.tsx:43",
         "frontend/src/lib/restoreRepoTerminal.ts:7",
         "frontend/src/lib/syncRepoTerminalSessions.ts:14",
         "frontend/src/lib/terminalHistory.ts:9"
@@ -112465,7 +112497,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/context/TerminalChatContext.tsx:74"
+        "frontend/src/context/TerminalChatContext.tsx:73"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -112520,7 +112552,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/context/TerminalChatContext.tsx:73"
+        "frontend/src/context/TerminalChatContext.tsx:72"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -112726,7 +112758,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/context/TerminalChatContext.tsx:96",
+        "frontend/src/context/TerminalChatContext.tsx:95",
         "frontend/src/lib/semanticExecution.test.ts:5"
       ],
       "reachable": true,
@@ -113748,7 +113780,7 @@
       "id": "surface:3f2965f2e342555c0e07",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/sidebarOrganization.ts",
-      "sha256": "ba55e2af09e339762f73ce7d825f02fee6227520ec5d3dbf7a53877f5abf771f",
+      "sha256": "c556d45dd88f793c9f0dd83feb41a4f99bffe126eab8e71a5df2e61924c2d999",
       "symbols": [
         "SidebarChat",
         "SidebarKind",
@@ -113756,6 +113788,7 @@
         "SidebarProject",
         "SidebarSection",
         "active",
+        "activeChatSaves",
         "actual",
         "c",
         "changeSidebarMeta",
@@ -113765,7 +113798,6 @@
         "createSidebarSection",
         "deleteSidebarChat",
         "deleteSidebarMeta",
-        "e",
         "error",
         "existing",
         "id",
@@ -113777,6 +113809,7 @@
         "loadSidebarProjects",
         "loadSidebarSections",
         "meaningfulSidebarTitle",
+        "messages",
         "operation",
         "owned",
         "pendingChats",
@@ -113786,13 +113819,15 @@
         "projects",
         "removeSidebarSection",
         "results",
+        "save",
         "saveSidebarChat",
         "scheduleProjectConversationLink",
         "scheduleSidebarChatSave",
         "sessions",
         "sortPinned",
         "swapSidebarPins",
-        "visiblePage"
+        "visiblePage",
+        "write"
       ],
       "imports": [
         "@/lib/sidebarProjectTask",
@@ -113817,8 +113852,8 @@
         "frontend/src/components/layout/SidebarProjectHistory.tsx:15",
         "frontend/src/components/terminal/WorkspaceConversationMenu.tsx:12",
         "frontend/src/lib/sidebarOrganization.test.ts:6",
-        "frontend/src/lib/terminalHistory.ts:253",
-        "frontend/src/lib/terminalHistory.ts:256"
+        "frontend/src/lib/terminalHistory.ts:255",
+        "frontend/src/lib/terminalHistory.ts:258"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -113836,14 +113871,14 @@
         "frontend/src/lib/sidebarOrganization.ts:39 (user_id)",
         "frontend/src/lib/sidebarOrganization.ts:43 (user_id)",
         "frontend/src/lib/sidebarOrganization.ts:47 (user_id)",
-        "frontend/src/lib/sidebarOrganization.ts:65 (user_id)",
-        "frontend/src/lib/sidebarOrganization.ts:69 (user_id)",
-        "frontend/src/lib/sidebarOrganization.ts:85 (user_id)",
-        "frontend/src/lib/sidebarOrganization.ts:93 (user_id)",
-        "frontend/src/lib/sidebarOrganization.ts:97 (user_id)",
-        "frontend/src/lib/sidebarOrganization.ts:136 (user_id)",
-        "frontend/src/lib/sidebarOrganization.ts:138 (user_id)",
-        "frontend/src/lib/sidebarOrganization.ts:140 (user_id)"
+        "frontend/src/lib/sidebarOrganization.ts:71 (user_id)",
+        "frontend/src/lib/sidebarOrganization.ts:75 (user_id)",
+        "frontend/src/lib/sidebarOrganization.ts:91 (user_id)",
+        "frontend/src/lib/sidebarOrganization.ts:99 (user_id)",
+        "frontend/src/lib/sidebarOrganization.ts:103 (user_id)",
+        "frontend/src/lib/sidebarOrganization.ts:151 (user_id)",
+        "frontend/src/lib/sidebarOrganization.ts:153 (user_id)",
+        "frontend/src/lib/sidebarOrganization.ts:155 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -113886,7 +113921,7 @@
         "frontend/src/components/layout/SidebarProjectHistory.tsx:7",
         "frontend/src/components/terminal/RepoContextBar.tsx:34",
         "frontend/src/components/terminal/WorkspaceConversationMenu.tsx:9",
-        "frontend/src/context/TerminalChatContext.tsx:43",
+        "frontend/src/context/TerminalChatContext.tsx:42",
         "frontend/src/lib/sidebarOrganization.ts:5",
         "frontend/src/lib/sidebarProjectTask.test.ts:3",
         "frontend/src/lib/terminalHistory.ts:4"
@@ -114233,15 +114268,17 @@
       "id": "surface:a6e8e2c57b829f69fe03",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/storageSafe.ts",
-      "sha256": "09177cc8bdd4282fc566ffa705d69c470116baf31b52b2395093ad4667dd5bcc",
+      "sha256": "37254c666b3a3db2f7ff3cc31a4666bcd0b2b506c0525521cb5b624b0e6ce6a6",
       "symbols": [
         "err",
         "isDataImageUrl",
         "isDataVideoUrl",
+        "isEmptyAssistantPlaceholder",
         "messagesForStorage",
         "next",
         "o",
         "safeStorageSet",
+        "sidebarMessagesForStorage",
         "slimLandingOutput",
         "stripFeatureOutput",
         "stripUrl",
@@ -114371,7 +114408,6 @@
         "frontend/src/app/vercel-ai-deployment/page.tsx"
       ],
       "callers": [
-        "frontend/src/context/TerminalChatContext.tsx:26",
         "frontend/src/lib/api.ts:15",
         "frontend/src/lib/runGuestLaneChat.ts:2",
         "frontend/src/lib/runLightLaneChat.ts:3",
@@ -115423,7 +115459,7 @@
       ],
       "callers": [
         "frontend/src/components/dashboard/SwarmRunHistory.tsx:7",
-        "frontend/src/context/TerminalChatContext.tsx:105",
+        "frontend/src/context/TerminalChatContext.tsx:104",
         "frontend/src/lib/api.ts:5",
         "frontend/src/lib/artifactRecovery.test.ts:9",
         "frontend/src/lib/engineeringArtifact.test.ts:15"
@@ -115563,10 +115599,10 @@
       "callers": [
         "frontend/src/components/layout/SidebarProjectHistory.tsx:41",
         "frontend/src/components/terminal/RepoContextBar.tsx:356",
-        "frontend/src/context/TerminalChatContext.tsx:1049",
-        "frontend/src/context/TerminalChatContext.tsx:1435",
-        "frontend/src/context/TerminalChatContext.tsx:2456",
-        "frontend/src/context/TerminalChatContext.tsx:3971"
+        "frontend/src/context/TerminalChatContext.tsx:1048",
+        "frontend/src/context/TerminalChatContext.tsx:1434",
+        "frontend/src/context/TerminalChatContext.tsx:2455",
+        "frontend/src/context/TerminalChatContext.tsx:3944"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -116381,7 +116417,7 @@
       "id": "surface:af3de59afc346b2429f7",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/terminalHistory.ts",
-      "sha256": "02f930e56efaa61c4ee1fef2b63987c4514d23b0be777f49cb368980090014c1",
+      "sha256": "0bc21e539fcbdac1bd712156789b596227454e80ff1766e38c39a3df9dca3003",
       "symbols": [
         "BROWSER_KEYWORDS",
         "KEY",
@@ -116476,9 +116512,9 @@
         "frontend/src/components/layout/SidebarProjectHistory.tsx:24",
         "frontend/src/components/layout/SidebarProjectHistory.tsx:30",
         "frontend/src/components/terminal/WorkspaceConversationMenu.tsx:14",
-        "frontend/src/context/TerminalChatContext.tsx:1892",
-        "frontend/src/context/TerminalChatContext.tsx:2038",
-        "frontend/src/context/TerminalChatContext.tsx:42",
+        "frontend/src/context/TerminalChatContext.tsx:1891",
+        "frontend/src/context/TerminalChatContext.tsx:2037",
+        "frontend/src/context/TerminalChatContext.tsx:41",
         "frontend/src/lib/restoreRepoTerminal.ts:6",
         "frontend/src/lib/syncRepoTerminalSessions.ts:9",
         "frontend/src/lib/terminalSessionStorage.ts:87"
@@ -116758,7 +116794,7 @@
       ],
       "callers": [
         "frontend/src/components/providers/AppProviders.tsx:7",
-        "frontend/src/context/TerminalChatContext.tsx:45"
+        "frontend/src/context/TerminalChatContext.tsx:44"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -117926,7 +117962,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/context/TerminalChatContext.tsx:69"
+        "frontend/src/context/TerminalChatContext.tsx:68"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -118030,7 +118066,7 @@
         "frontend/src/components/layout/SidebarProjectHistory.tsx:59",
         "frontend/src/components/notifications/NotificationBell.tsx:10",
         "frontend/src/components/terminal/SwarmMessageLog.tsx:43",
-        "frontend/src/context/TerminalChatContext.tsx:33",
+        "frontend/src/context/TerminalChatContext.tsx:32",
         "frontend/src/lib/projectResume.ts:5",
         "frontend/src/lib/restoreRepoTerminal.ts:9",
         "frontend/src/lib/syncRepoTerminalSessions.ts:8"
@@ -118451,7 +118487,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/context/TerminalChatContext.tsx:81",
+        "frontend/src/context/TerminalChatContext.tsx:80",
         "frontend/src/lib/agentProcessingFormat.ts:3",
         "frontend/src/lib/repoWorkspaceGate.ts:13"
       ],
@@ -119176,7 +119212,7 @@
       "id": "surface:302352813d356af65f42",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/xrogaResponseDocument.ts",
-      "sha256": "27f3ba8c113e0b4897268761e1adc8458e3040dd5fc6bd20afa939c9f2e25e9c",
+      "sha256": "1cc90fc08efffb9e575064935fa7f92c48bb014432262874dd72b6a1e738d378",
       "symbols": [
         "EnhancedAiResponse",
         "MAX_PROTOCOL_CHARS",
@@ -119279,7 +119315,7 @@
         "frontend/src/components/response-experience-v2/document.test.ts:8",
         "frontend/src/components/response-experience-v2/exportText.test.ts:4",
         "frontend/src/components/response-experience-v2/shareSnapshot.test.ts:3",
-        "frontend/src/context/TerminalChatContext.tsx:100",
+        "frontend/src/context/TerminalChatContext.tsx:99",
         "frontend/src/lib/modelHandoff.ts:1",
         "frontend/src/lib/researchHandoff.ts:2",
         "frontend/src/lib/responseCoverageContract.test.ts:3",
@@ -119595,7 +119631,7 @@
         "frontend/src/components/settings/GeneralSettingsPanel.tsx:8",
         "frontend/src/components/settings/SecuritySettingsPanel.tsx:11",
         "frontend/src/components/terminal/SwarmMessageLog.tsx:7",
-        "frontend/src/context/TerminalChatContext.tsx:28",
+        "frontend/src/context/TerminalChatContext.tsx:27",
         "frontend/src/hooks/useAvatarUpdate.ts:5",
         "frontend/src/hooks/useBackgroundBuildJobs.ts:11",
         "frontend/src/hooks/useBuildCompletionAlerts.ts:6"
@@ -119876,7 +119912,7 @@
         "frontend/src/components/terminal/ProjectWorkspaceRail.tsx:7",
         "frontend/src/components/terminal/RuntimeLogsButton.tsx:16",
         "frontend/src/components/terminal/RuntimePreviewControls.tsx:22",
-        "frontend/src/context/TerminalChatContext.tsx:31",
+        "frontend/src/context/TerminalChatContext.tsx:30",
         "frontend/src/hooks/useRuntimePreviewHydration.ts:12"
       ],
       "reachable": true,
@@ -119992,7 +120028,7 @@
         "frontend/src/components/terminal/SwarmMessageLog.tsx:41",
         "frontend/src/components/terminal/TerminalChatBar.tsx:9",
         "frontend/src/components/terminal/TerminalDock.tsx:12",
-        "frontend/src/context/TerminalChatContext.tsx:29"
+        "frontend/src/context/TerminalChatContext.tsx:28"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -120100,14 +120136,14 @@
         "frontend/src/components/terminal/WorkspaceIdentityMenu.tsx:18",
         "frontend/src/components/terminal/WorkspaceLauncher.tsx:6",
         "frontend/src/components/terminal/WorkspacePeopleControls.tsx:9",
-        "frontend/src/context/TerminalChatContext.tsx:166",
-        "frontend/src/context/TerminalChatContext.tsx:205",
-        "frontend/src/context/TerminalChatContext.tsx:2745",
-        "frontend/src/context/TerminalChatContext.tsx:30",
-        "frontend/src/context/TerminalChatContext.tsx:3408",
-        "frontend/src/context/TerminalChatContext.tsx:345",
-        "frontend/src/context/TerminalChatContext.tsx:3772",
-        "frontend/src/context/TerminalChatContext.tsx:830",
+        "frontend/src/context/TerminalChatContext.tsx:165",
+        "frontend/src/context/TerminalChatContext.tsx:204",
+        "frontend/src/context/TerminalChatContext.tsx:2746",
+        "frontend/src/context/TerminalChatContext.tsx:29",
+        "frontend/src/context/TerminalChatContext.tsx:3381",
+        "frontend/src/context/TerminalChatContext.tsx:344",
+        "frontend/src/context/TerminalChatContext.tsx:3745",
+        "frontend/src/context/TerminalChatContext.tsx:829",
         "frontend/src/hooks/useRuntimePreviewHydration.ts:16",
         "frontend/src/lib/projectResume.ts:8",
         "frontend/src/lib/repoContext.ts:1",
@@ -126004,7 +126040,7 @@
       "id": "surface:bd6af899f2dd9df930f6",
       "subsystem": "browser_sandbox",
       "sourcePath": "scripts/verify-native-openui-browser.mjs",
-      "sha256": "9d088649c19586e443f9492f1e059eec86528c9e18df62e86118b37e26f8dc62",
+      "sha256": "15c4718256f288e3f1ad7d9d9d1610004a2e9e04483342c14e38fd8716717815",
       "symbols": [
         "accessibility",
         "answerRegion",
@@ -143504,7 +143540,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:60833a0cd5724ab1ddaf",
+      "id": "finding:70ec8ada0f7a740b188d",
       "sourcePath": "frontend/src/components/terminal/SwarmMessageLog.tsx",
       "line": 436,
       "kind": "PLACEHOLDER",
@@ -143664,9 +143700,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:eeb247066643f80a7d08",
+      "id": "finding:52e5ac6aa9f4922d24aa",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 536,
+      "line": 535,
       "kind": "TODO",
       "reachable": true,
       "state": "PARTIAL",
@@ -143674,9 +143710,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:5f5f22fe431a46a6f88b",
+      "id": "finding:ad2a3addff4e9461ae0f",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 785,
+      "line": 784,
       "kind": "TODO",
       "reachable": true,
       "state": "PARTIAL",
@@ -143684,9 +143720,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:0df0cc16526fc7f0f3cd",
+      "id": "finding:4d782801c8b53bb7e8e8",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 1952,
+      "line": 1951,
       "kind": "TODO",
       "reachable": true,
       "state": "PARTIAL",
@@ -143694,9 +143730,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:eca381353a76a7ba23be",
+      "id": "finding:72f1b0bc44891ad7ce04",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 1954,
+      "line": 1953,
       "kind": "TODO",
       "reachable": true,
       "state": "PARTIAL",
@@ -143704,9 +143740,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:f35a4a5b1df4baf07e45",
+      "id": "finding:2e1ecaf64ae02340d5af",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 1954,
+      "line": 1953,
       "kind": "TODO",
       "reachable": true,
       "state": "PARTIAL",
@@ -143714,9 +143750,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:3f2efd3e8dcdadcb32b1",
+      "id": "finding:9febd6694a32240b1911",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 3298,
+      "line": 3271,
       "kind": "TODO",
       "reachable": true,
       "state": "PARTIAL",
@@ -144723,86 +144759,86 @@
       "reachable": false
     },
     {
-      "id": "frontend-call:2131f283511e7eae15de",
+      "id": "frontend-call:356540e49c1fe499002a",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 498,
+      "line": 524,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:73cd9ec9fdb4423f7a62",
+      "id": "frontend-call:06162705794d440daa3b",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 501,
+      "line": 527,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:b9582552063a2d3eed78",
+      "id": "frontend-call:1993a2caa4c67a3f42a2",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1266,
+      "line": 1292,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:1a76df1672a916c57893",
+      "id": "frontend-call:f1ff942596d42eb4b71b",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1267,
+      "line": 1293,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:5ad87c33aedc6bde4598",
+      "id": "frontend-call:9b8db5fe6363618b2878",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1272,
+      "line": 1298,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:c1c2f69efdae0ceee7c5",
+      "id": "frontend-call:4a4698fc0580a0d607fd",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1273,
+      "line": 1299,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:d818a1ddb6e809ab7f5b",
+      "id": "frontend-call:a8953e4c433cfb20e34d",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1279,
+      "line": 1305,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:f19e74d16e2a862bb18f",
+      "id": "frontend-call:5afd7c6e352844391fde",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1284,
+      "line": 1310,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:0582ff98af0bba937c08",
+      "id": "frontend-call:f5d87a682aed54e57ad7",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1341,
+      "line": 1367,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:9fe3f502446418e3dc1d",
+      "id": "frontend-call:50bc252574d6802d6207",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1342,
+      "line": 1368,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:b02c78c8dbd7709f4f3e",
+      "id": "frontend-call:6c5b6bd1a269c8c3cdb5",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1349,
+      "line": 1375,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:094fcaa819dcddee322e",
+      "id": "frontend-call:f3509fd2882a861742bc",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1363,
+      "line": 1389,
       "callee": "fetch",
       "reachable": false
     },
@@ -147082,247 +147118,247 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:352513e43524417a3c2c",
+      "id": "frontend-call:dd88544d1e49dc4fff52",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 738,
+      "line": 737,
       "callee": "api.dashboard.summary().then().catch",
       "reachable": true
     },
     {
-      "id": "frontend-call:4cce95212b163182f1e7",
+      "id": "frontend-call:59c0249c3f924d6a4ab5",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 738,
+      "line": 737,
       "callee": "api.dashboard.summary().then",
       "reachable": true
     },
     {
-      "id": "frontend-call:6c2d58bc4fd3bb2956ab",
+      "id": "frontend-call:abaf6b0a4d05bacd5b11",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 738,
+      "line": 737,
       "callee": "api.dashboard.summary",
       "reachable": true
     },
     {
-      "id": "frontend-call:d6075d1a030f8e3dca54",
+      "id": "frontend-call:324e4deee09d690a7555",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 1077,
+      "line": 1076,
       "callee": "api.github.status().then",
       "reachable": true
     },
     {
-      "id": "frontend-call:c42bf632f0300bf0d54f",
+      "id": "frontend-call:04ed4d8861ab03b63241",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 1077,
+      "line": 1076,
       "callee": "api.github.status",
       "reachable": true
     },
     {
-      "id": "frontend-call:8a47be4e91d8cd8fa6a6",
+      "id": "frontend-call:1cb7d6460c65537aa403",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 1096,
+      "line": 1095,
       "callee": "api.github.status().then",
       "reachable": true
     },
     {
-      "id": "frontend-call:b758fae975b4a8234978",
+      "id": "frontend-call:08919fee0a211a91c740",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 1096,
+      "line": 1095,
       "callee": "api.github.status",
       "reachable": true
     },
     {
-      "id": "frontend-call:7c489bd95ff3c8d01eb8",
+      "id": "frontend-call:195f124865e86985a007",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 1137,
+      "line": 1136,
       "callee": "api.vercel.status().then().catch",
       "reachable": true
     },
     {
-      "id": "frontend-call:fb9a2a5e3fad450d3184",
+      "id": "frontend-call:96d89fc3004eab41c496",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 1137,
+      "line": 1136,
       "callee": "api.vercel.status().then",
       "reachable": true
     },
     {
-      "id": "frontend-call:65f5483350ae12343361",
+      "id": "frontend-call:44782073144ec43e93bb",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 1137,
+      "line": 1136,
       "callee": "api.vercel.status",
       "reachable": true
     },
     {
-      "id": "frontend-call:d18d8792d2d6e8e839e5",
+      "id": "frontend-call:37e6ba11e112dca8ace6",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 1150,
+      "line": 1149,
       "callee": "api.github.status().then().catch",
       "reachable": true
     },
     {
-      "id": "frontend-call:648a895c5c8adafc5066",
+      "id": "frontend-call:4a743432e5cb5d44256f",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 1150,
+      "line": 1149,
       "callee": "api.github.status().then",
       "reachable": true
     },
     {
-      "id": "frontend-call:013f8da6e59e624f65bd",
+      "id": "frontend-call:5a93edc344ade13c6f69",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 1150,
+      "line": 1149,
       "callee": "api.github.status",
       "reachable": true
     },
     {
-      "id": "frontend-call:dbfabab71f1bc629ecf1",
+      "id": "frontend-call:4e817af050fa924cefe4",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 1723,
+      "line": 1722,
       "callee": "api.swarm.cancelRun().then().catch",
       "reachable": true
     },
     {
-      "id": "frontend-call:6c4ce98e30f6d05a265e",
+      "id": "frontend-call:4c11a430dfacd71f3b9d",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 1723,
+      "line": 1722,
       "callee": "api.swarm.cancelRun().then",
       "reachable": true
     },
     {
-      "id": "frontend-call:f9312ea229ad1eb4ecb2",
+      "id": "frontend-call:8da5cc463f2e71b4157c",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 1723,
+      "line": 1722,
       "callee": "api.swarm.cancelRun",
       "reachable": true
     },
     {
-      "id": "frontend-call:986b184ea23afbc2d1ab",
+      "id": "frontend-call:80339873bb75d88685ca",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 2005,
+      "line": 2004,
       "callee": "api.billing.setPacing",
       "reachable": true
     },
     {
-      "id": "frontend-call:727a10521281a80b8922",
+      "id": "frontend-call:adb9d935e82fb8348546",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 2823,
+      "line": 2824,
       "callee": "api.phase1.plan",
       "reachable": true
     },
     {
-      "id": "frontend-call:f193c213acef00d7eb43",
+      "id": "frontend-call:fba6c16b1a6857789a9f",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 2878,
+      "line": 2879,
       "callee": "api.github.status().then().catch",
       "reachable": true
     },
     {
-      "id": "frontend-call:10bf6885bcdce0e3e7a8",
+      "id": "frontend-call:c79a723206df2a4158d5",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 2878,
+      "line": 2879,
       "callee": "api.github.status().then",
       "reachable": true
     },
     {
-      "id": "frontend-call:dacb18f8fd51c60076ef",
+      "id": "frontend-call:d25bb30dc5c3864ffb78",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 2878,
+      "line": 2879,
       "callee": "api.github.status",
       "reachable": true
     },
     {
-      "id": "frontend-call:161eb70cf53b6815f495",
+      "id": "frontend-call:011eb577fe1523db6317",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 2957,
+      "line": 2958,
       "callee": "api.phase1.chat",
       "reachable": true
     },
     {
-      "id": "frontend-call:8d58be0f94db30c175a2",
+      "id": "frontend-call:afc3b10c57ea2cf42fb1",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 3324,
+      "line": 3297,
       "callee": "api.github.status().then",
       "reachable": true
     },
     {
-      "id": "frontend-call:e0d11f030fae7b0ec145",
+      "id": "frontend-call:a4b709885841e596452e",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 3324,
+      "line": 3297,
       "callee": "api.github.status",
       "reachable": true
     },
     {
-      "id": "frontend-call:f7f7d3fc1545b88874da",
+      "id": "frontend-call:fbaa36602e1cff6f144a",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 3934,
+      "line": 3907,
       "callee": "api.swarm.saveConversation().catch",
       "reachable": true
     },
     {
-      "id": "frontend-call:e0c044e3fcaa61492335",
+      "id": "frontend-call:c107566601a2c51d789d",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 3934,
+      "line": 3907,
       "callee": "api.swarm.saveConversation",
       "reachable": true
     },
     {
-      "id": "frontend-call:e3c2502eeb9d1d2f3aab",
+      "id": "frontend-call:829aa59c69f9dd972513",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 4020,
+      "line": 3993,
       "callee": "api.swarm.saveConversation().catch",
       "reachable": true
     },
     {
-      "id": "frontend-call:d2be5695f4de6bf286c1",
+      "id": "frontend-call:8cc4f50d46dfc45bb3ef",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 4020,
+      "line": 3993,
       "callee": "api.swarm.saveConversation",
       "reachable": true
     },
     {
-      "id": "frontend-call:623664cbdcdeb26dc1f5",
+      "id": "frontend-call:ce40a87a85c20cf5c6f7",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 4041,
+      "line": 4014,
       "callee": "api.github.updateSettings().catch",
       "reachable": true
     },
     {
-      "id": "frontend-call:1c113c2c058f9a6333d3",
+      "id": "frontend-call:324686f555eb62c65897",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 4041,
+      "line": 4014,
       "callee": "api.github.updateSettings",
       "reachable": true
     },
     {
-      "id": "frontend-call:59bacf6a3368ba0f51b1",
+      "id": "frontend-call:43507d7b9402d64283c4",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 4043,
+      "line": 4016,
       "callee": "api.projects.create().then().catch",
       "reachable": true
     },
     {
-      "id": "frontend-call:e3d57122b286b02281ca",
+      "id": "frontend-call:6521b1019599043ed98d",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 4043,
+      "line": 4016,
       "callee": "api.projects.create().then",
       "reachable": true
     },
     {
-      "id": "frontend-call:e1e57136afb75b2f5ed9",
+      "id": "frontend-call:b2eafbd889d181fcae74",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 4043,
+      "line": 4016,
       "callee": "api.projects.create",
       "reachable": true
     },
     {
-      "id": "frontend-call:537a4962d05498e414f0",
+      "id": "frontend-call:db15c64756672ba2cd27",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 4759,
+      "line": 4733,
       "callee": "api.github.status().then",
       "reachable": true
     },
     {
-      "id": "frontend-call:b4dd2d77fd8de9be1613",
+      "id": "frontend-call:06539f35477b92bb3dde",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 4759,
+      "line": 4733,
       "callee": "api.github.status",
       "reachable": true
     },
@@ -148367,7 +148403,7 @@
     {
       "id": "test-suite:2e491f4d2fcbc11f974c",
       "sourcePath": "backend/src/ai/nativeOpenUi.test.ts",
-      "declaredTests": 15,
+      "declaredTests": 18,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -154667,7 +154703,7 @@
     {
       "id": "test-suite:dbb3d9c0e01797407936",
       "sourcePath": "frontend/src/lib/storageSafe.test.ts",
-      "declaredTests": 1,
+      "declaredTests": 2,
       "skipLocations": [],
       "focusLocations": []
     },
