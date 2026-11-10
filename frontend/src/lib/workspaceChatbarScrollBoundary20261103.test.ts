@@ -40,8 +40,9 @@ test('conversation clips only below the floating chatbar and fades its upper edg
   );
 });
 
-test('mobile assistant replies use the composer inner inset without moving user messages', () => {
+test('assistant replies use the composer inner inset at every pane width without moving user messages', () => {
   const messageLog = read('../components/terminal/SwarmMessageLog.tsx');
-  assert.match(messageLog, /chromeless && msg\.role === 'assistant' && 'box-border max-\[600px\]:ps-\[18px\]'/);
-  assert.doesNotMatch(messageLog, /chromeless && msg\.role === 'user' && 'box-border max-\[600px\]:ps-\[18px\]'/);
+  assert.match(messageLog, /chromeless && msg\.role === 'assistant' && 'box-border ps-\[18px\]'/);
+  assert.doesNotMatch(messageLog, /chromeless && msg\.role === 'user' && 'box-border ps-\[18px\]'/);
+  assert.doesNotMatch(messageLog, /max-\[600px\]:ps-\[18px\]/);
 });

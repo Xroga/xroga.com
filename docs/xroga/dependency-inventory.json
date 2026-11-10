@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "28161b0de19ae41ff7975f541cfd15221048b678",
+  "source_sha": "2dde252953933c8ac3325b5efc18b28b122a0a22",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -22760,7 +22760,7 @@
     },
     {
       "path": "frontend/src/components/terminal/SwarmMessageLog.tsx",
-      "sha256": "03e992bcd4282f9a406c8a7fecbb3b9bb92f5a9b301f7151ad26d821d9f147e8"
+      "sha256": "97c2bdb5e2ba9f39888fd028a74f8b1241766078f5a67e4ebc1adbf251a44192"
     },
     {
       "path": "frontend/src/components/terminal/TerminalBuildReport.tsx",
