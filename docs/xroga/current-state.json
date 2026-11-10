@@ -144709,7 +144709,7 @@
     {
       "id": "test-suite:0f52997906a86a944a66",
       "sourcePath": "apps/xroga-browser-extension/src/agent/__tests__/read-loop-guard.test.ts",
-      "declaredTests": 4,
+      "declaredTests": 5,
       "skipLocations": [],
       "focusLocations": []
     },
