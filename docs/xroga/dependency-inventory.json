@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "47288674c38024ed24a892c42fdb1e1ac458f999",
+  "source_sha": "3a825c6e66fb6180c190d9ce1130a28005f953a0",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -20896,7 +20896,7 @@
     },
     {
       "path": "frontend/src/components/dashboard/WorkspaceShowcaseStarts.tsx",
-      "sha256": "570ff15daf9a57f4393e016c630f8b726fde7e2fc293bf1273b2251041df2f3e"
+      "sha256": "57c188f60050eb8c4208409e3e03b32032e5ab521808bb7ddc5a57cfb4256560"
     },
     {
       "path": "frontend/src/components/dashboard/WorkspaceStarterIdeas.tsx",
@@ -21868,7 +21868,7 @@
     },
     {
       "path": "frontend/src/components/layout/Sidebar.tsx",
-      "sha256": "a2b09887bb6d8c6586d4bbdea91fae6af311c2d2349ceb5eef157890002dfa96"
+      "sha256": "0a285c329d08c67062b57ad1ba5bf2c5bf50027a2a32bac83e3735626854a528"
     },
     {
       "path": "frontend/src/components/layout/SidebarActionMenu.tsx",
@@ -21888,7 +21888,7 @@
     },
     {
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "sha256": "403def6e0480eb4371f4c73261063c46af91996a8287e7722609c89d6e6ac237"
+      "sha256": "fabbe7dbdf3c5d33995fef1d001ac8761888501128d67bff03ed02d57a274d77"
     },
     {
       "path": "frontend/src/components/layout/SidebarSearchModal.tsx",
@@ -22720,7 +22720,7 @@
     },
     {
       "path": "frontend/src/components/terminal/RepoContextBar.tsx",
-      "sha256": "ca88dfad1df43df059dcdfcce9937bc97aae9b3b86c52c573d01eba14e1dc9f9"
+      "sha256": "51ea1eb1e55d676bbfe035638fe9db71cd151b984ead74d779eb2c6ca999fef1"
     },
     {
       "path": "frontend/src/components/terminal/RepoWorkspaceGateModal.tsx",
@@ -22768,7 +22768,7 @@
     },
     {
       "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "sha256": "959ecdbdfe4da3c4cee1a79e2e4684f638df3ded77cf7ed9002bdafbd2ee8d0c"
+      "sha256": "1ba12d5fa02c594c37d4dce9b120214619257eebd32d287e80efcd8c4813fa02"
     },
     {
       "path": "frontend/src/components/terminal/TerminalDock.tsx",
@@ -23096,7 +23096,7 @@
     },
     {
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "sha256": "7034873ea0b10fdf1deb91145dd162ab570aaf64f81794291d0b42a75099a55f"
+      "sha256": "9b717642fc22b53e2b44da817447b4a471f8135e5df18f36c4480d90c678cb2c"
     },
     {
       "path": "frontend/src/context/TerminalScrollContext.tsx",
@@ -23580,7 +23580,7 @@
     },
     {
       "path": "frontend/src/lib/passiveRepositorySelection.ts",
-      "sha256": "d3bb403f545e3326521818482ace27ab2c3989aa5c297533c357e4933db75cb5"
+      "sha256": "c86b023195530c865917ffaf97a81c31188fe4a0e8a9361dcc6fb7bb8a1f247e"
     },
     {
       "path": "frontend/src/lib/passwordStrength.ts",
@@ -23797,6 +23797,10 @@
     {
       "path": "frontend/src/lib/showcase/registry.ts",
       "sha256": "edb53ddc21b8d0e5bd80f4926f45573319db4d4f0af9526b780ee7fe9ebc2252"
+    },
+    {
+      "path": "frontend/src/lib/sidebarConversationLocation.ts",
+      "sha256": "823fdbfb4c89b55ed5675f39caf47d4d46ed8d01ccc9780cceb6f0c6004c3293"
     },
     {
       "path": "frontend/src/lib/sidebarOrganization.ts",
@@ -30125,7 +30129,7 @@
       "hostname": "github.com",
       "protocol": "https:",
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 4048,
+      "line": 4050,
       "credentialsInUrl": false
     },
     {
@@ -38252,14 +38256,7 @@
     },
     {
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 296,
-      "scope": "FUNCTION_LOCAL",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 363,
+      "line": 297,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -38273,28 +38270,28 @@
     },
     {
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 370,
+      "line": 365,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 463,
+      "line": 371,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 537,
+      "line": 464,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 804,
+      "line": 538,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -38308,28 +38305,28 @@
     },
     {
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 864,
+      "line": 806,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 889,
+      "line": 865,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 893,
+      "line": 890,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 900,
+      "line": 894,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -38756,14 +38753,14 @@
     },
     {
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 2088,
+      "line": 2090,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 2121,
+      "line": 2123,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
