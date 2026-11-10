@@ -144700,6 +144700,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:aa08e993df78f3120195",
+      "sourcePath": "apps/xroga-browser-extension/src/agent/__tests__/memory.test.ts",
+      "declaredTests": 4,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:afd50e9873e9d848f9fb",
       "sourcePath": "apps/xroga-browser-extension/src/agent/__tests__/overflow-recovery.test.ts",
       "declaredTests": 8,
