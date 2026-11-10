@@ -144,6 +144,38 @@ export function LoginForm() {
     }
   }
 
+  const [magicSent, setMagicSent] = useState(false);
+
+  async function handleMagicLink() {
+    setError(null);
+    if (!email.trim()) {
+      setError('Enter your email address first, then request a sign-in link.');
+      return;
+    }
+    setLoading(true);
+    try {
+      const { error: otpError } = await createClient().auth.signInWithOtp({
+        email: email.trim(),
+        options: {
+          shouldCreateUser: false,
+          emailRedirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(nextPath)}`,
+        },
+      });
+      if (otpError && (otpError.status === 429 || /rate limit/i.test(otpError.message))) {
+        setError('Please wait a moment before requesting another sign-in link.');
+      } else if (otpError && ((otpError.status ?? 0) >= 500 || /smtp|send|mailer/i.test(otpError.message))) {
+        setError('The email service is unavailable right now. Please try again later.');
+      } else {
+        // Same message whether or not the address has an account.
+        setMagicSent(true);
+      }
+    } catch (err) {
+      setError(safeAuthError(err, 'The sign-in link could not be sent. Please try again.'));
+    } finally {
+      setLoading(false);
+    }
+  }
+
   async function handleOAuth(provider: 'github' | 'google') {
     setError(null);
 
@@ -415,6 +447,21 @@ export function LoginForm() {
             : 'Sign in'}
 
         </AuthGradientButton>
+
+        {magicSent ? (
+          <p role="status" className="rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-3.5 py-2.5 text-[11px] leading-relaxed text-[var(--auth-text)]">
+            If this email belongs to an account, a sign-in link is on its way. Check your inbox and spam folder.
+          </p>
+        ) : (
+          <button
+            type="button"
+            onClick={handleMagicLink}
+            disabled={loading || oauthLoading}
+            className="w-full text-center text-xs font-semibold text-[#006aff] hover:underline disabled:opacity-50"
+          >
+            Email me a sign-in link instead
+          </button>
+        )}
       </form>
 
       <AuthSwitchText
