@@ -34,6 +34,7 @@ import { buildArtifactContextPreamble, useXrogaArtifactContext } from '@/lib/xro
 import { appendVoiceTranscript } from '@/lib/terminal/voiceRecording';
 import { XrogaVoiceControl } from './XrogaVoiceControl';
 import { getSelectedRepoContext } from '@/lib/repoContext';
+import { nativeWorkSkillById, buildNativeWorkSkillPrompt } from '@/lib/nativeWorkSkills';
 
 const MIN_INPUT_H = 32;
 const COMPOSER_PLACEHOLDERS = [
@@ -78,6 +79,7 @@ export function TerminalChatBar({ starter = false }: { starter?: boolean }) {
     loading,
     submit,
     stop,
+    startNewChat,
   } = useTerminalChat();
   const hydrated = useHydrated();
   const activeArtifactId = useXrogaArtifactContext((state) => state.activeArtifactId);
@@ -132,6 +134,29 @@ export function TerminalChatBar({ starter = false }: { starter?: boolean }) {
     }, 300);
     return () => window.clearTimeout(timer);
   }, [draft, prompt, setPrompt]);
+  // Library → Workspace: the selected native Skill is placed in the existing
+  // composer, never auto-sent and never opened in a second chat/mode.
+  useEffect(() => {
+    if (typeof window === 'undefined' || sessionRestoring) return;
+    const url = new URL(window.location.href);
+    const skill = nativeWorkSkillById(url.searchParams.get('nativeSkill'));
+    if (!skill || url.pathname !== '/workspace') return;
+    // Library starts a fresh, unassigned conversation in Recents; the plus-menu
+    // picker intentionally keeps its existing conversation instead.
+    startNewChat();
+    const scaffold = buildNativeWorkSkillPrompt(skill);
+    const next = scaffold;
+    setSelectedTool({label:skill.title,category:'Native Skill',description:skill.description,tone:'purple',scaffold});
+    setDraft(next);
+    draftRef.current = next;
+    lastExternalPrompt.current = next;
+    setPrompt(next);
+    url.searchParams.delete('nativeSkill');
+    window.history.replaceState(window.history.state,'',url.pathname+url.search+url.hash);
+    window.setTimeout(()=>textareaRef.current?.focus(),80);
+  },[setPrompt,sessionRestoring,startNewChat]);
+
+
   const [integrationsOpen, setIntegrationsOpen] = useState(false);
   const pluginsButtonRef = useRef<HTMLButtonElement>(null);
   const [githubOpen, setGithubOpen] = useState(false);
