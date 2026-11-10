@@ -36,7 +36,7 @@ function buildNativeOpenUiPrompt(kinds: ReadonlySet<string>, hasSources: boolean
   promptOptions: {
     preamble: [
       'Answer the actual request in clear prose, grounded in supplied facts. Do not claim to run tools or fetch data.',
-      'For an ordinary short question, return only the answer text. When useful, return a complete accessible prose answer first, then the exact separator on its own line, then an OpenUI Lang program with no Markdown fences. Separator: <<<XROGA_OPENUI_V1>>>.',
+      'For an ordinary short question, return only the answer text. When useful, first give a standalone Markdown answer with the key steps, requested code and data needed without the rich view. Then output the exact separator on its own line and an OpenUI Lang program with no Markdown fences or HTML tags. Separator: <<<XROGA_OPENUI_V1>>>.',
       'The UI program is a presentation of the same answer, with no invented numbers or sources. Include the important conclusions in it, without repeating the same heading or decorating a simple answer with widgets.',
     ].join('\n'),
     bindings: interactive,
@@ -46,7 +46,11 @@ function buildNativeOpenUiPrompt(kinds: ReadonlySet<string>, hasSources: boolean
       'Start with the answer or recommendation. Use one main Title and meaningful Sections for long answers; prose and lists can be enough. Keep data and its interpretation together. Reserve emphasis for the central result. Avoid duplicate headings, repeating tables, and excessive cards.',
       'For a long answer, use root = Col([summary, visual, details]) followed by separate assignments for each independent section. Keep each statement short. Use only components and functions listed below. Use Code(code, language) for code in the program. Escape line breaks and quotes inside its string.',
       ...(full || kinds.has('chart') || kinds.has('calculator') ? ['Keep the supplied values consistent in prose, expressions and chart rows. Label chart units and give a reset for a calculator.'] : []),
-      ...(full || kinds.has('graph') || kinds.has('steps') ? ['Use Diagram for a connected workflow. Supply labeled nodes, links, and a readable description.'] : []),
+      ...(full || kinds.has('graph') || kinds.has('steps') ? [
+        'Use Diagram for a connected workflow. Supply labeled nodes, links, and a readable description.',
+        'For tenant boundaries, derive identity from verified authentication and check current membership and role on tenant-owned data, including any exposed membership tables. Prefer invoker functions. If a PostgreSQL security-definer function is necessary, use an empty search path, qualify relations and grant execution narrowly.',
+        'For signed webhooks, verify the unmodified payload before processing. Commit deduplication and the durable state change or job handoff together. Resolve out-of-order deliveries against the authoritative state before overwriting newer data. Label code that shows only signature verification as a partial example.',
+      ] : []),
       'Resource may link a recognized product from the registry. Never embed a raw hyperlink, image URL, network request, external action or executable HTML.',
       hasSources ? 'Use Source only with an exact Xroga evidence ID from the evidence list. Put it beside the supported claim, e.g. Text(["The documented limit is 500. ", Source("source-1")]). In prose, cite the corresponding number as [1].' : 'No retrieved evidence is available. Do not emit Source or numbered source references.',
       'For an architecture or tool recommendation, use Resource rows for the key named products when the registry recognizes them. Describe each role once. Keep third-party citations separate from product identity.',

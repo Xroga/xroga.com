@@ -48,7 +48,10 @@ test('independent schema failure keeps authorized sections, prose and an explici
   const diagnostics: unknown[] = [];
   const answer = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + program, 'stop', undefined, undefined, event => diagnostics.push(event));
   assert.deepEqual(answer.completion, { status: 'partial', reason: 'presentation_contract' });
-  assert.equal(answer.response, PARTIAL_NATIVE_PRESENTATION_NOTE + '\n\n' + prose);
+  assert.ok(answer.response.startsWith(PARTIAL_NATIVE_PRESENTATION_NOTE + '\n\n' + prose));
+  assert.match(answer.response, /Client → Queue: Valid request/);
+  assert.match(answer.response, /await queue\.send\(request\)/);
+  assert.doesNotMatch(answer.response, /customer-private-name/);
   assert.match(answer.responseSource.text, /Diagram\(/);
   assert.match(answer.responseSource.text, /Code\(/);
   assert.match(answer.responseSource.text, /\$count = 4/);
@@ -93,6 +96,24 @@ test('the saved prose and clipboard fallback retain the substantive native body 
   assert.match(answer.response, /Client → App: HTTPS/);
   assert.match(answer.response, /Billing \| Verify the webhook/);
   assert.equal(answer.response.match(/Separate identity/g)?.length, 1);
+});
+
+test('a one-paragraph overview retains later code and diagram details for saved text, Copy and Share', () => {
+  const prose = 'Verify identity and process billing in a separate flow.';
+  const program = [
+    'root = Col([summary, storage, billing])',
+    'summary = Text("Verify identity and process billing in a separate flow.")',
+    'storage = Section("Tenant access", [Table(["Boundary", "Control"], [["Database", "Current membership"]]), Code("alter table projects enable row level security;", "sql")])',
+    'billing = Section("Verified billing", [Diagram("Event flow", [{id:"stripe",label:"Stripe",level:0},{id:"app",label:"Handler",level:1}], [{from:"stripe",to:"app",label:"Signed payload"}], "Read the original body."), Code("stripe.webhooks.constructEvent(rawBody, signature, secret);", "typescript")])',
+  ].join('\n');
+  const answer = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + program + '\n</Col>', 'stop');
+  assert.equal(answer.completion.status, 'complete');
+  assert.equal(answer.responseSource.text, program);
+  assert.match(answer.response, /## Tenant access[\s\S]*Database \| Current membership/);
+  assert.match(answer.response, /Stripe → Handler: Signed payload/);
+  assert.match(answer.response, /stripe\.webhooks\.constructEvent/);
+  assert.equal(answer.response.match(/Verify identity/g)?.length, 1);
+  assert.equal(readNativeOpenUiShare(buildNativeOpenUiShare(answer.response, program)!)?.text, answer.response);
 });
 
 test('native chat is a deploy-time DeepSeek flag independent of founder evaluation', () => {

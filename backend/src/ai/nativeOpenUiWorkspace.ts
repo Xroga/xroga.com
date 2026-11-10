@@ -1,5 +1,5 @@
 import { publicCompletionState } from './completionDiagnostics.js';
-import { NATIVE_UI_FORMAT, PARTIAL_NATIVE_PRESENTATION_NOTE, recoverIndependentNativeSections, recoverNativeMonthlyChart, splitNativeOpenUiAnswer, supplementUnfinishedNativeProse, validateNativeOpenUi, type NativeUiDiagnostic } from './nativeOpenUi.js';
+import { NATIVE_UI_FORMAT, PARTIAL_NATIVE_PRESENTATION_NOTE, recoverIndependentNativeSections, recoverNativeMonthlyChart, splitNativeOpenUiAnswer, supplementNativeProse, validateNativeOpenUi, type NativeUiDiagnostic } from './nativeOpenUi.js';
 import { requiresNativeAuthorizationReview, suppliedMonthlyComparison } from './nativeOpenUiAccuracy.js';
 
 /** Deployment-owned presentation choice; never reads a user role or client flag.
@@ -52,13 +52,13 @@ export function completeNativeWorkspaceAnswer(
   if (completion.status === 'complete' && validation?.ok === false) {
     const independent = validation.reason === 'schema' ? recoverIndependentNativeSections(program, evidenceIds, response) : undefined;
     return {
-      response: independent ? PARTIAL_NATIVE_PRESENTATION_NOTE + '\n\n' + response : response,
+      response: independent ? PARTIAL_NATIVE_PRESENTATION_NOTE + '\n\n' + supplementNativeProse(response, independent) : response,
       completion: { status: 'partial' as const, reason: 'presentation_contract' as const },
       responseSource: { format: NATIVE_UI_FORMAT, text: independent ?? '' },
     };
   }
   return {
-    response: valid ? supplementUnfinishedNativeProse(response, program)
+    response: valid ? supplementNativeProse(response, program)
       : completion.status === 'partial' && completion.reason === 'data_review'
         ? recovered?.text ?? 'Partial answer. The written summary disagreed with the plotted data, and the chart could not be recovered.'
         : response,

@@ -17,13 +17,15 @@ const safeKey = (key: string) => !['__proto__', 'prototype', 'constructor'].incl
 // envelope to an otherwise valid native answer. Keep transport syntax out of
 // the persisted program. A quoted example or an embedded tag is not a suffix.
 const deepSeekToolClosingSuffix = /[ \t]*<\/｜DSML｜ parameter>[ \t]*\n[ \t]*<\/｜DSML｜ invoke>[ \t]*\n[ \t]*<\/｜DSML｜ calls>[ \t]*$/u;
+const strayRootClosingLine = /\n[ \t]*<\/Col>[ \t]*$/u;
 
 export function splitNativeOpenUiAnswer(raw: string, streaming = false) {
   const normalized = raw.replace(/\r\n/g, '\n');
   const marker = normalized.indexOf(NATIVE_UI_MARKER);
   if (marker >= 0) return {
     text: normalized.slice(0, marker).trim(),
-    program: normalized.slice(marker + NATIVE_UI_MARKER.length).trimEnd().replace(deepSeekToolClosingSuffix, '').trim(),
+    program: normalized.slice(marker + NATIVE_UI_MARKER.length).trimEnd().replace(deepSeekToolClosingSuffix, '').trimEnd()
+      .replace(strayRootClosingLine, '').trim(),
   };
   // Never flash a partial separator as part of the answer.
   let text = normalized;
@@ -34,23 +36,29 @@ export function splitNativeOpenUiAnswer(raw: string, streaming = false) {
   return { text: text.trim(), program: '' };
 }
 
-/** Recover a missing prose body from an already validated native answer. This
- * runs only when the provider ended its text on an empty Markdown heading. */
-export function supplementUnfinishedNativeProse(prose: string, program: string): string {
-  if (!/(?:^|\n)#{1,6}[^\S\n]+[^\n]+$/.test(prose.trimEnd())) return prose;
+/** Recover readable details from an already validated program when the model
+ * returned only an overview or left a Markdown heading without its body. */
+export function supplementNativeProse(prose: string, program: string): string {
+  const unfinishedHeading = /(?:^|\n)#{1,6}[^\S\n]+[^\n]+$/.test(prose.trimEnd());
+  if (!unfinishedHeading && (prose.length > 600 || prose.includes('\n'))) return prose;
   const record = (value: unknown): Record<string, unknown> =>
     value && typeof value === 'object' && !Array.isArray(value) ? value as Record<string, unknown> : {};
   const array = (value: unknown) => Array.isArray(value) ? value as unknown[] : [];
   const scalar = (value: unknown): string => typeof value === 'string' || typeof value === 'number' ? String(value) : '';
   const root = parseProgram.parse(program).root;
   const children = array(root?.props.children);
-  const firstBlock = children.findIndex(child => !['Title', 'Text', 'Badge'].includes(scalar(record(child).typeName)));
+  const firstBlock = children.findIndex(child => (
+    unfinishedHeading ? !['Title', 'Text', 'Badge'].includes(scalar(record(child).typeName))
+      : ['Section', 'Code', 'Table', 'Diagram', 'Chart'].includes(scalar(record(child).typeName))
+  ));
   if (firstBlock < 0) return prose;
   const lines: string[] = [];
+  const seen = new Set<string>();
   let remaining = 24_000;
   const add = (value: string) => {
-    if (!value || value.length > remaining) return;
+    if (!value || value.length > remaining || seen.has(value) || prose.includes(value)) return;
     lines.push(value);
+    seen.add(value);
     remaining -= value.length;
   };
   function project(value: unknown): void {
@@ -62,6 +70,18 @@ export function supplementUnfinishedNativeProse(prose: string, program: string):
     const props = record(node.props);
     if (node.typeName === 'ListItem') {
       add('- ' + [scalar(props.title), scalar(props.description)].filter(Boolean).join(': '));
+    } else if (node.typeName === 'Section') {
+      const title = scalar(props.title);
+      if (title) add('## ' + title);
+      add(scalar(props.introduction));
+    } else if (node.typeName === 'Code') {
+      const code = scalar(props.code);
+      if (code && !prose.includes(code)) {
+        const longestRun = (code.match(/\x60+/g) ?? []).reduce((length, run) => Math.max(length, run.length), 0);
+        const fence = String.fromCharCode(96).repeat(Math.max(3, longestRun + 1));
+        const language = scalar(props.language);
+        add(fence + (/^[a-z0-9+#-]{1,30}$/i.test(language) ? language : '') + '\n' + code + '\n' + fence);
+      }
     } else if (node.typeName === 'Table') {
       const row = (cells: unknown) => array(cells).map(scalar).join(' | ');
       add(row(props.columns));
@@ -91,7 +111,7 @@ export function supplementUnfinishedNativeProse(prose: string, program: string):
       const index = /^source-(\d+)$/.exec(scalar(props.id))?.[1];
       if (index) add('[' + index + ']');
     } else {
-      for (const key of ['title', 'introduction', 'text', 'description', 'code', 'items'] as const) project(props[key]);
+      for (const key of ['title', 'introduction', 'text', 'description', 'role', 'items'] as const) project(props[key]);
     }
     project(props.children);
   }
