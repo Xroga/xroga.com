@@ -11,6 +11,7 @@ export const ACTION_TOOLS: ReadonlySet<string> = new Set([
   'type',
   'press',
   'hover',
+  'drag',
   'scroll',
   'upload',
   'handle_dialog',

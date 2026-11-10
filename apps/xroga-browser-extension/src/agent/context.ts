@@ -190,7 +190,7 @@ export function contextChars(messages: ModelMessage[], system = ''): number {
 
 /** Tools whose result is a view of the page at that moment: a newer step makes it stale. Reads, finds and attachments are answers, and stay. */
 const OBSERVING = new Set([
-  'snapshot', 'click', 'set', 'type', 'press', 'fill_form', 'scroll', 'hover', 'navigate', 'tabs', 'wait', 'handle_dialog', 'upload',
+  'snapshot', 'click', 'set', 'type', 'press', 'fill_form', 'scroll', 'hover', 'drag', 'navigate', 'tabs', 'wait', 'handle_dialog', 'upload',
 ]);
 const STALE_NOTE = '\n… the page observation of this earlier step was left out; its refs are out of date. Take a snapshot for the current page.';
 

@@ -14,6 +14,7 @@ const browserTools = new Set([
   'handle_dialog',
   'fill_form',
   'hover',
+  'drag',
   'scroll',
   'tabs',
   'upload',

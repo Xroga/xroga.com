@@ -312,6 +312,71 @@ export async function dispatchHover(ctx: ToolContext, point: Point): Promise<Poi
   return { dispatched: true };
 }
 
+/**
+ * Picks up at one point and drops at another with real pointer events: a press, a steady move in steps, a release. A page that starts a
+ * native HTML5 drag takes over the pointer, so drags are intercepted (Input.setInterceptDrags) and finished with drag events at the
+ * drop point. The button is always released, even when a step fails.
+ */
+export async function dispatchDrag(ctx: ToolContext, from: Point, to: Point): Promise<PointerOutcome> {
+  checkCancelled(ctx);
+  const { cdp } = await ctx.attach();
+  ctx.tab().actionSeq++;
+  const STEPS = 12;
+  let data: unknown;
+  const off = cdp.on('Input.dragIntercepted', (params: unknown) => {
+    data = (params as { data?: unknown }).data;
+  });
+  const mouse = (type: 'mouseMoved' | 'mousePressed' | 'mouseReleased', p: Point, pressed: boolean) =>
+    cdp.send(undefined, 'Input.dispatchMouseEvent', {
+      type,
+      x: p.x,
+      y: p.y,
+      button: 'left',
+      buttons: pressed ? 1 : 0,
+      ...(type === 'mouseMoved' ? {} : { clickCount: 1 }),
+    });
+  // Chrome reports an intercepted native drag a moment after the move that started it: the first moves wait briefly for it.
+  const awaitIntercept = async (ms: number) => {
+    const started = performance.now();
+    while (data === undefined && performance.now() - started < ms) await new Promise(resolve => setTimeout(resolve, 10));
+  };
+  let pressedDown = false;
+  let entered = false;
+  try {
+    await cdp.send(undefined, 'Input.setInterceptDrags', { enabled: true });
+    await cdp.send(undefined, 'Input.dispatchMouseEvent', { type: 'mouseMoved', x: from.x, y: from.y });
+    await mouse('mousePressed', from, true);
+    pressedDown = true;
+    for (let i = 1; i <= STEPS; i++) {
+      checkCancelled(ctx);
+      const p = { x: from.x + ((to.x - from.x) * i) / STEPS, y: from.y + ((to.y - from.y) * i) / STEPS };
+      if (data !== undefined) {
+        await cdp.send(undefined, 'Input.dispatchDragEvent', { type: entered ? 'dragOver' : 'dragEnter', x: p.x, y: p.y, data });
+        entered = true;
+      } else {
+        await mouse('mouseMoved', p, true);
+        if (i === 1) await awaitIntercept(300);
+      }
+    }
+    if (data !== undefined) {
+      await cdp.send(undefined, 'Input.dispatchDragEvent', { type: 'drop', x: to.x, y: to.y, data });
+      pressedDown = false;
+    } else {
+      await mouse('mouseReleased', to, false);
+      pressedDown = false;
+    }
+  } catch (error) {
+    if (pressedDown && data === undefined) await mouse('mouseReleased', to, false).catch(() => undefined);
+    if (error instanceof Error && error.name === 'CdpTimeoutError') return { dispatched: 'unknown' };
+    throw error;
+  } finally {
+    off();
+    await cdp.send(undefined, 'Input.setInterceptDrags', { enabled: false }).catch(() => undefined);
+  }
+  actionPoint(ctx, to, 'click');
+  return { dispatched: true };
+}
+
 export async function dispatchWheel(
   ctx: ToolContext,
   point: Point,

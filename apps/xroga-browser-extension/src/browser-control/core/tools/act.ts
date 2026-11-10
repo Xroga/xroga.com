@@ -1,14 +1,14 @@
 // Pointer actions: click, hover, scroll.
 // Pipeline: resolve and revalidate → actionability (all retries here) → dispatch once → receipt and page state.
 import { LayerError } from '../../protocol/errors';
-import type { ClickArgs, HoverArgs, ScrollArgs, Target } from '../../protocol/schemas';
+import type { ClickArgs, DragArgs, HoverArgs, ScrollArgs, Target } from '../../protocol/schemas';
 import type { ActionReceipt } from '../../protocol/results';
 import type { ScrollInfo } from '../../probe';
 import type { ToolContext, ToolOutcome } from '../controller';
 import { resolveTarget } from '../interaction/resolve';
 import type { ResolvedTarget } from '../interaction/resolve';
 import { waitForActionable } from '../interaction/actionability';
-import { dispatchClick, dispatchHover, dispatchWheel } from '../interaction/pointer';
+import { dispatchClick, dispatchDrag, dispatchHover, dispatchWheel } from '../interaction/pointer';
 import { withEvidence } from '../interaction/evidence';
 import { preflightNavigation } from '../interaction/preflight';
 import { classifyOn, gateTarget } from '../interaction/gate';
@@ -171,6 +171,28 @@ export async function hover(ctx: ToolContext, args: HoverArgs): Promise<ToolOutc
       postcondition: evidence.postcondition,
     };
     return withPageState(ctx, args.observe, { receipt, data: { point: actionable.point } });
+  });
+}
+
+export async function drag(ctx: ToolContext, args: DragArgs): Promise<ToolOutcome> {
+  assertNoModal(ctx);
+  return withTarget(ctx, args.from, async from => {
+    const start = await waitForActionable(ctx, from, { pointer: true, overControls: true, budgetMs: args.timeoutMs });
+    return withTarget(ctx, args.to, async to => {
+      const end = await waitForActionable(ctx, to, { pointer: true, overControls: true, budgetMs: args.timeoutMs });
+      const { outcome, evidence } = await withEvidence(ctx, to, args.expect, {}, () =>
+        dispatchDrag(ctx, start.point, end.point),
+      );
+      const receipt: ActionReceipt = {
+        action: 'drag',
+        target: `[${from.record.ref}] ${from.description} to [${to.record.ref}] ${to.description}`,
+        mechanism: 'pointer',
+        dispatched: outcome.dispatched,
+        effect: evidence.effect,
+        postcondition: evidence.postcondition,
+      };
+      return withPageState(ctx, args.observe, { receipt, data: { from: start.point, to: end.point } });
+    });
   });
 }
 
