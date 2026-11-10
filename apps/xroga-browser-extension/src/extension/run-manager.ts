@@ -52,7 +52,7 @@ import { EMPTY_GUARDS, UNFINISHED, ZERO_USAGE, addUsage } from '@src/store/types
 import type { AttachmentRef, PanelCommand, PanelEventBody } from '@src/ui/protocol';
 import { createAgentSession, layerPort } from './agent-session';
 import { TabScope } from './bindings';
-import { PageBorder, injectBorder, listenForBorder, showActionPoint } from './border';
+import { PageBorder, injectBorder, listenForBorder, showActionPoint, toolLabel } from './border';
 import { addPromptRoute, controllerReady } from './layer';
 import { Permissions } from './permissions';
 import { PromptBroker } from './prompt-broker';
@@ -378,9 +378,21 @@ export class RunManager {
     await this.#continue(record.conversationId, record.status, 'the user resumed in Workspace; observe before acting.');
   }
 
+  /** The status the on-page pointer shows, taken from the run's real events: a model wait, a plan, a tool, the next look. */
+  #paintActivity(conversationId: string, body: PanelEventBody): void {
+    const label =
+      body.type === 'turn_start' ? 'Waiting for response'
+      : body.type === 'message_start' ? 'Planning next step'
+      : body.type === 'tool_execution_start' ? toolLabel(body.row.tool)
+      : body.type === 'tool_execution_end' ? 'Analyzing page'
+      : undefined;
+    if (label) void this.border.activity(conversationId, label).catch(() => undefined);
+  }
+
   emit(conversationId: string, body: PanelEventBody, resultEntry?: EntryOf<'message'>): void {
     this.journal.emit(conversationId, body);
     observe(body);
+    this.#paintActivity(conversationId, body);
     if (body.type === 'tool_execution_end' && body.row.status === 'done') {
       const { tool, args, result } = body.row;
       const data = result as { page?: { tabId?: number }; data?: { activeTabId?: number } } | undefined;
