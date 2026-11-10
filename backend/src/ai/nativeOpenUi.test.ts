@@ -123,6 +123,30 @@ test('an explicit monthly direction that conflicts with the displayed data is fl
   assert.deepEqual(validateNativeOpenUi(make('March increased from January.')), { ok: true });
 });
 
+test('a monthly bar chart catches incorrect gain rankings and does not publish the contradictory prose', () => {
+  const rows = '[{month:"Jan", value:12000},{month:"Feb", value:15500},{month:"Mar", value:14300},{month:"Apr", value:18800},{month:"May", value:22200},{month:"Jun", value:25700}]';
+  const make = (text: string) => `root = Col([Text(${JSON.stringify(text)}), Chart("bar", ${rows}, "month", ["value"], "currency", "USD")])`;
+  const accurate = 'April had the largest dollar gain. April had the strongest percentage gain. The series rises in four of five months.';
+  assert.deepEqual(validateNativeOpenUi(make(accurate)), { ok: true });
+  for (const claim of [
+    "February's +$3,500 (+29.2%) is the largest percentage gain.",
+    'February is the strongest percentage gain.',
+    'June adds the most dollars.',
+    'May is the second-largest dollar gain.',
+    'Five of six months increased.',
+    'March rose.',
+  ]) assert.deepEqual(validateNativeOpenUi(make(claim)), { ok: false, reason: 'data_review' }, claim);
+  assert.deepEqual(validateNativeOpenUi(make('February had the largest percentage gain since January.')), { ok: true });
+  assert.deepEqual(validateNativeOpenUi(make('Of the first three months, February had the largest percentage gain.')), { ok: true });
+  const result = completeNativeWorkspaceAnswer('June adds the most dollars.' + NATIVE_UI_MARKER + make(accurate), 'stop');
+  assert.deepEqual(result.completion, { status: 'partial', reason: 'data_review' });
+  assert.match(result.response, /written summary disagreed/i);
+  assert.match(result.response, /\| April \| 18800 \| 4500 \|/);
+  assert.match(result.response, /\| June \| 25700 \| 3500 \|/);
+  assert.doesNotMatch(result.response, /June adds the most/);
+  assert.equal(result.responseSource.text, '');
+});
+
 test('the paid evaluator rejects non-staging, expired, repeated, and over-budget slots', () => {
   const now = Date.parse('2026-11-09T09:00:00Z');
   const first = { id: '01000000-0000-4000-8000-000000000001', label: 'Short answer', prompt: 'What is a tenant?' };

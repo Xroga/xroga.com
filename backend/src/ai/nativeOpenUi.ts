@@ -1,5 +1,5 @@
 import { createParser, parseExpression, split, tokenize, type ASTNode, type LibraryJSONSchema } from '@openuidev/lang-core';
-import { contradictsMonthlyChart, requiresNativeAuthorizationReview } from './nativeOpenUiAccuracy.js';
+import { contradictsMonthlyChart, monthlyChartDataFallback, requiresNativeAuthorizationReview } from './nativeOpenUiAccuracy.js';
 import catalog from './nativeOpenUiCatalog.json' with { type: 'json' };
 
 export const NATIVE_UI_FORMAT = 'xroga-openui-v1' as const;
@@ -100,6 +100,12 @@ export function supplementUnfinishedNativeProse(prose: string, program: string):
 
 export type NativeUiValidation = { ok: true } | { ok: false; reason: 'budget' | 'syntax' | 'authority' | 'reference' | 'schema' | 'authorization_review' | 'data_review' };
 const reject = (reason: Extract<NativeUiValidation, { ok: false }>['reason']): NativeUiValidation => ({ ok: false, reason });
+
+/** Used only after a schema-valid program reached the data-review gate. */
+export function reviewNativeMonthlyProse(program: string, prose: string): string {
+  const root = parseProgram.parse(program).root;
+  return contradictsMonthlyChart(root, prose) ? monthlyChartDataFallback(root) || prose : prose;
+}
 
 /** Audit all statements, including unreachable ones, before letting the upstream
  * parser resolve references or evaluate expressions. Limit expanded work as well

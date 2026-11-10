@@ -23,10 +23,12 @@ const monthList = monthPattern + '\\b(?:(?:\\s*,\\s*(?:and\\s+)?|\\s+and\\s+)' +
 const lower = 'fell|falls|fall|dropped|drops|drop|declined|declines|decline|decreased|decreases|decrease|dipped|dips|dip|eased back|eases back|ease back';
 const higher = 'rose|rises|rise|increased|increases|increase|climbed|climbs|climb|grew|grows|grow';
 
-/** High-confidence check for a single static monthly line. Only review explicit
- * month-subject direction claims with a preceding consecutive chart point.
- * Multi-series, missing months and ambiguous comparisons remain unclassified. */
-export function contradictsMonthlyChart(root: unknown, prose: string): boolean {
+interface MonthlyPoint { month: number; value: number }
+interface MonthlySeries { points: MonthlyPoint[]; currency?: string }
+
+/** Only one static, consecutive, single-series monthly line or bar chart can
+ * establish an unambiguous month-over-month comparison. */
+function monthlySeries(root: unknown): MonthlySeries | undefined {
   const pending: unknown[] = [root];
   const seen = new Set<object>();
   const charts: Array<Record<string, unknown>> = [];
@@ -37,42 +39,93 @@ export function contradictsMonthlyChart(root: unknown, prose: string): boolean {
     if (Array.isArray(value)) { pending.push(...value); continue; }
     const node = value as Record<string, unknown>;
     if (node.type === 'element' && node.typeName === 'Chart') {
-      if (node.hasDynamicProps !== false || !node.props || typeof node.props !== 'object') return false;
+      if (node.hasDynamicProps !== false || !node.props || typeof node.props !== 'object') return;
       charts.push(node.props as Record<string, unknown>);
-      if (charts.length > 1) return false;
+      if (charts.length > 1) return;
       continue;
     }
     pending.push(...Object.values(node));
   }
-  if (pending.length || charts.length !== 1) return false;
+  if (pending.length || charts.length !== 1) return;
   const chart = charts[0];
-  if (chart.type !== 'line' || !Array.isArray(chart.data) || chart.data.length < 2 || chart.data.length > 12 ||
+  if ((chart.type !== 'line' && chart.type !== 'bar') || !Array.isArray(chart.data) || chart.data.length < 2 || chart.data.length > 12 ||
       typeof chart.x !== 'string' || !Array.isArray(chart.series) || chart.series.length !== 1 ||
-      typeof chart.series[0] !== 'string') return false;
+      typeof chart.series[0] !== 'string') return;
 
-  const changes = new Map<number, number>();
   const labels = new Set<number>();
-  let previous: { month: number; value: number } | undefined;
+  const points: MonthlyPoint[] = [];
   for (const row of chart.data) {
-    if (!row || typeof row !== 'object') return false;
+    if (!row || typeof row !== 'object') return;
     const label = row[chart.x], value = row[chart.series[0]];
     const month = typeof label === 'string' ? months.get(label.trim().toLowerCase()) : undefined;
-    if (month === undefined || labels.has(month) || typeof value !== 'number' || !Number.isFinite(value)) return false;
+    if (month === undefined || labels.has(month) || typeof value !== 'number' || !Number.isFinite(value)) return;
+    const previous = points.at(-1);
+    if (previous && (previous.month + 1) % 12 !== month) return;
     labels.add(month);
-    if (previous) {
-      if ((previous.month + 1) % 12 !== month) return false;
-      changes.set(month, Math.sign(value - previous.value));
-    }
-    previous = { month, value };
+    points.push({ month, value });
   }
+  return { points, currency: chart.format === 'currency' && typeof chart.currency === 'string' && /^[A-Z]{3}$/.test(chart.currency) ? chart.currency : undefined };
+}
+
+/** Flag explicit direction and ranked-gain claims that conflict with the
+ * displayed consecutive points. Other baselines and ambiguous claims remain unclassified. */
+export function contradictsMonthlyChart(root: unknown, prose: string): boolean {
+  const series = monthlySeries(root);
+  if (!series) return false;
+  const changes = new Map(series.points.slice(1).map(({ month, value }, index) => {
+    const base = series.points[index].value;
+    return [month, { amount: value - base, rate: base > 0 ? (value - base) / base : undefined }] as const;
+  }));
+  const plain = prose.replace(/[\x60*_]/g, '');
   const claims = new RegExp('(?:^|[.!?;:\\n])\\s*(' + monthList + ')\\s+(' + lower + '|' + higher +
     ')\\b(?!\\s+(?:from|versus|vs\\.?|compared|relative|since|year[- ]over[- ]year|yoy)\\b)', 'gi');
-  for (const [, subject, verb] of prose.replace(/[\x60*_]/g, '').matchAll(claims)) {
+  for (const [, subject, verb] of plain.matchAll(claims)) {
     const direction = lower.split('|').includes(verb.toLowerCase()) ? -1 : 1;
     for (const match of subject.matchAll(new RegExp('\\b' + monthPattern + '\\b', 'gi'))) {
       const month = months.get(match[0].toLowerCase())!;
-      if (changes.has(month) && changes.get(month) !== direction) return true;
+      const change = changes.get(month);
+      if (change && Math.sign(change.amount) !== direction) return true;
+    }
+  }
+
+  const rankClaim = new RegExp(
+    '\\b(' + monthPattern + ')\\b(?:\\s+(?:is|was|has|had|adds|added|posts|posted|records|recorded|saw)|' +
+    '[’\']s\\s+(?:gain|increase|rise|[+−-]?(?:[$€£]|USD\\s*)?[0-9,.]+(?:\\s*\\([+−-]?[0-9,.]+%\\))?)\\s+(?:is|was))' +
+    '\\s+(?:the\\s+)?(?:(second[- ]largest|largest|biggest|strongest)\\s+(percentage|percent|dollar|absolute)\\s+(?:gain|increase|rise)|most\\s+dollars)' +
+    '\\b(?!\\s+(?:since|from|versus|vs\\.?|compared|relative|after|before|until|among|within|excluding|year[- ]over[- ]year|yoy|at that point)\\b)', 'gi');
+  for (const match of plain.matchAll(rankClaim)) {
+    const [, monthName, rank, unit] = match;
+    const prefix = plain.slice(Math.max(0, match.index - 100), match.index).split(/[.!?;\n]/).at(-1) ?? '';
+    if (/\b(?:since|before|after|until|among|excluding|within|first|last|year[- ]over[- ]year|yoy)\b/i.test(prefix)) continue;
+    const change = changes.get(months.get(monthName.toLowerCase())!);
+    if (!change) continue;
+    const metric = unit?.toLowerCase().startsWith('percent') ? 'rate' : 'amount';
+    const values = [...changes.values()].map(row => row[metric]);
+    const candidate = change[metric];
+    if (candidate === undefined || values.some(value => value === undefined)) continue;
+    const expectedRank = rank?.toLowerCase().startsWith('second') ? 2 : 1;
+    if (candidate <= 0 || 1 + values.filter(value => value! > candidate).length !== expectedRank) return true;
+  }
+  const counts = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve'];
+  const count = '(\\d{1,2}|' + counts.join('|') + ')';
+  const fraction = count + '\\s+of\\s+(?:the\\s+)?' + count + '\\s+months?\\b';
+  const numeric = (value: string) => /^\d/.test(value) ? Number(value) : counts.indexOf(value.toLowerCase());
+  const rises = [...changes.values()].filter(change => change.amount > 0).length;
+  for (const pattern of ['\\bthe series (?:rises|increases|grew) in\\s+' + fraction,
+    '(?:^|[.!?;:\\n])\\s*' + fraction + '\\s+(?:rose|increased|grew)\\b(?!\\s+(?:from|versus|compared|since|year[- ]over[- ]year|yoy)\\b)']) {
+    for (const [, numerator, denominator] of plain.matchAll(new RegExp(pattern, 'gi'))) {
+      if ([series.points.length, changes.size].includes(numeric(denominator)) && numeric(numerator) !== rises) return true;
     }
   }
   return false;
+}
+
+export function monthlyChartDataFallback(root: unknown): string {
+  const series = monthlySeries(root);
+  if (!series) return '';
+  const label = series.currency ? 'Chart value (' + series.currency + ')' : 'Chart value';
+  const rows = series.points.map(({ month, value }, index) =>
+    '| ' + monthNames[month] + ' | ' + value + ' | ' + (index ? Number((value - series.points[index - 1].value).toPrecision(15)) : '') + ' |');
+  return ['The written summary disagreed with the plotted data, so it was withheld. These are the chart values and changes from the preceding displayed month.',
+    '', '| Month | ' + label + ' | Change |', '| --- | ---: | ---: |', ...rows].join('\n');
 }
