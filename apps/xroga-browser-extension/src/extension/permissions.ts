@@ -8,6 +8,14 @@ import type { PermissionMode } from '@src/store/types';
 import { XROGA_PRODUCT } from '@src/xroga/product';
 import { WORKSPACE_URL } from '@src/xroga/workspace';
 
+/** Public marketing and documentation routes of xroga.com. Anything not listed (workspace, auth, dashboard, admin, api, share) is blocked. */
+const PUBLIC_XROGA_PATHS = [
+  '/', '/about', '/pricing', '/blog', '/docs', '/features', '/changelog', '/compare', '/alternatives', '/integrations', '/learn',
+  '/security', '/privacy', '/terms', '/refund', '/contact', '/showcase', '/community', '/research', '/stack', '/software', '/tools',
+  '/vibe-coding', '/ai-app-builder', '/ai-coding-agent', '/ai-website-builder', '/build-saas-with-ai', '/build-with', '/crypto',
+  '/cybersecurity', '/game-builder', '/github-ai-coding-agent', '/vercel-ai-deployment', '/llms.txt',
+];
+
 export class Permissions {
   #rules: Record<string, SiteRuleEntry> = {};
   #listeners = new Set<() => void>();
@@ -40,11 +48,15 @@ export class Permissions {
   }
 
   navigationPolicy() {
+    // The Xroga app (Workspace, sign-in, account and API routes, other subdomains) stays off limits: the Workspace tab carries
+    // the signed-in session and the bridge. Its public marketing pages open like any other site.
+    const workspaceHost = new URL(WORKSPACE_URL).hostname;
     return {
       allow: [],
-      deny: XROGA_PRODUCT ? [...new Set(['xroga.com', new URL(WORKSPACE_URL).hostname])] : [],
+      deny: XROGA_PRODUCT && workspaceHost !== 'xroga.com' ? [workspaceHost] : [],
       blocked: this.blockedSites(),
       publicHttps: XROGA_PRODUCT,
+      ...(XROGA_PRODUCT ? { publicOnly: { domain: 'xroga.com', paths: PUBLIC_XROGA_PATHS } } : {}),
     };
   }
 

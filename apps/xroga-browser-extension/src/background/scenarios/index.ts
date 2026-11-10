@@ -18,6 +18,7 @@ import './wait-and-navigate-deadlines';
 import './wait-targets';
 import './hidden-payment-frame';
 import './clicks-dialogs-frames';
+import './drag';
 import './drawn-over-pages';
 import './masked-names';
 import './set-g';

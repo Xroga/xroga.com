@@ -1,5 +1,6 @@
 // The agent loop, shaped like pi's runLoop: turns of one model call and its tool batch, with all browser policy in six
 // hooks. The worker owns the run; Chrome is reached through the ports.
+import type { RunTimings, Phase } from './timing';
 import { cutText, siteOf } from '@src/browser-control';
 import type { Result, UserStepDetails } from '@src/browser-control';
 import { requestOutputLimit, streamTurn } from '@src/llm';
@@ -8,9 +9,11 @@ import { activeBranch, appendEntry, getEntries, newId, putEntry } from '@src/sto
 import type { Entry, EntryOf, GuardState, MessagePart, PermissionMode, RunStatus, Usage } from '@src/store/types';
 import { addUsage, ZERO_USAGE } from '@src/store/types';
 import type { AgentEvent, ToolRow } from '@src/ui/protocol';
-import { contextChars, toModelMessages } from './context';
+import { contextChars, elideStaleObservations, toModelMessages } from './context';
+import { directNavigation, type DirectNavigation } from './direct-url';
+import { progressLedger } from './progress';
 import { browserState } from './header';
-import { assistantDisplay, userDisplay } from './display';
+import { assistantDisplay, userDisplay, userText } from './display';
 import type { HostPort, LayerPort } from './ports';
 import { note, RunWriter, storedResult } from './records';
 import { clearsDebt, createsDebt, debtLabel, deliveryUnknown, refusal, unverifiedLines } from './completion';
@@ -43,8 +46,10 @@ export const IMAGES_DROPPED = 'This model did not take images; continuing withou
 export const STOPPED_BY_USER = 'Stopped · What should Nanobrowser do instead?';
 /** The note the model reads after Stop, so the next run knows the last one was cut short. */
 export const STOPPED_NOTE =
-  'the user stopped the run; the page may have changed. Follow their next message, and observe before acting.';
+  'the user stopped the run; the page may have changed. Follow their next message, and observe once before acting. If they ask you to continue, carry on after the last step that was verified in this conversation; do not start over or read finished work again.';
 
+/** Evidence screenshots kept per run. */
+const EVIDENCE_SHOT_LIMIT = 6;
 const UNCERTAIN_WRITE_SUMMARY = 'A browser action may have been delivered. Further changes were paused.';
 
 /** The fixed line before a screenshot sent to the model. */
@@ -58,6 +63,8 @@ export interface Request {
 }
 
 export interface LoopOptions {
+  /** Where the run's time goes; measured only, never used to decide anything. */
+  timings?: RunTimings;
   conversationId: string;
   runId: string;
   /** When the run began, stored with each reply for the activity block's elapsed time. */
@@ -65,6 +72,8 @@ export interface LoopOptions {
   model: ResolvedModel;
   system: string;
   tools: AgentTool[];
+  /** The full tool list, when the run started with a smaller one; `enable_actions` switches to it. */
+  fullTools?: AgentTool[];
   layer: LayerPort;
   host: HostPort;
   signal: AbortSignal;
@@ -363,7 +372,9 @@ export class AgentLoop {
   async prepareRequest(): Promise<Request> {
     const branch = await activeBranch(this.options.conversationId);
     const messages = this.transformContext(
-      toModelMessages(branch, { vision: this.options.model.profile.vision, unverified: this.#unverified() }),
+      elideStaleObservations(
+        toModelMessages(branch, { vision: this.options.model.profile.vision, unverified: this.#unverified() }),
+      ),
     );
     const tools = this.options.tools;
     const chars =
@@ -408,15 +419,37 @@ export class AgentLoop {
    * The first request of a run: an outline of the active shared tab, if it is an ordinary web page, attached to the
    * user's message inside the boundary; and a note when the context holds refs of an earlier run.
    */
+  /** Opens the site a request names, before the first model turn. A failure is told to the model, which then decides what to do. */
+  async #openDirect(direct: DirectNavigation): Promise<void> {
+    const intent = `Open ${direct.url}`;
+    const result = direct.newTab
+      ? await this.options.layer.call('tabs', { action: 'open', url: direct.url, intent }, this.options.signal)
+      : await this.options.layer.call('navigate', { url: direct.url, intent }, this.options.signal);
+    if (result.ok) {
+      await this.writer.appNote(`${direct.url} was opened ${direct.newTab ? 'in a new tab' : 'in the current tab'} for this request. Its outline is attached.`);
+      return;
+    }
+    await this.writer.appNote(
+      `Opening ${direct.url} before the first step failed: ${result.error?.message ?? 'unknown error'} ${result.error?.hint ?? ''}`.trim(),
+    );
+  }
+
   async firstTurn(): Promise<void> {
     const branch = await activeBranch(this.options.conversationId);
     const earlierResults = branch.some(e => e.type === 'message' && e.message.role === 'tool');
     if (earlierResults) {
+      const ledger = progressLedger(branch);
       await this.writer.appNote(
-        'this run continues the conversation. Refs from earlier runs are no longer valid; take a snapshot before acting on a page.',
+        'this run continues the conversation. Refs from earlier runs are no longer valid; take a snapshot before acting on a page.' +
+          (ledger ? `
+${ledger}` : ''),
       );
     }
     await this.#inlineAttachments();
+    // A request that names its site starts there: the address is in the words, so no model turn is spent on deciding it.
+    const asked = [...branch].reverse().find((e): e is EntryOf<'message'> => e.type === 'message' && e.message.role === 'user' && !e.appOwned);
+    const direct = asked && !earlierResults ? directNavigation(userText(asked)) : null;
+    if (direct) await this.#openDirect(direct);
     const tabs = await this.options.layer.tabs().catch(() => null);
     const active = tabs?.tabs.find(t => t.tabId === tabs.activeTabId);
     if (!active || !/^https?:/i.test(active.url)) return;
@@ -580,7 +613,8 @@ export class AgentLoop {
     }
     const capture = await this.#withThumb(this.#screenshotImage(outcome));
     const image = this.options.model.profile.vision ? capture : undefined;
-    const localThumbnail = this.options.localScreenshots && !image ? capture?.thumb : undefined;
+    const evidence = capture ? undefined : await this.#evidenceShot(outcome);
+    const localThumbnail = this.options.localScreenshots && !image ? (capture ?? evidence)?.thumb : undefined;
     const text = observation
       ? [cutText(outcome.text, 1_200, '… action details cut.'), cutText(observation, RESULT_CAP - 1_201, '… page observation cut.')].join('\n')
       : cutText(outcome.text, RESULT_CAP, `… the result was cut at ${RESULT_CAP} characters.`);
@@ -756,6 +790,29 @@ export class AgentLoop {
     return { data: data.base64, mediaType: data.mimeType ?? 'image/png', note: PAGE_IMAGE_LINE };
   }
 
+  /**
+   * A screenshot kept for the user as evidence, at the moments that matter: a page that was just opened, and a form that was
+   * just submitted. It is shown as the step's thumbnail and never sent to the model. A few per run, and never at the cost of the step.
+   */
+  #evidenceShots = 0;
+  async #evidenceShot(outcome: CallOutcome): Promise<CallOutcome['image'] | undefined> {
+    if (!this.options.localScreenshots || this.#evidenceShots >= EVIDENCE_SHOT_LIMIT || this.options.signal.aborted) return undefined;
+    const tool = outcome.call.toolName;
+    const args = (outcome.call.input ?? {}) as Record<string, unknown>;
+    const wanted =
+      (tool === 'navigate' && typeof args.url === 'string') ||
+      (tool === 'tabs' && args.action === 'open') ||
+      (tool === 'fill_form' && args.submit !== undefined);
+    if (!wanted || !outcome.result?.ok) return undefined;
+    const tabId = outcome.result.page?.tabId ?? args.tabId ?? this.#activeTab;
+    const shot = await this.options.layer
+      .call('screenshot', typeof tabId === 'number' ? { tabId } : {}, this.options.signal)
+      .catch(() => undefined);
+    if (!shot?.ok) return undefined;
+    this.#evidenceShots++;
+    return this.#withThumb(this.#screenshotImage({ ...outcome, call: { ...outcome.call, toolName: 'screenshot' }, result: shot }));
+  }
+
   async #withThumb(image: CallOutcome['image'] | undefined): Promise<CallOutcome['image'] | undefined> {
     if (!image || !this.options.thumbnail) return image;
     const thumb = await this.options.thumbnail(image.data, image.mediaType).catch(() => undefined);
@@ -857,15 +914,19 @@ export class AgentLoop {
       await this.firstTurn();
       for (;;) {
         if (signal.aborted) return this.#end({ status: 'stopped' });
-        await this.#deliverSteering();
-        await this.storeHeader();
-        const request = await this.prepareRequest();
-        const check = await this.prepareNextTurn(request);
+        const { request, check } = await this.#time('prepare', async () => {
+          await this.#deliverSteering();
+          await this.storeHeader();
+          const request = await this.prepareRequest();
+          return { request, check: await this.prepareNextTurn(request) };
+        });
         if (check.stop) return this.#end({ status: 'failed', outcome: 'failed', reason: check.stop, cause: 'context' });
         this.#turns++;
         emit({ type: 'turn_start', turn: this.#turns });
         const sent = check.request ?? request;
-        const reply = await this.#stream(sent);
+        this.options.timings?.mark('first-model-request');
+        const reply = await this.#time('model', () => this.#stream(sent));
+        this.options.timings?.mark('first-model-reply');
         emit({ type: 'turn_end', turn: this.#turns });
         if (reply === 'aborted') return this.#end({ status: 'stopped' });
         // A server that reports more input than the window truncated the request silently: the reply was written from a
@@ -905,9 +966,9 @@ export class AgentLoop {
           return this.#end({ status: 'failed', outcome: 'failed', reason: CUT_BEFORE_ANYTHING, cause: 'cut' });
         }
         this.#overflowStage = 0;
-        const outcomes = await this.#runBatch(reply);
+        const outcomes = await this.#time('tools', () => this.#runBatch(reply));
         if (signal.aborted && !outcomes.some(o => o.done)) return this.#end({ status: 'stopped' });
-        const end = await this.finishTurn(reply, outcomes);
+        const end = await this.#time('finish', () => this.finishTurn(reply, outcomes));
         if (end) {
           // done's summary is the answer the user reads, written as the agent's message.
           if (end.summary) {
@@ -923,6 +984,12 @@ export class AgentLoop {
     } finally {
       emit({ type: 'agent_end', runId: this.options.runId });
     }
+  }
+
+  /** Times `work` when the run is being measured; otherwise just runs it. */
+  #time<T>(phase: Phase, work: () => Promise<T>): Promise<T> {
+    const timings = this.options.timings;
+    return timings ? timings.time(phase, work) : work();
   }
 
   #end(end: Partial<LoopEnd> & { status: RunStatus }): LoopEnd {
@@ -1143,18 +1210,27 @@ export class AgentLoop {
   /** Whether the user has sent a message while the run works. Set by the extension. */
   hasSteering: () => boolean = () => false;
 
-  async #execute(call: ToolCallRequest): Promise<CallOutcome> {
+  #execute(call: ToolCallRequest): Promise<CallOutcome> {
+    return this.#time(`tool:${call.toolName}`, () => this.#executeCall(call));
+  }
+
+  async #executeCall(call: ToolCallRequest): Promise<CallOutcome> {
     const { emit, signal } = this.options;
     const args = (call.input ?? {}) as Record<string, unknown>;
     const kind = kindOf(call.toolName, args);
     emit({ type: 'tool_execution_start', messageId: this.#replyId, row: this.#row(call, 'running') });
-    const refused = await this.beforeToolCall(call);
-    if (refused) return this.afterToolCall(refused);
+    const refused = await this.#time('tool.gate', () => this.beforeToolCall(call));
+    if (refused) return this.#time('tool.after', () => this.afterToolCall(refused));
     // The intent record is on disk before anything is dispatched.
-    await this.writer.intent(call.toolCallId, call.toolName, args);
+    await this.#time('tool.journal', () => this.writer.intent(call.toolCallId, call.toolName, args));
     let outcome: CallOutcome;
     if (call.toolName === 'done') {
       outcome = await this.#judgeDone(call, kind, args);
+    } else if (call.toolName === 'enable_actions' && this.options.fullTools) {
+      this.options.tools = this.options.fullTools;
+      this.#toolNames = new Set(this.options.tools.map(t => t.name));
+      this.options.fullTools = undefined;
+      outcome = { call, kind, text: 'The tools that click, type, fill forms, scroll and upload are now available. Take a snapshot before acting.', isError: false };
     } else if (call.toolName === 'upload') {
       // The model names attached files by id; the wrapper turns them into bytes for the layer.
       const { attachmentIds, ...rest } = args;
@@ -1162,11 +1238,11 @@ export class AgentLoop {
       if ('error' in files) {
         outcome = { call, kind, text: `error NOT_FOUND (nothing dispatched)\n${files.error}`, isError: true };
       } else {
-        const result = await this.options.layer.call(
+        const result = await this.#time('tool.layer', () => this.options.layer.call(
           'upload',
           { ...rest, attachments: files.files, observe: 'diff' },
           signal,
-        );
+        ));
         outcome = { call, kind, text: result.text, isError: !result.ok, result };
       }
     } else if (call.toolName === 'read_attachment') {
@@ -1187,9 +1263,9 @@ export class AgentLoop {
     } else {
       // Mutations return their diff; the model never sets `observe`.
       const sent = kind === 'mutate' && call.toolName !== 'tabs' ? { ...args, observe: 'diff' } : args;
-      const result = await this.options.layer.call(call.toolName, sent, signal);
+      const result = await this.#time('tool.layer', () => this.options.layer.call(call.toolName, sent, signal));
       outcome = { call, kind, text: result.text, isError: !result.ok, result };
     }
-    return this.afterToolCall(outcome);
+    return this.#time('tool.after', () => this.afterToolCall(outcome));
   }
 }

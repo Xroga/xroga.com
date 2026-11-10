@@ -470,7 +470,15 @@ export function Composer({
         />
       ) : null}
       {slash ? <Launcher items={items} selected={Math.min(selected, items.length - 1)} onPick={pick} /> : null}
-      <div className="relative flex flex-col rounded-2xl border border-nb-border bg-nb-bg shadow-soft transition-colors focus-within:border-nb-accent/60 focus-within:ring-2 focus-within:ring-nb-accent/20">
+      <div
+        className="relative flex flex-col rounded-2xl border border-nb-border bg-nb-bg shadow-soft transition-colors focus-within:border-nb-accent/60 focus-within:ring-2 focus-within:ring-nb-accent/20"
+        // On the New Tab page Chrome keeps the keyboard in the address bar even after a click in the panel, so a paste lands there.
+        // Taking the window's focus first moves the keyboard into the panel.
+        onPointerDownCapture={() => {
+          window.focus();
+          input.current?.focus();
+        }}
+      >
         <textarea
           ref={input}
           id="nb-composer-input"

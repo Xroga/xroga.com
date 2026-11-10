@@ -123,6 +123,12 @@ export const PressArgsSchema = z.strictObject({
 
 export const HoverArgsSchema = z.strictObject({ ...actionCommon, target: TargetSchema });
 
+export const DragArgsSchema = z.strictObject({
+  ...actionCommon,
+  from: TargetSchema.describe('The element to pick up'),
+  to: TargetSchema.describe('The element to drop it on'),
+});
+
 export const ScrollArgsSchema = z.strictObject({
   ...actionCommon,
   target: TargetSchema.optional().describe('The container to scroll; default: the page'),
@@ -204,6 +210,7 @@ export type FillFormArgs = z.infer<typeof FillFormArgsSchema>;
 export type TypeArgs = z.infer<typeof TypeArgsSchema>;
 export type PressArgs = z.infer<typeof PressArgsSchema>;
 export type HoverArgs = z.infer<typeof HoverArgsSchema>;
+export type DragArgs = z.infer<typeof DragArgsSchema>;
 export type ScrollArgs = z.infer<typeof ScrollArgsSchema>;
 export type WaitArgs = z.infer<typeof WaitArgsSchema>;
 export type NavigateArgs = z.infer<typeof NavigateArgsSchema>;

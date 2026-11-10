@@ -71,6 +71,8 @@ function toolGuide(tools: string[]): string {
     lines.push('- find locates elements by role, name or text in the latest observation, without a full outline.');
   if (has('read')) lines.push('- read returns a page or an element as Markdown, for reading text.');
   if (has('fill_form')) lines.push('- fill_form sets several fields in order and can activate a submit control.');
+  if (has('enable_actions'))
+    lines.push('- enable_actions turns on clicking, typing, forms and scrolling. Call it only if the task needs one of them; reading and opening pages do not.');
   if (has('ask_user'))
     lines.push(
       '- ask_user asks the user a question (kind "input") or hands them a step (kind "takeover"). For a takeover, the message says only what the user should do now, in a short plain sentence, e.g. "Sign in to GitHub in this tab, then press Done." Do not repeat the task or say what you will do after.',
@@ -88,8 +90,25 @@ function toolGuide(tools: string[]): string {
 }
 
 /** The agent's prompt. */
+/** Every reply costs seconds of the user's time, so the agent is told to spend fewer of them. */
+export const EFFICIENCY = `## Working efficiently
+
+- Each reply takes several seconds. When the outline already shows every control you need, call several tools in one reply (for example fill_form with its submit control, then read) instead of one per reply.
+- An action's result shows what changed. Take another snapshot only when the page changed in a way the result does not show.
+- When a page was opened for you, its outline is already attached: act on it without asking for a snapshot first.
+- Finish with done as soon as you have seen the answer.
+- When you continue earlier work in this conversation (after a stop, a pause, a lost connection or a restart), pick up after the last step that was verified. Take one snapshot of the current page, then carry on. Do not redo finished steps or read finished pages again.`;
+
+/** The conversation is the agent's memory, and it must use it. */
+export const MEMORY = `## Memory of this conversation
+
+- Everything said earlier in this conversation is yours to use: the user's messages, the files they attached, your earlier results and the plans you agreed. Look back before you ask. Never ask the user to repeat something they already said or attached.
+- If the user refers to something from earlier ("the leads I gave you", "the strategy we discussed", "why did you skip those"), find it in the conversation and answer from it. Attached files can be read again with read_attachment.
+- When you finish work on several items (clients, leads, pages, campaigns), say for each item whether it was done, skipped or failed, and why. That list is how you answer later questions about it.
+- If you really cannot find something in the conversation, say exactly what is missing, and ask for only that.`;
+
 export function agentSystemPrompt(options: PromptOptions = {}): string {
-  const sections = [ROLE, CONTRACT, PERMISSIONS, toolGuide(options.tools ?? [])];
+  const sections = [ROLE, CONTRACT, PERMISSIONS, toolGuide(options.tools ?? []), EFFICIENCY, MEMORY];
   const custom = options.customInstructions?.trim().slice(0, CUSTOM_INSTRUCTIONS_MAX).trim();
   if (custom) {
     // The user's own words, from Settings → Memory; no tool writes them.

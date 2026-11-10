@@ -22,6 +22,9 @@ if (live)
   );
 const providerModel = "deepseek-v4.1-flash-1017";
 const receipts = [];
+const latencyRuns = Number(process.env.XROGA_LATENCY_RUNS ?? 0) || 0;
+let pointerWaitVerified = false;
+let pointerAnchorVerified = false;
 let liveRequests = 0;
 let spentMicros = 0;
 // Chrome's IndexedDB files can exceed Windows' path limit under a deeply nested job root.
@@ -298,6 +301,11 @@ try {
   console.log("Chrome started");
   browser.on("page", page => page.on("pageerror", error => console.error("Fixture page error:", error.message)));
   const tab = browser.pages()[0];
+  // The on-page Xroga pointer, as the page can see it: its mode and its status (its content is in a closed shadow root).
+  const pointerState = () => tab.evaluate(() => {
+    const host = document.querySelector("[data-xroga-pointer]");
+    return host ? { mode: host.getAttribute("data-xroga-pointer"), status: host.getAttribute("data-xroga-status") } : null;
+  });
   const cdp = await browser.browser().newBrowserCDPSession();
   const { id } = await cdp.send("Extensions.loadUnpacked", { path: dist });
   console.log("Agent extension loaded");
@@ -312,7 +320,7 @@ try {
       if (location.origin !== origin) return;
       for (const event of ["click", "input"]) {
         document.addEventListener(event, () => {
-          if (document.querySelector("[data-xroga-action-point]"))
+          if (document.querySelector("[data-xroga-pointer=point], [data-xroga-pointer=neutral]"))
             void window.fixtureActionCue(event);
         }, true);
       }
@@ -609,10 +617,13 @@ try {
   } else if (!formOnly) {
     await input.fill(goal);
     if (!live) await tab.bringToFront();
+    const coldStart = Date.now();
+    const coldVisible = latencyRuns ? tab.waitForSelector("[data-xroga-pointer]", { timeout: 15_000 }).then(() => Date.now() - coldStart).catch(() => null) : null;
     await input.press("Enter");
     console.log("Side-panel task submitted");
     await waitForFinish(1);
     console.log("Side-panel task reached a terminal state");
+    const coldDone = Date.now() - coldStart;
     console.log("First task receipt:", JSON.stringify([...runs.values()]));
     assert.equal(
       [...runs.values()][0]?.result?.status,
@@ -620,6 +631,29 @@ try {
       await workspace.locator("#state").textContent(),
     );
     assert.ok(browser.pages().some((page) => page.url() === `${site}/catalog`));
+    if (latencyRuns) {
+      // Latency mode (XROGA_LATENCY_RUNS=N): repeat the same simple task in the real extension and real Chrome, timing it from the
+      // Playwright side, then read the per-phase ring the worker kept. The model is the deterministic fixture, so model time is
+      // about zero here: these numbers are the local overhead (observation, actions, settle, journal, sync), not live model latency.
+      const samples = [{ cold: true, pointerVisibleMs: await coldVisible, doneMs: coldDone }];
+      for (let i = 2; i <= latencyRuns; i++) {
+        await tab.goto(site);
+        const t0 = Date.now();
+        await input.fill(goal);
+        const visible = tab.waitForSelector("[data-xroga-pointer]", { timeout: 15_000 }).then(() => Date.now() - t0).catch(() => null);
+        await input.press("Enter");
+        await waitForFinish(i);
+        samples.push({ cold: false, pointerVisibleMs: await visible, doneMs: Date.now() - t0 });
+      }
+      let worker = browser.serviceWorkers().find(w => w.url().startsWith("chrome-extension://"));
+      worker ??= await browser.waitForEvent("serviceworker", { timeout: 10_000 });
+      const perf = await worker.evaluate(async () => (await chrome.storage.local.get("xroga_perf_v1")).xroga_perf_v1 ?? []);
+      const out = process.env.XROGA_LATENCY_OUT;
+      const report = { product: (await cdp.send("Browser.getVersion")).product, runs: latencyRuns, model: "deterministic fixture", samples, perf };
+      if (out) await writeFile(out, JSON.stringify(report, null, 2));
+      console.log(JSON.stringify({ latency: "recorded", runs: latencyRuns, out: out ?? null }));
+      throw Object.assign(new Error("latency mode complete"), { latencyDone: true });
+    }
     await workspace.evaluate(
       ({ goal, site, live }) =>
         window.startTask(
@@ -730,10 +764,16 @@ try {
         await new Promise((resolve) => setTimeout(resolve, 100));
     }
     assert.ok(stopRun?.pending);
+    // The model is thinking and nothing has been clicked yet: past the 1.6 s the old pointer lasted, the pointer is still
+    // on the page with a neutral anchored status, not pointing at a control.
+    await new Promise(resolve => setTimeout(resolve, 2500));
+    assert.deepEqual(await pointerState(), { mode: "neutral", status: "Waiting for response" }, "the pointer stays through a model wait");
+    pointerWaitVerified = true;
     await stop.click();
     try {
       await waitForFinish(formOnly ? 2 : 4);
       assert.deepEqual(stopRun.result, { status: "cancelled", actions: [] });
+      await tab.waitForFunction(() => !document.querySelector("[data-xroga-pointer]"), undefined, { timeout: 5000 });
     } finally {
       stopRun.release();
     }
@@ -751,7 +791,12 @@ try {
       if (!recovery?.release) await new Promise(resolve => setTimeout(resolve, 100));
     }
     assert.ok(recovery?.release, "the third request crossed the fixture provider admission boundary");
+    // Actions have run in this task, so the pointer rests at the last verified point while the third model request waits.
+    await new Promise(resolve => setTimeout(resolve, 2500));
+    assert.deepEqual(await pointerState(), { mode: "point", status: "Waiting for response" }, "the pointer rests at the last verified action during a model wait");
+    pointerAnchorVerified = true;
     await pause.click();
+    await tab.waitForFunction(() => !document.querySelector("[data-xroga-pointer]"), undefined, { timeout: 5000 });
     const resume = panel.getByRole("button", { name: "Resume", exact: true });
     await resume.waitFor({ timeout: 25_000 });
     recovery.release();
@@ -829,8 +874,8 @@ try {
     await workspace.evaluate(() => window.fixtureAuthChanged('SIGNED_OUT', null));
     await activity.waitFor({ state: "detached" });
     assert.equal(await workspace.getByText(answer, { exact: true }).count(), 0);
-    assert.ok(actionCues.has("click"), "The blue marker was visible when Chrome clicked");
-    assert.ok(actionCues.has("input"), "The blue marker was visible when Chrome typed");
+    assert.ok(actionCues.has("click"), "The Xroga pointer was visible when Chrome clicked");
+    assert.ok(actionCues.has("input"), "The Xroga pointer was visible when Chrome typed");
   }
   const { product } = await cdp.send("Browser.getVersion");
   console.log(
@@ -841,6 +886,8 @@ try {
       cancelledPendingTurn: !documentOnly,
       voiceFixtureRequests: voiceRequests,
       actionCues: [...actionCues].sort(),
+      pointerStaysThroughModelWait: pointerWaitVerified,
+      pointerRestsAtLastActionDuringWait: pointerAnchorVerified,
       resumedWithoutReplay: !live && !documentOnly,
       restartAndAccountBoundary: !live && !documentOnly,
       manualPauseAndResume: !live && !documentOnly,
@@ -852,6 +899,8 @@ try {
       costMicros: spentMicros,
     }),
   );
+} catch (error) {
+  if (!error?.latencyDone) throw error;
 } finally {
   try {
     await browser?.close();

@@ -1,0 +1,59 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Drag fixture</title>
+<style>
+  body { font: 16px sans-serif; margin: 24px; }
+  #track { position: relative; width: 400px; height: 40px; background: #ddd; margin: 24px 0; }
+  #handle { position: absolute; left: 0; top: 4px; width: 60px; height: 32px; }
+  #target { position: absolute; left: 340px; top: 4px; width: 56px; height: 32px; }
+  .row { display: flex; gap: 40px; margin: 24px 0; }
+  #card, #zone { width: 140px; height: 56px; border: 1px solid #888; display: flex; align-items: center; justify-content: center; }
+</style>
+<h1>Drag fixture</h1>
+
+<p>Pointer drag: move the handle onto the target.</p>
+<div id="track">
+  <button id="handle">Handle</button>
+  <button id="target">Target</button>
+</div>
+<p id="pointer-status">idle</p>
+
+<p>Native drag and drop: drop the card on the zone.</p>
+<div class="row">
+  <div id="card" draggable="true" role="button" tabindex="0">Card</div>
+  <div id="zone" role="button" tabindex="0">Drop zone</div>
+</div>
+<p id="native-status">idle</p>
+
+<script>
+  window.dragState = { pointer: 'idle', native: 'idle', moves: 0 };
+  const handle = document.getElementById('handle');
+  const track = document.getElementById('track');
+  let dragging = false, offset = 0;
+  handle.addEventListener('mousedown', e => { dragging = true; offset = e.clientX - handle.getBoundingClientRect().left; e.preventDefault(); });
+  window.addEventListener('mousemove', e => {
+    if (!dragging) return;
+    window.dragState.moves++;
+    const left = Math.max(0, Math.min(track.clientWidth - handle.offsetWidth, e.clientX - track.getBoundingClientRect().left - offset));
+    handle.style.left = left + 'px';
+  });
+  window.addEventListener('mouseup', () => {
+    if (!dragging) return;
+    dragging = false;
+    const h = handle.getBoundingClientRect(), t = document.getElementById('target').getBoundingClientRect();
+    const over = h.right > t.left + 10 && h.left < t.right - 10;
+    window.dragState.pointer = over ? 'over target' : 'missed';
+    document.getElementById('pointer-status').textContent = window.dragState.pointer;
+  });
+
+  const card = document.getElementById('card'), zone = document.getElementById('zone');
+  card.addEventListener('mousedown', () => { window.dragState.cardDown = (window.dragState.cardDown || 0) + 1; });
+  card.addEventListener('dragstart', e => { window.dragState.dragstart = (window.dragState.dragstart || 0) + 1; e.dataTransfer.setData('text/plain', 'card'); });
+  zone.addEventListener('dragenter', () => { window.dragState.zoneEnter = (window.dragState.zoneEnter || 0) + 1; });
+  zone.addEventListener('dragover', e => e.preventDefault());
+  zone.addEventListener('drop', e => {
+    e.preventDefault();
+    window.dragState.native = 'dropped ' + e.dataTransfer.getData('text/plain');
+    document.getElementById('native-status').textContent = window.dragState.native;
+  });
+</script>

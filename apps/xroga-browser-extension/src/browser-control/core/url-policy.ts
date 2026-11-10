@@ -3,7 +3,16 @@
 // Product sessions add a list of blocked sites, matched with siteOf.
 import { siteOf } from './site';
 
+export interface PublicOnlyRule {
+  /** The domain, for example "xroga.com". */
+  domain: string;
+  /** Lower-case public paths, for example "/pricing"; "/" is the home page only. */
+  paths: string[];
+}
+
 export interface UrlPolicy {
+  /** The domain's own app stays blocked; only these public pages open (see publicOnlyAllows). */
+  publicOnly?: PublicOnlyRule;
   allow: string[];
   deny: string[];
   /** Xroga task sessions are restricted to HTTPS web pages and temporary blank tabs. */
@@ -96,11 +105,33 @@ export function normalizePolicy(policy: UrlPolicy): UrlPolicy {
     allow: clean(policy.allow),
     deny: clean(policy.deny),
     ...(policy.publicHttps ? { publicHttps: true } : {}),
+    ...(policy.publicOnly ? { publicOnly: policy.publicOnly } : {}),
     blocked: [...new Set((policy.blocked ?? []).map(siteKey).filter(Boolean))],
   };
 }
 
+/**
+ * A domain whose app is off limits but whose public pages may be opened. The bare host and its `www.` form pass only for the
+ * listed public paths (the path itself or anything below it, the home page by "/" exactly); every other subdomain is blocked.
+ * Judged on every address the tab loads, so a public page that redirects into the app is stopped by the same rule.
+ */
+export function publicOnlyAllows(rule: PublicOnlyRule, url: string): boolean {
+  let parsed: URL;
+  try {
+    parsed = new URL(url);
+  } catch {
+    return false;
+  }
+  const host = parsed.hostname.toLowerCase().replace(/\.$/, '');
+  const domain = rule.domain.toLowerCase();
+  if (host !== domain && !host.endsWith(`.${domain}`)) return true; // not this domain: the other rules decide
+  if (host !== domain && host !== `www.${domain}`) return false; // any other subdomain
+  const path = parsed.pathname.toLowerCase().replace(/\/+$/, '') || '/';
+  return rule.paths.some(p => (p === '/' ? path === '/' : path === p || path.startsWith(`${p}/`)));
+}
+
 export function allows(policy: UrlPolicy, url: string): boolean {
+  if (policy.publicOnly && url !== 'about:blank' && !publicOnlyAllows(policy.publicOnly, url)) return false;
   if (policy.publicHttps && url !== 'about:blank') {
     try {
       const parsed = new URL(url);

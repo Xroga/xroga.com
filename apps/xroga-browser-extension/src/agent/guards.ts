@@ -9,6 +9,8 @@ export const REPEAT_LIMIT = 3;
 export const NO_EFFECT_NUDGE = 2;
 export const NO_EFFECT_STOP = 3;
 export const ERROR_STOP = 5;
+/** Calls in a row that only looked at pages before the agent is told to act or finish. */
+export const READ_STREAK_NUDGE = 5;
 
 export interface GuardVerdict {
   nudge?: string;
@@ -19,6 +21,27 @@ export interface GuardVerdict {
 }
 
 const NO_EFFECT_TOOLS = new Set(['click', 'set', 'type', 'press', 'fill_form']);
+const LOOKING_TOOLS = new Set(['snapshot', 'read', 'find', 'screenshot']);
+
+/** The tab a recorded look was at: its tabId, or the active tab when it named none. */
+function lookedAt(signature: string): string {
+  try {
+    const args = JSON.parse(signature.slice(signature.indexOf(' ') + 1, signature.lastIndexOf(' → '))) as { tabId?: unknown };
+    return String(args.tabId ?? 'active');
+  } catch {
+    return 'active';
+  }
+}
+
+/**
+ * The newest recorded calls, in a row, that only looked at a page, and how many different tabs they looked at. A task that reads
+ * many different pages is not a loop: only repeated looks at the same one or two pages are.
+ */
+function lookingStreak(recent: readonly string[]): { count: number; tabs: number } {
+  const looks: string[] = [];
+  for (let i = recent.length - 1; i >= 0 && LOOKING_TOOLS.has(recent[i].split(' ')[0]); i--) looks.push(recent[i]);
+  return { count: looks.length, tabs: new Set(looks.map(lookedAt)).size };
+}
 
 function targetKey(args: Record<string, unknown>, result: Result | undefined): string | null {
   const target = result?.receipt?.target?.replace(/^\[[^\]]+\] /, '') ?? args.target ?? args.submit;
@@ -94,6 +117,13 @@ export class Guards {
     if (repeats >= REPEAT_LIMIT) {
       return {
         nudge: `you made the same call with the same outcome ${repeats} times in your last ${REPEAT_WINDOW} calls. Try something else, or ask the user.`,
+      };
+    }
+    // Re-reading the page again and again is the other loop: every look is a model turn, and none of them moves the task on.
+    const looks = lookingStreak(s.recent);
+    if (LOOKING_TOOLS.has(tool) && looks.count >= READ_STREAK_NUDGE && looks.tabs <= 2) {
+      return {
+        nudge: `your last ${looks.count} calls only looked at the same page${looks.tabs > 1 ? 's' : ''}. Do not read it again: if you have what the task needs, finish with done; if a step is left, do it now.`,
       };
     }
     return {};
