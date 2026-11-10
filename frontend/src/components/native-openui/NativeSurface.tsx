@@ -5,7 +5,7 @@ import { Renderer } from '@openuidev/react-lang';
 import { useMemo, useState } from 'react';
 import { library } from './library';
 import { EvidenceContext, type AnswerSource } from './evidence';
-import { MAX_PROGRAM_CHARS, validateNativeOpenUi } from '../../../../backend/src/ai/nativeOpenUi';
+import { MAX_PROGRAM_CHARS, PARTIAL_NATIVE_PRESENTATION_NOTE, validateNativeOpenUi } from '../../../../backend/src/ai/nativeOpenUi';
 import { MarkdownBlocks } from './upstream/components/markdown';
 import { SourceCitation } from '../terminal/SourceCitation';
 import './upstream/components/theme.css';
@@ -37,17 +37,19 @@ export function NativeSurface({ answer, sources, isStreaming = false }: {
     }
     return '';
   }, [answer.library, answer.program, answer.text, verified, isStreaming]);
+  const prose = <MarkdownBlocks text={answer.text} renderCitation={number => {
+    const source = verified.get('source-' + number);
+    return source ? <SourceCitation source={source} number={number} /> : null;
+  }} />;
   return (
     <section className="xroga-native-openui" aria-label="Answer" dir="auto" aria-busy={isStreaming}>
       {accepted && failedProgram !== accepted
         ? <EvidenceContext.Provider value={verified}>
+            {answer.text.startsWith(PARTIAL_NATIVE_PRESENTATION_NOTE + '\n\n') ? prose : null}
             <Renderer response={accepted} isStreaming={isStreaming} library={library} publishObservability={false}
               onError={errors => { if (errors.some(error => error.severity !== 'warning')) setFailedProgram(accepted); }} />
           </EvidenceContext.Provider>
-        : <MarkdownBlocks text={answer.text} renderCitation={number => {
-            const source = verified.get('source-' + number);
-            return source ? <SourceCitation source={source} number={number} /> : null;
-          }} />}
+        : prose}
     </section>
   );
 }

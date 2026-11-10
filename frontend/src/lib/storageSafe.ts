@@ -108,6 +108,15 @@ export function messagesForStorage(messages: ChatMessage[]): ChatMessage[] {
   }));
 }
 
+export function isEmptyAssistantPlaceholder(message: ChatMessage): boolean {
+  return message.role === 'assistant' && !message.content?.trim() && !message.featureOutput
+    && !message.executionActivity?.length && !message.agent && !message.stoppedRunId;
+}
+
+export function sidebarMessagesForStorage(messages: ChatMessage[]): ChatMessage[] {
+  return messagesForStorage(messages.filter(message => !isEmptyAssistantPlaceholder(message)));
+}
+
 export function safeStorageSet(storage: Storage, key: string, value: string): boolean {
   try {
     storage.setItem(key, value);

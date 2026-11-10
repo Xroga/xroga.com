@@ -23,7 +23,6 @@ import {attachModelResult,markModelUnavailable,pendingModelConfirmation,type Mod
 import { capacityUnavailableLine } from '@/lib/capacityMessage';
 import { buildCompletedChatHistory } from '@/lib/chatHistory';
 import { isMathQueryPrompt } from '@/lib/mathDetect';
-import { streamTextReveal } from '@/lib/streamText';
 import type { SwarmProgressEvent } from '@/lib/swarm';
 import { useAppStore } from '@/store/useAppStore';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
@@ -2685,6 +2684,8 @@ const stopRequestedRunIdRef =
       let fullReply = '';
       let buildHadVisibleResult = false;
       let semanticBuildPlanned = false;
+      const originatingSessionId = sessionIdRef.current;
+      let phase1AnswerSettled = false;
       const controller = new AbortController();
       abortRef.current = controller;
 
@@ -2955,6 +2956,7 @@ if (
 
           try {
             const result = await api.phase1.chat(displayPrompt, history, attachments, semanticPlan.goalContract, controller.signal);
+            if (controller.signal.aborted || sessionIdRef.current !== originatingSessionId) return;
             const rawReply = (result.response || '').trim();
             fullReply = rawReply;
             // Empty Phase 1 must never leave a blank bubble or silently change execution paths.
@@ -2964,28 +2966,9 @@ if (
             }
 
             if (fullReply && !runSwarmBuild) {
-              await streamTextReveal(
-                fullReply,
-                (partial) => {
-                  setMessages((m) =>
-                    m.map((msg) =>
-                      msg.id === assistantId
-                        ? {
-                            ...msg,
-                            content: stripXrogaUiProtocol(partial),
-                            agent: 'Xroga AI Brain',
-                            webSources: result.webSources,
-                            hackathonBrief: result.hackathonBrief,
-                          }
-                        : msg
-                    )
-                  );
-                },
-                controller.signal
-              );
-
               const enhanced = enhanceAiResponse(fullReply, assistantId, result.completion, result.responseSource);
               fullReply = enhanced.content;
+              phase1AnswerSettled = true;
               setMessages((current) => current.map((message) =>
                 message.id === assistantId
                   ? {
@@ -2998,16 +2981,6 @@ if (
                     }
                   : message
               ));
-
-              if (result.webSources?.length || result.hackathonBrief) {
-                setMessages((m) =>
-                  m.map((msg) =>
-                    msg.id === assistantId
-                      ? { ...msg, webSources: result.webSources, hackathonBrief: result.hackathonBrief }
-                      : msg
-                  )
-                );
-              }
 
               if (
                 result.usage &&
@@ -4595,7 +4568,7 @@ active.applyBuild({
             })
           );
         }
-        if (!incognito && turn && !interruptRef.current) {
+        if (!incognito && turn?.assistantId === assistantId && sessionIdRef.current === originatingSessionId && !interruptRef.current) {
           setMessages((current) => {
             try {
               archiveChatTurn({
@@ -4606,9 +4579,10 @@ active.applyBuild({
               });
               saveTerminalHistorySession({
                 ownerId: workspaceIdentity.userId,
-                sessionId: sessionIdRef.current,
+                sessionId: originatingSessionId,
                 prompt: turn.text,
                 messages: current,
+                flushSidebar: phase1AnswerSettled,
               });
             } catch (err) {
               console.warn('[chat] archive save skipped:', (err as Error).message);

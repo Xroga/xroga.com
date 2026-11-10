@@ -309,7 +309,7 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
       return route.fulfill({ headers: cors, json: { response: 'Research requires approval. [Review](/dashboard/actions/confirm/' + confirmationId + ')' } });
     }
     expect(body.message).toBe(malformed);
-    return route.fulfill({ headers: cors, json: { response: fallback, completion: { status: 'complete' }, responseSource: { format: 'xroga-openui-v1', text: 'root = UnregisteredWidget("should never render")' } } });
+    return route.fulfill({ headers: cors, json: { response: fallback, completion: { status: 'partial', reason: 'presentation_contract' }, responseSource: { format: 'xroga-openui-v1', text: '' } } });
   });
 
   await page.locator('input[type=file][accept*="text/plain"]').setInputFiles({
@@ -440,7 +440,33 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
     releaseCancelled();
   }
   await send(malformed);
-  await expect(page.getByRole('region', { name: 'Answer', exact: true }).getByText(fallback, { exact: true })).toBeVisible();
+  const fallbackTurn = page.locator('[data-turn-id]').filter({ hasText: fallback }).last();
+  await expect(fallbackTurn.getByText(fallback, { exact: true })).toBeVisible();
+  await fallbackTurn.getByRole('button', { name: 'Copy', exact: true }).click();
+  await expect.poll(() => page.evaluate(() => navigator.clipboard.readText())).toBe(fallback);
+  await fallbackTurn.getByRole('button', { name: 'Share', exact: true }).click();
+  const fallbackShare = page.waitForResponse(response => new URL(response.url()).pathname === '/api/message-shares' && response.request().method() === 'POST');
+  await dialog.getByRole('button', { name: 'Create owner-only link' }).click();
+  const fallbackLink = await fallbackShare;
+  expect(fallbackLink.status()).toBe(201);
+  await dialog.getByRole('button', { name: 'Close share dialog' }).click();
+  const fallbackSharePage = await page.context().newPage();
+  try {
+    const { share: { token } } = await fallbackLink.json();
+    await fallbackSharePage.goto(new URL('/share/' + token, workspaceOrigin).href);
+    await expect(fallbackSharePage.getByText(fallback, { exact: true })).toBeVisible();
+  } finally {
+    await fallbackSharePage.close();
+  }
+  await expect.poll(async () => {
+    const saved = await readSaved();
+    const messages = saved?.messages as Array<{role?: string; content?: string; featureOutput?: unknown}> | undefined;
+    return messages?.some(message => message.content === fallback) &&
+      !messages.some(message => message.role === 'assistant' && !message.content?.trim() && !message.featureOutput);
+  }, { timeout: 20_000 }).toBe(true);
+  await page.reload();
+  await openPersistedConversation(page, { id: sessionId, title: savedTitle!, reply: fallback });
+  await expect(fallbackTurn.getByText(fallback, { exact: true })).toBeVisible();
   await expect(page.getByText('Cancelled fixture must never appear.', { exact: true })).toHaveCount(0);
   await expect(page.getByText('should never render', { exact: true })).toHaveCount(0);
   await send(reviewed);

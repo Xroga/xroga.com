@@ -169,6 +169,8 @@ export function saveTerminalHistorySession(opts: {
   ownerId?: string;
   prompt: string;
   messages: ChatMessage[];
+  /** A settled answer can go directly to the existing account-scoped save queue. */
+  flushSidebar?: boolean;
   status?: TerminalHistoryStatus;
   /** Force bind under this repo (selected workspace) even if localStorage briefly lags */
   forceRepo?: string;
@@ -253,7 +255,7 @@ export function saveTerminalHistorySession(opts: {
   if (activeProjectAtSave) void import('@/lib/sidebarOrganization').then(({scheduleProjectConversationLink})=>scheduleProjectConversationLink(entry,activeProjectAtSave));
   // Non-GitHub chats need the same cross-device restoration capability.
   if (ownerId && !entry.githubRepoName?.includes('/')) {
-    void import('@/lib/sidebarOrganization').then(({scheduleSidebarChatSave}) => scheduleSidebarChatSave(ownerId,entry));
+    void import('@/lib/sidebarOrganization').then(({scheduleSidebarChatSave}) => scheduleSidebarChatSave(ownerId,entry,opts.flushSidebar));
   }
 
   if (entry.githubRepoName?.includes('/') && terminalNumber) {

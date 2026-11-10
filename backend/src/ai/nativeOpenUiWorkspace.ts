@@ -1,5 +1,5 @@
 import { publicCompletionState } from './completionDiagnostics.js';
-import { NATIVE_UI_FORMAT, recoverNativeMonthlyChart, splitNativeOpenUiAnswer, supplementUnfinishedNativeProse, validateNativeOpenUi } from './nativeOpenUi.js';
+import { NATIVE_UI_FORMAT, PARTIAL_NATIVE_PRESENTATION_NOTE, recoverIndependentNativeSections, recoverNativeMonthlyChart, splitNativeOpenUiAnswer, supplementUnfinishedNativeProse, validateNativeOpenUi, type NativeUiDiagnostic } from './nativeOpenUi.js';
 import { requiresNativeAuthorizationReview, suppliedMonthlyComparison } from './nativeOpenUiAccuracy.js';
 
 /** Deployment-owned presentation choice; never reads a user role or client flag.
@@ -15,10 +15,20 @@ export function completeNativeWorkspaceAnswer(
   finishReason: string | null | undefined,
   evidenceIds?: ReadonlySet<string>,
   prompt?: string,
+  diagnose?: (event: NativeUiDiagnostic | { stage: 'assembly'; reason: 'missing_prose'; programLength: number }) => void,
 ) {
   const { text, program } = splitNativeOpenUiAnswer(raw);
-  const validation = program ? validateNativeOpenUi(program, evidenceIds, text) : undefined;
-  const response = text || "Xroga couldn't finish the requested answer.";
+  const validation = program ? validateNativeOpenUi(program, evidenceIds, text, diagnose) : undefined;
+  if (!text) {
+    diagnose?.({ stage: 'assembly', reason: 'missing_prose', programLength: program.length });
+    const completion = publicCompletionState(finishReason);
+    return {
+      response: "Xroga couldn't recover a readable answer. Send your question again to retry.",
+      completion: completion.status === 'partial' ? completion : { status: 'partial' as const, reason: 'presentation_contract' as const },
+      responseSource: { format: NATIVE_UI_FORMAT, text: '' },
+    };
+  }
+  const response = text;
   const completion = (validation?.ok === false && validation.reason === 'authorization_review') || requiresNativeAuthorizationReview(text)
     ? { status: 'partial' as const, reason: 'authorization_review' as const }
     : validation?.ok === false && validation.reason === 'data_review'
@@ -39,13 +49,20 @@ export function completeNativeWorkspaceAnswer(
   }
   const valid = !!text && validation?.ok === true && completion.status === 'complete';
   const recovered = completion.status === 'partial' && completion.reason === 'data_review' ? recoverNativeMonthlyChart(program) : undefined;
+  if (completion.status === 'complete' && validation?.ok === false) {
+    const independent = validation.reason === 'schema' ? recoverIndependentNativeSections(program, evidenceIds, response) : undefined;
+    return {
+      response: independent ? PARTIAL_NATIVE_PRESENTATION_NOTE + '\n\n' + response : response,
+      completion: { status: 'partial' as const, reason: 'presentation_contract' as const },
+      responseSource: { format: NATIVE_UI_FORMAT, text: independent ?? '' },
+    };
+  }
   return {
     response: valid ? supplementUnfinishedNativeProse(response, program)
       : completion.status === 'partial' && completion.reason === 'data_review'
         ? recovered?.text ?? 'Partial answer. The written summary disagreed with the plotted data, and the chart could not be recovered.'
         : response,
-    completion: (!text || (program && !valid)) && completion.status === 'complete'
-      ? { status: 'partial' as const, reason: 'presentation_contract' as const } : completion,
+    completion,
     responseSource: { format: NATIVE_UI_FORMAT, text: valid ? program : recovered?.program ?? '' },
   };
 }

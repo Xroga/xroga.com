@@ -8,6 +8,10 @@ import AxeBuilder from '@axe-core/playwright';
 
 const cases = {
   short: { text: 'Paris is the capital of France.' },
+  recovered: {
+    text: 'Some visuals could not be validated. The available explanation and verified visuals are shown below.\n\nThe API verifies organization membership before reading rows.',
+    program: 'root = Col([table])\ntable = Table(["Check", "Where"], [["Membership", "API"]])',
+  },
   compare: { text: 'Team costs $25 and Basic costs $10.', program: 'root = Col([Title("Plan comparison"), Text("Pick Basic for an individual or Team for collaboration."), Table(["Plan", "USD/month"], [["Team", 25], ["Basic", 10]])])' },
   largeTable: {
     text: 'Review the detailed results in the table.',
@@ -120,6 +124,13 @@ try {
       await open('short');
       await page.getByText(cases.short.text, { exact: true }).waitFor();
       assert.equal(await page.getByRole('slider').count(), 0);
+      await open('recovered');
+      await page.getByText(/Some visuals could not be validated/).waitFor();
+      await page.getByText('The API verifies organization membership before reading rows.', { exact: true }).waitFor();
+      await page.getByRole('cell', { name: 'Membership', exact: true }).waitFor();
+      if ([390, 1440].includes(viewport.width)) {
+        await page.screenshot({ path: resolve(output, channel + '-recovered-' + viewport.width + '-' + theme + '.png'), fullPage: true });
+      }
       await open('compare');
       const table = page.getByRole('table');
       await table.waitFor();

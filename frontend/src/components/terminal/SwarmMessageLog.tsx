@@ -9,7 +9,7 @@ import { MessageBubbleActions } from './MessageBubbleActions';
 import { MessageSuggestionChips } from './MessageSuggestionChips';
 import { ModernResponseText } from './ReasoningAndFollowUps';
 import { FeatureOutputView } from './FeatureOutputView';
-import { readNativeWorkspaceAnswer, NativeWorkspaceAnswer, buildNativeOpenUiShare } from '@/components/native-openui/NativeWorkspaceAnswer';
+import { readNativeWorkspaceAnswer, readNativeWorkspaceProse, NativeWorkspaceAnswer, buildNativeOpenUiShare } from '@/components/native-openui/NativeWorkspaceAnswer';
 import { appendCitationReferences } from '@/lib/xrogaCitations';
 import { ConversationTurnV2 } from '@/components/response-experience-v2/ConversationTurnV2';
 import { responseTextV2 } from '@/components/response-experience-v2/exportText';
@@ -545,9 +545,10 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                         ) : null}
             </>;
             const nativeAnswer = msg.role === 'assistant' ? readNativeWorkspaceAnswer(msg.featureOutput) : undefined;
-            const nativeShare = nativeAnswer && (nativeAnswer.program || msg.webSources?.length)
-              ? buildNativeOpenUiShare(nativeAnswer.text, nativeAnswer.program ?? '', msg.webSources) : undefined;
-            const nativeCopy = nativeAnswer ? appendCitationReferences(nativeAnswer.text, msg.webSources) : undefined;
+            const nativeProse = nativeAnswer?.text ?? (msg.role === 'assistant' ? readNativeWorkspaceProse(msg.featureOutput) : undefined);
+            const nativeShare = nativeProse && (nativeAnswer?.program || msg.webSources?.length)
+              ? buildNativeOpenUiShare(nativeProse, nativeAnswer?.program ?? '', msg.webSources) : undefined;
+            const nativeCopy = nativeProse ? appendCitationReferences(nativeProse, msg.webSources) : undefined;
             const answer = nativeAnswer ? (
               <ChatErrorBoundary>
                 <NativeWorkspaceAnswer answer={nativeAnswer} sources={msg.webSources} />

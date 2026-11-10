@@ -1,10 +1,11 @@
-import { createParser, parseExpression, split, tokenize, type ASTNode, type LibraryJSONSchema } from '@openuidev/lang-core';
+import { createParser, parseExpression, split, tokenize, walkAST, type ASTNode, type LibraryJSONSchema } from '@openuidev/lang-core';
 import { contradictsMonthlyChart, monthlyChartDataFallback, requiresNativeAuthorizationReview, suppliedMonthlyComparison } from './nativeOpenUiAccuracy.js';
 import catalog from './nativeOpenUiCatalog.json' with { type: 'json' };
 
 export const NATIVE_UI_FORMAT = 'xroga-openui-v1' as const;
 export const NATIVE_UI_LIBRARY = 'xroga-native-v1' as const;
 export const NATIVE_UI_MARKER = '\n<<<XROGA_OPENUI_V1>>>\n';
+export const PARTIAL_NATIVE_PRESENTATION_NOTE = 'Some visuals could not be validated. The available explanation and verified visuals are shown below.';
 export const MAX_PROGRAM_CHARS = 24000;
 const parseProgram = createParser(catalog.schema as LibraryJSONSchema, 'Col');
 const components = new Set(Object.keys(catalog.spec.components));
@@ -100,6 +101,15 @@ export function supplementUnfinishedNativeProse(prose: string, program: string):
 
 export type NativeUiValidation = { ok: true } | { ok: false; reason: 'budget' | 'syntax' | 'authority' | 'reference' | 'schema' | 'authorization_review' | 'data_review' };
 const reject = (reason: Extract<NativeUiValidation, { ok: false }>['reason']): NativeUiValidation => ({ ok: false, reason });
+type ValidationStage = 'limits' | 'lexer' | 'statements' | 'authority' | 'schema' | 'accuracy';
+export type NativeUiDiagnostic = {
+  stage: ValidationStage;
+  reason: Extract<NativeUiValidation, { ok: false }>['reason'];
+  statement?: number;
+  programLength: number;
+  shape: Array<{ tokens: number; skeleton: string }>;
+  schema?: Array<{ code: string; statement?: number; component?: string; pathDepth: number }>;
+};
 
 /** Used only after a schema-valid program reached the data-review gate. */
 export function recoverNativeMonthlyChart(program: string, supplied?: NonNullable<ReturnType<typeof suppliedMonthlyComparison>>, partial = true) {
@@ -111,11 +121,35 @@ export function recoverNativeMonthlyChart(program: string, supplied?: NonNullabl
 /** Audit all statements, including unreachable ones, before letting the upstream
  * parser resolve references or evaluate expressions. Limit expanded work as well
  * as input size, so repeated references cannot multiply the runtime budget. */
-export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<string> = new Set(), prose = ''): NativeUiValidation {
-  if (!program || program.length > MAX_PROGRAM_CHARS || program.includes("]]>")) return reject('budget');
+export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<string> = new Set(), prose = '', diagnose?: (value: NativeUiDiagnostic) => void): NativeUiValidation {
+  let stage: ValidationStage = 'limits';
+  let statement: number | undefined;
+  let statements: ReturnType<typeof split> = [];
+  const fail = (reason: NativeUiDiagnostic['reason'], errors?: ReturnType<typeof parseProgram.parse>['meta']['errors']) => {
+    if (diagnose) diagnose({
+      stage, reason, statement, programLength: program.length,
+      shape: statements.slice(0, 12).map(({ tokens }) => ({
+        tokens: tokens.length,
+        skeleton: tokens.slice(0, 100).map((token, index) => {
+          const name = token.v;
+          return token.t !== 14 && tokens[index + 1]?.t === 1 && typeof name === 'string'
+            && (components.has(name) || pureFunctions.has(name) || localActions.has(name)) ? name : String(token.t);
+        }).join(' '),
+      })),
+      ...(errors?.length ? { schema: errors.slice(0, 8).map(error => {
+        const index = statements.findIndex(item => item.id === error.statementId);
+        return { code: error.code, ...(index < 0 ? {} : { statement: index + 1 }),
+          ...(components.has(error.component) ? { component: error.component } : {}),
+          pathDepth: error.path.split('/').length - 1 };
+      }) } : {}),
+    });
+    return reject(reason);
+  };
+  if (!program || program.length > MAX_PROGRAM_CHARS || program.includes("]]>")) return fail('budget');
   try {
+    stage = 'lexer';
     const tokens = tokenize(program);
-    if (tokens.length > 4800) return reject('budget');
+    if (tokens.length > 4800) return fail('budget');
     // Bound the expression parser before building any AST. The lexer treats
     // delimiters inside quoted strings as data.
     // Token discriminants from the pinned OpenUI lexer (left/right pairs).
@@ -123,18 +157,20 @@ export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<s
     for (const token of tokens) {
       if ([1, 3, 5].includes(token.t)) nesting += 1;
       if ([2, 4, 6].includes(token.t)) nesting -= 1;
-      if (nesting > 18 || nesting < 0) return reject('syntax');
+      if (nesting > 18 || nesting < 0) return fail('syntax');
     }
-    if (nesting !== 0) return reject('syntax');
-    const statements = split(tokens);
-    if (!statements.length || statements.length > 96) return reject('budget');
+    if (nesting !== 0) return fail('syntax');
+    stage = 'statements';
+    statements = split(tokens);
+    if (!statements.length || statements.length > 96) return fail('budget');
     const symbols = new Map<string, ASTNode>();
     for (const statement of statements) {
-      if (!/^\$?[a-zA-Z][a-zA-Z0-9_]{0,39}$/.test(statement.id) || !safeKey(statement.id) || symbols.has(statement.id)) return reject('syntax');
-      if (statement.tokens.length > 1200) return reject('budget');
+      if (!/^\$?[a-zA-Z][a-zA-Z0-9_]{0,39}$/.test(statement.id) || !safeKey(statement.id) || symbols.has(statement.id)) return fail('syntax');
+      if (statement.tokens.length > 1200) return fail('budget');
       symbols.set(statement.id, parseExpression(statement.tokens));
     }
-    if (symbols.get('root')?.k !== 'Comp') return reject('syntax');
+    if (symbols.get('root')?.k !== 'Comp') return fail('syntax');
+    stage = 'authority';
     let budget = 6000;
     const reviewStrings = new Set<string>();
     let reason: Extract<NativeUiValidation, { ok: false }>['reason'] = 'authority';
@@ -169,15 +205,64 @@ export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<s
       }
     }
     for (const [key, node] of symbols) {
-      if (key.startsWith('$') && !['Num', 'Str', 'Bool', 'Null'].includes(node.k)) return reject('authority');
-      if (!visit(node, new Set([key]))) return reject(reason);
+      statement = (statement ?? 0) + 1;
+      if (key.startsWith('$') && !['Num', 'Str', 'Bool', 'Null'].includes(node.k)) return fail('authority');
+      if (!visit(node, new Set([key]))) return fail(reason);
     }
+    statement = undefined;
+    stage = 'schema';
     const result = parseProgram.parse(program);
-    if (result.queryStatements.length || result.mutationStatements.length) return reject('authority');
-    if (!result.root || result.root.typeName !== 'Col' || result.meta.incomplete || result.meta.unresolved.length || result.meta.errors.length) return reject('schema');
+    if (result.queryStatements.length || result.mutationStatements.length) return fail('authority');
+    if (!result.root || result.root.typeName !== 'Col' || result.meta.incomplete || result.meta.unresolved.length || result.meta.errors.length) return fail('schema', result.meta.errors);
+    stage = 'accuracy';
     const narrative = [prose, ...reviewStrings].join('\n');
-    if (requiresNativeAuthorizationReview(narrative)) return reject('authorization_review');
-    if (contradictsMonthlyChart(result.root, narrative)) return reject('data_review');
+    if (requiresNativeAuthorizationReview(narrative)) return fail('authorization_review');
+    if (contradictsMonthlyChart(result.root, narrative)) return fail('data_review');
     return { ok: true };
-  } catch { return reject('syntax'); }
+  } catch { return fail('syntax'); }
+}
+
+/** Only called after the entire program passed the authority audit and failed schema validation.
+ * Rebuild the root from named, independent sections and validate the exact new program. */
+export function recoverIndependentNativeSections(program: string, evidenceIds: ReadonlySet<string> | undefined, prose: string) {
+  try {
+    const statements = split(tokenize(program));
+    const root = statements.find(item => item.id === 'root');
+    if (!root) return;
+    const expression = parseExpression(root.tokens);
+    if (expression.k !== 'Comp' || expression.name !== 'Col' || expression.args.length !== 1 || expression.args[0].k !== 'Arr') return;
+    const children = expression.args[0].els;
+    if (children.length < 2 || children.length > 12 || children.some(child => child.k !== 'Ref')) return;
+    const declarations = new Map(statements.map(item => [item.id, item]));
+    const included = new Set<string>();
+    const names: string[] = [];
+    const sourceFor = (ids: ReadonlySet<string>) => statements.filter(item => ids.has(item.id))
+      .map(item => program.slice(item.start, item.end)).join('\n');
+    for (const child of children) {
+      if (child.k !== 'Ref' || names.includes(child.n)) continue;
+      const ids = new Set<string>();
+      const pending = [child.n];
+      let isolated = true;
+      for (let id = pending.pop(); id; id = pending.pop()) {
+        if (ids.has(id)) continue;
+        const declaration = declarations.get(id);
+        if (id === 'root' || !declaration || declaration.start === undefined || declaration.end === undefined) {
+          isolated = false;
+          break;
+        }
+        ids.add(id);
+        walkAST(parseExpression(declaration.tokens), node => {
+          if (node.k === 'Ref' || node.k === 'StateRef') pending.push(node.n);
+        });
+      }
+      if (!isolated || !validateNativeOpenUi(`root = Col([${child.n}])\n${sourceFor(ids)}`, evidenceIds, prose).ok) continue;
+      names.push(child.n);
+      ids.forEach(id => included.add(id));
+    }
+    if (!names.length || names.length === children.length) return;
+    const recovered = `root = Col([${names.join(', ')}])\n${sourceFor(included)}`;
+    if (validateNativeOpenUi(recovered, evidenceIds, prose).ok) return recovered;
+  } catch {
+    // Prose remains authoritative when the components cannot be separated safely.
+  }
 }

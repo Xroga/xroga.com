@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { NATIVE_UI_MARKER, splitNativeOpenUiAnswer, validateNativeOpenUi } from './nativeOpenUi.js';
-import { nativeOpenUiPrompt } from './nativeOpenUiPrompt.js';
+import { NATIVE_UI_MARKER, PARTIAL_NATIVE_PRESENTATION_NOTE, splitNativeOpenUiAnswer, validateNativeOpenUi } from './nativeOpenUi.js';
+import { nativeOpenUiPrompt, workspaceNativeOpenUiPrompt } from './nativeOpenUiPrompt.js';
 import { buildNativeOpenUiShare, readNativeOpenUiShare } from './nativeOpenUiShare.js';
 import { readNativeOpenUiRun } from './nativeOpenUiRun.js';
 import { completeNativeWorkspaceAnswer, usesNativeWorkspacePresentation } from './nativeOpenUiWorkspace.js';
@@ -25,6 +25,52 @@ test('native layout, data and reactive arithmetic are accepted without a V2 tran
     '$left = 15\nroot = Col([Icon("plane", "lg", "info"), Timer($left, "Practice"), Chart("bar", @Histogram([0, 1, 1, 4], 2, 0, 4), "key", ["value"]), Text(@Slice("ABC", 0, 2))])',
   ];
   for (const program of programs) assert.deepEqual(validateNativeOpenUi(program), { ok: true }, program);
+});
+
+test('architecture instructions use registry signatures without unrelated controls or unsupplied evidence', () => {
+  const prompt = workspaceNativeOpenUiPrompt(['prose', 'graph', 'table'], false);
+  for (const name of ['Diagram(', 'Table(', 'Code(']) assert.ok(prompt.includes(name), name);
+  for (const name of ['Slider(', 'Histogram(', 'Source(', 'DatePicker(']) assert.ok(!prompt.includes(name), name);
+  assert.ok(prompt.length < nativeOpenUiPrompt.length * 0.7);
+  assert.ok(workspaceNativeOpenUiPrompt(['chart', 'calculator'], true).includes('Source('));
+});
+
+test('independent schema failure keeps authorized sections, prose and an explicit partial status', () => {
+  const prose = 'Validate each request before enqueueing it.';
+  const program = [
+    'root = Col([flow, sensitiveSectionName, code, metric])',
+    'flow = Diagram("Request path", [{id:"client",label:"Client",level:0},{id:"queue",label:"Queue",level:1}], [{from:"client",to:"queue",label:"Valid request"}], "Validate before enqueueing.")',
+    'sensitiveSectionName = Table(["customer-private-name"])',
+    'code = Code("await queue.send(request);", "typescript")',
+    '$count = 4',
+    'metric = Metric("Count", @Format($count, "number", 0))',
+  ].join('\n');
+  const diagnostics: unknown[] = [];
+  const answer = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + program, 'stop', undefined, undefined, event => diagnostics.push(event));
+  assert.deepEqual(answer.completion, { status: 'partial', reason: 'presentation_contract' });
+  assert.equal(answer.response, PARTIAL_NATIVE_PRESENTATION_NOTE + '\n\n' + prose);
+  assert.match(answer.responseSource.text, /Diagram\(/);
+  assert.match(answer.responseSource.text, /Code\(/);
+  assert.match(answer.responseSource.text, /\$count = 4/);
+  assert.doesNotMatch(answer.responseSource.text, /Table\(/);
+  const diagnostic = JSON.stringify(diagnostics);
+  assert.match(diagnostic, /"stage":"schema"/);
+  assert.match(diagnostic, /"code":"missing-required"/);
+  assert.doesNotMatch(diagnostic, /sensitiveSectionName|customer-private-name|await queue|Valid request/);
+  const share = buildNativeOpenUiShare(answer.response, answer.responseSource.text);
+  assert.equal(readNativeOpenUiShare(share!)?.text, answer.response);
+  const untrusted = program.replace('Table(["customer-private-name"])', 'Source("invented")');
+  assert.equal(completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + untrusted, 'stop').responseSource.text, '');
+});
+
+test('a program with no readable prose explicitly asks the user to retry', () => {
+  const seen: unknown[] = [];
+  const answer = completeNativeWorkspaceAnswer(NATIVE_UI_MARKER + 'root = Col([Text("unreviewed")])', 'stop', undefined, undefined, value => seen.push(value));
+  assert.match(answer.response, /Send your question again to retry/);
+  assert.deepEqual(answer.completion, { status: 'partial', reason: 'presentation_contract' });
+  assert.equal(answer.responseSource.text, '');
+  assert.match(JSON.stringify(seen), /missing_prose/);
+  assert.doesNotMatch(JSON.stringify(seen), /unreviewed/);
 });
 
 test('Workspace strips only the trailing provider transport envelope from a native program', () => {

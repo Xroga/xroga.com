@@ -15,8 +15,6 @@ const Surface = lazy(() => import('./NativeSurface').then(module => ({ default: 
 export function readNativeWorkspaceAnswer(output: unknown): NativeAnswer | undefined {
   if ((output as { responseSource?: { format?: unknown } } | null)?.responseSource?.format !== 'xroga-openui-v1') return;
   const document = parseXrogaOutput(output);
-  // The only native program persisted for a partial answer is the backend's
-  // deterministic chart recovery. Its warning is in both prose and program.
   if (document?.responseSource?.format !== 'xroga-openui-v1' || !document.sourceText ||
       (document.status !== 'completed' && !(document.status === 'partial' && document.responseSource.text))) return;
   return {
@@ -25,6 +23,12 @@ export function readNativeWorkspaceAnswer(output: unknown): NativeAnswer | undef
     text: document.sourceText,
     ...(document.responseSource.text ? { program: document.responseSource.text } : {}),
   };
+}
+
+/** Clipboard and Share use the authoritative prose even when no native visual survived. */
+export function readNativeWorkspaceProse(output: unknown): string | undefined {
+  if ((output as { responseSource?: { format?: unknown } } | null)?.responseSource?.format !== 'xroga-openui-v1') return;
+  return parseXrogaOutput(output)?.sourceText || undefined;
 }
 
 export function NativeWorkspaceAnswer({ answer, sources, sourceReferral = true }: { answer: NativeAnswer; sources?: Array<Pick<CitationSource, 'title' | 'url' | 'siteName'> & Partial<CitationSource>>; sourceReferral?: boolean }) {

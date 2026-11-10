@@ -24,7 +24,7 @@ import { MODELS, type ModelId } from './models.js';
 import { publicCompletionState } from './completionDiagnostics.js';
 import { NATIVE_UI_FORMAT } from './nativeOpenUi.js';
 import { completeNativeWorkspaceAnswer, usesNativeWorkspacePresentation } from './nativeOpenUiWorkspace.js';
-import { nativeOpenUiPlainPrompt, nativeOpenUiPrompt } from './nativeOpenUiPrompt.js';
+import { nativeOpenUiPlainPrompt, workspaceNativeOpenUiPrompt } from './nativeOpenUiPrompt.js';
 import { assessPresentationCoverage, createPresentationProjection, presentationRequestInstructions, presentationResponseFormat, presentedAnswerMaxTokens, type PresentationResponseFormat } from './responsePresentation.js';
 import { prepareAnswerCoverage } from './answerCoverage.js';
 import {prepareSonnetConversation,requestedSonnetReason} from './sonnetApproval.js';
@@ -981,7 +981,8 @@ export async function runChatPipeline(opts: {
     const pick = pickAttachmentModel(prompt, prepared);
     const native = usesNativeWorkspacePresentation(pick.modelId);
     const attachmentSystem = prepared.hasImages ? VISION_SYSTEM : DOC_SYSTEM;
-    const system = native ? attachmentSystem + '\n\n' + nativeOpenUiPrompt : attachmentSystem;
+    const attachmentPlan = native ? prepareAnswerCoverage(opts.prompt, opts.goalContract?.presentation, opts.goalContract?.answerObligations).plan : [];
+    const system = native ? attachmentSystem + '\n\n' + workspaceNativeOpenUiPrompt(attachmentPlan.map(section => section.kind), false) : attachmentSystem;
 
     let userText = prompt;
     if (prepared.documentBlock) {
@@ -1021,7 +1022,8 @@ export async function runChatPipeline(opts: {
 
     const usage = await getUsage(opts.userId);
 
-    const answer = native ? completeNativeWorkspaceAnswer(result.text, result.finishReason) : { response: result.text };
+    const answer = native ? completeNativeWorkspaceAnswer(result.text, result.finishReason, undefined, undefined, diagnostic =>
+      console.warn('[native-openui-validation]', diagnostic)) : { response: result.text };
     if (native) opts.onDelta?.(answer.response);
     return {
       ...answer,
@@ -1150,7 +1152,7 @@ export async function runChatPipeline(opts: {
     && answerContract.plan.every(section => section.kind === 'prose')
     && answerContract.requirements.every(item => item.formats.length > 0 && item.formats.every(kind => kind === 'prose'));
   const instructions = native
-    ? plainNative ? nativeOpenUiPlainPrompt : nativeOpenUiPrompt + sourceManifest
+    ? plainNative ? nativeOpenUiPlainPrompt : workspaceNativeOpenUiPrompt(answerContract.plan.map(section => section.kind), Boolean(evidenceIds?.size)) + sourceManifest
     : chatPresentationSystem(opts.prompt) + (presentation?.length ? '\n\n' + presentationRequestInstructions(presentation) : '');
   const system = currentPublicProductTruth(truthAuthorities) + '\n\n' + instructions;
   const result = await callBuilderStream(
@@ -1176,7 +1178,8 @@ export async function runChatPipeline(opts: {
 
   if (native) {
     const answer = completeNativeWorkspaceAnswer(result.text, result.finishReason, evidenceIds,
-      route.kind !== 'research' && !researchBlock && !opts.projectEvidence ? opts.prompt : undefined);
+      route.kind !== 'research' && !researchBlock && !opts.projectEvidence ? opts.prompt : undefined,
+      diagnostic => console.warn('[native-openui-validation]', diagnostic));
     opts.onDelta?.(answer.response);
     return {
       ...answer,
