@@ -34,6 +34,7 @@ import { buildArtifactContextPreamble, useXrogaArtifactContext } from '@/lib/xro
 import { appendVoiceTranscript } from '@/lib/terminal/voiceRecording';
 import { XrogaVoiceControl } from './XrogaVoiceControl';
 import { getSelectedRepoContext } from '@/lib/repoContext';
+import { nativeWorkSkillById, buildNativeWorkSkillPrompt } from '@/lib/nativeWorkSkills';
 
 const MIN_INPUT_H = 32;
 const COMPOSER_PLACEHOLDERS = [
@@ -110,6 +111,26 @@ export function TerminalChatBar({ starter = false }: { starter?: boolean }) {
   draftRef.current = draft;
   const composingRef = useRef(false);
   const lastExternalPrompt = useRef(prompt);
+
+  // Library → Workspace: the selected native Skill is placed in the existing
+  // composer, never auto-sent and never opened in a second chat/mode.
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const url = new URL(window.location.href);
+    const skill = nativeWorkSkillById(url.searchParams.get('nativeSkill'));
+    if (!skill || url.pathname !== '/workspace') return;
+    const scaffold = buildNativeWorkSkillPrompt(skill);
+    const existingDraft = draftRef.current.trim();
+    const next = existingDraft ? `${scaffold}\n\n${existingDraft}` : scaffold;
+    setSelectedTool({label:skill.title,category:'Native Skill',description:skill.description,tone:'purple',scaffold});
+    setDraft(next);
+    draftRef.current = next;
+    lastExternalPrompt.current = next;
+    setPrompt(next);
+    url.searchParams.delete('nativeSkill');
+    window.history.replaceState(window.history.state,'',url.pathname+url.search+url.hash);
+    window.setTimeout(()=>textareaRef.current?.focus(),80);
+  },[setPrompt]);
 
   // Sync only when parent injects a new prompt (prefill / clear) — never while typing
   useEffect(() => {
