@@ -114,6 +114,8 @@ async function runNavigation(
   ctx: ToolContext,
   attachment: TabAttachment,
   go: () => Promise<void>,
+  /** The address, for one last try through Chrome's own tab navigation when the debugger's navigation cannot resolve it. */
+  browserUrl?: string,
 ): Promise<{ url: string; title: string; readiness: string }> {
   const tab = ctx.tab();
   tab.guard?.drain();
@@ -121,6 +123,8 @@ async function runNavigation(
   const readiness = trackReadiness(attachment.cdp, () => attachment.topology.mainFrameId(), start);
   tab.actionSeq++;
   let failure: unknown;
+  let viaBrowser = false;
+  let browserAlsoFailed = false;
   try {
     // A lookup that fails once and works a moment later is common (a network that is waking up, a resolver that missed): the
     // address is tried a second time after a short pause. Only failures where no request reached any server are repeated.
@@ -136,9 +140,19 @@ async function runNavigation(
         await new Promise(resolve => setTimeout(resolve, TRANSIENT_RETRY_MS));
         continue;
       }
+      if (failure && attempt === 1 && browserUrl && TRANSIENT_LOOKUP.test(text) && ctx.controller.host.tabs.load) {
+        // The same step the user takes in the address bar: Chrome loads the address itself, with no debugger command.
+        try {
+          await ctx.controller.host.tabs.load(tab.tabId, browserUrl, NAVIGATION_TIMEOUT_MS);
+          failure = undefined;
+          viaBrowser = true;
+        } catch {
+          browserAlsoFailed = true;
+        }
+      }
       break;
     }
-    const ready = failure ? 'failed' : await readiness.wait();
+    const ready = failure ? 'failed' : viaBrowser ? 'load' : await readiness.wait();
     const events = tab.guard?.drain() ?? [];
     const current = await ctx.controller.host.tabs.get(tab.tabId);
     if (events.length) throw policyError(events, current?.url ?? '');
@@ -150,7 +164,11 @@ async function runNavigation(
       const network = networkFailure(message);
       if (network) {
         // Chrome refused before any page request was handled: nothing was loaded or changed, so this is a plain read that failed.
-        throw new LayerError('NAVIGATION_FAILED', network.message, { delivered: false, hint: network.hint });
+        throw new LayerError(
+          'NAVIGATION_FAILED',
+          browserAlsoFailed ? `${network.message} Chrome's own tab navigation failed the same way, so this is not specific to Xroga.` : network.message,
+          { delivered: false, hint: network.hint },
+        );
       }
       throw new LayerError('NAVIGATION_FAILED', `The navigation failed: ${quote(message, 300)}`, {
         delivered: 'unknown',
@@ -236,6 +254,7 @@ export async function navigate(ctx: ToolContext, args: NavigateArgs): Promise<To
         : args.action === 'forward'
           ? page.goForward(timeout)
           : page.reload(timeout),
+    args.url ? parseUrl(args.url) : undefined,
   );
   return withPageState(ctx, args.observe, {
     data: { url: result.url, title: result.title, readiness: result.readiness },
@@ -311,7 +330,7 @@ export async function openTab(ctx: ToolContext, args: TabsArgs): Promise<ToolOut
     tab: () => ctx.controller.tabState(tab.tabId),
     attach: () => ctx.controller.attach(tab.tabId),
   };
-  if (url !== SAFE_URL) await runNavigation(child, attachment, () => attachment.page.goto(url, NAVIGATION_TIMEOUT_MS));
+  if (url !== SAFE_URL) await runNavigation(child, attachment, () => attachment.page.goto(url, NAVIGATION_TIMEOUT_MS), url);
   const data = { ...(await sessionTabs(ctx)), opened: tab.tabId };
   return { data, lines: [`tabs open · tab ${tab.tabId} · ${quote(url)}`] };
 }

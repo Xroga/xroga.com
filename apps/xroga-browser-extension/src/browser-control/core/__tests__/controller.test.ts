@@ -160,6 +160,54 @@ describe('navigate removes its readiness listener', () => {
     // A lookup that fails is tried once more after a pause, never a third time.
     expect((attachment.page.goto as unknown as ReturnType<typeof vi.fn>).mock.calls).toHaveLength(6);
   });
+
+  it('finishes through Chrome own tab navigation when the debugger navigation cannot resolve the name', async () => {
+    const attachment = {
+      ...fakeAttachment(9),
+      page: {
+        goto: vi.fn(async () => {
+          throw new Error('net::ERR_NAME_NOT_RESOLVED');
+        }),
+      } as unknown as TabAttachment['page'],
+    };
+    const load = vi.fn(async () => undefined);
+    const controller = await Controller.create({
+      attacher: { attach: vi.fn(async () => attachment) },
+      tabs: { ...tabs, load, get: async () => ({ tabId: 9, url: 'https://unresolvable.test/', title: 'Loaded' }) } as unknown as TabHost,
+      epochStore: { read: async () => null, write: async () => undefined },
+    });
+    const session = controller.createSession();
+    session.shareTab(9);
+    const result = await session.call('navigate', { url: 'https://unresolvable.test/', tabId: 9 });
+    expect(result.ok).toBe(true);
+    expect((attachment.page.goto as unknown as ReturnType<typeof vi.fn>).mock.calls).toHaveLength(2);
+    expect(load).toHaveBeenCalledTimes(1);
+  });
+
+  it('says so when Chrome own tab navigation fails the same way', async () => {
+    const attachment = {
+      ...fakeAttachment(9),
+      page: {
+        goto: vi.fn(async () => {
+          throw new Error('net::ERR_NAME_NOT_RESOLVED');
+        }),
+      } as unknown as TabAttachment['page'],
+    };
+    const load = vi.fn(async () => {
+      throw new Error('net::ERR_NAME_NOT_RESOLVED');
+    });
+    const controller = await Controller.create({
+      attacher: { attach: vi.fn(async () => attachment) },
+      tabs: { ...tabs, load, get: async () => ({ tabId: 9, url: 'about:blank', title: '' }) } as unknown as TabHost,
+      epochStore: { read: async () => null, write: async () => undefined },
+    });
+    const session = controller.createSession();
+    session.shareTab(9);
+    const result = await session.call('navigate', { url: 'https://unresolvable.test/', tabId: 9 });
+    expect(result.ok).toBe(false);
+    expect(result.error).toMatchObject({ code: 'NAVIGATION_FAILED', delivered: false });
+    expect(result.error?.message).toContain("Chrome's own tab navigation failed the same way");
+  });
 });
 
 describe('a ref of a tab the session no longer holds', () => {
