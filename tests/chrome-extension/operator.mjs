@@ -312,7 +312,7 @@ try {
       if (location.origin !== origin) return;
       for (const event of ["click", "input"]) {
         document.addEventListener(event, () => {
-          if (document.querySelector("[data-xroga-action-point]"))
+          if (document.querySelector("[data-xroga-pointer=point], [data-xroga-pointer=neutral]"))
             void window.fixtureActionCue(event);
         }, true);
       }
@@ -829,8 +829,8 @@ try {
     await workspace.evaluate(() => window.fixtureAuthChanged('SIGNED_OUT', null));
     await activity.waitFor({ state: "detached" });
     assert.equal(await workspace.getByText(answer, { exact: true }).count(), 0);
-    assert.ok(actionCues.has("click"), "The blue marker was visible when Chrome clicked");
-    assert.ok(actionCues.has("input"), "The blue marker was visible when Chrome typed");
+    assert.ok(actionCues.has("click"), "The Xroga pointer was visible when Chrome clicked");
+    assert.ok(actionCues.has("input"), "The Xroga pointer was visible when Chrome typed");
   }
   const { product } = await cdp.send("Browser.getVersion");
   console.log(

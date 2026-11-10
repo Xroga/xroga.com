@@ -311,6 +311,8 @@ export function setBorder(state: BorderState, pointer?: PointerCommand | null): 
       ptr.style.transform = '';
     }
   }
+  // The overlay's content is in a closed root, so its state is also written on the host for tests and for support.
+  b.host.setAttribute('data-xroga-pointer', state === 'on' ? (ptr.getAttribute('data-mode') ?? 'neutral') : 'hidden');
   if (state === 'on') {
     glow.style.transition = '';
     glow.style.opacity = '1';
