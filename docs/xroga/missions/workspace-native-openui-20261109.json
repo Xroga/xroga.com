@@ -8,7 +8,7 @@
   ],
   "state": "IN_PROGRESS",
   "risk": "medium",
-  "scope": "Validate one native OpenUI presentation path in the regular authenticated Workspace and preserve existing production Chrome pairing, accounting, and browser files.",
+  "scope": "Validate the native OpenUI presentation in the authenticated Workspace while preserving the live New Work, Recents and Projects behavior, Chrome pairing, accounting and browser files.",
   "changedFiles": [
     ".github/workflows/vercel-build-check.yml",
     "backend/package-lock.json",
@@ -110,7 +110,16 @@
     "scripts/security/hosted-workspace-staging.test.mjs",
     "scripts/security/source-lifetime-bindings.test.mjs",
     "scripts/security/staging-preflight.test.mjs",
-    "scripts/verify-native-openui-browser.mjs"
+    "scripts/verify-native-openui-browser.mjs",
+    "frontend/src/components/dashboard/WorkspaceShowcaseStarts.tsx",
+    "frontend/src/components/layout/Sidebar.tsx",
+    "frontend/src/components/layout/SidebarProjectHistory.tsx",
+    "frontend/src/components/terminal/RepoContextBar.tsx",
+    "frontend/src/components/terminal/TerminalChatBar.tsx",
+    "frontend/src/lib/newWorkProjectBoundary.test.ts",
+    "frontend/src/lib/passiveRepositorySelection.test.ts",
+    "frontend/src/lib/passiveRepositorySelection.ts",
+    "frontend/src/lib/sidebarConversationLocation.ts"
   ],
   "decisions": {
     "keep": [
@@ -189,6 +198,12 @@
       "scope": "Pin managed Supabase and private Cloud Run staging, preserve the old topology, deny bad origin, expired and wrong realm tokens, deny unknown routes and redirects",
       "negative": true,
       "reference": "scripts/security/hosted-workspace-staging.test.mjs"
+    },
+    {
+      "command": "node node_modules/tsx/dist/cli.mjs --tsconfig frontend/tsconfig.json --test frontend/src/lib/newWorkProjectBoundary.test.ts",
+      "scope": "The live composer keeps GitHub optional, New Work clears previous context, and Projects and Recents use explicit membership.",
+      "negative": true,
+      "reference": "frontend/src/lib/newWorkProjectBoundary.test.ts"
     }
   ],
   "architecture": {
