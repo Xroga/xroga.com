@@ -1,9 +1,12 @@
 // Source-reviewed resources for the managed Workspace staging topology.
 export const stagingProject = 'project-c40d4821-e647-4fa2-92d';
+export const hostedWorkspaceManifestVersion = 3;
 export const stagingRegion = 'us-east4';
 export const stagingAuthRef = 'dqxnatoessviphudbhei';
 export const stagingAuthOrigin = `https://${stagingAuthRef}.supabase.co`;
-export const stagingApiAudience = 'https://xroga-api-universal-staging-422lt7eujq-uk.a.run.app';
+export const stagingApiService = 'xroga-api-openui-acceptance';
+export const stagingApiAudience = `https://${stagingApiService}-574998934848.${stagingRegion}.run.app`;
+export const stagingApiIdentity = `${stagingApiService}@${stagingProject}.iam.gserviceaccount.com`;
 export const stagingWebService = 'xroga-workspace-openui-staging';
 export const stagingWebOrigin = `https://${stagingWebService}-574998934848.${stagingRegion}.run.app`;
 export const stagingOperatorOrigin = 'http://localhost:3217';
@@ -38,20 +41,20 @@ export function isHostedWorkspaceRoute(path, method) {
 /** @param {unknown} value */
 export function validateHostedWorkspaceStaging(value) {
   const m = /** @type {any} */ (value);
-  if (m?.version !== 2 || m.topology !== 'private_cloud_run_managed_supabase'
+  if (m?.version !== hostedWorkspaceManifestVersion || m.topology !== 'dedicated_private_cloud_run_managed_supabase'
     || m.environment !== 'staging' || m.dataPolicy !== 'synthetic_only'
     || m.project !== stagingProject || m.region !== stagingRegion
     || !/^[a-f0-9]{40}$/.test(m.sourceSha ?? '')
     || m.api?.sourceSha !== m.sourceSha || m.web?.sourceSha !== m.sourceSha
     || m.auth?.projectRef !== stagingAuthRef || m.auth?.issuer !== `${stagingAuthOrigin}/auth/v1`
     || m.ledger?.projectRef !== stagingAuthRef || m.storage?.projectRef !== stagingAuthRef
-    || m.api?.service !== 'xroga-api-universal-staging'
-    || m.api?.identity !== `xroga-universal-staging@${stagingProject}.iam.gserviceaccount.com`
+    || m.api?.service !== stagingApiService
+    || m.api?.identity !== stagingApiIdentity
     || m.api?.audience !== stagingApiAudience
-    || m.api?.origin !== `https://openui-${m.sourceSha.slice(0, 7)}---${new URL(stagingApiAudience).hostname}`
+    || m.api?.origin !== stagingApiAudience
     || !imagePin(m.api?.image, 'xroga-api-migration')
-    || m.api?.defaultTrafficPercent !== 0
-    || m.api?.rollbackRevision !== 'xroga-api-universal-staging-00001-tdc'
+    || m.api?.defaultTrafficPercent !== 100
+    || m.api?.rollback !== 'remove_dedicated_service'
     || m.web?.service !== stagingWebService || m.web?.origin !== stagingWebOrigin
     || m.web?.identity !== stagingWebIdentity || m.web?.operatorOrigin !== stagingOperatorOrigin
     || m.web?.requiresInvoker !== true || m.api?.requiresInvoker !== true) {
@@ -87,17 +90,15 @@ export function requireHostedWorkspaceBuild(environment, manifest) {
 /** @param {string} sourceSha @param {string} apiDigest */
 export function hostedWorkspaceManifest(sourceSha, apiDigest) {
   return validateHostedWorkspaceStaging({
-    version: 2, topology: 'private_cloud_run_managed_supabase',
+    version: hostedWorkspaceManifestVersion, topology: 'dedicated_private_cloud_run_managed_supabase',
     environment: 'staging', dataPolicy: 'synthetic_only', project: stagingProject, region: stagingRegion, sourceSha,
     auth: { projectRef: stagingAuthRef, issuer: `${stagingAuthOrigin}/auth/v1` },
     ledger: { projectRef: stagingAuthRef },
     storage: { projectRef: stagingAuthRef },
     api: {
-      sourceSha, service: 'xroga-api-universal-staging', audience: stagingApiAudience,
-      origin: `https://openui-${sourceSha.slice(0, 7)}---${new URL(stagingApiAudience).hostname}`,
-      image: `${repository}/xroga-api-migration@${apiDigest}`, defaultTrafficPercent: 0,
-      identity: `xroga-universal-staging@${stagingProject}.iam.gserviceaccount.com`,
-      rollbackRevision: 'xroga-api-universal-staging-00001-tdc', requiresInvoker: true,
+      sourceSha, service: stagingApiService, audience: stagingApiAudience, origin: stagingApiAudience,
+      image: `${repository}/xroga-api-migration@${apiDigest}`, defaultTrafficPercent: 100,
+      identity: stagingApiIdentity, rollback: 'remove_dedicated_service', requiresInvoker: true,
     },
     web: {
       sourceSha, service: stagingWebService, identity: stagingWebIdentity, origin: stagingWebOrigin,

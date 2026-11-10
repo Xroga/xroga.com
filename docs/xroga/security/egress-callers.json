@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "76f55d35ab8405691f4b66aea04bdffda81b6d262a1cd98f3ae49991e473581b",
+  "sourceTreeDigest": "8a320321bea8a852b9357e220f62085f4006edcb665fde069acf2d09c5ab13ca",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -4851,7 +4851,7 @@
         {
           "path": "scripts/security/hosted-workspace-staging.test.mjs",
           "marker": "Google IAM and original user token stay separate",
-          "sha256": "e51ad4577251881cf451c0bbc70daf18f93a32bbca48e89993fbff7e307cb2ac"
+          "sha256": "440e2810537f5dc55055aab04daf2e6a7a0f9b7b13fea30314030e06581fbe9b"
         }
       ]
     },
@@ -4873,7 +4873,7 @@
         {
           "path": "scripts/security/hosted-workspace-staging.test.mjs",
           "marker": "Google IAM and original user token stay separate",
-          "sha256": "e51ad4577251881cf451c0bbc70daf18f93a32bbca48e89993fbff7e307cb2ac"
+          "sha256": "440e2810537f5dc55055aab04daf2e6a7a0f9b7b13fea30314030e06581fbe9b"
         }
       ]
     },
@@ -4895,7 +4895,7 @@
         {
           "path": "scripts/security/hosted-workspace-staging.test.mjs",
           "marker": "hosted confirmation admits only the exact owner-visible DeepSeek research action",
-          "sha256": "e51ad4577251881cf451c0bbc70daf18f93a32bbca48e89993fbff7e307cb2ac"
+          "sha256": "440e2810537f5dc55055aab04daf2e6a7a0f9b7b13fea30314030e06581fbe9b"
         }
       ]
     },
@@ -4917,7 +4917,7 @@
         {
           "path": "scripts/security/hosted-workspace-staging.test.mjs",
           "marker": "Google IAM and original user token stay separate",
-          "sha256": "e51ad4577251881cf451c0bbc70daf18f93a32bbca48e89993fbff7e307cb2ac"
+          "sha256": "440e2810537f5dc55055aab04daf2e6a7a0f9b7b13fea30314030e06581fbe9b"
         }
       ]
     },

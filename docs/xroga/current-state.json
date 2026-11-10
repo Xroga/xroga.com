@@ -57339,7 +57339,7 @@
       "id": "surface:00069db1d185a39243c5",
       "subsystem": "frontend",
       "sourcePath": "frontend/next.config.mjs",
-      "sha256": "d0d1953d9d21bced387c3eb166023f464fc9d2723944c7674c25dee27907151f",
+      "sha256": "ef65844e8e550a0f73b47da4eba13f4bf4f0cc21ce7dc7cf1c3845a6a51a51dd",
       "symbols": [
         "BROWSER_EMPLOYEES_DEMO_SOURCE",
         "CLARITY_DEMO_SOURCE",
@@ -110540,9 +110540,51 @@
       "id": "surface:ee5a5c340d1ae3c1eefa",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/plainAiText.tsx",
-      "sha256": "7de92c8695e328910121be96d4e701faae8535129a354db8a9ce60de4019fa6a",
+      "sha256": "e95220a7c3b851a0b84b62a840a978a7dbcabb7ab0774d1fe81f6b7d0f086710",
       "symbols": [
-        "PlainAiResponse",
+        "PlainAiResponse"
+      ],
+      "imports": [
+        "@/lib/formatAiMarkdown",
+        "@/lib/mathRender",
+        "@/lib/plainAiTextParser",
+        "@/lib/utils"
+      ],
+      "runtimeImports": [
+        "frontend/src/lib/formatAiMarkdown.tsx",
+        "frontend/src/lib/mathRender.tsx",
+        "frontend/src/lib/plainAiTextParser.ts",
+        "frontend/src/lib/utils.ts"
+      ],
+      "entryPoints": [
+        "frontend/src/app/(workspace)/workspace/page.tsx",
+        "frontend/src/app/share/[token]/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/terminal/ReasoningAndFollowUps.tsx:14"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:033b796d676c8cd8b380",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/lib/plainAiTextParser.ts",
+      "sha256": "d5b5ab501d29ceeda5f44a6e0bdc80797746e87024d717af1c2ac7d4088e4ffa",
+      "symbols": [
         "XrogaBlock",
         "addText",
         "blocks",
@@ -110556,23 +110598,15 @@
         "sanitizePlainAiText",
         "value"
       ],
-      "imports": [
-        "@/lib/formatAiMarkdown",
-        "@/lib/mathRender",
-        "@/lib/utils"
-      ],
-      "runtimeImports": [
-        "frontend/src/lib/formatAiMarkdown.tsx",
-        "frontend/src/lib/mathRender.tsx",
-        "frontend/src/lib/utils.ts"
-      ],
+      "imports": [],
+      "runtimeImports": [],
       "entryPoints": [
         "frontend/src/app/(workspace)/workspace/page.tsx",
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/ReasoningAndFollowUps.tsx:14",
-        "frontend/src/lib/mathDetect.test.ts:5"
+        "frontend/src/lib/mathDetect.test.ts:5",
+        "frontend/src/lib/plainAiText.tsx:6"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -114367,7 +114401,7 @@
       "id": "surface:2cd2cfb40faa6f59e1b6",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/supabase/authBuildRealm.mjs",
-      "sha256": "ad9378e41979cdb2393a83a66be13affdb9301c0da9a247955e429b535a1883b",
+      "sha256": "60023a172a85295e9ebb8a41ba37b4f5c490a562b443633fbdcc3a8e5ed7bb0c",
       "symbols": [
         "localAuthProject",
         "localAuthUrl",
@@ -124408,13 +124442,14 @@
       "id": "surface:bd447efc6f4a92271280",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/security/hosted-workspace-staging.mjs",
-      "sha256": "ee67109683ac75adefc4f8f2152233fa02f254697c83d7a6ef986ef144690b19",
+      "sha256": "15d46b6faa21da2a0841b224ba43b682456bcb05bbf351fd3b02f8414214d15e",
       "symbols": [
         "actualSource",
         "apiDigest",
         "apiName",
         "hostedResearchConfirmation",
         "hostedWorkspaceManifest",
+        "hostedWorkspaceManifestVersion",
         "imagePin",
         "isHostedWorkspaceRoute",
         "m",
@@ -124428,6 +124463,8 @@
         "reviewed",
         "routes",
         "stagingApiAudience",
+        "stagingApiIdentity",
+        "stagingApiService",
         "stagingAuthOrigin",
         "stagingAuthRef",
         "stagingOperatorOrigin",
@@ -124461,10 +124498,10 @@
       "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
-        "declared-host:localhost",
-        "declared-host:xroga-api-universal-staging-422lt7eujq-uk.a.run.app"
+        "declared-host:localhost"
       ],
       "authBoundary": [
+        "scripts/security/hosted-workspace-staging.mjs#stagingApiIdentity",
         "scripts/security/hosted-workspace-staging.mjs#stagingAuthOrigin",
         "scripts/security/hosted-workspace-staging.mjs#stagingAuthRef",
         "scripts/security/hosted-workspace-staging.mjs#stagingWebIdentity"

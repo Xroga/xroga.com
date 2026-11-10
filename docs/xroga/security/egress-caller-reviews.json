@@ -4832,7 +4832,7 @@
         {
           "path": "scripts/security/hosted-workspace-staging.test.mjs",
           "marker": "Google IAM and original user token stay separate",
-          "sha256": "e51ad4577251881cf451c0bbc70daf18f93a32bbca48e89993fbff7e307cb2ac"
+          "sha256": "440e2810537f5dc55055aab04daf2e6a7a0f9b7b13fea30314030e06581fbe9b"
         }
       ]
     },
@@ -4847,7 +4847,7 @@
         {
           "path": "scripts/security/hosted-workspace-staging.test.mjs",
           "marker": "Google IAM and original user token stay separate",
-          "sha256": "e51ad4577251881cf451c0bbc70daf18f93a32bbca48e89993fbff7e307cb2ac"
+          "sha256": "440e2810537f5dc55055aab04daf2e6a7a0f9b7b13fea30314030e06581fbe9b"
         }
       ]
     },
@@ -4862,7 +4862,7 @@
         {
           "path": "scripts/security/hosted-workspace-staging.test.mjs",
           "marker": "Google IAM and original user token stay separate",
-          "sha256": "e51ad4577251881cf451c0bbc70daf18f93a32bbca48e89993fbff7e307cb2ac"
+          "sha256": "440e2810537f5dc55055aab04daf2e6a7a0f9b7b13fea30314030e06581fbe9b"
         }
       ]
     },
@@ -4877,7 +4877,7 @@
         {
           "path": "scripts/security/hosted-workspace-staging.test.mjs",
           "marker": "hosted confirmation admits only the exact owner-visible DeepSeek research action",
-          "sha256": "e51ad4577251881cf451c0bbc70daf18f93a32bbca48e89993fbff7e307cb2ac"
+          "sha256": "440e2810537f5dc55055aab04daf2e6a7a0f9b7b13fea30314030e06581fbe9b"
         }
       ]
     }

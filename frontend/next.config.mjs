@@ -2,11 +2,11 @@ import { nextRedirects } from './redirects.mjs';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { resolveAuthBuildConfiguration } from './src/lib/supabase/authBuildRealm.mjs';
-import { stagingWebOrigin } from '../scripts/security/hosted-workspace-staging.mjs';
+import { hostedWorkspaceManifestVersion, stagingWebOrigin } from '../scripts/security/hosted-workspace-staging.mjs';
 import {browserProxyHeaders,imageProxyHeaders} from './src/lib/untrustedProxyResponsePolicy.mjs';
 const stagingManifest=process.env.XROGA_STAGING_AUTH_BUILD==='1'?JSON.parse(readFileSync(process.env.XROGA_STAGING_MANIFEST_PATH??'', 'utf8')):undefined;
 const authBuildConfiguration = resolveAuthBuildConfiguration(process.env,stagingManifest);
-const hostedWorkspace = stagingManifest?.version === 2;
+const hostedWorkspace = stagingManifest?.version === hostedWorkspaceManifestVersion;
 
 const configuredApiOrigin = (() => {
   try {

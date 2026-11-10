@@ -6372,7 +6372,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "40adbb3cf38b25222c41"
+        "id": "c1f57b8225d79c77eef9"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -7196,7 +7196,7 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "40adbb3cf38b25222c41"
+        "id": "c1f57b8225d79c77eef9"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -31629,15 +31629,15 @@
       "sourceSha256": "9325d074808912c08ec9d59c7c4b58b09b831a91ab07d9601e44d70b33bddbb8"
     },
     {
-      "id": "40adbb3cf38b25222c41",
+      "id": "c1f57b8225d79c77eef9",
       "path": "frontend/src/components/native-openui/upstream/components/style.ts",
-      "line": 41,
+      "line": 42,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "5917e4877b60ce0ab2cb2ba2d82a5c87976df61757226af91cc0deb576c272c3"
+      "sourceSha256": "1e044a155ac88ca0e25fe4a5cd8f8eb3155e22f63ffa85c6eaff98deab963245"
     },
     {
       "id": "a5188cf19ad57cd05861",

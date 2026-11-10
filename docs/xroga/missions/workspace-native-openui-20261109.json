@@ -40,6 +40,7 @@
     "docs/operations/native-openui/ACCEPTANCE.md",
     "docs/operations/native-openui/CAPABILITY_AUDIT.md",
     "docs/operations/native-openui/FINAL-REAL-WORKSPACE-RELEASE.md",
+    "docs/operations/native-openui/PRIVATE-ACCEPTANCE-WINDOW.md",
     "docs/operations/native-openui/WORKSPACE_ACCEPTANCE.md",
     "docs/operations/native-openui/coverage.json",
     "docs/operations/native-openui/parity-benchmark.json",
@@ -93,6 +94,9 @@
     "frontend/src/context/TerminalChatContext.tsx",
     "frontend/src/lib/api.ts",
     "frontend/src/lib/hostedWorkspaceBridge.mjs",
+    "frontend/src/lib/mathDetect.test.ts",
+    "frontend/src/lib/plainAiText.tsx",
+    "frontend/src/lib/plainAiTextParser.ts",
     "frontend/src/lib/publicUrlInventory.osPreview.test.ts",
     "frontend/src/lib/publicUrlInventory.ts",
     "frontend/src/lib/runLightLaneChat.ts",
@@ -157,7 +161,7 @@
     },
     "egress": {
       "changed": true,
-      "description": "Existing reviewed transport retained. Chrome routes use the exact reviewed serving bridge and reserved model transport. Native rendering uses only reviewed client-side functions and existing source metadata. Isolated hosted staging adds a source-pinned server-side Cloud Run bridge with a distinct IAM credential and original Xroga bearer. Production paths retain their existing auth and transport."
+      "description": "Existing reviewed transport retained. Chrome routes use the exact reviewed serving bridge and reserved model transport. Native rendering uses only reviewed client-side functions and existing source metadata. Isolated hosted staging pins a dedicated IAM-only Cloud Run API, with an independent workload identity and the original Xroga bearer. Production and shared browser staging transport are unchanged."
     },
     "cost": {
       "changed": true,
@@ -195,7 +199,7 @@
     },
     {
       "command": "node --test scripts/security/staging-preflight.test.mjs",
-      "scope": "Pin managed Supabase and private Cloud Run staging, preserve the old topology, deny bad origin, expired and wrong realm tokens, deny unknown routes and redirects",
+      "scope": "Pin managed Supabase and dedicated private Cloud Run staging. Deny the public shared topology, bad origin, expired or wrong realm tokens, unknown routes and redirects.",
       "negative": true,
       "reference": "scripts/security/hosted-workspace-staging.test.mjs"
     },

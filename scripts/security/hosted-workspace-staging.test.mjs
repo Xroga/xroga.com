@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {
   hostedWorkspaceManifest, requireHostedWorkspaceBuild, validateHostedWorkspaceStaging,
   verifyHostedWorkspaceBuildReceipt,
-  stagingAuthOrigin, stagingWebOrigin, stagingOperatorOrigin,
+  stagingApiAudience, stagingApiIdentity, stagingApiService, stagingAuthOrigin, stagingWebOrigin, stagingOperatorOrigin,
 } from './hosted-workspace-staging.mjs';
 import { forwardHostedWorkspace } from '../../frontend/src/lib/hostedWorkspaceBridge.mjs';
 import { resolveAuthBuildConfiguration } from '../../frontend/src/lib/supabase/authBuildRealm.mjs';
@@ -36,11 +36,19 @@ function request({ token = jwt(), origin = stagingWebOrigin, body = '{}', method
 test('hosted auth build pins source, issuer, ledger, image digest and distinct private services', () => {
   const m = makeManifest();
   assert.equal(resolveAuthBuildConfiguration(env, m).url, stagingAuthOrigin);
+  assert.equal(m.api.origin, stagingApiAudience);
+  assert.equal(m.api.service, stagingApiService);
+  assert.equal(m.api.identity, stagingApiIdentity);
   for (const change of [
+    x => x.version = 2,
+    x => x.api.service = 'xroga-api-universal-staging',
+    x => x.api.identity = x.api.identity.replace(stagingApiService, 'xroga-universal-staging'),
+    x => x.api.origin = 'https://xroga-api-universal-staging-422lt7eujq-uk.a.run.app',
+    x => x.api.rollback = 'xroga-api-universal-staging-00001-tdc',
     x => x.api.origin = 'https://api.xroga.com',
-    x => x.api.audience = x.api.origin,
+    x => x.api.audience = 'https://xroga-api-universal-staging-422lt7eujq-uk.a.run.app',
     x => x.api.image = x.api.image.split('@')[0] + ':latest',
-    x => x.api.defaultTrafficPercent = 100,
+    x => x.api.defaultTrafficPercent = 0,
     x => x.api.requiresInvoker = false,
     x => x.api.sourceSha = 'c'.repeat(40),
     x => x.ledger.projectRef = 'nzenxdfumxrnsmybazmo',

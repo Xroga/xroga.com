@@ -1,5 +1,5 @@
 import { validateStagingManifest } from '../../../../scripts/security/staging-preflight.mjs';
-import { requireHostedWorkspaceBuild, stagingAuthRef } from '../../../../scripts/security/hosted-workspace-staging.mjs';
+import { hostedWorkspaceManifestVersion, requireHostedWorkspaceBuild, stagingAuthRef } from '../../../../scripts/security/hosted-workspace-staging.mjs';
 export const productionAuthProject = 'nzenxdfumxrnsmybazmo';
 export const localAuthProject = 'local-disposable';
 export const localAuthUrl = 'http://127.0.0.1:54321';
@@ -12,7 +12,7 @@ export const stagingAuthProject = 'self-hosted-staging';
  */
 export function resolveAuthBuildRealm(environment = process.env, stagingManifest = undefined) {
   if(environment.XROGA_STAGING_AUTH_BUILD==='1') {
-    if (/** @type {{version?: number}|undefined} */ (stagingManifest)?.version === 2) {
+    if (/** @type {{version?: number}|undefined} */ (stagingManifest)?.version === hostedWorkspaceManifestVersion) {
       requireHostedWorkspaceBuild(environment, stagingManifest);
       return stagingAuthRef;
     }
