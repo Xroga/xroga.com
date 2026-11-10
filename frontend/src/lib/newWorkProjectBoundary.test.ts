@@ -26,9 +26,9 @@ test('Recents and Projects are separated only by explicit membership',()=>{
  assert.equal(belongsToProject(null,'project-a'),false);
  assert.equal(belongsToProject('project-a','project-a'),true);
  assert.equal(belongsToProject('project-b','project-a'),false);
- assert.equal(isRecentWithoutProject(null,new Set(['project-a'])),true);
- assert.equal(isRecentWithoutProject('project-a',new Set(['project-a'])),false);
- assert.equal(isRecentWithoutProject('deleted',new Set(['project-a'])),true);
+ assert.equal(isRecentWithoutProject(null),true);
+ assert.equal(isRecentWithoutProject('project-a'),false);
+ assert.equal(isRecentWithoutProject('project-not-yet-paginated'),false);
  const recents=sidebar.slice(sidebar.indexOf('const standaloneRecents='),sidebar.indexOf('function conversationTitle'));
  assert.doesNotMatch(recents,/githubRepoName|github_repo_name/);
  const projects=sidebar.slice(sidebar.indexOf('const getProjectChats ='),sidebar.indexOf('const openedMenu='));

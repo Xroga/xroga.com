@@ -911,9 +911,8 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
     .filter(m=>m.item_type==='conversation'?activeItems.some(s=>s.id===m.item_id):
       Boolean(projectById(m.item_id)));
   const recentConversations=activeItems;
-  const knownProjectIds=new Set([...accountProjects,...pinnedProjectRecords,...organizedProjects].map(p=>p.id));
   const standaloneRecents=recentConversations.filter(session=>
-    isRecentWithoutProject(metaOf('conversation',session.id)?.project_id,knownProjectIds)
+    isRecentWithoutProject(metaOf('conversation',session.id)?.project_id)
   );
   function conversationTitle(session:RepoSession){
     return metaOf('conversation',session.id)?.title_override ||
