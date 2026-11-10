@@ -48,7 +48,8 @@ const startBody = z.object({
 }).strict();
 
 function runAllowance(goal: string, attachmentCount: number) {
-  const extended = attachmentCount > 0 || goal.length > 2_000;
+  // A long request (a multi-step or long-running task) gets the longer allowance. The model-cost cap of the run is unchanged.
+  const extended = attachmentCount > 0 || goal.length > 500;
   const configuredTurns = Number(process.env.XROGA_LOCAL_BROWSER_MAX_TURNS);
   const ceiling = Number.isInteger(configuredTurns) && configuredTurns >= 16
     ? Math.min(configuredTurns, MAX_TURNS) : MAX_TURNS;
