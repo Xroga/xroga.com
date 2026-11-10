@@ -333,7 +333,7 @@ export function TerminalChatBar({ starter = false }: { starter?: boolean }) {
   );
 
   async function applyStyleFromFile(file: File, stylePrompt: string) {
-    if (!(await ensureRepoWorkspace(stylePrompt))) return;
+    if (!(await ensureRepoWorkspace())) return;
     setUploading(true);
     try {
       const url = await uploadChatImage(file);
