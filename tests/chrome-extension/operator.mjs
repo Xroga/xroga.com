@@ -22,6 +22,7 @@ if (live)
   );
 const providerModel = "deepseek-v4.1-flash-1017";
 const receipts = [];
+const latencyRuns = Number(process.env.XROGA_LATENCY_RUNS ?? 0) || 0;
 let pointerWaitVerified = false;
 let pointerAnchorVerified = false;
 let liveRequests = 0;
@@ -616,10 +617,13 @@ try {
   } else if (!formOnly) {
     await input.fill(goal);
     if (!live) await tab.bringToFront();
+    const coldStart = Date.now();
+    const coldVisible = latencyRuns ? tab.waitForSelector("[data-xroga-pointer]", { timeout: 15_000 }).then(() => Date.now() - coldStart).catch(() => null) : null;
     await input.press("Enter");
     console.log("Side-panel task submitted");
     await waitForFinish(1);
     console.log("Side-panel task reached a terminal state");
+    const coldDone = Date.now() - coldStart;
     console.log("First task receipt:", JSON.stringify([...runs.values()]));
     assert.equal(
       [...runs.values()][0]?.result?.status,
@@ -627,6 +631,29 @@ try {
       await workspace.locator("#state").textContent(),
     );
     assert.ok(browser.pages().some((page) => page.url() === `${site}/catalog`));
+    if (latencyRuns) {
+      // Latency mode (XROGA_LATENCY_RUNS=N): repeat the same simple task in the real extension and real Chrome, timing it from the
+      // Playwright side, then read the per-phase ring the worker kept. The model is the deterministic fixture, so model time is
+      // about zero here: these numbers are the local overhead (observation, actions, settle, journal, sync), not live model latency.
+      const samples = [{ cold: true, pointerVisibleMs: await coldVisible, doneMs: coldDone }];
+      for (let i = 2; i <= latencyRuns; i++) {
+        await tab.goto(site);
+        const t0 = Date.now();
+        await input.fill(goal);
+        const visible = tab.waitForSelector("[data-xroga-pointer]", { timeout: 15_000 }).then(() => Date.now() - t0).catch(() => null);
+        await input.press("Enter");
+        await waitForFinish(i);
+        samples.push({ cold: false, pointerVisibleMs: await visible, doneMs: Date.now() - t0 });
+      }
+      let worker = browser.serviceWorkers().find(w => w.url().startsWith("chrome-extension://"));
+      worker ??= await browser.waitForEvent("serviceworker", { timeout: 10_000 });
+      const perf = await worker.evaluate(async () => (await chrome.storage.local.get("xroga_perf_v1")).xroga_perf_v1 ?? []);
+      const out = process.env.XROGA_LATENCY_OUT;
+      const report = { product: (await cdp.send("Browser.getVersion")).product, runs: latencyRuns, model: "deterministic fixture", samples, perf };
+      if (out) await writeFile(out, JSON.stringify(report, null, 2));
+      console.log(JSON.stringify({ latency: "recorded", runs: latencyRuns, out: out ?? null }));
+      throw Object.assign(new Error("latency mode complete"), { latencyDone: true });
+    }
     await workspace.evaluate(
       ({ goal, site, live }) =>
         window.startTask(
@@ -872,6 +899,8 @@ try {
       costMicros: spentMicros,
     }),
   );
+} catch (error) {
+  if (!error?.latencyDone) throw error;
 } finally {
   try {
     await browser?.close();

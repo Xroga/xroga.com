@@ -53,6 +53,8 @@ import type { AttachmentRef, PanelCommand, PanelEventBody } from '@src/ui/protoc
 import { createAgentSession, layerPort } from './agent-session';
 import { TabScope } from './bindings';
 import { PageBorder, injectBorder, listenForBorder, showActionPoint, toolLabel } from './border';
+import { RunTimings } from '@src/agent/timing';
+import { recordPerf } from './perf';
 import { addPromptRoute, controllerReady } from './layer';
 import { Permissions } from './permissions';
 import { PromptBroker } from './prompt-broker';
@@ -1626,7 +1628,9 @@ export class RunManager {
           vision: model.profile.vision, localScreenshots: !!canonical,
           agentTools: canonical?.plugins ? PLUGIN_TOOLS : undefined,
         });
+        const timings = new RunTimings();
         const loop = new AgentLoop({
+          timings,
           conversationId,
           runId,
           startedAt: record.startedAt,
@@ -1674,6 +1678,7 @@ export class RunManager {
         loopRef = loop;
         loop.hasSteering = () => (this.#queues.get(conversationId)?.length ?? 0) > 0;
         end = await loop.run();
+        void recordPerf({ runId, startedAt: record.startedAt, turns: end.turns, status: end.status, outcome: end.outcome, canonical: !!canonical, timings: timings.summary() });
         record.turns += end.turns;
         record.usage = addUsage(record.usage, end.usage);
         record.outcome = end.outcome;

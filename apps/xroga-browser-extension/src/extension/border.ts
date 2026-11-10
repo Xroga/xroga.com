@@ -330,18 +330,19 @@ export function setBorder(state: BorderState, pointer?: PointerCommand | null): 
     glow.style.opacity = '0';
     return;
   }
-  glow.style.transition = '';
+  // No fade: the capture only needs the overlay not painted, and a fade costs 150 to 200 ms on every screenshot. The change
+  // is made at once and the promise resolves after two frames, so the next paint the capture sees is already without it.
+  glow.style.transition = 'none';
+  glow.style.opacity = '0';
   return new Promise<void>(resolve => {
     let done = false;
     const finish = () => {
       if (done) return;
       done = true;
-      // One frame so the faded state is painted before the capture.
-      requestAnimationFrame(() => resolve());
+      resolve();
     };
-    glow.addEventListener('transitionend', finish, { once: true });
-    setTimeout(finish, 200);
-    glow.style.opacity = '0';
+    requestAnimationFrame(() => requestAnimationFrame(finish));
+    setTimeout(finish, 100);
   });
 }
 

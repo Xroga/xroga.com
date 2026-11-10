@@ -1,5 +1,6 @@
 // The agent loop, shaped like pi's runLoop: turns of one model call and its tool batch, with all browser policy in six
 // hooks. The worker owns the run; Chrome is reached through the ports.
+import type { RunTimings, Phase } from './timing';
 import { cutText, siteOf } from '@src/browser-control';
 import type { Result, UserStepDetails } from '@src/browser-control';
 import { requestOutputLimit, streamTurn } from '@src/llm';
@@ -58,6 +59,8 @@ export interface Request {
 }
 
 export interface LoopOptions {
+  /** Where the run's time goes; measured only, never used to decide anything. */
+  timings?: RunTimings;
   conversationId: string;
   runId: string;
   /** When the run began, stored with each reply for the activity block's elapsed time. */
@@ -857,15 +860,19 @@ export class AgentLoop {
       await this.firstTurn();
       for (;;) {
         if (signal.aborted) return this.#end({ status: 'stopped' });
-        await this.#deliverSteering();
-        await this.storeHeader();
-        const request = await this.prepareRequest();
-        const check = await this.prepareNextTurn(request);
+        const { request, check } = await this.#time('prepare', async () => {
+          await this.#deliverSteering();
+          await this.storeHeader();
+          const request = await this.prepareRequest();
+          return { request, check: await this.prepareNextTurn(request) };
+        });
         if (check.stop) return this.#end({ status: 'failed', outcome: 'failed', reason: check.stop, cause: 'context' });
         this.#turns++;
         emit({ type: 'turn_start', turn: this.#turns });
         const sent = check.request ?? request;
-        const reply = await this.#stream(sent);
+        this.options.timings?.mark('first-model-request');
+        const reply = await this.#time('model', () => this.#stream(sent));
+        this.options.timings?.mark('first-model-reply');
         emit({ type: 'turn_end', turn: this.#turns });
         if (reply === 'aborted') return this.#end({ status: 'stopped' });
         // A server that reports more input than the window truncated the request silently: the reply was written from a
@@ -905,9 +912,9 @@ export class AgentLoop {
           return this.#end({ status: 'failed', outcome: 'failed', reason: CUT_BEFORE_ANYTHING, cause: 'cut' });
         }
         this.#overflowStage = 0;
-        const outcomes = await this.#runBatch(reply);
+        const outcomes = await this.#time('tools', () => this.#runBatch(reply));
         if (signal.aborted && !outcomes.some(o => o.done)) return this.#end({ status: 'stopped' });
-        const end = await this.finishTurn(reply, outcomes);
+        const end = await this.#time('finish', () => this.finishTurn(reply, outcomes));
         if (end) {
           // done's summary is the answer the user reads, written as the agent's message.
           if (end.summary) {
@@ -923,6 +930,12 @@ export class AgentLoop {
     } finally {
       emit({ type: 'agent_end', runId: this.options.runId });
     }
+  }
+
+  /** Times `work` when the run is being measured; otherwise just runs it. */
+  #time<T>(phase: Phase, work: () => Promise<T>): Promise<T> {
+    const timings = this.options.timings;
+    return timings ? timings.time(phase, work) : work();
   }
 
   #end(end: Partial<LoopEnd> & { status: RunStatus }): LoopEnd {
@@ -1143,15 +1156,19 @@ export class AgentLoop {
   /** Whether the user has sent a message while the run works. Set by the extension. */
   hasSteering: () => boolean = () => false;
 
-  async #execute(call: ToolCallRequest): Promise<CallOutcome> {
+  #execute(call: ToolCallRequest): Promise<CallOutcome> {
+    return this.#time(`tool:${call.toolName}`, () => this.#executeCall(call));
+  }
+
+  async #executeCall(call: ToolCallRequest): Promise<CallOutcome> {
     const { emit, signal } = this.options;
     const args = (call.input ?? {}) as Record<string, unknown>;
     const kind = kindOf(call.toolName, args);
     emit({ type: 'tool_execution_start', messageId: this.#replyId, row: this.#row(call, 'running') });
-    const refused = await this.beforeToolCall(call);
-    if (refused) return this.afterToolCall(refused);
+    const refused = await this.#time('tool.gate', () => this.beforeToolCall(call));
+    if (refused) return this.#time('tool.after', () => this.afterToolCall(refused));
     // The intent record is on disk before anything is dispatched.
-    await this.writer.intent(call.toolCallId, call.toolName, args);
+    await this.#time('tool.journal', () => this.writer.intent(call.toolCallId, call.toolName, args));
     let outcome: CallOutcome;
     if (call.toolName === 'done') {
       outcome = await this.#judgeDone(call, kind, args);
@@ -1162,11 +1179,11 @@ export class AgentLoop {
       if ('error' in files) {
         outcome = { call, kind, text: `error NOT_FOUND (nothing dispatched)\n${files.error}`, isError: true };
       } else {
-        const result = await this.options.layer.call(
+        const result = await this.#time('tool.layer', () => this.options.layer.call(
           'upload',
           { ...rest, attachments: files.files, observe: 'diff' },
           signal,
-        );
+        ));
         outcome = { call, kind, text: result.text, isError: !result.ok, result };
       }
     } else if (call.toolName === 'read_attachment') {
@@ -1187,9 +1204,9 @@ export class AgentLoop {
     } else {
       // Mutations return their diff; the model never sets `observe`.
       const sent = kind === 'mutate' && call.toolName !== 'tabs' ? { ...args, observe: 'diff' } : args;
-      const result = await this.options.layer.call(call.toolName, sent, signal);
+      const result = await this.#time('tool.layer', () => this.options.layer.call(call.toolName, sent, signal));
       outcome = { call, kind, text: result.text, isError: !result.ok, result };
     }
-    return this.afterToolCall(outcome);
+    return this.#time('tool.after', () => this.afterToolCall(outcome));
   }
 }
