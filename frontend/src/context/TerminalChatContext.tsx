@@ -49,6 +49,8 @@ import { mergeBuildTodos, normalizeActiveTodo } from '@/lib/mergeBuildTodos';
 import { startPipelineMessageForPrompt } from '@/lib/buildPlanningSteps';
 import { formatAgentActivityLine } from '@/lib/agentProcessingFormat';
 import {
+  clearSelectedRepoContext,
+  markFreshTerminalIntent,
   getNewRepoVisibility,
   getSelectedRepoContext,
   hasFreshTerminalIntent,
@@ -57,7 +59,6 @@ import {
 } from '@/lib/repoContext';
 import { isKeepaliveActivity } from '@/lib/buildLiveStatus';
 import { defaultImageAttachmentPrompt } from '@/lib/parseImageContent';
-import { saveLocalProject, shouldSaveToProjects } from '@/lib/projectArchive';
 import {
   notifyGithubProjectSaved,
   notifyGithubRepoContext,
@@ -2008,9 +2009,11 @@ const stopRequestedRunIdRef =
         window.dispatchEvent(new CustomEvent('xroga-resume-workspace'));
       });
     }
-    // Ordinary New Work is not implicitly assigned to the previously selected sidebar project.
-    // Explicit project New Task selects its project immediately after this reset.
+    // An ordinary New Work is never assigned to the previous project or GitHub repo.
+    // Explicit New Work in a Project and opt-in repository selection can rebind later.
     clearActiveSidebarProject();
+    clearSelectedRepoContext();
+    markFreshTerminalIntent();
     setSessionId(
       typeof crypto !== 'undefined' ? crypto.randomUUID() : `session-${Date.now()}`
     );
@@ -2032,8 +2035,7 @@ const stopRequestedRunIdRef =
     setSwarmActiveAgent(null);
     persistReadyRef.current = false;
     if (!usePrivacyStore.getState().incognito) clearWorkspaceSession();
-    // Keep selected GitHub repo — new chat is another session under the same Xroga repo workspace.
-    // (Code still goes to GitHub; chats/images/research stay on Xroga under that repo.)
+    // No implicit repository: new conversations belong in Recents by default.
     persistReadyRef.current = true;
     // Refresh Repositories sidebar so the prior terminal stays listed (not "lost").
     window.dispatchEvent(new CustomEvent('xroga-resume-workspace'));
@@ -4335,26 +4337,6 @@ active.applyBuild({
               'stopped',
           });
 
-          if (
-            shouldSaveToProjects(
-              original,
-            )
-          ) {
-            saveLocalProject({
-              name:
-                original.slice(
-                  0,
-                  48,
-                ),
-
-              prompt:
-                original,
-
-              sourceMessageId:
-                assistantId,
-            });
-          }
-
           window.dispatchEvent(
             new Event(
               'xroga-resume-workspace',
@@ -4589,13 +4571,6 @@ active.applyBuild({
                 prompt: turn.text,
                 messages: current,
               });
-              if (shouldSaveToProjects(turn.text)) {
-                saveLocalProject({
-                  name: turn.text.slice(0, 48),
-                  prompt: turn.text,
-                  sourceMessageId: turn.assistantId,
-                });
-              }
             } catch (err) {
               console.warn('[chat] archive save skipped:', (err as Error).message);
             }

@@ -3,12 +3,13 @@ import assert from 'node:assert/strict';
 import { passiveRepositorySelection } from './passiveRepositorySelection';
 
 const base = {repositories:['Owner/old','Owner/chosen'],selected:null,fresh:false,projectSelected:false,defaultRepository:'Owner/old',repositoryLocked:false};
-test('an explicit repository-free project cannot inherit an account GitHub default', () => {
+test('New Work and a repository-free project never inherit account GitHub defaults', () => {
   assert.equal(passiveRepositorySelection({...base,projectSelected:true}), null);
   assert.equal(passiveRepositorySelection({...base,fresh:true}), null);
   assert.equal(passiveRepositorySelection({...base,projectSelected:true,repositoryLocked:true}), null);
   assert.equal(passiveRepositorySelection({...base,selected:'Owner/chosen',projectSelected:true}), 'Owner/chosen');
-  assert.equal(passiveRepositorySelection(base), 'Owner/old');
+  assert.equal(passiveRepositorySelection(base), null);
+  assert.equal(passiveRepositorySelection({...base,repositoryLocked:true}), null);
   assert.equal(passiveRepositorySelection({...base,defaultRepository:'missing',repositoryLocked:false}), null);
 });
 
