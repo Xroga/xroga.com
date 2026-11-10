@@ -30865,7 +30865,7 @@
       "id": "surface:4edcaf26389e9c51de18",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/notifications.ts",
-      "sha256": "fc99003d59bfbe5d1258501299439995c5c9bc3c5241a23ee7c827760e7d6c53",
+      "sha256": "ba421d5eb5df96b93b8dfcab8177c0f72042e58e4412b41325f9063e3e058a39",
       "symbols": [
         "endpoint",
         "publicKey",
@@ -30905,10 +30905,11 @@
       "tenantBoundary": [
         "backend/src/routes/notifications.ts:15 (user_id)",
         "backend/src/routes/notifications.ts:31 (user_id)",
-        "backend/src/routes/notifications.ts:84 (user_id)",
-        "backend/src/routes/notifications.ts:95 (user_id)",
-        "backend/src/routes/notifications.ts:110 (user_id)",
-        "backend/src/routes/notifications.ts:125 (user_id)"
+        "backend/src/routes/notifications.ts:63 (user_id)",
+        "backend/src/routes/notifications.ts:94 (user_id)",
+        "backend/src/routes/notifications.ts:105 (user_id)",
+        "backend/src/routes/notifications.ts:120 (user_id)",
+        "backend/src/routes/notifications.ts:135 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -36293,7 +36294,7 @@
       "id": "surface:73a05ca75d8c5fbace5b",
       "subsystem": "browser_sandbox",
       "sourcePath": "backend/src/services/browserPushService.ts",
-      "sha256": "3567c7cb42fefa42393777c254e4bcf8a3d67ab8fe641e021af9e360fa3b907c",
+      "sha256": "f4efcbdd6268fe5e71e0b265e09fa93ca00bc9ed4ca71347261039f26c085cfc",
       "symbols": [
         "BrowserPushSubscription",
         "allowedPushHosts",
@@ -104593,7 +104594,7 @@
       "id": "surface:b4fbe01a2005710dc422",
       "subsystem": "browser_sandbox",
       "sourcePath": "frontend/src/lib/browserPush.ts",
-      "sha256": "4f9d2148af8078093fd40665db9a3d4b2c599e92a5dfb1ac93f05de361d28012",
+      "sha256": "157fa536ba5285716a428c45314695422f456f2d38bc2466a2982c2b1643d095",
       "symbols": [
         "XROGA_PUSH_ENABLED_KEY",
         "browserPushSupported",
@@ -132029,7 +132030,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:b17fd981aa3e26b5f9e9",
+      "id": "registration:03fe746b164287ca0667",
       "sourcePath": "backend/src/routes/notifications.ts",
       "line": 53,
       "receiver": "router",
@@ -132041,9 +132042,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:6f0f82eaf0b573c0c39e",
+      "id": "registration:df1cebb851074bc921d7",
       "sourcePath": "backend/src/routes/notifications.ts",
-      "line": 77,
+      "line": 87,
       "receiver": "router",
       "method": "delete",
       "path": "/push-subscription",
@@ -132053,9 +132054,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:25a9adc491aa90c5f434",
+      "id": "registration:fb2db216cd43ab4a7be7",
       "sourcePath": "backend/src/routes/notifications.ts",
-      "line": 93,
+      "line": 103,
       "receiver": "router",
       "method": "patch",
       "path": "/:id/read",
@@ -132065,9 +132066,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:b8bbe9b9f671e4a23605",
+      "id": "registration:55e9ac7b3e8dee79aad1",
       "sourcePath": "backend/src/routes/notifications.ts",
-      "line": 108,
+      "line": 118,
       "receiver": "router",
       "method": "patch",
       "path": "/read-all",
@@ -132077,9 +132078,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:efb24e0ec7d413c68e50",
+      "id": "registration:c277ad2f795620b010ef",
       "sourcePath": "backend/src/routes/notifications.ts",
-      "line": 123,
+      "line": 133,
       "receiver": "router",
       "method": "delete",
       "path": "/:id",
@@ -138113,8 +138114,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:8af2d1dd9dd599399059",
-      "registrationId": "registration:b17fd981aa3e26b5f9e9",
+      "id": "route:ddf5928442d45eeda886",
+      "registrationId": "registration:03fe746b164287ca0667",
       "sourcePath": "backend/src/routes/notifications.ts",
       "line": 53,
       "method": "POST",
@@ -138130,10 +138131,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:9d91ccf0cd1c517a7833",
-      "registrationId": "registration:6f0f82eaf0b573c0c39e",
+      "id": "route:89b61373242315e74e5f",
+      "registrationId": "registration:df1cebb851074bc921d7",
       "sourcePath": "backend/src/routes/notifications.ts",
-      "line": 77,
+      "line": 87,
       "method": "DELETE",
       "path": "/api/notifications/push-subscription",
       "mountChain": [
@@ -138147,10 +138148,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:861e00eaac12fd7d22a9",
-      "registrationId": "registration:25a9adc491aa90c5f434",
+      "id": "route:aada7dd3688552cb6feb",
+      "registrationId": "registration:fb2db216cd43ab4a7be7",
       "sourcePath": "backend/src/routes/notifications.ts",
-      "line": 93,
+      "line": 103,
       "method": "PATCH",
       "path": "/api/notifications/:id/read",
       "mountChain": [
@@ -138164,10 +138165,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:ea3e016f4d5dd29d6468",
-      "registrationId": "registration:b8bbe9b9f671e4a23605",
+      "id": "route:ee263eb64437be924de6",
+      "registrationId": "registration:55e9ac7b3e8dee79aad1",
       "sourcePath": "backend/src/routes/notifications.ts",
-      "line": 108,
+      "line": 118,
       "method": "PATCH",
       "path": "/api/notifications/read-all",
       "mountChain": [
@@ -138181,10 +138182,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:a58bc05f07421028a9cd",
-      "registrationId": "registration:efb24e0ec7d413c68e50",
+      "id": "route:4efcbfad929323b2e087",
+      "registrationId": "registration:c277ad2f795620b010ef",
       "sourcePath": "backend/src/routes/notifications.ts",
-      "line": 123,
+      "line": 133,
       "method": "DELETE",
       "path": "/api/notifications/:id",
       "mountChain": [
@@ -147440,30 +147441,30 @@
       "reachable": false
     },
     {
-      "id": "frontend-call:e0622d9819a18da15f12",
+      "id": "frontend-call:17e56c31e2007a529181",
       "sourcePath": "frontend/src/lib/browserPush.ts",
-      "line": 31,
+      "line": 32,
       "callee": "api.notifications.subscribePush",
       "reachable": true
     },
     {
-      "id": "frontend-call:6b00d80d0e8a16860685",
+      "id": "frontend-call:cb8e93ca19af1ba7f540",
       "sourcePath": "frontend/src/lib/browserPush.ts",
-      "line": 40,
+      "line": 45,
       "callee": "api.notifications.pushKey",
       "reachable": true
     },
     {
-      "id": "frontend-call:170c827dbee80e7df3fe",
+      "id": "frontend-call:a3a29e39f8b3e02e64f1",
       "sourcePath": "frontend/src/lib/browserPush.ts",
-      "line": 48,
+      "line": 53,
       "callee": "api.notifications.subscribePush",
       "reachable": true
     },
     {
-      "id": "frontend-call:ee7f9e2b19eafc205f69",
+      "id": "frontend-call:e95a8f2c70daf844ded8",
       "sourcePath": "frontend/src/lib/browserPush.ts",
-      "line": 63,
+      "line": 67,
       "callee": "api.notifications.unsubscribePush",
       "reachable": true
     },

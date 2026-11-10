@@ -15538,18 +15538,18 @@
     },
     {
       "path": "backend/src/routes/notifications.ts",
-      "sourceSha256": "9aec298fc8c4b0f6c678f0861db12805da9b0700e109ff052d0e4e27be18486a",
+      "sourceSha256": "ba421d5eb5df96b93b8dfcab8177c0f72042e58e4412b41325f9063e3e058a39",
       "callIds": [
-        "95aca8562235b1b02997",
-        "cc2c2522f42d6ac8d5bd",
-        "96f82d20ad4bfc5af43e",
-        "faa4cebd0c15a1b5d69c",
-        "5233e1547ffa2fd23fd6",
-        "8f55ff924d59067efc48",
-        "83827643069e9005dce3",
-        "b1d953653483a66af3d9",
-        "add984aaad8b65bdbdfa",
-        "f0601134e3c2080d41f3"
+        "359cfba790c54b88250c",
+        "b1f8356c782b4d851d58",
+        "4cf1a1e8ccf9dfe563ec",
+        "e92ef4114ace634a21d8",
+        "47ac0c22a431bc8820e3",
+        "378770b99fd2d093c8a9",
+        "8a7f7c11d89690e8df03",
+        "72ee5f20e4c78f1ef9c5",
+        "9a158b9a4f1de2c968fe",
+        "394aa91707700665970a"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Router is mounted behind authMiddleware and re-derives userId from the issued immutable context before every route. List/count/read/read-all/delete use this actor, never request ownership. Every service-role factory has its fixed downstream notification query inspected.",
@@ -15578,6 +15578,26 @@
         "disposition": "SCOPED_BOUNDARY"
       },
       "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+    },
+    {
+      "path": "backend/src/routes/notifications.ts",
+      "sourceSha256": "ba421d5eb5df96b93b8dfcab8177c0f72042e58e4412b41325f9063e3e058a39",
+      "callIds": [
+        "451e5e119fb05d5ddb8f",
+        "4f9439afecb04c3595a7",
+        "49c06c5f5dedbb8357bf",
+        "94700f4054edde4f93ff",
+        "5776db83dd0f2287f933"
+      ],
+      "disposition": "REVIEWED_GAP",
+      "authority": "The new browser-push subscription routes are behind the existing auth middleware and derive userId from tenant context; each query visibly filters user_id or writes that user ID, but a source inspection alone is not authenticated tenant proof.",
+      "reason": "Isolated staging verifies private table grants and RLS, and endpoint validation rejects arbitrary hosts. Authenticated positive and cross-account negative API tests for these five new persistence calls are still required before promoting this manual review to a scoped boundary.",
+      "evidence": [
+        {
+          "path": "backend/src/services/browserPushService.test.ts",
+          "marker": "rejects SSRF destinations"
+        }
+      ]
     },
     {
       "path": "backend/src/routes/operations.ts",
@@ -23789,10 +23809,10 @@
     },
     {
       "path": "backend/src/services/notificationService.ts",
-      "sourceSha256": "97a7d33fe2b60ddebbdb9f1e8e2c5304d72398ff31ee9036386f705f62b6b402",
+      "sourceSha256": "823e0e647c547459ecd37560dee87b23d8d1fa0e28a85d5252870c65fccd69ec",
       "callIds": [
-        "988c4217a8b8b781b43c",
-        "30281b1cf819bb604048"
+        "0af8d7bbc823a95227af",
+        "2e83fbad1f1940ca3770"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "The only active production callers of the notification wrappers are authenticated swarm completion/failure handlers. They pass requireTenantContext(req.tenantContext), never a body owner or recipient. Video wrappers currently have no production consumer, but their primitive still requires that same original issued context. pushNotification validates the context before factory access, snapshots the bounded caller intent and writes only the context user_id. It checks returned owner and nonempty ID before acknowledging. There is no alternate owner argument or fallback identity.",

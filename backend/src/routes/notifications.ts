@@ -60,6 +60,16 @@ router.post('/push-subscription', async (req: AuthRequest, res) => {
     return;
   }
   const supabase = getTenantSupabaseAdmin(requireTenantContext(req.tenantContext));
+  const { data: existing, error: lookupError } = await supabase.from('notification_push_subscriptions')
+    .select('endpoint').eq('user_id', req.userId!).limit(11);
+  if (lookupError) {
+    res.status(503).json({ error: 'Push subscriptions could not be checked.' });
+    return;
+  }
+  if ((existing?.length ?? 0) >= 10 && !existing?.some((item) => item.endpoint === req.body.endpoint)) {
+    res.status(429).json({ error: 'This account has reached its device notification limit.' });
+    return;
+  }
   const { error } = await supabase.from('notification_push_subscriptions').upsert({
     endpoint: req.body.endpoint,
     user_id: req.userId!,
