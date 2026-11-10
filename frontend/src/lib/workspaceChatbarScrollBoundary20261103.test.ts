@@ -39,3 +39,9 @@ test('conversation clips only below the floating chatbar and fades its upper edg
     /data-workspace-state='conversation'\][^}]*background:\s*var\(--terminal-ui-surface/s,
   );
 });
+
+test('mobile assistant replies use the composer inner inset without moving user messages', () => {
+  const messageLog = read('../components/terminal/SwarmMessageLog.tsx');
+  assert.match(messageLog, /chromeless && msg\.role === 'assistant' && 'box-border max-\[600px\]:ps-\[18px\]'/);
+  assert.doesNotMatch(messageLog, /chromeless && msg\.role === 'user' && 'box-border max-\[600px\]:ps-\[18px\]'/);
+});

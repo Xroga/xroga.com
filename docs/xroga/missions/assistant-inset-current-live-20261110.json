@@ -1,0 +1,40 @@
+{
+  "version": "1.0",
+  "missionId": "ASSISTANT-INSET-CURRENT-LIVE-20261110",
+  "baseSha": "23072785b435bd2162512ca7683d7311631e47b9",
+  "requirementIds": ["XR-FAMILY-rich-ai-ui"],
+  "state": "CODE_COMPLETE",
+  "risk": "low",
+  "scope": "Align mobile assistant replies with the inner composer column on the exact current xroga.com source without replacing newer Workspace behavior.",
+  "changedFiles": [
+    "frontend/src/components/terminal/SwarmMessageLog.tsx",
+    "frontend/src/lib/workspaceChatbarScrollBoundary20261103.test.ts",
+    "docs/xroga/missions/assistant-inset-current-live-20261110.json"
+  ],
+  "decisions": {
+    "keep": ["Current production Workspace layout, user bubble alignment, and composer behavior."],
+    "extend": ["Apply an 18px mobile start inset only to assistant turns in the existing chromeless transcript."],
+    "replace": [],
+    "deprecate": []
+  },
+  "schemaImpact": {"changed": false, "migrations": [], "rollout": "No database change.", "rollback": "Revert the assistant-only class or redeploy the previous production build."},
+  "securityImpact": {
+    "auth": {"changed": false, "description": "No change."},
+    "tenant": {"changed": false, "description": "No change."},
+    "approval": {"changed": false, "description": "No change."},
+    "credentials": {"changed": false, "description": "No change."},
+    "egress": {"changed": false, "description": "No change."},
+    "cost": {"changed": false, "description": "No change."},
+    "billing": {"changed": false, "description": "No change."}
+  },
+  "tests": [{"command": "node --test frontend/src/lib/workspaceChatbarScrollBoundary20261103.test.ts", "scope": "Assistant-only inset and existing chatbar scroll boundary.", "negative": false, "reference": "frontend/src/lib/workspaceChatbarScrollBoundary20261103.test.ts"}],
+  "architecture": {"change": "extends_canonical", "reason": "Scoped styling on existing message rows; no new UI or runtime control plane.", "rfc": null},
+  "rollout": "Run required PR checks, stage production without assigning the domain, inspect, then promote only the verified build.",
+  "rollback": "Redeploy the preceding production deployment or revert the one-line class.",
+  "knownGaps": ["CI, staged visual verification, and production alias verification are pending."],
+  "placeholderClaimsRemaining": [],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {"state": "BLOCKED", "blockers": ["Required CI and live verification"], "authenticatedE2e": "BLOCKED", "stagedSecurity": "NOT_APPLICABLE", "liveUrl": null, "deployedSha": null},
+  "evidenceRefs": ["frontend/src/lib/workspaceChatbarScrollBoundary20261103.test.ts"]
+}
