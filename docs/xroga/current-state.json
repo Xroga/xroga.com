@@ -2,10 +2,10 @@
   "version": "1.0",
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
-    "branch": "",
-    "sha": "968483bfa8fc057d9c057b97a7608d62674dcc6f",
-    "sourceTimestampUtc": "2026-11-09T19:26:59+05:00",
-    "auditStartedUtc": "2026-11-09T15:24:44.009Z",
+    "branch": "codex/workspace-inline-sources-20261110",
+    "sha": "b5f43822535c7c55f1aeec7c246d4101f92bc679",
+    "sourceTimestampUtc": "2026-11-11T01:24:03+05:00",
+    "auditStartedUtc": "2026-11-10T20:24:43.173Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
@@ -46,6 +46,8 @@
       "deploy/browser-worker/Dockerfile.proxy",
       "deploy/browser-worker/package.json",
       "frontend/package.json",
+      "infra/google/Dockerfile.workspace-staging",
+      "infra/google/Dockerfile.workspace-staging.dockerignore",
       "package.json"
     ]
   },
@@ -5540,7 +5542,7 @@
         "backend/src/lib/richShareSnapshot.test.ts:4",
         "backend/src/lib/richShareSnapshot.ts:1",
         "frontend/src/app/share/[token]/page.tsx:1",
-        "frontend/src/components/native-openui/NativeWorkspaceAnswer.tsx:11"
+        "frontend/src/components/native-openui/NativeWorkspaceAnswer.tsx:12"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -86681,7 +86683,7 @@
       ],
       "callers": [
         "frontend/src/components/native-openui/Evaluation.tsx:12",
-        "frontend/src/components/native-openui/NativeWorkspaceAnswer.tsx:13"
+        "frontend/src/components/native-openui/NativeWorkspaceAnswer.tsx:14"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -86711,7 +86713,7 @@
       "id": "surface:1815fe3ed39eb8d357c4",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/NativeWorkspaceAnswer.tsx",
-      "sha256": "b4b1db43ee806827bdedee7328bab6c57328539662d02e4f1c2dd430de5b7033",
+      "sha256": "9a595c7709c5e7a8de40d5554d5886c2bb34aaef3f03fcf1c41d90dc699c40df",
       "symbols": [
         "NativeWorkspaceAnswer",
         "Surface",
@@ -86724,6 +86726,7 @@
       "imports": [
         "../../../../backend/src/ai/nativeOpenUiShare",
         "./NativeSurface",
+        "@/components/terminal/ChatErrorBoundary",
         "@/components/terminal/ReasoningAndFollowUps",
         "@/components/terminal/ResponseSourceScope",
         "@/components/terminal/ResponseSources",
@@ -86734,6 +86737,7 @@
       "runtimeImports": [
         "backend/src/ai/nativeOpenUiShare.ts",
         "frontend/src/components/native-openui/NativeSurface.tsx",
+        "frontend/src/components/terminal/ChatErrorBoundary.tsx",
         "frontend/src/components/terminal/ReasoningAndFollowUps.tsx",
         "frontend/src/components/terminal/ResponseSourceScope.tsx",
         "frontend/src/components/terminal/ResponseSources.tsx",
@@ -95404,7 +95408,7 @@
       "id": "surface:31befc84b561a79325ce",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/ChatErrorBoundary.tsx",
-      "sha256": "ff7a296ae665d7bbf84a0cb36b8fe90d4a930a52cef2fe5ffcb6db0898458daf",
+      "sha256": "b464f9591f077ed620e24ceb7ea34f6cac2ea88c8fd2dbec8f185a67f1eb7d98",
       "symbols": [
         "ChatErrorBoundary",
         "Props",
@@ -95415,9 +95419,11 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "frontend/src/app/(workspace)/workspace/page.tsx"
+        "frontend/src/app/(workspace)/workspace/page.tsx",
+        "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
+        "frontend/src/components/native-openui/NativeWorkspaceAnswer.tsx:10",
         "frontend/src/components/terminal/SwarmMessageLog.tsx:20"
       ],
       "reachable": true,

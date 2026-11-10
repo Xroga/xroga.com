@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "411e8cbef4d7965a45dec7bc3ed00f6aacd5786c",
+  "source_sha": "b5f43822535c7c55f1aeec7c246d4101f92bc679",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -22040,7 +22040,7 @@
     },
     {
       "path": "frontend/src/components/native-openui/NativeWorkspaceAnswer.tsx",
-      "sha256": "b4b1db43ee806827bdedee7328bab6c57328539662d02e4f1c2dd430de5b7033"
+      "sha256": "9a595c7709c5e7a8de40d5554d5886c2bb34aaef3f03fcf1c41d90dc699c40df"
     },
     {
       "path": "frontend/src/components/native-openui/Resources.tsx",
@@ -22604,7 +22604,7 @@
     },
     {
       "path": "frontend/src/components/terminal/ChatErrorBoundary.tsx",
-      "sha256": "ff7a296ae665d7bbf84a0cb36b8fe90d4a930a52cef2fe5ffcb6db0898458daf"
+      "sha256": "b464f9591f077ed620e24ceb7ea34f6cac2ea88c8fd2dbec8f185a67f1eb7d98"
     },
     {
       "path": "frontend/src/components/terminal/ChatIntegrationsBar.tsx",
