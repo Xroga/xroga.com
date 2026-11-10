@@ -7,6 +7,7 @@ import type { NativeAnswer } from './NativeSurface';
 import type { CitationSource } from '@/lib/xrogaCitations';
 import { ResponseSources } from '@/components/terminal/ResponseSources';
 import { ResponseSourceScope } from '@/components/terminal/ResponseSourceScope';
+import { ChatErrorBoundary } from '@/components/terminal/ChatErrorBoundary';
 
 export { buildNativeOpenUiShare } from '../../../../backend/src/ai/nativeOpenUiShare';
 
@@ -35,7 +36,9 @@ export function NativeWorkspaceAnswer({ answer, sources, sourceReferral = true }
   const fallback = <ModernResponseText content={answer.text} sources={sources?.map(source => ({ snippet: '', ...source }))} />;
   const evidence = sources?.map((source, index) => ({ ...source, id: 'source-' + (index + 1) }));
   return <ResponseSourceScope>
-    <Suspense fallback={fallback}><Surface answer={answer} sources={evidence} /></Suspense>
+    <ChatErrorBoundary fallback={fallback} logErrorDetails={false}>
+      <Suspense fallback={fallback}><Surface answer={answer} sources={evidence} /></Suspense>
+    </ChatErrorBoundary>
     {sources?.length ? <ResponseSources sources={sources} referral={sourceReferral} /> : null}
   </ResponseSourceScope>;
 }

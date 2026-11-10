@@ -8,6 +8,8 @@ The backend returns validated rich content when possible. An audited program wit
 
 The generated OpenUI instructions now use the existing answer plan to offer focused diagram, chart, or calculator signatures from the real registry. Ambiguous requests retain the general registry. Only requests with retrieved evidence see the Source constructor. The full component inventory and validation boundary remain available. Named independent sections also make the safe recovery contract usable. The new server diagnostic captures validation stage, statement ordinal, bounded token skeleton, and schema error code and location depth. The skeleton omits literals, symbol names, raw schema messages and private reasoning. The local test operator now captures a synthetic test's returned body before assertions so an ordinary fallback can be inspected without storing the provider's rejected program.
 
+The shared native answer component also uses the existing React error boundary with the authoritative prose as its fallback. If the native renderer throws or its lazy module fails to load, both Workspace and a shared answer remain readable. The application diagnostic for this path omits error detail. The saved answer and source references remain unchanged.
+
 ## Evidence and release limits
 
 - The source-level regression reproduces schema rejection with a missing required table property, keeps the independently valid diagram and code, preserves prose through a Share round trip, and refuses invented source authority. The missing-prose and sidebar-placeholder regressions check explicit failure and original conversation behavior.
