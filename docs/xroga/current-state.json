@@ -144707,6 +144707,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:0f52997906a86a944a66",
+      "sourcePath": "apps/xroga-browser-extension/src/agent/__tests__/read-loop-guard.test.ts",
+      "declaredTests": 4,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:c7885a9093e4fe7de8b7",
       "sourcePath": "apps/xroga-browser-extension/src/agent/__tests__/reasoning.test.ts",
       "declaredTests": 17,
@@ -144751,7 +144758,7 @@
     {
       "id": "test-suite:d748c4a3a476cd87446f",
       "sourcePath": "apps/xroga-browser-extension/src/agent/__tests__/skills.test.ts",
-      "declaredTests": 8,
+      "declaredTests": 9,
       "skipLocations": [],
       "focusLocations": []
     },
