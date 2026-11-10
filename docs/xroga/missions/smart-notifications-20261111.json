@@ -8,11 +8,13 @@
   "scope": "Extend Xroga's existing notification stack and inbox with safe-area mobile cards, a soft success chime, and opt-in standards-based browser push after the page closes.",
   "changedFiles": [
     "backend/package.json",
+    "package-lock.json",
     "backend/package-lock.json",
     "backend/src/routes/notifications.ts",
     "backend/src/services/notificationService.ts",
     "backend/src/services/browserPushService.ts",
     "backend/src/services/browserPushService.test.ts",
+    "deploy/cloudrun/build-smart-notifications-api.yaml",
     "frontend/src/lib/api.ts",
     "frontend/src/lib/browserPush.ts",
     "frontend/src/components/notifications/NotificationExperience.tsx",

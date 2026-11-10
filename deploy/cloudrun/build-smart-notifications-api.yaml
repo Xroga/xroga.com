@@ -1,0 +1,16 @@
+# Build only the reviewed portable API Dockerfile from an exact committed SHA.
+# Submit with --ignore-file=.dockerignore to keep local credentials out of Cloud Build.
+steps:
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - -f
+      - Dockerfile.api
+      - --build-arg
+      - XROGA_RELEASE_SHA=${_RELEASE_SHA}
+      - -t
+      - ${_IMAGE}
+      - .
+images:
+  - ${_IMAGE}
+timeout: 1800s
