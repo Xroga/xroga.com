@@ -1,6 +1,6 @@
 import { publicCompletionState } from './completionDiagnostics.js';
 import { NATIVE_UI_FORMAT, recoverNativeMonthlyChart, splitNativeOpenUiAnswer, supplementUnfinishedNativeProse, validateNativeOpenUi } from './nativeOpenUi.js';
-import { requiresNativeAuthorizationReview } from './nativeOpenUiAccuracy.js';
+import { requiresNativeAuthorizationReview, suppliedMonthlyComparison } from './nativeOpenUiAccuracy.js';
 
 /** Deployment-owned presentation choice; never reads a user role or client flag.
  * The paid founder evaluator has its own independent staging-only guard. */
@@ -14,6 +14,7 @@ export function completeNativeWorkspaceAnswer(
   raw: string,
   finishReason: string | null | undefined,
   evidenceIds?: ReadonlySet<string>,
+  prompt?: string,
 ) {
   const { text, program } = splitNativeOpenUiAnswer(raw);
   const validation = program ? validateNativeOpenUi(program, evidenceIds, text) : undefined;
@@ -23,6 +24,19 @@ export function completeNativeWorkspaceAnswer(
     : validation?.ok === false && validation.reason === 'data_review'
       ? { status: 'partial' as const, reason: 'data_review' as const }
       : publicCompletionState(finishReason, response);
+  const supplied = prompt && !evidenceIds?.size ? suppliedMonthlyComparison(prompt) : undefined;
+  if (supplied && finishReason === 'stop' && (validation?.ok || validation?.reason === 'data_review')) {
+    const reviewed = recoverNativeMonthlyChart(program, supplied, !validation.ok);
+    if (reviewed) {
+      return {
+        response: reviewed.text,
+        completion: reviewed.dataMismatch || !validation.ok
+          ? { status: 'partial' as const, reason: 'data_review' as const }
+          : { status: 'complete' as const },
+        responseSource: { format: NATIVE_UI_FORMAT, text: reviewed.program },
+      };
+    }
+  }
   const valid = !!text && validation?.ok === true && completion.status === 'complete';
   const recovered = completion.status === 'partial' && completion.reason === 'data_review' ? recoverNativeMonthlyChart(program) : undefined;
   return {

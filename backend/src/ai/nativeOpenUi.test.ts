@@ -147,8 +147,9 @@ test('a monthly bar chart catches incorrect gain rankings and does not publish t
   const result = completeNativeWorkspaceAnswer('June adds the most dollars.' + NATIVE_UI_MARKER + make(accurate), 'stop');
   assert.deepEqual(result.completion, { status: 'partial', reason: 'data_review' });
   assert.match(result.response, /written summary disagreed/i);
-  assert.match(result.response, /\| April \| 18800 \| 4500 \|/);
-  assert.match(result.response, /\| June \| 25700 \| 3500 \|/);
+  assert.match(result.response, /\| April \| 18800 \| \+4500 \| \+31\.47% \|/);
+  assert.match(result.response, /\| June \| 25700 \| \+3500 \|/);
+  assert.match(result.response, /Highest chart value: \$25,700 \(June\)/);
   assert.doesNotMatch(result.response, /June adds the most/);
   assert.match(result.responseSource.text, /Chart\("bar"/);
   assert.match(result.responseSource.text, /"Month":"April","Value":18800/);
@@ -166,6 +167,55 @@ test('a monthly bar chart catches incorrect gain rankings and does not publish t
     assert.notEqual(checked.completion.status === 'partial' && checked.completion.reason, 'data_review');
     assert.doesNotMatch(checked.responseSource.text, /Partial answer/);
   }
+});
+
+test('an explicit monthly data comparison uses the supplied points and deterministic rankings in Copy and Share', () => {
+  const prompt = 'Show a monthly revenue chart in USD using January 12000, February 15500, March 14300, April 18800, May 22200 and June 25700. List all month-over-month changes and identify the largest gains. Use only these supplied values.';
+  const rows = '[{m:"Jan",n:12000},{m:"Feb",n:15500},{m:"Mar",n:14300},{m:"Apr",n:18800},{m:"May",n:22200},{m:"Jun",n:25700}]';
+  const program = 'root = Col([Text("June was unbeatable when it came to growth."), Chart("line", ' + rows + ', "m", ["n"], "currency", "USD")])';
+  const wire = (chart: string, prose = 'June outpaced every other month in growth.') => prose + NATIVE_UI_MARKER + chart;
+  const answer = completeNativeWorkspaceAnswer(wire(program), 'stop', undefined, prompt);
+  assert.doesNotMatch(answer.response + answer.responseSource.text, /outpaced|unbeatable/);
+  assert.match(answer.response, /Largest month-over-month gain: \+\$4,500 \(April\)/);
+  assert.match(answer.response, /Largest relative month-over-month gain: \+31\.47% \(April\)/);
+  assert.match(answer.response, /Highest chart value: \$25,700 \(June\)/);
+  assert.match(answer.responseSource.text, /Chart\("line".*Table\(/);
+  const shared = buildNativeOpenUiShare(answer.response, answer.responseSource.text);
+  assert.ok(shared);
+  assert.equal(readNativeOpenUiShare(shared)?.text, answer.response);
+  const wrong = completeNativeWorkspaceAnswer(wire(program.replace('n:18800', 'n:17000').replace('"USD"', '"EUR"')), 'stop', undefined, prompt);
+  assert.deepEqual(wrong.completion, { status: 'partial', reason: 'data_review' });
+  assert.match(wrong.response, /generated chart did not match the supplied values or units/);
+  assert.match(wrong.responseSource.text, /"Month":"April","Value":18800/);
+  assert.doesNotMatch(wrong.response + wrong.responseSource.text, /17000|EUR/);
+  const contradiction = completeNativeWorkspaceAnswer(wire(program, 'June adds the most dollars.'), 'stop', undefined, prompt);
+  assert.deepEqual(contradiction.completion, { status: 'partial', reason: 'data_review' });
+  assert.match(contradiction.response, /written summary disagreed/);
+  assert.doesNotMatch(contradiction.response, /June adds/);
+  const truncated = completeNativeWorkspaceAnswer(wire(program), 'length', undefined, prompt);
+  assert.deepEqual(truncated.completion, { status: 'partial', reason: 'output_limit' });
+  assert.equal(truncated.responseSource.text, '');
+});
+
+test('monthly comparison keeps tied winners, separates gain metrics, and handles a zero base', () => {
+  function analyze(amounts: number[]) {
+    const months = ['January', 'February', 'March', 'April'];
+    const prompt = 'Plot a monthly chart in USD and show the largest month-over-month changes. Use only the provided values: ' +
+      months.map((month, i) => month + ' ' + amounts[i]).join(', ') + '.';
+    const chart = 'root = Col([Chart("bar", ' + JSON.stringify(months.map((month, i) => ({ month, value: amounts[i] })))
+      + ', "month", ["value"], "currency", "USD")])';
+    return completeNativeWorkspaceAnswer('Monthly figures.' + NATIVE_UI_MARKER + chart, 'stop', undefined, prompt).response;
+  }
+  const tied = analyze([10, 15, 20, 25]);
+  assert.match(tied, /\+\$5 \(February, March, April\)/);
+  assert.match(tied, /\+50% \(February\)/);
+  const separate = analyze([10, 20, 32, 33]);
+  assert.match(separate, /\+\$12 \(March\)/);
+  assert.match(separate, /\+100% \(February\)/);
+  const zero = analyze([0, 3, 6, 0]);
+  assert.match(zero, /\+\$3 \(February, March\)/);
+  assert.match(zero, /gain: unavailable across all months/);
+  assert.match(zero, /\| February \| 3 \| \+3 \| n\/a \|/);
 });
 
 test('the paid evaluator rejects non-staging, expired, repeated, and over-budget slots', () => {

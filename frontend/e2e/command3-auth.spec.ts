@@ -1279,8 +1279,17 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   try{expect((await anonymous.request.get(new URL(signed.url,page.url()).href)).status()).toBe(401);}finally{await anonymous.close();}
   expect((await fetch(`${backendUrl}/api/projects/${ownerProjectId}/files/${privateFileId}/links`,{method:'DELETE',headers:{Authorization:browserBearer}})).status).toBe(200);
   expect((await page.request.get(signed.url)).status()).toBe(404);
+  const ownerProjectOpened = page.waitForResponse(response =>
+    new URL(response.url()).pathname === `/api/projects/${ownerProjectId}` && response.request().method() === 'GET');
   await page.goto(`/dashboard/projects/${ownerProjectId}`);
-  await expect(page).toHaveURL(new RegExp(`/workspace\\?project=${ownerProjectId}`));
+  const ownerProjectResponse = await ownerProjectOpened;
+  expect(ownerProjectResponse.status()).toBe(200);
+  expect(await ownerProjectResponse.json()).toMatchObject({ id: ownerProjectId });
+  // Workspace consumes the one-time URL hint after verifying it with the API.
+  await expect(page).toHaveURL(/\/workspace$/);
+  await expect.poll(() => page.evaluate(() =>
+    JSON.parse(sessionStorage.getItem('xroga-active-sidebar-project-v1') || 'null')
+  )).toEqual({ userId: ownerId, projectId: ownerProjectId });
   // Keep main's unified Workspace navigation. Private saved-file delivery now
   // lives in Library, using the same owner-only download/copy/revoke controls.
   const projectsLoaded = page.waitForResponse(response => new URL(response.url()).pathname === '/api/projects' && response.request().method() === 'GET');

@@ -1175,7 +1175,8 @@ export async function runChatPipeline(opts: {
   const usage = await getUsage(opts.userId);
 
   if (native) {
-    const answer = completeNativeWorkspaceAnswer(result.text, result.finishReason, evidenceIds);
+    const answer = completeNativeWorkspaceAnswer(result.text, result.finishReason, evidenceIds,
+      route.kind !== 'research' && !researchBlock && !opts.projectEvidence ? opts.prompt : undefined);
     opts.onDelta?.(answer.response);
     return {
       ...answer,

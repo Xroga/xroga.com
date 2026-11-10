@@ -26,6 +26,15 @@ const higher = 'rose|rises|rise|increased|increases|increase|climbed|climbs|clim
 interface MonthlyPoint { month: number; value: number }
 interface MonthlySeries { type: 'line' | 'bar'; points: MonthlyPoint[]; format: 'number' | 'currency' | 'percent'; currency?: string }
 
+function monthlyChanges(series: MonthlySeries) {
+  return series.points.slice(1).map(({ month, value }, index) => {
+    const base = series.points[index].value;
+    const amount = Number((value - base).toPrecision(15));
+    const rate = base > 0 ? amount / base : undefined;
+    return { month, amount, rate: rate !== undefined && Number.isFinite(rate * 100) ? rate : undefined };
+  });
+}
+
 /** Only one static, consecutive, single-series monthly line or bar chart can
  * establish an unambiguous month-over-month comparison. */
 function monthlySeries(root: unknown): MonthlySeries | undefined {
@@ -75,10 +84,7 @@ function monthlySeries(root: unknown): MonthlySeries | undefined {
 export function contradictsMonthlyChart(root: unknown, prose: string): boolean {
   const series = monthlySeries(root);
   if (!series) return false;
-  const changes = new Map(series.points.slice(1).map(({ month, value }, index) => {
-    const base = series.points[index].value;
-    return [month, { amount: value - base, rate: base > 0 ? (value - base) / base : undefined }] as const;
-  }));
+  const changes = new Map(monthlyChanges(series).map(change => [change.month, change]));
   const plain = prose.replace(/[\x60*_]/g, '');
   const rank = 'second[- ]largest|largest|biggest|strongest|highest';
   const unit = 'percentage|percent|dollar|absolute';
@@ -146,19 +152,77 @@ export function contradictsMonthlyChart(root: unknown, prose: string): boolean {
   return false;
 }
 
-export function monthlyChartDataFallback(root: unknown): { text: string; program: string } | undefined {
+/** Only treat an explicitly closed monthly comparison as entirely data-driven.
+ * Ambiguous or mixed requests still use the general native response contract. */
+export function suppliedMonthlyComparison(prompt: string): MonthlyPoint[] | undefined {
+  if (prompt.length > 2000 || !/\bmonthly\b/i.test(prompt) || !/\b(?:chart|plot)\b/i.test(prompt)
+      || !/\bmonth[- ]over[- ]month\b/i.test(prompt) || !/\b(?:largest|biggest)\b/i.test(prompt)
+      || !/\buse only (?:these|the) (?:supplied|provided) values\b/i.test(prompt)
+      || !/\bUSD\b/i.test(prompt)) return;
+  const pair = new RegExp('\\b(' + monthPattern + ')(?:\\s*[:=]\\s*|\\s+)\\$?([+-]?(?:[0-9]{1,3}(?:,[0-9]{3})+|[0-9]+)(?:\\.[0-9]+)?)(?![a-z0-9]|[.,][0-9])', 'gi');
+  const points: MonthlyPoint[] = [];
+  for (const [, label, number] of prompt.matchAll(pair)) {
+    const point = { month: months.get(label.toLowerCase())!, value: Number(number.replace(/,/g, '')) };
+    const previous = points.at(-1);
+    if (points.length === 12 || Math.abs(point.value) > 1e15 || (previous && (previous.month + 1) % 12 !== point.month)) return;
+    points.push(point);
+  }
+  return points.length >= 3 ? points : undefined;
+}
+
+export function monthlyChartDataFallback(root: unknown, options?: {
+  supplied: readonly MonthlyPoint[];
+  partial: boolean;
+}): { text: string; program: string; dataMismatch: boolean } | undefined {
   const series = monthlySeries(root);
   if (!series) return;
+  // The caller may have exact user values. Never certify a model-authored
+  // dataset that changes a point, omits a month or substitutes different units.
+  const dataMismatch = !!options && (series.currency !== 'USD' || series.points.length !== options.supplied.length ||
+    series.points.some((point, index) => point.month !== options.supplied[index].month || point.value !== options.supplied[index].value));
+  if (dataMismatch && options) {
+    series.points = [...options.supplied];
+    series.currency = 'USD';
+    series.format = 'currency';
+  }
   const unit = series.currency ?? (series.format === 'percent' ? '%' : undefined);
   const label = unit ? 'Chart value (' + unit + ')' : 'Chart value';
-  const rows = series.points.map(({ month, value }, index) =>
-    '| ' + monthNames[month] + ' | ' + value + ' | ' + (index ? Number((value - series.points[index - 1].value).toPrecision(15)) : '') + ' |');
-  const text = ['Partial answer. The written summary disagreed with the plotted data, so it was withheld. These are the chart values and changes from the preceding displayed month.',
-    '', '| Month | ' + label + ' | Change |', '| --- | ---: | ---: |', ...rows].join('\n');
-  // Rebuild from numeric points, rather than carrying any model-authored
-  // title, note, state, sibling component or action into the reviewed answer.
+  const changes = monthlyChanges(series);
+  const formatValue = (value: number) => series.currency
+    ? new Intl.NumberFormat('en-US', { style: 'currency', currency: series.currency, maximumSignificantDigits: 15 }).format(value)
+    : new Intl.NumberFormat('en-US', { maximumSignificantDigits: 15 }).format(value) + (series.format === 'percent' ? '%' : '');
+  const signed = (value: number, format: (n: number) => string) => (value > 0 ? '+' : '') + format(value);
+  const percent = (value: number) => new Intl.NumberFormat('en-US', { style: 'percent', maximumFractionDigits: 2 }).format(value);
+  const level = Math.max(...series.points.map(point => point.value));
+  const listed = (values: Array<{ month: number }>) => values.map(({ month }) => monthNames[month]).join(', ');
+  const compare = (metric: 'amount' | 'rate', format: (n: number) => string) => {
+    const values = changes.map(change => change[metric]);
+    if (values.some(value => value === undefined)) return 'unavailable across all months because a prior value is zero or negative or the change cannot be represented.';
+    const best = Math.max(...values as number[]);
+    if (best <= 0) return 'no increase in the displayed period.';
+    return signed(best, format) + ' (' + listed(changes.filter(change => change[metric] === best)) + ').';
+  };
+  const facts = [
+    'Largest month-over-month gain: ' + compare('amount', formatValue),
+    'Largest relative month-over-month gain: ' + compare('rate', percent),
+    'Highest chart value: ' + formatValue(level) + ' (' + listed(series.points.filter(point => point.value === level)) + ').',
+  ];
+  const opening = dataMismatch
+    ? 'Partial answer. The generated chart did not match the supplied values or units. This chart and summary use the values you supplied.'
+    : options?.partial !== false
+      ? 'Partial answer. The written summary disagreed with the plotted data, so it was withheld.'
+      : 'Monthly comparison based on the supplied values.';
+  const columns = ['Month', label, 'Change', 'Percent change'];
+  const rows = series.points.map(({ month, value }, index) => {
+    const change = changes[index - 1];
+    return [monthNames[month], value, change ? signed(change.amount, String) : '', !change ? '' :
+      change.rate === undefined ? 'n/a' : signed(change.rate, percent)];
+  });
+  const text = [opening, '', ...facts.map(fact => '- ' + fact), '', '| ' + columns.join(' | ') + ' |',
+    '| --- | ---: | ---: | ---: |', ...rows.map(row => '| ' + row.join(' | ') + ' |')].join('\n');
   const data = JSON.stringify(series.points.map(({ month, value }) => ({ Month: monthNames[month], Value: value })));
   const args = [JSON.stringify(series.type), data, '"Month"', '["Value"]', JSON.stringify(series.format),
     JSON.stringify(series.currency ?? null), 'false', '240', JSON.stringify({ xLabel: 'Month', yLabel: label })];
-  return { text, program: 'root = Col([Markdown(' + JSON.stringify(text) + '), Chart(' + args.join(', ') + ')])' };
+  return { text, dataMismatch, program: 'root = Col([Markdown(' + JSON.stringify([opening, '', ...facts.map(fact => '- ' + fact)].join('\n'))
+    + '), Chart(' + args.join(', ') + '), Table(' + JSON.stringify(columns) + ', ' + JSON.stringify(rows) + ')])' };
 }

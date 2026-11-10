@@ -1,5 +1,5 @@
 import { createParser, parseExpression, split, tokenize, type ASTNode, type LibraryJSONSchema } from '@openuidev/lang-core';
-import { contradictsMonthlyChart, monthlyChartDataFallback, requiresNativeAuthorizationReview } from './nativeOpenUiAccuracy.js';
+import { contradictsMonthlyChart, monthlyChartDataFallback, requiresNativeAuthorizationReview, suppliedMonthlyComparison } from './nativeOpenUiAccuracy.js';
 import catalog from './nativeOpenUiCatalog.json' with { type: 'json' };
 
 export const NATIVE_UI_FORMAT = 'xroga-openui-v1' as const;
@@ -102,9 +102,9 @@ export type NativeUiValidation = { ok: true } | { ok: false; reason: 'budget' | 
 const reject = (reason: Extract<NativeUiValidation, { ok: false }>['reason']): NativeUiValidation => ({ ok: false, reason });
 
 /** Used only after a schema-valid program reached the data-review gate. */
-export function recoverNativeMonthlyChart(program: string) {
+export function recoverNativeMonthlyChart(program: string, supplied?: NonNullable<ReturnType<typeof suppliedMonthlyComparison>>, partial = true) {
   const root = parseProgram.parse(program).root;
-  const recovered = monthlyChartDataFallback(root);
+  const recovered = monthlyChartDataFallback(root, supplied ? { supplied, partial } : undefined);
   if (recovered && validateNativeOpenUi(recovered.program, new Set(), recovered.text).ok) return recovered;
 }
 
