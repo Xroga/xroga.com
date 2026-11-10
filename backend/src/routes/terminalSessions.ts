@@ -103,11 +103,12 @@ export function parseOffset(raw: unknown): number {
   return Math.min(Math.floor(n), 10_000);
 }
 
-async function nextTerminalNumber(
+export async function nextTerminalNumber(
   userId: string,
-  repo: string
+  repo: string,
+  db: ReturnType<typeof getSupabaseAdmin> = getSupabaseAdmin(),
 ): Promise<number> {
-  const supabase = getSupabaseAdmin();
+  const supabase = db;
   const { data, error } = await supabase
     .from('terminal_sessions')
     .select('terminal_number')

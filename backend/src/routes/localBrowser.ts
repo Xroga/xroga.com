@@ -20,6 +20,7 @@ import { createLocalBrowserPluginCatalog } from './localBrowserPlugins.js';
 import { executeComposioReadTool, isComposioConfigured, searchComposioTools } from '../services/integrations/composioClient.js';
 import { cancelBusinessActionConfirmation, confirmBusinessAction } from '../services/integrations/businessActionConfirmations.js';
 import { preparedActionDigest } from '../security/authority/digest.js';
+import { browserHistoryEnabled, syncBrowserRunToHistory } from './localBrowserHistory.js';
 
 const MODEL = 'deepseek_v4_1_flash_1017';
 const MAX_TURNS = 120;
@@ -183,7 +184,9 @@ const defaultPlugins = {
   cancel: cancelBusinessActionConfirmation,
 };
 
-export function createLocalBrowserRouter(resolve = configured, dispatch = dispatchBrowserModel, plugins = defaultPlugins) {
+const defaultHistory = { enabled: browserHistoryEnabled, sync: syncBrowserRunToHistory };
+
+export function createLocalBrowserRouter(resolve = configured, dispatch = dispatchBrowserModel, plugins = defaultPlugins, history = defaultHistory) {
   const router = Router();
   router.use('/plugins', createLocalBrowserPluginCatalog());
   const route = (handler: (req: BrowserDeviceRequest, res: Response, runtime: Runtime) => Promise<unknown>) =>
@@ -479,6 +482,13 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
       id: randomUUID(), kind: 'local_browser_receipt', summary: action, timestamp: task.completedAt!,
     }));
     await runs.stateStore(row.userId, () => lease).save(row.state);
+    if (task.status === 'completed' && history.enabled()) {
+      // The finished task appears in the user's Workspace history. A failure here never fails the finish: the result is already saved.
+      await Promise.race([
+        history.sync(requireTenantContext(req.tenantContext), { runId: row.runId, goal: task.objective, result: data.result ?? '' }),
+        new Promise<never>((_, reject) => setTimeout(() => reject(new Error('timeout')), 4_000)),
+      ]).catch(() => console.warn('[browser-history] sync skipped'));
+    }
     return res.json({ status: task.status });
   }));
 
