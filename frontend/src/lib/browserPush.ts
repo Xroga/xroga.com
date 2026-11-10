@@ -17,7 +17,7 @@ function decodeVapidKey(value: string): Uint8Array<ArrayBuffer> {
 }
 
 export async function hasBrowserPushSubscription(): Promise<boolean> {
-  if (!browserPushSupported() || Notification.permission !== 'granted') return false;
+  if (!browserPushSupported() || Notification.permission !== 'granted' || localStorage.getItem(XROGA_PUSH_ENABLED_KEY) !== '1') return false;
   const registration = await navigator.serviceWorker.getRegistration('/');
   return Boolean(await registration?.pushManager.getSubscription());
 }
@@ -28,7 +28,12 @@ export async function refreshBrowserPushAccount(): Promise<void> {
   const registration = await navigator.serviceWorker.getRegistration('/');
   const subscription = await registration?.pushManager.getSubscription();
   if (!subscription) { localStorage.setItem(XROGA_PUSH_ENABLED_KEY, '0'); return; }
-  await api.notifications.subscribePush(subscription.toJSON());
+  try {
+    await api.notifications.subscribePush(subscription.toJSON());
+  } catch (error) {
+    localStorage.setItem(XROGA_PUSH_ENABLED_KEY, '0');
+    throw error;
+  }
 }
 
 /** Must be called from a user gesture; no browser permission prompt on page load. */
@@ -55,11 +60,12 @@ export async function enableBrowserPush(): Promise<boolean> {
 }
 
 export async function disableBrowserPush(): Promise<void> {
-  localStorage.setItem(XROGA_PUSH_ENABLED_KEY, '0');
-  if (!browserPushSupported()) return;
+  if (!browserPushSupported()) { localStorage.setItem(XROGA_PUSH_ENABLED_KEY, '0'); return; }
   const registration = await navigator.serviceWorker.getRegistration('/');
   const subscription = await registration?.pushManager.getSubscription();
-  if (!subscription) return;
-  await api.notifications.unsubscribePush(subscription.endpoint);
-  await subscription.unsubscribe();
+  if (subscription) {
+    await api.notifications.unsubscribePush(subscription.endpoint);
+    await subscription.unsubscribe();
+  }
+  localStorage.setItem(XROGA_PUSH_ENABLED_KEY, '0');
 }

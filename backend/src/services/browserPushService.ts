@@ -63,7 +63,7 @@ export async function sendBrowserPush(context: TenantContext, notification: {
   await Promise.all((data ?? []).map(async (row) => {
     if (!validBrowserPushSubscription({ endpoint: row.endpoint, keys: { p256dh: row.p256dh, auth: row.auth_secret } })) return;
     try {
-      await webPush.sendNotification({ endpoint: row.endpoint, keys: { p256dh: row.p256dh, auth: row.auth_secret } }, payload, { TTL: 3600, urgency: 'normal' });
+      await webPush.sendNotification({ endpoint: row.endpoint, keys: { p256dh: row.p256dh, auth: row.auth_secret } }, payload, { TTL: 3600, urgency: 'normal', timeout: 5000 });
     } catch (cause) {
       const status = typeof cause === 'object' && cause !== null && 'statusCode' in cause ? Number(cause.statusCode) : 0;
       if (status === 404 || status === 410) {
