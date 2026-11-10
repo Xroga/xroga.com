@@ -22,7 +22,7 @@ interface WorkspaceMessage {
 }
 
 type Operation = 'start' | 'resume' | 'turn' | 'finish' | 'document' | 'voice' | 'authorize-device'
-  | 'plugin-search' | 'plugin-read' | 'plugin-review';
+  | 'plugin-search' | 'plugin-read' | 'plugin-review' | 'plugin-action-search' | 'plugin-act' | 'plugin-act-review';
 type Pending = { succeed: (value: unknown) => void; fail: (error: Error) => void };
 type PairFailure = 'sign-in' | 'unavailable' | 'extension-id' | 'account' | 'failed';
 let pairing: { nonce: string; tabId: number; expires: number; started: number } | undefined;
@@ -446,7 +446,7 @@ export async function workspaceRequest(op: Operation, value: unknown, signal?: A
       return deviceRequest(device, path, 'POST', op === 'start' ? value : body, signal);
     }
   }
-  if (op === 'plugin-search' || op === 'plugin-read' || op === 'plugin-review') {
+  if (op === 'plugin-search' || op === 'plugin-read' || op === 'plugin-review' || op === 'plugin-action-search' || op === 'plugin-act' || op === 'plugin-act-review') {
     throw new Error('Sign in to the Xroga extension to use connected apps.');
   }
   return relayRequest(op, value, signal);

@@ -17,9 +17,11 @@ import { isTerminalRunStatus, PostgresBrowserRunStore, type BrowserRunRecord, ty
 import { PostgresLeaseStore } from '../workers/postgresLeaseStore.js';
 import { readBrowserDocument } from './browserDocuments.js';
 import { createLocalBrowserPluginCatalog } from './localBrowserPlugins.js';
-import { executeComposioReadTool, isComposioConfigured, searchComposioTools } from '../services/integrations/composioClient.js';
+import { executeComposioReadTool, isComposioConfigured, searchComposioActionTools, searchComposioTools } from '../services/integrations/composioClient.js';
 import { cancelBusinessActionConfirmation, confirmBusinessAction } from '../services/integrations/businessActionConfirmations.js';
 import { preparedActionDigest } from '../security/authority/digest.js';
+import { isFinancialAction, prepareBusinessAction } from '../services/integrations/businessAction.js';
+import { createBusinessActionConfirmation } from '../services/integrations/businessActionConfirmations.js';
 
 const MODEL = 'deepseek_v4_1_flash_1017';
 const MAX_TURNS = 120;
@@ -27,6 +29,7 @@ const TURN_CEILING_MICROS = 3_000;
 const MAX_RUN_MICROS = 36_000;
 const MINUTE = 60_000;
 const MAX_GOAL = 16_000;
+const MAX_PLUGIN_ACTIONS = 4;
 const limits = { ...BROWSER_RUN_DEFAULTS, maxModelCostMicros: MAX_RUN_MICROS };
 const id = z.string().uuid();
 const pluginState = z.object({
@@ -36,9 +39,16 @@ const pluginState = z.object({
   reads: z.array(z.object({
     digest: z.string(), slug: z.string(), toolkit: z.string(), approvalId: z.string().uuid().optional(), used: z.boolean(),
   })).max(6),
+  /** Changes the agent asked to make through a connected app; each needs the user's approval on its own card. */
+  actions: z.array(z.object({
+    digest: z.string(), slug: z.string(), toolkit: z.string(), approvalId: z.string().uuid().optional(), used: z.boolean(),
+  })).max(MAX_PLUGIN_ACTIONS).default([]),
+  actionDiscoveries: z.array(z.object({
+    query: z.string(), sessionId: z.string().optional(), tools: z.array(z.object({ slug: z.string(), toolkit: z.string() })).max(6),
+  })).max(4).default([]),
 });
 function runPlugins(row: BrowserRunRecord) {
-  return pluginState.parse(row.state.productManifest.localBrowserPlugins ?? { discoveries: [], reads: [] });
+  return pluginState.parse(row.state.productManifest.localBrowserPlugins ?? { discoveries: [], reads: [], actions: [], actionDiscoveries: [] });
 }
 const startBody = z.object({
   goal: z.string().trim().min(1).max(MAX_GOAL),
@@ -181,9 +191,22 @@ const defaultPlugins = {
   prepare: executeComposioReadTool,
   confirm: confirmBusinessAction,
   cancel: cancelBusinessActionConfirmation,
+  discoverActions: searchComposioActionTools,
+  prepareAction: prepareBusinessAction,
+  createActionConfirmation: createBusinessActionConfirmation,
 };
 
-export function createLocalBrowserRouter(resolve = configured, dispatch = dispatchBrowserModel, plugins = defaultPlugins) {
+type ActionMembers = 'discoverActions' | 'prepareAction' | 'createActionConfirmation';
+/** The read members are required; the action members are optional so a test or a release can run without them. */
+type PluginAdapter = Omit<typeof defaultPlugins, ActionMembers> & Partial<Pick<typeof defaultPlugins, ActionMembers>>;
+
+export function createLocalBrowserRouter(resolve = configured, dispatch = dispatchBrowserModel, plugins: PluginAdapter = defaultPlugins) {
+  const actionPlugins = () => {
+    if (!plugins.discoverActions || !plugins.prepareAction || !plugins.createActionConfirmation) {
+      throw new BrowserRequestError(403, 'BROWSER_PLUGIN_ACTIONS_NOT_AVAILABLE');
+    }
+    return { discoverActions: plugins.discoverActions, prepareAction: plugins.prepareAction, createActionConfirmation: plugins.createActionConfirmation };
+  };
   const router = Router();
   router.use('/plugins', createLocalBrowserPluginCatalog());
   const route = (handler: (req: BrowserDeviceRequest, res: Response, runtime: Runtime) => Promise<unknown>) =>
@@ -310,6 +333,103 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
     await save();
     return res.json({ tools: tools.map(item => ({ slug: item.slug, toolkit: item.toolkit,
       description: item.description?.slice(0, 400), parameters: item.inputSchema })) });
+  }));
+
+  // Changes through a connected app. The browser agent names the tool and its arguments; the plan, its digest, the authority scope and
+  // the confirmation are the platform's own (prepareBusinessAction with a fixed selection, then the durable confirmation), so a change
+  // happens only after the user approves this exact action on its own card. Destructive and financial actions are not offered.
+  router.post('/runs/:runId/plugin-action-search', withLease(async (req, res, { runs }, row, lease) => {
+    const actor = await assertPluginRun(req, row);
+    const { query } = z.object({ query: z.string().trim().min(2).max(120) }).strict().parse(req.body);
+    checkData(query);
+    const state = runPlugins(row);
+    if (state.actionDiscoveries.length >= 4 || state.actionDiscoveries.some(item => item.query.toLowerCase() === query.toLowerCase())) {
+      throw new BrowserRequestError(409, 'BROWSER_PLUGIN_DISCOVERY_LIMIT');
+    }
+    const discovery: typeof state.actionDiscoveries[number] = { query, tools: [] };
+    state.actionDiscoveries.push(discovery);
+    row.state.productManifest.localBrowserPlugins = state;
+    const save = () => runs.stateStore(actor.userId, () => lease).save(row.state);
+    await save();
+    const result = await actionPlugins().discoverActions(actor.userId, { query }, actor);
+    await assertPluginRun(req, localRecord(await runs.load(actor.userId, row.runId), actor.userId));
+    const connected = new Set(result.toolkits.filter(item => item.connected && !item.noAuth).map(item => item.toolkit.toLowerCase()));
+    const tools = result.tools
+      .filter(item => item.risk !== 'read' && item.risk !== 'destructive' && connected.has(item.toolkit.toLowerCase()) &&
+        !isFinancialAction(query, item.slug))
+      .slice(0, 6);
+    discovery.sessionId = result.sessionId;
+    discovery.tools = tools.map(({ slug, toolkit }) => ({ slug, toolkit }));
+    await save();
+    return res.json({ tools: tools.map(item => ({ slug: item.slug, toolkit: item.toolkit, risk: item.risk,
+      description: item.description?.slice(0, 400), parameters: item.inputSchema })) });
+  }));
+
+  router.post('/runs/:runId/plugin-act', withLease(async (req, res, { runs }, row, lease) => {
+    const actor = await assertPluginRun(req, row);
+    const data = z.object({
+      slug: z.string().regex(/^[a-z0-9_-]{3,200}$/i),
+      arguments: z.record(z.string(), z.unknown()),
+      request: z.string().trim().min(2).max(200),
+    }).strict().parse(req.body);
+    checkData(data);
+    if (Buffer.byteLength(JSON.stringify(data)) > 12_000) throw new BrowserRequestError(400, 'BROWSER_PLUGIN_ARGUMENT_LIMIT');
+    const state = runPlugins(row);
+    const source = [...state.actionDiscoveries].reverse().find(item => item.tools.some(tool => tool.slug === data.slug));
+    const tool = source?.tools.find(tool => tool.slug === data.slug);
+    if (!source?.sessionId || !tool) throw new BrowserRequestError(403, 'BROWSER_PLUGIN_NOT_DISCOVERED');
+    const digest = preparedActionDigest(data);
+    if (state.actions.length >= MAX_PLUGIN_ACTIONS || state.actions.some(item => item.digest === digest)) {
+      throw new BrowserRequestError(409, 'BROWSER_PLUGIN_ACTION_ALREADY_REQUESTED');
+    }
+    if (state.actions.some(item => item.approvalId && !item.used)) throw new BrowserRequestError(409, 'BROWSER_PLUGIN_APPROVAL_PENDING');
+    const action: typeof state.actions[number] = { digest, slug: data.slug, toolkit: tool.toolkit, used: false };
+    state.actions.push(action);
+    row.state.productManifest.localBrowserPlugins = state;
+    const save = () => runs.stateStore(actor.userId, () => lease).save(row.state);
+    await save();
+    const outcome = await actionPlugins().prepareAction({
+      userId: actor.userId, tenantContext: actor, useCase: source.query, forceConfirmation: true, signal: AbortSignal.timeout(45_000),
+      fixedSelection: { toolSlug: data.slug, arguments: data.arguments, summary: `${data.request} (${tool.toolkit})` },
+    });
+    if (outcome.status !== 'ready' || outcome.plan.toolSlug !== data.slug || outcome.plan.toolkit.toLowerCase() !== tool.toolkit.toLowerCase() ||
+        outcome.plan.risk === 'destructive' || isFinancialAction(source.query, data.slug)) {
+      throw new BrowserRequestError(409, 'BROWSER_PLUGIN_ACTION_UNAVAILABLE');
+    }
+    const confirmation = await actionPlugins().createActionConfirmation(actor.userId, outcome.plan);
+    if (!id.safeParse(confirmation.id).success || !confirmation.approval) {
+      throw new BrowserRequestError(503, 'BROWSER_PLUGIN_APPROVAL_UNAVAILABLE');
+    }
+    try {
+      await assertPluginRun(req, localRecord(await runs.load(actor.userId, row.runId), actor.userId));
+      action.approvalId = confirmation.id;
+      await save();
+    } catch (error) {
+      await plugins.cancel(actor.userId, confirmation.id).catch(() => undefined);
+      throw error;
+    }
+    return res.json({ approval: { id: confirmation.id, summary: confirmation.summary, account: confirmation.approval.accountReference,
+      argumentsPreview: confirmation.argumentsPreview, risk: outcome.plan.risk } });
+  }));
+
+  router.post('/runs/:runId/plugin-act-review', withLease(async (req, res, { runs }, row, lease) => {
+    const actor = await assertPluginRun(req, row);
+    const { approvalId, decision } = z.object({ approvalId: id, decision: z.enum(['approve', 'deny']) }).strict().parse(req.body);
+    const state = runPlugins(row);
+    const action = state.actions.find(item => item.approvalId === approvalId);
+    if (!action || action.used) throw new BrowserRequestError(409, 'BROWSER_PLUGIN_APPROVAL_ALREADY_USED');
+    action.used = true;
+    row.state.productManifest.localBrowserPlugins = state;
+    await runs.stateStore(actor.userId, () => lease).save(row.state);
+    await assertPluginRun(req, localRecord(await runs.load(actor.userId, row.runId), actor.userId));
+    if (decision === 'deny') {
+      await plugins.cancel(actor.userId, approvalId);
+      return res.json({ denied: true });
+    }
+    const { confirmation, execution } = await plugins.confirm(actor, approvalId, { toolkit: action.toolkit, toolSlug: action.slug });
+    const receipt = confirmation.receipt;
+    if (execution.toolSlug !== action.slug || !receipt) throw new BrowserRequestError(503, 'BROWSER_PLUGIN_RECEIPT_UNAVAILABLE');
+    return res.json({ receiptId: receipt.id, result: execution.resultText.slice(0, 12_000) });
   }));
 
   router.post('/runs/:runId/plugin-read', withLease(async (req, res, { runs }, row, lease) => {

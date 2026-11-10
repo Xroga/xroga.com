@@ -1089,13 +1089,20 @@ export async function prepareBusinessAction(
 
     /** Bounded results from preceding reads; only allowed for reviewed workflows. */
     referenceEvidence?: BusinessActionReferenceEvidence[];
+
+    /**
+     * A tool and arguments already chosen by the caller (the browser agent). The planner model is not called; the tool must still be a
+     * connected, non-read action found by discovery, and the plan, digest, authority scope and confirmation are built exactly as before.
+     */
+    fixedSelection?: { toolSlug: string; arguments: Record<string, unknown>; summary: string };
   },
 ): Promise<BusinessActionPreparationOutcome> {
   const tenantContext=requireTenantContext(input.tenantContext),userId=input.userId;
   requireResourceOwner(tenantContext,userId);
   input={userId,tenantContext,useCase:input.useCase,signal:input.signal,
     forceConfirmation:input.forceConfirmation === true,
-    referenceEvidence:input.referenceEvidence && structuredClone(input.referenceEvidence)};
+    referenceEvidence:input.referenceEvidence && structuredClone(input.referenceEvidence),
+    fixedSelection:input.fixedSelection && structuredClone(input.fixedSelection)};
   const useCase =
     input.useCase.trim();
 
@@ -1246,7 +1253,7 @@ export async function prepareBusinessAction(
   const orderedTools = rankToolsBySkill(connectedTools, discovery.skill);
   const skillGuidance = boundedComposioGuidance(discovery, orderedTools.slice(0, MAX_TOOL_CANDIDATES));
 
-  const selection =
+  const selection = input.fixedSelection ??
     await selectActionToolAndArguments(
       {
         tenantContext,

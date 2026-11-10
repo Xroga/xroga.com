@@ -143,7 +143,7 @@ export type DisplayEntry =
 
 export interface OpenPrompt {
   id: string;
-  kind: 'write-card' | 'handover' | 'ask-takeover' | 'ask-input' | 'save-file' | 'confirm' | 'plugin-read';
+  kind: 'write-card' | 'handover' | 'ask-takeover' | 'ask-input' | 'save-file' | 'confirm' | 'plugin-read' | 'plugin-act';
   conversationId: string;
   tabId?: number;
   /** Everything the card shows; fixed titles and lines are the panel's own strings. */

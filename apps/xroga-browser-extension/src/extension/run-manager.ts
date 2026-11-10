@@ -420,7 +420,7 @@ export class RunManager {
       if (step) postWorkspace({ type: 'activity', runId, ...step });
     } else if (body.type === 'tool_execution_start') {
       postWorkspace({ type: 'activity', runId, tool: body.row.tool, status: body.row.status });
-    } else if (body.type === 'prompt_open' && (body.prompt.kind === 'write-card' || body.prompt.kind === 'plugin-read')) {
+    } else if (body.type === 'prompt_open' && (body.prompt.kind === 'write-card' || body.prompt.kind === 'plugin-read' || body.prompt.kind === 'plugin-act')) {
       postWorkspace({ type: 'activity', runId, status: 'approval-required' });
     } else if (body.type === 'run_status') {
       postWorkspace({ type: 'activity', runId, status: body.status });
@@ -1673,9 +1673,10 @@ export class RunManager {
           thumbnail,
           localScreenshots: !!canonical,
           agentTool: (call, signal) => {
-            if (canonical?.plugins && (call.toolName === 'plugin_search' || call.toolName === 'plugin_read')) {
+            if (canonical?.plugins && (call.toolName === 'plugin_search' || call.toolName === 'plugin_read' ||
+                call.toolName === 'plugin_action_search' || call.toolName === 'plugin_act')) {
               return runPluginTool(call.toolName, canonical.runId, call.input, signal,
-                approval => this.broker.open(conversationId, 'plugin-read', approval, signal),
+                approval => this.broker.open(conversationId, call.toolName === 'plugin_act' ? 'plugin-act' : 'plugin-read', approval, signal),
                 (text, source) => session.wrap(text, { connectedApp: source }),
               );
             }
