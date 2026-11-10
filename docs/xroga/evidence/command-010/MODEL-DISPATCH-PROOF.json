@@ -9,7 +9,7 @@
     {
       "path": "backend/src/ai/pipeline.ts",
       "historicalSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
-      "currentSha256": "912c808fdfff8dcf8238d798a78a1b29d329a70bcd0c471cc925c8bded41dbf8",
+      "currentSha256": "d981253fc491c75b4d2b90c6e080509aa541fd04d840276e133e81b39fe3eac6",
       "genericSdkPreviousCurrentBinding": {
         "reference": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
         "sha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
@@ -24,8 +24,8 @@
         "944a58bb15dca85b3ddd"
       ],
       "afterIds": [
-        "d27cb98db3e2d1059954",
-        "1af3b95479b4a049898f"
+        "b1d5a924ac6051d72aee",
+        "9ff832f34f606fa57c9e"
       ],
       "unchangedNearestBlockSha256": [
         "121ecd46287fd271b61cc97e84d2b17dce2570e8b82f7a6bdf77a6e4b7133436",
