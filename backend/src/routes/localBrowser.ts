@@ -121,7 +121,13 @@ function checkData(value: unknown) {
 function sendError(res: Response, error: unknown) {
   if (error instanceof BrowserRequestError) return res.status(error.status).json({ error: error.code });
   if (error instanceof z.ZodError) return res.status(400).json({ error: 'BROWSER_REQUEST_INVALID' });
-  // No user payload, raw provider error, or credential is returned.
+  // No user payload, raw provider error, or credential is returned. Only Xroga's own fixed business-action
+  // codes are surfaced (and logged), so a failed approval is diagnosable without exposing anything private.
+  const code = (error as { code?: unknown } | null)?.code;
+  if (typeof code === 'string' && /^(?:BUSINESS_ACTION|COMPOSIO)_[A-Z_]{2,60}$/.test(code)) {
+    console.error('[local-browser] business action failed:', code);
+    return res.status(503).json({ error: 'BROWSER_GATEWAY_UNAVAILABLE', reason: code });
+  }
   return res.status(503).json({ error: 'BROWSER_GATEWAY_UNAVAILABLE' });
 }
 

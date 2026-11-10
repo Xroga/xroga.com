@@ -72,7 +72,7 @@ export default defineConfig({
           externally_connectable: { matches: [`${workspaceOrigin}/workspace*`], ids: [] },
           content_security_policy: {
             extension_pages:
-              `script-src 'self'; object-src 'self'; connect-src 'self' blob:${apiOrigin ? ' ' + apiOrigin : ''}; base-uri 'none'; form-action 'none'`,
+              `script-src 'self'; object-src 'self'; img-src 'self' data: https://logos.composio.dev; connect-src 'self' blob:${apiOrigin ? ' ' + apiOrigin : ''}; base-uri 'none'; form-action 'none'`,
           },
         }),
     incognito: 'not_allowed',

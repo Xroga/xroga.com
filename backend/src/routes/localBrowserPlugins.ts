@@ -8,6 +8,17 @@ import {
 } from '../services/integrations/composioClient.js';
 import { canUserAccessComposioToolkit } from '../services/integrations/composioNamespace.js';
 
+// Only Composio's own logo host, over https, is passed on; anything else is dropped.
+export function safePluginLogo(value: unknown): string | undefined {
+  if (typeof value !== 'string' || value.length > 300) return undefined;
+  try {
+    const url = new URL(value);
+    return url.protocol === 'https:' && url.hostname === 'logos.composio.dev' && !url.username && !url.password && !url.port ? url.href : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
 export const browserPluginToolkit = z.string().regex(/^[a-z0-9_-]{2,80}$/i);
 const catalogQuery = z.object({
   search: z.string().trim().max(120).optional(),
@@ -32,7 +43,7 @@ export function createLocalBrowserPluginCatalog() {
       const items = filterComposioCatalogForUser(actor.userId, page.items).map(item => ({
         slug: item.slug, name: item.name, description: item.description, categories: item.categories,
         toolsCount: item.toolsCount, noAuth: item.noAuth, deprecated: item.deprecated,
-        canConnect: item.managedAuthSchemes.length > 0,
+        canConnect: item.managedAuthSchemes.length > 0, logo: safePluginLogo(item.logo),
       }));
       return res.json({ items, nextCursor: page.nextCursor });
     } catch (error) {
@@ -46,7 +57,7 @@ export function createLocalBrowserPluginCatalog() {
       const items = await listConnectedComposioToolkits(actor.userId, { sessionId: session.session_id }, actor);
       if (!await req.revalidateBrowserDevice!()) return res.sendStatus(403);
       return res.json({ items: items.filter(item => item.connected && canUserAccessComposioToolkit(actor.userId, item.toolkit))
-        .map(item => ({ slug: item.toolkit, name: item.name, noAuth: item.noAuth })) });
+        .map(item => ({ slug: item.toolkit, name: item.name, noAuth: item.noAuth, logo: safePluginLogo(item.logo) })) });
     } catch {
       return res.status(503).json({ error: 'BROWSER_PLUGIN_CONNECTIONS_UNAVAILABLE' });
     }

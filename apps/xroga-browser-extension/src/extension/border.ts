@@ -253,8 +253,7 @@ export function setBorder(state: BorderState, pointer?: PointerCommand | null): 
     const along = (side: string) => `linear-gradient(${side}, ${violet}, ${blue} 25%, ${blue} 75%, ${violet})`;
     root.innerHTML = `<style>
       .glow { position: absolute; inset: 0; transition: opacity 150ms ease; }
-      .pulse { position: absolute; inset: 0; animation: breathe 2s ease-in-out infinite alternate; }
-      @keyframes breathe { from { opacity: 0.6; } to { opacity: 1; } }
+      .pulse { position: absolute; inset: 0; }
       .edge { position: absolute; }
       .t, .b { left: 0; right: 0; height: 16px; background: ${along('to right')}; }
       .l, .r { top: 0; bottom: 0; width: 16px; background: ${along('to bottom')}; }
@@ -276,7 +275,7 @@ export function setBorder(state: BorderState, pointer?: PointerCommand | null): 
         .ptr .ring.go { animation: ripple 500ms ease-out both; }
         @keyframes ripple { from { transform: scale(.55); opacity: 1; } to { transform: scale(1.6); opacity: 0; } }
       }
-      @media (prefers-reduced-motion: reduce) { .pulse { animation: none; } .ptr { transition: opacity 150ms ease; } }
+      @media (prefers-reduced-motion: reduce) { .ptr { transition: opacity 150ms ease; } }
     </style><div class="glow"><div class="pulse"><div class="edge t"></div><div class="edge b"></div><div class="edge l"></div><div class="edge r"></div></div></div>
     <div class="ptr" data-mode="neutral"><i class="ring"></i><svg viewBox="0 0 25 29" fill="none"><path d="M2 2v22l6-6 5 9 4-2-5-9h9L2 2Z" fill="#1769ff" stroke="white" stroke-width="1.5" stroke-linejoin="round"/></svg><span class="chip">Xroga</span></div>`;
     document.documentElement.appendChild(host);

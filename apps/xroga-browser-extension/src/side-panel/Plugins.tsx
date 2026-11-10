@@ -3,8 +3,21 @@ import { useEffect, useRef, useState } from 'react';
 import { CloseIcon } from '@src/ui/icons';
 import { WORKSPACE_ORIGIN } from '@src/xroga/workspace';
 
-type Plugin = { slug: string; name?: string; description?: string; toolsCount?: number; canConnect?: boolean;
+type Plugin = { slug: string; name?: string; logo?: string; description?: string; toolsCount?: number; canConnect?: boolean;
   deprecated?: boolean; noAuth?: boolean; categories?: Array<{ name: string }> };
+// The logo comes only from the backend allowlist; a missing or failing image falls back to the first letter.
+function PluginIcon({ plugin, size = 28 }: { plugin: { slug: string; name?: string; logo?: string }; size?: number }) {
+  const [failed, setFailed] = useState(false);
+  const letter = (plugin.name ?? plugin.slug).trim().charAt(0).toUpperCase() || '?';
+  const box = { width: size, height: size } as const;
+  return plugin.logo && !failed ? (
+    <img src={plugin.logo} alt="" width={size} height={size} loading="lazy" referrerPolicy="no-referrer"
+      onError={() => setFailed(true)} className="shrink-0 rounded-md bg-white object-contain p-0.5" style={box} />
+  ) : (
+    <span aria-hidden="true" style={box} className="flex shrink-0 items-center justify-center rounded-md bg-nb-surface text-xs font-semibold">{letter}</span>
+  );
+}
+
 type Tool = { slug: string; name?: string; risk?: string; scopes?: string[] };
 type Reply = { error?: string; items?: Plugin[]; nextCursor?: string; tools?: Tool[]; redirectUrl?: string };
 
@@ -145,7 +158,7 @@ export function Plugins({ open, onOpenChange }: { open: boolean; onOpenChange: (
           {selected ? (
             <div className="min-h-0 flex-1 space-y-3 overflow-y-auto break-words">
               <button type="button" className={button} onClick={() => setSelected(undefined)}>Back to plugins</button>
-              <h3 className="font-semibold">{selected.name ?? selected.slug}</h3>
+              <h3 className="flex items-center gap-2 font-semibold"><PluginIcon plugin={selected} size={24} />{selected.name ?? selected.slug}</h3>
               {selected.description ? <p className="text-sm text-nb-muted">{selected.description}</p> : null}
               {isConnected(selected) ? (
                 <button type="button" className={button} onClick={() => void chrome.tabs.create({
@@ -185,10 +198,15 @@ export function Plugins({ open, onOpenChange }: { open: boolean; onOpenChange: (
                 {tab === 'discover' && loading && !filtered.length ? <li role="status" className="text-xs text-nb-muted">Loading plugins…</li> : null}
                 {filtered.map(item => <li key={item.slug}>
                   <button type="button" onClick={() => setSelected(item)} className="w-full min-w-0 rounded-lg border border-nb-border p-2.5 text-left hover:bg-nb-surface">
-                    <span className="block break-words text-sm font-medium">{item.name ?? item.slug}</span>
-                    <span className="text-xs text-nb-muted">{isConnected(item) ? 'Connected' : item.noAuth ? 'No account required'
-                      : !connectionsChecked ? 'Connection unchecked' : item.canConnect ? 'Available to connect' : 'Catalog listing'}</span>
-                    {item.categories?.[0] ? <span className="ml-2 text-xs text-nb-muted">{item.categories[0].name}</span> : null}
+                    <span className="flex items-center gap-2.5">
+                      <PluginIcon plugin={item} />
+                      <span className="min-w-0">
+                        <span className="block break-words text-sm font-medium">{item.name ?? item.slug}</span>
+                        <span className="text-xs text-nb-muted">{isConnected(item) ? 'Connected' : item.noAuth ? 'No account required'
+                          : !connectionsChecked ? 'Connection unchecked' : item.canConnect ? 'Available to connect' : 'Catalog listing'}</span>
+                        {item.categories?.[0] ? <span className="ml-2 text-xs text-nb-muted">{item.categories[0].name}</span> : null}
+                      </span>
+                    </span>
                   </button>
                 </li>)}
                 {!filtered.length && (tab === 'discover' ? !loading && !error : connectionsChecked) ? <li className="text-xs text-nb-muted">No matching plugins.</li> : null}
