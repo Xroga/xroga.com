@@ -78,6 +78,55 @@ function schemaWithout(schema: unknown, hidden: string[]): unknown {
   return s;
 }
 
+const SAFE_INT = 9007199254740991;
+
+/**
+ * What the model sees of a tool's schema, without what it can never use: the integer bounds that only restate the language's
+ * limits, the target forms for a CSS selector or screen coordinates (the agent is not offered selectors or pixel clicks, and the
+ * layer still checks every call against its own full schema), and the timeout, which the layer sets. Every model turn pays for the
+ * catalogue, so a smaller schema is a faster turn.
+ */
+/** The names of a postcondition's fields say what they check; their one-line descriptions only cost tokens. */
+function withoutLeafDescriptions(schema: unknown): unknown {
+  const s = schema as { properties?: Record<string, Record<string, unknown>> };
+  if (!s?.properties) return schema;
+  const properties = Object.fromEntries(
+    Object.entries(s.properties).map(([name, value]) => [name, Object.fromEntries(Object.entries(value).filter(([k]) => k !== 'description'))]),
+  );
+  return { ...s, properties };
+}
+
+export function compactSchema(schema: unknown, tool = ''): unknown {
+  const walk = (node: unknown, key = ''): unknown => {
+    if (Array.isArray(node)) return node.map(n => walk(n));
+    if (!node || typeof node !== 'object') return node;
+    const out: Record<string, unknown> = {};
+    for (const [k, v] of Object.entries(node as Record<string, unknown>)) {
+      if ((k === 'minimum' && v === -SAFE_INT) || (k === 'maximum' && v === SAFE_INT)) continue;
+      if (k === 'anyOf' && Array.isArray(v) && key === 'target') {
+        const kept = v.filter(variant => {
+          const required = (variant as { required?: string[] }).required ?? [];
+          return !required.includes('selector') && !(required.includes('x') && required.includes('y'));
+        });
+        out[k] = kept.length ? kept.map(n => walk(n)) : v.map(n => walk(n));
+        continue;
+      }
+      if (k === 'properties' && v && typeof v === 'object') {
+        const props: Record<string, unknown> = {};
+        for (const [name, value] of Object.entries(v as Record<string, unknown>)) {
+          if (name === 'timeoutMs' && tool !== 'wait') continue;
+          props[name] = name === 'expect' ? withoutLeafDescriptions(walk(value, name)) : walk(value, name);
+        }
+        out[k] = props;
+        continue;
+      }
+      out[k] = walk(v, k);
+    }
+    return out;
+  };
+  return walk(schema);
+}
+
 export const DONE_TOOL: AgentTool = {
   name: 'done',
   source: 'agent',
@@ -107,7 +156,7 @@ export function allTools(agentTools: AgentTool[] = []): AgentTool[] {
         required: spec.name === 'snapshot',
         description: spec.description,
         parameters: ((p: unknown) => (spec.name === 'upload' ? withAttachmentIds(p) : p))(
-          schemaWithout(argsJsonSchema(spec), [...HIDDEN['*'], ...(HIDDEN[spec.name] ?? [])]),
+          compactSchema(schemaWithout(argsJsonSchema(spec), [...HIDDEN['*'], ...(HIDDEN[spec.name] ?? [])]), spec.name),
         ),
       }) satisfies AgentTool,
   );
