@@ -47,6 +47,8 @@ export const STOPPED_BY_USER = 'Stopped · What should Nanobrowser do instead?';
 export const STOPPED_NOTE =
   'the user stopped the run; the page may have changed. Follow their next message, and observe before acting.';
 
+/** Evidence screenshots kept per run. */
+const EVIDENCE_SHOT_LIMIT = 6;
 const UNCERTAIN_WRITE_SUMMARY = 'A browser action may have been delivered. Further changes were paused.';
 
 /** The fixed line before a screenshot sent to the model. */
@@ -605,7 +607,8 @@ export class AgentLoop {
     }
     const capture = await this.#withThumb(this.#screenshotImage(outcome));
     const image = this.options.model.profile.vision ? capture : undefined;
-    const localThumbnail = this.options.localScreenshots && !image ? capture?.thumb : undefined;
+    const evidence = capture ? undefined : await this.#evidenceShot(outcome);
+    const localThumbnail = this.options.localScreenshots && !image ? (capture ?? evidence)?.thumb : undefined;
     const text = observation
       ? [cutText(outcome.text, 1_200, '… action details cut.'), cutText(observation, RESULT_CAP - 1_201, '… page observation cut.')].join('\n')
       : cutText(outcome.text, RESULT_CAP, `… the result was cut at ${RESULT_CAP} characters.`);
@@ -779,6 +782,29 @@ export class AgentLoop {
     const data = outcome.result?.data as { base64?: string; mimeType?: string } | undefined;
     if (!outcome.result?.ok || !data?.base64) return undefined;
     return { data: data.base64, mediaType: data.mimeType ?? 'image/png', note: PAGE_IMAGE_LINE };
+  }
+
+  /**
+   * A screenshot kept for the user as evidence, at the moments that matter: a page that was just opened, and a form that was
+   * just submitted. It is shown as the step's thumbnail and never sent to the model. A few per run, and never at the cost of the step.
+   */
+  #evidenceShots = 0;
+  async #evidenceShot(outcome: CallOutcome): Promise<CallOutcome['image'] | undefined> {
+    if (!this.options.localScreenshots || this.#evidenceShots >= EVIDENCE_SHOT_LIMIT || this.options.signal.aborted) return undefined;
+    const tool = outcome.call.toolName;
+    const args = (outcome.call.input ?? {}) as Record<string, unknown>;
+    const wanted =
+      (tool === 'navigate' && typeof args.url === 'string') ||
+      (tool === 'tabs' && args.action === 'open') ||
+      (tool === 'fill_form' && args.submit !== undefined);
+    if (!wanted || !outcome.result?.ok) return undefined;
+    const tabId = outcome.result.page?.tabId ?? args.tabId ?? this.#activeTab;
+    const shot = await this.options.layer
+      .call('screenshot', typeof tabId === 'number' ? { tabId } : {}, this.options.signal)
+      .catch(() => undefined);
+    if (!shot?.ok) return undefined;
+    this.#evidenceShots++;
+    return this.#withThumb(this.#screenshotImage({ ...outcome, call: { ...outcome.call, toolName: 'screenshot' }, result: shot }));
   }
 
   async #withThumb(image: CallOutcome['image'] | undefined): Promise<CallOutcome['image'] | undefined> {
