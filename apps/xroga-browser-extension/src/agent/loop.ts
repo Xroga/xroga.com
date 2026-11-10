@@ -11,6 +11,7 @@ import { addUsage, ZERO_USAGE } from '@src/store/types';
 import type { AgentEvent, ToolRow } from '@src/ui/protocol';
 import { contextChars, elideStaleObservations, toModelMessages } from './context';
 import { directNavigation, type DirectNavigation } from './direct-url';
+import { progressLedger } from './progress';
 import { browserState } from './header';
 import { assistantDisplay, userDisplay, userText } from './display';
 import type { HostPort, LayerPort } from './ports';
@@ -437,8 +438,11 @@ export class AgentLoop {
     const branch = await activeBranch(this.options.conversationId);
     const earlierResults = branch.some(e => e.type === 'message' && e.message.role === 'tool');
     if (earlierResults) {
+      const ledger = progressLedger(branch);
       await this.writer.appNote(
-        'this run continues the conversation. Refs from earlier runs are no longer valid; take a snapshot before acting on a page.',
+        'this run continues the conversation. Refs from earlier runs are no longer valid; take a snapshot before acting on a page.' +
+          (ledger ? `
+${ledger}` : ''),
       );
     }
     await this.#inlineAttachments();
