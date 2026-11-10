@@ -4,7 +4,7 @@ import { defineComponent } from "@openuidev/react-lang";
 import { z } from "zod/v4";
 import { useState } from "react";
 import { inline } from "./markdown";
-import { cx } from "./style";
+import { cx, isLongAnswerTable } from "./style";
 
 const NUMERIC = /^[-+−]?[$€£¥₹]?\s?\d[\d,]*(\.\d+)?\s?(%|[kKmMbB]|bn)?$/;
 const isElement = (value: unknown) => !!value && typeof value === "object" && (value as { type?: unknown }).type === "element";
@@ -34,7 +34,7 @@ export const Table = defineComponent({
     const cell = (value: unknown) =>
       isElement(value) ? renderNode(value) : typeof value === "number" ? value.toLocaleString("en-US", { maximumSignificantDigits: 17 }) : inline(String(value ?? ""));
     return (
-      <div className="iui-table-scroll" role="region" aria-label="Answer table" tabIndex={0}>
+      <div className={cx("iui-table-scroll", isLongAnswerTable(rows.length) && "iui-table-bounded")} role="region" aria-label="Answer table" tabIndex={0}>
         <table className="iui-table">
           <thead>
             <tr>

@@ -107,6 +107,11 @@ function TableRenderer({ block }: { block: TableBlock }) {
     {(!inlineTable || largeDataset) && tools}
     <div ref={scrollRef} tabIndex={largeDataset ? 0 : undefined} role={largeDataset ? 'region' : undefined}
       aria-label={largeDataset ? `${block.title ?? 'Table'} scroll area` : undefined}
+      onKeyDown={largeDataset ? event => {
+        if (event.target !== event.currentTarget || (event.key !== 'Home' && event.key !== 'End')) return;
+        event.preventDefault();
+        virtual.scrollToIndex(event.key === 'Home' ? 0 : rows.length - 1, { align: event.key === 'Home' ? 'start' : 'end' });
+      } : undefined}
       className={largeDataset || !inlineTable ? 'max-h-[440px] overflow-auto' : 'overflow-x-auto'}>
       <table className={`w-full border-collapse text-left text-sm ${fitColumns ? 'table-fixed [overflow-wrap:anywhere]' : 'min-w-[560px]'}`}><thead className="sticky top-0 z-10 bg-[var(--background)]"><tr>{block.selectable !== false ? <th className="w-9 border-b border-[var(--border)] p-3"><span className="sr-only">Select</span></th> : null}{table.getHeaderGroups()[0]?.headers.map((header) => <th key={header.id} scope="col" className="border-b border-[var(--border)] p-3 text-xs font-semibold"><button type="button" onClick={header.column.getToggleSortingHandler()} className="text-start">{flexRender(header.column.columnDef.header, header.getContext())}{header.column.getIsSorted() ? (header.column.getIsSorted() === 'asc' ? ' ↑' : ' ↓') : null}</button></th>)}</tr></thead>
         <tbody>{topSpacer > 0 ? <tr aria-hidden="true"><td colSpan={block.columns.length + (block.selectable !== false ? 1 : 0)} style={{ height: topSpacer, padding: 0 }} /></tr> : null}

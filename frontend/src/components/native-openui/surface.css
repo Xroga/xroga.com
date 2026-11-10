@@ -7,6 +7,8 @@
 }
 .xroga-native-openui .iui-row > *, .xroga-native-openui .iui-grid > * { min-width: 0; max-width: 100%; }
 .xroga-native-openui .iui-table-scroll { overflow: auto; max-width: 100%; }
+.xroga-native-openui .iui-table-bounded { max-block-size: min(28rem, 60vh); }
+.xroga-native-openui .iui-table-bounded thead th { position: sticky; inset-block-start: 0; z-index: 1; }
 .xroga-native-openui :focus-visible { outline: 2px solid var(--iui-focus); outline-offset: 3px; }
 .xroga-native-openui svg { max-width: 100%; }
 @media (max-width: 540px) {

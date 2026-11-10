@@ -7,6 +7,7 @@ import { z } from "zod/v4";
 const COLOR_LITERAL = /^(#[\da-f]{3,8}|(?:rgb|hsl)a?\([\d\s.%+,/-]+\)|transparent|currentcolor)$/i;
 /* Model-authored URLs never become links. Source resolves trusted evidence IDs. */
 export function webUrl(...value: [] | [unknown]): string | null { void value; return null; }
+export function isLongAnswerTable(rowCount: number): boolean { return rowCount > 40; }
 
 // Shared prop schemas
 /** Children slot: any component, or a list of them (from @Each). Printed as `Node[]`. */

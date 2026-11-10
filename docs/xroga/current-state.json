@@ -87454,7 +87454,7 @@
       "id": "surface:0fef6875af5860e2f4b4",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/markdown.tsx",
-      "sha256": "bda644b1a85c53cb182bb83fb084eec5911fd44aadeaf76e2b31f27472a95588",
+      "sha256": "7593cd869a8128cce852270da9e316e0f7a92265897ad284eaadafb4fb4fc92b",
       "symbols": [
         "Block",
         "INLINE",
@@ -87528,7 +87528,7 @@
       "id": "surface:ed03ec624a3b2b05f071",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/style.ts",
-      "sha256": "5917e4877b60ce0ab2cb2ba2d82a5c87976df61757226af91cc0deb576c272c3",
+      "sha256": "1e044a155ac88ca0e25fe4a5cd8f8eb3155e22f63ffa85c6eaff98deab963245",
       "symbols": [
         "BACKGROUND",
         "COLOR_LITERAL",
@@ -87547,6 +87547,7 @@
         "h",
         "hex",
         "ink",
+        "isLongAnswerTable",
         "length",
         "m",
         "match",
@@ -87680,7 +87681,7 @@
       "id": "surface:3f7c2c965ea05381e7ac",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/table.tsx",
-      "sha256": "a7fb8a663758f10981afd868a375a40b56a93fb55a9bd1e17aa74710a8650b17",
+      "sha256": "c86559627722395a4513dc58742b1124fbf9a1c54d46c6ad7f415fbec6ec781d",
       "symbols": [
         "NUMERIC",
         "Table",
@@ -99832,7 +99833,7 @@
       "id": "surface:63ea43cd41638dbb68bc",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/XrogaRichBlockView.tsx",
-      "sha256": "ca1cce48c259fa6393c92d9b953775f1181c1e7d9c43d3fab13bf4ff3af35cf0",
+      "sha256": "4e574c2bfaef30a72cbacc1bd540cc238ea7ff85e57fb3a19ce9d7d768a42cf2",
       "symbols": [
         "BoardRenderer",
         "CHART_COLORS",
@@ -125966,7 +125967,7 @@
       "id": "surface:bd6af899f2dd9df930f6",
       "subsystem": "browser_sandbox",
       "sourcePath": "scripts/verify-native-openui-browser.mjs",
-      "sha256": "9b44c75727aa82fb49f558d2cafacf9b9730fb59c10431426bbb6c3d0308bd8e",
+      "sha256": "9d088649c19586e443f9492f1e059eec86528c9e18df62e86118b37e26f8dc62",
       "symbols": [
         "accessibility",
         "answerRegion",
@@ -125989,6 +125990,7 @@
         "google",
         "graph",
         "graphAccessibility",
+        "heights",
         "icon",
         "metrics",
         "name",
@@ -125999,6 +126001,7 @@
         "paletteContext",
         "palettePage",
         "popupBounds",
+        "region",
         "renderedEdge",
         "results",
         "scale",

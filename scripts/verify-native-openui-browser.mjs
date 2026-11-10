@@ -9,6 +9,11 @@ import AxeBuilder from '@axe-core/playwright';
 const cases = {
   short: { text: 'Paris is the capital of France.' },
   compare: { text: 'Team costs $25 and Basic costs $10.', program: 'root = Col([Title("Plan comparison"), Text("Pick Basic for an individual or Team for collaboration."), Table(["Plan", "USD/month"], [["Team", 25], ["Basic", 10]])])' },
+  largeTable: {
+    text: 'Review the detailed results in the table.',
+    program: 'root = Col([Table(["Item", "Details"], ' +
+      JSON.stringify(Array.from({ length: 110 }, (_, index) => [`Item ${index + 1}`, index % 2 ? 'A longer description that wraps on narrow screens.' : 'Brief detail.'])) + ')])',
+  },
   revenue: {
     text: 'At $25 per attendee, gross revenue is $1,000 for 40 attendees.',
     prompt: 'Build a workshop revenue simulator with $25 per attendee, attendance range 10–80, and a graph for attendance 20/40/60. When I change attendees, update gross revenue locally. Include a reset control and accurate source values.',
@@ -120,6 +125,19 @@ try {
       await table.waitFor();
       await table.getByRole('button', { name: 'USD/month' }).click();
       assert.match(await table.getByRole('row').nth(1).innerText(), /Basic/);
+      assert.equal(await page.getByRole('region', { name: 'Answer table' }).evaluate(el => el.scrollHeight - el.clientHeight), 0);
+      if (viewport.width === 390) {
+        await open('largeTable');
+        const region = page.getByRole('region', { name: 'Answer table' });
+        const heights = await region.evaluate(el => ({ viewport: el.clientHeight, total: el.scrollHeight }));
+        assert.ok(heights.viewport <= 448 && heights.total > heights.viewport);
+        await region.press('End');
+        await page.waitForFunction(() => {
+          const region = document.querySelector('.iui-table-bounded');
+          return region && region.scrollHeight - region.clientHeight - region.scrollTop < 3;
+        });
+        assert.equal(await region.getByRole('cell', { name: 'Item 110', exact: true }).count(), 1);
+      }
       await open('revenue');
       const slider = page.getByRole('slider', { name: 'Attendees' });
       await slider.waitFor();

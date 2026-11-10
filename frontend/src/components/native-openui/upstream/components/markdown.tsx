@@ -1,5 +1,5 @@
 import { Fragment, type ReactNode } from "react";
-import { webUrl } from "./style";
+import { cx, isLongAnswerTable, webUrl } from "./style";
 
 // A small Markdown renderer that builds React elements and never injects HTML.
 // Inline: **bold**, *italic*, ~~strike~~, `code`, [text](https://...).
@@ -154,7 +154,7 @@ export function MarkdownBlocks({ text, renderCitation }: { text: string; renderC
           }
           case "table":
             return (
-              <div key={k} className="iui-table-scroll">
+              <div key={k} className={cx("iui-table-scroll", isLongAnswerTable(b.rows.length) && "iui-table-bounded")} role="region" aria-label="Answer table" tabIndex={0}>
                 <table className="iui-table">
                   <thead>
                     <tr>{b.head.map((h, j) => <th key={j}>{inline(h, `${k}-h${j}`, renderCitation)}</th>)}</tr>
