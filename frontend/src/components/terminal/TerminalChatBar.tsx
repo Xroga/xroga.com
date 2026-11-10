@@ -79,6 +79,7 @@ export function TerminalChatBar({ starter = false }: { starter?: boolean }) {
     loading,
     submit,
     stop,
+    startNewChat,
   } = useTerminalChat();
   const hydrated = useHydrated();
   const activeArtifactId = useXrogaArtifactContext((state) => state.activeArtifactId);
@@ -140,9 +141,11 @@ export function TerminalChatBar({ starter = false }: { starter?: boolean }) {
     const url = new URL(window.location.href);
     const skill = nativeWorkSkillById(url.searchParams.get('nativeSkill'));
     if (!skill || url.pathname !== '/workspace') return;
+    // Library starts a fresh, unassigned conversation in Recents; the plus-menu
+    // picker intentionally keeps its existing conversation instead.
+    startNewChat();
     const scaffold = buildNativeWorkSkillPrompt(skill);
-    const existingDraft = draftRef.current.trim();
-    const next = existingDraft ? `${scaffold}\n\n${existingDraft}` : scaffold;
+    const next = scaffold;
     setSelectedTool({label:skill.title,category:'Native Skill',description:skill.description,tone:'purple',scaffold});
     setDraft(next);
     draftRef.current = next;
@@ -151,7 +154,7 @@ export function TerminalChatBar({ starter = false }: { starter?: boolean }) {
     url.searchParams.delete('nativeSkill');
     window.history.replaceState(window.history.state,'',url.pathname+url.search+url.hash);
     window.setTimeout(()=>textareaRef.current?.focus(),80);
-  },[setPrompt,sessionRestoring]);
+  },[setPrompt,sessionRestoring,startNewChat]);
 
 
   const [integrationsOpen, setIntegrationsOpen] = useState(false);
