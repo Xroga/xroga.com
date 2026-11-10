@@ -7,7 +7,8 @@ describe('networkFailure', () => {
     expect(result?.code).toBe('ERR_NAME_NOT_RESOLVED');
     expect(result?.message).toContain('DNS lookup failed');
     expect(result?.message).toContain('nothing on the page changed');
-    expect(result?.hint).toContain('Do not retry the same address');
+    expect(result?.hint).toContain('already tried twice');
+    expect(result?.hint).toContain('do not guess another address');
   });
 
   it('names connection and certificate failures', () => {

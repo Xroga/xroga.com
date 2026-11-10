@@ -157,6 +157,8 @@ describe('navigate removes its readiness listener', () => {
       .filter(([method]) => method === 'Page.lifecycleEvent');
     expect(lifecycle).toHaveLength(3);
     for (const [, off] of lifecycle) expect(off).toHaveBeenCalledTimes(1);
+    // A lookup that fails is tried once more after a pause, never a third time.
+    expect((attachment.page.goto as unknown as ReturnType<typeof vi.fn>).mock.calls).toHaveLength(6);
   });
 });
 

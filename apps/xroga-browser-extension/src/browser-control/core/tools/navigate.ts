@@ -16,6 +16,9 @@ import { quote } from '../text';
 /** DOMContentLoaded plus network idle, capped at 5 s. */
 const NAVIGATION_BUDGET_MS = 5_000;
 const NAVIGATION_TIMEOUT_MS = 30_000;
+/** Failures before any request reached a server, worth one more try after a short pause. */
+const TRANSIENT_LOOKUP = /net::ERR_(?:NAME_NOT_RESOLVED|NETWORK_CHANGED|INTERNET_DISCONNECTED)/;
+const TRANSIENT_RETRY_MS = 800;
 
 /**
  * An absolute address. A site written the way people say it ("example.com", "www.example.com/pricing") is read as https, so the
@@ -61,7 +64,7 @@ export function networkFailure(message: string): { code: string; message: string
     hint:
       code === 'ERR_ABORTED'
         ? 'Take a snapshot to see where the tab is, then continue.'
-        : 'Do not retry the same address. If another address for the same site is realistic (for example with or without www), try it once; otherwise tell the user the exact Chrome error and that the site could not be reached from this browser.',
+        : 'The address was already tried twice. Do not retry it and do not guess another address (a www or other spelling usually fails the same way). Tell the user the exact Chrome error and that the site could not be reached from this browser; the cause is outside the page, for example the computer’s DNS, a VPN or a blocker.',
   };
 }
 
@@ -119,10 +122,21 @@ async function runNavigation(
   tab.actionSeq++;
   let failure: unknown;
   try {
-    try {
-      await go();
-    } catch (error) {
-      failure = error;
+    // A lookup that fails once and works a moment later is common (a network that is waking up, a resolver that missed): the
+    // address is tried a second time after a short pause. Only failures where no request reached any server are repeated.
+    for (let attempt = 0; ; attempt++) {
+      failure = undefined;
+      try {
+        await go();
+      } catch (error) {
+        failure = error;
+      }
+      const text = failure instanceof Error ? failure.message : String(failure ?? '');
+      if (failure && attempt === 0 && TRANSIENT_LOOKUP.test(text)) {
+        await new Promise(resolve => setTimeout(resolve, TRANSIENT_RETRY_MS));
+        continue;
+      }
+      break;
     }
     const ready = failure ? 'failed' : await readiness.wait();
     const events = tab.guard?.drain() ?? [];
