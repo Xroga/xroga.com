@@ -97706,7 +97706,7 @@
       "id": "surface:9c57a6290c71522141f5",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/SwarmMessageLog.tsx",
-      "sha256": "062502ced2cf3c8df965fb56c6af3153dc8691a6c6010fd0b563728cb696cf50",
+      "sha256": "03e992bcd4282f9a406c8a7fecbb3b9bb92f5a9b301f7151ad26d821d9f147e8",
       "symbols": [
         "AGENT_STYLES",
         "SwarmMessageLog",
@@ -154816,7 +154816,7 @@
     {
       "id": "test-suite:078f6241470c34fa2ea0",
       "sourcePath": "frontend/src/lib/workspaceChatbarScrollBoundary20261103.test.ts",
-      "declaredTests": 1,
+      "declaredTests": 2,
       "skipLocations": [],
       "focusLocations": []
     },
