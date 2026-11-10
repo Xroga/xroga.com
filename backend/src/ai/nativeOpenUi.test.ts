@@ -27,6 +27,28 @@ test('native layout, data and reactive arithmetic are accepted without a V2 tran
   for (const program of programs) assert.deepEqual(validateNativeOpenUi(program), { ok: true }, program);
 });
 
+test('Workspace strips only the trailing provider transport envelope from a native program', () => {
+  const prose = 'The browser is not a trusted authorization boundary.';
+  const program = 'root = Col([Text("A quoted </｜DSML｜ parameter> example stays intact."), List([ListItem("Verify the signature")], "timeline")])';
+  const wire = prose + NATIVE_UI_MARKER + program + '</｜DSML｜ parameter>\r\n</｜DSML｜ invoke>\r\n</｜DSML｜ calls>\n';
+  assert.deepEqual(completeNativeWorkspaceAnswer(wire, 'stop'), {
+    response: prose, completion: { status: 'complete' }, responseSource: { format: 'xroga-openui-v1', text: program },
+  });
+  assert.equal(splitNativeOpenUiAnswer(prose + NATIVE_UI_MARKER + program).program, program);
+});
+
+test('the saved prose and clipboard fallback retain the substantive native body after an unfinished heading', () => {
+  const prose = 'Separate identity and authorization.\n\n## Request path';
+  const program = 'root = Col([Title("Request path"), Text("Separate identity and authorization."), Diagram("Trust boundaries", [{id: "client", label: "Client", level: 0}, {id: "app", label: "App", level: 1}], [{from: "client", to: "app", label: "HTTPS"}], "The app authorizes the request."), Table(["Concern", "Guard"], [["Billing", "Verify the webhook"]])])';
+  const answer = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + program, 'stop');
+  assert.equal(answer.completion.status, 'complete');
+  assert.equal(answer.responseSource.text, program);
+  assert.ok(answer.response.startsWith(prose));
+  assert.match(answer.response, /Client → App: HTTPS/);
+  assert.match(answer.response, /Billing \| Verify the webhook/);
+  assert.equal(answer.response.match(/Separate identity/g)?.length, 1);
+});
+
 test('native chat is a deploy-time DeepSeek flag independent of founder evaluation', () => {
   const flag = { XROGA_NATIVE_OPENUI_WORKSPACE: '1' };
   const deepSeek = 'deepseek_v4_1_flash_1017';

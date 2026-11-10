@@ -1,5 +1,5 @@
 import { publicCompletionState } from './completionDiagnostics.js';
-import { NATIVE_UI_FORMAT, splitNativeOpenUiAnswer, validateNativeOpenUi } from './nativeOpenUi.js';
+import { NATIVE_UI_FORMAT, splitNativeOpenUiAnswer, supplementUnfinishedNativeProse, validateNativeOpenUi } from './nativeOpenUi.js';
 import { requiresNativeAuthorizationReview } from './nativeOpenUiAccuracy.js';
 
 /** Deployment-owned presentation choice; never reads a user role or client flag.
@@ -25,7 +25,7 @@ export function completeNativeWorkspaceAnswer(
       : publicCompletionState(finishReason, response);
   const valid = !!text && validation?.ok === true && completion.status === 'complete';
   return {
-    response,
+    response: valid ? supplementUnfinishedNativeProse(response, program) : response,
     completion: (!text || (program && !valid)) && completion.status === 'complete'
       ? { status: 'partial' as const, reason: 'presentation_contract' as const } : completion,
     responseSource: { format: NATIVE_UI_FORMAT, text: valid ? program : '' },

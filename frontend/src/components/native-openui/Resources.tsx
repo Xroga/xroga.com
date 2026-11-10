@@ -19,6 +19,24 @@ const resources = {
 };
 const resourceKey = z.enum(['nextjs', 'supabase', 'stripe', 'postgresql', 'react', 'vercel', 'github', 'cloudflare']);
 
+function Mark({ path }: { path: string }) {
+  return <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d={path} /></svg>;
+}
+
+const diagramResources = {
+  'next.js (server)': resources.nextjs,
+  'supabase auth': resources.supabase,
+  'stripe billing': resources.stripe,
+  'postgres + rls': resources.postgresql,
+};
+
+export function DiagramResourceMark({ label, fallback }: { label: string; fallback: React.ReactNode }) {
+  const key = label.trim().toLowerCase();
+  const resource = Object.values(resources).find(item => item.label.toLowerCase() === key)
+    ?? (Object.hasOwn(diagramResources, key) ? diagramResources[key as keyof typeof diagramResources] : undefined);
+  return resource ? <Mark path={resource.mark.path} /> : fallback;
+}
+
 function ResourceMark({ origin, research = false }: { origin: string; research?: boolean }) {
   const hostname = origin.replace(/^www[.]/, '');
   const resource = Object.values(resources).find(item => {
@@ -26,7 +44,7 @@ function ResourceMark({ origin, research = false }: { origin: string; research?:
     return hostname === domain || hostname.endsWith('.' + domain);
   });
   return resource
-    ? <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d={resource.mark.path} /></svg>
+    ? <Mark path={resource.mark.path} />
     : research ? <SourceLogo domain={hostname} size={15} /> : <Globe size={15} aria-hidden="true" />;
 }
 

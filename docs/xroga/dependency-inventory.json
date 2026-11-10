@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "4ac65bd989267f5dc5ad62e234b3a66c98b77d6c",
+  "source_sha": "fa4ca2ea0c3463009e3c753efe8bb7b12211c01d",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -16912,7 +16912,7 @@
     },
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
-      "sha256": "dba9ac7f239d7bc51bdb5b3db7a39ab6918862e6c1ae32b5759d9f37916cf591"
+      "sha256": "60cc4c55f353cd5c278fdb54d8b34644e9d241a22f890078d83b1eb78b534b0c"
     },
     {
       "path": "backend/src/ai/nativeOpenUiAccuracy.ts",
@@ -16932,7 +16932,7 @@
     },
     {
       "path": "backend/src/ai/nativeOpenUiWorkspace.ts",
-      "sha256": "ae9ed06e3c07b0e1ae23443d6a3de7f6fd4dc26291f06dfba1e457979d13e146"
+      "sha256": "33d4325597012248fe114e4975ea6e5e5fcdbee24c1aa61bfc6dd9dd4a0546d9"
     },
     {
       "path": "backend/src/ai/openaiCompat.ts",
@@ -22024,7 +22024,7 @@
     },
     {
       "path": "frontend/src/components/native-openui/Diagram.tsx",
-      "sha256": "d0b94660d8876ae7d869c91963d40ef25e44faaa38bae7697ef80b6a876178f1"
+      "sha256": "5315747a1da0365e947583b191ae0644f3edf699d0ecd35efe37d5b34e6ee77b"
     },
     {
       "path": "frontend/src/components/native-openui/Editorial.tsx",
@@ -22044,7 +22044,7 @@
     },
     {
       "path": "frontend/src/components/native-openui/Resources.tsx",
-      "sha256": "245ebef80f672cc2ef3aa64400fae3c20aac19cc1d7ac06e3eb78919d5fb8096"
+      "sha256": "59c7777f8a2318ef06abd9c525163c6e48439adbcdc01831ac8b913c6c784c2f"
     },
     {
       "path": "frontend/src/components/native-openui/Tabs.tsx",
@@ -22096,7 +22096,7 @@
     },
     {
       "path": "frontend/src/components/native-openui/upstream/components/text.tsx",
-      "sha256": "873aae3e4abe68f12717a5442cfe9dabf9204c4960c16c5dd8a161d9b2de1b60"
+      "sha256": "ac8648b6b416f3fecfe76b2b0bef7581bcf21d6b11e2f62edfd6872755119b45"
     },
     {
       "path": "frontend/src/components/native-openui/upstream/functions/calendar.ts",
@@ -32197,35 +32197,42 @@
     },
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
-      "line": 35,
+      "line": 80,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
-      "line": 52,
+      "line": 107,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
-      "line": 60,
+      "line": 124,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
-      "line": 75,
+      "line": 132,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
-      "line": 94,
+      "line": 147,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/nativeOpenUi.ts",
+      "line": 166,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -38336,21 +38343,21 @@
     },
     {
       "path": "frontend/src/components/native-openui/Diagram.tsx",
-      "line": 50,
+      "line": 51,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/native-openui/Diagram.tsx",
-      "line": 52,
+      "line": 53,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/native-openui/Diagram.tsx",
-      "line": 69,
+      "line": 70,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

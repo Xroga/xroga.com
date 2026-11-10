@@ -146,17 +146,18 @@ export const List = defineComponent({
   name: "List",
   props: z.object({
     items: z.array(z.union([z.string(), ListItem.ref])),
-    marker: z.enum(["bullet", "number", "none"]).optional(),
+    marker: z.enum(["bullet", "number", "none", "timeline"]).optional(),
     timeline: z.boolean().optional(),
   }),
-  description: "timeline joins the markers with a line.",
+  description: "timeline joins the markers with a line. The timeline marker is shorthand for a numbered timeline.",
   component: ({ props, renderNode }) => {
     const items = (Array.isArray(props.items) ? props.items.flat() : []) as unknown[];
-    const marker = props.marker ?? "bullet";
+    const marker = props.marker === "timeline" ? "number" : (props.marker ?? "bullet");
+    const timeline = props.timeline || props.marker === "timeline";
     const textMarkers = items.some((item) => isItem(item) && typeof item.props.marker === "string" && item.props.marker.length > 2);
     const Tag = marker === "number" ? "ol" : "ul";
     return (
-      <Tag className={cx("iui-list", `iui-list-${marker}`, props.timeline && "iui-timeline", textMarkers && "iui-list-wide")}>
+      <Tag className={cx("iui-list", `iui-list-${marker}`, timeline && "iui-timeline", textMarkers && "iui-list-wide")}>
         {items.map((item, i) => {
           if (item == null) return null;
           const custom = isItem(item) && typeof item.props.marker === "string" && item.props.marker ? item.props.marker : null;

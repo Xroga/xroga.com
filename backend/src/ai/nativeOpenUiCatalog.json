@@ -63,8 +63,8 @@
         "description": "Pill tag; icon is an optional leading lucide name."
       },
       "List": {
-        "signature": "List(items: (string | ListItem)[], marker?: \"bullet\" | \"number\" | \"none\", timeline?: boolean)",
-        "description": "timeline joins the markers with a line."
+        "signature": "List(items: (string | ListItem)[], marker?: \"bullet\" | \"number\" | \"none\" | \"timeline\", timeline?: boolean)",
+        "description": "timeline joins the markers with a line. The timeline marker is shorthand for a numbered timeline."
       },
       "ListItem": {
         "signature": "ListItem(title: string, description?: string, marker?: string, children?: Node[])",
@@ -1107,7 +1107,8 @@
               "enum": [
                 "bullet",
                 "number",
-                "none"
+                "none",
+                "timeline"
               ]
             },
             "timeline": {
@@ -1118,7 +1119,7 @@
             "items"
           ],
           "additionalProperties": false,
-          "description": "timeline joins the markers with a line."
+          "description": "timeline joins the markers with a line. The timeline marker is shorthand for a numbered timeline."
         },
         "ListItem": {
           "type": "object",
@@ -4060,7 +4061,8 @@
             "enum": [
               "bullet",
               "number",
-              "none"
+              "none",
+              "timeline"
             ]
           },
           "timeline": {
@@ -4071,7 +4073,7 @@
           "items"
         ],
         "additionalProperties": false,
-        "description": "timeline joins the markers with a line."
+        "description": "timeline joins the markers with a line. The timeline marker is shorthand for a numbered timeline."
       },
       "ListItem": {
         "type": "object",

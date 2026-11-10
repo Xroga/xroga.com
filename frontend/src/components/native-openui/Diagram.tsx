@@ -5,6 +5,7 @@ import { Background, Controls, Handle, MarkerType, Position, ReactFlow, ReactFlo
 import { useEffect, useId, useRef, useState } from 'react';
 import { z } from 'zod/v4';
 import { Glyph } from './upstream/components/glyph';
+import { DiagramResourceMark } from './Resources';
 
 const diagramNode = z.object({
   id: z.string().regex(/^[a-z][a-z0-9-]{0,31}$/),
@@ -35,7 +36,7 @@ function AnswerDiagramNode({ data }: NodeProps<AnswerNode>) {
     <Handle type="target" position={Position.Bottom} id="bottom" />
     <Handle type="target" position={Position.Left} id="left" />
     <Handle type="target" position={Position.Right} id="right" />
-    <span className="native-diagram-node-title">{data.icon && <Glyph name={data.icon} size={16} />}{data.label}</span>
+    <span className="native-diagram-node-title"><DiagramResourceMark label={data.label} fallback={data.icon && <Glyph name={data.icon} size={16} />} />{data.label}</span>
     {data.detail && <span className="native-diagram-node-detail">{data.detail}</span>}
     <Handle type="source" position={Position.Bottom} />
     <Handle type="source" position={Position.Top} id="top" />
