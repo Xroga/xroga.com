@@ -239,7 +239,7 @@ export function TerminalChatBar({ starter = false }: { starter?: boolean }) {
     setPrompt(text);
     lastExternalPrompt.current = text;
 
-    if (!(await ensureRepoWorkspace(text))) {
+    if (!(await ensureRepoWorkspace())) {
       setSendState('idle');
       return;
     }
