@@ -1,6 +1,5 @@
 'use client';
 
-import { isLocalChromeRequest, useWorkspaceBrowserOperator, WorkspaceBrowserProgress } from '@/components/browser/WorkspaceBrowserOperator';
 
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { useTerminalChat } from '@/context/TerminalChatContext';
@@ -73,8 +72,6 @@ function renameFile(file: File, newName: string) {
 }
 
 export function TerminalChatBar({ starter = false }: { starter?: boolean }) {
-  const browserOperator = useWorkspaceBrowserOperator();
-  const [browserPrompted, setBrowserPrompted] = useState(false);
   const workspaceIdentity = useWorkspaceIdentity();
   const isGuest = workspaceIdentity.status === 'guest';
   const { requestAuthGate } = useWorkspaceAuthGate();
@@ -290,19 +287,6 @@ export function TerminalChatBar({ starter = false }: { starter?: boolean }) {
     const raw = (textareaRef.current?.value ?? draft).trim();
     const text = autocorrectText(raw);
     if (!text && files.length === 0) return;
-    if (!incognito && !isGuest && isLocalChromeRequest(raw)) {
-      setBrowserPrompted(true);
-      const goal = raw.replace(/^\s*\/chrome\s*/i, '').trim();
-      if (goal && await browserOperator?.start(goal, files)) {
-        setDraft('');
-        draftRef.current = '';
-        lastExternalPrompt.current = '';
-        setPrompt('');
-        setFiles([]);
-        setSelectedTool(null);
-      }
-      return;
-    }
     setVoiceEpoch(value => value + 1);
     setDraft(text);
     draftRef.current = text;
@@ -603,7 +587,6 @@ export function TerminalChatBar({ starter = false }: { starter?: boolean }) {
         }}
       />
       <div className="relative">
-        {!incognito && <WorkspaceBrowserProgress operator={browserOperator} prompted={browserPrompted} />}
         <ChatbarShell
           ref={shellRef}
           className={cn(
