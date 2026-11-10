@@ -883,11 +883,11 @@
     },
     {
       "path": "scripts/security/hosted-workspace-staging.mjs",
-      "sha256": "ee67109683ac75adefc4f8f2152233fa02f254697c83d7a6ef986ef144690b19"
+      "sha256": "15d46b6faa21da2a0841b224ba43b682456bcb05bbf351fd3b02f8414214d15e"
     },
     {
       "path": "scripts/security/hosted-workspace-staging.test.mjs",
-      "sha256": "e51ad4577251881cf451c0bbc70daf18f93a32bbca48e89993fbff7e307cb2ac"
+      "sha256": "440e2810537f5dc55055aab04daf2e6a7a0f9b7b13fea30314030e06581fbe9b"
     }
   ],
   "previousCallerCounts": {
