@@ -56,6 +56,8 @@
 .bh-hero-photo{left:21%;opacity:.72;transform:scale(1.12) translate(calc(var(--bh-x,0)*-12px),calc(var(--bh-y,0)*-12px));transition:transform .45s ease-out;mask-image:linear-gradient(to right,transparent 0%,black 16%,black 100%)}
 .bh-hero-photo .bh-art-image{object-position:57% center;filter:brightness(.68) contrast(1.28) saturate(.53)}
 .bh-hero::after{position:absolute;inset:0;background:linear-gradient(90deg,rgba(1,3,6,.94) 0%,rgba(1,3,6,.73) 33%,transparent 67%),linear-gradient(0deg,#030407 0%,transparent 20%,transparent 83%,rgba(0,0,0,.42) 100%);content:"";z-index:2;pointer-events:none}
+.bh-hero-mesh{inset:0 0 0 23%;opacity:.8;mix-blend-mode:screen;mask-image:linear-gradient(to right,transparent 0%,black 39%);z-index:1;filter:drop-shadow(0 0 12px rgba(207,233,250,.12))}
+.bh-hero-mesh .bh-art-image{object-fit:contain;object-position:70% center;filter:contrast(1.14) brightness(1.12)}
 .bh-hero-singularity{position:absolute;left:50%;top:45%;z-index:1;width:min(72vw,860px);aspect-ratio:1;pointer-events:none;transform:translate(calc(-5% + var(--bh-x,0)*23px),calc(-45% + var(--bh-y,0)*13px));filter:drop-shadow(0 0 32px rgba(221,245,255,.2))}
 .bh-hero-singularity span{position:absolute;inset:5%;border-radius:50%;border:1px solid rgba(238,249,255,.15);transform:rotate(-24deg) scaleY(.62);box-shadow:inset 0 0 9px rgba(219,240,255,.12),0 0 15px rgba(216,235,247,.16);animation:bh-orbit-drift 17s ease-in-out infinite alternate}
 .bh-hero-singularity span:nth-of-type(2){inset:12%;transform:rotate(16deg) scaleY(.66);animation-duration:22s;border-color:rgba(255,255,255,.35)}
@@ -308,6 +310,8 @@
  .bh-hero-content{padding-top:0;padding-bottom:100px}
  .bh-hero-photo{inset:0 0 10% 0;opacity:.55;mask-image:linear-gradient(0deg,transparent,black 50%);transform:none}
  .bh-hero-photo .bh-art-image{object-position:63% 10%}
+ .bh-hero-mesh{inset:0;opacity:.64;mask-image:linear-gradient(0deg,transparent 0%,black 53%)}
+ .bh-hero-mesh .bh-art-image{object-fit:cover;object-position:67% 10%}
  .bh-hero-singularity{width:110vw;left:0;top:17%;transform:none}
  .bh-hero::after{background:linear-gradient(0deg,#030407 7%,rgba(0,0,0,.7) 31%,transparent 65%)}
  .bh-hero-lead{margin-top:25px!important}
