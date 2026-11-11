@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "1575dabe88300024f08b22afcfd2e54e4080a055",
+  "source_sha": "c310060592fff7887853001b0e3e2162aacb6a7c",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -16610,11 +16610,11 @@
     },
     {
       "path": ".github/workflows/chat-turn-rail-browser.yml",
-      "sha256": "3db90a31a49466be172d1c83b56005ac4d1d39e852a912833230cd731d43ffdc"
+      "sha256": "d0dc2a9e2220ebc5709339a98fe6e353b07c64355a5f8cbac4fcfef9ba23018b"
     },
     {
       "path": ".github/workflows/command3-auth-browser.yml",
-      "sha256": "281182a82b05e9ff4216e56fcc8c4be9e0c119f37df2085e145ae64cf7db51ef"
+      "sha256": "63bbf376917f45483f6dcaa2f177b9acd1ed319220818e1a1c1ce45530b7ae3c"
     },
     {
       "path": ".github/workflows/command4-authority.yml",
@@ -16658,7 +16658,7 @@
     },
     {
       "path": ".github/workflows/unit-tests.yml",
-      "sha256": "60d2f50de15081db9d42b125c4feb8229b9a809a316c88c0b3234a8c1652b84a"
+      "sha256": "e45881d46f536d72c3f4d41dc3a823dd474eded6bfdf0c377edf386d748a333d"
     },
     {
       "path": ".github/workflows/vercel-build-check.yml",
@@ -16666,7 +16666,7 @@
     },
     {
       "path": ".github/workflows/xroga-golden-journeys.yml",
-      "sha256": "9004ef4d67476a930bf7a17909423cf808a7865b89fec14d5c17cc65e3c2f0f6"
+      "sha256": "8a53dcaab8b17ed0102ed676bb589fe66af4ecfb6ee3fdd40b33cdeaee854dd9"
     },
     {
       "path": ".github/workflows/xroga-mission-policy.yml",
@@ -16942,7 +16942,7 @@
     },
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
-      "sha256": "82aa0f883644ac8d18288951544ec1c46e8fed7d9737e34e7585968ed322c7b5"
+      "sha256": "5a4fd1155d647bacec74b21ed5b6911b72fb61e56785cb7e7b8da1840dd5ed8d"
     },
     {
       "path": "backend/src/ai/nativeOpenUiAccuracy.ts",
@@ -32322,49 +32322,49 @@
     },
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
-      "line": 334,
+      "line": 344,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
-      "line": 353,
+      "line": 363,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
-      "line": 360,
+      "line": 370,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
-      "line": 361,
+      "line": 371,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
-      "line": 362,
+      "line": 372,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
-      "line": 367,
+      "line": 377,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
-      "line": 391,
+      "line": 401,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/openui-live-skills-compatibility-20261111",
-    "sha": "1575dabe88300024f08b22afcfd2e54e4080a055",
-    "sourceTimestampUtc": "2026-11-11T18:44:40+05:00",
-    "auditStartedUtc": "2026-11-11T13:45:34.092Z",
+    "sha": "c310060592fff7887853001b0e3e2162aacb6a7c",
+    "sourceTimestampUtc": "2026-11-11T20:47:42+05:00",
+    "auditStartedUtc": "2026-11-11T15:48:10.435Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -5161,7 +5161,7 @@
       "id": "surface:456e62cb099b42e5c2a2",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUi.ts",
-      "sha256": "82aa0f883644ac8d18288951544ec1c46e8fed7d9737e34e7585968ed322c7b5",
+      "sha256": "5a4fd1155d647bacec74b21ed5b6911b72fb61e56785cb7e7b8da1840dd5ed8d",
       "symbols": [
         "MAX_PROGRAM_CHARS",
         "NATIVE_UI_FORMAT",
@@ -5195,7 +5195,7 @@
         "group",
         "included",
         "index",
-        "invalidList",
+        "invalidBlock",
         "item",
         "items",
         "key",
@@ -5238,6 +5238,7 @@
         "reject",
         "remaining",
         "render",
+        "resolve",
         "resolveRecoveryReference",
         "restored",
         "result",
@@ -5246,6 +5247,7 @@
         "rewriteListItems",
         "root",
         "row",
+        "rows",
         "safeKey",
         "salvage",
         "salvageLayout",
@@ -140626,14 +140628,14 @@
     {
       "id": "workflow:192b8e3de52f74275313",
       "sourcePath": ".github/workflows/chat-turn-rail-browser.yml",
-      "sha256": "3db90a31a49466be172d1c83b56005ac4d1d39e852a912833230cd731d43ffdc",
+      "sha256": "d0dc2a9e2220ebc5709339a98fe6e353b07c64355a5f8cbac4fcfef9ba23018b",
       "sourceEntrypoints": [],
       "hasSchedule": false
     },
     {
       "id": "workflow:a7962a7c78b10b796636",
       "sourcePath": ".github/workflows/command3-auth-browser.yml",
-      "sha256": "281182a82b05e9ff4216e56fcc8c4be9e0c119f37df2085e145ae64cf7db51ef",
+      "sha256": "63bbf376917f45483f6dcaa2f177b9acd1ed319220818e1a1c1ce45530b7ae3c",
       "sourceEntrypoints": [
         "frontend/e2e/phase4-admin-share.security.mjs",
         "frontend/e2e/phase4-api-clients.security.mjs",
@@ -140732,7 +140734,7 @@
     {
       "id": "workflow:cd0effce06f425599e96",
       "sourcePath": ".github/workflows/unit-tests.yml",
-      "sha256": "60d2f50de15081db9d42b125c4feb8229b9a809a316c88c0b3234a8c1652b84a",
+      "sha256": "e45881d46f536d72c3f4d41dc3a823dd474eded6bfdf0c377edf386d748a333d",
       "sourceEntrypoints": [
         "scripts/ci/compare-baseline-runs.mjs",
         "scripts/ci/prepare-pr-integration.mjs",
@@ -140756,7 +140758,7 @@
     {
       "id": "workflow:91a0343d88e6b45453b7",
       "sourcePath": ".github/workflows/xroga-golden-journeys.yml",
-      "sha256": "9004ef4d67476a930bf7a17909423cf808a7865b89fec14d5c17cc65e3c2f0f6",
+      "sha256": "8a53dcaab8b17ed0102ed676bb589fe66af4ecfb6ee3fdd40b33cdeaee854dd9",
       "sourceEntrypoints": [
         "scripts/xroga/golden-journeys.test.mjs",
         "scripts/xroga/run-golden-browser.mjs",
@@ -144992,86 +144994,86 @@
       "reachable": false
     },
     {
-      "id": "frontend-call:aa1367f9925e4d31ff46",
+      "id": "frontend-call:911384da230e3cf8138b",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 540,
+      "line": 566,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:671cd77645d9509844d1",
+      "id": "frontend-call:d1d2b511d66894aeeca0",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 543,
+      "line": 569,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:51beefb84f34e1f1f378",
+      "id": "frontend-call:9c72fb6c7ece39cf2ed6",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1308,
+      "line": 1334,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:dff39155d27257bfec68",
+      "id": "frontend-call:3d6b375b7aab207bc7a5",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1309,
+      "line": 1335,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:82d6185968ba95d5e8ac",
+      "id": "frontend-call:3abd5fe58dc2f8a733f2",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1314,
+      "line": 1340,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:e57de038c8b27ccf485d",
+      "id": "frontend-call:ac9a09796fc0b0b858fd",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1315,
+      "line": 1341,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:d82d239fe0d30d5b22a9",
+      "id": "frontend-call:911db43288169a65429b",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1321,
+      "line": 1347,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:968daa4cc23d6d34594d",
+      "id": "frontend-call:cf3131a7410bf8aa31e1",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1326,
+      "line": 1352,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:472d50743575b74ecc8c",
+      "id": "frontend-call:24797baa6c74c8316b52",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1383,
+      "line": 1409,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:764fe81e1cb093bb1930",
+      "id": "frontend-call:5d67e6ecbf43114bc464",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1384,
+      "line": 1410,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:8719e21bc1fcfc1b511e",
+      "id": "frontend-call:0f8dd25b867de4ccb489",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1391,
+      "line": 1417,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:dae720995b358fc3089a",
+      "id": "frontend-call:b978d47f373b116f0865",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1405,
+      "line": 1431,
       "callee": "fetch",
       "reachable": false
     },
