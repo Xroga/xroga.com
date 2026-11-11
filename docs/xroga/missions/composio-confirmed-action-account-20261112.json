@@ -15,9 +15,11 @@
     "frontend/src/components/browser/WorkspaceBrowserOperator.test.ts",
     "frontend/src/components/layout/AppShell.tsx",
     "docs/xroga/current-state.json",
+    "docs/xroga/current-state.md",
     "docs/xroga/dependency-inventory.json",
     "docs/xroga/deployment-topology.md",
     "docs/xroga/research/source-manifest.json",
+    "docs/xroga/security/caller-reviews.json",
     "docs/xroga/runtime-contract.md",
     "docs/xroga/secret-inventory.md",
     "docs/xroga/missions/composio-confirmed-action-account-20261112.json"
