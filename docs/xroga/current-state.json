@@ -144922,6 +144922,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:72c8d2e0977924ecf847",
+      "sourcePath": "apps/xroga-browser-extension/src/agent/__tests__/evidence-actions.test.ts",
+      "declaredTests": 4,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:7e4b3bf9c93638fb4554",
       "sourcePath": "apps/xroga-browser-extension/src/agent/__tests__/export.test.ts",
       "declaredTests": 6,
