@@ -1,6 +1,6 @@
 import { publicCompletionState } from './completionDiagnostics.js';
 import { NATIVE_UI_FORMAT, PARTIAL_NATIVE_PRESENTATION_NOTE, recoverIndependentNativeSections, recoverNativeMonthlyChart, splitNativeOpenUiAnswer, supplementNativeProse, validateNativeOpenUi, type NativeUiDiagnostic } from './nativeOpenUi.js';
-import { nativeAnswerReviewReason, suppliedMonthlyComparison } from './nativeOpenUiAccuracy.js';
+import { nativeAnswerReviewReason, nativeTechnicalCorrections, suppliedMonthlyComparison } from './nativeOpenUiAccuracy.js';
 
 /** Deployment-owned presentation choice; never reads a user role or client flag.
  * The paid founder evaluator has its own independent staging-only guard. */
@@ -17,8 +17,9 @@ export function completeNativeWorkspaceAnswer(
   prompt?: string,
   diagnose?: (event: NativeUiDiagnostic | { stage: 'assembly'; reason: 'missing_prose'; programLength: number }) => void,
 ) {
-  const { text, program } = splitNativeOpenUiAnswer(raw);
-  const validation = program ? validateNativeOpenUi(program, evidenceIds, text, diagnose) : undefined;
+  const { text: prose, program } = splitNativeOpenUiAnswer(raw);
+  const validation = program ? validateNativeOpenUi(program, evidenceIds, prose, diagnose) : undefined;
+  const text = prose || (validation?.ok ? supplementNativeProse('', program) : '');
   if (!text) {
     diagnose?.({ stage: 'assembly', reason: 'missing_prose', programLength: program.length });
     const completion = publicCompletionState(finishReason);
@@ -49,7 +50,12 @@ export function completeNativeWorkspaceAnswer(
       };
     }
   }
-  const valid = !!text && validation?.ok === true && completion.status === 'complete';
+  const corrections = reviewReason ? nativeTechnicalCorrections(text) : [];
+  const reviewedProse = corrections.length
+    ? ['## Technical corrections', ...corrections.map(({ guidance }) => '- ' + guidance),
+      '## Original draft for review', 'Use the corrections above when reviewing this draft.', text].join('\n\n')
+    : response;
+  const valid = validation?.ok === true && completion.status === 'complete';
   const recovered = completion.status === 'partial' && completion.reason === 'data_review' ? recoverNativeMonthlyChart(program) : undefined;
   if (completion.status === 'complete' && validation?.ok === false) {
     const independent = validation.reason === 'schema' ? recoverIndependentNativeSections(program, evidenceIds, response) : undefined;
@@ -63,7 +69,7 @@ export function completeNativeWorkspaceAnswer(
     response: valid ? supplementNativeProse(response, program)
       : completion.status === 'partial' && completion.reason === 'data_review'
         ? recovered?.text ?? 'Partial answer. The written summary disagreed with the plotted data, and the chart could not be recovered.'
-        : response,
+        : reviewedProse,
     completion,
     responseSource: { format: NATIVE_UI_FORMAT, text: valid ? program : recovered?.program ?? '' },
   };

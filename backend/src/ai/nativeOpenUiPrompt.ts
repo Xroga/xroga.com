@@ -5,6 +5,7 @@ export const nativeOpenUiPlainPrompt = [
   'Answer the actual request directly in readable Markdown. Do not output an OpenUI program for this prose-only turn.',
   'Use only facts you can support. Qualify uncertain claims and distinguish supplied facts from examples.',
   'Do not claim to fetch evidence or execute tools. Keep calculations consistent with the supplied numbers and units.',
+  'For authorization and billing examples, verify that each code example enforces the same role and state checks stated in the answer.',
 ].join(' ');
 
 const library = catalog.spec as LibrarySpec;
@@ -37,7 +38,7 @@ function buildNativeOpenUiPrompt(kinds: ReadonlySet<string>, hasSources: boolean
     preamble: [
       'Answer the actual request in clear prose, grounded in supplied facts. Do not claim to run tools or fetch data.',
       'For an ordinary short question, return only the answer text. When useful, first give a standalone Markdown answer with the key steps, requested code and data needed without the rich view. Then output the exact separator on its own line and an OpenUI Lang program with no Markdown fences or HTML tags. Separator: <<<XROGA_OPENUI_V1>>>.',
-      'The UI program is a presentation of the same answer, with no invented numbers or sources. Include the important conclusions in it, without repeating the same heading or decorating a simple answer with widgets.',
+      'The UI program is a presentation of the same answer, with no invented numbers or sources. Cover each requested deliverable and place its explanation beside the relevant visual. Include important caveats and units in both forms, without repeating headings or decorating a simple answer with widgets.',
     ].join('\n'),
     bindings: interactive,
     builtinFunctions: false,
@@ -48,8 +49,8 @@ function buildNativeOpenUiPrompt(kinds: ReadonlySet<string>, hasSources: boolean
       ...(full || kinds.has('chart') || kinds.has('calculator') ? ['Keep the supplied values consistent in prose, expressions and chart rows. Label chart units and give a reset for a calculator.'] : []),
       ...(full || kinds.has('graph') || kinds.has('steps') ? [
         'Use Diagram for a connected workflow. Supply labeled nodes, links, and a readable description.',
-        'For tenant boundaries, derive identity from verified authentication and check current membership and role on tenant-owned data, including any exposed membership tables. For PostgreSQL RLS, enforce DELETE permissions in USING. WITH CHECK evaluates new rows for INSERT and UPDATE. Prefer invoker functions. If a security-definer function is necessary, use an empty search path, qualify relations and grant execution narrowly.',
-        'For signed webhooks, verify the unmodified payload before processing. Commit deduplication and the durable state change or job handoff together. Resolve out-of-order deliveries against the authoritative state before overwriting newer data. Stripe automatic delivery retries are finite. State a retry duration only when you have evidence for that mode. Label code that shows only signature verification as a partial example.',
+        'For tenant boundaries, derive identity from verified authentication and check current membership and role on tenant-owned data, including any exposed membership tables. For PostgreSQL RLS, put the exact allowed DELETE roles in USING when deletion is role restricted. A membership-only helper cannot implement owner/admin-only deletion. WITH CHECK evaluates new rows for INSERT and UPDATE. Prefer invoker functions. If a security-definer function is necessary, use an empty search path, qualify relations and grant execution narrowly.',
+        'For signed webhooks, verify the unmodified payload before processing. Commit event-ID deduplication and the durable state change or job handoff together. Reconcile out-of-order delivery against authoritative Stripe state. Never infer order from event.created or event timestamps. Stripe automatic delivery retries are finite. State a retry duration only when you have evidence for that mode. Label code that shows only signature verification as a partial example.',
       ] : []),
       'Resource may link a recognized product from the registry. Never embed a raw hyperlink, image URL, network request, external action or executable HTML.',
       hasSources ? 'Use Source only with an exact Xroga evidence ID from the evidence list. Put it beside the supported claim, e.g. Text(["The documented limit is 500. ", Source("source-1")]). In prose, cite the corresponding number as [1].' : 'No retrieved evidence is available. Do not emit Source or numbered source references.',
@@ -57,7 +58,7 @@ function buildNativeOpenUiPrompt(kinds: ReadonlySet<string>, hasSources: boolean
       'Keep a root Col and refer only to declared values. No Query, Mutation, loops, or external actions.',
       ...(interactive ? ['Local Button actions may use @Set or @Reset with a declared scalar state variable.'] : []),
       ...(full || kinds.has('chart') ? ['For an ordered series, compare each point to the preceding point and rank dollar and percentage changes separately.'] : []),
-      'Distinguish a browser Supabase SSR client that must read session tokens from a server-only or backend-for-frontend design that owns an HTTP-only session. Do not claim browser Supabase SSR uses HTTP-only access or refresh tokens by default. For PostgreSQL RLS, distinguish normal user queries from privileged paths that can bypass policies.',
+      'Distinguish a browser Supabase SSR client that must read session tokens from a server-only or backend-for-frontend design that owns an HTTP-only session. Do not claim browser Supabase SSR uses HTTP-only access or refresh tokens by default. Requests carrying a user access token remain subject to that user’s RLS, including from server-only clients. Keep service-role credentials separate.',
       'Prefer wrapping Row or responsive Grid and avoid fixed-width text. Charts need readable titles, axis labels and units. Use short labels and concise chart notes. Put assumptions below the calculation or diagram they qualify.',
       'Use Lucide icon names in kebab case, such as plane or database. Keep a readable label.',
     ],

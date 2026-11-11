@@ -1,5 +1,43 @@
 import { requiresAuthorizationReview } from './answerAuthorizationReview.js';
 
+type TechnicalCorrection = { reason: 'authorization_review' | 'factual_review'; guidance: string };
+
+/** Catch the documented failure patterns without treating every answer about
+ * Supabase or Stripe as suspect. Inspect examples as well as explanatory text. */
+export function nativeTechnicalCorrections(answer: string): TechnicalCorrection[] {
+  const text = answer.replace(/[\x60*_]/g, '');
+  const corrections: TechnicalCorrection[] = [];
+  const statements = text.split(/(?<=[.!?;])\s+|\n+/);
+  const warnsAgainst = (statement: string) =>
+    /\b(?:never|do not|does not|cannot|must not|should not|don't|doesn't|can't|mustn't|shouldn't|still subject to|incorrect|unsafe|unreliable)\b/i.test(statement);
+  if (statements.some(statement => !warnsAgainst(statement) &&
+    !/\b(?:only if|only when)\b[^.!?;\n]{0,90}\b(?:service[- ]role|bypassrls)\b/i.test(statement) &&
+    /\b(?:HTTP[- ]only\b[^.!?;\n]{0,80}\b(?:cookie|session|token)s?|(?:user|end[- ]user)(?:'s)?\s+(?:session|access token|jwt)s?)\b[^.!?;\n]{0,110}\bbypass(?:es)?\s+(?:tenant\s+)?(?:RLS|row[- ]level security)\b/i.test(statement))) {
+    corrections.push({
+      reason: 'authorization_review',
+      guidance: 'A request carrying a user access token remains subject to that user’s row-level policies, even when the server stores the token in an HTTP-only cookie. Keep service-role access separate and check current tenant membership and role before privileged operations.',
+    });
+  }
+  const promisesRoleCheck = /\b(?:delet(?:e|ion|ing)|deletes)\b[^.!?;\n]{0,100}\b(?:requires?|restricted to|limited to)\s+(?:an?\s+)?(?:tenant\s+)?(?:owner|admin)\b/i.test(text)
+    || /\bonly\s+(?:tenant\s+)?(?:owners?|admins?)(?:\s+(?:or|and)\s+(?:owners?|admins?))?\s+(?:can|may)\s+delet/i.test(text);
+  const membershipOnlyDelete = /\bcreate\s+policy\b[^;]{0,480}\bfor\s+delete\s+(?:to\s+[\w", ]{1,80}\s+)?using\s*\(\s*(?:(?:"?[\w]+"?)\.)?(?:is_)?(?:tenant|org|workspace)_member(?:ship)?\s*\(\s*[\w."]+\s*\)\s*\)\s*;/i.test(answer);
+  if (promisesRoleCheck && membershipOnlyDelete) {
+    corrections.push({
+      reason: 'authorization_review',
+      guidance: 'Where deletion is restricted to owners or admins, the DELETE policy’s USING predicate must verify the caller’s current membership and allowed role for the row’s tenant. A membership-only predicate does not enforce that rule.',
+    });
+  }
+  if (/\bStripe\b/i.test(text) && statements.some(statement => !warnsAgainst(statement) &&
+    /\b(?:compare|sort(?:\s+by)?|order(?:\s+by)?|rely\s+on|use)\b[^.!?;\n]{0,40}\b(?:event\s+timestamps?|event\.created)\b/i.test(statement) &&
+    /\b(?:order(?:ed|ing)?|stored state|newer|older|stale|reconcil|sort)\w*\b/i.test(statement))) {
+    corrections.push({
+      reason: 'factual_review',
+      guidance: 'Stripe event timestamps can tie and do not establish delivery order. Verify the signature, deduplicate by event ID, and reconcile the current subscription state with Stripe before applying a durable update.',
+    });
+  }
+  return corrections;
+}
+
 /** Review specific authorization errors in native answers. */
 function requiresNativeAuthorizationReview(answer: string): boolean {
   if (requiresAuthorizationReview(answer)) return true;
@@ -17,6 +55,8 @@ function requiresNativeAuthorizationReview(answer: string): boolean {
 
 export function nativeAnswerReviewReason(answer: string): 'authorization_review' | 'factual_review' | undefined {
   if (requiresNativeAuthorizationReview(answer)) return 'authorization_review';
+  const corrections = nativeTechnicalCorrections(answer);
+  if (corrections.length) return corrections[0].reason;
   // Stripe's automatic delivery attempts have a finite window in both modes.
   const prose = answer.replace(/[\x60*_]/g, '');
   if (/\bStripe\s+(?:(?:will|would|can|automatically)\s+)*retr(?:y|ies)\s+(?:(?:failed\s+)?(?:webhook\s+)?(?:events?|deliver(?:y|ies))\s+)?(?:forever|indefinitely|without (?:a )?limit)\b/i.test(prose)) {

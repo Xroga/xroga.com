@@ -1,0 +1,18 @@
+# Native Workspace answer reliability
+
+The hosted window on source `72402bbefe4278eb0e719738cb466052bc6555e0` proved native rendering, Copy, and exact persistence for a real DeepSeek answer. It stopped after that answer contained contradictory tenant permissions and inaccurate Stripe ordering guidance. The hosted Reopen check had reloaded Workspace without selecting the saved conversation.
+
+## Changes
+
+- Check both Markdown and OpenUI literals for the observed RLS and Stripe contradictions. When the Markdown contains one of the new failure patterns, place the documented correction above the original draft and withhold the unsafe native presentation.
+- Recover readable Markdown from a valid native-only response. Preserve headings, code, static tables and chart data in the existing text contract. Invalid programs still use available text.
+- Make the full text available in the rich answer and its share view. Plain responses and failures during lazy loading use the existing Markdown renderer directly.
+- The controlled authenticated browser case checks a detail that exists only in the full text, verifies that Copy includes it, then explicitly reopens the saved conversation and checks it again. The separate hosted harness now follows the same saved-title and session-ID flow.
+
+No provider, persistence schema, tenant policy, network destination, or dispatch allowance changed. The existing prompt asks the same DeepSeek call to check role and state consistency and cover the user's requested deliverables.
+
+## Release gate
+
+Verify the exact candidate through authenticated CI, then use a separately approved private window for fresh architecture, revenue, attachment-backed calculator and mixed-layout prompts. Require ordinary-account Reopen, private Share, tenant denials and decoder recovery. Retain the current decoder-compatible rollback before any production promotion. The already-closed hosted window supplies a replay fixture and cannot be reused for new inference.
+
+[Supabase RLS](https://supabase.com/docs/guides/database/postgres/row-level-security#bypassing-row-level-security) · [PostgreSQL policies](https://www.postgresql.org/docs/current/sql-createpolicy.html) · [Stripe event ordering](https://docs.stripe.com/webhooks#event-ordering)

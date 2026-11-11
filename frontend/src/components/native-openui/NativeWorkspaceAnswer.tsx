@@ -33,12 +33,14 @@ export function readNativeWorkspaceProse(output: unknown): string | undefined {
 }
 
 export function NativeWorkspaceAnswer({ answer, sources, sourceReferral = true }: { answer: NativeAnswer; sources?: Array<Pick<CitationSource, 'title' | 'url' | 'siteName'> & Partial<CitationSource>>; sourceReferral?: boolean }) {
-  const fallback = <ModernResponseText content={answer.text} sources={sources?.map(source => ({ snippet: '', ...source }))} />;
+  const fallback = <section aria-label="Answer" dir="auto">
+    <ModernResponseText content={answer.text} sources={sources?.map(source => ({ snippet: '', ...source }))} />
+  </section>;
   const evidence = sources?.map((source, index) => ({ ...source, id: 'source-' + (index + 1) }));
   return <ResponseSourceScope>
-    <ChatErrorBoundary fallback={fallback} logErrorDetails={false}>
-      <Suspense fallback={fallback}><Surface answer={answer} sources={evidence} /></Suspense>
-    </ChatErrorBoundary>
+    {answer.program ? <ChatErrorBoundary fallback={fallback} logErrorDetails={false}>
+      <Suspense fallback={fallback}><Surface answer={answer} sources={evidence} showFullText /></Suspense>
+    </ChatErrorBoundary> : fallback}
     {sources?.length ? <ResponseSources sources={sources} referral={sourceReferral} /> : null}
   </ResponseSourceScope>;
 }

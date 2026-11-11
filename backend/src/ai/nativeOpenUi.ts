@@ -22,14 +22,17 @@ const strayRootClosingLine = /\n[ \t]*<\/Col>[ \t]*$/u;
 export function splitNativeOpenUiAnswer(raw: string, streaming = false) {
   const normalized = raw.replace(/\r\n/g, '\n');
   const marker = normalized.indexOf(NATIVE_UI_MARKER);
-  if (marker >= 0) return {
-    text: normalized.slice(0, marker).trim(),
-    program: normalized.slice(marker + NATIVE_UI_MARKER.length).trimEnd().replace(deepSeekToolClosingSuffix, '').trimEnd()
+  const openingMarker = NATIVE_UI_MARKER.slice(1);
+  const startsWithMarker = normalized.startsWith(openingMarker);
+  if (marker >= 0 || startsWithMarker) return {
+    text: startsWithMarker ? '' : normalized.slice(0, marker).trim(),
+    program: normalized.slice(startsWithMarker ? openingMarker.length : marker + NATIVE_UI_MARKER.length).trimEnd().replace(deepSeekToolClosingSuffix, '').trimEnd()
       .replace(strayRootClosingLine, '').trim(),
   };
   // Never flash a partial separator as part of the answer.
   let text = normalized;
   if (streaming) {
+    if (openingMarker.startsWith(text)) return { text: '', program: '' };
     const last = text.lastIndexOf('\n');
     if (last >= 0 && NATIVE_UI_MARKER.startsWith(text.slice(last))) text = text.slice(0, last);
   }
@@ -37,7 +40,7 @@ export function splitNativeOpenUiAnswer(raw: string, streaming = false) {
 }
 
 /** Recover readable details from an already validated program when the model
- * returned only an overview or left a Markdown heading without its body. */
+ * omitted its prose, returned an overview or left a heading without its body. */
 export function supplementNativeProse(prose: string, program: string): string {
   const unfinishedHeading = /(?:^|\n)#{1,6}[^\S\n]+[^\n]+$/.test(prose.trimEnd());
   if (!unfinishedHeading && (prose.length > 600 || prose.includes('\n'))) return prose;
@@ -47,7 +50,7 @@ export function supplementNativeProse(prose: string, program: string): string {
   const scalar = (value: unknown): string => typeof value === 'string' || typeof value === 'number' ? String(value) : '';
   const root = parseProgram.parse(program).root;
   const children = array(root?.props.children);
-  const firstBlock = children.findIndex(child => (
+  const firstBlock = !prose ? 0 : children.findIndex(child => (
     unfinishedHeading ? !['Title', 'Text', 'Badge'].includes(scalar(record(child).typeName))
       : ['Section', 'Code', 'Table', 'Diagram', 'Chart'].includes(scalar(record(child).typeName))
   ));
@@ -61,12 +64,21 @@ export function supplementNativeProse(prose: string, program: string): string {
     seen.add(value);
     remaining -= value.length;
   };
+  const addTable = (headings: string[], rows: string[][]) => {
+    if (!headings.length || !rows.length) return;
+    const row = (cells: string[]) => '| ' + cells.map(cell =>
+      cell.replace(/\\/g, '\\\\').replace(/\|/g, '\\|').replace(/[\r\n]+/g, ' ')).join(' | ') + ' |';
+    add([row(headings), row(headings.map(() => '---')), ...rows.map(row)].join('\n'));
+  };
   function project(value: unknown): void {
     if (remaining <= 0) return;
     if (Array.isArray(value)) { value.forEach(project); return; }
     if (typeof value === 'string' || typeof value === 'number') { add(String(value)); return; }
     const node = record(value);
-    if (node.type !== 'element') return;
+    if (node.type !== 'element') {
+      if (node.title || node.description) add('- ' + [scalar(node.title), scalar(node.description)].filter(Boolean).join(': '));
+      return;
+    }
     const props = record(node.props);
     if (node.typeName === 'ListItem') {
       add('- ' + [scalar(props.title), scalar(props.description)].filter(Boolean).join(': '));
@@ -83,16 +95,16 @@ export function supplementNativeProse(prose: string, program: string): string {
         add(fence + (/^[a-z0-9+#-]{1,30}$/i.test(language) ? language : '') + '\n' + code + '\n' + fence);
       }
     } else if (node.typeName === 'Table') {
-      const row = (cells: unknown) => array(cells).map(scalar).join(' | ');
-      add(row(props.columns));
-      array(props.rows).forEach(cells => add(row(cells)));
+      addTable(array(props.columns).map(scalar), array(props.rows).map(cells => array(cells).map(scalar)));
     } else if (node.typeName === 'Chart' && Array.isArray(props.data)) {
       const presentation = record(props.presentation);
       const columns = [scalar(props.x), ...array(props.series).map(scalar)].filter(Boolean);
       add(scalar(presentation.title));
       if (columns.length > 1) {
-        add([scalar(presentation.xLabel) || columns[0], scalar(presentation.yLabel) || columns.slice(1).join(' | ')].join(' | '));
-        props.data.forEach(row => add(columns.map(key => scalar(record(row)[key])).join(' | ')));
+        const series = columns.slice(1);
+        const yLabel = scalar(presentation.yLabel);
+        addTable([scalar(presentation.xLabel) || columns[0], ...(series.length === 1 && yLabel ? [yLabel] : series)],
+          props.data.map(row => columns.map(key => scalar(record(row)[key]))));
       }
       add(scalar(presentation.note));
     } else if (node.typeName === 'Diagram') {
@@ -116,7 +128,7 @@ export function supplementNativeProse(prose: string, program: string): string {
     project(props.children);
   }
   project(children.slice(firstBlock));
-  return lines.length ? prose + '\n\n' + lines.join('\n\n') : prose;
+  return [prose, ...lines].filter(Boolean).join('\n\n');
 }
 
 export type NativeUiValidation = { ok: true } | { ok: false; reason: 'budget' | 'syntax' | 'authority' | 'reference' | 'schema' | 'authorization_review' | 'factual_review' | 'data_review' };
@@ -234,6 +246,7 @@ export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<s
     const result = parseProgram.parse(program);
     if (result.queryStatements.length || result.mutationStatements.length) return fail('authority');
     if (!result.root || result.root.typeName !== 'Col' || result.meta.incomplete || result.meta.unresolved.length || result.meta.errors.length) return fail('schema', result.meta.errors);
+    if (!Array.isArray(result.root.props.children) || !result.root.props.children.length) return fail('schema');
     stage = 'accuracy';
     const narrative = [prose, ...reviewStrings].join('\n');
     const reviewReason = nativeAnswerReviewReason(narrative);

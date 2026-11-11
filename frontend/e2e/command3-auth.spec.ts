@@ -244,6 +244,8 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   // still go through the real isolated app and database. Never use a live model.
   const prompt = 'Compare the workshop figures from my attached notes.';
   const reply = 'The workshop earns $25 per attendee. At 40 attendees, revenue is $1,000.';
+  const detail = 'The estimate excludes venue costs and payment processing fees.';
+  const fullReply = reply + '\n\n' + detail;
   const followUp = 'What was the ticket price again?';
   const followUpReply = 'The ticket price was $25.';
   const cancellation = 'Stop this pending fixture reply.';
@@ -292,10 +294,10 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
         url: `data:text/plain;base64,${Buffer.from('Ticket: $25. Attendees: 40.').toString('base64')}`,
         name: 'workshop-notes.txt', mimeType: 'text/plain',
       }]);
-      return route.fulfill({ headers: cors, json: { response: reply, completion: { status: 'complete' }, responseSource: { format: 'xroga-openui-v1', text: program }, webSources: [source], intent: 'file_analysis' } });
+      return route.fulfill({ headers: cors, json: { response: fullReply, completion: { status: 'complete' }, responseSource: { format: 'xroga-openui-v1', text: program }, webSources: [source], intent: 'file_analysis' } });
     }
     if (body.message === followUp) {
-      expect(body.history).toEqual(expect.arrayContaining([{ role: 'assistant', content: reply }]));
+      expect(body.history).toEqual(expect.arrayContaining([{ role: 'assistant', content: fullReply }]));
       return route.fulfill({ headers: cors, json: { response: followUpReply, completion: { status: 'complete' }, responseSource: { format: 'xroga-openui-v1', text: '' } } });
     }
     if (body.message === cancellation) {
@@ -323,6 +325,10 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   const answer = page.getByRole('region', { name: 'Answer', exact: true }).filter({ hasText: reply });
   await expect(answer).toBeVisible({ timeout: 30_000 });
   await expect(answer.getByRole('link', { name: /Workshop source fixture/ })).toHaveAttribute('href', source.url);
+  const fullText = answer.getByText('Read full text', { exact: true });
+  await fullText.click();
+  await expect(answer.getByText(detail, { exact: true })).toBeVisible();
+  await fullText.click();
   const slider = answer.getByRole('slider', { name: 'Attendees' });
   await slider.press('End');
   await expect(answer.getByText('$2,000', { exact: true })).toBeVisible();
@@ -333,7 +339,7 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   await expect(turn.getByRole('region', { name: 'Sources', exact: true })).toHaveCount(0);
   await turn.getByRole('button', { name: 'Copy', exact: true }).click();
   await expect.poll(() => page.evaluate(async () => (await navigator.clipboard.readText()).replace(/\r\n/g, '\n')))
-    .toBe(`${reply}\n\nSources\n[1] ${source.title} (${source.url})`);
+    .toBe(`${fullReply}\n\nSources\n[1] ${source.title} (${source.url})`);
   expect(chatCalls).toBe(1);
 
   const sessionId = (await composer.getAttribute('data-draft-session'))!;
@@ -381,6 +387,10 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
     await expect(sharedAnswer.getByRole('link', { name: /Workshop source fixture/ })).toHaveAttribute('href', source.url);
     await expect(ownerShare.getByRole('link', { name: /Workshop source fixture/ })).toHaveCount(1);
     await expect(ownerShare.getByRole('region', { name: 'Sources', exact: true })).toHaveCount(0);
+    const sharedFullText = sharedAnswer.getByText('Read full text', { exact: true });
+    await sharedFullText.click();
+    await expect(sharedAnswer.getByText(detail, { exact: true })).toBeVisible();
+    await sharedFullText.click();
     for (const [width, theme] of [[1440, 'black'], [390, 'white']] as const) {
       await ownerShare.setViewportSize({ width, height: 900 });
       await ownerShare.evaluate(value => {
@@ -424,6 +434,9 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   await page.reload();
   await openPersistedConversation(page, { id: sessionId, title: savedTitle!, reply });
   await expect(answer.getByText('$1,000', { exact: true })).toBeVisible();
+  await fullText.click();
+  await expect(answer.getByText(detail, { exact: true })).toBeVisible();
+  await fullText.click();
   await send(followUp);
   await expect(page.getByRole('region', { name: 'Answer', exact: true }).getByText(followUpReply, { exact: true })).toBeVisible();
   try {

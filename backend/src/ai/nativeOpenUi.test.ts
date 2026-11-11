@@ -10,6 +10,7 @@ test('the model gets instructions from the native registry and may answer in tex
   for (const name of ['Col(', 'Chart(', 'Slider(', 'Svg(', 'Diagram(', 'Section(', 'Table(', 'Payment(', 'Source(']) assert.ok(nativeOpenUiPrompt.includes(name), name);
   assert.deepEqual(splitNativeOpenUiAnswer('Paris.'), { text: 'Paris.', program: '' });
   assert.deepEqual(splitNativeOpenUiAnswer('Paris.\n<<<XROGA_OP', true), { text: 'Paris.', program: '' });
+  assert.deepEqual(splitNativeOpenUiAnswer('<<<XROGA_OP', true), { text: '', program: '' });
   const program = 'root = Col([Text("Paris.")])';
   assert.deepEqual(splitNativeOpenUiAnswer('Paris.' + NATIVE_UI_MARKER + program), { text: 'Paris.', program });
   assert.deepEqual(validateNativeOpenUi(program), { ok: true });
@@ -66,14 +67,33 @@ test('independent schema failure keeps authorized sections, prose and an explici
   assert.equal(completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + untrusted, 'stop').responseSource.text, '');
 });
 
-test('a program with no readable prose explicitly asks the user to retry', () => {
+test('a validated native-only response recovers readable code and table data without a second call', () => {
+  const program = 'root = Col([Text("Quote estimate"), Table(["Item", "Amount"], [["Print", 25]]), Code("total = 25", "python")])';
+  const answer = completeNativeWorkspaceAnswer(NATIVE_UI_MARKER.slice(1) + program, 'stop');
+  assert.deepEqual(answer.completion, { status: 'complete' });
+  assert.equal(answer.responseSource.text, program);
+  assert.match(answer.response, /Quote estimate/);
+  assert.match(answer.response, /\| Item \| Amount \|\n\| --- \| --- \|\n\| Print \| 25 \|/);
+  assert.match(answer.response, /total = 25/);
+  assert.equal(readNativeOpenUiShare(buildNativeOpenUiShare(answer.response, program)!)?.text, answer.response);
+});
+
+test('an invalid program without readable prose explicitly asks the user to retry', () => {
   const seen: unknown[] = [];
-  const answer = completeNativeWorkspaceAnswer(NATIVE_UI_MARKER + 'root = Col([Text("unreviewed")])', 'stop', undefined, undefined, value => seen.push(value));
+  const answer = completeNativeWorkspaceAnswer(NATIVE_UI_MARKER + 'root = Col([Text("unreviewed")', 'stop', undefined, undefined, value => seen.push(value));
   assert.match(answer.response, /Send your question again to retry/);
   assert.deepEqual(answer.completion, { status: 'partial', reason: 'presentation_contract' });
   assert.equal(answer.responseSource.text, '');
   assert.match(JSON.stringify(seen), /missing_prose/);
   assert.doesNotMatch(JSON.stringify(seen), /unreviewed/);
+});
+
+test('an empty native layout cannot cover up the written answer', () => {
+  const prose = 'The complete explanation is available.';
+  const answer = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + 'root = Col([])', 'stop');
+  assert.equal(answer.response, prose);
+  assert.equal(answer.responseSource.text, '');
+  assert.deepEqual(answer.completion, { status: 'partial', reason: 'presentation_contract' });
 });
 
 test('Workspace strips only the trailing provider transport envelope from a native program', () => {
@@ -199,6 +219,32 @@ test('an unbounded Stripe retry claim gets a readable factual-review fallback', 
   assert.equal(answer.response, inaccurate);
   assert.equal(answer.responseSource.text, '');
   assert.deepEqual(validateNativeOpenUi('root = Col([Text("Stripe does not retry forever.")])'), { ok: true });
+});
+
+test('hosted authorization and billing contradictions get corrections before the saved draft', () => {
+  const cookie = 'A server-only client that owns an HTTP-only session or uses the service role bypasses RLS.';
+  const roles = 'Role checks for privileged operations, including deletion, require owner or admin.';
+  const policy = 'create policy projects_delete on projects\n  for delete using (is_tenant_member(tenant_id));';
+  const ordering = 'For Stripe webhooks, compare event timestamps against stored state; never overwrite newer data.';
+  const draft = [cookie, roles, policy, ordering].join('\n\n');
+  const program = 'root = Col([Text("Architecture")])';
+  const answer = completeNativeWorkspaceAnswer(draft + NATIVE_UI_MARKER + program, 'stop');
+  assert.deepEqual(answer.completion, { status: 'partial', reason: 'authorization_review' });
+  assert.equal(answer.responseSource.text, '');
+  assert.match(answer.response, /^## Technical corrections[\s\S]*user access token[\s\S]*membership-only predicate[\s\S]*timestamps can tie/);
+  assert.ok(answer.response.endsWith(draft));
+  assert.deepEqual(validateNativeOpenUi(program, undefined, ordering), { ok: false, reason: 'factual_review' });
+  const codeOnly = 'root = Col([Text(' + JSON.stringify(roles) + '), Code(' + JSON.stringify(policy) + ', "sql")])';
+  assert.deepEqual(validateNativeOpenUi(codeOnly), { ok: false, reason: 'authorization_review' });
+  for (const correct of [
+    'A server-only client may use HTTP-only cookies. Requests with a user token still obey RLS.',
+    'An HTTP-only session can bypass RLS only if the request uses a service-role identity.',
+    roles + '\n' + policy.replace('is_tenant_member(tenant_id)', "has_tenant_role(tenant_id, 'admin')"),
+    'Stripe webhooks: do not use event timestamps to order delivery. Fetch current subscription state.',
+    'Compare event timestamps for reporting on webhook latency in Stripe.',
+  ]) {
+    assert.deepEqual(validateNativeOpenUi(program, undefined, correct), { ok: true }, correct);
+  }
 });
 
 test('an explicit monthly direction that conflicts with the displayed data is flagged', () => {
