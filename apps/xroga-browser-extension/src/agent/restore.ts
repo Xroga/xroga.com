@@ -28,7 +28,7 @@ export function completedBrowserTools(runId: string, branch: Entry[]): string[] 
       continue;
     for (const part of entry.message.parts) {
       if (part.type === 'tool-result' && !part.isError && part.toolName !== 'done') names.push(part.toolName);
-      if (names.length === 48) return names;
+      if (names.length === 500) return names;
     }
   }
   return names;

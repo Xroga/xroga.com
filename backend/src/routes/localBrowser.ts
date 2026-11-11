@@ -162,7 +162,7 @@ const turnBody = z.object({
 const endBody = z.object({
   status: z.enum(['completed', 'failed', 'cancelled']),
   result: z.string().max(12_000).optional(),
-  actions: z.array(z.string().regex(/^[a-z_]{1,50}$/)).max(48).default([]),
+  actions: z.array(z.string().regex(/^[a-z_]{1,50}$/)).max(500).default([]),
 }).strict();
 
 type Runtime = { runs: BrowserRunStore; leases: LeaseStore };
