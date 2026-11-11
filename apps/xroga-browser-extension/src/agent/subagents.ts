@@ -11,6 +11,7 @@
 // task is one model turn of planning and one of answering.
 import type { LayerPort } from './ports';
 import type { AgentTool } from './tools';
+import { challengeNote, detectChallenge } from './challenge';
 
 export const MAX_JOBS = 10;
 export const MAX_FOLLOW = 10;
@@ -144,7 +145,10 @@ async function readPage(deps: SubagentDeps, url: string, maxChars: number): Prom
     tabId = (opened.data as { opened?: number } | undefined)?.opened;
     if (!opened.ok || tabId === undefined) return { ok: false, text: `could not open the page: ${opened.text.split('\n')[0] || 'refused'}` };
     const page = await deps.layer.call('read', { tabId, format: 'markdown', maxChars }, controller.signal);
-    return page.ok ? { ok: true, text: page.text } : { ok: false, text: `could not read the page: ${page.text.split('\n')[0]}` };
+    if (!page.ok) return { ok: false, text: `could not read the page: ${page.text.split('\n')[0]}` };
+    // A page that is a bot check or a refusal is reported as one, not as content.
+    const challenge = detectChallenge({ title: /«([^»]{0,120})»/.exec(page.text)?.[1], text: pageBody(page.text) });
+    return challenge ? { ok: false, text: `${challengeNote(challenge)} (${url})` } : { ok: true, text: page.text };
   } catch (error) {
     return { ok: false, text: `stopped: ${controller.signal.aborted ? 'out of time' : error instanceof Error ? error.message : 'failed'}` };
   } finally {

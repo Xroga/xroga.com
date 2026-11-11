@@ -13,6 +13,7 @@ import { contextChars, elideStaleObservations, toModelMessages } from './context
 import { directNavigation, type DirectNavigation } from './direct-url';
 import { APPS_FIRST_NOTE, APPS_FIRST_SEARCHED_NOTE, RESEARCH_FIRST_NOTE, appSearchQuery, isAppsFirstRequest, isResearchRequest, researchPlan } from './routing';
 import { runSubagents } from './subagents';
+import { challengeNote, detectChallenge } from './challenge';
 import { progressLedger } from './progress';
 import { browserState } from './header';
 import { assistantDisplay, userDisplay, userText } from './display';
@@ -1331,6 +1332,12 @@ ${ledger}` : ''),
       const sent = kind === 'mutate' && call.toolName !== 'tabs' ? { ...args, observe: 'diff' } : args;
       const result = await this.#time('tool.layer', () => this.options.layer.call(call.toolName, sent, signal));
       outcome = { call, kind, text: result.text, isError: !result.ok, result };
+      // A bot check or a refusal is told to the agent when it happens, so it does not retry a page that will not open for it.
+      if (result.ok && ['read', 'snapshot', 'navigate', 'tabs', 'click', 'wait'].includes(call.toolName)) {
+        const title = result.page?.title ?? /«([^»]{0,120})»/.exec(result.text)?.[1];
+        const challenge = detectChallenge({ title, text: result.text });
+        if (challenge) outcome.text = `${result.text}\n${challengeNote(challenge)}`;
+      }
     }
     return this.#time('tool.after', () => this.afterToolCall(outcome));
   }
