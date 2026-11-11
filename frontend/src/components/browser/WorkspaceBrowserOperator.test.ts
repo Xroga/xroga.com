@@ -10,3 +10,8 @@ test('Browser Operator stays hidden on an ordinary workspace visit', () => {
   }));
   assert.equal(html, '');
 });
+
+test('Browser Operator does not show an idle placeholder without an extension', () => {
+  const html = renderToStaticMarkup(createElement(WorkspaceBrowserOperator, {}));
+  assert.equal(html, '');
+});

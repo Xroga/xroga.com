@@ -149889,7 +149889,7 @@
     {
       "id": "test-suite:608461139acb14851cc6",
       "sourcePath": "frontend/src/components/browser/WorkspaceBrowserOperator.test.ts",
-      "declaredTests": 1,
+      "declaredTests": 2,
       "skipLocations": [],
       "focusLocations": []
     },
