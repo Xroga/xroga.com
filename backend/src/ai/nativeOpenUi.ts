@@ -1,4 +1,4 @@
-import { createParser, parseExpression, split, tokenize, walkAST, type ASTNode, type LibraryJSONSchema } from '@openuidev/lang-core';
+import { createParser, evaluate, parseExpression, split, tokenize, walkAST, type ASTNode, type LibraryJSONSchema } from '@openuidev/lang-core';
 import { contradictsMonthlyChart, monthlyChartDataFallback, nativeAnswerReviewReason, suppliedMonthlyComparison } from './nativeOpenUiAccuracy.js';
 import catalog from './nativeOpenUiCatalog.json' with { type: 'json' };
 
@@ -41,16 +41,16 @@ export function splitNativeOpenUiAnswer(raw: string, streaming = false) {
 
 /** Recover readable details from an already validated program when the model
  * omitted its prose, returned an overview or left a heading without its body. */
-export function supplementNativeProse(prose: string, program: string): string {
+export function supplementNativeProse(prose: string, program: string, includeAll = false): string {
   const unfinishedHeading = /(?:^|\n)#{1,6}[^\S\n]+[^\n]+$/.test(prose.trimEnd());
-  if (!unfinishedHeading && (prose.length > 600 || prose.includes('\n'))) return prose;
+  if (!includeAll && !unfinishedHeading && (prose.length > 600 || prose.includes('\n'))) return prose;
   const record = (value: unknown): Record<string, unknown> =>
     value && typeof value === 'object' && !Array.isArray(value) ? value as Record<string, unknown> : {};
   const array = (value: unknown) => Array.isArray(value) ? value as unknown[] : [];
   const scalar = (value: unknown): string => typeof value === 'string' || typeof value === 'number' ? String(value) : '';
-  const root = parseProgram.parse(program).root;
+  const { root, stateDeclarations } = parseProgram.parse(program);
   const children = array(root?.props.children);
-  const firstBlock = !prose ? 0 : children.findIndex(child => (
+  const firstBlock = includeAll || !prose ? 0 : children.findIndex(child => (
     unfinishedHeading ? !['Title', 'Text', 'Badge'].includes(scalar(record(child).typeName))
       : ['Section', 'Code', 'Table', 'Diagram', 'Chart'].includes(scalar(record(child).typeName))
   ));
@@ -119,6 +119,21 @@ export function supplementNativeProse(prose: string, program: string): string {
         const from = names.get(scalar(link.from)), to = names.get(scalar(link.to));
         if (from && to) add('- ' + from + ' → ' + to + (link.label ? ': ' + scalar(link.label) : ''));
       });
+    } else if (node.typeName === 'Text' && node.hasDynamicProps && record(props.text).k) {
+      // Use the initial local state for the readable snapshot. Projection has no
+      // function or action dispatch and cannot mutate the saved controls.
+      try {
+        const expression = props.text as ASTNode;
+        let supported = true;
+        walkAST(expression, part => {
+          if (part.k === 'StateRef') supported &&= Object.hasOwn(stateDeclarations, part.n);
+          else if (!['Str', 'Num', 'Bool', 'Null', 'BinOp', 'UnaryOp', 'Ternary'].includes(part.k)) supported = false;
+        });
+        if (supported) {
+          const text = evaluate(expression, { getState: key => stateDeclarations[key], resolveRef: () => undefined });
+          add(scalar(text));
+        }
+      } catch { /* Dynamic text remains available in the interactive answer. */ }
     } else if (node.typeName === 'Source') {
       const index = /^source-(\d+)$/.exec(scalar(props.id))?.[1];
       if (index) add('[' + index + ']');
@@ -140,6 +155,7 @@ export type NativeUiDiagnostic = {
   statement?: number;
   programLength: number;
   shape: Array<{ tokens: number; skeleton: string }>;
+  schemaState?: { hasRoot: boolean; incomplete: boolean; unresolved: number; errors: number };
   schema?: Array<{ code: string; statement?: number; component?: string; pathDepth: number }>;
 };
 
@@ -153,10 +169,11 @@ export function recoverNativeMonthlyChart(program: string, supplied?: NonNullabl
 /** Audit all statements, including unreachable ones, before letting the upstream
  * parser resolve references or evaluate expressions. Limit expanded work as well
  * as input size, so repeated references cannot multiply the runtime budget. */
-export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<string> = new Set(), prose = '', diagnose?: (value: NativeUiDiagnostic) => void): NativeUiValidation {
+export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<string> = new Set(), prose = '', diagnose?: (value: NativeUiDiagnostic) => void, workspaceContract = false): NativeUiValidation {
   let stage: ValidationStage = 'limits';
   let statement: number | undefined;
   let statements: ReturnType<typeof split> = [];
+  let schemaState: NativeUiDiagnostic['schemaState'];
   const fail = (reason: NativeUiDiagnostic['reason'], errors?: ReturnType<typeof parseProgram.parse>['meta']['errors']) => {
     if (diagnose) diagnose({
       stage, reason, statement, programLength: program.length,
@@ -168,6 +185,7 @@ export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<s
             && (components.has(name) || pureFunctions.has(name) || localActions.has(name)) ? name : String(token.t);
         }).join(' '),
       })),
+      ...(schemaState ? { schemaState } : {}),
       ...(errors?.length ? { schema: errors.slice(0, 8).map(error => {
         const index = statements.findIndex(item => item.id === error.statementId);
         return { code: error.code, ...(index < 0 ? {} : { statement: index + 1 }),
@@ -242,61 +260,188 @@ export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<s
       if (!visit(node, new Set([key]))) return fail(reason);
     }
     statement = undefined;
-    stage = 'schema';
-    const result = parseProgram.parse(program);
-    if (result.queryStatements.length || result.mutationStatements.length) return fail('authority');
-    if (!result.root || result.root.typeName !== 'Col' || result.meta.incomplete || result.meta.unresolved.length || result.meta.errors.length) return fail('schema', result.meta.errors);
-    if (!Array.isArray(result.root.props.children) || !result.root.props.children.length) return fail('schema');
     stage = 'accuracy';
     const narrative = [prose, ...reviewStrings].join('\n');
     const reviewReason = nativeAnswerReviewReason(narrative);
     if (reviewReason) return fail(reviewReason);
+    stage = 'schema';
+    const result = parseProgram.parse(program);
+    if (result.queryStatements.length || result.mutationStatements.length) return fail('authority');
+    schemaState = {
+      hasRoot: Boolean(result.root), incomplete: result.meta.incomplete,
+      unresolved: result.meta.unresolved.length, errors: result.meta.errors.length,
+    };
+    if (!result.root || result.root.typeName !== 'Col' || result.meta.incomplete || result.meta.unresolved.length || result.meta.errors.length) return fail('schema', result.meta.errors);
+    if (!Array.isArray(result.root.props.children) || !result.root.props.children.length) return fail('schema');
+    if (workspaceContract) {
+      // The upstream parser currently accepts plain objects in this union.
+      // The actual List renderer only understands strings and ListItem nodes.
+      let invalidList = false;
+      for (const expression of symbols.values()) {
+        walkAST(expression, node => {
+          if (node.k !== 'Comp' || node.name !== 'List') return;
+          const items = resolveRecoveryReference(node.args[0], symbols);
+          if (items?.k === 'Arr' && items.els.some(item => resolveRecoveryReference(item, symbols)?.k === 'Obj')) invalidList = true;
+        });
+      }
+      if (invalidList) return fail('schema');
+    }
+    stage = 'accuracy';
     if (contradictsMonthlyChart(result.root, narrative)) return fail('data_review');
     return { ok: true };
   } catch { return fail('syntax'); }
 }
 
-/** Only called after the entire program passed the authority audit and failed schema validation.
- * Rebuild the root from named, independent sections and validate the exact new program. */
-export function recoverIndependentNativeSections(program: string, evidenceIds: ReadonlySet<string> | undefined, prose: string) {
+export function validateNativeWorkspaceProgram(program: string, evidenceIds: ReadonlySet<string> | undefined, prose: string, diagnose?: (value: NativeUiDiagnostic) => void) {
+  return validateNativeOpenUi(program, evidenceIds, prose, diagnose, true);
+}
+
+// Only reprint changed expressions. Keeping untouched declarations verbatim preserves
+// the original spelling of reactive formulas and state references.
+function printRecoveryExpression(node: ASTNode): string {
+  const print = printRecoveryExpression;
+  switch (node.k) {
+    case 'Comp': return (node.fn || localActions.has(node.name) ? '@' : '') + node.name + '(' + node.args.map(print).join(', ') + ')';
+    case 'Ref': case 'StateRef': return node.n;
+    case 'Arr': return '[' + node.els.map(print).join(', ') + ']';
+    case 'Obj': return '{' + node.entries.map(([key, value]) => JSON.stringify(key) + ': ' + print(value)).join(', ') + '}';
+    case 'BinOp': return '(' + print(node.left) + ' ' + node.op + ' ' + print(node.right) + ')';
+    case 'UnaryOp': return '(' + node.op + print(node.operand) + ')';
+    case 'Ternary': return '(' + print(node.cond) + ' ? ' + print(node.then) + ' : ' + print(node.else) + ')';
+    case 'Member': return print(node.obj) + '.' + node.field;
+    case 'Index': return print(node.obj) + '[' + print(node.index) + ']';
+    case 'Num': case 'Str': case 'Bool': return JSON.stringify(node.v);
+    case 'Null': return 'null';
+    default: throw new Error('Unsupported OpenUI recovery expression');
+  }
+}
+
+// The authority check has already rejected cyclic references.
+function resolveRecoveryReference(node: ASTNode | undefined, symbols: ReadonlyMap<string, ASTNode>) {
+  while (node?.k === 'Ref') node = symbols.get(node.n);
+  return node;
+}
+
+function rewriteListItems(node: ASTNode, symbols: ReadonlyMap<string, ASTNode>): ASTNode {
+  const original = node.k === 'Comp' && node.name === 'List' ? node.args[0] : undefined;
+  const items = resolveRecoveryReference(original, symbols);
+  if (node.k === 'Comp') {
+    const args = node.args.map(arg => rewriteListItems(arg, symbols));
+    if (items?.k === 'Arr') {
+      const els = items.els.map(item => {
+        const value = resolveRecoveryReference(item, symbols);
+        if (value?.k !== 'Obj') return rewriteListItems(item, symbols);
+        const fields = new Map(value.entries);
+        const keys = ['title', 'description', 'marker', 'children'];
+        const values = keys.map(key => fields.get(key));
+        if (!values[0] || fields.size !== value.entries.length || [...fields.keys()].some(key => !keys.includes(key))) return item;
+        let last = values.length - 1;
+        while (values[last] === undefined) last -= 1;
+        return { k: 'Comp', name: 'ListItem', args: values.slice(0, last + 1).map(value =>
+          value ? rewriteListItems(value, symbols) : { k: 'Str', v: '' }) } satisfies ASTNode;
+      });
+      if (els.some((item, index) => item !== items.els[index])) args[0] = { ...items, els };
+    }
+    if (args.some((arg, index) => arg !== node.args[index])) return { ...node, args };
+  } else if (node.k === 'Arr') {
+    const els = node.els.map(item => rewriteListItems(item, symbols));
+    if (els.some((item, index) => item !== node.els[index])) return { ...node, els };
+  }
+  return node;
+}
+
+const layoutChildren = new Map([['Col', 0], ['Row', 0], ['Grid', 0], ['Card', 0], ['Box', 0], ['Section', 1]]);
+
+/** Workspace calls this only after the original passes the authority and factual
+ * gates and fails schema validation. Every candidate passes the same validator. */
+export function recoverNativeWorkspaceProgram(program: string, evidenceIds: ReadonlySet<string> | undefined, prose: string) {
   try {
     const statements = split(tokenize(program));
-    const root = statements.find(item => item.id === 'root');
-    if (!root) return;
-    const expression = parseExpression(root.tokens);
-    if (expression.k !== 'Comp' || expression.name !== 'Col' || expression.args.length !== 1 || expression.args[0].k !== 'Arr') return;
-    const children = expression.args[0].els;
-    if (children.length < 2 || children.length > 12 || children.some(child => child.k !== 'Ref')) return;
     const declarations = new Map(statements.map(item => [item.id, item]));
-    const included = new Set<string>();
-    const names: string[] = [];
-    const sourceFor = (ids: ReadonlySet<string>) => statements.filter(item => ids.has(item.id))
-      .map(item => program.slice(item.start, item.end)).join('\n');
-    for (const child of children) {
-      if (child.k !== 'Ref' || names.includes(child.n)) continue;
-      const ids = new Set<string>();
-      const pending = [child.n];
-      let isolated = true;
-      for (let id = pending.pop(); id; id = pending.pop()) {
-        if (ids.has(id)) continue;
-        const declaration = declarations.get(id);
-        if (id === 'root' || !declaration || declaration.start === undefined || declaration.end === undefined) {
-          isolated = false;
-          break;
-        }
-        ids.add(id);
-        walkAST(parseExpression(declaration.tokens), node => {
-          if (node.k === 'Ref' || node.k === 'StateRef') pending.push(node.n);
+    const originals = new Map(statements.map(item => [item.id, parseExpression(item.tokens)]));
+    const reviewStrings = new Set([prose]);
+    for (const expression of originals.values()) walkAST(expression, node => {
+      if (node.k === 'Str') reviewStrings.add(node.v);
+    });
+    const narrative = [...reviewStrings].join('\n');
+    const symbols = new Map([...originals].map(([id, node]) => [id, rewriteListItems(node, originals)]));
+    const root = symbols.get('root');
+    if (root?.k !== 'Comp' || root.name !== 'Col') return;
+    const sourceFor = (id: string, node: ASTNode) => {
+      const item = declarations.get(id);
+      if (item && originals.get(id) === node && item.start !== undefined && item.end !== undefined) {
+        return program.slice(item.start, item.end);
+      }
+      const printed = printRecoveryExpression(node);
+      // A reprinted expression must retain its meaning in the pinned parser.
+      if (JSON.stringify(parseExpression(tokenize(printed))) !== JSON.stringify(node)) {
+        throw new Error('OpenUI recovery changed expression semantics');
+      }
+      return id + ' = ' + printed;
+    };
+    const normalized = [...symbols].some(([id, node]) => originals.get(id) !== node);
+    if (normalized) {
+      const full = [...symbols].map(([id, node]) => sourceFor(id, node)).join('\n');
+      const validation = validateNativeWorkspaceProgram(full, evidenceIds, narrative);
+      if (validation.ok || validation.reason === 'data_review') return { program: full, validation, partial: false };
+      if (validation.reason !== 'schema') return;
+    }
+
+    function render(candidate: ASTNode): string {
+      const included = new Set<string>();
+      function collect(node: ASTNode): void {
+        walkAST(node, ref => {
+          if ((ref.k !== 'Ref' && ref.k !== 'StateRef') || included.has(ref.n)) return;
+          const value = symbols.get(ref.n);
+          if (!value || ref.n === 'root') throw new Error('Missing recovery dependency');
+          included.add(ref.n);
+          collect(value);
         });
       }
-      if (!isolated || !validateNativeOpenUi(`root = Col([${child.n}])\n${sourceFor(ids)}`, evidenceIds, prose).ok) continue;
-      names.push(child.n);
-      ids.forEach(id => included.add(id));
+      collect(candidate);
+      return [sourceFor('root', candidate), ...[...symbols].filter(([id]) => included.has(id))
+        .map(([id, node]) => sourceFor(id, node))].join('\n');
     }
-    if (!names.length || names.length === children.length) return;
-    const recovered = `root = Col([${names.join(', ')}])\n${sourceFor(included)}`;
-    if (validateNativeOpenUi(recovered, evidenceIds, prose).ok) return recovered;
+
+    // Cap repeated parser calls independently of the provider output limits.
+    let probes = 48;
+    const validate = (candidate: ASTNode) => probes-- > 0
+      ? validateNativeWorkspaceProgram(render(candidate), evidenceIds, prose) : undefined;
+    const group = (els: ASTNode[]): Extract<ASTNode, { k: 'Comp' }> => ({ k: 'Comp', name: 'Col', args: [{ k: 'Arr', els }] });
+    const usable = (check: NativeUiValidation | undefined) => check?.ok === true || (check?.ok === false && check.reason === 'data_review');
+    function salvage(children: ASTNode[], depth: number): ASTNode[] {
+      if (!children.length || depth > 8 || probes <= 0) return [];
+      const check = validate(group(children));
+      if (usable(check)) return children;
+      if (check?.ok !== false || check.reason !== 'schema') return [];
+      if (children.length === 1) {
+        const layout = salvageLayout(resolveRecoveryReference(children[0], symbols), depth);
+        if (!layout) return [];
+        // A malformed container prop should not erase its validated children.
+        return usable(validate(group([layout.container]))) ? [layout.container] : layout.children;
+      }
+      const middle = Math.floor(children.length / 2);
+      return [...salvage(children.slice(0, middle), depth), ...salvage(children.slice(middle), depth)];
+    }
+    function salvageLayout(node: ASTNode | undefined, depth: number) {
+      if (node?.k !== 'Comp') return;
+      const index = layoutChildren.get(node.name);
+      if (index === undefined) return;
+      const children = resolveRecoveryReference(node.args[index], symbols);
+      if (children?.k !== 'Arr') return;
+      const els = salvage(children.els, depth + 1);
+      if (!els.length) return;
+      const args = node.args.slice();
+      args[index] = { k: 'Arr', els };
+      return { container: { ...node, args }, children: els };
+    }
+    const layout = salvageLayout(root, 0);
+    const recovered = layout && (usable(validate(layout.container)) ? layout.container : group(layout.children));
+    if (!recovered) return;
+    const restored = render(recovered);
+    const validation = validateNativeWorkspaceProgram(restored, evidenceIds, narrative);
+    if (validation.ok || validation.reason === 'data_review') return { program: restored, validation, partial: true };
   } catch {
-    // Prose remains authoritative when the components cannot be separated safely.
+    // Keep the original prose when recovery cannot safely rebuild the layout.
   }
 }

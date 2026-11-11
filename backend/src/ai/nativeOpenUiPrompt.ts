@@ -45,7 +45,7 @@ function buildNativeOpenUiPrompt(kinds: ReadonlySet<string>, hasSources: boolean
     toolCalls: false,
     additionalRules: [
       'Start with the answer or recommendation. Use one main Title and meaningful Sections for long answers; prose and lists can be enough. Keep data and its interpretation together. Reserve emphasis for the central result. Avoid duplicate headings, repeating tables, and excessive cards.',
-      'For a long answer, use root = Col([summary, visual, details]) followed by separate assignments for each independent section. Keep each statement short. Use only components and functions listed below. Use Code(code, language) for code in the program. Escape line breaks and quotes inside its string.',
+      'For a long answer, use root = Col([summary, visual, details]) followed by separate assignments for each independent section. Keep each statement short. Use only components and functions listed below. Use strings or ListItem(title, description) inside List, never bare objects. Use Code(code, language) for code in the program. Escape line breaks and quotes inside its string.',
       ...(full || kinds.has('chart') || kinds.has('calculator') ? ['Keep the supplied values consistent in prose, expressions and chart rows. Label chart units and give a reset for a calculator.'] : []),
       ...(full || kinds.has('graph') || kinds.has('steps') ? [
         'Use Diagram for a connected workflow. Supply labeled nodes, links, and a readable description.',

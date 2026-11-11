@@ -16,3 +16,11 @@ No provider, persistence schema, tenant policy, network destination, or dispatch
 Verify the exact candidate through authenticated CI, then use a separately approved private window for fresh architecture, revenue, attachment-backed calculator and mixed-layout prompts. Require ordinary-account Reopen, private Share, tenant denials and decoder recovery. Retain the current decoder-compatible rollback before any production promotion. The already-closed hosted window supplies a replay fixture and cannot be reused for new inference.
 
 [Supabase RLS](https://supabase.com/docs/guides/database/postgres/row-level-security#bypassing-row-level-security) · [PostgreSQL policies](https://www.postgresql.org/docs/current/sql-createpolicy.html) · [Stripe event ordering](https://docs.stripe.com/webhooks#event-ordering)
+
+## Workspace schema recovery
+
+The hosted response at `58d4eeab88cba91a4b6d62abb14773e9c36b430a` kept its Markdown, but schema rejection withheld the entire rich layout. Its redacted trace included plain objects in a list. The pinned parser accepts some of those objects even though the list renderer expects strings or `ListItem` components. The raw program was unavailable, so the trace cannot establish that the list was the only invalid block.
+
+New Workspace answers normalize known list fields and revalidate the full program. If schema errors remain, bounded recovery keeps valid content in its original order within layout containers, including references and local calculator state. An omitted component produces an explicit partial answer. Copy, Share, and saved history use the same readable answer and validated program. Recovery requires the original program to pass the authority and factual checks. A candidate must also pass evidence, resource, and data checks.
+
+Regression tests replay the observed list shape and cover invalid nested content, tables, charts, diagrams, code, calculators, evidence, and native-only replies. These tests use captured shapes and local inputs. A fresh hosted DeepSeek run, account isolation in hosted staging, and a decoder-compatible rollback are separate release checks. No additional provider request is used for repair.

@@ -1,0 +1,101 @@
+{
+  "version": "1.0",
+  "missionId": "WORKSPACE-NATIVE-OPENUI-SCHEMA-RECOVERY-20261111",
+  "baseSha": "58d4eeab88cba91a4b6d62abb14773e9c36b430a",
+  "requirementIds": [
+    "XR-MISSION-054",
+    "XR-MISSION-055"
+  ],
+  "state": "CODE_COMPLETE",
+  "risk": "medium",
+  "scope": "Keep the readable answer and valid rich components when the normal Workspace generation path encounters a malformed layout.",
+  "changedFiles": [
+    "backend/src/ai/nativeOpenUi.ts",
+    "backend/src/ai/nativeOpenUiPrompt.ts",
+    "backend/src/ai/nativeOpenUiWorkspace.ts",
+    "backend/src/ai/nativeOpenUi.test.ts",
+    "docs/operations/native-openui/ANSWER-RELIABILITY.md"
+  ],
+  "decisions": {
+    "keep": [
+      "Existing DeepSeek dispatch, native renderer, Markdown, private Share, and accounting."
+    ],
+    "extend": [
+      "Repair supported list objects and retain validated sibling components in the existing OpenUI program.",
+      "Recover text and calculation defaults from validated parts, with a partial notice if any component is discarded."
+    ],
+    "replace": [],
+    "deprecate": []
+  },
+  "schemaImpact": {
+    "changed": false,
+    "migrations": [],
+    "rollout": "Existing answer and share formats continue to decode.",
+    "rollback": "Restore the prior compatible API and frontend pair. Keep decoding already-saved native answers."
+  },
+  "securityImpact": {
+    "auth": {
+      "changed": false,
+      "description": "Use the existing authenticated Workspace and Share flows."
+    },
+    "tenant": {
+      "changed": false,
+      "description": "Existing account boundaries and evidence ownership remain enforced. Recovery cannot grant new evidence."
+    },
+    "approval": {
+      "changed": false,
+      "description": "No action or rollout approval bypass."
+    },
+    "credentials": {
+      "changed": false,
+      "description": "No credential or role changes."
+    },
+    "egress": {
+      "changed": false,
+      "description": "The existing DeepSeek call receives revised instructions. No new transport or destination."
+    },
+    "cost": {
+      "changed": false,
+      "description": "No extra dispatch or retry."
+    },
+    "billing": {
+      "changed": false,
+      "description": "Existing dispatch and settlement accounting."
+    }
+  },
+  "tests": [
+    {
+      "command": "tsx --test backend/src/ai/nativeOpenUi.test.ts backend/src/ai/tenantModelDispatch.test.ts",
+      "scope": "Verify repair of the observed list shape, bounded nested recovery, readable fallback, verified evidence, chart accuracy, and canonical settlement.",
+      "negative": true,
+      "reference": "backend/src/ai/nativeOpenUi.test.ts"
+    }
+  ],
+  "architecture": {
+    "change": "extends_canonical",
+    "reason": "Extend the existing Workspace assembly and pinned parser using the same persisted program and text contract.",
+    "rfc": null
+  },
+  "rollout": "Wait for exact-source CI and fresh private DeepSeek acceptance before requesting a canary.",
+  "rollback": "Restore the last decoder-compatible release and its generation settings.",
+  "knownGaps": [
+    "Malformed syntax, unsupported authority, unsafe evidence and a response with no recoverable content still use the existing fallback.",
+    "Fresh hosted acceptance and decoder recovery remain pending."
+  ],
+  "placeholderClaimsRemaining": [],
+  "evidenceRefs": [
+    "docs/operations/native-openui/ANSWER-RELIABILITY.md"
+  ],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "BLOCKED",
+    "blockers": [
+      "Fresh ordinary-user hosted DeepSeek acceptance and decoder recovery remain required."
+    ],
+    "authenticatedE2e": "BLOCKED",
+    "stagedSecurity": "BLOCKED",
+    "liveUrl": null,
+    "deployedSha": null
+  }
+}

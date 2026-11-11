@@ -1,5 +1,5 @@
 import { publicCompletionState } from './completionDiagnostics.js';
-import { NATIVE_UI_FORMAT, PARTIAL_NATIVE_PRESENTATION_NOTE, recoverIndependentNativeSections, recoverNativeMonthlyChart, splitNativeOpenUiAnswer, supplementNativeProse, validateNativeOpenUi, type NativeUiDiagnostic } from './nativeOpenUi.js';
+import { NATIVE_UI_FORMAT, PARTIAL_NATIVE_PRESENTATION_NOTE, recoverNativeWorkspaceProgram, recoverNativeMonthlyChart, splitNativeOpenUiAnswer, supplementNativeProse, validateNativeWorkspaceProgram, type NativeUiDiagnostic } from './nativeOpenUi.js';
 import { nativeAnswerReviewReason, nativeTechnicalCorrections, suppliedMonthlyComparison } from './nativeOpenUiAccuracy.js';
 
 /** Deployment-owned presentation choice; never reads a user role or client flag.
@@ -17,10 +17,15 @@ export function completeNativeWorkspaceAnswer(
   prompt?: string,
   diagnose?: (event: NativeUiDiagnostic | { stage: 'assembly'; reason: 'missing_prose'; programLength: number }) => void,
 ) {
-  const { text: prose, program } = splitNativeOpenUiAnswer(raw);
-  const validation = program ? validateNativeOpenUi(program, evidenceIds, prose, diagnose) : undefined;
+  const { text: prose, program: originalProgram } = splitNativeOpenUiAnswer(raw);
+  const original = originalProgram ? validateNativeWorkspaceProgram(originalProgram, evidenceIds, prose, diagnose) : undefined;
+  const repair = original?.ok === false && original.reason === 'schema' && finishReason === 'stop'
+    ? recoverNativeWorkspaceProgram(originalProgram, evidenceIds, prose) : undefined;
+  const program = repair?.program ?? originalProgram;
+  const validation = repair?.validation ?? original;
   const text = prose || (validation?.ok ? supplementNativeProse('', program) : '');
-  if (!text) {
+  const hasDataConflict = validation?.ok === false && validation.reason === 'data_review';
+  if (!text && !hasDataConflict) {
     diagnose?.({ stage: 'assembly', reason: 'missing_prose', programLength: program.length });
     const completion = publicCompletionState(finishReason);
     return {
@@ -34,18 +39,18 @@ export function completeNativeWorkspaceAnswer(
     ? validation.reason : nativeAnswerReviewReason(text);
   const completion = reviewReason
     ? { status: 'partial' as const, reason: reviewReason }
-    : validation?.ok === false && validation.reason === 'data_review'
+    : hasDataConflict
       ? { status: 'partial' as const, reason: 'data_review' as const }
       : publicCompletionState(finishReason, response);
   const supplied = prompt && !evidenceIds?.size ? suppliedMonthlyComparison(prompt) : undefined;
   if (supplied && finishReason === 'stop' && (validation?.ok || validation?.reason === 'data_review')) {
     const reviewed = recoverNativeMonthlyChart(program, supplied, !validation.ok);
     if (reviewed) {
+      const reason = reviewed.dataMismatch || !validation.ok ? 'data_review' as const
+        : repair?.partial ? 'presentation_contract' as const : undefined;
       return {
-        response: reviewed.text,
-        completion: reviewed.dataMismatch || !validation.ok
-          ? { status: 'partial' as const, reason: 'data_review' as const }
-          : { status: 'complete' as const },
+        response: reason === 'presentation_contract' ? PARTIAL_NATIVE_PRESENTATION_NOTE + '\n\n' + reviewed.text : reviewed.text,
+        completion: reason ? { status: 'partial' as const, reason } : { status: 'complete' as const },
         responseSource: { format: NATIVE_UI_FORMAT, text: reviewed.program },
       };
     }
@@ -57,16 +62,15 @@ export function completeNativeWorkspaceAnswer(
     : response;
   const valid = validation?.ok === true && completion.status === 'complete';
   const recovered = completion.status === 'partial' && completion.reason === 'data_review' ? recoverNativeMonthlyChart(program) : undefined;
-  if (completion.status === 'complete' && validation?.ok === false) {
-    const independent = validation.reason === 'schema' ? recoverIndependentNativeSections(program, evidenceIds, response) : undefined;
+  if (completion.status === 'complete' && (validation?.ok === false || repair?.partial)) {
     return {
-      response: independent ? PARTIAL_NATIVE_PRESENTATION_NOTE + '\n\n' + supplementNativeProse(response, independent) : response,
+      response: valid ? PARTIAL_NATIVE_PRESENTATION_NOTE + '\n\n' + supplementNativeProse(response, program, true) : response,
       completion: { status: 'partial' as const, reason: 'presentation_contract' as const },
-      responseSource: { format: NATIVE_UI_FORMAT, text: independent ?? '' },
+      responseSource: { format: NATIVE_UI_FORMAT, text: valid ? program : '' },
     };
   }
   return {
-    response: valid ? supplementNativeProse(response, program)
+    response: valid ? supplementNativeProse(response, program, Boolean(repair))
       : completion.status === 'partial' && completion.reason === 'data_review'
         ? recovered?.text ?? 'Partial answer. The written summary disagreed with the plotted data, and the chart could not be recovered.'
         : reviewedProse,

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { NATIVE_UI_MARKER, PARTIAL_NATIVE_PRESENTATION_NOTE, splitNativeOpenUiAnswer, validateNativeOpenUi } from './nativeOpenUi.js';
+import { NATIVE_UI_MARKER, PARTIAL_NATIVE_PRESENTATION_NOTE, splitNativeOpenUiAnswer, validateNativeOpenUi, validateNativeWorkspaceProgram } from './nativeOpenUi.js';
 import { nativeOpenUiPrompt, workspaceNativeOpenUiPrompt } from './nativeOpenUiPrompt.js';
 import { buildNativeOpenUiShare, readNativeOpenUiShare } from './nativeOpenUiShare.js';
 import { readNativeOpenUiRun } from './nativeOpenUiRun.js';
@@ -65,6 +65,76 @@ test('independent schema failure keeps authorized sections, prose and an explici
   assert.equal(readNativeOpenUiShare(share!)?.text, answer.response);
   const untrusted = program.replace('Table(["customer-private-name"])', 'Source("invented")');
   assert.equal(completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + untrusted, 'stop').responseSource.text, '');
+});
+
+test('the observed bare timeline object shape repairs without discarding the rest of the answer', () => {
+  const program = [
+    'root = Col([Section("Delivery", [steps, Code("run()", "typescript")])])',
+    'steps = List(entries, "timeline")',
+    'entries = [{title:"Queue",description:"Save the job."},{title:"Deliver",marker:"2",children:[Text("Confirm receipt.")]}]',
+  ].join('\n');
+  assert.deepEqual(validateNativeWorkspaceProgram(program, undefined, ''), { ok: false, reason: 'schema' });
+  const answer = completeNativeWorkspaceAnswer('Queue, then deliver.\n\nTrack both steps.' + NATIVE_UI_MARKER + program, 'stop');
+  assert.deepEqual(answer.completion, { status: 'complete' });
+  assert.match(answer.responseSource.text, /ListItem\("Queue", "Save the job\."\)/);
+  assert.match(answer.responseSource.text, /ListItem\("Deliver", "", "2", \[Text\("Confirm receipt\."\)\]\)/);
+  assert.match(answer.response, /Save the job\.[\s\S]*Confirm receipt\.[\s\S]*run\(\)/);
+  assert.deepEqual(validateNativeOpenUi(answer.responseSource.text, undefined, answer.response), { ok: true });
+});
+
+test('an invalid nested block keeps the ordered table, calculator, chart and verified source', () => {
+  const prose = 'Use the supplied quote.\n\nThe controls let you compare quantities.';
+  const program = [
+    '$quantity = 2',
+    'root = Col(blocks, 12)',
+    'blocks = [Section("Estimate", [Card([Table(["Item", "USD"], [["Print", 25]]), Table(["malformed"])]), calculator]),',
+    '  Section("Scenario", [Chart("bar", [{label:"Base",price:50}], "label", ["price"]), Source("source-1")])]',
+    'calculator = Row([Slider($quantity, 1, 10, 1, "Quantity"), Text("Total: $" + ($quantity * 25)), Button("Reset", @Set($quantity, 2))])',
+  ].join('\n');
+  const evidence = new Set(['source-1']);
+  const answer = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + program, 'stop', evidence);
+  assert.deepEqual(answer.completion, { status: 'partial', reason: 'presentation_contract' });
+  assert.match(answer.response, /Use the supplied quote\.[\s\S]*## Estimate[\s\S]*Print \| 25[\s\S]*Total: \$50[\s\S]*## Scenario[\s\S]*Base \| 50[\s\S]*\[1\]/);
+  assert.match(answer.responseSource.text, /Slider\(\$quantity,[\s\S]*@Set\(\$quantity, 2\)/);
+  assert.match(answer.responseSource.text, /\], 12\)/);
+  assert.doesNotMatch(answer.responseSource.text, /malformed/);
+  assert.deepEqual(validateNativeOpenUi(answer.responseSource.text, evidence, answer.response), { ok: true });
+  const source = { title: 'Workshop quote', url: 'https://example.com/quote' };
+  const shared = buildNativeOpenUiShare(answer.response, answer.responseSource.text, [source]);
+  assert.deepEqual(readNativeOpenUiShare(shared!), {
+    format: 'xroga-openui-v1', program: answer.responseSource.text, text: answer.response, sources: [source],
+  });
+  assert.equal(completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + program, 'stop').responseSource.text, '');
+});
+
+test('one malformed wrapper preserves later blocks in a long answer', () => {
+  const blocks = Array.from({ length: 52 }, (_, index) => 'Text("Item ' + index + '")');
+  blocks.splice(25, 0, 'Section(42, [Text("Content from the malformed wrapper")])');
+  const program = 'root = Col([' + blocks.join(', ') + '])';
+  const answer = completeNativeWorkspaceAnswer('Here are the results.' + NATIVE_UI_MARKER + program, 'stop');
+  assert.deepEqual(answer.completion, { status: 'partial', reason: 'presentation_contract' });
+  assert.match(answer.response, /Item 24[\s\S]*Content from the malformed wrapper[\s\S]*Item 25[\s\S]*Item 51/);
+  assert.doesNotMatch(answer.responseSource.text, /Section\(42/);
+});
+
+test('a native-only schema failure recovers verified content and leaves unknown list fields alone', () => {
+  const program = 'root = Col([Section("Report", [Text("Verified result."), List([{title:"Do not surface", unknown:"metadata"}])])])';
+  const answer = completeNativeWorkspaceAnswer(NATIVE_UI_MARKER.slice(1) + program, 'stop');
+  assert.equal(answer.completion.status, 'partial');
+  assert.match(answer.response, /Verified result/);
+  assert.doesNotMatch(answer.response + answer.responseSource.text, /Do not surface|metadata/);
+  assert.equal(completeNativeWorkspaceAnswer(NATIVE_UI_MARKER.slice(1) + program, 'length').responseSource.text, '');
+});
+
+test('a schema failure cannot suppress an authorization finding or bypass chart review', () => {
+  const badClaim = 'A service-role session enforces tenant RLS.';
+  const program = 'root = Col([Text("Overview"), Table(["Malformed", ' + JSON.stringify(badClaim) + '])])';
+  assert.deepEqual(completeNativeWorkspaceAnswer('Review access.' + NATIVE_UI_MARKER + program, 'stop').completion,
+    { status: 'partial', reason: 'authorization_review' });
+  const chart = 'root = Col([Text("March rose."), Table(["Malformed"]), Chart("bar", [{month:"Jan",value:12000},{month:"Feb",value:15500},{month:"Mar",value:14300}], "month", ["value"])])';
+  const answer = completeNativeWorkspaceAnswer('Monthly performance.' + NATIVE_UI_MARKER + chart, 'stop');
+  assert.deepEqual(answer.completion, { status: 'partial', reason: 'data_review' });
+  assert.doesNotMatch(answer.response + answer.responseSource.text, /March rose/);
 });
 
 test('a validated native-only response recovers readable code and table data without a second call', () => {
