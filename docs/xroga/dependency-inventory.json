@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "9520d9aad28069d255fc9d78cfed60b8066ad290",
+  "source_sha": "c6d0d04421f9bbef7ec766188b4147185f709327",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -78,6 +78,7 @@
         "Dockerfile.api",
         "backend/src/index.ts",
         "backend/src/config/platformEnvironment.ts",
+        "backend/src/services/browserPushService.ts",
         "scripts/infrastructure/cloud-run-release-gate.mjs",
         "docs/xroga/evidence/zero-fly/FINAL-PRODUCTION-ACCEPTANCE-20261027.json"
       ],
@@ -93,7 +94,9 @@
         "NODE_ENV",
         "PORT",
         "XROGA_PLATFORM_CONFIG_FILE",
-        "XROGA_RELEASE_SHA"
+        "XROGA_RELEASE_SHA",
+        "XROGA_VAPID_PRIVATE_KEY",
+        "XROGA_VAPID_PUBLIC_KEY"
       ],
       "inbound_callers": [
         "api or named source callers; operational reachability not inferred"
@@ -117,6 +120,7 @@
         "Dockerfile.api",
         "backend/src/index.ts",
         "backend/src/config/platformEnvironment.ts",
+        "backend/src/services/browserPushService.ts",
         "scripts/infrastructure/cloud-run-release-gate.mjs",
         "docs/xroga/evidence/zero-fly/FINAL-PRODUCTION-ACCEPTANCE-20261027.json"
       ],
@@ -4109,6 +4113,57 @@
         "backend/src/services/publish/expoWorkflow.ts",
         "backend/src/services/publish/userOwnedPublish.ts",
         "frontend/src/components/publish/MobilePublishPanel.tsx"
+      ],
+      "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
+      "evidence_ids": []
+    },
+    {
+      "dependency_id": "endpoint-fcm-googleapis-com",
+      "provider": "Source-defined endpoint fcm.googleapis.com",
+      "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
+      "environment": "PRODUCTION",
+      "state": "CONFIGURED_BUT_UNVERIFIED",
+      "runtime_owner": "backend/API or explicitly proposed component",
+      "config_sources": [
+        "backend/src/security/tenantIsolation.local.integration.ts"
+      ],
+      "hostnames": [
+        "fcm.googleapis.com"
+      ],
+      "resource_id": null,
+      "region": "Not verified",
+      "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
+      "secret_names": [
+        "CI",
+        "CLOUDFLARE_R2_PRIVATE_BUCKET",
+        "E2E_BACKEND_URL",
+        "FLY_APP_NAME",
+        "SUPABASE_ANON_KEY",
+        "SUPABASE_SERVICE_ROLE_KEY",
+        "SUPABASE_URL",
+        "WHOP_API_KEY",
+        "WHOP_COMPANY_ID",
+        "WHOP_PLAN_ID",
+        "WHOP_REDIRECT_URL",
+        "WHOP_WEBHOOK_SECRET",
+        "XB01_DISPOSABLE_SUPABASE",
+        "XB01_LOCAL_DATABASE_URL",
+        "XROGA_SANDBOX_FLY_APP",
+        "XROGA_SANDBOX_FLY_TOKEN"
+      ],
+      "inbound_callers": [
+        "api or named source callers; operational reachability not inferred"
+      ],
+      "outbound_dependencies": [],
+      "health_readiness": "Reference/asset hosts may need no service health check; adapter admission/liveness is unverified. No external action or paid health probe performed",
+      "timeout": "Adapter-specific; no fabricated central timeout",
+      "retry_policy": "Source-specific; no live retry test claimed",
+      "idempotency_expectation": "Required for consequential writes; verify canonical authority in Command 008",
+      "data_classification": "User data may be involved; tenant scope requires independent checks",
+      "failure_mode": "Safe user-facing failure required; internal details restricted",
+      "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
+      "observability_source": [
+        "backend/src/security/tenantIsolation.local.integration.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
       "evidence_ids": []
@@ -8820,6 +8875,7 @@
         "endpoint-api-whop-com",
         "endpoint-backend-composio-dev",
         "endpoint-example-invalid",
+        "endpoint-fcm-googleapis-com",
         "endpoint-fixture",
         "endpoint-fixture-invalid",
         "endpoint-fixture-supabase-co",
@@ -8953,6 +9009,7 @@
         "endpoint-127-0-0-1",
         "endpoint-api-whop-com",
         "endpoint-example-invalid",
+        "endpoint-fcm-googleapis-com",
         "endpoint-public-example-invalid"
       ]
     },
@@ -9455,6 +9512,7 @@
         "endpoint-127-0-0-1",
         "endpoint-api-whop-com",
         "endpoint-example-invalid",
+        "endpoint-fcm-googleapis-com",
         "endpoint-public-example-invalid"
       ]
     },
@@ -9664,6 +9722,7 @@
         "endpoint-api-machines-dev",
         "endpoint-api-whop-com",
         "endpoint-example-invalid",
+        "endpoint-fcm-googleapis-com",
         "endpoint-public-example-invalid",
         "endpoint-www-googleapis-com"
       ]
@@ -12274,6 +12333,7 @@
         "endpoint-api-whop-com",
         "endpoint-backend-composio-dev",
         "endpoint-example-invalid",
+        "endpoint-fcm-googleapis-com",
         "endpoint-fixture-supabase-co",
         "endpoint-fixtureproject-supabase-co",
         "endpoint-public-example-invalid",
@@ -12532,6 +12592,7 @@
         "endpoint-127-0-0-1",
         "endpoint-api-whop-com",
         "endpoint-example-invalid",
+        "endpoint-fcm-googleapis-com",
         "endpoint-fixture-supabase-co",
         "endpoint-fixtureproject-supabase-co",
         "endpoint-github-com",
@@ -12661,6 +12722,7 @@
         "endpoint-api-whop-com",
         "endpoint-backend-composio-dev",
         "endpoint-example-invalid",
+        "endpoint-fcm-googleapis-com",
         "endpoint-fixture",
         "endpoint-fixture-invalid",
         "endpoint-fixture-supabase-co",
@@ -13240,6 +13302,7 @@
         "endpoint-127-0-0-1",
         "endpoint-api-whop-com",
         "endpoint-example-invalid",
+        "endpoint-fcm-googleapis-com",
         "endpoint-public-example-invalid"
       ]
     },
@@ -13266,6 +13329,7 @@
         "endpoint-127-0-0-1",
         "endpoint-api-whop-com",
         "endpoint-example-invalid",
+        "endpoint-fcm-googleapis-com",
         "endpoint-public-example-invalid"
       ]
     },
@@ -13292,6 +13356,7 @@
         "endpoint-127-0-0-1",
         "endpoint-api-whop-com",
         "endpoint-example-invalid",
+        "endpoint-fcm-googleapis-com",
         "endpoint-public-example-invalid"
       ]
     },
@@ -13318,6 +13383,7 @@
         "endpoint-127-0-0-1",
         "endpoint-api-whop-com",
         "endpoint-example-invalid",
+        "endpoint-fcm-googleapis-com",
         "endpoint-public-example-invalid"
       ]
     },
@@ -13348,6 +13414,7 @@
         "endpoint-127-0-0-1",
         "endpoint-api-whop-com",
         "endpoint-example-invalid",
+        "endpoint-fcm-googleapis-com",
         "endpoint-public-example-invalid"
       ]
     },
@@ -13478,6 +13545,7 @@
         "endpoint-api-whop-com",
         "endpoint-backend-composio-dev",
         "endpoint-example-invalid",
+        "endpoint-fcm-googleapis-com",
         "endpoint-fixture",
         "endpoint-fixture-invalid",
         "endpoint-fixture-supabase-co",
@@ -13559,6 +13627,7 @@
         "endpoint-api-whop-com",
         "endpoint-backend-composio-dev",
         "endpoint-example-invalid",
+        "endpoint-fcm-googleapis-com",
         "endpoint-fixture-invalid",
         "endpoint-public-example-invalid"
       ]
@@ -15787,6 +15856,7 @@
         "endpoint-api-machines-dev",
         "endpoint-api-whop-com",
         "endpoint-example-invalid",
+        "endpoint-fcm-googleapis-com",
         "endpoint-public-example-invalid"
       ]
     },
@@ -15858,6 +15928,7 @@
         "endpoint-api-machines-dev",
         "endpoint-api-whop-com",
         "endpoint-example-invalid",
+        "endpoint-fcm-googleapis-com",
         "endpoint-public-example-invalid"
       ]
     },
@@ -16093,6 +16164,45 @@
       ],
       "dependency_ids": [
         "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "XROGA_VAPID_PRIVATE_KEY",
+      "consuming_sources": [
+        "backend/src/routes/notifications.ts",
+        "backend/src/services/browserPushService.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "SERVER_CREDENTIAL",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "CONDITIONAL_ON_CAPABILITY",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "api"
+      ]
+    },
+    {
+      "name": "XROGA_VAPID_PUBLIC_KEY",
+      "consuming_sources": [
+        "backend/src/services/browserPushService.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "SERVER_CREDENTIAL",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "CONDITIONAL_ON_CAPABILITY",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "api"
       ]
     },
     {
@@ -16614,7 +16724,7 @@
     },
     {
       "path": ".github/workflows/command3-auth-browser.yml",
-      "sha256": "63bbf376917f45483f6dcaa2f177b9acd1ed319220818e1a1c1ce45530b7ae3c"
+      "sha256": "474a071bb8b36dc348aac9fada01af6b85c20b7309b94f77084ec3063303ed02"
     },
     {
       "path": ".github/workflows/command4-authority.yml",
@@ -18450,7 +18560,7 @@
     },
     {
       "path": "backend/src/routes/notifications.ts",
-      "sha256": "9aec298fc8c4b0f6c678f0861db12805da9b0700e109ff052d0e4e27be18486a"
+      "sha256": "7b91dfd72ae335226c3fb83c7ce2e7cb7902b7dd25b87565f7dcef917720c5db"
     },
     {
       "path": "backend/src/routes/operations.ts",
@@ -18886,7 +18996,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "ca10dcce1588319a590acc2c5db06294bb0ac47af4b81c3186b0dc9db03068f4"
+      "sha256": "bdf87c7c2d0ff810034c72554ebacf6de1f291068b3eb2ac1134e1d0e47c5dea"
     },
     {
       "path": "backend/src/security/terminalIdentity.local.integration.ts",
@@ -18935,6 +19045,10 @@
     {
       "path": "backend/src/services/billingRoutes.local.integration.ts",
       "sha256": "1f7ce1602847ca3f2a24e3ac5c93c1b0dfdded4e0a424d81adc4a85895e98a2d"
+    },
+    {
+      "path": "backend/src/services/browserPushService.ts",
+      "sha256": "f4efcbdd6268fe5e71e0b265e09fa93ca00bc9ed4ca71347261039f26c085cfc"
     },
     {
       "path": "backend/src/services/ensureUserRecords.ts",
@@ -19158,7 +19272,7 @@
     },
     {
       "path": "backend/src/services/notificationService.ts",
-      "sha256": "97a7d33fe2b60ddebbdb9f1e8e2c5304d72398ff31ee9036386f705f62b6b402"
+      "sha256": "823e0e647c547459ecd37560dee87b23d8d1fa0e28a85d5252870c65fccd69ec"
     },
     {
       "path": "backend/src/services/projectScaffold.ts",
@@ -22170,11 +22284,11 @@
     },
     {
       "path": "frontend/src/components/notifications/NotificationExperience.tsx",
-      "sha256": "2b8296c2a5f9f70e5dd289d91787327f2e32453be464d557e468a5791684a075"
+      "sha256": "09d94ee31d3faf726e9614925e575d339f4d6620f73abcec1271b6e4937ab654"
     },
     {
       "path": "frontend/src/components/notifications/SidebarNotificationCenter.tsx",
-      "sha256": "38aa69cc8a0a675213cf5b4992dbea826147bd669b9cc7aaf9d79d9fe88b13a3"
+      "sha256": "a9d660edb0d37460ca8b1e3380161d37c23c1cafd7a846d4de41d53c724c231e"
     },
     {
       "path": "frontend/src/components/onboarding/BuildTypeCard.tsx",
@@ -22490,7 +22604,7 @@
     },
     {
       "path": "frontend/src/components/settings/NotificationsSettingsPanel.tsx",
-      "sha256": "3429fbf6c12ce26c54c175d76168e785b0dc78ac73238a0c511d9ceeb4058b56"
+      "sha256": "99dc739e5c946ced87a512364f6b1caa47db5ab2bd1999a100e4207decd27b32"
     },
     {
       "path": "frontend/src/components/settings/PlanUsageSettingsPanel.tsx",
@@ -23194,7 +23308,7 @@
     },
     {
       "path": "frontend/src/lib/api.ts",
-      "sha256": "b0ba97766d8a2c1273118fd5802ea1796cd0a7be450fef8ad3d94582cb237d05"
+      "sha256": "13315f5d5480282928def653b8552f932c447cf61038a590248feb8b9589e29d"
     },
     {
       "path": "frontend/src/lib/assistantCopy.ts",
@@ -23215,6 +23329,10 @@
     {
       "path": "frontend/src/lib/brand.ts",
       "sha256": "89c9910b49525c23848afd1d4bcb64c53dd1e2dd21839de945ac47a73522b25e"
+    },
+    {
+      "path": "frontend/src/lib/browserPush.ts",
+      "sha256": "157fa536ba5285716a428c45314695422f456f2d38bc2466a2982c2b1643d095"
     },
     {
       "path": "frontend/src/lib/browserSafety.ts",
@@ -24194,7 +24312,7 @@
     },
     {
       "path": "frontend/src/middleware.ts",
-      "sha256": "351846e952d1700742ae26bab4809f51f9de408eee31a5cda1727ef656e1ca65"
+      "sha256": "d52d0513a5604e1d5f41b4d13f36ce13468b9561c35b1c6fe1d363c50044f27d"
     },
     {
       "path": "frontend/src/store/useAppStore.ts",
@@ -24254,7 +24372,7 @@
     },
     {
       "path": "scripts/xroga/runtime-facts.mjs",
-      "sha256": "4eabe36ba552b7e1e84d6a8004e33d66aa4af3adca49032a4757705ef277c1bd"
+      "sha256": "db3ac14cb9e3198bfeda150817ba220e1f303217774ef7fee5bc213d1d87cef1"
     },
     {
       "path": "scripts/xroga/runtime-inventory.mjs",
@@ -26950,73 +27068,80 @@
       "credentialsInUrl": false
     },
     {
+      "hostname": "fcm.googleapis.com",
+      "protocol": "https:",
+      "path": "backend/src/security/tenantIsolation.local.integration.ts",
+      "line": 255,
+      "credentialsInUrl": false
+    },
+    {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 561,
+      "line": 590,
       "credentialsInUrl": false
     },
     {
       "hostname": "public.example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 611,
+      "line": 640,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 700,
+      "line": 729,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 812,
+      "line": 841,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 879,
+      "line": 908,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 937,
+      "line": 966,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1648,
+      "line": 1677,
       "credentialsInUrl": false
     },
     {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1666,
+      "line": 1695,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.whop.com",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1674,
+      "line": 1703,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1678,
+      "line": 1707,
       "credentialsInUrl": false
     },
     {
@@ -35829,14 +35954,14 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1123,
+      "line": 1152,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1481,
+      "line": 1510,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -35852,6 +35977,13 @@
       "path": "backend/src/security/vercelRefreshAccount.local.integration.ts",
       "line": 44,
       "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/services/browserPushService.ts",
+      "line": 10,
+      "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },

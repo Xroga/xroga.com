@@ -2,10 +2,10 @@
   "version": "1.0",
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
-    "branch": "codex/openui-live-skills-compatibility-20261111",
-    "sha": "9520d9aad28069d255fc9d78cfed60b8066ad290",
-    "sourceTimestampUtc": "2026-11-11T23:54:19+05:00",
-    "auditStartedUtc": "2026-11-11T18:54:51.954Z",
+    "branch": "codex/openui-notification-compatibility-20261112",
+    "sha": "c6d0d04421f9bbef7ec766188b4147185f709327",
+    "sourceTimestampUtc": "2026-11-11T23:57:01+05:00",
+    "auditStartedUtc": "2026-11-11T19:26:02.558Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -30956,20 +30956,26 @@
       "id": "surface:4edcaf26389e9c51de18",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/notifications.ts",
-      "sha256": "9aec298fc8c4b0f6c678f0861db12805da9b0700e109ff052d0e4e27be18486a",
+      "sha256": "7b91dfd72ae335226c3fb83c7ce2e7cb7902b7dd25b87565f7dcef917720c5db",
       "symbols": [
+        "endpoint",
+        "owned",
+        "publicKey",
         "router",
-        "supabase"
+        "supabase",
+        "values"
       ],
       "imports": [
         "../middleware/auth.js",
         "../security/serviceRoleGuard.js",
         "../security/tenantContext.js",
+        "../services/browserPushService.js",
         "express"
       ],
       "runtimeImports": [
         "backend/src/security/serviceRoleGuard.ts",
-        "backend/src/security/tenantContext.ts"
+        "backend/src/security/tenantContext.ts",
+        "backend/src/services/browserPushService.ts"
       ],
       "entryPoints": [
         "backend/src/index.ts"
@@ -30980,6 +30986,7 @@
       ],
       "reachable": true,
       "persistenceDependencies": [
+        "notification_push_subscriptions",
         "notifications"
       ],
       "externalProviderDependencies": [
@@ -30989,11 +30996,14 @@
         "backend/src/routes/notifications.ts#AuthRequest"
       ],
       "tenantBoundary": [
-        "backend/src/routes/notifications.ts:14 (user_id)",
-        "backend/src/routes/notifications.ts:30 (user_id)",
-        "backend/src/routes/notifications.ts:45 (user_id)",
-        "backend/src/routes/notifications.ts:60 (user_id)",
-        "backend/src/routes/notifications.ts:75 (user_id)"
+        "backend/src/routes/notifications.ts:15 (user_id)",
+        "backend/src/routes/notifications.ts:31 (user_id)",
+        "backend/src/routes/notifications.ts:63 (user_id)",
+        "backend/src/routes/notifications.ts:80 (user_id)",
+        "backend/src/routes/notifications.ts:101 (user_id)",
+        "backend/src/routes/notifications.ts:112 (user_id)",
+        "backend/src/routes/notifications.ts:127 (user_id)",
+        "backend/src/routes/notifications.ts:142 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -35500,6 +35510,7 @@
         "backend/src/security/platformHealth.local.integration.ts:7",
         "backend/src/security/serviceRoleGuard.test.ts:3",
         "backend/src/security/tenantContext.test.ts:4",
+        "backend/src/services/browserPushService.ts:2",
         "backend/src/services/integrations/businessWorkflowRuns.ts:2",
         "backend/src/services/integrations/composioControl.ts:4",
         "backend/src/services/integrations/credentialStorageBucket.ts:2",
@@ -35735,6 +35746,7 @@
         "backend/src/services/BillingService.budget.test.ts:5",
         "backend/src/services/BillingService.checkoutAdmission.security.test.ts:4",
         "backend/src/services/BillingService.ts:18",
+        "backend/src/services/browserPushService.ts:3",
         "backend/src/services/ensureUserRecords.receipt.test.ts:5",
         "backend/src/services/ensureUserRecords.ts:4",
         "backend/src/services/fixtures/checkoutApproval.ts:3",
@@ -36364,6 +36376,70 @@
         "backend/src/services/BillingService.planTransport.security.test.ts",
         "backend/src/services/BillingService.test.ts",
         "backend/src/services/billingBudget.local.integration.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:73a05ca75d8c5fbace5b",
+      "subsystem": "browser_sandbox",
+      "sourcePath": "backend/src/services/browserPushService.ts",
+      "sha256": "f4efcbdd6268fe5e71e0b265e09fa93ca00bc9ed4ca71347261039f26c085cfc",
+      "symbols": [
+        "BrowserPushSubscription",
+        "allowedPushHosts",
+        "browserPushPublicKey",
+        "candidate",
+        "cause",
+        "configureWebPush",
+        "link",
+        "payload",
+        "privateKey",
+        "publicKey",
+        "sendBrowserPush",
+        "status",
+        "supabase",
+        "url",
+        "validBrowserPushSubscription"
+      ],
+      "imports": [
+        "../security/serviceRoleGuard.js",
+        "../security/tenantContext.js",
+        "web-push"
+      ],
+      "runtimeImports": [
+        "backend/src/security/serviceRoleGuard.ts",
+        "backend/src/security/tenantContext.ts"
+      ],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
+      "callers": [
+        "backend/src/routes/notifications.ts:5",
+        "backend/src/services/browserPushService.test.ts:3",
+        "backend/src/services/notificationService.ts:3"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [
+        "notification_push_subscriptions"
+      ],
+      "externalProviderDependencies": [
+        "web-push"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [
+        "backend/src/services/browserPushService.ts:49 (user_id)",
+        "backend/src/services/browserPushService.ts:70 (user_id)"
+      ],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/services/browserPushService.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -40551,7 +40627,7 @@
       ],
       "callers": [
         "backend/src/routes/integrations.ts:34",
-        "backend/src/security/tenantIsolation.local.integration.ts:935",
+        "backend/src/security/tenantIsolation.local.integration.ts:964",
         "backend/src/services/integrations/businessAction.ts:43",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:6"
       ],
@@ -42113,7 +42189,7 @@
       "id": "surface:98ae0b31c2f7847037ba",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/services/notificationService.ts",
-      "sha256": "97a7d33fe2b60ddebbdb9f1e8e2c5304d72398ff31ee9036386f705f62b6b402",
+      "sha256": "823e0e647c547459ecd37560dee87b23d8d1fa0e28a85d5252870c65fccd69ec",
       "symbols": [
         "BuildCompleteNotificationParams",
         "PushNotificationInput",
@@ -42131,11 +42207,13 @@
       ],
       "imports": [
         "../config/supabase.js",
-        "../security/tenantContext.js"
+        "../security/tenantContext.js",
+        "./browserPushService.js"
       ],
       "runtimeImports": [
         "backend/src/config/supabase.ts",
-        "backend/src/security/tenantContext.ts"
+        "backend/src/security/tenantContext.ts",
+        "backend/src/services/browserPushService.ts"
       ],
       "entryPoints": [
         "backend/src/index.ts"
@@ -88493,7 +88571,7 @@
       "id": "surface:7d6e8734d9bf16ab0b12",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/notifications/NotificationExperience.tsx",
-      "sha256": "2b8296c2a5f9f70e5dd289d91787327f2e32453be464d557e468a5791684a075",
+      "sha256": "09d94ee31d3faf726e9614925e575d339f4d6620f73abcec1271b6e4937ab654",
       "symbols": [
         "NotificationExperience",
         "disposed",
@@ -88506,18 +88584,22 @@
         "poll",
         "polling",
         "prime",
+        "recent",
         "router",
         "seen",
         "setNotifications",
         "setUnreadCount",
+        "suppressClick",
         "sync",
         "timer",
         "toneClass",
+        "touchStartX",
         "userId"
       ],
       "imports": [
         "@/components/layout/WorkspaceIdentityContext",
         "@/lib/api",
+        "@/lib/browserPush",
         "@/lib/buildBrowserNotify",
         "@/lib/notificationExperience",
         "@/store/useAppStore",
@@ -88529,6 +88611,7 @@
       "runtimeImports": [
         "frontend/src/components/layout/WorkspaceIdentityContext.tsx",
         "frontend/src/lib/api.ts",
+        "frontend/src/lib/browserPush.ts",
         "frontend/src/lib/buildBrowserNotify.ts",
         "frontend/src/lib/notificationExperience.ts",
         "frontend/src/store/useAppStore.ts"
@@ -88570,7 +88653,7 @@
       "id": "surface:809bc1101435a8ee3125",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/notifications/SidebarNotificationCenter.tsx",
-      "sha256": "38aa69cc8a0a675213cf5b4992dbea826147bd669b9cc7aaf9d79d9fe88b13a3",
+      "sha256": "a9d660edb0d37460ca8b1e3380161d37c23c1cafd7a846d4de41d53c724c231e",
       "symbols": [
         "Props",
         "SidebarNotificationButton",
@@ -88587,6 +88670,7 @@
       ],
       "imports": [
         "@/lib/api",
+        "@/lib/browserPush",
         "@/lib/buildBrowserNotify",
         "@/lib/notificationExperience",
         "@/store/useAppStore",
@@ -88598,6 +88682,7 @@
       ],
       "runtimeImports": [
         "frontend/src/lib/api.ts",
+        "frontend/src/lib/browserPush.ts",
         "frontend/src/lib/buildBrowserNotify.ts",
         "frontend/src/lib/notificationExperience.ts",
         "frontend/src/store/useAppStore.ts"
@@ -88618,13 +88703,9 @@
         "next/navigation",
         "react"
       ],
-      "authBoundary": [
-        "frontend/src/components/notifications/SidebarNotificationCenter.tsx#requestBuildNotificationPermission"
-      ],
+      "authBoundary": [],
       "tenantBoundary": [],
-      "approvalBoundary": [
-        "frontend/src/components/notifications/SidebarNotificationCenter.tsx#requestBuildNotificationPermission"
-      ],
+      "approvalBoundary": [],
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [],
@@ -93254,16 +93335,17 @@
       "id": "surface:e5f7e62ad78a7b416b1d",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/settings/NotificationsSettingsPanel.tsx",
-      "sha256": "3429fbf6c12ce26c54c175d76168e785b0dc78ac73238a0c511d9ceeb4058b56",
+      "sha256": "99dc739e5c946ced87a512364f6b1caa47db5ab2bd1999a100e4207decd27b32",
       "symbols": [
         "NotificationsSettingsPanel",
-        "ok",
+        "enabled",
         "toggleBrowserNotify"
       ],
       "imports": [
         "@/components/settings/SettingsPrimitives",
         "@/components/ui/Badge",
         "@/components/ui/Switch",
+        "@/lib/browserPush",
         "@/lib/buildBrowserNotify",
         "@/lib/notificationExperience",
         "lucide-react",
@@ -93274,6 +93356,7 @@
         "frontend/src/components/settings/SettingsPrimitives.tsx",
         "frontend/src/components/ui/Badge.tsx",
         "frontend/src/components/ui/Switch.tsx",
+        "frontend/src/lib/browserPush.ts",
         "frontend/src/lib/buildBrowserNotify.ts",
         "frontend/src/lib/notificationExperience.ts"
       ],
@@ -93290,13 +93373,9 @@
         "react",
         "react-hot-toast"
       ],
-      "authBoundary": [
-        "frontend/src/components/settings/NotificationsSettingsPanel.tsx#requestBuildNotificationPermission"
-      ],
+      "authBoundary": [],
       "tenantBoundary": [],
-      "approvalBoundary": [
-        "frontend/src/components/settings/NotificationsSettingsPanel.tsx#requestBuildNotificationPermission"
-      ],
+      "approvalBoundary": [],
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [],
@@ -104337,7 +104416,7 @@
       "id": "surface:fc0647beab64e4906eb6",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/api.ts",
-      "sha256": "b0ba97766d8a2c1273118fd5802ea1796cd0a7be450fef8ad3d94582cb237d05",
+      "sha256": "13315f5d5480282928def653b8552f932c447cf61038a590248feb8b9589e29d",
       "symbols": [
         "API_URL",
         "ActivityLog",
@@ -104589,7 +104668,7 @@
         "frontend/src/components/native-openui/Evaluation.tsx:5",
         "frontend/src/components/notifications/NotificationBell.tsx:6",
         "frontend/src/components/notifications/NotificationExperience.tsx:6",
-        "frontend/src/components/notifications/SidebarNotificationCenter.tsx:9",
+        "frontend/src/components/notifications/SidebarNotificationCenter.tsx:10",
         "frontend/src/components/onboarding/OnboardingFlow.tsx:6",
         "frontend/src/components/pricing/PricingPageClient.tsx:22",
         "frontend/src/components/projects/FilePreview.tsx:4",
@@ -104627,6 +104706,7 @@
         "frontend/src/hooks/useAvatarUpdate.ts:4",
         "frontend/src/hooks/useBackgroundBuildJobs.ts:4",
         "frontend/src/hooks/useBuildCompletionAlerts.ts:4",
+        "frontend/src/lib/browserPush.ts:1",
         "frontend/src/lib/builderApi.ts:4",
         "frontend/src/lib/builderApiPhase2.ts:4",
         "frontend/src/lib/cloudTerminalSessions.ts:6",
@@ -104901,6 +104981,66 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:b4fbe01a2005710dc422",
+      "subsystem": "browser_sandbox",
+      "sourcePath": "frontend/src/lib/browserPush.ts",
+      "sha256": "157fa536ba5285716a428c45314695422f456f2d38bc2466a2982c2b1643d095",
+      "symbols": [
+        "XROGA_PUSH_ENABLED_KEY",
+        "browserPushSupported",
+        "bytes",
+        "decodeVapidKey",
+        "disableBrowserPush",
+        "enableBrowserPush",
+        "error",
+        "hasBrowserPushSubscription",
+        "index",
+        "padded",
+        "permission",
+        "raw",
+        "ready",
+        "refreshBrowserPushAccount",
+        "registration",
+        "subscription",
+        "workerPath"
+      ],
+      "imports": [
+        "@/lib/api"
+      ],
+      "runtimeImports": [
+        "frontend/src/lib/api.ts"
+      ],
+      "entryPoints": [
+        "frontend/src/app/(shell)/layout.tsx",
+        "frontend/src/app/(shell)/settings/page.tsx",
+        "frontend/src/app/(workspace)/layout.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/notifications/NotificationExperience.tsx:10",
+        "frontend/src/components/notifications/SidebarNotificationCenter.tsx:4",
+        "frontend/src/components/settings/NotificationsSettingsPanel.tsx:12"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [
+        "frontend/src/lib/browserPush.ts#permission"
+      ],
+      "tenantBoundary": [],
+      "approvalBoundary": [
+        "frontend/src/lib/browserPush.ts#permission"
+      ],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:ea8171dc3769efe1a9a1",
       "subsystem": "browser_sandbox",
       "sourcePath": "frontend/src/lib/browserSafety.ts",
@@ -104969,7 +105109,7 @@
       ],
       "callers": [
         "frontend/src/components/notifications/NotificationExperience.tsx:9",
-        "frontend/src/components/notifications/SidebarNotificationCenter.tsx:4",
+        "frontend/src/components/notifications/SidebarNotificationCenter.tsx:5",
         "frontend/src/components/settings/NotificationsSettingsPanel.tsx:9",
         "frontend/src/context/TerminalChatContext.tsx:97",
         "frontend/src/hooks/useBuildCompletionAlerts.ts:5"
@@ -109941,9 +110081,9 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/notifications/NotificationExperience.tsx:10",
-        "frontend/src/components/notifications/SidebarNotificationCenter.tsx:11",
-        "frontend/src/components/settings/NotificationsSettingsPanel.tsx:14",
+        "frontend/src/components/notifications/NotificationExperience.tsx:11",
+        "frontend/src/components/notifications/SidebarNotificationCenter.tsx:12",
+        "frontend/src/components/settings/NotificationsSettingsPanel.tsx:13",
         "frontend/src/lib/notificationExperience.test.ts:4"
       ],
       "reachable": true,
@@ -119784,7 +119924,7 @@
       "id": "surface:c97d84b7bce6d5239ff8",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/middleware.ts",
-      "sha256": "351846e952d1700742ae26bab4809f51f9de408eee31a5cda1727ef656e1ca65",
+      "sha256": "d52d0513a5604e1d5f41b4d13f36ce13468b9561c35b1c6fe1d363c50044f27d",
       "symbols": [
         "config",
         "middleware",
@@ -119857,7 +119997,7 @@
         "frontend/src/components/layout/Sidebar.tsx:66",
         "frontend/src/components/notifications/NotificationBell.tsx:7",
         "frontend/src/components/notifications/NotificationExperience.tsx:7",
-        "frontend/src/components/notifications/SidebarNotificationCenter.tsx:10",
+        "frontend/src/components/notifications/SidebarNotificationCenter.tsx:11",
         "frontend/src/components/providers/AppProviders.tsx:5",
         "frontend/src/components/providers/LanguageProvider.tsx:4",
         "frontend/src/components/publish/PublishWorkspace.tsx:33",
@@ -127830,7 +127970,7 @@
       "id": "surface:feab506b94437f0d2609",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/xroga/runtime-facts.mjs",
-      "sha256": "4eabe36ba552b7e1e84d6a8004e33d66aa4af3adca49032a4757705ef277c1bd",
+      "sha256": "db3ac14cb9e3198bfeda150817ba220e1f303217774ef7fee5bc213d1d87cef1",
       "symbols": [
         "coreServices",
         "current",
@@ -132330,9 +132470,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:fa08d4fe05af64046b18",
+      "id": "registration:ee72b47d63072eccf48a",
       "sourcePath": "backend/src/routes/notifications.ts",
-      "line": 7,
+      "line": 8,
       "receiver": "router",
       "method": "use",
       "path": null,
@@ -132342,9 +132482,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:d4bc00e304a0c23a4914",
+      "id": "registration:1660d7fa460a6f2f3358",
       "sourcePath": "backend/src/routes/notifications.ts",
-      "line": 12,
+      "line": 13,
       "receiver": "router",
       "method": "get",
       "path": "/",
@@ -132354,9 +132494,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:faf44843f9635af6db85",
+      "id": "registration:7c778c2d94aa5e4baff6",
       "sourcePath": "backend/src/routes/notifications.ts",
-      "line": 28,
+      "line": 29,
       "receiver": "router",
       "method": "get",
       "path": "/unread-count",
@@ -132366,9 +132506,45 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:02175b4885cbb4b818e4",
+      "id": "registration:075d18d210ccd92bd7f7",
       "sourcePath": "backend/src/routes/notifications.ts",
-      "line": 43,
+      "line": 44,
+      "receiver": "router",
+      "method": "get",
+      "path": "/push-key",
+      "handlers": [],
+      "scope": "module",
+      "functionName": "<module>",
+      "inlineResponse": true
+    },
+    {
+      "id": "registration:1ab8eda5ec23ecf1742e",
+      "sourcePath": "backend/src/routes/notifications.ts",
+      "line": 53,
+      "receiver": "router",
+      "method": "post",
+      "path": "/push-subscription",
+      "handlers": [],
+      "scope": "module",
+      "functionName": "<module>",
+      "inlineResponse": true
+    },
+    {
+      "id": "registration:8961fd66d87ec0bd656a",
+      "sourcePath": "backend/src/routes/notifications.ts",
+      "line": 94,
+      "receiver": "router",
+      "method": "delete",
+      "path": "/push-subscription",
+      "handlers": [],
+      "scope": "module",
+      "functionName": "<module>",
+      "inlineResponse": true
+    },
+    {
+      "id": "registration:9eca8f8140ec5437f2ee",
+      "sourcePath": "backend/src/routes/notifications.ts",
+      "line": 110,
       "receiver": "router",
       "method": "patch",
       "path": "/:id/read",
@@ -132378,9 +132554,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:bffbc69c1588348608cc",
+      "id": "registration:9a7bcd205522b5aa7e10",
       "sourcePath": "backend/src/routes/notifications.ts",
-      "line": 58,
+      "line": 125,
       "receiver": "router",
       "method": "patch",
       "path": "/read-all",
@@ -132390,9 +132566,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:faf7e0a90c548d15a6ef",
+      "id": "registration:ac63124e3453922f2a59",
       "sourcePath": "backend/src/routes/notifications.ts",
-      "line": 73,
+      "line": 140,
       "receiver": "router",
       "method": "delete",
       "path": "/:id",
@@ -138375,10 +138551,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:356b676eec0b4b85c046",
-      "registrationId": "registration:d4bc00e304a0c23a4914",
+      "id": "route:41f67df0a95439915acd",
+      "registrationId": "registration:1660d7fa460a6f2f3358",
       "sourcePath": "backend/src/routes/notifications.ts",
-      "line": 12,
+      "line": 13,
       "method": "GET",
       "path": "/api/notifications",
       "mountChain": [
@@ -138392,10 +138568,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:10e52d628a98840ae672",
-      "registrationId": "registration:faf44843f9635af6db85",
+      "id": "route:0c23fc62bd01b9318b2b",
+      "registrationId": "registration:7c778c2d94aa5e4baff6",
       "sourcePath": "backend/src/routes/notifications.ts",
-      "line": 28,
+      "line": 29,
       "method": "GET",
       "path": "/api/notifications/unread-count",
       "mountChain": [
@@ -138409,10 +138585,61 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:33ee44b4416d97d6ad36",
-      "registrationId": "registration:02175b4885cbb4b818e4",
+      "id": "route:339f49cfbd80cce952e7",
+      "registrationId": "registration:075d18d210ccd92bd7f7",
       "sourcePath": "backend/src/routes/notifications.ts",
-      "line": 43,
+      "line": 44,
+      "method": "GET",
+      "path": "/api/notifications/push-key",
+      "mountChain": [
+        "backend/src/index.ts:277"
+      ],
+      "authBoundary": [
+        "authMiddleware"
+      ],
+      "reachable": true,
+      "state": "IMPLEMENTED_AND_REACHABLE",
+      "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
+    },
+    {
+      "id": "route:81d9e67d9fbdfbbad9bb",
+      "registrationId": "registration:1ab8eda5ec23ecf1742e",
+      "sourcePath": "backend/src/routes/notifications.ts",
+      "line": 53,
+      "method": "POST",
+      "path": "/api/notifications/push-subscription",
+      "mountChain": [
+        "backend/src/index.ts:277"
+      ],
+      "authBoundary": [
+        "authMiddleware"
+      ],
+      "reachable": true,
+      "state": "IMPLEMENTED_AND_REACHABLE",
+      "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
+    },
+    {
+      "id": "route:db78a2a62434c6619935",
+      "registrationId": "registration:8961fd66d87ec0bd656a",
+      "sourcePath": "backend/src/routes/notifications.ts",
+      "line": 94,
+      "method": "DELETE",
+      "path": "/api/notifications/push-subscription",
+      "mountChain": [
+        "backend/src/index.ts:277"
+      ],
+      "authBoundary": [
+        "authMiddleware"
+      ],
+      "reachable": true,
+      "state": "IMPLEMENTED_AND_REACHABLE",
+      "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
+    },
+    {
+      "id": "route:c777d5dd51f84f6d871f",
+      "registrationId": "registration:9eca8f8140ec5437f2ee",
+      "sourcePath": "backend/src/routes/notifications.ts",
+      "line": 110,
       "method": "PATCH",
       "path": "/api/notifications/:id/read",
       "mountChain": [
@@ -138426,10 +138653,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:ec3c59b5e825a8e9e540",
-      "registrationId": "registration:bffbc69c1588348608cc",
+      "id": "route:45cd74f21fe81910371b",
+      "registrationId": "registration:9a7bcd205522b5aa7e10",
       "sourcePath": "backend/src/routes/notifications.ts",
-      "line": 58,
+      "line": 125,
       "method": "PATCH",
       "path": "/api/notifications/read-all",
       "mountChain": [
@@ -138443,10 +138670,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:b0055f923810c886eaad",
-      "registrationId": "registration:faf7e0a90c548d15a6ef",
+      "id": "route:e20ed4de07299bf30ebf",
+      "registrationId": "registration:ac63124e3453922f2a59",
       "sourcePath": "backend/src/routes/notifications.ts",
-      "line": 73,
+      "line": 140,
       "method": "DELETE",
       "path": "/api/notifications/:id",
       "mountChain": [
@@ -140597,6 +140824,13 @@
       "version": "20261101160136",
       "order": 161,
       "sha256": "c7465f9d2d5e2ed9ac329b4084f3d6253085d353e4716444225a402f128be731"
+    },
+    {
+      "id": "migration:e8e5b629fe1ca67cab6d",
+      "sourcePath": "supabase/migrations/20261110212913_smart_notification_push_subscriptions.sql",
+      "version": "20261110212913",
+      "order": 162,
+      "sha256": "3e1373475910689fc9ce26fb18fc2fbe2cf93fffef7416cb811aa87b4fbee5b1"
     }
   ],
   "workflows": [
@@ -140644,7 +140878,7 @@
     {
       "id": "workflow:a7962a7c78b10b796636",
       "sourcePath": ".github/workflows/command3-auth-browser.yml",
-      "sha256": "63bbf376917f45483f6dcaa2f177b9acd1ed319220818e1a1c1ce45530b7ae3c",
+      "sha256": "474a071bb8b36dc348aac9fada01af6b85c20b7309b94f77084ec3063303ed02",
       "sourceEntrypoints": [
         "frontend/e2e/phase4-admin-share.security.mjs",
         "frontend/e2e/phase4-api-clients.security.mjs",
@@ -146543,51 +146777,51 @@
       "reachable": false
     },
     {
-      "id": "frontend-call:96c19dab8d4257c1872d",
+      "id": "frontend-call:2245282a3a91627764b5",
       "sourcePath": "frontend/src/components/notifications/NotificationExperience.tsx",
-      "line": 51,
+      "line": 55,
       "callee": "api.notifications.list",
       "reachable": true
     },
     {
-      "id": "frontend-call:bda3359554b91ed3d049",
+      "id": "frontend-call:5d2207d58edfcfe131ec",
       "sourcePath": "frontend/src/components/notifications/NotificationExperience.tsx",
-      "line": 51,
+      "line": 55,
       "callee": "api.notifications.unreadCount",
       "reachable": true
     },
     {
-      "id": "frontend-call:aa1bccf82864b7c078e6",
+      "id": "frontend-call:093253a6fee348bfc232",
       "sourcePath": "frontend/src/components/notifications/NotificationExperience.tsx",
-      "line": 82,
+      "line": 91,
       "callee": "api.notifications.markRead",
       "reachable": true
     },
     {
-      "id": "frontend-call:c6d3c37555d89933b36a",
+      "id": "frontend-call:3ea6825f2b19c8ddfb20",
       "sourcePath": "frontend/src/components/notifications/SidebarNotificationCenter.tsx",
-      "line": 36,
+      "line": 37,
       "callee": "api.notifications.list",
       "reachable": true
     },
     {
-      "id": "frontend-call:c5c364393a5c381e5fd4",
+      "id": "frontend-call:a18c4a4d71ab0bc25981",
       "sourcePath": "frontend/src/components/notifications/SidebarNotificationCenter.tsx",
-      "line": 36,
+      "line": 37,
       "callee": "api.notifications.unreadCount",
       "reachable": true
     },
     {
-      "id": "frontend-call:31080b27a9b8ab6e0bfb",
+      "id": "frontend-call:c2dc8e19fa8dc5bc6386",
       "sourcePath": "frontend/src/components/notifications/SidebarNotificationCenter.tsx",
-      "line": 45,
+      "line": 46,
       "callee": "api.notifications.markRead",
       "reachable": true
     },
     {
-      "id": "frontend-call:7534dfb4d3aadac72bd0",
+      "id": "frontend-call:168ef5be5af1f4b22610",
       "sourcePath": "frontend/src/components/notifications/SidebarNotificationCenter.tsx",
-      "line": 58,
+      "line": 59,
       "callee": "api.notifications.markAllRead",
       "reachable": true
     },
@@ -147691,9 +147925,9 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:725b93b8f82865a6e9a7",
+      "id": "frontend-call:197c5d4ede6f1d0f0fff",
       "sourcePath": "frontend/src/lib/api.ts",
-      "line": 6709,
+      "line": 6718,
       "callee": "fetchApiResponse",
       "reachable": true
     },
@@ -147703,6 +147937,34 @@
       "line": 19,
       "callee": "fetch",
       "reachable": false
+    },
+    {
+      "id": "frontend-call:17e56c31e2007a529181",
+      "sourcePath": "frontend/src/lib/browserPush.ts",
+      "line": 32,
+      "callee": "api.notifications.subscribePush",
+      "reachable": true
+    },
+    {
+      "id": "frontend-call:cb8e93ca19af1ba7f540",
+      "sourcePath": "frontend/src/lib/browserPush.ts",
+      "line": 45,
+      "callee": "api.notifications.pushKey",
+      "reachable": true
+    },
+    {
+      "id": "frontend-call:a3a29e39f8b3e02e64f1",
+      "sourcePath": "frontend/src/lib/browserPush.ts",
+      "line": 53,
+      "callee": "api.notifications.subscribePush",
+      "reachable": true
+    },
+    {
+      "id": "frontend-call:e95a8f2c70daf844ded8",
+      "sourcePath": "frontend/src/lib/browserPush.ts",
+      "line": 67,
+      "callee": "api.notifications.unsubscribePush",
+      "reachable": true
     },
     {
       "id": "frontend-call:5c7dd1c3ab5ac2994596",
@@ -151561,7 +151823,7 @@
     {
       "id": "test-suite:cbf92151ae82e4823f24",
       "sourcePath": "backend/src/security/tenantIsolation.local.integration.ts",
-      "declaredTests": 75,
+      "declaredTests": 76,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -151674,6 +151936,13 @@
       "id": "test-suite:7e971da14448b6d4dcd8",
       "sourcePath": "backend/src/services/billingRoutes.local.integration.ts",
       "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:12e2bc4a463dbae2c17f",
+      "sourcePath": "backend/src/services/browserPushService.test.ts",
+      "declaredTests": 2,
       "skipLocations": [],
       "focusLocations": []
     },

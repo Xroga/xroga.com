@@ -1,6 +1,6 @@
 # Secret and environment name inventory
 
-Values are forbidden. Source SHA: `9520d9aad28069d255fc9d78cfed60b8066ad290`. Names and source discovery do not prove that a capability is configured or accepted.
+Values are forbidden. Source SHA: `c6d0d04421f9bbef7ec766188b4147185f709327`. Names and source discovery do not prove that a capability is configured or accepted.
 
 | Name | Classification | Requirement | Dependency |
 | --- | --- | --- | --- |
@@ -17,13 +17,13 @@ Values are forbidden. Source SHA: `9520d9aad28069d255fc9d78cfed60b8066ad290`. Na
 | BROWSERBASE_PROJECT_ID | PUBLIC_IDENTIFIER | OPTIONAL_OR_DEFAULTED | browserbase |
 | CARTESIA_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | endpoint-api-cartesia-ai, endpoint-api-elevenlabs-io, endpoint-api-fish-audio, endpoint-api-suno-ai |
 | CARTESIA_VOICE_ID | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-api-cartesia-ai, endpoint-api-elevenlabs-io, endpoint-api-fish-audio, endpoint-api-suno-ai |
-| CI | SYSTEM_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-127-0-0-1, endpoint-api-github-com, endpoint-api-vercel-com, endpoint-api-whop-com, endpoint-backend-composio-dev, endpoint-example-invalid, endpoint-fixture, endpoint-fixture-invalid, endpoint-fixture-supabase-co, endpoint-fixtureproject-supabase-co, endpoint-public-example-invalid, endpoint-whop-com |
+| CI | SYSTEM_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-127-0-0-1, endpoint-api-github-com, endpoint-api-vercel-com, endpoint-api-whop-com, endpoint-backend-composio-dev, endpoint-example-invalid, endpoint-fcm-googleapis-com, endpoint-fixture, endpoint-fixture-invalid, endpoint-fixture-supabase-co, endpoint-fixtureproject-supabase-co, endpoint-public-example-invalid, endpoint-whop-com |
 | CLOUDFLARE_ACCOUNT_ID | PUBLIC_IDENTIFIER | OPTIONAL_OR_DEFAULTED | r2 |
 | CLOUDFLARE_R2_ACCESS_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | r2 |
 | CLOUDFLARE_R2_ACCOUNT_ID | PUBLIC_IDENTIFIER | OPTIONAL_OR_DEFAULTED | r2 |
 | CLOUDFLARE_R2_BUCKET | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | r2 |
 | CLOUDFLARE_R2_METADATA_READ_TOKEN | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | r2 |
-| CLOUDFLARE_R2_PRIVATE_BUCKET | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | r2, endpoint-127-0-0-1, endpoint-api-whop-com, endpoint-example-invalid, endpoint-public-example-invalid |
+| CLOUDFLARE_R2_PRIVATE_BUCKET | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | r2, endpoint-127-0-0-1, endpoint-api-whop-com, endpoint-example-invalid, endpoint-fcm-googleapis-com, endpoint-public-example-invalid |
 | CLOUDFLARE_R2_SECRET_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | r2 |
 | CLOUDFLARE_VOICE_ACCOUNT_ID | PUBLIC_IDENTIFIER | OPTIONAL_OR_DEFAULTED | cloudflare-voice |
 | CLOUDFLARE_VOICE_API_TOKEN | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | cloudflare-voice |
@@ -47,7 +47,7 @@ Values are forbidden. Source SHA: `9520d9aad28069d255fc9d78cfed60b8066ad290`. Na
 | DEEPSEEK_WEBSEARCH_FETCH_API | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-api-deepseek-com, endpoint-cdn-deepseek-com |
 | DESCRIPT_API_TOKEN | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | runtime-controls-and-conditional-aliases |
 | DID_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | runtime-controls-and-conditional-aliases |
-| E2E_BACKEND_URL | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-127-0-0-1, endpoint-api-whop-com, endpoint-example-invalid, endpoint-public-example-invalid |
+| E2E_BACKEND_URL | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-127-0-0-1, endpoint-api-whop-com, endpoint-example-invalid, endpoint-fcm-googleapis-com, endpoint-public-example-invalid |
 | E2E_ISOLATED_PROJECT_REF | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-127-0-0-1 |
 | ELEVENLABS_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | endpoint-api-cartesia-ai, endpoint-api-elevenlabs-io, endpoint-api-fish-audio, endpoint-api-suno-ai |
 | ELEVENLABS_VOICE_ID | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-api-cartesia-ai, endpoint-api-elevenlabs-io, endpoint-api-fish-audio, endpoint-api-suno-ai |
@@ -56,7 +56,7 @@ Values are forbidden. Source SHA: `9520d9aad28069d255fc9d78cfed60b8066ad290`. Na
 | FAL_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | runtime-controls-and-conditional-aliases |
 | FAL_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | runtime-controls-and-conditional-aliases |
 | FISH_AUDIO_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | endpoint-api-cartesia-ai, endpoint-api-elevenlabs-io, endpoint-api-fish-audio, endpoint-api-suno-ai |
-| FLY_APP_NAME | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-127-0-0-1, endpoint-api-machines-dev, endpoint-api-whop-com, endpoint-example-invalid, endpoint-public-example-invalid, endpoint-www-googleapis-com |
+| FLY_APP_NAME | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-127-0-0-1, endpoint-api-machines-dev, endpoint-api-whop-com, endpoint-example-invalid, endpoint-fcm-googleapis-com, endpoint-public-example-invalid, endpoint-www-googleapis-com |
 | FLY_MACHINE_ID | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | FRONTEND_URL | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | api, endpoint-127-0-0-1, endpoint-accounts-google-com, endpoint-api-github-com, endpoint-api-supabase-com, endpoint-api-vercel-com, endpoint-backend-composio-dev, endpoint-chrome-google-com, endpoint-chromewebstore-googleapis-com, endpoint-github-com, endpoint-localhost, endpoint-oauth2-googleapis-com, endpoint-vercel-com, endpoint-www-googleapis-com, endpoint-xroga-api-fly-dev, endpoint-xrogaaicom-vercel-app |
 | GCE_METADATA_HOST | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
@@ -176,7 +176,7 @@ Values are forbidden. Source SHA: `9520d9aad28069d255fc9d78cfed60b8066ad290`. Na
 | STRIPE_PAYMENT_LINK | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-localhost |
 | STRIPE_SECRET_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | runtime-controls-and-conditional-aliases |
 | SUNO_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | endpoint-api-cartesia-ai, endpoint-api-elevenlabs-io, endpoint-api-fish-audio, endpoint-api-suno-ai |
-| SUPABASE_ANON_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | supabase, endpoint-127-0-0-1, endpoint-api-github-com, endpoint-api-vercel-com, endpoint-api-whop-com, endpoint-backend-composio-dev, endpoint-example-invalid, endpoint-fixture-supabase-co, endpoint-fixtureproject-supabase-co, endpoint-public-example-invalid, endpoint-whop-com |
+| SUPABASE_ANON_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | supabase, endpoint-127-0-0-1, endpoint-api-github-com, endpoint-api-vercel-com, endpoint-api-whop-com, endpoint-backend-composio-dev, endpoint-example-invalid, endpoint-fcm-googleapis-com, endpoint-fixture-supabase-co, endpoint-fixtureproject-supabase-co, endpoint-public-example-invalid, endpoint-whop-com |
 | SUPABASE_DB_PASSWORD | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | supabase |
 | SUPABASE_DB_REGION | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | supabase |
 | SUPABASE_DB_URL | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | supabase |
@@ -186,8 +186,8 @@ Values are forbidden. Source SHA: `9520d9aad28069d255fc9d78cfed60b8066ad290`. Na
 | SUPABASE_OAUTH_CLIENT_SECRET | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | supabase, endpoint-127-0-0-1, endpoint-api-supabase-com, endpoint-localhost |
 | SUPABASE_POOLER_HOST | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | supabase |
 | SUPABASE_PROJECT_REF | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | supabase |
-| SUPABASE_SERVICE_ROLE_KEY | SERVER_CREDENTIAL | REQUIRED_FOR_CORE_AUTH | supabase, endpoint-127-0-0-1, endpoint-api-whop-com, endpoint-example-invalid, endpoint-fixture-supabase-co, endpoint-fixtureproject-supabase-co, endpoint-github-com, endpoint-public-example-invalid, endpoint-supabase-management-tests-invalid |
-| SUPABASE_URL | RUNTIME_CONFIGURATION | REQUIRED_FOR_CORE_AUTH | supabase, endpoint-127-0-0-1, endpoint-api-github-com, endpoint-api-vercel-com, endpoint-api-whop-com, endpoint-backend-composio-dev, endpoint-example-invalid, endpoint-fixture, endpoint-fixture-invalid, endpoint-fixture-supabase-co, endpoint-fixtureproject-supabase-co, endpoint-localhost, endpoint-public-example-invalid, endpoint-supabase-management-tests-invalid, endpoint-whop-com, endpoint-xroga-api-fly-dev, endpoint-xrogaaicom-vercel-app |
+| SUPABASE_SERVICE_ROLE_KEY | SERVER_CREDENTIAL | REQUIRED_FOR_CORE_AUTH | supabase, endpoint-127-0-0-1, endpoint-api-whop-com, endpoint-example-invalid, endpoint-fcm-googleapis-com, endpoint-fixture-supabase-co, endpoint-fixtureproject-supabase-co, endpoint-github-com, endpoint-public-example-invalid, endpoint-supabase-management-tests-invalid |
+| SUPABASE_URL | RUNTIME_CONFIGURATION | REQUIRED_FOR_CORE_AUTH | supabase, endpoint-127-0-0-1, endpoint-api-github-com, endpoint-api-vercel-com, endpoint-api-whop-com, endpoint-backend-composio-dev, endpoint-example-invalid, endpoint-fcm-googleapis-com, endpoint-fixture, endpoint-fixture-invalid, endpoint-fixture-supabase-co, endpoint-fixtureproject-supabase-co, endpoint-localhost, endpoint-public-example-invalid, endpoint-supabase-management-tests-invalid, endpoint-whop-com, endpoint-xroga-api-fly-dev, endpoint-xrogaaicom-vercel-app |
 | SystemRoot | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | TERM | SYSTEM_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | TMPDIR | SYSTEM_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
@@ -214,14 +214,14 @@ Values are forbidden. Source SHA: `9520d9aad28069d255fc9d78cfed60b8066ad290`. Na
 | VERCEL_TEAM_ID | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-api-vercel-com |
 | VERCEL_TOKEN | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | runtime-controls-and-conditional-aliases |
 | VERCEL_URL | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
-| WHOP_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | endpoint-127-0-0-1, endpoint-api-whop-com, endpoint-example-invalid, endpoint-public-example-invalid |
-| WHOP_COMPANY_ID | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-127-0-0-1, endpoint-api-whop-com, endpoint-example-invalid, endpoint-public-example-invalid |
-| WHOP_PLAN_ID | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-127-0-0-1, endpoint-api-whop-com, endpoint-example-invalid, endpoint-public-example-invalid |
-| WHOP_REDIRECT_URL | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-127-0-0-1, endpoint-api-whop-com, endpoint-example-invalid, endpoint-public-example-invalid |
-| WHOP_WEBHOOK_SECRET | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | endpoint-127-0-0-1, endpoint-api-whop-com, endpoint-example-invalid, endpoint-public-example-invalid |
+| WHOP_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | endpoint-127-0-0-1, endpoint-api-whop-com, endpoint-example-invalid, endpoint-fcm-googleapis-com, endpoint-public-example-invalid |
+| WHOP_COMPANY_ID | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-127-0-0-1, endpoint-api-whop-com, endpoint-example-invalid, endpoint-fcm-googleapis-com, endpoint-public-example-invalid |
+| WHOP_PLAN_ID | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-127-0-0-1, endpoint-api-whop-com, endpoint-example-invalid, endpoint-fcm-googleapis-com, endpoint-public-example-invalid |
+| WHOP_REDIRECT_URL | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-127-0-0-1, endpoint-api-whop-com, endpoint-example-invalid, endpoint-fcm-googleapis-com, endpoint-public-example-invalid |
+| WHOP_WEBHOOK_SECRET | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | endpoint-127-0-0-1, endpoint-api-whop-com, endpoint-example-invalid, endpoint-fcm-googleapis-com, endpoint-public-example-invalid |
 | XAI_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | runtime-controls-and-conditional-aliases |
-| XB01_DISPOSABLE_SUPABASE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-127-0-0-1, endpoint-api-github-com, endpoint-api-vercel-com, endpoint-api-whop-com, endpoint-backend-composio-dev, endpoint-example-invalid, endpoint-fixture, endpoint-fixture-invalid, endpoint-fixture-supabase-co, endpoint-fixtureproject-supabase-co, endpoint-public-example-invalid, endpoint-whop-com |
-| XB01_LOCAL_DATABASE_URL | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | endpoint-127-0-0-1, endpoint-api-whop-com, endpoint-backend-composio-dev, endpoint-example-invalid, endpoint-fixture-invalid, endpoint-public-example-invalid |
+| XB01_DISPOSABLE_SUPABASE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-127-0-0-1, endpoint-api-github-com, endpoint-api-vercel-com, endpoint-api-whop-com, endpoint-backend-composio-dev, endpoint-example-invalid, endpoint-fcm-googleapis-com, endpoint-fixture, endpoint-fixture-invalid, endpoint-fixture-supabase-co, endpoint-fixtureproject-supabase-co, endpoint-public-example-invalid, endpoint-whop-com |
+| XB01_LOCAL_DATABASE_URL | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | endpoint-127-0-0-1, endpoint-api-whop-com, endpoint-backend-composio-dev, endpoint-example-invalid, endpoint-fcm-googleapis-com, endpoint-fixture-invalid, endpoint-public-example-invalid |
 | XB01_TEST_SOURCE_SHA | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-127-0-0-1 |
 | XROGA_ALLOWED_MODELS | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_AUTOMATION_SCHEDULER_AUDIENCE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
@@ -335,10 +335,10 @@ Values are forbidden. Source SHA: `9520d9aad28069d255fc9d78cfed60b8066ad290`. Na
 | XROGA_RUNTIME_ROLE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_SANDBOX_BROWSER_IMAGE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | google-execution, endpoint-127-0-0-1 |
 | XROGA_SANDBOX_DISABLED | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | google-execution |
-| XROGA_SANDBOX_FLY_APP | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | google-execution, endpoint-127-0-0-1, endpoint-api-machines-dev, endpoint-api-whop-com, endpoint-example-invalid, endpoint-public-example-invalid |
+| XROGA_SANDBOX_FLY_APP | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | google-execution, endpoint-127-0-0-1, endpoint-api-machines-dev, endpoint-api-whop-com, endpoint-example-invalid, endpoint-fcm-googleapis-com, endpoint-public-example-invalid |
 | XROGA_SANDBOX_FLY_IMAGE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | google-execution, endpoint-api-machines-dev |
 | XROGA_SANDBOX_FLY_REGION | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | google-execution, endpoint-api-machines-dev |
-| XROGA_SANDBOX_FLY_TOKEN | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | google-execution, endpoint-127-0-0-1, endpoint-api-machines-dev, endpoint-api-whop-com, endpoint-example-invalid, endpoint-public-example-invalid |
+| XROGA_SANDBOX_FLY_TOKEN | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | google-execution, endpoint-127-0-0-1, endpoint-api-machines-dev, endpoint-api-whop-com, endpoint-example-invalid, endpoint-fcm-googleapis-com, endpoint-public-example-invalid |
 | XROGA_SANDBOX_LIVE_TEST_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | google-execution |
 | XROGA_SANDBOX_WORKER_NAME | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | google-execution |
 | XROGA_SANDBOX_WORKER_TOKEN | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | google-execution |
@@ -351,6 +351,8 @@ Values are forbidden. Source SHA: `9520d9aad28069d255fc9d78cfed60b8066ad290`. Na
 | XROGA_STORAGE_RECONCILE_MODE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_TEST_CREDENTIAL_KEK | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_TRUSTED_PROXY_HOPS | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
+| XROGA_VAPID_PRIVATE_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | api |
+| XROGA_VAPID_PUBLIC_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | api |
 | XROGA_WORKSPACE_STAGING_RUNTIME | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-accounts-google-com, endpoint-metadata-google-internal |
 | YOUTUBE_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | endpoint-www-googleapis-com, endpoint-www-youtube-com |
 | ZHIPU_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | historical-zhipu |

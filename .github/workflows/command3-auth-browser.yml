@@ -218,7 +218,9 @@ jobs:
         id: start-application
         shell: bash
         run: |
-          PORT=4000 node backend/dist/index.js > backend.log 2>&1 & echo $! > backend.pid
+          push_keys="$(cd backend && node -e 'const {publicKey, privateKey} = require("web-push").generateVAPIDKeys(); console.log(publicKey, privateKey)')"
+          read -r push_public push_private <<< "$push_keys"
+          XROGA_VAPID_PUBLIC_KEY="$push_public" XROGA_VAPID_PRIVATE_KEY="$push_private" PORT=4000 node backend/dist/index.js > backend.log 2>&1 & echo $! > backend.pid
           XB01_PROXY_ORIGIN_PRELOAD=1 NODE_OPTIONS="--require=$GITHUB_WORKSPACE/scripts/security/proxy-origin-fixture.cjs" npm run start --prefix frontend --workspaces=false -- --hostname 127.0.0.1 --port 3000 > frontend.log 2>&1 & echo $! > frontend.pid
           for attempt in $(seq 1 40); do
             curl --silent --fail http://127.0.0.1:4000/ready >/dev/null && curl --silent --fail http://127.0.0.1:3000/auth/login >/dev/null && exit 0
