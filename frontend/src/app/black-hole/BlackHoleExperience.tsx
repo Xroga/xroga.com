@@ -168,6 +168,7 @@ export function BlackHoleExperience() {
             {stars.map((star, i) => <span key={i} style={{ left: star.left, top: star.top, opacity: star.opacity, width: star.size, height: star.size, animationDelay: star.delay }} />)}
           </div>
           <Art src="/backgrounds/xroga-black-portal-hero.webp" className="bh-hero-photo" eager />
+          <Art src="/black-hole/singularity-mesh.svg" className="bh-hero-mesh" eager />
           <div className="bh-hero-singularity" aria-hidden="true"><div className="bh-singularity-core"/><span/><span/><span/></div>
           <div className="bh-vignette" aria-hidden="true" />
           <div className="bh-wrap bh-hero-content">
