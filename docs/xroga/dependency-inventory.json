@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "054020ccf39215969b2b5fb3620aec8af850839b",
+  "source_sha": "9ac3ad295c77c2ff7a64052ffbf85e59b4b1e4af",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -16282,7 +16282,7 @@
     },
     {
       "path": ".vercel/project.json",
-      "presence": "PRESENT",
+      "presence": "ABSENT",
       "role": "Existing runtime/build/verification configuration"
     },
     {
@@ -16485,10 +16485,6 @@
     {
       "path": ".github/workflows/xroga-tenant-security.yml",
       "sha256": "1e0c72beae0cdedb6b496fceeda67e6b5d16aa6f57b1452a313915e725c0171c"
-    },
-    {
-      "path": ".vercel/project.json",
-      "sha256": "978867a51bff89f97ca84a99eb20eb76980bb1c8fb7e4a71b6aac71a78d26c48"
     },
     {
       "path": "Dockerfile.api",
@@ -22152,7 +22148,7 @@
     },
     {
       "path": "frontend/src/components/settings/NotificationsSettingsPanel.tsx",
-      "sha256": "99dc739e5c946ced87a512364f6b1caa47db5ab2bd1999a100e4207decd27b32"
+      "sha256": "33f3885994dca52b2a3af8c1deb08d0a3d7621a8bb62c582cbf254cdd6ec3564"
     },
     {
       "path": "frontend/src/components/settings/PlanUsageSettingsPanel.tsx",
@@ -23236,7 +23232,7 @@
     },
     {
       "path": "frontend/src/lib/notificationExperience.ts",
-      "sha256": "e0ecdfb7c7ea9fa7e8614cc31b4246b3b3bb9279b259a9154d1359b49cd3ab97"
+      "sha256": "57deb27e4caf6c866ee622e537518e01284aa4094866bf45651a13c8995d02b6"
     },
     {
       "path": "frontend/src/lib/oauthPopupResult.ts",

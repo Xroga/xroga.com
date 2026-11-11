@@ -90384,7 +90384,7 @@
       "id": "surface:e5f7e62ad78a7b416b1d",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/settings/NotificationsSettingsPanel.tsx",
-      "sha256": "99dc739e5c946ced87a512364f6b1caa47db5ab2bd1999a100e4207decd27b32",
+      "sha256": "33f3885994dca52b2a3af8c1deb08d0a3d7621a8bb62c582cbf254cdd6ec3564",
       "symbols": [
         "NotificationsSettingsPanel",
         "enabled",
@@ -90393,6 +90393,7 @@
       "imports": [
         "@/components/settings/SettingsPrimitives",
         "@/components/ui/Badge",
+        "@/components/ui/Button",
         "@/components/ui/Switch",
         "@/lib/browserPush",
         "@/lib/buildBrowserNotify",
@@ -90404,6 +90405,7 @@
       "runtimeImports": [
         "frontend/src/components/settings/SettingsPrimitives.tsx",
         "frontend/src/components/ui/Badge.tsx",
+        "frontend/src/components/ui/Button.tsx",
         "frontend/src/components/ui/Switch.tsx",
         "frontend/src/lib/browserPush.ts",
         "frontend/src/lib/buildBrowserNotify.ts",
@@ -90666,7 +90668,7 @@
         "frontend/src/components/integrations/XrogaConnectPanel.tsx:31",
         "frontend/src/components/settings/DataAiSettingsPanel.tsx:12",
         "frontend/src/components/settings/GeneralSettingsPanel.tsx:15",
-        "frontend/src/components/settings/NotificationsSettingsPanel.tsx:8",
+        "frontend/src/components/settings/NotificationsSettingsPanel.tsx:9",
         "frontend/src/components/settings/PlanUsageSettingsPanel.tsx:12",
         "frontend/src/components/settings/PrivacySettingsPanel.tsx:9",
         "frontend/src/components/settings/SecuritySettingsPanel.tsx:9",
@@ -98176,7 +98178,7 @@
       ],
       "callers": [
         "frontend/src/components/companion/CompanionCustomizer.tsx:10",
-        "frontend/src/components/settings/NotificationsSettingsPanel.tsx:7",
+        "frontend/src/components/settings/NotificationsSettingsPanel.tsx:8",
         "frontend/src/components/settings/PlanUsageSettingsPanel.tsx:9",
         "frontend/src/components/settings/PrivacySettingsPanel.tsx:8",
         "frontend/src/components/settings/SecuritySettingsPanel.tsx:8",
@@ -98271,6 +98273,7 @@
       "callers": [
         "frontend/src/components/settings/DataAiSettingsPanel.tsx:10",
         "frontend/src/components/settings/GeneralSettingsPanel.tsx:13",
+        "frontend/src/components/settings/NotificationsSettingsPanel.tsx:7",
         "frontend/src/components/settings/PlanUsageSettingsPanel.tsx:10",
         "frontend/src/components/settings/SecuritySettingsPanel.tsx:7",
         "frontend/src/components/showcase/ShowcaseDetail.tsx:5",
@@ -101906,7 +101909,7 @@
       "callers": [
         "frontend/src/components/notifications/NotificationExperience.tsx:10",
         "frontend/src/components/notifications/SidebarNotificationCenter.tsx:4",
-        "frontend/src/components/settings/NotificationsSettingsPanel.tsx:12"
+        "frontend/src/components/settings/NotificationsSettingsPanel.tsx:13"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -101997,7 +102000,7 @@
       "callers": [
         "frontend/src/components/notifications/NotificationExperience.tsx:9",
         "frontend/src/components/notifications/SidebarNotificationCenter.tsx:5",
-        "frontend/src/components/settings/NotificationsSettingsPanel.tsx:9",
+        "frontend/src/components/settings/NotificationsSettingsPanel.tsx:10",
         "frontend/src/context/TerminalChatContext.tsx:98",
         "frontend/src/hooks/useBuildCompletionAlerts.ts:5"
       ],
@@ -106813,7 +106816,7 @@
       "id": "surface:9e183b52d0143ffcb5b7",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/notificationExperience.ts",
-      "sha256": "e0ecdfb7c7ea9fa7e8614cc31b4246b3b3bb9279b259a9154d1359b49cd3ab97",
+      "sha256": "57deb27e4caf6c866ee622e537518e01284aa4094866bf45651a13c8995d02b6",
       "symbols": [
         "NOTIFICATION_PREFERENCES_EVENT",
         "NOTIFICATION_SEEN_KEY",
@@ -106826,7 +106829,9 @@
         "notificationTone",
         "now",
         "oscillator",
+        "playChime",
         "playNotificationChime",
+        "previewNotificationChime",
         "primeNotificationAudio",
         "readSeenNotifications",
         "rememberSeenNotifications",
@@ -106846,7 +106851,7 @@
       "callers": [
         "frontend/src/components/notifications/NotificationExperience.tsx:11",
         "frontend/src/components/notifications/SidebarNotificationCenter.tsx:12",
-        "frontend/src/components/settings/NotificationsSettingsPanel.tsx:13",
+        "frontend/src/components/settings/NotificationsSettingsPanel.tsx:14",
         "frontend/src/lib/notificationExperience.test.ts:4"
       ],
       "reachable": true,
@@ -150639,7 +150644,7 @@
     {
       "id": "test-suite:09466e8b4bc250c071a8",
       "sourcePath": "frontend/src/lib/notificationExperience.test.ts",
-      "declaredTests": 2,
+      "declaredTests": 3,
       "skipLocations": [],
       "focusLocations": []
     },
