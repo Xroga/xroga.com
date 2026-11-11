@@ -222,9 +222,12 @@ export function presentTerminalEvent(event: TerminalEvent): XrogaActivityPresent
   };
 }
 
-export function coalesceActivity(events: readonly TerminalEvent[]): XrogaActivityPresentation[] {
-  const rows: XrogaActivityPresentation[] = [];
-  const positions = new Map<string, number>();
+export function coalesceActivity(
+  events: readonly TerminalEvent[],
+  previous: readonly XrogaActivityPresentation[] = [],
+): XrogaActivityPresentation[] {
+  const rows = [...previous];
+  const positions = new Map(previous.map((row, index) => [row.id, index]));
   const seen = new Set<string>();
   for (const event of events) {
     if (event.kind === 'output' || event.kind === 'result' || event.kind === 'session') continue;
@@ -271,4 +274,19 @@ export function coalesceActivity(events: readonly TerminalEvent[]): XrogaActivit
     }
   }
   return rows;
+}
+
+/** A refreshed replay can overlap an already-saved snapshot. Replace matching rows, never append their logs twice. */
+export function mergeActivitySnapshots(
+  previous: readonly XrogaActivityPresentation[] = [],
+  replay: readonly XrogaActivityPresentation[],
+): XrogaActivityPresentation[] {
+  const rows = new Map(previous.map(row => [row.id, row]));
+  for (const row of replay) {
+    const saved = rows.get(row.id);
+    const reopensFinished = saved && saved.status !== 'active' && saved.status !== 'waiting' &&
+      (row.status === 'active' || row.status === 'waiting');
+    if (!saved || (!reopensFinished && row.updatedAt >= saved.updatedAt)) rows.set(row.id, row);
+  }
+  return [...rows.values()].slice(-80);
 }

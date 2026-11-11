@@ -4,6 +4,8 @@ Workspace extends the existing Swarm and Software Agent V2 adapters. The canonic
 
 An incoming answer chunk changes the inline status on the existing Swarm streaming path. The marker records receipt of answer text without retaining another copy of that text. Ordinary Phase 1 JSON calls do not expose a provider lifecycle or incremental response. Native OpenUI continues to withhold unvalidated model output until it passes the existing presentation and accounting boundary. Activity grouping stays memoized while the elapsed clock ticks. Expanded history renders up to 25 groups and 25 entries per group at a time. The existing saved conversation reader retains its 80-row cap.
 
+Background recovery uses the existing authorized run endpoint. It scopes browser-local pending entries to the signed-in account and saves each replay batch on the matching assistant message. The first poll after refresh rebuilds from the server's retained events, then polling uses the recorded cursor. Pending entries from older builds without a saved owner are excluded from automatic recovery. Existing saved conversations remain readable.
+
 | Reference | Pinned source and license | Xroga equivalent and decision | Verification |
 | --- | --- | --- | --- |
 | TUFFUI | `dec908d8`, MIT | Use status, tool block, terminal and checkpoint timeline patterns in the existing activity UI. Background agents, file changes and approvals use existing Xroga runtime surfaces. Full workflow screens are outside this scope. | Command details and chronology covered by the terminal tests. |

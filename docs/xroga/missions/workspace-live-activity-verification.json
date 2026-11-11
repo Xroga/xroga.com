@@ -19,6 +19,13 @@
     "frontend/src/lib/terminal/softwareAgentEvents.test.ts",
     "frontend/src/lib/xrogaEvent.ts",
     "frontend/src/lib/xrogaEventAdapter.ts",
+    "frontend/src/components/terminal/SwarmMessageLog.tsx",
+    "frontend/src/hooks/useBackgroundBuildJobs.ts",
+    "frontend/src/lib/pendingBuildJobs.ts",
+    "frontend/src/lib/pendingBuildJobs.test.ts",
+    "docs/xroga/current-state.json",
+    "docs/xroga/current-state.md",
+    "docs/xroga/security/egress-callers.json",
     "docs/operations/live-activity-verification.md",
     "docs/xroga/missions/workspace-live-activity-verification.json"
   ],
@@ -46,8 +53,8 @@
       "description": "Existing Workspace authentication."
     },
     "tenant": {
-      "changed": false,
-      "description": "Existing tenant-scoped event transport and per-turn history."
+      "changed": true,
+      "description": "Use the authorized run endpoint and scope automatic browser recovery to pending records stamped with the current account. Discard polling results after an account change."
     },
     "approval": {
       "changed": false,
@@ -76,6 +83,12 @@
       "scope": "Check that actual local process output, nonzero exit and replay survive the existing adapter.",
       "negative": true,
       "reference": "frontend/src/lib/terminal/softwareAgentEvents.test.ts"
+    },
+    {
+      "command": "node node_modules/tsx/dist/cli.mjs --tsconfig frontend/tsconfig.json --test frontend/src/lib/pendingBuildJobs.test.ts",
+      "scope": "Deny automatic restoration of another account's pending build or an unscoped legacy entry.",
+      "negative": true,
+      "reference": "frontend/src/lib/pendingBuildJobs.test.ts"
     }
   ],
   "architecture": {

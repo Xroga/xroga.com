@@ -14,7 +14,7 @@ import { appendCitationReferences } from '@/lib/xrogaCitations';
 import { ConversationTurnV2 } from '@/components/response-experience-v2/ConversationTurnV2';
 import { responseTextV2 } from '@/components/response-experience-v2/exportText';
 import { conversationActivityV2 } from '@/components/response-experience-v2/conversation';
-import { coalesceActivity } from '@/lib/terminal/activityPresentation';
+import { coalesceActivity, mergeActivitySnapshots } from '@/lib/terminal/activityPresentation';
 import conversationStyles from '@/components/response-experience-v2/conversation-v2.module.css';
 import { useResponseExperienceEnabled, ResponseExperienceGate } from '@/components/response-experience-v2/ResponseExperienceGate';
 import { ChatErrorBoundary } from './ChatErrorBoundary';
@@ -602,7 +602,9 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                         </ResponseExperienceGate>
             );
             const currentTurn = loading && msg.id === (buildPanelMessageId ?? animatingId);
-            const operationRows = conversationActivityV2(currentTurn ? coalesceActivity(terminalRun.events) : msg.executionActivity);
+            const operationRows = conversationActivityV2(currentTurn
+              ? mergeActivitySnapshots(msg.executionActivity, coalesceActivity(terminalRun.events))
+              : msg.executionActivity);
             const showPending = currentTurn && (!suppressGreetingActivity || operationRows.length > 0);
             const work = msg.role === 'assistant' && (showPending || operationRows.length > 0) ? (
               <TerminalLiveActivity activity={operationRows} run={currentTurn ? terminalRun : undefined} pending={showPending} />

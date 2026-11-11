@@ -41,7 +41,7 @@ function isPersistedExecutionActivity(item: unknown): item is XrogaActivityPrese
 function sanitizeExecutionActivity(raw: unknown): ChatMessage['executionActivity'] {
   if (!Array.isArray(raw)) return undefined;
   const safeText = (value: unknown, limit: number) =>
-    typeof value === 'string' ? redactTerminalText(value.slice(0, limit)) : undefined;
+    typeof value === 'string' ? redactTerminalText(value).slice(0, limit) : undefined;
   const safeRefs = (value: unknown) => Array.isArray(value) ?
     value.filter((ref): ref is string => typeof ref === 'string' && /^[a-z0-9_-]{1,128}$/i.test(ref)).slice(0, 20) : undefined;
   const items = raw.filter(isPersistedExecutionActivity).slice(-80).map(item => ({
