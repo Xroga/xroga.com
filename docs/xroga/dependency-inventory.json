@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "673529b3814904cdce9462930a5a2376858b7185",
+  "source_sha": "a5b2595986976aea71aa28dc4aa90eec640116bd",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -14048,6 +14048,7 @@
     {
       "name": "XROGA_COMPOSIO_ERROR_DETAIL",
       "consuming_sources": [
+        "backend/src/routes/localBrowser.ts",
         "backend/src/services/integrations/composioClient.ts"
       ],
       "environments": [
@@ -18298,7 +18299,7 @@
     },
     {
       "path": "backend/src/routes/localBrowser.ts",
-      "sha256": "a3f976e06e94acc55808b2d3bc59aa20d7d86b932f28ffcd667e5d5ce6180e33"
+      "sha256": "68394404490f624350f4738f6ddd8444ad196164358a665ae1932fe602c84363"
     },
     {
       "path": "backend/src/routes/localBrowserDevice.ts",
@@ -35131,14 +35132,14 @@
     },
     {
       "path": "backend/src/routes/localBrowser.ts",
-      "line": 430,
+      "line": 440,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/routes/localBrowser.ts",
-      "line": 457,
+      "line": 467,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
