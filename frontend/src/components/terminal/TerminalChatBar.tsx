@@ -557,9 +557,9 @@ export function TerminalChatBar({ starter = false }: { starter?: boolean }) {
       <ProjectsQuickPopover open={projectsQuickOpen} onClose={() => setProjectsQuickOpen(false)} anchorRef={projectsButtonRef} />
       <IntegrationsModal open={integrationsOpen} onClose={() => setIntegrationsOpen(false)} anchorRef={pluginsButtonRef}
         onSelect={(plugin) => {
-          const scaffold = 'Use the connected ' + plugin.name + ' plugin for this task: ';
+          const scaffold = 'Use the connected ' + plugin.name + ' app for this task: ';
           const next = draftRef.current.trim() ? scaffold + draftRef.current : scaffold;
-          setSelectedTool({ label: plugin.name, category: 'Connected plugin', description: 'Connected app selected. Actual execution still follows your tool permissions.', tone: 'purple', scaffold });
+          setSelectedTool({ label: plugin.name, category: 'Connected app', description: 'Connected app selected. Actual execution still follows your tool permissions.', tone: 'purple', scaffold });
           setDraft(next);
           draftRef.current = next;
           setIntegrationsOpen(false);
