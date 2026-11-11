@@ -82,7 +82,7 @@ import { endOf } from './analytics-payload';
 import { onWorkspaceDisconnect, postWorkspace, workspacePaired, workspaceRequest } from '@src/xroga/bridge';
 import { ACTIVITY_LIMIT, browserActivity } from '@src/xroga/activity';
 import { startXrogaModelRun } from '@src/xroga/model';
-import { PLUGIN_TOOLS, runPluginTool } from '@src/xroga/plugins';
+import { nativeAppCall, nativeAppTool, runPluginTool, PLUGIN_TOOLS, type AppToolInfo } from '@src/xroga/plugins';
 import { SEARCH_HOME, browserTarget } from '@src/xroga/navigation';
 import { XROGA_PRODUCT } from '@src/xroga/product';
 
@@ -1645,6 +1645,8 @@ export class RunManager {
         // Playbooks that fit the request, added once to the system prompt (the same text every turn, so the prefix stays cached).
         const playbooks = skillsSection(askedEntry?.type === 'message' ? userText(askedEntry) : '');
         const timings = new RunTimings();
+        // The connected-app tools this run's searches found, by name, so a call to one reaches the guarded routes.
+        const appTools = new Map<string, AppToolInfo>();
         const loop = new AgentLoop({
           timings,
           conversationId,
@@ -1672,13 +1674,32 @@ export class RunManager {
           attachmentPreviewChars: canonical ? 8_000 : undefined,
           thumbnail,
           localScreenshots: !!canonical,
-          agentTool: (call, signal) => {
-            if (canonical?.plugins && (call.toolName === 'plugin_search' || call.toolName === 'plugin_read' ||
-                call.toolName === 'plugin_action_search' || call.toolName === 'plugin_act')) {
-              return runPluginTool(call.toolName, canonical.runId, call.input, signal,
-                approval => this.broker.open(conversationId, call.toolName === 'plugin_act' ? 'plugin-act' : 'plugin-read', approval, signal),
-                (text, source) => session.wrap(text, { connectedApp: source }),
-              );
+          agentTool: async (call, signal) => {
+            const wrapApp = (text: string, source: string) => session.wrap(text, { connectedApp: source });
+            const ask = (change: boolean) => (approval: Parameters<Parameters<typeof runPluginTool>[4]>[0]) =>
+              this.broker.open(conversationId, change ? 'plugin-act' : 'plugin-read', approval, signal);
+            if (canonical?.plugins) {
+              // A tool a search found, called by its own name: the same guarded read or change route as plugin_read / plugin_act.
+              const app = appTools.get(call.toolName);
+              if (app) {
+                const mapped = nativeAppCall(app, call.input);
+                return runPluginTool(mapped.name, canonical.runId, mapped.body, signal, ask(mapped.name === 'plugin_act'), wrapApp);
+              }
+              if (call.toolName === 'plugin_search' || call.toolName === 'plugin_read' ||
+                  call.toolName === 'plugin_action_search' || call.toolName === 'plugin_act') {
+                const result = await runPluginTool(call.toolName, canonical.runId, call.input, signal, ask(call.toolName === 'plugin_act'), wrapApp);
+                const { appTools: found, ...rest } = result;
+                if (!found?.length) return rest;
+                // The tools the search found become callable by their own names, with their real parameter schemas.
+                const taken = new Set([...fullToolList.map(t => t.name), ...PLUGIN_TOOLS.map(t => t.name)]);
+                const registered = found.flatMap(info => {
+                  const tool = nativeAppTool(info, taken);
+                  if (!tool) return [];
+                  appTools.set(info.slug, info);
+                  return [tool];
+                });
+                return registered.length ? { ...rest, registerTools: registered } : rest;
+              }
             }
             return this.#agentTool(conversationId, call, signal);
           },

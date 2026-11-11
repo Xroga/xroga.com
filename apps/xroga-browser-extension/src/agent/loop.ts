@@ -101,7 +101,7 @@ export interface LoopOptions {
   agentTool?: (
     call: ToolCallRequest,
     signal: AbortSignal,
-  ) => Promise<{ text: string; isError: boolean; result?: unknown }>;
+  ) => Promise<{ text: string; isError: boolean; result?: unknown; registerTools?: AgentTool[] }>;
 }
 
 export interface LoopEnd {
@@ -1217,6 +1217,20 @@ ${ledger}` : ''),
   /** Whether the user has sent a message while the run works. Set by the extension. */
   hasSteering: () => boolean = () => false;
 
+  /**
+   * Tools found during the run (the connected-app tools a search returned) join the tool list for the next turn, under their own names.
+   * A tool already in the list is never replaced, and the run holds at most 40 of them.
+   */
+  #registerTools(found: AgentTool[]): void {
+    const have = new Set(this.options.tools.map(t => t.name));
+    const room = Math.max(0, 40 - this.options.tools.filter(t => t.source === 'agent' && !t.name.startsWith('plugin_') && t.group === 'working' && /^[A-Z0-9_]+$/.test(t.name)).length);
+    const added = found.filter(t => !have.has(t.name)).slice(0, room);
+    if (!added.length) return;
+    this.options.tools = [...this.options.tools, ...added];
+    if (this.options.fullTools) this.options.fullTools = [...this.options.fullTools, ...added];
+    for (const t of added) this.#toolNames.add(t.name);
+  }
+
   #execute(call: ToolCallRequest): Promise<CallOutcome> {
     return this.#time(`tool:${call.toolName}`, () => this.#executeCall(call));
   }
@@ -1263,7 +1277,9 @@ ${ledger}` : ''),
         ? await this.options.agentTool(call, signal)
         : { text: `error: ${call.toolName} is not available.`, isError: true };
       outcome = { call, kind, text: r.text, isError: r.isError };
-      if ((call.toolName === 'plugin_read' || call.toolName === 'plugin_act') && !r.isError && r.result && typeof r.result === 'object' &&
+      if (r.registerTools?.length) this.#registerTools(r.registerTools);
+      // Any connected-app call (plugin_read, plugin_act, or an app tool called by its own name) leaves a provider receipt.
+      if (!r.isError && r.result && typeof r.result === 'object' &&
           'pluginReceiptId' in r.result && typeof r.result.pluginReceiptId === 'string') {
         outcome.result = { ok: true, text: '', data: { pluginReceiptId: r.result.pluginReceiptId } };
       }

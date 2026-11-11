@@ -29,6 +29,44 @@ export const PLUGIN_TOOLS: AgentTool[] = [
 type Approval = { id: string; summary: string; account: string; argumentsPreview?: string; risk?: string };
 type PluginToolName = 'plugin_search' | 'plugin_read' | 'plugin_action_search' | 'plugin_act';
 
+/** A tool a search found, ready to be offered to the model under its own name. */
+export type AppToolInfo = { slug: string; toolkit: string; description: string; parameters: Record<string, unknown>; kind: 'read' | 'write' };
+
+const TOOL_NAME = /^[A-Za-z0-9_-]{1,64}$/;
+const clipText = (value: unknown, max: number) => (typeof value === 'string' ? value.replace(/\s+/g, ' ').trim().slice(0, max) : '');
+
+/** The tools of a search result: only well-formed entries with a name the model can call. */
+export function appToolsFrom(tools: unknown, kind: 'read' | 'write'): AppToolInfo[] {
+  if (!Array.isArray(tools)) return [];
+  const out: AppToolInfo[] = [];
+  for (const raw of tools.slice(0, 12)) {
+    const tool = raw as { slug?: unknown; toolkit?: unknown; description?: unknown; parameters?: unknown } | null;
+    if (!tool || typeof tool.slug !== 'string' || !TOOL_NAME.test(tool.slug) || typeof tool.toolkit !== 'string') continue;
+    const schema = tool.parameters as { properties?: unknown; required?: unknown } | null;
+    const properties = schema && typeof schema === 'object' && schema.properties && typeof schema.properties === 'object' ? schema.properties as Record<string, unknown> : {};
+    const required = Array.isArray(schema?.required) ? (schema!.required as unknown[]).filter((n): n is string => typeof n === 'string' && n in properties) : [];
+    out.push({ slug: tool.slug, toolkit: clipText(tool.toolkit, 60), description: clipText(tool.description, 300), kind,
+      parameters: { type: 'object', properties, ...(required.length ? { required } : {}) } });
+  }
+  return out;
+}
+
+/** The model-facing tool: its own Composio name and its real parameter schema, so native tool calling does the work. */
+export function nativeAppTool(info: AppToolInfo, taken: ReadonlySet<string>): AgentTool | undefined {
+  if (taken.has(info.slug)) return undefined;
+  const note = info.kind === 'read' ? 'Reads data; the user approves what is sent.' : 'Changes data; the user approves each change.';
+  return { name: info.slug, source: 'agent', group: 'working', parameters: info.parameters,
+    description: (info.description ? info.description + ' ' : '') + '[' + info.toolkit + ', connected app. ' + note + ']' };
+}
+
+/** A call to a native app tool goes through the same guarded read or change route as plugin_read / plugin_act. */
+export function nativeAppCall(info: AppToolInfo, input: unknown): { name: PluginToolName; body: unknown } {
+  const args = input && typeof input === 'object' && !Array.isArray(input) ? input as Record<string, unknown> : {};
+  if (info.kind === 'read') return { name: 'plugin_read', body: { slug: info.slug, arguments: args } };
+  const what = clipText(info.description.split(/[.!?]/)[0], 150) || info.slug;
+  return { name: 'plugin_act', body: { slug: info.slug, arguments: args, request: clipText(info.toolkit + ': ' + what, 200) } };
+}
+
 export async function runPluginTool(
   name: PluginToolName,
   runId: string,
@@ -36,7 +74,7 @@ export async function runPluginTool(
   signal: AbortSignal,
   approve: (approval: Approval) => Promise<unknown>,
   wrap: (text: string, source: string) => string,
-): Promise<{ text: string; isError: boolean; result?: { pluginReceiptId: string } }> {
+): Promise<{ text: string; isError: boolean; result?: { pluginReceiptId: string }; appTools?: AppToolInfo[] }> {
   let sentReview = false;
   const change = name === 'plugin_act';
   try {
@@ -44,10 +82,12 @@ export async function runPluginTool(
       const value = await workspaceRequest(name === 'plugin_search' ? 'plugin-search' : 'plugin-action-search', { runId, body: input }, signal) as
         { tools: unknown[]; apps?: unknown; plan?: unknown; pitfalls?: unknown; guidance?: unknown };
       // The provider's own advice for the task comes first, so a long tool list is what gets cut, not the advice.
-      const brief = { apps: value.apps, plan: value.plan, pitfalls: value.pitfalls, guidance: value.guidance, tools: value.tools };
+      const brief = { apps: value.apps, plan: value.plan, pitfalls: value.pitfalls, guidance: value.guidance, tools: value.tools,
+        note: 'Each tool above is now available to call directly by its own name with the listed arguments.' };
       return { text: value.tools.length ? wrap(JSON.stringify(brief).slice(0, 14_000), 'connected app tool metadata')
         : name === 'plugin_search' ? 'No matching connected app read tools. Continue with the browser where appropriate.'
-          : 'No matching connected app tools that make changes. Continue with the browser where appropriate.', isError: false };
+          : 'No matching connected app tools that make changes. Continue with the browser where appropriate.', isError: false,
+        appTools: appToolsFrom(value.tools, name === 'plugin_search' ? 'read' : 'write') };
     }
     const pending = await workspaceRequest(change ? 'plugin-act' : 'plugin-read', { runId, body: input }, signal) as { approval: Approval };
     if (!pending.approval?.id || !pending.approval.account) throw new Error('Approval could not be verified.');
