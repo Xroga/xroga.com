@@ -125,11 +125,11 @@ try {
       await db.query('begin');
       try{
         await db.query(`set local role ${role}`);
-        await assert.rejects(db.query(`select id from public.${name} limit 0`),error=>error.code==='42501');
+        await assert.rejects(db.query(`select 1 from public.${name} limit 0`),error=>error.code==='42501');
       }finally{await db.query('rollback');}
     }
     await db.query('begin');
-    try{await db.query('set local role service_role');assert.equal((await db.query(`select id from public.${name} limit 0`)).rowCount,0);}
+    try{await db.query('set local role service_role');assert.equal((await db.query(`select 1 from public.${name} limit 0`)).rowCount,0);}
     finally{await db.query('rollback');}
   }
   evidence.workflowCheckpointRoleChecks='PASS_BROWSER_DENIED_SERVICE_ALLOWED';
