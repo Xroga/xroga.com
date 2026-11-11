@@ -6,6 +6,7 @@ import type { HostPort } from '@src/agent/ports';
 import type { Session, UserStepDetails } from '@src/browser-control';
 import { agentSystemPrompt } from '@src/agent/prompt';
 import { toolsForRun } from '@src/agent/tools';
+import { DELEGATE_TOOL, parseJobs, runSubagents } from '@src/agent/subagents';
 import { startingTools } from '@src/agent/tool-selection';
 import { skillsSection } from '@src/agent/skills';
 import { userText } from '@src/agent/display';
@@ -1633,7 +1634,7 @@ export class RunManager {
         record.tabs = session.tabIds();
         const fullToolList = toolsForRun({
           vision: model.profile.vision, localScreenshots: !!canonical,
-          agentTools: canonical?.plugins ? PLUGIN_TOOLS : undefined,
+          agentTools: canonical?.plugins ? [DELEGATE_TOOL, ...PLUGIN_TOOLS] : [DELEGATE_TOOL],
         });
         // A request that only reads starts with the small tool list; the model switches to the full one if it needs to act.
         const askedBranch = await activeBranch(conversationId).catch(() => []);
@@ -1675,6 +1676,12 @@ export class RunManager {
           thumbnail,
           localScreenshots: !!canonical,
           agentTool: async (call, signal) => {
+            if (call.toolName === 'delegate') {
+              // Read-only helpers, each in its own tab, run together; they never act, so nothing here needs an approval.
+              const { jobs, problems } = parseJobs(call.input);
+              if (!jobs.length) return { text: `error INVALID_ARGUMENT (nothing started)\n${problems.join('\n')}`, isError: true };
+              return runSubagents({ layer: layerPort(session, this.border), model, signal }, jobs, problems);
+            }
             const wrapApp = (text: string, source: string) => session.wrap(text, { connectedApp: source });
             const ask = (change: boolean) => (approval: Parameters<Parameters<typeof runPluginTool>[4]>[0]) =>
               this.broker.open(conversationId, change ? 'plugin-act' : 'plugin-read', approval, signal);

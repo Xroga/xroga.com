@@ -70,6 +70,10 @@ function toolGuide(tools: string[]): string {
   if (has('find'))
     lines.push('- find locates elements by role, name or text in the latest observation, without a full outline.');
   if (has('read')) lines.push('- read returns a page or an element as Markdown, for reading text.');
+  if (has('delegate'))
+    lines.push(
+      '- delegate runs up to 6 read-only helpers at once in their own tabs. Use it when the task needs two or more pages or sources (comparisons, research, checking several results): one reader per page is instant and free, an explorer answers a small question on one site. Call it once with all the jobs instead of visiting the pages one by one. Do not delegate a single page you are already on.',
+    );
   if (has('fill_form')) lines.push('- fill_form sets several fields in order and can activate a submit control.');
   if (has('enable_actions'))
     lines.push('- enable_actions turns on clicking, typing, forms and scrolling. Call it only if the task needs one of them; reading and opening pages do not.');
