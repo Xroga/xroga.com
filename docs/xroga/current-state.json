@@ -145122,7 +145122,7 @@
     {
       "id": "test-suite:2f30107ceaee580a9298",
       "sourcePath": "apps/xroga-browser-extension/src/side-panel/__tests__/activity.test.tsx",
-      "declaredTests": 8,
+      "declaredTests": 10,
       "skipLocations": [],
       "focusLocations": []
     },
