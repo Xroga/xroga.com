@@ -144937,7 +144937,7 @@
     {
       "id": "test-suite:5dea4574df04602b5371",
       "sourcePath": "apps/xroga-browser-extension/src/agent/__tests__/routing.test.ts",
-      "declaredTests": 8,
+      "declaredTests": 11,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -144965,7 +144965,7 @@
     {
       "id": "test-suite:3a0a773e8eb5fa4230bd",
       "sourcePath": "apps/xroga-browser-extension/src/agent/__tests__/subagents.test.ts",
-      "declaredTests": 12,
+      "declaredTests": 14,
       "skipLocations": [],
       "focusLocations": []
     },
