@@ -145237,6 +145237,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:a497702a7555d658079b",
+      "sourcePath": "apps/xroga-browser-extension/src/extension/__tests__/parallel-workers.test.ts",
+      "declaredTests": 21,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:9a8e3262a9140c116172",
       "sourcePath": "apps/xroga-browser-extension/src/extension/__tests__/prompt-broker.test.ts",
       "declaredTests": 6,
