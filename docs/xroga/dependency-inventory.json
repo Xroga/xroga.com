@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "16820a250195c006baa0edc7aa2b7af16dca6e79",
+  "source_sha": "b49f1da7d8ac99b642a766894bb7f42ccf138e43",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -18278,15 +18278,15 @@
     },
     {
       "path": "backend/src/routes/localBrowser.ts",
-      "sha256": "f77d53a8717e5bfc1011c4f108bc3fbe77f9951cb266380a480aafb6a59e24d5"
+      "sha256": "64c58f89e05487b9cf2bd9e29c4355c6508c35c4f97ae1f74222e8b146273905"
     },
     {
       "path": "backend/src/routes/localBrowserDevice.ts",
-      "sha256": "10c10029be3e36ff9f3111f3077fba0ec56fa7a984f706bc0671ec3e1575c429"
+      "sha256": "b987b39b217528ff561f76de2005684059dd2b7bee090e778ce85f6ff117d188"
     },
     {
       "path": "backend/src/routes/localBrowserPlugins.ts",
-      "sha256": "548b9fdad565e09bc3bfa0f0962dfefd59ef9b6780aea3af8bf71977d78d3dbc"
+      "sha256": "afb6d29d8b8582cd8c38a80c3df5f79c96c4d4f604b318c9f67da2d398a79044"
     },
     {
       "path": "backend/src/routes/marketplace.ts",
@@ -18802,7 +18802,7 @@
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "sha256": "8fc37cada11db34659cca31efa804ff99bcac3d076d83c6deabd52142662381f"
+      "sha256": "874ec9b2059fa33e7a56ae7c16d434f7c456d7df06d89ee928a4f1d023585449"
     },
     {
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
@@ -25906,7 +25906,7 @@
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/routes/localBrowserPlugins.ts",
-      "line": 79,
+      "line": 90,
       "credentialsInUrl": false
     },
     {
@@ -35104,7 +35104,14 @@
     },
     {
       "path": "backend/src/routes/localBrowser.ts",
-      "line": 306,
+      "line": 335,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/routes/localBrowser.ts",
+      "line": 362,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -35356,14 +35363,14 @@
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "line": 1169,
+      "line": 1176,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "line": 1195,
+      "line": 1202,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
