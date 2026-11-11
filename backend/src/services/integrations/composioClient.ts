@@ -2610,14 +2610,18 @@ async function executeDiscoveredComposioTool(
 
   const toolSlug = cleanToolSlug(input.toolSlug);
 
-  const discovery = await searchComposioTools(userId, {
-    sessionId,
-    query: input.useCase,
-    mode: input.mode,
-  },context);
-  signal?.throwIfAborted();
-
-  const allowedTool = discovery.tools.find((tool) => tool.slug === toolSlug);
+  // The provider's tool search can vary between identical calls. The same check is repeated a few times, so an
+  // approved tool is not refused because one search happened to omit it; it must still be found by this session.
+  let allowedTool: XrogaConnectSearchResult['tools'][number] | undefined;
+  for (let attempt = 0; attempt < 3 && !allowedTool; attempt += 1) {
+    const discovery = await searchComposioTools(userId, {
+      sessionId,
+      query: input.useCase,
+      mode: input.mode,
+    },context);
+    signal?.throwIfAborted();
+    allowedTool = discovery.tools.find((tool) => tool.slug === toolSlug);
+  }
   const allowed =
     Boolean(allowedTool) &&
     canUserAccessComposioToolkit(
