@@ -18,7 +18,8 @@
   --act-danger: #ef6a74; --act-warn: #e3a042; --act-ok: color-mix(in srgb, var(--act-ink) 58%, transparent);
 }
 
-.list { list-style: none; margin: 0; padding: 0; display: grid; gap: 1px; }
+.list, .recent { list-style: none; margin: 0; padding: 0; display: grid; gap: 1px; }
+.recent { margin: 3px 0 2px 9px; padding-inline-start: 13px; border-inline-start: 1px solid var(--act-line); font-size: .92em; }
 .item { min-width: 0; }
 
 /* One row: icon, one line of text, optional meta, chevron. Used for summaries and for the live line. */
@@ -31,6 +32,7 @@
 .row:focus-visible { outline: 2px solid var(--act-accent); outline-offset: 1px; }
 .row[data-static='true'] { cursor: default; }
 .row[data-static='true']:hover { background: transparent; color: inherit; }
+.row:disabled { cursor: default; }
 .icon { flex: none; width: 15px; height: 15px; color: var(--act-ok); }
 .text { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .meta { flex: none; font-variant-numeric: tabular-nums; font-size: 12.5px; color: var(--act-ok); }
@@ -44,6 +46,8 @@
 /* The live line is the only place with colour and motion. */
 .live { color: var(--act-ink); }
 .live .text { animation: actLabelIn 180ms ease-out; }
+.liveIcon { flex: none; width: 15px; height: 15px; color: var(--act-accent); }
+.live .text { font-weight: 500; white-space: normal; overflow-wrap: anywhere; }
 .live[data-waiting='true'] .icon { color: var(--act-warn); }
 @keyframes actLabelIn { from { opacity: 0; transform: translateY(2px); } to { opacity: 1; transform: none; } }
 
@@ -64,7 +68,7 @@
 .details > * { min-width: 0; }
 .detailRow { display: flex; align-items: baseline; gap: 8px; min-width: 0; font-size: 13px; }
 .detailRow > span:first-child { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.chip { flex: 0 1 auto; min-width: 0; max-width: 100%; padding: 1px 8px; border: 1px solid var(--act-line); border-radius: 999px; font: 12px/1.6 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; color: var(--act-ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.context { margin: 0 0 2px; overflow-wrap: anywhere; color: var(--act-muted); font-size: 12.5px; }
 .terminal { margin: 0; max-width: 100%; box-sizing: border-box; max-height: 220px; overflow: auto; padding: 10px 12px; border: 1px solid var(--act-line); border-radius: 10px; background: var(--act-wash); color: var(--act-ink); font: 12.5px/1.55 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; white-space: pre-wrap; overflow-wrap: anywhere; }
 .terminal:focus-visible { outline: 2px solid var(--act-accent); outline-offset: 1px; }
 .prompt { color: var(--act-accent); user-select: none; }

@@ -23,7 +23,7 @@ export interface XrogaActivityPresentation {
 }
 
 const INTERNAL_MARKERS = /\b(?:business\.(?:read|action)|research\.(?:public-web|x)|software\.implement|repository\.(?:read|write)|validation\.run|attachment\.analyze|requiredAuthorities|selectedModel|fallbackModels|toolCallId|runtimeSessionId|provider route|sandbox:execute|model:execute)\b/gi;
-const GENERIC_PLACEHOLDER = /^(?:thinking|understanding (?:your|the) request|analyzing your (?:question|request)|composing (?:your|a|the) (?:(?:clear|structured) )?(?:answer|response|reply)|working on (?:it|your request))(?:\.{3}|…)?$/i;
+const GENERIC_PLACEHOLDER = /^(?:thinking|initializing|writing(?: (?:your )?response)?|creating|understanding (?:your|the) request|analyzing your (?:question|request)|composing (?:your|a|the) (?:(?:clear|structured) )?(?:answer|response|reply)|working on (?:it|(?:your )?(?:request|response)))(?:\.{3}|…)?$/i;
 
 export function hasInternalPresentationLeak(value: string): boolean {
   INTERNAL_MARKERS.lastIndex = 0;
@@ -228,6 +228,9 @@ export function coalesceActivity(events: readonly TerminalEvent[]): XrogaActivit
         ...prior,
         ...row,
         id: prior.id,
+        kind: row.kind === 'complete' || (terminal && row.kind === 'understand') ? prior.kind : row.kind,
+        detail: row.detail ?? prior.detail,
+        body: row.body ?? prior.body,
         startedAt,
         updatedAt,
         durationMs: row.durationMs ?? (terminal ? Math.max(0, updatedAt - startedAt) : prior.durationMs),

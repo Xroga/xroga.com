@@ -1,4 +1,5 @@
 import type { XrogaActivityKind, XrogaActivityPresentation } from './activityPresentation';
+import type { TerminalEvent } from './terminalEvent';
 
 /**
  * View model for the Xroga activity timeline.
@@ -111,7 +112,7 @@ export function summariseSettled(rows: readonly XrogaActivityPresentation[]): Ti
   for (const row of rows) {
     const family = familyOf(row.kind);
     // An error that is a row of its own (kind "error") is never merged away: it must stay readable.
-    const standalone = row.kind === 'error' || row.kind === 'warning' || family === 'other' || family === 'attention';
+    const standalone = row.kind === 'error' || row.kind === 'warning' || row.status === 'warning' || family === 'other' || family === 'attention';
     if (standalone || family !== runFamily) flush();
     if (standalone) { items.push(toItem(family, [row])); continue; }
     runFamily = family;
@@ -135,14 +136,21 @@ export interface BuildTimelineOptions {
 }
 
 export function buildActivityTimeline(rows: readonly XrogaActivityPresentation[], options: BuildTimelineOptions = {}): ActivityTimelineModel {
-  const { runActive = false, outcome = null, displayedActiveId = null, displayedSince = 0, now = 0, minDwellMs = 650 } = options;
-  const live = rows.filter(row => row.status === 'active' || row.status === 'waiting');
-  let active: XrogaActivityPresentation | null = live.at(-1) ?? null;
+  const { runActive, outcome = null, displayedActiveId = null, displayedSince = 0, now = 0, minDwellMs = 650 } = options;
+  const live = outcome || runActive === false ? [] : rows.filter(row => !isFinished(row));
+  const attention = live.findLast(row => row.status === 'waiting' || row.kind === 'approval');
+  let active: XrogaActivityPresentation | null = attention ?? live.at(-1) ?? null;
   // Two steps really are running at once. Do not swap the headline faster than a person can read it.
   const shown = displayedActiveId ? live.find(row => row.id === displayedActiveId) : undefined;
-  if (shown && active && shown.id !== active.id && now - displayedSince < minDwellMs) active = shown;
+  if (!attention && shown && active && shown.id !== active.id && now - displayedSince < minDwellMs) active = shown;
 
-  const settled = summariseSettled(rows.filter(row => row.id !== active?.id && isFinished(row)));
+  const settled = summariseSettled(rows.flatMap(row => {
+    if (isFinished(row)) return [row];
+    if (outcome || runActive === false) return [{
+      ...row, status: 'warning' as const, label: `${row.label} · No completion update`,
+    }];
+    return [];
+  }));
   const otherActive = Math.max(0, live.length - (active ? 1 : 0));
 
   let state: TimelineState = 'idle';
@@ -152,6 +160,14 @@ export function buildActivityTimeline(rows: readonly XrogaActivityPresentation[]
   else if (outcome === 'interrupted' || rows.some(row => row.status === 'cancelled' || row.status === 'interrupted')) state = 'stopped';
   else if (rows.length) state = 'done';
   return { state, settled, active, otherActive, total: rows.length };
+}
+
+/** A request can wait without an operation running. Writing requires an actual text delta. */
+export function pendingWorkLabel(events: readonly TerminalEvent[], hasWork: boolean): string {
+  const latest = events.findLast(event => event.kind !== 'session');
+  if (latest?.kind === 'output' && latest.rawEvent === 'delta' && latest.text.trim()) return 'Writing response';
+  if (hasWork || events.length > 0) return 'Waiting for the next update';
+  return 'Starting request';
 }
 
 export function formatElapsed(ms: number): string {

@@ -3,7 +3,6 @@ import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Check, Copy, Share2 } from 'lucide-react';
 import { MessageShareModal } from '@/components/terminal/MessageShareModal';
 import { serializeAssistantCopy } from '@/lib/assistantCopy';
-import { conversationStatusV2 } from './conversation';
 import styles from './conversation-v2.module.css';
 import type { ResponseInputV2 } from './document';
 import { richShareSnapshot } from './shareSnapshot';
@@ -40,14 +39,12 @@ export function ConversationTurnV2({ role, content, copyContent = content, promp
   message?: ResponseInputV2; richResponse?: string;
   streaming: boolean; activity?: ReactNode; controls?: ReactNode; children?: ReactNode;
 }) {
-  const status = conversationStatusV2(streaming, content);
   return <div className={styles.turn} data-conversation-turn-v2={role}>
     {role === 'user' ? <>
       <div className={styles.userMessage} dir="auto">{content}</div>
       <TurnActions role={role} content={content} />
     </> : <>
       {activity && <div className={styles.activity}>{activity}</div>}
-      {status && <div className={styles.status} role="status"><span aria-hidden="true" />{status}</div>}
       {controls && <div className={styles.controls}>{controls}</div>}
       <div className={styles.answer}>{children}</div>
       {!streaming && <TurnActions role={role} content={copyContent} prompt={prompt} message={message} richResponse={richResponse} />}
