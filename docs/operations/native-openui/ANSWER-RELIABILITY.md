@@ -29,6 +29,6 @@ Regression tests replay the observed list shape and cover invalid nested content
 
 The authenticated browser test exercises a partially recovered response through the normal Workspace composer, then checks the native table, Copy, database persistence and Reopen. It substitutes only the paid transport. The isolated application and database handle authentication and storage.
 
-GitHub's hosted Ubuntu runner lists the Azure mirror first. Repeated DNS errors for that mirror blocked Chromium setup before browser assertions could run. The PR browser and baseline jobs use the existing Canonical entries in the runner's mirror list, preserving the pinned Chromium install and the signed Ubuntu archive. The script applies only on GitHub-hosted runners with the known mirror configuration.
+Repeated DNS failures on both Ubuntu mirrors blocked Chromium setup before browser assertions could run. The browser and baseline jobs install the pinned Playwright Chromium and verify that it can launch and render a page. They install the Playwright system dependencies only if that launch check fails, then require it to pass. The application, fixture and security checks remain mandatory.
 
-[GitHub runner mirror configuration](https://github.com/actions/runner-images/blob/main/images/ubuntu/scripts/build/configure-apt-sources.sh) · [Ubuntu archive verification](https://documentation.ubuntu.com/security/software-integrity/archive-verification/)
+[Playwright installation and system dependencies](https://playwright.dev/docs/browsers)
