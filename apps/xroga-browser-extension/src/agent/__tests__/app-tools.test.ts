@@ -44,7 +44,7 @@ describe('connected-app tools found by a search', () => {
 describe('the loop with app tools', () => {
   it('offers a found tool to the model on the next turn, runs a call to it, and records its receipt', async () => {
     const c = await createConversation({ mode: 'ask' });
-    await appendEntry(c.id, { type: 'message', message: { role: 'user', parts: [{ type: 'text', text: 'Check my sheet' }] } });
+    await appendEntry(c.id, { type: 'message', message: { role: 'user', parts: [{ type: 'text', text: 'Look up the spreadsheet called Xroga Test' }] } });
     const [info] = appToolsFrom([sheetsTool], 'read');
     const nativeTool = nativeAppTool(info, new Set())!;
     const searchTool: AgentTool = { name: 'plugin_search', source: 'agent', group: 'working', description: 'find',
@@ -78,5 +78,61 @@ describe('the loop with app tools', () => {
     const branch = await activeBranch(c.id);
     const toolText = branch.flatMap(e => (e.type === 'message' && e.message.role === 'tool' ? e.message.parts : [])).map(p => ('text' in p ? p.text : '')).join('\n');
     expect(toolText).toContain('Spreadsheet "Xroga Test" exists.');
+  });
+});
+
+async function appRun(text: string, search: { text: string; registerTools?: AgentTool[] }, replies: Array<{ toolCalls: Array<{ name: string; input: unknown; id: string }> }>) {
+  const c = await createConversation({ mode: 'ask' });
+  await appendEntry(c.id, { type: 'message', message: { role: 'user', parts: [{ type: 'text', text }] } });
+  const searchTool: AgentTool = { name: 'plugin_search', source: 'agent', group: 'working', description: 'find',
+    parameters: { type: 'object', properties: { query: { type: 'string' } }, required: ['query'] } };
+  const dispatched: Array<{ name: string; input: unknown }> = [];
+  const scripted = new ScriptedModel(replies);
+  const loop = new AgentLoop({
+    conversationId: c.id, runId: 'r1',
+    model: { ref: { providerId: 'p', model: 'm' }, chat: scripted.chat(), profile: resolveProfile({ kind: 'openai-compatible', modelName: 'm' }), reasoning: 'none' },
+    system: 'sys', tools: [...toolsForRun({ disabled: ['hover'], vision: false }), searchTool],
+    layer: new FakeLayer(), host: new FakeHost(), signal: new AbortController().signal, emit: () => undefined, turnCap: 10,
+    agentTool: async call => {
+      dispatched.push({ name: call.toolName, input: call.input });
+      if (call.toolName === 'plugin_search') return { isError: false, ...search };
+      return { text: 'Spreadsheet "Xroga Test" exists.', isError: false, result: { pluginReceiptId: 'receipt_1' } };
+    },
+  });
+  const end = await loop.run();
+  return { end, scripted, dispatched };
+}
+
+describe('a request about connected apps', () => {
+  const request = 'Use my connected Google Sheets app, not the browser. Find the spreadsheet named "Xroga Test" and tell me whether it exists.';
+  const [info] = appToolsFrom([sheetsTool], 'read');
+
+  it('has its search run before the first model turn, so the first turn already calls the tool it found', async () => {
+    const native = nativeAppTool(info, new Set())!;
+    const { end, scripted, dispatched } = await appRun(request, { text: 'found: GOOGLESHEETS_SEARCH_SPREADSHEETS', registerTools: [native] }, [
+      { toolCalls: [{ name: 'GOOGLESHEETS_SEARCH_SPREADSHEETS', input: { query: 'Xroga Test' }, id: 'b' }] },
+      { toolCalls: [{ name: 'done', input: { outcome: 'success', summary: 'It exists.' }, id: 'd' }] },
+    ]);
+    expect(end.outcome).toBe('success');
+    // Two model turns in all: no turn was spent asking for the search.
+    expect(scripted.calls).toHaveLength(2);
+    expect(scripted.calls[0].tools.map(t => t.name)).toContain('GOOGLESHEETS_SEARCH_SPREADSHEETS');
+    expect(JSON.stringify(scripted.calls[0].prompt)).toContain('do not search again for the same task');
+    expect(dispatched[0].name).toBe('plugin_search');
+    const query = (dispatched[0].input as { query: string }).query;
+    expect(query.startsWith('Google Sheets app.')).toBe(true);
+    expect(query).not.toContain('browser');
+    expect(query.length).toBeLessThanOrEqual(120);
+    expect(dispatched[1].name).toBe('GOOGLESHEETS_SEARCH_SPREADSHEETS');
+  });
+
+  it('leaves the search to the model when the up-front search finds nothing', async () => {
+    const { end, scripted, dispatched } = await appRun(request, { text: 'No matching connected app read tools.' }, [
+      { toolCalls: [{ name: 'plugin_search', input: { query: 'find a Google Sheets spreadsheet by name' }, id: 'a' }] },
+      { toolCalls: [{ name: 'done', input: { outcome: 'partial', summary: 'Nothing found.' }, id: 'd' }] },
+    ]);
+    expect(end.status).toBe('done');
+    expect(JSON.stringify(scripted.calls[0].prompt)).not.toContain('do not search again');
+    expect(dispatched.map(d => d.name)).toEqual(['plugin_search', 'plugin_search']);
   });
 });

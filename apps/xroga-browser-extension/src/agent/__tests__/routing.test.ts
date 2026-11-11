@@ -6,7 +6,7 @@ import { activeBranch, appendEntry, createConversation } from '@src/store/conver
 import { closeDb } from '@src/store/db';
 import { AgentLoop } from '../loop';
 import { toolsForRun, type AgentTool } from '../tools';
-import { isAppsFirstRequest, APPS_FIRST_NOTE } from '../routing';
+import { isAppsFirstRequest, appSearchQuery, APPS_FIRST_NOTE } from '../routing';
 import { FakeHost, FakeLayer } from '../testing/fake-layer';
 
 afterEach(async () => {
@@ -90,5 +90,18 @@ describe('the first turn of an app request', () => {
   it('is unchanged for a request about a page', async () => {
     const { layer } = await firstTurnOf('What is the heading of the page?', true);
     expect(layer.calls.map(c => c.tool)).toContain('snapshot');
+  });
+});
+
+describe('the search sentence for an app request', () => {
+  it('keeps the app and the task and drops the instructions about the browser', () => {
+    expect(appSearchQuery('Use my connected Google Sheets app, not the browser. Find the spreadsheet named "Xroga Test" and tell me whether it exists.'))
+      .toBe('Google Sheets app. Find the spreadsheet named "Xroga Test" and tell me whether it exists.');
+    expect(appSearchQuery('Add a row to my Google Sheet with the total, without using the browser')).toBe('Add a row to my Google Sheet with the total.');
+    expect(appSearchQuery('List my Notion pages via the API')).toBe('List my Notion pages via the API');
+  });
+  it('is at most 120 characters and never empty', () => {
+    expect(appSearchQuery('Find the spreadsheet in my Google Sheets '.repeat(20)).length).toBeLessThanOrEqual(120);
+    expect(appSearchQuery('  Use  ')).toBe('Use');
   });
 });

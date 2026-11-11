@@ -25,7 +25,26 @@ export function isAppsFirstRequest(request: string): boolean {
   return explicit || OWNED_APP.test(request);
 }
 
+const USE_PREFIX = /\buse (?:my |the |our )?(?:connected )?/gi;
+const NO_BROWSER = /[,;]?\s*\b(?:not|without|instead of|don'?t use|do not use|no need (?:for|to use)|skip)\s+(?:using\s+)?(?:the\s+)?browser\b[,.:;]?/gi;
+
+/**
+ * The search sentence for a request about connected apps: the user's own words with the instructions about the browser taken out
+ * ("Use my connected Google Sheets app, not the browser. Find the sheet ..." becomes "Google Sheets app. Find the sheet ..."),
+ * at most 120 characters, which is what the search accepts. The app stays named, because the provider matches on it.
+ */
+export function appSearchQuery(request: string): string {
+  const clean = request.replace(/\s+/g, ' ').trim();
+  const text = clean.replace(USE_PREFIX, '').replace(NO_BROWSER, '. ').replace(/\s*[,;]\s*\./g, '.').replace(/\s+/g, ' ').trim();
+  return (text.length >= 2 ? text : clean).slice(0, 120).trim();
+}
+
 /** The note that tells the model where to start. It never forbids the browser. */
 export const APPS_FIRST_NOTE =
   "this request is about the user's connected apps. Start with plugin_search (to read) or plugin_action_search (to change something); " +
   'no page has been opened or read for it. Use the browser tools only if no connected-app tool fits, or the user asks for the browser.';
+
+/** The note when the search has already been run for the request, so the model does not spend a turn on it. */
+export const APPS_FIRST_SEARCHED_NOTE =
+  "this request is about the user's connected apps. The search for it was already run (below); do not search again for the same task. " +
+  'The tools it found can be called directly by their names. No page has been opened or read. Use the browser tools only if no found tool fits, or the user asks for the browser.';

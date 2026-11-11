@@ -11,7 +11,7 @@ import { addUsage, ZERO_USAGE } from '@src/store/types';
 import type { AgentEvent, ToolRow } from '@src/ui/protocol';
 import { contextChars, elideStaleObservations, toModelMessages } from './context';
 import { directNavigation, type DirectNavigation } from './direct-url';
-import { APPS_FIRST_NOTE, isAppsFirstRequest } from './routing';
+import { APPS_FIRST_NOTE, APPS_FIRST_SEARCHED_NOTE, appSearchQuery, isAppsFirstRequest } from './routing';
 import { progressLedger } from './progress';
 import { browserState } from './header';
 import { assistantDisplay, userDisplay, userText } from './display';
@@ -420,6 +420,24 @@ export class AgentLoop {
    * The first request of a run: an outline of the active shared tab, if it is an ordinary web page, attached to the
    * user's message inside the boundary; and a note when the context holds refs of an earlier run.
    */
+  /**
+   * Runs the connected-app search for a request before the first model turn. Its result (already inside the untrusted-data boundary)
+   * is returned as text, and the tools it found join the tool list. Nothing is returned when the search is unavailable or fails.
+   */
+  async #searchApps(request: string): Promise<string | undefined> {
+    if (!this.options.agentTool) return undefined;
+    try {
+      const call: ToolCallRequest = { toolCallId: 'pre-search', toolName: 'plugin_search', input: { query: appSearchQuery(request) } };
+      const r = await this.options.agentTool(call, this.options.signal);
+      // Nothing found (or an error): the model searches itself, with its own wording.
+      if (r.isError || !r.registerTools?.length) return undefined;
+      this.#registerTools(r.registerTools);
+      return r.text;
+    } catch {
+      return undefined;
+    }
+  }
+
   /** Opens the site a request names, before the first model turn. A failure is told to the model, which then decides what to do. */
   async #openDirect(direct: DirectNavigation): Promise<void> {
     const intent = `Open ${direct.url}`;
@@ -452,7 +470,10 @@ ${ledger}` : ''),
     // A request about the user's connected apps starts with the app tools: no page is opened or read for it, and the debugger is not
     // attached until a browser tool is actually used. The browser tools stay in the list for when no app tool fits.
     if (asked && this.options.tools.some(t => t.name === 'plugin_search') && isAppsFirstRequest(userText(asked))) {
-      await this.writer.appNote(APPS_FIRST_NOTE);
+      // The search itself is deterministic: it is run here, so the model's first turn can already call the tool it found instead of
+      // spending a whole turn (seconds at the provider) on asking for the search. A failed search leaves the model to do it.
+      const found = await this.#searchApps(userText(asked));
+      await this.writer.appNote(found ? APPS_FIRST_SEARCHED_NOTE + '\n' + found : APPS_FIRST_NOTE);
       return;
     }
     const direct = asked && !earlierResults ? directNavigation(userText(asked)) : null;
