@@ -52,6 +52,47 @@ const ALLOWED: Record<string, MessageKey> = {
   auto: 'act.allowedAuto',
 };
 
+const LIVE_TOOL_LABELS = new Map<string, MessageKey>([
+  ['snapshot', 'activity.inspecting'],
+  ['find', 'activity.finding'],
+  ['read', 'activity.reading'],
+  ['screenshot', 'activity.capture'],
+  ['click', 'activity.clicking'],
+  ['set', 'activity.form'],
+  ['type', 'activity.typing'],
+  ['press', 'activity.keyboard'],
+  ['hover', 'activity.inspecting'],
+  ['scroll', 'activity.scrolling'],
+  ['handle_dialog', 'activity.dialog'],
+  ['fill_form', 'activity.form'],
+  ['plugin_search', 'activity.pluginSearch'],
+  ['plugin_read', 'activity.pluginRead'],
+  ['read_attachment', 'activity.file'],
+  ['upload', 'activity.uploading'],
+  ['save_file', 'activity.saving'],
+  ['wait', 'activity.pageWait'],
+]);
+
+/** Live labels describe what was dispatched, without guessing what the operation achieved. */
+export function liveToolLabel(row: ToolRow): string {
+  if (row.tool === 'navigate' || row.tool === 'tabs') {
+    const args = row.args as { url?: unknown; action?: unknown } | undefined;
+    if (row.tool === 'navigate' || args?.action === 'open') {
+      if (typeof args?.url === 'string') {
+        try {
+          const { protocol, hostname } = new URL(args.url);
+          if ((protocol === 'http:' || protocol === 'https:') && hostname) return t('activity.openingSite', { hostname });
+        } catch {
+          // Navigation without a valid host still has a browser action to report.
+        }
+      }
+      return t('activity.navigating');
+    }
+    return t('activity.tabs');
+  }
+  return t(LIVE_TOOL_LABELS.get(row.tool) ?? 'activity.working');
+}
+
 /** Typed values are masked in what the panel shows, as in the audit log. */
 export function maskArgs(args: unknown): unknown {
   if (!args || typeof args !== 'object') return args;

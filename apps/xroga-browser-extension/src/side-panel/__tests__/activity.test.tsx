@@ -1,5 +1,4 @@
-// The activity block's status line: Thinking…, Working… or Waiting for you… with the time so far while the run works,
-// then "Worked for", from when the run began to its last reply.
+// Activity follows worker events and actual response text.
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { elapsed, phaseOf } from '../Activity';
@@ -22,11 +21,11 @@ describe('activity status line', () => {
     expect(elapsed(-50)).toBe('0s');
   });
 
-  it('is Working while a tool runs, Waiting for you on a card, and Thinking otherwise', () => {
-    expect(phaseOf([row('done'), row('running')], false)).toBe('working');
+  it('prioritizes approval and running tools over incoming answer text', () => {
+    expect(phaseOf([row('done'), row('running')], false, true)).toBe('working');
     expect(phaseOf([row('running'), row('waiting')], false)).toBe('waiting');
     expect(phaseOf([row('done')], true)).toBe('waiting');
-    expect(phaseOf([row('done')], false)).toBe('thinking');
+    expect(phaseOf([row('done')], false)).toBe('between');
   });
 
   it('a finished run reads "Worked for", from when the run began to its last reply', () => {
@@ -63,7 +62,8 @@ describe('activity status line', () => {
       reply('a', '2026-10-08T10:00:05.000Z', { runStartedAt: '2026-10-08T10:00:01.000Z', tools: [row('running')] }),
     ];
     const html = renderToStaticMarkup(<Transcript entries={entries} streaming={null} live={{ waiting: false }} />);
-    expect(text(html)).toContain('Working… 19s');
+    expect(text(html)).toContain('Black Hole is working 19s Clicking a page control');
+    expect(html.match(/data-black-hole=/g)).toHaveLength(1);
     expect(text(html)).not.toContain('Worked for');
   });
 
@@ -83,7 +83,30 @@ describe('activity status line', () => {
       />,
     );
     expect(text(html)).toContain('Worked for 4s');
-    expect(text(html)).toContain('Thinking… 4s');
+    expect(text(html)).toContain('Black Hole is working 4s Waiting for the next update…');
+    expect(html.match(/data-black-hole=/g)).toHaveLength(1);
+  });
+
+  it('only shows writing after a real text update', () => {
+    const entries = [user('u', '2026-10-08T10:00:00.000Z')];
+    const live = { startedAt: entries[0].at, waiting: false };
+    const render = (streaming: { id: string; text: string } | null) =>
+      text(renderToStaticMarkup(<Transcript entries={entries} streaming={streaming} live={live} />));
+    expect(render(null)).toContain('Starting request');
+    expect(render({ id: 'a', text: '' })).not.toContain('Writing response');
+    expect(render({ id: 'a', text: 'Here are the results' })).toContain('Writing response');
+  });
+
+  it('uses the destination host for a live navigation and leaves private URL parts out of its headline', () => {
+    const entries = [
+      user('u', '2026-10-08T10:00:00.000Z'),
+      reply('a', '2026-10-08T10:00:05.000Z', {
+        tools: [{ ...row('running'), tool: 'navigate', args: { url: 'https://example.org/path?private=value' } }],
+      }),
+    ];
+    const html = renderToStaticMarkup(<Transcript entries={entries} streaming={null} live={{ waiting: false }} />);
+    expect(text(html)).toContain('Opening example.org');
+    expect(html).not.toContain('private=value');
   });
 
   it('no block of a working run shows its answer line, also one a saved file split off', () => {
