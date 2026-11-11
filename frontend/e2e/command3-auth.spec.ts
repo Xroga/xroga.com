@@ -504,7 +504,8 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   await expect(recoveredTable.getByRole('cell', { name: '25', exact: true })).toBeVisible();
   const recoveryTurn = page.locator('[data-turn-id]').filter({ has: recoveredAnswer });
   await recoveryTurn.getByRole('button', { name: 'Copy', exact: true }).click();
-  await expect.poll(() => page.evaluate(async () => (await navigator.clipboard.readText()).replace(/\r\n/g, '\n'))).toBe(recoveryText);
+  const recoveryClipboard = [recoveryNote, recoveryProse, 'Item\tUSD\nPrinting\t25'].join('\n\n');
+  await expect.poll(() => page.evaluate(async () => (await navigator.clipboard.readText()).replace(/\r\n/g, '\n'))).toBe(recoveryClipboard);
   await expect.poll(async () => ((await readSaved())?.messages as Array<{ featureOutput?: { responseSource?: { text?: string } } }> | undefined)
     ?.some(message => message.featureOutput?.responseSource?.text === recoveryProgram), { timeout: 20_000 }).toBe(true);
   await page.reload();
