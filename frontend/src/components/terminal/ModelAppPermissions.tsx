@@ -30,14 +30,14 @@ export function ModelAppPermissions() {
     } finally { setSaving(false); }
   }
   return <div className={styles.permissionChoice}>
-    <label htmlFor="model-app-permissions">Connected app permissions</label>
+    <label htmlFor="model-app-permissions">App permissions</label>
     <select id="model-app-permissions" value={mode} disabled={loading || saving || error.startsWith('Sign in')}
       onChange={event => void change(event.target.value as XrogaPluginPermissionMode)}>
-      <option value="low_risk">Auto (default)</option>
+      <option value="low_risk">Auto</option>
       <option value="always_ask">Ask before changes</option>
       <option value="read_only">Read-only</option>
       <option value="full_access">Full access — requested app actions</option>
     </select>
-    {error ? <p role="status">{error}</p> : <p role="status">{saving ? 'Saving…' : loading ? 'Loading saved preference…' : mode === 'full_access' ? 'Requested app actions only; safeguards still apply.' : mode === 'always_ask' ? 'Ask before app changes.' : mode === 'read_only' ? 'Reads only; changes need approval.' : 'Routine app actions run automatically.'}</p>}
+    {error || loading || saving ? <p role="status">{error || (saving ? 'Saving…' : 'Loading…')}</p> : null}
   </div>;
 }
