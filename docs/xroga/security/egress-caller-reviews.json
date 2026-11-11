@@ -4353,7 +4353,7 @@
     {
       "id": "7b6e1f490ce974fc3971",
       "callSha256": "9bdd54f164230d27aca5d0bdf34fc470042478bcc9bd0f1037b146d00f035cd4",
-      "sourceFileSha256": "68fa5450c3a85f0685b71be4f8d3693872ca5ca36997d38988a241b8419573ac",
+      "sourceFileSha256": "3e9e55c84d8a1cb11abd8a2f71caa3f758e8222a8c5c1f2890edf81ea9e68e61",
       "disposition": "VERIFIED_GUARD",
       "trust": "FIXED_COMPOSIO_TRANSPORT_ORIGINAL_CONTEXT_CURRENT_OWNED_SESSION_FINITE_PUBLIC_DISCOVERY_EXACT_PRIVATE_EGRESS_AND_NATIVE_CONFIGURATION_CONFIRMATION",
       "tenantAuthority": "ISSUED_ACTOR_OWNER_SOURCE_CREDENTIAL_EPOCH_LIVE_ACCOUNT_ONE_USE_CLAIM_SECRET_FLOOR_TERMINAL_DENIAL_AND_VERIFIED_COMPLETION",
@@ -4371,7 +4371,12 @@
         {
           "path": "backend/src/services/integrations/composioProvenance.security.test.ts",
           "marker": "private connected-app read uses exact existing consent",
-          "sha256": "445b458f198df385ebf35733b0578e22353921e19aaf75c43055847d4d349c73"
+          "sha256": "1593499035681a2a03af17c56bcc02ceb1f2a1ae3dab1b1f552b04574f287192"
+        },
+        {
+          "path": "backend/src/services/integrations/composioAccountSelection.security.test.ts",
+          "marker": "confirmed action fails closed if disabled multi-account session has two Gmail accounts",
+          "sha256": "a1ce8db93b45a1e1adcd6a0af1c259291c3d4990ae1dcfa032ed2894f9d4ac20"
         }
       ]
     },

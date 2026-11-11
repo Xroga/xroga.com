@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "4cc0a3d5ac13642a19360d5dd2c68f28587181f7bd45ab8ad87508d15bc76b1d",
+  "sourceTreeDigest": "46ac0f1433d845524833d353a21f0a873e12d799a590e848ba17f085b77bcb00",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -2519,7 +2519,7 @@
     {
       "id": "7b6e1f490ce974fc3971",
       "file": "backend/src/services/integrations/composioClient.ts",
-      "line": 1417,
+      "line": 1431,
       "entryPoint": "composioRequest",
       "transport": "fetch",
       "callee": "fetch",
@@ -2544,7 +2544,12 @@
         {
           "path": "backend/src/services/integrations/composioProvenance.security.test.ts",
           "marker": "private connected-app read uses exact existing consent",
-          "sha256": "445b458f198df385ebf35733b0578e22353921e19aaf75c43055847d4d349c73"
+          "sha256": "1593499035681a2a03af17c56bcc02ceb1f2a1ae3dab1b1f552b04574f287192"
+        },
+        {
+          "path": "backend/src/services/integrations/composioAccountSelection.security.test.ts",
+          "marker": "confirmed action fails closed if disabled multi-account session has two Gmail accounts",
+          "sha256": "a1ce8db93b45a1e1adcd6a0af1c259291c3d4990ae1dcfa032ed2894f9d4ac20"
         }
       ]
     },

@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "4cdc973593c855f0d9cb32c2326cf93d09f17cc8",
+  "source_sha": "b7c80ddf8b2a7a1abaf5aabc998b8bd1939f7d7a",
   "hash_policy": "Exact preserved attachment bytes; repository text uses Git-canonical LF bytes for portable hashes and byte counts",
   "sources": [
     {
@@ -6325,9 +6325,9 @@
       "source_id": "SRC-3d3190a1571aa705",
       "filename": "current-state.json",
       "path_or_url": "docs/xroga/current-state.json",
-      "sha256": "f436c84dc6c9bdf5c01b2dac051dac621aea74588555e4929145e28073a521e3",
-      "byte_size": 5693373,
-      "modified_timestamp": "2026-11-11T22:46:26.744Z",
+      "sha256": "2919cf71ab6e970861024a3b193a18ca36c9b6218b57308f6525665b1790c71d",
+      "byte_size": 5694442,
+      "modified_timestamp": "2026-11-11T23:11:05.299Z",
       "parse_status": "PARSED_JSON",
       "category": "REPOSITORY_DOCUMENT",
       "authority": "ADVISORY",
@@ -12786,9 +12786,9 @@
       "source_id": "SRC-8c25c7e0b5b0dd66",
       "filename": "composioClient.ts",
       "path_or_url": "backend/src/services/integrations/composioClient.ts",
-      "sha256": "68fa5450c3a85f0685b71be4f8d3693872ca5ca36997d38988a241b8419573ac",
-      "byte_size": 99670,
-      "modified_timestamp": "2026-10-28T19:47:43.165Z",
+      "sha256": "3e9e55c84d8a1cb11abd8a2f71caa3f758e8222a8c5c1f2890edf81ea9e68e61",
+      "byte_size": 101675,
+      "modified_timestamp": "2026-11-11T23:03:21.096Z",
       "parse_status": "AST_METADATA",
       "category": "SOURCE_CODE",
       "authority": "CURRENT_CODE",
