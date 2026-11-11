@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "2dde252953933c8ac3325b5efc18b28b122a0a22",
+  "source_sha": "eb9e16c01b9c902c15bca0133d7b4570d80a9c1b",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -78,6 +78,7 @@
         "Dockerfile.api",
         "backend/src/index.ts",
         "backend/src/config/platformEnvironment.ts",
+        "backend/src/services/browserPushService.ts",
         "scripts/infrastructure/cloud-run-release-gate.mjs",
         "docs/xroga/evidence/zero-fly/FINAL-PRODUCTION-ACCEPTANCE-20261027.json"
       ],
@@ -93,7 +94,9 @@
         "NODE_ENV",
         "PORT",
         "XROGA_PLATFORM_CONFIG_FILE",
-        "XROGA_RELEASE_SHA"
+        "XROGA_RELEASE_SHA",
+        "XROGA_VAPID_PRIVATE_KEY",
+        "XROGA_VAPID_PUBLIC_KEY"
       ],
       "inbound_callers": [
         "api or named source callers; operational reachability not inferred"
@@ -117,6 +120,7 @@
         "Dockerfile.api",
         "backend/src/index.ts",
         "backend/src/config/platformEnvironment.ts",
+        "backend/src/services/browserPushService.ts",
         "scripts/infrastructure/cloud-run-release-gate.mjs",
         "docs/xroga/evidence/zero-fly/FINAL-PRODUCTION-ACCEPTANCE-20261027.json"
       ],
@@ -16067,6 +16071,45 @@
       ]
     },
     {
+      "name": "XROGA_VAPID_PRIVATE_KEY",
+      "consuming_sources": [
+        "backend/src/routes/notifications.ts",
+        "backend/src/services/browserPushService.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "SERVER_CREDENTIAL",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "CONDITIONAL_ON_CAPABILITY",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "api"
+      ]
+    },
+    {
+      "name": "XROGA_VAPID_PUBLIC_KEY",
+      "consuming_sources": [
+        "backend/src/services/browserPushService.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "SERVER_CREDENTIAL",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "CONDITIONAL_ON_CAPABILITY",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "api"
+      ]
+    },
+    {
       "name": "XROGA_WORKSPACE_STAGING_RUNTIME",
       "consuming_sources": [
         "frontend/src/lib/hostedWorkspaceBridge.mjs"
@@ -16442,7 +16485,7 @@
     },
     {
       "path": ".vercel/project.json",
-      "presence": "ABSENT",
+      "presence": "PRESENT",
       "role": "Existing runtime/build/verification configuration"
     },
     {
@@ -16645,6 +16688,10 @@
     {
       "path": ".github/workflows/xroga-tenant-security.yml",
       "sha256": "85e19e642dc58c1d74068fe4c765ee9a7e8092b29ae1018f7bf44026620888e5"
+    },
+    {
+      "path": ".vercel/project.json",
+      "sha256": "978867a51bff89f97ca84a99eb20eb76980bb1c8fb7e4a71b6aac71a78d26c48"
     },
     {
       "path": "Dockerfile.api",
@@ -18420,7 +18467,7 @@
     },
     {
       "path": "backend/src/routes/notifications.ts",
-      "sha256": "9aec298fc8c4b0f6c678f0861db12805da9b0700e109ff052d0e4e27be18486a"
+      "sha256": "7b91dfd72ae335226c3fb83c7ce2e7cb7902b7dd25b87565f7dcef917720c5db"
     },
     {
       "path": "backend/src/routes/operations.ts",
@@ -18907,6 +18954,10 @@
       "sha256": "1f7ce1602847ca3f2a24e3ac5c93c1b0dfdded4e0a424d81adc4a85895e98a2d"
     },
     {
+      "path": "backend/src/services/browserPushService.ts",
+      "sha256": "f4efcbdd6268fe5e71e0b265e09fa93ca00bc9ed4ca71347261039f26c085cfc"
+    },
+    {
       "path": "backend/src/services/ensureUserRecords.ts",
       "sha256": "b93530285b863676609458c1b2ee8d5478f8504b19fe89aa421bdabcd93c9852"
     },
@@ -19128,7 +19179,7 @@
     },
     {
       "path": "backend/src/services/notificationService.ts",
-      "sha256": "97a7d33fe2b60ddebbdb9f1e8e2c5304d72398ff31ee9036386f705f62b6b402"
+      "sha256": "823e0e647c547459ecd37560dee87b23d8d1fa0e28a85d5252870c65fccd69ec"
     },
     {
       "path": "backend/src/services/projectScaffold.ts",
@@ -22128,11 +22179,11 @@
     },
     {
       "path": "frontend/src/components/notifications/NotificationExperience.tsx",
-      "sha256": "2b8296c2a5f9f70e5dd289d91787327f2e32453be464d557e468a5791684a075"
+      "sha256": "09d94ee31d3faf726e9614925e575d339f4d6620f73abcec1271b6e4937ab654"
     },
     {
       "path": "frontend/src/components/notifications/SidebarNotificationCenter.tsx",
-      "sha256": "38aa69cc8a0a675213cf5b4992dbea826147bd669b9cc7aaf9d79d9fe88b13a3"
+      "sha256": "a9d660edb0d37460ca8b1e3380161d37c23c1cafd7a846d4de41d53c724c231e"
     },
     {
       "path": "frontend/src/components/onboarding/BuildTypeCard.tsx",
@@ -22448,7 +22499,7 @@
     },
     {
       "path": "frontend/src/components/settings/NotificationsSettingsPanel.tsx",
-      "sha256": "3429fbf6c12ce26c54c175d76168e785b0dc78ac73238a0c511d9ceeb4058b56"
+      "sha256": "99dc739e5c946ced87a512364f6b1caa47db5ab2bd1999a100e4207decd27b32"
     },
     {
       "path": "frontend/src/components/settings/PlanUsageSettingsPanel.tsx",
@@ -23144,7 +23195,7 @@
     },
     {
       "path": "frontend/src/lib/api.ts",
-      "sha256": "9545e70a830e5d06082a7f4e7110b523feb1f7744a1641fa650131f275a2e381"
+      "sha256": "ea8d0feea1213630145ff1b89e42dee6b1c543e4d7dedec3a6f8aa7e89db2f09"
     },
     {
       "path": "frontend/src/lib/assistantCopy.ts",
@@ -23165,6 +23216,10 @@
     {
       "path": "frontend/src/lib/brand.ts",
       "sha256": "89c9910b49525c23848afd1d4bcb64c53dd1e2dd21839de945ac47a73522b25e"
+    },
+    {
+      "path": "frontend/src/lib/browserPush.ts",
+      "sha256": "157fa536ba5285716a428c45314695422f456f2d38bc2466a2982c2b1643d095"
     },
     {
       "path": "frontend/src/lib/browserSafety.ts",
@@ -24136,7 +24191,7 @@
     },
     {
       "path": "frontend/src/middleware.ts",
-      "sha256": "351846e952d1700742ae26bab4809f51f9de408eee31a5cda1727ef656e1ca65"
+      "sha256": "d52d0513a5604e1d5f41b4d13f36ce13468b9561c35b1c6fe1d363c50044f27d"
     },
     {
       "path": "frontend/src/store/useAppStore.ts",
@@ -24196,7 +24251,7 @@
     },
     {
       "path": "scripts/xroga/runtime-facts.mjs",
-      "sha256": "4eabe36ba552b7e1e84d6a8004e33d66aa4af3adca49032a4757705ef277c1bd"
+      "sha256": "4953e23fb8c0714ef1bb9eccb2fc5e72a868bef4b465c2761a98d7f9e6012707"
     },
     {
       "path": "scripts/xroga/runtime-inventory.mjs",
@@ -35703,6 +35758,13 @@
       "path": "backend/src/security/vercelRefreshAccount.local.integration.ts",
       "line": 44,
       "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/services/browserPushService.ts",
+      "line": 10,
+      "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
