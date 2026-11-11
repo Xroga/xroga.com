@@ -1,0 +1,64 @@
+{
+  "version": "1.0",
+  "missionId": "COMPOSIO-CONFIRMED-ACTION-ACCOUNT-20261112",
+  "baseSha": "87253bc630d20f12a80cac98f698a30d3bead0f8",
+  "requirementIds": ["XR-FAMILY-composio-dynamic-tools", "XR-ORIGINAL-F041"],
+  "state": "CODE_COMPLETE",
+  "risk": "high",
+  "scope": "Repair confirmed Composio actions for single-account sessions and remove the idle Browser Operator workspace strip without removing explicit extension pairing.",
+  "changedFiles": [
+    "backend/src/services/integrations/composioClient.ts",
+    "backend/src/e2e/xrogaGoldenJourneys.test.ts",
+    "backend/src/services/integrations/composioAccountSelection.security.test.ts",
+    "backend/src/services/integrations/composioProvenance.security.test.ts",
+    "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+    "frontend/src/components/browser/WorkspaceBrowserOperator.test.ts",
+    "frontend/src/components/layout/AppShell.tsx",
+    "docs/xroga/current-state.json",
+    "docs/xroga/current-state.md",
+    "docs/xroga/dependency-inventory.json",
+    "docs/xroga/deployment-topology.md",
+    "docs/xroga/research/source-manifest.json",
+    "docs/xroga/security/caller-reviews.json",
+    "docs/xroga/runtime-contract.md",
+    "docs/xroga/secret-inventory.md",
+    "docs/xroga/missions/composio-confirmed-action-account-20261112.json"
+  ],
+  "decisions": {
+    "keep": ["Existing one-time approval, tenant-bound account binding, egress admission, and extension pairing capability"],
+    "extend": ["Pre-dispatch Composio session-mode and active-account verification", "Synthetic positive and negative action-selection tests"],
+    "replace": ["Unconditional explicit account field on Composio session execute", "Idle Browser Operator placeholder"],
+    "deprecate": []
+  },
+  "schemaImpact": {
+    "changed": false,
+    "migrations": [],
+    "rollout": "Deploy compatible Cloud Run API and frontend only after source-bound checks; no database migration.",
+    "rollback": "Restore the prior Cloud Run revision and Vercel deployment if connected actions or pairing regress; do not replay uncertain writes."
+  },
+  "securityImpact": {
+    "auth": {"changed": false, "description": "The existing authenticated session and approval remain mandatory."},
+    "tenant": {"changed": false, "description": "Connected-account list must match the exact authenticated Composio user and approved account."},
+    "approval": {"changed": false, "description": "No email or other write executes without the existing one-time confirmation."},
+    "credentials": {"changed": false, "description": "Existing protected Composio key is reused; no credential value is logged or copied."},
+    "egress": {"changed": true, "description": "One bounded read of active connected-account metadata precedes single-account dispatch; execution remains on the fixed Composio host."},
+    "cost": {"changed": true, "description": "Single-account writes perform one extra Composio metadata read; no premium tool or model is added."},
+    "billing": {"changed": false, "description": "No product billing behavior changes."}
+  },
+  "tests": [
+    {"command": "node --import tsx --test src/services/integrations/composioAccountSelection.security.test.ts", "scope": "Confirmed Gmail dispatch with one account and explicit multi-account selection", "negative": true, "reference": "backend/src/services/integrations/composioAccountSelection.security.test.ts"},
+    {"command": "node node_modules/typescript/bin/tsc --noEmit (backend)", "scope": "Backend type safety", "negative": false, "reference": "backend/src/services/integrations/composioClient.ts"},
+    {"command": "node node_modules/typescript/bin/tsc --noEmit (frontend)", "scope": "Workspace UI type safety", "negative": false, "reference": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx"},
+    {"command": "tsx --tsconfig frontend/tsconfig.json --test frontend/src/components/browser/WorkspaceBrowserOperator.test.ts", "scope": "Idle Browser Operator is absent from workspace rendering", "negative": false, "reference": "frontend/src/components/browser/WorkspaceBrowserOperator.test.ts"},
+    {"command": "Provider diagnostic with empty, non-sending Gmail arguments", "scope": "Composio rejects the explicit account field with HTTP 400 and accepts its omission into the tool validator", "negative": true, "reference": "backend/src/services/integrations/composioClient.ts"}
+  ],
+  "architecture": {"change": "extends_canonical", "reason": "Repairs the existing Composio adapter and dashboard UI without a second action executor or approval path.", "rfc": null},
+  "rollout": "Run source-bound CI and stage the API and frontend; verify authenticated account selection and browser pairing before promotion.",
+  "rollback": "Restore previous API/frontend revisions. A failed or uncertain send must never be retried automatically.",
+  "knownGaps": ["A real email was not sent during diagnosis; the user must authorize a fresh exact confirmation after deployment."],
+  "placeholderClaimsRemaining": ["No live end-to-end Gmail send is claimed before an authorized verified receipt."],
+  "evidenceRefs": ["backend/src/services/integrations/composioAccountSelection.security.test.ts"],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {"state": "BLOCKED", "blockers": ["Source-bound CI and staged authenticated verification pending"], "authenticatedE2e": "BLOCKED", "stagedSecurity": "BLOCKED", "liveUrl": null, "deployedSha": null}
+}

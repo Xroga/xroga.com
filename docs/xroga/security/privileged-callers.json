@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "9d57df1d7f915d72575de6c4a6e5bfd6221294547aabd593a31d6dd8a4bdfb3a",
+  "reviewRegistrySha256": "b2046cc8ba1c4aa13b2e1f26edc49af1e347ea98192908fe637400776cf63de3",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -6488,7 +6488,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "db86c426bed33eedc7ee"
+        "id": "07b7daa5022ce3698f3c"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -10308,7 +10308,7 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "db86c426bed33eedc7ee"
+        "id": "07b7daa5022ce3698f3c"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -31272,7 +31272,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "2500a1f07a78f43f9ebee385642fac97743777253c045bce71eed6bf51002d9a",
+      "sourceSha256": "1c8cf51bb01e006b231c1a948a3e775c4d01912cd7ef0611f1f8f501e589b373",
       "semanticReview": {
         "authority": "Inspected the exact receiver and complete expression. It is a built-in JavaScript data conversion with no persistence client or privilege transfer.",
         "reason": "Decodes the user-requested recording or enumerates user-selected File objects locally. Neither method is a database or storage invocation.",
@@ -31289,15 +31289,15 @@
       }
     },
     {
-      "id": "db86c426bed33eedc7ee",
+      "id": "07b7daa5022ce3698f3c",
       "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
-      "line": 246,
+      "line": 248,
       "enclosing": "WorkspaceBrowserOperator",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "2500a1f07a78f43f9ebee385642fac97743777253c045bce71eed6bf51002d9a",
+      "sourceSha256": "1c8cf51bb01e006b231c1a948a3e775c4d01912cd7ef0611f1f8f501e589b373",
       "semanticReview": {
         "authority": "Inspected the exact receiver and complete expression. It is a built-in JavaScript data conversion with no persistence client or privilege transfer.",
         "reason": "Decodes the user-requested recording or enumerates user-selected File objects locally. Neither method is a database or storage invocation.",
