@@ -365,6 +365,7 @@ export function TerminalChatBar({ starter = false }: { starter?: boolean }) {
     const preamble = buildComposerPreamble(
       useComposerToolsStore.getState().rules,
       useComposerToolsStore.getState().enabledSkills,
+      useComposerToolsStore.getState().preferences,
     );
     const artifactPreamble = incognito ? '' : buildArtifactContextPreamble(useXrogaArtifactContext.getState());
     await submit(
