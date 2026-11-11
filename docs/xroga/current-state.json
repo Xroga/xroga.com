@@ -144630,6 +144630,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:c620de95596ccf0877ff",
+      "sourcePath": "apps/xroga-browser-extension/src/agent/__tests__/chat-memory.test.ts",
+      "declaredTests": 3,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:6fe73844a9048abb3dd6",
       "sourcePath": "apps/xroga-browser-extension/src/agent/__tests__/compact-schema.test.ts",
       "declaredTests": 6,
