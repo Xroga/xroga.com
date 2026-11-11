@@ -65,6 +65,7 @@
   "panel.jumpToLatest": "Jump to latest",
   "activity.working": "Running a tool",
   "activity.starting": "Starting request…",
+  "activity.blackHoleWorking": "Black Hole is working",
   "activity.between": "Waiting for the next update…",
   "activity.writing": "Writing response…",
   "activity.stepOutcome": "{action} · {outcome}",

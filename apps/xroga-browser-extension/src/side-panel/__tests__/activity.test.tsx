@@ -62,7 +62,8 @@ describe('activity status line', () => {
       reply('a', '2026-10-08T10:00:05.000Z', { runStartedAt: '2026-10-08T10:00:01.000Z', tools: [row('running')] }),
     ];
     const html = renderToStaticMarkup(<Transcript entries={entries} streaming={null} live={{ waiting: false }} />);
-    expect(text(html)).toContain('Clicking a page control 19s');
+    expect(text(html)).toContain('Black Hole is working 19s Clicking a page control');
+    expect(html.match(/data-black-hole=/g)).toHaveLength(1);
     expect(text(html)).not.toContain('Worked for');
   });
 
@@ -82,7 +83,8 @@ describe('activity status line', () => {
       />,
     );
     expect(text(html)).toContain('Worked for 4s');
-    expect(text(html)).toContain('Waiting for the next update… 4s');
+    expect(text(html)).toContain('Black Hole is working 4s Waiting for the next update…');
+    expect(html.match(/data-black-hole=/g)).toHaveLength(1);
   });
 
   it('only shows writing after a real text update', () => {

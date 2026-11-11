@@ -65,6 +65,7 @@
   "panel.jumpToLatest": "跳到最新",
   "activity.working": "正在运行工具",
   "activity.starting": "正在启动请求…",
+  "activity.blackHoleWorking": "黑洞正在处理",
   "activity.between": "正在等待下一条更新…",
   "activity.writing": "正在撰写回复…",
   "activity.stepOutcome": "{action} · {outcome}",

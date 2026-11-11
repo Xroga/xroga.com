@@ -3,11 +3,16 @@
 // effect when the page did not react, how a write was allowed, and on expanding, the arguments (typed values masked),
 // the receipt and the error hint. Page strings are text nodes only.
 import { useEffect, useState } from 'react';
+import {
+  Camera, CircleAlert, CircleCheck, Clock, FileSearch, Globe, Keyboard, ListChecks, Minus, MousePointerClick,
+  ScanText, ShieldCheck, type LucideIcon,
+} from 'lucide-react';
 import type { ToolRow } from '@src/ui/protocol';
 import { t } from '@src/ui/i18n';
 import type { MessageKey } from '@src/ui/i18n';
 import { activityLine, liveToolLabel, maskArgs } from './activity-label';
-import { CheckIcon, ChevronIcon, CloseIcon, HistoryIcon, SpinnerIcon } from '@src/ui/icons';
+import { ChevronIcon, HistoryIcon } from '@src/ui/icons';
+import { BlackHoleIndicator } from '@src/ui/BlackHoleIndicator';
 
 export type Phase = 'starting' | 'between' | 'writing' | 'working' | 'waiting';
 
@@ -19,7 +24,11 @@ const PHASES: Record<Phase, MessageKey> = {
   waiting: 'activity.waiting',
 };
 
-const ICONS: Record<ToolRow['status'], string> = { running: '…', done: '✓', failed: '✗', skipped: '–', waiting: '!' };
+const TOOL_ICONS: Record<string, LucideIcon> = {
+  navigate: Globe, tabs: Globe, plugin_search: Globe, snapshot: ScanText, read: FileSearch, find: FileSearch,
+  read_attachment: FileSearch, screenshot: Camera, click: MousePointerClick, hover: MousePointerClick,
+  type: Keyboard, set: Keyboard, press: Keyboard, fill_form: Keyboard, wait: Clock, done: CircleCheck,
+};
 const TONES: Record<ToolRow['status'], string> = {
   running: 'text-nb-link',
   done: 'text-emerald-600 dark:text-emerald-400',
@@ -70,21 +79,29 @@ function useNow(live: boolean): number {
  * "Worked for" once it has stopped.
  */
 export function Activity({ rows, phase, start, end }: { rows: ToolRow[]; phase?: Phase; start: number; end?: number }) {
-  const [open, setOpen] = useState(false);
+  const [liveOpen, setLiveOpen] = useState(false);
+  const [historyOpen, setHistoryOpen] = useState(false);
+  const open = phase ? liveOpen : historyOpen;
   const now = useNow(!!phase);
   const time = elapsed((phase ? now : (end ?? start)) - start);
   const running = phase === 'working' ? rows.findLast(row => row.status === 'running') : undefined;
   const latest = rows.findLast(row => row.status !== 'running' && row.status !== 'waiting');
   const label = running ? liveToolLabel(running) : phase ? t(PHASES[phase]) : t('activity.worked', { time });
+  const working = Boolean(phase && phase !== 'waiting');
   const status = (
     <>
-      {phase && phase !== 'waiting' ? (
-        <SpinnerIcon size={14} className="shrink-0 text-nb-link motion-safe:animate-spin" />
+      {working ? (
+        <BlackHoleIndicator compact />
       ) : (
         <HistoryIcon size={14} className={phase ? 'shrink-0 text-amber-600 dark:text-amber-400' : 'shrink-0'} />
       )}
-      <span className={`min-w-0 flex-1 break-words ${phase ? 'font-medium text-nb-fg' : ''}`}>{label}</span>
-      {phase ? <span className="shrink-0 tabular-nums opacity-70">{time}</span> : null}
+      <span className="min-w-0 flex-1 break-words">
+        <span className="flex flex-wrap items-baseline gap-x-1.5">
+          <span className={phase ? 'font-semibold text-nb-fg' : ''}>{working ? t('activity.blackHoleWorking') : label}</span>
+          {phase ? <span aria-hidden="true" className="text-xs tabular-nums opacity-70">{time}</span> : null}
+        </span>
+        {working ? <span className="block text-xs">{label}</span> : null}
+      </span>
     </>
   );
   return (
@@ -95,7 +112,7 @@ export function Activity({ rows, phase, start, end }: { rows: ToolRow[]; phase?:
           type="button"
           aria-expanded={open}
           className="flex max-w-full items-center gap-2 self-start rounded-lg p-1 text-left text-nb-muted transition-colors hover:bg-nb-surface hover:text-nb-fg focus-visible:outline focus-visible:outline-2 focus-visible:outline-nb-accent"
-          onClick={() => setOpen(o => !o)}>
+          onClick={() => (phase ? setLiveOpen : setHistoryOpen)(o => !o)}>
           {status}
           <ChevronIcon size={14} className={`shrink-0 motion-safe:transition-transform ${open ? 'rotate-90' : ''}`} />
         </button>
@@ -126,6 +143,10 @@ function Row({ row, live }: { row: ToolRow; live: boolean }) {
   const unconfirmed = !live && (row.status === 'running' || row.status === 'waiting');
   const status = unconfirmed ? 'activity.unconfirmed' : STATUS[row.status];
   const result = row.result as { receipt?: unknown; error?: { hint?: string } } | undefined;
+  const Icon = unconfirmed || row.status === 'skipped' ? Minus
+    : row.status === 'failed' ? CircleAlert
+    : row.status === 'waiting' ? ShieldCheck
+    : Object.hasOwn(TOOL_ICONS, row.tool) ? TOOL_ICONS[row.tool] : ListChecks;
   return (
     <li className="flex flex-col">
       <button
@@ -133,10 +154,7 @@ function Row({ row, live }: { row: ToolRow; live: boolean }) {
         aria-expanded={open}
         className="flex items-start gap-1.5 rounded-md px-1 py-0.5 text-left hover:bg-nb-surface"
         onClick={() => setOpen(o => !o)}>
-        <span aria-hidden className={`w-3 shrink-0 text-center font-semibold ${TONES[row.status]}`}>
-          {unconfirmed ? '–' : row.status === 'done' ? <CheckIcon size={13} /> : row.status === 'failed' ? <CloseIcon size={13} />
-            : row.status === 'running' ? <SpinnerIcon size={13} className="motion-safe:animate-spin" /> : ICONS[row.status]}
-        </span>
+        <Icon size={13} aria-hidden="true" className={`shrink-0 ${unconfirmed ? 'text-nb-muted' : TONES[row.status]}`} />
         <span className="min-w-0 flex-1 break-words">
           {row.status === 'done' ? line.label : liveToolLabel(row)}
           {[...(status ? [t(status)] : []), ...line.tags].map(tag => (
