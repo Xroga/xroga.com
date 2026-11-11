@@ -39,6 +39,7 @@ test('local Chrome shares canonical ownership, turn fencing, cancellation and re
   app.use(express.json());
   app.use(authMiddleware);
   let pluginRevoked = false;
+  let exhausted = false;
   let pluginConfirmations = 0;
   const approvalId = '00000000-0000-4000-8000-000000000003';
   const receiptId = '00000000-0000-4000-8000-000000000004';
@@ -48,6 +49,7 @@ test('local Chrome shares canonical ownership, turn fencing, cancellation and re
   });
   app.use(createLocalBrowserRouter(() => ({ runs, leases }), async request => {
     await request.authority?.revalidate();
+    if (exhausted) throw Object.assign(new Error('capacity'), { code: 'PAID_PROVIDER_CAPACITY_UNAVAILABLE', nextUnlockAt: '2026-11-12T00:00:00.000Z' });
     assert.equal(request.modelId, 'deepseek_v4_1_flash_1017');
     assert.equal(request.platformCostCeiling, 3_000);
     assert.equal(request.body.stream, false);
@@ -182,8 +184,40 @@ test('local Chrome shares canonical ownership, turn fencing, cancellation and re
     assert.equal(grant.granted, 48);
     assert.equal(grant.maxTurns, firstMax + 48);
     assert.equal(grant.turns, firstMax - 3);
-    assert.ok(grant.remainingMs > 40 * 60_000);
+    assert.ok(grant.remainingMs > 30 * 60_000);
     assert.equal((await send(`${segPath}/turn`, 'POST', { ...request, turn: firstMax - 2 })).status, 200);
+
+    // No total ceiling: segments keep being granted past the old 48, 100, 120 and 400 turn marks. The turn fence still holds each turn.
+    let turn = firstMax - 1;
+    let max = grant.maxTurns;
+    while (turn <= 450) {
+      if (turn - 1 >= max - 3) {
+        const next = await (await send(`${segPath}/extend`, 'POST', {})).json() as { maxTurns: number; granted: number };
+        assert.equal(next.granted, 48);
+        max = next.maxTurns;
+      }
+      assert.equal((await send(`${segPath}/turn`, 'POST', { ...request, turn })).status, 200);
+      turn++;
+    }
+    assert.ok(max > 450);
+    assert.equal((await send(`${segPath}/turn`, 'POST', { ...request, turn: 400 })).status, 409);
+
+    // The wall-clock segment is renewed too, and a run whose segment has already ended resumes instead of failing.
+    const row = await runs.load(owner, anotherRun);
+    assert.ok(row);
+    row!.state.createdAt = new Date(Date.now() - 7 * 3_600_000).toISOString();
+    const ended = await (await send(`${segPath}/resume`, 'POST', {})).json() as { remainingMs: number; turns: number };
+    assert.ok(ended.remainingMs > 30 * 60_000, 'an ended segment is renewed on resume');
+    assert.equal(ended.turns, 450);
+    const timeOnly = await (await send(`${segPath}/extend`, 'POST', {})).json() as { granted: number };
+    assert.equal(timeOnly.granted, 0, 'nothing to renew while the segment is fresh');
+
+    // The owner's entitlement ledger refusing a turn is a clean, resumable stop: nothing is charged and no run limit is reported.
+    exhausted = true;
+    const refused = await send(`${segPath}/turn`, 'POST', { ...request, turn: 451 });
+    assert.equal(refused.status, 402);
+    assert.deepEqual(await refused.json(), { error: 'BROWSER_ALLOWANCE_EXHAUSTED', nextUnlockAt: '2026-11-12T00:00:00.000Z' });
+    exhausted = false;
 
     const probeRun = await (await send('/runs', 'POST', { goal: 'Inspect a synthetic image', startUrl: 'https://example.com/' })).json() as { runId: string };
     const probePath = `/runs/${probeRun.runId}/turn`;

@@ -60,16 +60,15 @@ export async function startXrogaModelRun(
   const runId = start.runId;
   let turn = start.turns ?? 0;
   let requestInterrupted = false;
+  let allowance: { nextUnlockAt?: string } | undefined;
   const remainingTurns = (start.maxTurns ?? 12) - turn;
   const remainingMs = start.remainingMs ?? 600_000;
   let maxTurns = start.maxTurns ?? 12;
   if (
     !Number.isSafeInteger(remainingTurns) ||
     remainingTurns <= 0 ||
-    remainingTurns > 400 ||
     !Number.isSafeInteger(remainingMs) ||
     remainingMs <= 0 ||
-    remainingMs > 21_600_000 ||
     (resumeId && resumeId !== runId)
   ) {
     throw new Error('This browser task has reached its time or turn limit.');
@@ -98,7 +97,12 @@ export async function startXrogaModelRun(
             signal,
           );
           return completionStream(value as Completion);
-        } catch {
+        } catch (error) {
+          // The owner's entitlement ledger refused the turn: nothing was charged and the run's progress is kept, so it can resume.
+          if ((error as { code?: unknown } | null)?.code === 'BROWSER_ALLOWANCE_EXHAUSTED') {
+            allowance = {};
+            return Response.json({ error: { message: 'Your Xroga usage allowance is used up for now.' } }, { status: 400 });
+          }
           // The server may already have charged or fenced this request. Never retry it.
           requestInterrupted = !signal.aborted;
           return Response.json(
@@ -123,10 +127,9 @@ export async function startXrogaModelRun(
   const extend = async (): Promise<{ turns: number; remainingMs: number }> => {
     try {
       const next = (await workspaceRequest('extend', { runId, body: {} }, signal)) as { maxTurns?: number; remainingMs?: number };
-      const granted = Number.isSafeInteger(next?.maxTurns) ? (next.maxTurns as number) - maxTurns : 0;
-      if (granted <= 0 || !Number.isSafeInteger(next.remainingMs) || (next.remainingMs as number) <= 0) return { turns: 0, remainingMs: 0 };
-      maxTurns = next.maxTurns as number;
-      return { turns: granted, remainingMs: next.remainingMs as number };
+      const turns = Number.isSafeInteger(next?.maxTurns) ? Math.max(0, (next.maxTurns as number) - maxTurns) : 0;
+      if (Number.isSafeInteger(next?.maxTurns)) maxTurns = Math.max(maxTurns, next.maxTurns as number);
+      return { turns, remainingMs: Number.isSafeInteger(next?.remainingMs) ? Math.max(0, next.remainingMs as number) : 0 };
     } catch {
       return { turns: 0, remainingMs: 0 };
     }
@@ -138,6 +141,9 @@ export async function startXrogaModelRun(
     plugins: start.plugins === true,
     remainingTurns,
     remainingMs,
+    get allowanceExhausted() {
+      return !!allowance;
+    },
     get requestInterrupted() {
       return requestInterrupted;
     },

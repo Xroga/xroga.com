@@ -1528,6 +1528,7 @@ export class RunManager {
     starting.catch(() => undefined);
     const controller = new AbortController();
     let deadline: ReturnType<typeof setTimeout> | undefined;
+    let renewDeadline: ((remainingMs: number) => void) | undefined;
     const resumed = restore?.canonicalBrowserRunId ? restore : undefined;
     const runId = resumed?.runId ?? newId();
     let loopRef: AgentLoop | undefined;
@@ -1591,7 +1592,20 @@ export class RunManager {
           );
           record.canonicalBrowserRunId = canonical.runId;
           await putRun(record);
-          deadline = setTimeout(() => controller.abort(), canonical.remainingMs);
+          // The wall-clock segment is renewed before it ends, by the server, while the run is alive; there is no total time limit.
+          const arm = (remaining: number): void => {
+            if (deadline) clearTimeout(deadline);
+            const renewIn = remaining - 6 * 60_000;
+            deadline = setTimeout(async () => {
+              const next = await canonical!.extend();
+              if (next.remainingMs > 8 * 60_000) arm(next.remainingMs);
+              else {
+                deadline = setTimeout(() => controller.abort(), Math.max(1_000, next.remainingMs || remaining - renewIn));
+              }
+            }, Math.max(1_000, renewIn));
+          };
+          renewDeadline = arm;
+          arm(canonical.remainingMs);
           this.#canonicalRuns.set(conversationId, canonical.runId);
           postWorkspace({ type: 'run', runId: canonical.runId });
         }
@@ -1676,9 +1690,8 @@ export class RunManager {
             ? async () => {
                 const next = await canonical!.extend();
                 if (next.turns <= 0) return 0;
-                // The wall-clock limit moves with the segment.
-                if (deadline) clearTimeout(deadline);
-                deadline = setTimeout(() => controller.abort(), next.remainingMs);
+                // The wall-clock segment moves with the turn segment.
+                if (next.remainingMs > 0) renewDeadline?.(next.remainingMs);
                 return next.turns;
               }
             : undefined,
@@ -1742,11 +1755,14 @@ export class RunManager {
         record.debt = loop.debt;
         record.guards = loop.guards.state;
         const pausedByUser = this.#pauseRequested.has(conversationId) && end.status !== 'done';
-        const paused = pausedByUser || (canonical?.requestInterrupted && end.status === 'failed');
+        const outOfAllowance = !!canonical?.allowanceExhausted && end.status !== 'done';
+        const paused = pausedByUser || outOfAllowance || (canonical?.requestInterrupted && end.status === 'failed');
         const reason = paused
           ? pausedByUser
             ? 'Paused. Resume to continue from the saved checkpoint.'
-            : 'Xroga paused after a model request could not be verified. Resume to continue from the saved state.'
+            : outOfAllowance
+              ? 'Your Xroga usage allowance is used up for now. Your progress is saved. Resume when your allowance renews or you upgrade; nothing is repeated.'
+              : 'Xroga paused after a model request could not be verified. Resume to continue from the saved state.'
           : end.reason;
         if (end.status === 'failed' && reason) await this.#notice(conversationId, reason, paused ? 'info' : 'error');
         if (end.status === 'stopped' && !paused && !this.#connectionLost.has(conversationId)) {

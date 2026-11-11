@@ -26,24 +26,22 @@ import { createBusinessActionConfirmation } from '../services/integrations/busin
 
 const MODEL = 'deepseek_v4_1_flash_1017';
 const MAX_TURNS = 120;
-// A run is admitted in segments: when it reaches the end of one, `extend` grants the next while the verified spend and the hard
-// ceilings allow. The per-turn reservation and the settled provider cost, not the turn count, are what bound the money.
-const HARD_TURNS = 400;
+// A run is admitted in segments: when it reaches the end of one, `extend` grants the next, so a task is bounded by its outcome, not by a
+// turn or time count. Money is bounded where it is spent: every model turn reserves and settles against the owner's canonical
+// entitlement ledger, and a refused reservation stops the run with its progress saved (BROWSER_ALLOWANCE_EXHAUSTED).
 const SEGMENT_TURNS = 48;
 const TURN_CEILING_MICROS = 3_000;
-// Settled provider cost bounds a run's spend. The default is unchanged; a scoped staging test can raise it with one environment value.
-const MAX_RUN_MICROS = (() => {
-  const configured = Number(process.env.XROGA_LOCAL_BROWSER_MAX_RUN_MICROS);
-  return Number.isInteger(configured) && configured >= 36_000 && configured <= 1_000_000 ? configured : 36_000;
-})();
 const MINUTE = 60_000;
 const SEGMENT_MS = 40 * MINUTE;
-const HARD_MS = 6 * 60 * MINUTE;
+/** A run's wall-clock segment is renewed when less than this is left. */
+const RENEW_BEFORE_MS = 10 * MINUTE;
 const MAX_GOAL = 16_000;
 const MAX_PLUGIN_ACTIONS = 10;
 const MAX_PLUGIN_DISCOVERIES = 10;
 const MAX_PLUGIN_READS = 20;
-const limits = { ...BROWSER_RUN_DEFAULTS, maxModelCostMicros: MAX_RUN_MICROS };
+// The job is built for each model turn, so this bounds ONE request (a safety bound, many times its reservation), not the run.
+const PER_TURN_JOB_COST_MICROS = 36_000;
+const limits = { ...BROWSER_RUN_DEFAULTS, maxModelCostMicros: PER_TURN_JOB_COST_MICROS };
 const id = z.string().uuid();
 const clip = (value: unknown, max: number) => (typeof value === 'string' ? value.replace(/\s+/g, ' ').trim().slice(0, max) : undefined);
 
@@ -154,7 +152,7 @@ const message = z.object({
   tool_call_id: z.string().max(200).optional(),
 }).strict();
 const turnBody = z.object({
-  turn: z.number().int().min(1).max(HARD_TURNS),
+  turn: z.number().int().min(1),
   messages: z.array(message).min(1).max(140),
   tools: z.array(tool).max(32).optional(),
   tool_choice: z.enum(['auto', 'none', 'required']).optional(),
@@ -213,6 +211,11 @@ function sendError(res: Response, error: unknown) {
   // No user payload, raw provider error, or credential is returned. Only Xroga's own fixed business-action
   // codes are surfaced (and logged), so a failed approval is diagnosable without exposing anything private.
   const code = (error as { code?: unknown } | null)?.code;
+  // The owner's entitlement ledger refused a model turn: nothing was charged, the run's progress is kept, and it can resume.
+  if (code === 'PAID_PROVIDER_CAPACITY_UNAVAILABLE') {
+    const next = (error as { nextUnlockAt?: unknown }).nextUnlockAt;
+    return res.status(402).json({ error: 'BROWSER_ALLOWANCE_EXHAUSTED', ...(typeof next === 'string' ? { nextUnlockAt: next } : {}) });
+  }
   if (typeof code === 'string' && /^(?:BUSINESS_ACTION|COMPOSIO)_[A-Z_]{2,60}$/.test(code)) {
     console.error('[local-browser] business action failed:', code);
     const providerMessage = (error as { providerMessage?: unknown }).providerMessage;
@@ -618,7 +621,6 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
     // Charge the full per-turn ceiling until a settled provider receipt says otherwise.
     // A crash or unknown charge cannot restore the allowance by resuming a task.
     const priorSpend = Number(row.state.productManifest.localBrowserSpendMicros ?? admitted.turns * TURN_CEILING_MICROS);
-    if (priorSpend + TURN_CEILING_MICROS > MAX_RUN_MICROS) throw new BrowserRequestError(409, 'BROWSER_SPEND_LIMIT');
     const task = row.state.tasks[0]!;
     task.status = 'running';
     task.startedAt ??= new Date().toISOString();
@@ -675,28 +677,37 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
     }
   }));
 
-  // The next execution segment of the same run, under the same ownership, spend ledger and approvals. Granted only near the end of the
-  // current segment and only while the settled spend leaves room for more turns; otherwise nothing changes and the caller stops
-  // with its saved progress. Never starts a second run.
-  router.post('/runs/:runId/extend', withLease(async (_req, res, { runs }, row, lease) => {
-    active(row);
-    const current = allowance(row);
-    if (current.turns < current.maxTurns - 3) return res.json({ ...current, granted: 0 });
-    const spent = Number(row.state.productManifest.localBrowserSpendMicros ?? current.turns * TURN_CEILING_MICROS);
-    if (spent + 2 * TURN_CEILING_MICROS > MAX_RUN_MICROS) throw new BrowserRequestError(409, 'BROWSER_SPEND_LIMIT');
-    if (current.maxTurns >= HARD_TURNS) throw new BrowserRequestError(409, 'BROWSER_TURN_LIMIT');
-    const duration = Number(row.state.productManifest.localBrowserDurationMs ?? 10 * MINUTE);
-    row.state.productManifest.localBrowserMaxTurns = Math.min(HARD_TURNS, current.maxTurns + SEGMENT_TURNS);
-    row.state.productManifest.localBrowserDurationMs = Math.min(HARD_MS, duration + SEGMENT_MS);
+  // The next execution segment of the same run, under the same ownership, ledger and approvals. Turns are renewed near the end of the
+  // current segment and time when less than ten minutes are left; nothing else changes. There is no total ceiling: the run ends when the
+  // task is done, cancelled, or the owner's entitlement ledger refuses a turn. Never starts a second run.
+  const grantSegment = async (runs: Runtime['runs'], row: BrowserRunRecord, lease: Lease) => {
+    const before = allowance(row);
+    const needTurns = before.turns >= before.maxTurns - 3;
+    const needTime = before.remainingMs < RENEW_BEFORE_MS;
+    if (!needTurns && !needTime) return { ...before, granted: 0 };
+    const manifest = row.state.productManifest;
+    if (needTurns) manifest.localBrowserMaxTurns = before.maxTurns + SEGMENT_TURNS;
+    if (needTime) {
+      // A fresh segment counts from now when the old one has already ended.
+      const spent = Date.now() - Date.parse(row.state.createdAt);
+      manifest.localBrowserDurationMs = Math.max(Number(manifest.localBrowserDurationMs ?? 10 * MINUTE), spent) + SEGMENT_MS;
+    }
     row.state.updatedAt = new Date().toISOString();
     await runs.stateStore(row.userId, () => lease).save(row.state);
     const next = allowance(row);
-    return res.json({ ...next, granted: next.maxTurns - current.maxTurns });
+    return { ...next, granted: next.maxTurns - before.maxTurns };
+  };
+
+  router.post('/runs/:runId/extend', withLease(async (_req, res, { runs }, row, lease) => {
+    if (row.cancelRequested || isTerminalRunStatus(row.status)) throw new BrowserRequestError(409, 'BROWSER_RUN_INACTIVE');
+    return res.json(await grantSegment(runs, row, lease));
   }));
 
-  router.post('/runs/:runId/resume', withLease(async (req, res, _rt, row) => {
-    active(row);
-    return res.json({ ...allowance(row), ...(req.revalidateBrowserDevice && plugins.configured() ? { plugins: true } : {}) });
+  router.post('/runs/:runId/resume', withLease(async (req, res, { runs }, row, lease) => {
+    // Resuming is the owner's own continuation of the same run: an ended segment is renewed, a cancelled or finished run is not.
+    if (row.cancelRequested || isTerminalRunStatus(row.status)) throw new BrowserRequestError(409, 'BROWSER_RUN_INACTIVE');
+    const next = await grantSegment(runs, row, lease);
+    return res.json({ ...next, ...(req.revalidateBrowserDevice && plugins.configured() ? { plugins: true } : {}) });
   }));
 
   router.post('/runs/:runId/finish', withLease(async (req, res, { runs }, row, lease) => {
