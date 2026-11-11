@@ -4263,7 +4263,7 @@
     {
       "id": "7b6e1f490ce974fc3971",
       "callSha256": "9bdd54f164230d27aca5d0bdf34fc470042478bcc9bd0f1037b146d00f035cd4",
-      "sourceFileSha256": "68fa5450c3a85f0685b71be4f8d3693872ca5ca36997d38988a241b8419573ac",
+      "sourceFileSha256": "3e9e55c84d8a1cb11abd8a2f71caa3f758e8222a8c5c1f2890edf81ea9e68e61",
       "disposition": "VERIFIED_GUARD",
       "trust": "FIXED_COMPOSIO_TRANSPORT_ORIGINAL_CONTEXT_CURRENT_OWNED_SESSION_FINITE_PUBLIC_DISCOVERY_EXACT_PRIVATE_EGRESS_AND_NATIVE_CONFIGURATION_CONFIRMATION",
       "tenantAuthority": "ISSUED_ACTOR_OWNER_SOURCE_CREDENTIAL_EPOCH_LIVE_ACCOUNT_ONE_USE_CLAIM_SECRET_FLOOR_TERMINAL_DENIAL_AND_VERIFIED_COMPLETION",
@@ -4281,7 +4281,7 @@
         {
           "path": "backend/src/services/integrations/composioProvenance.security.test.ts",
           "marker": "private connected-app read uses exact existing consent",
-          "sha256": "445b458f198df385ebf35733b0578e22353921e19aaf75c43055847d4d349c73"
+          "sha256": "1593499035681a2a03af17c56bcc02ceb1f2a1ae3dab1b1f552b04574f287192"
         }
       ]
     },
@@ -4634,7 +4634,7 @@
     {
       "id": "5b19b5ab231e0280efc7",
       "callSha256": "80ce304010538de36141c81697b2e04d5d62fe4ba24211324eb807875a83b163",
-      "sourceFileSha256": "2500a1f07a78f43f9ebee385642fac97743777253c045bce71eed6bf51002d9a",
+      "sourceFileSha256": "1c8cf51bb01e006b231c1a948a3e775c4d01912cd7ef0611f1f8f501e589b373",
       "disposition": "VERIFIED_GUARD",
       "trust": "BOUNDED_CHROME_EXTENSION_PORT_NO_HTTP_TRANSPORT_OR_SESSION_TOKEN_IN_RESPONSE",
       "tenantAuthority": "Verified API account and one-time extension challenge. Exact runtime extension ID and paired Chrome port. API calls retain the server-issued owner and task authorization.",
@@ -4642,19 +4642,19 @@
         {
           "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
           "marker": "const connected = runtime.connect(extensionId, { name: 'xroga-browser-v1' })",
-          "sha256": "2500a1f07a78f43f9ebee385642fac97743777253c045bce71eed6bf51002d9a"
+          "sha256": "1c8cf51bb01e006b231c1a948a3e775c4d01912cd7ef0611f1f8f501e589b373"
         },
         {
           "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
           "marker": "if (!isStart && !isResume && !isDocument && !isVoice",
-          "sha256": "2500a1f07a78f43f9ebee385642fac97743777253c045bce71eed6bf51002d9a"
+          "sha256": "1c8cf51bb01e006b231c1a948a3e775c4d01912cd7ef0611f1f8f501e589b373"
         }
       ]
     },
     {
       "id": "6631f0cfac960ae10cff",
       "callSha256": "8dbda9699ab8293c740bb5d6ed43bd52c729d323ad44176699f254e1435f18fc",
-      "sourceFileSha256": "2500a1f07a78f43f9ebee385642fac97743777253c045bce71eed6bf51002d9a",
+      "sourceFileSha256": "1c8cf51bb01e006b231c1a948a3e775c4d01912cd7ef0611f1f8f501e589b373",
       "disposition": "VERIFIED_GUARD",
       "trust": "BOUNDED_CHROME_EXTENSION_PORT_NO_HTTP_TRANSPORT_OR_SESSION_TOKEN_IN_RESPONSE",
       "tenantAuthority": "Verified API account and one-time extension challenge. Exact runtime extension ID and paired Chrome port. API calls retain the server-issued owner and task authorization.",
@@ -4662,19 +4662,19 @@
         {
           "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
           "marker": "const connected = runtime.connect(extensionId, { name: 'xroga-browser-v1' })",
-          "sha256": "2500a1f07a78f43f9ebee385642fac97743777253c045bce71eed6bf51002d9a"
+          "sha256": "1c8cf51bb01e006b231c1a948a3e775c4d01912cd7ef0611f1f8f501e589b373"
         },
         {
           "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
           "marker": "const bytes = Uint8Array.from(atob(encoded)",
-          "sha256": "2500a1f07a78f43f9ebee385642fac97743777253c045bce71eed6bf51002d9a"
+          "sha256": "1c8cf51bb01e006b231c1a948a3e775c4d01912cd7ef0611f1f8f501e589b373"
         }
       ]
     },
     {
       "id": "e0aa33d2494c480caeb3",
       "callSha256": "80ce304010538de36141c81697b2e04d5d62fe4ba24211324eb807875a83b163",
-      "sourceFileSha256": "2500a1f07a78f43f9ebee385642fac97743777253c045bce71eed6bf51002d9a",
+      "sourceFileSha256": "1c8cf51bb01e006b231c1a948a3e775c4d01912cd7ef0611f1f8f501e589b373",
       "disposition": "VERIFIED_GUARD",
       "trust": "BOUNDED_CHROME_EXTENSION_PORT_NO_HTTP_TRANSPORT_OR_SESSION_TOKEN_IN_RESPONSE",
       "tenantAuthority": "Verified API account and one-time extension challenge. Exact runtime extension ID and paired Chrome port. API calls retain the server-issued owner and task authorization.",
@@ -4682,19 +4682,19 @@
         {
           "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
           "marker": "const connected = runtime.connect(extensionId, { name: 'xroga-browser-v1' })",
-          "sha256": "2500a1f07a78f43f9ebee385642fac97743777253c045bce71eed6bf51002d9a"
+          "sha256": "1c8cf51bb01e006b231c1a948a3e775c4d01912cd7ef0611f1f8f501e589b373"
         },
         {
           "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
           "marker": "preparedPcm: true, expectedToken: pairedToken.current",
-          "sha256": "2500a1f07a78f43f9ebee385642fac97743777253c045bce71eed6bf51002d9a"
+          "sha256": "1c8cf51bb01e006b231c1a948a3e775c4d01912cd7ef0611f1f8f501e589b373"
         }
       ]
     },
     {
       "id": "96c8086ac0938c5c9190",
       "callSha256": "26c50fda42001535cb70aac98a0d29a407fa8ea44ab454f87cbf7772b31fff4e",
-      "sourceFileSha256": "2500a1f07a78f43f9ebee385642fac97743777253c045bce71eed6bf51002d9a",
+      "sourceFileSha256": "1c8cf51bb01e006b231c1a948a3e775c4d01912cd7ef0611f1f8f501e589b373",
       "disposition": "VERIFIED_GUARD",
       "trust": "BOUNDED_CHROME_EXTENSION_PORT_NO_HTTP_TRANSPORT_OR_SESSION_TOKEN_IN_RESPONSE",
       "tenantAuthority": "Verified API account and one-time extension challenge. Exact runtime extension ID and paired Chrome port. API calls retain the server-issued owner and task authorization.",
@@ -4702,19 +4702,19 @@
         {
           "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
           "marker": "const connected = runtime.connect(extensionId, { name: 'xroga-browser-v1' })",
-          "sha256": "2500a1f07a78f43f9ebee385642fac97743777253c045bce71eed6bf51002d9a"
+          "sha256": "1c8cf51bb01e006b231c1a948a3e775c4d01912cd7ef0611f1f8f501e589b373"
         },
         {
           "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
           "marker": "if ((isStart || isResume) && data.runId",
-          "sha256": "2500a1f07a78f43f9ebee385642fac97743777253c045bce71eed6bf51002d9a"
+          "sha256": "1c8cf51bb01e006b231c1a948a3e775c4d01912cd7ef0611f1f8f501e589b373"
         }
       ]
     },
     {
       "id": "3736829b4cae598c6292",
       "callSha256": "80ce304010538de36141c81697b2e04d5d62fe4ba24211324eb807875a83b163",
-      "sourceFileSha256": "2500a1f07a78f43f9ebee385642fac97743777253c045bce71eed6bf51002d9a",
+      "sourceFileSha256": "1c8cf51bb01e006b231c1a948a3e775c4d01912cd7ef0611f1f8f501e589b373",
       "disposition": "VERIFIED_GUARD",
       "trust": "BOUNDED_CHROME_EXTENSION_PORT_NO_HTTP_TRANSPORT_OR_SESSION_TOKEN_IN_RESPONSE",
       "tenantAuthority": "Verified API account and one-time extension challenge. Exact runtime extension ID and paired Chrome port. API calls retain the server-issued owner and task authorization.",
@@ -4722,12 +4722,12 @@
         {
           "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
           "marker": "const connected = runtime.connect(extensionId, { name: 'xroga-browser-v1' })",
-          "sha256": "2500a1f07a78f43f9ebee385642fac97743777253c045bce71eed6bf51002d9a"
+          "sha256": "1c8cf51bb01e006b231c1a948a3e775c4d01912cd7ef0611f1f8f501e589b373"
         },
         {
           "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
           "marker": "}, () => send({ type: 'result', id, ok: false })",
-          "sha256": "2500a1f07a78f43f9ebee385642fac97743777253c045bce71eed6bf51002d9a"
+          "sha256": "1c8cf51bb01e006b231c1a948a3e775c4d01912cd7ef0611f1f8f501e589b373"
         }
       ]
     }
