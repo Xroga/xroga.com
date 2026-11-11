@@ -376,8 +376,14 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
     : composerBox.y - (menuBox.y + menuBox.height);
   expect(composerGap).toBeGreaterThanOrEqual(4);
   expect(composerGap).toBeLessThanOrEqual(12);
-  expect(Math.abs(menuBox.x - composerBox.x)).toBeLessThanOrEqual(2);
-  expect(menuBox.width).toBeCloseTo(Math.min(composerBox.width, (await page.evaluate(() => window.innerWidth)) - 16), 0);
+  // The new menu is a compact, trigger-anchored popover rather than
+  // the former full-width overlay. Preserve containment and alignment.
+  const triggerBox = (await terminalDock.locator('.xv-cba-trigger').first().boundingBox())!;
+  const viewportWidth = await page.evaluate(() => window.innerWidth);
+  const expectedWidth = Math.min(344, viewportWidth - 16);
+  const expectedLeft = Math.max(8, Math.min(triggerBox.x, viewportWidth - expectedWidth - 8));
+  expect(Math.abs(menuBox.x - expectedLeft)).toBeLessThanOrEqual(2);
+  expect(menuBox.width).toBeCloseTo(expectedWidth, 0);
 
   // Every action survived the redesign, Integrations among them — and the detached
   // Integrations pill that used to duplicate it is gone.
@@ -388,7 +394,7 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
     'Debug an error',
     'Skills',
     'Rules',
-    'Plugins',
+    'Connect Apps',
   ]) {
     await expect(
       plusMenu.getByRole('button', { name: new RegExp(`^${action}(?:\\s|$)`) }),
@@ -396,13 +402,13 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   }
   await expect(page.locator('.xv-chatbar-integration-btn')).toHaveCount(0);
 
-  // The approved picker follows the composer width with one readable column.
+  // The compact picker remains keyboard accessible and uses one readable column.
   const grid = plusMenu.locator('.xv-cba-grid');
   await expect(grid).toBeVisible();
   const gridColumns = await grid.evaluate(
     (el) => getComputedStyle(el).gridTemplateColumns.split(' ').length,
   );
-  expect(gridColumns, 'the current full-width work picker uses one readable column').toBe(1);
+  expect(gridColumns, 'the compact work picker uses one readable column').toBe(1);
   expect(menuBox.y).toBeGreaterThanOrEqual(0);
   expect(menuBox.y + menuBox.height).toBeLessThanOrEqual(await page.evaluate(() => window.innerHeight));
   await expect(plusMenu).toHaveCSS('overflow-y', 'auto');
