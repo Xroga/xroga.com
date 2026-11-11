@@ -8,7 +8,7 @@ import { withTenantModelReservation } from '../ai/tenantModelDispatch.js';
 import { assertCanUseModel } from '../ai/quota.js';
 import { resolveModelSpec } from '../ai/models.js';
 import { actualProviderCostMicroUsd } from '../ai/providerBudget.js';
-import { requiresNativeAuthorizationReview } from '../ai/nativeOpenUiAccuracy.js';
+import { nativeAnswerReviewReason } from '../ai/nativeOpenUiAccuracy.js';
 import { publicRuntimeFailure } from '../ai/universal/runtimeFailure.js';
 import { NATIVE_UI_FORMAT, NATIVE_UI_LIBRARY, splitNativeOpenUiAnswer, validateNativeOpenUi } from '../ai/nativeOpenUi.js';
 import { nativeOpenUiPrompt } from '../ai/nativeOpenUiPrompt.js';
@@ -98,8 +98,9 @@ router.post('/evaluate', (req, res, next) => {
       emit('error', { error: 'The response or its provider receipt could not be verified. Review the ledger before another run.' });
       return res.end();
     }
-    const validation = requiresNativeAuthorizationReview(text)
-      ? { ok: false as const, reason: 'authorization_review' as const }
+    const reviewReason = nativeAnswerReviewReason(text);
+    const validation = reviewReason
+      ? { ok: false as const, reason: reviewReason }
       : program ? validateNativeOpenUi(program, undefined, text) : null;
     emit('answer', {
       text, format: NATIVE_UI_FORMAT, library: NATIVE_UI_LIBRARY,

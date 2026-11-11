@@ -1,16 +1,27 @@
 import { requiresAuthorizationReview } from './answerAuthorizationReview.js';
 
-/** Reject the specific browser/server auth conflation, without altering legacy
- * answer policy or treating an explicitly server-owned session as incorrect. */
-export function requiresNativeAuthorizationReview(answer: string): boolean {
+/** Review specific authorization errors in native answers. */
+function requiresNativeAuthorizationReview(answer: string): boolean {
   if (requiresAuthorizationReview(answer)) return true;
   const prose = answer.replace(/```[^\n]*\n[\s\S]*?```/g, '').replace(/[\x60*_]/g, '');
-  return prose.split(/(?<=[.!?])\s+|\n+/).some(sentence =>
-    /\bSupabase\b/i.test(sentence) &&
-    /\b(?:browser|client[- ]side|default|standard)\b/i.test(sentence) &&
-    /\b(?:receives?|gets?|sets?|uses?|stores?|issues?)\b[^.!?\n]{0,100}\bHTTP[- ]?only\b[^.!?\n]{0,50}\b(?:cookies?|tokens?)\b/i.test(sentence) &&
-    !/\b(?:not|never|doesn't|cannot|without|server[- ]only|BFF|backend[- ]for[- ]frontend)\b/i.test(sentence),
-  );
+  return prose.split(/(?<=[.!?])\s+|\n+/).some(sentence => {
+    const deletionClaim = /\b(?:delete|deleting|deletion)\b[^.!?;\n]{0,85}\b(?:belongs?|goes?|must be|should be)\s+in\s+(?:an?\s+)?with\s+check\b/i.exec(sentence) ??
+      /\b(?:for\s+delete(?:\s+polic(?:y|ies))?|delete\s+policies)\s*[:,]?\s*(?:(?:must|should)\s+)?use\s+(?:an?\s+)?with\s+check\b/i.exec(sentence);
+    if (deletionClaim && !/\b(?:never|do not|don't|cannot|should not)\b/i.test(sentence.slice(0, deletionClaim.index))) return true;
+    return /\bSupabase\b/i.test(sentence) &&
+      /\b(?:browser|client[- ]side|default|standard)\b/i.test(sentence) &&
+      /\b(?:receives?|gets?|sets?|uses?|stores?|issues?)\b[^.!?\n]{0,100}\bHTTP[- ]?only\b[^.!?\n]{0,50}\b(?:cookies?|tokens?)\b/i.test(sentence) &&
+      !/\b(?:not|never|doesn't|cannot|without|server[- ]only|BFF|backend[- ]for[- ]frontend)\b/i.test(sentence);
+  });
+}
+
+export function nativeAnswerReviewReason(answer: string): 'authorization_review' | 'factual_review' | undefined {
+  if (requiresNativeAuthorizationReview(answer)) return 'authorization_review';
+  // Stripe's automatic delivery attempts have a finite window in both modes.
+  const prose = answer.replace(/[\x60*_]/g, '');
+  if (/\bStripe\s+(?:(?:will|would|can|automatically)\s+)*retr(?:y|ies)\s+(?:(?:failed\s+)?(?:webhook\s+)?(?:events?|deliver(?:y|ies))\s+)?(?:forever|indefinitely|without (?:a )?limit)\b/i.test(prose)) {
+    return 'factual_review';
+  }
 }
 
 const monthNames = [

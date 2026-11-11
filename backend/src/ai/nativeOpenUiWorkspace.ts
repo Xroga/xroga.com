@@ -1,6 +1,6 @@
 import { publicCompletionState } from './completionDiagnostics.js';
 import { NATIVE_UI_FORMAT, PARTIAL_NATIVE_PRESENTATION_NOTE, recoverIndependentNativeSections, recoverNativeMonthlyChart, splitNativeOpenUiAnswer, supplementNativeProse, validateNativeOpenUi, type NativeUiDiagnostic } from './nativeOpenUi.js';
-import { requiresNativeAuthorizationReview, suppliedMonthlyComparison } from './nativeOpenUiAccuracy.js';
+import { nativeAnswerReviewReason, suppliedMonthlyComparison } from './nativeOpenUiAccuracy.js';
 
 /** Deployment-owned presentation choice; never reads a user role or client flag.
  * The paid founder evaluator has its own independent staging-only guard. */
@@ -29,8 +29,10 @@ export function completeNativeWorkspaceAnswer(
     };
   }
   const response = text;
-  const completion = (validation?.ok === false && validation.reason === 'authorization_review') || requiresNativeAuthorizationReview(text)
-    ? { status: 'partial' as const, reason: 'authorization_review' as const }
+  const reviewReason = validation?.ok === false && (validation.reason === 'authorization_review' || validation.reason === 'factual_review')
+    ? validation.reason : nativeAnswerReviewReason(text);
+  const completion = reviewReason
+    ? { status: 'partial' as const, reason: reviewReason }
     : validation?.ok === false && validation.reason === 'data_review'
       ? { status: 'partial' as const, reason: 'data_review' as const }
       : publicCompletionState(finishReason, response);

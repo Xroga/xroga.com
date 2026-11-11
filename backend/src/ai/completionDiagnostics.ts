@@ -48,7 +48,7 @@ export function requirePublicCompletion(text: string, modelId: string, diagnosti
 /** Public completion state, without provider identity or private reasoning. */
 export type PublicCompletionState =
   | { status: 'complete' }
-  | { status: 'partial'; reason: 'output_limit' | 'unconfirmed_stop' | 'authorization_review' | 'presentation_contract' | 'data_review' };
+  | { status: 'partial'; reason: 'output_limit' | 'unconfirmed_stop' | 'authorization_review' | 'factual_review' | 'presentation_contract' | 'data_review' };
 
 export function publicCompletionState(finishReason: string | null | undefined, answer = ''): PublicCompletionState {
   // This is a narrow negative check, not a certificate that other facts are true.

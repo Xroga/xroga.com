@@ -274,6 +274,8 @@ export function enhanceAiResponse(content: string, documentId: string, completio
       ? 'Authorization guidance needs review. This answer contains a known unsafe authorization claim. Privileged database roles can bypass RLS, and JWT claims alone do not prove immediate revocation. Verify current server-owned tenant membership and permissions. The original answer is preserved. No automatic retry was made.'
       : partialReason === 'data_review'
       ? 'A written comparison disagreed with the plotted data. Check the figures against the original source.'
+      : partialReason === 'factual_review'
+      ? 'This answer contains a technical claim that needs review. The original answer is preserved below.'
       : partialReason === 'source_attribution'
       ? 'Some numbered citations could not be matched to a retrieved source. Linked citations are verified; treat any unlinked number as unverified. No automatic retry was made.'
       : partialReason === 'output_limit'

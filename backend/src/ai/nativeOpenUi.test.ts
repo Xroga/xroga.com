@@ -175,6 +175,32 @@ test('a browser Supabase SSR session is distinct from an explicitly server-owned
     { status: 'partial', reason: 'authorization_review' });
 });
 
+test('DELETE role checks use USING and native review catches the observed WITH CHECK advice', () => {
+  const inaccurate = 'Role checks (only owner may delete a tenant) belong in a with check clause or an invoker function.';
+  const program = 'root = Col([Text(' + JSON.stringify(inaccurate) + ')])';
+  assert.deepEqual(validateNativeOpenUi(program), { ok: false, reason: 'authorization_review' });
+  assert.deepEqual(completeNativeWorkspaceAnswer(inaccurate, 'stop').completion,
+    { status: 'partial', reason: 'authorization_review' });
+  for (const correct of [
+    'For DELETE policies, use USING. For INSERT, use WITH CHECK.',
+    'Never use WITH CHECK for DELETE.',
+    'Only the owner may delete a tenant; new-row checks belong in a WITH CHECK clause.',
+  ]) {
+    assert.deepEqual(validateNativeOpenUi('root = Col([Text(' + JSON.stringify(correct) + ')])'), { ok: true });
+  }
+});
+
+test('an unbounded Stripe retry claim gets a readable factual-review fallback', () => {
+  const inaccurate = 'A non-2xx makes Stripe retry forever.';
+  const program = 'root = Col([Text(' + JSON.stringify(inaccurate) + ')])';
+  assert.deepEqual(validateNativeOpenUi(program), { ok: false, reason: 'factual_review' });
+  const answer = completeNativeWorkspaceAnswer(inaccurate, 'stop');
+  assert.deepEqual(answer.completion, { status: 'partial', reason: 'factual_review' });
+  assert.equal(answer.response, inaccurate);
+  assert.equal(answer.responseSource.text, '');
+  assert.deepEqual(validateNativeOpenUi('root = Col([Text("Stripe does not retry forever.")])'), { ok: true });
+});
+
 test('an explicit monthly direction that conflicts with the displayed data is flagged', () => {
   const accurate = 'February rose. March dipped.';
   const inaccurate = 'The path is not smooth: February and March ease back before growth resumes.';

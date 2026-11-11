@@ -1,5 +1,5 @@
 import { createParser, parseExpression, split, tokenize, walkAST, type ASTNode, type LibraryJSONSchema } from '@openuidev/lang-core';
-import { contradictsMonthlyChart, monthlyChartDataFallback, requiresNativeAuthorizationReview, suppliedMonthlyComparison } from './nativeOpenUiAccuracy.js';
+import { contradictsMonthlyChart, monthlyChartDataFallback, nativeAnswerReviewReason, suppliedMonthlyComparison } from './nativeOpenUiAccuracy.js';
 import catalog from './nativeOpenUiCatalog.json' with { type: 'json' };
 
 export const NATIVE_UI_FORMAT = 'xroga-openui-v1' as const;
@@ -119,7 +119,7 @@ export function supplementNativeProse(prose: string, program: string): string {
   return lines.length ? prose + '\n\n' + lines.join('\n\n') : prose;
 }
 
-export type NativeUiValidation = { ok: true } | { ok: false; reason: 'budget' | 'syntax' | 'authority' | 'reference' | 'schema' | 'authorization_review' | 'data_review' };
+export type NativeUiValidation = { ok: true } | { ok: false; reason: 'budget' | 'syntax' | 'authority' | 'reference' | 'schema' | 'authorization_review' | 'factual_review' | 'data_review' };
 const reject = (reason: Extract<NativeUiValidation, { ok: false }>['reason']): NativeUiValidation => ({ ok: false, reason });
 type ValidationStage = 'limits' | 'lexer' | 'statements' | 'authority' | 'schema' | 'accuracy';
 export type NativeUiDiagnostic = {
@@ -236,7 +236,8 @@ export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<s
     if (!result.root || result.root.typeName !== 'Col' || result.meta.incomplete || result.meta.unresolved.length || result.meta.errors.length) return fail('schema', result.meta.errors);
     stage = 'accuracy';
     const narrative = [prose, ...reviewStrings].join('\n');
-    if (requiresNativeAuthorizationReview(narrative)) return fail('authorization_review');
+    const reviewReason = nativeAnswerReviewReason(narrative);
+    if (reviewReason) return fail(reviewReason);
     if (contradictsMonthlyChart(result.root, narrative)) return fail('data_review');
     return { ok: true };
   } catch { return fail('syntax'); }
