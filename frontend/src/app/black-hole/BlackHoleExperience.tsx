@@ -203,7 +203,7 @@ export function BlackHoleExperience() {
             <h2>HUMAN PURPOSE.<br/><span>MACHINE CAPABILITY.</span></h2>
             <p className="bh-copy bh-narrow">Humans bring intention, values, imagination and judgment. Intelligence provides tools, reasoning support and execution. The strongest work happens when each plays its proper part.</p>
             <div className="bh-touch-scene" aria-label="An artistic representation of human and machine collaboration" role="img">
-              <Art src="/homepage/intelligence/xroga-unified-intelligence-20260901.png" className="bh-touch-art"/>
+              <Art src="/black-hole/human-machine.svg" className="bh-touch-art"/>
               <svg className="bh-touch-orbit" viewBox="0 0 900 330" aria-hidden="true">
                 <defs><radialGradient id="bhglow"><stop offset="0" stopColor="#d8edff" stopOpacity=".9"/><stop offset="1" stopColor="#d8edff" stopOpacity="0"/></radialGradient></defs>
                 <ellipse cx="450" cy="160" rx="180" ry="75" fill="none" stroke="white" strokeOpacity=".23" strokeWidth=".8"/>
