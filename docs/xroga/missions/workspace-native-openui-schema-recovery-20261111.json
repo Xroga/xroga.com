@@ -20,7 +20,8 @@
     ".github/workflows/command3-auth-browser.yml",
     ".github/workflows/unit-tests.yml",
     ".github/workflows/xroga-golden-journeys.yml",
-    "frontend/e2e/command3-auth.spec.ts"
+    "frontend/e2e/command3-auth.spec.ts",
+    "scripts/xroga/phase-two.test.mjs"
   ],
   "decisions": {
     "keep": [
