@@ -8,10 +8,12 @@
   ],
   "state": "CODE_COMPLETE",
   "risk": "low",
-  "scope": "Use existing events for a single live status and expandable Work history in Workspace.",
+  "scope": "Use existing events for a single live status and expandable Work history in Workspace, with the approved Black Hole mark in the working header.",
   "changedFiles": [
     "frontend/src/components/activity/ActivityTimeline.tsx",
     "frontend/src/components/activity/activity.module.css",
+    "frontend/src/components/activity/BlackHoleIndicator.tsx",
+    "frontend/src/components/activity/black-hole.module.css",
     "frontend/src/components/response-experience-v2/ConversationTurnV2.tsx",
     "frontend/src/components/response-experience-v2/conversation-v2.module.css",
     "frontend/src/components/response-experience-v2/conversation.test.ts",

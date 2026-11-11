@@ -11,6 +11,7 @@ import {
   type ActivityTimelineModel, type TimelineFamily, type TimelineItem, type TimelineTone,
 } from '@/lib/terminal/activityTimeline';
 import styles from './activity.module.css';
+import { BlackHoleIndicator } from './BlackHoleIndicator';
 
 const FAMILY_ICON: Record<TimelineFamily, LucideIcon> = {
   command: SquareTerminal, verify: ShieldCheck, read: FileSearch, research: Search, write: FilePen,
@@ -22,11 +23,6 @@ function iconFor(family: TimelineFamily, tone: TimelineTone): LucideIcon {
   if (tone === 'failed') return CircleX;
   if (tone === 'stopped') return CirclePause;
   return FAMILY_ICON[family];
-}
-
-/** Four small dots. Motion stops under prefers-reduced-motion (see the stylesheet). */
-export function ActivitySpinner() {
-  return <span className={styles.spinner} aria-hidden="true"><i /><i /><i /><i /></span>;
 }
 
 const HISTORY_PAGE_SIZE = 25;
@@ -142,35 +138,50 @@ export function ActivityTimeline({ model, now, runStartedAt = null, pendingLabel
   const shown = hidden ? settled.slice(hidden) : settled;
   const earlierSteps = settled.slice(0, hidden).reduce((count, item) => count + item.count, 0);
   const text = active ? liveLabel(active, otherActive) : pendingLabel;
-  const startedAt = active?.startedAt ?? runStartedAt ?? null;
+  const startedAt = runStartedAt ?? active?.startedAt ?? null;
   const elapsed = startedAt ? formatElapsed(now - startedAt) : '';
   const waiting = state === 'waiting';
   const WaitingIcon = active?.kind === 'approval' || active?.kind === 'connection' ? Hand : Clock;
-  const hasDetails = Boolean(active && (active.detail || active.body));
+  const hasDetails = Boolean(active || settled.length);
   const LiveIcon = active ? FAMILY_ICON[familyOf(active.kind)] : null;
 
   return (
     <section className={styles.timeline} aria-label="Activity" data-state={state} data-testid="activity-timeline">
       <span className={styles.sr} role="status" aria-live="polite">{text}</span>
-      <div className={`${styles.item} ${styles.live}`} data-waiting={waiting ? 'true' : undefined}>
-        <button type="button" className={`${styles.row} ${styles.live}`} data-waiting={waiting ? 'true' : undefined}
+      <div className={styles.workingPanel} data-waiting={waiting ? 'true' : undefined}>
+        <button type="button" className={`${styles.row} ${styles.workingHeader}`}
           aria-expanded={hasDetails ? liveOpen : undefined} data-static={hasDetails ? undefined : 'true'}
           onClick={hasDetails ? () => setLiveOpen(value => !value) : undefined} tabIndex={hasDetails ? 0 : -1}>
-          {waiting ? <WaitingIcon className={styles.icon} aria-hidden="true" /> : LiveIcon ? <LiveIcon className={styles.liveIcon} aria-hidden="true" /> : <ActivitySpinner />}
-          <span className={styles.text} key={text} title={text}>{text}</span>
-          {elapsed ? <span className={styles.meta}>{elapsed}</span> : null}
+          {waiting ? <WaitingIcon className={styles.icon} aria-hidden="true" /> : <BlackHoleIndicator />}
+          <span className={styles.workingCopy}>
+            <span className={styles.workingTitle}>
+              <span>{waiting ? text : 'Black Hole is working'}</span>
+              {elapsed ? <span className={styles.meta} aria-hidden="true">{elapsed}</span> : null}
+            </span>
+            {!waiting ? <span className={styles.stage}>{text}</span> : null}
+          </span>
           {hasDetails ? <ChevronDown className={styles.chevron} aria-hidden="true" /> : null}
         </button>
-        {liveOpen && active && hasDetails ? <RowDetails rows={[active]} showLabel={false} /> : null}
+        {liveOpen && hasDetails ? <div className={styles.workingDetails}>
+          {hidden > 0 ? <button type="button" className={styles.earlier} onClick={() => {
+            if (showAll) setHistoryCount(count => count + HISTORY_PAGE_SIZE);
+            else setShowAll(true);
+          }}>
+            {`Show earlier steps (${earlierSteps})`}
+          </button> : null}
+          {shown.length || active ? <ol className={styles.list}>
+            {shown.map(item => <SettledItem key={item.id} item={item} />)}
+            {active && LiveIcon ? <li className={styles.item}>
+              <div className={`${styles.row} ${styles.currentStep}`} data-static="true">
+                <LiveIcon className={styles.icon} aria-hidden="true" />
+                <span>{active.label}</span>
+              </div>
+              {active.detail || active.body ? <RowDetails key={active.id} rows={[active]} showLabel={false} /> : null}
+            </li> : null}
+          </ol> : null}
+        </div> : null}
         {note ? <p className={styles.note}>{note}</p> : null}
       </div>
-      {shown.length ? <ol className={styles.recent}>{shown.map(item => <SettledItem key={item.id} item={item} />)}</ol> : null}
-      {hidden > 0 ? <button type="button" className={styles.earlier} onClick={() => {
-        if (showAll) setHistoryCount(count => count + HISTORY_PAGE_SIZE);
-        else setShowAll(true);
-      }}>
-        {`Show earlier steps (${earlierSteps})`}
-      </button> : null}
     </section>
   );
 }
