@@ -222,6 +222,16 @@ function sendError(res: Response, error: unknown) {
     return res.status(503).json({ error: 'BROWSER_GATEWAY_UNAVAILABLE', reason: code,
       ...(typeof providerMessage === 'string' ? { providerMessage: providerMessage.slice(0, 300) } : {}) });
   }
+  // Nothing from the request or the provider is returned. The server log keeps the error's name, its fixed code and, only where the
+  // staging diagnostic flag is set, the first characters of its message, so an unexplained 503 can be found.
+  const failure = error as { name?: unknown; message?: unknown; status?: unknown } | null;
+  console.error('[local-browser] request failed:', {
+    name: typeof failure?.name === 'string' ? failure.name.slice(0, 60) : undefined,
+    code: typeof code === 'string' ? code.slice(0, 60) : undefined,
+    status: typeof failure?.status === 'number' ? failure.status : undefined,
+    ...(process.env.XROGA_COMPOSIO_ERROR_DETAIL === '1' && typeof failure?.message === 'string'
+      ? { message: failure.message.replace(/[\t\n\r ]+/g, ' ').slice(0, 160) } : {}),
+  });
   return res.status(503).json({ error: 'BROWSER_GATEWAY_UNAVAILABLE' });
 }
 
