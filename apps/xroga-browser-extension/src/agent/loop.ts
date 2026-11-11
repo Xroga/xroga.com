@@ -14,6 +14,7 @@ import { directNavigation, type DirectNavigation } from './direct-url';
 import { APPS_FIRST_NOTE, APPS_FIRST_SEARCHED_NOTE, RESEARCH_FIRST_NOTE, appSearchQuery, isAppsFirstRequest, isResearchRequest, researchPlan } from './routing';
 import { runSubagents } from './subagents';
 import { challengeNote, detectChallenge } from './challenge';
+import { BATCH_TOOLS, runPlan, type Condition, type Step } from './batch-plan';
 import { progressLedger } from './progress';
 import { browserState } from './header';
 import { assistantDisplay, userDisplay, userText } from './display';
@@ -1275,6 +1276,72 @@ ${ledger}` : ''),
     for (const t of added) this.#toolNames.add(t.name);
   }
 
+  /**
+   * One `batch` call: its steps run in order with no model turn between them, under when / unless / repeat. Each step takes the same path as an
+   * ordinary call (the gate, the layer with its permissions and approvals, then hand-over, dialogs, verification debt and the loop guards), so a
+   * batch is never a way around any of them. The batch call itself was journaled before dispatch, so a crash in the middle is fenced on recovery as
+   * an uncertain write, exactly as one call is. The model gets one result: the trail of what ran and the last step's result.
+   */
+  async #runBatchTool(call: ToolCallRequest, kind: ToolKind, args: Record<string, unknown>): Promise<CallOutcome> {
+    const { emit, signal, layer } = this.options;
+    const steps = args.steps as Step[] | undefined;
+    const test = async (c: Condition): Promise<boolean> => {
+      if (c.for === 'hidden') return !(await test({ for: 'visible', role: c.role, name: c.name }));
+      const input: Record<string, unknown> = { timeoutMs: 1 };
+      if (c.for === 'text') input.text = c.value;
+      else if (c.for === 'text_gone') input.textGone = c.value;
+      else if (c.for === 'url') input.url = c.value;
+      else {
+        input.target = { role: c.role, ...(c.name ? { name: c.name } : {}) };
+        input.state = 'visible';
+      }
+      return (await layer.call('wait', input, signal)).ok;
+    };
+    const run = async (tool: string, input: Record<string, unknown>, meta: { label: string; final: boolean }) => {
+      if (signal.aborted) throw new Error('Stopped');
+      const stepCall: ToolCallRequest = { toolCallId: `${call.toolCallId}#${meta.label}`, toolName: tool, input };
+      const stepKind = kindOf(tool, input);
+      emit({ type: 'tool_execution_start', messageId: this.#replyId, row: this.#row(stepCall, 'running') });
+      let outcome: CallOutcome | null = await this.beforeToolCall(stepCall);
+      if (!outcome) {
+        // Only the last top-level step pays for a page observation; the others return their own receipt.
+        const sent = stepKind === 'mutate' && tool !== 'tabs' ? { ...input, observe: meta.final ? 'diff' : 'none' } : input;
+        const result = await this.#time('tool.layer', () => layer.call(tool, sent, signal));
+        outcome = { call: stepCall, kind: stepKind, text: result.text, isError: !result.ok, result };
+        if (result.ok && ['read', 'snapshot', 'navigate', 'tabs', 'click', 'wait'].includes(tool)) {
+          const title = result.page?.title ?? /«([^»]{0,120})»/.exec(result.text)?.[1];
+          const challenge = detectChallenge({ title, text: result.text });
+          if (challenge) outcome.text = `${result.text}\n${challengeNote(challenge)}`;
+        }
+      }
+      outcome = await this.afterToolCall(outcome);
+      emit({ type: 'tool_execution_end', messageId: this.#replyId, row: this.#row(stepCall, outcome.isError ? 'failed' : 'done', outcome) });
+      const halt = outcome.handover
+        ? 'a person was asked to step in on the page: check it before going on'
+        : outcome.result?.pending?.length
+          ? 'a dialog or prompt is open on the page'
+          : this.hasSteering()
+            ? 'the user sent a message'
+            : this.#guardStop
+              ? 'a loop guard stopped the run'
+              : this.#recoveryReadOnly
+                ? 'an earlier write might have been delivered, so only observing is allowed now'
+                : undefined;
+      return { text: outcome.text, ok: !outcome.isError, ...(halt ? { halt } : {}) };
+    };
+    try {
+      const done = await runPlan(steps ?? [], {
+        run,
+        test,
+        allow: tool => BATCH_TOOLS.has(tool) && this.#toolNames.has(tool),
+        forbidden: new Set(['batch']),
+      });
+      return { call, kind, text: done.text, isError: !done.ok };
+    } catch (error) {
+      return { call, kind, text: error instanceof Error ? error.message : String(error), isError: true };
+    }
+  }
+
   #execute(call: ToolCallRequest): Promise<CallOutcome> {
     return this.#time(`tool:${call.toolName}`, () => this.#executeCall(call));
   }
@@ -1316,6 +1383,8 @@ ${ledger}` : ''),
         wrap: (text, source) => this.options.layer.wrap(text, source),
       });
       outcome = { call, kind, text: r.text, isError: r.isError };
+    } else if (call.toolName === 'batch') {
+      outcome = await this.#runBatchTool(call, kind, args);
     } else if (this.options.tools.find(t => t.name === call.toolName)?.source === 'agent') {
       const r = this.options.agentTool
         ? await this.options.agentTool(call, signal)

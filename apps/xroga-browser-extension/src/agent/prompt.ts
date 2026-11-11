@@ -74,6 +74,10 @@ function toolGuide(tools: string[]): string {
     lines.push(
       '- delegate reads several web pages at once in background tabs, instantly and read-only: jobs are a url, or a query with follow:N to also read the top N result pages. Use it first for research, comparisons and "open N sites" tasks; one call replaces searching, choosing and opening the sites one by one. Answer from what it returns; do not re-read pages it already gave you.',
     );
+  if (has('batch'))
+    lines.push(
+      '- batch runs several page tools as one call with no model turn between them, and supports when / unless / repeat. Use it for steps you already know (fill several fields, dismiss a banner only if it is there, click Next until it is gone). Take a snapshot or read afterwards to check the page. Do not use it when a step depends on what the previous one shows.',
+    );
   if (has('fill_form')) lines.push('- fill_form sets several fields in order and can activate a submit control.');
   if (has('enable_actions'))
     lines.push('- enable_actions turns on clicking, typing, forms and scrolling. Call it only if the task needs one of them; reading and opening pages do not.');

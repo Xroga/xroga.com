@@ -37,17 +37,30 @@ export interface Step {
 export interface StepResult {
   text: string;
   ok?: boolean;
+  /** The step succeeded but the rest should not run (a person was asked to step in, a dialog is open): why. */
+  halt?: string;
+}
+
+export interface StepMeta {
+  label: string;
+  /** The last top-level tool step: the only one that pays for a page observation. */
+  final: boolean;
 }
 
 export interface PlanOptions {
-  run: (tool: string, args: Record<string, unknown>) => Promise<StepResult>;
+  run: (tool: string, args: Record<string, unknown>, meta: StepMeta) => Promise<StepResult>;
   test: (condition: Condition) => Promise<boolean>;
   /** Merged under every step's own arguments (for example a tabId). */
   defaults?: Record<string, unknown>;
   stopOnError?: boolean;
   /** Tools a step may not name (a batch cannot start another batch or a worker). */
   forbidden?: ReadonlySet<string>;
+  /** When given, only these tools may run in the batch. */
+  allow?: (tool: string) => boolean;
 }
+
+/** Thrown inside the planner to end a plan early without failing it. */
+class Halt extends Error {}
 
 interface Output {
   label: string;
@@ -119,11 +132,19 @@ export function worstCase(steps: Step[]): number {
   }, 0);
 }
 
-export async function runPlan(steps: Step[], opts: PlanOptions): Promise<{ text: string; ran: number; ok: boolean }> {
-  const { run, test, defaults = {}, stopOnError = true, forbidden = new Set<string>() } = opts;
+export async function runPlan(steps: Step[], opts: PlanOptions): Promise<{ text: string; ran: number; ok: boolean; halted?: string }> {
+  const { run, test, defaults = {}, stopOnError = true, forbidden = new Set<string>(), allow } = opts;
   if (!Array.isArray(steps) || !steps.length) throw new Error('batch needs at least one step');
   const outputs: Output[] = [];
   let ops = 0;
+  let halted: string | undefined;
+  let finalIndex = -1;
+  for (let i = steps.length - 1; i >= 0; i--) {
+    if (steps[i]?.tool && !Array.isArray(steps[i]?.steps)) {
+      finalIndex = i;
+      break;
+    }
+  }
 
   const evaluate = async (cond: Condition | undefined, where: string): Promise<boolean> => {
     if (!isCondition(cond)) throw new Error(`${where} needs a condition such as {for:"text", value:"Next"}`);
@@ -135,7 +156,7 @@ export async function runPlan(steps: Step[], opts: PlanOptions): Promise<{ text:
     const isGroup = Array.isArray(step.steps);
     if (!isGroup && !step.tool) throw new Error(`step ${label} needs a tool (or steps)`);
     if (isGroup && step.tool) throw new Error(`step ${label} has both tool and steps: a group has no tool of its own`);
-    if (step.tool && forbidden.has(step.tool)) throw new Error(`step ${label}: ${step.tool} cannot run inside a batch`);
+    if (step.tool && (forbidden.has(step.tool) || (allow && !allow(step.tool)))) throw new Error(`step ${label}: ${step.tool} cannot run inside a batch`);
     if (isGroup && depth + 1 > MAX_NESTING) throw new Error(`step ${label}: groups nest at most ${MAX_NESTING} deep`);
     if (isGroup && !step.steps!.length) throw new Error(`step ${label}: an empty group does nothing`);
   };
@@ -147,7 +168,7 @@ export async function runPlan(steps: Step[], opts: PlanOptions): Promise<{ text:
     }
     if (++ops > MAX_OPS) throw new BatchError(`batch exceeded ${MAX_OPS} tool calls: a repeat is probably not terminating`, trailOf(outputs));
     try {
-      const result = await run(step.tool!, args);
+      const result = await run(step.tool!, args, { label, final: depth === 0 && label === String(finalIndex + 1) });
       if (result.ok === false) throw new Error(result.text.split('\n')[0] || 'the step failed');
       const prev = iteration > 1 ? [...outputs].reverse().find(o => o.label === label && o.ok && !o.skipped) : undefined;
       if (prev) {
@@ -156,7 +177,12 @@ export async function runPlan(steps: Step[], opts: PlanOptions): Promise<{ text:
       } else {
         outputs.push({ label, tool, ok: true, text: result.text, runs: iteration || 1 });
       }
+      if (result.halt) {
+        halted = result.halt;
+        throw new Halt(result.halt);
+      }
     } catch (error) {
+      if (error instanceof Halt) throw error;
       const message = error instanceof Error ? error.message : String(error);
       outputs.push({ label, tool, ok: false, text: message, runs: iteration });
       if (stopOnError) throw new BatchError(`step ${label} (${tool}) failed: ${message}`, trailOf(outputs));
@@ -206,8 +232,67 @@ export async function runPlan(steps: Step[], opts: PlanOptions): Promise<{ text:
     for (const [i, step] of items.entries()) await one(step, path ? `${path}.${i + 1}` : String(i + 1), depth);
   }
 
+  // The whole plan is checked before anything runs: a bad step late in the list must not leave the earlier ones done.
+  const precheck = (items: Step[], depth: number, path: string): void => {
+    for (const [i, step] of items.entries()) {
+      const label = path ? `${path}.${i + 1}` : String(i + 1);
+      validate(step, label, depth);
+      if (step.when !== undefined && !isCondition(step.when)) throw new Error(`step ${label}: when needs a condition such as {for:"text", value:"Next"}`);
+      if (step.unless !== undefined && !isCondition(step.unless)) throw new Error(`step ${label}: unless needs a condition such as {for:"text", value:"Next"}`);
+      normaliseRepeat(step.repeat);
+      if (Array.isArray(step.steps)) precheck(step.steps, depth + 1, label);
+    }
+  };
+  precheck(steps, 0, '');
   if (worstCase(steps) > MAX_OPS) throw new Error(`this batch could run more than ${MAX_OPS} tool calls; make it smaller`);
-  await list(steps, 0, '');
+  try {
+    await list(steps, 0, '');
+  } catch (error) {
+    if (!(error instanceof Halt)) throw error;
+  }
   const last = [...outputs].reverse().find(o => o.ok && !o.skipped) ?? outputs[outputs.length - 1];
-  return { text: `${trailOf(outputs)}\n\n${last?.text ?? ''}`.trim(), ran: ops, ok: outputs.every(o => o.ok) };
+  const stopped = halted ? `\n\nThe batch stopped here: ${halted}` : '';
+  return { text: `${trailOf(outputs)}\n\n${last?.text ?? ''}${stopped}`.trim(), ran: ops, ok: outputs.every(o => o.ok), ...(halted ? { halted } : {}) };
 }
+
+/** The tools a batch step may name: the page tools of the layer. Everything else (agent tools, `upload`, `done`) runs as an ordinary call. */
+export const BATCH_TOOLS: ReadonlySet<string> = new Set([
+  'snapshot', 'find', 'read', 'wait', 'click', 'set', 'type', 'press', 'navigate', 'fill_form', 'scroll', 'hover', 'drag', 'tabs', 'handle_dialog',
+]);
+
+export const BATCH_TOOL = {
+  name: 'batch',
+  source: 'agent' as const,
+  group: 'acting' as const,
+  description:
+    'Run several page tools as ONE call, with no model turn between steps. Use it when you already know the steps: fill several fields, dismiss a banner only if it is there ' +
+    '(when/unless), click Next until it is gone (repeat with until). Each step is {tool, args} with the same arguments the tool takes alone, plus optional when / unless ' +
+    '(a condition: {for:"text"|"text_gone"|"url", value} or {for:"visible"|"hidden", role, name}) and repeat (a number, or {until|while: condition, max}). ' +
+    'steps inside a step make a group. Targets must be known: use refs or role and name from a snapshot you have. The batch stops at the first failure and ' +
+    'returns the trail of what ran plus the last result. Do a snapshot or read afterwards to check the page. Consequential steps still need their approvals. ' +
+    'Do not put a batch inside a batch. Do not use it when a step needs what the previous one shows.',
+  parameters: {
+    type: 'object',
+    properties: {
+      steps: {
+        type: 'array',
+        minItems: 1,
+        maxItems: 40,
+        items: {
+          type: 'object',
+          properties: {
+            tool: { type: 'string', enum: [...BATCH_TOOLS] },
+            args: { type: 'object' },
+            when: { type: 'object' },
+            unless: { type: 'object' },
+            repeat: {},
+            steps: { type: 'array', items: { type: 'object' } },
+          },
+          additionalProperties: false,
+        },
+      },
+    },
+    required: ['steps'],
+    additionalProperties: false,
+  },
+};

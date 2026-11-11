@@ -8,6 +8,7 @@ import { agentSystemPrompt } from '@src/agent/prompt';
 import { toolsForRun } from '@src/agent/tools';
 import { DELEGATE_TOOL, parseJobs, runSubagents } from '@src/agent/subagents';
 import { ParallelWorkers, PARALLEL_TOOLS, type WorkerJob } from './parallel-workers';
+import { BATCH_TOOL } from '@src/agent/batch-plan';
 import { startingTools } from '@src/agent/tool-selection';
 import { skillsSection } from '@src/agent/skills';
 import { userText } from '@src/agent/display';
@@ -1681,8 +1682,8 @@ export class RunManager {
         const fullToolList = toolsForRun({
           vision: model.profile.vision, localScreenshots: !!canonical,
           agentTools: isWorker
-            ? [DELEGATE_TOOL]
-            : [DELEGATE_TOOL, ...(canonical?.plugins ? PLUGIN_TOOLS : []), ...PARALLEL_TOOLS],
+            ? [DELEGATE_TOOL, BATCH_TOOL]
+            : [DELEGATE_TOOL, BATCH_TOOL, ...(canonical?.plugins ? PLUGIN_TOOLS : []), ...PARALLEL_TOOLS],
         });
         // A request that only reads starts with the small tool list; the model switches to the full one if it needs to act.
         const askedBranch = await activeBranch(conversationId).catch(() => []);

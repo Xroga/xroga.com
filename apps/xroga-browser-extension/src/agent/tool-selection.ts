@@ -15,6 +15,7 @@ export const ACTION_TOOLS: ReadonlySet<string> = new Set([
   'scroll',
   'upload',
   'handle_dialog',
+  'batch',
 ]);
 
 export const ENABLE_ACTIONS_TOOL: AgentTool = {

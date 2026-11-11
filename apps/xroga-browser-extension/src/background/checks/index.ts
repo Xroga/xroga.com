@@ -16,6 +16,7 @@ import './panel-runs';
 import './injection-entry';
 import './two-runs';
 import './parallel-workers';
+import './batch-tool';
 import './panel-compact';
 import './local-context';
 import './eval';
