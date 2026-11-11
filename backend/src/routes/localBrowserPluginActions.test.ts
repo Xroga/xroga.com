@@ -51,6 +51,8 @@ test('changes through a connected app need discovery, an exact approval of their
     prepare: async () => { throw new Error('reads are not used here'); },
     confirm: async (_context: unknown, id: string, expected: { toolkit: string; toolSlug: string }) => {
       assert.equal(id, approvalId);
+      // The saved plan names the toolkit in lower case; discovery may report it in any case.
+      assert.equal(expected.toolkit, 'wordpress');
       executed.push(expected.toolSlug);
       return { confirmation: { receipt: { id: receiptId } }, execution: { toolSlug: expected.toolSlug, resultText: 'Created the draft post.' } };
     },
@@ -61,7 +63,7 @@ test('changes through a connected app need discovery, an exact approval of their
         { toolkit: 'wordpress', connected: true, noAuth: false },
         { toolkit: 'notconnected', connected: false, noAuth: false },
       ], tools: [
-        { slug: 'WORDPRESS_CREATE_DRAFT_POST', toolkit: 'wordpress', risk: 'write', description: 'Create a draft post', inputSchema: { type: 'object' } },
+        { slug: 'WORDPRESS_CREATE_DRAFT_POST', toolkit: 'WordPress', risk: 'write', description: 'Create a draft post', inputSchema: { type: 'object' } },
         { slug: 'WORDPRESS_LIST_POSTS', toolkit: 'wordpress', risk: 'read', inputSchema: {} },
         { slug: 'WORDPRESS_DELETE_POST', toolkit: 'wordpress', risk: 'destructive', inputSchema: {} },
         { slug: 'NOTCONNECTED_CREATE', toolkit: 'notconnected', risk: 'write', inputSchema: {} },
@@ -118,7 +120,7 @@ test('changes through a connected app need discovery, an exact approval of their
     assert.equal(requested.status, 200);
     const approval = (await requested.json() as { approval: { id: string; account: string; argumentsPreview: string; risk: string } }).approval;
     assert.deepEqual(approval, { id: approvalId, summary: 'Create a draft post (wordpress)', account: 'fixture-wordpress-connection', argumentsPreview: '{"title":"Hello"}', risk: 'write' });
-    assert.deepEqual(prepared, [{ toolSlug: 'WORDPRESS_CREATE_DRAFT_POST', summary: 'Create the draft post (wordpress)', forced: true, arguments: { title: 'Hello' } }]);
+    assert.deepEqual(prepared, [{ toolSlug: 'WORDPRESS_CREATE_DRAFT_POST', summary: 'Create the draft post (WordPress)', forced: true, arguments: { title: 'Hello' } }]);
     assert.deepEqual(executed, []);
 
     // The same change is not requested twice, and a second one waits for the first approval.

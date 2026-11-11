@@ -432,7 +432,7 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
       await plugins.cancel(actor.userId, approvalId);
       return res.json({ denied: true });
     }
-    const { confirmation, execution } = await plugins.confirm(actor, approvalId, { toolkit: action.toolkit, toolSlug: action.slug });
+    const { confirmation, execution } = await plugins.confirm(actor, approvalId, { toolkit: action.toolkit.toLowerCase(), toolSlug: action.slug });
     const receipt = confirmation.receipt;
     if (execution.toolSlug !== action.slug || !receipt) throw new BrowserRequestError(503, 'BROWSER_PLUGIN_RECEIPT_UNAVAILABLE');
     return res.json({ receiptId: receipt.id, result: execution.resultText.slice(0, 12_000) });
@@ -491,7 +491,7 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
       await plugins.cancel(actor.userId, approvalId);
       return res.json({ denied: true });
     }
-    const { confirmation, execution } = await plugins.confirm(actor, approvalId, { toolkit: read.toolkit, toolSlug: read.slug });
+    const { confirmation, execution } = await plugins.confirm(actor, approvalId, { toolkit: read.toolkit.toLowerCase(), toolSlug: read.slug });
     await assertPluginRun(req, localRecord(await runs.load(actor.userId, row.runId), actor.userId));
     const receipt = confirmation.receipt;
     if (execution.toolSlug !== read.slug || !receipt) throw new BrowserRequestError(503, 'BROWSER_PLUGIN_RECEIPT_UNAVAILABLE');
