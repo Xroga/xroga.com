@@ -66,7 +66,9 @@ defineCheck({
           const run = conversationId ? await getRun(conversationId) : undefined;
           status = run?.status ?? 'starting';
           if (i % 20 === 0) (report.polls as unknown[]).push({ i, bridgePaired: workspacePaired(), status, turns: run?.turns, transcript: last.slice(-120) });
-          if (['done', 'failed', 'stopped', 'capped', 'interrupted'].includes(status)) break;
+          // 'interrupted' with the reason 'Syncing the saved result' is the short moment after a run ends while its result is sent to the server.
+          const syncing = status === 'interrupted' && /Syncing/i.test(run?.reason ?? '');
+          if (!syncing && ['done', 'failed', 'stopped', 'capped', 'interrupted'].includes(status)) break;
           await sleep(500);
         }
         const ms = Date.now() - started;
@@ -77,6 +79,7 @@ defineCheck({
           status,
           seconds: Math.round(ms / 100) / 10,
           turns: run?.turns,
+          reason: run?.reason,
           answer: last.slice(-500),
         });
       } finally {
