@@ -2,15 +2,16 @@
 
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
-import { Bell } from 'lucide-react';
+import { Bell, Volume2 } from 'lucide-react';
 import { Switch } from '@/components/ui/Switch';
+import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { SettingsPanelHeader, SettingsRow, SettingsStack } from '@/components/settings/SettingsPrimitives';
 import {
   BROWSER_NOTIFY_PROJECT_READY_KEY,
 } from '@/lib/buildBrowserNotify';
 import { browserPushSupported, disableBrowserPush, enableBrowserPush, hasBrowserPushSubscription } from '@/lib/browserPush';
-import { NOTIFICATION_SOUND_KEY, NOTIFICATION_STACK_KEY, notificationPreference, setNotificationPreference } from '@/lib/notificationExperience';
+import { NOTIFICATION_SOUND_KEY, NOTIFICATION_STACK_KEY, notificationPreference, previewNotificationChime, setNotificationPreference } from '@/lib/notificationExperience';
 
 export function NotificationsSettingsPanel() {
   const [browserNotify, setBrowserNotify] = useState(false);
@@ -62,7 +63,15 @@ export function NotificationsSettingsPanel() {
           <Switch checked={stackNotify} onChange={(next) => { setNotificationPreference(NOTIFICATION_STACK_KEY, next); setStackNotify(next); }} label="In-app notification stack" description="Show recent updates in the bottom-right corner. Hover or focus to see up to six; the sidebar bell always remains available." />
         </SettingsRow>
         <SettingsRow>
-          <Switch checked={soundNotify} onChange={(next) => { setNotificationPreference(NOTIFICATION_SOUND_KEY, next); setSoundNotify(next); }} label="Completion sound" description="Play a short chime when new updates arrive while this tab is in the background. Browser audio rules may require a previous interaction." />
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
+            <div className="min-w-[min(100%,16rem)] flex-1">
+              <Switch checked={soundNotify} onChange={(next) => { setNotificationPreference(NOTIFICATION_SOUND_KEY, next); setSoundNotify(next); }} label="Completion sound" description="Play a short chime when new updates arrive while this tab is in the background. Browser audio rules may require a previous interaction." />
+            </div>
+            <Button size="sm" variant="secondary" className="mb-2 shrink-0" onClick={previewNotificationChime}>
+              <Volume2 className="h-3.5 w-3.5" aria-hidden="true" />
+              Play sound
+            </Button>
+          </div>
         </SettingsRow>
         <SettingsRow>
           <Switch
