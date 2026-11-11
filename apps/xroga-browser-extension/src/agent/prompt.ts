@@ -72,7 +72,7 @@ function toolGuide(tools: string[]): string {
   if (has('read')) lines.push('- read returns a page or an element as Markdown, for reading text.');
   if (has('delegate'))
     lines.push(
-      '- delegate runs up to 6 read-only helpers at once in their own tabs. Use it when the task needs two or more pages or sources (comparisons, research, checking several results): one reader per page is instant and free, an explorer answers a small question on one site. Call it once with all the jobs instead of visiting the pages one by one. Do not delegate a single page you are already on.',
+      '- delegate reads several web pages at once in background tabs, instantly and read-only: jobs are a url, or a query with follow:N to also read the top N result pages. Use it first for research, comparisons and "open N sites" tasks; one call replaces searching, choosing and opening the sites one by one. Answer from what it returns; do not re-read pages it already gave you.',
     );
   if (has('fill_form')) lines.push('- fill_form sets several fields in order and can activate a submit control.');
   if (has('enable_actions'))

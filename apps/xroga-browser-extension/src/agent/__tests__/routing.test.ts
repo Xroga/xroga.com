@@ -6,7 +6,9 @@ import { activeBranch, appendEntry, createConversation } from '@src/store/conver
 import { closeDb } from '@src/store/db';
 import { AgentLoop } from '../loop';
 import { toolsForRun, type AgentTool } from '../tools';
-import { isAppsFirstRequest, appSearchQuery, APPS_FIRST_NOTE } from '../routing';
+import { isAppsFirstRequest, appSearchQuery, APPS_FIRST_NOTE, RESEARCH_FIRST_NOTE } from '../routing';
+import { DELEGATE_TOOL } from '../subagents';
+import { ok } from '../testing/fake-layer';
 import { FakeHost, FakeLayer } from '../testing/fake-layer';
 
 afterEach(async () => {
@@ -53,10 +55,10 @@ const pluginSearch: AgentTool = {
   parameters: { type: 'object', properties: { query: { type: 'string' } }, required: ['query'], additionalProperties: false },
 };
 
-async function firstTurnOf(text: string, withPlugins: boolean) {
+async function firstTurnOf(text: string, withPlugins: boolean, withDelegate = false, layerOverride?: FakeLayer) {
   const c = await createConversation({ mode: 'ask' });
   await appendEntry(c.id, { type: 'message', message: { role: 'user', parts: [{ type: 'text', text }] } });
-  const layer = new WebLayer();
+  const layer = layerOverride ?? new WebLayer();
   const loop = new AgentLoop({
     conversationId: c.id, runId: 'r1',
     model: {
@@ -64,7 +66,7 @@ async function firstTurnOf(text: string, withPlugins: boolean) {
       profile: resolveProfile({ kind: 'openai-compatible', modelName: 'm' }), reasoning: 'none',
     },
     system: 'sys',
-    tools: [...toolsForRun({ disabled: ['hover'], vision: false }), ...(withPlugins ? [pluginSearch] : [])],
+    tools: [...toolsForRun({ disabled: ['hover'], vision: false }), ...(withPlugins ? [pluginSearch] : []), ...(withDelegate ? [DELEGATE_TOOL] : [])],
     layer, host: new FakeHost(), signal: new AbortController().signal, emit: () => undefined, turnCap: 5,
   });
   await loop.firstTurn();
@@ -103,5 +105,37 @@ describe('the search sentence for an app request', () => {
   it('is at most 120 characters and never empty', () => {
     expect(appSearchQuery('Find the spreadsheet in my Google Sheets '.repeat(20)).length).toBeLessThanOrEqual(120);
     expect(appSearchQuery('  Use  ')).toBe('Use');
+  });
+});
+
+describe('the first turn of a research request', () => {
+  const request = 'Compare the top 3 laptop reviews for 2026. Open three review sites at the same time and tell me which laptop each one recommends.';
+  function webLayer() {
+    let next = 10;
+    const open = new Map<number, string>();
+    const results = ['[PCMag](https://www.pcmag.com/a)', '[Wired](https://www.wired.com/b)', '[CNET](https://www.cnet.com/c)'].join('\n');
+    return new FakeLayer({
+      tabs: args => {
+        if (args.action !== 'open') return ok('ok');
+        const tabId = next++; open.set(tabId, String(args.url));
+        return ok('opened', { data: { opened: tabId } as never });
+      },
+      read: args => { const u = open.get(Number(args.tabId))!; return ok(u.includes('google.com/search') ? results : 'Review text of ' + u); },
+    });
+  }
+
+  it('reads the search and its top pages before the model is called, and reads no page outline', async () => {
+    const layer = webLayer();
+    const { notes } = await firstTurnOf(request, false, true, layer);
+    expect(notes).toContain(RESEARCH_FIRST_NOTE);
+    expect(notes).toContain('Review text of https://www.pcmag.com/a');
+    expect(notes).toContain('Review text of https://www.cnet.com/c');
+    expect(layer.calls.map(c => c.tool)).not.toContain('snapshot');
+    expect(layer.calls.filter(c => c.tool === 'tabs' && c.args.action === 'open')).toHaveLength(4);
+  });
+
+  it('is unchanged without the delegate tool, and for a request about a page', async () => {
+    expect((await firstTurnOf(request, false, false)).layer.calls.map(c => c.tool)).toContain('snapshot');
+    expect((await firstTurnOf('What is the heading of the page?', false, true)).layer.calls.map(c => c.tool)).toContain('snapshot');
   });
 });

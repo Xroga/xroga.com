@@ -11,7 +11,8 @@ import { addUsage, ZERO_USAGE } from '@src/store/types';
 import type { AgentEvent, ToolRow } from '@src/ui/protocol';
 import { contextChars, elideStaleObservations, toModelMessages } from './context';
 import { directNavigation, type DirectNavigation } from './direct-url';
-import { APPS_FIRST_NOTE, APPS_FIRST_SEARCHED_NOTE, appSearchQuery, isAppsFirstRequest } from './routing';
+import { APPS_FIRST_NOTE, APPS_FIRST_SEARCHED_NOTE, RESEARCH_FIRST_NOTE, appSearchQuery, isAppsFirstRequest, isResearchRequest, researchPlan } from './routing';
+import { runSubagents } from './subagents';
 import { progressLedger } from './progress';
 import { browserState } from './header';
 import { assistantDisplay, userDisplay, userText } from './display';
@@ -475,6 +476,16 @@ ${ledger}` : ''),
       const found = await this.#searchApps(userText(asked));
       await this.writer.appNote(found ? APPS_FIRST_SEARCHED_NOTE + '\n' + found : APPS_FIRST_NOTE);
       return;
+    }
+    // A request for information on the web starts with the search and its top pages already read, in parallel and without a model
+    // call, so the first model turn already has the material. The browser tools stay in the list for when it is not enough.
+    if (asked && !earlierResults && this.options.tools.some(t => t.name === 'delegate') && isResearchRequest(userText(asked))) {
+      const plan = researchPlan(userText(asked));
+      const read = await runSubagents({ layer: this.options.layer, signal: this.options.signal }, [{ query: plan.query, follow: plan.follow }]).catch(() => null);
+      if (read && !this.options.signal.aborted) {
+        await this.writer.appNote(`${RESEARCH_FIRST_NOTE}\n${read.text}`);
+        return;
+      }
     }
     const direct = asked && !earlierResults ? directNavigation(userText(asked)) : null;
     if (direct) await this.#openDirect(direct);

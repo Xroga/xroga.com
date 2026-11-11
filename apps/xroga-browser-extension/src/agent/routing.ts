@@ -48,3 +48,45 @@ export const APPS_FIRST_NOTE =
 export const APPS_FIRST_SEARCHED_NOTE =
   "this request is about the user's connected apps. The search for it was already run (below); do not search again for the same task. " +
   'The tools it found can be called directly by their names. No page has been opened or read. Use the browser tools only if no found tool fits, or the user asks for the browser.';
+
+// ---- Research requests: the web is the source, not the page the user is on ------------------------------------------------
+// "Compare the top 3 laptop reviews", "open ten sites and tell me their headlines", "what is the latest on X": the answer is on
+// pages nobody has open. The search and the reading of its top pages are deterministic, so they are done BEFORE the first model
+// turn, in parallel and without a model call; the model's first turn then already holds the material and answers from it. This is
+// the difference between one turn of model time and four or five. The browser stays available when the material is not enough.
+
+const RESEARCH =
+  /\b(?:compare|comparison|research|top\s+\d+|best\b|reviews?\b|web search|search (?:the )?(?:web|online|internet)|look ?up|find out|latest|news about|open\s+(?:\w+\s+)?(?:\d+|two|three|four|five|six|seven|eight|nine|ten)\s+(?:different\s+)?(?:sites|websites|pages|sources|tabs|links))\b/i;
+const NOT_RESEARCH =
+  /\b(?:buy|order|book|log ?in|sign ?in|sign ?up|fill|submit|post|send|create|delete|upload|download|pay|checkout|check out|click|scroll|screenshot|this page|current page|this tab|the page)\b/i;
+const NUMBER_WORDS: Record<string, number> = { two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10 };
+
+export function isResearchRequest(request: string): boolean {
+  if (URL_OR_SITE.test(request)) return false;
+  if (EXPLICIT_APPS.test(request) || OWNED_APP.test(request)) return false;
+  if (NOT_RESEARCH.test(request)) return false;
+  return RESEARCH.test(request);
+}
+
+/** The search sentence and how many result pages to read, from the user's words. */
+export function researchPlan(request: string): { query: string; follow: number } {
+  const clean = request.replace(/\s+/g, ' ').trim();
+  const sentences = clean.split(/(?<=[.!?])\s+/).filter(Boolean);
+  // The topic is in the first sentence; later ones are usually instructions about how to report.
+  let query = (sentences[0] ?? clean)
+    .replace(/^(?:please\s+)?(?:can you\s+)?(?:compare|research|find|search(?: for)?|look up|check|tell me about|give me)\s+/i, '')
+    .replace(/\b(?:at the same time|simultaneously|in parallel)\b/gi, '')
+    .replace(/[.!?]+$/, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+  if (query.length < 4) query = clean;
+  query = query.slice(0, 120).trim();
+  const counted = /\b(\d+|two|three|four|five|six|seven|eight|nine|ten)\s+(?:different\s+)?(?:review\s+)?(?:sites|websites|pages|sources|tabs|links|reviews)\b/i.exec(clean)
+    ?? /\btop\s+(\d+)\b/i.exec(clean);
+  const raw = counted ? (/^\d+$/.test(counted[1]) ? Number(counted[1]) : NUMBER_WORDS[counted[1].toLowerCase()]) : 4;
+  return { query, follow: Math.max(2, Math.min(10, raw || 4)) };
+}
+
+export const RESEARCH_FIRST_NOTE =
+  'this request is about information on the web, so the web search was already run and the top result pages were read, in parallel (below). ' +
+  'Answer from them now, with the exact links. Search or open a page yourself only if a fact you need is missing.';

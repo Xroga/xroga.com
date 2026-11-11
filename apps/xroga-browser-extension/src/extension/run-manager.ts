@@ -1680,7 +1680,7 @@ export class RunManager {
               // Read-only helpers, each in its own tab, run together; they never act, so nothing here needs an approval.
               const { jobs, problems } = parseJobs(call.input);
               if (!jobs.length) return { text: `error INVALID_ARGUMENT (nothing started)\n${problems.join('\n')}`, isError: true };
-              return runSubagents({ layer: layerPort(session, this.border), model, signal }, jobs, problems);
+              return runSubagents({ layer: layerPort(session, this.border), signal }, jobs, problems);
             }
             const wrapApp = (text: string, source: string) => session.wrap(text, { connectedApp: source });
             const ask = (change: boolean) => (approval: Parameters<Parameters<typeof runPluginTool>[4]>[0]) =>
