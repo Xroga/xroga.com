@@ -1,7 +1,7 @@
 {
   "version": "1.0",
   "missionId": "SMART-NOTIFICATIONS-20261111",
-  "baseSha": "2428e6e879d656ae131f30d8a10a039896e233d2",
+  "baseSha": "04cdaeeb2facfd12c92fda16d6c3a669bf3700ae",
   "requirementIds": ["XR-ORIGINAL-F089"],
   "state": "CODE_COMPLETE",
   "risk": "high",
@@ -38,7 +38,8 @@
     "docs/xroga/research/source-manifest.json",
     "docs/xroga/research/source-reconciliation.md",
     "docs/xroga/batch-1/phases/PHASE-2-CLOSURE-LEDGER.json",
-    "docs/xroga/current-state.json"
+    "docs/xroga/current-state.json",
+    "docs/xroga/current-state.md"
   ],
   "decisions": {
     "keep": ["Existing notifications inbox, read state, API auth, completion event writers and synthesized chime"],

@@ -1,6 +1,6 @@
 # Secret and environment name inventory
 
-Values are forbidden. Source SHA: `0402f6749f1c57ad2a88699056fd6365c76b35d1`. Names and source discovery do not prove that a capability is configured or accepted.
+Values are forbidden. Source SHA: `53483b60842e98feba7a141d5a14b7f98f93983b`. Names and source discovery do not prove that a capability is configured or accepted.
 
 | Name | Classification | Requirement | Dependency |
 | --- | --- | --- | --- |
@@ -342,6 +342,8 @@ Values are forbidden. Source SHA: `0402f6749f1c57ad2a88699056fd6365c76b35d1`. Na
 | XROGA_STORAGE_RECONCILE_MODE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_TEST_CREDENTIAL_KEK | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_TRUSTED_PROXY_HOPS | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
+| XROGA_VAPID_PRIVATE_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | api |
+| XROGA_VAPID_PUBLIC_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | api |
 | YOUTUBE_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | endpoint-www-googleapis-com, endpoint-www-youtube-com |
 | ZHIPU_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | historical-zhipu |
 | ZURELAY_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | zurelay-models, endpoint-127-0-0-1 |

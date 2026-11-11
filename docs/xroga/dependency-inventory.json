@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "0402f6749f1c57ad2a88699056fd6365c76b35d1",
+  "source_sha": "53483b60842e98feba7a141d5a14b7f98f93983b",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -78,6 +78,7 @@
         "Dockerfile.api",
         "backend/src/index.ts",
         "backend/src/config/platformEnvironment.ts",
+        "backend/src/services/browserPushService.ts",
         "scripts/infrastructure/cloud-run-release-gate.mjs",
         "docs/xroga/evidence/zero-fly/FINAL-PRODUCTION-ACCEPTANCE-20261027.json"
       ],
@@ -93,7 +94,9 @@
         "NODE_ENV",
         "PORT",
         "XROGA_PLATFORM_CONFIG_FILE",
-        "XROGA_RELEASE_SHA"
+        "XROGA_RELEASE_SHA",
+        "XROGA_VAPID_PRIVATE_KEY",
+        "XROGA_VAPID_PUBLIC_KEY"
       ],
       "inbound_callers": [
         "api or named source callers; operational reachability not inferred"
@@ -117,6 +120,7 @@
         "Dockerfile.api",
         "backend/src/index.ts",
         "backend/src/config/platformEnvironment.ts",
+        "backend/src/services/browserPushService.ts",
         "scripts/infrastructure/cloud-run-release-gate.mjs",
         "docs/xroga/evidence/zero-fly/FINAL-PRODUCTION-ACCEPTANCE-20261027.json"
       ],
@@ -15883,6 +15887,45 @@
       ]
     },
     {
+      "name": "XROGA_VAPID_PRIVATE_KEY",
+      "consuming_sources": [
+        "backend/src/routes/notifications.ts",
+        "backend/src/services/browserPushService.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "SERVER_CREDENTIAL",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "CONDITIONAL_ON_CAPABILITY",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "api"
+      ]
+    },
+    {
+      "name": "XROGA_VAPID_PUBLIC_KEY",
+      "consuming_sources": [
+        "backend/src/services/browserPushService.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "SERVER_CREDENTIAL",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "CONDITIONAL_ON_CAPABILITY",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "api"
+      ]
+    },
+    {
       "name": "YOUTUBE_API_KEY",
       "consuming_sources": [
         "backend/src/config/envSecrets.ts",
@@ -16239,7 +16282,7 @@
     },
     {
       "path": ".vercel/project.json",
-      "presence": "ABSENT",
+      "presence": "PRESENT",
       "role": "Existing runtime/build/verification configuration"
     },
     {
@@ -16442,6 +16485,10 @@
     {
       "path": ".github/workflows/xroga-tenant-security.yml",
       "sha256": "1e0c72beae0cdedb6b496fceeda67e6b5d16aa6f57b1452a313915e725c0171c"
+    },
+    {
+      "path": ".vercel/project.json",
+      "sha256": "978867a51bff89f97ca84a99eb20eb76980bb1c8fb7e4a71b6aac71a78d26c48"
     },
     {
       "path": "Dockerfile.api",
@@ -18177,7 +18224,7 @@
     },
     {
       "path": "backend/src/routes/notifications.ts",
-      "sha256": "9aec298fc8c4b0f6c678f0861db12805da9b0700e109ff052d0e4e27be18486a"
+      "sha256": "7b91dfd72ae335226c3fb83c7ce2e7cb7902b7dd25b87565f7dcef917720c5db"
     },
     {
       "path": "backend/src/routes/operations.ts",
@@ -18664,6 +18711,10 @@
       "sha256": "1f7ce1602847ca3f2a24e3ac5c93c1b0dfdded4e0a424d81adc4a85895e98a2d"
     },
     {
+      "path": "backend/src/services/browserPushService.ts",
+      "sha256": "f4efcbdd6268fe5e71e0b265e09fa93ca00bc9ed4ca71347261039f26c085cfc"
+    },
+    {
       "path": "backend/src/services/ensureUserRecords.ts",
       "sha256": "b93530285b863676609458c1b2ee8d5478f8504b19fe89aa421bdabcd93c9852"
     },
@@ -18885,7 +18936,7 @@
     },
     {
       "path": "backend/src/services/notificationService.ts",
-      "sha256": "97a7d33fe2b60ddebbdb9f1e8e2c5304d72398ff31ee9036386f705f62b6b402"
+      "sha256": "823e0e647c547459ecd37560dee87b23d8d1fa0e28a85d5252870c65fccd69ec"
     },
     {
       "path": "backend/src/services/projectScaffold.ts",
@@ -20357,7 +20408,7 @@
     },
     {
       "path": "frontend/src/components/automations/AutomationsWorkspace.tsx",
-      "sha256": "48fad7fbe60dcf3be7149f1ebe70eb5a29a24224da29c9fa8cb6b73f7ae2876d"
+      "sha256": "9e4c9981d117653ee8ddfb50d7166d282671829b673447deb91fa0194b990b76"
     },
     {
       "path": "frontend/src/components/automations/BrowserRun.tsx",
@@ -20373,7 +20424,7 @@
     },
     {
       "path": "frontend/src/components/automations/Connections.tsx",
-      "sha256": "8568c83e70ae2e0999212d8abcdeda323c9eda1c043974230489916603d0b706"
+      "sha256": "6ac074b2037e239ae6d66730ba8e90c4da38d388ee419cb4f6ba9732164b4b5a"
     },
     {
       "path": "frontend/src/components/automations/DraftSummary.tsx",
@@ -20386,6 +20437,10 @@
     {
       "path": "frontend/src/components/automations/Schedules.tsx",
       "sha256": "d11fd3c7525ef9b027d81523e6174a1747c6a236bdcf34100d8f89d4ee9a26df"
+    },
+    {
+      "path": "frontend/src/components/automations/WorkPacksGallery.tsx",
+      "sha256": "596cfca09e8c01ae6a2803d37b503e38891a4063701fad6247993b4577a3d371"
     },
     {
       "path": "frontend/src/components/automations/WorkflowEditor.tsx",
@@ -20402,6 +20457,10 @@
     {
       "path": "frontend/src/components/automations/useDrafts.ts",
       "sha256": "035de9b22ebb0bde61e753c72080c74d316dbd25ce8c2f5b3626426f59cc5a62"
+    },
+    {
+      "path": "frontend/src/components/automations/workPacksV2.ts",
+      "sha256": "75fd039a3292c3b16215a1904694d3cf6336ef5d88ccf387d74bbab7e3426b72"
     },
     {
       "path": "frontend/src/components/billing/BillingPageClient.tsx",
@@ -20557,7 +20616,7 @@
     },
     {
       "path": "frontend/src/components/dashboard/DashboardView.tsx",
-      "sha256": "31218793ba7eadbcb863556c8df57565775f8ac23ba9007a4463dcf783d5ec6e"
+      "sha256": "2aa86cd3a9091ca37d3a7bde797e5cacaf0284d3129187fa74644a87396edfcd"
     },
     {
       "path": "frontend/src/components/dashboard/DashboardWelcome.tsx",
@@ -20637,7 +20696,7 @@
     },
     {
       "path": "frontend/src/components/dashboard/WorkspaceShowcaseStarts.tsx",
-      "sha256": "570ff15daf9a57f4393e016c630f8b726fde7e2fc293bf1273b2251041df2f3e"
+      "sha256": "57c188f60050eb8c4208409e3e03b32032e5ab521808bb7ddc5a57cfb4256560"
     },
     {
       "path": "frontend/src/components/dashboard/WorkspaceStarterIdeas.tsx",
@@ -21545,7 +21604,7 @@
     },
     {
       "path": "frontend/src/components/layout/AppShell.tsx",
-      "sha256": "9f1e4e747595fb5eb215a6a186f30fa44bd4661885d59b9e7b0894258bb34616"
+      "sha256": "dbce5f6ab1627fed981c30fd107aecce33180561622795796f8185acfedac134"
     },
     {
       "path": "frontend/src/components/layout/BetaExpectationBanner.tsx",
@@ -21609,7 +21668,7 @@
     },
     {
       "path": "frontend/src/components/layout/Sidebar.tsx",
-      "sha256": "156f3e2d8a75fc99e718d77f4b3311aad80a8243187ad53fdcb25e6a2a8fae90"
+      "sha256": "39efbd0c786649998ec6d6af5102887326ad1592f5005ba3a5eca40a99124bdb"
     },
     {
       "path": "frontend/src/components/layout/SidebarActionMenu.tsx",
@@ -21629,7 +21688,7 @@
     },
     {
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "sha256": "403def6e0480eb4371f4c73261063c46af91996a8287e7722609c89d6e6ac237"
+      "sha256": "fabbe7dbdf3c5d33995fef1d001ac8761888501128d67bff03ed02d57a274d77"
     },
     {
       "path": "frontend/src/components/layout/SidebarSearchModal.tsx",
@@ -21677,7 +21736,15 @@
     },
     {
       "path": "frontend/src/components/library/LibraryWorkspace.tsx",
-      "sha256": "51fa82647e6c5eaaee2114bb2a2a620926290753427600dbc8ab1e573ddde908"
+      "sha256": "ae0f15a4f2d12c27f8ae92dc74335d5bd97048beb8f1f638ad5334f9e24bb562"
+    },
+    {
+      "path": "frontend/src/components/library/NativeSkillsDirectory.tsx",
+      "sha256": "b936d823fdf858f0afad3a3d687a1bf3a11a9c6680ce50b5cb1396146915ae2d"
+    },
+    {
+      "path": "frontend/src/components/library/NativeSkillsPicker.tsx",
+      "sha256": "6f8a63b3cbd334f6361b9787bad76b3b4677e19befa2bbcbb709cd00437b0d0b"
     },
     {
       "path": "frontend/src/components/magicui/globe.tsx",
@@ -21689,11 +21756,15 @@
     },
     {
       "path": "frontend/src/components/marketing/AiAppBuilderLanding.tsx",
-      "sha256": "e1eb7cb35b512811c0479a2b654d8761773ea46bdf80ec1e9a8580e1df1202e1"
+      "sha256": "d349e01dd506f0ee950ef131a09a492d617e7a8e486e66d6b9e1cb4825bff171"
     },
     {
       "path": "frontend/src/components/marketing/AiAppBuilderPrompt.tsx",
       "sha256": "8cc1c60efe052177e6cb6c9888e28bafc625bb1582a6a26bc4897cd9ac0ff529"
+    },
+    {
+      "path": "frontend/src/components/marketing/AiAppBuilderSeoContent.tsx",
+      "sha256": "cfde1940f87dea9b8e463c9890f982de51a813c93a127a87f90d9f17741c94b8"
     },
     {
       "path": "frontend/src/components/marketing/AiAppBuilderWatercolor.tsx",
@@ -21761,11 +21832,11 @@
     },
     {
       "path": "frontend/src/components/notifications/NotificationExperience.tsx",
-      "sha256": "2b8296c2a5f9f70e5dd289d91787327f2e32453be464d557e468a5791684a075"
+      "sha256": "09d94ee31d3faf726e9614925e575d339f4d6620f73abcec1271b6e4937ab654"
     },
     {
       "path": "frontend/src/components/notifications/SidebarNotificationCenter.tsx",
-      "sha256": "38aa69cc8a0a675213cf5b4992dbea826147bd669b9cc7aaf9d79d9fe88b13a3"
+      "sha256": "a9d660edb0d37460ca8b1e3380161d37c23c1cafd7a846d4de41d53c724c231e"
     },
     {
       "path": "frontend/src/components/onboarding/BuildTypeCard.tsx",
@@ -22081,7 +22152,7 @@
     },
     {
       "path": "frontend/src/components/settings/NotificationsSettingsPanel.tsx",
-      "sha256": "3429fbf6c12ce26c54c175d76168e785b0dc78ac73238a0c511d9ceeb4058b56"
+      "sha256": "99dc739e5c946ced87a512364f6b1caa47db5ab2bd1999a100e4207decd27b32"
     },
     {
       "path": "frontend/src/components/settings/PlanUsageSettingsPanel.tsx",
@@ -22213,7 +22284,7 @@
     },
     {
       "path": "frontend/src/components/terminal/ChatBarActionsMenu.tsx",
-      "sha256": "caa7e448e518c7b41b2302b1f97414998ad975847bffba857995113934feb4e3"
+      "sha256": "a7dc712f71f0e7749c7dade52782ee8e75d82953b7122a090212d3741d787aff"
     },
     {
       "path": "frontend/src/components/terminal/ChatBarButtons.tsx",
@@ -22245,7 +22316,7 @@
     },
     {
       "path": "frontend/src/components/terminal/ChatTurnRail.tsx",
-      "sha256": "bf469dce73985b56c3943f8fbb51489e35658cad9fea50a5e0eeccda0c901c43"
+      "sha256": "a8cb247e4540341a102045b91342063fd1741bc5b712b41f50f38bcd979e8378"
     },
     {
       "path": "frontend/src/components/terminal/ChatbarQueueOutside.tsx",
@@ -22353,7 +22424,7 @@
     },
     {
       "path": "frontend/src/components/terminal/RepoContextBar.tsx",
-      "sha256": "ca88dfad1df43df059dcdfcce9937bc97aae9b3b86c52c573d01eba14e1dc9f9"
+      "sha256": "51ea1eb1e55d676bbfe035638fe9db71cd151b984ead74d779eb2c6ca999fef1"
     },
     {
       "path": "frontend/src/components/terminal/RepoWorkspaceGateModal.tsx",
@@ -22401,7 +22472,7 @@
     },
     {
       "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "sha256": "959ecdbdfe4da3c4cee1a79e2e4684f638df3ded77cf7ed9002bdafbd2ee8d0c"
+      "sha256": "0a89d45270f28d036dfd6a647a1b812b5661f58c82a6b975f21de8c3b115c05d"
     },
     {
       "path": "frontend/src/components/terminal/TerminalDock.tsx",
@@ -22417,7 +22488,7 @@
     },
     {
       "path": "frontend/src/components/terminal/TerminalSkinPicker.tsx",
-      "sha256": "f5a62d44cea1dc5be69f2b257d681e375c728226b28908747b0d8c721d163077"
+      "sha256": "f4127b31f0c7b2c1b03675f29a56a54213e4e910000a911dabf711036ce8451e"
     },
     {
       "path": "frontend/src/components/terminal/TextGeneratingAnimation.tsx",
@@ -22456,8 +22527,12 @@
       "sha256": "8e0b17b81dcdb750e39ecf274727996fc6a899a2c4eafbd5132b5fa9bf1e49ed"
     },
     {
+      "path": "frontend/src/components/terminal/WorkspaceConversationMenu.tsx",
+      "sha256": "955bacc8703f2baf23655bc140e799456acef35ab77737c69ce6cfb3bb855df6"
+    },
+    {
       "path": "frontend/src/components/terminal/WorkspaceIdentityMenu.tsx",
-      "sha256": "267574d0f4175c1b1075d14c1a5c8e39de4a9c315101479d8edd8c3c8c894dd7"
+      "sha256": "ded2132f7d62a5e7241ad54cedc59afeabb2729ae49987f59b310c4aae6c9ca5"
     },
     {
       "path": "frontend/src/components/terminal/WorkspaceLauncher.tsx",
@@ -22725,7 +22800,7 @@
     },
     {
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "sha256": "e63361404059650e86323ce433c60037c52409a119beece8baf48acc90254c5b"
+      "sha256": "dc0ea1cf26f38ee56a3468c1ddb73728f2623df404c54dfbb86acb55beadcc5f"
     },
     {
       "path": "frontend/src/context/TerminalScrollContext.tsx",
@@ -22773,7 +22848,7 @@
     },
     {
       "path": "frontend/src/lib/api.ts",
-      "sha256": "bf072296dc2828844620377cf54a58fafe4cbedfb1a796a8324b77b1f10aa0c0"
+      "sha256": "c77b3dd2191a864078994c0ca2fbfbeed597446f066975ccd97432565101a683"
     },
     {
       "path": "frontend/src/lib/assistantCopy.ts",
@@ -22794,6 +22869,10 @@
     {
       "path": "frontend/src/lib/brand.ts",
       "sha256": "89c9910b49525c23848afd1d4bcb64c53dd1e2dd21839de945ac47a73522b25e"
+    },
+    {
+      "path": "frontend/src/lib/browserPush.ts",
+      "sha256": "157fa536ba5285716a428c45314695422f456f2d38bc2466a2982c2b1643d095"
     },
     {
       "path": "frontend/src/lib/browserSafety.ts",
@@ -22841,7 +22920,7 @@
     },
     {
       "path": "frontend/src/lib/capabilityPages.ts",
-      "sha256": "7733757da3fe9c24bcb1bec24e50e426957c3328151f5766dc4a81d92d1a3f0e"
+      "sha256": "a87bebf54942f456218cff340737efacfa6626b30749863b7d682d257801b343"
     },
     {
       "path": "frontend/src/lib/capacityMessage.ts",
@@ -23148,6 +23227,10 @@
       "sha256": "f4e011fd3e7dc1effe2c74a0bfef81bede80ac4339731861ebfc972623b2f678"
     },
     {
+      "path": "frontend/src/lib/nativeWorkSkills.ts",
+      "sha256": "6203e6dc53733abb3c06079dc71e3ee40ca940a0d496715e61a1b5c8161bcefe"
+    },
+    {
       "path": "frontend/src/lib/normalizeBuildSource.ts",
       "sha256": "8eb964cdc6628349845af326282c9eddaa22e6bbe8c48eb834b76d81372df0a4"
     },
@@ -23205,7 +23288,7 @@
     },
     {
       "path": "frontend/src/lib/passiveRepositorySelection.ts",
-      "sha256": "d3bb403f545e3326521818482ace27ab2c3989aa5c297533c357e4933db75cb5"
+      "sha256": "c86b023195530c865917ffaf97a81c31188fe4a0e8a9361dcc6fb7bb8a1f247e"
     },
     {
       "path": "frontend/src/lib/passwordStrength.ts",
@@ -23422,6 +23505,10 @@
     {
       "path": "frontend/src/lib/showcase/registry.ts",
       "sha256": "edb53ddc21b8d0e5bd80f4926f45573319db4d4f0af9526b780ee7fe9ebc2252"
+    },
+    {
+      "path": "frontend/src/lib/sidebarConversationLocation.ts",
+      "sha256": "823fdbfb4c89b55ed5675f39caf47d4d46ed8d01ccc9780cceb6f0c6004c3293"
     },
     {
       "path": "frontend/src/lib/sidebarOrganization.ts",
@@ -23757,7 +23844,7 @@
     },
     {
       "path": "frontend/src/middleware.ts",
-      "sha256": "d219457fcf40ba40dab26615936c23ff8907b35082c50efed28297ce6e58a423"
+      "sha256": "5c5d9cbbaafa0fced799f9361c1a04e1e9f2dd92bec644745b59f0390660bba7"
     },
     {
       "path": "frontend/src/store/useAppStore.ts",
@@ -23817,7 +23904,7 @@
     },
     {
       "path": "scripts/xroga/runtime-facts.mjs",
-      "sha256": "a722847267f4078221bc47f833104b9fe04baa1818ae383ce0e2c3b1720f7d9d"
+      "sha256": "3b3d2848098867066aaaf3db7ee02c8382d6987b2e7ae307db2eda4100892eed"
     },
     {
       "path": "scripts/xroga/runtime-inventory.mjs",
@@ -29155,14 +29242,14 @@
       "hostname": "x.com",
       "protocol": "https:",
       "path": "frontend/src/components/marketing/AiAppBuilderLanding.tsx",
-      "line": 633,
+      "line": 637,
       "credentialsInUrl": false
     },
     {
       "hostname": "github.com",
       "protocol": "https:",
       "path": "frontend/src/components/marketing/AiAppBuilderLanding.tsx",
-      "line": 642,
+      "line": 646,
       "credentialsInUrl": false
     },
     {
@@ -29666,7 +29753,7 @@
       "hostname": "github.com",
       "protocol": "https:",
       "path": "frontend/src/components/terminal/WorkspaceIdentityMenu.tsx",
-      "line": 121,
+      "line": 114,
       "credentialsInUrl": false
     },
     {
@@ -29757,7 +29844,7 @@
       "hostname": "github.com",
       "protocol": "https:",
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 4002,
+      "line": 4014,
       "credentialsInUrl": false
     },
     {
@@ -35195,6 +35282,13 @@
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
+      "path": "backend/src/services/browserPushService.ts",
+      "line": 10,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
       "path": "backend/src/services/ensureUserRecords.ts",
       "line": 44,
       "scope": "MODULE_LIFETIME",
@@ -37730,14 +37824,7 @@
     },
     {
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 296,
-      "scope": "FUNCTION_LOCAL",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 363,
+      "line": 297,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -37751,28 +37838,28 @@
     },
     {
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 370,
+      "line": 365,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 463,
+      "line": 371,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 537,
+      "line": 464,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 804,
+      "line": 538,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -37786,28 +37873,28 @@
     },
     {
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 864,
+      "line": 806,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 889,
+      "line": 865,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 893,
+      "line": 890,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 900,
+      "line": 894,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -38052,14 +38139,14 @@
     },
     {
       "path": "frontend/src/components/terminal/ChatTurnRail.tsx",
-      "line": 167,
+      "line": 177,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/terminal/ChatTurnRail.tsx",
-      "line": 176,
+      "line": 186,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -38164,14 +38251,14 @@
     },
     {
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 2046,
+      "line": 2058,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 2079,
+      "line": 2091,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
