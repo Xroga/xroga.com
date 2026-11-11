@@ -613,12 +613,12 @@ test('the bottom inspiration bar opens the real catalog automatically on workspa
 
   assert.match(
     TEMPLATES,
-    /Recent projects/,
+    /Recent work/,
   );
 
   assert.match(
     TEMPLATES,
-    /loadTerminalHistory\(\)\.filter/,
+    /loadTerminalHistory\(\)\.slice\(0, 6\)/,
   );
 
   assert.match(
@@ -673,7 +673,7 @@ test('the bottom inspiration bar opens the real catalog automatically on workspa
 
   assert.match(
     TEMPLATES,
-    /selected GitHub repository/,
+    /only after I select and authorize a repository/,
   );
 
   assert.match(

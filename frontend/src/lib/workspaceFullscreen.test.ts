@@ -139,8 +139,8 @@ test('only the root list is a grid', () => {
   // Skills and Rules are toggles in a set rather than independent destinations, and
   // reading them across two columns would break that.
   const gridOpen = MENU.indexOf('<div className="xv-cba-grid">');
-  const skills = MENU.indexOf("panel === 'skills'");
-  assert.ok(gridOpen !== -1 && skills > gridOpen, 'the sub-panels must sit outside the grid');
+  const workPanel = MENU.indexOf("panel === 'work'");
+  assert.ok(gridOpen !== -1 && workPanel > gridOpen, 'the sub-panels must sit outside the grid');
   assert.equal(
     (MENU.match(/className="xv-cba-grid"/g) ?? []).length,
     1,

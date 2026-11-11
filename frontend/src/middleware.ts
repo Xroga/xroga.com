@@ -21,6 +21,6 @@ export async function middleware(request: NextRequest) {
  */
 export const config = {
   matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|opengraph-image|manifest.webmanifest|robots.txt|sitemap.xml|llms.txt|\\.well-known|.*\\.(?:svg|png|jpg|jpeg|gif|webp|avif|ico|txt|xml|woff|woff2|ttf)$).*)',
+    '/((?!_next/static|_next/image|favicon.ico|opengraph-image|manifest.webmanifest|xroga-notifications-sw.js|robots.txt|sitemap.xml|llms.txt|\\.well-known|.*\\.(?:svg|png|jpg|jpeg|gif|webp|avif|ico|txt|xml|woff|woff2|ttf)$).*)',
   ],
 };

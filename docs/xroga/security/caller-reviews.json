@@ -115,6 +115,23 @@
       "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
     },
     {
+      "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
+      "sourceSha256": "fabbe7dbdf3c5d33995fef1d001ac8761888501128d67bff03ed02d57a274d77",
+      "callIds": [
+        "760b00e5814db2a361f2",
+        "40e7c79e9640ac083bab"
+      ],
+      "disposition": "REVIEWED_GAP",
+      "authority": "The new project rename and sidebar item deletion calls use the browser Supabase client and filter by accountId and item ID. Their database RLS and authenticated cross-account behavior require separate validation.",
+      "reason": "These persistence calls were introduced on the live baseline, not by Smart Notifications. Source inspection is not sufficient to certify their tenant boundary; retain as an explicit gap pending authenticated tests.",
+      "evidence": [
+        {
+          "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
+          "marker": "await createClient().from('xroga_sidebar_items').delete().eq('user_id',accountId)"
+        }
+      ]
+    },
+    {
       "path": "backend/src/ai/black-hole/toolRegistry.ts",
       "sourceSha256": "9f9ada19f7bde6ab337df723c8093ff7614703736319e364e7c595b7e50acd4c",
       "callIds": [
@@ -15482,18 +15499,18 @@
     },
     {
       "path": "backend/src/routes/notifications.ts",
-      "sourceSha256": "9aec298fc8c4b0f6c678f0861db12805da9b0700e109ff052d0e4e27be18486a",
+      "sourceSha256": "7b91dfd72ae335226c3fb83c7ce2e7cb7902b7dd25b87565f7dcef917720c5db",
       "callIds": [
-        "95aca8562235b1b02997",
-        "cc2c2522f42d6ac8d5bd",
-        "96f82d20ad4bfc5af43e",
-        "faa4cebd0c15a1b5d69c",
-        "5233e1547ffa2fd23fd6",
-        "8f55ff924d59067efc48",
-        "83827643069e9005dce3",
-        "b1d953653483a66af3d9",
-        "add984aaad8b65bdbdfa",
-        "f0601134e3c2080d41f3"
+        "359cfba790c54b88250c",
+        "b1f8356c782b4d851d58",
+        "4cf1a1e8ccf9dfe563ec",
+        "e92ef4114ace634a21d8",
+        "cc8a37cdf238cf59a99a",
+        "6687ae47bab37c501d74",
+        "2fed6ca9cd27f6992d02",
+        "75ba31f14c658b6995a8",
+        "1a27090c7a9708d480e8",
+        "b010f789ba8fcc1a6231"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Router is mounted behind authMiddleware and re-derives userId from the issued immutable context before every route. List/count/read/read-all/delete use this actor, never request ownership. Every service-role factory has its fixed downstream notification query inspected.",
@@ -15522,6 +15539,27 @@
         "disposition": "SCOPED_BOUNDARY"
       },
       "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+    },
+    {
+      "path": "backend/src/routes/notifications.ts",
+      "sourceSha256": "7b91dfd72ae335226c3fb83c7ce2e7cb7902b7dd25b87565f7dcef917720c5db",
+      "callIds": [
+        "451e5e119fb05d5ddb8f",
+        "4f9439afecb04c3595a7",
+        "4052599c36bb1a154183",
+        "9dd5e0d47e2b5fcbd7ed",
+        "0173fa66f148bf107c9c",
+        "5756010c7ca215102e1e"
+      ],
+      "disposition": "REVIEWED_GAP",
+      "authority": "The browser-push subscription routes are behind auth middleware and derive userId from tenant context; each query filters user_id or writes that user ID, but source inspection alone is not authenticated tenant proof.",
+      "reason": "Isolated staging verifies private table grants and RLS, and endpoint validation rejects arbitrary hosts. Existing endpoint updates are owner-scoped; a new insert cannot overwrite another account's unique endpoint. Authenticated positive and cross-account negative API tests for these six new persistence calls are still required before promoting this review to a scoped boundary.",
+      "evidence": [
+        {
+          "path": "backend/src/services/browserPushService.test.ts",
+          "marker": "rejects SSRF destinations"
+        }
+      ]
     },
     {
       "path": "backend/src/routes/operations.ts",
@@ -23733,10 +23771,10 @@
     },
     {
       "path": "backend/src/services/notificationService.ts",
-      "sourceSha256": "97a7d33fe2b60ddebbdb9f1e8e2c5304d72398ff31ee9036386f705f62b6b402",
+      "sourceSha256": "823e0e647c547459ecd37560dee87b23d8d1fa0e28a85d5252870c65fccd69ec",
       "callIds": [
-        "988c4217a8b8b781b43c",
-        "30281b1cf819bb604048"
+        "0af8d7bbc823a95227af",
+        "2e83fbad1f1940ca3770"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "The only active production callers of the notification wrappers are authenticated swarm completion/failure handlers. They pass requireTenantContext(req.tenantContext), never a body owner or recipient. Video wrappers currently have no production consumer, but their primitive still requires that same original issued context. pushNotification validates the context before factory access, snapshots the bounded caller intent and writes only the context user_id. It checks returned owner and nonempty ID before acknowledging. There is no alternate owner argument or fallback identity.",
@@ -27762,9 +27800,9 @@
     },
     {
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "sourceSha256": "403def6e0480eb4371f4c73261063c46af91996a8287e7722609c89d6e6ac237",
+      "sourceSha256": "fabbe7dbdf3c5d33995fef1d001ac8761888501128d67bff03ed02d57a274d77",
       "callIds": [
-        "a291f26c3c5001de01f9"
+        "4c3e13cce409a0e53b15"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in SidebarProjectHistory, with no database or Storage client receiver.",
@@ -27787,9 +27825,9 @@
     },
     {
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "sourceSha256": "403def6e0480eb4371f4c73261063c46af91996a8287e7722609c89d6e6ac237",
+      "sourceSha256": "fabbe7dbdf3c5d33995fef1d001ac8761888501128d67bff03ed02d57a274d77",
       "callIds": [
-        "f8d5eaf0193282882763"
+        "9e140274802c8fbb62dd"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in SidebarProjectHistory, with no database or Storage client receiver.",
@@ -28137,9 +28175,9 @@
     },
     {
       "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "sourceSha256": "959ecdbdfe4da3c4cee1a79e2e4684f638df3ded77cf7ed9002bdafbd2ee8d0c",
+      "sourceSha256": "0a89d45270f28d036dfd6a647a1b812b5661f58c82a6b975f21de8c3b115c05d",
       "callIds": [
-        "01fce3ee8703d9146072"
+        "69d6ffd06737331aba28"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in TerminalChatBar, with no database or Storage client receiver.",
