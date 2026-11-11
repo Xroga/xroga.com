@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { ChatBarActionsMenu } from './ChatBarActionsMenu';
+import { ProjectsQuickPopover } from './ProjectsQuickPopover';
 import { ComposerToolChip } from './ComposerToolChip';
 import type { ComposerInsertOptions } from './ChatBarActionsMenu';
 import { buildComposerPreamble, COMPOSER_COMMANDS, COMPOSER_SKILLS, useComposerToolsStore } from '@/store/useComposerToolsStore';
@@ -138,6 +139,8 @@ export function TerminalChatBar({ starter = false }: { starter?: boolean }) {
     return () => window.clearTimeout(timer);
   }, [draft, prompt, setPrompt]);
   const [integrationsOpen, setIntegrationsOpen] = useState(false);
+  const [projectsQuickOpen, setProjectsQuickOpen] = useState(false);
+  const projectsButtonRef = useRef<HTMLButtonElement>(null);
   const pluginsButtonRef = useRef<HTMLButtonElement>(null);
   const [githubOpen, setGithubOpen] = useState(false);
   const [githubConnected, setGithubConnected] = useState(false);
@@ -551,6 +554,7 @@ export function TerminalChatBar({ starter = false }: { starter?: boolean }) {
 
   return (
     <>
+      <ProjectsQuickPopover open={projectsQuickOpen} onClose={() => setProjectsQuickOpen(false)} anchorRef={projectsButtonRef} />
       <IntegrationsModal open={integrationsOpen} onClose={() => setIntegrationsOpen(false)} anchorRef={pluginsButtonRef}
         onSelect={(plugin) => {
           const scaffold = 'Use the connected ' + plugin.name + ' plugin for this task: ';
@@ -693,6 +697,11 @@ export function TerminalChatBar({ starter = false }: { starter?: boolean }) {
                       dispatchCompanionEvent({ type: 'integration_connecting', message: 'Opening your authorised integrations.', source: 'runtime' });
                       setIntegrationsOpen(true);
                     }}
+                      onOpenProjects={() => {
+                         if (isGuest) { requestAuthGate('integration'); return; }
+                         setIntegrationsOpen(false);
+                         setProjectsQuickOpen(true);
+                       }}
                       connectorsNeedingAttention={[githubConnected, vercelConnected].filter((c) => !c).length}
                       onInsert={(text, options) => {
                       // Fills the composer and focuses it. Deliberately not auto-sent:
@@ -714,14 +723,16 @@ export function TerminalChatBar({ starter = false }: { starter?: boolean }) {
                       }}
                     />
                     <BlackHoleVButton compact className="xv-companion-blackhole" />
-                    <button type="button" className={startStyles.tool} aria-label="Projects" onClick={() => {
-                      if (isGuest) { requestAuthGate('integration'); return; }
-                      setGithubOpen(true);
-                    }}><Folder aria-hidden="true" /><span>Projects</span></button>
-                    <button ref={pluginsButtonRef} type="button" className={startStyles.tool} aria-label="Plugins" onClick={() => {
-                      if (isGuest) { requestAuthGate('integration'); return; }
-                      setIntegrationsOpen(true);
-                    }}><Puzzle aria-hidden="true" /><span>Plugins</span></button>
+                    <button ref={projectsButtonRef} type="button" className={startStyles.tool} aria-label="Projects" aria-expanded={projectsQuickOpen} aria-haspopup="dialog" onClick={() => {
+                       if (isGuest) { requestAuthGate('integration'); return; }
+                       setIntegrationsOpen(false);
+                       setProjectsQuickOpen(open => !open);
+                     }}><Folder aria-hidden="true" /><span>Projects</span></button>
+                    <button ref={pluginsButtonRef} type="button" className={startStyles.tool} aria-label="Connect Apps" aria-expanded={integrationsOpen} aria-haspopup="dialog" onClick={() => {
+                       if (isGuest) { requestAuthGate('integration'); return; }
+                       setProjectsQuickOpen(false);
+                       setIntegrationsOpen(open => !open);
+                     }}><Puzzle aria-hidden="true" /><span>Connect Apps</span></button>
                   </div>
                 ) : null
               }
