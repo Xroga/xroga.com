@@ -50,6 +50,7 @@ defineCheck({
     await waitForLoad(view.id!);
     await sleep(600);
     const windowsBefore = (await chrome.windows.getAll()).length;
+    const knownBefore = new Set((await listConversations()).map(c => c.id));
     try {
       await panel(page.id!, 'type-send', { text: 'PARENT-TASK: collect the headings of three pages with workers' });
       let last = '';
@@ -60,7 +61,7 @@ defineCheck({
       }
       const conversations = await listConversations();
       const parent = conversations.find(c => c.title.startsWith('PARENT-TASK'));
-      const workers = conversations.filter(c => c.title.startsWith('Worker: '));
+      const workers = conversations.filter(c => !knownBefore.has(c.id) && c.title.startsWith('Worker: '));
       const report: Record<string, unknown> = { parentStatus: last, workers: workers.map(w => w.status) };
       if (!parent) throw new Error(JSON.stringify({ ...report, error: 'no parent conversation' }));
 
@@ -92,7 +93,9 @@ defineCheck({
       // Their windows are closed afterwards, and the table keeps compact results only.
       await sleep(800);
       const windowsAfter = (await chrome.windows.getAll()).length;
-      const stored = ((await chrome.storage.local.get('xroga_parallel_jobs_v1')).xroga_parallel_jobs_v1 ?? {}) as Record<string, { state: string; result?: string }>;
+      const everything = ((await chrome.storage.local.get('xroga_parallel_jobs_v1')).xroga_parallel_jobs_v1 ?? {}) as Record<string, { state: string; result?: string; instruction?: string }>;
+      // The table may still hold the jobs of a check that ran before in this Chrome: only this check's own workers count.
+      const stored = Object.fromEntries(Object.entries(everything).filter(([, j]) => /WORKER-[ABC]/.test(j.instruction ?? '')));
       report.windows = { before: windowsBefore, after: windowsAfter };
       report.stored = Object.values(stored).map(j => j.state);
 

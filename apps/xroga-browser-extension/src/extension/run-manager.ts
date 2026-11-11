@@ -146,6 +146,7 @@ export class RunManager {
       load: async () => ((await chrome.storage.local.get(WORKER_JOBS_KEY))[WORKER_JOBS_KEY] as Record<string, WorkerJob> | undefined) ?? {},
       save: jobs => chrome.storage.local.set({ [WORKER_JOBS_KEY]: jobs }),
       open: (parentId, task) => this.#openWorker(parentId, task),
+      defaultUrl: SEARCH_HOME,
       stop: conversationId => this.#stop(conversationId),
       closeWindow: windowId => chrome.windows.remove(windowId),
       refuse: url => {
