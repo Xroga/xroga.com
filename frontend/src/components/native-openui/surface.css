@@ -12,7 +12,7 @@
 .xroga-native-openui :focus-visible { outline: 2px solid var(--iui-focus); outline-offset: 3px; }
 .xroga-native-openui svg { max-width: 100%; }
 .xroga-native-full-text { margin-block-start: 1rem; border-top: 1px solid var(--native-line); }
-.xroga-native-full-text > summary { width: fit-content; cursor: pointer; padding-block: .45rem; font-size: .875rem; font-weight: 600; }
+.xroga-native-full-text > button { cursor: pointer; padding: .45rem 0; border: 0; background: transparent; color: inherit; font-size: .875rem; font-weight: 600; }
 @media (max-width: 540px) {
   .xroga-native-openui .iui-row { flex-wrap: wrap; }
 }

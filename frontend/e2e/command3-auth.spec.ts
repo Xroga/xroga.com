@@ -325,10 +325,11 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   const answer = page.getByRole('region', { name: 'Answer', exact: true }).filter({ hasText: reply });
   await expect(answer).toBeVisible({ timeout: 30_000 });
   await expect(answer.getByRole('link', { name: /Workshop source fixture/ })).toHaveAttribute('href', source.url);
-  const fullText = answer.getByText('Read full text', { exact: true });
+  const fullText = answer.getByRole('button', { name: 'Read full text', exact: true });
   await fullText.click();
   await expect(answer.getByText(detail, { exact: true })).toBeVisible();
   await fullText.click();
+  await expect(answer.getByText(detail, { exact: true })).toHaveCount(0);
   const slider = answer.getByRole('slider', { name: 'Attendees' });
   await slider.press('End');
   await expect(answer.getByText('$2,000', { exact: true })).toBeVisible();
@@ -387,10 +388,11 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
     await expect(sharedAnswer.getByRole('link', { name: /Workshop source fixture/ })).toHaveAttribute('href', source.url);
     await expect(ownerShare.getByRole('link', { name: /Workshop source fixture/ })).toHaveCount(1);
     await expect(ownerShare.getByRole('region', { name: 'Sources', exact: true })).toHaveCount(0);
-    const sharedFullText = sharedAnswer.getByText('Read full text', { exact: true });
+    const sharedFullText = sharedAnswer.getByRole('button', { name: 'Read full text', exact: true });
     await sharedFullText.click();
     await expect(sharedAnswer.getByText(detail, { exact: true })).toBeVisible();
     await sharedFullText.click();
+    await expect(sharedAnswer.getByText(detail, { exact: true })).toHaveCount(0);
     for (const [width, theme] of [[1440, 'black'], [390, 'white']] as const) {
       await ownerShare.setViewportSize({ width, height: 900 });
       await ownerShare.evaluate(value => {
@@ -437,6 +439,7 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   await fullText.click();
   await expect(answer.getByText(detail, { exact: true })).toBeVisible();
   await fullText.click();
+  await expect(answer.getByText(detail, { exact: true })).toHaveCount(0);
   await send(followUp);
   await expect(page.getByRole('region', { name: 'Answer', exact: true }).getByText(followUpReply, { exact: true })).toBeVisible();
   try {

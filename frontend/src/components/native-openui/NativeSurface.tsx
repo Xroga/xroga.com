@@ -51,10 +51,10 @@ export function NativeSurface({ answer, sources, isStreaming = false, showFullTe
             <Renderer response={accepted} isStreaming={isStreaming} library={library} publishObservability={false}
               onError={errors => { if (errors.some(error => error.severity !== 'warning')) setFailedProgram(accepted); }} />
             {showFullText && !isStreaming && !displayProse && answer.text ? (
-              <details className="xroga-native-full-text" onToggle={event => setFullTextOpen(event.currentTarget.open)}>
-                <summary>Read full text</summary>
+              <div className="xroga-native-full-text">
+                <button type="button" aria-expanded={fullTextOpen} onClick={() => setFullTextOpen(open => !open)}>Read full text</button>
                 {fullTextOpen ? prose : null}
-              </details>
+              </div>
             ) : null}
           </EvidenceContext.Provider>
         : prose}
