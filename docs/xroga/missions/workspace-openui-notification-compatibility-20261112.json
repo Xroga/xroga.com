@@ -29,7 +29,11 @@
     "supabase/migrations/20261110212913_smart_notification_push_subscriptions.sql",
     "docs/xroga/missions/workspace-openui-notification-compatibility-20261112.json",
     "frontend/src/lib/notificationExperience.ts",
-    "frontend/src/lib/notificationExperience.test.ts"
+    "frontend/src/lib/notificationExperience.test.ts",
+    "docs/xroga/security/current-migration-additions.json",
+    "scripts/security/schema-catalog.mjs",
+    "scripts/security/schema-catalog.test.mjs",
+    "scripts/security/full-supabase-history.mjs"
   ],
   "decisions": {
     "keep": [
@@ -97,6 +101,12 @@
       "scope": "Verify the live sound preview plays the chime without opting the user into future sound alerts.",
       "negative": true,
       "reference": "frontend/src/lib/notificationExperience.test.ts"
+    },
+    {
+      "command": "node scripts/security/full-supabase-history.mjs",
+      "scope": "Require the source-bound push table and verify its privileges in a fresh disposable database.",
+      "negative": true,
+      "reference": "scripts/security/full-supabase-history.mjs"
     }
   ],
   "architecture": {

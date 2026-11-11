@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "c6d0d04421f9bbef7ec766188b4147185f709327",
+  "source_sha": "5180c28f57dc427e7e3b87e3283764935fe47c13",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -22604,7 +22604,7 @@
     },
     {
       "path": "frontend/src/components/settings/NotificationsSettingsPanel.tsx",
-      "sha256": "99dc739e5c946ced87a512364f6b1caa47db5ab2bd1999a100e4207decd27b32"
+      "sha256": "33f3885994dca52b2a3af8c1deb08d0a3d7621a8bb62c582cbf254cdd6ec3564"
     },
     {
       "path": "frontend/src/components/settings/PlanUsageSettingsPanel.tsx",
@@ -23700,7 +23700,7 @@
     },
     {
       "path": "frontend/src/lib/notificationExperience.ts",
-      "sha256": "e0ecdfb7c7ea9fa7e8614cc31b4246b3b3bb9279b259a9154d1359b49cd3ab97"
+      "sha256": "57deb27e4caf6c866ee622e537518e01284aa4094866bf45651a13c8995d02b6"
     },
     {
       "path": "frontend/src/lib/oauthPopupResult.ts",
