@@ -1,92 +1,108 @@
-# Open-source browser agents: what was read, what was taken, what was not
+# Open-source browser agents: source-level audit, what was taken, what was not
 
-Date: 2026-11-12. Scope: Xroga Browser Operator (`apps/xroga-browser-extension`). Nothing in this document is a performance claim for Xroga;
-every upstream figure below is the upstream author's own and was not reproduced here.
+Date: 2026-11-12. Scope: Xroga Browser Operator (`apps/xroga-browser-extension`). Every upstream figure below is the upstream author's own and
+was not reproduced here. Status words: VERIFIED (tested, evidence in the repository or the PR), PARTIAL, BLOCKED, NOT IMPLEMENTED, UNSAFE.
 
-## 1. Provenance and licences (checked, not assumed)
+## 1. Sources (shallow clones outside the repository; nothing from them was run or installed)
 
-The request named six projects by short name. Four resolved unambiguously and were cloned shallowly (`--depth 1`) into separate folders
-outside the repository. Nothing from them was run or installed. Two names are ambiguous and are NOT cloned (section 6).
-
-| Name in the request | Repository | Commit read | Licence file | Decision on code reuse |
+| # | Repository | Commit | Licence file | Reuse decision |
 | --- | --- | --- | --- | --- |
-| OpenBUA | AliSharjeell/OpenBUA | 98d68ba | none; the README says "MIT" but no LICENSE file ships | study only; ideas re-implemented from scratch |
-| anomalyco/browse | anomalyco/browse | 3fa9866 | MIT, "Copyright (c) 2025 opencode" | adaptation allowed with the notice; used for ideas, attributed |
-| Agent WebBridge | jeet-dhandha/agent-webbridge | a14cd1d | MIT | adaptation allowed with the notice; nothing copied |
-| PinchTab | pinchtab/pinchtab | a626620 | MIT | study only: a Go service, a different runtime |
-| OpenBrowser | not identified (several repositories share the name) | - | - | needs the exact URL |
-| browser-agent | not identified | - | - | needs the exact URL |
+| 1 | AliSharjeell/OpenBUA | 98d68ba | none (README says "MIT"; no LICENSE file ships) | ideas only; nothing copied |
+| 2 | dylansantwani/openbrowser | 1f67080 | MIT, "Copyright (c) 2026 OpenBrowser contributors" | adaptation allowed with the notice; the batch planner is ported (attributed) |
+| 3 | anomalyco/browse | 3fa9866 | MIT, "Copyright (c) 2025 opencode" | adaptation allowed with the notice; ideas used, attributed |
+| 4 | jeet-dhandha/agent-webbridge | a14cd1d | MIT | nothing copied |
+| 5 | uiuing/browser-agent | a8517e2 | MIT | ideas; nothing copied yet |
+| 6 | pinchtab/pinchtab | a626620 | MIT | study only (a separate Go service) |
 
-The GitHub licence field for OpenBUA is empty. Until its author adds a LICENSE file, treat the code as all-rights-reserved: ideas only.
+Note: the OpenBrowser repository ships an `openbrowser-1.0.0.zip`; it was not unpacked. Dependencies of any adapted code were not imported: the
+OpenBrowser planner is dependency-free and was ported to TypeScript by hand.
 
-## 2. What each project actually contains (from its source and README)
+## 2. What each repository contains (read from its source layout, README and key modules)
 
-- **OpenBUA** (Chrome extension, side panel). `start_parallel_tasks` opens up to 3 worker windows, each with its own chat, model loop and start
-  URL; `parallel_task_status` lets the parent wait up to 15 s for a change. A background coordinator keeps a job table: state
-  (starting, running, completed, failed, cancelled), an owner window, at most 3 active per owner, the whole batch validated before any window is
-  created, results truncated to 16 KB, sensitive snapshots deleted when a job ends, closed windows turn jobs into failed or cancelled, parent
-  cancel propagates to children, and workers cannot spawn workers. Also: form agents and recovery, document editing, social-platform skills.
-- **anomalyco/browse** (extension + local relay + MCP). Named sessions with their own tabs; agents work in background tabs they opened or were
-  lent; allowed-origin lists per session; a bot-challenge classifier (wait, person, block) for Cloudflare, Akamai, DataDome, PerimeterX,
-  Imperva, AWS WAF, reCAPTCHA, hCaptcha; HAR capture, video recording with an optional ghost cursor, a flight recorder; site secrets typed
-  without the agent seeing them; handoff cards; idle-tab cleanup; redaction of password, code and card fields in snapshots.
-- **Agent WebBridge** (extension + Node daemon + MCP). `chrome.debugger` per tab, so N tabs of one profile run concurrently; one daemon per
-  profile, so concurrency is profiles x tabs; 15 tools; Node and Python SDKs; community recipes for logged-in sites. The upstream five-tab demo
-  (3.5 s parallel vs 9.3 s sequential) is one hardware-specific run.
-- **PinchTab** (Go binary, HTTP API). Multiple isolated Chrome instances and profiles, headed or headless, accessibility-first element refs,
-  text extraction (upstream: about 800 tokens per page), a dashboard, container isolation, distributed use. A separate service, not an extension.
+1. **OpenBUA** (Chrome extension). Parent agent with up to 3 worker windows (`parallel-tasks.ts`, `window-coordinator.ts`): a job table with owner,
+   states, whole-batch validation, results truncated to 16 KB, sensitive snapshots dropped at the end, window-closed handling, cancel propagation,
+   workers cannot spawn workers. Also: per-site form agents and recovery, document editors, a social-posting skill set, page-trust checks, memory and
+   vault, and `captcha-auto.ts`, which sends challenge screenshots to a vision model and clicks the answer (UNSAFE, see section 4).
+2. **OpenBrowser** (extension + hub/MCP). 15 composable tools grouped by action enums; trusted input through the debugger; compact accessibility
+   snapshots with refs that carry their frame; `mode: diff`; region `outline` mode; actions return their own delta; `expect` on actions; `batch.js`
+   (a pure planner: `when` / `unless` / `repeat{until, while, max}` / groups, ceilings on repeats, nesting and total calls); `macros.js` (saved and
+   replayed sequences); background jobs; GIF recorder; frames and open shadow roots; refs re-resolve through a stored selector after a re-render;
+   obscured-target detection; CAPTCHA detected and not bypassed; a mutation queue; federation of hubs on other machines.
+3. **anomalyco/browse** (extension + relay + MCP). Named sessions with their own tabs, agents use only tabs they opened or were lent, per-session
+   allowed origins, bot-challenge classification (wait / person / block), HAR capture, video and flight recorder, site secrets typed without the
+   agent seeing them, handoff cards, idle-tab cleanup, redaction of password, code and card fields.
+4. **Agent WebBridge** (extension + Node daemon + MCP). `chrome.debugger` per tab; one daemon per Chrome profile and a router, so concurrency is
+   profiles x tabs; 15 tools; SDKs; community recipes. Multi-profile needs a local daemon per profile.
+5. **browser-agent** (MV3 extension, pnpm monorepo: `engine/page`, `engine/orchestrator`, `engine/batch`, `guardrails`, `trace`, `tools`, `llm`). The
+   `page_act` pipeline: perception, grounding by semantic fingerprints (survives re-renders), execution through DOM and CDP channels, verification
+   by post-conditions (`value_equals`, `element_exists`, `text_present`, `url_matches`, `list_count_delta`, `element_state`), bounded failure
+   strategies chosen by failure reason, structured trace. Typed tools with risk tiers `read / act / dangerous`; skills extracted from verified runs;
+   batch execution of a skill over table rows (rows independent, verified independently, failed rows retried, a delivery report).
+6. **PinchTab** (Go binary, HTTP API). `internal/` includes instance and profile orchestration, headed and headless, accessibility-first refs,
+   text and snapshot extraction, `contentguard`, `idpi` (injection defence), `navguard` and `netguard`, a scheduler, a dashboard, and also
+   `autosolver`, `stealth` and `cfchallenge` (challenge solving and fingerprint evasion).
 
-## 3. What the Xroga extension already has (verified in this repository)
+## 3. What the Xroga extension already has (checked in this repository)
 
-Compact accessibility snapshots with stable refs; diff observation after actions (`observe: diff`); targeted `read` and `find`; per-tab locks and
-background tabs; session-owned tabs only; sensitive-field masking; postconditions (`expect`) checked after actions; risk-classified tools with the
-Chrome approval card for consequential actions; hand-over and take-over; a visible agent pointer; several tool calls in one model reply; parallel
-page reads (`delegate`, this branch); research-first reading before the first model turn (this branch); connected-app tools with approvals;
-domain playbooks; durable run segments with resume (this branch).
+Compact accessibility snapshots with refs; diff observation; scoped and windowed reads; targeted `read` and `find`; per-tab locks and background
+tabs; session-owned tabs only; sensitive-field masking; `expect` postconditions (`url`, `text`, `textGone`, `value`, `checked`, `gone`); frames and
+shadow roots in perception; obscured-target checks; risk-classified tools with the Chrome approval card; hand-over and take-over; a visible agent
+pointer; several tool calls in one reply with stop-on-change; parallel page reads (`delegate`); research-first reading; segments and resume;
+connected apps with approvals; domain playbooks; parallel worker runs; bot-challenge handling.
 
-## 4. Capability matrix and decisions
+## 4. Capability inventory and status
 
-| Capability (source) | Xroga today | Decision |
-| --- | --- | --- |
-| Bot-challenge classification and what to do (browse) | none: a blocked page was retried or read as content | TAKEN: `src/agent/challenge.ts`, wired into every page-reading result and the parallel readers; 12 tests |
-| Parallel page reads in separate tabs (WebBridge, OpenBrowser idea) | `delegate` readers, search-follow | already done (earlier this session) |
-| Compact snapshots, diffs, targeted reads (OpenBrowser, PinchTab) | present | no gap found |
-| Post-action verification (browser-agent idea) | `expect` postconditions | no gap found |
-| Parent agent with up to 3 worker agents, own windows (OpenBUA) | none | DESIGNED, not built: needs approval (section 5) |
-| Job table, cancel propagation, no worker spawning, batch validation (OpenBUA) | n/a | required parts of the design in section 5 |
-| Reusable verified workflows / macros / conditional batches (OpenBrowser, browser-agent) | playbooks only | blocked: the two repositories are not identified |
-| HAR, video, flight recorder (browse) | screenshots only | NOT built: large, and it records pages, which needs its own privacy review |
-| Site secrets typed without the model seeing them (browse) | credentials never go to the model | NOT built: needs a design with the credential-egress review |
-| Multiple Chrome profiles (WebBridge) | one profile (the extension's own) | NOT feasible inside a single extension |
-| Isolated browser instances (PinchTab) | n/a | NOT needed; out of scope for an extension |
-| Idle agent-tab cleanup (browse) | helper tabs closed after use; run tabs closed with the run | no gap found |
+| Capability | Source | Xroga today | Status / action |
+| --- | --- | --- | --- |
+| Parent with up to 3 worker agents, own windows | OpenBUA | `start_parallel_tasks` / `parallel_task_status`: each worker is its own canonical run, own window, own counter; job table persists; stop cascades | VERIFIED (16 unit tests; real-Chrome check `parallel-workers`; not yet run with the real model on staging) |
+| Workers cannot spawn; batch validated first; truncated results | OpenBUA | same | VERIFIED |
+| Adaptive worker count (scheduler picks 1..N from task independence) | task text | the model chooses 1 to 3 from tool guidance; the server limits 4 active runs per account | PARTIAL: no measured scheduler; no 5-worker mode; benchmarks not run |
+| Bot-challenge classification | browse | `challenge.ts`, wired to every page read and to parallel readers | VERIFIED (12 tests) |
+| Parallel reads in background tabs, search then read top results | WebBridge / OpenBrowser idea | `delegate`, research-first | VERIFIED (20 tests; real Chrome S1/S2) |
+| Batch with `when` / `unless` / `repeat`, groups, ceilings | OpenBrowser | planner ported (`batch-plan.ts`); NOT yet exposed as a tool | PARTIAL: planner VERIFIED (10 tests); integration into the run loop NOT IMPLEMENTED (design below) |
+| Macros: save and replay verified sequences | OpenBrowser, browser-agent | none | NOT IMPLEMENTED |
+| Skills from verified runs, batch over table rows with per-row verification | browser-agent | none (domain playbooks only) | NOT IMPLEMENTED |
+| Post-conditions `list_count_delta`, `element_exists`, record-exists checks | browser-agent | `expect` has 6 kinds; none counts rows | NOT IMPLEMENTED |
+| Bounded failure strategies by failure reason | browser-agent | loop guards (repeat, no effect, errors, read streak) | PARTIAL |
+| Semantic fingerprints that survive re-render | browser-agent, OpenBrowser | refs re-resolve in our layer | already implemented; reliability across SPAs not measured |
+| Compact snapshots, diff mode, actions return delta, `expect` on actions | OpenBrowser, PinchTab | present | already implemented |
+| Region `outline` mode for dense pages | OpenBrowser | none (scope and window exist) | NOT IMPLEMENTED |
+| Frames and open shadow roots; obscured-target detection | OpenBrowser, browser-agent | present | already implemented |
+| `inspect` (console, network, cookies, storage), `zoom`, GIF | OpenBrowser | none | NOT IMPLEMENTED (cookies and storage reads need a privacy review) |
+| Session ownership: only tabs the agent opened or was lent | browse | session-owned tabs | already implemented |
+| Idle agent-tab cleanup | browse | helper tabs closed after use; run tabs closed with the run | already implemented |
+| HAR capture, video recording, flight recorder | browse | none | NOT IMPLEMENTED (records page content: needs its own privacy review) |
+| Site secrets typed without the model seeing them | browse | credentials never go to the model | NOT IMPLEMENTED (needs a design with the credential review) |
+| Multiple Chrome profiles | WebBridge | one profile | BLOCKED: needs a local daemon per profile; not a default requirement |
+| Isolated browser instances, headless, container isolation | PinchTab | none | not applicable to an extension; BLOCKED unless a verified need appears |
+| Typed tools with risk tiers; site policies | browser-agent | present and stricter (approval cards, write policy) | already implemented |
+| Page-trust and injection defences | OpenBUA, PinchTab | untrusted-content boundary on every page read | already implemented |
+| Vision-model CAPTCHA solving | OpenBUA | refused | UNSAFE: not taken; a person must answer a challenge |
+| Fingerprint evasion, stealth, challenge auto-solvers | PinchTab | refused | UNSAFE: not taken |
+| Hub federation / running browsers on other machines | OpenBrowser, browse | none | BLOCKED: needs a relay; not a default requirement |
+| Local MCP servers and hubs | OpenBrowser, browse, WebBridge | none | not applicable: no daemons by default |
 
-## 5. Design to approve: worker runs (OpenBUA pattern) on the existing coordinator
+## 5. Design for the next integration: a `batch` tool on the existing loop
 
-Why not "subagents sharing one run": every model request of a Xroga run is accounted by the server turn by turn, in order, against the run's own turn
-counter. Concurrent model calls inside one run collide with that accounting (this was built first and broke a real run). OpenBUA does not have this
-constraint; Xroga does.
+The planner is pure and tested. The integration into `AgentLoop` has two constraints that must be respected, and was not rushed:
+1. Each step must go through the loop's normal execution path (`#executeCall`: gate, journal intent on disk before dispatch, layer call,
+   `afterToolCall` for hand-over, dialogs, verification debt and guards), because a write that crashes mid-batch must still be fenced on recovery.
+2. The model protocol allows only one result per tool call, so the batch is ONE tool call with ONE result (the trail plus the last step's text);
+   the steps are visible as activity rows but are not separate tool-result messages.
+Conditions are answered through the layer's `wait` with a 1 ms limit (so the answer is instant), steps may not name `batch`, `delegate`,
+`start_parallel_tasks`, `ask_user` or `done`, a consequential step still raises the Chrome approval card for its own action, and a step that changes
+the page so that a later target no longer exists stops the batch, as a reply of several calls already does.
 
-Proposal (no new scheduler, no new service): a worker is an ordinary canonical run.
-1. The parent calls `start_parallel_tasks({ tasks: [{ instruction, url }] })`, 1 to 3 tasks. The extension creates one conversation and one canonical
-   run per task through the existing `/runs` route. The existing limit of 4 active runs per account is exactly one parent plus three workers.
-2. Each worker has its own turn counter, its own spend reservations against the same owner ledger, its own window and tab ownership, and its own
-   history. Spend is therefore bounded by the owner's entitlement exactly as today.
-3. Workers get the parent's permission mode, cannot call `start_parallel_tasks`, and every consequential action raises its own approval card in
-   its own window. Approvals never transfer between runs.
-4. The parent gets `parallel_task_status({ waitSeconds <= 15 })`: states and a compact result per worker (truncated), never the transcripts.
-5. Parent stop or cancel cancels the children; a closed worker window fails only that worker; the parent decides whether it still needs it.
-6. Terminal workers drop their snapshots. Results are observations, not instructions (same untrusted-content boundary as page text).
-7. Tests: a fake-layer unit suite for the job table; a real-Chrome scenario with three fixture pages; a staging run with three real worker runs.
+## 6. Parallel workers: what exists and what does not
 
-Risks to review before building: three windows asking for approvals at once; the shared Chrome profile (same cookies and logins in every
-worker); extra cost per task (three loops instead of one); whether the active-run limit is acceptable for users who already run two tasks.
-This touches INV-02 (no second orchestrator): the argument is that it reuses the one coordinator, once per worker. An exception RFC may still be
-required by the owner of that rule.
+Exists (VERIFIED in real Chrome with a scripted model, not yet with the real model): the design in section 5 of the previous version of this document, now
+built: workers are runs of their own with their own counters and reservations against the owner ledger, at most 3 active per parent, cancel cascades,
+a closed window fails only its worker, results are compact, workers have neither worker-starting tools nor connected-app tools.
 
-## 6. Open points
+Does not exist: a scheduler that measures whether 2, 3 or 5 workers finish a workload faster; benchmark numbers; a UI panel for workers beyond their
+own conversations; per-worker screenshots in the parent; parent-side conflict resolution (the parent model compares results).
 
-- OpenBrowser and browser-agent: several repositories use these names and a search did not settle which are meant. Send the two URLs and they
-  will be read the same way.
+## 7. Open points
+
 - OpenBUA: no LICENSE file. Ask its author to add one before any code is taken.
-- Upstream numbers (token savings, parallel speedups) are not Xroga measurements.
+- Upstream numbers (token savings, parallel speedups) are not Xroga measurements. Nothing in this document claims a speedup for Xroga.
