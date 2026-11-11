@@ -194,7 +194,7 @@ jobs:
       # skips the download, while `--with-deps` still installs the system libraries, which are
       # part of the runner rather than the cache. Skipping this on a cache hit would trade a slow
       # job for a browser that cannot start.
-      - run: npx playwright install --with-deps chromium
+      - run: bash scripts/ci/install-playwright-chromium.sh
 
       - name: Save Playwright browsers
         if: steps.playwright-cache.outputs.cache-hit != 'true'

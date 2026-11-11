@@ -87,7 +87,7 @@ test('an invalid nested block keeps the ordered table, calculator, chart and ver
   const program = [
     '$quantity = 2',
     'root = Col(blocks, 12)',
-    'blocks = [Section("Estimate", [Card([Table(["Item", "USD"], [["Print", 25]]), Table(["malformed"])]), calculator]),',
+    'blocks = [Section("Estimate", [Card([Table(["Item", "USD"], [["Print", 25]]), Table(["malformed", "USD"], [[99]])]), calculator]),',
     '  Section("Scenario", [Chart("bar", [{label:"Base",price:50}], "label", ["price"]), Source("source-1")])]',
     'calculator = Row([Slider($quantity, 1, 10, 1, "Quantity"), Text("Total: $" + ($quantity * 25)), Button("Reset", @Set($quantity, 2))])',
   ].join('\n');

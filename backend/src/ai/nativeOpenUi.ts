@@ -274,17 +274,27 @@ export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<s
     if (!result.root || result.root.typeName !== 'Col' || result.meta.incomplete || result.meta.unresolved.length || result.meta.errors.length) return fail('schema', result.meta.errors);
     if (!Array.isArray(result.root.props.children) || !result.root.props.children.length) return fail('schema');
     if (workspaceContract) {
-      // The upstream parser currently accepts plain objects in this union.
-      // The actual List renderer only understands strings and ListItem nodes.
-      let invalidList = false;
+      // Check render-time requirements the upstream schema does not enforce.
+      let invalidBlock = false;
+      const resolve = (node: ASTNode | undefined) => resolveRecoveryReference(node, symbols);
       for (const expression of symbols.values()) {
         walkAST(expression, node => {
-          if (node.k !== 'Comp' || node.name !== 'List') return;
-          const items = resolveRecoveryReference(node.args[0], symbols);
-          if (items?.k === 'Arr' && items.els.some(item => resolveRecoveryReference(item, symbols)?.k === 'Obj')) invalidList = true;
+          if (invalidBlock || node.k !== 'Comp') return;
+          if (node.name === 'List') {
+            const items = resolve(node.args[0]);
+            invalidBlock = items?.k === 'Arr' && items.els.some(item => resolve(item)?.k === 'Obj');
+          } else if (node.name === 'Table') {
+            const columns = resolve(node.args[0]);
+            const rows = resolve(node.args[1]);
+            if (columns?.k !== 'Arr' || rows?.k !== 'Arr') return;
+            invalidBlock = rows.els.some(item => {
+              const row = resolve(item);
+              return row?.k === 'Arr' && row.els.length !== columns.els.length;
+            });
+          }
         });
       }
-      if (invalidList) return fail('schema');
+      if (invalidBlock) return fail('schema');
     }
     stage = 'accuracy';
     if (contradictsMonthlyChart(result.root, narrative)) return fail('data_review');

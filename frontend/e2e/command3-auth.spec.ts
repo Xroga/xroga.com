@@ -251,6 +251,11 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   const cancellation = 'Stop this pending fixture reply.';
   const malformed = 'Show the invalid-program fallback.';
   const fallback = 'This readable answer remains available.';
+  const recovery = 'Show a partially recovered estimate.';
+  const recoveryNote = 'Some visuals could not be validated. The available explanation and verified visuals are shown below.';
+  const recoveryProse = 'The estimate covers the print charge.';
+  const recoveryText = [recoveryNote, recoveryProse, '| Item | USD |\n| --- | --- |\n| Printing | 25 |'].join('\n\n');
+  const recoveryProgram = 'root = Col([Table(["Item", "USD"], [["Printing", 25]])])';
   const reviewed = 'Show the reviewed monthly chart.';
   const reviewedReply = 'Partial answer. The written summary disagreed with the plotted data, so it was withheld.';
   const reviewedProgram = 'root = Col([Markdown(' + JSON.stringify(reviewedReply) + '), Chart("bar", [{Month:"January", Value:12000}, {Month:"February", Value:15500}], "Month", ["Value"], "currency", "USD")])';
@@ -303,6 +308,13 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
     if (body.message === cancellation) {
       await held;
       return route.fulfill({ headers: cors, json: { response: 'Cancelled fixture must never appear.' } }).catch(() => undefined);
+    }
+    if (body.message === recovery) {
+      return route.fulfill({ headers: cors, json: {
+        response: recoveryText,
+        completion: { status: 'partial', reason: 'presentation_contract' },
+        responseSource: { format: 'xroga-openui-v1', text: recoveryProgram },
+      } });
     }
     if (body.message === reviewed) {
       return route.fulfill({ headers: cors, json: { response: reviewedReply, completion: { status: 'partial', reason: 'data_review' }, responseSource: { format: 'xroga-openui-v1', text: reviewedProgram } } });
@@ -485,6 +497,20 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   await expect(fallbackTurn.getByText(fallback, { exact: true })).toBeVisible();
   await expect(page.getByText('Cancelled fixture must never appear.', { exact: true })).toHaveCount(0);
   await expect(page.getByText('should never render', { exact: true })).toHaveCount(0);
+  await send(recovery);
+  const recoveredAnswer = page.getByRole('region', { name: 'Answer', exact: true }).filter({ hasText: recoveryProse });
+  const recoveredTable = recoveredAnswer.locator('.iui-col').getByRole('table');
+  await expect(recoveredAnswer.getByText(recoveryNote, { exact: true })).toBeVisible();
+  await expect(recoveredTable.getByRole('cell', { name: '25', exact: true })).toBeVisible();
+  const recoveryTurn = page.locator('[data-turn-id]').filter({ has: recoveredAnswer });
+  await recoveryTurn.getByRole('button', { name: 'Copy', exact: true }).click();
+  await expect.poll(() => page.evaluate(async () => (await navigator.clipboard.readText()).replace(/\r\n/g, '\n'))).toBe(recoveryText);
+  await expect.poll(async () => ((await readSaved())?.messages as Array<{ featureOutput?: { responseSource?: { text?: string } } }> | undefined)
+    ?.some(message => message.featureOutput?.responseSource?.text === recoveryProgram), { timeout: 20_000 }).toBe(true);
+  await page.reload();
+  await openPersistedConversation(page, { id: sessionId, title: savedTitle!, reply: recoveryProse });
+  await expect(recoveredAnswer.getByText(recoveryNote, { exact: true })).toBeVisible();
+  await expect(recoveredTable.getByRole('cell', { name: '25', exact: true })).toBeVisible();
   await send(reviewed);
   const reviewedAnswer = page.getByRole('region', { name: 'Answer', exact: true }).filter({ hasText: reviewedReply });
   await expect(reviewedAnswer.getByRole('img', { name: /bar chart/ })).toBeVisible();
@@ -516,10 +542,10 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   expect(confirmations).toBe(1);
   expect(receiptReads).toBeGreaterThanOrEqual(1);
   expect(receiptReads).toBeLessThanOrEqual(2);
-  expect(chatCalls).toBe(6);
+  expect(chatCalls).toBe(7);
   await writeFile('test-results/native-workspace/evidence.json', JSON.stringify({
     source: expectedRelease, route: '/workspace', auth: 'isolated Supabase ordinary accounts',
-    model: 'deterministic transport fixtures, zero provider calls', nativeActions: ['file handoff', 'citation link', 'keyboard calculator', 'copy readback', 'database save and reopen', 'private share owner/guest/other account', 'continuation', 'browser cancellation', 'client validation fallback', 'reviewed partial chart', 'inline research receipt without refocus or redispatch'],
+    model: 'deterministic transport fixtures, zero provider calls', nativeActions: ['file handoff', 'citation link', 'keyboard calculator', 'copy readback', 'database save and reopen', 'private share owner/guest/other account', 'continuation', 'browser cancellation', 'client validation fallback', 'partial native recovery, copy and reopen', 'reviewed partial chart', 'inline research receipt without refocus or redispatch'],
     viewports: [1440, 390], themes: ['black', 'gray'],
   }, null, 2));
 });
