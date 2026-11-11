@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "8cf35c041325f9e3d5289d35ab2a47e9aefaff33",
+  "source_sha": "006d75e82470c3988af65a09504f9ddbc99bf907",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -8339,6 +8339,7 @@
         "XROGA_LOCAL_BROWSER_ALLOWED_USER_IDS",
         "XROGA_LOCAL_BROWSER_DEVICE_EXTENSION_ID",
         "XROGA_LOCAL_BROWSER_ENABLED",
+        "XROGA_LOCAL_BROWSER_MAX_RUN_MICROS",
         "XROGA_LOCAL_BROWSER_MAX_TURNS",
         "XROGA_LOCAL_BROWSER_VISION_PROBE",
         "XROGA_MAX_REPAIR_ATTEMPTS",
@@ -15118,6 +15119,25 @@
       ]
     },
     {
+      "name": "XROGA_LOCAL_BROWSER_MAX_RUN_MICROS",
+      "consuming_sources": [
+        "backend/src/routes/localBrowser.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
       "name": "XROGA_LOCAL_BROWSER_MAX_TURNS",
       "consuming_sources": [
         "backend/src/routes/localBrowser.ts"
@@ -18298,11 +18318,11 @@
     },
     {
       "path": "backend/src/routes/localBrowser.ts",
-      "sha256": "594819d4fbc02cce8c5f2f9d9fa876603fad6dac214907601e98cd3772784bbf"
+      "sha256": "7581a3a6ef8d1f7b8de61f970535cf885c72fd198fdb421e68a5357e62943b43"
     },
     {
       "path": "backend/src/routes/localBrowserDevice.ts",
-      "sha256": "b987b39b217528ff561f76de2005684059dd2b7bee090e778ce85f6ff117d188"
+      "sha256": "e9ba5fd68611f4ec4b04d20afadbe6dc20e3c081c44dafb059341773a6410ad5"
     },
     {
       "path": "backend/src/routes/localBrowserPlugins.ts",
@@ -35124,21 +35144,21 @@
     },
     {
       "path": "backend/src/routes/localBrowser.ts",
-      "line": 185,
+      "line": 195,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/routes/localBrowser.ts",
-      "line": 417,
+      "line": 427,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/routes/localBrowser.ts",
-      "line": 444,
+      "line": 454,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
