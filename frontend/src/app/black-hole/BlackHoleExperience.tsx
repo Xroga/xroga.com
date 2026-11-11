@@ -3,26 +3,11 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import {
-  ArrowDown, ArrowRight, ArrowUpRight, Check, ChevronDown, Code2, FileText,
-  Globe2, Menu, MousePointer2, Orbit, Play, Search, ShieldCheck,
-  Sparkles, Workflow, X
+  ArrowDown, ArrowRight, ArrowUpRight, Check, Code2, FileText,
+  Globe2, Menu, Search, ShieldCheck, Workflow, X
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
-
-const chapters = [
-  { id: 'encounter', number: '01', label: 'Encounter' },
-  { id: 'question', number: '02', label: 'The question' },
-  { id: 'partnership', number: '03', label: 'Human + AI' },
-  { id: 'origin', number: '04', label: 'Our origin' },
-  { id: 'work', number: '05', label: 'Real work' },
-  { id: 'capabilities', number: '06', label: 'Capabilities' },
-  { id: 'trust', number: '07', label: 'Human control' },
-  { id: 'evolution', number: '08', label: 'Infinity' },
-  { id: 'consistency', number: '09', label: 'Consistency' },
-  { id: 'perspective', number: '10', label: 'Perspective' },
-  { id: 'purpose', number: '11', label: 'Purpose' },
-  { id: 'begin', number: '12', label: 'Begin' },
-] as const;
+import type { PointerEvent, ReactNode } from 'react';
 
 const capabilityModes = [
   {
@@ -88,7 +73,7 @@ function Art({ src, alt = '', className = '', eager = false, objectPosition }: A
   );
 }
 
-function Overline({ n, children }: { n: string; children: React.ReactNode }) {
+function Overline({ n, children }: { n: string; children: ReactNode }) {
   return <p className="bh-overline"><span>{n}</span><i aria-hidden="true" />{children}</p>;
 }
 
@@ -147,7 +132,7 @@ export function BlackHoleExperience() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  const onHeroMove = (event: React.PointerEvent<HTMLElement>) => {
+  const onHeroMove = (event: PointerEvent<HTMLElement>) => {
     if (event.pointerType === 'touch' || !hero.current) return;
     const rect = hero.current.getBoundingClientRect();
     hero.current.style.setProperty('--bh-x', ((event.clientX - rect.left) / rect.width - 0.5).toFixed(3));
