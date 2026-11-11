@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "8d1aef82cf0d7e7f08e0c61e17aa4538aa4d4aa1",
+  "source_sha": "9478a47598eb1eee851a1073e637c7c18cfb622c",
   "hash_policy": "Exact preserved attachment bytes; repository text uses Git-canonical LF bytes for portable hashes and byte counts",
   "sources": [
     {
@@ -6299,9 +6299,9 @@
       "source_id": "SRC-3d3190a1571aa705",
       "filename": "current-state.json",
       "path_or_url": "docs/xroga/current-state.json",
-      "sha256": "009fb916355cfce5356c68415009fd6eb4eca72bdcebce5383586ab2251db575",
+      "sha256": "5c117f594af9137d25109837635470525fcfe837b9e94f5844f6ddcce79cfcd5",
       "byte_size": 5690342,
-      "modified_timestamp": "2026-11-11T19:33:39.951Z",
+      "modified_timestamp": "2026-11-11T19:34:51.662Z",
       "parse_status": "PARSED_JSON",
       "category": "REPOSITORY_DOCUMENT",
       "authority": "ADVISORY",
@@ -30557,9 +30557,9 @@
       "source_id": "SRC-b5fb9b6d0970672d",
       "filename": "full-supabase-history.mjs",
       "path_or_url": "scripts/security/full-supabase-history.mjs",
-      "sha256": "10af2e34421c5f93595c2d3a956ab862319ef92bd00a38c7915d6d66c588bda2",
-      "byte_size": 14314,
-      "modified_timestamp": "2026-11-11T19:32:56.776Z",
+      "sha256": "ebb89d978025ba86e2562ee93f9995be39530c8c6e7de708a696a3277a291831",
+      "byte_size": 14312,
+      "modified_timestamp": "2026-11-11T19:34:27.519Z",
       "parse_status": "AST_METADATA",
       "category": "SOURCE_CODE",
       "authority": "CURRENT_CODE",
