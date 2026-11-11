@@ -96,19 +96,21 @@ export function ChatBarActionsMenu({
   plusIcon?: boolean;
 }) {
   const [open, setOpen] = useState(false);
-  const [panel, setPanel] = useState<'menu' | 'commands' | 'skills' | 'rules' | 'work'>('menu');
+  const [panel, setPanel] = useState<'menu' | 'commands' | 'skills' | 'preferences' | 'rules' | 'work'>('menu');
   const [workId, setWorkId] = useState<string>('library');
   const activeWork = WORK_OPTIONS.find(item => item.id === workId) ?? WORK_OPTIONS[0];
   const rootRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const [menuStyle, setMenuStyle] = useState<React.CSSProperties>({});
 
+  const preferences = useComposerToolsStore((s) => s.preferences);
+  const setPreferences = useComposerToolsStore((s) => s.setPreferences);
   const rules = useComposerToolsStore((s) => s.rules);
   const setRules = useComposerToolsStore((s) => s.setRules);
   const enabledSkills = useComposerToolsStore((s) => s.enabledSkills);
   const toggleSkill = useComposerToolsStore((s) => s.toggleSkill);
 
-  const activeCount = enabledSkills.length + (rules.trim() ? 1 : 0);
+  const activeCount = enabledSkills.length + (rules.trim() ? 1 : 0) + (preferences?.trim() ? 1 : 0);
   useEffect(() => {
     if (!open) return;
     const onPointerDown = (event: PointerEvent) => {
@@ -288,6 +290,10 @@ export function ChatBarActionsMenu({
                 <Sparkles className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                 <span className="xv-cba-item__text"><b>Skills</b><i>{enabledSkills.length ? `${enabledSkills.length} active` : 'Reusable instruction packs'}</i></span>
               </button>
+              <button type="button" className="xv-cba-item" data-tone="purple" onClick={() => setPanel('preferences')}>
+                <ScrollText className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                <span className="xv-cba-item__text"><b>Prompt preferences</b><i>{preferences?.trim() ? 'Applied to prompts' : 'Optional reusable instructions'}</i></span>
+              </button>
               <button type="button" className="xv-cba-item" data-tone="gray" onClick={() => setPanel('rules')}>
                 <ScrollText className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                 <span className="xv-cba-item__text"><b>Rules</b><i>{rules.trim() ? 'Applied to every prompt' : 'Standing instructions you write'}</i></span>
@@ -384,6 +390,21 @@ export function ChatBarActionsMenu({
                   </button>
                 );
               })}
+            </>
+          )}
+
+          {panel === 'preferences' && (
+            <>
+              <div className="xv-cba-head">
+                <button type="button" onClick={() => setPanel('menu')} className="xv-cba-back">Back</button>
+                <span>Prompt preferences</span>
+                <button type="button" onClick={() => setOpen(false)} aria-label="Close"><X className="h-3.5 w-3.5" aria-hidden="true" /></button>
+              </div>
+              <p className="xv-cba-note">Optional response style or format. Saved on this device and included with your prompts.</p>
+              <textarea value={preferences ?? ''} onChange={event => setPreferences(event.target.value)}
+                rows={4} spellCheck={false} placeholder="Prefer concise answers with clear steps."
+                className="xv-cba-textarea" aria-label="Reusable prompt preferences" />
+              {preferences?.trim() ? <button type="button" className="xv-cba-clear" onClick={() => setPreferences('')}>Clear preferences</button> : null}
             </>
           )}
 
