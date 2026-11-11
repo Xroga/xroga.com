@@ -32,9 +32,12 @@ const MAX_GOAL = 16_000;
 const MAX_PLUGIN_ACTIONS = 4;
 const limits = { ...BROWSER_RUN_DEFAULTS, maxModelCostMicros: MAX_RUN_MICROS };
 const id = z.string().uuid();
+/** Parameter names (never values) of a discovered tool, kept so the agent's arguments can be checked before anything is approved. */
+const toolArgs = z.object({ props: z.array(z.string().max(80)).max(80), required: z.array(z.string().max(80)).max(40) });
+type ToolArgs = z.infer<typeof toolArgs>;
 const pluginState = z.object({
   discoveries: z.array(z.object({
-    query: z.string(), sessionId: z.string().optional(), tools: z.array(z.object({ slug: z.string(), toolkit: z.string() })).max(6),
+    query: z.string(), sessionId: z.string().optional(), tools: z.array(z.object({ slug: z.string(), toolkit: z.string(), args: toolArgs.optional() })).max(6),
   })).max(4),
   reads: z.array(z.object({
     digest: z.string(), slug: z.string(), toolkit: z.string(), approvalId: z.string().uuid().optional(), used: z.boolean(),
@@ -44,7 +47,7 @@ const pluginState = z.object({
     digest: z.string(), slug: z.string(), toolkit: z.string(), approvalId: z.string().uuid().optional(), used: z.boolean(),
   })).max(MAX_PLUGIN_ACTIONS).default([]),
   actionDiscoveries: z.array(z.object({
-    query: z.string(), sessionId: z.string().optional(), tools: z.array(z.object({ slug: z.string(), toolkit: z.string() })).max(6),
+    query: z.string(), sessionId: z.string().optional(), tools: z.array(z.object({ slug: z.string(), toolkit: z.string(), args: toolArgs.optional() })).max(6),
   })).max(4).default([]),
 });
 function runPlugins(row: BrowserRunRecord) {
@@ -108,7 +111,25 @@ const configured = () => {
 };
 
 class BrowserRequestError extends Error {
-  constructor(readonly status: number, readonly code: string) { super(code); }
+  constructor(readonly status: number, readonly code: string, readonly detail?: Record<string, string[]>) { super(code); }
+}
+
+function summarizeToolArgs(schema: unknown): ToolArgs | undefined {
+  const s = schema as { properties?: unknown; required?: unknown } | null;
+  if (!s || typeof s !== 'object' || !s.properties || typeof s.properties !== 'object') return undefined;
+  const props = Object.keys(s.properties as object).filter(name => name.length <= 80).slice(0, 80);
+  const required = Array.isArray(s.required) ? s.required.filter((name): name is string => typeof name === 'string' && name.length <= 80).slice(0, 40) : [];
+  return { props, required };
+}
+/** An argument the tool does not define, or a required one that is missing, is refused with the names involved; nothing is sent. */
+function assertToolArguments(args: Record<string, unknown>, summary: ToolArgs | undefined) {
+  if (!summary || !summary.props.length) return;
+  const known = new Set(summary.props);
+  const unknown = Object.keys(args).filter(name => !known.has(name)).slice(0, 12);
+  const missing = summary.required.filter(name => args[name] === undefined || args[name] === null).slice(0, 12);
+  if (unknown.length || missing.length) {
+    throw new BrowserRequestError(422, 'BROWSER_PLUGIN_ARGUMENTS_INVALID', { unknown, missing, allowed: summary.props.slice(0, 40) });
+  }
 }
 
 function checkData(value: unknown) {
@@ -119,7 +140,7 @@ function checkData(value: unknown) {
 }
 
 function sendError(res: Response, error: unknown) {
-  if (error instanceof BrowserRequestError) return res.status(error.status).json({ error: error.code });
+  if (error instanceof BrowserRequestError) return res.status(error.status).json({ error: error.code, ...(error.detail ?? {}) });
   if (error instanceof z.ZodError) return res.status(400).json({ error: 'BROWSER_REQUEST_INVALID' });
   // No user payload, raw provider error, or credential is returned. Only Xroga's own fixed business-action
   // codes are surfaced (and logged), so a failed approval is diagnosable without exposing anything private.
@@ -335,7 +356,7 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
     const connected = new Set(result.toolkits.filter(item => item.connected && !item.noAuth).map(item => item.toolkit.toLowerCase()));
     const tools = result.tools.filter(item => item.risk === 'read' && connected.has(item.toolkit.toLowerCase())).slice(0, 6);
     discovery.sessionId = result.sessionId;
-    discovery.tools = tools.map(({ slug, toolkit }) => ({ slug, toolkit }));
+    discovery.tools = tools.map(({ slug, toolkit, inputSchema }) => ({ slug, toolkit, args: summarizeToolArgs(inputSchema) }));
     await save();
     return res.json({ tools: tools.map(item => ({ slug: item.slug, toolkit: item.toolkit,
       description: item.description?.slice(0, 400), parameters: item.inputSchema })) });
@@ -365,7 +386,7 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
         !isFinancialAction(query, item.slug))
       .slice(0, 6);
     discovery.sessionId = result.sessionId;
-    discovery.tools = tools.map(({ slug, toolkit }) => ({ slug, toolkit }));
+    discovery.tools = tools.map(({ slug, toolkit, inputSchema }) => ({ slug, toolkit, args: summarizeToolArgs(inputSchema) }));
     await save();
     return res.json({ tools: tools.map(item => ({ slug: item.slug, toolkit: item.toolkit, risk: item.risk,
       description: item.description?.slice(0, 400), parameters: item.inputSchema })) });
@@ -384,6 +405,7 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
     const source = [...state.actionDiscoveries].reverse().find(item => item.tools.some(tool => tool.slug === data.slug));
     const tool = source?.tools.find(tool => tool.slug === data.slug);
     if (!source?.sessionId || !tool) throw new BrowserRequestError(403, 'BROWSER_PLUGIN_NOT_DISCOVERED');
+    assertToolArguments(data.arguments, tool.args);
     const digest = preparedActionDigest(data);
     if (state.actions.length >= MAX_PLUGIN_ACTIONS || state.actions.some(item => item.digest === digest)) {
       throw new BrowserRequestError(409, 'BROWSER_PLUGIN_ACTION_ALREADY_REQUESTED');
@@ -449,6 +471,7 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
     const tool = source?.tools.find(tool => tool.slug === data.slug);
     const digest = preparedActionDigest(data);
     if (!source?.sessionId || !tool) throw new BrowserRequestError(403, 'BROWSER_PLUGIN_NOT_DISCOVERED');
+    assertToolArguments(data.arguments, tool.args);
     if (state.reads.length >= 6 || state.reads.some(item => item.digest === digest)) {
       throw new BrowserRequestError(409, 'BROWSER_PLUGIN_READ_ALREADY_REQUESTED');
     }

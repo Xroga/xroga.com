@@ -1485,6 +1485,12 @@ async function composioRequest<T>(
         const slug = typeof err?.slug === 'string' && /^[A-Za-z0-9_.-]{1,60}$/.test(err.slug) ? err.slug : '-';
         const providerCode = typeof err?.code === 'number' || typeof err?.code === 'string' ? String(err.code).slice(0, 20) : '-';
         console.error('[composio] upstream error', response.status, path.split('?')[0].replace(/[A-Za-z0-9_-]{16,}/g, ':id'), slug, providerCode);
+        // Off by default (production). Staging sets XROGA_COMPOSIO_ERROR_DETAIL=1 to see the provider's own explanation of a rejected call.
+        if (process.env.XROGA_COMPOSIO_ERROR_DETAIL === '1') {
+          const e = (payload as { error?: { message?: unknown; suggested_fix?: unknown } } | null)?.error;
+          const clip = (v: unknown) => (typeof v === 'string' ? v.replace(/s+/g, ' ').slice(0, 300) : '-');
+          console.error('[composio] upstream detail', clip(e?.message), '| fix:', clip(e?.suggested_fix));
+        }
       } catch { /* diagnostics must never change the result */ }
       let message = 'Xroga Connect could not complete the external request.';
 

@@ -16,7 +16,18 @@ let nextStatusCheck = 0;
 let valid = false;
 
 class DeviceError extends Error {
-  constructor(readonly status: number, readonly code: string) { super(code); }
+  constructor(readonly status: number, readonly code: string, readonly detail?: Record<string, string[]>) { super(code); }
+}
+
+/** Only short lists of names (never values) are kept from an error body: the arguments a tool does not define or still needs. */
+function safeDetail(body: unknown): Record<string, string[]> | undefined {
+  if (!body || typeof body !== 'object') return undefined;
+  const out: Record<string, string[]> = {};
+  for (const key of ['unknown', 'missing', 'allowed']) {
+    const value = (body as Record<string, unknown>)[key];
+    if (Array.isArray(value)) out[key] = value.filter((x): x is string => typeof x === 'string' && x.length <= 80).slice(0, key === 'allowed' ? 40 : 12);
+  }
+  return Object.keys(out).length ? out : undefined;
 }
 
 async function request(path: string, method: string, data?: unknown, bearer?: string, signal?: AbortSignal) {
@@ -35,7 +46,7 @@ async function request(path: string, method: string, data?: unknown, bearer?: st
   });
   if (response.status === 204) return;
   const result = await response.json();
-  if (!response.ok) throw new DeviceError(response.status, result.error ?? 'BROWSER_DEVICE_UNAVAILABLE');
+  if (!response.ok) throw new DeviceError(response.status, result.error ?? 'BROWSER_DEVICE_UNAVAILABLE', safeDetail(result));
   return result;
 }
 

@@ -72,4 +72,17 @@ describe('plugin_action_search and plugin_act', () => {
     expect(requests.map(r => r.op)).toEqual(['plugin-act']);
     expect(result.text).toContain('unavailable or interrupted');
   });
+
+  it('tells the model which arguments to fix when the tool does not define them, and sends nothing', async () => {
+    responses = [Object.assign(new Error('x'), { code: 'BROWSER_PLUGIN_ARGUMENTS_INVALID', status: 422,
+      detail: { unknown: ['search_type'], missing: ['query'], allowed: ['query', 'max_results'] } })];
+    const result = await runPluginTool('plugin_read', 'run-1', { slug: 'S', arguments: { search_type: 'content' } }, new AbortController().signal,
+      async () => { throw new Error('no approval card must be shown'); }, wrap);
+    expect(requests.map(r => r.op)).toEqual(['plugin-read']);
+    expect(result.isError).toBe(true);
+    expect(result.text).toContain('Nothing was sent');
+    expect(result.text).toContain('Not defined by the tool: search_type');
+    expect(result.text).toContain('Required but missing: query');
+    expect(result.text).toContain('query, max_results');
+  });
 });

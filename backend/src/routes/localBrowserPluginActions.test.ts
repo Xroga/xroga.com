@@ -63,7 +63,7 @@ test('changes through a connected app need discovery, an exact approval of their
         { toolkit: 'wordpress', connected: true, noAuth: false },
         { toolkit: 'notconnected', connected: false, noAuth: false },
       ], tools: [
-        { slug: 'WORDPRESS_CREATE_DRAFT_POST', toolkit: 'WordPress', risk: 'write', description: 'Create a draft post', inputSchema: { type: 'object' } },
+        { slug: 'WORDPRESS_CREATE_DRAFT_POST', toolkit: 'WordPress', risk: 'write', description: 'Create a draft post', inputSchema: { type: 'object', properties: { title: { type: 'string' }, content: { type: 'string' } }, required: ['title'] } },
         { slug: 'WORDPRESS_LIST_POSTS', toolkit: 'wordpress', risk: 'read', inputSchema: {} },
         { slug: 'WORDPRESS_DELETE_POST', toolkit: 'wordpress', risk: 'destructive', inputSchema: {} },
         { slug: 'NOTCONNECTED_CREATE', toolkit: 'notconnected', risk: 'write', inputSchema: {} },
@@ -113,6 +113,17 @@ test('changes through a connected app need discovery, an exact approval of their
     for (const slug of ['WORDPRESS_DELETE_POST', 'WORDPRESS_LIST_POSTS', 'NOTCONNECTED_CREATE', 'SOMETHING_ELSE']) {
       assert.equal((await act(slug)).status, 403, slug);
     }
+    assert.equal(prepared.length, 0);
+
+    // Arguments the tool does not define, or a missing required one, are refused with the names before any approval exists.
+    const bad = await act('WORDPRESS_CREATE_DRAFT_POST', { title: 'Hello', bogus: 1, search_type: 'x' });
+    assert.equal(bad.status, 422);
+    const badBody = await bad.json() as { error: string; unknown: string[]; missing: string[]; allowed: string[] };
+    assert.deepEqual({ error: badBody.error, unknown: badBody.unknown, missing: badBody.missing }, { error: 'BROWSER_PLUGIN_ARGUMENTS_INVALID', unknown: ['bogus', 'search_type'], missing: [] });
+    assert.deepEqual(badBody.allowed, ['title', 'content']);
+    const lacking = await act('WORDPRESS_CREATE_DRAFT_POST', { content: 'x' });
+    assert.equal(lacking.status, 422);
+    assert.deepEqual((await lacking.json() as { missing: string[] }).missing, ['title']);
     assert.equal(prepared.length, 0);
 
     // The offered tool is prepared with the agent's arguments, always for individual confirmation, and nothing runs yet.

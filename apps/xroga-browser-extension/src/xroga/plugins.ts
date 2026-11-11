@@ -57,7 +57,13 @@ export async function runPluginTool(
     if (review.denied) return { text: change ? 'The user denied this change. Nothing was changed in the app.' : 'The user denied this read. The app was not called.', isError: true };
     if (typeof review.receiptId !== 'string' || !/^[a-z0-9_-]{1,128}$/i.test(review.receiptId) || typeof review.result !== 'string') throw new Error('Plugin receipt could not be verified.');
     return { text: 'Provider receipt ' + review.receiptId + '\n' + wrap(review.result, 'connected app result'), isError: false, result: { pluginReceiptId: review.receiptId } };
-  } catch {
+  } catch (error) {
+    const failure = error as { code?: unknown; detail?: Record<string, string[]> };
+    if (failure?.code === 'BROWSER_PLUGIN_ARGUMENTS_INVALID' && failure.detail) {
+      const list = (key: string) => (failure.detail![key] ?? []).join(', ') || 'none';
+      return { text: 'Nothing was sent. These arguments do not match the definition of the tool. Not defined by the tool: ' + list('unknown') +
+        '. Required but missing: ' + list('missing') + '. Arguments the tool accepts: ' + list('allowed') + '. Correct the call and try once more.', isError: true };
+    }
     if (change && sentReview) {
       return { text: 'The approved change could not be verified. It may or may not have been made. Do not repeat it. Check the result in the app, and tell the user exactly what is uncertain.', isError: true };
     }
