@@ -145034,6 +145034,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:120e25ea5ac5f8427750",
+      "sourcePath": "apps/xroga-browser-extension/src/agent/__tests__/skills-domains.test.ts",
+      "declaredTests": 7,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:d748c4a3a476cd87446f",
       "sourcePath": "apps/xroga-browser-extension/src/agent/__tests__/skills.test.ts",
       "declaredTests": 13,
@@ -145258,9 +145265,16 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:93297fc031e22e984125",
+      "sourcePath": "apps/xroga-browser-extension/src/extension/__tests__/parallel-graph.test.ts",
+      "declaredTests": 13,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:a497702a7555d658079b",
       "sourcePath": "apps/xroga-browser-extension/src/extension/__tests__/parallel-workers.test.ts",
-      "declaredTests": 21,
+      "declaredTests": 22,
       "skipLocations": [],
       "focusLocations": []
     },
