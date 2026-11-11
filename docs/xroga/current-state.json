@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/openui-notification-compatibility-20261112",
-    "sha": "5180c28f57dc427e7e3b87e3283764935fe47c13",
-    "sourceTimestampUtc": "2026-11-12T00:31:26+05:00",
-    "auditStartedUtc": "2026-11-11T19:32:21.902Z",
+    "sha": "8d1aef82cf0d7e7f08e0c61e17aa4538aa4d4aa1",
+    "sourceTimestampUtc": "2026-11-12T00:33:17+05:00",
+    "auditStartedUtc": "2026-11-11T19:33:39.587Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -124710,7 +124710,7 @@
       "id": "surface:b5fb9b6d0970672ddebe",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/security/full-supabase-history.mjs",
-      "sha256": "09b8e794eb5d3fe98e17f76372ccad5e8c33302ec66191662d60b4614fc6f696",
+      "sha256": "10af2e34421c5f93595c2d3a956ab862319ef92bd00a38c7915d6d66c588bda2",
       "symbols": [
         "actual",
         "additions",
@@ -125154,7 +125154,7 @@
       "id": "surface:a741178549139c6d7626",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/security/schema-catalog.mjs",
-      "sha256": "d2d6ccc2887ede3682a17cf1d1a630d52b8fe69528ee1f6684573b3c774b8dbf",
+      "sha256": "62addad0c6d0a9171678afa953b8dec99b25412f24f6ae779c0ae021a3cda817",
       "symbols": [
         "assertDisposableSource",
         "collectSchemaCatalog",
