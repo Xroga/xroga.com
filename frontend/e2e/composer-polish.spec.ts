@@ -82,7 +82,7 @@ test('existing conversation composer has the identical control layout without a 
   await expect.poll(async () => surface.evaluate(el => getComputedStyle(el).borderTopWidth)).toBe('1px');
   await expect(page.locator('.xv-chatbar-context-strip')).toHaveCount(0);
   await expect(surface.getByRole('button', { name: 'Projects' })).toBeVisible();
-  await expect(surface.getByRole('button', { name: 'Plugins' })).toBeVisible();
+  await expect(surface.getByRole('button', { name: 'Connect Apps' })).toBeVisible();
   await expect(surface.getByRole('button', { name: 'Black Hole model and usage' })).toBeVisible();
   await expect(surface.getByRole('button', { name: 'Start voice typing' })).toBeVisible();
   // Current main uses the microphone glyph while idle and audio lines only
@@ -114,7 +114,7 @@ test('existing conversation tools fit on a small phone without an external Plugi
   expect(b!.x+b!.width).toBeLessThanOrEqual(390);
   await expect(page.locator('.xv-chatbar-context-strip')).toHaveCount(0);
   const surface = frame.locator('.xv-chatbar-solid');
-  const plugins = surface.getByRole('button', { name: 'Plugins' });
+  const plugins = surface.getByRole('button', { name: 'Connect Apps' });
   const voice = surface.getByRole('button', { name: 'Start voice typing' });
   const send = surface.getByRole('button', { name: 'Send prompt', exact: true });
   await expect(plugins).toBeVisible();
