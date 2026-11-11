@@ -1,6 +1,6 @@
 # Xroga repository truth map
 
-Source SHA: `c6d0d04421f9bbef7ec766188b4147185f709327`. Branch observed: `codex/openui-notification-compatibility-20261112`. Audit started: 2026-11-11T19:26:02.558Z.
+Source SHA: `f8493a7c23bc865c9a3b772e5bb4b185c28e6c77`. Branch observed: `codex/openui-notification-compatibility-20261112`. Audit started: 2026-11-11T19:27:15.825Z.
 
 This inventory records static source and call-path evidence. A mounted endpoint is reachable in source; that does not certify live success, tenant safety, approval enforcement, or completion. All implementation surfaces retain an unverified/partial/placeholder state until their own acceptance tests establish behavior. No architecture was replaced and no production operations were performed.
 

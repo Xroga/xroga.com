@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/openui-notification-compatibility-20261112",
-    "sha": "c6d0d04421f9bbef7ec766188b4147185f709327",
-    "sourceTimestampUtc": "2026-11-11T23:57:01+05:00",
-    "auditStartedUtc": "2026-11-11T19:26:02.558Z",
+    "sha": "f8493a7c23bc865c9a3b772e5bb4b185c28e6c77",
+    "sourceTimestampUtc": "2026-11-12T00:26:57+05:00",
+    "auditStartedUtc": "2026-11-11T19:27:15.825Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
