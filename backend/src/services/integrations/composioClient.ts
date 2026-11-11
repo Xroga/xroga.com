@@ -2714,24 +2714,33 @@ async function executeDiscoveredComposioTool(
     if(!final?.connected||finalAccountId!==accountId)throw new ComposioClientError('The connected application account changed. Prepare the action again.',{status:409,code:'COMPOSIO_ACTION_ACCOUNT_CHANGED'});
   }
 
-  const response = await composioRequest<ComposioExecuteResponse>(
-    `/tool_router/session/${encodeURIComponent(sessionId)}/execute`,
-    {
-      method: 'POST',
-      body: {
-        tool_slug: toolSlug,
-        arguments: input.arguments,
-        // Official session execute API selects the exact account using `account`.
-        // https://docs.composio.dev/reference/api-reference/tool-router/postToolRouterSessionBySessionIdExecute
-        // Composio rejects this field with a 400 ("Multi-account selection is not enabled") on projects without that feature,
-        // so it is sent only when the deployment says the project has it. Our own live account check still runs before dispatch.
-        ...(account && process.env.COMPOSIO_MULTI_ACCOUNT_ENABLED === '1' ? { account } : {}),
-        enable_auto_workbench_offload: false,
-      },
-      timeoutMs: EXECUTE_TIMEOUT_MS,
-      signal,
-    },context
-  );
+  // Official session execute API selects the exact account using `account`, so the approved account is always sent first.
+  // https://docs.composio.dev/reference/api-reference/tool-router/postToolRouterSessionBySessionIdExecute
+  // A project without multi-account selection refuses the field with a 400 before anything runs ("Multi-account selection is not
+  // enabled"). That one refusal is answered by repeating the same call without it (the session then uses its own single connection,
+  // which the live account check above already matched to the approved one), and the project is remembered as not supporting it.
+  const executePath = `/tool_router/session/${encodeURIComponent(sessionId)}/execute`;
+  const executeWith = (withAccount: boolean) => composioRequest<ComposioExecuteResponse>(executePath, {
+    method: 'POST',
+    body: {
+      tool_slug: toolSlug,
+      arguments: input.arguments,
+      ...(withAccount && account ? { account } : {}),
+      enable_auto_workbench_offload: false,
+    },
+    timeoutMs: EXECUTE_TIMEOUT_MS,
+    signal,
+  }, context);
+  let response: ComposioExecuteResponse;
+  try {
+    response = await executeWith(!accountSelectionUnsupported);
+  } catch (error) {
+    const reason = (error as { providerMessage?: unknown }).providerMessage;
+    if (!(account && !accountSelectionUnsupported && error instanceof ComposioClientError && error.status === 400 &&
+        typeof reason === 'string' && reason.toLowerCase().includes('multi-account selection is not enabled'))) throw error;
+    accountSelectionUnsupported = true;
+    response = await executeWith(false);
+  }
   // v3.1 can report input_required or failed with HTTP 200. Neither is a
   // completed effect. Never answer a provider approval request automatically.
   // Legacy inline responses with explicit data remain wire-compatible.
@@ -2783,6 +2792,13 @@ export async function executeComposioReadTool(
     toolSlug,
     mode: 'read',
   });
+}
+
+/** Set once Composio has said this project has no multi-account selection, so later calls do not repeat the refused field. */
+let accountSelectionUnsupported = false;
+/** Test-only: forgets what was learned about the project, so one test cannot change another. */
+export function resetComposioAccountSelectionMemory(): void {
+  accountSelectionUnsupported = false;
 }
 
 export async function executeComposioActionTool(
