@@ -1,19 +1,20 @@
-// The activity block: a status line for the run, "Thinking…", "Working…" or "Waiting for you…" with the time so far
-// while it works, then "Worked for 12s", which opens one row per tool call in plain language, with its status, the
+// The activity block shows the current operation or response state, then folds into one history disclosure with
+// a row per tool call in plain language, its status, the
 // effect when the page did not react, how a write was allowed, and on expanding, the arguments (typed values masked),
 // the receipt and the error hint. Page strings are text nodes only.
 import { useEffect, useState } from 'react';
 import type { ToolRow } from '@src/ui/protocol';
 import { t } from '@src/ui/i18n';
 import type { MessageKey } from '@src/ui/i18n';
-import { activityLine, maskArgs } from './activity-label';
-import { CheckIcon, ChevronIcon, CloseIcon, SpinnerIcon } from '@src/ui/icons';
+import { activityLine, liveToolLabel, maskArgs } from './activity-label';
+import { CheckIcon, ChevronIcon, CloseIcon, HistoryIcon, SpinnerIcon } from '@src/ui/icons';
 
-/** What a working run is doing: waiting for the model, running a tool, or waiting for the user's answer. */
-export type Phase = 'thinking' | 'working' | 'waiting';
+export type Phase = 'starting' | 'between' | 'writing' | 'working' | 'waiting';
 
 const PHASES: Record<Phase, MessageKey> = {
-  thinking: 'panel.thinking',
+  starting: 'activity.starting',
+  between: 'activity.between',
+  writing: 'activity.writing',
   working: 'activity.working',
   waiting: 'activity.waiting',
 };
@@ -33,10 +34,12 @@ const STATUS: Partial<Record<ToolRow['status'], Parameters<typeof t>[0]>> = {
   failed: 'act.failed',
 };
 
-/** The phase of a working run from its rows: a card waiting for the user, then a tool running, else the model. */
-export function phaseOf(rows: ToolRow[], waiting: boolean): Phase {
+/** Only a tool start, a prompt or visible response text can identify a specific live phase. */
+export function phaseOf(rows: ToolRow[], waiting: boolean, writing = false, responseStarted = writing): Phase {
   if (waiting || rows.some(r => r.status === 'waiting')) return 'waiting';
-  return rows.some(r => r.status === 'running') ? 'working' : 'thinking';
+  if (rows.some(r => r.status === 'running')) return 'working';
+  if (writing) return 'writing';
+  return rows.length || responseStarted ? 'between' : 'starting';
 }
 
 /** "4s", "2m 5s", "1h 3m". */
@@ -70,34 +73,46 @@ export function Activity({ rows, phase, start, end }: { rows: ToolRow[]; phase?:
   const [open, setOpen] = useState(false);
   const now = useNow(!!phase);
   const time = elapsed((phase ? now : (end ?? start)) - start);
-  const status = phase ? (
+  const running = phase === 'working' ? rows.findLast(row => row.status === 'running') : undefined;
+  const latest = rows.findLast(row => row.status !== 'running' && row.status !== 'waiting');
+  const label = running ? liveToolLabel(running) : phase ? t(PHASES[phase]) : t('activity.worked', { time });
+  const status = (
     <>
-      <SpinnerIcon size={14} className="text-nb-link motion-safe:animate-spin" />
-      <span>{t(PHASES[phase])}</span>
-      <span className="tabular-nums opacity-60">{time}</span>
+      {phase && phase !== 'waiting' ? (
+        <SpinnerIcon size={14} className="shrink-0 text-nb-link motion-safe:animate-spin" />
+      ) : (
+        <HistoryIcon size={14} className={phase ? 'shrink-0 text-amber-600 dark:text-amber-400' : 'shrink-0'} />
+      )}
+      <span className={`min-w-0 flex-1 break-words ${phase ? 'font-medium text-nb-fg' : ''}`}>{label}</span>
+      {phase ? <span className="shrink-0 tabular-nums opacity-70">{time}</span> : null}
     </>
-  ) : (
-    <span>{t('activity.worked', { time })}</span>
   );
   return (
-    <div className="flex flex-col gap-1" data-role="activity">
+    <div className="flex min-w-0 flex-col gap-1" data-role="activity" data-phase={phase}>
+      {phase ? <span className="sr-only" role="status">{label}</span> : null}
       {rows.length ? (
         <button
           type="button"
           aria-expanded={open}
-          className="flex items-center gap-1.5 self-start rounded-md py-0.5 pr-1 text-left text-nb-muted transition-colors hover:text-nb-fg"
+          className="flex max-w-full items-center gap-2 self-start rounded-lg p-1 text-left text-nb-muted transition-colors hover:bg-nb-surface hover:text-nb-fg focus-visible:outline focus-visible:outline-2 focus-visible:outline-nb-accent"
           onClick={() => setOpen(o => !o)}>
           {status}
-          <ChevronIcon size={14} className={`transition-transform ${open ? 'rotate-90' : ''}`} />
+          <ChevronIcon size={14} className={`shrink-0 motion-safe:transition-transform ${open ? 'rotate-90' : ''}`} />
         </button>
       ) : (
-        <div className="flex items-center gap-1.5 py-0.5 text-nb-muted">{status}</div>
+        <div className="flex max-w-full items-center gap-2 self-start p-1 text-nb-muted">{status}</div>
       )}
-      {phase && !open && rows.at(-1) ? <p className="truncate text-xs text-nb-muted">{activityLine(rows.at(-1)!).label}</p> : null}
+      {phase && !open && latest ? (
+        <p className="ml-2.5 break-words border-l border-nb-border pl-3 text-xs text-nb-muted">
+          {latest.status === 'done' ? activityLine(latest).label : t('activity.stepOutcome', {
+            action: liveToolLabel(latest), outcome: t(latest.status === 'failed' ? 'act.failed' : 'act.skipped'),
+          })}
+        </p>
+      ) : null}
       {open && rows.length ? (
         <ul className="flex flex-col gap-0.5 rounded-xl border border-nb-border bg-nb-bg px-2.5 py-1.5 text-xs shadow-sm">
           {rows.map(row => (
-            <Row key={row.toolCallId} row={row} />
+            <Row key={row.toolCallId} row={row} live={Boolean(phase)} />
           ))}
         </ul>
       ) : null}
@@ -105,10 +120,11 @@ export function Activity({ rows, phase, start, end }: { rows: ToolRow[]; phase?:
   );
 }
 
-function Row({ row }: { row: ToolRow }) {
+function Row({ row, live }: { row: ToolRow; live: boolean }) {
   const [open, setOpen] = useState(false);
   const line = activityLine(row);
-  const status = STATUS[row.status];
+  const unconfirmed = !live && (row.status === 'running' || row.status === 'waiting');
+  const status = unconfirmed ? 'activity.unconfirmed' : STATUS[row.status];
   const result = row.result as { receipt?: unknown; error?: { hint?: string } } | undefined;
   return (
     <li className="flex flex-col">
@@ -118,11 +134,11 @@ function Row({ row }: { row: ToolRow }) {
         className="flex items-start gap-1.5 rounded-md px-1 py-0.5 text-left hover:bg-nb-surface"
         onClick={() => setOpen(o => !o)}>
         <span aria-hidden className={`w-3 shrink-0 text-center font-semibold ${TONES[row.status]}`}>
-          {row.status === 'done' ? <CheckIcon size={13} /> : row.status === 'failed' ? <CloseIcon size={13} />
+          {unconfirmed ? '–' : row.status === 'done' ? <CheckIcon size={13} /> : row.status === 'failed' ? <CloseIcon size={13} />
             : row.status === 'running' ? <SpinnerIcon size={13} className="motion-safe:animate-spin" /> : ICONS[row.status]}
         </span>
         <span className="min-w-0 flex-1 break-words">
-          {line.label}
+          {row.status === 'done' ? line.label : liveToolLabel(row)}
           {[...(status ? [t(status)] : []), ...line.tags].map(tag => (
             <span key={tag} className="ml-1 rounded-full bg-nb-surface px-1.5 text-[10px] text-nb-muted">
               {tag}

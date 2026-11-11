@@ -1,0 +1,105 @@
+{
+  "version": "1.0",
+  "missionId": "EXTENSION-OBSERVABLE-WORK-HISTORY",
+  "baseSha": "e4c3ecc9f19c6a04636d6de1ebd68db07a8d306e",
+  "requirementIds": [
+    "XR-MISSION-053",
+    "XR-FAMILY-activity-feeds"
+  ],
+  "state": "CODE_COMPLETE",
+  "risk": "low",
+  "scope": "Use existing events for a single live status and expandable Work history in the Chrome extension.",
+  "changedFiles": [
+    "apps/xroga-browser-extension/src/side-panel/Activity.tsx",
+    "apps/xroga-browser-extension/src/side-panel/Transcript.tsx",
+    "apps/xroga-browser-extension/src/side-panel/__tests__/activity.test.tsx",
+    "apps/xroga-browser-extension/src/side-panel/activity-label.ts",
+    "apps/xroga-browser-extension/src/ui/locales/en.json",
+    "apps/xroga-browser-extension/src/ui/locales/zh_CN.json",
+    "apps/xroga-browser-extension/src/ui/locales/zh_TW.json",
+    "docs/operations/observable-work-history.md",
+    "docs/xroga/missions/extension-observable-work-history.json"
+  ],
+  "decisions": {
+    "keep": [
+      "Existing execution, approvals, persistence and model contracts."
+    ],
+    "extend": [
+      "Compact disclosure for current work and recorded history."
+    ],
+    "replace": [
+      "Generic or guessed progress labels."
+    ],
+    "deprecate": []
+  },
+  "schemaImpact": {
+    "changed": false,
+    "migrations": [],
+    "rollout": "No migration.",
+    "rollback": "No schema rollback required."
+  },
+  "securityImpact": {
+    "auth": {
+      "changed": false,
+      "description": "Existing authentication."
+    },
+    "tenant": {
+      "changed": false,
+      "description": "Reads the same authorized event or run records."
+    },
+    "approval": {
+      "changed": false,
+      "description": "Displays existing approval state only."
+    },
+    "credentials": {
+      "changed": false,
+      "description": "No new credentials."
+    },
+    "egress": {
+      "changed": false,
+      "description": "No new requests or destinations."
+    },
+    "cost": {
+      "changed": false,
+      "description": "No additional tool or model requests."
+    },
+    "billing": {
+      "changed": false,
+      "description": "No accounting change."
+    }
+  },
+  "tests": [
+    {
+      "command": "pnpm test src/side-panel/__tests__/activity.test.tsx",
+      "scope": "Verify observable start, text and tool states without false activity.",
+      "negative": true,
+      "reference": "apps/xroga-browser-extension/src/side-panel/__tests__/activity.test.tsx"
+    }
+  ],
+  "architecture": {
+    "change": "extends_canonical",
+    "reason": "Presentation only, using events already delivered to the client.",
+    "rfc": null
+  },
+  "rollout": "Run exact-source checks and review the affected surface before release.",
+  "rollback": "Revert the UI change. Event and history formats stay compatible.",
+  "knownGaps": [
+    "Hosted authenticated Workspace and installed production extension acceptance remain pending."
+  ],
+  "placeholderClaimsRemaining": [],
+  "evidenceRefs": [
+    "docs/operations/observable-work-history.md"
+  ],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "NOT_REQUESTED",
+    "blockers": [
+      "Exact-source release checks and live acceptance remain pending."
+    ],
+    "authenticatedE2e": "BLOCKED",
+    "stagedSecurity": "NOT_APPLICABLE",
+    "liveUrl": null,
+    "deployedSha": null
+  }
+}
