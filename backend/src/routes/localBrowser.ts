@@ -26,9 +26,19 @@ import { createBusinessActionConfirmation } from '../services/integrations/busin
 
 const MODEL = 'deepseek_v4_1_flash_1017';
 const MAX_TURNS = 120;
+// A run is admitted in segments: when it reaches the end of one, `extend` grants the next while the verified spend and the hard
+// ceilings allow. The per-turn reservation and the settled provider cost, not the turn count, are what bound the money.
+const HARD_TURNS = 400;
+const SEGMENT_TURNS = 48;
 const TURN_CEILING_MICROS = 3_000;
-const MAX_RUN_MICROS = 36_000;
+// Settled provider cost bounds a run's spend. The default is unchanged; a scoped staging test can raise it with one environment value.
+const MAX_RUN_MICROS = (() => {
+  const configured = Number(process.env.XROGA_LOCAL_BROWSER_MAX_RUN_MICROS);
+  return Number.isInteger(configured) && configured >= 36_000 && configured <= 1_000_000 ? configured : 36_000;
+})();
 const MINUTE = 60_000;
+const SEGMENT_MS = 40 * MINUTE;
+const HARD_MS = 6 * 60 * MINUTE;
 const MAX_GOAL = 16_000;
 const MAX_PLUGIN_ACTIONS = 10;
 const MAX_PLUGIN_DISCOVERIES = 10;
@@ -144,7 +154,7 @@ const message = z.object({
   tool_call_id: z.string().max(200).optional(),
 }).strict();
 const turnBody = z.object({
-  turn: z.number().int().min(1).max(MAX_TURNS),
+  turn: z.number().int().min(1).max(HARD_TURNS),
   messages: z.array(message).min(1).max(140),
   tools: z.array(tool).max(32).optional(),
   tool_choice: z.enum(['auto', 'none', 'required']).optional(),
@@ -663,6 +673,25 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
       clearInterval(timer);
       res.off('close', disconnect);
     }
+  }));
+
+  // The next execution segment of the same run, under the same ownership, spend ledger and approvals. Granted only near the end of the
+  // current segment and only while the settled spend leaves room for more turns; otherwise nothing changes and the caller stops
+  // with its saved progress. Never starts a second run.
+  router.post('/runs/:runId/extend', withLease(async (_req, res, { runs }, row, lease) => {
+    active(row);
+    const current = allowance(row);
+    if (current.turns < current.maxTurns - 3) return res.json({ ...current, granted: 0 });
+    const spent = Number(row.state.productManifest.localBrowserSpendMicros ?? current.turns * TURN_CEILING_MICROS);
+    if (spent + 2 * TURN_CEILING_MICROS > MAX_RUN_MICROS) throw new BrowserRequestError(409, 'BROWSER_SPEND_LIMIT');
+    if (current.maxTurns >= HARD_TURNS) throw new BrowserRequestError(409, 'BROWSER_TURN_LIMIT');
+    const duration = Number(row.state.productManifest.localBrowserDurationMs ?? 10 * MINUTE);
+    row.state.productManifest.localBrowserMaxTurns = Math.min(HARD_TURNS, current.maxTurns + SEGMENT_TURNS);
+    row.state.productManifest.localBrowserDurationMs = Math.min(HARD_MS, duration + SEGMENT_MS);
+    row.state.updatedAt = new Date().toISOString();
+    await runs.stateStore(row.userId, () => lease).save(row.state);
+    const next = allowance(row);
+    return res.json({ ...next, granted: next.maxTurns - current.maxTurns });
   }));
 
   router.post('/runs/:runId/resume', withLease(async (req, res, _rt, row) => {

@@ -1672,6 +1672,16 @@ export class RunManager {
           signal: controller.signal,
           emit: (event, entry) => this.emit(conversationId, event, entry),
           turnCap: canonical?.remainingTurns ?? settings.turnCap,
+          extendTurns: canonical
+            ? async () => {
+                const next = await canonical!.extend();
+                if (next.turns <= 0) return 0;
+                // The wall-clock limit moves with the segment.
+                if (deadline) clearTimeout(deadline);
+                deadline = setTimeout(() => controller.abort(), next.remainingMs);
+                return next.turns;
+              }
+            : undefined,
           attachmentPreviewChars: canonical ? 8_000 : undefined,
           thumbnail,
           localScreenshots: !!canonical,

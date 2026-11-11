@@ -81,6 +81,8 @@ export interface LoopOptions {
   signal: AbortSignal;
   emit: (event: AgentEvent, resultEntry?: EntryOf<'message'>) => void;
   turnCap: number;
+  /** Asks for the next segment of turns when the cap is reached; resolves to the number granted, 0 when refused. */
+  extendTurns?: () => Promise<number>;
   attachmentPreviewChars?: number;
   /** The conversation's mode, for the page header; only the user changes it. */
   mode?: () => PermissionMode;
@@ -901,7 +903,16 @@ ${ledger}` : ''),
       await this.writer.appNote('you acted on a page in this run; finish with `done` and an honest outcome.');
       return null;
     }
-    if (this.#turns >= this.options.turnCap) return this.salvage('the run reached its turn limit.', 'cap');
+    if (this.#turns >= this.options.turnCap) {
+      // The end of a segment is not the end of the task: the server is asked for the next one (same run, same spend ledger), and the
+      // run only stops, with an honest summary, when it declines.
+      const more = (await this.options.extendTurns?.().catch(() => 0)) ?? 0;
+      if (more > 0) {
+        this.options.turnCap += more;
+        return null;
+      }
+      return this.salvage('the run reached its turn limit.', 'cap');
+    }
     return null;
   }
 

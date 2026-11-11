@@ -169,6 +169,22 @@ test('local Chrome shares canonical ownership, turn fencing, cancellation and re
     assert.equal((await send(`${longPath}/turn`, 'POST', { ...request, turn: 15 })).status, 409);
     assert.equal((await send(`${longPath}/turn`, 'POST', { ...request, turn: 16 })).status, 200);
 
+    // A run is admitted in segments: the next one is granted only at the end of the current one, to the owner, and the turn fence holds.
+    const segPath = `/runs/${anotherRun}`;
+    const early = await (await send(`${segPath}/extend`, 'POST', {})).json() as { maxTurns: number; granted: number };
+    assert.equal(early.granted, 0);
+    const firstMax = early.maxTurns;
+    for (let turn = 1; turn <= firstMax - 3; turn++) {
+      assert.equal((await send(`${segPath}/turn`, 'POST', { ...request, turn })).status, 200);
+    }
+    assert.equal((await send(`${segPath}/extend`, 'POST', {}, true)).status, 404);
+    const grant = await (await send(`${segPath}/extend`, 'POST', {})).json() as { maxTurns: number; granted: number; remainingMs: number; turns: number };
+    assert.equal(grant.granted, 48);
+    assert.equal(grant.maxTurns, firstMax + 48);
+    assert.equal(grant.turns, firstMax - 3);
+    assert.ok(grant.remainingMs > 40 * 60_000);
+    assert.equal((await send(`${segPath}/turn`, 'POST', { ...request, turn: firstMax - 2 })).status, 200);
+
     const probeRun = await (await send('/runs', 'POST', { goal: 'Inspect a synthetic image', startUrl: 'https://example.com/' })).json() as { runId: string };
     const probePath = `/runs/${probeRun.runId}/turn`;
     const png = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+VODsAAAAASUVORK5CYII=';

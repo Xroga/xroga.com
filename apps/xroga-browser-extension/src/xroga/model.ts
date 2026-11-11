@@ -62,13 +62,14 @@ export async function startXrogaModelRun(
   let requestInterrupted = false;
   const remainingTurns = (start.maxTurns ?? 12) - turn;
   const remainingMs = start.remainingMs ?? 600_000;
+  let maxTurns = start.maxTurns ?? 12;
   if (
     !Number.isSafeInteger(remainingTurns) ||
     remainingTurns <= 0 ||
-    remainingTurns > 120 ||
+    remainingTurns > 400 ||
     !Number.isSafeInteger(remainingMs) ||
     remainingMs <= 0 ||
-    remainingMs > 5_400_000 ||
+    remainingMs > 21_600_000 ||
     (resumeId && resumeId !== runId)
   ) {
     throw new Error('This browser task has reached its time or turn limit.');
@@ -114,9 +115,26 @@ export async function startXrogaModelRun(
     overrides: { contextWindow: 32_000, maxOutput: 2_048, vision: false },
   });
   const model: ResolvedModel = { ref: XROGA_REF, chat, profile, reasoning: 'none', reasoningDropped: true };
+  /**
+   * Asks the server for the run's next segment when this one is used up: the same run, ledger and approvals. The server grants it
+   * only while settled spend and its ceilings allow; anything else (or a Workspace relay, which has no such route) is 0 and the
+   * caller stops with its saved progress as before.
+   */
+  const extend = async (): Promise<{ turns: number; remainingMs: number }> => {
+    try {
+      const next = (await workspaceRequest('extend', { runId, body: {} }, signal)) as { maxTurns?: number; remainingMs?: number };
+      const granted = Number.isSafeInteger(next?.maxTurns) ? (next.maxTurns as number) - maxTurns : 0;
+      if (granted <= 0 || !Number.isSafeInteger(next.remainingMs) || (next.remainingMs as number) <= 0) return { turns: 0, remainingMs: 0 };
+      maxTurns = next.maxTurns as number;
+      return { turns: granted, remainingMs: next.remainingMs as number };
+    } catch {
+      return { turns: 0, remainingMs: 0 };
+    }
+  };
   return {
     runId,
     model,
+    extend,
     plugins: start.plugins === true,
     remainingTurns,
     remainingMs,

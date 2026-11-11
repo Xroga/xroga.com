@@ -21,7 +21,7 @@ interface WorkspaceMessage {
   value?: unknown;
 }
 
-type Operation = 'start' | 'resume' | 'turn' | 'finish' | 'document' | 'voice' | 'authorize-device'
+type Operation = 'start' | 'resume' | 'extend' | 'turn' | 'finish' | 'document' | 'voice' | 'authorize-device'
   | 'plugin-search' | 'plugin-read' | 'plugin-review' | 'plugin-action-search' | 'plugin-act' | 'plugin-act-review';
 type Pending = { succeed: (value: unknown) => void; fail: (error: Error) => void };
 type PairFailure = 'sign-in' | 'unavailable' | 'extension-id' | 'account' | 'failed';
