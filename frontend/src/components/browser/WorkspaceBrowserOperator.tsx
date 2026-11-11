@@ -217,7 +217,9 @@ export function WorkspaceBrowserOperator({ extensionId }: { extensionId?: string
     };
   }, [extensionId]);
 
-  if (!extensionId && !pairingVisible) return null;
+  // The operator panel belongs to an explicit extension-pairing flow, not to
+  // every workspace visit. Keep the listener mounted, but hide the idle pill.
+  if (!pairingVisible) return null;
   return (
     <details className="fixed bottom-24 right-4 z-40 w-[min(24rem,calc(100vw-2rem))] rounded-xl border bg-background p-3 text-sm text-foreground shadow-lg" open={paired || pairingVisible || undefined}>
       <summary className="cursor-pointer font-medium">Browser Operator</summary>
