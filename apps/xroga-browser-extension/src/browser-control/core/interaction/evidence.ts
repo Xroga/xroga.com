@@ -16,6 +16,11 @@ import { siteOf } from '../site';
 const POLL_MS = 100;
 const CAP_MS = 1_500;
 const NAVIGATION_READY_MS = 5_000;
+/** After a new document: ready once it has loaded, no tracked request is in flight and this long has passed since the last
+ * one, instead of waiting for Chrome's networkIdle, which needs 500 ms of silence. The wait still ends at networkIdle if that
+ * comes first, and at NAVIGATION_READY_MS. */
+const READY_QUIET_MS = 250;
+const READY_POLL_MS = 50;
 /** How long the block is watched after settle when the only evidence is its own mutations. */
 const VOLATILITY_MS = 400;
 /** Weak signals: mutations alone do not say the action did something. */
@@ -72,6 +77,9 @@ export class Evidence {
   #baseline!: Snapshot;
   #block = '';
   #idle = false;
+  /** When the new document finished loading, and when a tracked request last started or finished. */
+  #loadedAt: number | null = null;
+  #lastNetworkAt = 0;
   #abandoned = false;
   #factsBefore: PageFacts | null = null;
   #focusBefore: string | null = null;
@@ -119,6 +127,7 @@ export class Evidence {
         if (!frame.parentId && frame.id === topology.mainFrameId()) {
           this.#navigation = { url: frame.url + (frame.urlFragment ?? ''), kind: 'new-document' };
           this.#idle = false;
+          this.#loadedAt = null;
         }
       }),
       cdp.on('Page.navigatedWithinDocument', params => {
@@ -128,6 +137,7 @@ export class Evidence {
       cdp.on('Page.lifecycleEvent', params => {
         const p = params as { frameId: string; name: string };
         if (p.frameId === topology.mainFrameId() && p.name === 'networkIdle') this.#idle = true;
+        if (p.frameId === topology.mainFrameId() && p.name === 'load') this.#loadedAt = performance.now();
       }),
       cdp.on('Page.javascriptDialogOpening', params => {
         this.#dialog ??= params as DialogInfo;
@@ -139,6 +149,7 @@ export class Evidence {
       cdp.on('Network.requestWillBeSent', (params, sessionId) => {
         const p = params as { requestId: string; type?: string; request: { method: string; url: string } };
         if (p.type !== 'Document' && p.type !== 'XHR' && p.type !== 'Fetch') return;
+        this.#lastNetworkAt = performance.now();
         this.#requests.set(`${sessionId ?? ''}|${p.requestId}`, {
           method: p.request.method,
           url: p.request.url,
@@ -160,7 +171,10 @@ export class Evidence {
 
   #finish(params: unknown, sessionId: string | undefined): void {
     const request = this.#requests.get(`${sessionId ?? ''}|${(params as { requestId: string }).requestId}`);
-    if (request) request.done = true;
+    if (request) {
+      request.done = true;
+      this.#lastNetworkAt = performance.now();
+    }
   }
 
   /** A dialog seen by the dispatch race. */
@@ -376,8 +390,15 @@ export class Evidence {
   /** After a new document: DOMContentLoaded plus network idle, capped. */
   async #waitReady(start: number): Promise<void> {
     while (!this.#idle && performance.now() - start < NAVIGATION_READY_MS) {
-      await new Promise(resolve => setTimeout(resolve, POLL_MS));
+      if (this.#quietAfterLoad()) return;
+      await new Promise(resolve => setTimeout(resolve, READY_POLL_MS));
     }
+  }
+
+  /** The document has loaded, nothing it asked for is still coming, and it has been quiet for READY_QUIET_MS. */
+  #quietAfterLoad(): boolean {
+    if (this.#loadedAt === null || [...this.#requests.values()].some(r => !r.done)) return false;
+    return performance.now() - Math.max(this.#loadedAt, this.#lastNetworkAt) >= READY_QUIET_MS;
   }
 
   dispose(): void {

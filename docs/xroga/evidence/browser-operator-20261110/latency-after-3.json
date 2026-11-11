@@ -1,0 +1,1209 @@
+{
+  "product": "Chrome/151.0.7922.34",
+  "runs": 12,
+  "model": "deterministic fixture",
+  "samples": [
+    {
+      "cold": true,
+      "pointerVisibleMs": 152,
+      "doneMs": 1496
+    },
+    {
+      "cold": false,
+      "pointerVisibleMs": 179,
+      "doneMs": 1545
+    },
+    {
+      "cold": false,
+      "pointerVisibleMs": 238,
+      "doneMs": 1342
+    },
+    {
+      "cold": false,
+      "pointerVisibleMs": 206,
+      "doneMs": 1430
+    },
+    {
+      "cold": false,
+      "pointerVisibleMs": 265,
+      "doneMs": 1475
+    },
+    {
+      "cold": false,
+      "pointerVisibleMs": 209,
+      "doneMs": 1988
+    },
+    {
+      "cold": false,
+      "pointerVisibleMs": 306,
+      "doneMs": 2328
+    },
+    {
+      "cold": false,
+      "pointerVisibleMs": 239,
+      "doneMs": 1798
+    },
+    {
+      "cold": false,
+      "pointerVisibleMs": 252,
+      "doneMs": 1794
+    },
+    {
+      "cold": false,
+      "pointerVisibleMs": 256,
+      "doneMs": 1743
+    },
+    {
+      "cold": false,
+      "pointerVisibleMs": 247,
+      "doneMs": 1693
+    },
+    {
+      "cold": false,
+      "pointerVisibleMs": 206,
+      "doneMs": 1522
+    }
+  ],
+  "perf": [
+    {
+      "canonical": true,
+      "outcome": "success",
+      "runId": "92a5c856-a663-4cbc-96cb-f906552fabcd",
+      "startedAt": "2026-11-10T11:24:47.200Z",
+      "status": "done",
+      "timings": {
+        "marks": {
+          "first-model-reply": 274,
+          "first-model-request": 154
+        },
+        "phases": {
+          "finish": {
+            "count": 5,
+            "maxMs": 4,
+            "p50Ms": 3,
+            "totalMs": 12
+          },
+          "model": {
+            "count": 5,
+            "maxMs": 121,
+            "p50Ms": 58,
+            "totalMs": 347
+          },
+          "prepare": {
+            "count": 5,
+            "maxMs": 33,
+            "p50Ms": 12,
+            "totalMs": 76
+          },
+          "tool.after": {
+            "count": 5,
+            "maxMs": 45,
+            "p50Ms": 0,
+            "totalMs": 47
+          },
+          "tool.gate": {
+            "count": 5,
+            "maxMs": 0,
+            "p50Ms": 0,
+            "totalMs": 0
+          },
+          "tool.journal": {
+            "count": 5,
+            "maxMs": 3,
+            "p50Ms": 2,
+            "totalMs": 12
+          },
+          "tool.layer": {
+            "count": 4,
+            "maxMs": 533,
+            "p50Ms": 10,
+            "totalMs": 643
+          },
+          "tool:click": {
+            "count": 1,
+            "maxMs": 536,
+            "p50Ms": 536,
+            "totalMs": 536
+          },
+          "tool:done": {
+            "count": 1,
+            "maxMs": 4,
+            "p50Ms": 4,
+            "totalMs": 4
+          },
+          "tool:read": {
+            "count": 1,
+            "maxMs": 6,
+            "p50Ms": 6,
+            "totalMs": 6
+          },
+          "tool:screenshot": {
+            "count": 1,
+            "maxMs": 146,
+            "p50Ms": 146,
+            "totalMs": 146
+          },
+          "tool:snapshot": {
+            "count": 1,
+            "maxMs": 16,
+            "p50Ms": 16,
+            "totalMs": 16
+          },
+          "tools": {
+            "count": 5,
+            "maxMs": 538,
+            "p50Ms": 21,
+            "totalMs": 723
+          }
+        },
+        "wallMs": 1283
+      },
+      "turns": 5
+    },
+    {
+      "canonical": true,
+      "outcome": "success",
+      "runId": "b1567de0-e91d-41e4-a153-ff384f6b3803",
+      "startedAt": "2026-11-10T11:24:48.815Z",
+      "status": "done",
+      "timings": {
+        "marks": {
+          "first-model-reply": 112,
+          "first-model-request": 65
+        },
+        "phases": {
+          "finish": {
+            "count": 5,
+            "maxMs": 4,
+            "p50Ms": 3,
+            "totalMs": 12
+          },
+          "model": {
+            "count": 5,
+            "maxMs": 80,
+            "p50Ms": 51,
+            "totalMs": 296
+          },
+          "prepare": {
+            "count": 5,
+            "maxMs": 25,
+            "p50Ms": 12,
+            "totalMs": 68
+          },
+          "tool.after": {
+            "count": 5,
+            "maxMs": 47,
+            "p50Ms": 0,
+            "totalMs": 47
+          },
+          "tool.gate": {
+            "count": 5,
+            "maxMs": 0,
+            "p50Ms": 0,
+            "totalMs": 0
+          },
+          "tool.journal": {
+            "count": 5,
+            "maxMs": 15,
+            "p50Ms": 3,
+            "totalMs": 26
+          },
+          "tool.layer": {
+            "count": 4,
+            "maxMs": 583,
+            "p50Ms": 7,
+            "totalMs": 692
+          },
+          "tool:click": {
+            "count": 1,
+            "maxMs": 599,
+            "p50Ms": 599,
+            "totalMs": 599
+          },
+          "tool:done": {
+            "count": 1,
+            "maxMs": 3,
+            "p50Ms": 3,
+            "totalMs": 3
+          },
+          "tool:read": {
+            "count": 1,
+            "maxMs": 4,
+            "p50Ms": 4,
+            "totalMs": 4
+          },
+          "tool:screenshot": {
+            "count": 1,
+            "maxMs": 149,
+            "p50Ms": 149,
+            "totalMs": 149
+          },
+          "tool:snapshot": {
+            "count": 1,
+            "maxMs": 11,
+            "p50Ms": 11,
+            "totalMs": 11
+          },
+          "tools": {
+            "count": 5,
+            "maxMs": 601,
+            "p50Ms": 15,
+            "totalMs": 781
+          }
+        },
+        "wallMs": 1213
+      },
+      "turns": 5
+    },
+    {
+      "canonical": true,
+      "outcome": "success",
+      "runId": "4e29a186-73b0-4f20-8546-e1f0e1a6604e",
+      "startedAt": "2026-11-10T11:24:50.452Z",
+      "status": "done",
+      "timings": {
+        "marks": {
+          "first-model-reply": 109,
+          "first-model-request": 58
+        },
+        "phases": {
+          "finish": {
+            "count": 5,
+            "maxMs": 4,
+            "p50Ms": 2,
+            "totalMs": 12
+          },
+          "model": {
+            "count": 5,
+            "maxMs": 61,
+            "p50Ms": 58,
+            "totalMs": 281
+          },
+          "prepare": {
+            "count": 5,
+            "maxMs": 20,
+            "p50Ms": 11,
+            "totalMs": 63
+          },
+          "tool.after": {
+            "count": 5,
+            "maxMs": 45,
+            "p50Ms": 0,
+            "totalMs": 46
+          },
+          "tool.gate": {
+            "count": 5,
+            "maxMs": 0,
+            "p50Ms": 0,
+            "totalMs": 0
+          },
+          "tool.journal": {
+            "count": 5,
+            "maxMs": 3,
+            "p50Ms": 2,
+            "totalMs": 11
+          },
+          "tool.layer": {
+            "count": 4,
+            "maxMs": 477,
+            "p50Ms": 7,
+            "totalMs": 570
+          },
+          "tool:click": {
+            "count": 1,
+            "maxMs": 480,
+            "p50Ms": 480,
+            "totalMs": 480
+          },
+          "tool:done": {
+            "count": 1,
+            "maxMs": 3,
+            "p50Ms": 3,
+            "totalMs": 3
+          },
+          "tool:read": {
+            "count": 1,
+            "maxMs": 4,
+            "p50Ms": 4,
+            "totalMs": 4
+          },
+          "tool:screenshot": {
+            "count": 1,
+            "maxMs": 132,
+            "p50Ms": 132,
+            "totalMs": 132
+          },
+          "tool:snapshot": {
+            "count": 1,
+            "maxMs": 10,
+            "p50Ms": 10,
+            "totalMs": 10
+          },
+          "tools": {
+            "count": 5,
+            "maxMs": 484,
+            "p50Ms": 14,
+            "totalMs": 646
+          }
+        },
+        "wallMs": 1045
+      },
+      "turns": 5
+    },
+    {
+      "canonical": true,
+      "outcome": "success",
+      "runId": "258e62d5-b164-470c-bea5-45fb236ccd09",
+      "startedAt": "2026-11-10T11:24:51.842Z",
+      "status": "done",
+      "timings": {
+        "marks": {
+          "first-model-reply": 126,
+          "first-model-request": 67
+        },
+        "phases": {
+          "finish": {
+            "count": 5,
+            "maxMs": 3,
+            "p50Ms": 2,
+            "totalMs": 11
+          },
+          "model": {
+            "count": 5,
+            "maxMs": 77,
+            "p50Ms": 67,
+            "totalMs": 332
+          },
+          "prepare": {
+            "count": 5,
+            "maxMs": 18,
+            "p50Ms": 13,
+            "totalMs": 67
+          },
+          "tool.after": {
+            "count": 5,
+            "maxMs": 32,
+            "p50Ms": 0,
+            "totalMs": 32
+          },
+          "tool.gate": {
+            "count": 5,
+            "maxMs": 0,
+            "p50Ms": 0,
+            "totalMs": 0
+          },
+          "tool.journal": {
+            "count": 5,
+            "maxMs": 3,
+            "p50Ms": 2,
+            "totalMs": 11
+          },
+          "tool.layer": {
+            "count": 4,
+            "maxMs": 508,
+            "p50Ms": 7,
+            "totalMs": 615
+          },
+          "tool:click": {
+            "count": 1,
+            "maxMs": 511,
+            "p50Ms": 511,
+            "totalMs": 511
+          },
+          "tool:done": {
+            "count": 1,
+            "maxMs": 3,
+            "p50Ms": 3,
+            "totalMs": 3
+          },
+          "tool:read": {
+            "count": 1,
+            "maxMs": 7,
+            "p50Ms": 7,
+            "totalMs": 7
+          },
+          "tool:screenshot": {
+            "count": 1,
+            "maxMs": 129,
+            "p50Ms": 129,
+            "totalMs": 129
+          },
+          "tool:snapshot": {
+            "count": 1,
+            "maxMs": 9,
+            "p50Ms": 9,
+            "totalMs": 9
+          },
+          "tools": {
+            "count": 5,
+            "maxMs": 513,
+            "p50Ms": 11,
+            "totalMs": 674
+          }
+        },
+        "wallMs": 1136
+      },
+      "turns": 5
+    },
+    {
+      "canonical": true,
+      "outcome": "success",
+      "runId": "5c3cf79f-b8f8-41d3-92f7-f3eef8adb050",
+      "startedAt": "2026-11-10T11:24:53.357Z",
+      "status": "done",
+      "timings": {
+        "marks": {
+          "first-model-reply": 194,
+          "first-model-request": 124
+        },
+        "phases": {
+          "finish": {
+            "count": 5,
+            "maxMs": 4,
+            "p50Ms": 3,
+            "totalMs": 14
+          },
+          "model": {
+            "count": 5,
+            "maxMs": 70,
+            "p50Ms": 65,
+            "totalMs": 330
+          },
+          "prepare": {
+            "count": 5,
+            "maxMs": 28,
+            "p50Ms": 16,
+            "totalMs": 89
+          },
+          "tool.after": {
+            "count": 5,
+            "maxMs": 30,
+            "p50Ms": 0,
+            "totalMs": 30
+          },
+          "tool.gate": {
+            "count": 5,
+            "maxMs": 0,
+            "p50Ms": 0,
+            "totalMs": 0
+          },
+          "tool.journal": {
+            "count": 5,
+            "maxMs": 4,
+            "p50Ms": 3,
+            "totalMs": 14
+          },
+          "tool.layer": {
+            "count": 4,
+            "maxMs": 510,
+            "p50Ms": 8,
+            "totalMs": 612
+          },
+          "tool:click": {
+            "count": 1,
+            "maxMs": 514,
+            "p50Ms": 514,
+            "totalMs": 514
+          },
+          "tool:done": {
+            "count": 1,
+            "maxMs": 2,
+            "p50Ms": 2,
+            "totalMs": 2
+          },
+          "tool:read": {
+            "count": 1,
+            "maxMs": 3,
+            "p50Ms": 3,
+            "totalMs": 3
+          },
+          "tool:screenshot": {
+            "count": 1,
+            "maxMs": 126,
+            "p50Ms": 126,
+            "totalMs": 126
+          },
+          "tool:snapshot": {
+            "count": 1,
+            "maxMs": 12,
+            "p50Ms": 12,
+            "totalMs": 12
+          },
+          "tools": {
+            "count": 5,
+            "maxMs": 517,
+            "p50Ms": 15,
+            "totalMs": 672
+          }
+        },
+        "wallMs": 1204
+      },
+      "turns": 5
+    },
+    {
+      "canonical": true,
+      "outcome": "success",
+      "runId": "f93365f0-61a4-4f75-912b-c58660997a2c",
+      "startedAt": "2026-11-10T11:24:54.880Z",
+      "status": "done",
+      "timings": {
+        "marks": {
+          "first-model-reply": 154,
+          "first-model-request": 87
+        },
+        "phases": {
+          "finish": {
+            "count": 5,
+            "maxMs": 9,
+            "p50Ms": 3,
+            "totalMs": 25
+          },
+          "model": {
+            "count": 5,
+            "maxMs": 119,
+            "p50Ms": 83,
+            "totalMs": 448
+          },
+          "prepare": {
+            "count": 5,
+            "maxMs": 48,
+            "p50Ms": 24,
+            "totalMs": 136
+          },
+          "tool.after": {
+            "count": 5,
+            "maxMs": 84,
+            "p50Ms": 0,
+            "totalMs": 84
+          },
+          "tool.gate": {
+            "count": 5,
+            "maxMs": 0,
+            "p50Ms": 0,
+            "totalMs": 0
+          },
+          "tool.journal": {
+            "count": 5,
+            "maxMs": 26,
+            "p50Ms": 3,
+            "totalMs": 38
+          },
+          "tool.layer": {
+            "count": 4,
+            "maxMs": 592,
+            "p50Ms": 6,
+            "totalMs": 816
+          },
+          "tool:click": {
+            "count": 1,
+            "maxMs": 595,
+            "p50Ms": 595,
+            "totalMs": 595
+          },
+          "tool:done": {
+            "count": 1,
+            "maxMs": 4,
+            "p50Ms": 4,
+            "totalMs": 4
+          },
+          "tool:read": {
+            "count": 1,
+            "maxMs": 7,
+            "p50Ms": 7,
+            "totalMs": 7
+          },
+          "tool:screenshot": {
+            "count": 1,
+            "maxMs": 326,
+            "p50Ms": 326,
+            "totalMs": 326
+          },
+          "tool:snapshot": {
+            "count": 1,
+            "maxMs": 9,
+            "p50Ms": 9,
+            "totalMs": 9
+          },
+          "tools": {
+            "count": 5,
+            "maxMs": 600,
+            "p50Ms": 12,
+            "totalMs": 961
+          }
+        },
+        "wallMs": 1640
+      },
+      "turns": 5
+    },
+    {
+      "canonical": true,
+      "outcome": "success",
+      "runId": "c3a9d839-5508-4f5b-889f-3c17fcf2e8b1",
+      "startedAt": "2026-11-10T11:24:57.017Z",
+      "status": "done",
+      "timings": {
+        "marks": {
+          "first-model-reply": 303,
+          "first-model-request": 223
+        },
+        "phases": {
+          "finish": {
+            "count": 5,
+            "maxMs": 197,
+            "p50Ms": 3,
+            "totalMs": 209
+          },
+          "model": {
+            "count": 5,
+            "maxMs": 166,
+            "p50Ms": 78,
+            "totalMs": 455
+          },
+          "prepare": {
+            "count": 5,
+            "maxMs": 127,
+            "p50Ms": 23,
+            "totalMs": 266
+          },
+          "tool.after": {
+            "count": 5,
+            "maxMs": 33,
+            "p50Ms": 0,
+            "totalMs": 33
+          },
+          "tool.gate": {
+            "count": 5,
+            "maxMs": 0,
+            "p50Ms": 0,
+            "totalMs": 0
+          },
+          "tool.journal": {
+            "count": 5,
+            "maxMs": 5,
+            "p50Ms": 3,
+            "totalMs": 16
+          },
+          "tool.layer": {
+            "count": 4,
+            "maxMs": 561,
+            "p50Ms": 10,
+            "totalMs": 683
+          },
+          "tool:click": {
+            "count": 1,
+            "maxMs": 564,
+            "p50Ms": 564,
+            "totalMs": 564
+          },
+          "tool:done": {
+            "count": 1,
+            "maxMs": 3,
+            "p50Ms": 3,
+            "totalMs": 3
+          },
+          "tool:read": {
+            "count": 1,
+            "maxMs": 5,
+            "p50Ms": 5,
+            "totalMs": 5
+          },
+          "tool:screenshot": {
+            "count": 1,
+            "maxMs": 148,
+            "p50Ms": 148,
+            "totalMs": 148
+          },
+          "tool:snapshot": {
+            "count": 1,
+            "maxMs": 13,
+            "p50Ms": 13,
+            "totalMs": 13
+          },
+          "tools": {
+            "count": 5,
+            "maxMs": 614,
+            "p50Ms": 17,
+            "totalMs": 796
+          }
+        },
+        "wallMs": 1825
+      },
+      "turns": 5
+    },
+    {
+      "canonical": true,
+      "outcome": "success",
+      "runId": "96b4dd9a-00b7-4abf-b3f7-976362aa5a58",
+      "startedAt": "2026-11-10T11:24:59.358Z",
+      "status": "done",
+      "timings": {
+        "marks": {
+          "first-model-reply": 219,
+          "first-model-request": 120
+        },
+        "phases": {
+          "finish": {
+            "count": 5,
+            "maxMs": 7,
+            "p50Ms": 3,
+            "totalMs": 19
+          },
+          "model": {
+            "count": 5,
+            "maxMs": 98,
+            "p50Ms": 87,
+            "totalMs": 438
+          },
+          "prepare": {
+            "count": 5,
+            "maxMs": 37,
+            "p50Ms": 32,
+            "totalMs": 159
+          },
+          "tool.after": {
+            "count": 5,
+            "maxMs": 43,
+            "p50Ms": 0,
+            "totalMs": 44
+          },
+          "tool.gate": {
+            "count": 5,
+            "maxMs": 0,
+            "p50Ms": 0,
+            "totalMs": 0
+          },
+          "tool.journal": {
+            "count": 5,
+            "maxMs": 8,
+            "p50Ms": 4,
+            "totalMs": 22
+          },
+          "tool.layer": {
+            "count": 4,
+            "maxMs": 555,
+            "p50Ms": 9,
+            "totalMs": 680
+          },
+          "tool:click": {
+            "count": 1,
+            "maxMs": 558,
+            "p50Ms": 558,
+            "totalMs": 558
+          },
+          "tool:done": {
+            "count": 1,
+            "maxMs": 5,
+            "p50Ms": 5,
+            "totalMs": 5
+          },
+          "tool:read": {
+            "count": 1,
+            "maxMs": 5,
+            "p50Ms": 5,
+            "totalMs": 5
+          },
+          "tool:screenshot": {
+            "count": 1,
+            "maxMs": 166,
+            "p50Ms": 166,
+            "totalMs": 166
+          },
+          "tool:snapshot": {
+            "count": 1,
+            "maxMs": 13,
+            "p50Ms": 13,
+            "totalMs": 13
+          },
+          "tools": {
+            "count": 5,
+            "maxMs": 571,
+            "p50Ms": 17,
+            "totalMs": 776
+          }
+        },
+        "wallMs": 1485
+      },
+      "turns": 5
+    },
+    {
+      "canonical": true,
+      "outcome": "success",
+      "runId": "15832ba8-883f-4f55-971c-cf7b0346b1df",
+      "startedAt": "2026-11-10T11:25:01.238Z",
+      "status": "done",
+      "timings": {
+        "marks": {
+          "first-model-reply": 226,
+          "first-model-request": 133
+        },
+        "phases": {
+          "finish": {
+            "count": 5,
+            "maxMs": 6,
+            "p50Ms": 3,
+            "totalMs": 19
+          },
+          "model": {
+            "count": 5,
+            "maxMs": 107,
+            "p50Ms": 90,
+            "totalMs": 457
+          },
+          "prepare": {
+            "count": 5,
+            "maxMs": 36,
+            "p50Ms": 26,
+            "totalMs": 134
+          },
+          "tool.after": {
+            "count": 5,
+            "maxMs": 39,
+            "p50Ms": 0,
+            "totalMs": 40
+          },
+          "tool.gate": {
+            "count": 5,
+            "maxMs": 0,
+            "p50Ms": 0,
+            "totalMs": 0
+          },
+          "tool.journal": {
+            "count": 5,
+            "maxMs": 4,
+            "p50Ms": 3,
+            "totalMs": 17
+          },
+          "tool.layer": {
+            "count": 4,
+            "maxMs": 542,
+            "p50Ms": 10,
+            "totalMs": 680
+          },
+          "tool:click": {
+            "count": 1,
+            "maxMs": 545,
+            "p50Ms": 545,
+            "totalMs": 545
+          },
+          "tool:done": {
+            "count": 1,
+            "maxMs": 3,
+            "p50Ms": 3,
+            "totalMs": 3
+          },
+          "tool:read": {
+            "count": 1,
+            "maxMs": 5,
+            "p50Ms": 5,
+            "totalMs": 5
+          },
+          "tool:screenshot": {
+            "count": 1,
+            "maxMs": 170,
+            "p50Ms": 170,
+            "totalMs": 170
+          },
+          "tool:snapshot": {
+            "count": 1,
+            "maxMs": 15,
+            "p50Ms": 15,
+            "totalMs": 15
+          },
+          "tools": {
+            "count": 5,
+            "maxMs": 549,
+            "p50Ms": 20,
+            "totalMs": 760
+          }
+        },
+        "wallMs": 1471
+      },
+      "turns": 5
+    },
+    {
+      "canonical": true,
+      "outcome": "success",
+      "runId": "f7b04a44-1445-4ce2-b0d2-a862fa9dbc0e",
+      "startedAt": "2026-11-10T11:25:03.130Z",
+      "status": "done",
+      "timings": {
+        "marks": {
+          "first-model-reply": 256,
+          "first-model-request": 173
+        },
+        "phases": {
+          "finish": {
+            "count": 5,
+            "maxMs": 5,
+            "p50Ms": 3,
+            "totalMs": 16
+          },
+          "model": {
+            "count": 5,
+            "maxMs": 90,
+            "p50Ms": 84,
+            "totalMs": 421
+          },
+          "prepare": {
+            "count": 5,
+            "maxMs": 60,
+            "p50Ms": 24,
+            "totalMs": 151
+          },
+          "tool.after": {
+            "count": 5,
+            "maxMs": 28,
+            "p50Ms": 0,
+            "totalMs": 28
+          },
+          "tool.gate": {
+            "count": 5,
+            "maxMs": 0,
+            "p50Ms": 0,
+            "totalMs": 0
+          },
+          "tool.journal": {
+            "count": 5,
+            "maxMs": 4,
+            "p50Ms": 3,
+            "totalMs": 15
+          },
+          "tool.layer": {
+            "count": 4,
+            "maxMs": 490,
+            "p50Ms": 7,
+            "totalMs": 615
+          },
+          "tool:click": {
+            "count": 1,
+            "maxMs": 493,
+            "p50Ms": 493,
+            "totalMs": 493
+          },
+          "tool:done": {
+            "count": 1,
+            "maxMs": 4,
+            "p50Ms": 4,
+            "totalMs": 4
+          },
+          "tool:read": {
+            "count": 1,
+            "maxMs": 5,
+            "p50Ms": 5,
+            "totalMs": 5
+          },
+          "tool:screenshot": {
+            "count": 1,
+            "maxMs": 146,
+            "p50Ms": 146,
+            "totalMs": 146
+          },
+          "tool:snapshot": {
+            "count": 1,
+            "maxMs": 10,
+            "p50Ms": 10,
+            "totalMs": 10
+          },
+          "tools": {
+            "count": 5,
+            "maxMs": 498,
+            "p50Ms": 14,
+            "totalMs": 677
+          }
+        },
+        "wallMs": 1382
+      },
+      "turns": 5
+    },
+    {
+      "canonical": true,
+      "outcome": "success",
+      "runId": "c98acff4-c6e0-4189-bfbd-8f99ff409ec2",
+      "startedAt": "2026-11-10T11:25:04.938Z",
+      "status": "done",
+      "timings": {
+        "marks": {
+          "first-model-reply": 240,
+          "first-model-request": 169
+        },
+        "phases": {
+          "finish": {
+            "count": 5,
+            "maxMs": 4,
+            "p50Ms": 3,
+            "totalMs": 13
+          },
+          "model": {
+            "count": 5,
+            "maxMs": 85,
+            "p50Ms": 82,
+            "totalMs": 405
+          },
+          "prepare": {
+            "count": 5,
+            "maxMs": 48,
+            "p50Ms": 20,
+            "totalMs": 135
+          },
+          "tool.after": {
+            "count": 5,
+            "maxMs": 38,
+            "p50Ms": 0,
+            "totalMs": 38
+          },
+          "tool.gate": {
+            "count": 5,
+            "maxMs": 0,
+            "p50Ms": 0,
+            "totalMs": 0
+          },
+          "tool.journal": {
+            "count": 5,
+            "maxMs": 9,
+            "p50Ms": 3,
+            "totalMs": 20
+          },
+          "tool.layer": {
+            "count": 4,
+            "maxMs": 526,
+            "p50Ms": 6,
+            "totalMs": 622
+          },
+          "tool:click": {
+            "count": 1,
+            "maxMs": 529,
+            "p50Ms": 529,
+            "totalMs": 529
+          },
+          "tool:done": {
+            "count": 1,
+            "maxMs": 10,
+            "p50Ms": 10,
+            "totalMs": 10
+          },
+          "tool:read": {
+            "count": 1,
+            "maxMs": 3,
+            "p50Ms": 3,
+            "totalMs": 3
+          },
+          "tool:screenshot": {
+            "count": 1,
+            "maxMs": 129,
+            "p50Ms": 129,
+            "totalMs": 129
+          },
+          "tool:snapshot": {
+            "count": 1,
+            "maxMs": 10,
+            "p50Ms": 10,
+            "totalMs": 10
+          },
+          "tools": {
+            "count": 5,
+            "maxMs": 530,
+            "p50Ms": 17,
+            "totalMs": 697
+          }
+        },
+        "wallMs": 1378
+      },
+      "turns": 5
+    },
+    {
+      "canonical": true,
+      "outcome": "success",
+      "runId": "9aadd473-caab-4af6-a3a7-9899ea474295",
+      "startedAt": "2026-11-10T11:25:06.678Z",
+      "status": "done",
+      "timings": {
+        "marks": {
+          "first-model-reply": 235,
+          "first-model-request": 165
+        },
+        "phases": {
+          "finish": {
+            "count": 5,
+            "maxMs": 2,
+            "p50Ms": 2,
+            "totalMs": 8
+          },
+          "model": {
+            "count": 5,
+            "maxMs": 81,
+            "p50Ms": 73,
+            "totalMs": 367
+          },
+          "prepare": {
+            "count": 5,
+            "maxMs": 70,
+            "p50Ms": 23,
+            "totalMs": 158
+          },
+          "tool.after": {
+            "count": 5,
+            "maxMs": 31,
+            "p50Ms": 0,
+            "totalMs": 31
+          },
+          "tool.gate": {
+            "count": 5,
+            "maxMs": 0,
+            "p50Ms": 0,
+            "totalMs": 0
+          },
+          "tool.journal": {
+            "count": 5,
+            "maxMs": 2,
+            "p50Ms": 2,
+            "totalMs": 10
+          },
+          "tool.layer": {
+            "count": 4,
+            "maxMs": 485,
+            "p50Ms": 5,
+            "totalMs": 585
+          },
+          "tool:click": {
+            "count": 1,
+            "maxMs": 487,
+            "p50Ms": 487,
+            "totalMs": 487
+          },
+          "tool:done": {
+            "count": 1,
+            "maxMs": 2,
+            "p50Ms": 2,
+            "totalMs": 2
+          },
+          "tool:read": {
+            "count": 1,
+            "maxMs": 3,
+            "p50Ms": 3,
+            "totalMs": 3
+          },
+          "tool:screenshot": {
+            "count": 1,
+            "maxMs": 128,
+            "p50Ms": 128,
+            "totalMs": 128
+          },
+          "tool:snapshot": {
+            "count": 1,
+            "maxMs": 6,
+            "p50Ms": 6,
+            "totalMs": 6
+          },
+          "tools": {
+            "count": 5,
+            "maxMs": 490,
+            "p50Ms": 9,
+            "totalMs": 638
+          }
+        },
+        "wallMs": 1269
+      },
+      "turns": 5
+    }
+  ]
+}

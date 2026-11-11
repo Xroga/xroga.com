@@ -144630,6 +144630,20 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:c620de95596ccf0877ff",
+      "sourcePath": "apps/xroga-browser-extension/src/agent/__tests__/chat-memory.test.ts",
+      "declaredTests": 3,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:6fe73844a9048abb3dd6",
+      "sourcePath": "apps/xroga-browser-extension/src/agent/__tests__/compact-schema.test.ts",
+      "declaredTests": 6,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:9326400c94c31ed3e14b",
       "sourcePath": "apps/xroga-browser-extension/src/agent/__tests__/compaction.test.ts",
       "declaredTests": 14,
@@ -144647,6 +144661,20 @@
       "id": "test-suite:b9f6d66a3fa91d5d328c",
       "sourcePath": "apps/xroga-browser-extension/src/agent/__tests__/context.test.ts",
       "declaredTests": 9,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:1d0bed7dc876e6b82d73",
+      "sourcePath": "apps/xroga-browser-extension/src/agent/__tests__/direct-url.test.ts",
+      "declaredTests": 5,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:065f5330f89312caaaca",
+      "sourcePath": "apps/xroga-browser-extension/src/agent/__tests__/elide-stale.test.ts",
+      "declaredTests": 5,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -144679,9 +144707,30 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:aa08e993df78f3120195",
+      "sourcePath": "apps/xroga-browser-extension/src/agent/__tests__/memory.test.ts",
+      "declaredTests": 4,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:afd50e9873e9d848f9fb",
       "sourcePath": "apps/xroga-browser-extension/src/agent/__tests__/overflow-recovery.test.ts",
       "declaredTests": 8,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:4416829605a942e81579",
+      "sourcePath": "apps/xroga-browser-extension/src/agent/__tests__/progress.test.ts",
+      "declaredTests": 5,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:0f52997906a86a944a66",
+      "sourcePath": "apps/xroga-browser-extension/src/agent/__tests__/read-loop-guard.test.ts",
+      "declaredTests": 5,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -144728,6 +144777,27 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:d748c4a3a476cd87446f",
+      "sourcePath": "apps/xroga-browser-extension/src/agent/__tests__/skills.test.ts",
+      "declaredTests": 13,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:daa420c85ada1bb773f8",
+      "sourcePath": "apps/xroga-browser-extension/src/agent/__tests__/timing.test.ts",
+      "declaredTests": 10,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:4e8c713a22940968e143",
+      "sourcePath": "apps/xroga-browser-extension/src/agent/__tests__/tool-selection.test.ts",
+      "declaredTests": 6,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:9642f262e967513f5a95",
       "sourcePath": "apps/xroga-browser-extension/src/browser-control/__tests__/scaffold.test.ts",
       "declaredTests": 2,
@@ -144751,7 +144821,7 @@
     {
       "id": "test-suite:9ce6b49f128b75684d5d",
       "sourcePath": "apps/xroga-browser-extension/src/browser-control/core/__tests__/controller.test.ts",
-      "declaredTests": 20,
+      "declaredTests": 22,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -144812,9 +144882,23 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:d60e39feeb8c1bc4431e",
+      "sourcePath": "apps/xroga-browser-extension/src/browser-control/core/__tests__/network-failure.test.ts",
+      "declaredTests": 5,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:00aff94cc72c5c6c8685",
       "sourcePath": "apps/xroga-browser-extension/src/browser-control/core/__tests__/outline.test.ts",
       "declaredTests": 23,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:7c159a4dee607c359a12",
+      "sourcePath": "apps/xroga-browser-extension/src/browser-control/core/__tests__/public-only.test.ts",
+      "declaredTests": 6,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -144868,9 +144952,16 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:19177a1a2c1596a536be",
+      "sourcePath": "apps/xroga-browser-extension/src/extension/__tests__/border-unreachable.test.ts",
+      "declaredTests": 3,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:316b5d843f93228e86f1",
       "sourcePath": "apps/xroga-browser-extension/src/extension/__tests__/border.test.ts",
-      "declaredTests": 14,
+      "declaredTests": 27,
       "skipLocations": [],
       "focusLocations": []
     },
