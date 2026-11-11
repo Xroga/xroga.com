@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "8b993cf66c9589dffd6448e97a0ee9cb4678f978",
+  "source_sha": "4cdc973593c855f0d9cb32c2326cf93d09f17cc8",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -20704,7 +20704,11 @@
     },
     {
       "path": "frontend/src/components/activity/ActivityTimeline.tsx",
-      "sha256": "f62dd28b57b0828fe1d4b397b58b5800c38c06718c5406aed245f2ee1f2e64d6"
+      "sha256": "bbffbbc5c9d1e92434d5826f04ee36d1bbe074e2f702b8a0e28b5cabb5dc6ce0"
+    },
+    {
+      "path": "frontend/src/components/activity/BlackHoleIndicator.tsx",
+      "sha256": "11ebdc5d0b82014fea49078e631e98242aef268235d948611f632f60de5ca6cd"
     },
     {
       "path": "frontend/src/components/analytics/GoogleTag.tsx",
