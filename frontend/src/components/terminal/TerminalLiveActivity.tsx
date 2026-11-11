@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { ActivityTimeline } from '@/components/activity/ActivityTimeline';
 import {
@@ -31,7 +31,6 @@ export function TerminalLiveActivity({
 }: TerminalLiveActivityProps) {
   const [now, setNow] = useState(() => Date.now());
   const [mountedAt] = useState(() => Date.now());
-  const shown = useRef<{ id: string | null; since: number }>({ id: null, since: 0 });
 
   const rows = useMemo(() => {
     if (activity) return [...activity];
@@ -50,16 +49,9 @@ export function TerminalLiveActivity({
     () => buildActivityTimeline(rows, {
       runActive: active,
       outcome: run?.outcome ?? null,
-      displayedActiveId: shown.current.id,
-      displayedSince: shown.current.since,
-      now,
     }),
-    [rows, active, run?.outcome, now],
+    [rows, active, run?.outcome],
   );
-  useEffect(() => {
-    const id = model.active?.id ?? null;
-    if (id !== shown.current.id) shown.current = { id, since: Date.now() };
-  });
 
   const lastObservableAt = Math.max(
     run?.startedAt ?? mountedAt,

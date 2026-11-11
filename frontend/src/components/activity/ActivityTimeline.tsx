@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import {
   AlertTriangle, CheckCircle2, ChevronDown, CircleX, CirclePause, Database, FilePen, FileSearch, FileText,
-  Globe, Hand, ListTodo, Plug, Rocket, Search, ShieldCheck, SquareTerminal, type LucideIcon,
+  Clock, Globe, Hand, ListTodo, Plug, Rocket, Search, ShieldCheck, SquareTerminal, type LucideIcon,
 } from 'lucide-react';
 import type { XrogaActivityPresentation } from '@/lib/terminal/activityPresentation';
 import {
@@ -29,22 +29,25 @@ export function ActivitySpinner() {
   return <span className={styles.spinner} aria-hidden="true"><i /><i /><i /><i /></span>;
 }
 
-const COMMANDLIKE = new Set(['command', 'test', 'verify', 'error', 'warning']);
+const HISTORY_PAGE_SIZE = 25;
 
 function RowDetails({ rows, showLabel = true }: { rows: readonly XrogaActivityPresentation[]; showLabel?: boolean }) {
+  const [visibleCount, setVisibleCount] = useState(HISTORY_PAGE_SIZE);
   return (
     <div className={styles.details}>
-      {rows.map(row => {
-        const isCommand = COMMANDLIKE.has(row.kind);
+      {rows.slice(0, visibleCount).map(row => {
+        const isCommand = row.kind === 'command';
         const duration = row.durationMs ? formatElapsed(row.durationMs) : '';
-        const hasLine = showLabel || Boolean(duration);
+        const hasLine = showLabel || Boolean(duration) || row.exitCode !== undefined;
         return (
           <div key={row.id}>
             {hasLine ? <div className={styles.detailRow}>
               {showLabel ? <span title={row.label}>{row.label}</span> : <span />}
+              {row.exitCode !== undefined ? <span className={styles.meta}>Exit {row.exitCode}</span> : null}
               {duration ? <span className={styles.meta}>{duration}</span> : null}
             </div> : null}
             {!isCommand && row.detail ? <p className={styles.context}>{row.detail}</p> : null}
+            {!isCommand && row.body ? <p className={styles.context}>{row.body}</p> : null}
             {isCommand && (row.detail || row.body) ? (
               <pre className={styles.terminal} tabIndex={0} aria-label={`Output of ${row.label}`}>
                 <code>
@@ -56,6 +59,9 @@ function RowDetails({ rows, showLabel = true }: { rows: readonly XrogaActivityPr
           </div>
         );
       })}
+      {rows.length > visibleCount ? (
+        <button type="button" className={styles.earlier} onClick={() => setVisibleCount(count => count + HISTORY_PAGE_SIZE)}>Show more details</button>
+      ) : null}
     </div>
   );
 }
@@ -64,7 +70,7 @@ function SettledItem({ item }: { item: TimelineItem }) {
   const [open, setOpen] = useState(false);
   const Icon = iconFor(item.family, item.tone);
   const duration = item.durationMs ? formatElapsed(item.durationMs) : '';
-  const expandable = item.rows.some(row => row.detail || row.body) || item.count > 1;
+  const expandable = item.rows.some(row => row.detail || row.body || row.exitCode !== undefined) || item.count > 1;
   return (
     <li className={styles.item} data-tone={item.tone}>
       <button
@@ -99,6 +105,7 @@ export function ActivityTimeline({ model, now, runStartedAt = null, pendingLabel
   const [open, setOpen] = useState(false);
   const [showAll, setShowAll] = useState(false);
   const [liveOpen, setLiveOpen] = useState(false);
+  const [historyCount, setHistoryCount] = useState(HISTORY_PAGE_SIZE);
   const { state, active, settled, otherActive } = model;
   const running = state === 'working' || state === 'waiting';
 
@@ -106,6 +113,11 @@ export function ActivityTimeline({ model, now, runStartedAt = null, pendingLabel
   if (!running) {
     if (!settled.length && state !== 'failed' && state !== 'stopped') return null;
     const steps = model.total;
+    const summary = [
+      model.completed > 0 ? `${model.completed} completed` : '',
+      model.failed > 0 ? `${model.failed} failed` : '',
+      model.unconfirmed > 0 ? `${model.unconfirmed} unconfirmed` : '',
+    ].filter(Boolean).join(' · ');
     const label = state === 'failed' ? 'Run failed' : state === 'stopped' ? 'Run stopped' : 'Work history';
     const HeaderIcon = state === 'failed' ? CircleX : state === 'stopped' ? CirclePause : CheckCircle2;
     return (
@@ -114,20 +126,26 @@ export function ActivityTimeline({ model, now, runStartedAt = null, pendingLabel
           disabled={!steps} onClick={() => setOpen(value => !value)}>
           <HeaderIcon className={styles.icon} aria-hidden="true" style={state === 'failed' ? { color: 'var(--act-danger)' } : undefined} />
           <span className={styles.text}>{label}</span>
-          {steps ? <><span className={styles.meta}>{steps} {steps === 1 ? 'step' : 'steps'}</span><ChevronDown className={styles.chevron} aria-hidden="true" /></> : null}
+          {steps ? <><span className={styles.meta}>{summary || `${steps} ${steps === 1 ? 'step' : 'steps'}`}</span><ChevronDown className={styles.chevron} aria-hidden="true" /></> : null}
         </button>
-        {open ? <ol className={styles.list}>{settled.map(item => <SettledItem key={item.id} item={item} />)}</ol> : null}
+        {open ? <>
+          <ol className={styles.list}>{settled.slice(0, historyCount).map(item => <SettledItem key={item.id} item={item} />)}</ol>
+          {settled.length > historyCount ? (
+            <button type="button" className={styles.earlier} onClick={() => setHistoryCount(count => count + HISTORY_PAGE_SIZE)}>Show more steps</button>
+          ) : null}
+        </> : null}
       </section>
     );
   }
 
-  const hidden = !showAll ? Math.max(0, settled.length - EARLIER_VISIBLE) : 0;
+  const hidden = Math.max(0, settled.length - (showAll ? historyCount : EARLIER_VISIBLE));
   const shown = hidden ? settled.slice(hidden) : settled;
   const earlierSteps = settled.slice(0, hidden).reduce((count, item) => count + item.count, 0);
   const text = active ? liveLabel(active, otherActive) : pendingLabel;
   const startedAt = active?.startedAt ?? runStartedAt ?? null;
   const elapsed = startedAt ? formatElapsed(now - startedAt) : '';
   const waiting = state === 'waiting';
+  const WaitingIcon = active?.kind === 'approval' || active?.kind === 'connection' ? Hand : Clock;
   const hasDetails = Boolean(active && (active.detail || active.body));
   const LiveIcon = active ? FAMILY_ICON[familyOf(active.kind)] : null;
 
@@ -138,7 +156,7 @@ export function ActivityTimeline({ model, now, runStartedAt = null, pendingLabel
         <button type="button" className={`${styles.row} ${styles.live}`} data-waiting={waiting ? 'true' : undefined}
           aria-expanded={hasDetails ? liveOpen : undefined} data-static={hasDetails ? undefined : 'true'}
           onClick={hasDetails ? () => setLiveOpen(value => !value) : undefined} tabIndex={hasDetails ? 0 : -1}>
-          {waiting ? <Hand className={styles.icon} aria-hidden="true" /> : LiveIcon ? <LiveIcon className={styles.liveIcon} aria-hidden="true" /> : <ActivitySpinner />}
+          {waiting ? <WaitingIcon className={styles.icon} aria-hidden="true" /> : LiveIcon ? <LiveIcon className={styles.liveIcon} aria-hidden="true" /> : <ActivitySpinner />}
           <span className={styles.text} key={text} title={text}>{text}</span>
           {elapsed ? <span className={styles.meta}>{elapsed}</span> : null}
           {hasDetails ? <ChevronDown className={styles.chevron} aria-hidden="true" /> : null}
@@ -147,9 +165,11 @@ export function ActivityTimeline({ model, now, runStartedAt = null, pendingLabel
         {note ? <p className={styles.note}>{note}</p> : null}
       </div>
       {shown.length ? <ol className={styles.recent}>{shown.map(item => <SettledItem key={item.id} item={item} />)}</ol> : null}
-      {settled.length > EARLIER_VISIBLE ? <button type="button" className={styles.earlier} aria-expanded={showAll}
-        onClick={() => setShowAll(value => !value)}>
-        {showAll ? 'Show fewer steps' : `Show ${earlierSteps} earlier ${earlierSteps === 1 ? 'step' : 'steps'}`}
+      {hidden > 0 ? <button type="button" className={styles.earlier} onClick={() => {
+        if (showAll) setHistoryCount(count => count + HISTORY_PAGE_SIZE);
+        else setShowAll(true);
+      }}>
+        {`Show earlier steps (${earlierSteps})`}
       </button> : null}
     </section>
   );

@@ -1,4 +1,5 @@
 import type { TerminalEvent } from './terminalEvent';
+import { redactTerminalText } from './terminalRedaction';
 
 export type XrogaActivityKind =
   | 'respond' | 'understand' | 'search' | 'open-source' | 'read-source' | 'compare' | 'summarize'
@@ -18,6 +19,7 @@ export interface XrogaActivityPresentation {
   startedAt: number;
   updatedAt: number;
   durationMs?: number;
+  exitCode?: number;
   evidenceRefs?: string[];
   artifactRefs?: string[];
 }
@@ -48,7 +50,12 @@ export function isGenericPlaceholderActivity(value: string): boolean {
 
 function kindFor(event: TerminalEvent): XrogaActivityKind {
   const type = event.canonical?.type ?? '';
+  const operation = event.canonical?.metadata?.softwareEventType;
   const value = `${type} ${event.text}`.toLowerCase();
+  if (event.canonical?.source === 'software-agent-v2') {
+    if (operation === 'command.started' || operation === 'command.output' || operation === 'command.completed') return 'command';
+    if (operation === 'check.started' || operation === 'check.completed') return 'test';
+  }
   if (event.level === 'error' || type.endsWith('.failed')) return 'error';
   if (event.level === 'warn') return 'warning';
   if (type === 'approval.requested') return 'approval';
@@ -180,14 +187,21 @@ function structuredDetail(event: TerminalEvent, kind: XrogaActivityKind): string
 
 export function presentTerminalEvent(event: TerminalEvent): XrogaActivityPresentation {
   const kind = kindFor(event);
+  const operation = event.canonical?.source === 'software-agent-v2' ? event.canonical.metadata?.softwareEventType : undefined;
   const safe = publicActivityText(event.text);
   const label = safe || fallbackLabel(kind);
   const canonicalAt = event.canonical?.timestamp ? Date.parse(event.canonical.timestamp) : Number.NaN;
   const at = Number.isFinite(canonicalAt) ? canonicalAt : event.at;
   const rawDetail = structuredDetail(event, kind);
-  const detail = publicActivityText(rawDetail);
-  const body = publicActivityText(event.canonical?.details ?? event.body ?? '');
+  const command = operation === 'command.started' ? event.text.replace(/^Running /, '') :
+    operation === 'command.completed' ? event.body : undefined;
+  const detail = command ? redactTerminalText(command).trim().slice(0, 1000) :
+    publicActivityText(redactTerminalText(rawDetail));
+  // Output is already bounded and redacted by Agent V2. Preserve its line breaks.
+  const body = operation === 'command.output' ? redactTerminalText(event.body ?? '').slice(-8000) :
+    operation === 'command.completed' ? '' : publicActivityText(redactTerminalText(event.canonical?.details ?? event.body ?? ''));
   const duration = event.canonical?.metadata?.durationMs;
+  const exitCode = event.canonical?.metadata?.exitCode;
 
   return {
     id: event.canonical?.activityId ?? event.canonical?.toolCallId ?? event.canonical?.eventId ?? String(event.seq),
@@ -196,6 +210,7 @@ export function presentTerminalEvent(event: TerminalEvent): XrogaActivityPresent
     detail: detail && detail.toLowerCase() !== label.toLowerCase() ? detail : undefined,
     status: statusFor(event),
     body: body || undefined,
+    exitCode: typeof exitCode === 'number' && Number.isSafeInteger(exitCode) ? exitCode : undefined,
     startedAt: at,
     updatedAt: at,
     durationMs:
@@ -210,17 +225,33 @@ export function presentTerminalEvent(event: TerminalEvent): XrogaActivityPresent
 export function coalesceActivity(events: readonly TerminalEvent[]): XrogaActivityPresentation[] {
   const rows: XrogaActivityPresentation[] = [];
   const positions = new Map<string, number>();
+  const seen = new Set<string>();
   for (const event of events) {
-    if (event.kind === 'output' || event.kind === 'result') continue;
+    if (event.kind === 'output' || event.kind === 'result' || event.kind === 'session') continue;
     if (isGenericPlaceholderActivity(event.text)) continue;
+    const canonical = event.canonical;
+    const identity = canonical ? `${canonical.runId ?? ''}:${canonical.eventId}` : `sequence:${event.seq}`;
+    if (seen.has(identity)) continue;
+    seen.add(identity);
     const row = presentTerminalEvent(event);
-    const key = event.canonical?.activityId || event.canonical?.toolCallId || `${row.kind}:${row.label.toLowerCase()}`;
+    const correlationId = canonical?.activityId ?? canonical?.toolCallId;
+    const key = correlationId ? `${canonical?.runId ?? ''}:${correlationId}` : identity;
+    row.id = key;
     const previous = positions.get(key);
     if (previous == null) {
       positions.set(key, rows.length);
       rows.push(row);
     } else {
       const prior = rows[previous];
+      const outputUpdate = canonical?.source === 'software-agent-v2' && canonical.metadata?.softwareEventType === 'command.output';
+      if (outputUpdate) {
+        if (row.body && prior.status === 'active') {
+          rows[previous] = { ...prior, body: [prior.body, row.body].filter(Boolean).join('\n').slice(-8000), updatedAt: Math.max(prior.updatedAt, row.updatedAt) };
+        }
+        continue;
+      }
+      // A delayed replay must not reopen an already settled step.
+      if (prior.status !== 'active' && prior.status !== 'waiting') continue;
       const startedAt = Math.min(prior.startedAt, row.startedAt);
       const updatedAt = Math.max(prior.updatedAt, row.updatedAt);
       const terminal = row.status !== 'active' && row.status !== 'waiting';
@@ -233,7 +264,7 @@ export function coalesceActivity(events: readonly TerminalEvent[]): XrogaActivit
         body: row.body ?? prior.body,
         startedAt,
         updatedAt,
-        durationMs: row.durationMs ?? (terminal ? Math.max(0, updatedAt - startedAt) : prior.durationMs),
+        durationMs: row.durationMs ?? (terminal && updatedAt > startedAt ? updatedAt - startedAt : prior.durationMs),
         evidenceRefs: [...new Set([...(prior.evidenceRefs ?? []), ...(row.evidenceRefs ?? [])])],
         artifactRefs: [...new Set([...(prior.artifactRefs ?? []), ...(row.artifactRefs ?? [])])],
       };

@@ -39,6 +39,9 @@ export interface ActivityTimelineModel {
   otherActive: number;
   /** Total rows the model was built from. */
   total: number;
+  completed: number;
+  failed: number;
+  unconfirmed: number;
 }
 
 const FAMILY_BY_KIND: Record<XrogaActivityKind, TimelineFamily> = {
@@ -75,7 +78,7 @@ function groupLabel(family: TimelineFamily, rows: readonly XrogaActivityPresenta
       return `Read ${plural(n, 'item')}`;
     case 'research': return allKind('search') ? `Searched the web ${n} times` : `Researched in ${plural(n, 'step')}`;
     case 'write': return allKind('write-file') ? `Edited ${plural(n, 'file')}` : `Implemented changes in ${plural(n, 'step')}`;
-    case 'browser': return `Checked the preview ${n} times`;
+    case 'browser': return `${plural(n, 'browser step')}`;
     case 'data': return `Queried data ${n} times`;
     case 'connected': return `Used connected apps ${n} times`;
     case 'transfer': return `Handled ${plural(n, 'transfer')}`;
@@ -157,9 +160,12 @@ export function buildActivityTimeline(rows: readonly XrogaActivityPresentation[]
   if (active?.status === 'waiting' || active?.kind === 'approval') state = 'waiting';
   else if (active || runActive) state = 'working';
   else if (outcome === 'failure' || rows.at(-1)?.status === 'error') state = 'failed';
-  else if (outcome === 'interrupted' || rows.some(row => row.status === 'cancelled' || row.status === 'interrupted')) state = 'stopped';
+  else if (outcome === 'interrupted' || (!outcome && rows.some(row => row.status === 'cancelled' || row.status === 'interrupted'))) state = 'stopped';
   else if (rows.length) state = 'done';
-  return { state, settled, active, otherActive, total: rows.length };
+  const completed = rows.filter(row => row.status === 'complete').length;
+  const failed = rows.filter(isFailure).length;
+  const unconfirmed = live.length ? 0 : rows.filter(row => !isFinished(row)).length;
+  return { state, settled, active, otherActive, total: rows.length, completed, failed, unconfirmed };
 }
 
 /** A request can wait without an operation running. Writing requires an actual text delta. */

@@ -668,9 +668,17 @@ export function TerminalChatProvider({
   const [terminalRun, dispatchTerminalRun] = useReducer(terminalRunReducer, EMPTY_RUN_STATE);
   const terminalSeqRef = useRef(0);
   const terminalEventsRef = useRef<TerminalEvent[]>([]);
+  const terminalEventIds = useRef(new Set<string>());
 
   const pushTerminalEvent = useCallback((event: string, payload: Record<string, unknown>) => {
-    const rows = adaptTerminalEvent(event, payload, { fromSeq: terminalSeqRef.current });
+    const rows = adaptTerminalEvent(event, payload, { fromSeq: terminalSeqRef.current }).filter(row => {
+      const canonical = row.canonical;
+      if (!canonical) return true;
+      const id = `${canonical.runId ?? ''}:${canonical.eventId}`;
+      if (terminalEventIds.current.has(id)) return false;
+      terminalEventIds.current.add(id);
+      return true;
+    });
     if (rows.length === 0) return;
     terminalEventsRef.current = [...terminalEventsRef.current, ...rows];
     terminalSeqRef.current = rows[rows.length - 1].seq;
@@ -680,6 +688,7 @@ export function TerminalChatProvider({
   const startTerminalRun = useCallback(() => {
     terminalSeqRef.current = 0;
     terminalEventsRef.current = [];
+    terminalEventIds.current.clear();
     dispatchTerminalRun({ type: 'run-started' });
   }, []);
   const [githubGateOpen, setGithubGateOpen] = useState(false);
@@ -3047,6 +3056,10 @@ if (
           if (!bufferedDelta) return;
           const chunk = bufferedDelta;
           bufferedDelta = '';
+          if (chunk.trim() && terminalEventsRef.current.at(-1)?.kind !== 'output') {
+            // The text lives in the answer buffer. Activity only needs to know that text arrived.
+            pushTerminalEvent('delta', { delta: 'Response text received' });
+          }
           setMessages((current) =>
             current.map((message) =>
               message.id === assistantId
@@ -4551,7 +4564,7 @@ active.applyBuild({
         // behind it — the exact failure the old fixed checklist had.
         dispatchTerminalRun({ type: 'stream-closed' });
         const turn = lastTurnRef.current;
-        if (turn && !interruptRef.current) {
+        if (turn?.assistantId === assistantId && sessionIdRef.current === originatingSessionId && !interruptRef.current) {
           const thoughtMs = Date.now() - thinkingStartedAtRef.current;
           const steps = [...thinkingStepsRef.current];
           const executionActivity = coalesceActivity(terminalEventsRef.current);
