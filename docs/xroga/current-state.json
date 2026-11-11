@@ -145127,6 +145127,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:64beebba7655ca5b4780",
+      "sourcePath": "apps/xroga-browser-extension/src/side-panel/__tests__/automatic-workspace-connect.test.ts",
+      "declaredTests": 3,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:b4064f65b795288edbb6",
       "sourcePath": "apps/xroga-browser-extension/src/side-panel/__tests__/cards.test.tsx",
       "declaredTests": 8,
