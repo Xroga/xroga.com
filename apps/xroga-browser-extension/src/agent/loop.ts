@@ -11,6 +11,7 @@ import { addUsage, ZERO_USAGE } from '@src/store/types';
 import type { AgentEvent, ToolRow } from '@src/ui/protocol';
 import { contextChars, elideStaleObservations, toModelMessages } from './context';
 import { directNavigation, type DirectNavigation } from './direct-url';
+import { APPS_FIRST_NOTE, isAppsFirstRequest } from './routing';
 import { progressLedger } from './progress';
 import { browserState } from './header';
 import { assistantDisplay, userDisplay, userText } from './display';
@@ -448,6 +449,12 @@ ${ledger}` : ''),
     await this.#inlineAttachments();
     // A request that names its site starts there: the address is in the words, so no model turn is spent on deciding it.
     const asked = [...branch].reverse().find((e): e is EntryOf<'message'> => e.type === 'message' && e.message.role === 'user' && !e.appOwned);
+    // A request about the user's connected apps starts with the app tools: no page is opened or read for it, and the debugger is not
+    // attached until a browser tool is actually used. The browser tools stay in the list for when no app tool fits.
+    if (asked && this.options.tools.some(t => t.name === 'plugin_search') && isAppsFirstRequest(userText(asked))) {
+      await this.writer.appNote(APPS_FIRST_NOTE);
+      return;
+    }
     const direct = asked && !earlierResults ? directNavigation(userText(asked)) : null;
     if (direct) await this.#openDirect(direct);
     const tabs = await this.options.layer.tabs().catch(() => null);

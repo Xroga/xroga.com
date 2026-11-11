@@ -1478,6 +1478,14 @@ async function composioRequest<T>(
     }
 
     if (!response.ok) {
+      // Server-side diagnostics only: the HTTP status, the path with identifiers removed, and the provider's own short
+      // error identifier. Never arguments, results, messages or any user data.
+      try {
+        const err = (payload as { error?: { slug?: unknown; code?: unknown } } | null)?.error;
+        const slug = typeof err?.slug === 'string' && /^[A-Za-z0-9_.-]{1,60}$/.test(err.slug) ? err.slug : '-';
+        const providerCode = typeof err?.code === 'number' || typeof err?.code === 'string' ? String(err.code).slice(0, 20) : '-';
+        console.error('[composio] upstream error', response.status, path.split('?')[0].replace(/[A-Za-z0-9_-]{16,}/g, ':id'), slug, providerCode);
+      } catch { /* diagnostics must never change the result */ }
       let message = 'Xroga Connect could not complete the external request.';
 
       if (response.status === 401 || response.status === 403) {
