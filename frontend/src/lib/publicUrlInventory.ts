@@ -66,6 +66,7 @@ const staticIndexable = [
   ['/research', 'COLLECTION', 'frontend/src/app/research/page.tsx', .82, 'monthly', '2026-08-30'],
   ['/research/web3-hackathon-winning-patterns', 'RESEARCH', 'frontend/src/app/research/web3-hackathon-winning-patterns/page.tsx', .9, 'monthly', '2026-08-30', 'research'],
   ['/about', 'ABOUT', 'frontend/src/app/about/page.tsx', .78, 'monthly'],
+  ['/black-hole', 'PRODUCT', 'frontend/src/app/black-hole/page.tsx', .88, 'monthly', '2026-11-12'],
   ['/contact', 'CONTACT', 'frontend/src/app/contact/page.tsx', .65, 'yearly'],
   ['/terms', 'LEGAL', 'frontend/src/app/terms/page.tsx', .45, 'yearly'],
   ['/privacy', 'LEGAL', 'frontend/src/app/privacy/page.tsx', .45, 'yearly'],
