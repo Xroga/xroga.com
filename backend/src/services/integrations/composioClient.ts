@@ -1488,7 +1488,7 @@ async function composioRequest<T>(
         // Off by default (production). Staging sets XROGA_COMPOSIO_ERROR_DETAIL=1 to see the provider's own explanation of a rejected call.
         if (process.env.XROGA_COMPOSIO_ERROR_DETAIL === '1') {
           const e = (payload as { error?: { message?: unknown; suggested_fix?: unknown } } | null)?.error;
-          const clip = (v: unknown) => (typeof v === 'string' ? v.replace(/s+/g, ' ').slice(0, 300) : '-');
+          const clip = (v: unknown) => (typeof v === 'string' ? v.replace(/[\t\n\r ]+/g, ' ').slice(0, 300) : '-');
           console.error('[composio] upstream detail', clip(e?.message), '| fix:', clip(e?.suggested_fix));
         }
       } catch { /* diagnostics must never change the result */ }
@@ -1519,7 +1519,7 @@ async function composioRequest<T>(
       // A rejected request (4xx) carries the provider's own short reason, so the caller can correct it. It is untrusted text.
       const reason = (payload as { error?: { message?: unknown } } | null)?.error?.message;
       if (response.status >= 400 && response.status < 500 && typeof reason === 'string' && reason.trim()) {
-        Object.assign(failure, { providerMessage: reason.replace(/s+/g, ' ').trim().slice(0, 300) });
+        Object.assign(failure, { providerMessage: reason.replace(/[\t\n\r ]+/g, ' ').trim().slice(0, 300) });
       }
       throw failure;
     }
@@ -2723,7 +2723,9 @@ async function executeDiscoveredComposioTool(
         arguments: input.arguments,
         // Official session execute API selects the exact account using `account`.
         // https://docs.composio.dev/reference/api-reference/tool-router/postToolRouterSessionBySessionIdExecute
-        ...(account ? { account } : {}),
+        // Composio rejects this field with a 400 ("Multi-account selection is not enabled") on projects without that feature,
+        // so it is sent only when the deployment says the project has it. Our own live account check still runs before dispatch.
+        ...(account && process.env.COMPOSIO_MULTI_ACCOUNT_ENABLED === '1' ? { account } : {}),
         enable_auto_workbench_offload: false,
       },
       timeoutMs: EXECUTE_TIMEOUT_MS,
