@@ -144845,6 +144845,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:e44cba91adf2e11c2e4a",
+      "sourcePath": "apps/xroga-browser-extension/src/agent/__tests__/batch-plan.test.ts",
+      "declaredTests": 14,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:a5bf7a5b0695dd587d62",
       "sourcePath": "apps/xroga-browser-extension/src/agent/__tests__/challenge.test.ts",
       "declaredTests": 6,
