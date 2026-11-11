@@ -295,7 +295,14 @@ async function handleLlm(req, res, path) {
       error: { message: 'Unrecognized request argument supplied: reasoning_effort', type: 'invalid_request_error' },
     });
   }
-  const reply = llm.replies.shift() ?? { text: `You said: ${userText}` };
+  // A reply with `when` is for the run whose first user message contains that text, so several runs at once each get their own script.
+  // Replies without it are taken in order, as before.
+  const firstUser = (body.messages ?? []).find(m => m.role === 'user');
+  const firstText = Array.isArray(firstUser?.content)
+    ? firstUser.content.map(p => p.text ?? '').join(' ')
+    : String(firstUser?.content ?? '');
+  const at = llm.replies.findIndex(r => !r.when || firstText.includes(r.when));
+  const reply = (at >= 0 ? llm.replies.splice(at, 1)[0] : undefined) ?? { text: `You said: ${userText}` };
   if (reply.delayMs) await new Promise(r => setTimeout(r, reply.delayMs));
   if (reply.status) return send(res, reply.status, { error: { message: reply.error ?? `HTTP ${reply.status}` } });
   res.writeHead(200, {

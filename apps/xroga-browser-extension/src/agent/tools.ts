@@ -197,6 +197,9 @@ export function kindOf(tool: string, args: Record<string, unknown>): ToolKind {
   if (tool === 'done' || tool === 'ask_user') return 'control';
   if (tool === 'wait') return 'wait';
   if (tool === 'enable_actions' || tool === 'delegate') return 'read';
+  // Starting workers opens windows and runs: it is fenced like other effects. Reading their status is a read.
+  if (tool === 'parallel_task_status') return 'read';
+  if (tool === 'start_parallel_tasks') return 'mutate';
   if (tool === 'save_file') return 'state';
   if (tool === 'read_attachment' || tool === 'plugin_search' || tool === 'plugin_action_search') return 'read';
   // An approved connected read can transmit private arguments. Fence it like a dispatched effect on recovery.

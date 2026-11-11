@@ -15,6 +15,7 @@ import './restart-restore';
 import './panel-runs';
 import './injection-entry';
 import './two-runs';
+import './parallel-workers';
 import './panel-compact';
 import './local-context';
 import './eval';
