@@ -1,6 +1,6 @@
 import { publicCompletionState } from './completionDiagnostics.js';
 import { NATIVE_UI_FORMAT, PARTIAL_NATIVE_PRESENTATION_NOTE, recoverNativeWorkspaceProgram, recoverNativeMonthlyChart, splitNativeOpenUiAnswer, supplementNativeProse, validateNativeWorkspaceProgram, type NativeUiDiagnostic } from './nativeOpenUi.js';
-import { nativeAnswerReviewReason, nativeTechnicalCorrections, suppliedMonthlyComparison } from './nativeOpenUiAccuracy.js';
+import { nativeAnswerReviewReason, nativeFactualGuidance, nativeTechnicalCorrections, suppliedMonthlyComparison } from './nativeOpenUiAccuracy.js';
 
 /** Deployment-owned presentation choice; never reads a user role or client flag.
  * The paid founder evaluator has its own independent staging-only guard. */
@@ -18,11 +18,26 @@ export function completeNativeWorkspaceAnswer(
   diagnose?: (event: NativeUiDiagnostic | { stage: 'assembly'; reason: 'missing_prose'; programLength: number }) => void,
 ) {
   const { text: prose, program: originalProgram } = splitNativeOpenUiAnswer(raw);
-  const original = originalProgram ? validateNativeWorkspaceProgram(originalProgram, evidenceIds, prose, diagnose) : undefined;
-  const repair = original?.ok === false && original.reason === 'schema' && finishReason === 'stop'
-    ? recoverNativeWorkspaceProgram(originalProgram, evidenceIds, prose) : undefined;
+  let factualRule: NativeUiDiagnostic['factualRule'];
+  const original = originalProgram ? validateNativeWorkspaceProgram(originalProgram, evidenceIds, prose, event => {
+    factualRule = event.factualRule;
+    diagnose?.(event);
+  }) : undefined;
+  const factualLayoutOnly = original?.ok === false && original.reason === 'factual_review'
+    && factualRule && !nativeAnswerReviewReason(prose);
+  const guidance = factualLayoutOnly && factualRule ? nativeFactualGuidance[factualRule] : '';
+  const repair = finishReason === 'stop' && original?.ok === false && (original.reason === 'schema' || factualLayoutOnly)
+    ? recoverNativeWorkspaceProgram(originalProgram, evidenceIds, prose, factualLayoutOnly ? 'factual_review' : 'schema') : undefined;
   const program = repair?.program ?? originalProgram;
   const validation = repair?.validation ?? original;
+  if (guidance) {
+    const readable = repair?.validation.ok ? supplementNativeProse(prose, program, true) : prose;
+    return {
+      response: [repair?.validation.ok ? PARTIAL_NATIVE_PRESENTATION_NOTE : '', guidance, readable].filter(Boolean).join('\n\n'),
+      completion: { status: 'partial' as const, reason: 'factual_review' as const },
+      responseSource: { format: NATIVE_UI_FORMAT, text: repair?.validation.ok ? program : '' },
+    };
+  }
   const text = prose || (validation?.ok ? supplementNativeProse('', program) : '');
   const hasDataConflict = validation?.ok === false && validation.reason === 'data_review';
   if (!text && !hasDataConflict) {

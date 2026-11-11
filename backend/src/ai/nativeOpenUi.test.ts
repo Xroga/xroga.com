@@ -286,9 +286,45 @@ test('an unbounded Stripe retry claim gets a readable factual-review fallback', 
   assert.deepEqual(validateNativeOpenUi(program), { ok: false, reason: 'factual_review' });
   const answer = completeNativeWorkspaceAnswer(inaccurate, 'stop');
   assert.deepEqual(answer.completion, { status: 'partial', reason: 'factual_review' });
-  assert.equal(answer.response, inaccurate);
+  assert.match(answer.response, /finite delivery window/);
+  assert.ok(answer.response.endsWith(inaccurate));
   assert.equal(answer.responseSource.text, '');
   assert.deepEqual(validateNativeOpenUi('root = Col([Text("Stripe does not retry forever.")])'), { ok: true });
+});
+
+test('a flagged billing claim keeps independently valid architecture with an explicit correction', () => {
+  const prose = 'Use tenant membership for authorization and a separate Stripe webhook for billing.';
+  const unsafe = 'Compare event timestamps against stored state to order deliveries.';
+  const program = [
+    'root = Col([Section("Architecture", [Table(["Component", "Role"], [["Next.js", "Web"]]), billing]), Code("verify(rawBody);", "typescript")])',
+    'billing = Text(' + JSON.stringify(unsafe) + ')',
+  ].join('\n');
+  const diagnostics: unknown[] = [];
+  const answer = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + program, 'stop', undefined, undefined, event => diagnostics.push(event));
+  assert.deepEqual(answer.completion, { status: 'partial', reason: 'factual_review' });
+  assert.ok(answer.response.startsWith(PARTIAL_NATIVE_PRESENTATION_NOTE));
+  assert.match(answer.response, /do not establish delivery order/);
+  assert.match(answer.response, /Next\.js \| Web/);
+  assert.match(answer.responseSource.text, /Code\("verify\(rawBody\);"/);
+  assert.doesNotMatch(answer.response + answer.responseSource.text, /compare event timestamps/i);
+  assert.deepEqual(validateNativeOpenUi(answer.responseSource.text, undefined, answer.response), { ok: true });
+  assert.ok(buildNativeOpenUiShare(answer.response, answer.responseSource.text));
+  assert.match(JSON.stringify(diagnostics), /"factualRule":"stripe_event_order"/);
+  assert.doesNotMatch(JSON.stringify(diagnostics), /stored state|rawBody|Next\.js/);
+
+  const unverified = program.replace('billing]),', 'billing, Source("source-99")]),');
+  assert.equal(completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + unverified, 'stop').responseSource.text, '');
+  assert.equal(completeNativeWorkspaceAnswer(prose + '\n' + unsafe + NATIVE_UI_MARKER + program, 'stop').responseSource.text, '');
+  assert.equal(completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + program, 'length').responseSource.text, '');
+});
+
+test('factual layout recovery does not hide contradictory chart prose from a removed block', () => {
+  const program = 'root = Col([Text("Stripe will retry indefinitely. March rose."), Chart("bar", [{month:"Jan",value:12},{month:"Feb",value:15},{month:"Mar",value:14}], "month", ["value"])])';
+  const answer = completeNativeWorkspaceAnswer('Review the monthly chart.' + NATIVE_UI_MARKER + program, 'stop');
+  assert.deepEqual(answer.completion, { status: 'partial', reason: 'factual_review' });
+  assert.match(answer.response, /finite delivery window/);
+  assert.doesNotMatch(answer.response, /March rose/);
+  assert.equal(answer.responseSource.text, '');
 });
 
 test('hosted authorization and billing contradictions get corrections before the saved draft', () => {

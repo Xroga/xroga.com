@@ -32,3 +32,9 @@ The authenticated browser test exercises a partially recovered response through 
 Repeated DNS failures on both Ubuntu mirrors blocked Chromium setup before browser assertions could run. The browser and baseline jobs install the pinned Playwright Chromium and verify that it can launch and render a page. They install the Playwright system dependencies only if that launch check fails, then require it to pass. The application, fixture and security checks remain mandatory.
 
 [Playwright installation and system dependencies](https://playwright.dev/docs/browsers)
+
+### Factual review recovery
+
+The private test of `d1238ff9a` withheld the entire native architecture program at factual review. Its diagnostic did not distinguish the ordering rule from the retry-window rule, and the rejected text was intentionally unavailable.
+
+When only the layout triggers a known factual rule, the Workspace now withholds the flagged content, reports the relevant correction, and keeps independent components that pass the same validation. This stays a partial answer. Recovery is limited to stopped completions and cannot override authorization, evidence ownership, or chart data review. Diagnostics record the fixed rule identifier without logging generated claims. The authenticated fixture covers the corrected text, rich table, Copy and Reopen.

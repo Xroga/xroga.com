@@ -1,5 +1,5 @@
 import { createParser, evaluate, parseExpression, split, tokenize, walkAST, type ASTNode, type LibraryJSONSchema } from '@openuidev/lang-core';
-import { contradictsMonthlyChart, monthlyChartDataFallback, nativeAnswerReviewReason, suppliedMonthlyComparison } from './nativeOpenUiAccuracy.js';
+import { contradictsMonthlyChart, monthlyChartDataFallback, reviewNativeAnswer, suppliedMonthlyComparison } from './nativeOpenUiAccuracy.js';
 import catalog from './nativeOpenUiCatalog.json' with { type: 'json' };
 
 export const NATIVE_UI_FORMAT = 'xroga-openui-v1' as const;
@@ -155,6 +155,7 @@ export type NativeUiDiagnostic = {
   statement?: number;
   programLength: number;
   shape: Array<{ tokens: number; skeleton: string }>;
+  factualRule?: NonNullable<ReturnType<typeof reviewNativeAnswer>>['rule'];
   schemaState?: { hasRoot: boolean; incomplete: boolean; unresolved: number; errors: number };
   schema?: Array<{ code: string; statement?: number; component?: string; pathDepth: number }>;
 };
@@ -174,6 +175,7 @@ export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<s
   let statement: number | undefined;
   let statements: ReturnType<typeof split> = [];
   let schemaState: NativeUiDiagnostic['schemaState'];
+  let factualRule: NativeUiDiagnostic['factualRule'];
   const fail = (reason: NativeUiDiagnostic['reason'], errors?: ReturnType<typeof parseProgram.parse>['meta']['errors']) => {
     if (diagnose) diagnose({
       stage, reason, statement, programLength: program.length,
@@ -186,6 +188,7 @@ export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<s
         }).join(' '),
       })),
       ...(schemaState ? { schemaState } : {}),
+      ...(factualRule ? { factualRule } : {}),
       ...(errors?.length ? { schema: errors.slice(0, 8).map(error => {
         const index = statements.findIndex(item => item.id === error.statementId);
         return { code: error.code, ...(index < 0 ? {} : { statement: index + 1 }),
@@ -262,8 +265,11 @@ export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<s
     statement = undefined;
     stage = 'accuracy';
     const narrative = [prose, ...reviewStrings].join('\n');
-    const reviewReason = nativeAnswerReviewReason(narrative);
-    if (reviewReason) return fail(reviewReason);
+    const finding = reviewNativeAnswer(narrative);
+    if (finding) {
+      factualRule = finding.rule;
+      return fail(finding.reason);
+    }
     stage = 'schema';
     const result = parseProgram.parse(program);
     if (result.queryStatements.length || result.mutationStatements.length) return fail('authority');
@@ -362,9 +368,9 @@ function rewriteListItems(node: ASTNode, symbols: ReadonlyMap<string, ASTNode>):
 
 const layoutChildren = new Map([['Col', 0], ['Row', 0], ['Grid', 0], ['Card', 0], ['Box', 0], ['Section', 1]]);
 
-/** Workspace calls this only after the original passes the authority and factual
- * gates and fails schema validation. Every candidate passes the same validator. */
-export function recoverNativeWorkspaceProgram(program: string, evidenceIds: ReadonlySet<string> | undefined, prose: string) {
+/** Workspace calls this after the original passes the authority audit. Every
+ * candidate passes the same validator, including its factual and data checks. */
+export function recoverNativeWorkspaceProgram(program: string, evidenceIds: ReadonlySet<string> | undefined, prose: string, failure: 'schema' | 'factual_review' = 'schema') {
   try {
     const statements = split(tokenize(program));
     const declarations = new Map(statements.map(item => [item.id, item]));
@@ -389,7 +395,7 @@ export function recoverNativeWorkspaceProgram(program: string, evidenceIds: Read
       }
       return id + ' = ' + printed;
     };
-    const normalized = [...symbols].some(([id, node]) => originals.get(id) !== node);
+    const normalized = failure === 'schema' && [...symbols].some(([id, node]) => originals.get(id) !== node);
     if (normalized) {
       const full = [...symbols].map(([id, node]) => sourceFor(id, node)).join('\n');
       const validation = validateNativeWorkspaceProgram(full, evidenceIds, narrative);
@@ -415,15 +421,18 @@ export function recoverNativeWorkspaceProgram(program: string, evidenceIds: Read
 
     // Cap repeated parser calls independently of the provider output limits.
     let probes = 48;
+    // The existing factual rules are Stripe-specific. Retain that context even
+    // if the only component naming Stripe is withheld during recovery.
+    const reviewContext = failure === 'factual_review' ? prose + '\nStripe' : prose;
     const validate = (candidate: ASTNode) => probes-- > 0
-      ? validateNativeWorkspaceProgram(render(candidate), evidenceIds, prose) : undefined;
+      ? validateNativeWorkspaceProgram(render(candidate), evidenceIds, reviewContext) : undefined;
     const group = (els: ASTNode[]): Extract<ASTNode, { k: 'Comp' }> => ({ k: 'Comp', name: 'Col', args: [{ k: 'Arr', els }] });
     const usable = (check: NativeUiValidation | undefined) => check?.ok === true || (check?.ok === false && check.reason === 'data_review');
     function salvage(children: ASTNode[], depth: number): ASTNode[] {
       if (!children.length || depth > 8 || probes <= 0) return [];
       const check = validate(group(children));
       if (usable(check)) return children;
-      if (check?.ok !== false || check.reason !== 'schema') return [];
+      if (check?.ok !== false || (check.reason !== 'schema' && check.reason !== failure)) return [];
       if (children.length === 1) {
         const layout = salvageLayout(resolveRecoveryReference(children[0], symbols), depth);
         if (!layout) return [];
@@ -449,7 +458,11 @@ export function recoverNativeWorkspaceProgram(program: string, evidenceIds: Read
     const recovered = layout && (usable(validate(layout.container)) ? layout.container : group(layout.children));
     if (!recovered) return;
     const restored = render(recovered);
-    const validation = validateNativeWorkspaceProgram(restored, evidenceIds, narrative);
+    const validation = validateNativeWorkspaceProgram(restored, evidenceIds, failure === 'schema' ? narrative : reviewContext);
+    if (failure === 'factual_review') {
+      // Omitted components must not hide a contradiction with any surviving chart.
+      if (!validation.ok || contradictsMonthlyChart(parseProgram.parse(restored).root, narrative)) return;
+    }
     if (validation.ok || validation.reason === 'data_review') return { program: restored, validation, partial: true };
   } catch {
     // Keep the original prose when recovery cannot safely rebuild the layout.

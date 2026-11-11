@@ -254,7 +254,8 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   const recovery = 'Show a partially recovered estimate.';
   const recoveryNote = 'Some visuals could not be validated. The available explanation and verified visuals are shown below.';
   const recoveryProse = 'The estimate covers the print charge.';
-  const recoveryText = [recoveryNote, recoveryProse, '| Item | USD |\n| --- | --- |\n| Printing | 25 |'].join('\n\n');
+  const recoveryGuidance = 'Stripe automatic webhook retries have a finite delivery window.';
+  const recoveryText = [recoveryNote, recoveryGuidance, recoveryProse, '| Item | USD |\n| --- | --- |\n| Printing | 25 |'].join('\n\n');
   const recoveryProgram = 'root = Col([Table(["Item", "USD"], [["Printing", 25]])])';
   const reviewed = 'Show the reviewed monthly chart.';
   const reviewedReply = 'Partial answer. The written summary disagreed with the plotted data, so it was withheld.';
@@ -312,7 +313,7 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
     if (body.message === recovery) {
       return route.fulfill({ headers: cors, json: {
         response: recoveryText,
-        completion: { status: 'partial', reason: 'presentation_contract' },
+        completion: { status: 'partial', reason: 'factual_review' },
         responseSource: { format: 'xroga-openui-v1', text: recoveryProgram },
       } });
     }
@@ -501,16 +502,18 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   const recoveredAnswer = page.getByRole('region', { name: 'Answer', exact: true }).filter({ hasText: recoveryProse });
   const recoveredTable = recoveredAnswer.locator('.iui-col').getByRole('table');
   await expect(recoveredAnswer.getByText(recoveryNote, { exact: true })).toBeVisible();
+  await expect(recoveredAnswer.getByText(recoveryGuidance, { exact: true })).toBeVisible();
   await expect(recoveredTable.getByRole('cell', { name: '25', exact: true })).toBeVisible();
   const recoveryTurn = page.locator('[data-turn-id]').filter({ has: recoveredAnswer });
   await recoveryTurn.getByRole('button', { name: 'Copy', exact: true }).click();
-  const recoveryClipboard = [recoveryNote, recoveryProse, 'Item\tUSD\nPrinting\t25'].join('\n\n');
+  const recoveryClipboard = [recoveryNote, recoveryGuidance, recoveryProse, 'Item\tUSD\nPrinting\t25'].join('\n\n');
   await expect.poll(() => page.evaluate(async () => (await navigator.clipboard.readText()).replace(/\r\n/g, '\n'))).toBe(recoveryClipboard);
   await expect.poll(async () => ((await readSaved())?.messages as Array<{ featureOutput?: { responseSource?: { text?: string } } }> | undefined)
     ?.some(message => message.featureOutput?.responseSource?.text === recoveryProgram), { timeout: 20_000 }).toBe(true);
   await page.reload();
   await openPersistedConversation(page, { id: sessionId, title: savedTitle!, reply: recoveryProse });
   await expect(recoveredAnswer.getByText(recoveryNote, { exact: true })).toBeVisible();
+  await expect(recoveredAnswer.getByText(recoveryGuidance, { exact: true })).toBeVisible();
   await expect(recoveredTable.getByRole('cell', { name: '25', exact: true })).toBeVisible();
   await send(reviewed);
   const reviewedAnswer = page.getByRole('region', { name: 'Answer', exact: true }).filter({ hasText: reviewedReply });

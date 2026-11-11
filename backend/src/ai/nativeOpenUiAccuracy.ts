@@ -1,6 +1,11 @@
 import { requiresAuthorizationReview } from './answerAuthorizationReview.js';
 
-type TechnicalCorrection = { reason: 'authorization_review' | 'factual_review'; guidance: string };
+type FactualRule = 'stripe_event_order' | 'stripe_retry_window';
+export const nativeFactualGuidance: Record<FactualRule, string> = {
+  stripe_event_order: 'Stripe event timestamps can tie and do not establish delivery order. Verify the signature, deduplicate by event ID, and reconcile the current subscription state with Stripe before applying a durable update.',
+  stripe_retry_window: 'Stripe automatic webhook retries have a finite delivery window. Reconcile missed events separately and make processing idempotent.',
+};
+type TechnicalCorrection = { reason: 'authorization_review' | 'factual_review'; guidance: string; rule?: FactualRule };
 
 /** Catch the documented failure patterns without treating every answer about
  * Supabase or Stripe as suspect. Inspect examples as well as explanatory text. */
@@ -32,7 +37,16 @@ export function nativeTechnicalCorrections(answer: string): TechnicalCorrection[
     /\b(?:order(?:ed|ing)?|stored state|newer|older|stale|reconcil|sort)\w*\b/i.test(statement))) {
     corrections.push({
       reason: 'factual_review',
-      guidance: 'Stripe event timestamps can tie and do not establish delivery order. Verify the signature, deduplicate by event ID, and reconcile the current subscription state with Stripe before applying a durable update.',
+      rule: 'stripe_event_order',
+      guidance: nativeFactualGuidance.stripe_event_order,
+    });
+  }
+  // Stripe's automatic delivery attempts have a finite window in both modes.
+  if (/\bStripe\s+(?:(?:will|would|can|automatically)\s+)*retr(?:y|ies)\s+(?:(?:failed\s+)?(?:webhook\s+)?(?:events?|deliver(?:y|ies))\s+)?(?:forever|indefinitely|without (?:a )?limit)\b/i.test(text)) {
+    corrections.push({
+      reason: 'factual_review',
+      rule: 'stripe_retry_window',
+      guidance: nativeFactualGuidance.stripe_retry_window,
     });
   }
   return corrections;
@@ -53,15 +67,13 @@ function requiresNativeAuthorizationReview(answer: string): boolean {
   });
 }
 
-export function nativeAnswerReviewReason(answer: string): 'authorization_review' | 'factual_review' | undefined {
-  if (requiresNativeAuthorizationReview(answer)) return 'authorization_review';
-  const corrections = nativeTechnicalCorrections(answer);
-  if (corrections.length) return corrections[0].reason;
-  // Stripe's automatic delivery attempts have a finite window in both modes.
-  const prose = answer.replace(/[\x60*_]/g, '');
-  if (/\bStripe\s+(?:(?:will|would|can|automatically)\s+)*retr(?:y|ies)\s+(?:(?:failed\s+)?(?:webhook\s+)?(?:events?|deliver(?:y|ies))\s+)?(?:forever|indefinitely|without (?:a )?limit)\b/i.test(prose)) {
-    return 'factual_review';
-  }
+export function reviewNativeAnswer(answer: string): { reason: TechnicalCorrection['reason']; rule?: FactualRule; guidance?: string } | undefined {
+  if (requiresNativeAuthorizationReview(answer)) return { reason: 'authorization_review' };
+  return nativeTechnicalCorrections(answer)[0];
+}
+
+export function nativeAnswerReviewReason(answer: string) {
+  return reviewNativeAnswer(answer)?.reason;
 }
 
 const monthNames = [

@@ -21,7 +21,8 @@
     ".github/workflows/unit-tests.yml",
     ".github/workflows/xroga-golden-journeys.yml",
     "frontend/e2e/command3-auth.spec.ts",
-    "scripts/xroga/phase-two.test.mjs"
+    "scripts/xroga/phase-two.test.mjs",
+    "backend/src/ai/nativeOpenUiAccuracy.ts"
   ],
   "decisions": {
     "keep": [
@@ -29,7 +30,8 @@
     ],
     "extend": [
       "Repair supported list objects and retain validated sibling components in the existing OpenUI program.",
-      "Recover text and calculation defaults from validated parts, with a partial notice if any component is discarded."
+      "Recover text and calculation defaults from validated parts, with a partial notice if any component is discarded.",
+      "Preserve independently valid content when a known layout-only factual rule triggers. Add the applicable correction and retain a partial completion."
     ],
     "replace": [],
     "deprecate": []
