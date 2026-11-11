@@ -27,7 +27,9 @@
     "package-lock.json",
     "scripts/xroga/runtime-facts.mjs",
     "supabase/migrations/20261110212913_smart_notification_push_subscriptions.sql",
-    "docs/xroga/missions/workspace-openui-notification-compatibility-20261112.json"
+    "docs/xroga/missions/workspace-openui-notification-compatibility-20261112.json",
+    "frontend/src/lib/notificationExperience.ts",
+    "frontend/src/lib/notificationExperience.test.ts"
   ],
   "decisions": {
     "keep": [
@@ -89,6 +91,12 @@
       "scope": "Verify authenticated subscription creation, update and deletion and verify that a different account cannot modify or delete the subscription.",
       "negative": true,
       "reference": "backend/src/security/tenantIsolation.local.integration.ts"
+    },
+    {
+      "command": "node --import tsx --test frontend/src/lib/notificationExperience.test.ts",
+      "scope": "Verify the live sound preview plays the chime without opting the user into future sound alerts.",
+      "negative": true,
+      "reference": "frontend/src/lib/notificationExperience.test.ts"
     }
   ],
   "architecture": {
