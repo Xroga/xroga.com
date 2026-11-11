@@ -120,3 +120,30 @@ describe('tasks that come after other tasks', () => {
     expect(handoff).toContain('[a] a:');
   });
 });
+
+describe('exclusive control of a shared thing', () => {
+  it('tasks that name the same resource take turns, others still run together', async () => {
+    const h = harness();
+    const r = parse(await h.workers.start('parent', { tasks: [t('front', undefined, { resource: 'design:kit' }), t('back', undefined, { resource: 'design:kit' }), t('research'), t('sleeve', undefined, { resource: 'design:sleeve' })] }));
+    expect(r.started.map((s: { id: string; state: string }) => s.id + ':' + s.state)).toEqual(['front:running', 'back:waiting', 'research:running', 'sleeve:running']);
+    expect(h.opened).toHaveLength(3);
+    await h.workers.ended('conv-1', { status: 'done', outcome: 'success', result: 'front done' });
+    expect(h.opened).toHaveLength(4);
+    expect(h.opened[3].instruction).toContain('Do back');
+  });
+
+  it('a resource is released when its holder fails or is stopped, so the next task is not stuck', async () => {
+    const h = harness();
+    await h.workers.start('parent', { tasks: [t('one', undefined, { resource: 'doc:a' }), t('two', undefined, { resource: 'doc:a' })] });
+    await h.workers.ended('conv-1', { status: 'failed', reason: 'Crashed.' });
+    expect(h.opened).toHaveLength(2);
+  });
+
+  it('refuses a malformed resource name', async () => {
+    const h = harness();
+    const r = await h.workers.start('parent', { tasks: [t('a', undefined, { resource: 'has space' })] });
+    expect(r.isError).toBe(true);
+    expect(r.text).toContain('resource');
+    expect(h.opened).toHaveLength(0);
+  });
+});

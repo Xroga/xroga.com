@@ -24,6 +24,7 @@ const HANDOFF_ALL = 6_000;
 const MAX_WAIT_SECONDS = 15;
 const KEEP_ENDED_MS = 24 * 3_600_000;
 const LABEL = /^[a-z][a-z0-9_-]{0,23}$/i;
+const RESOURCE = /^[a-z0-9][a-z0-9:_./-]{0,59}$/i;
 
 export type WorkerState = 'waiting' | 'starting' | 'running' | 'completed' | 'failed' | 'cancelled';
 export const isEnded = (state: WorkerState) => state === 'completed' || state === 'failed' || state === 'cancelled';
@@ -35,6 +36,8 @@ export interface WorkerJob {
   label: string;
   /** The labels of the tasks this one waits for. */
   after: string[];
+  /** A shared thing this task needs alone (a document, a canvas, an account page): no two tasks with the same one run at once. */
+  resource?: string;
   parentId: string;
   conversationId?: string;
   windowId?: number;
@@ -77,7 +80,7 @@ export const PARALLEL_TOOLS: AgentTool[] = [
     description:
       'Split a goal into tasks that workers do, each in its own Chrome window with its own instruction. Up to 8 tasks; at most 3 run at the same time and the rest wait. ' +
       'Tasks that do not need each other run together. A task that needs another one gives it in `after`: it starts once that task has finished, and receives its result. ' +
-      'Give each task an `id` (a short name) when others depend on it. A task needs a specific instruction and may have an https start page (default: a web search). ' +
+      'Give each task an `id` (a short name) when others depend on it. Give tasks that edit the same document, canvas or account page the same `resource`, so they take turns. A task needs a specific instruction and may have an https start page (default: a web search). ' +
       'Use it for work that really splits (several sources to research, assets to prepare before they are assembled); do one thing at a time when each step depends on the screen the last one left. ' +
       'A worker cannot start workers and works like you do, with its own approvals. Collect results with parallel_task_status.',
     parameters: {
@@ -94,6 +97,7 @@ export const PARALLEL_TOOLS: AgentTool[] = [
               instruction: { type: 'string', description: 'What this worker must find out or do, complete in itself' },
               url: { type: 'string', description: 'The https page it starts on' },
               after: { type: 'array', items: { type: 'string' }, description: 'The ids of the tasks that must finish first; their results are given to this one' },
+              resource: { type: 'string', description: 'A shared thing this task must have alone, for example design:front-kit or crm:acme. Tasks with the same resource never run at the same time' },
             },
             required: ['instruction'],
             additionalProperties: false,
@@ -122,6 +126,7 @@ export const PARALLEL_TOOLS: AgentTool[] = [
 interface Plan {
   label: string;
   after: string[];
+  resource?: string;
   instruction: string;
   url: string;
 }
@@ -177,7 +182,9 @@ export class ParallelWorkers {
       if (why) return { error: `error (nothing started): task ${i + 1}: ${why}` };
       const after = Array.isArray(t.after) ? t.after.filter((x): x is string => typeof x === 'string').map(x => x.trim()) : [];
       if (Array.isArray(t.after) && after.length !== t.after.length) return { error: `error INVALID_ARGUMENT (nothing started): task ${i + 1}: after is a list of ids.` };
-      plans.push({ label, after: [...new Set(after)], instruction, url });
+      const resource = typeof t.resource === 'string' && t.resource.trim() ? t.resource.trim() : undefined;
+      if (resource !== undefined && !RESOURCE.test(resource)) return { error: `error INVALID_ARGUMENT (nothing started): task ${i + 1}: a resource is a short name such as design:front-kit.` };
+      plans.push({ label, after: [...new Set(after)], ...(resource ? { resource } : {}), instruction, url });
     }
     for (const p of plans) {
       for (const dep of p.after) {
@@ -232,6 +239,8 @@ export class ParallelWorkers {
         }
         if (deps.some(d => d && !isEnded(d.state))) continue;
         if (mine.filter(j => isActive(j.state)).length >= MAX_ACTIVE_WORKERS) continue;
+        // Exclusive control of a shared thing: wait while another task holds the same resource.
+        if (job.resource && mine.some(j => j !== job && isActive(j.state) && j.resource === job.resource)) continue;
         job.state = 'starting';
         await this.deps.save(jobs);
         try {
@@ -269,7 +278,7 @@ export class ParallelWorkers {
       const planned = this.#plan(parentId, raw, jobs);
       if ('error' in planned) return { text: planned.error, isError: true };
       const created: WorkerJob[] = planned.plans.map(p => ({
-        id: this.deps.newId(), label: p.label, after: p.after, parentId, instruction: p.instruction, url: p.url, state: 'waiting' as const, createdAt: this.deps.now(),
+        id: this.deps.newId(), label: p.label, after: p.after, ...(p.resource ? { resource: p.resource } : {}), parentId, instruction: p.instruction, url: p.url, state: 'waiting' as const, createdAt: this.deps.now(),
       }));
       for (const job of created) jobs[job.id] = job;
       await this.deps.save(jobs);

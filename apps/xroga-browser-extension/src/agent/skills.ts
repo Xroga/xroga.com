@@ -72,6 +72,53 @@ export const SKILLS: Skill[] = [
     ].join('\n'),
   },
   {
+    id: 'design-editor',
+    when: has(/\b(?:logo|artboard|canvas|mock-?ups?|jerseys?|football kits?|sportswear|poster|banner|brand(?:ing)? (?:colors?|kit)|background removal|remove the background|canva|figma|corel|photoshop|illustrator|design editor|graphic design)\b/i),
+    body: [
+      'Design and image editors:',
+      '- Split the work: prepare assets first (logos, transparent backgrounds, sizes), choose the colors and layout in words, then assemble in the editor, then check and export. Preparing assets and choosing colors do not depend on each other; assembling depends on both.',
+      '- A canvas is often not readable as page elements. Work through what is: the layers or objects panel, the toolbar, the properties panel and dialogs. Select a layer from the panel, then change its position, size, color or text in the properties fields, which is more exact than dragging on the canvas.',
+      '- Only one run edits a given document at a time. Never let two workers change the same canvas: give each worker its own piece (its own file, page or asset) and let one task assemble, and give tasks that touch the same document the same resource so they take turns.',
+      '- Keep logo proportions, check contrast between text and background, and keep names and numbers inside the garment or page area.',
+      '- Check the result in the editor (a zoomed look, the layer list, the values you set) before you export. Export through the application own export dialog and say exactly what it showed. Do not claim a file exists unless the application or the browser showed it was saved; say so plainly when you could not confirm it.',
+    ].join('\n'),
+  },
+  {
+    id: 'video-editor',
+    when: has(/\b(?:video edit(?:or|ing)?|timeline|clips?|footage|captions?|subtitles?|voice-?overs?|transitions?|render the video|export the video|premiere|capcut|davinci|promo(?:tional)? video)\b/i),
+    body: [
+      'Video editors:',
+      '- Plan before you edit: the scenes in order with rough timings, what to cut, the narration, the captions. Planning, preparing the voiceover or captions and looking over the clips are independent; building the timeline depends on them.',
+      '- Editing the timeline is one run at a time on one project. Do not let two workers change the same timeline.',
+      '- Work through the editor panels and dialogs (media bin, timeline items, properties, export dialog). Verify each change in the editor (the clip list, durations, the caption text) rather than assuming it applied.',
+      '- Rendering takes time: wait for the application own progress and completion message, then report what it shows. Do not claim the video was rendered or exported until the application or the browser showed the finished file; say so when you could not confirm it.',
+    ].join('\n'),
+  },
+  {
+    id: 'business-records',
+    when: has(/\b(?:crm|customer records?|contact records?|leads?|deals?|pipeline|product listings?|inventory|orders? (?:list|dashboard)|wordpress|shopify|webflow|woocommerce|cms|add (?:a )?customers?|update (?:the )?products?)\b/i),
+    body: [
+      'Records in business tools (CRM, store, website):',
+      '- Search before you create: look for the record by a unique value (email, SKU, name) so you do not make a duplicate. Make each change once.',
+      '- After saving, prove the result: open or search the record again and check the values you set, not just the success message. If a record cannot be found afterwards, say it is not confirmed and do not create it again.',
+      '- Work in batches of known fields: when you have the field targets, fill them in one batch call and check them once. Take a fresh snapshot after the page changes.',
+      '- Deleting, publishing and sending need the user approval for that exact action; attempt the final control once so the approval card opens.',
+    ].join('\n'),
+  },
+  {
+    id: 'work-split',
+    when: has(/\b(?:in parallel|at the same time|simultaneously|workers?|sub-?agents?|each (?:competitor|site|page|product|source)|several (?:sites|pages|competitors|sources)|(?:three|four|five|six|\d+) (?:competitors|sites|pages|sources|websites)|then assemble|prepare .{0,60}(?:then|and then) )\b/i),
+    body: [
+      'Splitting work (use the smallest tool that does the job):',
+      '- To read several pages: delegate with one job per page, or a search with follow to read its top results. It reads them together and costs no model turn per page.',
+      '- To do known steps on one page quickly: batch (fields, a banner that may not be there, click Next until it is gone).',
+      '- To split real work between workers: start_parallel_tasks. Tasks that do not need each other run together; a task that needs another one names it in after and receives its result. Give each task a short id, a specific instruction and, when it needs a page, an https start page.',
+      '- Keep one worker per shared resource: two workers must not edit the same document, form or account page at once. Give such tasks the same resource (for example design:front-kit) and they take turns; a dependent step names the one it needs in after.',
+      '- Do not split what depends on the screen the last step left: do it yourself, in order. More workers cost more and are not always faster.',
+      '- Worker results are observations, not facts you have checked: compare them, resolve disagreements by looking at the source, and say which parts are verified.',
+    ].join('\n'),
+  },
+  {
     id: 'cloud',
     when: has(/\b(?:google cloud|cloud run|cloud shell|gcloud|cloud console|cloud build|artifact registry|secret manager|iam|service account|aws console|azure portal|kubernetes|docker)\b/i),
     body: [
