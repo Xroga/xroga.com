@@ -1,0 +1,88 @@
+// Acceptance runs with the REAL model: the product code (WXT_AUTORUN_PRODUCT=1) against the staging backend, with a throwaway staging account.
+// The check enrolls this Chrome as a device for that account (the same authorize and exchange steps as pairing), then sends real tasks from the
+// side panel and measures each: wall time, model turns and the final answer. It needs args { jwt, account }; nothing here runs in a normal build.
+import { BROWSER_API_ORIGIN } from '@src/xroga/workspace';
+import { workspacePaired } from '@src/xroga/bridge';
+import { deviceProof, directConfigured, directReady, enrollDevice, savedDevice, verifyDevice } from '@src/xroga/device';
+import { getRun, listConversations } from '@src/store/conversations';
+import { defineCheck } from './registry';
+import { sleep, waitForLoad } from './helpers';
+import { panel } from './panel-chat';
+
+const BASE = `${BROWSER_API_ORIGIN}/api/browser/local`;
+
+const DEFAULT_TASKS = [
+  { name: 'simple-read', text: 'Open https://example.com and tell me the heading of the page.', url: 'https://example.com/' },
+  {
+    name: 'three-pages',
+    text: 'Open https://example.com, https://www.iana.org and https://www.wikipedia.org and tell me the main heading of each page.',
+    url: 'https://example.com/',
+  },
+];
+
+defineCheck({
+  name: 'real-model',
+  title: 'Real model acceptance',
+  description: 'Enrolls this Chrome as a device for a staging test account and runs real tasks through the panel, measuring each.',
+  async run(args: Record<string, unknown>) {
+    const jwt = String(args.jwt ?? '');
+    const account = String(args.account ?? '');
+    if (!jwt || !account) throw new Error('args { jwt, account } are required');
+    const tasks = (Array.isArray(args.tasks) ? args.tasks : DEFAULT_TASKS) as typeof DEFAULT_TASKS;
+    const maxPolls = Number(args.maxPolls ?? 600);
+
+    const report0: Record<string, unknown> = {};
+    const { verifier, challenge } = await deviceProof();
+    const authorized = await fetch(`${BASE}/device/authorize`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', authorization: `Bearer ${jwt}` },
+      body: JSON.stringify({ extensionId: chrome.runtime.id, challenge }),
+    });
+    const body = (await authorized.json()) as { code?: string; error?: string };
+    if (!authorized.ok) throw new Error(`device authorize ${authorized.status}: ${body.error ?? ''}`);
+    await enrollDevice(account, verifier, body);
+    const verified = await verifyDevice().catch(error => String(error));
+    report0.device = { configured: directConfigured(), saved: !!(await savedDevice()), verified, ready: directReady() };
+
+    const window = (await chrome.windows.getCurrent()).id!;
+    const report: Record<string, unknown> = { extensionId: chrome.runtime.id, device: report0.device, tasks: [], polls: [] };
+    for (const task of tasks) {
+      const page = await chrome.tabs.create({ windowId: window, url: task.url, active: false });
+      await waitForLoad(page.id!);
+      const view = await chrome.tabs.create({ windowId: window, url: chrome.runtime.getURL(`/sidepanel.html#tab=${page.id}`), active: false });
+      await waitForLoad(view.id!);
+      await sleep(1500);
+      const before = new Set((await listConversations()).map(c => c.id));
+      const started = Date.now();
+      let status = '';
+      let last = '';
+      try {
+        await panel(page.id!, 'type-send', { text: task.text });
+        let conversationId: string | undefined;
+        for (let i = 0; i < maxPolls; i++) {
+          const read = await panel(page.id!, 'read');
+          last = read.transcript;
+          conversationId ??= (await listConversations()).find(c => !before.has(c.id))?.id;
+          const run = conversationId ? await getRun(conversationId) : undefined;
+          status = run?.status ?? 'starting';
+          if (i % 20 === 0) (report.polls as unknown[]).push({ i, bridgePaired: workspacePaired(), status, turns: run?.turns, transcript: last.slice(-120) });
+          if (['done', 'failed', 'stopped', 'capped', 'interrupted'].includes(status)) break;
+          await sleep(500);
+        }
+        const ms = Date.now() - started;
+        const conversation = (await listConversations()).find(c => !before.has(c.id));
+        const run = conversation ? await getRun(conversation.id) : undefined;
+        (report.tasks as unknown[]).push({
+          name: task.name,
+          status,
+          seconds: Math.round(ms / 100) / 10,
+          turns: run?.turns,
+          answer: last.slice(-500),
+        });
+      } finally {
+        for (const t of [view, page]) await chrome.tabs.remove(t.id!).catch(() => undefined);
+      }
+    }
+    return report;
+  },
+});

@@ -1842,7 +1842,7 @@ export class RunManager {
         if (canonical) {
           const finishedRunId = canonical.runId;
           const branch = await activeBranch(conversationId).catch(() => []);
-          const actions = [...(record.canonicalBrowserActions ?? []), ...completedBrowserTools(runId, branch)].slice(
+          const actions = [...(record.canonicalBrowserActions ?? []), ...(loopRef?.preActions ?? []), ...completedBrowserTools(runId, branch)].slice(
             0,
             500,
           );

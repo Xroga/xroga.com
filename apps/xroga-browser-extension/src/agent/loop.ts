@@ -458,6 +458,9 @@ export class AgentLoop {
     );
   }
 
+  /** What the run did before the first model turn (opened a site, attached its outline, read pages): counted as work done. */
+  readonly preActions: string[] = [];
+
   async firstTurn(): Promise<void> {
     const branch = await activeBranch(this.options.conversationId);
     const earlierResults = branch.some(e => e.type === 'message' && e.message.role === 'tool');
@@ -487,12 +490,16 @@ ${ledger}` : ''),
       const plan = researchPlan(userText(asked));
       const read = await runSubagents({ layer: this.options.layer, signal: this.options.signal }, [{ query: plan.query, follow: plan.follow }]).catch(() => null);
       if (read && !this.options.signal.aborted) {
+        this.preActions.push('delegate');
         await this.writer.appNote(`${RESEARCH_FIRST_NOTE}\n${read.text}`);
         return;
       }
     }
     const direct = asked && !earlierResults ? directNavigation(userText(asked)) : null;
-    if (direct) await this.#openDirect(direct);
+    if (direct) {
+      await this.#openDirect(direct);
+      this.preActions.push('navigate');
+    }
     const tabs = await this.options.layer.tabs().catch(() => null);
     const active = tabs?.tabs.find(t => t.tabId === tabs.activeTabId);
     if (!active || !/^https?:/i.test(active.url)) return;
@@ -503,6 +510,7 @@ ${ledger}` : ''),
     );
     if (!result.ok) return;
     this.#seen.set(active.tabId, active.url);
+    this.preActions.push('snapshot');
     // Kept within budget: a share of the window, at 4 characters a token.
     const budget = Math.max(2_000, Math.min(30_000, this.options.model.profile.contextWindow * 4 * 0.2));
     const outline = cutText(result.text, budget, '… the outline was cut; take a snapshot to see more.');
