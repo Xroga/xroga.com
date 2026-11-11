@@ -85,4 +85,27 @@ describe('plugin_action_search and plugin_act', () => {
     expect(result.text).toContain('Required but missing: query');
     expect(result.text).toContain('query, max_results');
   });
+
+  it("gives the model the provider's plan, pitfalls and connection status ahead of the tools", async () => {
+    responses = [{ tools: [{ slug: 'GOOGLESHEETS_SEARCH_SPREADSHEETS', parameters: { properties: { query: { type: 'string' } } } }],
+      plan: ['Search by file name first.'], pitfalls: ['Pass an ID, not a name.'], guidance: 'Read the sheet after finding it.',
+      apps: [{ app: 'googlesheets', connected: true }] }];
+    const result = await runPluginTool('plugin_search', 'run-1', { query: 'find a spreadsheet in Google Sheets' }, new AbortController().signal, async () => 'approve', wrap);
+    expect(result.isError).toBe(false);
+    const text = result.text;
+    expect(text.indexOf('Search by file name first.')).toBeLessThan(text.indexOf('GOOGLESHEETS_SEARCH_SPREADSHEETS'));
+    expect(text).toContain('Pass an ID, not a name.');
+    expect(text).toContain('Read the sheet after finding it.');
+    expect(text).toContain('"connected":true');
+  });
+
+  it("relays the app's reason when it rejects an approved request, and says it most likely changed nothing", async () => {
+    responses = [{ approval }, Object.assign(new Error('x'), { code: 'BROWSER_GATEWAY_UNAVAILABLE', status: 503,
+      detail: { providerMessage: ['Unknown field search_type'] } })];
+    const result = await runPluginTool('plugin_read', 'run-1', { slug: 'S', arguments: { query: 'a' } }, new AbortController().signal, async () => 'approve', wrap);
+    expect(result.isError).toBe(true);
+    expect(result.text).toContain('most likely changed nothing');
+    expect(result.text).toContain('<<connected app error>>Unknown field search_type<<end>>');
+    expect(result.text).toContain('request the corrected call once');
+  });
 });

@@ -17,7 +17,8 @@ import { isTerminalRunStatus, PostgresBrowserRunStore, type BrowserRunRecord, ty
 import { PostgresLeaseStore } from '../workers/postgresLeaseStore.js';
 import { readBrowserDocument } from './browserDocuments.js';
 import { createLocalBrowserPluginCatalog } from './localBrowserPlugins.js';
-import { executeComposioReadTool, isComposioConfigured, searchComposioActionTools, searchComposioTools } from '../services/integrations/composioClient.js';
+import { executeComposioReadTool, getComposioToolDetails, isComposioConfigured, searchComposioActionTools, searchComposioTools } from '../services/integrations/composioClient.js';
+import type { XrogaConnectSearchResult } from '../services/integrations/composioClient.js';
 import { cancelBusinessActionConfirmation, confirmBusinessAction } from '../services/integrations/businessActionConfirmations.js';
 import { preparedActionDigest } from '../security/authority/digest.js';
 import { isFinancialAction, prepareBusinessAction } from '../services/integrations/businessAction.js';
@@ -32,6 +33,61 @@ const MAX_GOAL = 16_000;
 const MAX_PLUGIN_ACTIONS = 4;
 const limits = { ...BROWSER_RUN_DEFAULTS, maxModelCostMicros: MAX_RUN_MICROS };
 const id = z.string().uuid();
+const clip = (value: unknown, max: number) => (typeof value === 'string' ? value.replace(/\s+/g, ' ').trim().slice(0, max) : undefined);
+
+/** A tool's parameters as the model needs them: names, types, which are required, allowed values, a short description. */
+export function compactSchema(schema: unknown): Record<string, unknown> | undefined {
+  const s = schema as { properties?: Record<string, unknown>; required?: unknown } | null;
+  if (!s || typeof s !== 'object' || !s.properties || typeof s.properties !== 'object') return undefined;
+  const properties: Record<string, unknown> = {};
+  for (const [name, raw] of Object.entries(s.properties).slice(0, 40)) {
+    const d = (raw ?? {}) as { type?: unknown; description?: unknown; enum?: unknown; default?: unknown; items?: { type?: unknown } };
+    const small = d.default !== undefined && JSON.stringify(d.default).length < 80;
+    properties[name] = {
+      ...(typeof d.type === 'string' || Array.isArray(d.type) ? { type: d.type } : {}),
+      ...(clip(d.description, 180) ? { description: clip(d.description, 180) } : {}),
+      ...(Array.isArray(d.enum) ? { enum: d.enum.slice(0, 12) } : {}),
+      ...(small ? { default: d.default } : {}),
+      ...(d.items && typeof d.items.type === 'string' ? { items: { type: d.items.type } } : {}),
+    };
+  }
+  const required = Array.isArray(s.required) ? s.required.filter((name): name is string => typeof name === 'string').slice(0, 40) : [];
+  return { type: 'object', properties, required };
+}
+
+const hasProperties = (schema: unknown) => !!schema && typeof schema === 'object' && !!(schema as { properties?: unknown }).properties && typeof (schema as { properties?: unknown }).properties === 'object';
+
+/**
+ * Search can return a reference instead of a full definition. A tool without a parameter list makes the model guess
+ * argument names, so the full definition is fetched for it (bounded, in parallel); a failed lookup leaves the tool as it was.
+ */
+export async function withFullSchemas<T extends { slug: string; inputSchema?: Record<string, unknown> }>(
+  tools: T[], details: ((slug: string, actor?: Parameters<typeof getComposioToolDetails>[1]) => Promise<{ inputSchema?: Record<string, unknown> }>) | undefined,
+  actor: Parameters<typeof getComposioToolDetails>[1],
+): Promise<T[]> {
+  if (!details) return tools;
+  return Promise.all(tools.map(async tool => {
+    if (hasProperties(tool.inputSchema)) return tool;
+    try {
+      const full = await details(tool.slug, actor);
+      return hasProperties(full.inputSchema) ? { ...tool, inputSchema: full.inputSchema } : tool;
+    } catch {
+      return tool;
+    }
+  }));
+}
+
+/** What the provider says about doing this task well: its plan, known pitfalls, notes, and which apps are connected. */
+export function searchGuidance(result: Pick<XrogaConnectSearchResult, 'skill' | 'guidance' | 'toolkits'>) {
+  const list = (items: unknown, count: number, max: number) =>
+    (Array.isArray(items) ? items : []).map(item => clip(item, max)).filter((item): item is string => !!item).slice(0, count);
+  const plan = list(result.skill?.recommendedPlanSteps, 8, 240);
+  const pitfalls = list(result.skill?.knownPitfalls, 6, 240);
+  const guidance = clip(result.guidance, 400);
+  const apps = result.toolkits.slice(0, 6).map(app => ({ app: app.toolkit, connected: app.connected, ...(clip(app.statusMessage, 160) ? { note: clip(app.statusMessage, 160) } : {}) }));
+  return { ...(plan.length ? { plan } : {}), ...(pitfalls.length ? { pitfalls } : {}), ...(guidance ? { guidance } : {}), ...(apps.length ? { apps } : {}) };
+}
+
 /** Parameter names (never values) of a discovered tool, kept so the agent's arguments can be checked before anything is approved. */
 const toolArgs = z.object({ props: z.array(z.string().max(80)).max(80), required: z.array(z.string().max(80)).max(40) });
 type ToolArgs = z.infer<typeof toolArgs>;
@@ -147,7 +203,9 @@ function sendError(res: Response, error: unknown) {
   const code = (error as { code?: unknown } | null)?.code;
   if (typeof code === 'string' && /^(?:BUSINESS_ACTION|COMPOSIO)_[A-Z_]{2,60}$/.test(code)) {
     console.error('[local-browser] business action failed:', code);
-    return res.status(503).json({ error: 'BROWSER_GATEWAY_UNAVAILABLE', reason: code });
+    const providerMessage = (error as { providerMessage?: unknown }).providerMessage;
+    return res.status(503).json({ error: 'BROWSER_GATEWAY_UNAVAILABLE', reason: code,
+      ...(typeof providerMessage === 'string' ? { providerMessage: providerMessage.slice(0, 300) } : {}) });
   }
   return res.status(503).json({ error: 'BROWSER_GATEWAY_UNAVAILABLE' });
 }
@@ -221,9 +279,10 @@ const defaultPlugins = {
   discoverActions: searchComposioActionTools,
   prepareAction: prepareBusinessAction,
   createActionConfirmation: createBusinessActionConfirmation,
+  details: getComposioToolDetails,
 };
 
-type ActionMembers = 'discoverActions' | 'prepareAction' | 'createActionConfirmation';
+type ActionMembers = 'discoverActions' | 'prepareAction' | 'createActionConfirmation' | 'details';
 /** The read members are required; the action members are optional so a test or a release can run without them. */
 type PluginAdapter = Omit<typeof defaultPlugins, ActionMembers> & Partial<Pick<typeof defaultPlugins, ActionMembers>>;
 
@@ -354,12 +413,12 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
     const result = await plugins.discover(actor.userId, { query }, actor);
     await assertPluginRun(req, localRecord(await runs.load(actor.userId, row.runId), actor.userId));
     const connected = new Set(result.toolkits.filter(item => item.connected && !item.noAuth).map(item => item.toolkit.toLowerCase()));
-    const tools = result.tools.filter(item => item.risk === 'read' && connected.has(item.toolkit.toLowerCase())).slice(0, 6);
+    const tools = await withFullSchemas(result.tools.filter(item => item.risk === 'read' && connected.has(item.toolkit.toLowerCase())).slice(0, 6), plugins.details, actor);
     discovery.sessionId = result.sessionId;
     discovery.tools = tools.map(({ slug, toolkit, inputSchema }) => ({ slug, toolkit, args: summarizeToolArgs(inputSchema) }));
     await save();
     return res.json({ tools: tools.map(item => ({ slug: item.slug, toolkit: item.toolkit,
-      description: item.description?.slice(0, 400), parameters: item.inputSchema })) });
+      description: item.description?.slice(0, 400), parameters: compactSchema(item.inputSchema) ?? item.inputSchema })), ...searchGuidance(result) });
   }));
 
   // Changes through a connected app. The browser agent names the tool and its arguments; the plan, its digest, the authority scope and
@@ -381,15 +440,15 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
     const result = await actionPlugins().discoverActions(actor.userId, { query }, actor);
     await assertPluginRun(req, localRecord(await runs.load(actor.userId, row.runId), actor.userId));
     const connected = new Set(result.toolkits.filter(item => item.connected && !item.noAuth).map(item => item.toolkit.toLowerCase()));
-    const tools = result.tools
+    const tools = await withFullSchemas(result.tools
       .filter(item => item.risk !== 'read' && item.risk !== 'destructive' && connected.has(item.toolkit.toLowerCase()) &&
         !isFinancialAction(query, item.slug))
-      .slice(0, 6);
+      .slice(0, 6), plugins.details, actor);
     discovery.sessionId = result.sessionId;
     discovery.tools = tools.map(({ slug, toolkit, inputSchema }) => ({ slug, toolkit, args: summarizeToolArgs(inputSchema) }));
     await save();
     return res.json({ tools: tools.map(item => ({ slug: item.slug, toolkit: item.toolkit, risk: item.risk,
-      description: item.description?.slice(0, 400), parameters: item.inputSchema })) });
+      description: item.description?.slice(0, 400), parameters: compactSchema(item.inputSchema) ?? item.inputSchema })), ...searchGuidance(result) });
   }));
 
   router.post('/runs/:runId/plugin-act', withLease(async (req, res, { runs }, row, lease) => {

@@ -4,7 +4,7 @@ import { workspaceRequest } from './bridge';
 export const PLUGIN_TOOLS: AgentTool[] = [
   {
     name: 'plugin_search', source: 'agent', group: 'working',
-    description: 'Find read tools on the user’s connected apps when the goal needs their data. Use brief app and operation keywords, never secrets, recipients or private data. Browser tools remain available.',
+    description: 'Find read tools on the user’s connected apps when the goal needs their data. Describe the task in a short sentence that names the app; never include secrets, recipients or private data. The result lists each tool with the exact arguments it accepts, and the provider’s plan and pitfalls for the task: follow them and use only the listed argument names. Browser tools remain available.',
     parameters: { type: 'object', properties: { query: { type: 'string', maxLength: 120 } }, required: ['query'], additionalProperties: false },
   },
   {
@@ -41,8 +41,11 @@ export async function runPluginTool(
   const change = name === 'plugin_act';
   try {
     if (name === 'plugin_search' || name === 'plugin_action_search') {
-      const value = await workspaceRequest(name === 'plugin_search' ? 'plugin-search' : 'plugin-action-search', { runId, body: input }, signal) as { tools: unknown[] };
-      return { text: value.tools.length ? wrap(JSON.stringify(value.tools).slice(0, 12_000), 'connected app tool metadata')
+      const value = await workspaceRequest(name === 'plugin_search' ? 'plugin-search' : 'plugin-action-search', { runId, body: input }, signal) as
+        { tools: unknown[]; apps?: unknown; plan?: unknown; pitfalls?: unknown; guidance?: unknown };
+      // The provider's own advice for the task comes first, so a long tool list is what gets cut, not the advice.
+      const brief = { apps: value.apps, plan: value.plan, pitfalls: value.pitfalls, guidance: value.guidance, tools: value.tools };
+      return { text: value.tools.length ? wrap(JSON.stringify(brief).slice(0, 14_000), 'connected app tool metadata')
         : name === 'plugin_search' ? 'No matching connected app read tools. Continue with the browser where appropriate.'
           : 'No matching connected app tools that make changes. Continue with the browser where appropriate.', isError: false };
     }
@@ -63,6 +66,10 @@ export async function runPluginTool(
       const list = (key: string) => (failure.detail![key] ?? []).join(', ') || 'none';
       return { text: 'Nothing was sent. These arguments do not match the definition of the tool. Not defined by the tool: ' + list('unknown') +
         '. Required but missing: ' + list('missing') + '. Arguments the tool accepts: ' + list('allowed') + '. Correct the call and try once more.', isError: true };
+    }
+    if (sentReview && failure?.detail?.providerMessage?.[0]) {
+      return { text: 'The app rejected the approved request, so it most likely changed nothing. Reason given by the app (untrusted text): ' +
+        wrap(failure.detail.providerMessage[0], 'connected app error') + ' If the fix is clear (a wrong or missing argument), request the corrected call once, using only the arguments the tool lists; otherwise tell the user what failed.', isError: true };
     }
     if (change && sentReview) {
       return { text: 'The approved change could not be verified. It may or may not have been made. Do not repeat it. Check the result in the app, and tell the user exactly what is uncertain.', isError: true };

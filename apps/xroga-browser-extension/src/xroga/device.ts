@@ -23,6 +23,7 @@ class DeviceError extends Error {
 function safeDetail(body: unknown): Record<string, string[]> | undefined {
   if (!body || typeof body !== 'object') return undefined;
   const out: Record<string, string[]> = {};
+  if (typeof (body as Record<string, unknown>).providerMessage === 'string') out.providerMessage = [((body as Record<string, string>).providerMessage).slice(0, 300)];
   for (const key of ['unknown', 'missing', 'allowed']) {
     const value = (body as Record<string, unknown>)[key];
     if (Array.isArray(value)) out[key] = value.filter((x): x is string => typeof x === 'string' && x.length <= 80).slice(0, key === 'allowed' ? 40 : 12);

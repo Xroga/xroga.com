@@ -1512,10 +1512,16 @@ async function composioRequest<T>(
         message = 'Xroga Connect is temporarily unavailable. Please try again shortly.';
       }
 
-      throw new ComposioClientError(message, {
+      const failure = new ComposioClientError(message, {
         status: response.status >= 500 ? 502 : response.status,
         code: 'COMPOSIO_UPSTREAM_ERROR',
       });
+      // A rejected request (4xx) carries the provider's own short reason, so the caller can correct it. It is untrusted text.
+      const reason = (payload as { error?: { message?: unknown } } | null)?.error?.message;
+      if (response.status >= 400 && response.status < 500 && typeof reason === 'string' && reason.trim()) {
+        Object.assign(failure, { providerMessage: reason.replace(/s+/g, ' ').trim().slice(0, 300) });
+      }
+      throw failure;
     }
 
     return payload as T;
