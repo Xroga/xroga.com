@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "c310060592fff7887853001b0e3e2162aacb6a7c",
+  "source_sha": "76887dce392ab431710452ce43da8ac0945ab418",
   "hash_policy": "Exact preserved attachment bytes; repository text uses Git-canonical LF bytes for portable hashes and byte counts",
   "sources": [
     {
@@ -4245,9 +4245,9 @@
       "source_id": "SRC-70df9be898fd6c54",
       "filename": "ANSWER-RELIABILITY.md",
       "path_or_url": "docs/operations/native-openui/ANSWER-RELIABILITY.md",
-      "sha256": "6cd3f0a43426b5b3c33c31ac48b2ae5743e7ccaf0606be3d602dee761f1f0a76",
-      "byte_size": 4713,
-      "modified_timestamp": "2026-11-11T15:46:58.658Z",
+      "sha256": "3162a8c20c804bab537735d86eec9bf8f4b7198347c8d2eaa3c439da495d9070",
+      "byte_size": 4525,
+      "modified_timestamp": "2026-11-11T16:02:34.399Z",
       "parse_status": "TEXT_READ",
       "category": "REPOSITORY_DOCUMENT",
       "authority": "ADVISORY",
@@ -6299,9 +6299,9 @@
       "source_id": "SRC-3d3190a1571aa705",
       "filename": "current-state.json",
       "path_or_url": "docs/xroga/current-state.json",
-      "sha256": "6a9dbc69f308a714a864cba425c542d2be7346b0625d8f8d4f73af0dd1dea808",
+      "sha256": "3069915ad60805757250eaab05f3c7341a559ab8babae292a121fc9e1e9b5285",
       "byte_size": 5680863,
-      "modified_timestamp": "2026-11-11T15:48:11.002Z",
+      "modified_timestamp": "2026-11-11T16:03:18.799Z",
       "parse_status": "PARSED_JSON",
       "category": "REPOSITORY_DOCUMENT",
       "authority": "ADVISORY",
