@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "0aa2bfb88592d679e622117b0e611521dda9a66f",
+  "source_sha": "673529b3814904cdce9462930a5a2376858b7185",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -18298,7 +18298,7 @@
     },
     {
       "path": "backend/src/routes/localBrowser.ts",
-      "sha256": "50478dbebd039b9b2e5277d09c073be4b6274db16e90dd689f61eadeb467fec6"
+      "sha256": "a3f976e06e94acc55808b2d3bc59aa20d7d86b932f28ffcd667e5d5ce6180e33"
     },
     {
       "path": "backend/src/routes/localBrowserDevice.ts",
