@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/openui-live-skills-compatibility-20261111",
-    "sha": "4da19ab8bc7bf52e3de3ef43242898083c7c845e",
-    "sourceTimestampUtc": "2026-11-11T21:19:10+05:00",
-    "auditStartedUtc": "2026-11-11T16:19:32.698Z",
+    "sha": "f0e9019058459698a41bf01e4ec93994ae57c97d",
+    "sourceTimestampUtc": "2026-11-11T21:36:06+05:00",
+    "auditStartedUtc": "2026-11-11T16:36:33.822Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
