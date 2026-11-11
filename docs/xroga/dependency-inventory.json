@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "006d75e82470c3988af65a09504f9ddbc99bf907",
+  "source_sha": "0aa2bfb88592d679e622117b0e611521dda9a66f",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -8339,7 +8339,6 @@
         "XROGA_LOCAL_BROWSER_ALLOWED_USER_IDS",
         "XROGA_LOCAL_BROWSER_DEVICE_EXTENSION_ID",
         "XROGA_LOCAL_BROWSER_ENABLED",
-        "XROGA_LOCAL_BROWSER_MAX_RUN_MICROS",
         "XROGA_LOCAL_BROWSER_MAX_TURNS",
         "XROGA_LOCAL_BROWSER_VISION_PROBE",
         "XROGA_MAX_REPAIR_ATTEMPTS",
@@ -15119,25 +15118,6 @@
       ]
     },
     {
-      "name": "XROGA_LOCAL_BROWSER_MAX_RUN_MICROS",
-      "consuming_sources": [
-        "backend/src/routes/localBrowser.ts"
-      ],
-      "environments": [
-        "backend/operator or inherited system context"
-      ],
-      "secret_class": "RUNTIME_CONFIGURATION",
-      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
-      "requiredness": "OPTIONAL_OR_DEFAULTED",
-      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
-      "mechanisms": [
-        "STATIC_ENV_READER"
-      ],
-      "dependency_ids": [
-        "runtime-controls-and-conditional-aliases"
-      ]
-    },
-    {
       "name": "XROGA_LOCAL_BROWSER_MAX_TURNS",
       "consuming_sources": [
         "backend/src/routes/localBrowser.ts"
@@ -18318,7 +18298,7 @@
     },
     {
       "path": "backend/src/routes/localBrowser.ts",
-      "sha256": "7581a3a6ef8d1f7b8de61f970535cf885c72fd198fdb421e68a5357e62943b43"
+      "sha256": "50478dbebd039b9b2e5277d09c073be4b6274db16e90dd689f61eadeb467fec6"
     },
     {
       "path": "backend/src/routes/localBrowserDevice.ts",
@@ -35144,21 +35124,21 @@
     },
     {
       "path": "backend/src/routes/localBrowser.ts",
-      "line": 195,
+      "line": 193,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/routes/localBrowser.ts",
-      "line": 427,
+      "line": 430,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/routes/localBrowser.ts",
-      "line": 454,
+      "line": 457,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
