@@ -30,7 +30,9 @@ const TURN_CEILING_MICROS = 3_000;
 const MAX_RUN_MICROS = 36_000;
 const MINUTE = 60_000;
 const MAX_GOAL = 16_000;
-const MAX_PLUGIN_ACTIONS = 4;
+const MAX_PLUGIN_ACTIONS = 10;
+const MAX_PLUGIN_DISCOVERIES = 10;
+const MAX_PLUGIN_READS = 20;
 const limits = { ...BROWSER_RUN_DEFAULTS, maxModelCostMicros: MAX_RUN_MICROS };
 const id = z.string().uuid();
 const clip = (value: unknown, max: number) => (typeof value === 'string' ? value.replace(/\s+/g, ' ').trim().slice(0, max) : undefined);
@@ -94,17 +96,17 @@ type ToolArgs = z.infer<typeof toolArgs>;
 const pluginState = z.object({
   discoveries: z.array(z.object({
     query: z.string(), sessionId: z.string().optional(), tools: z.array(z.object({ slug: z.string(), toolkit: z.string(), args: toolArgs.optional() })).max(6),
-  })).max(4),
+  })).max(MAX_PLUGIN_DISCOVERIES),
   reads: z.array(z.object({
     digest: z.string(), slug: z.string(), toolkit: z.string(), approvalId: z.string().uuid().optional(), used: z.boolean(),
-  })).max(6),
+  })).max(MAX_PLUGIN_READS),
   /** Changes the agent asked to make through a connected app; each needs the user's approval on its own card. */
   actions: z.array(z.object({
     digest: z.string(), slug: z.string(), toolkit: z.string(), approvalId: z.string().uuid().optional(), used: z.boolean(),
   })).max(MAX_PLUGIN_ACTIONS).default([]),
   actionDiscoveries: z.array(z.object({
     query: z.string(), sessionId: z.string().optional(), tools: z.array(z.object({ slug: z.string(), toolkit: z.string(), args: toolArgs.optional() })).max(6),
-  })).max(4).default([]),
+  })).max(MAX_PLUGIN_DISCOVERIES).default([]),
 });
 function runPlugins(row: BrowserRunRecord) {
   return pluginState.parse(row.state.productManifest.localBrowserPlugins ?? { discoveries: [], reads: [], actions: [], actionDiscoveries: [] });
@@ -402,7 +404,7 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
     const { query } = z.object({ query: z.string().trim().min(2).max(120) }).strict().parse(req.body);
     checkData(query);
     const state = runPlugins(row);
-    if (state.discoveries.length >= 4 || state.discoveries.some(item => item.query.toLowerCase() === query.toLowerCase())) {
+    if (state.discoveries.length >= MAX_PLUGIN_DISCOVERIES || state.discoveries.some(item => item.query.toLowerCase() === query.toLowerCase())) {
       throw new BrowserRequestError(409, 'BROWSER_PLUGIN_DISCOVERY_LIMIT');
     }
     const discovery: typeof state.discoveries[number] = { query, tools: [] };
@@ -429,7 +431,7 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
     const { query } = z.object({ query: z.string().trim().min(2).max(120) }).strict().parse(req.body);
     checkData(query);
     const state = runPlugins(row);
-    if (state.actionDiscoveries.length >= 4 || state.actionDiscoveries.some(item => item.query.toLowerCase() === query.toLowerCase())) {
+    if (state.actionDiscoveries.length >= MAX_PLUGIN_DISCOVERIES || state.actionDiscoveries.some(item => item.query.toLowerCase() === query.toLowerCase())) {
       throw new BrowserRequestError(409, 'BROWSER_PLUGIN_DISCOVERY_LIMIT');
     }
     const discovery: typeof state.actionDiscoveries[number] = { query, tools: [] };
@@ -531,7 +533,7 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
     const digest = preparedActionDigest(data);
     if (!source?.sessionId || !tool) throw new BrowserRequestError(403, 'BROWSER_PLUGIN_NOT_DISCOVERED');
     assertToolArguments(data.arguments, tool.args);
-    if (state.reads.length >= 6 || state.reads.some(item => item.digest === digest)) {
+    if (state.reads.length >= MAX_PLUGIN_READS || state.reads.some(item => item.digest === digest)) {
       throw new BrowserRequestError(409, 'BROWSER_PLUGIN_READ_ALREADY_REQUESTED');
     }
     const read: typeof state.reads[number] = { digest, slug: data.slug, toolkit: tool.toolkit, used: false };

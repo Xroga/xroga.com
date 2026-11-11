@@ -38,7 +38,7 @@ test('a tool whose search result has no parameter list gets its full definition,
   assert.deepEqual(asked.sort(), ['B_FAILS', 'C_NEEDS_IT']);
   assert.deepEqual(out[0], tools[0]);
   assert.deepEqual(out[1], tools[1]);
-  assert.deepEqual((out[2].inputSchema as { required: string[] }).required, ['id']);
+  assert.deepEqual((out[2].inputSchema as unknown as { required: string[] }).required, ['id']);
   assert.deepEqual(await withFullSchemas(tools, undefined, undefined), tools);
 });
 
