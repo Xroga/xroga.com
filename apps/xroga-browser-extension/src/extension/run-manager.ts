@@ -176,6 +176,12 @@ export class RunManager {
       changed: (conversationId, added, removed) => void this.#scopeChanged(conversationId, added, removed),
     });
     this.border = new PageBorder({
+      visible: async tabId => {
+        const tab = await chrome.tabs.get(tabId).catch(() => undefined);
+        if (!tab?.active) return false;
+        const win = await chrome.windows.get(tab.windowId).catch(() => undefined);
+        return win?.state !== 'minimized';
+      },
       conversationOf: tabId => this.scope.conversationOf(tabId),
       tabsOf: conversationId => this.scope.tabsOf(conversationId),
       scopedTabs: () => this.scope.scopedTabs(),

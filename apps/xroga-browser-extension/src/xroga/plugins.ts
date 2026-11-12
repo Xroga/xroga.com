@@ -67,6 +67,23 @@ export function nativeAppCall(info: AppToolInfo, input: unknown): { name: Plugin
   return { name: 'plugin_act', body: { slug: info.slug, arguments: args, request: clipText(info.toolkit + ': ' + what, 200) } };
 }
 
+/**
+ * When a search finds no tool and an app the task needs is not connected, what the model should do: ask the user to connect it, then search
+ * again. The handover is the existing ask_user takeover, so the run pauses where it is and continues when the user presses Done; nothing
+ * is restarted. App names are plain labels from discovery and are shown only if they look like one.
+ */
+export function missingConnectionNote(apps: unknown, name: PluginToolName): string | null {
+  if (!Array.isArray(apps)) return null;
+  const missing = apps
+    .filter((app): app is { app: string; connected: boolean } => !!app && typeof app === 'object' && (app as { connected?: unknown }).connected === false && typeof (app as { app?: unknown }).app === 'string')
+    .map(app => app.app.trim())
+    .filter(label => /^[\w .+-]{1,60}$/.test(label))
+    .slice(0, 3);
+  if (!missing.length) return null;
+  const list = missing.join(', ');
+  return `No usable tool was found because ${list} ${missing.length > 1 ? 'are' : 'is'} not connected to this Xroga account. If the task needs ${missing.length > 1 ? 'them' : 'it'}, call ask_user with kind "takeover" and a short message such as "Connect ${missing[0]} in Xroga (Plugins), then press Done." When the user is done, call ${name} again with the same description and continue from where you were; do not start over. Do not try to sign in to the app in the browser unless the task can only be done there.`;
+}
+
 export async function runPluginTool(
   name: PluginToolName,
   runId: string,
@@ -85,8 +102,8 @@ export async function runPluginTool(
       const brief = { apps: value.apps, plan: value.plan, pitfalls: value.pitfalls, guidance: value.guidance, tools: value.tools,
         note: 'Each tool above is now available to call directly by its own name with the listed arguments.' };
       return { text: value.tools.length ? wrap(JSON.stringify(brief).slice(0, 14_000), 'connected app tool metadata')
-        : name === 'plugin_search' ? 'No matching connected app read tools. Continue with the browser where appropriate.'
-          : 'No matching connected app tools that make changes. Continue with the browser where appropriate.', isError: false,
+        : missingConnectionNote(value.apps, name) ?? (name === 'plugin_search' ? 'No matching connected app read tools. Continue with the browser where appropriate.'
+          : 'No matching connected app tools that make changes. Continue with the browser where appropriate.'), isError: false,
         appTools: appToolsFrom(value.tools, name === 'plugin_search' ? 'read' : 'write') };
     }
     const pending = await workspaceRequest(change ? 'plugin-act' : 'plugin-read', { runId, body: input }, signal) as { approval: Approval };
