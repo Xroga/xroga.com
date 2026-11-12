@@ -82,6 +82,9 @@ export async function startXrogaModelRun(
         }
         const request = JSON.parse(init.body);
         try {
+          // Compaction's summary call is a model request too, and the server counts it. The loop's own turn count does not, so a
+          // request can reach the end of the segment before the loop asks for the next one: renew it here, before it is refused.
+          if (turn + 1 > maxTurns) await extend();
           const value = await workspaceRequest(
             'turn',
             {

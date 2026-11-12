@@ -62,6 +62,18 @@ describe('a canonical run', () => {
     expect(turns).toEqual([1, 1]);
   });
 
+  it('renews the segment before a request that would pass its end, even when the loop did not count that request (compaction summary)', async () => {
+    const run = await startXrogaModelRun('goal', 'https://example.com', new AbortController().signal, 0);
+    const ask = () => streamTurn({ chat: run.model.chat, system: 's', messages: [{ role: 'user', content: 'hi' }], tools: {}, signal: new AbortController().signal } as never);
+    for (let i = 0; i < 48; i++) await ask();
+    expect(requests.some(r => r.op === 'extend')).toBe(false);
+    await ask();
+    const ops = requests.map(r => r.op);
+    expect(ops.slice(-2)).toEqual(['extend', 'turn']);
+    const turns = requests.filter(r => r.op === 'turn').map(r => (r.value as { body: { turn: number } }).body.turn);
+    expect(turns.at(-1)).toBe(49);
+  });
+
   it('still treats any other failed model request as unverified and never retries it', async () => {
     const run = await startXrogaModelRun('goal', 'https://example.com', new AbortController().signal, 0);
     turnFails = new Error('network');
