@@ -34,6 +34,8 @@ import type { AgentTool, ToolKind } from './tools';
 
 /** Every tool result is capped; a cut keeps a boundary's end marker. */
 export const RESULT_CAP = 8_000;
+/** A request with more messages than this is compacted first; the server refuses 140. */
+export const MESSAGE_SOFT_LIMIT = 100;
 /** The readers' combined result: a little over their own total (subagents.ts TOTAL_CHARS plus headings). */
 export const DELEGATE_RESULT_CAP = 30_000;
 
@@ -215,6 +217,8 @@ export class AgentLoop {
   #activeTab: number | null = null;
   /** Until this turn the ratio is not applied: the cooldown after a compaction. */
   #cooldownUntil = 0;
+  /** After a compaction for message count, the turn before which that trigger does not fire again (it cannot help if nothing is older). */
+  #countCooldownUntil = 0;
   /** `/compact` asked for step 2 at the next turn boundary. */
   #compactRequested = false;
   /** After a request refused for its size, the window in force for the rest of the run. */
@@ -272,7 +276,9 @@ export class AgentLoop {
         tokens = this.estimate(rebuilt);
       }
     }
-    if (tokens > threshold || this.#compactRequested) {
+    // A long task can pile up many short messages while the context is still small: the server refuses more than 140 per request.
+    if (tokens > threshold || this.#compactRequested || (request.messages.length > MESSAGE_SOFT_LIMIT && this.#turns >= this.#countCooldownUntil)) {
+      this.#countCooldownUntil = this.#turns + 6;
       this.#compactRequested = false;
       if (await this.compact()) {
         rebuilt = await this.prepareRequest();

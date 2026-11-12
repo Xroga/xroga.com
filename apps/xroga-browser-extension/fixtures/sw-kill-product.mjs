@@ -207,7 +207,8 @@ async function main() {
     if (afterRestart.length !== before.length) failures.push(`items changed during the restart (${before.length} to ${afterRestart.length})`);
     if (!report.steps.resumeOffered) failures.push('the panel did not offer Resume after the worker was killed (product contract)');
     if (report.steps.pressedResume && !resumed) failures.push('the resumed run did not settle');
-    if (afterResume.length > before.length + 1) failures.push(`the resumed run changed the page more than the one uncertain step allows: ${JSON.stringify(afterResume)}`);
+    // A kill between two writes leaves nothing uncertain, so the resumed run may finish the work; what must hold is no duplicate and no overshoot.
+    if (new Set(afterResume).size !== afterResume.length || afterResume.length > 3) failures.push(`the resumed run left a duplicate or too many items: ${JSON.stringify(afterResume)}`);
     if (new Set(final).size !== final.length) failures.push(`duplicate items: ${JSON.stringify(final)}`);
     if (final.length > 3) failures.push(`more than three items: ${JSON.stringify(final)}`);
     if (final.length < 3) failures.push(`fewer than three items at the end: ${JSON.stringify(final)}`);

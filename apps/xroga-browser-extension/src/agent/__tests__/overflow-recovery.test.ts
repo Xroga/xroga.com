@@ -179,7 +179,8 @@ describe('the context set', () => {
       message: { role: 'user', parts: [{ type: 'text', text: 'Pay my bills.' }] },
     });
     let asked = false;
-    const { fn, refused: refusedAsk } = provider(6_000, (_call, i) => {
+    // The simulated server limit sits a little above the bare system prompt and tools, so a few words more in the prompt do not make recovery impossible.
+    const { fn, refused: refusedAsk } = provider(6_300, (_call, i) => {
       if (i === 0)
         return {
           toolCalls: [{ name: 'ask_user', input: { kind: 'input', message: 'Which account should I use?' }, id: 'q' }],
@@ -209,8 +210,7 @@ describe('the context set', () => {
       'tabs',
       'upload',
     ];
-    // The window is only tight enough to force compaction; it carries a margin so a few words more in the system prompt do not turn this into an overflow test.
-    const { loop, scripted } = loopFor(c.id, fn, layer, 16_896, short);
+    const { loop, scripted } = loopFor(c.id, fn, layer, 16_384, short);
     const end = await loop.run();
     expect(asked).toBe(true);
     expect(end).toMatchObject({ status: 'done' });

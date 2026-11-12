@@ -123,9 +123,9 @@ export async function startXrogaModelRun(
   const profile = resolveProfile({
     kind: 'openai-compatible',
     modelName: XROGA_MODEL,
-    // The loop budgets four characters per token and the server refuses requests over 96,000 bytes (JSON escaping and tool
-    // schemas included), so the window is sized to stay under that cap: compaction starts well before the server would refuse.
-    overrides: { contextWindow: 22_000, maxOutput: 2_048, vision: false },
+    // The server refuses requests over 96,000 bytes. A smaller window here made compaction (itself a model call) fire on almost every turn
+    // of a long task, so the window stays at 32,000 and a refused request is recovered through the overflow path above instead.
+    overrides: { contextWindow: 32_000, maxOutput: 2_048, vision: false },
   });
   const model: ResolvedModel = { ref: XROGA_REF, chat, profile, reasoning: 'none', reasoningDropped: true };
   /**

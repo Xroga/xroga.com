@@ -327,8 +327,11 @@ export interface CompactionPlan {
   old: Unit[];
 }
 
+/** The most messages the recent part keeps. The Xroga server refuses a request of more than 140 messages, however short they are. */
+export const RECENT_MESSAGE_LIMIT = 60;
+
 /**
- * Where the recent part starts: the newest groups up to `recentChars`, and
+ * Where the recent part starts: the newest groups up to `recentChars` and `RECENT_MESSAGE_LIMIT` messages, and
  * always the newest group. Null when nothing older is left to compact.
  */
 export function planCompaction(
@@ -344,6 +347,7 @@ export function planCompaction(
     : 0;
   const units = unitsOf(entries.slice(start));
   let size = 0;
+  let count = 0;
   let cut = -1;
   for (let i = units.length - 1; i >= 0; i--) {
     const u = units[i];
@@ -351,8 +355,9 @@ export function planCompaction(
     // The recent part begins with a reply of the model: app-owned messages after the newest user message (the step's
     // header) are a group with no reply, kept with the recent part and never its start.
     const reply = u.entries.some(e => e.message.role === 'assistant');
-    if (cut >= 0 && reply && size + u.chars > recentChars) break;
+    if (cut >= 0 && reply && (size + u.chars > recentChars || count + u.entries.length > RECENT_MESSAGE_LIMIT)) break;
     size += u.chars;
+    count += u.entries.length;
     if (reply) cut = i;
   }
   if (cut <= 0) return null;
