@@ -15,6 +15,7 @@ const pureSources={
   [nativeShareId]:'../../backend/src/ai/nativeOpenUiShare.ts',
   [nativePresentationId]:'../../backend/src/ai/nativeOpenUi.ts',
   './nativeOpenUi.js':'../../backend/src/ai/nativeOpenUi.ts',
+  './nativeDiagramTopology.js':'../../backend/src/ai/nativeDiagramTopology.ts',
   './nativeOpenUiAccuracy.js':'../../backend/src/ai/nativeOpenUiAccuracy.ts',
   './answerAuthorizationReview.js':'../../backend/src/ai/answerAuthorizationReview.ts',
   '@/components/response-experience-v2/shareSnapshot':'components/response-experience-v2/shareSnapshot.ts',
