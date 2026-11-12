@@ -77,14 +77,6 @@ function Overline({ n, children }: { n: string; children: ReactNode }) {
   return <p className="bh-overline"><span>{n}</span><i aria-hidden="true" />{children}</p>;
 }
 
-const stars = Array.from({ length: 80 }, (_, i) => ({
-  left: ((i * 67 + 19) % 103) + '%',
-  top: ((i * 29 + 11) % 101) + '%',
-  opacity: (i % 7 === 0 ? 0.8 : 0.2 + (i % 4) * 0.09),
-  size: i % 11 === 0 ? 2 : 1,
-  delay: (i % 13) * -0.77 + 's',
-}));
-
 export function BlackHoleExperience() {
   const root = useRef<HTMLDivElement>(null);
   const hero = useRef<HTMLElement>(null);
@@ -141,13 +133,9 @@ export function BlackHoleExperience() {
 
       <main id="main-story">
         <section className="bh-hero bh-chapter" id="encounter" ref={hero} onPointerMove={onHeroMove} data-chapter data-revealed="true">
-          <div className="bh-starfield" aria-hidden="true">
-            {stars.map((star, i) => <span key={i} style={{ left: star.left, top: star.top, opacity: star.opacity, width: star.size, height: star.size, animationDelay: star.delay }} />)}
-          </div>
-          <Art src="/backgrounds/xroga-black-portal-hero.webp" className="bh-hero-photo" eager />
-          <Art src="/black-hole/singularity-mesh.svg" className="bh-hero-mesh" eager />
-          <div className="bh-hero-singularity" aria-hidden="true"><div className="bh-singularity-core"/><span/><span/><span/></div>
-          <div className="bh-vignette" aria-hidden="true" />
+          <Art src="/black-hole/particle-wave.svg" className="bh-hero-wave" eager />
+          <div className="bh-hero-wave-shade" aria-hidden="true" />
+          <div className="bh-hero-metadata" aria-hidden="true"><span>XROGA / BLACK HOLE</span><span>MODEL EXPERIENCE · V INFINITY</span></div>
           <div className="bh-wrap bh-hero-content">
             <Overline n="XROGA / 001">AN INTELLIGENCE IN EVOLUTION</Overline>
             <h1>BLACK HOLE <em>V</em><br/><span>INFINITY</span><span className="bh-title-period">.</span></h1>
@@ -162,7 +150,7 @@ export function BlackHoleExperience() {
         </section>
 
         <section className="bh-chapter bh-question" id="question" data-chapter>
-          <div className="bh-question-amber" aria-hidden="true"/>
+          <div className="bh-question-silver" aria-hidden="true"/>
           <Art src="/black-hole/references/code-consciousness.webp" className="bh-question-art" />
           <div className="bh-wrap bh-question-layout">
             <div className="bh-intro-column">
@@ -309,7 +297,7 @@ export function BlackHoleExperience() {
         </section>
 
         <section className="bh-chapter bh-purpose" id="purpose" data-chapter>
-          <Art src="/backgrounds/xroga-black-clouds-bg.webp" className="bh-purpose-sky"/>
+          <div className="bh-purpose-quiet-light" aria-hidden="true"/>
           <div className="bh-wrap bh-purpose-content">
             <Overline n="11 / WHAT WE BELIEVE">AN INTELLIGENCE WITH PERSPECTIVE</Overline>
             <h2>NO INTELLIGENCE<br/>IS ABOVE <em>ALLAH.</em></h2>
@@ -320,7 +308,7 @@ export function BlackHoleExperience() {
         </section>
 
         <section className="bh-chapter bh-finale" id="begin" data-chapter>
-          <Art src="/backgrounds/xroga-black-portal-hero.webp" className="bh-finale-photo"/>
+          <Art src="/black-hole/particle-wave.svg" className="bh-finale-photo"/>
           <div className="bh-finale-light" aria-hidden="true"/>
           <div className="bh-wrap bh-finale-content">
             <Overline n="12 / THE INVITATION">THE FUTURE IS HUMAN-DIRECTED</Overline>

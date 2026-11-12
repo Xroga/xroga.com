@@ -403,3 +403,94 @@
   .bh-perspective-earth{inset:3% -38% 9% 0;opacity:.35}
 }
 
+
+
+/* 2026-11-13 / Particle-wave redesign — isolated to /black-hole.
+   Original, resolution-independent vector inspired by the user-provided dot-wave reference.
+   All six supplied reference images remain in their story chapters. */
+.bh-page{background:#000!important;color:#fff}
+.bh-chapter{background:#000!important;scroll-margin-top:0}
+.bh-grain{opacity:.032;mix-blend-mode:screen}
+.bh-hero{
+  min-height:max(850px,100svh);padding:clamp(108px,13vh,155px) 0 95px;
+  display:flex;align-items:flex-start;justify-content:flex-start;background:#000!important;
+}
+.bh-hero-wave{
+  position:absolute;inset:9% -4% 0;z-index:0;opacity:1;
+  mask-image:linear-gradient(180deg,transparent 0%,#000 9%,#000 84%,transparent 100%);
+}
+.bh-hero-wave .bh-art-image{
+  object-fit:cover;object-position:center 54%;
+  filter:grayscale(1) brightness(1.12) contrast(1.16);
+}
+.bh-hero-wave-shade{
+  position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:linear-gradient(180deg,#000 0%,rgba(0,0,0,.97) 8%,rgba(0,0,0,.66) 22%,rgba(0,0,0,.08) 46%,rgba(0,0,0,.08) 78%,#000 100%),
+  linear-gradient(90deg,rgba(0,0,0,.65),transparent 48%,rgba(0,0,0,.08));
+}
+.bh-hero::after{display:none}
+.bh-hero-metadata{
+  position:absolute;z-index:4;top:23px;left:var(--bh-edge);right:var(--bh-edge);
+  display:flex;align-items:center;justify-content:space-between;gap:15px;
+  font:10px/1.4 var(--font-coding),monospace;letter-spacing:.18em;color:#b5b5b5;
+  pointer-events:none;
+}
+.bh-hero-content{align-self:flex-start;padding-top:10px!important;position:relative;z-index:5}
+.bh-hero-content .bh-overline{margin-bottom:21px!important;color:#ddd}
+.bh-page .bh-hero h1{font-size:clamp(4rem,8.1vw,9.5rem);line-height:.88;text-shadow:0 4px 40px #000,0 0 30px rgba(0,0,0,.95)}
+.bh-page .bh-hero h1 em{color:#e0e0e0}
+.bh-page .bh-hero h1 span:not(.bh-title-period){background:linear-gradient(180deg,#fff,#d6d6d6);background-clip:text;-webkit-background-clip:text}
+.bh-page .bh-title-period{color:#fff}
+.bh-hero-lead{margin-top:23px!important;text-shadow:0 2px 24px #000}
+.bh-hero-copy{margin-top:13px!important;color:#ccc;text-shadow:0 3px 16px #000}
+.bh-hero-bottom{color:#bbb;z-index:5}
+.bh-page .bh-button-light{background:#fff!important;border-color:#fff!important;color:#000!important}
+.bh-page .bh-button-ghost{background:rgba(0,0,0,.45)}
+.bh-page .bh-feature-line strong{color:#eee}
+.bh-question-silver{
+  position:absolute;z-index:2;left:62%;top:39%;width:30vw;max-width:390px;aspect-ratio:1;
+  border:1px solid rgba(228,228,228,.19);border-radius:50%;
+  box-shadow:0 0 50px rgba(255,255,255,.05),inset 0 0 30px rgba(255,255,255,.04);
+  pointer-events:none;
+}
+.bh-question-art .bh-art-image,.bh-origin-back .bh-art-image,.bh-work-background .bh-art-image,
+.bh-evolution-back .bh-art-image,.bh-perspective-earth .bh-art-image{
+  image-rendering:auto;filter:grayscale(1) contrast(1.2) brightness(.99);
+}
+.bh-question-art{opacity:.68}
+.bh-touch-art{opacity:.94}
+.bh-origin-back{opacity:.81}
+.bh-work-background{opacity:.76}
+.bh-evolution-back{opacity:.65}
+.bh-perspective-earth{opacity:.75}
+.bh-purpose-quiet-light{
+  position:absolute;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse 34% 26% at 50% 49%,rgba(230,230,230,.055),transparent 100%);
+}
+.bh-purpose::after{background:linear-gradient(180deg,#000 0%,transparent 20%,transparent 78%,#000 100%)}
+.bh-finale-photo{opacity:.37;transform:none}
+.bh-finale-photo .bh-art-image{filter:grayscale(1) contrast(1.22) brightness(.78)}
+.bh-finale::after{background:radial-gradient(ellipse at 50% 47%,rgba(0,0,0,.42),#000 82%)}
+.bh-finale-light{opacity:.23}
+.bh-footer{background:#000}
+@media(max-width:900px){
+  .bh-hero{min-height:880px;padding-top:116px}
+  .bh-hero-wave{inset:21% -27% 0;opacity:.92}
+  .bh-page .bh-hero h1{font-size:clamp(3.8rem,10vw,7.5rem)}
+}
+@media(max-width:640px){
+  .bh-hero{min-height:850px;padding:111px 0 95px}
+  .bh-hero-metadata{top:16px;font-size:8px;letter-spacing:.1em}
+  .bh-hero-metadata span:last-child{display:none}
+  .bh-hero-content{padding-top:12px!important;padding-bottom:100px}
+  .bh-hero-wave{inset:24% -65% 3%;opacity:1}
+  .bh-hero-wave .bh-art-image{object-position:50% 55%}
+  .bh-hero-wave-shade{background:linear-gradient(180deg,#000 0%,rgba(0,0,0,.95) 22%,rgba(0,0,0,.22) 52%,rgba(0,0,0,.08) 74%,#000 100%)}
+  .bh-page .bh-hero h1{font-size:clamp(3.25rem,14vw,6.5rem)}
+  .bh-hero-lead{margin-top:23px!important}
+  .bh-hero-copy{max-width:395px}
+  .bh-question-silver{opacity:.35;left:33%;top:54%;width:56vw}
+  .bh-question-art{opacity:.5}
+  .bh-touch-art,.bh-origin-back,.bh-work-background,.bh-evolution-back,.bh-perspective-earth{opacity:.65}
+}
+@media(prefers-reduced-motion:reduce){.bh-hero-wave{transition:none!important}}
