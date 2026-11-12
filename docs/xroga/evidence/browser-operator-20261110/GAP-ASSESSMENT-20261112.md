@@ -181,6 +181,28 @@ calls with at most two distinct calls, none of which changed the page, now stops
 polling and any call whose outcome was "changed" (add ten rows, next page) are exempt. Six unit tests cover alternating pages, a failing click, legitimate repeats, polling, many different pages and reset on
 progress. Four existing long-run tests had scripted dozens of byte-identical reads to fill a context window, which is exactly the loop the guard stops; their scripted reads now vary the offset.
 
+### 3j. Network loss, tab loss, missing connection with the real model, and the overflow-test timeout
+
+`fixtures/sw-kill.mjs --mode offline|tabclose` (same CDP harness as 3i): with the extension worker's network taken away for 12 s while a model reply was pending, the panel showed Failed to fetch with a
+Retry control, the page kept its two rows (nothing replayed), and a follow-up message finished the run with the third row added once. With the working tab closed mid-run the run did not hang (it
+ended Done on the scripted model). The model is a script in these tests, so they prove the product's handling, not a real model's wording.
+
+Missing connection with real DeepSeek (staging, throwaway account, since deleted): "Use my connected Google Sheets app to add a row..." called `plugin_action_search`, which reported the app not
+connected; the model handed over with `ask_user`, the harness pressed Done without connecting anything, the model searched again twice and ended `failed` with correct instructions (connect Google Sheets in
+Plugins, then ask to retry). A Gmail read request went to the browser, met the sign-in page and handed over. Not tested: resuming after a real connection.
+
+The remaining flaky unit test was a reproducible timeout, not noise: the three long-run files (compaction, overflow-recovery, injection-context) run 30 to 36 turn conversations on fake-indexeddb, take 1.1 to 1.8 s
+alone, and exceeded the 5 s default when the suite ran in parallel (one run in three failed). In real Chrome the same per-turn preparation measured about 9 ms, so it is test-environment cost; the files now set an
+explicit 30 s timeout, and six consecutive full-suite runs pass.
+
+### 3k. Product Resume contract after a real worker kill, real DeepSeek (staging, throwaway account, since deleted)
+
+`fixtures/sw-kill-product.mjs` enrolls the product build as a device, asks for three todo items on a public page, stops every service worker after the first item appears, and checks what the
+person sees. Result: the worker came back; the page kept exactly one item (nothing replayed); the panel showed "Interrupted: The extension restarted during this run" with Resume and Stop (a typed message is
+blocked while a run is interrupted, by design); pressing Resume ran the task under the uncertain-write rule: it read the page, said that a browser action may have been delivered and that further changes were
+paused, and asked for a short follow-up; the follow-up added the two remaining items and the page ended with alpha, beta, gamma, three distinct items, the answer noting alpha was not re-added. The harness first
+mis-detected Resume because the control lives in the run bar, not in the panel's button list; that was a test bug, not a product defect. One run, one account, one site.
+
 ## 4. NOT IMPLEMENTED or BLOCKED, with the reason
 
 Canvas pixel interaction (BLOCKED by the single-model rule: the only allowed model, deepseek_v4_1_flash_1017, has no vision, so it cannot see a canvas;

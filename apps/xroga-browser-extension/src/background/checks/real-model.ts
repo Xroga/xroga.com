@@ -80,6 +80,11 @@ defineCheck({
               await panel(page.id!, 'click', { label: 'Allow' }).catch(() => undefined);
             }
           }
+          // A hand-over (ask_user takeover) is answered by the person pressing Done; the check plays the person only when args.done is set.
+          if (args.done && status === 'awaiting_user' && /\nDone\n/.test(String(read.body ?? ''))) {
+            (report.polls as unknown[]).push({ i, pressed: 'Done', body: String(read.body ?? '').slice(-300) });
+            await panel(page.id!, 'click', { label: 'Done' }).catch(() => undefined);
+          }
           const syncing = status === 'interrupted' && /Syncing/i.test(run?.reason ?? '');
           if (!syncing && ['done', 'failed', 'stopped', 'capped', 'interrupted'].includes(status)) break;
           await sleep(500);
