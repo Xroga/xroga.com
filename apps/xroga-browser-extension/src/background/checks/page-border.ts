@@ -93,6 +93,11 @@ defineCheck({
         { text: 'Looked.', delayMs: 1500 },
       ]);
       await panel(id, 'type-send', { text: 'Look at the page' });
+      // The page is in a background tab here: nothing is drawn into a tab nobody can see (measured: it slowed input 4 to 5 times), and the
+      // overlay appears when the tab is shown.
+      await sleep(1200);
+      report.heldBackWhileHidden = !(await hasBorder(id));
+      await chrome.tabs.update(id, { active: true });
       report.shownWhileWorking = await until(() => hasBorder(id), true);
       report.notOnOtherTab = !(await hasBorder(other.id!));
       await sleep(400);

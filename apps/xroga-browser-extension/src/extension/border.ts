@@ -28,6 +28,12 @@ export interface BorderPorts {
   scopedTabs(): Promise<number[]>;
   /** The Settings switch. */
   enabled(): Promise<boolean>;
+  /**
+   * Whether the tab is on screen (the active tab of a window that is not minimized). The pointer is not drawn into a tab nobody can see:
+   * measured in real Chrome, a hidden tab's input dispatch was 4 to 5 times slower with the overlay present, because every pointer update
+   * queues page script ahead of the next input event. Absent means every tab counts as visible.
+   */
+  visible?(tabId: number): Promise<boolean>;
   /** Runs `setBorder(state, pointer)` in the tab's top frame, or in one document of it; resolves when it has. */
   inject(tabId: number, state: BorderState, documentId?: string, pointer?: PointerCommand): Promise<void>;
   /**
@@ -76,6 +82,10 @@ export class PageBorder {
   #anchors = new Map<number, { x: number; y: number; kind: PointerKind }>();
   /** The status each working conversation shows now. */
   #labels = new Map<string, string>();
+  /** The newest overlay command per tab, so a slow visibility check never lets an old 'on' land after a later 'off'. */
+  #seq = new Map<number, number>();
+  /** Tabs whose 'on' was held back because they were hidden; drawn when they become visible. */
+  #held = new Set<number>();
 
   constructor(private readonly ports: BorderPorts) {}
 
@@ -199,13 +209,34 @@ export class PageBorder {
     if (!this.#capturing.get(tabId)) this.#send(tabId, 'on', undefined, this.#pointerFor(tabId, conversationId));
   }
 
+  /** A tab became visible: what was held back while it was hidden is drawn now. */
+  async shown(tabId: number): Promise<void> {
+    if (this.#held.delete(tabId)) await this.#apply(tabId);
+  }
+
   /** Started and not waited for: a page with a dialog open holds an injection until the dialog closes. */
   #send(tabId: number, state: BorderState, documentId?: string, pointer?: PointerCommand): void {
     const mark = (working: boolean) => this.ports.unreachable?.(tabId, working).catch(() => undefined);
+    const seq = (this.#seq.get(tabId) ?? 0) + 1;
+    this.#seq.set(tabId, seq);
+    const run = () =>
+      this.ports
+        .inject(tabId, state, documentId, pointer)
+        .then(() => (state === 'on' ? mark(false) : undefined))
+        .catch(() => (state === 'on' ? mark(true) : mark(false)));
+    if (state !== 'on' || !this.ports.visible) return void run();
+    this.#held.delete(tabId);
     void this.ports
-      .inject(tabId, state, documentId, pointer)
-      .then(() => (state === 'on' ? mark(false) : undefined))
-      .catch(() => (state === 'on' ? mark(true) : mark(false)));
+      .visible(tabId)
+      .catch(() => true)
+      .then(visible => {
+        if (this.#seq.get(tabId) !== seq) return; // a newer command for this tab supersedes this one
+        if (!visible) {
+          this.#held.add(tabId);
+          return;
+        }
+        return run();
+      });
   }
 }
 
@@ -383,6 +414,7 @@ export async function showActionPoint(tabId: number, point: { x: number; y: numb
 /** New documents in a tab's top frame, and the Settings switch. Registered at worker start. */
 export function listenForBorder(border: PageBorder): void {
   activeBorder = border;
+  chrome.tabs.onActivated.addListener(({ tabId }) => void border.shown(tabId).catch(() => undefined));
   chrome.webNavigation.onCommitted.addListener(details => {
     if (details.frameId === 0) void border.committed(details.tabId, details.documentId).catch(() => undefined);
   });
