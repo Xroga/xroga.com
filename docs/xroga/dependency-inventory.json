@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "8c79ead48121e7cf982bbecfdc2f686607f49f2d",
+  "source_sha": "276ce9cff64c169fce79ee1276e81f20cb1b06a7",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -18299,11 +18299,15 @@
     },
     {
       "path": "backend/src/routes/localBrowser.ts",
-      "sha256": "447c2a05ffce3d42612b2dc0f569e7f7349db8b8dfe3407321c2bcc3bacf40f1"
+      "sha256": "8b297d61d56e78b263a80222a496e4b50207c4e08ef99e0c7bfd798bdbabe6cd"
     },
     {
       "path": "backend/src/routes/localBrowserDevice.ts",
       "sha256": "e9ba5fd68611f4ec4b04d20afadbe6dc20e3c081c44dafb059341773a6410ad5"
+    },
+    {
+      "path": "backend/src/routes/localBrowserDirectRead.ts",
+      "sha256": "c4c35b55fd6f52534eb693815db8f17e2e2492196fbdd5216915eba0f216d260"
     },
     {
       "path": "backend/src/routes/localBrowserPlugins.ts",
@@ -35125,28 +35129,35 @@
     },
     {
       "path": "backend/src/routes/localBrowser.ts",
-      "line": 173,
+      "line": 174,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/routes/localBrowser.ts",
-      "line": 201,
+      "line": 202,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/routes/localBrowser.ts",
-      "line": 448,
+      "line": 449,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/routes/localBrowser.ts",
-      "line": 475,
+      "line": 476,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/routes/localBrowserDirectRead.ts",
+      "line": 26,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
