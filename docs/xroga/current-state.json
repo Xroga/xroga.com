@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/workspace-observable-work-history",
-    "sha": "c5da366ab2b158c11084297771998e92718fbdb5",
-    "sourceTimestampUtc": "2026-11-12T21:34:16+05:00",
-    "auditStartedUtc": "2026-11-12T16:35:01.385Z",
+    "sha": "31b8f22501cb6b8bafc4ebfd637417f6d2da660b",
+    "sourceTimestampUtc": "2026-11-12T22:29:07+05:00",
+    "auditStartedUtc": "2026-11-12T17:29:38.768Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -5166,7 +5166,7 @@
       "id": "surface:456e62cb099b42e5c2a2",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUi.ts",
-      "sha256": "8054750fd02d10c518addcf427c283141ca76e70e22fc3965b28be99313572a5",
+      "sha256": "a6b62d9b7415cd56beb241a5501dc8f685ce03e70b780d8bb4b28559ee2941e5",
       "symbols": [
         "MAX_PROGRAM_CHARS",
         "NATIVE_UI_FORMAT",
@@ -5207,6 +5207,7 @@
         "fields",
         "finding",
         "firstBlock",
+        "followed",
         "from",
         "full",
         "group",
@@ -5258,6 +5259,7 @@
         "props",
         "prose",
         "pureFunctions",
+        "reachable",
         "readable",
         "readout",
         "reason",
@@ -5266,6 +5268,7 @@
         "recoverNativeWorkspaceProgram",
         "recovered",
         "reference",
+        "referenceIssue",
         "reject",
         "remaining",
         "render",
@@ -5505,7 +5508,7 @@
       "id": "surface:a67f0b1fa2dd0f11a67f",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiPrompt.ts",
-      "sha256": "c7eae6b8b32e0b7f83515b7277e349c9d6c4924b448e46ab7e9092cae09ab5fb",
+      "sha256": "28ca1ae9b0a08a97f191c2c67a24c1e2ee268d1c4c3421fafbadff8fe58a646e",
       "symbols": [
         "allowed",
         "buildNativeOpenUiPrompt",
@@ -5552,7 +5555,7 @@
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
-      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "knownRisk": "Production source contains annotated mock/TODO/placeholder/simulation markers; individual findings classified separately.",
       "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
@@ -5663,7 +5666,7 @@
       "id": "surface:93911e9946fd4b21d50d",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiWorkspace.ts",
-      "sha256": "9afca27fe41e4b5d509e60493531de243e8434c1970aaefa79271120f1163ac2",
+      "sha256": "1cbd5cf2e9222cc8dc1b41bd5db1a0f88f13e08f1f9d5c201e29106ec2702eee",
       "symbols": [
         "completeNativeWorkspaceAnswer",
         "completion",
@@ -5677,6 +5680,7 @@
         "program",
         "readable",
         "reason",
+        "recoverable",
         "recovered",
         "repair",
         "response",
@@ -126580,7 +126584,7 @@
       "id": "surface:bd6af899f2dd9df930f6",
       "subsystem": "browser_sandbox",
       "sourcePath": "scripts/verify-native-openui-browser.mjs",
-      "sha256": "0dffbb7401fc838e8c0c7566c262139ecf57ea569834462dbdf7ccfd72bae9d1",
+      "sha256": "c71e6a89ce4dbd79f13ecdfab17f6deb1d25bb9120292ec30bb6f5d95e029b80",
       "symbols": [
         "accessibility",
         "answer",
@@ -141208,6 +141212,16 @@
   ],
   "findings": [
     {
+      "id": "finding:a73f972c29b09508da8a",
+      "sourcePath": "backend/src/ai/nativeOpenUiPrompt.ts",
+      "line": 49,
+      "kind": "PLACEHOLDER",
+      "reachable": true,
+      "state": "PARTIAL",
+      "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
+      "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
+    },
+    {
       "id": "finding:ef66c73c60a6be41cf28",
       "sourcePath": "backend/src/ai/prompts.ts",
       "line": 60,
@@ -149079,7 +149093,7 @@
     {
       "id": "test-suite:2e491f4d2fcbc11f974c",
       "sourcePath": "backend/src/ai/nativeOpenUi.test.ts",
-      "declaredTests": 37,
+      "declaredTests": 41,
       "skipLocations": [],
       "focusLocations": []
     },
