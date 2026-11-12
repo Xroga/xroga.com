@@ -195,6 +195,14 @@ The remaining flaky unit test was a reproducible timeout, not noise: the three l
 alone, and exceeded the 5 s default when the suite ran in parallel (one run in three failed). In real Chrome the same per-turn preparation measured about 9 ms, so it is test-environment cost; the files now set an
 explicit 30 s timeout, and six consecutive full-suite runs pass.
 
+### 3k. Product Resume contract after a real worker kill, real DeepSeek (staging, throwaway account, since deleted)
+
+`fixtures/sw-kill-product.mjs` enrolls the product build as a device, asks for three todo items on a public page, stops every service worker after the first item appears, and checks what the
+person sees. Result: the worker came back; the page kept exactly one item (nothing replayed); the panel showed "Interrupted: The extension restarted during this run" with Resume and Stop (a typed message is
+blocked while a run is interrupted, by design); pressing Resume ran the task under the uncertain-write rule: it read the page, said that a browser action may have been delivered and that further changes were
+paused, and asked for a short follow-up; the follow-up added the two remaining items and the page ended with alpha, beta, gamma, three distinct items, the answer noting alpha was not re-added. The harness first
+mis-detected Resume because the control lives in the run bar, not in the panel's button list; that was a test bug, not a product defect. One run, one account, one site.
+
 ## 4. NOT IMPLEMENTED or BLOCKED, with the reason
 
 Canvas pixel interaction (BLOCKED by the single-model rule: the only allowed model, deepseek_v4_1_flash_1017, has no vision, so it cannot see a canvas;
