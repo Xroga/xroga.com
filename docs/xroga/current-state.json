@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/workspace-observable-work-history",
-    "sha": "cec8624da0f289ca5420032b78296476492f24d9",
-    "sourceTimestampUtc": "2026-11-12T19:48:41+05:00",
-    "auditStartedUtc": "2026-11-12T14:49:34.122Z",
+    "sha": "1ea88d60f585b9bb6f8a05c4a7c7cb380982a1c7",
+    "sourceTimestampUtc": "2026-11-12T20:05:41+05:00",
+    "auditStartedUtc": "2026-11-12T15:06:19.688Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
@@ -145404,86 +145404,86 @@
       "reachable": false
     },
     {
-      "id": "frontend-call:2d969d4d5bc6e13c5a46",
+      "id": "frontend-call:f74adb04743731eb537b",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 614,
+      "line": 619,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:47f4671915612d630be9",
+      "id": "frontend-call:38ae07262aaefc1aa8f3",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 617,
+      "line": 622,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:1352c1491d81bea6a3ba",
+      "id": "frontend-call:6dfb09a77d14fd8f9437",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1382,
+      "line": 1387,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:58eeb82f7084df120f5d",
-      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1383,
-      "callee": "fetch",
-      "reachable": false
-    },
-    {
-      "id": "frontend-call:d372c399dbb50b63283b",
+      "id": "frontend-call:d75ee89de5007bd5a789",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 1388,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:1290761b8a5b6fa8662c",
+      "id": "frontend-call:ba0d356e0477b5646c9c",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1389,
+      "line": 1393,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:6af8be65506546e7e2ff",
+      "id": "frontend-call:b3a242e530c9eac9aaf1",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1395,
+      "line": 1394,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:28ce2cad3065186b1b30",
+      "id": "frontend-call:41e682336cdd12c22a38",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 1400,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:e9dddea000cbc37214a3",
+      "id": "frontend-call:1d189279bec7575a205c",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1457,
+      "line": 1405,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:f3994f19541c5038eae9",
+      "id": "frontend-call:963b5d114725c5c01258",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1458,
+      "line": 1462,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:40e28776eab14dd3d61a",
+      "id": "frontend-call:a05c6e02ae92bd81a481",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1465,
+      "line": 1463,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:72cbe21ce43d77f0c850",
+      "id": "frontend-call:caafd004aa46c6f81b28",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1479,
+      "line": 1470,
+      "callee": "fetch",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:426cfefc32ca4537325d",
+      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
+      "line": 1484,
       "callee": "fetch",
       "reachable": false
     },
