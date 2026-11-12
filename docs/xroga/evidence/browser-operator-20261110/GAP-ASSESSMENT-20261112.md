@@ -66,9 +66,21 @@ text/csv) matching the file; a download that never began was refused after the 1
 download record for an empty blob, so an empty export reads as "no download began"; a download that finished with 0 bytes is covered by unit tests only.
 Not tested: a very large file, an interrupted download, the permission being refused in the product build.
 
+### 3c. Real DeepSeek on staging, with the new tools (throwaway staging account, since deleted; one run each)
+
+| Task | Result | What the model did |
+| --- | --- | --- |
+| Open a URL that answers with a file attachment, say whether the download finished, its name and size | done, 25 s, 3 turns | `navigate`, `confirm_download`, `done`. Reported "xroga-test.txt, 126 bytes, text/plain" from the browser's download record, and explained the `net::ERR_ABORTED` that a navigation to a file produces. VERIFIED that the model uses `confirm_download`. |
+| Add two items on a public TodoMVC page and confirm the list has exactly two | done, 33 s, 3 turns | `type`, `type`, `done`. Correct answer, but the model did NOT use `expect.count`; it checked the page's own "2 items left" counter. So `count`/`exists` remain unit-tested and real-Chrome-tested but NOT seen used by the real model. |
+
+Findings from getting there: the product refuses localhost pages by policy (correct), so real-model tasks need public pages; typing on a site that is "always ask"
+waits for an Allow press (the harness pressed Allow twice, only for this task); runs left waiting on approval count against the active-run limit of 4
+(`BROWSER_RUN_LIMIT`), which blocked one attempt until the four stale test rows of the throwaway account were marked failed.
+
 ## 4. NOT IMPLEMENTED or BLOCKED, with the reason
 
-Canvas pixel interaction; native desktop applications (BLOCKED); macros and skills extracted from verified runs; region outline snapshots; HAR, video and
+Canvas pixel interaction (BLOCKED by the single-model rule: the only allowed model, deepseek_v4_1_flash_1017, has no vision, so it cannot see a canvas;
+point targets exist in the layer but are offered only to a model with vision); native desktop applications (BLOCKED); macros and skills extracted from verified runs; region outline snapshots; HAR, video and
 flight recorder (privacy review); typing stored secrets without the model seeing them (credential review); multiple Chrome profiles (BLOCKED: needs a
 local daemon); a worker count chosen automatically from measurements (the cap of three is fixed; section 3a shows it behaves as designed); a worker
 panel beyond the workers own conversations (the extension transcript is being changed in #971 by Codex, so this was not touched).
