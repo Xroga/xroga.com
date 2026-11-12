@@ -6,6 +6,12 @@ The extension stores a browser-only device credential in trusted extension stora
 
 The Plugins panel uses existing Xroga connected accounts. The extension receives catalog metadata and connection status, and sign-in takes place on the connected service's hosted authorization flow. If an agent requests a connected read, the extension displays the account and requested inputs for review. Approved inputs are sent through Xroga to the connected service via Composio. Bounded results may be used as evidence by the task's model and retained in its account-scoped history. Connected app credentials are never sent to the extension or the model.
 
+**Analytics: not sent in the Xroga edition.** The upstream sections below describe a daily count and usage counts that the Nanobrowser distribution sends to PostHog. The Xroga build has no analytics destination configured, and the extension's content security policy allows network connections only to `https://api.xroga.com` (and Composio logo images), so neither is sent. Those two upstream sections, and the statements below that Nanobrowser has "no server" and "no account", describe the upstream product and do not apply to this edition.
+
+**What the Xroga features keep on this device:** conversations and attachments (per Xroga account), run checkpoints so a task survives a restart, the table of worker runs, workflow hints (sanitized guidance learned from tasks that finished with verified evidence: tool names and element names only, never typed values, never approvals, never another account's), and local performance timings (phase names and milliseconds, never page text, never sent anywhere). "Delete all data" in Settings clears the conversation data; uninstalling removes everything.
+
+**What goes to Xroga's API during a task:** your request, the page content the agent reads (with password, card and one-time-code fields masked), the results of its tools and the task's model messages. Xroga forwards model messages to its model provider and records usage for billing. Screenshots are kept on the device unless you attach one yourself. A result may include text from a page you opened; Xroga treats page text as data, never as instructions.
+
 # Privacy Policy for Nanobrowser
 
 ## Introduction
