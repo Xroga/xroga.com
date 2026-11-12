@@ -1,6 +1,6 @@
 # Repository evidence gaps
 
-Source SHA: `73a7dd59a46f84bd6795a5f8f3ee66eace308080`. These are pre-existing findings, not changes made by Command 001.
+Source SHA: `e1722a293645900c559547f3e8dbb23b35686b50`. These are pre-existing findings, not changes made by Command 001.
 
 - OAuth credentials and PKCE state persist in `oauthPkceStore.ts` database fields and a storage mirror. Command 009 must establish encryption, expiry and one-use semantics with verified KMS before cutover.
 - Auth middleware can return internal configuration/error text. Repair and test safe public errors in Command 007.

@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "69ec01b612b78832c227dcec6098ead397b93424a236c0ae49268f1e292a8ab1",
+  "reviewRegistrySha256": "8ba79ced0673ea5222c4a104a68c41e7b75cd9620bd9ca3011decaee32f3c559",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -3912,11 +3912,11 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "b1d5a924ac6051d72aee"
+        "id": "5725855926bd46f4b2a1"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "9ff832f34f606fa57c9e"
+        "id": "108c0b015831530e885e"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -6488,7 +6488,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "958dfbd784ba9e4cc0c9"
+        "id": "32f34440748d20a994f0"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -7372,7 +7372,7 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "958dfbd784ba9e4cc0c9"
+        "id": "32f34440748d20a994f0"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -7632,11 +7632,11 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "b1d5a924ac6051d72aee"
+        "id": "5725855926bd46f4b2a1"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "9ff832f34f606fa57c9e"
+        "id": "108c0b015831530e885e"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -11357,15 +11357,15 @@
       }
     },
     {
-      "id": "b1d5a924ac6051d72aee",
+      "id": "5725855926bd46f4b2a1",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3875,
+      "line": 3878,
       "enclosing": "runBuildPipeline",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "d981253fc491c75b4d2b90c6e080509aa541fd04d840276e133e81b39fe3eac6",
+      "sourceSha256": "e3ce3808eba24cd2461066d7b571ae5f96fd108ef3b8aaf807ba04b39b1b3dc8",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -11378,15 +11378,15 @@
       }
     },
     {
-      "id": "9ff832f34f606fa57c9e",
+      "id": "108c0b015831530e885e",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4059,
+      "line": 4062,
       "enclosing": "runBuildPipeline",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "d981253fc491c75b4d2b90c6e080509aa541fd04d840276e133e81b39fe3eac6",
+      "sourceSha256": "e3ce3808eba24cd2461066d7b571ae5f96fd108ef3b8aaf807ba04b39b1b3dc8",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -31319,15 +31319,15 @@
       }
     },
     {
-      "id": "958dfbd784ba9e4cc0c9",
+      "id": "32f34440748d20a994f0",
       "path": "frontend/src/app/share/[token]/page.tsx",
-      "line": 115,
+      "line": 116,
       "enclosing": "canPresentRichShare",
       "kind": "RPC_CANDIDATE",
       "target": "current_community_role",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "df622a35e0f0208ad80cad4ea639004cb8e8066414c6ecf4f418f2a7e69ffcea"
+      "sourceSha256": "17cb0432a53350ac1074586cc95cb0a017603bd74342f1dc696d4093e9852409"
     },
     {
       "id": "19620b924bbcbab333b0",
