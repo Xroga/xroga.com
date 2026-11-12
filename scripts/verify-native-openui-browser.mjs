@@ -76,7 +76,7 @@ const cases = {
   identifiers: { text: 'Keep tenant_id and tenant_members visible.', program: 'root = Col([Text("Keep tenant_id and tenant_members visible.", "md")])' },
   bareTransport: { raw: 'Keep the readable answer.\nroot = Col([Text("Keep the readable answer."), UnknownInternalWidget()])' },
   diagramRecovery: {
-    raw: 'The web client calls the API.\n<<<XROGA_OPENUI_V1>>>\nroot = Col([Diagram("Request path", [{id:"web",label:"Web",level:"0",detail:null},{id:"api",label:"API",level:"1"}], [{from:"web",to:"api",label:null}], "The web client calls the API."), Table(["Component"], [["API"]])])',
+    raw: 'The web client calls the API.\n<<<XROGA_OPENUI_V1>>>\nroot = Col([Diagram("Request path", [{id:"web",label:"Web",level:"0",detail:null,tone:"blue"},{id:"api",label:"API",level:"1",tone:"purple"}], [{from:"web",to:"api",label:null}], "The web client calls the API."), Table(["Component"], [["API"]])])',
     completion: 'complete',
   },
   unfinished: { raw: 'Keep the confirmed amount of $25.\n<<<XROGA_OPENUI_V1>>>\nroot = Col([Chart(', finish: 'length' },
@@ -230,6 +230,8 @@ try {
       const recoveredEdge = page.locator('.react-flow__edge-path');
       await recoveredEdge.waitFor({ state: 'attached' });
       assert.ok(await recoveredEdge.evaluate(path => path.getTotalLength() > 0 && getComputedStyle(path).stroke !== 'none'));
+      await page.locator('.native-diagram-node-neutral').getByText('Web', { exact: true }).waitFor();
+      await page.locator('.native-diagram-node-purple').getByText('API', { exact: true }).waitFor();
       await page.getByText('Web → API', { exact: true }).waitFor();
       await page.getByRole('cell', { name: 'API', exact: true }).waitFor();
       assert.equal(await page.getByText(/Some visuals could not be validated/).count(), 0);

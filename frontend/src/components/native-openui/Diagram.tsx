@@ -6,14 +6,14 @@ import { useEffect, useId, useRef, useState } from 'react';
 import { z } from 'zod/v4';
 import { Glyph } from './upstream/components/glyph';
 import { DiagramResourceMark } from './Resources';
-import { hasRenderableDiagramTopology } from '../../../../backend/src/ai/nativeDiagramTopology';
+import { DIAGRAM_NODE_TONES, hasRenderableDiagramTopology } from '../../../../backend/src/ai/nativeDiagramTopology';
 
 const diagramNode = z.object({
   id: z.string().regex(/^[a-z][a-z0-9-]{0,31}$/),
   label: z.string().min(1).max(45),
   level: z.number().int().min(0).max(5),
   detail: z.string().max(66).optional(),
-  tone: z.enum(['neutral', 'info', 'success', 'purple', 'warning']).optional(),
+  tone: z.enum(DIAGRAM_NODE_TONES).optional(),
   icon: z.string().max(36).optional(),
 });
 const diagramLink = z.object({

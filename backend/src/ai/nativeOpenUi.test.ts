@@ -102,6 +102,27 @@ test('Workspace repairs diagram layout literals and keeps the complete saved pre
   assert.equal(share?.program, answer.responseSource.text);
 });
 
+test('an unsupported diagram color does not remove verified nodes, edges, or their labels', () => {
+  const program = [
+    'root = Col([flow, Table(["Component"], [["API"]])])',
+    'flow = Diagram("Request path", nodes, [{from:"web",to:"api",label:"HTTPS"}], "The web client calls the API.")',
+    'nodes = [{id:"web",label:"Web",level:0,tone:"blue",detail:"Next.js"},{id:"api",label:"API",level:1,tone:"purple"}]',
+  ].join('\n');
+  const diagnostics: Array<NativeUiDiagnostic | { stage: 'assembly' }> = [];
+  const answer = completeNativeWorkspaceAnswer('The web client calls the API over HTTPS.' + NATIVE_UI_MARKER + program,
+    'stop', undefined, undefined, event => diagnostics.push(event), ['graph', 'table']);
+  assert.ok(diagnostics.some(event => 'schema' in event && event.schema?.some(error => error.diagramField === '/nodes/*/tone')));
+  assert.deepEqual(answer.completion, { status: 'complete' });
+  const renderedDiagram = answer.responseSource.text.split('\n').find(line => line.startsWith('flow = Diagram(')) ?? '';
+  assert.match(renderedDiagram, /"tone":\s*"purple"/);
+  assert.doesNotMatch(renderedDiagram, /"tone":\s*"blue"/);
+  assert.match(renderedDiagram, /"detail":\s*"Next\.js"/);
+  assert.match(renderedDiagram, /"from":\s*"web",\s*"to":\s*"api",\s*"label":\s*"HTTPS"/);
+  assert.deepEqual(missingNativeFormats(answer.responseSource.text, ['graph', 'table']), []);
+  const share = readNativeOpenUiShare(buildNativeOpenUiShare(answer.response, answer.responseSource.text)!);
+  assert.equal(share?.program, answer.responseSource.text);
+});
+
 test('unrenderable diagram relationships cannot satisfy graph coverage', () => {
   const nodes = [{ id: 'web', label: 'Web', level: 0 }, { id: 'api', label: 'API', level: 1 }];
   const links = [{ from: 'web', to: 'api' }];

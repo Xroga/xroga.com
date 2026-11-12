@@ -1,6 +1,6 @@
 import { createParser, evaluate, parseExpression, split, tokenize, walkAST, type ASTNode, type LibraryJSONSchema } from '@openuidev/lang-core';
 import { contradictsMonthlyChart, monthlyChartDataFallback, reviewNativeAnswer, suppliedMonthlyComparison } from './nativeOpenUiAccuracy.js';
-import { hasRenderableDiagramTopology } from './nativeDiagramTopology.js';
+import { DIAGRAM_NODE_TONES, hasRenderableDiagramTopology } from './nativeDiagramTopology.js';
 import catalog from './nativeOpenUiCatalog.json' with { type: 'json' };
 
 export const NATIVE_UI_FORMAT = 'xroga-openui-v1' as const;
@@ -484,6 +484,7 @@ function normalizeDiagramRows(node: ASTNode, symbols: ReadonlyMap<string, ASTNod
     const entries = object.entries.flatMap(([key, raw]): [string, ASTNode][] => {
       const value = resolveRecoveryReference(raw, symbols);
       if (value?.k === 'Null' && optionalFields.includes(key)) return [];
+      if (isNode && key === 'tone' && (value?.k !== 'Str' || !DIAGRAM_NODE_TONES.some(tone => tone === value.v))) return [];
       if (isNode && key === 'level' && value?.k === 'Str' && /^[0-5]$/.test(value.v)) {
         return [[key, { k: 'Num', v: Number(value.v) }]];
       }

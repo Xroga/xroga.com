@@ -1,3 +1,5 @@
+export const DIAGRAM_NODE_TONES = ['neutral', 'info', 'success', 'purple', 'warning'] as const;
+
 /** Relationship and layout constraints shared by Workspace admission and the renderer. */
 export function hasRenderableDiagramTopology(nodes: unknown, links: unknown): boolean {
   if (!Array.isArray(nodes) || nodes.length < 2 || nodes.length > 12 ||
