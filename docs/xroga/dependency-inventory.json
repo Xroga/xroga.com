@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "31b8f22501cb6b8bafc4ebfd637417f6d2da660b",
+  "source_sha": "ccaf9ef0899eba81ad0764b1b39c78883347ce90",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -17051,8 +17051,12 @@
       "sha256": "901a9eaf9253a042659bc440edb8c79cfe7d1b4b30ae9d7ce839c09c74ae3645"
     },
     {
+      "path": "backend/src/ai/nativeDiagramTopology.ts",
+      "sha256": "79a1b889cd0a9c5393c52816c52e556187cf4fd1230f5e7e77858c3a686f6be1"
+    },
+    {
       "path": "backend/src/ai/nativeOpenUi.ts",
-      "sha256": "a6b62d9b7415cd56beb241a5501dc8f685ce03e70b780d8bb4b28559ee2941e5"
+      "sha256": "18c70df55cca0a119f6477405cc96ae6bb1aa2061828bdbd46b6ea2b55249307"
     },
     {
       "path": "backend/src/ai/nativeOpenUiAccuracy.ts",
@@ -17060,7 +17064,7 @@
     },
     {
       "path": "backend/src/ai/nativeOpenUiPrompt.ts",
-      "sha256": "28ca1ae9b0a08a97f191c2c67a24c1e2ee268d1c4c3421fafbadff8fe58a646e"
+      "sha256": "4a8ce986a431a4cac8e646e6957e3e1b9cf2fd099cab2056dee795c4bbc2cbd6"
     },
     {
       "path": "backend/src/ai/nativeOpenUiRun.ts",
@@ -22180,7 +22184,7 @@
     },
     {
       "path": "frontend/src/components/native-openui/Diagram.tsx",
-      "sha256": "f773738015c3606e003ae06088ece58dcb7adeaf1382daf5fa8c4c568cf1d320"
+      "sha256": "8807aba877a7b79867db0bad8b6d4208628a19f07622ff1a1c9017ba62b72464"
     },
     {
       "path": "frontend/src/components/native-openui/Editorial.tsx",
@@ -32373,9 +32377,16 @@
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
-      "path": "backend/src/ai/nativeOpenUi.ts",
-      "line": 11,
-      "scope": "MODULE_LIFETIME",
+      "path": "backend/src/ai/nativeDiagramTopology.ts",
+      "line": 5,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/nativeDiagramTopology.ts",
+      "line": 6,
+      "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
@@ -32402,14 +32413,14 @@
     },
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
-      "line": 94,
-      "scope": "FUNCTION_LOCAL",
+      "line": 15,
+      "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
-      "line": 97,
+      "line": 95,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -32423,140 +32434,147 @@
     },
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
-      "line": 101,
+      "line": 99,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
-      "line": 130,
+      "line": 102,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
-      "line": 134,
+      "line": 129,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
-      "line": 148,
+      "line": 143,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
-      "line": 168,
+      "line": 151,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
-      "line": 222,
+      "line": 171,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
-      "line": 277,
+      "line": 225,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
-      "line": 283,
+      "line": 281,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
-      "line": 331,
+      "line": 287,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
-      "line": 340,
+      "line": 341,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
-      "line": 359,
+      "line": 350,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
-      "line": 379,
+      "line": 369,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
-      "line": 452,
+      "line": 389,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
-      "line": 470,
+      "line": 468,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
-      "line": 489,
+      "line": 508,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/nativeOpenUi.ts",
+      "line": 527,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
-      "line": 496,
+      "line": 534,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
-      "line": 497,
+      "line": 535,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
-      "line": 498,
+      "line": 536,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
-      "line": 504,
+      "line": 542,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
-      "line": 528,
+      "line": 566,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -38681,14 +38699,14 @@
     },
     {
       "path": "frontend/src/components/native-openui/Diagram.tsx",
-      "line": 51,
+      "line": 53,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/native-openui/Diagram.tsx",
-      "line": 53,
+      "line": 54,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

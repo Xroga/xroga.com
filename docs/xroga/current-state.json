@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/workspace-observable-work-history",
-    "sha": "31b8f22501cb6b8bafc4ebfd637417f6d2da660b",
-    "sourceTimestampUtc": "2026-11-12T22:29:07+05:00",
-    "auditStartedUtc": "2026-11-12T17:29:38.768Z",
+    "sha": "ccaf9ef0899eba81ad0764b1b39c78883347ce90",
+    "sourceTimestampUtc": "2026-11-12T23:58:58+05:00",
+    "auditStartedUtc": "2026-11-12T19:00:00.287Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -5163,10 +5163,51 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:e305dd7a26ee4137b77a",
+      "subsystem": "ai_execution",
+      "sourcePath": "backend/src/ai/nativeDiagramTopology.ts",
+      "sha256": "79a1b889cd0a9c5393c52816c52e556187cf4fd1230f5e7e77858c3a686f6be1",
+      "symbols": [
+        "count",
+        "hasRenderableDiagramTopology",
+        "ids",
+        "node",
+        "peers"
+      ],
+      "imports": [],
+      "runtimeImports": [],
+      "entryPoints": [
+        "backend/src/index.ts",
+        "frontend/src/app/(workspace)/workspace/page.tsx",
+        "frontend/src/app/native-answer-evaluation/page.tsx",
+        "frontend/src/app/share/[token]/page.tsx",
+        "scripts/security/verify-oci-federation.ts"
+      ],
+      "callers": [
+        "backend/src/ai/nativeOpenUi.ts:3",
+        "frontend/src/components/native-openui/Diagram.tsx:9"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:456e62cb099b42e5c2a2",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUi.ts",
-      "sha256": "a6b62d9b7415cd56beb241a5501dc8f685ce03e70b780d8bb4b28559ee2941e5",
+      "sha256": "18c70df55cca0a119f6477405cc96ae6bb1aa2061828bdbd46b6ea2b55249307",
       "symbols": [
         "MAX_PROGRAM_CHARS",
         "NATIVE_UI_FORMAT",
@@ -5196,8 +5237,11 @@
         "components",
         "declarations",
         "deepSeekToolClosingSuffix",
+        "diagramField",
+        "diagramTopology",
         "element",
         "els",
+        "entries",
         "envelope",
         "expression",
         "factualRule",
@@ -5236,13 +5280,18 @@
         "name",
         "names",
         "narrative",
+        "nativeElements",
         "nativeFence",
         "nesting",
         "next",
         "node",
+        "normalizeDiagramRows",
+        "normalizeWorkspaceComponents",
         "normalized",
+        "object",
         "opening",
         "operators",
+        "optionalFields",
         "original",
         "originals",
         "outputs",
@@ -5278,7 +5327,6 @@
         "result",
         "reviewContext",
         "reviewStrings",
-        "rewriteListItems",
         "root",
         "row",
         "rows",
@@ -5321,11 +5369,13 @@
         "yLabel"
       ],
       "imports": [
+        "./nativeDiagramTopology.js",
         "./nativeOpenUiAccuracy.js",
         "./nativeOpenUiCatalog.json",
         "@openuidev/lang-core"
       ],
       "runtimeImports": [
+        "backend/src/ai/nativeDiagramTopology.ts",
         "backend/src/ai/nativeOpenUiAccuracy.ts",
         "backend/src/ai/nativeOpenUiCatalog.json"
       ],
@@ -5508,7 +5558,7 @@
       "id": "surface:a67f0b1fa2dd0f11a67f",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiPrompt.ts",
-      "sha256": "28ca1ae9b0a08a97f191c2c67a24c1e2ee268d1c4c3421fafbadff8fe58a646e",
+      "sha256": "4a8ce986a431a4cac8e646e6957e3e1b9cf2fd099cab2056dee795c4bbc2cbd6",
       "symbols": [
         "allowed",
         "buildNativeOpenUiPrompt",
@@ -86792,7 +86842,7 @@
       "id": "surface:92ce2788e7a639e6a608",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/Diagram.tsx",
-      "sha256": "f773738015c3606e003ae06088ece58dcb7adeaf1382daf5fa8c4c568cf1d320",
+      "sha256": "8807aba877a7b79867db0bad8b6d4208628a19f07622ff1a1c9017ba62b72464",
       "symbols": [
         "AnswerDiagramNode",
         "AnswerNode",
@@ -86824,6 +86874,7 @@
         "width"
       ],
       "imports": [
+        "../../../../backend/src/ai/nativeDiagramTopology",
         "./Resources",
         "./upstream/components/glyph",
         "@openuidev/react-lang",
@@ -86832,6 +86883,7 @@
         "zod/v4"
       ],
       "runtimeImports": [
+        "backend/src/ai/nativeDiagramTopology.ts",
         "frontend/src/components/native-openui/Resources.tsx",
         "frontend/src/components/native-openui/upstream/components/glyph.tsx"
       ],
@@ -126584,7 +126636,7 @@
       "id": "surface:bd6af899f2dd9df930f6",
       "subsystem": "browser_sandbox",
       "sourcePath": "scripts/verify-native-openui-browser.mjs",
-      "sha256": "c71e6a89ce4dbd79f13ecdfab17f6deb1d25bb9120292ec30bb6f5d95e029b80",
+      "sha256": "dfaf475c85e8789c7887a135b4fbe3da3c40309bc41cfb64156a9a4bcc9c23f2",
       "symbols": [
         "accessibility",
         "answer",
@@ -126620,6 +126672,7 @@
         "paletteContext",
         "palettePage",
         "popupBounds",
+        "recoveredEdge",
         "region",
         "renderedEdge",
         "results",
@@ -149093,7 +149146,7 @@
     {
       "id": "test-suite:2e491f4d2fcbc11f974c",
       "sourcePath": "backend/src/ai/nativeOpenUi.test.ts",
-      "declaredTests": 41,
+      "declaredTests": 43,
       "skipLocations": [],
       "focusLocations": []
     },
