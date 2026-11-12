@@ -209,7 +209,8 @@ describe('the context set', () => {
       'tabs',
       'upload',
     ];
-    const { loop, scripted } = loopFor(c.id, fn, layer, 16_384, short);
+    // The window is only tight enough to force compaction; it carries a margin so a few words more in the system prompt do not turn this into an overflow test.
+    const { loop, scripted } = loopFor(c.id, fn, layer, 16_896, short);
     const end = await loop.run();
     expect(asked).toBe(true);
     expect(end).toMatchObject({ status: 'done' });

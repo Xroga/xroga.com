@@ -49,6 +49,19 @@ describe('a canonical run', () => {
     expect(run.requestInterrupted).toBe(false);
   });
 
+  it('treats a request over the server size cap as an overflow to compact, not as an unverified request, and gives the turn back', async () => {
+    const run = await startXrogaModelRun('goal', 'https://example.com', new AbortController().signal, 0);
+    turnFails = Object.assign(new Error('x'), { code: 'BROWSER_CONTEXT_TOO_LARGE' });
+    const reply = await streamTurn({ chat: run.model.chat, system: 's', messages: [{ role: 'user', content: 'hi' }], tools: {}, signal: new AbortController().signal } as never);
+    expect(reply.error).toBeTruthy();
+    expect(run.requestInterrupted).toBe(false);
+    // The next request after compaction reuses the same turn number: the server never counted the refused one.
+    turnFails = undefined;
+    await streamTurn({ chat: run.model.chat, system: 's', messages: [{ role: 'user', content: 'hi' }], tools: {}, signal: new AbortController().signal } as never);
+    const turns = requests.filter(r => r.op === 'turn').map(r => (r.value as { body: { turn: number } }).body.turn);
+    expect(turns).toEqual([1, 1]);
+  });
+
   it('still treats any other failed model request as unverified and never retries it', async () => {
     const run = await startXrogaModelRun('goal', 'https://example.com', new AbortController().signal, 0);
     turnFails = new Error('network');

@@ -103,6 +103,13 @@ export async function startXrogaModelRun(
             allowance = {};
             return Response.json({ error: { message: 'Your Xroga usage allowance is used up for now.' } }, { status: 400 });
           }
+          // The server refused the request before reserving anything because it is over its size cap (96,000 bytes). Nothing was
+          // charged and the server's turn counter did not move, so give the turn number back and report it as an overflow: the loop
+          // then compacts the context and asks again, instead of pausing the run as unverified.
+          if ((error as { code?: unknown } | null)?.code === 'BROWSER_CONTEXT_TOO_LARGE') {
+            turn--;
+            return Response.json({ error: { message: 'request too large' } }, { status: 413 });
+          }
           // The server may already have charged or fenced this request. Never retry it.
           requestInterrupted = !signal.aborted;
           return Response.json(
@@ -116,7 +123,9 @@ export async function startXrogaModelRun(
   const profile = resolveProfile({
     kind: 'openai-compatible',
     modelName: XROGA_MODEL,
-    overrides: { contextWindow: 32_000, maxOutput: 2_048, vision: false },
+    // The loop budgets four characters per token and the server refuses requests over 96,000 bytes (JSON escaping and tool
+    // schemas included), so the window is sized to stay under that cap: compaction starts well before the server would refuse.
+    overrides: { contextWindow: 22_000, maxOutput: 2_048, vision: false },
   });
   const model: ResolvedModel = { ref: XROGA_REF, chat, profile, reasoning: 'none', reasoningDropped: true };
   /**

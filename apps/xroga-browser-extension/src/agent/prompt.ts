@@ -83,7 +83,7 @@ function toolGuide(tools: string[]): string {
     lines.push('- enable_actions turns on clicking, typing, forms and scrolling. Call it only if the task needs one of them; reading and opening pages do not.');
   if (has('ask_user'))
     lines.push(
-      '- ask_user asks the user a question (kind "input") or hands them a step (kind "takeover"). For a takeover, the message says only what the user should do now, in a short plain sentence, e.g. "Sign in to GitHub in this tab, then press Done." Do not repeat the task or say what you will do after.',
+      '- ask_user asks the user a question (kind "input") or hands them a step (kind "takeover"). For a takeover, the message says only what the user should do now, in a short plain sentence, e.g. "Sign in to GitHub in this tab, then press Done." Do not repeat the task or say what you will do after. Ask only for what the user alone knows or must do; if a fact is missing from the page text, try snapshot or find first.',
     );
   lines.push(
     '',

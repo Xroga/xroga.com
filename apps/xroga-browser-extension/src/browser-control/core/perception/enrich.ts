@@ -30,7 +30,12 @@ function within(doc: LayoutDocument, inner: number, outer: number): boolean {
   return false;
 }
 
-const NO_VALUE_TYPES = new Set(['checkbox', 'radio', 'button', 'submit', 'reset', 'image']);
+/** Class names that mean "this element shows a rating, score or level" (checked on elements with no text). */
+const STATE_CLASS = /rating|stars?|score|level|grade|rank|progress|status|badge|state|variant|severity|priority/i;
+/** The most class-carried values added to one frame, so a page full of styled boxes stays readable. */
+const STATE_CLASS_LIMIT = 300;
+
+const NO_VALUE_TYPES =new Set(['checkbox', 'radio', 'button', 'submit', 'reset', 'image']);
 
 /** A form control whose value the page shows: a text-like input, a textarea or a select. */
 function holdsValue(node: LayoutNode): boolean {
@@ -119,6 +124,7 @@ export function enrichFrame(
     byBackend.set(node.backendNodeId, created);
   };
 
+  let stateNodes = 0;
   for (const node of doc.byIndex) {
     if (!node || node.tag === '#text') continue;
     // A native checkbox or radio that is not rendered (display: none): promoted onto its visible label.
@@ -151,6 +157,28 @@ export function enrichFrame(
       actionable.add(label.index);
       stats.promoted++;
       continue;
+    }
+    // A value the page carries only in a class (a rating drawn with icons: `star-rating Five`) has no text and no
+    // accessible name, so the model could not read it. A rendered, textless element whose class names a rating or
+    // score is added as plain text with its classes, so "Five" is visible. Nothing here is actionable.
+    if (isRendered(node) && !byBackend.has(node.backendNodeId) && !doc.text(node.index) && !node.attrs['aria-label']) {
+      const classes = (node.attrs.class ?? '').trim().split(/\s+/).filter(Boolean);
+      if (classes.length > 1 && stateNodes < STATE_CLASS_LIMIT && classes.some(c => STATE_CLASS.test(c))) {
+        stateNodes++;
+        splice(node, {
+          kind: 'text',
+          rawRole: `layout:${node.tag}`,
+          role: 'text',
+          name: `[${classes.slice(0, 4).join(' ')}]`,
+          states: [],
+          actionable: false,
+          backendNodeId: node.backendNodeId,
+          children: [],
+          ...base,
+        });
+        stats.added++;
+        continue;
+      }
     }
     const existing = byBackend.get(node.backendNodeId);
     if (existing?.actionable) continue;

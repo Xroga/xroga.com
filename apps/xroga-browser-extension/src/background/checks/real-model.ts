@@ -115,7 +115,7 @@ defineCheck({
           seconds: Math.round(ms / 100) / 10,
           turns: run?.turns,
           reason: run?.reason,
-          answer: last.slice(-500),
+          answer: last.slice(-3000),
         });
       } finally {
         for (const t of [view, page]) await chrome.tabs.remove(t.id!).catch(() => undefined);
