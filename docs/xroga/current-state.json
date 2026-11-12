@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/workspace-observable-work-history",
-    "sha": "ccaf9ef0899eba81ad0764b1b39c78883347ce90",
-    "sourceTimestampUtc": "2026-11-12T23:58:58+05:00",
-    "auditStartedUtc": "2026-11-12T19:00:00.287Z",
+    "sha": "1560c7ba6ed4335b9510c0263ab92bad3bcdbdb6",
+    "sourceTimestampUtc": "2026-11-13T01:15:56+05:00",
+    "auditStartedUtc": "2026-11-12T20:17:28.049Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -5166,8 +5166,9 @@
       "id": "surface:e305dd7a26ee4137b77a",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeDiagramTopology.ts",
-      "sha256": "79a1b889cd0a9c5393c52816c52e556187cf4fd1230f5e7e77858c3a686f6be1",
+      "sha256": "3cc5295a2d9e905341047bc3bcef54095971cca864130908d333ab9210bb6f85",
       "symbols": [
+        "DIAGRAM_NODE_TONES",
         "count",
         "hasRenderableDiagramTopology",
         "ids",
@@ -5207,7 +5208,7 @@
       "id": "surface:456e62cb099b42e5c2a2",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUi.ts",
-      "sha256": "18c70df55cca0a119f6477405cc96ae6bb1aa2061828bdbd46b6ea2b55249307",
+      "sha256": "ee2128559204adf175cc6cf3e00ade0427fdddf32a87944fc8049f959ca4a194",
       "symbols": [
         "MAX_PROGRAM_CHARS",
         "NATIVE_UI_FORMAT",
@@ -5558,7 +5559,7 @@
       "id": "surface:a67f0b1fa2dd0f11a67f",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiPrompt.ts",
-      "sha256": "4a8ce986a431a4cac8e646e6957e3e1b9cf2fd099cab2056dee795c4bbc2cbd6",
+      "sha256": "1b0df0225f72e742306239aa12515205932f14f69ce49eff65c591e7d5ef0871",
       "symbols": [
         "allowed",
         "buildNativeOpenUiPrompt",
@@ -86842,7 +86843,7 @@
       "id": "surface:92ce2788e7a639e6a608",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/Diagram.tsx",
-      "sha256": "8807aba877a7b79867db0bad8b6d4208628a19f07622ff1a1c9017ba62b72464",
+      "sha256": "1f9e26b9118ed0d5e9e833db2f87f13adb1536002a81e8a767b0417bbb439024",
       "symbols": [
         "AnswerDiagramNode",
         "AnswerNode",
@@ -126636,7 +126637,7 @@
       "id": "surface:bd6af899f2dd9df930f6",
       "subsystem": "browser_sandbox",
       "sourcePath": "scripts/verify-native-openui-browser.mjs",
-      "sha256": "dfaf475c85e8789c7887a135b4fbe3da3c40309bc41cfb64156a9a4bcc9c23f2",
+      "sha256": "b4d99f507adc5e83eecef43e082eb9ab3ddddfe8055f94a860e86c28622b8d17",
       "symbols": [
         "accessibility",
         "answer",
@@ -149146,7 +149147,7 @@
     {
       "id": "test-suite:2e491f4d2fcbc11f974c",
       "sourcePath": "backend/src/ai/nativeOpenUi.test.ts",
-      "declaredTests": 43,
+      "declaredTests": 44,
       "skipLocations": [],
       "focusLocations": []
     },
