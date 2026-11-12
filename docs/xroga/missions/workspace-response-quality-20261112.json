@@ -28,14 +28,14 @@
     "billing": { "changed": false, "description": "Existing reservation and settlement rules." }
   },
   "tests": [
-    { "command": "tsx --test backend/src/ai/nativeOpenUi.test.ts backend/src/lib/richShareSnapshot.test.ts", "scope": "Transport variants, omitted formats, code preservation and Share fallback.", "negative": true, "reference": "backend/src/ai/nativeOpenUi.test.ts" },
-    { "command": "node scripts/verify-native-openui-browser.mjs", "scope": "Thirty renderer scenarios, five widths and both themes.", "negative": true, "reference": "scripts/verify-native-openui-browser.mjs" },
+    { "command": "tsx --test backend/src/ai/nativeOpenUi.test.ts backend/src/lib/richShareSnapshot.test.ts", "scope": "Transport variants, unresolved or cyclic references, omitted formats, code preservation and Share fallback.", "negative": true, "reference": "backend/src/ai/nativeOpenUi.test.ts" },
+    { "command": "node scripts/verify-native-openui-browser.mjs", "scope": "Thirty-one renderer scenarios, five widths and both themes.", "negative": true, "reference": "scripts/verify-native-openui-browser.mjs" },
     { "command": "playwright test e2e/command3-auth.spec.ts", "scope": "Authenticated nested diagram and table rendering, transient and persistent lazy asset failure, Copy and reopen, with isolated fixtures.", "negative": true, "reference": "frontend/e2e/command3-auth.spec.ts" }
   ],
   "architecture": { "change": "extends_canonical", "reason": "Extend existing answer assembly and compatibility readers.", "rfc": null },
   "rollout": "Complete exact-source CI and a single approved grouped hosted acceptance before production review.",
   "rollback": "Keep the prior paired release and exercise the decoder-compatible recovery in staging.",
-  "knownGaps": ["The first hosted prompt stopped on a static asset capacity failure and exposed inaccurate tenant-key advice. Corrected staging and a production canary remain pending. Private Search staging prerequisites are independent."],
+  "knownGaps": ["Hosted staging proved frontend asset delivery after the capacity correction. The first fresh model program then failed a reference check. Reference recovery needs hosted acceptance before a production canary. Private Search staging prerequisites are independent."],
   "placeholderClaimsRemaining": [],
   "evidenceRefs": ["docs/operations/native-openui/WORKSPACE-RESPONSE-QUALITY.md"],
   "claimsFullProductCompletion": false,

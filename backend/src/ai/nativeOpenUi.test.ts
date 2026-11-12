@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { NATIVE_UI_MARKER, PARTIAL_NATIVE_PRESENTATION_NOTE, splitNativeOpenUiAnswer, validateNativeOpenUi, validateNativeWorkspaceProgram } from './nativeOpenUi.js';
+import { NATIVE_UI_MARKER, PARTIAL_NATIVE_PRESENTATION_NOTE, missingNativeFormats, splitNativeOpenUiAnswer, validateNativeOpenUi, validateNativeWorkspaceProgram } from './nativeOpenUi.js';
 import { nativeOpenUiPrompt, workspaceNativeOpenUiPrompt } from './nativeOpenUiPrompt.js';
 import { buildNativeOpenUiShare, readNativeOpenUiShare } from './nativeOpenUiShare.js';
 import { readNativeOpenUiRun } from './nativeOpenUiRun.js';
@@ -81,6 +81,68 @@ test('the observed bare timeline object shape repairs without discarding the res
   assert.match(answer.responseSource.text, /ListItem\("Deliver", "", "2", \[Text\("Confirm receipt\."\)\]\)/);
   assert.match(answer.response, /Save the job\.[\s\S]*Confirm receipt\.[\s\S]*run\(\)/);
   assert.deepEqual(validateNativeOpenUi(answer.responseSource.text, undefined, answer.response), { ok: true });
+});
+
+test('native recovery discards unreachable broken references without dropping a complete layout', () => {
+  const program = [
+    'root = Col([table])',
+    'table = Table(["Component", "Role"], [["Postgres", "Tenant data"]])',
+    'unused = Section("Unused", [unresolvedPrivateIdentifier])',
+  ].join('\n');
+  const diagnostics: unknown[] = [];
+  const result = completeNativeWorkspaceAnswer('Enforce tenant membership.' + NATIVE_UI_MARKER + program,
+    'stop', undefined, undefined, event => diagnostics.push(event), ['table']);
+  assert.deepEqual(result.completion, { status: 'complete' });
+  assert.match(result.responseSource.text, /Table\(/);
+  assert.doesNotMatch(result.responseSource.text, /Unused|unresolvedPrivateIdentifier/);
+  assert.match(JSON.stringify(diagnostics), /"referenceIssue":"missing"/);
+  assert.doesNotMatch(JSON.stringify(diagnostics), /unresolvedPrivateIdentifier/);
+});
+
+test('native recovery keeps verified components beside missing and cyclic references', () => {
+  const table = 'table = Table(["Component", "Role"], [["Postgres", "Tenant data"]])';
+  const graph = 'diagram = Diagram("Request path", [{id:"app",label:"App",level:0},{id:"db",label:"Postgres",level:1}], [{from:"app",to:"db"}], "The app verifies membership.")';
+  const prose = 'Authenticate the user, verify membership, and keep service credentials server-side.';
+  for (const [name, tail] of [
+    ['missing', 'unstable = Section("Discarded", [unknownSection])'],
+    ['cycle', 'unstable = Section("Discarded", [loop])\nloop = unstable'],
+  ] as const) {
+    const diagnostics: unknown[] = [];
+    const program = ['root = Col([table, unstable, diagram])', table, graph, tail].join('\n');
+    const result = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + program, 'stop', undefined, undefined,
+      event => diagnostics.push(event), ['table', 'graph']);
+    assert.deepEqual(result.completion, { status: 'partial', reason: 'presentation_contract' });
+    assert.match(result.response, /Authenticate the user/);
+    assert.match(result.responseSource.text, /Table\([\s\S]*Diagram\(/);
+    assert.doesNotMatch(result.responseSource.text, /Discarded|unknownSection|\bloop\b/);
+    assert.match(JSON.stringify(diagnostics), new RegExp('"referenceIssue":"' + name + '"'));
+    assert.deepEqual(validateNativeOpenUi(result.responseSource.text, undefined, result.response), { ok: true });
+  }
+});
+
+test('broken references cannot bypass evidence authority or factual review', () => {
+  for (const program of [
+    'root = Col([missing, Source("source-99")])',
+    'root = Col([missing, draft])\ndraft = Text("WITH CHECK prevents moving a row to another tenant.")',
+  ]) {
+    const result = completeNativeWorkspaceAnswer('Check the current tenant membership.' + NATIVE_UI_MARKER + program, 'stop');
+    assert.deepEqual(result.completion, { status: 'partial', reason: 'presentation_contract' });
+    assert.equal(result.responseSource.text, '');
+    assert.equal(result.response, 'Check the current tenant membership.');
+  }
+});
+
+test('reference recovery preserves a validated calculator state and its formula', () => {
+  const program = [
+    'root = Col([missingCaption, Metric("Gross", @Format($attendees * 25, "currency", 0, "USD")), Controls([Slider($attendees, 10, 80, 1, "Attendees"), Button("Reset", @Set($attendees, 40))], "Attendance")])',
+    '$attendees = 40',
+  ].join('\n');
+  const result = completeNativeWorkspaceAnswer('Gross revenue starts at $1,000.' + NATIVE_UI_MARKER + program,
+    'stop', undefined, undefined, undefined, ['calculator']);
+  assert.deepEqual(result.completion, { status: 'partial', reason: 'presentation_contract' });
+  assert.match(result.responseSource.text, /\$attendees = 40/);
+  assert.match(result.responseSource.text, /@Set\(\$attendees, 40\)/);
+  assert.deepEqual(missingNativeFormats(result.responseSource.text, ['calculator']), []);
 });
 
 test('an invalid nested block keeps the ordered table, calculator, chart and verified source', () => {

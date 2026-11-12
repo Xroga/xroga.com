@@ -265,6 +265,7 @@ export type NativeUiDiagnostic = {
   programLength: number;
   shape: Array<{ tokens: number; skeleton: string }>;
   factualRule?: NonNullable<ReturnType<typeof reviewNativeAnswer>>['rule'];
+  referenceIssue?: 'missing' | 'cycle';
   schemaState?: { hasRoot: boolean; incomplete: boolean; unresolved: number; errors: number };
   schema?: Array<{ code: string; statement?: number; component?: string; pathDepth: number }>;
 };
@@ -285,6 +286,7 @@ export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<s
   let statements: ReturnType<typeof split> = [];
   let schemaState: NativeUiDiagnostic['schemaState'];
   let factualRule: NativeUiDiagnostic['factualRule'];
+  let referenceIssue: NativeUiDiagnostic['referenceIssue'];
   const fail = (reason: NativeUiDiagnostic['reason'], errors?: ReturnType<typeof parseProgram.parse>['meta']['errors']) => {
     if (diagnose) diagnose({
       stage, reason, statement, programLength: program.length,
@@ -298,6 +300,7 @@ export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<s
       })),
       ...(schemaState ? { schemaState } : {}),
       ...(factualRule ? { factualRule } : {}),
+      ...(referenceIssue ? { referenceIssue } : {}),
       ...(errors?.length ? { schema: errors.slice(0, 8).map(error => {
         const index = statements.findIndex(item => item.id === error.statementId);
         return { code: error.code, ...(index < 0 ? {} : { statement: index + 1 }),
@@ -348,7 +351,11 @@ export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<s
         case 'Ref':
         case 'StateRef': {
           const target = symbols.get(node.n);
-          if (!target || active.has(node.n)) { reason = 'reference'; return false; }
+          if (!target || active.has(node.n)) {
+            reason = 'reference';
+            referenceIssue = target ? 'cycle' : 'missing';
+            return false;
+          }
           return visit(target, new Set([...active, node.n]), depth + 1);
         }
         case 'Obj': return node.entries.length <= 120 && node.entries.every(([key, value]) => safeKey(key) && next(value));
@@ -441,9 +448,13 @@ function printRecoveryExpression(node: ASTNode): string {
   }
 }
 
-// The authority check has already rejected cyclic references.
 function resolveRecoveryReference(node: ASTNode | undefined, symbols: ReadonlyMap<string, ASTNode>) {
-  while (node?.k === 'Ref') node = symbols.get(node.n);
+  const followed = new Set<string>();
+  while (node?.k === 'Ref') {
+    if (followed.has(node.n)) return;
+    followed.add(node.n);
+    node = symbols.get(node.n);
+  }
   return node;
 }
 
@@ -477,9 +488,9 @@ function rewriteListItems(node: ASTNode, symbols: ReadonlyMap<string, ASTNode>):
 
 const layoutChildren = new Map([['Col', 0], ['Row', 0], ['Grid', 0], ['Card', 0], ['Box', 0], ['Section', 1]]);
 
-/** Workspace calls this after the original passes the authority audit. Every
- * candidate passes the same validator, including its factual and data checks. */
-export function recoverNativeWorkspaceProgram(program: string, evidenceIds: ReadonlySet<string> | undefined, prose: string, failure: 'schema' | 'factual_review' = 'schema') {
+/** Every recovered candidate passes the full authority, schema and data checks.
+ * Reachable branches with unresolved references may be omitted from the view. */
+export function recoverNativeWorkspaceProgram(program: string, evidenceIds: ReadonlySet<string> | undefined, prose: string, failure: 'schema' | 'factual_review' | 'reference' = 'schema') {
   try {
     const statements = split(tokenize(program));
     const declarations = new Map(statements.map(item => [item.id, item]));
@@ -489,6 +500,7 @@ export function recoverNativeWorkspaceProgram(program: string, evidenceIds: Read
       if (node.k === 'Str') reviewStrings.add(node.v);
     });
     const narrative = [...reviewStrings].join('\n');
+    if (failure === 'reference' && reviewNativeAnswer(narrative)) return;
     const symbols = new Map([...originals].map(([id, node]) => [id, rewriteListItems(node, originals)]));
     const root = symbols.get('root');
     if (root?.k !== 'Comp' || root.name !== 'Col') return;
@@ -518,7 +530,7 @@ export function recoverNativeWorkspaceProgram(program: string, evidenceIds: Read
         walkAST(node, ref => {
           if ((ref.k !== 'Ref' && ref.k !== 'StateRef') || included.has(ref.n)) return;
           const value = symbols.get(ref.n);
-          if (!value || ref.n === 'root') throw new Error('Missing recovery dependency');
+          if (!value || ref.n === 'root') return;
           included.add(ref.n);
           collect(value);
         });
@@ -535,6 +547,13 @@ export function recoverNativeWorkspaceProgram(program: string, evidenceIds: Read
     const reviewContext = failure === 'factual_review' ? prose + '\nStripe' : prose;
     const validate = (candidate: ASTNode) => probes-- > 0
       ? validateNativeWorkspaceProgram(render(candidate), evidenceIds, reviewContext) : undefined;
+    if (failure === 'reference') {
+      // The displayed root may already be intact. Drop only unreachable
+      // declarations in that case and retain the complete layout.
+      const reachable = render(root);
+      const validation = validateNativeWorkspaceProgram(reachable, evidenceIds, narrative);
+      if (validation.ok || validation.reason === 'data_review') return { program: reachable, validation, partial: false };
+    }
     const group = (els: ASTNode[]): Extract<ASTNode, { k: 'Comp' }> => ({ k: 'Comp', name: 'Col', args: [{ k: 'Arr', els }] });
     const usable = (check: NativeUiValidation | undefined) => check?.ok === true || (check?.ok === false && check.reason === 'data_review');
     function salvage(children: ASTNode[], depth: number): ASTNode[] {
@@ -567,7 +586,7 @@ export function recoverNativeWorkspaceProgram(program: string, evidenceIds: Read
     const recovered = layout && (usable(validate(layout.container)) ? layout.container : group(layout.children));
     if (!recovered) return;
     const restored = render(recovered);
-    const validation = validateNativeWorkspaceProgram(restored, evidenceIds, failure === 'schema' ? narrative : reviewContext);
+    const validation = validateNativeWorkspaceProgram(restored, evidenceIds, failure === 'factual_review' ? reviewContext : narrative);
     if (failure === 'factual_review') {
       // Omitted components must not hide a contradiction with any surviving chart.
       if (!validation.ok || contradictsMonthlyChart(parseProgram.parse(restored).root, narrative)) return;

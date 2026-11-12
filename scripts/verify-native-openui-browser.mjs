@@ -13,6 +13,9 @@ const cases = {
     text: 'Some visuals could not be validated. The available explanation and verified visuals are shown below.\n\nThe API verifies organization membership before reading rows.',
     program: 'root = Col([table])\ntable = Table(["Check", "Where"], [["Membership", "API"]])',
   },
+  referenceRecovered: {
+    raw: 'Check current tenant membership before reading rows.\n<<<XROGA_OPENUI_V1>>>\nroot = Col([table, unavailableDetails])\ntable = Table(["Check", "Where"], [["Membership", "API"]])',
+  },
   compare: { text: 'Team costs $25 and Basic costs $10.', program: 'root = Col([Title("Plan comparison"), Text("Pick Basic for an individual or Team for collaboration."), Table(["Plan", "USD/month"], [["Team", 25], ["Basic", 10]])])' },
   largeTable: {
     text: 'Review the detailed results in the table.',
@@ -154,6 +157,10 @@ try {
       if ([390, 1440].includes(viewport.width)) {
         await page.screenshot({ path: resolve(output, channel + '-recovered-' + viewport.width + '-' + theme + '.png'), fullPage: true });
       }
+      await open('referenceRecovered');
+      await page.getByText('Check current tenant membership before reading rows.', { exact: true }).waitFor();
+      await page.locator('.iui-col').getByRole('cell', { name: 'Membership', exact: true }).waitFor();
+      assert.doesNotMatch(await page.getByRole('region', { name: 'Answer', exact: true }).innerText(), /unavailableDetails|root\s*=\s*Col/);
       await open('compare');
       const table = page.getByRole('table');
       await table.waitFor();

@@ -28,8 +28,9 @@ export function completeNativeWorkspaceAnswer(
   const factualLayoutOnly = original?.ok === false && original.reason === 'factual_review'
     && factualRule && !nativeAnswerReviewReason(prose);
   const guidance = factualLayoutOnly && factualRule ? nativeFactualGuidance[factualRule] : '';
-  const repair = finishReason === 'stop' && original?.ok === false && (original.reason === 'schema' || factualLayoutOnly)
-    ? recoverNativeWorkspaceProgram(originalProgram, evidenceIds, prose, factualLayoutOnly ? 'factual_review' : 'schema') : undefined;
+  const recoverable = original?.ok === false && (original.reason === 'schema' || original.reason === 'reference' || factualLayoutOnly);
+  const repair = finishReason === 'stop' && recoverable
+    ? recoverNativeWorkspaceProgram(originalProgram, evidenceIds, prose, factualLayoutOnly ? 'factual_review' : original.reason === 'reference' ? 'reference' : 'schema') : undefined;
   const program = repair?.program ?? originalProgram;
   const validation = repair?.validation ?? original;
   const missing = missingNativeFormats(validation?.ok ? program : '', requiredFormats);
