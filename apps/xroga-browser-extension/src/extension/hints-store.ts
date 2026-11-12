@@ -5,7 +5,9 @@ import { activeBranch } from '@src/store/conversations';
 import { savedDevice } from '@src/xroga/device';
 import { distill, hintSection, pick, recordStale, remember, type WorkflowHint } from '@src/agent/workflow-hints';
 
-const KEY = 'xroga_hints_v1';
+/** Exported so Settings -> Data -> Delete everything can remove it. */
+export const HINTS_KEY = 'xroga_hints_v1';
+const KEY = HINTS_KEY;
 
 async function load(): Promise<WorkflowHint[]> {
   try {

@@ -56,7 +56,7 @@ export const APPS_FIRST_SEARCHED_NOTE =
 // the difference between one turn of model time and four or five. The browser stays available when the material is not enough.
 
 const RESEARCH =
-  /\b(?:compare|comparison|research|top\s+\d+|best\b|reviews?\b|web search|search (?:the )?(?:web|online|internet)|look ?up|find out|latest|news about|open\s+(?:\w+\s+)?(?:\d+|two|three|four|five|six|seven|eight|nine|ten)\s+(?:different\s+)?(?:sites|websites|pages|sources|tabs|links))\b/i;
+  /\b(?:compare|comparison|research|top\s+\d+|best\b|reviews?\b|web search|search (?:the )?(?:web|online|internet)|look ?up|find out|latest|most recent|who won|who is the current|what is the current|news about|open\s+(?:\w+\s+)?(?:\d+|two|three|four|five|six|seven|eight|nine|ten)\s+(?:different\s+)?(?:sites|websites|pages|sources|tabs|links))\b/i;
 const NOT_RESEARCH =
   /\b(?:buy|order|book|log ?in|sign ?in|sign ?up|fill|submit|post|send|create|delete|upload|download|pay|checkout|check out|click|scroll|screenshot|this page|current page|this tab|the page)\b/i;
 const NUMBER_WORDS: Record<string, number> = { two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10 };

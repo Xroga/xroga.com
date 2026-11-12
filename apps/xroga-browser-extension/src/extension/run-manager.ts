@@ -12,7 +12,7 @@ import { BATCH_TOOL } from '@src/agent/batch-plan';
 import { startingTools } from '@src/agent/tool-selection';
 import { skillsFor, skillsSection } from '@src/agent/skills';
 import { routeFor } from '@src/agent/router';
-import { hintsForRun, learnFromRun } from './hints-store';
+import { HINTS_KEY, hintsForRun, learnFromRun } from './hints-store';
 import { userText } from '@src/agent/display';
 import { toDisplay } from '@src/agent/display';
 import {
@@ -62,7 +62,7 @@ import { createAgentSession, layerPort } from './agent-session';
 import { TabScope } from './bindings';
 import { PageBorder, injectBorder, listenForBorder, showActionPoint, toolLabel } from './border';
 import { RunTimings } from '@src/agent/timing';
-import { recordPerf } from './perf';
+import { PERF_KEY, recordPerf } from './perf';
 import { addPromptRoute, controllerReady } from './layer';
 import { Permissions } from './permissions';
 import { PromptBroker } from './prompt-broker';
@@ -923,6 +923,10 @@ export class RunManager {
         WHATS_NEW_KEY,
         RATING_KEY,
         RATING_ANSWER_KEY,
+        // Xroga's own local stores: workflow hints and run timings are the user's data too.
+        HINTS_KEY,
+        PERF_KEY,
+        WORKER_JOBS_KEY,
         ...OLD_KEYS,
       ]);
     });

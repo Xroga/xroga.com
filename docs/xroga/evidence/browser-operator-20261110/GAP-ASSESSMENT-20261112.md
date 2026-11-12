@@ -135,6 +135,39 @@ tab, which is not how a user sees it); in a visible tab the dispatch is 20-25 ms
 Not changed: polling interval and the 100 ms quiet window (shortening them would make "no effect" a weaker claim and risks a repeated click), the pointer's own 240 ms movement.
 Not measured: real DeepSeek action-to-action gaps (the model turn there is 2-6 s and dominates), CPU and RAM of the pointer, a screenshot-heavy task, task-to-task slot release.
 
+### 3g. Hidden-tab pointer penalty, and what changed in the integrated build
+
+Cause found by measurement: in a hidden tab each pointer update queued page script (two executeScript calls per click) ahead of the next input event, and the first mouse-move
+dispatch grew from 160-190 ms to 620-860 ms. The pointer is now not drawn into a tab nobody can see (`visible` port in `PageBorder`, newest command wins, drawn on `tabs.onActivated`);
+the existing `page-border` check was updated to the new rule (held back while hidden, shown on activation, still absent from screenshots, still follows Back and the Settings switch).
+Ten clicks in a hidden tab, medians of three runs: pointer on 10.7 s and 10.9 s, off 10.8 s and 10.5 s (before: 16.9 and 15.6 against 10.4 and 10.7). A hidden tab is still slower than a visible one
+(about 10.5 s against 6.2 s for ten clicks) because Chrome throttles it; that part is not Xroga's.
+
+A request such as "add two rows ... and tell me when done" was classed read-only (the verb "add" was not in the action list), so the run started without click tools and spent a model turn on
+`enable_actions`; common action verbs were added (unclear requests already keep every tool, so this only removes a wasted turn).
+
+Integrated build (`claude/ops-integrated-20261112`: #965 head plus Codex #971): typecheck clean, 1,111 unit tests pass, 284 of 284 real-Chrome scenarios pass, and the `panel-shot` check captured the
+live panel in real Chrome: "Black Hole is working" header with the animated mark, status "Clicking a page control", the activity row "Clicked button «Add a row»", and the Stop button.
+
+### 3h. Real DeepSeek strategy benchmark (staging, product build, real Chrome, two runs each, page titles of public sites)
+
+| Strategy | Sites read | Run 1 (s) | Run 2 (s) | Model turns | Browser RAM peak (MB) | Answers |
+| --- | --- | --- | --- | --- | --- | --- |
+| One agent, sites one after another | 4 | 74.9 | 73.5 | 4 | 1,277 / 1,704 | all four titles, correct |
+| Parallel readers (`delegate`) | 4 | 16.7 | 13.5 | 2 | 1,673 / 1,671 | all four titles, correct |
+| 2 workers (one site each) | 2 | 24.4 | 26.3 | 4 | 1,584 / 1,495 | both titles |
+| 3 workers (one site each) | 3 | 35.3 | 26.3 | 4-5 | 1,468 / 1,560 | all three titles |
+| 4 assigned tasks (3 run, 1 waits) | 4 | 29.6 | 28.2 | 4 | 1,529 / 1,518 | all four titles |
+
+All ten runs ended `done`. Read the table with care: the worker rows read 2, 3 and 4 sites, not the same four, so their times are not a like-for-like speed comparison; the
+like-for-like rows for four sites are one agent (about 74 s), readers (about 15 s) and four assigned workers (about 29 s). Readers were fastest by a wide margin, then workers, then a single agent,
+which matches the earlier fixture measurement: a worker is a whole run with its own turns, so it pays off only for work heavy enough to repay that. The four-task limit and queue behaved as designed
+(three running, one waiting, all four reported). Browser RAM peaked between 1.3 and 1.7 GB for every strategy with no clear ordering (the sampler windows are approximated from task durations, so
+per-strategy CPU seconds are not reported: they were noisy and should not be quoted). Settled provider cost per run was not collected this round (earlier staging log readings: 30 to 1,300 micro-dollars
+per task). Not measured: two-worker against four-worker on the same four sites, dependent workflows, and lower-powered hardware.
+Consequence for routing: independent page reads should use readers; the router already keeps worker tools out of ordinary requests, and prompts for 3 or more sites still offer them, so a prompt that
+asks for workers explicitly gets them, but nothing here justifies choosing workers over readers for simple reads.
+
 ## 4. NOT IMPLEMENTED or BLOCKED, with the reason
 
 Canvas pixel interaction (BLOCKED by the single-model rule: the only allowed model, deepseek_v4_1_flash_1017, has no vision, so it cannot see a canvas;

@@ -145086,6 +145086,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:3735a3420aa7c7525d8b",
+      "sourcePath": "apps/xroga-browser-extension/src/agent/__tests__/router-table.test.ts",
+      "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:95473d6e4ae8a28e3dea",
       "sourcePath": "apps/xroga-browser-extension/src/agent/__tests__/router.test.ts",
       "declaredTests": 9,
