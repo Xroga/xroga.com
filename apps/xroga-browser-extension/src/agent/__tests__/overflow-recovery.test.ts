@@ -98,7 +98,7 @@ describe('the long-run scenario on a 16k window, with the full tool list', () =>
           ? [
               i % 2
                 ? { name: 'click', input: { target: { ref: `a${i}` } }, id: `c${i}` }
-                : { name: 'read', input: {}, id: `r${i}` },
+                : { name: 'read', input: { offset: i * 1000 }, id: `r${i}` },
             ]
           : [{ name: 'done', input: { outcome: 'success', summary: 'Saved.' }, id: 'd' }],
     }));
@@ -126,7 +126,7 @@ describe('a request the provider refuses for its size', () => {
       text: `Reading ${i}. `.repeat(40),
       toolCalls:
         i < 24
-          ? [{ name: 'read', input: {}, id: `r${i}` }]
+          ? [{ name: 'read', input: { offset: i * 1000 }, id: `r${i}` }]
           : [{ name: 'done', input: { outcome: 'success', summary: 'Read.' }, id: 'd' }],
     }));
     // A short tool list: the fake server counts the prompt and not the tool definitions.
@@ -180,7 +180,7 @@ describe('the context set', () => {
         return {
           toolCalls: [{ name: 'ask_user', input: { kind: 'input', message: 'Which account should I use?' }, id: 'q' }],
         };
-      if (i < 30) return { text: `Step ${i}. `.repeat(150), toolCalls: [{ name: 'read', input: {}, id: `r${i}` }] };
+      if (i < 30) return { text: `Step ${i}. `.repeat(150), toolCalls: [{ name: 'read', input: { offset: i * 1000 }, id: `r${i}` }] };
       return { toolCalls: [{ name: 'done', input: { outcome: 'success', summary: 'Done.' }, id: 'd' }] };
     });
     const layer = flatsLayer({

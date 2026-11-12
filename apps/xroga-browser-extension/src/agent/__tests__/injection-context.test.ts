@@ -151,7 +151,7 @@ describe('when the protected set does not fit (context set)', () => {
     const layer: FakeLayer = new FakeLayer({ read: () => ok(layer.wrap(page)) });
     // The provider reports the input it was sent, as a real one does; the loop's estimate builds on it.
     const script = withSummaries((call, i) => ({
-      ...(i < 12 ? { toolCalls: [{ name: 'read', input: {}, id: `r${i}` }] } : done),
+      ...(i < 12 ? { toolCalls: [{ name: 'read', input: { offset: i * 1000 }, id: `r${i}` }] } : done),
       usage: { input: Math.round(JSON.stringify(call.prompt).length / 4), output: 10 },
     }));
     const { loop, scripted } = loopFor(c.id, script, layer, 24_000);

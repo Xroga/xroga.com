@@ -258,7 +258,7 @@ describe('a long run on a 16k window', () => {
               toolCalls: [
                 i % 2
                   ? { name: 'click', input: { target: { ref: `a${i}` } }, id: `c${i}` }
-                  : { name: 'read', input: {}, id: `r${i}` },
+                  : { name: 'read', input: { offset: i * 1000 }, id: `r${i}` },
               ],
             }
           : { toolCalls: [{ name: 'done', input: { outcome: 'success', summary: 'Saved.' }, id: 'd' }] }),
@@ -301,7 +301,7 @@ describe('a long run on a 16k window', () => {
       (call, i) => ({
         text: `Reading listing ${i}. `.repeat(60),
         ...(i < 36
-          ? { toolCalls: [{ name: 'read', input: {}, id: `r${i}` }] }
+          ? { toolCalls: [{ name: 'read', input: { offset: i * 1000 }, id: `r${i}` }] }
           : { toolCalls: [{ name: 'done', input: { outcome: 'success', summary: 'Read.' }, id: 'd' }] }),
         usage: { input: Math.round(JSON.stringify(call.prompt).length / 4), output: 10 },
       }),
@@ -348,7 +348,7 @@ describe('a poisoned summary across stop, restart and continue', () => {
           toolCalls: [
             i % 2
               ? { name: 'click', input: { target: { ref: `a${i}` } }, id: `c${i}` }
-              : { name: 'read', input: {}, id: `r${i}` },
+              : { name: 'read', input: { offset: i * 1000 }, id: `r${i}` },
           ],
           usage: { input: Math.round(JSON.stringify(call.prompt).length / 4), output: 10 },
         };

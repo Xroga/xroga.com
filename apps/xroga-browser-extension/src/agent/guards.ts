@@ -11,6 +11,13 @@ export const NO_EFFECT_STOP = 3;
 export const ERROR_STOP = 5;
 /** Calls in a row that only looked at pages before the agent is told to act or finish. */
 export const READ_STREAK_NUDGE = 5;
+/**
+ * A run that keeps making only the same one or two calls with no change to the page (A, A, A... or A, B, A, B...) is going in circles. The window
+ * of recent calls has to be full, hold at most two distinct calls and none that changed anything; this many calls later in that state the run stops.
+ * Polling (`wait`, `parallel_task_status`) and any call whose outcome was `changed` are not cycles.
+ */
+export const CYCLE_STOP = 4;
+const POLLING_TOOLS = new Set(['wait', 'parallel_task_status']);
 
 export interface GuardVerdict {
   nudge?: string;
@@ -103,6 +110,17 @@ export class Guards {
           reobserve: true,
         };
       }
+    }
+    const cycling =
+      s.recent.length >= REPEAT_WINDOW &&
+      new Set(s.recent).size <= 2 &&
+      !s.recent.some(r => r.endsWith('→ changed') || POLLING_TOOLS.has(r.split(' ')[0]));
+    s.cycle = cycling ? (s.cycle ?? 0) + 1 : 0;
+    if (s.cycle >= CYCLE_STOP) {
+      return {
+        stop: `the last ${REPEAT_WINDOW + s.cycle - 1} calls were only ${new Set(s.recent).size === 1 ? 'the same call' : 'two calls repeated'} and none changed the page.`,
+        guard: 'no_effect',
+      };
     }
     const repeats = s.recent.filter(r => r === sig).length;
     if (

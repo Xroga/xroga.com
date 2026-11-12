@@ -168,6 +168,19 @@ per task). Not measured: two-worker against four-worker on the same four sites, 
 Consequence for routing: independent page reads should use readers; the router already keeps worker tools out of ordinary requests, and prompts for 3 or more sites still offer them, so a prompt that
 asks for workers explicitly gets them, but nothing here justifies choosing workers over readers for simple reads.
 
+### 3i. Real service-worker kill, and the no-progress cycle guard
+
+`fixtures/sw-kill.mjs` drives real Chrome over the DevTools protocol (no extension code in the loop): it opens a fixture page, the side panel and an operator page, scripts the fake model to
+add three rows with delays, stops every service worker (`ServiceWorker.stopAllWorkers`) after the second row while the third step is pending, and watches. Result: the worker came back, the
+page had the same two rows right after the restart (no action replayed), the panel showed the run as Interrupted, and a follow-up message finished the run (Done, two rows). The earlier "restart"
+checks only wrote stored state and called restore; this is the first test that kills the live worker. Limits: autorun build with the fixture model (the product build shows a Resume button instead;
+not exercised here), no network-loss or tab-loss case, one run.
+
+Guard gap found and closed: repeated identical calls only produced a nudge, and an agent alternating two calls (A, B, A, B...) never reached the repeat limit, so nothing ever stopped it. A window of recent
+calls with at most two distinct calls, none of which changed the page, now stops the run after nine calls (the existing salvage path, so the user gets an honest summary); `wait` and `parallel_task_status`
+polling and any call whose outcome was "changed" (add ten rows, next page) are exempt. Six unit tests cover alternating pages, a failing click, legitimate repeats, polling, many different pages and reset on
+progress. Four existing long-run tests had scripted dozens of byte-identical reads to fill a context window, which is exactly the loop the guard stops; their scripted reads now vary the offset.
+
 ## 4. NOT IMPLEMENTED or BLOCKED, with the reason
 
 Canvas pixel interaction (BLOCKED by the single-model rule: the only allowed model, deepseek_v4_1_flash_1017, has no vision, so it cannot see a canvas;
