@@ -10,8 +10,10 @@ const require=createRequire(new URL('../../package.json',import.meta.url)),ts=re
 // Load the real pure presentation validators. The transport fixture continues
 // to replace UI-only leaves, never Share parsing or founder-access policy.
 const nativeShareId='../../../../../backend/src/ai/nativeOpenUiShare';
+const nativePresentationId='../../../../../backend/src/ai/nativeOpenUi';
 const pureSources={
   [nativeShareId]:'../../backend/src/ai/nativeOpenUiShare.ts',
+  [nativePresentationId]:'../../backend/src/ai/nativeOpenUi.ts',
   './nativeOpenUi.js':'../../backend/src/ai/nativeOpenUi.ts',
   './nativeOpenUiAccuracy.js':'../../backend/src/ai/nativeOpenUiAccuracy.ts',
   './answerAuthorizationReview.js':'../../backend/src/ai/answerAuthorizationReview.ts',
@@ -61,6 +63,7 @@ function fixture(origin,authenticated=true){
     '@/components/response-experience-v2/access':pureModule('@/components/response-experience-v2/access'),
     '@/lib/hostedWorkspaceBridge.mjs':{hostedWorkspaceRequest},
     [nativeShareId]:pureModule(nativeShareId),
+    [nativePresentationId]:pureModule(nativePresentationId),
     '@/components/native-openui/NativeWorkspaceAnswer':{NativeWorkspaceAnswer(){throw Error('UI rendering is outside this transport fixture');}},
     '@/components/terminal/SourceLogo':{SourceLogo(){throw Error('UI rendering is outside this transport fixture');}},
     'next/server':{NextResponse:{json:Response.json}}};
@@ -163,7 +166,11 @@ test('real Share loader preserves authoritative text and rejects unsafe native p
       assert.equal(calls,3+index);
     }
     payload={...base,response:invalid};
-    assert.equal((await f.loadShare(token)).status,'missing');
+    const recovered=await f.loadShare(token);
+    assert.equal(recovered.status,'ok');
+    assert.equal(recovered.share.response,response);
+    assert.equal(recovered.share.richResponse,undefined);
+    assert.equal(recovered.share.richUnavailable,true);
     assert.equal(calls,5);
   }finally{api.closeAllConnections();await new Promise(r=>api.close(r));}
 });
