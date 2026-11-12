@@ -10,7 +10,7 @@ A passing unit test is not a user experience: the Chrome, DS and Svc columns are
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | Browser control engine (Nanobrowser layer) | Y | Y | Y | Y (282 scenarios) | Y | n/a | none known | scenario suite; GAP 1 | none |
 | DeepSeek route through Zurelay (staging) | Y | Y | Y | n/a | Y | n/a | production never exercised with a real authenticated call | GAP 3, 6 | production approval |
-| Route A: open + read heading/title, no model call | Y | Y | Y | Y (6/6) | Y (staging, 3 runs 2.3-2.9 s, 0 turns) | n/a | handover on redirect/challenge/no heading; strict server rule not yet deployed to staging | GAP 3e; check `direct-read` | independent review of the server rule |
+| Route A: open + read heading/title, no model call | Y | Y | Y | Y (6/6) | Y (staging, 3 runs 2.3-2.9 s, 0 turns) | n/a | handover on redirect/challenge/no heading; strict server rule deployed and verified on staging (image direct2-1112) | GAP 3e; check `direct-read` | independent review of the server rule |
 | Complexity router (direct / readers / single / multi) | Y | Y | Y (8 tests) | Y (worker checks pass under it) | N (routing accuracy not measured on real requests) | n/a | thresholds are rules, untuned | `agent/router.ts` | none |
 | Lightweight parallel readers (`delegate`) | Y | Y | Y | Y | Y | n/a | faster than workers on simple reads (median 11.5 s vs 36 s, n=3) | GAP 3 | none |
 | Worker runs, dependency graph, resource locks, 4 tasks / 3 running | Y | Y | Y | Y | P (real model on public pages) | n/a | worker count not auto-tuned; 1/2/3-worker real-model benchmark not done | checks parallel-workers/graph/bench; GAP 3a | none |
@@ -28,7 +28,7 @@ A passing unit test is not a user experience: the Chrome, DS and Svc columns are
 | Plugins UI + Composio discovery | Y | Y | Y | P | P | N | connect-and-resume untested end to end | GAP 1 | disposable account |
 | MCP servers (discovery, invocation) | P | P | P | N | N | N | not exercised through the Plugins path | n/a | an MCP server to connect |
 | Recovery: segment renewal, restart-restore | Y | Y | Y | Y (restart-restore) | Y (60-turn run) | n/a | service-worker suspension, network loss, tab loss with the real model not tested | GAP 1 | none |
-| Server finish for direct reads (`direct:true`) | Y | Y | Y | n/a | Y (looser version) | n/a | stricter version (goal, site, age, evidence) tested by route tests only | `localBrowserDirectRead.ts` | independent review |
+| Server finish for direct reads (`direct:true`) | Y | Y | Y | n/a | Y (looser version) | n/a | stricter version (goal, site, age, evidence) verified on staging with 3 real runs | `localBrowserDirectRead.ts` | independent review |
 | #971 activity UI integration | Y (merge candidate) | N | N | N | N | n/a | candidate branch not releasable: stale registers, `lucide-react` missing in test env, one locale test fails in #971 itself | branch `claude/ops-integrated-20261112` | Codex coordination |
 | CI gates (#965) | n/a | n/a | n/a | n/a | n/a | n/a | tenant-security fails ONLY on the egress evidence for `composioClient.ts` (source changed after review) | review packet | independent security review |
 | Private review build | Y | n/a | n/a | P (loads, panel renders) | n/a | n/a | not installed as a user with sign-in on the production build | `C:/xr-release/*.zip` | none |

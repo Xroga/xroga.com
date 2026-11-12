@@ -109,7 +109,7 @@ person calls the page heading (the banner/title), which is why the answer shows 
 (`BROWSER_RESULT_UNVERIFIED`), so the finish route now accepts `direct: true` only for the actions `navigate` and `read` with a short result (backend change in
 `routes/localBrowser.ts`, asserted in `localBrowser.test.ts`: not marked direct, a non-read action, no actions, an over-long result and another account are all refused).
 That backend change touches the file that is under the pending security review and needs the same human review; it cannot complete anything that changes state.
-Staging image `direct1-1112` (commit 914fd69a2) carries it. Not measured: a login-wall or challenge page in the product build (covered in unit tests only).
+Staging image `direct1-1112` (commit 914fd69a2) carries the first version of the rule; the stricter server check (recorded goal must be a plain open-and-read, the answer must name the run's site, age under 5 minutes, no evidence yet) was then built as `direct2-1112` (commit 51b43b527) and verified the same way: three product-build runs (two headings, one title) all `done`, 0 model turns, 2.2 to 3.5 s, settled on the server. Not measured: a login-wall or challenge page in the product build (covered in unit tests only).
 
 ### 3f. Click latency and the visual pointer (real Chrome, product code path, fixture model that answers instantly)
 
