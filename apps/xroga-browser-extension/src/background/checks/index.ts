@@ -30,6 +30,7 @@ import './confirm-download';
 import './parallel-bench';
 import './direct-read';
 import './click-bench';
+import './panel-shot';
 import './optional-permissions';
 import './voice';
 import './panel-selection';

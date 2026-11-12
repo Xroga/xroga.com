@@ -31,7 +31,7 @@ export const ENABLE_ACTIONS_TOOL: AgentTool = {
 const OPEN_SITE = /\b(?:go to|goto|open|visit|navigate to|browse to|head to|load)\s+(?:https?:\/\/\S+|(?:[\w-]+\.)+[a-z]{2,}\S*)/gi;
 const NEGATED = /\b(?:do not|don't|dont|never|without|no need to)\b[^.!?\n]*/gi;
 const ACTION =
-  /\b(?:open|go to|goto|visit|navigate|browse|click|tap|press|type|enter|fill|submit|select|choose|tick|log ?in|sign ?(?:in|up)|register|buy|purchase|order|checkout|add to (?:cart|basket)|book|reserve|send|post|publish|create|delete|remove|upload|attach|download|drag|play|filter|sort|search for|search the|scroll|paginate|next page|apply|save|edit|update|change|toggle|turn (?:on|off)|fill out|fill in)\b/i;
+  /\b(?:open|go to|goto|visit|navigate|browse|click|tap|press|type|enter|fill|submit|select|choose|tick|log ?in|sign ?(?:in|up)|register|buy|purchase|order|checkout|add to (?:cart|basket)|book|reserve|send|post|publish|create|delete|remove|upload|attach|download|drag|play|filter|sort|search for|search the|scroll|paginate|next page|apply|save|edit|update|change|toggle|turn (?:on|off)|fill out|fill in|add|insert|rename|move|mark|approve|reject|accept|enable|disable|invite|assign|schedule|configure|install|set up|subscribe|unsubscribe|reply|comment|share|export|import|merge|archive|restore|make)\b/i;
 const READ_CUE =
   /\b(?:tell me|what(?:'s| is| are)|heading|headline|title|read|summari[sz]e|summary|extract|list|compare|price|find out|show me|report|look up|check (?:what|whether|if)|describe|url|address|who|when|where|how many)\b/i;
 
