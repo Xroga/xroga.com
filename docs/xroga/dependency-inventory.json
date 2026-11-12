@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "b7c80ddf8b2a7a1abaf5aabc998b8bd1939f7d7a",
+  "source_sha": "5a581f19514130fb891b81305f068f897e0b4dde",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -18772,7 +18772,7 @@
     },
     {
       "path": "backend/src/security/businessAuthority.local.integration.ts",
-      "sha256": "9b3195e648555bc2b3815d4b835202d649ed95d93a81c87ebfc1950fda57dff1"
+      "sha256": "d903722bef5557c67eb5311568579c334e24b6863e3f77ecd04d5643a1c493b7"
     },
     {
       "path": "backend/src/security/businessConfirmationClaim.local.integration.ts",
@@ -18792,7 +18792,7 @@
     },
     {
       "path": "backend/src/security/connectedAccountRoutes.local.integration.ts",
-      "sha256": "0bca6bb9a602efef4507aea90af781515f957f47e5184c00d8b9f7f7838dba7d"
+      "sha256": "fdd7c1112272ffb007a9a67dc22da3735df643bb948d2c04940a61c0d2539a57"
     },
     {
       "path": "backend/src/security/connectedMemoryConsumer.local.integration.ts",
@@ -26557,14 +26557,14 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/connectedAccountRoutes.local.integration.ts",
-      "line": 51,
+      "line": 60,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/connectedAccountRoutes.local.integration.ts",
-      "line": 64,
+      "line": 73,
       "credentialsInUrl": false
     },
     {
