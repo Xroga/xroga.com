@@ -4,7 +4,7 @@
 import { BROWSER_API_ORIGIN } from '@src/xroga/workspace';
 import { workspacePaired } from '@src/xroga/bridge';
 import { deviceProof, directConfigured, directReady, enrollDevice, savedDevice, verifyDevice } from '@src/xroga/device';
-import { getRun, listConversations } from '@src/store/conversations';
+import { activeBranch, getRun, listConversations } from '@src/store/conversations';
 import { defineCheck } from './registry';
 import { sleep, waitForLoad } from './helpers';
 import { panel } from './panel-chat';
@@ -57,6 +57,8 @@ defineCheck({
       let status = '';
       let last = '';
       try {
+        // Ask mode waits for a person to approve each change; args.auto runs the task in Auto mode, which is a product setting.
+        if (args.auto) await panel(page.id!, 'select', { label: 'Mode', value: 'auto' }).catch(() => undefined);
         await panel(page.id!, 'type-send', { text: task.text });
         let conversationId: string | undefined;
         for (let i = 0; i < maxPolls; i++) {
@@ -67,6 +69,17 @@ defineCheck({
           status = run?.status ?? 'starting';
           if (i % 20 === 0) (report.polls as unknown[]).push({ i, bridgePaired: workspacePaired(), status, turns: run?.turns, transcript: last.slice(-120) });
           // 'interrupted' with the reason 'Syncing the saved result' is the short moment after a run ends while its result is sent to the server.
+          // With args.approve, the check plays the person: it presses the first approval button of a waiting card (and records which).
+          if (args.approve && status === 'awaiting_user' && i % 10 === 0) {
+            (report.polls as unknown[]).push({ i, waitingButtons: (read.buttons ?? []).slice(0, 14), body: String(read.body ?? '').slice(-260) });
+          }
+          if (args.approve && status === 'awaiting_user') {
+            // The card's buttons are not in `buttons`; its text names "Allow" and "Deny". Press Allow (this action only).
+            if (/\nAllow\n/.test(String(read.body ?? ''))) {
+              (report.polls as unknown[]).push({ i, pressed: 'Allow', asked: String(read.body ?? '').match(/Asked because[^\n]*/)?.[0] });
+              await panel(page.id!, 'click', { label: 'Allow' }).catch(() => undefined);
+            }
+          }
           const syncing = status === 'interrupted' && /Syncing/i.test(run?.reason ?? '');
           if (!syncing && ['done', 'failed', 'stopped', 'capped', 'interrupted'].includes(status)) break;
           await sleep(500);
@@ -74,7 +87,24 @@ defineCheck({
         const ms = Date.now() - started;
         const conversation = (await listConversations()).find(c => !before.has(c.id));
         const run = conversation ? await getRun(conversation.id) : undefined;
+        // Which tools the model called, and what the postconditions and confirm_download said (evidence of how it really behaved).
+        const used: string[] = [];
+        const evidence: string[] = [];
+        if (conversation) {
+          for (const e of await activeBranch(conversation.id)) {
+            if (e.type !== 'message' || e.message.role !== 'tool') continue;
+            for (const p of e.message.parts) {
+              if (p.type !== 'tool-result') continue;
+              used.push(p.toolName);
+              const post = (e.result as { receipt?: { postcondition?: { status?: string; detail?: string } } } | undefined)?.receipt?.postcondition;
+              if (post) evidence.push(`${p.toolName}: expect ${post.status}${post.detail ? ` (${post.detail.slice(0, 100)})` : ''}`);
+              if (p.toolName === 'confirm_download') evidence.push(p.text.slice(0, 160));
+            }
+          }
+        }
         (report.tasks as unknown[]).push({
+          used,
+          evidence,
           name: task.name,
           status,
           seconds: Math.round(ms / 100) / 10,
