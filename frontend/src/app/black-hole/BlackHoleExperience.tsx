@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import {
   ArrowDown, ArrowRight, ArrowUpRight, Check, Code2, FileText,
-  Globe2, Menu, Search, ShieldCheck, Workflow, X
+  Globe2, Search, ShieldCheck, Workflow
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import type { PointerEvent, ReactNode } from 'react';
@@ -88,8 +88,6 @@ const stars = Array.from({ length: 80 }, (_, i) => ({
 export function BlackHoleExperience() {
   const root = useRef<HTMLDivElement>(null);
   const hero = useRef<HTMLElement>(null);
-  const [active, setActive] = useState('encounter');
-  const [menuOpen, setMenuOpen] = useState(false);
   const [capabilityIndex, setCapabilityIndex] = useState(0);
   const [progress, setProgress] = useState(0);
   const capability = capabilityModes[capabilityIndex];
@@ -103,10 +101,6 @@ export function BlackHoleExperience() {
         for (const entry of entries) {
           if (entry.isIntersecting) {
             entry.target.setAttribute('data-revealed', 'true');
-            if (entry.intersectionRatio > 0.2) {
-              const key = (entry.target as HTMLElement).id;
-              if (key) setActive(key);
-            }
           }
         }
       },
@@ -139,28 +133,11 @@ export function BlackHoleExperience() {
     hero.current.style.setProperty('--bh-y', ((event.clientY - rect.top) / rect.height - 0.5).toFixed(3));
   };
 
-  const closeMenu = () => setMenuOpen(false);
-
   return (
     <div className="bh-page" ref={root}>
       <a className="bh-skip" href="#main-story">Skip to main content</a>
       <div className="bh-grain" aria-hidden="true" />
       <div className="bh-progress" role="presentation"><span style={{ width: progress + '%' }} /></div>
-      <header className="bh-nav">
-        <div className="bh-nav-inner">
-          <Link href="/" className="bh-wordmark" aria-label="XROGA homepage">XROGA<span className="bh-logo-point">.</span></Link>
-          <a href="#encounter" className="bh-model-brand" onClick={closeMenu}><span className="bh-brand-line" /> BLACK HOLE <b>V</b> INFINITY</a>
-          <nav className={'bh-nav-links' + (menuOpen ? ' is-open' : '')} aria-label="Black Hole V Infinity navigation">
-            <a href="#partnership" onClick={closeMenu}>Philosophy</a>
-            <a href="#work" onClick={closeMenu}>The work</a>
-            <a href="#evolution" onClick={closeMenu}>Evolution</a>
-            <a href="#purpose" onClick={closeMenu}>Purpose</a>
-            <Link href="/about" onClick={closeMenu}>About XROGA</Link>
-          </nav>
-          <Link href="/auth/signup" className="bh-nav-cta">Enter XROGA <ArrowUpRight size={15}/></Link>
-          <button className="bh-menu-toggle" aria-label={menuOpen ? 'Close menu' : 'Open menu'} aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}>{menuOpen ? <X size={22}/> : <Menu size={22}/>}</button>
-        </div>
-      </header>
 
       <main id="main-story">
         <section className="bh-hero bh-chapter" id="encounter" ref={hero} onPointerMove={onHeroMove} data-chapter data-revealed="true">
@@ -186,7 +163,7 @@ export function BlackHoleExperience() {
 
         <section className="bh-chapter bh-question" id="question" data-chapter>
           <div className="bh-question-amber" aria-hidden="true"/>
-          <Art src="/backgrounds/xroga-black-digital-universe-bg.webp" className="bh-question-art" />
+          <Art src="/black-hole/references/code-consciousness.webp" className="bh-question-art" />
           <div className="bh-wrap bh-question-layout">
             <div className="bh-intro-column">
               <Overline n="02 / THE QUESTION">THE WORLD IS CHANGING</Overline>
@@ -204,7 +181,7 @@ export function BlackHoleExperience() {
             <h2>HUMAN PURPOSE.<br/><span>MACHINE CAPABILITY.</span></h2>
             <p className="bh-copy bh-narrow">Humans bring intention, values, imagination and judgment. Intelligence provides tools, reasoning support and execution. The strongest work happens when each plays its proper part.</p>
             <div className="bh-touch-scene" aria-label="An artistic representation of human and machine collaboration" role="img">
-              <Art src="/black-hole/human-machine.svg" className="bh-touch-art"/>
+              <Art src="/black-hole/references/human-machine.webp" className="bh-touch-art"/>
               <svg className="bh-touch-orbit" viewBox="0 0 900 330" aria-hidden="true">
                 <defs><radialGradient id="bhglow"><stop offset="0" stopColor="#d8edff" stopOpacity=".9"/><stop offset="1" stopColor="#d8edff" stopOpacity="0"/></radialGradient></defs>
                 <ellipse cx="450" cy="160" rx="180" ry="75" fill="none" stroke="white" strokeOpacity=".23" strokeWidth=".8"/>
@@ -223,7 +200,7 @@ export function BlackHoleExperience() {
         </section>
 
         <section className="bh-chapter bh-origin" id="origin" data-chapter>
-          <Art src="/backgrounds/xroga-black-monochrome-coder-space-bg-20260829.webp" className="bh-origin-back"/>
+          <Art src="/black-hole/references/human-code.webp" className="bh-origin-back"/>
           <div className="bh-wrap bh-origin-grid">
             <div className="bh-origin-visual"><div className="bh-origin-mask" aria-hidden="true"/><div className="bh-origin-counter">0<span>→</span>1<small>ORIGIN OF AN IDEA</small></div></div>
             <div className="bh-origin-copy">
@@ -238,8 +215,7 @@ export function BlackHoleExperience() {
         </section>
 
         <section className="bh-chapter bh-work" id="work" data-chapter>
-          <Art src="/backgrounds/bg-desktop-4-blackhole-nebula.webp" className="bh-work-background"/>
-          <Art src="/backgrounds/xroga-gray-code-city-bg.webp" className="bh-work-code"/>
+          <Art src="/black-hole/references/code-black-hole.webp" className="bh-work-background"/>
           <div className="bh-wrap bh-work-layout">
             <div className="bh-work-copy">
               <Overline n="05 / FROM INTENT TO OUTCOME">LET THE WORK SPEAK</Overline>
@@ -301,8 +277,7 @@ export function BlackHoleExperience() {
         </section>
 
         <section className="bh-chapter bh-evolution" id="evolution" data-chapter>
-          <Art src="/backgrounds/bg-desktop-1-infinity.webp" className="bh-evolution-back"/>
-          <Art src="/images/black-hole-accretion.png" className="bh-evolution-planet" />
+          <Art src="/black-hole/references/stellar-hands.webp" className="bh-evolution-back"/>
           <div className="bh-wrap">
             <Overline n="08 / THE NAME">WHY INFINITY?</Overline>
             <h2>ONE NAME.<br/><em>CONTINUOUS EVOLUTION.</em></h2>
@@ -323,7 +298,7 @@ export function BlackHoleExperience() {
         </section>
 
         <section className="bh-chapter bh-perspective" id="perspective" data-chapter>
-          <Art src="/backgrounds/bg-desktop-2-earth.webp" className="bh-perspective-earth"/>
+          <Art src="/black-hole/references/astronaut.webp" className="bh-perspective-earth"/>
           <div className="bh-space-grid" aria-hidden="true"/>
           <div className="bh-wrap bh-perspective-content">
             <Overline n="10 / THE PERSPECTIVE">YOU ARE HERE</Overline>

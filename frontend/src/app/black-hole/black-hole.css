@@ -36,19 +36,8 @@
 .bh-progress span{height:100%;background:linear-gradient(90deg,#92b4cd,#f3f9ff);display:block;box-shadow:0 0 12px #c4dfff;transition:width .15s linear}
 .bh-skip{position:absolute;left:24px;top:-100px;padding:10px 15px;background:white;color:black!important;z-index:90}
 .bh-skip:focus{top:76px}
-.bh-nav{position:absolute;inset:0 0 auto;z-index:60;height:94px;border-bottom:1px solid rgba(255,255,255,.11)}
-.bh-nav-inner{height:100%;display:flex;align-items:center;gap:26px;padding:0 var(--bh-edge)}
 .bh-wordmark{font-size:24px;font-weight:850;line-height:1;letter-spacing:-.075em;color:white!important;white-space:nowrap}
 .bh-logo-point{color:#b4cde3}
-.bh-model-brand{display:flex;align-items:center;gap:7px;margin-left:18px;font-family:var(--font-coding),monospace;font-size:10px;letter-spacing:.1em;white-space:nowrap;color:#bdc3ca!important}
-.bh-model-brand b{font-weight:800;color:white}
-.bh-brand-line{height:16px;width:1px;background:#777c88;margin-right:12px;transform:rotate(20deg)}
-.bh-nav-links{display:flex;align-items:center;gap:clamp(15px,2vw,35px);margin-left:auto}
-.bh-nav-links a{font-size:12px;font-weight:600;color:#c1c5ce;transition:color .2s}
-.bh-nav-links a:hover{color:white}
-.bh-nav-cta{display:flex;align-items:center;justify-content:center;gap:7px;background:#eff2f6;color:#11141a!important;min-height:40px;padding:0 16px;border-radius:3px;font-size:11px;font-weight:800;white-space:nowrap}
-.bh-nav-cta:hover{background:white}
-.bh-menu-toggle{display:none;border:0;background:none;color:white;cursor:pointer}
 .bh-starfield{position:absolute;inset:0;z-index:1;pointer-events:none}
 .bh-starfield span{position:absolute;border-radius:50%;background:white;box-shadow:0 0 8px rgba(226,244,255,.6);animation:bh-twinkle 6s ease-in-out infinite alternate}
 @keyframes bh-twinkle{from{opacity:.16;transform:scale(.7)}to{opacity:.72;transform:scale(1.4)}}
@@ -259,20 +248,11 @@
  .bh-chapter[data-chapter]:not([data-revealed="true"]) .bh-copy{opacity:.45;transform:translateY(18px)}
 }
 @media(max-width:1180px){
- .bh-model-brand{margin-left:0}
- .bh-nav-links{gap:16px}
- .bh-nav-links a{font-size:11px}
  .bh-page h2{font-size:clamp(3.2rem,6.5vw,6rem)}
  .bh-origin-grid{gap:4vw}
  .bh-capability-explorer{grid-template-columns:minmax(210px,.37fr) minmax(0,.63fr)}
 }
 @media(max-width:900px){
- .bh-nav{height:76px}
- .bh-nav-links{display:none;position:absolute;top:76px;left:0;right:0;background:rgba(5,8,12,.98);border-bottom:1px solid rgba(255,255,255,.2);padding:20px var(--bh-edge) 25px;flex-direction:column;align-items:stretch;gap:0}
- .bh-nav-links.is-open{display:flex}
- .bh-nav-links a{padding:14px 0;font-size:14px;border-bottom:1px solid rgba(255,255,255,.08)}
- .bh-menu-toggle{display:block;margin-left:0}
- .bh-nav-cta{margin-left:auto}
  .bh-question-layout,.bh-origin-grid,.bh-work-layout,.bh-trust-grid,.bh-section-split-heading{grid-template-columns:1fr}
  .bh-question-layout{gap:25px}
  .bh-visual-statement{min-height:260px;transform:none}
@@ -294,12 +274,7 @@
 }
 @media(max-width:640px){
  .bh-page{--bh-edge:22px}
- .bh-nav-inner{gap:12px}
  .bh-wordmark{font-size:21px}
- .bh-model-brand{font-size:8px;max-width:132px;overflow:hidden;white-space:nowrap}
- .bh-brand-line{margin-right:4px;height:12px}
- .bh-nav-cta{min-height:36px;padding:0 10px;font-size:10px}
- .bh-nav-cta svg{display:none}
  .bh-chapter{padding:105px 0;min-height:auto}
  .bh-overline{font-size:9px;letter-spacing:.12em;gap:8px;margin-bottom:24px!important}
  .bh-overline i{width:16px}
@@ -389,3 +364,42 @@
  .bh-page *, .bh-page *::before,.bh-page *::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
  .bh-hero-photo,.bh-hero-singularity{transform:none}
 }
+
+
+/* XROGA / 2026-11-13 — uploaded artwork integrated as native cinematic layers.
+   No header is rendered on this dedicated story page; all standard site navigation remains untouched. */
+.bh-hero{padding-top:72px}
+.bh-hero-content{padding-top:0}
+.bh-question-art{inset:0 -4% 0 43%;opacity:.7;mix-blend-mode:screen;mask-image:radial-gradient(ellipse at 55% 48%,#000 11%,#000 37%,transparent 82%)}
+.bh-question-art .bh-art-image{object-position:53% 47%;filter:grayscale(1) contrast(1.26) brightness(.89)}
+.bh-question-amber{opacity:.19}
+.bh-touch-scene{height:clamp(420px,44vw,680px)}
+.bh-touch-art{inset:0;opacity:.87;mix-blend-mode:screen;mask-image:linear-gradient(0deg,transparent,#000 14%,#000 83%,transparent)}
+.bh-touch-art .bh-art-image{object-fit:contain;object-position:center center;filter:grayscale(1) contrast(1.35) brightness(1.18)}
+.bh-touch-orbit{opacity:.21}
+.bh-origin-back{inset:0 41% 0 -5%;opacity:.8;mix-blend-mode:screen;mask-image:linear-gradient(90deg,#000 0%,#000 55%,transparent 99%)}
+.bh-origin-back .bh-art-image{object-position:55% center;transform:scaleX(-1);filter:grayscale(1) contrast(1.32) brightness(.84)}
+.bh-work-background{inset:0 -7% 0 32%;opacity:.72;mix-blend-mode:screen;mask-image:linear-gradient(90deg,transparent,#000 31%,#000 83%,transparent)}
+.bh-work-background .bh-art-image{object-position:45% 53%;filter:contrast(1.24) saturate(.82) brightness(.82)}
+.bh-evolution-back{inset:0 -6% 0 39%;opacity:.56;mix-blend-mode:screen;mask-image:radial-gradient(ellipse at 62% 47%,#000 10%,#000 43%,transparent 85%)}
+.bh-evolution-back .bh-art-image{object-position:55% 42%;filter:grayscale(1) contrast(1.34) brightness(.93)}
+.bh-perspective-earth{inset:0 -8% 0 39%;opacity:.71;mix-blend-mode:screen;mask-image:radial-gradient(ellipse at 55% 48%,#000 13%,#000 40%,transparent 85%)}
+.bh-perspective-earth .bh-art-image{object-fit:contain;object-position:60% center;filter:grayscale(1) contrast(1.24) brightness(1.08)}
+@media(max-width:900px){
+  .bh-origin-back{inset:0 -10% 30% 2%;opacity:.44;mask-image:linear-gradient(0deg,transparent,#000 40%,#000 75%,transparent)}
+  .bh-question-art{inset:0 -25% 0 18%;opacity:.48}
+  .bh-evolution-back{inset:0 -24% 0 20%;opacity:.37}
+  .bh-perspective-earth{inset:0 -22% 0 18%;opacity:.48}
+}
+@media(max-width:640px){
+  .bh-hero{padding-top:65px}
+  .bh-question-art{inset:0 -38% 2% 2%;opacity:.34;mask-image:linear-gradient(0deg,transparent,#000 38%,#000 70%,transparent)}
+  .bh-touch-scene{height:440px}
+  .bh-touch-art{opacity:.84}
+  .bh-touch-orbit{opacity:.14}
+  .bh-origin-back{inset:0 -8% 31% 0;opacity:.43}
+  .bh-work-background{inset:0 -37% 0 8%;opacity:.42;mask-image:linear-gradient(0deg,transparent,#000 27%,#000 76%,transparent)}
+  .bh-evolution-back{inset:0 -50% 13% -6%;opacity:.29}
+  .bh-perspective-earth{inset:3% -38% 9% 0;opacity:.35}
+}
+
