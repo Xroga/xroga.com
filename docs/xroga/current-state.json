@@ -3,12 +3,12 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/workspace-observable-work-history",
-    "sha": "1ea88d60f585b9bb6f8a05c4a7c7cb380982a1c7",
-    "sourceTimestampUtc": "2026-11-12T20:05:41+05:00",
-    "auditStartedUtc": "2026-11-12T15:06:19.688Z",
+    "sha": "7b39aac65b0659ebd44b472776ac4afc4d884912",
+    "sourceTimestampUtc": "2026-11-12T21:09:05+05:00",
+    "auditStartedUtc": "2026-11-12T16:11:17.712Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
-    "node": "v24.18.0",
+    "node": "v22.21.1",
     "npm": "11.16.0",
     "lockfiles": [
       "backend/package-lock.json",
@@ -5342,7 +5342,7 @@
         "backend/src/services/integrations/researchResult.ts:8",
         "frontend/src/app/share/[token]/page.tsx:2",
         "frontend/src/components/native-openui/NativeSurface.tsx:8",
-        "frontend/src/components/native-openui/NativeWorkspaceAnswer.tsx:11"
+        "frontend/src/components/native-openui/NativeWorkspaceAnswer.tsx:12"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -5370,7 +5370,7 @@
       "id": "surface:f8a39bc555632894e7fb",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiAccuracy.ts",
-      "sha256": "829368fb376037693335348d3bb4037c6fcd0dd1b2ea71898cc0eac21288cbdf",
+      "sha256": "93b0c8d00eb59262e25cd56d7165891a3385da56cc0c91b0d77a2f74c6b5aa6a",
       "symbols": [
         "FactualRule",
         "MonthlyPoint",
@@ -5505,7 +5505,7 @@
       "id": "surface:a67f0b1fa2dd0f11a67f",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiPrompt.ts",
-      "sha256": "470599af50862b017c7ae825e9633c4d06da4a39f59755a1e247c32d269bc69b",
+      "sha256": "c7eae6b8b32e0b7f83515b7277e349c9d6c4924b448e46ab7e9092cae09ab5fb",
       "symbols": [
         "allowed",
         "buildNativeOpenUiPrompt",
@@ -5636,7 +5636,7 @@
         "backend/src/lib/richShareSnapshot.test.ts:4",
         "backend/src/lib/richShareSnapshot.ts:1",
         "frontend/src/app/share/[token]/page.tsx:1",
-        "frontend/src/components/native-openui/NativeWorkspaceAnswer.tsx:13"
+        "frontend/src/components/native-openui/NativeWorkspaceAnswer.tsx:14"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -87039,7 +87039,7 @@
       ],
       "callers": [
         "frontend/src/components/native-openui/Evaluation.tsx:12",
-        "frontend/src/components/native-openui/NativeWorkspaceAnswer.tsx:15"
+        "frontend/src/components/native-openui/NativeWorkspaceAnswer.tsx:16"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -87069,7 +87069,7 @@
       "id": "surface:1815fe3ed39eb8d357c4",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/NativeWorkspaceAnswer.tsx",
-      "sha256": "4c0152fa716ad9ad941806ec37a7d5454ac999099db022396dc7d6f6054f2165",
+      "sha256": "dd944fef75e541339b0d2645ff9d66e2781dc5e1879c4e1f3c1c5f3529947caa",
       "symbols": [
         "NativeWorkspaceAnswer",
         "Surface",
@@ -87083,6 +87083,7 @@
       "imports": [
         "../../../../backend/src/ai/nativeOpenUi",
         "../../../../backend/src/ai/nativeOpenUiShare",
+        "../response-experience-v2/loadPresentation",
         "./NativeSurface",
         "@/components/terminal/ChatErrorBoundary",
         "@/components/terminal/ReasoningAndFollowUps",
@@ -87096,6 +87097,7 @@
         "backend/src/ai/nativeOpenUi.ts",
         "backend/src/ai/nativeOpenUiShare.ts",
         "frontend/src/components/native-openui/NativeSurface.tsx",
+        "frontend/src/components/response-experience-v2/loadPresentation.ts",
         "frontend/src/components/terminal/ChatErrorBoundary.tsx",
         "frontend/src/components/terminal/ReasoningAndFollowUps.tsx",
         "frontend/src/components/terminal/ResponseSourceScope.tsx",
@@ -92456,6 +92458,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
+        "frontend/src/components/native-openui/NativeWorkspaceAnswer.tsx:11",
         "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:15",
         "frontend/src/components/response-experience-v2/loadPresentation.test.ts:3"
       ],
@@ -145404,86 +145407,86 @@
       "reachable": false
     },
     {
-      "id": "frontend-call:f74adb04743731eb537b",
+      "id": "frontend-call:546bb8ef64f3a8279605",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 619,
+      "line": 653,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:38ae07262aaefc1aa8f3",
+      "id": "frontend-call:6f7373b67511eae21ba0",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 622,
+      "line": 656,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:6dfb09a77d14fd8f9437",
+      "id": "frontend-call:c793ea9b8f446d261b5a",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1387,
+      "line": 1421,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:d75ee89de5007bd5a789",
+      "id": "frontend-call:0bcc1deb603f6c196303",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1388,
+      "line": 1422,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:ba0d356e0477b5646c9c",
+      "id": "frontend-call:b250119c3b0931d7b38d",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1393,
+      "line": 1427,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:b3a242e530c9eac9aaf1",
+      "id": "frontend-call:8643323b1d0205f58e94",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1394,
+      "line": 1428,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:41e682336cdd12c22a38",
+      "id": "frontend-call:1c5a101b3040eb69adfe",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1400,
+      "line": 1434,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:1d189279bec7575a205c",
+      "id": "frontend-call:e03ade89cd942a620146",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1405,
+      "line": 1439,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:963b5d114725c5c01258",
+      "id": "frontend-call:8414f218416abfbc2cc8",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1462,
+      "line": 1496,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:a05c6e02ae92bd81a481",
+      "id": "frontend-call:67a71650050c985dbe46",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1463,
+      "line": 1497,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:caafd004aa46c6f81b28",
+      "id": "frontend-call:39d15d77673a44dca599",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1470,
+      "line": 1504,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:426cfefc32ca4537325d",
+      "id": "frontend-call:02cd1192850290d042f3",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1484,
+      "line": 1518,
       "callee": "fetch",
       "reachable": false
     },
@@ -149076,7 +149079,7 @@
     {
       "id": "test-suite:2e491f4d2fcbc11f974c",
       "sourcePath": "backend/src/ai/nativeOpenUi.test.ts",
-      "declaredTests": 36,
+      "declaredTests": 37,
       "skipLocations": [],
       "focusLocations": []
     },
