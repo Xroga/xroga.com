@@ -52,7 +52,7 @@ defineCheck({
     const windowsBefore = (await chrome.windows.getAll()).length;
     const knownBefore = new Set((await listConversations()).map(c => c.id));
     try {
-      await panel(page.id!, 'type-send', { text: 'PARENT-TASK: collect the headings of three pages with workers' });
+      await panel(page.id!, 'type-send', { text: 'PARENT-TASK: collect the headings of three pages in parallel with several agents' });
       let last = '';
       for (let i = 0; i < 160; i++) {
         last = (await panel(page.id!, 'read')).status;

@@ -221,6 +221,8 @@ export interface RunRecord {
     status: 'completed' | 'failed' | 'cancelled';
     actions: string[];
     result?: string;
+    /** A read answered from the page with no model turn (agent/direct-read.ts); the server accepts it only for read actions. */
+    direct?: true;
     localStatus: RunStatus;
   };
   leafEntryId: string | null;

@@ -10,7 +10,9 @@ import { DELEGATE_TOOL, parseJobs, runSubagents } from '@src/agent/subagents';
 import { ParallelWorkers, PARALLEL_TOOLS, type WorkerJob } from './parallel-workers';
 import { BATCH_TOOL } from '@src/agent/batch-plan';
 import { startingTools } from '@src/agent/tool-selection';
-import { skillsSection } from '@src/agent/skills';
+import { skillsFor, skillsSection } from '@src/agent/skills';
+import { routeFor } from '@src/agent/router';
+import { hintsForRun, learnFromRun } from './hints-store';
 import { userText } from '@src/agent/display';
 import { toDisplay } from '@src/agent/display';
 import {
@@ -1580,6 +1582,8 @@ export class RunManager {
     const resumed = restore?.canonicalBrowserRunId ? restore : undefined;
     const runId = resumed?.runId ?? newId();
     let loopRef: AgentLoop | undefined;
+    let usedHintIds: string[] = [];
+    let askedRequest = '';
     const done = (async () => {
       const conversation = (await getConversation(conversationId))!;
       const now = new Date().toISOString();
@@ -1697,21 +1701,31 @@ export class RunManager {
         // A worker has neither the tools that start workers nor the connected-app tools (their approvals live in the panel).
         const isWorker = this.#workerConversations.has(conversationId) || (await this.#workers.isWorker(conversationId));
         if (isWorker) this.#workerConversations.add(conversationId);
+        const askedBranch = await activeBranch(conversationId).catch(() => []);
+        const askedEntry = askedBranch.findLast(e => e.type === 'message' && e.message.role === 'user' && !e.appOwned);
+        // Click's `at` (a point inside a known element) is offered only to editor-like tasks, where a canvas hides its objects.
+        // The router decides what this run is offered: worker tools only when the request has independent parts (or workers already exist).
+        const decision = routeFor(askedEntry?.type === 'message' ? userText(askedEntry) : '', { hasWorkers: await this.#workers.hasWorkers(conversationId).catch(() => false) });
+        const pointAt = skillsFor(askedEntry?.type === 'message' ? userText(askedEntry) : '').some(k => k.id === 'design-editor' || k.id === 'video-editor');
         const fullToolList = toolsForRun({
+          pointAt,
           vision: model.profile.vision, localScreenshots: !!canonical,
           agentTools: isWorker
             ? [DELEGATE_TOOL, BATCH_TOOL, CONFIRM_DOWNLOAD_TOOL]
-            : [DELEGATE_TOOL, BATCH_TOOL, CONFIRM_DOWNLOAD_TOOL, ...(canonical?.plugins ? PLUGIN_TOOLS : []), ...PARALLEL_TOOLS],
+            : [DELEGATE_TOOL, BATCH_TOOL, CONFIRM_DOWNLOAD_TOOL, ...(canonical?.plugins ? PLUGIN_TOOLS : []), ...(decision.offerWorkers ? PARALLEL_TOOLS : [])],
         });
         // A request that only reads starts with the small tool list; the model switches to the full one if it needs to act.
-        const askedBranch = await activeBranch(conversationId).catch(() => []);
-        const askedEntry = askedBranch.findLast(e => e.type === 'message' && e.message.role === 'user' && !e.appOwned);
         const { tools, full: fullTools } = startingTools(
           fullToolList,
           askedEntry?.type === 'message' ? userText(askedEntry) : '',
         );
         // Playbooks that fit the request, added once to the system prompt (the same text every turn, so the prefix stays cached).
-        const playbooks = skillsSection(askedEntry?.type === 'message' ? userText(askedEntry) : '');
+        const askedText = askedEntry?.type === 'message' ? userText(askedEntry) : '';
+        // Verified guidance from this owner's earlier runs on this site: text for the model, never an approval.
+        const hints = await hintsForRun(session.tabIds(), askedText).catch(() => ({ text: '', ids: [] as string[] }));
+        usedHintIds = hints.ids;
+        askedRequest = askedText;
+        const playbooks = [skillsSection(askedText), hints.text].filter(Boolean).join('\n\n');
         const timings = new RunTimings();
         // The connected-app tools this run's searches found, by name, so a call to one reaches the guarded routes.
         const appTools = new Map<string, AppToolInfo>();
@@ -1876,6 +1890,15 @@ export class RunManager {
               ? assistant.message.parts.flatMap(part => (part.type === 'text' ? [part.text] : [])).join('\n')
               : undefined);
           if (status === 'completed' && !result?.trim()) status = 'failed';
+          if (status !== 'cancelled') {
+            void learnFromRun({
+              conversationId,
+              tabIds: record.tabs ?? [],
+              request: askedRequest,
+              completed: status === 'completed',
+              usedHintIds,
+            }).catch(() => undefined);
+          }
           if (
             end?.status === 'capped' ||
             end?.status === 'awaiting_user' ||
@@ -1889,6 +1912,7 @@ export class RunManager {
               status,
               actions,
               result: status === 'completed' ? result?.slice(0, 12_000) : undefined,
+              ...(end?.direct ? { direct: true as const } : {}),
               localStatus: record.status,
             };
             await this.#setStatus(record, 'interrupted', 'Syncing the saved result with Workspace.');

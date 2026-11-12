@@ -55,31 +55,29 @@ describe('starting workers', () => {
     expect(Object.keys(h.stored.jobs)).toHaveLength(0);
   });
 
-  it('runs at most three at a time, queues the rest, and starts a waiting one as soon as a worker ends', async () => {
+  it('runs at most three at a time, queues the fourth, and starts it as soon as a worker ends', async () => {
     const h = harness();
-    const r = parse(await h.workers.start('parent', { tasks: [task(1), task(2), task(3), task(4), task(5)] }));
-    expect(r.started.map((s: { state: string }) => s.state)).toEqual(['running', 'running', 'running', 'waiting', 'waiting']);
+    const r = parse(await h.workers.start('parent', { tasks: [task(1), task(2), task(3), task(4)] }));
+    expect(r.started.map((s: { state: string }) => s.state)).toEqual(['running', 'running', 'running', 'waiting']);
     expect(h.opened).toHaveLength(MAX_ACTIVE_WORKERS);
     await h.workers.ended('conv-2', { status: 'done', outcome: 'success', result: 'two' });
     expect(h.opened).toHaveLength(4);
-    await h.workers.ended('conv-1', { status: 'done', outcome: 'success', result: 'one' });
-    expect(h.opened).toHaveLength(5);
     // Another parent has its own three.
     expect((await h.workers.start('other', { tasks: [task(6)] })).isError).toBe(false);
   });
 
-  it('refuses a ninth task, counting those running and waiting', async () => {
+  it('refuses a fifth task, counting those running and waiting', async () => {
     const h = harness();
-    await h.workers.start('parent', { tasks: Array.from({ length: 6 }, (_, i) => task(i + 1)) });
-    const r = await h.workers.start('parent', { tasks: [task(7), task(8), task(9)] });
+    await h.workers.start('parent', { tasks: Array.from({ length: 3 }, (_, i) => task(i + 1)) });
+    const r = await h.workers.start('parent', { tasks: [task(7), task(8)] });
     expect(r.isError).toBe(true);
-    expect(r.text).toContain('at most 8');
+    expect(r.text).toContain('at most 4');
     expect(h.opened).toHaveLength(MAX_ACTIVE_WORKERS);
   });
 
   it('refuses empty, missing and oversized input', async () => {
     const h = harness();
-    for (const input of [{}, { tasks: [] }, { tasks: [{ instruction: '', url: 'https://a.example' }] }, { tasks: [{ instruction: 'x'.repeat(4_001), url: 'https://a.example' }] }, { tasks: Array.from({ length: 9 }, (_, i) => task(i + 1)) }]) {
+    for (const input of [{}, { tasks: [] }, { tasks: [{ instruction: '', url: 'https://a.example' }] }, { tasks: [{ instruction: 'x'.repeat(4_001), url: 'https://a.example' }] }, { tasks: Array.from({ length: 5 }, (_, i) => task(i + 1)) }]) {
       expect((await h.workers.start('parent', input)).isError).toBe(true);
     }
     expect(h.opened).toHaveLength(0);

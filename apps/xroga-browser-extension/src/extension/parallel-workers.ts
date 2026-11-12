@@ -14,8 +14,8 @@ import type { AgentTool } from '@src/agent/tools';
 
 /** Workers running at the same time for one parent. More tasks than this wait their turn. */
 export const MAX_ACTIVE_WORKERS = 3;
-/** Tasks one parent may have running or waiting. */
-export const MAX_TASKS = 8;
+/** Tasks one parent may have assigned (running or waiting): never more than four, and at most three of them run at once (the parent holds the fourth account slot). */
+export const MAX_TASKS = 4;
 export const MAX_INSTRUCTION = 4_000;
 const MAX_RESULT = 6_000;
 /** What one finished task hands to a task that comes after it, and the most all of them may hand over together. */
@@ -78,7 +78,7 @@ export const PARALLEL_TOOLS: AgentTool[] = [
     source: 'agent',
     group: 'working',
     description:
-      'Split a goal into tasks that workers do, each in its own Chrome window with its own instruction. Up to 8 tasks; at most 3 run at the same time and the rest wait. ' +
+      'Split a goal into tasks that workers do, each in its own Chrome window with its own instruction. Up to 4 tasks; at most 3 run at the same time and the fourth waits. Use one task, or none, when a single agent is as fast. ' +
       'Tasks that do not need each other run together. A task that needs another one gives it in `after`: it starts once that task has finished, and receives its result. ' +
       'Give each task an `id` (a short name) when others depend on it. Give tasks that edit the same document, canvas or account page the same `resource`, so they take turns. A task needs a specific instruction and may have an https start page (default: a web search). ' +
       'Use it for work that really splits (several sources to research, assets to prepare before they are assembled); do one thing at a time when each step depends on the screen the last one left. ' +
@@ -152,6 +152,11 @@ export class ParallelWorkers {
   async #prune(jobs: Record<string, WorkerJob>): Promise<void> {
     const cutoff = this.deps.now() - KEEP_ENDED_MS;
     for (const job of Object.values(jobs)) if (isEnded(job.state) && (job.endedAt ?? job.createdAt) < cutoff) delete jobs[job.id];
+  }
+
+  /** Whether this conversation has started workers (a follow-up still needs their status, whatever the new request looks like). */
+  async hasWorkers(parentId: string): Promise<boolean> {
+    return Object.values(await this.#jobs()).some(j => j.parentId === parentId);
   }
 
   /** Whether a conversation is a worker's. The run manager also remembers the ones it is opening, before their ids are recorded here. */

@@ -10,7 +10,7 @@ NOT IMPLEMENTED, BLOCKED. A number from a single run is a single run, not an ave
 | --- | --- | --- |
 | Single-agent browser execution | VERIFIED on public sites | Real Chrome: the full fixture scenario suite (282 of 282) and run-level checks pass. Real DeepSeek through staging: 18 real tasks (simple read, form fill without submitting, three sites, three-page reads, workers, a task graph); 13 ended `done`, one was recorded `failed` and one `interrupted` before a bug was fixed (a correct answer with no layer receipt counted as no work), and three were read at the short result-sync moment (shown as `interrupted`; the check was fixed). I read the end of each answer: the ones I checked against the pages were correct; I did not audit every answer line by line. NOT shown: signed-in business applications. |
 | Advanced interactions | PARTIAL | Present and tested at fixture level: navigation, tabs, snapshot, find, read, scroll, click, hover, type, key chords, fill_form, select/check, dialogs, drag between referenced elements, upload of attached files, waits, postconditions, frames and open shadow roots. NOT IMPLEMENTED: downloads (no tool, so an exported file cannot be confirmed), pixel/canvas clicks (the agent is deliberately not given coordinates or selectors), native desktop applications (BLOCKED: the extension controls Chrome only). |
-| Multi-agent execution | VERIFIED (scripted model in real Chrome; real model on public pages) | `delegate` (parallel page readers, search-then-read), `start_parallel_tasks` workers (each its own run, window and server turn counter; up to 8 tasks, 3 at a time), a dependency graph (`after`, results handed over), exclusive `resource` names, `batch` (when/unless/repeat). Real-Chrome checks: parallel-workers, parallel-graph, batch-tool. PARTIAL: which structure to use is chosen by the model from the playbooks, not by a measured scheduler. NOT IMPLEMENTED: a 5-worker mode (the account allows 4 active runs). |
+| Multi-agent execution | VERIFIED (scripted model in real Chrome; real model on public pages) | `delegate` (parallel page readers, search-then-read), `start_parallel_tasks` workers (each its own run, window and server turn counter; up to 4 assigned tasks per parent, 3 at a time), a dependency graph (`after`, results handed over), exclusive `resource` names, `batch` (when/unless/repeat). Real-Chrome checks: parallel-workers, parallel-graph, batch-tool. PARTIAL: which structure to use is chosen by the model from the playbooks, not by a measured scheduler. NOT IMPLEMENTED: a 5-worker mode (the account allows 4 active runs). |
 | Parallel tab ownership | PARTIAL | Each worker has its own window and its own session-owned tabs; tasks that name the same resource never run together (unit-tested). NOT tested in real Chrome: two runs attacking the same tab, or a user tab being touched. |
 | DeepSeek integration | VERIFIED on staging | Model `deepseek_v4_1_flash_1017` through the staging gateway with the active Zurelay key; per-turn server timing, tokens and settled cost read from the staging logs (section 3). |
 | Connected-app actions | PARTIAL | The approved Sheets read/write path was failing because the provider refused an account field; fixed and exercised against staging at API level. NOT verified: a real approved write on the owner account by the owner. Gmail overlay work is #970 (Codex). |
@@ -78,6 +78,62 @@ Not tested: a very large file, an interrupted download, the permission being ref
 Findings from getting there: the product refuses localhost pages by policy (correct), so real-model tasks need public pages; typing on a site that is "always ask"
 waits for an Allow press (the harness pressed Allow twice, only for this task); runs left waiting on approval count against the active-run limit of 4
 (`BROWSER_RUN_LIMIT`), which blocked one attempt until the four stale test rows of the throwaway account were marked failed.
+
+### 3d. Connected-app write path, fixture harness (backend golden journeys, fake Composio origin, no real account)
+
+28 journeys pass (3 new): a permit already used for a successful write is refused before any provider call, so a client that lost the response and retries
+cannot write twice (execute count stays 1); a provider 5xx on the write is reported and attempted once; and only the multi-account refusal is answered with a
+second call, any other 400 is reported after one attempt. Already covered before: tenant and cross-account denial, account changed or disconnected, forged
+permit, provider failure/timeout/input_required/malformed never recorded as success, redacted audit rows, credential canaries stopped before egress.
+NOT covered here: independent readback of the changed data (the agent's job; the business-records playbook requires it, and no real run has proven it), a real
+disposable account, durable claim races (need an isolated database), and reconnect to a different account in the middle of a retry beyond the account-changed check.
+Status: VERIFIED IN CONTROLLED ENVIRONMENT for the items above; the real Sheets write remains BLOCKED BY PERMISSION (needs one disposable Google account connected to the staging Xroga project).
+
+### 3e. Route A: open and read without a model call (real Chrome, real staging backend)
+
+`agent/direct-read.ts` answers a request that is only "open this site and read its heading or title" from the page itself. The matcher is narrow (one site,
+one read verb, one target, nothing else: no click, search, comparison, condition or second site), and the answer is given only when the loaded page is on the
+same site, no challenge or login stands in the way, and a heading really is on the page; otherwise the normal path runs unchanged. The answer names the page
+title as well when it differs from the first heading, because "the heading" can mean either.
+
+| Path | Runs | Wall clock (s) | Model turns | Result |
+| --- | --- | --- | --- | --- |
+| Route A, product build, real staging backend, iana.org | 3 | 2.3, 2.3, 2.9 | 0 | done, result settled on the server |
+| Same page, request with one more clause so it goes to the model (real DeepSeek) | 3 | 9.6, 9.6, 19.8 | 1, 1, 3 | done |
+| Route A in the autorun build, no server, iana.org and wikipedia.org | 6 | 2.8 to 4.1 | 0 | PASS |
+
+Single runs, one machine, a different question on the model side (it also asks what the site is for), so this shows the size of the saving, not an exact ratio.
+Findings that changed the code: (1) example.com's heading is not exposed as a heading by the layer, so Route A hands over and the model answers from the title; (2) the
+`snapshot` outline does not list headings the way `read` does, so Route A reads with `read`; (3) the first heading element on iana.org ("Domain Names") is not what a
+person calls the page heading (the banner/title), which is why the answer shows both; (4) the server refused a completed result with no model turn
+(`BROWSER_RESULT_UNVERIFIED`), so the finish route now accepts `direct: true` only for the actions `navigate` and `read` with a short result (backend change in
+`routes/localBrowser.ts`, asserted in `localBrowser.test.ts`: not marked direct, a non-read action, no actions, an over-long result and another account are all refused).
+That backend change touches the file that is under the pending security review and needs the same human review; it cannot complete anything that changes state.
+Staging image `direct1-1112` (commit 914fd69a2) carries the first version of the rule; the stricter server check (recorded goal must be a plain open-and-read, the answer must name the run's site, age under 5 minutes, no evidence yet) was then built as `direct2-1112` (commit 51b43b527) and verified the same way: three product-build runs (two headings, one title) all `done`, 0 model turns, 2.2 to 3.5 s, settled on the server. Not measured: a login-wall or challenge page in the product build (covered in unit tests only).
+
+### 3f. Click latency and the visual pointer (real Chrome, product code path, fixture model that answers instantly)
+
+Check `click-bench`: ten clicks in one model reply, and ten replies with one click each, with the visual pointer on and off, three runs each. The run recorder's phase
+timings put essentially all the time in the browser action (`tool.layer`), not in the model turn, gating or persistence (model 20-30 ms per turn here).
+Stage timing inside one click, measured by temporary instrumentation that was removed afterwards:
+
+| Stage (visible tab, pointer off) | ms per click |
+| --- | --- |
+| resolve target | 5 |
+| actionability (includes a fixed 50 ms stability gap) | 72 |
+| confirmation gate | 2 |
+| evidence begin | 10 |
+| CDP dispatch (move, press, release, three guard checks) | 20 |
+| **settle** (two quiet polls of 100 ms, then a volatility watch) | **about 640 before, about 437 after** |
+| page state after the action | 16 |
+
+Findings: (1) the dominant cost of an ordinary click is the post-click settle, almost all of it a fixed 400 ms "does the block keep changing by itself" wait that runs when
+the only evidence is the block's own mutations; it is now 200 ms. The ticking-clock scenario (10 Hz) and scenario sets C and D still pass in real Chrome; a page that changes
+more slowly than 5 Hz can now be attributed to the click, and that verdict is information for the model, not a gate. Ten clicks: 8.1-8.4 s before, 6.2-6.3 s after (median of three
+runs each, one machine). (2) In a hidden tab the first mouse-move dispatch took 160-190 ms without the pointer and 620-860 ms with it (an early benchmark ran the page in a background
+tab, which is not how a user sees it); in a visible tab the dispatch is 20-25 ms with the pointer on or off, so the pointer has no measurable cost there. The pointer hook is not awaited by the action.
+Not changed: polling interval and the 100 ms quiet window (shortening them would make "no effect" a weaker claim and risks a repeated click), the pointer's own 240 ms movement.
+Not measured: real DeepSeek action-to-action gaps (the model turn there is 2-6 s and dominates), CPU and RAM of the pointer, a screenshot-heavy task, task-to-task slot release.
 
 ## 4. NOT IMPLEMENTED or BLOCKED, with the reason
 

@@ -78,6 +78,7 @@ export const SKILLS: Skill[] = [
       'Design and image editors:',
       '- Split the work: prepare assets first (logos, transparent backgrounds, sizes), choose the colors and layout in words, then assemble in the editor, then check and export. Preparing assets and choosing colors do not depend on each other; assembling depends on both.',
       '- A canvas is often not readable as page elements. Work through what is: the layers or objects panel, the toolbar, the properties panel and dialogs. Select a layer from the panel, then change its position, size, color or text in the properties fields, which is more exact than dragging on the canvas.',
+      '- If you must click inside a canvas, use click on the canvas ref with at [fx, fy] (fractions of its box) computed from positions the app itself shows (a layer list with x, y and sizes, divided by the canvas size). Never guess a point; afterwards check that the selection or the properties panel changed.',
       '- Only one run edits a given document at a time. Never let two workers change the same canvas: give each worker its own piece (its own file, page or asset) and let one task assemble, and give tasks that touch the same document the same resource so they take turns.',
       '- Keep logo proportions, check contrast between text and background, and keep names and numbers inside the garment or page area.',
       '- Check the result in the editor (a zoomed look, the layer list, the values you set) before you export. Export through the application own export dialog and say exactly what it showed. After the export starts, call confirm_download (name = the file type, such as ".png") and report its name and size. Do not claim a file exists unless confirm_download or the application showed it was saved; say so plainly when you could not confirm it.',
@@ -92,6 +93,16 @@ export const SKILLS: Skill[] = [
       '- Editing the timeline is one run at a time on one project. Do not let two workers change the same timeline.',
       '- Work through the editor panels and dialogs (media bin, timeline items, properties, export dialog). Verify each change in the editor (the clip list, durations, the caption text) rather than assuming it applied.',
       '- Rendering takes time: wait for the application own progress and completion message, then report what it shows. When the export finishes, call confirm_download with waitSeconds up to 180 (name ".mp4" or the type shown) and report its name and size. Do not claim the video was rendered or exported until confirm_download or the application showed the finished file; say so when you could not confirm it.',
+    ].join('\n'),
+  },
+  {
+    id: 'exact-count',
+    when: has(/\b(?:exactly|only|just)\s+(?:\w+\s+)?(?:\d+|one|two|three|four|five|six|seven|eight|nine|ten)\b|\badd\s+(?:\d+|two|three|four|five|six|seven|eight|nine|ten)\b|\bmake sure (?:there (?:are|is)|the list has)\b/i),
+    body: [
+      'A request for an exact number of items or records:',
+      '- Put the proof on the last action: expect {count: {...}} or expect {exists: {role, name}} for one named element. The receipt then says what the page really holds.',
+      '- A count covers the WHOLE page, so a role alone also counts menus and footers (a todo page answered "11 listitem, not 3" for three todos). Narrow it with a name only the rows share, or use a name per row with exists, or read the page counter instead.',
+      '- A counter the page shows itself ("3 items left") is equally good evidence when you read it after the last action. Do not add a check just to have one, and never report the number from what you typed.',
     ].join('\n'),
   },
   {

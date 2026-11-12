@@ -156,6 +156,26 @@ test('local Chrome shares canonical ownership, turn fencing, cancellation and re
     assert.equal(snapshot.result, null);
     assert.deepEqual(received.map(item => item.runId), [runId]);
 
+    // A read answered from the page with no model turn may complete, and only that: nothing that changes anything can.
+    const readRun = await send('/runs', 'POST', { goal: 'Open example.com and read the first visible heading', startUrl: 'https://example.com/' });
+    const { runId: directRun } = await readRun.json() as { runId: string };
+    const directPath = `/runs/${directRun}`;
+    const finish = (body: unknown, crossTenant = false) => send(`${directPath}/finish`, 'POST', body, crossTenant);
+    const answer = 'The first heading on example.com is "Example Domain".';
+    assert.equal((await finish({ status: 'completed', result: answer, actions: ['navigate', 'read'] })).status, 400, 'no model turn and not marked direct');
+    assert.equal((await finish({ status: 'completed', result: answer, actions: ['navigate', 'click'], direct: true })).status, 400, 'a change is never a direct result');
+    assert.equal((await finish({ status: 'completed', result: answer, actions: [], direct: true })).status, 400, 'a direct result needs its actions');
+    assert.equal((await finish({ status: 'completed', result: 'x'.repeat(601), actions: ['navigate', 'read'], direct: true })).status, 400, 'a direct result is short');
+    assert.equal((await finish({ status: 'completed', result: answer, actions: ['navigate', 'read'], direct: true }, true)).status, 404, 'another account cannot finish it');
+    assert.equal((await finish({ status: 'completed', result: 'The first heading is "Example Domain".', actions: ['navigate', 'read'], direct: true })).status, 400, 'the answer has to name the site the run started on');
+    const completed = await finish({ status: 'completed', result: answer, actions: ['navigate', 'read'], direct: true });
+    assert.equal(completed.status, 200);
+    assert.deepEqual(await completed.json(), { status: 'completed' });
+    // A run whose recorded goal is anything else cannot be completed this way, whatever the flag and the actions say.
+    const other = await send('/runs', 'POST', { goal: 'Open example.com, read the heading and then click the first link', startUrl: 'https://example.com/' });
+    const { runId: otherRun } = await other.json() as { runId: string };
+    assert.equal((await send(`/runs/${otherRun}/finish`, 'POST', { status: 'completed', result: answer, actions: ['navigate', 'read'], direct: true })).status, 400, 'an ineligible goal');
+
     const extended = await send('/runs', 'POST', { goal: 'Read the attached specification', startUrl: 'https://example.com/', attachmentCount: 1 });
     const accepted = await extended.json() as { runId: string; maxTurns: number; remainingMs: number };
     assert.ok(accepted.maxTurns > 12);

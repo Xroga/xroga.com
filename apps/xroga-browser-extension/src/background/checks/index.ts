@@ -28,6 +28,8 @@ import './upload-measure';
 import './save-file';
 import './confirm-download';
 import './parallel-bench';
+import './direct-read';
+import './click-bench';
 import './optional-permissions';
 import './voice';
 import './panel-selection';

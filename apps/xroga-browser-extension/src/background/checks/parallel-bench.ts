@@ -57,7 +57,7 @@ defineCheck({
         }
         const known = new Set((await listConversations()).map(c => c.id));
         const start = Date.now();
-        await panel(page.id!, 'type-send', { text: `${parent}: run ${count} worker(s)` });
+        await panel(page.id!, 'type-send', { text: `${parent}: run ${count} worker(s) in parallel with several agents` });
         let last = '';
         // The panel still says "Done" from the phase before: wait until this run has started.
         for (let i = 0; i < 60 && (await panel(page.id!, 'read')).status === 'Done'; i++) await sleep(50);
