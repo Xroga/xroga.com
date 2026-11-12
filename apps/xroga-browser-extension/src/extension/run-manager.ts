@@ -67,6 +67,7 @@ import { PromptBroker } from './prompt-broker';
 import { notifyFinished, notifyNeeds } from './notify';
 import { thumbnail } from './thumbnail';
 import { isNumberedCopy, saveText } from './downloads';
+import { CONFIRM_DOWNLOAD_TOOL, readQuery, waitForDownload, type DownloadLike } from '../agent/confirm-download';
 import { checkSave } from '@src/agent/save-file';
 import { conversationMarkdown, exportName } from '@src/agent/export';
 import { isBlockedSite, quote } from '@src/browser-control';
@@ -1214,8 +1215,24 @@ export class RunManager {
     call: ToolCallRequest,
     signal: AbortSignal,
   ): Promise<{ text: string; isError: boolean }> {
-    if (call.toolName !== 'save_file') return { text: `error: ${call.toolName} is not available.`, isError: true };
     const args = (call.input ?? {}) as Record<string, unknown>;
+    if (call.toolName === 'confirm_download') {
+      // Reads Chrome's download list, so it needs the same permission saving does; only a user's click can allow it.
+      if (!(await chrome.permissions.contains({ permissions: ['downloads'] }).catch(() => false))) {
+        return {
+          text: "error DOWNLOADS_NOT_ALLOWED\nChecking a download needs Chrome's downloads permission, which the user has not allowed. Say the download started and could not be confirmed.",
+          isError: true,
+        };
+      }
+      const verdict = await waitForDownload(
+        async () => (await chrome.downloads.search({ orderBy: ['-startTime'], limit: 25 })) as DownloadLike[],
+        readQuery(args),
+        undefined,
+        signal,
+      );
+      return { text: verdict.line, isError: verdict.isError };
+    }
+    if (call.toolName !== 'save_file') return { text: `error: ${call.toolName} is not available.`, isError: true };
     const check = checkSave(args);
     if (!check.ok) return { text: `error INVALID_ARGUMENT (nothing saved)\n${check.reason}`, isError: true };
     const content = String(args.content);
@@ -1683,8 +1700,8 @@ export class RunManager {
         const fullToolList = toolsForRun({
           vision: model.profile.vision, localScreenshots: !!canonical,
           agentTools: isWorker
-            ? [DELEGATE_TOOL, BATCH_TOOL]
-            : [DELEGATE_TOOL, BATCH_TOOL, ...(canonical?.plugins ? PLUGIN_TOOLS : []), ...PARALLEL_TOOLS],
+            ? [DELEGATE_TOOL, BATCH_TOOL, CONFIRM_DOWNLOAD_TOOL]
+            : [DELEGATE_TOOL, BATCH_TOOL, CONFIRM_DOWNLOAD_TOOL, ...(canonical?.plugins ? PLUGIN_TOOLS : []), ...PARALLEL_TOOLS],
         });
         // A request that only reads starts with the small tool list; the model switches to the full one if it needs to act.
         const askedBranch = await activeBranch(conversationId).catch(() => []);

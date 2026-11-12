@@ -80,7 +80,7 @@ export const SKILLS: Skill[] = [
       '- A canvas is often not readable as page elements. Work through what is: the layers or objects panel, the toolbar, the properties panel and dialogs. Select a layer from the panel, then change its position, size, color or text in the properties fields, which is more exact than dragging on the canvas.',
       '- Only one run edits a given document at a time. Never let two workers change the same canvas: give each worker its own piece (its own file, page or asset) and let one task assemble, and give tasks that touch the same document the same resource so they take turns.',
       '- Keep logo proportions, check contrast between text and background, and keep names and numbers inside the garment or page area.',
-      '- Check the result in the editor (a zoomed look, the layer list, the values you set) before you export. Export through the application own export dialog and say exactly what it showed. Do not claim a file exists unless the application or the browser showed it was saved; say so plainly when you could not confirm it.',
+      '- Check the result in the editor (a zoomed look, the layer list, the values you set) before you export. Export through the application own export dialog and say exactly what it showed. After the export starts, call confirm_download (name = the file type, such as ".png") and report its name and size. Do not claim a file exists unless confirm_download or the application showed it was saved; say so plainly when you could not confirm it.',
     ].join('\n'),
   },
   {
@@ -91,7 +91,7 @@ export const SKILLS: Skill[] = [
       '- Plan before you edit: the scenes in order with rough timings, what to cut, the narration, the captions. Planning, preparing the voiceover or captions and looking over the clips are independent; building the timeline depends on them.',
       '- Editing the timeline is one run at a time on one project. Do not let two workers change the same timeline.',
       '- Work through the editor panels and dialogs (media bin, timeline items, properties, export dialog). Verify each change in the editor (the clip list, durations, the caption text) rather than assuming it applied.',
-      '- Rendering takes time: wait for the application own progress and completion message, then report what it shows. Do not claim the video was rendered or exported until the application or the browser showed the finished file; say so when you could not confirm it.',
+      '- Rendering takes time: wait for the application own progress and completion message, then report what it shows. When the export finishes, call confirm_download with waitSeconds up to 180 (name ".mp4" or the type shown) and report its name and size. Do not claim the video was rendered or exported until confirm_download or the application showed the finished file; say so when you could not confirm it.',
     ].join('\n'),
   },
   {

@@ -20,6 +20,7 @@ const browserTools = new Set([
   'upload',
   'read_attachment',
   'save_file',
+  'confirm_download',
 ]);
 
 export const ACTIVITY_LIMIT = 40;
