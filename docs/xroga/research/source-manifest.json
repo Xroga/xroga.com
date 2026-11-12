@@ -4268,6 +4268,19 @@
       "notes": "Git-canonical LF text bytes ingested; historical completion claims are not current verification"
     },
     {
+      "source_id": "SRC-ec7825d93685d512",
+      "filename": "observable-work-history.md",
+      "path_or_url": "docs/operations/observable-work-history.md",
+      "sha256": "ca0569ed9fbeeba693d6746fcb29254a10f8417e40cf01d321c49b507a43f034",
+      "byte_size": 791,
+      "modified_timestamp": "2026-11-12T17:23:18.760Z",
+      "parse_status": "TEXT_READ",
+      "category": "REPOSITORY_DOCUMENT",
+      "authority": "ADVISORY",
+      "analyzed": true,
+      "notes": "Git-canonical LF text bytes ingested; historical completion claims are not current verification"
+    },
+    {
       "source_id": "SRC-ca6ed291efd4b2f7",
       "filename": "production-evidence.md",
       "path_or_url": "docs/operations/production-evidence.md",
@@ -6195,9 +6208,9 @@
       "source_id": "SRC-3d3190a1571aa705",
       "filename": "current-state.json",
       "path_or_url": "docs/xroga/current-state.json",
-      "sha256": "6a2cd82acae047f5aa9329060ed7073e54053844cd2335ede47ebd4cec61fa5d",
-      "byte_size": 5586676,
-      "modified_timestamp": "2026-11-12T17:17:44.872Z",
+      "sha256": "b1e8c1cce5643fc995445fc6d58f3a2e66bdcb1c4e1a5a1cb56fbd6e809882cd",
+      "byte_size": 5586930,
+      "modified_timestamp": "2026-11-12T17:37:03.276Z",
       "parse_status": "PARSED_JSON",
       "category": "REPOSITORY_DOCUMENT",
       "authority": "ADVISORY",
