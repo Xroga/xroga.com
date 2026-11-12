@@ -23,8 +23,13 @@ const NAVIGATION_READY_MS = 5_000;
  * comes first, and at NAVIGATION_READY_MS. */
 const READY_QUIET_MS = 250;
 const READY_POLL_MS = 50;
-/** How long the block is watched after settle when the only evidence is its own mutations. */
-const VOLATILITY_MS = 400;
+/**
+ * How long the block is watched after settle when the only evidence is its own mutations. Measured in real Chrome at about 640 ms per click,
+ * 400 of it this wait, so it is 200: the block was already quiet for a poll before this starts, and a page that changes by itself at 5 Hz
+ * or faster (a clock, a spinner, a ticker) still shows a mutation inside it. A slower self-changer can now be attributed to the action; the
+ * verdict is information for the model, not a gate, and the action's own signals (value, focus, layers, requests) are checked separately.
+ */
+const VOLATILITY_MS = 200;
 /** Weak signals: mutations alone do not say the action did something. */
 const WEAK = / mutations? in /;
 

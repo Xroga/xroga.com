@@ -111,6 +111,30 @@ person calls the page heading (the banner/title), which is why the answer shows 
 That backend change touches the file that is under the pending security review and needs the same human review; it cannot complete anything that changes state.
 Staging image `direct1-1112` (commit 914fd69a2) carries it. Not measured: a login-wall or challenge page in the product build (covered in unit tests only).
 
+### 3f. Click latency and the visual pointer (real Chrome, product code path, fixture model that answers instantly)
+
+Check `click-bench`: ten clicks in one model reply, and ten replies with one click each, with the visual pointer on and off, three runs each. The run recorder's phase
+timings put essentially all the time in the browser action (`tool.layer`), not in the model turn, gating or persistence (model 20-30 ms per turn here).
+Stage timing inside one click, measured by temporary instrumentation that was removed afterwards:
+
+| Stage (visible tab, pointer off) | ms per click |
+| --- | --- |
+| resolve target | 5 |
+| actionability (includes a fixed 50 ms stability gap) | 72 |
+| confirmation gate | 2 |
+| evidence begin | 10 |
+| CDP dispatch (move, press, release, three guard checks) | 20 |
+| **settle** (two quiet polls of 100 ms, then a volatility watch) | **about 640 before, about 437 after** |
+| page state after the action | 16 |
+
+Findings: (1) the dominant cost of an ordinary click is the post-click settle, almost all of it a fixed 400 ms "does the block keep changing by itself" wait that runs when
+the only evidence is the block's own mutations; it is now 200 ms. The ticking-clock scenario (10 Hz) and scenario sets C and D still pass in real Chrome; a page that changes
+more slowly than 5 Hz can now be attributed to the click, and that verdict is information for the model, not a gate. Ten clicks: 8.1-8.4 s before, 6.2-6.3 s after (median of three
+runs each, one machine). (2) In a hidden tab the first mouse-move dispatch took 160-190 ms without the pointer and 620-860 ms with it (an early benchmark ran the page in a background
+tab, which is not how a user sees it); in a visible tab the dispatch is 20-25 ms with the pointer on or off, so the pointer has no measurable cost there. The pointer hook is not awaited by the action.
+Not changed: polling interval and the 100 ms quiet window (shortening them would make "no effect" a weaker claim and risks a repeated click), the pointer's own 240 ms movement.
+Not measured: real DeepSeek action-to-action gaps (the model turn there is 2-6 s and dominates), CPU and RAM of the pointer, a screenshot-heavy task, task-to-task slot release.
+
 ## 4. NOT IMPLEMENTED or BLOCKED, with the reason
 
 Canvas pixel interaction (BLOCKED by the single-model rule: the only allowed model, deepseek_v4_1_flash_1017, has no vision, so it cannot see a canvas;
