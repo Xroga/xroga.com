@@ -554,7 +554,7 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   }, null, 2));
 });
 
-test('saved native answers hide transport syntax during a lazy renderer failure and restore after reload', async ({ page, browser }) => {
+test('saved native answers hide transport syntax during a lazy renderer failure and restore on reopen', async ({ page, browser }) => {
   const chunkURLs = new Set<string>();
   const inspect = async (response: import('@playwright/test').Response) => {
     const url = new URL(response.url());
@@ -569,18 +569,23 @@ test('saved native answers hide transport syntax during a lazy renderer failure 
   await form.locator('#login-password').fill(password);
   await form.getByRole('button', { name: 'Sign in' }).click();
   await expect(page).toHaveURL(/\/workspace$/, { timeout: AUTH_TRANSITION_TIMEOUT_MS });
-  await openPersistedConversation(page, conversations.second);
+  const workspace = new URL('/workspace', page.url());
+  workspace.searchParams.set('conversation', conversations.second.id);
+  // The earlier composer test creates newer conversations. A durable record
+  // is still addressable when it has aged out of the sidebar's recent list.
+  await page.goto(workspace.href);
+  const composer = page.locator('[data-terminal-composer]');
+  await expect(composer).toHaveAttribute('data-draft-owner', ownerId);
+  await expect(composer).toHaveAttribute('data-draft-session', conversations.second.id, { timeout: 20_000 });
   await expect(page.getByRole('slider', { name: 'Attendees' })).toHaveValue('40');
   await expect.poll(() => chunkURLs.size).toBeGreaterThan(0);
 
-  const workspace = new URL('/workspace', page.url());
   const context = await browser.newContext({ baseURL: workspace.origin, storageState: await page.context().storageState(),
     viewport: { width: 390, height: 844 }, permissions: ['clipboard-read', 'clipboard-write'] });
   let blocked = 0;
   try {
     const saved = await context.newPage();
     for (const chunk of chunkURLs) await saved.route(chunk, route => { blocked += 1; return route.abort('failed'); });
-    workspace.searchParams.set('conversation', conversations.second.id);
     await saved.goto(workspace.href);
     const answer = saved.getByRole('region', { name: 'Answer', exact: true });
     await expect.poll(() => blocked).toBeGreaterThan(0);
@@ -590,7 +595,7 @@ test('saved native answers hide transport syntax during a lazy renderer failure 
     await saved.locator('[data-turn-id]').filter({ has: answer }).getByRole('button', { name: 'Copy', exact: true }).click();
     await expect.poll(() => saved.evaluate(() => navigator.clipboard.readText())).toBe(conversations.second.reply);
     await saved.unrouteAll({ behavior: 'wait' });
-    await saved.reload();
+    await saved.goto(workspace.href);
     await expect(answer.getByRole('slider', { name: 'Attendees' })).toHaveValue('40');
     await expect(answer).not.toContainText(/UnknownInternalWidget|root\s*=\s*Col/);
   } finally {
