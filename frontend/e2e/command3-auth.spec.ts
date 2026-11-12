@@ -268,7 +268,7 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   ].join('\n\n');
   const architectureProgram = [
     'root = Col([Section("Request architecture", [diagram]), roles, sample])',
-    'diagram = Diagram("Request path", [{id: "app", label: "Next.js", level: 0}, {id: "database", label: "PostgreSQL", level: 1}], [{from: "app", to: "database", label: "User access token"}])',
+    'diagram = Diagram("Request path", [{id: "app", label: "Next.js", level: 0}, {id: "database", label: "PostgreSQL", level: 1}], [{from: "app", to: "database", label: "User access token"}], "The app queries rows with the user access token.")',
     'roles = Section("Component roles", [table], "What each component does")',
     'table = Table(["Component", "Role"], [["Next.js", "Application"], ["PostgreSQL", "Data isolation"]])',
     'sample = Code("const boundary = \\"tenant_id\\";", "typescript")',
@@ -373,8 +373,8 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   expect(chatCalls).toBe(1);
 
   const sessionId = (await composer.getAttribute('data-draft-session'))!;
-  const readSaved = async () => {
-    const saved = await admin.from('xroga_sidebar_chats').select('title,messages').eq('user_id', ownerId).eq('id', sessionId).maybeSingle();
+  const readSaved = async (id = sessionId) => {
+    const saved = await admin.from('xroga_sidebar_chats').select('title,messages').eq('user_id', ownerId).eq('id', id).maybeSingle();
     expect(saved.error).toBeNull();
     return saved.data;
   };
@@ -563,13 +563,21 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   expect(receiptReads).toBeGreaterThanOrEqual(1);
   expect(receiptReads).toBeLessThanOrEqual(2);
   expect(chatCalls).toBe(7);
+  await page.getByRole('button', { name: 'New Work', exact: true }).click();
+  await expect(composer).not.toHaveAttribute('data-draft-session', sessionId);
+  await expect(composer).toHaveAttribute('data-draft-restoring', 'false');
+  const architectureSession = (await composer.getAttribute('data-draft-session'))!;
+  expect(architectureSession).toBeTruthy();
+  const architectureHttp = page.waitForResponse(response => new URL(response.url()).pathname === '/api/phase1/chat'
+    && response.request().method() === 'POST' && response.request().postDataJSON()?.message === architecture);
   await send(architecture);
+  expect((await architectureHttp).ok()).toBe(true);
   const renderedArchitecture = page.getByRole('region', { name: 'Answer', exact: true }).filter({ hasText: 'Component roles' }).last();
   await expect(renderedArchitecture.getByRole('region', { name: 'Answer table', exact: true })).toBeVisible({ timeout: 20_000 });
   await expect(renderedArchitecture.locator('.react-flow__edge')).toHaveCount(1);
   await expect(renderedArchitecture.locator('pre code')).toHaveText('const boundary = "tenant_id";');
   await expect(renderedArchitecture).not.toContainText(/root\s*=\s*Col/);
-  await expect.poll(async () => ((await readSaved())?.messages as Array<{ featureOutput?: { responseSource?: { text?: string } } }> | undefined)
+  await expect.poll(async () => ((await readSaved(architectureSession))?.messages as Array<{ featureOutput?: { responseSource?: { text?: string } } }> | undefined)
     ?.some(message => message.featureOutput?.responseSource?.text === architectureProgram), { timeout: 20_000 }).toBe(true);
   expect(chatCalls).toBe(8);
   await writeFile('test-results/native-workspace/evidence.json', JSON.stringify({
