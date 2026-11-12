@@ -95,6 +95,15 @@ export const SKILLS: Skill[] = [
     ].join('\n'),
   },
   {
+    id: 'exact-count',
+    when: has(/\b(?:exactly|only|just)\s+(?:\w+\s+)?(?:\d+|one|two|three|four|five|six|seven|eight|nine|ten)\b|\badd\s+(?:\d+|two|three|four|five|six|seven|eight|nine|ten)\b|\bmake sure (?:there (?:are|is)|the list has)\b/i),
+    body: [
+      'A request for an exact number of items or records:',
+      '- Put the proof on the last action: expect {count: {role: "listitem", equals: 3}} (the role of the rows you can see; add name to narrow it), or expect {exists: {role, name}} for one named element. The receipt then says what the page really holds.',
+      '- A counter the page shows itself ("3 items left") is equally good evidence when you read it after the last action. Do not add a check just to have one, and never report the number from what you typed.',
+    ].join('\n'),
+  },
+  {
     id: 'business-records',
     when: has(/\b(?:crm|customer records?|contact records?|leads?|deals?|pipeline|product listings?|inventory|orders? (?:list|dashboard)|wordpress|shopify|webflow|woocommerce|cms|add (?:a )?customers?|update (?:the )?products?)\b/i),
     body: [
