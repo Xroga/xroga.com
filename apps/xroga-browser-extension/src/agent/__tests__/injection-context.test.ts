@@ -1,7 +1,7 @@
 // The context set: after a restart every request holds the system prompt and every user message word for word; the run
 // stops, sending nothing, when they do not fit; and a note is never counted as a user message.
 import 'fake-indexeddb/auto';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { IDBFactory } from 'fake-indexeddb';
 import { ScriptedModel, resolveProfile } from '@src/llm';
 import type { ScriptedCall, ScriptedReply } from '@src/llm';
@@ -17,6 +17,10 @@ import { planRestore } from '../restore';
 import { toolsForRun } from '../tools';
 import { FakeHost, FakeLayer, ok } from '../testing/fake-layer';
 import { isSummaryCall, withSummaries } from '../testing/scripts';
+
+// These tests run 30 to 36 turn conversations on fake-indexeddb (a JavaScript IndexedDB). Alone each takes 1 to 2 s; with the whole suite running in parallel the
+// default 5 s is not enough on a busy machine. In real Chrome the same per-turn preparation measured about 9 ms, so this is test-environment cost, not product latency.
+vi.setConfig({ testTimeout: 30_000 });
 
 afterEach(async () => {
   await closeDb();
