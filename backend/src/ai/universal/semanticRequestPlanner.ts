@@ -1416,6 +1416,8 @@ export async function planSemanticRequest(
               let correctionUsed =
                 false;
 
+              let completionShape: { finish: 'stop' | 'length' | 'other'; outputTokens: number } | undefined;
+
               const goalContract =
                 await resolveStructuredGoalContract(
                   async (
@@ -1478,6 +1480,11 @@ export async function planSemanticRequest(
 
                     finalModelId =
                       completion.modelId;
+                    completionShape = {
+                      finish: completion.finishReason === 'stop' || completion.finishReason === 'length'
+                        ? completion.finishReason : 'other',
+                      outputTokens: completion.outputTokens,
+                    };
 
                     /* Canonical dispatch already verified the atomic usage receipt. */
 
@@ -1504,6 +1511,9 @@ export async function planSemanticRequest(
                         error instanceof
                         RuntimeFailure
                       ) {
+                        if (completionShape) {
+                          console.warn('[planner-completion-shape]', { modelId, code: error.code, ...completionShape });
+                        }
                         lastStructuredFailure =
                           error;
 

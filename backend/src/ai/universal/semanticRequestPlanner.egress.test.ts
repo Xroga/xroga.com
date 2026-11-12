@@ -15,6 +15,8 @@ test('actual semantic planner carries issued actor, platform reservation and exa
   t.after(() => { for (const key of Object.keys(env)) { if (prior[key] === undefined) delete process.env[key]; else process.env[key] = prior[key]; } });
   let effects = 0, reservations = 0, settlements = 0, receipts = 0;
   let mode = 'ok';
+  const warnings: unknown[][] = [];
+  t.mock.method(console, 'warn', (...args: unknown[]) => { warnings.push(args); });
   const held = new Map<string, Record<string, unknown>>();
   const usage = { user_id: owner, plan_tier: 'spark', plan_budget_usd: 20,
     quota_period_start: new Date().toISOString().slice(0, 7) + '-01', input_tokens: 0, output_tokens: 0, spent_usd: 0, rollover_usd: 0, model_usage: {} };
@@ -29,6 +31,15 @@ test('actual semantic planner carries issued actor, platform reservation and exa
       assert.ok(body.messages.some((message: { content: string }) => message.content.includes('Explain a safe local parser')));
       assert.doesNotMatch(JSON.stringify(body), /synthetic-platform-credential/);
       assert.equal(new Headers(init?.headers).get('x-zurelay-fallback'),'off');assert.equal(body.model,'deepseek-v4.1-flash-1017');assert.equal(body.reasoning_effort,'none');
+      assert.equal(body.max_tokens, 1500);
+      assert.deepEqual(body.response_format, { type: 'json_object' });
+      if (mode === 'truncated') {
+        return Response.json({ id: 'synthetic-truncated', model: 'deepseek-v4.1-flash-1017', choices: [{
+          message: { content: '{"semanticIntent":"ANSWER","presentation":[{"heading":"fixture-private-fragment' },
+          finish_reason: 'length',
+        }], usage: { prompt_tokens: 3348, completion_tokens: 1500, total_tokens: 4848 } },
+        { headers: { 'x-request-id': 'synthetic-truncated', 'x-zurelay-model': 'deepseek-v4.1-flash-1017' } });
+      }
       return Response.json({ id: 'synthetic-planner-result',model:'deepseek-v4.1-flash-1017', choices: [{ message: { content: JSON.stringify({
         semanticIntent: 'ANSWER', requiredCapabilities: ['conversation.respond'], freshnessRequirement: 'NONE', confidence: 0.9,
       }) }, finish_reason: 'stop' }], usage: { prompt_tokens: 2, completion_tokens: 2,total_tokens:4 } },{headers:{'x-request-id':'synthetic-planner-result','x-zurelay-model':'deepseek-v4.1-flash-1017'}});
@@ -69,7 +80,14 @@ test('actual semantic planner carries issued actor, platform reservation and exa
   await assert.rejects(planSemanticRequest({ ...request, tenantContext: { ...context } }), { code: 'TENANT_AUTH_REQUIRED' });
   await assert.rejects(planSemanticRequest({ ...request, userId: foreign }), { code: 'RESOURCE_NOT_FOUND' });
   assert.equal(effects, 1);
+  mode = 'truncated';
+  await assert.rejects(planSemanticRequest(request), { code: 'PLANNER_INVALID_OUTPUT' });
+  assert.deepEqual([effects, reservations, settlements, receipts], [2, 2, 2, 2], 'Truncated content settles once and never dispatches a repair');
+  assert.deepEqual(warnings.find(([label]) => label === '[planner-completion-shape]')?.[1], {
+    modelId: 'deepseek_v4_1_flash_1017', code: 'PLANNER_INVALID_OUTPUT', finish: 'length', outputTokens: 1500,
+  });
+  assert.doesNotMatch(JSON.stringify(warnings), /fixture-private-fragment/);
   mode = 'foreign-reservation';
   await assert.rejects(planSemanticRequest(request), { code: 'PROVIDER_RESERVATION_DENIED' });
-  assert.deepEqual([effects, reservations, settlements, receipts], [1, 2, 1, 1], 'Invalid reservation cannot start another provider/account or fabricate usage');
+  assert.deepEqual([effects, reservations, settlements, receipts], [2, 3, 2, 2], 'Invalid reservation cannot start another provider/account or fabricate usage');
 });
