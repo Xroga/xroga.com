@@ -32,7 +32,11 @@ export function nativeTechnicalCorrections(answer: string): TechnicalCorrection[
       guidance: 'Where deletion is restricted to owners or admins, the DELETE policy’s USING predicate must verify the caller’s current membership and allowed role for the row’s tenant. A membership-only predicate does not enforce that rule.',
     });
   }
-  if (/\bStripe\b/i.test(text) && statements.some(statement => !warnsAgainst(statement) &&
+  // Exclude only the timestamp-based ordering clause explicitly rejected by
+  // the answer. A separate recommendation in the same sentence still counts.
+  const rejectedOrdering = /\brather than\s+(?:infer(?:ring)?|deriv(?:e|ing)|determin(?:e|ing))\s+(?:the\s+)?(?:delivery\s+)?order\s+from\s+(?:event\.created|event\s+timestamps?)\b/gi;
+  const orderingStatements = statements.map(statement => statement.replace(rejectedOrdering, ''));
+  if (/\bStripe\b/i.test(text) && orderingStatements.some(statement => !warnsAgainst(statement) &&
     /\b(?:compare|sort(?:\s+by)?|order(?:\s+by)?|rely\s+on|use)\b[^.!?;\n]{0,40}\b(?:event\s+timestamps?|event\.created)\b/i.test(statement) &&
     /\b(?:order(?:ed|ing)?|stored state|newer|older|stale|reconcil|sort)\w*\b/i.test(statement))) {
     corrections.push({

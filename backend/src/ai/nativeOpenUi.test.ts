@@ -318,6 +318,16 @@ test('a flagged billing claim keeps independently valid architecture with an exp
   assert.equal(completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + program, 'length').responseSource.text, '');
 });
 
+test('Stripe reconciliation advice that rejects timestamp ordering keeps the native answer', () => {
+  const advice = 'Reconcile out-of-order delivery against authoritative Stripe state (fetch the subscription/customer) rather than inferring order from `event.created` or timestamps.';
+  const program = 'root = Col([Text("Webhook flow"), Table(["Step", "Action"], [["1", "Verify the signature"]])])';
+  const answer = completeNativeWorkspaceAnswer(advice + NATIVE_UI_MARKER + program, 'stop');
+  assert.deepEqual(answer.completion, { status: 'complete' });
+  assert.equal(answer.responseSource.text, program);
+  const unsafe = advice.slice(0, -1) + ', but compare event timestamps against stored state to ignore stale deliveries.';
+  assert.deepEqual(validateNativeOpenUi(program, undefined, unsafe), { ok: false, reason: 'factual_review' });
+});
+
 test('factual layout recovery does not hide contradictory chart prose from a removed block', () => {
   const program = 'root = Col([Text("Stripe will retry indefinitely. March rose."), Chart("bar", [{month:"Jan",value:12},{month:"Feb",value:15},{month:"Mar",value:14}], "month", ["value"])])';
   const answer = completeNativeWorkspaceAnswer('Review the monthly chart.' + NATIVE_UI_MARKER + program, 'stop');
