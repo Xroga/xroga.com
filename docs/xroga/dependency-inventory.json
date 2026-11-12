@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "8ceecb77f9a3c089cac4303793d6b84aa75f73b3",
+  "source_sha": "73a7dd59a46f84bd6795a5f8f3ee66eace308080",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -17196,7 +17196,7 @@
     },
     {
       "path": "backend/src/ai/responsePresentation.ts",
-      "sha256": "53b0f2a5014bb4e35bf535e1b5a3ec5c94f6eaf09f411da450418aa4cd08e740"
+      "sha256": "e543d6fda12abd26617271c716e4200836aa1b948e46d313d158c8ac75f1d737"
     },
     {
       "path": "backend/src/ai/router.ts",
@@ -17436,7 +17436,7 @@
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "sha256": "58e3fa0ea9ec46ed2aa0be0c7aa6ca0777c213059c12f3cd6ecf04a6a2ab6e29"
+      "sha256": "47fab9492ea23277010df4f4babf7d27aa5588606f762b0ace3c2eaa843f1acc"
     },
     {
       "path": "backend/src/ai/usageAccounting.ts",
@@ -33011,14 +33011,7 @@
     },
     {
       "path": "backend/src/ai/responsePresentation.ts",
-      "line": 164,
-      "scope": "FUNCTION_LOCAL",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "backend/src/ai/responsePresentation.ts",
-      "line": 169,
+      "line": 165,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -33032,14 +33025,14 @@
     },
     {
       "path": "backend/src/ai/responsePresentation.ts",
-      "line": 183,
+      "line": 171,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/responsePresentation.ts",
-      "line": 186,
+      "line": 184,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -33047,6 +33040,13 @@
     {
       "path": "backend/src/ai/responsePresentation.ts",
       "line": 187,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/responsePresentation.ts",
+      "line": 188,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -33452,63 +33452,63 @@
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "line": 132,
+      "line": 162,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "line": 154,
+      "line": 184,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "line": 238,
+      "line": 268,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "line": 255,
+      "line": 285,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "line": 298,
+      "line": 328,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "line": 311,
+      "line": 341,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "line": 1147,
+      "line": 1177,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "line": 1255,
+      "line": 1285,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "line": 1546,
+      "line": 1577,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

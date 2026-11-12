@@ -654,7 +654,8 @@
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "sha256": "58e3fa0ea9ec46ed2aa0be0c7aa6ca0777c213059c12f3cd6ecf04a6a2ab6e29",
+      "sha256": "47fab9492ea23277010df4f4babf7d27aa5588606f762b0ace3c2eaa843f1acc",
+      "beforeInlineCalculatorRoutingSha256": "58e3fa0ea9ec46ed2aa0be0c7aa6ca0777c213059c12f3cd6ecf04a6a2ab6e29",
       "beforePlannerCompletionDiagnosticsSha256": "6ca81b0c9234195e6159d1e03735a21ce50d50cf1e8f71b53cb62199bf95cb26",
       "beforeCurrentMetadataReconciliation": {
         "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
