@@ -28,7 +28,7 @@ const TOOL = 'SLACK_DELETE_MESSAGE';
 type Mode = 'success' | 'failure' | 'timeout' | 'empty' | 'input_required' | 'incomplete' | 'malformed';
 
 /** Intercepts actual adapter calls, not a replacement runtime. Never forwards a request. */
-function providerStub(t: TestContext, mode: Mode = 'success', connected = false, slug = TOOL,events?:{refuseAccount?:boolean;executeAccountSent?:boolean[];onSearch?:()=>void;onAudit?:()=>void;sessionOwner?:()=>string;fixture?:ReturnType<typeof nativeReleaseFixture>}) {
+function providerStub(t: TestContext, mode: Mode = 'success', connected = false, slug = TOOL,events?:{executeStatus?:{status:number;message:string};refuseAccount?:boolean;executeAccountSent?:boolean[];onSearch?:()=>void;onAudit?:()=>void;sessionOwner?:()=>string;fixture?:ReturnType<typeof nativeReleaseFixture>}) {
   const previous = new Map(['COMPOSIO_API_KEY','SUPABASE_URL','SUPABASE_SERVICE_ROLE_KEY','SUPABASE_JWT_SECRET'].map(key=>[key,process.env[key]]));
   process.env.COMPOSIO_API_KEY = 'golden-test-canary-not-a-real-key';
   process.env.SUPABASE_URL='http://127.0.0.1:54321';process.env.SUPABASE_SERVICE_ROLE_KEY='synthetic-offline-service-role';delete process.env.SUPABASE_JWT_SECRET;
@@ -56,6 +56,7 @@ function providerStub(t: TestContext, mode: Mode = 'success', connected = false,
     const response=(data:unknown,status=200)=>new Response(JSON.stringify(data),{status,headers:{'Content-Type':'application/json'}});
     if(path.endsWith('/execute')) {
       const sent=JSON.parse(String(init?.body));
+      if(events?.executeStatus)return response({error:{message:events.executeStatus.message,slug:'ToolRouterV2_Fixture',code:1}},events.executeStatus.status);
       if(events?.refuseAccount){
         // A project without multi-account selection: Composio refuses the field before anything runs.
         events.executeAccountSent?.push(sent.account!==undefined);
@@ -266,4 +267,34 @@ test('GJ a project without multi-account selection: the approved account is sent
   assert.equal(second.status,'success');
   // The project is remembered as not offering account selection, so the refused field is not sent again.
   assert.deepEqual(sentLog,[true,false,false]);
+});
+
+test('GJ a used permit cannot be replayed after a successful write (no duplicate effect on retry or reconnect)',async t=>{
+  const paths=providerStub(t,'success',true),plan=preparedPlan(),context=createTenantContext({userId:OWNER,via:'remote_getuser'}),scope=businessActionAuthorityScope(plan);
+  const claim={id:'fixture-replay-claim',userId:OWNER,scopeDigest:preparedActionDigest(scope),expiresAt:scope.expiresAt,claimedAt:new Date().toISOString()};
+  let kept: Parameters<typeof executePreparedBusinessAction>[0]['authorityPermit'];
+  const first=await executeAuthorizedAction({context,scope,claim,revalidateBeforeEffect:async()=>claim},async authorityPermit=>{
+    kept=authorityPermit;
+    return executePreparedBusinessAction({userId:OWNER,plan,authorization:{explicitUserAuthorization:true,confirmedHighRisk:true},authorityPermit});
+  });
+  assert.equal(first.status,'success');
+  assert.equal(paths.filter(path=>path.endsWith('/execute')).length,1);
+  // A client that lost the response and retries with the permit it still holds is refused before any provider call.
+  await assert.rejects(executePreparedBusinessAction({userId:OWNER,plan,authorization:{explicitUserAuthorization:true,confirmedHighRisk:true},authorityPermit:kept}),code('AUTHORITY_ALREADY_USED_OR_MISSING'));
+  assert.equal(paths.filter(path=>path.endsWith('/execute')).length,1,'the write happened once');
+});
+
+test('GJ a provider 5xx on the write is reported and the write is attempted once, never silently repeated',async t=>{
+  const paths=providerStub(t,'success',true,TOOL,{executeStatus:{status:503,message:'Provider unavailable'}});
+  resetComposioAccountSelectionMemory();
+  await assert.rejects(executeFixture());
+  assert.equal(paths.filter(path=>path.endsWith('/execute')).length,1);
+});
+
+test('GJ only the multi-account refusal is answered with a second call; any other 400 is reported after one attempt',async t=>{
+  const paths=providerStub(t,'success',true,TOOL,{executeStatus:{status:400,message:'Invalid channel id'}});
+  resetComposioAccountSelectionMemory();
+  t.after(()=>resetComposioAccountSelectionMemory());
+  await assert.rejects(executeFixture());
+  assert.equal(paths.filter(path=>path.endsWith('/execute')).length,1);
 });

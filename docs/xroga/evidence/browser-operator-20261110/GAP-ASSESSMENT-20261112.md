@@ -79,6 +79,16 @@ Findings from getting there: the product refuses localhost pages by policy (corr
 waits for an Allow press (the harness pressed Allow twice, only for this task); runs left waiting on approval count against the active-run limit of 4
 (`BROWSER_RUN_LIMIT`), which blocked one attempt until the four stale test rows of the throwaway account were marked failed.
 
+### 3d. Connected-app write path, fixture harness (backend golden journeys, fake Composio origin, no real account)
+
+28 journeys pass (3 new): a permit already used for a successful write is refused before any provider call, so a client that lost the response and retries
+cannot write twice (execute count stays 1); a provider 5xx on the write is reported and attempted once; and only the multi-account refusal is answered with a
+second call, any other 400 is reported after one attempt. Already covered before: tenant and cross-account denial, account changed or disconnected, forged
+permit, provider failure/timeout/input_required/malformed never recorded as success, redacted audit rows, credential canaries stopped before egress.
+NOT covered here: independent readback of the changed data (the agent's job; the business-records playbook requires it, and no real run has proven it), a real
+disposable account, durable claim races (need an isolated database), and reconnect to a different account in the middle of a retry beyond the account-changed check.
+Status: VERIFIED IN CONTROLLED ENVIRONMENT for the items above; the real Sheets write remains BLOCKED BY PERMISSION (needs one disposable Google account connected to the staging Xroga project).
+
 ## 4. NOT IMPLEMENTED or BLOCKED, with the reason
 
 Canvas pixel interaction (BLOCKED by the single-model rule: the only allowed model, deepseek_v4_1_flash_1017, has no vision, so it cannot see a canvas;
