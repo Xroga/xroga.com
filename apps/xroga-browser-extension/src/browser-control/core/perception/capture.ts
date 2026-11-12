@@ -72,11 +72,16 @@ export interface Capture {
   ms: number;
 }
 
-/** Domains the layer enables once per session and never disables. */
+/**
+ * The DOM domain is enabled once per session. The accessibility domain is deliberately not: enabling it makes
+ * Chrome keep a live accessibility tree for the page for as long as the debugger is attached, which slows a
+ * large page (and the whole computer) even when nothing is being read. getFullAXTree and getPartialAXTree build
+ * a tree on demand, only for the call that asks.
+ */
 export async function enableDomains(cdp: CdpPort, sessionId: SessionId, enabled: Set<string>): Promise<void> {
   const key = sessionId ?? '';
   if (enabled.has(key)) return;
-  await Promise.all([cdp.send(sessionId, 'DOM.enable'), cdp.send(sessionId, 'Accessibility.enable')]);
+  await cdp.send(sessionId, 'DOM.enable');
   enabled.add(key);
 }
 

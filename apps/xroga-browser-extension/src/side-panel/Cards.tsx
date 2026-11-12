@@ -325,6 +325,23 @@ export function Cards({ prompts, answer }: { prompts: OpenPrompt[]; answer: (id:
                 </Buttons>
               </Frame>
             );
+          case 'plugin-act':
+            return (
+              <Frame key={p.id} title="Approve a change in a connected app" tone="agent">
+                <Line>{plain(p.data.summary)}</Line>
+                <Line muted>Account: {plain(p.data.account)}</Line>
+                <Line muted>This will change something in the app. It runs only if you allow it, exactly as shown.</Line>
+                {p.data.argumentsPreview ? (
+                  <pre className="max-h-36 overflow-auto whitespace-pre-wrap break-words rounded-md bg-nb-surface p-2 text-xs">
+                    {plain(p.data.argumentsPreview)}
+                  </pre>
+                ) : null}
+                <Buttons>
+                  <button type="button" className={primary} onClick={() => reply('approve')}>Allow this change</button>
+                  <button type="button" className={secondary} onClick={() => reply('deny')}>Deny</button>
+                </Buttons>
+              </Frame>
+            );
           case 'save-file':
             return <SaveFileCard key={p.id} prompt={p} answer={reply} />;
           default:

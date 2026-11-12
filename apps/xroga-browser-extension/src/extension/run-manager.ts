@@ -6,8 +6,13 @@ import type { HostPort } from '@src/agent/ports';
 import type { Session, UserStepDetails } from '@src/browser-control';
 import { agentSystemPrompt } from '@src/agent/prompt';
 import { toolsForRun } from '@src/agent/tools';
+import { DELEGATE_TOOL, parseJobs, runSubagents } from '@src/agent/subagents';
+import { ParallelWorkers, PARALLEL_TOOLS, type WorkerJob } from './parallel-workers';
+import { BATCH_TOOL } from '@src/agent/batch-plan';
 import { startingTools } from '@src/agent/tool-selection';
-import { skillsSection } from '@src/agent/skills';
+import { skillsFor, skillsSection } from '@src/agent/skills';
+import { routeFor } from '@src/agent/router';
+import { HINTS_KEY, hintsForRun, learnFromRun } from './hints-store';
 import { userText } from '@src/agent/display';
 import { toDisplay } from '@src/agent/display';
 import {
@@ -57,13 +62,14 @@ import { createAgentSession, layerPort } from './agent-session';
 import { TabScope } from './bindings';
 import { PageBorder, injectBorder, listenForBorder, showActionPoint, toolLabel } from './border';
 import { RunTimings } from '@src/agent/timing';
-import { recordPerf } from './perf';
+import { PERF_KEY, recordPerf } from './perf';
 import { addPromptRoute, controllerReady } from './layer';
 import { Permissions } from './permissions';
 import { PromptBroker } from './prompt-broker';
 import { notifyFinished, notifyNeeds } from './notify';
 import { thumbnail } from './thumbnail';
 import { isNumberedCopy, saveText } from './downloads';
+import { CONFIRM_DOWNLOAD_TOOL, readQuery, waitForDownload, type DownloadLike } from '../agent/confirm-download';
 import { checkSave } from '@src/agent/save-file';
 import { conversationMarkdown, exportName } from '@src/agent/export';
 import { isBlockedSite, quote } from '@src/browser-control';
@@ -82,7 +88,7 @@ import { endOf } from './analytics-payload';
 import { onWorkspaceDisconnect, postWorkspace, workspacePaired, workspaceRequest } from '@src/xroga/bridge';
 import { ACTIVITY_LIMIT, browserActivity } from '@src/xroga/activity';
 import { startXrogaModelRun } from '@src/xroga/model';
-import { PLUGIN_TOOLS, runPluginTool } from '@src/xroga/plugins';
+import { nativeAppCall, nativeAppTool, runPluginTool, PLUGIN_TOOLS, type AppToolInfo } from '@src/xroga/plugins';
 import { SEARCH_HOME, browserTarget } from '@src/xroga/navigation';
 import { XROGA_PRODUCT } from '@src/xroga/product';
 
@@ -100,6 +106,9 @@ interface ActiveRun {
   /** Set once the loop exists: `/compact` asks it for compaction at the next turn boundary. */
   loop?: AgentLoop;
 }
+
+/** Where the parallel-worker job table is kept, so it survives the extension worker being stopped. */
+const WORKER_JOBS_KEY = 'xroga_parallel_jobs_v1';
 
 export class RunManager {
   readonly journal = new Journal();
@@ -129,8 +138,32 @@ export class RunManager {
   #stayOnTab = new Set<string>();
   #pauseRequested = new Set<string>();
   #settling = new Set<string>();
+  /** Worker conversations this session opened; read before their ids reach the job table. */
+  #workerConversations = new Set<string>();
+  readonly #workers: ParallelWorkers;
 
   constructor() {
+    this.#workers = new ParallelWorkers({
+      now: () => Date.now(),
+      newId: () => crypto.randomUUID(),
+      load: async () => ((await chrome.storage.local.get(WORKER_JOBS_KEY))[WORKER_JOBS_KEY] as Record<string, WorkerJob> | undefined) ?? {},
+      save: jobs => chrome.storage.local.set({ [WORKER_JOBS_KEY]: jobs }),
+      open: (parentId, task) => this.#openWorker(parentId, task),
+      defaultUrl: SEARCH_HOME,
+      stop: conversationId => this.#stop(conversationId),
+      closeWindow: windowId => chrome.windows.remove(windowId),
+      refuse: url => {
+        if (!isStartUrl(url) || (XROGA_PRODUCT && !browserTarget(url))) return 'the start page must be an https page.';
+        return isBlockedSite(url, this.permissions.blockedSites()) ? 'that site is blocked in Settings.' : null;
+      },
+      wait: (ms, signal) =>
+        new Promise<void>(resolve => {
+          const timer = setTimeout(resolve, ms);
+          signal?.addEventListener('abort', () => { clearTimeout(timer); resolve(); }, { once: true });
+        }),
+    });
+    // A worker window closed by the person fails only that worker.
+    chrome.windows.onRemoved.addListener(windowId => void this.#workers.windowClosed(windowId).catch(() => undefined));
     if (XROGA_PRODUCT)
       onWorkspaceDisconnect(() => {
         for (const id of this.#runs.keys()) {
@@ -143,6 +176,12 @@ export class RunManager {
       changed: (conversationId, added, removed) => void this.#scopeChanged(conversationId, added, removed),
     });
     this.border = new PageBorder({
+      visible: async tabId => {
+        const tab = await chrome.tabs.get(tabId).catch(() => undefined);
+        if (!tab?.active) return false;
+        const win = await chrome.windows.get(tab.windowId).catch(() => undefined);
+        return win?.state !== 'minimized';
+      },
       conversationOf: tabId => this.scope.conversationOf(tabId),
       tabsOf: conversationId => this.scope.tabsOf(conversationId),
       scopedTabs: () => this.scope.scopedTabs(),
@@ -226,6 +265,8 @@ export class RunManager {
    */
   #stop(conversationId: string): void {
     this.#runs.get(conversationId)?.controller.abort();
+    // Stopping a parent stops the workers it started; a worker that already finished keeps its result.
+    void this.#workers.cancelFor(conversationId, 'Stopped by the parent task.').catch(() => undefined);
     this.broker.withdrawAll(conversationId);
     const returned = this.#queues.get(conversationId)?.splice(0) ?? [];
     this.#emitQueue(conversationId, returned);
@@ -420,7 +461,7 @@ export class RunManager {
       if (step) postWorkspace({ type: 'activity', runId, ...step });
     } else if (body.type === 'tool_execution_start') {
       postWorkspace({ type: 'activity', runId, tool: body.row.tool, status: body.row.status });
-    } else if (body.type === 'prompt_open' && (body.prompt.kind === 'write-card' || body.prompt.kind === 'plugin-read')) {
+    } else if (body.type === 'prompt_open' && (body.prompt.kind === 'write-card' || body.prompt.kind === 'plugin-read' || body.prompt.kind === 'plugin-act')) {
       postWorkspace({ type: 'activity', runId, status: 'approval-required' });
     } else if (body.type === 'run_status') {
       postWorkspace({ type: 'activity', runId, status: body.status });
@@ -882,6 +923,10 @@ export class RunManager {
         WHATS_NEW_KEY,
         RATING_KEY,
         RATING_ANSWER_KEY,
+        // Xroga's own local stores: workflow hints and run timings are the user's data too.
+        HINTS_KEY,
+        PERF_KEY,
+        WORKER_JOBS_KEY,
         ...OLD_KEYS,
       ]);
     });
@@ -1182,8 +1227,24 @@ export class RunManager {
     call: ToolCallRequest,
     signal: AbortSignal,
   ): Promise<{ text: string; isError: boolean }> {
-    if (call.toolName !== 'save_file') return { text: `error: ${call.toolName} is not available.`, isError: true };
     const args = (call.input ?? {}) as Record<string, unknown>;
+    if (call.toolName === 'confirm_download') {
+      // Reads Chrome's download list, so it needs the same permission saving does; only a user's click can allow it.
+      if (!(await chrome.permissions.contains({ permissions: ['downloads'] }).catch(() => false))) {
+        return {
+          text: "error DOWNLOADS_NOT_ALLOWED\nChecking a download needs Chrome's downloads permission, which the user has not allowed. Say the download started and could not be confirmed.",
+          isError: true,
+        };
+      }
+      const verdict = await waitForDownload(
+        async () => (await chrome.downloads.search({ orderBy: ['-startTime'], limit: 25 })) as DownloadLike[],
+        readQuery(args),
+        undefined,
+        signal,
+      );
+      return { text: verdict.line, isError: verdict.isError };
+    }
+    if (call.toolName !== 'save_file') return { text: `error: ${call.toolName} is not available.`, isError: true };
     const check = checkSave(args);
     if (!check.ok) return { text: `error INVALID_ARGUMENT (nothing saved)\n${check.reason}`, isError: true };
     const content = String(args.content);
@@ -1527,9 +1588,12 @@ export class RunManager {
     starting.catch(() => undefined);
     const controller = new AbortController();
     let deadline: ReturnType<typeof setTimeout> | undefined;
+    let renewDeadline: ((remainingMs: number) => void) | undefined;
     const resumed = restore?.canonicalBrowserRunId ? restore : undefined;
     const runId = resumed?.runId ?? newId();
     let loopRef: AgentLoop | undefined;
+    let usedHintIds: string[] = [];
+    let askedRequest = '';
     const done = (async () => {
       const conversation = (await getConversation(conversationId))!;
       const now = new Date().toISOString();
@@ -1590,7 +1654,20 @@ export class RunManager {
           );
           record.canonicalBrowserRunId = canonical.runId;
           await putRun(record);
-          deadline = setTimeout(() => controller.abort(), canonical.remainingMs);
+          // The wall-clock segment is renewed before it ends, by the server, while the run is alive; there is no total time limit.
+          const arm = (remaining: number): void => {
+            if (deadline) clearTimeout(deadline);
+            const renewIn = remaining - 6 * 60_000;
+            deadline = setTimeout(async () => {
+              const next = await canonical!.extend();
+              if (next.remainingMs > 8 * 60_000) arm(next.remainingMs);
+              else {
+                deadline = setTimeout(() => controller.abort(), Math.max(1_000, next.remainingMs || remaining - renewIn));
+              }
+            }, Math.max(1_000, renewIn));
+          };
+          renewDeadline = arm;
+          arm(canonical.remainingMs);
           this.#canonicalRuns.set(conversationId, canonical.runId);
           postWorkspace({ type: 'run', runId: canonical.runId });
         }
@@ -1631,20 +1708,37 @@ export class RunManager {
         this.#modes.set(conversationId, conversation.mode);
         const session = await this.#openSession(conversationId);
         record.tabs = session.tabIds();
-        const fullToolList = toolsForRun({
-          vision: model.profile.vision, localScreenshots: !!canonical,
-          agentTools: canonical?.plugins ? PLUGIN_TOOLS : undefined,
-        });
-        // A request that only reads starts with the small tool list; the model switches to the full one if it needs to act.
+        // A worker has neither the tools that start workers nor the connected-app tools (their approvals live in the panel).
+        const isWorker = this.#workerConversations.has(conversationId) || (await this.#workers.isWorker(conversationId));
+        if (isWorker) this.#workerConversations.add(conversationId);
         const askedBranch = await activeBranch(conversationId).catch(() => []);
         const askedEntry = askedBranch.findLast(e => e.type === 'message' && e.message.role === 'user' && !e.appOwned);
+        // Click's `at` (a point inside a known element) is offered only to editor-like tasks, where a canvas hides its objects.
+        // The router decides what this run is offered: worker tools only when the request has independent parts (or workers already exist).
+        const decision = routeFor(askedEntry?.type === 'message' ? userText(askedEntry) : '', { hasWorkers: await this.#workers.hasWorkers(conversationId).catch(() => false) });
+        const pointAt = skillsFor(askedEntry?.type === 'message' ? userText(askedEntry) : '').some(k => k.id === 'design-editor' || k.id === 'video-editor');
+        const fullToolList = toolsForRun({
+          pointAt,
+          vision: model.profile.vision, localScreenshots: !!canonical,
+          agentTools: isWorker
+            ? [DELEGATE_TOOL, BATCH_TOOL, CONFIRM_DOWNLOAD_TOOL]
+            : [DELEGATE_TOOL, BATCH_TOOL, CONFIRM_DOWNLOAD_TOOL, ...(canonical?.plugins ? PLUGIN_TOOLS : []), ...(decision.offerWorkers ? PARALLEL_TOOLS : [])],
+        });
+        // A request that only reads starts with the small tool list; the model switches to the full one if it needs to act.
         const { tools, full: fullTools } = startingTools(
           fullToolList,
           askedEntry?.type === 'message' ? userText(askedEntry) : '',
         );
         // Playbooks that fit the request, added once to the system prompt (the same text every turn, so the prefix stays cached).
-        const playbooks = skillsSection(askedEntry?.type === 'message' ? userText(askedEntry) : '');
+        const askedText = askedEntry?.type === 'message' ? userText(askedEntry) : '';
+        // Verified guidance from this owner's earlier runs on this site: text for the model, never an approval.
+        const hints = await hintsForRun(session.tabIds(), askedText).catch(() => ({ text: '', ids: [] as string[] }));
+        usedHintIds = hints.ids;
+        askedRequest = askedText;
+        const playbooks = [skillsSection(askedText), hints.text].filter(Boolean).join('\n\n');
         const timings = new RunTimings();
+        // The connected-app tools this run's searches found, by name, so a call to one reaches the guarded routes.
+        const appTools = new Map<string, AppToolInfo>();
         const loop = new AgentLoop({
           timings,
           conversationId,
@@ -1669,15 +1763,54 @@ export class RunManager {
           signal: controller.signal,
           emit: (event, entry) => this.emit(conversationId, event, entry),
           turnCap: canonical?.remainingTurns ?? settings.turnCap,
+          extendTurns: canonical
+            ? async () => {
+                const next = await canonical!.extend();
+                if (next.turns <= 0) return 0;
+                // The wall-clock segment moves with the turn segment.
+                if (next.remainingMs > 0) renewDeadline?.(next.remainingMs);
+                return next.turns;
+              }
+            : undefined,
           attachmentPreviewChars: canonical ? 8_000 : undefined,
           thumbnail,
           localScreenshots: !!canonical,
-          agentTool: (call, signal) => {
-            if (canonical?.plugins && (call.toolName === 'plugin_search' || call.toolName === 'plugin_read')) {
-              return runPluginTool(call.toolName, canonical.runId, call.input, signal,
-                approval => this.broker.open(conversationId, 'plugin-read', approval, signal),
-                (text, source) => session.wrap(text, { connectedApp: source }),
-              );
+          agentTool: async (call, signal) => {
+            if (call.toolName === 'start_parallel_tasks' && !isWorker) return this.#workers.start(conversationId, call.input);
+            if (call.toolName === 'parallel_task_status' && !isWorker) {
+              return this.#workers.status(conversationId, (call.input as { waitSeconds?: unknown } | null)?.waitSeconds, signal);
+            }
+            if (call.toolName === 'delegate') {
+              // Read-only helpers, each in its own tab, run together; they never act, so nothing here needs an approval.
+              const { jobs, problems } = parseJobs(call.input);
+              if (!jobs.length) return { text: `error INVALID_ARGUMENT (nothing started)\n${problems.join('\n')}`, isError: true };
+              return runSubagents({ layer: layerPort(session, this.border), signal }, jobs, problems);
+            }
+            const wrapApp = (text: string, source: string) => session.wrap(text, { connectedApp: source });
+            const ask = (change: boolean) => (approval: Parameters<Parameters<typeof runPluginTool>[4]>[0]) =>
+              this.broker.open(conversationId, change ? 'plugin-act' : 'plugin-read', approval, signal);
+            if (canonical?.plugins) {
+              // A tool a search found, called by its own name: the same guarded read or change route as plugin_read / plugin_act.
+              const app = appTools.get(call.toolName);
+              if (app) {
+                const mapped = nativeAppCall(app, call.input);
+                return runPluginTool(mapped.name, canonical.runId, mapped.body, signal, ask(mapped.name === 'plugin_act'), wrapApp);
+              }
+              if (call.toolName === 'plugin_search' || call.toolName === 'plugin_read' ||
+                  call.toolName === 'plugin_action_search' || call.toolName === 'plugin_act') {
+                const result = await runPluginTool(call.toolName, canonical.runId, call.input, signal, ask(call.toolName === 'plugin_act'), wrapApp);
+                const { appTools: found, ...rest } = result;
+                if (!found?.length) return rest;
+                // The tools the search found become callable by their own names, with their real parameter schemas.
+                const taken = new Set([...fullToolList.map(t => t.name), ...PLUGIN_TOOLS.map(t => t.name)]);
+                const registered = found.flatMap(info => {
+                  const tool = nativeAppTool(info, taken);
+                  if (!tool) return [];
+                  appTools.set(info.slug, info);
+                  return [tool];
+                });
+                return registered.length ? { ...rest, registerTools: registered } : rest;
+              }
             }
             return this.#agentTool(conversationId, call, signal);
           },
@@ -1703,11 +1836,14 @@ export class RunManager {
         record.debt = loop.debt;
         record.guards = loop.guards.state;
         const pausedByUser = this.#pauseRequested.has(conversationId) && end.status !== 'done';
-        const paused = pausedByUser || (canonical?.requestInterrupted && end.status === 'failed');
+        const outOfAllowance = !!canonical?.allowanceExhausted && end.status !== 'done';
+        const paused = pausedByUser || outOfAllowance || (canonical?.requestInterrupted && end.status === 'failed');
         const reason = paused
           ? pausedByUser
             ? 'Paused. Resume to continue from the saved checkpoint.'
-            : 'Xroga paused after a model request could not be verified. Resume to continue from the saved state.'
+            : outOfAllowance
+              ? 'Your Xroga usage allowance is used up for now. Your progress is saved. Resume when your allowance renews or you upgrade; nothing is repeated.'
+              : 'Xroga paused after a model request could not be verified. Resume to continue from the saved state.'
           : end.reason;
         if (end.status === 'failed' && reason) await this.#notice(conversationId, reason, paused ? 'info' : 'error');
         if (end.status === 'stopped' && !paused && !this.#connectionLost.has(conversationId)) {
@@ -1748,9 +1884,9 @@ export class RunManager {
         if (canonical) {
           const finishedRunId = canonical.runId;
           const branch = await activeBranch(conversationId).catch(() => []);
-          const actions = [...(record.canonicalBrowserActions ?? []), ...completedBrowserTools(runId, branch)].slice(
+          const actions = [...(record.canonicalBrowserActions ?? []), ...(loopRef?.preActions ?? []), ...completedBrowserTools(runId, branch)].slice(
             0,
-            48,
+            500,
           );
           let status: 'cancelled' | 'completed' | 'failed' = controller.signal.aborted
             ? 'cancelled'
@@ -1764,6 +1900,15 @@ export class RunManager {
               ? assistant.message.parts.flatMap(part => (part.type === 'text' ? [part.text] : [])).join('\n')
               : undefined);
           if (status === 'completed' && !result?.trim()) status = 'failed';
+          if (status !== 'cancelled') {
+            void learnFromRun({
+              conversationId,
+              tabIds: record.tabs ?? [],
+              request: askedRequest,
+              completed: status === 'completed',
+              usedHintIds,
+            }).catch(() => undefined);
+          }
           if (
             end?.status === 'capped' ||
             end?.status === 'awaiting_user' ||
@@ -1777,6 +1922,7 @@ export class RunManager {
               status,
               actions,
               result: status === 'completed' ? result?.slice(0, 12_000) : undefined,
+              ...(end?.direct ? { direct: true as const } : {}),
               localStatus: record.status,
             };
             await this.#setStatus(record, 'interrupted', 'Syncing the saved result with Workspace.');
@@ -1787,6 +1933,22 @@ export class RunManager {
           this.#canonicalRuns.delete(conversationId);
         }
         await this.#closeSession(conversationId).catch(() => undefined);
+        // A worker compact result goes to its parent; a parent that ended stops the workers it still has.
+        if (this.#workerConversations.has(conversationId)) {
+          const branch = await activeBranch(conversationId).catch(() => []);
+          const assistant = branch.findLast(entry => entry.type === 'message' && entry.message.role === 'assistant');
+          const text = assistant?.type === 'message' ? assistant.message.parts.flatMap(part => (part.type === 'text' ? [part.text] : [])).join('\n') : undefined;
+          await this.#workers
+            .ended(conversationId, {
+              status: record.status === 'interrupted' ? 'failed' : (end?.status ?? record.status),
+              outcome: end?.outcome,
+              result: end?.summary ?? text,
+              reason: record.reason ?? end?.reason,
+            })
+            .catch(() => undefined);
+          this.#workerConversations.delete(conversationId);
+        }
+        await this.#workers.cancelFor(conversationId, 'The parent task ended.').catch(() => undefined);
         runEnded(record, end ?? {});
         // A run that finished well counts towards the card that asks for a store rating.
         if (endOf(record.status, record.outcome) === 'success') {
@@ -1806,6 +1968,46 @@ export class RunManager {
     this.#runs.set(conversationId, { runId, controller, done });
     void this.#watchdog();
     void done.then(() => this.#watchdog());
+  }
+
+  /**
+   * Opens one worker: a window on its start page, a conversation of its own that owns that tab, the assignment as its first message, and
+   * a run of its own (a canonical run in the product, with its own turn counter and reservations). It has the parent's mode and live model.
+   */
+  async #openWorker(parentId: string, task: { instruction: string; url: string }): Promise<{ conversationId: string; windowId?: number }> {
+    const created = await chrome.windows.create({ url: task.url, focused: false, type: 'normal' });
+    const tabId = created?.tabs?.[0]?.id;
+    if (!created || created.id === undefined || tabId === undefined) {
+      if (created?.id !== undefined) await chrome.windows.remove(created.id).catch(() => undefined);
+      throw new Error('Chrome did not open a worker window.');
+    }
+    const win = created as chrome.windows.Window & { id: number };
+    try {
+      // The run reads the tab address to admit the task, so wait until the page has one.
+      for (let i = 0; i < 40; i++) {
+        const tab = await chrome.tabs.get(tabId);
+        if (tab.url && /^https?:/i.test(tab.url) && (!XROGA_PRODUCT || browserTarget(tab.url))) break;
+        if (i === 39) throw new Error('The start page did not open.');
+        await new Promise(resolve => setTimeout(resolve, 250));
+      }
+      const parent = await getConversation(parentId);
+      const mode = this.#modes.get(parentId) ?? parent?.mode ?? 'ask';
+      const conversation = await createConversation({ mode, tabs: [tabId] });
+      this.#workerConversations.add(conversation.id);
+      const live = await getLive(parentId);
+      if (live) await setLive(conversation.id, live);
+      await this.scope.add(conversation.id, tabId, 'start', { move: true });
+      const text = task.instruction;
+      const entry = await appendEntry(conversation.id, { type: 'message', message: { role: 'user', parts: [{ type: 'text', text }] } });
+      const updated = await updateConversation(conversation.id, { title: titleFrom('Worker: ' + text) });
+      if (updated) this.emit(conversation.id, { type: 'conversation', conversation: updated });
+      this.emit(conversation.id, { type: 'message_end', entry: { kind: 'user', id: entry.id, text, at: entry.at } });
+      this.#launch(conversation.id, undefined, live);
+      return { conversationId: conversation.id, windowId: win.id };
+    } catch (error) {
+      await chrome.windows.remove(win.id).catch(() => undefined);
+      throw error;
+    }
   }
 
   async #sendQueued(conversationId: string): Promise<void> {

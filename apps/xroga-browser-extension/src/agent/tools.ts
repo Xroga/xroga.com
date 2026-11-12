@@ -47,6 +47,8 @@ const HIDDEN: Record<string, string[]> = {
   ask_user: ['timeoutMs'],
   // The agent names attached files by id; the wrapper turns them into bytes.
   upload: ['paths', 'attachments'],
+  // A point inside a known element is offered only to runs that need it (toolsForRun with pointAt), so the base catalogue stays small.
+  click: ['at'],
 };
 
 /** What the model gives `upload` in place of paths or bytes: the ids of files the user attached. */
@@ -97,6 +99,18 @@ function withoutLeafDescriptions(schema: unknown): unknown {
   return { ...s, properties };
 }
 
+/**
+ * The postconditions with a nested query (exists, count) are shown to the model as plain objects: their shape is in one line of the system prompt,
+ * and the layer checks every call against its own full schema, so the catalogue does not pay for the nested shape in every action tool.
+ */
+function looseNested(schema: unknown): unknown {
+  const s = schema as { properties?: Record<string, unknown> };
+  if (!s?.properties) return schema;
+  const properties = { ...s.properties };
+  for (const name of ['exists', 'count']) if (name in properties) properties[name] = { type: 'object' };
+  return { ...s, properties };
+}
+
 export function compactSchema(schema: unknown, tool = ''): unknown {
   const walk = (node: unknown, key = ''): unknown => {
     if (Array.isArray(node)) return node.map(n => walk(n));
@@ -116,7 +130,7 @@ export function compactSchema(schema: unknown, tool = ''): unknown {
         const props: Record<string, unknown> = {};
         for (const [name, value] of Object.entries(v as Record<string, unknown>)) {
           if (name === 'timeoutMs' && tool !== 'wait') continue;
-          props[name] = name === 'expect' ? withoutLeafDescriptions(walk(value, name)) : walk(value, name);
+          props[name] = name === 'expect' ? looseNested(withoutLeafDescriptions(walk(value, name))) : walk(value, name);
         }
         out[k] = props;
         continue;
@@ -174,13 +188,22 @@ export function toolsForRun(options: {
   vision: boolean;
   localScreenshots?: boolean;
   agentTools?: AgentTool[];
+  /** Offer click's `at` (fractions inside an element's box), for canvases and editors whose layout the app tells the model. */
+  pointAt?: boolean;
 }): AgentTool[] {
+  const withAt = (t: AgentTool): AgentTool => {
+    if (!options.pointAt || t.name !== 'click') return t;
+    const spec = TOOL_SPECS.find(s => s.name === 'click');
+    if (!spec) return t;
+    return { ...t, parameters: compactSchema(schemaWithout(argsJsonSchema(spec), [...HIDDEN['*']]), 'click') as AgentTool['parameters'] };
+  };
   return allTools(options.agentTools)
     .filter(
       t =>
         (t.required || !options.disabled?.includes(t.name)) &&
         (t.name !== 'screenshot' || options.vision || options.localScreenshots),
     )
+    .map(withAt)
     .map(t =>
       t.name === 'screenshot' && options.localScreenshots && !options.vision
         ? {
@@ -196,9 +219,14 @@ export function toolsForRun(options: {
 export function kindOf(tool: string, args: Record<string, unknown>): ToolKind {
   if (tool === 'done' || tool === 'ask_user') return 'control';
   if (tool === 'wait') return 'wait';
-  if (tool === 'enable_actions') return 'read';
+  if (tool === 'enable_actions' || tool === 'delegate') return 'read';
+  // Starting workers opens windows and runs: it is fenced like other effects. Reading their status is a read.
+  if (tool === 'parallel_task_status') return 'read';
+  // A batch may contain writes: it is fenced like one, and its steps are checked and recorded one by one.
+  if (tool === 'batch') return 'mutate';
+  if (tool === 'start_parallel_tasks') return 'mutate';
   if (tool === 'save_file') return 'state';
-  if (tool === 'read_attachment' || tool === 'plugin_search') return 'read';
+  if (tool === 'read_attachment' || tool === 'confirm_download' || tool === 'plugin_search' || tool === 'plugin_action_search') return 'read';
   // An approved connected read can transmit private arguments. Fence it like a dispatched effect on recovery.
   if (tool === 'plugin_read') return 'mutate';
   if (tool === 'tabs') return args.action === 'list' ? 'read' : 'mutate';

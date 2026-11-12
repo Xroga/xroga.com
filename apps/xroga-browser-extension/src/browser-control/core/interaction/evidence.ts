@@ -11,6 +11,8 @@ import { focusedElement } from './preflight';
 import { isSensitiveState } from '../perception/masking';
 import { dialogDetail, quote } from '../text';
 import { siteOf } from '../site';
+import { observeTab } from '../tools/observe';
+import { countMatching, describeQuery } from './count';
 
 /** Settle: poll 100 ms; cap 1.5 s; 500 ms with no evidence and no request. */
 const POLL_MS = 100;
@@ -21,8 +23,13 @@ const NAVIGATION_READY_MS = 5_000;
  * comes first, and at NAVIGATION_READY_MS. */
 const READY_QUIET_MS = 250;
 const READY_POLL_MS = 50;
-/** How long the block is watched after settle when the only evidence is its own mutations. */
-const VOLATILITY_MS = 400;
+/**
+ * How long the block is watched after settle when the only evidence is its own mutations. Measured in real Chrome at about 640 ms per click,
+ * 400 of it this wait, so it is 200: the block was already quiet for a poll before this starts, and a page that changes by itself at 5 Hz
+ * or faster (a clock, a spinner, a ticker) still shows a mutation inside it. A slower self-changer can now be attributed to the action; the
+ * verdict is information for the model, not a gate, and the action's own signals (value, focus, layers, requests) are checked separately.
+ */
+const VOLATILITY_MS = 200;
 /** Weak signals: mutations alone do not say the action did something. */
 const WEAK = / mutations? in /;
 
@@ -428,6 +435,21 @@ export async function checkExpectation(
   }
   if (expect.textGone !== undefined && (await probe.callGlobal<boolean>(main, 'hasText', expect.textGone))) {
     failures.push(`${quote(expect.textGone)} is still on the page`);
+  }
+  if (expect.exists !== undefined || expect.count !== undefined) {
+    // Counted on a fresh look at the whole page, since a list may be longer than the screen.
+    const observation = await observeTab(ctx, { mode: 'all', window: 'page' });
+    if (expect.exists !== undefined && countMatching(observation.tree, expect.exists) === 0) {
+      failures.push(`there is no ${describeQuery(expect.exists)} on the page`);
+    }
+    if (expect.count !== undefined) {
+      const { equals, atLeast, atMost, ...query } = expect.count;
+      const n = countMatching(observation.tree, query);
+      const what = describeQuery(query);
+      if (equals !== undefined && n !== equals) failures.push(`the page has ${n} ${what}, not ${equals}`);
+      if (atLeast !== undefined && n < atLeast) failures.push(`the page has ${n} ${what}, fewer than ${atLeast}`);
+      if (atMost !== undefined && n > atMost) failures.push(`the page has ${n} ${what}, more than ${atMost}`);
+    }
   }
   if (expect.value !== undefined || expect.checked !== undefined || expect.gone !== undefined) {
     if (!target) return { status: 'not_checked', detail: 'value, checked and gone need a target' };

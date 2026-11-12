@@ -11,6 +11,11 @@ import { addUsage, ZERO_USAGE } from '@src/store/types';
 import type { AgentEvent, ToolRow } from '@src/ui/protocol';
 import { contextChars, elideStaleObservations, toModelMessages } from './context';
 import { directNavigation, type DirectNavigation } from './direct-url';
+import { answerDirect, directRead } from './direct-read';
+import { APPS_FIRST_NOTE, APPS_FIRST_SEARCHED_NOTE, RESEARCH_FIRST_NOTE, appSearchQuery, isAppsFirstRequest, isResearchRequest, researchPlan } from './routing';
+import { runSubagents } from './subagents';
+import { challengeNote, detectChallenge } from './challenge';
+import { BATCH_TOOLS, runPlan, type Condition, type Step } from './batch-plan';
 import { progressLedger } from './progress';
 import { browserState } from './header';
 import { assistantDisplay, userDisplay, userText } from './display';
@@ -79,6 +84,8 @@ export interface LoopOptions {
   signal: AbortSignal;
   emit: (event: AgentEvent, resultEntry?: EntryOf<'message'>) => void;
   turnCap: number;
+  /** Asks for the next segment of turns when the cap is reached; resolves to the number granted, 0 when refused. */
+  extendTurns?: () => Promise<number>;
   attachmentPreviewChars?: number;
   /** The conversation's mode, for the page header; only the user changes it. */
   mode?: () => PermissionMode;
@@ -100,7 +107,7 @@ export interface LoopOptions {
   agentTool?: (
     call: ToolCallRequest,
     signal: AbortSignal,
-  ) => Promise<{ text: string; isError: boolean; result?: unknown }>;
+  ) => Promise<{ text: string; isError: boolean; result?: unknown; registerTools?: AgentTool[] }>;
 }
 
 export interface LoopEnd {
@@ -112,6 +119,8 @@ export interface LoopEnd {
   /** The provider's failure that ended the run, as its status code says. */
   providerError?: { status?: number; overflow: boolean; network?: boolean };
   summary?: string;
+  /** The run was answered from the page itself, with no model turn (Route A). */
+  direct?: true;
   usage: Usage;
   turns: number;
 }
@@ -419,6 +428,24 @@ export class AgentLoop {
    * The first request of a run: an outline of the active shared tab, if it is an ordinary web page, attached to the
    * user's message inside the boundary; and a note when the context holds refs of an earlier run.
    */
+  /**
+   * Runs the connected-app search for a request before the first model turn. Its result (already inside the untrusted-data boundary)
+   * is returned as text, and the tools it found join the tool list. Nothing is returned when the search is unavailable or fails.
+   */
+  async #searchApps(request: string): Promise<string | undefined> {
+    if (!this.options.agentTool) return undefined;
+    try {
+      const call: ToolCallRequest = { toolCallId: 'pre-search', toolName: 'plugin_search', input: { query: appSearchQuery(request) } };
+      const r = await this.options.agentTool(call, this.options.signal);
+      // Nothing found (or an error): the model searches itself, with its own wording.
+      if (r.isError || !r.registerTools?.length) return undefined;
+      this.#registerTools(r.registerTools);
+      return r.text;
+    } catch {
+      return undefined;
+    }
+  }
+
   /** Opens the site a request names, before the first model turn. A failure is told to the model, which then decides what to do. */
   async #openDirect(direct: DirectNavigation): Promise<void> {
     const intent = `Open ${direct.url}`;
@@ -434,7 +461,42 @@ export class AgentLoop {
     );
   }
 
-  async firstTurn(): Promise<void> {
+  /**
+   * Route A. Opens the site, reads its outline, and answers when the page clearly shows what was asked for. The answer is written
+   * as the reply with a notice saying no model call was made. Returns the end of the run, or whether the site was opened so the
+   * normal path does not open it twice.
+   */
+  async #readDirect(ask: ReturnType<typeof directRead> & object): Promise<{ end?: LoopEnd; opened: boolean }> {
+    const { layer, signal } = this.options;
+    const started = Date.now();
+    const nav = ask.newTab
+      ? await layer.call('tabs', { action: 'open', url: ask.url, intent: `Open ${ask.url}` }, signal)
+      : await layer.call('navigate', { url: ask.url, intent: `Open ${ask.url}` }, signal);
+    if (!nav.ok || signal.aborted) return { opened: false };
+    const tabs = await layer.tabs().catch(() => null);
+    const active = tabs?.tabs.find(t => t.tabId === tabs.activeTabId);
+    if (!active || !/^https?:/i.test(active.url)) return { opened: true };
+    const look = await layer.call('read', { tabId: active.tabId, format: 'markdown', maxChars: 8000 }, signal);
+    if (!look.ok) return { opened: true };
+    const title = look.page?.title ?? active.title ?? '';
+    const answer = answerDirect(ask, { url: look.page?.url ?? active.url, title, outline: look.text });
+    if (!answer || signal.aborted) return { opened: true };
+    this.#seen.set(active.tabId, active.url);
+    this.preActions.push('navigate', 'read');
+    await this.#noteOnce('direct', 'Answered directly from the page: this request needed no model call.');
+    const id = newId();
+    const entry = await this.writer.message(
+      { role: 'assistant', parts: [{ type: 'text', text: answer.text }] },
+      { id, meta: { model: this.options.model.ref, stopReason: 'stop', durationMs: Date.now() - started, ...(this.options.startedAt ? { runStartedAt: this.options.startedAt } : {}) } },
+    );
+    this.options.emit({ type: 'message_end', entry: assistantDisplay(entry) });
+    return { opened: true, end: this.#end({ status: 'done', outcome: 'success', summary: answer.text, direct: true }) };
+  }
+
+  /** What the run did before the first model turn (opened a site, attached its outline, read pages): counted as work done. */
+  readonly preActions: string[] = [];
+
+  async firstTurn(): Promise<LoopEnd | void> {
     const branch = await activeBranch(this.options.conversationId);
     const earlierResults = branch.some(e => e.type === 'message' && e.message.role === 'tool');
     if (earlierResults) {
@@ -448,8 +510,40 @@ ${ledger}` : ''),
     await this.#inlineAttachments();
     // A request that names its site starts there: the address is in the words, so no model turn is spent on deciding it.
     const asked = [...branch].reverse().find((e): e is EntryOf<'message'> => e.type === 'message' && e.message.role === 'user' && !e.appOwned);
+    // A request about the user's connected apps starts with the app tools: no page is opened or read for it, and the debugger is not
+    // attached until a browser tool is actually used. The browser tools stay in the list for when no app tool fits.
+    if (asked && this.options.tools.some(t => t.name === 'plugin_search') && isAppsFirstRequest(userText(asked))) {
+      // The search itself is deterministic: it is run here, so the model's first turn can already call the tool it found instead of
+      // spending a whole turn (seconds at the provider) on asking for the search. A failed search leaves the model to do it.
+      const found = await this.#searchApps(userText(asked));
+      await this.writer.appNote(found ? APPS_FIRST_SEARCHED_NOTE + '\n' + found : APPS_FIRST_NOTE);
+      return;
+    }
+    // A request for information on the web starts with the search and its top pages already read, in parallel and without a model
+    // call, so the first model turn already has the material. The browser tools stay in the list for when it is not enough.
+    if (asked && !earlierResults && this.options.tools.some(t => t.name === 'delegate') && isResearchRequest(userText(asked))) {
+      const plan = researchPlan(userText(asked));
+      const read = await runSubagents({ layer: this.options.layer, signal: this.options.signal }, [{ query: plan.query, follow: plan.follow }]).catch(() => null);
+      if (read && !this.options.signal.aborted) {
+        this.preActions.push('delegate');
+        await this.writer.appNote(`${RESEARCH_FIRST_NOTE}\n${read.text}`);
+        return;
+      }
+    }
+    // Route A: "open this site and read its heading" is answered from the page itself, with no model call, when the page really
+    // shows it. Anything unclear (a redirect, a login or challenge, no heading) is left to the normal path below.
+    let opened = false;
+    const plain = asked && !earlierResults ? directRead(userText(asked)) : null;
+    if (plain) {
+      const fast = await this.#readDirect(plain);
+      if (fast.end) return fast.end;
+      opened = fast.opened;
+    }
     const direct = asked && !earlierResults ? directNavigation(userText(asked)) : null;
-    if (direct) await this.#openDirect(direct);
+    if (direct) {
+      if (!opened) await this.#openDirect(direct);
+      this.preActions.push('navigate');
+    }
     const tabs = await this.options.layer.tabs().catch(() => null);
     const active = tabs?.tabs.find(t => t.tabId === tabs.activeTabId);
     if (!active || !/^https?:/i.test(active.url)) return;
@@ -460,6 +554,7 @@ ${ledger}` : ''),
     );
     if (!result.ok) return;
     this.#seen.set(active.tabId, active.url);
+    this.preActions.push('snapshot');
     // Kept within budget: a share of the window, at 4 characters a token.
     const budget = Math.max(2_000, Math.min(30_000, this.options.model.profile.contextWindow * 4 * 0.2));
     const outline = cutText(result.text, budget, '… the outline was cut; take a snapshot to see more.');
@@ -862,7 +957,16 @@ ${ledger}` : ''),
       await this.writer.appNote('you acted on a page in this run; finish with `done` and an honest outcome.');
       return null;
     }
-    if (this.#turns >= this.options.turnCap) return this.salvage('the run reached its turn limit.', 'cap');
+    if (this.#turns >= this.options.turnCap) {
+      // The end of a segment is not the end of the task: the server is asked for the next one (same run, same spend ledger), and the
+      // run only stops, with an honest summary, when it declines.
+      const more = (await this.options.extendTurns?.().catch(() => 0)) ?? 0;
+      if (more > 0) {
+        this.options.turnCap += more;
+        return null;
+      }
+      return this.salvage('the run reached its turn limit.', 'cap');
+    }
     return null;
   }
 
@@ -911,7 +1015,8 @@ ${ledger}` : ''),
     const { emit, signal } = this.options;
     emit({ type: 'agent_start', runId: this.options.runId });
     try {
-      await this.firstTurn();
+      const early = await this.firstTurn();
+      if (early) return early;
       for (;;) {
         if (signal.aborted) return this.#end({ status: 'stopped' });
         const { request, check } = await this.#time('prepare', async () => {
@@ -1210,6 +1315,86 @@ ${ledger}` : ''),
   /** Whether the user has sent a message while the run works. Set by the extension. */
   hasSteering: () => boolean = () => false;
 
+  /**
+   * Tools found during the run (the connected-app tools a search returned) join the tool list for the next turn, under their own names.
+   * A tool already in the list is never replaced, and the run holds at most 40 of them.
+   */
+  #registerTools(found: AgentTool[]): void {
+    const have = new Set(this.options.tools.map(t => t.name));
+    const room = Math.max(0, 40 - this.options.tools.filter(t => t.source === 'agent' && !t.name.startsWith('plugin_') && t.group === 'working' && /^[A-Z0-9_]+$/.test(t.name)).length);
+    const added = found.filter(t => !have.has(t.name)).slice(0, room);
+    if (!added.length) return;
+    this.options.tools = [...this.options.tools, ...added];
+    if (this.options.fullTools) this.options.fullTools = [...this.options.fullTools, ...added];
+    for (const t of added) this.#toolNames.add(t.name);
+  }
+
+  /**
+   * One `batch` call: its steps run in order with no model turn between them, under when / unless / repeat. Each step takes the same path as an
+   * ordinary call (the gate, the layer with its permissions and approvals, then hand-over, dialogs, verification debt and the loop guards), so a
+   * batch is never a way around any of them. The batch call itself was journaled before dispatch, so a crash in the middle is fenced on recovery as
+   * an uncertain write, exactly as one call is. The model gets one result: the trail of what ran and the last step's result.
+   */
+  async #runBatchTool(call: ToolCallRequest, kind: ToolKind, args: Record<string, unknown>): Promise<CallOutcome> {
+    const { emit, signal, layer } = this.options;
+    const steps = args.steps as Step[] | undefined;
+    const test = async (c: Condition): Promise<boolean> => {
+      if (c.for === 'hidden') return !(await test({ for: 'visible', role: c.role, name: c.name }));
+      const input: Record<string, unknown> = { timeoutMs: 1 };
+      if (c.for === 'text') input.text = c.value;
+      else if (c.for === 'text_gone') input.textGone = c.value;
+      else if (c.for === 'url') input.url = c.value;
+      else {
+        input.target = { role: c.role, ...(c.name ? { name: c.name } : {}) };
+        input.state = 'visible';
+      }
+      return (await layer.call('wait', input, signal)).ok;
+    };
+    const run = async (tool: string, input: Record<string, unknown>, meta: { label: string; final: boolean }) => {
+      if (signal.aborted) throw new Error('Stopped');
+      const stepCall: ToolCallRequest = { toolCallId: `${call.toolCallId}#${meta.label}`, toolName: tool, input };
+      const stepKind = kindOf(tool, input);
+      emit({ type: 'tool_execution_start', messageId: this.#replyId, row: this.#row(stepCall, 'running') });
+      let outcome: CallOutcome | null = await this.beforeToolCall(stepCall);
+      if (!outcome) {
+        // Only the last top-level step pays for a page observation; the others return their own receipt.
+        const sent = stepKind === 'mutate' && tool !== 'tabs' ? { ...input, observe: meta.final ? 'diff' : 'none' } : input;
+        const result = await this.#time('tool.layer', () => layer.call(tool, sent, signal));
+        outcome = { call: stepCall, kind: stepKind, text: result.text, isError: !result.ok, result };
+        if (result.ok && ['read', 'snapshot', 'navigate', 'tabs', 'click', 'wait'].includes(tool)) {
+          const title = result.page?.title ?? /«([^»]{0,120})»/.exec(result.text)?.[1];
+          const challenge = detectChallenge({ title, text: result.text });
+          if (challenge) outcome.text = `${result.text}\n${challengeNote(challenge)}`;
+        }
+      }
+      outcome = await this.afterToolCall(outcome);
+      emit({ type: 'tool_execution_end', messageId: this.#replyId, row: this.#row(stepCall, outcome.isError ? 'failed' : 'done', outcome) });
+      const halt = outcome.handover
+        ? 'a person was asked to step in on the page: check it before going on'
+        : outcome.result?.pending?.length
+          ? 'a dialog or prompt is open on the page'
+          : this.hasSteering()
+            ? 'the user sent a message'
+            : this.#guardStop
+              ? 'a loop guard stopped the run'
+              : this.#recoveryReadOnly
+                ? 'an earlier write might have been delivered, so only observing is allowed now'
+                : undefined;
+      return { text: outcome.text, ok: !outcome.isError, ...(halt ? { halt } : {}) };
+    };
+    try {
+      const done = await runPlan(steps ?? [], {
+        run,
+        test,
+        allow: tool => BATCH_TOOLS.has(tool) && this.#toolNames.has(tool),
+        forbidden: new Set(['batch']),
+      });
+      return { call, kind, text: done.text, isError: !done.ok };
+    } catch (error) {
+      return { call, kind, text: error instanceof Error ? error.message : String(error), isError: true };
+    }
+  }
+
   #execute(call: ToolCallRequest): Promise<CallOutcome> {
     return this.#time(`tool:${call.toolName}`, () => this.#executeCall(call));
   }
@@ -1251,12 +1436,16 @@ ${ledger}` : ''),
         wrap: (text, source) => this.options.layer.wrap(text, source),
       });
       outcome = { call, kind, text: r.text, isError: r.isError };
+    } else if (call.toolName === 'batch') {
+      outcome = await this.#runBatchTool(call, kind, args);
     } else if (this.options.tools.find(t => t.name === call.toolName)?.source === 'agent') {
       const r = this.options.agentTool
         ? await this.options.agentTool(call, signal)
         : { text: `error: ${call.toolName} is not available.`, isError: true };
       outcome = { call, kind, text: r.text, isError: r.isError };
-      if (call.toolName === 'plugin_read' && !r.isError && r.result && typeof r.result === 'object' &&
+      if (r.registerTools?.length) this.#registerTools(r.registerTools);
+      // Any connected-app call (plugin_read, plugin_act, or an app tool called by its own name) leaves a provider receipt.
+      if (!r.isError && r.result && typeof r.result === 'object' &&
           'pluginReceiptId' in r.result && typeof r.result.pluginReceiptId === 'string') {
         outcome.result = { ok: true, text: '', data: { pluginReceiptId: r.result.pluginReceiptId } };
       }
@@ -1265,6 +1454,12 @@ ${ledger}` : ''),
       const sent = kind === 'mutate' && call.toolName !== 'tabs' ? { ...args, observe: 'diff' } : args;
       const result = await this.#time('tool.layer', () => this.options.layer.call(call.toolName, sent, signal));
       outcome = { call, kind, text: result.text, isError: !result.ok, result };
+      // A bot check or a refusal is told to the agent when it happens, so it does not retry a page that will not open for it.
+      if (result.ok && ['read', 'snapshot', 'navigate', 'tabs', 'click', 'wait'].includes(call.toolName)) {
+        const title = result.page?.title ?? /«([^»]{0,120})»/.exec(result.text)?.[1];
+        const challenge = detectChallenge({ title, text: result.text });
+        if (challenge) outcome.text = `${result.text}\n${challengeNote(challenge)}`;
+      }
     }
     return this.#time('tool.after', () => this.afterToolCall(outcome));
   }

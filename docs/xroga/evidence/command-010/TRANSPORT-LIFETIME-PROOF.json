@@ -711,7 +711,7 @@
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "sha256": "8fc37cada11db34659cca31efa804ff99bcac3d076d83c6deabd52142662381f",
+      "sha256": "874ec9b2059fa33e7a56ae7c16d434f7c456d7df06d89ee928a4f1d023585449",
       "beforeCurrentMetadataReconciliation": {
         "path": "backend/src/services/integrations/businessAction.ts",
         "sha256": "79fa4e23cd501826f0425aaa01bcdc79a14b2d457f57f2f56a29b0fde021c0a3"
@@ -757,7 +757,11 @@
         "previousSha256": "52834ccc98c469b80c2f14419d79fe66e39c7ff475ef5885e7d1be463153abcf"
       },
       "expoWorkflowContinuation": "docs/xroga/evidence/command-010/EXPO-WORKFLOW-AUTHORITY-20261028.json",
-      "previousSha256": "98ce8ce7042d42f4d136c1e3ab0f17b618f92c3bdf6c8f4cfedd3da2875939d0"
+      "previousSha256": "98ce8ce7042d42f4d136c1e3ab0f17b618f92c3bdf6c8f4cfedd3da2875939d0",
+      "beforeBrowserPluginActions": {
+        "path": "backend/src/services/integrations/businessAction.ts",
+        "sha256": "8fc37cada11db34659cca31efa804ff99bcac3d076d83c6deabd52142662381f"
+      }
     },
     {
       "path": "backend/src/services/integrations/businessRead.ts",

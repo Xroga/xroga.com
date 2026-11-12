@@ -187,6 +187,8 @@ export interface GuardState {
   /** Effect-less actions per target. */
   noEffect: Record<string, number>;
   errorsInRow: number;
+  /** Consecutive calls in which the last window held at most two distinct calls and none changed the page (see agent/guards.ts). Absent in older records. */
+  cycle?: number;
   /** Plain-text endings after a mutation, and refusals of done(success) in a row. */
   plainEndings: number;
   doneRefusals: number;
@@ -221,6 +223,8 @@ export interface RunRecord {
     status: 'completed' | 'failed' | 'cancelled';
     actions: string[];
     result?: string;
+    /** A read answered from the page with no model turn (agent/direct-read.ts); the server accepts it only for read actions. */
+    direct?: true;
     localStatus: RunStatus;
   };
   leafEntryId: string | null;

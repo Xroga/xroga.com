@@ -12,7 +12,7 @@ import { prepareBusinessAction, executePreparedBusinessAction, businessActionAut
 import { createTenantContext } from '../security/tenantContext.js';
 import { executeAuthorizedAction } from '../security/authority/enforce.js';
 import { preparedActionDigest } from '../security/authority/digest.js';
-import { createActionComposioSession, executeComposioActionTool, executeComposioReadTool } from '../services/integrations/composioClient.js';
+import { createActionComposioSession, executeComposioActionTool, executeComposioReadTool, resetComposioAccountSelectionMemory } from '../services/integrations/composioClient.js';
 import { goalContractSchema } from '../ai/universal/goalContract.js';
 import { dispatchForGoal } from '../ai/universal/semanticRequestPlanner.js';
 import { artifactStatusFor } from '../ai/engineeringArtifact.js';
@@ -28,7 +28,7 @@ const TOOL = 'SLACK_DELETE_MESSAGE';
 type Mode = 'success' | 'failure' | 'timeout' | 'empty' | 'input_required' | 'incomplete' | 'malformed';
 
 /** Intercepts actual adapter calls, not a replacement runtime. Never forwards a request. */
-function providerStub(t: TestContext, mode: Mode = 'success', connected = false, slug = TOOL,events?:{onSearch?:()=>void;onAudit?:()=>void;sessionOwner?:()=>string;fixture?:ReturnType<typeof nativeReleaseFixture>}) {
+function providerStub(t: TestContext, mode: Mode = 'success', connected = false, slug = TOOL,events?:{executeStatus?:{status:number;message:string};refuseAccount?:boolean;executeAccountSent?:boolean[];onSearch?:()=>void;onAudit?:()=>void;sessionOwner?:()=>string;fixture?:ReturnType<typeof nativeReleaseFixture>}) {
   const previous = new Map(['COMPOSIO_API_KEY','SUPABASE_URL','SUPABASE_SERVICE_ROLE_KEY','SUPABASE_JWT_SECRET'].map(key=>[key,process.env[key]]));
   process.env.COMPOSIO_API_KEY = 'golden-test-canary-not-a-real-key';
   process.env.SUPABASE_URL='http://127.0.0.1:54321';process.env.SUPABASE_SERVICE_ROLE_KEY='synthetic-offline-service-role';delete process.env.SUPABASE_JWT_SECRET;
@@ -55,7 +55,13 @@ function providerStub(t: TestContext, mode: Mode = 'success', connected = false,
     const path=url.pathname; paths.push(path);
     const response=(data:unknown,status=200)=>new Response(JSON.stringify(data),{status,headers:{'Content-Type':'application/json'}});
     if(path.endsWith('/execute')) {
-      if(slug===TOOL)assert.equal(JSON.parse(String(init?.body)).account,'fixture-account-A','Actual adapter must explicitly select the approved account');
+      const sent=JSON.parse(String(init?.body));
+      if(events?.executeStatus)return response({error:{message:events.executeStatus.message,slug:'ToolRouterV2_Fixture',code:1}},events.executeStatus.status);
+      if(events?.refuseAccount){
+        // A project without multi-account selection: Composio refuses the field before anything runs.
+        events.executeAccountSent?.push(sent.account!==undefined);
+        if(sent.account!==undefined)return response({error:{message:"The 'account' parameter is not supported for this project. Multi-account selection is not enabled.",slug:'ToolRouterV2_BadRequest',code:4300}},400);
+      } else if(slug===TOOL)assert.equal(sent.account,'fixture-account-A','Actual adapter must explicitly select the approved account');
       if(mode==='timeout')throw new DOMException('Fixture timeout','AbortError');
       if(mode==='input_required')return response({result_type:'input_required',request_state:'SYNTHETIC_PROVIDER_STATE',input_requests:[],data:{}});
       if(mode==='incomplete')return response({result_type:'failed',error:null,data:{}});
@@ -246,4 +252,49 @@ test('GJ actual HTTP auth denial and SSE serialization use loopback only',async(
     const stream=await fetch(`${origin}/fixture-stream`);assert.match(stream.headers.get('content-type')!,/text\/event-stream/);
     const body=await stream.text();assert.match(body,/event: progress\ndata:/);assert.match(body,/event: done/);assert.doesNotMatch(body,/verified/);
   }finally{server.closeAllConnections();await new Promise<void>((resolve,reject)=>server.close(error=>error?reject(error):resolve()));}
+});
+
+test('GJ a project without multi-account selection: the approved account is sent first, refused once, then the same call runs without it',async t=>{
+  const sentLog:boolean[]=[];
+  providerStub(t,'success',true,TOOL,{refuseAccount:true,executeAccountSent:sentLog});
+  resetComposioAccountSelectionMemory();
+  t.after(()=>resetComposioAccountSelectionMemory());
+  const first=await executeFixture();
+  assert.equal(first.status,'success');
+  // The account was offered first (the repository's rule), refused before any effect, and the identical call was repeated once without it.
+  assert.deepEqual(sentLog,[true,false]);
+  const second=await executeFixture();
+  assert.equal(second.status,'success');
+  // The project is remembered as not offering account selection, so the refused field is not sent again.
+  assert.deepEqual(sentLog,[true,false,false]);
+});
+
+test('GJ a used permit cannot be replayed after a successful write (no duplicate effect on retry or reconnect)',async t=>{
+  const paths=providerStub(t,'success',true),plan=preparedPlan(),context=createTenantContext({userId:OWNER,via:'remote_getuser'}),scope=businessActionAuthorityScope(plan);
+  const claim={id:'fixture-replay-claim',userId:OWNER,scopeDigest:preparedActionDigest(scope),expiresAt:scope.expiresAt,claimedAt:new Date().toISOString()};
+  let kept: Parameters<typeof executePreparedBusinessAction>[0]['authorityPermit'];
+  const first=await executeAuthorizedAction({context,scope,claim,revalidateBeforeEffect:async()=>claim},async authorityPermit=>{
+    kept=authorityPermit;
+    return executePreparedBusinessAction({userId:OWNER,plan,authorization:{explicitUserAuthorization:true,confirmedHighRisk:true},authorityPermit});
+  });
+  assert.equal(first.status,'success');
+  assert.equal(paths.filter(path=>path.endsWith('/execute')).length,1);
+  // A client that lost the response and retries with the permit it still holds is refused before any provider call.
+  await assert.rejects(executePreparedBusinessAction({userId:OWNER,plan,authorization:{explicitUserAuthorization:true,confirmedHighRisk:true},authorityPermit:kept}),code('AUTHORITY_ALREADY_USED_OR_MISSING'));
+  assert.equal(paths.filter(path=>path.endsWith('/execute')).length,1,'the write happened once');
+});
+
+test('GJ a provider 5xx on the write is reported and the write is attempted once, never silently repeated',async t=>{
+  const paths=providerStub(t,'success',true,TOOL,{executeStatus:{status:503,message:'Provider unavailable'}});
+  resetComposioAccountSelectionMemory();
+  await assert.rejects(executeFixture());
+  assert.equal(paths.filter(path=>path.endsWith('/execute')).length,1);
+});
+
+test('GJ only the multi-account refusal is answered with a second call; any other 400 is reported after one attempt',async t=>{
+  const paths=providerStub(t,'success',true,TOOL,{executeStatus:{status:400,message:'Invalid channel id'}});
+  resetComposioAccountSelectionMemory();
+  t.after(()=>resetComposioAccountSelectionMemory());
+  await assert.rejects(executeFixture());
+  assert.equal(paths.filter(path=>path.endsWith('/execute')).length,1);
 });

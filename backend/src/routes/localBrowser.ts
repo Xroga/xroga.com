@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { createCanonicalExecutionState, type ExecutableTaskNode } from '../ai/executionRuntime.js';
 import { actualProviderCostMicroUsd } from '../ai/providerBudget.js';
 import { resolveModelSpec } from '../ai/models.js';
+import { DIRECT_READ_MAX_AGE_MS, isPlainOpenAndRead, namesSite } from './localBrowserDirectRead.js';
 import { browserDeviceExtension, localBrowserAccountAllowed, type BrowserDeviceRequest } from './localBrowserDevice.js';
 import { publicHttpsUrl } from '../security/boundedPublicGet.js';
 import { classifyOutboundData } from '../security/egress/dataClassification.js';
@@ -17,28 +18,107 @@ import { isTerminalRunStatus, PostgresBrowserRunStore, type BrowserRunRecord, ty
 import { PostgresLeaseStore } from '../workers/postgresLeaseStore.js';
 import { readBrowserDocument } from './browserDocuments.js';
 import { createLocalBrowserPluginCatalog } from './localBrowserPlugins.js';
-import { executeComposioReadTool, isComposioConfigured, searchComposioTools } from '../services/integrations/composioClient.js';
+import { executeComposioReadTool, getComposioToolDetails, isComposioConfigured, searchComposioActionTools, searchComposioTools } from '../services/integrations/composioClient.js';
+import type { XrogaConnectSearchResult } from '../services/integrations/composioClient.js';
 import { cancelBusinessActionConfirmation, confirmBusinessAction } from '../services/integrations/businessActionConfirmations.js';
 import { preparedActionDigest } from '../security/authority/digest.js';
+import { isFinancialAction, prepareBusinessAction } from '../services/integrations/businessAction.js';
+import { createBusinessActionConfirmation } from '../services/integrations/businessActionConfirmations.js';
 
 const MODEL = 'deepseek_v4_1_flash_1017';
 const MAX_TURNS = 120;
+// A run is admitted in segments: when it reaches the end of one, `extend` grants the next, so a task is bounded by its outcome, not by a
+// turn or time count. Money is bounded where it is spent: every model turn reserves and settles against the owner's canonical
+// entitlement ledger, and a refused reservation stops the run with its progress saved (BROWSER_ALLOWANCE_EXHAUSTED).
+const SEGMENT_TURNS = 48;
 const TURN_CEILING_MICROS = 3_000;
-const MAX_RUN_MICROS = 36_000;
 const MINUTE = 60_000;
+const SEGMENT_MS = 40 * MINUTE;
+/** A run's wall-clock segment is renewed when less than this is left. */
+const RENEW_BEFORE_MS = 10 * MINUTE;
 const MAX_GOAL = 16_000;
-const limits = { ...BROWSER_RUN_DEFAULTS, maxModelCostMicros: MAX_RUN_MICROS };
+const MAX_PLUGIN_ACTIONS = 10;
+const MAX_PLUGIN_DISCOVERIES = 10;
+const MAX_PLUGIN_READS = 20;
+// The job is built for each model turn, so this bounds ONE request (a safety bound, many times its reservation), not the run.
+const PER_TURN_JOB_COST_MICROS = 36_000;
+const limits = { ...BROWSER_RUN_DEFAULTS, maxModelCostMicros: PER_TURN_JOB_COST_MICROS };
 const id = z.string().uuid();
+const clip = (value: unknown, max: number) => (typeof value === 'string' ? value.replace(/\s+/g, ' ').trim().slice(0, max) : undefined);
+
+/** A tool's parameters as the model needs them: names, types, which are required, allowed values, a short description. */
+export function compactSchema(schema: unknown): Record<string, unknown> | undefined {
+  const s = schema as { properties?: Record<string, unknown>; required?: unknown } | null;
+  if (!s || typeof s !== 'object' || !s.properties || typeof s.properties !== 'object') return undefined;
+  const properties: Record<string, unknown> = {};
+  for (const [name, raw] of Object.entries(s.properties).slice(0, 40)) {
+    const d = (raw ?? {}) as { type?: unknown; description?: unknown; enum?: unknown; default?: unknown; items?: { type?: unknown } };
+    const small = d.default !== undefined && JSON.stringify(d.default).length < 80;
+    properties[name] = {
+      ...(typeof d.type === 'string' || Array.isArray(d.type) ? { type: d.type } : {}),
+      ...(clip(d.description, 180) ? { description: clip(d.description, 180) } : {}),
+      ...(Array.isArray(d.enum) ? { enum: d.enum.slice(0, 12) } : {}),
+      ...(small ? { default: d.default } : {}),
+      ...(d.items && typeof d.items.type === 'string' ? { items: { type: d.items.type } } : {}),
+    };
+  }
+  const required = Array.isArray(s.required) ? s.required.filter((name): name is string => typeof name === 'string').slice(0, 40) : [];
+  return { type: 'object', properties, required };
+}
+
+const hasProperties = (schema: unknown) => !!schema && typeof schema === 'object' && !!(schema as { properties?: unknown }).properties && typeof (schema as { properties?: unknown }).properties === 'object';
+
+/**
+ * Search can return a reference instead of a full definition. A tool without a parameter list makes the model guess
+ * argument names, so the full definition is fetched for it (bounded, in parallel); a failed lookup leaves the tool as it was.
+ */
+export async function withFullSchemas<T extends { slug: string; inputSchema?: Record<string, unknown> }>(
+  tools: T[], details: ((slug: string, actor?: Parameters<typeof getComposioToolDetails>[1]) => Promise<{ inputSchema?: Record<string, unknown> }>) | undefined,
+  actor: Parameters<typeof getComposioToolDetails>[1],
+): Promise<T[]> {
+  if (!details) return tools;
+  return Promise.all(tools.map(async tool => {
+    if (hasProperties(tool.inputSchema)) return tool;
+    try {
+      const full = await details(tool.slug, actor);
+      return hasProperties(full.inputSchema) ? { ...tool, inputSchema: full.inputSchema } : tool;
+    } catch {
+      return tool;
+    }
+  }));
+}
+
+/** What the provider says about doing this task well: its plan, known pitfalls, notes, and which apps are connected. */
+export function searchGuidance(result: Pick<XrogaConnectSearchResult, 'skill' | 'guidance' | 'toolkits'>) {
+  const list = (items: unknown, count: number, max: number) =>
+    (Array.isArray(items) ? items : []).map(item => clip(item, max)).filter((item): item is string => !!item).slice(0, count);
+  const plan = list(result.skill?.recommendedPlanSteps, 8, 240);
+  const pitfalls = list(result.skill?.knownPitfalls, 6, 240);
+  const guidance = clip(result.guidance, 400);
+  const apps = result.toolkits.slice(0, 6).map(app => ({ app: app.toolkit, connected: app.connected, ...(clip(app.statusMessage, 160) ? { note: clip(app.statusMessage, 160) } : {}) }));
+  return { ...(plan.length ? { plan } : {}), ...(pitfalls.length ? { pitfalls } : {}), ...(guidance ? { guidance } : {}), ...(apps.length ? { apps } : {}) };
+}
+
+/** Parameter names (never values) of a discovered tool, kept so the agent's arguments can be checked before anything is approved. */
+const toolArgs = z.object({ props: z.array(z.string().max(80)).max(80), required: z.array(z.string().max(80)).max(40) });
+type ToolArgs = z.infer<typeof toolArgs>;
 const pluginState = z.object({
   discoveries: z.array(z.object({
-    query: z.string(), sessionId: z.string().optional(), tools: z.array(z.object({ slug: z.string(), toolkit: z.string() })).max(6),
-  })).max(4),
+    query: z.string(), sessionId: z.string().optional(), tools: z.array(z.object({ slug: z.string(), toolkit: z.string(), args: toolArgs.optional() })).max(6),
+  })).max(MAX_PLUGIN_DISCOVERIES),
   reads: z.array(z.object({
     digest: z.string(), slug: z.string(), toolkit: z.string(), approvalId: z.string().uuid().optional(), used: z.boolean(),
-  })).max(6),
+  })).max(MAX_PLUGIN_READS),
+  /** Changes the agent asked to make through a connected app; each needs the user's approval on its own card. */
+  actions: z.array(z.object({
+    digest: z.string(), slug: z.string(), toolkit: z.string(), approvalId: z.string().uuid().optional(), used: z.boolean(),
+  })).max(MAX_PLUGIN_ACTIONS).default([]),
+  actionDiscoveries: z.array(z.object({
+    query: z.string(), sessionId: z.string().optional(), tools: z.array(z.object({ slug: z.string(), toolkit: z.string(), args: toolArgs.optional() })).max(6),
+  })).max(MAX_PLUGIN_DISCOVERIES).default([]),
 });
 function runPlugins(row: BrowserRunRecord) {
-  return pluginState.parse(row.state.productManifest.localBrowserPlugins ?? { discoveries: [], reads: [] });
+  return pluginState.parse(row.state.productManifest.localBrowserPlugins ?? { discoveries: [], reads: [], actions: [], actionDiscoveries: [] });
 }
 const startBody = z.object({
   goal: z.string().trim().min(1).max(MAX_GOAL),
@@ -73,7 +153,7 @@ const message = z.object({
   tool_call_id: z.string().max(200).optional(),
 }).strict();
 const turnBody = z.object({
-  turn: z.number().int().min(1).max(MAX_TURNS),
+  turn: z.number().int().min(1),
   messages: z.array(message).min(1).max(140),
   tools: z.array(tool).max(32).optional(),
   tool_choice: z.enum(['auto', 'none', 'required']).optional(),
@@ -83,8 +163,16 @@ const turnBody = z.object({
 const endBody = z.object({
   status: z.enum(['completed', 'failed', 'cancelled']),
   result: z.string().max(12_000).optional(),
-  actions: z.array(z.string().regex(/^[a-z_]{1,50}$/)).max(48).default([]),
+  actions: z.array(z.string().regex(/^[a-z_]{1,50}$/)).max(500).default([]),
+  /** A read answered from the page by the extension itself, with no model turn (agent/direct-read.ts). See DIRECT_READ_ACTIONS. */
+  direct: z.literal(true).optional(),
 }).strict();
+/**
+ * The only actions a result without a model turn may report: opening a page and reading it. Nothing that changes anything can be
+ * completed this way, so the rule that a completed result needs a model turn still covers every write, upload, download and app action.
+ */
+const DIRECT_READ_ACTIONS = new Set(['navigate', 'read']);
+const DIRECT_READ_RESULT_MAX = 600;
 
 type Runtime = { runs: BrowserRunStore; leases: LeaseStore };
 let runtime: Runtime | undefined;
@@ -98,7 +186,25 @@ const configured = () => {
 };
 
 class BrowserRequestError extends Error {
-  constructor(readonly status: number, readonly code: string) { super(code); }
+  constructor(readonly status: number, readonly code: string, readonly detail?: Record<string, string[]>) { super(code); }
+}
+
+function summarizeToolArgs(schema: unknown): ToolArgs | undefined {
+  const s = schema as { properties?: unknown; required?: unknown } | null;
+  if (!s || typeof s !== 'object' || !s.properties || typeof s.properties !== 'object') return undefined;
+  const props = Object.keys(s.properties as object).filter(name => name.length <= 80).slice(0, 80);
+  const required = Array.isArray(s.required) ? s.required.filter((name): name is string => typeof name === 'string' && name.length <= 80).slice(0, 40) : [];
+  return { props, required };
+}
+/** An argument the tool does not define, or a required one that is missing, is refused with the names involved; nothing is sent. */
+function assertToolArguments(args: Record<string, unknown>, summary: ToolArgs | undefined) {
+  if (!summary || !summary.props.length) return;
+  const known = new Set(summary.props);
+  const unknown = Object.keys(args).filter(name => !known.has(name)).slice(0, 12);
+  const missing = summary.required.filter(name => args[name] === undefined || args[name] === null).slice(0, 12);
+  if (unknown.length || missing.length) {
+    throw new BrowserRequestError(422, 'BROWSER_PLUGIN_ARGUMENTS_INVALID', { unknown, missing, allowed: summary.props.slice(0, 40) });
+  }
 }
 
 function checkData(value: unknown) {
@@ -109,9 +215,32 @@ function checkData(value: unknown) {
 }
 
 function sendError(res: Response, error: unknown) {
-  if (error instanceof BrowserRequestError) return res.status(error.status).json({ error: error.code });
+  if (error instanceof BrowserRequestError) return res.status(error.status).json({ error: error.code, ...(error.detail ?? {}) });
   if (error instanceof z.ZodError) return res.status(400).json({ error: 'BROWSER_REQUEST_INVALID' });
-  // No user payload, raw provider error, or credential is returned.
+  // No user payload, raw provider error, or credential is returned. Only Xroga's own fixed business-action
+  // codes are surfaced (and logged), so a failed approval is diagnosable without exposing anything private.
+  const code = (error as { code?: unknown } | null)?.code;
+  // The owner's entitlement ledger refused a model turn: nothing was charged, the run's progress is kept, and it can resume.
+  if (code === 'PAID_PROVIDER_CAPACITY_UNAVAILABLE') {
+    const next = (error as { nextUnlockAt?: unknown }).nextUnlockAt;
+    return res.status(402).json({ error: 'BROWSER_ALLOWANCE_EXHAUSTED', ...(typeof next === 'string' ? { nextUnlockAt: next } : {}) });
+  }
+  if (typeof code === 'string' && /^(?:BUSINESS_ACTION|COMPOSIO)_[A-Z_]{2,60}$/.test(code)) {
+    console.error('[local-browser] business action failed:', code);
+    const providerMessage = (error as { providerMessage?: unknown }).providerMessage;
+    return res.status(503).json({ error: 'BROWSER_GATEWAY_UNAVAILABLE', reason: code,
+      ...(typeof providerMessage === 'string' ? { providerMessage: providerMessage.slice(0, 300) } : {}) });
+  }
+  // Nothing from the request or the provider is returned. The server log keeps the error's name, its fixed code and, only where the
+  // staging diagnostic flag is set, the first characters of its message, so an unexplained 503 can be found.
+  const failure = error as { name?: unknown; message?: unknown; status?: unknown } | null;
+  console.error('[local-browser] request failed:', {
+    name: typeof failure?.name === 'string' ? failure.name.slice(0, 60) : undefined,
+    code: typeof code === 'string' ? code.slice(0, 60) : undefined,
+    status: typeof failure?.status === 'number' ? failure.status : undefined,
+    ...(process.env.XROGA_COMPOSIO_ERROR_DETAIL === '1' && typeof failure?.message === 'string'
+      ? { message: failure.message.replace(/[\t\n\r ]+/g, ' ').slice(0, 160) } : {}),
+  });
   return res.status(503).json({ error: 'BROWSER_GATEWAY_UNAVAILABLE' });
 }
 
@@ -181,9 +310,23 @@ const defaultPlugins = {
   prepare: executeComposioReadTool,
   confirm: confirmBusinessAction,
   cancel: cancelBusinessActionConfirmation,
+  discoverActions: searchComposioActionTools,
+  prepareAction: prepareBusinessAction,
+  createActionConfirmation: createBusinessActionConfirmation,
+  details: getComposioToolDetails,
 };
 
-export function createLocalBrowserRouter(resolve = configured, dispatch = dispatchBrowserModel, plugins = defaultPlugins) {
+type ActionMembers = 'discoverActions' | 'prepareAction' | 'createActionConfirmation' | 'details';
+/** The read members are required; the action members are optional so a test or a release can run without them. */
+type PluginAdapter = Omit<typeof defaultPlugins, ActionMembers> & Partial<Pick<typeof defaultPlugins, ActionMembers>>;
+
+export function createLocalBrowserRouter(resolve = configured, dispatch = dispatchBrowserModel, plugins: PluginAdapter = defaultPlugins) {
+  const actionPlugins = () => {
+    if (!plugins.discoverActions || !plugins.prepareAction || !plugins.createActionConfirmation) {
+      throw new BrowserRequestError(403, 'BROWSER_PLUGIN_ACTIONS_NOT_AVAILABLE');
+    }
+    return { discoverActions: plugins.discoverActions, prepareAction: plugins.prepareAction, createActionConfirmation: plugins.createActionConfirmation };
+  };
   const router = Router();
   router.use('/plugins', createLocalBrowserPluginCatalog());
   const route = (handler: (req: BrowserDeviceRequest, res: Response, runtime: Runtime) => Promise<unknown>) =>
@@ -293,7 +436,7 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
     const { query } = z.object({ query: z.string().trim().min(2).max(120) }).strict().parse(req.body);
     checkData(query);
     const state = runPlugins(row);
-    if (state.discoveries.length >= 4 || state.discoveries.some(item => item.query.toLowerCase() === query.toLowerCase())) {
+    if (state.discoveries.length >= MAX_PLUGIN_DISCOVERIES || state.discoveries.some(item => item.query.toLowerCase() === query.toLowerCase())) {
       throw new BrowserRequestError(409, 'BROWSER_PLUGIN_DISCOVERY_LIMIT');
     }
     const discovery: typeof state.discoveries[number] = { query, tools: [] };
@@ -304,12 +447,110 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
     const result = await plugins.discover(actor.userId, { query }, actor);
     await assertPluginRun(req, localRecord(await runs.load(actor.userId, row.runId), actor.userId));
     const connected = new Set(result.toolkits.filter(item => item.connected && !item.noAuth).map(item => item.toolkit.toLowerCase()));
-    const tools = result.tools.filter(item => item.risk === 'read' && connected.has(item.toolkit.toLowerCase())).slice(0, 6);
+    const tools = await withFullSchemas(result.tools.filter(item => item.risk === 'read' && connected.has(item.toolkit.toLowerCase())).slice(0, 6), plugins.details, actor);
     discovery.sessionId = result.sessionId;
-    discovery.tools = tools.map(({ slug, toolkit }) => ({ slug, toolkit }));
+    discovery.tools = tools.map(({ slug, toolkit, inputSchema }) => ({ slug, toolkit, args: summarizeToolArgs(inputSchema) }));
     await save();
     return res.json({ tools: tools.map(item => ({ slug: item.slug, toolkit: item.toolkit,
-      description: item.description?.slice(0, 400), parameters: item.inputSchema })) });
+      description: item.description?.slice(0, 400), parameters: compactSchema(item.inputSchema) ?? item.inputSchema })), ...searchGuidance(result) });
+  }));
+
+  // Changes through a connected app. The browser agent names the tool and its arguments; the plan, its digest, the authority scope and
+  // the confirmation are the platform's own (prepareBusinessAction with a fixed selection, then the durable confirmation), so a change
+  // happens only after the user approves this exact action on its own card. Destructive and financial actions are not offered.
+  router.post('/runs/:runId/plugin-action-search', withLease(async (req, res, { runs }, row, lease) => {
+    const actor = await assertPluginRun(req, row);
+    const { query } = z.object({ query: z.string().trim().min(2).max(120) }).strict().parse(req.body);
+    checkData(query);
+    const state = runPlugins(row);
+    if (state.actionDiscoveries.length >= MAX_PLUGIN_DISCOVERIES || state.actionDiscoveries.some(item => item.query.toLowerCase() === query.toLowerCase())) {
+      throw new BrowserRequestError(409, 'BROWSER_PLUGIN_DISCOVERY_LIMIT');
+    }
+    const discovery: typeof state.actionDiscoveries[number] = { query, tools: [] };
+    state.actionDiscoveries.push(discovery);
+    row.state.productManifest.localBrowserPlugins = state;
+    const save = () => runs.stateStore(actor.userId, () => lease).save(row.state);
+    await save();
+    const result = await actionPlugins().discoverActions(actor.userId, { query }, actor);
+    await assertPluginRun(req, localRecord(await runs.load(actor.userId, row.runId), actor.userId));
+    const connected = new Set(result.toolkits.filter(item => item.connected && !item.noAuth).map(item => item.toolkit.toLowerCase()));
+    const tools = await withFullSchemas(result.tools
+      .filter(item => item.risk !== 'read' && item.risk !== 'destructive' && connected.has(item.toolkit.toLowerCase()) &&
+        !isFinancialAction(query, item.slug))
+      .slice(0, 6), plugins.details, actor);
+    discovery.sessionId = result.sessionId;
+    discovery.tools = tools.map(({ slug, toolkit, inputSchema }) => ({ slug, toolkit, args: summarizeToolArgs(inputSchema) }));
+    await save();
+    return res.json({ tools: tools.map(item => ({ slug: item.slug, toolkit: item.toolkit, risk: item.risk,
+      description: item.description?.slice(0, 400), parameters: compactSchema(item.inputSchema) ?? item.inputSchema })), ...searchGuidance(result) });
+  }));
+
+  router.post('/runs/:runId/plugin-act', withLease(async (req, res, { runs }, row, lease) => {
+    const actor = await assertPluginRun(req, row);
+    const data = z.object({
+      slug: z.string().regex(/^[a-z0-9_-]{3,200}$/i),
+      arguments: z.record(z.string(), z.unknown()),
+      request: z.string().trim().min(2).max(200),
+    }).strict().parse(req.body);
+    checkData(data);
+    if (Buffer.byteLength(JSON.stringify(data)) > 12_000) throw new BrowserRequestError(400, 'BROWSER_PLUGIN_ARGUMENT_LIMIT');
+    const state = runPlugins(row);
+    const source = [...state.actionDiscoveries].reverse().find(item => item.tools.some(tool => tool.slug === data.slug));
+    const tool = source?.tools.find(tool => tool.slug === data.slug);
+    if (!source?.sessionId || !tool) throw new BrowserRequestError(403, 'BROWSER_PLUGIN_NOT_DISCOVERED');
+    assertToolArguments(data.arguments, tool.args);
+    const digest = preparedActionDigest(data);
+    if (state.actions.length >= MAX_PLUGIN_ACTIONS || state.actions.some(item => item.digest === digest)) {
+      throw new BrowserRequestError(409, 'BROWSER_PLUGIN_ACTION_ALREADY_REQUESTED');
+    }
+    if (state.actions.some(item => item.approvalId && !item.used)) throw new BrowserRequestError(409, 'BROWSER_PLUGIN_APPROVAL_PENDING');
+    const action: typeof state.actions[number] = { digest, slug: data.slug, toolkit: tool.toolkit, used: false };
+    state.actions.push(action);
+    row.state.productManifest.localBrowserPlugins = state;
+    const save = () => runs.stateStore(actor.userId, () => lease).save(row.state);
+    await save();
+    const outcome = await actionPlugins().prepareAction({
+      userId: actor.userId, tenantContext: actor, useCase: source.query, forceConfirmation: true, signal: AbortSignal.timeout(45_000),
+      fixedSelection: { toolSlug: data.slug, arguments: data.arguments, summary: `${data.request} (${tool.toolkit})` },
+    });
+    if (outcome.status !== 'ready' || outcome.plan.toolSlug !== data.slug || outcome.plan.toolkit.toLowerCase() !== tool.toolkit.toLowerCase() ||
+        outcome.plan.risk === 'destructive' || isFinancialAction(source.query, data.slug)) {
+      throw new BrowserRequestError(409, 'BROWSER_PLUGIN_ACTION_UNAVAILABLE');
+    }
+    const confirmation = await actionPlugins().createActionConfirmation(actor.userId, outcome.plan);
+    if (!id.safeParse(confirmation.id).success || !confirmation.approval) {
+      throw new BrowserRequestError(503, 'BROWSER_PLUGIN_APPROVAL_UNAVAILABLE');
+    }
+    try {
+      await assertPluginRun(req, localRecord(await runs.load(actor.userId, row.runId), actor.userId));
+      action.approvalId = confirmation.id;
+      await save();
+    } catch (error) {
+      await plugins.cancel(actor.userId, confirmation.id).catch(() => undefined);
+      throw error;
+    }
+    return res.json({ approval: { id: confirmation.id, summary: confirmation.summary, account: confirmation.approval.accountReference,
+      argumentsPreview: confirmation.argumentsPreview, risk: outcome.plan.risk } });
+  }));
+
+  router.post('/runs/:runId/plugin-act-review', withLease(async (req, res, { runs }, row, lease) => {
+    const actor = await assertPluginRun(req, row);
+    const { approvalId, decision } = z.object({ approvalId: id, decision: z.enum(['approve', 'deny']) }).strict().parse(req.body);
+    const state = runPlugins(row);
+    const action = state.actions.find(item => item.approvalId === approvalId);
+    if (!action || action.used) throw new BrowserRequestError(409, 'BROWSER_PLUGIN_APPROVAL_ALREADY_USED');
+    action.used = true;
+    row.state.productManifest.localBrowserPlugins = state;
+    await runs.stateStore(actor.userId, () => lease).save(row.state);
+    await assertPluginRun(req, localRecord(await runs.load(actor.userId, row.runId), actor.userId));
+    if (decision === 'deny') {
+      await plugins.cancel(actor.userId, approvalId);
+      return res.json({ denied: true });
+    }
+    const { confirmation, execution } = await plugins.confirm(actor, approvalId, { toolkit: action.toolkit.toLowerCase(), toolSlug: action.slug });
+    const receipt = confirmation.receipt;
+    if (execution.toolSlug !== action.slug || !receipt) throw new BrowserRequestError(503, 'BROWSER_PLUGIN_RECEIPT_UNAVAILABLE');
+    return res.json({ receiptId: receipt.id, result: execution.resultText.slice(0, 12_000) });
   }));
 
   router.post('/runs/:runId/plugin-read', withLease(async (req, res, { runs }, row, lease) => {
@@ -323,7 +564,8 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
     const tool = source?.tools.find(tool => tool.slug === data.slug);
     const digest = preparedActionDigest(data);
     if (!source?.sessionId || !tool) throw new BrowserRequestError(403, 'BROWSER_PLUGIN_NOT_DISCOVERED');
-    if (state.reads.length >= 6 || state.reads.some(item => item.digest === digest)) {
+    assertToolArguments(data.arguments, tool.args);
+    if (state.reads.length >= MAX_PLUGIN_READS || state.reads.some(item => item.digest === digest)) {
       throw new BrowserRequestError(409, 'BROWSER_PLUGIN_READ_ALREADY_REQUESTED');
     }
     const read: typeof state.reads[number] = { digest, slug: data.slug, toolkit: tool.toolkit, used: false };
@@ -365,7 +607,7 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
       await plugins.cancel(actor.userId, approvalId);
       return res.json({ denied: true });
     }
-    const { confirmation, execution } = await plugins.confirm(actor, approvalId, { toolkit: read.toolkit, toolSlug: read.slug });
+    const { confirmation, execution } = await plugins.confirm(actor, approvalId, { toolkit: read.toolkit.toLowerCase(), toolSlug: read.slug });
     await assertPluginRun(req, localRecord(await runs.load(actor.userId, row.runId), actor.userId));
     const receipt = confirmation.receipt;
     if (execution.toolSlug !== read.slug || !receipt) throw new BrowserRequestError(503, 'BROWSER_PLUGIN_RECEIPT_UNAVAILABLE');
@@ -398,7 +640,6 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
     // Charge the full per-turn ceiling until a settled provider receipt says otherwise.
     // A crash or unknown charge cannot restore the allowance by resuming a task.
     const priorSpend = Number(row.state.productManifest.localBrowserSpendMicros ?? admitted.turns * TURN_CEILING_MICROS);
-    if (priorSpend + TURN_CEILING_MICROS > MAX_RUN_MICROS) throw new BrowserRequestError(409, 'BROWSER_SPEND_LIMIT');
     const task = row.state.tasks[0]!;
     task.status = 'running';
     task.startedAt ??= new Date().toISOString();
@@ -455,9 +696,37 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
     }
   }));
 
-  router.post('/runs/:runId/resume', withLease(async (req, res, _rt, row) => {
-    active(row);
-    return res.json({ ...allowance(row), ...(req.revalidateBrowserDevice && plugins.configured() ? { plugins: true } : {}) });
+  // The next execution segment of the same run, under the same ownership, ledger and approvals. Turns are renewed near the end of the
+  // current segment and time when less than ten minutes are left; nothing else changes. There is no total ceiling: the run ends when the
+  // task is done, cancelled, or the owner's entitlement ledger refuses a turn. Never starts a second run.
+  const grantSegment = async (runs: Runtime['runs'], row: BrowserRunRecord, lease: Lease) => {
+    const before = allowance(row);
+    const needTurns = before.turns >= before.maxTurns - 3;
+    const needTime = before.remainingMs < RENEW_BEFORE_MS;
+    if (!needTurns && !needTime) return { ...before, granted: 0 };
+    const manifest = row.state.productManifest;
+    if (needTurns) manifest.localBrowserMaxTurns = before.maxTurns + SEGMENT_TURNS;
+    if (needTime) {
+      // A fresh segment counts from now when the old one has already ended.
+      const spent = Date.now() - Date.parse(row.state.createdAt);
+      manifest.localBrowserDurationMs = Math.max(Number(manifest.localBrowserDurationMs ?? 10 * MINUTE), spent) + SEGMENT_MS;
+    }
+    row.state.updatedAt = new Date().toISOString();
+    await runs.stateStore(row.userId, () => lease).save(row.state);
+    const next = allowance(row);
+    return { ...next, granted: next.maxTurns - before.maxTurns };
+  };
+
+  router.post('/runs/:runId/extend', withLease(async (_req, res, { runs }, row, lease) => {
+    if (row.cancelRequested || isTerminalRunStatus(row.status)) throw new BrowserRequestError(409, 'BROWSER_RUN_INACTIVE');
+    return res.json(await grantSegment(runs, row, lease));
+  }));
+
+  router.post('/runs/:runId/resume', withLease(async (req, res, { runs }, row, lease) => {
+    // Resuming is the owner's own continuation of the same run: an ended segment is renewed, a cancelled or finished run is not.
+    if (row.cancelRequested || isTerminalRunStatus(row.status)) throw new BrowserRequestError(409, 'BROWSER_RUN_INACTIVE');
+    const next = await grantSegment(runs, row, lease);
+    return res.json({ ...next, ...(req.revalidateBrowserDevice && plugins.configured() ? { plugins: true } : {}) });
   }));
 
   router.post('/runs/:runId/finish', withLease(async (req, res, { runs }, row, lease) => {
@@ -466,7 +735,17 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
     if (isTerminalRunStatus(row.status)) return res.json({ status: row.status });
     if (data.status === 'completed') {
       active(row);
-      if (!data.actions.length || !data.result?.trim() || !row.state.productManifest.localBrowserTurn) {
+      // The flag alone proves nothing: the run's own recorded goal has to be a plain open-and-read request, the answer has to name the
+      // site the run started on, the run has to be young and have no evidence yet, and only read actions may be reported.
+      const task0 = row.state.tasks[0];
+      const direct = data.direct === true && !row.state.productManifest.localBrowserTurn
+        && data.actions.length > 0 && data.actions.every(action => DIRECT_READ_ACTIONS.has(action))
+        && (data.result?.length ?? 0) <= DIRECT_READ_RESULT_MAX
+        && isPlainOpenAndRead(String(row.spec.goal ?? ''))
+        && namesSite(data.result ?? '', String(row.spec.startUrl ?? ''))
+        && Date.now() - Date.parse(row.state.createdAt) <= DIRECT_READ_MAX_AGE_MS
+        && !(task0?.evidence?.length);
+      if (!data.actions.length || !data.result?.trim() || (!row.state.productManifest.localBrowserTurn && !direct)) {
         throw new BrowserRequestError(400, 'BROWSER_RESULT_UNVERIFIED');
       }
     }

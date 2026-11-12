@@ -21,6 +21,14 @@ export function quadCenter(q: Quad): Point {
   return { x: (q[0] + q[2] + q[4] + q[6]) / 4, y: (q[1] + q[3] + q[5] + q[7]) / 4 };
 }
 
+/** The point at fractions (fx across, fy down) of a quad given as top-left, top-right, bottom-right, bottom-left. */
+export function quadAt(q: Quad, fx: number, fy: number): Point {
+  return {
+    x: q[0] + fx * (q[2] - q[0]) + fy * (q[6] - q[0]),
+    y: q[1] + fx * (q[3] - q[1]) + fy * (q[7] - q[1]),
+  };
+}
+
 export function quadArea(q: Quad): number {
   let area = 0;
   for (let i = 0; i < 4; i++) {

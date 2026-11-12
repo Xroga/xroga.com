@@ -96,7 +96,7 @@ interface StoredResult {
   page?: { tabId?: number; url?: string };
 }
 
-const READS = new Set(['snapshot', 'find', 'read', 'screenshot', 'wait', 'read_attachment']);
+const READS = new Set(['snapshot', 'find', 'read', 'screenshot', 'wait', 'read_attachment', 'confirm_download']);
 const ALLOWED: Record<string, string> = {
   user: 'allowed by the user',
   'site-rule': "allowed by the site's rule",

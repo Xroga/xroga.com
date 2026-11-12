@@ -77,3 +77,10 @@ describe('connected apps and SEO', () => {
     expect(ids('Go to example.com and tell me the heading')).toEqual([]);
   });
 });
+
+describe('exact-count playbook', () => {
+  it('is chosen for requests that name an exact number, and not for plain ones', () => {
+    expect(ids('Add three todo items and make sure the list has exactly three')).toContain('exact-count');
+    expect(ids('Open example.com and tell me the heading')).not.toContain('exact-count');
+  });
+});

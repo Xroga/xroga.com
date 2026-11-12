@@ -204,6 +204,7 @@
   "act.upload": "向 {target} 上傳了檔案",
   "act.readAttachment": "閱讀了附件",
   "act.saveFile": "儲存了檔案",
+  "act.confirmDownload": "檢查了下載",
   "act.other": "{tool}",
   "act.navigate": "前往 {url}",
   "act.tabOpen": "開啟了分頁：{url}",

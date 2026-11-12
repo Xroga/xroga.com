@@ -153,8 +153,17 @@ export function App() {
       );
     void autoConnect().then(refresh, refresh);
     refresh();
-    const timer = setInterval(refresh, 1_000);
-    return () => clearInterval(timer);
+    const timer = setInterval(() => {
+      if (document.visibilityState === 'visible') refresh();
+    }, 5_000);
+    const onVisible = () => {
+      if (document.visibilityState === 'visible') refresh();
+    };
+    document.addEventListener('visibilitychange', onVisible);
+    return () => {
+      clearInterval(timer);
+      document.removeEventListener('visibilitychange', onVisible);
+    };
   }, []);
   const [state, dispatch] = useReducer(reduce, INITIAL);
   // Mode, model and effort chosen before the first message of a new conversation.

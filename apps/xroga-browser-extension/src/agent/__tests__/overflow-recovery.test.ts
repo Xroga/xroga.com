@@ -1,6 +1,6 @@
 // Steps 3 and 4 of context management and a request refused for its size, with the context-set cases that need them.
 import 'fake-indexeddb/auto';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { IDBFactory } from 'fake-indexeddb';
 import { ScriptedModel, resolveProfile } from '@src/llm';
 import type { ScriptedCall, ScriptedReply } from '@src/llm';
@@ -13,6 +13,10 @@ import { agentSystemPrompt } from '../prompt';
 import { toolsForRun } from '../tools';
 import { FakeHost, FakeLayer, ok, receipt } from '../testing/fake-layer';
 import { isSummaryCall, withSummaries } from '../testing/scripts';
+
+// These tests run 30 to 36 turn conversations on fake-indexeddb (a JavaScript IndexedDB). Alone each takes 1 to 2 s; with the whole suite running in parallel the
+// default 5 s is not enough on a busy machine. In real Chrome the same per-turn preparation measured about 9 ms, so this is test-environment cost, not product latency.
+vi.setConfig({ testTimeout: 30_000 });
 
 afterEach(async () => {
   await closeDb();
@@ -98,7 +102,7 @@ describe('the long-run scenario on a 16k window, with the full tool list', () =>
           ? [
               i % 2
                 ? { name: 'click', input: { target: { ref: `a${i}` } }, id: `c${i}` }
-                : { name: 'read', input: {}, id: `r${i}` },
+                : { name: 'read', input: { offset: i * 1000 }, id: `r${i}` },
             ]
           : [{ name: 'done', input: { outcome: 'success', summary: 'Saved.' }, id: 'd' }],
     }));
@@ -126,7 +130,7 @@ describe('a request the provider refuses for its size', () => {
       text: `Reading ${i}. `.repeat(40),
       toolCalls:
         i < 24
-          ? [{ name: 'read', input: {}, id: `r${i}` }]
+          ? [{ name: 'read', input: { offset: i * 1000 }, id: `r${i}` }]
           : [{ name: 'done', input: { outcome: 'success', summary: 'Read.' }, id: 'd' }],
     }));
     // A short tool list: the fake server counts the prompt and not the tool definitions.
@@ -180,7 +184,7 @@ describe('the context set', () => {
         return {
           toolCalls: [{ name: 'ask_user', input: { kind: 'input', message: 'Which account should I use?' }, id: 'q' }],
         };
-      if (i < 30) return { text: `Step ${i}. `.repeat(150), toolCalls: [{ name: 'read', input: {}, id: `r${i}` }] };
+      if (i < 30) return { text: `Step ${i}. `.repeat(150), toolCalls: [{ name: 'read', input: { offset: i * 1000 }, id: `r${i}` }] };
       return { toolCalls: [{ name: 'done', input: { outcome: 'success', summary: 'Done.' }, id: 'd' }] };
     });
     const layer = flatsLayer({

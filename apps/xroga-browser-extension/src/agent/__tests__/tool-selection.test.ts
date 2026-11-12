@@ -39,3 +39,17 @@ describe('startingTools', () => {
     expect(switchTo).toBeUndefined();
   });
 });
+
+describe('action verbs that are not reads', () => {
+  it.each([
+    'Add two rows to the list and tell me when done',
+    'Rename the file and tell me the new name',
+    'Mark the invoice as paid and tell me the total',
+    'Enable dark mode and tell me what changed',
+  ])('%s starts with the action tools', request => {
+    expect(isReadOnlyRequest(request)).toBe(false);
+  });
+  it('a plain read stays read-only', () => {
+    expect(isReadOnlyRequest('Tell me the heading of this page')).toBe(true);
+  });
+});

@@ -12,6 +12,9 @@ export const INTERRUPTED_MUTATION =
 export const SKIPPED_RESTART = 'skipped: the extension restarted before this call ran.';
 export const RESTART_NOTE = 'the browser connection restarted; all refs are invalid; take a snapshot first.';
 
+/** Agent tools that do page work themselves: their successful results are evidence of work, though they carry no layer receipt. */
+const AGENT_WORK = new Set(['delegate', 'batch', 'start_parallel_tasks', 'parallel_task_status']);
+
 /** Read only results that were durably recorded for this run. Arguments, page text and credentials stay local. */
 export function completedBrowserTools(runId: string, branch: Entry[]): string[] {
   const names: string[] = [];
@@ -19,6 +22,13 @@ export function completedBrowserTools(runId: string, branch: Entry[]): string[] 
     if (entry.type !== 'message' || entry.meta?.runId !== runId || entry.message.role !== 'tool') continue;
     const result = entry.result as
       { ok?: unknown; receipt?: { dispatched?: unknown; reachedTarget?: unknown } } | undefined;
+    if (!result) {
+      for (const part of entry.message.parts) {
+        if (part.type === 'tool-result' && !part.isError && AGENT_WORK.has(part.toolName)) names.push(part.toolName);
+        if (names.length === 500) return names;
+      }
+      continue;
+    }
     if (
       result?.ok !== true ||
       result.receipt?.dispatched === false ||
@@ -28,7 +38,7 @@ export function completedBrowserTools(runId: string, branch: Entry[]): string[] 
       continue;
     for (const part of entry.message.parts) {
       if (part.type === 'tool-result' && !part.isError && part.toolName !== 'done') names.push(part.toolName);
-      if (names.length === 48) return names;
+      if (names.length === 500) return names;
     }
   }
   return names;

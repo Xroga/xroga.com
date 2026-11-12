@@ -1478,6 +1478,20 @@ async function composioRequest<T>(
     }
 
     if (!response.ok) {
+      // Server-side diagnostics only: the HTTP status, the path with identifiers removed, and the provider's own short
+      // error identifier. Never arguments, results, messages or any user data.
+      try {
+        const err = (payload as { error?: { slug?: unknown; code?: unknown } } | null)?.error;
+        const slug = typeof err?.slug === 'string' && /^[A-Za-z0-9_.-]{1,60}$/.test(err.slug) ? err.slug : '-';
+        const providerCode = typeof err?.code === 'number' || typeof err?.code === 'string' ? String(err.code).slice(0, 20) : '-';
+        console.error('[composio] upstream error', response.status, path.split('?')[0].replace(/[A-Za-z0-9_-]{16,}/g, ':id'), slug, providerCode);
+        // Off by default (production). Staging sets XROGA_COMPOSIO_ERROR_DETAIL=1 to see the provider's own explanation of a rejected call.
+        if (process.env.XROGA_COMPOSIO_ERROR_DETAIL === '1') {
+          const e = (payload as { error?: { message?: unknown; suggested_fix?: unknown } } | null)?.error;
+          const clip = (v: unknown) => (typeof v === 'string' ? v.replace(/[\t\n\r ]+/g, ' ').slice(0, 300) : '-');
+          console.error('[composio] upstream detail', clip(e?.message), '| fix:', clip(e?.suggested_fix));
+        }
+      } catch { /* diagnostics must never change the result */ }
       let message = 'Xroga Connect could not complete the external request.';
 
       if (response.status === 401 || response.status === 403) {
@@ -1498,10 +1512,16 @@ async function composioRequest<T>(
         message = 'Xroga Connect is temporarily unavailable. Please try again shortly.';
       }
 
-      throw new ComposioClientError(message, {
+      const failure = new ComposioClientError(message, {
         status: response.status >= 500 ? 502 : response.status,
         code: 'COMPOSIO_UPSTREAM_ERROR',
       });
+      // A rejected request (4xx) carries the provider's own short reason, so the caller can correct it. It is untrusted text.
+      const reason = (payload as { error?: { message?: unknown } } | null)?.error?.message;
+      if (response.status >= 400 && response.status < 500 && typeof reason === 'string' && reason.trim()) {
+        Object.assign(failure, { providerMessage: reason.replace(/[\t\n\r ]+/g, ' ').trim().slice(0, 300) });
+      }
+      throw failure;
     }
 
     return payload as T;
@@ -2610,14 +2630,18 @@ async function executeDiscoveredComposioTool(
 
   const toolSlug = cleanToolSlug(input.toolSlug);
 
-  const discovery = await searchComposioTools(userId, {
-    sessionId,
-    query: input.useCase,
-    mode: input.mode,
-  },context);
-  signal?.throwIfAborted();
-
-  const allowedTool = discovery.tools.find((tool) => tool.slug === toolSlug);
+  // The provider's tool search can vary between identical calls. The same check is repeated a few times, so an
+  // approved tool is not refused because one search happened to omit it; it must still be found by this session.
+  let allowedTool: XrogaConnectSearchResult['tools'][number] | undefined;
+  for (let attempt = 0; attempt < 3 && !allowedTool; attempt += 1) {
+    const discovery = await searchComposioTools(userId, {
+      sessionId,
+      query: input.useCase,
+      mode: input.mode,
+    },context);
+    signal?.throwIfAborted();
+    allowedTool = discovery.tools.find((tool) => tool.slug === toolSlug);
+  }
   const allowed =
     Boolean(allowedTool) &&
     canUserAccessComposioToolkit(
@@ -2690,22 +2714,33 @@ async function executeDiscoveredComposioTool(
     if(!final?.connected||finalAccountId!==accountId)throw new ComposioClientError('The connected application account changed. Prepare the action again.',{status:409,code:'COMPOSIO_ACTION_ACCOUNT_CHANGED'});
   }
 
-  const response = await composioRequest<ComposioExecuteResponse>(
-    `/tool_router/session/${encodeURIComponent(sessionId)}/execute`,
-    {
-      method: 'POST',
-      body: {
-        tool_slug: toolSlug,
-        arguments: input.arguments,
-        // Official session execute API selects the exact account using `account`.
-        // https://docs.composio.dev/reference/api-reference/tool-router/postToolRouterSessionBySessionIdExecute
-        ...(account ? { account } : {}),
-        enable_auto_workbench_offload: false,
-      },
-      timeoutMs: EXECUTE_TIMEOUT_MS,
-      signal,
-    },context
-  );
+  // Official session execute API selects the exact account using `account`, so the approved account is always sent first.
+  // https://docs.composio.dev/reference/api-reference/tool-router/postToolRouterSessionBySessionIdExecute
+  // A project without multi-account selection refuses the field with a 400 before anything runs ("Multi-account selection is not
+  // enabled"). That one refusal is answered by repeating the same call without it (the session then uses its own single connection,
+  // which the live account check above already matched to the approved one), and the project is remembered as not supporting it.
+  const executePath = `/tool_router/session/${encodeURIComponent(sessionId)}/execute`;
+  const executeWith = (withAccount: boolean) => composioRequest<ComposioExecuteResponse>(executePath, {
+    method: 'POST',
+    body: {
+      tool_slug: toolSlug,
+      arguments: input.arguments,
+      ...(withAccount && account ? { account } : {}),
+      enable_auto_workbench_offload: false,
+    },
+    timeoutMs: EXECUTE_TIMEOUT_MS,
+    signal,
+  }, context);
+  let response: ComposioExecuteResponse;
+  try {
+    response = await executeWith(!accountSelectionUnsupported);
+  } catch (error) {
+    const reason = (error as { providerMessage?: unknown }).providerMessage;
+    if (!(account && !accountSelectionUnsupported && error instanceof ComposioClientError && error.status === 400 &&
+        typeof reason === 'string' && reason.toLowerCase().includes('multi-account selection is not enabled'))) throw error;
+    accountSelectionUnsupported = true;
+    response = await executeWith(false);
+  }
   // v3.1 can report input_required or failed with HTTP 200. Neither is a
   // completed effect. Never answer a provider approval request automatically.
   // Legacy inline responses with explicit data remain wire-compatible.
@@ -2757,6 +2792,13 @@ export async function executeComposioReadTool(
     toolSlug,
     mode: 'read',
   });
+}
+
+/** Set once Composio has said this project has no multi-account selection, so later calls do not repeat the refused field. */
+let accountSelectionUnsupported = false;
+/** Test-only: forgets what was learned about the project, so one test cannot change another. */
+export function resetComposioAccountSelectionMemory(): void {
+  accountSelectionUnsupported = false;
 }
 
 export async function executeComposioActionTool(

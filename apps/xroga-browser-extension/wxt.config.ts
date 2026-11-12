@@ -54,7 +54,8 @@ export default defineConfig({
       ? '__MSG_extDescription__'
       : 'Use Xroga to work in your own Chrome tabs, with live actions and approval controls.',
     default_locale: 'en',
-    ...(autorun ? {} : { version: '0.2.8', ...(manifestKey ? { key: manifestKey } : {}) }),
+    // The harness build keeps the pinned extension id when a key is given, so a device enrolled against the real backend is bound to it.
+    ...(autorun ? (manifestKey ? { key: manifestKey } : {}) : { version: '0.2.8', ...(manifestKey ? { key: manifestKey } : {}) }),
     minimum_chrome_version: '125',
     ...(autorun
       ? {
@@ -72,7 +73,7 @@ export default defineConfig({
           externally_connectable: { matches: [`${workspaceOrigin}/workspace*`], ids: [] },
           content_security_policy: {
             extension_pages:
-              `script-src 'self'; object-src 'self'; connect-src 'self' blob:${apiOrigin ? ' ' + apiOrigin : ''}; base-uri 'none'; form-action 'none'`,
+              `script-src 'self'; object-src 'self'; img-src 'self' data: https://logos.composio.dev; connect-src 'self' blob:${apiOrigin ? ' ' + apiOrigin : ''}; base-uri 'none'; form-action 'none'`,
           },
         }),
     incognito: 'not_allowed',
@@ -129,7 +130,11 @@ export default defineConfig({
       alias: {
         '@xroga/runtime-background': resolve(
           import.meta.dirname,
-          autorun ? 'src/xroga/fixture-background.ts' : 'src/xroga/agent-background.ts',
+          autorun
+            ? process.env.WXT_AUTORUN_PRODUCT === '1'
+              ? 'src/xroga/product-autorun-background.ts'
+              : 'src/xroga/fixture-background.ts'
+            : 'src/xroga/agent-background.ts',
         ),
         // puppeteer-core 25 imports @puppeteer/browsers for the `channel` option, which is never used here.
         '@puppeteer/browsers': resolve(import.meta.dirname, 'src/browser-control/host/puppeteer-browsers-stub.ts'),

@@ -1,6 +1,6 @@
 # Secret and environment name inventory
 
-Values are forbidden. Source SHA: `16820a250195c006baa0edc7aa2b7af16dca6e79`. Names and source discovery do not prove that a capability is configured or accepted.
+Values are forbidden. Source SHA: `c1c8970c25affc32dbc5cbafc1709b6f229205fd`. Names and source discovery do not prove that a capability is configured or accepted.
 
 | Name | Classification | Requirement | Dependency |
 | --- | --- | --- | --- |
@@ -248,6 +248,7 @@ Values are forbidden. Source SHA: `16820a250195c006baa0edc7aa2b7af16dca6e79`. Na
 | XROGA_CHROME_EXTENSION_ID | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_CIRCUIT_FAILURE_THRESHOLD | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_CLEANUP_JOB_ID | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
+| XROGA_COMPOSIO_ERROR_DETAIL | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-backend-composio-dev |
 | XROGA_CREDENTIAL_KMS_PROVIDER | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | credential-store |
 | XROGA_DEPLOYMENT_ENVIRONMENT | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-127-0-0-1 |
 | XROGA_DEV_CREDENTIAL_KEK | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |

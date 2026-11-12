@@ -26,6 +26,19 @@ describe('snapshot diffs', () => {
     expect(applyDiff(before, ops)).toEqual(after);
   });
 
+  // Measured saving: a 300-line outline where a click opens a dialog and flips one checkbox. Synthetic outline, so this
+  // shows the size relationship, not a number for any real site.
+  it('is far smaller than the full outline for a small change, and exact', () => {
+    const full = Array.from({ length: 300 }, (_, i) => `  [e${i + 1}] link "Row ${i + 1} · customer ${i * 7}" (href /c/${i})`);
+    const next = [...full.slice(0, 150), '  dialog "Confirm"', '    [e901] button "Cancel"', ...full.slice(150)];
+    next[10] = '  [e11] link "Row 11 · customer 70" (visited)';
+    const ops = diffLines(full, next)!;
+    expect(applyDiff(full, ops)).toEqual(next);
+    const diffChars = renderDiff(ops, 1).text.length;
+    const fullChars = next.join('\n').length;
+    expect(diffChars).toBeLessThan(fullChars * 0.1);
+  });
+
   it('renders added, removed and changed lines', () => {
     const { text, added, removed, changed } = renderDiff(diffLines(before, after)!, 14);
     expect(text.split('\n')).toEqual([

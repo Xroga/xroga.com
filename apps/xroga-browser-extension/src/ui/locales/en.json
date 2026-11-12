@@ -204,6 +204,7 @@
   "act.upload": "Uploaded a file to {target}",
   "act.readAttachment": "Read an attachment",
   "act.saveFile": "Saved a file",
+  "act.confirmDownload": "Checked a download",
   "act.other": "{tool}",
   "act.navigate": "Went to {url}",
   "act.tabOpen": "Opened a tab: {url}",

@@ -1,5 +1,5 @@
 import 'fake-indexeddb/auto';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { IDBFactory } from 'fake-indexeddb';
 import { ScriptedModel, resolveProfile } from '@src/llm';
 import type { ScriptedCall, ScriptedReply } from '@src/llm';
@@ -17,6 +17,10 @@ import { NOTE_LABEL, RunWriter } from '../records';
 import { toolsForRun } from '../tools';
 import { FakeHost, FakeLayer, failed, ok, receipt } from '../testing/fake-layer';
 import { isSummaryCall, withSummaries } from '../testing/scripts';
+
+// These tests run 30 to 36 turn conversations on fake-indexeddb (a JavaScript IndexedDB). Alone each takes 1 to 2 s; with the whole suite running in parallel the
+// default 5 s is not enough on a busy machine. In real Chrome the same per-turn preparation measured about 9 ms, so this is test-environment cost, not product latency.
+vi.setConfig({ testTimeout: 30_000 });
 
 afterEach(async () => {
   await closeDb();
@@ -258,7 +262,7 @@ describe('a long run on a 16k window', () => {
               toolCalls: [
                 i % 2
                   ? { name: 'click', input: { target: { ref: `a${i}` } }, id: `c${i}` }
-                  : { name: 'read', input: {}, id: `r${i}` },
+                  : { name: 'read', input: { offset: i * 1000 }, id: `r${i}` },
               ],
             }
           : { toolCalls: [{ name: 'done', input: { outcome: 'success', summary: 'Saved.' }, id: 'd' }] }),
@@ -301,7 +305,7 @@ describe('a long run on a 16k window', () => {
       (call, i) => ({
         text: `Reading listing ${i}. `.repeat(60),
         ...(i < 36
-          ? { toolCalls: [{ name: 'read', input: {}, id: `r${i}` }] }
+          ? { toolCalls: [{ name: 'read', input: { offset: i * 1000 }, id: `r${i}` }] }
           : { toolCalls: [{ name: 'done', input: { outcome: 'success', summary: 'Read.' }, id: 'd' }] }),
         usage: { input: Math.round(JSON.stringify(call.prompt).length / 4), output: 10 },
       }),
@@ -348,7 +352,7 @@ describe('a poisoned summary across stop, restart and continue', () => {
           toolCalls: [
             i % 2
               ? { name: 'click', input: { target: { ref: `a${i}` } }, id: `c${i}` }
-              : { name: 'read', input: {}, id: `r${i}` },
+              : { name: 'read', input: { offset: i * 1000 }, id: `r${i}` },
           ],
           usage: { input: Math.round(JSON.stringify(call.prompt).length / 4), output: 10 },
         };
