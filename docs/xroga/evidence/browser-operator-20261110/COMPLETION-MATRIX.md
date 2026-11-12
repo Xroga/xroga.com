@@ -31,7 +31,7 @@ A passing unit test is not a user experience: the Chrome, DS and Svc columns are
 | Server finish for direct reads (`direct:true`) | Y | Y | Y | n/a | Y (looser version) | n/a | stricter version (goal, site, age, evidence) verified on staging with 3 real runs | `localBrowserDirectRead.ts` | independent review |
 | #971 activity UI integration | Y (merged on `claude/ops-integrated-20261112`) | Y (candidate branch) | Y (1,111 unit tests pass on it) | Y (284 of 284 scenarios on the integrated build; `panel-shot` check: Black Hole header, live status, real activity row, Stop button, final answer) | N | n/a | candidate needs governance regeneration on its own branch and a human look at the screenshots; two defects found and fixed in the merge (lucide-react licence list, one placeholder-only string); Codex's #971 itself is unchanged | `panel-shot` PNGs; branch log | Codex coordination for the merge order |
 | CI gates (#965) | n/a | n/a | n/a | n/a | n/a | n/a | tenant-security fails ONLY on the egress evidence for `composioClient.ts` (source changed after review) | review packet | independent security review |
-| Private review build | Y | n/a | n/a | P (loads, panel renders) | n/a | n/a | not installed as a user with sign-in on the production build | `C:/xr-release/*.zip` | none |
+| Private review build | Y | n/a | n/a | P (loads, panel renders) | n/a | n/a | not installed as a user with sign-in on the production build | `C:/xr-review-builds/*.zip` | none |
 
 ## Performance facts measured this round (real Chrome, one laptop, fixture model with instant replies)
 

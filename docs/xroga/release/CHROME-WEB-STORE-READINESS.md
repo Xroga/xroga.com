@@ -74,7 +74,7 @@ but side panel and debugger behaviour not tested there); Firefox and Safari (not
 
 ## 8. Review build and smoke test
 
-Built from source commit `c1a36b89a` (production-mode `wxt build`, 34 files). Review package: `C:/xr-release/xroga-browser-operator-0.2.8-c1a36b89a.zip`,
+Built from source commit `c1a36b89a` (production-mode `wxt build`, 34 files). Review package: `C:/xr-review-builds/xroga-browser-operator-0.2.8-c1a36b89a.zip`,
 SHA-256 `8cf8d47b84ee7bfdad369dcb6cb5997ba1d9aae04066e1445e35dfe3811f50e0` (checksum file beside it). Smoke test in Chrome for Testing: the unpacked package loads, its
 Manifest V3 service worker registers and the side panel page opens with the title "Xroga Browser Automation". This is a load test, not a store install, and not a
 sign-in or task test of the production build (those ran on the staging build, see the gap assessment).
