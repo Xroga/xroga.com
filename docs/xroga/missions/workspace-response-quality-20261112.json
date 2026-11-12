@@ -29,17 +29,17 @@
   },
   "tests": [
     { "command": "tsx --test backend/src/ai/nativeOpenUi.test.ts backend/src/lib/richShareSnapshot.test.ts", "scope": "Transport variants, unresolved or cyclic references, omitted formats, code preservation and Share fallback.", "negative": true, "reference": "backend/src/ai/nativeOpenUi.test.ts" },
-    { "command": "node scripts/verify-native-openui-browser.mjs", "scope": "Thirty-one renderer scenarios, five widths and both themes.", "negative": true, "reference": "scripts/verify-native-openui-browser.mjs" },
+    { "command": "node scripts/verify-native-openui-browser.mjs", "scope": "Thirty-two renderer scenarios, five widths and both themes.", "negative": true, "reference": "scripts/verify-native-openui-browser.mjs" },
     { "command": "playwright test e2e/command3-auth.spec.ts", "scope": "Authenticated nested diagram and table rendering, transient and persistent lazy asset failure, Copy and reopen, with isolated fixtures.", "negative": true, "reference": "frontend/e2e/command3-auth.spec.ts" }
   ],
   "architecture": { "change": "extends_canonical", "reason": "Extend existing answer assembly and compatibility readers.", "rfc": null },
   "rollout": "Complete exact-source CI and a single approved grouped hosted acceptance before production review.",
   "rollback": "Keep the prior paired release and exercise the decoder-compatible recovery in staging.",
-  "knownGaps": ["Hosted staging proved frontend asset delivery after the capacity correction. The first fresh model program then failed a reference check. Reference recovery needs hosted acceptance before a production canary. Private Search staging prerequisites are independent."],
+  "knownGaps": ["Hosted staging proved the provider-disabled reference replay and asset delivery. The fresh answer had a nested Diagram schema mismatch. Diagram normalization and the shared topology check need fresh hosted acceptance before a production canary. Private Search staging prerequisites are independent."],
   "placeholderClaimsRemaining": [],
   "evidenceRefs": ["docs/operations/native-openui/WORKSPACE-RESPONSE-QUALITY.md"],
   "claimsFullProductCompletion": false,
   "claimsAllBatchCommandsComplete": false,
   "release": { "state": "BLOCKED", "blockers": ["Exact-source authenticated tests, grouped hosted acceptance and production approval."], "authenticatedE2e": "BLOCKED", "stagedSecurity": "BLOCKED", "liveUrl": null, "deployedSha": null },
-  "changedFiles": ["backend/src/ai/answerCoverage.ts", "backend/src/ai/nativeOpenUi.ts", "backend/src/ai/nativeOpenUi.test.ts", "backend/src/ai/nativeOpenUiPrompt.ts", "backend/src/ai/nativeOpenUiAccuracy.ts", "backend/src/ai/nativeOpenUiShare.ts", "backend/src/ai/nativeOpenUiWorkspace.ts", "backend/src/ai/pipeline.ts", "backend/src/lib/richShareSnapshot.ts", "backend/src/lib/richShareSnapshot.test.ts", "frontend/e2e/command3-auth.spec.ts", "frontend/e2e/phase4-admin-share.security.mjs", "frontend/src/app/share/[token]/page.tsx", "frontend/src/components/native-openui/NativeWorkspaceAnswer.tsx", "scripts/verify-native-openui-browser.mjs", "docs/operations/native-openui/WORKSPACE-RESPONSE-QUALITY.md", "docs/xroga/missions/workspace-response-quality-20261112.json"]
+  "changedFiles": ["backend/src/ai/answerCoverage.ts", "backend/src/ai/nativeOpenUi.ts", "backend/src/ai/nativeDiagramTopology.ts", "frontend/src/components/native-openui/Diagram.tsx", "backend/src/ai/nativeOpenUi.test.ts", "backend/src/ai/nativeOpenUiPrompt.ts", "backend/src/ai/nativeOpenUiAccuracy.ts", "backend/src/ai/nativeOpenUiShare.ts", "backend/src/ai/nativeOpenUiWorkspace.ts", "backend/src/ai/pipeline.ts", "backend/src/lib/richShareSnapshot.ts", "backend/src/lib/richShareSnapshot.test.ts", "frontend/e2e/command3-auth.spec.ts", "frontend/e2e/phase4-admin-share.security.mjs", "frontend/src/app/share/[token]/page.tsx", "frontend/src/components/native-openui/NativeWorkspaceAnswer.tsx", "scripts/verify-native-openui-browser.mjs", "docs/operations/native-openui/WORKSPACE-RESPONSE-QUALITY.md", "docs/xroga/missions/workspace-response-quality-20261112.json"]
 }

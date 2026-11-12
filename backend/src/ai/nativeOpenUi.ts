@@ -1,5 +1,6 @@
 import { createParser, evaluate, parseExpression, split, tokenize, walkAST, type ASTNode, type LibraryJSONSchema } from '@openuidev/lang-core';
 import { contradictsMonthlyChart, monthlyChartDataFallback, reviewNativeAnswer, suppliedMonthlyComparison } from './nativeOpenUiAccuracy.js';
+import { hasRenderableDiagramTopology } from './nativeDiagramTopology.js';
 import catalog from './nativeOpenUiCatalog.json' with { type: 'json' };
 
 export const NATIVE_UI_FORMAT = 'xroga-openui-v1' as const;
@@ -123,23 +124,25 @@ function hasReactiveCalculator(program: string) {
   return [...inputs].some(input => outputs.has(input));
 }
 
-/** Inspect only the validated renderer tree, so unused declarations do not
- * satisfy a request. Shape checks here are independent of factual review. */
+function* nativeElements(root: unknown) {
+  const pending: unknown[] = [root];
+  const visited = new Set<object>();
+  while (pending.length) {
+    const value = pending.pop();
+    if (!value || typeof value !== 'object' || visited.has(value)) continue;
+    visited.add(value);
+    const element = value as { type?: string; typeName?: string; props?: Record<string, unknown> };
+    if (element.type === 'element' && element.typeName) yield { typeName: element.typeName, props: element.props };
+    pending.push(...Object.values(value));
+  }
+}
+
+/** Inspect only the renderer tree, so unused declarations do not satisfy a request. */
 export function missingNativeFormats(program: string, formats: readonly RequiredNativeFormat[]) {
   if (!formats.length) return [];
   const names = new Set<string>();
-  if (program) {
-    const { root } = parseProgram.parse(program);
-    const pending: unknown[] = [root];
-    const visited = new Set<object>();
-    while (pending.length) {
-      const value = pending.pop();
-      if (!value || typeof value !== 'object' || visited.has(value)) continue;
-      visited.add(value);
-      const element = value as { type?: string; typeName?: string };
-      if (element.type === 'element' && element.typeName) names.add(element.typeName);
-      pending.push(...Object.values(value));
-    }
+  if (program) for (const { typeName, props } of nativeElements(parseProgram.parse(program).root)) {
+    if (typeName !== 'Diagram' || hasRenderableDiagramTopology(props?.nodes, props?.links)) names.add(typeName);
   }
   const available: Record<RequiredNativeFormat, boolean> = {
     table: names.has('Table'), chart: names.has('Chart'), graph: names.has('Diagram') || names.has('Svg'),
@@ -266,8 +269,9 @@ export type NativeUiDiagnostic = {
   shape: Array<{ tokens: number; skeleton: string }>;
   factualRule?: NonNullable<ReturnType<typeof reviewNativeAnswer>>['rule'];
   referenceIssue?: 'missing' | 'cycle';
+  diagramTopology?: 'invalid';
   schemaState?: { hasRoot: boolean; incomplete: boolean; unresolved: number; errors: number };
-  schema?: Array<{ code: string; statement?: number; component?: string; pathDepth: number }>;
+  schema?: Array<{ code: string; statement?: number; component?: string; pathDepth: number; diagramField?: string }>;
 };
 
 /** Used only after a schema-valid program reached the data-review gate. */
@@ -287,6 +291,7 @@ export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<s
   let schemaState: NativeUiDiagnostic['schemaState'];
   let factualRule: NativeUiDiagnostic['factualRule'];
   let referenceIssue: NativeUiDiagnostic['referenceIssue'];
+  let diagramTopology: NativeUiDiagnostic['diagramTopology'];
   const fail = (reason: NativeUiDiagnostic['reason'], errors?: ReturnType<typeof parseProgram.parse>['meta']['errors']) => {
     if (diagnose) diagnose({
       stage, reason, statement, programLength: program.length,
@@ -301,10 +306,15 @@ export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<s
       ...(schemaState ? { schemaState } : {}),
       ...(factualRule ? { factualRule } : {}),
       ...(referenceIssue ? { referenceIssue } : {}),
+      ...(diagramTopology ? { diagramTopology } : {}),
       ...(errors?.length ? { schema: errors.slice(0, 8).map(error => {
         const index = statements.findIndex(item => item.id === error.statementId);
+        const diagramField = error.component === 'Diagram' &&
+          /^\/(?:title|description|nodes|links|nodes\/\d+\/(?:id|label|level|detail|tone|icon)|links\/\d+\/(?:from|to|label))$/.test(error.path)
+          ? error.path.replace(/\/\d+\//, '/*/') : undefined;
         return { code: error.code, ...(index < 0 ? {} : { statement: index + 1 }),
           ...(components.has(error.component) ? { component: error.component } : {}),
+          ...(diagramField ? { diagramField } : {}),
           pathDepth: error.path.split('/').length - 1 };
       }) } : {}),
     });
@@ -396,6 +406,12 @@ export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<s
     if (!result.root || result.root.typeName !== 'Col' || result.meta.incomplete || result.meta.unresolved.length || result.meta.errors.length) return fail('schema', result.meta.errors);
     if (!Array.isArray(result.root.props.children) || !result.root.props.children.length) return fail('schema');
     if (workspaceContract) {
+      for (const { typeName, props } of nativeElements(result.root)) {
+        if (typeName === 'Diagram' && !hasRenderableDiagramTopology(props?.nodes, props?.links)) {
+          diagramTopology = 'invalid';
+          return fail('schema');
+        }
+      }
       // Check render-time requirements the upstream schema does not enforce.
       let invalidBlock = false;
       const resolve = (node: ASTNode | undefined) => resolveRecoveryReference(node, symbols);
@@ -458,15 +474,37 @@ function resolveRecoveryReference(node: ASTNode | undefined, symbols: ReadonlyMa
   return node;
 }
 
-function rewriteListItems(node: ASTNode, symbols: ReadonlyMap<string, ASTNode>): ASTNode {
+function normalizeDiagramRows(node: ASTNode, symbols: ReadonlyMap<string, ASTNode>, isNode: boolean): ASTNode {
+  const rows = resolveRecoveryReference(node, symbols);
+  if (rows?.k !== 'Arr' || rows.els.length > (isNode ? 12 : 18)) return node;
+  const optionalFields = isNode ? ['detail', 'tone', 'icon'] : ['label'];
+  const els = rows.els.map(row => {
+    const object = resolveRecoveryReference(row, symbols);
+    if (object?.k !== 'Obj') return row;
+    const entries = object.entries.flatMap(([key, raw]): [string, ASTNode][] => {
+      const value = resolveRecoveryReference(raw, symbols);
+      if (value?.k === 'Null' && optionalFields.includes(key)) return [];
+      if (isNode && key === 'level' && value?.k === 'Str' && /^[0-5]$/.test(value.v)) {
+        return [[key, { k: 'Num', v: Number(value.v) }]];
+      }
+      return [[key, raw]];
+    });
+    return entries.length !== object.entries.length || entries.some(([, value], i) => value !== object.entries[i][1])
+      ? { ...object, entries } : row;
+  });
+  return els.some((row, index) => row !== rows.els[index]) ? { ...rows, els } : node;
+}
+
+function normalizeWorkspaceComponents(node: ASTNode, symbols: ReadonlyMap<string, ASTNode>): ASTNode {
   const original = node.k === 'Comp' && node.name === 'List' ? node.args[0] : undefined;
   const items = resolveRecoveryReference(original, symbols);
   if (node.k === 'Comp') {
-    const args = node.args.map(arg => rewriteListItems(arg, symbols));
+    const args = node.args.map((arg, index) => node.name === 'Diagram' && (index === 1 || index === 2)
+      ? normalizeDiagramRows(arg, symbols, index === 1) : normalizeWorkspaceComponents(arg, symbols));
     if (items?.k === 'Arr') {
       const els = items.els.map(item => {
         const value = resolveRecoveryReference(item, symbols);
-        if (value?.k !== 'Obj') return rewriteListItems(item, symbols);
+        if (value?.k !== 'Obj') return normalizeWorkspaceComponents(item, symbols);
         const fields = new Map(value.entries);
         const keys = ['title', 'description', 'marker', 'children'];
         const values = keys.map(key => fields.get(key));
@@ -474,13 +512,13 @@ function rewriteListItems(node: ASTNode, symbols: ReadonlyMap<string, ASTNode>):
         let last = values.length - 1;
         while (values[last] === undefined) last -= 1;
         return { k: 'Comp', name: 'ListItem', args: values.slice(0, last + 1).map(value =>
-          value ? rewriteListItems(value, symbols) : { k: 'Str', v: '' }) } satisfies ASTNode;
+          value ? normalizeWorkspaceComponents(value, symbols) : { k: 'Str', v: '' }) } satisfies ASTNode;
       });
       if (els.some((item, index) => item !== items.els[index])) args[0] = { ...items, els };
     }
     if (args.some((arg, index) => arg !== node.args[index])) return { ...node, args };
   } else if (node.k === 'Arr') {
-    const els = node.els.map(item => rewriteListItems(item, symbols));
+    const els = node.els.map(item => normalizeWorkspaceComponents(item, symbols));
     if (els.some((item, index) => item !== node.els[index])) return { ...node, els };
   }
   return node;
@@ -501,7 +539,7 @@ export function recoverNativeWorkspaceProgram(program: string, evidenceIds: Read
     });
     const narrative = [...reviewStrings].join('\n');
     if (failure === 'reference' && reviewNativeAnswer(narrative)) return;
-    const symbols = new Map([...originals].map(([id, node]) => [id, rewriteListItems(node, originals)]));
+    const symbols = new Map([...originals].map(([id, node]) => [id, normalizeWorkspaceComponents(node, originals)]));
     const root = symbols.get('root');
     if (root?.k !== 'Comp' || root.name !== 'Col') return;
     const sourceFor = (id: string, node: ASTNode) => {

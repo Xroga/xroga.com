@@ -75,13 +75,17 @@ const cases = {
   roadmap: { text: 'Start with discovery, then build and validate.', program: 'root = Col([Title("Delivery roadmap"), List([ListItem("Discovery", "Week one"), ListItem("Build", "Week two"), ListItem("Validation", "Week three")], "timeline")])' },
   identifiers: { text: 'Keep tenant_id and tenant_members visible.', program: 'root = Col([Text("Keep tenant_id and tenant_members visible.", "md")])' },
   bareTransport: { raw: 'Keep the readable answer.\nroot = Col([Text("Keep the readable answer."), UnknownInternalWidget()])' },
+  diagramRecovery: {
+    raw: 'The web client calls the API.\n<<<XROGA_OPENUI_V1>>>\nroot = Col([Diagram("Request path", [{id:"web",label:"Web",level:"0",detail:null},{id:"api",label:"API",level:"1"}], [{from:"web",to:"api",label:null}], "The web client calls the API."), Table(["Component"], [["API"]])])',
+    completion: 'complete',
+  },
   unfinished: { raw: 'Keep the confirmed amount of $25.\n<<<XROGA_OPENUI_V1>>>\nroot = Col([Chart(', finish: 'length' },
 };
 const { completeNativeWorkspaceAnswer } = await tsImport('../backend/src/ai/nativeOpenUiWorkspace.ts', import.meta.url);
 for (const [name, fixture] of Object.entries(cases)) {
   if (!fixture.raw) continue;
   const answer = completeNativeWorkspaceAnswer(fixture.raw, fixture.finish ?? 'stop');
-  assert.equal(answer.completion.status, 'partial', name + ' must be recorded as recovery');
+  assert.equal(answer.completion.status, fixture.completion ?? 'partial', name + ' completion status');
   cases[name] = { text: answer.response, program: answer.responseSource.text };
 }
 const compiled = await build({
@@ -222,6 +226,13 @@ try {
       const graphAccessibility = await new AxeBuilder({ page }).analyze();
       assert.deepEqual(graphAccessibility.violations.map(({id}) => id), []);
       await page.screenshot({ path: resolve(output, channel + '-architecture-' + viewport.width + '-' + theme + '.png'), fullPage: true });
+      await open('diagramRecovery');
+      const recoveredEdge = page.locator('.react-flow__edge-path');
+      await recoveredEdge.waitFor({ state: 'attached' });
+      assert.ok(await recoveredEdge.evaluate(path => path.getTotalLength() > 0 && getComputedStyle(path).stroke !== 'none'));
+      await page.getByText('Web → API', { exact: true }).waitFor();
+      await page.getByRole('cell', { name: 'API', exact: true }).waitFor();
+      assert.equal(await page.getByText(/Some visuals could not be validated/).count(), 0);
       await open('flow');
       assert.equal(await page.locator('svg line').count(), 1);
       await page.getByText('Read rows under RLS').waitFor();

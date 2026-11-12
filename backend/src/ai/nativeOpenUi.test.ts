@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { NATIVE_UI_MARKER, PARTIAL_NATIVE_PRESENTATION_NOTE, missingNativeFormats, splitNativeOpenUiAnswer, validateNativeOpenUi, validateNativeWorkspaceProgram } from './nativeOpenUi.js';
+import { NATIVE_UI_MARKER, PARTIAL_NATIVE_PRESENTATION_NOTE, missingNativeFormats, splitNativeOpenUiAnswer, validateNativeOpenUi, validateNativeWorkspaceProgram, type NativeUiDiagnostic } from './nativeOpenUi.js';
 import { nativeOpenUiPrompt, workspaceNativeOpenUiPrompt } from './nativeOpenUiPrompt.js';
 import { buildNativeOpenUiShare, readNativeOpenUiShare } from './nativeOpenUiShare.js';
 import { readNativeOpenUiRun } from './nativeOpenUiRun.js';
@@ -81,6 +81,46 @@ test('the observed bare timeline object shape repairs without discarding the res
   assert.match(answer.responseSource.text, /ListItem\("Deliver", "", "2", \[Text\("Confirm receipt\."\)\]\)/);
   assert.match(answer.response, /Save the job\.[\s\S]*Confirm receipt\.[\s\S]*run\(\)/);
   assert.deepEqual(validateNativeOpenUi(answer.responseSource.text, undefined, answer.response), { ok: true });
+});
+
+test('Workspace repairs diagram layout literals and keeps the complete saved presentation', () => {
+  const program = [
+    'root = Col([flow, Table(["Component"], [["API"]])])',
+    'flow = Diagram("Request path", nodes, [{from:"web",to:"api",label:null}], "The web client calls the API.")',
+    'nodes = [{id:"web",label:"Web",level:"0",detail:null},{id:"api",label:"API",level:"1",tone:null,icon:null}]',
+  ].join('\n');
+  const diagnostics: NativeUiDiagnostic[] = [];
+  assert.deepEqual(validateNativeWorkspaceProgram(program, undefined, '', event => diagnostics.push(event)), { ok: false, reason: 'schema' });
+  assert.ok(diagnostics[0]?.schema?.some(error => error.diagramField === '/nodes/*/level'));
+  const answer = completeNativeWorkspaceAnswer('The web client calls the API.' + NATIVE_UI_MARKER + program,
+    'stop', undefined, undefined, undefined, ['graph', 'table']);
+  assert.deepEqual(answer.completion, { status: 'complete' });
+  assert.match(answer.responseSource.text, /Diagram\(/);
+  assert.deepEqual(validateNativeWorkspaceProgram(answer.responseSource.text, undefined, answer.response), { ok: true });
+  assert.deepEqual(missingNativeFormats(answer.responseSource.text, ['graph', 'table']), []);
+  const share = readNativeOpenUiShare(buildNativeOpenUiShare(answer.response, answer.responseSource.text)!);
+  assert.equal(share?.program, answer.responseSource.text);
+});
+
+test('unrenderable diagram relationships cannot satisfy graph coverage', () => {
+  const nodes = [{ id: 'web', label: 'Web', level: 0 }, { id: 'api', label: 'API', level: 1 }];
+  const links = [{ from: 'web', to: 'api' }];
+  for (const [graphNodes, graphLinks] of [
+    [nodes, [{ from: 'web', to: 'missing' }]],
+    [nodes, [{ from: 'web', to: 'web' }]],
+    [[nodes[0], nodes[0]], links],
+    [[...nodes, { id: 'worker', label: 'Worker', level: 0 }, { id: 'auth', label: 'Auth', level: 0 }, { id: 'db', label: 'Database', level: 0 }], links],
+    [[{ ...nodes[0], level: 'upstream' }, nodes[1]], links],
+  ]) {
+    const program = 'root = Col([Diagram("Request path", ' + JSON.stringify(graphNodes) + ', '
+      + JSON.stringify(graphLinks) + ', "The web client calls the API."), Table(["Component"], [["API"]])])';
+    assert.deepEqual(missingNativeFormats(program, ['graph']), ['graph']);
+    const answer = completeNativeWorkspaceAnswer('The web client calls the API.' + NATIVE_UI_MARKER + program,
+      'stop', undefined, undefined, undefined, ['graph', 'table']);
+    assert.deepEqual(answer.completion, { status: 'partial', reason: 'presentation_contract' });
+    assert.doesNotMatch(answer.responseSource.text, /Diagram\(/);
+    assert.match(answer.responseSource.text, /Table\(/);
+  }
 });
 
 test('native recovery discards unreachable broken references without dropping a complete layout', () => {
