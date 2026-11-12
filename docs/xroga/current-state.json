@@ -144875,7 +144875,7 @@
     {
       "id": "test-suite:6fe73844a9048abb3dd6",
       "sourcePath": "apps/xroga-browser-extension/src/agent/__tests__/compact-schema.test.ts",
-      "declaredTests": 6,
+      "declaredTests": 7,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -145050,7 +145050,7 @@
     {
       "id": "test-suite:d748c4a3a476cd87446f",
       "sourcePath": "apps/xroga-browser-extension/src/agent/__tests__/skills.test.ts",
-      "declaredTests": 13,
+      "declaredTests": 15,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -145072,6 +145072,13 @@
       "id": "test-suite:4e8c713a22940968e143",
       "sourcePath": "apps/xroga-browser-extension/src/agent/__tests__/tool-selection.test.ts",
       "declaredTests": 6,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:c28f611c81ed7e0af507",
+      "sourcePath": "apps/xroga-browser-extension/src/agent/__tests__/workflow-hints.test.ts",
+      "declaredTests": 10,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -145120,7 +145127,7 @@
     {
       "id": "test-suite:11c04aceafdf512cfd7e",
       "sourcePath": "apps/xroga-browser-extension/src/browser-control/core/__tests__/diff.test.ts",
-      "declaredTests": 5,
+      "declaredTests": 6,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -147255,7 +147262,7 @@
     {
       "id": "test-suite:c9e64862eb7c7cfedf8a",
       "sourcePath": "backend/src/e2e/xrogaGoldenJourneys.test.ts",
-      "declaredTests": 23,
+      "declaredTests": 26,
       "skipLocations": [],
       "focusLocations": []
     },
