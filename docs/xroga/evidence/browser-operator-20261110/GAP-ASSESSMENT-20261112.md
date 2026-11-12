@@ -149,6 +149,25 @@ A request such as "add two rows ... and tell me when done" was classed read-only
 Integrated build (`claude/ops-integrated-20261112`: #965 head plus Codex #971): typecheck clean, 1,111 unit tests pass, 284 of 284 real-Chrome scenarios pass, and the `panel-shot` check captured the
 live panel in real Chrome: "Black Hole is working" header with the animated mark, status "Clicking a page control", the activity row "Clicked button «Add a row»", and the Stop button.
 
+### 3h. Real DeepSeek strategy benchmark (staging, product build, real Chrome, two runs each, page titles of public sites)
+
+| Strategy | Sites read | Run 1 (s) | Run 2 (s) | Model turns | Browser RAM peak (MB) | Answers |
+| --- | --- | --- | --- | --- | --- | --- |
+| One agent, sites one after another | 4 | 74.9 | 73.5 | 4 | 1,277 / 1,704 | all four titles, correct |
+| Parallel readers (`delegate`) | 4 | 16.7 | 13.5 | 2 | 1,673 / 1,671 | all four titles, correct |
+| 2 workers (one site each) | 2 | 24.4 | 26.3 | 4 | 1,584 / 1,495 | both titles |
+| 3 workers (one site each) | 3 | 35.3 | 26.3 | 4-5 | 1,468 / 1,560 | all three titles |
+| 4 assigned tasks (3 run, 1 waits) | 4 | 29.6 | 28.2 | 4 | 1,529 / 1,518 | all four titles |
+
+All ten runs ended `done`. Read the table with care: the worker rows read 2, 3 and 4 sites, not the same four, so their times are not a like-for-like speed comparison; the
+like-for-like rows for four sites are one agent (about 74 s), readers (about 15 s) and four assigned workers (about 29 s). Readers were fastest by a wide margin, then workers, then a single agent,
+which matches the earlier fixture measurement: a worker is a whole run with its own turns, so it pays off only for work heavy enough to repay that. The four-task limit and queue behaved as designed
+(three running, one waiting, all four reported). Browser RAM peaked between 1.3 and 1.7 GB for every strategy with no clear ordering (the sampler windows are approximated from task durations, so
+per-strategy CPU seconds are not reported: they were noisy and should not be quoted). Settled provider cost per run was not collected this round (earlier staging log readings: 30 to 1,300 micro-dollars
+per task). Not measured: two-worker against four-worker on the same four sites, dependent workflows, and lower-powered hardware.
+Consequence for routing: independent page reads should use readers; the router already keeps worker tools out of ordinary requests, and prompts for 3 or more sites still offer them, so a prompt that
+asks for workers explicitly gets them, but nothing here justifies choosing workers over readers for simple reads.
+
 ## 4. NOT IMPLEMENTED or BLOCKED, with the reason
 
 Canvas pixel interaction (BLOCKED by the single-model rule: the only allowed model, deepseek_v4_1_flash_1017, has no vision, so it cannot see a canvas;
