@@ -22,6 +22,9 @@ import { analyzeTask } from './black-hole/taskClass.js';
 import { assessBlackHoleComplexity } from './black-hole/complexity.js';
 import { MODELS, type ModelId } from './models.js';
 import { publicCompletionState } from './completionDiagnostics.js';
+import { NATIVE_UI_FORMAT } from './nativeOpenUi.js';
+import { completeNativeWorkspaceAnswer, usesNativeWorkspacePresentation } from './nativeOpenUiWorkspace.js';
+import { nativeOpenUiPlainPrompt, workspaceNativeOpenUiPrompt } from './nativeOpenUiPrompt.js';
 import { assessPresentationCoverage, createPresentationProjection, presentationRequestInstructions, presentationResponseFormat, presentedAnswerMaxTokens, type PresentationResponseFormat } from './responsePresentation.js';
 import { prepareAnswerCoverage } from './answerCoverage.js';
 import {prepareSonnetConversation,requestedSonnetReason} from './sonnetApproval.js';
@@ -388,7 +391,7 @@ export interface BuildClientMeta {
 
 export interface ChatPipelineResult {
   completion?: ReturnType<typeof publicCompletionState>;
-  responseSource?: { format: 'xroga-response-json-v1'; text: string; contract?: ReturnType<typeof prepareAnswerCoverage> };
+  responseSource?: { format: 'xroga-response-json-v1' | typeof NATIVE_UI_FORMAT; text: string; contract?: ReturnType<typeof prepareAnswerCoverage> };
   response: string;
   intent: string;
   usage: ReturnType<typeof usageToTokenUsage>;
@@ -976,7 +979,10 @@ export async function runChatPipeline(opts: {
   if (hasAttachments) {
     const prompt = defaultAttachmentPrompt(prepared, opts.prompt);
     const pick = pickAttachmentModel(prompt, prepared);
-    const system = prepared.hasImages ? VISION_SYSTEM : DOC_SYSTEM;
+    const native = usesNativeWorkspacePresentation(pick.modelId);
+    const attachmentSystem = prepared.hasImages ? VISION_SYSTEM : DOC_SYSTEM;
+    const attachmentPlan = native ? prepareAnswerCoverage(opts.prompt, opts.goalContract?.presentation, opts.goalContract?.answerObligations).plan : [];
+    const system = native ? attachmentSystem + '\n\n' + workspaceNativeOpenUiPrompt(attachmentPlan.map(section => section.kind), false) : attachmentSystem;
 
     let userText = prompt;
     if (prepared.documentBlock) {
@@ -1007,14 +1013,20 @@ export async function runChatPipeline(opts: {
         tenantContext:opts.tenantContext,
         databaseProjectId:opts.modelScope?.projectId,modelRunAttempt:opts.modelScope?.runAttempt,modelRepository:opts.modelScope?.repository,
         temperature: 0.35,
-        onDelta: opts.onDelta,
+        modelConnectedAccountId:opts.modelScope?.connectedAccountId,modelMaximumCostMicroUsd:opts.modelScope?.maximumCostMicroUsd,
+        modelRevalidateBeforeDispatch:opts.modelScope?.revalidateBeforeDispatch,
+        // The native program is presentation data. Send only settled prose as a text event.
+        onDelta: native ? undefined : opts.onDelta,
       },
     );
 
     const usage = await getUsage(opts.userId);
 
+    const answer = native ? completeNativeWorkspaceAnswer(result.text, result.finishReason, undefined, undefined, diagnostic =>
+      console.warn('[native-openui-validation]', diagnostic)) : { response: result.text };
+    if (native) opts.onDelta?.(answer.response);
     return {
-      response: result.text,
+      ...answer,
       intent: pick.kind === 'document' ? 'file_analysis' : 'vision_analysis',
       usage: usageToTokenUsage(usage),
       modelId: result.modelId,
@@ -1122,10 +1134,27 @@ export async function runChatPipeline(opts: {
   if (opts.projectEvidence) truthAuthorities.add('repository:read');
   if (research?.sources.length) truthAuthorities.add('network:public-read');
   const answerContract = prepareAnswerCoverage(opts.prompt, opts.goalContract?.presentation, opts.goalContract?.answerObligations);
-  const presentation = answerContract.plan;
+  const native = usesNativeWorkspacePresentation(route.builder);
+  const sources = research?.sources ?? [];
+  const evidenceIds = new Set(sources.map((_, index) => 'source-' + (index + 1)));
+  const sourceManifest = sources.length
+    ? '\n\nVerified research references available for Source(id):\n' + JSON.stringify(
+      sources.map((source, index) => ({ id: 'source-' + (index + 1), title: source.title })),
+    ) : '';
+  const presentation = native ? undefined : answerContract.plan;
   const projection = presentation?.length ? createPresentationProjection(presentation) : undefined;
   const format = presentation?.length ? presentationResponseFormat(presentation) : undefined;
-  const system = `${currentPublicProductTruth(truthAuthorities)}\n\n${chatPresentationSystem(opts.prompt)}${presentation?.length ? `\n\n${presentationRequestInstructions(presentation)}` : ''}`;
+  // A confident prose-only answer does not need the full registry. Evidence,
+  // requested visual formats, or an uncertain plan keep the rich path available.
+  const plainNative = native && route.kind !== 'research' && !researchBlock && !opts.projectEvidence
+    && opts.goalContract?.semanticIntent === 'ANSWER' && opts.goalContract.contextComplexity === 'low'
+    && opts.goalContract.confidence >= 0.8 && !opts.goalContract.presentationIssue && answerContract.coverage.complete
+    && answerContract.plan.every(section => section.kind === 'prose')
+    && answerContract.requirements.every(item => item.formats.length > 0 && item.formats.every(kind => kind === 'prose'));
+  const instructions = native
+    ? plainNative ? nativeOpenUiPlainPrompt : workspaceNativeOpenUiPrompt(answerContract.plan.map(section => section.kind), Boolean(evidenceIds?.size)) + sourceManifest
+    : chatPresentationSystem(opts.prompt) + (presentation?.length ? '\n\n' + presentationRequestInstructions(presentation) : '');
+  const system = currentPublicProductTruth(truthAuthorities) + '\n\n' + instructions;
   const result = await callBuilderStream(
     route.builder,
     [{ role: 'system', content: system }, ...historyMsgs, { role: 'user', content: userContent }],
@@ -1139,11 +1168,25 @@ export async function runChatPipeline(opts: {
       modelConnectedAccountId:opts.modelScope?.connectedAccountId,modelMaximumCostMicroUsd:opts.modelScope?.maximumCostMicroUsd,
       modelRevalidateBeforeDispatch:opts.modelScope?.revalidateBeforeDispatch,
       temperature: 0.5,
-      onDelta: projection ? delta => { const visible = projection.append(delta); if (visible) opts.onDelta?.(visible); } : opts.onDelta,
+      // The provider adapter publishes only after canonical usage settlement.
+      onDelta: native ? undefined
+        : projection ? delta => { const visible = projection.append(delta); if (visible) opts.onDelta?.(visible); } : opts.onDelta,
     },
   );
 
   const usage = await getUsage(opts.userId);
+
+  if (native) {
+    const answer = completeNativeWorkspaceAnswer(result.text, result.finishReason, evidenceIds,
+      route.kind !== 'research' && !researchBlock && !opts.projectEvidence ? opts.prompt : undefined,
+      diagnostic => console.warn('[native-openui-validation]', diagnostic));
+    opts.onDelta?.(answer.response);
+    return {
+      ...answer,
+      intent: route.kind, usage: usageToTokenUsage(usage), webSources: research?.sources,
+      modelId: result.modelId, route,
+    };
+  }
 
   const document = projection?.finish(result.text);
   const response = document ? document.response || "Xroga couldn't finish the requested structured answer." : result.text;

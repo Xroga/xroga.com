@@ -3,12 +3,10 @@
 import React, {
   useCallback,
   useEffect,
-  useRef,
   useState,
 } from 'react';
-import { createPortal } from 'react-dom';
-import { ArrowUpRight, Check, Copy, Search } from 'lucide-react';
-import { SourceLogo } from '@/components/terminal/SourceLogo';
+import { Search } from 'lucide-react';
+import { SourceCitation } from '@/components/terminal/SourceCitation';
 
 import ReactMarkdown, {
   type Components,
@@ -16,7 +14,7 @@ import ReactMarkdown, {
 } from 'react-markdown';
 
 import remarkGfm from 'remark-gfm';
-import { remarkSourceCitations, safeSourceUrl, sourceClickUrl, type CitationSource } from './xrogaCitations';
+import { remarkSourceCitations, safeSourceUrl, type CitationSource } from './xrogaCitations';
 
 import {
   ApiError,
@@ -30,6 +28,7 @@ import {
 } from './oauthPopupResult';
 
 import { xrogaConnect } from './xrogaConnect';
+import { RESEARCH_RECEIPT_AVAILABLE } from './researchHandoff';
 
 function joinClasses(
   ...values:
@@ -345,6 +344,10 @@ export function BusinessActionConfirmationInline({
           setNotice(
             result.response,
           );
+          if (result.ok && result.toolkit === 'xroga-native-research' &&
+              result.confirmation.status === 'consumed' && result.confirmation.id === confirmationId) {
+            window.dispatchEvent(new CustomEvent(RESEARCH_RECEIPT_AVAILABLE, { detail: confirmationId }));
+          }
         } catch (
           error
         ) {
@@ -1657,57 +1660,6 @@ const components:
     ),
   };
 
-function CitationChip({ number, source, label }: { number?: number; source: CitationSource; label?: React.ReactNode }) {
-  const [visible, setVisible] = useState(false);
-  const [copied, setCopied] = useState(false);
-  const [position, setPosition] = useState({ top: 0, left: 0 });
-  const linkRef = useRef<HTMLAnchorElement>(null);
-  const dismissRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  useEffect(() => () => { if (dismissRef.current) clearTimeout(dismissRef.current); }, []);
-  const url = safeSourceUrl(source.url);
-  if (!url) return <span>{label ?? `[${number}]`}</span>;
-  const domain = new URL(url).hostname.replace(/^www\./i, '');
-  const snippet = source.snippet.replace(/\s+/g, ' ').replace(/^[\s*•-]+/, '').trim();
-  const excerpt = snippet.length > 175 ? `${snippet.slice(0, 172).trimEnd()}…` : snippet;
-  const keepOpen = () => { if (dismissRef.current) clearTimeout(dismissRef.current); };
-  const scheduleClose = () => { keepOpen(); dismissRef.current = setTimeout(() => setVisible(false), 180); };
-  const placePreview = () => {
-    keepOpen();
-    const rect = linkRef.current?.getBoundingClientRect();
-    if (!rect) return;
-    const width = Math.min(344, window.innerWidth - 24);
-    const left = Math.max(12, Math.min(rect.left, window.innerWidth - width - 12));
-    const top = rect.bottom + 12 + 260 < window.innerHeight ? rect.bottom + 9 : Math.max(12, rect.top - 260);
-    setPosition({ top, left });
-    setVisible(true);
-  };
-  return (
-    <span className="inline-flex align-baseline">
-      <a
-        ref={linkRef}
-        href={sourceClickUrl(url) ?? url}
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label={number ? `Open source ${number}: ${source.title}` : `Open link: ${source.title}`}
-        onMouseEnter={placePreview}
-        onMouseLeave={scheduleClose}
-        onFocus={placePreview}
-        onBlur={scheduleClose}
-        onKeyDown={(event) => { if (event.key === 'Escape') setVisible(false); }}
-        className={label ? 'xv-resource-link' : 'xv-citation-chip'}
-      >{label ?? <><SourceLogo domain={domain} size={15} /><span>{domain}</span></>}</a>
-      {visible && typeof document !== 'undefined' ? createPortal(
-        <div className="xv-citation-preview" style={{ top: position.top, left: position.left }} onMouseEnter={keepOpen} onMouseLeave={scheduleClose} onFocus={keepOpen} onBlur={scheduleClose}>
-          <span className="xv-citation-preview__top"><span className="xv-citation-preview__icon"><SourceLogo domain={domain} size={27} /></span><span className="min-w-0"><span className="xv-citation-preview__domain">{domain}</span><span className="xv-citation-preview__eyebrow">Source page · verify on original site</span></span></span>
-          <span className="xv-citation-preview__title">{source.title}</span>
-          {excerpt ? <span className="xv-citation-preview__excerpt">{excerpt}</span> : null}
-          <span className="xv-citation-preview__actions"><button type="button" onClick={async () => { try { await navigator.clipboard.writeText(snippet || source.title); setCopied(true); } catch { setCopied(false); } }}>{copied ? <Check size={13} /> : <Copy size={13} />}{copied ? 'Copied' : 'Copy excerpt'}</button><a href={sourceClickUrl(url) ?? url} target="_blank" rel="noopener noreferrer">Visit source <ArrowUpRight size={13} /></a></span>
-        </div>, document.body,
-      ) : null}
-    </span>
-  );
-}
-
 /** Add breathing room to legacy wall-of-text answers without rewriting their wording. */
 export function structureLongProse(markdown: string): string {
   const formatBlock = (block: string) => {
@@ -1764,12 +1716,12 @@ export function FormattedAiMarkdown({
       const match = typeof label === 'string' ? /^\[(\d{1,2})\]$/.exec(label) : null;
       const number = match ? Number(match[1]) : 0;
       const source = number > 0 ? availableSources[number - 1] : undefined;
-      if (source && href === safeSourceUrl(source.url)) return <CitationChip number={number} source={source} />;
+      if (source && href === safeSourceUrl(source.url)) return <SourceCitation number={number} source={source} referral />;
       const external = href ? safeSourceUrl(href) : null;
       if (external) {
         const knownIndex = availableSources.findIndex((item) => safeSourceUrl(item.url) === external);
         const title = typeof label === 'string' && label.trim() ? label.trim() : new URL(external).hostname;
-        return <CitationChip number={knownIndex >= 0 ? knownIndex + 1 : undefined} source={knownIndex >= 0 ? availableSources[knownIndex] : { title, url: external, snippet: '' }} label={children} />;
+        return <SourceCitation referral number={knownIndex >= 0 ? knownIndex + 1 : undefined} source={knownIndex >= 0 ? availableSources[knownIndex] : { title, url: external, snippet: '' }} label={children} />;
       }
       return React.createElement(components.a as React.ElementType, { href, ...props }, children);
     },

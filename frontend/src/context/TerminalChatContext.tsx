@@ -18,12 +18,11 @@ import { usePathname } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { streamSwarmExecute, apiFetch, ApiError, type ChatAttachment, api } from '@/lib/api';
 import { resolveBuilderProject, syncBuilderConversation } from '@/lib/builderChat';
-import { attachResearchResult, markResearchUnavailable, pendingResearchConfirmation, type ResearchHandoff } from '@/lib/researchHandoff';
+import { attachResearchResult, markResearchUnavailable, pendingResearchConfirmation, RESEARCH_RECEIPT_AVAILABLE, type ResearchHandoff } from '@/lib/researchHandoff';
 import {attachModelResult,markModelUnavailable,pendingModelConfirmation,type ModelHandoff} from '@/lib/modelHandoff';
 import { capacityUnavailableLine } from '@/lib/capacityMessage';
 import { buildCompletedChatHistory } from '@/lib/chatHistory';
 import { isMathQueryPrompt } from '@/lib/mathDetect';
-import { streamTextReveal } from '@/lib/streamText';
 import type { SwarmProgressEvent } from '@/lib/swarm';
 import { useAppStore } from '@/store/useAppStore';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
@@ -49,6 +48,8 @@ import { mergeBuildTodos, normalizeActiveTodo } from '@/lib/mergeBuildTodos';
 import { startPipelineMessageForPrompt } from '@/lib/buildPlanningSteps';
 import { formatAgentActivityLine } from '@/lib/agentProcessingFormat';
 import {
+  clearSelectedRepoContext,
+  markFreshTerminalIntent,
   getNewRepoVisibility,
   getSelectedRepoContext,
   hasFreshTerminalIntent,
@@ -57,7 +58,6 @@ import {
 } from '@/lib/repoContext';
 import { isKeepaliveActivity } from '@/lib/buildLiveStatus';
 import { defaultImageAttachmentPrompt } from '@/lib/parseImageContent';
-import { saveLocalProject, shouldSaveToProjects } from '@/lib/projectArchive';
 import {
   notifyGithubProjectSaved,
   notifyGithubRepoContext,
@@ -1363,9 +1363,14 @@ const stopRequestedRunIdRef =
     if (!pending.length) return;
     let disposed = false;
     let inFlight = false;
+    let refreshQueued = false;
     const session = sessionIdRef.current;
     const refresh = async () => {
-      if (disposed || inFlight) return;
+      if (disposed || sessionIdRef.current !== session) return;
+      if (inFlight) {
+        refreshQueued = true;
+        return;
+      }
       inFlight = true;
       try {
         for (const message of pending) {
@@ -1389,11 +1394,26 @@ const stopRequestedRunIdRef =
             // Leave the original approval and context intact. No automatic provider retry.
           }
         }
-      } finally { inFlight = false; }
+      } finally {
+        inFlight = false;
+        if (refreshQueued && !disposed) {
+          refreshQueued = false;
+          void refresh();
+        }
+      }
+    };
+    const receiptAvailable = (event: Event) => {
+      const id: unknown = (event as CustomEvent<unknown>).detail;
+      if (typeof id === 'string' && pending.some(message => message.confirmationId === id)) void refresh();
     };
     void refresh();
     window.addEventListener('focus', refresh);
-    return () => { disposed = true; window.removeEventListener('focus', refresh); };
+    window.addEventListener(RESEARCH_RECEIPT_AVAILABLE, receiptAvailable);
+    return () => {
+      disposed = true;
+      window.removeEventListener('focus', refresh);
+      window.removeEventListener(RESEARCH_RECEIPT_AVAILABLE, receiptAvailable);
+    };
   }, [isGuest, sessionReady, workspaceIdentity.userId, researchPendingKey]);
 
   /** Persist terminal history while user works — not only after submit completes */
@@ -1404,6 +1424,7 @@ const stopRequestedRunIdRef =
     const timer = window.setTimeout(() => {
       // Sticky binding inside save/ensure — do not relocate #N when selected repo changes.
       saveTerminalHistorySession({
+        ownerId: workspaceIdentity.userId,
         sessionId: sessionIdRef.current,
         prompt,
         messages,
@@ -1424,7 +1445,7 @@ const stopRequestedRunIdRef =
       });
     }, 500);
     return () => window.clearTimeout(timer);
-  }, [sessionReady, prompt, messages, incognito, isGuest]);
+  }, [sessionReady, prompt, messages, incognito, isGuest, workspaceIdentity.userId]);
 
   /**
    * Soft stall WARNING only — never abort mid-build.
@@ -1638,6 +1659,16 @@ const stopRequestedRunIdRef =
 );
 
  const stop = useCallback(() => {
+  // A plain chat has no durable build run to cancel. End only this browser
+  // request, leaving any already-started provider settlement to the server.
+  if (!heavyJobActiveRef.current && !heavyBuildActiveRef.current && !activeRunIdRef.current) {
+    const request = abortRef.current;
+    if (request) {
+      interruptRef.current = true;
+      request.abort();
+      return;
+    }
+  }
   const runId =
     activeRunIdRef.current ??
     loadPendingBuildJobs().find(
@@ -1996,6 +2027,7 @@ const stopRequestedRunIdRef =
       // BEFORE wiping the live workspace — so clicking #1 later restores exact history.
       const priorId = sessionIdRef.current;
       saveTerminalHistorySession({
+        ownerId: workspaceIdentity.userId,
         sessionId: priorId,
         prompt,
         messages,
@@ -2008,9 +2040,11 @@ const stopRequestedRunIdRef =
         window.dispatchEvent(new CustomEvent('xroga-resume-workspace'));
       });
     }
-    // Ordinary New Work is not implicitly assigned to the previously selected sidebar project.
-    // Explicit project New Task selects its project immediately after this reset.
+    // An ordinary New Work is never assigned to the previous project or GitHub repo.
+    // Explicit New Work in a Project and opt-in repository selection can rebind later.
     clearActiveSidebarProject();
+    clearSelectedRepoContext();
+    markFreshTerminalIntent();
     setSessionId(
       typeof crypto !== 'undefined' ? crypto.randomUUID() : `session-${Date.now()}`
     );
@@ -2032,12 +2066,11 @@ const stopRequestedRunIdRef =
     setSwarmActiveAgent(null);
     persistReadyRef.current = false;
     if (!usePrivacyStore.getState().incognito) clearWorkspaceSession();
-    // Keep selected GitHub repo — new chat is another session under the same Xroga repo workspace.
-    // (Code still goes to GitHub; chats/images/research stay on Xroga under that repo.)
+    // No implicit repository: new conversations belong in Recents by default.
     persistReadyRef.current = true;
     // Refresh Repositories sidebar so the prior terminal stays listed (not "lost").
     window.dispatchEvent(new CustomEvent('xroga-resume-workspace'));
-  }, [setSwarmRunning, messages, prompt, setSessionId]);
+  }, [setSwarmRunning, messages, prompt, setSessionId, workspaceIdentity.userId]);
 
   const discardCurrentChat = useCallback(() => {
     discardNextNewChatRef.current = true;
@@ -2412,6 +2445,7 @@ const stopRequestedRunIdRef =
               });
               const selected = getSelectedRepoContext();
               saveTerminalHistorySession({
+                ownerId: workspaceIdentity.userId,
                 sessionId: sessionIdRef.current,
                 prompt: displayPrompt,
                 messages: current,
@@ -2469,6 +2503,7 @@ const stopRequestedRunIdRef =
       refreshTokenUsage,
       setTokenUsage,
       heavyAssistantId,
+      workspaceIdentity.userId,
       processNextInQueue,
     ]
   );
@@ -2649,6 +2684,8 @@ const stopRequestedRunIdRef =
       let fullReply = '';
       let buildHadVisibleResult = false;
       let semanticBuildPlanned = false;
+      const originatingSessionId = sessionIdRef.current;
+      let phase1AnswerSettled = false;
       const controller = new AbortController();
       abortRef.current = controller;
 
@@ -2796,6 +2833,7 @@ const stopRequestedRunIdRef =
               }
             : null,
           { hasExistingPreview: Boolean(priorSite), isUpdate: isBuildUpdate },
+          controller.signal,
         );
         /*
  * Clicking Retry on a stopped build is explicit execution intent.
@@ -2917,7 +2955,8 @@ if (
           setThinkingSteps([]);
 
           try {
-            const result = await api.phase1.chat(displayPrompt, history, attachments, semanticPlan.goalContract);
+            const result = await api.phase1.chat(displayPrompt, history, attachments, semanticPlan.goalContract, controller.signal);
+            if (controller.signal.aborted || sessionIdRef.current !== originatingSessionId) return;
             const rawReply = (result.response || '').trim();
             fullReply = rawReply;
             // Empty Phase 1 must never leave a blank bubble or silently change execution paths.
@@ -2927,28 +2966,9 @@ if (
             }
 
             if (fullReply && !runSwarmBuild) {
-              await streamTextReveal(
-                fullReply,
-                (partial) => {
-                  setMessages((m) =>
-                    m.map((msg) =>
-                      msg.id === assistantId
-                        ? {
-                            ...msg,
-                            content: stripXrogaUiProtocol(partial),
-                            agent: 'Xroga AI Brain',
-                            webSources: result.webSources,
-                            hackathonBrief: result.hackathonBrief,
-                          }
-                        : msg
-                    )
-                  );
-                },
-                controller.signal
-              );
-
               const enhanced = enhanceAiResponse(fullReply, assistantId, result.completion, result.responseSource);
               fullReply = enhanced.content;
+              phase1AnswerSettled = true;
               setMessages((current) => current.map((message) =>
                 message.id === assistantId
                   ? {
@@ -2961,16 +2981,6 @@ if (
                     }
                   : message
               ));
-
-              if (result.webSources?.length || result.hackathonBrief) {
-                setMessages((m) =>
-                  m.map((msg) =>
-                    msg.id === assistantId
-                      ? { ...msg, webSources: result.webSources, hackathonBrief: result.hackathonBrief }
-                      : msg
-                  )
-                );
-              }
 
               if (
                 result.usage &&
@@ -3904,6 +3914,7 @@ active.applyBuild({
                     sessionId: sessionIdRef.current,
                   });
                   saveTerminalHistorySession({
+                    ownerId: workspaceIdentity.userId,
                     sessionId: sessionIdRef.current,
                     prompt: displayPrompt,
                     messages: updated,
@@ -4023,6 +4034,7 @@ active.applyBuild({
                 }
                 // Always persist history immediately for sidebar (don't wait for debounce)
                 saveTerminalHistorySession({
+                  ownerId: workspaceIdentity.userId,
                   sessionId: sessionIdRef.current,
                   prompt: displayPrompt,
                   messages: updated,
@@ -4322,6 +4334,7 @@ active.applyBuild({
             .incognito
         ) {
           saveTerminalHistorySession({
+            ownerId: workspaceIdentity.userId,
             sessionId:
               sessionIdRef.current,
 
@@ -4334,26 +4347,6 @@ active.applyBuild({
             status:
               'stopped',
           });
-
-          if (
-            shouldSaveToProjects(
-              original,
-            )
-          ) {
-            saveLocalProject({
-              name:
-                original.slice(
-                  0,
-                  48,
-                ),
-
-              prompt:
-                original,
-
-              sourceMessageId:
-                assistantId,
-            });
-          }
 
           window.dispatchEvent(
             new Event(
@@ -4575,7 +4568,7 @@ active.applyBuild({
             })
           );
         }
-        if (!incognito && turn && !interruptRef.current) {
+        if (!incognito && turn?.assistantId === assistantId && sessionIdRef.current === originatingSessionId && !interruptRef.current) {
           setMessages((current) => {
             try {
               archiveChatTurn({
@@ -4585,17 +4578,12 @@ active.applyBuild({
                 assistantMessageId: turn.assistantId,
               });
               saveTerminalHistorySession({
-                sessionId: sessionIdRef.current,
+                ownerId: workspaceIdentity.userId,
+                sessionId: originatingSessionId,
                 prompt: turn.text,
                 messages: current,
+                flushSidebar: phase1AnswerSettled,
               });
-              if (shouldSaveToProjects(turn.text)) {
-                saveLocalProject({
-                  name: turn.text.slice(0, 48),
-                  prompt: turn.text,
-                  sourceMessageId: turn.assistantId,
-                });
-              }
             } catch (err) {
               console.warn('[chat] archive save skipped:', (err as Error).message);
             }
@@ -4658,7 +4646,7 @@ active.applyBuild({
 setTimeout(processNextInQueue, 50);
       }
     },
-    [prompt, loading, projectId, incognito, isGuest, messages, setSwarmRunning, refreshTokenUsage, enqueuePrompt, processNextInQueue, cleanupInProgressAssistant, pushSwarmTerminalLine, handleGitHubBuildBlocked, handleVercelBuildBlocked, setTokenUsage, submitGuestTurn, submitLightAlongsideHeavy, pushTerminalEvent, startTerminalRun]
+    [prompt, loading, projectId, incognito, isGuest, workspaceIdentity.userId, messages, setSwarmRunning, refreshTokenUsage, enqueuePrompt, processNextInQueue, cleanupInProgressAssistant, pushSwarmTerminalLine, handleGitHubBuildBlocked, handleVercelBuildBlocked, setTokenUsage, submitGuestTurn, submitLightAlongsideHeavy, pushTerminalEvent, startTerminalRun]
   );
 
   submitRef.current = submit;

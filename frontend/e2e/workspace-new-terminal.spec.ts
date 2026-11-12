@@ -36,6 +36,68 @@ test.beforeEach(async ({ page, baseURL }) => {
   }));
 });
 
+test('answer citations and table rows remain directly readable on desktop and mobile', async ({ page }, testInfo) => {
+  const source = 'https://support.google.com/google-ads/answer/7478529';
+  const response = [
+    `Workspace fixture. See [Google Ads Help](${source}).`,
+    '',
+    '| Match type | Reach |',
+    '| --- | --- |',
+    ...Array.from({ length: 26 }, (_, index) => `| Example ${index + 1} | Reach ${index + 1} |`),
+  ].join('\n');
+  await page.route('**/api/guest/chat', route => {
+    const headers = { 'access-control-allow-origin': '*', 'access-control-allow-methods': 'POST, OPTIONS', 'access-control-allow-headers': 'content-type, accept' };
+    return route.request().method() === 'OPTIONS'
+      ? route.fulfill({ status: 204, headers })
+      : route.fulfill({ headers, json: { response, guestSessionId: 'inline-answer-table-fixture', guest: { limit: 10, remaining: 9, resetAt: '2099-01-01T00:00:00Z' } } });
+  });
+  await page.goto('/workspace');
+  await page.locator('[data-terminal-composer]').fill('Compare keyword match types in this fixture.');
+  await page.getByRole('button', { name: 'Send prompt', exact: true }).click();
+  const citation = page.getByRole('link', { name: 'Open link: Google Ads Help' });
+  await expect(citation).toHaveAttribute('href', source + '?utm_source=xroga.com', { timeout: 30_000 });
+  const table = page.locator('[data-inline-answer-table] table');
+  await expect(table.getByRole('cell', { name: 'Reach 26', exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Next page' })).toHaveCount(0);
+  for (const width of [1440, 390]) {
+    await page.setViewportSize({ width, height: 900 });
+    expect(await table.evaluate(el => {
+      const scroll = el.parentElement!;
+      return scroll.scrollWidth <= scroll.clientWidth + 1;
+    })).toBe(true);
+    await citation.scrollIntoViewIfNeeded();
+    await page.screenshot({ path: testInfo.outputPath(`inline-answer-${width}.png`) });
+  }
+  await citation.focus();
+  await expect(page.getByRole('tooltip').getByText('Google Ads Help', { exact: true })).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('tooltip')).toHaveCount(0);
+});
+
+test('large answer tables keep wrapped rows reachable in a bounded mobile viewport', async ({ page }) => {
+  const response = [
+    '| Item | Details |',
+    '| --- | --- |',
+    ...Array.from({ length: 110 }, (_, index) =>
+      `| Item ${index + 1} | ${index % 2 ? 'A longer description that wraps on narrow screens.' : 'Brief detail.'} |`),
+  ].join('\n');
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.route('**/api/guest/chat', route => route.fulfill({
+    headers: { 'access-control-allow-origin': '*' },
+    json: { response, guestSessionId: 'virtual-table-fixture', guest: { limit: 10, remaining: 9, resetAt: '2099-01-01T00:00:00Z' } },
+  }));
+  await page.goto('/workspace');
+  await page.locator('[data-terminal-composer]').fill('Show the large fixture table.');
+  await page.getByRole('button', { name: 'Send prompt', exact: true }).click();
+  const region = page.getByRole('region', { name: /scroll area/ });
+  await expect(region.getByRole('cell', { name: 'Item 1', exact: true })).toBeVisible({ timeout: 30_000 });
+  await expect(region.getByRole('cell', { name: 'Item 110', exact: true })).toHaveCount(0);
+  expect(await region.evaluate(node => node.clientHeight)).toBeLessThanOrEqual(440);
+  await region.press('End');
+  await expect(region.getByRole('cell', { name: 'Item 110', exact: true })).toBeInViewport();
+  await expect(page.getByRole('button', { name: 'Download CSV', exact: true })).toBeVisible();
+});
+
 test('canonical public composers preserve the approved Plus controls without a second composer', async ({ page }) => {
   await page.goto('/workspace');
   const composer = page.locator('[data-terminal-composer]');

@@ -136,11 +136,14 @@ test('fullscreen preserves the current empty-workspace starter and one canonical
 });
 
 test('only the root list is a grid', () => {
-  // Skills and Rules are toggles in a set rather than independent destinations, and
-  // reading them across two columns would break that.
+  // Prompt preferences and Rules are controls within a panel. The native
+  // Skills picker is a separate dialog.
   const gridOpen = MENU.indexOf('<div className="xv-cba-grid">');
-  const skills = MENU.indexOf("panel === 'skills'");
-  assert.ok(gridOpen !== -1 && skills > gridOpen, 'the sub-panels must sit outside the grid');
+  const instructions = MENU.indexOf("panel === 'instructions'");
+  const rules = MENU.indexOf("panel === 'rules'");
+  const skills = MENU.indexOf('<NativeSkillsPicker');
+  assert.ok(gridOpen !== -1 && instructions > gridOpen && rules > gridOpen, 'the sub-panels must sit outside the grid');
+  assert.ok(skills > rules, 'the Skills picker must be mounted separately from the root grid');
   assert.equal(
     (MENU.match(/className="xv-cba-grid"/g) ?? []).length,
     1,

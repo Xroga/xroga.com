@@ -121,7 +121,7 @@ function ResultCard({ item, presentation, hideImages, selected, onCompare, saved
       {price ? <div className={styles.price} data-rr-price><span>{isDemo ? 'Illustrative price' : 'Source-listed price'}</span><strong>{price}</strong><small>{BASIS[item.price!.basis]}{item.price?.taxesIncluded === false ? ' · taxes extra or unknown' : ''}</small></div> : <p className={styles.priceMissing}>Price and availability: check provider</p>}
       <div className={styles.actions} data-rr-actions>
         {sourceUrl ? <a href={sourceUrl} target="_blank" rel="noopener noreferrer" aria-label={`${actionLabel(item)}: ${item.title} in a new tab`}>{actionLabel(item)} <ArrowRight size={16} /></a> : null}
-        {(item.facts?.length || item.route?.length || item.coupon || item.limitations || item.source) ? <details className={styles.details}><summary>Details <ArrowRight size={13} /></summary>
+        {((item.facts?.length ?? 0) > 4 || item.route?.length || item.coupon || item.limitations || item.source || item.availabilityEvidence || item.confirmationReference || item.price?.note || item.images?.some(image => image.attribution)) ? <div className={styles.details}>
           {item.route?.length ? <ol className={styles.legs}>{item.route.map((leg, i) => <li key={`${leg.from}-${i}`}><strong>{leg.from} → {leg.to}</strong>{leg.service ? ` · ${leg.service}` : ''}{leg.duration ? ` · ${leg.duration}` : ''}<br /><small>{leg.departureLocal ?? 'Departure unknown'}{leg.departureTimeZone ? ` (${leg.departureTimeZone})` : ''} → {leg.arrivalLocal ?? 'Arrival unknown'}{leg.arrivalTimeZone ? ` (${leg.arrivalTimeZone})` : ''}</small></li>)}</ol> : null}
           {item.facts?.slice(4).map((fact, i) => <p key={`${fact.label}-${i}`}><strong>{fact.label}:</strong> {fact.value}</p>)}
           {item.coupon ? <Coupon item={item} /> : null}
@@ -131,7 +131,7 @@ function ResultCard({ item, presentation, hideImages, selected, onCompare, saved
           {item.price?.note ? <p><strong>Price basis:</strong> {item.price.note}</p> : null}
           {item.source ? <p><strong>Source:</strong> {item.source.title}{item.source.observedAt ? ` · observed ${new Date(item.source.observedAt).toLocaleString()}` : ''}</p> : null}
           {item.images?.some((image) => image.attribution) ? <p><strong>Image credit:</strong> {item.images.map((image) => image.attribution).filter(Boolean).join(', ')}</p> : null}
-        </details> : null}
+        </div> : null}
         <button type="button" className={styles.compare} aria-pressed={selected} onClick={onCompare}>{selected ? <Check size={14} /> : <SlidersHorizontal size={14} />}Compare</button>
       </div>
     </div>

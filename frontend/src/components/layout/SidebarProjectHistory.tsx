@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useRouter, usePathname } from 'next/navigation';
+import { belongsToProject, isRecentWithoutProject } from '@/lib/sidebarConversationLocation';
 import { activateSidebarProject, clearActiveSidebarProject, getActiveSidebarProject, SIDEBAR_PROJECT_ACTIVE_EVENT } from '@/lib/sidebarProjectTask';
 import { clearSelectedRepoContext, consumeFreshTerminalIntent } from '@/lib/repoContext';
 import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
@@ -707,8 +708,8 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
     try {
       // Restore membership alongside the actual saved conversation, not the previous task.
       const explicitProjectId=metaOf('conversation',session.id)?.project_id;
-      const inferredProject=accountProjects.find(p=>p.github_repo_name&&p.github_repo_name===session.githubRepoName);
-      const restoredProject=explicitProjectId||inferredProject?.id;
+      // Project membership is explicit, never inferred from a matching repo name.
+      const restoredProject=explicitProjectId;
       if(accountId&&restoredProject)activateSidebarProject(accountId,restoredProject);
       else clearActiveSidebarProject();
       const branch = session.githubBranch || 'main';
@@ -895,16 +896,11 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
       });
     }catch(e){toast.error((e as Error).message||'Could not load older history');}
   }
-  const organizedProjects = useMemo(()=>{
-    const actual=accountProjects.map(p=>({id:p.id,label:p.name,repo:p.github_repo_name||null,actual:p}));
-    const known=new Set(actual.map(p=>p.repo).filter(Boolean));
-    const old=folders.filter(folder=>!known.has(folder.repo)).map(folder=>({
-      id:'repo:'+folder.key,label:folder.label,repo:folder.repo,actual:null as SidebarProject|null,
-    }));
-    // Show only the requested first five projects; legacy repositories are fallbacks
-    // only when the account does not yet have canonical project records.
-    return actual.length ? [...actual,...old.filter(folder=>accountProjects.length<5).slice(0,Math.max(0,5-accountProjects.length))] : old;
-  },[accountProjects,folders]);
+  // A GitHub repository is optional execution context, not a sidebar Project.
+  // Only persisted, account-owned Project records appear under Projects.
+  const organizedProjects = useMemo(()=>
+    accountProjects.map(p=>({id:p.id,label:p.name,repo:p.github_repo_name||null,actual:p})),
+  [accountProjects]);
   const projectById=(id:string)=>organizedProjects.find(p=>p.id===id)
     ||(pinnedProjectRecords.find(p=>p.id===id)?(()=>{
        const p=pinnedProjectRecords.find(p=>p.id===id)!;
@@ -915,14 +911,9 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
     .filter(m=>m.item_type==='conversation'?activeItems.some(s=>s.id===m.item_id):
       Boolean(projectById(m.item_id)));
   const recentConversations=activeItems;
-  const standaloneRecents=recentConversations.filter(session=>{
-    const projectId=metaOf('conversation',session.id)?.project_id;
-    if(projectId)return !accountProjects.some(project=>project.id===projectId)
-      && !pinnedProjectRecords.some(project=>project.id===projectId)
-      && !organizedProjects.some(project=>project.id===projectId);
-    return !organizedProjects.some(project=>Boolean(project.repo&&project.repo===session.githubRepoName))
-      && !accountProjects.some(project=>Boolean(project.github_repo_name&&project.github_repo_name===session.githubRepoName));
-  });
+  const standaloneRecents=recentConversations.filter(session=>
+    isRecentWithoutProject(metaOf('conversation',session.id)?.project_id)
+  );
   function conversationTitle(session:RepoSession){
     return metaOf('conversation',session.id)?.title_override ||
       meaningfulSidebarTitle(session.title,session.entry?.prompt||session.preview);
@@ -1140,11 +1131,7 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
   const sectionTitle = 'px-2 pb-0.5 text-[9px] font-bold uppercase tracking-[0.1em] text-[var(--muted)]';
   const secondary = 'text-[10px] text-[var(--muted)] hover:text-[var(--foreground)] transition-colors focus-visible:outline-2 focus-visible:outline-[var(--accent)]';
   const getProjectChats = (p:(typeof organizedProjects)[number]) =>
-    recentConversations.filter(session => {
-      const data=metaOf('conversation',session.id);
-      if(data?.project_id)return data.project_id===p.id;
-      return Boolean(p.repo&&session.githubRepoName===p.repo);
-    });
+    recentConversations.filter(session=>belongsToProject(metaOf('conversation',session.id)?.project_id,p.id));
   const openedMenu=menu?menuActions:[];
   return <div className="mt-2 mb-1 px-1.5" data-sidebar-work-organizer>
     <section aria-label="Projects" className="space-y-0.5">
@@ -1260,6 +1247,10 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
           {editor.mode==='move-project'?<>
             <input autoFocus value={editorText} onChange={e=>setEditorText(e.target.value)} placeholder="Search projects" aria-label="Search destination projects"
               className="w-full rounded-lg border border-[var(--card-border)] bg-transparent p-2 text-xs"/>
+            <button type="button" className="w-full rounded-md px-2 py-2 text-left text-xs font-medium hover:bg-[var(--foreground)]/10"
+              onClick={()=>{void updateItem('conversation',editor.id,{project_id:null,section_id:null});setEditor(null);}}>
+              Move to Recents (no project)
+            </button>
             <div className="max-h-[220px] overflow-y-auto space-y-1">
               {allProjectOptions.filter(p=>p.name.toLowerCase().includes(editorText.toLowerCase())).map(project=>
                 <button key={project.id} type="button" className="w-full rounded-md px-2 py-2 text-left text-xs hover:bg-[var(--foreground)]/10"

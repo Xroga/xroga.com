@@ -6,7 +6,8 @@
       "path": "docs/xroga/evidence/command-010/TRANSPORT-LIFETIME-PROOF.json",
       "archive": "docs/xroga/evidence/command-010/historical/TRANSPORT-LIFETIME-PROOF-87e33b94.json",
       "historicalSha256": "9950d43b6acdd1c5ad4e4bf784ef5115d47af775141905e918525f4ac3cfb4a0",
-      "currentSha256": "f7c19d49f9d3433032b7f5bc8a1489acbaab698e6e9b05953527cae38f4e1024",
+      "currentSha256": "0b2b44c1e6c6c2f3f186e540669e78464ff8c9b71a3bec72c19ad5d0f59c63df",
+      "beforeNativeOpenUiBenchmarkSha256": "f7c19d49f9d3433032b7f5bc8a1489acbaab698e6e9b05953527cae38f4e1024",
       "beforeAuraContinuationSha256": "70e9f401245efccf5abceeb405820c5d0b4f74895c4006a5353671c6b27c14c6",
       "beforeVoiceContinuationSha256": "8986e802f6e8a1435e18f4fe2bf6bcbad03d6ad907bca974721e70919e97b16e",
       "beforeNativePublicationSha256": "90dd03551344cf373a15e641ea37042614f54bb4dfe1dfbbe77d6ef832defd96",
@@ -25,7 +26,11 @@
       "guestRichGuideContinuation": "docs/xroga/evidence/response-experience-v2-906/live-generation-contract.md",
       "beforeCompletionSDKBindingSha256": "b52400f8baec06ca69c642b519bb53fa81d98cdffc8a490f5f821022318efd6f",
       "beforeStructuredWorkspaceSha256": "7a44e2551379a4a160f350a9b1c7ecb3e3fd63f5df6e4304545b97b335443f47",
-      "previousCurrentSha256": "7a44e2551379a4a160f350a9b1c7ecb3e3fd63f5df6e4304545b97b335443f47"
+      "previousCurrentSha256": "7a44e2551379a4a160f350a9b1c7ecb3e3fd63f5df6e4304545b97b335443f47",
+      "beforeNativeWorkspaceRoutingSha256": "def2738775df3226ffcc5a7947c1f6b972948f9b9a9d22f413667bf0207811de",
+      "beforeNativePlainPromptSha256": "c664925ba8b8f73ea316f91de601e4da85f384c7df716f9061c10cb99e0cc482",
+      "beforeLiveChromePreservationSha256": "c5dc2789581a52c827f1b03ad7fb78052704c0779a6d3611a2e0040df3f06385",
+      "beforeHostedWorkspaceStagingSha256": "7e8a157348ede2c414695ef4faa2cb8d2d5ccb5d95da9f2ddeaa99651883bb50"
     },
     {
       "path": "docs/xroga/evidence/command-010/SOURCE-LIFETIME-PROOF.json",
@@ -38,7 +43,8 @@
       "path": "docs/xroga/evidence/command-010/MODEL-DISPATCH-PROOF.json",
       "archive": "docs/xroga/evidence/command-010/historical/MODEL-DISPATCH-PROOF-87e33b94.json",
       "historicalSha256": "7b04f1a944b9258329978770b9e273804653d5c7464a4ccfb2ac6c2e6f6849e1",
-      "currentSha256": "e6f50ffc7aef52b6cc365dfe72ec89183242c2c74976f1dcc2f97ba815f68a22",
+      "currentSha256": "9e0d8aa9fc857f7ad01795246daae0c0e7c16b7ca610b37a6c3b834bcba79286",
+      "beforeNativeOpenUiBenchmarkSha256": "e6f50ffc7aef52b6cc365dfe72ec89183242c2c74976f1dcc2f97ba815f68a22",
       "beforeNativePublicationSha256": "f2467eb712a137ff897be9157c16cf8e17311597f712a83aa0280ca8aed27eac",
       "nativePublicationContinuation": "docs/xroga/evidence/command-010/NATIVE-ARTIFACT-AUTHORITY-20261028.json",
       "beforeCwsApprovalSha256": "ca3969dcc33e1c8d40133d088ec652598cdc1b983b97349349184e9017bea73b",
@@ -51,7 +57,9 @@
       "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
       "beforeResearchHandoffSha256": "edfbc914afac4123a09e47f09284a21314474a9ad5a0c8c0ad614d52976462ef",
       "beforeRichShareSha256": "254d2301346131790c7700021780a54e11228ceb8cac7573a86b827aebdb8d8e",
-      "previousCurrentSha256": "3fa435b95ed8f7f01f56c3c4cd92392e338264f5a4dfb0d2c4682ac180e1cdb4"
+      "previousCurrentSha256": "3fa435b95ed8f7f01f56c3c4cd92392e338264f5a4dfb0d2c4682ac180e1cdb4",
+      "beforeNativeWorkspaceRoutingSha256": "e92a07a27739aeed74adbe601e77ca49ff97c93ea4140d9242e0b14adc0c980a",
+      "beforeNativePlainPromptSha256": "40c3d57b33ac26d24bcd89e7cb49425888dd6dd0720b7dc0cb7e331207253e85"
     }
   ],
   "exactPersistenceRemaps": [

@@ -99,6 +99,7 @@ flowchart LR
   endpoint_example_test["Source-defined endpoint example.test - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_exp_host["Source-defined endpoint exp.host - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_expo_dev["Source-defined endpoint expo.dev - CONFIGURED_BUT_UNVERIFIED"]
+  endpoint_fcm_googleapis_com["Source-defined endpoint fcm.googleapis.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_fixture["Source-defined endpoint fixture - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_fixture_invalid["Source-defined endpoint fixture.invalid - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_fixture_supabase_co["Source-defined endpoint fixture.supabase.co - CONFIGURED_BUT_UNVERIFIED"]
@@ -252,7 +253,7 @@ flowchart LR
   frontend -. "source host/reference; unverified" .-> endpoint_brandland_zendesk_com
   frontend -. "source host/reference; unverified" .-> endpoint_build_avax_network
   frontend -. "source host/reference; unverified" .-> endpoint_calendly_com
-  frontend -. "source host/reference; unverified" .-> endpoint_cdn_deepseek_com
+  api -. "source host/reference; unverified" .-> endpoint_cdn_deepseek_com
   frontend -. "source host/reference; unverified" .-> endpoint_cdn_jsdelivr_net
   frontend -. "source host/reference; unverified" .-> endpoint_cdn_simpleicons_org
   frontend -. "source host/reference; unverified" .-> endpoint_chain_link
@@ -295,6 +296,7 @@ flowchart LR
   api -. "source host/reference; unverified" .-> endpoint_example_test
   api -. "source host/reference; unverified" .-> endpoint_exp_host
   api -. "source host/reference; unverified" .-> endpoint_expo_dev
+  api -. "source host/reference; unverified" .-> endpoint_fcm_googleapis_com
   api -. "source host/reference; unverified" .-> endpoint_fixture
   api -. "source host/reference; unverified" .-> endpoint_fixture_invalid
   api -. "source host/reference; unverified" .-> endpoint_fixture_supabase_co

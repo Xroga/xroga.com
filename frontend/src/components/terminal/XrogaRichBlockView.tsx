@@ -39,11 +39,11 @@ function ExportButton({ label, create }: { label: string; create: () => Promise<
   return <span className="inline-flex flex-col items-start gap-1"><button type="button" disabled={busy} onClick={() => void handleDownload()} className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-[var(--border)] px-3 text-xs font-medium hover:bg-black/5 disabled:opacity-50 dark:hover:bg-white/5"><Download className="h-3.5 w-3.5" aria-hidden="true" />{busy ? 'Preparing…' : label}</button>{error ? <span role="alert" className="max-w-64 text-xs text-red-500">{error}</span> : null}</span>;
 }
 
-function Surface({ children, title, description, state = 'ready', variant }: { children: React.ReactNode; title?: string; description?: string; state?: RichBlock['state']; variant?: 'data-table' | 'chart' }) {
+function Surface({ children, title, description, state = 'ready', variant, inlineTable }: { children: React.ReactNode; title?: string; description?: string; state?: RichBlock['state']; variant?: 'data-table' | 'chart'; inlineTable?: boolean }) {
   if (state === 'loading') return <section className="xv-response-surface max-w-[960px] rounded-2xl border border-[var(--border)] p-5" aria-busy="true"><LoaderCircle className="h-5 w-5 animate-spin" aria-hidden="true" /><span className="sr-only">Loading output</span></section>;
   if (state === 'empty') return <section className="xv-response-surface max-w-[960px] rounded-2xl border border-dashed border-[var(--border)] p-5 text-sm text-[var(--muted)]">No data is available for this output.</section>;
   if (state === 'error' || state === 'unsupported') return <section className="xv-response-surface max-w-[960px] rounded-2xl border border-amber-500/35 p-5 text-sm" role="status"><TriangleAlert className="mr-2 inline h-4 w-4" aria-hidden="true" />{state === 'unsupported' ? 'This output cannot be previewed in this workspace yet.' : 'This output could not be rendered.'}</section>;
-  return <section data-xroga-surface={variant} className="xv-response-surface max-w-[960px] overflow-hidden rounded-2xl bg-[var(--background)] shadow-[0_12px_36px_rgba(10,30,68,.09)]">{title || description ? <header className="px-5 pb-2 pt-5">{title ? <h3 className="text-base font-semibold tracking-tight text-[var(--foreground)]">{title}</h3> : null}{description ? <p className="mt-1 text-xs text-[var(--muted)]">{description}</p> : null}</header> : null}{children}</section>;
+  return <section data-xroga-surface={variant} data-inline-answer-table={inlineTable || undefined} className="xv-response-surface max-w-[960px] overflow-hidden rounded-2xl bg-[var(--background)] shadow-[0_12px_36px_rgba(10,30,68,.09)]">{title || description ? <header className="px-5 pb-2 pt-5">{title ? <h3 className="text-base font-semibold tracking-tight text-[var(--foreground)]">{title}</h3> : null}{description ? <p className="mt-1 text-xs text-[var(--muted)]">{description}</p> : null}</header> : null}{children}</section>;
 }
 
 function MetricCard({ metric }: { metric: Metric }) {
@@ -60,6 +60,8 @@ function MetricRenderer({ block }: { block: Extract<RichBlock, { type: 'metric' 
 function valueText(value: unknown): string { return value === null || value === undefined ? '' : String(value); }
 
 function TableRenderer({ block }: { block: TableBlock }) {
+  const inlineTable = block.type === 'table' && !block.artifactId && !block.datasetId;
+  const fitColumns = inlineTable && block.columns.length <= 4;
   const [filter, setFilter] = useState('');
   const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({});
   const addSelection = useXrogaArtifactContext((state) => state.addSelection);
@@ -67,11 +69,19 @@ function TableRenderer({ block }: { block: TableBlock }) {
   const table = useReactTable({ data: block.rows, columns, state: { globalFilter: filter, rowSelection }, onGlobalFilterChange: setFilter, onRowSelectionChange: setRowSelection, enableRowSelection: block.selectable !== false, getCoreRowModel: getCoreRowModel(), getFilteredRowModel: getFilteredRowModel(), getSortedRowModel: getSortedRowModel(), getPaginationRowModel: getPaginationRowModel(), initialState: { pagination: { pageSize: 25 } } });
   const filteredRows = table.getFilteredRowModel().rows;
   const largeDataset = shouldVirtualizeRows(filteredRows.length);
-  const rows = largeDataset ? filteredRows : table.getRowModel().rows;
+  const rows = largeDataset || inlineTable ? table.getPrePaginationRowModel().rows : table.getRowModel().rows;
   const scrollRef = useRef<HTMLDivElement>(null);
-  const virtual = useVirtualizer({ count: largeDataset ? rows.length : 0, getScrollElement: () => scrollRef.current, estimateSize: () => 42, overscan: 8 });
+  const virtual = useVirtualizer({
+    count: largeDataset ? rows.length : 0,
+    getScrollElement: () => scrollRef.current,
+    getItemKey: index => rows[index]?.id ?? index,
+    estimateSize: () => 42,
+    overscan: 8,
+  });
   const virtualItems = largeDataset ? virtual.getVirtualItems() : [];
-  const visibleRows = largeDataset ? virtualItems.map((item) => ({ row: rows[item.index], key: item.key })) : rows.map((row) => ({ row, key: row.id }));
+  const visibleRows = largeDataset
+    ? virtualItems.map(({ index, key }) => ({ row: rows[index], key, index }))
+    : rows.map((row, index) => ({ row, key: row.id, index }));
   const topSpacer = largeDataset && virtualItems.length ? virtualItems[0].start : 0;
   const bottomSpacer = largeDataset && virtualItems.length ? virtual.getTotalSize() - virtualItems[virtualItems.length - 1].end : 0;
   const selectedIds = Object.keys(rowSelection).filter((key) => rowSelection[key]);
@@ -86,20 +96,36 @@ function TableRenderer({ block }: { block: TableBlock }) {
     anchor.click();
     window.setTimeout(() => URL.revokeObjectURL(url), 1000);
   };
-  return <Surface title={block.title ?? (block.type === 'spreadsheet' ? 'Spreadsheet' : block.type === 'database' ? 'Database' : 'Table')} description={block.description} state={block.state} variant="data-table">
-    <div className="flex flex-wrap items-center gap-2 border-b border-[var(--border)] p-3">
+  const tools = <div className="xv-table-tools flex flex-wrap items-center gap-2 border-b border-[var(--border)] p-3">
       {block.searchable !== false ? <label className="relative min-w-44 flex-1"><Search className="pointer-events-none absolute left-2.5 top-2.5 h-4 w-4 text-[var(--muted)]" aria-hidden="true" /><span className="sr-only">Search table</span><input value={filter} onChange={(event) => setFilter(event.target.value)} placeholder="Search rows" className="h-9 w-full rounded-lg border border-[var(--border)] bg-transparent pl-9 pr-3 text-sm outline-none focus:ring-2 focus:ring-blue-500" /></label> : null}
       {selectedIds.length ? <button type="button" onClick={useSelection} className="h-9 rounded-lg border border-[var(--border)] px-3 text-xs font-medium hover:bg-black/5 dark:hover:bg-white/5">Use {selectedIds.length} as context</button> : null}
       <button type="button" onClick={() => void copyCsv()} className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-[var(--border)] px-3 text-xs font-medium hover:bg-black/5 dark:hover:bg-white/5"><Copy className="h-3.5 w-3.5" aria-hidden="true" />Copy CSV</button>
       <button type="button" onClick={downloadCsv} className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-[var(--border)] px-3 text-xs font-medium hover:bg-black/5 dark:hover:bg-white/5"><Download className="h-3.5 w-3.5" aria-hidden="true" />Download CSV</button>
       <ExportButton label="Download XLSX" create={() => exportTableXlsx(block)} />
-    </div>
-    <div ref={scrollRef} className="max-h-[440px] overflow-auto">
-      <table className="w-full min-w-[560px] border-collapse text-left text-sm"><thead className="sticky top-0 z-10 bg-[var(--background)]"><tr>{block.selectable !== false ? <th className="w-10 border-b border-[var(--border)] p-3"><span className="sr-only">Select</span></th> : null}{table.getHeaderGroups()[0]?.headers.map((header) => <th key={header.id} className="border-b border-[var(--border)] p-3 text-xs font-semibold"><button type="button" onClick={header.column.getToggleSortingHandler()} className="inline-flex items-center gap-1">{flexRender(header.column.columnDef.header, header.getContext())}{header.column.getIsSorted() ? (header.column.getIsSorted() === 'asc' ? ' ↑' : ' ↓') : null}</button></th>)}</tr></thead>
-        <tbody>{topSpacer > 0 ? <tr aria-hidden="true"><td colSpan={block.columns.length + (block.selectable !== false ? 1 : 0)} style={{ height: topSpacer }} /></tr> : null}{visibleRows.map(({ row, key }) => row ? <tr key={key} className="border-b border-[var(--border)]/70 hover:bg-black/[0.025] dark:hover:bg-white/[0.035]">{block.selectable !== false ? <td className="p-3"><input type="checkbox" aria-label={`Select row ${Number(row.id) + 1}`} checked={row.getIsSelected()} onChange={row.getToggleSelectedHandler()} /></td> : null}{row.getVisibleCells().map((cell) => <td key={cell.id} className="max-w-80 p-3 align-top">{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>)}</tr> : null)}{bottomSpacer > 0 ? <tr aria-hidden="true"><td colSpan={block.columns.length + (block.selectable !== false ? 1 : 0)} style={{ height: bottomSpacer }} /></tr> : null}</tbody></table>
+    </div>;
+  return <Surface title={block.title ?? (block.type === 'spreadsheet' ? 'Spreadsheet' : block.type === 'database' ? 'Database' : 'Table')} description={block.description} state={block.state} variant="data-table" inlineTable={inlineTable}>
+    {(!inlineTable || largeDataset) && tools}
+    <div ref={scrollRef} tabIndex={largeDataset ? 0 : undefined} role={largeDataset ? 'region' : undefined}
+      aria-label={largeDataset ? `${block.title ?? 'Table'} scroll area` : undefined}
+      onKeyDown={largeDataset ? event => {
+        if (event.target !== event.currentTarget || (event.key !== 'Home' && event.key !== 'End')) return;
+        event.preventDefault();
+        virtual.scrollToIndex(event.key === 'Home' ? 0 : rows.length - 1, { align: event.key === 'Home' ? 'start' : 'end' });
+      } : undefined}
+      className={largeDataset || !inlineTable ? 'max-h-[440px] overflow-auto' : 'overflow-x-auto'}>
+      <table className={`w-full border-collapse text-left text-sm ${fitColumns ? 'table-fixed [overflow-wrap:anywhere]' : 'min-w-[560px]'}`}><thead className="sticky top-0 z-10 bg-[var(--background)]"><tr>{block.selectable !== false ? <th className="w-9 border-b border-[var(--border)] p-3"><span className="sr-only">Select</span></th> : null}{table.getHeaderGroups()[0]?.headers.map((header) => <th key={header.id} scope="col" className="border-b border-[var(--border)] p-3 text-xs font-semibold"><button type="button" onClick={header.column.getToggleSortingHandler()} className="text-start">{flexRender(header.column.columnDef.header, header.getContext())}{header.column.getIsSorted() ? (header.column.getIsSorted() === 'asc' ? ' ↑' : ' ↓') : null}</button></th>)}</tr></thead>
+        <tbody>{topSpacer > 0 ? <tr aria-hidden="true"><td colSpan={block.columns.length + (block.selectable !== false ? 1 : 0)} style={{ height: topSpacer, padding: 0 }} /></tr> : null}
+          {visibleRows.map(({ row, key, index }) => row ? <tr key={key} data-index={largeDataset ? index : undefined}
+            ref={largeDataset ? virtual.measureElement : undefined}
+            className="border-b border-[var(--border)]/70 hover:bg-black/[0.025] dark:hover:bg-white/[0.035]">
+            {block.selectable !== false ? <td className="p-3"><input type="checkbox" aria-label={`Select row ${Number(row.id) + 1}`} checked={row.getIsSelected()} onChange={row.getToggleSelectedHandler()} /></td> : null}
+            {row.getVisibleCells().map((cell) => <td key={cell.id} className="max-w-80 p-3 align-top">{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>)}
+          </tr> : null)}
+          {bottomSpacer > 0 ? <tr aria-hidden="true"><td colSpan={block.columns.length + (block.selectable !== false ? 1 : 0)} style={{ height: bottomSpacer, padding: 0 }} /></tr> : null}</tbody></table>
       {largeDataset ? <span className="sr-only">Large dataset virtualization is active for {rows.length} rows.</span> : null}
     </div>
-    <footer className="flex items-center justify-between gap-2 p-3 text-xs text-[var(--muted)]"><span>{filteredRows.length} rows</span>{!largeDataset ? <div className="flex items-center gap-1"><button type="button" aria-label="Previous page" disabled={!table.getCanPreviousPage()} onClick={() => table.previousPage()} className="rounded-md border border-[var(--border)] p-1.5 disabled:opacity-40"><ChevronLeft className="h-4 w-4" /></button><span>Page {table.getState().pagination.pageIndex + 1} of {Math.max(1, table.getPageCount())}</span><button type="button" aria-label="Next page" disabled={!table.getCanNextPage()} onClick={() => table.nextPage()} className="rounded-md border border-[var(--border)] p-1.5 disabled:opacity-40"><ChevronRight className="h-4 w-4" /></button></div> : <span>Virtualized view</span>}</footer>
+    <footer className="flex items-center justify-between gap-2 p-3 text-xs text-[var(--muted)]"><span>{filteredRows.length} rows</span>{largeDataset ? <span>Virtualized view</span> : !inlineTable && table.getPageCount() > 1 ? <div className="flex items-center gap-1"><button type="button" aria-label="Previous page" disabled={!table.getCanPreviousPage()} onClick={() => table.previousPage()} className="rounded-md border border-[var(--border)] p-1.5 disabled:opacity-40"><ChevronLeft className="h-4 w-4" /></button><span>Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}</span><button type="button" aria-label="Next page" disabled={!table.getCanNextPage()} onClick={() => table.nextPage()} className="rounded-md border border-[var(--border)] p-1.5 disabled:opacity-40"><ChevronRight className="h-4 w-4" /></button></div> : null}</footer>
+    {inlineTable && !largeDataset && tools}
   </Surface>;
 }
 

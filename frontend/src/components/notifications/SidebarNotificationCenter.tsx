@@ -1,7 +1,8 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { requestBuildNotificationPermission } from '@/lib/buildBrowserNotify';
+import { enableBrowserPush } from '@/lib/browserPush';
+import { BROWSER_NOTIFY_PROJECT_READY_KEY } from '@/lib/buildBrowserNotify';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Bell, CheckCheck, Settings2, X } from 'lucide-react';
@@ -73,7 +74,7 @@ export function SidebarNotificationCenter({ open, onClose }: Pick<Props, 'open' 
       <button type="button" onClick={() => void markAllRead()} disabled={busy || unread === 0} className="inline-flex items-center gap-1 text-[10px] text-sky-400 hover:underline disabled:opacity-40"><CheckCheck className="h-3 w-3" /> Mark all read</button>
     </div>
     <div className="xv-notification-scroll min-h-0 flex-1 overflow-y-auto p-2">
-      <button type="button" className="mb-2 w-full rounded-lg border border-[var(--card-border)] p-2 text-xs" onClick={async () => { const allowed = await requestBuildNotificationPermission(); setBrowserStatus(allowed ? 'Browser notifications enabled for real task updates.' : 'Notifications are unavailable or blocked. Check this site’s browser permissions.'); }}>Enable browser notifications</button>
+      <button type="button" className="mb-2 w-full rounded-lg border border-[var(--card-border)] p-2 text-xs" onClick={async () => { try { const allowed = await enableBrowserPush(); if (allowed) localStorage.setItem(BROWSER_NOTIFY_PROJECT_READY_KEY, '1'); setBrowserStatus(allowed ? 'Browser push is enabled, including after Xroga closes.' : 'Notifications are unavailable or blocked. Check this site’s browser permissions.'); } catch { setBrowserStatus('Could not enable browser push. Please try again in settings.'); } }}>Enable browser notifications</button>
       {browserStatus ? <p role="status" className="mb-2 text-xs text-[var(--muted)]">{browserStatus}</p> : null}
       {error ? <p role="alert" className="mb-2 text-xs">{error}</p> : null}
       {notifications.length === 0 ? <div className="px-3 py-10 text-center text-xs text-[var(--muted)]">No notifications yet. Real task updates will appear here.</div> : notifications.map((n) => <button key={n.id} type="button" onClick={() => void openNotification(n)} className={`mb-1 flex w-full items-start gap-2.5 rounded-xl px-2.5 py-2.5 text-left transition hover:bg-[var(--foreground)]/[.07] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 ${n.read ? '' : 'bg-[var(--foreground)]/[.045]'}`}>

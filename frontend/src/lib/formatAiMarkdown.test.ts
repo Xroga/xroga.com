@@ -2,7 +2,11 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { FormattedAiMarkdown, safeMarkdownUrl, structureLongProse } from './formatAiMarkdown.js';
+import { createRequire } from 'node:module';
+
+const requireStyle = createRequire(__filename);
+requireStyle.extensions['.css'] = (module) => { module.exports = { __esModule: true, default: {} }; };
+const { FormattedAiMarkdown, safeMarkdownUrl, structureLongProse } = requireStyle('./formatAiMarkdown.tsx') as typeof import('./formatAiMarkdown');
 
 test('markdown URL policy permits ordinary links and rejects executable protocols', () => {
   assert.equal(safeMarkdownUrl('https://standards.example/spec', 'href', {} as never), 'https://standards.example/spec');
@@ -39,7 +43,8 @@ test('CommonMark content renders links, emphasis, fenced code, and tables with e
   assert.match(html, /language-ts/);
   assert.match(html, /const ready = true;/);
   assert.match(html, /<td[^>]*><\/td>/, 'the empty GFM cell must remain in the table');
-  assert.doesNotMatch(html, /onerror|<img/);
+  assert.doesNotMatch(html, /onerror|src="x"/i);
+  assert.match(html, /src="\/api\/site-icon\?d=example\.com"/);
 });
 
 test('long answers present the opening once as a brief lead while preserving sections', () => {
@@ -64,7 +69,7 @@ test('dense legacy prose is divided into readable paragraphs without changing wo
 
 test('ordinary external links also get the compact resource-preview affordance', () => {
   const html = renderToStaticMarkup(createElement(FormattedAiMarkdown, { content: 'Read the [original guide](https://example.com/guide).' }));
-  assert.match(html, /xv-resource-link/);
+  assert.match(html, /data-source-citation/);
   assert.match(html, /Open link: original guide/);
   assert.match(html, /href="https:\/\/example\.com\/guide\?utm_source=xroga\.com"/);
 });

@@ -39,3 +39,10 @@ test('conversation clips only below the floating chatbar and fades its upper edg
     /data-workspace-state='conversation'\][^}]*background:\s*var\(--terminal-ui-surface/s,
   );
 });
+
+test('assistant replies use the composer inner inset at every pane width without moving user messages', () => {
+  const messageLog = read('../components/terminal/SwarmMessageLog.tsx');
+  assert.match(messageLog, /chromeless && msg\.role === 'assistant' && 'box-border ps-\[18px\]'/);
+  assert.doesNotMatch(messageLog, /chromeless && msg\.role === 'user' && 'box-border ps-\[18px\]'/);
+  assert.doesNotMatch(messageLog, /max-\[600px\]:ps-\[18px\]/);
+});

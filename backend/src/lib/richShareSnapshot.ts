@@ -1,9 +1,13 @@
+import { readNativeOpenUiShare } from '../ai/nativeOpenUiShare.js';
+
 const PREFIX = 'XROGA_RESPONSE_V2\n';
 
 /** Backward-compatible text projection of a read-only presentation snapshot.
  * This never authorizes an action or validates model factual claims. The V2
  * frontend separately validates every presentation node before rendering it. */
 export function projectRichShare(value: string): { response: string; richResponse?: string } {
+  const native = readNativeOpenUiShare(value);
+  if (native) return { response: native.text, richResponse: value };
   if (!value.startsWith(PREFIX) || value.length > 100_000) return { response: value };
   try {
     const data = JSON.parse(value.slice(PREFIX.length));

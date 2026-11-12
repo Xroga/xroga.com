@@ -1,22 +1,22 @@
 # Xroga repository truth map
 
-Source SHA: `c6b2f05ed5f07ee188bdbaa7afd29891070b584f`. Branch observed: `feat/mic-mobile-main-20261031`. Audit started: 2026-10-31T01:28:02.145Z.
+Source SHA: `9478a47598eb1eee851a1073e637c7c18cfb622c`. Branch observed: `codex/openui-notification-compatibility-20261112`. Audit started: 2026-11-11T19:34:51.187Z.
 
 This inventory records static source and call-path evidence. A mounted endpoint is reachable in source; that does not certify live success, tenant safety, approval enforcement, or completion. All implementation surfaces retain an unverified/partial/placeholder state until their own acceptance tests establish behavior. No architecture was replaced and no production operations were performed.
 
 ## Counts
 
-- surfaces: 1861
-- routeRegistrations: 381
-- routes: 319
-- reachableRoutes: 236
+- surfaces: 1919
+- routeRegistrations: 395
+- routes: 331
+- reachableRoutes: 240
 - queues: 4
-- migrations: 161
+- migrations: 162
 - workflows: 21
-- testSuites: 1092
-- declaredTests: 7348
-- classifiedMarkers: 403
-- reachableMarkers: 337
+- testSuites: 1104
+- declaredTests: 7445
+- classifiedMarkers: 419
+- reachableMarkers: 353
 - absentRequiredPaths: 5
 - duplicateIds: 0
 

@@ -2762,7 +2762,12 @@
       "relatedSourceBindings": [
         {
           "path": "backend/src/ai/pipeline.ts",
-          "sha256": "d3742ca4dccc50daf99aa71d9896449957dde73798dc6d7c2a9c5ca5536cff32",
+          "sha256": "d981253fc491c75b4d2b90c6e080509aa541fd04d840276e133e81b39fe3eac6",
+          "nativeOpenUiSourceReview": {
+            "previousSha256": "d3742ca4dccc50daf99aa71d9896449957dde73798dc6d7c2a9c5ca5536cff32",
+            "finding": "The staging-only native OpenUI branch changes chat presentation and validates output after the same model dispatch and usage accounting. The full runBuildPipeline function and following worker source are byte-identical to the previously bound source. No admission, project ownership, checkpoint or worker proof changes.",
+            "liveAcceptance": false
+          },
           "preGoogleMigrationSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
           "beforeDirectOutputSha256": "0168bc57563dbc535012982e5c6680fd3ebb40c7595fb67620e1ca60284df9b4",
           "beforeRichShareCompletionReviewSha256": "373180f86ff9ed02a7624d767374d214c14765ffcbf9a489b86d3bc26507e3b6",
@@ -2770,6 +2775,21 @@
             "scope": "ONE_ARGUMENT_ADDITION_TO_EXISTING_NEGATIVE_COMPLETION_REVIEW",
             "evidence": "docs/xroga/evidence/response-v2-rich-share/source-review.json",
             "authorityAndPersistenceUnchanged": true,
+            "liveAcceptance": false
+          },
+          "nativeWorkspaceRoutingReview": {
+            "previousSha256": "c5eee2fd7ac3c6211e1e0b53fa516357ef110a07504ff45c29111a4b5dbe6f43",
+            "scope": "Chat and attachments use existing metered dispatch. The worker body and its two reviewed local conversions remain byte-identical.",
+            "liveAcceptance": false
+          },
+          "beforeNativePlainPrompt": {
+            "sourceSha256": "07ab1714a6f3d3559d546e2172016cca626482f7a31857904f249fb27b1103af",
+            "scope": "Only the instructions for high-confidence prose answers change. The worker body is byte-identical. Model dispatch, scope, reservation and settlement are unchanged. This rebind does not certify a live run."
+          },
+          "deterministicMonthlySourceReview": {
+            "previousSha256": "6934fe9714e36e4caa8cbdb93cc6f26d8e00039163f1804214e1fd975ae26471",
+            "scope": "ONLY_ORDINARY_CHAT_POST_SETTLEMENT_PRESENTATION_CONTEXT",
+            "method": "Exact source diff and two byte-identical enclosing-function caller comparisons. No change to dispatch, accounting, persistence, authorization or worker execution.",
             "liveAcceptance": false
           }
         },
