@@ -16,7 +16,7 @@ NOT IMPLEMENTED, BLOCKED. A number from a single run is a single run, not an ave
 | Connected-app actions | PARTIAL | The approved Sheets read/write path was failing because the provider refused an account field; fixed and exercised against staging at API level. NOT verified: a real approved write on the owner account by the owner. Gmail overlay work is #970 (Codex). |
 | Recovery and resumption | PARTIAL | Run segments: a backend test drives one run past 450 turns and renews time; a real 60-turn DeepSeek run crossed the old 48-turn limit through a segment renewal. restart-restore passes in real Chrome. Worker table persists across an extension worker restart (unit-tested). NOT tested with the real model: service-worker suspension, Chrome crash, tool loss. |
 | Planning and expertise | PARTIAL | 19 playbooks chosen from the request (including design editors, video editors, business records, work-split, Google and Meta Ads, SEO), selection VERIFIED by tests. Real execution of Meta Ads, Google Ads, a design editor or a video editor is NOT VERIFIED: no accounts. |
-| Performance | VERIFIED where measured | Section 3. Not measured: CPU and RAM overhead, 5-worker runs, differential against full snapshots. |
+| Performance | VERIFIED where measured | Section 3. CPU and RAM with workers and the worker scheduler: section 3a (fixture model). Not measured: differential against full snapshots. |
 | Security | PARTIAL | Route-level tenant ownership, device authentication and turn fencing are tested in the backend. Workers get no connected-app tools and no worker-starting tools; each run needs its own approvals. NOT tested: two real accounts at once. The egress review of the Composio network call needs a human (CI job disposable-policy-database). |
 | Production readiness | NOT READY | Section 6. |
 
@@ -46,13 +46,35 @@ turns, so it pays off only for subtasks heavy enough to repay that. n = 3 per ro
 Cost settled per task: 30 to 1,300 micro-dollars ($0.00003 to $0.0013). Other single runs: a form fill (not submitted) 16.9 s in 2 turns; a task graph
 (a and b, then c) 20.8 s; three documentation sites 62 s in 6 turns.
 
+### 3a. Worker scheduler, CPU and memory (real Chrome, fixture model with a fixed 3 s per worker turn; check `parallel-bench`)
+
+| Phase | Wall clock | Against one worker | Chrome process tree peak memory | CPU seconds in the phase |
+| --- | --- | --- | --- | --- |
+| 1 worker | 5.5 s | 1.00 | 1,099 MB | 4.9 over 5.9 s |
+| 3 workers together | 5.4 s | 0.99 | 1,287 MB | 5.8 over 5.4 s |
+| 4 workers (the fourth waits for a free slot; cap is 3) | 9.1 s | 1.65 | 1,341 MB | 6.8 over 9.3 s |
+
+Three workers took as long as one (the same three one after another would take about 12.3 s), and a fourth waited for a slot as designed. Idle Chrome with
+the extension before the first phase was about 470 MB. Each extra worker window added about 100 MB. Caveats: one run on one laptop; the model is a fixture
+with fixed latency, so this measures the scheduler and the browser, not DeepSeek; the CPU figure includes the check's own panel polling (every 150 ms) and
+page loads, so it is an upper bound for the scheduler itself. Five-worker runs were not measured because the cap is three.
+
+### 3b. Download confirmation (real Chrome, check `confirm-download`)
+
+A page started a download the way an Export button does. `confirm_download` read Chrome's download list and reported the name and size (35 bytes,
+text/csv) matching the file; a download that never began was refused after the 1.5 s wait it was given, and no folder path appears in the line. Chrome makes no
+download record for an empty blob, so an empty export reads as "no download began"; a download that finished with 0 bytes is covered by unit tests only.
+Not tested: a very large file, an interrupted download, the permission being refused in the product build.
+
 ## 4. NOT IMPLEMENTED or BLOCKED, with the reason
 
-Downloads and exported-file confirmation; canvas pixel interaction; native desktop applications (BLOCKED); macros and skills extracted from verified runs;
-postconditions that count rows or confirm a record exists (the playbook asks the agent to search again instead); region outline snapshots; HAR, video and
+Canvas pixel interaction; native desktop applications (BLOCKED); macros and skills extracted from verified runs; region outline snapshots; HAR, video and
 flight recorder (privacy review); typing stored secrets without the model seeing them (credential review); multiple Chrome profiles (BLOCKED: needs a
-local daemon); worker-count scheduler driven by measurements; a worker panel beyond the workers own conversations (the extension transcript is being
-changed in #971 by Codex, so this was not touched).
+local daemon); a worker count chosen automatically from measurements (the cap of three is fixed; section 3a shows it behaves as designed); a worker
+panel beyond the workers own conversations (the extension transcript is being changed in #971 by Codex, so this was not touched).
+
+Built since the first version of this list: `confirm_download` (section 3b) and the `exists` / `count` postconditions (unit-tested and exercised in real
+Chrome by scenario S3; NOT yet seen used by the real model).
 
 ## 5. Things that need a person
 

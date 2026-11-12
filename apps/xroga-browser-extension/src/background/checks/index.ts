@@ -27,6 +27,7 @@ import './panel-screenshot-tab';
 import './upload-measure';
 import './save-file';
 import './confirm-download';
+import './parallel-bench';
 import './optional-permissions';
 import './voice';
 import './panel-selection';
