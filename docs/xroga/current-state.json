@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/workspace-observable-work-history",
-    "sha": "86696627f2f2551be2f58c41f0c44dcc0e338c38",
-    "sourceTimestampUtc": "2026-11-12T13:19:55+05:00",
-    "auditStartedUtc": "2026-11-12T08:20:20.602Z",
+    "sha": "8ceecb77f9a3c089cac4303793d6b84aa75f73b3",
+    "sourceTimestampUtc": "2026-11-12T17:02:47+05:00",
+    "auditStartedUtc": "2026-11-12T12:03:28.454Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
@@ -87796,7 +87796,7 @@
       "id": "surface:0fef6875af5860e2f4b4",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/markdown.tsx",
-      "sha256": "7593cd869a8128cce852270da9e316e0f7a92265897ad284eaadafb4fb4fc92b",
+      "sha256": "f87aa56077be3bde409ea31bf361009628b5dae6039ccfda7b77f19857e5e1a1",
       "symbols": [
         "Block",
         "INLINE",
@@ -87845,6 +87845,7 @@
         "frontend/src/components/native-openui/Evaluation.tsx:7",
         "frontend/src/components/native-openui/NativeSurface.tsx:9",
         "frontend/src/components/native-openui/upstream/components/extra.tsx:10",
+        "frontend/src/components/native-openui/upstream/components/markdown.test.ts:5",
         "frontend/src/components/native-openui/upstream/components/table.tsx:6",
         "frontend/src/components/native-openui/upstream/components/text.tsx:8"
       ],
@@ -87858,7 +87859,9 @@
       "approvalBoundary": [],
       "costBoundary": [],
       "evidenceBoundary": [],
-      "testCoverage": [],
+      "testCoverage": [
+        "frontend/src/components/native-openui/upstream/components/markdown.test.ts"
+      ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -154261,6 +154264,13 @@
       "id": "test-suite:07b7947e9acd174081b4",
       "sourcePath": "frontend/src/components/library/libraryFilePreview.test.ts",
       "declaredTests": 3,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:4ce9d7bbf578638998f1",
+      "sourcePath": "frontend/src/components/native-openui/upstream/components/markdown.test.ts",
+      "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
     },
