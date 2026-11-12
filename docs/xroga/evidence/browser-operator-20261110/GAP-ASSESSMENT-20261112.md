@@ -73,6 +73,8 @@ Not tested: a very large file, an interrupted download, the permission being ref
 | Open a URL that answers with a file attachment, say whether the download finished, its name and size | done, 25 s, 3 turns | `navigate`, `confirm_download`, `done`. Reported "xroga-test.txt, 126 bytes, text/plain" from the browser's download record, and explained the `net::ERR_ABORTED` that a navigation to a file produces. VERIFIED that the model uses `confirm_download`. |
 | Add two items on a public TodoMVC page and confirm the list has exactly two | done, 33 s, 3 turns | `type`, `type`, `done`. Correct answer, but the model did NOT use `expect.count`; it checked the page's own "2 items left" counter. So `count`/`exists` remain unit-tested and real-Chrome-tested but NOT seen used by the real model. |
 
+| Add three items on public TodoMVC and make sure the list has exactly three (second try to see `expect.count` used; Auto mode, Allow pressed by the harness) | done, 44.7 s, 7 turns | `enable_actions`, `snapshot`, `type` x3 (each "expect met"), `read`, `done`. Correct answer. The model again verified by reading the list, NOT with `expect.count`. Two real runs, two times not used: `count`/`exists` stay unit- and real-Chrome-tested only. |
+
 Findings from getting there: the product refuses localhost pages by policy (correct), so real-model tasks need public pages; typing on a site that is "always ask"
 waits for an Allow press (the harness pressed Allow twice, only for this task); runs left waiting on approval count against the active-run limit of 4
 (`BROWSER_RUN_LIMIT`), which blocked one attempt until the four stale test rows of the throwaway account were marked failed.
