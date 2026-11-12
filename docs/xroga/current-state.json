@@ -145151,7 +145151,7 @@
     {
       "id": "test-suite:4e8c713a22940968e143",
       "sourcePath": "apps/xroga-browser-extension/src/agent/__tests__/tool-selection.test.ts",
-      "declaredTests": 6,
+      "declaredTests": 8,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -145320,6 +145320,13 @@
       "id": "test-suite:2b3df95c81dd580356f4",
       "sourcePath": "apps/xroga-browser-extension/src/extension/__tests__/analytics-payload.test.ts",
       "declaredTests": 19,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:6f650eb759acf75f98ba",
+      "sourcePath": "apps/xroga-browser-extension/src/extension/__tests__/border-hidden.test.ts",
+      "declaredTests": 4,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -145634,7 +145641,7 @@
     {
       "id": "test-suite:6ec2efd8788f1beff0d3",
       "sourcePath": "apps/xroga-browser-extension/src/xroga/__tests__/plugins-act.test.ts",
-      "declaredTests": 10,
+      "declaredTests": 14,
       "skipLocations": [],
       "focusLocations": []
     },
