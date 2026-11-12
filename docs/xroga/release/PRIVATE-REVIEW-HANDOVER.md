@@ -10,7 +10,7 @@ Not a public release. This guide is for the owner's hands-on testing of the priv
 | Backend | staging Cloud Run service `xroga-api-universal-staging`, tag `browser-op-1110` (image `direct2-1112`, commit 51b43b527, includes the strict zero-model-read rule) |
 | Model | DeepSeek V4.1 Flash 1017 through Zurelay (the only model; no other LLM is used by any path) |
 | Eligible accounts | only the owner account on the server allowlist |
-| Package (staging-keyed, use this one) | `C:/xr-review-builds/xroga-browser-operator-staging-0.2.8-cf393599a.zip`, SHA-256 `7f20e4acc6d1eba499971a7468e855ef23a7dbf8680158e6f7152b5410326f8b`, built from `claude/ops-integrated-20261112` at `cf393599a` (#965 + Codex #971) |
+| Package (staging-keyed, use this one) | `C:/xr-review-builds/xroga-browser-operator-staging-0.2.8-d73b832c5.zip`, SHA-256 `b9673a655350730a97ea1c41995ce76d2555773cd6d907b36d1b9779dc93821f`, built from a clean `claude/ops-integrated-20261112` at `d73b832c5` (later commits on that branch change documentation only) (#965 + Codex #971) |
 | Other packages in the folder | `...-0.2.8-acea9973f.zip` and `...-c1a36b89a.zip` are production-mode builds with no pinned key; they will not pair with staging |
 
 A package with no pinned key gets a random extension ID, and the backend only accepts the pinned test ID, so **use the staging-keyed package** (its name says `staging`). Pairing a package with a different ID fails by design.
