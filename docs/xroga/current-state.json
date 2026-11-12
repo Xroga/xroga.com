@@ -3,12 +3,12 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/workspace-observable-work-history",
-    "sha": "b7c80ddf8b2a7a1abaf5aabc998b8bd1939f7d7a",
-    "sourceTimestampUtc": "2026-11-12T04:03:21+05:00",
-    "auditStartedUtc": "2026-11-11T23:11:02.008Z",
+    "sha": "5d3eeb8ebc5eb9900e8f0f76ed322819842592bf",
+    "sourceTimestampUtc": "2026-11-12T06:33:31+05:00",
+    "auditStartedUtc": "2026-11-12T01:33:46.390Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
-    "node": "v22.21.1",
+    "node": "v24.18.0",
     "npm": "11.16.0",
     "lockfiles": [
       "backend/package-lock.json",
@@ -9130,7 +9130,7 @@
       "id": "surface:74760a8c78ac888599fd",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/responsePresentation.ts",
-      "sha256": "7e16ea46e2c45bb3855222b9345b895417bd33a4eb005632fb2665150d2737d7",
+      "sha256": "53b0f2a5014bb4e35bf535e1b5a3ec5c94f6eaf09f411da450418aa4cd08e740",
       "symbols": [
         "AnswerObligations",
         "GENERIC_HEADING",
@@ -13391,7 +13391,7 @@
       "id": "surface:2caccad5e3c57290edad",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "sha256": "6ca81b0c9234195e6159d1e03735a21ce50d50cf1e8f71b53cb62199bf95cb26",
+      "sha256": "58e3fa0ea9ec46ed2aa0be0c7aa6ca0777c213059c12f3cd6ecf04a6a2ab6e29",
       "symbols": [
         "SEMANTIC_PLANNER_DEFAULT_TOTAL_TIMEOUT_MS",
         "SEMANTIC_PLANNER_HEDGE_DELAY_MS",
@@ -13415,6 +13415,7 @@
         "capabilityPlan",
         "coherenceError",
         "completion",
+        "completionShape",
         "configuredTotalMs",
         "controls",
         "correctionUsed",
