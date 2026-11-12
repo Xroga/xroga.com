@@ -28,7 +28,8 @@ test('actual semantic planner carries issued actor, platform reservation and exa
       assert.equal(reservations, settlements + 1);
       assert.equal(new Headers(init?.headers).get('authorization'), 'Bearer ' + env.ZURELAY_API_KEY);
       assert.equal(init?.redirect, 'manual');
-      assert.ok(body.messages.some((message: { content: string }) => message.content.includes('Explain a safe local parser')));
+      const expectedPrompt = mode === 'misrouted-calculator' ? 'build an interactive calculator' : 'Explain a safe local parser';
+      assert.ok(body.messages.some((message: { content: string }) => message.content.includes(expectedPrompt)));
       assert.doesNotMatch(JSON.stringify(body), /synthetic-platform-credential/);
       assert.equal(new Headers(init?.headers).get('x-zurelay-fallback'),'off');assert.equal(body.model,'deepseek-v4.1-flash-1017');assert.equal(body.reasoning_effort,'none');
       assert.equal(body.max_tokens, 1500);
@@ -40,9 +41,13 @@ test('actual semantic planner carries issued actor, platform reservation and exa
         }], usage: { prompt_tokens: 3348, completion_tokens: 1500, total_tokens: 4848 } },
         { headers: { 'x-request-id': 'synthetic-truncated', 'x-zurelay-model': 'deepseek-v4.1-flash-1017' } });
       }
-      return Response.json({ id: 'synthetic-planner-result',model:'deepseek-v4.1-flash-1017', choices: [{ message: { content: JSON.stringify({
-        semanticIntent: 'ANSWER', requiredCapabilities: ['conversation.respond'], freshnessRequirement: 'NONE', confidence: 0.9,
-      }) }, finish_reason: 'stop' }], usage: { prompt_tokens: 2, completion_tokens: 2,total_tokens:4 } },{headers:{'x-request-id':'synthetic-planner-result','x-zurelay-model':'deepseek-v4.1-flash-1017'}});
+      const decision = mode === 'misrouted-calculator'
+        ? { semanticIntent: 'MODIFY', requiredCapabilities: ['software.implement', 'validation.run'] }
+        : { semanticIntent: 'ANSWER', requiredCapabilities: ['conversation.respond'] };
+      const id = 'synthetic-planner-' + mode;
+      return Response.json({ id,model:'deepseek-v4.1-flash-1017', choices: [{ message: { content: JSON.stringify({
+        ...decision, freshnessRequirement: 'NONE', confidence: 0.9,
+      }) }, finish_reason: 'stop' }], usage: { prompt_tokens: 2, completion_tokens: 2,total_tokens:4 } },{headers:{'x-request-id':id,'x-zurelay-model':'deepseek-v4.1-flash-1017'}});
     }
     assert.equal(url.origin, env.SUPABASE_URL, 'No unlisted transport is allowed');
     if (url.pathname === '/rest/v1/user_token_usage') {
@@ -87,7 +92,16 @@ test('actual semantic planner carries issued actor, platform reservation and exa
     modelId: 'deepseek_v4_1_flash_1017', code: 'PLANNER_INVALID_OUTPUT', finish: 'length', outputTokens: 1500,
   });
   assert.doesNotMatch(JSON.stringify(warnings), /fixture-private-fragment/);
+  mode = 'misrouted-calculator';
+  const calculator = await planSemanticRequest({ ...request,
+    message: 'Use the notes to build an interactive calculator with a slider and a chart.',
+    attachments: [{ name: 'notes.txt', mediaType: 'text/plain' }],
+  });
+  assert.equal(calculator.dispatch, 'chat');
+  assert.equal(calculator.goalContract.semanticIntent, 'ANSWER');
+  assert.deepEqual(calculator.capabilityIds, ['conversation.respond', 'attachment.analyze']);
+  assert.deepEqual([effects, reservations, settlements, receipts], [3, 3, 3, 3], 'Correct routing must not purchase another planner call');
   mode = 'foreign-reservation';
   await assert.rejects(planSemanticRequest(request), { code: 'PROVIDER_RESERVATION_DENIED' });
-  assert.deepEqual([effects, reservations, settlements, receipts], [2, 3, 2, 2], 'Invalid reservation cannot start another provider/account or fabricate usage');
+  assert.deepEqual([effects, reservations, settlements, receipts], [3, 4, 3, 3], 'Invalid reservation cannot start another provider/account or fabricate usage');
 });
