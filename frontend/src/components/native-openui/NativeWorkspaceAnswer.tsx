@@ -8,11 +8,12 @@ import type { CitationSource } from '@/lib/xrogaCitations';
 import { ResponseSources } from '@/components/terminal/ResponseSources';
 import { ResponseSourceScope } from '@/components/terminal/ResponseSourceScope';
 import { ChatErrorBoundary } from '@/components/terminal/ChatErrorBoundary';
+import { loadPresentation } from '../response-experience-v2/loadPresentation';
 import { splitNativeOpenUiAnswer } from '../../../../backend/src/ai/nativeOpenUi';
 
 export { buildNativeOpenUiShare } from '../../../../backend/src/ai/nativeOpenUiShare';
 
-const Surface = lazy(() => import('./NativeSurface').then(module => ({ default: module.NativeSurface })));
+const Surface = lazy(() => loadPresentation(() => import('./NativeSurface')).then(module => ({ default: module.NativeSurface })));
 
 export function readNativeWorkspaceAnswer(output: unknown): NativeAnswer | undefined {
   if ((output as { responseSource?: { format?: unknown } } | null)?.responseSource?.format !== 'xroga-openui-v1') return;

@@ -260,6 +260,19 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   const reviewed = 'Show the reviewed monthly chart.';
   const reviewedReply = 'Partial answer. The written summary disagreed with the plotted data, so it was withheld.';
   const reviewedProgram = 'root = Col([Markdown(' + JSON.stringify(reviewedReply) + '), Chart("bar", [{Month:"January", Value:12000}, {Month:"February", Value:15500}], "Month", ["Value"], "currency", "USD")])';
+  const architecture = 'Show the request architecture, component roles and example code.';
+  const architectureReply = [
+    '## Request architecture', 'The application checks tenant membership before reading rows.',
+    '| Component | Role |\n| --- | --- |\n| Next.js | Application |\n| PostgreSQL | Data isolation |',
+    '```typescript\nconst boundary = "tenant_id";\n```',
+  ].join('\n\n');
+  const architectureProgram = [
+    'root = Col([Section("Request architecture", [diagram]), roles, sample])',
+    'diagram = Diagram("Request path", [{id: "app", label: "Next.js", level: 0}, {id: "database", label: "PostgreSQL", level: 1}], [{from: "app", to: "database", label: "User access token"}])',
+    'roles = Section("Component roles", [table], "What each component does")',
+    'table = Table(["Component", "Role"], [["Next.js", "Application"], ["PostgreSQL", "Data isolation"]])',
+    'sample = Code("const boundary = \\"tenant_id\\";", "typescript")',
+  ].join('\n');
   const research = 'Research the official evidence and cite it.';
   const confirmationId = '221fe7f9-f0dd-4b12-b03a-bcb57a13f655';
   const researchReply = 'The retrieved source describes the official policy [1].';
@@ -319,6 +332,9 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
     }
     if (body.message === reviewed) {
       return route.fulfill({ headers: cors, json: { response: reviewedReply, completion: { status: 'partial', reason: 'data_review' }, responseSource: { format: 'xroga-openui-v1', text: reviewedProgram } } });
+    }
+    if (body.message === architecture) {
+      return route.fulfill({ headers: cors, json: { response: architectureReply, completion: { status: 'complete' }, responseSource: { format: 'xroga-openui-v1', text: architectureProgram } } });
     }
     if (body.message === research) {
       return route.fulfill({ headers: cors, json: { response: 'Research requires approval. [Review](/dashboard/actions/confirm/' + confirmationId + ')' } });
@@ -547,9 +563,18 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   expect(receiptReads).toBeGreaterThanOrEqual(1);
   expect(receiptReads).toBeLessThanOrEqual(2);
   expect(chatCalls).toBe(7);
+  await send(architecture);
+  const renderedArchitecture = page.getByRole('region', { name: 'Answer', exact: true }).filter({ hasText: 'Component roles' }).last();
+  await expect(renderedArchitecture.getByRole('region', { name: 'Answer table', exact: true })).toBeVisible({ timeout: 20_000 });
+  await expect(renderedArchitecture.locator('.react-flow__edge')).toHaveCount(1);
+  await expect(renderedArchitecture.locator('pre code')).toHaveText('const boundary = "tenant_id";');
+  await expect(renderedArchitecture).not.toContainText(/root\s*=\s*Col/);
+  await expect.poll(async () => ((await readSaved())?.messages as Array<{ featureOutput?: { responseSource?: { text?: string } } }> | undefined)
+    ?.some(message => message.featureOutput?.responseSource?.text === architectureProgram), { timeout: 20_000 }).toBe(true);
+  expect(chatCalls).toBe(8);
   await writeFile('test-results/native-workspace/evidence.json', JSON.stringify({
     source: expectedRelease, route: '/workspace', auth: 'isolated Supabase ordinary accounts',
-    model: 'deterministic transport fixtures, zero provider calls', nativeActions: ['file handoff', 'citation link', 'keyboard calculator', 'copy readback', 'database save and reopen', 'private share owner/guest/other account', 'continuation', 'browser cancellation', 'client validation fallback', 'partial native recovery, copy and reopen', 'reviewed partial chart', 'inline research receipt without refocus or redispatch'],
+    model: 'deterministic transport fixtures, zero provider calls', nativeActions: ['file handoff', 'citation link', 'keyboard calculator', 'copy readback', 'database save and reopen', 'private share owner/guest/other account', 'continuation', 'browser cancellation', 'client validation fallback', 'partial native recovery, copy and reopen', 'reviewed partial chart', 'inline research receipt without refocus or redispatch', 'connected diagram, nested table and code in one persisted answer'],
     viewports: [1440, 390], themes: ['black', 'gray'],
   }, null, 2));
 });
@@ -598,6 +623,15 @@ test('saved native answers hide transport syntax during a lazy renderer failure 
     await saved.goto(workspace.href);
     await expect(answer.getByRole('slider', { name: 'Attendees' })).toHaveValue('40');
     await expect(answer).not.toContainText(/UnknownInternalWidget|root\s*=\s*Col/);
+    const failedOnce = new Set<string>();
+    for (const chunk of chunkURLs) await saved.route(chunk, route => {
+      if (failedOnce.has(chunk)) return route.continue();
+      failedOnce.add(chunk);
+      return route.fulfill({ status: 429 });
+    });
+    await saved.goto(workspace.href);
+    await expect.poll(() => failedOnce.size).toBeGreaterThan(0);
+    await expect(answer.getByRole('slider', { name: 'Attendees' })).toHaveValue('40');
   } finally {
     await context.close();
   }

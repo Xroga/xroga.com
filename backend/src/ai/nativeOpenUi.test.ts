@@ -362,6 +362,27 @@ test('an unbounded Stripe retry claim gets a readable factual-review fallback', 
   assert.deepEqual(validateNativeOpenUi('root = Col([Text("Stripe does not retry forever.")])'), { ok: true });
 });
 
+test('membership checks are not treated as an immutable tenant key', () => {
+  const inaccurate = 'WITH CHECK prevents moving a row to another tenant.';
+  const program = 'root = Col([Table(["Component", "Role"], [["Postgres", "Tenant data"]])])';
+  const diagnostics: unknown[] = [];
+  const result = completeNativeWorkspaceAnswer(
+    'Check current membership for both row versions.\n\n```sql\n-- ' + inaccurate + '\n```' + NATIVE_UI_MARKER + program,
+    'stop', undefined, undefined, event => diagnostics.push(event),
+  );
+  assert.deepEqual(result.completion, { status: 'partial', reason: 'factual_review' });
+  assert.match(result.response, /both pass for a user who belongs to both tenants/);
+  assert.match(result.response, /restrict UPDATE privileges/);
+  assert.match(JSON.stringify(diagnostics), /"factualRule":"tenant_key_immutability"/);
+  for (const accurate of [
+    'WITH CHECK blocks moves to an unauthorized tenant.',
+    'WITH CHECK prevents moving a row to another tenant if the user lacks membership there.',
+    'WITH CHECK does not prevent moving a row between tenants where the user belongs to both.',
+  ]) {
+    assert.deepEqual(validateNativeOpenUi(program, undefined, accurate), { ok: true });
+  }
+});
+
 test('a flagged billing claim keeps independently valid architecture with an explicit correction', () => {
   const prose = 'Use tenant membership for authorization and a separate Stripe webhook for billing.';
   const unsafe = 'Compare event timestamps against stored state to order deliveries.';

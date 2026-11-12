@@ -1,9 +1,10 @@
 import { requiresAuthorizationReview } from './answerAuthorizationReview.js';
 
-type FactualRule = 'stripe_event_order' | 'stripe_retry_window';
+type FactualRule = 'stripe_event_order' | 'stripe_retry_window' | 'tenant_key_immutability';
 export const nativeFactualGuidance: Record<FactualRule, string> = {
   stripe_event_order: 'Stripe event timestamps can tie and do not establish delivery order. Verify the signature, deduplicate by event ID, and reconcile the current subscription state with Stripe before applying a durable update.',
   stripe_retry_window: 'Stripe automatic webhook retries have a finite delivery window. Reconcile missed events separately and make processing idempotent.',
+  tenant_key_immutability: 'PostgreSQL WITH CHECK evaluates the proposed new row. Membership checks on the old and new rows can both pass for a user who belongs to both tenants. To keep tenant_id immutable, restrict UPDATE privileges to approved columns or reject tenant-key changes in a database trigger.',
 };
 type TechnicalCorrection = { reason: 'authorization_review' | 'factual_review'; guidance: string; rule?: FactualRule };
 
@@ -30,6 +31,17 @@ export function nativeTechnicalCorrections(answer: string): TechnicalCorrection[
     corrections.push({
       reason: 'authorization_review',
       guidance: 'Where deletion is restricted to owners or admins, the DELETE policy’s USING predicate must verify the caller’s current membership and allowed role for the row’s tenant. A membership-only predicate does not enforce that rule.',
+    });
+  }
+  // A membership check on the new row does not compare the tenant keys.
+  // Keep accurate statements about denying writes to unauthorized tenants.
+  if (statements.some(statement => !warnsAgainst(statement) &&
+    /\bwith\s+check\b[^.!?;\n]{0,60}\b(?:prevents?|blocks?|forbids?|stops?)\b[^.!?;\n]{0,85}\b(?:mov(?:e|es|ing)|transfer(?:s|ring)?|reassign(?:s|ing)?|chang(?:e|es|ing))\b[^.!?;\n]{0,65}\b(?:another tenant|different tenant|between tenants|tenant(?:id| key))\b/i.test(statement) &&
+    !/\b(?:unauthorized|without membership|if|unless|only when)\b/i.test(statement))) {
+    corrections.push({
+      reason: 'factual_review',
+      rule: 'tenant_key_immutability',
+      guidance: nativeFactualGuidance.tenant_key_immutability,
     });
   }
   // Exclude only the timestamp-based ordering clause explicitly rejected by
