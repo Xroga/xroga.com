@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { createCanonicalExecutionState, type ExecutableTaskNode } from '../ai/executionRuntime.js';
 import { actualProviderCostMicroUsd } from '../ai/providerBudget.js';
 import { resolveModelSpec } from '../ai/models.js';
+import { DIRECT_READ_MAX_AGE_MS, isPlainOpenAndRead, namesSite } from './localBrowserDirectRead.js';
 import { browserDeviceExtension, localBrowserAccountAllowed, type BrowserDeviceRequest } from './localBrowserDevice.js';
 import { publicHttpsUrl } from '../security/boundedPublicGet.js';
 import { classifyOutboundData } from '../security/egress/dataClassification.js';
@@ -734,9 +735,16 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
     if (isTerminalRunStatus(row.status)) return res.json({ status: row.status });
     if (data.status === 'completed') {
       active(row);
+      // The flag alone proves nothing: the run's own recorded goal has to be a plain open-and-read request, the answer has to name the
+      // site the run started on, the run has to be young and have no evidence yet, and only read actions may be reported.
+      const task0 = row.state.tasks[0];
       const direct = data.direct === true && !row.state.productManifest.localBrowserTurn
         && data.actions.length > 0 && data.actions.every(action => DIRECT_READ_ACTIONS.has(action))
-        && (data.result?.length ?? 0) <= DIRECT_READ_RESULT_MAX;
+        && (data.result?.length ?? 0) <= DIRECT_READ_RESULT_MAX
+        && isPlainOpenAndRead(String(row.spec.goal ?? ''))
+        && namesSite(data.result ?? '', String(row.spec.startUrl ?? ''))
+        && Date.now() - Date.parse(row.state.createdAt) <= DIRECT_READ_MAX_AGE_MS
+        && !(task0?.evidence?.length);
       if (!data.actions.length || !data.result?.trim() || (!row.state.productManifest.localBrowserTurn && !direct)) {
         throw new BrowserRequestError(400, 'BROWSER_RESULT_UNVERIFIED');
       }

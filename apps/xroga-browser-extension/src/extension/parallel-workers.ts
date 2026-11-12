@@ -154,6 +154,11 @@ export class ParallelWorkers {
     for (const job of Object.values(jobs)) if (isEnded(job.state) && (job.endedAt ?? job.createdAt) < cutoff) delete jobs[job.id];
   }
 
+  /** Whether this conversation has started workers (a follow-up still needs their status, whatever the new request looks like). */
+  async hasWorkers(parentId: string): Promise<boolean> {
+    return Object.values(await this.#jobs()).some(j => j.parentId === parentId);
+  }
+
   /** Whether a conversation is a worker's. The run manager also remembers the ones it is opening, before their ids are recorded here. */
   async isWorker(conversationId: string): Promise<boolean> {
     return Object.values(await this.#jobs()).some(j => j.conversationId === conversationId);
