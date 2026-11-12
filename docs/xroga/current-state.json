@@ -144939,6 +144939,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:365a3a0ad78efeff04f3",
+      "sourcePath": "apps/xroga-browser-extension/src/agent/__tests__/compaction-message-count.test.ts",
+      "declaredTests": 3,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:9326400c94c31ed3e14b",
       "sourcePath": "apps/xroga-browser-extension/src/agent/__tests__/compaction.test.ts",
       "declaredTests": 14,
@@ -145655,7 +145662,7 @@
     {
       "id": "test-suite:e6bbe975e1c3d88cc95e",
       "sourcePath": "apps/xroga-browser-extension/src/xroga/__tests__/model-segments.test.ts",
-      "declaredTests": 5,
+      "declaredTests": 7,
       "skipLocations": [],
       "focusLocations": []
     },
