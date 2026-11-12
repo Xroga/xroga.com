@@ -22,6 +22,14 @@ export const TargetSchema = z
   .union([RefTargetSchema, SemanticTargetSchema, SelectorTargetSchema, PointTargetSchema])
   .describe('The element to act on: a ref, or a role and name that must match exactly one element');
 
+/** An element query for postconditions: a role, a name, or both. */
+const CountQuerySchema = z
+  .strictObject({
+    role: z.string().min(1).optional().describe('The element role, such as listitem, row or button'),
+    name: z.string().min(1).optional().describe('Text the element name contains'),
+  })
+  .refine(q => !!q.role || !!q.name, 'give a role, a name, or both');
+
 export const ExpectationSchema = z
   .strictObject({
     url: z.string().optional().describe('The page URL contains this text'),
@@ -30,6 +38,15 @@ export const ExpectationSchema = z
     value: z.string().optional().describe("The target's value equals this"),
     checked: z.boolean().optional().describe('The target is checked (true) or unchecked (false)'),
     gone: z.boolean().optional().describe('The target is no longer in the page'),
+    exists: CountQuerySchema.optional().describe('An element with this role (and a name containing this text) is on the page'),
+    count: CountQuerySchema.extend({
+      equals: z.number().int().min(0).optional(),
+      atLeast: z.number().int().min(0).optional(),
+      atMost: z.number().int().min(0).optional(),
+    })
+      .refine(c => c.equals !== undefined || c.atLeast !== undefined || c.atMost !== undefined, 'count needs equals, atLeast or atMost')
+      .optional()
+      .describe('How many elements with this role (and a name containing this text) the page has: the list gained a row'),
   })
   .describe('A postcondition checked after the action settles');
 

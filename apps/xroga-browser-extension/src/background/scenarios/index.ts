@@ -27,3 +27,4 @@ import './set-g-loop';
 import './set-i';
 import './set-u';
 import './set-s-subagents';
+import './expect-count';

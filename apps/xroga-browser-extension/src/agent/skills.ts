@@ -101,6 +101,7 @@ export const SKILLS: Skill[] = [
       'Records in business tools (CRM, store, website):',
       '- Search before you create: look for the record by a unique value (email, SKU, name) so you do not make a duplicate. Make each change once.',
       '- After saving, prove the result: open or search the record again and check the values you set, not just the success message. If a record cannot be found afterwards, say it is not confirmed and do not create it again.',
+      '- On the save click you can ask for the proof in the same call: expect {count: {role: "row", name: "Ada", atLeast: 1}} (or role listitem) checks that the list holds the record, and expect {exists: {role, name}} that a named element is there. The result tells you what the page had instead.',
       '- Work in batches of known fields: when you have the field targets, fill them in one batch call and check them once. Take a fresh snapshot after the page changes.',
       '- Deleting, publishing and sending need the user approval for that exact action; attempt the final control once so the approval card opens.',
     ].join('\n'),

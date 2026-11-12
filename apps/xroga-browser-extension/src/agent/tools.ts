@@ -97,6 +97,18 @@ function withoutLeafDescriptions(schema: unknown): unknown {
   return { ...s, properties };
 }
 
+/**
+ * The postconditions with a nested query (exists, count) are shown to the model as plain objects: their shape is in one line of the system prompt,
+ * and the layer checks every call against its own full schema, so the catalogue does not pay for the nested shape in every action tool.
+ */
+function looseNested(schema: unknown): unknown {
+  const s = schema as { properties?: Record<string, unknown> };
+  if (!s?.properties) return schema;
+  const properties = { ...s.properties };
+  for (const name of ['exists', 'count']) if (name in properties) properties[name] = { type: 'object' };
+  return { ...s, properties };
+}
+
 export function compactSchema(schema: unknown, tool = ''): unknown {
   const walk = (node: unknown, key = ''): unknown => {
     if (Array.isArray(node)) return node.map(n => walk(n));
@@ -116,7 +128,7 @@ export function compactSchema(schema: unknown, tool = ''): unknown {
         const props: Record<string, unknown> = {};
         for (const [name, value] of Object.entries(v as Record<string, unknown>)) {
           if (name === 'timeoutMs' && tool !== 'wait') continue;
-          props[name] = name === 'expect' ? withoutLeafDescriptions(walk(value, name)) : walk(value, name);
+          props[name] = name === 'expect' ? looseNested(withoutLeafDescriptions(walk(value, name))) : walk(value, name);
         }
         out[k] = props;
         continue;
