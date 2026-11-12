@@ -34,6 +34,8 @@ import type { AgentTool, ToolKind } from './tools';
 
 /** Every tool result is capped; a cut keeps a boundary's end marker. */
 export const RESULT_CAP = 8_000;
+/** The readers' combined result: a little over their own total (subagents.ts TOTAL_CHARS plus headings). */
+export const DELEGATE_RESULT_CAP = 30_000;
 
 /** The run's stop when the context no longer fits (step 4 of context management). */
 export const CONTEXT_LIMIT =
@@ -710,9 +712,11 @@ ${ledger}` : ''),
     const image = this.options.model.profile.vision ? capture : undefined;
     const evidence = capture ? undefined : await this.#evidenceShot(outcome);
     const localThumbnail = this.options.localScreenshots && !image ? (capture ?? evidence)?.thumb : undefined;
+    // The parallel readers already bound their combined text to their own budget; cutting it at the ordinary cap dropped whole sites.
+    const cap = outcome.call.toolName === 'delegate' ? DELEGATE_RESULT_CAP : RESULT_CAP;
     const text = observation
       ? [cutText(outcome.text, 1_200, '… action details cut.'), cutText(observation, RESULT_CAP - 1_201, '… page observation cut.')].join('\n')
-      : cutText(outcome.text, RESULT_CAP, `… the result was cut at ${RESULT_CAP} characters.`);
+      : cutText(outcome.text, cap, `… the result was cut at ${cap} characters.`);
     // A nudge is the extension's own line on the result that caused it, outside any boundary.
     return { ...outcome, ...(image ? { image } : {}), localThumbnail, text: [text, ...notes].join('\n') };
   }
