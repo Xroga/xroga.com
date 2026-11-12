@@ -135,6 +135,20 @@ tab, which is not how a user sees it); in a visible tab the dispatch is 20-25 ms
 Not changed: polling interval and the 100 ms quiet window (shortening them would make "no effect" a weaker claim and risks a repeated click), the pointer's own 240 ms movement.
 Not measured: real DeepSeek action-to-action gaps (the model turn there is 2-6 s and dominates), CPU and RAM of the pointer, a screenshot-heavy task, task-to-task slot release.
 
+### 3g. Hidden-tab pointer penalty, and what changed in the integrated build
+
+Cause found by measurement: in a hidden tab each pointer update queued page script (two executeScript calls per click) ahead of the next input event, and the first mouse-move
+dispatch grew from 160-190 ms to 620-860 ms. The pointer is now not drawn into a tab nobody can see (`visible` port in `PageBorder`, newest command wins, drawn on `tabs.onActivated`);
+the existing `page-border` check was updated to the new rule (held back while hidden, shown on activation, still absent from screenshots, still follows Back and the Settings switch).
+Ten clicks in a hidden tab, medians of three runs: pointer on 10.7 s and 10.9 s, off 10.8 s and 10.5 s (before: 16.9 and 15.6 against 10.4 and 10.7). A hidden tab is still slower than a visible one
+(about 10.5 s against 6.2 s for ten clicks) because Chrome throttles it; that part is not Xroga's.
+
+A request such as "add two rows ... and tell me when done" was classed read-only (the verb "add" was not in the action list), so the run started without click tools and spent a model turn on
+`enable_actions`; common action verbs were added (unclear requests already keep every tool, so this only removes a wasted turn).
+
+Integrated build (`claude/ops-integrated-20261112`: #965 head plus Codex #971): typecheck clean, 1,111 unit tests pass, 284 of 284 real-Chrome scenarios pass, and the `panel-shot` check captured the
+live panel in real Chrome: "Black Hole is working" header with the animated mark, status "Clicking a page control", the activity row "Clicked button «Add a row»", and the Stop button.
+
 ## 4. NOT IMPLEMENTED or BLOCKED, with the reason
 
 Canvas pixel interaction (BLOCKED by the single-model rule: the only allowed model, deepseek_v4_1_flash_1017, has no vision, so it cannot see a canvas;

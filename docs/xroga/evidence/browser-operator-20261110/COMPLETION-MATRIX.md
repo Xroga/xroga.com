@@ -18,18 +18,18 @@ A passing unit test is not a user experience: the Chrome, DS and Svc columns are
 | Anti-loop guards (repeat, no-effect, errors, read streak) | Y | Y | Y | Y (set G) | P | n/a | new patterns (circular navigation, plan repetition) not demonstrated | scenarios set G; `guards.ts` | none |
 | Exact-count playbook, `count` / `exists` postconditions | Y | Y | Y | Y | P (model used `count` once; the page counts all roles so it fell back to the page counter) | n/a | model rarely chooses them | GAP 3c | none |
 | Click settle latency | Y | Y | Y | Y | n/a | n/a | settle is still about 440 ms of a 565 ms click; deeper cuts would loosen "no effect" detection | `click-bench`; GAP 3f | none |
-| Visual pointer overlay | Y | Y (#965 branch) | Y | Y | n/a | n/a | adds about 600 ms per click when the tab is hidden (measured); in a visible tab no measurable cost | GAP 3f | none |
+| Visual pointer overlay | Y | Y (#965 branch) | Y (3 unit tests) | Y | n/a | n/a | hidden-tab penalty fixed: the overlay is not drawn into a hidden tab and appears on activation (ten clicks in a hidden tab: pointer on 10.7/10.9 s vs off 10.8/10.5 s, was 16.9/15.6 vs 10.4/10.7); in a visible tab no measurable cost | GAP 3g | none |
 | Downloads: `confirm_download` | Y | Y | Y | Y | Y | n/a | empty blob records no download | check `confirm-download`; GAP 3b | none |
 | Uploads | Y | Y | Y | Y | N | n/a | interrupted upload not tested | scenarios | none |
 | Canvas click by fraction (`at`) | Y | Y (editor tasks only) | Y | Y (controlled canvas) | N | n/a | needs positions the app shows; no real editor | scenario CV-1 | real editor account |
 | Visual perception (OCR / vision model) | N | N | N | N | N | N | not built: needs a model/hosting/cost decision | GAP 4 | architecture approval |
 | Workflow hints (sanitized, owner-scoped guidance) | Y | Y | Y (9) | N | N | n/a | no real run has used a hint; speed-up unproven | `workflow-hints.ts`, tests | none |
 | Composio read/write path, approvals, one-use permits | Y | Y | Y (28 journeys) | n/a | n/a | N | no real account write or readback | GAP 3d | disposable Google account |
-| Plugins UI + Composio discovery | Y | Y | Y | P | P | N | connect-and-resume untested end to end | GAP 1 | disposable account |
+| Plugins UI + Composio discovery | Y | Y | Y | P | P | N | missing-connection guidance added (ask_user handover, then search again; 3 unit tests); never run with a real unconnected app | `missingConnectionNote` | disposable account |
 | MCP servers (discovery, invocation) | P | P | P | N | N | N | not exercised through the Plugins path | n/a | an MCP server to connect |
 | Recovery: segment renewal, restart-restore | Y | Y | Y | Y (restart-restore) | Y (60-turn run) | n/a | service-worker suspension, network loss, tab loss with the real model not tested | GAP 1 | none |
 | Server finish for direct reads (`direct:true`) | Y | Y | Y | n/a | Y (looser version) | n/a | stricter version (goal, site, age, evidence) verified on staging with 3 real runs | `localBrowserDirectRead.ts` | independent review |
-| #971 activity UI integration | Y (merge candidate) | N | N | N | N | n/a | candidate branch not releasable: stale registers, `lucide-react` missing in test env, one locale test fails in #971 itself | branch `claude/ops-integrated-20261112` | Codex coordination |
+| #971 activity UI integration | Y (merged on `claude/ops-integrated-20261112`) | Y (candidate branch) | Y (1,111 unit tests pass on it) | Y (284 of 284 scenarios on the integrated build; `panel-shot` check: Black Hole header, live status, real activity row, Stop button, final answer) | N | n/a | candidate needs governance regeneration on its own branch and a human look at the screenshots; two defects found and fixed in the merge (lucide-react licence list, one placeholder-only string); Codex's #971 itself is unchanged | `panel-shot` PNGs; branch log | Codex coordination for the merge order |
 | CI gates (#965) | n/a | n/a | n/a | n/a | n/a | n/a | tenant-security fails ONLY on the egress evidence for `composioClient.ts` (source changed after review) | review packet | independent security review |
 | Private review build | Y | n/a | n/a | P (loads, panel renders) | n/a | n/a | not installed as a user with sign-in on the production build | `C:/xr-release/*.zip` | none |
 
