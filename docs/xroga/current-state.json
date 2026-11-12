@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/workspace-observable-work-history",
-    "sha": "5d3eeb8ebc5eb9900e8f0f76ed322819842592bf",
-    "sourceTimestampUtc": "2026-11-12T06:33:31+05:00",
-    "auditStartedUtc": "2026-11-12T01:33:46.390Z",
+    "sha": "86696627f2f2551be2f58c41f0c44dcc0e338c38",
+    "sourceTimestampUtc": "2026-11-12T13:19:55+05:00",
+    "auditStartedUtc": "2026-11-12T08:20:20.602Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
@@ -5335,7 +5335,7 @@
       "id": "surface:f8a39bc555632894e7fb",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiAccuracy.ts",
-      "sha256": "397ad5afb79016b99d9c45f7a5c51062cebeec9918b5a3af079414fdab3a99b5",
+      "sha256": "829368fb376037693335348d3bb4037c6fcd0dd1b2ea71898cc0eac21288cbdf",
       "symbols": [
         "FactualRule",
         "MonthlyPoint",
@@ -5391,6 +5391,7 @@
         "node",
         "numeric",
         "opening",
+        "orderingStatements",
         "pair",
         "pattern",
         "pending",
@@ -5407,6 +5408,7 @@
         "rankClaim",
         "rankDisagrees",
         "rate",
+        "rejectedOrdering",
         "requiresNativeAuthorizationReview",
         "reviewNativeAnswer",
         "rises",
@@ -149015,7 +149017,7 @@
     {
       "id": "test-suite:2e491f4d2fcbc11f974c",
       "sourcePath": "backend/src/ai/nativeOpenUi.test.ts",
-      "declaredTests": 31,
+      "declaredTests": 32,
       "skipLocations": [],
       "focusLocations": []
     },
