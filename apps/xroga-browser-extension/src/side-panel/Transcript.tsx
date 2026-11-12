@@ -41,7 +41,7 @@ function runStart(e: AssistantEntry): number {
  * message or reply above it when that came later (a message sent while it worked, a file saved between replies).
  * `floor` is the time of the last message or reply, where the next run's time starts at the latest.
  */
-function group(entries: DisplayEntry[]): { items: Item[]; floor: number } {
+function group(entries: DisplayEntry[]): { items: Item[]; floor: number; opened?: Opened } {
   const items: Item[] = [];
   let opened: Opened | undefined;
   let floor = 0;
@@ -65,7 +65,7 @@ function group(entries: DisplayEntry[]): { items: Item[]; floor: number } {
     }
     if (e.kind === 'assistant' || e.kind === 'user') floor = Math.max(floor, Date.parse(e.at) || 0);
   }
-  return { items, floor };
+  return { items, floor, opened };
 }
 
 export function Transcript({
@@ -98,12 +98,13 @@ export function Transcript({
   });
 
   const now = useMinute();
-  const { items, floor } = group(entries);
+  const { items, floor, opened } = group(entries);
   const lastItem = items.at(-1);
   const pending = streaming && !entries.some(e => e.id === streaming.id) ? streaming : null;
   // The working run's block is the last one; before its first reply, its status line stands alone.
   const working = !!live || !!pending;
   const liveRun = working && lastItem?.kind === 'run' ? lastItem : undefined;
+  const startingRows = runRows([], opened);
   // Every block after the last user message belongs to the working run, also one a saved file split off: none of them
   // shows its answer's line until the run stops.
   const settledBefore = working ? items.findLastIndex(i => i.kind === 'user') + 1 : items.length;
@@ -133,8 +134,8 @@ export function Transcript({
           {working && !liveRun ? (
             <li className="text-sm">
               <Activity
-                rows={[]}
-                phase={live?.waiting ? 'waiting' : 'thinking'}
+                rows={startingRows}
+                phase={phaseOf(startingRows, !!live?.waiting, !!pending?.text.trim(), !!pending)}
                 start={Math.max(floor, live?.startedAt ? Date.parse(live.startedAt) : 0) || Date.now()}
               />
             </li>
@@ -425,11 +426,12 @@ function RunView({
     .map(r => r.text)
     .filter(Boolean)
     .join('\n\n');
+  const activeText = Boolean(streaming?.text.trim());
   return (
     <div className="flex flex-col gap-2 text-sm" data-role="assistant">
       <Activity
         rows={rows}
-        phase={live ? phaseOf(rows, live.waiting) : undefined}
+        phase={live ? phaseOf(rows, live.waiting, activeText, !!streaming) : undefined}
         start={start}
         end={Date.parse(last.at)}
       />

@@ -10,6 +10,7 @@ import { useStorage } from '@src/ui/hooks';
 import { setLanguage, t, useLanguage } from '@src/ui/i18n';
 import { applyTheme } from '@src/ui/theme';
 import { PanelClient, panelTabId } from './client';
+import { automaticWorkspaceConnect } from './automatic-workspace-connect';
 import { Composer, pickModel, sameModel } from './Composer';
 import type { LauncherItem, ModelChoice, PendingFile } from './Composer';
 import { attachmentKind, MAX_FILE, MAX_XROGA_FILE, MAX_XROGA_FILES } from '@src/store/attachments';
@@ -131,11 +132,12 @@ export function App() {
   useEffect(() => {
     if (!XROGA_PRODUCT) return;
     let wasPaired = false;
-    const autoConnect = () => chrome.runtime.sendMessage({ type: 'xroga.browser.connect.v1', automatic: true });
+    const autoConnect = automaticWorkspaceConnect(() => chrome.runtime.sendMessage({ type: 'xroga.browser.connect.v1', automatic: true }));
     const refresh = () =>
       void chrome.runtime.sendMessage({ type: 'xroga.browser.connection.v1' }).then(
         result => {
-          if (wasPaired && !result?.paired) void autoConnect().catch(() => undefined);
+          if (wasPaired && !result?.paired) void autoConnect.start();
+          else void autoConnect.observe(result);
           wasPaired = result?.paired === true;
           setPaired(result?.paired === true);
           setDirect(result?.direct === true);
@@ -151,8 +153,9 @@ export function App() {
           setConnecting(false);
         },
       );
-    void autoConnect().then(refresh, refresh);
+    void autoConnect.start().then(refresh);
     refresh();
+    // Both sides kept: the visible-only refresh from the operator branch and the auto-connect lifecycle from #971.
     const timer = setInterval(() => {
       if (document.visibilityState === 'visible') refresh();
     }, 5_000);
@@ -161,6 +164,7 @@ export function App() {
     };
     document.addEventListener('visibilitychange', onVisible);
     return () => {
+      autoConnect.close();
       clearInterval(timer);
       document.removeEventListener('visibilitychange', onVisible);
     };
