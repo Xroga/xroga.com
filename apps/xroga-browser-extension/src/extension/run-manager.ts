@@ -1909,6 +1909,7 @@ export class RunManager {
               status,
               actions,
               result: status === 'completed' ? result?.slice(0, 12_000) : undefined,
+              ...(end?.direct ? { direct: true as const } : {}),
               localStatus: record.status,
             };
             await this.#setStatus(record, 'interrupted', 'Syncing the saved result with Workspace.');

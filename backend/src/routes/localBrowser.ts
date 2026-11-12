@@ -163,7 +163,15 @@ const endBody = z.object({
   status: z.enum(['completed', 'failed', 'cancelled']),
   result: z.string().max(12_000).optional(),
   actions: z.array(z.string().regex(/^[a-z_]{1,50}$/)).max(500).default([]),
+  /** A read answered from the page by the extension itself, with no model turn (agent/direct-read.ts). See DIRECT_READ_ACTIONS. */
+  direct: z.literal(true).optional(),
 }).strict();
+/**
+ * The only actions a result without a model turn may report: opening a page and reading it. Nothing that changes anything can be
+ * completed this way, so the rule that a completed result needs a model turn still covers every write, upload, download and app action.
+ */
+const DIRECT_READ_ACTIONS = new Set(['navigate', 'read']);
+const DIRECT_READ_RESULT_MAX = 600;
 
 type Runtime = { runs: BrowserRunStore; leases: LeaseStore };
 let runtime: Runtime | undefined;
@@ -726,7 +734,10 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
     if (isTerminalRunStatus(row.status)) return res.json({ status: row.status });
     if (data.status === 'completed') {
       active(row);
-      if (!data.actions.length || !data.result?.trim() || !row.state.productManifest.localBrowserTurn) {
+      const direct = data.direct === true && !row.state.productManifest.localBrowserTurn
+        && data.actions.length > 0 && data.actions.every(action => DIRECT_READ_ACTIONS.has(action))
+        && (data.result?.length ?? 0) <= DIRECT_READ_RESULT_MAX;
+      if (!data.actions.length || !data.result?.trim() || (!row.state.productManifest.localBrowserTurn && !direct)) {
         throw new BrowserRequestError(400, 'BROWSER_RESULT_UNVERIFIED');
       }
     }

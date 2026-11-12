@@ -11,6 +11,7 @@ import { addUsage, ZERO_USAGE } from '@src/store/types';
 import type { AgentEvent, ToolRow } from '@src/ui/protocol';
 import { contextChars, elideStaleObservations, toModelMessages } from './context';
 import { directNavigation, type DirectNavigation } from './direct-url';
+import { answerDirect, directRead } from './direct-read';
 import { APPS_FIRST_NOTE, APPS_FIRST_SEARCHED_NOTE, RESEARCH_FIRST_NOTE, appSearchQuery, isAppsFirstRequest, isResearchRequest, researchPlan } from './routing';
 import { runSubagents } from './subagents';
 import { challengeNote, detectChallenge } from './challenge';
@@ -118,6 +119,8 @@ export interface LoopEnd {
   /** The provider's failure that ended the run, as its status code says. */
   providerError?: { status?: number; overflow: boolean; network?: boolean };
   summary?: string;
+  /** The run was answered from the page itself, with no model turn (Route A). */
+  direct?: true;
   usage: Usage;
   turns: number;
 }
@@ -458,10 +461,42 @@ export class AgentLoop {
     );
   }
 
+  /**
+   * Route A. Opens the site, reads its outline, and answers when the page clearly shows what was asked for. The answer is written
+   * as the reply with a notice saying no model call was made. Returns the end of the run, or whether the site was opened so the
+   * normal path does not open it twice.
+   */
+  async #readDirect(ask: ReturnType<typeof directRead> & object): Promise<{ end?: LoopEnd; opened: boolean }> {
+    const { layer, signal } = this.options;
+    const started = Date.now();
+    const nav = ask.newTab
+      ? await layer.call('tabs', { action: 'open', url: ask.url, intent: `Open ${ask.url}` }, signal)
+      : await layer.call('navigate', { url: ask.url, intent: `Open ${ask.url}` }, signal);
+    if (!nav.ok || signal.aborted) return { opened: false };
+    const tabs = await layer.tabs().catch(() => null);
+    const active = tabs?.tabs.find(t => t.tabId === tabs.activeTabId);
+    if (!active || !/^https?:/i.test(active.url)) return { opened: true };
+    const look = await layer.call('read', { tabId: active.tabId, format: 'markdown', maxChars: 8000 }, signal);
+    if (!look.ok) return { opened: true };
+    const title = look.page?.title ?? active.title ?? '';
+    const answer = answerDirect(ask, { url: look.page?.url ?? active.url, title, outline: look.text });
+    if (!answer || signal.aborted) return { opened: true };
+    this.#seen.set(active.tabId, active.url);
+    this.preActions.push('navigate', 'read');
+    await this.#noteOnce('direct', 'Answered directly from the page: this request needed no model call.');
+    const id = newId();
+    const entry = await this.writer.message(
+      { role: 'assistant', parts: [{ type: 'text', text: answer.text }] },
+      { id, meta: { model: this.options.model.ref, stopReason: 'stop', durationMs: Date.now() - started, ...(this.options.startedAt ? { runStartedAt: this.options.startedAt } : {}) } },
+    );
+    this.options.emit({ type: 'message_end', entry: assistantDisplay(entry) });
+    return { opened: true, end: this.#end({ status: 'done', outcome: 'success', summary: answer.text, direct: true }) };
+  }
+
   /** What the run did before the first model turn (opened a site, attached its outline, read pages): counted as work done. */
   readonly preActions: string[] = [];
 
-  async firstTurn(): Promise<void> {
+  async firstTurn(): Promise<LoopEnd | void> {
     const branch = await activeBranch(this.options.conversationId);
     const earlierResults = branch.some(e => e.type === 'message' && e.message.role === 'tool');
     if (earlierResults) {
@@ -495,9 +530,18 @@ ${ledger}` : ''),
         return;
       }
     }
+    // Route A: "open this site and read its heading" is answered from the page itself, with no model call, when the page really
+    // shows it. Anything unclear (a redirect, a login or challenge, no heading) is left to the normal path below.
+    let opened = false;
+    const plain = asked && !earlierResults ? directRead(userText(asked)) : null;
+    if (plain) {
+      const fast = await this.#readDirect(plain);
+      if (fast.end) return fast.end;
+      opened = fast.opened;
+    }
     const direct = asked && !earlierResults ? directNavigation(userText(asked)) : null;
     if (direct) {
-      await this.#openDirect(direct);
+      if (!opened) await this.#openDirect(direct);
       this.preActions.push('navigate');
     }
     const tabs = await this.options.layer.tabs().catch(() => null);
@@ -971,7 +1015,8 @@ ${ledger}` : ''),
     const { emit, signal } = this.options;
     emit({ type: 'agent_start', runId: this.options.runId });
     try {
-      await this.firstTurn();
+      const early = await this.firstTurn();
+      if (early) return early;
       for (;;) {
         if (signal.aborted) return this.#end({ status: 'stopped' });
         const { request, check } = await this.#time('prepare', async () => {
