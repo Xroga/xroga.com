@@ -31,6 +31,7 @@ import './parallel-bench';
 import './direct-read';
 import './click-bench';
 import './panel-shot';
+import './model-outage';
 import './optional-permissions';
 import './voice';
 import './panel-selection';

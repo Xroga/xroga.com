@@ -144967,6 +144967,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:171c5068d3a3d15493b5",
+      "sourcePath": "apps/xroga-browser-extension/src/agent/__tests__/cycle-guard.test.ts",
+      "declaredTests": 7,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:9b41fb1639dd2052b30b",
       "sourcePath": "apps/xroga-browser-extension/src/agent/__tests__/direct-read-loop.test.ts",
       "declaredTests": 6,

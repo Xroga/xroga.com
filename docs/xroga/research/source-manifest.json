@@ -6208,9 +6208,15 @@
       "source_id": "SRC-3d3190a1571aa705",
       "filename": "current-state.json",
       "path_or_url": "docs/xroga/current-state.json",
+<<<<<<< HEAD
       "sha256": "c9c62a84564ffae4c987bc2a8b6cdd8df981b278c224ae401ecaceb33803f016",
       "byte_size": 5586698,
       "modified_timestamp": "2026-11-12T16:53:21.142Z",
+=======
+      "sha256": "6a2cd82acae047f5aa9329060ed7073e54053844cd2335ede47ebd4cec61fa5d",
+      "byte_size": 5586676,
+      "modified_timestamp": "2026-11-12T17:17:44.872Z",
+>>>>>>> claude/ops-plugin-actions-20261111
       "parse_status": "PARSED_JSON",
       "category": "REPOSITORY_DOCUMENT",
       "authority": "ADVISORY",
