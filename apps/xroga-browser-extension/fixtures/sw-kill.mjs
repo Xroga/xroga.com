@@ -1,6 +1,9 @@
 // Real service-worker kill in the middle of a run, driven from outside the extension over the DevTools protocol.
 //
-//   node fixtures/sw-kill.mjs [--headful] [--port 9341]
+//   node fixtures/sw-kill.mjs [--mode kill|offline|tabclose] [--headful] [--port 9341]
+//
+// Modes: kill (default) stops every service worker; offline takes the extension worker's network away for twelve seconds and gives it back; tabclose closes
+// the page the run is working on. Each checks that no completed action was replayed and that the run ends or can be continued, and records what the user sees.
 //
 // It starts the fixture server and Chrome for Testing with the autorun build (no queued job) and a debugging port, opens a fixture page, the side
 // panel and an "operator" extension page, scripts the fake model to add three rows with delays, stops every service worker (ServiceWorker.stopAllWorkers)
@@ -20,6 +23,7 @@ const argv = process.argv.slice(2);
 const flag = n => argv.includes(n);
 const opt = n => (argv.indexOf(n) >= 0 ? argv[argv.indexOf(n) + 1] : undefined);
 const CDP_PORT = Number(opt('--port') ?? 9341);
+const MODE = opt('--mode') ?? 'kill';
 const base = `http://localhost:${PORT}`;
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const log = (...a) => console.log(...a);
@@ -149,14 +153,30 @@ async function main() {
     report.steps.rowsBeforeKill = rowsBefore;
     if (rowsBefore < 2) throw new Error(`the run did not reach two rows before the kill (${rowsBefore})`);
 
-    // Stop every service worker, as Chrome does when it suspends or crashes one.
-    await cdp.send('ServiceWorker.enable', {}, panelTarget.sid);
-    await sleep(500);
-    await cdp.send('ServiceWorker.stopAllWorkers', {}, panelTarget.sid);
-    report.steps.killedAt = new Date().toISOString();
-    await sleep(500);
-    const stopped = !(await targets()).some(t => t.type === 'service_worker' && t.url.includes(extId));
-    report.steps.workerGoneAfterStop = stopped;
+    report.steps.mode = MODE;
+    if (MODE === 'kill') {
+      // Stop every service worker, as Chrome does when it suspends or crashes one.
+      await cdp.send('ServiceWorker.enable', {}, panelTarget.sid);
+      await sleep(500);
+      await cdp.send('ServiceWorker.stopAllWorkers', {}, panelTarget.sid);
+      report.steps.killedAt = new Date().toISOString();
+      await sleep(500);
+      report.steps.workerGoneAfterStop = !(await targets()).some(t => t.type === 'service_worker' && t.url.includes(extId));
+    } else if (MODE === 'offline') {
+      // The extension worker loses its network while a model reply is pending, then gets it back.
+      const sw = (await targets()).find(t => t.type === 'service_worker' && t.url.includes(extId));
+      const sid = await attach(sw.targetId);
+      await cdp.send('Network.enable', {}, sid);
+      await cdp.send('Network.emulateNetworkConditions', { offline: true, latency: 0, downloadThroughput: -1, uploadThroughput: -1 }, sid);
+      report.steps.offlineAt = new Date().toISOString();
+      await sleep(12_000);
+      await cdp.send('Network.emulateNetworkConditions', { offline: false, latency: 0, downloadThroughput: -1, uploadThroughput: -1 }, sid);
+      report.steps.networkBack = true;
+    } else if (MODE === 'tabclose') {
+      // The page the run works on is closed while the third step is pending.
+      await cdp.send('Target.closeTarget', { targetId: page.targetId });
+      report.steps.tabClosedAt = new Date().toISOString();
+    }
 
     // It comes back when something wakes it; the panel reconnects by itself, and a message from the operator page wakes it too.
     let back = false;
@@ -167,7 +187,7 @@ async function main() {
     }
     report.steps.workerBack = back;
     await sleep(2500);
-    report.steps.rowsRightAfterRestart = await rows();
+    report.steps.rowsRightAfterRestart = MODE === 'tabclose' ? null : await rows().catch(() => null);
     const read1 = await panelOp('read');
     report.steps.statusAfterRestart = read1?.status;
     report.steps.buttonsAfterRestart = (read1?.buttons ?? []).filter(b => /Resume|Stop|Retry|Send/.test(b));
@@ -189,15 +209,19 @@ async function main() {
       if (String(r?.transcript ?? '').includes(`${tag} finished.`)) finished = true;
     }
     report.steps.finished = finished;
-    report.steps.rowsFinal = await rows();
+    report.steps.rowsFinal = MODE === 'tabclose' ? null : await rows().catch(() => null);
     const last = await panelOp('read').catch(() => null);
     report.steps.finalStatus = last?.status;
 
     const failures = [];
     if (!report.steps.workerBack) failures.push('the service worker did not come back');
-    if (report.steps.rowsRightAfterRestart !== rowsBefore) failures.push(`rows changed during the restart (${rowsBefore} to ${report.steps.rowsRightAfterRestart}): an action was replayed`);
-    if (!finished) failures.push('the run did not finish after the restart (with Resume if offered)');
-    if (report.steps.rowsFinal > 3) failures.push(`more than the three scripted clicks reached the page (${report.steps.rowsFinal})`);
+    if (MODE === 'kill' && report.steps.rowsRightAfterRestart !== rowsBefore) failures.push(`rows changed during the restart (${rowsBefore} to ${report.steps.rowsRightAfterRestart}): an action was replayed`);
+    if (MODE === 'tabclose') {
+      // The model here is a script, so what it says at the end proves nothing about honesty; what the product controls is that the run does not hang.
+      if (!['Done', 'Interrupted', 'Failed', 'Stopped', 'Waiting for you'].includes(String(last?.status))) failures.push(`the run is stuck in "${last?.status}" after the tab was closed`);
+      report.steps.activityAfterClose = String(last?.transcript ?? '').split('\n').filter(l => /Clicked|Clicking|failed|Added|closed|gone|tab/i.test(l)).slice(0, 6);
+    } else if (!finished) failures.push('the run did not finish after the disruption (with Resume if offered)');
+    if (report.steps.rowsFinal !== null && report.steps.rowsFinal > 3) failures.push(`more than the three scripted clicks reached the page (${report.steps.rowsFinal})`);
     report.failures = failures;
     report.ok = failures.length === 0;
   } catch (error) {
