@@ -89,6 +89,28 @@ NOT covered here: independent readback of the changed data (the agent's job; the
 disposable account, durable claim races (need an isolated database), and reconnect to a different account in the middle of a retry beyond the account-changed check.
 Status: VERIFIED IN CONTROLLED ENVIRONMENT for the items above; the real Sheets write remains BLOCKED BY PERMISSION (needs one disposable Google account connected to the staging Xroga project).
 
+### 3e. Route A: open and read without a model call (real Chrome, real staging backend)
+
+`agent/direct-read.ts` answers a request that is only "open this site and read its heading or title" from the page itself. The matcher is narrow (one site,
+one read verb, one target, nothing else: no click, search, comparison, condition or second site), and the answer is given only when the loaded page is on the
+same site, no challenge or login stands in the way, and a heading really is on the page; otherwise the normal path runs unchanged. The answer names the page
+title as well when it differs from the first heading, because "the heading" can mean either.
+
+| Path | Runs | Wall clock (s) | Model turns | Result |
+| --- | --- | --- | --- | --- |
+| Route A, product build, real staging backend, iana.org | 3 | 2.3, 2.3, 2.9 | 0 | done, result settled on the server |
+| Same page, request with one more clause so it goes to the model (real DeepSeek) | 3 | 9.6, 9.6, 19.8 | 1, 1, 3 | done |
+| Route A in the autorun build, no server, iana.org and wikipedia.org | 6 | 2.8 to 4.1 | 0 | PASS |
+
+Single runs, one machine, a different question on the model side (it also asks what the site is for), so this shows the size of the saving, not an exact ratio.
+Findings that changed the code: (1) example.com's heading is not exposed as a heading by the layer, so Route A hands over and the model answers from the title; (2) the
+`snapshot` outline does not list headings the way `read` does, so Route A reads with `read`; (3) the first heading element on iana.org ("Domain Names") is not what a
+person calls the page heading (the banner/title), which is why the answer shows both; (4) the server refused a completed result with no model turn
+(`BROWSER_RESULT_UNVERIFIED`), so the finish route now accepts `direct: true` only for the actions `navigate` and `read` with a short result (backend change in
+`routes/localBrowser.ts`, asserted in `localBrowser.test.ts`: not marked direct, a non-read action, no actions, an over-long result and another account are all refused).
+That backend change touches the file that is under the pending security review and needs the same human review; it cannot complete anything that changes state.
+Staging image `direct1-1112` (commit 914fd69a2) carries it. Not measured: a login-wall or challenge page in the product build (covered in unit tests only).
+
 ## 4. NOT IMPLEMENTED or BLOCKED, with the reason
 
 Canvas pixel interaction (BLOCKED by the single-model rule: the only allowed model, deepseek_v4_1_flash_1017, has no vision, so it cannot see a canvas;

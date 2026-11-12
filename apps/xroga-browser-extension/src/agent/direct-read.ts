@@ -90,5 +90,9 @@ export function answerDirect(ask: DirectRead, page: { url: string; title: string
     return title ? { text: `The title of ${hostKey(page.url)} is “${title}”.` } : null;
   }
   const heading = pickHeading(page.outline);
-  return heading ? { text: `The first heading on ${hostKey(page.url)} is “${heading}”.` } : null;
+  if (!heading) return null;
+  // Where the page title says something else, both are shown: a person calling "the heading" the banner or title can see the difference.
+  const title = page.title.replace(/\s+/g, ' ').trim();
+  const differs = title && title.toLowerCase() !== heading.toLowerCase();
+  return { text: `The first heading on ${hostKey(page.url)} is “${heading}”${differs ? ` (the page title is “${title}”)` : ''}.` };
 }

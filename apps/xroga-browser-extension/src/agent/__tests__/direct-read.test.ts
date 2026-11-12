@@ -60,6 +60,12 @@ describe('answerDirect: the page must really show it', () => {
     expect(answerDirect(ask, page())?.text).toContain('Example Domain');
     expect(answerDirect({ ...ask, what: 'title' }, page({ title: 'My  Title' }))?.text).toContain('My Title');
   });
+  it('shows the page title too when it differs from the first heading', () => {
+    const text = answerDirect(ask, page({ title: 'Internet Assigned Numbers Authority', outline: '# Domain Names' }))?.text ?? '';
+    expect(text).toContain('Domain Names');
+    expect(text).toContain('the page title is “Internet Assigned Numbers Authority”');
+    expect(answerDirect(ask, page())?.text).not.toContain('page title');
+  });
   it('hands over when the site redirected elsewhere, a challenge or login stands in the way, or no heading exists', () => {
     expect(answerDirect(ask, page({ url: 'https://other.test/' }))).toBeNull();
     expect(answerDirect(ask, page({ title: 'Just a moment...' }))).toBeNull();
