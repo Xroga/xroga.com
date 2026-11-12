@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "5a3870bc00b472ec7d95793a5633dc900c391038",
+  "source_sha": "8c79ead48121e7cf982bbecfdc2f686607f49f2d",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -18299,7 +18299,7 @@
     },
     {
       "path": "backend/src/routes/localBrowser.ts",
-      "sha256": "68394404490f624350f4738f6ddd8444ad196164358a665ae1932fe602c84363"
+      "sha256": "447c2a05ffce3d42612b2dc0f569e7f7349db8b8dfe3407321c2bcc3bacf40f1"
     },
     {
       "path": "backend/src/routes/localBrowserDevice.ts",
@@ -35125,21 +35125,28 @@
     },
     {
       "path": "backend/src/routes/localBrowser.ts",
-      "line": 193,
+      "line": 173,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/routes/localBrowser.ts",
+      "line": 201,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/routes/localBrowser.ts",
-      "line": 440,
+      "line": 448,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/routes/localBrowser.ts",
-      "line": 467,
+      "line": 475,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
