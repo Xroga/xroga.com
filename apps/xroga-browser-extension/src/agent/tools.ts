@@ -47,6 +47,8 @@ const HIDDEN: Record<string, string[]> = {
   ask_user: ['timeoutMs'],
   // The agent names attached files by id; the wrapper turns them into bytes.
   upload: ['paths', 'attachments'],
+  // A point inside a known element is offered only to runs that need it (toolsForRun with pointAt), so the base catalogue stays small.
+  click: ['at'],
 };
 
 /** What the model gives `upload` in place of paths or bytes: the ids of files the user attached. */
@@ -186,13 +188,22 @@ export function toolsForRun(options: {
   vision: boolean;
   localScreenshots?: boolean;
   agentTools?: AgentTool[];
+  /** Offer click's `at` (fractions inside an element's box), for canvases and editors whose layout the app tells the model. */
+  pointAt?: boolean;
 }): AgentTool[] {
+  const withAt = (t: AgentTool): AgentTool => {
+    if (!options.pointAt || t.name !== 'click') return t;
+    const spec = TOOL_SPECS.find(s => s.name === 'click');
+    if (!spec) return t;
+    return { ...t, parameters: compactSchema(schemaWithout(argsJsonSchema(spec), [...HIDDEN['*']]), 'click') as AgentTool['parameters'] };
+  };
   return allTools(options.agentTools)
     .filter(
       t =>
         (t.required || !options.disabled?.includes(t.name)) &&
         (t.name !== 'screenshot' || options.vision || options.localScreenshots),
     )
+    .map(withAt)
     .map(t =>
       t.name === 'screenshot' && options.localScreenshots && !options.vision
         ? {

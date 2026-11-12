@@ -108,6 +108,7 @@ export const ClickArgsSchema = z.strictObject({
   button: z.enum(['left', 'right', 'middle']).optional(),
   count: z.number().int().min(1).max(3).optional(),
   modifiers: z.array(z.enum(['Alt', 'Control', 'Meta', 'Shift'])).optional(),
+  at: z.tuple([z.number().min(0).max(1), z.number().min(0).max(1)]).optional(),
 });
 
 export const SetArgsSchema = z.strictObject({

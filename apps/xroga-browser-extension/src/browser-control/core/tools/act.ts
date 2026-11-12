@@ -65,7 +65,7 @@ export async function click(ctx: ToolContext, args: ClickArgs): Promise<ToolOutc
   assertNoModal(ctx);
   return withTarget(ctx, args.target, async first => {
     const prepare = async (target: ResolvedTarget) => {
-      const actionable = await waitForActionable(ctx, target, { pointer: true, budgetMs: args.timeoutMs });
+      const actionable = await waitForActionable(ctx, target, { pointer: true, budgetMs: args.timeoutMs, at: args.at ? { fx: args.at[0], fy: args.at[1] } : undefined });
       // A click on a frame element lands on whatever the frame shows at that point, which nobody classified.
       if (FRAME_TAGS.includes(actionable.state.tag)) {
         throw new LayerError(

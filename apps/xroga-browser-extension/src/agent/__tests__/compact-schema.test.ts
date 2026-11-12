@@ -31,6 +31,12 @@ describe('compactSchema', () => {
     expect(size(tools)).toBeLessThan(32_064 * 0.84);
   });
 
+  it('offers the at option of click only to a run that asks for it', () => {
+    expect(json).not.toContain('"at"');
+    const withAt = toolsForRun({ vision: false, pointAt: true }).find(t => t.name === 'click')!;
+    expect(JSON.stringify(withAt.parameters)).toContain('"at"');
+  });
+
   it('leaves other schemas alone', () => {
     expect(compactSchema({ type: 'object', properties: { a: { type: 'string' } } })).toEqual({
       type: 'object',

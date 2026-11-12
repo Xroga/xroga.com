@@ -7,7 +7,7 @@ import { checkCancelled } from '../controller';
 import type { FrameRecord } from '../ports';
 import { NodeArg } from '../probe-client';
 import type { ChainStep, Point, Quad } from '../geometry';
-import { chainToTop, nodeAtViewportPoint, quadArea, quadCenter, sessionRoot } from '../geometry';
+import { chainToTop, nodeAtViewportPoint, quadArea, quadAt, quadCenter, sessionRoot } from '../geometry';
 import type { AXNode } from '../perception/ax';
 import { cleanText } from '../perception/ax';
 import { assertAsShown } from './resolve';
@@ -30,6 +30,8 @@ export interface Needs {
    * wheel there, which activates nothing, so the rule against nested controls (made for clicks) does not apply.
    */
   overControls?: boolean;
+  /** Click this far into the target's box (fractions 0..1) instead of its centre; the hit test still has to land on the target. */
+  at?: { fx: number; fy: number };
 }
 
 export interface Actionable {
@@ -118,7 +120,7 @@ async function checkOnce(ctx: ToolContext, target: ResolvedTarget, needs: Needs)
   const pointOf = async (): Promise<{ quad: Quad; point: Point } | null> => {
     if (!viaLabel) {
       const q = await firstQuad(ctx, target);
-      return q ? { quad: q, point: quadCenter(q) } : null;
+      return q ? { quad: q, point: needs.at ? quadAt(q, needs.at.fx, needs.at.fy) : quadCenter(q) } : null;
     }
     return labelPoint(ctx, target);
   };
