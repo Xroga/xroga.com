@@ -46,7 +46,7 @@
       "path": "docs/xroga/evidence/command-010/MODEL-DISPATCH-PROOF.json",
       "archive": "docs/xroga/evidence/command-010/historical/MODEL-DISPATCH-PROOF-87e33b94.json",
       "historicalSha256": "7b04f1a944b9258329978770b9e273804653d5c7464a4ccfb2ac6c2e6f6849e1",
-      "currentSha256": "9e0d8aa9fc857f7ad01795246daae0c0e7c16b7ca610b37a6c3b834bcba79286",
+      "currentSha256": "3526098df6953a037a6905a8ad051d6af652381932ff9eaa3fa388010441c437",
       "beforeNativeOpenUiBenchmarkSha256": "e6f50ffc7aef52b6cc365dfe72ec89183242c2c74976f1dcc2f97ba815f68a22",
       "beforeNativePublicationSha256": "f2467eb712a137ff897be9157c16cf8e17311597f712a83aa0280ca8aed27eac",
       "nativePublicationContinuation": "docs/xroga/evidence/command-010/NATIVE-ARTIFACT-AUTHORITY-20261028.json",
@@ -62,7 +62,8 @@
       "beforeRichShareSha256": "254d2301346131790c7700021780a54e11228ceb8cac7573a86b827aebdb8d8e",
       "previousCurrentSha256": "3fa435b95ed8f7f01f56c3c4cd92392e338264f5a4dfb0d2c4682ac180e1cdb4",
       "beforeNativeWorkspaceRoutingSha256": "e92a07a27739aeed74adbe601e77ca49ff97c93ea4140d9242e0b14adc0c980a",
-      "beforeNativePlainPromptSha256": "40c3d57b33ac26d24bcd89e7cb49425888dd6dd0720b7dc0cb7e331207253e85"
+      "beforeNativePlainPromptSha256": "40c3d57b33ac26d24bcd89e7cb49425888dd6dd0720b7dc0cb7e331207253e85",
+      "beforeWorkspaceResponseQualitySha256": "9e0d8aa9fc857f7ad01795246daae0c0e7c16b7ca610b37a6c3b834bcba79286"
     }
   ],
   "exactPersistenceRemaps": [
