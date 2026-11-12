@@ -11,6 +11,7 @@ import { ParallelWorkers, PARALLEL_TOOLS, type WorkerJob } from './parallel-work
 import { BATCH_TOOL } from '@src/agent/batch-plan';
 import { startingTools } from '@src/agent/tool-selection';
 import { skillsSection } from '@src/agent/skills';
+import { hintsForRun, learnFromRun } from './hints-store';
 import { userText } from '@src/agent/display';
 import { toDisplay } from '@src/agent/display';
 import {
@@ -1580,6 +1581,8 @@ export class RunManager {
     const resumed = restore?.canonicalBrowserRunId ? restore : undefined;
     const runId = resumed?.runId ?? newId();
     let loopRef: AgentLoop | undefined;
+    let usedHintIds: string[] = [];
+    let askedRequest = '';
     const done = (async () => {
       const conversation = (await getConversation(conversationId))!;
       const now = new Date().toISOString();
@@ -1711,7 +1714,12 @@ export class RunManager {
           askedEntry?.type === 'message' ? userText(askedEntry) : '',
         );
         // Playbooks that fit the request, added once to the system prompt (the same text every turn, so the prefix stays cached).
-        const playbooks = skillsSection(askedEntry?.type === 'message' ? userText(askedEntry) : '');
+        const askedText = askedEntry?.type === 'message' ? userText(askedEntry) : '';
+        // Verified guidance from this owner's earlier runs on this site: text for the model, never an approval.
+        const hints = await hintsForRun(session.tabIds(), askedText).catch(() => ({ text: '', ids: [] as string[] }));
+        usedHintIds = hints.ids;
+        askedRequest = askedText;
+        const playbooks = [skillsSection(askedText), hints.text].filter(Boolean).join('\n\n');
         const timings = new RunTimings();
         // The connected-app tools this run's searches found, by name, so a call to one reaches the guarded routes.
         const appTools = new Map<string, AppToolInfo>();
@@ -1876,6 +1884,15 @@ export class RunManager {
               ? assistant.message.parts.flatMap(part => (part.type === 'text' ? [part.text] : [])).join('\n')
               : undefined);
           if (status === 'completed' && !result?.trim()) status = 'failed';
+          if (status !== 'cancelled') {
+            void learnFromRun({
+              conversationId,
+              tabIds: record.tabs ?? [],
+              request: askedRequest,
+              completed: status === 'completed',
+              usedHintIds,
+            }).catch(() => undefined);
+          }
           if (
             end?.status === 'capped' ||
             end?.status === 'awaiting_user' ||
