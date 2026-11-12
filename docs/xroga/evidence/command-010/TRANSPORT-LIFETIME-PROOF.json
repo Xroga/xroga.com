@@ -291,7 +291,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "d981253fc491c75b4d2b90c6e080509aa541fd04d840276e133e81b39fe3eac6",
+      "sha256": "e3ce3808eba24cd2461066d7b571ae5f96fd108ef3b8aaf807ba04b39b1b3dc8",
       "previousGenericSdkBinding": {
         "sha256": "e5b3b4a3dc538e708fa8c005a8da6584db01b3dd425833373d59decbd2bfcb93",
         "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
@@ -581,7 +581,8 @@
         "scope": "ONLY_ORDINARY_CHAT_POST_SETTLEMENT_PRESENTATION_CONTEXT",
         "method": "Exact source diff and two byte-identical enclosing-function caller comparisons. No change to dispatch, accounting, persistence, authorization or worker execution.",
         "liveAcceptance": false
-      }
+      },
+      "beforeWorkspaceResponseQualitySha256": "d981253fc491c75b4d2b90c6e080509aa541fd04d840276e133e81b39fe3eac6"
     },
     {
       "path": "backend/src/ai/providerBudget.ts",

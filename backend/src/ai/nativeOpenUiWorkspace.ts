@@ -1,5 +1,5 @@
 import { publicCompletionState } from './completionDiagnostics.js';
-import { NATIVE_UI_FORMAT, PARTIAL_NATIVE_PRESENTATION_NOTE, recoverNativeWorkspaceProgram, recoverNativeMonthlyChart, splitNativeOpenUiAnswer, supplementNativeProse, validateNativeWorkspaceProgram, type NativeUiDiagnostic } from './nativeOpenUi.js';
+import { NATIVE_UI_FORMAT, PARTIAL_NATIVE_PRESENTATION_NOTE, missingNativeFormats, recoverNativeWorkspaceProgram, recoverNativeMonthlyChart, splitNativeOpenUiAnswer, supplementNativeProse, validateNativeWorkspaceProgram, type NativeUiDiagnostic, type RequiredNativeFormat } from './nativeOpenUi.js';
 import { nativeAnswerReviewReason, nativeFactualGuidance, nativeTechnicalCorrections, suppliedMonthlyComparison } from './nativeOpenUiAccuracy.js';
 
 /** Deployment-owned presentation choice; never reads a user role or client flag.
@@ -15,7 +15,9 @@ export function completeNativeWorkspaceAnswer(
   finishReason: string | null | undefined,
   evidenceIds?: ReadonlySet<string>,
   prompt?: string,
-  diagnose?: (event: NativeUiDiagnostic | { stage: 'assembly'; reason: 'missing_prose'; programLength: number }) => void,
+  diagnose?: (event: NativeUiDiagnostic | { stage: 'assembly'; reason: 'missing_prose'; programLength: number }
+    | { stage: 'assembly'; reason: 'missing_formats'; formats: RequiredNativeFormat[] }) => void,
+  requiredFormats: readonly RequiredNativeFormat[] = [],
 ) {
   const { text: prose, program: originalProgram } = splitNativeOpenUiAnswer(raw);
   let factualRule: NativeUiDiagnostic['factualRule'];
@@ -30,6 +32,8 @@ export function completeNativeWorkspaceAnswer(
     ? recoverNativeWorkspaceProgram(originalProgram, evidenceIds, prose, factualLayoutOnly ? 'factual_review' : 'schema') : undefined;
   const program = repair?.program ?? originalProgram;
   const validation = repair?.validation ?? original;
+  const missing = missingNativeFormats(validation?.ok ? program : '', requiredFormats);
+  if (missing.length) diagnose?.({ stage: 'assembly', reason: 'missing_formats', formats: missing });
   if (guidance) {
     const readable = repair?.validation.ok ? supplementNativeProse(prose, program, true) : prose;
     return {
@@ -62,7 +66,7 @@ export function completeNativeWorkspaceAnswer(
     const reviewed = recoverNativeMonthlyChart(program, supplied, !validation.ok);
     if (reviewed) {
       const reason = reviewed.dataMismatch || !validation.ok ? 'data_review' as const
-        : repair?.partial ? 'presentation_contract' as const : undefined;
+        : repair?.partial || missing.length ? 'presentation_contract' as const : undefined;
       return {
         response: reason === 'presentation_contract' ? PARTIAL_NATIVE_PRESENTATION_NOTE + '\n\n' + reviewed.text : reviewed.text,
         completion: reason ? { status: 'partial' as const, reason } : { status: 'complete' as const },
@@ -77,7 +81,7 @@ export function completeNativeWorkspaceAnswer(
     : response;
   const valid = validation?.ok === true && completion.status === 'complete';
   const recovered = completion.status === 'partial' && completion.reason === 'data_review' ? recoverNativeMonthlyChart(program) : undefined;
-  if (completion.status === 'complete' && (validation?.ok === false || repair?.partial)) {
+  if (completion.status === 'complete' && (validation?.ok === false || repair?.partial || missing.length)) {
     return {
       response: valid ? PARTIAL_NATIVE_PRESENTATION_NOTE + '\n\n' + supplementNativeProse(response, program, true) : response,
       completion: { status: 'partial' as const, reason: 'presentation_contract' as const },

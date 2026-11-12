@@ -20,23 +20,132 @@ const deepSeekToolClosingSuffix = /[ \t]*<\/｜DSML｜ parameter>[ \t]*\n[ \t]*<
 const strayRootClosingLine = /\n[ \t]*<\/Col>[ \t]*$/u;
 
 export function splitNativeOpenUiAnswer(raw: string, streaming = false) {
+  return scanNativeOpenUiAnswer(raw, streaming, true);
+}
+
+function scanNativeOpenUiAnswer(raw: string, streaming: boolean, allowJsonEnvelope: boolean): { text: string; program: string } {
   const normalized = raw.replace(/\r\n/g, '\n');
-  const marker = normalized.indexOf(NATIVE_UI_MARKER);
-  const openingMarker = NATIVE_UI_MARKER.slice(1);
-  const startsWithMarker = normalized.startsWith(openingMarker);
-  if (marker >= 0 || startsWithMarker) return {
-    text: startsWithMarker ? '' : normalized.slice(0, marker).trim(),
-    program: normalized.slice(startsWithMarker ? openingMarker.length : marker + NATIVE_UI_MARKER.length).trimEnd().replace(deepSeekToolClosingSuffix, '').trimEnd()
-      .replace(strayRootClosingLine, '').trim(),
+  const marker = NATIVE_UI_MARKER.trim();
+  const lines = normalized.split('\n');
+  const prose: string[] = [];
+  let fence: string | undefined;
+  let fencedProgram: string | undefined;
+  const envelope = (text: string, source: string) => {
+    let program = source.trim().replace(deepSeekToolClosingSuffix, '').trimEnd().replace(strayRootClosingLine, '').trim();
+    const wrapper = /^(\x60{3,}|~{3,})[ \t]*(?:openui(?:lang|-lang)?|xroga-openui-v1)?[ \t]*\n/i.exec(program);
+    if (wrapper) {
+      program = program.slice(wrapper[0].length);
+      const close = new RegExp(`\\n[ \\t]*${wrapper[1]}${wrapper[1][0]}*[ \\t]*$`);
+      program = program.replace(close, '').trim();
+    }
+    return { text: text.trim(), program };
   };
-  // Never flash a partial separator as part of the answer.
-  let text = normalized;
-  if (streaming) {
-    if (openingMarker.startsWith(text)) return { text: '', program: '' };
-    const last = text.lastIndexOf('\n');
-    if (last >= 0 && NATIVE_UI_MARKER.startsWith(text.slice(last))) text = text.slice(0, last);
+  if (allowJsonEnvelope && /^\s*\{/.test(normalized) && normalized.length <= 100_000) {
+    try {
+      const candidate: unknown = JSON.parse(normalized);
+      if (candidate && typeof candidate === 'object' && 'format' in candidate && candidate.format === NATIVE_UI_FORMAT) {
+        const text = 'text' in candidate && typeof candidate.text === 'string' ? candidate.text : '';
+        const program = 'program' in candidate && typeof candidate.program === 'string' ? candidate.program : '';
+        const readable = scanNativeOpenUiAnswer(text, streaming, false);
+        return envelope(readable.text, program || readable.program);
+      }
+    } catch { /* Plain code or prose still goes through the line scanner. */ }
   }
-  return { text: text.trim(), program: '' };
+  for (let index = 0; index < lines.length; index += 1) {
+    const line = lines[index];
+    const opening = /^ {0,3}(\x60{3,}|~{3,})(.*)$/.exec(line);
+    if (fence) {
+      prose.push(line);
+      if (opening && opening[1][0] === fence[0] && opening[1].length >= fence.length && !opening[2].trim()) fence = undefined;
+      continue;
+    }
+    const visible = line.trim();
+    if (visible === marker) return envelope(prose.join('\n'), lines.slice(index + 1).join('\n'));
+    if (streaming && index === lines.length - 1 && marker.startsWith(visible)) break;
+    if (/^ {0,3}root[ \t]*=[ \t]*[A-Z][A-Za-z0-9]*[ \t]*\(/.test(line)) {
+      // State and component assignments can precede the root.
+      let start = index;
+      for (let previous = index - 1; previous >= 0; previous -= 1) {
+        const candidate = lines[previous];
+        if (!candidate.trim()) continue;
+        const component = /^ {0,3}[a-z_]\w*[ \t]*=[ \t]*([A-Z][A-Za-z0-9]*)[ \t]*\(/.exec(candidate);
+        if (!/^ {0,3}\$[a-z_]\w*[ \t]*=/i.test(candidate) && !(component && components.has(component[1]))) break;
+        start = previous;
+      }
+      return envelope(prose.slice(0, start).join('\n'), lines.slice(start).join('\n'));
+    }
+    const nativeFence = opening && /^(?:openui(?:lang|-lang)?|xroga-openui-v1)$/i.test(opening[2].trim());
+    if (opening && (nativeFence || /^(?:xroga-ui|xroga-response-json-v1)$/i.test(opening[2].trim()))) {
+      const closing = new RegExp(`^ {0,3}${opening[1]}${opening[1][0]}*[ \\t]*$`);
+      const start = index + 1;
+      do { index += 1; } while (index < lines.length && !closing.test(lines[index]));
+      if (nativeFence && fencedProgram === undefined) fencedProgram = lines.slice(start, index).join('\n');
+      continue;
+    }
+    if (opening) fence = opening[1];
+    prose.push(line);
+  }
+  return envelope(prose.join('\n'), fencedProgram ?? '');
+}
+
+export type RequiredNativeFormat = 'table' | 'chart' | 'graph' | 'calculator';
+
+function hasReactiveCalculator(program: string) {
+  const symbols = new Map(split(tokenize(program)).map(statement => [statement.id, parseExpression(statement.tokens)]));
+  const root = symbols.get('root');
+  if (!root) return false;
+  const inputs = new Set<string>();
+  const outputs = new Set<string>();
+  function inspect(start: ASTNode, see: (node: ASTNode) => void) {
+    const pending = [start];
+    const seen = new Set<ASTNode>();
+    while (pending.length) {
+      const expression = pending.pop()!;
+      if (seen.has(expression)) continue;
+      seen.add(expression);
+      walkAST(expression, node => {
+        see(node);
+        if (node.k === 'Ref') {
+          const reference = symbols.get(node.n);
+          if (reference && !seen.has(reference)) pending.push(reference);
+        }
+      });
+    }
+  }
+  inspect(root, node => {
+    if (node.k !== 'Comp') return;
+    const binding = node.args[0];
+    if (['Slider', 'Input', 'Select', 'Checkbox', 'RadioGroup', 'SegmentedControl', 'ChoicePicker', 'DatePicker'].includes(node.name)
+      && binding?.k === 'StateRef') inputs.add(binding.n);
+    const readout = node.name === 'Metric' ? node.args[1] : ['Text', 'Math'].includes(node.name) ? binding : undefined;
+    if (readout) inspect(readout, value => { if (value.k === 'StateRef') outputs.add(value.n); });
+  });
+  return [...inputs].some(input => outputs.has(input));
+}
+
+/** Inspect only the validated renderer tree, so unused declarations do not
+ * satisfy a request. Shape checks here are independent of factual review. */
+export function missingNativeFormats(program: string, formats: readonly RequiredNativeFormat[]) {
+  if (!formats.length) return [];
+  const names = new Set<string>();
+  if (program) {
+    const { root } = parseProgram.parse(program);
+    const pending: unknown[] = [root];
+    const visited = new Set<object>();
+    while (pending.length) {
+      const value = pending.pop();
+      if (!value || typeof value !== 'object' || visited.has(value)) continue;
+      visited.add(value);
+      const element = value as { type?: string; typeName?: string };
+      if (element.type === 'element' && element.typeName) names.add(element.typeName);
+      pending.push(...Object.values(value));
+    }
+  }
+  const available: Record<RequiredNativeFormat, boolean> = {
+    table: names.has('Table'), chart: names.has('Chart'), graph: names.has('Diagram') || names.has('Svg'),
+    calculator: Boolean(program && formats.includes('calculator') && hasReactiveCalculator(program)),
+  };
+  return [...new Set(formats)].filter(format => !available[format]);
 }
 
 /** Recover readable details from an already validated program when the model

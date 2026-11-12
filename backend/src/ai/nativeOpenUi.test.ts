@@ -5,6 +5,7 @@ import { nativeOpenUiPrompt, workspaceNativeOpenUiPrompt } from './nativeOpenUiP
 import { buildNativeOpenUiShare, readNativeOpenUiShare } from './nativeOpenUiShare.js';
 import { readNativeOpenUiRun } from './nativeOpenUiRun.js';
 import { completeNativeWorkspaceAnswer, usesNativeWorkspacePresentation } from './nativeOpenUiWorkspace.js';
+import { requiredNativeFormats } from './answerCoverage.js';
 
 test('the model gets instructions from the native registry and may answer in text', () => {
   for (const name of ['Col(', 'Chart(', 'Slider(', 'Svg(', 'Diagram(', 'Section(', 'Table(', 'Payment(', 'Source(']) assert.ok(nativeOpenUiPrompt.includes(name), name);
@@ -174,6 +175,75 @@ test('Workspace strips only the trailing provider transport envelope from a nati
     response: prose, completion: { status: 'complete' }, responseSource: { format: 'xroga-openui-v1', text: program },
   });
   assert.equal(splitNativeOpenUiAnswer(prose + NATIVE_UI_MARKER + program).program, program);
+});
+
+test('native transport variations isolate the program and preserve actual programming fences', () => {
+  const program = '$count = 5\nroot = Col([Text("Count: " + $count)])';
+  const fence = String.fromCharCode(96).repeat(3);
+  const prose = ['Keep tenant_id unchanged.', fence + 'python', 'print("hello")', NATIVE_UI_MARKER.trim(),
+    'root = Col(["literal in the example"])', fence, 'This is the full explanation.'].join('\n');
+  const variants = [
+    prose + NATIVE_UI_MARKER + program,
+    prose + '\n\n' + program,
+    prose + '\n\n' + fence + 'openui-lang\n' + program + '\n' + fence,
+    prose + NATIVE_UI_MARKER + '~~~\n' + program + '\n~~~',
+    JSON.stringify({ format: 'xroga-openui-v1', text: prose, program }),
+  ];
+  for (const wire of variants) for (const newline of ['\n', '\r\n']) {
+    assert.deepEqual(splitNativeOpenUiAnswer(wire.replaceAll('\n', newline)), { text: prose, program });
+  }
+  const ordinary = [fence + 'json', '{"data":[1,2]}', fence].join('\n');
+  const hidden = [fence + 'xroga-ui', '{"kind":"chart"}', fence].join('\n');
+  assert.deepEqual(splitNativeOpenUiAnswer([ordinary, hidden, 'Next steps.'].join('\n')), { text: ordinary + '\nNext steps.', program: '' });
+  assert.deepEqual(splitNativeOpenUiAnswer([prose, fence + 'openui', program, fence, 'Next steps.'].join('\n')),
+    { text: prose + '\nNext steps.', program });
+  assert.equal(completeNativeWorkspaceAnswer('Keep the prose.\nroot = Unknown(["internal"])', 'stop').response, 'Keep the prose.');
+  const rootLast = 'visual = Text("Readable.")\n\nroot = Col([visual])';
+  assert.deepEqual(splitNativeOpenUiAnswer('Readable.\n\n' + rootLast), { text: 'Readable.', program: rootLast });
+});
+
+test('every streamed transport prefix withholds the separator and keeps the prose', () => {
+  const prose = 'Revenue is in USD.';
+  const wire = prose + NATIVE_UI_MARKER + 'root = Col([Text("Revenue is in USD.")])';
+  for (let size = prose.length; size <= wire.length; size += 1) {
+    assert.equal(splitNativeOpenUiAnswer(wire.slice(0, size), true).text, prose);
+  }
+});
+
+test('required visuals must render and cannot be satisfied by unused declarations or prose fallback', () => {
+  const prompt = 'Build an interactive calculator with a slider. Chart and tabulate the attendance scenarios.';
+  const formats = requiredNativeFormats(prompt);
+  assert.deepEqual([...formats].sort(), ['calculator', 'chart', 'table']);
+  assert.deepEqual(requiredNativeFormats('Explain what a chart is.'), []);
+  assert.deepEqual(requiredNativeFormats('Explain the total without a chart.'), []);
+  const checked: unknown[] = [];
+  const prose = 'The fixed ticket price is $25.';
+  const reply = completeNativeWorkspaceAnswer(prose, 'stop', undefined, undefined, event => checked.push(event), formats);
+  assert.equal(reply.response, prose);
+  assert.deepEqual(reply.completion, { status: 'partial', reason: 'presentation_contract' });
+  assert.deepEqual(checked, [{ stage: 'assembly', reason: 'missing_formats', formats }]);
+  const table = 'Table(["Attendance", "Revenue"], [[40, 1000]])';
+  const wired = 'root = Col([Text("The fixed ticket price is $25.")])\nunused = ' + table;
+  const unused = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + wired, 'stop', undefined, undefined, undefined, ['table']);
+  assert.equal(unused.completion.status, 'partial');
+  const visible = 'root = Col([Text("The fixed ticket price is $25."), ' + table + '])';
+  const mixed = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + visible, 'stop', undefined, undefined, undefined, formats);
+  assert.equal(mixed.completion.status, 'partial');
+  assert.equal(mixed.responseSource.text, visible);
+  const complete = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + visible, 'stop', undefined, undefined, undefined, ['table']);
+  assert.equal(complete.completion.status, 'complete');
+  const staticControl = '$attendees = 40\nroot = Col([Slider($attendees, 10, 80, 1, "Attendees"), Metric("Gross", "$1,000")])';
+  const reactiveControl = staticControl.replace('"$1,000"', '@Format($attendees * 25, "currency", 0, "USD")');
+  assert.equal(completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + staticControl, 'stop', undefined, undefined, undefined, ['calculator']).completion.status, 'partial');
+  assert.equal(completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + reactiveControl, 'stop', undefined, undefined, undefined, ['calculator']).completion.status, 'complete');
+});
+
+test('a provider output limit preserves readable prose and keeps the answer partial', () => {
+  const program = 'root = Col([Table(["Plan", "Price"], [["Team", 25]])])';
+  const answer = completeNativeWorkspaceAnswer('Team is $25.' + NATIVE_UI_MARKER + program, 'length');
+  assert.deepEqual(answer.completion, { status: 'partial', reason: 'output_limit' });
+  assert.equal(answer.responseSource.text, '');
+  assert.match(answer.response, /Team is \$25\./);
 });
 
 test('the saved prose and clipboard fallback retain the substantive native body after an unfinished heading', () => {

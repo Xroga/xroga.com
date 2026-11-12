@@ -5,6 +5,7 @@ import { basename, resolve } from 'node:path';
 import { chromium } from 'playwright';
 import { build } from 'esbuild';
 import AxeBuilder from '@axe-core/playwright';
+import { tsImport } from 'tsx/esm/api';
 
 const cases = {
   short: { text: 'Paris is the capital of France.' },
@@ -59,7 +60,27 @@ const cases = {
     'root = Col([Title("Practice and review"), Icon("plane", "lg", "info"), Timer($seconds, "Practice timer"), Text("First entries: " + @Slice("ABC", 0, 2)), Chart("bar", @Histogram([0, 1, 1, 4], 2, 0, 4), "key", ["value"])])',
   ].join('\n') },
   stream: { text: 'The first section is available.', program: 'root = Col([Text("The first section is available.")])\ntail = Chart(' },
+  conversation: { text: 'You’re welcome. Happy to help.' },
+  explanation: { text: 'A cache reuses a previous result.', program: 'root = Col([Title("How caching works"), Section("Freshness", [Text("A cache reuses a previous result."), List([ListItem("Set a lifetime"), ListItem("Invalidate after writes")], "number")])])' },
+  technical: { text: 'Idempotency prevents duplicate effects.', program: 'root = Col([Title("Idempotency"), Text("Idempotency prevents duplicate effects."), Quote("A retry can return the original result.")])' },
+  database: { text: 'PostgreSQL supports relational transactions. SQLite runs in process.', program: 'root = Col([Table(["Database", "Deployment"], [["PostgreSQL", "Server"], ["SQLite", "In process"]])])' },
+  debug: { text: 'Await the promise before reading the value.', program: 'root = Col([Text("Await the promise before reading the value."), Code("const total = await fetchTotal();", "typescript")])' },
+  executable: { text: 'The function multiplies price and quantity.', program: 'root = Col([Code("def revenue(price, quantity):\\n    return price * quantity", "python")])' },
+  math: { text: 'The area of a circle is pi times radius squared.', program: 'root = Col([Math("A = \\\\pi r^2"), Text("The area of a circle is pi times radius squared.")])' },
+  finance: { text: 'May increased from $200 to $250.', program: 'root = Col([Chart("line", [{month:"April", total:200},{month:"May",total:250}], "month", ["total"], "currency", "USD"), Table(["Month", "Revenue"], [["April", 200], ["May", 250]])])' },
+  roi: { text: 'The initial return is 20%.', program: '$gain = 120\nroot = Col([Metric("ROI", @Format(100 * ($gain - 100) / 100, "percent", 0)), Slider($gain, 100, 150, 1, "Gain"), Button("Reset", @Set($gain, 120))])' },
+  roadmap: { text: 'Start with discovery, then build and validate.', program: 'root = Col([Title("Delivery roadmap"), List([ListItem("Discovery", "Week one"), ListItem("Build", "Week two"), ListItem("Validation", "Week three")], "timeline")])' },
+  identifiers: { text: 'Keep tenant_id and tenant_members visible.', program: 'root = Col([Text("Keep tenant_id and tenant_members visible.", "md")])' },
+  bareTransport: { raw: 'Keep the readable answer.\nroot = Col([Text("Keep the readable answer."), UnknownInternalWidget()])' },
+  unfinished: { raw: 'Keep the confirmed amount of $25.\n<<<XROGA_OPENUI_V1>>>\nroot = Col([Chart(', finish: 'length' },
 };
+const { completeNativeWorkspaceAnswer } = await tsImport('../backend/src/ai/nativeOpenUiWorkspace.ts', import.meta.url);
+for (const [name, fixture] of Object.entries(cases)) {
+  if (!fixture.raw) continue;
+  const answer = completeNativeWorkspaceAnswer(fixture.raw, fixture.finish ?? 'stop');
+  assert.equal(answer.completion.status, 'partial', name + ' must be recorded as recovery');
+  cases[name] = { text: answer.response, program: answer.responseSource.text };
+}
 const compiled = await build({
   stdin: {
     resolveDir: process.cwd(),
@@ -69,7 +90,7 @@ const compiled = await build({
       + 'const q=new URL(location.href).searchParams; const name=q.get("case") || "short";'
       + 'document.body.dataset.theme=q.get("shellTheme") || q.get("theme") || "light"; document.querySelector("main").dataset.theme=q.get("theme") || "light";'
       + 'const sources=[{id:"source-1",title:"PostgreSQL: Row Security Policies",url:"https://www.postgresql.org/docs/current/ddl-rowsecurity.html"},{id:"source-2",title:"W3C Documentation",url:"https://www.w3.org/TR/"},{id:"source-3",title:"About keyword matching options",siteName:"Google Ads Help",url:"https://support.google.com/google-ads/answer/7478529"}];'
-      + 'createRoot(document.getElementById("root")).render(<ResponseSourceScope>{cases[name].prompt && <p className="native-evaluation-user">{cases[name].prompt}</p>}<div className="native-evaluation-answer-label">Xroga</div><NativeSurface answer={{...cases[name],format:"xroga-openui-v1",library:"xroga-native-v1"}} sources={sources} isStreaming={name==="stream"} />{name==="numericEvidence" && <ResponseSources sources={[...sources, sources[0], ...[4,5,6].map(n => ({title:"Source "+n,url:"https://example.com/"+n})), {title:"Unsafe link",url:"javascript:alert(1)"}]} />}</ResponseSourceScope>);',
+      + 'const fixture=cases[name]; createRoot(document.getElementById("root")).render(<ResponseSourceScope>{fixture.prompt && <p className="native-evaluation-user">{fixture.prompt}</p>}<div className="native-evaluation-answer-label">Xroga</div><NativeSurface answer={{...fixture,format:"xroga-openui-v1",library:"xroga-native-v1"}} sources={sources} isStreaming={name==="stream"} />{name==="numericEvidence" && <ResponseSources sources={[...sources, sources[0], ...[4,5,6].map(n => ({title:"Source "+n,url:"https://example.com/"+n})), {title:"Unsafe link",url:"javascript:alert(1)"}]} />}</ResponseSourceScope>);',
   },
   outdir: 'native-assets', entryNames: 'native', chunkNames: 'native-chunk-[hash]', format: 'esm', splitting: true,
   write: false, bundle: true, jsx: 'automatic', minify: true,
@@ -108,6 +129,7 @@ try {
       const context = await browser.newContext({ viewport, reducedMotion: 'reduce' });
       const page = await context.newPage();
       const errors = [], external = [];
+      const checked = new Set();
       page.on('pageerror', error => errors.push(error.message));
       await page.route('**/*', async route => {
         if (!route.request().url().startsWith(origin + '/')) {
@@ -120,6 +142,7 @@ try {
         await page.getByRole('region', { name: 'Answer', exact: true }).waitFor();
         const fit = await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth);
         assert.ok(fit, name + ' must fit the viewport');
+        checked.add(name);
       };
       await open('short');
       await page.getByText(cases.short.text, { exact: true }).waitFor();
@@ -283,9 +306,35 @@ try {
       await open('stream');
       assert.equal(await page.getByRole('region', { name: 'Answer', exact: true }).getAttribute('aria-busy'), 'true');
       await page.locator('.iui-text').getByText(cases.stream.text).waitFor();
+      const answer = page.getByRole('region', { name: 'Answer', exact: true });
+      for (const [name, selector, visible] of [
+        ['conversation', 'p', 'You’re welcome. Happy to help.'],
+        ['explanation', 'li', 'Invalidate after writes'],
+        ['technical', 'blockquote', 'A retry can return the original result.'],
+        ['database', 'td', 'In process'],
+        ['debug', 'pre', 'const total = await fetchTotal();'],
+        ['executable', 'pre', 'return price * quantity'],
+        ['math', '.iui-text', 'The area of a circle is pi times radius squared.'],
+        ['finance', 'td', '250'],
+        ['roadmap', 'li', 'Validation'],
+        ['identifiers', '.iui-text', 'Keep tenant_id and tenant_members visible.'],
+        ['bareTransport', 'p', 'Keep the readable answer.'],
+        ['unfinished', 'p', 'Keep the confirmed amount of $25.'],
+      ]) {
+        await open(name);
+        await answer.locator(selector).filter({ hasText: visible }).first().waitFor();
+        assert.doesNotMatch(await answer.innerText(), /<<<XROGA_OPENUI_V1>>>|UnknownInternalWidget\(|root\s*=\s*Col\(/);
+        if (name === 'math') await answer.locator('.katex').first().waitFor();
+      }
+      await open('roi');
+      await answer.getByText('20%', { exact: true }).waitFor();
+      await answer.getByRole('slider', { name: 'Gain' }).press('ArrowRight');
+      await answer.getByText('21%', { exact: true }).waitFor();
+      await answer.getByRole('button', { name: 'Reset' }).click();
+      await answer.getByText('20%', { exact: true }).waitFor();
       assert.deepEqual(errors, []);
       assert.deepEqual(external, []);
-      results.push({ viewport, theme, scenarios: Object.keys(cases).length, accessibilityViolations: 0, externalRequests: 0 });
+      results.push({ viewport, theme, scenarios: checked.size, cases: [...checked], accessibilityViolations: 0, externalRequests: 0 });
       await context.close();
     }
   }

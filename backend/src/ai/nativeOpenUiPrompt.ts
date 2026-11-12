@@ -12,6 +12,7 @@ const library = catalog.spec as LibrarySpec;
 const common = ['Col', 'Row', 'Box', 'Grid', 'Card', 'Title', 'Text', 'Caption', 'Badge', 'List', 'ListItem', 'Markdown', 'Code', 'Section', 'Icon', 'Resource', 'Table'];
 const focusedComponents: Record<string, string[]> = {
   graph: ['Diagram', 'Svg', 'Circle', 'Ellipse', 'Rect', 'Line', 'Path', 'Polyline', 'Polygon', 'G', 'SvgText'],
+  table: ['Table'],
   chart: ['Chart', 'Metric', 'Math', 'Quote'],
   calculator: ['Chart', 'Metric', 'Math', 'Controls', 'Slider', 'Input', 'Select', 'Button'],
   metrics: ['Metric', 'Math'],
@@ -77,7 +78,7 @@ const withoutSources = buildNativeOpenUiPrompt(new Set(), false, true);
 
 export function workspaceNativeOpenUiPrompt(kinds: readonly string[], hasSources: boolean): string {
   const requested = new Set(kinds);
-  if (![...requested].some(kind => kind === 'graph' || kind === 'chart' || kind === 'calculator')) {
+  if (![...requested].some(kind => Object.hasOwn(focusedComponents, kind))) {
     return hasSources ? nativeOpenUiPrompt : withoutSources;
   }
   return buildNativeOpenUiPrompt(requested, hasSources, false);

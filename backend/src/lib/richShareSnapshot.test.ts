@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { projectRichShare } from './richShareSnapshot.js';
-import { buildNativeOpenUiShare, readNativeOpenUiShare } from '../ai/nativeOpenUiShare.js';
+import { buildNativeOpenUiShare, NATIVE_SHARE_PREFIX, readNativeOpenUiShare } from '../ai/nativeOpenUiShare.js';
 
 test('old clients receive full text and new clients can independently validate the read-only snapshot', () => {
   const snapshot='XROGA_RESPONSE_V2\n'+JSON.stringify({version:2,text:'Full answer with tenant_id.',document:{version:2,nodes:[{kind:'prose',text:'Full answer with tenant_id.'}]}});
@@ -23,4 +23,14 @@ test('a sourced native answer keeps citations through the share API even without
   assert.deepEqual(readNativeOpenUiShare(snapshot)?.sources, sources);
   assert.equal(buildNativeOpenUiShare(text, ''), undefined);
   assert.equal(buildNativeOpenUiShare(text, '', [{ title: 'Unsafe', url: 'javascript:alert(1)' }]), undefined);
+});
+
+test('broken native share programs preserve readable text without exposing the internal envelope', () => {
+  const text = 'Keep the verified table explanation.';
+  const internal = 'root = Col([UnknownInternalWidget()])';
+  const snapshot = NATIVE_SHARE_PREFIX + JSON.stringify({ format: 'xroga-openui-v1', text: text + '\n' + internal, program: internal, sources: [] });
+  assert.equal(readNativeOpenUiShare(snapshot), undefined);
+  assert.deepEqual(projectRichShare(snapshot), { response: text });
+  assert.deepEqual(projectRichShare(NATIVE_SHARE_PREFIX + '{'), { response: 'The shared answer has no readable text.' });
+  assert.deepEqual(projectRichShare('{"result":42}'), { response: '{"result":42}' });
 });
