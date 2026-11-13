@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/workspace-observable-work-history",
-    "sha": "1560c7ba6ed4335b9510c0263ab92bad3bcdbdb6",
-    "sourceTimestampUtc": "2026-11-13T01:15:56+05:00",
-    "auditStartedUtc": "2026-11-12T20:17:28.049Z",
+    "sha": "04423dcc1bb8dbbf2cc2b3ff2ae92baccc1e8f11",
+    "sourceTimestampUtc": "2026-11-14T00:00:39+05:00",
+    "auditStartedUtc": "2026-11-13T19:00:53.541Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -5424,7 +5424,7 @@
       "id": "surface:f8a39bc555632894e7fb",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiAccuracy.ts",
-      "sha256": "93b0c8d00eb59262e25cd56d7165891a3385da56cc0c91b0d77a2f74c6b5aa6a",
+      "sha256": "87ee819e16f1958bc367c7a578c0209c9e4ffee139507e3c55fc934f2fa1309e",
       "symbols": [
         "FactualRule",
         "MonthlyPoint",
@@ -5442,6 +5442,7 @@
         "claims",
         "columns",
         "compare",
+        "compareBothGains",
         "contradictsMonthlyChart",
         "corrections",
         "count",
@@ -5451,6 +5452,7 @@
         "deletionClaim",
         "direction",
         "expectedRank",
+        "explicitMonthlyChanges",
         "facts",
         "format",
         "formatValue",
@@ -5513,7 +5515,8 @@
         "unit",
         "value",
         "values",
-        "warnsAgainst"
+        "warnsAgainst",
+        "wrongAxialReference"
       ],
       "imports": [
         "./answerAuthorizationReview.js"
@@ -5559,7 +5562,7 @@
       "id": "surface:a67f0b1fa2dd0f11a67f",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiPrompt.ts",
-      "sha256": "1b0df0225f72e742306239aa12515205932f14f69ce49eff65c591e7d5ef0871",
+      "sha256": "9417338470247580a41e0a0e8efb58674f71df8369f644401ee4dabe4f1ac80f",
       "symbols": [
         "allowed",
         "buildNativeOpenUiPrompt",
@@ -5569,6 +5572,7 @@
         "library",
         "nativeOpenUiPlainPrompt",
         "nativeOpenUiPrompt",
+        "numericPrecisionRule",
         "requested",
         "selected",
         "withoutSources",
@@ -141266,9 +141270,9 @@
   ],
   "findings": [
     {
-      "id": "finding:a73f972c29b09508da8a",
+      "id": "finding:dd964bdab6577c3f76f2",
       "sourcePath": "backend/src/ai/nativeOpenUiPrompt.ts",
-      "line": 49,
+      "line": 53,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -149147,7 +149151,7 @@
     {
       "id": "test-suite:2e491f4d2fcbc11f974c",
       "sourcePath": "backend/src/ai/nativeOpenUi.test.ts",
-      "declaredTests": 44,
+      "declaredTests": 46,
       "skipLocations": [],
       "focusLocations": []
     },
