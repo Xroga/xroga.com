@@ -66,6 +66,22 @@ describe('plugin_action_search and plugin_act', () => {
     expect(result.text).toContain('may or may not have been made');
   });
 
+  it('tells the agent to search again when a tool from an earlier task was called, instead of a bare failure', async () => {
+    responses = [Object.assign(new Error('BROWSER_PLUGIN_NOT_DISCOVERED'), { code: 'BROWSER_PLUGIN_NOT_DISCOVERED' })];
+    const result = await runPluginTool('plugin_read', 'run-2', { slug: 'GMAIL_FETCH_EMAILS', arguments: {} }, new AbortController().signal, async () => 'approve', wrap);
+    expect(result.isError).toBe(true);
+    expect(result.text).toContain('plugin_search');
+    expect(result.text).toContain('not found by a search in this task');
+  });
+
+  it('tells the agent to search again when a tool from an earlier task was called, instead of a bare failure', async () => {
+    responses = [Object.assign(new Error('BROWSER_PLUGIN_NOT_DISCOVERED'), { code: 'BROWSER_PLUGIN_NOT_DISCOVERED' })];
+    const result = await runPluginTool('plugin_read', 'run-2', { slug: 'GMAIL_FETCH_EMAILS', arguments: {} }, new AbortController().signal, async () => 'approve', wrap);
+    expect(result.isError).toBe(true);
+    expect(result.text).toContain('plugin_search');
+    expect(result.text).toContain('not found by a search in this task');
+  });
+
   it('does not offer a change when approval could not be set up', async () => {
     responses = [new Error('403')];
     const result = await runPluginTool('plugin_act', 'run-1', { slug: 'S', arguments: {}, request: 'x' }, new AbortController().signal, async () => 'approve', wrap);

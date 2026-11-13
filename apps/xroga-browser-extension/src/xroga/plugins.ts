@@ -135,6 +135,10 @@ export async function runPluginTool(
     return { text: 'Provider receipt ' + review.receiptId + '\n' + wrap(review.result, 'connected app result'), isError: false, result: { pluginReceiptId: review.receiptId } };
   } catch (error) {
     const failure = error as { code?: unknown; detail?: Record<string, string[]> };
+    if (failure?.code === 'BROWSER_PLUGIN_NOT_DISCOVERED') {
+      // A follow-up message starts a new task, and the server only runs a tool that this task's own search found.
+      return { text: 'This tool was not found by a search in this task, so it was not called. Run plugin_search (to read) or plugin_action_search (to change something) now, then call the tool it returns.', isError: true };
+    }
     if (failure?.code === 'BROWSER_PLUGIN_ARGUMENTS_INVALID' && failure.detail) {
       const list = (key: string) => (failure.detail![key] ?? []).join(', ') || 'none';
       return { text: 'Nothing was sent. These arguments do not match the definition of the tool. Not defined by the tool: ' + list('unknown') +
