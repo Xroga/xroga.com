@@ -2,10 +2,10 @@
   "version": "1.0",
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
-    "branch": "codex/workspace-observable-work-history",
-    "sha": "f26bf1824b8ec40092f08bb00ba8596f10a0f457",
-    "sourceTimestampUtc": "2026-11-14T00:55:00+05:00",
-    "auditStartedUtc": "2026-11-13T19:56:47.835Z",
+    "branch": "codex/openui-production-integration-20261114",
+    "sha": "ee654276963e2396f1a5c8c5ea2c4e26a6aaebfe",
+    "sourceTimestampUtc": "2026-11-14T02:36:54+05:00",
+    "auditStartedUtc": "2026-11-13T21:42:39.328Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -61174,6 +61174,110 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:7169bcc92c13ef45b6ae",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/app/black-hole/BlackHoleExperience.tsx",
+      "sha256": "9c02441a9569f59201279dbc01444036817b5ea471354b97f257cf67ef7e8287",
+      "symbols": [
+        "Art",
+        "ArtProps",
+        "BlackHoleExperience",
+        "Icon",
+        "Overline",
+        "capability",
+        "capabilityModes",
+        "entry",
+        "hero",
+        "io",
+        "onHeroMove",
+        "onScroll",
+        "parent",
+        "rect",
+        "root",
+        "scheduled",
+        "sections",
+        "total"
+      ],
+      "imports": [
+        "lucide-react",
+        "next/image",
+        "next/link",
+        "react"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [
+        "frontend/src/app/black-hole/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/app/black-hole/page.tsx:3"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "lucide-react",
+        "next/image",
+        "next/link",
+        "react"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [
+        "frontend/src/app/black-hole/BlackHoleExperience.tsx#PointerEvent"
+      ],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:de9aae77593e36d17ad0",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/app/black-hole/page.tsx",
+      "sha256": "7f10142ce873fb7c806f947e3c4d3fff5a58f477a5e00a532ffe2309a210ddbb",
+      "symbols": [
+        "BlackHolePage",
+        "metadata",
+        "pageJsonLd"
+      ],
+      "imports": [
+        "./BlackHoleExperience",
+        "./black-hole.css",
+        "@/lib/seo",
+        "next"
+      ],
+      "runtimeImports": [
+        "frontend/src/app/black-hole/BlackHoleExperience.tsx",
+        "frontend/src/app/black-hole/black-hole.css",
+        "frontend/src/lib/seo.ts"
+      ],
+      "entryPoints": [
+        "frontend/src/app/black-hole/page.tsx"
+      ],
+      "callers": [],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "next"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:e4740fd5f297485958dd",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/app/blog/[slug]/page.tsx",
@@ -104485,6 +104589,7 @@
         "frontend/src/app/auth/layout.tsx",
         "frontend/src/app/auth/login/page.tsx",
         "frontend/src/app/auth/signup/page.tsx",
+        "frontend/src/app/black-hole/page.tsx",
         "frontend/src/app/blog/[slug]/page.tsx",
         "frontend/src/app/blog/page.tsx",
         "frontend/src/app/build-saas-with-ai/page.tsx",
@@ -106659,6 +106764,7 @@
         "frontend/src/app/auth/layout.tsx",
         "frontend/src/app/auth/login/page.tsx",
         "frontend/src/app/auth/signup/page.tsx",
+        "frontend/src/app/black-hole/page.tsx",
         "frontend/src/app/blog/[slug]/page.tsx",
         "frontend/src/app/blog/page.tsx",
         "frontend/src/app/build-saas-with-ai/page.tsx",
@@ -112024,7 +112130,7 @@
       "id": "surface:4a1f5385bc6d8ba1e88e",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/publicUrlInventory.ts",
-      "sha256": "bc52ce508695d9f321e0ccd6ab1e0dc2611ce1602501770d06fa9ce45f13fe46",
+      "sha256": "9d7fad975f495bc7047b5fb5d5091698833a7286e737e3064410ba18265193a9",
       "symbols": [
         "INDEXABLE_PUBLIC_URLS",
         "PUBLIC_URL_INVENTORY",
@@ -113414,6 +113520,7 @@
         "frontend/src/app/auth/layout.tsx",
         "frontend/src/app/auth/login/page.tsx",
         "frontend/src/app/auth/signup/page.tsx",
+        "frontend/src/app/black-hole/page.tsx",
         "frontend/src/app/blog/[slug]/page.tsx",
         "frontend/src/app/blog/page.tsx",
         "frontend/src/app/build-saas-with-ai/page.tsx",
@@ -113474,6 +113581,7 @@
         "frontend/src/app/auth/layout.tsx:2",
         "frontend/src/app/auth/login/page.tsx:9",
         "frontend/src/app/auth/signup/page.tsx:9",
+        "frontend/src/app/black-hole/page.tsx:2",
         "frontend/src/app/blog/[slug]/page.tsx:4",
         "frontend/src/app/blog/[slug]/page.tsx:5",
         "frontend/src/app/blog/page.tsx:3",

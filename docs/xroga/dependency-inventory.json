@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "f26bf1824b8ec40092f08bb00ba8596f10a0f457",
+  "source_sha": "ee654276963e2396f1a5c8c5ea2c4e26a6aaebfe",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -20355,6 +20355,14 @@
       "sha256": "7109a7bf6121b5073a1e4e7fa20b58fa9b22111e46fe3590ba3cf1b55a2b2ac7"
     },
     {
+      "path": "frontend/src/app/black-hole/BlackHoleExperience.tsx",
+      "sha256": "9c02441a9569f59201279dbc01444036817b5ea471354b97f257cf67ef7e8287"
+    },
+    {
+      "path": "frontend/src/app/black-hole/page.tsx",
+      "sha256": "7f10142ce873fb7c806f947e3c4d3fff5a58f477a5e00a532ffe2309a210ddbb"
+    },
+    {
       "path": "frontend/src/app/blog/[slug]/page.tsx",
       "sha256": "30884d7df978aeec36d5a08c0f1280c096fbdb19ff153ff6839ffd152efda0ee"
     },
@@ -23840,7 +23848,7 @@
     },
     {
       "path": "frontend/src/lib/publicUrlInventory.ts",
-      "sha256": "bc52ce508695d9f321e0ccd6ab1e0dc2611ce1602501770d06fa9ce45f13fe46"
+      "sha256": "9d7fad975f495bc7047b5fb5d5091698833a7286e737e3064410ba18265193a9"
     },
     {
       "path": "frontend/src/lib/publish/types.ts",
@@ -39462,7 +39470,7 @@
     },
     {
       "path": "frontend/src/lib/publicUrlInventory.ts",
-      "line": 161,
+      "line": 162,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
