@@ -72,3 +72,11 @@ test('the presets are scaffolds, not finished prompts', () => {
     assert.ok(preset.endsWith('\n\n'), 'a scaffold should leave the caret on a fresh line');
   }
 });
+
+test('saved prompt preferences are included only when supplied and stay distinct from rules', () => {
+  const preamble = buildComposerPreamble('Never publish without approval.', [], 'Use compact tables.');
+  assert.match(preamble, /Response preferences: Use compact tables\./);
+  assert.match(preamble, /Never publish without approval\./);
+  assert.ok(preamble.indexOf('Response preferences:') < preamble.indexOf('Never publish'));
+  assert.equal(buildComposerPreamble('', [], ''), '');
+});

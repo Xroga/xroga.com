@@ -65,6 +65,7 @@ export function ChatBarActionsMenu({
   onInsert,
   onAddFiles,
   onOpenIntegrations,
+  onOpenProjects,
   connectorsNeedingAttention = 0,
   recentTerminal,
   disabled,
@@ -80,6 +81,8 @@ export function ChatBarActionsMenu({
    * row now, and the pill is gone.
    */
   onOpenIntegrations?: () => void;
+  /** Opens the user's saved-project switcher rather than inserting an example prompt. */
+  onOpenProjects?: () => void;
   /** Drives the "n needs reconnection" note. 0 means everything is connected. */
   connectorsNeedingAttention?: number;
   /** Optional recent work shown as a compact continuation card above the tools. */
@@ -93,19 +96,21 @@ export function ChatBarActionsMenu({
   plusIcon?: boolean;
 }) {
   const [open, setOpen] = useState(false);
-  const [panel, setPanel] = useState<'menu' | 'commands' | 'skills' | 'rules' | 'work'>('menu');
+  const [panel, setPanel] = useState<'menu' | 'commands' | 'skills' | 'preferences' | 'rules' | 'work'>('menu');
   const [workId, setWorkId] = useState<string>('library');
   const activeWork = WORK_OPTIONS.find(item => item.id === workId) ?? WORK_OPTIONS[0];
   const rootRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const [menuStyle, setMenuStyle] = useState<React.CSSProperties>({});
 
+  const preferences = useComposerToolsStore((s) => s.preferences);
+  const setPreferences = useComposerToolsStore((s) => s.setPreferences);
   const rules = useComposerToolsStore((s) => s.rules);
   const setRules = useComposerToolsStore((s) => s.setRules);
   const enabledSkills = useComposerToolsStore((s) => s.enabledSkills);
   const toggleSkill = useComposerToolsStore((s) => s.toggleSkill);
 
-  const activeCount = enabledSkills.length + (rules.trim() ? 1 : 0);
+  const activeCount = enabledSkills.length + (rules.trim() ? 1 : 0) + (preferences?.trim() ? 1 : 0);
   useEffect(() => {
     if (!open) return;
     const onPointerDown = (event: PointerEvent) => {
@@ -113,7 +118,21 @@ export function ChatBarActionsMenu({
       if (!rootRef.current?.contains(target) && !menuRef.current?.contains(target)) setOpen(false);
     };
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setOpen(false);
+      if (event.key === 'Escape') { setOpen(false); rootRef.current?.querySelector('button')?.focus(); return; }
+      if (!['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) return;
+      const menu = menuRef.current;
+      if (!menu) return;
+      const target = event.target as HTMLElement;
+      if (target.closest('textarea, input, select') || (!menu.contains(target) && !rootRef.current?.contains(target))) return;
+      const entries = [...menu.querySelectorAll<HTMLButtonElement>('button:not(:disabled)')];
+      if (!entries.length) return;
+      event.preventDefault();
+      const current = entries.indexOf(document.activeElement as HTMLButtonElement);
+      const next = event.key === 'Home' ? 0 : event.key === 'End' ? entries.length - 1
+        : event.key === 'ArrowDown' ? (current + 1) % entries.length
+        : (current - 1 + entries.length) % entries.length;
+      entries[next].focus();
+      entries[next].scrollIntoView({ block: 'nearest' });
     };
     document.addEventListener('pointerdown', onPointerDown);
     document.addEventListener('keydown', onKeyDown);
@@ -123,6 +142,12 @@ export function ChatBarActionsMenu({
     };
   }, [open]);
 
+  useEffect(() => {
+    if (!open) return;
+    const frame = window.requestAnimationFrame(() => menuRef.current?.querySelector<HTMLButtonElement>('button:not(:disabled)')?.focus());
+    return () => window.cancelAnimationFrame(frame);
+  }, [open, panel]);
+
   useLayoutEffect(() => {
     if (!open) return;
     const sync = () => {
@@ -130,19 +155,20 @@ export function ChatBarActionsMenu({
       if (!composer) return;
       const frame = composer.closest<HTMLElement>('.xv-kimi-composer-frame') ?? composer;
       const rect = frame.getBoundingClientRect();
-      const width = Math.min(rect.width, window.innerWidth - 16);
-      const left = Math.max(8, Math.min(rect.left, window.innerWidth - width - 8));
+      const trigger = rootRef.current?.getBoundingClientRect() ?? rect;
+      const width = Math.min(344, window.innerWidth - 16);
+      const left = Math.max(8, Math.min(trigger.left, window.innerWidth - width - 8));
       const idle = Boolean(composer.closest('.xv-terminal-dock--idle'));
       if (idle) {
         const available = window.innerHeight - rect.bottom - 16;
         setMenuStyle(available >= 160 ? {
           position: 'fixed', left, top: rect.bottom + 6,
           bottom: 'auto', width,
-          maxHeight: Math.max(120, Math.min(480, available)),
+          maxHeight: Math.max(120, Math.min(314, available)),
         } : {
           position: 'fixed', left, top: 'auto',
           bottom: Math.max(8, window.innerHeight - rect.top + 6), width,
-          maxHeight: Math.max(120, Math.min(440, rect.top - 12)),
+          maxHeight: Math.max(120, Math.min(314, rect.top - 12)),
         });
         return;
       }
@@ -150,7 +176,7 @@ export function ChatBarActionsMenu({
         position: 'fixed', left, top: 'auto',
         bottom: Math.max(8, window.innerHeight - rect.top + 6),
         width,
-        maxHeight: Math.min(480, Math.max(130, rect.top - 12)),
+        maxHeight: Math.min(314, Math.max(130, rect.top - 12)),
       });
     };
     sync();
@@ -235,14 +261,14 @@ export function ChatBarActionsMenu({
               </button>
               <button type="button" className="xv-cba-item xv-cba-item--integrations" data-tone="purple" disabled={!onOpenIntegrations} onClick={() => { onOpenIntegrations?.(); setOpen(false); }}>
                 <Puzzle className="h-4 w-4 shrink-0" aria-hidden="true" />
-                <span className="xv-cba-item__text"><b>Plugins</b><i>Connect and manage supported apps</i></span>
+                <span className="xv-cba-item__text"><b>Connect Apps</b><i>Connect and manage supported apps</i></span>
                 {connectorsNeedingAttention > 0 && <i className="xv-cba-flag" aria-hidden="true" />}
               </button>
               {WORK_OPTIONS.map(item => {
                 const Icon = item.icon;
                 return <button key={item.id} type="button" className="xv-cba-item xv-cba-work"
                   data-tone={item.id === 'library' || item.id === 'browser' ? 'blue' : item.id === 'projects' || item.id === 'apps' ? 'green' : 'purple'}
-                  onClick={() => { setWorkId(item.id); setPanel('work'); }}>
+                  onClick={() => { if (item.id === 'projects' && onOpenProjects) { onOpenProjects(); setOpen(false); return; } setWorkId(item.id); setPanel('work'); }}>
                   <Icon className="h-4 w-4 shrink-0" aria-hidden="true" />
                   <span className="xv-cba-item__text"><b>{item.label}</b><i>{item.description}</i></span>
                   <ChevronRight className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
@@ -263,6 +289,10 @@ export function ChatBarActionsMenu({
               <button type="button" className="xv-cba-item" data-tone="purple" onClick={() => setPanel('skills')}>
                 <Sparkles className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                 <span className="xv-cba-item__text"><b>Skills</b><i>{enabledSkills.length ? `${enabledSkills.length} active` : 'Reusable instruction packs'}</i></span>
+              </button>
+              <button type="button" className="xv-cba-item" data-tone="purple" onClick={() => setPanel('preferences')}>
+                <ScrollText className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                <span className="xv-cba-item__text"><b>Prompt preferences</b><i>{preferences?.trim() ? 'Applied to prompts' : 'Optional reusable instructions'}</i></span>
               </button>
               <button type="button" className="xv-cba-item" data-tone="gray" onClick={() => setPanel('rules')}>
                 <ScrollText className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
@@ -360,6 +390,21 @@ export function ChatBarActionsMenu({
                   </button>
                 );
               })}
+            </>
+          )}
+
+          {panel === 'preferences' && (
+            <>
+              <div className="xv-cba-head">
+                <button type="button" onClick={() => setPanel('menu')} className="xv-cba-back">Back</button>
+                <span>Prompt preferences</span>
+                <button type="button" onClick={() => setOpen(false)} aria-label="Close"><X className="h-3.5 w-3.5" aria-hidden="true" /></button>
+              </div>
+              <p className="xv-cba-note">Optional response style or format. Saved on this device and included with your prompts.</p>
+              <textarea value={preferences ?? ''} onChange={event => setPreferences(event.target.value)}
+                rows={4} spellCheck={false} placeholder="Prefer concise answers with clear steps."
+                className="xv-cba-textarea" aria-label="Reusable prompt preferences" />
+              {preferences?.trim() ? <button type="button" className="xv-cba-clear" onClick={() => setPreferences('')}>Clear preferences</button> : null}
             </>
           )}
 

@@ -167,27 +167,27 @@ export function IntegrationsModal({
   if (!open) return null;
 
   return (
-    <AnchoredPortalPopover open={open} onClose={onClose} anchorRef={anchorRef} placement="top-start" width={260} className={compactStyles.menu} ariaLabel="Plugin shortcuts">
+    <AnchoredPortalPopover open={open} onClose={onClose} anchorRef={anchorRef} placement="top-start" width={260} className={compactStyles.menu} ariaLabel="Connect Apps">
       <section
         role="dialog"
         aria-labelledby="workspace-plugins-title"
         className="xv-plugins-popover"
       >
-        <h2 id="workspace-plugins-title" className="sr-only">Plugins</h2>
+        <h2 id="workspace-plugins-title" className="sr-only">Connect Apps</h2>
         <header className="xv-plugins-popover__header">
           <label className="xv-plugins-popover__search">
             <Search aria-hidden="true" />
-            <span className="sr-only">Search plugins</span>
+            <span className="sr-only">Search apps</span>
             <input
               value={query}
               onChange={(event) => setQuery(event.target.value)}
-              placeholder="Search plugins…"
+              placeholder="Search apps…"
             />
           </label>
           <button
             type="button"
             onClick={onClose}
-            aria-label="Close Plugins"
+            aria-label="Close Connect Apps"
             className="xv-plugins-popover__close"
           >
             <X className="h-4 w-4" aria-hidden="true" />
@@ -196,7 +196,7 @@ export function IntegrationsModal({
 
         <div className="xv-plugins-popover__body">
           <div className="xv-plugins-popover__primary">
-            <p className="xv-plugins-popover__eyebrow">Plugins</p>
+            <p className="xv-plugins-popover__eyebrow">Connect Apps</p>
             {plugins.map((plugin) => {
               const entry = <>
                 <span className="xv-plugins-popover__logo"><IntegrationLogo id={plugin.id} name={plugin.name} size={17} /></span>
@@ -210,7 +210,7 @@ export function IntegrationsModal({
               </>;
               return plugin.connected && onSelect
                 ? <button type="button" key={plugin.id} onClick={() => { onSelect(plugin); onClose(); }}
-                    className="xv-plugins-popover__item" aria-label={'Select ' + plugin.name + ' plugin'}>{entry}</button>
+                    className="xv-plugins-popover__item" aria-label={'Select ' + plugin.name + ' app'}>{entry}</button>
                 : <Link key={plugin.id} href={`/dashboard/integrations/${plugin.id}`} onClick={onClose}
                     className="xv-plugins-popover__item">{entry}</Link>;
             })}
@@ -218,31 +218,31 @@ export function IntegrationsModal({
             {loadingApps && !apps.length ? (
               <div className="xv-plugins-popover__loading">
                 <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" />
-                Checking business Plugins…
+                Checking connected apps…
               </div>
             ) : null}
             {catalogSearching && query.trim().length >= 2 ? (
               <div className="xv-plugins-popover__loading" role="status">
-                <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" /> Searching supported plugins…
+                <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" /> Searching supported apps…
               </div>
             ) : null}
             {catalogError && query.trim().length >= 2 ? (
-              <p className="xv-plugins-popover__empty">Live plugin search is unavailable. Browse the full catalog below.</p>
+              <p className="xv-plugins-popover__empty">Live app search is unavailable. Browse the full catalog below.</p>
             ) : null}
             {!loadingApps && !catalogSearching && !catalogError && plugins.length === 0 ? (
-              <p className="xv-plugins-popover__empty">No matching plugins in the catalog.</p>
+              <p className="xv-plugins-popover__empty">No matching apps found.</p>
             ) : null}
           </div>
 
           <aside className="xv-plugins-popover__aside">
-            <button type="button" className={compactStyles.connect} onClick={() => setConnecting(value => !value)} aria-expanded={connecting}>Connect plugins <Plus size={14} /></button>
+            <button type="button" className={compactStyles.connect} onClick={() => setConnecting(value => !value)} aria-expanded={connecting}>Connect more apps <Plus size={14} /></button>
             {connecting ? <div className={compactStyles.connectList}>{[...native, ...apps].filter(plugin => !plugin.connected).map(plugin => <Link key={plugin.id} href={`/dashboard/integrations/${plugin.id}`} onClick={onClose}><IntegrationLogo id={plugin.id} name={plugin.name} size={16} />{plugin.name}<Plus size={12} /></Link>)}</div> : null}
             <Link
               href="/dashboard/integrations"
               onClick={onClose}
               className="xv-plugins-popover__browse"
             >
-              Browse all plugins
+              Browse all apps
               <ArrowUpRight aria-hidden="true" />
             </Link>
           </aside>
