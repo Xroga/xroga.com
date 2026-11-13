@@ -60,6 +60,7 @@ export async function startXrogaModelRun(
   const runId = start.runId;
   let turn = start.turns ?? 0;
   let requestInterrupted = false;
+  let lastErrorCode: string | undefined;
   let allowance: { nextUnlockAt?: string } | undefined;
   const remainingTurns = (start.maxTurns ?? 12) - turn;
   const remainingMs = start.remainingMs ?? 600_000;
@@ -115,8 +116,29 @@ export async function startXrogaModelRun(
           }
           // The server may already have charged or fenced this request. Never retry it.
           requestInterrupted = !signal.aborted;
+          const rawCode = (error as { code?: unknown } | null)?.code;
+          lastErrorCode =
+            typeof rawCode === 'string' && /^[A-Z_]{3,64}$/.test(rawCode)
+              ? rawCode
+              : error instanceof Error
+                ? `${error.name}: ${error.message}`.replace(/\s+/g, ' ').slice(0, 120)
+                : (() => {
+                    try {
+                      return JSON.stringify(error)?.replace(/\s+/g, ' ').slice(0, 160);
+                    } catch {
+                      return undefined;
+                    }
+                  })();
           return Response.json(
-            { error: { message: 'The Xroga model request could not be completed or accounted for.' } },
+            {
+              error: {
+                message: `The Xroga model request could not be completed or accounted for${
+                  typeof (error as { code?: unknown } | null)?.code === 'string' && /^[A-Z_]{3,64}$/.test((error as { code: string }).code)
+                    ? ` (${(error as { code: string }).code})`
+                    : ''
+                }.`,
+              },
+            },
             { status: 400 },
           );
         }
@@ -155,6 +177,10 @@ export async function startXrogaModelRun(
     remainingMs,
     get allowanceExhausted() {
       return !!allowance;
+    },
+    /** The server's own error code for the request that could not be verified (a fixed code, never user data). */
+    get lastErrorCode() {
+      return lastErrorCode;
     },
     get requestInterrupted() {
       return requestInterrupted;

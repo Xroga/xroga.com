@@ -1854,7 +1854,9 @@ export class RunManager {
             ? 'Paused. Resume to continue from the saved checkpoint.'
             : outOfAllowance
               ? 'Your Xroga usage allowance is used up for now. Your progress is saved. Resume when your allowance renews or you upgrade; nothing is repeated.'
-              : 'Xroga paused after a model request could not be verified. Resume to continue from the saved state.'
+              : `Xroga paused after a model request could not be verified. Resume to continue from the saved state.${
+                  canonical?.lastErrorCode ? ` (${canonical.lastErrorCode})` : ''
+                }`
           : end.reason;
         if (end.status === 'failed' && reason) await this.#notice(conversationId, reason, paused ? 'info' : 'error');
         if (end.status === 'stopped' && !paused && !this.#connectionLost.has(conversationId)) {
