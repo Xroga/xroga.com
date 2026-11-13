@@ -131,7 +131,7 @@ export function PluginPermissionControl({
     PERMISSION_OPTIONS[2]!;
 
   const menu = menuOpen ? (
-    <div
+    <span
       role="menu"
       aria-label={toolkit ? `${pluginName || 'Plugin'} permission` : 'Default Plugin permission'}
       className="xv-plugin-permission-menu absolute right-0 z-[80] mt-2 w-[min(300px,calc(100vw-24px))] overflow-hidden rounded-xl border border-[var(--border-subtle)] bg-[var(--surface-raised)] p-1 shadow-[0_16px_38px_rgba(0,0,0,0.18)]"
@@ -178,12 +178,12 @@ export function PluginPermissionControl({
           ) : null}
         </button>
       ))}
-    </div>
+    </span>
   ) : null;
 
   if (buttonOnly) {
     return (
-      <div className="relative inline-flex" ref={menuRef}>
+      <span className="relative inline-flex" ref={menuRef}>
         <button
           type="button"
           disabled={permissionLoading || permissionSaving}
@@ -216,7 +216,7 @@ export function PluginPermissionControl({
           <ChevronDown className="h-3.5 w-3.5" aria-hidden="true" />
         </button>
         {menu}
-      </div>
+      </span>
     );
   }
 
