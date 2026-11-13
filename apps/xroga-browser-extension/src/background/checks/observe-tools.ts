@@ -30,7 +30,7 @@ defineCheck({
       assert(snap.ok, `snapshot failed: ${snap.text}`);
       const data = snap.data as SnapshotData;
       assert(data.refs >= 30, `expected at least 30 refs, got ${data.refs}`);
-      assert(/<<<page-content [0-9a-f]{12}>>>/.test(snap.text), 'page text sits inside the boundary');
+      assert(/<<<page-content [0-9a-f]{12}(?: site=[^>]*)?>>>/.test(snap.text), 'page text sits inside the boundary');
       for (const s of SECRETS) assert(!JSON.stringify(snap).includes(s), `secret "${s}" leaked into the snapshot`);
       out.snapshot = {
         refs: data.refs,
@@ -79,7 +79,8 @@ defineCheck({
       errors.notInSession = (await session.call('snapshot', { tabId: 999999 })).error?.code;
       assert(errors.unknownRef === 'REF_UNKNOWN', `unknown ref: ${errors.unknownRef}`);
       assert(errors.badArgs === 'INVALID_ARGUMENT', `bad args: ${errors.badArgs}`);
-      assert(errors.unavailable === 'INVALID_ARGUMENT', `unavailable tool: ${errors.unavailable}`);
+      // fill_form is available now, so a field with an unknown ref is a REF_UNKNOWN error of that tool, not an unavailable tool.
+      assert(errors.unavailable === 'REF_UNKNOWN', `fill_form with an unknown ref: ${errors.unavailable}`);
       assert(errors.notInSession === 'TAB_NOT_IN_SESSION', `tab not in session: ${errors.notInSession}`);
       out.errors = errors;
 

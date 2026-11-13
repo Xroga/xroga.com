@@ -120,18 +120,39 @@ async function main() {
       if (/\nAllow\n/.test(String(read?.body ?? ''))) await panelOp('click', { label: 'Allow' }).catch(() => undefined);
     };
 
-    await panelOp('type-send', { text: 'Check the page titles of example.com, iana.org, en.wikipedia.org and developer.mozilla.org in parallel, then also open each site and tell me its first heading. Give a table.' });
+    const MODE = opt('--mode') ?? 'kill';
+    report.steps.mode = MODE;
+    const LONG = MODE !== 'kill';
+    const TASK = LONG
+      ? 'Open each of these Wikipedia pages one at a time and read the whole page: Python (programming language), Java (programming language), Rust (programming language), Go (programming language), C (programming language), Ruby (programming language), Perl, PHP. For each give the year it first appeared and its designer from the infobox, as a table. Do not use parallel readers.'
+      : 'Check the page titles of example.com, iana.org, en.wikipedia.org and developer.mozilla.org in parallel, then also open each site and tell me its first heading. Give a table.';
+    await panelOp('type-send', { text: TASK });
     const working = r => /is working/.test(String(r?.body ?? ''));
     let seen = false;
     for (let i = 0; i < 120 && !seen; i++) { await sleep(500); const r = await panelOp('read').catch(() => null); await allow(r); seen = working(r); }
     report.steps.workStarted = seen;
-    await sleep(12000);
-    await cdp.send('ServiceWorker.enable', {}, panelTarget.sid);
-    await sleep(300);
-    await cdp.send('ServiceWorker.stopAllWorkers', {}, panelTarget.sid);
-    report.steps.killedAt = new Date().toISOString();
-    let back = false;
-    for (let i = 0; i < 60 && !back; i++) { await sleep(500); back = (await targets()).some(t => t.type === 'service_worker' && t.url.includes(extId)); }
+    await sleep(LONG ? 45000 : 12000);
+    let back = true;
+    if (MODE === 'kill') {
+      await cdp.send('ServiceWorker.enable', {}, panelTarget.sid);
+      await sleep(300);
+      await cdp.send('ServiceWorker.stopAllWorkers', {}, panelTarget.sid);
+      report.steps.killedAt = new Date().toISOString();
+      back = false;
+      for (let i = 0; i < 60 && !back; i++) { await sleep(500); back = (await targets()).some(t => t.type === 'service_worker' && t.url.includes(extId)); }
+    } else if (MODE === 'offline') {
+      const sw = (await targets()).find(t => t.type === 'service_worker' && t.url.includes(extId));
+      const sid = await attach(sw.targetId);
+      await cdp.send('Network.enable', {}, sid);
+      await cdp.send('Network.emulateNetworkConditions', { offline: true, latency: 0, downloadThroughput: -1, uploadThroughput: -1 }, sid);
+      report.steps.offlineAt = new Date().toISOString();
+      await sleep(20000);
+      await cdp.send('Network.emulateNetworkConditions', { offline: false, latency: 0, downloadThroughput: -1, uploadThroughput: -1 }, sid);
+      report.steps.networkBack = true;
+    } else if (MODE === 'stop') {
+      await panelOp('click', { label: 'Stop' });
+      report.steps.pressedStop = new Date().toISOString();
+    }
     report.steps.workerBack = back;
     await sleep(4000);
     const read1 = await panelOp('read');
@@ -144,11 +165,13 @@ async function main() {
     };
     let resumed = false;
     if (report.steps.resumeOffered) { await panelOp('click', { label: 'Resume' }); report.steps.pressedResume = true; await sleep(3000); resumed = await settle(420_000, 'resume'); }
-    const titles = t => ['Example Domain', 'Internet Assigned Numbers Authority', 'Wikipedia', 'MDN'].filter(x => t.includes(x));
+    const KEYS = LONG ? ['Guido van Rossum', 'James Gosling', 'Ritchie', 'Matsumoto', 'Larry Wall', 'Lerdorf', 'Griesemer', 'Hoare'] : ['Example Domain', 'Internet Assigned Numbers Authority', 'Wikipedia', 'MDN'];
+    const titles = t => KEYS.filter(x => t.includes(x));
+    if (MODE !== 'kill') { await sleep(2000); const quiet = await settle(MODE === 'stop' ? 30_000 : 420_000, 'afterInterruption'); report.steps.settledAfterInterruption = quiet; }
     let transcript = String((await panelOp('read').catch(() => null))?.transcript ?? '');
     report.steps.titlesAfterResume = titles(transcript);
     let followed = true;
-    if (titles(transcript).length < 4) {
+    if (titles(transcript).length < Math.min(KEYS.length, LONG ? 7 : 4)) {
       await panelOp('type-send', { text: 'Continue and finish the table with all four sites.' });
       report.steps.followUpSent = true; await sleep(3000); followed = await settle(420_000, 'followUp');
       transcript = String((await panelOp('read').catch(() => null))?.transcript ?? '');
@@ -158,10 +181,11 @@ async function main() {
     const failures = [];
     if (!seen) failures.push('the run never started working');
     if (!back) failures.push('the service worker did not come back');
-    if (!report.steps.resumeOffered) failures.push('the panel did not offer Resume after the kill');
+    if (MODE === 'kill' && !report.steps.resumeOffered) failures.push('the panel did not offer Resume after the kill');
+    if (MODE === 'stop' && report.steps.settledAfterInterruption === false) failures.push('the run kept working after Stop');
     if (report.steps.pressedResume && !resumed) failures.push('the resumed run did not settle');
     if (!followed) failures.push('the follow-up run did not settle');
-    if (titles(transcript).length < 4) failures.push('the final answer lacks some sites: ' + JSON.stringify(titles(transcript)));
+    if (titles(transcript).length < Math.min(KEYS.length, LONG ? 7 : 4)) failures.push('the final answer lacks some sites: ' + JSON.stringify(titles(transcript)));
     if (/truncat|cut off|won.t guess|no observed|could not (?:read|be read)/i.test(transcript.slice(-1500))) failures.push('the final answer says some pages were not read');
     report.failures = failures; report.ok = failures.length === 0;
   } catch (error) {

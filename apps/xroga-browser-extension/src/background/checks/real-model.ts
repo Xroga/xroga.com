@@ -80,6 +80,11 @@ defineCheck({
               await panel(page.id!, 'click', { label: 'Allow' }).catch(() => undefined);
             }
           }
+          // A file the agent made waits for the person to press Save (a card with Save, Save as and Skip): the check plays the person only with args.approve.
+          if (args.approve && status === 'awaiting_user' && /Save this file\?/.test(String(read.body ?? '')) && /\nSave\n/.test(String(read.body ?? ''))) {
+            (report.polls as unknown[]).push({ i, pressed: 'Save', file: String(read.body ?? '').match(/[\w.-]+\.(?:csv|md|json|txt|html)/)?.[0] });
+            await panel(page.id!, 'click', { label: 'Save' }).catch(() => undefined);
+          }
           // A hand-over (ask_user takeover) is answered by the person pressing Done; the check plays the person only when args.done is set.
           if (args.done && status === 'awaiting_user' && /\nDone\n/.test(String(read.body ?? ''))) {
             (report.polls as unknown[]).push({ i, pressed: 'Done', body: String(read.body ?? '').slice(-300) });
@@ -101,6 +106,8 @@ defineCheck({
             for (const p of e.message.parts) {
               if (p.type !== 'tool-result') continue;
               used.push(p.toolName);
+              // args.trace keeps the start of every tool result, to see what the model was told at each step.
+              if (args.trace) evidence.push(`${p.toolName} → ${p.text.replace(/\s+/g, ' ').slice(0, 320)}`);
               const post = (e.result as { receipt?: { postcondition?: { status?: string; detail?: string } } } | undefined)?.receipt?.postcondition;
               if (post) evidence.push(`${p.toolName}: expect ${post.status}${post.detail ? ` (${post.detail.slice(0, 100)})` : ''}`);
               if (p.toolName === 'confirm_download') evidence.push(p.text.slice(0, 160));

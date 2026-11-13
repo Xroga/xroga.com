@@ -54,6 +54,7 @@ import './assumptions';
 import './host-connection';
 import './record-ax';
 import './observe-tools';
+import './snapshot-rows';
 import './observe-timing';
 import './navigation-policy';
 import './scenarios';

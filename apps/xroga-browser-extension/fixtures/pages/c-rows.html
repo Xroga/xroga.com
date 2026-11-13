@@ -1,0 +1,15 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Rows with a hover-only Delete button</title>
+<style>
+  li { list-style: none; position: relative; padding: 8px 40px 8px 8px; border-bottom: 1px solid #ddd; }
+  li .destroy { display: none; position: absolute; right: 8px; top: 8px; }
+  li:hover .destroy { display: inline-block; }
+</style>
+<h1>todos</h1>
+<input aria-label="New Todo Input" placeholder="What needs to be done?">
+<ul class="todo-list">
+  <li><input type="checkbox" class="toggle" aria-label="Toggle Todo"><label>buy milk</label><button class="destroy" aria-label="Delete todo">x</button></li>
+  <li><input type="checkbox" class="toggle" aria-label="Toggle Todo"><label>call bank</label><button class="destroy" aria-label="Delete todo">x</button></li>
+  <li><input type="checkbox" class="toggle" aria-label="Toggle Todo"><label>write report</label><button class="destroy" aria-label="Delete todo">x</button></li>
+</ul>

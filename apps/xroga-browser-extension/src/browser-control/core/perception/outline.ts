@@ -718,13 +718,50 @@ export interface RenderedLine {
   node: ONode;
 }
 
+const ROW_ROLES = new Set(['listitem', 'row', 'treeitem', 'option', 'article']);
+
+/** The first text a node holds, a few levels down: how a row with no name of its own is told apart. */
+function firstText(n: ONode, depth = 0): string {
+  for (const c of n.children) {
+    if (c.kind === 'text' && c.name.trim()) return c.name.trim();
+    if (depth < 3 && c.kind === 'element') {
+      const inner = c.name.trim() && c.role !== 'checkbox' && !c.ref ? c.name.trim() : firstText(c, depth + 1);
+      if (inner) return inner;
+    }
+  }
+  return '';
+}
+
 export function renderLines(roots: ONode[]): RenderedLine[] {
   const lines: RenderedLine[] = [];
-  const walk = (n: ONode, depth: number) => {
-    lines.push({ text: `${'  '.repeat(depth)}${renderLine(n)}`, depth, ref: n.ref, node: n });
-    n.children.forEach(c => walk(c, depth + 1));
+  // Controls that share a role and a name (a "Delete" button on every row) cannot be told apart by their line alone, so each
+  // says which row it is in: the nearest enclosing node that has a name or text of its own.
+  const counts = new Map<string, number>();
+  const count = (n: ONode) => {
+    if (n.kind === 'element' && n.ref && n.name) counts.set(`${n.role}|${n.name}`, (counts.get(`${n.role}|${n.name}`) ?? 0) + 1);
+    n.children.forEach(count);
   };
-  roots.forEach(r => walk(r, 0));
+  roots.forEach(count);
+  const walk = (n: ONode, depth: number, ancestors: ONode[]) => {
+    let text = `${'  '.repeat(depth)}${renderLine(n)}`;
+    // A control inside a list item or table row always says which row (a button revealed by hovering one row is the only one on the
+    // page, yet the model still has to know whose it is); elsewhere only when its role and name are shared with another control.
+    const rowAncestor = [...ancestors].reverse().find(a => ROW_ROLES.has(a.role));
+    if (n.kind === 'element' && n.ref && n.name && (rowAncestor || (counts.get(`${n.role}|${n.name}`) ?? 0) > 1)) {
+      const candidates = rowAncestor ? [rowAncestor] : [...ancestors].reverse();
+      for (const a of candidates) {
+        if (a.role === 'document' || a.role === 'RootWebArea') break;
+        const context = (a.name.trim() || firstText(a)).slice(0, 60);
+        if (context && context !== n.name) {
+          text += ` (in ${quote(context, 60)})`;
+          break;
+        }
+      }
+    }
+    lines.push({ text, depth, ref: n.ref, node: n });
+    n.children.forEach(c => walk(c, depth + 1, [...ancestors, n]));
+  };
+  roots.forEach(r => walk(r, 0, []));
   return lines;
 }
 
