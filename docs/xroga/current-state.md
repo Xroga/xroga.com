@@ -1,20 +1,20 @@
 # Xroga repository truth map
 
-Source SHA: `968483bfa8fc057d9c057b97a7608d62674dcc6f`. Branch observed: ``. Audit started: 2026-11-09T15:24:44.009Z.
+Source SHA: `14fe611eebe78310fc4f3f8ea82c7b8e3c6cc95d`. Branch observed: `fix/explicit-composio-toolkit-routing-20261114`. Audit started: 2026-11-13T21:38:43.299Z.
 
 This inventory records static source and call-path evidence. A mounted endpoint is reachable in source; that does not certify live success, tenant safety, approval enforcement, or completion. All implementation surfaces retain an unverified/partial/placeholder state until their own acceptance tests establish behavior. No architecture was replaced and no production operations were performed.
 
 ## Counts
 
-- surfaces: 1912
+- surfaces: 1913
 - routeRegistrations: 395
 - routes: 331
 - reachableRoutes: 240
 - queues: 4
 - migrations: 162
 - workflows: 21
-- testSuites: 1103
-- declaredTests: 7418
+- testSuites: 1106
+- declaredTests: 7429
 - classifiedMarkers: 418
 - reachableMarkers: 352
 - absentRequiredPaths: 5
@@ -74,7 +74,7 @@ This inventory records static source and call-path evidence. A mounted endpoint 
 ## Review candidates
 
 - **execution_control_planes**: backend/src/ai/softwareAgent/SoftwareAgentRuntime.ts, backend/src/ai/taskGraphRunner.ts, backend/src/lib/adaptiveOrchestrator.ts, backend/src/operations/operationsEngine.ts. Multiple related boundaries exist. This is a review candidate, not a conclusion that implementations are redundant; compare callers, authority, durability and evidence before changing architecture.
-- **approval_contracts**: backend/src/capabilities/modules/businessAction.ts, backend/src/operations/operationsEngine.ts, backend/src/operations/permissions.ts, backend/src/services/integrations/businessAction.ts, backend/src/services/integrations/businessActionConfirmations.ts. Multiple related boundaries exist. This is a review candidate, not a conclusion that implementations are redundant; compare callers, authority, durability and evidence before changing architecture.
+- **approval_contracts**: backend/src/capabilities/modules/businessAction.ts, backend/src/operations/operationsEngine.ts, backend/src/operations/permissions.ts, backend/src/services/integrations/businessAction.ts, backend/src/services/integrations/businessActionConfirmations.ts, backend/src/services/integrations/businessActionResultUi.ts. Multiple related boundaries exist. This is a review candidate, not a conclusion that implementations are redundant; compare callers, authority, durability and evidence before changing architecture.
 - **cost_accounting**: backend/src/ai/providerBudget.ts, backend/src/ai/quota.ts, backend/src/ai/universal/costLedger.ts, backend/src/services/BillingService.ts. Multiple related boundaries exist. This is a review candidate, not a conclusion that implementations are redundant; compare callers, authority, durability and evidence before changing architecture.
 - **credential_persistence**: backend/src/services/integrations/githubTokenStore.ts, backend/src/services/integrations/oauthPkceStore.ts, backend/src/services/publish/chromeWebStore.ts, backend/src/services/publish/easCredentials.ts, backend/src/services/publish/electronSecrets.ts, frontend/src/components/integrations/CustomCredentialsSection.tsx. Multiple related boundaries exist. This is a review candidate, not a conclusion that implementations are redundant; compare callers, authority, durability and evidence before changing architecture.
 - **browser_execution**: backend/src/lib/browserbase.ts, backend/src/middleware/runtimePreviewGateway.ts, backend/src/sandbox/flyMachineSandbox.ts, backend/src/sandbox/remoteSandbox.ts, backend/src/synthesis/browserVerificationAdapter.ts. Multiple related boundaries exist. This is a review candidate, not a conclusion that implementations are redundant; compare callers, authority, durability and evidence before changing architecture.

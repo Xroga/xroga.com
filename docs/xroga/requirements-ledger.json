@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "968483bfa8fc057d9c057b97a7608d62674dcc6f",
+  "source_sha": "14fe611eebe78310fc4f3f8ea82c7b8e3c6cc95d",
   "assessment": "AVAILABLE_SOURCE_RECONCILIATION",
   "requirements": [
     {
@@ -1055,7 +1055,8 @@
         "backend/src/operations/operationsEngine.ts",
         "backend/src/operations/permissions.ts",
         "backend/src/services/integrations/businessAction.ts",
-        "backend/src/services/integrations/businessActionConfirmations.ts"
+        "backend/src/services/integrations/businessActionConfirmations.ts",
+        "backend/src/services/integrations/businessActionResultUi.ts"
       ],
       "implementation_owner_command": "008",
       "priority": "P0",
@@ -1854,6 +1855,7 @@
         "backend/src/capabilities/modules/businessAction.ts",
         "backend/src/services/integrations/businessAction.ts",
         "backend/src/services/integrations/businessActionConfirmations.ts",
+        "backend/src/services/integrations/businessActionResultUi.ts",
         "backend/src/services/integrations/composioClient.ts"
       ],
       "implementation_owner_command": "MISSION-027",
