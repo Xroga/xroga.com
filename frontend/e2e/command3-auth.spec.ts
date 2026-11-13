@@ -1342,22 +1342,22 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   const actionsMenu = page.getByRole('dialog', { name: 'Composer actions' });
   await expect(actionsMenu.getByRole('button', { name: /Add files or photos/ })).toBeVisible();
   await expect(actionsMenu.getByRole('button', { name: 'Slash commands' })).toBeVisible();
-  await expect(actionsMenu.getByRole('button', { name: /Plugins/ })).toBeVisible();
+  await expect(actionsMenu.getByRole('button', { name: /Connect Apps/ })).toBeVisible();
   await expect(actionsMenu.getByRole('button', { name: /Plan before build/ })).toBeVisible();
   await expect(actionsMenu.getByRole('button', { name: /Debug an error/ })).toBeVisible();
   await expect(actionsMenu.getByRole('button', { name: /Skills/ })).toBeVisible();
   await expect(actionsMenu.getByRole('button', { name: /Rules/ })).toBeVisible();
   // The menu's attachment geometry is asserted once, earlier in this test. What is
   // checked here is its contents and the Integrations flow.
-  await actionsMenu.getByRole('button', { name: /Plugins/ }).click();
+  await actionsMenu.getByRole('button', { name: /Connect Apps/ }).click();
   // Accounts with GitHub authority see the full manager; a clean authenticated
   // account sees the truthful first-connection state. The transient readiness probe
   // may appear between them, but it is not the completed interaction state.
   const integrationsDialog = page.getByRole('dialog', {
-    name: /^(?:Plugins|Integrations|Start with GitHub)$/,
+    name: /^(?:Connect Apps|Integrations|Start with GitHub)$/,
   });
   await expect(integrationsDialog).toBeVisible({ timeout: 10_000 });
-  await integrationsDialog.getByRole('button', { name: /^Close(?: plugins| integrations)?$/i }).click();
+  await integrationsDialog.getByRole('button', { name: /^Close(?: Connect Apps| integrations)?$/i }).click();
 
   await composerActions.click();
   await expect(actionsMenu).toBeVisible();

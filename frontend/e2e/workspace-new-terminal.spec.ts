@@ -118,7 +118,7 @@ test('canonical public composers preserve the approved Plus controls without a s
   await expect(actions.locator('svg.lucide-plus')).toHaveCount(1);
   await expect(actions.locator('svg')).toHaveCount(1);
   await expect(page.locator('.xv-chatbar-solid').getByRole('button', { name: 'Projects', exact: true })).toBeVisible();
-  await expect(page.locator('.xv-chatbar-solid').getByRole('button', { name: 'Plugins', exact: true })).toBeVisible();
+  await expect(page.locator('.xv-chatbar-solid').getByRole('button', { name: 'Connect Apps', exact: true })).toBeVisible();
   await expect(composer).toHaveCount(1);
 });
 
