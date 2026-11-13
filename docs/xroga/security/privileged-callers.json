@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "95a3cd2f30857ef37b7fa4de18106a7c4230be569690f210573413dd030eccb5",
+  "reviewRegistrySha256": "399227a4350e05298af49b6ea33c28fad914a68e4e69dbcd69b81bda063430d6",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -6572,7 +6572,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "69d6ffd06737331aba28"
+        "id": "227a815ae8e2c760bd61"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -6596,7 +6596,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "fccd4b3be4fb6d7b3e31"
+        "id": "14dce094280fa3a3b31a"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -10408,7 +10408,7 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "69d6ffd06737331aba28"
+        "id": "227a815ae8e2c760bd61"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -10424,7 +10424,7 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "fccd4b3be4fb6d7b3e31"
+        "id": "14dce094280fa3a3b31a"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -32274,7 +32274,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "0dbd96995b155733fa243bf3ce5cab4f3a5e374f86e566ff29f850f3cae8f8c1",
+      "sourceSha256": "b9690880a80670c7b533e7701c2de4ab0493d7fc8821563b1faa06dea52c472b",
       "semanticReview": {
         "authority": "Native Array.from copies a local Map iterator into React state for rendering validated plugin search results. This disposition covers only that conversion, not adjacent connector search or any consequential integration action.",
         "reason": "Exact current-source receiver and surrounding data flow were inspected. Only the native in-memory conversion is excluded. No adjacent authority, persistence or provider boundary is certified.",
@@ -32287,15 +32287,15 @@
       }
     },
     {
-      "id": "69d6ffd06737331aba28",
+      "id": "227a815ae8e2c760bd61",
       "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "line": 385,
+      "line": 389,
       "enclosing": "TerminalChatBar",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "0a89d45270f28d036dfd6a647a1b812b5661f58c82a6b975f21de8c3b115c05d",
+      "sourceSha256": "56771761395d13094fd28183ae415e0d5bddeae383e8f43d49490de6758c5b73",
       "semanticReview": {
         "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in TerminalChatBar, with no database or Storage client receiver.",
         "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
@@ -32513,15 +32513,15 @@
       }
     },
     {
-      "id": "fccd4b3be4fb6d7b3e31",
+      "id": "14dce094280fa3a3b31a",
       "path": "frontend/src/lib/formatAiMarkdown.tsx",
-      "line": 638,
+      "line": 630,
       "enclosing": "decodeBase64UrlUtf8",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "231169928fb8f5a9683adabf0525102c69c862733d02ccb1a4600146cd4d8cb8",
+      "sourceSha256": "d83c29dbdfa41ef3a94c511472f94e64f91f463614f26780d181d351c017a1fb",
       "semanticReview": {
         "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in decodeBase64UrlUtf8, with no database or Storage client receiver.",
         "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh. Re-bound 2026-11-04: Diff from the reviewed source d80e1ce5489b is only `export` added to BusinessActionConfirmationInline so the V2 turn can render the existing confirmation review. The reviewed call (decodeBase64UrlUtf8 Array/Uint8Array conversion) is unchanged; no new call, receiver, persistence or egress was added.",
