@@ -46,7 +46,7 @@
       "path": "docs/xroga/evidence/command-010/MODEL-DISPATCH-PROOF.json",
       "archive": "docs/xroga/evidence/command-010/historical/MODEL-DISPATCH-PROOF-87e33b94.json",
       "historicalSha256": "7b04f1a944b9258329978770b9e273804653d5c7464a4ccfb2ac6c2e6f6849e1",
-      "currentSha256": "3526098df6953a037a6905a8ad051d6af652381932ff9eaa3fa388010441c437",
+      "currentSha256": "e849e4d1a31465f0cd4457594f786ff8bc974cca8657bcbd479f9b33d0071615",
       "beforeNativeOpenUiBenchmarkSha256": "e6f50ffc7aef52b6cc365dfe72ec89183242c2c74976f1dcc2f97ba815f68a22",
       "beforeNativePublicationSha256": "f2467eb712a137ff897be9157c16cf8e17311597f712a83aa0280ca8aed27eac",
       "nativePublicationContinuation": "docs/xroga/evidence/command-010/NATIVE-ARTIFACT-AUTHORITY-20261028.json",
