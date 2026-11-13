@@ -1,5 +1,5 @@
 .mark { position:relative; display:inline-grid; place-items:center; width:2.15rem; height:2.15rem; flex:none; isolation:isolate; background:transparent; }
-.art { width:132%; height:132%; max-width:none; object-fit:contain; filter:drop-shadow(0 0 4px #e6ecf555); transform-origin:center; }
+.art { display:block; width:155%; aspect-ratio:536/267; flex:none; background:currentColor; -webkit-mask:url('/black-hole-user-icon.svg') center / contain no-repeat; mask:url('/black-hole-user-icon.svg') center / contain no-repeat; transform-origin:center; }
 .active .art { animation:black-hole-breathe 4.8s ease-in-out infinite; }
 .wordmark { display:inline-flex; align-items:center; gap:.35rem; color:var(--foreground); white-space:nowrap; user-select:none; font-size:11px; font-weight:650; }
 .brand { margin-left:.05rem; }

@@ -30,20 +30,18 @@ export function BlackHoleVButton({ className, compact = false }: { className?: s
       <ChatBarPortalPopover open={open} onClose={() => setOpen(false)} anchorRef={btnRef} width={250}>
         <div className={styles.modelPanel} data-testid="black-hole-model-panel">
           <div className={styles.modelHeading}><strong>Xroga · Black Hole</strong><span>Auto</span></div>
-          <p>Super Intelligence for your work. Describe what you need; Xroga chooses the available capabilities automatically.</p>
-          <div className={styles.modelSafety}><ShieldCheck size={14} /><span>Sensitive actions require approval.</span></div>
+          <p>Xroga chooses available capabilities for your task.</p>
+          <div className={styles.modelSafety}><ShieldCheck size={13} aria-hidden="true" /><span>Sensitive actions require approval.</span></div>
           <div className={styles.usageMeters} aria-live="polite">
-            {usageError ? <span>Usage is unavailable right now.</span> : ([
-              ['Capacity remaining', usage?.capacityRemainingPercent],
-              ['Available now', usage?.availableNowPercent],
-            ] as const).map(([label, value]) => <div className={styles.usageMeter} key={label}>
-              <div><span>{label}</span><strong>{usage ? value == null ? 'Unavailable' : `${Math.round(value)}%` : 'Checking…'}</strong></div>
-              <div className={styles.usageTrack} role="progressbar" aria-label={label} aria-valuemin={0} aria-valuemax={100} aria-valuenow={value == null ? undefined : Math.round(value)}>
-                <span className={usage ? undefined : styles.usageLoading} style={usage ? { width: `${Math.max(0, Math.min(100, value ?? 0))}%` } : undefined} />
+            {usageError ? <span>Usage is unavailable right now.</span> : <div className={styles.usageMeter}>
+              <div><span>Remaining</span><strong>{usage ? (usage.capacityRemainingPercent ?? usage.availableNowPercent) == null ? 'Unavailable' : `${Math.round(usage.capacityRemainingPercent ?? usage.availableNowPercent ?? 0)}%` : 'Checking…'}</strong></div>
+              <div className={styles.usageTrack} role="progressbar" aria-label="Capacity remaining" aria-valuemin={0} aria-valuemax={100}
+                aria-valuenow={usage && (usage.capacityRemainingPercent ?? usage.availableNowPercent) != null ? Math.round(usage.capacityRemainingPercent ?? usage.availableNowPercent ?? 0) : undefined}>
+                <span className={usage ? undefined : styles.usageLoading} style={usage ? { width: `${Math.max(0, Math.min(100, usage.capacityRemainingPercent ?? usage.availableNowPercent ?? 0))}%` } : undefined} />
               </div>
-            </div>)}
+            </div>}
           </div>
-          <a href="/dashboard#plan-usage" className={styles.modelSafety}>View plan and usage</a>
+          <a href="/dashboard#plan-usage" className={styles.modelPlanLink}>View plan and usage</a>
           {open ? <ModelAppPermissions /> : null}
         </div>
       </ChatBarPortalPopover>
