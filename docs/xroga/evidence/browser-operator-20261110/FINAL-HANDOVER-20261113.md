@@ -155,3 +155,9 @@ RFC `docs/xroga/security/rfcs/RFC-CUSTOM-MCP-EXECUTION.md`, stage 1 (read pins o
 Four server gates had to accept an owner-pinned read, each found only by the live run (unit tests cannot see them): the read-name rule (a read needs a reading word in its name), "discovered in this session" (the provider search never lists custom tools), twice (before the card and when executing), and the execution-time risk recheck (name classifies unknown, plan says read). Each now accepts a tool only if its pin verifies against the live definition with the flag on and its name does not read as a change; no other check changed.
 
 Not done: write pins, a price ceiling and AAL2 for pinning (RFC open questions 2-4); the independent security review; revocation on re-sync at the sync itself (it happens at the next call); the changed-definition test used an altered stored digest because the Monid server's own definition cannot be changed from here. The pin is left revoked on staging; the flag stays on only for the tagged staging revision.
+
+## 13. Final package (supersedes section 1)
+
+Install folder `C:\xr-review-builds\xroga-extension-staging-0ff582593` holds extension build `bc8293acd` (source unchanged since; the later commits are backend, frontend and docs). Zip `C:\xr-review-builds\xroga-browser-operator-staging-0.2.8-bc8293acd.zip`, SHA-256 `5f6d9d2207b1b184dccd44ba8c1ea7e6cb7384ecd259c3f662cfa3f5f2df9ce7`. Extension typecheck clean; agent, xroga, extension and browser-control unit suites pass (753 tests, 82 files). Staging: tag `browser-op-1110` on the pin4 image (flag on, 0% traffic); my superseded revisions deleted.
+
+Open items, none of which can be closed from here: the independent security review (Composio egress path and the custom MCP pin gate); a vision-hosting decision for pixel-only editors; write pins and a price ceiling for custom MCP (RFC questions 2-4); the Monid plugin and the "Xroga test 2" Gmail draft left for the owner to delete.
