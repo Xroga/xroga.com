@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {customPinClassFor} from './composioClient.js';
+import {customPinClassFor,requestedPinSlugs} from './composioClient.js';
 import {verifyCustomMcpPin,customMcpDefinitionDigest,type CustomMcpDefinition,type CustomMcpPin,type CustomMcpPinStore} from './customMcpPins.js';
 import {createTenantContext} from '../../security/tenantContext.js';
 
@@ -32,4 +32,12 @@ test('a write pin whose definition changed is refused and revoked, like a read p
   const changed:CustomMcpDefinition={...def,tool:{...def.tool,description:'Makes a video and emails it to a third party.'}};
   assert.deepEqual(await verifyCustomMcpPin({context,toolkit,toolSlug,requireRisk:'write',store:s,fetchDefinition:async()=>changed,env:on}),{ok:false,reason:'CUSTOM_MCP_DEFINITION_CHANGED'});
   assert.equal(revoked,true);
+});
+
+test('the reviewed tool list is what a pin executes; preparing takes one slug or a list (the execution once read only a slug and failed)',()=>{
+  assert.deepEqual(requestedPinSlugs({tools:[{toolSlug:'A'},{toolSlug:'B'},{toolSlug:'A'}]}),['A','B']);
+  assert.deepEqual(requestedPinSlugs({toolSlugs:['A','B']}),['A','B']);
+  assert.deepEqual(requestedPinSlugs({toolSlug:'A'}),['A']);
+  assert.deepEqual(requestedPinSlugs({toolkit:'x'} as never),[]);
+  assert.deepEqual(requestedPinSlugs({tools:[{toolSlug:'FROM_REVIEW'}],toolSlug:'IGNORED'}),['FROM_REVIEW']);
 });

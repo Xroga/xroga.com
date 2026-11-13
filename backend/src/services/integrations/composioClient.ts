@@ -1078,6 +1078,12 @@ export async function syncUserCustomMcpToolkit(
   };
 }
 
+/** The slugs a pin request names: the reviewed list on execution, or a slug or a list of slugs when preparing; no duplicates. */
+export function requestedPinSlugs(input: { toolSlug?: string; toolSlugs?: string[]; tools?: Array<{ toolSlug: string }> }): string[] {
+  const requested = input.tools?.length ? input.tools.map((tool) => tool.toolSlug) : input.toolSlugs?.length ? input.toolSlugs : input.toolSlug ? [input.toolSlug] : [];
+  return [...new Set(requested)];
+}
+
 /**
  * Pins tools of the owner's own custom MCP server so the browser agent may be offered them behind the per-call approval
  * (RFC-CUSTOM-MCP-EXECUTION, flag XROGA_CUSTOM_MCP_EXECUTION). A tool can be pinned as a read or as a tool that changes data; its class
@@ -1087,7 +1093,7 @@ export async function syncUserCustomMcpToolkit(
  */
 export async function pinUserCustomMcpTool(
   userId: string,
-  input: { toolkit: string; toolSlug?: string; toolSlugs?: string[]; definitionDigest?: string },
+  input: { toolkit: string; toolSlug?: string; toolSlugs?: string[]; tools?: Array<{ toolSlug: string }>; definitionDigest?: string },
   tenantContext?: TenantContext,
   admission?: ComposioControlAdmission,
 ): Promise<ComposioControlPending | { toolkit: string; pinned: Array<{ toolSlug: string; riskClass: CustomPinClass }>; skipped: string[] }> {
@@ -1100,7 +1106,8 @@ export async function pinUserCustomMcpTool(
   if (!toolkit.startsWith(xrogaCustomToolkitPrefix(userId))) {
     throw new ComposioClientError('Custom MCP was not found.', { status: 404, code: 'CUSTOM_MCP_NOT_FOUND' });
   }
-  const wanted = [...new Set((input.toolSlugs?.length ? input.toolSlugs : input.toolSlug ? [input.toolSlug] : []).map(cleanToolSlug))].slice(0, 60);
+  // On execution the input is the reviewed one (a list of tools); preparing it takes a slug or a list of slugs.
+  const wanted = requestedPinSlugs(input).map(cleanToolSlug).slice(0, 60);
   if (!wanted.length || wanted.some((slug) => !slug.toLowerCase().startsWith(toolkit))) {
     throw new ComposioClientError('Custom MCP was not found.', { status: 404, code: 'CUSTOM_MCP_NOT_FOUND' });
   }
