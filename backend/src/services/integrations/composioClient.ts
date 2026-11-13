@@ -382,6 +382,7 @@ export interface XrogaConnectSearchResult {
   mode: XrogaConnectMode;
   tools: XrogaConnectTool[];
   toolkits: XrogaConnectToolkit[];
+  explicitlyRequestedToolkit?: string;
   guidance?: string;
   skill?: XrogaConnectSkill;
 }
@@ -1825,6 +1826,25 @@ function mapSearchTool(
   };
 }
 
+/** Keep explicit app names local; discovery receives only the app's public slug. */
+export function explicitlyNamedConnectedToolkit(
+  query: string,
+  toolkits: Pick<XrogaConnectToolkit, 'toolkit' | 'name'>[],
+): string | undefined {
+  const normalizedQuery = ` ${query.toLowerCase().replace(/[^a-z0-9]+/g, ' ').replace(/\s+/g, ' ').trim()} `;
+  const compactQuery = normalizedQuery.replace(/[^a-z0-9]/g, '');
+  const matches = toolkits.filter((item) => {
+    const names = [item.name, item.toolkit]
+      .filter((name): name is string => typeof name === 'string' && name.trim().length >= 3)
+      .map((name) => name.toLowerCase().replace(/[^a-z0-9]+/g, ' ').replace(/\s+/g, ' ').trim());
+    return names.some((name) =>
+      normalizedQuery.includes(` ${name} `) ||
+      (name.replace(/ /g, '').length >= 6 && compactQuery.includes(name.replace(/ /g, ''))),
+    );
+  });
+  return matches.length === 1 ? matches[0]!.toolkit.toLowerCase() : undefined;
+}
+
 export async function searchComposioTools(
   userId: string,
   input: {
@@ -1858,7 +1878,8 @@ export async function searchComposioTools(
   // Names, recipients, private project text and query values stay local for the
   // existing selector. Metadata never supplies execution authority.
   const connected=await listSessionComposioToolkits(userId,{sessionId:session.session_id,mode,connectedOnly:true},actor);
-  const apps=connected.filter(item=>item.connected&&!item.toolkit.toLowerCase().startsWith('custom_')&&/^[a-z0-9_-]{1,80}$/i.test(item.toolkit)).map(item=>item.toolkit.toLowerCase()).slice(0,20);
+  const explicitlyRequestedToolkit=explicitlyNamedConnectedToolkit(query,connected);
+  const apps=connected.filter(item=>item.connected&&!item.toolkit.toLowerCase().startsWith('custom_')&&/^[a-z0-9_-]{1,80}$/i.test(item.toolkit)).map(item=>item.toolkit.toLowerCase()).filter(slug=>!explicitlyRequestedToolkit||slug===explicitlyRequestedToolkit).slice(0,20);
   const vocabulary=['get','list','find','search','read','send','create','update','delete','archive','upload','download','publish','message','email','task','issue','file','event','contact','row','record','invoice','calendar','channel','document','spreadsheet'];
   const words=new Set(query.toLowerCase().match(/[a-z]+/g)??[]),terms=vocabulary.filter(word=>words.has(word));
   const publicQuery=`Find ${mode} tools for ${apps.join(', ')||'available applications'}: ${terms.join(' ')||'available operations'}.`;
@@ -1922,6 +1943,7 @@ export async function searchComposioTools(
   return {
     sessionId: session.session_id,
     mode,
+    ...(explicitlyRequestedToolkit ? { explicitlyRequestedToolkit } : {}),
     tools,
     toolkits,
     guidance: searchResult?.execution_guidance,
