@@ -4,6 +4,7 @@ import { createTenantContext } from '../../security/tenantContext.js';
 import { nativeReleaseFixture } from '../publish/__tests__/nativeReleaseFixture.js';
 import { actionPlanDigest, type BusinessActionPlan } from './businessAction.js';
 import { confirmBusinessAction, createBusinessActionConfirmation } from './businessActionConfirmations.js';
+import { createActionComposioSession } from './composioClient.js';
 
 const OWNER = '11111111-1111-4111-8111-111111111111';
 const ACCOUNT = 'ca_synthetic_gmail';
@@ -87,3 +88,30 @@ async function exercise(t: TestContext,
 test('confirmed single-account Gmail action omits unsupported account field', t => exercise(t, 'single'));
 test('confirmed action fails closed if disabled multi-account session has two Gmail accounts', t => exercise(t, 'ambiguous'));
 test('confirmed multi-account action pins the approved Gmail account', t => exercise(t, 'multi'));
+
+test('new Composio sessions require exact account selection', async t => {
+  const priorKey = process.env.COMPOSIO_API_KEY;
+  process.env.COMPOSIO_API_KEY = 'synthetic-composio-key';
+  t.after(() => {
+    if (priorKey === undefined) delete process.env.COMPOSIO_API_KEY;
+    else process.env.COMPOSIO_API_KEY = priorKey;
+  });
+  const context = createTenantContext({ userId: OWNER, via: 'remote_getuser' });
+  let posts = 0;
+  t.mock.method(globalThis, 'fetch', async (input: Parameters<typeof fetch>[0], init?: RequestInit) => {
+    const url = new URL(String(input));
+    assert.equal(url.origin, 'https://backend.composio.dev');
+    if (init?.method === 'POST') {
+      posts++;
+      const body = JSON.parse(String(init.body));
+      assert.equal(body.user_id, `xroga:${OWNER}`);
+      assert.deepEqual(body.multi_account, { enable: true, require_explicit_selection: true });
+      assert.equal(body.execute.enable_multi_execute, false);
+    }
+    return Response.json({ session_id: 'trs_synthetic', config: {
+      user_id: `xroga:${OWNER}`, multi_account: { enable: true, require_explicit_selection: true },
+    } });
+  });
+  await createActionComposioSession(OWNER, context);
+  assert.equal(posts, 1);
+});
