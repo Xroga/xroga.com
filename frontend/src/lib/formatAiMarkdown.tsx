@@ -30,6 +30,7 @@ import {
 } from './oauthPopupResult';
 
 import { xrogaConnect } from './xrogaConnect';
+import { compactConnectedAppConfirmationMarkdown, previewConnectedAppResult } from './connectedAppResult';
 import { RESEARCH_RECEIPT_AVAILABLE } from './researchHandoff';
 
 function joinClasses(
@@ -242,6 +243,7 @@ export function BusinessActionConfirmationInline({
       false,
     );
   const [detailsOpen, setDetailsOpen] = useState(true);
+  const [resultOpen, setResultOpen] = useState(false);
 
   useEffect(
     () => {
@@ -465,6 +467,9 @@ export function BusinessActionConfirmationInline({
   const status =
     confirmation
       ?.status;
+  const resultPreview = notice && !failed && status === 'consumed'
+    ? previewConnectedAppResult(notice)
+    : null;
 
   return (
     <span className="my-2 flex w-full max-w-xl flex-col gap-2 rounded-xl border border-[var(--card-border)]/70 bg-[var(--foreground)]/[0.025] p-3 align-top">
@@ -551,15 +556,27 @@ export function BusinessActionConfirmationInline({
       ) : null}
 
       {notice ? (
-        <span
-          className={joinClasses(
-            'text-[12px] font-medium',
-            failed
-              ? 'text-red-500'
-              : 'text-[var(--foreground)]/75',
-          )}
-        >
-          {notice}
+        <span className="flex min-w-0 flex-col gap-1">
+          <span className={joinClasses('text-[12px] font-medium', failed ? 'text-red-500' : 'text-[var(--foreground)]/75')}>
+            {resultPreview?.summary ?? notice}
+          </span>
+          {resultPreview?.details ? (
+            <>
+              <button
+                type="button"
+                aria-expanded={resultOpen}
+                onClick={() => setResultOpen((open) => !open)}
+                className="self-start text-[11px] text-[var(--foreground)]/65 underline-offset-2 hover:underline"
+              >
+                {resultOpen ? 'Hide provider result' : 'View provider result'}
+              </button>
+              {resultOpen ? (
+                <code className="block max-h-48 overflow-auto whitespace-pre-wrap break-all text-[10px] text-[var(--foreground)]/70">
+                  {resultPreview.details}
+                </code>
+              ) : null}
+            </>
+          ) : null}
         </span>
       ) : null}
     </span>
@@ -1693,7 +1710,8 @@ export function FormattedAiMarkdown({
   sources?: CitationSource[];
   afterIntro?: React.ReactNode;
 }) {
-  const normalized = streaming ? content.replace(/\r\n/g, '\n') : structureLongProse(content.replace(/\r\n/g, '\n'));
+  const prepared = content.replace(/\r\n/g, '\n');
+  const normalized = streaming ? prepared : structureLongProse(compactConnectedAppConfirmationMarkdown(prepared));
   const opening = normalized.match(/^([^\n]+(?:\n(?!\n)[^\n]+)*)\n\s*\n/);
   const lead = !streaming && (normalized.length > 500 || afterIntro) && opening && opening[1].length >= 25 && opening[1].length <= 500 && !/^\s*(?:[#>*`\-|\d+\.]|!\[)/.test(opening[1]) ? opening[1] : null;
   const introParts = afterIntro && !lead && !streaming ? normalized.split(/\n\s*\n/) : [];

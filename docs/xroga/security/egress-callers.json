@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "b1e3aa717bf77de548b615d1a2708a60fde6ff1da6ca77fba84af78000e7897a",
+  "sourceTreeDigest": "7685b7f671fdf9b8bfe413a975f71ae95c8851f3adb089d54fb642341efb439b",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -2519,7 +2519,7 @@
     {
       "id": "7b6e1f490ce974fc3971",
       "file": "backend/src/services/integrations/composioClient.ts",
-      "line": 1431,
+      "line": 1432,
       "entryPoint": "composioRequest",
       "transport": "fetch",
       "callee": "fetch",
