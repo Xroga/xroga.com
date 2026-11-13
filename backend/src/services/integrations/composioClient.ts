@@ -2695,6 +2695,12 @@ async function executeDiscoveredComposioTool(
     signal?.throwIfAborted();
     allowedTool = discovery.tools.find((tool) => tool.slug === toolSlug);
   }
+  // The provider's session search never lists a custom MCP server's tools. An owner-pinned read tool (flag on, live definition unchanged,
+  // name not a change) counts as discovered for a read; the pin check runs again before any approval or call.
+  if (!allowedTool && await isPinnedCustomReadSlug(userId, toolSlug, context)) {
+    const pinned = (await supabaseCustomMcpPinStore(context).listActive(context.userId)).find((item) => item.toolSlug === toolSlug);
+    if (pinned) allowedTool = { slug: toolSlug, toolkit: pinned.toolkit, risk: 'read', requiresConfirmation: true };
+  }
   const allowed =
     Boolean(allowedTool) &&
     canUserAccessComposioToolkit(
