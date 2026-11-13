@@ -132,3 +132,11 @@ Defects found by this run and fixed:
 5. **Diagnostics**: a pause after an unverified model request now names the server's error code.
 
 Install folder holds build `bc8293acd`. Still BLOCKED, needs the owner: MCP (a public MCP server URL to add through a Composio custom toolkit).
+
+## 11. Custom MCP (Monid), registered and connected through the product (2026-11-13, night) - REAL THIRD-PARTY, staging
+
+With the owner's permission, on a Monid account with a $0.00 balance (no spend possible): Plugins, Custom, Add MCP server, name `Monid`, URL `https://mcp.monid.ai/v1`, OAuth (Dynamic Client Registration) with the server's public discovery URL. The product showed a review page ("Nothing has been created yet"; spend ceiling "No spending authority included"; the registration "does not authorize tool execution"), Confirm gave a provider receipt, Connect opened the Monid consent screen (identity, basic profile, email, organization membership), Allow connected it, and Sync listed 18 actions.
+
+A task asking the agent to read the Monid balance and free offerings through the connected app used no tool: no read tool for that was offered, and the Monid run tool is classified restricted and cannot execute from the browser agent. It said so, offered to reconnect or use the browser, and ran/paid for nothing. This matches the product's rule that a custom MCP's tools stay untrusted until separately authorized; executing a custom MCP tool end to end was therefore NOT demonstrated, and no `monid run` was attempted. Registering, reviewing, OAuth connecting and syncing were.
+
+The "Confirm action" button on the review page renders white text on a white button (hard to read); not fixed here.
