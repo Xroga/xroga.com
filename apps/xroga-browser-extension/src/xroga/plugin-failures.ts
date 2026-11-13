@@ -42,6 +42,7 @@ const TABLE: Record<string, Entry> = {
   BROWSER_PLUGIN_APPROVAL_ALREADY_USED: { kind: 'search_again', neverRan: true, text: 'That approval was already used. Ask for a new call; do not reuse it.' },
   COMPOSIO_ACTION_ACCOUNT_CHANGED: { kind: 'search_again', neverRan: true, text: 'The connected account changed after the call was prepared. ' + SEARCH_AGAIN },
   COMPOSIO_MUTATION_BLOCKED: { kind: 'use_action_tool', neverRan: true, text: 'This tool is not a read-only tool, so plugin_read cannot run it. If the task really needs it, find it with plugin_action_search and call it with plugin_act (the owner approves each change); otherwise choose a read tool.' },
+  BROWSER_PLUGIN_USE_CHANGE_TOOLS: { kind: 'use_action_tool', neverRan: true, text: 'This tool changes data or runs something, so plugin_read cannot call it. Find it with plugin_action_search (describe what to run or create), then call it; the owner approves each call. Nothing was sent.' },
   BROWSER_PLUGIN_DISCOVERY_LIMIT: { kind: 'already_done', neverRan: true, text: 'This search was already made, or the search limit for this task is reached. Use the tools found earlier in this task instead of searching again.' },
   BROWSER_PLUGIN_READ_ALREADY_REQUESTED: { kind: 'already_done', neverRan: true, text: 'This exact read was already requested in this task. Use its earlier result; change the arguments only if a different read is needed.' },
   BROWSER_PLUGIN_ARGUMENT_LIMIT: { kind: 'already_done', neverRan: true, text: 'The arguments are larger than the allowed size. Send a smaller request.' },

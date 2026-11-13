@@ -31,6 +31,7 @@ describe('what a failed connected-app call tells the agent', () => {
     ['BROWSER_GATEWAY_UNAVAILABLE', 'COMPOSIO_CUSTOM_MCP_NOT_PINNED', 'policy', /pin/i],
     ['BROWSER_GATEWAY_UNAVAILABLE', 'COMPOSIO_CUSTOM_MCP_DEFINITION_CHANGED', 'policy', /changed/i],
     ['BROWSER_GATEWAY_UNAVAILABLE', 'COMPOSIO_CUSTOM_MCP_EXECUTION_OFF', 'policy', /not switched on/i],
+    ['BROWSER_PLUGIN_USE_CHANGE_TOOLS', undefined, 'use_action_tool', /plugin_action_search/],
     ['BROWSER_PLUGIN_DISCOVERY_LIMIT', undefined, 'already_done', /earlier/i],
     ['BROWSER_PLUGIN_READ_ALREADY_REQUESTED', undefined, 'already_done', /earlier result/i],
     ['BROWSER_DEVICE_REVOKED', undefined, 'auth', /sign in/i],

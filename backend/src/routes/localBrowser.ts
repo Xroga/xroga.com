@@ -100,6 +100,22 @@ export function searchGuidance(result: Pick<XrogaConnectSearchResult, 'skill' | 
   return { ...(plan.length ? { plan } : {}), ...(pitfalls.length ? { pitfalls } : {}), ...(guidance ? { guidance } : {}), ...(apps.length ? { apps } : {}) };
 }
 
+/**
+ * Orders an owner's pinned tools by how well their names match the search words, so the few that fit (a stored discovery holds six)
+ * are the ones about the task rather than the first six pinned.
+ */
+export function rankPinnedByQuery<T extends { slug: string }>(query: string, tools: T[]): T[] {
+  const words = [...new Set(query.toLowerCase().split(/[^a-z0-9]+/).filter(word => word.length >= 3))];
+  const score = (slug: string) => words.filter(word => slug.toLowerCase().includes(word)).length;
+  return tools.map((tool, index) => ({ tool, index, score: score(tool.slug) })).sort((a, b) => b.score - a.score || a.index - b.index).map(item => item.tool);
+}
+
+/** Names of an owner's pinned change tools for a note to the agent (slugs only, never definitions). */
+export function changeToolsNote(tools: Array<{ slug: string }>): string | undefined {
+  if (!tools.length) return undefined;
+  return `This account also has connected tools that change data or run things (${tools.slice(0, 10).map(tool => tool.slug).join(', ')}). They are not in this list: find them with plugin_action_search (describe what to run or create), then call them; the owner approves each call.`;
+}
+
 /** Parameter names (never values) of a discovered tool, kept so the agent's arguments can be checked before anything is approved. */
 const toolArgs = z.object({ props: z.array(z.string().max(80)).max(80), required: z.array(z.string().max(80)).max(40) });
 type ToolArgs = z.infer<typeof toolArgs>;
@@ -455,12 +471,15 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
     // Owner-pinned custom MCP read tools (flag XROGA_CUSTOM_MCP_EXECUTION) join the catalogue tools; each was re-verified against the live definition.
     const pinned = plugins.pinnedReads ? await plugins.pinnedReads(actor).catch(() => []) : [];
     const catalogue = result.tools.filter(item => item.risk === 'read' && connected.has(item.toolkit.toLowerCase()));
-    const tools = await withFullSchemas([...pinned.filter(p => !catalogue.some(item => item.slug === p.slug)), ...catalogue].slice(0, 6), plugins.details, actor);
+    const tools = await withFullSchemas([...rankPinnedByQuery(query, pinned.filter(p => !catalogue.some(item => item.slug === p.slug))), ...catalogue].slice(0, 6), plugins.details, actor);
+    const writeNote = changeToolsNote(plugins.pinnedWrites ? await plugins.pinnedWrites(actor).catch(() => []) : []);
     discovery.sessionId = result.sessionId;
     discovery.tools = tools.map(({ slug, toolkit, inputSchema }) => ({ slug, toolkit, args: summarizeToolArgs(inputSchema) }));
     await save();
+    const readGuidance = searchGuidance(result);
     return res.json({ tools: tools.map(item => ({ slug: item.slug, toolkit: item.toolkit,
-      description: item.description?.slice(0, 400), parameters: compactSchema(item.inputSchema) ?? item.inputSchema })), ...searchGuidance(result) });
+      description: item.description?.slice(0, 400), parameters: compactSchema(item.inputSchema) ?? item.inputSchema })), ...readGuidance,
+      ...(writeNote ? { guidance: [readGuidance.guidance, writeNote].filter(Boolean).join(' ') } : {}) });
   }));
 
   // Changes through a connected app. The browser agent names the tool and its arguments; the plan, its digest, the authority scope and
@@ -486,8 +505,8 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
     const pinnedWrites = plugins.pinnedWrites ? await plugins.pinnedWrites(actor).catch(() => []) : [];
     const catalogueWrites = result.tools.filter(item => item.risk !== 'read' && item.risk !== 'destructive' && connected.has(item.toolkit.toLowerCase()) &&
       !isFinancialAction(query, item.slug));
-    const tools = await withFullSchemas([...pinnedWrites.filter(p => !catalogueWrites.some(item => item.slug === p.slug) && !isFinancialAction(query, p.slug)), ...catalogueWrites]
-      .slice(0, 8), plugins.details, actor);
+    const tools = await withFullSchemas([...rankPinnedByQuery(query, pinnedWrites.filter(p => !catalogueWrites.some(item => item.slug === p.slug) && !isFinancialAction(query, p.slug))), ...catalogueWrites]
+      .slice(0, 6), plugins.details, actor);
     discovery.sessionId = result.sessionId;
     discovery.tools = tools.map(({ slug, toolkit, inputSchema }) => ({ slug, toolkit, args: summarizeToolArgs(inputSchema) }));
     await save();
@@ -573,7 +592,12 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
     const source = [...state.discoveries].reverse().find(item => item.tools.some(tool => tool.slug === data.slug));
     const tool = source?.tools.find(tool => tool.slug === data.slug);
     const digest = preparedActionDigest(data);
-    if (!source?.sessionId || !tool) throw new BrowserRequestError(403, 'BROWSER_PLUGIN_NOT_DISCOVERED');
+    if (!source?.sessionId || !tool) {
+      // A pinned tool that changes data is only found by the change search; say so instead of "not discovered".
+      const changeTools = plugins.pinnedWrites ? await plugins.pinnedWrites(actor).catch(() => []) : [];
+      if (changeTools.some(item => item.slug === data.slug)) throw new BrowserRequestError(409, 'BROWSER_PLUGIN_USE_CHANGE_TOOLS');
+      throw new BrowserRequestError(403, 'BROWSER_PLUGIN_NOT_DISCOVERED');
+    }
     assertToolArguments(data.arguments, tool.args);
     if (state.reads.length >= MAX_PLUGIN_READS || state.reads.some(item => item.digest === digest)) {
       throw new BrowserRequestError(409, 'BROWSER_PLUGIN_READ_ALREADY_REQUESTED');
