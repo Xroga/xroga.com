@@ -91,7 +91,9 @@ export async function forwardHostedWorkspace(request, path, manifest, fetch = gl
   const search = new URL(request.url).search;
   const research = hostedResearchConfirmation(path, method);
   if (search.length > 4096 || (research && search)) return denied(400);
-  if (request.body && !/^application\/json(?:\s*;|$)/i.test(request.headers.get('content-type') ?? '')) return denied(415);
+  // The staging ingress can expose a zero-byte DELETE as a body stream.
+  const bodylessRevoke = method === 'DELETE' && guestShare.test(path);
+  if (request.body && !bodylessRevoke && !/^application\/json(?:\s*;|$)/i.test(request.headers.get('content-type') ?? '')) return denied(415);
   const headers = copyHeaders(request.headers, requestHeaders);
   const abort = AbortSignal.any([request.signal, AbortSignal.timeout(180000)]);
   const probe = method === 'GET' && path === usagePath && !search ? diagnostics : undefined;
@@ -113,6 +115,7 @@ export async function forwardHostedWorkspace(request, path, manifest, fetch = gl
           const next = await reader.read();
           if (next.done) break;
           bytes += next.value.byteLength;
+          if (bodylessRevoke && bytes > 0) return denied(415);
           if (bytes > maxBodyBytes) return denied(413);
           chunks.push(next.value);
         }
@@ -120,7 +123,7 @@ export async function forwardHostedWorkspace(request, path, manifest, fetch = gl
         await reader.cancel().catch(() => undefined);
         reader.releaseLock();
       }
-      body = Buffer.concat(chunks);
+      if (!bodylessRevoke) body = Buffer.concat(chunks);
     }
     abort.throwIfAborted();
     const token = await googleIdentity(manifest.api.audience, fetch);
