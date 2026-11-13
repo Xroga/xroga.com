@@ -28189,7 +28189,7 @@
     },
     {
       "path": "frontend/src/components/terminal/IntegrationsModal.tsx",
-      "sourceSha256": "0dbd96995b155733fa243bf3ce5cab4f3a5e374f86e566ff29f850f3cae8f8c1",
+      "sourceSha256": "b9690880a80670c7b533e7701c2de4ab0493d7fc8821563b1faa06dea52c472b",
       "callIds": [
         "8204b932fb1d657bcf51"
       ],
@@ -28214,9 +28214,9 @@
     },
     {
       "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "sourceSha256": "0a89d45270f28d036dfd6a647a1b812b5661f58c82a6b975f21de8c3b115c05d",
+      "sourceSha256": "56771761395d13094fd28183ae415e0d5bddeae383e8f43d49490de6758c5b73",
       "callIds": [
-        "69d6ffd06737331aba28"
+        "227a815ae8e2c760bd61"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in TerminalChatBar, with no database or Storage client receiver.",
