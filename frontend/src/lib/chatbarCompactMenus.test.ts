@@ -44,5 +44,5 @@ test('Black Hole retains backend usage and app policy with only one meter', () =
   assert.match(MODEL, /ModelAppPermissions/);
   assert.equal((MODEL.match(/className=\{styles\.usageMeter\}/g) ?? []).length, 1);
   assert.doesNotMatch(MODEL, /Available now<\/span>/);
-  assert.match(read('../components/terminal/BlackHoleMark.tsx'), /black-hole-cutout-v2\.png/);
+  assert.match(read('../components/terminal/BlackHoleMark.tsx'), /black-hole-user-icon\\.svg/);
 });
