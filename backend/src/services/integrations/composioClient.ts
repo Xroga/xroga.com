@@ -1079,8 +1079,9 @@ export async function syncUserCustomMcpToolkit(
 }
 
 /** The slugs a pin request names: the reviewed list on execution, or a slug or a list of slugs when preparing; no duplicates. */
-export function requestedPinSlugs(input: { toolSlug?: string; toolSlugs?: string[]; tools?: Array<{ toolSlug: string }> }): string[] {
-  const requested = input.tools?.length ? input.tools.map((tool) => tool.toolSlug) : input.toolSlugs?.length ? input.toolSlugs : input.toolSlug ? [input.toolSlug] : [];
+export function requestedPinSlugs(input: { toolSlug?: string; toolSlugs?: string[]; tools?: Array<{ toolSlug: string }>; skipped?: string[] }): string[] {
+  // The reviewed list also names the tools left out, so executing recomputes exactly what was reviewed.
+  const requested = input.tools?.length ? [...input.tools.map((tool) => tool.toolSlug), ...(input.skipped ?? [])] : input.toolSlugs?.length ? input.toolSlugs : input.toolSlug ? [input.toolSlug] : [];
   return [...new Set(requested)];
 }
 
@@ -1093,7 +1094,7 @@ export function requestedPinSlugs(input: { toolSlug?: string; toolSlugs?: string
  */
 export async function pinUserCustomMcpTool(
   userId: string,
-  input: { toolkit: string; toolSlug?: string; toolSlugs?: string[]; tools?: Array<{ toolSlug: string }>; definitionDigest?: string },
+  input: { toolkit: string; toolSlug?: string; toolSlugs?: string[]; tools?: Array<{ toolSlug: string }>; skipped?: string[]; definitionDigest?: string },
   tenantContext?: TenantContext,
   admission?: ComposioControlAdmission,
 ): Promise<ComposioControlPending | { toolkit: string; pinned: Array<{ toolSlug: string; riskClass: CustomPinClass }>; skipped: string[] }> {

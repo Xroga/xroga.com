@@ -40,4 +40,6 @@ test('the reviewed tool list is what a pin executes; preparing takes one slug or
   assert.deepEqual(requestedPinSlugs({toolSlug:'A'}),['A']);
   assert.deepEqual(requestedPinSlugs({toolkit:'x'} as never),[]);
   assert.deepEqual(requestedPinSlugs({tools:[{toolSlug:'FROM_REVIEW'}],toolSlug:'IGNORED'}),['FROM_REVIEW']);
+  // the reviewed input also names the tools that were left out, so executing recomputes exactly what was reviewed (the prepared and the executed parameters must be identical)
+  assert.deepEqual(requestedPinSlugs({tools:[{toolSlug:'A'},{toolSlug:'B'}],skipped:['TOPUP']}),['A','B','TOPUP']);
 });
