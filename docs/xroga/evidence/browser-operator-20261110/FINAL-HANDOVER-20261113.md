@@ -76,6 +76,8 @@ Provider receipts for the staging runs since 20:55 UTC on 2026-11-13: 582 model 
 7. Settings, Data, Delete everything; Sign out and confirm a new task cannot start.
 8. Report problems with the time, the request, a screenshot of the side panel, and the red lines from `chrome://extensions`, Xroga, "service worker", Console.
 
-## 7. Staging state
+## 7. Staging state (checked at the end of the session)
 
-Staging service `xroga-api-universal-staging`, tag `browser-op-1110`, 0% traffic, allowlist limited to the owner account and the owner's own staging sign-up. Throwaway test users are deleted when testing ends (see the tracker at the bottom of this file if any remain).
+Staging service `xroga-api-universal-staging`: tag `browser-op-1110` on revision `00090-mel`, 0% traffic (100% stays on `00001-tdc`), allowlist = the staging owner account and the owner's own staging sign-up, nothing else. All throwaway test users and their run rows are deleted (count 0), my extra revisions are deleted, and the temporary token and argument files are removed. The full real-Chrome scenario suite (about 291 s) passed on the final source after the last code change.
+
+A complete Chrome restart in the middle of a real-model task was not run as one test: its two halves were each tested (every extension worker killed mid-run with the real model; the task tab lost mid-run with a scripted model).
