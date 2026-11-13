@@ -36,6 +36,8 @@ import type { AgentTool, ToolKind } from './tools';
 export const RESULT_CAP = 8_000;
 /** A request with more messages than this is compacted first; the server refuses 140. */
 export const MESSAGE_SOFT_LIMIT = 100;
+/** The most tools one model request may list: the Xroga server's turn schema allows 32 and refuses the request beyond that. */
+export const MAX_TOOLS_PER_REQUEST = 32;
 /** The readers' combined result: a little over their own total (subagents.ts TOTAL_CHARS plus headings). */
 export const DELEGATE_RESULT_CAP = 30_000;
 
@@ -1331,7 +1333,9 @@ ${ledger}` : ''),
    */
   #registerTools(found: AgentTool[]): void {
     const have = new Set(this.options.tools.map(t => t.name));
-    const room = Math.max(0, 40 - this.options.tools.filter(t => t.source === 'agent' && !t.name.startsWith('plugin_') && t.group === 'working' && /^[A-Z0-9_]+$/.test(t.name)).length);
+    // The Xroga server refuses a model request that lists more than 32 tools (BROWSER_REQUEST_INVALID), so the whole list, the
+    // built-in tools included, is held to 32. A found tool that does not fit is still reachable through plugin_read / plugin_act.
+    const room = Math.max(0, MAX_TOOLS_PER_REQUEST - this.options.tools.length);
     const added = found.filter(t => !have.has(t.name)).slice(0, room);
     if (!added.length) return;
     this.options.tools = [...this.options.tools, ...added];

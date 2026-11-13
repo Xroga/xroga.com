@@ -117,6 +117,21 @@ async function appRun(text: string, search: { text: string; registerTools?: Agen
   return { end, scripted, dispatched };
 }
 
+describe('the tool list a model request carries', () => {
+  it('never lists more than the 32 tools the Xroga server accepts, however many a search finds', async () => {
+    const many: AgentTool[] = Array.from({ length: 40 }, (_, i) => nativeAppTool(
+      { slug: `GMAIL_TOOL_${String.fromCharCode(65 + (i % 26))}${i >= 26 ? 'X' : ''}`, toolkit: 'gmail', description: 'a tool', kind: 'write', parameters: { type: 'object', properties: {} } },
+      new Set(Array.from({ length: i }, (_, j) => `gmail_tool_${String.fromCharCode(97 + (j % 26))}${j >= 26 ? 'x' : ''}`)),
+    )!);
+    const { scripted } = await appRun('Use my connected Gmail app to draft a note', { text: 'found many', registerTools: many }, [
+      { toolCalls: [{ name: 'done', input: { outcome: 'success', summary: 'ok' }, id: 'd' }] },
+    ]);
+    for (const call of scripted.calls) expect(call.tools.length).toBeLessThanOrEqual(32);
+    // The server also requires lowercase letters and underscores only.
+    for (const call of scripted.calls) for (const t of call.tools) expect(t.name).toMatch(/^[a-z_]{1,50}$/);
+  });
+});
+
 describe('a request about connected apps', () => {
   const request = 'Use my connected Google Sheets app, not the browser. Find the spreadsheet named "Xroga Test" and tell me whether it exists.';
   const [info] = appToolsFrom([sheetsTool], 'read');

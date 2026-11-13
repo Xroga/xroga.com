@@ -1815,8 +1815,11 @@ export class RunManager {
                 // The tools the search found become callable by their own names, with their real parameter schemas.
                 const taken = new Set([...fullToolList.map(t => t.name), ...PLUGIN_TOOLS.map(t => t.name), ...appTools.keys()]);
                 const alreadyOffered = new Set([...appTools.values()].map(info => info.slug));
+                // At most 32 tools may be listed in a model request, built-in tools included; the rest stay reachable by plugin_read / plugin_act.
+                let room = Math.max(0, 32 - fullToolList.length - appTools.size);
                 const registered = found.flatMap(info => {
-                  if (alreadyOffered.has(info.slug)) return [];
+                  if (alreadyOffered.has(info.slug) || room <= 0) return [];
+                  room--;
                   const tool = nativeAppTool(info, taken);
                   if (!tool) return [];
                   taken.add(tool.name);
