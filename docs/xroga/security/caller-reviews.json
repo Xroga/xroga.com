@@ -28489,13 +28489,13 @@
     },
     {
       "path": "frontend/src/lib/formatAiMarkdown.tsx",
-      "sourceSha256": "1e2deb18cb83176b8fef27331df8c612026ddf9ee67eabab8f465f4faa6315b3",
+      "sourceSha256": "9c398f9187ec2b35914858a0a9e0d659237c33f76434ec1a452af06c5e0e6908",
       "callIds": [
-        "8f79ed0414dde0a30453"
+        "8511a7b064692fd2a796"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in decodeBase64UrlUtf8, with no database or Storage client receiver.",
-      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh. Re-bound 2026-11-04: Diff from the reviewed source d80e1ce5489b is only `export` added to BusinessActionConfirmationInline so the V2 turn can render the existing confirmation review. The reviewed call (decodeBase64UrlUtf8 Array/Uint8Array conversion) is unchanged; no new call, receiver, persistence or egress was added.",
+      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh. Re-bound 2026-11-14: The current diff changes connected-action card presentation and imports the existing logo and permission controls. The reviewed Uint8Array.from conversion inside decodeBase64UrlUtf8 is unchanged and remains in memory; this narrow review does not certify the new UI or its approval semantics.",
       "evidence": [
         {
           "path": "frontend/src/lib/formatAiMarkdown.tsx",

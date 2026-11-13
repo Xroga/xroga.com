@@ -78972,6 +78972,7 @@
         "frontend/src/app/ai-coding-agent/page.tsx",
         "frontend/src/app/game-builder/page.tsx",
         "frontend/src/app/layout.tsx",
+        "frontend/src/app/os-preview/rich-results/page.tsx",
         "frontend/src/app/share/[token]/page.tsx",
         "frontend/src/app/showcase/[slug]/page.tsx",
         "frontend/src/app/showcase/page.tsx",
@@ -79558,6 +79559,7 @@
         "frontend/src/app/ai-coding-agent/page.tsx",
         "frontend/src/app/game-builder/page.tsx",
         "frontend/src/app/layout.tsx",
+        "frontend/src/app/os-preview/rich-results/page.tsx",
         "frontend/src/app/pricing/page.tsx",
         "frontend/src/app/share/[token]/page.tsx",
         "frontend/src/app/showcase/[slug]/page.tsx",
@@ -80632,8 +80634,11 @@
         "frontend/src/app/(shell)/dashboard/projects/page.tsx",
         "frontend/src/app/(shell)/layout.tsx",
         "frontend/src/app/(workspace)/layout.tsx",
+        "frontend/src/app/(workspace)/workspace/page.tsx",
         "frontend/src/app/ai-app-builder/page.tsx",
         "frontend/src/app/game-builder/page.tsx",
+        "frontend/src/app/os-preview/rich-results/page.tsx",
+        "frontend/src/app/share/[token]/page.tsx",
         "frontend/src/app/software/page.tsx"
       ],
       "callers": [
@@ -81954,8 +81959,11 @@
         "frontend/src/app/(shell)/dashboard/projects/page.tsx",
         "frontend/src/app/(shell)/layout.tsx",
         "frontend/src/app/(workspace)/layout.tsx",
+        "frontend/src/app/(workspace)/workspace/page.tsx",
         "frontend/src/app/ai-app-builder/page.tsx",
         "frontend/src/app/game-builder/page.tsx",
+        "frontend/src/app/os-preview/rich-results/page.tsx",
+        "frontend/src/app/share/[token]/page.tsx",
         "frontend/src/app/software/page.tsx"
       ],
       "callers": [
@@ -82092,14 +82100,18 @@
       "entryPoints": [
         "frontend/src/app/(shell)/dashboard/automations/page.tsx",
         "frontend/src/app/(shell)/dashboard/integrations/[plugin]/page.tsx",
-        "frontend/src/app/(shell)/dashboard/integrations/page.tsx"
+        "frontend/src/app/(shell)/dashboard/integrations/page.tsx",
+        "frontend/src/app/(workspace)/workspace/page.tsx",
+        "frontend/src/app/os-preview/rich-results/page.tsx",
+        "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
         "frontend/src/components/automations/WorkPacksGallery.tsx:5",
         "frontend/src/components/integrations/CustomMcpManager.tsx:17",
         "frontend/src/components/integrations/InstalledPluginsShelf.tsx:10",
         "frontend/src/components/integrations/PluginDetail.tsx:21",
-        "frontend/src/components/integrations/PluginMarketplace.tsx:30"
+        "frontend/src/components/integrations/PluginMarketplace.tsx:30",
+        "frontend/src/lib/formatAiMarkdown.tsx:12"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -82471,7 +82483,7 @@
       "id": "surface:8cd95fb7b73c05af3831",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "frontend/src/components/integrations/PluginPermissionControl.tsx",
-      "sha256": "faad35d80066e1001a40e8b7494d8858badbf043dc0a8c3158813a805166e2d1",
+      "sha256": "bfe4cc6706ba115cd2d79fad8fe9e6081b27739fc167d7f98028fbab93564974",
       "symbols": [
         "PERMISSION_OPTIONS",
         "PluginPermissionControl",
@@ -82495,10 +82507,14 @@
         "frontend/src/lib/xrogaConnect.ts"
       ],
       "entryPoints": [
-        "frontend/src/app/(shell)/dashboard/integrations/[plugin]/page.tsx"
+        "frontend/src/app/(shell)/dashboard/integrations/[plugin]/page.tsx",
+        "frontend/src/app/(workspace)/workspace/page.tsx",
+        "frontend/src/app/os-preview/rich-results/page.tsx",
+        "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/integrations/PluginDetail.tsx:22"
+        "frontend/src/components/integrations/PluginDetail.tsx:22",
+        "frontend/src/lib/formatAiMarkdown.tsx:13"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -103715,6 +103731,7 @@
         "frontend/src/app/ai-coding-agent/page.tsx",
         "frontend/src/app/game-builder/page.tsx",
         "frontend/src/app/layout.tsx",
+        "frontend/src/app/os-preview/rich-results/page.tsx",
         "frontend/src/app/pricing/page.tsx",
         "frontend/src/app/share/[token]/page.tsx",
         "frontend/src/app/showcase/[slug]/page.tsx",
@@ -104404,7 +104421,7 @@
         "frontend/src/lib/community.ts:1",
         "frontend/src/lib/driveApi.ts:3",
         "frontend/src/lib/existingSourceApi.ts:3",
-        "frontend/src/lib/formatAiMarkdown.tsx:21",
+        "frontend/src/lib/formatAiMarkdown.tsx:23",
         "frontend/src/lib/githubConnect.ts:31",
         "frontend/src/lib/hydrateLandingOutput.ts:2",
         "frontend/src/lib/projectDeliveryApi.ts:3",
@@ -107444,7 +107461,7 @@
       "id": "surface:015cc267f70323e72e46",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/formatAiMarkdown.tsx",
-      "sha256": "1e2deb18cb83176b8fef27331df8c612026ddf9ee67eabab8f465f4faa6315b3",
+      "sha256": "9c398f9187ec2b35914858a0a9e0d659237c33f76434ec1a452af06c5e0e6908",
       "symbols": [
         "AppMark",
         "BusinessActionConfirmationInline",
@@ -107540,6 +107557,8 @@
         "./researchHandoff",
         "./xrogaCitations",
         "./xrogaConnect",
+        "@/components/integrations/PluginBrandLogo",
+        "@/components/integrations/PluginPermissionControl",
         "@/components/terminal/SourceLogo",
         "lucide-react",
         "react",
@@ -107548,6 +107567,8 @@
         "remark-gfm"
       ],
       "runtimeImports": [
+        "frontend/src/components/integrations/PluginBrandLogo.tsx",
+        "frontend/src/components/integrations/PluginPermissionControl.tsx",
         "frontend/src/components/terminal/SourceLogo.tsx",
         "frontend/src/lib/api.ts",
         "frontend/src/lib/oauthPopupResult.ts",
@@ -107579,6 +107600,7 @@
         "remark-gfm"
       ],
       "authBoundary": [
+        "frontend/src/lib/formatAiMarkdown.tsx#PluginPermissionControl",
         "frontend/src/lib/formatAiMarkdown.tsx#clearOAuthResult",
         "frontend/src/lib/formatAiMarkdown.tsx#subscribeOAuthResults"
       ],
@@ -107587,6 +107609,7 @@
         "frontend/src/lib/formatAiMarkdown.tsx#BusinessActionConfirmationInline",
         "frontend/src/lib/formatAiMarkdown.tsx#CONFIRMATION_PATH",
         "frontend/src/lib/formatAiMarkdown.tsx#ConfirmationStatus",
+        "frontend/src/lib/formatAiMarkdown.tsx#PluginPermissionControl",
         "frontend/src/lib/formatAiMarkdown.tsx#SafeConfirmation",
         "frontend/src/lib/formatAiMarkdown.tsx#confirm",
         "frontend/src/lib/formatAiMarkdown.tsx#confirmationId",
@@ -108533,9 +108556,12 @@
         "frontend/src/app/(shell)/dashboard/projects/page.tsx",
         "frontend/src/app/(shell)/layout.tsx",
         "frontend/src/app/(workspace)/layout.tsx",
+        "frontend/src/app/(workspace)/workspace/page.tsx",
         "frontend/src/app/ai-app-builder/page.tsx",
         "frontend/src/app/game-builder/page.tsx",
         "frontend/src/app/onboarding/page.tsx",
+        "frontend/src/app/os-preview/rich-results/page.tsx",
+        "frontend/src/app/share/[token]/page.tsx",
         "frontend/src/app/software/page.tsx"
       ],
       "callers": [
@@ -109811,7 +109837,7 @@
         "frontend/src/components/integrations/SupabaseConnectPanel.tsx:6",
         "frontend/src/components/integrations/XrogaConnectPanel.tsx:26",
         "frontend/src/components/onboarding/OnboardingFlow.tsx:10",
-        "frontend/src/lib/formatAiMarkdown.tsx:27",
+        "frontend/src/lib/formatAiMarkdown.tsx:29",
         "frontend/src/lib/githubConnect.ts:1",
         "frontend/src/lib/supabaseConnect.ts:4",
         "frontend/src/lib/vercelConnect.ts:3"
@@ -110813,7 +110839,10 @@
         "frontend/src/app/(shell)/dashboard/integrations/page.tsx",
         "frontend/src/app/(shell)/layout.tsx",
         "frontend/src/app/(workspace)/layout.tsx",
+        "frontend/src/app/(workspace)/workspace/page.tsx",
         "frontend/src/app/ai-app-builder/page.tsx",
+        "frontend/src/app/os-preview/rich-results/page.tsx",
+        "frontend/src/app/share/[token]/page.tsx",
         "frontend/src/app/software/page.tsx"
       ],
       "callers": [
@@ -112171,7 +112200,7 @@
       ],
       "callers": [
         "frontend/src/context/TerminalChatContext.tsx:21",
-        "frontend/src/lib/formatAiMarkdown.tsx:33",
+        "frontend/src/lib/formatAiMarkdown.tsx:35",
         "frontend/src/lib/researchHandoff.test.ts:3"
       ],
       "reachable": true,
@@ -114229,6 +114258,7 @@
         "frontend/src/app/auth/signup/page.tsx",
         "frontend/src/app/game-builder/page.tsx",
         "frontend/src/app/layout.tsx",
+        "frontend/src/app/os-preview/rich-results/page.tsx",
         "frontend/src/app/pricing/page.tsx",
         "frontend/src/app/share/[token]/page.tsx",
         "frontend/src/app/showcase/[slug]/page.tsx",
@@ -116709,6 +116739,7 @@
         "frontend/src/app/image/page.tsx",
         "frontend/src/app/layout.tsx",
         "frontend/src/app/onboarding/page.tsx",
+        "frontend/src/app/os-preview/rich-results/page.tsx",
         "frontend/src/app/pricing/page.tsx",
         "frontend/src/app/share/[token]/page.tsx",
         "frontend/src/app/showcase/[slug]/page.tsx",
@@ -118625,7 +118656,7 @@
         "frontend/src/components/terminal/ResponseSources.tsx:7",
         "frontend/src/components/terminal/SwarmMessageLog.tsx:13",
         "frontend/src/components/terminal/WebSourcesPanel.tsx:6",
-        "frontend/src/lib/formatAiMarkdown.tsx:19",
+        "frontend/src/lib/formatAiMarkdown.tsx:21",
         "frontend/src/lib/sanitizeChatMessages.ts:5",
         "frontend/src/lib/xrogaCitations.test.ts:7"
       ],
@@ -118705,7 +118736,7 @@
         "frontend/src/components/terminal/IntegrationsModal.tsx:12",
         "frontend/src/components/terminal/ModelAppPermissions.tsx:4",
         "frontend/src/lib/connectReview.security.test.ts:3",
-        "frontend/src/lib/formatAiMarkdown.tsx:32"
+        "frontend/src/lib/formatAiMarkdown.tsx:34"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -120213,6 +120244,7 @@
         "frontend/src/app/auth/signup/page.tsx",
         "frontend/src/app/game-builder/page.tsx",
         "frontend/src/app/layout.tsx",
+        "frontend/src/app/os-preview/rich-results/page.tsx",
         "frontend/src/app/pricing/page.tsx",
         "frontend/src/app/share/[token]/page.tsx",
         "frontend/src/app/showcase/[slug]/page.tsx",
@@ -143911,9 +143943,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:6019bd7f3c22e5619e20",
+      "id": "finding:8aaa0417fe81d47880e6",
       "sourcePath": "frontend/src/lib/formatAiMarkdown.tsx",
-      "line": 1345,
+      "line": 1337,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -143921,9 +143953,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:e116d2cf26efea0ba96e",
+      "id": "finding:7ab331f5d09f4b9df789",
       "sourcePath": "frontend/src/lib/formatAiMarkdown.tsx",
-      "line": 1346,
+      "line": 1338,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -147592,16 +147624,16 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:1b827370fdbc796add8b",
+      "id": "frontend-call:82e181275fd3b594de0b",
       "sourcePath": "frontend/src/lib/formatAiMarkdown.tsx",
-      "line": 1015,
+      "line": 1007,
       "callee": "api.phase1.plan",
       "reachable": true
     },
     {
-      "id": "frontend-call:d535594a2e2d635c3726",
+      "id": "frontend-call:e420c78d171cc4c9ecfb",
       "sourcePath": "frontend/src/lib/formatAiMarkdown.tsx",
-      "line": 1051,
+      "line": 1043,
       "callee": "api.phase1.chat",
       "reachable": true
     },
