@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "c5ba32acf7284c1bc121860c5a35eae645d4aaa928231ec85944c539826bc282",
+  "sourceTreeDigest": "3fbdf187bebfecda8f075f0a48982ccb83eb896b1d0d3689c7096dce68a8be74",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -2549,7 +2549,7 @@
         {
           "path": "backend/src/services/integrations/composioAccountSelection.security.test.ts",
           "marker": "confirmed action fails closed if disabled multi-account session has two Gmail accounts",
-          "sha256": "a1ce8db93b45a1e1adcd6a0af1c259291c3d4990ae1dcfa032ed2894f9d4ac20"
+          "sha256": "3795a88efd53915946650760b925509fb58e029df1bd3884204edd156e102b31"
         }
       ]
     },

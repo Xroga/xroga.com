@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "ee654276963e2396f1a5c8c5ea2c4e26a6aaebfe",
+  "source_sha": "4384c61b3017510900996609e9e88b74e0cc1684",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -18572,7 +18572,7 @@
     },
     {
       "path": "backend/src/routes/phase1.ts",
-      "sha256": "91b55da6a6beca61715b829c0087b10f90d2cc5bb7e2b7bce5500fbca50b2b7d"
+      "sha256": "768d23551b96e4e803da3767e3b4cb99b6d28cb2d97f84d9a6c8c300fbdfc845"
     },
     {
       "path": "backend/src/routes/phase1BusinessPreflight.ts",
@@ -19075,6 +19075,10 @@
       "sha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec"
     },
     {
+      "path": "backend/src/services/integrations/businessActionResultUi.ts",
+      "sha256": "9317443405eb7db5ebc8d4e6da0b090ff17a663cd0df235f574d22944de75f8a"
+    },
+    {
       "path": "backend/src/services/integrations/businessAutomations.ts",
       "sha256": "4be929bbebe757032e053312b5477c735fa7e68e06099c1157875aad770f43a0"
     },
@@ -19092,15 +19096,15 @@
     },
     {
       "path": "backend/src/services/integrations/businessWorkflow.ts",
-      "sha256": "a1aeb614b3b6e3214b2eec5994f61c42d3cbd75e121a7327898eec1237629a86"
+      "sha256": "09888dc6385175a75551626eae991e3b0813fbd3ea18f9b922b9b1a8b0ec433d"
     },
     {
       "path": "backend/src/services/integrations/businessWorkflowRuns.ts",
-      "sha256": "9dd08269a9ec339afdd6b6dee0c46837a2887213fa84355e7a7417bf69aaad4c"
+      "sha256": "c08a1d8f472f45de1b8eb6bee080f29e7419c4b8be919e0f4e1dff9e898ab70a"
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "sha256": "3e9e55c84d8a1cb11abd8a2f71caa3f758e8222a8c5c1f2890edf81ea9e68e61"
+      "sha256": "90f52225738cf5395be20f9e68a8f55be080e96d7cd5083c963c7d1be915bffe"
     },
     {
       "path": "backend/src/services/integrations/composioControl.ts",
@@ -26359,7 +26363,7 @@
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/routes/phase1.ts",
-      "line": 178,
+      "line": 179,
       "credentialsInUrl": false
     },
     {
@@ -36194,14 +36198,14 @@
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 1855,
+      "line": 1863,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 1981,
+      "line": 1989,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
