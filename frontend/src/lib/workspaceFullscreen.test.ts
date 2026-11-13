@@ -103,21 +103,21 @@ test('the composer stops where the terminal does', () => {
   assert.match(block, /right: var\(--xv-app-gutter\) !important/, 'and stop at it');
 });
 
-test('the current plus menu follows the composer width and stays within the viewport', () => {
+test('the compact plus menu stays within the viewport', () => {
   assert.match(MENU, /className="xv-cba-grid"/, 'the root list needs the grid wrapper');
   const at = code.indexOf('.xv-cba-grid {');
   assert.notEqual(at, -1, 'the grid has no styles');
 
-  // PR827 intentionally made the portalled picker composer-wide and one-column.
+  // The compact portalled picker stays in a single column.
   const controls = readFileSync(new URL('../components/terminal/WorkspaceControls.module.css', import.meta.url), 'utf8');
-  assert.match(MENU, /const width = Math\.min\(rect\.width, window\.innerWidth - 16\)/);
-  assert.match(MENU, /const left = Math\.max\(8, Math\.min\(rect\.left, window\.innerWidth - width - 8\)\)/);
+  assert.match(MENU, /const width = Math\.min\(344, window\.innerWidth - 16\)/);
+  assert.match(MENU, /const left = Math\.max\(8, Math\.min\(trigger\.left, window\.innerWidth - width - 8\)\)/);
   assert.match(MENU, /'--xv-actions-width': `\$\{menuStyle\.width\}px`/);
   assert.match(controls, /\.actions\.actions\s*\{[^}]*width: var\(--xv-actions-width\) !important;[^}]*max-width: calc\(100vw - 16px\) !important/);
   assert.match(controls, /\.actions\.actions :global\(\.xv-cba-grid\)\s*\{[^}]*grid-template-columns: 1fr/);
   const upload = MENU.indexOf('<b>Add files or photos</b>');
-  const plugins = MENU.indexOf('<b>Plugins</b>');
-  assert.ok(upload >= 0 && plugins > upload, 'upload must still precede the renamed Plugins entry');
+  const connectApps = MENU.indexOf('<b>Connect Apps</b>');
+  assert.ok(upload >= 0 && connectApps > upload, 'upload must still precede the Connect Apps entry');
   assert.match(MENU, /disabled=\{!onAddFiles\} onClick=\{\(\) => \{ onAddFiles\?\.\(\); setOpen\(false\); \}\}/);
   assert.match(MENU, /disabled=\{!onOpenIntegrations\} onClick=\{\(\) => \{ onOpenIntegrations\?\.\(\); setOpen\(false\); \}\}/);
 });
@@ -162,8 +162,8 @@ test('the geometry is asserted where the workspace can actually be reached', () 
   assert.match(E2E, /the sidebar is still on screen in fullscreen/);
   assert.match(E2E, /the hidden sidebar still reserves its width/);
   assert.match(E2E, /the sidebar did not reopen after fullscreen/);
-  assert.match(E2E, /expect\(gridColumns, 'the current full-width work picker uses one readable column'\)\.toBe\(1\)/);
-  assert.match(E2E, /expect\(menuBox\.width\)\.toBeCloseTo\(Math\.min\(composerBox\.width/);
+  assert.match(E2E, /expect\(gridColumns, 'the compact work picker uses one readable column'\)\.toBe\(1\)/);
+  assert.match(E2E, /expect\(menuBox\.width\)\.toBeCloseTo\(expectedWidth/);
   assert.match(E2E, /await expect\(lastAction\)\.toBeInViewport\(\)/);
 });
 

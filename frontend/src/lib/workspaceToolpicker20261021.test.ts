@@ -15,7 +15,7 @@ const sidebar = source('../components/layout/Sidebar.tsx');
 test('all requested tool categories remain available without the redundant header or logos', () => {
   assert.doesNotMatch(actions, /Choose a tool, or describe your task|Examples fill the composer without sending anything/);
   assert.doesNotMatch(actions, /xv-cba-integrations-logo|IntegrationLogo/);
-  for (const name of ['Plugins', 'Library', 'Projects', 'Browser automation', 'AI Employees', 'Apps automation', 'Slash commands', 'Plan before build', 'Debug an error', 'Skills', 'Rules'])
+  for (const name of ['Connect Apps', 'Library', 'Projects', 'Browser automation', 'AI Employees', 'Apps automation', 'Slash commands', 'Plan before build', 'Debug an error', 'Skills', 'Rules'])
     assert.ok(actions.includes(name), name + ' missing');
   assert.match(palette, /data-tone='orange'/);
   assert.match(palette, /data-tone='red'/);
