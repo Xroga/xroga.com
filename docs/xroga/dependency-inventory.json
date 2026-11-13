@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "04423dcc1bb8dbbf2cc2b3ff2ae92baccc1e8f11",
+  "source_sha": "f26bf1824b8ec40092f08bb00ba8596f10a0f457",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -23592,7 +23592,7 @@
     },
     {
       "path": "frontend/src/lib/hostedWorkspaceBridge.mjs",
-      "sha256": "875600fbd44bee626eb8d6b6b984f5d4f5b2fca27b494c19d945d135363bff16"
+      "sha256": "562de9c1291a88600f00940fa7235b3d45ceb069194507f4b8e44e447588fbfa"
     },
     {
       "path": "frontend/src/lib/hydrateLandingOutput.ts",
