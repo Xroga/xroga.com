@@ -2851,6 +2851,15 @@ export async function listPinnedCustomReadTools(context:TenantContext):Promise<A
   return out;
 }
 
+async function isPinnedCustomReadSlug(userId:string,toolSlug:string,context?:TenantContext):Promise<boolean>{
+  if(process.env.XROGA_CUSTOM_MCP_EXECUTION!=='on'||!context||!toolSlug.toLowerCase().startsWith(xrogaCustomToolkitPrefix(userId)))return false;
+  try{
+    const actor=requireTenantContext(context);
+    const pin=(await supabaseCustomMcpPinStore(actor).listActive(actor.userId)).find(item=>item.toolSlug===toolSlug);
+    return !!pin&&(await pinnedCustomReadTrust(actor,actor.userId,pin.toolkit,toolSlug)).ok;
+  }catch{return false;}
+}
+
 export async function executeComposioReadTool(
   userId: string,
   input: {
@@ -2865,7 +2874,9 @@ export async function executeComposioReadTool(
 ): Promise<ComposioExecuteResponse> {
   const toolSlug = cleanToolSlug(input.toolSlug);
 
-  if (classifyComposioToolRisk(toolSlug)!=='read') {
+  // A tool name needs a reading word to count as a read. A custom MCP tool the owner pinned as a read (flag on, definition unchanged,
+  // name not a change) is the one exception: its name says nothing, the owner's reviewed pin does.
+  if (classifyComposioToolRisk(toolSlug)!=='read' && !(await isPinnedCustomReadSlug(userId, toolSlug, input.tenantContext))) {
     throw new ComposioClientError(
       'This action is not available through the Xroga Connect read capability.',
       {
