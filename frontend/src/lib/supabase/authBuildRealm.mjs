@@ -1,4 +1,5 @@
 import { validateStagingManifest } from '../../../../scripts/security/staging-preflight.mjs';
+import { hostedWorkspaceManifestVersion, requireHostedWorkspaceBuild, stagingAuthRef } from '../../../../scripts/security/hosted-workspace-staging.mjs';
 export const productionAuthProject = 'nzenxdfumxrnsmybazmo';
 export const localAuthProject = 'local-disposable';
 export const localAuthUrl = 'http://127.0.0.1:54321';
@@ -11,6 +12,10 @@ export const stagingAuthProject = 'self-hosted-staging';
  */
 export function resolveAuthBuildRealm(environment = process.env, stagingManifest = undefined) {
   if(environment.XROGA_STAGING_AUTH_BUILD==='1') {
+    if (/** @type {{version?: number}|undefined} */ (stagingManifest)?.version === hostedWorkspaceManifestVersion) {
+      requireHostedWorkspaceBuild(environment, stagingManifest);
+      return stagingAuthRef;
+    }
     if(environment.CI!=='true'||environment.VERCEL_ENV!=='preview'||environment.XROGA_DEPLOYMENT_ENVIRONMENT!=='staging'||environment.XROGA_ISOLATED_AUTH_BUILD==='1')throw new Error('Staging auth requires an explicit non-production build');
     const reviewed=validateStagingManifest(stagingManifest);
     const sha=environment.XROGA_RELEASE_SHA??environment.VERCEL_GIT_COMMIT_SHA;

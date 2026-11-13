@@ -4,10 +4,20 @@ import {createServer} from 'node:http';
 import {readFileSync} from 'node:fs';
 import {createRequire} from 'node:module';
 import vm from 'node:vm';
+import * as openUiLang from '@openuidev/lang-core';
+import { hostedWorkspaceRequest } from '../src/lib/hostedWorkspaceBridge.mjs';
 const require=createRequire(new URL('../../package.json',import.meta.url)),ts=require('typescript');
 // Load the real pure presentation validators. The transport fixture continues
 // to replace UI-only leaves, never Share parsing or founder-access policy.
+const nativeShareId='../../../../../backend/src/ai/nativeOpenUiShare';
+const nativePresentationId='../../../../../backend/src/ai/nativeOpenUi';
 const pureSources={
+  [nativeShareId]:'../../backend/src/ai/nativeOpenUiShare.ts',
+  [nativePresentationId]:'../../backend/src/ai/nativeOpenUi.ts',
+  './nativeOpenUi.js':'../../backend/src/ai/nativeOpenUi.ts',
+  './nativeDiagramTopology.js':'../../backend/src/ai/nativeDiagramTopology.ts',
+  './nativeOpenUiAccuracy.js':'../../backend/src/ai/nativeOpenUiAccuracy.ts',
+  './answerAuthorizationReview.js':'../../backend/src/ai/answerAuthorizationReview.ts',
   '@/components/response-experience-v2/shareSnapshot':'components/response-experience-v2/shareSnapshot.ts',
   '@/components/response-experience-v2/access':'components/response-experience-v2/access.ts',
   './document':'components/response-experience-v2/document.ts',
@@ -22,11 +32,19 @@ const pureCache=new Map();
 const pureContext=vm.createContext({URL,TextDecoder,console});
 function pureModule(id){
   if(id==='zod')return require(id);
+  if(id==='@openuidev/lang-core')return openUiLang;
+  if(id==='./nativeOpenUiCatalog.json')return {default:JSON.parse(readFileSync(new URL('../../backend/src/ai/nativeOpenUiCatalog.json',import.meta.url),'utf8'))};
   const path=pureSources[id];assert.ok(path,'Unexpected pure fixture dependency '+id);
   if(pureCache.has(path))return pureCache.get(path);
   const exports={};pureCache.set(path,exports);
   const code=ts.transpileModule(readFileSync(new URL('../src/'+path,import.meta.url),'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;
-  vm.runInContext('(function(exports,require){'+code+'\n})',pureContext)(exports,pureModule);return exports;
+  try {
+    vm.runInContext('(function(exports,require){'+code+'\n})',pureContext)(exports,pureModule);
+    return exports;
+  } catch (error) {
+    pureCache.delete(path);
+    throw error;
+  }
 }
 function guard(origin){
   const source=readFileSync(new URL('../src/lib/api.ts',import.meta.url),'utf8'),ast=ts.createSourceFile('api.ts',source,ts.ScriptTarget.Latest,true);
@@ -44,6 +62,11 @@ function fixture(origin,authenticated=true){
     '@/components/response-experience-v2/SharedResponseV2':{default(){throw Error('UI rendering is outside this transport fixture');}},
     '@/components/response-experience-v2/shareSnapshot':pureModule('@/components/response-experience-v2/shareSnapshot'),
     '@/components/response-experience-v2/access':pureModule('@/components/response-experience-v2/access'),
+    '@/lib/hostedWorkspaceBridge.mjs':{hostedWorkspaceRequest},
+    [nativeShareId]:pureModule(nativeShareId),
+    [nativePresentationId]:pureModule(nativePresentationId),
+    '@/components/native-openui/NativeWorkspaceAnswer':{NativeWorkspaceAnswer(){throw Error('UI rendering is outside this transport fixture');}},
+    '@/components/terminal/SourceLogo':{SourceLogo(){throw Error('UI rendering is outside this transport fixture');}},
     'next/server':{NextResponse:{json:Response.json}}};
   function compile(path,suffix=''){
     const exports={},code=ts.transpileModule(readFileSync(new URL('../src/'+path,import.meta.url),'utf8')+suffix,{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022,jsx:ts.JsxEmit.ReactJSX}}).outputText;
@@ -108,5 +131,47 @@ test('real Share loader validates both snapshot API versions without changing te
     payload={...payload,response:'Different authoritative text',richResponse:snapshot};
     const mismatch=await f.loadShare(token);assert.equal(mismatch.share.response,payload.response);
     assert.equal(mismatch.share.richResponse,undefined);assert.equal(mismatch.share.richUnavailable,true);
+  }finally{api.closeAllConnections();await new Promise(r=>api.close(r));}
+});
+
+test('real Share loader preserves authoritative text and rejects unsafe native programs',async()=>{
+  const {buildNativeOpenUiShare,NATIVE_SHARE_PREFIX}=pureModule(nativeShareId);
+  const response='Evidence-grounded answer.';
+  const program='root = Col([Text("Evidence-grounded answer."), Source("source-1")])';
+  const valid=buildNativeOpenUiShare(response,program,[{title:'Evidence',url:'https://example.com/evidence'}]);
+  assert.ok(valid);
+  const invalid=NATIVE_SHARE_PREFIX+JSON.stringify({format:'xroga-openui-v1',text:response,program,sources:[]});
+  const base={token,visibility:'private',scope:'response',prompt:''};
+  let calls=0,payload;
+  const api=createServer((_req,res)=>{calls++;res.writeHead(200,{'content-type':'application/json'}).end(JSON.stringify({share:payload}));});
+  await new Promise(r=>api.listen(0,'127.0.0.1',r));
+  try{
+    const f=fixture(`http://127.0.0.1:${api.address().port}`);
+    for(const [index,body] of [{response,richResponse:valid},{response:valid}].entries()){
+      payload={...base,...body};
+      const loaded=await f.loadShare(token);
+      assert.equal(loaded.status,'ok');
+      assert.equal(loaded.share.response,response);
+      assert.equal(loaded.share.richResponse,valid);
+      assert.equal(loaded.share.richUnavailable,false);
+      assert.equal(calls,index+1);
+    }
+    for(const [index,richResponse] of [valid,invalid].entries()){
+      const authoritative='Different authoritative text.';
+      payload={...base,response:authoritative,richResponse};
+      const loaded=await f.loadShare(token);
+      assert.equal(loaded.status,'ok');
+      assert.equal(loaded.share.response,authoritative);
+      assert.equal(loaded.share.richResponse,undefined);
+      assert.equal(loaded.share.richUnavailable,true);
+      assert.equal(calls,3+index);
+    }
+    payload={...base,response:invalid};
+    const recovered=await f.loadShare(token);
+    assert.equal(recovered.status,'ok');
+    assert.equal(recovered.share.response,response);
+    assert.equal(recovered.share.richResponse,undefined);
+    assert.equal(recovered.share.richUnavailable,true);
+    assert.equal(calls,5);
   }finally{api.closeAllConnections();await new Promise(r=>api.close(r));}
 });

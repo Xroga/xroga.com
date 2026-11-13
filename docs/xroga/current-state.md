@@ -1,22 +1,22 @@
 # Xroga repository truth map
 
-Source SHA: `c6b2f05ed5f07ee188bdbaa7afd29891070b584f`. Branch observed: `feat/mic-mobile-main-20261031`. Audit started: 2026-10-31T01:28:02.145Z.
+Source SHA: `f0ff009a4b7fcccc6fbff407d24794694bbf17a4`. Branch observed: `codex/openui-production-integration-20261114`. Audit started: 2026-11-13T22:47:56.178Z.
 
 This inventory records static source and call-path evidence. A mounted endpoint is reachable in source; that does not certify live success, tenant safety, approval enforcement, or completion. All implementation surfaces retain an unverified/partial/placeholder state until their own acceptance tests establish behavior. No architecture was replaced and no production operations were performed.
 
 ## Counts
 
-- surfaces: 1861
-- routeRegistrations: 381
-- routes: 319
-- reachableRoutes: 236
+- surfaces: 1925
+- routeRegistrations: 395
+- routes: 331
+- reachableRoutes: 240
 - queues: 4
-- migrations: 161
+- migrations: 162
 - workflows: 21
-- testSuites: 1092
-- declaredTests: 7348
-- classifiedMarkers: 403
-- reachableMarkers: 337
+- testSuites: 1108
+- declaredTests: 7485
+- classifiedMarkers: 422
+- reachableMarkers: 356
 - absentRequiredPaths: 5
 - duplicateIds: 0
 
@@ -74,7 +74,7 @@ This inventory records static source and call-path evidence. A mounted endpoint 
 ## Review candidates
 
 - **execution_control_planes**: backend/src/ai/softwareAgent/SoftwareAgentRuntime.ts, backend/src/ai/taskGraphRunner.ts, backend/src/lib/adaptiveOrchestrator.ts, backend/src/operations/operationsEngine.ts. Multiple related boundaries exist. This is a review candidate, not a conclusion that implementations are redundant; compare callers, authority, durability and evidence before changing architecture.
-- **approval_contracts**: backend/src/capabilities/modules/businessAction.ts, backend/src/operations/operationsEngine.ts, backend/src/operations/permissions.ts, backend/src/services/integrations/businessAction.ts, backend/src/services/integrations/businessActionConfirmations.ts. Multiple related boundaries exist. This is a review candidate, not a conclusion that implementations are redundant; compare callers, authority, durability and evidence before changing architecture.
+- **approval_contracts**: backend/src/capabilities/modules/businessAction.ts, backend/src/operations/operationsEngine.ts, backend/src/operations/permissions.ts, backend/src/services/integrations/businessAction.ts, backend/src/services/integrations/businessActionConfirmations.ts, backend/src/services/integrations/businessActionResultUi.ts. Multiple related boundaries exist. This is a review candidate, not a conclusion that implementations are redundant; compare callers, authority, durability and evidence before changing architecture.
 - **cost_accounting**: backend/src/ai/providerBudget.ts, backend/src/ai/quota.ts, backend/src/ai/universal/costLedger.ts, backend/src/services/BillingService.ts. Multiple related boundaries exist. This is a review candidate, not a conclusion that implementations are redundant; compare callers, authority, durability and evidence before changing architecture.
 - **credential_persistence**: backend/src/services/integrations/githubTokenStore.ts, backend/src/services/integrations/oauthPkceStore.ts, backend/src/services/publish/chromeWebStore.ts, backend/src/services/publish/easCredentials.ts, backend/src/services/publish/electronSecrets.ts, frontend/src/components/integrations/CustomCredentialsSection.tsx. Multiple related boundaries exist. This is a review candidate, not a conclusion that implementations are redundant; compare callers, authority, durability and evidence before changing architecture.
 - **browser_execution**: backend/src/lib/browserbase.ts, backend/src/middleware/runtimePreviewGateway.ts, backend/src/sandbox/flyMachineSandbox.ts, backend/src/sandbox/remoteSandbox.ts, backend/src/synthesis/browserVerificationAdapter.ts. Multiple related boundaries exist. This is a review candidate, not a conclusion that implementations are redundant; compare callers, authority, durability and evidence before changing architecture.

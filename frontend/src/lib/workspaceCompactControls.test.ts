@@ -48,8 +48,9 @@ test('mobile keeps the repo and branch compact while the menu owns new repositor
   assert.match(mobile, /\.xv-repo-chip--compact \.xv-repo-branch\s*\{[^}]*display:\s*block/);
 });
 
-test('switching a connected repository during a conversation starts a fresh task', () => {
-  assert.match(REPO, /if \(messages\.length > 0 \|\| \(previousKey && previousKey !== targetKey\)\)\s*\{\s*startNewChat\(\)/);
+test('switching an existing repository during a conversation starts a fresh task', () => {
+  const selectRepo = REPO.slice(REPO.indexOf('async function selectRepo('), REPO.indexOf('async function selectBranch('));
+  assert.match(selectRepo, /if \(previousKey && previousKey !== targetKey && messages\.length > 0\)\s*\{\s*startNewChat\(\)/);
   assert.match(REPO, /saveSelectedRepoContext\(\{ repo: fullName, branch \}\)/);
   assert.match(REPO, /notifyGithubRepoContext\(fullName, branch\)/);
   assert.match(REPO, /if \(changesContext\) startNewChat\(\)/);

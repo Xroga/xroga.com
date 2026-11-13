@@ -54,6 +54,8 @@ test('activity updates coalesce by stable activity identity', () => {
 test('generic simulated thinking copy is never presented as real activity', () => {
   for (const text of [
     'Thinking…',
+    'Working on your response',
+    'Initializing…',
     'Understanding your request…',
     'Analyzing your question',
     'Composing a clear response',
@@ -120,4 +122,15 @@ test('structured tool metadata surfaces real commands and connected-app operatio
     metadata: { service: 'Slack', operation: 'send message', target: '#launch' },
   };
   assert.equal(presentTerminalEvent(app).detail, 'Slack');
+});
+
+test('a generic completion keeps the command context and classification in the saved timeline', () => {
+  const command = event(1, 'Running command', 'tool.started', 'cmd-1');
+  command.canonical = { ...command.canonical!, metadata: { command: 'npm test' } };
+  const finished = event(2, 'Finished', 'activity.completed', 'cmd-1');
+  finished.canonical = { ...finished.canonical!, status: 'completed' };
+  const [row] = coalesceActivity([command, finished]);
+  assert.equal(row?.kind, 'command');
+  assert.equal(row?.detail, 'npm test');
+  assert.equal(row?.status, 'complete');
 });

@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "fc9938a7effd4f7fd8e4c6237fb8914f9a8c593c",
+  "source_sha": "f0ff009a4b7fcccc6fbff407d24794694bbf17a4",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -39,6 +39,7 @@
         "NEXT_PUBLIC_XROGA_BUILDER",
         "NEXT_PUBLIC_XROGA_DRIVE",
         "NEXT_PUBLIC_XROGA_EXISTING_SOURCE",
+        "NEXT_PUBLIC_XROGA_WORKSPACE_STAGING_ORIGIN",
         "VERCEL_ENV",
         "VERCEL_GIT_COMMIT_SHA"
       ],
@@ -77,6 +78,7 @@
         "Dockerfile.api",
         "backend/src/index.ts",
         "backend/src/config/platformEnvironment.ts",
+        "backend/src/services/browserPushService.ts",
         "scripts/infrastructure/cloud-run-release-gate.mjs",
         "docs/xroga/evidence/zero-fly/FINAL-PRODUCTION-ACCEPTANCE-20261027.json"
       ],
@@ -92,7 +94,9 @@
         "NODE_ENV",
         "PORT",
         "XROGA_PLATFORM_CONFIG_FILE",
-        "XROGA_RELEASE_SHA"
+        "XROGA_RELEASE_SHA",
+        "XROGA_VAPID_PRIVATE_KEY",
+        "XROGA_VAPID_PUBLIC_KEY"
       ],
       "inbound_callers": [
         "api or named source callers; operational reachability not inferred"
@@ -116,6 +120,7 @@
         "Dockerfile.api",
         "backend/src/index.ts",
         "backend/src/config/platformEnvironment.ts",
+        "backend/src/services/browserPushService.ts",
         "scripts/infrastructure/cloud-run-release-gate.mjs",
         "docs/xroga/evidence/zero-fly/FINAL-PRODUCTION-ACCEPTANCE-20261027.json"
       ],
@@ -1122,7 +1127,8 @@
       "config_sources": [
         "backend/src/lib/googleServiceToken.ts",
         "backend/src/services/publish/chromeWebStore.ts",
-        "backend/src/services/publish/expoCredentialMaterial.ts"
+        "backend/src/services/publish/expoCredentialMaterial.ts",
+        "frontend/src/lib/hostedWorkspaceBridge.mjs"
       ],
       "hostnames": [
         "accounts.google.com"
@@ -1132,7 +1138,11 @@
       "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
       "secret_names": [
         "FRONTEND_URL",
-        "NODE_ENV"
+        "NODE_ENV",
+        "XROGA_STAGING_AUTH_BUILD",
+        "XROGA_STAGING_INVOKER_SUBJECT",
+        "XROGA_STAGING_MANIFEST_PATH",
+        "XROGA_WORKSPACE_STAGING_RUNTIME"
       ],
       "inbound_callers": [
         "api or named source callers; operational reachability not inferred"
@@ -1148,7 +1158,8 @@
       "observability_source": [
         "backend/src/lib/googleServiceToken.ts",
         "backend/src/services/publish/chromeWebStore.ts",
-        "backend/src/services/publish/expoCredentialMaterial.ts"
+        "backend/src/services/publish/expoCredentialMaterial.ts",
+        "frontend/src/lib/hostedWorkspaceBridge.mjs"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
       "evidence_ids": []
@@ -2579,6 +2590,7 @@
       "state": "CONFIGURED_BUT_UNVERIFIED",
       "runtime_owner": "backend/API or explicitly proposed component",
       "config_sources": [
+        "backend/src/ai/researchSearchProvider.ts",
         "frontend/src/lib/siteIcon.ts"
       ],
       "hostnames": [
@@ -2587,7 +2599,9 @@
       "resource_id": null,
       "region": "Not verified",
       "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
-      "secret_names": [],
+      "secret_names": [
+        "DEEPSEEK_WEBSEARCH_FETCH_API"
+      ],
       "inbound_callers": [
         "api or named source callers; operational reachability not inferred"
       ],
@@ -2600,6 +2614,7 @@
       "failure_mode": "Safe user-facing failure required; internal details restricted",
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
+        "backend/src/ai/researchSearchProvider.ts",
         "frontend/src/lib/siteIcon.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
@@ -4103,6 +4118,57 @@
       "evidence_ids": []
     },
     {
+      "dependency_id": "endpoint-fcm-googleapis-com",
+      "provider": "Source-defined endpoint fcm.googleapis.com",
+      "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
+      "environment": "PRODUCTION",
+      "state": "CONFIGURED_BUT_UNVERIFIED",
+      "runtime_owner": "backend/API or explicitly proposed component",
+      "config_sources": [
+        "backend/src/security/tenantIsolation.local.integration.ts"
+      ],
+      "hostnames": [
+        "fcm.googleapis.com"
+      ],
+      "resource_id": null,
+      "region": "Not verified",
+      "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
+      "secret_names": [
+        "CI",
+        "CLOUDFLARE_R2_PRIVATE_BUCKET",
+        "E2E_BACKEND_URL",
+        "FLY_APP_NAME",
+        "SUPABASE_ANON_KEY",
+        "SUPABASE_SERVICE_ROLE_KEY",
+        "SUPABASE_URL",
+        "WHOP_API_KEY",
+        "WHOP_COMPANY_ID",
+        "WHOP_PLAN_ID",
+        "WHOP_REDIRECT_URL",
+        "WHOP_WEBHOOK_SECRET",
+        "XB01_DISPOSABLE_SUPABASE",
+        "XB01_LOCAL_DATABASE_URL",
+        "XROGA_SANDBOX_FLY_APP",
+        "XROGA_SANDBOX_FLY_TOKEN"
+      ],
+      "inbound_callers": [
+        "api or named source callers; operational reachability not inferred"
+      ],
+      "outbound_dependencies": [],
+      "health_readiness": "Reference/asset hosts may need no service health check; adapter admission/liveness is unverified. No external action or paid health probe performed",
+      "timeout": "Adapter-specific; no fabricated central timeout",
+      "retry_policy": "Source-specific; no live retry test claimed",
+      "idempotency_expectation": "Required for consequential writes; verify canonical authority in Command 008",
+      "data_classification": "User data may be involved; tenant scope requires independent checks",
+      "failure_mode": "Safe user-facing failure required; internal details restricted",
+      "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
+      "observability_source": [
+        "backend/src/security/tenantIsolation.local.integration.ts"
+      ],
+      "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
+      "evidence_ids": []
+    },
+    {
       "dependency_id": "endpoint-fixture",
       "provider": "Source-defined endpoint fixture",
       "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
@@ -5030,7 +5096,8 @@
       "config_sources": [
         "backend/src/scripts/verifyGceExecution.ts",
         "backend/src/synthesis/projectRuntime/googleFactory.ts",
-        "backend/src/workers/browserRunDispatch.ts"
+        "backend/src/workers/browserRunDispatch.ts",
+        "frontend/src/lib/hostedWorkspaceBridge.mjs"
       ],
       "hostnames": [
         "metadata.google.internal"
@@ -5060,7 +5127,11 @@
         "XROGA_GCE_VERIFY_ONLY",
         "XROGA_GCE_ZONE",
         "XROGA_PROJECT_RUNTIME_PROVIDER",
-        "XROGA_RELEASE_SHA"
+        "XROGA_RELEASE_SHA",
+        "XROGA_STAGING_AUTH_BUILD",
+        "XROGA_STAGING_INVOKER_SUBJECT",
+        "XROGA_STAGING_MANIFEST_PATH",
+        "XROGA_WORKSPACE_STAGING_RUNTIME"
       ],
       "inbound_callers": [
         "api or named source callers; operational reachability not inferred"
@@ -5076,7 +5147,8 @@
       "observability_source": [
         "backend/src/scripts/verifyGceExecution.ts",
         "backend/src/synthesis/projectRuntime/googleFactory.ts",
-        "backend/src/workers/browserRunDispatch.ts"
+        "backend/src/workers/browserRunDispatch.ts",
+        "frontend/src/lib/hostedWorkspaceBridge.mjs"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
       "evidence_ids": []
@@ -6864,9 +6936,7 @@
       "state": "CONFIGURED_BUT_UNVERIFIED",
       "runtime_owner": "backend/API or explicitly proposed component",
       "config_sources": [
-        "frontend/src/components/layout/nav/MegaPreviews.tsx",
-        "frontend/src/components/terminal/SourceLogo.tsx",
-        "frontend/src/components/terminal/WebSourcesPanel.tsx"
+        "frontend/src/components/layout/nav/MegaPreviews.tsx"
       ],
       "hostnames": [
         "www.google.com"
@@ -6887,9 +6957,7 @@
       "failure_mode": "Safe user-facing failure required; internal details restricted",
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
-        "frontend/src/components/layout/nav/MegaPreviews.tsx",
-        "frontend/src/components/terminal/SourceLogo.tsx",
-        "frontend/src/components/terminal/WebSourcesPanel.tsx"
+        "frontend/src/components/layout/nav/MegaPreviews.tsx"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
       "evidence_ids": []
@@ -8145,6 +8213,7 @@
         "backend/src/ai/black-hole/cutover.ts",
         "backend/src/ai/engineeringOperator.ts",
         "backend/src/ai/legacyBuilderAdapter.ts",
+        "backend/src/ai/nativeOpenUiWorkspace.ts",
         "backend/src/ai/providerRuntime.ts",
         "backend/src/ai/resourceMeter.ts",
         "backend/src/ai/routerConfig.ts",
@@ -8168,6 +8237,8 @@
         "backend/src/routes/businessAutomationWebhook.ts",
         "backend/src/routes/existingSource.ts",
         "backend/src/routes/guestChat.ts",
+        "backend/src/routes/localBrowser.ts",
+        "backend/src/routes/nativeOpenUiEvaluation.ts",
         "backend/src/runtime/readiness.ts",
         "backend/src/runtime/startupPolicy.ts",
         "backend/src/sandbox/containerCancellation.local.integration.ts",
@@ -8187,6 +8258,7 @@
         "backend/src/workers/proxySidecar.ts",
         "frontend/src/app/(workspace)/workspace/page.tsx",
         "frontend/src/app/api/showcase/aura/chat/route.ts",
+        "frontend/src/app/native-answer-evaluation/page.tsx",
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "hostnames": [],
@@ -8248,6 +8320,8 @@
         "MODEL_CIRCUIT_RECOVERY_MS",
         "MONGODB_URI",
         "MORPH_API_KEY",
+        "NATIVE_OPENUI_EVALUATION_RUN",
+        "NATIVE_OPENUI_EVALUATOR_ID",
         "NEON_DATABASE_URL",
         "OPENAI_API_KEY",
         "PATH",
@@ -8307,6 +8381,7 @@
         "XROGA_BUILDER_INPROCESS_QA",
         "XROGA_BUILDER_QA_HOST_SECRET",
         "XROGA_BUILDER_QA_HOST_URL",
+        "XROGA_CHROME_EXTENSION_ID",
         "XROGA_CIRCUIT_FAILURE_THRESHOLD",
         "XROGA_CLEANUP_JOB_ID",
         "XROGA_DEV_CREDENTIAL_KEK",
@@ -8331,7 +8406,11 @@
         "XROGA_GITHUB_BOT_EMAIL",
         "XROGA_GITHUB_BOT_NAME",
         "XROGA_LEGACY_CREDENTIAL_MIGRATION",
+        "XROGA_LOCAL_BROWSER_ALLOWED_USER_IDS",
+        "XROGA_LOCAL_BROWSER_ENABLED",
+        "XROGA_LOCAL_BROWSER_MAX_TURNS",
         "XROGA_MAX_REPAIR_ATTEMPTS",
+        "XROGA_NATIVE_OPENUI_WORKSPACE",
         "XROGA_OCI_KMS_AUTH_MODE",
         "XROGA_OCI_KMS_ENDPOINT",
         "XROGA_OCI_KMS_KEY_ID",
@@ -8373,6 +8452,7 @@
         "backend/src/ai/black-hole/cutover.ts",
         "backend/src/ai/engineeringOperator.ts",
         "backend/src/ai/legacyBuilderAdapter.ts",
+        "backend/src/ai/nativeOpenUiWorkspace.ts",
         "backend/src/ai/providerRuntime.ts",
         "backend/src/ai/resourceMeter.ts",
         "backend/src/ai/routerConfig.ts",
@@ -8396,6 +8476,8 @@
         "backend/src/routes/businessAutomationWebhook.ts",
         "backend/src/routes/existingSource.ts",
         "backend/src/routes/guestChat.ts",
+        "backend/src/routes/localBrowser.ts",
+        "backend/src/routes/nativeOpenUiEvaluation.ts",
         "backend/src/runtime/readiness.ts",
         "backend/src/runtime/startupPolicy.ts",
         "backend/src/sandbox/containerCancellation.local.integration.ts",
@@ -8415,6 +8497,7 @@
         "backend/src/workers/proxySidecar.ts",
         "frontend/src/app/(workspace)/workspace/page.tsx",
         "frontend/src/app/api/showcase/aura/chat/route.ts",
+        "frontend/src/app/native-answer-evaluation/page.tsx",
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
@@ -8792,6 +8875,7 @@
         "endpoint-api-whop-com",
         "endpoint-backend-composio-dev",
         "endpoint-example-invalid",
+        "endpoint-fcm-googleapis-com",
         "endpoint-fixture",
         "endpoint-fixture-invalid",
         "endpoint-fixture-supabase-co",
@@ -8925,6 +9009,7 @@
         "endpoint-127-0-0-1",
         "endpoint-api-whop-com",
         "endpoint-example-invalid",
+        "endpoint-fcm-googleapis-com",
         "endpoint-public-example-invalid"
       ]
     },
@@ -9360,7 +9445,8 @@
         "STATIC_ENV_READER"
       ],
       "dependency_ids": [
-        "endpoint-api-deepseek-com"
+        "endpoint-api-deepseek-com",
+        "endpoint-cdn-deepseek-com"
       ]
     },
     {
@@ -9426,6 +9512,7 @@
         "endpoint-127-0-0-1",
         "endpoint-api-whop-com",
         "endpoint-example-invalid",
+        "endpoint-fcm-googleapis-com",
         "endpoint-public-example-invalid"
       ]
     },
@@ -9635,6 +9722,7 @@
         "endpoint-api-machines-dev",
         "endpoint-api-whop-com",
         "endpoint-example-invalid",
+        "endpoint-fcm-googleapis-com",
         "endpoint-public-example-invalid",
         "endpoint-www-googleapis-com"
       ]
@@ -10921,6 +11009,46 @@
       ]
     },
     {
+      "name": "NATIVE_OPENUI_EVALUATION_RUN",
+      "consuming_sources": [
+        "backend/src/routes/nativeOpenUiEvaluation.ts",
+        "frontend/src/app/native-answer-evaluation/page.tsx"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "NATIVE_OPENUI_EVALUATOR_ID",
+      "consuming_sources": [
+        "backend/src/routes/nativeOpenUiEvaluation.ts",
+        "frontend/src/app/native-answer-evaluation/page.tsx"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
       "name": "NEON_DATABASE_URL",
       "consuming_sources": [
         "backend/src/lib/capabilityRegistry.ts"
@@ -11289,6 +11417,27 @@
       ]
     },
     {
+      "name": "NEXT_PUBLIC_XROGA_WORKSPACE_STAGING_ORIGIN",
+      "consuming_sources": [
+        "frontend/src/app/api/private-files/[projectId]/[fileId]/route.ts",
+        "frontend/src/app/share/[token]/page.tsx",
+        "frontend/src/middleware.ts"
+      ],
+      "environments": [
+        "frontend build/browser/SSR"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "frontend"
+      ]
+    },
+    {
       "name": "NODE_ENV",
       "consuming_sources": [
         "backend/src/ai/guestBudget.ts",
@@ -11299,6 +11448,7 @@
         "backend/src/builder/qa/playwrightQaDriver.ts",
         "backend/src/index.ts",
         "backend/src/routes/github.ts",
+        "backend/src/routes/localBrowser.ts",
         "backend/src/runtime/startupPolicy.ts",
         "backend/src/sandbox/sandboxProviders.ts",
         "backend/src/scripts/runCanonicalWorker.ts",
@@ -11320,6 +11470,7 @@
         "frontend/src/components/dashboard/ApiConnectionBanner.tsx",
         "frontend/src/components/homepage-next/phase1/useOrchestration.ts",
         "frontend/src/components/homepage-next/s04/useScene.ts",
+        "frontend/src/components/native-openui/renderer-config.ts",
         "frontend/src/lib/api.ts"
       ],
       "environments": [
@@ -12182,6 +12333,7 @@
         "endpoint-api-whop-com",
         "endpoint-backend-composio-dev",
         "endpoint-example-invalid",
+        "endpoint-fcm-googleapis-com",
         "endpoint-fixture-supabase-co",
         "endpoint-fixtureproject-supabase-co",
         "endpoint-public-example-invalid",
@@ -12440,6 +12592,7 @@
         "endpoint-127-0-0-1",
         "endpoint-api-whop-com",
         "endpoint-example-invalid",
+        "endpoint-fcm-googleapis-com",
         "endpoint-fixture-supabase-co",
         "endpoint-fixtureproject-supabase-co",
         "endpoint-github-com",
@@ -12569,6 +12722,7 @@
         "endpoint-api-whop-com",
         "endpoint-backend-composio-dev",
         "endpoint-example-invalid",
+        "endpoint-fcm-googleapis-com",
         "endpoint-fixture",
         "endpoint-fixture-invalid",
         "endpoint-fixture-supabase-co",
@@ -13148,6 +13302,7 @@
         "endpoint-127-0-0-1",
         "endpoint-api-whop-com",
         "endpoint-example-invalid",
+        "endpoint-fcm-googleapis-com",
         "endpoint-public-example-invalid"
       ]
     },
@@ -13174,6 +13329,7 @@
         "endpoint-127-0-0-1",
         "endpoint-api-whop-com",
         "endpoint-example-invalid",
+        "endpoint-fcm-googleapis-com",
         "endpoint-public-example-invalid"
       ]
     },
@@ -13200,6 +13356,7 @@
         "endpoint-127-0-0-1",
         "endpoint-api-whop-com",
         "endpoint-example-invalid",
+        "endpoint-fcm-googleapis-com",
         "endpoint-public-example-invalid"
       ]
     },
@@ -13226,6 +13383,7 @@
         "endpoint-127-0-0-1",
         "endpoint-api-whop-com",
         "endpoint-example-invalid",
+        "endpoint-fcm-googleapis-com",
         "endpoint-public-example-invalid"
       ]
     },
@@ -13256,6 +13414,7 @@
         "endpoint-127-0-0-1",
         "endpoint-api-whop-com",
         "endpoint-example-invalid",
+        "endpoint-fcm-googleapis-com",
         "endpoint-public-example-invalid"
       ]
     },
@@ -13386,6 +13545,7 @@
         "endpoint-api-whop-com",
         "endpoint-backend-composio-dev",
         "endpoint-example-invalid",
+        "endpoint-fcm-googleapis-com",
         "endpoint-fixture",
         "endpoint-fixture-invalid",
         "endpoint-fixture-supabase-co",
@@ -13467,6 +13627,7 @@
         "endpoint-api-whop-com",
         "endpoint-backend-composio-dev",
         "endpoint-example-invalid",
+        "endpoint-fcm-googleapis-com",
         "endpoint-fixture-invalid",
         "endpoint-public-example-invalid"
       ]
@@ -13971,6 +14132,25 @@
       ]
     },
     {
+      "name": "XROGA_CHROME_EXTENSION_ID",
+      "consuming_sources": [
+        "frontend/src/app/(workspace)/workspace/page.tsx"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
       "name": "XROGA_CIRCUIT_FAILURE_THRESHOLD",
       "consuming_sources": [
         "backend/src/ai/providerRuntime.ts",
@@ -14034,7 +14214,10 @@
     {
       "name": "XROGA_DEPLOYMENT_ENVIRONMENT",
       "consuming_sources": [
+        "backend/src/ai/nativeOpenUiWorkspace.ts",
+        "backend/src/routes/nativeOpenUiEvaluation.ts",
         "backend/src/runtime/startupPolicy.ts",
+        "frontend/src/app/native-answer-evaluation/page.tsx",
         "frontend/src/lib/supabase/authBuildRealm.mjs"
       ],
       "environments": [
@@ -15007,9 +15190,85 @@
       ]
     },
     {
+      "name": "XROGA_LOCAL_BROWSER_ALLOWED_USER_IDS",
+      "consuming_sources": [
+        "backend/src/routes/localBrowser.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "XROGA_LOCAL_BROWSER_ENABLED",
+      "consuming_sources": [
+        "backend/src/routes/localBrowser.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "XROGA_LOCAL_BROWSER_MAX_TURNS",
+      "consuming_sources": [
+        "backend/src/routes/localBrowser.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
       "name": "XROGA_MAX_REPAIR_ATTEMPTS",
       "consuming_sources": [
         "backend/src/ai/routerConfig.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "XROGA_NATIVE_OPENUI_WORKSPACE",
+      "consuming_sources": [
+        "backend/src/ai/nativeOpenUiWorkspace.ts"
       ],
       "environments": [
         "backend/operator or inherited system context"
@@ -15597,6 +15856,7 @@
         "endpoint-api-machines-dev",
         "endpoint-api-whop-com",
         "endpoint-example-invalid",
+        "endpoint-fcm-googleapis-com",
         "endpoint-public-example-invalid"
       ]
     },
@@ -15668,6 +15928,7 @@
         "endpoint-api-machines-dev",
         "endpoint-api-whop-com",
         "endpoint-example-invalid",
+        "endpoint-fcm-googleapis-com",
         "endpoint-public-example-invalid"
       ]
     },
@@ -15788,6 +16049,7 @@
     {
       "name": "XROGA_STAGING_AUTH_BUILD",
       "consuming_sources": [
+        "frontend/src/lib/hostedWorkspaceBridge.mjs",
         "frontend/src/lib/supabase/authBuildRealm.mjs"
       ],
       "environments": [
@@ -15801,7 +16063,49 @@
         "STATIC_ENV_READER"
       ],
       "dependency_ids": [
-        "endpoint-127-0-0-1"
+        "endpoint-127-0-0-1",
+        "endpoint-accounts-google-com",
+        "endpoint-metadata-google-internal"
+      ]
+    },
+    {
+      "name": "XROGA_STAGING_INVOKER_SUBJECT",
+      "consuming_sources": [
+        "frontend/src/lib/hostedWorkspaceBridge.mjs"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "endpoint-accounts-google-com",
+        "endpoint-metadata-google-internal"
+      ]
+    },
+    {
+      "name": "XROGA_STAGING_MANIFEST_PATH",
+      "consuming_sources": [
+        "frontend/src/lib/hostedWorkspaceBridge.mjs"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "endpoint-accounts-google-com",
+        "endpoint-metadata-google-internal"
       ]
     },
     {
@@ -15860,6 +16164,65 @@
       ],
       "dependency_ids": [
         "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "XROGA_VAPID_PRIVATE_KEY",
+      "consuming_sources": [
+        "backend/src/routes/notifications.ts",
+        "backend/src/services/browserPushService.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "SERVER_CREDENTIAL",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "CONDITIONAL_ON_CAPABILITY",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "api"
+      ]
+    },
+    {
+      "name": "XROGA_VAPID_PUBLIC_KEY",
+      "consuming_sources": [
+        "backend/src/services/browserPushService.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "SERVER_CREDENTIAL",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "CONDITIONAL_ON_CAPABILITY",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "api"
+      ]
+    },
+    {
+      "name": "XROGA_WORKSPACE_STAGING_RUNTIME",
+      "consuming_sources": [
+        "frontend/src/lib/hostedWorkspaceBridge.mjs"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "endpoint-accounts-google-com",
+        "endpoint-metadata-google-internal"
       ]
     },
     {
@@ -16357,11 +16720,11 @@
     },
     {
       "path": ".github/workflows/chat-turn-rail-browser.yml",
-      "sha256": "3db90a31a49466be172d1c83b56005ac4d1d39e852a912833230cd731d43ffdc"
+      "sha256": "d0dc2a9e2220ebc5709339a98fe6e353b07c64355a5f8cbac4fcfef9ba23018b"
     },
     {
       "path": ".github/workflows/command3-auth-browser.yml",
-      "sha256": "e21d55f5fb11528b97e5eaee7e871ba8da879112075781e192e1b048d01375a9"
+      "sha256": "474a071bb8b36dc348aac9fada01af6b85c20b7309b94f77084ec3063303ed02"
     },
     {
       "path": ".github/workflows/command4-authority.yml",
@@ -16405,15 +16768,15 @@
     },
     {
       "path": ".github/workflows/unit-tests.yml",
-      "sha256": "60d2f50de15081db9d42b125c4feb8229b9a809a316c88c0b3234a8c1652b84a"
+      "sha256": "e45881d46f536d72c3f4d41dc3a823dd474eded6bfdf0c377edf386d748a333d"
     },
     {
       "path": ".github/workflows/vercel-build-check.yml",
-      "sha256": "0b65b0c8f8e895298283a3d0bde43ce35b6775285f42306b54701fb24f237594"
+      "sha256": "86da16fa9031cb6d96b33c2639a55c50d28d0d8a03b923f881a2e147d702749b"
     },
     {
       "path": ".github/workflows/xroga-golden-journeys.yml",
-      "sha256": "9004ef4d67476a930bf7a17909423cf808a7865b89fec14d5c17cc65e3c2f0f6"
+      "sha256": "8a53dcaab8b17ed0102ed676bb589fe66af4ecfb6ee3fdd40b33cdeaee854dd9"
     },
     {
       "path": ".github/workflows/xroga-mission-policy.yml",
@@ -16428,8 +16791,12 @@
       "sha256": "c0e3624914c0c5a359dbf8ecdb951c7031513bf4766fe0eeb56668cf3a3720e1"
     },
     {
+      "path": "backend/src/ai/answerAuthorizationReview.ts",
+      "sha256": "b59ee59d403a4ab8776da6cc5e89530b9084063f442d6a19b94c6aa842fc9692"
+    },
+    {
       "path": "backend/src/ai/answerCoverage.ts",
-      "sha256": "9519e49f2e29f272f5ba02f1593696bf205097e9d3cec904680da1b7eb6660a3"
+      "sha256": "71c2336714e1205c9f5ce500813466aac63e760c2662e87346af384cbade2f36"
     },
     {
       "path": "backend/src/ai/architect.ts",
@@ -16585,7 +16952,7 @@
     },
     {
       "path": "backend/src/ai/completionDiagnostics.ts",
-      "sha256": "76634e478f5a4d14f7db7544084830115a9c823120d2a0aff1dd3106a9c116f9"
+      "sha256": "d794befa47d7de74367beec48c2f4a995c264a227143eb850bafdbabdba92312"
     },
     {
       "path": "backend/src/ai/contextPreparation.ts",
@@ -16684,6 +17051,34 @@
       "sha256": "901a9eaf9253a042659bc440edb8c79cfe7d1b4b30ae9d7ce839c09c74ae3645"
     },
     {
+      "path": "backend/src/ai/nativeDiagramTopology.ts",
+      "sha256": "3cc5295a2d9e905341047bc3bcef54095971cca864130908d333ab9210bb6f85"
+    },
+    {
+      "path": "backend/src/ai/nativeOpenUi.ts",
+      "sha256": "ee2128559204adf175cc6cf3e00ade0427fdddf32a87944fc8049f959ca4a194"
+    },
+    {
+      "path": "backend/src/ai/nativeOpenUiAccuracy.ts",
+      "sha256": "87ee819e16f1958bc367c7a578c0209c9e4ffee139507e3c55fc934f2fa1309e"
+    },
+    {
+      "path": "backend/src/ai/nativeOpenUiPrompt.ts",
+      "sha256": "9417338470247580a41e0a0e8efb58674f71df8369f644401ee4dabe4f1ac80f"
+    },
+    {
+      "path": "backend/src/ai/nativeOpenUiRun.ts",
+      "sha256": "22c1f0e62ba1d2f34bde235234ce495a88654aab061100080a7c34b0f10bc8a4"
+    },
+    {
+      "path": "backend/src/ai/nativeOpenUiShare.ts",
+      "sha256": "e985644b5a74cb146c48a1100f639c451de35e44e16a19a8fc4d912b7795821e"
+    },
+    {
+      "path": "backend/src/ai/nativeOpenUiWorkspace.ts",
+      "sha256": "1cbd5cf2e9222cc8dc1b41bd5db1a0f88f13e08f1f9d5c201e29106ec2702eee"
+    },
+    {
       "path": "backend/src/ai/openaiCompat.ts",
       "sha256": "c159e3bd321637cc26214829ed36bca439a102e91983e6fd93fcbee36ef61544"
     },
@@ -16713,7 +17108,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "d3742ca4dccc50daf99aa71d9896449957dde73798dc6d7c2a9c5ca5536cff32"
+      "sha256": "e3ce3808eba24cd2461066d7b571ae5f96fd108ef3b8aaf807ba04b39b1b3dc8"
     },
     {
       "path": "backend/src/ai/postCompletionAccounting.ts",
@@ -16781,15 +17176,15 @@
     },
     {
       "path": "backend/src/ai/research.ts",
-      "sha256": "9d3da3f252878821e8af7cc168f6b16928a870ecc891205e9242498663093da0"
+      "sha256": "aa6bdd6450fabb91b48e0949fb8e7474a6d9e9a9a0958df5cc3756989ebb250f"
     },
     {
       "path": "backend/src/ai/researchAnswer.ts",
-      "sha256": "c2ecfbb3624c8b779592d4f930aa216b4527f2e25939f49fa1f8d57becc54adc"
+      "sha256": "c00a78a202fd82363673c0680a1895e93cd5a60d2090a06b9641b0328e5a2fca"
     },
     {
       "path": "backend/src/ai/researchSearchProvider.ts",
-      "sha256": "ed99c4a95c9108f8f188ca2fd623bf4c54022a2691954c9b97ea8acbf344d0eb"
+      "sha256": "1708a291bb1d10a78fecd67fae7d6fe2d510af67d3083b8c08eeb3aa260b5075"
     },
     {
       "path": "backend/src/ai/resourceLedger.ts",
@@ -16805,7 +17200,7 @@
     },
     {
       "path": "backend/src/ai/responsePresentation.ts",
-      "sha256": "7e16ea46e2c45bb3855222b9345b895417bd33a4eb005632fb2665150d2737d7"
+      "sha256": "e543d6fda12abd26617271c716e4200836aa1b948e46d313d158c8ac75f1d737"
     },
     {
       "path": "backend/src/ai/router.ts",
@@ -17045,7 +17440,7 @@
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "sha256": "6ca81b0c9234195e6159d1e03735a21ce50d50cf1e8f71b53cb62199bf95cb26"
+      "sha256": "47fab9492ea23277010df4f4babf7d27aa5588606f762b0ace3c2eaa843f1acc"
     },
     {
       "path": "backend/src/ai/usageAccounting.ts",
@@ -17617,7 +18012,7 @@
     },
     {
       "path": "backend/src/index.ts",
-      "sha256": "b062ce27a40145f293271908a325c44f740dd62d457b7c5be830acf2eb32b7c6"
+      "sha256": "32ddb81d26bd758e8b13a5f62fc7926ac85ec316a9149b0b120c178e8ead2725"
     },
     {
       "path": "backend/src/lib/adaptiveOrchestrator.ts",
@@ -17773,7 +18168,7 @@
     },
     {
       "path": "backend/src/lib/richShareSnapshot.ts",
-      "sha256": "bbf7a23a87f5229c305fdf346afea769db172c0a32f58d66f84af7d2bca1354d"
+      "sha256": "c037e09e96a27e1f7457248454683c2675a8fa64f02fb19605b0872ee7920720"
     },
     {
       "path": "backend/src/lib/runway.ts",
@@ -18056,6 +18451,10 @@
       "sha256": "a7ab9896df1a729f603a742a1951fd81357562d86ed289bcce64deca45a75f15"
     },
     {
+      "path": "backend/src/routes/browserDocuments.ts",
+      "sha256": "52b4445687ccae287d6c84bfefac85c463400915c5857c7d70f4b9a9a5cddfe3"
+    },
+    {
       "path": "backend/src/routes/browserRunInternal.ts",
       "sha256": "57042021416e917aa7256dadf11fa9d2c68c0520db0b0bc0255be9af35ba5ea1"
     },
@@ -18144,6 +18543,10 @@
       "sha256": "e6aab8dfd7f534aeb38932151f6ef807eb71447e4bc2b538e6d01b0585905a21"
     },
     {
+      "path": "backend/src/routes/localBrowser.ts",
+      "sha256": "873a0c1ae4876e25462a9b9e18772d456ee3334fd5e5dd4492e0775b3427d019"
+    },
+    {
       "path": "backend/src/routes/marketplace.ts",
       "sha256": "620274f557c9c344af6424dbc655375274c3c742d547b6844c5c6d93600e724d"
     },
@@ -18156,8 +18559,12 @@
       "sha256": "e69821ae544aecfe8073586f737f2e39e9344360c034705f41f005d457427ac1"
     },
     {
+      "path": "backend/src/routes/nativeOpenUiEvaluation.ts",
+      "sha256": "9c0eefe0175ba4be5e859705e69f8dc5db1accd3d5b17a875199ce084d84b717"
+    },
+    {
       "path": "backend/src/routes/notifications.ts",
-      "sha256": "9aec298fc8c4b0f6c678f0861db12805da9b0700e109ff052d0e4e27be18486a"
+      "sha256": "7b91dfd72ae335226c3fb83c7ce2e7cb7902b7dd25b87565f7dcef917720c5db"
     },
     {
       "path": "backend/src/routes/operations.ts",
@@ -18165,7 +18572,7 @@
     },
     {
       "path": "backend/src/routes/phase1.ts",
-      "sha256": "91b55da6a6beca61715b829c0087b10f90d2cc5bb7e2b7bce5500fbca50b2b7d"
+      "sha256": "768d23551b96e4e803da3767e3b4cb99b6d28cb2d97f84d9a6c8c300fbdfc845"
     },
     {
       "path": "backend/src/routes/phase1BusinessPreflight.ts",
@@ -18369,7 +18776,7 @@
     },
     {
       "path": "backend/src/security/businessAuthority.local.integration.ts",
-      "sha256": "9b3195e648555bc2b3815d4b835202d649ed95d93a81c87ebfc1950fda57dff1"
+      "sha256": "d903722bef5557c67eb5311568579c334e24b6863e3f77ecd04d5643a1c493b7"
     },
     {
       "path": "backend/src/security/businessConfirmationClaim.local.integration.ts",
@@ -18389,7 +18796,7 @@
     },
     {
       "path": "backend/src/security/connectedAccountRoutes.local.integration.ts",
-      "sha256": "0bca6bb9a602efef4507aea90af781515f957f47e5184c00d8b9f7f7838dba7d"
+      "sha256": "fdd7c1112272ffb007a9a67dc22da3735df643bb948d2c04940a61c0d2539a57"
     },
     {
       "path": "backend/src/security/connectedMemoryConsumer.local.integration.ts",
@@ -18593,7 +19000,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "ca10dcce1588319a590acc2c5db06294bb0ac47af4b81c3186b0dc9db03068f4"
+      "sha256": "bdf87c7c2d0ff810034c72554ebacf6de1f291068b3eb2ac1134e1d0e47c5dea"
     },
     {
       "path": "backend/src/security/terminalIdentity.local.integration.ts",
@@ -18644,6 +19051,10 @@
       "sha256": "1f7ce1602847ca3f2a24e3ac5c93c1b0dfdded4e0a424d81adc4a85895e98a2d"
     },
     {
+      "path": "backend/src/services/browserPushService.ts",
+      "sha256": "f4efcbdd6268fe5e71e0b265e09fa93ca00bc9ed4ca71347261039f26c085cfc"
+    },
+    {
       "path": "backend/src/services/ensureUserRecords.ts",
       "sha256": "b93530285b863676609458c1b2ee8d5478f8504b19fe89aa421bdabcd93c9852"
     },
@@ -18664,6 +19075,10 @@
       "sha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec"
     },
     {
+      "path": "backend/src/services/integrations/businessActionResultUi.ts",
+      "sha256": "9317443405eb7db5ebc8d4e6da0b090ff17a663cd0df235f574d22944de75f8a"
+    },
+    {
       "path": "backend/src/services/integrations/businessAutomations.ts",
       "sha256": "4be929bbebe757032e053312b5477c735fa7e68e06099c1157875aad770f43a0"
     },
@@ -18681,15 +19096,15 @@
     },
     {
       "path": "backend/src/services/integrations/businessWorkflow.ts",
-      "sha256": "a1aeb614b3b6e3214b2eec5994f61c42d3cbd75e121a7327898eec1237629a86"
+      "sha256": "09888dc6385175a75551626eae991e3b0813fbd3ea18f9b922b9b1a8b0ec433d"
     },
     {
       "path": "backend/src/services/integrations/businessWorkflowRuns.ts",
-      "sha256": "9dd08269a9ec339afdd6b6dee0c46837a2887213fa84355e7a7417bf69aaad4c"
+      "sha256": "c08a1d8f472f45de1b8eb6bee080f29e7419c4b8be919e0f4e1dff9e898ab70a"
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "sha256": "68fa5450c3a85f0685b71be4f8d3693872ca5ca36997d38988a241b8419573ac"
+      "sha256": "90f52225738cf5395be20f9e68a8f55be080e96d7cd5083c963c7d1be915bffe"
     },
     {
       "path": "backend/src/services/integrations/composioControl.ts",
@@ -18817,7 +19232,7 @@
     },
     {
       "path": "backend/src/services/integrations/researchResult.ts",
-      "sha256": "8382a77b8a23817d945873566354960b6e07412a12d57a73e3c06511ce811dda"
+      "sha256": "8b02d992fc703451a4cc942a8570dc3db7fe665742d87fc88fd96d53b44cf3e5"
     },
     {
       "path": "backend/src/services/integrations/supabaseAccess.ts",
@@ -18865,7 +19280,7 @@
     },
     {
       "path": "backend/src/services/notificationService.ts",
-      "sha256": "97a7d33fe2b60ddebbdb9f1e8e2c5304d72398ff31ee9036386f705f62b6b402"
+      "sha256": "823e0e647c547459ecd37560dee87b23d8d1fa0e28a85d5252870c65fccd69ec"
     },
     {
       "path": "backend/src/services/projectScaffold.ts",
@@ -19525,7 +19940,7 @@
     },
     {
       "path": "backend/src/workers/browserCapability.ts",
-      "sha256": "7d2bab8d22905fdccca667481ce0be5c1a61ac799d0b117d098ce1768d0d5511"
+      "sha256": "f2a0fa5a5842e812a1ec600a2817c4b7394a8faf28873d8893a523d99bb78bb9"
     },
     {
       "path": "backend/src/workers/browserCoordinator.ts",
@@ -19541,7 +19956,7 @@
     },
     {
       "path": "backend/src/workers/browserModelDispatch.ts",
-      "sha256": "ffdf4df315ade2befc0aef670ab28bb3eab812b1ca3ec085b2e81b9761b7ce49"
+      "sha256": "e113109ead824127c843bc27b7d07119fda3fae8e4ec0ddefd1abc177b79a63e"
     },
     {
       "path": "backend/src/workers/browserModelGateway.ts",
@@ -19565,7 +19980,7 @@
     },
     {
       "path": "backend/src/workers/browserRunStore.ts",
-      "sha256": "75054d2fd6ba5b567ea9f49a7c08027ed48c5149f00cc48b1b79eca32d935f86"
+      "sha256": "b3401b95677a25a74a1e964237c4a22d281e8c27da72fee9693e83557abca71f"
     },
     {
       "path": "backend/src/workers/browserTaskHandler.ts",
@@ -19833,7 +20248,7 @@
     },
     {
       "path": "frontend/src/app/(workspace)/workspace/page.tsx",
-      "sha256": "adbcbb1f07739cc85785e64c37c89d02fb26a602f29e42f10b49e69825a64195"
+      "sha256": "38cd455f073cfd679346988398cafc5e0b78ad92eb674fb30073bd46b9b6afa9"
     },
     {
       "path": "frontend/src/app/about/page.tsx",
@@ -19881,7 +20296,7 @@
     },
     {
       "path": "frontend/src/app/api/private-files/[projectId]/[fileId]/route.ts",
-      "sha256": "65f33f8ffaf2af3666cbd8a022e19c52389f7e691c4f9a84870cbf02d6861b76"
+      "sha256": "fd665a689140b289ba6af953a8ea7d19b24e05a22707fc42d417c563f4e2b35f"
     },
     {
       "path": "frontend/src/app/api/release/route.ts",
@@ -19942,6 +20357,14 @@
     {
       "path": "frontend/src/app/auth/signup/page.tsx",
       "sha256": "7109a7bf6121b5073a1e4e7fa20b58fa9b22111e46fe3590ba3cf1b55a2b2ac7"
+    },
+    {
+      "path": "frontend/src/app/black-hole/BlackHoleExperience.tsx",
+      "sha256": "9c02441a9569f59201279dbc01444036817b5ea471354b97f257cf67ef7e8287"
+    },
+    {
+      "path": "frontend/src/app/black-hole/page.tsx",
+      "sha256": "7f10142ce873fb7c806f947e3c4d3fff5a58f477a5e00a532ffe2309a210ddbb"
     },
     {
       "path": "frontend/src/app/blog/[slug]/page.tsx",
@@ -20116,6 +20539,10 @@
       "sha256": "bae3b76f60214a12282ac932ad2ccd0f62da194a480e4b28da6ff24d1b90704b"
     },
     {
+      "path": "frontend/src/app/native-answer-evaluation/page.tsx",
+      "sha256": "6dc29300a911c9f20694b283951730fb67a9570271544b236c61c3142a94159b"
+    },
+    {
       "path": "frontend/src/app/not-found.tsx",
       "sha256": "56f1fd35ef6913e084cb7d514770e2c954ec565b932e153fc0d8c17e06002889"
     },
@@ -20201,7 +20628,7 @@
     },
     {
       "path": "frontend/src/app/robots.ts",
-      "sha256": "d0f936240d4b11dbeb646f911ba9adb98554cd664ade5d22485374023908b46e"
+      "sha256": "84d6005fe7104289a07c526b910dce4d52315cbc5567f069d18e8e6ebce84d16"
     },
     {
       "path": "frontend/src/app/security/page.tsx",
@@ -20209,7 +20636,7 @@
     },
     {
       "path": "frontend/src/app/share/[token]/page.tsx",
-      "sha256": "02be162aa110db0a216d12681f621023bd0c5737a2c48f484a7244b856a7bb16"
+      "sha256": "17cb0432a53350ac1074586cc95cb0a017603bd74342f1dc696d4093e9852409"
     },
     {
       "path": "frontend/src/app/showcase/[slug]/page.tsx",
@@ -20272,6 +20699,10 @@
       "sha256": "da13331569c812f34d9e174fc0d33f6ee336ec8d76a7eec8f12fd62cd6b83697"
     },
     {
+      "path": "frontend/src/app/workspace-staging-transport/[...segments]/route.ts",
+      "sha256": "7e94e3dc87e134ef85791f2ad66702c566ea823c1c7df4acccd941c39d1a59a6"
+    },
+    {
       "path": "frontend/src/components/PlaceholderPage.tsx",
       "sha256": "c58f72d2ea89e75a671da9f6ff5fc0523f6767951ca39cc9e8672a946cd6fe8e"
     },
@@ -20289,7 +20720,11 @@
     },
     {
       "path": "frontend/src/components/activity/ActivityTimeline.tsx",
-      "sha256": "6d0f3711f1703797619da1f5a0a14a73a0e3e48eae17d217792b789bdefae348"
+      "sha256": "bbffbbc5c9d1e92434d5826f04ee36d1bbe074e2f702b8a0e28b5cabb5dc6ce0"
+    },
+    {
+      "path": "frontend/src/components/activity/BlackHoleIndicator.tsx",
+      "sha256": "11ebdc5d0b82014fea49078e631e98242aef268235d948611f632f60de5ca6cd"
     },
     {
       "path": "frontend/src/components/analytics/GoogleTag.tsx",
@@ -20337,7 +20772,7 @@
     },
     {
       "path": "frontend/src/components/automations/AutomationsWorkspace.tsx",
-      "sha256": "48fad7fbe60dcf3be7149f1ebe70eb5a29a24224da29c9fa8cb6b73f7ae2876d"
+      "sha256": "9e4c9981d117653ee8ddfb50d7166d282671829b673447deb91fa0194b990b76"
     },
     {
       "path": "frontend/src/components/automations/BrowserRun.tsx",
@@ -20353,7 +20788,7 @@
     },
     {
       "path": "frontend/src/components/automations/Connections.tsx",
-      "sha256": "8568c83e70ae2e0999212d8abcdeda323c9eda1c043974230489916603d0b706"
+      "sha256": "6ac074b2037e239ae6d66730ba8e90c4da38d388ee419cb4f6ba9732164b4b5a"
     },
     {
       "path": "frontend/src/components/automations/DraftSummary.tsx",
@@ -20366,6 +20801,10 @@
     {
       "path": "frontend/src/components/automations/Schedules.tsx",
       "sha256": "d11fd3c7525ef9b027d81523e6174a1747c6a236bdcf34100d8f89d4ee9a26df"
+    },
+    {
+      "path": "frontend/src/components/automations/WorkPacksGallery.tsx",
+      "sha256": "596cfca09e8c01ae6a2803d37b503e38891a4063701fad6247993b4577a3d371"
     },
     {
       "path": "frontend/src/components/automations/WorkflowEditor.tsx",
@@ -20382,6 +20821,10 @@
     {
       "path": "frontend/src/components/automations/useDrafts.ts",
       "sha256": "035de9b22ebb0bde61e753c72080c74d316dbd25ce8c2f5b3626426f59cc5a62"
+    },
+    {
+      "path": "frontend/src/components/automations/workPacksV2.ts",
+      "sha256": "75fd039a3292c3b16215a1904694d3cf6336ef5d88ccf387d74bbab7e3426b72"
     },
     {
       "path": "frontend/src/components/billing/BillingPageClient.tsx",
@@ -20414,6 +20857,10 @@
     {
       "path": "frontend/src/components/bootstrap/UserCacheScopeBootstrap.tsx",
       "sha256": "6267ed345f17658d2aae78da083e3283f401196e7b8a79abe4dc02f51b2678f1"
+    },
+    {
+      "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+      "sha256": "2500a1f07a78f43f9ebee385642fac97743777253c045bce71eed6bf51002d9a"
     },
     {
       "path": "frontend/src/components/browser/XrogaBrowser.tsx",
@@ -20533,7 +20980,7 @@
     },
     {
       "path": "frontend/src/components/dashboard/DashboardView.tsx",
-      "sha256": "31218793ba7eadbcb863556c8df57565775f8ac23ba9007a4463dcf783d5ec6e"
+      "sha256": "2aa86cd3a9091ca37d3a7bde797e5cacaf0284d3129187fa74644a87396edfcd"
     },
     {
       "path": "frontend/src/components/dashboard/DashboardWelcome.tsx",
@@ -20613,7 +21060,7 @@
     },
     {
       "path": "frontend/src/components/dashboard/WorkspaceShowcaseStarts.tsx",
-      "sha256": "570ff15daf9a57f4393e016c630f8b726fde7e2fc293bf1273b2251041df2f3e"
+      "sha256": "57c188f60050eb8c4208409e3e03b32032e5ab521808bb7ddc5a57cfb4256560"
     },
     {
       "path": "frontend/src/components/dashboard/WorkspaceStarterIdeas.tsx",
@@ -21505,7 +21952,7 @@
     },
     {
       "path": "frontend/src/components/integrations/PluginPermissionControl.tsx",
-      "sha256": "faad35d80066e1001a40e8b7494d8858badbf043dc0a8c3158813a805166e2d1"
+      "sha256": "5537fd1659cc597876c617ef2de16ce094dfe7906ba9b6308e14e8f96963d178"
     },
     {
       "path": "frontend/src/components/integrations/SupabaseConnectPanel.tsx",
@@ -21521,7 +21968,7 @@
     },
     {
       "path": "frontend/src/components/layout/AppShell.tsx",
-      "sha256": "9f1e4e747595fb5eb215a6a186f30fa44bd4661885d59b9e7b0894258bb34616"
+      "sha256": "dbce5f6ab1627fed981c30fd107aecce33180561622795796f8185acfedac134"
     },
     {
       "path": "frontend/src/components/layout/BetaExpectationBanner.tsx",
@@ -21585,7 +22032,7 @@
     },
     {
       "path": "frontend/src/components/layout/Sidebar.tsx",
-      "sha256": "c103d88e76e8b001be9ed2c5d32e09dda591faa69497d1e7a32b3729162320cb"
+      "sha256": "39efbd0c786649998ec6d6af5102887326ad1592f5005ba3a5eca40a99124bdb"
     },
     {
       "path": "frontend/src/components/layout/SidebarActionMenu.tsx",
@@ -21597,15 +22044,15 @@
     },
     {
       "path": "frontend/src/components/layout/SidebarMovingTitle.tsx",
-      "sha256": "1abff744bd82506c8b18132613e20702dcee683185066b2eb41dcfa6a73064a7"
+      "sha256": "678b902d726647af8fb52e7ab1b7b5db15d042283dd62799f991a1da572dfea5"
     },
     {
       "path": "frontend/src/components/layout/SidebarNavScroller.tsx",
-      "sha256": "876418c9c2555c51d31cb25549bb84d0526df9a8fdda429c5e6b0b15c6f5fc01"
+      "sha256": "88b416a3164797ba1081419d50c97a58e809055a9edea69dcf8e7efd06cc6b17"
     },
     {
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "sha256": "7daceb7dfb3cd3b1faf8b1f42f6e11243daf15afa78ff8fe076371ae510f9628"
+      "sha256": "fabbe7dbdf3c5d33995fef1d001ac8761888501128d67bff03ed02d57a274d77"
     },
     {
       "path": "frontend/src/components/layout/SidebarSearchModal.tsx",
@@ -21653,7 +22100,15 @@
     },
     {
       "path": "frontend/src/components/library/LibraryWorkspace.tsx",
-      "sha256": "51fa82647e6c5eaaee2114bb2a2a620926290753427600dbc8ab1e573ddde908"
+      "sha256": "ae0f15a4f2d12c27f8ae92dc74335d5bd97048beb8f1f638ad5334f9e24bb562"
+    },
+    {
+      "path": "frontend/src/components/library/NativeSkillsDirectory.tsx",
+      "sha256": "b936d823fdf858f0afad3a3d687a1bf3a11a9c6680ce50b5cb1396146915ae2d"
+    },
+    {
+      "path": "frontend/src/components/library/NativeSkillsPicker.tsx",
+      "sha256": "6f8a63b3cbd334f6361b9787bad76b3b4677e19befa2bbcbb709cd00437b0d0b"
     },
     {
       "path": "frontend/src/components/magicui/globe.tsx",
@@ -21665,11 +22120,15 @@
     },
     {
       "path": "frontend/src/components/marketing/AiAppBuilderLanding.tsx",
-      "sha256": "e1eb7cb35b512811c0479a2b654d8761773ea46bdf80ec1e9a8580e1df1202e1"
+      "sha256": "d349e01dd506f0ee950ef131a09a492d617e7a8e486e66d6b9e1cb4825bff171"
     },
     {
       "path": "frontend/src/components/marketing/AiAppBuilderPrompt.tsx",
       "sha256": "8cc1c60efe052177e6cb6c9888e28bafc625bb1582a6a26bc4897cd9ac0ff529"
+    },
+    {
+      "path": "frontend/src/components/marketing/AiAppBuilderSeoContent.tsx",
+      "sha256": "cfde1940f87dea9b8e463c9890f982de51a813c93a127a87f90d9f17741c94b8"
     },
     {
       "path": "frontend/src/components/marketing/AiAppBuilderWatercolor.tsx",
@@ -21732,16 +22191,124 @@
       "sha256": "f95cfd8300505ad3bf09c36ab2c232b223e7da70f29cea2d3ab3ed2737a08d4b"
     },
     {
+      "path": "frontend/src/components/native-openui/ChoicePicker.tsx",
+      "sha256": "e85a6415d9b1813e40a28f83ad41f6c5fb46dcae93460eae59f9ce98453d2ab4"
+    },
+    {
+      "path": "frontend/src/components/native-openui/Diagram.tsx",
+      "sha256": "1f9e26b9118ed0d5e9e833db2f87f13adb1536002a81e8a767b0417bbb439024"
+    },
+    {
+      "path": "frontend/src/components/native-openui/Editorial.tsx",
+      "sha256": "b3f8ddb1cdbdcf0b70864454ecf48c4fea129df907da6c96a03d36d011ede00f"
+    },
+    {
+      "path": "frontend/src/components/native-openui/Evaluation.tsx",
+      "sha256": "1e2ae7719f474599a6661aba18df43a720678e83ed005e9de764cc03b94f78a4"
+    },
+    {
+      "path": "frontend/src/components/native-openui/NativeSurface.tsx",
+      "sha256": "8ac9677537970ba04be35f4fce6a03e88c4f8c7daae255990efba91c4b107569"
+    },
+    {
+      "path": "frontend/src/components/native-openui/NativeWorkspaceAnswer.tsx",
+      "sha256": "dd944fef75e541339b0d2645ff9d66e2781dc5e1879c4e1f3c1c5f3529947caa"
+    },
+    {
+      "path": "frontend/src/components/native-openui/Resources.tsx",
+      "sha256": "130ff40661bb1418dfa1da4db1528b6f905049a426e016719d0ad9b8c07541ec"
+    },
+    {
+      "path": "frontend/src/components/native-openui/Tabs.tsx",
+      "sha256": "7d31def2031bd99eaec52f99d53716d93a36238635db26730ff1d063394fc15f"
+    },
+    {
+      "path": "frontend/src/components/native-openui/evidence.tsx",
+      "sha256": "818ce6a84450710ca72e5045ddef360764b85343c3a54c59c03d6a937e27e33c"
+    },
+    {
+      "path": "frontend/src/components/native-openui/library.tsx",
+      "sha256": "4e52c369c7abf53f0f5e8e0737c83ecba744d0876580b9e4d26b2ea681a96539"
+    },
+    {
+      "path": "frontend/src/components/native-openui/renderer-config.ts",
+      "sha256": "4c5bb2ab1d43f464d7b34a6fc4f648e02d23bc13bec622df3bd825333f281874"
+    },
+    {
+      "path": "frontend/src/components/native-openui/upstream/components/chart.tsx",
+      "sha256": "9325d074808912c08ec9d59c7c4b58b09b831a91ab07d9601e44d70b33bddbb8"
+    },
+    {
+      "path": "frontend/src/components/native-openui/upstream/components/controls.tsx",
+      "sha256": "9b1080ef66360c4172cdedad2ab58d82ba8980da0c81e742ed1dc754452a5811"
+    },
+    {
+      "path": "frontend/src/components/native-openui/upstream/components/extra.tsx",
+      "sha256": "e299208bbe5eb29a71f4717cefe85edb605f445211c84a3eedba8fafb5b1c1d7"
+    },
+    {
+      "path": "frontend/src/components/native-openui/upstream/components/glyph.tsx",
+      "sha256": "053692a89691a981255de2a03292a45ac39736f166b182d408e72006b102ef76"
+    },
+    {
+      "path": "frontend/src/components/native-openui/upstream/components/layout.tsx",
+      "sha256": "6326be84c31b9982bf50afa99abd796c1dc34f0a7d8ddb00fce9945215bb32ef"
+    },
+    {
+      "path": "frontend/src/components/native-openui/upstream/components/markdown.tsx",
+      "sha256": "f87aa56077be3bde409ea31bf361009628b5dae6039ccfda7b77f19857e5e1a1"
+    },
+    {
+      "path": "frontend/src/components/native-openui/upstream/components/style.ts",
+      "sha256": "1e044a155ac88ca0e25fe4a5cd8f8eb3155e22f63ffa85c6eaff98deab963245"
+    },
+    {
+      "path": "frontend/src/components/native-openui/upstream/components/svg.tsx",
+      "sha256": "609d543f30ea118214894781ae241ba28e076ea49132cd79a54fb87cbb2245a4"
+    },
+    {
+      "path": "frontend/src/components/native-openui/upstream/components/table.tsx",
+      "sha256": "c86559627722395a4513dc58742b1124fbf9a1c54d46c6ad7f415fbec6ec781d"
+    },
+    {
+      "path": "frontend/src/components/native-openui/upstream/components/text.tsx",
+      "sha256": "0d2e62a51cfe268dc4e591bbda87922d39d308ee4b72bfb2088ab524bb560e2a"
+    },
+    {
+      "path": "frontend/src/components/native-openui/upstream/functions/calendar.ts",
+      "sha256": "106e6636de0fecc62c85d2d8fd4d28a8f9c2b56a54fdcb168a5c48d56723609f"
+    },
+    {
+      "path": "frontend/src/components/native-openui/upstream/functions/collections.ts",
+      "sha256": "c03c2c0f0bb86ea5b178aee5370ac156335b536278d29e6bbf84df65a8f5626e"
+    },
+    {
+      "path": "frontend/src/components/native-openui/upstream/functions/data.ts",
+      "sha256": "f77129d9982ebf8344c4118126f8f63d1aeb30cef2791ffb3a255a66320fad41"
+    },
+    {
+      "path": "frontend/src/components/native-openui/upstream/functions/numbers.ts",
+      "sha256": "a165969fc08879e326fb04041f377c1bb38fcf0d5a4570b8bf3291e8d36ae515"
+    },
+    {
+      "path": "frontend/src/components/native-openui/upstream/functions/shared.ts",
+      "sha256": "f85c67bb1b6e60e6333139f201af52281a0d8d51163fda55f0a514d4dd7d048a"
+    },
+    {
+      "path": "frontend/src/components/native-openui/upstream/functions/text.ts",
+      "sha256": "bb07529302d391b27670a651f45383cc2fb77a1d3bcf6965ac37664257c39dcb"
+    },
+    {
       "path": "frontend/src/components/notifications/NotificationBell.tsx",
       "sha256": "97367d44cea04f1aa64a2a645509a6ddab5217d4d80bf2185a3ccabe4086df3a"
     },
     {
       "path": "frontend/src/components/notifications/NotificationExperience.tsx",
-      "sha256": "2b8296c2a5f9f70e5dd289d91787327f2e32453be464d557e468a5791684a075"
+      "sha256": "09d94ee31d3faf726e9614925e575d339f4d6620f73abcec1271b6e4937ab654"
     },
     {
       "path": "frontend/src/components/notifications/SidebarNotificationCenter.tsx",
-      "sha256": "38aa69cc8a0a675213cf5b4992dbea826147bd669b9cc7aaf9d79d9fe88b13a3"
+      "sha256": "a9d660edb0d37460ca8b1e3380161d37c23c1cafd7a846d4de41d53c724c231e"
     },
     {
       "path": "frontend/src/components/onboarding/BuildTypeCard.tsx",
@@ -21761,7 +22328,7 @@
     },
     {
       "path": "frontend/src/components/onboarding/OnboardingFlow.tsx",
-      "sha256": "70f8a888d615843a67688d020a52afbd386566527721bf816f4dc0e287e86fcb"
+      "sha256": "cd8bf750ae8491b30eae6e696846433beb47c59ccddda38b58f6823e43642ede"
     },
     {
       "path": "frontend/src/components/onboarding/WorkspacePreparationCard.tsx",
@@ -21885,7 +22452,7 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/ChartV2.tsx",
-      "sha256": "320aaea32423759ce7edad6e4caa85219332c0693981f5636eacb4098b3d14e4"
+      "sha256": "adccc24984c95014570dc61838eaedece5d3c614b68e6e868ca02236f7d767a7"
     },
     {
       "path": "frontend/src/components/response-experience-v2/ComparisonV2.tsx",
@@ -21893,7 +22460,7 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/ConversationTurnV2.tsx",
-      "sha256": "3f38bc7c5d17a6d00d3874eb1b231aa006a1c64e9a888dedd0704734c3037430"
+      "sha256": "2aa94551c4bb6bcbedbd2e7cf521b65aa681acad8d3c7a59cbf4a3e09699e54c"
     },
     {
       "path": "frontend/src/components/response-experience-v2/DataV2.tsx",
@@ -21913,7 +22480,7 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/ProseV2.tsx",
-      "sha256": "aeeb7b35fe6bdeac647fb123ea27280eea329d0aad2e9fa960852d45f10abf75"
+      "sha256": "5ef20e2fbe3c644d54df71d39d54f26e2620d810e8e49f7f495ca52164b7621a"
     },
     {
       "path": "frontend/src/components/response-experience-v2/ResourcesV2.tsx",
@@ -21921,7 +22488,7 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx",
-      "sha256": "bf3050cc0f54fc83964036cbca9c82d270708c72b4c61d8b29142ee06a5d6f78"
+      "sha256": "84d86782b2e7843b62b94fbdc3a1b1655300f892dc0cb0ef1cc98d24f575dda2"
     },
     {
       "path": "frontend/src/components/response-experience-v2/ResponseExperienceGate.tsx",
@@ -21933,7 +22500,7 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/SourceV2.tsx",
-      "sha256": "9296ca07d218634feaf57cae381fcfd3407a69c09f8e584668c4a4b4175905d7"
+      "sha256": "a2cad34d63de428268e07ba6692a5ede1c9608faf91a95be9d8eb446f1069f42"
     },
     {
       "path": "frontend/src/components/response-experience-v2/StatusBadgeV2.tsx",
@@ -21953,7 +22520,7 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/conversation.ts",
-      "sha256": "f5d8286896e927309f3465ddedfdb0d76778d7a2fdebb8311536b66052d5fa67"
+      "sha256": "91183e77632fdedb05623a422857c6194a01a484c2bc4bc45e28954f4277d722"
     },
     {
       "path": "frontend/src/components/response-experience-v2/diagramSyntax.ts",
@@ -22057,7 +22624,7 @@
     },
     {
       "path": "frontend/src/components/settings/NotificationsSettingsPanel.tsx",
-      "sha256": "3429fbf6c12ce26c54c175d76168e785b0dc78ac73238a0c511d9ceeb4058b56"
+      "sha256": "33f3885994dca52b2a3af8c1deb08d0a3d7621a8bb62c582cbf254cdd6ec3564"
     },
     {
       "path": "frontend/src/components/settings/PlanUsageSettingsPanel.tsx",
@@ -22165,11 +22732,11 @@
     },
     {
       "path": "frontend/src/components/terminal/BlackHoleMark.tsx",
-      "sha256": "cee93c037c1fb922df7fc49826bbb6f308d1af372dedc8efd2d27d5d5475a7c2"
+      "sha256": "7683980a268cdcf2b2d10be25f49e44ae4d772a9357c8f6800deb6cf380c04a9"
     },
     {
       "path": "frontend/src/components/terminal/BlackHoleVButton.tsx",
-      "sha256": "fdc49818f067ad6fb65666437409407b18f27e0e1bc2ed6567aaad86fa65a298"
+      "sha256": "63ea8e31d85fe06f4af105055de0a9648531b029124609fe894b230097e755fd"
     },
     {
       "path": "frontend/src/components/terminal/BuildCodeSandbox.tsx",
@@ -22189,7 +22756,7 @@
     },
     {
       "path": "frontend/src/components/terminal/ChatBarActionsMenu.tsx",
-      "sha256": "caa7e448e518c7b41b2302b1f97414998ad975847bffba857995113934feb4e3"
+      "sha256": "4a7e163389452581579a20aa33e3832372daf568be426bff77bd70f39aa64c2b"
     },
     {
       "path": "frontend/src/components/terminal/ChatBarButtons.tsx",
@@ -22209,7 +22776,7 @@
     },
     {
       "path": "frontend/src/components/terminal/ChatErrorBoundary.tsx",
-      "sha256": "ff7a296ae665d7bbf84a0cb36b8fe90d4a930a52cef2fe5ffcb6db0898458daf"
+      "sha256": "b464f9591f077ed620e24ceb7ea34f6cac2ea88c8fd2dbec8f185a67f1eb7d98"
     },
     {
       "path": "frontend/src/components/terminal/ChatIntegrationsBar.tsx",
@@ -22221,7 +22788,7 @@
     },
     {
       "path": "frontend/src/components/terminal/ChatTurnRail.tsx",
-      "sha256": "6afcf033d68796efb15e3bcec771bec8840bda755b3b9f7ffe660e1ad40b843d"
+      "sha256": "a8cb247e4540341a102045b91342063fd1741bc5b712b41f50f38bcd979e8378"
     },
     {
       "path": "frontend/src/components/terminal/ChatbarQueueOutside.tsx",
@@ -22281,7 +22848,7 @@
     },
     {
       "path": "frontend/src/components/terminal/IntegrationsModal.tsx",
-      "sha256": "0dbd96995b155733fa243bf3ce5cab4f3a5e374f86e566ff29f850f3cae8f8c1"
+      "sha256": "b9690880a80670c7b533e7701c2de4ab0493d7fc8821563b1faa06dea52c472b"
     },
     {
       "path": "frontend/src/components/terminal/LegacyLandingOutputView.tsx",
@@ -22293,7 +22860,7 @@
     },
     {
       "path": "frontend/src/components/terminal/MessageBubbleActions.tsx",
-      "sha256": "164be07d1359346d4b937e8e5281905fc4c26e944e3e987ef2f6985a36bd48a4"
+      "sha256": "8f999816f3e0abc0153a7468bde243696d1c11eb9c74814a9d64328b5430471a"
     },
     {
       "path": "frontend/src/components/terminal/MessageShareModal.tsx",
@@ -22305,7 +22872,7 @@
     },
     {
       "path": "frontend/src/components/terminal/ModelAppPermissions.tsx",
-      "sha256": "c8371dd30298bb8a2a98d94934ecc395ba20b354df6a7f435b3286a6401c093c"
+      "sha256": "982cd973fc45e7d3bd177526be63cdbdb76b108a267492503ec8c9bc2a771724"
     },
     {
       "path": "frontend/src/components/terminal/ProductStartChips.tsx",
@@ -22324,12 +22891,16 @@
       "sha256": "6b9c079c5921ac6ab12ae12b0a5676432463843e36e99eabd51b2d3ec9c6eec2"
     },
     {
+      "path": "frontend/src/components/terminal/ProjectsQuickPopover.tsx",
+      "sha256": "10d4e6cd3adde3a423e709e70add1cd2a6cd296cd38170dcbacdae926beef05c"
+    },
+    {
       "path": "frontend/src/components/terminal/ReasoningAndFollowUps.tsx",
       "sha256": "0eeca6c512ee98f3ce66312df7d6de42fd61a49a85c270e53c580418c2239179"
     },
     {
       "path": "frontend/src/components/terminal/RepoContextBar.tsx",
-      "sha256": "ca88dfad1df43df059dcdfcce9937bc97aae9b3b86c52c573d01eba14e1dc9f9"
+      "sha256": "51ea1eb1e55d676bbfe035638fe9db71cd151b984ead74d779eb2c6ca999fef1"
     },
     {
       "path": "frontend/src/components/terminal/RepoWorkspaceGateModal.tsx",
@@ -22340,8 +22911,12 @@
       "sha256": "631f0e8237ad7fef685c872d4a80e124f4051733acb6b969f0c0cba72861eaeb"
     },
     {
+      "path": "frontend/src/components/terminal/ResponseSourceScope.tsx",
+      "sha256": "ecaf2015217e16fe145f69c21424b817e908dda0d8bdc1b4e941034e31dca5d5"
+    },
+    {
       "path": "frontend/src/components/terminal/ResponseSources.tsx",
-      "sha256": "0fd186c17e5d8ab081a61db58f16e171de43d5d8cc66727caccab5245f1a5fc7"
+      "sha256": "455ff5c4c7a2da8643ce2e808444bd2699cf7c1279a481903a25f76618b56c8c"
     },
     {
       "path": "frontend/src/components/terminal/RuntimeLogsButton.tsx",
@@ -22360,8 +22935,12 @@
       "sha256": "c3acc3b0846b77b2c62e93ac6f5852c3d09e1d3c21ab9fd96152f7e607456714"
     },
     {
+      "path": "frontend/src/components/terminal/SourceCitation.tsx",
+      "sha256": "92218738a0a46f2913ff30c9fd35eace7bfc0c991bd75c7258c5383e05405079"
+    },
+    {
       "path": "frontend/src/components/terminal/SourceLogo.tsx",
-      "sha256": "4ce9f501dbcecd540cc168638d497c3a2ce75608a2a27aee4efa10ef7cd09ae9"
+      "sha256": "e1bd467b8ba7a957a55d4d5a04e4141024e65fc994ad4c4decae6136ea2d97db"
     },
     {
       "path": "frontend/src/components/terminal/StoppedBuildResumeCard.tsx",
@@ -22369,7 +22948,7 @@
     },
     {
       "path": "frontend/src/components/terminal/SwarmMessageLog.tsx",
-      "sha256": "46620a18afa66deeb284cde5c4ca101b88509f249e48d331678aa302e5082c84"
+      "sha256": "f65cafd36a0f2b3d2b2d4844fea0bcf41a5c71a0810898a460d24bd3d9de714f"
     },
     {
       "path": "frontend/src/components/terminal/TerminalBuildReport.tsx",
@@ -22377,7 +22956,7 @@
     },
     {
       "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "sha256": "959ecdbdfe4da3c4cee1a79e2e4684f638df3ded77cf7ed9002bdafbd2ee8d0c"
+      "sha256": "56771761395d13094fd28183ae415e0d5bddeae383e8f43d49490de6758c5b73"
     },
     {
       "path": "frontend/src/components/terminal/TerminalDock.tsx",
@@ -22385,7 +22964,7 @@
     },
     {
       "path": "frontend/src/components/terminal/TerminalLiveActivity.tsx",
-      "sha256": "49b93f7fe12f1677aa204790fa3a212626dd1ec4f4b112cbefce47d7933cf929"
+      "sha256": "646e86bccdaeae747888c02c04c22b2b31f46bdee43ef4c5ea4b34bee5aed5eb"
     },
     {
       "path": "frontend/src/components/terminal/TerminalSearchBar.tsx",
@@ -22393,7 +22972,7 @@
     },
     {
       "path": "frontend/src/components/terminal/TerminalSkinPicker.tsx",
-      "sha256": "f5a62d44cea1dc5be69f2b257d681e375c728226b28908747b0d8c721d163077"
+      "sha256": "f4127b31f0c7b2c1b03675f29a56a54213e4e910000a911dabf711036ce8451e"
     },
     {
       "path": "frontend/src/components/terminal/TextGeneratingAnimation.tsx",
@@ -22425,19 +23004,23 @@
     },
     {
       "path": "frontend/src/components/terminal/WebSourcesPanel.tsx",
-      "sha256": "8cb2000ed030e5347f74d4f434d4392173bbad11f1851cd4eca90f68bb31eb86"
+      "sha256": "1f1912e5ce8ccf4e833b7725860fe671bff137480b268eccc613870fc514bbd8"
     },
     {
       "path": "frontend/src/components/terminal/WorkspaceConnectionsStrip.tsx",
       "sha256": "8e0b17b81dcdb750e39ecf274727996fc6a899a2c4eafbd5132b5fa9bf1e49ed"
     },
     {
+      "path": "frontend/src/components/terminal/WorkspaceConversationMenu.tsx",
+      "sha256": "955bacc8703f2baf23655bc140e799456acef35ab77737c69ce6cfb3bb855df6"
+    },
+    {
       "path": "frontend/src/components/terminal/WorkspaceIdentityMenu.tsx",
-      "sha256": "267574d0f4175c1b1075d14c1a5c8e39de4a9c315101479d8edd8c3c8c894dd7"
+      "sha256": "ded2132f7d62a5e7241ad54cedc59afeabb2729ae49987f59b310c4aae6c9ca5"
     },
     {
       "path": "frontend/src/components/terminal/WorkspaceLauncher.tsx",
-      "sha256": "88725edfafa78eeb8e50129641166281becee1d7e81b99a86d7d10c2f0e9c867"
+      "sha256": "fb66177195fa8ac30107e287b33e186452aa7c3a4d46bf4c279ab8affa93e6f2"
     },
     {
       "path": "frontend/src/components/terminal/WorkspacePeopleControls.tsx",
@@ -22453,11 +23036,11 @@
     },
     {
       "path": "frontend/src/components/terminal/XrogaBlockView.tsx",
-      "sha256": "43a771a1eff3baeb4ccbf43c11df226d6311460e90000274e7c32fe988c08551"
+      "sha256": "792091a73e92fb147483a4340d698e299916f196bb3a3caaf8cd7dfe2e36fcda"
     },
     {
       "path": "frontend/src/components/terminal/XrogaDecisionMatrixView.tsx",
-      "sha256": "b75b0787f73877364c43d658da809fb1b4bd2e1ac43b5e986cd3416f49e4997d"
+      "sha256": "f2e3ae30ce1f3bab7afa282add1f082117c3dbc6b1e65a2840479236f466c95e"
     },
     {
       "path": "frontend/src/components/terminal/XrogaLucideIcon.tsx",
@@ -22469,15 +23052,15 @@
     },
     {
       "path": "frontend/src/components/terminal/XrogaOrganizerBlockView.tsx",
-      "sha256": "6f53a818308e8992298746967a8bca0d408754970caa931f1e853c717a8549bd"
+      "sha256": "8cb7417ea3c1579e3e50990729bbf60065246f16af63fa52b965f3387a00e316"
     },
     {
       "path": "frontend/src/components/terminal/XrogaRichBlockView.tsx",
-      "sha256": "528ce3d806b3f388bfb215ad2604ae33e76a8f9f26e7176c6af4dc1285d41908"
+      "sha256": "4e574c2bfaef30a72cbacc1bd540cc238ea7ff85e57fb3a19ce9d7d768a42cf2"
     },
     {
       "path": "frontend/src/components/terminal/XrogaRichResultsView.tsx",
-      "sha256": "872ab28612bcce7b7b656e748219fa74242e133529e1b272fe865a8a8279f577"
+      "sha256": "3a676aaf12473990570c41cb3dfb4b54cce4ff74ded53115c887fab98778d470"
     },
     {
       "path": "frontend/src/components/terminal/XrogaStatusBadge.tsx",
@@ -22701,7 +23284,7 @@
     },
     {
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "sha256": "e63361404059650e86323ce433c60037c52409a119beece8baf48acc90254c5b"
+      "sha256": "f64b6a90528ee957cac3789193401a61ceb6cea289f93599780b4677bf8c19d6"
     },
     {
       "path": "frontend/src/context/TerminalScrollContext.tsx",
@@ -22713,7 +23296,7 @@
     },
     {
       "path": "frontend/src/hooks/useBackgroundBuildJobs.ts",
-      "sha256": "28db4d42587ae138981fcc765c699e220cac0edd3541a51fa82c90175e3eef44"
+      "sha256": "63798163ad2d3e61f261f4ec6c96a294b65b2d65f0591d066b2c07626dd79c54"
     },
     {
       "path": "frontend/src/hooks/useBuildCompletionAlerts.ts",
@@ -22749,7 +23332,7 @@
     },
     {
       "path": "frontend/src/lib/api.ts",
-      "sha256": "bf072296dc2828844620377cf54a58fafe4cbedfb1a796a8324b77b1f10aa0c0"
+      "sha256": "13315f5d5480282928def653b8552f932c447cf61038a590248feb8b9589e29d"
     },
     {
       "path": "frontend/src/lib/assistantCopy.ts",
@@ -22770,6 +23353,10 @@
     {
       "path": "frontend/src/lib/brand.ts",
       "sha256": "89c9910b49525c23848afd1d4bcb64c53dd1e2dd21839de945ac47a73522b25e"
+    },
+    {
+      "path": "frontend/src/lib/browserPush.ts",
+      "sha256": "157fa536ba5285716a428c45314695422f456f2d38bc2466a2982c2b1643d095"
     },
     {
       "path": "frontend/src/lib/browserSafety.ts",
@@ -22817,7 +23404,7 @@
     },
     {
       "path": "frontend/src/lib/capabilityPages.ts",
-      "sha256": "7733757da3fe9c24bcb1bec24e50e426957c3328151f5766dc4a81d92d1a3f0e"
+      "sha256": "a87bebf54942f456218cff340737efacfa6626b30749863b7d682d257801b343"
     },
     {
       "path": "frontend/src/lib/capacityMessage.ts",
@@ -22969,7 +23556,7 @@
     },
     {
       "path": "frontend/src/lib/formatAiMarkdown.tsx",
-      "sha256": "dba219fea184b59714d2c36619d1c58bd3273e6b232c9d1b4b53e3427bc16fdf"
+      "sha256": "d83c29dbdfa41ef3a94c511472f94e64f91f463614f26780d181d351c017a1fb"
     },
     {
       "path": "frontend/src/lib/gameBuilderContent.ts",
@@ -23018,6 +23605,10 @@
     {
       "path": "frontend/src/lib/homepageFaq.ts",
       "sha256": "d940ae4be7e994653b3e929c2bc2b35c1a5258f9fa0464a857d346f2e51caf30"
+    },
+    {
+      "path": "frontend/src/lib/hostedWorkspaceBridge.mjs",
+      "sha256": "562de9c1291a88600f00940fa7235b3d45ceb069194507f4b8e44e447588fbfa"
     },
     {
       "path": "frontend/src/lib/hydrateLandingOutput.ts",
@@ -23124,12 +23715,16 @@
       "sha256": "f4e011fd3e7dc1effe2c74a0bfef81bede80ac4339731861ebfc972623b2f678"
     },
     {
+      "path": "frontend/src/lib/nativeWorkSkills.ts",
+      "sha256": "6203e6dc53733abb3c06079dc71e3ee40ca940a0d496715e61a1b5c8161bcefe"
+    },
+    {
       "path": "frontend/src/lib/normalizeBuildSource.ts",
       "sha256": "8eb964cdc6628349845af326282c9eddaa22e6bbe8c48eb834b76d81372df0a4"
     },
     {
       "path": "frontend/src/lib/notificationExperience.ts",
-      "sha256": "e0ecdfb7c7ea9fa7e8614cc31b4246b3b3bb9279b259a9154d1359b49cd3ab97"
+      "sha256": "57deb27e4caf6c866ee622e537518e01284aa4094866bf45651a13c8995d02b6"
     },
     {
       "path": "frontend/src/lib/oauthPopupResult.ts",
@@ -23181,7 +23776,7 @@
     },
     {
       "path": "frontend/src/lib/passiveRepositorySelection.ts",
-      "sha256": "d3bb403f545e3326521818482ace27ab2c3989aa5c297533c357e4933db75cb5"
+      "sha256": "c86b023195530c865917ffaf97a81c31188fe4a0e8a9361dcc6fb7bb8a1f247e"
     },
     {
       "path": "frontend/src/lib/passwordStrength.ts",
@@ -23189,7 +23784,7 @@
     },
     {
       "path": "frontend/src/lib/pendingBuildJobs.ts",
-      "sha256": "e1f2f29be773ea48f97a49bc30f9a90b48680f2696ca6f1e8af3a33d750ec209"
+      "sha256": "feee2c706b9badb7c681508f25c4426993a0eed7ceaae2e1d248746dbe5682b8"
     },
     {
       "path": "frontend/src/lib/phase1Routing.ts",
@@ -23197,7 +23792,11 @@
     },
     {
       "path": "frontend/src/lib/plainAiText.tsx",
-      "sha256": "7de92c8695e328910121be96d4e701faae8535129a354db8a9ce60de4019fa6a"
+      "sha256": "e95220a7c3b851a0b84b62a840a978a7dbcabb7ab0774d1fe81f6b7d0f086710"
+    },
+    {
+      "path": "frontend/src/lib/plainAiTextParser.ts",
+      "sha256": "d5b5ab501d29ceeda5f44a6e0bdc80797746e87024d717af1c2ac7d4088e4ffa"
     },
     {
       "path": "frontend/src/lib/plans.ts",
@@ -23253,11 +23852,11 @@
     },
     {
       "path": "frontend/src/lib/publicMarketing.ts",
-      "sha256": "020281baaedc2433064c1ba4fa738456977272ab9545be67770f8f8618a48fd0"
+      "sha256": "9dce975db94613aa2e65466f913a0f413d0976b73b31dbb1007971a8712b5f72"
     },
     {
       "path": "frontend/src/lib/publicUrlInventory.ts",
-      "sha256": "39207af254d2a8a86ecbf99ea7f14378c4c7b956a87f1f0d0cf4a45a198c1f72"
+      "sha256": "9d7fad975f495bc7047b5fb5d5091698833a7286e737e3064410ba18265193a9"
     },
     {
       "path": "frontend/src/lib/publish/types.ts",
@@ -23301,7 +23900,7 @@
     },
     {
       "path": "frontend/src/lib/researchHandoff.ts",
-      "sha256": "7d59b242748543a52f568e421114e816283d9c49691c4045fa5c7441c096f8ad"
+      "sha256": "9eeae9816ae0462dff96d514efa7249ebd5fda065c0530cf80fca0507dbf08af"
     },
     {
       "path": "frontend/src/lib/researchWait.ts",
@@ -23329,7 +23928,7 @@
     },
     {
       "path": "frontend/src/lib/runLightLaneChat.ts",
-      "sha256": "c56592637fe2a74c344c471dfc93b246133acba8db0882826b5e9cf595a80e83"
+      "sha256": "9f60a9800aec28c9dd077f0bd4950975e4871634a01195ce475c3adb7d42c7c7"
     },
     {
       "path": "frontend/src/lib/safeDates.ts",
@@ -23337,7 +23936,7 @@
     },
     {
       "path": "frontend/src/lib/sanitizeChatMessages.ts",
-      "sha256": "08aed69e29becb483c25057b2fea1f9d2b27fbedb54dffb6b50cd74e194b4318"
+      "sha256": "9472c50e5932eacfc781a768529cc0ea1b846bc8a34679b8fb0d5fed52df2410"
     },
     {
       "path": "frontend/src/lib/scheduledFeedback.ts",
@@ -23400,8 +23999,12 @@
       "sha256": "edb53ddc21b8d0e5bd80f4926f45573319db4d4f0af9526b780ee7fe9ebc2252"
     },
     {
+      "path": "frontend/src/lib/sidebarConversationLocation.ts",
+      "sha256": "823fdbfb4c89b55ed5675f39caf47d4d46ed8d01ccc9780cceb6f0c6004c3293"
+    },
+    {
       "path": "frontend/src/lib/sidebarOrganization.ts",
-      "sha256": "4126ec733881661a0ec2a8cdc5678e4c4d177f01dd3e3533d5fa1a67ff463072"
+      "sha256": "c556d45dd88f793c9f0dd83feb41a4f99bffe126eab8e71a5df2e61924c2d999"
     },
     {
       "path": "frontend/src/lib/sidebarProjectTask.ts",
@@ -23433,7 +24036,7 @@
     },
     {
       "path": "frontend/src/lib/storageSafe.ts",
-      "sha256": "09177cc8bdd4282fc566ffa705d69c470116baf31b52b2395093ad4667dd5bcc"
+      "sha256": "37254c666b3a3db2f7ff3cc31a4666bcd0b2b506c0525521cb5b624b0e6ce6a6"
     },
     {
       "path": "frontend/src/lib/streamText.ts",
@@ -23441,7 +24044,7 @@
     },
     {
       "path": "frontend/src/lib/supabase/authBuildRealm.mjs",
-      "sha256": "002fc085825c866039ac9c3a76c4a818601fa7f7311717c71c81ddbfb14f4921"
+      "sha256": "60023a172a85295e9ebb8a41ba37b4f5c490a562b443633fbdcc3a8e5ed7bb0c"
     },
     {
       "path": "frontend/src/lib/supabase/authCookiePolicy.ts",
@@ -23509,11 +24112,11 @@
     },
     {
       "path": "frontend/src/lib/terminal/activityPresentation.ts",
-      "sha256": "9691f43d3dd244e8ab5b7d4c27eedae9ab41f4e4d1ca530476ef86d1bca388f6"
+      "sha256": "3026825d27c660a75e3d2a258089cccc9db6e8ba8e8b3c8382dfe99902e13ec7"
     },
     {
       "path": "frontend/src/lib/terminal/activityTimeline.ts",
-      "sha256": "10ba3ba4eb7d545fc902ed44373c4595ae9a6e0384ed01b229baf668a6207943"
+      "sha256": "f34b738df3e75f3bc44163270ac91920eb1314b9f6dcedba06723cf89ab5c8fc"
     },
     {
       "path": "frontend/src/lib/terminal/dictation.ts",
@@ -23549,7 +24152,7 @@
     },
     {
       "path": "frontend/src/lib/terminalHistory.ts",
-      "sha256": "81058bf811fa1043fad7294bacd36f1e0aa1098a5f00c07e14e87ff82988a80b"
+      "sha256": "0bc21e539fcbdac1bd712156789b596227454e80ff1766e38c39a3df9dca3003"
     },
     {
       "path": "frontend/src/lib/terminalSearch.ts",
@@ -23657,7 +24260,7 @@
     },
     {
       "path": "frontend/src/lib/xrogaBlocks.ts",
-      "sha256": "924d3a623b0888ef1523b24b24f86fdd237a61bd87e0c956ba5acd0e00c51697"
+      "sha256": "bc1122b2bfaa033b96ae306bcf50f95bf966abf5e69f33792d08e82f52885dc6"
     },
     {
       "path": "frontend/src/lib/xrogaBrand.ts",
@@ -23673,7 +24276,7 @@
     },
     {
       "path": "frontend/src/lib/xrogaCitations.ts",
-      "sha256": "30323511a9d473cdc395952a17af6fbe8726e899f069e4cbb27d9a3f5b07a5a9"
+      "sha256": "c417f125a92821e81fbff40c9145e928d5860a9ffe9da757755f3c3b791c75a6"
     },
     {
       "path": "frontend/src/lib/xrogaConnect.ts",
@@ -23693,11 +24296,11 @@
     },
     {
       "path": "frontend/src/lib/xrogaEvent.ts",
-      "sha256": "e43afff83299ccf6badefa0e98eeb1b42b2fbf21bc1768ec2ec4e350b7ec9ed2"
+      "sha256": "2594c29a3735c91c3cb3161ee049c7d24958cc6e3105effc85fbfa15b358c613"
     },
     {
       "path": "frontend/src/lib/xrogaEventAdapter.ts",
-      "sha256": "5447cfea2e130bf5f3a23bf5b723b8ccd57d767b97e15c105338084fc3843ad3"
+      "sha256": "4f5d75c6c8c93588268ddea70e024589d01c9e130dca902ca268549a2be44930"
     },
     {
       "path": "frontend/src/lib/xrogaFileExports.ts",
@@ -23713,7 +24316,7 @@
     },
     {
       "path": "frontend/src/lib/xrogaResponseDocument.ts",
-      "sha256": "565c5d92a6152acf76bd89498de775fc453855051421253bc06e81300a83ff5a"
+      "sha256": "ddd310d945810acbda5c9ba5dfd09267e87ff34caf330e7c3d2974ac109f374d"
     },
     {
       "path": "frontend/src/lib/xrogaRichResultFixtures.ts",
@@ -23733,7 +24336,7 @@
     },
     {
       "path": "frontend/src/middleware.ts",
-      "sha256": "d219457fcf40ba40dab26615936c23ff8907b35082c50efed28297ce6e58a423"
+      "sha256": "d52d0513a5604e1d5f41b4d13f36ce13468b9561c35b1c6fe1d363c50044f27d"
     },
     {
       "path": "frontend/src/store/useAppStore.ts",
@@ -23749,7 +24352,7 @@
     },
     {
       "path": "frontend/src/store/useComposerToolsStore.ts",
-      "sha256": "963d54b27d042b07858c478c64604bb5a4f5e530266f045f099e64ff437d8d18"
+      "sha256": "9d50dc34cf43994ef9f0fab4921a0bd8f59dcc979584afe2e39ede941ec6f72d"
     },
     {
       "path": "frontend/src/store/useCurrencyStore.ts",
@@ -23793,7 +24396,7 @@
     },
     {
       "path": "scripts/xroga/runtime-facts.mjs",
-      "sha256": "4eabe36ba552b7e1e84d6a8004e33d66aa4af3adca49032a4757705ef277c1bd"
+      "sha256": "db3ac14cb9e3198bfeda150817ba220e1f303217774ef7fee5bc213d1d87cef1"
     },
     {
       "path": "scripts/xroga/runtime-inventory.mjs",
@@ -24966,7 +25569,7 @@
       "hostname": "github.com",
       "protocol": "https:",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4064,
+      "line": 4110,
       "credentialsInUrl": false
     },
     {
@@ -24974,6 +25577,13 @@
       "protocol": "https:",
       "path": "backend/src/ai/researchSearchProvider.ts",
       "line": 14,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "cdn.deepseek.com",
+      "protocol": "https:",
+      "path": "backend/src/ai/researchSearchProvider.ts",
+      "line": 43,
       "credentialsInUrl": false
     },
     {
@@ -25211,42 +25821,42 @@
       "hostname": "localhost",
       "protocol": "http:",
       "path": "backend/src/index.ts",
-      "line": 116,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "xroga.com",
-      "protocol": "https:",
-      "path": "backend/src/index.ts",
-      "line": 117,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "www.xroga.com",
-      "protocol": "https:",
-      "path": "backend/src/index.ts",
       "line": 118,
       "credentialsInUrl": false
     },
     {
-      "hostname": "xrogaaicom.vercel.app",
+      "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/index.ts",
       "line": 119,
       "credentialsInUrl": false
     },
     {
-      "hostname": "xroga-api.fly.dev",
+      "hostname": "www.xroga.com",
       "protocol": "https:",
       "path": "backend/src/index.ts",
       "line": 120,
       "credentialsInUrl": false
     },
     {
+      "hostname": "xrogaaicom.vercel.app",
+      "protocol": "https:",
+      "path": "backend/src/index.ts",
+      "line": 121,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "xroga-api.fly.dev",
+      "protocol": "https:",
+      "path": "backend/src/index.ts",
+      "line": 122,
+      "credentialsInUrl": false
+    },
+    {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/index.ts",
-      "line": 212,
+      "line": 214,
       "credentialsInUrl": false
     },
     {
@@ -25757,7 +26367,7 @@
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/routes/phase1.ts",
-      "line": 178,
+      "line": 179,
       "credentialsInUrl": false
     },
     {
@@ -25967,14 +26577,14 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/connectedAccountRoutes.local.integration.ts",
-      "line": 51,
+      "line": 60,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/connectedAccountRoutes.local.integration.ts",
-      "line": 64,
+      "line": 73,
       "credentialsInUrl": false
     },
     {
@@ -26482,73 +27092,80 @@
       "credentialsInUrl": false
     },
     {
+      "hostname": "fcm.googleapis.com",
+      "protocol": "https:",
+      "path": "backend/src/security/tenantIsolation.local.integration.ts",
+      "line": 255,
+      "credentialsInUrl": false
+    },
+    {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 561,
+      "line": 590,
       "credentialsInUrl": false
     },
     {
       "hostname": "public.example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 611,
+      "line": 640,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 700,
+      "line": 729,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 812,
+      "line": 841,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 879,
+      "line": 908,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 937,
+      "line": 966,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1648,
+      "line": 1677,
       "credentialsInUrl": false
     },
     {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1666,
+      "line": 1695,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.whop.com",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1674,
+      "line": 1703,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1678,
+      "line": 1707,
       "credentialsInUrl": false
     },
     {
@@ -26751,14 +27368,14 @@
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 1379,
+      "line": 1393,
       "credentialsInUrl": false
     },
     {
       "hostname": "backend.composio.dev",
       "protocol": "https:",
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 1402,
+      "line": 1416,
       "credentialsInUrl": false
     },
     {
@@ -27822,7 +28439,7 @@
       "hostname": "api.xroga.com",
       "protocol": "https:",
       "path": "frontend/src/app/api/private-files/[projectId]/[fileId]/route.ts",
-      "line": 17,
+      "line": 18,
       "credentialsInUrl": false
     },
     {
@@ -29131,14 +29748,14 @@
       "hostname": "x.com",
       "protocol": "https:",
       "path": "frontend/src/components/marketing/AiAppBuilderLanding.tsx",
-      "line": 633,
+      "line": 637,
       "credentialsInUrl": false
     },
     {
       "hostname": "github.com",
       "protocol": "https:",
       "path": "frontend/src/components/marketing/AiAppBuilderLanding.tsx",
-      "line": 642,
+      "line": 646,
       "credentialsInUrl": false
     },
     {
@@ -29625,24 +30242,10 @@
       "credentialsInUrl": false
     },
     {
-      "hostname": "www.google.com",
-      "protocol": "https:",
-      "path": "frontend/src/components/terminal/SourceLogo.tsx",
-      "line": 14,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "www.google.com",
-      "protocol": "https:",
-      "path": "frontend/src/components/terminal/WebSourcesPanel.tsx",
-      "line": 27,
-      "credentialsInUrl": false
-    },
-    {
       "hostname": "github.com",
       "protocol": "https:",
       "path": "frontend/src/components/terminal/WorkspaceIdentityMenu.tsx",
-      "line": 121,
+      "line": 114,
       "credentialsInUrl": false
     },
     {
@@ -29656,7 +30259,7 @@
       "hostname": "www.openstreetmap.org",
       "protocol": "https:",
       "path": "frontend/src/components/terminal/XrogaRichBlockView.tsx",
-      "line": 153,
+      "line": 179,
       "credentialsInUrl": false
     },
     {
@@ -29733,7 +30336,7 @@
       "hostname": "github.com",
       "protocol": "https:",
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 4002,
+      "line": 4064,
       "credentialsInUrl": false
     },
     {
@@ -29929,7 +30532,7 @@
       "hostname": "xroga.local",
       "protocol": "https:",
       "path": "frontend/src/lib/formatAiMarkdown.tsx",
-      "line": 130,
+      "line": 131,
       "credentialsInUrl": false
     },
     {
@@ -30021,6 +30624,20 @@
       "protocol": "https:",
       "path": "frontend/src/lib/hackathonResearch.ts",
       "line": 13,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "metadata.google.internal",
+      "protocol": "http:",
+      "path": "frontend/src/lib/hostedWorkspaceBridge.mjs",
+      "line": 53,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "accounts.google.com",
+      "protocol": "https:",
+      "path": "frontend/src/lib/hostedWorkspaceBridge.mjs",
+      "line": 70,
       "credentialsInUrl": false
     },
     {
@@ -31210,7 +31827,7 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "frontend/src/lib/supabase/authBuildRealm.mjs",
-      "line": 4,
+      "line": 5,
       "credentialsInUrl": false
     },
     {
@@ -31259,28 +31876,35 @@
       "hostname": "github.com",
       "protocol": "https:",
       "path": "frontend/src/lib/terminalHistory.ts",
-      "line": 233,
+      "line": 237,
       "credentialsInUrl": false
     }
   ],
   "fallback_candidates": [
     {
       "path": "backend/src/ai/answerCoverage.ts",
-      "line": 65,
+      "line": 44,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/answerCoverage.ts",
-      "line": 105,
+      "line": 73,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/answerCoverage.ts",
-      "line": 131,
+      "line": 113,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/answerCoverage.ts",
+      "line": 139,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -31769,6 +32393,279 @@
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
+      "path": "backend/src/ai/nativeDiagramTopology.ts",
+      "line": 7,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/nativeDiagramTopology.ts",
+      "line": 8,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/nativeOpenUi.ts",
+      "line": 12,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/nativeOpenUi.ts",
+      "line": 13,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/nativeOpenUi.ts",
+      "line": 14,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/nativeOpenUi.ts",
+      "line": 15,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/nativeOpenUi.ts",
+      "line": 95,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/nativeOpenUi.ts",
+      "line": 98,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/nativeOpenUi.ts",
+      "line": 99,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/nativeOpenUi.ts",
+      "line": 102,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/nativeOpenUi.ts",
+      "line": 129,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/nativeOpenUi.ts",
+      "line": 143,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/nativeOpenUi.ts",
+      "line": 151,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/nativeOpenUi.ts",
+      "line": 171,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/nativeOpenUi.ts",
+      "line": 225,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/nativeOpenUi.ts",
+      "line": 281,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/nativeOpenUi.ts",
+      "line": 287,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/nativeOpenUi.ts",
+      "line": 341,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/nativeOpenUi.ts",
+      "line": 350,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/nativeOpenUi.ts",
+      "line": 369,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/nativeOpenUi.ts",
+      "line": 389,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/nativeOpenUi.ts",
+      "line": 468,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/nativeOpenUi.ts",
+      "line": 509,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/nativeOpenUi.ts",
+      "line": 528,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/nativeOpenUi.ts",
+      "line": 535,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/nativeOpenUi.ts",
+      "line": 536,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/nativeOpenUi.ts",
+      "line": 537,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/nativeOpenUi.ts",
+      "line": 543,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/nativeOpenUi.ts",
+      "line": 567,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/nativeOpenUiAccuracy.ts",
+      "line": 104,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/nativeOpenUiAccuracy.ts",
+      "line": 127,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/nativeOpenUiAccuracy.ts",
+      "line": 149,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/nativeOpenUiAccuracy.ts",
+      "line": 172,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/nativeOpenUiPrompt.ts",
+      "line": 28,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/nativeOpenUiPrompt.ts",
+      "line": 80,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/nativeOpenUiPrompt.ts",
+      "line": 81,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/nativeOpenUiPrompt.ts",
+      "line": 84,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/nativeOpenUiRun.ts",
+      "line": 16,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/nativeOpenUiShare.ts",
+      "line": 44,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
       "path": "backend/src/ai/openaiCompat.ts",
       "line": 269,
       "scope": "FUNCTION_LOCAL",
@@ -31931,63 +32828,70 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 530,
+      "line": 533,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 560,
+      "line": 563,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 754,
+      "line": 757,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 1121,
+      "line": 1134,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 1519,
+      "line": 1141,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 2271,
+      "line": 1565,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3830,
+      "line": 2317,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4014,
+      "line": 3876,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4793,
+      "line": 4060,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/pipeline.ts",
+      "line": 4839,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -32204,35 +33108,21 @@
     },
     {
       "path": "backend/src/ai/responsePresentation.ts",
-      "line": 161,
+      "line": 165,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/responsePresentation.ts",
-      "line": 166,
+      "line": 170,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/responsePresentation.ts",
-      "line": 167,
-      "scope": "FUNCTION_LOCAL",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "backend/src/ai/responsePresentation.ts",
-      "line": 180,
-      "scope": "FUNCTION_LOCAL",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "backend/src/ai/responsePresentation.ts",
-      "line": 183,
+      "line": 171,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -32240,6 +33130,20 @@
     {
       "path": "backend/src/ai/responsePresentation.ts",
       "line": 184,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/responsePresentation.ts",
+      "line": 187,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/responsePresentation.ts",
+      "line": 188,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -32645,63 +33549,63 @@
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "line": 132,
+      "line": 162,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "line": 154,
+      "line": 184,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "line": 238,
+      "line": 268,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "line": 255,
+      "line": 285,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "line": 298,
+      "line": 328,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "line": 311,
+      "line": 341,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "line": 1147,
+      "line": 1177,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "line": 1255,
+      "line": 1285,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "line": 1536,
+      "line": 1577,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -34919,6 +35823,13 @@
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
+      "path": "backend/src/routes/browserDocuments.ts",
+      "line": 25,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
       "path": "backend/src/routes/capabilities.ts",
       "line": 46,
       "scope": "MODULE_LIFETIME",
@@ -35144,14 +36055,14 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1123,
+      "line": 1152,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1481,
+      "line": 1510,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -35167,6 +36078,13 @@
       "path": "backend/src/security/vercelRefreshAccount.local.integration.ts",
       "line": 44,
       "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/services/browserPushService.ts",
+      "line": 10,
+      "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
@@ -35256,42 +36174,42 @@
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 701,
+      "line": 715,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 1275,
+      "line": 1289,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 1304,
+      "line": 1318,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 1335,
+      "line": 1349,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 1841,
+      "line": 1863,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 1967,
+      "line": 1989,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -35480,7 +36398,14 @@
     },
     {
       "path": "backend/src/services/integrations/researchResult.ts",
-      "line": 57,
+      "line": 63,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/services/integrations/researchResult.ts",
+      "line": 102,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -37188,7 +38113,7 @@
     },
     {
       "path": "backend/src/workers/browserRunStore.ts",
-      "line": 75,
+      "line": 76,
       "scope": "INSTANCE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -37334,13 +38259,6 @@
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
-      "path": "frontend/src/components/activity/ActivityTimeline.tsx",
-      "line": 32,
-      "scope": "MODULE_LIFETIME",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
       "path": "frontend/src/components/automations/BrowserRun.tsx",
       "line": 17,
       "scope": "MODULE_LIFETIME",
@@ -37364,6 +38282,20 @@
     {
       "path": "frontend/src/components/automations/evidence.ts",
       "line": 3,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+      "line": 79,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+      "line": 80,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -37692,14 +38624,7 @@
     },
     {
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 296,
-      "scope": "FUNCTION_LOCAL",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 363,
+      "line": 297,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -37713,28 +38638,28 @@
     },
     {
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 370,
+      "line": 365,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 463,
+      "line": 371,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 537,
+      "line": 464,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 804,
+      "line": 538,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -37748,28 +38673,28 @@
     },
     {
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 864,
+      "line": 806,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 889,
+      "line": 865,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 893,
+      "line": 890,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 900,
+      "line": 894,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -37777,6 +38702,69 @@
     {
       "path": "frontend/src/components/layout/WorkspacePerformanceProbe.tsx",
       "line": 42,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/components/native-openui/ChoicePicker.tsx",
+      "line": 19,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/components/native-openui/Diagram.tsx",
+      "line": 53,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/components/native-openui/Diagram.tsx",
+      "line": 54,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/components/native-openui/Diagram.tsx",
+      "line": 70,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/components/native-openui/NativeSurface.tsx",
+      "line": 22,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/components/native-openui/NativeSurface.tsx",
+      "line": 29,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/components/native-openui/evidence.tsx",
+      "line": 7,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/components/native-openui/upstream/components/chart.tsx",
+      "line": 300,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/components/native-openui/upstream/functions/shared.ts",
+      "line": 71,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -37825,7 +38813,7 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/SourceV2.tsx",
-      "line": 24,
+      "line": 25,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -38014,14 +39002,14 @@
     },
     {
       "path": "frontend/src/components/terminal/ChatTurnRail.tsx",
-      "line": 155,
+      "line": 177,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/terminal/ChatTurnRail.tsx",
-      "line": 164,
+      "line": 186,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -38048,8 +39036,36 @@
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
+      "path": "frontend/src/components/terminal/ResponseSourceScope.tsx",
+      "line": 6,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/components/terminal/ResponseSourceScope.tsx",
+      "line": 12,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/components/terminal/ResponseSourceScope.tsx",
+      "line": 14,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/components/terminal/ResponseSources.tsx",
+      "line": 15,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
       "path": "frontend/src/components/terminal/SwarmMessageLog.tsx",
-      "line": 225,
+      "line": 224,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -38126,14 +39142,28 @@
     },
     {
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 2046,
+      "line": 671,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 2079,
+      "line": 2121,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/context/TerminalChatContext.tsx",
+      "line": 2154,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/hooks/useBackgroundBuildJobs.ts",
+      "line": 63,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -38441,14 +39471,14 @@
     },
     {
       "path": "frontend/src/lib/publicMarketing.ts",
-      "line": 44,
+      "line": 45,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/lib/publicUrlInventory.ts",
-      "line": 160,
+      "line": 162,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -38469,7 +39499,7 @@
     },
     {
       "path": "frontend/src/lib/researchHandoff.ts",
-      "line": 68,
+      "line": 69,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -38504,14 +39534,14 @@
     },
     {
       "path": "frontend/src/lib/sanitizeChatMessages.ts",
-      "line": 17,
+      "line": 18,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/lib/sanitizeChatMessages.ts",
-      "line": 23,
+      "line": 24,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -38525,21 +39555,14 @@
     },
     {
       "path": "frontend/src/lib/sidebarOrganization.ts",
-      "line": 102,
+      "line": 108,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/lib/sidebarOrganization.ts",
-      "line": 141,
-      "scope": "FUNCTION_LOCAL",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "frontend/src/lib/sidebarOrganization.ts",
-      "line": 158,
+      "line": 109,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -38547,6 +39570,20 @@
     {
       "path": "frontend/src/lib/sidebarOrganization.ts",
       "line": 159,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/lib/sidebarOrganization.ts",
+      "line": 176,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/lib/sidebarOrganization.ts",
+      "line": 177,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -38588,21 +39625,35 @@
     },
     {
       "path": "frontend/src/lib/terminal/activityPresentation.ts",
-      "line": 212,
+      "line": 230,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/lib/terminal/activityPresentation.ts",
-      "line": 234,
+      "line": 231,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/lib/terminal/activityPresentation.ts",
-      "line": 235,
+      "line": 271,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/lib/terminal/activityPresentation.ts",
+      "line": 272,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/lib/terminal/activityPresentation.ts",
+      "line": 284,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -38686,14 +39737,14 @@
     },
     {
       "path": "frontend/src/lib/xrogaEvent.ts",
-      "line": 91,
+      "line": 92,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/lib/xrogaEvent.ts",
-      "line": 107,
+      "line": 108,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -38770,7 +39821,7 @@
     },
     {
       "path": "frontend/src/store/useComposerToolsStore.ts",
-      "line": 178,
+      "line": 183,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

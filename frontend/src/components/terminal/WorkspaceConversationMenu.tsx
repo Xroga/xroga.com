@@ -1,13 +1,14 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Archive, ArrowLeft, Check, ChevronDown, Copy, ExternalLink, FolderInput, Loader2, Pencil, Pin, PinOff, Share2, Trash2 } from 'lucide-react';
+import { Archive, ArrowLeft, Check, ChevronDown, FolderInput, Loader2, Pencil, Pin, PinOff, Trash2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { useWorkspaceIdentity } from '@/components/layout/WorkspaceIdentityContext';
 import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
 import { getActiveSidebarProject, SIDEBAR_PROJECT_ACTIVE_EVENT, activateSidebarProject, clearActiveSidebarProject } from '@/lib/sidebarProjectTask';
 import { AnchoredPortalPopover } from '@/components/ui/AnchoredPortalPopover';
+import { WorkspaceIdentityMenu } from './WorkspaceIdentityMenu';
 import { meaningfulSidebarTitle, loadSidebarChatById, loadSidebarMeta, loadSidebarProjects, changeSidebarMeta, deleteSidebarChat, deleteSidebarMeta, type SidebarMeta, type SidebarProject } from '@/lib/sidebarOrganization';
 import { loadCloudTerminalSession } from '@/lib/cloudTerminalSessions';
 import { removeTerminalHistoryEntry } from '@/lib/terminalHistory';
@@ -62,9 +63,10 @@ export function WorkspaceConversationMenu() {
   const displayTitle = sessionRestoring ? 'Opening conversation…' : activeTitle;
   // Context prefix only for active GitHub or project work. Other recent chats
   // display their conversation title directly, with no artificial label.
-  const contextPrefix = activeRepo ? `Repo · ${activeRepo.split('/').pop() || activeRepo}` :
+  const contextPrefix = activeRepo ? `Repo · ${(activeRepo.split('/').pop() || activeRepo).replace(/-20\d{6}-\d{6}$/, '')}` :
     projectName ? `Project · ${projectName}` : '';
-  const headerTitle = contextPrefix ? `${contextPrefix} / ${displayTitle}` : displayTitle;
+  const headerTitle = displayTitle === 'New chat' && contextPrefix ? contextPrefix : displayTitle;
+  const headerTooltip = contextPrefix ? `${contextPrefix} / ${displayTitle}` : displayTitle;
 
   const closeMenu = useCallback(() => {
     setOpen(false);
@@ -146,35 +148,6 @@ export function WorkspaceConversationMenu() {
 
   // All actions below apply to the active conversation, not the sidebar list.
   // A saved owner-scoped record must be present before any mutation is offered.
-  function conversationUrl(): string {
-    return `${window.location.origin}/workspace?conversation=${encodeURIComponent(sessionId)}`;
-  }
-
-  async function shareLink(action: 'share' | 'copy' | 'open') {
-    if (!canManage || !currentEntry) return;
-    const url = conversationUrl();
-    if (action === 'open') {
-      window.open(url, '_blank', 'noopener,noreferrer');
-      return;
-    }
-    if (action === 'share' && typeof navigator.share === 'function') {
-      try {
-        await navigator.share({ title: currentEntry.title, url });
-      } catch (err) {
-        if ((err as Error).name !== 'AbortError') toast.error('Could not share this conversation.');
-      }
-      return;
-    }
-    try {
-      await navigator.clipboard.writeText(url);
-      toast.success(action === 'share'
-        ? 'Private link copied. Only your signed-in account can open it.'
-        : 'Conversation link copied');
-    } catch {
-      toast.error('Could not copy the conversation link.');
-    }
-  }
-
   async function persistMetadata(changes: Partial<SidebarMeta>): Promise<boolean> {
     if (!accountId || !canManage || !currentEntry) return false;
     setBusyAction(true);
@@ -282,7 +255,7 @@ export function WorkspaceConversationMenu() {
   return (
     <div className={styles.root} data-testid="workspace-conversation-menu">
       <button ref={anchorRef} type="button" className={styles.trigger}
-        title={headerTitle}
+        title={headerTooltip}
         aria-label={`Conversation: ${headerTitle}. Open conversation actions`}
         aria-expanded={open} aria-haspopup="menu"
         onClick={() => setOpen((value) => !value)}>
@@ -290,12 +263,9 @@ export function WorkspaceConversationMenu() {
         <ChevronDown size={15} aria-hidden="true" className={open ? styles.chevronOpen : styles.chevron} />
       </button>
       <AnchoredPortalPopover open={open} onClose={closeMenu} anchorRef={anchorRef}
-        width={296} placement="bottom-start" ariaLabel="Conversation actions" className={styles.popover}>
+        width={290} placement="bottom-start" ariaLabel="Conversation actions" className={styles.popover}>
         <div className={styles.actionPane}>
-          <div className={styles.actionContext}>
-            <span className={styles.contextLabel}>Current conversation</span>
-            <span className={styles.contextTitle} title={displayTitle}>{displayTitle}</span>
-          </div>
+          {activeRepo ? <WorkspaceIdentityMenu embedded onAction={closeMenu} /> : null}
           {!accountId ? (
             <p className={styles.actionHint}>Sign in to manage saved conversations.</p>
           ) : fetching ? (
@@ -368,27 +338,30 @@ export function WorkspaceConversationMenu() {
                   </div>
                 ) : (
             <div className={styles.actionList}>
-              <button role="menuitem" type="button" className={styles.subAction} disabled={!canManage}
-                onClick={() => beginEditor('rename')}><Pencil size={15} aria-hidden="true" /> Rename</button>
-              <button role="menuitem" type="button" className={styles.subAction} disabled={!canManage}
-                onClick={() => void togglePin()}>
-                {currentMeta?.pin_order != null ? <PinOff size={15} aria-hidden="true" /> : <Pin size={15} aria-hidden="true" />}
-                {currentMeta?.pin_order != null ? 'Unpin' : 'Pin'}
-              </button>
+              <div className={styles.primaryActionRow} role="group" aria-label="Conversation editing and pinning">
+                <button role="menuitem" type="button" className={styles.primaryAction} disabled={!canManage}
+                  title="Rename conversation" aria-label="Rename conversation"
+                  onClick={() => beginEditor('rename')}>
+                  <Pencil size={15} aria-hidden="true" /><span>Edit</span>
+                </button>
+                <button role="menuitem" type="button" className={styles.primaryAction} disabled={!canManage}
+                  title={currentMeta?.pin_order != null ? 'Unpin conversation' : 'Pin conversation'}
+                  aria-label={currentMeta?.pin_order != null ? 'Unpin conversation' : 'Pin conversation'}
+                  aria-pressed={currentMeta?.pin_order != null}
+                  onClick={() => void togglePin()}>
+                  {currentMeta?.pin_order != null ? <PinOff size={15} aria-hidden="true" /> : <Pin size={15} aria-hidden="true" />}
+                  <span>{currentMeta?.pin_order != null ? 'Unpin' : 'Pin'}</span>
+                </button>
+              </div>
               <button role="menuitem" type="button" className={styles.subAction} disabled={!canManage}
                 onClick={() => beginEditor('project')}><FolderInput size={15} aria-hidden="true" /> Move to project</button>
               <div role="separator" className={styles.actionDivider} />
-              <button role="menuitem" type="button" className={styles.subAction} disabled={!canManage}
-                onClick={() => void shareLink('share')}><Share2 size={15} aria-hidden="true" /> Share private link</button>
-              <button role="menuitem" type="button" className={styles.subAction} disabled={!canManage}
-                onClick={() => void shareLink('copy')}><Copy size={15} aria-hidden="true" /> Copy link</button>
-              <button role="menuitem" type="button" className={styles.subAction} disabled={!canManage}
-                onClick={() => void shareLink('open')}><ExternalLink size={15} aria-hidden="true" /> Open in new tab</button>
-              <div role="separator" className={styles.actionDivider} />
-              <button role="menuitem" type="button" className={styles.subAction} disabled={!canManage}
-                onClick={() => beginEditor('archive')}><Archive size={15} aria-hidden="true" /> Archive</button>
-              <button role="menuitem" type="button" className={`${styles.subAction} ${styles.dangerText}`} disabled={!canManage}
-                onClick={() => beginEditor('delete')}><Trash2 size={15} aria-hidden="true" /> Delete</button>
+              <div className={styles.bottomActions}>
+                <button role="menuitem" type="button" className={styles.subAction} disabled={!canManage}
+                  onClick={() => beginEditor('archive')}><Archive size={15} aria-hidden="true" /> Archive</button>
+                <button role="menuitem" type="button" className={`${styles.subAction} ${styles.dangerText}`} disabled={!canManage}
+                  onClick={() => beginEditor('delete')}><Trash2 size={15} aria-hidden="true" /> Delete</button>
+              </div>
             </div>
           )}
         </div>

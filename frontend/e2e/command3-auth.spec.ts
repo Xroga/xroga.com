@@ -106,7 +106,19 @@ test.beforeAll(async () => {
       kind: 'chat', status: 'complete', message_count: 2,
       messages: [
         { id: `${conversation.id}-input`, role: 'user', content: 'Isolated persisted conversation fixture', createdAt: Date.now() },
-        { id: `${conversation.id}-reply`, role: 'assistant', content: conversation.reply, createdAt: Date.now() },
+        { id: `${conversation.id}-reply`, role: 'assistant', content: conversation.reply, createdAt: Date.now(),
+          ...(key === 'second' ? { featureOutput: {
+            schemaVersion: 1,
+            id: `native-${conversation.id}`,
+            status: 'completed',
+            blocks: [],
+            sourceText: conversation.reply + '\nroot = Col([UnknownInternalWidget()])',
+            responseSource: { format: 'xroga-openui-v1', text: [
+              '$attendees = 40',
+              `root = Col([Text(${JSON.stringify(conversation.reply)}), Metric("Gross revenue", @Format($attendees * 25, "currency", 0, "USD")), Controls([Slider($attendees, 10, 80, 1, "Attendees"), Button("Reset", @Set($attendees, 40))], "Attendance")])`,
+            ].join('\n') },
+          } } : {}),
+        },
       ],
     })),
   ).select('user_id,id');
@@ -117,6 +129,39 @@ test.beforeAll(async () => {
 test.afterAll(async () => {
   if (ownerId) expect((await admin.auth.admin.deleteUser(ownerId)).error).toBeNull();
   if (outsiderId) expect((await admin.auth.admin.deleteUser(outsiderId)).error).toBeNull();
+});
+
+test('setup remains retryable after a failed save and exits only after a durable skip', async ({ page }) => {
+  const previous = { status: 'completed', current_step: 'complete', backfilled: true };
+  const reset = await admin.from('profiles').update({ onboarding: { status: 'not_started' } }).eq('id', outsiderId);
+  expect(reset.error).toBeNull();
+  try {
+    await page.goto('/auth/login?next=%2Fworkspace');
+    const form = page.locator('form', { has: page.locator('#login-email') });
+    await form.locator('#login-email').fill(outsiderEmail);
+    await form.locator('#login-password').fill(password);
+    await form.getByRole('button', { name: 'Sign in' }).click();
+    await expect(page).toHaveURL(/\/onboarding$/, { timeout: AUTH_TRANSITION_TIMEOUT_MS });
+
+    await page.route('**/api/profile', async route => {
+      if (route.request().method() === 'PATCH') await route.abort('failed');
+      else await route.continue();
+    });
+    await page.getByRole('button', { name: 'Skip setup', exact: true }).click();
+    await expect(page.getByRole('alert').filter({ hasText: 'Setup could not be saved. Please try again.' })).toBeVisible();
+    await expect(page).toHaveURL(/\/onboarding$/);
+    await page.unroute('**/api/profile');
+
+    await page.getByRole('button', { name: 'Skip setup', exact: true }).click();
+    await expect(page).toHaveURL(/\/workspace$/, { timeout: AUTH_TRANSITION_TIMEOUT_MS });
+    const saved = await admin.from('profiles').select('onboarding').eq('id', outsiderId).single();
+    expect(saved.error).toBeNull();
+    expect(saved.data?.onboarding).toMatchObject({ status: 'skipped', current_step: 'complete' });
+    await page.reload();
+    await expect(page).toHaveURL(/\/workspace$/);
+  } finally {
+    expect((await admin.from('profiles').update({ onboarding: previous }).eq('id', outsiderId)).error).toBeNull();
+  }
 });
 
 test('explicit hide preserves drafts without crossing real account and conversation boundaries', async ({ page }) => {
@@ -147,6 +192,13 @@ test('explicit hide preserves drafts without crossing real account and conversat
   await expect(composer).not.toHaveAttribute('data-draft-session', firstConversation!);
   await expect(header.getByRole('button', { name: 'Composer stays visible in a new workspace', exact: true })).toBeDisabled();
   await openPersistedConversation(page, conversations.second);
+  const nativeAnswer = page.getByRole('region', { name: 'Answer', exact: true });
+  const attendees = nativeAnswer.getByRole('slider', { name: 'Attendees' });
+  await expect(nativeAnswer.getByText('$1,000', { exact: true })).toBeVisible();
+  await attendees.press('End');
+  await expect(nativeAnswer.getByText('$2,000', { exact: true })).toBeVisible();
+  await nativeAnswer.getByRole('button', { name: 'Reset', exact: true }).click();
+  await expect(nativeAnswer.getByText('$1,000', { exact: true })).toBeVisible();
   await expect(composer).toHaveValue('');
   await composer.fill('');
   await header.getByRole('button', { name: 'Hide the chatbar', exact: true }).click();
@@ -170,6 +222,427 @@ test('explicit hide preserves drafts without crossing real account and conversat
   await header.getByRole('button', { name: 'Hide the chatbar', exact: true }).click();
   await header.getByRole('button', { name: 'Show the chatbar', exact: true }).click();
   await expect(composer).toHaveValue('');
+});
+
+test('regular Workspace composes, copies, shares and reopens a settled native answer', async ({ page, browser }) => {
+  const signIn = async (tab: typeof page, email: string) => {
+    await tab.goto('/auth/login?next=%2Fworkspace', { waitUntil: 'domcontentloaded' });
+    const form = tab.locator('form', { has: tab.locator('#login-email') });
+    await form.locator('#login-email').fill(email);
+    await form.locator('#login-password').fill(password);
+    await form.getByRole('button', { name: 'Sign in' }).click();
+    await expect(tab).toHaveURL(/\/workspace$/, { timeout: AUTH_TRANSITION_TIMEOUT_MS });
+  };
+  await signIn(page, ownerEmail);
+  const workspaceOrigin = new URL(page.url()).origin;
+  await page.context().grantPermissions(['clipboard-read', 'clipboard-write'], { origin: workspaceOrigin });
+  const composer = page.locator('[data-terminal-composer]');
+  await expect(composer).toHaveAttribute('data-draft-owner', ownerId);
+  await expect(composer).toHaveAttribute('data-draft-restoring', 'false');
+
+  // Replace the two paid endpoints only. Sign-in, storage, Share and its ACLs
+  // still go through the real isolated app and database. Never use a live model.
+  const prompt = 'Compare the workshop figures from my attached notes.';
+  const reply = 'The workshop earns $25 per attendee. At 40 attendees, revenue is $1,000.';
+  const detail = 'The estimate excludes venue costs and payment processing fees.';
+  const fullReply = reply + '\n\n' + detail;
+  const followUp = 'What was the ticket price again?';
+  const followUpReply = 'The ticket price was $25.';
+  const cancellation = 'Stop this pending fixture reply.';
+  const malformed = 'Show the invalid-program fallback.';
+  const fallback = 'This readable answer remains available.';
+  const recovery = 'Show a partially recovered estimate.';
+  const recoveryNote = 'Some visuals could not be validated. The available explanation and verified visuals are shown below.';
+  const recoveryProse = 'The estimate covers the print charge.';
+  const recoveryGuidance = 'Stripe automatic webhook retries have a finite delivery window.';
+  const recoveryText = [recoveryNote, recoveryGuidance, recoveryProse, '| Item | USD |\n| --- | --- |\n| Printing | 25 |'].join('\n\n');
+  const recoveryProgram = 'root = Col([Table(["Item", "USD"], [["Printing", 25]])])';
+  const reviewed = 'Show the reviewed monthly chart.';
+  const reviewedReply = 'Partial answer. The written summary disagreed with the plotted data, so it was withheld.';
+  const reviewedProgram = 'root = Col([Markdown(' + JSON.stringify(reviewedReply) + '), Chart("bar", [{Month:"January", Value:12000}, {Month:"February", Value:15500}], "Month", ["Value"], "currency", "USD")])';
+  const architecture = 'Show the request architecture, component roles and example code.';
+  const architectureReply = [
+    '## Request architecture', 'The application checks tenant membership before reading rows.',
+    '| Component | Role |\n| --- | --- |\n| Next.js | Application |\n| PostgreSQL | Data isolation |',
+    '```typescript\nconst boundary = "tenant_id";\n```',
+  ].join('\n\n');
+  const architectureProgram = [
+    'root = Col([Section("Request architecture", [diagram]), roles, sample])',
+    'diagram = Diagram("Request path", [{id: "app", label: "Next.js", level: 0}, {id: "database", label: "PostgreSQL", level: 1}], [{from: "app", to: "database", label: "User access token"}], "The app queries rows with the user access token.")',
+    'roles = Section("Component roles", [table], "What each component does")',
+    'table = Table(["Component", "Role"], [["Next.js", "Application"], ["PostgreSQL", "Data isolation"]])',
+    'sample = Code("const boundary = \\"tenant_id\\";", "typescript")',
+  ].join('\n');
+  const research = 'Research the official evidence and cite it.';
+  const confirmationId = '221fe7f9-f0dd-4b12-b03a-bcb57a13f655';
+  const researchReply = 'The retrieved source describes the official policy [1].';
+  const researchSource = { title: 'Official policy fixture', siteName: 'Example publisher', url: 'https://example.com/policy', snippet: 'Documented policy.', source: 'web' };
+  const confirmation = { id: confirmationId, status: 'pending', summary: 'Retrieve one set of public results.', toolkit: 'xroga-native-research', risk: 'read',
+    approval: { accountReference: 'controlled fixture', operation: 'Search', actionDigest: 'a'.repeat(64), destination: 'official search', criticalParameters: {}, spendMaximumMicroUsd: '750', currency: 'USD' } };
+  const source = { title: 'Workshop source fixture', url: 'https://example.com/workshop', snippet: 'USD 25 per attendee.', source: 'fixture' };
+  const program = [
+    '$attendees = 40',
+    `root = Col([Text(${JSON.stringify(reply)}), Metric("Gross revenue", @Format($attendees * 25, "currency", 0, "USD")), Controls([Slider($attendees, 10, 80, 1, "Attendees"), Button("Reset", @Set($attendees, 40))], "Attendance"), Source("source-1")])`,
+  ].join('\n');
+  const goalContract = {
+    version: '1.0', goal: 'Answer a question', desiredOutcome: 'An answer based on the supplied material',
+    semanticIntent: 'ANSWER', constraints: [], acceptance: [], historyContext: [], projectContext: null,
+    deliverables: [], requiredCapabilities: ['conversation.respond'], requiredAuthorities: [],
+    freshnessRequirement: 'NONE', sourcePolicy: { mode: 'any', scope: 'public_web', officialDomains: [] },
+    previewRequirement: 'NONE', deploymentRequirement: 'NONE', risks: [], contextComplexity: 'low', blockers: [], confidence: 1,
+  };
+  let chatCalls = 0;
+  let releaseCancelled: () => void = () => {};
+  const held = new Promise<void>(resolve => { releaseCancelled = resolve; });
+  const cors = {
+    'access-control-allow-origin': workspaceOrigin,
+    'access-control-allow-methods': 'POST, OPTIONS',
+    'access-control-allow-headers': 'authorization, content-type',
+  };
+  await page.route('**/api/phase1/{plan,chat}', async route => {
+    const request = route.request();
+    if (request.method() === 'OPTIONS') return route.fulfill({ status: 204, headers: cors });
+    expect(request.method()).toBe('POST');
+    if (new URL(request.url()).pathname.endsWith('/plan')) {
+      return route.fulfill({ headers: cors, json: { goalContract, dispatch: 'chat', capabilityIds: ['conversation.respond'], rationale: 'no-cost fixture', blockers: [] } });
+    }
+    chatCalls += 1;
+    const body = request.postDataJSON();
+    if (body.message === prompt) {
+      expect(body.attachments).toEqual([{
+        url: `data:text/plain;base64,${Buffer.from('Ticket: $25. Attendees: 40.').toString('base64')}`,
+        name: 'workshop-notes.txt', mimeType: 'text/plain',
+      }]);
+      return route.fulfill({ headers: cors, json: { response: fullReply, completion: { status: 'complete' }, responseSource: { format: 'xroga-openui-v1', text: program }, webSources: [source], intent: 'file_analysis' } });
+    }
+    if (body.message === followUp) {
+      expect(body.history).toEqual(expect.arrayContaining([{ role: 'assistant', content: fullReply }]));
+      return route.fulfill({ headers: cors, json: { response: followUpReply, completion: { status: 'complete' }, responseSource: { format: 'xroga-openui-v1', text: '' } } });
+    }
+    if (body.message === cancellation) {
+      await held;
+      return route.fulfill({ headers: cors, json: { response: 'Cancelled fixture must never appear.' } }).catch(() => undefined);
+    }
+    if (body.message === recovery) {
+      return route.fulfill({ headers: cors, json: {
+        response: recoveryText,
+        completion: { status: 'partial', reason: 'factual_review' },
+        responseSource: { format: 'xroga-openui-v1', text: recoveryProgram },
+      } });
+    }
+    if (body.message === reviewed) {
+      return route.fulfill({ headers: cors, json: { response: reviewedReply, completion: { status: 'partial', reason: 'data_review' }, responseSource: { format: 'xroga-openui-v1', text: reviewedProgram } } });
+    }
+    if (body.message === architecture) {
+      return route.fulfill({ headers: cors, json: { response: architectureReply, completion: { status: 'complete' }, responseSource: { format: 'xroga-openui-v1', text: architectureProgram } } });
+    }
+    if (body.message === research) {
+      return route.fulfill({ headers: cors, json: { response: 'Research requires approval. [Review](/dashboard/actions/confirm/' + confirmationId + ')' } });
+    }
+    expect(body.message).toBe(malformed);
+    return route.fulfill({ headers: cors, json: { response: fallback, completion: { status: 'partial', reason: 'presentation_contract' }, responseSource: { format: 'xroga-openui-v1', text: '' } } });
+  });
+
+  await page.locator('input[type=file][accept*="text/plain"]').setInputFiles({
+    name: 'workshop-notes.txt', mimeType: 'text/plain', buffer: Buffer.from('Ticket: $25. Attendees: 40.'),
+  });
+  const send = async (text: string) => {
+    await composer.fill(text);
+    await composer.press('Enter');
+  };
+  await send(prompt);
+  const answer = page.getByRole('region', { name: 'Answer', exact: true }).filter({ hasText: reply });
+  await expect(answer).toBeVisible({ timeout: 30_000 });
+  await expect(answer.getByRole('link', { name: /Workshop source fixture/ })).toHaveAttribute('href', source.url);
+  const fullText = answer.getByRole('button', { name: 'Read full text', exact: true });
+  await fullText.click();
+  await expect(answer.getByText(detail, { exact: true })).toBeVisible();
+  await fullText.click();
+  await expect(answer.getByText(detail, { exact: true })).toHaveCount(0);
+  const slider = answer.getByRole('slider', { name: 'Attendees' });
+  await slider.press('End');
+  await expect(answer.getByText('$2,000', { exact: true })).toBeVisible();
+  await answer.getByRole('button', { name: 'Reset', exact: true }).click();
+  await expect(answer.getByText('$1,000', { exact: true })).toBeVisible();
+  const turn = page.locator('[data-turn-id]').filter({ has: answer });
+  await expect(turn.getByRole('link', { name: /Workshop source fixture/ })).toHaveCount(1);
+  await expect(turn.getByRole('region', { name: 'Sources', exact: true })).toHaveCount(0);
+  await turn.getByRole('button', { name: 'Copy', exact: true }).click();
+  await expect.poll(() => page.evaluate(async () => (await navigator.clipboard.readText()).replace(/\r\n/g, '\n')))
+    .toBe(`${fullReply}\n\nSources\n[1] ${source.title} (${source.url})`);
+  expect(chatCalls).toBe(1);
+
+  const sessionId = (await composer.getAttribute('data-draft-session'))!;
+  const readSaved = async (id = sessionId) => {
+    const saved = await admin.from('xroga_sidebar_chats').select('title,messages').eq('user_id', ownerId).eq('id', id).maybeSingle();
+    expect(saved.error).toBeNull();
+    return saved.data;
+  };
+  await expect.poll(async () => ((await readSaved())?.messages as Array<{ featureOutput?: { responseSource?: { text?: string } } }> | undefined)
+    ?.some(message => message.featureOutput?.responseSource?.text === program), { timeout: 20_000 }).toBe(true);
+  const savedTitle = (await readSaved())?.title;
+  // Workspace titles for file-backed prompts retain the attachment marker.
+  // Reopen the exact persisted title rather than guessing from the draft alone.
+  expect(savedTitle).toContain(prompt);
+
+  await mkdir('test-results/native-workspace', { recursive: true });
+  for (const [width, theme] of [[1440, 'black'], [390, 'gray']] as const) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.locator('html').evaluate((root, value) => root.setAttribute('data-theme', value), theme);
+    await expect(answer).toBeVisible();
+    expect(await answer.evaluate(el => el.scrollWidth - el.clientWidth)).toBeLessThanOrEqual(1);
+    expect(await answer.evaluate(el => getComputedStyle(el).colorScheme)).toBe('dark');
+    await answer.screenshot({ path: `test-results/native-workspace/composer-${width}-${theme}.png` });
+    await page.screenshot({ path: `test-results/native-workspace/workspace-${width}-${theme}.png` });
+  }
+  await page.setViewportSize({ width: 1440, height: 900 });
+
+  await turn.getByRole('button', { name: 'Share', exact: true }).click();
+  const dialog = page.getByRole('dialog', { name: 'Share this answer' });
+  const created = page.waitForResponse(response => new URL(response.url()).pathname === '/api/message-shares' && response.request().method() === 'POST');
+  await dialog.getByRole('button', { name: 'Create owner-only link' }).click();
+  const share = await created;
+  expect(share.status()).toBe(201);
+  await dialog.getByRole('button', { name: 'Copy share link' }).click();
+  const shareUrl = new URL(`/share/${(await share.json()).share.token}`, workspaceOrigin).href;
+  await expect.poll(() => page.evaluate(() => navigator.clipboard.readText())).toBe(shareUrl);
+  await dialog.getByRole('button', { name: 'Close share dialog' }).click();
+
+  const ownerShare = await page.context().newPage();
+  const other = await browser.newContext({ baseURL: workspaceOrigin });
+  try {
+    await ownerShare.goto(shareUrl);
+    const sharedAnswer = ownerShare.getByRole('region', { name: 'Answer', exact: true });
+    await expect(sharedAnswer.getByRole('slider', { name: 'Attendees' })).toBeVisible();
+    await expect(sharedAnswer.getByRole('link', { name: /Workshop source fixture/ })).toHaveAttribute('href', source.url);
+    await expect(ownerShare.getByRole('link', { name: /Workshop source fixture/ })).toHaveCount(1);
+    await expect(ownerShare.getByRole('region', { name: 'Sources', exact: true })).toHaveCount(0);
+    const sharedFullText = sharedAnswer.getByRole('button', { name: 'Read full text', exact: true });
+    await sharedFullText.click();
+    await expect(sharedAnswer.getByText(detail, { exact: true })).toBeVisible();
+    await sharedFullText.click();
+    await expect(sharedAnswer.getByText(detail, { exact: true })).toHaveCount(0);
+    for (const [width, theme] of [[1440, 'black'], [390, 'white']] as const) {
+      await ownerShare.setViewportSize({ width, height: 900 });
+      await ownerShare.evaluate(value => {
+        document.documentElement.dataset.theme = value;
+        document.body.classList.remove('theme-black', 'theme-gray', 'theme-white', 'theme-beige');
+        document.body.classList.add('theme-' + value);
+      }, theme);
+      const contrast = await sharedAnswer.getByText(reply, { exact: true }).evaluate(node => {
+        const channels = (css: string) => css.match(/[\d.]+/g)?.map(Number) ?? [];
+        const over = (top: number[], bottom: number[]) => bottom.map((channel, i) =>
+          (top[i] ?? 0) * (top[3] ?? 1) + channel * (1 - (top[3] ?? 1)));
+        const luminance = (rgb: number[]) => rgb.reduce((sum, component, index) => {
+          const normalized = component / 255;
+          return sum + (normalized <= 0.04045 ? normalized / 12.92 : ((normalized + 0.055) / 1.055) ** 2.4)
+            * [0.2126, 0.7152, 0.0722][index];
+        }, 0);
+        const surfaces: number[][] = [];
+        for (let el: Element | null = node; el; el = el.parentElement) {
+          surfaces.unshift(channels(getComputedStyle(el).backgroundColor));
+        }
+        const bg = surfaces.reduce((under, above) => over(above, under), [255, 255, 255]);
+        const text = over(channels(getComputedStyle(node).color), bg);
+        const values = [luminance(bg), luminance(text)].sort((a, b) => b - a);
+        return (values[0] + 0.05) / (values[1] + 0.05);
+      });
+      expect(contrast).toBeGreaterThanOrEqual(4.5);
+      await ownerShare.screenshot({ path: `test-results/native-workspace/owner-share-${width}-${theme}.png` });
+    }
+    const visitor = await other.newPage();
+    await visitor.goto(shareUrl);
+    await expect(visitor.getByRole('heading', { name: 'This share is private' })).toBeVisible();
+    await signIn(visitor, outsiderEmail);
+    await visitor.goto(shareUrl);
+    await expect(visitor.getByRole('heading', { name: 'This share is private' })).toBeVisible();
+    await expect(visitor.getByText(reply, { exact: true })).toHaveCount(0);
+  } finally {
+    await other.close();
+    await ownerShare.close();
+  }
+
+  await page.reload();
+  await openPersistedConversation(page, { id: sessionId, title: savedTitle!, reply });
+  await expect(answer.getByText('$1,000', { exact: true })).toBeVisible();
+  await fullText.click();
+  await expect(answer.getByText(detail, { exact: true })).toBeVisible();
+  await fullText.click();
+  await expect(answer.getByText(detail, { exact: true })).toHaveCount(0);
+  await send(followUp);
+  await expect(page.getByRole('region', { name: 'Answer', exact: true }).getByText(followUpReply, { exact: true })).toBeVisible();
+  try {
+    await send(cancellation);
+    await expect.poll(() => chatCalls).toBe(3);
+    const aborted = page.waitForEvent('requestfailed', {
+      predicate: request => new URL(request.url()).pathname === '/api/phase1/chat' && request.postDataJSON()?.message === cancellation,
+      timeout: 10_000,
+    });
+    await page.getByRole('button', { name: 'Stop response', exact: true }).click();
+    expect((await aborted).failure()?.errorText).toContain('ERR_ABORTED');
+    await expect(page.getByRole('button', { name: 'Stop response', exact: true })).toHaveCount(0);
+  } finally {
+    releaseCancelled();
+  }
+  await send(malformed);
+  const fallbackTurn = page.locator('[data-turn-id]').filter({ hasText: fallback }).last();
+  await expect(fallbackTurn.getByText(fallback, { exact: true })).toBeVisible();
+  await fallbackTurn.getByRole('button', { name: 'Copy', exact: true }).click();
+  await expect.poll(() => page.evaluate(() => navigator.clipboard.readText())).toBe(fallback);
+  await fallbackTurn.getByRole('button', { name: 'Share', exact: true }).click();
+  const fallbackShare = page.waitForResponse(response => new URL(response.url()).pathname === '/api/message-shares' && response.request().method() === 'POST');
+  await dialog.getByRole('button', { name: 'Create owner-only link' }).click();
+  const fallbackLink = await fallbackShare;
+  expect(fallbackLink.status()).toBe(201);
+  await dialog.getByRole('button', { name: 'Close share dialog' }).click();
+  const fallbackSharePage = await page.context().newPage();
+  try {
+    const { share: { token } } = await fallbackLink.json();
+    await fallbackSharePage.goto(new URL('/share/' + token, workspaceOrigin).href);
+    await expect(fallbackSharePage.getByText(fallback, { exact: true })).toBeVisible();
+  } finally {
+    await fallbackSharePage.close();
+  }
+  await expect.poll(async () => {
+    const saved = await readSaved();
+    const messages = saved?.messages as Array<{role?: string; content?: string; featureOutput?: unknown}> | undefined;
+    return messages?.some(message => message.content === fallback) &&
+      !messages.some(message => message.role === 'assistant' && !message.content?.trim() && !message.featureOutput);
+  }, { timeout: 20_000 }).toBe(true);
+  await page.reload();
+  await openPersistedConversation(page, { id: sessionId, title: savedTitle!, reply: fallback });
+  await expect(fallbackTurn.getByText(fallback, { exact: true })).toBeVisible();
+  await expect(page.getByText('Cancelled fixture must never appear.', { exact: true })).toHaveCount(0);
+  await expect(page.getByText('should never render', { exact: true })).toHaveCount(0);
+  await send(recovery);
+  const recoveredAnswer = page.getByRole('region', { name: 'Answer', exact: true }).filter({ hasText: recoveryProse });
+  const recoveredTable = recoveredAnswer.locator('.iui-col').getByRole('table');
+  await expect(recoveredAnswer.getByText(recoveryNote, { exact: true })).toBeVisible();
+  await expect(recoveredAnswer.getByText(recoveryGuidance, { exact: true })).toBeVisible();
+  await expect(recoveredTable.getByRole('cell', { name: '25', exact: true })).toBeVisible();
+  const recoveryTurn = page.locator('[data-turn-id]').filter({ has: recoveredAnswer });
+  await recoveryTurn.getByRole('button', { name: 'Copy', exact: true }).click();
+  const recoveryClipboard = [recoveryNote, recoveryGuidance, recoveryProse, 'Item\tUSD\nPrinting\t25'].join('\n\n');
+  await expect.poll(() => page.evaluate(async () => (await navigator.clipboard.readText()).replace(/\r\n/g, '\n'))).toBe(recoveryClipboard);
+  await expect.poll(async () => ((await readSaved())?.messages as Array<{ featureOutput?: { responseSource?: { text?: string } } }> | undefined)
+    ?.some(message => message.featureOutput?.responseSource?.text === recoveryProgram), { timeout: 20_000 }).toBe(true);
+  await page.reload();
+  await openPersistedConversation(page, { id: sessionId, title: savedTitle!, reply: recoveryProse });
+  await expect(recoveredAnswer.getByText(recoveryNote, { exact: true })).toBeVisible();
+  await expect(recoveredAnswer.getByText(recoveryGuidance, { exact: true })).toBeVisible();
+  await expect(recoveredTable.getByRole('cell', { name: '25', exact: true })).toBeVisible();
+  await send(reviewed);
+  const reviewedAnswer = page.getByRole('region', { name: 'Answer', exact: true }).filter({ hasText: reviewedReply });
+  await expect(reviewedAnswer.getByRole('img', { name: /bar chart/ })).toBeVisible();
+  await expect(reviewedAnswer.getByText(reviewedReply, { exact: true })).toBeVisible();
+  await expect(page.getByText('Suggested next steps', { exact: true })).toHaveCount(0);
+  let confirmations = 0;
+  let receiptReads = 0;
+  await page.route('**/api/phase1/business-actions/confirmations/' + confirmationId + '**', async route => {
+    const request = route.request();
+    if (request.method() === 'OPTIONS') return route.fulfill({ status: 204, headers: cors });
+    if (new URL(request.url()).pathname.endsWith('/confirm')) {
+      expect(request.method()).toBe('POST');
+      confirmations++;
+      return route.fulfill({ headers: cors, json: { ok: true, toolkit: confirmation.toolkit,
+        confirmation: { ...confirmation, status: 'consumed' }, response: 'Completed.' } });
+    }
+    expect(request.method()).toBe('GET');
+    if (!confirmations) return route.fulfill({ headers: cors, json: { confirmation } });
+    receiptReads++;
+    return route.fulfill({ headers: cors, json: { confirmation: { ...confirmation, status: 'consumed' },
+      researchResult: { confirmationId, receiptId: confirmationId, text: '', omittedSourceCount: 0, sources: [researchSource],
+        answer: { response: researchReply, completion: { status: 'complete' }, webSources: [researchSource],
+          responseSource: { format: 'xroga-openui-v1', text: 'root = Col([Text(["The retrieved source describes the official policy. ", Source("source-1")])])' } } } } });
+  });
+  await send(research);
+  await page.getByRole('button', { name: 'Confirm action', exact: true }).click();
+  const researched = page.getByRole('region', { name: 'Answer', exact: true }).filter({ hasText: 'The retrieved source describes the official policy.' });
+  await expect(researched.getByRole('link', { name: /Official policy fixture/ })).toHaveAttribute('href', researchSource.url);
+  expect(confirmations).toBe(1);
+  expect(receiptReads).toBeGreaterThanOrEqual(1);
+  expect(receiptReads).toBeLessThanOrEqual(2);
+  expect(chatCalls).toBe(7);
+  await page.getByRole('button', { name: 'New Work', exact: true }).click();
+  await expect(composer).not.toHaveAttribute('data-draft-session', sessionId);
+  await expect(composer).toHaveAttribute('data-draft-restoring', 'false');
+  const architectureSession = (await composer.getAttribute('data-draft-session'))!;
+  expect(architectureSession).toBeTruthy();
+  const architectureHttp = page.waitForResponse(response => new URL(response.url()).pathname === '/api/phase1/chat'
+    && response.request().method() === 'POST' && response.request().postDataJSON()?.message === architecture);
+  await send(architecture);
+  expect((await architectureHttp).ok()).toBe(true);
+  const renderedArchitecture = page.getByRole('region', { name: 'Answer', exact: true }).filter({ hasText: 'Component roles' }).last();
+  await expect(renderedArchitecture.getByRole('region', { name: 'Answer table', exact: true })).toBeVisible({ timeout: 20_000 });
+  await expect(renderedArchitecture.locator('.react-flow__edge')).toHaveCount(1);
+  await expect(renderedArchitecture.locator('pre code')).toHaveText('const boundary = "tenant_id";');
+  await expect(renderedArchitecture).not.toContainText(/root\s*=\s*Col/);
+  await expect.poll(async () => ((await readSaved(architectureSession))?.messages as Array<{ featureOutput?: { responseSource?: { text?: string } } }> | undefined)
+    ?.some(message => message.featureOutput?.responseSource?.text === architectureProgram), { timeout: 20_000 }).toBe(true);
+  expect(chatCalls).toBe(8);
+  await writeFile('test-results/native-workspace/evidence.json', JSON.stringify({
+    source: expectedRelease, route: '/workspace', auth: 'isolated Supabase ordinary accounts',
+    model: 'deterministic transport fixtures, zero provider calls', nativeActions: ['file handoff', 'citation link', 'keyboard calculator', 'copy readback', 'database save and reopen', 'private share owner/guest/other account', 'continuation', 'browser cancellation', 'client validation fallback', 'partial native recovery, copy and reopen', 'reviewed partial chart', 'inline research receipt without refocus or redispatch', 'connected diagram, nested table and code in one persisted answer'],
+    viewports: [1440, 390], themes: ['black', 'gray'],
+  }, null, 2));
+});
+
+test('saved native answers hide transport syntax during a lazy renderer failure and restore on reopen', async ({ page, browser }) => {
+  const chunkURLs = new Set<string>();
+  const inspect = async (response: import('@playwright/test').Response) => {
+    const url = new URL(response.url());
+    if (!url.pathname.startsWith('/_next/static/chunks/') || !url.pathname.endsWith('.js') || !response.ok()) return;
+    const script = await response.text().catch(() => '');
+    if (script.includes('xroga-native-openui') && script.includes('publishObservability')) chunkURLs.add(response.url());
+  };
+  page.on('response', inspect);
+  await page.goto('/auth/login?next=%2Fworkspace', { waitUntil: 'domcontentloaded' });
+  const form = page.locator('form', { has: page.locator('#login-email') });
+  await form.locator('#login-email').fill(ownerEmail);
+  await form.locator('#login-password').fill(password);
+  await form.getByRole('button', { name: 'Sign in' }).click();
+  await expect(page).toHaveURL(/\/workspace$/, { timeout: AUTH_TRANSITION_TIMEOUT_MS });
+  const workspace = new URL('/workspace', page.url());
+  workspace.searchParams.set('conversation', conversations.second.id);
+  // The earlier composer test creates newer conversations. A durable record
+  // is still addressable when it has aged out of the sidebar's recent list.
+  await page.goto(workspace.href);
+  const composer = page.locator('[data-terminal-composer]');
+  await expect(composer).toHaveAttribute('data-draft-owner', ownerId);
+  await expect(composer).toHaveAttribute('data-draft-session', conversations.second.id, { timeout: 20_000 });
+  await expect(page.getByRole('slider', { name: 'Attendees' })).toHaveValue('40');
+  await expect.poll(() => chunkURLs.size).toBeGreaterThan(0);
+
+  const context = await browser.newContext({ baseURL: workspace.origin, storageState: await page.context().storageState(),
+    viewport: { width: 390, height: 844 }, permissions: ['clipboard-read', 'clipboard-write'] });
+  let blocked = 0;
+  try {
+    const saved = await context.newPage();
+    for (const chunk of chunkURLs) await saved.route(chunk, route => { blocked += 1; return route.abort('failed'); });
+    await saved.goto(workspace.href);
+    const answer = saved.getByRole('region', { name: 'Answer', exact: true });
+    await expect.poll(() => blocked).toBeGreaterThan(0);
+    await expect(answer.getByText(conversations.second.reply, { exact: true })).toBeVisible();
+    await expect(answer.getByRole('slider')).toHaveCount(0);
+    await expect(answer).not.toContainText(/UnknownInternalWidget|root\s*=\s*Col/);
+    await saved.locator('[data-turn-id]').filter({ has: answer }).getByRole('button', { name: 'Copy', exact: true }).click();
+    await expect.poll(() => saved.evaluate(() => navigator.clipboard.readText())).toBe(conversations.second.reply);
+    await saved.unrouteAll({ behavior: 'wait' });
+    await saved.goto(workspace.href);
+    await expect(answer.getByRole('slider', { name: 'Attendees' })).toHaveValue('40');
+    await expect(answer).not.toContainText(/UnknownInternalWidget|root\s*=\s*Col/);
+    const failedOnce = new Set<string>();
+    for (const chunk of chunkURLs) await saved.route(chunk, route => {
+      if (failedOnce.has(chunk)) return route.continue();
+      failedOnce.add(chunk);
+      return route.fulfill({ status: 429 });
+    });
+    await saved.goto(workspace.href);
+    await expect.poll(() => failedOnce.size).toBeGreaterThan(0);
+    await expect(answer.getByRole('slider', { name: 'Attendees' })).toHaveValue('40');
+  } finally {
+    await context.close();
+  }
 });
 
 test('real Supabase login persists, Operations works, cross-tenant access is denied, and logout clears the session', async ({ page }) => {
@@ -869,22 +1342,22 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   const actionsMenu = page.getByRole('dialog', { name: 'Composer actions' });
   await expect(actionsMenu.getByRole('button', { name: /Add files or photos/ })).toBeVisible();
   await expect(actionsMenu.getByRole('button', { name: 'Slash commands' })).toBeVisible();
-  await expect(actionsMenu.getByRole('button', { name: /Plugins/ })).toBeVisible();
+  await expect(actionsMenu.getByRole('button', { name: /Connect Apps/ })).toBeVisible();
   await expect(actionsMenu.getByRole('button', { name: /Plan before build/ })).toBeVisible();
   await expect(actionsMenu.getByRole('button', { name: /Debug an error/ })).toBeVisible();
   await expect(actionsMenu.getByRole('button', { name: /Skills/ })).toBeVisible();
   await expect(actionsMenu.getByRole('button', { name: /Rules/ })).toBeVisible();
   // The menu's attachment geometry is asserted once, earlier in this test. What is
   // checked here is its contents and the Integrations flow.
-  await actionsMenu.getByRole('button', { name: /Plugins/ }).click();
+  await actionsMenu.getByRole('button', { name: /Connect Apps/ }).click();
   // Accounts with GitHub authority see the full manager; a clean authenticated
   // account sees the truthful first-connection state. The transient readiness probe
   // may appear between them, but it is not the completed interaction state.
   const integrationsDialog = page.getByRole('dialog', {
-    name: /^(?:Plugins|Integrations|Start with GitHub)$/,
+    name: /^(?:Connect Apps|Integrations|Start with GitHub)$/,
   });
   await expect(integrationsDialog).toBeVisible({ timeout: 10_000 });
-  await integrationsDialog.getByRole('button', { name: /^Close(?: plugins| integrations)?$/i }).click();
+  await integrationsDialog.getByRole('button', { name: /^Close(?: Connect Apps| integrations)?$/i }).click();
 
   await composerActions.click();
   await expect(actionsMenu).toBeVisible();
@@ -979,8 +1452,17 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   try{expect((await anonymous.request.get(new URL(signed.url,page.url()).href)).status()).toBe(401);}finally{await anonymous.close();}
   expect((await fetch(`${backendUrl}/api/projects/${ownerProjectId}/files/${privateFileId}/links`,{method:'DELETE',headers:{Authorization:browserBearer}})).status).toBe(200);
   expect((await page.request.get(signed.url)).status()).toBe(404);
+  const ownerProjectOpened = page.waitForResponse(response =>
+    new URL(response.url()).pathname === `/api/projects/${ownerProjectId}` && response.request().method() === 'GET');
   await page.goto(`/dashboard/projects/${ownerProjectId}`);
-  await expect(page).toHaveURL(new RegExp(`/workspace\\?project=${ownerProjectId}`));
+  const ownerProjectResponse = await ownerProjectOpened;
+  expect(ownerProjectResponse.status()).toBe(200);
+  expect(await ownerProjectResponse.json()).toMatchObject({ id: ownerProjectId });
+  // Workspace consumes the one-time URL hint after verifying it with the API.
+  await expect(page).toHaveURL(/\/workspace$/);
+  await expect.poll(() => page.evaluate(() =>
+    JSON.parse(sessionStorage.getItem('xroga-active-sidebar-project-v1') || 'null')
+  )).toEqual({ userId: ownerId, projectId: ownerProjectId });
   // Keep main's unified Workspace navigation. Private saved-file delivery now
   // lives in Library, using the same owner-only download/copy/revoke controls.
   const projectsLoaded = page.waitForResponse(response => new URL(response.url()).pathname === '/api/projects' && response.request().method() === 'GET');

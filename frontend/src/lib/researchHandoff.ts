@@ -1,5 +1,6 @@
 import { parseXrogaOutput } from './xrogaBlocks';
 import {enhanceAiResponse} from './xrogaResponseDocument';
+export const RESEARCH_RECEIPT_AVAILABLE = 'xroga:research-receipt-available';
 export interface ResearchHandoff {
   confirmationId: string;
   receiptId: string;
