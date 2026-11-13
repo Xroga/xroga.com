@@ -1941,8 +1941,9 @@ router.post(
 router.post('/xroga-connect/custom-mcp/:toolkit/pin', async (req: AuthRequest, res) => {
   const parsed = z.object({
     toolkit: z.string().trim().min(2).max(120).regex(/^[A-Za-z0-9_-]+$/),
-    toolSlug: z.string().trim().min(3).max(200).regex(/^[A-Za-z0-9_-]+$/),
-  }).strict().safeParse({ toolkit: req.params.toolkit, toolSlug: req.body?.toolSlug });
+    toolSlug: z.string().trim().min(3).max(200).regex(/^[A-Za-z0-9_-]+$/).optional(),
+    toolSlugs: z.array(z.string().trim().min(3).max(200).regex(/^[A-Za-z0-9_-]+$/)).min(1).max(60).optional(),
+  }).strict().safeParse({ toolkit: req.params.toolkit, toolSlug: req.body?.toolSlug, toolSlugs: req.body?.toolSlugs });
   if (!parsed.success) { res.status(400).json({ ok: false, error: parsed.error.flatten() }); return; }
   try {
     const result = await pinUserCustomMcpTool(req.userId!, parsed.data, requireTenantContext(req.tenantContext));

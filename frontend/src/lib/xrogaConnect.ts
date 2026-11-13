@@ -478,14 +478,14 @@ export const xrogaConnect = {
       ),
 
     pins: () =>
-      apiFetch<{ ok: boolean; enabled: boolean; pins: Array<{ toolkit: string; toolSlug: string; riskClass: 'read'; serverUrl: string }> }>(
+      apiFetch<{ ok: boolean; enabled: boolean; pins: Array<{ toolkit: string; toolSlug: string; riskClass: 'read' | 'write'; serverUrl: string }> }>(
         '/api/integrations/xroga-connect/custom-mcp/pins',
       ),
 
-    pin: (toolkit: string, toolSlug: string) =>
-      apiFetch<XrogaConnectPending | { ok: boolean; pinned: true }>(
+    pin: (toolkit: string, toolSlug: string | string[]) =>
+      apiFetch<XrogaConnectPending | { ok: boolean; pinned: Array<{ toolSlug: string; riskClass: 'read' | 'write' }> }>(
         `/api/integrations/xroga-connect/custom-mcp/${encodeURIComponent(toolkit)}/pin`,
-        { method: 'POST', body: JSON.stringify({ toolSlug }) },
+        { method: 'POST', body: JSON.stringify(Array.isArray(toolSlug) ? { toolSlugs: toolSlug } : { toolSlug }) },
       ),
 
     unpin: (toolkit: string, toolSlug: string) =>

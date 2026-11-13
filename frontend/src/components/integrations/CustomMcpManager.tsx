@@ -31,7 +31,7 @@ function customDetailHref(toolkit: string): string {
   return `/dashboard/integrations/${encodeURIComponent(toolkit)}`;
 }
 
-type PinInfo = { toolkit: string; toolSlug: string };
+type PinInfo = { toolkit: string; toolSlug: string; riskClass: 'read' | 'write' };
 
 /** The tools a server synced, with the pin that lets the browser agent be offered one read tool (each call is still approved on its own). */
 function CustomMcpToolsPanel({ toolkit, onReview }: { toolkit: string; onReview: (url: string) => void }) {
@@ -53,8 +53,8 @@ function CustomMcpToolsPanel({ toolkit, onReview }: { toolkit: string; onReview:
   }, [toolkit]);
   useEffect(() => { void load(); }, [load]);
 
-  async function pin(slug: string) {
-    setBusy(slug);
+  async function pin(slug: string | string[]) {
+    setBusy(Array.isArray(slug) ? '*' : slug);
     try {
       const result = await xrogaConnect.customMcp.pin(toolkit, slug);
       if ('needsConfirmation' in result) { onReview(connectReviewUrl(result)); return; }
@@ -75,9 +75,15 @@ function CustomMcpToolsPanel({ toolkit, onReview }: { toolkit: string; onReview:
     <div className="mt-3 rounded-token-md border border-[var(--border-subtle)] bg-[var(--surface-inset)] p-3">
       <p className="text-xs leading-5 text-[var(--text-secondary)]">
         {enabled
-          ? 'Pin a read tool to let the browser agent be offered it. You review its exact definition first, every call still needs your approval, and a change on the server revokes the pin.'
+          ? 'Pin a tool to let the browser agent use it: read tools to look things up, other tools to create, run or generate things with your own account. You review the exact definitions first, every call still needs your approval showing its arguments, and a change on the server revokes the pin. Tools that delete data, move money or change access are never pinned. Any cost is on your own account with that server.'
           : 'Running custom MCP tools is switched off on this deployment. Tools stay registered but cannot run.'}
       </p>
+      {enabled && tools.length > 1 ? (
+        <button type="button" disabled={busy !== null} onClick={() => void pin(tools.map(t => t.slug))}
+          className="mt-2 rounded-token-sm border border-[var(--border-subtle)] px-2.5 py-1 text-[11px] font-semibold text-[var(--text-primary)] disabled:opacity-50">
+          Pin all tools
+        </button>
+      ) : null}
       <ul className="mt-2 divide-y divide-[var(--border-subtle)]">
         {tools.slice(0, 100).map(tool => {
           const pinned = pins.some(p => p.toolkit === toolkit && p.toolSlug === tool.slug);
@@ -90,12 +96,12 @@ function CustomMcpToolsPanel({ toolkit, onReview }: { toolkit: string; onReview:
               {pinned ? (
                 <button type="button" disabled={busy !== null} onClick={() => void unpin(tool.slug)}
                   className="shrink-0 rounded-token-sm border border-[var(--border-subtle)] px-2.5 py-1 text-[11px] font-semibold text-[var(--text-primary)] disabled:opacity-50">
-                  Pinned · Revoke
+                  {pins.find(p => p.toolkit === toolkit && p.toolSlug === tool.slug)?.riskClass === 'write' ? 'Pinned (can change data) · Revoke' : 'Pinned (read) · Revoke'}
                 </button>
               ) : (
                 <button type="button" disabled={busy !== null || !enabled} onClick={() => void pin(tool.slug)}
                   className="shrink-0 rounded-token-sm border border-[var(--border-subtle)] px-2.5 py-1 text-[11px] font-semibold text-[var(--text-primary)] disabled:opacity-50">
-                  Pin read tool
+                  Pin tool
                 </button>
               )}
             </li>

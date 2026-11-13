@@ -19,7 +19,7 @@ import { isTerminalRunStatus, PostgresBrowserRunStore, type BrowserRunRecord, ty
 import { PostgresLeaseStore } from '../workers/postgresLeaseStore.js';
 import { readBrowserDocument } from './browserDocuments.js';
 import { createLocalBrowserPluginCatalog } from './localBrowserPlugins.js';
-import { executeComposioReadTool, getComposioToolDetails, listPinnedCustomReadTools, isComposioConfigured, searchComposioActionTools, searchComposioTools } from '../services/integrations/composioClient.js';
+import { executeComposioReadTool, getComposioToolDetails, listPinnedCustomReadTools, listPinnedCustomWriteTools, isComposioConfigured, searchComposioActionTools, searchComposioTools } from '../services/integrations/composioClient.js';
 import type { XrogaConnectSearchResult } from '../services/integrations/composioClient.js';
 import { cancelBusinessActionConfirmation, confirmBusinessAction } from '../services/integrations/businessActionConfirmations.js';
 import { preparedActionDigest } from '../security/authority/digest.js';
@@ -318,9 +318,10 @@ const defaultPlugins = {
   createActionConfirmation: createBusinessActionConfirmation,
   details: getComposioToolDetails,
   pinnedReads: listPinnedCustomReadTools,
+  pinnedWrites: listPinnedCustomWriteTools,
 };
 
-type ActionMembers = 'discoverActions' | 'prepareAction' | 'createActionConfirmation' | 'details' | 'pinnedReads';
+type ActionMembers = 'discoverActions' | 'prepareAction' | 'createActionConfirmation' | 'details' | 'pinnedReads' | 'pinnedWrites';
 /** The read members are required; the action members are optional so a test or a release can run without them. */
 type PluginAdapter = Omit<typeof defaultPlugins, ActionMembers> & Partial<Pick<typeof defaultPlugins, ActionMembers>>;
 
@@ -481,10 +482,12 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
     const result = await actionPlugins().discoverActions(actor.userId, { query }, actor);
     await assertPluginRun(req, localRecord(await runs.load(actor.userId, row.runId), actor.userId));
     const connected = new Set(result.toolkits.filter(item => item.connected && !item.noAuth).map(item => item.toolkit.toLowerCase()));
-    const tools = await withFullSchemas(result.tools
-      .filter(item => item.risk !== 'read' && item.risk !== 'destructive' && connected.has(item.toolkit.toLowerCase()) &&
-        !isFinancialAction(query, item.slug))
-      .slice(0, 6), plugins.details, actor);
+    // Owner-pinned custom MCP tools that change data (flag XROGA_CUSTOM_MCP_EXECUTION) join the catalogue tools; each was re-verified live.
+    const pinnedWrites = plugins.pinnedWrites ? await plugins.pinnedWrites(actor).catch(() => []) : [];
+    const catalogueWrites = result.tools.filter(item => item.risk !== 'read' && item.risk !== 'destructive' && connected.has(item.toolkit.toLowerCase()) &&
+      !isFinancialAction(query, item.slug));
+    const tools = await withFullSchemas([...pinnedWrites.filter(p => !catalogueWrites.some(item => item.slug === p.slug) && !isFinancialAction(query, p.slug)), ...catalogueWrites]
+      .slice(0, 8), plugins.details, actor);
     discovery.sessionId = result.sessionId;
     discovery.tools = tools.map(({ slug, toolkit, inputSchema }) => ({ slug, toolkit, args: summarizeToolArgs(inputSchema) }));
     await save();

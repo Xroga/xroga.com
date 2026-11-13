@@ -10,7 +10,9 @@ import {canonicalAuthorityJson} from '../../security/authority/digest.js';
 
 export type CustomPinDenial='CUSTOM_MCP_EXECUTION_OFF'|'CUSTOM_MCP_NOT_PINNED'|'CUSTOM_MCP_PIN_REVOKED'|'CUSTOM_MCP_DEFINITION_CHANGED'|'CUSTOM_MCP_RISK_NOT_ALLOWED'|'CUSTOM_MCP_CALL_LIMIT'|'CUSTOM_MCP_DEFINITION_UNAVAILABLE';
 
-export interface CustomMcpPin{userId:string;toolkit:string;toolSlug:string;serverUrl:string;authMode:string;definitionDigest:string;riskClass:'read';maxCallsPerRun:number;revokedAt:string|null}
+/** A pin is for reading, or for a tool that changes data (create, update, run, generate...). Destructive and financial tools cannot be pinned. */
+export type CustomPinClass='read'|'write';
+export interface CustomMcpPin{userId:string;toolkit:string;toolSlug:string;serverUrl:string;authMode:string;definitionDigest:string;riskClass:CustomPinClass;maxCallsPerRun:number;revokedAt:string|null}
 export interface CustomMcpDefinition{
   /** The server as registered: its address and how it is authenticated. */
   server:{appUrl:string;authSchemes:readonly string[];noAuth:boolean};
@@ -38,7 +40,7 @@ export function customMcpDefinitionDigest(definition:CustomMcpDefinition):string
 
 const rowToPin=(row:Record<string,unknown>):CustomMcpPin=>({
   userId:String(row.user_id),toolkit:String(row.toolkit),toolSlug:String(row.tool_slug),serverUrl:String(row.server_url),authMode:String(row.auth_mode),
-  definitionDigest:String(row.definition_digest),riskClass:'read',maxCallsPerRun:Number(row.max_calls_per_run),revokedAt:row.revoked_at?String(row.revoked_at):null,
+  definitionDigest:String(row.definition_digest),riskClass:row.risk_class==='write'?'write':'read',maxCallsPerRun:Number(row.max_calls_per_run),revokedAt:row.revoked_at?String(row.revoked_at):null,
 });
 
 export function supabaseCustomMcpPinStore(context:TenantContext):CustomMcpPinStore{
@@ -52,9 +54,9 @@ export function supabaseCustomMcpPinStore(context:TenantContext):CustomMcpPinSto
       return data?rowToPin(data as Record<string,unknown>):undefined;
     },
     async upsert(pin){
-      if(pin.userId!==context.userId||pin.riskClass!=='read')throw new Error('CUSTOM_MCP_RISK_NOT_ALLOWED');
+      if(pin.userId!==context.userId||(pin.riskClass!=='read'&&pin.riskClass!=='write'))throw new Error('CUSTOM_MCP_RISK_NOT_ALLOWED');
       const{error}=await db().upsert({user_id:context.userId,toolkit:pin.toolkit,tool_slug:pin.toolSlug,server_url:pin.serverUrl,auth_mode:pin.authMode,
-        definition_digest:pin.definitionDigest,risk_class:'read',max_calls_per_run:pin.maxCallsPerRun,confirmation_id:pin.confirmationId??null,
+        definition_digest:pin.definitionDigest,risk_class:pin.riskClass,max_calls_per_run:pin.maxCallsPerRun,confirmation_id:pin.confirmationId??null,
         pinned_at:new Date().toISOString(),revoked_at:null,revoked_reason:null},{onConflict:'user_id,toolkit,tool_slug'});
       if(error)throw new Error('CUSTOM_MCP_PIN_STORE_UNAVAILABLE');
     },
@@ -79,7 +81,7 @@ export function supabaseCustomMcpPinStore(context:TenantContext):CustomMcpPinSto
  * no pin, a revoked pin, a risk class other than read, or a live definition that differs from the pinned one (which also revokes the pin).
  */
 export async function verifyCustomMcpPin(input:{
-  context:TenantContext;toolkit:string;toolSlug:string;requireRisk:'read';
+  context:TenantContext;toolkit:string;toolSlug:string;requireRisk:CustomPinClass;
   store:CustomMcpPinStore;fetchDefinition:()=>Promise<CustomMcpDefinition>;env?:NodeJS.ProcessEnv;
 }):Promise<{ok:true;pin:CustomMcpPin}|{ok:false;reason:CustomPinDenial}>{
   const context=requireTenantContext(input.context);
@@ -87,7 +89,7 @@ export async function verifyCustomMcpPin(input:{
   const pin=await input.store.get(context.userId,input.toolkit,input.toolSlug);
   if(!pin)return{ok:false,reason:'CUSTOM_MCP_NOT_PINNED'};
   if(pin.revokedAt)return{ok:false,reason:'CUSTOM_MCP_PIN_REVOKED'};
-  if(pin.riskClass!=='read'||input.requireRisk!=='read')return{ok:false,reason:'CUSTOM_MCP_RISK_NOT_ALLOWED'};
+  if(pin.riskClass!==input.requireRisk)return{ok:false,reason:'CUSTOM_MCP_RISK_NOT_ALLOWED'};
   let live:CustomMcpDefinition;
   try{live=await input.fetchDefinition();}catch{return{ok:false,reason:'CUSTOM_MCP_DEFINITION_UNAVAILABLE'};}
   if(live.tool.slug!==input.toolSlug||customMcpDefinitionDigest(live)!==pin.definitionDigest){
