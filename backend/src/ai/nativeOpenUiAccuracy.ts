@@ -1,21 +1,27 @@
 import { requiresAuthorizationReview } from './answerAuthorizationReview.js';
 
-type FactualRule = 'stripe_event_order' | 'stripe_retry_window' | 'tenant_key_immutability';
+type FactualRule = 'stripe_event_order' | 'stripe_retry_window' | 'tenant_key_immutability' | 'earth_axial_tilt_reference';
 export const nativeFactualGuidance: Record<FactualRule, string> = {
   stripe_event_order: 'Stripe event timestamps can tie and do not establish delivery order. Verify the signature, deduplicate by event ID, and reconcile the current subscription state with Stripe before applying a durable update.',
   stripe_retry_window: 'Stripe automatic webhook retries have a finite delivery window. Reconcile missed events separately and make processing idempotent.',
   tenant_key_immutability: 'PostgreSQL WITH CHECK evaluates the proposed new row. Membership checks on the old and new rows can both pass for a user who belongs to both tenants. To keep tenant_id immutable, restrict UPDATE privileges to approved columns or reject tenant-key changes in a database trigger.',
+  earth_axial_tilt_reference: 'Earth’s rotation axis is tilted about 23.4° from the perpendicular to its orbital plane. That tilt changes the angle of sunlight and the length of the day in each hemisphere as Earth orbits the Sun, causing the seasons.',
 };
 type TechnicalCorrection = { reason: 'authorization_review' | 'factual_review'; guidance: string; rule?: FactualRule };
 
-/** Catch the documented failure patterns without treating every answer about
- * Supabase or Stripe as suspect. Inspect examples as well as explanatory text. */
+/** Catch documented factual errors in explanatory text and examples. */
 export function nativeTechnicalCorrections(answer: string): TechnicalCorrection[] {
   const text = answer.replace(/[\x60*_]/g, '');
   const corrections: TechnicalCorrection[] = [];
   const statements = text.split(/(?<=[.!?;])\s+|\n+/);
   const warnsAgainst = (statement: string) =>
     /\b(?:never|do not|does not|cannot|must not|should not|don't|doesn't|can't|mustn't|shouldn't|still subject to|incorrect|unsafe|unreliable)\b/i.test(statement);
+  // This applies to the spin axis. The equatorial plane can correctly be
+  // described as inclined by this angle relative to the orbital plane.
+  const wrongAxialReference = /\bEarth(?:['’]s)?\b[^.!?;\n]{0,64}\b(?:axis|axial tilt)\b[^.!?;\n]{0,30}\b23(?:[.,][45]\d*)?\s*(?:°|degrees?\b)\s*(?:relative to|with respect to|from|to)\s+(?:the\s+|its\s+|Earth['’]s\s+)?(?:orbital plane|plane of (?:its|Earth['’]s) orbit|ecliptic(?: plane)?)\b/i;
+  if (statements.some(statement => !warnsAgainst(statement) && !/\b(?:not tilted|misconception|false|wrong|myth|erroneous)\b/i.test(statement) && wrongAxialReference.test(statement))) {
+    corrections.push({ reason: 'factual_review', rule: 'earth_axial_tilt_reference', guidance: nativeFactualGuidance.earth_axial_tilt_reference });
+  }
   if (statements.some(statement => !warnsAgainst(statement) &&
     !/\b(?:only if|only when)\b[^.!?;\n]{0,90}\b(?:service[- ]role|bypassrls)\b/i.test(statement) &&
     /\b(?:HTTP[- ]only\b[^.!?;\n]{0,80}\b(?:cookie|session|token)s?|(?:user|end[- ]user)(?:'s)?\s+(?:session|access token|jwt)s?)\b[^.!?;\n]{0,110}\bbypass(?:es)?\s+(?:tenant\s+)?(?:RLS|row[- ]level security)\b/i.test(statement))) {
@@ -234,9 +240,12 @@ export function contradictsMonthlyChart(root: unknown, prose: string): boolean {
 /** Only treat an explicitly closed monthly comparison as entirely data-driven.
  * Ambiguous or mixed requests still use the general native response contract. */
 export function suppliedMonthlyComparison(prompt: string): MonthlyPoint[] | undefined {
+  const explicitMonthlyChanges = /\bmonth[- ]over[- ]month\b/i.test(prompt);
+  const compareBothGains = /\b(?:largest|biggest)\s+dollar\s+gain\b/i.test(prompt)
+    && /\b(?:largest|biggest)\s+percentage\s+gain\b/i.test(prompt);
   if (prompt.length > 2000 || !/\bmonthly\b/i.test(prompt) || !/\b(?:chart|plot)\b/i.test(prompt)
-      || !/\bmonth[- ]over[- ]month\b/i.test(prompt) || !/\b(?:largest|biggest)\b/i.test(prompt)
-      || !/\buse only (?:these|the) (?:supplied|provided) values\b/i.test(prompt)
+      || (!explicitMonthlyChanges && !compareBothGains) || !/\b(?:largest|biggest)\b/i.test(prompt)
+      || !/\buse only (?:these|the) (?:(?:supplied|provided) )?values\b/i.test(prompt)
       || !/\bUSD\b/i.test(prompt)) return;
   const pair = new RegExp('\\b(' + monthPattern + ')(?:\\s*[:=]\\s*|\\s+)\\$?([+-]?(?:[0-9]{1,3}(?:,[0-9]{3})+|[0-9]+)(?:\\.[0-9]+)?)(?![a-z0-9]|[.,][0-9])', 'gi');
   const points: MonthlyPoint[] = [];

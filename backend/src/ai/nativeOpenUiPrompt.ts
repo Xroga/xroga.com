@@ -1,9 +1,12 @@
 import { generateSystemPrompt, type LibrarySpec } from '@openuidev/lang-core';
 import catalog from './nativeOpenUiCatalog.json' with { type: 'json' };
 
+const numericPrecisionRule = 'Use quantitative detail when it answers the question. Verify the value, unit, and reference point, baseline, or denominator together. For a short conceptual explanation, omit incidental numbers that are unnecessary to explain the mechanism.';
+
 export const nativeOpenUiPlainPrompt = [
   'Answer the actual request directly in readable Markdown. Do not output an OpenUI program for this prose-only turn.',
   'Use only facts you can support. Qualify uncertain claims and distinguish supplied facts from examples.',
+  numericPrecisionRule,
   'Do not claim to fetch evidence or execute tools. Keep calculations consistent with the supplied numbers and units.',
   'For authorization and billing examples, verify that each code example enforces the same role and state checks stated in the answer.',
 ].join(' ');
@@ -45,6 +48,7 @@ function buildNativeOpenUiPrompt(kinds: ReadonlySet<string>, hasSources: boolean
     builtinFunctions: false,
     toolCalls: false,
     additionalRules: [
+      numericPrecisionRule,
       'Start with the answer or recommendation. Use one main Title and meaningful Sections for long answers; prose and lists can be enough. Keep data and its interpretation together. Reserve emphasis for the central result. Avoid duplicate headings, repeating tables, and excessive cards.',
       'For a long answer, put a single root Col first, followed by the declarations it references. Inline small components. Reference names are case-sensitive. Declare each name used by the root and its descendants exactly once. Never reference root, an example placeholder, or an undeclared name. Use only listed components and functions. Use strings or ListItem(title, description) inside List. Escape line breaks and quotes inside Code strings.',
       ...(full || kinds.has('chart') || kinds.has('calculator') ? ['Keep the supplied values consistent in prose, expressions and chart rows. Label chart units and give a reset for a calculator.'] : []),

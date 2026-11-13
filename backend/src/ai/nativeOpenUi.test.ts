@@ -1,13 +1,16 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { NATIVE_UI_MARKER, PARTIAL_NATIVE_PRESENTATION_NOTE, missingNativeFormats, splitNativeOpenUiAnswer, validateNativeOpenUi, validateNativeWorkspaceProgram, type NativeUiDiagnostic } from './nativeOpenUi.js';
-import { nativeOpenUiPrompt, workspaceNativeOpenUiPrompt } from './nativeOpenUiPrompt.js';
+import { nativeOpenUiPlainPrompt, nativeOpenUiPrompt, workspaceNativeOpenUiPrompt } from './nativeOpenUiPrompt.js';
 import { buildNativeOpenUiShare, readNativeOpenUiShare } from './nativeOpenUiShare.js';
 import { readNativeOpenUiRun } from './nativeOpenUiRun.js';
 import { completeNativeWorkspaceAnswer, usesNativeWorkspacePresentation } from './nativeOpenUiWorkspace.js';
 import { requiredNativeFormats } from './answerCoverage.js';
 
 test('the model gets instructions from the native registry and may answer in text', () => {
+  for (const prompt of [nativeOpenUiPlainPrompt, nativeOpenUiPrompt]) {
+    assert.match(prompt, /Verify the value, unit, and reference point, baseline, or denominator together/);
+  }
   for (const name of ['Col(', 'Chart(', 'Slider(', 'Svg(', 'Diagram(', 'Section(', 'Table(', 'Payment(', 'Source(']) assert.ok(nativeOpenUiPrompt.includes(name), name);
   assert.deepEqual(splitNativeOpenUiAnswer('Paris.'), { text: 'Paris.', program: '' });
   assert.deepEqual(splitNativeOpenUiAnswer('Paris.\n<<<XROGA_OP', true), { text: 'Paris.', program: '' });
@@ -485,6 +488,30 @@ test('an unbounded Stripe retry claim gets a readable factual-review fallback', 
   assert.deepEqual(validateNativeOpenUi('root = Col([Text("Stripe does not retry forever.")])'), { ok: true });
 });
 
+test('the captured seasons error is flagged in prose and native content', () => {
+  const inaccurate = 'Earth has seasons because its axis is tilted about 23.5° relative to its orbital plane, so as it orbits the Sun each hemisphere alternately receives more direct sunlight and longer days, then less direct sunlight and shorter days.';
+  const result = completeNativeWorkspaceAnswer(inaccurate, 'stop');
+  assert.deepEqual(result.completion, { status: 'partial', reason: 'factual_review' });
+  assert.match(result.response, /23\.4° from the perpendicular to its orbital plane/);
+  assert.ok(result.response.endsWith(inaccurate));
+  assert.equal(result.responseSource.text, '');
+  const program = (text: string) => 'root = Col([Text(' + JSON.stringify(text) + ')])';
+  const diagnostics: NativeUiDiagnostic[] = [];
+  assert.deepEqual(validateNativeWorkspaceProgram(program(inaccurate), undefined, '', event => diagnostics.push(event)),
+    { ok: false, reason: 'factual_review' });
+  assert.equal(diagnostics[0]?.factualRule, 'earth_axial_tilt_reference');
+  for (const accurate of [
+    'Earth’s rotation axis is tilted 23.4 degrees from the normal to the orbital plane.',
+    'Earth’s equatorial plane is inclined 23.5° relative to its orbital plane.',
+    'Earth’s axis makes an angle of 66.5° with its orbital plane.',
+    'Earth’s axis is not tilted 23.5° from its orbital plane.',
+    'Earth’s tilted axis changes the angle of sunlight and the length of the day over the year.',
+  ]) {
+    assert.deepEqual(completeNativeWorkspaceAnswer(accurate, 'stop').completion, { status: 'complete' });
+    assert.deepEqual(validateNativeWorkspaceProgram(program(accurate), undefined, ''), { ok: true });
+  }
+});
+
 test('membership checks are not treated as an immutable tenant key', () => {
   const inaccurate = 'WITH CHECK prevents moving a row to another tenant.';
   const program = 'root = Col([Table(["Component", "Role"], [["Postgres", "Tenant data"]])])';
@@ -664,6 +691,21 @@ test('an explicit monthly data comparison uses the supplied points and determini
   const truncated = completeNativeWorkspaceAnswer(wire(program), 'length', undefined, prompt);
   assert.deepEqual(truncated.completion, { status: 'partial', reason: 'output_limit' });
   assert.equal(truncated.responseSource.text, '');
+});
+
+test('the hosted revenue wording verifies every user-supplied value and both gain measures', () => {
+  const prompt = 'Show a monthly revenue chart and table in USD: January 8000, February 10000, March 12000, April 11000, May 13000, June 16000. Explain the largest dollar gain and largest percentage gain separately. Use only these values and no web search.';
+  const chart = 'root = Col([Chart("line", [{month:"Jan",usd:8000},{month:"Feb",usd:10000},{month:"Mar",usd:12000},{month:"Apr",usd:11000},{month:"May",usd:13000},{month:"Jun",usd:16000}], "month", ["usd"], "currency", "USD")])';
+  const prose = 'Revenue rose from January to June.';
+  const result = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + chart, 'stop', undefined, prompt);
+  assert.deepEqual(result.completion, { status: 'complete' });
+  assert.match(result.response, /Largest month-over-month gain: \+\$3,000 \(June\)/);
+  assert.match(result.response, /Largest relative month-over-month gain: \+25% \(February\)/);
+  assert.match(result.responseSource.text, /Chart\("line".*Table\(/);
+  const altered = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + chart.replace('usd:16000', 'usd:17000'), 'stop', undefined, prompt);
+  assert.deepEqual(altered.completion, { status: 'partial', reason: 'data_review' });
+  assert.match(altered.responseSource.text, /"Month":"June","Value":16000/);
+  assert.doesNotMatch(altered.responseSource.text, /17000/);
 });
 
 test('monthly comparison keeps tied winners, separates gain metrics, and handles a zero base', () => {

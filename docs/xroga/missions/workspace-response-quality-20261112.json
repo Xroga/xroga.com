@@ -35,7 +35,7 @@
   "architecture": { "change": "extends_canonical", "reason": "Extend existing answer assembly and compatibility readers.", "rfc": null },
   "rollout": "Complete exact-source CI and a single approved grouped hosted acceptance before production review.",
   "rollback": "Keep the prior paired release and exercise the decoder-compatible recovery in staging.",
-  "knownGaps": ["Hosted staging verified provider-disabled diagram recovery and asset delivery. The first live answer rejected a Diagram node tone and retained its text, table and code. The neutral tone recovery needs fresh hosted acceptance before a production canary. Private Search staging prerequisites are independent."],
+  "knownGaps": ["The corrected hosted run passed the fresh architecture answer and its persistence, Copy and Reopen checks. The concise answer failed factual review. The accuracy correction, revenue comparison and file-backed calculator need fresh hosted acceptance. Private Search staging prerequisites are independent."],
   "placeholderClaimsRemaining": [],
   "evidenceRefs": ["docs/operations/native-openui/WORKSPACE-RESPONSE-QUALITY.md"],
   "claimsFullProductCompletion": false,
