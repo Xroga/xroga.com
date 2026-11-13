@@ -163,7 +163,7 @@ test('skipping is offered without being dressed as a hazard', () => {
   const flow = FLOW.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/[^\n]*/g, '');
   // No confirmation, no "are you sure" — skipping just advances.
   assert.ok(!/confirm\(/.test(flow), 'skipping must not raise a confirmation');
-  assert.match(flow, /status: 'skipped'/, 'a global skip must be recorded');
+  assert.match(flow, /finishSetup\('skipped'\)/, 'a global skip must be recorded');
   assert.match(flow, /githubSkipped: true/);
   assert.match(flow, /vercelSkipped: true/);
 });

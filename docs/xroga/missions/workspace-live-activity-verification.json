@@ -1,0 +1,120 @@
+{
+  "version": "1.0",
+  "missionId": "WORKSPACE-LIVE-ACTIVITY-VERIFICATION",
+  "baseSha": "b7b090b7bbf363b23ebd1e2bc9b4f81d6f1f8fa8",
+  "requirementIds": [
+    "XR-MISSION-053",
+    "XR-FAMILY-activity-feeds"
+  ],
+  "state": "CODE_COMPLETE",
+  "risk": "low",
+  "scope": "Preserve public command evidence, deduplicate activity replay, and display streamed response status and paged history in Workspace.",
+  "changedFiles": [
+    "frontend/src/components/activity/ActivityTimeline.tsx",
+    "frontend/src/components/terminal/TerminalLiveActivity.tsx",
+    "frontend/src/context/TerminalChatContext.tsx",
+    "frontend/src/lib/sanitizeChatMessages.ts",
+    "frontend/src/lib/terminal/activityPresentation.ts",
+    "frontend/src/lib/terminal/activityTimeline.ts",
+    "frontend/src/lib/terminal/softwareAgentEvents.test.ts",
+    "frontend/src/lib/xrogaEvent.ts",
+    "frontend/src/lib/xrogaEventAdapter.ts",
+    "frontend/src/components/terminal/SwarmMessageLog.tsx",
+    "frontend/src/hooks/useBackgroundBuildJobs.ts",
+    "frontend/src/lib/pendingBuildJobs.ts",
+    "frontend/src/lib/pendingBuildJobs.test.ts",
+    "docs/xroga/current-state.json",
+    "docs/xroga/current-state.md",
+    "docs/xroga/security/egress-callers.json",
+    "docs/operations/live-activity-verification.md",
+    "docs/xroga/missions/workspace-live-activity-verification.json"
+  ],
+  "decisions": {
+    "keep": [
+      "Existing Agent V2 and Swarm streams, tenant controls and native OpenUI validation."
+    ],
+    "extend": [
+      "Existing canonical event adapter, terminal presentation and saved history validation."
+    ],
+    "replace": [
+      "Free-text command correlation and raw saved activity objects."
+    ],
+    "deprecate": []
+  },
+  "schemaImpact": {
+    "changed": false,
+    "migrations": [],
+    "rollout": "Optional activity exit code only.",
+    "rollback": "Earlier readers can ignore the optional exit code."
+  },
+  "securityImpact": {
+    "auth": {
+      "changed": false,
+      "description": "Existing Workspace authentication."
+    },
+    "tenant": {
+      "changed": true,
+      "description": "Use the authorized run endpoint and scope automatic browser recovery to pending records stamped with the current account. Discard polling results after an account change."
+    },
+    "approval": {
+      "changed": false,
+      "description": "Uses existing user approval records."
+    },
+    "credentials": {
+      "changed": false,
+      "description": "Existing redaction is also applied when reading saved rows."
+    },
+    "egress": {
+      "changed": false,
+      "description": "No new destinations or external requests."
+    },
+    "cost": {
+      "changed": false,
+      "description": "No added model calls."
+    },
+    "billing": {
+      "changed": false,
+      "description": "No ledger changes."
+    }
+  },
+  "tests": [
+    {
+      "command": "node node_modules/tsx/dist/cli.mjs --tsconfig frontend/tsconfig.json --test frontend/src/lib/terminal/softwareAgentEvents.test.ts",
+      "scope": "Check that actual local process output, nonzero exit and replay survive the existing adapter.",
+      "negative": true,
+      "reference": "frontend/src/lib/terminal/softwareAgentEvents.test.ts"
+    },
+    {
+      "command": "node node_modules/tsx/dist/cli.mjs --tsconfig frontend/tsconfig.json --test frontend/src/lib/pendingBuildJobs.test.ts",
+      "scope": "Deny automatic restoration of another account's pending build or an unscoped legacy entry.",
+      "negative": true,
+      "reference": "frontend/src/lib/pendingBuildJobs.test.ts"
+    }
+  ],
+  "architecture": {
+    "change": "extends_canonical",
+    "reason": "Uses the existing event contract, adapter and conversation history.",
+    "rfc": null
+  },
+  "rollout": "Review a draft stacked on the native OpenUI source. Verify isolated staging and release gates.",
+  "rollback": "Revert the UI commits independently of the Native OpenUI base. Existing event and history readers remain compatible.",
+  "knownGaps": [
+    "Hosted model, Search, two-account, extension cursor synchronization and authenticated reconnect acceptance need the release candidate and applicable authorization."
+  ],
+  "placeholderClaimsRemaining": [],
+  "evidenceRefs": [
+    "docs/operations/live-activity-verification.md"
+  ],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "NOT_REQUESTED",
+    "blockers": [
+      "Hosted acceptance and coordinated extension integration pending."
+    ],
+    "authenticatedE2e": "BLOCKED",
+    "stagedSecurity": "BLOCKED",
+    "liveUrl": null,
+    "deployedSha": null
+  }
+}

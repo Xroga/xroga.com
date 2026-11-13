@@ -31,6 +31,7 @@ import billingWebhookRouter from './routes/billingWebhook.js';
 import simpleChatRouter from './routes/simpleChat.js';
 import v1Router from './routes/v1.js';
 import phase1Router from './routes/phase1.js';
+import nativeOpenUiEvaluationRouter from './routes/nativeOpenUiEvaluation.js';
 import guestChatRouter from './routes/guestChat.js';
 import phase1BusinessPreflightRouter from './routes/phase1BusinessPreflight.js';
 import businessAutomationsRouter from './routes/businessAutomations.js';
@@ -54,6 +55,7 @@ import { phase1AuthMiddleware } from './middleware/phase1Auth.js';
 import mediaRouter from './routes/media.js';
 import driveRouter from './routes/drive.js';
 import browserRunsRouter from './routes/browserRuns.js';
+import localBrowserRouter from './routes/localBrowser.js';
 import builderRouter from './routes/builder.js';
 import { resolveStorageConfig } from './storage/runtime.js';
 import capabilitiesRouter from './routes/capabilities.js';
@@ -227,6 +229,7 @@ app.use(
   businessAutomationsRouter,
   phase1Router,
 );
+app.use('/api/native-openui', nativeOpenUiEvaluationRouter);
 app.use('/api/dashboard', authMiddleware, dashboardRouter);
 app.use('/api/tasks', authMiddleware, tasksRouter);
 app.use('/api/referrals', authMiddleware, referralsRouter);
@@ -256,6 +259,7 @@ app.use('/api/showcase', authMiddleware, showcaseRouter);
 app.use('/api/media', authMiddleware, mediaRouter);
 app.use('/api/drive', authMiddleware, driveRouter);
 app.use('/api/browser/runs', authMiddleware, browserRunsRouter);
+app.use('/api/browser/local', authMiddleware, localBrowserRouter);
 app.use('/api/builder', authMiddleware, builderRouter);
 app.use('/api/capabilities', authMiddleware, capabilitiesRouter);
 app.use('/api/debug', authMiddleware, debugRouter);

@@ -11,7 +11,8 @@ test('development API fallbacks use the backend port declared by AGENTS.md', () 
     assert.doesNotMatch(source, /http:\/\/localhost:4000/);
   }
   assert.match(share, /import \{ API_URL, fetchApiResponse \} from ['"]@\/lib\/api['"]/);
-  assert.match(share, /fetchApiResponse\(`\$\{API_URL\}\/api\/message-shares\//);
+  assert.match(share, /const path = `\/api\/message-shares\/\$\{encodeURIComponent\(token\)\}`/);
+  assert.match(share, /fetchApiResponse\(`\$\{API_URL\}\$\{path\}`, options\)/);
   assert.doesNotMatch(share, /(?:const|let)\s+API_URL\s*=/);
   assert.doesNotMatch(share, /http:\/\/localhost:4000/);
 });

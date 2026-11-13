@@ -50,7 +50,7 @@ export async function runLightLaneChat(opts: {
   if (!session?.access_token) throw new Error('Please sign in to chat.');
 
   try {
-    const plan = await api.phase1.plan(opts.prompt, opts.history, undefined, opts.projectContext ?? null);
+    const plan = await api.phase1.plan(opts.prompt, opts.history, undefined, opts.projectContext ?? null, undefined, opts.signal);
     if (plan.directResponse) {
       opts.onPartial(plan.directResponse);
       return { response: plan.directResponse, usage: plan.usage };
@@ -69,7 +69,7 @@ export async function runLightLaneChat(opts: {
       await streamTextReveal(response, opts.onPartial, opts.signal);
       return { response, usage: plan.usage };
     }
-    const result = await api.phase1.chat(opts.prompt, opts.history, undefined, plan.goalContract);
+    const result = await api.phase1.chat(opts.prompt, opts.history, undefined, plan.goalContract, opts.signal);
     await streamTextReveal(result.response, opts.onPartial, opts.signal);
     return result;
   } catch (err) {

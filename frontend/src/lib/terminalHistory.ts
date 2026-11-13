@@ -165,8 +165,12 @@ function detectStatus(messages: ChatMessage[], kind: TerminalHistoryKind): Termi
 
 export function saveTerminalHistorySession(opts: {
   sessionId: string;
+  /** Bind deferred sidebar sync to the account that created this snapshot. */
+  ownerId?: string;
   prompt: string;
   messages: ChatMessage[];
+  /** A settled answer can go directly to the existing account-scoped save queue. */
+  flushSidebar?: boolean;
   status?: TerminalHistoryStatus;
   /** Force bind under this repo (selected workspace) even if localStorage briefly lags */
   forceRepo?: string;
@@ -246,11 +250,12 @@ export function saveTerminalHistorySession(opts: {
   save([entry, ...rest]);
   void saveTerminalSessionToIndexedDB(entry);
   // Project membership is durable sidebar metadata, not a GitHub or model-routing side effect.
-  const activeProjectAtSave = getActiveSidebarProject();
-  void import('@/lib/sidebarOrganization').then(({scheduleProjectConversationLink})=>scheduleProjectConversationLink(entry,activeProjectAtSave));
+  const ownerId = opts.ownerId;
+  const activeProjectAtSave = ownerId ? getActiveSidebarProject(ownerId) : null;
+  if (activeProjectAtSave) void import('@/lib/sidebarOrganization').then(({scheduleProjectConversationLink})=>scheduleProjectConversationLink(entry,activeProjectAtSave));
   // Non-GitHub chats need the same cross-device restoration capability.
-  if (!entry.githubRepoName?.includes('/')) {
-    void import('@/lib/sidebarOrganization').then(({scheduleSidebarChatSave}) => scheduleSidebarChatSave(entry));
+  if (ownerId && !entry.githubRepoName?.includes('/')) {
+    void import('@/lib/sidebarOrganization').then(({scheduleSidebarChatSave}) => scheduleSidebarChatSave(ownerId,entry,opts.flushSidebar));
   }
 
   if (entry.githubRepoName?.includes('/') && terminalNumber) {

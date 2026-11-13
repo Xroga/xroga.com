@@ -23,6 +23,22 @@ test('research normalization deduplicates pages, keeps distinct pages, rejects u
   assert.equal(result.text, ''); // Search snippets are not an invented synthesized answer.
 });
 
+test('saved DeepSeek research retains native inline evidence and rejects an invented source ID', () => {
+  const webSource = { title: 'Documentation', url: 'https://example.com/a', snippet: 'Retrieved excerpt', source: 'web',
+    siteName: 'Example', siteIconDomain: 'example.com', publishedAt: '2026-10-17T00:00:00.000Z' };
+  const program = 'root = Col([Text(["See the documentation. ", Source("source-1")])])';
+  const receipt = { ok: true, operation: 'search', result: { provider: 'deepseek', results: [{
+    title: webSource.title, url: webSource.url, excerpts: [webSource.snippet], site_name: webSource.siteName,
+    site_icon_domain: webSource.siteIconDomain, publish_date: webSource.publishedAt,
+  }] }, answer: { response: 'See the documentation [1].', completion: { status: 'complete' },
+    webSources: [webSource], responseSource: { format: 'xroga-openui-v1', text: program } } };
+  assert.deepEqual(presentResearchResult(receipt).sources, [webSource]);
+  assert.deepEqual(presentResearchResult(receipt).answer, receipt.answer);
+  const invalid = structuredClone(receipt);
+  invalid.answer.responseSource.text = program.replace('source-1', 'source-2');
+  assert.equal(presentResearchResult(invalid).answerFailure, 'INVALID_SAVED_ANSWER');
+});
+
 test('private result survives repeated reads with issued owner and matching consumed receipt only', async () => {
   const h = harness(); setStorageServiceForTests(h.svc);
   const context = createTenantContext({ userId: h.alice.userId, via: 'local_jwt' });

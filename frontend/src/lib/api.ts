@@ -1697,6 +1697,7 @@ export async function apiFetch<
   } catch (
     err
   ) {
+    options.signal?.throwIfAborted();
     if(err instanceof ApiError&&err.data.code==='API_DESTINATION_DENIED')throw err;
     const raw =
       (
@@ -1733,6 +1734,7 @@ export async function apiFetch<
             res.statusText,
         }),
       );
+  options.signal?.throwIfAborted();
 
   if (
     !res.ok
@@ -4440,6 +4442,15 @@ export const api = {
   },
 
   notifications: {
+    pushKey: () => apiFetch<{ publicKey: string }>('/api/notifications/push-key'),
+    subscribePush: (subscription: PushSubscriptionJSON) => apiFetch<{ subscribed: boolean }>(
+      '/api/notifications/push-subscription',
+      { method: 'POST', body: JSON.stringify(subscription) },
+    ),
+    unsubscribePush: (endpoint: string) => apiFetch<{ subscribed: boolean }>(
+      '/api/notifications/push-subscription',
+      { method: 'DELETE', body: JSON.stringify({ endpoint }) },
+    ),
     list:
       () =>
         apiFetch<
@@ -4963,6 +4974,7 @@ concurrency:
             string,
             unknown
           >,
+        signal?: AbortSignal,
       ) =>
         apiFetch<
           SemanticRequestPlan
@@ -4970,6 +4982,7 @@ concurrency:
           '/api/phase1/plan',
 
           {
+            signal,
             method:
               'POST',
 
@@ -5004,6 +5017,7 @@ concurrency:
 
         goalContract?:
           SemanticRequestPlan['goalContract'],
+        signal?: AbortSignal,
       ) =>
         apiFetch<
           Phase1ChatResult
@@ -5011,6 +5025,7 @@ concurrency:
           '/api/phase1/chat',
 
           {
+            signal,
             method:
               'POST',
 
@@ -6055,8 +6070,8 @@ import type {
 } from '@/lib/hackathonBrief';
 
 export interface Phase1ChatResult {
-  completion?: { status: 'complete' } | { status: 'partial'; reason: 'output_limit' | 'unconfirmed_stop' | 'authorization_review' | 'presentation_contract' };
-  responseSource?: { format: 'xroga-response-json-v1'; text: string; contract?:import('./responseCoverageContract').ResponseCoverageContract };
+  completion?: { status: 'complete' } | { status: 'partial'; reason: 'output_limit' | 'unconfirmed_stop' | 'authorization_review' | 'factual_review' | 'presentation_contract' | 'data_review' };
+  responseSource?: { format: 'xroga-response-json-v1' | 'xroga-openui-v1'; text: string; contract?:import('./responseCoverageContract').ResponseCoverageContract };
   response:
     string;
 

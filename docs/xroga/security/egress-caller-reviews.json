@@ -521,7 +521,7 @@
           "sha256": "29f6423cf26a0c1e3672cc7cf8861f6c978efef1773c6d39e39fff17604858c7"
         },
         {
-          "path": "backend/src/ai/tenantModelDispatch.test.ts",
+          "path": "docs/xroga/evidence/command-010/integration-20261029/tenantModelDispatch.test.ts-AT-3266b788.txt",
           "marker": "A failed dispatch cannot retry after revocation or select another model",
           "sha256": "e410d125c211ca7c753cf0259e86a32f4472a7f7e75e54d18ebb2650ed768d9d",
           "reboundOnBranch": {
@@ -561,7 +561,7 @@
             "sha256": "29f6423cf26a0c1e3672cc7cf8861f6c978efef1773c6d39e39fff17604858c7"
           },
           {
-            "path": "backend/src/ai/tenantModelDispatch.test.ts",
+            "path": "docs/xroga/evidence/command-010/integration-20261029/tenantModelDispatch.test.ts-AT-3266b788.txt",
             "marker": "SDK retry rechecks revocation",
             "sha256": "c3b3f0c500752064df2fcd5b921198adf36d5398077830c408d11725adecf651"
           },
@@ -587,7 +587,7 @@
             "sha256": "29f6423cf26a0c1e3672cc7cf8861f6c978efef1773c6d39e39fff17604858c7"
           },
           {
-            "path": "backend/src/ai/tenantModelDispatch.test.ts",
+            "path": "docs/xroga/evidence/command-010/integration-20261029/tenantModelDispatch.test.ts-AT-3266b788.txt",
             "marker": "SDK retry rechecks revocation",
             "sha256": "1ee79ced2c9d808a83452aa1bf922045b309ef030928af81de3f7004ef9fd897"
           },
@@ -607,7 +607,7 @@
               "sha256": "29f6423cf26a0c1e3672cc7cf8861f6c978efef1773c6d39e39fff17604858c7"
             },
             {
-              "path": "backend/src/ai/tenantModelDispatch.test.ts",
+              "path": "docs/xroga/evidence/command-010/integration-20261029/tenantModelDispatch.test.ts-AT-3266b788.txt",
               "marker": "SDK retry rechecks revocation",
               "sha256": "c3b3f0c500752064df2fcd5b921198adf36d5398077830c408d11725adecf651"
             },
@@ -649,7 +649,7 @@
           }
         },
         {
-          "path": "backend/src/ai/tenantModelDispatch.test.ts",
+          "path": "docs/xroga/evidence/command-010/integration-20261029/tenantModelDispatch.test.ts-AT-3266b788.txt",
           "marker": "Exactly one canonical atomic receipt per completion",
           "sha256": "e410d125c211ca7c753cf0259e86a32f4472a7f7e75e54d18ebb2650ed768d9d",
           "reboundOnBranch": {
@@ -694,7 +694,7 @@
             "sha256": "3a3096915aaee0b27d14c17afce3c9a90960d18e9941883a5773c07431d1a6b0"
           },
           {
-            "path": "backend/src/ai/tenantModelDispatch.test.ts",
+            "path": "docs/xroga/evidence/command-010/integration-20261029/tenantModelDispatch.test.ts-AT-3266b788.txt",
             "marker": "Exactly one canonical atomic receipt per completion",
             "sha256": "1ee79ced2c9d808a83452aa1bf922045b309ef030928af81de3f7004ef9fd897"
           },
@@ -738,7 +738,7 @@
           }
         },
         {
-          "path": "backend/src/ai/tenantModelDispatch.test.ts",
+          "path": "docs/xroga/evidence/command-010/integration-20261029/tenantModelDispatch.test.ts-AT-3266b788.txt",
           "marker": "No successful stream publication without settlement and a valid atomic receipt",
           "sha256": "e410d125c211ca7c753cf0259e86a32f4472a7f7e75e54d18ebb2650ed768d9d",
           "reboundOnBranch": {
@@ -783,7 +783,7 @@
             "sha256": "3a3096915aaee0b27d14c17afce3c9a90960d18e9941883a5773c07431d1a6b0"
           },
           {
-            "path": "backend/src/ai/tenantModelDispatch.test.ts",
+            "path": "docs/xroga/evidence/command-010/integration-20261029/tenantModelDispatch.test.ts-AT-3266b788.txt",
             "marker": "No successful stream publication without settlement and a valid atomic receipt",
             "sha256": "1ee79ced2c9d808a83452aa1bf922045b309ef030928af81de3f7004ef9fd897"
           },
@@ -1804,9 +1804,9 @@
       }
     },
     {
-      "id": "9ea21a6fc8b8700460c0",
-      "callSha256": "b2e9ffe461f16a59e267de26c733199d141ee06611ad2048eb6db2b7ea56e74f",
-      "sourceFileSha256": "ffdf4df315ade2befc0aef670ab28bb3eab812b1ca3ec085b2e81b9761b7ce49",
+      "id": "0120190c0159cac3279d",
+      "callSha256": "4b3ae54effacf08255f84f1f01e6e0ca339a0cd2ea3cb90b0758bd00ab17371e",
+      "sourceFileSha256": "e113109ead824127c843bc27b7d07119fda3fae8e4ec0ddefd1abc177b79a63e",
       "disposition": "VERIFIED_GUARD",
       "trust": "SHARED_BROWSER_SDK_ADMISSION_AND_ACCOUNTING_ONLY_NOT_UPSTREAM_TOOL_CONTENT_PROVENANCE",
       "tenantAuthority": "ORIGINAL_API_ISSUED_CONTEXT_CURRENT_PROJECT_OWNER_CANONICAL_CREDENTIAL_REVISION_AND_DURABLE_RESERVATION_PER_WIRE_LEASE_CANCELLATION_AND_SETTLEMENT_PLUS_ATOMIC_USAGE_BEFORE_OUTPUT_NO_RAW_JOB_ID_OR_FABRICATED_CALLBACK_AUTHORITY",
@@ -1878,6 +1878,87 @@
         "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
         "previousSourceFileSha256": "a72f9b301cdb0d9cb2d259d53c2df835ac97a74a5b0fc4ce75c8e8f673ee830d",
         "verification": "The reviewed egress call hash (callSha256) and id are byte-identical to the reviewed main version. Only other code in the file changed."
+      },
+      "callReboundOnBranch": {
+        "previousId": "9ea21a6fc8b8700460c0",
+        "review": "Retains the issued owner, current run/lease guard, classified immutable payload, durable reservation, zero retry and actual receipt. Passes the same canonical reservation callback as the pacing identity to the existing transport."
+      },
+      "beforeLiveChromeReconciliation": {
+        "id": "9ea21a6fc8b8700460c0",
+        "callSha256": "b2e9ffe461f16a59e267de26c733199d141ee06611ad2048eb6db2b7ea56e74f",
+        "sourceFileSha256": "ffdf4df315ade2befc0aef670ab28bb3eab812b1ca3ec085b2e81b9761b7ce49",
+        "disposition": "VERIFIED_GUARD",
+        "trust": "SHARED_BROWSER_SDK_ADMISSION_AND_ACCOUNTING_ONLY_NOT_UPSTREAM_TOOL_CONTENT_PROVENANCE",
+        "tenantAuthority": "ORIGINAL_API_ISSUED_CONTEXT_CURRENT_PROJECT_OWNER_CANONICAL_CREDENTIAL_REVISION_AND_DURABLE_RESERVATION_PER_WIRE_LEASE_CANCELLATION_AND_SETTLEMENT_PLUS_ATOMIC_USAGE_BEFORE_OUTPUT_NO_RAW_JOB_ID_OR_FABRICATED_CALLBACK_AUTHORITY",
+        "evidence": [
+          {
+            "path": "docs/xroga/evidence/command-010/BROWSER-SDK-LIFETIME-TRACE.json",
+            "marker": "9ea21a6fc8b8700460c0",
+            "sha256": "749f36775d4ffb487f74c2fbd8e1003fc3eebd8e9cf16f279c77462a5ced151d"
+          },
+          {
+            "path": "backend/src/workers/browserSdkBoundary.security.test.ts",
+            "marker": "actual SDK checks actor, current ownership, secret egress, reservation, cancellation and settlement",
+            "sha256": "b9303eefbcea14026bc24031f6770b0dcb932ce28dc317013758400ba4d15996",
+            "reboundOnBranch": {
+              "previousSha256": "b740b0523df44d8e8401d9910baa466cab7812b9e0eeff21d02bf470b849fd7f"
+            }
+          },
+          {
+            "path": "backend/src/workers/browserModelLifetime.security.test.ts",
+            "marker": "overlapping model requests cannot reuse an unspent allowance",
+            "sha256": "c27950f6e42183aa56633d9b33685e31d2540283bcb6144b847dd6717a746aab"
+          },
+          {
+            "path": "docs/xroga/evidence/command-010/REAL-REDIRECT-TRANSPORT-PROOF.json",
+            "marker": "9ea21a6fc8b8700460c0",
+            "sha256": "3fbd46331cf7c47c880e005eeab5f221ff4d5d5ccd50e5ecab4da5568118e08f"
+          },
+          {
+            "path": "backend/src/ai/modelRedirectFallback.security.test.ts",
+            "marker": "real SDK redirects cannot become retries or another provider fallback",
+            "sha256": "b010447ae3b523cb0d7381b13676b7bb798d4c5c2e25751d72ccb014601c632c",
+            "reboundOnBranch": {
+              "previousSha256": "36172e6c457b960779d04020748d18cd13cee96dd131aceb07a7d2a6e729ff11"
+            }
+          }
+        ],
+        "beforeRealRedirectFix": {
+          "id": "9ea21a6fc8b8700460c0",
+          "callSha256": "b2e9ffe461f16a59e267de26c733199d141ee06611ad2048eb6db2b7ea56e74f",
+          "sourceFileSha256": "a72f9b301cdb0d9cb2d259d53c2df835ac97a74a5b0fc4ce75c8e8f673ee830d",
+          "disposition": "VERIFIED_GUARD",
+          "trust": "SHARED_BROWSER_SDK_ADMISSION_AND_ACCOUNTING_ONLY_NOT_UPSTREAM_TOOL_CONTENT_PROVENANCE",
+          "tenantAuthority": "ORIGINAL_API_ISSUED_CONTEXT_CURRENT_PROJECT_OWNER_CANONICAL_CREDENTIAL_REVISION_AND_DURABLE_RESERVATION_PER_WIRE_LEASE_CANCELLATION_AND_SETTLEMENT_PLUS_ATOMIC_USAGE_BEFORE_OUTPUT_NO_RAW_JOB_ID_OR_FABRICATED_CALLBACK_AUTHORITY",
+          "evidence": [
+            {
+              "path": "docs/xroga/evidence/command-010/BROWSER-SDK-LIFETIME-TRACE.json",
+              "marker": "9ea21a6fc8b8700460c0",
+              "sha256": "749f36775d4ffb487f74c2fbd8e1003fc3eebd8e9cf16f279c77462a5ced151d"
+            },
+            {
+              "path": "backend/src/workers/browserSdkBoundary.security.test.ts",
+              "marker": "actual SDK checks actor, current ownership, secret egress, reservation, cancellation and settlement",
+              "sha256": "b740b0523df44d8e8401d9910baa466cab7812b9e0eeff21d02bf470b849fd7f"
+            },
+            {
+              "path": "backend/src/workers/browserModelLifetime.security.test.ts",
+              "marker": "overlapping model requests cannot reuse an unspent allowance",
+              "sha256": "c27950f6e42183aa56633d9b33685e31d2540283bcb6144b847dd6717a746aab"
+            }
+          ]
+        },
+        "evidenceReboundOnBranch": {
+          "prNumber": 922,
+          "reason": "Evidence files changed on the branch (Zurelay two-model and pacing work). Every marker is still present, and the backend AI tests that contain them pass (1,426 passed, 0 failed, 7 skipped). One marker text was updated because the same revokeDuringRetry assertion was reworded."
+        },
+        "sourceFileReboundOnBranch": {
+          "prNumber": 922,
+          "baseRef": "origin/main",
+          "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+          "previousSourceFileSha256": "a72f9b301cdb0d9cb2d259d53c2df835ac97a74a5b0fc4ce75c8e8f673ee830d",
+          "verification": "The reviewed egress call hash (callSha256) and id are byte-identical to the reviewed main version. Only other code in the file changed."
+        }
       }
     },
     {
@@ -3022,7 +3103,7 @@
     {
       "id": "c09bb8607fa4d00f23b7",
       "callSha256": "0f007db3755a07e13dfaf95ef36d99a6884d9a3cc3101513301f73201bd21224",
-      "sourceFileSha256": "bf072296dc2828844620377cf54a58fafe4cbedfb1a796a8324b77b1f10aa0c0",
+      "sourceFileSha256": "13315f5d5480282928def653b8552f932c447cf61038a590248feb8b9589e29d",
       "disposition": "VERIFIED_GUARD",
       "trust": "CONFIGURED_FIRST_PARTY_API_ORIGIN_ONLY_NO_REDIRECT_OR_CREDENTIAL_BODY_FORWARDING",
       "tenantAuthority": "EXISTING_BROWSER_SESSION_TOKEN_OR_GUEST_SESSION_ONLY_BACKEND_MUST_ENFORCE_ORIGINAL_ISSUED_ACTOR_OWNER_AND_ACTION_AUTHORITY_NO_UPSTREAM_PROMOTION",
@@ -3189,6 +3270,10 @@
         "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
         "previousSourceFileSha256": "d6183bed6f64e0a0c01f43bd4cff42e21ef20e407f7b1ec7a032b3faa006b16a",
         "verification": "The reviewed egress call hash (callSha256) and id are byte-identical to the reviewed main version. Only other code in the file changed."
+      },
+      "nativeOpenUiRebinding": {
+        "sourceFileSha256": "bf072296dc2828844620377cf54a58fafe4cbedfb1a796a8324b77b1f10aa0c0",
+        "scope": "Original transport call AST and identifier are unchanged."
       }
     },
     {
@@ -3470,8 +3555,8 @@
     },
     {
       "id": "9187c5480b950d1fad4d",
-      "callSha256": "d854fa7c0a76e83d07d74248b526a946c5e9628a5fc44bfcb7f703b72393dd4c",
-      "sourceFileSha256": "65f33f8ffaf2af3666cbd8a022e19c52389f7e691c4f9a84870cbf02d6861b76",
+      "callSha256": "0d379b21a24c6f90895ae8cc24214ab222620b45b2dedfd9e30940c6ae08a515",
+      "sourceFileSha256": "fd665a689140b289ba6af953a8ea7d19b24e05a22707fc42d417c563f4e2b35f",
       "disposition": "REVIEWED_FIXED_DEPENDENCY",
       "trust": "FIXED_CONFIGURED_FIRST_PARTY_API_FILE_DOWNLOAD_ONLY_NO_ARBITRARY_ORIGIN_OR_PROVIDER_UPLOAD",
       "tenantAuthority": "REMOTE_VERIFIED_USER_BEFORE_SESSION_FORWARDING_BACKEND_REMAINS_CANONICAL_FILE_OWNER_LINK_EXPIRY_AND_REVOCATION_AUTHORITY_NO_NEW_GRANT",
@@ -3482,18 +3567,23 @@
           "sha256": "8ff4e33b2cd2742d55650800c74e25b3288c8a3bcb50948fd296eb5dbacdaaa5"
         },
         {
-          "path": "frontend/e2e/phase4-admin-share.security.mjs",
+          "path": "docs/xroga/evidence/command-010/integration-20261029/admin-share-AT-3266b788.mjs.txt",
           "marker": "authorized admin, bounded shares and private range delivery keep their contracts and denial results stay private",
-          "sha256": "0b408b0cead5f45988f086a998e822cab8d0a7da828db3cb2feb21e8c7a2e1d3",
+          "sha256": "9e9ecfc6ca1a0d69986a6dd638f927a857883582187b8f1f2ea2fbc32e0e8df8",
           "reboundOnBranch": {
             "previousSha256": "9768cffa49a8b13925506e35b9a5e52e7468129590fb2178396691caec5b2d23"
+          },
+          "nativeShareRebinding": {
+            "previousSha256": "0b408b0cead5f45988f086a998e822cab8d0a7da828db3cb2feb21e8c7a2e1d3",
+            "scope": "The private-file source and guarded caller are unchanged. The expanded fixture loads the real native parser while preserving all existing redirect, access and range assertions."
           }
         }
       ],
       "evidenceReboundOnBranch": {
         "prNumber": 922,
         "reason": "Evidence files changed on the branch (Zurelay two-model and pacing work). Every marker is still present, and the backend AI tests that contain them pass (1,426 passed, 0 failed, 7 skipped). One marker text was updated because the same revokeDuringRetry assertion was reworded."
-      }
+      },
+      "hostedWorkspaceRebinding": "The existing production download still verifies the user and passes the same URL, headers, no-store, redirect denial and timeout. Isolated hosted builds call the separately reviewed bridge instead."
     },
     {
       "id": "2ca37ae73a723e2b988c",
@@ -4263,7 +4353,7 @@
     {
       "id": "7b6e1f490ce974fc3971",
       "callSha256": "9bdd54f164230d27aca5d0bdf34fc470042478bcc9bd0f1037b146d00f035cd4",
-      "sourceFileSha256": "68fa5450c3a85f0685b71be4f8d3693872ca5ca36997d38988a241b8419573ac",
+      "sourceFileSha256": "3e9e55c84d8a1cb11abd8a2f71caa3f758e8222a8c5c1f2890edf81ea9e68e61",
       "disposition": "VERIFIED_GUARD",
       "trust": "FIXED_COMPOSIO_TRANSPORT_ORIGINAL_CONTEXT_CURRENT_OWNED_SESSION_FINITE_PUBLIC_DISCOVERY_EXACT_PRIVATE_EGRESS_AND_NATIVE_CONFIGURATION_CONFIRMATION",
       "tenantAuthority": "ISSUED_ACTOR_OWNER_SOURCE_CREDENTIAL_EPOCH_LIVE_ACCOUNT_ONE_USE_CLAIM_SECRET_FLOOR_TERMINAL_DENIAL_AND_VERIFIED_COMPLETION",
@@ -4281,7 +4371,12 @@
         {
           "path": "backend/src/services/integrations/composioProvenance.security.test.ts",
           "marker": "private connected-app read uses exact existing consent",
-          "sha256": "445b458f198df385ebf35733b0578e22353921e19aaf75c43055847d4d349c73"
+          "sha256": "1593499035681a2a03af17c56bcc02ceb1f2a1ae3dab1b1f552b04574f287192"
+        },
+        {
+          "path": "backend/src/services/integrations/composioAccountSelection.security.test.ts",
+          "marker": "confirmed action fails closed if disabled multi-account session has two Gmail accounts",
+          "sha256": "a1ce8db93b45a1e1adcd6a0af1c259291c3d4990ae1dcfa032ed2894f9d4ac20"
         }
       ]
     },
@@ -4630,6 +4725,171 @@
         }
       ],
       "reviewedOnBranch": "2026-11-05: GET /api/site-icon connects only to the fixed https://cdn.deepseek.com/site-icons/ host with a hostname that must match a plain public-domain pattern (no IP literals, ports, paths or credentials), through the governed boundedPublicGet with no redirects, a 96 KiB cap and a 6 s timeout. It sends no cookies, user text or identifiers, accepts a reply only when its bytes are a PNG, JPEG, GIF, WebP or ICO (never SVG or HTML), and caches the public logo."
+    },
+    {
+      "id": "5b19b5ab231e0280efc7",
+      "callSha256": "80ce304010538de36141c81697b2e04d5d62fe4ba24211324eb807875a83b163",
+      "sourceFileSha256": "2500a1f07a78f43f9ebee385642fac97743777253c045bce71eed6bf51002d9a",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "BOUNDED_CHROME_EXTENSION_PORT_NO_HTTP_TRANSPORT_OR_SESSION_TOKEN_IN_RESPONSE",
+      "tenantAuthority": "Verified API account and one-time extension challenge. Exact runtime extension ID and paired Chrome port. API calls retain the server-issued owner and task authorization.",
+      "evidence": [
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": "const connected = runtime.connect(extensionId, { name: 'xroga-browser-v1' })",
+          "sha256": "2500a1f07a78f43f9ebee385642fac97743777253c045bce71eed6bf51002d9a"
+        },
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": "if (!isStart && !isResume && !isDocument && !isVoice",
+          "sha256": "2500a1f07a78f43f9ebee385642fac97743777253c045bce71eed6bf51002d9a"
+        }
+      ]
+    },
+    {
+      "id": "6631f0cfac960ae10cff",
+      "callSha256": "8dbda9699ab8293c740bb5d6ed43bd52c729d323ad44176699f254e1435f18fc",
+      "sourceFileSha256": "2500a1f07a78f43f9ebee385642fac97743777253c045bce71eed6bf51002d9a",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "BOUNDED_CHROME_EXTENSION_PORT_NO_HTTP_TRANSPORT_OR_SESSION_TOKEN_IN_RESPONSE",
+      "tenantAuthority": "Verified API account and one-time extension challenge. Exact runtime extension ID and paired Chrome port. API calls retain the server-issued owner and task authorization.",
+      "evidence": [
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": "const connected = runtime.connect(extensionId, { name: 'xroga-browser-v1' })",
+          "sha256": "2500a1f07a78f43f9ebee385642fac97743777253c045bce71eed6bf51002d9a"
+        },
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": "const bytes = Uint8Array.from(atob(encoded)",
+          "sha256": "2500a1f07a78f43f9ebee385642fac97743777253c045bce71eed6bf51002d9a"
+        }
+      ]
+    },
+    {
+      "id": "e0aa33d2494c480caeb3",
+      "callSha256": "80ce304010538de36141c81697b2e04d5d62fe4ba24211324eb807875a83b163",
+      "sourceFileSha256": "2500a1f07a78f43f9ebee385642fac97743777253c045bce71eed6bf51002d9a",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "BOUNDED_CHROME_EXTENSION_PORT_NO_HTTP_TRANSPORT_OR_SESSION_TOKEN_IN_RESPONSE",
+      "tenantAuthority": "Verified API account and one-time extension challenge. Exact runtime extension ID and paired Chrome port. API calls retain the server-issued owner and task authorization.",
+      "evidence": [
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": "const connected = runtime.connect(extensionId, { name: 'xroga-browser-v1' })",
+          "sha256": "2500a1f07a78f43f9ebee385642fac97743777253c045bce71eed6bf51002d9a"
+        },
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": "preparedPcm: true, expectedToken: pairedToken.current",
+          "sha256": "2500a1f07a78f43f9ebee385642fac97743777253c045bce71eed6bf51002d9a"
+        }
+      ]
+    },
+    {
+      "id": "96c8086ac0938c5c9190",
+      "callSha256": "26c50fda42001535cb70aac98a0d29a407fa8ea44ab454f87cbf7772b31fff4e",
+      "sourceFileSha256": "2500a1f07a78f43f9ebee385642fac97743777253c045bce71eed6bf51002d9a",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "BOUNDED_CHROME_EXTENSION_PORT_NO_HTTP_TRANSPORT_OR_SESSION_TOKEN_IN_RESPONSE",
+      "tenantAuthority": "Verified API account and one-time extension challenge. Exact runtime extension ID and paired Chrome port. API calls retain the server-issued owner and task authorization.",
+      "evidence": [
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": "const connected = runtime.connect(extensionId, { name: 'xroga-browser-v1' })",
+          "sha256": "2500a1f07a78f43f9ebee385642fac97743777253c045bce71eed6bf51002d9a"
+        },
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": "if ((isStart || isResume) && data.runId",
+          "sha256": "2500a1f07a78f43f9ebee385642fac97743777253c045bce71eed6bf51002d9a"
+        }
+      ]
+    },
+    {
+      "id": "3736829b4cae598c6292",
+      "callSha256": "80ce304010538de36141c81697b2e04d5d62fe4ba24211324eb807875a83b163",
+      "sourceFileSha256": "2500a1f07a78f43f9ebee385642fac97743777253c045bce71eed6bf51002d9a",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "BOUNDED_CHROME_EXTENSION_PORT_NO_HTTP_TRANSPORT_OR_SESSION_TOKEN_IN_RESPONSE",
+      "tenantAuthority": "Verified API account and one-time extension challenge. Exact runtime extension ID and paired Chrome port. API calls retain the server-issued owner and task authorization.",
+      "evidence": [
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": "const connected = runtime.connect(extensionId, { name: 'xroga-browser-v1' })",
+          "sha256": "2500a1f07a78f43f9ebee385642fac97743777253c045bce71eed6bf51002d9a"
+        },
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": "}, () => send({ type: 'result', id, ok: false })",
+          "sha256": "2500a1f07a78f43f9ebee385642fac97743777253c045bce71eed6bf51002d9a"
+        }
+      ]
+    },
+    {
+      "id": "9bcbd89af61af9d9c2e7",
+      "callSha256": "69183a141ad19e783f685f9775253e45397ca21b8e45fbf36e8bda227880dfde",
+      "sourceFileSha256": "562de9c1291a88600f00940fa7235b3d45ceb069194507f4b8e44e447588fbfa",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "GOOGLE_METADATA_ONLY_WITH_PINNED_STAGING_AUDIENCE",
+      "tenantAuthority": "WORKLOAD_IDENTITY_ONLY_NO_USER_TOKEN",
+      "evidence": [
+        {
+          "path": "scripts/security/hosted-workspace-staging.test.mjs",
+          "marker": "Google IAM and original user token stay separate",
+          "sha256": "6a46d891ea391c0d299f350e5a87f3b964b34b8e67147448ec61c0a039728042"
+        }
+      ]
+    },
+    {
+      "id": "49a49569b55d144f7a6d",
+      "callSha256": "da6bfc623a007eed3e78f4f96bc3c5380edf422eaf335a62cad99ea667f02942",
+      "sourceFileSha256": "562de9c1291a88600f00940fa7235b3d45ceb069194507f4b8e44e447588fbfa",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "PINNED_PRIVATE_STAGING_HEALTH_NO_REDIRECT",
+      "tenantAuthority": "WORKLOAD_IDENTITY_ONLY_NO_USER_TOKEN",
+      "evidence": [
+        {
+          "path": "scripts/security/hosted-workspace-staging.test.mjs",
+          "marker": "Google IAM and original user token stay separate",
+          "sha256": "6a46d891ea391c0d299f350e5a87f3b964b34b8e67147448ec61c0a039728042"
+        }
+      ]
+    },
+    {
+      "id": "e88275f663bb87ce2556",
+      "callSha256": "76321677eab8b50bb630c570fefcde30d7972a323fb64ce6a832a1da1804486a",
+      "sourceFileSha256": "562de9c1291a88600f00940fa7235b3d45ceb069194507f4b8e44e447588fbfa",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "PINNED_PRIVATE_STAGING_API_METHOD_PATH_AND_ISSUER_BOUND",
+      "tenantAuthority": "ORIGINAL_USER_TOKEN_VERIFIED_BY_EXISTING_XROGA_AUTH_AND_TENANT_CHECKS",
+      "evidence": [
+        {
+          "path": "scripts/security/hosted-workspace-staging.test.mjs",
+          "marker": "Google IAM and original user token stay separate",
+          "sha256": "6a46d891ea391c0d299f350e5a87f3b964b34b8e67147448ec61c0a039728042"
+        },
+        {
+          "path": "scripts/security/hosted-workspace-staging.test.mjs",
+          "marker": "the staging bridge forwards an empty Share revoke and rejects nonempty revoke bodies",
+          "sha256": "6a46d891ea391c0d299f350e5a87f3b964b34b8e67147448ec61c0a039728042"
+        }
+      ]
+    },
+    {
+      "id": "a609adccda5421076aa0",
+      "callSha256": "0dada8e6784a5bce39fbf1fa531b03ba551a31948812672d0398b222d8fcef74",
+      "sourceFileSha256": "562de9c1291a88600f00940fa7235b3d45ceb069194507f4b8e44e447588fbfa",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "PINNED_PRIVATE_STAGING_RESEARCH_CONFIRMATION_GET_NO_REDIRECT",
+      "tenantAuthority": "ORIGINAL_OWNER_JWT_VERIFIED_BY_EXISTING_XROGA_AUTH_AND_TENANT_CHECKS",
+      "evidence": [
+        {
+          "path": "scripts/security/hosted-workspace-staging.test.mjs",
+          "marker": "hosted confirmation admits only the exact owner-visible DeepSeek research action",
+          "sha256": "6a46d891ea391c0d299f350e5a87f3b964b34b8e67147448ec61c0a039728042"
+        }
+      ]
     }
   ]
 }

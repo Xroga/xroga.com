@@ -1,27 +1,27 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "ab0fcbd251c0d5f859a5d19bda625fed1f6b31ada2b5432bedf80cb4ad01fc3f",
+  "reviewRegistrySha256": "8ba79ced0673ea5222c4a104a68c41e7b75cd9620bd9ca3011decaee32f3c559",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
-    "privilegedFactorySites": 226,
-    "persistenceCandidates": 999,
-    "ownerPredicateCandidates": 262,
-    "reviewRequired": 152,
-    "reviewedCandidates": 847,
-    "unresolvedSafetyCandidates": 196,
+    "privilegedFactorySites": 229,
+    "persistenceCandidates": 1018,
+    "ownerPredicateCandidates": 267,
+    "reviewRequired": 159,
+    "reviewedCandidates": 859,
+    "unresolvedSafetyCandidates": 209,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 23
   },
   "outcomes": {
-    "REVIEW_REQUIRED": 152,
+    "REVIEW_REQUIRED": 159,
     "SCOPED_BOUNDARY": 547,
     "NARROW_EXCEPTION": 52,
-    "NOT_PERSISTENCE": 204,
-    "REVIEWED_GAP": 44
+    "NOT_PERSISTENCE": 210,
+    "REVIEWED_GAP": 50
   },
   "acceptance": {
     "version": 1,
@@ -29,7 +29,7 @@
     "scope": "COMMAND_007_CRITERION_EVIDENCE_NOT_BATCH_OR_PRODUCTION_ACCEPTANCE",
     "certifiedScopedPrivilegedCallers": 0,
     "verifiedCandidateBoundaries": 80,
-    "unresolvedCandidateBoundaries": 919,
+    "unresolvedCandidateBoundaries": 938,
     "criteria": [
       {
         "id": "XB01-C007-AC01",
@@ -1759,6 +1759,86 @@
         "id": "OB-079a87ae5cea7b51"
       },
       {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-a9ca981ff1d04bab"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-a9ca981ff1d04bab"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-a9ca981ff1d04bab"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-a9ca981ff1d04bab"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-a9ca981ff1d04bab"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-a9ca981ff1d04bab"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-a9ca981ff1d04bab"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-a9ca981ff1d04bab"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-a9ca981ff1d04bab"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-a9ca981ff1d04bab"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-a9ca981ff1d04bab"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-a9ca981ff1d04bab"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-a9ca981ff1d04bab"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-a9ca981ff1d04bab"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-a9ca981ff1d04bab"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-a9ca981ff1d04bab"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-a9ca981ff1d04bab"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-a9ca981ff1d04bab"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-a9ca981ff1d04bab"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-a9ca981ff1d04bab"
+      },
+      {
         "code": "OPEN_EVIDENCE_GAP",
         "id": "OB-a9ca981ff1d04bab"
       },
@@ -1825,6 +1905,22 @@
       {
         "code": "OPEN_EVIDENCE_GAP",
         "id": "OB-8df15cca7cda10a6"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-86fddcd964290b98"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-86fddcd964290b98"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-86fddcd964290b98"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-86fddcd964290b98"
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
@@ -3816,11 +3912,11 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "4431005001a8d288051f"
+        "id": "5725855926bd46f4b2a1"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "ce02ccc6a928e44634de"
+        "id": "108c0b015831530e885e"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -3976,7 +4072,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "187abb36370526699b39"
+        "id": "a63399e235c516f3bb2c"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -4700,6 +4796,18 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
+        "id": "49d80835a4c3c34ee32b"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "4b5a67879fe8cadd9429"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "6976a39ca0e1440bcce4"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
         "id": "3a0a65d6d673a33eaf05"
       },
       {
@@ -4736,6 +4844,10 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
+        "id": "5df2ea611eb4f0af7872"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
         "id": "c9a009f6baa9e3a3bbad"
       },
       {
@@ -4757,6 +4869,74 @@
       {
         "code": "MISSING_CALLER_REVIEW",
         "id": "c4dcd4d97035ff02f08f"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "1e389b2b8a0cf1525b07"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "359cfba790c54b88250c"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "b1f8356c782b4d851d58"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "4cf1a1e8ccf9dfe563ec"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "e92ef4114ace634a21d8"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "451e5e119fb05d5ddb8f"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "4f9439afecb04c3595a7"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "4052599c36bb1a154183"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "9dd5e0d47e2b5fcbd7ed"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "0173fa66f148bf107c9c"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "5756010c7ca215102e1e"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "cc8a37cdf238cf59a99a"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "6687ae47bab37c501d74"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "2fed6ca9cd27f6992d02"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "75ba31f14c658b6995a8"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "1a27090c7a9708d480e8"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "b010f789ba8fcc1a6231"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -4945,6 +5125,18 @@
       {
         "code": "MISSING_CALLER_REVIEW",
         "id": "803b86f865c8ed7ab2ca"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "7b3e5212487df9eb990e"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "4579524e754c9ee2fcbc"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "7f4f5ca6f9ae391042fc"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -5508,7 +5700,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "ad1e9c1616482d93e008"
+        "id": "46b6b6328f29b95a6601"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -5757,6 +5949,14 @@
       {
         "code": "MISSING_CALLER_REVIEW",
         "id": "011226346256904a9409"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "0af8d7bbc823a95227af"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "2e83fbad1f1940ca3770"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -6248,7 +6448,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "16c2383298e67ee3f47a"
+        "id": "1c780eb9958455f3963f"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -6276,6 +6476,10 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
+        "id": "08422679562345dadd12"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
         "id": "d4c73673998a3db5e517"
       },
       {
@@ -6284,7 +6488,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "d9642208258b6b210b66"
+        "id": "32f34440748d20a994f0"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -6304,6 +6508,14 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
+        "id": "a9e89dea32df3eb8a0b5"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "db86c426bed33eedc7ee"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
         "id": "37347768912b9e614cea"
       },
       {
@@ -6316,19 +6528,31 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "a291f26c3c5001de01f9"
+        "id": "4c3e13cce409a0e53b15"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "f8d5eaf0193282882763"
+        "id": "9e140274802c8fbb62dd"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "6797a49e98ecf2091511"
+        "id": "760b00e5814db2a361f2"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "4fbfd0293636c69d00b0"
+        "id": "40e7c79e9640ac083bab"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "3472a6307dab98e79124"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "38edd11cb4a9893a7442"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "c1f57b8225d79c77eef9"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -6344,15 +6568,11 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "4fe92c7afdea034fa58b"
+        "id": "69d6ffd06737331aba28"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "01fce3ee8703d9146072"
-      },
-      {
-        "code": "MISSING_CALLER_REVIEW",
-        "id": "6a5f707e725aad757a40"
+        "id": "2aa4104e88385814af87"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -6372,75 +6592,75 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "ee548d3cf583cfcbdd91"
+        "id": "fccd4b3be4fb6d7b3e31"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "ddc1e732f1738562a7d8"
+        "id": "b2d38fcee23b039b688d"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "bd0cc046439923e989ba"
+        "id": "5738efec15741dbbde04"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "acc8432821b9b5b26c10"
+        "id": "84a183bfa73d3e5e395a"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "d93b375d98daf8c8146e"
+        "id": "ea921a271e5c16723654"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "1435d5679d9cfc68eda8"
+        "id": "3f55ca9bca9bf6d1fe2f"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "c86a835c30be0bcf1251"
+        "id": "66543c22e563effb8d3d"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "1b5ad169706fb2285a23"
+        "id": "e42747bc49fe6b38579d"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "c51d95ae33aa4d5dae44"
+        "id": "e98c8fdfead62eea9db1"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "7de702fbc2b7b261b051"
+        "id": "e4fc26ab2402611886cf"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "02bb0163278413bfc4d4"
+        "id": "a26d5da14b519f47afc3"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "c16200354fe78e5df55b"
+        "id": "1e74b546c685d7ffd889"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "db4a5917ca14f418b42b"
+        "id": "a108928a44efb90f219c"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "2d4d10ceeaf02fe42f70"
+        "id": "d49e9cb99cdd7edb7855"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "50a0f49e57786f999e73"
+        "id": "48b8088abc9053f2bdc0"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "eebad1f4e73b01bd9e5d"
+        "id": "da5c03a93404fda2dc28"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "27942300e7daaadc06fe"
+        "id": "d38a7b39a297e5fdb40a"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "19a37b099336607193eb"
+        "id": "c1985adb7ebe36362ee6"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -6512,7 +6732,7 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "187abb36370526699b39"
+        "id": "a63399e235c516f3bb2c"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -6616,6 +6836,34 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "1e389b2b8a0cf1525b07"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "451e5e119fb05d5ddb8f"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "4f9439afecb04c3595a7"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "4052599c36bb1a154183"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "9dd5e0d47e2b5fcbd7ed"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "0173fa66f148bf107c9c"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "5756010c7ca215102e1e"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
         "id": "64717458bf109fdf13a6"
       },
       {
@@ -6665,6 +6913,18 @@
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
         "id": "6f5b4dd162285b19bdb0"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "7b3e5212487df9eb990e"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "4579524e754c9ee2fcbc"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "7f4f5ca6f9ae391042fc"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -6868,7 +7128,7 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "ad1e9c1616482d93e008"
+        "id": "46b6b6328f29b95a6601"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -7084,7 +7344,7 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "16c2383298e67ee3f47a"
+        "id": "1c780eb9958455f3963f"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -7100,6 +7360,10 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "08422679562345dadd12"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
         "id": "d4c73673998a3db5e517"
       },
       {
@@ -7108,7 +7372,7 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "d9642208258b6b210b66"
+        "id": "32f34440748d20a994f0"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -7132,11 +7396,23 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "6797a49e98ecf2091511"
+        "id": "760b00e5814db2a361f2"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "4fbfd0293636c69d00b0"
+        "id": "40e7c79e9640ac083bab"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "3472a6307dab98e79124"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "38edd11cb4a9893a7442"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "c1f57b8225d79c77eef9"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -7148,11 +7424,7 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "4fe92c7afdea034fa58b"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "6a5f707e725aad757a40"
+        "id": "2aa4104e88385814af87"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -7164,71 +7436,71 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "ddc1e732f1738562a7d8"
+        "id": "b2d38fcee23b039b688d"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "bd0cc046439923e989ba"
+        "id": "5738efec15741dbbde04"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "acc8432821b9b5b26c10"
+        "id": "84a183bfa73d3e5e395a"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "d93b375d98daf8c8146e"
+        "id": "ea921a271e5c16723654"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "1435d5679d9cfc68eda8"
+        "id": "3f55ca9bca9bf6d1fe2f"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "c86a835c30be0bcf1251"
+        "id": "66543c22e563effb8d3d"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "1b5ad169706fb2285a23"
+        "id": "e42747bc49fe6b38579d"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "c51d95ae33aa4d5dae44"
+        "id": "e98c8fdfead62eea9db1"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "7de702fbc2b7b261b051"
+        "id": "e4fc26ab2402611886cf"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "02bb0163278413bfc4d4"
+        "id": "a26d5da14b519f47afc3"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "c16200354fe78e5df55b"
+        "id": "1e74b546c685d7ffd889"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "db4a5917ca14f418b42b"
+        "id": "a108928a44efb90f219c"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "2d4d10ceeaf02fe42f70"
+        "id": "d49e9cb99cdd7edb7855"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "50a0f49e57786f999e73"
+        "id": "48b8088abc9053f2bdc0"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "eebad1f4e73b01bd9e5d"
+        "id": "da5c03a93404fda2dc28"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "27942300e7daaadc06fe"
+        "id": "d38a7b39a297e5fdb40a"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "19a37b099336607193eb"
+        "id": "c1985adb7ebe36362ee6"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -7360,11 +7632,11 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "4431005001a8d288051f"
+        "id": "5725855926bd46f4b2a1"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "ce02ccc6a928e44634de"
+        "id": "108c0b015831530e885e"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -8508,6 +8780,18 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "49d80835a4c3c34ee32b"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "4b5a67879fe8cadd9429"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "6976a39ca0e1440bcce4"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "2a2b04bfcdf9721a6f51"
       },
       {
@@ -8548,6 +8832,10 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "5df2ea611eb4f0af7872"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "c9a009f6baa9e3a3bbad"
       },
       {
@@ -8572,43 +8860,43 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "95aca8562235b1b02997"
+        "id": "359cfba790c54b88250c"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "cc2c2522f42d6ac8d5bd"
+        "id": "b1f8356c782b4d851d58"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "96f82d20ad4bfc5af43e"
+        "id": "4cf1a1e8ccf9dfe563ec"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "faa4cebd0c15a1b5d69c"
+        "id": "e92ef4114ace634a21d8"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "5233e1547ffa2fd23fd6"
+        "id": "cc8a37cdf238cf59a99a"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "8f55ff924d59067efc48"
+        "id": "6687ae47bab37c501d74"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "83827643069e9005dce3"
+        "id": "2fed6ca9cd27f6992d02"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "b1d953653483a66af3d9"
+        "id": "75ba31f14c658b6995a8"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "add984aaad8b65bdbdfa"
+        "id": "1a27090c7a9708d480e8"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "f0601134e3c2080d41f3"
+        "id": "b010f789ba8fcc1a6231"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -9580,11 +9868,11 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "988c4217a8b8b781b43c"
+        "id": "0af8d7bbc823a95227af"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "30281b1cf819bb604048"
+        "id": "2e83fbad1f1940ca3770"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -10080,6 +10368,14 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "a9e89dea32df3eb8a0b5"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "db86c426bed33eedc7ee"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "229f69845215b3f79181"
       },
       {
@@ -10092,11 +10388,11 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "a291f26c3c5001de01f9"
+        "id": "4c3e13cce409a0e53b15"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "f8d5eaf0193282882763"
+        "id": "9e140274802c8fbb62dd"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -10104,7 +10400,7 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "01fce3ee8703d9146072"
+        "id": "69d6ffd06737331aba28"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -10120,7 +10416,7 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "ee548d3cf583cfcbdd91"
+        "id": "fccd4b3be4fb6d7b3e31"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -10133,11 +10429,11 @@
     ]
   },
   "reviewAgreement": {
-    "currentCallers": 999,
+    "currentCallers": 1018,
     "structuredVerified": 80,
-    "structuredUnproven": 919,
-    "manualUnresolved": 196,
-    "manualUnsupported": 723,
+    "structuredUnproven": 938,
+    "manualUnresolved": 209,
+    "manualUnsupported": 729,
     "agreedVerified": 80,
     "proofAwaitingManualReconciliation": 0
   },
@@ -11061,15 +11357,15 @@
       }
     },
     {
-      "id": "4431005001a8d288051f",
+      "id": "5725855926bd46f4b2a1",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3832,
+      "line": 3878,
       "enclosing": "runBuildPipeline",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "d3742ca4dccc50daf99aa71d9896449957dde73798dc6d7c2a9c5ca5536cff32",
+      "sourceSha256": "e3ce3808eba24cd2461066d7b571ae5f96fd108ef3b8aaf807ba04b39b1b3dc8",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -11082,15 +11378,15 @@
       }
     },
     {
-      "id": "ce02ccc6a928e44634de",
+      "id": "108c0b015831530e885e",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4016,
+      "line": 4062,
       "enclosing": "runBuildPipeline",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "d3742ca4dccc50daf99aa71d9896449957dde73798dc6d7c2a9c5ca5536cff32",
+      "sourceSha256": "e3ce3808eba24cd2461066d7b571ae5f96fd108ef3b8aaf807ba04b39b1b3dc8",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -12300,15 +12596,15 @@
       }
     },
     {
-      "id": "187abb36370526699b39",
+      "id": "a63399e235c516f3bb2c",
       "path": "backend/src/ai/responsePresentation.ts",
-      "line": 137,
+      "line": 141,
       "enclosing": "normalizeSectionData",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "7e16ea46e2c45bb3855222b9345b895417bd33a4eb005632fb2665150d2737d7"
+      "sourceSha256": "e543d6fda12abd26617271c716e4200836aa1b948e46d313d158c8ac75f1d737"
     },
     {
       "id": "64b99cfd7d4a42c04576",
@@ -19133,6 +19429,93 @@
       }
     },
     {
+      "id": "49d80835a4c3c34ee32b",
+      "path": "backend/src/routes/browserDocuments.ts",
+      "line": 19,
+      "enclosing": "officeArchive",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "52b4445687ccae287d6c84bfefac85c463400915c5857c7d70f4b9a9a5cddfe3",
+      "semanticReview": {
+        "authority": "Built-in Buffer and Uint8Array constructors create local memory objects only. They carry no identity, database handle or storage authority.",
+        "reason": "These matches allocate ZIP signature bytes or copy already supplied PDF and spreadsheet bytes into the local parser. The static scanner matched the method name from.",
+        "evidence": [
+          {
+            "path": "backend/src/routes/browserDocuments.ts",
+            "marker": "Buffer.from([0x50, 0x4b, 0x05, 0x06])"
+          },
+          {
+            "path": "backend/src/routes/browserDocuments.ts",
+            "marker": "pdf.getDocument({ data: Uint8Array.from(data), isEvalSupported: false"
+          },
+          {
+            "path": "backend/src/routes/browserDocuments.ts",
+            "marker": "workbook.xlsx.load(Uint8Array.from(data).buffer)"
+          }
+        ]
+      }
+    },
+    {
+      "id": "4b5a67879fe8cadd9429",
+      "path": "backend/src/routes/browserDocuments.ts",
+      "line": 64,
+      "enclosing": "readBrowserDocument",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "52b4445687ccae287d6c84bfefac85c463400915c5857c7d70f4b9a9a5cddfe3",
+      "semanticReview": {
+        "authority": "Built-in Buffer and Uint8Array constructors create local memory objects only. They carry no identity, database handle or storage authority.",
+        "reason": "These matches allocate ZIP signature bytes or copy already supplied PDF and spreadsheet bytes into the local parser. The static scanner matched the method name from.",
+        "evidence": [
+          {
+            "path": "backend/src/routes/browserDocuments.ts",
+            "marker": "Buffer.from([0x50, 0x4b, 0x05, 0x06])"
+          },
+          {
+            "path": "backend/src/routes/browserDocuments.ts",
+            "marker": "pdf.getDocument({ data: Uint8Array.from(data), isEvalSupported: false"
+          },
+          {
+            "path": "backend/src/routes/browserDocuments.ts",
+            "marker": "workbook.xlsx.load(Uint8Array.from(data).buffer)"
+          }
+        ]
+      }
+    },
+    {
+      "id": "6976a39ca0e1440bcce4",
+      "path": "backend/src/routes/browserDocuments.ts",
+      "line": 85,
+      "enclosing": "readBrowserDocument",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "52b4445687ccae287d6c84bfefac85c463400915c5857c7d70f4b9a9a5cddfe3",
+      "semanticReview": {
+        "authority": "Built-in Buffer and Uint8Array constructors create local memory objects only. They carry no identity, database handle or storage authority.",
+        "reason": "These matches allocate ZIP signature bytes or copy already supplied PDF and spreadsheet bytes into the local parser. The static scanner matched the method name from.",
+        "evidence": [
+          {
+            "path": "backend/src/routes/browserDocuments.ts",
+            "marker": "Buffer.from([0x50, 0x4b, 0x05, 0x06])"
+          },
+          {
+            "path": "backend/src/routes/browserDocuments.ts",
+            "marker": "pdf.getDocument({ data: Uint8Array.from(data), isEvalSupported: false"
+          },
+          {
+            "path": "backend/src/routes/browserDocuments.ts",
+            "marker": "workbook.xlsx.load(Uint8Array.from(data).buffer)"
+          }
+        ]
+      }
+    },
+    {
       "id": "3a0a65d6d673a33eaf05",
       "path": "backend/src/routes/businessAutomationWebhook.ts",
       "line": 21,
@@ -19362,6 +19745,27 @@
       }
     },
     {
+      "id": "5df2ea611eb4f0af7872",
+      "path": "backend/src/routes/localBrowser.ts",
+      "line": 198,
+      "enclosing": "createLocalBrowserRouter",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "873a0c1ae4876e25462a9b9e18772d456ee3334fd5e5dd4492e0775b3427d019",
+      "semanticReview": {
+        "authority": "Inspected the exact receiver and complete expression. It is a built-in JavaScript data conversion with no persistence client or privilege transfer.",
+        "reason": "Decodes the already bounded document body into a local byte buffer. The scanner matches the built-in Buffer method name.",
+        "evidence": [
+          {
+            "path": "backend/src/routes/localBrowser.ts",
+            "marker": "Buffer.from(data.base64, 'base64')"
+          }
+        ]
+      }
+    },
+    {
       "id": "c9a009f6baa9e3a3bbad",
       "path": "backend/src/routes/messageShares.ts",
       "line": 70,
@@ -19512,57 +19916,26 @@
       }
     },
     {
-      "id": "95aca8562235b1b02997",
-      "path": "backend/src/routes/notifications.ts",
-      "line": 13,
+      "id": "1e389b2b8a0cf1525b07",
+      "path": "backend/src/routes/nativeOpenUiEvaluation.ts",
+      "line": 65,
       "enclosing": "<module>",
-      "kind": "PRIVILEGED_FACTORY",
-      "target": "getTenantSupabaseAdmin",
+      "kind": "RPC_CANDIDATE",
+      "target": "current_community_role",
       "ownerPredicateCandidate": false,
-      "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "9aec298fc8c4b0f6c678f0861db12805da9b0700e109ff052d0e4e27be18486a",
-      "semanticReview": {
-        "authority": "Router is mounted behind authMiddleware and re-derives userId from the issued immutable context before every route. List/count/read/read-all/delete use this actor, never request ownership. Every service-role factory has its fixed downstream notification query inspected.",
-        "reason": "Real API tests show foreign-ID mutations are idempotent no-ops, own-ID marking works, foreign rows remain unread and cannot be listed through API or RLS. This certifies tenant scoping, not producer content provenance, historical redaction or instant access-token revocation.",
-        "evidence": [
-          {
-            "path": "backend/src/security/tenantIsolation.local.integration.ts",
-            "marker": "FOREIGN_NOTIFICATION_CANARY"
-          }
-        ]
-      }
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "9c0eefe0175ba4be5e859705e69f8dc5db1accd3d5b17a875199ce084d84b717"
     },
     {
-      "id": "cc2c2522f42d6ac8d5bd",
+      "id": "359cfba790c54b88250c",
       "path": "backend/src/routes/notifications.ts",
       "line": 14,
       "enclosing": "<module>",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "notifications",
-      "ownerPredicateCandidate": true,
-      "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "9aec298fc8c4b0f6c678f0861db12805da9b0700e109ff052d0e4e27be18486a",
-      "semanticReview": {
-        "authority": "Router is mounted behind authMiddleware and re-derives userId from the issued immutable context before every route. List/count/read/read-all/delete use this actor, never request ownership. Every service-role factory has its fixed downstream notification query inspected.",
-        "reason": "Real API tests show foreign-ID mutations are idempotent no-ops, own-ID marking works, foreign rows remain unread and cannot be listed through API or RLS. This certifies tenant scoping, not producer content provenance, historical redaction or instant access-token revocation.",
-        "evidence": [
-          {
-            "path": "backend/src/security/tenantIsolation.local.integration.ts",
-            "marker": "FOREIGN_NOTIFICATION_CANARY"
-          }
-        ]
-      }
-    },
-    {
-      "id": "96f82d20ad4bfc5af43e",
-      "path": "backend/src/routes/notifications.ts",
-      "line": 29,
-      "enclosing": "<module>",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "9aec298fc8c4b0f6c678f0861db12805da9b0700e109ff052d0e4e27be18486a",
+      "sourceSha256": "7b91dfd72ae335226c3fb83c7ce2e7cb7902b7dd25b87565f7dcef917720c5db",
       "semanticReview": {
         "authority": "Router is mounted behind authMiddleware and re-derives userId from the issued immutable context before every route. List/count/read/read-all/delete use this actor, never request ownership. Every service-role factory has its fixed downstream notification query inspected.",
         "reason": "Real API tests show foreign-ID mutations are idempotent no-ops, own-ID marking works, foreign rows remain unread and cannot be listed through API or RLS. This certifies tenant scoping, not producer content provenance, historical redaction or instant access-token revocation.",
@@ -19575,15 +19948,36 @@
       }
     },
     {
-      "id": "faa4cebd0c15a1b5d69c",
+      "id": "b1f8356c782b4d851d58",
+      "path": "backend/src/routes/notifications.ts",
+      "line": 15,
+      "enclosing": "<module>",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "notifications",
+      "ownerPredicateCandidate": true,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "7b91dfd72ae335226c3fb83c7ce2e7cb7902b7dd25b87565f7dcef917720c5db",
+      "semanticReview": {
+        "authority": "Router is mounted behind authMiddleware and re-derives userId from the issued immutable context before every route. List/count/read/read-all/delete use this actor, never request ownership. Every service-role factory has its fixed downstream notification query inspected.",
+        "reason": "Real API tests show foreign-ID mutations are idempotent no-ops, own-ID marking works, foreign rows remain unread and cannot be listed through API or RLS. This certifies tenant scoping, not producer content provenance, historical redaction or instant access-token revocation.",
+        "evidence": [
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "FOREIGN_NOTIFICATION_CANARY"
+          }
+        ]
+      }
+    },
+    {
+      "id": "4cf1a1e8ccf9dfe563ec",
       "path": "backend/src/routes/notifications.ts",
       "line": 30,
       "enclosing": "<module>",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "notifications",
-      "ownerPredicateCandidate": true,
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getTenantSupabaseAdmin",
+      "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "9aec298fc8c4b0f6c678f0861db12805da9b0700e109ff052d0e4e27be18486a",
+      "sourceSha256": "7b91dfd72ae335226c3fb83c7ce2e7cb7902b7dd25b87565f7dcef917720c5db",
       "semanticReview": {
         "authority": "Router is mounted behind authMiddleware and re-derives userId from the issued immutable context before every route. List/count/read/read-all/delete use this actor, never request ownership. Every service-role factory has its fixed downstream notification query inspected.",
         "reason": "Real API tests show foreign-ID mutations are idempotent no-ops, own-ID marking works, foreign rows remain unread and cannot be listed through API or RLS. This certifies tenant scoping, not producer content provenance, historical redaction or instant access-token revocation.",
@@ -19596,15 +19990,162 @@
       }
     },
     {
-      "id": "5233e1547ffa2fd23fd6",
+      "id": "e92ef4114ace634a21d8",
       "path": "backend/src/routes/notifications.ts",
-      "line": 44,
+      "line": 31,
+      "enclosing": "<module>",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "notifications",
+      "ownerPredicateCandidate": true,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "7b91dfd72ae335226c3fb83c7ce2e7cb7902b7dd25b87565f7dcef917720c5db",
+      "semanticReview": {
+        "authority": "Router is mounted behind authMiddleware and re-derives userId from the issued immutable context before every route. List/count/read/read-all/delete use this actor, never request ownership. Every service-role factory has its fixed downstream notification query inspected.",
+        "reason": "Real API tests show foreign-ID mutations are idempotent no-ops, own-ID marking works, foreign rows remain unread and cannot be listed through API or RLS. This certifies tenant scoping, not producer content provenance, historical redaction or instant access-token revocation.",
+        "evidence": [
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "FOREIGN_NOTIFICATION_CANARY"
+          }
+        ]
+      }
+    },
+    {
+      "id": "451e5e119fb05d5ddb8f",
+      "path": "backend/src/routes/notifications.ts",
+      "line": 62,
+      "enclosing": "<module>",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getTenantSupabaseAdmin",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "7b91dfd72ae335226c3fb83c7ce2e7cb7902b7dd25b87565f7dcef917720c5db",
+      "semanticReview": {
+        "authority": "The browser-push subscription routes are behind auth middleware and derive userId from tenant context; each query filters user_id or writes that user ID, but source inspection alone is not authenticated tenant proof.",
+        "reason": "Isolated staging verifies private table grants and RLS, and endpoint validation rejects arbitrary hosts. Existing endpoint updates are owner-scoped; a new insert cannot overwrite another account's unique endpoint. Authenticated positive and cross-account negative API tests for these six new persistence calls are still required before promoting this review to a scoped boundary.",
+        "evidence": [
+          {
+            "path": "backend/src/services/browserPushService.test.ts",
+            "marker": "rejects SSRF destinations"
+          }
+        ]
+      }
+    },
+    {
+      "id": "4f9439afecb04c3595a7",
+      "path": "backend/src/routes/notifications.ts",
+      "line": 63,
+      "enclosing": "<module>",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "notification_push_subscriptions",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "7b91dfd72ae335226c3fb83c7ce2e7cb7902b7dd25b87565f7dcef917720c5db",
+      "semanticReview": {
+        "authority": "The browser-push subscription routes are behind auth middleware and derive userId from tenant context; each query filters user_id or writes that user ID, but source inspection alone is not authenticated tenant proof.",
+        "reason": "Isolated staging verifies private table grants and RLS, and endpoint validation rejects arbitrary hosts. Existing endpoint updates are owner-scoped; a new insert cannot overwrite another account's unique endpoint. Authenticated positive and cross-account negative API tests for these six new persistence calls are still required before promoting this review to a scoped boundary.",
+        "evidence": [
+          {
+            "path": "backend/src/services/browserPushService.test.ts",
+            "marker": "rejects SSRF destinations"
+          }
+        ]
+      }
+    },
+    {
+      "id": "4052599c36bb1a154183",
+      "path": "backend/src/routes/notifications.ts",
+      "line": 80,
+      "enclosing": "<module>",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "notification_push_subscriptions",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "7b91dfd72ae335226c3fb83c7ce2e7cb7902b7dd25b87565f7dcef917720c5db",
+      "semanticReview": {
+        "authority": "The browser-push subscription routes are behind auth middleware and derive userId from tenant context; each query filters user_id or writes that user ID, but source inspection alone is not authenticated tenant proof.",
+        "reason": "Isolated staging verifies private table grants and RLS, and endpoint validation rejects arbitrary hosts. Existing endpoint updates are owner-scoped; a new insert cannot overwrite another account's unique endpoint. Authenticated positive and cross-account negative API tests for these six new persistence calls are still required before promoting this review to a scoped boundary.",
+        "evidence": [
+          {
+            "path": "backend/src/services/browserPushService.test.ts",
+            "marker": "rejects SSRF destinations"
+          }
+        ]
+      }
+    },
+    {
+      "id": "9dd5e0d47e2b5fcbd7ed",
+      "path": "backend/src/routes/notifications.ts",
+      "line": 82,
+      "enclosing": "<module>",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "notification_push_subscriptions",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "7b91dfd72ae335226c3fb83c7ce2e7cb7902b7dd25b87565f7dcef917720c5db",
+      "semanticReview": {
+        "authority": "The browser-push subscription routes are behind auth middleware and derive userId from tenant context; each query filters user_id or writes that user ID, but source inspection alone is not authenticated tenant proof.",
+        "reason": "Isolated staging verifies private table grants and RLS, and endpoint validation rejects arbitrary hosts. Existing endpoint updates are owner-scoped; a new insert cannot overwrite another account's unique endpoint. Authenticated positive and cross-account negative API tests for these six new persistence calls are still required before promoting this review to a scoped boundary.",
+        "evidence": [
+          {
+            "path": "backend/src/services/browserPushService.test.ts",
+            "marker": "rejects SSRF destinations"
+          }
+        ]
+      }
+    },
+    {
+      "id": "0173fa66f148bf107c9c",
+      "path": "backend/src/routes/notifications.ts",
+      "line": 100,
+      "enclosing": "<module>",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getTenantSupabaseAdmin",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "7b91dfd72ae335226c3fb83c7ce2e7cb7902b7dd25b87565f7dcef917720c5db",
+      "semanticReview": {
+        "authority": "The browser-push subscription routes are behind auth middleware and derive userId from tenant context; each query filters user_id or writes that user ID, but source inspection alone is not authenticated tenant proof.",
+        "reason": "Isolated staging verifies private table grants and RLS, and endpoint validation rejects arbitrary hosts. Existing endpoint updates are owner-scoped; a new insert cannot overwrite another account's unique endpoint. Authenticated positive and cross-account negative API tests for these six new persistence calls are still required before promoting this review to a scoped boundary.",
+        "evidence": [
+          {
+            "path": "backend/src/services/browserPushService.test.ts",
+            "marker": "rejects SSRF destinations"
+          }
+        ]
+      }
+    },
+    {
+      "id": "5756010c7ca215102e1e",
+      "path": "backend/src/routes/notifications.ts",
+      "line": 101,
+      "enclosing": "<module>",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "notification_push_subscriptions",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "7b91dfd72ae335226c3fb83c7ce2e7cb7902b7dd25b87565f7dcef917720c5db",
+      "semanticReview": {
+        "authority": "The browser-push subscription routes are behind auth middleware and derive userId from tenant context; each query filters user_id or writes that user ID, but source inspection alone is not authenticated tenant proof.",
+        "reason": "Isolated staging verifies private table grants and RLS, and endpoint validation rejects arbitrary hosts. Existing endpoint updates are owner-scoped; a new insert cannot overwrite another account's unique endpoint. Authenticated positive and cross-account negative API tests for these six new persistence calls are still required before promoting this review to a scoped boundary.",
+        "evidence": [
+          {
+            "path": "backend/src/services/browserPushService.test.ts",
+            "marker": "rejects SSRF destinations"
+          }
+        ]
+      }
+    },
+    {
+      "id": "cc8a37cdf238cf59a99a",
+      "path": "backend/src/routes/notifications.ts",
+      "line": 111,
       "enclosing": "<module>",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "9aec298fc8c4b0f6c678f0861db12805da9b0700e109ff052d0e4e27be18486a",
+      "sourceSha256": "7b91dfd72ae335226c3fb83c7ce2e7cb7902b7dd25b87565f7dcef917720c5db",
       "semanticReview": {
         "authority": "Router is mounted behind authMiddleware and re-derives userId from the issued immutable context before every route. List/count/read/read-all/delete use this actor, never request ownership. Every service-role factory has its fixed downstream notification query inspected.",
         "reason": "Real API tests show foreign-ID mutations are idempotent no-ops, own-ID marking works, foreign rows remain unread and cannot be listed through API or RLS. This certifies tenant scoping, not producer content provenance, historical redaction or instant access-token revocation.",
@@ -19617,15 +20158,15 @@
       }
     },
     {
-      "id": "8f55ff924d59067efc48",
+      "id": "6687ae47bab37c501d74",
       "path": "backend/src/routes/notifications.ts",
-      "line": 45,
+      "line": 112,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "notifications",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "9aec298fc8c4b0f6c678f0861db12805da9b0700e109ff052d0e4e27be18486a",
+      "sourceSha256": "7b91dfd72ae335226c3fb83c7ce2e7cb7902b7dd25b87565f7dcef917720c5db",
       "semanticReview": {
         "authority": "Router is mounted behind authMiddleware and re-derives userId from the issued immutable context before every route. List/count/read/read-all/delete use this actor, never request ownership. Every service-role factory has its fixed downstream notification query inspected.",
         "reason": "Real API tests show foreign-ID mutations are idempotent no-ops, own-ID marking works, foreign rows remain unread and cannot be listed through API or RLS. This certifies tenant scoping, not producer content provenance, historical redaction or instant access-token revocation.",
@@ -19638,15 +20179,15 @@
       }
     },
     {
-      "id": "83827643069e9005dce3",
+      "id": "2fed6ca9cd27f6992d02",
       "path": "backend/src/routes/notifications.ts",
-      "line": 59,
+      "line": 126,
       "enclosing": "<module>",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "9aec298fc8c4b0f6c678f0861db12805da9b0700e109ff052d0e4e27be18486a",
+      "sourceSha256": "7b91dfd72ae335226c3fb83c7ce2e7cb7902b7dd25b87565f7dcef917720c5db",
       "semanticReview": {
         "authority": "Router is mounted behind authMiddleware and re-derives userId from the issued immutable context before every route. List/count/read/read-all/delete use this actor, never request ownership. Every service-role factory has its fixed downstream notification query inspected.",
         "reason": "Real API tests show foreign-ID mutations are idempotent no-ops, own-ID marking works, foreign rows remain unread and cannot be listed through API or RLS. This certifies tenant scoping, not producer content provenance, historical redaction or instant access-token revocation.",
@@ -19659,15 +20200,15 @@
       }
     },
     {
-      "id": "b1d953653483a66af3d9",
+      "id": "75ba31f14c658b6995a8",
       "path": "backend/src/routes/notifications.ts",
-      "line": 60,
+      "line": 127,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "notifications",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "9aec298fc8c4b0f6c678f0861db12805da9b0700e109ff052d0e4e27be18486a",
+      "sourceSha256": "7b91dfd72ae335226c3fb83c7ce2e7cb7902b7dd25b87565f7dcef917720c5db",
       "semanticReview": {
         "authority": "Router is mounted behind authMiddleware and re-derives userId from the issued immutable context before every route. List/count/read/read-all/delete use this actor, never request ownership. Every service-role factory has its fixed downstream notification query inspected.",
         "reason": "Real API tests show foreign-ID mutations are idempotent no-ops, own-ID marking works, foreign rows remain unread and cannot be listed through API or RLS. This certifies tenant scoping, not producer content provenance, historical redaction or instant access-token revocation.",
@@ -19680,15 +20221,15 @@
       }
     },
     {
-      "id": "add984aaad8b65bdbdfa",
+      "id": "1a27090c7a9708d480e8",
       "path": "backend/src/routes/notifications.ts",
-      "line": 74,
+      "line": 141,
       "enclosing": "<module>",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "9aec298fc8c4b0f6c678f0861db12805da9b0700e109ff052d0e4e27be18486a",
+      "sourceSha256": "7b91dfd72ae335226c3fb83c7ce2e7cb7902b7dd25b87565f7dcef917720c5db",
       "semanticReview": {
         "authority": "Router is mounted behind authMiddleware and re-derives userId from the issued immutable context before every route. List/count/read/read-all/delete use this actor, never request ownership. Every service-role factory has its fixed downstream notification query inspected.",
         "reason": "Real API tests show foreign-ID mutations are idempotent no-ops, own-ID marking works, foreign rows remain unread and cannot be listed through API or RLS. This certifies tenant scoping, not producer content provenance, historical redaction or instant access-token revocation.",
@@ -19701,15 +20242,15 @@
       }
     },
     {
-      "id": "f0601134e3c2080d41f3",
+      "id": "b010f789ba8fcc1a6231",
       "path": "backend/src/routes/notifications.ts",
-      "line": 75,
+      "line": 142,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "notifications",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "9aec298fc8c4b0f6c678f0861db12805da9b0700e109ff052d0e4e27be18486a",
+      "sourceSha256": "7b91dfd72ae335226c3fb83c7ce2e7cb7902b7dd25b87565f7dcef917720c5db",
       "semanticReview": {
         "authority": "Router is mounted behind authMiddleware and re-derives userId from the issued immutable context before every route. List/count/read/read-all/delete use this actor, never request ownership. Every service-role factory has its fixed downstream notification query inspected.",
         "reason": "Real API tests show foreign-ID mutations are idempotent no-ops, own-ID marking works, foreign rows remain unread and cannot be listed through API or RLS. This certifies tenant scoping, not producer content provenance, historical redaction or instant access-token revocation.",
@@ -21721,6 +22262,39 @@
           }
         ]
       }
+    },
+    {
+      "id": "7b3e5212487df9eb990e",
+      "path": "backend/src/services/browserPushService.ts",
+      "line": 48,
+      "enclosing": "sendBrowserPush",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getTenantSupabaseAdmin",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "f4efcbdd6268fe5e71e0b265e09fa93ca00bc9ed4ca71347261039f26c085cfc"
+    },
+    {
+      "id": "4579524e754c9ee2fcbc",
+      "path": "backend/src/services/browserPushService.ts",
+      "line": 49,
+      "enclosing": "sendBrowserPush",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "notification_push_subscriptions",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "f4efcbdd6268fe5e71e0b265e09fa93ca00bc9ed4ca71347261039f26c085cfc"
+    },
+    {
+      "id": "7f4f5ca6f9ae391042fc",
+      "path": "backend/src/services/browserPushService.ts",
+      "line": 70,
+      "enclosing": "sendBrowserPush",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "notification_push_subscriptions",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "f4efcbdd6268fe5e71e0b265e09fa93ca00bc9ed4ca71347261039f26c085cfc"
     },
     {
       "id": "d81d114079399f02921b",
@@ -24645,15 +25219,15 @@
       }
     },
     {
-      "id": "ad1e9c1616482d93e008",
+      "id": "46b6b6328f29b95a6601",
       "path": "backend/src/services/integrations/researchResult.ts",
-      "line": 34,
+      "line": 40,
       "enclosing": "saveResearchResult",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "8382a77b8a23817d945873566354960b6e07412a12d57a73e3c06511ce811dda"
+      "sourceSha256": "8b02d992fc703451a4cc942a8570dc3db7fe665742d87fc88fd96d53b44cf3e5"
     },
     {
       "id": "34d41864b9724cd70b8d",
@@ -26547,15 +27121,15 @@
       }
     },
     {
-      "id": "988c4217a8b8b781b43c",
+      "id": "0af8d7bbc823a95227af",
       "path": "backend/src/services/notificationService.ts",
-      "line": 60,
+      "line": 61,
       "enclosing": "pushNotification",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "97a7d33fe2b60ddebbdb9f1e8e2c5304d72398ff31ee9036386f705f62b6b402",
+      "sourceSha256": "823e0e647c547459ecd37560dee87b23d8d1fa0e28a85d5252870c65fccd69ec",
       "semanticReview": {
         "authority": "The only active production callers of the notification wrappers are authenticated swarm completion/failure handlers. They pass requireTenantContext(req.tenantContext), never a body owner or recipient. Video wrappers currently have no production consumer, but their primitive still requires that same original issued context. pushNotification validates the context before factory access, snapshots the bounded caller intent and writes only the context user_id. It checks returned owner and nonempty ID before acknowledging. There is no alternate owner argument or fallback identity.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Two exact factory/insert sites only. Actual existing wrapper persistence and own HTTP projection pass, and a cloned non-issued context is rejected before any count change. Safe failure copy does not expose raw backend diagnostics. The actor/owner proof comes from the issued-context guard and exact write, not dormancy. Delivery guarantees, notification content policy, all future consumers and Phase3 authority remain separate. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries.",
@@ -26572,15 +27146,15 @@
       }
     },
     {
-      "id": "30281b1cf819bb604048",
+      "id": "2e83fbad1f1940ca3770",
       "path": "backend/src/services/notificationService.ts",
-      "line": 61,
+      "line": 62,
       "enclosing": "pushNotification",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "notifications",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "97a7d33fe2b60ddebbdb9f1e8e2c5304d72398ff31ee9036386f705f62b6b402",
+      "sourceSha256": "823e0e647c547459ecd37560dee87b23d8d1fa0e28a85d5252870c65fccd69ec",
       "semanticReview": {
         "authority": "The only active production callers of the notification wrappers are authenticated swarm completion/failure handlers. They pass requireTenantContext(req.tenantContext), never a body owner or recipient. Video wrappers currently have no production consumer, but their primitive still requires that same original issued context. pushNotification validates the context before factory access, snapshots the bounded caller intent and writes only the context user_id. It checks returned owner and nonempty ID before acknowledging. There is no alternate owner argument or fallback identity.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Two exact factory/insert sites only. Actual existing wrapper persistence and own HTTP projection pass, and a cloned non-issued context is rejected before any count change. Safe failure copy does not expose raw backend diagnostics. The actor/owner proof comes from the issued-context guard and exact write, not dormancy. Delivery guarantees, notification content policy, all future consumers and Phase3 authority remain separate. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries.",
@@ -30491,15 +31065,15 @@
       "sourceSha256": "0c878ec62c92cb0529a52f985e39dfc50756ee0ad06f2dd4940c57724b46f8d0"
     },
     {
-      "id": "16c2383298e67ee3f47a",
+      "id": "1c780eb9958455f3963f",
       "path": "frontend/src/app/(workspace)/workspace/page.tsx",
-      "line": 25,
+      "line": 27,
       "enclosing": "WorkspacePage",
       "kind": "RPC_CANDIDATE",
       "target": "current_community_role",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "adbcbb1f07739cc85785e64c37c89d02fb26a602f29e42f10b49e69825a64195"
+      "sourceSha256": "38cd455f073cfd679346988398cafc5e0b78ad92eb674fb30073bd46b9b6afa9"
     },
     {
       "id": "83779ac5d4b86b4ed00a",
@@ -30694,6 +31268,17 @@
       }
     },
     {
+      "id": "08422679562345dadd12",
+      "path": "frontend/src/app/native-answer-evaluation/page.tsx",
+      "line": 21,
+      "enclosing": "NativeAnswerEvaluationPage",
+      "kind": "RPC_CANDIDATE",
+      "target": "current_community_role",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "6dc29300a911c9f20694b283951730fb67a9570271544b236c61c3142a94159b"
+    },
+    {
       "id": "d4c73673998a3db5e517",
       "path": "frontend/src/app/onboarding/page.tsx",
       "line": 28,
@@ -30734,15 +31319,15 @@
       }
     },
     {
-      "id": "d9642208258b6b210b66",
+      "id": "32f34440748d20a994f0",
       "path": "frontend/src/app/share/[token]/page.tsx",
-      "line": 97,
+      "line": 116,
       "enclosing": "canPresentRichShare",
       "kind": "RPC_CANDIDATE",
       "target": "current_community_role",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "02be162aa110db0a216d12681f621023bd0c5737a2c48f484a7244b856a7bb16"
+      "sourceSha256": "17cb0432a53350ac1074586cc95cb0a017603bd74342f1dc696d4093e9852409"
     },
     {
       "id": "19620b924bbcbab333b0",
@@ -30868,6 +31453,56 @@
           {
             "path": "frontend/src/components/billing/BillingSuccessExperience.tsx",
             "marker": "{Array.from({ length: 18 }, (_, index) => <i key={index} className=\"absolute h-2 w-2 animate-pulse rounded-full bg-[var(--accent)]\" style={{ left: `${5 + ((index * 37) % 90)}%`, top: `${8 + ((index * 23) % 80)}%`, animationDelay: `${index * 80}ms` }} />)}"
+          }
+        ]
+      }
+    },
+    {
+      "id": "a9e89dea32df3eb8a0b5",
+      "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+      "line": 180,
+      "enclosing": "WorkspaceBrowserOperator",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "2500a1f07a78f43f9ebee385642fac97743777253c045bce71eed6bf51002d9a",
+      "semanticReview": {
+        "authority": "Inspected the exact receiver and complete expression. It is a built-in JavaScript data conversion with no persistence client or privilege transfer.",
+        "reason": "Decodes the user-requested recording or enumerates user-selected File objects locally. Neither method is a database or storage invocation.",
+        "evidence": [
+          {
+            "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+            "marker": "Uint8Array.from(atob(encoded)"
+          },
+          {
+            "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+            "marker": "Array.from(event.target.files"
+          }
+        ]
+      }
+    },
+    {
+      "id": "db86c426bed33eedc7ee",
+      "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+      "line": 246,
+      "enclosing": "WorkspaceBrowserOperator",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "2500a1f07a78f43f9ebee385642fac97743777253c045bce71eed6bf51002d9a",
+      "semanticReview": {
+        "authority": "Inspected the exact receiver and complete expression. It is a built-in JavaScript data conversion with no persistence client or privilege transfer.",
+        "reason": "Decodes the user-requested recording or enumerates user-selected File objects locally. Neither method is a database or storage invocation.",
+        "evidence": [
+          {
+            "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+            "marker": "Uint8Array.from(atob(encoded)"
+          },
+          {
+            "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+            "marker": "Array.from(event.target.files"
           }
         ]
       }
@@ -31241,15 +31876,15 @@
       "sourceSha256": "017f18809ddcdcd868d74ad5b3e2f82ac2ced4b25a89c6bea904ace8b79204e8"
     },
     {
-      "id": "a291f26c3c5001de01f9",
+      "id": "4c3e13cce409a0e53b15",
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 605,
+      "line": 606,
       "enclosing": "SidebarProjectHistory",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "7daceb7dfb3cd3b1faf8b1f42f6e11243daf15afa78ff8fe076371ae510f9628",
+      "sourceSha256": "fabbe7dbdf3c5d33995fef1d001ac8761888501128d67bff03ed02d57a274d77",
       "semanticReview": {
         "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in SidebarProjectHistory, with no database or Storage client receiver.",
         "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
@@ -31262,15 +31897,15 @@
       }
     },
     {
-      "id": "f8d5eaf0193282882763",
+      "id": "9e140274802c8fbb62dd",
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 842,
+      "line": 843,
       "enclosing": "SidebarProjectHistory",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "7daceb7dfb3cd3b1faf8b1f42f6e11243daf15afa78ff8fe076371ae510f9628",
+      "sourceSha256": "fabbe7dbdf3c5d33995fef1d001ac8761888501128d67bff03ed02d57a274d77",
       "semanticReview": {
         "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in SidebarProjectHistory, with no database or Storage client receiver.",
         "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
@@ -31283,26 +31918,26 @@
       }
     },
     {
-      "id": "6797a49e98ecf2091511",
+      "id": "760b00e5814db2a361f2",
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 1110,
+      "line": 1101,
       "enclosing": "saveEditor",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "projects",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "7daceb7dfb3cd3b1faf8b1f42f6e11243daf15afa78ff8fe076371ae510f9628"
+      "sourceSha256": "fabbe7dbdf3c5d33995fef1d001ac8761888501128d67bff03ed02d57a274d77"
     },
     {
-      "id": "4fbfd0293636c69d00b0",
+      "id": "40e7c79e9640ac083bab",
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 1130,
+      "line": 1121,
       "enclosing": "saveEditor",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "xroga_sidebar_items",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "7daceb7dfb3cd3b1faf8b1f42f6e11243daf15afa78ff8fe076371ae510f9628"
+      "sourceSha256": "fabbe7dbdf3c5d33995fef1d001ac8761888501128d67bff03ed02d57a274d77"
     },
     {
       "id": "92e2f9e84b8b9d7515b1",
@@ -31345,6 +31980,39 @@
           }
         ]
       }
+    },
+    {
+      "id": "3472a6307dab98e79124",
+      "path": "frontend/src/components/native-openui/upstream/components/chart.tsx",
+      "line": 85,
+      "enclosing": "Cartesian",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "9325d074808912c08ec9d59c7c4b58b09b831a91ab07d9601e44d70b33bddbb8"
+    },
+    {
+      "id": "38edd11cb4a9893a7442",
+      "path": "frontend/src/components/native-openui/upstream/components/chart.tsx",
+      "line": 184,
+      "enclosing": "axis",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "9325d074808912c08ec9d59c7c4b58b09b831a91ab07d9601e44d70b33bddbb8"
+    },
+    {
+      "id": "c1f57b8225d79c77eef9",
+      "path": "frontend/src/components/native-openui/upstream/components/style.ts",
+      "line": 42,
+      "enclosing": "<module>",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "1e044a155ac88ca0e25fe4a5cd8f8eb3155e22f63ffa85c6eaff98deab963245"
     },
     {
       "id": "a5188cf19ad57cd05861",
@@ -31600,26 +32268,15 @@
       }
     },
     {
-      "id": "4fe92c7afdea034fa58b",
-      "path": "frontend/src/components/terminal/ResponseSources.tsx",
-      "line": 57,
-      "enclosing": "ResponseSources",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "<dynamic>",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "0fd186c17e5d8ab081a61db58f16e171de43d5d8cc66727caccab5245f1a5fc7"
-    },
-    {
-      "id": "01fce3ee8703d9146072",
+      "id": "69d6ffd06737331aba28",
       "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "line": 413,
+      "line": 385,
       "enclosing": "TerminalChatBar",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "959ecdbdfe4da3c4cee1a79e2e4684f638df3ded77cf7ed9002bdafbd2ee8d0c",
+      "sourceSha256": "0a89d45270f28d036dfd6a647a1b812b5661f58c82a6b975f21de8c3b115c05d",
       "semanticReview": {
         "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in TerminalChatBar, with no database or Storage client receiver.",
         "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
@@ -31632,7 +32289,7 @@
       }
     },
     {
-      "id": "6a5f707e725aad757a40",
+      "id": "2aa4104e88385814af87",
       "path": "frontend/src/components/terminal/XrogaRichResultsView.tsx",
       "line": 203,
       "enclosing": "RichResultsContent",
@@ -31640,7 +32297,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "872ab28612bcce7b7b656e748219fa74242e133529e1b272fe865a8a8279f577"
+      "sourceSha256": "3a676aaf12473990570c41cb3dfb4b54cce4ff74ded53115c887fab98778d470"
     },
     {
       "id": "8e9b157c7d4fd26ad135",
@@ -31837,15 +32494,15 @@
       }
     },
     {
-      "id": "ee548d3cf583cfcbdd91",
+      "id": "fccd4b3be4fb6d7b3e31",
       "path": "frontend/src/lib/formatAiMarkdown.tsx",
-      "line": 635,
+      "line": 638,
       "enclosing": "decodeBase64UrlUtf8",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "dba219fea184b59714d2c36619d1c58bd3273e6b232c9d1b4b53e3427bc16fdf",
+      "sourceSha256": "231169928fb8f5a9683adabf0525102c69c862733d02ccb1a4600146cd4d8cb8",
       "semanticReview": {
         "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in decodeBase64UrlUtf8, with no database or Storage client receiver.",
         "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh. Re-bound 2026-11-04: Diff from the reviewed source d80e1ce5489b is only `export` added to BusinessActionConfirmationInline so the V2 turn can render the existing confirmation review. The reviewed call (decodeBase64UrlUtf8 Array/Uint8Array conversion) is unchanged; no new call, receiver, persistence or egress was added.",
@@ -32055,7 +32712,7 @@
       }
     },
     {
-      "id": "ddc1e732f1738562a7d8",
+      "id": "b2d38fcee23b039b688d",
       "path": "frontend/src/lib/sidebarOrganization.ts",
       "line": 31,
       "enclosing": "loadSidebarMeta",
@@ -32063,10 +32720,10 @@
       "target": "xroga_sidebar_items",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "4126ec733881661a0ec2a8cdc5678e4c4d177f01dd3e3533d5fa1a67ff463072"
+      "sourceSha256": "c556d45dd88f793c9f0dd83feb41a4f99bffe126eab8e71a5df2e61924c2d999"
     },
     {
-      "id": "bd0cc046439923e989ba",
+      "id": "5738efec15741dbbde04",
       "path": "frontend/src/lib/sidebarOrganization.ts",
       "line": 35,
       "enclosing": "loadSidebarSections",
@@ -32074,10 +32731,10 @@
       "target": "xroga_sidebar_sections",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "4126ec733881661a0ec2a8cdc5678e4c4d177f01dd3e3533d5fa1a67ff463072"
+      "sourceSha256": "c556d45dd88f793c9f0dd83feb41a4f99bffe126eab8e71a5df2e61924c2d999"
     },
     {
-      "id": "acc8432821b9b5b26c10",
+      "id": "84a183bfa73d3e5e395a",
       "path": "frontend/src/lib/sidebarOrganization.ts",
       "line": 39,
       "enclosing": "loadSidebarProjects",
@@ -32085,10 +32742,10 @@
       "target": "projects",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "4126ec733881661a0ec2a8cdc5678e4c4d177f01dd3e3533d5fa1a67ff463072"
+      "sourceSha256": "c556d45dd88f793c9f0dd83feb41a4f99bffe126eab8e71a5df2e61924c2d999"
     },
     {
-      "id": "d93b375d98daf8c8146e",
+      "id": "ea921a271e5c16723654",
       "path": "frontend/src/lib/sidebarOrganization.ts",
       "line": 43,
       "enclosing": "loadSidebarChats",
@@ -32096,10 +32753,10 @@
       "target": "xroga_sidebar_chats",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "4126ec733881661a0ec2a8cdc5678e4c4d177f01dd3e3533d5fa1a67ff463072"
+      "sourceSha256": "c556d45dd88f793c9f0dd83feb41a4f99bffe126eab8e71a5df2e61924c2d999"
     },
     {
-      "id": "1435d5679d9cfc68eda8",
+      "id": "3f55ca9bca9bf6d1fe2f",
       "path": "frontend/src/lib/sidebarOrganization.ts",
       "line": 47,
       "enclosing": "loadSidebarChatById",
@@ -32107,139 +32764,139 @@
       "target": "xroga_sidebar_chats",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "4126ec733881661a0ec2a8cdc5678e4c4d177f01dd3e3533d5fa1a67ff463072"
+      "sourceSha256": "c556d45dd88f793c9f0dd83feb41a4f99bffe126eab8e71a5df2e61924c2d999"
     },
     {
-      "id": "c86a835c30be0bcf1251",
+      "id": "66543c22e563effb8d3d",
       "path": "frontend/src/lib/sidebarOrganization.ts",
-      "line": 54,
+      "line": 60,
       "enclosing": "saveSidebarChat",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "xroga_sidebar_chats",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "4126ec733881661a0ec2a8cdc5678e4c4d177f01dd3e3533d5fa1a67ff463072"
+      "sourceSha256": "c556d45dd88f793c9f0dd83feb41a4f99bffe126eab8e71a5df2e61924c2d999"
     },
     {
-      "id": "1b5ad169706fb2285a23",
+      "id": "e42747bc49fe6b38579d",
       "path": "frontend/src/lib/sidebarOrganization.ts",
-      "line": 65,
+      "line": 71,
       "enclosing": "changeSidebarMeta",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "projects",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "4126ec733881661a0ec2a8cdc5678e4c4d177f01dd3e3533d5fa1a67ff463072"
+      "sourceSha256": "c556d45dd88f793c9f0dd83feb41a4f99bffe126eab8e71a5df2e61924c2d999"
     },
     {
-      "id": "c51d95ae33aa4d5dae44",
+      "id": "e98c8fdfead62eea9db1",
       "path": "frontend/src/lib/sidebarOrganization.ts",
-      "line": 69,
+      "line": 75,
       "enclosing": "changeSidebarMeta",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "xroga_sidebar_items",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "4126ec733881661a0ec2a8cdc5678e4c4d177f01dd3e3533d5fa1a67ff463072"
+      "sourceSha256": "c556d45dd88f793c9f0dd83feb41a4f99bffe126eab8e71a5df2e61924c2d999"
     },
     {
-      "id": "7de702fbc2b7b261b051",
+      "id": "e4fc26ab2402611886cf",
       "path": "frontend/src/lib/sidebarOrganization.ts",
-      "line": 73,
+      "line": 79,
       "enclosing": "changeSidebarMeta",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "xroga_sidebar_items",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "4126ec733881661a0ec2a8cdc5678e4c4d177f01dd3e3533d5fa1a67ff463072"
+      "sourceSha256": "c556d45dd88f793c9f0dd83feb41a4f99bffe126eab8e71a5df2e61924c2d999"
     },
     {
-      "id": "02bb0163278413bfc4d4",
+      "id": "a26d5da14b519f47afc3",
       "path": "frontend/src/lib/sidebarOrganization.ts",
-      "line": 85,
+      "line": 91,
       "enclosing": "deleteSidebarMeta",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "xroga_sidebar_items",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "4126ec733881661a0ec2a8cdc5678e4c4d177f01dd3e3533d5fa1a67ff463072"
+      "sourceSha256": "c556d45dd88f793c9f0dd83feb41a4f99bffe126eab8e71a5df2e61924c2d999"
     },
     {
-      "id": "c16200354fe78e5df55b",
+      "id": "1e74b546c685d7ffd889",
       "path": "frontend/src/lib/sidebarOrganization.ts",
-      "line": 89,
+      "line": 95,
       "enclosing": "createSidebarSection",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "xroga_sidebar_sections",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "4126ec733881661a0ec2a8cdc5678e4c4d177f01dd3e3533d5fa1a67ff463072"
+      "sourceSha256": "c556d45dd88f793c9f0dd83feb41a4f99bffe126eab8e71a5df2e61924c2d999"
     },
     {
-      "id": "db4a5917ca14f418b42b",
+      "id": "a108928a44efb90f219c",
       "path": "frontend/src/lib/sidebarOrganization.ts",
-      "line": 93,
+      "line": 99,
       "enclosing": "removeSidebarSection",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "xroga_sidebar_sections",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "4126ec733881661a0ec2a8cdc5678e4c4d177f01dd3e3533d5fa1a67ff463072"
+      "sourceSha256": "c556d45dd88f793c9f0dd83feb41a4f99bffe126eab8e71a5df2e61924c2d999"
     },
     {
-      "id": "2d4d10ceeaf02fe42f70",
+      "id": "d49e9cb99cdd7edb7855",
       "path": "frontend/src/lib/sidebarOrganization.ts",
-      "line": 97,
+      "line": 103,
       "enclosing": "deleteSidebarChat",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "xroga_sidebar_chats",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "4126ec733881661a0ec2a8cdc5678e4c4d177f01dd3e3533d5fa1a67ff463072"
+      "sourceSha256": "c556d45dd88f793c9f0dd83feb41a4f99bffe126eab8e71a5df2e61924c2d999"
     },
     {
-      "id": "50a0f49e57786f999e73",
+      "id": "48b8088abc9053f2bdc0",
       "path": "frontend/src/lib/sidebarOrganization.ts",
-      "line": 119,
+      "line": 137,
       "enclosing": "swapSidebarPins",
       "kind": "RPC_CANDIDATE",
       "target": "xroga_swap_sidebar_pins",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "4126ec733881661a0ec2a8cdc5678e4c4d177f01dd3e3533d5fa1a67ff463072"
+      "sourceSha256": "c556d45dd88f793c9f0dd83feb41a4f99bffe126eab8e71a5df2e61924c2d999"
     },
     {
-      "id": "eebad1f4e73b01bd9e5d",
+      "id": "da5c03a93404fda2dc28",
       "path": "frontend/src/lib/sidebarOrganization.ts",
-      "line": 133,
+      "line": 151,
       "enclosing": "loadPinnedSidebarRecords",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "projects",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "4126ec733881661a0ec2a8cdc5678e4c4d177f01dd3e3533d5fa1a67ff463072"
+      "sourceSha256": "c556d45dd88f793c9f0dd83feb41a4f99bffe126eab8e71a5df2e61924c2d999"
     },
     {
-      "id": "27942300e7daaadc06fe",
+      "id": "d38a7b39a297e5fdb40a",
       "path": "frontend/src/lib/sidebarOrganization.ts",
-      "line": 135,
+      "line": 153,
       "enclosing": "loadPinnedSidebarRecords",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "terminal_sessions",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "4126ec733881661a0ec2a8cdc5678e4c4d177f01dd3e3533d5fa1a67ff463072"
+      "sourceSha256": "c556d45dd88f793c9f0dd83feb41a4f99bffe126eab8e71a5df2e61924c2d999"
     },
     {
-      "id": "19a37b099336607193eb",
+      "id": "c1985adb7ebe36362ee6",
       "path": "frontend/src/lib/sidebarOrganization.ts",
-      "line": 137,
+      "line": 155,
       "enclosing": "loadPinnedSidebarRecords",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "xroga_sidebar_chats",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "4126ec733881661a0ec2a8cdc5678e4c4d177f01dd3e3533d5fa1a67ff463072"
+      "sourceSha256": "c556d45dd88f793c9f0dd83feb41a4f99bffe126eab8e71a5df2e61924c2d999"
     },
     {
       "id": "66603d4f9153d6ce36e1",

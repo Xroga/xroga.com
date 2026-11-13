@@ -23,6 +23,7 @@ interface MessageBubbleActionsProps {
   prompt?: string;
   onFeedback?: () => void;
   createdAt?: number;
+  richResponse?: string;
 }
 
 export function MessageBubbleActions({
@@ -32,6 +33,7 @@ export function MessageBubbleActions({
   prompt,
   onFeedback,
   createdAt,
+  richResponse,
 }: MessageBubbleActionsProps) {
   const [reaction, setReaction] = useState<'up' | 'down' | null>(null);
   const [copied, setCopied] = useState(false);
@@ -110,6 +112,8 @@ export function MessageBubbleActions({
         onClose={() => setShareOpen(false)}
         prompt={role === 'assistant' ? prompt : undefined}
         response={content}
+        richResponse={richResponse}
+        literalContent={Boolean(richResponse)}
         contentLabel={role === 'user' ? 'prompt' : 'answer'}
       />
     )}
