@@ -1813,14 +1813,20 @@ export class RunManager {
                 const { appTools: found, ...rest } = result;
                 if (!found?.length) return rest;
                 // The tools the search found become callable by their own names, with their real parameter schemas.
-                const taken = new Set([...fullToolList.map(t => t.name), ...PLUGIN_TOOLS.map(t => t.name)]);
+                const taken = new Set([...fullToolList.map(t => t.name), ...PLUGIN_TOOLS.map(t => t.name), ...appTools.keys()]);
+                const alreadyOffered = new Set([...appTools.values()].map(info => info.slug));
                 const registered = found.flatMap(info => {
+                  if (alreadyOffered.has(info.slug)) return [];
                   const tool = nativeAppTool(info, taken);
                   if (!tool) return [];
-                  appTools.set(info.slug, info);
+                  taken.add(tool.name);
+                  appTools.set(tool.name, info);
                   return [tool];
                 });
-                return registered.length ? { ...rest, registerTools: registered } : rest;
+                if (!registered.length) return rest;
+                // The listed slugs are the provider's names; the model calls the tools by these names instead.
+                const names = registered.map(t => `${appTools.get(t.name)!.slug} -> call it as ${t.name}`).join('; ');
+                return { ...rest, text: `${rest.text}\nCall each tool by this name (not by the provider name above): ${names}.`, registerTools: registered };
               }
             }
             return this.#agentTool(conversationId, call, signal);

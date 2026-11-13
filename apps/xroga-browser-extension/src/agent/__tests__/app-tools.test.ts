@@ -7,7 +7,7 @@ import { closeDb } from '@src/store/db';
 import { AgentLoop } from '../loop';
 import { toolsForRun, type AgentTool } from '../tools';
 import { FakeHost, FakeLayer } from '../testing/fake-layer';
-import { appToolsFrom, nativeAppCall, nativeAppTool } from '../../xroga/plugins';
+import { appToolAlias, appToolsFrom, nativeAppCall, nativeAppTool } from '../../xroga/plugins';
 
 afterEach(async () => {
   await closeDb();
@@ -25,9 +25,23 @@ describe('connected-app tools found by a search', () => {
     expect(found.map(f => f.slug)).toEqual(['GOOGLESHEETS_SEARCH_SPREADSHEETS']);
     expect(found[0].parameters).toEqual({ type: 'object', properties: sheetsTool.parameters.properties, required: ['query'] });
     const tool = nativeAppTool(found[0], new Set())!;
-    expect(tool).toMatchObject({ name: 'GOOGLESHEETS_SEARCH_SPREADSHEETS', source: 'agent', parameters: found[0].parameters });
+    expect(tool).toMatchObject({ name: 'googlesheets_search_spreadsheets', source: 'agent', parameters: found[0].parameters });
     expect(tool.description).toContain('Reads data; the user approves what is sent.');
-    expect(nativeAppTool(found[0], new Set(['GOOGLESHEETS_SEARCH_SPREADSHEETS']))).toBeUndefined();
+    // A name already taken gets a suffix instead of hiding the tool.
+    expect(nativeAppTool(found[0], new Set(['googlesheets_search_spreadsheets']))!.name).toBe('googlesheets_search_spreadsheets_a');
+  });
+
+  it('are offered under a name the Xroga server accepts for a tool in a model request', () => {
+    // The server's turn schema: /^[a-z_]{1,50}$/. Composio slugs are upper case, can hold digits and exceed 50 characters.
+    const serverRule = /^[a-z_]{1,50}$/;
+    const slugs = ['GMAIL_FETCH_EMAILS', 'GOOGLESHEETS_BATCH_GET_SPREADSHEET_VALUES_BY_DATA_FILTER', 'GITHUB_V3_LIST_REPOS_2', 'a-b-c', '12345'];
+    const taken = new Set<string>();
+    for (const slug of slugs) {
+      const alias = appToolAlias(slug, taken);
+      expect(alias, slug).toMatch(serverRule);
+      taken.add(alias!);
+    }
+    expect(taken.size).toBe(slugs.length);
   });
 
   it('are called through the same guarded read or change route, never around it', () => {
@@ -52,7 +66,7 @@ describe('the loop with app tools', () => {
     const dispatched: Array<{ name: string; input: unknown }> = [];
     const scripted = new ScriptedModel([
       { toolCalls: [{ name: 'plugin_search', input: { query: 'find a Google Sheets spreadsheet by name' }, id: 'a' }] },
-      { toolCalls: [{ name: 'GOOGLESHEETS_SEARCH_SPREADSHEETS', input: { query: 'Xroga Test' }, id: 'b' }] },
+      { toolCalls: [{ name: 'googlesheets_search_spreadsheets', input: { query: 'Xroga Test' }, id: 'b' }] },
       { toolCalls: [{ name: 'done', input: { outcome: 'success', summary: 'Found it.' }, id: 'd' }] },
     ]);
     const loop = new AgentLoop({
@@ -69,11 +83,11 @@ describe('the loop with app tools', () => {
     const end = await loop.run();
     expect(end.status).toBe('done');
     expect(end.outcome).toBe('success');
-    expect(scripted.calls[0].tools.map(t => t.name)).not.toContain('GOOGLESHEETS_SEARCH_SPREADSHEETS');
-    expect(scripted.calls[1].tools.map(t => t.name)).toContain('GOOGLESHEETS_SEARCH_SPREADSHEETS');
+    expect(scripted.calls[0].tools.map(t => t.name)).not.toContain('googlesheets_search_spreadsheets');
+    expect(scripted.calls[1].tools.map(t => t.name)).toContain('googlesheets_search_spreadsheets');
     expect(dispatched).toEqual([
       { name: 'plugin_search', input: { query: 'find a Google Sheets spreadsheet by name' } },
-      { name: 'GOOGLESHEETS_SEARCH_SPREADSHEETS', input: { query: 'Xroga Test' } },
+      { name: 'googlesheets_search_spreadsheets', input: { query: 'Xroga Test' } },
     ]);
     const branch = await activeBranch(c.id);
     const toolText = branch.flatMap(e => (e.type === 'message' && e.message.role === 'tool' ? e.message.parts : [])).map(p => ('text' in p ? p.text : '')).join('\n');
@@ -110,20 +124,20 @@ describe('a request about connected apps', () => {
   it('has its search run before the first model turn, so the first turn already calls the tool it found', async () => {
     const native = nativeAppTool(info, new Set())!;
     const { end, scripted, dispatched } = await appRun(request, { text: 'found: GOOGLESHEETS_SEARCH_SPREADSHEETS', registerTools: [native] }, [
-      { toolCalls: [{ name: 'GOOGLESHEETS_SEARCH_SPREADSHEETS', input: { query: 'Xroga Test' }, id: 'b' }] },
+      { toolCalls: [{ name: 'googlesheets_search_spreadsheets', input: { query: 'Xroga Test' }, id: 'b' }] },
       { toolCalls: [{ name: 'done', input: { outcome: 'success', summary: 'It exists.' }, id: 'd' }] },
     ]);
     expect(end.outcome).toBe('success');
     // Two model turns in all: no turn was spent asking for the search.
     expect(scripted.calls).toHaveLength(2);
-    expect(scripted.calls[0].tools.map(t => t.name)).toContain('GOOGLESHEETS_SEARCH_SPREADSHEETS');
+    expect(scripted.calls[0].tools.map(t => t.name)).toContain('googlesheets_search_spreadsheets');
     expect(JSON.stringify(scripted.calls[0].prompt)).toContain('do not search again for the same task');
     expect(dispatched[0].name).toBe('plugin_search');
     const query = (dispatched[0].input as { query: string }).query;
     expect(query.startsWith('Google Sheets app.')).toBe(true);
     expect(query).not.toContain('browser');
     expect(query.length).toBeLessThanOrEqual(120);
-    expect(dispatched[1].name).toBe('GOOGLESHEETS_SEARCH_SPREADSHEETS');
+    expect(dispatched[1].name).toBe('googlesheets_search_spreadsheets');
   });
 
   it('leaves the search to the model when the up-front search finds nothing', async () => {

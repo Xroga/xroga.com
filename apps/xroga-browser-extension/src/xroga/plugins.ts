@@ -51,11 +51,27 @@ export function appToolsFrom(tools: unknown, kind: 'read' | 'write'): AppToolInf
   return out;
 }
 
-/** The model-facing tool: its own Composio name and its real parameter schema, so native tool calling does the work. */
+/**
+ * The name the model calls a found tool by. The Xroga server accepts only lowercase letters and underscores, 50 at most, for a tool in a
+ * model request; Composio slugs are upper case and can hold digits and be longer (GMAIL_FETCH_EMAILS), and offering one under its own
+ * name made every following model request fail as BROWSER_REQUEST_INVALID. The call is still routed by the real slug.
+ */
+export function appToolAlias(slug: string, taken: ReadonlySet<string>): string | undefined {
+  const base = slug.toLowerCase().replace(/[^a-z_]+/g, '_').replace(/_+/g, '_').replace(/^_+|_+$/g, '').slice(0, 46) || 'app_tool';
+  if (!taken.has(base)) return base;
+  for (const suffix of 'abcdefghijklmnopqrstuvwxyz') {
+    const next = `${base}_${suffix}`;
+    if (!taken.has(next)) return next;
+  }
+  return undefined;
+}
+
+/** The model-facing tool: a valid alias of its Composio name and its real parameter schema, so native tool calling does the work. */
 export function nativeAppTool(info: AppToolInfo, taken: ReadonlySet<string>): AgentTool | undefined {
-  if (taken.has(info.slug)) return undefined;
+  const name = appToolAlias(info.slug, taken);
+  if (!name) return undefined;
   const note = info.kind === 'read' ? 'Reads data; the user approves what is sent.' : 'Changes data; the user approves each change.';
-  return { name: info.slug, source: 'agent', group: 'working', parameters: info.parameters,
+  return { name, source: 'agent', group: 'working', parameters: info.parameters,
     description: (info.description ? info.description + ' ' : '') + '[' + info.toolkit + ', connected app. ' + note + ']' };
 }
 
