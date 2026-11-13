@@ -81,3 +81,18 @@ Provider receipts for the staging runs since 20:55 UTC on 2026-11-13: 582 model 
 Staging service `xroga-api-universal-staging`: tag `browser-op-1110` on revision `00090-mel`, 0% traffic (100% stays on `00001-tdc`), allowlist = the staging owner account and the owner's own staging sign-up, nothing else. All throwaway test users and their run rows are deleted (count 0), my extra revisions are deleted, and the temporary token and argument files are removed. The full real-Chrome scenario suite (about 291 s) passed on the final source after the last code change.
 
 A complete Chrome restart in the middle of a real-model task was not run as one test: its two halves were each tested (every extension worker killed mid-run with the real model; the task tab lost mid-run with a scripted model).
+
+## 8. Hands-on run in the owner's own Chrome profile (2026-11-13, afternoon) - CHROME + DEEPSEEK, staging
+
+Driven through screen control on the owner's Chrome with the installed extension (version 0.2.8, ID `ogebkgkppocnjeojdbkiokcpeaenonop`), signed in to staging. Every approval card and the Chrome downloads permission prompt were pressed by me as the owner instructed.
+
+| Task | Result |
+| --- | --- |
+| Four sites in parallel (example.com, iana.org, wikipedia.org, developer.mozilla.org) | done; table and notes correct |
+| TodoMVC: add eight, complete three, delete one, filter Active | done; tasks 5-8 left, page counter "4 items left!"; the mouse Delete was blocked by the page, the agent used keyboard focus + Enter and the receipt confirmed it |
+| CSV deliverable (three sites) | Save card showed the right 130 B file; Chrome asked to let the extension open downloaded files (Allow); the file in Downloads had the header and three rows (removed afterwards) |
+| Stop mid-run, then follow-up (eight Wikipedia pages) | Stop worked; the follow-up was NOT accepted until Resume was pressed (defect, fixed below); after Resume all eight rows were returned |
+
+Defect found and fixed (commit `2a3346131`): Stop sent while a model turn was in flight got a 409 on the server's `finish` call (staging log, 10:12:45 UTC), the run parked as "Task saved locally. Resume to sync", and the composer ignored send until Resume. `finish` is now retried four times with a short back-off before parking. Verified live after reloading the new build: Stop, then a follow-up without Resume, was accepted and the run continued. Unit suites for `src/extension` pass (114).
+
+Other observations, not fixed: (a) `todomvc.com` failed to resolve once (DNS) and the agent reported it as a navigation-policy block (`URL_NOT_ALLOWED`); the message names the wrong cause. (b) The extension's error list held unhandled "No tab with given id" rejections after tasks closed their tabs (harmless; cleared). The install folder now holds build `2a3346131`.
