@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "a889e1db8749e1cbaff8aa4778ecc596a5e0797f",
+  "source_sha": "96d10b80c1a28a14aa2f073c7ffb2cd14a9e24bc",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -2412,7 +2412,8 @@
         "SUPABASE_URL",
         "XB01_DISPOSABLE_SUPABASE",
         "XB01_LOCAL_DATABASE_URL",
-        "XROGA_COMPOSIO_ERROR_DETAIL"
+        "XROGA_COMPOSIO_ERROR_DETAIL",
+        "XROGA_CUSTOM_MCP_EXECUTION"
       ],
       "inbound_callers": [
         "api or named source callers; operational reachability not inferred"
@@ -14086,6 +14087,26 @@
       ]
     },
     {
+      "name": "XROGA_CUSTOM_MCP_EXECUTION",
+      "consuming_sources": [
+        "backend/src/services/integrations/composioClient.ts",
+        "backend/src/services/integrations/customMcpPins.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "endpoint-backend-composio-dev"
+      ]
+    },
+    {
       "name": "XROGA_DEPLOYMENT_ENVIRONMENT",
       "consuming_sources": [
         "backend/src/runtime/startupPolicy.ts",
@@ -18295,11 +18316,11 @@
     },
     {
       "path": "backend/src/routes/integrations.ts",
-      "sha256": "e6aab8dfd7f534aeb38932151f6ef807eb71447e4bc2b538e6d01b0585905a21"
+      "sha256": "a83293abe5ae6377c700bac27d34c69f4c7442802decee257901542b45f999d1"
     },
     {
       "path": "backend/src/routes/localBrowser.ts",
-      "sha256": "8b297d61d56e78b263a80222a496e4b50207c4e08ef99e0c7bfd798bdbabe6cd"
+      "sha256": "fe3fe22dae67647e3fc1c07aa71b51ff6c387d058232a4ef12541080fca340e9"
     },
     {
       "path": "backend/src/routes/localBrowserDevice.ts",
@@ -18827,7 +18848,7 @@
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "sha256": "874ec9b2059fa33e7a56ae7c16d434f7c456d7df06d89ee928a4f1d023585449"
+      "sha256": "8a195f490f694aa9e5eacd76bf7818d46c8ff0cd2a628f06ce71477f149cdc59"
     },
     {
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
@@ -18859,11 +18880,11 @@
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "sha256": "420fa103e898918054e175ef86823322470c071aec58ed40834f741b09f6f3c2"
+      "sha256": "6b9caaf4f551895e78938c65dd44032370a562112901bbdcd5d57d089d941cb2"
     },
     {
       "path": "backend/src/services/integrations/composioControl.ts",
-      "sha256": "f8ad0d65a5f8e70a636a57161db93e25ce68e77a9fa873980e593ccbd8dc1e74"
+      "sha256": "06e8b400c89771c9cef3002a505cd565c53c9a59c6aabde89bb263cc8455e8cf"
     },
     {
       "path": "backend/src/services/integrations/composioNamespace.ts",
@@ -18896,6 +18917,10 @@
     {
       "path": "backend/src/services/integrations/cryptoProvider.ts",
       "sha256": "a4fb326b9cf7382a89649bf05552b4222ed5924397cf1b14a268999ffa721fb9"
+    },
+    {
+      "path": "backend/src/services/integrations/customMcpPins.ts",
+      "sha256": "3ddc9c765fc2c3194e5f372d6036e41f9c62a26110fca717b0a9ee305d39a7e8"
     },
     {
       "path": "backend/src/services/integrations/flyGoogleWorkloadIdentity.ts",
@@ -21639,7 +21664,7 @@
     },
     {
       "path": "frontend/src/components/integrations/CustomMcpManager.tsx",
-      "sha256": "47340753ec6349b09b1da846fe02628fee0af5f8b37eebfaa59cd9bc585f76a7"
+      "sha256": "1cbfa9a63a83fcfee71e954d1de5fd2b06d190e7c0f770e4c7c0588a2191114c"
     },
     {
       "path": "frontend/src/components/integrations/FreeApiOptionsPanel.tsx",
@@ -23851,7 +23876,7 @@
     },
     {
       "path": "frontend/src/lib/xrogaConnect.ts",
-      "sha256": "f21dc8a91d626123ecda91340d33738b9b95f3a6aa0df80fa231c7a1540c835b"
+      "sha256": "f3a13f593a6534311a8722e78167c3e7a4f4e551b4ed7bda35ba2af29c67e16b"
     },
     {
       "path": "frontend/src/lib/xrogaCsv.ts",
@@ -25924,7 +25949,7 @@
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/routes/integrations.ts",
-      "line": 2038,
+      "line": 2081,
       "credentialsInUrl": false
     },
     {
@@ -26925,21 +26950,21 @@
       "hostname": "backend.composio.dev",
       "protocol": "https:",
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 16,
+      "line": 17,
       "credentialsInUrl": false
     },
     {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 1379,
+      "line": 1432,
       "credentialsInUrl": false
     },
     {
       "hostname": "backend.composio.dev",
       "protocol": "https:",
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 1402,
+      "line": 1455,
       "credentialsInUrl": false
     },
     {
@@ -29228,14 +29253,14 @@
       "hostname": "mcp.example.com",
       "protocol": "https:",
       "path": "frontend/src/components/integrations/CustomMcpManager.tsx",
-      "line": 178,
+      "line": 253,
       "credentialsInUrl": false
     },
     {
       "hostname": "mcp.example.com",
       "protocol": "https:",
       "path": "frontend/src/components/integrations/CustomMcpManager.tsx",
-      "line": 225,
+      "line": 300,
       "credentialsInUrl": false
     },
     {
@@ -35143,14 +35168,14 @@
     },
     {
       "path": "backend/src/routes/localBrowser.ts",
-      "line": 449,
+      "line": 450,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/routes/localBrowser.ts",
-      "line": 476,
+      "line": 480,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -35402,21 +35427,21 @@
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "line": 659,
+      "line": 660,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "line": 1176,
+      "line": 1177,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "line": 1202,
+      "line": 1203,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -35479,42 +35504,42 @@
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 701,
+      "line": 702,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 1275,
+      "line": 1328,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 1304,
+      "line": 1357,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 1335,
+      "line": 1388,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 1861,
+      "line": 1914,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 1987,
+      "line": 2040,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
