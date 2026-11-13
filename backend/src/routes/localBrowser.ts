@@ -1,3 +1,4 @@
+import { EgressDenied } from '../security/egress/egressPolicy.js';
 import { createHash, randomUUID } from 'node:crypto';
 import { Router, type Response } from 'express';
 import { z } from 'zod';
@@ -225,6 +226,8 @@ function sendError(res: Response, error: unknown) {
     const next = (error as { nextUnlockAt?: unknown }).nextUnlockAt;
     return res.status(402).json({ error: 'BROWSER_ALLOWANCE_EXHAUSTED', ...(typeof next === 'string' ? { nextUnlockAt: next } : {}) });
   }
+  // A security-policy refusal (secret in the data, unsafe address, untrusted tool...) says which fixed rule refused, never what was sent.
+  if (error instanceof EgressDenied) return res.status(403).json({ error: 'BROWSER_POLICY_DENIED', reason: error.reason });
   if (typeof code === 'string' && /^(?:BUSINESS_ACTION|COMPOSIO)_[A-Z_]{2,60}$/.test(code)) {
     console.error('[local-browser] business action failed:', code);
     const providerMessage = (error as { providerMessage?: unknown }).providerMessage;

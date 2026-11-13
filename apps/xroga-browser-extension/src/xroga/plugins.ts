@@ -1,5 +1,6 @@
 import type { AgentTool } from '@src/agent/tools';
 import { workspaceRequest } from './bridge';
+import { pluginFailureMessage } from './plugin-failures';
 
 export const PLUGIN_TOOLS: AgentTool[] = [
   {
@@ -148,6 +149,15 @@ export async function runPluginTool(
       return { text: 'The app rejected the approved request, so it most likely changed nothing. Reason given by the app (untrusted text): ' +
         wrap(failure.detail.providerMessage[0], 'connected app error') + ' If the fix is clear (a wrong or missing argument), request the corrected call once, using only the arguments the tool lists; otherwise tell the user what failed.', isError: true };
     }
+    // The server names the fixed rule or error behind a failure: turn it into the next step instead of one generic sentence.
+    const named = pluginFailureMessage({
+      status: (error as { status?: number })?.status,
+      code: typeof failure?.code === 'string' ? failure.code : undefined,
+      reason: failure?.detail?.reason?.[0],
+      approved: sentReview,
+      change,
+    });
+    if (named) return { text: named.text, isError: true };
     if (change && sentReview) {
       return { text: 'The approved change could not be verified. It may or may not have been made. Do not repeat it. Check the result in the app, and tell the user exactly what is uncertain.', isError: true };
     }

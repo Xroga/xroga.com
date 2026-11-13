@@ -2723,9 +2723,11 @@ async function executeDiscoveredComposioTool(
     const toolkit=allowedTool!.toolkit.trim().toLowerCase(),payload={sessionId,useCase:input.useCase,toolSlug,arguments:input.arguments},digest=preparedActionDigest(payload);
     // An owner-pinned read tool whose live definition still matches its pin goes on to the same per-call approval as any connected app.
     // Anything else (flag off, not pinned, changed, revoked) is refused exactly as before.
-    if(toolkit.startsWith('custom_')&&!(await pinnedCustomReadTrust(context,userId,toolkit,toolSlug)).ok){
+    const customPin=toolkit.startsWith('custom_')?await pinnedCustomReadTrust(context,userId,toolkit,toolSlug):undefined;
+    if(customPin&&!customPin.ok){
       await enforceEgress({context,actionClass:'READ',destination:COMPOSIO_API_BASE,recipient:'untrusted-custom-mcp',purpose:'custom-mcp-read-admission',payload,declaredClass:'USER_PRIVATE',toolTrust:'UNTRUSTED_CAPABILITY_METADATA',binding:{userId,provider:toolkit,connectedAccountId:'untrusted-custom-mcp',operation:toolSlug,targetDigest:digest,planDigest:digest}},receipt=>persistSecurityDecision(context,receipt));
-      throw new EgressDenied('UNTRUSTED_TOOL_REQUIRES_SANDBOX');
+      // Say why in one fixed code (not pinned, revoked, definition changed, not enabled...) so the agent and the owner know the next step.
+      throw new ComposioClientError('This custom MCP tool is not allowed to run.',{status:403,code:'COMPOSIO_'+customPin.reason});
     }
     const accounts=await listComposioToolkits(userId,{sessionId,mode:'read',toolkits:[toolkit]},context),current=accounts.find(item=>item.toolkit.toLowerCase()===toolkit),connectedAccountId=current?.noAuth?`no-auth:${toolkit}`:current?.connectedAccountId;
     if(!current?.connected||!connectedAccountId)throw new AuthorityError('COMPOSIO_READ_ACCOUNT_UNAVAILABLE');
