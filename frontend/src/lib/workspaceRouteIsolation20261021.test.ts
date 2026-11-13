@@ -40,7 +40,7 @@ test('plugin search uses full catalog with debounce and cannot misrepresent unlo
   assert.match(plugin, /xrogaConnect\.catalog\(\{ search: query\.trim\(\), limit: 25 \}\)/);
   assert.match(plugin, /setTimeout\(\(\) =>/);
   assert.match(plugin, /catalogSearching/);
-  assert.match(plugin, /Live plugin search is unavailable/);
+  assert.match(plugin, /Live app search is unavailable/);
   assert.match(plugin, /plugin\.connected && onSelect/);
 });
 
