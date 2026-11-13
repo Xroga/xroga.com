@@ -674,7 +674,9 @@ export async function confirmBusinessAction(
       existing as
         ConfirmationRow,
     );
-  if(expectedOperation&&(!isBusinessActionPlan(row.plan)||row.plan.toolkit!==expectedOperation.toolkit||row.plan.toolSlug!==expectedOperation.toolSlug)){
+  // The toolkit slug is compared without regard to case: a read plan stores it lower case ("gmail") and a change plan as the provider
+  // names it ("GMAIL"), and a correct approval was refused as "belongs to another operation". The tool slug stays an exact match.
+  if(expectedOperation&&(!isBusinessActionPlan(row.plan)||row.plan.toolkit.toLowerCase()!==expectedOperation.toolkit.toLowerCase()||row.plan.toolSlug!==expectedOperation.toolSlug)){
     throw new ComposioClientError('The approval belongs to another operation.',{status:409,code:'BUSINESS_ACTION_AUTHORITY_SCOPE_REQUIRED'});
   }
 
