@@ -89,6 +89,7 @@ import { onWorkspaceDisconnect, postWorkspace, workspacePaired, workspaceRequest
 import { ACTIVITY_LIMIT, browserActivity } from '@src/xroga/activity';
 import { startXrogaModelRun } from '@src/xroga/model';
 import { nativeAppCall, nativeAppTool, runPluginTool, PLUGIN_TOOLS, type AppToolInfo } from '@src/xroga/plugins';
+import { repairingPluginCaller, type PluginToolName } from '@src/xroga/plugin-repair';
 import { SEARCH_HOME, browserTarget } from '@src/xroga/navigation';
 import { XROGA_PRODUCT } from '@src/xroga/product';
 
@@ -1750,6 +1751,9 @@ export class RunManager {
         const timings = new RunTimings();
         // The connected-app tools this run's searches found, by name, so a call to one reaches the guarded routes.
         const appTools = new Map<string, AppToolInfo>();
+        // wrapApp and ask are defined below with the tool dispatch; the caller reads them lazily.
+        let pluginRun: (name: PluginToolName, body: unknown) => ReturnType<typeof runPluginTool> = () => Promise.reject(new Error('Connected apps are not ready.'));
+        const pluginCaller = repairingPluginCaller((name, body) => pluginRun(name, body));
         const loop = new AgentLoop({
           timings,
           conversationId,
@@ -1800,16 +1804,19 @@ export class RunManager {
             const wrapApp = (text: string, source: string) => session.wrap(text, { connectedApp: source });
             const ask = (change: boolean) => (approval: Parameters<Parameters<typeof runPluginTool>[4]>[0]) =>
               this.broker.open(conversationId, change ? 'plugin-act' : 'plugin-read', approval, signal);
+            pluginRun = (name, body) => runPluginTool(name, canonical!.runId, body, signal, ask(name === 'plugin_act'), wrapApp);
+            // A call refused only because this task's own search did not list the tool is repaired once without a model turn (see plugin-repair.ts).
+            const callPlugin = pluginCaller;
             if (canonical?.plugins) {
               // A tool a search found, called by its own name: the same guarded read or change route as plugin_read / plugin_act.
               const app = appTools.get(call.toolName);
               if (app) {
                 const mapped = nativeAppCall(app, call.input);
-                return runPluginTool(mapped.name, canonical.runId, mapped.body, signal, ask(mapped.name === 'plugin_act'), wrapApp);
+                return callPlugin(mapped.name, mapped.body);
               }
               if (call.toolName === 'plugin_search' || call.toolName === 'plugin_read' ||
                   call.toolName === 'plugin_action_search' || call.toolName === 'plugin_act') {
-                const result = await runPluginTool(call.toolName, canonical.runId, call.input, signal, ask(call.toolName === 'plugin_act'), wrapApp);
+                const result = await callPlugin(call.toolName, call.input);
                 const { appTools: found, ...rest } = result;
                 if (!found?.length) return rest;
                 // The tools the search found become callable by their own names, with their real parameter schemas.

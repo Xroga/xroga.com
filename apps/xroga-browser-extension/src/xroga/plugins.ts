@@ -1,6 +1,6 @@
 import type { AgentTool } from '@src/agent/tools';
 import { workspaceRequest } from './bridge';
-import { pluginFailureMessage } from './plugin-failures';
+import { pluginFailureMessage, type PluginFailureKind } from './plugin-failures';
 
 export const PLUGIN_TOOLS: AgentTool[] = [
   {
@@ -108,7 +108,7 @@ export async function runPluginTool(
   signal: AbortSignal,
   approve: (approval: Approval) => Promise<unknown>,
   wrap: (text: string, source: string) => string,
-): Promise<{ text: string; isError: boolean; result?: { pluginReceiptId: string }; appTools?: AppToolInfo[] }> {
+): Promise<{ text: string; isError: boolean; result?: { pluginReceiptId: string }; appTools?: AppToolInfo[]; failureKind?: PluginFailureKind }> {
   let sentReview = false;
   const change = name === 'plugin_act';
   try {
@@ -138,7 +138,7 @@ export async function runPluginTool(
     const failure = error as { code?: unknown; detail?: Record<string, string[]> };
     if (failure?.code === 'BROWSER_PLUGIN_NOT_DISCOVERED') {
       // A follow-up message starts a new task, and the server only runs a tool that this task's own search found.
-      return { text: 'This tool was not found by a search in this task, so it was not called. Run plugin_search (to read) or plugin_action_search (to change something) now, then call the tool it returns.', isError: true };
+      return { text: 'This tool was not found by a search in this task, so it was not called. Run plugin_search (to read) or plugin_action_search (to change something) now, then call the tool it returns.', isError: true, failureKind: 'search_again' };
     }
     if (failure?.code === 'BROWSER_PLUGIN_ARGUMENTS_INVALID' && failure.detail) {
       const list = (key: string) => (failure.detail![key] ?? []).join(', ') || 'none';
@@ -157,7 +157,7 @@ export async function runPluginTool(
       approved: sentReview,
       change,
     });
-    if (named) return { text: named.text, isError: true };
+    if (named) return { text: named.text, isError: true, failureKind: named.kind };
     if (change && sentReview) {
       return { text: 'The approved change could not be verified. It may or may not have been made. Do not repeat it. Check the result in the app, and tell the user exactly what is uncertain.', isError: true };
     }
