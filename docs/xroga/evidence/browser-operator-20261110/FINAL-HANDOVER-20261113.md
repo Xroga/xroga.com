@@ -140,3 +140,18 @@ With the owner's permission, on a Monid account with a $0.00 balance (no spend p
 A task asking the agent to read the Monid balance and free offerings through the connected app used no tool: no read tool for that was offered, and the Monid run tool is classified restricted and cannot execute from the browser agent. It said so, offered to reconnect or use the browser, and ran/paid for nothing. This matches the product's rule that a custom MCP's tools stay untrusted until separately authorized; executing a custom MCP tool end to end was therefore NOT demonstrated, and no `monid run` was attempted. Registering, reviewing, OAuth connecting and syncing were.
 
 The "Confirm action" button on the review page renders white text on a white button (hard to read); not fixed here.
+
+## 12. Custom MCP pin, stage 1, verified live on staging (2026-11-13, night) - CHROME + DEEPSEEK + REAL THIRD-PARTY
+
+RFC `docs/xroga/security/rfcs/RFC-CUSTOM-MCP-EXECUTION.md`, stage 1 (read pins only, off by default). Staging backend image `pin4-1113` on the tagged revision with `XROGA_CUSTOM_MCP_EXECUTION=on`; additive table `custom_mcp_tool_pins` on the staging database; frontend on the staging preview branch. Monid account, $0.00 balance, no spend possible.
+
+| Step | Result |
+| --- | --- |
+| Pin "Monid balance" (read, no arguments) from the Tools panel | review page showed the exact definition and digest, "No spending authority included"; Confirm gave a receipt |
+| Agent asked for the balance in the extension | offered the pinned tool, approval card with the exact tool and empty arguments, Allow pressed |
+| Result | "$0.00 USD, $0.00 held", provider receipt returned; matches the Monid dashboard |
+| Simulated server change (stored digest altered in the staging database) | the next request: no Monid tool offered, nothing called, the pin shows revoked with reason "definition changed" |
+
+Four server gates had to accept an owner-pinned read, each found only by the live run (unit tests cannot see them): the read-name rule (a read needs a reading word in its name), "discovered in this session" (the provider search never lists custom tools), twice (before the card and when executing), and the execution-time risk recheck (name classifies unknown, plan says read). Each now accepts a tool only if its pin verifies against the live definition with the flag on and its name does not read as a change; no other check changed.
+
+Not done: write pins, a price ceiling and AAL2 for pinning (RFC open questions 2-4); the independent security review; revocation on re-sync at the sync itself (it happens at the next call); the changed-definition test used an altered stored digest because the Monid server's own definition cannot be changed from here. The pin is left revoked on staging; the flag stays on only for the tagged staging revision.
