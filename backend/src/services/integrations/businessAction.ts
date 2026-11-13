@@ -31,6 +31,7 @@ import {
   ComposioClientError,
   executeComposioActionTool,
   getComposioToolDetails,
+  isPinnedCustomReadSlug,
   listComposioToolkits,
   searchComposioActionTools,
   type XrogaConnectTool,
@@ -1531,10 +1532,15 @@ export async function executePreparedBusinessAction(
    * is required even if the original plan was
    * classified more permissively.
    */
-  const details =
+  const fetchedDetails =
     await getComposioToolDetails(
       input.plan.toolSlug,metadataContext,
     );
+  // A custom MCP tool the owner pinned as a read has a name that says nothing, so it classifies as unknown. The pin (re-verified here
+  // against the live definition, flag on) is what makes it a read; nothing else about the check changes.
+  const pinnedRead = fetchedDetails.risk !== 'read' && input.plan.risk === 'read' && !!metadataContext
+    && await isPinnedCustomReadSlug(input.userId, input.plan.toolSlug, metadataContext);
+  const details = pinnedRead ? { ...fetchedDetails, risk: 'read' as const } : fetchedDetails;
 
   if (
     details.deprecated

@@ -2857,7 +2857,7 @@ export async function listPinnedCustomReadTools(context:TenantContext):Promise<A
   return out;
 }
 
-async function isPinnedCustomReadSlug(userId:string,toolSlug:string,context?:TenantContext):Promise<boolean>{
+export async function isPinnedCustomReadSlug(userId:string,toolSlug:string,context?:TenantContext):Promise<boolean>{
   if(process.env.XROGA_CUSTOM_MCP_EXECUTION!=='on'||!context||!toolSlug.toLowerCase().startsWith(xrogaCustomToolkitPrefix(userId)))return false;
   try{
     const actor=requireTenantContext(context);
