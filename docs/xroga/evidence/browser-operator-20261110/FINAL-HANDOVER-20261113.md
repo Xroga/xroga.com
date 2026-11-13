@@ -96,3 +96,16 @@ Driven through screen control on the owner's Chrome with the installed extension
 Defect found and fixed (commit `2a3346131`): Stop sent while a model turn was in flight got a 409 on the server's `finish` call (staging log, 10:12:45 UTC), the run parked as "Task saved locally. Resume to sync", and the composer ignored send until Resume. `finish` is now retried four times with a short back-off before parking. Verified live after reloading the new build: Stop, then a follow-up without Resume, was accepted and the run continued. Unit suites for `src/extension` pass (114).
 
 Other observations, not fixed: (a) `todomvc.com` failed to resolve once (DNS) and the agent reported it as a navigation-policy block (`URL_NOT_ALLOWED`); the message names the wrong cause. (b) The extension's error list held unhandled "No tab with given id" rejections after tasks closed their tabs (harmless; cleared). The install folder now holds build `2a3346131`.
+
+## 9. Connected apps and MCP: what was tested without any account (2026-11-13, evening) - DEEPSEEK, staging
+
+A throwaway staging account (deleted afterwards; staging allowlist restored to the two owner accounts; extra revisions deleted) ran two plugin tasks through the product build.
+
+| Task | Result |
+| --- | --- |
+| "List which apps are connected for me, do not guess" | done, 23 s, 4 turns: said none is connected (Gmail, Google Sheets, Microsoft 365, LaunchDarkly checked), made no changes, told the user how to connect one and that the sign-in is the user's step |
+| "Use a no-login app (Hacker News) to get the top story" | by design the server offers only connected, authenticated apps (`!noAuth`), so no plugin tool was usable; in 4 of the last 5 runs the agent said so and read news.ycombinator.com directly (done, 3-4 turns, names the page and the rank basis) |
+
+One earlier attempt of the second task paused with "a model request could not be verified" (a 400 on the model turn right after a duplicate `plugin-search` returned 409); it did not repeat in the next four runs, and its cause is not identified. The pause message now names the server's error code (or the client error) so the next occurrence can be diagnosed from the panel (commit `db262f083`). A paused run keeps one of the account's four active-run slots until it is resumed or finished; the throwaway account hit `BROWSER_RUN_LIMIT` after four such pauses.
+
+Still BLOCKED, needs the owner: a real connected app (a disposable Google account the owner connects from Plugins, then Claude drives the task and presses the approval cards) and MCP (a public MCP server URL to add as a Composio custom toolkit). Nothing was connected, created or sent on any real account.
