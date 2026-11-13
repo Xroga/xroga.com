@@ -565,7 +565,7 @@ export default function BusinessActionConfirmationPage() {
                     void confirm();
                   }}
                   disabled={Boolean(submitting) || !confirmation.approval}
-                  className="rounded-xl bg-[var(--accent)] px-4 py-2.5 text-sm font-semibold text-white transition-opacity disabled:opacity-50"
+                  className="rounded-xl bg-[var(--accent)] px-4 py-2.5 text-sm font-semibold text-[var(--background)] transition-opacity disabled:opacity-50"
                 >
                   {submitting ===
                   'confirm'
