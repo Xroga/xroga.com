@@ -10,7 +10,7 @@ test('the class a pin may take comes from the tool name: reading words read, oth
 });
 
 test('destructive, financial and access-changing names can never be pinned',()=>{
-  for(const slug of['CUSTOM_X_DELETE_PROJECT','CUSTOM_X_REMOVE_ASSET','CUSTOM_X_PURGE_CACHE','CUSTOM_X_REFUND_ORDER','CUSTOM_X_TRANSFER_FUNDS','CUSTOM_X_BUY_CREDITS','CUSTOM_X_PAYMENT_CREATE','CUSTOM_X_CREATE_API_KEY','CUSTOM_X_GRANT_ACCESS','CUSTOM_X_REVOKE_TOKEN'])assert.equal(customPinClassFor(slug),undefined,slug);
+  for(const slug of['CUSTOM_X_DELETE_PROJECT','CUSTOM_X_REMOVE_ASSET','CUSTOM_X_PURGE_CACHE','CUSTOM_X_REFUND_ORDER','CUSTOM_X_TRANSFER_FUNDS','CUSTOM_X_BUY_CREDITS','CUSTOM_X_PAYMENT_CREATE','CUSTOM_X_CREATE_API_KEY','CUSTOM_X_GRANT_ACCESS','CUSTOM_X_REVOKE_TOKEN','CUSTOM_X_MONID_TOPUP','CUSTOM_X_DEPOSIT_FUNDS','CUSTOM_X_MONID_KEYS','CUSTOM_X_SUBSCRIBE_PLAN','CUSTOM_X_BILLING_UPDATE'])assert.equal(customPinClassFor(slug),undefined,slug);
 });
 
 const context=createTenantContext({userId:'11111111-1111-4111-8111-111111111111',via:'remote_getuser'});

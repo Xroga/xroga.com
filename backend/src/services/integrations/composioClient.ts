@@ -2864,10 +2864,13 @@ export async function pinnedCustomReadTrust(context:TenantContext,userId:string,
 
 /** Names that can never be pinned or run from a custom MCP server: they destroy data, move money or change who has access. */
 const BLOCKED_CUSTOM_CLASSES=new Set(['DELETE','TRANSFER_OR_FINANCIAL','PURCHASE_OR_SPEND','CREDENTIAL_OR_PERMISSION_CHANGE']);
+const CUSTOM_BLOCKED_TOKENS=['TOPUP','DEPOSIT','FUND','FUNDS','FUNDING','KEY','KEYS','SECRET','SECRETS','SUBSCRIBE','SUBSCRIPTION','BILLING','INVOICE','UPGRADE','DOWNGRADE','PAYOUT','PAYOUTS','CHECKOUT'];
 /** The class a pin may take from the tool's name: reading words read, everything else is a change; destructive or financial is refused. */
 export function customPinClassFor(toolSlug:string):CustomPinClass|undefined{
   const risk=classifyComposioToolRisk(toolSlug);
   if(risk==='destructive'||BLOCKED_CUSTOM_CLASSES.has(businessActionClass(toolSlug)))return undefined;
+  // Names that put money into or out of an account, buy or change a plan, or hand out credentials are never pinned either.
+  if(CUSTOM_BLOCKED_TOKENS.some(token=>toolSlug.toUpperCase().split(/[^A-Z0-9]+/).includes(token)))return undefined;
   return risk==='read'?'read':'write';
 }
 
