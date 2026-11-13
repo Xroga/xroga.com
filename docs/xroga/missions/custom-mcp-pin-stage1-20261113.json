@@ -1,0 +1,122 @@
+{
+  "version": "1.0",
+  "missionId": "CUSTOM-MCP-PIN-STAGE1-20261113",
+  "baseSha": "9ad736360dbbcb30942fae470485ad4502dd1f43",
+  "requirementIds": [
+    "XR-FAMILY-browser-execution"
+  ],
+  "state": "IN_PROGRESS",
+  "risk": "high",
+  "scope": "RFC-CUSTOM-MCP-EXECUTION stage 1: an owner can pin one read tool of their own custom MCP server so the browser agent may be offered it behind the existing per-call approval. Off by default (XROGA_CUSTOM_MCP_EXECUTION). Read tools only. No new scheduler or control plane. Staging only; the independent security review is still required before any other use.",
+  "changedFiles": [
+    "backend/src/routes/integrations.ts",
+    "backend/src/routes/localBrowser.ts",
+    "backend/src/services/integrations/composioClient.ts",
+    "backend/src/services/integrations/composioControl.ts",
+    "frontend/src/components/integrations/CustomMcpManager.tsx",
+    "frontend/src/lib/xrogaConnect.ts",
+    "backend/src/services/integrations/customMcpPins.test.ts",
+    "backend/src/services/integrations/customMcpPins.ts",
+    "docs/xroga/missions/custom-mcp-pin-stage1-20261113.json",
+    "supabase/migrations/20261113130000_custom_mcp_tool_pins.sql"
+  ],
+  "decisions": {
+    "keep": [
+      "Nanobrowser browser control, task loop, scoped tabs and recovery journal",
+      "Existing Xroga account, model ledger, browser run and lease stores"
+    ],
+    "extend": [
+      "Local Chrome execution target",
+      "Background pairing through the existing same-profile Workspace session",
+      "Workspace PCM dictation, Chrome-local action cues and redacted screenshot previews",
+      "Explicit resumption after uncertain model completion",
+      "Proof-bound one-time enrollment and revocable Chrome device sessions using the existing API and database",
+      "Authenticated optional Workspace link and owner-partitioned local history"
+    ],
+    "replace": [
+      "The limited page-reading default extension build"
+    ],
+    "deprecate": []
+  },
+  "schemaImpact": {
+    "changed": true,
+    "migrations": [
+      "supabase/migrations/20261113130000_custom_mcp_tool_pins.sql"
+    ],
+    "rollout": "Additive table custom_mcp_tool_pins with RLS enabled and service-role only access. Unused while XROGA_CUSTOM_MCP_EXECUTION is off.",
+    "rollback": "Set XROGA_CUSTOM_MCP_EXECUTION off (calls are refused again) and revoke pins. The table can stay; nothing reads it with the flag off."
+  },
+  "securityImpact": {
+    "auth": {
+      "changed": false,
+      "description": "No change to sign-in or sessions."
+    },
+    "tenant": {
+      "changed": true,
+      "description": "A pin is keyed by the verified user id and the user-scoped custom toolkit prefix; another owner pin is never found."
+    },
+    "approval": {
+      "changed": true,
+      "description": "Pinning goes through the existing confirmed control operation (PIN_CUSTOM_MCP_TOOL) with the same authority scope, nonce and expiry. Every call of a pinned tool still needs its own exact approval card."
+    },
+    "credentials": {
+      "changed": false,
+      "description": "Credentials stay in the existing server-side Composio path. Nothing new is exposed to the model or client."
+    },
+    "egress": {
+      "changed": true,
+      "description": "A pinned read tool whose live definition (server address, auth, name, description, schema) still matches its digest is passed to the egress gate as server-registered; the secret, destination and URL checks and the exact permit stay in front. A changed definition revokes the pin. Tools named as changes are refused."
+    },
+    "cost": {
+      "changed": false,
+      "description": "No spend authority; paid tools stay not runnable. Unpriced custom calls are still bounded by the existing run limits."
+    },
+    "billing": {
+      "changed": false,
+      "description": "No billing change."
+    }
+  },
+  "tests": [
+    {
+      "command": "node --import tsx --test backend/src/services/integrations/customMcpPins.test.ts",
+      "scope": "Flag off, unpinned, revoked, changed definition (five kinds), unreachable server, foreign owner, digest stability",
+      "negative": true,
+      "reference": "backend/src/services/integrations/customMcpPins.test.ts"
+    },
+    {
+      "command": "node --import tsx --test backend/src/services/integrations/composioControl.security.test.ts backend/src/security/egress/egressPolicy.test.ts",
+      "scope": "Existing control and egress behaviour is unchanged",
+      "negative": true,
+      "reference": "backend/src/services/integrations/composioControl.security.test.ts"
+    }
+  ],
+  "architecture": {
+    "change": "extends_canonical",
+    "reason": "Extends the existing plugin_search / plugin_read route, the confirmed control operations and the egress gate. No scheduler, loop or control plane is added.",
+    "rfc": "docs/xroga/security/rfcs/RFC-CUSTOM-MCP-EXECUTION.md"
+  },
+  "rollout": "Staging only behind the flag, one allowlisted owner, read pins only, a $0 account. Production untouched. Merge only after the independent security review.",
+  "rollback": "Turn the flag off and revoke pins; redeploy the previous staging revision if needed.",
+  "knownGaps": [
+    "Not reviewed by an independent security reviewer.",
+    "Write-class pins, a per-call price ceiling and AAL2 for pinning are not built (RFC open questions 2-4).",
+    "A re-sync that changes a definition revokes the pin at the next call, not at the sync itself."
+  ],
+  "placeholderClaimsRemaining": [],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "BLOCKED",
+    "blockers": [
+      "Independent security review of the pin gate and the Composio egress path.",
+      "Live staging verification with a real custom MCP read tool is still to be recorded."
+    ],
+    "authenticatedE2e": "BLOCKED",
+    "stagedSecurity": "BLOCKED",
+    "liveUrl": null,
+    "deployedSha": null
+  },
+  "evidenceRefs": [
+    "docs/xroga/security/rfcs/RFC-CUSTOM-MCP-EXECUTION.md"
+  ]
+}

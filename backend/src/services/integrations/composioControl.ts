@@ -13,7 +13,7 @@ import {createBusinessActionConfirmation} from './businessActionConfirmations.js
 import {actionPlanDigest,type BusinessActionPlan} from './businessAction.js';
 import {nativeReleaseActor} from '../publish/nativeReleaseAdmission.js';
 
-export type ComposioControlOperation='CREATE_CUSTOM_MCP'|'SYNC_CUSTOM_MCP'|'DELETE_CUSTOM_MCP'|'CREATE_AUTOMATION_TRIGGER';
+export type ComposioControlOperation='CREATE_CUSTOM_MCP'|'SYNC_CUSTOM_MCP'|'DELETE_CUSTOM_MCP'|'PIN_CUSTOM_MCP_TOOL'|'CREATE_AUTOMATION_TRIGGER';
 export interface ComposioControlPending {needsConfirmation:true;reviewUrl:string;message:string}
 export interface ComposioControlAdmission {readonly marker:'native-connect-control'}
 const toolkit='xroga-native-connect-control',useCase='Manage exact owned connected-app configuration';
@@ -37,7 +37,7 @@ export function requireComposioControl(access:ComposioControlAdmission|undefined
 /** Adapter over the existing durable claim and managed vault, not a new issuer. */
 export async function executeComposioControl(userId:string,plan:BusinessActionPlan,permit?:AuthorityPermit){
  const{context,scope,binding}=nativeReleaseActor(userId,undefined,plan,permit),operation=plan.toolSlug.slice('XROGA_'.length) as ComposioControlOperation;
- if(!scope||!binding||!['CREATE_CUSTOM_MCP','SYNC_CUSTOM_MCP','DELETE_CUSTOM_MCP','CREATE_AUTOMATION_TRIGGER'].includes(operation)||plan.toolkit!==toolkit||plan.useCase!==useCase||plan.toolSlug!=='XROGA_'+operation||plan.risk!=='write'||!plan.requiresConfirmation||plan.forceConfirmation!==true||!isDeepStrictEqual(plan.requiredScopes,['xroga:connect-control'])||scope.connectedAccountId!=='composio:'+plan.arguments.resource||scope.actionClass!==(operation==='DELETE_CUSTOM_MCP'?'DELETE':'CREDENTIAL_OR_PERMISSION_CHANGE')||scope.projectId!==null||scope.runId!==null||scope.maxSpendMicroUsd!==null||scope.currency!==null||plan.sessionId!==`trs_native_connect_${scope.nonce}`||Date.parse(scope.expiresAt)-Date.parse(scope.issuedAt)>15*60000)throw denied();
+ if(!scope||!binding||!['CREATE_CUSTOM_MCP','SYNC_CUSTOM_MCP','DELETE_CUSTOM_MCP','PIN_CUSTOM_MCP_TOOL','CREATE_AUTOMATION_TRIGGER'].includes(operation)||plan.toolkit!==toolkit||plan.useCase!==useCase||plan.toolSlug!=='XROGA_'+operation||plan.risk!=='write'||!plan.requiresConfirmation||plan.forceConfirmation!==true||!isDeepStrictEqual(plan.requiredScopes,['xroga:connect-control'])||scope.connectedAccountId!=='composio:'+plan.arguments.resource||scope.actionClass!==(operation==='DELETE_CUSTOM_MCP'?'DELETE':'CREDENTIAL_OR_PERMISSION_CHANGE')||scope.projectId!==null||scope.runId!==null||scope.maxSpendMicroUsd!==null||scope.currency!==null||plan.sessionId!==`trs_native_connect_${scope.nonce}`||Date.parse(scope.expiresAt)-Date.parse(scope.issuedAt)>15*60000)throw denied();
  const proof=plan.scopeRequirements as{nativeConnectProof?:unknown}|undefined,value=unsigned(plan);if(!proof||!isDeepStrictEqual(Object.keys(proof),['nativeConnectProof'])||typeof proof.nativeConnectProof!=='string')throw denied();
  try{if(await runtimeCredentialVault().open(context,identity(context,scope.nonce,value),proof.nativeConnectProof)!==digest(value))throw denied();}catch{throw denied();}
  let consumed=false,writes=0;const check=async()=>{const{data,error}=await getTenantSupabaseAdmin(context).from('business_action_confirmations').select('id,user_id,status,plan_digest,expires_at,claimed_at,effect_started_at').eq('id',permit!.grantId).eq('user_id',userId).maybeSingle();if(error||data?.id!==permit!.grantId||data.user_id!==userId||data.status!=='executing'||data.plan_digest!==scope.planDigest||Date.parse(data.expires_at)!==Date.parse(scope.expiresAt)||Date.parse(scope.expiresAt)<=Date.now()||!Number.isFinite(Date.parse(data.claimed_at))||consumed&&!Number.isFinite(Date.parse(data.effect_started_at)))throw denied();};
@@ -52,6 +52,7 @@ export async function executeComposioControl(userId:string,plan:BusinessActionPl
   if(operation==='CREATE_CUSTOM_MCP')result=await client.createUserCustomMcpToolkit(userId,input as import('./composioClient.js').XrogaCustomMcpCreateInput,context,access);
   else if(operation==='SYNC_CUSTOM_MCP')result=await client.syncUserCustomMcpToolkit(userId,input as{toolkit:string;connectedAccountId?:string},context,access);
   else if(operation==='DELETE_CUSTOM_MCP')result=await client.deleteUserCustomMcpToolkit(userId,String((input as{toolkit:string}).toolkit),context,access);
+  else if(operation==='PIN_CUSTOM_MCP_TOOL')result=await client.pinUserCustomMcpTool(userId,input as{toolkit:string;toolSlug:string;definitionDigest:string},context,access);
   else{const automation=await import('./businessAutomations.js');result=await automation.createBusinessAutomationRule(userId,input as Parameters<typeof automation.createBusinessAutomationRule>[1],context,access);}
   if(!consumed||!result||typeof result!=='object'||(result as{needsConfirmation?:boolean}).needsConfirmation)throw denied();await check();return{ok:true,operation,result:JSON.parse(JSON.stringify(result)) as Record<string,unknown>};
  }finally{state.active=false;issued.delete(access);}

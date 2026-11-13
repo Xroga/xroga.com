@@ -1,3 +1,4 @@
+import { supabaseCustomMcpPinStore, customMcpExecutionEnabled } from '../services/integrations/customMcpPins.js';
 import {AuthorityError} from '../security/authority/enforce.js';
 import {EgressDenied} from '../security/egress/egressPolicy.js';
 import {requireTenantContext,requireResourceOwner} from '../security/tenantContext.js';
@@ -64,6 +65,7 @@ import {
   searchComposioActionTools,
   searchComposioTools,
   syncUserCustomMcpToolkit,
+  pinUserCustomMcpTool,
 } from '../services/integrations/composioClient.js';
 
 const router = Router();
@@ -1934,6 +1936,47 @@ router.post(
     }
   },
 );
+
+/** Custom MCP tool pins (RFC-CUSTOM-MCP-EXECUTION, stage 1). Pinning only prepares the exact review; the pin is written after the owner confirms it. */
+router.post('/xroga-connect/custom-mcp/:toolkit/pin', async (req: AuthRequest, res) => {
+  const parsed = z.object({
+    toolkit: z.string().trim().min(2).max(120).regex(/^[A-Za-z0-9_-]+$/),
+    toolSlug: z.string().trim().min(3).max(200).regex(/^[A-Za-z0-9_-]+$/),
+  }).strict().safeParse({ toolkit: req.params.toolkit, toolSlug: req.body?.toolSlug });
+  if (!parsed.success) { res.status(400).json({ ok: false, error: parsed.error.flatten() }); return; }
+  try {
+    const result = await pinUserCustomMcpTool(req.userId!, parsed.data, requireTenantContext(req.tenantContext));
+    res.json({ ok: true, ...result });
+  } catch (error) {
+    sendComposioError(res, error);
+  }
+});
+
+router.get('/xroga-connect/custom-mcp/pins', async (req: AuthRequest, res) => {
+  try {
+    const context = requireTenantContext(req.tenantContext);
+    const pins = await supabaseCustomMcpPinStore(context).listActive(req.userId!);
+    res.set('Cache-Control', 'no-store');
+    res.json({ ok: true, enabled: customMcpExecutionEnabled(), pins: pins.map(pin => ({ toolkit: pin.toolkit, toolSlug: pin.toolSlug, riskClass: pin.riskClass, serverUrl: pin.serverUrl })) });
+  } catch (error) {
+    sendComposioError(res, error);
+  }
+});
+
+router.delete('/xroga-connect/custom-mcp/:toolkit/pin/:toolSlug', async (req: AuthRequest, res) => {
+  const parsed = z.object({
+    toolkit: z.string().trim().min(2).max(120).regex(/^[A-Za-z0-9_-]+$/),
+    toolSlug: z.string().trim().min(3).max(200).regex(/^[A-Za-z0-9_-]+$/),
+  }).safeParse(req.params);
+  if (!parsed.success) { res.status(400).json({ ok: false, error: parsed.error.flatten() }); return; }
+  try {
+    const context = requireTenantContext(req.tenantContext);
+    await supabaseCustomMcpPinStore(context).revoke(req.userId!, parsed.data.toolkit, parsed.data.toolSlug, 'revoked by owner');
+    res.json({ ok: true });
+  } catch (error) {
+    sendComposioError(res, error);
+  }
+});
 
 router.delete(
   '/xroga-connect/custom-mcp/:toolkit',

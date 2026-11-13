@@ -477,6 +477,23 @@ export const xrogaConnect = {
         },
       ),
 
+    pins: () =>
+      apiFetch<{ ok: boolean; enabled: boolean; pins: Array<{ toolkit: string; toolSlug: string; riskClass: 'read'; serverUrl: string }> }>(
+        '/api/integrations/xroga-connect/custom-mcp/pins',
+      ),
+
+    pin: (toolkit: string, toolSlug: string) =>
+      apiFetch<XrogaConnectPending | { ok: boolean; pinned: true }>(
+        `/api/integrations/xroga-connect/custom-mcp/${encodeURIComponent(toolkit)}/pin`,
+        { method: 'POST', body: JSON.stringify({ toolSlug }) },
+      ),
+
+    unpin: (toolkit: string, toolSlug: string) =>
+      apiFetch<{ ok: boolean }>(
+        `/api/integrations/xroga-connect/custom-mcp/${encodeURIComponent(toolkit)}/pin/${encodeURIComponent(toolSlug)}`,
+        { method: 'DELETE' },
+      ),
+
     remove: (toolkit: string) =>
       apiFetch<XrogaConnectPending|{
         ok: boolean;

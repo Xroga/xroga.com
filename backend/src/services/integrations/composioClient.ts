@@ -11,6 +11,7 @@ import { enforceEgress,EgressDenied } from '../../security/egress/egressPolicy.j
 import { persistSecurityDecision } from '../../security/egress/securityDecision.js';
 import {classifyOutboundData} from '../../security/egress/dataClassification.js';
 import {publicHttpsUrl} from '../../security/egress/urlPolicy.js';
+import {verifyCustomMcpPin,supabaseCustomMcpPinStore,customMcpDefinitionDigest,type CustomPinDenial} from './customMcpPins.js';
 import {prepareComposioControl,requireComposioControl,type ComposioControlAdmission,type ComposioControlPending} from './composioControl.js';
 
 const COMPOSIO_API_BASE = 'https://backend.composio.dev/api/v3.1';
@@ -1077,6 +1078,57 @@ export async function syncUserCustomMcpToolkit(
   };
 }
 
+/**
+ * Pins one tool of the owner's own custom MCP server so the browser agent may be offered it behind the per-call approval
+ * (RFC-CUSTOM-MCP-EXECUTION, stage 1: read tools only, flag XROGA_CUSTOM_MCP_EXECUTION). Without an admission this only prepares the exact
+ * review; with one it re-reads the live definition, requires the digest the owner reviewed, and only then writes the pin.
+ */
+export async function pinUserCustomMcpTool(
+  userId: string,
+  input: { toolkit: string; toolSlug: string; definitionDigest?: string },
+  tenantContext?: TenantContext,
+  admission?: ComposioControlAdmission,
+): Promise<ComposioControlPending | { toolkit: string; toolSlug: string; pinned: true; definitionDigest: string }> {
+  const actor = requireComposioActor(userId, tenantContext);
+  input = structuredClone(input);
+  const toolkit = cleanToolkit(input.toolkit), toolSlug = cleanToolSlug(input.toolSlug);
+  if (process.env.XROGA_CUSTOM_MCP_EXECUTION !== 'on') {
+    throw new ComposioClientError('Running custom MCP tools is not enabled.', { status: 403, code: 'CUSTOM_MCP_EXECUTION_OFF' });
+  }
+  if (!toolkit.startsWith(xrogaCustomToolkitPrefix(userId)) || !toolSlug.toLowerCase().startsWith(toolkit)) {
+    throw new ComposioClientError('Custom MCP was not found.', { status: 404, code: 'CUSTOM_MCP_NOT_FOUND' });
+  }
+  const risk = classifyComposioToolRisk(toolSlug);
+  if (risk === 'write' || risk === 'destructive') {
+    throw new ComposioClientError('Only a tool that only reads can be pinned in this release.', { status: 403, code: 'CUSTOM_MCP_RISK_NOT_ALLOWED' });
+  }
+  const live = await fetchCustomMcpDefinition(actor, toolkit, toolSlug);
+  publicHttpsUrl(live.server.appUrl);
+  const digest = customMcpDefinitionDigest(live);
+  const properties = Object.keys(((live.tool.inputSchema as { properties?: Record<string, unknown> } | undefined)?.properties) ?? {}).slice(0, 40);
+  const parameters = {
+    resource: toolkit, connection: composioControlSource(actor),
+    source: { appUrl: live.server.appUrl, authSchemes: live.server.authSchemes, noAuth: live.server.noAuth },
+    input: { toolkit, toolSlug, riskClass: 'read', definitionDigest: digest,
+      definition: { name: live.tool.name ?? null, description: (live.tool.description ?? '').slice(0, 600), argumentNames: properties } },
+  };
+  if (!admission) {
+    return prepareComposioControl(actor, 'PIN_CUSTOM_MCP_TOOL', parameters,
+      `Allow the browser agent to be offered the read tool ${toolSlug} of ${live.server.appUrl}, exactly as defined below. Every call still needs its own approval. If the server changes this definition, the pin is revoked. This does not authorize any change or spending.`);
+  }
+  const approval = requireComposioControl(admission, actor, 'PIN_CUSTOM_MCP_TOOL', parameters);
+  await approval.beforeDispatch();
+  const current = await fetchCustomMcpDefinition(actor, toolkit, toolSlug);
+  if (customMcpDefinitionDigest(current) !== parameters.input.definitionDigest) throw new AuthorityError('COMPOSIO_CUSTOM_MCP_DEFINITION_CHANGED');
+  await approval.check();
+  await supabaseCustomMcpPinStore(actor).upsert({
+    userId, toolkit, toolSlug, serverUrl: current.server.appUrl,
+    authMode: current.server.noAuth ? 'none' : (current.server.authSchemes.join(',').slice(0, 80) || 'unknown'),
+    definitionDigest: parameters.input.definitionDigest, riskClass: 'read', maxCallsPerRun: 5,
+  });
+  return { toolkit, toolSlug, pinned: true, definitionDigest: parameters.input.definitionDigest };
+}
+
 export async function deleteUserCustomMcpToolkit(
   userId: string,
   toolkitSlug: string,
@@ -1115,6 +1167,7 @@ export async function deleteUserCustomMcpToolkit(
   clearComposioCatalogCache();
 
   if(response.slug?.toLowerCase()!==toolkit||response.deleted!==true)throw new AuthorityError('COMPOSIO_CUSTOM_MCP_DELETE_NOT_VERIFIED');
+  if(process.env.XROGA_CUSTOM_MCP_EXECUTION==='on')await supabaseCustomMcpPinStore(actor).revoke(userId,toolkit,undefined,'server deleted').catch(()=>undefined);
 
   return {
     slug: response.slug?.trim().toLowerCase() || toolkit,
@@ -2662,7 +2715,9 @@ async function executeDiscoveredComposioTool(
   let account: string | undefined;
   if(input.mode==='read'){
     const toolkit=allowedTool!.toolkit.trim().toLowerCase(),payload={sessionId,useCase:input.useCase,toolSlug,arguments:input.arguments},digest=preparedActionDigest(payload);
-    if(toolkit.startsWith('custom_')){
+    // An owner-pinned read tool whose live definition still matches its pin goes on to the same per-call approval as any connected app.
+    // Anything else (flag off, not pinned, changed, revoked) is refused exactly as before.
+    if(toolkit.startsWith('custom_')&&!(await pinnedCustomReadTrust(context,userId,toolkit,toolSlug)).ok){
       await enforceEgress({context,actionClass:'READ',destination:COMPOSIO_API_BASE,recipient:'untrusted-custom-mcp',purpose:'custom-mcp-read-admission',payload,declaredClass:'USER_PRIVATE',toolTrust:'UNTRUSTED_CAPABILITY_METADATA',binding:{userId,provider:toolkit,connectedAccountId:'untrusted-custom-mcp',operation:toolSlug,targetDigest:digest,planDigest:digest}},receipt=>persistSecurityDecision(context,receipt));
       throw new EgressDenied('UNTRUSTED_TOOL_REQUIRES_SANDBOX');
     }
@@ -2700,7 +2755,7 @@ async function executeDiscoveredComposioTool(
       authorityPermit:input.authorityPermit,destination:COMPOSIO_API_BASE,
       recipient:accountId,purpose:'confirmed_business_action',
       payload:{sessionId,useCase:input.useCase,toolSlug,arguments:input.arguments},
-      toolTrust:toolkit.startsWith(xrogaCustomToolkitPrefix(userId))?'UNTRUSTED_CAPABILITY_METADATA':'SERVER_REGISTERED',
+      toolTrust:toolkit.startsWith(xrogaCustomToolkitPrefix(userId))?((await pinnedCustomReadTrust(context,userId,toolkit,toolSlug)).ok?'SERVER_REGISTERED':'UNTRUSTED_CAPABILITY_METADATA'):'SERVER_REGISTERED',
     },receipt=>persistSecurityDecision(context,receipt));
     signal?.throwIfAborted();
     await consumeAuthorityPermit(input.authorityPermit, actualBinding);
@@ -2761,6 +2816,39 @@ async function executeDiscoveredComposioTool(
     ...(typeof response.log_id === 'string' && /^[A-Za-z0-9_-]{1,160}$/.test(response.log_id)
       && redactOperationsValue(response.log_id, 'tool_output') === response.log_id ? { log_id: response.log_id } : {}),
   };
+}
+
+/**
+ * Whether a custom MCP read tool may proceed to the per-call approval (RFC-CUSTOM-MCP-EXECUTION, stage 1). Server-side only: the pin is looked
+ * up by the verified tenant and the live definition is read from the provider at call time; nothing from a request can mark a tool trusted.
+ * A tool whose name reads as a change (send, delete, create, update, pay...) is refused even if it was pinned as a read.
+ */
+export async function pinnedCustomReadTrust(context:TenantContext,userId:string,toolkit:string,toolSlug:string):Promise<{ok:true}|{ok:false;reason:CustomPinDenial}>{
+  const actor=requireTenantContext(context);
+  if(!toolkit.startsWith(xrogaCustomToolkitPrefix(userId)))return{ok:false,reason:'CUSTOM_MCP_NOT_PINNED'};
+  const risk=classifyComposioToolRisk(toolSlug);
+  if(risk==='write'||risk==='destructive')return{ok:false,reason:'CUSTOM_MCP_RISK_NOT_ALLOWED'};
+  const result=await verifyCustomMcpPin({context:actor,toolkit,toolSlug,requireRisk:'read',store:supabaseCustomMcpPinStore(actor),fetchDefinition:()=>fetchCustomMcpDefinition(actor,toolkit,toolSlug)});
+  return result.ok?{ok:true}:{ok:false,reason:result.reason};
+}
+
+/** The server's address and auth as registered, and the tool exactly as the server describes it now. */
+export async function fetchCustomMcpDefinition(actor:TenantContext,toolkit:string,toolSlug:string){
+  const [meta,details]=await Promise.all([getComposioCatalogToolkit(toolkit,actor),getComposioToolDetails(toolSlug,actor)]);
+  if(!meta.appUrl)throw new AuthorityError('COMPOSIO_CUSTOM_MCP_SOURCE_UNAVAILABLE');
+  return{server:{appUrl:meta.appUrl,authSchemes:meta.authSchemes.map(String),noAuth:meta.noAuth},
+    tool:{slug:details.slug,name:details.name,description:details.description,inputSchema:details.inputSchema}};
+}
+
+/** The owner's pinned custom read tools that still verify (flag on, definition unchanged). Offered next to the catalogue tools in discovery. */
+export async function listPinnedCustomReadTools(context:TenantContext):Promise<Array<{slug:string;toolkit:string;risk:'read';description?:string;inputSchema?:Record<string,unknown>}>>{
+  const actor=requireTenantContext(context);
+  if(process.env.XROGA_CUSTOM_MCP_EXECUTION!=='on')return[];
+  const pins=(await supabaseCustomMcpPinStore(actor).listActive(actor.userId)).slice(0,6),out:Array<{slug:string;toolkit:string;risk:'read';description?:string;inputSchema?:Record<string,unknown>}>=[];
+  for(const pin of pins){
+    if((await pinnedCustomReadTrust(actor,actor.userId,pin.toolkit,pin.toolSlug)).ok)out.push({slug:pin.toolSlug,toolkit:pin.toolkit,risk:'read'});
+  }
+  return out;
 }
 
 export async function executeComposioReadTool(

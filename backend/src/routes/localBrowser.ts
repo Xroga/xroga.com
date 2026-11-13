@@ -18,7 +18,7 @@ import { isTerminalRunStatus, PostgresBrowserRunStore, type BrowserRunRecord, ty
 import { PostgresLeaseStore } from '../workers/postgresLeaseStore.js';
 import { readBrowserDocument } from './browserDocuments.js';
 import { createLocalBrowserPluginCatalog } from './localBrowserPlugins.js';
-import { executeComposioReadTool, getComposioToolDetails, isComposioConfigured, searchComposioActionTools, searchComposioTools } from '../services/integrations/composioClient.js';
+import { executeComposioReadTool, getComposioToolDetails, listPinnedCustomReadTools, isComposioConfigured, searchComposioActionTools, searchComposioTools } from '../services/integrations/composioClient.js';
 import type { XrogaConnectSearchResult } from '../services/integrations/composioClient.js';
 import { cancelBusinessActionConfirmation, confirmBusinessAction } from '../services/integrations/businessActionConfirmations.js';
 import { preparedActionDigest } from '../security/authority/digest.js';
@@ -314,9 +314,10 @@ const defaultPlugins = {
   prepareAction: prepareBusinessAction,
   createActionConfirmation: createBusinessActionConfirmation,
   details: getComposioToolDetails,
+  pinnedReads: listPinnedCustomReadTools,
 };
 
-type ActionMembers = 'discoverActions' | 'prepareAction' | 'createActionConfirmation' | 'details';
+type ActionMembers = 'discoverActions' | 'prepareAction' | 'createActionConfirmation' | 'details' | 'pinnedReads';
 /** The read members are required; the action members are optional so a test or a release can run without them. */
 type PluginAdapter = Omit<typeof defaultPlugins, ActionMembers> & Partial<Pick<typeof defaultPlugins, ActionMembers>>;
 
@@ -447,7 +448,10 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
     const result = await plugins.discover(actor.userId, { query }, actor);
     await assertPluginRun(req, localRecord(await runs.load(actor.userId, row.runId), actor.userId));
     const connected = new Set(result.toolkits.filter(item => item.connected && !item.noAuth).map(item => item.toolkit.toLowerCase()));
-    const tools = await withFullSchemas(result.tools.filter(item => item.risk === 'read' && connected.has(item.toolkit.toLowerCase())).slice(0, 6), plugins.details, actor);
+    // Owner-pinned custom MCP read tools (flag XROGA_CUSTOM_MCP_EXECUTION) join the catalogue tools; each was re-verified against the live definition.
+    const pinned = plugins.pinnedReads ? await plugins.pinnedReads(actor).catch(() => []) : [];
+    const catalogue = result.tools.filter(item => item.risk === 'read' && connected.has(item.toolkit.toLowerCase()));
+    const tools = await withFullSchemas([...pinned.filter(p => !catalogue.some(item => item.slug === p.slug)), ...catalogue].slice(0, 6), plugins.details, actor);
     discovery.sessionId = result.sessionId;
     discovery.tools = tools.map(({ slug, toolkit, inputSchema }) => ({ slug, toolkit, args: summarizeToolArgs(inputSchema) }));
     await save();
