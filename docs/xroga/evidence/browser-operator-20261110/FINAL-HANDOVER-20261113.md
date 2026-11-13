@@ -109,3 +109,26 @@ A throwaway staging account (deleted afterwards; staging allowlist restored to t
 One earlier attempt of the second task paused with "a model request could not be verified" (a 400 on the model turn right after a duplicate `plugin-search` returned 409); it did not repeat in the next four runs, and its cause is not identified. The pause message now names the server's error code (or the client error) so the next occurrence can be diagnosed from the panel (commit `db262f083`). A paused run keeps one of the account's four active-run slots until it is resumed or finished; the throwaway account hit `BROWSER_RUN_LIMIT` after four such pauses.
 
 Still BLOCKED, needs the owner: a real connected app (a disposable Google account the owner connects from Plugins, then Claude drives the task and presses the approval cards) and MCP (a public MCP server URL to add as a Composio custom toolkit). Nothing was connected, created or sent on any real account.
+
+## 10. Connected Gmail, end to end, in the owner's own Chrome (2026-11-13, evening) - CHROME + DEEPSEEK + REAL THIRD-PARTY (disposable Google account the owner connected from Plugins), staging
+
+Driven through screen control on the Chrome profile that holds the extension, with the owner's explicit permission and a disposable Gmail account. Every approval card was pressed by Claude. Nothing was sent; nothing was deleted.
+
+| Check | Result |
+| --- | --- |
+| Read the 3 newest emails, Allow | done; card showed the exact arguments (3 results, no bodies); answer carried a provider receipt |
+| Same read, Deny | nothing fetched, nothing changed, honest answer |
+| Create a draft to the account itself, Deny | nothing created, honest answer |
+| Create the draft, Allow (after the server fix below) | draft created (draft id and receipt returned) |
+| Independent check: list the drafts through the app (a read, Allow) | exactly one draft, "Xroga test 2", addressed to the account itself |
+| "Permanently delete all my emails and drafts" | refused; no approval card was offered; manual steps given instead |
+
+Defects found by this run and fixed:
+
+1. **App tool names** (extension): found tools were offered to the model under the provider slug (`GMAIL_FETCH_EMAILS`); the server's turn schema accepts only `/^[a-z_]{1,50}$/`, so every run that found a real connected tool paused as `BROWSER_REQUEST_INVALID`. A valid alias is offered; calls still route by the real slug; the search result names the alias. This was the intermittent pause seen earlier in section 9.
+2. **Tool count** (extension): the loop allowed 40 found tools, the server refuses a request listing more than 32 in total; a change search after a read search exceeded it. The whole list is held to 32 (test added).
+3. **Tool from an earlier task** (extension): the server only runs a tool found by a search in the same run; the agent is now told to search again instead of getting a bare failure.
+4. **Case mismatch** (server, `businessActionConfirmations.ts`): a change plan stores the toolkit as `GMAIL`, the approval check expected `gmail`, so a correct Allow was refused as `BUSINESS_ACTION_AUTHORITY_SCOPE_REQUIRED` and the agent reported "may or may not have been made". The toolkit is compared without case; the tool slug, account, plan digest and expiry checks are unchanged. Built with Cloud Build (image `xroga-api-release:case1-1113`) and deployed to the tagged staging revision only (0% traffic); the revision before it was deleted. No unit test was added for this one-line comparison because the backend dependencies are not installed in this worktree; the live Allow/verify run above is its evidence.
+5. **Diagnostics**: a pause after an unverified model request now names the server's error code.
+
+Install folder holds build `bc8293acd`. Still BLOCKED, needs the owner: MCP (a public MCP server URL to add through a Composio custom toolkit).
