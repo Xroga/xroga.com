@@ -1515,7 +1515,18 @@ export class RunManager {
     this.#settling.add(record.conversationId);
     try {
       const { localStatus, ...body } = finish;
-      const value = (await workspaceRequest('finish', { runId, body })) as { status?: string } | undefined;
+      // A Stop pressed while a model turn is still in flight is answered 409 until that turn ends: try again a few times
+      // before parking the run (found in the owner's own Chrome, where the user had to press Resume before sending a follow-up).
+      let value: { status?: string } | undefined;
+      for (let attempt = 0; attempt < 4; attempt++) {
+        try {
+          value = (await workspaceRequest('finish', { runId, body })) as { status?: string } | undefined;
+          if (value && ['completed', 'failed', 'cancelled'].includes(value.status ?? '')) break;
+        } catch (error) {
+          if (attempt === 3) throw error;
+        }
+        await new Promise(resolve => setTimeout(resolve, 1500 * (attempt + 1)));
+      }
       if (!value || !['completed', 'failed', 'cancelled'].includes(value.status ?? ''))
         throw new Error('Run result not settled');
       const status =
