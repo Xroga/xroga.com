@@ -1,6 +1,6 @@
 # Xroga repository truth map
 
-Source SHA: `4d4a2ad64414d5069c0df9d9b665f37b55cb608a`. Branch observed: `fix/composio-explicit-account-and-read-result-20261114`. Audit started: 2026-11-13T19:56:31.574Z.
+Source SHA: `6255ef8634bfbf3c335ef3618e3c793af999ee9a`. Branch observed: `ui/compact-connected-action-card-20261114`. Audit started: 2026-11-13T21:04:21.548Z.
 
 This inventory records static source and call-path evidence. A mounted endpoint is reachable in source; that does not certify live success, tenant safety, approval enforcement, or completion. All implementation surfaces retain an unverified/partial/placeholder state until their own acceptance tests establish behavior. No architecture was replaced and no production operations were performed.
 
