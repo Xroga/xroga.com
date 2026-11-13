@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "78eababf03d399322164d72e3c203303c5ee53b7b340b90ac86a6f5b365788f5",
+  "sourceTreeDigest": "e487f9d499b3f82f288aac92d6145d34068995f9dfedb57f8e9b77517b1830c4",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -2519,7 +2519,7 @@
     {
       "id": "7b6e1f490ce974fc3971",
       "file": "backend/src/services/integrations/composioClient.ts",
-      "line": 1417,
+      "line": 1431,
       "entryPoint": "composioRequest",
       "transport": "fetch",
       "callee": "fetch",
@@ -2544,7 +2544,7 @@
         {
           "path": "backend/src/services/integrations/composioProvenance.security.test.ts",
           "marker": "private connected-app read uses exact existing consent",
-          "sha256": "445b458f198df385ebf35733b0578e22353921e19aaf75c43055847d4d349c73"
+          "sha256": "1593499035681a2a03af17c56bcc02ceb1f2a1ae3dab1b1f552b04574f287192"
         }
       ]
     },
