@@ -2845,6 +2845,8 @@ async function executeDiscoveredComposioTool(
   if (!response || typeof response !== 'object' || Array.isArray(response)
     || (Object.hasOwn(response, 'result_type') && response.result_type !== 'completed')
     || (!response.error && !Object.hasOwn(response, 'data'))) {
+    // Only the shape is logged (the result type and the key names), never any value, so an unexplained refusal can be diagnosed.
+    console.error('[composio] execute not completed:',{toolSlug:toolSlug.slice(0,80),resultType:typeof (response as {result_type?:unknown})?.result_type==='string'?String((response as {result_type?:string}).result_type).slice(0,40):undefined,keys:response&&typeof response==='object'?Object.keys(response).slice(0,12):typeof response});
     throw new ComposioClientError('The provider did not report a completed action. Review its state before preparing another attempt.', {
       status: 409, code: 'COMPOSIO_EXECUTION_NOT_COMPLETED',
     });
