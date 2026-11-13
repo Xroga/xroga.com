@@ -1,9 +1,12 @@
 import { generateSystemPrompt, type LibrarySpec } from '@openuidev/lang-core';
 import catalog from './nativeOpenUiCatalog.json' with { type: 'json' };
 
+const numericPrecisionRule = 'Use quantitative detail when it answers the question. Verify the value, unit, and reference point, baseline, or denominator together. For a short conceptual explanation, omit incidental numbers that are unnecessary to explain the mechanism.';
+
 export const nativeOpenUiPlainPrompt = [
   'Answer the actual request directly in readable Markdown. Do not output an OpenUI program for this prose-only turn.',
   'Use only facts you can support. Qualify uncertain claims and distinguish supplied facts from examples.',
+  numericPrecisionRule,
   'Do not claim to fetch evidence or execute tools. Keep calculations consistent with the supplied numbers and units.',
   'For authorization and billing examples, verify that each code example enforces the same role and state checks stated in the answer.',
 ].join(' ');
@@ -12,6 +15,7 @@ const library = catalog.spec as LibrarySpec;
 const common = ['Col', 'Row', 'Box', 'Grid', 'Card', 'Title', 'Text', 'Caption', 'Badge', 'List', 'ListItem', 'Markdown', 'Code', 'Section', 'Icon', 'Resource', 'Table'];
 const focusedComponents: Record<string, string[]> = {
   graph: ['Diagram', 'Svg', 'Circle', 'Ellipse', 'Rect', 'Line', 'Path', 'Polyline', 'Polygon', 'G', 'SvgText'],
+  table: ['Table'],
   chart: ['Chart', 'Metric', 'Math', 'Quote'],
   calculator: ['Chart', 'Metric', 'Math', 'Controls', 'Slider', 'Input', 'Select', 'Button'],
   metrics: ['Metric', 'Math'],
@@ -44,12 +48,13 @@ function buildNativeOpenUiPrompt(kinds: ReadonlySet<string>, hasSources: boolean
     builtinFunctions: false,
     toolCalls: false,
     additionalRules: [
+      numericPrecisionRule,
       'Start with the answer or recommendation. Use one main Title and meaningful Sections for long answers; prose and lists can be enough. Keep data and its interpretation together. Reserve emphasis for the central result. Avoid duplicate headings, repeating tables, and excessive cards.',
-      'For a long answer, use root = Col([summary, visual, details]) followed by separate assignments for each independent section. Keep each statement short. Use only components and functions listed below. Use strings or ListItem(title, description) inside List, never bare objects. Use Code(code, language) for code in the program. Escape line breaks and quotes inside its string.',
+      'For a long answer, put a single root Col first, followed by the declarations it references. Inline small components. Reference names are case-sensitive. Declare each name used by the root and its descendants exactly once. Never reference root, an example placeholder, or an undeclared name. Use only listed components and functions. Use strings or ListItem(title, description) inside List. Escape line breaks and quotes inside Code strings.',
       ...(full || kinds.has('chart') || kinds.has('calculator') ? ['Keep the supplied values consistent in prose, expressions and chart rows. Label chart units and give a reset for a calculator.'] : []),
       ...(full || kinds.has('graph') || kinds.has('steps') ? [
-        'Use Diagram for a connected workflow. Supply labeled nodes, links, and a readable description.',
-        'For tenant boundaries, derive identity from verified authentication and check current membership and role on tenant-owned data, including any exposed membership tables. For PostgreSQL RLS, put the exact allowed DELETE roles in USING when deletion is role restricted. A membership-only helper cannot implement owner/admin-only deletion. WITH CHECK evaluates new rows for INSERT and UPDATE. Prefer invoker functions. If a security-definer function is necessary, use an empty search path, qualify relations and grant execution narrowly.',
+        'Use Diagram for a connected workflow. Use unique lowercase node IDs, numeric levels 0 to 5, at most three nodes per level, and link endpoints that exactly match two distinct node IDs. Omit unused optional fields. If setting a node tone, use neutral, info, success, purple, or warning. Supply a readable description.',
+        'For tenant boundaries, derive identity from verified authentication and check current membership and role on tenant-owned data, including any exposed membership tables. For PostgreSQL RLS, put the exact allowed DELETE roles in USING when deletion is role restricted. A membership-only helper cannot implement owner/admin-only deletion. WITH CHECK evaluates the proposed row for INSERT and UPDATE. Membership alone does not make tenant_id immutable for a user who belongs to both tenants. Enforce immutability separately with column privileges or a database trigger when needed. Prefer invoker functions. If a security-definer function is necessary, use an empty search path, qualify relations and grant execution narrowly.',
         'For signed webhooks, verify the unmodified payload before processing. Commit event-ID deduplication and the durable state change or job handoff together. Reconcile out-of-order delivery against authoritative Stripe state. Never infer order from event.created or event timestamps. Stripe automatic delivery retries are finite. State a retry duration only when you have evidence for that mode. Label code that shows only signature verification as a partial example.',
       ] : []),
       'Resource may link a recognized product from the registry. Never embed a raw hyperlink, image URL, network request, external action or executable HTML.',
@@ -77,7 +82,7 @@ const withoutSources = buildNativeOpenUiPrompt(new Set(), false, true);
 
 export function workspaceNativeOpenUiPrompt(kinds: readonly string[], hasSources: boolean): string {
   const requested = new Set(kinds);
-  if (![...requested].some(kind => kind === 'graph' || kind === 'chart' || kind === 'calculator')) {
+  if (![...requested].some(kind => Object.hasOwn(focusedComponents, kind))) {
     return hasSources ? nativeOpenUiPrompt : withoutSources;
   }
   return buildNativeOpenUiPrompt(requested, hasSources, false);

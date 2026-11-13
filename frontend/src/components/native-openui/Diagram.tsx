@@ -6,13 +6,14 @@ import { useEffect, useId, useRef, useState } from 'react';
 import { z } from 'zod/v4';
 import { Glyph } from './upstream/components/glyph';
 import { DiagramResourceMark } from './Resources';
+import { DIAGRAM_NODE_TONES, hasRenderableDiagramTopology } from '../../../../backend/src/ai/nativeDiagramTopology';
 
 const diagramNode = z.object({
   id: z.string().regex(/^[a-z][a-z0-9-]{0,31}$/),
   label: z.string().min(1).max(45),
   level: z.number().int().min(0).max(5),
   detail: z.string().max(66).optional(),
-  tone: z.enum(['neutral', 'info', 'success', 'purple', 'warning']).optional(),
+  tone: z.enum(DIAGRAM_NODE_TONES).optional(),
   icon: z.string().max(36).optional(),
 });
 const diagramLink = z.object({
@@ -48,11 +49,10 @@ function AnswerDiagramNode({ data }: NodeProps<AnswerNode>) {
 const nodeTypes = { answer: AnswerDiagramNode };
 
 function layout(props: z.infer<typeof diagramProps>, compact: boolean) {
+  if (!hasRenderableDiagramTopology(props.nodes, props.links)) return null;
   const byId = new Map(props.nodes.map(node => [node.id, node]));
-  if (byId.size !== props.nodes.length || props.links.some(link => link.from === link.to || !byId.has(link.from) || !byId.has(link.to))) return null;
   const levels = [...new Set(props.nodes.map(node => node.level))].sort((a, b) => a - b);
   const groups = levels.map(level => props.nodes.filter(node => node.level === level));
-  if (groups.some(group => group.length > 3)) return null;
 
   const rows = compact ? groups.flatMap(group => group.length === 3 ? [group.slice(0, 2), group.slice(2)] : [group]) : groups;
   // Branching edges can share the same routing lane. Keep all connections and

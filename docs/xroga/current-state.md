@@ -1,22 +1,22 @@
 # Xroga repository truth map
 
-Source SHA: `9478a47598eb1eee851a1073e637c7c18cfb622c`. Branch observed: `codex/openui-notification-compatibility-20261112`. Audit started: 2026-11-11T19:34:51.187Z.
+Source SHA: `f26bf1824b8ec40092f08bb00ba8596f10a0f457`. Branch observed: `codex/workspace-observable-work-history`. Audit started: 2026-11-13T19:56:47.835Z.
 
 This inventory records static source and call-path evidence. A mounted endpoint is reachable in source; that does not certify live success, tenant safety, approval enforcement, or completion. All implementation surfaces retain an unverified/partial/placeholder state until their own acceptance tests establish behavior. No architecture was replaced and no production operations were performed.
 
 ## Counts
 
-- surfaces: 1919
+- surfaces: 1921
 - routeRegistrations: 395
 - routes: 331
 - reachableRoutes: 240
 - queues: 4
 - migrations: 162
 - workflows: 21
-- testSuites: 1104
-- declaredTests: 7445
-- classifiedMarkers: 419
-- reachableMarkers: 353
+- testSuites: 1106
+- declaredTests: 7475
+- classifiedMarkers: 420
+- reachableMarkers: 354
 - absentRequiredPaths: 5
 - duplicateIds: 0
 

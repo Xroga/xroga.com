@@ -291,7 +291,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "d981253fc491c75b4d2b90c6e080509aa541fd04d840276e133e81b39fe3eac6",
+      "sha256": "e3ce3808eba24cd2461066d7b571ae5f96fd108ef3b8aaf807ba04b39b1b3dc8",
       "previousGenericSdkBinding": {
         "sha256": "e5b3b4a3dc538e708fa8c005a8da6584db01b3dd425833373d59decbd2bfcb93",
         "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
@@ -581,7 +581,8 @@
         "scope": "ONLY_ORDINARY_CHAT_POST_SETTLEMENT_PRESENTATION_CONTEXT",
         "method": "Exact source diff and two byte-identical enclosing-function caller comparisons. No change to dispatch, accounting, persistence, authorization or worker execution.",
         "liveAcceptance": false
-      }
+      },
+      "beforeWorkspaceResponseQualitySha256": "d981253fc491c75b4d2b90c6e080509aa541fd04d840276e133e81b39fe3eac6"
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
@@ -654,7 +655,9 @@
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "sha256": "6ca81b0c9234195e6159d1e03735a21ce50d50cf1e8f71b53cb62199bf95cb26",
+      "sha256": "47fab9492ea23277010df4f4babf7d27aa5588606f762b0ace3c2eaa843f1acc",
+      "beforeInlineCalculatorRoutingSha256": "58e3fa0ea9ec46ed2aa0be0c7aa6ca0777c213059c12f3cd6ecf04a6a2ab6e29",
+      "beforePlannerCompletionDiagnosticsSha256": "6ca81b0c9234195e6159d1e03735a21ce50d50cf1e8f71b53cb62199bf95cb26",
       "beforeCurrentMetadataReconciliation": {
         "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
         "sha256": "1cd8184f146f76899fc3070dbb8a59fb847f03231a7ff35041e494fa61349102"
@@ -879,7 +882,7 @@
     },
     {
       "path": "frontend/src/lib/hostedWorkspaceBridge.mjs",
-      "sha256": "875600fbd44bee626eb8d6b6b984f5d4f5b2fca27b494c19d945d135363bff16"
+      "sha256": "562de9c1291a88600f00940fa7235b3d45ceb069194507f4b8e44e447588fbfa"
     },
     {
       "path": "scripts/security/hosted-workspace-staging.mjs",
@@ -887,7 +890,7 @@
     },
     {
       "path": "scripts/security/hosted-workspace-staging.test.mjs",
-      "sha256": "169d7f32d138c374caf6941453e9c026593ca7be002654ee4cf0cefa0835ed2e"
+      "sha256": "6a46d891ea391c0d299f350e5a87f3b964b34b8e67147448ec61c0a039728042"
     }
   ],
   "previousCallerCounts": {

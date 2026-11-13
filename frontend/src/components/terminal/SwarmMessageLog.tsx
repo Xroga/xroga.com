@@ -14,7 +14,7 @@ import { appendCitationReferences } from '@/lib/xrogaCitations';
 import { ConversationTurnV2 } from '@/components/response-experience-v2/ConversationTurnV2';
 import { responseTextV2 } from '@/components/response-experience-v2/exportText';
 import { conversationActivityV2 } from '@/components/response-experience-v2/conversation';
-import { coalesceActivity } from '@/lib/terminal/activityPresentation';
+import { coalesceActivity, mergeActivitySnapshots } from '@/lib/terminal/activityPresentation';
 import conversationStyles from '@/components/response-experience-v2/conversation-v2.module.css';
 import { useResponseExperienceEnabled, ResponseExperienceGate } from '@/components/response-experience-v2/ResponseExperienceGate';
 import { ChatErrorBoundary } from './ChatErrorBoundary';
@@ -28,11 +28,7 @@ const XrogaRichResultsView = lazy(() => import('./XrogaRichResultsView').then((m
 import { isCodeBuildProcessing } from '@/lib/codeBuildProcessing';
 import { promptWantsLiveResearch } from '@/lib/researchWait';
 import { shareableDocumentText } from '@/lib/xrogaShareableOutput';
-import {
-  isQuickConversationPrompt,
-  pendingExecutionIntent,
-  pendingExecutionLabel,
-} from '@/lib/terminal/executionIntent';
+import { isQuickConversationPrompt } from '@/lib/terminal/executionIntent';
 import { UserPromptBubble } from '@/components/settings/PrivacySettingsPanel';
 import { generateMessageSuggestions } from '@/lib/messageHelpers';
 import { IncognitoProfileBox } from '@/components/incognito/IncognitoProfileBox';
@@ -337,12 +333,6 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
   const lightResearchWait =
     loading && !heavyBuildActive && promptWantsLiveResearch(lastUserText);
   const showResearchPages = lightResearchWait || researchTodoActive;
-  const pendingIntent = pendingExecutionIntent({
-    prompt: lastUserText,
-    codeBuildActive,
-    researchActive: showResearchPages,
-  });
-  const pendingActivityLabel = pendingExecutionLabel(pendingIntent);
 
   function handleSuggestion(text: string) {
     setPrompt(text);
@@ -612,7 +602,13 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                         </ResponseExperienceGate>
             );
             const currentTurn = loading && msg.id === (buildPanelMessageId ?? animatingId);
-            const operationRows = conversationActivityV2(currentTurn ? coalesceActivity(terminalRun.events) : msg.executionActivity);
+            const operationRows = conversationActivityV2(currentTurn
+              ? mergeActivitySnapshots(msg.executionActivity, coalesceActivity(terminalRun.events))
+              : msg.executionActivity);
+            const showPending = currentTurn && (!suppressGreetingActivity || operationRows.length > 0);
+            const work = msg.role === 'assistant' && (showPending || operationRows.length > 0) ? (
+              <TerminalLiveActivity activity={operationRows} run={currentTurn ? terminalRun : undefined} pending={showPending} />
+            ) : undefined;
 
             return (
               <div
@@ -635,7 +631,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                     prompt={promptByAssistantId.get(msg.id)}
                     streaming={msg.id === animatingId && loading}
                     controls={msg.buildStopped || msg.capacityUnavailable || msg.updateTrail || (currentTurn && openInteractionsForTurn(terminalRun.events, msg.content).length) ? <>{msg.buildStopped || msg.capacityUnavailable || msg.updateTrail ? taskControls : null}{currentTurn ? <RequiredInteractionCards interactions={openInteractionsForTurn(terminalRun.events, msg.content)} /> : null}</> : undefined}
-                    activity={operationRows.length ? <TerminalLiveActivity activity={operationRows} run={currentTurn ? terminalRun : undefined} /> : undefined}>
+                    activity={work}>
                     {msg.role === 'assistant' ? answer : null}
                   </ConversationTurnV2>
                 ) : <>
@@ -671,24 +667,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                   ) : (
                     <>
                       <div className="py-1 text-left space-y-2">
-                        {/* The pending shell is transient request-lifecycle feedback only.
-                            It is never persisted as execution evidence. Real canonical
-                            activity replaces it as soon as the backend emits a step. */}
-                        {msg.executionActivity?.length || (!loading && msg.thinkingSteps?.length) ? (
-                          <TerminalLiveActivity
-                            activity={msg.executionActivity}
-                            thinkingSteps={msg.thinkingSteps}
-                          />
-                        ) : loading &&
-                          msg.id === (buildPanelMessageId ?? animatingId) &&
-                          !suppressGreetingActivity ? (
-                          <TerminalLiveActivity
-                            run={terminalRun}
-                            pending
-                            pendingIntent={pendingIntent}
-                            pendingLabel={pendingActivityLabel}
-                          />
-                        ) : null}
+                        {work}
                         {taskControls}
                         {answer}
 

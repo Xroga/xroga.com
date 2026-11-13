@@ -1,11 +1,13 @@
-import { Fragment, type ReactNode } from "react";
+import React, { Fragment, type ReactNode } from "react";
 import { cx, isLongAnswerTable, webUrl } from "./style";
 
 // A small Markdown renderer that builds React elements and never injects HTML.
 // Inline: **bold**, *italic*, ~~strike~~, `code`, [text](https://...).
 // Blocks: paragraphs, # headings, - and 1. lists, > quotes, ``` code, ---, | tables |.
 
-const INLINE = /(`[^`\n]+`)|(\*\*[^*\n]+?\*\*|__[^_\n]+?__)|(~~[^~\n]+?~~)|(\*[^*\s][^*\n]*?\*|_[^_\s][^_\n]*?_)|(\[[^\]\n]+\]\([^)\s]+\))|(\[(\d{1,2})\])/;
+// An underscore inside an identifier is literal, even when another identifier
+// later in the same paragraph also contains an underscore.
+const INLINE = /(`[^`\n]+`)|(\*\*[^*\n]+?\*\*|(?<![\p{L}\p{N}_])__[^_\n]+?__(?![\p{L}\p{N}_]))|(~~[^~\n]+?~~)|(\*[^*\s][^*\n]*?\*|(?<![\p{L}\p{N}_])_[^_\s][^_\n]*?_(?![\p{L}\p{N}_]))|(\[[^\]\n]+\]\([^)\s]+\))|(\[(\d{1,2})\])/u;
 type RenderCitation = (number: number) => ReactNode;
 
 export function inline(text: string, key = "i", renderCitation?: RenderCitation): ReactNode {

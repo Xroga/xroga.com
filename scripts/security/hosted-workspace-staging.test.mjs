@@ -138,6 +138,34 @@ test('Google IAM and original user token stay separate and response drops platfo
   assert.equal(response.headers.get('cache-control'), 'private, no-store');
 });
 
+test('the staging bridge forwards an empty Share revoke and rejects nonempty revoke bodies', async () => {
+  const manifest = makeManifest();
+  const path = '/api/message-shares/isolated-share-test-token';
+  const token = jwt();
+  const forwarded = [];
+  const fetcher = async (url, options) => {
+    if (url.hostname === 'metadata.google.internal') return new Response('google.id.token', { headers: { 'Metadata-Flavor': 'Google' } });
+    if (url.pathname === '/health') return Response.json({ service: 'xroga-api', release: source });
+    forwarded.push({ url, options });
+    return Response.json({ success: true });
+  };
+  const revoke = (body, headers = {}) => new Request(manifest.web.origin + path, {
+    method: 'DELETE', duplex: 'half', body, headers: { Authorization: token, ...headers },
+  });
+  const emptyStream = new ReadableStream({ start(controller) { controller.close(); } });
+  const accepted = await forwardHostedWorkspace(revoke(emptyStream), path, manifest, fetcher);
+  assert.equal(accepted.status, 200);
+  assert.deepEqual(await accepted.json(), { success: true });
+  assert.equal(forwarded[0].url.pathname, path);
+  assert.equal(forwarded[0].options.method, 'DELETE');
+  assert.equal(forwarded[0].options.headers.get('authorization'), token);
+  assert.equal(forwarded[0].options.body, undefined);
+  for (const input of [revoke('{}'), revoke('{}', { 'Content-Type': 'application/json' })]) {
+    assert.equal((await forwardHostedWorkspace(input, path, manifest, fetcher)).status, 415);
+  }
+  assert.equal(forwarded.length, 1);
+});
+
 test('wrong API source fails before forwarding and upstream redirects never escape', async () => {
   const manifest = makeManifest();
   for (const release of [source, 'wrong']) {

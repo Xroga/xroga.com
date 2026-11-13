@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "349f09a6a4b36b03c85d09e7e4f41dfaf456e79f3e897109a8458e5893d17f3d",
+  "sourceTreeDigest": "4ece9f6fc8661ff34a3d5d007e54aa37b027efeaf4cd2b8c94096402b2ec67c7",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -2519,7 +2519,7 @@
     {
       "id": "7b6e1f490ce974fc3971",
       "file": "backend/src/services/integrations/composioClient.ts",
-      "line": 1417,
+      "line": 1431,
       "entryPoint": "composioRequest",
       "transport": "fetch",
       "callee": "fetch",
@@ -2544,7 +2544,12 @@
         {
           "path": "backend/src/services/integrations/composioProvenance.security.test.ts",
           "marker": "private connected-app read uses exact existing consent",
-          "sha256": "445b458f198df385ebf35733b0578e22353921e19aaf75c43055847d4d349c73"
+          "sha256": "1593499035681a2a03af17c56bcc02ceb1f2a1ae3dab1b1f552b04574f287192"
+        },
+        {
+          "path": "backend/src/services/integrations/composioAccountSelection.security.test.ts",
+          "marker": "confirmed action fails closed if disabled multi-account session has two Gmail accounts",
+          "sha256": "a1ce8db93b45a1e1adcd6a0af1c259291c3d4990ae1dcfa032ed2894f9d4ac20"
         }
       ]
     },
@@ -4851,14 +4856,14 @@
         {
           "path": "scripts/security/hosted-workspace-staging.test.mjs",
           "marker": "Google IAM and original user token stay separate",
-          "sha256": "169d7f32d138c374caf6941453e9c026593ca7be002654ee4cf0cefa0835ed2e"
+          "sha256": "6a46d891ea391c0d299f350e5a87f3b964b34b8e67147448ec61c0a039728042"
         }
       ]
     },
     {
       "id": "49a49569b55d144f7a6d",
       "file": "frontend/src/lib/hostedWorkspaceBridge.mjs",
-      "line": 134,
+      "line": 137,
       "entryPoint": "forwardHostedWorkspace",
       "transport": "fetch",
       "callee": "fetch",
@@ -4873,14 +4878,14 @@
         {
           "path": "scripts/security/hosted-workspace-staging.test.mjs",
           "marker": "Google IAM and original user token stay separate",
-          "sha256": "169d7f32d138c374caf6941453e9c026593ca7be002654ee4cf0cefa0835ed2e"
+          "sha256": "6a46d891ea391c0d299f350e5a87f3b964b34b8e67147448ec61c0a039728042"
         }
       ]
     },
     {
       "id": "a609adccda5421076aa0",
       "file": "frontend/src/lib/hostedWorkspaceBridge.mjs",
-      "line": 149,
+      "line": 152,
       "entryPoint": "forwardHostedWorkspace",
       "transport": "fetch",
       "callee": "fetch",
@@ -4895,14 +4900,14 @@
         {
           "path": "scripts/security/hosted-workspace-staging.test.mjs",
           "marker": "hosted confirmation admits only the exact owner-visible DeepSeek research action",
-          "sha256": "169d7f32d138c374caf6941453e9c026593ca7be002654ee4cf0cefa0835ed2e"
+          "sha256": "6a46d891ea391c0d299f350e5a87f3b964b34b8e67147448ec61c0a039728042"
         }
       ]
     },
     {
       "id": "e88275f663bb87ce2556",
       "file": "frontend/src/lib/hostedWorkspaceBridge.mjs",
-      "line": 164,
+      "line": 167,
       "entryPoint": "forwardHostedWorkspace",
       "transport": "fetch",
       "callee": "fetch",
@@ -4917,7 +4922,12 @@
         {
           "path": "scripts/security/hosted-workspace-staging.test.mjs",
           "marker": "Google IAM and original user token stay separate",
-          "sha256": "169d7f32d138c374caf6941453e9c026593ca7be002654ee4cf0cefa0835ed2e"
+          "sha256": "6a46d891ea391c0d299f350e5a87f3b964b34b8e67147448ec61c0a039728042"
+        },
+        {
+          "path": "scripts/security/hosted-workspace-staging.test.mjs",
+          "marker": "the staging bridge forwards an empty Share revoke and rejects nonempty revoke bodies",
+          "sha256": "6a46d891ea391c0d299f350e5a87f3b964b34b8e67147448ec61c0a039728042"
         }
       ]
     },

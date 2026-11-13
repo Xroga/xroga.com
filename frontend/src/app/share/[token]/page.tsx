@@ -1,4 +1,5 @@
-import { NATIVE_SHARE_PREFIX, readNativeOpenUiShare } from '../../../../../backend/src/ai/nativeOpenUiShare';
+import { NATIVE_SHARE_PREFIX, readNativeOpenUiShare, readNativeOpenUiShareText } from '../../../../../backend/src/ai/nativeOpenUiShare';
+import { splitNativeOpenUiAnswer } from '../../../../../backend/src/ai/nativeOpenUi';
 import { NativeWorkspaceAnswer } from '@/components/native-openui/NativeWorkspaceAnswer';
 import type { Metadata } from 'next';
 import Image from 'next/image';
@@ -71,10 +72,10 @@ const loadShare = cache(async (token: string): Promise<ShareResult> => {
     if (snapshot.startsWith(NATIVE_SHARE_PREFIX)) {
       const native = readNativeOpenUiShare(snapshot);
       const wrapped = !share.richResponse && share.response.startsWith(NATIVE_SHARE_PREFIX);
-      if (wrapped && !native) return { status: 'missing' };
-      const matchingText = wrapped || native?.text === share.response;
+      const responseText = wrapped ? readNativeOpenUiShareText(snapshot) : splitNativeOpenUiAnswer(share.response).text;
+      const matchingText = wrapped || native?.text === responseText;
       return { status: 'ok', share: { ...share,
-        response: wrapped && native ? native.text : share.response,
+        response: responseText || 'The shared answer has no readable text.',
         richResponse: native && matchingText ? snapshot : undefined,
         richUnavailable: !native || !matchingText,
       } };

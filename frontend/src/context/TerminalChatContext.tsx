@@ -11,7 +11,7 @@ import {
   type ReactNode,
 } from 'react';
 import { EMPTY_RUN_STATE, type TerminalEvent, type TerminalRunState } from '@/lib/terminal/terminalEvent';
-import { coalesceActivity, type XrogaActivityPresentation } from '@/lib/terminal/activityPresentation';
+import { coalesceActivity, mergeActivitySnapshots, type XrogaActivityPresentation } from '@/lib/terminal/activityPresentation';
 import { adaptTerminalEvent } from '@/lib/terminal/terminalEventAdapter';
 import { terminalRunReducer } from '@/lib/terminal/terminalRunReducer';
 import { usePathname } from 'next/navigation';
@@ -86,7 +86,7 @@ import {
 import {
   addPendingBuildJob,
   attachPendingBuildRun,
-  loadPendingBuildJobs,
+  loadPendingBuildJobsForOwner,
   reconcilePendingBuildTranscript,
   removePendingBuildJob,
   updatePendingBuildSequence,
@@ -668,9 +668,17 @@ export function TerminalChatProvider({
   const [terminalRun, dispatchTerminalRun] = useReducer(terminalRunReducer, EMPTY_RUN_STATE);
   const terminalSeqRef = useRef(0);
   const terminalEventsRef = useRef<TerminalEvent[]>([]);
+  const terminalEventIds = useRef(new Set<string>());
 
   const pushTerminalEvent = useCallback((event: string, payload: Record<string, unknown>) => {
-    const rows = adaptTerminalEvent(event, payload, { fromSeq: terminalSeqRef.current });
+    const rows = adaptTerminalEvent(event, payload, { fromSeq: terminalSeqRef.current }).filter(row => {
+      const canonical = row.canonical;
+      if (!canonical) return true;
+      const id = `${canonical.runId ?? ''}:${canonical.eventId}`;
+      if (terminalEventIds.current.has(id)) return false;
+      terminalEventIds.current.add(id);
+      return true;
+    });
     if (rows.length === 0) return;
     terminalEventsRef.current = [...terminalEventsRef.current, ...rows];
     terminalSeqRef.current = rows[rows.length - 1].seq;
@@ -680,6 +688,7 @@ export function TerminalChatProvider({
   const startTerminalRun = useCallback(() => {
     terminalSeqRef.current = 0;
     terminalEventsRef.current = [];
+    terminalEventIds.current.clear();
     dispatchTerminalRun({ type: 'run-started' });
   }, []);
   const [githubGateOpen, setGithubGateOpen] = useState(false);
@@ -807,6 +816,17 @@ const stopRequestedRunIdRef =
 
   queueRef.current = promptQueue;
 
+  const activityOwner = useRef(workspaceIdentity.userId);
+  useEffect(() => {
+    if (activityOwner.current === workspaceIdentity.userId) return;
+    activityOwner.current = workspaceIdentity.userId;
+    activeRunIdRef.current = null;
+    terminalSeqRef.current = 0;
+    terminalEventsRef.current = [];
+    terminalEventIds.current.clear();
+    dispatchTerminalRun({ type: 'reset' });
+  }, [workspaceIdentity.userId]);
+
   useBackgroundBuildJobs(
     ({ assistantMessageId, userMessageId, userPrompt, startedAt, output, runStatus }) => {
       setMessages((messages) =>
@@ -915,15 +935,26 @@ const stopRequestedRunIdRef =
         ),
       );
     },
-    ({ assistantMessageId, userMessageId, userPrompt, startedAt, runId, status, events }) => {
-      setMessages((messages) =>
-        reconcilePendingBuildTranscript(messages, {
+    ({ assistantMessageId, userMessageId, userPrompt, startedAt, runId, status, events, replayedFromStart }) => {
+      const recoveredRows = events.flatMap(event => adaptTerminalEvent('progress', {
+        ...event.data, sequence: event.sequence, runId,
+      }, { fromSeq: event.sequence }));
+      setMessages((messages) => {
+        const transcript = reconcilePendingBuildTranscript(messages, {
           assistantMessageId,
           userMessageId,
           userPrompt,
           startedAt,
-        }),
-      );
+        }) as ChatMessage[];
+        if (!recoveredRows.length) return transcript;
+        return transcript.map(message => message.id === assistantMessageId ? {
+          ...message,
+          executionActivity: replayedFromStart
+            ? mergeActivitySnapshots(message.executionActivity, coalesceActivity(recoveredRows))
+            : coalesceActivity(recoveredRows, message.executionActivity).slice(-80),
+        } : message);
+      });
+      if (activeRunIdRef.current && activeRunIdRef.current !== runId) return;
       activeRunIdRef.current = runId;
       if (status === 'running') {
         setHeavyLoading(true);
@@ -936,7 +967,7 @@ const stopRequestedRunIdRef =
         setPipelineMessage('Restored the active build from its persisted run.');
       }
       for (const event of events) {
-        pushTerminalEvent('progress', event.data);
+        pushTerminalEvent('progress', { ...event.data, sequence: event.sequence, runId });
         if (event.data.needsGitHub === true) setGithubGateOpen(true);
         if (event.data.needsVercel === true) setVercelGateOpen(true);
         if (event.data.needsRepoPick === true) {
@@ -955,7 +986,7 @@ const stopRequestedRunIdRef =
         }
       }
     },
-    !isGuest,
+    isGuest || incognito ? null : workspaceIdentity.userId,
   );
 
   // NotificationExperience owns polling and alerts; this hook previously marked
@@ -966,7 +997,7 @@ const stopRequestedRunIdRef =
   // see an empty terminal or a dead Stop button during that first request after reload.
   useEffect(() => {
     if (incognito || isGuest) return;
-    const pending = loadPendingBuildJobs().find((job) => Boolean(job.runId));
+    const pending = loadPendingBuildJobsForOwner(workspaceIdentity.userId).find((job) => Boolean(job.runId));
     if (!pending?.runId) return;
     activeRunIdRef.current = pending.runId;
     setMessages((current) => reconcilePendingBuildTranscript(current, pending));
@@ -978,7 +1009,7 @@ const stopRequestedRunIdRef =
     setSwarmRunning(true);
     setSwarmStatusLabel('Reconnecting');
     setPipelineMessage('Restoring your active build…');
-  }, [incognito, isGuest, setSwarmRunning]);
+  }, [incognito, isGuest, setSwarmRunning, workspaceIdentity.userId]);
 
   useEffect(() => {
     if (!heavyBuildActive) return;
@@ -1671,7 +1702,7 @@ const stopRequestedRunIdRef =
   }
   const runId =
     activeRunIdRef.current ??
-    loadPendingBuildJobs().find(
+    loadPendingBuildJobsForOwner(workspaceIdentity.userId).find(
       (job) =>
         Boolean(
           job.runId,
@@ -1820,6 +1851,7 @@ const stopRequestedRunIdRef =
     );
 }, [
   setSwarmRunning,
+  workspaceIdentity.userId,
 ]);
 
   const retryStoppedBuild =
@@ -2673,6 +2705,7 @@ const stopRequestedRunIdRef =
         lastRealProgressAtRef.current = Date.now();
         stallAbortRef.current = false;
         addPendingBuildJob({
+          ownerId: workspaceIdentity.userId ?? undefined,
           assistantMessageId: assistantId,
           userMessageId: userMessageId,
           userPrompt: displayPrompt,
@@ -3047,6 +3080,11 @@ if (
           if (!bufferedDelta) return;
           const chunk = bufferedDelta;
           bufferedDelta = '';
+          if (activityOwner.current !== workspaceIdentity.userId) return;
+          if (chunk.trim() && terminalEventsRef.current.at(-1)?.kind !== 'output') {
+            // The text lives in the answer buffer. Activity only needs to know that text arrived.
+            pushTerminalEvent('delta', { delta: 'Response text received' });
+          }
           setMessages((current) =>
             current.map((message) =>
               message.id === assistantId
@@ -3135,6 +3173,7 @@ githubTargetRepo:
             ...(priorSite ? { priorSite } : {}),
           },
           onStart: (runId) => {
+            if (activityOwner.current !== workspaceIdentity.userId) return;
             // Fresh-product intent is single-use, but keep it available until the
             // backend has accepted the run so a preflight error can be retried safely.
             if (freshProductIntent) consumeFreshTerminalIntent();
@@ -3146,6 +3185,7 @@ githubTargetRepo:
             setSwarmStatusLabel('Reconnecting');
           },
           onProgress: (event) => {
+            if (activityOwner.current !== workspaceIdentity.userId) return;
             if (typeof event.sequence === 'number') {
               updatePendingBuildSequence(assistantId, event.sequence);
             }
@@ -3157,7 +3197,7 @@ githubTargetRepo:
               );
             // Fed before the keepalive bail-out below: the adapter drops keepalive
             // noise itself, but still surfaces a permission gate attached to one.
-            pushTerminalEvent('progress', swarmEv as unknown as Record<string, unknown>);
+            pushTerminalEvent('progress', { ...swarmEv, runId: activeRunIdRef.current ?? undefined });
             // Silent keepalives: refresh todos only — never fake pipeline activity
             if (swarmEv.keepalive) {
               if (swarmEv.swarmTodos?.length) {
@@ -3342,7 +3382,7 @@ githubTargetRepo:
             if (ev.dag && !useCompactPipeline) setDag(ev.dag);
           },
           onDelta: (delta) => {
-            if (!delta) return;
+            if (!delta || activityOwner.current !== workspaceIdentity.userId) return;
             // Only suppress stream text during intentional product builds (landing card path).
             // Broader codeBuildActive was swallowing chat/error replies → blank bubbles.
             if (startingHeavyBuild) return;
@@ -3413,6 +3453,7 @@ githubTargetRepo:
             });
           },
           onComplete: (complete) => {
+            if (activityOwner.current !== workspaceIdentity.userId) return;
             pushTerminalEvent('complete', complete as unknown as Record<string, unknown>);
             // End "Building…" as soon as the swarm finishes — don't wait for finally /
             // archive work. Waiting time after this is not model spend.
@@ -4322,7 +4363,7 @@ active.applyBuild({
 
             executionActivity: (() => {
               const snapshot = coalesceActivity(terminalEventsRef.current);
-              return snapshot.length ? snapshot : message.executionActivity;
+              return snapshot.length ? mergeActivitySnapshots(message.executionActivity, snapshot) : message.executionActivity;
             })(),
           };
         });
@@ -4549,9 +4590,12 @@ active.applyBuild({
         // If the stream ended without a terminal event, the reducer resolves the run
         // to 'interrupted'. A run left marked active would spin forever with nothing
         // behind it — the exact failure the old fixed checklist had.
-        dispatchTerminalRun({ type: 'stream-closed' });
+        if (activityOwner.current === workspaceIdentity.userId && sessionIdRef.current === originatingSessionId) {
+          dispatchTerminalRun({ type: 'stream-closed' });
+        }
         const turn = lastTurnRef.current;
-        if (turn && !interruptRef.current) {
+        if (turn?.assistantId === assistantId && activityOwner.current === workspaceIdentity.userId &&
+          sessionIdRef.current === originatingSessionId && !interruptRef.current) {
           const thoughtMs = Date.now() - thinkingStartedAtRef.current;
           const steps = [...thinkingStepsRef.current];
           const executionActivity = coalesceActivity(terminalEventsRef.current);
@@ -4563,7 +4607,7 @@ active.applyBuild({
                 content: msg.content,
                 thinkingSteps: steps.length ? steps : msg.thinkingSteps,
                 thoughtMs: thoughtMs > 0 ? thoughtMs : msg.thoughtMs,
-                executionActivity: executionActivity.length ? executionActivity : msg.executionActivity,
+                executionActivity: executionActivity.length ? mergeActivitySnapshots(msg.executionActivity, executionActivity) : msg.executionActivity,
               };
             })
           );

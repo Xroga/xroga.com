@@ -1,12 +1,16 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { NATIVE_UI_MARKER, PARTIAL_NATIVE_PRESENTATION_NOTE, splitNativeOpenUiAnswer, validateNativeOpenUi, validateNativeWorkspaceProgram } from './nativeOpenUi.js';
-import { nativeOpenUiPrompt, workspaceNativeOpenUiPrompt } from './nativeOpenUiPrompt.js';
+import { NATIVE_UI_MARKER, PARTIAL_NATIVE_PRESENTATION_NOTE, missingNativeFormats, splitNativeOpenUiAnswer, validateNativeOpenUi, validateNativeWorkspaceProgram, type NativeUiDiagnostic } from './nativeOpenUi.js';
+import { nativeOpenUiPlainPrompt, nativeOpenUiPrompt, workspaceNativeOpenUiPrompt } from './nativeOpenUiPrompt.js';
 import { buildNativeOpenUiShare, readNativeOpenUiShare } from './nativeOpenUiShare.js';
 import { readNativeOpenUiRun } from './nativeOpenUiRun.js';
 import { completeNativeWorkspaceAnswer, usesNativeWorkspacePresentation } from './nativeOpenUiWorkspace.js';
+import { requiredNativeFormats } from './answerCoverage.js';
 
 test('the model gets instructions from the native registry and may answer in text', () => {
+  for (const prompt of [nativeOpenUiPlainPrompt, nativeOpenUiPrompt]) {
+    assert.match(prompt, /Verify the value, unit, and reference point, baseline, or denominator together/);
+  }
   for (const name of ['Col(', 'Chart(', 'Slider(', 'Svg(', 'Diagram(', 'Section(', 'Table(', 'Payment(', 'Source(']) assert.ok(nativeOpenUiPrompt.includes(name), name);
   assert.deepEqual(splitNativeOpenUiAnswer('Paris.'), { text: 'Paris.', program: '' });
   assert.deepEqual(splitNativeOpenUiAnswer('Paris.\n<<<XROGA_OP', true), { text: 'Paris.', program: '' });
@@ -80,6 +84,129 @@ test('the observed bare timeline object shape repairs without discarding the res
   assert.match(answer.responseSource.text, /ListItem\("Deliver", "", "2", \[Text\("Confirm receipt\."\)\]\)/);
   assert.match(answer.response, /Save the job\.[\s\S]*Confirm receipt\.[\s\S]*run\(\)/);
   assert.deepEqual(validateNativeOpenUi(answer.responseSource.text, undefined, answer.response), { ok: true });
+});
+
+test('Workspace repairs diagram layout literals and keeps the complete saved presentation', () => {
+  const program = [
+    'root = Col([flow, Table(["Component"], [["API"]])])',
+    'flow = Diagram("Request path", nodes, [{from:"web",to:"api",label:null}], "The web client calls the API.")',
+    'nodes = [{id:"web",label:"Web",level:"0",detail:null},{id:"api",label:"API",level:"1",tone:null,icon:null}]',
+  ].join('\n');
+  const diagnostics: NativeUiDiagnostic[] = [];
+  assert.deepEqual(validateNativeWorkspaceProgram(program, undefined, '', event => diagnostics.push(event)), { ok: false, reason: 'schema' });
+  assert.ok(diagnostics[0]?.schema?.some(error => error.diagramField === '/nodes/*/level'));
+  const answer = completeNativeWorkspaceAnswer('The web client calls the API.' + NATIVE_UI_MARKER + program,
+    'stop', undefined, undefined, undefined, ['graph', 'table']);
+  assert.deepEqual(answer.completion, { status: 'complete' });
+  assert.match(answer.responseSource.text, /Diagram\(/);
+  assert.deepEqual(validateNativeWorkspaceProgram(answer.responseSource.text, undefined, answer.response), { ok: true });
+  assert.deepEqual(missingNativeFormats(answer.responseSource.text, ['graph', 'table']), []);
+  const share = readNativeOpenUiShare(buildNativeOpenUiShare(answer.response, answer.responseSource.text)!);
+  assert.equal(share?.program, answer.responseSource.text);
+});
+
+test('an unsupported diagram color does not remove verified nodes, edges, or their labels', () => {
+  const program = [
+    'root = Col([flow, Table(["Component"], [["API"]])])',
+    'flow = Diagram("Request path", nodes, [{from:"web",to:"api",label:"HTTPS"}], "The web client calls the API.")',
+    'nodes = [{id:"web",label:"Web",level:0,tone:"blue",detail:"Next.js"},{id:"api",label:"API",level:1,tone:"purple"}]',
+  ].join('\n');
+  const diagnostics: Array<NativeUiDiagnostic | { stage: 'assembly' }> = [];
+  const answer = completeNativeWorkspaceAnswer('The web client calls the API over HTTPS.' + NATIVE_UI_MARKER + program,
+    'stop', undefined, undefined, event => diagnostics.push(event), ['graph', 'table']);
+  assert.ok(diagnostics.some(event => 'schema' in event && event.schema?.some(error => error.diagramField === '/nodes/*/tone')));
+  assert.deepEqual(answer.completion, { status: 'complete' });
+  const renderedDiagram = answer.responseSource.text.split('\n').find(line => line.startsWith('flow = Diagram(')) ?? '';
+  assert.match(renderedDiagram, /"tone":\s*"purple"/);
+  assert.doesNotMatch(renderedDiagram, /"tone":\s*"blue"/);
+  assert.match(renderedDiagram, /"detail":\s*"Next\.js"/);
+  assert.match(renderedDiagram, /"from":\s*"web",\s*"to":\s*"api",\s*"label":\s*"HTTPS"/);
+  assert.deepEqual(missingNativeFormats(answer.responseSource.text, ['graph', 'table']), []);
+  const share = readNativeOpenUiShare(buildNativeOpenUiShare(answer.response, answer.responseSource.text)!);
+  assert.equal(share?.program, answer.responseSource.text);
+});
+
+test('unrenderable diagram relationships cannot satisfy graph coverage', () => {
+  const nodes = [{ id: 'web', label: 'Web', level: 0 }, { id: 'api', label: 'API', level: 1 }];
+  const links = [{ from: 'web', to: 'api' }];
+  for (const [graphNodes, graphLinks] of [
+    [nodes, [{ from: 'web', to: 'missing' }]],
+    [nodes, [{ from: 'web', to: 'web' }]],
+    [[nodes[0], nodes[0]], links],
+    [[...nodes, { id: 'worker', label: 'Worker', level: 0 }, { id: 'auth', label: 'Auth', level: 0 }, { id: 'db', label: 'Database', level: 0 }], links],
+    [[{ ...nodes[0], level: 'upstream' }, nodes[1]], links],
+  ]) {
+    const program = 'root = Col([Diagram("Request path", ' + JSON.stringify(graphNodes) + ', '
+      + JSON.stringify(graphLinks) + ', "The web client calls the API."), Table(["Component"], [["API"]])])';
+    assert.deepEqual(missingNativeFormats(program, ['graph']), ['graph']);
+    const answer = completeNativeWorkspaceAnswer('The web client calls the API.' + NATIVE_UI_MARKER + program,
+      'stop', undefined, undefined, undefined, ['graph', 'table']);
+    assert.deepEqual(answer.completion, { status: 'partial', reason: 'presentation_contract' });
+    assert.doesNotMatch(answer.responseSource.text, /Diagram\(/);
+    assert.match(answer.responseSource.text, /Table\(/);
+  }
+});
+
+test('native recovery discards unreachable broken references without dropping a complete layout', () => {
+  const program = [
+    'root = Col([table])',
+    'table = Table(["Component", "Role"], [["Postgres", "Tenant data"]])',
+    'unused = Section("Unused", [unresolvedPrivateIdentifier])',
+  ].join('\n');
+  const diagnostics: unknown[] = [];
+  const result = completeNativeWorkspaceAnswer('Enforce tenant membership.' + NATIVE_UI_MARKER + program,
+    'stop', undefined, undefined, event => diagnostics.push(event), ['table']);
+  assert.deepEqual(result.completion, { status: 'complete' });
+  assert.match(result.responseSource.text, /Table\(/);
+  assert.doesNotMatch(result.responseSource.text, /Unused|unresolvedPrivateIdentifier/);
+  assert.match(JSON.stringify(diagnostics), /"referenceIssue":"missing"/);
+  assert.doesNotMatch(JSON.stringify(diagnostics), /unresolvedPrivateIdentifier/);
+});
+
+test('native recovery keeps verified components beside missing and cyclic references', () => {
+  const table = 'table = Table(["Component", "Role"], [["Postgres", "Tenant data"]])';
+  const graph = 'diagram = Diagram("Request path", [{id:"app",label:"App",level:0},{id:"db",label:"Postgres",level:1}], [{from:"app",to:"db"}], "The app verifies membership.")';
+  const prose = 'Authenticate the user, verify membership, and keep service credentials server-side.';
+  for (const [name, tail] of [
+    ['missing', 'unstable = Section("Discarded", [unknownSection])'],
+    ['cycle', 'unstable = Section("Discarded", [loop])\nloop = unstable'],
+  ] as const) {
+    const diagnostics: unknown[] = [];
+    const program = ['root = Col([table, unstable, diagram])', table, graph, tail].join('\n');
+    const result = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + program, 'stop', undefined, undefined,
+      event => diagnostics.push(event), ['table', 'graph']);
+    assert.deepEqual(result.completion, { status: 'partial', reason: 'presentation_contract' });
+    assert.match(result.response, /Authenticate the user/);
+    assert.match(result.responseSource.text, /Table\([\s\S]*Diagram\(/);
+    assert.doesNotMatch(result.responseSource.text, /Discarded|unknownSection|\bloop\b/);
+    assert.match(JSON.stringify(diagnostics), new RegExp('"referenceIssue":"' + name + '"'));
+    assert.deepEqual(validateNativeOpenUi(result.responseSource.text, undefined, result.response), { ok: true });
+  }
+});
+
+test('broken references cannot bypass evidence authority or factual review', () => {
+  for (const program of [
+    'root = Col([missing, Source("source-99")])',
+    'root = Col([missing, draft])\ndraft = Text("WITH CHECK prevents moving a row to another tenant.")',
+  ]) {
+    const result = completeNativeWorkspaceAnswer('Check the current tenant membership.' + NATIVE_UI_MARKER + program, 'stop');
+    assert.deepEqual(result.completion, { status: 'partial', reason: 'presentation_contract' });
+    assert.equal(result.responseSource.text, '');
+    assert.equal(result.response, 'Check the current tenant membership.');
+  }
+});
+
+test('reference recovery preserves a validated calculator state and its formula', () => {
+  const program = [
+    'root = Col([missingCaption, Metric("Gross", @Format($attendees * 25, "currency", 0, "USD")), Controls([Slider($attendees, 10, 80, 1, "Attendees"), Button("Reset", @Set($attendees, 40))], "Attendance")])',
+    '$attendees = 40',
+  ].join('\n');
+  const result = completeNativeWorkspaceAnswer('Gross revenue starts at $1,000.' + NATIVE_UI_MARKER + program,
+    'stop', undefined, undefined, undefined, ['calculator']);
+  assert.deepEqual(result.completion, { status: 'partial', reason: 'presentation_contract' });
+  assert.match(result.responseSource.text, /\$attendees = 40/);
+  assert.match(result.responseSource.text, /@Set\(\$attendees, 40\)/);
+  assert.deepEqual(missingNativeFormats(result.responseSource.text, ['calculator']), []);
 });
 
 test('an invalid nested block keeps the ordered table, calculator, chart and verified source', () => {
@@ -174,6 +301,75 @@ test('Workspace strips only the trailing provider transport envelope from a nati
     response: prose, completion: { status: 'complete' }, responseSource: { format: 'xroga-openui-v1', text: program },
   });
   assert.equal(splitNativeOpenUiAnswer(prose + NATIVE_UI_MARKER + program).program, program);
+});
+
+test('native transport variations isolate the program and preserve actual programming fences', () => {
+  const program = '$count = 5\nroot = Col([Text("Count: " + $count)])';
+  const fence = String.fromCharCode(96).repeat(3);
+  const prose = ['Keep tenant_id unchanged.', fence + 'python', 'print("hello")', NATIVE_UI_MARKER.trim(),
+    'root = Col(["literal in the example"])', fence, 'This is the full explanation.'].join('\n');
+  const variants = [
+    prose + NATIVE_UI_MARKER + program,
+    prose + '\n\n' + program,
+    prose + '\n\n' + fence + 'openui-lang\n' + program + '\n' + fence,
+    prose + NATIVE_UI_MARKER + '~~~\n' + program + '\n~~~',
+    JSON.stringify({ format: 'xroga-openui-v1', text: prose, program }),
+  ];
+  for (const wire of variants) for (const newline of ['\n', '\r\n']) {
+    assert.deepEqual(splitNativeOpenUiAnswer(wire.replaceAll('\n', newline)), { text: prose, program });
+  }
+  const ordinary = [fence + 'json', '{"data":[1,2]}', fence].join('\n');
+  const hidden = [fence + 'xroga-ui', '{"kind":"chart"}', fence].join('\n');
+  assert.deepEqual(splitNativeOpenUiAnswer([ordinary, hidden, 'Next steps.'].join('\n')), { text: ordinary + '\nNext steps.', program: '' });
+  assert.deepEqual(splitNativeOpenUiAnswer([prose, fence + 'openui', program, fence, 'Next steps.'].join('\n')),
+    { text: prose + '\nNext steps.', program });
+  assert.equal(completeNativeWorkspaceAnswer('Keep the prose.\nroot = Unknown(["internal"])', 'stop').response, 'Keep the prose.');
+  const rootLast = 'visual = Text("Readable.")\n\nroot = Col([visual])';
+  assert.deepEqual(splitNativeOpenUiAnswer('Readable.\n\n' + rootLast), { text: 'Readable.', program: rootLast });
+});
+
+test('every streamed transport prefix withholds the separator and keeps the prose', () => {
+  const prose = 'Revenue is in USD.';
+  const wire = prose + NATIVE_UI_MARKER + 'root = Col([Text("Revenue is in USD.")])';
+  for (let size = prose.length; size <= wire.length; size += 1) {
+    assert.equal(splitNativeOpenUiAnswer(wire.slice(0, size), true).text, prose);
+  }
+});
+
+test('required visuals must render and cannot be satisfied by unused declarations or prose fallback', () => {
+  const prompt = 'Build an interactive calculator with a slider. Chart and tabulate the attendance scenarios.';
+  const formats = requiredNativeFormats(prompt);
+  assert.deepEqual([...formats].sort(), ['calculator', 'chart', 'table']);
+  assert.deepEqual(requiredNativeFormats('Explain what a chart is.'), []);
+  assert.deepEqual(requiredNativeFormats('Explain the total without a chart.'), []);
+  const checked: unknown[] = [];
+  const prose = 'The fixed ticket price is $25.';
+  const reply = completeNativeWorkspaceAnswer(prose, 'stop', undefined, undefined, event => checked.push(event), formats);
+  assert.equal(reply.response, prose);
+  assert.deepEqual(reply.completion, { status: 'partial', reason: 'presentation_contract' });
+  assert.deepEqual(checked, [{ stage: 'assembly', reason: 'missing_formats', formats }]);
+  const table = 'Table(["Attendance", "Revenue"], [[40, 1000]])';
+  const wired = 'root = Col([Text("The fixed ticket price is $25.")])\nunused = ' + table;
+  const unused = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + wired, 'stop', undefined, undefined, undefined, ['table']);
+  assert.equal(unused.completion.status, 'partial');
+  const visible = 'root = Col([Text("The fixed ticket price is $25."), ' + table + '])';
+  const mixed = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + visible, 'stop', undefined, undefined, undefined, formats);
+  assert.equal(mixed.completion.status, 'partial');
+  assert.equal(mixed.responseSource.text, visible);
+  const complete = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + visible, 'stop', undefined, undefined, undefined, ['table']);
+  assert.equal(complete.completion.status, 'complete');
+  const staticControl = '$attendees = 40\nroot = Col([Slider($attendees, 10, 80, 1, "Attendees"), Metric("Gross", "$1,000")])';
+  const reactiveControl = staticControl.replace('"$1,000"', '@Format($attendees * 25, "currency", 0, "USD")');
+  assert.equal(completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + staticControl, 'stop', undefined, undefined, undefined, ['calculator']).completion.status, 'partial');
+  assert.equal(completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + reactiveControl, 'stop', undefined, undefined, undefined, ['calculator']).completion.status, 'complete');
+});
+
+test('a provider output limit preserves readable prose and keeps the answer partial', () => {
+  const program = 'root = Col([Table(["Plan", "Price"], [["Team", 25]])])';
+  const answer = completeNativeWorkspaceAnswer('Team is $25.' + NATIVE_UI_MARKER + program, 'length');
+  assert.deepEqual(answer.completion, { status: 'partial', reason: 'output_limit' });
+  assert.equal(answer.responseSource.text, '');
+  assert.match(answer.response, /Team is \$25\./);
 });
 
 test('the saved prose and clipboard fallback retain the substantive native body after an unfinished heading', () => {
@@ -292,6 +488,51 @@ test('an unbounded Stripe retry claim gets a readable factual-review fallback', 
   assert.deepEqual(validateNativeOpenUi('root = Col([Text("Stripe does not retry forever.")])'), { ok: true });
 });
 
+test('the captured seasons error is flagged in prose and native content', () => {
+  const inaccurate = 'Earth has seasons because its axis is tilted about 23.5° relative to its orbital plane, so as it orbits the Sun each hemisphere alternately receives more direct sunlight and longer days, then less direct sunlight and shorter days.';
+  const result = completeNativeWorkspaceAnswer(inaccurate, 'stop');
+  assert.deepEqual(result.completion, { status: 'partial', reason: 'factual_review' });
+  assert.match(result.response, /23\.4° from the perpendicular to its orbital plane/);
+  assert.ok(result.response.endsWith(inaccurate));
+  assert.equal(result.responseSource.text, '');
+  const program = (text: string) => 'root = Col([Text(' + JSON.stringify(text) + ')])';
+  const diagnostics: NativeUiDiagnostic[] = [];
+  assert.deepEqual(validateNativeWorkspaceProgram(program(inaccurate), undefined, '', event => diagnostics.push(event)),
+    { ok: false, reason: 'factual_review' });
+  assert.equal(diagnostics[0]?.factualRule, 'earth_axial_tilt_reference');
+  for (const accurate of [
+    'Earth’s rotation axis is tilted 23.4 degrees from the normal to the orbital plane.',
+    'Earth’s equatorial plane is inclined 23.5° relative to its orbital plane.',
+    'Earth’s axis makes an angle of 66.5° with its orbital plane.',
+    'Earth’s axis is not tilted 23.5° from its orbital plane.',
+    'Earth’s tilted axis changes the angle of sunlight and the length of the day over the year.',
+  ]) {
+    assert.deepEqual(completeNativeWorkspaceAnswer(accurate, 'stop').completion, { status: 'complete' });
+    assert.deepEqual(validateNativeWorkspaceProgram(program(accurate), undefined, ''), { ok: true });
+  }
+});
+
+test('membership checks are not treated as an immutable tenant key', () => {
+  const inaccurate = 'WITH CHECK prevents moving a row to another tenant.';
+  const program = 'root = Col([Table(["Component", "Role"], [["Postgres", "Tenant data"]])])';
+  const diagnostics: unknown[] = [];
+  const result = completeNativeWorkspaceAnswer(
+    'Check current membership for both row versions.\n\n```sql\n-- ' + inaccurate + '\n```' + NATIVE_UI_MARKER + program,
+    'stop', undefined, undefined, event => diagnostics.push(event),
+  );
+  assert.deepEqual(result.completion, { status: 'partial', reason: 'factual_review' });
+  assert.match(result.response, /both pass for a user who belongs to both tenants/);
+  assert.match(result.response, /restrict UPDATE privileges/);
+  assert.match(JSON.stringify(diagnostics), /"factualRule":"tenant_key_immutability"/);
+  for (const accurate of [
+    'WITH CHECK blocks moves to an unauthorized tenant.',
+    'WITH CHECK prevents moving a row to another tenant if the user lacks membership there.',
+    'WITH CHECK does not prevent moving a row between tenants where the user belongs to both.',
+  ]) {
+    assert.deepEqual(validateNativeOpenUi(program, undefined, accurate), { ok: true });
+  }
+});
+
 test('a flagged billing claim keeps independently valid architecture with an explicit correction', () => {
   const prose = 'Use tenant membership for authorization and a separate Stripe webhook for billing.';
   const unsafe = 'Compare event timestamps against stored state to order deliveries.';
@@ -316,6 +557,16 @@ test('a flagged billing claim keeps independently valid architecture with an exp
   assert.equal(completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + unverified, 'stop').responseSource.text, '');
   assert.equal(completeNativeWorkspaceAnswer(prose + '\n' + unsafe + NATIVE_UI_MARKER + program, 'stop').responseSource.text, '');
   assert.equal(completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + program, 'length').responseSource.text, '');
+});
+
+test('Stripe reconciliation advice that rejects timestamp ordering keeps the native answer', () => {
+  const advice = 'Reconcile out-of-order delivery against authoritative Stripe state (fetch the subscription/customer) rather than inferring order from `event.created` or timestamps.';
+  const program = 'root = Col([Text("Webhook flow"), Table(["Step", "Action"], [["1", "Verify the signature"]])])';
+  const answer = completeNativeWorkspaceAnswer(advice + NATIVE_UI_MARKER + program, 'stop');
+  assert.deepEqual(answer.completion, { status: 'complete' });
+  assert.equal(answer.responseSource.text, program);
+  const unsafe = advice.slice(0, -1) + ', but compare event timestamps against stored state to ignore stale deliveries.';
+  assert.deepEqual(validateNativeOpenUi(program, undefined, unsafe), { ok: false, reason: 'factual_review' });
 });
 
 test('factual layout recovery does not hide contradictory chart prose from a removed block', () => {
@@ -440,6 +691,21 @@ test('an explicit monthly data comparison uses the supplied points and determini
   const truncated = completeNativeWorkspaceAnswer(wire(program), 'length', undefined, prompt);
   assert.deepEqual(truncated.completion, { status: 'partial', reason: 'output_limit' });
   assert.equal(truncated.responseSource.text, '');
+});
+
+test('the hosted revenue wording verifies every user-supplied value and both gain measures', () => {
+  const prompt = 'Show a monthly revenue chart and table in USD: January 8000, February 10000, March 12000, April 11000, May 13000, June 16000. Explain the largest dollar gain and largest percentage gain separately. Use only these values and no web search.';
+  const chart = 'root = Col([Chart("line", [{month:"Jan",usd:8000},{month:"Feb",usd:10000},{month:"Mar",usd:12000},{month:"Apr",usd:11000},{month:"May",usd:13000},{month:"Jun",usd:16000}], "month", ["usd"], "currency", "USD")])';
+  const prose = 'Revenue rose from January to June.';
+  const result = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + chart, 'stop', undefined, prompt);
+  assert.deepEqual(result.completion, { status: 'complete' });
+  assert.match(result.response, /Largest month-over-month gain: \+\$3,000 \(June\)/);
+  assert.match(result.response, /Largest relative month-over-month gain: \+25% \(February\)/);
+  assert.match(result.responseSource.text, /Chart\("line".*Table\(/);
+  const altered = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + chart.replace('usd:16000', 'usd:17000'), 'stop', undefined, prompt);
+  assert.deepEqual(altered.completion, { status: 'partial', reason: 'data_review' });
+  assert.match(altered.responseSource.text, /"Month":"June","Value":16000/);
+  assert.doesNotMatch(altered.responseSource.text, /17000/);
 });
 
 test('monthly comparison keeps tied winners, separates gain metrics, and handles a zero base', () => {

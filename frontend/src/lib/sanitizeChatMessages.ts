@@ -2,6 +2,7 @@ import type { ChatMessage } from '@/context/TerminalChatContext';
 
 import type { HackathonBriefCardData } from '@/lib/hackathonBrief';
 import type { XrogaActivityPresentation } from '@/lib/terminal/activityPresentation';
+import { redactTerminalText } from '@/lib/terminal/terminalRedaction';
 import { safeSourceUrl } from '@/lib/xrogaCitations';
 
 function sanitizeHackathonBrief(raw: unknown): ChatMessage['hackathonBrief'] {
@@ -39,7 +40,25 @@ function isPersistedExecutionActivity(item: unknown): item is XrogaActivityPrese
 
 function sanitizeExecutionActivity(raw: unknown): ChatMessage['executionActivity'] {
   if (!Array.isArray(raw)) return undefined;
-  const items = raw.filter(isPersistedExecutionActivity).slice(-80);
+  const safeText = (value: unknown, limit: number) =>
+    typeof value === 'string' ? redactTerminalText(value).slice(0, limit) : undefined;
+  const safeRefs = (value: unknown) => Array.isArray(value) ?
+    value.filter((ref): ref is string => typeof ref === 'string' && /^[a-z0-9_-]{1,128}$/i.test(ref)).slice(0, 20) : undefined;
+  const items = raw.filter(isPersistedExecutionActivity).slice(-80).map(item => ({
+    id: item.id.slice(0, 320),
+    kind: item.kind,
+    label: safeText(item.label, 500) ?? '',
+    status: item.status,
+    startedAt: item.startedAt,
+    updatedAt: item.updatedAt,
+    detail: safeText(item.detail, 1000),
+    body: safeText(item.body, 8000),
+    durationMs: typeof item.durationMs === 'number' && Number.isFinite(item.durationMs) && item.durationMs >= 0
+      ? item.durationMs : undefined,
+    exitCode: Number.isSafeInteger(item.exitCode) ? item.exitCode : undefined,
+    evidenceRefs: safeRefs(item.evidenceRefs),
+    artifactRefs: safeRefs(item.artifactRefs),
+  }));
   return items.length ? items : undefined;
 }
 
