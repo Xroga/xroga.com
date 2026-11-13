@@ -302,10 +302,20 @@ function remainingMs(record: BrowserRunRecord) {
   return Date.parse(record.state.createdAt) + Number(record.state.productManifest.localBrowserDurationMs ?? 10 * MINUTE) - Date.now();
 }
 
+/**
+ * How many local browser runs one account may have active at once (a parent run plus its parallel workers). Four by default; an operator
+ * may provision more for a deployment (XROGA_LOCAL_BROWSER_MAX_ACTIVE_RUNS, 4 to 12). The extension is told the number and never starts
+ * more workers than fit, so a worker is queued instead of refused.
+ */
+export function activeRunLimit(env: NodeJS.ProcessEnv = process.env): number {
+  const configured = Number(env.XROGA_LOCAL_BROWSER_MAX_ACTIVE_RUNS);
+  return Number.isInteger(configured) && configured >= 4 && configured <= 12 ? configured : 4;
+}
+
 function allowance(record: BrowserRunRecord) {
   const turns = Number(record.state.productManifest.localBrowserTurn ?? 0);
   const maxTurns = Number(record.state.productManifest.localBrowserMaxTurns ?? 12);
-  return { runId: record.runId, turns, maxTurns, remainingMs: Math.max(0, remainingMs(record)) };
+  return { runId: record.runId, turns, maxTurns, remainingMs: Math.max(0, remainingMs(record)), activeRunLimit: activeRunLimit() };
 }
 
 // The operator pins one sanitized test capture to one already admitted run.
@@ -371,7 +381,7 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
     const lease = await leases.acquire({ tenantId: ctx.tenantId, runId: ctx.userId, taskId: 'local-chrome-admission' }, `chrome-api-${randomUUID()}`, 10_000);
     if (!lease) throw new BrowserRequestError(429, 'BROWSER_ADMISSION_BUSY');
     try {
-      if (await runs.countActive(ctx.tenantId) >= 4) throw new BrowserRequestError(429, 'BROWSER_RUN_LIMIT');
+      if (await runs.countActive(ctx.tenantId) >= activeRunLimit()) throw new BrowserRequestError(429, 'BROWSER_RUN_LIMIT');
       const admitted = runAllowance(data.goal, data.attachmentCount);
       const state = createCanonicalExecutionState({
         projectId: `user:${ctx.userId}`, requiredCapabilities: ['browser_automation'], tasks: [browserTask(data.goal, admitted.durationMs)],
@@ -382,7 +392,7 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
         executionTarget: 'local_chrome', goal: data.goal, startUrl, allowedOrigins: [new URL(startUrl).origin],
         limits, plan: null, driveProject: null,
       } });
-      return res.status(201).json({ runId: state.runId, turns: 0, maxTurns: admitted.turns, remainingMs: admitted.durationMs,
+      return res.status(201).json({ runId: state.runId, turns: 0, maxTurns: admitted.turns, remainingMs: admitted.durationMs, activeRunLimit: activeRunLimit(),
         ...(req.revalidateBrowserDevice && plugins.configured() ? { plugins: true } : {}) });
     } finally {
       await leases.release(lease).catch(() => undefined);

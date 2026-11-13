@@ -66,18 +66,18 @@ describe('starting workers', () => {
     expect((await h.workers.start('other', { tasks: [task(6)] })).isError).toBe(false);
   });
 
-  it('refuses a fifth task, counting those running and waiting', async () => {
+  it('refuses a ninth task, counting those running and waiting', async () => {
     const h = harness();
     await h.workers.start('parent', { tasks: Array.from({ length: 3 }, (_, i) => task(i + 1)) });
-    const r = await h.workers.start('parent', { tasks: [task(7), task(8)] });
+    const r = await h.workers.start('parent', { tasks: Array.from({ length: 6 }, (_, i) => task(i + 10)) });
     expect(r.isError).toBe(true);
-    expect(r.text).toContain('at most 4');
+    expect(r.text).toContain('at most 8');
     expect(h.opened).toHaveLength(MAX_ACTIVE_WORKERS);
   });
 
   it('refuses empty, missing and oversized input', async () => {
     const h = harness();
-    for (const input of [{}, { tasks: [] }, { tasks: [{ instruction: '', url: 'https://a.example' }] }, { tasks: [{ instruction: 'x'.repeat(4_001), url: 'https://a.example' }] }, { tasks: Array.from({ length: 5 }, (_, i) => task(i + 1)) }]) {
+    for (const input of [{}, { tasks: [] }, { tasks: [{ instruction: '', url: 'https://a.example' }] }, { tasks: [{ instruction: 'x'.repeat(4_001), url: 'https://a.example' }] }, { tasks: Array.from({ length: 9 }, (_, i) => task(i + 1)) }]) {
       expect((await h.workers.start('parent', input)).isError).toBe(true);
     }
     expect(h.opened).toHaveLength(0);
@@ -192,5 +192,46 @@ describe('survives a restart of the extension worker', () => {
     h.tick(25 * 3_600_000);
     await h.workers.start('parent', { tasks: [task(2)] });
     expect(Object.values(h.stored.jobs).map(j => j.instruction)).toEqual(['Research competitor 2']);
+  });
+});
+
+describe('worker capacity follows the account limit the server reports', () => {
+  const six = [1, 2, 3, 4, 5, 6].map(task);
+  it('maps an account limit to workers: the parent holds one slot, never more than six, three when unknown', async () => {
+    const { workersFor } = await import('../parallel-workers');
+    expect([undefined, 0, 4, 6, 7, 8, 12].map(n => workersFor(n))).toEqual([3, 3, 3, 5, 6, 6, 6]);
+  });
+  it('with the default account (four runs) three of six tasks run and three wait; they start as slots free', async () => {
+    const h = harness();
+    await h.workers.start('parent', { tasks: six });
+    const states = () => Object.values(h.stored.jobs).map(j => j.state);
+    expect(states().filter(s => s === 'running')).toHaveLength(3);
+    expect(states().filter(s => s === 'waiting')).toHaveLength(3);
+  });
+  it('with a provisioned account (six runs) five run at once and the sixth waits, truthfully', async () => {
+    const h = harness({ activeLimit: () => 5 });
+    await h.workers.start('parent', { tasks: six });
+    const states = Object.values(h.stored.jobs).map(j => j.state);
+    expect(states.filter(s => s === 'running')).toHaveLength(5);
+    expect(states.filter(s => s === 'waiting')).toHaveLength(1);
+    expect(h.opened).toHaveLength(5);
+  });
+  it('with seven or more runs provisioned all six run at once, and a limit above six is still held to six', async () => {
+    const h = harness({ activeLimit: () => 99 });
+    await h.workers.start('parent', { tasks: six });
+    expect(Object.values(h.stored.jobs).filter(j => j.state === 'running')).toHaveLength(6);
+    expect(new Set(h.opened.map(o => o.url)).size).toBe(6);
+  });
+  it('accepts up to eight assigned tasks and refuses a ninth', async () => {
+    const h = harness({ activeLimit: () => 6 });
+    expect((await h.workers.start('parent', { tasks: [1, 2, 3, 4, 5, 6, 7, 8].map(task) })).isError).toBe(false);
+    expect((await h.workers.start('parent', { tasks: [task(9)] })).isError).toBe(true);
+  });
+  it('two tasks naming the same resource never run together even with free slots', async () => {
+    const h = harness({ activeLimit: () => 6 });
+    await h.workers.start('parent', { tasks: [{ ...task(1), resource: 'doc:timeline' }, { ...task(2), resource: 'doc:timeline' }, task(3)] });
+    const jobs = Object.values(h.stored.jobs);
+    expect(jobs.filter(j => j.state === 'running')).toHaveLength(2);
+    expect(jobs.filter(j => j.resource === 'doc:timeline' && j.state === 'running')).toHaveLength(1);
   });
 });

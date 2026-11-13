@@ -5,17 +5,25 @@
 //
 // Why each worker is a run of its own: every model request of a run is accounted by the server turn by turn, in order, against that run's
 // counter, so concurrent model calls inside one run collide. A worker therefore has its own counter and its own reservations against the same
-// owner ledger, and the existing limit of four active runs per account is exactly one parent plus three workers.
+// owner ledger. The account's active-run limit comes from the server (four by default: one parent plus three workers); where more is
+// provisioned, more workers run at once, up to six.
 //
 // The job-table rules follow the pattern of OpenBUA (github.com/AliSharjeell/OpenBUA, no licence file, so ideas only; nothing copied): the whole
 // batch is validated before anything is opened, at most three workers are active per parent, workers cannot start workers, results are
 // truncated, stopping the parent stops its workers, and a closed window fails only its own worker.
 import type { AgentTool } from '@src/agent/tools';
 
-/** Workers running at the same time for one parent. More tasks than this wait their turn. */
+/** Workers running at the same time for one parent when the server says nothing else. More tasks than this wait their turn. */
 export const MAX_ACTIVE_WORKERS = 3;
-/** Tasks one parent may have assigned (running or waiting): never more than four, and at most three of them run at once (the parent holds the fourth account slot). */
-export const MAX_TASKS = 4;
+/** The most workers one parent runs at once, however much the account allows (each is a Chrome window and a model stream). */
+export const MAX_ACTIVE_WORKERS_CEILING = 6;
+/** Workers that may run at once for an account limit of `activeRunLimit` runs: the parent holds one slot. */
+export function workersFor(activeRunLimit: number | undefined): number {
+  if (!Number.isInteger(activeRunLimit) || (activeRunLimit as number) < 2) return MAX_ACTIVE_WORKERS;
+  return Math.max(1, Math.min(MAX_ACTIVE_WORKERS_CEILING, (activeRunLimit as number) - 1));
+}
+/** Tasks one parent may have assigned (running or waiting). How many of them run at once depends on the account's limit; the rest wait. */
+export const MAX_TASKS = 8;
 export const MAX_INSTRUCTION = 4_000;
 const MAX_RESULT = 6_000;
 /** What one finished task hands to a task that comes after it, and the most all of them may hand over together. */
@@ -63,6 +71,8 @@ export interface WorkerDeps {
   save: (jobs: Record<string, WorkerJob>) => Promise<void>;
   /** Opens the worker's window and conversation and starts its run. Resolves once the run has started. */
   open: (parentId: string, task: WorkerTask) => Promise<{ conversationId: string; windowId?: number }>;
+  /** How many workers this parent may run at once (from the account limit the server reported). Three when absent. */
+  activeLimit?: (parentId: string) => number;
   stop: (conversationId: string) => void;
   closeWindow: (windowId: number) => Promise<void>;
   /** The reason a start page is not allowed (not HTTPS, a blocked site), or null. */
@@ -78,7 +88,7 @@ export const PARALLEL_TOOLS: AgentTool[] = [
     source: 'agent',
     group: 'working',
     description:
-      'Split a goal into tasks that workers do, each in its own Chrome window with its own instruction. Up to 4 tasks; at most 3 run at the same time and the fourth waits. Use one task, or none, when a single agent is as fast. ' +
+      'Split a goal into tasks that workers do, each in its own Chrome window with its own instruction. Up to 8 tasks; as many run at the same time as the account allows (3 to 6) and the rest wait their turn. Use one task, or none, when a single agent is as fast. ' +
       'Tasks that do not need each other run together. A task that needs another one gives it in `after`: it starts once that task has finished, and receives its result. ' +
       'Give each task an `id` (a short name) when others depend on it. Give tasks that edit the same document, canvas or account page the same `resource`, so they take turns. A task needs a specific instruction and may have an https start page (default: a web search). ' +
       'Use it for work that really splits (several sources to research, assets to prepare before they are assembled); do one thing at a time when each step depends on the screen the last one left. ' +
@@ -243,7 +253,7 @@ export class ParallelWorkers {
           continue;
         }
         if (deps.some(d => d && !isEnded(d.state))) continue;
-        if (mine.filter(j => isActive(j.state)).length >= MAX_ACTIVE_WORKERS) continue;
+        if (mine.filter(j => isActive(j.state)).length >= Math.max(1, Math.min(MAX_ACTIVE_WORKERS_CEILING, this.deps.activeLimit?.(parentId) ?? MAX_ACTIVE_WORKERS))) continue;
         // Exclusive control of a shared thing: wait while another task holds the same resource.
         if (job.resource && mine.some(j => j !== job && isActive(j.state) && j.resource === job.resource)) continue;
         job.state = 'starting';

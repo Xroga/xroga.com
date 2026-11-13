@@ -7,7 +7,7 @@ import type { Session, UserStepDetails } from '@src/browser-control';
 import { agentSystemPrompt } from '@src/agent/prompt';
 import { toolsForRun } from '@src/agent/tools';
 import { DELEGATE_TOOL, parseJobs, runSubagents } from '@src/agent/subagents';
-import { ParallelWorkers, PARALLEL_TOOLS, type WorkerJob } from './parallel-workers';
+import { ParallelWorkers, PARALLEL_TOOLS, workersFor, type WorkerJob } from './parallel-workers';
 import { BATCH_TOOL } from '@src/agent/batch-plan';
 import { startingTools } from '@src/agent/tool-selection';
 import { skillsFor, skillsSection } from '@src/agent/skills';
@@ -142,6 +142,8 @@ export class RunManager {
   /** Worker conversations this session opened; read before their ids reach the job table. */
   #workerConversations = new Set<string>();
   readonly #workers: ParallelWorkers;
+  /** The account's active-run limit the server reported when each conversation's run started. */
+  readonly #activeRunLimits = new Map<string, number>();
 
   constructor() {
     this.#workers = new ParallelWorkers({
@@ -150,6 +152,7 @@ export class RunManager {
       load: async () => ((await chrome.storage.local.get(WORKER_JOBS_KEY))[WORKER_JOBS_KEY] as Record<string, WorkerJob> | undefined) ?? {},
       save: jobs => chrome.storage.local.set({ [WORKER_JOBS_KEY]: jobs }),
       open: (parentId, task) => this.#openWorker(parentId, task),
+      activeLimit: parentId => workersFor(this.#activeRunLimits.get(parentId)),
       defaultUrl: SEARCH_HOME,
       stop: conversationId => this.#stop(conversationId),
       closeWindow: windowId => chrome.windows.remove(windowId),
@@ -1666,6 +1669,7 @@ export class RunManager {
           );
           record.canonicalBrowserRunId = canonical.runId;
           await putRun(record);
+          if (canonical.activeRunLimit) this.#activeRunLimits.set(conversationId, canonical.activeRunLimit);
           // The wall-clock segment is renewed before it ends, by the server, while the run is alive; there is no total time limit.
           const arm = (remaining: number): void => {
             if (deadline) clearTimeout(deadline);

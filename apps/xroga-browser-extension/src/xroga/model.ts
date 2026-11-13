@@ -53,6 +53,7 @@ export async function startXrogaModelRun(
     maxTurns?: number;
     remainingMs?: number;
     plugins?: boolean;
+    activeRunLimit?: number;
   };
   if (typeof start?.runId !== 'string' || !/^[0-9a-f-]{36}$/i.test(start.runId)) {
     throw new Error('Xroga did not admit the browser task.');
@@ -173,6 +174,8 @@ export async function startXrogaModelRun(
     model,
     extend,
     plugins: start.plugins === true,
+    /** How many runs this account may have active at once (parent plus workers), as the server said when this run started. */
+    activeRunLimit: Number.isInteger(start.activeRunLimit) ? (start.activeRunLimit as number) : undefined,
     remainingTurns,
     remainingMs,
     get allowanceExhausted() {

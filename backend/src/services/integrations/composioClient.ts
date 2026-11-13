@@ -2847,6 +2847,15 @@ async function executeDiscoveredComposioTool(
     || (!response.error && !Object.hasOwn(response, 'data'))) {
     // Only the shape is logged (the result type and the key names), never any value, so an unexplained refusal can be diagnosed.
     console.error('[composio] execute not completed:',{toolSlug:toolSlug.slice(0,80),resultType:typeof (response as {result_type?:unknown})?.result_type==='string'?String((response as {result_type?:string}).result_type).slice(0,40):undefined,keys:response&&typeof response==='object'?Object.keys(response).slice(0,12):typeof response});
+    // The provider ran the call and the tool itself reported a failure with a reason (wrong arguments, unknown id...): pass the reason on
+    // (redacted, short) so the agent can correct the call, instead of an unexplained "not completed".
+    const failed = response && typeof response === 'object' && !Array.isArray(response) ? response as { result_type?: unknown; error?: unknown; data?: unknown } : undefined;
+    const rawReason = typeof failed?.error === 'string' ? failed.error
+      : failed?.data && typeof failed.data === 'object' && typeof (failed.data as { message?: unknown }).message === 'string' ? (failed.data as { message: string }).message : undefined;
+    if (failed?.result_type === 'failed' && rawReason) {
+      const reason = String(redactOperationsValue(rawReason, 'tool_output')).replace(/[\t\n\r ]+/g, ' ').slice(0, 300);
+      throw Object.assign(new ComposioClientError('The connected tool reported a failure.', { status: 409, code: 'COMPOSIO_TOOL_REPORTED_FAILURE' }), { providerMessage: reason });
+    }
     throw new ComposioClientError('The provider did not report a completed action. Review its state before preparing another attempt.', {
       status: 409, code: 'COMPOSIO_EXECUTION_NOT_COMPLETED',
     });
