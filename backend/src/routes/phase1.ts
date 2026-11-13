@@ -99,6 +99,7 @@ import {
   createBusinessActionConfirmation,
   getBusinessActionConfirmation,
 } from '../services/integrations/businessActionConfirmations.js';
+import { confirmedReadResultMarkdown } from '../services/integrations/businessActionResultUi.js';
 
 const router =
   Router();
@@ -2011,6 +2012,9 @@ router.post(
 
           response:
             `The provider reported completion: ${result.confirmation.summary}. Receipt ${result.confirmation.id}.` +
+            (result.confirmation.risk === 'read' && !continuation
+              ? confirmedReadResultMarkdown(result.execution.resultText)
+              : '') +
             (continuation ? `\n\n${businessWorkflowProgressMarkdown(continuation)}` : '') +
             (continuationNeedsAttention ? '\n\nThe external action completed, but Xroga could not advance the saved workflow. Check the workflow status before doing anything else.' : ''),
 

@@ -1668,6 +1668,14 @@ async function createComposioSession(
     execute: {
       enable_multi_execute: false,
     },
+    // A user may authorize more than one account for a toolkit. Confirmation
+    // binds the exact account, and execute passes that ID explicitly; without
+    // multi-account mode Composio rejects the account field and we must fail
+    // closed whenever a second account exists.
+    multi_account: {
+      enable: true,
+      require_explicit_selection: true,
+    },
     manage_connections: {
       enable: true,
       enable_wait_for_connections: false,
