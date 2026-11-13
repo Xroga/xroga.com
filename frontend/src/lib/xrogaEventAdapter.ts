@@ -89,6 +89,7 @@ function softwareType(event: SoftwareRunEvent): XrogaEventType {
 function softwareStatus(event: SoftwareRunEvent, type: XrogaEventType): XrogaEventStatus {
   if (event.status === 'failed') return 'failed';
   if (event.status === 'cancelled') return 'cancelled';
+  if (event.status === 'success') return 'completed';
   if (type.endsWith('.completed') || type === 'receipt.created') return 'completed';
   return event.status === 'pending' ? 'pending' : 'running';
 }
@@ -127,11 +128,11 @@ export function adaptToXrogaEvent(input: XrogaEventAdapterInput): XrogaCanonical
     artifactRefs: evidence?.previewId ? [evidence.previewId] : undefined,
     metadata: {
       rawEvent: input.rawEvent,
+      ...(software ? { softwareEventType: software.type } : {}),
       ...(type === 'approval.requested' && confirmationIdFromPayload(input.payload) ? { confirmationId: confirmationIdFromPayload(input.payload) } : {}),
       ...(evidence?.filePath ? { filePath: evidence.filePath } : {}),
       ...(evidence?.exitCode != null ? { exitCode: evidence.exitCode } : {}),
       ...(evidence?.durationMs != null ? { durationMs: evidence.durationMs } : {}),
-      ...(evidence?.runtimeSessionId ? { runtimeSessionId: evidence.runtimeSessionId } : {}),
     },
   };
 }

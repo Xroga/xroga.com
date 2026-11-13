@@ -24,7 +24,8 @@ test('repo header is only the actual repository name; menu still has complete id
   assert.match(identity, /activeProject\?\.repo\.split\('\/'\)\.pop\(\)/);
   assert.match(identity, /<h3 className="xv-repo-name" title=\{repoIdentity\.fullName\}><SidebarMovingTitle text=\{repoIdentity\.label\} \/><\/h3>/);
   assert.doesNotMatch(identity.slice(identity.indexOf('className="xv-term-title xv-term-title--button"'), identity.indexOf('<AnchoredPortalPopover open={open}')), /ChevronDown/);
-  assert.match(identity, /repoIdentity\.fullName \|\| 'No GitHub repository'/);
+  assert.match(identity, /aria-label=\{`Copy repository name \$\{repoIdentity\.fullName\}`\}/);
+  assert.match(identity, /navigator\.clipboard\.writeText\(repoIdentity\.fullName\)/);
 });
 
 test('sidebar uses animated Blocks for Overview and Locate for Search', () => {
@@ -39,7 +40,7 @@ test('plugin search uses full catalog with debounce and cannot misrepresent unlo
   assert.match(plugin, /xrogaConnect\.catalog\(\{ search: query\.trim\(\), limit: 25 \}\)/);
   assert.match(plugin, /setTimeout\(\(\) =>/);
   assert.match(plugin, /catalogSearching/);
-  assert.match(plugin, /Live plugin search is unavailable/);
+  assert.match(plugin, /Live app search is unavailable/);
   assert.match(plugin, /plugin\.connected && onSelect/);
 });
 

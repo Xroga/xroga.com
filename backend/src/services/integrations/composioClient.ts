@@ -82,6 +82,10 @@ interface ComposioWorkbenchConfig {
 
 interface ComposioSessionConfig {
   user_id?: string;
+  multi_account?: {
+    enable?: boolean;
+    require_explicit_selection?: boolean;
+  };
   tags?: string[] | ComposioTagsConfig;
   search?: {
     enable?: boolean;
@@ -191,6 +195,16 @@ interface ComposioSessionToolkitResponse {
   total_pages?: number;
   current_page?: number;
   total_items?: number;
+}
+
+interface ComposioConnectedAccountsResponse {
+  items?: Array<{
+    id?: string;
+    user_id?: string;
+    toolkit?: { slug?: string };
+    status?: string;
+  }>;
+  next_cursor?: string | null;
 }
 
 interface ComposioCatalogCategory {
@@ -1654,6 +1668,14 @@ async function createComposioSession(
     execute: {
       enable_multi_execute: false,
     },
+    // A user may authorize more than one account for a toolkit. Confirmation
+    // binds the exact account, and execute passes that ID explicitly; without
+    // multi-account mode Composio rejects the account field and we must fail
+    // closed whenever a second account exists.
+    multi_account: {
+      enable: true,
+      require_explicit_selection: true,
+    },
     manage_connections: {
       enable: true,
       enable_wait_for_connections: false,
@@ -2577,6 +2599,48 @@ export async function createComposioConnectionLink(
   };
 }
 
+async function executionAccountForSession(
+  userId: string,
+  sessionId: string,
+  toolkit: string,
+  approvedAccountId: string | undefined,
+  context: TenantContext,
+): Promise<string | undefined> {
+  const session = await assertComposioSession(userId, sessionId, 'action', context);
+  if (!approvedAccountId) return undefined; // No-auth toolkit.
+  if (session.config?.multi_account?.enable === true) return approvedAccountId;
+
+  // Composio rejects the `account` execute field when multi-account selection
+  // is disabled. Omitting it is safe only if its default cannot resolve to a
+  // different active account than the one bound into the user's confirmation.
+  const params = new URLSearchParams({
+    toolkit_slugs: toolkit,
+    user_ids: composioUserId(userId),
+    statuses: 'ACTIVE',
+    limit: '2',
+  });
+  const accounts = await composioRequest<ComposioConnectedAccountsResponse>(
+    `/connected_accounts?${params.toString()}`,
+    {},
+    context,
+  );
+  const only = accounts.items?.[0];
+  if (
+    accounts.items?.length !== 1 ||
+    accounts.next_cursor ||
+    only?.id !== approvedAccountId ||
+    only.user_id !== composioUserId(userId) ||
+    only.toolkit?.slug?.toLowerCase() !== toolkit.toLowerCase() ||
+    only.status?.toUpperCase() !== 'ACTIVE'
+  ) {
+    throw new ComposioClientError(
+      'The connected application account selection changed. Prepare the action again.',
+      { status: 409, code: 'COMPOSIO_ACTION_ACCOUNT_AMBIGUOUS' },
+    );
+  }
+  return undefined;
+}
+
 async function executeDiscoveredComposioTool(
   userId: string,
   input: {
@@ -2690,6 +2754,10 @@ async function executeDiscoveredComposioTool(
     if(!final?.connected||finalAccountId!==accountId)throw new ComposioClientError('The connected application account changed. Prepare the action again.',{status:409,code:'COMPOSIO_ACTION_ACCOUNT_CHANGED'});
   }
 
+  const dispatchAccount = input.mode === 'action'
+    ? await executionAccountForSession(userId, sessionId, allowedTool!.toolkit, account, context)
+    : undefined;
+  signal?.throwIfAborted();
   const response = await composioRequest<ComposioExecuteResponse>(
     `/tool_router/session/${encodeURIComponent(sessionId)}/execute`,
     {
@@ -2699,7 +2767,7 @@ async function executeDiscoveredComposioTool(
         arguments: input.arguments,
         // Official session execute API selects the exact account using `account`.
         // https://docs.composio.dev/reference/api-reference/tool-router/postToolRouterSessionBySessionIdExecute
-        ...(account ? { account } : {}),
+        ...(dispatchAccount ? { account: dispatchAccount } : {}),
         enable_auto_workbench_offload: false,
       },
       timeoutMs: EXECUTE_TIMEOUT_MS,

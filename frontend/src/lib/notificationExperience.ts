@@ -50,8 +50,8 @@ export function primeNotificationAudio() {
 }
 
 /** A restrained two-note chime; browsers may suppress audio without a prior user gesture. */
-export function playNotificationChime() {
-  if (typeof window === 'undefined' || !notificationPreference(NOTIFICATION_SOUND_KEY)) return;
+function playChime(preview: boolean) {
+  if (typeof window === 'undefined' || (!preview && !notificationPreference(NOTIFICATION_SOUND_KEY))) return;
   try {
     if (!window.AudioContext) return;
     audioContext ??= new window.AudioContext();
@@ -70,4 +70,13 @@ export function playNotificationChime() {
       oscillator.stop(now + offset + 0.27);
     }
   } catch { /* audio unavailable */ }
+}
+
+export function playNotificationChime() {
+  playChime(false);
+}
+
+/** A direct user gesture can preview the actual chime without changing the saved preference. */
+export function previewNotificationChime() {
+  playChime(true);
 }

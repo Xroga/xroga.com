@@ -23,6 +23,13 @@ test('keeps three explicitly separated app tasks as three steps', () => {
   assert.equal(steps?.[2]?.request, 'create a task for Friday');
 });
 
+test('keeps two explicit read-only app tasks in one checkpointed workflow', () => {
+  assert.deepEqual(splitExplicitBusinessWorkflow('List my Google Sheets spreadsheets and list my Canva designs'), [
+    { kind: 'read', request: 'List my Google Sheets spreadsheets', dependsOnPrevious: false },
+    { kind: 'read', request: 'list my Canva designs', dependsOnPrevious: false },
+  ]);
+});
+
 test('does not turn a public search, ordinary sentence, or ambiguous clause into an app workflow', () => {
   assert.equal(splitExplicitBusinessWorkflow('Search the web for flights and send me options'), null);
   assert.equal(splitExplicitBusinessWorkflow('Explain Gmail and calendar integrations'), null);

@@ -17,7 +17,7 @@ test('project identity menu exposes only real project actions', () => {
   assert.match(MENU, /Open on GitHub/);
   assert.match(MENU, /Open live site/);
   assert.match(MENU, /New task in this project/);
-  assert.match(MENU, /Project settings/);
+  assert.doesNotMatch(MENU, /title="Project settings"|Archive current task/);
   assert.doesNotMatch(MENU, />Pin</);
   assert.doesNotMatch(MENU, />Share</);
   assert.doesNotMatch(MENU, />Copy link</);
@@ -51,4 +51,21 @@ test('Undo is one shared implementation and is stale-head protected', () => {
   assert.match(ATOMIC, /expectedStartingHeadSha/);
   assert.match(DEPLOY, /expectedStartingHeadSha/);
   assert.match(ROUTE, /expectedHeadSha/);
+});
+
+test('repo title truncates instead of wrapping and secondary project actions are grouped', () => {
+  assert.match(MENU, /compactRepoName = repoIdentity\.label\.replace/);
+  assert.match(MENU, /min-w-0 flex-1 truncate text-left/);
+  assert.doesNotMatch(MENU, /break-all font-mono/);
+  assert.match(MENU, /visibleCommitSha && \(syncConfidence === 'moved'/);
+  assert.match(MENU, /projectActionClass/);
+  assert.match(MENU, /grid-cols-3/);
+  assert.match(MENU, /grid-cols-2/);
+  assert.doesNotMatch(MENU, /settingsOpen|setSettingsOpen|archiveCurrentTask/);
+});
+
+test('connected badge disappears so the repository name fills the header', () => {
+  assert.match(MENU, /Copy repository:.*STATUS_LABEL/);
+  assert.doesNotMatch(MENU, /\{STATUS_LABEL\[visibleStatus\]\}\s*<\/span>/);
+  assert.match(MENU, /grid-cols-3/);
 });

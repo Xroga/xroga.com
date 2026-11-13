@@ -3,11 +3,11 @@ import { test } from 'node:test';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { createRequire } from 'node:module';
-import { FormattedAiMarkdown } from './formatAiMarkdown';
 import { remarkSourceCitations, safeSourceUrl, sourceClickUrl } from './xrogaCitations';
 
 const nodeRequire = createRequire(__filename);
 nodeRequire.extensions['.css'] = (module) => { module.exports = { __esModule: true, default: new Proxy({}, { get: (_target, key) => String(key) }) }; };
+const { FormattedAiMarkdown } = nodeRequire('./formatAiMarkdown.tsx') as typeof import('./formatAiMarkdown');
 const { renderBlock } = nodeRequire('../components/terminal/XrogaBlockView.tsx') as typeof import('@/components/terminal/XrogaBlockView');
 
 const sources = [
@@ -47,7 +47,7 @@ test('the answer renderer shows an accessible source preview and exact source li
     sources,
   }));
   assert.match(html, /Open source 1: Official report/);
-  assert.match(html, /xv-citation-chip/);
+  assert.match(html, /data-source-citation/);
   assert.match(html, /https:\/\/example\.com\/report\?utm_source=xroga\.com/);
   assert.doesNotMatch(html, /More evidence/, 'unrelated source snippets must not flood the answer');
 });

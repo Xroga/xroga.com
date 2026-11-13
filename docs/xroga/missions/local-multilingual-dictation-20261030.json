@@ -1,7 +1,7 @@
 {
   "version": "1.0",
   "missionId": "LOCAL-MULTILINGUAL-DICTATION-20261030",
-  "baseSha": "d7ce7def4ab94a72587907cb4f60690d7f288838",
+  "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
   "requirementIds": [
     "XR-ORIGINAL-F076"
   ],
@@ -193,7 +193,8 @@
     "Three public provider calls returned in 3.8-5.5s. Hindi was rendered in Urdu script and Urdu word errors remain. This is not exact transcription, long-recording latency or real microphone/physical-phone acceptance.",
     "Initial b83 CI passed 4960 backend and 1289 frontend tests, then rejected stale historical current caller counts. Isolated auth CI rejected an obsolete tiny-audio transport fixture. Metadata and valid PCM fixtures are corrected without weakening the tests. A real isolated JWT/zero-ledger verification step is now required before release.",
     "054d isolated verification passed real free-voice JWT/zero settlement and seven browser journeys. The hide-control journey timed out under a hover-paused restore toast. The fixture now moves the pointer away and waits for normal dismissal, preserving all security assertions.",
-    "2026-10-31: the on-device Whisper engine described by this mission was removed. Dictation now uses the approved Cloudflare Whisper route with segmented PCM capture; the local-engine files no longer exist."
+    "2026-10-31: the on-device Whisper engine described by this mission was removed. Dictation now uses the approved Cloudflare Whisper route with segmented PCM capture; the local-engine files no longer exist.",
+    "PR #933 integrated this manifest in squash commit 6ee13e4b9e2655efa161937903625353a75c7bea. Its main integration base is that commit's parent. The historical voice branch base d7ce7def4ab94a72587907cb4f60690d7f288838 remains in the original evidence."
   ],
   "placeholderClaimsRemaining": [
     "No universal language/device accuracy claim.",

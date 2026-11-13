@@ -33,14 +33,23 @@ export function deepseekSearchBody(body: { objective: string; search_queries: st
   return { query, count: DEEPSEEK_SEARCH_RESULTS, ...(question ? { ori_question: question } : {}) };
 }
 
-interface DeepseekResult { url?: unknown; title?: unknown; summary?: unknown; snippet?: unknown; date?: unknown; site_name?: unknown }
+interface DeepseekResult { url?: unknown; title?: unknown; summary?: unknown; snippet?: unknown; date?: unknown; site_name?: unknown; site_icon?: unknown }
+interface SearchResult { url: string; title?: string; publish_date: string | null; excerpts: string[]; site_name?: string; site_icon_domain?: string }
+
+function iconDomain(value: unknown, source: string): string | undefined {
+  if (typeof value !== 'string') return;
+  try {
+    const domain = new URL(source).hostname.replace(/^www\./i, '').toLowerCase();
+    if (value === 'https://cdn.deepseek.com/site-icons/' + domain) return domain;
+  } catch { /* Unusable source URL is handled by evidence validation. */ }
+}
 
 /**
  * Normalise a DeepSeek response into the existing Parallel result shape, so normalisation, trust ranking, citations and
  * persistence downstream stay unchanged. Retrieved text is untrusted data: it is carried as an excerpt, never as
  * instructions. Anything malformed is rejected rather than guessed.
  */
-export function normaliseDeepseekSearch(raw: unknown, traceId: string | null): { search_id: string; provider: 'deepseek'; results: Array<{ url: string; title?: string; publish_date: string | null; excerpts: string[] }> } {
+export function normaliseDeepseekSearch(raw: unknown, traceId: string | null): { search_id: string; provider: 'deepseek'; results: SearchResult[] } {
   if (!raw || typeof raw !== 'object' || !Array.isArray((raw as { results?: unknown }).results)) throw new Error('Malformed provider result');
   const results = ((raw as { results: unknown[] }).results).map(item => {
     if (!item || typeof item !== 'object') throw new Error('Malformed provider result');
@@ -48,7 +57,11 @@ export function normaliseDeepseekSearch(raw: unknown, traceId: string | null): {
     if (typeof r.url !== 'string' || (r.title !== undefined && typeof r.title !== 'string')) throw new Error('Malformed provider result');
     const excerpt = typeof r.summary === 'string' && r.summary.trim() ? r.summary : typeof r.snippet === 'string' ? r.snippet : '';
     const date = typeof r.date === 'string' && !Number.isNaN(Date.parse(r.date)) ? r.date : null;
-    return { url: r.url, ...(typeof r.title === 'string' ? { title: r.title } : {}), publish_date: date, excerpts: excerpt ? [excerpt.slice(0, 2_000)] : [] };
+    const siteName = typeof r.site_name === 'string' ? r.site_name.replace(/[\u0000-\u001f\u007f]/g, ' ').trim().slice(0, 120) : '';
+    const domain = iconDomain(r.site_icon, r.url);
+    return { url: r.url, ...(typeof r.title === 'string' ? { title: r.title } : {}),
+      publish_date: date, excerpts: excerpt ? [excerpt.slice(0, 2_000)] : [],
+      ...(siteName ? { site_name: siteName } : {}), ...(domain ? { site_icon_domain: domain } : {}) };
   });
   if (typeof traceId !== 'string' || !/^[A-Za-z0-9-]{8,200}$/.test(traceId)) throw new Error('Missing or unsafe provider request identity');
   return { search_id: traceId, provider: 'deepseek', results };

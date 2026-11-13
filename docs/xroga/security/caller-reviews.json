@@ -1063,9 +1063,9 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "d3742ca4dccc50daf99aa71d9896449957dde73798dc6d7c2a9c5ca5536cff32",
+      "sourceSha256": "e3ce3808eba24cd2461066d7b571ae5f96fd108ef3b8aaf807ba04b39b1b3dc8",
       "callIds": [
-        "4431005001a8d288051f"
+        "5725855926bd46f4b2a1"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -2550,13 +2550,41 @@
           "c3617170cdd8b722b96f"
         ],
         "verification": "Reviewed call chains are byte-identical to the reviewed main version. The enclosing function changed, and the change was reviewed by diff: Manual diff review: the reviewed calls are two native Array.from(byPath.values()) conversions; their expressions are byte-identical and no changed line touches them. Other changes in this large function (answer budget, imports, completion fields) do not."
+      },
+      "nativeOpenUiRebinding": {
+        "sourceSha256": "d3742ca4dccc50daf99aa71d9896449957dde73798dc6d7c2a9c5ca5536cff32",
+        "callIds": [
+          "4431005001a8d288051f"
+        ],
+        "scope": "Exact runBuildPipeline body unchanged; only existing built-in array conversions reindexed."
+      },
+      "nativeOpenUiAuthorizationReviewRebinding": {
+        "sourceSha256": "0f2209ef1fbf0b7613a5ce964a3df5cf5df7ce4bff51160b0850c1bc2be2e016",
+        "callIds": [
+          "d431d5067a3873deb9cb"
+        ],
+        "scope": "Same worker body and reviewed built-in Array.from expression. Native chat output review is separate."
+      },
+      "nativeOpenUiWorkspaceRebinding": {
+        "sourceSha256": "c5eee2fd7ac3c6211e1e0b53fa516357ef110a07504ff45c29111a4b5dbe6f43",
+        "callIds": [
+          "7dc867931d0d296911dc"
+        ],
+        "scope": "Byte-identical runBuildPipeline body; only the existing in-memory Array.from conversions were reindexed."
+      },
+      "nativePlainPromptRebinding": {
+        "sourceSha256": "07ab1714a6f3d3559d546e2172016cca626482f7a31857904f249fb27b1103af",
+        "callIds": [
+          "5b543818a91ad0c16240"
+        ],
+        "scope": "Byte-identical runBuildPipeline body; only source positions moved after changing read-only native prompt selection."
       }
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "d3742ca4dccc50daf99aa71d9896449957dde73798dc6d7c2a9c5ca5536cff32",
+      "sourceSha256": "e3ce3808eba24cd2461066d7b571ae5f96fd108ef3b8aaf807ba04b39b1b3dc8",
       "callIds": [
-        "ce02ccc6a928e44634de"
+        "108c0b015831530e885e"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -4041,6 +4069,34 @@
           "2e78e5aba21ba282d65c"
         ],
         "verification": "Reviewed call chains are byte-identical to the reviewed main version. The enclosing function changed, and the change was reviewed by diff: Manual diff review: the reviewed calls are two native Array.from(byPath.values()) conversions; their expressions are byte-identical and no changed line touches them. Other changes in this large function (answer budget, imports, completion fields) do not."
+      },
+      "nativeOpenUiRebinding": {
+        "sourceSha256": "d3742ca4dccc50daf99aa71d9896449957dde73798dc6d7c2a9c5ca5536cff32",
+        "callIds": [
+          "ce02ccc6a928e44634de"
+        ],
+        "scope": "Exact runBuildPipeline body unchanged; only existing built-in array conversions reindexed."
+      },
+      "nativeOpenUiAuthorizationReviewRebinding": {
+        "sourceSha256": "0f2209ef1fbf0b7613a5ce964a3df5cf5df7ce4bff51160b0850c1bc2be2e016",
+        "callIds": [
+          "1f158fd95dae861dc678"
+        ],
+        "scope": "Same worker body and reviewed built-in Array.from expression. Native chat output review is separate."
+      },
+      "nativeOpenUiWorkspaceRebinding": {
+        "sourceSha256": "c5eee2fd7ac3c6211e1e0b53fa516357ef110a07504ff45c29111a4b5dbe6f43",
+        "callIds": [
+          "b11f02479d5943c73413"
+        ],
+        "scope": "Byte-identical runBuildPipeline body; only the existing in-memory Array.from conversions were reindexed."
+      },
+      "nativePlainPromptRebinding": {
+        "sourceSha256": "07ab1714a6f3d3559d546e2172016cca626482f7a31857904f249fb27b1103af",
+        "callIds": [
+          "9ed969847167feb788b9"
+        ],
+        "scope": "Byte-identical runBuildPipeline body; only source positions moved after changing read-only native prompt selection."
       }
     },
     {
@@ -15482,18 +15538,18 @@
     },
     {
       "path": "backend/src/routes/notifications.ts",
-      "sourceSha256": "9aec298fc8c4b0f6c678f0861db12805da9b0700e109ff052d0e4e27be18486a",
+      "sourceSha256": "7b91dfd72ae335226c3fb83c7ce2e7cb7902b7dd25b87565f7dcef917720c5db",
       "callIds": [
-        "95aca8562235b1b02997",
-        "cc2c2522f42d6ac8d5bd",
-        "96f82d20ad4bfc5af43e",
-        "faa4cebd0c15a1b5d69c",
-        "5233e1547ffa2fd23fd6",
-        "8f55ff924d59067efc48",
-        "83827643069e9005dce3",
-        "b1d953653483a66af3d9",
-        "add984aaad8b65bdbdfa",
-        "f0601134e3c2080d41f3"
+        "359cfba790c54b88250c",
+        "b1f8356c782b4d851d58",
+        "4cf1a1e8ccf9dfe563ec",
+        "e92ef4114ace634a21d8",
+        "cc8a37cdf238cf59a99a",
+        "6687ae47bab37c501d74",
+        "2fed6ca9cd27f6992d02",
+        "75ba31f14c658b6995a8",
+        "1a27090c7a9708d480e8",
+        "b010f789ba8fcc1a6231"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Router is mounted behind authMiddleware and re-derives userId from the issued immutable context before every route. List/count/read/read-all/delete use this actor, never request ownership. Every service-role factory has its fixed downstream notification query inspected.",
@@ -15522,6 +15578,27 @@
         "disposition": "SCOPED_BOUNDARY"
       },
       "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+    },
+    {
+      "path": "backend/src/routes/notifications.ts",
+      "sourceSha256": "7b91dfd72ae335226c3fb83c7ce2e7cb7902b7dd25b87565f7dcef917720c5db",
+      "callIds": [
+        "451e5e119fb05d5ddb8f",
+        "4f9439afecb04c3595a7",
+        "4052599c36bb1a154183",
+        "9dd5e0d47e2b5fcbd7ed",
+        "0173fa66f148bf107c9c",
+        "5756010c7ca215102e1e"
+      ],
+      "disposition": "REVIEWED_GAP",
+      "authority": "The browser-push subscription routes are behind auth middleware and derive userId from tenant context; each query filters user_id or writes that user ID, but source inspection alone is not authenticated tenant proof.",
+      "reason": "Isolated staging verifies private table grants and RLS, and endpoint validation rejects arbitrary hosts. Existing endpoint updates are owner-scoped; a new insert cannot overwrite another account's unique endpoint. Authenticated positive and cross-account negative API tests for these six new persistence calls are still required before promoting this review to a scoped boundary.",
+      "evidence": [
+        {
+          "path": "backend/src/services/browserPushService.test.ts",
+          "marker": "rejects SSRF destinations"
+        }
+      ]
     },
     {
       "path": "backend/src/routes/operations.ts",
@@ -15600,9 +15677,9 @@
     },
     {
       "path": "backend/src/routes/phase1.ts",
-      "sourceSha256": "91b55da6a6beca61715b829c0087b10f90d2cc5bb7e2b7bce5500fbca50b2b7d",
+      "sourceSha256": "768d23551b96e4e803da3767e3b4cb99b6d28cb2d97f84d9a6c8c300fbdfc845",
       "callIds": [
-        "fa04b8d8f9413c194ec5"
+        "006420f2256a9d86cc5a"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in toolUiLink. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -23733,10 +23810,10 @@
     },
     {
       "path": "backend/src/services/notificationService.ts",
-      "sourceSha256": "97a7d33fe2b60ddebbdb9f1e8e2c5304d72398ff31ee9036386f705f62b6b402",
+      "sourceSha256": "823e0e647c547459ecd37560dee87b23d8d1fa0e28a85d5252870c65fccd69ec",
       "callIds": [
-        "988c4217a8b8b781b43c",
-        "30281b1cf819bb604048"
+        "0af8d7bbc823a95227af",
+        "2e83fbad1f1940ca3770"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "The only active production callers of the notification wrappers are authenticated swarm completion/failure handlers. They pass requireTenantContext(req.tenantContext), never a body owner or recipient. Video wrappers currently have no production consumer, but their primitive still requires that same original issued context. pushNotification validates the context before factory access, snapshots the bounded caller intent and writes only the context user_id. It checks returned owner and nonempty ID before acknowledging. There is no alternate owner argument or fallback identity.",
@@ -27762,9 +27839,9 @@
     },
     {
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "sourceSha256": "7daceb7dfb3cd3b1faf8b1f42f6e11243daf15afa78ff8fe076371ae510f9628",
+      "sourceSha256": "fabbe7dbdf3c5d33995fef1d001ac8761888501128d67bff03ed02d57a274d77",
       "callIds": [
-        "a291f26c3c5001de01f9"
+        "4c3e13cce409a0e53b15"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in SidebarProjectHistory, with no database or Storage client receiver.",
@@ -27787,9 +27864,9 @@
     },
     {
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "sourceSha256": "7daceb7dfb3cd3b1faf8b1f42f6e11243daf15afa78ff8fe076371ae510f9628",
+      "sourceSha256": "fabbe7dbdf3c5d33995fef1d001ac8761888501128d67bff03ed02d57a274d77",
       "callIds": [
-        "f8d5eaf0193282882763"
+        "9e140274802c8fbb62dd"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in SidebarProjectHistory, with no database or Storage client receiver.",
@@ -27872,7 +27949,7 @@
       "evidence": [
         {
           "path": "frontend/src/components/os-preview/Command2Sections.tsx",
-          "marker": "return <><div className=\"os-split\"><section className=\"os-panel\"><div className=\"os-field\"><label htmlFor=\"os-genome-search\">Search demo assets</label><input id=\"os-genome-search\" value={query} onChange={(e) => setQuery(e.target.value)}/></div><div className=\"os-field\"><label htmlFor=\"os-genome-category\">Category</label><select id=\"os-genome-category\" value={category} onChange={(e) => setCategory(e.target.value)}><option value=\"all\">All categories</option>{Array.from(new Set(DEMO_ASSETS.map((a) => a.category))).map((c) => <option key={c}>{c}</option>)}</select></div><div className=\"os-catalog-grid\">{filtered.map((a) => <button key={a.id} className={`os-catalog-item ${selected === a.id ? 'is-current' : ''}`} onClick={() => setSelected(a.id)}><strong>{a.name}</strong><small>{a.category} \u00b7 {a.trust.replaceAll('-',' ')}</small></button>)}</div></section><section className=\"os-panel\"><span className=\"os-eyebrow\">Provenance and trust</span><h2>{asset.name}</h2><p>{asset.detail}</p><ul className=\"os-list\"><li><strong>License</strong><small>{asset.license}</small></li><li><strong>Compatibility</strong><small>{asset.trust === 'approved-demo' ? 'Original fixture compatible with this preview.' : 'Not approved for composition.'}</small></li><li><strong>Certification evidence</strong><small>{asset.trust === 'approved-demo' ? 'Demo review only; no production certification.' : 'Rejected in this example.'}</small></li></ul><div className=\"os-field\"><label htmlFor=\"os-genome-approach\">Proposed approach</label><select id=\"os-genome-approach\" value={approach} onChange={(e) => setApproach(e.target.value)}>{['Reuse','Adapt','Compose','Generate'].map((a) => <option key={a}>{a}</option>)}</select></div><p role=\"status\">{asset.trust === 'approved-demo' ? `${approach} is available as a local design example. No code is imported.` : 'Composition blocked by the documented trust or dependency issue.'}</p></section></div><StoryTrail story=\"clinic\"/></>;"
+          "marker": "return <><div className=\"os-split\"><section className=\"os-panel\"><div className=\"os-field\"><label htmlFor=\"os-genome-search\">Search demo assets</label><input id=\"os-genome-search\" value={query} onChange={(e) => setQuery(e.target.value)}/></div><div className=\"os-field\"><label htmlFor=\"os-genome-category\">Category</label><select id=\"os-genome-category\" value={category} onChange={(e) => setCategory(e.target.value)}><option value=\"all\">All categories</option>{Array.from(new Set(DEMO_ASSETS.map((a) => a.category))).map((c) => <option key={c}>{c}</option>)}</select></div><div className=\"os-catalog-grid\">{filtered.map((a) => <button key={a.id} className={`os-catalog-item ${selected === a.id ? 'is-current' : ''}`} onClick={() => setSelected(a.id)}><strong>{a.name}</strong><small>{a.category} · {a.trust.replaceAll('-',' ')}</small></button>)}</div></section><section className=\"os-panel\"><span className=\"os-eyebrow\">Provenance and trust</span><h2>{asset.name}</h2><p>{asset.detail}</p><ul className=\"os-list\"><li><strong>License</strong><small>{asset.license}</small></li><li><strong>Compatibility</strong><small>{asset.trust === 'approved-demo' ? 'Original fixture compatible with this preview.' : 'Not approved for composition.'}</small></li><li><strong>Certification evidence</strong><small>{asset.trust === 'approved-demo' ? 'Demo review only; no production certification.' : 'Rejected in this example.'}</small></li></ul><div className=\"os-field\"><label htmlFor=\"os-genome-approach\">Proposed approach</label><select id=\"os-genome-approach\" value={approach} onChange={(e) => setApproach(e.target.value)}>{['Reuse','Adapt','Compose','Generate'].map((a) => <option key={a}>{a}</option>)}</select></div><p role=\"status\">{asset.trust === 'approved-demo' ? `${approach} is available as a local design example. No code is imported.` : 'Composition blocked by the documented trust or dependency issue.'}</p></section></div><StoryTrail story=\"clinic\"/></>;"
         }
       ],
       "beforeCurrentMainIntegration": {
@@ -28112,7 +28189,7 @@
     },
     {
       "path": "frontend/src/components/terminal/IntegrationsModal.tsx",
-      "sourceSha256": "0dbd96995b155733fa243bf3ce5cab4f3a5e374f86e566ff29f850f3cae8f8c1",
+      "sourceSha256": "b9690880a80670c7b533e7701c2de4ab0493d7fc8821563b1faa06dea52c472b",
       "callIds": [
         "8204b932fb1d657bcf51"
       ],
@@ -28137,9 +28214,9 @@
     },
     {
       "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "sourceSha256": "959ecdbdfe4da3c4cee1a79e2e4684f638df3ded77cf7ed9002bdafbd2ee8d0c",
+      "sourceSha256": "56771761395d13094fd28183ae415e0d5bddeae383e8f43d49490de6758c5b73",
       "callIds": [
-        "01fce3ee8703d9146072"
+        "227a815ae8e2c760bd61"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in TerminalChatBar, with no database or Storage client receiver.",
@@ -28412,9 +28489,9 @@
     },
     {
       "path": "frontend/src/lib/formatAiMarkdown.tsx",
-      "sourceSha256": "dba219fea184b59714d2c36619d1c58bd3273e6b232c9d1b4b53e3427bc16fdf",
+      "sourceSha256": "d83c29dbdfa41ef3a94c511472f94e64f91f463614f26780d181d351c017a1fb",
       "callIds": [
-        "ee548d3cf583cfcbdd91"
+        "14dce094280fa3a3b31a"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in decodeBase64UrlUtf8, with no database or Storage client receiver.",
@@ -29117,6 +29194,69 @@
         "baseRef": "origin/main",
         "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374"
       }
+    },
+    {
+      "path": "backend/src/routes/localBrowser.ts",
+      "sourceSha256": "873a0c1ae4876e25462a9b9e18772d456ee3334fd5e5dd4492e0775b3427d019",
+      "callIds": [
+        "5df2ea611eb4f0af7872"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Inspected the exact receiver and complete expression. It is a built-in JavaScript data conversion with no persistence client or privilege transfer.",
+      "reason": "Decodes the already bounded document body into a local byte buffer. The scanner matches the built-in Buffer method name.",
+      "evidence": [
+        {
+          "path": "backend/src/routes/localBrowser.ts",
+          "marker": "Buffer.from(data.base64, 'base64')"
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+      "sourceSha256": "2500a1f07a78f43f9ebee385642fac97743777253c045bce71eed6bf51002d9a",
+      "callIds": [
+        "a9e89dea32df3eb8a0b5",
+        "db86c426bed33eedc7ee"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Inspected the exact receiver and complete expression. It is a built-in JavaScript data conversion with no persistence client or privilege transfer.",
+      "reason": "Decodes the user-requested recording or enumerates user-selected File objects locally. Neither method is a database or storage invocation.",
+      "evidence": [
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": "Uint8Array.from(atob(encoded)"
+        },
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": "Array.from(event.target.files"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/routes/browserDocuments.ts",
+      "sourceSha256": "52b4445687ccae287d6c84bfefac85c463400915c5857c7d70f4b9a9a5cddfe3",
+      "callIds": [
+        "49d80835a4c3c34ee32b",
+        "4b5a67879fe8cadd9429",
+        "6976a39ca0e1440bcce4"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Built-in Buffer and Uint8Array constructors create local memory objects only. They carry no identity, database handle or storage authority.",
+      "reason": "These matches allocate ZIP signature bytes or copy already supplied PDF and spreadsheet bytes into the local parser. The static scanner matched the method name from.",
+      "evidence": [
+        {
+          "path": "backend/src/routes/browserDocuments.ts",
+          "marker": "Buffer.from([0x50, 0x4b, 0x05, 0x06])"
+        },
+        {
+          "path": "backend/src/routes/browserDocuments.ts",
+          "marker": "pdf.getDocument({ data: Uint8Array.from(data), isEvalSupported: false"
+        },
+        {
+          "path": "backend/src/routes/browserDocuments.ts",
+          "marker": "workbook.xlsx.load(Uint8Array.from(data).buffer)"
+        }
+      ]
     }
   ],
   "retiredSourceReviews": [

@@ -157,6 +157,12 @@ export function AppShell({ children, displayName, email }: AppShellProps) {
                 ) : (
                   children
                 )}
+                {isDashboard ? (
+                  <details className="fixed bottom-24 right-4 z-40 w-[min(24rem,calc(100vw-2rem))] rounded-xl border bg-background p-3 text-sm text-foreground shadow-lg">
+                    <summary className="cursor-pointer font-medium">Browser Operator</summary>
+                    <p className="my-2 text-xs" role="status">Connect from the Xroga side panel in Chrome.</p>
+                  </details>
+                ) : null}
               </main>
               {isDashboard ? <TerminalDock /> : null}
             </div>

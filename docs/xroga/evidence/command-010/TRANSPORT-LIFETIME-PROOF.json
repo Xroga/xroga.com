@@ -120,8 +120,8 @@
     }
   ],
   "counts": {
-    "total": 150,
-    "reviewed": 150,
+    "total": 159,
+    "reviewed": 159,
     "pending": 0,
     "unresolvedHighRiskReviewCandidates": 0
   },
@@ -215,7 +215,7 @@
     },
     {
       "path": "scripts/security/source-lifetime-bindings.test.mjs",
-      "sha256": "6c8352ce73e679c5be0cf5a01d598ac099bd8ad7348af4241f323d6f7f00740b",
+      "sha256": "7d3c3af8176a838c9b1f3de5e75630ca8c4d26e634d886ff8c0975d5157a9640",
       "previousGenericSdkBinding": {
         "reference": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
         "sha256": "71eaca46f240f51b1ac490fd9e137cafbe0d0423313991de7b1bc0f57e588bcb",
@@ -230,7 +230,11 @@
           "scope": "HISTORICAL_SOURCE_NOT_CURRENT_EXECUTION_PROOF"
         }
       },
-      "beforeBrowserSDKCardinalityReconciliationSha256": "441861e7507aea76299bd43e73325792e4cbe16f3414bf6ae5183ad055ae78b9"
+      "beforeBrowserSDKCardinalityReconciliationSha256": "441861e7507aea76299bd43e73325792e4cbe16f3414bf6ae5183ad055ae78b9",
+      "beforeLiveChromePreservation": {
+        "sha256": "6c8352ce73e679c5be0cf5a01d598ac099bd8ad7348af4241f323d6f7f00740b",
+        "ref": "3dcf7cc432a3ba446ef228008b2342be9beeebd4"
+      }
     },
     {
       "path": "backend/src/ai/architect.ts",
@@ -287,7 +291,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "d3742ca4dccc50daf99aa71d9896449957dde73798dc6d7c2a9c5ca5536cff32",
+      "sha256": "e3ce3808eba24cd2461066d7b571ae5f96fd108ef3b8aaf807ba04b39b1b3dc8",
       "previousGenericSdkBinding": {
         "sha256": "e5b3b4a3dc538e708fa8c005a8da6584db01b3dd425833373d59decbd2bfcb93",
         "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
@@ -563,7 +567,22 @@
         "scope": "PRESERVED_PREVIOUS_SOURCE_BINDING_NOT_NEW_EXECUTION_PROOF"
       },
       "richShareCorrectionReview": "Only existing negative-completion review receives the actual answer text. Source review confirms unchanged persistence expressions, authority and model transport.",
-      "previousSha256": "fa67a6ccaaca85b55c30405833f4f52cbe1959ed401b0de682f5567a9ad6c645"
+      "previousSha256": "fa67a6ccaaca85b55c30405833f4f52cbe1959ed401b0de682f5567a9ad6c645",
+      "beforeNativeWorkspaceRouting": {
+        "sourceSha256": "c5eee2fd7ac3c6211e1e0b53fa516357ef110a07504ff45c29111a4b5dbe6f43",
+        "scope": "Only chat presentation and use of the existing dispatch cap/revalidation changed. No additional outbound transport or authority."
+      },
+      "beforeNativePlainPrompt": {
+        "sourceSha256": "07ab1714a6f3d3559d546e2172016cca626482f7a31857904f249fb27b1103af",
+        "scope": "Only the instructions for high-confidence prose answers change. The worker body is byte-identical. Model dispatch, scope, reservation and settlement are unchanged. This rebind does not certify a live run."
+      },
+      "deterministicMonthlySourceReview": {
+        "previousSha256": "6934fe9714e36e4caa8cbdb93cc6f26d8e00039163f1804214e1fd975ae26471",
+        "scope": "ONLY_ORDINARY_CHAT_POST_SETTLEMENT_PRESENTATION_CONTEXT",
+        "method": "Exact source diff and two byte-identical enclosing-function caller comparisons. No change to dispatch, accounting, persistence, authorization or worker execution.",
+        "liveAcceptance": false
+      },
+      "beforeWorkspaceResponseQualitySha256": "d981253fc491c75b4d2b90c6e080509aa541fd04d840276e133e81b39fe3eac6"
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
@@ -604,7 +623,7 @@
     },
     {
       "path": "backend/src/ai/tenantModelDispatch.test.ts",
-      "sha256": "e410d125c211ca7c753cf0259e86a32f4472a7f7e75e54d18ebb2650ed768d9d",
+      "sha256": "0403decdadd5d6f6dbc7a61b1aad87f6927e2961e9f20fcf0b8d972bc27f8a96",
       "previousGenericSdkBinding": {
         "sha256": "acb7d3ee286d862c38e386380a20a7632415cd454510076abedca054016f2959",
         "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
@@ -617,7 +636,13 @@
           "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
         }
       },
-      "previousSha256": "e06c723425fbc538baf84a6110a41c04ab87c6af80d0fe3708a3c4f62780fbfc"
+      "previousSha256": "e06c723425fbc538baf84a6110a41c04ab87c6af80d0fe3708a3c4f62780fbfc",
+      "beforeNativeWorkspaceTests": {
+        "sha256": "e410d125c211ca7c753cf0259e86a32f4472a7f7e75e54d18ebb2650ed768d9d",
+        "reference": "3266b788188ca23518e4d03213ac125114ae92f6",
+        "archive": "docs/xroga/evidence/command-010/integration-20261029/tenantModelDispatch.test.ts-AT-3266b788.txt",
+        "scope": "Original regression snapshot retained. Current test adds opt-in native file, research, malformed source and plain response cases; historical evidence is not promoted."
+      }
     },
     {
       "path": "backend/src/ai/tenantModelDispatch.ts",
@@ -630,7 +655,9 @@
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "sha256": "6ca81b0c9234195e6159d1e03735a21ce50d50cf1e8f71b53cb62199bf95cb26",
+      "sha256": "47fab9492ea23277010df4f4babf7d27aa5588606f762b0ace3c2eaa843f1acc",
+      "beforeInlineCalculatorRoutingSha256": "58e3fa0ea9ec46ed2aa0be0c7aa6ca0777c213059c12f3cd6ecf04a6a2ab6e29",
+      "beforePlannerCompletionDiagnosticsSha256": "6ca81b0c9234195e6159d1e03735a21ce50d50cf1e8f71b53cb62199bf95cb26",
       "beforeCurrentMetadataReconciliation": {
         "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
         "sha256": "1cd8184f146f76899fc3070dbb8a59fb847f03231a7ff35041e494fa61349102"
@@ -688,7 +715,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "ca10dcce1588319a590acc2c5db06294bb0ac47af4b81c3186b0dc9db03068f4",
+      "sha256": "bdf87c7c2d0ff810034c72554ebacf6de1f291068b3eb2ac1134e1d0e47c5dea",
       "beforeCurrentMetadataReconciliation": {
         "path": "backend/src/security/tenantIsolation.local.integration.ts",
         "sha256": "435e6670a00ccd975ede1ae00eaf62db2d95e626a5c880546d3704f208d56a63"
@@ -841,13 +868,29 @@
     },
     {
       "path": "backend/src/workers/browserCapability.ts",
-      "sha256": "7d2bab8d22905fdccca667481ce0be5c1a61ac799d0b117d098ce1768d0d5511",
+      "sha256": "f2a0fa5a5842e812a1ec600a2817c4b7394a8faf28873d8893a523d99bb78bb9",
       "beforeCurrentMainIntegration": {
         "sha256": "2b28ecd8b77c60677931c7303ea23e56a345fbb91f589ecfc5f6cce7cb3a4a28",
         "ref": "92043b72c20e5a12636dee079d760a1e5708b48f"
       },
       "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
-      "previousSha256": "5d75d311b49b606b3116dcc84e1284c30ce556a7f0f4a5ae530c406d0631aefa"
+      "previousSha256": "5d75d311b49b606b3116dcc84e1284c30ce556a7f0f4a5ae530c406d0631aefa",
+      "beforeLiveChromePreservation": {
+        "sha256": "7d2bab8d22905fdccca667481ce0be5c1a61ac799d0b117d098ce1768d0d5511",
+        "ref": "3dcf7cc432a3ba446ef228008b2342be9beeebd4"
+      }
+    },
+    {
+      "path": "frontend/src/lib/hostedWorkspaceBridge.mjs",
+      "sha256": "562de9c1291a88600f00940fa7235b3d45ceb069194507f4b8e44e447588fbfa"
+    },
+    {
+      "path": "scripts/security/hosted-workspace-staging.mjs",
+      "sha256": "15d46b6faa21da2a0841b224ba43b682456bcb05bbf351fd3b02f8414214d15e"
+    },
+    {
+      "path": "scripts/security/hosted-workspace-staging.test.mjs",
+      "sha256": "6a46d891ea391c0d299f350e5a87f3b964b34b8e67147448ec61c0a039728042"
     }
   ],
   "previousCallerCounts": {
@@ -969,5 +1012,21 @@
     "baseRef": "origin/main",
     "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
     "basis": "currentSourceBindings were re-bound to the branch sources after the egress register was re-verified call by call (REBIND-REPORT.json): every reviewed egress call hash is unchanged or manually reviewed, 149 of 149 reviewed, none pending. counts follow the regenerated egress inventory (one retired Gemini call). No acceptance is promoted."
+  },
+  "liveChromePreservation": {
+    "backend": "92ec31a3369a0d8ca42d23d62f79d8f522b5fb9e",
+    "frontend": "23a1a48a2ee0018ed0c828f6347df9d0bef9c369",
+    "previousProofSha256": "c5dc2789581a52c827f1b03ad7fb78052704c0779a6d3611a2e0040df3f06385",
+    "scope": "Existing authenticated pairing and exact SDK pacing guard retained. This source review does not certify a hosted run."
+  },
+  "hostedWorkspaceStagingContinuation": {
+    "previousProofSha256": "7e8a157348ede2c414695ef4faa2cb8d2d5ccb5d95da9f2ddeaa99651883bb50",
+    "callerIds": [
+      "9bcbd89af61af9d9c2e7",
+      "49a49569b55d144f7a6d",
+      "a609adccda5421076aa0",
+      "e88275f663bb87ce2556"
+    ],
+    "scope": "Four isolated staging transport call sites reviewed. Negative tests bind origin, issuer, image, owner confirmation, toolkit, and redirect restrictions. No proof of live provider or production acceptance."
   }
 }
