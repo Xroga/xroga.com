@@ -88,6 +88,13 @@ for (const [name, fixture] of Object.entries(cases)) {
   assert.equal(answer.completion.status, fixture.completion ?? 'partial', name + ' completion status');
   cases[name] = { text: answer.response, program: answer.responseSource.text };
 }
+const captured = process.argv[3] ? JSON.parse(await readFile(resolve(process.argv[3]), "utf8")) : null;
+if (captured) {
+  assert.equal(typeof captured.text, "string");
+  assert.equal(typeof captured.program, "string");
+  assert.ok(captured.sources.length && captured.sources.every(source => new URL(source.url).hostname === "docs.python.org"));
+  cases.capturedSearch = { ...captured, sources: captured.sources.map((source, index) => ({ ...source, id: "source-" + (index + 1) })) };
+}
 const compiled = await build({
   stdin: {
     resolveDir: process.cwd(),
@@ -97,7 +104,7 @@ const compiled = await build({
       + 'const q=new URL(location.href).searchParams; const name=q.get("case") || "short";'
       + 'document.body.dataset.theme=q.get("shellTheme") || q.get("theme") || "light"; document.querySelector("main").dataset.theme=q.get("theme") || "light";'
       + 'const sources=[{id:"source-1",title:"PostgreSQL: Row Security Policies",url:"https://www.postgresql.org/docs/current/ddl-rowsecurity.html"},{id:"source-2",title:"W3C Documentation",url:"https://www.w3.org/TR/"},{id:"source-3",title:"About keyword matching options",siteName:"Google Ads Help",url:"https://support.google.com/google-ads/answer/7478529"}];'
-      + 'const fixture=cases[name]; createRoot(document.getElementById("root")).render(<ResponseSourceScope>{fixture.prompt && <p className="native-evaluation-user">{fixture.prompt}</p>}<div className="native-evaluation-answer-label">Xroga</div><NativeSurface answer={{...fixture,format:"xroga-openui-v1",library:"xroga-native-v1"}} sources={sources} isStreaming={name==="stream"} />{name==="numericEvidence" && <ResponseSources sources={[...sources, sources[0], ...[4,5,6].map(n => ({title:"Source "+n,url:"https://example.com/"+n})), {title:"Unsafe link",url:"javascript:alert(1)"}]} />}</ResponseSourceScope>);',
+      + 'const fixture=cases[name]; createRoot(document.getElementById("root")).render(<ResponseSourceScope>{fixture.prompt && <p className="native-evaluation-user">{fixture.prompt}</p>}<div className="native-evaluation-answer-label">Xroga</div><NativeSurface answer={{...fixture,format:"xroga-openui-v1",library:"xroga-native-v1"}} sources={fixture.sources ?? sources} isStreaming={name==="stream"} />{name==="numericEvidence" && <ResponseSources sources={[...sources, sources[0], ...[4,5,6].map(n => ({title:"Source "+n,url:"https://example.com/"+n})), {title:"Unsafe link",url:"javascript:alert(1)"}]} />}</ResponseSourceScope>);',
   },
   outdir: 'native-assets', entryNames: 'native', chunkNames: 'native-chunk-[hash]', format: 'esm', splitting: true,
   write: false, bundle: true, jsx: 'automatic', minify: true,
@@ -165,6 +172,18 @@ try {
       await page.getByText('Check current tenant membership before reading rows.', { exact: true }).waitFor();
       await page.locator('.iui-col').getByRole('cell', { name: 'Membership', exact: true }).waitFor();
       assert.doesNotMatch(await page.getByRole('region', { name: 'Answer', exact: true }).innerText(), /unavailableDetails|root\s*=\s*Col/);
+      if (captured) {
+        await open("capturedSearch");
+        const recoveredTable = page.getByRole("table");
+        await recoveredTable.getByRole("cell", { name: "Path.read_text()", exact: true }).waitFor();
+        assert.equal(await recoveredTable.count(), 1);
+        assert.equal(await recoveredTable.locator("tbody tr").count(), 2);
+        assert.ok(await recoveredTable.locator("a[href^=\"https://docs.python.org/\"] svg").count() > 0);
+        assert.equal(await page.locator("a[href^=\"https://docs.python.org/\"] img").count(), 0);
+        if ([390, 1440].includes(viewport.width)) {
+          await recoveredTable.screenshot({ path: resolve(output, channel + "-captured-search-" + viewport.width + "-" + theme + ".png") });
+        }
+      }
       await open('compare');
       const table = page.getByRole('table');
       await table.waitFor();

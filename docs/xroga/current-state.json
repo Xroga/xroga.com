@@ -87275,7 +87275,7 @@
       "id": "surface:169100c09d49c9650f7a",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/NativeSurface.tsx",
-      "sha256": "5d8688bc07507ae0b48ed2d65b90e81b46be417203019037c8593b0c0b5401e8",
+      "sha256": "c07956bca1215d4da0a9e4ad5da426c471594628a07a7580ae4fb93b5db1ce0a",
       "symbols": [
         "NativeAnswer",
         "NativeSurface",
@@ -87286,7 +87286,8 @@
         "ids",
         "prefix",
         "prose",
-        "verified"
+        "verified",
+        "visibleTables"
       ],
       "imports": [
         "../../../../backend/src/ai/nativeOpenUi",
@@ -88136,13 +88137,15 @@
       "id": "surface:0fef6875af5860e2f4b4",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/markdown.tsx",
-      "sha256": "29b5fb5197e7e5c1f46c0337e94542f1faf719e84ce119370a3c0538dacad28e",
+      "sha256": "916625cb97f1954b5a39c1e3fae913e75a756407831495bd5db6dd2c3221bc83",
       "symbols": [
         "Block",
         "INLINE",
         "LIST_ITEM",
         "MarkdownBlocks",
         "RenderCitation",
+        "VisibleMarkdownTables",
+        "block",
         "blocks",
         "body",
         "cells",
@@ -88157,6 +88160,8 @@
         "item",
         "items",
         "k",
+        "key",
+        "keys",
         "label",
         "line",
         "lines",
@@ -88166,8 +88171,14 @@
         "number",
         "ordered",
         "out",
+        "plain",
+        "preservedMarkdownTableKeys",
         "rest",
         "rows",
+        "seenTables",
+        "tableContentKey",
+        "tableHasLinks",
+        "tableKey",
         "token"
       ],
       "imports": [
@@ -88368,7 +88379,7 @@
       "id": "surface:3f7c2c965ea05381e7ac",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/table.tsx",
-      "sha256": "c86559627722395a4513dc58742b1124fbf9a1c54d46c6ad7f415fbec6ec781d",
+      "sha256": "282525a15685cc9396a8cc95f26273158eb6b74705c89f0e1d7af39ab451ce42",
       "symbols": [
         "NUMERIC",
         "Table",
@@ -88379,7 +88390,9 @@
         "cmp",
         "columns",
         "isElement",
+        "key",
         "numeric",
+        "proseTables",
         "rows",
         "visibleRows"
       ],
@@ -98497,7 +98510,7 @@
       "id": "surface:9364a65f93f37c69b67d",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/SourceCitation.tsx",
-      "sha256": "707c5bc1f2f4b9fa953b551634a5bae5a4ef95bec2aa182ce04356e3a1aaef42",
+      "sha256": "6c5e2cc0a2e0f1627dde09b389d413636429beae1dfa032c0851ef3907272ad2",
       "symbols": [
         "CitationIcon",
         "CitationPage",
@@ -98515,6 +98528,7 @@
         "keepOpen",
         "left",
         "link",
+        "localMark",
         "onKey",
         "onScroll",
         "position",
@@ -127065,7 +127079,7 @@
       "id": "surface:bd6af899f2dd9df930f6",
       "subsystem": "browser_sandbox",
       "sourcePath": "scripts/verify-native-openui-browser.mjs",
-      "sha256": "180f57cc5bf812cb13164bddc07cb9849bf0d69bdb887ab5242c141def66e221",
+      "sha256": "a4189429df6bb7f0e166bc68a1177a76e0c7dd617fec7c364a1c7aba35f3d594",
       "symbols": [
         "accessibility",
         "answer",
@@ -127073,6 +127087,7 @@
         "assets",
         "basic",
         "browser",
+        "captured",
         "cases",
         "channel",
         "checked",
@@ -127103,6 +127118,7 @@
         "palettePage",
         "popupBounds",
         "recoveredEdge",
+        "recoveredTable",
         "region",
         "renderedEdge",
         "results",
@@ -154946,7 +154962,7 @@
     {
       "id": "test-suite:4ce9d7bbf578638998f1",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/markdown.test.ts",
-      "declaredTests": 1,
+      "declaredTests": 2,
       "skipLocations": [],
       "focusLocations": []
     },

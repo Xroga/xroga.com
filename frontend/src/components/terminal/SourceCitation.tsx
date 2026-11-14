@@ -2,7 +2,7 @@
 
 import React, { useEffect, useId, useRef, useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
-import { siPostgresql } from 'simple-icons';
+import { siPostgresql, siPython } from 'simple-icons';
 import { citationMetadata, safeSourceUrl, sourceClickUrl, type CitationSource } from '@/lib/xrogaCitations';
 import { GoogleIcon } from '../auth/AuthGoogleIcon';
 import { useInlineCitation } from './ResponseSourceScope';
@@ -13,8 +13,10 @@ export type CitationPage = Pick<CitationSource, 'title' | 'url' | 'siteName'>;
 
 function CitationIcon({ domain, size }: { domain: string; size: number }) {
   // Reuse local publisher marks for exact domains.
-  if (domain === 'postgresql.org' || domain === 'git.postgresql.org') {
-    return <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d={siPostgresql.path} /></svg>;
+  const localMark = domain === 'python.org' || domain === 'docs.python.org' ? siPython
+    : domain === 'postgresql.org' || domain === 'git.postgresql.org' ? siPostgresql : undefined;
+  if (localMark) {
+    return <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d={localMark.path} /></svg>;
   }
   return ['google.com', 'support.google.com', 'ads.google.com'].includes(domain)
     ? <span className={styles.mark} style={{ width: size, height: size }}><GoogleIcon /></span>

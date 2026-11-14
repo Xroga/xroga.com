@@ -1,0 +1,109 @@
+{
+  "version": "1.0",
+  "missionId": "WORKSPACE-LIVE-ANSWER-POLISH-20261114",
+  "baseSha": "62c34a8f6347955ad2dacbfa9734972f44dabb3a",
+  "requirementIds": [
+    "XR-MISSION-054",
+    "XR-MISSION-055"
+  ],
+  "state": "CODE_COMPLETE",
+  "risk": "low",
+  "scope": "Remove repeated comparison tables from partial native answers, preserve cited rows and use the existing local Python publisher mark.",
+  "changedFiles": [
+    "frontend/src/components/native-openui/NativeSurface.tsx",
+    "frontend/src/components/native-openui/upstream/components/markdown.tsx",
+    "frontend/src/components/native-openui/upstream/components/markdown.test.ts",
+    "frontend/src/components/native-openui/upstream/components/table.tsx",
+    "frontend/src/components/terminal/SourceCitation.tsx",
+    "scripts/verify-native-openui-browser.mjs"
+  ],
+  "decisions": {
+    "keep": [
+      "The authoritative saved answer, citation destinations, complete native table controls and renderer fallback."
+    ],
+    "extend": [
+      "Use the existing Python mark for the exact python.org and docs.python.org domains."
+    ],
+    "replace": [
+      "For recovered partial answers, elide unlinked Markdown projections and scalar native tables that repeat the already visible cited table."
+    ],
+    "deprecate": []
+  },
+  "schemaImpact": {
+    "changed": false,
+    "migrations": [],
+    "rollout": "Frontend only, paired with the existing API and Job.",
+    "rollback": "Restore currently serving Vercel deployment dpl_9T92n99GswEbnxup5XArJJMu9Ttp."
+  },
+  "securityImpact": {
+    "auth": {
+      "changed": false,
+      "description": "Existing middleware and Share guards remain authoritative."
+    },
+    "tenant": {
+      "changed": false,
+      "description": "The renderer receives the same owner-scoped saved program and citations."
+    },
+    "approval": {
+      "changed": false,
+      "description": "Current confirmation and source controls remain in force."
+    },
+    "credentials": {
+      "changed": false,
+      "description": "No credential or permission changes."
+    },
+    "egress": {
+      "changed": false,
+      "description": "The local verified Python mark avoids a logo network request for those two exact hosts. No new destinations."
+    },
+    "cost": {
+      "changed": false,
+      "description": "No model, Search or service added."
+    },
+    "billing": {
+      "changed": false,
+      "description": "No ledger changes."
+    }
+  },
+  "tests": [
+    {
+      "command": "node node_modules/tsx/dist/cli.mjs --tsconfig frontend/tsconfig.json --test frontend/src/components/native-openui/upstream/components/markdown.test.ts",
+      "scope": "Retain distinct table data, interactive cells and the original cited comparison.",
+      "negative": true,
+      "reference": "frontend/src/components/native-openui/upstream/components/markdown.test.ts"
+    },
+    {
+      "command": "node scripts/verify-native-openui-browser.mjs <output> <captured-public-answer>",
+      "scope": "Replay the live public Python documentation response, check one comparison table and its local publisher marks at five widths.",
+      "negative": true,
+      "reference": "scripts/verify-native-openui-browser.mjs"
+    }
+  ],
+  "architecture": {
+    "change": "none",
+    "reason": "Use the existing native renderer, parser and citation components.",
+    "rfc": null
+  },
+  "rollout": "Run exact-source CI and stage the frontend for a separate source-bound release decision.",
+  "rollback": "Restore dpl_9T92n99GswEbnxup5XArJJMu9Ttp while retaining the current API and Job.",
+  "knownGaps": [
+    "The frontend-only follow-up requires production promotion. Other domains use the existing icon path and fallback."
+  ],
+  "placeholderClaimsRemaining": [],
+  "evidenceRefs": [
+    "frontend/src/components/native-openui/upstream/components/markdown.test.ts",
+    "scripts/verify-native-openui-browser.mjs"
+  ],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "BLOCKED",
+    "blockers": [
+      "Exact-source staging and source-bound promotion are pending."
+    ],
+    "authenticatedE2e": "BLOCKED",
+    "stagedSecurity": "NOT_APPLICABLE",
+    "liveUrl": null,
+    "deployedSha": null
+  }
+}

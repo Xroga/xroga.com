@@ -2,8 +2,8 @@
 
 import { defineComponent } from "@openuidev/react-lang";
 import { z } from "zod/v4";
-import { useState } from "react";
-import { inline } from "./markdown";
+import { useContext, useState } from "react";
+import { inline, tableContentKey, VisibleMarkdownTables } from "./markdown";
 import { cx, isLongAnswerTable } from "./style";
 
 const NUMERIC = /^[-+−]?[$€£¥₹]?\s?\d[\d,]*(\.\d+)?\s?(%|[kKmMbB]|bn)?$/;
@@ -18,9 +18,12 @@ export const Table = defineComponent({
   description: "Each row lists its cells in column order; a cell may be a component. Number columns align right.",
   component: function SortableTable({ props, renderNode }) {
     const [sort, setSort] = useState<{ column: number; descending: boolean }>();
+    const proseTables = useContext(VisibleMarkdownTables);
     const columns = Array.isArray(props.columns) ? props.columns.map((c) => String(c ?? "")) : [];
     const rows = (Array.isArray(props.rows) ? props.rows : []).filter(Array.isArray) as unknown[][];
     if (!columns.length || rows.some(row => row.length !== columns.length)) return <p>Table data is incomplete.</p>;
+    const key = proseTables && tableContentKey(columns, rows);
+    if (key && proseTables.has(key)) return null;
     const visibleRows = sort ? [...rows].sort((left, right) => {
       const a = left[sort.column], b = right[sort.column];
       const cmp = typeof a === "number" && typeof b === "number" ? a - b : String(a ?? "").localeCompare(String(b ?? ""), undefined, { numeric: true });

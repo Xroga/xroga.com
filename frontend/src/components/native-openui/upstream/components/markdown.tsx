@@ -1,4 +1,4 @@
-import React, { Fragment, type ReactNode } from "react";
+import React, { createContext, Fragment, type ReactNode } from "react";
 import { cx, isLongAnswerTable, webUrl } from "./style";
 
 // A small Markdown renderer that builds React elements and never injects HTML.
@@ -57,6 +57,33 @@ type Block =
   | { kind: "code"; text: string }
   | { kind: "hr" }
   | { kind: "table"; head: string[]; rows: string[][] };
+
+export const VisibleMarkdownTables = createContext<ReadonlySet<string> | null>(null);
+
+// Only compare scalar cells. Retain distinct data and cells with components.
+export function tableContentKey(head: readonly string[], rows: readonly unknown[][]): string | undefined {
+  if (!rows.length || rows.some(row => row.length !== head.length || row.some(cell => typeof cell !== "string" && typeof cell !== "number"))) return;
+  const plain = (cell: unknown) => String(cell).split(/(`[^`\n]+`)/g)
+    .map((part, index) => index % 2 ? part.slice(1, -1) : part.replace(/\[(\d{1,3})\](?:\([^\s)]+\))?/g, ""))
+    .join("").trim().replace(/\s+/g, " ")
+    .replace(/^the (?=[a-z])/i, "")
+    .replace(/^[A-Z](?=[a-z]+ )/, initial => initial.toLowerCase());
+  return JSON.stringify([head.map(plain), rows.map(row => row.map(plain))]);
+}
+
+function tableHasLinks(head: string[], rows: string[][]): boolean {
+  return [head, ...rows].some(row => row.some(value => /\[\d{1,3}\]|\]\(/.test(value)));
+}
+
+export function preservedMarkdownTableKeys(text: string): ReadonlySet<string> {
+  const keys = new Set<string>();
+  for (const block of blocks(text)) {
+    if (block.kind !== "table" || !tableHasLinks(block.head, block.rows)) continue;
+    const key = tableContentKey(block.head, block.rows);
+    if (key) keys.add(key);
+  }
+  return keys;
+}
 
 const LIST_ITEM = /^\s{0,3}([-*+]|(\d+)[.)])\s+(.*)$/;
 const cells = (line: string) => line.trim().replace(/^\||\|$/g, "").split("|").map((c) => c.trim());
@@ -122,7 +149,8 @@ function blocks(source: string): Block[] {
   return out;
 }
 
-export function MarkdownBlocks({ text, renderCitation }: { text: string; renderCitation?: RenderCitation }) {
+export function MarkdownBlocks({ text, renderCitation, deduplicateTables = false }: { text: string; renderCitation?: RenderCitation; deduplicateTables?: boolean }) {
+  const seenTables = new Set<string>();
   return (
     <>
       {blocks(text).map((b, i) => {
@@ -156,7 +184,10 @@ export function MarkdownBlocks({ text, renderCitation }: { text: string; renderC
               <ul key={k}>{items}</ul>
             );
           }
-          case "table":
+          case "table": {
+            const tableKey = deduplicateTables ? tableContentKey(b.head, b.rows) : undefined;
+            if (tableKey && seenTables.has(tableKey) && !tableHasLinks(b.head, b.rows)) return null;
+            if (tableKey) seenTables.add(tableKey);
             return (
               <div key={k} className={cx("iui-table-scroll", isLongAnswerTable(b.rows.length) && "iui-table-bounded")} role="region" aria-label="Answer table" tabIndex={0}>
                 <table className="iui-table">
@@ -171,6 +202,7 @@ export function MarkdownBlocks({ text, renderCitation }: { text: string; renderC
                 </table>
               </div>
             );
+          }
         }
       })}
     </>
