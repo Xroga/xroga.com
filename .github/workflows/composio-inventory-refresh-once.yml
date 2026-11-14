@@ -25,6 +25,12 @@ jobs:
           node-version-file: .node-version
           cache: npm
       - run: npm ci
+      - name: Focused Composio execution regression suites
+        run: npx tsx --test backend/src/services/integrations/composioActionPreflight.test.ts backend/src/services/integrations/businessWorkflow.test.ts backend/src/services/integrations/composioApprovedReadBatch.test.ts
+      - name: Check backend TypeScript
+        run: npx tsc -p backend/tsconfig.json --noEmit
+      - name: Check frontend TypeScript
+        run: npx tsc -p frontend/tsconfig.json --noEmit
       - name: Generate source-bound inventory using existing checked tool
         run: |
           node scripts/xroga/inventory.mjs --refresh
