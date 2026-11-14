@@ -58,7 +58,11 @@ export function composioActionInputProblem(
         for (const result of results) issues.push(...result);
       } else {
         const matches = results.filter((result) => !result.length).length;
-        if (!matches) issues.push(...(results.sort((a, b) => a.length - b.length)[0] ?? [path]));
+        // JSON Schema oneOf requires exactly one matching alternative, not any match.
+        // A multiple-match error is deliberately reported at the parent path.
+        if (key === 'oneOf' ? matches !== 1 : matches === 0) {
+          issues.push(...(matches > 1 ? [path] : (results.sort((a, b) => a.length - b.length)[0] ?? [path])));
+        }
       }
     }
     if (Array.isArray(value)) {

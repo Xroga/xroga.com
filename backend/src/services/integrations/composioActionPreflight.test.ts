@@ -43,3 +43,12 @@ test('returns a bounded clarification without provider-controlled field labels',
   const branches = { anyOf: Array.from({ length: 33 }, () => ({})) };
   assert.match(composioActionInputProblem('EXAMPLE_UPDATE', {}, branches, '') ?? '', /couldn’t safely check/);
 });
+
+test('oneOf rejects overlapping alternatives while anyOf accepts them', () => {
+  const branches = [{ required: ['id'] }, { required: ['url'] }];
+  const ambiguous = { id: '123', url: 'https://example.com/123' };
+  assert.match(composioActionInputProblem('EXAMPLE_UPDATE', ambiguous, { oneOf: branches }, '') ?? '', /Please clarify/);
+  assert.equal(composioActionInputProblem('EXAMPLE_UPDATE', ambiguous, { anyOf: branches }, ''), null);
+  assert.equal(composioActionInputProblem('EXAMPLE_UPDATE', { id: '123' }, { oneOf: branches }, ''), null);
+  assert.match(composioActionInputProblem('EXAMPLE_UPDATE', {}, { oneOf: branches }, '') ?? '', /Please provide|Please clarify/);
+});

@@ -38,3 +38,22 @@ export function splitExplicitBusinessWorkflow(message: string): BusinessWorkflow
   // durable checkpoints and per-read confirmation still apply to each step.
   return steps;
 }
+
+/**
+ * Continue only the paused action. Previous completed steps and their receipts
+ * stay untouched. User clarification is never treated as provider authority.
+ */
+export function clarifyPendingBusinessWorkflowStep(
+  steps: BusinessWorkflowStep[], stepIndex: number, details: string,
+): BusinessWorkflowStep[] {
+  if (!Number.isInteger(stepIndex) || stepIndex < 0 || stepIndex >= steps.length ||
+      steps[stepIndex]?.kind !== 'action') throw new Error('No pending action to clarify.');
+  if (typeof details !== 'string' || details.length > 350 ||
+      /[\u0000-\u001f\u007f]/.test(details)) throw new Error('Invalid action clarification.');
+  const clean = details.trim().replace(/\s+/g, ' ');
+  if (clean.length < 3) throw new Error('Provide the missing details for this action.');
+  const current = steps[stepIndex]!;
+  const updated = `${current.request}\nUser clarification: ${clean}`;
+  if (updated.length > 500) throw new Error('Action details are too long. Narrow the clarification.');
+  return steps.map((step, index) => index === stepIndex ? { ...step, request: updated } : { ...step });
+}

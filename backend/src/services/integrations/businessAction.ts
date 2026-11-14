@@ -1253,7 +1253,7 @@ export async function prepareBusinessAction(
   // Follow Composio's search → inspect schema → execute sequence. Only hydrate
   // scoped, connected candidates the planner is actually allowed to consider.
   const candidates = rankToolsBySkill(connectedTools, discovery.skill).slice(0, MAX_TOOL_CANDIDATES);
-  const inspected = await Promise.all(candidates.map(async (tool): Promise<XrogaConnectTool | null> => {
+  const inspected = await Promise.allSettled(candidates.map(async (tool): Promise<XrogaConnectTool | null> => {
     if (!tool.schemaLookupRequired && tool.inputSchema && Object.keys(tool.inputSchema).length) return tool;
     input.signal?.throwIfAborted();
     const details = await getComposioToolDetails(tool.slug, tenantContext);
@@ -1263,7 +1263,17 @@ export async function prepareBusinessAction(
         !details.inputSchema || !Object.keys(details.inputSchema).length) return null;
     return { ...tool, inputSchema: details.inputSchema };
   }));
-  const orderedTools = inspected.filter((tool): tool is XrogaConnectTool => tool !== null);
+  // A failed unrelated candidate must not hide a valid action, but ownership
+  // or authorization failures cannot be downgraded into ordinary discovery misses.
+  for (const outcome of inspected) {
+    if (outcome.status !== 'rejected') continue;
+    const cause = outcome.reason;
+    if (cause instanceof AuthorityError ||
+        (cause instanceof ComposioClientError && [401, 403].includes(cause.status))) throw cause;
+  }
+  const orderedTools = inspected.flatMap((outcome) =>
+    outcome.status === 'fulfilled' && outcome.value ? [outcome.value] : []);
+
   if (!orderedTools.length) return {
     status: 'unavailable',
     message: 'Xroga could not verify an available action schema for this request. No action was sent.',

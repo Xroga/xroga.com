@@ -261,7 +261,7 @@ function businessWorkflowProgressMarkdown(progress: BusinessWorkflowProgress): s
     parts.push(`Step ${run.stepIndex + 1} of ${run.stepCount} is ready for review. Nothing in this step has changed yet. [Review action](${href})`);
   } else if (run.status === 'setup_required') {
     parts.push(run.failureCode === 'ACTION_INPUT_REQUIRED'
-      ? 'Start a new workflow with the missing details. The pending step was not executed; check any earlier completed steps before repeating them.'
+      ? 'Open the saved workflow and provide the missing details. Xroga will resume the pending action without replaying completed steps.'
       : run.failureCode === 'READ_RESULT_TOO_LARGE'
       ? 'The app returned too many records to pass safely to the next action. Narrow the request and start a new workflow.'
       : 'Connect or choose the app above, then resume this saved workflow. No pending action was executed.');
@@ -1858,7 +1858,14 @@ router.post('/business-workflows/:id/resume', async (req: AuthRequest, res) => {
   const userId = requireUserId(req);
   if (!userId) return res.status(401).json({ error: 'Sign in required', code: 'UNAUTHORIZED' });
   try {
-    const progress = await resumeBusinessWorkflowAfterSetup(requireTenantContext(req.tenantContext), String(req.params.id ?? ''));
+    const missingDetails: unknown = req.body?.missingDetails;
+    if (missingDetails !== undefined && (typeof missingDetails !== 'string' || missingDetails.length > 350)) {
+      return res.status(422).json({ error: 'Missing details must be a short text clarification.', code: 'BUSINESS_WORKFLOW_INVALID_DETAILS' });
+    }
+    const progress = await resumeBusinessWorkflowAfterSetup(
+      requireTenantContext(req.tenantContext), String(req.params.id ?? ''),
+      missingDetails as string | undefined,
+    );
     return res.json({ workflow: progress.run, response: businessWorkflowProgressMarkdown(progress), confirmation: progress.confirmation ?? null });
   } catch {
     return res.status(409).json({ error: 'Workflow could not resume; check its current state before retrying.', code: 'BUSINESS_WORKFLOW_RESUME_FAILED' });

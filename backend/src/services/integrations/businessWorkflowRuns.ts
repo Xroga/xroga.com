@@ -3,7 +3,7 @@ import { getTenantSupabaseAdmin } from '../../security/serviceRoleGuard.js';
 import { prepareBusinessAction, type BusinessActionPreparationOutcome, type BusinessActionReferenceEvidence, type BusinessActionExecutionOutcome } from './businessAction.js';
 import { cancelBusinessActionConfirmation, createBusinessActionConfirmation, type SafeBusinessActionConfirmation } from './businessActionConfirmations.js';
 import { readBusinessData, type BusinessReadOutcome } from './businessRead.js';
-import type { BusinessWorkflowStep } from './businessWorkflow.js';
+import { clarifyPendingBusinessWorkflowStep, type BusinessWorkflowStep } from './businessWorkflow.js';
 
 type RunStatus = 'running' | 'executing' | 'awaiting_confirmation' | 'setup_required' | 'completed' | 'failed' | 'cancelled';
 
@@ -238,7 +238,7 @@ export async function resumeBusinessWorkflowAfterConfirmation(
   return advance(context, current);
 }
 
-export async function resumeBusinessWorkflowAfterSetup(context: TenantContext, runId: string): Promise<BusinessWorkflowProgress> {
+export async function resumeBusinessWorkflowAfterSetup(context: TenantContext, runId: string, missingDetails?: string): Promise<BusinessWorkflowProgress> {
   const { userId } = requireTenantContext(context);
   const row = await loadRun(context, userId, runId);
   if (row.status === 'awaiting_confirmation' && row.current_confirmation_id) {
@@ -268,10 +268,18 @@ export async function resumeBusinessWorkflowAfterSetup(context: TenantContext, r
     if (!resumed) throw new Error('The confirmed action no longer belongs to this workflow.');
     return resumed;
   }
-  if (row.status !== 'setup_required' || row.failure_code === 'READ_RESULT_TOO_LARGE' || row.failure_code === 'ACTION_INPUT_REQUIRED') {
+  if (row.status === 'setup_required' && row.failure_code === 'ACTION_INPUT_REQUIRED') {
+    // Replan the same current step with explicit user clarification; no earlier
+    // step is replayed, and all external writes still require exact approval.
+    const steps = clarifyPendingBusinessWorkflowStep(row.steps, row.step_index, missingDetails ?? '');
+    return advance(context, await updateRun(context, row, {
+      steps, status: 'running', failure_code: null, current_confirmation_id: null,
+    }));
+  }
+  if (missingDetails !== undefined || row.status !== 'setup_required' || row.failure_code === 'READ_RESULT_TOO_LARGE') {
     throw new Error('This workflow is not waiting for a connection or app choice.');
   }
-  return advance(context, await updateRun(context, row, { status: 'running' }));
+  return advance(context, await updateRun(context, row, { status: 'running', failure_code: null }));
 }
 
 export async function cancelBusinessWorkflowRun(context: TenantContext, runId: string): Promise<BusinessWorkflowRunView> {
