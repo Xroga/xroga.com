@@ -582,6 +582,32 @@ test('Stripe reconciliation advice that rejects timestamp ordering keeps the nat
   assert.deepEqual(validateNativeOpenUi(program, undefined, unsafe), { ok: false, reason: 'factual_review' });
 });
 
+test('a Stripe visual can distinguish logging metadata from state ordering', () => {
+  const prose = 'Reconcile Stripe webhooks against the current subscription state.';
+  const layout = (sentence: string) => `root = Col([Text(${JSON.stringify(sentence)}), Table(["Step", "Action"], [["1", "Verify the signature"]])])`;
+  const advice = [
+    'Reconcile against Stripe state, not event timestamps, before updating the stored state.',
+    'Use current Stripe state, not `event.created`, to reconcile the stored state.',
+    'Use event timestamps only for logging, not for ordering.',
+    'Use `event.created` for auditing only, not to determine delivery order.',
+  ];
+  for (const sentence of advice) {
+    const program = layout(sentence);
+    const answer = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + program, 'stop');
+    assert.deepEqual(answer.completion, { status: 'complete' }, sentence);
+    assert.equal(answer.responseSource.text, program);
+  }
+  for (const sentence of [
+    advice[1] + ' But compare event timestamps against stored state to ignore stale deliveries.',
+    advice[2].slice(0, -1) + ', but sort by event timestamps before updating stored state.',
+    'Use event timestamps for logging and for ordering.',
+    'Compare event timestamps and use the newest event as stored state.',
+  ]) {
+    assert.deepEqual(validateNativeWorkspaceProgram(layout(sentence), undefined, prose),
+      { ok: false, reason: 'factual_review' }, sentence);
+  }
+});
+
 test('factual layout recovery does not hide contradictory chart prose from a removed block', () => {
   const program = 'root = Col([Text("Stripe will retry indefinitely. March rose."), Chart("bar", [{month:"Jan",value:12},{month:"Feb",value:15},{month:"Mar",value:14}], "month", ["value"])])';
   const answer = completeNativeWorkspaceAnswer('Review the monthly chart.' + NATIVE_UI_MARKER + program, 'stop');

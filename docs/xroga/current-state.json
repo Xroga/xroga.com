@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/workspace-adaptive-acceptance-20261114",
-    "sha": "84a28c26ba18ded25858c8f2695312ee457daf4a",
-    "sourceTimestampUtc": "2026-11-14T21:53:47+05:00",
-    "auditStartedUtc": "2026-11-14T16:54:06.340Z",
+    "sha": "d787f5b50974b9fc3e21b5b5851cbc1d633032a5",
+    "sourceTimestampUtc": "2026-11-15T00:26:04+05:00",
+    "auditStartedUtc": "2026-11-14T20:24:35.420Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -5433,7 +5433,7 @@
       "id": "surface:f8a39bc555632894e7fb",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiAccuracy.ts",
-      "sha256": "87ee819e16f1958bc367c7a578c0209c9e4ffee139507e3c55fc934f2fa1309e",
+      "sha256": "c9a068a66ed47f538ca345ae311c8deca7baab83f0ff8081caeb7477eaa0c3e0",
       "symbols": [
         "FactualRule",
         "MonthlyPoint",
@@ -5476,6 +5476,7 @@
         "lower",
         "match",
         "membershipOnlyDelete",
+        "metadataContrast",
         "metricFor",
         "month",
         "monthList",
@@ -5509,6 +5510,7 @@
         "rankDisagrees",
         "rate",
         "rejectedOrdering",
+        "rejectedTimestamp",
         "requiresNativeAuthorizationReview",
         "reviewNativeAnswer",
         "rises",
@@ -149776,7 +149778,7 @@
     {
       "id": "test-suite:2e491f4d2fcbc11f974c",
       "sourcePath": "backend/src/ai/nativeOpenUi.test.ts",
-      "declaredTests": 46,
+      "declaredTests": 47,
       "skipLocations": [],
       "focusLocations": []
     },

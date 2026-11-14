@@ -50,10 +50,16 @@ export function nativeTechnicalCorrections(answer: string): TechnicalCorrection[
       guidance: nativeFactualGuidance.tenant_key_immutability,
     });
   }
-  // Exclude only the timestamp-based ordering clause explicitly rejected by
-  // the answer. A separate recommendation in the same sentence still counts.
+  // Remove the explicitly rejected method and the permitted metadata-only use.
+  // Keep separate clauses so a warning cannot mask a later recommendation.
   const rejectedOrdering = /\brather than\s+(?:infer(?:ring)?|deriv(?:e|ing)|determin(?:e|ing))\s+(?:the\s+)?(?:delivery\s+)?order\s+from\s+(?:event\.created|event\s+timestamps?)\b/gi;
-  const orderingStatements = statements.map(statement => statement.replace(rejectedOrdering, ''));
+  const rejectedTimestamp = /[,—–]\s*not\s+(?:event\.created|event\s+timestamps?)\s*[,—–]|\bnot\s+from\s+(?:event\.created|event\s+timestamps?)\b/gi;
+  const metadataContrast = /\buse\s+(?:event\.created|event\s+timestamps?)\s+(?:only\s+for\s+(?:logging|auditing|telemetry|monitoring|diagnostics)|for\s+(?:logging|auditing|telemetry|monitoring|diagnostics)(?:\s+only)?)\s*[,—–]\s*not\s+(?:for\s+(?:ordering|sorting|reconciliation)|to\s+(?:determine|infer)\s+(?:the\s+)?(?:event\s+|delivery\s+)?order)\b/gi;
+  const orderingStatements = statements.flatMap(statement => statement
+    .replace(rejectedOrdering, '')
+    .replace(rejectedTimestamp, ' ')
+    .replace(metadataContrast, ' ')
+    .split(/,\s+(?:but|yet)\s+/i));
   if (/\bStripe\b/i.test(text) && orderingStatements.some(statement => !warnsAgainst(statement) &&
     /\b(?:compare|sort(?:\s+by)?|order(?:\s+by)?|rely\s+on|use)\b[^.!?;\n]{0,40}\b(?:event\s+timestamps?|event\.created)\b/i.test(statement) &&
     /\b(?:order(?:ed|ing)?|stored state|newer|older|stale|reconcil|sort)\w*\b/i.test(statement))) {

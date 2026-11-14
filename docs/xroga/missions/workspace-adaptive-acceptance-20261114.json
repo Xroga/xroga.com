@@ -12,6 +12,7 @@
   "changedFiles": [
     "backend/src/ai/nativeOpenUi.test.ts",
     "backend/src/ai/nativeOpenUiCatalog.json",
+    "backend/src/ai/nativeOpenUiAccuracy.ts",
     "backend/src/ai/nativeOpenUiPrompt.ts",
     "backend/src/ai/nativeOpenUiWorkspace.ts",
     "backend/src/ai/pipeline.ts",
@@ -41,7 +42,8 @@
     "extend": [
       "Use the semantic plan to size the canonical native answer dispatch. Increase room for the single planner decision and bind that ceiling to the reservation.",
       "Render safe inline citations and protect readable content and native controls at narrow widths and zoom.",
-      "Keep the registered presentation components available for mixed requests and preserve validated visuals after a provider output limit."
+      "Keep the registered presentation components available for mixed requests and preserve validated visuals after a provider output limit.",
+      "Distinguish Stripe timestamp logging and explicit rejection of timestamp ordering from recommendations to order events by timestamp."
     ],
     "keep": [
       "One planner, one canonical DeepSeek answer dispatch, existing registry and authorization, saved answers, owner-only Share and decoder compatibility."

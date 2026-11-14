@@ -1,6 +1,6 @@
 # Xroga repository truth map
 
-Source SHA: `84a28c26ba18ded25858c8f2695312ee457daf4a`. Branch observed: `codex/workspace-adaptive-acceptance-20261114`. Audit started: 2026-11-14T16:54:06.340Z.
+Source SHA: `d787f5b50974b9fc3e21b5b5851cbc1d633032a5`. Branch observed: `codex/workspace-adaptive-acceptance-20261114`. Audit started: 2026-11-14T20:24:35.420Z.
 
 This inventory records static source and call-path evidence. A mounted endpoint is reachable in source; that does not certify live success, tenant safety, approval enforcement, or completion. All implementation surfaces retain an unverified/partial/placeholder state until their own acceptance tests establish behavior. No architecture was replaced and no production operations were performed.
 
@@ -14,7 +14,7 @@ This inventory records static source and call-path evidence. A mounted endpoint 
 - migrations: 162
 - workflows: 21
 - testSuites: 1110
-- declaredTests: 7505
+- declaredTests: 7506
 - classifiedMarkers: 425
 - reachableMarkers: 359
 - absentRequiredPaths: 5
