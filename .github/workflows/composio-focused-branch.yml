@@ -1,0 +1,28 @@
+name: Focused Composio branch checks
+on:
+  pull_request:
+    paths:
+      - 'backend/src/services/integrations/**'
+      - 'backend/src/routes/phase1.ts'
+      - 'frontend/src/app/(shell)/dashboard/workflows/**'
+      - '.github/workflows/composio-focused-branch.yml'
+permissions:
+  contents: read
+jobs:
+  focused:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: '.node-version'
+          cache: npm
+      - run: npm ci
+      - name: Regression tests for Composio preflight and paused workflow clarification
+        run: npx tsx --test backend/src/services/integrations/composioActionPreflight.test.ts backend/src/services/integrations/businessWorkflow.test.ts
+      - name: Backend TypeScript check
+        run: npx tsc -p backend/tsconfig.json --noEmit
+      - name: Frontend TypeScript check
+        run: npx tsc -p frontend/tsconfig.json --noEmit
