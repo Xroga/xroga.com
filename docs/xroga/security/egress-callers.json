@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "5e0bb63b711667cb072ec275c8785bee21a2aa4a1c35129770659d5f5a6325c1",
+  "sourceTreeDigest": "d85b45e6fc05f6f9b9017d8cbc58363d846657915c1725fd4d916b34d34d9a13",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",

@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "9b1810e3554144e7c76ed14da93b7bed4c2de5de71b7820ccbec905b0b0b8575",
+  "reviewRegistrySha256": "b7f1c8a84aa3b0d89a8a70e2436d863a143c02a15dbf30e6b14db9fa035f6de7",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -5312,35 +5312,35 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "b1c0d6b8e195f79b0330"
+        "id": "025a01bd4f6d227a4b25"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "a0df0a93fb894e4e6fed"
+        "id": "0af8b50eb3cf8a2f16e3"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "e8e8323b4ccba5a6dc16"
+        "id": "b8338a9d7821b218bb10"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "10e8b35ebde560e0928a"
+        "id": "249af83b90460d9ddea9"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "779aaa3d9eb539380552"
+        "id": "e8e5572b95dacde8cfda"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "74b84794b1baeefba2e3"
+        "id": "8dfd0964bc00f2d155ad"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "fec5554e7fbf7cee0110"
+        "id": "c62c6d167a18d8d377f0"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "120f3c9583f4a977d816"
+        "id": "e1c6b803c74ca09aea07"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -7056,35 +7056,35 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "b1c0d6b8e195f79b0330"
+        "id": "025a01bd4f6d227a4b25"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "a0df0a93fb894e4e6fed"
+        "id": "0af8b50eb3cf8a2f16e3"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "e8e8323b4ccba5a6dc16"
+        "id": "b8338a9d7821b218bb10"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "10e8b35ebde560e0928a"
+        "id": "249af83b90460d9ddea9"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "779aaa3d9eb539380552"
+        "id": "e8e5572b95dacde8cfda"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "74b84794b1baeefba2e3"
+        "id": "8dfd0964bc00f2d155ad"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "fec5554e7fbf7cee0110"
+        "id": "c62c6d167a18d8d377f0"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "120f3c9583f4a977d816"
+        "id": "e1c6b803c74ca09aea07"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -20321,7 +20321,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "768d23551b96e4e803da3767e3b4cb99b6d28cb2d97f84d9a6c8c300fbdfc845",
+      "sourceSha256": "f8165d4c8cb4da073056f0e5371e01e70b4fc0df9a51a893b8beb5e488433493",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in toolUiLink. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -23047,7 +23047,7 @@
       "target": "business_workflow_runs",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c08a1d8f472f45de1b8eb6bee080f29e7419c4b8be919e0f4e1dff9e898ab70a"
+      "sourceSha256": "11b8a6c84f00c3d6b2e825dded915ad554090d39eada07b7390ebf7fecdaa4fa"
     },
     {
       "id": "9680461141ee27df8f1e",
@@ -23058,7 +23058,7 @@
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c08a1d8f472f45de1b8eb6bee080f29e7419c4b8be919e0f4e1dff9e898ab70a"
+      "sourceSha256": "11b8a6c84f00c3d6b2e825dded915ad554090d39eada07b7390ebf7fecdaa4fa"
     },
     {
       "id": "52cbf82d23aa39fb1097",
@@ -23069,7 +23069,7 @@
       "target": "business_workflow_runs",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c08a1d8f472f45de1b8eb6bee080f29e7419c4b8be919e0f4e1dff9e898ab70a"
+      "sourceSha256": "11b8a6c84f00c3d6b2e825dded915ad554090d39eada07b7390ebf7fecdaa4fa"
     },
     {
       "id": "e6bf012f03760d8f4b31",
@@ -23080,95 +23080,95 @@
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c08a1d8f472f45de1b8eb6bee080f29e7419c4b8be919e0f4e1dff9e898ab70a"
+      "sourceSha256": "11b8a6c84f00c3d6b2e825dded915ad554090d39eada07b7390ebf7fecdaa4fa"
     },
     {
-      "id": "b1c0d6b8e195f79b0330",
+      "id": "025a01bd4f6d227a4b25",
       "path": "backend/src/services/integrations/businessWorkflowRuns.ts",
-      "line": 194,
+      "line": 197,
       "enclosing": "createBusinessWorkflowRun",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "business_workflow_runs",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c08a1d8f472f45de1b8eb6bee080f29e7419c4b8be919e0f4e1dff9e898ab70a"
+      "sourceSha256": "11b8a6c84f00c3d6b2e825dded915ad554090d39eada07b7390ebf7fecdaa4fa"
     },
     {
-      "id": "a0df0a93fb894e4e6fed",
+      "id": "0af8b50eb3cf8a2f16e3",
       "path": "backend/src/services/integrations/businessWorkflowRuns.ts",
-      "line": 194,
+      "line": 197,
       "enclosing": "createBusinessWorkflowRun",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c08a1d8f472f45de1b8eb6bee080f29e7419c4b8be919e0f4e1dff9e898ab70a"
+      "sourceSha256": "11b8a6c84f00c3d6b2e825dded915ad554090d39eada07b7390ebf7fecdaa4fa"
     },
     {
-      "id": "e8e8323b4ccba5a6dc16",
+      "id": "b8338a9d7821b218bb10",
       "path": "backend/src/services/integrations/businessWorkflowRuns.ts",
-      "line": 214,
+      "line": 217,
       "enclosing": "resumeBusinessWorkflowAfterConfirmation",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "business_workflow_runs",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c08a1d8f472f45de1b8eb6bee080f29e7419c4b8be919e0f4e1dff9e898ab70a"
+      "sourceSha256": "11b8a6c84f00c3d6b2e825dded915ad554090d39eada07b7390ebf7fecdaa4fa"
     },
     {
-      "id": "10e8b35ebde560e0928a",
+      "id": "249af83b90460d9ddea9",
       "path": "backend/src/services/integrations/businessWorkflowRuns.ts",
-      "line": 214,
+      "line": 217,
       "enclosing": "resumeBusinessWorkflowAfterConfirmation",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c08a1d8f472f45de1b8eb6bee080f29e7419c4b8be919e0f4e1dff9e898ab70a"
+      "sourceSha256": "11b8a6c84f00c3d6b2e825dded915ad554090d39eada07b7390ebf7fecdaa4fa"
     },
     {
-      "id": "779aaa3d9eb539380552",
+      "id": "e8e5572b95dacde8cfda",
       "path": "backend/src/services/integrations/businessWorkflowRuns.ts",
-      "line": 242,
+      "line": 245,
       "enclosing": "resumeBusinessWorkflowAfterSetup",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "business_action_confirmations",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c08a1d8f472f45de1b8eb6bee080f29e7419c4b8be919e0f4e1dff9e898ab70a"
+      "sourceSha256": "11b8a6c84f00c3d6b2e825dded915ad554090d39eada07b7390ebf7fecdaa4fa"
     },
     {
-      "id": "74b84794b1baeefba2e3",
+      "id": "8dfd0964bc00f2d155ad",
       "path": "backend/src/services/integrations/businessWorkflowRuns.ts",
-      "line": 242,
+      "line": 245,
       "enclosing": "resumeBusinessWorkflowAfterSetup",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c08a1d8f472f45de1b8eb6bee080f29e7419c4b8be919e0f4e1dff9e898ab70a"
+      "sourceSha256": "11b8a6c84f00c3d6b2e825dded915ad554090d39eada07b7390ebf7fecdaa4fa"
     },
     {
-      "id": "fec5554e7fbf7cee0110",
+      "id": "c62c6d167a18d8d377f0",
       "path": "backend/src/services/integrations/businessWorkflowRuns.ts",
-      "line": 283,
+      "line": 288,
       "enclosing": "cancelBusinessWorkflowForConfirmation",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "business_workflow_runs",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c08a1d8f472f45de1b8eb6bee080f29e7419c4b8be919e0f4e1dff9e898ab70a"
+      "sourceSha256": "11b8a6c84f00c3d6b2e825dded915ad554090d39eada07b7390ebf7fecdaa4fa"
     },
     {
-      "id": "120f3c9583f4a977d816",
+      "id": "e1c6b803c74ca09aea07",
       "path": "backend/src/services/integrations/businessWorkflowRuns.ts",
-      "line": 283,
+      "line": 288,
       "enclosing": "cancelBusinessWorkflowForConfirmation",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c08a1d8f472f45de1b8eb6bee080f29e7419c4b8be919e0f4e1dff9e898ab70a"
+      "sourceSha256": "11b8a6c84f00c3d6b2e825dded915ad554090d39eada07b7390ebf7fecdaa4fa"
     },
     {
       "id": "81d01fa98445cfc7e929",
