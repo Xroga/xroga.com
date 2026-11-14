@@ -2,10 +2,10 @@
   "version": "1.0",
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
-    "branch": "codex/workspace-inline-full-answers-20261114",
-    "sha": "3187f15baec0d5f212fc2a53a48b91a1ff3ac66f",
-    "sourceTimestampUtc": "2026-11-14T20:25:38+05:00",
-    "auditStartedUtc": "2026-11-14T15:37:02.313Z",
+    "branch": "codex/workspace-adaptive-acceptance-20261114",
+    "sha": "84a28c26ba18ded25858c8f2695312ee457daf4a",
+    "sourceTimestampUtc": "2026-11-14T21:53:47+05:00",
+    "auditStartedUtc": "2026-11-14T16:54:06.340Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -365,7 +365,8 @@
         "backend/src/ai/answerCoverage.test.ts:3",
         "backend/src/ai/nativeOpenUi.test.ts:8",
         "backend/src/ai/pipeline.ts:29",
-        "backend/src/ai/presentationRelevance.test.ts:4"
+        "backend/src/ai/presentationRelevance.test.ts:4",
+        "backend/src/ai/tenantModelDispatch.test.ts:11"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -380,7 +381,8 @@
       "testCoverage": [
         "backend/src/ai/answerCoverage.test.ts",
         "backend/src/ai/nativeOpenUi.test.ts",
-        "backend/src/ai/presentationRelevance.test.ts"
+        "backend/src/ai/presentationRelevance.test.ts",
+        "backend/src/ai/tenantModelDispatch.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -431,7 +433,7 @@
       "callers": [
         "backend/src/ai/compileValidate.test.ts:9",
         "backend/src/ai/pipeline.ts:211",
-        "backend/src/ai/tenantModelDispatch.test.ts:11"
+        "backend/src/ai/tenantModelDispatch.test.ts:12"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -2848,7 +2850,7 @@
         "backend/src/ai/builderAttempt.test.ts:3",
         "backend/src/ai/openaiCompat.ts:18",
         "backend/src/ai/pipeline.ts:47",
-        "backend/src/ai/tenantModelDispatch.test.ts:18",
+        "backend/src/ai/tenantModelDispatch.test.ts:19",
         "backend/src/synthesis/coherentImplementation.ts:6"
       ],
       "reachable": true,
@@ -3429,7 +3431,7 @@
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:8",
-        "backend/src/ai/tenantModelDispatch.test.ts:12"
+        "backend/src/ai/tenantModelDispatch.test.ts:13"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -5569,7 +5571,7 @@
       "id": "surface:a67f0b1fa2dd0f11a67f",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiPrompt.ts",
-      "sha256": "9417338470247580a41e0a0e8efb58674f71df8369f644401ee4dabe4f1ac80f",
+      "sha256": "a204090e2c4d48deeb4eb0d3228a2a7926c5cae1999651aa9aed1175d1a462c0",
       "symbols": [
         "allowed",
         "buildNativeOpenUiPrompt",
@@ -6648,7 +6650,7 @@
       "id": "surface:90932fa247bf4ae28450",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/pipeline.ts",
-      "sha256": "e3ce3808eba24cd2461066d7b571ae5f96fd108ef3b8aaf807ba04b39b1b3dc8",
+      "sha256": "245f60b9f9b04e0a67226b5354a4fd13ccf584a475e2219a09472d2f5d57000c",
       "symbols": [
         "ARCHITECT_MS",
         "BUILDER_FALLBACKS",
@@ -8280,7 +8282,7 @@
         "backend/src/ai/research.ts:4",
         "backend/src/ai/softwareAgent/xrogaAgentModel.ts:16",
         "backend/src/ai/softwareAgent/xrogaAgentModelEgress.test.ts:5",
-        "backend/src/ai/tenantModelDispatch.test.ts:14",
+        "backend/src/ai/tenantModelDispatch.test.ts:15",
         "backend/src/ai/universal/semanticRequestPlanner.ts:21",
         "backend/src/index.ts:71",
         "backend/src/lib/resilience/callWithFallback.ts:4",
@@ -9849,7 +9851,7 @@
         "backend/src/ai/softwareAgent/softwareAgentCheckpoint.ts:8",
         "backend/src/ai/softwareAgent/swarmRunSoftwareEventSink.test.ts:5",
         "backend/src/ai/softwareAgent/swarmRunSoftwareEventSink.ts:1",
-        "backend/src/ai/tenantModelDispatch.test.ts:19",
+        "backend/src/ai/tenantModelDispatch.test.ts:20",
         "backend/src/ai/tenantModelDispatch.ts:18",
         "backend/src/builder/swarmBridge.ts:2",
         "backend/src/existingSource/change/canonical.ts:67",
@@ -12023,7 +12025,7 @@
         "backend/src/ai/softwareAgent/xrogaAgentModelEgress.test.ts:3",
         "backend/src/ai/softwareAgent/xrogaAgentModelTelemetry.test.ts:248",
         "backend/src/ai/softwareAgent/xrogaAgentModelTelemetry.test.ts:7",
-        "backend/src/ai/tenantModelDispatch.test.ts:13",
+        "backend/src/ai/tenantModelDispatch.test.ts:14",
         "backend/src/existingSource/change/production.ts:41",
         "backend/src/security/softwareAgentSdk.local.integration.ts:6",
         "backend/src/synthesis/softwareAgentImplementationAdapter.ts:38"
@@ -13516,10 +13518,11 @@
       "id": "surface:2caccad5e3c57290edad",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "sha256": "47fab9492ea23277010df4f4babf7d27aa5588606f762b0ace3c2eaa843f1acc",
+      "sha256": "212fc2477f54492635b1a59de29e89ba716008969dddc39a4281030b8c97a579",
       "symbols": [
         "SEMANTIC_PLANNER_DEFAULT_TOTAL_TIMEOUT_MS",
         "SEMANTIC_PLANNER_HEDGE_DELAY_MS",
+        "SEMANTIC_PLANNER_MAX_OUTPUT_TOKENS",
         "SEMANTIC_PLANNER_MAX_TOTAL_TIMEOUT_MS",
         "SEMANTIC_PLANNER_ROUTE_TIMEOUT_MS",
         "SOCIAL_ACKNOWLEDGEMENT",
@@ -34382,7 +34385,7 @@
       "callers": [
         "backend/src/ai/parallelApproval.ts:7",
         "backend/src/ai/sonnetApproval.ts:6",
-        "backend/src/ai/tenantModelDispatch.test.ts:16",
+        "backend/src/ai/tenantModelDispatch.test.ts:17",
         "backend/src/ai/tenantModelDispatch.ts:11",
         "backend/src/ai/zurelayEscalation.test.ts:5",
         "backend/src/builder/providerAuthority.ts:5",
@@ -34508,7 +34511,7 @@
         "backend/src/ai/researchAnswer.ts:6",
         "backend/src/ai/sonnetApproval.ts:4",
         "backend/src/ai/supabaseApprovalPipeline.security.test.ts:6",
-        "backend/src/ai/tenantModelDispatch.test.ts:15",
+        "backend/src/ai/tenantModelDispatch.test.ts:16",
         "backend/src/ai/tenantModelDispatch.ts:7",
         "backend/src/ai/universal/semanticRequestPlanner.test.ts:31",
         "backend/src/ai/zurelayEscalation.test.ts:4",
@@ -41589,8 +41592,8 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:3887",
-        "backend/src/ai/pipeline.ts:3890",
+        "backend/src/ai/pipeline.ts:3889",
+        "backend/src/ai/pipeline.ts:3892",
         "backend/src/ai/projectMemory.ts:7",
         "backend/src/ai/sessionMemory.ts:7",
         "backend/src/builder/providerTransports.ts:10",
@@ -41863,7 +41866,7 @@
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:127",
-        "backend/src/ai/pipeline.ts:3886",
+        "backend/src/ai/pipeline.ts:3888",
         "backend/src/ai/tenantModelDispatch.ts:6",
         "backend/src/config/supabaseTransport.security.test.ts:6",
         "backend/src/routes/integrations.ts:19",
@@ -87150,13 +87153,15 @@
       "id": "surface:e67e2018c5fc720f5a55",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/Editorial.tsx",
-      "sha256": "b3f8ddb1cdbdcf0b70864454ecf48c4fea129df907da6c96a03d36d011ede00f",
+      "sha256": "95ca782cd9945bf036810f17ba5bf1b326eda1d7ad6c9549280d92258292bb1d",
       "symbols": [
         "Controls",
         "Metric",
-        "Section"
+        "Section",
+        "renderCitation"
       ],
       "imports": [
+        "./evidence",
         "./upstream/components/glyph",
         "./upstream/components/markdown",
         "./upstream/components/style",
@@ -87165,6 +87170,7 @@
         "zod/v4"
       ],
       "runtimeImports": [
+        "frontend/src/components/native-openui/evidence.tsx",
         "frontend/src/components/native-openui/upstream/components/glyph.tsx",
         "frontend/src/components/native-openui/upstream/components/markdown.tsx",
         "frontend/src/components/native-openui/upstream/components/style.ts"
@@ -87188,7 +87194,9 @@
       "tenantBoundary": [],
       "approvalBoundary": [],
       "costBoundary": [],
-      "evidenceBoundary": [],
+      "evidenceBoundary": [
+        "frontend/src/components/native-openui/Editorial.tsx#useRenderEvidenceCitation"
+      ],
       "testCoverage": [],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -87278,7 +87286,7 @@
       "id": "surface:169100c09d49c9650f7a",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/NativeSurface.tsx",
-      "sha256": "9489ebf1477f2cdf0f3f8aa8d1159668e5241abc2af120415043ce61b81d5895",
+      "sha256": "fdc3aebada01a682f62679bf6cae10749a75cc24de3ef66050d3004e2f0f17cd",
       "symbols": [
         "NativeAnswer",
         "NativeSurface",
@@ -87481,7 +87489,7 @@
       "id": "surface:1361f34bb7bd574392a7",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/Tabs.tsx",
-      "sha256": "e090e3f9989223584330de0f8aecebe8f411089ed8559bb0e7b9cbaaa87b257c",
+      "sha256": "43aff22ec55572f86d3cd5b897e6fbff05bff10ba536675492d0ef9b66b2ce3b",
       "symbols": [
         "Tabs",
         "tabs"
@@ -87550,8 +87558,10 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
+        "frontend/src/components/native-openui/Editorial.tsx:9",
         "frontend/src/components/native-openui/NativeSurface.tsx:8",
         "frontend/src/components/native-openui/library.tsx:23",
+        "frontend/src/components/native-openui/upstream/components/extra.tsx:12",
         "frontend/src/components/native-openui/upstream/components/text.tsx:9"
       ],
       "reachable": true,
@@ -87829,7 +87839,7 @@
       "id": "surface:a849bd03e85ab44f9cab",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/controls.tsx",
-      "sha256": "9b1080ef66360c4172cdedad2ab58d82ba8980da0c81e742ed1dc754452a5811",
+      "sha256": "d326b670c3249ea26ef055c691186f3834c695c54142c5f7f12cf3d803ec2a45",
       "symbols": [
         "Button",
         "Checkbox",
@@ -87886,6 +87896,7 @@
         "shown",
         "step",
         "streaming",
+        "style",
         "target",
         "text",
         "toggle",
@@ -87939,7 +87950,7 @@
       "id": "surface:3cd2636e7dcb8164b6aa",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/extra.tsx",
-      "sha256": "bc8883f53beba29ad1dc69b16a2bce4a69be9a8c9fb2fb1c7ea188f1f878ce5a",
+      "sha256": "34d26863b9c061598604f6376a34c2f9ac8f7e1fde80c6a2f04e2fe341bec76c",
       "symbols": [
         "Carousel",
         "Code",
@@ -87956,12 +87967,14 @@
         "html",
         "internal",
         "items",
+        "renderCitation",
         "renderSlot",
         "slot",
         "str",
         "width"
       ],
       "imports": [
+        "../../evidence",
         "./markdown",
         "./style",
         "@/lib/codeHighlight",
@@ -87973,6 +87986,7 @@
         "zod/v4"
       ],
       "runtimeImports": [
+        "frontend/src/components/native-openui/evidence.tsx",
         "frontend/src/components/native-openui/upstream/components/markdown.tsx",
         "frontend/src/components/native-openui/upstream/components/style.ts",
         "frontend/src/lib/codeHighlight.ts",
@@ -87999,7 +88013,9 @@
       "tenantBoundary": [],
       "approvalBoundary": [],
       "costBoundary": [],
-      "evidenceBoundary": [],
+      "evidenceBoundary": [
+        "frontend/src/components/native-openui/upstream/components/extra.tsx#useRenderEvidenceCitation"
+      ],
       "testCoverage": [],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -88123,7 +88139,7 @@
       "id": "surface:0fef6875af5860e2f4b4",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/markdown.tsx",
-      "sha256": "bf28eafe35bbd75caab147682c0932e3a45f8d77e4af2e9adb18c47e25dc77a7",
+      "sha256": "677bc907edbfe7d023acc8cc5b9fd8fe1df12398e6902cfa93c0321a047419d9",
       "symbols": [
         "Block",
         "INLINE",
@@ -88175,6 +88191,7 @@
         "rest",
         "rows",
         "seenTables",
+        "source",
         "tableContentKey",
         "tableHasLinks",
         "tableKey",
@@ -88285,7 +88302,7 @@
         "frontend/src/components/native-openui/Tabs.tsx:7",
         "frontend/src/components/native-openui/library.tsx:12",
         "frontend/src/components/native-openui/upstream/components/controls.tsx:15",
-        "frontend/src/components/native-openui/upstream/components/extra.tsx:12",
+        "frontend/src/components/native-openui/upstream/components/extra.tsx:13",
         "frontend/src/components/native-openui/upstream/components/layout.tsx:6",
         "frontend/src/components/native-openui/upstream/components/markdown.tsx:3",
         "frontend/src/components/native-openui/upstream/components/svg.tsx:5",
@@ -88445,7 +88462,7 @@
       "id": "surface:c0e107e03bc08dc07fad",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/text.tsx",
-      "sha256": "0d2e62a51cfe268dc4e591bbda87922d39d308ee4b72bfb2088ab524bb560e2a",
+      "sha256": "73e646222f5da35075a1b2752e3c2891565c6e7a2c5f1cb3164b8ff3bfcb3713",
       "symbols": [
         "Badge",
         "Caption",
@@ -106798,7 +106815,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/native-openui/upstream/components/extra.tsx:59",
+        "frontend/src/components/native-openui/upstream/components/extra.tsx:60",
         "frontend/src/components/response-experience-v2/ProseV2.tsx:9",
         "frontend/src/lib/codeHighlight.test.ts:3"
       ],
@@ -112403,7 +112420,7 @@
       "id": "surface:2f643a1aa432bf0f982e",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/publicAnswerText.ts",
-      "sha256": "0e84b2fee14286c6c2422424a2c85cc340a21a382faacb4fe67e6d0dc95ae1df",
+      "sha256": "461344b72a6f757833949cddd3dc349880bf42e8402f36913f27509a5ee7b443",
       "symbols": [
         "isPresentationLanguage",
         "markerTail",
@@ -127130,7 +127147,7 @@
       "id": "surface:bd6af899f2dd9df930f6",
       "subsystem": "browser_sandbox",
       "sourcePath": "scripts/verify-native-openui-browser.mjs",
-      "sha256": "d9419a6ce5d1f2fc859d51e31601d6366190a4e7a4fbd32560fd7cec1781a160",
+      "sha256": "12ba3a49c9f4ae9deae3bbb8d50b94bbbd7de3457a50ff518014a521f1e3e520",
       "symbols": [
         "accessibility",
         "answer",
@@ -127154,11 +127171,14 @@
         "fallbackAnswer",
         "file",
         "fit",
+        "geometry",
         "google",
         "graph",
         "graphAccessibility",
         "heights",
         "icon",
+        "inlineLinks",
+        "label",
         "metrics",
         "name",
         "open",
@@ -127181,12 +127201,16 @@
         "sprite",
         "stripe",
         "table",
+        "text",
         "theme",
         "timer",
         "tooltip",
         "touch",
         "touchPage",
-        "viewport"
+        "viewport",
+        "zoomContext",
+        "zoomPage",
+        "zoomReflow"
       ],
       "imports": [
         "@axe-core/playwright",
@@ -140259,9 +140283,9 @@
       "state": "IMPLEMENTED_BUT_UNVERIFIED"
     },
     {
-      "id": "schedule:a568b6cf45368e6d4b6c",
+      "id": "schedule:b988dab1f743dbdc1c6e",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/controls.tsx",
-      "line": 463,
+      "line": 466,
       "kind": "setInterval",
       "symbol": "<module>",
       "reachable": true,
@@ -141762,7 +141786,7 @@
   ],
   "findings": [
     {
-      "id": "finding:dd964bdab6577c3f76f2",
+      "id": "finding:5fbedd14f1fd4cd8a681",
       "sourcePath": "backend/src/ai/nativeOpenUiPrompt.ts",
       "line": 53,
       "kind": "PLACEHOLDER",
@@ -143752,9 +143776,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:dc596283b9abdc0c7e3e",
+      "id": "finding:e7734d4b42a57d662d36",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/controls.tsx",
-      "line": 169,
+      "line": 172,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -143762,9 +143786,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:a3635bb80dee9f7bf5c8",
+      "id": "finding:37ceae2deb15dabd5e91",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/controls.tsx",
-      "line": 185,
+      "line": 188,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -143772,9 +143796,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:52b6f3689d30ae3116df",
+      "id": "finding:0073ad271480c3943da0",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/controls.tsx",
-      "line": 185,
+      "line": 188,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -143782,9 +143806,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:8d30b1a370ac8dee0e14",
+      "id": "finding:6c426eec1074c0d5d274",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/controls.tsx",
-      "line": 186,
+      "line": 189,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -143792,9 +143816,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:fc16cf6157da2774d241",
+      "id": "finding:cb41fa67ab166217970f",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/controls.tsx",
-      "line": 207,
+      "line": 210,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -143802,9 +143826,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:f237b2f10e4e89c59de3",
+      "id": "finding:096255e772e83f9bef4f",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/controls.tsx",
-      "line": 219,
+      "line": 222,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -143812,9 +143836,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:417f3ca14bdaecec28d2",
+      "id": "finding:4353c480a31e3085915e",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/controls.tsx",
-      "line": 219,
+      "line": 222,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -143822,9 +143846,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:8cf75cfe732ce1feb5f6",
+      "id": "finding:60fa20876242ddff79a5",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/controls.tsx",
-      "line": 220,
+      "line": 223,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -143832,9 +143856,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:a2fbad98eb98fed421e2",
+      "id": "finding:b4ec13738b297d235e1a",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/controls.tsx",
-      "line": 237,
+      "line": 240,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -143842,29 +143866,29 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:70b5786fba70ee5b3fdd",
-      "sourcePath": "frontend/src/components/native-openui/upstream/components/controls.tsx",
-      "line": 246,
-      "kind": "PLACEHOLDER",
-      "reachable": true,
-      "state": "PARTIAL",
-      "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
-      "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
-    },
-    {
-      "id": "finding:55af05e748d96eba5a1e",
-      "sourcePath": "frontend/src/components/native-openui/upstream/components/controls.tsx",
-      "line": 247,
-      "kind": "PLACEHOLDER",
-      "reachable": true,
-      "state": "PARTIAL",
-      "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
-      "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
-    },
-    {
-      "id": "finding:ab4b174fb92fa7d0307d",
+      "id": "finding:8befb1a344c53d3fd3ba",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/controls.tsx",
       "line": 249,
+      "kind": "PLACEHOLDER",
+      "reachable": true,
+      "state": "PARTIAL",
+      "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
+      "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
+    },
+    {
+      "id": "finding:0e6a3dd1baf9c90d72b7",
+      "sourcePath": "frontend/src/components/native-openui/upstream/components/controls.tsx",
+      "line": 250,
+      "kind": "PLACEHOLDER",
+      "reachable": true,
+      "state": "PARTIAL",
+      "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
+      "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
+    },
+    {
+      "id": "finding:3f9b9c9d014409384afc",
+      "sourcePath": "frontend/src/components/native-openui/upstream/components/controls.tsx",
+      "line": 252,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -146021,86 +146045,86 @@
       "reachable": false
     },
     {
-      "id": "frontend-call:4dd2275ca8cf334dc8c0",
+      "id": "frontend-call:9c067969e8166ae0fc38",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 713,
+      "line": 719,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:1b4846b4634ee3ccdbdc",
+      "id": "frontend-call:f5186468694d0e476f83",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 716,
+      "line": 722,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:fceeacbc454fb9337a08",
-      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1487,
-      "callee": "fetch",
-      "reachable": false
-    },
-    {
-      "id": "frontend-call:96c27ac912a49413c634",
-      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1488,
-      "callee": "fetch",
-      "reachable": false
-    },
-    {
-      "id": "frontend-call:b1e5ac99ea027d91ef74",
+      "id": "frontend-call:6a63a52ddee703ad9bec",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 1493,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:520209c2e6addcb66adb",
+      "id": "frontend-call:0f063b62940272bf9dc9",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 1494,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:543ca9f1798ca1268fce",
+      "id": "frontend-call:ce1b1819d391baa24a29",
+      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
+      "line": 1499,
+      "callee": "fetch",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:716486b14bd47ab3721b",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 1500,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:327b3089a4a93508bc2b",
+      "id": "frontend-call:c6c0fd360e7c239493c8",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1505,
+      "line": 1506,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:9a57073d63890be4c8bd",
+      "id": "frontend-call:7b60b616ec8fcbc3638a",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1562,
+      "line": 1511,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:d2fb3c75e2bbbbf7bed8",
+      "id": "frontend-call:fd5d8222a3c6970e71ed",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1563,
+      "line": 1568,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:056a6f8b6b0870b097b3",
+      "id": "frontend-call:fbf7bc66434a8188ceb8",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1570,
+      "line": 1569,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:f707395eb2a74bd83227",
+      "id": "frontend-call:85d9eb7077f9ebfd0b0e",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1584,
+      "line": 1576,
+      "callee": "fetch",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:49e496423a14d0c94e49",
+      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
+      "line": 1590,
       "callee": "fetch",
       "reachable": false
     },
@@ -155013,7 +155037,7 @@
     {
       "id": "test-suite:4ce9d7bbf578638998f1",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/markdown.test.ts",
-      "declaredTests": 4,
+      "declaredTests": 6,
       "skipLocations": [],
       "focusLocations": []
     },
