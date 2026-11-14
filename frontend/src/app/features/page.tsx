@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import {
-  ArrowRight, ArrowUpRight, Blocks, BookOpen, BrainCircuit, Check,
+  ArrowRight, ArrowUpRight, BrainCircuit, Check,
   CheckCircle2, ChevronRight, CircleDot, CloudUpload, Code2,
   FileCode2, GitBranch, Globe2, Layers3, LockKeyhole,
   ShieldCheck, Sparkles, Workflow,
@@ -135,16 +135,6 @@ export default function FeaturesPage() {
       <PageJsonLd path="/features" name="Xroga AI features" description="Explore Xroga AI Chat, AI Coding Agent, product building, validation, GitHub delivery, and Vercel deployment." type="CollectionPage" />
       <div className="xf-grain" aria-hidden="true"/>
       <div className="xf-container">
-        <header className="xf-local-header">
-          <Link href="/" className="xf-brand" aria-label="Xroga home"><span className="xf-brand-symbol"><Sparkles size={18}/></span>XROGA<span className="xf-brand-sub">/ FEATURES</span></Link>
-          <nav aria-label="Features page navigation">
-            <a href="#highlights">Highlights</a>
-            <a href="#benefits">Why Xroga</a>
-            <a href="#all-features">All features</a>
-          </nav>
-          <Link href="/auth/signup" className="xf-nav-cta">Start building <ArrowUpRight size={15}/></Link>
-        </header>
-
         <section className="xf-hero" aria-labelledby="xf-title">
           <div className="xf-hero-copy">
             <div className="xf-eyebrow"><span className="xf-pulse"/> EXPLORE XROGA <span className="xf-eyebrow-sep">/</span> ONE CONNECTED WORKSPACE</div>
@@ -200,8 +190,7 @@ export default function FeaturesPage() {
         </section>
 
         <section className="xf-bottom-cta" aria-labelledby="xf-cta-heading"><div className="xf-bottom-glow" aria-hidden="true"/><span className="xf-kicker">START WITH AN IDEA</span><h2 id="xf-cta-heading">Your next build starts here.</h2><p>Describe the outcome. Keep control of the code. See what was actually done.</p><Link href="/auth/signup" className="xf-btn-primary">Start building free <ArrowUpRight size={18}/></Link></section>
-        <footer className="xf-local-footer"><Link href="/" className="xf-brand"><span className="xf-brand-symbol"><Sparkles size={15}/></span>XROGA</Link><div><Link href="/docs"><BookOpen size={14}/> Docs</Link><Link href="/integrations"><Blocks size={14}/> Integrations</Link><Link href="/pricing"><ArrowRight size={14}/> Pricing</Link></div><a href="#top">Back to top ↑</a></footer>
-      </div>
+        </div>
     </main>
   );
 }
