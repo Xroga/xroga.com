@@ -698,7 +698,7 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
       jumpMessageId: entry.messages[entry.messages.length - 1]?.id,
       githubRepoName: entry.githubRepoName,
     });
-    router.push('/workspace');
+    if(pathname!=='/workspace')router.push('/workspace');
     toast.success('Conversation restored');
   }
 
@@ -1075,9 +1075,11 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
 
   useEffect(()=>{
     if(typeof window==='undefined'||window.location.pathname!=='/workspace'||!accountId)return;
-    const id=new URLSearchParams(window.location.search).get('conversation');
+    const url=new URL(window.location.href);
+    const id=url.searchParams.get('conversation');
     if(!id||id===activeSessionId)return;
-    window.history.replaceState(window.history.state,'','/workspace');
+    url.searchParams.delete('conversation');
+    window.history.replaceState(window.history.state,'',url);
     const match=savedConversations.find(s=>s.id===id);
     if(match){void openSession(match);return;}
     void (async()=>{

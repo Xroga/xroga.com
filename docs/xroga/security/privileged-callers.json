@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "9b1810e3554144e7c76ed14da93b7bed4c2de5de71b7820ccbec905b0b0b8575",
+  "reviewRegistrySha256": "9cbc9532c6b2fde8ebae7fe6aa36cc3d92c11f675cc5727a0eecdf74653ddf67",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -6536,15 +6536,15 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "9e140274802c8fbb62dd"
+        "id": "4cec2f7fa66b26d9ec3f"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "760b00e5814db2a361f2"
+        "id": "31946daf7555512d5080"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "40e7c79e9640ac083bab"
+        "id": "db1022327782f972c915"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -7404,11 +7404,11 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "760b00e5814db2a361f2"
+        "id": "31946daf7555512d5080"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "40e7c79e9640ac083bab"
+        "id": "db1022327782f972c915"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -10400,7 +10400,7 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "9e140274802c8fbb62dd"
+        "id": "4cec2f7fa66b26d9ec3f"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -31903,7 +31903,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "fabbe7dbdf3c5d33995fef1d001ac8761888501128d67bff03ed02d57a274d77",
+      "sourceSha256": "2b1ee96959439cef8b692222e04dd4d178f84fb52d5cdac6ca4c853e281ecd6c",
       "semanticReview": {
         "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in SidebarProjectHistory, with no database or Storage client receiver.",
         "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
@@ -31916,7 +31916,7 @@
       }
     },
     {
-      "id": "9e140274802c8fbb62dd",
+      "id": "4cec2f7fa66b26d9ec3f",
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
       "line": 843,
       "enclosing": "SidebarProjectHistory",
@@ -31924,7 +31924,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "fabbe7dbdf3c5d33995fef1d001ac8761888501128d67bff03ed02d57a274d77",
+      "sourceSha256": "2b1ee96959439cef8b692222e04dd4d178f84fb52d5cdac6ca4c853e281ecd6c",
       "semanticReview": {
         "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in SidebarProjectHistory, with no database or Storage client receiver.",
         "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
@@ -31937,26 +31937,26 @@
       }
     },
     {
-      "id": "760b00e5814db2a361f2",
+      "id": "31946daf7555512d5080",
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 1101,
+      "line": 1103,
       "enclosing": "saveEditor",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "projects",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "fabbe7dbdf3c5d33995fef1d001ac8761888501128d67bff03ed02d57a274d77"
+      "sourceSha256": "2b1ee96959439cef8b692222e04dd4d178f84fb52d5cdac6ca4c853e281ecd6c"
     },
     {
-      "id": "40e7c79e9640ac083bab",
+      "id": "db1022327782f972c915",
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 1121,
+      "line": 1123,
       "enclosing": "saveEditor",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "xroga_sidebar_items",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "fabbe7dbdf3c5d33995fef1d001ac8761888501128d67bff03ed02d57a274d77"
+      "sourceSha256": "2b1ee96959439cef8b692222e04dd4d178f84fb52d5cdac6ca4c853e281ecd6c"
     },
     {
       "id": "92e2f9e84b8b9d7515b1",

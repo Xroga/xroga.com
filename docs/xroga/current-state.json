@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/openui-production-integration-20261114",
-    "sha": "b1c084fe1c1867c2c347b6bad75715b6735483ec",
-    "sourceTimestampUtc": "2026-11-14T13:20:16+05:00",
-    "auditStartedUtc": "2026-11-14T08:34:38.621Z",
+    "sha": "2983e059f1312f7b7b7a3bdba28a1fabe152a823",
+    "sourceTimestampUtc": "2026-11-14T13:34:48+05:00",
+    "auditStartedUtc": "2026-11-14T08:49:42.082Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -84456,7 +84456,7 @@
       "id": "surface:dae82b1420f0fd73a0bb",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "sha256": "fabbe7dbdf3c5d33995fef1d001ac8761888501128d67bff03ed02d57a274d77",
+      "sha256": "2b1ee96959439cef8b692222e04dd4d178f84fb52d5cdac6ca4c853e281ecd6c",
       "symbols": [
         "REPO_FILTERS",
         "RepoFilter",
@@ -84609,6 +84609,7 @@
         "top",
         "updateItem",
         "uploaded",
+        "url",
         "value",
         "verified",
         "verifiedCloudRef",
@@ -84709,8 +84710,8 @@
         "frontend/src/components/layout/SidebarProjectHistory.tsx#workspaceIdentity"
       ],
       "tenantBoundary": [
-        "frontend/src/components/layout/SidebarProjectHistory.tsx:1101 (user_id)",
-        "frontend/src/components/layout/SidebarProjectHistory.tsx:1121 (user_id)"
+        "frontend/src/components/layout/SidebarProjectHistory.tsx:1103 (user_id)",
+        "frontend/src/components/layout/SidebarProjectHistory.tsx:1123 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -143489,9 +143490,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:dc227a417ca994819c9f",
+      "id": "finding:763627a56950b2675c98",
       "sourcePath": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 1248,
+      "line": 1250,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -143499,9 +143500,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:57a16e87d52d086a535b",
+      "id": "finding:02a30cf62a3110b9c75f",
       "sourcePath": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 1275,
+      "line": 1277,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -145848,86 +145849,86 @@
       "reachable": false
     },
     {
-      "id": "frontend-call:e5f6926d79da002c3472",
+      "id": "frontend-call:a6a9cdfd278a3a26d9c4",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 684,
+      "line": 686,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:901255b9019243e6798d",
+      "id": "frontend-call:d03007721e830da5a828",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 687,
+      "line": 689,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:aa34c7519824c3d4f270",
+      "id": "frontend-call:4e9415dd9413ee5ecb47",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1458,
+      "line": 1460,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:da8412dfe551a54ed310",
+      "id": "frontend-call:924a2b96580909accc0d",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1459,
+      "line": 1461,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:dd82471b1cb61fc20bac",
+      "id": "frontend-call:59f4d785e930e36c34c0",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1464,
+      "line": 1466,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:bf5b5c45d8d266e0a806",
+      "id": "frontend-call:1f826727abb17f4a1289",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1465,
+      "line": 1467,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:727997afbd13060cc9b4",
+      "id": "frontend-call:9a2cd51221d4d325a25f",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1471,
+      "line": 1473,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:1ddd235263b89c75577e",
+      "id": "frontend-call:db3b8fcc57194365152e",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1476,
+      "line": 1478,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:adb97abbabf159976bcb",
+      "id": "frontend-call:ba7000e0467d1c8a48ba",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1533,
+      "line": 1535,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:91c3d5af660e360cc2a4",
+      "id": "frontend-call:f7caa167c212492f26dc",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1534,
+      "line": 1536,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:fbc04e95ffe2533d776e",
+      "id": "frontend-call:f7bf08b0a8f3c83d999d",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1541,
+      "line": 1543,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:2eaf46a3a55bb41e62d6",
+      "id": "frontend-call:5132a8f6aa019f9a43b8",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1555,
+      "line": 1557,
       "callee": "fetch",
       "reachable": false
     },
@@ -147248,30 +147249,30 @@
       "reachable": false
     },
     {
-      "id": "frontend-call:9a3758d8cfece6994ba2",
+      "id": "frontend-call:31bbb0f5be98bae66787",
       "sourcePath": "frontend/src/components/layout/SidebarProjectHistory.tsx",
       "line": 975,
       "callee": "api.projects.get",
       "reachable": true
     },
     {
-      "id": "frontend-call:df1b6c8399ec85b23013",
+      "id": "frontend-call:314fb1e3e213c738e849",
       "sourcePath": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 1106,
+      "line": 1108,
       "callee": "api.projects.create",
       "reachable": true
     },
     {
-      "id": "frontend-call:3d9f10a9ab4d5ad49420",
+      "id": "frontend-call:d40da552eb44e2fa531a",
       "sourcePath": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 1114,
+      "line": 1116,
       "callee": "api.projects.delete",
       "reachable": true
     },
     {
-      "id": "frontend-call:b8d89a747bd5c5e24acd",
+      "id": "frontend-call:4d91db4660d449ed5a1d",
       "sourcePath": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 1117,
+      "line": 1119,
       "callee": "api.terminalSessions.delete",
       "reachable": true
     },
