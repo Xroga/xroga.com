@@ -7,23 +7,27 @@
   ],
   "state": "CODE_COMPLETE",
   "risk": "low",
-  "scope": "Redesign the existing public /features capability hub with dark visual bento cards, an illustrative workflow preview, a searchable/category-filterable directory and responsive layouts. Reuse canonical public capability definitions and keep unverified planned Xroga OS features out.",
+  "scope": "Replace short eight-card features list with a Manus-style six-category public directory grounded in XROGA_FEATURES, capability pages and the public integration menu. Keep original bento highlights; switch the complete /features visual palette from lime green to Xroga blue, preserve responsive interactions and avoid claims about unverified providers or planned features.",
   "changedFiles": [
     "frontend/src/app/features/page.tsx",
     "frontend/src/app/features/FeaturesCatalog.tsx",
     "frontend/src/app/features/features.css",
+    "frontend/src/lib/publicFeatureDirectory.ts",
+    "frontend/src/lib/publicFeatureDirectory.test.ts",
     "docs/xroga/missions/public-features-bento-20261115.json"
   ],
   "decisions": {
     "keep": [
-      "Existing feature routes, canonical CAPABILITY_PAGES data, metadata, CollectionPage JSON-LD, public auth CTA and backend/runtime boundaries."
+      "Existing public product routes, CAPABILITY_PAGES descriptions, /features metadata and CollectionPage JSON-LD, auth CTA and backend/runtime/security boundaries.",
+      "Broader XROGA_FEATURES source remains the canonical source list; do not rename or delete unrelated product code."
     ],
     "extend": [
-      "Existing /features page with client-side search and category filters.",
-      "CSS-only illustrative diagrams, visual cards, light interactions and responsive layouts."
+      "Complete six-category directory with 60 core workflow/build/platform cards and 30 integration directory cards, default all visible and filterable/searchable.",
+      "Source-coverage tests for all 37 feature labels in the public feature inventory.",
+      "Reusable blue visual vocabulary for hero, bento highlights, benefits, directory, controls and CSS illustrations."
     ],
     "replace": [
-      "Former simple /features link grid rendering."
+      "Former eight-entry directory and its green visual accents."
     ],
     "deprecate": []
   },
@@ -31,7 +35,7 @@
     "changed": false,
     "migrations": [],
     "rollout": "No database or schema changes.",
-    "rollback": "Revert the bounded /features page, client catalog, stylesheet and mission manifest."
+    "rollback": "Revert the features UI/data/test changes; no migrations."
   },
   "securityImpact": {
     "auth": {
@@ -66,19 +70,25 @@
   "tests": [
     {
       "command": "npm run lint --prefix frontend --workspaces=false",
-      "scope": "Pending CI: frontend lint for updated page and new catalog.",
+      "scope": "Frontend lint for updated page and feature directory; rerun on final SHA.",
       "negative": false,
       "reference": "frontend/src/app/features/FeaturesCatalog.tsx"
     },
     {
       "command": "npm run build --prefix frontend --workspaces=false",
-      "scope": "Pending CI: Next.js route compilation, static metadata and client bundle.",
+      "scope": "Next.js compilation, types, static metadata and client bundle; rerun on final SHA.",
       "negative": false,
       "reference": "frontend/src/app/features/page.tsx"
     },
     {
-      "command": "Manual responsive and keyboard smoke test",
-      "scope": "Pending review: category filtering, no-result/clear state, keyboard focus, and 390/768/1440 px layout. Not claimed executed.",
+      "command": "npx tsx --tsconfig frontend/tsconfig.json --test frontend/src/lib/publicFeatureDirectory.test.ts",
+      "scope": "37 canonical source entries mapped, category/uniqueness coverage, retired-feature negative tests; pending CI or trusted local execution.",
+      "negative": true,
+      "reference": "frontend/src/lib/publicFeatureDirectory.test.ts"
+    },
+    {
+      "command": "Manual responsive and keyboard review",
+      "scope": "Review 390, 768 and 1440px widths, focus, category filters, search/clear/no-match, and blue theme. Not yet executed.",
       "negative": true,
       "reference": "frontend/src/app/features/features.css"
     }
@@ -89,24 +99,28 @@
     "rfc": null
   },
   "rollout": "Merge only after frontend CI and visual/a11y review; then verify public /features URL and internal links. No automatic production publication requested.",
-  "rollback": "Revert the /features-specific commits or re-deploy the previously verified frontend release; backend and schema unaffected.",
+  "rollback": "Revert this bounded /features page, catalog, directory data and CSS change, or re-deploy the prior verified frontend release; no backend or schema changes.",
   "knownGaps": [
-    "Full frontend build, automated lint and browser screenshots are pending CI/review.",
-    "Illustrated browser/code/workflow UI is explicitly representative, not a production capture.",
-    "No new Xroga features are claimed; public feature descriptions may still require later independent product audit."
+    "Exact latest-head frontend lint/build and feature crosswalk tests must complete before verified-scope status.",
+    "Existing repository-wide mission policy CI reports a historical non-ancestor SHA in an unrelated local dictation mission; do not change that source as part of this marketing redesign.",
+    "Vercel preview is rate-limited and no visual browser review is claimed; image mockups are illustrative only.",
+    "Provider list comprises 30 highlighted navigation catalog entries, not every technology in the full /integrations build catalog; live connections require authorization and runtime verification."
   ],
   "placeholderClaimsRemaining": [],
   "evidenceRefs": [
     "frontend/src/app/features/page.tsx",
     "frontend/src/app/features/FeaturesCatalog.tsx",
-    "frontend/src/app/features/features.css"
+    "frontend/src/app/features/features.css",
+    "frontend/src/lib/publicFeatureDirectory.ts",
+    "frontend/src/lib/publicFeatureDirectory.test.ts"
   ],
   "claimsFullProductCompletion": false,
   "claimsAllBatchCommandsComplete": false,
   "release": {
     "state": "BLOCKED",
     "blockers": [
-      "Required frontend CI review, mobile/desktop visual checks, approval, and independently verified production deployment remain outstanding."
+      "Exact-head frontend build, source crosswalk tests and responsive/keyboard visual review still require evidence.",
+      "Production merge and deployment require explicit approval; Vercel preview is currently limited."
     ],
     "authenticatedE2e": "NOT_APPLICABLE",
     "stagedSecurity": "NOT_APPLICABLE",
