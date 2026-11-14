@@ -6,18 +6,20 @@ import { z } from 'zod/v4';
 import { children } from './upstream/components/style';
 import { Glyph } from './upstream/components/glyph';
 import { inline } from './upstream/components/markdown';
+import { useRenderEvidenceCitation } from './evidence';
 
 export const Section = defineComponent({
   name: 'Section',
   props: z.object({ title: z.string().min(1).max(100), children, introduction: z.string().max(450).optional(), icon: z.string().max(48).optional() }),
   description: 'A meaningful subsection. Group its explanation and relevant components together. Use a short heading and optional orientation sentence.',
-  component: ({ props, renderNode }) => (
-    <section className="native-answer-section">
+  component: function SectionView({ props, renderNode }) {
+    const renderCitation = useRenderEvidenceCitation();
+    return <section className="native-answer-section">
       <h2>{props.icon && <Glyph name={props.icon} size={18} />}{inline(props.title)}</h2>
-      {props.introduction && <p>{inline(props.introduction)}</p>}
+      {props.introduction && <p>{inline(props.introduction, 'section-introduction', renderCitation)}</p>}
       <div className="iui-col iui-flow">{renderNode(props.children)}</div>
-    </section>
-  ),
+    </section>;
+  },
 });
 
 export const Metric = defineComponent({

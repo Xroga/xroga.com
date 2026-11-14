@@ -55,5 +55,23 @@ test('public answer text keeps ordinary code and withholds private streamed synt
   assert.equal(publicAnswerText(code), code);
   assert.equal(publicAnswerText(code + '\n<<<XROGA_OPENUI_V1>>>\nroot = Col([])'), code);
   assert.equal(publicAnswerText('Answer ready.\n<<<XROGA_OPENUI', true), 'Answer ready.');
+  assert.equal(publicAnswerText('Answer ready.\nroot = Row([Text("private")])'), 'Answer ready.');
   assert.equal(publicAnswerText(JSON.stringify({ format: 'xroga-openui-v1', text: 'Readable result.', program: 'root = Col([])' })), 'Readable result.');
+});
+
+test('a hidden study-card face never suppresses the main answer', () => {
+  const text = 'A study card explains this later.';
+  const matches = nativeMarkdownMatches({
+    type: 'element', typeName: 'Flashcard',
+    props: { back: [{ type: 'element', typeName: 'Text', props: { text } }] },
+  });
+  assert.match(renderToStaticMarkup(createElement(MarkdownBlocks, { text, matches })), /A study card explains this later/);
+});
+
+test('Markdown tables preserve literal pipes and all columns', () => {
+  const text = '| Expression | Expected |\n| --- | --- |\n| `number | null` | Use A \\| B |';
+  const html = renderToStaticMarkup(createElement(MarkdownBlocks, { text }));
+  assert.equal((html.match(/<td>/g) ?? []).length, 2);
+  assert.match(html, /<code class="iui-code">number \| null<\/code>/);
+  assert.match(html, /<td>Use A \| B<\/td>/);
 });

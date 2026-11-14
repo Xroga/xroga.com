@@ -9,6 +9,7 @@ import { z } from "zod/v4";
 import { inline } from "./markdown";
 import type { HighlightedToken } from "@/lib/codeHighlight";
 import { isPresentationLanguage } from "@/lib/publicAnswerText";
+import { useRenderEvidenceCitation } from "../../evidence";
 import { children, cx } from "./style";
 
 const str = (value: unknown) => (value == null ? "" : String(value));
@@ -22,7 +23,7 @@ const renderSlot = (value: unknown, renderNode: Render) =>
 export const Carousel = defineComponent({
   name: "Carousel",
   props: z.object({ children, itemWidth: z.number().optional(), gap: z.number().optional() }),
-  description: "Horizontal row that scrolls and snaps, each child an item itemWidth px wide (default 240): photos, cards, options, days.",
+  description: "Wrapping row of cards, options or days. Each item has a preferred width in CSS pixels.",
   component: function CarouselView({ props, renderNode }) {
     const items = (props.children ?? []).flat().filter(item => item != null);
     const width = Math.min(640, Math.max(80, props.itemWidth ?? 240));
@@ -36,7 +37,7 @@ export const Carousel = defineComponent({
 export const Popover = defineComponent({
   name: "Popover",
   props: z.object({ trigger: slot, content: slot }),
-  description: 'Shows content in a small panel when the trigger is clicked: a definition, a source, details behind an Icon("info", "sm").',
+  description: 'Inline note with a label and visible contents, for a definition or supporting detail.',
   component: ({ props, renderNode }) => <aside className="iui-inline-note">
     {renderSlot(props.trigger, renderNode)}
     <div className="iui-col iui-flow">{renderSlot(props.content, renderNode)}</div>
@@ -93,12 +94,13 @@ export const Quote = defineComponent({
   name: "Quote",
   props: z.object({ text: z.string(), cite: z.string().optional() }),
   description: "A quotation or a callout with a side rule; cite names the source.",
-  component: ({ props }) => (
-    <blockquote className="iui-quote">
-      <p>{inline(str(props.text))}</p>
-      {props.cite ? <cite>{inline(str(props.cite))}</cite> : null}
-    </blockquote>
-  ),
+  component: function QuoteView({ props }) {
+    const renderCitation = useRenderEvidenceCitation();
+    return <blockquote className="iui-quote">
+      <p>{inline(str(props.text), "quote", renderCitation)}</p>
+      {props.cite ? <cite>{inline(str(props.cite), "attribution", renderCitation)}</cite> : null}
+    </blockquote>;
+  },
 });
 
 export const MathBlock = defineComponent({

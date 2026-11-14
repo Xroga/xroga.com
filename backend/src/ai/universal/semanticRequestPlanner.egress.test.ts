@@ -32,13 +32,13 @@ test('actual semantic planner carries issued actor, platform reservation and exa
       assert.ok(body.messages.some((message: { content: string }) => message.content.includes(expectedPrompt)));
       assert.doesNotMatch(JSON.stringify(body), /synthetic-platform-credential/);
       assert.equal(new Headers(init?.headers).get('x-zurelay-fallback'),'off');assert.equal(body.model,'deepseek-v4.1-flash-1017');assert.equal(body.reasoning_effort,'none');
-      assert.equal(body.max_tokens, 1500);
+      assert.equal(body.max_tokens, 2200);
       assert.deepEqual(body.response_format, { type: 'json_object' });
       if (mode === 'truncated') {
         return Response.json({ id: 'synthetic-truncated', model: 'deepseek-v4.1-flash-1017', choices: [{
           message: { content: '{"semanticIntent":"ANSWER","presentation":[{"heading":"fixture-private-fragment' },
           finish_reason: 'length',
-        }], usage: { prompt_tokens: 3348, completion_tokens: 1500, total_tokens: 4848 } },
+        }], usage: { prompt_tokens: 3348, completion_tokens: 2200, total_tokens: 5548 } },
         { headers: { 'x-request-id': 'synthetic-truncated', 'x-zurelay-model': 'deepseek-v4.1-flash-1017' } });
       }
       const decision = mode === 'misrouted-calculator'
@@ -57,6 +57,7 @@ test('actual semantic planner carries issued actor, platform reservation and exa
     if (url.pathname === '/rest/v1/model_provider_health') return Response.json(null);
     if (url.pathname.endsWith('/reserve_xroga_provider_budget')) {
       assert.equal(body.p_user_id, owner); reservations++;
+      assert.equal(body.p_maximum_output_tokens, 2200);
       const row = { id: randomUUID(), user_id: mode === 'foreign-reservation' ? foreign : owner, status: 'reserved',
         idempotency_key: body.p_idempotency_key, internal_route: body.p_internal_route, purpose: body.p_purpose,
         price_version: body.p_price_version, estimated_input_tokens: body.p_estimated_input_tokens,
@@ -89,7 +90,7 @@ test('actual semantic planner carries issued actor, platform reservation and exa
   await assert.rejects(planSemanticRequest(request), { code: 'PLANNER_INVALID_OUTPUT' });
   assert.deepEqual([effects, reservations, settlements, receipts], [2, 2, 2, 2], 'Truncated content settles once and never dispatches a repair');
   assert.deepEqual(warnings.find(([label]) => label === '[planner-completion-shape]')?.[1], {
-    modelId: 'deepseek_v4_1_flash_1017', code: 'PLANNER_INVALID_OUTPUT', finish: 'length', outputTokens: 1500,
+    modelId: 'deepseek_v4_1_flash_1017', code: 'PLANNER_INVALID_OUTPUT', finish: 'length', outputTokens: 2200,
   });
   assert.doesNotMatch(JSON.stringify(warnings), /fixture-private-fragment/);
   mode = 'misrouted-calculator';

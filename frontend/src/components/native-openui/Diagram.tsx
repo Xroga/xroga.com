@@ -2,7 +2,7 @@
 
 import { defineComponent } from '@openuidev/react-lang';
 import { Background, Controls, Handle, MarkerType, Position, ReactFlow, ReactFlowProvider, type Edge, type Node, type NodeProps } from '@xyflow/react';
-import { useEffect, useId, useRef, useState } from 'react';
+import { useId, useLayoutEffect, useRef, useState } from 'react';
 import { z } from 'zod/v4';
 import { Glyph } from './upstream/components/glyph';
 import { DiagramResourceMark } from './Resources';
@@ -99,7 +99,7 @@ export const Diagram = defineComponent({
     const [compact, setCompact] = useState<boolean>();
     const result = layout(props, compact === true);
     const renderable = result !== null;
-    useEffect(() => {
+    useLayoutEffect(() => {
       const element = diagram.current;
       if (!renderable || !element) return;
       const measure = () => {

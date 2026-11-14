@@ -16,13 +16,12 @@ import { bg, children, color, onColor, cx, option, radius, radiusSchema, space, 
 
 type Plan = Parameters<ReturnType<typeof useTriggerAction>>[2];
 
-/** Runs an action prop. With no action, a button sends its label to the assistant. */
+/** Native answer actions only update the renderer's local state. */
 function useRunAction() {
   const trigger = useTriggerAction();
   const formName = useFormName();
-  return (message: string, plan: unknown, sendLabel: boolean) => {
+  return (message: string, plan: unknown) => {
     if (plan) void trigger(message, formName, plan as Plan);
-    else if (sendLabel) void trigger(message, formName);
   };
 }
 
@@ -60,11 +59,12 @@ export const Button = defineComponent({
     disabled: z.boolean().optional(),
     block: z.boolean().optional(),
   }),
-  description: "icon is a lucide name.",
+  description: "Runs a local Set or Reset action. Without an action it displays a label. icon is a Lucide name.",
   component: function ButtonView({ props }) {
     const run = useRunAction();
     const streaming = useIsStreaming();
     const label = String(props.label ?? "");
+    if (!props.action) return <span className="iui-label">{label}</span>;
     return (
       <button
         type="button"
@@ -76,7 +76,7 @@ export const Button = defineComponent({
           props.block && "iui-block",
         )}
         disabled={!!props.disabled || streaming}
-        onClick={() => run(label, props.action, true)}
+        onClick={() => run(label, props.action)}
       >
         {props.icon ? <Glyph name={props.icon} size={props.size === "sm" ? 14 : 16} /> : null}
         {label}
@@ -93,11 +93,12 @@ export const IconButton = defineComponent({
     label: z.string().optional(),
     variant: z.enum(["outline", "ghost", "solid"]).optional(),
   }),
-  description: "Round icon-only button; label is read aloud.",
+  description: "Round icon-only control for a local action. Give it an accessible label.",
   component: function IconButtonView({ props }) {
     const run = useRunAction();
     const streaming = useIsStreaming();
     const label = props.label || String(props.icon ?? "");
+    if (!props.action) return <span className="iui-label">{label}</span>;
     return (
       <button
         type="button"
@@ -105,7 +106,7 @@ export const IconButton = defineComponent({
         aria-label={label}
         title={props.label || undefined}
         disabled={streaming}
-        onClick={() => run(label, props.action, false)}
+        onClick={() => run(label, props.action)}
       >
         <Glyph name={props.icon} size={16} />
       </button>
@@ -123,13 +124,15 @@ export const Pressable = defineComponent({
     background: color.optional(),
     radius: radiusSchema.optional(),
   }),
-  description: "Makes any content clickable, such as a tile or a swatch.",
+  description: "A tile or swatch for a local action. Without an action its content appears as a static group.",
   component: function PressableView({ props, renderNode }) {
     const run = useRunAction();
     const streaming = useIsStreaming();
     const ref = useRef<HTMLDivElement>(null);
+    const style = { padding: space(props.padding), background: bg(props.background), ...onColor(props.background), borderRadius: radius(props.radius) };
+    if (!props.action) return <div className="iui-col" style={style}>{renderNode(props.children)}</div>;
     const press = () => {
-      if (!streaming) run(textOf(ref.current), props.action, false);
+      if (!streaming) run(textOf(ref.current), props.action);
     };
     // Clicks meant for a control inside the tile stay with that control.
     const onClick = (event: MouseEvent<HTMLDivElement>) => {
@@ -149,7 +152,7 @@ export const Pressable = defineComponent({
         aria-pressed={props.selected === undefined ? undefined : !!props.selected}
         aria-disabled={streaming || undefined}
         className={cx("iui-pressable", props.selected && "is-selected")}
-        style={{ padding: space(props.padding), background: bg(props.background), ...onColor(props.background), borderRadius: radius(props.radius) }}
+        style={style}
         onClick={onClick}
         onKeyDown={onKeyDown}
       >

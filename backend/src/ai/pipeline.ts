@@ -1163,7 +1163,9 @@ export async function runChatPipeline(opts: {
     [{ role: 'system', content: system }, ...historyMsgs, { role: 'user', content: userContent }],
     {
       userId: opts.userId,
-      maxTokens: opts.approvedResearch?4096:route.kind === 'research' ? researchAnswerMaxTokens(opts.prompt) : presentedAnswerMaxTokens(presentation),
+      maxTokens: opts.approvedResearch ? 4096 : route.kind === 'research'
+        ? researchAnswerMaxTokens(opts.prompt)
+        : presentedAnswerMaxTokens(answerContract.plan),
       reasoningMode: 'none',
       responseFormat: format,
       tenantContext:opts.tenantContext,

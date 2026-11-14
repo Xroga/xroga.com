@@ -2762,7 +2762,7 @@
       "relatedSourceBindings": [
         {
           "path": "backend/src/ai/pipeline.ts",
-          "sha256": "e3ce3808eba24cd2461066d7b571ae5f96fd108ef3b8aaf807ba04b39b1b3dc8",
+          "sha256": "245f60b9f9b04e0a67226b5354a4fd13ccf584a475e2219a09472d2f5d57000c",
           "nativeOpenUiSourceReview": {
             "previousSha256": "d3742ca4dccc50daf99aa71d9896449957dde73798dc6d7c2a9c5ca5536cff32",
             "finding": "The staging-only native OpenUI branch changes chat presentation and validates output after the same model dispatch and usage accounting. The full runBuildPipeline function and following worker source are byte-identical to the previously bound source. No admission, project ownership, checkpoint or worker proof changes.",
@@ -2796,6 +2796,12 @@
             "previousSha256": "d981253fc491c75b4d2b90c6e080509aa541fd04d840276e133e81b39fe3eac6",
             "scope": "ORDINARY_CHAT_PRESENTATION_ONLY",
             "method": "Exact source diff and byte-identical runBuildPipeline body. Existing model authority, accounting, and worker admission are unchanged.",
+            "liveAcceptance": false
+          },
+          "adaptiveWorkspaceBudgetReview": {
+            "previousSha256": "e3ce3808eba24cd2461066d7b571ae5f96fd108ef3b8aaf807ba04b39b1b3dc8",
+            "scope": "CHAT_OUTPUT_RESERVATION_ONLY",
+            "method": "The source diff changes one chat output ceiling. runBuildPipeline and the two reviewed caller expressions remain byte-identical. Provider and canonical settlement are exercised through the local transport fixture.",
             "liveAcceptance": false
           }
         },
