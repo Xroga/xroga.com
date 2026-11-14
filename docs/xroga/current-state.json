@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com",
     "branch": "research/composio-five-upstreams-20261114",
-    "sha": "01069cf9170bdc422d5d5f97a055aeaacacbebfa",
-    "sourceTimestampUtc": "2026-11-14T15:49:12+05:00",
-    "auditStartedUtc": "2026-11-14T10:50:29.603Z",
+    "sha": "071f048fb98f5fa4f98c24795c99874e90cbc399",
+    "sourceTimestampUtc": "2026-11-14T15:51:35+05:00",
+    "auditStartedUtc": "2026-11-14T10:52:31.874Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -127500,6 +127500,7 @@
       "runtimeImports": [],
       "entryPoints": [
         "scripts/ci/prepare-pr-integration.mjs",
+        "scripts/xroga/reconcile-requirements.mjs",
         "scripts/xroga/validate-requirements-ledger.mjs"
       ],
       "callers": [
@@ -127560,6 +127561,7 @@
       "entryPoints": [
         "scripts/ci/prepare-pr-integration.mjs",
         "scripts/xroga/inventory.mjs",
+        "scripts/xroga/reconcile-requirements.mjs",
         "scripts/xroga/validate-requirements-ledger.mjs"
       ],
       "callers": [
@@ -128293,6 +128295,7 @@
       ],
       "entryPoints": [
         "scripts/ci/prepare-pr-integration.mjs",
+        "scripts/xroga/reconcile-requirements.mjs",
         "scripts/xroga/validate-requirements-ledger.mjs"
       ],
       "callers": [
@@ -128371,6 +128374,7 @@
       ],
       "entryPoints": [
         "scripts/ci/prepare-pr-integration.mjs",
+        "scripts/xroga/reconcile-requirements.mjs",
         "scripts/xroga/validate-requirements-ledger.mjs"
       ],
       "callers": [
@@ -128425,6 +128429,7 @@
       "runtimeImports": [],
       "entryPoints": [
         "scripts/ci/prepare-pr-integration.mjs",
+        "scripts/xroga/reconcile-requirements.mjs",
         "scripts/xroga/validate-requirements-ledger.mjs"
       ],
       "callers": [
@@ -128873,6 +128878,7 @@
       "runtimeImports": [],
       "entryPoints": [
         "scripts/ci/prepare-pr-integration.mjs",
+        "scripts/xroga/reconcile-requirements.mjs",
         "scripts/xroga/validate-requirements-ledger.mjs"
       ],
       "callers": [
@@ -141600,9 +141606,11 @@
     {
       "id": "workflow:0d65f14a990679940a0f",
       "sourcePath": ".github/workflows/composio-inventory-refresh-once.yml",
-      "sha256": "c721c2268bef31ff44719e078e38928985c423cbecd477d221a91921d10ac96a",
+      "sha256": "5ab9956f242f16ee50029b0d73e987ba83a6f0f5e0e995a73561c425568a6942",
       "sourceEntrypoints": [
-        "scripts/xroga/inventory.mjs"
+        "scripts/xroga/inventory.mjs",
+        "scripts/xroga/reconcile-requirements.mjs",
+        "scripts/xroga/validate-requirements-ledger.mjs"
       ],
       "hasSchedule": false
     },
