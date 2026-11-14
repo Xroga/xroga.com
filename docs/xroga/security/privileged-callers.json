@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "c326b245a1da514b9e9ec418f110d27e5e00e237bfbe78757a78a1c8440e8ace",
+  "reviewRegistrySha256": "adb04bc1c08daab43ee56e37cfeb68e5ccae5564ac7e59eec0d34282c82de917",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -6452,7 +6452,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "1c780eb9958455f3963f"
+        "id": "8241ecf3f1b730551013"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -6516,7 +6516,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "db86c426bed33eedc7ee"
+        "id": "ab72f1ea30b75934c90e"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -6596,7 +6596,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "4ea086a99635527f4d82"
+        "id": "a054a6bf0c7fe92e32cb"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -7352,7 +7352,7 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "1c780eb9958455f3963f"
+        "id": "8241ecf3f1b730551013"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -10380,7 +10380,7 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "db86c426bed33eedc7ee"
+        "id": "ab72f1ea30b75934c90e"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -10424,7 +10424,7 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "4ea086a99635527f4d82"
+        "id": "a054a6bf0c7fe92e32cb"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -31084,15 +31084,15 @@
       "sourceSha256": "0c878ec62c92cb0529a52f985e39dfc50756ee0ad06f2dd4940c57724b46f8d0"
     },
     {
-      "id": "1c780eb9958455f3963f",
+      "id": "8241ecf3f1b730551013",
       "path": "frontend/src/app/(workspace)/workspace/page.tsx",
-      "line": 27,
+      "line": 28,
       "enclosing": "WorkspacePage",
       "kind": "RPC_CANDIDATE",
       "target": "current_community_role",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "38cd455f073cfd679346988398cafc5e0b78ad92eb674fb30073bd46b9b6afa9"
+      "sourceSha256": "a3b024b66efcb443fb0a6fa1cd8e28b72cf6b4b62cb62b810a6431461b80ea53"
     },
     {
       "id": "83779ac5d4b86b4ed00a",
@@ -31485,7 +31485,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "2500a1f07a78f43f9ebee385642fac97743777253c045bce71eed6bf51002d9a",
+      "sourceSha256": "f6dd6900539927540ab6834c744e1d86e1894c0db4e4ec7b6dedb8a2b4533817",
       "semanticReview": {
         "authority": "Inspected the exact receiver and complete expression. It is a built-in JavaScript data conversion with no persistence client or privilege transfer.",
         "reason": "Decodes the user-requested recording or enumerates user-selected File objects locally. Neither method is a database or storage invocation.",
@@ -31502,7 +31502,7 @@
       }
     },
     {
-      "id": "db86c426bed33eedc7ee",
+      "id": "ab72f1ea30b75934c90e",
       "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
       "line": 246,
       "enclosing": "WorkspaceBrowserOperator",
@@ -31510,7 +31510,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "2500a1f07a78f43f9ebee385642fac97743777253c045bce71eed6bf51002d9a",
+      "sourceSha256": "f6dd6900539927540ab6834c744e1d86e1894c0db4e4ec7b6dedb8a2b4533817",
       "semanticReview": {
         "authority": "Inspected the exact receiver and complete expression. It is a built-in JavaScript data conversion with no persistence client or privilege transfer.",
         "reason": "Decodes the user-requested recording or enumerates user-selected File objects locally. Neither method is a database or storage invocation.",
@@ -32513,7 +32513,7 @@
       }
     },
     {
-      "id": "4ea086a99635527f4d82",
+      "id": "a054a6bf0c7fe92e32cb",
       "path": "frontend/src/lib/formatAiMarkdown.tsx",
       "line": 647,
       "enclosing": "decodeBase64UrlUtf8",
@@ -32521,7 +32521,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "af4cb3f3a2809aec1a571abc46b01ea23f9847d71efa2467a64f7759c173986b",
+      "sourceSha256": "ec0e5e45eef5f5222d775c7e006fa805e741e24e77902ac77dc1a456b1d46f2f",
       "semanticReview": {
         "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in decodeBase64UrlUtf8, with no database or Storage client receiver.",
         "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh. Re-bound 2026-11-04: Diff from the reviewed source d80e1ce5489b is only `export` added to BusinessActionConfirmationInline so the V2 turn can render the existing confirmation review. The reviewed call (decodeBase64UrlUtf8 Array/Uint8Array conversion) is unchanged; no new call, receiver, persistence or egress was added.",

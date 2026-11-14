@@ -10,7 +10,7 @@ import {
   WORKSPACE_MAX_WIDTH,
   WORKSPACE_MIN_WIDTH,
 } from '@/store/useThemeStore';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, type ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
 import { useTerminalChat } from '@/context/TerminalChatContext';
@@ -42,7 +42,7 @@ import { RepoContextBar } from '@/components/terminal/RepoContextBar';
  * scroll offset. Opening the workspace animates the body's grid columns rather than
  * mounting a card next to it.
  */
-export function DashboardView() {
+export function DashboardView({ browserOperator }: { browserOperator?: ReactNode }) {
   const hydrated = useHydrated();
   const { messages, startNewChat, loading, sessionRestoring } = useTerminalChat();
   const fullscreen = useThemeStore((s) => s.terminalFullscreen);
@@ -271,7 +271,7 @@ export function DashboardView() {
           )}
         </header>
 
-
+        {browserOperator}
         <div
           ref={bodyRef}
           className="xv-workspace-body"

@@ -9,6 +9,9 @@ const nodeRequire = createRequire(__filename);
 nodeRequire.extensions['.css'] = (module) => { module.exports = { __esModule: true, default: new Proxy({}, { get: (_target, key) => String(key) }) }; };
 const { FormattedAiMarkdown } = nodeRequire('./formatAiMarkdown.tsx') as typeof import('./formatAiMarkdown');
 const { renderBlock } = nodeRequire('../components/terminal/XrogaBlockView.tsx') as typeof import('@/components/terminal/XrogaBlockView');
+const { ProseV2 } = nodeRequire('../components/response-experience-v2/ProseV2.tsx') as typeof import('@/components/response-experience-v2/ProseV2');
+const { MarkdownBlocks } = nodeRequire('../components/native-openui/upstream/components/markdown.tsx') as typeof import('@/components/native-openui/upstream/components/markdown');
+const { evidenceCitation } = nodeRequire('../components/native-openui/evidence.tsx') as typeof import('@/components/native-openui/evidence');
 
 const sources = [
   { title: 'Official report', url: 'https://example.com/report', snippet: 'Evidence.' },
@@ -56,6 +59,29 @@ test('structured-output narrative retains the same inline citations as plain ans
   const html = renderToStaticMarkup(renderBlock({ schemaVersion: 1, id: 'answer', type: 'narrative', text: 'A verified claim [2].' }, undefined, sources));
   assert.match(html, /Open source 2: Second report/);
   assert.match(html, /href="https:\/\/example\.org\/two\?utm_source=xroga\.com"/);
+});
+
+test('saved numbered Markdown links use a publisher chip only for matching evidence', () => {
+  const source = { title: 'Connection settings', url: 'https://git.postgresql.org/docs.pdf?id=123', snippet: '' };
+  const matching = `Default port ([1](${source.url})).`;
+  const different = 'See [1](https://example.org/unknown).';
+  const evidence = new Map([['source-1', { ...source, id: 'source-1' }]]);
+  for (const render of [
+    (text: string) => createElement(FormattedAiMarkdown, { content: text, sources: [source] }),
+    (text: string) => createElement(ProseV2, { text, sources: [source] }),
+    (text: string) => createElement(MarkdownBlocks, { text, renderCitation: (number, href) => evidenceCitation(evidence, number, href) }),
+  ]) {
+    const html = renderToStaticMarkup(render(matching));
+    assert.match(html, /Open source 1: Connection settings/);
+    assert.match(html, />PostgreSQL</);
+    assert.match(html, /docs\.pdf\?id=123/);
+    assert.doesNotMatch(renderToStaticMarkup(render(different)), /Connection settings/);
+  }
+  const native = renderToStaticMarkup(createElement(MarkdownBlocks, {
+    text: 'See [1](https://git.postgresql.org/docs.pdf?id=456).',
+    renderCitation: (number, href) => evidenceCitation(evidence, number, href),
+  }));
+  assert.doesNotMatch(native, /<a /);
 });
 
 test('source clicks carry Xroga attribution without altering the underlying evidence URLs', () => {

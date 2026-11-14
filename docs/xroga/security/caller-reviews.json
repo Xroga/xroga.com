@@ -28489,9 +28489,9 @@
     },
     {
       "path": "frontend/src/lib/formatAiMarkdown.tsx",
-      "sourceSha256": "af4cb3f3a2809aec1a571abc46b01ea23f9847d71efa2467a64f7759c173986b",
+      "sourceSha256": "ec0e5e45eef5f5222d775c7e006fa805e741e24e77902ac77dc1a456b1d46f2f",
       "callIds": [
-        "4ea086a99635527f4d82"
+        "a054a6bf0c7fe92e32cb"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in decodeBase64UrlUtf8, with no database or Storage client receiver.",
@@ -29213,10 +29213,10 @@
     },
     {
       "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
-      "sourceSha256": "2500a1f07a78f43f9ebee385642fac97743777253c045bce71eed6bf51002d9a",
+      "sourceSha256": "f6dd6900539927540ab6834c744e1d86e1894c0db4e4ec7b6dedb8a2b4533817",
       "callIds": [
         "a9e89dea32df3eb8a0b5",
-        "db86c426bed33eedc7ee"
+        "ab72f1ea30b75934c90e"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the exact receiver and complete expression. It is a built-in JavaScript data conversion with no persistence client or privilege transfer.",

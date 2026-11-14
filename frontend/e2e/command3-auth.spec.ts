@@ -579,11 +579,33 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   await expect(renderedArchitecture).not.toContainText(/root\s*=\s*Col/);
   await expect.poll(async () => ((await readSaved(architectureSession))?.messages as Array<{ featureOutput?: { responseSource?: { text?: string } } }> | undefined)
     ?.some(message => message.featureOutput?.responseSource?.text === architectureProgram), { timeout: 20_000 }).toBe(true);
+  const pairingWorkspace = new URL('/workspace', page.url());
+  pairingWorkspace.searchParams.set('conversation', architectureSession);
+  pairingWorkspace.searchParams.set('browserExtension', 'abcdefghijklmnopabcdefghijklmnop');
+  pairingWorkspace.searchParams.set('browserPair', '11111111-1111-4111-8111-111111111111');
+  await page.goto(pairingWorkspace.href);
+  await expect(renderedArchitecture.locator('.react-flow__edge')).toHaveCount(1, { timeout: 20_000 });
+  const browserOperator = page.getByText('Browser Operator', { exact: true });
+  const transcript = page.getByTestId('terminal-scroll');
+  for (const width of [1440, 390]) {
+    await page.setViewportSize({ width, height: 900 });
+    await expect(browserOperator).toHaveCount(1);
+    const panel = browserOperator.locator('..');
+    await expect(panel).toHaveJSProperty('open', true);
+    const expanded = (await panel.boundingBox())!;
+    expect(expanded.y + expanded.height).toBeLessThanOrEqual((await transcript.boundingBox())!.y);
+    expect(expanded.x + expanded.width).toBeLessThanOrEqual(width);
+    await browserOperator.click();
+    await expect(panel).toHaveJSProperty('open', false);
+    const collapsed = (await panel.boundingBox())!;
+    expect(collapsed.y + collapsed.height).toBeLessThanOrEqual((await transcript.boundingBox())!.y);
+    await browserOperator.click();
+  }
   expect(chatCalls).toBe(8);
   await writeFile('test-results/native-workspace/evidence.json', JSON.stringify({
     source: expectedRelease, route: '/workspace', auth: 'isolated Supabase ordinary accounts',
     model: 'deterministic transport fixtures, zero provider calls', nativeActions: ['file handoff', 'citation link', 'keyboard calculator', 'copy readback', 'database save and reopen', 'private share owner/guest/other account', 'continuation', 'browser cancellation', 'client validation fallback', 'partial native recovery, copy and reopen', 'reviewed partial chart', 'inline research receipt without refocus or redispatch', 'connected diagram, nested table and code in one persisted answer'],
-    viewports: [1440, 390], themes: ['black', 'gray'],
+    viewports: [1440, 390], themes: ['black', 'gray'], browserOperator: 'one in-flow panel, expanded and collapsed above the saved architecture answer',
   }, null, 2));
 });
 

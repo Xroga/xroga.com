@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "7685b7f671fdf9b8bfe413a975f71ae95c8851f3adb089d54fb642341efb439b",
+  "sourceTreeDigest": "c613b74b8b79bbc91cbdc4a6cbe76deef15869d481a16dc5c1901b750486fb14",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -4369,12 +4369,12 @@
         {
           "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
           "marker": "const connected = runtime.connect(extensionId, { name: 'xroga-browser-v1' })",
-          "sha256": "2500a1f07a78f43f9ebee385642fac97743777253c045bce71eed6bf51002d9a"
+          "sha256": "f6dd6900539927540ab6834c744e1d86e1894c0db4e4ec7b6dedb8a2b4533817"
         },
         {
           "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
           "marker": "if (!isStart && !isResume && !isDocument && !isVoice",
-          "sha256": "2500a1f07a78f43f9ebee385642fac97743777253c045bce71eed6bf51002d9a"
+          "sha256": "f6dd6900539927540ab6834c744e1d86e1894c0db4e4ec7b6dedb8a2b4533817"
         }
       ]
     },
@@ -4396,12 +4396,12 @@
         {
           "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
           "marker": "const connected = runtime.connect(extensionId, { name: 'xroga-browser-v1' })",
-          "sha256": "2500a1f07a78f43f9ebee385642fac97743777253c045bce71eed6bf51002d9a"
+          "sha256": "f6dd6900539927540ab6834c744e1d86e1894c0db4e4ec7b6dedb8a2b4533817"
         },
         {
           "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
           "marker": "const bytes = Uint8Array.from(atob(encoded)",
-          "sha256": "2500a1f07a78f43f9ebee385642fac97743777253c045bce71eed6bf51002d9a"
+          "sha256": "f6dd6900539927540ab6834c744e1d86e1894c0db4e4ec7b6dedb8a2b4533817"
         }
       ]
     },
@@ -4423,12 +4423,12 @@
         {
           "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
           "marker": "const connected = runtime.connect(extensionId, { name: 'xroga-browser-v1' })",
-          "sha256": "2500a1f07a78f43f9ebee385642fac97743777253c045bce71eed6bf51002d9a"
+          "sha256": "f6dd6900539927540ab6834c744e1d86e1894c0db4e4ec7b6dedb8a2b4533817"
         },
         {
           "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
           "marker": "preparedPcm: true, expectedToken: pairedToken.current",
-          "sha256": "2500a1f07a78f43f9ebee385642fac97743777253c045bce71eed6bf51002d9a"
+          "sha256": "f6dd6900539927540ab6834c744e1d86e1894c0db4e4ec7b6dedb8a2b4533817"
         }
       ]
     },
@@ -4450,12 +4450,12 @@
         {
           "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
           "marker": "const connected = runtime.connect(extensionId, { name: 'xroga-browser-v1' })",
-          "sha256": "2500a1f07a78f43f9ebee385642fac97743777253c045bce71eed6bf51002d9a"
+          "sha256": "f6dd6900539927540ab6834c744e1d86e1894c0db4e4ec7b6dedb8a2b4533817"
         },
         {
           "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
           "marker": "if ((isStart || isResume) && data.runId",
-          "sha256": "2500a1f07a78f43f9ebee385642fac97743777253c045bce71eed6bf51002d9a"
+          "sha256": "f6dd6900539927540ab6834c744e1d86e1894c0db4e4ec7b6dedb8a2b4533817"
         }
       ]
     },
@@ -4477,12 +4477,12 @@
         {
           "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
           "marker": "const connected = runtime.connect(extensionId, { name: 'xroga-browser-v1' })",
-          "sha256": "2500a1f07a78f43f9ebee385642fac97743777253c045bce71eed6bf51002d9a"
+          "sha256": "f6dd6900539927540ab6834c744e1d86e1894c0db4e4ec7b6dedb8a2b4533817"
         },
         {
           "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
           "marker": "}, () => send({ type: 'result', id, ok: false })",
-          "sha256": "2500a1f07a78f43f9ebee385642fac97743777253c045bce71eed6bf51002d9a"
+          "sha256": "f6dd6900539927540ab6834c744e1d86e1894c0db4e4ec7b6dedb8a2b4533817"
         }
       ]
     },

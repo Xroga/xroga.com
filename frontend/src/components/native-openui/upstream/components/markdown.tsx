@@ -8,7 +8,7 @@ import { cx, isLongAnswerTable, webUrl } from "./style";
 // An underscore inside an identifier is literal, even when another identifier
 // later in the same paragraph also contains an underscore.
 const INLINE = /(`[^`\n]+`)|(\*\*[^*\n]+?\*\*|(?<![\p{L}\p{N}_])__[^_\n]+?__(?![\p{L}\p{N}_]))|(~~[^~\n]+?~~)|(\*[^*\s][^*\n]*?\*|(?<![\p{L}\p{N}_])_[^_\s][^_\n]*?_(?![\p{L}\p{N}_]))|(\[[^\]\n]+\]\([^)\s]+\))|(\[(\d{1,2})\])/u;
-type RenderCitation = (number: number) => ReactNode;
+type RenderCitation = (number: number, href?: string) => ReactNode;
 
 export function inline(text: string, key = "i", renderCitation?: RenderCitation): ReactNode {
   const out: ReactNode[] = [];
@@ -31,8 +31,10 @@ export function inline(text: string, key = "i", renderCitation?: RenderCitation)
     else {
       const close = token.indexOf("](");
       const label = token.slice(1, close);
-      const href = webUrl(token.slice(close + 2, -1));
-      const citation = /^\d{1,2}$/.test(label) ? renderCitation?.(Number(label)) : null;
+      const destination = token.slice(close + 2, -1);
+      const href = webUrl(destination);
+      const number = /^(\d{1,3})$/.exec(label)?.[1];
+      const citation = number ? renderCitation?.(Number(number), destination) : null;
       out.push(
         citation ? <Fragment key={k}>{citation}</Fragment> : href ? (
           <a key={k} className="iui-link" href={href} target="_blank" rel="noopener noreferrer">

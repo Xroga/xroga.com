@@ -219,8 +219,8 @@ export function WorkspaceBrowserOperator({ extensionId }: { extensionId?: string
 
   if (!extensionId && !pairingVisible) return null;
   return (
-    <details className="fixed bottom-24 right-4 z-40 w-[min(24rem,calc(100vw-2rem))] rounded-xl border bg-background p-3 text-sm text-foreground shadow-lg" open={paired || pairingVisible || undefined}>
-      <summary className="cursor-pointer font-medium">Browser Operator</summary>
+    <details className="mx-3 my-1 max-h-[32dvh] w-fit min-w-0 max-w-[calc(100%_-_1.5rem)] shrink-0 self-end overflow-auto rounded-lg text-sm text-foreground open:w-96 open:border open:bg-background open:px-3 open:pb-2" open={paired || pairingVisible || undefined}>
+      <summary className="cursor-pointer rounded-md px-2 py-1 text-xs font-medium hover:bg-foreground/5 focus-visible:outline focus-visible:-outline-offset-2">Browser Operator</summary>
       <p className="my-2 text-xs" role="status">{status}</p>
       {paired && <form className="grid gap-2" onSubmit={event => {
         event.preventDefault();

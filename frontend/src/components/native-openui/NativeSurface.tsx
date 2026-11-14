@@ -4,10 +4,9 @@ import './renderer-config';
 import { Renderer } from '@openuidev/react-lang';
 import { useMemo, useState } from 'react';
 import { library } from './library';
-import { EvidenceContext, type AnswerSource } from './evidence';
+import { EvidenceContext, evidenceCitation, type AnswerSource } from './evidence';
 import { MAX_PROGRAM_CHARS, PARTIAL_NATIVE_PRESENTATION_NOTE, validateNativeOpenUi } from '../../../../backend/src/ai/nativeOpenUi';
 import { MarkdownBlocks } from './upstream/components/markdown';
-import { SourceCitation } from '../terminal/SourceCitation';
 import './upstream/components/theme.css';
 import './upstream/components/components.css';
 import '@xyflow/react/dist/style.css';
@@ -38,10 +37,7 @@ export function NativeSurface({ answer, sources, isStreaming = false, showFullTe
     }
     return '';
   }, [answer.library, answer.program, answer.text, verified, isStreaming]);
-  const prose = <MarkdownBlocks text={answer.text} renderCitation={number => {
-    const source = verified.get('source-' + number);
-    return source ? <SourceCitation source={source} number={number} /> : null;
-  }} />;
+  const prose = <MarkdownBlocks text={answer.text} renderCitation={(number, href) => evidenceCitation(verified, number, href)} />;
   const displayProse = answer.text.startsWith(PARTIAL_NATIVE_PRESENTATION_NOTE + '\n\n');
   return (
     <section className="xroga-native-openui" aria-label="Answer" dir="auto" aria-busy={isStreaming}>

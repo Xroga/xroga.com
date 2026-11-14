@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "0278ce1c5e404d83b90b1fe107e145a6a0dbae29",
+  "source_sha": "75d9b91f1228fe4d1c790ce39090010d3b633925",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -20248,7 +20248,7 @@
     },
     {
       "path": "frontend/src/app/(workspace)/workspace/page.tsx",
-      "sha256": "38cd455f073cfd679346988398cafc5e0b78ad92eb674fb30073bd46b9b6afa9"
+      "sha256": "a3b024b66efcb443fb0a6fa1cd8e28b72cf6b4b62cb62b810a6431461b80ea53"
     },
     {
       "path": "frontend/src/app/about/page.tsx",
@@ -20860,7 +20860,7 @@
     },
     {
       "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
-      "sha256": "2500a1f07a78f43f9ebee385642fac97743777253c045bce71eed6bf51002d9a"
+      "sha256": "f6dd6900539927540ab6834c744e1d86e1894c0db4e4ec7b6dedb8a2b4533817"
     },
     {
       "path": "frontend/src/components/browser/XrogaBrowser.tsx",
@@ -20980,7 +20980,7 @@
     },
     {
       "path": "frontend/src/components/dashboard/DashboardView.tsx",
-      "sha256": "2aa86cd3a9091ca37d3a7bde797e5cacaf0284d3129187fa74644a87396edfcd"
+      "sha256": "7369f4b829f341829ccc8ee4391148d7a6d29c38c7ee9306a02ad4d5d78c1e4b"
     },
     {
       "path": "frontend/src/components/dashboard/DashboardWelcome.tsx",
@@ -21968,7 +21968,7 @@
     },
     {
       "path": "frontend/src/components/layout/AppShell.tsx",
-      "sha256": "dbce5f6ab1627fed981c30fd107aecce33180561622795796f8185acfedac134"
+      "sha256": "9f1e4e747595fb5eb215a6a186f30fa44bd4661885d59b9e7b0894258bb34616"
     },
     {
       "path": "frontend/src/components/layout/BetaExpectationBanner.tsx",
@@ -22208,7 +22208,7 @@
     },
     {
       "path": "frontend/src/components/native-openui/NativeSurface.tsx",
-      "sha256": "8ac9677537970ba04be35f4fce6a03e88c4f8c7daae255990efba91c4b107569"
+      "sha256": "5d8688bc07507ae0b48ed2d65b90e81b46be417203019037c8593b0c0b5401e8"
     },
     {
       "path": "frontend/src/components/native-openui/NativeWorkspaceAnswer.tsx",
@@ -22224,7 +22224,7 @@
     },
     {
       "path": "frontend/src/components/native-openui/evidence.tsx",
-      "sha256": "818ce6a84450710ca72e5045ddef360764b85343c3a54c59c03d6a937e27e33c"
+      "sha256": "0478fee0e918f9db2a3323d760e9bda900825e41476532298b22943c5603f594"
     },
     {
       "path": "frontend/src/components/native-openui/library.tsx",
@@ -22256,7 +22256,7 @@
     },
     {
       "path": "frontend/src/components/native-openui/upstream/components/markdown.tsx",
-      "sha256": "f87aa56077be3bde409ea31bf361009628b5dae6039ccfda7b77f19857e5e1a1"
+      "sha256": "29b5fb5197e7e5c1f46c0337e94542f1faf719e84ce119370a3c0538dacad28e"
     },
     {
       "path": "frontend/src/components/native-openui/upstream/components/style.ts",
@@ -22480,7 +22480,7 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/ProseV2.tsx",
-      "sha256": "5ef20e2fbe3c644d54df71d39d54f26e2620d810e8e49f7f495ca52164b7621a"
+      "sha256": "345e1df09f5262d430f97701ba32083865e3fc2f5dfb9621ea0cce1eaf245caf"
     },
     {
       "path": "frontend/src/components/response-experience-v2/ResourcesV2.tsx",
@@ -22500,7 +22500,7 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/SourceV2.tsx",
-      "sha256": "a2cad34d63de428268e07ba6692a5ede1c9608faf91a95be9d8eb446f1069f42"
+      "sha256": "a01a5f193d728a0ed4e43899cdcb26817bd405e0e9b5677a7c7de9fd00bfa6c3"
     },
     {
       "path": "frontend/src/components/response-experience-v2/StatusBadgeV2.tsx",
@@ -22528,7 +22528,7 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/document.ts",
-      "sha256": "f02d2a6b885bed29338990d15e32bbed317dc3bc7cf588986196529a940f441e"
+      "sha256": "ad59b9c365eea0c485bce809e98b34d26c2740a6f56564dd3be309c6188d8e17"
     },
     {
       "path": "frontend/src/components/response-experience-v2/entityRegistry.ts",
@@ -22936,7 +22936,7 @@
     },
     {
       "path": "frontend/src/components/terminal/SourceCitation.tsx",
-      "sha256": "92218738a0a46f2913ff30c9fd35eace7bfc0c991bd75c7258c5383e05405079"
+      "sha256": "707c5bc1f2f4b9fa953b551634a5bae5a4ef95bec2aa182ce04356e3a1aaef42"
     },
     {
       "path": "frontend/src/components/terminal/SourceLogo.tsx",
@@ -23560,7 +23560,7 @@
     },
     {
       "path": "frontend/src/lib/formatAiMarkdown.tsx",
-      "sha256": "af4cb3f3a2809aec1a571abc46b01ea23f9847d71efa2467a64f7759c173986b"
+      "sha256": "ec0e5e45eef5f5222d775c7e006fa805e741e24e77902ac77dc1a456b1d46f2f"
     },
     {
       "path": "frontend/src/lib/gameBuilderContent.ts",
@@ -24280,7 +24280,7 @@
     },
     {
       "path": "frontend/src/lib/xrogaCitations.ts",
-      "sha256": "c417f125a92821e81fbff40c9145e928d5860a9ffe9da757755f3c3b791c75a6"
+      "sha256": "3b0425245bb2983b80c1b261be39457e786e284c0fe7d83ee7f6565e641cfdb4"
     },
     {
       "path": "frontend/src/lib/xrogaConnect.ts",
@@ -38740,21 +38740,21 @@
     },
     {
       "path": "frontend/src/components/native-openui/NativeSurface.tsx",
-      "line": 22,
+      "line": 21,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/native-openui/NativeSurface.tsx",
-      "line": 29,
+      "line": 28,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/native-openui/evidence.tsx",
-      "line": 7,
+      "line": 8,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

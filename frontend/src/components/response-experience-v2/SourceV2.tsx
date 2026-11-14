@@ -1,5 +1,5 @@
 'use client';
-import { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 import type { CitationSource } from '@/lib/xrogaCitations';
 import { sourceKeyV2 } from './sourceRegistry';
 import { Globe } from 'lucide-react';

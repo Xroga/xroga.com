@@ -14,7 +14,8 @@ export default async function WorkspacePage({ searchParams }: { searchParams: Pr
   let reviewStatus: string | null = null;
   const enabled = process.env.VERCEL_ENV === 'preview' || process.env.NODE_ENV === 'development' || process.env.RESPONSE_EXPERIENCE_V2 === 'founder';
   const rollout = process.env.RESPONSE_EXPERIENCE_V2;
-  const extensionId = process.env.XROGA_CHROME_EXTENSION_ID;
+  const configuredExtensionId = process.env.XROGA_CHROME_EXTENSION_ID;
+  const extensionId = configuredExtensionId && /^[a-p]{32}$/.test(configuredExtensionId) ? configuredExtensionId : undefined;
   if (rollout === 'authenticated' || rollout === 'canary' || (enabled && query.responseV2 === '1')) {
     try {
       const client = await createClient();
@@ -35,9 +36,10 @@ export default async function WorkspacePage({ searchParams }: { searchParams: Pr
   return (
     <DashboardErrorBoundary>
       {reviewStatus && <p role="status">{reviewStatus}</p>}
-      <ResponseExperienceProvider authorizedUserId={authorizedUserId}><DashboardView /></ResponseExperienceProvider>
-      {(extensionId && /^[a-p]{32}$/.test(extensionId) || query.browserPair && query.browserExtension) &&
-        <WorkspaceBrowserOperator extensionId={extensionId && /^[a-p]{32}$/.test(extensionId) ? extensionId : undefined} />}
+      <ResponseExperienceProvider authorizedUserId={authorizedUserId}>
+        <DashboardView browserOperator={extensionId || (query.browserPair && query.browserExtension)
+          ? <WorkspaceBrowserOperator extensionId={extensionId} /> : undefined} />
+      </ResponseExperienceProvider>
     </DashboardErrorBoundary>
   );
 }

@@ -31,12 +31,22 @@ export function citationMetadata(source: Pick<CitationSource, 'title' | 'siteNam
   const generic = /^source\s*(?:#?\d+)?$/i;
   const providedName = source.siteName?.trim();
   const knownName = domain === 'support.google.com' && destination.pathname.startsWith('/google-ads/')
-    ? 'Google Ads Help' : domain === 'ads.google.com' ? 'Google Ads' : domain;
+    ? 'Google Ads Help' : domain === 'ads.google.com' ? 'Google Ads'
+      : domain === 'postgresql.org' || domain === 'git.postgresql.org' ? 'PostgreSQL' : domain;
   const site = providedName && !generic.test(providedName) ? providedName : knownName;
   const providedTitle = source.title.trim();
   const path = destination.pathname === '/' ? '' : destination.pathname;
   const title = providedTitle && !generic.test(providedTitle) ? providedTitle : site === domain ? domain + path : site;
   return { domain, site, title };
+}
+
+export function numberedCitation(label: string, href: string, sources: readonly CitationSource[]) {
+  const match = /^(?:\[(\d{1,3})\]|(\d{1,3}))$/.exec(label.trim());
+  if (!match) return undefined;
+  const number = Number(match[1] ?? match[2]);
+  const source = sources[number - 1];
+  const url = safeSourceUrl(href);
+  return source && url && safeSourceUrl(source.url) === url ? { number, source } : undefined;
 }
 
 
