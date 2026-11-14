@@ -1,0 +1,44 @@
+name: Composio evaluation snapshot refresh (branch only)
+on:
+  push:
+    branches:
+      - research/composio-five-upstreams-20261114
+    paths:
+      - .github/workflows/composio-inventory-refresh-once.yml
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    if: github.repository == 'Xroga/xroga.com' && github.actor == 'Xroga'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: research/composio-five-upstreams-20261114
+          fetch-depth: 0
+          persist-credentials: true
+          submodules: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .node-version
+          cache: npm
+      - run: npm ci
+      - name: Generate source-bound inventory using existing checked tool
+        run: |
+          node scripts/xroga/inventory.mjs --refresh
+          node scripts/xroga/inventory.mjs --check
+          git diff --check
+      - name: Commit only derived inventory files to this evaluation branch
+        run: |
+          set -euo pipefail
+          git add -- docs/xroga/current-state.json docs/xroga/current-state-schema.json docs/xroga/current-state.md docs/xroga/blockers.md
+          if git diff --cached --quiet; then
+            echo "Inventory unchanged"
+            exit 0
+          fi
+          git config user.name "xroga-inventory-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "chore(composio): regenerate exact source-bound evaluation inventory"
+          git push origin HEAD:refs/heads/research/composio-five-upstreams-20261114
