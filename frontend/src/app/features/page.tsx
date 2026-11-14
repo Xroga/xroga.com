@@ -9,7 +9,8 @@ import {
 import { CAPABILITY_PAGES } from '@/lib/capabilityPages';
 import { buildMetadata } from '@/lib/seo';
 import { PageJsonLd } from '@/components/seo/PageJsonLd';
-import { FeaturesCatalog, type FeatureListing } from './FeaturesCatalog';
+import { FeaturesCatalog } from './FeaturesCatalog';
+import { PUBLIC_FEATURE_GROUPS, PUBLIC_FEATURE_TOTAL } from '@/lib/publicFeatureDirectory';
 import './features.css';
 
 export const metadata: Metadata = buildMetadata({
@@ -20,37 +21,6 @@ export const metadata: Metadata = buildMetadata({
 });
 
 const capabilities = CAPABILITY_PAGES;
-
-const catalog: FeatureListing[] = [
-  {
-    title: 'AI Chat & Research',
-    description: 'Research current public sources, analyze supported documents and screenshots, and continue into connected project work.',
-    href: '/features/ai-chat',
-    group: 'Chat',
-    icon: 'chat',
-  },
-  ...([
-    ['ai-app-builder', 'AI App Builder', 'Build', 'apps'],
-    ['ai-website-builder', 'Website Builder', 'Build', 'web'],
-    ['build-saas-with-ai', 'SaaS Builder', 'Build', 'saas'],
-    ['ai-coding-agent', 'AI Coding Agent', 'Develop', 'code'],
-    ['github-ai-coding-agent', 'GitHub Integration', 'Develop', 'github'],
-    ['vercel-ai-deployment', 'Vercel Deployment', 'Ship', 'deploy'],
-  ] as const).map(([slug, title, group, icon]) => ({
-    title,
-    description: capabilities[slug].description,
-    href: '/' + slug,
-    group,
-    icon,
-  })),
-  {
-    title: 'Integrations',
-    description: 'Explore supported connections and build integrations, with authorization required for external provider actions.',
-    href: '/integrations',
-    group: 'Connect',
-    icon: 'connect',
-  },
-];
 
 function WorkflowPreview() {
   return (
@@ -91,7 +61,7 @@ function Scene({ type }: { type: SceneType }) {
           <div className="xf-mock-main"><div className="xf-mock-head"/><div className="xf-mock-stats"><i/><i/><i/></div><div className="xf-mock-chart"><b/><b/><b/><b/><b/><b/><b/><b/></div></div>
         </div>
       </div>
-      <span className="xf-float-chip xf-float-chip-green"><Layers3 size={13}/> Interface + API + data</span>
+      <span className="xf-float-chip xf-float-chip-blue"><Layers3 size={13}/> Interface + API + data</span>
     </div>
   );
   if (type === 'coding') return (
@@ -223,10 +193,10 @@ export default function FeaturesPage() {
 
         <section className="xf-catalog-shell" id="all-features" aria-labelledby="xf-all-features-title">
           <div className="xf-section-head xf-catalog-head">
-            <div><span className="xf-kicker">03 / EXPLORE EVERYTHING</span><h2 id="xf-all-features-title">Find your next<br/><span>capability.</span></h2></div>
-            <p>All public Xroga capability areas in one place. Browse by workflow or search for what you want to build.</p>
+            <div><span className="xf-kicker">03 / THE COMPLETE DIRECTORY</span><h2 id="xf-all-features-title">Explore all<br/><span>Xroga features.</span></h2></div>
+            <p>{PUBLIC_FEATURE_TOTAL} carefully organized entries across research, building, coding, shipping, workspace tools and app integrations. Explore each category or search directly.</p>
           </div>
-          <FeaturesCatalog items={catalog}/>
+          <FeaturesCatalog groups={PUBLIC_FEATURE_GROUPS}/>
         </section>
 
         <section className="xf-bottom-cta" aria-labelledby="xf-cta-heading"><div className="xf-bottom-glow" aria-hidden="true"/><span className="xf-kicker">START WITH AN IDEA</span><h2 id="xf-cta-heading">Your next build starts here.</h2><p>Describe the outcome. Keep control of the code. See what was actually done.</p><Link href="/auth/signup" className="xf-btn-primary">Start building free <ArrowUpRight size={18}/></Link></section>
