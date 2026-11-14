@@ -87071,7 +87071,7 @@
       "id": "surface:92ce2788e7a639e6a608",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/Diagram.tsx",
-      "sha256": "2a0ffc542aae59991814004a030641d577553db4d4210ca8ffe7c0f94e74c3ef",
+      "sha256": "0a0ab511a3b780a0d05e11abecad9f2f8030dd87ff057c56715100e98ef7968a",
       "symbols": [
         "AnswerDiagramNode",
         "AnswerNode",

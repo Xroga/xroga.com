@@ -21,6 +21,7 @@
     "docs/operations/native-openui/CAPABILITY_AUDIT.md",
     "docs/operations/native-openui/prompt-suite.json",
     "frontend/e2e/command3-auth.spec.ts",
+    "frontend/src/components/native-openui/Diagram.tsx",
     "frontend/src/components/native-openui/Editorial.tsx",
     "frontend/src/components/native-openui/NativeSurface.tsx",
     "frontend/src/components/native-openui/Tabs.tsx",
