@@ -40,6 +40,7 @@ export function ProjectsQuickPopover({ open, onClose, anchorRef }: {
   const [repoQuery, setRepoQuery] = useState('');
   const [githubConnected, setGithubConnected] = useState<boolean | null>(null);
   const [loadingRepos, setLoadingRepos] = useState(false);
+  const [repoRefresh, setRepoRefresh] = useState(0);
   const [repoError, setRepoError] = useState('');
   const [creating, setCreating] = useState(false);
 
@@ -74,7 +75,7 @@ export function ProjectsQuickPopover({ open, onClose, anchorRef }: {
       .catch(() => { if (active) setRepoError('GitHub repositories are unavailable. Retry or create without a repository.'); })
       .finally(() => { if (active) setLoadingRepos(false); });
     return () => { active = false; };
-  }, [open, view, repoMode]);
+  }, [open, view, repoMode, repoRefresh]);
 
   const matches = useMemo<ProjectOption[]>(() => {
     const term = query.trim().toLowerCase();
@@ -184,7 +185,7 @@ export function ProjectsQuickPopover({ open, onClose, anchorRef }: {
               </label>)}
             </div>
             <a className={styles.newRepo} href="https://github.com/new" target="_blank" rel="noopener noreferrer">Create repository on GitHub <ExternalLink size={13}/></a>
-            <button type="button" className={styles.refreshRepos} onClick={() => {setRepoMode('none');window.setTimeout(()=>setRepoMode('existing'),0);}}>Refresh repository list</button>
+            <button type="button" className={styles.refreshRepos} onClick={() => setRepoRefresh(value => value + 1)}>Refresh repository list</button>
           </>}
           {repoError && <p role="status" className={styles.error}>{repoError}</p>}
         </div> : null}
