@@ -24,15 +24,15 @@
       },
       "Carousel": {
         "signature": "Carousel(children: Node[], itemWidth?: number, gap?: number)",
-        "description": "Horizontal row that scrolls and snaps, each child an item itemWidth px wide (default 240): photos, cards, options, days."
+        "description": "Wrapping row of cards, options or days. Each item has a preferred width in CSS pixels."
       },
       "Popover": {
         "signature": "Popover(trigger: string | Node[], content: string | Node[])",
-        "description": "Shows content in a small panel when the trigger is clicked: a definition, a source, details behind an Icon(\"info\", \"sm\")."
+        "description": "Inline note with a label and visible contents, for a definition or supporting detail."
       },
       "Tabs": {
         "signature": "Tabs(label: string, tabs: {title: string, content: Node[]}[])",
-        "description": "Keyboard-accessible optional views or scenarios. Put all essential conclusions in visible content outside the tabs."
+        "description": "Named alternatives displayed as inline sections in reading order."
       },
       "Divider": {
         "signature": "Divider()",
@@ -148,15 +148,15 @@
       },
       "Button": {
         "signature": "Button(label: string, action?: ActionExpression, variant?: \"solid\" | \"outline\" | \"soft\" | \"ghost\", color?: \"primary\" | \"danger\" | \"success\", size?: \"sm\" | \"md\" | \"lg\", icon?: string, disabled?: boolean, block?: boolean)",
-        "description": "icon is a lucide name."
+        "description": "Runs a local Set or Reset action. Without an action it displays a label. icon is a Lucide name."
       },
       "IconButton": {
         "signature": "IconButton(icon: string, action?: ActionExpression, label?: string, variant?: \"outline\" | \"ghost\" | \"solid\")",
-        "description": "Round icon-only button; label is read aloud."
+        "description": "Round icon-only control for a local action. Give it an accessible label."
       },
       "Pressable": {
         "signature": "Pressable(children: Node[], action?: ActionExpression, selected?: boolean, padding?: number, background?: Color, radius?: Radius)",
-        "description": "Makes any content clickable, such as a tile or a swatch."
+        "description": "A tile or swatch for a local action. Without an action its content appears as a static group."
       },
       "Flashcard": {
         "signature": "Flashcard(front: string | Node[], back: string | Node[], hint?: string)",
@@ -855,7 +855,7 @@
             "children"
           ],
           "additionalProperties": false,
-          "description": "Horizontal row that scrolls and snaps, each child an item itemWidth px wide (default 240): photos, cards, options, days."
+          "description": "Wrapping row of cards, options or days. Each item has a preferred width in CSS pixels."
         },
         "Popover": {
           "type": "object",
@@ -888,7 +888,7 @@
             "content"
           ],
           "additionalProperties": false,
-          "description": "Shows content in a small panel when the trigger is clicked: a definition, a source, details behind an Icon(\"info\", \"sm\")."
+          "description": "Inline note with a label and visible contents, for a definition or supporting detail."
         },
         "Tabs": {
           "type": "object",
@@ -928,7 +928,7 @@
             "tabs"
           ],
           "additionalProperties": false,
-          "description": "Keyboard-accessible optional views or scenarios. Put all essential conclusions in visible content outside the tabs."
+          "description": "Named alternatives displayed as inline sections in reading order."
         },
         "Divider": {
           "type": "object",
@@ -1812,7 +1812,7 @@
             "label"
           ],
           "additionalProperties": false,
-          "description": "icon is a lucide name."
+          "description": "Runs a local Set or Reset action. Without an action it displays a label. icon is a Lucide name."
         },
         "ActionExpression": {
           "anyOf": [
@@ -1895,7 +1895,7 @@
             "icon"
           ],
           "additionalProperties": false,
-          "description": "Round icon-only button; label is read aloud."
+          "description": "Round icon-only control for a local action. Give it an accessible label."
         },
         "Pressable": {
           "type": "object",
@@ -1938,7 +1938,7 @@
             "children"
           ],
           "additionalProperties": false,
-          "description": "Makes any content clickable, such as a tile or a swatch."
+          "description": "A tile or swatch for a local action. Without an action its content appears as a static group."
         },
         "Flashcard": {
           "type": "object",
@@ -3809,7 +3809,7 @@
           "children"
         ],
         "additionalProperties": false,
-        "description": "Horizontal row that scrolls and snaps, each child an item itemWidth px wide (default 240): photos, cards, options, days."
+        "description": "Wrapping row of cards, options or days. Each item has a preferred width in CSS pixels."
       },
       "Popover": {
         "type": "object",
@@ -3842,7 +3842,7 @@
           "content"
         ],
         "additionalProperties": false,
-        "description": "Shows content in a small panel when the trigger is clicked: a definition, a source, details behind an Icon(\"info\", \"sm\")."
+        "description": "Inline note with a label and visible contents, for a definition or supporting detail."
       },
       "Tabs": {
         "type": "object",
@@ -3882,7 +3882,7 @@
           "tabs"
         ],
         "additionalProperties": false,
-        "description": "Keyboard-accessible optional views or scenarios. Put all essential conclusions in visible content outside the tabs."
+        "description": "Named alternatives displayed as inline sections in reading order."
       },
       "Divider": {
         "type": "object",
@@ -4766,7 +4766,7 @@
           "label"
         ],
         "additionalProperties": false,
-        "description": "icon is a lucide name."
+        "description": "Runs a local Set or Reset action. Without an action it displays a label. icon is a Lucide name."
       },
       "ActionExpression": {
         "anyOf": [
@@ -4849,7 +4849,7 @@
           "icon"
         ],
         "additionalProperties": false,
-        "description": "Round icon-only button; label is read aloud."
+        "description": "Round icon-only control for a local action. Give it an accessible label."
       },
       "Pressable": {
         "type": "object",
@@ -4892,7 +4892,7 @@
           "children"
         ],
         "additionalProperties": false,
-        "description": "Makes any content clickable, such as a tile or a swatch."
+        "description": "A tile or swatch for a local action. Without an action its content appears as a static group."
       },
       "Flashcard": {
         "type": "object",

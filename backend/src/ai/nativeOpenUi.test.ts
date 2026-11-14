@@ -38,6 +38,9 @@ test('architecture instructions use registry signatures without unrelated contro
   for (const name of ['Slider(', 'Histogram(', 'Source(', 'DatePicker(']) assert.ok(!prompt.includes(name), name);
   assert.ok(prompt.length < nativeOpenUiPrompt.length * 0.7);
   assert.ok(workspaceNativeOpenUiPrompt(['chart', 'calculator'], true).includes('Source('));
+  for (const name of ['RadioGroup(', 'DatePicker(', 'Checkbox(', 'ChoicePicker(', 'Form(']) {
+    assert.ok(workspaceNativeOpenUiPrompt(['calculator'], false).includes(name), name);
+  }
 });
 
 test('independent schema failure keeps authorized sections, prose and an explicit partial status', () => {

@@ -7,7 +7,8 @@ import {withTenantModelReservation,type TenantModelScope} from './tenantModelDis
 import {chatCompletion,chatCompletionStream,type ChatMessage} from './openaiCompat.js';
 import {callBuilderStream,runChatPipeline} from './pipeline.js';
 import {goalContractSchema} from './universal/goalContract.js';
-import {presentationResponseFormat,type PresentationPlan} from './responsePresentation.js';
+import {presentationResponseFormat,presentedAnswerMaxTokens,type PresentationPlan} from './responsePresentation.js';
+import {prepareAnswerCoverage} from './answerCoverage.js';
 import {runArchitectPlan} from './architect.js';
 import {convertUserRequest} from './converter.js';
 import {createXrogaAgentModel} from './softwareAgent/xrogaAgentModel.js';
@@ -37,6 +38,8 @@ test('actual pipeline, completion and SoftwareAgent calls bind tenant, account r
   let atomicReceipts=0;
   let receivedAnswer = '';
   let lastReservedInput = 0;
+  let lastReservedOutput = 0;
+  let lastProviderMaxTokens = 0;
   let abortDuringResponse:AbortController|undefined;
   const reset=(next='ok')=>{mode=next;row=structuredClone(original);ownerNow=owner;credentialReads=0;projectReads=0;mutate=undefined;expire=undefined;};
   const stringify=JSON.stringify;
@@ -53,6 +56,7 @@ test('actual pipeline, completion and SoftwareAgent calls bind tenant, account r
     const url=new URL(String(input));
     if(url.origin==='https://api.zurelay.com'){
       effects++;const body=JSON.parse(String(init?.body));assert.doesNotMatch(JSON.stringify(body),/foreign source|cached-key|SYNTHETIC_CREDENTIAL/);
+      lastProviderMaxTokens = body.max_tokens;
       abortDuringResponse?.abort();
       assert.equal(new Headers(init?.headers).get('authorization'),'Bearer '+(!['platform503','platformPositive'].includes(mode)?'synthetic-user-current':'synthetic-platform-key'));
       assert.equal(init?.redirect,'manual');
@@ -107,6 +111,7 @@ test('actual pipeline, completion and SoftwareAgent calls bind tenant, account r
     if(url.pathname==='/rest/v1/model_provider_health')return Response.json(null);
     if(url.pathname.endsWith('/reserve_xroga_provider_budget')){
       lastReservedInput = body.p_estimated_input_tokens;
+      lastReservedOutput = body.p_maximum_output_tokens;
       assert.equal(body.p_user_id,owner);
       const r={id:randomUUID(),user_id:mode==='reservationMismatch'?foreign:owner,status:'reserved',idempotency_key:body.p_idempotency_key,internal_route:body.p_internal_route,
         purpose:body.p_purpose,price_version:body.p_price_version,estimated_input_tokens:body.p_estimated_input_tokens,maximum_output_tokens:body.p_maximum_output_tokens,reserved_micro_usd:body.p_reservation_micro_usd};
@@ -342,6 +347,26 @@ test('actual pipeline, completion and SoftwareAgent calls bind tenant, account r
   assert.equal(plain.response,receivedAnswer);
   assert.equal(effects,beforePlain+1);
   assert.equal(atomicReceipts,receiptsPlain+1);
+
+  reset('native');resetModelRuntimeHealth();
+  const orderedPlan:PresentationPlan = ['Architecture', 'Ownership', 'Chart', 'Scenarios', 'Tradeoffs'].map((heading, index) => ({
+    kind: (['graph', 'table', 'chart', 'calculator', 'prose'] as const)[index]!,
+    heading, instruction: 'Preserve the supplied details.', covers: [`part-${index}`],
+  }));
+  const richGoal = goalContractSchema.parse({ ...semantic, presentation: orderedPlan,
+    answerObligations: orderedPlan.map((section,index)=>({id:`part-${index}`,description:section.heading,origin:'necessary-support',formats:[section.kind]})),
+  });
+  receivedAnswer = 'The architecture, ownership, chart, scenarios and tradeoffs are included.';
+  const beforeRich = effects, receiptsRich = atomicReceipts;
+  const richPrompt = 'Explain the architecture, ownership, chart, scenarios and tradeoffs. No external research.';
+  await runChatPipeline({ userId: owner, tenantContext: context, modelScope: scope,
+    prompt: richPrompt, goalContract: richGoal });
+  const plannedBudget = presentedAnswerMaxTokens(prepareAnswerCoverage(richPrompt, richGoal.presentation, richGoal.answerObligations).plan);
+  assert.ok(plannedBudget > 4096 && plannedBudget <= 8192);
+  assert.equal(lastReservedOutput, plannedBudget);
+  assert.equal(lastProviderMaxTokens, plannedBudget);
+  assert.equal(effects, beforeRich + 1);
+  assert.equal(atomicReceipts, receiptsRich + 1);
 });
 
 test('local request security denial cannot fall through to a different provider or account',async()=>{

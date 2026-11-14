@@ -1,0 +1,128 @@
+{
+  "version": "1.0",
+  "missionId": "WORKSPACE-ADAPTIVE-ACCEPTANCE-20261114",
+  "baseSha": "f92ab67e691a25c94d26dcf25bcde5768e87390a",
+  "requirementIds": [
+    "XR-MISSION-054",
+    "XR-MISSION-055"
+  ],
+  "state": "CODE_COMPLETE",
+  "risk": "medium",
+  "scope": "Improve native answer completeness and accessibility, and verify the final hosted Workspace pair.",
+  "changedFiles": [
+    "backend/src/ai/nativeOpenUi.test.ts",
+    "backend/src/ai/nativeOpenUiCatalog.json",
+    "backend/src/ai/nativeOpenUiPrompt.ts",
+    "backend/src/ai/pipeline.ts",
+    "backend/src/ai/tenantModelDispatch.test.ts",
+    "backend/src/ai/universal/semanticRequestPlanner.egress.test.ts",
+    "backend/src/ai/universal/semanticRequestPlanner.test.ts",
+    "backend/src/ai/universal/semanticRequestPlanner.ts",
+    "docs/operations/native-openui/CAPABILITY_AUDIT.md",
+    "docs/operations/native-openui/prompt-suite.json",
+    "frontend/e2e/command3-auth.spec.ts",
+    "frontend/src/components/native-openui/Editorial.tsx",
+    "frontend/src/components/native-openui/NativeSurface.tsx",
+    "frontend/src/components/native-openui/Tabs.tsx",
+    "frontend/src/components/native-openui/surface.css",
+    "frontend/src/components/native-openui/upstream/components/controls.tsx",
+    "frontend/src/components/native-openui/upstream/components/extra.tsx",
+    "frontend/src/components/native-openui/upstream/components/markdown.test.ts",
+    "frontend/src/components/native-openui/upstream/components/markdown.tsx",
+    "frontend/src/components/native-openui/upstream/components/text.tsx",
+    "frontend/src/lib/publicAnswerText.ts",
+    "scripts/verify-native-openui-browser.mjs"
+  ],
+  "decisions": {
+    "extend": [
+      "Use the semantic plan to size the canonical native answer dispatch. Increase room for the single planner decision and bind that ceiling to the reservation.",
+      "Render safe inline citations and protect readable content and native controls at narrow widths and zoom."
+    ],
+    "keep": [
+      "One planner, one canonical DeepSeek answer dispatch, existing registry and authorization, saved answers, owner-only Share and decoder compatibility."
+    ],
+    "deprecate": [],
+    "replace": [
+      "Display generated labels without action styling when no local action exists."
+    ]
+  },
+  "schemaImpact": {
+    "changed": false,
+    "migrations": [],
+    "rollout": "Use an exact-source paired Workspace staging replay followed by bounded model acceptance.",
+    "rollback": "Restore the current frontend and serving API and canonical Job pair through the existing release procedure. No schema or saved format changes."
+  },
+  "securityImpact": {
+    "auth": {
+      "changed": false,
+      "description": "Existing middleware and Share guards remain authoritative."
+    },
+    "tenant": {
+      "changed": false,
+      "description": "The renderer receives the same owner-scoped saved program and citations."
+    },
+    "approval": {
+      "changed": false,
+      "description": "Current confirmation and source controls remain in force."
+    },
+    "credentials": {
+      "changed": false,
+      "description": "No credential or permission changes."
+    },
+    "egress": {
+      "changed": false,
+      "description": "The presentation reuses existing verified links and runtime decisions. No new destinations or network callers."
+    },
+    "cost": {
+      "changed": true,
+      "description": "For native multi-section answers and semantic planning, maximum output reservations can grow within the canonical provider budget. Provider, calls and ledger remain the same."
+    },
+    "billing": {
+      "changed": false,
+      "description": "No ledger changes."
+    }
+  },
+  "tests": [
+    {
+      "scope": "Native interaction, keyboard, layout, light/dark and reflow matrix. Captured answer replay and truthful controls.",
+      "command": "node scripts/verify-native-openui-browser.mjs",
+      "reference": "scripts/verify-native-openui-browser.mjs",
+      "negative": true
+    },
+    {
+      "scope": "Pipe delimiters, renderer text and hidden content in native answers.",
+      "command": "npm run test:frontend",
+      "reference": "frontend/src/components/native-openui/upstream/components/markdown.test.ts",
+      "negative": true
+    }
+  ],
+  "architecture": {
+    "change": "none",
+    "reason": "Extend the existing OpenUI prompt, validated component library, model reservation and Workspace presentation.",
+    "rfc": null
+  },
+  "rollout": "Require exact-source CI, private hosted ordinary-user acceptance and separate production authorization.",
+  "rollback": "Restore the current frontend and serving API and canonical Job pair through the existing release procedure. No schema or saved format changes.",
+  "knownGaps": [
+    "Fresh model acceptance, provider-backed media/maps and production promotion need independent evidence. Closed staging budgets cannot be reused."
+  ],
+  "placeholderClaimsRemaining": [],
+  "evidenceRefs": [
+    "backend/src/ai/tenantModelDispatch.test.ts",
+    "scripts/verify-native-openui-browser.mjs",
+    "frontend/e2e/command3-auth.spec.ts",
+    "docs/operations/native-openui/prompt-suite.json"
+  ],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "BLOCKED",
+    "blockers": [
+      "Exact-source hosted ordinary-user acceptance and source-bound production authorization are pending."
+    ],
+    "authenticatedE2e": "BLOCKED",
+    "stagedSecurity": "BLOCKED",
+    "liveUrl": null,
+    "deployedSha": null
+  }
+}

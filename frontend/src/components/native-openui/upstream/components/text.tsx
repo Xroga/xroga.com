@@ -73,11 +73,12 @@ export const Caption = defineComponent({
   name: "Caption",
   props: z.object({ text: z.string(), color: color.optional() }),
   description: "Small secondary text.",
-  component: ({ props }) => (
-    <p className="iui-caption" style={{ color: fg(props.color) }}>
-      {inline(str(props.text))}
-    </p>
-  ),
+  component: function CaptionView({ props }) {
+    const renderCitation = useRenderEvidenceCitation();
+    return <p className="iui-caption" style={{ color: fg(props.color) }}>
+      {inline(str(props.text), "caption", renderCitation)}
+    </p>;
+  },
 });
 
 export const Label = defineComponent({

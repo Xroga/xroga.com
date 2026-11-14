@@ -119,6 +119,9 @@ export function nativeMarkdownMatches(root: unknown): MarkdownMatches {
       return;
     }
     const { props, typeName } = node;
+    // The reverse of a study card is deliberately hidden until the user flips
+    // it. A matching paragraph in the main answer must stay visible.
+    if (typeName === "Flashcard") return;
     if (["Text", "Caption", "Quote"].includes(typeName ?? "") && typeof props.text === "string") paragraphs.add(citationTextKey(props.text));
     if (typeName === "Text" && Array.isArray(props.text)) {
       const parts = props.text.map(part => {
@@ -163,7 +166,16 @@ export function nativeMarkdownMatches(root: unknown): MarkdownMatches {
 }
 
 const LIST_ITEM = /^\s{0,3}([-*+]|(\d+)[.)])\s+(.*)$/;
-const cells = (line: string) => line.trim().replace(/^\||\|$/g, "").split("|").map((c) => c.trim());
+function cells(line: string): string[] {
+  const source = line.trim().replace(/^\|/, "").replace(/(?<!\\)\|$/, "");
+  // A literal pipe in a code span or escaped with a backslash belongs to the
+  // cell. Keep the Markdown that the inline renderer still needs to read.
+  return source.split(/(`[^`\n]+`|\\\||\|)/u).reduce<string[]>((row, part) => {
+    if (part === "|") row.push("");
+    else row[row.length - 1] += part === "\\|" ? "|" : part;
+    return row;
+  }, [""]).map(cell => cell.trim());
+}
 
 function blocks(source: string): Block[] {
   const lines = publicAnswerText(source).replace(/\r\n?/g, "\n").split("\n");

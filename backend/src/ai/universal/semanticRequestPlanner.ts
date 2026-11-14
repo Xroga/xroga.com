@@ -365,6 +365,10 @@ export const SEMANTIC_PLANNER_ROUTE_TIMEOUT_MS =
 export const SEMANTIC_PLANNER_HEDGE_DELAY_MS =
   4_000;
 
+// Allow room for the semantic decision and its answer obligations in one
+// dispatch. A clipped JSON decision cannot safely authorize a route.
+const SEMANTIC_PLANNER_MAX_OUTPUT_TOKENS = 2_200;
+
 /**
  * The planner needs a compact JSON
  * decision, not a private reasoning
@@ -374,7 +378,7 @@ export function semanticPlannerCompletionOptions(
   signal: AbortSignal,
 ) {
   return {
-    maxTokens: 1_500,
+    maxTokens: SEMANTIC_PLANNER_MAX_OUTPUT_TOKENS,
 
     temperature: 0,
 
@@ -1377,8 +1381,7 @@ export async function planSemanticRequest(
       },
     ];
 
-  const maximumOutputTokens =
-    1_500;
+  const maximumOutputTokens = SEMANTIC_PLANNER_MAX_OUTPUT_TOKENS;
 
   const configuredTotalMs =
     Number(

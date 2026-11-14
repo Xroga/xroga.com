@@ -282,7 +282,7 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   const source = { title: 'Workshop source fixture', url: 'https://example.com/workshop', snippet: 'USD 25 per attendee.', source: 'fixture' };
   const program = [
     '$attendees = 40',
-    `root = Col([Text(${JSON.stringify(reply)}), Metric("Gross revenue", @Format($attendees * 25, "currency", 0, "USD")), Controls([Slider($attendees, 10, 80, 1, "Attendees"), Button("Reset", @Set($attendees, 40))], "Attendance"), Source("source-1")])`,
+    `root = Col([Text(${JSON.stringify(reply)}), Metric("Gross revenue", @Format($attendees * 25, "currency", 0, "USD")), Controls([Slider($attendees, 10, 80, 1, "Attendees"), Button("Reset", @Set($attendees, 40))], "Attendance"), Caption("Ticket price basis [1]."), Button("Draft only")])`,
   ].join('\n');
   const goalContract = {
     version: '1.0', goal: 'Answer a question', desiredOutcome: 'An answer based on the supplied material',
@@ -354,6 +354,8 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   const answer = page.getByRole('region', { name: 'Answer', exact: true }).filter({ hasText: reply });
   await expect(answer).toBeVisible({ timeout: 30_000 });
   await expect(answer.getByRole('link', { name: /Workshop source fixture/ })).toHaveAttribute('href', source.url);
+  await expect(answer.getByText('Draft only', { exact: true })).toBeVisible();
+  await expect(answer.getByRole('button', { name: 'Draft only', exact: true })).toHaveCount(0);
   await expect(answer.getByText(detail, { exact: true })).toBeVisible();
   await expect(answer.getByText(reply, { exact: true })).toHaveCount(1);
   await expect(answer.getByRole('button', { name: 'Read full text', exact: true })).toHaveCount(0);
@@ -385,14 +387,18 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   expect(savedTitle).toContain(prompt);
 
   await mkdir('test-results/native-workspace', { recursive: true });
-  for (const [width, theme] of [[1440, 'black'], [390, 'gray']] as const) {
+  for (const width of [320, 390, 768, 1280, 1440]) {
     await page.setViewportSize({ width, height: 900 });
-    await page.locator('html').evaluate((root, value) => root.setAttribute('data-theme', value), theme);
-    await expect(answer).toBeVisible();
-    expect(await answer.evaluate(el => el.scrollWidth - el.clientWidth)).toBeLessThanOrEqual(1);
-    expect(await answer.evaluate(el => getComputedStyle(el).colorScheme)).toBe('dark');
-    await answer.screenshot({ path: `test-results/native-workspace/composer-${width}-${theme}.png` });
-    await page.screenshot({ path: `test-results/native-workspace/workspace-${width}-${theme}.png` });
+    for (const theme of ['black', 'white'] as const) {
+      await page.locator('html').evaluate((root, value) => root.setAttribute('data-theme', value), theme);
+      await expect(answer).toBeVisible();
+      expect(await answer.evaluate(el => el.scrollWidth - el.clientWidth)).toBeLessThanOrEqual(1);
+      expect(await answer.evaluate(el => getComputedStyle(el).colorScheme)).toBe(theme === 'black' ? 'dark' : 'light');
+      await answer.screenshot({ path: `test-results/native-workspace/composer-${width}-${theme}.png` });
+      if (width === 390 || width === 1440) {
+        await page.screenshot({ path: `test-results/native-workspace/workspace-${width}-${theme}.png` });
+      }
+    }
   }
   await page.setViewportSize({ width: 1440, height: 900 });
 
@@ -635,7 +641,7 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   await writeFile('test-results/native-workspace/evidence.json', JSON.stringify({
     source: expectedRelease, route: '/workspace', auth: 'isolated Supabase ordinary accounts',
     model: 'deterministic transport fixtures, zero provider calls', nativeActions: ['file handoff', 'citation link', 'keyboard calculator', 'copy readback', 'database save and reopen', 'private share owner/guest/other account', 'continuation', 'browser cancellation', 'client validation fallback', 'partial native recovery, copy and reopen', 'reviewed partial chart', 'inline research receipt without refocus or redispatch', 'connected diagram, nested table and code in one persisted answer'],
-    viewports: [1440, 390], themes: ['black', 'gray'], browserOperator: 'one in-flow panel, expanded and collapsed above the saved architecture answer',
+    viewports: [320, 390, 768, 1280, 1440], themes: ['black', 'white'], browserOperator: 'one in-flow panel, expanded and collapsed above the saved architecture answer',
   }, null, 2));
 });
 

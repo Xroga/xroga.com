@@ -48,6 +48,18 @@ const cases = {
   numericEvidence: { text: 'Official policy and documentation.', program: 'root = Col([Text("Official policy [3]."), Markdown("See documentation [2].")])' },
   fallbackCitations: { text: 'Check the documentation [2](https://www.w3.org/TR/). The mismatched link [2](https://untrusted.example/) is not a citation. Unknown [99] and code `[2]` are plain text.' },
   code: { text: 'TypeScript function returns the supplied constant.', program: 'root = Col([Code("const total: number = 42;", "typescript")])' },
+  actionLabels: {
+    text: 'No external action was taken.',
+    program: 'root = Col([Button("Draft only"), IconButton("info", null, "Local note"), Pressable([Text("Read-only tile")])])',
+  },
+  embeddedCitations: {
+    text: 'Policy detail [2].\n\nDocument note [2].\n\nQuoted claim [2].',
+    program: 'root = Col([Section("Policy", [Caption("Document note [2]."), Quote("Quoted claim [2].")], "Policy detail [2].")])',
+  },
+  reflow: {
+    text: 'المجموع التقديري: $12,345,678,901.25. These values are supplied estimates.',
+    program: 'root = Col([Badge("A long label for the estimated source figures across these scenarios"), Metric("Estimated total", "$12,345,678,901.25"), Table(["Label", "Estimated value"], [["Scenario A", "$12,345,678,901.25"]])])',
+  },
   tabs: { text: 'Core recommendation remains visible.\n\nInclude this separate implementation caveat.', program: 'root = Col([Text("Core recommendation remains visible."), Tabs("Scenarios", [{title: "Basic", content: [Text("Basic details")]}, {title: "Team", content: [Text("Team details")]}]), Popover("Implementation notes", [Text("All results remain visible.")]), Carousel([Text("First option"), Text("Second option")]), Code("PRIVATE_LAYOUT_CODE", "openui")])' },
   choice: { text: 'Compare local scenarios.', program: [
     '$choice = "base"',
@@ -375,6 +387,20 @@ try {
       await answer.getByText('21%', { exact: true }).waitFor();
       await answer.getByRole('button', { name: 'Reset' }).click();
       await answer.getByText('20%', { exact: true }).waitFor();
+      await open('actionLabels');
+      for (const label of ['Draft only', 'Local note', 'Read-only tile']) {
+        await answer.getByText(label, { exact: true }).waitFor();
+      }
+      assert.equal(await answer.getByRole('button').count(), 0);
+      await open('embeddedCitations');
+      const inlineLinks = answer.getByRole('link', { name: 'Open source 2: W3C Documentation' });
+      assert.equal(await inlineLinks.count(), 3);
+      for (const text of ['Policy detail', 'Document note', 'Quoted claim']) {
+        assert.equal(await answer.locator('p').filter({ hasText: text }).count(), 1);
+      }
+      await open('reflow');
+      await answer.getByText(cases.reflow.text, { exact: true }).waitFor();
+      assert.equal(await answer.getByText(cases.reflow.text, { exact: true }).evaluate(element => getComputedStyle(element).direction), 'rtl');
       assert.deepEqual(errors, []);
       assert.deepEqual(external, []);
       results.push({ viewport, theme, scenarios: checked.size, cases: [...checked], accessibilityViolations: 0, externalRequests: 0 });
@@ -407,7 +433,27 @@ try {
   assert.equal(await answerRegion.evaluate(el => getComputedStyle(el).colorScheme), 'light', 'Evaluator light mode remains readable inside a dark app shell');
   assert.equal(await palettePage.locator('.native-evaluation').evaluate(el => getComputedStyle(el).backgroundColor), 'rgb(255, 255, 255)');
   await paletteContext.close();
-  const evidence = { mode: 'credential-free browser fixture', browser: browser.version(), entryBytes: Object.fromEntries(['/native.js','/native.css'].map(key => [key, assets.get(key).length])), lazyChunks: [...assets.keys()].filter(key => key.startsWith('/native-chunk-')).length, results };
+  // Scale the actual answer and its container, as well as testing narrow widths.
+  const zoomContext = await browser.newContext({ viewport: { width: 780, height: 1000 } });
+  const zoomPage = await zoomContext.newPage();
+  const zoomReflow = [];
+  for (const theme of ['light', 'dark']) {
+    await zoomPage.goto(origin + '/?case=reflow&theme=' + theme);
+    const answer = zoomPage.getByRole('region', { name: 'Answer', exact: true });
+    await answer.waitFor();
+    await zoomPage.addStyleTag({ content: 'html { zoom: 2; }' });
+    const geometry = await answer.evaluate(element => ({
+      viewport: innerWidth,
+      scrollWidth: document.documentElement.scrollWidth,
+      answerRight: element.getBoundingClientRect().right,
+      clippedBadges: Array.from(element.querySelectorAll('.iui-badge')).filter(badge => badge.scrollWidth > badge.clientWidth + 1).length,
+    }));
+    assert.ok(geometry.scrollWidth <= geometry.viewport && geometry.answerRight <= geometry.viewport);
+    assert.equal(geometry.clippedBadges, 0);
+    zoomReflow.push({ theme, ...geometry });
+  }
+  await zoomContext.close();
+  const evidence = { mode: 'credential-free browser fixture', browser: browser.version(), entryBytes: Object.fromEntries(['/native.js','/native.css'].map(key => [key, assets.get(key).length])), lazyChunks: [...assets.keys()].filter(key => key.startsWith('/native-chunk-')).length, zoomReflow, results };
   await writeFile(resolve(output, channel + '-native-browser-evidence.json'), JSON.stringify(evidence, null, 2) + '\n');
   process.stdout.write(JSON.stringify(evidence, null, 2) + '\n');
 } finally {

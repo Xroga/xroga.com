@@ -480,7 +480,7 @@ describe('semantic planner single-model delivery',()=>{
   });
   it('retains the bounded JSON decision controls and total deadline',()=>{
     const signal=new AbortController().signal;
-    assert.deepEqual(semanticPlannerCompletionOptions(signal),{maxTokens:1500,temperature:0,json:true,reasoningMode:'none',signal});
+    assert.deepEqual(semanticPlannerCompletionOptions(signal),{maxTokens:2200,temperature:0,json:true,reasoningMode:'none',signal});
     assert.equal(SEMANTIC_PLANNER_ROUTE_TIMEOUT_MS,SEMANTIC_PLANNER_DEFAULT_TOTAL_TIMEOUT_MS);
     assert.ok(SEMANTIC_PLANNER_MAX_TOTAL_TIMEOUT_MS<60000);
   });

@@ -1,6 +1,6 @@
 import { splitNativeOpenUiAnswer } from '../../../backend/src/ai/nativeOpenUi';
 
-const presentationSyntax = /<<<XROGA_OPENUI|(?:\x60{3,}|~{3,})[ \t]*(?:openui(?:lang|-lang)?|xroga-ui|xroga-openui-v1|xroga-response-json-v1)\b|^ {0,3}root[ \t]*=[ \t]*Col[ \t]*\(|"format"\s*:\s*"xroga-openui-v1"/im;
+const presentationSyntax = /<<<XROGA_OPENUI|(?:\x60{3,}|~{3,})[ \t]*(?:openui(?:lang|-lang)?|xroga-ui|xroga-openui-v1|xroga-response-json-v1)\b|^ {0,3}root[ \t]*=[ \t]*[A-Z][A-Za-z0-9]*[ \t]*\(|"format"\s*:\s*"xroga-openui-v1"/im;
 
 export function isPresentationLanguage(language?: string): boolean {
   return /^(?:openui(?:lang|-lang)?|xroga-ui|xroga-openui-v1|xroga-response-json-v1)$/i.test(language?.trim() ?? '');

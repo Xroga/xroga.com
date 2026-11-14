@@ -17,7 +17,7 @@ const focusedComponents: Record<string, string[]> = {
   graph: ['Diagram', 'Svg', 'Circle', 'Ellipse', 'Rect', 'Line', 'Path', 'Polyline', 'Polygon', 'G', 'SvgText'],
   table: ['Table'],
   chart: ['Chart', 'Metric', 'Math', 'Quote'],
-  calculator: ['Chart', 'Metric', 'Math', 'Controls', 'Slider', 'Input', 'Select', 'Button'],
+  calculator: ['Chart', 'Metric', 'Math', 'Controls', 'Form', 'Slider', 'Input', 'Select', 'Checkbox', 'RadioGroup', 'SegmentedControl', 'DatePicker', 'ChoicePicker', 'Button'],
   metrics: ['Metric', 'Math'],
   tabs: ['Tabs', 'Popover'],
   cards: ['Carousel', 'Flashcard', 'Quote'],
@@ -65,6 +65,7 @@ function buildNativeOpenUiPrompt(kinds: ReadonlySet<string>, hasSources: boolean
       ...(full || kinds.has('chart') ? ['For an ordered series, compare each point to the preceding point and rank dollar and percentage changes separately.'] : []),
       'Distinguish a browser Supabase SSR client that must read session tokens from a server-only or backend-for-frontend design that owns an HTTP-only session. Do not claim browser Supabase SSR uses HTTP-only access or refresh tokens by default. Requests carrying a user access token remain subject to that user’s RLS, including from server-only clients. Keep service-role credentials separate.',
       'Prefer wrapping Row or responsive Grid and avoid fixed-width text. Charts need readable titles, axis labels and units. Use short labels and concise chart notes. Put assumptions below the calculation or diagram they qualify.',
+      'Keep the main answer visible in reading order. Cite a supported claim in a Text or Markdown block beside that claim. Use Section for supporting details and Code only for code the user wants to read.',
       'Use Lucide icon names in kebab case, such as plane or database. Keep a readable label.',
     ],
     examples: [
