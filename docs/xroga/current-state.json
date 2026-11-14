@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com",
     "branch": "research/composio-five-upstreams-20261114",
-    "sha": "e7987e7eb490b70dca5c874ba84d00e04b34ae69",
-    "sourceTimestampUtc": "2026-11-15T00:11:27+05:00",
-    "auditStartedUtc": "2026-11-14T19:12:50.472Z",
+    "sha": "43c68acddfdf9f61af3d3bba7bf55b5dcdbc0b50",
+    "sourceTimestampUtc": "2026-11-15T00:18:59+05:00",
+    "auditStartedUtc": "2026-11-14T19:20:05.086Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -34377,6 +34377,7 @@
         "backend/src/services/fixtures/checkoutApproval.ts:5",
         "backend/src/services/integrations/businessAction.ts:5",
         "backend/src/services/integrations/businessActionConfirmations.ts:7",
+        "backend/src/services/integrations/composioApprovedReadBatch.ts:7",
         "backend/src/services/integrations/composioClient.ts:5",
         "backend/src/services/integrations/composioControl.ts:10",
         "backend/src/services/integrations/credentialVault.ts:3",
@@ -34512,6 +34513,7 @@
         "backend/src/services/fixtures/checkoutApproval.ts:4",
         "backend/src/services/integrations/businessAction.ts:7",
         "backend/src/services/integrations/businessActionConfirmations.ts:6",
+        "backend/src/services/integrations/composioApprovedReadBatch.ts:8",
         "backend/src/services/integrations/composioClient.ts:6",
         "backend/src/services/integrations/composioConsentConsumers.security.test.ts:5",
         "backend/src/services/integrations/composioControl.ts:5",
@@ -37814,6 +37816,69 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:01d8a173ac5a776bd1be",
+      "subsystem": "integrations_actions_credentials",
+      "sourcePath": "backend/src/services/integrations/composioApprovedReadBatch.ts",
+      "sha256": "e3fa62431de728b982fbd71c78bb1d9c1bf79e3ece47db7174e0083182366c42",
+      "symbols": [
+        "ApprovedRead",
+        "ApprovedReadBatchResult",
+        "MAX_BATCH_READS",
+        "actors",
+        "details",
+        "errorCode",
+        "exact",
+        "executeApprovedComposioReadBatch",
+        "i",
+        "immutableTasks",
+        "key",
+        "outcomes",
+        "seen",
+        "task",
+        "toolSlug",
+        "validateReadBatchTargets"
+      ],
+      "imports": [
+        "../../security/authority/digest.js",
+        "../../security/authority/enforce.js",
+        "../../security/authority/types.js",
+        "./composioClient.js"
+      ],
+      "runtimeImports": [
+        "backend/src/security/authority/digest.ts",
+        "backend/src/security/authority/enforce.ts",
+        "backend/src/services/integrations/composioClient.ts"
+      ],
+      "entryPoints": [],
+      "callers": [
+        "backend/src/services/integrations/composioApprovedReadBatch.test.ts:3"
+      ],
+      "reachable": false,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [
+        "backend/src/services/integrations/composioApprovedReadBatch.ts#AuthorityDispatchBinding",
+        "backend/src/services/integrations/composioApprovedReadBatch.ts#AuthorityPermit",
+        "backend/src/services/integrations/composioApprovedReadBatch.ts#assertAuthorityPermit",
+        "backend/src/services/integrations/composioApprovedReadBatch.ts#authorityContextForPermit"
+      ],
+      "tenantBoundary": [],
+      "approvalBoundary": [
+        "backend/src/services/integrations/composioApprovedReadBatch.ts#preparedActionDigest"
+      ],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/services/integrations/composioApprovedReadBatch.test.ts"
+      ],
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:8c25c7e0b5b0dd66676d",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/composioClient.ts",
@@ -38107,6 +38172,7 @@
         "backend/src/services/integrations/composioAccountSelection.security.test.ts:7",
         "backend/src/services/integrations/composioActorBoundary.security.test.ts:3",
         "backend/src/services/integrations/composioActorBoundary.security.test.ts:4",
+        "backend/src/services/integrations/composioApprovedReadBatch.ts:10",
         "backend/src/services/integrations/composioClient.catalogDeprecation.test.ts:3",
         "backend/src/services/integrations/composioClient.explicitToolkit.test.ts:4",
         "backend/src/services/integrations/composioClient.pagination.test.ts:4",
@@ -141605,7 +141671,7 @@
     {
       "id": "workflow:f743773ae77f298bb32b",
       "sourcePath": ".github/workflows/composio-focused-branch.yml",
-      "sha256": "1cbb6cbc8d04bb8999ce9fa5975c56e2cddb6079650dcbf36a411af007e51995",
+      "sha256": "7a6c733c48dbf8a88e6be4cca0e92dbc35b408fc45037a7ed4e511522eadd159",
       "sourceEntrypoints": [
         "backend/src/services/integrations/composioActionPreflight.test.ts"
       ],
@@ -141614,7 +141680,7 @@
     {
       "id": "workflow:0d65f14a990679940a0f",
       "sourcePath": ".github/workflows/composio-inventory-refresh-once.yml",
-      "sha256": "e7f90dd43c943558ad9fb2873d86ff89778256448bedefae94a3b70faa45ecac",
+      "sha256": "bb5c821d729911bfba25070f252423ff2cd801c3481d2e77eac467d4a835643d",
       "sourceEntrypoints": [
         "scripts/xroga/inventory.mjs",
         "scripts/xroga/reconcile-requirements.mjs",
@@ -152828,6 +152894,13 @@
       "id": "test-suite:8f41ab5d9949d1ae4111",
       "sourcePath": "backend/src/services/integrations/composioActorBoundary.security.test.ts",
       "declaredTests": 5,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:9c5fd10c096a8d24b111",
+      "sourcePath": "backend/src/services/integrations/composioApprovedReadBatch.test.ts",
+      "declaredTests": 2,
       "skipLocations": [],
       "focusLocations": []
     },

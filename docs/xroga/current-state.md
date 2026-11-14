@@ -1,20 +1,20 @@
 # Xroga repository truth map
 
-Source SHA: `e7987e7eb490b70dca5c874ba84d00e04b34ae69`. Branch observed: `research/composio-five-upstreams-20261114`. Audit started: 2026-11-14T19:12:50.472Z.
+Source SHA: `43c68acddfdf9f61af3d3bba7bf55b5dcdbc0b50`. Branch observed: `research/composio-five-upstreams-20261114`. Audit started: 2026-11-14T19:20:05.086Z.
 
 This inventory records static source and call-path evidence. A mounted endpoint is reachable in source; that does not certify live success, tenant safety, approval enforcement, or completion. All implementation surfaces retain an unverified/partial/placeholder state until their own acceptance tests establish behavior. No architecture was replaced and no production operations were performed.
 
 ## Counts
 
-- surfaces: 1927
+- surfaces: 1928
 - routeRegistrations: 395
 - routes: 331
 - reachableRoutes: 240
 - queues: 4
 - migrations: 162
 - workflows: 23
-- testSuites: 1111
-- declaredTests: 7513
+- testSuites: 1112
+- declaredTests: 7515
 - classifiedMarkers: 423
 - reachableMarkers: 357
 - absentRequiredPaths: 5

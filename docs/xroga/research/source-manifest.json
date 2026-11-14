@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "e7987e7eb490b70dca5c874ba84d00e04b34ae69",
+  "source_sha": "43c68acddfdf9f61af3d3bba7bf55b5dcdbc0b50",
   "hash_policy": "Exact preserved attachment bytes; repository text uses Git-canonical LF bytes for portable hashes and byte counts",
   "sources": [
     {
@@ -6338,9 +6338,9 @@
       "source_id": "SRC-3d3190a1571aa705",
       "filename": "current-state.json",
       "path_or_url": "docs/xroga/current-state.json",
-      "sha256": "570f8551e2c546f2ef85992910a4e6d6b1f8bbbaa61cc831208fc9ad1d18f783",
-      "byte_size": 5722306,
-      "modified_timestamp": "2026-11-14T19:12:50.647Z",
+      "sha256": "3f528496e93a969f4b5db3c4fef773cf4a88e60fca1a5daca64982ecbfd88fa1",
+      "byte_size": 5725375,
+      "modified_timestamp": "2026-11-14T19:20:05.225Z",
       "parse_status": "PARSED_JSON",
       "category": "REPOSITORY_DOCUMENT",
       "authority": "ADVISORY",
@@ -12828,6 +12828,19 @@
       "sha256": "c3d5ed06b27cf7fceec01d78a36aaf6d656ce05a3d3791a43141c5689e8d51d4",
       "byte_size": 6535,
       "modified_timestamp": "2026-11-14T10:51:54.291Z",
+      "parse_status": "AST_METADATA",
+      "category": "SOURCE_CODE",
+      "authority": "CURRENT_CODE",
+      "analyzed": true,
+      "notes": "Git-canonical LF source bytes and AST/import metadata, not manual behavioral verification"
+    },
+    {
+      "source_id": "SRC-01d8a173ac5a776b",
+      "filename": "composioApprovedReadBatch.ts",
+      "path_or_url": "backend/src/services/integrations/composioApprovedReadBatch.ts",
+      "sha256": "e3fa62431de728b982fbd71c78bb1d9c1bf79e3ece47db7174e0083182366c42",
+      "byte_size": 5863,
+      "modified_timestamp": "2026-11-14T19:19:22.627Z",
       "parse_status": "AST_METADATA",
       "category": "SOURCE_CODE",
       "authority": "CURRENT_CODE",
