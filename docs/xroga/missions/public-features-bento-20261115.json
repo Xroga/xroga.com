@@ -1,0 +1,116 @@
+{
+  "version": "1.0",
+  "missionId": "PUBLIC-FEATURES-BENTO-20261115",
+  "baseSha": "67dac20c98e9f208b9785c271b1f221b3bce4759",
+  "requirementIds": [
+    "XR-FAMILY-rich-ai-ui"
+  ],
+  "state": "CODE_COMPLETE",
+  "risk": "low",
+  "scope": "Redesign the existing public /features capability hub with dark visual bento cards, an illustrative workflow preview, a searchable/category-filterable directory and responsive layouts. Reuse canonical public capability definitions and keep unverified planned Xroga OS features out.",
+  "changedFiles": [
+    "frontend/src/app/features/page.tsx",
+    "frontend/src/app/features/FeaturesCatalog.tsx",
+    "frontend/src/app/features/features.css",
+    "docs/xroga/missions/public-features-bento-20261115.json"
+  ],
+  "decisions": {
+    "keep": [
+      "Existing feature routes, canonical CAPABILITY_PAGES data, metadata, CollectionPage JSON-LD, public auth CTA and backend/runtime boundaries."
+    ],
+    "extend": [
+      "Existing /features page with client-side search and category filters.",
+      "CSS-only illustrative diagrams, visual cards, light interactions and responsive layouts."
+    ],
+    "replace": [
+      "Former simple /features link grid rendering."
+    ],
+    "deprecate": []
+  },
+  "schemaImpact": {
+    "changed": false,
+    "migrations": [],
+    "rollout": "No database or schema changes.",
+    "rollback": "Revert the bounded /features page, client catalog, stylesheet and mission manifest."
+  },
+  "securityImpact": {
+    "auth": {
+      "changed": false,
+      "description": "No authorization behavior changed; existing signup route is linked."
+    },
+    "tenant": {
+      "changed": false,
+      "description": "No tenant data or authenticated workspace state is accessed."
+    },
+    "approval": {
+      "changed": false,
+      "description": "No external action execution; all cards are navigation links."
+    },
+    "credentials": {
+      "changed": false,
+      "description": "No secrets, account credentials or provider tokens used."
+    },
+    "egress": {
+      "changed": false,
+      "description": "No new network requests or third-party assets; catalog filters are local."
+    },
+    "cost": {
+      "changed": false,
+      "description": "No model inference, external APIs or paid dependencies."
+    },
+    "billing": {
+      "changed": false,
+      "description": "No subscription or checkout changes."
+    }
+  },
+  "tests": [
+    {
+      "command": "npm run lint --prefix frontend --workspaces=false",
+      "scope": "Pending CI: frontend lint for updated page and new catalog.",
+      "negative": false,
+      "reference": "frontend/src/app/features/FeaturesCatalog.tsx"
+    },
+    {
+      "command": "npm run build --prefix frontend --workspaces=false",
+      "scope": "Pending CI: Next.js route compilation, static metadata and client bundle.",
+      "negative": false,
+      "reference": "frontend/src/app/features/page.tsx"
+    },
+    {
+      "command": "Manual responsive and keyboard smoke test",
+      "scope": "Pending review: category filtering, no-result/clear state, keyboard focus, and 390/768/1440 px layout. Not claimed executed.",
+      "negative": true,
+      "reference": "frontend/src/app/features/features.css"
+    }
+  ],
+  "architecture": {
+    "change": "extends_canonical",
+    "reason": "Public marketing page only; no execution runtime, scheduler, model route, capability registry or control plane changes.",
+    "rfc": null
+  },
+  "rollout": "Merge only after frontend CI and visual/a11y review; then verify public /features URL and internal links. No automatic production publication requested.",
+  "rollback": "Revert the /features-specific commits or re-deploy the previously verified frontend release; backend and schema unaffected.",
+  "knownGaps": [
+    "Full frontend build, automated lint and browser screenshots are pending CI/review.",
+    "Illustrated browser/code/workflow UI is explicitly representative, not a production capture.",
+    "No new Xroga features are claimed; public feature descriptions may still require later independent product audit."
+  ],
+  "placeholderClaimsRemaining": [],
+  "evidenceRefs": [
+    "frontend/src/app/features/page.tsx",
+    "frontend/src/app/features/FeaturesCatalog.tsx",
+    "frontend/src/app/features/features.css"
+  ],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "BLOCKED",
+    "blockers": [
+      "Required frontend CI review, mobile/desktop visual checks, approval, and independently verified production deployment remain outstanding."
+    ],
+    "authenticatedE2e": "NOT_APPLICABLE",
+    "stagedSecurity": "NOT_APPLICABLE",
+    "liveUrl": null,
+    "deployedSha": null
+  }
+}
