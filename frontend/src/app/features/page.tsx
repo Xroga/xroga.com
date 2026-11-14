@@ -210,7 +210,7 @@ export default function FeaturesPage() {
           <div className="xf-benefits-glow" aria-hidden="true"/>
           <span className="xf-kicker xf-centered">02 / THE DIFFERENCE</span>
           <h2 id="xf-benefits-title">And so much more<span className="xf-accent-dot">.</span></h2>
-          <p className="xf-benefits-subtitle">Good AI work isn't just an answer. It's what you can inspect, own, and build on.</p>
+          <p className="xf-benefits-subtitle">Good AI work goes beyond an answer. It is what you can inspect, own, and build on.</p>
           <div className="xf-benefits-grid">
             {benefits.map(({ icon: Icon, title, body }) => (
               <div className="xf-benefit" key={title}>
