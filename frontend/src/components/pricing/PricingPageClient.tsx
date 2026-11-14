@@ -274,7 +274,7 @@ export function PricingPageClient() {
             <span className={styles.eyebrow}>TWO PLANS. ONE WORKFLOW.</span>
             <h2 id="plans-title">
               Two plans.
-              <em> Infinite possibilities.</em>
+              <em> One powerful workspace.</em>
             </h2>
             <p>
               The same powerful Xroga workspace, with more available capacity for
@@ -311,7 +311,7 @@ export function PricingPageClient() {
                     ) : !isFree ? (
                       <span className={styles.popularBadge}>
                         <Zap aria-hidden="true" />
-                        MOST POPULAR
+                        FOR ACTIVE BUILDERS
                       </span>
                     ) : null}
                   </div>
