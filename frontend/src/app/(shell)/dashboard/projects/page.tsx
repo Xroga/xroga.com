@@ -270,7 +270,7 @@ function ProjectsHubInner() {
     toast.success('Conversation removed');
   }
 
-  const hasRemoteProjects = filteredRemote.length > 0;
+  const hasRemoteProjects = filteredRemote.length > 0 || filteredLocal.length > 0;
   const hasLocalInConversations = filteredLocal.length > 0;
   const repoProjects = filteredRemote.filter(p => Boolean(p.github_repo_name?.includes('/') || p.github_repo_url));
   const currentRepoProjects = selectedRepo ? repoProjects.filter(p => p.github_repo_name === selectedRepo) : repoProjects;
@@ -338,6 +338,18 @@ function ProjectsHubInner() {
                           if (p.github_repo_url) window.open(p.github_repo_url, '_blank', 'noopener,noreferrer');
                         }}
                       />
+                    ))}
+                  </div>
+                </section>
+              )}
+              {filteredLocal.length > 0 && (
+                <section className="space-y-3">
+                  <h2 className="text-sm font-semibold uppercase tracking-wide text-[var(--muted)]">Local builds</h2>
+                  <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {filteredLocal.map(p => (
+                      <SectionCompactCard key={p.id} title={p.name} subtitle={p.type}
+                        dateIso={p.updatedAt} onOpen={() => openLocalProject(p)}
+                        onDelete={() => deleteLocal(p.id)} openLabel="Resume build"/>
                     ))}
                   </div>
                 </section>
