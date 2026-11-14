@@ -134,6 +134,11 @@ test('real Share loader validates both snapshot API versions without changing te
     payload={...payload,response:'Different authoritative text',richResponse:snapshot};
     const mismatch=await f.loadShare(token);assert.equal(mismatch.share.response,payload.response);
     assert.equal(mismatch.share.richResponse,undefined);assert.equal(mismatch.share.richUnavailable,true);
+    const requestedCode='\n\n```python\nprint(42)\n```';
+    payload={...payload,richResponse:undefined,response:text+requestedCode+'\n\n```openui\nroot = Col([])\n```'};
+    const plain=await f.loadShare(token);
+    assert.equal(plain.status,'ok');
+    assert.equal(plain.share.response,text+requestedCode);
   }finally{api.closeAllConnections();await new Promise(r=>api.close(r));}
 });
 

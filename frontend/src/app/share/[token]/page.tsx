@@ -89,7 +89,7 @@ const loadShare = cache(async (token: string): Promise<ShareResult> => {
     const presentation = readRichShareSnapshot(snapshot);
     const matchingText = !share.richResponse || presentation.text === share.response;
     return { status: 'ok', share: { ...share,
-      response: share.response.startsWith(RICH_SHARE_PREFIX) ? presentation.text : share.response,
+      response: publicAnswerText(share.response.startsWith(RICH_SHARE_PREFIX) ? presentation.text : share.response),
       richResponse: presentation.document && matchingText ? snapshot : undefined,
       richUnavailable: share.richUnavailable === true || snapshot.startsWith(RICH_SHARE_PREFIX) && (!presentation.document || !matchingText),
     } };
@@ -173,7 +173,7 @@ export default async function MessageSharePage({ params }: { params: Promise<{ t
           <section className="px-5 py-6 sm:px-8 sm:py-8">
             <p className="mb-3 text-[10px] font-semibold uppercase tracking-[.16em] text-[var(--text-secondary)]">Response</p>
             {share.richUnavailable && <p role="status" className="mb-3 text-sm">The interactive view is unavailable. The complete saved text follows.</p>}
-            {native ? <NativeWorkspaceAnswer answer={{ ...native, library: 'xroga-native-v1' }} sources={native.sources} sourceReferral={false} /> : legacyRichAllowed && share.richResponse ? <SharedResponseV2 snapshot={share.richResponse} text={share.response} /> : <p className="whitespace-pre-wrap text-[15px] leading-7">{publicAnswerText(share.response)}</p>}
+            {native ? <NativeWorkspaceAnswer answer={{ ...native, library: 'xroga-native-v1' }} sources={native.sources} sourceReferral={false} /> : legacyRichAllowed && share.richResponse ? <SharedResponseV2 snapshot={share.richResponse} text={share.response} /> : <p className="whitespace-pre-wrap text-[15px] leading-7">{share.response}</p>}
             <SharedAnswerDownloads response={share.response} />
           </section>
         </article>
