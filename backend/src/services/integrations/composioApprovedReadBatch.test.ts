@@ -22,6 +22,9 @@ test('admits only 2–3 distinct plain read actions', () => {
     read('GMAIL_LIST_MESSAGES'), read('COMPOSIO_MULTI_EXECUTE_TOOL'),
   ]), /Only exact/);
   assert.throws(() => validateReadBatchTargets([
+    read('GMAIL_LIST_MESSAGES'), read('COMPOSIO_GET_TOOL_SCHEMAS'),
+  ]), /Only exact/);
+  assert.throws(() => validateReadBatchTargets([
     read('GMAIL_LIST_MESSAGES'), read('UNKNOWN_PERFORM_ACTION'),
   ]), /Only exact/);
   assert.throws(() => validateReadBatchTargets(Array.from({ length: 4 }, (_, i) =>

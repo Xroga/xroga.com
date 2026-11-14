@@ -43,6 +43,7 @@ export function validateReadBatchTargets(
       typeof task.toolSlug !== 'string' || !/^[A-Za-z0-9][A-Za-z0-9_-]{2,199}$/.test(task.toolSlug) ||
       typeof task.useCase !== 'string' || !task.useCase.trim() || task.useCase.length > 500 ||
       !task.arguments || typeof task.arguments !== 'object' || Array.isArray(task.arguments) ||
+      task.toolSlug.toUpperCase().startsWith('COMPOSIO_') ||
       classifyComposioToolRisk(task.toolSlug) !== 'read') {
       throw new ComposioClientError('Only exact, independently authorized read actions may be batched.', {
         status: 403, code: 'COMPOSIO_READ_BATCH_TOOL_BLOCKED',
