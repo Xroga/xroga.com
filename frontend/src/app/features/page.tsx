@@ -193,7 +193,7 @@ export default function FeaturesPage() {
 
         <section className="xf-catalog-shell" id="all-features" aria-labelledby="xf-all-features-title">
           <div className="xf-section-head xf-catalog-head">
-            <div><span className="xf-kicker">03 / THE COMPLETE DIRECTORY</span><h2 id="xf-all-features-title">Explore all<br/><span>Xroga features.</span></h2></div>
+            <div><span className="xf-kicker">03 / THE COMPLETE DIRECTORY</span><h2 id="xf-all-features-title">Explore all<br/><span>Xroga features</span></h2></div>
             <p>{PUBLIC_FEATURE_TOTAL} carefully organized entries across research, building, coding, shipping, workspace tools and app integrations. Explore each category or search directly.</p>
           </div>
           <FeaturesCatalog groups={PUBLIC_FEATURE_GROUPS}/>
