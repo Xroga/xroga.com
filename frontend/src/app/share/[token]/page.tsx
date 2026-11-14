@@ -1,6 +1,7 @@
 import { NATIVE_SHARE_PREFIX, readNativeOpenUiShare, readNativeOpenUiShareText } from '../../../../../backend/src/ai/nativeOpenUiShare';
 import { splitNativeOpenUiAnswer } from '../../../../../backend/src/ai/nativeOpenUi';
 import { NativeWorkspaceAnswer } from '@/components/native-openui/NativeWorkspaceAnswer';
+import { publicAnswerText } from '@/lib/publicAnswerText';
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -88,7 +89,7 @@ const loadShare = cache(async (token: string): Promise<ShareResult> => {
     const presentation = readRichShareSnapshot(snapshot);
     const matchingText = !share.richResponse || presentation.text === share.response;
     return { status: 'ok', share: { ...share,
-      response: share.response.startsWith(RICH_SHARE_PREFIX) ? presentation.text : share.response,
+      response: publicAnswerText(share.response.startsWith(RICH_SHARE_PREFIX) ? presentation.text : share.response),
       richResponse: presentation.document && matchingText ? snapshot : undefined,
       richUnavailable: share.richUnavailable === true || snapshot.startsWith(RICH_SHARE_PREFIX) && (!presentation.document || !matchingText),
     } };

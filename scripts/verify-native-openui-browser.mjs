@@ -48,7 +48,7 @@ const cases = {
   numericEvidence: { text: 'Official policy and documentation.', program: 'root = Col([Text("Official policy [3]."), Markdown("See documentation [2].")])' },
   fallbackCitations: { text: 'Check the documentation [2](https://www.w3.org/TR/). The mismatched link [2](https://untrusted.example/) is not a citation. Unknown [99] and code `[2]` are plain text.' },
   code: { text: 'TypeScript function returns the supplied constant.', program: 'root = Col([Code("const total: number = 42;", "typescript")])' },
-  tabs: { text: 'Core recommendation remains visible.', program: 'root = Col([Text("Core recommendation remains visible."), Tabs("Scenarios", [{title: "Basic", content: [Text("Basic details")]}, {title: "Team", content: [Text("Team details")]}])])' },
+  tabs: { text: 'Core recommendation remains visible.\n\nInclude this separate implementation caveat.', program: 'root = Col([Text("Core recommendation remains visible."), Tabs("Scenarios", [{title: "Basic", content: [Text("Basic details")]}, {title: "Team", content: [Text("Team details")]}]), Popover("Implementation notes", [Text("All results remain visible.")]), Carousel([Text("First option"), Text("Second option")]), Code("PRIVATE_LAYOUT_CODE", "openui")])' },
   choice: { text: 'Compare local scenarios.', program: [
     '$choice = "base"',
     'root = Col([ChoicePicker($choice, "Pricing scenario", [{value: "base", label: "Base"}, {value: "growth", label: "Growth"}, {value: "trial", label: "Trial"}, {value: "enterprise", label: "Enterprise"}, {value: "custom", label: "Custom"}]), Metric("Current total", $choice == "growth" ? 200 : 100), Metric("Mean from provided values", @Stats([100, 200, 300]).mean)])',
@@ -129,7 +129,7 @@ const server = createServer(async (req, res) => {
   res.setHeader('Content-Type', name.endsWith('.js') ? 'text/javascript' : 'text/css');
   return res.end(assets.get(name));
 });
-const output = resolve(process.argv[2] ?? '../../outputs/workspace-native-openui-20261109');
+const output = resolve((process.argv[2] === '-' ? undefined : process.argv[2]) ?? process.env.XROGA_LOCAL_ARTIFACTS ?? '../../outputs/workspace-native-openui-20261109');
 await mkdir(output, { recursive: true });
 await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
 const origin = 'http://127.0.0.1:' + server.address().port;
@@ -263,11 +263,13 @@ try {
       await code.locator('.iui-code-token').first().waitFor();
       assert.equal(await code.innerText(), 'const total: number = 42;');
       await open('tabs');
-      const basic = page.getByRole('tab', { name: 'Basic' });
-      await basic.press('ArrowRight');
-      await page.getByRole('tabpanel', { name: 'Team' }).getByText('Team details').waitFor();
-      await page.getByText('Core recommendation remains visible.').waitFor();
-      assert.equal(await page.getByRole('tab', { name: 'Team' }).getAttribute('aria-selected'), 'true');
+      for (const detail of ['Basic details', 'Team details', 'Core recommendation remains visible.', 'Include this separate implementation caveat.', 'All results remain visible.', 'First option', 'Second option']) {
+        await page.getByText(detail, { exact: true }).waitFor();
+        assert.equal(await page.getByText(detail, { exact: true }).count(), 1);
+      }
+      assert.equal(await page.getByRole('tab').count(), 0);
+      assert.equal(await page.getByText('PRIVATE_LAYOUT_CODE').count(), 0);
+      assert.equal(await page.getByRole('button', { name: /read full text|read more|view here|next/i }).count(), 0);
       await open('evidence');
       const evidence = page.getByRole('link', { name: /PostgreSQL/ });
       assert.equal(await evidence.getAttribute('href'), 'https://www.postgresql.org/docs/current/ddl-rowsecurity.html');

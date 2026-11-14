@@ -1,4 +1,5 @@
 import React, { createContext, Fragment, type ReactNode } from "react";
+import { isPresentationLanguage, publicAnswerText } from "@/lib/publicAnswerText";
 import { cx, isLongAnswerTable, webUrl } from "./style";
 
 // A small Markdown renderer that builds React elements and never injects HTML.
@@ -85,11 +86,87 @@ export function preservedMarkdownTableKeys(text: string): ReadonlySet<string> {
   return keys;
 }
 
+function textKey(text: string): string {
+  return text.replace(/\s+/g, " ").trim();
+}
+
+/** A sentence-final citation can sit immediately before or after its period. */
+function citationTextKey(text: string): string {
+  return textKey(text).replace(/\s*(\[\d{1,2}\](?:\s*\[\d{1,2}\])*)\.$/, (_, citations: string) => ". " + citations);
+}
+
+type MarkdownMatches = {
+  paragraphs: ReadonlySet<string>;
+  titles: ReadonlySet<string>;
+  code: ReadonlySet<string>;
+  relationships: ReadonlySet<string>;
+  tables: ReadonlySet<string>;
+};
+
+/** Match literal content only. Distinct wording and citation markers stay visible. */
+export function nativeMarkdownMatches(root: unknown): MarkdownMatches {
+  const paragraphs = new Set<string>();
+  const titles = new Set<string>();
+  const code = new Set<string>();
+  const relationships = new Set<string>();
+  const tables = new Set<string>();
+  function visit(value: unknown): void {
+    if (Array.isArray(value)) { value.forEach(visit); return; }
+    if (!value || typeof value !== "object") return;
+    const node = value as { type?: string; typeName?: string; props?: Record<string, unknown> };
+    if (node.type !== "element" || !node.props) {
+      Object.values(value).forEach(visit);
+      return;
+    }
+    const { props, typeName } = node;
+    if (["Text", "Caption", "Quote"].includes(typeName ?? "") && typeof props.text === "string") paragraphs.add(citationTextKey(props.text));
+    if (typeName === "Text" && Array.isArray(props.text)) {
+      const parts = props.text.map(part => {
+        if (typeof part === "string") return part;
+        if (part?.type !== "element" || part.typeName !== "Source") return undefined;
+        const number = /^source-(\d{1,2})$/.exec(part.props?.id ?? "")?.[1];
+        return number === undefined ? undefined : `[${number}]`;
+      });
+      if (parts.every(part => part !== undefined)) paragraphs.add(citationTextKey(parts.join("")));
+    }
+    if (typeName === "Title" && typeof props.text === "string") titles.add(textKey(props.text));
+    if (["Section", "Diagram", "Card"].includes(typeName ?? "") && typeof props.title === "string") titles.add(textKey(props.title));
+    if (typeName === "Section" && typeof props.introduction === "string") paragraphs.add(citationTextKey(props.introduction));
+    if (typeName === "Diagram" && Array.isArray(props.nodes) && Array.isArray(props.links)) {
+      const labels = new Map(props.nodes.map(node => [node?.id, node?.label]));
+      for (const link of props.links) {
+        const from = labels.get(link?.from), to = labels.get(link?.to);
+        if (typeof from === "string" && typeof to === "string") {
+          const label = typeof link.label === "string" && link.label ? ": " + link.label : "";
+          relationships.add(textKey(from + " → " + to + label));
+        }
+      }
+    }
+    if (typeName === "Code" && typeof props.code === "string" && !isPresentationLanguage(typeof props.language === "string" ? props.language : undefined)) {
+      code.add(props.code.trimEnd());
+    }
+    if (typeName === "Markdown" && typeof props.text === "string") {
+      for (const block of blocks(props.text)) {
+        if (block.kind === "p") paragraphs.add(citationTextKey(block.text));
+        if (block.kind === "h") titles.add(textKey(block.text));
+        if (block.kind === "code") code.add(block.text.trimEnd());
+      }
+    }
+    if (typeName === "Table" && Array.isArray(props.columns) && Array.isArray(props.rows) && props.rows.every(Array.isArray)) {
+      const key = tableContentKey(props.columns, props.rows);
+      if (key) tables.add(key);
+    }
+    Object.values(props).forEach(visit);
+  }
+  visit(root);
+  return { paragraphs, titles, code, tables, relationships };
+}
+
 const LIST_ITEM = /^\s{0,3}([-*+]|(\d+)[.)])\s+(.*)$/;
 const cells = (line: string) => line.trim().replace(/^\||\|$/g, "").split("|").map((c) => c.trim());
 
 function blocks(source: string): Block[] {
-  const lines = source.replace(/\r\n?/g, "\n").split("\n");
+  const lines = publicAnswerText(source).replace(/\r\n?/g, "\n").split("\n");
   const out: Block[] = [];
   let i = 0;
   while (i < lines.length) {
@@ -98,9 +175,14 @@ function blocks(source: string): Block[] {
       i++;
       continue;
     }
-    if (/^\s*```/.test(line)) {
+    const fence = /^ {0,3}(\x60{3,}|~{3,})/.exec(line)?.[1];
+    if (fence) {
       const body: string[] = [];
-      for (i++; i < lines.length && !/^\s*```/.test(lines[i]); i++) body.push(lines[i]);
+      for (i++; i < lines.length; i++) {
+        const close = /^ {0,3}(\x60{3,}|~{3,})[ \t]*$/.exec(lines[i])?.[1];
+        if (close && close[0] === fence[0] && close.length >= fence.length) break;
+        body.push(lines[i]);
+      }
       out.push({ kind: "code", text: body.join("\n") });
       i++;
       continue;
@@ -143,13 +225,13 @@ function blocks(source: string): Block[] {
       continue;
     }
     const body: string[] = [];
-    for (; i < lines.length && lines[i].trim() && !LIST_ITEM.test(lines[i]) && !/^(#{1,4})\s|^\s*```|^\s*>/.test(lines[i]); i++) body.push(lines[i].trim());
+    for (; i < lines.length && lines[i].trim() && !LIST_ITEM.test(lines[i]) && !/^(#{1,4})\s|^ {0,3}(?:\x60{3,}|~{3,})|^\s*>/.test(lines[i]); i++) body.push(lines[i].trim());
     out.push({ kind: "p", text: body.join(" ") });
   }
   return out;
 }
 
-export function MarkdownBlocks({ text, renderCitation, deduplicateTables = false }: { text: string; renderCitation?: RenderCitation; deduplicateTables?: boolean }) {
+export function MarkdownBlocks({ text, renderCitation, deduplicateTables = false, matches }: { text: string; renderCitation?: RenderCitation; deduplicateTables?: boolean; matches?: MarkdownMatches }) {
   const seenTables = new Set<string>();
   return (
     <>
@@ -157,16 +239,19 @@ export function MarkdownBlocks({ text, renderCitation, deduplicateTables = false
         const k = `b${i}`;
         switch (b.kind) {
           case "p":
+            if (matches?.paragraphs.has(citationTextKey(b.text))) return null;
             return <p key={k}>{inline(b.text, k, renderCitation)}</p>;
           case "quote":
             return <blockquote key={k}>{inline(b.text, k, renderCitation)}</blockquote>;
           case "h":
+            if (matches?.titles.has(textKey(b.text))) return null;
             return (
               <div key={k} role="heading" aria-level={b.level + 1} className={`iui-md-h iui-md-h${b.level}`}>
                 {inline(b.text, k, renderCitation)}
               </div>
             );
           case "code":
+            if (matches?.code.has(b.text.trimEnd())) return null;
             return (
               <pre key={k} className="iui-code-block">
                 <code>{b.text}</code>
@@ -175,7 +260,9 @@ export function MarkdownBlocks({ text, renderCitation, deduplicateTables = false
           case "hr":
             return <hr key={k} className="iui-divider" />;
           case "list": {
-            const items = b.items.map((t, j) => <li key={j}>{inline(t, `${k}-${j}`, renderCitation)}</li>);
+            const entries = b.ordered ? b.items : b.items.filter(item => !matches?.relationships.has(textKey(item)));
+            if (!entries.length) return null;
+            const items = entries.map((item, j) => <li key={j}>{inline(item, `${k}-${j}`, renderCitation)}</li>);
             return b.ordered ? (
               <ol key={k} start={b.start}>
                 {items}
@@ -185,8 +272,8 @@ export function MarkdownBlocks({ text, renderCitation, deduplicateTables = false
             );
           }
           case "table": {
-            const tableKey = deduplicateTables ? tableContentKey(b.head, b.rows) : undefined;
-            if (tableKey && seenTables.has(tableKey) && !tableHasLinks(b.head, b.rows)) return null;
+            const tableKey = deduplicateTables || matches ? tableContentKey(b.head, b.rows) : undefined;
+            if (tableKey && !tableHasLinks(b.head, b.rows) && (seenTables.has(tableKey) || matches?.tables.has(tableKey))) return null;
             if (tableKey) seenTables.add(tableKey);
             return (
               <div key={k} className={cx("iui-table-scroll", isLongAnswerTable(b.rows.length) && "iui-table-bounded")} role="region" aria-label="Answer table" tabIndex={0}>

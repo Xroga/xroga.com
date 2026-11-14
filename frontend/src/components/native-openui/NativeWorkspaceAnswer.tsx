@@ -43,7 +43,7 @@ export function NativeWorkspaceAnswer({ answer, sources, sourceReferral = true }
   const evidence = sources?.map((source, index) => ({ ...source, id: 'source-' + (index + 1) }));
   return <ResponseSourceScope>
     {answer.program ? <ChatErrorBoundary fallback={fallback} logErrorDetails={false}>
-      <Suspense fallback={fallback}><Surface answer={answer} sources={evidence} showFullText /></Suspense>
+      <Suspense fallback={fallback}><Surface answer={answer} sources={evidence} /></Suspense>
     </ChatErrorBoundary> : fallback}
     {sources?.length ? <ResponseSources sources={sources} referral={sourceReferral} /> : null}
   </ResponseSourceScope>;

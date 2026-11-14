@@ -14,6 +14,8 @@ const nativePresentationId='../../../../../backend/src/ai/nativeOpenUi';
 const pureSources={
   [nativeShareId]:'../../backend/src/ai/nativeOpenUiShare.ts',
   [nativePresentationId]:'../../backend/src/ai/nativeOpenUi.ts',
+  '../../../backend/src/ai/nativeOpenUi':'../../backend/src/ai/nativeOpenUi.ts',
+  '@/lib/publicAnswerText':'lib/publicAnswerText.ts',
   './nativeOpenUi.js':'../../backend/src/ai/nativeOpenUi.ts',
   './nativeDiagramTopology.js':'../../backend/src/ai/nativeDiagramTopology.ts',
   './nativeOpenUiAccuracy.js':'../../backend/src/ai/nativeOpenUiAccuracy.ts',
@@ -65,6 +67,7 @@ function fixture(origin,authenticated=true){
     '@/lib/hostedWorkspaceBridge.mjs':{hostedWorkspaceRequest},
     [nativeShareId]:pureModule(nativeShareId),
     [nativePresentationId]:pureModule(nativePresentationId),
+    '@/lib/publicAnswerText':pureModule('@/lib/publicAnswerText'),
     '@/components/native-openui/NativeWorkspaceAnswer':{NativeWorkspaceAnswer(){throw Error('UI rendering is outside this transport fixture');}},
     '@/components/terminal/SourceLogo':{SourceLogo(){throw Error('UI rendering is outside this transport fixture');}},
     'next/server':{NextResponse:{json:Response.json}}};
@@ -131,6 +134,11 @@ test('real Share loader validates both snapshot API versions without changing te
     payload={...payload,response:'Different authoritative text',richResponse:snapshot};
     const mismatch=await f.loadShare(token);assert.equal(mismatch.share.response,payload.response);
     assert.equal(mismatch.share.richResponse,undefined);assert.equal(mismatch.share.richUnavailable,true);
+    const requestedCode='\n\n```python\nprint(42)\n```';
+    payload={...payload,richResponse:undefined,response:text+requestedCode+'\n\n```openui\nroot = Col([])\n```'};
+    const plain=await f.loadShare(token);
+    assert.equal(plain.status,'ok');
+    assert.equal(plain.share.response,text+requestedCode);
   }finally{api.closeAllConnections();await new Promise(r=>api.close(r));}
 });
 
