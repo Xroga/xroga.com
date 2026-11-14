@@ -40,7 +40,7 @@ function validRule(value: unknown): value is BusinessAutomationRule {
 
 function explicitSteps(request: string): BusinessWorkflowStep[] {
   const steps = splitExplicitBusinessWorkflow(request);
-  if (!steps) throw new Error('Automations need two to four explicit connected-app steps, including an action.');
+  if (!steps) throw new Error('Automations need two to eight explicit connected-app steps, including an action.');
   return steps;
 }
 

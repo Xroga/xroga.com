@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { splitExplicitBusinessWorkflow, clarifyPendingBusinessWorkflowStep } from './businessWorkflow.js';
+import { splitExplicitBusinessWorkflow, clarifyPendingBusinessWorkflowStep, independentReadWave } from './businessWorkflow.js';
 
 test('splits independent cross-app actions without needing provider names', () => {
   assert.deepEqual(splitExplicitBusinessWorkflow('Send an email to Jane about Friday and schedule a meeting with Alex tomorrow'), [
@@ -49,4 +49,27 @@ test('clarification changes only the pending action while preserving earlier ste
   assert.equal(steps[1]!.request, 'Create a sheet for them');
   assert.throws(() => clarifyPendingBusinessWorkflowStep(steps, 0, 'some details'), /No pending action/);
   assert.throws(() => clarifyPendingBusinessWorkflowStep(steps, 1, 'bad' + String.fromCharCode(10) + 'newline'), /Invalid action clarification|too long/);
+});
+
+test('plans bounded read concurrency, while never parallelizing writes or dependent reads', () => {
+  const steps = [
+    { kind: 'read' as const, request: 'List Gmail messages', dependsOnPrevious: false },
+    { kind: 'read' as const, request: 'List Calendar events', dependsOnPrevious: false },
+    { kind: 'read' as const, request: 'List CRM contacts', dependsOnPrevious: false },
+    { kind: 'read' as const, request: 'Read connected files', dependsOnPrevious: false },
+    { kind: 'action' as const, request: 'Create report', dependsOnPrevious: true },
+    { kind: 'read' as const, request: 'Read the new report', dependsOnPrevious: true },
+  ];
+  assert.deepEqual(independentReadWave(steps, 0), [0, 1, 2]);
+  assert.deepEqual(independentReadWave(steps, 1), [1, 2, 3]);
+  assert.deepEqual(independentReadWave(steps, 4), []);
+  assert.deepEqual(independentReadWave(steps, 5), []);
+  assert.deepEqual(independentReadWave(steps, 0, 1), [0]);
+  assert.deepEqual(independentReadWave(steps, -1), []);
+});
+
+test('splits up to eight explicit steps but rejects unbounded workflow clauses', () => {
+  const commands = Array.from({length: 8}, (_, i) => `List item ${i + 1} from my CRM`).join('; ');
+  assert.equal(splitExplicitBusinessWorkflow(commands)?.length, 8);
+  assert.equal(splitExplicitBusinessWorkflow(commands + '; List a ninth item from CRM'), null);
 });

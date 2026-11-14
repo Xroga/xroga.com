@@ -22,7 +22,7 @@ export function splitExplicitBusinessWorkflow(message: string): BusinessWorkflow
 
   const separator = new RegExp(`\\s*(?:;|\\n+)\\s*|\\s+(?:and then|then|and|also)\\s+(?=${NEXT_TASK.source})`, 'gi');
   const clauses = text.split(separator).map((item) => item.trim().replace(/^[,.;\s]+|[,.;\s]+$/g, ''));
-  if (clauses.length < 2 || clauses.length > 4 || clauses.some((item) => item.length < 5 || item.length > 500)) return null;
+  if (clauses.length < 2 || clauses.length > 8 || clauses.some((item) => item.length < 5 || item.length > 500)) return null;
 
   const steps: BusinessWorkflowStep[] = [];
   for (const request of clauses) {
@@ -56,4 +56,20 @@ export function clarifyPendingBusinessWorkflowStep(
   const updated = `${current.request}\nUser clarification: ${clean}`;
   if (updated.length > 500) throw new Error('Action details are too long. Narrow the clarification.');
   return steps.map((step, index) => index === stepIndex ? { ...step, request: updated } : { ...step });
+}
+
+/**
+ * A bounded wave of independent, explicitly requested read-only steps.
+ * Writes and dependent reads remain strictly sequential and approval gated.
+ */
+export function independentReadWave(steps: readonly BusinessWorkflowStep[], startIndex: number, maxConcurrency = 3): number[] {
+  if (!Number.isInteger(startIndex) || startIndex < 0 || startIndex >= steps.length) return [];
+  const limit = Math.min(3, Math.max(1, Math.trunc(maxConcurrency)));
+  const indexes: number[] = [];
+  for (let i = startIndex; i < steps.length && indexes.length < limit; i++) {
+    const step = steps[i];
+    if (!step || step.kind !== 'read' || step.dependsOnPrevious) break;
+    indexes.push(i);
+  }
+  return indexes;
 }
