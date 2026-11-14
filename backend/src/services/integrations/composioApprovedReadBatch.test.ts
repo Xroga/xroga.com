@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { validateReadBatchTargets, executeApprovedComposioReadBatch } from './composioApprovedReadBatch.js';
+import { validateReadBatchTargets, executeApprovedComposioReadBatch,
+  validateReviewedComposioReadBatch, confirmReviewedComposioReadBatch } from './composioApprovedReadBatch.js';
 
 const read = (name: string) => ({
   sessionId: 'trs_bounded_test', toolSlug: name,
@@ -36,4 +37,21 @@ test('batch rejects absent user authority before any provider calls', async () =
     { ...read('GMAIL_LIST_MESSAGES'), authorityPermit: undefined, authorityBinding: undefined },
     { ...read('GMAIL_GET_MESSAGE'), authorityPermit: undefined, authorityBinding: undefined },
   ] as never), /approval|authority|permit|Cannot|undefined/i);
+});
+
+test('requires individually reviewed, unique confirmation IDs and account digests', () => {
+  const one = { id: '11111111-1111-4111-8111-111111111111', actionDigest: 'a'.repeat(64),
+    accountReference: 'ca_test_account_one' };
+  const two = { id: '22222222-2222-4222-8222-222222222222', actionDigest: 'b'.repeat(64),
+    accountReference: 'ca_test_account_two' };
+  assert.doesNotThrow(() => validateReviewedComposioReadBatch([one, two]));
+  assert.throws(() => validateReviewedComposioReadBatch([one]), /Review two or three/);
+  assert.throws(() => validateReviewedComposioReadBatch([one, one]), /duplicated/);
+  assert.throws(() => validateReviewedComposioReadBatch([one, { ...two, actionDigest: '' }]), /missing/);
+  assert.throws(() => validateReviewedComposioReadBatch([one, { ...two, accountReference: '' }]), /missing/);
+});
+
+test('invalid batch cannot fetch or execute provider actions', async () => {
+  await assert.rejects(confirmReviewedComposioReadBatch(undefined as never, []),
+    /TENANT_AUTH_REQUIRED|tenant|context/i);
 });

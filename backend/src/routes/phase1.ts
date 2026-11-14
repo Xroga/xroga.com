@@ -100,6 +100,7 @@ import {
   getBusinessActionConfirmation,
 } from '../services/integrations/businessActionConfirmations.js';
 import { confirmedReadResultMarkdown } from '../services/integrations/businessActionResultUi.js';
+import { confirmReviewedComposioReadBatch } from '../services/integrations/composioApprovedReadBatch.js';
 
 const router =
   Router();
@@ -1972,6 +1973,42 @@ router.get(
     }
   },
 );
+
+/** User-reviewed batch of independent READ approvals only.
+ * Uses existing Xroga exact confirmation receipts per individual action.
+ */
+router.post('/business-actions/confirmations/approved-reads/batch', async (req: AuthRequest, res) => {
+  if (!requireUserId(req)) return res.status(401).json({ error: 'Sign in required', code: 'UNAUTHORIZED' });
+  try {
+    if (req.body?.approveAll !== true) {
+      return res.status(422).json({ error: 'Review and approve each read before continuing.',
+        code: 'COMPOSIO_BATCH_APPROVAL_REQUIRED' });
+    }
+    const results = await confirmReviewedComposioReadBatch(requireTenantContext(req.tenantContext), req.body?.confirmations);
+    const rendered = await Promise.all(results.map(async (item) => {
+      if (item.status !== 'completed') return { id: item.id, ok: false, code: item.errorCode };
+      let continuation: BusinessWorkflowProgress | null = null, continuationNeedsAttention = false;
+      try {
+        continuation = await resumeBusinessWorkflowAfterConfirmation(
+          requireTenantContext(req.tenantContext), item.confirmation.id, item.execution);
+      } catch { continuationNeedsAttention = true; }
+      return {
+        id: item.id, ok: true, confirmation: item.confirmation,
+        response: `The provider reported completion: ${item.confirmation.summary}. Receipt ${item.id}.` +
+          (continuation ? `\n\n${businessWorkflowProgressMarkdown(continuation)}`
+            : confirmedReadResultMarkdown(item.execution.resultText)),
+        workflowRunId: continuation?.run.id ?? null,
+        nextConfirmationId: continuation?.confirmation?.id ?? null,
+        continuationNeedsAttention,
+      };
+    }));
+    return res.json({ ok: rendered.every((x) => x.ok === true), results: rendered });
+  } catch (error) {
+    const failure = publicRuntimeFailure(businessRuntimeFailure(error,
+      'Xroga could not complete this reviewed batch of connected-app reads.'));
+    return res.status(failure.status).json(failure.body);
+  }
+});
 
 router.post(
   '/business-actions/confirmations/:id/confirm',

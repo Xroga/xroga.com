@@ -5,6 +5,8 @@
  * validation. Nothing in this module grants a new approval or tool privilege.
  */
 import { preparedActionDigest } from '../../security/authority/digest.js';
+import { requireTenantContext, type TenantContext } from '../../security/tenantContext.js';
+import { confirmBusinessAction, getBusinessActionConfirmation } from './businessActionConfirmations.js';
 import { assertAuthorityPermit, authorityContextForPermit } from '../../security/authority/enforce.js';
 import type { AuthorityDispatchBinding, AuthorityPermit } from '../../security/authority/types.js';
 import {
@@ -126,5 +128,86 @@ export async function executeApprovedComposioReadBatch(
     const errorCode = outcome.status === 'rejected' && outcome.reason instanceof ComposioClientError
       ? outcome.reason.code : 'COMPOSIO_READ_BATCH_ITEM_FAILED';
     return { index, toolSlug, status: 'failed', errorCode };
+  });
+}
+
+/** Exact user-reviewed inputs. Every item must match the already displayed
+ * persisted approval digest and account, before any operation is dispatched.
+ */
+export interface ReviewedComposioRead {
+  id: string;
+  actionDigest: string;
+  accountReference: string;
+}
+
+export function validateReviewedComposioReadBatch(items: readonly ReviewedComposioRead[]): void {
+  if (!Array.isArray(items) || items.length < 2 || items.length > 3) {
+    throw new ComposioClientError('Review two or three read actions before approving them together.', {
+      status: 422, code: 'COMPOSIO_REVIEWED_READ_BATCH_SIZE',
+    });
+  }
+  const ids = new Set<string>();
+  for (const item of items) {
+    if (!item || typeof item.id !== 'string' ||
+      !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(item.id) ||
+      typeof item.actionDigest !== 'string' || !/^[a-f0-9]{64}$/.test(item.actionDigest) ||
+      typeof item.accountReference !== 'string' || !item.accountReference.trim() ||
+      item.accountReference.length > 180 || ids.has(item.id.toLowerCase())) {
+      throw new ComposioClientError('The exact read approvals are missing or duplicated.', {
+        status: 422, code: 'COMPOSIO_REVIEWED_READ_BATCH_INVALID',
+      });
+    }
+    ids.add(item.id.toLowerCase());
+  }
+}
+
+export type ReviewedReadBatchOutcome =
+  | { id: string; status: 'completed'; confirmation: Awaited<ReturnType<typeof confirmBusinessAction>>['confirmation'];
+      execution: Awaited<ReturnType<typeof confirmBusinessAction>>['execution'] }
+  | { id: string; status: 'failed'; errorCode: string };
+
+/**
+ * The reachable batch entrypoint. Confirmation claims, authority permits,
+ * tenant+account revalidation, egress and receipts remain inside the existing
+ * approved single-action executor, run concurrently for independent READS.
+ * Writes/destructive/unknown/meta tools are always rejected pre-dispatch.
+ */
+export async function confirmReviewedComposioReadBatch(
+  context: TenantContext, reviewed: readonly ReviewedComposioRead[],
+): Promise<ReviewedReadBatchOutcome[]> {
+  const { userId } = requireTenantContext(context);
+  validateReviewedComposioReadBatch(reviewed);
+  const confirmations = await Promise.all(reviewed.map((item) =>
+    getBusinessActionConfirmation(userId, item.id)));
+  for (let i = 0; i < confirmations.length; i++) {
+    const found = confirmations[i]!;
+    const expected = reviewed[i]!;
+    if (found.id.toLowerCase() !== expected.id.toLowerCase() ||
+      found.status !== 'pending' || Date.parse(found.expiresAt) <= Date.now() ||
+      found.risk !== 'read' || !found.approval ||
+      found.approval.actionDigest !== expected.actionDigest ||
+      found.approval.accountReference !== expected.accountReference ||
+      found.approval.operation !== found.toolSlug ||
+      !found.toolSlug || found.toolSlug.toUpperCase().startsWith('COMPOSIO_') ||
+      classifyComposioToolRisk(found.toolSlug) !== 'read') {
+      throw new ComposioClientError('The reviewed connected-app read changed. Review each action again.', {
+        status: 409, code: 'COMPOSIO_REVIEWED_READ_CHANGED',
+      });
+    }
+  }
+  // Each confirmation's independent durable claim prevents replay, even if
+  // another request attempts the same grant concurrently.
+  const results = await Promise.allSettled(confirmations.map((item) =>
+    confirmBusinessAction(context, item.id, {
+      toolkit: item.toolkit, toolSlug: item.toolSlug!,
+    })));
+  return results.map((result, index): ReviewedReadBatchOutcome => {
+    if (result.status === 'fulfilled') {
+      return { id: confirmations[index]!.id, status: 'completed',
+        confirmation: result.value.confirmation, execution: result.value.execution };
+    }
+    return { id: confirmations[index]!.id, status: 'failed',
+      errorCode: result.reason instanceof ComposioClientError
+        ? result.reason.code : 'COMPOSIO_REVIEWED_READ_FAILED' };
   });
 }
