@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "b8b617594e27a0d6e7deb467148f5d57c773fb9e",
+  "source_sha": "3187f15baec0d5f212fc2a53a48b91a1ff3ac66f",
   "hash_policy": "Exact preserved attachment bytes; repository text uses Git-canonical LF bytes for portable hashes and byte counts",
   "sources": [
     {
@@ -6351,9 +6351,9 @@
       "source_id": "SRC-3d3190a1571aa705",
       "filename": "current-state.json",
       "path_or_url": "docs/xroga/current-state.json",
-      "sha256": "9870a71676520d8d8daf32ca6c3aadb451435984099175143df148e1f7fe8688",
-      "byte_size": 5724366,
-      "modified_timestamp": "2026-11-14T15:25:37.080Z",
+      "sha256": "ef46b59288bc87054349f4bdb4a49c57f427ad563a1daa69bdb3fcb9a169729c",
+      "byte_size": 5724410,
+      "modified_timestamp": "2026-11-14T15:37:03.088Z",
       "parse_status": "PARSED_JSON",
       "category": "REPOSITORY_DOCUMENT",
       "authority": "ADVISORY",
@@ -23082,9 +23082,9 @@
       "source_id": "SRC-0fef6875af5860e2",
       "filename": "markdown.tsx",
       "path_or_url": "frontend/src/components/native-openui/upstream/components/markdown.tsx",
-      "sha256": "b969f6b9681c67679c942a9d3201ce1f5b34ca84b2a607a97f58ec3e06aa9e9e",
-      "byte_size": 12479,
-      "modified_timestamp": "2026-11-14T15:13:09.696Z",
+      "sha256": "bf28eafe35bbd75caab147682c0932e3a45f8d77e4af2e9adb18c47e25dc77a7",
+      "byte_size": 13262,
+      "modified_timestamp": "2026-11-14T15:35:59.009Z",
       "parse_status": "AST_METADATA",
       "category": "SOURCE_CODE",
       "authority": "CURRENT_CODE",

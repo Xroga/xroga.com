@@ -34,10 +34,10 @@ test('partial answer collapse preserves the cited table and distinct data', () =
 test('inline answer keeps additional prose and requested code but strips presentation fences', () => {
   const element = (typeName: string, props: Record<string, unknown>) => ({ type: 'element', typeName, props });
   const matches = nativeMarkdownMatches(element('Col', {
-    children: [element('Text', { text: 'An exact summary.' }), element('Code', { code: 'return 25 * 40;' })],
+    children: [element('Text', { text: 'An exact summary.' }), element('Text', { text: ['A cited fact. ', element('Source', { id: 'source-1' })] }), element('Code', { code: 'return 25 * 40;' })],
   }));
   const fence = String.fromCharCode(96).repeat(3);
-  const text = ['An exact summary.', 'Fees are excluded.',
+  const text = ['An exact summary.', 'Fees are excluded.', 'A cited fact [1].', 'Another cited fact [1].',
     fence + 'openui\nroot = Col([Text("INTERNAL")])\n' + fence,
     fence + 'js\nreturn 25 * 40;\n' + fence,
     '~~~python\nprint(25 * 40)\n~~~', 'The complete estimate follows.'].join('\n\n');
@@ -45,7 +45,8 @@ test('inline answer keeps additional prose and requested code but strips present
   assert.match(html, /Fees are excluded/);
   assert.match(html, /<code>print\(25 \* 40\)<\/code>/);
   assert.match(html, /The complete estimate follows/);
-  assert.doesNotMatch(html, /An exact summary|INTERNAL|return 25 \* 40|root = Col/);
+  assert.match(html, /Another cited fact/);
+  assert.doesNotMatch(html, /An exact summary|>A cited fact|INTERNAL|return 25 \* 40|root = Col/);
 });
 
 test('public answer text keeps ordinary code and withholds private streamed syntax', () => {

@@ -90,6 +90,11 @@ function textKey(text: string): string {
   return text.replace(/\s+/g, " ").trim();
 }
 
+/** A sentence-final citation can sit immediately before or after its period. */
+function citationTextKey(text: string): string {
+  return textKey(text).replace(/\s*(\[\d{1,2}\](?:\s*\[\d{1,2}\])*)\.$/, (_, citations: string) => ". " + citations);
+}
+
 type MarkdownMatches = {
   paragraphs: ReadonlySet<string>;
   titles: ReadonlySet<string>;
@@ -114,10 +119,19 @@ export function nativeMarkdownMatches(root: unknown): MarkdownMatches {
       return;
     }
     const { props, typeName } = node;
-    if (["Text", "Caption", "Quote"].includes(typeName ?? "") && typeof props.text === "string") paragraphs.add(textKey(props.text));
+    if (["Text", "Caption", "Quote"].includes(typeName ?? "") && typeof props.text === "string") paragraphs.add(citationTextKey(props.text));
+    if (typeName === "Text" && Array.isArray(props.text)) {
+      const parts = props.text.map(part => {
+        if (typeof part === "string") return part;
+        if (part?.type !== "element" || part.typeName !== "Source") return undefined;
+        const number = /^source-(\d{1,2})$/.exec(part.props?.id ?? "")?.[1];
+        return number === undefined ? undefined : `[${number}]`;
+      });
+      if (parts.every(part => part !== undefined)) paragraphs.add(citationTextKey(parts.join("")));
+    }
     if (typeName === "Title" && typeof props.text === "string") titles.add(textKey(props.text));
     if (["Section", "Diagram", "Card"].includes(typeName ?? "") && typeof props.title === "string") titles.add(textKey(props.title));
-    if (typeName === "Section" && typeof props.introduction === "string") paragraphs.add(textKey(props.introduction));
+    if (typeName === "Section" && typeof props.introduction === "string") paragraphs.add(citationTextKey(props.introduction));
     if (typeName === "Diagram" && Array.isArray(props.nodes) && Array.isArray(props.links)) {
       const labels = new Map(props.nodes.map(node => [node?.id, node?.label]));
       for (const link of props.links) {
@@ -133,7 +147,7 @@ export function nativeMarkdownMatches(root: unknown): MarkdownMatches {
     }
     if (typeName === "Markdown" && typeof props.text === "string") {
       for (const block of blocks(props.text)) {
-        if (block.kind === "p") paragraphs.add(textKey(block.text));
+        if (block.kind === "p") paragraphs.add(citationTextKey(block.text));
         if (block.kind === "h") titles.add(textKey(block.text));
         if (block.kind === "code") code.add(block.text.trimEnd());
       }
@@ -225,7 +239,7 @@ export function MarkdownBlocks({ text, renderCitation, deduplicateTables = false
         const k = `b${i}`;
         switch (b.kind) {
           case "p":
-            if (matches?.paragraphs.has(textKey(b.text))) return null;
+            if (matches?.paragraphs.has(citationTextKey(b.text))) return null;
             return <p key={k}>{inline(b.text, k, renderCitation)}</p>;
           case "quote":
             return <blockquote key={k}>{inline(b.text, k, renderCitation)}</blockquote>;
