@@ -3,8 +3,8 @@ import Link from 'next/link';
 import {
   ArrowRight, ArrowUpRight, Blocks, BookOpen, BrainCircuit, Check,
   CheckCircle2, ChevronRight, CircleDot, CloudUpload, Code2,
-  FileCode2, GitBranch, Globe2, Layers3, LockKeyhole, MessageSquareText,
-  Play, Search, ShieldCheck, Sparkles, Workflow,
+  FileCode2, GitBranch, Globe2, Layers3, LockKeyhole,
+  ShieldCheck, Sparkles, Workflow,
 } from 'lucide-react';
 import { CAPABILITY_PAGES } from '@/lib/capabilityPages';
 import { buildMetadata } from '@/lib/seo';
