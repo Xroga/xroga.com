@@ -84,21 +84,8 @@ function ProjectsHubInner() {
         return p;
       };
       api.projects
-        .listGithub()
-        .then((list) => {
-          const normalized = list.map(normalizeGithubProject).filter((p) => p.github_repo_name?.includes('/'));
-          if (normalized.length > 0) {
-            setProjects(normalized);
-            return;
-          }
-          return api.projects.list().then((all) =>
-            setProjects(
-              all
-                .map(normalizeGithubProject)
-                .filter((p) => p.github_repo_name?.includes('/') || Boolean(p.github_repo_url))
-            )
-          );
-        })
+        .list()
+        .then((list) => setProjects(list.map(normalizeGithubProject)))
         .catch(() => setProjects([]))
         .finally(() => setLoading(false));
     };
@@ -283,14 +270,12 @@ function ProjectsHubInner() {
     toast.success('Conversation removed');
   }
 
-  const hasGithubProjects = filteredRemote.length > 0;
+  const hasRemoteProjects = filteredRemote.length > 0;
   const hasLocalInConversations = filteredLocal.length > 0;
-  const currentRepoProjects = selectedRepo
-    ? filteredRemote.filter((p) => p.github_repo_name === selectedRepo)
-    : filteredRemote;
-  const otherRepoProjects = selectedRepo
-    ? filteredRemote.filter((p) => p.github_repo_name && p.github_repo_name !== selectedRepo)
-    : [];
+  const repoProjects = filteredRemote.filter(p => Boolean(p.github_repo_name?.includes('/') || p.github_repo_url));
+  const currentRepoProjects = selectedRepo ? repoProjects.filter(p => p.github_repo_name === selectedRepo) : repoProjects;
+  const otherRepoProjects = selectedRepo ? repoProjects.filter(p => p.github_repo_name && p.github_repo_name !== selectedRepo) : [];
+  const withoutRepoProjects = filteredRemote.filter(p => !p.github_repo_name?.includes('/') && !p.github_repo_url);
 
   return (
     <PageFullscreenFrame>
@@ -328,7 +313,7 @@ function ProjectsHubInner() {
                 <PanelLoader key={i} height={180} />
               ))}
             </div>
-          ) : hasGithubProjects ? (
+          ) : hasRemoteProjects ? (
             <div className="space-y-6">
               {currentRepoProjects.length > 0 && (
                 <section className="space-y-3">
@@ -353,6 +338,20 @@ function ProjectsHubInner() {
                           if (p.github_repo_url) window.open(p.github_repo_url, '_blank', 'noopener,noreferrer');
                         }}
                       />
+                    ))}
+                  </div>
+                </section>
+              )}
+              {withoutRepoProjects.length > 0 && (
+                <section className="space-y-3">
+                  <h2 className="text-sm font-semibold uppercase tracking-wide text-[var(--muted)]">Projects without GitHub</h2>
+                  <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {withoutRepoProjects.map(p => (
+                      <SectionCompactCard key={p.id} title={p.name} subtitle={p.type}
+                        dateIso={p.updated_at}
+                        onOpen={() => router.push('/workspace?project='+encodeURIComponent(p.id))}
+                        onDelete={() => { if (confirm(`Remove "${p.name}" from Xroga?`)) void deleteRemote(p.id); }}
+                        openLabel="Open project" />
                     ))}
                   </div>
                 </section>
