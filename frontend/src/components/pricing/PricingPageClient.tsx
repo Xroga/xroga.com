@@ -11,7 +11,7 @@ import {
   Compass,
   CreditCard,
   FileStack,
-  Github,
+  GitBranch,
   Info,
   LockKeyhole,
   Minus,
@@ -82,7 +82,7 @@ const COMPARISON_GROUPS = [
   },
   {
     title: 'Coding & verification',
-    icon: Github,
+    icon: GitBranch,
     rows: [
       { name: 'Repository inspection and code understanding', free: 'Included', pro: 'Included' },
       { name: 'Code edits, fixes and refactoring', free: 'Included', pro: 'Included' },
