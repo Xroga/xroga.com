@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { splitExplicitBusinessWorkflow, clarifyPendingBusinessWorkflowStep, independentReadWave, dependentWorkflowEvidenceIndexes } from './businessWorkflow.js';
+import { splitExplicitBusinessWorkflow, clarifyPendingBusinessWorkflowStep, independentReadWave, dependentWorkflowEvidenceIndexes, validateBusinessWorkflowGraph, explicitWorkflowEvidenceIndexes } from './businessWorkflow.js';
 
 test('splits independent cross-app actions without needing provider names', () => {
   assert.deepEqual(splitExplicitBusinessWorkflow('Send an email to Jane about Friday and schedule a meeting with Alex tomorrow'), [
@@ -83,4 +83,36 @@ test('dependent actions can reference found records and a created destination', 
   assert.deepEqual(dependentWorkflowEvidenceIndexes(outcomes, 3, 'Add those email records to that sheet', true), [0, 1, 2]);
   assert.deepEqual(dependentWorkflowEvidenceIndexes(outcomes, 3, 'Update it', true), [2]);
   assert.deepEqual(dependentWorkflowEvidenceIndexes(outcomes, 3, 'Add those email records', false), []);
+});
+
+test('structured dependencies are bounded, acyclic, and require correct flags', () => {
+  const graph = [
+    { kind: 'read' as const, request: 'Read Gmail messages', dependsOnPrevious: false, dependsOnSteps: [] },
+    { kind: 'action' as const, request: 'Create destination sheet', dependsOnPrevious: false, dependsOnSteps: [] },
+    { kind: 'action' as const, request: 'Append those emails to the sheet', dependsOnPrevious: true, dependsOnSteps: [0, 1] },
+    { kind: 'read' as const, request: 'Read the created sheet', dependsOnPrevious: true, dependsOnSteps: [1, 2] },
+  ];
+  assert.doesNotThrow(() => validateBusinessWorkflowGraph(graph));
+  assert.deepEqual(independentReadWave(graph, 3), []);
+  assert.throws(() => validateBusinessWorkflowGraph(graph.map((s, i) =>
+    i === 2 ? { ...s, dependsOnSteps: [3] } : s)), /dependency/);
+  assert.throws(() => validateBusinessWorkflowGraph(graph.map((s, i) =>
+    i === 2 ? { ...s, dependsOnSteps: [0, 0] } : s)), /dependency/);
+  assert.throws(() => validateBusinessWorkflowGraph(graph.map((s, i) =>
+    i === 2 ? { ...s, dependsOnPrevious: false } : s)), /dependency/);
+  assert.throws(() => validateBusinessWorkflowGraph(graph.map((s, i) =>
+    i === 2 ? { ...s, dependsOnSteps: [0, 1, 1, 0] } : s)), /dependency/);
+});
+
+test('explicit evidence dependencies select exact receipts and reject missing sources', () => {
+  const outcomes = [
+    { stepIndex: 0, kind: 'read' as const },
+    { stepIndex: 1, kind: 'action' as const },
+    { stepIndex: 2, kind: 'read' as const },
+  ];
+  assert.deepEqual(explicitWorkflowEvidenceIndexes(outcomes, 3, [0, 1]), [0, 1]);
+  assert.deepEqual(explicitWorkflowEvidenceIndexes(outcomes, 3, [2]), [2]);
+  assert.throws(() => explicitWorkflowEvidenceIndexes(outcomes, 3, [2, 3]), /Invalid/);
+  assert.throws(() => explicitWorkflowEvidenceIndexes(outcomes, 3, [2, 2]), /Invalid/);
+  assert.throws(() => explicitWorkflowEvidenceIndexes(outcomes.slice(0, 1), 3, [1]), /missing/);
 });

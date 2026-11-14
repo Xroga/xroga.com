@@ -55,3 +55,4 @@ jobs:
 # Dependency-backed source mappings regenerated using the canonical requirement builder.
 
 # Audit-only diagnostics for stale historical review references; no exception bypass.
+# Structured, bounded dependency edges now apply to connected-app readback steps.

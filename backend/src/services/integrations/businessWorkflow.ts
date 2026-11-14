@@ -7,6 +7,8 @@ export interface BusinessWorkflowStep {
   kind: 'read' | 'action';
   request: string;
   dependsOnPrevious: boolean;
+  /** Optional explicit zero-based dependencies; strictly earlier, at most three. */
+  dependsOnSteps?: number[];
 }
 
 const READ_VERBS = /^(?:please\s+)?(?:find|search|list|show|check|look up|lookup|fetch|retrieve|read|summarize|inspect|review|get)\b/i;
@@ -68,7 +70,7 @@ export function independentReadWave(steps: readonly BusinessWorkflowStep[], star
   const indexes: number[] = [];
   for (let i = startIndex; i < steps.length && indexes.length < limit; i++) {
     const step = steps[i];
-    if (!step || step.kind !== 'read' || step.dependsOnPrevious) break;
+    if (!step || step.kind !== 'read' || step.dependsOnPrevious || (step.dependsOnSteps?.length ?? 0) > 0) break;
     indexes.push(i);
   }
   return indexes;
@@ -91,4 +93,48 @@ export function dependentWorkflowEvidenceIndexes(
   const reads = earlier.filter((item) => item.kind === 'read').slice(-2);
   const lastAction = earlier.filter((item) => item.kind === 'action').slice(-1);
   return [...new Set([...reads, ...lastAction].map((item) => item.index))].sort((a, b) => a - b);
+}
+
+/**
+ * Validate structured workflow dependencies before storing and after loading
+ * untrusted JSONB. Only earlier steps may be referenced; Xroga never creates
+ * cycles, crosses accounts, or infers authorization from these data edges.
+ */
+export function validateBusinessWorkflowGraph(steps: readonly BusinessWorkflowStep[]): void {
+  if (!Array.isArray(steps) || steps.length < 2 || steps.length > 8) {
+    throw new Error('A connected-app workflow needs two to eight explicit steps.');
+  }
+  steps.forEach((step, index) => {
+    if (!step || (step.kind !== 'read' && step.kind !== 'action') ||
+      typeof step.request !== 'string' || step.request.trim().length < 5 || step.request.length > 500 ||
+      typeof step.dependsOnPrevious !== 'boolean') {
+      throw new Error('Invalid connected-app workflow step.');
+    }
+    if (step.dependsOnSteps === undefined) return; // Existing parsed workflows.
+    const deps = step.dependsOnSteps;
+    if (!Array.isArray(deps) || deps.length > 3 ||
+      new Set(deps).size !== deps.length ||
+      deps.some((dep) => !Number.isInteger(dep) || dep < 0 || dep >= index) ||
+      step.dependsOnPrevious !== (deps.length > 0)) {
+      throw new Error('Invalid or forward-pointing connected-app workflow dependency.');
+    }
+  });
+}
+
+/** Resolve only explicitly named source steps. Missing receipts fail closed. */
+export function explicitWorkflowEvidenceIndexes(
+  outcomes: readonly { stepIndex: number; kind: 'read' | 'action' }[],
+  pendingIndex: number,
+  dependencies: readonly number[],
+): number[] {
+  if (dependencies.length > 3 || new Set(dependencies).size !== dependencies.length ||
+      dependencies.some((i) => !Number.isInteger(i) || i < 0 || i >= pendingIndex)) {
+    throw new Error('Invalid connected-app dependency.');
+  }
+  return dependencies.map((stepIndex) => {
+    const matches = outcomes.map((outcome, index) => ({ ...outcome, index }))
+      .filter((outcome) => outcome.stepIndex === stepIndex);
+    if (matches.length !== 1) throw new Error('A required prior app result is missing or ambiguous.');
+    return matches[0]!.index;
+  });
 }

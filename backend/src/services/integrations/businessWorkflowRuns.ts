@@ -3,7 +3,7 @@ import { getTenantSupabaseAdmin } from '../../security/serviceRoleGuard.js';
 import { prepareBusinessAction, type BusinessActionPreparationOutcome, type BusinessActionReferenceEvidence, type BusinessActionExecutionOutcome } from './businessAction.js';
 import { cancelBusinessActionConfirmation, createBusinessActionConfirmation, type SafeBusinessActionConfirmation } from './businessActionConfirmations.js';
 import { readBusinessData, type BusinessReadOutcome } from './businessRead.js';
-import { clarifyPendingBusinessWorkflowStep, dependentWorkflowEvidenceIndexes, independentReadWave, type BusinessWorkflowStep } from './businessWorkflow.js';
+import { clarifyPendingBusinessWorkflowStep, dependentWorkflowEvidenceIndexes, explicitWorkflowEvidenceIndexes, independentReadWave, validateBusinessWorkflowGraph, type BusinessWorkflowStep } from './businessWorkflow.js';
 
 type RunStatus = 'running' | 'executing' | 'awaiting_confirmation' | 'setup_required' | 'completed' | 'failed' | 'cancelled';
 
@@ -64,6 +64,7 @@ function view(row: RunRow): BusinessWorkflowRunView {
 function validRun(row: unknown): row is RunRow {
   if (!row || typeof row !== 'object') return false;
   const value = row as Record<string, unknown>;
+  try { validateBusinessWorkflowGraph(value.steps as BusinessWorkflowStep[]); } catch { return false; }
   return typeof value.id === 'string'
     && typeof value.user_id === 'string'
     && Array.isArray(value.steps)
@@ -106,8 +107,10 @@ async function updateRun(context: TenantContext, row: RunRow, values: Partial<Ru
 }
 
 function previousEvidence(row: RunRow, step: BusinessWorkflowStep): BusinessActionReferenceEvidence[] | undefined {
-  if (!step.dependsOnPrevious) return undefined;
-  const indexes = dependentWorkflowEvidenceIndexes(row.outcomes, row.step_index, step.request, step.dependsOnPrevious);
+  if (!step.dependsOnPrevious && !(step.dependsOnSteps?.length)) return undefined;
+  const indexes = step.dependsOnSteps
+    ? explicitWorkflowEvidenceIndexes(row.outcomes, row.step_index, step.dependsOnSteps)
+    : dependentWorkflowEvidenceIndexes(row.outcomes, row.step_index, step.request, step.dependsOnPrevious);
   const relevant = indexes.map((index) => row.outcomes[index]!);
   if (!relevant.length || relevant.length > 3 || relevant.some((outcome) => outcome.data.length > 8_000)) {
     throw new Error('The dependent action needs an exact, bounded previous result before it can be prepared.');
@@ -189,7 +192,9 @@ async function advance(context: TenantContext, row: RunRow): Promise<BusinessWor
           continue;
         }
         const eventEvidence = current.outcomes.filter((item) => item.stepIndex === -1).map((item) => ({ sourceRequest: item.request, toolkit: item.toolkit, toolSlug: item.toolSlug, data: item.data }));
-        const result = await readBusinessData({ userId: current.user_id, tenantContext: context, useCase: step.request, referenceEvidence: eventEvidence });
+        const dependencyEvidence = previousEvidence(current, step);
+        const result = await readBusinessData({ userId: current.user_id, tenantContext: context, useCase: step.request,
+          referenceEvidence: dependencyEvidence?.length ? dependencyEvidence : eventEvidence });
         if(result.status==='confirmation_required'){
           try{current=await updateRun(context,current,{status:'awaiting_confirmation',current_confirmation_id:result.confirmation.id});}
           catch(error){await cancelBusinessActionConfirmation(current.user_id,result.confirmation.id).catch(()=>undefined);throw error;}
@@ -251,7 +256,7 @@ export async function createBusinessWorkflowRun(
   initialEvidence?: { toolkit: string; toolSlug: string; data: string },
 ): Promise<BusinessWorkflowProgress> {
   const { userId } = requireTenantContext(context);
-  if (steps.length < 2 || steps.length > 8) throw new Error('A connected-app workflow needs two to eight explicit steps.');
+  validateBusinessWorkflowGraph(steps);
   if (initialEvidence && initialEvidence.data.length > 8_000) throw new Error('The trigger payload is too large for a bounded workflow.');
   const outcomes: StepOutcome[] = initialEvidence ? [{ stepIndex: -1, request: 'Authorized app trigger event', kind: 'read', toolkit: initialEvidence.toolkit, toolSlug: initialEvidence.toolSlug, data: initialEvidence.data }] : [];
   const { data, error } = await getTenantSupabaseAdmin(context)
