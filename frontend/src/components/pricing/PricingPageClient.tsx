@@ -451,7 +451,7 @@ export function PricingPageClient() {
                           <span>{row.free}</span>
                         </td>
                         <td className={`${styles.valueCell} ${styles.proCell}`}>
-                          {row.pro === '—' ? <Minus className={styles.unavailableIcon} aria-label="Not included" /> : <Check className={styles.includedIcon} aria-hidden="true" />}
+                          {String(row.pro) === '—' ? <Minus className={styles.unavailableIcon} aria-label="Not included" /> : <Check className={styles.includedIcon} aria-hidden="true" />}
                           <span>{row.pro}</span>
                         </td>
                       </tr>
