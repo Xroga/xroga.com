@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com",
     "branch": "research/composio-five-upstreams-20261114",
-    "sha": "071f048fb98f5fa4f98c24795c99874e90cbc399",
-    "sourceTimestampUtc": "2026-11-14T15:51:35+05:00",
-    "auditStartedUtc": "2026-11-14T10:52:31.874Z",
+    "sha": "b8d439a4070961a74c7ff65555a9d9e380c62478",
+    "sourceTimestampUtc": "2026-11-14T15:53:18+05:00",
+    "auditStartedUtc": "2026-11-14T10:54:39.223Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -123119,7 +123119,7 @@
       "id": "surface:276c4109416eb12460ad",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/ci/prepare-pr-integration.mjs",
-      "sha256": "d817c4542cf197c96e1350d2d1172436736efa8d131ba2625737691b1401e2f3",
+      "sha256": "277c588118a4fe7a4bcc7bf5f2657b5c420edb401efe0273a0b91153087e0a14",
       "symbols": [
         "admission",
         "after",
@@ -141606,7 +141606,7 @@
     {
       "id": "workflow:0d65f14a990679940a0f",
       "sourcePath": ".github/workflows/composio-inventory-refresh-once.yml",
-      "sha256": "5ab9956f242f16ee50029b0d73e987ba83a6f0f5e0e995a73561c425568a6942",
+      "sha256": "4fb2993530cd4f65659bdf826d7e08eba931ff55586ef60e42ff0985ad5456ae",
       "sourceEntrypoints": [
         "scripts/xroga/inventory.mjs",
         "scripts/xroga/reconcile-requirements.mjs",
