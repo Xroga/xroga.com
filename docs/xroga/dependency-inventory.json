@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "d06167880bcdcb42045b4ec5d6baaba78a772d55",
+  "source_sha": "b83380477987ca1507244d0870f83b579a5d49f4",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -16798,7 +16798,7 @@
     },
     {
       "path": "backend/src/ai/answerCoverage.ts",
-      "sha256": "71c2336714e1205c9f5ce500813466aac63e760c2662e87346af384cbade2f36"
+      "sha256": "b35bfc25ae6074291fa230812ba2a7916f32233abed93edead1f5906bfe45212"
     },
     {
       "path": "backend/src/ai/architect.ts",

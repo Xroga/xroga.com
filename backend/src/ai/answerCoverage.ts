@@ -19,7 +19,7 @@ export function requestedAnswerObligations(prompt: string): AnswerObligations {
   for (const [id, expression, kind] of requests) {
     const evidence = sentences.filter(sentence => {
       const match = expression.exec(sentence);
-      if (!match || !/\b(?:include|show|draw|create|provide|render|add|with|give|build|compare|explain|let\s+me|allow|want|tabulate)\b|^\s*(?:chart|plot)\s+/i.test(sentence)) return false;
+      if (!match || !/\b(?:include|show|draw|create|provide|render|add|with|give|build|compare|explain|present|let\s+me|allow|want|tabulate)\b|^\s*(?:chart|plot)\s+/i.test(sentence)) return false;
       return !/\b(?:no|without|don't|do not|avoid|skip)\s+(?:any\s+)?(?:\w+\s+){0,2}$/i.test(sentence.slice(0,match.index));
     });
     let occurrence=0;

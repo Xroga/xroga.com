@@ -342,6 +342,8 @@ test('required visuals must render and cannot be satisfied by unused declaration
   const prompt = 'Build an interactive calculator with a slider. Chart and tabulate the attendance scenarios.';
   const formats = requiredNativeFormats(prompt);
   assert.deepEqual([...formats].sort(), ['calculator', 'chart', 'table']);
+  assert.deepEqual(requiredNativeFormats('Present these measurements as a sortable table: red 9.2, green 1.15, blue 12.8. Values are seconds.'), ['table']);
+  assert.deepEqual(requiredNativeFormats('Present the summary without a chart.'), []);
   assert.deepEqual(requiredNativeFormats('Explain what a chart is.'), []);
   assert.deepEqual(requiredNativeFormats('Explain the total without a chart.'), []);
   const checked: unknown[] = [];

@@ -305,7 +305,7 @@
       "id": "surface:65cb0aba3b036f66089f",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/answerCoverage.ts",
-      "sha256": "71c2336714e1205c9f5ce500813466aac63e760c2662e87346af384cbade2f36",
+      "sha256": "b35bfc25ae6074291fa230812ba2a7916f32233abed93edead1f5906bfe45212",
       "symbols": [
         "boundary",
         "branching",
