@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com",
     "branch": "research/composio-five-upstreams-20261114",
-    "sha": "b8d439a4070961a74c7ff65555a9d9e380c62478",
-    "sourceTimestampUtc": "2026-11-14T15:53:18+05:00",
-    "auditStartedUtc": "2026-11-14T10:54:39.223Z",
+    "sha": "e7987e7eb490b70dca5c874ba84d00e04b34ae69",
+    "sourceTimestampUtc": "2026-11-15T00:11:27+05:00",
+    "auditStartedUtc": "2026-11-14T19:12:50.472Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -37570,7 +37570,7 @@
       "id": "surface:0756eaaa034fcdc72577",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/businessWorkflow.ts",
-      "sha256": "17c028ce569ca64f4453357c0868559bbac3e89a9fcc6eda755ddacbe5c4fcb0",
+      "sha256": "8c09a5a4df5d2afd615c18ecb0baac2846ac68e26f182f84a3856b8555716896",
       "symbols": [
         "ACTION_VERBS",
         "BusinessWorkflowStep",
@@ -37582,13 +37582,16 @@
         "clean",
         "current",
         "dependentWorkflowEvidenceIndexes",
+        "deps",
         "earlier",
+        "explicitWorkflowEvidenceIndexes",
         "i",
         "independentReadWave",
         "indexes",
         "kind",
         "lastAction",
         "limit",
+        "matches",
         "reads",
         "referencesReadData",
         "request",
@@ -37597,7 +37600,8 @@
         "step",
         "steps",
         "text",
-        "updated"
+        "updated",
+        "validateBusinessWorkflowGraph"
       ],
       "imports": [],
       "runtimeImports": [],
@@ -37620,7 +37624,8 @@
       "approvalBoundary": [],
       "costBoundary": [],
       "evidenceBoundary": [
-        "backend/src/services/integrations/businessWorkflow.ts#dependentWorkflowEvidenceIndexes"
+        "backend/src/services/integrations/businessWorkflow.ts#dependentWorkflowEvidenceIndexes",
+        "backend/src/services/integrations/businessWorkflow.ts#explicitWorkflowEvidenceIndexes"
       ],
       "testCoverage": [
         "backend/src/services/integrations/businessWorkflow.test.ts"
@@ -37636,7 +37641,7 @@
       "id": "surface:0cc7e3112dcf7f702112",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/businessWorkflowRuns.ts",
-      "sha256": "c910533884fb3267ea48ff118f09154f23a08dc79a1a660001e9167a0b4fc2b2",
+      "sha256": "830abde8d5f88bceeff75e045373d4463f67aa32a1be530439be1d22a99c3f9d",
       "symbols": [
         "BusinessWorkflowProgress",
         "BusinessWorkflowRunView",
@@ -37651,6 +37656,7 @@
         "confirmation",
         "createBusinessWorkflowRun",
         "current",
+        "dependencyEvidence",
         "error",
         "eventEvidence",
         "getBusinessWorkflowRun",
@@ -37711,11 +37717,11 @@
       "externalProviderDependencies": [],
       "authBoundary": [],
       "tenantBoundary": [
-        "backend/src/services/integrations/businessWorkflowRuns.ts:83 (user_id)",
-        "backend/src/services/integrations/businessWorkflowRuns.ts:95 (user_id)",
-        "backend/src/services/integrations/businessWorkflowRuns.ts:277 (user_id)",
-        "backend/src/services/integrations/businessWorkflowRuns.ts:305 (user_id)",
-        "backend/src/services/integrations/businessWorkflowRuns.ts:356 (user_id)"
+        "backend/src/services/integrations/businessWorkflowRuns.ts:84 (user_id)",
+        "backend/src/services/integrations/businessWorkflowRuns.ts:96 (user_id)",
+        "backend/src/services/integrations/businessWorkflowRuns.ts:282 (user_id)",
+        "backend/src/services/integrations/businessWorkflowRuns.ts:310 (user_id)",
+        "backend/src/services/integrations/businessWorkflowRuns.ts:361 (user_id)"
       ],
       "approvalBoundary": [
         "backend/src/services/integrations/businessWorkflowRuns.ts#cancelBusinessActionConfirmation",
@@ -37727,8 +37733,10 @@
       ],
       "costBoundary": [],
       "evidenceBoundary": [
+        "backend/src/services/integrations/businessWorkflowRuns.ts#dependencyEvidence",
         "backend/src/services/integrations/businessWorkflowRuns.ts#dependentWorkflowEvidenceIndexes",
         "backend/src/services/integrations/businessWorkflowRuns.ts#eventEvidence",
+        "backend/src/services/integrations/businessWorkflowRuns.ts#explicitWorkflowEvidenceIndexes",
         "backend/src/services/integrations/businessWorkflowRuns.ts#previousEvidence",
         "backend/src/services/integrations/businessWorkflowRuns.ts#referenceEvidence"
       ],
@@ -141606,7 +141614,7 @@
     {
       "id": "workflow:0d65f14a990679940a0f",
       "sourcePath": ".github/workflows/composio-inventory-refresh-once.yml",
-      "sha256": "4fb2993530cd4f65659bdf826d7e08eba931ff55586ef60e42ff0985ad5456ae",
+      "sha256": "e7f90dd43c943558ad9fb2873d86ff89778256448bedefae94a3b70faa45ecac",
       "sourceEntrypoints": [
         "scripts/xroga/inventory.mjs",
         "scripts/xroga/reconcile-requirements.mjs",
@@ -152791,7 +152799,7 @@
     {
       "id": "test-suite:b64d08deac9922c347cc",
       "sourcePath": "backend/src/services/integrations/businessWorkflow.test.ts",
-      "declaredTests": 9,
+      "declaredTests": 11,
       "skipLocations": [],
       "focusLocations": []
     },
