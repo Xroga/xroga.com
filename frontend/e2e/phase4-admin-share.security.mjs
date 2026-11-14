@@ -14,6 +14,8 @@ const nativePresentationId='../../../../../backend/src/ai/nativeOpenUi';
 const pureSources={
   [nativeShareId]:'../../backend/src/ai/nativeOpenUiShare.ts',
   [nativePresentationId]:'../../backend/src/ai/nativeOpenUi.ts',
+  '../../../backend/src/ai/nativeOpenUi':'../../backend/src/ai/nativeOpenUi.ts',
+  '@/lib/publicAnswerText':'lib/publicAnswerText.ts',
   './nativeOpenUi.js':'../../backend/src/ai/nativeOpenUi.ts',
   './nativeDiagramTopology.js':'../../backend/src/ai/nativeDiagramTopology.ts',
   './nativeOpenUiAccuracy.js':'../../backend/src/ai/nativeOpenUiAccuracy.ts',
@@ -65,6 +67,7 @@ function fixture(origin,authenticated=true){
     '@/lib/hostedWorkspaceBridge.mjs':{hostedWorkspaceRequest},
     [nativeShareId]:pureModule(nativeShareId),
     [nativePresentationId]:pureModule(nativePresentationId),
+    '@/lib/publicAnswerText':pureModule('@/lib/publicAnswerText'),
     '@/components/native-openui/NativeWorkspaceAnswer':{NativeWorkspaceAnswer(){throw Error('UI rendering is outside this transport fixture');}},
     '@/components/terminal/SourceLogo':{SourceLogo(){throw Error('UI rendering is outside this transport fixture');}},
     'next/server':{NextResponse:{json:Response.json}}};
