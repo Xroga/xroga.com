@@ -6,28 +6,31 @@
     "XR-FAMILY-rich-ai-ui"
   ],
   "state": "CODE_COMPLETE",
-  "risk": "low",
-  "scope": "Replace short eight-card features list with a Manus-style six-category public directory grounded in XROGA_FEATURES, capability pages and the public integration menu. Keep original bento highlights; switch the complete /features visual palette from lime green to Xroga blue, preserve responsive interactions and avoid claims about unverified providers or planned features.",
+  "risk": "medium",
+  "scope": "Redesign the shared public /features page into a blue Manus-style categorized directory; remove its duplicate page-level header/footer so the canonical PublicMarketingChrome remains the sole shared navigation; adapt the uploaded Manus-style Baskerville headline typography to h1/h2 across Xroga pages and the feature-directory category headings, retaining readable sans-serif control and card text.",
   "changedFiles": [
     "frontend/src/app/features/page.tsx",
     "frontend/src/app/features/FeaturesCatalog.tsx",
     "frontend/src/app/features/features.css",
     "frontend/src/lib/publicFeatureDirectory.ts",
     "frontend/src/lib/publicFeatureDirectory.test.ts",
+    "frontend/src/styles/xroga-fonts.css",
     "docs/xroga/missions/public-features-bento-20261115.json"
   ],
   "decisions": {
     "keep": [
-      "Existing public product routes, CAPABILITY_PAGES descriptions, /features metadata and CollectionPage JSON-LD, auth CTA and backend/runtime/security boundaries.",
-      "Broader XROGA_FEATURES source remains the canonical source list; do not rename or delete unrelated product code."
+      "Canonical PublicMarketingChrome shared header/footer; no additional page-level navigation/footer.",
+      "Existing routes, metadata, public descriptions, backend/runtime/security boundaries and user-selected workspace font settings.",
+      "Blue bento visual design and the complete source-mapped directory."
     ],
     "extend": [
-      "Complete six-category directory with 60 core workflow/build/platform cards and 30 integration directory cards, default all visible and filterable/searchable.",
-      "Source-coverage tests for all 37 feature labels in the public feature inventory.",
-      "Reusable blue visual vocabulary for hero, bento highlights, benefits, directory, controls and CSS illustrations."
+      "Add Libre Baskerville webfont via runtime-only Google Fonts CSS with bundled Source Serif 4/Georgia fallback; apply to semantic h1/h2 on all pages and explicitly to public marketing page headings. Avoid next/font/google build-time network dependency.",
+      "Remove duplicate /features local header/footer markup and adjust hero spacing under the existing shared marketing chrome.",
+      "Retain existing six-category full directory, status labels, frontend search and category filters with source-coverage tests."
     ],
     "replace": [
-      "Former eight-entry directory and its green visual accents."
+      "Cormorant-based previous feature-page display styling with a Baskerville-style editorial serif matching the provided screenshot.",
+      "Duplicative local navigation/footer markup on /features."
     ],
     "deprecate": []
   },
@@ -87,10 +90,10 @@
       "reference": "frontend/src/lib/publicFeatureDirectory.test.ts"
     },
     {
-      "command": "Manual responsive and keyboard review",
-      "scope": "Review 390, 768 and 1440px widths, focus, category filters, search/clear/no-match, and blue theme. Not yet executed.",
+      "command": "Manual desktop/mobile screenshot comparison of /features and other representative Xroga pages",
+      "scope": "Inspect real rendered font family, page's single shared navigation, functional filters, hero and directory heading line wraps at 390/768/1440px; not yet observed.",
       "negative": true,
-      "reference": "frontend/src/app/features/features.css"
+      "reference": "frontend/src/styles/xroga-fonts.css"
     }
   ],
   "architecture": {
@@ -101,10 +104,10 @@
   "rollout": "Merge only after frontend CI and visual/a11y review; then verify public /features URL and internal links. No automatic production publication requested.",
   "rollback": "Revert this bounded /features page, catalog, directory data and CSS change, or re-deploy the prior verified frontend release; no backend or schema changes.",
   "knownGaps": [
-    "Exact latest-head frontend lint/build and feature crosswalk tests must complete before verified-scope status.",
-    "Existing repository-wide mission policy CI reports a historical non-ancestor SHA in an unrelated local dictation mission; do not change that source as part of this marketing redesign.",
-    "Vercel preview is rate-limited and no visual browser review is claimed; image mockups are illustrative only.",
-    "Provider list comprises 30 highlighted navigation catalog entries, not every technology in the full /integrations build catalog; live connections require authorization and runtime verification."
+    "Must verify actual Libre Baskerville computed font loaded via Google CSS; when provider inaccessible the bundled Source Serif fallback renders instead.",
+    "Latest-branch Next.js frontend build/visual review and Xroga site-wide heading regression screenshots are pending.",
+    "Vercel preview link previously shown was for an older commit, so it does not demonstrate this font/header fix.",
+    "Unrelated repository-wide mission policy baseline ancestor and inventory snapshot drift may block larger checks; do not bypass."
   ],
   "placeholderClaimsRemaining": [],
   "evidenceRefs": [
@@ -119,8 +122,8 @@
   "release": {
     "state": "BLOCKED",
     "blockers": [
-      "Exact-head frontend build, source crosswalk tests and responsive/keyboard visual review still require evidence.",
-      "Production merge and deployment require explicit approval; Vercel preview is currently limited."
+      "Exact-commit frontend CI and visual/typography/header screenshots required before merge or production release.",
+      "Global heading change requires review on homepage, app builder, about, workspace and other representative routes."
     ],
     "authenticatedE2e": "NOT_APPLICABLE",
     "stagedSecurity": "NOT_APPLICABLE",
