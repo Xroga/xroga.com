@@ -238,3 +238,83 @@
 @media(max-width:760px){.xf-catalog-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.xf-provider-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.xf-catalog-controls{align-items:stretch}.xf-search{max-width:none}.xf-directory-section{margin-bottom:55px}.xf-connect-note{align-items:start;flex-direction:column}}
 @media(max-width:540px){.xf-catalog-grid{grid-template-columns:1fr}.xf-provider-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.xf-catalog-card{min-height:175px}.xf-provider-card{min-height:120px}.xf-directory-heading{align-items:start;flex-direction:column;gap:11px}.xf-directory-count{padding:0;border:0}.xf-filter-tabs{flex-wrap:nowrap;overflow-x:auto;padding-bottom:9px;max-width:100%;scrollbar-width:thin;scrollbar-color:#40628e transparent}.xf-filter-tab{padding:10px 12px}.xf-directory-heading h3{font-size:28px}}
 @media(prefers-reduced-motion:reduce){.xf-catalog-card:hover{transform:none}.xf-root :is(.xf-catalog-card,.xf-filter-tab){transition:none}}
+
+
+/* Editorial serif headings — Manus-inspired typographic hierarchy, Xroga-owned implementation.
+   Reuses the self-hosted Cormorant variable font (font-emilio) already registered
+   by the root layout. Body text, cards and interactive controls remain sans-serif. */
+.xf-root {
+  --xf-display-serif: var(--font-emilio), 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+}
+.xf-hero h1,
+.xf-section-head h2,
+.xf-benefits-shell h2,
+.xf-bottom-cta h2,
+.xf-directory-heading h3 {
+  font-family: var(--xf-display-serif);
+  font-weight: 500;
+  font-optical-sizing: auto;
+  font-synthesis: none;
+  letter-spacing: -.045em;
+  text-wrap: balance;
+}
+.xf-hero h1 {
+  font-size: clamp(66px, 7.2vw, 104px);
+  line-height: .91;
+  letter-spacing: -.055em;
+  margin: 27px 0 27px;
+}
+.xf-section-head h2 {
+  font-size: clamp(56px, 5.7vw, 83px);
+  line-height: .95;
+}
+.xf-benefits-shell h2 {
+  font-size: clamp(62px, 6.8vw, 94px);
+  line-height: .94;
+  letter-spacing: -.048em;
+}
+.xf-catalog-head {
+  align-items: center;
+  flex-direction: column;
+  gap: 0;
+  text-align: center;
+  margin-bottom: 43px;
+}
+.xf-catalog-head h2 {
+  font-size: clamp(72px, 9.3vw, 122px);
+  line-height: .9;
+  letter-spacing: -.048em;
+  max-width: 1000px;
+}
+.xf-catalog-head h2 span { color: #f1f6ff; }
+.xf-catalog-head > p {
+  max-width: 650px;
+  margin: 25px auto 0;
+  color: #9aadc8;
+  font-size: 13px;
+  line-height: 1.75;
+}
+.xf-directory-heading h3 {
+  font-size: clamp(32px, 3.5vw, 46px);
+  line-height: 1.05;
+  letter-spacing: -.035em;
+}
+.xf-bottom-cta h2 {
+  font-size: clamp(54px, 5.8vw, 80px);
+  line-height: .96;
+}
+@media (max-width: 760px) {
+  .xf-hero h1 { font-size: clamp(58px, 10.3vw, 86px); }
+  .xf-section-head h2 { font-size: clamp(52px, 8.2vw, 71px); }
+  .xf-catalog-head h2 { font-size: clamp(66px, 11vw, 90px); }
+  .xf-benefits-shell h2 { font-size: clamp(58px, 8.8vw, 77px); }
+}
+@media (max-width: 540px) {
+  .xf-hero h1 { font-size: clamp(58px, 13vw, 77px); line-height: .9; }
+  .xf-section-head h2 { font-size: clamp(50px, 11.7vw, 66px); }
+  .xf-catalog-head h2 { font-size: clamp(53px, 12vw, 70px); line-height: .94; }
+  .xf-catalog-head > p { margin-top: 18px; font-size: 12px; }
+  .xf-benefits-shell h2 { font-size: clamp(53px, 11vw, 72px); }
+  .xf-directory-heading h3 { font-size: 34px; }
+  .xf-bottom-cta h2 { font-size: clamp(51px, 11vw, 67px); }
+}
