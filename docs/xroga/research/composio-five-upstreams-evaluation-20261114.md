@@ -73,3 +73,10 @@ The evaluation branch now includes:
 5. **Scope of acceleration:** independent connected-app read **steps**, not simultaneous writes or unapproved account actions. The recorded result stream is preserved through existing workflow checkpoints.
 
 Release state: **DRAFT; source improvements only; no production deployment.**
+
+## Follow-up implementation notes (November 14)
+- Source-linked requirement mappings were regenerated together with the repository inventory through a feature-branch-only generator; no accepted security proof was fabricated.
+- Explicit dependent actions now receive a bounded union of relevant previous read evidence and the latest destination/action receipt when the user refers to earlier records.
+- Existing approvals and per-account ownership still control external mutations.
+- Integrated historical source-bound review mapping remains a separate mandatory security check; diagnostics were improved without disabling the check.
+- Actual auth/provider integration and commercial action execution remain blocked until credentials and staging tests are available.
