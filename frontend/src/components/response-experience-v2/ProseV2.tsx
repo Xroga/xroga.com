@@ -1,6 +1,6 @@
 'use client';
 
-import { isValidElement, lazy, Suspense, useId, useRef, useState, useEffect, type ReactNode } from 'react';
+import React, { isValidElement, lazy, Suspense, useId, useRef, useState, useEffect, type ReactNode } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
@@ -8,7 +8,7 @@ import { normalizeMathDelimitersV2, remarkMathPresentationV2 } from './mathSynta
 import { Copy, Check } from 'lucide-react';
 import { highlightCode, isLightColor, type HighlightedToken } from '@/lib/codeHighlight';
 import { InlineImageV2, SourceLinkV2, SourceMarkV2 } from './SourceV2';
-import type { CitationSource } from '@/lib/xrogaCitations';
+import { numberedCitation, type CitationSource } from '@/lib/xrogaCitations';
 import { remarkCitationsV2 } from './sourceRegistry';
 import { safeLinkV2 } from './document';
 import styles from './response-v2.module.css';
@@ -56,9 +56,9 @@ export function ProseV2({ text, sources = [] }: { text: string; sources?: Citati
       a: ({ href, children }) => {
         if (!href) return <span>{children}</span>;
         if (href.startsWith('/')) return <a href={href}>{children}</a>;
-        const match = /^\[(\d+)\]$/.exec(String(children));
-        const source = match && sources[Number(match[1]) - 1];
-        if (source && safeLinkV2(source.url) === href) return <SourceLinkV2 url={href} title={source.title} number={Number(match![1])} />;
+        const label = Array.isArray(children) ? children.join('') : children;
+        const citation = typeof label === 'string' ? numberedCitation(label, href, sources) : undefined;
+        if (citation) return <SourceLinkV2 url={href} title={citation.source.title} siteName={citation.source.siteName} number={citation.number} />;
         return <a href={href} target="_blank" rel="noopener noreferrer"><SourceMarkV2 url={href} /> {children}</a>;
       },
       img: ({ alt, src }) => <InlineImageV2 key={src} alt={alt} src={src} />,

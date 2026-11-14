@@ -9,10 +9,12 @@ import { MessageBubbleActions } from './MessageBubbleActions';
 import { MessageSuggestionChips } from './MessageSuggestionChips';
 import { ModernResponseText } from './ReasoningAndFollowUps';
 import { FeatureOutputView } from './FeatureOutputView';
+import { readNativeWorkspaceAnswer, readNativeWorkspaceProse, NativeWorkspaceAnswer, buildNativeOpenUiShare } from '@/components/native-openui/NativeWorkspaceAnswer';
+import { appendCitationReferences } from '@/lib/xrogaCitations';
 import { ConversationTurnV2 } from '@/components/response-experience-v2/ConversationTurnV2';
 import { responseTextV2 } from '@/components/response-experience-v2/exportText';
 import { conversationActivityV2 } from '@/components/response-experience-v2/conversation';
-import { coalesceActivity } from '@/lib/terminal/activityPresentation';
+import { coalesceActivity, mergeActivitySnapshots } from '@/lib/terminal/activityPresentation';
 import conversationStyles from '@/components/response-experience-v2/conversation-v2.module.css';
 import { useResponseExperienceEnabled, ResponseExperienceGate } from '@/components/response-experience-v2/ResponseExperienceGate';
 import { ChatErrorBoundary } from './ChatErrorBoundary';
@@ -20,16 +22,13 @@ import { StoppedBuildResumeCard } from './StoppedBuildResumeCard';
 import { CapacityUnavailableCard } from './CapacityUnavailableCard';
 import { UpdateFileTrail } from './UpdateFileTrail';
 import { ResponseSources } from './ResponseSources';
+import { ResponseSourceScope } from './ResponseSourceScope';
 import { webSourcesToRichResults } from '@/lib/xrogaWebResultAdapter';
 const XrogaRichResultsView = lazy(() => import('./XrogaRichResultsView').then((module) => ({ default: module.XrogaRichResultsView })));
 import { isCodeBuildProcessing } from '@/lib/codeBuildProcessing';
 import { promptWantsLiveResearch } from '@/lib/researchWait';
 import { shareableDocumentText } from '@/lib/xrogaShareableOutput';
-import {
-  isQuickConversationPrompt,
-  pendingExecutionIntent,
-  pendingExecutionLabel,
-} from '@/lib/terminal/executionIntent';
+import { isQuickConversationPrompt } from '@/lib/terminal/executionIntent';
 import { UserPromptBubble } from '@/components/settings/PrivacySettingsPanel';
 import { generateMessageSuggestions } from '@/lib/messageHelpers';
 import { IncognitoProfileBox } from '@/components/incognito/IncognitoProfileBox';
@@ -334,12 +333,6 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
   const lightResearchWait =
     loading && !heavyBuildActive && promptWantsLiveResearch(lastUserText);
   const showResearchPages = lightResearchWait || researchTodoActive;
-  const pendingIntent = pendingExecutionIntent({
-    prompt: lastUserText,
-    codeBuildActive,
-    researchActive: showResearchPages,
-  });
-  const pendingActivityLabel = pendingExecutionLabel(pendingIntent);
 
   function handleSuggestion(text: string) {
     setPrompt(text);
@@ -541,8 +534,18 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                           />
                         ) : null}
             </>;
-            const answer = (
+            const nativeAnswer = msg.role === 'assistant' ? readNativeWorkspaceAnswer(msg.featureOutput) : undefined;
+            const nativeProse = nativeAnswer?.text ?? (msg.role === 'assistant' ? readNativeWorkspaceProse(msg.featureOutput) : undefined);
+            const nativeShare = nativeProse && (nativeAnswer?.program || msg.webSources?.length)
+              ? buildNativeOpenUiShare(nativeProse, nativeAnswer?.program ?? '', msg.webSources) : undefined;
+            const nativeCopy = nativeProse ? appendCitationReferences(nativeProse, msg.webSources) : undefined;
+            const answer = nativeAnswer ? (
+              <ChatErrorBoundary>
+                <NativeWorkspaceAnswer answer={nativeAnswer} sources={msg.webSources} />
+              </ChatErrorBoundary>
+            ) : (
                         <ResponseExperienceGate message={msg} streaming={msg.id === animatingId && loading}>
+                        <ResponseSourceScope>
                         {isRenderedFeature ? (
                           <ChatErrorBoundary>
                             <FeatureOutputView
@@ -595,10 +598,17 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                         {msg.webSources && msg.webSources.length > 0 ? (
                           <ResponseSources sources={msg.webSources} />
                         ) : null}
+                        </ResponseSourceScope>
                         </ResponseExperienceGate>
             );
             const currentTurn = loading && msg.id === (buildPanelMessageId ?? animatingId);
-            const operationRows = conversationActivityV2(currentTurn ? coalesceActivity(terminalRun.events) : msg.executionActivity);
+            const operationRows = conversationActivityV2(currentTurn
+              ? mergeActivitySnapshots(msg.executionActivity, coalesceActivity(terminalRun.events))
+              : msg.executionActivity);
+            const showPending = currentTurn && (!suppressGreetingActivity || operationRows.length > 0);
+            const work = msg.role === 'assistant' && (showPending || operationRows.length > 0) ? (
+              <TerminalLiveActivity activity={operationRows} run={currentTurn ? terminalRun : undefined} pending={showPending} />
+            ) : undefined;
 
             return (
               <div
@@ -607,6 +617,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                 data-turn-id={msg.role === 'user' || msg.role === 'assistant' ? msg.id : undefined}
                 className={cn(
                   'xv-terminal-turn group flex gap-2',
+                  chromeless && msg.role === 'assistant' && 'box-border ps-[18px]',
                   msg.role === 'user' ? 'flex-row-reverse' : 'flex-row',
                   msg.role === 'system' && 'justify-center',
                   searchHit === msg.id && 'ring-1 ring-[#006aff]/40 rounded-lg'
@@ -615,11 +626,12 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                 {conversationV2 && msg.role !== 'system' ? (
                   <ConversationTurnV2 role={msg.role} content={msg.content}
                     message={msg}
-                    copyContent={responseTextV2(msg) ?? [msg.content, shareableDocumentText(msg.featureOutput)].filter(Boolean).join('\n\n')}
+                    richResponse={nativeShare}
+                    copyContent={nativeCopy ?? responseTextV2(msg) ?? [msg.content, shareableDocumentText(msg.featureOutput)].filter(Boolean).join('\n\n')}
                     prompt={promptByAssistantId.get(msg.id)}
                     streaming={msg.id === animatingId && loading}
                     controls={msg.buildStopped || msg.capacityUnavailable || msg.updateTrail || (currentTurn && openInteractionsForTurn(terminalRun.events, msg.content).length) ? <>{msg.buildStopped || msg.capacityUnavailable || msg.updateTrail ? taskControls : null}{currentTurn ? <RequiredInteractionCards interactions={openInteractionsForTurn(terminalRun.events, msg.content)} /> : null}</> : undefined}
-                    activity={operationRows.length ? <TerminalLiveActivity activity={operationRows} run={currentTurn ? terminalRun : undefined} /> : undefined}>
+                    activity={work}>
                     {msg.role === 'assistant' ? answer : null}
                   </ConversationTurnV2>
                 ) : <>
@@ -655,24 +667,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                   ) : (
                     <>
                       <div className="py-1 text-left space-y-2">
-                        {/* The pending shell is transient request-lifecycle feedback only.
-                            It is never persisted as execution evidence. Real canonical
-                            activity replaces it as soon as the backend emits a step. */}
-                        {msg.executionActivity?.length || (!loading && msg.thinkingSteps?.length) ? (
-                          <TerminalLiveActivity
-                            activity={msg.executionActivity}
-                            thinkingSteps={msg.thinkingSteps}
-                          />
-                        ) : loading &&
-                          msg.id === (buildPanelMessageId ?? animatingId) &&
-                          !suppressGreetingActivity ? (
-                          <TerminalLiveActivity
-                            run={terminalRun}
-                            pending
-                            pendingIntent={pendingIntent}
-                            pendingLabel={pendingActivityLabel}
-                          />
-                        ) : null}
+                        {work}
                         {taskControls}
                         {answer}
 
@@ -680,7 +675,8 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                       {msg.content && (
                         <MessageBubbleActions
                           role="assistant"
-                          content={[msg.content, shareableDocumentText(msg.featureOutput)].filter(Boolean).join('\n\n')}
+                          richResponse={nativeShare}
+                          content={nativeCopy ?? [msg.content, shareableDocumentText(msg.featureOutput)].filter(Boolean).join('\n\n')}
                           messageId={msg.id}
                           createdAt={msg.createdAt}
                           prompt={promptByAssistantId.get(msg.id)}
@@ -695,7 +691,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                           prompt={promptByAssistantId.get(msg.id)}
                         />
                       )}
-                      {suggestions && (
+                      {suggestions && !nativeAnswer && (
                         <MessageSuggestionChips
                           suggestions={suggestions}
                           onSelect={handleSuggestion}

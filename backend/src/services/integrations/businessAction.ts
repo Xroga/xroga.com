@@ -1147,6 +1147,8 @@ export async function prepareBusinessAction(
           tool.risk !==
           'read',
       )
+      .filter((tool) => !discovery.explicitlyRequestedToolkit ||
+        normalizeToolkit(tool.toolkit) === discovery.explicitlyRequestedToolkit)
       .slice(
         0,
         MAX_TOOL_CANDIDATES,

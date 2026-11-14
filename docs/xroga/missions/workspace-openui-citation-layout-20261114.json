@@ -1,0 +1,78 @@
+{
+  "version": "1.0",
+  "missionId": "WORKSPACE-OPENUI-CITATION-LAYOUT-20261114",
+  "baseSha": "75d9b91f1228fe4d1c790ce39090010d3b633925",
+  "requirementIds": ["XR-MISSION-054", "XR-MISSION-055"],
+  "state": "CODE_COMPLETE",
+  "risk": "low",
+  "scope": "Restore publisher citations in saved responses and reserve layout space for the existing Browser Operator above the Workspace transcript.",
+  "changedFiles": [
+    "frontend/src/lib/xrogaCitations.ts",
+    "frontend/src/lib/formatAiMarkdown.tsx",
+    "frontend/src/components/native-openui/evidence.tsx",
+    "frontend/src/components/native-openui/NativeSurface.tsx",
+    "frontend/src/components/native-openui/upstream/components/markdown.tsx",
+    "frontend/src/components/terminal/SourceCitation.tsx",
+    "frontend/src/components/response-experience-v2/ProseV2.tsx",
+    "frontend/src/components/response-experience-v2/SourceV2.tsx",
+    "frontend/src/components/response-experience-v2/document.ts",
+    "frontend/src/app/(workspace)/workspace/page.tsx",
+    "frontend/src/components/dashboard/DashboardView.tsx",
+    "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+    "frontend/src/components/layout/AppShell.tsx",
+    "frontend/src/components/layout/SidebarProjectHistory.tsx",
+    "frontend/src/lib/xrogaCitations.test.ts",
+    "frontend/e2e/command3-auth.spec.ts"
+  ],
+  "decisions": {
+    "keep": ["The existing Workspace layout, pairing and account admission checks, Search source provenance, saved-answer format and native answer renderer."],
+    "extend": ["Recognize explicit evidence-linked numbers in saved answers when both source number and full URL agree."],
+    "replace": ["Render one in-flow Browser Operator panel in place of both fixed overlays."],
+    "deprecate": []
+  },
+  "schemaImpact": {
+    "changed": false,
+    "migrations": [],
+    "rollout": "Frontend only, paired with the existing API and Job.",
+    "rollback": "Restore the current production frontend, which already decodes the same stored answer formats."
+  },
+  "securityImpact": {
+    "auth": { "changed": false, "description": "The existing pairing and Workspace sign-in checks still run in the existing client and server functions." },
+    "tenant": { "changed": false, "description": "Citational evidence comes only from the authorized answer. The layout uses the existing Workspace shell." },
+    "approval": { "changed": false, "description": "The existing task authorization and user-initiated source navigation remain in force." },
+    "credentials": { "changed": false, "description": "No new credentials or permissions." },
+    "egress": { "changed": false, "description": "Exact destination matching narrows attribution. The PostgreSQL mark uses the existing local icon dependency." },
+    "cost": { "changed": false, "description": "No additional model, retrieval or tool calls." },
+    "billing": { "changed": false, "description": "No change to accounting or settlement." }
+  },
+  "tests": [
+    {
+      "command": "node node_modules/tsx/dist/cli.mjs --tsconfig frontend/tsconfig.json --test frontend/src/lib/xrogaCitations.test.ts",
+      "scope": "Check matching and mismatched destinations in standard, compatibility and native Markdown rendering.",
+      "negative": true,
+      "reference": "frontend/src/lib/xrogaCitations.test.ts"
+    },
+    {
+      "command": "node node_modules/@playwright/test/cli.js test -c frontend/playwright.config.ts frontend/e2e/command3-auth.spec.ts",
+      "scope": "Reopen the persisted architecture answer and check the single panel remains above it when open and closed at desktop and mobile widths.",
+      "negative": true,
+      "reference": "frontend/e2e/command3-auth.spec.ts"
+    }
+  ],
+  "architecture": { "change": "none", "reason": "Updates the existing answer and Workspace presentation paths.", "rfc": null },
+  "rollout": "Pass exact-commit CI and verify the candidate and current production deployment IDs before promotion.",
+  "rollback": "Restore Vercel deployment dpl_3VijEGw2QtTfUudEYeLZvpdfit8f. The API, Job and database admission fence do not need to move.",
+  "knownGaps": ["Complete exact-commit browser CI and staged release verification before requesting production promotion."],
+  "placeholderClaimsRemaining": [],
+  "evidenceRefs": ["frontend/src/lib/xrogaCitations.test.ts", "frontend/e2e/command3-auth.spec.ts"],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "BLOCKED",
+    "blockers": ["Exact-source CI and candidate verification are pending. Production promotion requires source-bound approval."],
+    "authenticatedE2e": "BLOCKED",
+    "stagedSecurity": "NOT_APPLICABLE",
+    "liveUrl": null,
+    "deployedSha": null
+  }
+}

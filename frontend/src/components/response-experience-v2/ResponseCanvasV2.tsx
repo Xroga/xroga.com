@@ -3,8 +3,9 @@ import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { displayTitleV2, safeLinkV2, type ResponseDocumentV2, type ResponseNodeV2 } from './document';
 import { ProseV2, CodeV2 } from './ProseV2';
 import styles from './response-v2.module.css';
-import { InlineImageV2, SourceLinkV2, SourceMarkV2, SourceRegistryContextV2 } from './SourceV2';
+import { InlineImageV2, SourceLinkV2, SourceRegistryContextV2 } from './SourceV2';
 import { sourceRegistryV2 } from './sourceRegistry';
+import { ResponseSources } from '../terminal/ResponseSources';
 import { ResourcesV2 } from './ResourcesV2';
 import { EntityIdentityV2 } from './EntityIdentityV2';
 import { StatusBadgeV2 } from './StatusBadgeV2';
@@ -37,7 +38,7 @@ function NodeView({ node, document, grouped = false, stacked = false }: { node: 
     case 'images': return <section>{node.title && <h3 className={styles.blockTitle}>{node.title}</h3>}{node.items.map(item => <figure key={item.id}><InlineImageV2 src={item.url} alt={item.label} />{item.caption && <figcaption>{item.caption}</figcaption>}</figure>)}</section>;
     case 'code': return <><h3 className={styles.blockTitle}>{node.title}</h3><CodeV2 text={node.text} language={node.language} /></>;
     case 'table': return <Table node={node} stacked={stacked} />;
-    case 'chart': return <Chart node={node} showSourceData={false} />;
+    case 'chart': return <Chart node={node} showSourceData={!grouped} />;
     case 'calculator': return <Calculator key={JSON.stringify([node.operation, node.inputs])} node={node} />;
     case 'tabs': return <Tabs key={JSON.stringify(node.items.map(item => item.id))} node={node} sources={document.sources} />;
     case 'graph': return <Graph node={node} />;
@@ -80,10 +81,10 @@ export default function ResponseCanvasV2({ document }: { document: ResponseDocum
     observer.observe(element);
     return () => observer.disconnect();
   }, []);
-  const references = composition.unplacedSourceKeys.flatMap(key => { const source = registry.get(key); return source ? [{ key, source }] : []; });
+  const references = composition.unplacedSourceKeys.flatMap(key => { const source = registry.get(key); return source ? [source] : []; });
   return <SourceRegistryContextV2.Provider value={registry}><article ref={root} className={styles.canvas} data-response-v2="true" data-composition="semantic" aria-label="Xroga response" aria-busy={document.streaming}>
     <div className={styles.editorialBody}>{composition.parts.map(part => <ComposedPart key={part.id} part={part} document={document} width={width} />)}</div>
-    {references.length > 0 && <details className={`${styles.sources} ${styles.measure}`}><summary>References - {references.length}</summary><ul>{references.map(({ key, source }) => <li key={key}><SourceLinkV2 url={source.url} title={source.title} /><a href={safeLinkV2(source.url)} target="_blank" rel="noopener noreferrer">{source.title}</a></li>)}</ul></details>}
+    {references.length > 0 && <div className={styles.measure}><ResponseSources sources={references} referral={false} /></div>}
     {document.streaming && <span className={styles.streaming} role="status">Receiving response</span>}
   </article></SourceRegistryContextV2.Provider>;
 }

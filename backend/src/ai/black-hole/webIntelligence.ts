@@ -14,6 +14,7 @@ import {
 
 import {withTenantModelReservation,type TenantModelScope} from '../tenantModelDispatch.js';
 import {isTerminalModelFailure} from '../providerRuntime.js';
+import { scopeOfficialSearchQuery } from '../researchSearchProvider.js';
 
 import {
   parallelExtract,
@@ -542,65 +543,22 @@ export async function runWebIntelligence(
       toRawResults(
         result.sources,
       );
-  } else if (
-    decision.action === 'search'
-  ) {
+  } else if (decision.action === 'search' || decision.action === 'research' || decision.action === 'deep_research') {
     provider = 'parallel';
-
-    const result =
-      await parallelSearch({
-        userId: input.userId,
-        dispatchScope: input.dispatchScope,
-
-        objective:
-          [
-            decision.objective || input.prompt,
-            decision.sourcePolicy === 'official_only' && decision.officialDomains.length
-              ? `Use only official sources from: ${decision.officialDomains.join(', ')}.`
-              : '',
-          ].filter(Boolean).join('\n'),
-
-        queries:
-          decision.queries
-            .length
-            ? decision.queries
-            : [
-                redactSecrets(
-                  input.prompt,
-                ).slice(0, 500),
-              ],
-
-        signal: input.signal,
-      });
-
-    if(result.needsConfirmation)return pendingResearch(decision,result.reviewUrl!);
-
-    rawResults =
-      toRawResults(
-        result.sources,
-      );
-  } else if (
-    decision.action ===
-      'research' ||
-    decision.action ===
-      'deep_research'
-  ) {
-    provider = 'parallel';
-
-    const result =
-      await parallelSearch({
-        userId:input.userId,dispatchScope:input.dispatchScope,objective:decision.objective || input.prompt,
-        queries:decision.queries.length ? decision.queries : [redactSecrets(input.prompt).slice(0,500)],signal:input.signal,
-      });
-
-    if(result.needsConfirmation)return pendingResearch(decision,result.reviewUrl!);
-
-    // Synthesis is performed by the existing canonical DeepSeek answer call.
-
-    rawResults =
-      toRawResults(
-        result.sources,
-      );
+    const objective = decision.objective || input.prompt;
+    const queries = decision.queries.length ? decision.queries : [redactSecrets(input.prompt).slice(0, 500)];
+    const domains = decision.officialDomains.length ? decision.officialDomains : input.officialDomains ?? [];
+    const scopedQuery = decision.sourcePolicy === 'official_only' ? scopeOfficialSearchQuery(queries[0]!, domains) : undefined;
+    if (decision.sourcePolicy === 'official_only' && !scopedQuery) {
+      return { action: decision.action, evidence: 'No verified official domain was available. No search was sent.', bundle: null,
+        sourceCount: 0, injectionAttempts: 0, reason: 'OFFICIAL_DOMAINS_UNAVAILABLE' };
+    }
+    const result = await parallelSearch({
+      userId: input.userId, dispatchScope: input.dispatchScope, objective,
+      queries: scopedQuery ? [scopedQuery] : queries, signal: input.signal,
+    });
+    if (result.needsConfirmation) return pendingResearch(decision, result.reviewUrl!);
+    rawResults = toRawResults(result.sources);
   } else {
     provider = 'grok_x';
 

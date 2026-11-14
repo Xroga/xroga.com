@@ -1,0 +1,6320 @@
+{
+  "spec": {
+    "root": "Col",
+    "components": {
+      "Col": {
+        "signature": "Col(children: Node[], gap?: number, align?: \"start\" | \"center\" | \"end\" | \"stretch\")",
+        "description": "Vertical layout. Without gap it spaces blocks like an article."
+      },
+      "Row": {
+        "signature": "Row(children: Node[], gap?: number, align?: \"start\" | \"center\" | \"end\" | \"stretch\", justify?: \"start\" | \"center\" | \"end\" | \"between\", wrap?: boolean)",
+        "description": "Horizontal layout; items are vertically centered."
+      },
+      "Box": {
+        "signature": "Box(children?: Node[], direction?: \"row\" | \"col\", gap?: number, padding?: number, background?: Color, radius?: Radius, border?: boolean, width?: Length, height?: Length, flex?: number, align?: \"start\" | \"center\" | \"end\" | \"stretch\", justify?: \"start\" | \"center\" | \"end\" | \"between\", wrap?: boolean)",
+        "description": "Flex container, a column by default. radius also clips the content."
+      },
+      "Grid": {
+        "signature": "Grid(children: Node[], columns?: number, minChildWidth?: number, gap?: number)",
+        "description": "Equal columns (default 2). With minChildWidth (px), columns drop on narrow screens."
+      },
+      "Card": {
+        "signature": "Card(children: Node[], variant?: \"outline\" | \"soft\", padding?: number, gap?: number)",
+        "description": "Panel with a border; soft is a filled panel for summaries."
+      },
+      "Carousel": {
+        "signature": "Carousel(children: Node[], itemWidth?: number, gap?: number)",
+        "description": "Horizontal row that scrolls and snaps, each child an item itemWidth px wide (default 240): photos, cards, options, days."
+      },
+      "Popover": {
+        "signature": "Popover(trigger: string | Node[], content: string | Node[])",
+        "description": "Shows content in a small panel when the trigger is clicked: a definition, a source, details behind an Icon(\"info\", \"sm\")."
+      },
+      "Tabs": {
+        "signature": "Tabs(label: string, tabs: {title: string, content: Node[]}[])",
+        "description": "Keyboard-accessible optional views or scenarios. Put all essential conclusions in visible content outside the tabs."
+      },
+      "Divider": {
+        "signature": "Divider()",
+        "description": ""
+      },
+      "Spacer": {
+        "signature": "Spacer()",
+        "description": "Fills the free space in a Row."
+      },
+      "Title": {
+        "signature": "Title(text: string, size?: \"sm\" | \"md\" | \"lg\" | \"xl\" | \"2xl\" | \"3xl\", color?: Color, level?: \"2\" | \"3\" | \"4\")",
+        "description": "Heading. Size is visual; level is 2 by default, 3 for subsections and 4 only within a subsection."
+      },
+      "Text": {
+        "signature": "Text(text: string | Node[], size?: \"xs\" | \"sm\" | \"md\" | \"lg\", color?: Color, weight?: \"normal\" | \"medium\" | \"semibold\", italic?: boolean, lineThrough?: boolean, tabularNums?: boolean, maxLines?: number)",
+        "description": "Paragraph with bold, italic and code. Inline components can include Source, Icon, or Badge. Only use verified Source IDs for links."
+      },
+      "Caption": {
+        "signature": "Caption(text: string, color?: Color)",
+        "description": "Small secondary text."
+      },
+      "Label": {
+        "signature": "Label(text: string)",
+        "description": "Field or group label."
+      },
+      "Badge": {
+        "signature": "Badge(text: string, color?: \"neutral\" | \"info\" | \"success\" | \"warning\" | \"danger\" | \"purple\" | \"pink\", icon?: string)",
+        "description": "Pill tag; icon is an optional leading lucide name."
+      },
+      "List": {
+        "signature": "List(items: (string | ListItem)[], marker?: \"bullet\" | \"number\" | \"none\" | \"timeline\", timeline?: boolean)",
+        "description": "timeline joins the markers with a line. The timeline marker is shorthand for a numbered timeline."
+      },
+      "ListItem": {
+        "signature": "ListItem(title: string, description?: string, marker?: string, children?: Node[])",
+        "description": "marker replaces the bullet or number, e.g. a time or an emoji."
+      },
+      "Markdown": {
+        "signature": "Markdown(text: string)",
+        "description": "Prose with headings, lists, quotes, code and tables."
+      },
+      "Quote": {
+        "signature": "Quote(text: string, cite?: string)",
+        "description": "A quotation or a callout with a side rule; cite names the source."
+      },
+      "Code": {
+        "signature": "Code(code: string, language?: string)",
+        "description": "Code block with a copy button."
+      },
+      "Math": {
+        "signature": "Math(tex: string, inline?: boolean)",
+        "description": "LaTeX formula, e.g. Math(\"E = mc^2\"); inline true to sit in a Text list."
+      },
+      "Section": {
+        "signature": "Section(title: string, children: Node[], introduction?: string, icon?: string)",
+        "description": "A meaningful subsection. Group its explanation and relevant components together. Use a short heading and optional orientation sentence."
+      },
+      "Metric": {
+        "signature": "Metric(label: string, value: string | number, note?: string, tone?: \"neutral\" | \"info\" | \"success\" | \"warning\" | \"danger\")",
+        "description": "A prominent single measured or calculated value. Include the unit in a formatted value or the label. Use note for the basis. Tone denotes meaning, not verification."
+      },
+      "Controls": {
+        "signature": "Controls(children: Node[], label: string, columns?: number)",
+        "description": "Group related local inputs and reset controls. Name what the inputs change. Multiple columns stack at phone widths."
+      },
+      "Diagram": {
+        "signature": "Diagram(title: string, nodes: {id: string, label: string, level: number, detail?: string, tone?: \"neutral\" | \"info\" | \"success\" | \"purple\" | \"warning\", icon?: string}[], links: {from: string, to: string, label?: string}[], description: string)",
+        "description": "Connected technical diagram with labeled relationships and a concise text equivalent. Group peers on the same level (up to three per level); use increasing levels for downstream components. Choose role-specific tones and meaningful links, not a duplicate list."
+      },
+      "Form": {
+        "signature": "Form(children: Node[])",
+        "description": "Groups fields for local interaction. Use Controls for a named set of inputs."
+      },
+      "Input": {
+        "signature": "Input(value: $binding<string | number>, label?: string, type?: \"text\" | \"number\", placeholder?: string)",
+        "description": "Text or number field; a number field stores numbers."
+      },
+      "TextArea": {
+        "signature": "TextArea(value: $binding<string>, label?: string, placeholder?: string, rows?: number)",
+        "description": ""
+      },
+      "Slider": {
+        "signature": "Slider(value: $binding<number>, min: number, max: number, step?: number, label?: string, unit?: string, marks?: {value: number, label: string}[])",
+        "description": "Shows label and value; unit like \"%\" or \"$\" formats the value."
+      },
+      "Select": {
+        "signature": "Select(value: $binding<string>, options: (string | {value: string, label: string})[], label?: string, placeholder?: string)",
+        "description": "Dropdown, for long option lists."
+      },
+      "Checkbox": {
+        "signature": "Checkbox(checked: $binding<boolean>, label: string, lineThrough?: boolean)",
+        "description": "lineThrough strikes the label when checked, for to-do lists."
+      },
+      "RadioGroup": {
+        "signature": "RadioGroup(value: $binding<string>, options: (string | {value: string, label: string, description?: string})[], label?: string, variant?: \"list\" | \"pills\" | \"cards\")",
+        "description": "pills for short choices; cards for choices that need a description line."
+      },
+      "SegmentedControl": {
+        "signature": "SegmentedControl(value: $binding<string>, options: (string | {value: string, label: string})[], block?: boolean)",
+        "description": "2 to 4 short choices in a row."
+      },
+      "DatePicker": {
+        "signature": "DatePicker(value: $binding<string>, label?: string, min?: string, max?: string)",
+        "description": "Dates are \"YYYY-MM-DD\"."
+      },
+      "ChoicePicker": {
+        "signature": "ChoicePicker(value: $binding<string>, label: string, options: {value: string, label: string, description?: string}[])",
+        "description": "Search named options and apply one choice to local presentation state. Useful when reviewing a scenario before changing a calculation. It never approves or performs an external action."
+      },
+      "Timer": {
+        "signature": "Timer(seconds: $binding<number>, label?: string)",
+        "description": "User-started local countdown, at most 3600 seconds, with pause and reset. Bind a scalar such as $left to show a completion message. It is not a reminder or scheduled task."
+      },
+      "Button": {
+        "signature": "Button(label: string, action?: ActionExpression, variant?: \"solid\" | \"outline\" | \"soft\" | \"ghost\", color?: \"primary\" | \"danger\" | \"success\", size?: \"sm\" | \"md\" | \"lg\", icon?: string, disabled?: boolean, block?: boolean)",
+        "description": "icon is a lucide name."
+      },
+      "IconButton": {
+        "signature": "IconButton(icon: string, action?: ActionExpression, label?: string, variant?: \"outline\" | \"ghost\" | \"solid\")",
+        "description": "Round icon-only button; label is read aloud."
+      },
+      "Pressable": {
+        "signature": "Pressable(children: Node[], action?: ActionExpression, selected?: boolean, padding?: number, background?: Color, radius?: Radius)",
+        "description": "Makes any content clickable, such as a tile or a swatch."
+      },
+      "Flashcard": {
+        "signature": "Flashcard(front: string | Node[], back: string | Node[], hint?: string)",
+        "description": "Card that flips between front and back when tapped. Put several in a Carousel or Grid."
+      },
+      "Source": {
+        "signature": "Source(id: string)",
+        "description": "Link to one source by the exact evidence ID supplied by Xroga. Omit when no IDs were supplied."
+      },
+      "Resource": {
+        "signature": "Resource(key: \"nextjs\" | \"supabase\" | \"stripe\" | \"postgresql\" | \"react\" | \"vercel\" | \"github\" | \"cloudflare\", role: string)",
+        "description": "An official product link and a concise explanation of its role. Use only for a product relevant to the user. This link is a reference, not retrieved evidence."
+      },
+      "Icon": {
+        "signature": "Icon(name: string, size?: \"sm\" | \"md\" | \"lg\" | \"xl\", color?: Color)",
+        "description": "An installed Lucide icon by kebab-case name, e.g. plane, wallet, microscope or calendar-days. Optional semantic color and size."
+      },
+      "Table": {
+        "signature": "Table(columns: string[], rows: any[][])",
+        "description": "Each row lists its cells in column order; a cell may be a component. Number columns align right."
+      },
+      "Chart": {
+        "signature": "Chart(type: \"bar\" | \"line\" | \"area\" | \"pie\" | \"donut\" | \"scatter\", data: Record<string, string | number>[], x?: string, series?: string[], format?: \"number\" | \"currency\" | \"percent\", currency?: string, stacked?: boolean, height?: number, presentation?: {title?: string, xLabel?: string, yLabel?: string, note?: string})",
+        "description": "Chart from exact numeric rows. Set x, series, and presentation labels with units. Scatter x is numeric. Percent values are like 45; use a currency code like \"USD\"."
+      },
+      "Svg": {
+        "signature": "Svg(children: Node[], viewBox: string, width?: Length, height?: Length, label?: string)",
+        "description": "A drawing for steps, parts, mechanisms, diagrams and layouts. Scales to its width. Provide a descriptive label and nearby prose explaining the relationships."
+      },
+      "Circle": {
+        "signature": "Circle(cx: number, cy: number, r: number, fill?: Color, stroke?: Color, strokeWidth?: number, opacity?: number)",
+        "description": ""
+      },
+      "Ellipse": {
+        "signature": "Ellipse(cx: number, cy: number, rx: number, ry: number, fill?: Color, stroke?: Color, strokeWidth?: number, opacity?: number)",
+        "description": ""
+      },
+      "Rect": {
+        "signature": "Rect(x: number, y: number, width: number, height: number, fill?: Color, stroke?: Color, strokeWidth?: number, opacity?: number, rx?: number)",
+        "description": ""
+      },
+      "Line": {
+        "signature": "Line(x1: number, y1: number, x2: number, y2: number, stroke?: Color, strokeWidth?: number, opacity?: number)",
+        "description": ""
+      },
+      "Path": {
+        "signature": "Path(d: string, fill?: Color, stroke?: Color, strokeWidth?: number, opacity?: number)",
+        "description": ""
+      },
+      "Polyline": {
+        "signature": "Polyline(points: string, stroke?: Color, strokeWidth?: number, fill?: Color, opacity?: number)",
+        "description": "points like \"0,0 10,5 20,0\"."
+      },
+      "Polygon": {
+        "signature": "Polygon(points: string, fill?: Color, stroke?: Color, strokeWidth?: number, opacity?: number)",
+        "description": ""
+      },
+      "G": {
+        "signature": "G(children: Node[], transform?: string, opacity?: number)",
+        "description": "Group; transform like \"rotate(30 50 50)\" or \"translate(10 0)\"."
+      },
+      "SvgText": {
+        "signature": "SvgText(text: string, x: number, y: number, size?: number, fill?: Color, anchor?: \"start\" | \"middle\" | \"end\", weight?: \"normal\" | \"medium\" | \"semibold\")",
+        "description": ""
+      }
+    },
+    "componentGroups": [
+      {
+        "name": "Editorial layout",
+        "components": [
+          "Section",
+          "Metric",
+          "Col",
+          "Row",
+          "Grid",
+          "Title",
+          "Text",
+          "Caption",
+          "List",
+          "ListItem",
+          "Card",
+          "Quote",
+          "Badge",
+          "Source",
+          "Resource"
+        ]
+      },
+      {
+        "name": "Data and technical answers",
+        "components": [
+          "Table",
+          "Chart",
+          "Diagram",
+          "Math",
+          "Code",
+          "Svg",
+          "G",
+          "Circle",
+          "Ellipse",
+          "Rect",
+          "Line",
+          "Path",
+          "Polyline",
+          "Polygon",
+          "SvgText"
+        ]
+      },
+      {
+        "name": "Local interactions",
+        "components": [
+          "Controls",
+          "Form",
+          "Slider",
+          "Input",
+          "TextArea",
+          "Select",
+          "Checkbox",
+          "RadioGroup",
+          "SegmentedControl",
+          "DatePicker",
+          "ChoicePicker",
+          "Timer",
+          "Button",
+          "IconButton",
+          "Pressable",
+          "Popover",
+          "Carousel",
+          "Tabs",
+          "Flashcard"
+        ]
+      }
+    ],
+    "functions": {
+      "Clamp": {
+        "signature": "Clamp(number: number, min: number, max: number) → number",
+        "description": "number kept between min and max"
+      },
+      "Convert": {
+        "signature": "Convert(value: number, from: string, to: string) → number",
+        "description": "value from one unit to another: mm cm m km in ft yd mi; mg g kg oz lb st; ml l tsp tbsp floz cup pt qt gal (US); m/s km/h mph kn; m2 km2 ft2 ha acre; c f k"
+      },
+      "Lerp": {
+        "signature": "Lerp(a: number, b: number, t: number) → number",
+        "description": "The value a fraction t of the way from a to b"
+      },
+      "Payment": {
+        "signature": "Payment(principal: number, rate: number, periods: number) → number",
+        "description": "Payment per period that repays principal over periods at rate percent per period, e.g. a 30-year loan at 6% a year: @Payment(300000, 6 / 12, 360)"
+      },
+      "Percent": {
+        "signature": "Percent(part: number, total: number) → number",
+        "description": "part / total * 100, e.g. @Percent(3, 4) is 75; 0 when total is 0"
+      },
+      "Pow": {
+        "signature": "Pow(base: number, exponent: number) → number",
+        "description": "base raised to exponent"
+      },
+      "Sqrt": {
+        "signature": "Sqrt(number: number) → number",
+        "description": "Square root; null for a negative number"
+      },
+      "Format": {
+        "signature": "Format(value: number, kind?: \"number\" | \"currency\" | \"percent\" | \"compact\", decimals?: number, currency?: string) → string",
+        "description": "Number as text: \"number\" 12,345.6, \"currency\" $12,345.68 (currency is a code like \"EUR\"), \"percent\" 45 -> 45%, \"compact\" 1.2M ($1.2M with a currency)"
+      },
+      "Plural": {
+        "signature": "Plural(n: number, word: string, plural?: string) → string",
+        "description": "Count and word: @Plural(1, \"guest\") is \"1 guest\", 3 gives \"3 guests\"; plural defaults to word + \"s\""
+      },
+      "Default": {
+        "signature": "Default(value?: any, fallback: any) → any",
+        "description": "value, or fallback when value is null, \"\" or not a number, e.g. an empty number input: @Default($weight, 0)"
+      },
+      "Duration": {
+        "signature": "Duration(seconds: number, style?: \"short\" | \"clock\") → string",
+        "description": "Seconds as text: \"short\" 1h 20m, 4m 05s, 45s (default); \"clock\" 1:20:00, 4:05"
+      },
+      "Between": {
+        "signature": "Between(rows: any[], field: string, min?: any, max?: any) → any[]",
+        "description": "Rows whose field is from min to max, both included; compares numbers, or text such as \"YYYY-MM-DD\" dates. Leave min or max null for an open end"
+      },
+      "Change": {
+        "signature": "Change(current: number, previous: number) → number",
+        "description": "Percent change from previous to current, e.g. @Change(120, 100) is 20; null when previous is 0"
+      },
+      "Cumulative": {
+        "signature": "Cumulative(rows: any[], field: string) → any[]",
+        "description": "Copy of the rows with field replaced by its running total (field \"\" for a list of numbers)"
+      },
+      "GroupBy": {
+        "signature": "GroupBy(rows: any[], key: string, field?: string, agg?: \"sum\" | \"avg\" | \"count\" | \"min\" | \"max\") → {key: string | number, value: number}[]",
+        "description": "One row per distinct key, in first-seen order; value is agg of field (default \"sum\"), or the row count without a field"
+      },
+      "Histogram": {
+        "signature": "Histogram(values: number[], bins: number, min?: number, max?: number) → {key: string, value: number, start: number, end: number}[]",
+        "description": "Count supplied values into 1 to 40 equal-width bins. Use key and value for a chart. Optional min and max select the range."
+      },
+      "MovingAvg": {
+        "signature": "MovingAvg(rows: any[], field: string, window: number) → any[]",
+        "description": "Copy of the rows with field replaced by the average of its last window values (field \"\" for a list of numbers)"
+      },
+      "Stats": {
+        "signature": "Stats(values: number[]) → {count: number, min: number, max: number, mean: number, median: number, stdev: number}",
+        "description": "Summary of numbers, all zeros for an empty list"
+      },
+      "Top": {
+        "signature": "Top(rows: any[], field: string, n: number, direction?: \"desc\" | \"asc\") → any[]",
+        "description": "The n rows with the largest field (\"asc\": the smallest)"
+      },
+      "AddDays": {
+        "signature": "AddDays(date: string, days: number) → string",
+        "description": "Add a whole number of days to a supplied YYYY-MM-DD calendar date. Negative values go backwards."
+      },
+      "AddMonths": {
+        "signature": "AddMonths(date: string, months: number) → string",
+        "description": "Add whole calendar months to a supplied YYYY-MM-DD date. Jan 31 plus one month is the last day of February."
+      },
+      "DaysBetween": {
+        "signature": "DaysBetween(from: string, to: string) → number",
+        "description": "Calendar days from one supplied YYYY-MM-DD date to another. Negative if the second date is earlier."
+      },
+      "StartOf": {
+        "signature": "StartOf(date: string, unit: \"week\" | \"month\" | \"year\") → string",
+        "description": "First day of the supplied YYYY-MM-DD date’s week (Monday), month or year."
+      },
+      "Chunk": {
+        "signature": "Chunk(list: any[], size: number) → any[][]",
+        "description": "Split a bounded local list into consecutive batches of the specified size."
+      },
+      "Find": {
+        "signature": "Find(list: any[], field: string, value: any) → any",
+        "description": "First local row whose field equals the supplied value, or null. Empty field compares the whole item."
+      },
+      "Includes": {
+        "signature": "Includes(list: any[] | string, item: any) → boolean",
+        "description": "Whether a local list contains a value, or a string contains the supplied text."
+      },
+      "MixColor": {
+        "signature": "MixColor(from: string, to: string, t: number) → string",
+        "description": "Blend two hex colors at a fraction t from 0 to 1 for a local tint. Keep text contrast and prefer semantic theme tokens for ordinary text."
+      },
+      "Reverse": {
+        "signature": "Reverse(list: any[]) → any[]",
+        "description": "A local list in reverse order without changing the original."
+      },
+      "Slice": {
+        "signature": "Slice(list: any[] | string, start: number, end?: number) → any[] | string",
+        "description": "Local items or text from start up to end (exclusive). Negative indices count from the end."
+      },
+      "Take": {
+        "signature": "Take(list: any[], n: number) → any[]",
+        "description": "First n items from a local list, or the last n when n is negative."
+      }
+    },
+    "schema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "properties": {
+        "Col": {
+          "$ref": "#/$defs/Col"
+        },
+        "Row": {
+          "$ref": "#/$defs/Row"
+        },
+        "Box": {
+          "$ref": "#/$defs/Box"
+        },
+        "Grid": {
+          "$ref": "#/$defs/Grid"
+        },
+        "Card": {
+          "$ref": "#/$defs/Card"
+        },
+        "Carousel": {
+          "$ref": "#/$defs/Carousel"
+        },
+        "Popover": {
+          "$ref": "#/$defs/Popover"
+        },
+        "Tabs": {
+          "$ref": "#/$defs/Tabs"
+        },
+        "Divider": {
+          "$ref": "#/$defs/Divider"
+        },
+        "Spacer": {
+          "$ref": "#/$defs/Spacer"
+        },
+        "Title": {
+          "$ref": "#/$defs/Title"
+        },
+        "Text": {
+          "$ref": "#/$defs/Text"
+        },
+        "Caption": {
+          "$ref": "#/$defs/Caption"
+        },
+        "Label": {
+          "$ref": "#/$defs/Label"
+        },
+        "Badge": {
+          "$ref": "#/$defs/Badge"
+        },
+        "List": {
+          "$ref": "#/$defs/List"
+        },
+        "ListItem": {
+          "$ref": "#/$defs/ListItem"
+        },
+        "Markdown": {
+          "$ref": "#/$defs/Markdown"
+        },
+        "Quote": {
+          "$ref": "#/$defs/Quote"
+        },
+        "Code": {
+          "$ref": "#/$defs/Code"
+        },
+        "Math": {
+          "$ref": "#/$defs/Math"
+        },
+        "Section": {
+          "$ref": "#/$defs/Section"
+        },
+        "Metric": {
+          "$ref": "#/$defs/Metric"
+        },
+        "Controls": {
+          "$ref": "#/$defs/Controls"
+        },
+        "Diagram": {
+          "$ref": "#/$defs/Diagram"
+        },
+        "Form": {
+          "$ref": "#/$defs/Form"
+        },
+        "Input": {
+          "$ref": "#/$defs/Input"
+        },
+        "TextArea": {
+          "$ref": "#/$defs/TextArea"
+        },
+        "Slider": {
+          "$ref": "#/$defs/Slider"
+        },
+        "Select": {
+          "$ref": "#/$defs/Select"
+        },
+        "Checkbox": {
+          "$ref": "#/$defs/Checkbox"
+        },
+        "RadioGroup": {
+          "$ref": "#/$defs/RadioGroup"
+        },
+        "SegmentedControl": {
+          "$ref": "#/$defs/SegmentedControl"
+        },
+        "DatePicker": {
+          "$ref": "#/$defs/DatePicker"
+        },
+        "ChoicePicker": {
+          "$ref": "#/$defs/ChoicePicker"
+        },
+        "Timer": {
+          "$ref": "#/$defs/Timer"
+        },
+        "Button": {
+          "$ref": "#/$defs/Button"
+        },
+        "IconButton": {
+          "$ref": "#/$defs/IconButton"
+        },
+        "Pressable": {
+          "$ref": "#/$defs/Pressable"
+        },
+        "Flashcard": {
+          "$ref": "#/$defs/Flashcard"
+        },
+        "Source": {
+          "$ref": "#/$defs/Source"
+        },
+        "Resource": {
+          "$ref": "#/$defs/Resource"
+        },
+        "Icon": {
+          "$ref": "#/$defs/Icon"
+        },
+        "Table": {
+          "$ref": "#/$defs/Table"
+        },
+        "Chart": {
+          "$ref": "#/$defs/Chart"
+        },
+        "Svg": {
+          "$ref": "#/$defs/Svg"
+        },
+        "Circle": {
+          "$ref": "#/$defs/Circle"
+        },
+        "Ellipse": {
+          "$ref": "#/$defs/Ellipse"
+        },
+        "Rect": {
+          "$ref": "#/$defs/Rect"
+        },
+        "Line": {
+          "$ref": "#/$defs/Line"
+        },
+        "Path": {
+          "$ref": "#/$defs/Path"
+        },
+        "Polyline": {
+          "$ref": "#/$defs/Polyline"
+        },
+        "Polygon": {
+          "$ref": "#/$defs/Polygon"
+        },
+        "G": {
+          "$ref": "#/$defs/G"
+        },
+        "SvgText": {
+          "$ref": "#/$defs/SvgText"
+        }
+      },
+      "required": [
+        "Col",
+        "Row",
+        "Box",
+        "Grid",
+        "Card",
+        "Carousel",
+        "Popover",
+        "Tabs",
+        "Divider",
+        "Spacer",
+        "Title",
+        "Text",
+        "Caption",
+        "Label",
+        "Badge",
+        "List",
+        "ListItem",
+        "Markdown",
+        "Quote",
+        "Code",
+        "Math",
+        "Section",
+        "Metric",
+        "Controls",
+        "Diagram",
+        "Form",
+        "Input",
+        "TextArea",
+        "Slider",
+        "Select",
+        "Checkbox",
+        "RadioGroup",
+        "SegmentedControl",
+        "DatePicker",
+        "ChoicePicker",
+        "Timer",
+        "Button",
+        "IconButton",
+        "Pressable",
+        "Flashcard",
+        "Source",
+        "Resource",
+        "Icon",
+        "Table",
+        "Chart",
+        "Svg",
+        "Circle",
+        "Ellipse",
+        "Rect",
+        "Line",
+        "Path",
+        "Polyline",
+        "Polygon",
+        "G",
+        "SvgText"
+      ],
+      "additionalProperties": false,
+      "$defs": {
+        "Col": {
+          "type": "object",
+          "properties": {
+            "children": {
+              "type": "array",
+              "items": {}
+            },
+            "gap": {
+              "type": "number"
+            },
+            "align": {
+              "type": "string",
+              "enum": [
+                "start",
+                "center",
+                "end",
+                "stretch"
+              ]
+            }
+          },
+          "required": [
+            "children"
+          ],
+          "additionalProperties": false,
+          "description": "Vertical layout. Without gap it spaces blocks like an article."
+        },
+        "Row": {
+          "type": "object",
+          "properties": {
+            "children": {
+              "type": "array",
+              "items": {}
+            },
+            "gap": {
+              "type": "number"
+            },
+            "align": {
+              "type": "string",
+              "enum": [
+                "start",
+                "center",
+                "end",
+                "stretch"
+              ]
+            },
+            "justify": {
+              "type": "string",
+              "enum": [
+                "start",
+                "center",
+                "end",
+                "between"
+              ]
+            },
+            "wrap": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "children"
+          ],
+          "additionalProperties": false,
+          "description": "Horizontal layout; items are vertically centered."
+        },
+        "Box": {
+          "type": "object",
+          "properties": {
+            "children": {
+              "type": "array",
+              "items": {}
+            },
+            "direction": {
+              "type": "string",
+              "enum": [
+                "row",
+                "col"
+              ]
+            },
+            "gap": {
+              "type": "number"
+            },
+            "padding": {
+              "type": "number"
+            },
+            "background": {
+              "type": "string"
+            },
+            "radius": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "enum": [
+                    "sm",
+                    "md",
+                    "lg",
+                    "xl",
+                    "full"
+                  ]
+                },
+                {
+                  "type": "number"
+                }
+              ]
+            },
+            "border": {
+              "type": "boolean"
+            },
+            "width": {
+              "type": [
+                "number",
+                "string"
+              ]
+            },
+            "height": {
+              "type": [
+                "number",
+                "string"
+              ]
+            },
+            "flex": {
+              "type": "number"
+            },
+            "align": {
+              "type": "string",
+              "enum": [
+                "start",
+                "center",
+                "end",
+                "stretch"
+              ]
+            },
+            "justify": {
+              "type": "string",
+              "enum": [
+                "start",
+                "center",
+                "end",
+                "between"
+              ]
+            },
+            "wrap": {
+              "type": "boolean"
+            }
+          },
+          "additionalProperties": false,
+          "description": "Flex container, a column by default. radius also clips the content."
+        },
+        "Grid": {
+          "type": "object",
+          "properties": {
+            "children": {
+              "type": "array",
+              "items": {}
+            },
+            "columns": {
+              "type": "number"
+            },
+            "minChildWidth": {
+              "type": "number"
+            },
+            "gap": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "children"
+          ],
+          "additionalProperties": false,
+          "description": "Equal columns (default 2). With minChildWidth (px), columns drop on narrow screens."
+        },
+        "Card": {
+          "type": "object",
+          "properties": {
+            "children": {
+              "type": "array",
+              "items": {}
+            },
+            "variant": {
+              "type": "string",
+              "enum": [
+                "outline",
+                "soft"
+              ]
+            },
+            "padding": {
+              "type": "number"
+            },
+            "gap": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "children"
+          ],
+          "additionalProperties": false,
+          "description": "Panel with a border; soft is a filled panel for summaries."
+        },
+        "Carousel": {
+          "type": "object",
+          "properties": {
+            "children": {
+              "type": "array",
+              "items": {}
+            },
+            "itemWidth": {
+              "type": "number"
+            },
+            "gap": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "children"
+          ],
+          "additionalProperties": false,
+          "description": "Horizontal row that scrolls and snaps, each child an item itemWidth px wide (default 240): photos, cards, options, days."
+        },
+        "Popover": {
+          "type": "object",
+          "properties": {
+            "trigger": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "items": {}
+                }
+              ]
+            },
+            "content": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "items": {}
+                }
+              ]
+            }
+          },
+          "required": [
+            "trigger",
+            "content"
+          ],
+          "additionalProperties": false,
+          "description": "Shows content in a small panel when the trigger is clicked: a definition, a source, details behind an Icon(\"info\", \"sm\")."
+        },
+        "Tabs": {
+          "type": "object",
+          "properties": {
+            "label": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 80
+            },
+            "tabs": {
+              "minItems": 2,
+              "maxItems": 6,
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64
+                  },
+                  "content": {
+                    "type": "array",
+                    "items": {}
+                  }
+                },
+                "required": [
+                  "title",
+                  "content"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": [
+            "label",
+            "tabs"
+          ],
+          "additionalProperties": false,
+          "description": "Keyboard-accessible optional views or scenarios. Put all essential conclusions in visible content outside the tabs."
+        },
+        "Divider": {
+          "type": "object",
+          "properties": {},
+          "additionalProperties": false
+        },
+        "Spacer": {
+          "type": "object",
+          "properties": {},
+          "additionalProperties": false,
+          "description": "Fills the free space in a Row."
+        },
+        "Title": {
+          "type": "object",
+          "properties": {
+            "text": {
+              "type": "string"
+            },
+            "size": {
+              "type": "string",
+              "enum": [
+                "sm",
+                "md",
+                "lg",
+                "xl",
+                "2xl",
+                "3xl"
+              ]
+            },
+            "color": {
+              "type": "string"
+            },
+            "level": {
+              "type": "string",
+              "enum": [
+                "2",
+                "3",
+                "4"
+              ]
+            }
+          },
+          "required": [
+            "text"
+          ],
+          "additionalProperties": false,
+          "description": "Heading. Size is visual; level is 2 by default, 3 for subsections and 4 only within a subsection."
+        },
+        "Text": {
+          "type": "object",
+          "properties": {
+            "text": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "items": {}
+                }
+              ]
+            },
+            "size": {
+              "type": "string",
+              "enum": [
+                "xs",
+                "sm",
+                "md",
+                "lg"
+              ]
+            },
+            "color": {
+              "type": "string"
+            },
+            "weight": {
+              "type": "string",
+              "enum": [
+                "normal",
+                "medium",
+                "semibold"
+              ]
+            },
+            "italic": {
+              "type": "boolean"
+            },
+            "lineThrough": {
+              "type": "boolean"
+            },
+            "tabularNums": {
+              "type": "boolean"
+            },
+            "maxLines": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "text"
+          ],
+          "additionalProperties": false,
+          "description": "Paragraph with bold, italic and code. Inline components can include Source, Icon, or Badge. Only use verified Source IDs for links."
+        },
+        "Caption": {
+          "type": "object",
+          "properties": {
+            "text": {
+              "type": "string"
+            },
+            "color": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "text"
+          ],
+          "additionalProperties": false,
+          "description": "Small secondary text."
+        },
+        "Label": {
+          "type": "object",
+          "properties": {
+            "text": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "text"
+          ],
+          "additionalProperties": false,
+          "description": "Field or group label."
+        },
+        "Badge": {
+          "type": "object",
+          "properties": {
+            "text": {
+              "type": "string"
+            },
+            "color": {
+              "type": "string",
+              "enum": [
+                "neutral",
+                "info",
+                "success",
+                "warning",
+                "danger",
+                "purple",
+                "pink"
+              ]
+            },
+            "icon": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "text"
+          ],
+          "additionalProperties": false,
+          "description": "Pill tag; icon is an optional leading lucide name."
+        },
+        "List": {
+          "type": "object",
+          "properties": {
+            "items": {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "$ref": "#/$defs/ListItem"
+                  }
+                ]
+              }
+            },
+            "marker": {
+              "type": "string",
+              "enum": [
+                "bullet",
+                "number",
+                "none",
+                "timeline"
+              ]
+            },
+            "timeline": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "items"
+          ],
+          "additionalProperties": false,
+          "description": "timeline joins the markers with a line. The timeline marker is shorthand for a numbered timeline."
+        },
+        "ListItem": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "marker": {
+              "type": "string"
+            },
+            "children": {
+              "type": "array",
+              "items": {}
+            }
+          },
+          "required": [
+            "title"
+          ],
+          "additionalProperties": false,
+          "description": "marker replaces the bullet or number, e.g. a time or an emoji."
+        },
+        "Markdown": {
+          "type": "object",
+          "properties": {
+            "text": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "text"
+          ],
+          "additionalProperties": false,
+          "description": "Prose with headings, lists, quotes, code and tables."
+        },
+        "Quote": {
+          "type": "object",
+          "properties": {
+            "text": {
+              "type": "string"
+            },
+            "cite": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "text"
+          ],
+          "additionalProperties": false,
+          "description": "A quotation or a callout with a side rule; cite names the source."
+        },
+        "Code": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "string"
+            },
+            "language": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code"
+          ],
+          "additionalProperties": false,
+          "description": "Code block with a copy button."
+        },
+        "Math": {
+          "type": "object",
+          "properties": {
+            "tex": {
+              "type": "string"
+            },
+            "inline": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "tex"
+          ],
+          "additionalProperties": false,
+          "description": "LaTeX formula, e.g. Math(\"E = mc^2\"); inline true to sit in a Text list."
+        },
+        "Section": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100
+            },
+            "children": {
+              "type": "array",
+              "items": {}
+            },
+            "introduction": {
+              "type": "string",
+              "maxLength": 450
+            },
+            "icon": {
+              "type": "string",
+              "maxLength": 48
+            }
+          },
+          "required": [
+            "title",
+            "children"
+          ],
+          "additionalProperties": false,
+          "description": "A meaningful subsection. Group its explanation and relevant components together. Use a short heading and optional orientation sentence."
+        },
+        "Metric": {
+          "type": "object",
+          "properties": {
+            "label": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 80
+            },
+            "value": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 100
+                },
+                {
+                  "type": "number"
+                }
+              ]
+            },
+            "note": {
+              "type": "string",
+              "maxLength": 160
+            },
+            "tone": {
+              "type": "string",
+              "enum": [
+                "neutral",
+                "info",
+                "success",
+                "warning",
+                "danger"
+              ]
+            }
+          },
+          "required": [
+            "label",
+            "value"
+          ],
+          "additionalProperties": false,
+          "description": "A prominent single measured or calculated value. Include the unit in a formatted value or the label. Use note for the basis. Tone denotes meaning, not verification."
+        },
+        "Controls": {
+          "type": "object",
+          "properties": {
+            "children": {
+              "type": "array",
+              "items": {}
+            },
+            "label": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 80
+            },
+            "columns": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 3
+            }
+          },
+          "required": [
+            "children",
+            "label"
+          ],
+          "additionalProperties": false,
+          "description": "Group related local inputs and reset controls. Name what the inputs change. Multiple columns stack at phone widths."
+        },
+        "Diagram": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 120
+            },
+            "nodes": {
+              "minItems": 2,
+              "maxItems": 12,
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "pattern": "^[a-z][a-z0-9-]{0,31}$"
+                  },
+                  "label": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 45
+                  },
+                  "level": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 5
+                  },
+                  "detail": {
+                    "type": "string",
+                    "maxLength": 66
+                  },
+                  "tone": {
+                    "type": "string",
+                    "enum": [
+                      "neutral",
+                      "info",
+                      "success",
+                      "purple",
+                      "warning"
+                    ]
+                  },
+                  "icon": {
+                    "type": "string",
+                    "maxLength": 36
+                  }
+                },
+                "required": [
+                  "id",
+                  "label",
+                  "level"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "links": {
+              "minItems": 1,
+              "maxItems": 18,
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "from": {
+                    "type": "string",
+                    "maxLength": 32
+                  },
+                  "to": {
+                    "type": "string",
+                    "maxLength": 32
+                  },
+                  "label": {
+                    "type": "string",
+                    "maxLength": 38
+                  }
+                },
+                "required": [
+                  "from",
+                  "to"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "description": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 360
+            }
+          },
+          "required": [
+            "title",
+            "nodes",
+            "links",
+            "description"
+          ],
+          "additionalProperties": false,
+          "description": "Connected technical diagram with labeled relationships and a concise text equivalent. Group peers on the same level (up to three per level); use increasing levels for downstream components. Choose role-specific tones and meaningful links, not a duplicate list."
+        },
+        "Form": {
+          "type": "object",
+          "properties": {
+            "children": {
+              "type": "array",
+              "items": {}
+            }
+          },
+          "required": [
+            "children"
+          ],
+          "additionalProperties": false,
+          "description": "Groups fields for local interaction. Use Controls for a named set of inputs."
+        },
+        "Input": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "label": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "text",
+                "number"
+              ]
+            },
+            "placeholder": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "value"
+          ],
+          "additionalProperties": false,
+          "description": "Text or number field; a number field stores numbers."
+        },
+        "TextArea": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "string"
+            },
+            "label": {
+              "type": "string"
+            },
+            "placeholder": {
+              "type": "string"
+            },
+            "rows": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "value"
+          ],
+          "additionalProperties": false
+        },
+        "Slider": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "number"
+            },
+            "min": {
+              "type": "number"
+            },
+            "max": {
+              "type": "number"
+            },
+            "step": {
+              "type": "number"
+            },
+            "label": {
+              "type": "string"
+            },
+            "unit": {
+              "type": "string"
+            },
+            "marks": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "value": {
+                    "type": "number"
+                  },
+                  "label": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "value",
+                  "label"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": [
+            "value",
+            "min",
+            "max"
+          ],
+          "additionalProperties": false,
+          "description": "Shows label and value; unit like \"%\" or \"$\" formats the value."
+        },
+        "Select": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "string"
+            },
+            "options": {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "value": {
+                        "type": "string"
+                      },
+                      "label": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "value",
+                      "label"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              }
+            },
+            "label": {
+              "type": "string"
+            },
+            "placeholder": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "value",
+            "options"
+          ],
+          "additionalProperties": false,
+          "description": "Dropdown, for long option lists."
+        },
+        "Checkbox": {
+          "type": "object",
+          "properties": {
+            "checked": {
+              "type": "boolean"
+            },
+            "label": {
+              "type": "string"
+            },
+            "lineThrough": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "checked",
+            "label"
+          ],
+          "additionalProperties": false,
+          "description": "lineThrough strikes the label when checked, for to-do lists."
+        },
+        "RadioGroup": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "string"
+            },
+            "options": {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "value": {
+                        "type": "string"
+                      },
+                      "label": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "value",
+                      "label"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              }
+            },
+            "label": {
+              "type": "string"
+            },
+            "variant": {
+              "type": "string",
+              "enum": [
+                "list",
+                "pills",
+                "cards"
+              ]
+            }
+          },
+          "required": [
+            "value",
+            "options"
+          ],
+          "additionalProperties": false,
+          "description": "pills for short choices; cards for choices that need a description line."
+        },
+        "SegmentedControl": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "string"
+            },
+            "options": {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "value": {
+                        "type": "string"
+                      },
+                      "label": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "value",
+                      "label"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              }
+            },
+            "block": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "value",
+            "options"
+          ],
+          "additionalProperties": false,
+          "description": "2 to 4 short choices in a row."
+        },
+        "DatePicker": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "string"
+            },
+            "label": {
+              "type": "string"
+            },
+            "min": {
+              "type": "string"
+            },
+            "max": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "value"
+          ],
+          "additionalProperties": false,
+          "description": "Dates are \"YYYY-MM-DD\"."
+        },
+        "ChoicePicker": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "string",
+              "maxLength": 80
+            },
+            "label": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 80
+            },
+            "options": {
+              "minItems": 2,
+              "maxItems": 16,
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "value": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 80
+                  },
+                  "label": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 80
+                  },
+                  "description": {
+                    "type": "string",
+                    "maxLength": 140
+                  }
+                },
+                "required": [
+                  "value",
+                  "label"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": [
+            "value",
+            "label",
+            "options"
+          ],
+          "additionalProperties": false,
+          "description": "Search named options and apply one choice to local presentation state. Useful when reviewing a scenario before changing a calculation. It never approves or performs an external action."
+        },
+        "Timer": {
+          "type": "object",
+          "properties": {
+            "seconds": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 3600
+            },
+            "label": {
+              "type": "string",
+              "maxLength": 100
+            }
+          },
+          "required": [
+            "seconds"
+          ],
+          "additionalProperties": false,
+          "description": "User-started local countdown, at most 3600 seconds, with pause and reset. Bind a scalar such as $left to show a completion message. It is not a reminder or scheduled task."
+        },
+        "Button": {
+          "type": "object",
+          "properties": {
+            "label": {
+              "type": "string"
+            },
+            "action": {
+              "$ref": "#/$defs/ActionExpression"
+            },
+            "variant": {
+              "type": "string",
+              "enum": [
+                "solid",
+                "outline",
+                "soft",
+                "ghost"
+              ]
+            },
+            "color": {
+              "type": "string",
+              "enum": [
+                "primary",
+                "danger",
+                "success"
+              ]
+            },
+            "size": {
+              "type": "string",
+              "enum": [
+                "sm",
+                "md",
+                "lg"
+              ]
+            },
+            "icon": {
+              "type": "string"
+            },
+            "disabled": {
+              "type": "boolean"
+            },
+            "block": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "label"
+          ],
+          "additionalProperties": false,
+          "description": "icon is a lucide name."
+        },
+        "ActionExpression": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "const": "open_url"
+                },
+                "url": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "type",
+                "url"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "const": "continue_conversation"
+                },
+                "context": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "type"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string"
+                },
+                "params": {
+                  "type": "object",
+                  "propertyNames": {
+                    "type": "string"
+                  },
+                  "additionalProperties": {}
+                }
+              },
+              "required": [
+                "type"
+              ],
+              "additionalProperties": false
+            }
+          ]
+        },
+        "IconButton": {
+          "type": "object",
+          "properties": {
+            "icon": {
+              "type": "string"
+            },
+            "action": {
+              "$ref": "#/$defs/ActionExpression"
+            },
+            "label": {
+              "type": "string"
+            },
+            "variant": {
+              "type": "string",
+              "enum": [
+                "outline",
+                "ghost",
+                "solid"
+              ]
+            }
+          },
+          "required": [
+            "icon"
+          ],
+          "additionalProperties": false,
+          "description": "Round icon-only button; label is read aloud."
+        },
+        "Pressable": {
+          "type": "object",
+          "properties": {
+            "children": {
+              "type": "array",
+              "items": {}
+            },
+            "action": {
+              "$ref": "#/$defs/ActionExpression"
+            },
+            "selected": {
+              "type": "boolean"
+            },
+            "padding": {
+              "type": "number"
+            },
+            "background": {
+              "type": "string"
+            },
+            "radius": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "enum": [
+                    "sm",
+                    "md",
+                    "lg",
+                    "xl",
+                    "full"
+                  ]
+                },
+                {
+                  "type": "number"
+                }
+              ]
+            }
+          },
+          "required": [
+            "children"
+          ],
+          "additionalProperties": false,
+          "description": "Makes any content clickable, such as a tile or a swatch."
+        },
+        "Flashcard": {
+          "type": "object",
+          "properties": {
+            "front": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "items": {}
+                }
+              ]
+            },
+            "back": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "items": {}
+                }
+              ]
+            },
+            "hint": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "front",
+            "back"
+          ],
+          "additionalProperties": false,
+          "description": "Card that flips between front and back when tapped. Put several in a Carousel or Grid."
+        },
+        "Source": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "maxLength": 120
+            }
+          },
+          "required": [
+            "id"
+          ],
+          "additionalProperties": false,
+          "description": "Link to one source by the exact evidence ID supplied by Xroga. Omit when no IDs were supplied."
+        },
+        "Resource": {
+          "type": "object",
+          "properties": {
+            "key": {
+              "type": "string",
+              "enum": [
+                "nextjs",
+                "supabase",
+                "stripe",
+                "postgresql",
+                "react",
+                "vercel",
+                "github",
+                "cloudflare"
+              ]
+            },
+            "role": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 180
+            }
+          },
+          "required": [
+            "key",
+            "role"
+          ],
+          "additionalProperties": false,
+          "description": "An official product link and a concise explanation of its role. Use only for a product relevant to the user. This link is a reference, not retrieved evidence."
+        },
+        "Icon": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "maxLength": 64
+            },
+            "size": {
+              "type": "string",
+              "enum": [
+                "sm",
+                "md",
+                "lg",
+                "xl"
+              ]
+            },
+            "color": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "name"
+          ],
+          "additionalProperties": false,
+          "description": "An installed Lucide icon by kebab-case name, e.g. plane, wallet, microscope or calendar-days. Optional semantic color and size."
+        },
+        "Table": {
+          "type": "object",
+          "properties": {
+            "columns": {
+              "minItems": 1,
+              "maxItems": 12,
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "rows": {
+              "maxItems": 120,
+              "type": "array",
+              "items": {
+                "maxItems": 12,
+                "type": "array",
+                "items": {}
+              }
+            }
+          },
+          "required": [
+            "columns",
+            "rows"
+          ],
+          "additionalProperties": false,
+          "description": "Each row lists its cells in column order; a cell may be a component. Number columns align right."
+        },
+        "Chart": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "bar",
+                "line",
+                "area",
+                "pie",
+                "donut",
+                "scatter"
+              ]
+            },
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "propertyNames": {
+                  "type": "string"
+                },
+                "additionalProperties": {
+                  "type": [
+                    "string",
+                    "number"
+                  ]
+                }
+              }
+            },
+            "x": {
+              "type": "string"
+            },
+            "series": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "format": {
+              "type": "string",
+              "enum": [
+                "number",
+                "currency",
+                "percent"
+              ]
+            },
+            "currency": {
+              "type": "string"
+            },
+            "stacked": {
+              "type": "boolean"
+            },
+            "height": {
+              "type": "number"
+            },
+            "presentation": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "maxLength": 120
+                },
+                "xLabel": {
+                  "type": "string",
+                  "maxLength": 80
+                },
+                "yLabel": {
+                  "type": "string",
+                  "maxLength": 80
+                },
+                "note": {
+                  "type": "string",
+                  "maxLength": 240
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "type",
+            "data"
+          ],
+          "additionalProperties": false,
+          "description": "Chart from exact numeric rows. Set x, series, and presentation labels with units. Scatter x is numeric. Percent values are like 45; use a currency code like \"USD\"."
+        },
+        "Svg": {
+          "type": "object",
+          "properties": {
+            "children": {
+              "type": "array",
+              "items": {}
+            },
+            "viewBox": {
+              "type": "string"
+            },
+            "width": {
+              "type": [
+                "number",
+                "string"
+              ]
+            },
+            "height": {
+              "type": [
+                "number",
+                "string"
+              ]
+            },
+            "label": {
+              "type": "string",
+              "maxLength": 120
+            }
+          },
+          "required": [
+            "children",
+            "viewBox"
+          ],
+          "additionalProperties": false,
+          "description": "A drawing for steps, parts, mechanisms, diagrams and layouts. Scales to its width. Provide a descriptive label and nearby prose explaining the relationships."
+        },
+        "Circle": {
+          "type": "object",
+          "properties": {
+            "cx": {
+              "type": "number"
+            },
+            "cy": {
+              "type": "number"
+            },
+            "r": {
+              "type": "number"
+            },
+            "fill": {
+              "type": "string"
+            },
+            "stroke": {
+              "type": "string"
+            },
+            "strokeWidth": {
+              "type": "number"
+            },
+            "opacity": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "cx",
+            "cy",
+            "r"
+          ],
+          "additionalProperties": false
+        },
+        "Ellipse": {
+          "type": "object",
+          "properties": {
+            "cx": {
+              "type": "number"
+            },
+            "cy": {
+              "type": "number"
+            },
+            "rx": {
+              "type": "number"
+            },
+            "ry": {
+              "type": "number"
+            },
+            "fill": {
+              "type": "string"
+            },
+            "stroke": {
+              "type": "string"
+            },
+            "strokeWidth": {
+              "type": "number"
+            },
+            "opacity": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "cx",
+            "cy",
+            "rx",
+            "ry"
+          ],
+          "additionalProperties": false
+        },
+        "Rect": {
+          "type": "object",
+          "properties": {
+            "x": {
+              "type": "number"
+            },
+            "y": {
+              "type": "number"
+            },
+            "width": {
+              "type": "number"
+            },
+            "height": {
+              "type": "number"
+            },
+            "fill": {
+              "type": "string"
+            },
+            "stroke": {
+              "type": "string"
+            },
+            "strokeWidth": {
+              "type": "number"
+            },
+            "opacity": {
+              "type": "number"
+            },
+            "rx": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "x",
+            "y",
+            "width",
+            "height"
+          ],
+          "additionalProperties": false
+        },
+        "Line": {
+          "type": "object",
+          "properties": {
+            "x1": {
+              "type": "number"
+            },
+            "y1": {
+              "type": "number"
+            },
+            "x2": {
+              "type": "number"
+            },
+            "y2": {
+              "type": "number"
+            },
+            "stroke": {
+              "type": "string"
+            },
+            "strokeWidth": {
+              "type": "number"
+            },
+            "opacity": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "x1",
+            "y1",
+            "x2",
+            "y2"
+          ],
+          "additionalProperties": false
+        },
+        "Path": {
+          "type": "object",
+          "properties": {
+            "d": {
+              "type": "string"
+            },
+            "fill": {
+              "type": "string"
+            },
+            "stroke": {
+              "type": "string"
+            },
+            "strokeWidth": {
+              "type": "number"
+            },
+            "opacity": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "d"
+          ],
+          "additionalProperties": false
+        },
+        "Polyline": {
+          "type": "object",
+          "properties": {
+            "points": {
+              "type": "string"
+            },
+            "stroke": {
+              "type": "string"
+            },
+            "strokeWidth": {
+              "type": "number"
+            },
+            "fill": {
+              "type": "string"
+            },
+            "opacity": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "points"
+          ],
+          "additionalProperties": false,
+          "description": "points like \"0,0 10,5 20,0\"."
+        },
+        "Polygon": {
+          "type": "object",
+          "properties": {
+            "points": {
+              "type": "string"
+            },
+            "fill": {
+              "type": "string"
+            },
+            "stroke": {
+              "type": "string"
+            },
+            "strokeWidth": {
+              "type": "number"
+            },
+            "opacity": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "points"
+          ],
+          "additionalProperties": false
+        },
+        "G": {
+          "type": "object",
+          "properties": {
+            "children": {
+              "type": "array",
+              "items": {}
+            },
+            "transform": {
+              "type": "string"
+            },
+            "opacity": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "children"
+          ],
+          "additionalProperties": false,
+          "description": "Group; transform like \"rotate(30 50 50)\" or \"translate(10 0)\"."
+        },
+        "SvgText": {
+          "type": "object",
+          "properties": {
+            "text": {
+              "type": "string"
+            },
+            "x": {
+              "type": "number"
+            },
+            "y": {
+              "type": "number"
+            },
+            "size": {
+              "type": "number"
+            },
+            "fill": {
+              "type": "string"
+            },
+            "anchor": {
+              "type": "string",
+              "enum": [
+                "start",
+                "middle",
+                "end"
+              ]
+            },
+            "weight": {
+              "type": "string",
+              "enum": [
+                "normal",
+                "medium",
+                "semibold"
+              ]
+            }
+          },
+          "required": [
+            "text",
+            "x",
+            "y"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "functions": {
+        "Clamp": {
+          "description": "number kept between min and max",
+          "params": {
+            "type": "object",
+            "properties": {
+              "number": {
+                "type": "number"
+              },
+              "min": {
+                "type": "number"
+              },
+              "max": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "number",
+              "min",
+              "max"
+            ],
+            "additionalProperties": false
+          },
+          "returns": {
+            "type": "number"
+          }
+        },
+        "Convert": {
+          "description": "value from one unit to another: mm cm m km in ft yd mi; mg g kg oz lb st; ml l tsp tbsp floz cup pt qt gal (US); m/s km/h mph kn; m2 km2 ft2 ha acre; c f k",
+          "params": {
+            "type": "object",
+            "properties": {
+              "value": {
+                "type": "number"
+              },
+              "from": {
+                "type": "string"
+              },
+              "to": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "value",
+              "from",
+              "to"
+            ],
+            "additionalProperties": false
+          },
+          "returns": {
+            "type": "number"
+          }
+        },
+        "Lerp": {
+          "description": "The value a fraction t of the way from a to b",
+          "params": {
+            "type": "object",
+            "properties": {
+              "a": {
+                "type": "number"
+              },
+              "b": {
+                "type": "number"
+              },
+              "t": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "a",
+              "b",
+              "t"
+            ],
+            "additionalProperties": false
+          },
+          "returns": {
+            "type": "number"
+          }
+        },
+        "Payment": {
+          "description": "Payment per period that repays principal over periods at rate percent per period, e.g. a 30-year loan at 6% a year: @Payment(300000, 6 / 12, 360)",
+          "params": {
+            "type": "object",
+            "properties": {
+              "principal": {
+                "type": "number"
+              },
+              "rate": {
+                "type": "number"
+              },
+              "periods": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "principal",
+              "rate",
+              "periods"
+            ],
+            "additionalProperties": false
+          },
+          "returns": {
+            "type": "number"
+          }
+        },
+        "Percent": {
+          "description": "part / total * 100, e.g. @Percent(3, 4) is 75; 0 when total is 0",
+          "params": {
+            "type": "object",
+            "properties": {
+              "part": {
+                "type": "number"
+              },
+              "total": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "part",
+              "total"
+            ],
+            "additionalProperties": false
+          },
+          "returns": {
+            "type": "number"
+          }
+        },
+        "Pow": {
+          "description": "base raised to exponent",
+          "params": {
+            "type": "object",
+            "properties": {
+              "base": {
+                "type": "number"
+              },
+              "exponent": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "base",
+              "exponent"
+            ],
+            "additionalProperties": false
+          },
+          "returns": {
+            "type": "number"
+          }
+        },
+        "Sqrt": {
+          "description": "Square root; null for a negative number",
+          "params": {
+            "type": "object",
+            "properties": {
+              "number": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "number"
+            ],
+            "additionalProperties": false
+          },
+          "returns": {
+            "type": "number"
+          }
+        },
+        "Format": {
+          "description": "Number as text: \"number\" 12,345.6, \"currency\" $12,345.68 (currency is a code like \"EUR\"), \"percent\" 45 -> 45%, \"compact\" 1.2M ($1.2M with a currency)",
+          "params": {
+            "type": "object",
+            "properties": {
+              "value": {
+                "type": "number"
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "number",
+                  "currency",
+                  "percent",
+                  "compact"
+                ]
+              },
+              "decimals": {
+                "type": "number"
+              },
+              "currency": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "value"
+            ],
+            "additionalProperties": false
+          },
+          "returns": {
+            "type": "string"
+          }
+        },
+        "Plural": {
+          "description": "Count and word: @Plural(1, \"guest\") is \"1 guest\", 3 gives \"3 guests\"; plural defaults to word + \"s\"",
+          "params": {
+            "type": "object",
+            "properties": {
+              "n": {
+                "type": "number"
+              },
+              "word": {
+                "type": "string"
+              },
+              "plural": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "n",
+              "word"
+            ],
+            "additionalProperties": false
+          },
+          "returns": {
+            "type": "string"
+          }
+        },
+        "Default": {
+          "description": "value, or fallback when value is null, \"\" or not a number, e.g. an empty number input: @Default($weight, 0)",
+          "params": {
+            "type": "object",
+            "properties": {
+              "value": {},
+              "fallback": {}
+            },
+            "required": [
+              "fallback"
+            ],
+            "additionalProperties": false
+          },
+          "returns": {}
+        },
+        "Duration": {
+          "description": "Seconds as text: \"short\" 1h 20m, 4m 05s, 45s (default); \"clock\" 1:20:00, 4:05",
+          "params": {
+            "type": "object",
+            "properties": {
+              "seconds": {
+                "type": "number"
+              },
+              "style": {
+                "type": "string",
+                "enum": [
+                  "short",
+                  "clock"
+                ]
+              }
+            },
+            "required": [
+              "seconds"
+            ],
+            "additionalProperties": false
+          },
+          "returns": {
+            "type": "string"
+          }
+        },
+        "Between": {
+          "description": "Rows whose field is from min to max, both included; compares numbers, or text such as \"YYYY-MM-DD\" dates. Leave min or max null for an open end",
+          "params": {
+            "type": "object",
+            "properties": {
+              "rows": {
+                "maxItems": 160,
+                "type": "array",
+                "items": {}
+              },
+              "field": {
+                "type": "string"
+              },
+              "min": {},
+              "max": {}
+            },
+            "required": [
+              "rows",
+              "field"
+            ],
+            "additionalProperties": false
+          },
+          "returns": {
+            "type": "array",
+            "items": {}
+          }
+        },
+        "Change": {
+          "description": "Percent change from previous to current, e.g. @Change(120, 100) is 20; null when previous is 0",
+          "params": {
+            "type": "object",
+            "properties": {
+              "current": {
+                "type": "number"
+              },
+              "previous": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "current",
+              "previous"
+            ],
+            "additionalProperties": false
+          },
+          "returns": {
+            "type": [
+              "number",
+              "null"
+            ]
+          }
+        },
+        "Cumulative": {
+          "description": "Copy of the rows with field replaced by its running total (field \"\" for a list of numbers)",
+          "params": {
+            "type": "object",
+            "properties": {
+              "rows": {
+                "maxItems": 160,
+                "type": "array",
+                "items": {}
+              },
+              "field": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "rows",
+              "field"
+            ],
+            "additionalProperties": false
+          },
+          "returns": {
+            "type": "array",
+            "items": {}
+          }
+        },
+        "GroupBy": {
+          "description": "One row per distinct key, in first-seen order; value is agg of field (default \"sum\"), or the row count without a field",
+          "params": {
+            "type": "object",
+            "properties": {
+              "rows": {
+                "maxItems": 160,
+                "type": "array",
+                "items": {}
+              },
+              "key": {
+                "type": "string"
+              },
+              "field": {
+                "type": "string"
+              },
+              "agg": {
+                "type": "string",
+                "enum": [
+                  "sum",
+                  "avg",
+                  "count",
+                  "min",
+                  "max"
+                ]
+              }
+            },
+            "required": [
+              "rows",
+              "key"
+            ],
+            "additionalProperties": false
+          },
+          "returns": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "key": {
+                  "type": [
+                    "string",
+                    "number"
+                  ]
+                },
+                "value": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "key",
+                "value"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "Histogram": {
+          "description": "Count supplied values into 1 to 40 equal-width bins. Use key and value for a chart. Optional min and max select the range.",
+          "params": {
+            "type": "object",
+            "properties": {
+              "values": {
+                "maxItems": 160,
+                "type": "array",
+                "items": {
+                  "type": "number"
+                }
+              },
+              "bins": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 40
+              },
+              "min": {
+                "type": "number"
+              },
+              "max": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "values",
+              "bins"
+            ],
+            "additionalProperties": false
+          },
+          "returns": {
+            "maxItems": 40,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "key": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "number"
+                },
+                "start": {
+                  "type": "number"
+                },
+                "end": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "key",
+                "value",
+                "start",
+                "end"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "MovingAvg": {
+          "description": "Copy of the rows with field replaced by the average of its last window values (field \"\" for a list of numbers)",
+          "params": {
+            "type": "object",
+            "properties": {
+              "rows": {
+                "maxItems": 160,
+                "type": "array",
+                "items": {}
+              },
+              "field": {
+                "type": "string"
+              },
+              "window": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "rows",
+              "field",
+              "window"
+            ],
+            "additionalProperties": false
+          },
+          "returns": {
+            "type": "array",
+            "items": {}
+          }
+        },
+        "Stats": {
+          "description": "Summary of numbers, all zeros for an empty list",
+          "params": {
+            "type": "object",
+            "properties": {
+              "values": {
+                "maxItems": 160,
+                "type": "array",
+                "items": {
+                  "type": "number"
+                }
+              }
+            },
+            "required": [
+              "values"
+            ],
+            "additionalProperties": false
+          },
+          "returns": {
+            "type": "object",
+            "properties": {
+              "count": {
+                "type": "number"
+              },
+              "min": {
+                "type": "number"
+              },
+              "max": {
+                "type": "number"
+              },
+              "mean": {
+                "type": "number"
+              },
+              "median": {
+                "type": "number"
+              },
+              "stdev": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "count",
+              "min",
+              "max",
+              "mean",
+              "median",
+              "stdev"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "Top": {
+          "description": "The n rows with the largest field (\"asc\": the smallest)",
+          "params": {
+            "type": "object",
+            "properties": {
+              "rows": {
+                "maxItems": 160,
+                "type": "array",
+                "items": {}
+              },
+              "field": {
+                "type": "string"
+              },
+              "n": {
+                "type": "number"
+              },
+              "direction": {
+                "type": "string",
+                "enum": [
+                  "desc",
+                  "asc"
+                ]
+              }
+            },
+            "required": [
+              "rows",
+              "field",
+              "n"
+            ],
+            "additionalProperties": false
+          },
+          "returns": {
+            "type": "array",
+            "items": {}
+          }
+        },
+        "AddDays": {
+          "description": "Add a whole number of days to a supplied YYYY-MM-DD calendar date. Negative values go backwards.",
+          "params": {
+            "type": "object",
+            "properties": {
+              "date": {
+                "type": "string",
+                "pattern": "^[1-9]\\d{3}-\\d{2}-\\d{2}$"
+              },
+              "days": {
+                "type": "integer",
+                "minimum": -366000,
+                "maximum": 366000
+              }
+            },
+            "required": [
+              "date",
+              "days"
+            ],
+            "additionalProperties": false
+          },
+          "returns": {
+            "type": "string",
+            "pattern": "^[1-9]\\d{3}-\\d{2}-\\d{2}$"
+          }
+        },
+        "AddMonths": {
+          "description": "Add whole calendar months to a supplied YYYY-MM-DD date. Jan 31 plus one month is the last day of February.",
+          "params": {
+            "type": "object",
+            "properties": {
+              "date": {
+                "type": "string",
+                "pattern": "^[1-9]\\d{3}-\\d{2}-\\d{2}$"
+              },
+              "months": {
+                "type": "integer",
+                "minimum": -12000,
+                "maximum": 12000
+              }
+            },
+            "required": [
+              "date",
+              "months"
+            ],
+            "additionalProperties": false
+          },
+          "returns": {
+            "type": "string",
+            "pattern": "^[1-9]\\d{3}-\\d{2}-\\d{2}$"
+          }
+        },
+        "DaysBetween": {
+          "description": "Calendar days from one supplied YYYY-MM-DD date to another. Negative if the second date is earlier.",
+          "params": {
+            "type": "object",
+            "properties": {
+              "from": {
+                "type": "string",
+                "pattern": "^[1-9]\\d{3}-\\d{2}-\\d{2}$"
+              },
+              "to": {
+                "type": "string",
+                "pattern": "^[1-9]\\d{3}-\\d{2}-\\d{2}$"
+              }
+            },
+            "required": [
+              "from",
+              "to"
+            ],
+            "additionalProperties": false
+          },
+          "returns": {
+            "type": "number"
+          }
+        },
+        "StartOf": {
+          "description": "First day of the supplied YYYY-MM-DD date’s week (Monday), month or year.",
+          "params": {
+            "type": "object",
+            "properties": {
+              "date": {
+                "type": "string",
+                "pattern": "^[1-9]\\d{3}-\\d{2}-\\d{2}$"
+              },
+              "unit": {
+                "type": "string",
+                "enum": [
+                  "week",
+                  "month",
+                  "year"
+                ]
+              }
+            },
+            "required": [
+              "date",
+              "unit"
+            ],
+            "additionalProperties": false
+          },
+          "returns": {
+            "type": "string",
+            "pattern": "^[1-9]\\d{3}-\\d{2}-\\d{2}$"
+          }
+        },
+        "Chunk": {
+          "description": "Split a bounded local list into consecutive batches of the specified size.",
+          "params": {
+            "type": "object",
+            "properties": {
+              "list": {
+                "maxItems": 160,
+                "type": "array",
+                "items": {}
+              },
+              "size": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 160
+              }
+            },
+            "required": [
+              "list",
+              "size"
+            ],
+            "additionalProperties": false
+          },
+          "returns": {
+            "maxItems": 160,
+            "type": "array",
+            "items": {
+              "maxItems": 160,
+              "type": "array",
+              "items": {}
+            }
+          }
+        },
+        "Find": {
+          "description": "First local row whose field equals the supplied value, or null. Empty field compares the whole item.",
+          "params": {
+            "type": "object",
+            "properties": {
+              "list": {
+                "maxItems": 160,
+                "type": "array",
+                "items": {}
+              },
+              "field": {
+                "type": "string",
+                "maxLength": 120
+              },
+              "value": {}
+            },
+            "required": [
+              "list",
+              "field",
+              "value"
+            ],
+            "additionalProperties": false
+          },
+          "returns": {}
+        },
+        "Includes": {
+          "description": "Whether a local list contains a value, or a string contains the supplied text.",
+          "params": {
+            "type": "object",
+            "properties": {
+              "list": {
+                "anyOf": [
+                  {
+                    "maxItems": 160,
+                    "type": "array",
+                    "items": {}
+                  },
+                  {
+                    "type": "string",
+                    "maxLength": 8000
+                  }
+                ]
+              },
+              "item": {}
+            },
+            "required": [
+              "list",
+              "item"
+            ],
+            "additionalProperties": false
+          },
+          "returns": {
+            "type": "boolean"
+          }
+        },
+        "MixColor": {
+          "description": "Blend two hex colors at a fraction t from 0 to 1 for a local tint. Keep text contrast and prefer semantic theme tokens for ordinary text.",
+          "params": {
+            "type": "object",
+            "properties": {
+              "from": {
+                "type": "string",
+                "pattern": "^#?[\\da-f]{3}(?:[\\da-f]{3})?$"
+              },
+              "to": {
+                "type": "string",
+                "pattern": "^#?[\\da-f]{3}(?:[\\da-f]{3})?$"
+              },
+              "t": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "from",
+              "to",
+              "t"
+            ],
+            "additionalProperties": false
+          },
+          "returns": {
+            "type": "string",
+            "pattern": "^#?[\\da-f]{3}(?:[\\da-f]{3})?$"
+          }
+        },
+        "Reverse": {
+          "description": "A local list in reverse order without changing the original.",
+          "params": {
+            "type": "object",
+            "properties": {
+              "list": {
+                "maxItems": 160,
+                "type": "array",
+                "items": {}
+              }
+            },
+            "required": [
+              "list"
+            ],
+            "additionalProperties": false
+          },
+          "returns": {
+            "maxItems": 160,
+            "type": "array",
+            "items": {}
+          }
+        },
+        "Slice": {
+          "description": "Local items or text from start up to end (exclusive). Negative indices count from the end.",
+          "params": {
+            "type": "object",
+            "properties": {
+              "list": {
+                "anyOf": [
+                  {
+                    "maxItems": 160,
+                    "type": "array",
+                    "items": {}
+                  },
+                  {
+                    "type": "string",
+                    "maxLength": 8000
+                  }
+                ]
+              },
+              "start": {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              },
+              "end": {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": [
+              "list",
+              "start"
+            ],
+            "additionalProperties": false
+          },
+          "returns": {
+            "anyOf": [
+              {
+                "maxItems": 160,
+                "type": "array",
+                "items": {}
+              },
+              {
+                "type": "string",
+                "maxLength": 8000
+              }
+            ]
+          }
+        },
+        "Take": {
+          "description": "First n items from a local list, or the last n when n is negative.",
+          "params": {
+            "type": "object",
+            "properties": {
+              "list": {
+                "maxItems": 160,
+                "type": "array",
+                "items": {}
+              },
+              "n": {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": [
+              "list",
+              "n"
+            ],
+            "additionalProperties": false
+          },
+          "returns": {
+            "maxItems": 160,
+            "type": "array",
+            "items": {}
+          }
+        }
+      }
+    },
+    "id": "xroga-native-v1"
+  },
+  "schema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "Col": {
+        "$ref": "#/$defs/Col"
+      },
+      "Row": {
+        "$ref": "#/$defs/Row"
+      },
+      "Box": {
+        "$ref": "#/$defs/Box"
+      },
+      "Grid": {
+        "$ref": "#/$defs/Grid"
+      },
+      "Card": {
+        "$ref": "#/$defs/Card"
+      },
+      "Carousel": {
+        "$ref": "#/$defs/Carousel"
+      },
+      "Popover": {
+        "$ref": "#/$defs/Popover"
+      },
+      "Tabs": {
+        "$ref": "#/$defs/Tabs"
+      },
+      "Divider": {
+        "$ref": "#/$defs/Divider"
+      },
+      "Spacer": {
+        "$ref": "#/$defs/Spacer"
+      },
+      "Title": {
+        "$ref": "#/$defs/Title"
+      },
+      "Text": {
+        "$ref": "#/$defs/Text"
+      },
+      "Caption": {
+        "$ref": "#/$defs/Caption"
+      },
+      "Label": {
+        "$ref": "#/$defs/Label"
+      },
+      "Badge": {
+        "$ref": "#/$defs/Badge"
+      },
+      "List": {
+        "$ref": "#/$defs/List"
+      },
+      "ListItem": {
+        "$ref": "#/$defs/ListItem"
+      },
+      "Markdown": {
+        "$ref": "#/$defs/Markdown"
+      },
+      "Quote": {
+        "$ref": "#/$defs/Quote"
+      },
+      "Code": {
+        "$ref": "#/$defs/Code"
+      },
+      "Math": {
+        "$ref": "#/$defs/Math"
+      },
+      "Section": {
+        "$ref": "#/$defs/Section"
+      },
+      "Metric": {
+        "$ref": "#/$defs/Metric"
+      },
+      "Controls": {
+        "$ref": "#/$defs/Controls"
+      },
+      "Diagram": {
+        "$ref": "#/$defs/Diagram"
+      },
+      "Form": {
+        "$ref": "#/$defs/Form"
+      },
+      "Input": {
+        "$ref": "#/$defs/Input"
+      },
+      "TextArea": {
+        "$ref": "#/$defs/TextArea"
+      },
+      "Slider": {
+        "$ref": "#/$defs/Slider"
+      },
+      "Select": {
+        "$ref": "#/$defs/Select"
+      },
+      "Checkbox": {
+        "$ref": "#/$defs/Checkbox"
+      },
+      "RadioGroup": {
+        "$ref": "#/$defs/RadioGroup"
+      },
+      "SegmentedControl": {
+        "$ref": "#/$defs/SegmentedControl"
+      },
+      "DatePicker": {
+        "$ref": "#/$defs/DatePicker"
+      },
+      "ChoicePicker": {
+        "$ref": "#/$defs/ChoicePicker"
+      },
+      "Timer": {
+        "$ref": "#/$defs/Timer"
+      },
+      "Button": {
+        "$ref": "#/$defs/Button"
+      },
+      "IconButton": {
+        "$ref": "#/$defs/IconButton"
+      },
+      "Pressable": {
+        "$ref": "#/$defs/Pressable"
+      },
+      "Flashcard": {
+        "$ref": "#/$defs/Flashcard"
+      },
+      "Source": {
+        "$ref": "#/$defs/Source"
+      },
+      "Resource": {
+        "$ref": "#/$defs/Resource"
+      },
+      "Icon": {
+        "$ref": "#/$defs/Icon"
+      },
+      "Table": {
+        "$ref": "#/$defs/Table"
+      },
+      "Chart": {
+        "$ref": "#/$defs/Chart"
+      },
+      "Svg": {
+        "$ref": "#/$defs/Svg"
+      },
+      "Circle": {
+        "$ref": "#/$defs/Circle"
+      },
+      "Ellipse": {
+        "$ref": "#/$defs/Ellipse"
+      },
+      "Rect": {
+        "$ref": "#/$defs/Rect"
+      },
+      "Line": {
+        "$ref": "#/$defs/Line"
+      },
+      "Path": {
+        "$ref": "#/$defs/Path"
+      },
+      "Polyline": {
+        "$ref": "#/$defs/Polyline"
+      },
+      "Polygon": {
+        "$ref": "#/$defs/Polygon"
+      },
+      "G": {
+        "$ref": "#/$defs/G"
+      },
+      "SvgText": {
+        "$ref": "#/$defs/SvgText"
+      }
+    },
+    "required": [
+      "Col",
+      "Row",
+      "Box",
+      "Grid",
+      "Card",
+      "Carousel",
+      "Popover",
+      "Tabs",
+      "Divider",
+      "Spacer",
+      "Title",
+      "Text",
+      "Caption",
+      "Label",
+      "Badge",
+      "List",
+      "ListItem",
+      "Markdown",
+      "Quote",
+      "Code",
+      "Math",
+      "Section",
+      "Metric",
+      "Controls",
+      "Diagram",
+      "Form",
+      "Input",
+      "TextArea",
+      "Slider",
+      "Select",
+      "Checkbox",
+      "RadioGroup",
+      "SegmentedControl",
+      "DatePicker",
+      "ChoicePicker",
+      "Timer",
+      "Button",
+      "IconButton",
+      "Pressable",
+      "Flashcard",
+      "Source",
+      "Resource",
+      "Icon",
+      "Table",
+      "Chart",
+      "Svg",
+      "Circle",
+      "Ellipse",
+      "Rect",
+      "Line",
+      "Path",
+      "Polyline",
+      "Polygon",
+      "G",
+      "SvgText"
+    ],
+    "additionalProperties": false,
+    "$defs": {
+      "Col": {
+        "type": "object",
+        "properties": {
+          "children": {
+            "type": "array",
+            "items": {}
+          },
+          "gap": {
+            "type": "number"
+          },
+          "align": {
+            "type": "string",
+            "enum": [
+              "start",
+              "center",
+              "end",
+              "stretch"
+            ]
+          }
+        },
+        "required": [
+          "children"
+        ],
+        "additionalProperties": false,
+        "description": "Vertical layout. Without gap it spaces blocks like an article."
+      },
+      "Row": {
+        "type": "object",
+        "properties": {
+          "children": {
+            "type": "array",
+            "items": {}
+          },
+          "gap": {
+            "type": "number"
+          },
+          "align": {
+            "type": "string",
+            "enum": [
+              "start",
+              "center",
+              "end",
+              "stretch"
+            ]
+          },
+          "justify": {
+            "type": "string",
+            "enum": [
+              "start",
+              "center",
+              "end",
+              "between"
+            ]
+          },
+          "wrap": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "children"
+        ],
+        "additionalProperties": false,
+        "description": "Horizontal layout; items are vertically centered."
+      },
+      "Box": {
+        "type": "object",
+        "properties": {
+          "children": {
+            "type": "array",
+            "items": {}
+          },
+          "direction": {
+            "type": "string",
+            "enum": [
+              "row",
+              "col"
+            ]
+          },
+          "gap": {
+            "type": "number"
+          },
+          "padding": {
+            "type": "number"
+          },
+          "background": {
+            "type": "string"
+          },
+          "radius": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "sm",
+                  "md",
+                  "lg",
+                  "xl",
+                  "full"
+                ]
+              },
+              {
+                "type": "number"
+              }
+            ]
+          },
+          "border": {
+            "type": "boolean"
+          },
+          "width": {
+            "type": [
+              "number",
+              "string"
+            ]
+          },
+          "height": {
+            "type": [
+              "number",
+              "string"
+            ]
+          },
+          "flex": {
+            "type": "number"
+          },
+          "align": {
+            "type": "string",
+            "enum": [
+              "start",
+              "center",
+              "end",
+              "stretch"
+            ]
+          },
+          "justify": {
+            "type": "string",
+            "enum": [
+              "start",
+              "center",
+              "end",
+              "between"
+            ]
+          },
+          "wrap": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Flex container, a column by default. radius also clips the content."
+      },
+      "Grid": {
+        "type": "object",
+        "properties": {
+          "children": {
+            "type": "array",
+            "items": {}
+          },
+          "columns": {
+            "type": "number"
+          },
+          "minChildWidth": {
+            "type": "number"
+          },
+          "gap": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "children"
+        ],
+        "additionalProperties": false,
+        "description": "Equal columns (default 2). With minChildWidth (px), columns drop on narrow screens."
+      },
+      "Card": {
+        "type": "object",
+        "properties": {
+          "children": {
+            "type": "array",
+            "items": {}
+          },
+          "variant": {
+            "type": "string",
+            "enum": [
+              "outline",
+              "soft"
+            ]
+          },
+          "padding": {
+            "type": "number"
+          },
+          "gap": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "children"
+        ],
+        "additionalProperties": false,
+        "description": "Panel with a border; soft is a filled panel for summaries."
+      },
+      "Carousel": {
+        "type": "object",
+        "properties": {
+          "children": {
+            "type": "array",
+            "items": {}
+          },
+          "itemWidth": {
+            "type": "number"
+          },
+          "gap": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "children"
+        ],
+        "additionalProperties": false,
+        "description": "Horizontal row that scrolls and snaps, each child an item itemWidth px wide (default 240): photos, cards, options, days."
+      },
+      "Popover": {
+        "type": "object",
+        "properties": {
+          "trigger": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "array",
+                "items": {}
+              }
+            ]
+          },
+          "content": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "array",
+                "items": {}
+              }
+            ]
+          }
+        },
+        "required": [
+          "trigger",
+          "content"
+        ],
+        "additionalProperties": false,
+        "description": "Shows content in a small panel when the trigger is clicked: a definition, a source, details behind an Icon(\"info\", \"sm\")."
+      },
+      "Tabs": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80
+          },
+          "tabs": {
+            "minItems": 2,
+            "maxItems": 6,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 64
+                },
+                "content": {
+                  "type": "array",
+                  "items": {}
+                }
+              },
+              "required": [
+                "title",
+                "content"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "label",
+          "tabs"
+        ],
+        "additionalProperties": false,
+        "description": "Keyboard-accessible optional views or scenarios. Put all essential conclusions in visible content outside the tabs."
+      },
+      "Divider": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      },
+      "Spacer": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false,
+        "description": "Fills the free space in a Row."
+      },
+      "Title": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string"
+          },
+          "size": {
+            "type": "string",
+            "enum": [
+              "sm",
+              "md",
+              "lg",
+              "xl",
+              "2xl",
+              "3xl"
+            ]
+          },
+          "color": {
+            "type": "string"
+          },
+          "level": {
+            "type": "string",
+            "enum": [
+              "2",
+              "3",
+              "4"
+            ]
+          }
+        },
+        "required": [
+          "text"
+        ],
+        "additionalProperties": false,
+        "description": "Heading. Size is visual; level is 2 by default, 3 for subsections and 4 only within a subsection."
+      },
+      "Text": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "array",
+                "items": {}
+              }
+            ]
+          },
+          "size": {
+            "type": "string",
+            "enum": [
+              "xs",
+              "sm",
+              "md",
+              "lg"
+            ]
+          },
+          "color": {
+            "type": "string"
+          },
+          "weight": {
+            "type": "string",
+            "enum": [
+              "normal",
+              "medium",
+              "semibold"
+            ]
+          },
+          "italic": {
+            "type": "boolean"
+          },
+          "lineThrough": {
+            "type": "boolean"
+          },
+          "tabularNums": {
+            "type": "boolean"
+          },
+          "maxLines": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "text"
+        ],
+        "additionalProperties": false,
+        "description": "Paragraph with bold, italic and code. Inline components can include Source, Icon, or Badge. Only use verified Source IDs for links."
+      },
+      "Caption": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string"
+          },
+          "color": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "text"
+        ],
+        "additionalProperties": false,
+        "description": "Small secondary text."
+      },
+      "Label": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "text"
+        ],
+        "additionalProperties": false,
+        "description": "Field or group label."
+      },
+      "Badge": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string"
+          },
+          "color": {
+            "type": "string",
+            "enum": [
+              "neutral",
+              "info",
+              "success",
+              "warning",
+              "danger",
+              "purple",
+              "pink"
+            ]
+          },
+          "icon": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "text"
+        ],
+        "additionalProperties": false,
+        "description": "Pill tag; icon is an optional leading lucide name."
+      },
+      "List": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/$defs/ListItem"
+                }
+              ]
+            }
+          },
+          "marker": {
+            "type": "string",
+            "enum": [
+              "bullet",
+              "number",
+              "none",
+              "timeline"
+            ]
+          },
+          "timeline": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "additionalProperties": false,
+        "description": "timeline joins the markers with a line. The timeline marker is shorthand for a numbered timeline."
+      },
+      "ListItem": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "marker": {
+            "type": "string"
+          },
+          "children": {
+            "type": "array",
+            "items": {}
+          }
+        },
+        "required": [
+          "title"
+        ],
+        "additionalProperties": false,
+        "description": "marker replaces the bullet or number, e.g. a time or an emoji."
+      },
+      "Markdown": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "text"
+        ],
+        "additionalProperties": false,
+        "description": "Prose with headings, lists, quotes, code and tables."
+      },
+      "Quote": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string"
+          },
+          "cite": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "text"
+        ],
+        "additionalProperties": false,
+        "description": "A quotation or a callout with a side rule; cite names the source."
+      },
+      "Code": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "language": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "code"
+        ],
+        "additionalProperties": false,
+        "description": "Code block with a copy button."
+      },
+      "Math": {
+        "type": "object",
+        "properties": {
+          "tex": {
+            "type": "string"
+          },
+          "inline": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "tex"
+        ],
+        "additionalProperties": false,
+        "description": "LaTeX formula, e.g. Math(\"E = mc^2\"); inline true to sit in a Text list."
+      },
+      "Section": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "children": {
+            "type": "array",
+            "items": {}
+          },
+          "introduction": {
+            "type": "string",
+            "maxLength": 450
+          },
+          "icon": {
+            "type": "string",
+            "maxLength": 48
+          }
+        },
+        "required": [
+          "title",
+          "children"
+        ],
+        "additionalProperties": false,
+        "description": "A meaningful subsection. Group its explanation and relevant components together. Use a short heading and optional orientation sentence."
+      },
+      "Metric": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80
+          },
+          "value": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 100
+              },
+              {
+                "type": "number"
+              }
+            ]
+          },
+          "note": {
+            "type": "string",
+            "maxLength": 160
+          },
+          "tone": {
+            "type": "string",
+            "enum": [
+              "neutral",
+              "info",
+              "success",
+              "warning",
+              "danger"
+            ]
+          }
+        },
+        "required": [
+          "label",
+          "value"
+        ],
+        "additionalProperties": false,
+        "description": "A prominent single measured or calculated value. Include the unit in a formatted value or the label. Use note for the basis. Tone denotes meaning, not verification."
+      },
+      "Controls": {
+        "type": "object",
+        "properties": {
+          "children": {
+            "type": "array",
+            "items": {}
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80
+          },
+          "columns": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 3
+          }
+        },
+        "required": [
+          "children",
+          "label"
+        ],
+        "additionalProperties": false,
+        "description": "Group related local inputs and reset controls. Name what the inputs change. Multiple columns stack at phone widths."
+      },
+      "Diagram": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "nodes": {
+            "minItems": 2,
+            "maxItems": 12,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "pattern": "^[a-z][a-z0-9-]{0,31}$"
+                },
+                "label": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 45
+                },
+                "level": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 5
+                },
+                "detail": {
+                  "type": "string",
+                  "maxLength": 66
+                },
+                "tone": {
+                  "type": "string",
+                  "enum": [
+                    "neutral",
+                    "info",
+                    "success",
+                    "purple",
+                    "warning"
+                  ]
+                },
+                "icon": {
+                  "type": "string",
+                  "maxLength": 36
+                }
+              },
+              "required": [
+                "id",
+                "label",
+                "level"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "links": {
+            "minItems": 1,
+            "maxItems": 18,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "from": {
+                  "type": "string",
+                  "maxLength": 32
+                },
+                "to": {
+                  "type": "string",
+                  "maxLength": 32
+                },
+                "label": {
+                  "type": "string",
+                  "maxLength": 38
+                }
+              },
+              "required": [
+                "from",
+                "to"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 360
+          }
+        },
+        "required": [
+          "title",
+          "nodes",
+          "links",
+          "description"
+        ],
+        "additionalProperties": false,
+        "description": "Connected technical diagram with labeled relationships and a concise text equivalent. Group peers on the same level (up to three per level); use increasing levels for downstream components. Choose role-specific tones and meaningful links, not a duplicate list."
+      },
+      "Form": {
+        "type": "object",
+        "properties": {
+          "children": {
+            "type": "array",
+            "items": {}
+          }
+        },
+        "required": [
+          "children"
+        ],
+        "additionalProperties": false,
+        "description": "Groups fields for local interaction. Use Controls for a named set of inputs."
+      },
+      "Input": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": [
+              "string",
+              "number"
+            ]
+          },
+          "label": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "text",
+              "number"
+            ]
+          },
+          "placeholder": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "value"
+        ],
+        "additionalProperties": false,
+        "description": "Text or number field; a number field stores numbers."
+      },
+      "TextArea": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "placeholder": {
+            "type": "string"
+          },
+          "rows": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "value"
+        ],
+        "additionalProperties": false
+      },
+      "Slider": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "number"
+          },
+          "min": {
+            "type": "number"
+          },
+          "max": {
+            "type": "number"
+          },
+          "step": {
+            "type": "number"
+          },
+          "label": {
+            "type": "string"
+          },
+          "unit": {
+            "type": "string"
+          },
+          "marks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "number"
+                },
+                "label": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "value",
+                "label"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "value",
+          "min",
+          "max"
+        ],
+        "additionalProperties": false,
+        "description": "Shows label and value; unit like \"%\" or \"$\" formats the value."
+      },
+      "Select": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string"
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "value": {
+                      "type": "string"
+                    },
+                    "label": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "value",
+                    "label"
+                  ],
+                  "additionalProperties": false
+                }
+              ]
+            }
+          },
+          "label": {
+            "type": "string"
+          },
+          "placeholder": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "value",
+          "options"
+        ],
+        "additionalProperties": false,
+        "description": "Dropdown, for long option lists."
+      },
+      "Checkbox": {
+        "type": "object",
+        "properties": {
+          "checked": {
+            "type": "boolean"
+          },
+          "label": {
+            "type": "string"
+          },
+          "lineThrough": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "checked",
+          "label"
+        ],
+        "additionalProperties": false,
+        "description": "lineThrough strikes the label when checked, for to-do lists."
+      },
+      "RadioGroup": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string"
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "value": {
+                      "type": "string"
+                    },
+                    "label": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "value",
+                    "label"
+                  ],
+                  "additionalProperties": false
+                }
+              ]
+            }
+          },
+          "label": {
+            "type": "string"
+          },
+          "variant": {
+            "type": "string",
+            "enum": [
+              "list",
+              "pills",
+              "cards"
+            ]
+          }
+        },
+        "required": [
+          "value",
+          "options"
+        ],
+        "additionalProperties": false,
+        "description": "pills for short choices; cards for choices that need a description line."
+      },
+      "SegmentedControl": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string"
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "value": {
+                      "type": "string"
+                    },
+                    "label": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "value",
+                    "label"
+                  ],
+                  "additionalProperties": false
+                }
+              ]
+            }
+          },
+          "block": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "value",
+          "options"
+        ],
+        "additionalProperties": false,
+        "description": "2 to 4 short choices in a row."
+      },
+      "DatePicker": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "min": {
+            "type": "string"
+          },
+          "max": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "value"
+        ],
+        "additionalProperties": false,
+        "description": "Dates are \"YYYY-MM-DD\"."
+      },
+      "ChoicePicker": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "maxLength": 80
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80
+          },
+          "options": {
+            "minItems": 2,
+            "maxItems": 16,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 80
+                },
+                "label": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 80
+                },
+                "description": {
+                  "type": "string",
+                  "maxLength": 140
+                }
+              },
+              "required": [
+                "value",
+                "label"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "value",
+          "label",
+          "options"
+        ],
+        "additionalProperties": false,
+        "description": "Search named options and apply one choice to local presentation state. Useful when reviewing a scenario before changing a calculation. It never approves or performs an external action."
+      },
+      "Timer": {
+        "type": "object",
+        "properties": {
+          "seconds": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 3600
+          },
+          "label": {
+            "type": "string",
+            "maxLength": 100
+          }
+        },
+        "required": [
+          "seconds"
+        ],
+        "additionalProperties": false,
+        "description": "User-started local countdown, at most 3600 seconds, with pause and reset. Bind a scalar such as $left to show a completion message. It is not a reminder or scheduled task."
+      },
+      "Button": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string"
+          },
+          "action": {
+            "$ref": "#/$defs/ActionExpression"
+          },
+          "variant": {
+            "type": "string",
+            "enum": [
+              "solid",
+              "outline",
+              "soft",
+              "ghost"
+            ]
+          },
+          "color": {
+            "type": "string",
+            "enum": [
+              "primary",
+              "danger",
+              "success"
+            ]
+          },
+          "size": {
+            "type": "string",
+            "enum": [
+              "sm",
+              "md",
+              "lg"
+            ]
+          },
+          "icon": {
+            "type": "string"
+          },
+          "disabled": {
+            "type": "boolean"
+          },
+          "block": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "label"
+        ],
+        "additionalProperties": false,
+        "description": "icon is a lucide name."
+      },
+      "ActionExpression": {
+        "anyOf": [
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "open_url"
+              },
+              "url": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "type",
+              "url"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "continue_conversation"
+              },
+              "context": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "type"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string"
+              },
+              "params": {
+                "type": "object",
+                "propertyNames": {
+                  "type": "string"
+                },
+                "additionalProperties": {}
+              }
+            },
+            "required": [
+              "type"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      },
+      "IconButton": {
+        "type": "object",
+        "properties": {
+          "icon": {
+            "type": "string"
+          },
+          "action": {
+            "$ref": "#/$defs/ActionExpression"
+          },
+          "label": {
+            "type": "string"
+          },
+          "variant": {
+            "type": "string",
+            "enum": [
+              "outline",
+              "ghost",
+              "solid"
+            ]
+          }
+        },
+        "required": [
+          "icon"
+        ],
+        "additionalProperties": false,
+        "description": "Round icon-only button; label is read aloud."
+      },
+      "Pressable": {
+        "type": "object",
+        "properties": {
+          "children": {
+            "type": "array",
+            "items": {}
+          },
+          "action": {
+            "$ref": "#/$defs/ActionExpression"
+          },
+          "selected": {
+            "type": "boolean"
+          },
+          "padding": {
+            "type": "number"
+          },
+          "background": {
+            "type": "string"
+          },
+          "radius": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "sm",
+                  "md",
+                  "lg",
+                  "xl",
+                  "full"
+                ]
+              },
+              {
+                "type": "number"
+              }
+            ]
+          }
+        },
+        "required": [
+          "children"
+        ],
+        "additionalProperties": false,
+        "description": "Makes any content clickable, such as a tile or a swatch."
+      },
+      "Flashcard": {
+        "type": "object",
+        "properties": {
+          "front": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "array",
+                "items": {}
+              }
+            ]
+          },
+          "back": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "array",
+                "items": {}
+              }
+            ]
+          },
+          "hint": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "front",
+          "back"
+        ],
+        "additionalProperties": false,
+        "description": "Card that flips between front and back when tapped. Put several in a Carousel or Grid."
+      },
+      "Source": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 120
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "additionalProperties": false,
+        "description": "Link to one source by the exact evidence ID supplied by Xroga. Omit when no IDs were supplied."
+      },
+      "Resource": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string",
+            "enum": [
+              "nextjs",
+              "supabase",
+              "stripe",
+              "postgresql",
+              "react",
+              "vercel",
+              "github",
+              "cloudflare"
+            ]
+          },
+          "role": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 180
+          }
+        },
+        "required": [
+          "key",
+          "role"
+        ],
+        "additionalProperties": false,
+        "description": "An official product link and a concise explanation of its role. Use only for a product relevant to the user. This link is a reference, not retrieved evidence."
+      },
+      "Icon": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "size": {
+            "type": "string",
+            "enum": [
+              "sm",
+              "md",
+              "lg",
+              "xl"
+            ]
+          },
+          "color": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "additionalProperties": false,
+        "description": "An installed Lucide icon by kebab-case name, e.g. plane, wallet, microscope or calendar-days. Optional semantic color and size."
+      },
+      "Table": {
+        "type": "object",
+        "properties": {
+          "columns": {
+            "minItems": 1,
+            "maxItems": 12,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "rows": {
+            "maxItems": 120,
+            "type": "array",
+            "items": {
+              "maxItems": 12,
+              "type": "array",
+              "items": {}
+            }
+          }
+        },
+        "required": [
+          "columns",
+          "rows"
+        ],
+        "additionalProperties": false,
+        "description": "Each row lists its cells in column order; a cell may be a component. Number columns align right."
+      },
+      "Chart": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "bar",
+              "line",
+              "area",
+              "pie",
+              "donut",
+              "scatter"
+            ]
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "propertyNames": {
+                "type": "string"
+              },
+              "additionalProperties": {
+                "type": [
+                  "string",
+                  "number"
+                ]
+              }
+            }
+          },
+          "x": {
+            "type": "string"
+          },
+          "series": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "format": {
+            "type": "string",
+            "enum": [
+              "number",
+              "currency",
+              "percent"
+            ]
+          },
+          "currency": {
+            "type": "string"
+          },
+          "stacked": {
+            "type": "boolean"
+          },
+          "height": {
+            "type": "number"
+          },
+          "presentation": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string",
+                "maxLength": 120
+              },
+              "xLabel": {
+                "type": "string",
+                "maxLength": 80
+              },
+              "yLabel": {
+                "type": "string",
+                "maxLength": 80
+              },
+              "note": {
+                "type": "string",
+                "maxLength": 240
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "type",
+          "data"
+        ],
+        "additionalProperties": false,
+        "description": "Chart from exact numeric rows. Set x, series, and presentation labels with units. Scatter x is numeric. Percent values are like 45; use a currency code like \"USD\"."
+      },
+      "Svg": {
+        "type": "object",
+        "properties": {
+          "children": {
+            "type": "array",
+            "items": {}
+          },
+          "viewBox": {
+            "type": "string"
+          },
+          "width": {
+            "type": [
+              "number",
+              "string"
+            ]
+          },
+          "height": {
+            "type": [
+              "number",
+              "string"
+            ]
+          },
+          "label": {
+            "type": "string",
+            "maxLength": 120
+          }
+        },
+        "required": [
+          "children",
+          "viewBox"
+        ],
+        "additionalProperties": false,
+        "description": "A drawing for steps, parts, mechanisms, diagrams and layouts. Scales to its width. Provide a descriptive label and nearby prose explaining the relationships."
+      },
+      "Circle": {
+        "type": "object",
+        "properties": {
+          "cx": {
+            "type": "number"
+          },
+          "cy": {
+            "type": "number"
+          },
+          "r": {
+            "type": "number"
+          },
+          "fill": {
+            "type": "string"
+          },
+          "stroke": {
+            "type": "string"
+          },
+          "strokeWidth": {
+            "type": "number"
+          },
+          "opacity": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "cx",
+          "cy",
+          "r"
+        ],
+        "additionalProperties": false
+      },
+      "Ellipse": {
+        "type": "object",
+        "properties": {
+          "cx": {
+            "type": "number"
+          },
+          "cy": {
+            "type": "number"
+          },
+          "rx": {
+            "type": "number"
+          },
+          "ry": {
+            "type": "number"
+          },
+          "fill": {
+            "type": "string"
+          },
+          "stroke": {
+            "type": "string"
+          },
+          "strokeWidth": {
+            "type": "number"
+          },
+          "opacity": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "cx",
+          "cy",
+          "rx",
+          "ry"
+        ],
+        "additionalProperties": false
+      },
+      "Rect": {
+        "type": "object",
+        "properties": {
+          "x": {
+            "type": "number"
+          },
+          "y": {
+            "type": "number"
+          },
+          "width": {
+            "type": "number"
+          },
+          "height": {
+            "type": "number"
+          },
+          "fill": {
+            "type": "string"
+          },
+          "stroke": {
+            "type": "string"
+          },
+          "strokeWidth": {
+            "type": "number"
+          },
+          "opacity": {
+            "type": "number"
+          },
+          "rx": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "x",
+          "y",
+          "width",
+          "height"
+        ],
+        "additionalProperties": false
+      },
+      "Line": {
+        "type": "object",
+        "properties": {
+          "x1": {
+            "type": "number"
+          },
+          "y1": {
+            "type": "number"
+          },
+          "x2": {
+            "type": "number"
+          },
+          "y2": {
+            "type": "number"
+          },
+          "stroke": {
+            "type": "string"
+          },
+          "strokeWidth": {
+            "type": "number"
+          },
+          "opacity": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "x1",
+          "y1",
+          "x2",
+          "y2"
+        ],
+        "additionalProperties": false
+      },
+      "Path": {
+        "type": "object",
+        "properties": {
+          "d": {
+            "type": "string"
+          },
+          "fill": {
+            "type": "string"
+          },
+          "stroke": {
+            "type": "string"
+          },
+          "strokeWidth": {
+            "type": "number"
+          },
+          "opacity": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "d"
+        ],
+        "additionalProperties": false
+      },
+      "Polyline": {
+        "type": "object",
+        "properties": {
+          "points": {
+            "type": "string"
+          },
+          "stroke": {
+            "type": "string"
+          },
+          "strokeWidth": {
+            "type": "number"
+          },
+          "fill": {
+            "type": "string"
+          },
+          "opacity": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "points"
+        ],
+        "additionalProperties": false,
+        "description": "points like \"0,0 10,5 20,0\"."
+      },
+      "Polygon": {
+        "type": "object",
+        "properties": {
+          "points": {
+            "type": "string"
+          },
+          "fill": {
+            "type": "string"
+          },
+          "stroke": {
+            "type": "string"
+          },
+          "strokeWidth": {
+            "type": "number"
+          },
+          "opacity": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "points"
+        ],
+        "additionalProperties": false
+      },
+      "G": {
+        "type": "object",
+        "properties": {
+          "children": {
+            "type": "array",
+            "items": {}
+          },
+          "transform": {
+            "type": "string"
+          },
+          "opacity": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "children"
+        ],
+        "additionalProperties": false,
+        "description": "Group; transform like \"rotate(30 50 50)\" or \"translate(10 0)\"."
+      },
+      "SvgText": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string"
+          },
+          "x": {
+            "type": "number"
+          },
+          "y": {
+            "type": "number"
+          },
+          "size": {
+            "type": "number"
+          },
+          "fill": {
+            "type": "string"
+          },
+          "anchor": {
+            "type": "string",
+            "enum": [
+              "start",
+              "middle",
+              "end"
+            ]
+          },
+          "weight": {
+            "type": "string",
+            "enum": [
+              "normal",
+              "medium",
+              "semibold"
+            ]
+          }
+        },
+        "required": [
+          "text",
+          "x",
+          "y"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "functions": {
+      "Clamp": {
+        "description": "number kept between min and max",
+        "params": {
+          "type": "object",
+          "properties": {
+            "number": {
+              "type": "number"
+            },
+            "min": {
+              "type": "number"
+            },
+            "max": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "number",
+            "min",
+            "max"
+          ],
+          "additionalProperties": false
+        },
+        "returns": {
+          "type": "number"
+        }
+      },
+      "Convert": {
+        "description": "value from one unit to another: mm cm m km in ft yd mi; mg g kg oz lb st; ml l tsp tbsp floz cup pt qt gal (US); m/s km/h mph kn; m2 km2 ft2 ha acre; c f k",
+        "params": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "number"
+            },
+            "from": {
+              "type": "string"
+            },
+            "to": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "value",
+            "from",
+            "to"
+          ],
+          "additionalProperties": false
+        },
+        "returns": {
+          "type": "number"
+        }
+      },
+      "Lerp": {
+        "description": "The value a fraction t of the way from a to b",
+        "params": {
+          "type": "object",
+          "properties": {
+            "a": {
+              "type": "number"
+            },
+            "b": {
+              "type": "number"
+            },
+            "t": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "a",
+            "b",
+            "t"
+          ],
+          "additionalProperties": false
+        },
+        "returns": {
+          "type": "number"
+        }
+      },
+      "Payment": {
+        "description": "Payment per period that repays principal over periods at rate percent per period, e.g. a 30-year loan at 6% a year: @Payment(300000, 6 / 12, 360)",
+        "params": {
+          "type": "object",
+          "properties": {
+            "principal": {
+              "type": "number"
+            },
+            "rate": {
+              "type": "number"
+            },
+            "periods": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "principal",
+            "rate",
+            "periods"
+          ],
+          "additionalProperties": false
+        },
+        "returns": {
+          "type": "number"
+        }
+      },
+      "Percent": {
+        "description": "part / total * 100, e.g. @Percent(3, 4) is 75; 0 when total is 0",
+        "params": {
+          "type": "object",
+          "properties": {
+            "part": {
+              "type": "number"
+            },
+            "total": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "part",
+            "total"
+          ],
+          "additionalProperties": false
+        },
+        "returns": {
+          "type": "number"
+        }
+      },
+      "Pow": {
+        "description": "base raised to exponent",
+        "params": {
+          "type": "object",
+          "properties": {
+            "base": {
+              "type": "number"
+            },
+            "exponent": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "base",
+            "exponent"
+          ],
+          "additionalProperties": false
+        },
+        "returns": {
+          "type": "number"
+        }
+      },
+      "Sqrt": {
+        "description": "Square root; null for a negative number",
+        "params": {
+          "type": "object",
+          "properties": {
+            "number": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "number"
+          ],
+          "additionalProperties": false
+        },
+        "returns": {
+          "type": "number"
+        }
+      },
+      "Format": {
+        "description": "Number as text: \"number\" 12,345.6, \"currency\" $12,345.68 (currency is a code like \"EUR\"), \"percent\" 45 -> 45%, \"compact\" 1.2M ($1.2M with a currency)",
+        "params": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "number"
+            },
+            "kind": {
+              "type": "string",
+              "enum": [
+                "number",
+                "currency",
+                "percent",
+                "compact"
+              ]
+            },
+            "decimals": {
+              "type": "number"
+            },
+            "currency": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "value"
+          ],
+          "additionalProperties": false
+        },
+        "returns": {
+          "type": "string"
+        }
+      },
+      "Plural": {
+        "description": "Count and word: @Plural(1, \"guest\") is \"1 guest\", 3 gives \"3 guests\"; plural defaults to word + \"s\"",
+        "params": {
+          "type": "object",
+          "properties": {
+            "n": {
+              "type": "number"
+            },
+            "word": {
+              "type": "string"
+            },
+            "plural": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "n",
+            "word"
+          ],
+          "additionalProperties": false
+        },
+        "returns": {
+          "type": "string"
+        }
+      },
+      "Default": {
+        "description": "value, or fallback when value is null, \"\" or not a number, e.g. an empty number input: @Default($weight, 0)",
+        "params": {
+          "type": "object",
+          "properties": {
+            "value": {},
+            "fallback": {}
+          },
+          "required": [
+            "fallback"
+          ],
+          "additionalProperties": false
+        },
+        "returns": {}
+      },
+      "Duration": {
+        "description": "Seconds as text: \"short\" 1h 20m, 4m 05s, 45s (default); \"clock\" 1:20:00, 4:05",
+        "params": {
+          "type": "object",
+          "properties": {
+            "seconds": {
+              "type": "number"
+            },
+            "style": {
+              "type": "string",
+              "enum": [
+                "short",
+                "clock"
+              ]
+            }
+          },
+          "required": [
+            "seconds"
+          ],
+          "additionalProperties": false
+        },
+        "returns": {
+          "type": "string"
+        }
+      },
+      "Between": {
+        "description": "Rows whose field is from min to max, both included; compares numbers, or text such as \"YYYY-MM-DD\" dates. Leave min or max null for an open end",
+        "params": {
+          "type": "object",
+          "properties": {
+            "rows": {
+              "maxItems": 160,
+              "type": "array",
+              "items": {}
+            },
+            "field": {
+              "type": "string"
+            },
+            "min": {},
+            "max": {}
+          },
+          "required": [
+            "rows",
+            "field"
+          ],
+          "additionalProperties": false
+        },
+        "returns": {
+          "type": "array",
+          "items": {}
+        }
+      },
+      "Change": {
+        "description": "Percent change from previous to current, e.g. @Change(120, 100) is 20; null when previous is 0",
+        "params": {
+          "type": "object",
+          "properties": {
+            "current": {
+              "type": "number"
+            },
+            "previous": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "current",
+            "previous"
+          ],
+          "additionalProperties": false
+        },
+        "returns": {
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      },
+      "Cumulative": {
+        "description": "Copy of the rows with field replaced by its running total (field \"\" for a list of numbers)",
+        "params": {
+          "type": "object",
+          "properties": {
+            "rows": {
+              "maxItems": 160,
+              "type": "array",
+              "items": {}
+            },
+            "field": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "rows",
+            "field"
+          ],
+          "additionalProperties": false
+        },
+        "returns": {
+          "type": "array",
+          "items": {}
+        }
+      },
+      "GroupBy": {
+        "description": "One row per distinct key, in first-seen order; value is agg of field (default \"sum\"), or the row count without a field",
+        "params": {
+          "type": "object",
+          "properties": {
+            "rows": {
+              "maxItems": 160,
+              "type": "array",
+              "items": {}
+            },
+            "key": {
+              "type": "string"
+            },
+            "field": {
+              "type": "string"
+            },
+            "agg": {
+              "type": "string",
+              "enum": [
+                "sum",
+                "avg",
+                "count",
+                "min",
+                "max"
+              ]
+            }
+          },
+          "required": [
+            "rows",
+            "key"
+          ],
+          "additionalProperties": false
+        },
+        "returns": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": [
+                  "string",
+                  "number"
+                ]
+              },
+              "value": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "key",
+              "value"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "Histogram": {
+        "description": "Count supplied values into 1 to 40 equal-width bins. Use key and value for a chart. Optional min and max select the range.",
+        "params": {
+          "type": "object",
+          "properties": {
+            "values": {
+              "maxItems": 160,
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            },
+            "bins": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 40
+            },
+            "min": {
+              "type": "number"
+            },
+            "max": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "values",
+            "bins"
+          ],
+          "additionalProperties": false
+        },
+        "returns": {
+          "maxItems": 40,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string"
+              },
+              "value": {
+                "type": "number"
+              },
+              "start": {
+                "type": "number"
+              },
+              "end": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "key",
+              "value",
+              "start",
+              "end"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "MovingAvg": {
+        "description": "Copy of the rows with field replaced by the average of its last window values (field \"\" for a list of numbers)",
+        "params": {
+          "type": "object",
+          "properties": {
+            "rows": {
+              "maxItems": 160,
+              "type": "array",
+              "items": {}
+            },
+            "field": {
+              "type": "string"
+            },
+            "window": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "rows",
+            "field",
+            "window"
+          ],
+          "additionalProperties": false
+        },
+        "returns": {
+          "type": "array",
+          "items": {}
+        }
+      },
+      "Stats": {
+        "description": "Summary of numbers, all zeros for an empty list",
+        "params": {
+          "type": "object",
+          "properties": {
+            "values": {
+              "maxItems": 160,
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            }
+          },
+          "required": [
+            "values"
+          ],
+          "additionalProperties": false
+        },
+        "returns": {
+          "type": "object",
+          "properties": {
+            "count": {
+              "type": "number"
+            },
+            "min": {
+              "type": "number"
+            },
+            "max": {
+              "type": "number"
+            },
+            "mean": {
+              "type": "number"
+            },
+            "median": {
+              "type": "number"
+            },
+            "stdev": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "count",
+            "min",
+            "max",
+            "mean",
+            "median",
+            "stdev"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "Top": {
+        "description": "The n rows with the largest field (\"asc\": the smallest)",
+        "params": {
+          "type": "object",
+          "properties": {
+            "rows": {
+              "maxItems": 160,
+              "type": "array",
+              "items": {}
+            },
+            "field": {
+              "type": "string"
+            },
+            "n": {
+              "type": "number"
+            },
+            "direction": {
+              "type": "string",
+              "enum": [
+                "desc",
+                "asc"
+              ]
+            }
+          },
+          "required": [
+            "rows",
+            "field",
+            "n"
+          ],
+          "additionalProperties": false
+        },
+        "returns": {
+          "type": "array",
+          "items": {}
+        }
+      },
+      "AddDays": {
+        "description": "Add a whole number of days to a supplied YYYY-MM-DD calendar date. Negative values go backwards.",
+        "params": {
+          "type": "object",
+          "properties": {
+            "date": {
+              "type": "string",
+              "pattern": "^[1-9]\\d{3}-\\d{2}-\\d{2}$"
+            },
+            "days": {
+              "type": "integer",
+              "minimum": -366000,
+              "maximum": 366000
+            }
+          },
+          "required": [
+            "date",
+            "days"
+          ],
+          "additionalProperties": false
+        },
+        "returns": {
+          "type": "string",
+          "pattern": "^[1-9]\\d{3}-\\d{2}-\\d{2}$"
+        }
+      },
+      "AddMonths": {
+        "description": "Add whole calendar months to a supplied YYYY-MM-DD date. Jan 31 plus one month is the last day of February.",
+        "params": {
+          "type": "object",
+          "properties": {
+            "date": {
+              "type": "string",
+              "pattern": "^[1-9]\\d{3}-\\d{2}-\\d{2}$"
+            },
+            "months": {
+              "type": "integer",
+              "minimum": -12000,
+              "maximum": 12000
+            }
+          },
+          "required": [
+            "date",
+            "months"
+          ],
+          "additionalProperties": false
+        },
+        "returns": {
+          "type": "string",
+          "pattern": "^[1-9]\\d{3}-\\d{2}-\\d{2}$"
+        }
+      },
+      "DaysBetween": {
+        "description": "Calendar days from one supplied YYYY-MM-DD date to another. Negative if the second date is earlier.",
+        "params": {
+          "type": "object",
+          "properties": {
+            "from": {
+              "type": "string",
+              "pattern": "^[1-9]\\d{3}-\\d{2}-\\d{2}$"
+            },
+            "to": {
+              "type": "string",
+              "pattern": "^[1-9]\\d{3}-\\d{2}-\\d{2}$"
+            }
+          },
+          "required": [
+            "from",
+            "to"
+          ],
+          "additionalProperties": false
+        },
+        "returns": {
+          "type": "number"
+        }
+      },
+      "StartOf": {
+        "description": "First day of the supplied YYYY-MM-DD date’s week (Monday), month or year.",
+        "params": {
+          "type": "object",
+          "properties": {
+            "date": {
+              "type": "string",
+              "pattern": "^[1-9]\\d{3}-\\d{2}-\\d{2}$"
+            },
+            "unit": {
+              "type": "string",
+              "enum": [
+                "week",
+                "month",
+                "year"
+              ]
+            }
+          },
+          "required": [
+            "date",
+            "unit"
+          ],
+          "additionalProperties": false
+        },
+        "returns": {
+          "type": "string",
+          "pattern": "^[1-9]\\d{3}-\\d{2}-\\d{2}$"
+        }
+      },
+      "Chunk": {
+        "description": "Split a bounded local list into consecutive batches of the specified size.",
+        "params": {
+          "type": "object",
+          "properties": {
+            "list": {
+              "maxItems": 160,
+              "type": "array",
+              "items": {}
+            },
+            "size": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 160
+            }
+          },
+          "required": [
+            "list",
+            "size"
+          ],
+          "additionalProperties": false
+        },
+        "returns": {
+          "maxItems": 160,
+          "type": "array",
+          "items": {
+            "maxItems": 160,
+            "type": "array",
+            "items": {}
+          }
+        }
+      },
+      "Find": {
+        "description": "First local row whose field equals the supplied value, or null. Empty field compares the whole item.",
+        "params": {
+          "type": "object",
+          "properties": {
+            "list": {
+              "maxItems": 160,
+              "type": "array",
+              "items": {}
+            },
+            "field": {
+              "type": "string",
+              "maxLength": 120
+            },
+            "value": {}
+          },
+          "required": [
+            "list",
+            "field",
+            "value"
+          ],
+          "additionalProperties": false
+        },
+        "returns": {}
+      },
+      "Includes": {
+        "description": "Whether a local list contains a value, or a string contains the supplied text.",
+        "params": {
+          "type": "object",
+          "properties": {
+            "list": {
+              "anyOf": [
+                {
+                  "maxItems": 160,
+                  "type": "array",
+                  "items": {}
+                },
+                {
+                  "type": "string",
+                  "maxLength": 8000
+                }
+              ]
+            },
+            "item": {}
+          },
+          "required": [
+            "list",
+            "item"
+          ],
+          "additionalProperties": false
+        },
+        "returns": {
+          "type": "boolean"
+        }
+      },
+      "MixColor": {
+        "description": "Blend two hex colors at a fraction t from 0 to 1 for a local tint. Keep text contrast and prefer semantic theme tokens for ordinary text.",
+        "params": {
+          "type": "object",
+          "properties": {
+            "from": {
+              "type": "string",
+              "pattern": "^#?[\\da-f]{3}(?:[\\da-f]{3})?$"
+            },
+            "to": {
+              "type": "string",
+              "pattern": "^#?[\\da-f]{3}(?:[\\da-f]{3})?$"
+            },
+            "t": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "from",
+            "to",
+            "t"
+          ],
+          "additionalProperties": false
+        },
+        "returns": {
+          "type": "string",
+          "pattern": "^#?[\\da-f]{3}(?:[\\da-f]{3})?$"
+        }
+      },
+      "Reverse": {
+        "description": "A local list in reverse order without changing the original.",
+        "params": {
+          "type": "object",
+          "properties": {
+            "list": {
+              "maxItems": 160,
+              "type": "array",
+              "items": {}
+            }
+          },
+          "required": [
+            "list"
+          ],
+          "additionalProperties": false
+        },
+        "returns": {
+          "maxItems": 160,
+          "type": "array",
+          "items": {}
+        }
+      },
+      "Slice": {
+        "description": "Local items or text from start up to end (exclusive). Negative indices count from the end.",
+        "params": {
+          "type": "object",
+          "properties": {
+            "list": {
+              "anyOf": [
+                {
+                  "maxItems": 160,
+                  "type": "array",
+                  "items": {}
+                },
+                {
+                  "type": "string",
+                  "maxLength": 8000
+                }
+              ]
+            },
+            "start": {
+              "type": "integer",
+              "minimum": -9007199254740991,
+              "maximum": 9007199254740991
+            },
+            "end": {
+              "type": "integer",
+              "minimum": -9007199254740991,
+              "maximum": 9007199254740991
+            }
+          },
+          "required": [
+            "list",
+            "start"
+          ],
+          "additionalProperties": false
+        },
+        "returns": {
+          "anyOf": [
+            {
+              "maxItems": 160,
+              "type": "array",
+              "items": {}
+            },
+            {
+              "type": "string",
+              "maxLength": 8000
+            }
+          ]
+        }
+      },
+      "Take": {
+        "description": "First n items from a local list, or the last n when n is negative.",
+        "params": {
+          "type": "object",
+          "properties": {
+            "list": {
+              "maxItems": 160,
+              "type": "array",
+              "items": {}
+            },
+            "n": {
+              "type": "integer",
+              "minimum": -9007199254740991,
+              "maximum": 9007199254740991
+            }
+          },
+          "required": [
+            "list",
+            "n"
+          ],
+          "additionalProperties": false
+        },
+        "returns": {
+          "maxItems": 160,
+          "type": "array",
+          "items": {}
+        }
+      }
+    }
+  }
+}
