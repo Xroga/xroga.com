@@ -246,6 +246,11 @@ try {
       assert.ok(renderedEdge.length > 0 && renderedEdge.stroke !== 'none' && renderedEdge.overflow === 'visible', JSON.stringify(renderedEdge));
       await graph.getByRole('button', { name: /zoom in/i }).click();
       await graph.getByRole('button', { name: /fit view/i }).click();
+      await graph.locator('.native-diagram-node-title').filter({ hasText: 'Billing webhook' }).waitFor({ state: 'visible' });
+      await page.waitForFunction(() => {
+        const nodes = Array.from(document.querySelectorAll('.native-diagram-canvas .react-flow__node'));
+        return nodes.length === 6 && nodes.every(node => getComputedStyle(node).visibility === 'visible');
+      });
       assert.equal(await graph.locator('details').count(), 0);
       if (viewport.width <= 390) {
         assert.equal(await graph.locator('.react-flow__edge-text').count(), 0, 'Compact diagrams do not overprint edge labels');

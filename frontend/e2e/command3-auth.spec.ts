@@ -598,6 +598,9 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
     await expect(sharedArchitecture.getByRole('region', { name: 'Answer table', exact: true })).toBeVisible();
     const sharedDiagram = sharedArchitecture.getByRole('figure', { name: 'Request path', exact: true });
     await expect(sharedDiagram.getByText('Next.js → PostgreSQL · User access token')).toBeVisible();
+    for (const name of ['Next.js', 'PostgreSQL']) {
+      await expect(sharedDiagram.locator('.native-diagram-node-title').getByText(name, { exact: true })).toBeVisible();
+    }
     await expect(sharedDiagram.locator('.react-flow__edge-path')).toHaveCount(1);
     expect(await sharedDiagram.locator('.react-flow__edge-path').evaluate((path: SVGPathElement) => path.getTotalLength())).toBeGreaterThan(0);
     await expect(sharedArchitecture.locator('pre code')).toHaveText('const boundary = "tenant_id";');
