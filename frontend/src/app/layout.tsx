@@ -57,6 +57,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" suppressHydrationWarning>
       <head>
         <StorageBootstrap />
+        {/* Runtime-only font stylesheet; avoids Next build-time Google font fetching. */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&display=swap" />
          {productionTelemetry&&<script
     src="https://analytics.ahrefs.com/analytics.js"
     data-key="vxPNnAmUvdWc+ePnPvZZ5w"
