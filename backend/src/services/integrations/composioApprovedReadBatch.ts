@@ -195,6 +195,19 @@ export async function confirmReviewedComposioReadBatch(
       });
     }
   }
+  // Provider metadata can change after a user first reviewed a confirmation.
+  // Revalidate ALL candidate tools before issuing ANY concurrent provider calls.
+  const details = await Promise.all(confirmations.map((item) =>
+    getComposioToolDetails(item.toolSlug!, context)));
+  for (let i = 0; i < details.length; i++) {
+    if (details[i]!.slug !== confirmations[i]!.toolSlug ||
+      details[i]!.toolkit.toLowerCase() !== confirmations[i]!.toolkit.toLowerCase() ||
+      details[i]!.risk !== 'read' || details[i]!.deprecated) {
+      throw new ComposioClientError('The reviewed read tool changed. Review each action again.', {
+        status: 409, code: 'COMPOSIO_REVIEWED_READ_METADATA_CHANGED',
+      });
+    }
+  }
   // Each confirmation's independent durable claim prevents replay, even if
   // another request attempts the same grant concurrently.
   const results = await Promise.allSettled(confirmations.map((item) =>
