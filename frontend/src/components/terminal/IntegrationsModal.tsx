@@ -54,7 +54,7 @@ export function IntegrationsModal({ open, onClose, anchorRef, onSelect }: {
     setLoadingStatus(true);
     setConnected([]);
     setConnectionError('');
-    setNative(nativeNames.map((name, index) => nativeApp(name, nativeSlugs[index], false, true)));
+    setNative([nativeApp('GitHub','github',false,true),nativeApp('Vercel','vercel',false,true),nativeApp('Supabase','supabase',false,true)]);
     void Promise.allSettled([api.github.status(), api.vercel.status(), api.supabase.status(), xrogaConnect.status()])
       .then(async (results) => {
         if (!active) return;
@@ -152,7 +152,7 @@ export function IntegrationsModal({ open, onClose, anchorRef, onSelect }: {
     const term = query.trim().toLowerCase();
     const tokens = term.split(/\s+/).filter(Boolean);
     return [...byKey.values()].filter(item => view === 'connected' ? item.connected : true)
-      .filter(item => !tokens.length || tokens.every(token => (item.name + ' ' + item.slug + ' ' + (item.description || '')).toLowerCase().includes(token)))
+      .filter(item => !tokens.length || (view === 'explore' && item.source === 'catalog' && catalog.some(result => result.slug === item.slug)) || tokens.every(token => (item.name + ' ' + item.slug + ' ' + (item.description || '')).toLowerCase().includes(token)))
       .sort((a,b) => (a.connected === b.connected ? a.name.localeCompare(b.name) : a.connected ? -1 : 1));
   }, [catalog, connected, native, query, view]);
 
@@ -204,6 +204,7 @@ export function IntegrationsModal({ open, onClose, anchorRef, onSelect }: {
         {(loadingCatalog && view === 'explore' || loadingStatus) && <p className={styles.note}><Loader2 size={14} className="animate-spin"/> {view === 'connected' ? 'Checking your connections…' : 'Searching the live app directory…'}</p>}
         {!loadingCatalog && !loadingStatus && showResults.length === 0 && <p className={styles.note}>{view === 'connected' ? 'No connected apps found.' : isSearching ? 'No matching apps found.' : 'No apps available.'}</p>}
         {catalogError && view === 'explore' && <p role="status" className={styles.error}>{catalogError}</p>}
+        {available === false && view === 'explore' && <p role="status" className={styles.note}>The connected-app service is unavailable. Native apps are still shown.</p>}
         {connectionError && view === 'connected' && <p role="status" className={styles.error}>{connectionError}</p>}
         {view === 'explore' && cursor && !loadingCatalog && <button type="button" className={styles.loadMore} disabled={loadingMore} onClick={() => void loadMore()}>{loadingMore ? <Loader2 size={13} className="animate-spin"/> : <ChevronDown size={14}/>} Load more apps</button>}
       </div>
