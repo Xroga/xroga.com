@@ -42,3 +42,5 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git commit -m "chore(composio): regenerate exact source-bound evaluation inventory"
           git push origin HEAD:refs/heads/research/composio-five-upstreams-20261114
+
+# Refresh generation follows the extended Composio schema-validation change.

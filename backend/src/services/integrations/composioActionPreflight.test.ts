@@ -52,3 +52,22 @@ test('oneOf rejects overlapping alternatives while anyOf accepts them', () => {
   assert.equal(composioActionInputProblem('EXAMPLE_UPDATE', { id: '123' }, { oneOf: branches }, ''), null);
   assert.match(composioActionInputProblem('EXAMPLE_UPDATE', {}, { oneOf: branches }, '') ?? '', /Please provide|Please clarify/);
 });
+
+test('common numeric bounds, maximum lengths, sizes and unknown-property rejection', () => {
+  const schema = { type: 'object', required: ['budget', 'title', 'items'], additionalProperties: false, properties: {
+    budget: { type: 'number', minimum: 1, maximum: 100 },
+    title: { type: 'string', minLength: 2, maxLength: 10 },
+    items: { type: 'array', minItems: 1, maxItems: 3, items: { type: 'integer', minimum: 1 } },
+  } };
+  assert.equal(composioActionInputProblem('EXAMPLE_CREATE', { budget: 50, title: 'Campaign', items: [1, 2] }, schema, ''), null);
+  assert.match(composioActionInputProblem('EXAMPLE_CREATE', { budget: 0, title: 'Too long for title', items: [1, 2, 3, 4] }, schema, '') ?? '', /budget|title|items/);
+  assert.match(composioActionInputProblem('EXAMPLE_CREATE', { budget: 50, title: 'Valid', items: [1], unknown: 'unsafe' }, schema, '') ?? '', /unknown/);
+  assert.match(composioActionInputProblem('EXAMPLE_CREATE', { budget: 50, title: 'Valid', items: [0] }, schema, '') ?? '', /items/);
+});
+
+test('exclusive numeric boundaries remain fail-closed at the limit', () => {
+  const schema = { type: 'object', required: ['bid'], properties: { bid: { type: 'number', exclusiveMinimum: 0, exclusiveMaximum: 10 } } };
+  assert.match(composioActionInputProblem('EXAMPLE_BID', { bid: 0 }, schema, '') ?? '', /bid/);
+  assert.match(composioActionInputProblem('EXAMPLE_BID', { bid: 10 }, schema, '') ?? '', /bid/);
+  assert.equal(composioActionInputProblem('EXAMPLE_BID', { bid: 5 }, schema, ''), null);
+});
