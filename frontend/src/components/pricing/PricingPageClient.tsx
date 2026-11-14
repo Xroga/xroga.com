@@ -6,6 +6,12 @@ import { useRouter } from 'next/navigation';
 import {
   ArrowRight,
   BadgeCheck,
+  BrainCircuit,
+  BriefcaseBusiness,
+  ClipboardList,
+  CircleAlert,
+  Gamepad2,
+  BadgeDollarSign,
   Check,
   Code2,
   Compass,
@@ -164,6 +170,54 @@ const FAQS = [
   },
 ] as const;
 
+const PRO_SCENES = [
+  { name: 'Research', icon: Search },
+  { name: 'Think', icon: BrainCircuit },
+  { name: 'Work', icon: BriefcaseBusiness },
+  { name: 'Plan', icon: ClipboardList },
+  { name: 'Fix', icon: CircleAlert },
+  { name: 'Code', icon: Code2 },
+  { name: 'Game', icon: Gamepad2 },
+  { name: 'Publish', icon: Rocket },
+  { name: 'Earn', icon: BadgeDollarSign },
+] as const;
+
+function PlanShowcase({ paid }: { paid: boolean }) {
+  const [index, setIndex] = useState(0);
+  const [reducedMotion, setReducedMotion] = useState(false);
+  useEffect(() => {
+    if (!paid) return;
+    const preference = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const sync = () => setReducedMotion(preference.matches);
+    sync();
+    preference.addEventListener('change', sync);
+    return () => preference.removeEventListener('change', sync);
+  }, [paid]);
+  useEffect(() => {
+    if (!paid || reducedMotion) return;
+    const interval = window.setInterval(() => {
+      if (document.visibilityState === 'visible') setIndex((previous) => (previous + 1) % PRO_SCENES.length);
+    }, 2100);
+    return () => window.clearInterval(interval);
+  }, [paid, reducedMotion]);
+  const scene = PRO_SCENES[index];
+  const Active = paid ? scene.icon : Compass;
+  return (
+    <div className={paid ? styles.proShowcase : styles.freeShowcase} aria-label={paid ? 'Xroga Pro: Research, Think, Work, Plan, Fix, Code, Game, Publish, Earn' : 'Xroga Free'}>
+      <div className={styles.showcaseOrb}>
+        <span className={styles.orbLines} aria-hidden="true" />
+        <span className={styles.orbCenter} aria-hidden="true">
+          <Active key={paid ? scene.name : 'free'} className={styles.showcaseSymbol} strokeWidth={1.65}/>
+        </span>
+        {paid && <span className={styles.orbHalo} aria-hidden="true" />}
+      </div>
+      <span className={styles.showcaseCaption} aria-hidden="true">
+        {paid ? (reducedMotion ? 'Build beyond' : scene.name) : 'Explore Xroga'}
+      </span>
+    </div>
+  );
+}
+
 function CtaParticles() {
   return (
     <>
@@ -299,9 +353,7 @@ export function PricingPageClient() {
 
                   <div className={styles.planTop}>
                     <div className={styles.planIdentity}>
-                      <span className={styles.planEmblem} aria-hidden="true">
-                        {isFree ? <Compass /> : <Rocket />}
-                      </span>
+                      <PlanShowcase paid={!isFree} />
                       <span className={styles.planName}>{plan.name}</span>
                       <p className={styles.planTagline}>{plan.tagline}</p>
                     </div>
@@ -334,7 +386,11 @@ export function PricingPageClient() {
                     {features.map((feature) => (
                       <li key={feature}>
                         <span className={styles.check}>
-                          <Check aria-hidden="true" />
+                          {isFree ? <Check aria-hidden="true" /> : (() => {
+                            const Icons = [Search, BrainCircuit, BriefcaseBusiness, ClipboardList, Code2, Rocket];
+                            const FeatureIcon = Icons[features.indexOf(feature)] ?? Sparkles;
+                            return <FeatureIcon aria-hidden="true" />;
+                          })()}
                         </span>
                         <span>
                           {feature}
@@ -358,24 +414,24 @@ export function PricingPageClient() {
                     ) : isCurrent ? (
                       <button
                         type="button"
-                        className={`${styles.ctaButton} ${styles.proCta}`}
+                        className={`${styles.ctaButton} ${styles.proCta} ${styles.proUiverse}`}
                         disabled
                       >
                         Current plan
                       </button>
                     ) : loggedIn ? (
                       <div className={styles.proCtaWrap}>
-                        <CheckoutButton planTier="spark" label="Get Xroga Pro — $25/month" className={`${styles.ctaButton} ${styles.proCta}`} />
+                        <CheckoutButton planTier="spark" label="Try Xroga Pro" className={`${styles.ctaButton} ${styles.proCta} ${styles.proUiverse}`} />
                         <CtaParticles />
                       </div>
                     ) : (
                       <div className={styles.proCtaWrap}>
                         <button
                           type="button"
-                          className={`${styles.ctaButton} ${styles.proCta}`}
+                          className={`${styles.ctaButton} ${styles.proCta} ${styles.proUiverse}`}
                           onClick={() => router.push('/auth/signup')}
                         >
-                          Get Xroga Pro — $25/month
+                          Try Xroga Pro
                           <ArrowRight aria-hidden="true" />
                         </button>
                         <CtaParticles />
