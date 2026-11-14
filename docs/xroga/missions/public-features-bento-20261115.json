@@ -9,6 +9,7 @@
   "risk": "medium",
   "scope": "Redesign the shared public /features page into a blue Manus-style categorized directory; remove its duplicate page-level header/footer so the canonical PublicMarketingChrome remains the sole shared navigation; adapt the uploaded Manus-style Baskerville headline typography to h1/h2 across Xroga pages and the feature-directory category headings, retaining readable sans-serif control and card text.",
   "changedFiles": [
+    "frontend/src/app/layout.tsx",
     "frontend/src/app/features/page.tsx",
     "frontend/src/app/features/FeaturesCatalog.tsx",
     "frontend/src/app/features/features.css",
@@ -24,7 +25,7 @@
       "Blue bento visual design and the complete source-mapped directory."
     ],
     "extend": [
-      "Add Libre Baskerville webfont via runtime-only Google Fonts CSS with bundled Source Serif 4/Georgia fallback; apply to semantic h1/h2 on all pages and explicitly to public marketing page headings. Avoid next/font/google build-time network dependency.",
+      "Load Libre Baskerville once using a runtime-only Google Fonts stylesheet link in the shared root document head (CSP already allows Google font hosts), with bundled Source Serif 4 / Georgia fallback. Apply the family to h1/h2 site-wide and to public marketing display headings; keep Next.js builds independent from downloading Google font binaries.",
       "Remove duplicate /features local header/footer markup and adjust hero spacing under the existing shared marketing chrome.",
       "Retain existing six-category full directory, status labels, frontend search and category filters with source-coverage tests."
     ],
@@ -104,7 +105,7 @@
   "rollout": "Merge only after frontend CI and visual/a11y review; then verify public /features URL and internal links. No automatic production publication requested.",
   "rollback": "Revert this bounded /features page, catalog, directory data and CSS change, or re-deploy the prior verified frontend release; no backend or schema changes.",
   "knownGaps": [
-    "Must verify actual Libre Baskerville computed font loaded via Google CSS; when provider inaccessible the bundled Source Serif fallback renders instead.",
+    "Verify actual browser computed font and loading from the shared stylesheet link; runtime network blocks show the bundled local serif fallback.",
     "Latest-branch Next.js frontend build/visual review and Xroga site-wide heading regression screenshots are pending.",
     "Vercel preview link previously shown was for an older commit, so it does not demonstrate this font/header fix.",
     "Unrelated repository-wide mission policy baseline ancestor and inventory snapshot drift may block larger checks; do not bypass."
