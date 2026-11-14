@@ -397,7 +397,7 @@ export function PricingPageClient() {
         <section className={styles.compareSection} aria-labelledby="compare-title">
           <div className={styles.compareHeading}>
             <div className={styles.sectionHeadCompact}>
-              <span className={styles.eyebrow}><BadgeCheck aria-hidden="true" /> EXPLORE WHAT'S INCLUDED</span>
+              <span className={styles.eyebrow}><BadgeCheck aria-hidden="true" /> EXPLORE WHAT&apos;S INCLUDED</span>
               <h2 id="compare-title">Compare Xroga <em>Free & Pro.</em></h2>
               <p>Explore the full feature categories, not just an eight-row summary.
                 Both plans use the same core capabilities; some operations require a supported connected service.</p>
@@ -469,7 +469,7 @@ export function PricingPageClient() {
             )}
           </div>
           <p className={styles.compareFootnote}>
-            Feature availability depends on your plan's current capacity, connected accounts,
+            Feature availability depends on your plan&apos;s current capacity, connected accounts,
             provider support and permissions. This comparison does not promise universal support
             for every external integration or automatic publishing.
           </p>
