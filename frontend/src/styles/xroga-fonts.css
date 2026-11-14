@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&display=swap');
+
 /**
  * Xroga four-font system — maps Narrow Type aesthetic roles:
  * Azurio (sharp serif headlines), Goga (body/UI sans),
@@ -19,4 +21,22 @@
 
 .font-emilio {
   font-family: var(--font-emilio), Georgia, 'Times New Roman', serif;
+}
+
+
+/*
+ * Manus-style editorial typography across Xroga:
+ * - Libre Baskerville closely matches the supplied headline reference.
+ * - Source Serif 4 is a bundled, offline fallback.
+ * - Change page/section headings, not small interface labels or body copy.
+ * - Do not change the user's chosen workspace input/sidebar fonts.
+ */
+body {
+  --xv-editorial-serif: 'Libre Baskerville', var(--font-source-serif), Georgia, 'Times New Roman', serif;
+}
+body :is(h1, h2) {
+  font-family: var(--xv-editorial-serif);
+}
+body.xv-public-theme .xv-public-marketing-content :is(h1, h2) {
+  font-family: var(--xv-editorial-serif) !important;
 }
