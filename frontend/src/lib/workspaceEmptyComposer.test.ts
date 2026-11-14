@@ -416,24 +416,11 @@ test('connection management reads real provider status and routes full managemen
     );
   }
 
-  assert.equal(
-    INTEGRATIONS.includes('/dashboard/integrations/\${plugin.id}'),
-    true,
-  );
-
-  assert.match(
-    INTEGRATIONS,
-    /Browse all apps/,
-  );
-
-  assert.match(INTEGRATIONS, /placeholder="Search apps…"/);
-  assert.match(INTEGRATIONS, /xv-plugins-popover__body/);
-  assert.match(INTEGRATIONS, /Browse all/);
-
-  assert.match(
-    INTEGRATIONS,
-    /xrogaConnect\.search/,
-  );
+  assert.match(INTEGRATIONS, /href=\{'\/dashboard\/integrations\/'\+encodeURIComponent\(app\.slug\)\}/);
+  assert.match(INTEGRATIONS, /href="\/dashboard\/integrations".*Browse all apps/);
+  assert.match(INTEGRATIONS, /Search all supported apps/);
+  assert.match(INTEGRATIONS, /styles\.items/);
+  assert.match(INTEGRATIONS, /xrogaConnect\.catalog/);
 });
 
 

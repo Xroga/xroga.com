@@ -22,6 +22,7 @@ The private links used synthetic test material and were revoked. This report exc
 - Settle a successful empty DeepSeek result at $0 while keeping its trace and search count. A nonempty provider result can still be billable when the approved domain filter rejects every page. The production canary above had a nonempty result.
 - Validate the structured Share snapshot on the server and pass the decoded answer directly to the same validated native surface used by Workspace. Preserve authoritative prose and disclose the fallback if the API cannot validate the stored visual program. The Share route still uses the existing owner/public access decision and no-store response. The original production failure has not been replayed on a hosted candidate yet.
 - The regular authenticated CI test now exercises a diagram, table and code in the owner-only Share page at 390 px and verifies revocation. The existing test also covers calculator interactions, two-account isolation, Copy and saved Reopen. The production merge removed the old Connect Apps Map conversion, so its obsolete static caller entry was dropped. Historical evidence remains.
+- The first corrected authenticated build rendered the mobile Share table but did not produce the SVG edge. The connected diagram now measures its stable figure before mounting the responsive graph. Its browser assertion checks both the visible relation and a nonzero SVG path. The composer retains the shared animation for native provider marks, with catalog-supplied marks for other apps.
 
 ## Release and rollback
 

@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/openui-production-integration-20261114",
-    "sha": "5a92270bdba2ea21139ba213239d715985a2539c",
-    "sourceTimestampUtc": "2026-11-14T15:21:32+05:00",
-    "auditStartedUtc": "2026-11-14T10:28:58.343Z",
+    "sha": "a92dcf9c0b19e61c803957729f5ea2d559ecb6d7",
+    "sourceTimestampUtc": "2026-11-14T15:29:17+05:00",
+    "auditStartedUtc": "2026-11-14T10:50:58.436Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -82354,6 +82354,7 @@
         "frontend/src/components/integrations/PluginBrandLogo.tsx:4",
         "frontend/src/components/projects/GitHubProjectCard.tsx:8",
         "frontend/src/components/terminal/HomepageChatBar.tsx:10",
+        "frontend/src/components/terminal/IntegrationsModal.tsx:8",
         "frontend/src/components/terminal/WorkspaceConnectionsStrip.tsx:8"
       ],
       "reachable": true,
@@ -87064,13 +87065,15 @@
       "id": "surface:92ce2788e7a639e6a608",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/Diagram.tsx",
-      "sha256": "1f9e26b9118ed0d5e9e833db2f87f13adb1536002a81e8a767b0417bbb439024",
+      "sha256": "2a0ffc542aae59991814004a030641d577553db4d4210ca8ffe7c0f94e74c3ef",
       "symbols": [
         "AnswerDiagramNode",
         "AnswerNode",
         "Diagram",
+        "availableWidth",
         "byId",
-        "canvas",
+        "diagram",
+        "diagramId",
         "diagramLink",
         "diagramNode",
         "diagramProps",
@@ -87085,11 +87088,13 @@
         "nodeTypes",
         "nodes",
         "positions",
+        "renderable",
         "resize",
         "result",
         "rightward",
         "rows",
         "separateRelationships",
+        "style",
         "title",
         "to",
         "upward",
@@ -96285,7 +96290,7 @@
       "callers": [
         "frontend/src/components/terminal/SwarmMessageLog.tsx:45",
         "frontend/src/lib/chatTurnRail.test.ts:4",
-        "frontend/src/lib/workspaceRouteIsolation20261021.test.ts:48"
+        "frontend/src/lib/workspaceRouteIsolation20261021.test.ts:49"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -97175,7 +97180,7 @@
       "id": "surface:0d42f6431011b29940e9",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/IntegrationsModal.tsx",
-      "sha256": "0d364d2758cc8871f42f4b371a0fcbde31f90a84f7d6286ca0924a7dbd42b310",
+      "sha256": "fbc3b85766cd15098d573a54861b2a95c089f8ff6d83b45c15b38f83294c21df",
       "symbols": [
         "AppRow",
         "IntegrationsModal",
@@ -97214,6 +97219,7 @@
       ],
       "imports": [
         "./PluginsMenu.module.css",
+        "@/components/integrations/IntegrationLogo",
         "@/components/integrations/PluginBrandLogo",
         "@/components/ui/AnchoredPortalPopover",
         "@/lib/api",
@@ -97224,6 +97230,7 @@
         "react"
       ],
       "runtimeImports": [
+        "frontend/src/components/integrations/IntegrationLogo.tsx",
         "frontend/src/components/integrations/PluginBrandLogo.tsx",
         "frontend/src/components/terminal/PluginsMenu.module.css",
         "frontend/src/components/ui/AnchoredPortalPopover.tsx",
@@ -105204,7 +105211,7 @@
         "frontend/src/components/terminal/ChatIntegrationsBar.tsx:13",
         "frontend/src/components/terminal/GitHubBuildGateModal.tsx:5",
         "frontend/src/components/terminal/GithubRepoModal.tsx:5",
-        "frontend/src/components/terminal/IntegrationsModal.tsx:8",
+        "frontend/src/components/terminal/IntegrationsModal.tsx:9",
         "frontend/src/components/terminal/MessageShareModal.tsx:7",
         "frontend/src/components/terminal/ProjectPreviewDock.tsx:7",
         "frontend/src/components/terminal/ProjectsQuickPopover.tsx:9",
@@ -111789,7 +111796,7 @@
         "frontend/src/components/integrations/PluginBrandLogo.tsx:5",
         "frontend/src/components/integrations/PluginDetail.tsx:24",
         "frontend/src/components/integrations/PluginMarketplace.tsx:34",
-        "frontend/src/components/terminal/IntegrationsModal.tsx:9",
+        "frontend/src/components/terminal/IntegrationsModal.tsx:10",
         "frontend/src/lib/pluginCategoryUx.test.ts:6",
         "frontend/src/lib/pluginMarketplacePolish.test.ts:6",
         "frontend/src/lib/pluginStep2.test.ts:6",
@@ -119738,7 +119745,7 @@
         "frontend/src/components/integrations/PluginMarketplace.tsx:52",
         "frontend/src/components/integrations/PluginPermissionControl.tsx:13",
         "frontend/src/components/integrations/XrogaConnectPanel.tsx:20",
-        "frontend/src/components/terminal/IntegrationsModal.tsx:10",
+        "frontend/src/components/terminal/IntegrationsModal.tsx:11",
         "frontend/src/components/terminal/ModelAppPermissions.tsx:4",
         "frontend/src/lib/connectReview.security.test.ts:3",
         "frontend/src/lib/formatAiMarkdown.tsx:32"
@@ -127058,7 +127065,7 @@
       "id": "surface:bd6af899f2dd9df930f6",
       "subsystem": "browser_sandbox",
       "sourcePath": "scripts/verify-native-openui-browser.mjs",
-      "sha256": "b4d99f507adc5e83eecef43e082eb9ab3ddddfe8055f94a860e86c28622b8d17",
+      "sha256": "180f57cc5bf812cb13164bddc07cb9849bf0d69bdb887ab5242c141def66e221",
       "symbols": [
         "accessibility",
         "answer",
@@ -127078,6 +127085,7 @@
         "evidence",
         "external",
         "fallback",
+        "fallbackAnswer",
         "file",
         "fit",
         "google",
@@ -144677,9 +144685,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:8e6c241b49564a426868",
+      "id": "finding:70e29601944cf8ad1cdd",
       "sourcePath": "frontend/src/components/terminal/IntegrationsModal.tsx",
-      "line": 189,
+      "line": 190,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -145946,86 +145954,86 @@
       "reachable": false
     },
     {
-      "id": "frontend-call:c256f0a68a716fbe1c85",
-      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 715,
-      "callee": "fetch",
-      "reachable": false
-    },
-    {
-      "id": "frontend-call:ab6ccb689d448968271e",
+      "id": "frontend-call:ca6b76e39bd07e181e61",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 718,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:08bf6549e07a1b2d7035",
+      "id": "frontend-call:8274581362be4a0ea68f",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1489,
+      "line": 721,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:7baaf83ba5c4c8dc7ae6",
+      "id": "frontend-call:71dfea5f809fb6b40354",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1490,
+      "line": 1492,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:1ed2128966e1e6387e00",
+      "id": "frontend-call:e15f23d4fca019ec5bb7",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1495,
+      "line": 1493,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:9a2d187d4bc83d75e88b",
+      "id": "frontend-call:7775f003995af2fcaf05",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1496,
+      "line": 1498,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:cde245b34faad214d9c2",
+      "id": "frontend-call:f670af311b94f8e3485d",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1502,
+      "line": 1499,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:87495a3ef24473977d7e",
+      "id": "frontend-call:487b76b93846e36373c9",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1507,
+      "line": 1505,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:647e25c02a01f6dfde61",
+      "id": "frontend-call:2a5de48d16f8a2029fd4",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1564,
+      "line": 1510,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:840e439f362799b3025d",
+      "id": "frontend-call:183e8db007f4d721bc48",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1565,
+      "line": 1567,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:f437e581f1353ad0139e",
+      "id": "frontend-call:3ed79535f1b9e6c1ead4",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1572,
+      "line": 1568,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:7cd6eb358498c6fea037",
+      "id": "frontend-call:02999e69c30ab87e1d96",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1586,
+      "line": 1575,
+      "callee": "fetch",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:88c0dacfc816311f0217",
+      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
+      "line": 1589,
       "callee": "fetch",
       "reachable": false
     },
@@ -148039,23 +148047,23 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:2a295c5959c7a47d46d8",
+      "id": "frontend-call:9f8d70898d2894a24600",
       "sourcePath": "frontend/src/components/terminal/IntegrationsModal.tsx",
-      "line": 58,
+      "line": 59,
       "callee": "api.github.status",
       "reachable": true
     },
     {
-      "id": "frontend-call:eef6f2f7239465b42554",
+      "id": "frontend-call:ca51cda00f9f93fd9ff4",
       "sourcePath": "frontend/src/components/terminal/IntegrationsModal.tsx",
-      "line": 58,
+      "line": 59,
       "callee": "api.vercel.status",
       "reachable": true
     },
     {
-      "id": "frontend-call:7daed20eff4a73f4885c",
+      "id": "frontend-call:73377e2cb70734a63400",
       "sourcePath": "frontend/src/components/terminal/IntegrationsModal.tsx",
-      "line": 58,
+      "line": 59,
       "callee": "api.supabase.status",
       "reachable": true
     },

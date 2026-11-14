@@ -46,7 +46,7 @@ const cases = {
   flow: { text: 'The API checks membership before reading tenant rows.', program: 'root = Col([Title("Tenant request path"), Text("The API checks membership before reading tenant rows."), Svg([Rect(2, 14, 95, 32, "surface", "muted", 0.8, 1, 6), SvgText("Verify membership", 49.5, 33, 9, "ink", "middle"), Line(103, 30, 145, 30, "muted", 1.2), Polygon("145,27 150,30 145,33", "muted"), Rect(155, 14, 93, 32, "surface", "muted", 0.8, 1, 6), SvgText("Read tenant rows", 201.5, 33, 9, "ink", "middle")], "0 0 250 60", "100%", null, "Verify membership before reading tenant rows"), List([ListItem("Check authenticated membership"), ListItem("Read rows under RLS")], "number")])' },
   evidence: { text: 'PostgreSQL documents row-level security.', program: 'root = Col([Text(["PostgreSQL documents row-level security. ", Source("source-1")])])' },
   numericEvidence: { text: 'Official policy and documentation.', program: 'root = Col([Text("Official policy [3]."), Markdown("See documentation [2].")])' },
-  fallbackCitations: { text: 'Check the documentation [2](https://untrusted.example/). Unknown [99] and code `[2]` are plain text.' },
+  fallbackCitations: { text: 'Check the documentation [2](https://www.w3.org/TR/). The mismatched link [2](https://untrusted.example/) is not a citation. Unknown [99] and code `[2]` are plain text.' },
   code: { text: 'TypeScript function returns the supplied constant.', program: 'root = Col([Code("const total: number = 42;", "typescript")])' },
   tabs: { text: 'Core recommendation remains visible.', program: 'root = Col([Text("Core recommendation remains visible."), Tabs("Scenarios", [{title: "Basic", content: [Text("Basic details")]}, {title: "Team", content: [Text("Team details")]}])])' },
   choice: { text: 'Compare local scenarios.', program: [
@@ -259,7 +259,9 @@ try {
       const fallback = page.getByRole('link', { name: /W3C Documentation/ });
       assert.equal(await fallback.getAttribute('href'), 'https://www.w3.org/TR/');
       assert.equal(await fallback.locator('img').getAttribute('src'), '/api/site-icon?d=w3.org');
-      assert.equal(await page.getByRole('region', { name: 'Answer', exact: true }).getByRole('link').count(), 1);
+      const fallbackAnswer = page.getByRole('region', { name: 'Answer', exact: true });
+      assert.equal(await fallbackAnswer.getByRole('link').count(), 1);
+      assert.equal(await fallbackAnswer.locator('a[href="https://untrusted.example/"]').count(), 0);
       assert.equal(await page.locator('code').getByText('[2]', { exact: true }).count(), 1);
       await open('numericEvidence');
       const google = page.getByRole('region', { name: 'Answer', exact: true }).getByRole('link', { name: 'Open source 3: About keyword matching options' });

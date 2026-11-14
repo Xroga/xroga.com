@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "5a92270bdba2ea21139ba213239d715985a2539c",
+  "source_sha": "a92dcf9c0b19e61c803957729f5ea2d559ecb6d7",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -22198,7 +22198,7 @@
     },
     {
       "path": "frontend/src/components/native-openui/Diagram.tsx",
-      "sha256": "1f9e26b9118ed0d5e9e833db2f87f13adb1536002a81e8a767b0417bbb439024"
+      "sha256": "2a0ffc542aae59991814004a030641d577553db4d4210ca8ffe7c0f94e74c3ef"
     },
     {
       "path": "frontend/src/components/native-openui/Editorial.tsx",
@@ -22850,7 +22850,7 @@
     },
     {
       "path": "frontend/src/components/terminal/IntegrationsModal.tsx",
-      "sha256": "0d364d2758cc8871f42f4b371a0fcbde31f90a84f7d6286ca0924a7dbd42b310"
+      "sha256": "fbc3b85766cd15098d573a54861b2a95c089f8ff6d83b45c15b38f83294c21df"
     },
     {
       "path": "frontend/src/components/terminal/LegacyLandingOutputView.tsx",
@@ -39050,14 +39050,14 @@
     },
     {
       "path": "frontend/src/components/terminal/IntegrationsModal.tsx",
-      "line": 120,
+      "line": 121,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/terminal/IntegrationsModal.tsx",
-      "line": 132,
+      "line": 133,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

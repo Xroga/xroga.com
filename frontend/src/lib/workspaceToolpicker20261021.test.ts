@@ -27,8 +27,9 @@ test('chosen tools remain removable and connected plugin selections never bypass
   assert.match(composer, /setSelectedTool\(null\)/);
   assert.match(composer, /onSelect=\{\(plugin\) =>/);
   assert.doesNotMatch(composer, /onPointerEnter=\{event => \{ if \(event.pointerType === 'mouse' && !isGuest\) setIntegrationsOpen\(true\)/);
-  assert.match(plugins, /plugin.connected && onSelect/);
-  assert.match(plugins, /Boolean\(toolkit.connected\)/);
+  assert.match(plugins, /app\.connected && onSelect/);
+  assert.match(plugins, /toolkits\(session\.sessionId, \{ connectedOnly: true \}\)/);
+  assert.match(plugins, /setConnected\(\(result\.toolkits \?\? \[\]\)\.filter\(item => item\.connected\)\)/);
   assert.match(chips, /AnchoredPortalPopover/);
   assert.match(chips, /onRemove/);
 });

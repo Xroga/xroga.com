@@ -94,29 +94,36 @@ export const Diagram = defineComponent({
   description: 'Connected technical diagram with labeled relationships and a concise text equivalent. Group peers on the same level (up to three per level); use increasing levels for downstream components. Choose role-specific tones and meaningful links, not a duplicate list.',
   component: function DiagramView({ props }) {
     const title = useId();
-    const canvas = useRef<HTMLDivElement>(null);
-    const [compact, setCompact] = useState(false);
+    const diagramId = 'diagram-' + title.replace(/[^a-zA-Z0-9-]/g, '');
+    const diagram = useRef<HTMLElement>(null);
+    const [compact, setCompact] = useState<boolean>();
+    const result = layout(props, compact === true);
+    const renderable = result !== null;
     useEffect(() => {
-      const element = canvas.current;
-      if (!element) return;
-      const measure = () => setCompact(element.clientWidth < 460);
+      const element = diagram.current;
+      if (!renderable || !element) return;
+      const measure = () => {
+        const style = getComputedStyle(element);
+        const availableWidth = element.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+        setCompact(availableWidth < 460);
+      };
       measure();
       const resize = new ResizeObserver(measure);
       resize.observe(element);
       return () => resize.disconnect();
-    }, [compact]);
-    const result = layout(props, compact);
+    }, [renderable]);
     if (!result) return <p role="status">The diagram relationships could not be rendered. {props.description}</p>;
     return (
-      <figure className="native-diagram" aria-labelledby={title}>
+      <figure ref={diagram} className="native-diagram" aria-labelledby={title}>
         <figcaption>
           <strong id={title}>{props.title}</strong>
           <p>{props.description}</p>
         </figcaption>
-        <ReactFlowProvider key={compact ? 'compact' : 'wide'}>
-        <div ref={canvas} className="native-diagram-canvas"
+        {compact !== undefined && <ReactFlowProvider key={compact ? 'compact' : 'wide'}>
+        <div className="native-diagram-canvas"
           style={{ height: compact ? Math.min(900, Math.max(260, result.rowCount * 145 + 24)) : Math.min(540, Math.max(260, result.rowCount * 96 + 44)) }}>
           <ReactFlow
+            id={diagramId}
             nodeTypes={nodeTypes}
             nodes={result.nodes}
             edges={result.edges}
@@ -140,7 +147,7 @@ export const Diagram = defineComponent({
         <div className="native-diagram-toolbar">
           <Controls showInteractive={false} orientation="horizontal" aria-label="Diagram zoom controls" />
         </div>
-        </ReactFlowProvider>
+        </ReactFlowProvider>}
         <div className="native-diagram-relationships">
           <strong>Diagram relationships</strong>
           <ul>

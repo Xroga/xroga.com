@@ -37,11 +37,12 @@ test('sidebar uses animated Blocks for Overview and Locate for Search', () => {
 });
 
 test('plugin search uses full catalog with debounce and cannot misrepresent unloaded results', () => {
-  assert.match(plugin, /xrogaConnect\.catalog\(\{ search: query\.trim\(\), limit: 25 \}\)/);
-  assert.match(plugin, /setTimeout\(\(\) =>/);
-  assert.match(plugin, /catalogSearching/);
-  assert.match(plugin, /Live app search is unavailable/);
-  assert.match(plugin, /plugin\.connected && onSelect/);
+  assert.match(plugin, /xrogaConnect\.catalog\(\{ search: query\.trim\(\) \|\| undefined, sortBy: 'usage', limit: 50 \}\)/);
+  assert.match(plugin, /xrogaConnect\.catalog\([^\n]+cursor: next/);
+  assert.match(plugin, /\}, query\.trim\(\) \? 260 : 0\)/);
+  assert.match(plugin, /requestRef\.current !== requestId/);
+  assert.match(plugin, /Catalog search is unavailable/);
+  assert.match(plugin, /!loadingCatalog && !loadingStatus && showResults\.length === 0/);
 });
 
 test('conversation navigation uses 1 marker per user request and reply with adaptive page limits', async () => {

@@ -595,7 +595,10 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
     await architectureSharePage.goto(architectureLink);
     const sharedArchitecture = architectureSharePage.getByRole('region', { name: 'Answer', exact: true });
     await expect(sharedArchitecture.getByRole('region', { name: 'Answer table', exact: true })).toBeVisible();
-    await expect(sharedArchitecture.locator('.react-flow__edge')).toHaveCount(1);
+    const sharedDiagram = sharedArchitecture.getByRole('figure', { name: 'Request path', exact: true });
+    await expect(sharedDiagram.getByText('Next.js → PostgreSQL · User access token')).toBeVisible();
+    await expect(sharedDiagram.locator('.react-flow__edge-path')).toHaveCount(1);
+    expect(await sharedDiagram.locator('.react-flow__edge-path').evaluate((path: SVGPathElement) => path.getTotalLength())).toBeGreaterThan(0);
     await expect(sharedArchitecture.locator('pre code')).toHaveText('const boundary = "tenant_id";');
     const shareRevoked = page.waitForResponse(response => response.request().method() === 'DELETE'
       && new URL(response.url()).pathname === '/api/message-shares/' + savedArchitectureShare.token);
