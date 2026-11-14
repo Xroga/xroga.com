@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com",
     "branch": "research/composio-five-upstreams-20261114",
-    "sha": "404822b67f63ea28a6114dc33ca71a7f33e6f098",
-    "sourceTimestampUtc": "2026-11-14T15:41:53+05:00",
-    "auditStartedUtc": "2026-11-14T10:43:29.876Z",
+    "sha": "5756e3a1fc928d512325f8667cca85f3ae3d2574",
+    "sourceTimestampUtc": "2026-11-14T15:44:40+05:00",
+    "auditStartedUtc": "2026-11-14T10:45:40.374Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -37740,7 +37740,7 @@
       "id": "surface:a031e75d4b41545e63a7",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/composioActionPreflight.ts",
-      "sha256": "575713cc6983d3fab5c73053b31fdb300944bb323d4d004ee2a7ae9518ac1c96",
+      "sha256": "c3d5ed06b27cf7fceec01d78a36aaf6d656ce05a3d3791a43141c5689e8d51d4",
       "symbols": [
         "SHEETS_APPEND",
         "Schema",
@@ -37748,12 +37748,14 @@
         "check",
         "child",
         "composioActionInputProblem",
+        "count",
         "field",
         "fields",
         "group",
         "issues",
         "item",
         "key",
+        "length",
         "matches",
         "matchesType",
         "name",
@@ -141591,7 +141593,7 @@
     {
       "id": "workflow:0d65f14a990679940a0f",
       "sourcePath": ".github/workflows/composio-inventory-refresh-once.yml",
-      "sha256": "9c915d3c7cb094913adf5594f9c09cee379de96c9bd1dab0e4a1b9dac5b95721",
+      "sha256": "7da6bb7564a9bce74a7bd91d59ebc68533593770a9df66fc9a9c527f9b8b6bec",
       "sourceEntrypoints": [
         "scripts/xroga/inventory.mjs"
       ],
@@ -152795,7 +152797,7 @@
     {
       "id": "test-suite:f2ab76ed64ad7c31a6e3",
       "sourcePath": "backend/src/services/integrations/composioActionPreflight.test.ts",
-      "declaredTests": 6,
+      "declaredTests": 8,
       "skipLocations": [],
       "focusLocations": []
     },
