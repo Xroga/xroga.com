@@ -106,6 +106,7 @@ export const PUBLIC_FEATURE_GROUPS: PublicFeatureGroup[] = [
       { id: 'desktop-release', title: 'Desktop release artifacts', description: 'Prepare Electron build outputs through configured GitHub Actions.', href: '/build', icon: 'desktop', kind: 'conditional' },
       { id: 'expo-publish', title: 'Expo / EAS handoff', description: 'Prepare mobile publishing with your EAS account and tokens; not automatic store approval.', href: '/build', icon: 'mobile', kind: 'conditional' },
       { id: 'supabase-env', title: 'Supabase key handoff', description: 'Use authorized protected credentials to configure a supported deployment.', href: '/integrations', icon: 'key', kind: 'conditional' },
+      { id: 'billing-keys', title: 'Product billing credentials', description: 'Configure supported billing credentials for a generated app; provider setup and acceptance are separate steps.', href: '/integrations', icon: 'key', kind: 'conditional' },
       { id: 'deploy-verify', title: 'Deployment verification', description: 'Separate successful builds, provider acceptance and independently checked live URLs.', href: '/vercel-ai-deployment', icon: 'shield' },
     ],
   },
