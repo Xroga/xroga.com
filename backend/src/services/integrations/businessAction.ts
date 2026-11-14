@@ -1263,6 +1263,8 @@ export async function prepareBusinessAction(
         !details.inputSchema || !Object.keys(details.inputSchema).length) return null;
     return { ...tool, inputSchema: details.inputSchema };
   }));
+  // A cancelled run cannot continue with only the subset of completed lookups.
+  input.signal?.throwIfAborted();
   // A failed unrelated candidate must not hide a valid action, but ownership
   // or authorization failures cannot be downgraded into ordinary discovery misses.
   for (const outcome of inspected) {

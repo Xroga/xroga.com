@@ -48,5 +48,5 @@ test('clarification changes only the pending action while preserving earlier ste
   assert.match(updated[1]!.request, /User clarification: Use the connected Google Sheets/);
   assert.equal(steps[1]!.request, 'Create a sheet for them');
   assert.throws(() => clarifyPendingBusinessWorkflowStep(steps, 0, 'some details'), /No pending action/);
-  assert.throws(() => clarifyPendingBusinessWorkflowStep(steps, 1, 'bad\\nnewline'), /Invalid action clarification|too long/);
+  assert.throws(() => clarifyPendingBusinessWorkflowStep(steps, 1, 'bad' + String.fromCharCode(10) + 'newline'), /Invalid action clarification|too long/);
 });
