@@ -83,7 +83,7 @@ export function IntegrationsModal({ open, onClose, anchorRef, onSelect }: {
 
   // Search is server-backed, not restricted to the initial popular apps.
   useEffect(() => {
-    if (!open) return;
+    if (!open || view === 'connected') return;
     const requestId = ++requestRef.current;
     let active = true;
     setCatalog([]);
@@ -106,7 +106,7 @@ export function IntegrationsModal({ open, onClose, anchorRef, onSelect }: {
         });
     }, query.trim() ? 260 : 0);
     return () => { active = false; window.clearTimeout(timer); };
-  }, [open, query]);
+  }, [open, query, view]);
 
   async function loadMore() {
     if (!cursor || loadingMore) return;
@@ -158,7 +158,7 @@ export function IntegrationsModal({ open, onClose, anchorRef, onSelect }: {
 
   const connectedCount = native.filter(item => item.connected).length + connected.filter(item => item.connected && !nativeSlugs.some(slug => keyFor(item.toolkit) === slug)).length;
   const isSearching = Boolean(query.trim());
-  const showResults = rows.filter(item => view === 'connected' || isSearching || item.source === 'native' || catalog.some(c => c.slug === item.slug)).slice(0, 100);
+  const showResults = rows.filter(item => view === 'connected' || isSearching || item.source === 'native' || catalog.some(c => c.slug === item.slug));
 
   function handleKeyDown(event: KeyboardEvent<HTMLElement>) {
     const items = [...(listRef.current?.querySelectorAll<HTMLElement>('[data-app-item]') ?? [])];
