@@ -224,7 +224,7 @@ export function PricingPageClient() {
     ...group,
     rows: group.rows.filter((row) =>
       [group.title, row.name, row.free, row.pro, 'detail' in row ? row.detail : '']
-        .some((value) => value.toLowerCase().includes(normalizedQuery)),
+        .some((value) => String(value ?? '').toLowerCase().includes(normalizedQuery)),
     ),
   })).filter((group) => group.rows.length > 0);
   const totalFeatureCount = COMPARISON_GROUPS.reduce((count, group) => count + group.rows.length, 0);
