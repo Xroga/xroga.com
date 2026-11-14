@@ -362,7 +362,7 @@ test('actual pipeline, completion and SoftwareAgent calls bind tenant, account r
   await runChatPipeline({ userId: owner, tenantContext: context, modelScope: scope,
     prompt: richPrompt, goalContract: richGoal });
   const plannedBudget = presentedAnswerMaxTokens(prepareAnswerCoverage(richPrompt, richGoal.presentation, richGoal.answerObligations).plan);
-  assert.ok(plannedBudget > 4096 && plannedBudget <= 8192);
+  assert.ok(plannedBudget > 8192);
   assert.equal(lastReservedOutput, plannedBudget);
   assert.equal(lastProviderMaxTokens, plannedBudget);
   assert.equal(effects, beforeRich + 1);

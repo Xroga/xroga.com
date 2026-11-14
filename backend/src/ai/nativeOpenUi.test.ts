@@ -32,11 +32,10 @@ test('native layout, data and reactive arithmetic are accepted without a V2 tran
   for (const program of programs) assert.deepEqual(validateNativeOpenUi(program), { ok: true }, program);
 });
 
-test('architecture instructions use registry signatures without unrelated controls or unsupplied evidence', () => {
+test('a mixed request can use components outside its initial plan without unsupplied evidence', () => {
   const prompt = workspaceNativeOpenUiPrompt(['prose', 'graph', 'table'], false);
-  for (const name of ['Diagram(', 'Table(', 'Code(']) assert.ok(prompt.includes(name), name);
-  for (const name of ['Slider(', 'Histogram(', 'Source(', 'DatePicker(']) assert.ok(!prompt.includes(name), name);
-  assert.ok(prompt.length < nativeOpenUiPrompt.length * 0.7);
+  for (const name of ['Diagram(', 'Table(', 'Code(', 'Slider(', 'Histogram(', 'DatePicker(']) assert.ok(prompt.includes(name), name);
+  assert.ok(!prompt.includes('Source('));
   assert.ok(workspaceNativeOpenUiPrompt(['chart', 'calculator'], true).includes('Source('));
   for (const name of ['RadioGroup(', 'DatePicker(', 'Checkbox(', 'ChoicePicker(', 'Form(']) {
     assert.ok(workspaceNativeOpenUiPrompt(['calculator'], false).includes(name), name);
@@ -367,12 +366,22 @@ test('required visuals must render and cannot be satisfied by unused declaration
   assert.equal(completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + reactiveControl, 'stop', undefined, undefined, undefined, ['calculator']).completion.status, 'complete');
 });
 
-test('a provider output limit preserves readable prose and keeps the answer partial', () => {
+test('a provider output limit keeps verified visuals shareable and rejects unfinished syntax', () => {
   const program = 'root = Col([Table(["Plan", "Price"], [["Team", 25]])])';
   const answer = completeNativeWorkspaceAnswer('Team is $25.' + NATIVE_UI_MARKER + program, 'length');
   assert.deepEqual(answer.completion, { status: 'partial', reason: 'output_limit' });
-  assert.equal(answer.responseSource.text, '');
+  assert.equal(answer.responseSource.text, program);
+  assert.match(answer.response, /reached the provider output limit/);
   assert.match(answer.response, /Team is \$25\./);
+  const snapshot = buildNativeOpenUiShare(answer.response, answer.responseSource.text);
+  assert.ok(snapshot);
+  assert.equal(readNativeOpenUiShare(snapshot)?.program, program);
+  assert.match(readNativeOpenUiShare(snapshot)?.text ?? '', /reached the provider output limit/);
+
+  const cutProgram = completeNativeWorkspaceAnswer('Team is $25.' + NATIVE_UI_MARKER + program.slice(0, -8), 'length');
+  assert.deepEqual(cutProgram.completion, { status: 'partial', reason: 'output_limit' });
+  assert.equal(cutProgram.responseSource.text, '');
+  assert.doesNotMatch(cutProgram.response, /root =|Col\(/);
 });
 
 test('the saved prose and clipboard fallback retain the substantive native body after an unfinished heading', () => {
@@ -427,7 +436,8 @@ test('a settled document answer retains prose when presentation or evidence is i
     response: prose, completion: { status: 'partial', reason: 'presentation_contract' },
     responseSource: { format: 'xroga-openui-v1', text: '' },
   });
-  assert.equal(completeNativeWorkspaceAnswer(raw, 'length', new Set(['source-1'])).responseSource.text, '');
+  assert.equal(completeNativeWorkspaceAnswer(raw, 'length', new Set(['source-1'])).responseSource.text, program);
+  assert.equal(completeNativeWorkspaceAnswer(raw, 'length').responseSource.text, '');
 });
 
 test('untrusted UI cannot confer authority, invent evidence, or exhaust parser recursion', () => {
@@ -693,7 +703,9 @@ test('an explicit monthly data comparison uses the supplied points and determini
   assert.doesNotMatch(contradiction.response, /June adds/);
   const truncated = completeNativeWorkspaceAnswer(wire(program), 'length', undefined, prompt);
   assert.deepEqual(truncated.completion, { status: 'partial', reason: 'output_limit' });
-  assert.equal(truncated.responseSource.text, '');
+  assert.match(truncated.response, /Largest month-over-month gain: \+\$4,500 \(April\)/);
+  assert.match(truncated.responseSource.text, /Chart\("line".*Table\(/);
+  assert.doesNotMatch(truncated.response + truncated.responseSource.text, /outpaced|unbeatable/);
 });
 
 test('the hosted revenue wording verifies every user-supplied value and both gain measures', () => {

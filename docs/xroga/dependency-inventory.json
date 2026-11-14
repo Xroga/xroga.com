@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "ee7a9cbd7e39d8d8349152ff520e5899801b1967",
+  "source_sha": "6dc950245c7bc19d6d2c0c9149de164a7ad37dbb",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -17066,7 +17066,7 @@
     },
     {
       "path": "backend/src/ai/nativeOpenUiPrompt.ts",
-      "sha256": "a204090e2c4d48deeb4eb0d3228a2a7926c5cae1999651aa9aed1175d1a462c0"
+      "sha256": "7d8d69bad2c04eefd1acf8eff9455e8bd7e2c3feb9fb6068c5cd3b20008a94fa"
     },
     {
       "path": "backend/src/ai/nativeOpenUiRun.ts",
@@ -17078,7 +17078,7 @@
     },
     {
       "path": "backend/src/ai/nativeOpenUiWorkspace.ts",
-      "sha256": "1cbd5cf2e9222cc8dc1b41bd5db1a0f88f13e08f1f9d5c201e29106ec2702eee"
+      "sha256": "508f1be193ac80a0d5f1230c51368ef6a0762953fc9ced5cd37679bfd72c38b4"
     },
     {
       "path": "backend/src/ai/openaiCompat.ts",
@@ -17202,7 +17202,7 @@
     },
     {
       "path": "backend/src/ai/responsePresentation.ts",
-      "sha256": "e543d6fda12abd26617271c716e4200836aa1b948e46d313d158c8ac75f1d737"
+      "sha256": "dbeb992ea88495bb6f0b42ae0e27ff7b30d55787f68abd88593a01dffdf68b0f"
     },
     {
       "path": "backend/src/ai/router.ts",
@@ -32649,28 +32649,21 @@
     },
     {
       "path": "backend/src/ai/nativeOpenUiPrompt.ts",
-      "line": 28,
-      "scope": "FUNCTION_LOCAL",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "backend/src/ai/nativeOpenUiPrompt.ts",
-      "line": 81,
+      "line": 67,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/nativeOpenUiPrompt.ts",
-      "line": 82,
+      "line": 68,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/nativeOpenUiPrompt.ts",
-      "line": 85,
+      "line": 71,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

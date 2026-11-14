@@ -2,6 +2,8 @@ import { publicCompletionState } from './completionDiagnostics.js';
 import { NATIVE_UI_FORMAT, PARTIAL_NATIVE_PRESENTATION_NOTE, missingNativeFormats, recoverNativeWorkspaceProgram, recoverNativeMonthlyChart, splitNativeOpenUiAnswer, supplementNativeProse, validateNativeWorkspaceProgram, type NativeUiDiagnostic, type RequiredNativeFormat } from './nativeOpenUi.js';
 import { nativeAnswerReviewReason, nativeFactualGuidance, nativeTechnicalCorrections, suppliedMonthlyComparison } from './nativeOpenUiAccuracy.js';
 
+const outputLimitNote = 'This answer reached the provider output limit. The available answer is shown below.';
+
 /** Deployment-owned presentation choice; never reads a user role or client flag.
  * The paid founder evaluator has its own independent staging-only guard. */
 export function usesNativeWorkspacePresentation(modelId: string, env = process.env): boolean {
@@ -49,7 +51,9 @@ export function completeNativeWorkspaceAnswer(
     diagnose?.({ stage: 'assembly', reason: 'missing_prose', programLength: program.length });
     const completion = publicCompletionState(finishReason);
     return {
-      response: "Xroga couldn't recover a readable answer. Send your question again to retry.",
+      response: finishReason === 'length'
+        ? 'The provider reached its output limit before a readable answer was available.'
+        : "Xroga couldn't recover a readable answer. Send your question again to retry.",
       completion: completion.status === 'partial' ? completion : { status: 'partial' as const, reason: 'presentation_contract' as const },
       responseSource: { format: NATIVE_UI_FORMAT, text: '' },
     };
@@ -63,13 +67,16 @@ export function completeNativeWorkspaceAnswer(
       ? { status: 'partial' as const, reason: 'data_review' as const }
       : publicCompletionState(finishReason, response);
   const supplied = prompt && !evidenceIds?.size ? suppliedMonthlyComparison(prompt) : undefined;
-  if (supplied && finishReason === 'stop' && (validation?.ok || validation?.reason === 'data_review')) {
+  if (supplied && (finishReason === 'stop' || finishReason === 'length') &&
+      (validation?.ok || validation?.reason === 'data_review')) {
     const reviewed = recoverNativeMonthlyChart(program, supplied, !validation.ok);
     if (reviewed) {
       const reason = reviewed.dataMismatch || !validation.ok ? 'data_review' as const
+        : finishReason === 'length' ? 'output_limit' as const
         : repair?.partial || missing.length ? 'presentation_contract' as const : undefined;
       return {
-        response: reason === 'presentation_contract' ? PARTIAL_NATIVE_PRESENTATION_NOTE + '\n\n' + reviewed.text : reviewed.text,
+        response: reason === 'presentation_contract' ? PARTIAL_NATIVE_PRESENTATION_NOTE + '\n\n' + reviewed.text
+          : reason === 'output_limit' ? outputLimitNote + '\n\n' + reviewed.text : reviewed.text,
         completion: reason ? { status: 'partial' as const, reason } : { status: 'complete' as const },
         responseSource: { format: NATIVE_UI_FORMAT, text: reviewed.program },
       };
@@ -81,12 +88,21 @@ export function completeNativeWorkspaceAnswer(
       '## Original draft for review', 'Use the corrections above when reviewing this draft.', text].join('\n\n')
     : response;
   const valid = validation?.ok === true && completion.status === 'complete';
+  const verifiedBeforeLimit = validation?.ok === true && completion.status === 'partial' && completion.reason === 'output_limit';
   const recovered = completion.status === 'partial' && completion.reason === 'data_review' ? recoverNativeMonthlyChart(program) : undefined;
   if (completion.status === 'complete' && (validation?.ok === false || repair?.partial || missing.length)) {
     return {
       response: valid ? PARTIAL_NATIVE_PRESENTATION_NOTE + '\n\n' + supplementNativeProse(response, program, true) : response,
       completion: { status: 'partial' as const, reason: 'presentation_contract' as const },
       responseSource: { format: NATIVE_UI_FORMAT, text: valid ? program : '' },
+    };
+  }
+  if (completion.status === 'partial' && completion.reason === 'output_limit') {
+    const verifiedText = verifiedBeforeLimit ? supplementNativeProse(response, program) : response;
+    return {
+      response: outputLimitNote + '\n\n' + verifiedText,
+      completion,
+      responseSource: { format: NATIVE_UI_FORMAT, text: verifiedBeforeLimit ? program : '' },
     };
   }
   return {

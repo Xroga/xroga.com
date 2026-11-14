@@ -13,7 +13,10 @@
     "backend/src/ai/nativeOpenUi.test.ts",
     "backend/src/ai/nativeOpenUiCatalog.json",
     "backend/src/ai/nativeOpenUiPrompt.ts",
+    "backend/src/ai/nativeOpenUiWorkspace.ts",
     "backend/src/ai/pipeline.ts",
+    "backend/src/ai/responsePresentation.test.ts",
+    "backend/src/ai/responsePresentation.ts",
     "backend/src/ai/tenantModelDispatch.test.ts",
     "backend/src/ai/universal/semanticRequestPlanner.egress.test.ts",
     "backend/src/ai/universal/semanticRequestPlanner.test.ts",
@@ -37,7 +40,8 @@
   "decisions": {
     "extend": [
       "Use the semantic plan to size the canonical native answer dispatch. Increase room for the single planner decision and bind that ceiling to the reservation.",
-      "Render safe inline citations and protect readable content and native controls at narrow widths and zoom."
+      "Render safe inline citations and protect readable content and native controls at narrow widths and zoom.",
+      "Keep the registered presentation components available for mixed requests and preserve validated visuals after a provider output limit."
     ],
     "keep": [
       "One planner, one canonical DeepSeek answer dispatch, existing registry and authorization, saved answers, owner-only Share and decoder compatibility."
@@ -76,7 +80,7 @@
     },
     "cost": {
       "changed": true,
-      "description": "For native multi-section answers and semantic planning, maximum output reservations can grow within the canonical provider budget. Provider, calls and ledger remain the same."
+      "description": "Dense answer plans reserve their full estimated output through the existing provider ledger. Rich answer prompts advertise the full applicable presentation registry."
     },
     "billing": {
       "changed": false,

@@ -5571,18 +5571,14 @@
       "id": "surface:a67f0b1fa2dd0f11a67f",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiPrompt.ts",
-      "sha256": "a204090e2c4d48deeb4eb0d3228a2a7926c5cae1999651aa9aed1175d1a462c0",
+      "sha256": "7d8d69bad2c04eefd1acf8eff9455e8bd7e2c3feb9fb6068c5cd3b20008a94fa",
       "symbols": [
-        "allowed",
         "buildNativeOpenUiPrompt",
-        "common",
-        "focusedComponents",
-        "interactive",
+        "general",
         "library",
         "nativeOpenUiPlainPrompt",
         "nativeOpenUiPrompt",
         "numericPrecisionRule",
-        "requested",
         "selected",
         "withoutSources",
         "workspaceNativeOpenUiPrompt"
@@ -5730,7 +5726,7 @@
       "id": "surface:93911e9946fd4b21d50d",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiWorkspace.ts",
-      "sha256": "1cbd5cf2e9222cc8dc1b41bd5db1a0f88f13e08f1f9d5c201e29106ec2702eee",
+      "sha256": "508f1be193ac80a0d5f1230c51368ef6a0762953fc9ced5cd37679bfd72c38b4",
       "symbols": [
         "completeNativeWorkspaceAnswer",
         "completion",
@@ -5741,6 +5737,7 @@
         "hasDataConflict",
         "missing",
         "original",
+        "outputLimitNote",
         "program",
         "readable",
         "reason",
@@ -5755,7 +5752,9 @@
         "text",
         "usesNativeWorkspacePresentation",
         "valid",
-        "validation"
+        "validation",
+        "verifiedBeforeLimit",
+        "verifiedText"
       ],
       "imports": [
         "./completionDiagnostics.js",
@@ -5782,7 +5781,10 @@
       "tenantBoundary": [],
       "approvalBoundary": [],
       "costBoundary": [],
-      "evidenceBoundary": [],
+      "evidenceBoundary": [
+        "backend/src/ai/nativeOpenUiWorkspace.ts#verifiedBeforeLimit",
+        "backend/src/ai/nativeOpenUiWorkspace.ts#verifiedText"
+      ],
       "testCoverage": [
         "backend/src/ai/nativeOpenUi.test.ts"
       ],
@@ -9257,7 +9259,7 @@
       "id": "surface:74760a8c78ac888599fd",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/responsePresentation.ts",
-      "sha256": "e543d6fda12abd26617271c716e4200836aa1b948e46d313d158c8ac75f1d737",
+      "sha256": "dbeb992ea88495bb6f0b42ae0e27ff7b30d55787f68abd88593a01dffdf68b0f",
       "symbols": [
         "AnswerObligations",
         "GENERIC_HEADING",
@@ -141787,9 +141789,9 @@
   ],
   "findings": [
     {
-      "id": "finding:5fbedd14f1fd4cd8a681",
+      "id": "finding:72f277920f96b1ffd771",
       "sourcePath": "backend/src/ai/nativeOpenUiPrompt.ts",
-      "line": 53,
+      "line": 39,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
