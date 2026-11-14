@@ -73,3 +73,22 @@ export function independentReadWave(steps: readonly BusinessWorkflowStep[], star
   }
   return indexes;
 }
+
+/** Select bounded evidence for an explicitly dependent step, never as instructions.
+ * Include both relevant prior reads and the most recent created destination when
+ * the user refers to earlier records. External egress still requires approval.
+ */
+export function dependentWorkflowEvidenceIndexes(
+  outcomes: readonly { stepIndex: number; kind: 'read' | 'action' }[],
+  pendingIndex: number, request: string, dependsOnPrevious: boolean,
+): number[] {
+  if (!dependsOnPrevious || pendingIndex < 1) return [];
+  const earlier = outcomes.map((item, index) => ({ ...item, index }))
+    .filter((item) => item.stepIndex < pendingIndex);
+  if (!earlier.length) return [];
+  const referencesReadData = /\b(?:results?|found|matching|search(?:ed)?|leads?|clients?|them|those|these|their|listed|retrieved|emails?|messages?|records?|rows?|data)\b/i.test(request);
+  if (!referencesReadData) return [earlier[earlier.length - 1]!.index];
+  const reads = earlier.filter((item) => item.kind === 'read').slice(-2);
+  const lastAction = earlier.filter((item) => item.kind === 'action').slice(-1);
+  return [...new Set([...reads, ...lastAction].map((item) => item.index))].sort((a, b) => a - b);
+}

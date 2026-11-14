@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { splitExplicitBusinessWorkflow, clarifyPendingBusinessWorkflowStep, independentReadWave } from './businessWorkflow.js';
+import { splitExplicitBusinessWorkflow, clarifyPendingBusinessWorkflowStep, independentReadWave, dependentWorkflowEvidenceIndexes } from './businessWorkflow.js';
 
 test('splits independent cross-app actions without needing provider names', () => {
   assert.deepEqual(splitExplicitBusinessWorkflow('Send an email to Jane about Friday and schedule a meeting with Alex tomorrow'), [
@@ -72,4 +72,15 @@ test('splits up to eight explicit steps but rejects unbounded workflow clauses',
   const commands = Array.from({length: 8}, (_, i) => `List item ${i + 1} from my CRM`).join('; ');
   assert.equal(splitExplicitBusinessWorkflow(commands)?.length, 8);
   assert.equal(splitExplicitBusinessWorkflow(commands + '; List a ninth item from CRM'), null);
+});
+
+test('dependent actions can reference found records and a created destination', () => {
+  const outcomes = [
+    { stepIndex: 0, kind: 'read' as const },
+    { stepIndex: 1, kind: 'action' as const },
+    { stepIndex: 2, kind: 'read' as const },
+  ];
+  assert.deepEqual(dependentWorkflowEvidenceIndexes(outcomes, 3, 'Add those email records to that sheet', true), [0, 1, 2]);
+  assert.deepEqual(dependentWorkflowEvidenceIndexes(outcomes, 3, 'Update it', true), [2]);
+  assert.deepEqual(dependentWorkflowEvidenceIndexes(outcomes, 3, 'Add those email records', false), []);
 });

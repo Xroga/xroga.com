@@ -44,3 +44,5 @@ jobs:
           git push origin HEAD:refs/heads/research/composio-five-upstreams-20261114
 
 # Refresh generation follows the extended Composio schema-validation change.
+
+# Source inventory refresh includes bounded dependency-evidence handoff.

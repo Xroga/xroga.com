@@ -3,7 +3,7 @@ import { getTenantSupabaseAdmin } from '../../security/serviceRoleGuard.js';
 import { prepareBusinessAction, type BusinessActionPreparationOutcome, type BusinessActionReferenceEvidence, type BusinessActionExecutionOutcome } from './businessAction.js';
 import { cancelBusinessActionConfirmation, createBusinessActionConfirmation, type SafeBusinessActionConfirmation } from './businessActionConfirmations.js';
 import { readBusinessData, type BusinessReadOutcome } from './businessRead.js';
-import { clarifyPendingBusinessWorkflowStep, independentReadWave, type BusinessWorkflowStep } from './businessWorkflow.js';
+import { clarifyPendingBusinessWorkflowStep, dependentWorkflowEvidenceIndexes, independentReadWave, type BusinessWorkflowStep } from './businessWorkflow.js';
 
 type RunStatus = 'running' | 'executing' | 'awaiting_confirmation' | 'setup_required' | 'completed' | 'failed' | 'cancelled';
 
@@ -107,9 +107,8 @@ async function updateRun(context: TenantContext, row: RunRow, values: Partial<Ru
 
 function previousEvidence(row: RunRow, step: BusinessWorkflowStep): BusinessActionReferenceEvidence[] | undefined {
   if (!step.dependsOnPrevious) return undefined;
-  const earlier = row.outcomes.filter((outcome) => outcome.stepIndex < row.step_index);
-  const wantsReadResults = /\b(?:results?|found|matching|search(?:ed)?|leads?|clients?)\b/i.test(step.request);
-  const relevant = wantsReadResults ? earlier.filter((outcome) => outcome.kind === 'read') : earlier.slice(-1);
+  const indexes = dependentWorkflowEvidenceIndexes(row.outcomes, row.step_index, step.request, step.dependsOnPrevious);
+  const relevant = indexes.map((index) => row.outcomes[index]!);
   if (!relevant.length || relevant.length > 3 || relevant.some((outcome) => outcome.data.length > 8_000)) {
     throw new Error('The dependent action needs an exact, bounded previous result before it can be prepared.');
   }
