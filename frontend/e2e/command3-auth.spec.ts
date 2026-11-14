@@ -580,13 +580,12 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   await expect.poll(async () => ((await readSaved(architectureSession))?.messages as Array<{ featureOutput?: { responseSource?: { text?: string } } }> | undefined)
     ?.some(message => message.featureOutput?.responseSource?.text === architectureProgram), { timeout: 20_000 }).toBe(true);
   const pairingWorkspace = new URL('/workspace', page.url());
+  pairingWorkspace.searchParams.set('conversation', architectureSession);
   pairingWorkspace.searchParams.set('browserExtension', 'abcdefghijklmnopabcdefghijklmnop');
   pairingWorkspace.searchParams.set('browserPair', '11111111-1111-4111-8111-111111111111');
   await page.goto(pairingWorkspace.href);
   const browserOperator = page.getByText('Browser Operator', { exact: true });
   await expect(browserOperator).toHaveCount(1);
-  await page.getByRole('region', { name: 'Recent conversations' })
-    .getByRole('button', { name: /Show the request architecture/ }).click();
   await expect(renderedArchitecture.locator('.react-flow__edge')).toHaveCount(1, { timeout: 20_000 });
   const transcript = page.getByTestId('terminal-scroll');
   for (const width of [1440, 390]) {

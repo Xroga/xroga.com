@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "59769d8d7c3399ae9ee22fd10c5e48458172339a",
+  "source_sha": "b1c084fe1c1867c2c347b6bad75715b6735483ec",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -20248,7 +20248,7 @@
     },
     {
       "path": "frontend/src/app/(workspace)/workspace/page.tsx",
-      "sha256": "a3b024b66efcb443fb0a6fa1cd8e28b72cf6b4b62cb62b810a6431461b80ea53"
+      "sha256": "6e58e1399bb6dd7d931cecb0f51d0ec1b300ac41d33627a9ea70e4f8a7dd3624"
     },
     {
       "path": "frontend/src/app/about/page.tsx",
@@ -20860,7 +20860,7 @@
     },
     {
       "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
-      "sha256": "f6dd6900539927540ab6834c744e1d86e1894c0db4e4ec7b6dedb8a2b4533817"
+      "sha256": "0be4dadad6e19f17d809b6e998499508d82f8c849b4b3c46d315fb9ca6b1603f"
     },
     {
       "path": "frontend/src/components/browser/XrogaBrowser.tsx",
@@ -38292,14 +38292,14 @@
     },
     {
       "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
-      "line": 79,
+      "line": 80,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
-      "line": 80,
+      "line": 81,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

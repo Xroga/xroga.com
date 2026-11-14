@@ -38,7 +38,8 @@ export default async function WorkspacePage({ searchParams }: { searchParams: Pr
       {reviewStatus && <p role="status">{reviewStatus}</p>}
       <ResponseExperienceProvider authorizedUserId={authorizedUserId}>
         <DashboardView browserOperator={extensionId || (query.browserPair && query.browserExtension)
-          ? <WorkspaceBrowserOperator extensionId={extensionId} /> : undefined} />
+          ? <WorkspaceBrowserOperator extensionId={extensionId} nonce={query.browserPair} requestedId={query.browserExtension} />
+          : undefined} />
       </ResponseExperienceProvider>
     </DashboardErrorBoundary>
   );

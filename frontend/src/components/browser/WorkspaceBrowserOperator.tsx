@@ -40,7 +40,11 @@ async function taskFile(file: File, token: string) {
   return { name: `${name.slice(0, 196)}.txt`, text };
 }
 
-export function WorkspaceBrowserOperator({ extensionId }: { extensionId?: string }) {
+export function WorkspaceBrowserOperator({ extensionId, nonce, requestedId }: {
+  extensionId?: string;
+  nonce?: string;
+  requestedId?: string;
+}) {
   const portRef = useRef<Port | null>(null);
   const activeRun = useRef('');
   const pairedToken = useRef('');
@@ -55,9 +59,6 @@ export function WorkspaceBrowserOperator({ extensionId }: { extensionId?: string
   const [status, setStatus] = useState('Connect from the Xroga side panel in Chrome.');
 
   useEffect(() => {
-    const url = new URL(location.href);
-    const nonce = url.searchParams.get('browserPair');
-    const requestedId = url.searchParams.get('browserExtension');
     if (!nonce || !UUID.test(nonce) || !requestedId || !EXTENSION_ID.test(requestedId)) return;
     setPairingVisible(true);
     const runtime = (window as Window & { chrome?: { runtime?: {
@@ -115,6 +116,7 @@ export function WorkspaceBrowserOperator({ extensionId }: { extensionId?: string
           portRef.current = connected;
           setPaired(true);
           setStatus('Chrome connected. Browser actions run on this device. Relevant page observations are sent to Xroga for model inference.');
+          const url = new URL(location.href);
           url.searchParams.delete('browserPair');
           url.searchParams.delete('browserExtension');
           history.replaceState(history.state, '', url);
@@ -215,7 +217,7 @@ export function WorkspaceBrowserOperator({ extensionId }: { extensionId?: string
       portRef.current = null;
       pairedToken.current = '';
     };
-  }, [extensionId]);
+  }, [extensionId, nonce, requestedId]);
 
   if (!extensionId && !pairingVisible) return null;
   return (
