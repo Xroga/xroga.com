@@ -28,7 +28,7 @@ const TOOL = 'SLACK_DELETE_MESSAGE';
 type Mode = 'success' | 'failure' | 'timeout' | 'empty' | 'input_required' | 'incomplete' | 'malformed';
 
 /** Intercepts actual adapter calls, not a replacement runtime. Never forwards a request. */
-function providerStub(t: TestContext, mode: Mode = 'success', connected = false, slug = TOOL,events?:{onSearch?:()=>void;onAudit?:()=>void;sessionOwner?:()=>string;fixture?:ReturnType<typeof nativeReleaseFixture>}) {
+function providerStub(t: TestContext, mode: Mode = 'success', connected = false, slug = TOOL,events?:{onSearch?:()=>void;onAudit?:()=>void;sessionOwner?:()=>string;fixture?:ReturnType<typeof nativeReleaseFixture>;toolInputSchema?:Record<string,unknown>}) {
   const previous = new Map(['COMPOSIO_API_KEY','SUPABASE_URL','SUPABASE_SERVICE_ROLE_KEY','SUPABASE_JWT_SECRET'].map(key=>[key,process.env[key]]));
   process.env.COMPOSIO_API_KEY = 'golden-test-canary-not-a-real-key';
   process.env.SUPABASE_URL='http://127.0.0.1:54321';process.env.SUPABASE_SERVICE_ROLE_KEY='synthetic-offline-service-role';delete process.env.SUPABASE_JWT_SECRET;
@@ -63,7 +63,7 @@ function providerStub(t: TestContext, mode: Mode = 'success', connected = false,
       return response(mode==='failure'?{error:'SIMULATED_PROVIDER_FAILURE',data:null}:{data:{fixture:true,reference:'fixture-deletion-1',
         access_token:'SYNTHETIC_PROVIDER_RESULT_CREDENTIAL',credentials:{secret:'SYNTHETIC_NESTED_CREDENTIAL'},url:'https://example.invalid/fixture-result'},error:null});
     }
-    if(path.includes('/tools/'))return response({slug,toolkit:{slug:'slack'},tags:[slug===TOOL?'destructiveHint':'readOnlyHint'],input_parameters:{type:'object'},scopes:['fixture.message.delete']});
+    if(path.includes('/tools/'))return response({slug,toolkit:{slug:'slack'},tags:[slug===TOOL?'destructiveHint':'readOnlyHint'],input_parameters:events?.toolInputSchema??{type:'object'},scopes:['fixture.message.delete']});
     if(path.endsWith('/search')){events?.onSearch?.();return response({tool_schemas:mode==='empty'?{}:{fixture:{tool_slug:slug,toolkit:'slack',description:'Synthetic fixture only',input_schema:{type:'object'}}}});}
     if(path.endsWith('/toolkits'))return response({items:[{slug:'slack',name:'Slack',connected_account:connected?{id:'fixture-account-A',status:'ACTIVE'}:null}]});
     if(path.endsWith('/session')||path.endsWith(`/${SESSION}`))return response({session_id:SESSION,config:{user_id:`xroga:${events?.sessionOwner?.()??OWNER}`,workbench:{enable:false,enable_proxy_execution:false},execute:{enable_multi_execute:false},multi_account:{enable:true,require_explicit_selection:true},tags:['readOnlyHint']}});
@@ -156,6 +156,15 @@ test('GJ business write rejects absent user authority and changed prepared argum
   await assert.rejects(executePreparedBusinessAction({userId:OWNER,plan,authorization:{explicitUserAuthorization:false as unknown as true}}),code('BUSINESS_ACTION_USER_AUTHORIZATION_REQUIRED'));
   await assert.rejects(executePreparedBusinessAction({userId:OWNER,plan:{...plan,arguments:{message_id:'other-message'}},authorization:{explicitUserAuthorization:true,confirmedHighRisk:true}}),code('BUSINESS_ACTION_PLAN_CHANGED'));
   assert.equal(paths.length,0);
+});
+test('GJ a previously prepared approval cannot dispatch after required inputs fail the current schema', async t => {
+  const paths = providerStub(t, 'success', true, TOOL, { toolInputSchema: {
+    type: 'object', required: ['message_id', 'channel_id'],
+    properties: { message_id: { type: 'string' }, channel_id: { type: 'string' } },
+  } });
+  await assert.rejects(executeFixture(), code('BUSINESS_ACTION_INPUT_REQUIRED'));
+  assert.equal(paths.some(path => path.endsWith('/execute')), false);
+  assert.deepEqual(paths.auditCorrelations, []);
 });
 test('GJ exact prepared destructive action requires confirmation before the actual adapter executes',async t=>{
   const paths=providerStub(t,'success',true),plan=preparedPlan();

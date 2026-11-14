@@ -1,0 +1,47 @@
+{
+  "version": "1.0",
+  "missionId": "COMPOSIO-UPSTREAM-AUTOMATION-20261114",
+  "baseSha": "09ab0b3b42397f9755d176bf32f64205355c75f7",
+  "requirementIds": ["XR-FAMILY-composio-dynamic-tools", "XR-ORIGINAL-F041"],
+  "state": "CODE_COMPLETE",
+  "risk": "medium",
+  "scope": "Reuse upstream Composio MCP skill references and hydrate any deferred input schema for bounded connected-action candidates before planning in the existing Xroga runtime.",
+  "changedFiles": [
+    "backend/src/services/integrations/composioClient.ts",
+    "backend/src/services/integrations/businessAction.ts",
+    "backend/src/services/integrations/businessModelEgress.test.ts",
+    "vendor/composio-mcp-plugin/LICENSE",
+    "vendor/composio-mcp-plugin/skills/composio-mcp/SKILL.md",
+    "vendor/composio-mcp-plugin/skills/composio-activity-summary/SKILL.md",
+    "vendor/composio-mcp-plugin/UPSTREAM.md",
+    "docs/xroga/missions/composio-upstream-automation-20261114.json"
+  ],
+  "decisions": {
+    "keep": ["Canonical scheduler, tenant-bound Composio session adapter, approvals and execution"],
+    "extend": ["Upstream deferred-schema inspection contract before action argument planning"],
+    "replace": [],
+    "deprecate": []
+  },
+  "schemaImpact": {"changed": false, "migrations": [], "rollout": "No database migration.", "rollback": "No schema rollback."},
+  "securityImpact": {
+    "auth": {"changed": false, "description": "Existing authenticated route and actor admission."},
+    "tenant": {"changed": false, "description": "Schema lookups use the same issued tenant and connected candidates."},
+    "approval": {"changed": false, "description": "Existing exact confirmation and dispatch checks remain in force."},
+    "credentials": {"changed": false, "description": "No new credentials or OAuth grants."},
+    "egress": {"changed": true, "description": "Bounded calls to existing Composio metadata endpoint; no remote snippets or shell execution."},
+    "cost": {"changed": true, "description": "Additional metadata-only requests capped at ten when discovery does not include schemas; no new model calls or paid-tool policy."},
+    "billing": {"changed": false, "description": "No billing changes."}
+  },
+  "tests": [
+    {"command": "tsx --test backend/src/services/integrations/businessModelEgress.test.ts", "scope": "Hydrates full tool input before model dispatch and fails safely on missing metadata.", "negative": true, "reference": "backend/src/services/integrations/businessModelEgress.test.ts"}
+  ],
+  "architecture": {"change": "extends_canonical", "reason": "Uses the same session API, canonical planner and consent boundaries, with upstream references checked in separately.", "rfc": null},
+  "rollout": "Use the dedicated feature branch. Run exact-source CI and verify a signed-in isolated paired frontend/API before inviting manual testing or promoting to production.",
+  "rollback": "Revert the single adoption commit or leave production on the existing revision.",
+  "knownGaps": ["Vendored skill files are references, not an enabled remote agent.", "Live provider-backed integration and every toolkit operation are not certified.", "No OwnPilot default identity, unrestricted batching, remote bash or permission-bypass configs are imported."],
+  "placeholderClaimsRemaining": [],
+  "evidenceRefs": ["vendor/composio-mcp-plugin/UPSTREAM.md", "backend/src/services/integrations/businessModelEgress.test.ts"],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {"state": "BLOCKED", "blockers": ["Exact-source CI and an authorized isolated Composio Workspace acceptance window are outstanding."], "authenticatedE2e": "BLOCKED", "stagedSecurity": "BLOCKED", "liveUrl": null, "deployedSha": null}
+}

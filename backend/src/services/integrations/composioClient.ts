@@ -121,6 +121,8 @@ interface ComposioToolSchema {
   description?: string;
   input_schema?: Record<string, unknown>;
   output_schema?: Record<string, unknown>;
+  hasFullSchema?: boolean;
+  schemaRef?: unknown;
 }
 
 interface ComposioSearchResponse {
@@ -336,6 +338,7 @@ export interface XrogaConnectTool {
   name?: string;
   description?: string;
   inputSchema?: Record<string, unknown>;
+  schemaLookupRequired?: boolean;
   scopes?: string[];
   tags?: string[];
   version?: string;
@@ -1821,6 +1824,9 @@ function mapSearchTool(
     toolkit: tool.toolkit,
     description: tool.description,
     inputSchema: tool.input_schema,
+    ...(tool.hasFullSchema === false || (tool.hasFullSchema !== true && tool.schemaRef)
+      ? { schemaLookupRequired: true }
+      : {}),
     risk,
     requiresConfirmation: risk === 'destructive',
   };

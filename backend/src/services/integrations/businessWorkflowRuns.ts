@@ -159,7 +159,10 @@ async function advance(context: TenantContext, row: RunRow): Promise<BusinessWor
         forceConfirmation: true,
       });
       if (preparation.status !== 'ready') {
-        current = await updateRun(context, current, { status: 'setup_required' });
+        current = await updateRun(context, current, {
+          status: 'setup_required',
+          ...(preparation.status === 'input_required' ? { failure_code: 'ACTION_INPUT_REQUIRED' } : {}),
+        });
         return { run: view(current), pendingAction: preparation };
       }
       const confirmation = await createBusinessActionConfirmation(current.user_id, preparation.plan);
@@ -265,7 +268,9 @@ export async function resumeBusinessWorkflowAfterSetup(context: TenantContext, r
     if (!resumed) throw new Error('The confirmed action no longer belongs to this workflow.');
     return resumed;
   }
-  if (row.status !== 'setup_required' || row.failure_code === 'READ_RESULT_TOO_LARGE') throw new Error('This workflow is not waiting for a connection or app choice.');
+  if (row.status !== 'setup_required' || row.failure_code === 'READ_RESULT_TOO_LARGE' || row.failure_code === 'ACTION_INPUT_REQUIRED') {
+    throw new Error('This workflow is not waiting for a connection or app choice.');
+  }
   return advance(context, await updateRun(context, row, { status: 'running' }));
 }
 
