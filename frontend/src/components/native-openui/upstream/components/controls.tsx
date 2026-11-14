@@ -308,9 +308,10 @@ export const Slider = defineComponent({
     const step = props.step && props.step > 0 ? props.step : 1;
     const raw = typeof field.value === "number" ? field.value : Number(field.value);
     const value = Number.isFinite(raw) ? Math.min(max, Math.max(min, raw)) : min;
-    const unit = props.unit ?? "";
+    const unit = props.unit?.trim() ?? "";
     const prefix = /^[$€£¥₹]/.test(unit);
-    const readout = prefix ? `${unit}${numberText(value)}` : `${numberText(value)}${unit}`;
+    const separator = unit && !/^[%°‰′″]/u.test(unit) ? " " : "";
+    const readout = prefix ? `${unit}${numberText(value)}` : `${numberText(value)}${separator}${unit}`;
     const marks = (props.marks ?? []).filter((m) => m && Number.isFinite(m.value) && m.value >= min && m.value <= max);
     const id = useId();
     return (

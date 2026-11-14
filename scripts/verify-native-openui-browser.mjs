@@ -28,7 +28,7 @@ const cases = {
     program: [
       '$people = 40',
       'root = Col([Title("Workshop revenue simulator", "lg"), Text("Adjust attendance to calculate gross revenue. The ticket price is fixed at **$25 per attendee**."), calculator, scenarios, Caption("Gross revenue = attendance × $25. Fees, refunds and expenses are excluded.")])',
-      'calculator = Card([Grid([Metric("Gross revenue", @Format($people * 25, "currency", 0, "USD"), "Before fees and expenses", "info"), Metric("Ticket price", "$25", "Per attendee")], 2, 180), Divider(), Controls([Slider($people, 10, 80, 1, "Attendees", null, [{value: 10, label: "10 attendees"}, {value: 80, label: "80 attendees"}]), Button("Reset", @Set($people, 40))], "Attendance")], "outline")',
+      'calculator = Card([Grid([Metric("Gross revenue", @Format($people * 25, "currency", 0, "USD"), "Before fees and expenses", "info"), Metric("Ticket price", "$25", "Per attendee")], 2, 180), Divider(), Controls([Slider($people, 10, 80, 1, "Attendees", "people", [{value: 10, label: "10 attendees"}, {value: 80, label: "80 attendees"}]), Button("Reset", @Set($people, 40))], "Attendance")], "outline")',
       'scenarios = Section("Revenue by attendance", [Chart("bar", [{attendees: "20", gross: 500}, {attendees: "40", gross: 1000}, {attendees: "60", gross: 1500}], "attendees", ["gross"], "currency", "USD", false, 215, {xLabel: "Attendees", yLabel: "Gross revenue (USD)", note: "Each bar uses the same $25 ticket price."})])',
     ].join('\n'),
   },
@@ -83,7 +83,7 @@ const cases = {
   executable: { text: 'The function multiplies price and quantity.', program: 'root = Col([Code("def revenue(price, quantity):\\n    return price * quantity", "python")])' },
   math: { text: 'The area of a circle is pi times radius squared.', program: 'root = Col([Math("A = \\\\pi r^2"), Text("The area of a circle is pi times radius squared.")])' },
   finance: { text: 'May increased from $200 to $250.', program: 'root = Col([Chart("line", [{month:"April", total:200},{month:"May",total:250}], "month", ["total"], "currency", "USD"), Table(["Month", "Revenue"], [["April", 200], ["May", 250]])])' },
-  roi: { text: 'The initial return is 20%.', program: '$gain = 120\nroot = Col([Metric("ROI", @Format(100 * ($gain - 100) / 100, "percent", 0)), Slider($gain, 100, 150, 1, "Gain"), Button("Reset", @Set($gain, 120))])' },
+  roi: { text: 'The initial return is 20%.', program: '$gain = 120\nroot = Col([Metric("ROI", @Format(100 * ($gain - 100) / 100, "percent", 0)), Slider($gain, 100, 150, 1, "Gain", "%"), Button("Reset", @Set($gain, 120))])' },
   roadmap: { text: 'Start with discovery, then build and validate.', program: 'root = Col([Title("Delivery roadmap"), List([ListItem("Discovery", "Week one"), ListItem("Build", "Week two"), ListItem("Validation", "Week three")], "timeline")])' },
   identifiers: { text: 'Keep tenant_id and tenant_members visible.', program: 'root = Col([Text("Keep tenant_id and tenant_members visible.", "md")])' },
   bareTransport: { raw: 'Keep the readable answer.\nroot = Col([Text("Keep the readable answer."), UnknownInternalWidget()])' },
@@ -217,6 +217,7 @@ try {
       await open('revenue');
       const slider = page.getByRole('slider', { name: 'Attendees' });
       await slider.waitFor();
+      assert.equal(await slider.getAttribute('aria-valuetext'), '40 people');
       if (viewport.width === 390) {
         const metrics = await page.locator('.native-answer-metric').evaluateAll(nodes => nodes.map(node => node.getBoundingClientRect().top));
         assert.equal(metrics[0], metrics[1], 'Both calculator values should fit on one row at 390px');
@@ -388,7 +389,9 @@ try {
       }
       await open('roi');
       await answer.getByText('20%', { exact: true }).waitFor();
-      await answer.getByRole('slider', { name: 'Gain' }).press('ArrowRight');
+      const gain = answer.getByRole('slider', { name: 'Gain' });
+      assert.equal(await gain.getAttribute('aria-valuetext'), '120%');
+      await gain.press('ArrowRight');
       await answer.getByText('21%', { exact: true }).waitFor();
       await answer.getByRole('button', { name: 'Reset' }).click();
       await answer.getByText('20%', { exact: true }).waitFor();
