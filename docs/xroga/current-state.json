@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/openui-production-integration-20261114",
-    "sha": "75d9b91f1228fe4d1c790ce39090010d3b633925",
-    "sourceTimestampUtc": "2026-11-14T04:36:03+05:00",
-    "auditStartedUtc": "2026-11-14T08:13:14.699Z",
+    "sha": "59769d8d7c3399ae9ee22fd10c5e48458172339a",
+    "sourceTimestampUtc": "2026-11-14T13:14:40+05:00",
+    "auditStartedUtc": "2026-11-14T08:19:53.569Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -145850,86 +145850,86 @@
       "reachable": false
     },
     {
-      "id": "frontend-call:eebb4830c2845bad7cf6",
+      "id": "frontend-call:a0afd45676c46261db06",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 683,
+      "line": 685,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:edd58f2a3a15751a2e28",
+      "id": "frontend-call:3dd71a3271dffbcaf1f7",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 686,
+      "line": 688,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:18e605c6e004157f5e31",
+      "id": "frontend-call:b04280b7159b6bbec988",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1457,
+      "line": 1459,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:a679d1a5ce5cfb10c707",
+      "id": "frontend-call:0a1652f9c4d49fc37e8a",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1458,
+      "line": 1460,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:b2da386e822718624c40",
+      "id": "frontend-call:b0861f1af0e34d195ba5",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1463,
+      "line": 1465,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:b44fbebda91ce12df8ae",
+      "id": "frontend-call:9c4165cfeb444cf22b2f",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1464,
+      "line": 1466,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:35766bcf65e82789167d",
+      "id": "frontend-call:159254a85241f39c126b",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1470,
+      "line": 1472,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:7e6fde2ed8cfa024cdbf",
+      "id": "frontend-call:f517faba0bdd5fb2b753",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1475,
+      "line": 1477,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:3fab432acafa95dad1ea",
+      "id": "frontend-call:88b0a283940251305261",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1532,
+      "line": 1534,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:3884ff48afeb34b23129",
+      "id": "frontend-call:c5ca20b4225e04fbc90d",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1533,
+      "line": 1535,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:1054cf443a66c14d716b",
+      "id": "frontend-call:5d73cb352411d2250ce0",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1540,
+      "line": 1542,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:7f09ff26c352e39ee915",
+      "id": "frontend-call:e8fb4a6ba1a1c4152add",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1554,
+      "line": 1556,
       "callee": "fetch",
       "reachable": false
     },
