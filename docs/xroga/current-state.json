@@ -64295,7 +64295,7 @@
       "id": "surface:9f51ed5a722f2b32376d",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/app/share/[token]/page.tsx",
-      "sha256": "df1955af0641e308dfa46ba7fcda1c3d4b71debe2047dd10060e57d6fa07dff9",
+      "sha256": "984d65c26e0f8d0a2e876d8851f13f321cea01efc8b911fcc4d9a960bb9be32e",
       "symbols": [
         "MessageSharePage",
         "PublicShare",
@@ -146175,44 +146175,44 @@
       "reachable": false
     },
     {
-      "id": "frontend-call:3f36ab74a61d94893208",
+      "id": "frontend-call:cdf446db1fad0433b0b3",
       "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 137,
+      "line": 142,
       "callee": "api.closeAllConnections",
       "reachable": false
     },
     {
-      "id": "frontend-call:8fa96a87c128bf718f1e",
+      "id": "frontend-call:d27b052b509a8ea8a2c3",
       "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 137,
+      "line": 142,
       "callee": "api.close",
       "reachable": false
     },
     {
-      "id": "frontend-call:f3ddeb6b3afb7b615ead",
+      "id": "frontend-call:64d3edb2d158a64d91c3",
       "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 150,
+      "line": 155,
       "callee": "api.listen",
       "reachable": false
     },
     {
-      "id": "frontend-call:f1900016cfd639818001",
+      "id": "frontend-call:f849dd7444d47f513431",
       "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 152,
+      "line": 157,
       "callee": "api.address",
       "reachable": false
     },
     {
-      "id": "frontend-call:e2653e620fdcb85574d9",
+      "id": "frontend-call:0545885a2c50a2f40596",
       "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 182,
+      "line": 187,
       "callee": "api.closeAllConnections",
       "reachable": false
     },
     {
-      "id": "frontend-call:9a719759e4e1c0588bd0",
+      "id": "frontend-call:f5a78ba42cbc387edc32",
       "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 182,
+      "line": 187,
       "callee": "api.close",
       "reachable": false
     },
