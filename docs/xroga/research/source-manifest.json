@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "fb9c19673f83cdc5648a67a20b53028c6777ed6d",
+  "source_sha": "2b8b3b83cc6101fb73199846b0321852a5d46f3e",
   "hash_policy": "Exact preserved attachment bytes; repository text uses Git-canonical LF bytes for portable hashes and byte counts",
   "sources": [
     {
@@ -6351,9 +6351,9 @@
       "source_id": "SRC-3d3190a1571aa705",
       "filename": "current-state.json",
       "path_or_url": "docs/xroga/current-state.json",
-      "sha256": "b8902b087b0168f7fbf97040c62c90aa4c14ab3df9cad95c7dd529918b422a5f",
+      "sha256": "52e53e5028d5fc3999ce49b7890f8cb1f0dc574e3c910941e7b746becc29e53e",
       "byte_size": 5724366,
-      "modified_timestamp": "2026-11-14T15:14:37.778Z",
+      "modified_timestamp": "2026-11-14T15:20:53.835Z",
       "parse_status": "PARSED_JSON",
       "category": "REPOSITORY_DOCUMENT",
       "authority": "ADVISORY",
@@ -22926,9 +22926,9 @@
       "source_id": "SRC-169100c09d49c965",
       "filename": "NativeSurface.tsx",
       "path_or_url": "frontend/src/components/native-openui/NativeSurface.tsx",
-      "sha256": "f0447a84aa4d9341184d1cb902ed0673ba8658fbad9564bb73a712dffc1d0ce4",
-      "byte_size": 3521,
-      "modified_timestamp": "2026-11-14T15:11:08.011Z",
+      "sha256": "9489ebf1477f2cdf0f3f8aa8d1159668e5241abc2af120415043ce61b81d5895",
+      "byte_size": 3593,
+      "modified_timestamp": "2026-11-14T15:19:29.593Z",
       "parse_status": "AST_METADATA",
       "category": "SOURCE_CODE",
       "authority": "CURRENT_CODE",

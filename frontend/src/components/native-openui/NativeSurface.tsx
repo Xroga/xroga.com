@@ -45,7 +45,7 @@ export function NativeSurface({ answer, sources, isStreaming = false }: {
     : undefined, [accepted, isStreaming, recovered]);
   const visibleTables = useMemo(() => preservedMarkdownTableKeys(answer.text), [answer.text]);
   const renderCitation = (number: number, href?: string) => evidenceCitation(verified, number, href);
-  const prose = <MarkdownBlocks text={answer.text} deduplicateTables={recovered} renderCitation={renderCitation} />;
+  const prose = <div className="iui-markdown"><MarkdownBlocks text={answer.text} deduplicateTables={recovered} renderCitation={renderCitation} /></div>;
   return (
     <section className="xroga-native-openui" aria-label="Answer" dir="auto" aria-busy={isStreaming}>
       {accepted && failedProgram !== accepted
@@ -55,7 +55,7 @@ export function NativeSurface({ answer, sources, isStreaming = false }: {
               <Renderer response={accepted} isStreaming={isStreaming} library={library} publishObservability={false}
                 onError={errors => { if (errors.some(error => error.severity !== 'warning')) setFailedProgram(accepted); }} />
             </VisibleMarkdownTables.Provider>
-            {!recovered && <MarkdownBlocks text={answer.text} matches={matches} renderCitation={renderCitation} />}
+            {!recovered && <div className="iui-markdown"><MarkdownBlocks text={answer.text} matches={matches} renderCitation={renderCitation} /></div>}
           </EvidenceContext.Provider>
         : prose}
     </section>
