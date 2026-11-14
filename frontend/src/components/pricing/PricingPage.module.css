@@ -1613,3 +1613,155 @@
 @media (prefers-reduced-motion: reduce) {
   .starField span { animation: none; }
 }
+
+
+/* Large glassmorphic capability icons: static on Free, continuously morphing on Pro. */
+.proShowcase, .freeShowcase {
+  position: relative;
+  width: min(100%, 225px);
+  margin: 0 0 23px;
+  display: grid;
+  justify-items: center;
+  isolation: isolate;
+}
+.showcaseOrb {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 180px;
+  height: 180px;
+  max-width: 100%;
+  border: 1px solid rgba(227,222,255,.38);
+  border-radius: 47px;
+  background:
+    radial-gradient(circle at 50% 1%, rgba(209,197,255,.39), transparent 56%),
+    linear-gradient(155deg, rgba(84,81,140,.76), #181a3a 47%, #090c20);
+  box-shadow: inset 0 2px 1px rgba(255,255,255,.18), inset 0 -15px 30px rgba(3,4,17,.5),
+    0 0 0 9px rgba(171,160,244,.035), 0 24px 50px rgba(95,83,198,.16);
+  overflow: hidden;
+  transition: transform .4s ease, box-shadow .4s ease, border-color .4s ease;
+}
+.proShowcase .showcaseOrb {
+  box-shadow: inset 0 2px 1px rgba(255,255,255,.2), inset 0 -15px 30px rgba(3,4,17,.5),
+    0 0 0 9px rgba(171,160,244,.04), 0 25px 65px rgba(130,98,241,.3);
+}
+.orbLines {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: repeating-linear-gradient(0deg, transparent 0, transparent 5px, rgba(205,210,255,.085) 6px, transparent 7px);
+  mask-image: linear-gradient(to bottom, transparent 8%, #000 48%, transparent 95%);
+  pointer-events: none;
+}
+.orbCenter {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 92px;
+  height: 92px;
+  border: 5px solid rgba(230,222,255,.94);
+  border-radius: 23px;
+  box-shadow: 0 0 21px rgba(226,210,255,.65), inset 0 0 24px rgba(213,201,255,.15);
+  color: #f7efff;
+}
+.showcaseSymbol { width: 52px; height: 52px; filter: drop-shadow(0 0 10px rgba(215,195,255,.55)); }
+.proShowcase .showcaseSymbol { animation: capabilityEnter 2.1s ease-in-out both; }
+.orbHalo {
+  position: absolute;
+  inset: -42%;
+  border-radius: 50%;
+  border: 1px solid rgba(204,197,255,.18);
+  box-shadow: 0 0 50px 4px rgba(137,105,240,.2);
+  pointer-events: none;
+  animation: haloBreathe 4s ease-in-out infinite;
+}
+.showcaseCaption {
+  display: block;
+  margin: 15px 0 0;
+  min-height: 22px;
+  font-family: var(--font-xv-mono), ui-monospace, monospace;
+  font-size: .75rem;
+  font-weight: 740;
+  text-transform: uppercase;
+  letter-spacing: .14em;
+  color: #d6ceff;
+}
+.freeShowcase .showcaseOrb {
+  background: linear-gradient(160deg, #353e63, #1c223d 63%, #10152c);
+  box-shadow: inset 0 1px rgba(255,255,255,.15), 0 17px 45px rgba(24,34,64,.18);
+}
+.freeShowcase .orbCenter { border-color: rgba(206,213,245,.72); box-shadow: 0 0 13px rgba(188,198,242,.24); }
+.freeShowcase .showcaseCaption { color: #b5c0dc; }
+.proCard:hover .showcaseOrb {
+  transform: translateY(-6px) rotate(-2deg) scale(1.035);
+  border-color: rgba(234,223,255,.72);
+  box-shadow: inset 0 2px rgba(255,255,255,.21), 0 35px 80px rgba(141,92,255,.35);
+}
+.proCard:hover .featureList .check {
+  background: rgba(190,163,255,.22);
+  box-shadow: 0 0 0 3px rgba(170,146,255,.07);
+}
+.proCard .featureList li:hover .check {
+  transform: scale(1.14) rotate(-9deg);
+  color: #fff;
+}
+.proCard .featureList .check {
+  transition: transform .25s ease, color .25s ease, background .25s ease, box-shadow .25s ease;
+}
+.proCard .featureList .check svg { width: 16px; height: 16px; stroke-width: 1.95; }
+/* Uiverse-inspired dark inset CTA with a rotating dotted perimeter and sparkle. */
+.proCard .proUiverse {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  border: 1px solid rgba(224,217,255,.32);
+  border-radius: 22px;
+  background: linear-gradient(180deg, #151527 0%, #0c0e1b 100%);
+  box-shadow: inset 0 1px rgba(255,255,255,.22), inset 0 4px 8px rgba(255,255,255,.05),
+    0 12px 30px rgba(0,0,0,.3);
+  color: #f5f4ff;
+  letter-spacing: .015em;
+}
+.proCard .proUiverse::before {
+  content: '';
+  position: absolute;
+  z-index: -2;
+  inset: -110%;
+  background: conic-gradient(from 0deg, transparent 0deg 220deg,
+    rgba(217,201,255,.9) 247deg, transparent 278deg, rgba(173,132,255,.8) 315deg, transparent 342deg);
+  animation: uiverseRotate 4.8s linear infinite;
+}
+.proCard .proUiverse::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: 2px;
+  border-radius: 19px;
+  background: linear-gradient(180deg, #202034, #0c0e1c);
+  pointer-events: none;
+}
+.proCard .proUiverse:hover:not(:disabled) {
+  transform: translateY(-2px);
+  border-color: rgba(226,210,255,.78);
+  box-shadow: inset 0 1px rgba(255,255,255,.23), 0 0 0 4px rgba(146,112,255,.12),
+    0 17px 36px rgba(93,75,175,.33);
+}
+.proCard .proUiverse:disabled::before { animation: none; }
+@keyframes capabilityEnter {
+  0% { opacity: .15; transform: scale(.68) rotate(-12deg); filter: blur(8px); }
+  22% { opacity: 1; filter: blur(0); transform: scale(1.08) rotate(0); }
+  80% { opacity: 1; transform: scale(1); }
+  100% { opacity: .85; transform: scale(.96); }
+}
+@keyframes haloBreathe { 50% { opacity: .56; transform: scale(1.11); } }
+@keyframes uiverseRotate { to { transform: rotate(360deg); } }
+@media (max-width: 720px) {
+  .proShowcase, .freeShowcase { width: 100%; margin: 0 auto 21px; }
+  .showcaseOrb { width: 152px; height: 152px; border-radius: 40px; }
+  .orbCenter { width: 81px; height: 81px; border-width: 4px; border-radius: 21px; }
+  .showcaseSymbol { width: 46px; height: 46px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .proShowcase .showcaseSymbol, .orbHalo, .proCard .proUiverse::before { animation: none !important; }
+  .proCard:hover .showcaseOrb, .proCard:hover .featureList .check { transform: none !important; }
+}
