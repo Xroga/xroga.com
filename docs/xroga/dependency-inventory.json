@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "3187f15baec0d5f212fc2a53a48b91a1ff3ac66f",
+  "source_sha": "236dcf332377890489a4bc3df1e8df8ebe748029",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -20638,7 +20638,7 @@
     },
     {
       "path": "frontend/src/app/share/[token]/page.tsx",
-      "sha256": "df1955af0641e308dfa46ba7fcda1c3d4b71debe2047dd10060e57d6fa07dff9"
+      "sha256": "984d65c26e0f8d0a2e876d8851f13f321cea01efc8b911fcc4d9a960bb9be32e"
     },
     {
       "path": "frontend/src/app/showcase/[slug]/page.tsx",
