@@ -17,7 +17,7 @@
 .xf-local-header nav a:hover,.xf-local-footer a:hover{color:var(--xf-blue)}
 .xf-nav-cta{border:1px solid rgba(255,255,255,.2);background:#171a1c;border-radius:100px;display:inline-flex;align-items:center;gap:10px;padding:11px 16px;color:white;font-weight:750;font-size:12px;transition:border-color .2s,background .2s}
 .xf-nav-cta:hover{border-color:var(--xf-blue);background:#1e2229}
-.xf-hero{display:grid;grid-template-columns:1.08fr .92fr;align-items:center;gap:64px;padding:102px 0 134px}
+.xf-hero{display:grid;grid-template-columns:1.08fr .92fr;align-items:center;gap:64px;padding:76px 0 124px}
 .xf-eyebrow,.xf-kicker{display:inline-flex;align-items:center;gap:10px;color:#6ea5e0;font-size:10px;font-weight:800;letter-spacing:.19em}
 .xf-pulse{width:7px;height:7px;border-radius:100%;background:#7fbbfc;box-shadow:0 0 14px #7fbbfc}
 .xf-eyebrow-sep{color:#545a5c}
@@ -183,7 +183,7 @@
 .xf-local-footer>div{display:flex;gap:22px}
 .xf-local-footer>div a{display:flex;align-items:center;gap:6px}
 @media(max-width:1080px){.xf-container{padding:0 24px}.xf-hero{gap:28px}.xf-hero h1{font-size:clamp(51px,6.1vw,75px)}.xf-feature-app,.xf-feature-code{grid-column:span 6}.xf-catalog-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
-@media(max-width:760px){.xf-local-header{min-height:74px}.xf-local-header nav{display:none}.xf-brand-sub{display:none}.xf-hero{grid-template-columns:1fr;gap:48px;padding:69px 0 100px}.xf-hero h1{font-size:clamp(51px,10vw,74px)}.xf-workspace{justify-self:center;max-width:530px;transform:none}.xf-feature-grid{gap:12px}.xf-feature-card,.xf-feature-app,.xf-feature-code,.xf-feature-saas,.xf-feature-deploy{grid-column:span 6;min-height:390px}.xf-feature-app .xf-scene,.xf-feature-code .xf-scene{min-height:165px}.xf-section-head{align-items:start;flex-direction:column;gap:13px}.xf-section-head>p{max-width:540px}.xf-benefits-shell{margin-top:84px;padding:72px 20px 25px}.xf-benefits-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.xf-catalog-shell{padding-top:95px}.xf-catalog-controls{align-items:stretch;flex-direction:column}.xf-search{width:100%}.xf-catalog-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.xf-bottom-cta{margin-top:96px}}
+@media(max-width:760px){.xf-local-header{min-height:74px}.xf-local-header nav{display:none}.xf-brand-sub{display:none}.xf-hero{grid-template-columns:1fr;gap:48px;padding:62px 0 100px}.xf-hero h1{font-size:clamp(51px,10vw,74px)}.xf-workspace{justify-self:center;max-width:530px;transform:none}.xf-feature-grid{gap:12px}.xf-feature-card,.xf-feature-app,.xf-feature-code,.xf-feature-saas,.xf-feature-deploy{grid-column:span 6;min-height:390px}.xf-feature-app .xf-scene,.xf-feature-code .xf-scene{min-height:165px}.xf-section-head{align-items:start;flex-direction:column;gap:13px}.xf-section-head>p{max-width:540px}.xf-benefits-shell{margin-top:84px;padding:72px 20px 25px}.xf-benefits-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.xf-catalog-shell{padding-top:95px}.xf-catalog-controls{align-items:stretch;flex-direction:column}.xf-search{width:100%}.xf-catalog-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.xf-bottom-cta{margin-top:96px}}
 @media(max-width:540px){.xf-container{padding:0 16px}.xf-nav-cta{padding:10px 13px;font-size:11px}.xf-hero{padding:64px 0 95px}.xf-hero h1{font-size:clamp(45px,12.4vw,65px);margin:22px 0}.xf-hero-copy>p{font-size:13px;line-height:1.8}.xf-hero-proof{gap:11px 17px}.xf-workspace-body{padding:17px 14px 15px}.xf-workspace-float{right:0;bottom:-28px}.xf-section-head h2{font-size:39px}.xf-feature-card,.xf-feature-app,.xf-feature-code,.xf-feature-saas,.xf-feature-deploy{grid-column:span 12;min-height:375px;padding:21px 23px 0}.xf-feature-app,.xf-feature-code{min-height:420px}.xf-card-copy h3{font-size:27px}.xf-feature-app .xf-scene,.xf-feature-code .xf-scene{min-height:200px}.xf-benefits-shell{padding:65px 11px 15px;border-radius:20px}.xf-benefits-grid{gap:8px}.xf-benefit{min-height:225px;padding:12px 9px 18px}.xf-benefit h3{font-size:12px}.xf-benefit p{font-size:10px}.xf-benefit-art{min-height:95px}.xf-catalog-grid{grid-template-columns:1fr}.xf-catalog-card{min-height:210px}.xf-filter-tabs{gap:6px}.xf-filter-tab{padding:9px 12px}.xf-local-footer{flex-wrap:wrap}.xf-local-footer>div{order:3;width:100%;justify-content:space-between;gap:8px}}
 @media(prefers-reduced-motion:reduce){.xf-root :is(a,button){transition:none!important}.xf-feature-card:hover,.xf-catalog-card:hover,.xf-btn-primary:hover,.xf-btn-secondary:hover{transform:none}}
 
@@ -244,7 +244,7 @@
    Reuses the self-hosted Cormorant variable font (font-emilio) already registered
    by the root layout. Body text, cards and interactive controls remain sans-serif. */
 .xf-root {
-  --xf-display-serif: var(--font-emilio), 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  --xf-display-serif: var(--xv-editorial-serif);
 }
 .xf-hero h1,
 .xf-section-head h2,
@@ -252,7 +252,7 @@
 .xf-bottom-cta h2,
 .xf-directory-heading h3 {
   font-family: var(--xf-display-serif);
-  font-weight: 500;
+  font-weight: 400;
   font-optical-sizing: auto;
   font-synthesis: none;
   letter-spacing: -.045em;
@@ -318,3 +318,6 @@
   .xf-directory-heading h3 { font-size: 34px; }
   .xf-bottom-cta h2 { font-size: clamp(51px, 11vw, 67px); }
 }
+
+/* Page category titles share the editorial serif, while compact feature cards stay sans. */
+.xf-root .xf-directory-heading h3 { font-family: var(--xv-editorial-serif) !important; font-weight: 400; }
