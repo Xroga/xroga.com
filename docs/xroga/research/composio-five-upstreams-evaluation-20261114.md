@@ -80,3 +80,21 @@ Release state: **DRAFT; source improvements only; no production deployment.**
 - Existing approvals and per-account ownership still control external mutations.
 - Integrated historical source-bound review mapping remains a separate mandatory security check; diagnostics were improved without disabling the check.
 - Actual auth/provider integration and commercial action execution remain blocked until credentials and staging tests are available.
+
+## Advanced connected-app execution additions — November 15
+
+**Implemented on this evaluation branch (source-level, not live account verification):**
+
+1. Bounded, validated explicit dependency edges (`dependsOnSteps`) in connected-app workflows. A step can reference at most three earlier results, with cycles/forward references, duplicates, and invalid source receipts rejected before execution.
+2. Dependent **read** steps now pass exact bounded previous-step evidence into the existing connected-app read planner. This enables a read-back step to use an earlier created destination receipt rather than losing the identifier.
+3. A server-side `executeApprovedComposioReadBatch` primitive supports two or three independent already-approved read actions concurrently. Each uses its own existing exact authority permit, discovered tool, connected account, egress policy, and completion receipt. Partial failures are returned per item, not silently retried. Internal Composio meta-tools, writes, destructive and opaque tools are explicitly excluded.
+4. The branch's focused test workflow includes admission tests for the approved read batch, as well as workflow dependency and input-preflight tests. Backend and frontend TypeScript checks are included.
+
+**Important boundaries:**
+
+- The approved read-batch primitive is an internal backend capability and is **not wired to a user-facing batch approval flow**. It does not currently enable a native `COMPOSIO_MULTI_EXECUTE_TOOL` session.
+- Xroga's session policy still disables raw multi-execute, API proxy and remote workbench. Composio calls these powerful but potentially consequential operations; they cannot be enabled without equivalent per-action permissions, account scoping, data-egress controls, budgeting, and appropriate auditing.
+- The current workflow UI still uses individual confirmations. Independent read *preparation* may happen concurrently; this must not be confused with verified parallel provider reads unless individually approved.
+- This branch is **not** a general arbitrary DAG scheduler and does not support parallel unapproved writes. It extends the existing canonical workflow engine only.
+- The source-bound security review mismatch involving `backend/src/routes/phase1.ts` remains an independent mandatory merge gate. Any reconciliation requires a real security review, not replacement hashes without analysis.
+- No live Gmail → Google Sheets provider write/readback, customer-account testing, or production deployment has been performed.

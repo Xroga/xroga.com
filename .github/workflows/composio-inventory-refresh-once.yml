@@ -56,3 +56,5 @@ jobs:
 
 # Audit-only diagnostics for stale historical review references; no exception bypass.
 # Structured, bounded dependency edges now apply to connected-app readback steps.
+
+# Regenerate committed source inventory after advanced approved-read batch and dependency additions.
