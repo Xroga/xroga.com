@@ -3,7 +3,7 @@ import { getTenantSupabaseAdmin } from '../../security/serviceRoleGuard.js';
 import { prepareBusinessAction, type BusinessActionPreparationOutcome, type BusinessActionReferenceEvidence, type BusinessActionExecutionOutcome } from './businessAction.js';
 import { cancelBusinessActionConfirmation, createBusinessActionConfirmation, type SafeBusinessActionConfirmation } from './businessActionConfirmations.js';
 import { readBusinessData, type BusinessReadOutcome } from './businessRead.js';
-import type { BusinessWorkflowStep } from './businessWorkflow.js';
+import { clarifyPendingBusinessWorkflowStep, dependentWorkflowEvidenceIndexes, independentReadWave, type BusinessWorkflowStep } from './businessWorkflow.js';
 
 type RunStatus = 'running' | 'executing' | 'awaiting_confirmation' | 'setup_required' | 'completed' | 'failed' | 'cancelled';
 
@@ -68,7 +68,7 @@ function validRun(row: unknown): row is RunRow {
     && typeof value.user_id === 'string'
     && Array.isArray(value.steps)
     && value.steps.length >= 2
-    && value.steps.length <= 4
+    && value.steps.length <= 8
     && value.steps.every((step) => step && typeof step === 'object'
       && (step.kind === 'read' || step.kind === 'action')
       && typeof step.request === 'string'
@@ -107,9 +107,8 @@ async function updateRun(context: TenantContext, row: RunRow, values: Partial<Ru
 
 function previousEvidence(row: RunRow, step: BusinessWorkflowStep): BusinessActionReferenceEvidence[] | undefined {
   if (!step.dependsOnPrevious) return undefined;
-  const earlier = row.outcomes.filter((outcome) => outcome.stepIndex < row.step_index);
-  const wantsReadResults = /\b(?:results?|found|matching|search(?:ed)?|leads?|clients?)\b/i.test(step.request);
-  const relevant = wantsReadResults ? earlier.filter((outcome) => outcome.kind === 'read') : earlier.slice(-1);
+  const indexes = dependentWorkflowEvidenceIndexes(row.outcomes, row.step_index, step.request, step.dependsOnPrevious);
+  const relevant = indexes.map((index) => row.outcomes[index]!);
   if (!relevant.length || relevant.length > 3 || relevant.some((outcome) => outcome.data.length > 8_000)) {
     throw new Error('The dependent action needs an exact, bounded previous result before it can be prepared.');
   }
@@ -128,6 +127,67 @@ async function advance(context: TenantContext, row: RunRow): Promise<BusinessWor
     const step = current.steps[current.step_index]!;
     try {
       if (step.kind === 'read') {
+        const wave = independentReadWave(current.steps, current.step_index);
+        if (wave.length > 1) {
+          // Parallelize only independent read intentions. Each read still goes
+          // through Xroga's existing connection, risk and approval enforcement.
+          const eventEvidence = current.outcomes.filter((item) => item.stepIndex === -1)
+            .map((item) => ({ sourceRequest: item.request, toolkit: item.toolkit, toolSlug: item.toolSlug, data: item.data }));
+          const outcomes = await Promise.allSettled(wave.map((index) => readBusinessData({
+            userId: current.user_id, tenantContext: context,
+            useCase: current.steps[index]!.request, referenceEvidence: eventEvidence,
+          })));
+          // A later read may request approval before an earlier read pauses.
+          // Cancel its unused confirmation rather than leak a stale grant.
+          const cancelLaterConfirmations = async (from: number): Promise<void> => {
+            await Promise.all(outcomes.slice(from).map(async (item) => {
+              if (item.status === 'fulfilled' && item.value.status === 'confirmation_required') {
+                await cancelBusinessActionConfirmation(current.user_id, item.value.confirmation.id).catch(() => undefined);
+              }
+            }));
+          };
+          for (let offset = 0; offset < outcomes.length; offset++) {
+            const outcome = outcomes[offset]!;
+            if (outcome.status === 'rejected') {
+              await cancelLaterConfirmations(offset + 1);
+              throw outcome.reason;
+            }
+            const result = outcome.value;
+            if (result.status === 'confirmation_required') {
+              await cancelLaterConfirmations(offset + 1);
+              try {
+                current = await updateRun(context, current, {
+                  status: 'awaiting_confirmation', current_confirmation_id: result.confirmation.id,
+                });
+              } catch (error) {
+                await cancelBusinessActionConfirmation(current.user_id, result.confirmation.id).catch(() => undefined);
+                throw error;
+              }
+              return { run: view(current), confirmation: result.confirmation };
+            }
+            if (result.status !== 'success') {
+              await cancelLaterConfirmations(offset + 1);
+              current = await updateRun(context, current, { status: 'setup_required', failure_code: null });
+              return { run: view(current), pendingRead: result };
+            }
+            const nextStepDependsOnThis = current.steps.slice(current.step_index + 1)
+              .some((item) => item.dependsOnPrevious);
+            if (result.evidenceText.length > 8_000 && nextStepDependsOnThis) {
+              await cancelLaterConfirmations(offset + 1);
+              current = await updateRun(context, current, { status: 'setup_required', failure_code: 'READ_RESULT_TOO_LARGE' });
+              return { run: view(current) };
+            }
+            current = await updateRun(context, current, {
+              outcomes: [...current.outcomes, {
+                stepIndex: current.step_index, request: current.steps[current.step_index]!.request,
+                kind: 'read', toolkit: result.toolkit, toolSlug: result.toolSlug,
+                data: result.evidenceText.slice(0, 8_000),
+              }],
+              step_index: current.step_index + 1,
+            });
+          }
+          continue;
+        }
         const eventEvidence = current.outcomes.filter((item) => item.stepIndex === -1).map((item) => ({ sourceRequest: item.request, toolkit: item.toolkit, toolSlug: item.toolSlug, data: item.data }));
         const result = await readBusinessData({ userId: current.user_id, tenantContext: context, useCase: step.request, referenceEvidence: eventEvidence });
         if(result.status==='confirmation_required'){
@@ -191,7 +251,7 @@ export async function createBusinessWorkflowRun(
   initialEvidence?: { toolkit: string; toolSlug: string; data: string },
 ): Promise<BusinessWorkflowProgress> {
   const { userId } = requireTenantContext(context);
-  if (steps.length < 2 || steps.length > 4) throw new Error('A connected-app workflow needs two to four explicit steps.');
+  if (steps.length < 2 || steps.length > 8) throw new Error('A connected-app workflow needs two to eight explicit steps.');
   if (initialEvidence && initialEvidence.data.length > 8_000) throw new Error('The trigger payload is too large for a bounded workflow.');
   const outcomes: StepOutcome[] = initialEvidence ? [{ stepIndex: -1, request: 'Authorized app trigger event', kind: 'read', toolkit: initialEvidence.toolkit, toolSlug: initialEvidence.toolSlug, data: initialEvidence.data }] : [];
   const { data, error } = await getTenantSupabaseAdmin(context)
@@ -238,7 +298,7 @@ export async function resumeBusinessWorkflowAfterConfirmation(
   return advance(context, current);
 }
 
-export async function resumeBusinessWorkflowAfterSetup(context: TenantContext, runId: string): Promise<BusinessWorkflowProgress> {
+export async function resumeBusinessWorkflowAfterSetup(context: TenantContext, runId: string, missingDetails?: string): Promise<BusinessWorkflowProgress> {
   const { userId } = requireTenantContext(context);
   const row = await loadRun(context, userId, runId);
   if (row.status === 'awaiting_confirmation' && row.current_confirmation_id) {
@@ -268,10 +328,18 @@ export async function resumeBusinessWorkflowAfterSetup(context: TenantContext, r
     if (!resumed) throw new Error('The confirmed action no longer belongs to this workflow.');
     return resumed;
   }
-  if (row.status !== 'setup_required' || row.failure_code === 'READ_RESULT_TOO_LARGE' || row.failure_code === 'ACTION_INPUT_REQUIRED') {
+  if (row.status === 'setup_required' && row.failure_code === 'ACTION_INPUT_REQUIRED') {
+    // Replan the same current step with explicit user clarification; no earlier
+    // step is replayed, and all external writes still require exact approval.
+    const steps = clarifyPendingBusinessWorkflowStep(row.steps, row.step_index, missingDetails ?? '');
+    return advance(context, await updateRun(context, row, {
+      steps, status: 'running', failure_code: null, current_confirmation_id: null,
+    }));
+  }
+  if (missingDetails !== undefined || row.status !== 'setup_required' || row.failure_code === 'READ_RESULT_TOO_LARGE') {
     throw new Error('This workflow is not waiting for a connection or app choice.');
   }
-  return advance(context, await updateRun(context, row, { status: 'running' }));
+  return advance(context, await updateRun(context, row, { status: 'running', failure_code: null }));
 }
 
 export async function cancelBusinessWorkflowRun(context: TenantContext, runId: string): Promise<BusinessWorkflowRunView> {

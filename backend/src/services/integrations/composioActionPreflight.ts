@@ -46,7 +46,17 @@ export function composioActionInputProblem(
     if (types.length && types.every((type) => typeof type === 'string' && !matchesType(value, type))) return [path];
     if (Array.isArray(rule.enum) && rule.enum.every(scalar) && !rule.enum.includes(value)) return [path];
     if (Object.hasOwn(rule, 'const') && scalar(rule.const) && rule.const !== value) return [path];
-    if (typeof value === 'string' && typeof rule.minLength === 'number' && [...value].length < rule.minLength) return [path];
+    if (typeof value === 'string') {
+      const length = [...value].length;
+      if (typeof rule.minLength === 'number' && length < rule.minLength) return [path];
+      if (typeof rule.maxLength === 'number' && length > rule.maxLength) return [path];
+    }
+    if (typeof value === 'number' && Number.isFinite(value)) {
+      if (typeof rule.minimum === 'number' && value < rule.minimum) return [path];
+      if (typeof rule.maximum === 'number' && value > rule.maximum) return [path];
+      if (typeof rule.exclusiveMinimum === 'number' && value <= rule.exclusiveMinimum) return [path];
+      if (typeof rule.exclusiveMaximum === 'number' && value >= rule.exclusiveMaximum) return [path];
+    }
 
     const issues: string[] = [];
     for (const key of ['anyOf', 'oneOf', 'allOf'] as const) {
@@ -58,17 +68,25 @@ export function composioActionInputProblem(
         for (const result of results) issues.push(...result);
       } else {
         const matches = results.filter((result) => !result.length).length;
-        if (!matches) issues.push(...(results.sort((a, b) => a.length - b.length)[0] ?? [path]));
+        // JSON Schema oneOf requires exactly one matching alternative, not any match.
+        // A multiple-match error is deliberately reported at the parent path.
+        if (key === 'oneOf' ? matches !== 1 : matches === 0) {
+          issues.push(...(matches > 1 ? [path] : (results.sort((a, b) => a.length - b.length)[0] ?? [path])));
+        }
       }
     }
     if (Array.isArray(value)) {
       if (typeof rule.minItems === 'number' && value.length < rule.minItems) issues.push(path);
+      if (typeof rule.maxItems === 'number' && value.length > rule.maxItems) issues.push(path);
       if (record(rule.items) || rule.items === false) for (const item of value) {
         if (tooComplex || issues.length >= 8) break;
         issues.push(...check(item, rule.items, path, depth + 1));
       }
     } else if (record(value)) {
       const props = record(rule.properties) ? rule.properties : {};
+      const count = Object.keys(value).length;
+      if (typeof rule.minProperties === 'number' && count < rule.minProperties) issues.push(path);
+      if (typeof rule.maxProperties === 'number' && count > rule.maxProperties) issues.push(path);
       if (Array.isArray(rule.required)) for (const name of rule.required) {
         if (--remaining < 0) { tooComplex = true; return []; }
         if (typeof name !== 'string') continue;

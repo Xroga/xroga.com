@@ -1,0 +1,15 @@
+[submodule "research/upstreams/composio-five/composio-sdk"]
+	path = research/upstreams/composio-five/composio-sdk
+	url = https://github.com/ComposioHQ/composio.git
+[submodule "research/upstreams/composio-five/composio-mcp-plugin"]
+	path = research/upstreams/composio-five/composio-mcp-plugin
+	url = https://github.com/ComposioHQ/composio-mcp-plugin.git
+[submodule "research/upstreams/composio-five/ownpilot"]
+	path = research/upstreams/composio-five/ownpilot
+	url = https://github.com/ownpilot/OwnPilot.git
+[submodule "research/upstreams/composio-five/codev-agent"]
+	path = research/upstreams/composio-five/codev-agent
+	url = https://github.com/shricodev/all-in-one-agent.git
+[submodule "research/upstreams/composio-five/tool-router-agents"]
+	path = research/upstreams/composio-five/tool-router-agents
+	url = https://github.com/composio-temp/tool-router-agents.git
