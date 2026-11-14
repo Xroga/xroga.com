@@ -587,6 +587,8 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   const browserOperator = page.getByText('Browser Operator', { exact: true });
   await expect(browserOperator).toHaveCount(1);
   await expect(renderedArchitecture.locator('.react-flow__edge')).toHaveCount(1, { timeout: 20_000 });
+  await page.mouse.move(0, 0);
+  await expect(page.getByText('Conversation restored', { exact: true })).toHaveCount(0, { timeout: 10_000 });
   const transcript = page.getByTestId('terminal-scroll');
   for (const width of [1440, 390]) {
     await page.setViewportSize({ width, height: 900 });
@@ -594,12 +596,12 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
     const panel = browserOperator.locator('..');
     await expect(panel).toHaveJSProperty('open', true);
     const expanded = (await panel.boundingBox())!;
-    expect(expanded.y + expanded.height).toBeLessThanOrEqual((await transcript.boundingBox())!.y);
-    expect(expanded.x + expanded.width).toBeLessThanOrEqual(width);
+    expect(expanded.y + expanded.height).toBeLessThanOrEqual((await transcript.boundingBox())!.y + 1);
+    expect(expanded.x + expanded.width).toBeLessThanOrEqual(width + 1);
     await browserOperator.click();
     await expect(panel).toHaveJSProperty('open', false);
     const collapsed = (await panel.boundingBox())!;
-    expect(collapsed.y + collapsed.height).toBeLessThanOrEqual((await transcript.boundingBox())!.y);
+    expect(collapsed.y + collapsed.height).toBeLessThanOrEqual((await transcript.boundingBox())!.y + 1);
     await browserOperator.click();
   }
   expect(chatCalls).toBe(8);

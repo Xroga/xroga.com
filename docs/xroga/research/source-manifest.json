@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "b1c084fe1c1867c2c347b6bad75715b6735483ec",
+  "source_sha": "2983e059f1312f7b7b7a3bdba28a1fabe152a823",
   "hash_policy": "Exact preserved attachment bytes; repository text uses Git-canonical LF bytes for portable hashes and byte counts",
   "sources": [
     {
@@ -6338,9 +6338,9 @@
       "source_id": "SRC-3d3190a1571aa705",
       "filename": "current-state.json",
       "path_or_url": "docs/xroga/current-state.json",
-      "sha256": "3b3df3f0f8e198c3365b38ec5d9181cca703ab25169aa06175d79d998ccca75a",
-      "byte_size": 5719107,
-      "modified_timestamp": "2026-11-14T09:06:25.967Z",
+      "sha256": "21e36b3511177fb2c5da471b252d5cd34864dd30cbf15767a7d7a3a0571d7e5a",
+      "byte_size": 5719122,
+      "modified_timestamp": "2026-11-14T09:10:39.060Z",
       "parse_status": "PARSED_JSON",
       "category": "REPOSITORY_DOCUMENT",
       "authority": "ADVISORY",
@@ -22419,9 +22419,9 @@
       "source_id": "SRC-dae82b1420f0fd73",
       "filename": "SidebarProjectHistory.tsx",
       "path_or_url": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "sha256": "fabbe7dbdf3c5d33995fef1d001ac8761888501128d67bff03ed02d57a274d77",
-      "byte_size": 67037,
-      "modified_timestamp": "2026-11-10T11:33:41.659Z",
+      "sha256": "2b1ee96959439cef8b692222e04dd4d178f84fb52d5cdac6ca4c853e281ecd6c",
+      "byte_size": 67118,
+      "modified_timestamp": "2026-11-14T08:46:27.674Z",
       "parse_status": "AST_METADATA",
       "category": "SOURCE_CODE",
       "authority": "CURRENT_CODE",

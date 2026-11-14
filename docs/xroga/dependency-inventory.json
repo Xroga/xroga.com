@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "09ab0b3b42397f9755d176bf32f64205355c75f7",
+  "source_sha": "8ad8673cc836fe7f6568f9422c260d2d0d7b757d",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -22056,7 +22056,7 @@
     },
     {
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "sha256": "fabbe7dbdf3c5d33995fef1d001ac8761888501128d67bff03ed02d57a274d77"
+      "sha256": "2b1ee96959439cef8b692222e04dd4d178f84fb52d5cdac6ca4c853e281ecd6c"
     },
     {
       "path": "frontend/src/components/layout/SidebarSearchModal.tsx",

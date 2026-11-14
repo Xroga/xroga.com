@@ -20,6 +20,7 @@
     "frontend/src/components/dashboard/DashboardView.tsx",
     "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
     "frontend/src/components/layout/AppShell.tsx",
+    "frontend/src/components/layout/SidebarProjectHistory.tsx",
     "frontend/src/lib/xrogaCitations.test.ts",
     "frontend/e2e/command3-auth.spec.ts"
   ],
