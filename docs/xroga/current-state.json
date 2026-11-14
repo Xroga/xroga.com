@@ -6095,7 +6095,7 @@
       ],
       "callers": [
         "backend/src/ai/parallelDispatch.ts:6",
-        "backend/src/services/integrations/businessAction.ts:1506"
+        "backend/src/services/integrations/businessAction.ts:1523"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -12281,7 +12281,7 @@
         "backend/src/ai/pipeline.ts:30",
         "backend/src/ai/sonnetApproval.test.ts:4",
         "backend/src/ai/universal/semanticRequestPlanner.ts:14",
-        "backend/src/services/integrations/businessAction.ts:1458"
+        "backend/src/services/integrations/businessAction.ts:1475"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -36442,7 +36442,7 @@
         "backend/src/services/BillingService.test.ts:5",
         "backend/src/services/billingBudget.local.integration.ts:5",
         "backend/src/services/fixtures/checkoutApproval.ts:2",
-        "backend/src/services/integrations/businessAction.ts:1465"
+        "backend/src/services/integrations/businessAction.ts:1482"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -36755,7 +36755,7 @@
       "id": "surface:5a05332cd3011b3aa919",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/businessAction.ts",
-      "sha256": "2d299d2e4b2354edba463df23ad338b58cc3077232219934d59a21fd2d348802",
+      "sha256": "de4122c951c7798e15c0920fe46b1db31a6184e5019c14c225f2ca60a2e7a0b6",
       "symbols": [
         "ActionToolChoice",
         "BusinessActionAuthorization",
@@ -36802,6 +36802,7 @@
         "explicit",
         "haystack",
         "inputProblem",
+        "inspected",
         "isFinancialAction",
         "isPlainRecord",
         "issuedAt",
@@ -36931,7 +36932,7 @@
         "backend/src/services/integrations/businessModelEgress.test.ts:7",
         "backend/src/services/integrations/businessWorkflowRuns.ts:3",
         "backend/src/services/integrations/composioAccountSelection.security.test.ts:5",
-        "backend/src/services/integrations/composioClient.ts:2734",
+        "backend/src/services/integrations/composioClient.ts:2740",
         "backend/src/services/integrations/composioControl.ts:13",
         "backend/src/services/integrations/githubApproval.ts:6",
         "backend/src/services/integrations/supabaseApproval.ts:12",
@@ -37099,7 +37100,7 @@
         "backend/src/services/integrations/businessActionConfirmationsPreview.test.ts:3",
         "backend/src/services/integrations/businessWorkflowRuns.ts:4",
         "backend/src/services/integrations/composioAccountSelection.security.test.ts:6",
-        "backend/src/services/integrations/composioClient.ts:2734",
+        "backend/src/services/integrations/composioClient.ts:2740",
         "backend/src/services/integrations/composioControl.security.test.ts:8",
         "backend/src/services/integrations/composioControl.ts:12",
         "backend/src/services/integrations/composioProvenance.security.test.ts:5",
@@ -37776,7 +37777,7 @@
       "id": "surface:8c25c7e0b5b0dd66676d",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/composioClient.ts",
-      "sha256": "48263936e0eba7c491f982779df5642ce6769ef83cde89c6beacbee2a66e0e10",
+      "sha256": "cb60035128897e64923bdeb32262863159822d175d00a522037208585755f338",
       "symbols": [
         "COMPOSIO_API_BASE",
         "COMPOSIO_CACHE_TTL_MS",
@@ -38197,7 +38198,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/services/integrations/businessAction.ts:1511",
+        "backend/src/services/integrations/businessAction.ts:1528",
         "backend/src/services/integrations/businessAutomations.ts:5",
         "backend/src/services/integrations/composioClient.ts:14"
       ],
@@ -38985,7 +38986,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/services/integrations/businessAction.ts:1475",
+        "backend/src/services/integrations/businessAction.ts:1492",
         "backend/src/services/integrations/githubPublication.ts:11",
         "backend/src/services/showcase/templateExport.ts:4"
       ],
@@ -41410,7 +41411,7 @@
       ],
       "callers": [
         "backend/src/routes/supabaseOAuth.ts:1",
-        "backend/src/services/integrations/businessAction.ts:1495",
+        "backend/src/services/integrations/businessAction.ts:1512",
         "backend/src/services/integrations/supabaseProjectCreation.security.test.ts:4"
       ],
       "reachable": true,
@@ -41637,7 +41638,7 @@
         "backend/src/security/connectedMemoryConsumer.local.integration.ts:6",
         "backend/src/security/providerKeyRevision.local.integration.ts:5",
         "backend/src/security/tenantIsolation.local.integration.ts:56",
-        "backend/src/services/integrations/businessAction.ts:1500",
+        "backend/src/services/integrations/businessAction.ts:1517",
         "backend/src/services/integrations/supabaseActorBoundary.security.test.ts:5",
         "backend/src/services/integrations/supabaseManagement.security.test.ts:13",
         "backend/src/services/integrations/supabaseProvision.authority.test.ts:5",
@@ -42787,7 +42788,7 @@
         "backend/src/routes/publish.ts:268",
         "backend/src/routes/publish.ts:305",
         "backend/src/routes/publish.ts:321",
-        "backend/src/services/integrations/businessAction.ts:1490",
+        "backend/src/services/integrations/businessAction.ts:1507",
         "backend/src/services/integrations/oauthAuthorizationEpoch.test.ts:7",
         "backend/src/services/integrations/oauthPkceStore.consume.test.ts:8",
         "backend/src/services/publish/chromeWebStore.authority.test.ts:4",
@@ -43047,7 +43048,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/services/integrations/businessAction.ts:1480",
+        "backend/src/services/integrations/businessAction.ts:1497",
         "backend/src/services/publish/nonWebShip.ts:2"
       ],
       "reachable": true,
@@ -43273,7 +43274,7 @@
         "backend/src/ai/pipeline.ts:183",
         "backend/src/routes/publish.ts:12",
         "backend/src/routes/publish.ts:70",
-        "backend/src/services/integrations/businessAction.ts:1516",
+        "backend/src/services/integrations/businessAction.ts:1533",
         "backend/src/services/integrations/userProviderKeys.revision.test.ts:9",
         "backend/src/services/publish/expoCanonicalAdmission.security.test.ts:4",
         "backend/src/services/publish/expoWorkflow.authority.test.ts:3",
@@ -43413,7 +43414,7 @@
       "callers": [
         "backend/src/ai/pipeline.ts:189",
         "backend/src/routes/publish.ts:382",
-        "backend/src/services/integrations/businessAction.ts:1470",
+        "backend/src/services/integrations/businessAction.ts:1487",
         "backend/src/services/publish/electronSecrets.authority.test.ts:4",
         "backend/src/services/publish/electronSigningAdmission.security.test.ts:3"
       ],
@@ -44323,7 +44324,7 @@
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:177",
-        "backend/src/services/integrations/businessAction.ts:1485",
+        "backend/src/services/integrations/businessAction.ts:1502",
         "backend/src/services/publish/desktopWorkflow.security.test.ts:3",
         "backend/src/services/publish/desktopWorkflow.security.test.ts:4",
         "backend/src/services/publish/desktopWorkflow.ts:68",
@@ -152714,7 +152715,7 @@
     {
       "id": "test-suite:3c03439396f109690bfd",
       "sourcePath": "backend/src/services/integrations/businessModelEgress.test.ts",
-      "declaredTests": 6,
+      "declaredTests": 8,
       "skipLocations": [],
       "focusLocations": []
     },

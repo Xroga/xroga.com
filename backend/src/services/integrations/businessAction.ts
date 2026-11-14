@@ -1250,7 +1250,24 @@ export async function prepareBusinessAction(
     );
   }
 
-  const orderedTools = rankToolsBySkill(connectedTools, discovery.skill);
+  // Follow Composio's search → inspect schema → execute sequence. Only hydrate
+  // scoped, connected candidates the planner is actually allowed to consider.
+  const candidates = rankToolsBySkill(connectedTools, discovery.skill).slice(0, MAX_TOOL_CANDIDATES);
+  const inspected = await Promise.all(candidates.map(async (tool): Promise<XrogaConnectTool | null> => {
+    if (!tool.schemaLookupRequired && tool.inputSchema && Object.keys(tool.inputSchema).length) return tool;
+    input.signal?.throwIfAborted();
+    const details = await getComposioToolDetails(tool.slug, tenantContext);
+    input.signal?.throwIfAborted();
+    if (details.deprecated || details.risk === 'read' ||
+        normalizeToolkit(details.toolkit) !== normalizeToolkit(tool.toolkit) ||
+        !details.inputSchema || !Object.keys(details.inputSchema).length) return null;
+    return { ...tool, inputSchema: details.inputSchema };
+  }));
+  const orderedTools = inspected.filter((tool): tool is XrogaConnectTool => tool !== null);
+  if (!orderedTools.length) return {
+    status: 'unavailable',
+    message: 'Xroga could not verify an available action schema for this request. No action was sent.',
+  };
   const skillGuidance = boundedComposioGuidance(discovery, orderedTools.slice(0, MAX_TOOL_CANDIDATES));
 
   const selection =
@@ -1283,7 +1300,7 @@ export async function prepareBusinessAction(
     );
 
   const selected =
-    connectedTools.find(
+    orderedTools.find(
       (tool) =>
         tool.slug ===
         selection.toolSlug,

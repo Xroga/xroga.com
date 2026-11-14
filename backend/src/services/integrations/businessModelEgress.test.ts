@@ -14,7 +14,7 @@ function fixture(t: TestContext) {
     COMPOSIO_API_KEY:'synthetic-business-composio-credential'};
   const prior=Object.fromEntries(Object.keys(env).map(k=>[k,process.env[k]]));Object.assign(process.env,env);
   t.after(()=>{for(const k of Object.keys(env))prior[k]===undefined?delete process.env[k]:process.env[k]=prior[k];});
-  const state={lane:'read',mode:'ok',effects:0,reservations:0,settlements:0,receipts:0,releases:0,composio:0,readExecutions:0,mutate:undefined as undefined|(()=>void)};
+  const state={lane:'read',mode:'ok',effects:0,reservations:0,settlements:0,receipts:0,releases:0,composio:0,readExecutions:0,schemaLookups:0,mutate:undefined as undefined|(()=>void)};
   const held=new Map<string,Record<string,unknown>>();let config:Record<string,unknown>={};
   const slug=()=>state.lane==='read'?'SLACK_LIST_MESSAGES':'SLACK_DELETE_MESSAGE';
   const usage={user_id:owner,plan_tier:'spark',plan_budget_usd:20,quota_period_start:new Date().toISOString().slice(0,7)+'-01',
@@ -32,6 +32,10 @@ function fixture(t: TestContext) {
       state.effects++;assert.ok(state.reservations>state.settlements);
       assert.equal(init?.redirect,'manual');assert.ok(body.messages.some((m:{content:string})=>m.content.includes('selected synthetic message')));
       if(state.mode==='outage')return Response.json({error:{message:'Synthetic provider outage'}},{status:503});
+      if(state.mode==='partial-action-schema'){
+        assert.equal(state.schemaLookups,1);
+        assert.ok(body.messages.some((m:{content:string})=>m.content.includes('messageId')));
+      }
       assert.doesNotMatch(JSON.stringify(body),/synthetic-business-platform-credential|synthetic-business-glm-credential/);
       return Response.json({id:'synthetic-model-result',model:body.model,choices:[{message:{content:JSON.stringify({toolSlug:slug(),arguments:{},summary:'Delete the selected synthetic message'})},finish_reason:'stop'}],usage:{prompt_tokens:2,completion_tokens:2,total_tokens:4}},{headers:{'x-request-id':'synthetic-model-result','x-zurelay-model':body.model}});
     }
@@ -40,9 +44,14 @@ function fixture(t: TestContext) {
       if(url.pathname.endsWith('/session')){assert.equal(body.user_id,'xroga:'+owner);config=body;state.mutate?.();state.mutate=undefined;return Response.json({session_id:'trs_business_model_fixture',config});}
       if(url.pathname.endsWith('/trs_business_model_fixture'))return Response.json({session_id:'trs_business_model_fixture',config});
       if(url.pathname.endsWith('/search'))return Response.json({tool_schemas:{fixture:{tool_slug:slug(),toolkit:'slack',
-        description:state.mode==='descriptor'?env.ZURELAY_API_KEY:'Synthetic owned tool metadata',input_schema:{type:'object',properties:{}}}}});
+        description:state.mode==='descriptor'?env.ZURELAY_API_KEY:'Synthetic owned tool metadata',input_schema:{type:'object',properties:{}},
+        ...(state.mode==='partial-action-schema'||state.mode==='unavailable-action-schema'?{hasFullSchema:false,schemaRef:{args:{tool_slugs:[slug()]},tool:'COMPOSIO_GET_TOOL_SCHEMAS'}}:{})}}});
       if(url.pathname.endsWith('/toolkits'))return Response.json({items:[{slug:'slack',name:'Slack',connected_account:{id:'ca_synthetic_owner',status:'ACTIVE'}}]});
-      if(url.pathname.includes('/tools/'))return Response.json({slug:slug(),toolkit:{slug:'slack'},tags:[state.lane==='read'?'readOnlyHint':'destructiveHint'],input_parameters:state.mode==='missing-action-input'?{type:'object',required:['messageId'],properties:{messageId:{type:'string'}}}:{type:'object'},scopes:['fixture.message']});
+      if(url.pathname.includes('/tools/')){
+        state.schemaLookups++;
+        return Response.json({slug:slug(),toolkit:{slug:'slack'},tags:[state.lane==='read'?'readOnlyHint':'destructiveHint'],
+          input_parameters:state.mode==='unavailable-action-schema'?{}:['missing-action-input','partial-action-schema'].includes(state.mode)?{type:'object',required:['messageId'],properties:{messageId:{type:'string'}}}:{type:'object'},scopes:['fixture.message']});
+      }
       if(url.pathname.endsWith('/execute')){assert.equal(state.lane,'read','Preparation must never execute an external action');state.readExecutions++;return Response.json({data:{messages:['SYNTHETIC_READ_RESULT']},error:null});}
       assert.fail('Unexpected Composio operation: '+url.pathname);
     }
@@ -101,6 +110,27 @@ test('the actual action planner asks for missing inputs from current tool metada
   assert.equal(result.status, 'input_required');
   if (result.status === 'input_required') assert.match(result.message, /messageId/);
   assert.equal('plan' in result, false);
+  assert.equal(f.state.readExecutions, 0);
+});
+
+test('action planning hydrates a deferred schema before asking the model for arguments', async t => {
+  const f = fixture(t);
+  f.state.lane = 'action';
+  f.state.mode = 'partial-action-schema';
+  const result = await prepareBusinessAction(f.request());
+  assert.equal(result.status, 'input_required');
+  assert.equal(f.state.effects, 1);
+  assert.equal(f.state.readExecutions, 0);
+});
+
+test('a missing deferred schema does not reach the planner or approval', async t => {
+  const f = fixture(t);
+  f.state.lane = 'action';
+  f.state.mode = 'unavailable-action-schema';
+  const result = await prepareBusinessAction(f.request());
+  assert.equal(result.status, 'unavailable');
+  assert.equal(f.state.schemaLookups, 1);
+  assert.equal(f.state.effects, 0);
   assert.equal(f.state.readExecutions, 0);
 });
 
