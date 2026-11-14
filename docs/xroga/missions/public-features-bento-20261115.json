@@ -59,8 +59,8 @@
       "description": "No secrets, account credentials or provider tokens used."
     },
     "egress": {
-      "changed": false,
-      "description": "No new network requests or third-party assets; catalog filters are local."
+      "changed": true,
+      "description": "New public runtime-only stylesheet request to fonts.googleapis.com and glyph requests to fonts.gstatic.com for Libre Baskerville. Both hosts already appear in the project's CSP; no user credentials are transmitted by the font integration. Bundled Source Serif 4/Georgia remains the fallback."
     },
     "cost": {
       "changed": false,
@@ -95,6 +95,12 @@
       "scope": "Inspect real rendered font family, page's single shared navigation, functional filters, hero and directory heading line wraps at 390/768/1440px; not yet observed.",
       "negative": true,
       "reference": "frontend/src/styles/xroga-fonts.css"
+    },
+    {
+      "command": "Browser font CSS network + computed-style check",
+      "scope": "Check exact branch preview loads Libre Baskerville from Google and heading computed fonts across public and workspace pages; pending browser environment.",
+      "negative": true,
+      "reference": "frontend/src/app/layout.tsx"
     }
   ],
   "architecture": {
@@ -105,7 +111,7 @@
   "rollout": "Merge only after frontend CI and visual/a11y review; then verify public /features URL and internal links. No automatic production publication requested.",
   "rollback": "Revert this bounded /features page, catalog, directory data and CSS change, or re-deploy the prior verified frontend release; no backend or schema changes.",
   "knownGaps": [
-    "Verify actual browser computed font and loading from the shared stylesheet link; runtime network blocks show the bundled local serif fallback.",
+    "Verify browser computed font for all page headings and ensure remote Google font CSS/glyph URLs load under current CSP; if unavailable, local Source Serif 4/Georgia fallback is used.",
     "Latest-branch Next.js frontend build/visual review and Xroga site-wide heading regression screenshots are pending.",
     "Vercel preview link previously shown was for an older commit, so it does not demonstrate this font/header fix.",
     "Unrelated repository-wide mission policy baseline ancestor and inventory snapshot drift may block larger checks; do not bypass."
