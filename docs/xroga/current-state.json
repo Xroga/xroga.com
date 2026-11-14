@@ -87843,7 +87843,7 @@
       "id": "surface:a849bd03e85ab44f9cab",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/controls.tsx",
-      "sha256": "d326b670c3249ea26ef055c691186f3834c695c54142c5f7f12cf3d803ec2a45",
+      "sha256": "20ff0bef2b534a9b718ed246ee34b93591f7ce34c39bd380efc6cb22e3ccf350",
       "symbols": [
         "Button",
         "Checkbox",
@@ -87897,6 +87897,7 @@
         "reset",
         "run",
         "s",
+        "separator",
         "shown",
         "step",
         "streaming",
@@ -127151,7 +127152,7 @@
       "id": "surface:bd6af899f2dd9df930f6",
       "subsystem": "browser_sandbox",
       "sourcePath": "scripts/verify-native-openui-browser.mjs",
-      "sha256": "f82c90c4c611625839a1b38a15e8d08024fc46adaf46c3929530a4642cfd3019",
+      "sha256": "8e2a2d325c2dedabd34bf1cafe2fa1dab5dfb10c0dea9f5caab566b5af5fbbe3",
       "symbols": [
         "accessibility",
         "answer",
@@ -127175,6 +127176,7 @@
         "fallbackAnswer",
         "file",
         "fit",
+        "gain",
         "geometry",
         "google",
         "graph",
@@ -140288,9 +140290,9 @@
       "state": "IMPLEMENTED_BUT_UNVERIFIED"
     },
     {
-      "id": "schedule:b988dab1f743dbdc1c6e",
+      "id": "schedule:24332e074eda33ccc959",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/controls.tsx",
-      "line": 466,
+      "line": 467,
       "kind": "setInterval",
       "symbol": "<module>",
       "reachable": true,
