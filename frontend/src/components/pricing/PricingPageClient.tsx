@@ -383,12 +383,12 @@ export function PricingPageClient() {
                   </p>
 
                   <ul className={styles.featureList}>
-                    {features.map((feature) => (
+                    {features.map((feature, featureIndex) => (
                       <li key={feature}>
                         <span className={styles.check}>
                           {isFree ? <Check aria-hidden="true" /> : (() => {
                             const Icons = [Search, BrainCircuit, BriefcaseBusiness, ClipboardList, Code2, Rocket];
-                            const FeatureIcon = Icons[features.indexOf(feature)] ?? Sparkles;
+                            const FeatureIcon = Icons[featureIndex] ?? Sparkles;
                             return <FeatureIcon aria-hidden="true" />;
                           })()}
                         </span>
