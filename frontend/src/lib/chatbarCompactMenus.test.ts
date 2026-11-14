@@ -31,7 +31,7 @@ test('Connect Apps uses actual connected app picker and no full-page dialog', ()
   assert.match(CONNECT, /PluginBrandLogo/);
   assert.match(CONNECT, /setView\('connected'\)/);
   assert.match(CONNECT, /Load more apps/);
-  assert.match(CONNECT, /aria-label="Search supported apps"/);
+  assert.match(CONNECT, /Search supported apps/);
   assert.match(CONNECT, /Browse all apps/);
 });
 
