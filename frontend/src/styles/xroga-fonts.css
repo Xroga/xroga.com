@@ -2,7 +2,8 @@
  * Xroga four-font system — maps Narrow Type aesthetic roles:
  * Azurio (sharp serif headlines), Goga (body/UI sans),
  * Remixa (technical semibold labels), Emilio (elegant italic accents).
- * Loaded via Google Font stand-ins until licensed webfonts are hosted.
+ * Existing product faces are self-hosted; the site-wide editorial serif is
+ * loaded once at runtime by the shared root layout.
  */
 
 .font-azurio {
@@ -33,7 +34,7 @@ body {
   --xv-editorial-serif: 'Libre Baskerville', var(--font-source-serif), Georgia, 'Times New Roman', serif;
 }
 body :is(h1, h2) {
-  font-family: var(--xv-editorial-serif);
+  font-family: var(--xv-editorial-serif) !important;
 }
 body.xv-public-theme .xv-public-marketing-content :is(h1, h2) {
   font-family: var(--xv-editorial-serif) !important;
