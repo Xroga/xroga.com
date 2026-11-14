@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "a92dcf9c0b19e61c803957729f5ea2d559ecb6d7",
+  "source_sha": "f705d01b983e90760cc4992de646324a73f93e75",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -22210,7 +22210,7 @@
     },
     {
       "path": "frontend/src/components/native-openui/NativeSurface.tsx",
-      "sha256": "5d8688bc07507ae0b48ed2d65b90e81b46be417203019037c8593b0c0b5401e8"
+      "sha256": "c07956bca1215d4da0a9e4ad5da426c471594628a07a7580ae4fb93b5db1ce0a"
     },
     {
       "path": "frontend/src/components/native-openui/NativeWorkspaceAnswer.tsx",
@@ -22258,7 +22258,7 @@
     },
     {
       "path": "frontend/src/components/native-openui/upstream/components/markdown.tsx",
-      "sha256": "29b5fb5197e7e5c1f46c0337e94542f1faf719e84ce119370a3c0538dacad28e"
+      "sha256": "916625cb97f1954b5a39c1e3fae913e75a756407831495bd5db6dd2c3221bc83"
     },
     {
       "path": "frontend/src/components/native-openui/upstream/components/style.ts",
@@ -22270,7 +22270,7 @@
     },
     {
       "path": "frontend/src/components/native-openui/upstream/components/table.tsx",
-      "sha256": "c86559627722395a4513dc58742b1124fbf9a1c54d46c6ad7f415fbec6ec781d"
+      "sha256": "282525a15685cc9396a8cc95f26273158eb6b74705c89f0e1d7af39ab451ce42"
     },
     {
       "path": "frontend/src/components/native-openui/upstream/components/text.tsx",
@@ -22938,7 +22938,7 @@
     },
     {
       "path": "frontend/src/components/terminal/SourceCitation.tsx",
-      "sha256": "707c5bc1f2f4b9fa953b551634a5bae5a4ef95bec2aa182ce04356e3a1aaef42"
+      "sha256": "6c5e2cc0a2e0f1627dde09b389d413636429beae1dfa032c0851ef3907272ad2"
     },
     {
       "path": "frontend/src/components/terminal/SourceLogo.tsx",
@@ -38785,6 +38785,20 @@
     {
       "path": "frontend/src/components/native-openui/upstream/components/chart.tsx",
       "line": 300,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/components/native-openui/upstream/components/markdown.tsx",
+      "line": 79,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/components/native-openui/upstream/components/markdown.tsx",
+      "line": 153,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
