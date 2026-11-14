@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import {
-  ArrowRight, ArrowUpRight, BrainCircuit, Check,
+  ArrowRight, ArrowUpRight, Blocks, BrainCircuit, Check,
   CheckCircle2, ChevronRight, CircleDot, CloudUpload, Code2,
   FileCode2, GitBranch, Globe2, Layers3, LockKeyhole,
   ShieldCheck, Sparkles, Workflow,
