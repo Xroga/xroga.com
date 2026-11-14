@@ -57,6 +57,10 @@ export function attachResearchResult<T extends Message>(message: T, result: Rese
     const answer=enhanceAiResponse(result.answer.response,message.id,result.answer.completion,result.answer.responseSource);
     return {...message,content:answer.content,featureOutput:answer.output??{type:'chat',content:answer.content},webSources:result.answer.webSources,researchReceiptId:result.receiptId};
   }
+  if (result.answerFailure === 'NO_QUALIFYING_SOURCES' && !result.sources.length) {
+    const content = 'The approved search found no sources that met your request. Xroga could not produce a verified answer. No second search was made.';
+    return { ...message, content, featureOutput: { type: 'chat', content }, webSources: [], researchReceiptId: result.receiptId };
+  }
   const escape = (s: string) => s.replace(/([\\`*_[\]<>])/g, '\\$1');
   const evidence = result.sources.map(source => `### ${escape(source.title)}\n\n${source.snippet.split('\n').map(line => `> ${line}`).join('\n')}\n\n[${escape(source.title)}](<${source.url}>)`).join('\n\n');
   const original = message.content.endsWith(UNAVAILABLE_NOTICE) ? message.content.slice(0, -UNAVAILABLE_NOTICE.length) : message.content;

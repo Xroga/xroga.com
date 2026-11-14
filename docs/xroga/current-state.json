@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/openui-production-integration-20261114",
-    "sha": "2983e059f1312f7b7b7a3bdba28a1fabe152a823",
-    "sourceTimestampUtc": "2026-11-14T13:34:48+05:00",
-    "auditStartedUtc": "2026-11-14T08:49:42.082Z",
+    "sha": "5c1ff07c19e07488d8c4243d7d9329e6f17e10b2",
+    "sourceTimestampUtc": "2026-11-14T13:50:01+05:00",
+    "auditStartedUtc": "2026-11-14T09:55:42.712Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -1620,7 +1620,7 @@
       "callers": [
         "backend/src/ai/black-hole/researchRouter.test.ts:4",
         "backend/src/ai/black-hole/webIntelligence.test.ts:5",
-        "backend/src/ai/black-hole/webIntelligence.ts:30",
+        "backend/src/ai/black-hole/webIntelligence.ts:31",
         "backend/src/ai/researchAnswer.ts:3"
       ],
       "reachable": true,
@@ -2082,7 +2082,7 @@
       "id": "surface:0e78a2534aef2dadd6c0",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/black-hole/webIntelligence.ts",
-      "sha256": "d5924883b7e10022953a8dbf8401d1b2a5b4d39e0e304fafe2e66cf747aa2473",
+      "sha256": "aee3096360ef1c20f437acf8e5e6354c4cc17137f00bb97aadbd3c2357f04c24",
       "symbols": [
         "ACTIONS",
         "WebAction",
@@ -2094,6 +2094,7 @@
         "context",
         "decideWebAction",
         "decision",
+        "domains",
         "error",
         "evidence",
         "extractUrls",
@@ -2104,14 +2105,17 @@
         "match",
         "messages",
         "normalized",
+        "objective",
         "officialDomains",
         "parseDecision",
         "pendingResearch",
         "provider",
+        "queries",
         "rawResults",
         "requiresResearch",
         "result",
         "runWebIntelligence",
+        "scopedQuery",
         "sourcePolicy",
         "sources",
         "toRawResults",
@@ -2129,6 +2133,7 @@
         "../parallelWeb.js",
         "../providerRuntime.js",
         "../research.js",
+        "../researchSearchProvider.js",
         "../tenantModelDispatch.js",
         "../universal/goalContract.js",
         "./researchRouter.js"
@@ -2138,6 +2143,7 @@
         "backend/src/ai/openaiCompat.ts",
         "backend/src/ai/parallelWeb.ts",
         "backend/src/ai/providerRuntime.ts",
+        "backend/src/ai/researchSearchProvider.ts",
         "backend/src/ai/tenantModelDispatch.ts",
         "backend/src/lib/taskClassifier.ts",
         "backend/src/lib/truthfulExecution.ts",
@@ -5661,7 +5667,7 @@
       "id": "surface:daedffd81adedfabf156",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiShare.ts",
-      "sha256": "e985644b5a74cb146c48a1100f639c451de35e44e16a19a8fc4d912b7795821e",
+      "sha256": "2510d641db2fd2c7402b8f86d8ce14b8d0bad2f4ad3bd57b902b02bc9fa0291e",
       "symbols": [
         "NATIVE_SHARE_PREFIX",
         "buildNativeOpenUiShare",
@@ -5671,7 +5677,9 @@
         "parsed",
         "parsedUrl",
         "readNativeOpenUiShare",
+        "readNativeOpenUiShareEnvelope",
         "readNativeOpenUiShareText",
+        "share",
         "shareLimit",
         "shareSource",
         "snapshot",
@@ -6306,7 +6314,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/black-hole/webIntelligence.ts:18",
+        "backend/src/ai/black-hole/webIntelligence.ts:19",
         "backend/src/ai/parallelWeb.security.test.ts:8",
         "backend/src/ai/research.ts:7"
       ],
@@ -7226,7 +7234,7 @@
         "backend/src/ai/repositoryHydrationAuthority.test.ts:3",
         "backend/src/ai/repositoryReadFailure.test.ts:3",
         "backend/src/ai/researchAnswer.test.ts:5",
-        "backend/src/ai/researchAnswer.ts:56",
+        "backend/src/ai/researchAnswer.ts:59",
         "backend/src/ai/tenantModelDispatch.test.ts:8",
         "backend/src/ai/universal/resumeProjectContext.test.ts:54",
         "backend/src/builder/phase2Bridge.ts:5",
@@ -8898,7 +8906,7 @@
       "id": "surface:794bcc5ea45ebaad109e",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/researchAnswer.ts",
-      "sha256": "c00a78a202fd82363673c0680a1895e93cd5a60d2090a06b9641b0328e5a2fca",
+      "sha256": "d407bacfa089cbd6e213efc755be6197bfb68c7eaec41c679171a6762ea0bfc7",
       "symbols": [
         "RESEARCH_ANSWER_MAXIMUM_MICRO_USD",
         "ResearchAnswerRequest",
@@ -8917,6 +8925,7 @@
         "link",
         "links",
         "normalized",
+        "officialOnly",
         "original",
         "ref",
         "refs",
@@ -8934,6 +8943,7 @@
         "../services/integrations/researchResult.js",
         "./black-hole/researchRouter.js",
         "./pipeline.js",
+        "./researchSearchProvider.js",
         "./tenantModelDispatch.js",
         "./universal/goalContract.js",
         "zod"
@@ -8941,6 +8951,7 @@
       "runtimeImports": [
         "backend/src/ai/black-hole/researchRouter.ts",
         "backend/src/ai/pipeline.ts",
+        "backend/src/ai/researchSearchProvider.ts",
         "backend/src/ai/universal/goalContract.ts",
         "backend/src/security/authority/enforce.ts",
         "backend/src/services/integrations/researchResult.ts"
@@ -8982,7 +8993,7 @@
       "id": "surface:5f676989c84806ca6213",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/researchSearchProvider.ts",
-      "sha256": "1708a291bb1d10a78fecd67fae7d6fe2d510af67d3083b8c08eeb3aa260b5075",
+      "sha256": "aa68f0a3824a5e5ff17abee739fa65e720e2e7e35fe4323823189945c18015cf",
       "symbols": [
         "DEEPSEEK_QUERY_MAX",
         "DEEPSEEK_SEARCH_MICRO_USD",
@@ -8995,14 +9006,24 @@
         "deepseekSearchCredential",
         "domain",
         "excerpt",
+        "host",
         "iconDomain",
+        "limit",
+        "matchesOfficialResearchDomain",
+        "next",
         "normaliseDeepseekSearch",
+        "officialResearchDomains",
+        "operators",
         "query",
         "question",
         "r",
         "researchSearchMicroUsd",
         "results",
-        "siteName"
+        "scopeOfficialSearchQuery",
+        "scopedTerms",
+        "siteName",
+        "sites",
+        "terms"
       ],
       "imports": [
         "../config/envSecrets.js"
@@ -9015,9 +9036,12 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
+        "backend/src/ai/black-hole/webIntelligence.ts:17",
         "backend/src/ai/parallelApproval.ts:22",
         "backend/src/ai/parallelDispatch.ts:15",
-        "backend/src/ai/researchSearchProvider.test.ts:3"
+        "backend/src/ai/researchAnswer.ts:7",
+        "backend/src/ai/researchSearchProvider.test.ts:3",
+        "backend/src/services/integrations/researchResult.ts:10"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -40848,13 +40872,14 @@
       "id": "surface:aac124d6e71fc0bcd5a6",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/researchResult.ts",
-      "sha256": "8b02d992fc703451a4cc942a8570dc3db7fe665742d87fc88fd96d53b44cf3e5",
+      "sha256": "27ecd374b1e6229921f15159f1e8e6278925ac52958cd29af6b40717699a7a39",
       "symbols": [
         "MAX_BYTES",
         "ResearchResult",
         "actor",
         "answer",
         "answerSchema",
+        "approved",
         "candidate",
         "candidates",
         "canonical",
@@ -40868,7 +40893,9 @@
         "items",
         "object",
         "objects",
+        "officialOnly",
         "omittedSourceCount",
+        "policy",
         "presentResearchResult",
         "previous",
         "program",
@@ -40893,6 +40920,7 @@
       "imports": [
         "../../ai/nativeOpenUi.js",
         "../../ai/research.js",
+        "../../ai/researchSearchProvider.js",
         "../../lib/truthfulExecution.js",
         "../../security/authority/digest.js",
         "../../security/egress/urlPolicy.js",
@@ -40903,6 +40931,7 @@
       ],
       "runtimeImports": [
         "backend/src/ai/nativeOpenUi.ts",
+        "backend/src/ai/researchSearchProvider.ts",
         "backend/src/lib/truthfulExecution.ts",
         "backend/src/security/authority/digest.ts",
         "backend/src/security/egress/urlPolicy.ts",
@@ -64265,7 +64294,7 @@
       "id": "surface:9f51ed5a722f2b32376d",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/app/share/[token]/page.tsx",
-      "sha256": "17cb0432a53350ac1074586cc95cb0a017603bd74342f1dc696d4093e9852409",
+      "sha256": "6cdfde56ab68b428654dfeee475bf988918ccd73051a1712c103b15a564f753f",
       "symbols": [
         "MessageSharePage",
         "PublicShare",
@@ -113036,7 +113065,7 @@
       "id": "surface:e29556c101092aa421b9",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/researchHandoff.ts",
-      "sha256": "9eeae9816ae0462dff96d514efa7249ebd5fda065c0530cf80fca0507dbf08af",
+      "sha256": "a984aca6005ddcc8fe68bae36735832aa004b191b998b11e024cc0aa520108fb",
       "symbols": [
         "Message",
         "RESEARCH_RECEIPT_AVAILABLE",
@@ -145849,86 +145878,86 @@
       "reachable": false
     },
     {
-      "id": "frontend-call:a6a9cdfd278a3a26d9c4",
+      "id": "frontend-call:2f1efb6957cded3a433d",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 686,
+      "line": 713,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:d03007721e830da5a828",
+      "id": "frontend-call:53bb6f5a4bf45aa5e810",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 689,
+      "line": 716,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:4e9415dd9413ee5ecb47",
+      "id": "frontend-call:306cb79a0ec62b42bbcb",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1460,
+      "line": 1487,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:924a2b96580909accc0d",
+      "id": "frontend-call:b39322f4a2c40c160848",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1461,
+      "line": 1488,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:59f4d785e930e36c34c0",
+      "id": "frontend-call:d049e5cb98bb892105fe",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1466,
+      "line": 1493,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:1f826727abb17f4a1289",
+      "id": "frontend-call:688bbffbc23dbdbb51c1",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1467,
+      "line": 1494,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:9a2cd51221d4d325a25f",
+      "id": "frontend-call:00558389d7c0c50b15d0",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1473,
+      "line": 1500,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:db3b8fcc57194365152e",
+      "id": "frontend-call:e10532a0c35b778b9d06",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1478,
+      "line": 1505,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:ba7000e0467d1c8a48ba",
+      "id": "frontend-call:d65b8488830f9dd1c39e",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1535,
+      "line": 1562,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:f7caa167c212492f26dc",
+      "id": "frontend-call:23486e89e3105474e6f5",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1536,
+      "line": 1563,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:f7bf08b0a8f3c83d999d",
+      "id": "frontend-call:9bcb9a717bb7b4d7f397",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1543,
+      "line": 1570,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:5132a8f6aa019f9a43b8",
+      "id": "frontend-call:5b9c08238f3cb691cbdf",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1557,
+      "line": 1584,
       "callee": "fetch",
       "reachable": false
     },
@@ -146304,7 +146333,7 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:c3cf9ae6b04020028688",
+      "id": "frontend-call:19d14fb028dced874316",
       "sourcePath": "frontend/src/app/share/[token]/page.tsx",
       "line": 57,
       "callee": "fetchApiResponse",
@@ -149836,7 +149865,7 @@
     {
       "id": "test-suite:fc958963f2b7e8b93a94",
       "sourcePath": "backend/src/ai/researchSearchProvider.test.ts",
-      "declaredTests": 4,
+      "declaredTests": 5,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -152988,7 +153017,7 @@
     {
       "id": "test-suite:8f29106e1cf3c4b63c0a",
       "sourcePath": "backend/src/services/integrations/researchResult.test.ts",
-      "declaredTests": 3,
+      "declaredTests": 4,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -155695,7 +155724,7 @@
     {
       "id": "test-suite:4446028f39b7ee404095",
       "sourcePath": "frontend/src/lib/researchHandoff.test.ts",
-      "declaredTests": 3,
+      "declaredTests": 4,
       "skipLocations": [],
       "focusLocations": []
     },

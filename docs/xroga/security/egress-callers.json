@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "6a1bd0969b647607a3bf6089e76d36e1062282b0dd479f2914648f7ca9fd4ea0",
+  "sourceTreeDigest": "045cbd1a467ad0f54b5c639a1cdbdf0143f95ebb5bcec3d25ca5c1e277d5036a",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -217,7 +217,7 @@
         {
           "path": "backend/src/ai/parallelWeb.security.test.ts",
           "marker": "actual Parallel entries enforce issued context, current owner, egress, canonical holds and exact settlement",
-          "sha256": "c070ac329948841c4cc4a74bf641ef747fd81aa64b8cc27600879a0def449ee9",
+          "sha256": "29e704826d0e504396a577427e0181d909331628d30f4ad2878e975f462290b9",
           "reboundOnBranch": {
             "previousSha256": "40a9c47c0f61e5894bcc787e72738b44e1ec1b23dcdf652b44e6708b8ff706f2"
           }
@@ -247,7 +247,7 @@
         {
           "path": "backend/src/ai/parallelWeb.security.test.ts",
           "marker": "actual Parallel entries enforce issued context, current owner, egress, canonical holds and exact settlement",
-          "sha256": "c070ac329948841c4cc4a74bf641ef747fd81aa64b8cc27600879a0def449ee9",
+          "sha256": "29e704826d0e504396a577427e0181d909331628d30f4ad2878e975f462290b9",
           "reboundOnBranch": {
             "previousSha256": "40a9c47c0f61e5894bcc787e72738b44e1ec1b23dcdf652b44e6708b8ff706f2"
           }

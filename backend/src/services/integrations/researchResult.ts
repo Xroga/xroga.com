@@ -7,6 +7,7 @@ import type { SafeBusinessActionConfirmation } from './businessActionConfirmatio
 import {z} from 'zod';
 import { NATIVE_UI_FORMAT, MAX_PROGRAM_CHARS, validateNativeOpenUi } from '../../ai/nativeOpenUi.js';
 import type { ResearchSource } from '../../ai/research.js';
+import { matchesOfficialResearchDomain, officialResearchDomains } from '../../ai/researchSearchProvider.js';
 
 const MAX_BYTES = 262_144;
 const filename = (id: string) => {
@@ -52,12 +53,12 @@ export interface ResearchResult {
 }
 
 /** Provider evidence is untrusted content, never an instruction or a new authority. */
-export function presentResearchResult(raw: unknown): Omit<ResearchResult, 'confirmationId' | 'receiptId'> {
+export function presentResearchResult(raw: unknown, officialOnly?: readonly string[]): Omit<ResearchResult, 'confirmationId' | 'receiptId'> {
   const envelope = record(raw);
   if (envelope.ok !== true || !['search', 'extract', 'responses'].includes(String(envelope.operation))) throw new Error('Invalid research result');
   const data = record(envelope.result);
   const items = Array.isArray(data.output) ? data.output.flatMap(v => Array.isArray(record(v).content) ? record(v).content as unknown[] : []) : [];
-  const answer = text(data.output_text) || items.filter(v => record(v).type === 'output_text').map(v => text(record(v).text)).join('\n');
+  const answer = officialOnly ? '' : text(data.output_text) || items.filter(v => record(v).type === 'output_text').map(v => text(record(v).text)).join('\n');
   const candidates = Array.isArray(data.results) ? data.results : items.flatMap(v => Array.isArray(record(v).annotations) ? record(v).annotations as unknown[] : []).filter(v => record(v).type === 'url_citation');
   const sources: ResearchResult['sources'] = [];
   const seen = new Map<string, number>();
@@ -68,6 +69,7 @@ export function presentResearchResult(raw: unknown): Omit<ResearchResult, 'confi
       if (typeof item.url !== 'string') throw new Error('Missing source URL');
       publicHttpsUrl(item.url);
       const url = new URL(item.url);
+      if (officialOnly && !matchesOfficialResearchDomain(url.href, officialOnly)) continue;
       url.hash = '';
       // Keep distinct paths and query parameters. A hostname is not a page ID.
       const canonical = url.href;
@@ -101,9 +103,10 @@ export function presentResearchResult(raw: unknown): Omit<ResearchResult, 'confi
   const valid = sourced && synthesis?.success && (!program || validateNativeOpenUi(program,
     new Set(synthesis.data.webSources.map((_, index) => 'source-' + (index + 1))), synthesis.data.response).ok);
   return { text: answer, sources, omittedSourceCount,
-    ...(valid && synthesis?.success ? {answer:synthesis.data} : {}),
-    ...(envelope.answer!==undefined&&!valid?{answerFailure:'INVALID_SAVED_ANSWER'}
-      :['NO_QUALIFYING_SOURCES','SYNTHESIS_UNAVAILABLE'].includes(String(envelope.answerFailure))?{answerFailure:String(envelope.answerFailure)}:{}),
+    ...(officialOnly && !sources.length ? { answerFailure: 'NO_QUALIFYING_SOURCES' }
+      : valid && synthesis?.success ? { answer: synthesis.data }
+      : envelope.answer!==undefined ? { answerFailure:'INVALID_SAVED_ANSWER' }
+      : ['NO_QUALIFYING_SOURCES','SYNTHESIS_UNAVAILABLE'].includes(String(envelope.answerFailure)) ? { answerFailure:String(envelope.answerFailure) } : {}),
   };
 }
 
@@ -115,13 +118,20 @@ export async function readResearchResult(context: TenantContext, confirmation: S
     || receipt?.outcome !== 'provider_reported_success' || !receipt.resultDigest) return null;
   const storage = requireResearchResultStorage();
   const actor = actorFromTenantContext(context);
+  // Read the policy from the verified, owner-scoped confirmation, not the
+  // provider envelope. This also protects previously stored unfiltered receipts.
+  const approved = record(confirmation.approval?.criticalParameters);
+  const policy = record(record(record(approved.answerRequest).goalContract).sourcePolicy);
+  const officialOnly = policy.mode === 'official_only'
+    ? officialResearchDomains(Array.isArray(policy.officialDomains) ? policy.officialDomains.filter((item): item is string => typeof item === 'string') : [])
+    : undefined;
   const objects = await storage.listObjects(actor, { safeFilename: filename(confirmation.id), limit: 100 });
   for (const object of objects) {
     const { bytes } = await storage.readObjectBytes(actor, object.id, MAX_BYTES);
     let raw: unknown;
     try { raw = JSON.parse(bytes.toString('utf8')); if (preparedActionDigest(raw) !== receipt.resultDigest) continue; }
     catch { continue; }
-    return { ...presentResearchResult(raw), confirmationId: confirmation.id, receiptId: receipt.id };
+    return { ...presentResearchResult(raw, officialOnly), confirmationId: confirmation.id, receiptId: receipt.id };
   }
   // Historical confirmations may predate durable result storage. Never repeat them.
   return null;

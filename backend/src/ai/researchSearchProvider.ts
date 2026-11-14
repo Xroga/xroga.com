@@ -17,6 +17,32 @@ export const DEEPSEEK_SEARCH_MICRO_USD = 750;
 export const DEEPSEEK_QUERY_MAX = 128;
 export const DEEPSEEK_SEARCH_RESULTS = 10;
 
+export function officialResearchDomains(domains: readonly string[]): string[] {
+  return [...new Set(domains.map(domain => domain.trim().toLowerCase().replace(/^www\./, '').replace(/\.$/, ''))
+    .filter(domain => /^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z][a-z0-9-]{1,62}$/.test(domain)))];
+}
+
+export function matchesOfficialResearchDomain(url: string, domains: readonly string[]): boolean {
+  const host = new URL(url).hostname.toLowerCase().replace(/^www\./, '').replace(/\.$/, '');
+  return domains.some(domain => host === domain || host.endsWith('.' + domain));
+}
+
+/** The bounded Search request has no domain field. Its documented site operator
+ * goes in the reviewed query, before the canonical approval is created. */
+export function scopeOfficialSearchQuery(query: string, domains: readonly string[]): string | undefined {
+  const limit = DEEPSEEK_QUERY_MAX;
+  const sites: string[] = [];
+  for (const domain of officialResearchDomains(domains)) {
+    const next = [...sites, 'site:' + domain].join(' OR ');
+    if (next.length + 2 < limit) sites.push('site:' + domain);
+  }
+  if (!sites.length) return;
+  const operators = sites.join(' OR ');
+  const terms = query.replace(/-?site:\S+/gi, '').replace(/\bOR\b/gi, ' ').replace(/["()]/g, ' ').replace(/\s+/g, ' ').trim();
+  const scopedTerms = [...terms].slice(0, limit - operators.length - 1).join('').trimEnd();
+  return scopedTerms ? `${scopedTerms} ${operators}` : operators;
+}
+
 /** The dedicated server-side search credential, or undefined when research search is unavailable. */
 export function deepseekSearchCredential(): string | undefined {
   return getSecret('DEEPSEEK_WEBSEARCH_FETCH_API') || undefined;
@@ -28,8 +54,8 @@ export function researchSearchMicroUsd(): number {
 
 /** One bounded DeepSeek request built from the already validated Parallel-shaped body. */
 export function deepseekSearchBody(body: { objective: string; search_queries: string[] }): { query: string; count: number; ori_question?: string } {
-  const query = body.search_queries[0].trim().slice(0, DEEPSEEK_QUERY_MAX);
-  const question = body.objective.trim().slice(0, DEEPSEEK_QUERY_MAX);
+  const query = [...body.search_queries[0].trim()].slice(0, DEEPSEEK_QUERY_MAX).join('');
+  const question = [...body.objective.trim()].slice(0, DEEPSEEK_QUERY_MAX).join('');
   return { query, count: DEEPSEEK_SEARCH_RESULTS, ...(question ? { ori_question: question } : {}) };
 }
 

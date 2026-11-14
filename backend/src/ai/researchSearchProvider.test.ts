@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {deepseekSearchCredential,researchSearchMicroUsd,deepseekSearchBody,normaliseDeepseekSearch,DEEPSEEK_SEARCH_MICRO_USD} from './researchSearchProvider.js';
+import {deepseekSearchCredential,researchSearchMicroUsd,deepseekSearchBody,normaliseDeepseekSearch,scopeOfficialSearchQuery,DEEPSEEK_SEARCH_MICRO_USD} from './researchSearchProvider.js';
 
 test('search uses only the dedicated DeepSeek credential; without it search is unavailable, never rerouted', () => {
   const saved = process.env.DEEPSEEK_WEBSEARCH_FETCH_API;
@@ -22,6 +22,20 @@ test('one bounded DeepSeek request respects the documented 128-character limits'
   assert.equal(body.ori_question?.length, 128);
   assert.equal(body.count, 10);
   assert.deepEqual(Object.keys(deepseekSearchBody({ objective: '  ', search_queries: ['Next.js 15 release'] })).sort(), ['count', 'query']);
+});
+
+test('official-only queries send the approved domains and fit the provider limit', () => {
+  assert.equal(scopeOfficialSearchQuery('pathlib read_text OR site:forum.example (read_bytes)', [
+    'WWW.DOCS.PYTHON.ORG.', 'docs.python.org', 'https://unrelated.example', 'python.org/path', 'developer.mozilla.org',
+  ]), 'pathlib read_text read_bytes site:docs.python.org OR site:developer.mozilla.org');
+  const terms = '文件'.repeat(120) + '🌍';
+  const query = scopeOfficialSearchQuery(terms, ['docs.python.org'])!;
+  const body = deepseekSearchBody({ objective: '🌍'.repeat(150), search_queries: [query] });
+  assert.equal([...body.query].length, 128);
+  assert.equal([...body.ori_question!].length, 128);
+  assert.equal(body.query, query);
+  assert.ok(body.query.endsWith(' site:docs.python.org'));
+  assert.equal(scopeOfficialSearchQuery('reserve no search', ['http://docs.python.org', 'local']), undefined);
 });
 
 test('DeepSeek results become the existing result shape with real URLs, dates and the trace receipt', () => {

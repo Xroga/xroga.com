@@ -4285,7 +4285,7 @@
     {
       "id": "5baa649b7c2c9b6b6f30",
       "callSha256": "8a4cf1df25bdb5d59e6f01020cc5be67cec679c8815a93cc5b5b594cc7a7fe28",
-      "sourceFileSha256": "ac3f222a927506239ccb3a51c40ccc5acee7329ea117c36c8654d0a6b8cdb15a",
+      "sourceFileSha256": "0a7da4cf31ee271f34d2380b8d7d557be006afb19283fe1cc529539dc210c54e",
       "disposition": "VERIFIED_GUARD",
       "trust": "FIXED_PARALLEL_API_WITH_PRODUCER_ATTESTED_EXACT_PRIVATE_EGRESS_APPROVAL",
       "tenantAuthority": "ORIGINAL_ACTOR_PROJECT_RUN_GENERATION_CURRENT_ONE_USE_CLAIM_SECRET_FLOOR_AND_CANONICAL_BUDGET_SETTLEMENT_NO_DENIAL_FALLBACK",
@@ -4298,7 +4298,7 @@
         {
           "path": "backend/src/ai/parallelWeb.security.test.ts",
           "marker": "actual Parallel entries enforce issued context, current owner, egress, canonical holds and exact settlement",
-          "sha256": "c070ac329948841c4cc4a74bf641ef747fd81aa64b8cc27600879a0def449ee9",
+          "sha256": "29e704826d0e504396a577427e0181d909331628d30f4ad2878e975f462290b9",
           "reboundOnBranch": {
             "previousSha256": "40a9c47c0f61e5894bcc787e72738b44e1ec1b23dcdf652b44e6708b8ff706f2"
           }
@@ -4332,7 +4332,7 @@
         {
           "path": "backend/src/ai/parallelWeb.security.test.ts",
           "marker": "actual Parallel entries enforce issued context, current owner, egress, canonical holds and exact settlement",
-          "sha256": "c070ac329948841c4cc4a74bf641ef747fd81aa64b8cc27600879a0def449ee9",
+          "sha256": "29e704826d0e504396a577427e0181d909331628d30f4ad2878e975f462290b9",
           "reboundOnBranch": {
             "previousSha256": "40a9c47c0f61e5894bcc787e72738b44e1ec1b23dcdf652b44e6708b8ff706f2"
           }

@@ -1,4 +1,4 @@
-import { NATIVE_SHARE_PREFIX, readNativeOpenUiShare, readNativeOpenUiShareText } from '../../../../../backend/src/ai/nativeOpenUiShare';
+import { NATIVE_SHARE_PREFIX, readNativeOpenUiShareEnvelope, readNativeOpenUiShareText } from '../../../../../backend/src/ai/nativeOpenUiShare';
 import { splitNativeOpenUiAnswer } from '../../../../../backend/src/ai/nativeOpenUi';
 import { NativeWorkspaceAnswer } from '@/components/native-openui/NativeWorkspaceAnswer';
 import type { Metadata } from 'next';
@@ -27,7 +27,7 @@ type PublicShare = {
 };
 
 type ShareResult =
-  | { status: 'ok'; share: PublicShare }
+  | { status: 'ok'; share: PublicShare; native?: NonNullable<ReturnType<typeof readNativeOpenUiShareEnvelope>> }
   | { status: 'private' }
   | { status: 'missing' };
 
@@ -70,22 +70,27 @@ const loadShare = cache(async (token: string): Promise<ShareResult> => {
     // revisions return the snapshot in response. Both retain the same share ACL.
     const snapshot = typeof share.richResponse === 'string' ? share.richResponse : share.response;
     if (snapshot.startsWith(NATIVE_SHARE_PREFIX)) {
-      const native = readNativeOpenUiShare(snapshot);
+      const native = readNativeOpenUiShareEnvelope(snapshot);
       const wrapped = !share.richResponse && share.response.startsWith(NATIVE_SHARE_PREFIX);
       const responseText = wrapped ? readNativeOpenUiShareText(snapshot) : splitNativeOpenUiAnswer(share.response).text;
       const matchingText = wrapped || native?.text === responseText;
-      return { status: 'ok', share: { ...share,
-        response: responseText || 'The shared answer has no readable text.',
-        richResponse: native && matchingText ? snapshot : undefined,
-        richUnavailable: !native || !matchingText,
-      } };
+      return {
+        status: 'ok',
+        // NativeWorkspaceAnswer validates the program in its rendering runtime.
+        native: matchingText ? native : undefined,
+        share: { ...share,
+          response: responseText || 'The shared answer has no readable text.',
+          richResponse: undefined,
+          richUnavailable: !native || !matchingText,
+        },
+      };
     }
     const presentation = readRichShareSnapshot(snapshot);
     const matchingText = !share.richResponse || presentation.text === share.response;
     return { status: 'ok', share: { ...share,
       response: share.response.startsWith(RICH_SHARE_PREFIX) ? presentation.text : share.response,
       richResponse: presentation.document && matchingText ? snapshot : undefined,
-      richUnavailable: snapshot.startsWith(RICH_SHARE_PREFIX) && (!presentation.document || !matchingText),
+      richUnavailable: share.richUnavailable === true || snapshot.startsWith(RICH_SHARE_PREFIX) && (!presentation.document || !matchingText),
     } };
   } catch {
     return { status: 'missing' };
@@ -139,8 +144,7 @@ export default async function MessageSharePage({ params }: { params: Promise<{ t
       </main>
     );
   }
-  const { share } = result;
-  const native = share.richResponse ? readNativeOpenUiShare(share.richResponse) : undefined;
+  const { share, native } = result;
   // The API has already enforced the saved link's visibility. A validated
   // native snapshot must reopen independently of the older V2 rollout flag.
   const legacyRichAllowed = !native && Boolean(share.richResponse) && await canPresentRichShare();

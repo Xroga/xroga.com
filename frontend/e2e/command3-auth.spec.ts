@@ -579,6 +579,35 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   await expect(renderedArchitecture).not.toContainText(/root\s*=\s*Col/);
   await expect.poll(async () => ((await readSaved(architectureSession))?.messages as Array<{ featureOutput?: { responseSource?: { text?: string } } }> | undefined)
     ?.some(message => message.featureOutput?.responseSource?.text === architectureProgram), { timeout: 20_000 }).toBe(true);
+  const architectureTurn = page.locator('[data-turn-id]', { has: renderedArchitecture });
+  await architectureTurn.getByRole('button', { name: 'Share', exact: true }).click();
+  const architectureShareCreated = page.waitForResponse(response => new URL(response.url()).pathname === '/api/message-shares'
+    && response.request().method() === 'POST');
+  await dialog.getByRole('button', { name: 'Create owner-only link' }).click();
+  const architectureShare = await architectureShareCreated;
+  expect(architectureShare.status()).toBe(201);
+  const { share: savedArchitectureShare } = await architectureShare.json();
+  expect(savedArchitectureShare.richResponse).toContain('XROGA_OPENUI_SHARE_V1');
+  const architectureLink = new URL('/share/' + savedArchitectureShare.token, workspaceOrigin).href;
+  const architectureSharePage = await page.context().newPage();
+  try {
+    await architectureSharePage.setViewportSize({ width: 390, height: 900 });
+    await architectureSharePage.goto(architectureLink);
+    const sharedArchitecture = architectureSharePage.getByRole('region', { name: 'Answer', exact: true });
+    await expect(sharedArchitecture.getByRole('region', { name: 'Answer table', exact: true })).toBeVisible();
+    await expect(sharedArchitecture.locator('.react-flow__edge')).toHaveCount(1);
+    await expect(sharedArchitecture.locator('pre code')).toHaveText('const boundary = "tenant_id";');
+    const shareRevoked = page.waitForResponse(response => response.request().method() === 'DELETE'
+      && new URL(response.url()).pathname === '/api/message-shares/' + savedArchitectureShare.token);
+    await dialog.getByRole('button', { name: 'Revoke', exact: true }).click();
+    expect((await shareRevoked).ok()).toBe(true);
+    await architectureSharePage.reload();
+    await expect(architectureSharePage.getByRole('heading', { name: 'Page not found', exact: true })).toBeVisible();
+    await expect(sharedArchitecture).toHaveCount(0);
+  } finally {
+    await architectureSharePage.close();
+    await dialog.getByRole('button', { name: 'Close share dialog' }).click();
+  }
   const pairingWorkspace = new URL('/workspace', page.url());
   pairingWorkspace.searchParams.set('conversation', architectureSession);
   pairingWorkspace.searchParams.set('browserExtension', 'abcdefghijklmnopabcdefghijklmnop');

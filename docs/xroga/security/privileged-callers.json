@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "9cbc9532c6b2fde8ebae7fe6aa36cc3d92c11f675cc5727a0eecdf74653ddf67",
+  "reviewRegistrySha256": "d6d16dafe9a3ee92fe6de7d93fdb969548d74517e96c69865b5730789c5b29dd",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -3908,7 +3908,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "91afe59da48d41fdec1b"
+        "id": "9f307b5e858813b8e6bb"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -5704,7 +5704,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "46b6b6328f29b95a6601"
+        "id": "3089acca6fa163c13c73"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -6492,7 +6492,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "32f34440748d20a994f0"
+        "id": "d7d7a840148c552e4769"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -6700,7 +6700,7 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "91afe59da48d41fdec1b"
+        "id": "9f307b5e858813b8e6bb"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -7136,7 +7136,7 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "46b6b6328f29b95a6601"
+        "id": "3089acca6fa163c13c73"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -7380,7 +7380,7 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "32f34440748d20a994f0"
+        "id": "d7d7a840148c552e4769"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -11202,7 +11202,7 @@
       "target": "swarm_runs",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "ac3f222a927506239ccb3a51c40ccc5acee7329ea117c36c8654d0a6b8cdb15a",
+      "sourceSha256": "0a7da4cf31ee271f34d2380b8d7d557be006afb19283fe1cc529539dc210c54e",
       "semanticReview": {
         "authority": "Original issued TenantContext fixes actor/user, current project ownership and optional issued worker generation are rechecked. The exact owner and operation enter the existing reserve_xroga_provider_budget and settle_xroga_provider_budget RPCs, with complete reservation/settlement receipts checked. The same canonical billing cycles, policy, holds and reconciliation are used. No alternate ledger or user-ID context fallback is introduced.",
         "reason": "Focused actual SDK/REST-transport fixtures pass actor clone/foreign owner, cancelled/replaced generation, reservation/receipt denial, secret canaries, pending accounting and normal authorized provider recovery. Current-source real disposable SQL and full source-bound CI are still required. Upstream query provenance, externally fetched URL redirect/DNS behavior and the separate xAI path remain unresolved. This honest reviewed gap still blocks security acceptance.",
@@ -11214,6 +11214,10 @@
           {
             "path": "backend/src/ai/parallelWeb.security.test.ts",
             "marker": "actual Parallel entries enforce issued context, current owner, egress, canonical holds and exact settlement"
+          },
+          {
+            "path": "backend/src/ai/parallelWeb.security.test.ts",
+            "marker": "empty DeepSeek results settle zero while preserving the request receipt and dispatch count"
           }
         ]
       }
@@ -11227,7 +11231,7 @@
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "ac3f222a927506239ccb3a51c40ccc5acee7329ea117c36c8654d0a6b8cdb15a",
+      "sourceSha256": "0a7da4cf31ee271f34d2380b8d7d557be006afb19283fe1cc529539dc210c54e",
       "semanticReview": {
         "authority": "Original issued TenantContext fixes actor/user, current project ownership and optional issued worker generation are rechecked. The exact owner and operation enter the existing reserve_xroga_provider_budget and settle_xroga_provider_budget RPCs, with complete reservation/settlement receipts checked. The same canonical billing cycles, policy, holds and reconciliation are used. No alternate ledger or user-ID context fallback is introduced.",
         "reason": "Focused actual SDK/REST-transport fixtures pass actor clone/foreign owner, cancelled/replaced generation, reservation/receipt denial, secret canaries, pending accounting and normal authorized provider recovery. Current-source real disposable SQL and full source-bound CI are still required. Upstream query provenance, externally fetched URL redirect/DNS behavior and the separate xAI path remain unresolved. This honest reviewed gap still blocks security acceptance.",
@@ -11239,6 +11243,10 @@
           {
             "path": "backend/src/ai/parallelWeb.security.test.ts",
             "marker": "actual Parallel entries enforce issued context, current owner, egress, canonical holds and exact settlement"
+          },
+          {
+            "path": "backend/src/ai/parallelWeb.security.test.ts",
+            "marker": "empty DeepSeek results settle zero while preserving the request receipt and dispatch count"
           }
         ]
       }
@@ -11252,7 +11260,7 @@
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "ac3f222a927506239ccb3a51c40ccc5acee7329ea117c36c8654d0a6b8cdb15a",
+      "sourceSha256": "0a7da4cf31ee271f34d2380b8d7d557be006afb19283fe1cc529539dc210c54e",
       "semanticReview": {
         "authority": "Original issued TenantContext fixes actor/user, current project ownership and optional issued worker generation are rechecked. The exact owner and operation enter the existing reserve_xroga_provider_budget and settle_xroga_provider_budget RPCs, with complete reservation/settlement receipts checked. The same canonical billing cycles, policy, holds and reconciliation are used. No alternate ledger or user-ID context fallback is introduced.",
         "reason": "Focused actual SDK/REST-transport fixtures pass actor clone/foreign owner, cancelled/replaced generation, reservation/receipt denial, secret canaries, pending accounting and normal authorized provider recovery. Current-source real disposable SQL and full source-bound CI are still required. Upstream query provenance, externally fetched URL redirect/DNS behavior and the separate xAI path remain unresolved. This honest reviewed gap still blocks security acceptance.",
@@ -11264,6 +11272,10 @@
           {
             "path": "backend/src/ai/parallelWeb.security.test.ts",
             "marker": "actual Parallel entries enforce issued context, current owner, egress, canonical holds and exact settlement"
+          },
+          {
+            "path": "backend/src/ai/parallelWeb.security.test.ts",
+            "marker": "empty DeepSeek results settle zero while preserving the request receipt and dispatch count"
           }
         ]
       }
@@ -11277,7 +11289,7 @@
       "target": "reserve_xroga_provider_budget",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "ac3f222a927506239ccb3a51c40ccc5acee7329ea117c36c8654d0a6b8cdb15a",
+      "sourceSha256": "0a7da4cf31ee271f34d2380b8d7d557be006afb19283fe1cc529539dc210c54e",
       "semanticReview": {
         "authority": "Original issued TenantContext fixes actor/user, current project ownership and optional issued worker generation are rechecked. The exact owner and operation enter the existing reserve_xroga_provider_budget and settle_xroga_provider_budget RPCs, with complete reservation/settlement receipts checked. The same canonical billing cycles, policy, holds and reconciliation are used. No alternate ledger or user-ID context fallback is introduced.",
         "reason": "Focused actual SDK/REST-transport fixtures pass actor clone/foreign owner, cancelled/replaced generation, reservation/receipt denial, secret canaries, pending accounting and normal authorized provider recovery. Current-source real disposable SQL and full source-bound CI are still required. Upstream query provenance, externally fetched URL redirect/DNS behavior and the separate xAI path remain unresolved. This honest reviewed gap still blocks security acceptance.",
@@ -11289,6 +11301,10 @@
           {
             "path": "backend/src/ai/parallelWeb.security.test.ts",
             "marker": "actual Parallel entries enforce issued context, current owner, egress, canonical holds and exact settlement"
+          },
+          {
+            "path": "backend/src/ai/parallelWeb.security.test.ts",
+            "marker": "empty DeepSeek results settle zero while preserving the request receipt and dispatch count"
           }
         ]
       }
@@ -11302,7 +11318,7 @@
       "target": "ensure_xroga_free_cycle",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "ac3f222a927506239ccb3a51c40ccc5acee7329ea117c36c8654d0a6b8cdb15a",
+      "sourceSha256": "0a7da4cf31ee271f34d2380b8d7d557be006afb19283fe1cc529539dc210c54e",
       "semanticReview": {
         "authority": "Original issued TenantContext fixes actor/user, current project ownership and optional issued worker generation are rechecked. The exact owner and operation enter the existing reserve_xroga_provider_budget and settle_xroga_provider_budget RPCs, with complete reservation/settlement receipts checked. The same canonical billing cycles, policy, holds and reconciliation are used. No alternate ledger or user-ID context fallback is introduced.",
         "reason": "Focused actual SDK/REST-transport fixtures pass actor clone/foreign owner, cancelled/replaced generation, reservation/receipt denial, secret canaries, pending accounting and normal authorized provider recovery. Current-source real disposable SQL and full source-bound CI are still required. Upstream query provenance, externally fetched URL redirect/DNS behavior and the separate xAI path remain unresolved. This honest reviewed gap still blocks security acceptance.",
@@ -11314,20 +11330,24 @@
           {
             "path": "backend/src/ai/parallelWeb.security.test.ts",
             "marker": "actual Parallel entries enforce issued context, current owner, egress, canonical holds and exact settlement"
+          },
+          {
+            "path": "backend/src/ai/parallelWeb.security.test.ts",
+            "marker": "empty DeepSeek results settle zero while preserving the request receipt and dispatch count"
           }
         ]
       }
     },
     {
-      "id": "91afe59da48d41fdec1b",
+      "id": "9f307b5e858813b8e6bb",
       "path": "backend/src/ai/parallelDispatch.ts",
-      "line": 116,
+      "line": 119,
       "enclosing": "executeParallelRequest",
       "kind": "RPC_CANDIDATE",
       "target": "settle_xroga_provider_budget",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "ac3f222a927506239ccb3a51c40ccc5acee7329ea117c36c8654d0a6b8cdb15a",
+      "sourceSha256": "0a7da4cf31ee271f34d2380b8d7d557be006afb19283fe1cc529539dc210c54e",
       "semanticReview": {
         "authority": "Original issued TenantContext fixes actor/user, current project ownership and optional issued worker generation are rechecked. The exact owner and operation enter the existing reserve_xroga_provider_budget and settle_xroga_provider_budget RPCs, with complete reservation/settlement receipts checked. The same canonical billing cycles, policy, holds and reconciliation are used. No alternate ledger or user-ID context fallback is introduced.",
         "reason": "Focused actual SDK/REST-transport fixtures pass actor clone/foreign owner, cancelled/replaced generation, reservation/receipt denial, secret canaries, pending accounting and normal authorized provider recovery. Current-source real disposable SQL and full source-bound CI are still required. Upstream query provenance, externally fetched URL redirect/DNS behavior and the separate xAI path remain unresolved. This honest reviewed gap still blocks security acceptance.",
@@ -11339,6 +11359,10 @@
           {
             "path": "backend/src/ai/parallelWeb.security.test.ts",
             "marker": "actual Parallel entries enforce issued context, current owner, egress, canonical holds and exact settlement"
+          },
+          {
+            "path": "backend/src/ai/parallelWeb.security.test.ts",
+            "marker": "empty DeepSeek results settle zero while preserving the request receipt and dispatch count"
           }
         ]
       }
@@ -25238,15 +25262,15 @@
       }
     },
     {
-      "id": "46b6b6328f29b95a6601",
+      "id": "3089acca6fa163c13c73",
       "path": "backend/src/services/integrations/researchResult.ts",
-      "line": 40,
+      "line": 41,
       "enclosing": "saveResearchResult",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "8b02d992fc703451a4cc942a8570dc3db7fe665742d87fc88fd96d53b44cf3e5"
+      "sourceSha256": "27ecd374b1e6229921f15159f1e8e6278925ac52958cd29af6b40717699a7a39"
     },
     {
       "id": "34d41864b9724cd70b8d",
@@ -31338,15 +31362,15 @@
       }
     },
     {
-      "id": "32f34440748d20a994f0",
+      "id": "d7d7a840148c552e4769",
       "path": "frontend/src/app/share/[token]/page.tsx",
-      "line": 116,
+      "line": 121,
       "enclosing": "canPresentRichShare",
       "kind": "RPC_CANDIDATE",
       "target": "current_community_role",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "17cb0432a53350ac1074586cc95cb0a017603bd74342f1dc696d4093e9852409"
+      "sourceSha256": "31025246f788c886c916070a0b8ef0cc87c92d7bf4530feab0e401818ab3a5d4"
     },
     {
       "id": "19620b924bbcbab333b0",

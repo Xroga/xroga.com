@@ -53,3 +53,14 @@ test('retains ordered rich blocks, source evidence and old citations through una
   assert.equal(updated.webSources.length, 2);
   assert.deepEqual(attachResearchResult(JSON.parse(JSON.stringify(updated)), result), updated);
 });
+
+test('an empty qualifying-source receipt replaces the stale approval prompt and survives reopening', () => {
+  const receipt = { ...result, sources: [], answerFailure: 'NO_QUALIFYING_SOURCES' };
+  const pending = { ...message, webSources: [result.sources[0]] };
+  const settled = attachResearchResult(pending, receipt);
+  assert.match(settled.content, /found no sources that met your request/);
+  assert.doesNotMatch(settled.content, /approval|Review|Actual returned excerpt/);
+  assert.deepEqual(settled.webSources, []);
+  assert.equal(settled.researchReceiptId, receipt.receiptId);
+  assert.deepEqual(attachResearchResult(JSON.parse(JSON.stringify(settled)), receipt), settled);
+});

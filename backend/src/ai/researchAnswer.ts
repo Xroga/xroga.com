@@ -4,6 +4,7 @@ import {normalizeResearch,formatResearchAsEvidence} from './black-hole/researchR
 import {presentResearchResult} from '../services/integrations/researchResult.js';
 import type {TenantModelScope} from './tenantModelDispatch.js';
 import {AuthorityError} from '../security/authority/enforce.js';
+import { officialResearchDomains } from './researchSearchProvider.js';
 
 export const RESEARCH_ANSWER_MAXIMUM_MICRO_USD=5_000;
 export const researchAnswerRequestSchema=z.object({
@@ -46,9 +47,11 @@ export function bindCitationLinks(response:string,sources:ReadonlyArray<{url:str
 /** Runs inside the already claimed, exact research confirmation. This is the
  * original answer generation, not an extra formatting call or a retry loop. */
 export async function completeApprovedResearchAnswer(scope:TenantModelScope,request:ResearchAnswerRequest,raw:unknown,check:()=>Promise<void>){
- const input=researchAnswerRequestSchema.parse(request),evidence=presentResearchResult(raw);
+ const input=researchAnswerRequestSchema.parse(request);
  const goal=input.goalContract;
- const normalized=normalizeResearch(evidence.sources,{query:input.prompt,officialDomains:goal?.sourcePolicy.officialDomains,maxSources:12});
+ const officialOnly=goal?.sourcePolicy.mode==='official_only' ? officialResearchDomains(goal.sourcePolicy.officialDomains) : undefined;
+ const evidence=presentResearchResult(raw,officialOnly);
+ const normalized=normalizeResearch(evidence.sources,{query:input.prompt,officialDomains:officialOnly??goal?.sourcePolicy.officialDomains,maxSources:12});
  const sources=goal?.sourcePolicy.mode==='official_only'?normalized.sources.filter(s=>s.trust==='A_official'):normalized.sources;
  if(!sources.length)return {answerFailure:'NO_QUALIFYING_SOURCES' as const};
  const filtered={...normalized,sources,unavailable:false};

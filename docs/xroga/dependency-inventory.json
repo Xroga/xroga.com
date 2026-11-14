@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "2983e059f1312f7b7b7a3bdba28a1fabe152a823",
+  "source_sha": "5c1ff07c19e07488d8c4243d7d9329e6f17e10b2",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -16892,7 +16892,7 @@
     },
     {
       "path": "backend/src/ai/black-hole/webIntelligence.ts",
-      "sha256": "d5924883b7e10022953a8dbf8401d1b2a5b4d39e0e304fafe2e66cf747aa2473"
+      "sha256": "aee3096360ef1c20f437acf8e5e6354c4cc17137f00bb97aadbd3c2357f04c24"
     },
     {
       "path": "backend/src/ai/buildImprovementMemory.ts",
@@ -17072,7 +17072,7 @@
     },
     {
       "path": "backend/src/ai/nativeOpenUiShare.ts",
-      "sha256": "e985644b5a74cb146c48a1100f639c451de35e44e16a19a8fc4d912b7795821e"
+      "sha256": "2510d641db2fd2c7402b8f86d8ce14b8d0bad2f4ad3bd57b902b02bc9fa0291e"
     },
     {
       "path": "backend/src/ai/nativeOpenUiWorkspace.ts",
@@ -17180,11 +17180,11 @@
     },
     {
       "path": "backend/src/ai/researchAnswer.ts",
-      "sha256": "c00a78a202fd82363673c0680a1895e93cd5a60d2090a06b9641b0328e5a2fca"
+      "sha256": "d407bacfa089cbd6e213efc755be6197bfb68c7eaec41c679171a6762ea0bfc7"
     },
     {
       "path": "backend/src/ai/researchSearchProvider.ts",
-      "sha256": "1708a291bb1d10a78fecd67fae7d6fe2d510af67d3083b8c08eeb3aa260b5075"
+      "sha256": "aa68f0a3824a5e5ff17abee739fa65e720e2e7e35fe4323823189945c18015cf"
     },
     {
       "path": "backend/src/ai/resourceLedger.ts",
@@ -19232,7 +19232,7 @@
     },
     {
       "path": "backend/src/services/integrations/researchResult.ts",
-      "sha256": "8b02d992fc703451a4cc942a8570dc3db7fe665742d87fc88fd96d53b44cf3e5"
+      "sha256": "27ecd374b1e6229921f15159f1e8e6278925ac52958cd29af6b40717699a7a39"
     },
     {
       "path": "backend/src/services/integrations/supabaseAccess.ts",
@@ -20636,7 +20636,7 @@
     },
     {
       "path": "frontend/src/app/share/[token]/page.tsx",
-      "sha256": "17cb0432a53350ac1074586cc95cb0a017603bd74342f1dc696d4093e9852409"
+      "sha256": "6cdfde56ab68b428654dfeee475bf988918ccd73051a1712c103b15a564f753f"
     },
     {
       "path": "frontend/src/app/showcase/[slug]/page.tsx",
@@ -23904,7 +23904,7 @@
     },
     {
       "path": "frontend/src/lib/researchHandoff.ts",
-      "sha256": "9eeae9816ae0462dff96d514efa7249ebd5fda065c0530cf80fca0507dbf08af"
+      "sha256": "a984aca6005ddcc8fe68bae36735832aa004b191b998b11e024cc0aa520108fb"
     },
     {
       "path": "frontend/src/lib/researchWait.ts",
@@ -25587,7 +25587,7 @@
       "hostname": "cdn.deepseek.com",
       "protocol": "https:",
       "path": "backend/src/ai/researchSearchProvider.ts",
-      "line": 43,
+      "line": 69,
       "credentialsInUrl": false
     },
     {
@@ -32020,7 +32020,7 @@
     },
     {
       "path": "backend/src/ai/black-hole/webIntelligence.ts",
-      "line": 79,
+      "line": 80,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -32664,7 +32664,7 @@
     },
     {
       "path": "backend/src/ai/nativeOpenUiShare.ts",
-      "line": 44,
+      "line": 54,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -33084,7 +33084,14 @@
     },
     {
       "path": "backend/src/ai/researchAnswer.ts",
-      "line": 33,
+      "line": 34,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/researchSearchProvider.ts",
+      "line": 21,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -36402,14 +36409,14 @@
     },
     {
       "path": "backend/src/services/integrations/researchResult.ts",
-      "line": 63,
+      "line": 64,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/researchResult.ts",
-      "line": 102,
+      "line": 104,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -39503,7 +39510,7 @@
     },
     {
       "path": "frontend/src/lib/researchHandoff.ts",
-      "line": 69,
+      "line": 73,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
