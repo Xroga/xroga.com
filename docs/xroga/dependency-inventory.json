@@ -17088,7 +17088,7 @@
     },
     {
       "path": "backend/src/ai/parallelDispatch.ts",
-      "sha256": "ac3f222a927506239ccb3a51c40ccc5acee7329ea117c36c8654d0a6b8cdb15a"
+      "sha256": "0a7da4cf31ee271f34d2380b8d7d557be006afb19283fe1cc529539dc210c54e"
     },
     {
       "path": "backend/src/ai/parallelWeb.ts",
@@ -18168,7 +18168,7 @@
     },
     {
       "path": "backend/src/lib/richShareSnapshot.ts",
-      "sha256": "c037e09e96a27e1f7457248454683c2675a8fa64f02fb19605b0872ee7920720"
+      "sha256": "7a3d0ab309cb6ab6e0340fc0e1a51737f0315b50620c67e2c1deedda8f657e76"
     },
     {
       "path": "backend/src/lib/runway.ts",
@@ -20636,7 +20636,7 @@
     },
     {
       "path": "frontend/src/app/share/[token]/page.tsx",
-      "sha256": "6cdfde56ab68b428654dfeee475bf988918ccd73051a1712c103b15a564f753f"
+      "sha256": "31025246f788c886c916070a0b8ef0cc87c92d7bf4530feab0e401818ab3a5d4"
     },
     {
       "path": "frontend/src/app/showcase/[slug]/page.tsx",

@@ -1,6 +1,6 @@
 # Xroga repository truth map
 
-Source SHA: `5c1ff07c19e07488d8c4243d7d9329e6f17e10b2`. Branch observed: `codex/openui-production-integration-20261114`. Audit started: 2026-11-14T09:55:42.712Z.
+Source SHA: `5c1ff07c19e07488d8c4243d7d9329e6f17e10b2`. Branch observed: `codex/openui-production-integration-20261114`. Audit started: 2026-11-14T10:10:47.039Z.
 
 This inventory records static source and call-path evidence. A mounted endpoint is reachable in source; that does not certify live success, tenant safety, approval enforcement, or completion. All implementation surfaces retain an unverified/partial/placeholder state until their own acceptance tests establish behavior. No architecture was replaced and no production operations were performed.
 
@@ -14,7 +14,7 @@ This inventory records static source and call-path evidence. A mounted endpoint 
 - migrations: 162
 - workflows: 21
 - testSuites: 1110
-- declaredTests: 7498
+- declaredTests: 7499
 - classifiedMarkers: 422
 - reachableMarkers: 356
 - absentRequiredPaths: 5
