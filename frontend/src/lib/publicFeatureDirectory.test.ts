@@ -22,7 +22,7 @@ const sourceCoverage: ReadonlyArray<readonly [string, readonly string[]]> = [
   ['Website & SaaS generation', ['website-builder', 'saas-builder']],
   ['Chatbot landing + BYOK /api/chat scaffold', ['chatbot']],
   ['Ship GitHub → Vercel (web) / Releases (Chrome & desktop)', ['vercel', 'chrome-release', 'desktop-release']],
-  ['Connectable: GitHub, Vercel, Supabase, Expo, billing keys', ['github-sticky', 'vercel', 'supabase-env', 'expo-publish']],
+  ['Connectable: GitHub, Vercel, Supabase, Expo, billing keys', ['github-sticky', 'vercel', 'supabase-env', 'expo-publish', 'billing-keys']],
   ['Truthful shared-capacity billing', ['usage', 'limits']],
   ['Terminal fullscreen mode', ['terminal']],
   ['Browser preview dock', ['preview-dock']],
