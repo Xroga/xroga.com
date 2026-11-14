@@ -251,7 +251,7 @@
     },
     {
       "path": "backend/src/ai/black-hole/webIntelligence.ts",
-      "sha256": "d5924883b7e10022953a8dbf8401d1b2a5b4d39e0e304fafe2e66cf747aa2473",
+      "sha256": "aee3096360ef1c20f437acf8e5e6354c4cc17137f00bb97aadbd3c2357f04c24",
       "beforeCurrentMetadataReconciliation": {
         "path": "backend/src/ai/black-hole/webIntelligence.ts",
         "sha256": "f7ee10618d7993cc8e827b7f77d23eec06e663232d26a44c598a48825fbb6b7d"
@@ -1018,6 +1018,11 @@
     "frontend": "23a1a48a2ee0018ed0c828f6347df9d0bef9c369",
     "previousProofSha256": "c5dc2789581a52c827f1b03ad7fb78052704c0779a6d3611a2e0040df3f06385",
     "scope": "Existing authenticated pairing and exact SDK pacing guard retained. This source review does not certify a hosted run."
+  },
+  "officialSearchScopeContinuation": {
+    "previousProofSha256": "00eabe1985257fee9f5977c24ecd7d005616f10a008e326bd75a74204fd9f90e",
+    "verification": "docs/operations/native-openui/WORKSPACE-PRODUCTION-FOLLOW-UP-20261114.md",
+    "scope": "Reviewed the existing search caller: official-only requests now require a verified domain and send the same scoped query through approval and dispatch. The destination and transport authorization are unchanged."
   },
   "hostedWorkspaceStagingContinuation": {
     "previousProofSha256": "7e8a157348ede2c414695ef4faa2cb8d2d5ccb5d95da9f2ddeaa99651883bb50",
