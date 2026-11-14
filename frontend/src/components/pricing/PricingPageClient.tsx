@@ -450,6 +450,15 @@ export function PricingPageClient() {
           </div>
         </section>
 
+        <section className={styles.artSection} aria-label="Xroga creative possibilities">
+          <div className={styles.artCopy}>
+            <span className={styles.eyebrow}>XROGA IN MOTION</span>
+            <h2>Go from a thought <em>to something real.</em></h2>
+            <p>Research an idea, build what matters, iterate with evidence, and keep moving.</p>
+          </div>
+          <img className={styles.artImage} src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANwAAADSAQAAAAAJK5NcAAAD2UlEQVR42u1YT2gcVRj/vZnZP8aQjEHMgiuZaEtSFa2NIErNThSkFJFcPHixrV70JHqQiKU7eNDoqSdRPJibJ1EPXrw4oGIPhXjoIdjAPrVgFOtuMdjZzWR+HnY2u7PzzUgDEYr7nWbmx++9733v+773ewPczObtl+gk3owk2N63P8fyQJ14M5NgcDGbqLZyvB3byJnS1HnrRA5YzmMe8nPAo3mTLObNuZjHDDOZClCZILHEnFFVJ8ehMWaCBqrZYGQfzXKogmem5mWHlgDj3WlecSWmfx7Hrp/GuC8xpzY922yyBTHBThrf3fe7+5stUWd3F+sfk5fk4Dz40TrJb+VsmWSb5KZcgQWSZEZKl+skh73tRUj58ZaKTJJkkLGXNZKkI4NNkszKhEkB3Nuy7nTLecy8coCPogTaAAAXFQnsBWc2t3h9aViv295cMUJ3kaQGtcBsvAYAVXnYKxYAbCca5x6oHAAo99Y0tGczdZItRS2At1ZJsqMGs8HqPTx/CGjZBWBbYD6pyKjBWTEb7lnhTrTEL4aTrBuEn0l++dcvjISlbDwKBJc4ASlVpne48aN5bVxkli18/onX3PGUl+7CNXZWp45oDCZZzLQqGkb79a3kYRaD5SJgqlVDwx+AYzBUpxEuYxvQeCnlbJ2M/lwoeJjkH+nYAurvVy973W0bWsoFAFfvBRBgLDVsaY5sX4yAklBNJZNsPhQBJvvb3Rs2jAD7hXNAJPVhr042AkAxSjEJDTgBQKhymjsTd5NXGKZ2xe1V0w/9+PULqQVgDQBwNq0QCnFLqIU6XZ/jwC4A6P6ce7FtqThlHeubdJoAON/17H4hDvzMB2CSYQqyECkNoESmC6KImu0AuJPcSjnUgW7FH+5IF6/XwkS3wQVCqwm8axqwB77tPdANgWo8Q4rpAcFhVNckJnygU3wYa8AtXgp0CPX47VtuHKik2cozGy+f+prNbflAf3vhFMnddMaXA7D9/gMALsuKsNYmSUFOWXGSDcTWSOgSWgCwIh8RE4pklHHyWEo4C/uLefEcG2Gmdnl6Zp2uLCeBzckjn97tZ1FN76qfda6QqOoczWQflJp3MLKRjex/YMcBF8YJGXwK8LsyRBC/j/16fG78vbl31j1JGf908swby8/xQ1E2f18pYUXWt3iivdp+K+uvwFeFDw6/6TsoSd5WDNv418v1f2kbysv2xYVjZ1/8y7c5gxoxca4suM+e6Ew3ZGYpgH6kmDWs3sXQsAOgwwH9MAQG2nKGbv59cHXe1hfmR7U0sgO0s9jvH7QbAYfU26w+iF96NwKO7KazfwA3iXg3EwG/bAAAAABJRU5ErkJggg==" width="220" height="210" alt="Monochrome halftone particle artwork supplied as a pricing page visual reference" loading="lazy" />
+        </section>
+
         <section className={styles.compareSection} aria-labelledby="compare-title">
           <div className={styles.compareHeading}>
             <div className={styles.sectionHeadCompact}>
