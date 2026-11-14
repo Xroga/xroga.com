@@ -11,7 +11,6 @@
   "scope": "Enforce official Search provenance and accurate provider settlement, and preserve native presentation on owner-authorized Share pages.",
   "changedFiles": [
     "backend/src/ai/black-hole/webIntelligence.ts",
-    "backend/src/ai/nativeOpenUiShare.ts",
     "backend/src/ai/parallelDispatch.ts",
     "backend/src/ai/researchAnswer.ts",
     "backend/src/ai/researchSearchProvider.ts",

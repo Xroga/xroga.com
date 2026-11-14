@@ -30,8 +30,7 @@ export function readNativeOpenUiShareText(value: string) {
   return splitNativeOpenUiAnswer(decoded.text).text || undefined;
 }
 
-/** Decode the bounded data envelope. This does not certify its program for rendering. */
-export function readNativeOpenUiShareEnvelope(value: string) {
+export function readNativeOpenUiShare(value: string) {
   try {
     const parsed = snapshot.safeParse(decodeNativeOpenUiShare(value));
     if (!parsed.success) return;
@@ -42,17 +41,11 @@ export function readNativeOpenUiShareEnvelope(value: string) {
       const parsedUrl = new URL(url);
       return !['https:', 'http:'].includes(parsedUrl.protocol) || parsedUrl.username || parsedUrl.password;
     })) return;
-    if (program || sources.length) return { ...parsed.data, text };
+    const ids = new Set(sources.map((_, index) => 'source-' + (index + 1)));
+    if (program ? validateNativeOpenUi(program, ids, text).ok : sources.length > 0) return { ...parsed.data, text };
   } catch {
     // An invalid share is never executable UI.
   }
-}
-
-export function readNativeOpenUiShare(value: string) {
-  const share = readNativeOpenUiShareEnvelope(value);
-  if (!share?.program) return share;
-  const ids = new Set(share.sources.map((_, index) => 'source-' + (index + 1)));
-  return validateNativeOpenUi(share.program, ids, share.text).ok ? share : undefined;
 }
 
 export function buildNativeOpenUiShare(text: string, program: string, sources: Array<z.input<typeof shareSource>> = []) {

@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/openui-production-integration-20261114",
-    "sha": "81f453cd8c5979662fd7516d280b906f67935ba1",
-    "sourceTimestampUtc": "2026-11-14T15:12:20+05:00",
-    "auditStartedUtc": "2026-11-14T10:17:47.284Z",
+    "sha": "5a92270bdba2ea21139ba213239d715985a2539c",
+    "sourceTimestampUtc": "2026-11-14T15:21:32+05:00",
+    "auditStartedUtc": "2026-11-14T10:28:58.343Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -5667,7 +5667,7 @@
       "id": "surface:daedffd81adedfabf156",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiShare.ts",
-      "sha256": "2510d641db2fd2c7402b8f86d8ce14b8d0bad2f4ad3bd57b902b02bc9fa0291e",
+      "sha256": "e985644b5a74cb146c48a1100f639c451de35e44e16a19a8fc4d912b7795821e",
       "symbols": [
         "NATIVE_SHARE_PREFIX",
         "buildNativeOpenUiShare",
@@ -5677,9 +5677,7 @@
         "parsed",
         "parsedUrl",
         "readNativeOpenUiShare",
-        "readNativeOpenUiShareEnvelope",
         "readNativeOpenUiShareText",
-        "share",
         "shareLimit",
         "shareSource",
         "snapshot",
@@ -64296,7 +64294,7 @@
       "id": "surface:9f51ed5a722f2b32376d",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/app/share/[token]/page.tsx",
-      "sha256": "31025246f788c886c916070a0b8ef0cc87c92d7bf4530feab0e401818ab3a5d4",
+      "sha256": "5ccaa74267b12a60f035cee3331446a197aaafb5ccc5bfad365e07d636aa4f23",
       "symbols": [
         "MessageSharePage",
         "PublicShare",
@@ -146130,16 +146128,16 @@
       "reachable": false
     },
     {
-      "id": "frontend-call:177a1bdc50eb6bb9c8c8",
+      "id": "frontend-call:275c5c52e0bdb4b30609",
       "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 176,
+      "line": 179,
       "callee": "api.closeAllConnections",
       "reachable": false
     },
     {
-      "id": "frontend-call:b571a78f84a08e543ba1",
+      "id": "frontend-call:2b9df4436aec374379c6",
       "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 176,
+      "line": 179,
       "callee": "api.close",
       "reachable": false
     },
@@ -146389,7 +146387,7 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:508d97792980c7ac4496",
+      "id": "frontend-call:929fdc219161cfbf5826",
       "sourcePath": "frontend/src/app/share/[token]/page.tsx",
       "line": 57,
       "callee": "fetchApiResponse",

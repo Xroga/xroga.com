@@ -152,7 +152,8 @@ test('real Share loader preserves authoritative text and rejects unsafe native p
       const loaded=await f.loadShare(token);
       assert.equal(loaded.status,'ok');
       assert.equal(loaded.share.response,response);
-      assert.equal(loaded.share.richResponse,valid);
+      assert.equal(loaded.native?.program,program);
+      assert.deepEqual(loaded.native?.sources,[{title:'Evidence',url:'https://example.com/evidence'}]);
       assert.equal(loaded.share.richUnavailable,false);
       assert.equal(calls,index+1);
     }
@@ -163,6 +164,7 @@ test('real Share loader preserves authoritative text and rejects unsafe native p
       assert.equal(loaded.status,'ok');
       assert.equal(loaded.share.response,authoritative);
       assert.equal(loaded.share.richResponse,undefined);
+      assert.equal(loaded.native,undefined);
       assert.equal(loaded.share.richUnavailable,true);
       assert.equal(calls,3+index);
     }
@@ -171,6 +173,7 @@ test('real Share loader preserves authoritative text and rejects unsafe native p
     assert.equal(recovered.status,'ok');
     assert.equal(recovered.share.response,response);
     assert.equal(recovered.share.richResponse,undefined);
+    assert.equal(recovered.native,undefined);
     assert.equal(recovered.share.richUnavailable,true);
     assert.equal(calls,5);
   }finally{api.closeAllConnections();await new Promise(r=>api.close(r));}

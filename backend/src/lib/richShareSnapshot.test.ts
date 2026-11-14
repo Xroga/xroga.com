@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { projectRichShare } from './richShareSnapshot.js';
-import { buildNativeOpenUiShare, NATIVE_SHARE_PREFIX, readNativeOpenUiShare, readNativeOpenUiShareEnvelope } from '../ai/nativeOpenUiShare.js';
+import { buildNativeOpenUiShare, NATIVE_SHARE_PREFIX, readNativeOpenUiShare } from '../ai/nativeOpenUiShare.js';
 
 test('old clients receive full text and new clients can independently validate the read-only snapshot', () => {
   const snapshot='XROGA_RESPONSE_V2\n'+JSON.stringify({version:2,text:'Full answer with tenant_id.',document:{version:2,nodes:[{kind:'prose',text:'Full answer with tenant_id.'}]}});
@@ -29,7 +29,6 @@ test('broken native share programs preserve readable text without exposing the i
   const text = 'Keep the verified table explanation.';
   const internal = 'root = Col([UnknownInternalWidget()])';
   const snapshot = NATIVE_SHARE_PREFIX + JSON.stringify({ format: 'xroga-openui-v1', text: text + '\n' + internal, program: internal, sources: [] });
-  assert.equal(readNativeOpenUiShareEnvelope(snapshot)?.text, text);
   assert.equal(readNativeOpenUiShare(snapshot), undefined);
   assert.deepEqual(projectRichShare(snapshot), { response: text, richUnavailable: true });
   assert.deepEqual(projectRichShare(NATIVE_SHARE_PREFIX + '{'), { response: 'The shared answer has no readable text.', richUnavailable: true });
@@ -49,6 +48,5 @@ test('the captured architecture share projects the full prose with the diagram a
   const snapshot = buildNativeOpenUiShare(text, program);
   assert.ok(snapshot);
   assert.deepEqual(projectRichShare(snapshot), { response: text, richResponse: snapshot });
-  assert.equal(readNativeOpenUiShareEnvelope(snapshot)?.program, program);
   assert.equal(readNativeOpenUiShare(snapshot)?.program, program);
 });
