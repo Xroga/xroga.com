@@ -1,4 +1,6 @@
 import assert from 'node:assert/strict';
+import { spawnSync } from 'node:child_process';
+import { coalesceActivity } from './activityPresentation';
 
 import {
   test,
@@ -76,6 +78,30 @@ function adapt(
     },
   );
 }
+
+test('command history retains actual output and exit status across overlapping replay', () => {
+  const command = 'node -e "console.log(42); process.exit(7)"';
+  const child = spawnSync(process.execPath, ['-e', 'console.log(42); process.exit(7)'], { encoding: 'utf8' });
+  assert.equal(child.error, undefined);
+  assert.equal(child.status, 7);
+  const evidence = { commandId: 'command-1' };
+  const events = [
+    softwareEvent({ id: 'start', type: 'command.started', status: 'running', summary: command, evidence }),
+    softwareEvent({ id: 'output', type: 'command.output', status: 'running', title: 'Command output', summary: child.stdout, evidence }),
+    softwareEvent({ id: 'finish', type: 'command.completed', status: 'failed', title: 'Command failed', summary: command,
+      evidence: { ...evidence, exitCode: child.status } }),
+  ];
+  const trace = [...events, ...events].flatMap((event, index) =>
+    adaptTerminalEvent('progress', { builderVersion: 'agent-v2', softwareAgentV2: true, softwareEvent: event },
+      { fromSeq: index, now: index + 1 }));
+  const [activity] = coalesceActivity(trace);
+  assert.equal(coalesceActivity(trace).length, 1);
+  assert.equal(activity.kind, 'command');
+  assert.equal(activity.status, 'error');
+  assert.equal(activity.exitCode, 7);
+  assert.equal(activity.detail, command);
+  assert.equal(activity.body?.trim(), '42');
+});
 
 test(
   'Agent V2 file update becomes visible terminal activity',

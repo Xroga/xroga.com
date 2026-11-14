@@ -6,6 +6,7 @@ import {
   enforceExplicitBusinessWorkflowControls,
   enforceExplicitExecutionControls,
   enforceExplicitPublicResearchControls,
+  enforceInlineCalculatorIntent,
   executeHedgedPlannerFallback,
   interpreterModelOrder,
   planExplicitProjectBuild,
@@ -191,6 +192,40 @@ describe('semantic request dispatch', () => {
   it('routes real implementation to build and refuses unfulfilled external actions', () => {
     assert.equal(dispatchForGoal(goal({ semanticIntent: 'MODIFY' }), ['software.implement', 'repository.write']), 'build');
     assert.equal(dispatchForGoal(goal({ semanticIntent: 'EXTERNAL_ACTION' }), ['conversation.respond']), 'blocked');
+  });
+
+  it('routes the hosted file-backed calculator request to the native answer path', () => {
+    const planned = goal({ semanticIntent: 'MODIFY', requiredCapabilities: ['software.implement', 'validation.run'] });
+    const attachments = [{ name: 'workshop-notes.txt', mediaType: 'text/plain' }];
+    const message = 'Use my attached workshop notes to build an interactive gross revenue calculator with a reset. Chart and tabulate all attendance scenarios in the notes. Label the slider Attendees and let it change by one attendee at a time. Start at the initial attendance in the notes. No web search.';
+    const corrected = enforceInlineCalculatorIntent(planned, { message, attachments });
+    assert.equal(corrected.semanticIntent, 'ANSWER');
+    assert.deepEqual(corrected.requiredCapabilities, ['conversation.respond', 'attachment.analyze']);
+    assert.equal(dispatchForGoal(corrected, corrected.requiredCapabilities), 'chat');
+
+    const inline = enforceInlineCalculatorIntent(planned, {
+      message: 'Make a calculator in this answer with a slider for quantity.', attachments: [],
+    });
+    assert.deepEqual(inline.requiredCapabilities, ['conversation.respond']);
+  });
+
+  it('keeps software deliverables, external actions and explicit project controls on their existing routes', () => {
+    const planned = goal({ semanticIntent: 'MODIFY', requiredCapabilities: ['software.implement', 'validation.run'] });
+    const attachments = [{ name: 'notes.txt', mediaType: 'text/plain' }];
+    for (const message of [
+      'Build a calculator app with a slider and chart from the notes.',
+      'Build a calculator with a slider and chart from the notes, then deploy it.',
+      'Build a calculator with a slider and chart from the notes and send the result.',
+      'Build a calculator with a slider.',
+    ]) assert.equal(enforceInlineCalculatorIntent(planned, { message, attachments }), planned);
+
+    const message = 'Make a calculator in this answer with a slider.';
+    for (const other of [
+      { ...planned, previewRequirement: 'REQUIRED' as const },
+      { ...planned, projectContext: { repo: 'owner/repository', branch: 'main', projectRoot: '/' } },
+      { ...planned, requiredCapabilities: [...planned.requiredCapabilities, 'business.action'] },
+      { ...planned, blockers: ['An input is missing.'] },
+    ]) assert.equal(enforceInlineCalculatorIntent(other, { message, attachments }), other);
   });
 
   it('rejects a connected-app action that claims it can produce a software Preview', () => {

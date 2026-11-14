@@ -1,3 +1,4 @@
+/** Founder-approved workspace chatbar release: 2026-11-14. No behavior change. */
 'use client';
 
 import Link from 'next/link';

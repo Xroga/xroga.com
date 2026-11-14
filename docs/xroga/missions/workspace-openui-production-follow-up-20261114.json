@@ -1,0 +1,117 @@
+{
+  "version": "1.0",
+  "missionId": "WORKSPACE-OPENUI-PRODUCTION-FOLLOW-UP-20261114",
+  "baseSha": "5c1ff07c19e07488d8c4243d7d9329e6f17e10b2",
+  "requirementIds": [
+    "XR-MISSION-054",
+    "XR-MISSION-055"
+  ],
+  "state": "CODE_COMPLETE",
+  "risk": "medium",
+  "scope": "Enforce official Search provenance and accurate provider settlement, and preserve native presentation on owner-authorized Share pages.",
+  "changedFiles": [
+    "backend/src/ai/black-hole/webIntelligence.ts",
+    "backend/src/ai/parallelDispatch.ts",
+    "backend/src/ai/researchAnswer.ts",
+    "backend/src/ai/researchSearchProvider.ts",
+    "backend/src/lib/richShareSnapshot.ts",
+    "backend/src/services/integrations/researchResult.ts",
+    "frontend/src/app/share/[token]/page.tsx",
+    "frontend/src/lib/researchHandoff.ts",
+    "frontend/e2e/command3-auth.spec.ts"
+  ],
+  "decisions": {
+    "keep": [
+      "Existing Search provider, canonical approval and accounting, authenticated Workspace and native renderer."
+    ],
+    "extend": [
+      "Apply approved source domains before sending Search and when reopening stored evidence.",
+      "Return structured content with its authoritative prose on Share."
+    ],
+    "replace": [],
+    "deprecate": []
+  },
+  "schemaImpact": {
+    "changed": false,
+    "migrations": [],
+    "rollout": "Verified backend and frontend use the existing Search receipts and Share formats.",
+    "rollback": "Restore the compatible live frontend and API/Job pair."
+  },
+  "securityImpact": {
+    "auth": {
+      "changed": false,
+      "description": "Share audience and issuer checks are unchanged."
+    },
+    "tenant": {
+      "changed": false,
+      "description": "Read research receipts with the issued tenant context and matching receipt digest."
+    },
+    "approval": {
+      "changed": false,
+      "description": "The exact outbound query is reviewed by the returning account before Search."
+    },
+    "credentials": {
+      "changed": false,
+      "description": "Keep existing provider and storage credentials."
+    },
+    "egress": {
+      "changed": true,
+      "description": "Add approved domain syntax to the reviewed query. The original search destination stays fixed."
+    },
+    "cost": {
+      "changed": true,
+      "description": "No additional inference or retrieval. An empty provider result has a verified zero charge."
+    },
+    "billing": {
+      "changed": true,
+      "description": "Canonical settle uses the verified charge and preserves dispatch count and trace."
+    }
+  },
+  "tests": [
+    {
+      "command": "tsx --test backend/src/ai/researchSearchProvider.test.ts backend/src/services/integrations/researchResult.test.ts backend/src/ai/parallelWeb.security.test.ts",
+      "scope": "Verify approved query construction, stored evidence filtering, zero-cost settlement and authorization denials.",
+      "negative": true,
+      "reference": "backend/src/ai/parallelWeb.security.test.ts"
+    },
+    {
+      "command": "tsx --test backend/src/lib/richShareSnapshot.test.ts",
+      "scope": "Verify the captured architecture snapshot and invalid-program prose recovery.",
+      "negative": true,
+      "reference": "backend/src/lib/richShareSnapshot.test.ts"
+    },
+    {
+      "command": "playwright test -c frontend/playwright.config.ts command3-auth.spec.ts",
+      "scope": "Verify authenticated native diagram, table and code through owner-only Share and revoke.",
+      "negative": true,
+      "reference": "frontend/e2e/command3-auth.spec.ts"
+    }
+  ],
+  "architecture": {
+    "change": "extends_canonical",
+    "reason": "Refines the existing Search flow and native Share representation.",
+    "rfc": null
+  },
+  "rollout": "Pass exact-source CI and hosted verification. Use the existing approved production promotion procedure.",
+  "rollback": "Restore the verified current Vercel alias target and the compatible 75d9b91f API/Job pair using the existing recovery procedure. Retain the earlier verified native frontend dpl_Hs7fae4ASUHaeFyQU9fuhp3Zf9x7.",
+  "knownGaps": [
+    "Live acceptance of the new Search query and captured architecture Share replay are pending.",
+    "Storage scheduling is an independent activation."
+  ],
+  "placeholderClaimsRemaining": [],
+  "evidenceRefs": [
+    "docs/operations/native-openui/WORKSPACE-PRODUCTION-FOLLOW-UP-20261114.md"
+  ],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "BLOCKED",
+    "blockers": [
+      "Exact-source authenticated browser CI and hosted acceptance are pending."
+    ],
+    "authenticatedE2e": "BLOCKED",
+    "stagedSecurity": "BLOCKED",
+    "liveUrl": null,
+    "deployedSha": null
+  }
+}

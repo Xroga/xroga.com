@@ -80,14 +80,17 @@ test('active reading marker follows both scroll directions and no rail appears f
   await page.goto('/workspace');
   await expect(page.locator('.xv-chat-turn-rail')).toHaveCount(0);
   const rail = await populate(page);
+  await expect(page.getByRole('button', { name: 'Stop response', exact: true })).toHaveCount(0);
   const root = page.locator('.xv-terminal-scroll').first();
+  const active = rail.locator('.xv-chat-turn-tick--active');
+  const topActive = await rail.locator('.xv-chat-turn-tick').first().getAttribute('aria-label');
   await root.evaluate(element => element.scrollTo({ top: 0, behavior: 'instant' }));
-  await expect.poll(async () => rail.locator('.xv-chat-turn-tick--active').count()).toBe(1);
-  const topActive = await rail.locator('.xv-chat-turn-tick--active').getAttribute('aria-label');
+  // The previous marker can remain active until the scroll's animation frame.
+  // Wait for the first turn, rather than treating any active marker as settled.
+  expect(topActive).toContain('Conversation rail prompt 1');
+  await expect(active).toHaveAttribute('aria-label', topActive!);
   await root.evaluate(element => element.scrollTo({ top: element.scrollHeight, behavior: 'instant' }));
-  await expect.poll(async () => rail.locator('.xv-chat-turn-tick--active').getAttribute('aria-label'))
-    .not.toBe(topActive);
+  await expect.poll(async () => active.getAttribute('aria-label')).not.toBe(topActive);
   await root.evaluate(element => element.scrollTo({ top: 0, behavior: 'instant' }));
-  await expect.poll(async () => rail.locator('.xv-chat-turn-tick--active').getAttribute('aria-label'))
-    .toBe(topActive);
+  await expect(active).toHaveAttribute('aria-label', topActive!);
 });

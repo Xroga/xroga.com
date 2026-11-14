@@ -45,6 +45,6 @@ function DecisionMatrix({ block }: { block: Matrix }) {
         </li>)}</ol>}
       </div>
     </div>
-    <details className="border-t border-[var(--border)] px-4 py-3 text-xs"><summary className="cursor-pointer font-medium">Show underlying scores</summary><div className="mt-3 max-w-full overflow-x-auto"><table className="w-full min-w-[420px] text-left"><thead><tr><th scope="col" className="p-2">Option</th>{criteria.map((criterion) => <th scope="col" key={criterion.id} className="p-2">{criterion.label}</th>)}</tr></thead><tbody>{block.options.map((option) => <tr key={option.id} className="border-t border-[var(--border)]"><th scope="row" className="p-2 font-medium">{option.label}</th>{criteria.map((criterion) => <td key={criterion.id} className="p-2 tabular-nums">{option.scores[criterion.id]}</td>)}</tr>)}</tbody></table></div></details>
+    <div className="border-t border-[var(--border)] px-4 py-3 text-xs"><h4 className="font-medium">Underlying scores</h4><div className="mt-3 max-w-full overflow-x-auto"><table className="w-full min-w-[420px] text-left"><thead><tr><th scope="col" className="p-2">Option</th>{criteria.map((criterion) => <th scope="col" key={criterion.id} className="p-2">{criterion.label}</th>)}</tr></thead><tbody>{block.options.map((option) => <tr key={option.id} className="border-t border-[var(--border)]"><th scope="row" className="p-2 font-medium">{option.label}</th>{criteria.map((criterion) => <td key={criterion.id} className="p-2 tabular-nums">{option.scores[criterion.id]}</td>)}</tr>)}</tbody></table></div></div>
   </section>;
 }

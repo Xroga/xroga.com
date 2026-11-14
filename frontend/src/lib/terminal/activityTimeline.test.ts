@@ -1,7 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import type { XrogaActivityKind, XrogaActivityPresentation, XrogaActivityStatus } from './activityPresentation';
-import { buildActivityTimeline, familyOf, formatElapsed, liveLabel, summariseSettled } from './activityTimeline';
+import { buildActivityTimeline, familyOf, formatElapsed, liveLabel, pendingWorkLabel, summariseSettled } from './activityTimeline';
+import type { TerminalEvent } from './terminalEvent';
 
 let counter = 0;
 const row = (kind: XrogaActivityKind, label: string, status: XrogaActivityStatus = 'complete', extra: Partial<XrogaActivityPresentation> = {}): XrogaActivityPresentation =>
@@ -72,6 +73,33 @@ test('elapsed time is plain and omitted below one second', () => {
   assert.equal(formatElapsed(77_000), '1m 17s');
   assert.equal(formatElapsed(3_900_000), '1h 05m');
   assert.equal(formatElapsed(Number.NaN), '');
+});
+
+test('waiting for approval takes priority over a parallel running command', () => {
+  const approval = row('approval', 'Approval required', 'waiting');
+  const command = row('command', 'Running tests', 'active');
+  const model = buildActivityTimeline([approval, command], { runActive: true, displayedActiveId: command.id });
+  assert.equal(model.state, 'waiting');
+  assert.equal(model.active?.id, approval.id);
+});
+
+test('a reopened turn or completed run never presents an unconfirmed step as live or successful', () => {
+  const rows = [row('command', 'Running a command', 'active'), row('search', 'Searched the web')];
+  for (const options of [{ runActive: false }, { outcome: 'success' as const }]) {
+    const model = buildActivityTimeline(rows, options);
+    assert.equal(model.active, null);
+    assert.equal(model.settled[0]?.tone, 'warning');
+    assert.match(model.settled[0]?.label ?? '', /No completion update/);
+  }
+});
+
+test('only a real answer delta changes the pending label to writing', () => {
+  const open: TerminalEvent = { seq: 1, kind: 'session', rawEvent: 'start', level: 'info', at: 1, source: null, body: null, text: 'Started' };
+  const delta: TerminalEvent = { ...open, seq: 2, kind: 'output', rawEvent: 'delta', text: 'Partial answer' };
+  assert.equal(pendingWorkLabel([], false), 'Starting request');
+  assert.equal(pendingWorkLabel([open], false), 'Waiting for the next update');
+  assert.equal(pendingWorkLabel([open, delta], false), 'Writing response');
+  assert.equal(pendingWorkLabel([open, delta, { ...open, kind: 'status', seq: 3 }], true), 'Waiting for the next update');
 });
 
 test('every activity kind maps to a family, so a new kind cannot silently fall outside the timeline', () => {

@@ -188,7 +188,7 @@ export async function createBusinessWorkflowRun(
   initialEvidence?: { toolkit: string; toolSlug: string; data: string },
 ): Promise<BusinessWorkflowProgress> {
   const { userId } = requireTenantContext(context);
-  if (steps.length < 2 || steps.length > 4 || !steps.some((step) => step.kind === 'action')) throw new Error('A connected-app workflow needs two to four explicit steps, including an action.');
+  if (steps.length < 2 || steps.length > 4) throw new Error('A connected-app workflow needs two to four explicit steps.');
   if (initialEvidence && initialEvidence.data.length > 8_000) throw new Error('The trigger payload is too large for a bounded workflow.');
   const outcomes: StepOutcome[] = initialEvidence ? [{ stepIndex: -1, request: 'Authorized app trigger event', kind: 'read', toolkit: initialEvidence.toolkit, toolSlug: initialEvidence.toolSlug, data: initialEvidence.data }] : [];
   const { data, error } = await getTenantSupabaseAdmin(context)

@@ -15,7 +15,7 @@ const sidebar = source('../components/layout/Sidebar.tsx');
 test('all requested tool categories remain available without the redundant header or logos', () => {
   assert.doesNotMatch(actions, /Choose a tool, or describe your task|Examples fill the composer without sending anything/);
   assert.doesNotMatch(actions, /xv-cba-integrations-logo|IntegrationLogo/);
-  for (const name of ['Plugins', 'Library', 'Projects', 'Browser automation', 'AI Employees', 'Apps automation', 'Slash commands', 'Plan before build', 'Debug an error', 'Skills', 'Rules'])
+  for (const name of ['Connect Apps', 'Library', 'Projects', 'Browser automation', 'AI Employees', 'Apps automation', 'Slash commands', 'Plan before build', 'Debug an error', 'Skills', 'Rules'])
     assert.ok(actions.includes(name), name + ' missing');
   assert.match(palette, /data-tone='orange'/);
   assert.match(palette, /data-tone='red'/);
@@ -27,8 +27,9 @@ test('chosen tools remain removable and connected plugin selections never bypass
   assert.match(composer, /setSelectedTool\(null\)/);
   assert.match(composer, /onSelect=\{\(plugin\) =>/);
   assert.doesNotMatch(composer, /onPointerEnter=\{event => \{ if \(event.pointerType === 'mouse' && !isGuest\) setIntegrationsOpen\(true\)/);
-  assert.match(plugins, /plugin.connected && onSelect/);
-  assert.match(plugins, /Boolean\(toolkit.connected\)/);
+  assert.match(plugins, /app\.connected && onSelect/);
+  assert.match(plugins, /toolkits\(session\.sessionId, \{ connectedOnly: true \}\)/);
+  assert.match(plugins, /setConnected\(\(result\.toolkits \?\? \[\]\)\.filter\(item => item\.connected\)\)/);
   assert.match(chips, /AnchoredPortalPopover/);
   assert.match(chips, /onRemove/);
 });
