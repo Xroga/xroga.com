@@ -21,7 +21,7 @@ jobs:
           cache: npm
       - run: npm ci
       - name: Regression tests for Composio preflight and paused workflow clarification
-        run: npx tsx --test backend/src/services/integrations/composioActionPreflight.test.ts backend/src/services/integrations/businessWorkflow.test.ts
+        run: npx tsx --test backend/src/services/integrations/composioActionPreflight.test.ts backend/src/services/integrations/businessWorkflow.test.ts backend/src/services/integrations/composioApprovedReadBatch.test.ts
       - name: Backend TypeScript check
         run: npx tsc -p backend/tsconfig.json --noEmit
       - name: Frontend TypeScript check
