@@ -100,7 +100,7 @@ export function ProjectsQuickPopover({ open, onClose, anchorRef }: {
         resumeToDashboard({prompt:item.project.prompt,selectedId:item.id,selectedLabel:item.name,source:'projects',jumpMessageId:item.project.sourceMessageId});
         router.push('/workspace');
       } else if (item.project.github_repo_name?.includes('/')) {
-        await continueGithubProject(item.project,router);
+        await continueGithubProject(item.project, router);
       } else router.push('/workspace?project='+encodeURIComponent(item.id));
       onClose();
     } catch {
