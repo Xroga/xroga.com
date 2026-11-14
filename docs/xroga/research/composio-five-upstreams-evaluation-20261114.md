@@ -98,3 +98,24 @@ Release state: **DRAFT; source improvements only; no production deployment.**
 - This branch is **not** a general arbitrary DAG scheduler and does not support parallel unapproved writes. It extends the existing canonical workflow engine only.
 - The source-bound security review mismatch involving `backend/src/routes/phase1.ts` remains an independent mandatory merge gate. Any reconciliation requires a real security review, not replacement hashes without analysis.
 - No live Gmail → Google Sheets provider write/readback, customer-account testing, or production deployment has been performed.
+
+## Approved connected-app read-batch API (evaluated source, not live acceptance)
+
+Endpoint: `POST /api/phase1/business-actions/confirmations/approved-reads/batch` (authenticated).
+
+Request body:
+```json
+{
+  "approveAll": true,
+  "confirmations": [
+    { "id": "<reviewed confirmation UUID>", "actionDigest": "<displayed SHA-256>", "accountReference": "<displayed account>" },
+    { "id": "<second reviewed confirmation UUID>", "actionDigest": "<displayed SHA-256>", "accountReference": "<displayed account>" }
+  ]
+}
+```
+
+The endpoint requires 2–3 distinct, pending, unexpired, read-risk confirmations for the **same authenticated Xroga user**. It checks each exact account and plan digest, then refetches provider tool metadata for ALL operations before any dispatch. It invokes the existing `confirmBusinessAction` for each item in parallel. Every provider effect is tied to its own durable confirmation claim and receipt; partial outcomes are reported separately, with no silent retries.
+
+**Not a generic Composio multi-execute endpoint.** Composio session configuration still disables native `COMPOSIO_MULTI_EXECUTE_TOOL`, authenticated raw proxy and remote workbench. The user-facing multi-confirmation review page and integrated per-run batch-preparation queue remain future work, so natural-language requests currently reach individual approval cards. Model-generated approval text cannot invoke this endpoint without an explicit authenticated `approveAll` request and exact reviewed digests/accounts.
+
+Proof boundary: focused synthetic regression tests and TypeScript do not substitute for live connected account and human approval acceptance. Previous source-bound CI remains mandatory before merge.

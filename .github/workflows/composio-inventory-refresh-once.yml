@@ -58,3 +58,5 @@ jobs:
 # Structured, bounded dependency edges now apply to connected-app readback steps.
 
 # Regenerate committed source inventory after advanced approved-read batch and dependency additions.
+
+# Snapshot source after approved-read-batch endpoint and provider metadata revalidation.
