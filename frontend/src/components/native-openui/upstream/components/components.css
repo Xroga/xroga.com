@@ -280,28 +280,12 @@
 .iui-html-view > iframe { display: block; width: 100%; height: 100%; border: 0; background: transparent; }
 .iui-html-view-wait { display: grid; place-items: center; height: 100%; color: var(--iui-muted); font-size: 13px; }
 
-/* Carousel, popover, code, quote, math, video, flashcard, confetti */
-/* Items keep their borders and rings inside themselves; the track's 4px block
-   padding (pulled back with a negative margin) leaves room for focus rings. */
-.iui-carousel { position: relative; min-width: 0; }
-.iui-carousel-track { display: flex; gap: 12px; margin-block: -4px; padding-block: 4px; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scrollbar-width: none; }
-.iui-carousel-track::-webkit-scrollbar { display: none; }
-.iui-carousel-item { flex: none; max-width: 85%; min-width: 0; scroll-snap-align: start; display: flex; flex-direction: column; }
-.iui-carousel-item > .iui-card, .iui-carousel-item > .iui-pressable { height: 100%; }
-.iui-carousel-nav { position: absolute; top: 50%; z-index: 2; display: grid; place-items: center; width: 34px; height: 34px; margin-top: -17px; border: 1px solid var(--iui-border); border-radius: 50%; background: var(--iui-canvas); color: var(--iui-ink); box-shadow: 0 1px 3px rgb(0 0 0 / 14%); cursor: pointer; }
-/* Same frosted glass as the map controls, since these sit over photos. */
-.iui-carousel-nav { border-color: transparent; background: var(--iui-glass); backdrop-filter: blur(12px) saturate(1.4); box-shadow: inset 0 0 0 1px var(--iui-glass-ring), 0 2px 12px rgb(0 0 0 / 8%); transition: background-color 120ms ease-out, box-shadow 120ms ease-out, opacity 120ms ease-out; }
-.iui-carousel-nav:hover { background: var(--iui-glass-hover); }
-@media (prefers-reduced-motion: reduce) { .iui-carousel-nav { transition: none; } }
-.iui-carousel-nav.is-prev { left: 8px; }
-.iui-carousel-nav.is-next { right: 8px; }
-.iui-carousel-nav:hover { background: var(--iui-surface); }
-@media (hover: none) { .iui-carousel-nav { display: none; } }
+/* Inline card groups and supplementary notes */
+.iui-carousel-grid { display: flex; flex-wrap: wrap; gap: 12px; min-width: 0; }
+.iui-carousel-grid > div { flex: 1 1 240px; min-width: 0; max-width: 100%; }
+.iui-inline-note { display: grid; gap: 8px; border-inline-start: 2px solid var(--iui-border-strong); padding-inline-start: 12px; }
 
-.iui-popover-trigger { display: inline-flex; align-items: center; gap: 4px; padding: 0; border: 0; background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; }
-.iui-popover-trigger:hover { color: var(--iui-muted); }
-.iui-popover { position: fixed; z-index: 2000; display: flex; flex-direction: column; gap: 8px; width: max-content; max-width: min(280px, calc(100vw - 24px)); padding: 12px 14px; border: 1px solid var(--iui-border); border-radius: var(--iui-radius-lg); background: var(--iui-canvas); color: var(--iui-ink); box-shadow: var(--iui-shadow); font: 440 14px/1.5 var(--iui-font); }
-
+/* Code, quote, math and flashcards */
 .iui-codeblock { min-width: 0; overflow: hidden; border: 1px solid var(--iui-border); border-radius: var(--iui-radius-lg); background: var(--iui-surface); }
 .iui-codeblock-head { display: flex; align-items: center; justify-content: space-between; padding: 6px 8px 6px 14px; border-bottom: 1px solid var(--iui-border); color: var(--iui-muted); font-size: 12px; }
 .iui-codeblock-head button { display: inline-flex; align-items: center; gap: 5px; padding: 4px 8px; border: 0; border-radius: 6px; background: none; color: inherit; font: inherit; cursor: pointer; }
@@ -375,8 +359,8 @@
 .iui-flow > .iui-caption + .iui-title { margin-top: var(--iui-space-tight); }
 
 /* Inside a card or a grid cell, titles are card-sized (18/24) and body text is 15/22. */
-:is(.iui-card, .iui-grid > .iui-flow, .iui-carousel-item > .iui-flow) > :is(.iui-title-lg, .iui-title-xl, .iui-title-2xl, .iui-title-3xl) { font-size: 18px; line-height: 24px; letter-spacing: -0.3px; }
-:is(.iui-card, .iui-grid > .iui-flow, .iui-carousel-item > .iui-flow) > .iui-text:not(.iui-text-xs, .iui-text-sm, .iui-text-lg) { font-size: 15px; line-height: 22px; }
+:is(.iui-card, .iui-grid > .iui-flow, .iui-carousel-grid > div > .iui-flow) > :is(.iui-title-lg, .iui-title-xl, .iui-title-2xl, .iui-title-3xl) { font-size: 18px; line-height: 24px; letter-spacing: -0.3px; }
+:is(.iui-card, .iui-grid > .iui-flow, .iui-carousel-grid > div > .iui-flow) > .iui-text:not(.iui-text-xs, .iui-text-sm, .iui-text-lg) { font-size: 15px; line-height: 22px; }
 
 /* Media row: a photo beside text. The photo is a fixed 4:3, a third of the row
    (120-200px), 16px from text that starts at the photo's top edge. */

@@ -3,12 +3,12 @@
 import { defineComponent } from "@openuidev/react-lang";
 import katex from "katex";
 
-import { Check, ChevronLeft, ChevronRight, Copy } from "lucide-react";
-import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
-import { createPortal } from "react-dom";
+import { Check, Copy } from "lucide-react";
+import { useEffect, useState, type CSSProperties, type ReactNode } from "react";
 import { z } from "zod/v4";
 import { inline } from "./markdown";
 import type { HighlightedToken } from "@/lib/codeHighlight";
+import { isPresentationLanguage } from "@/lib/publicAnswerText";
 import { children, cx } from "./style";
 
 const str = (value: unknown) => (value == null ? "" : String(value));
@@ -24,102 +24,23 @@ export const Carousel = defineComponent({
   props: z.object({ children, itemWidth: z.number().optional(), gap: z.number().optional() }),
   description: "Horizontal row that scrolls and snaps, each child an item itemWidth px wide (default 240): photos, cards, options, days.",
   component: function CarouselView({ props, renderNode }) {
-    const ref = useRef<HTMLDivElement>(null);
-    const [edges, setEdges] = useState({ start: true, end: true });
-    const items = (Array.isArray(props.children) ? props.children.flat() : []).filter((c) => c != null);
+    const items = (props.children ?? []).flat().filter(item => item != null);
     const width = Math.min(640, Math.max(80, props.itemWidth ?? 240));
-    useLayoutEffect(() => {
-      const el = ref.current;
-      if (!el) return;
-      const read = () => setEdges({ start: el.scrollLeft < 4, end: el.scrollLeft + el.clientWidth > el.scrollWidth - 4 });
-      read();
-      el.addEventListener("scroll", read, { passive: true });
-      const observer = new ResizeObserver(read);
-      observer.observe(el);
-      return () => {
-        el.removeEventListener("scroll", read);
-        observer.disconnect();
-      };
-    }, [items.length]);
-    const page = (dir: number) => ref.current?.scrollBy({ left: dir * ref.current.clientWidth * 0.85, behavior: "smooth" });
-    return (
-      <div className="iui-carousel">
-        <div ref={ref} className="iui-carousel-track" style={{ gap: props.gap != null ? Math.max(0, props.gap) * 4 : undefined }}>
-          {items.map((item, i) => (
-            <div key={i} className="iui-carousel-item" style={{ width }}>
-              {renderNode(item)}
-            </div>
-          ))}
-        </div>
-        {!edges.start && (
-          <button type="button" className="iui-carousel-nav is-prev" aria-label="Previous" onClick={() => page(-1)}>
-            <ChevronLeft size={18} />
-          </button>
-        )}
-        {!edges.end && (
-          <button type="button" className="iui-carousel-nav is-next" aria-label="Next" onClick={() => page(1)}>
-            <ChevronRight size={18} />
-          </button>
-        )}
-      </div>
-    );
+    return <div className="iui-carousel-grid" style={{ gap: props.gap != null ? Math.max(0, props.gap) * 4 : undefined }}>
+      {items.map((item, index) => <div key={index} style={{ flexBasis: width }}>{renderNode(item)}</div>)}
+    </div>;
   },
 });
 
-// Popover
+// Popover content is part of the answer and remains visible inline.
 export const Popover = defineComponent({
   name: "Popover",
   props: z.object({ trigger: slot, content: slot }),
   description: 'Shows content in a small panel when the trigger is clicked: a definition, a source, details behind an Icon("info", "sm").',
-  component: function PopoverView({ props, renderNode }) {
-    const [open, setOpen] = useState(false);
-    const [at, setAt] = useState<{ left: number; top: number; up: boolean } | null>(null);
-    const button = useRef<HTMLButtonElement>(null);
-    const panel = useRef<HTMLDivElement>(null);
-    useLayoutEffect(() => {
-      if (!open || !button.current) return;
-      const r = button.current.getBoundingClientRect();
-      const up = r.bottom + 220 > window.innerHeight && r.top > 240;
-      setAt({ left: Math.min(Math.max(12, r.left), window.innerWidth - 292), top: up ? r.top - 8 : r.bottom + 8, up });
-    }, [open]);
-    useEffect(() => {
-      if (!open) return;
-      const close = (event: Event) => {
-        const target = event.target as Node;
-        if (event.type === "keydown" ? (event as KeyboardEvent).key === "Escape" : !panel.current?.contains(target) && !button.current?.contains(target)) setOpen(false);
-      };
-      const onScroll = () => setOpen(false);
-      document.addEventListener("pointerdown", close);
-      document.addEventListener("keydown", close);
-      window.addEventListener("scroll", onScroll, true);
-      return () => {
-        document.removeEventListener("pointerdown", close);
-        document.removeEventListener("keydown", close);
-        window.removeEventListener("scroll", onScroll, true);
-      };
-    }, [open]);
-    return (
-      <>
-        <button ref={button} type="button" className="iui-popover-trigger" aria-expanded={open} onClick={() => setOpen(!open)}>
-          {renderSlot(props.trigger, renderNode)}
-        </button>
-        {open &&
-          at &&
-          createPortal(
-            <div
-              ref={panel}
-              role="dialog"
-              className="iui-popover"
-              style={{ left: at.left, top: at.top, transform: at.up ? "translateY(-100%)" : undefined }}
-              data-theme={button.current?.closest("[data-theme]")?.getAttribute("data-theme") ?? undefined}
-            >
-              {renderSlot(props.content, renderNode)}
-            </div>,
-            button.current?.closest(".xroga-native-openui") ?? document.body,
-          )}
-      </>
-    );
-  },
+  component: ({ props, renderNode }) => <aside className="iui-inline-note">
+    {renderSlot(props.trigger, renderNode)}
+    <div className="iui-col iui-flow">{renderSlot(props.content, renderNode)}</div>
+  </aside>,
 });
 
 // Code, quote, math
@@ -130,15 +51,17 @@ export const Code = defineComponent({
   component: function CodeView({ props }) {
     const [copied, setCopied] = useState(false);
     const code = str(props.code);
+    const internal = isPresentationLanguage(props.language);
     const [highlight, setHighlight] = useState<{ code: string; lines: HighlightedToken[][] }>();
     useEffect(() => {
-      if (!props.language) return;
+      if (!props.language || internal) return;
       let current = true;
       void import("@/lib/codeHighlight").then(module => module.highlightCode(code, props.language)).then(lines => {
         if (current && lines) setHighlight({ code, lines });
       }).catch(() => {});
       return () => { current = false; };
-    }, [code, props.language]);
+    }, [code, internal, props.language]);
+    if (internal) return null;
     const colored = highlight?.code === code ? highlight.lines : undefined;
     const copy = () =>
       void navigator.clipboard?.writeText(code).then(() => {

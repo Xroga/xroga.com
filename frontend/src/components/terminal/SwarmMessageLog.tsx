@@ -28,6 +28,7 @@ const XrogaRichResultsView = lazy(() => import('./XrogaRichResultsView').then((m
 import { isCodeBuildProcessing } from '@/lib/codeBuildProcessing';
 import { promptWantsLiveResearch } from '@/lib/researchWait';
 import { shareableDocumentText } from '@/lib/xrogaShareableOutput';
+import { publicAnswerText } from '@/lib/publicAnswerText';
 import { isQuickConversationPrompt } from '@/lib/terminal/executionIntent';
 import { UserPromptBubble } from '@/components/settings/PrivacySettingsPanel';
 import { generateMessageSuggestions } from '@/lib/messageHelpers';
@@ -627,7 +628,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                   <ConversationTurnV2 role={msg.role} content={msg.content}
                     message={msg}
                     richResponse={nativeShare}
-                    copyContent={nativeCopy ?? responseTextV2(msg) ?? [msg.content, shareableDocumentText(msg.featureOutput)].filter(Boolean).join('\n\n')}
+                    copyContent={nativeCopy ?? responseTextV2(msg) ?? [publicAnswerText(msg.content), shareableDocumentText(msg.featureOutput)].filter(Boolean).join('\n\n')}
                     prompt={promptByAssistantId.get(msg.id)}
                     streaming={msg.id === animatingId && loading}
                     controls={msg.buildStopped || msg.capacityUnavailable || msg.updateTrail || (currentTurn && openInteractionsForTurn(terminalRun.events, msg.content).length) ? <>{msg.buildStopped || msg.capacityUnavailable || msg.updateTrail ? taskControls : null}{currentTurn ? <RequiredInteractionCards interactions={openInteractionsForTurn(terminalRun.events, msg.content)} /> : null}</> : undefined}
@@ -676,7 +677,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                         <MessageBubbleActions
                           role="assistant"
                           richResponse={nativeShare}
-                          content={nativeCopy ?? [msg.content, shareableDocumentText(msg.featureOutput)].filter(Boolean).join('\n\n')}
+                          content={nativeCopy ?? [publicAnswerText(msg.content), shareableDocumentText(msg.featureOutput)].filter(Boolean).join('\n\n')}
                           messageId={msg.id}
                           createdAt={msg.createdAt}
                           prompt={promptByAssistantId.get(msg.id)}

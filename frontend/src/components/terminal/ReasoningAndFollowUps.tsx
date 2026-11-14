@@ -14,6 +14,7 @@ import type { CitationSource } from '@/lib/xrogaCitations';
 import { PlainAiResponse } from '@/lib/plainAiText';
 import { isMathSolutionContent } from '@/lib/mathDetect';
 import { ImageStudioCard } from './ImageStudioCard';
+import { publicAnswerText } from '@/lib/publicAnswerText';
 
 function ResponseBody({ children, streaming }: { children: ReactNode; streaming?: boolean }) {
   return <div className={cn('xv-response-text min-w-0', streaming && 'xv-streaming')}>
@@ -34,7 +35,7 @@ export const ModernResponseText = memo(function ModernResponseText({
   sources?: CitationSource[];
   afterIntro?: ReactNode;
 }) {
-  const safeContent = typeof content === 'string' ? content.replace(/[—–]/g, '-') : '';
+  const safeContent = typeof content === 'string' ? publicAnswerText(content, streaming).replace(/[—–]/g, '-') : '';
 
   if (!safeContent && streaming) {
     return null;

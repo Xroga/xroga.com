@@ -11,8 +11,9 @@
 .xroga-native-openui .iui-table-bounded thead th { position: sticky; inset-block-start: 0; z-index: 1; }
 .xroga-native-openui :focus-visible { outline: 2px solid var(--iui-focus); outline-offset: 3px; }
 .xroga-native-openui svg { max-width: 100%; }
-.xroga-native-full-text { margin-block-start: 1rem; border-top: 1px solid var(--native-line); }
-.xroga-native-full-text > button { cursor: pointer; padding: .45rem 0; border: 0; background: transparent; color: inherit; font-size: .875rem; font-weight: 600; }
+.xroga-native-sections > section + section { margin-block-start: 1rem; }
+.xroga-native-sections :is(h2,h3) { margin-block: 0 .5rem; font-size: 1em; font-weight: 650; }
+.xroga-native-openui > .iui-col + :where(p,ol,ul,pre,blockquote,div) { margin-block-start: 1rem; }
 @media (max-width: 540px) {
   .xroga-native-openui .iui-row { flex-wrap: wrap; }
 }
@@ -23,10 +24,6 @@
   }
 }
 
-.xroga-native-tabs [role="tablist"] { display: flex; gap: 4px; overflow-x: auto; border-bottom: 1px solid var(--iui-border-strong); }
-.xroga-native-tabs [role="tab"] { padding: 8px 12px; border: 0; background: transparent; color: var(--iui-muted); font: inherit; cursor: pointer; flex-shrink: 0; }
-.xroga-native-tabs [role="tab"][aria-selected="true"] { color: var(--iui-ink); box-shadow: inset 0 -2px var(--iui-ink); font-weight: 600; }
-.xroga-native-tabs [role="tabpanel"]:not([hidden]) { padding: 12px 2px; }
 .xroga-native-openui, .xroga-native-openui *, .xroga-native-openui *::before, .xroga-native-openui *::after { box-sizing: border-box; }
 
 .xroga-native-openui .iui-code-token { color: var(--iui-code-light, inherit); }

@@ -255,14 +255,9 @@ test('essential answer sections and tables are not hidden in disclosure controls
   const interactions = readFileSync(new URL('./InteractiveV2.tsx', import.meta.url), 'utf8');
   assert.doesNotMatch(canvas.slice(0, canvas.indexOf('references.length > 0')), /<details|View source data/);
   assert.match(canvas, /<ResponseSources sources=\{references\}/);
-  // Tabs switch between alternative views, like any tab widget, and nothing else may be hidden. Every panel stays in the page
-  // (so assistive technology, keyboard users, Copy and export all reach it) and `hidden` is allowed only on a tab panel.
-  assert.doesNotMatch(interactions, /node\.items\[selected\]/);
-  assert.match(interactions, /role="tablist"/);
   assert.match(interactions, /node\.items\.map/);
-  const hiddenUses = interactions.match(/hidden=/g) ?? [];
-  assert.equal(hiddenUses.length, 1);
-  assert.match(interactions, /role="tabpanel"[^>]*hidden=\{index !== active\}/);
+  assert.match(interactions, /<ProseV2 text=\{item\.content\}/);
+  assert.doesNotMatch(interactions, /role="tablist"|role="tabpanel"|\bhidden=/);
 });
 
 test('source-backed resources preserve supplied evidence without inventing price or availability', () => {

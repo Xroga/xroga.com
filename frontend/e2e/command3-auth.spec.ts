@@ -354,11 +354,10 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   const answer = page.getByRole('region', { name: 'Answer', exact: true }).filter({ hasText: reply });
   await expect(answer).toBeVisible({ timeout: 30_000 });
   await expect(answer.getByRole('link', { name: /Workshop source fixture/ })).toHaveAttribute('href', source.url);
-  const fullText = answer.getByRole('button', { name: 'Read full text', exact: true });
-  await fullText.click();
   await expect(answer.getByText(detail, { exact: true })).toBeVisible();
-  await fullText.click();
-  await expect(answer.getByText(detail, { exact: true })).toHaveCount(0);
+  await expect(answer.getByText(reply, { exact: true })).toHaveCount(1);
+  await expect(answer.getByRole('button', { name: 'Read full text', exact: true })).toHaveCount(0);
+  await expect(answer).not.toContainText(/\$attendees\s*=|root\s*=\s*Col/);
   const slider = answer.getByRole('slider', { name: 'Attendees' });
   await slider.press('End');
   await expect(answer.getByText('$2,000', { exact: true })).toBeVisible();
@@ -417,11 +416,10 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
     await expect(sharedAnswer.getByRole('link', { name: /Workshop source fixture/ })).toHaveAttribute('href', source.url);
     await expect(ownerShare.getByRole('link', { name: /Workshop source fixture/ })).toHaveCount(1);
     await expect(ownerShare.getByRole('region', { name: 'Sources', exact: true })).toHaveCount(0);
-    const sharedFullText = sharedAnswer.getByRole('button', { name: 'Read full text', exact: true });
-    await sharedFullText.click();
     await expect(sharedAnswer.getByText(detail, { exact: true })).toBeVisible();
-    await sharedFullText.click();
-    await expect(sharedAnswer.getByText(detail, { exact: true })).toHaveCount(0);
+    await expect(sharedAnswer.getByText(reply, { exact: true })).toHaveCount(1);
+    await expect(sharedAnswer.getByRole('button', { name: 'Read full text', exact: true })).toHaveCount(0);
+    await expect(sharedAnswer).not.toContainText(/\$attendees\s*=|root\s*=\s*Col/);
     for (const [width, theme] of [[1440, 'black'], [390, 'white']] as const) {
       await ownerShare.setViewportSize({ width, height: 900 });
       await ownerShare.evaluate(value => {
@@ -465,10 +463,7 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   await page.reload();
   await openPersistedConversation(page, { id: sessionId, title: savedTitle!, reply });
   await expect(answer.getByText('$1,000', { exact: true })).toBeVisible();
-  await fullText.click();
   await expect(answer.getByText(detail, { exact: true })).toBeVisible();
-  await fullText.click();
-  await expect(answer.getByText(detail, { exact: true })).toHaveCount(0);
   await send(followUp);
   await expect(page.getByRole('region', { name: 'Answer', exact: true }).getByText(followUpReply, { exact: true })).toBeVisible();
   try {

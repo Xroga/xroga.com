@@ -2,7 +2,8 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { createElement, Fragment } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { inline, MarkdownBlocks, preservedMarkdownTableKeys, tableContentKey } from './markdown';
+import { publicAnswerText } from '@/lib/publicAnswerText';
+import { inline, MarkdownBlocks, nativeMarkdownMatches, preservedMarkdownTableKeys, tableContentKey } from './markdown';
 
 const render = (source: string) => renderToStaticMarkup(createElement(Fragment, null, inline(source)));
 
@@ -28,4 +29,30 @@ test('partial answer collapse preserves the cited table and distinct data', () =
   assert.ok(keys.has(tableContentKey(headings, rows)!));
   assert.ok(!keys.has(tableContentKey(headings, [...rows].reverse())!));
   assert.equal(tableContentKey(headings, [[...rows[0].slice(0, 2), { type: 'element' }]]), undefined);
+});
+
+test('inline answer keeps additional prose and requested code but strips presentation fences', () => {
+  const element = (typeName: string, props: Record<string, unknown>) => ({ type: 'element', typeName, props });
+  const matches = nativeMarkdownMatches(element('Col', {
+    children: [element('Text', { text: 'An exact summary.' }), element('Code', { code: 'return 25 * 40;' })],
+  }));
+  const fence = String.fromCharCode(96).repeat(3);
+  const text = ['An exact summary.', 'Fees are excluded.',
+    fence + 'openui\nroot = Col([Text("INTERNAL")])\n' + fence,
+    fence + 'js\nreturn 25 * 40;\n' + fence,
+    '~~~python\nprint(25 * 40)\n~~~', 'The complete estimate follows.'].join('\n\n');
+  const html = renderToStaticMarkup(createElement(MarkdownBlocks, { text, matches }));
+  assert.match(html, /Fees are excluded/);
+  assert.match(html, /<code>print\(25 \* 40\)<\/code>/);
+  assert.match(html, /The complete estimate follows/);
+  assert.doesNotMatch(html, /An exact summary|INTERNAL|return 25 \* 40|root = Col/);
+});
+
+test('public answer text keeps ordinary code and withholds private streamed syntax', () => {
+  const fence = String.fromCharCode(96).repeat(3);
+  const code = fence + 'python\nroot = Node()\n' + fence;
+  assert.equal(publicAnswerText(code), code);
+  assert.equal(publicAnswerText(code + '\n<<<XROGA_OPENUI_V1>>>\nroot = Col([])'), code);
+  assert.equal(publicAnswerText('Answer ready.\n<<<XROGA_OPENUI', true), 'Answer ready.');
+  assert.equal(publicAnswerText(JSON.stringify({ format: 'xroga-openui-v1', text: 'Readable result.', program: 'root = Col([])' })), 'Readable result.');
 });
