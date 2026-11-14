@@ -94,7 +94,7 @@
     "rfc": null
   },
   "rollout": "Pass exact-source CI and hosted verification. Use the existing approved production promotion procedure.",
-  "rollback": "Restore Vercel deployment dpl_Hs7fae4ASUHaeFyQU9fuhp3Zf9x7 and the compatible 75d9b91f API/Job pair using the existing recovery procedure.",
+  "rollback": "Restore the verified current Vercel alias target and the compatible 75d9b91f API/Job pair using the existing recovery procedure. Retain the earlier verified native frontend dpl_Hs7fae4ASUHaeFyQU9fuhp3Zf9x7.",
   "knownGaps": [
     "Live acceptance of the new Search query and captured architecture Share replay are pending.",
     "Storage scheduling is an independent activation."

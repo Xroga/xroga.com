@@ -25,7 +25,13 @@ test('Connect Apps uses actual connected app picker and no full-page dialog', ()
   assert.match(CHAT, /setIntegrationsOpen\(open => !open\)/);
   assert.match(CONNECT, /AnchoredPortalPopover/);
   assert.match(CONNECT, /api\.github\.status\(\)/);
-  assert.match(CONNECT, /xrogaConnect\.search/);
+  assert.match(CONNECT, /xrogaConnect\.catalog/);
+  assert.match(CONNECT, /xrogaConnect\.session/);
+  assert.match(CONNECT, /connectedOnly: true/);
+  assert.match(CONNECT, /PluginBrandLogo/);
+  assert.match(CONNECT, /setView\('connected'\)/);
+  assert.match(CONNECT, /Load more apps/);
+  assert.match(CONNECT, /Search supported apps/);
   assert.match(CONNECT, /Browse all apps/);
 });
 
@@ -46,4 +52,17 @@ test('Black Hole retains backend usage and app policy with only one meter', () =
   assert.doesNotMatch(MODEL, /Available now<\/span>/);
   assert.match(read('../components/terminal/BlackHoleMark.module.css'), /black-hole-user-icon\.svg/);
   assert.doesNotMatch(read('../components/terminal/BlackHoleMark.tsx'), /black-hole-cutout-v2/);
+});
+
+test('Projects can create an account-owned record with or without linking an actual GitHub repository', () => {
+  assert.match(PROJECTS, /api\.projects\.create\(/);
+  assert.match(PROJECTS, /github_repo_name:selected\.fullName/);
+  assert.match(PROJECTS, /api\.github\.listRepos\(\)/);
+  assert.match(PROJECTS, /repoMode === 'existing'/);
+  assert.match(PROJECTS, /clearSelectedRepoContext\(\)/);
+  assert.match(PROJECTS, /Create project/);
+  const page = read('../app/(shell)/dashboard/projects/page.tsx');
+  assert.match(page, /api\.projects\s*\.list\(\)/);
+  assert.match(page, /Projects without GitHub/);
+  assert.doesNotMatch(page, /\.listGithub\(\)/);
 });

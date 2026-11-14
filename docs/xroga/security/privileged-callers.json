@@ -1,17 +1,17 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "d6d16dafe9a3ee92fe6de7d93fdb969548d74517e96c69865b5730789c5b29dd",
+  "reviewRegistrySha256": "7b0a4969647e70790bd66e2b05698d399638336f525e2134808652ac69e0275b",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
     "privilegedFactorySites": 229,
-    "persistenceCandidates": 1019,
+    "persistenceCandidates": 1018,
     "ownerPredicateCandidates": 267,
     "reviewRequired": 160,
-    "reviewedCandidates": 859,
+    "reviewedCandidates": 858,
     "unresolvedSafetyCandidates": 210,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 23
@@ -20,7 +20,7 @@
     "REVIEW_REQUIRED": 160,
     "SCOPED_BOUNDARY": 547,
     "NARROW_EXCEPTION": 52,
-    "NOT_PERSISTENCE": 210,
+    "NOT_PERSISTENCE": 209,
     "REVIEWED_GAP": 50
   },
   "acceptance": {
@@ -29,7 +29,7 @@
     "scope": "COMMAND_007_CRITERION_EVIDENCE_NOT_BATCH_OR_PRODUCTION_ACCEPTANCE",
     "certifiedScopedPrivilegedCallers": 0,
     "verifiedCandidateBoundaries": 80,
-    "unresolvedCandidateBoundaries": 939,
+    "unresolvedCandidateBoundaries": 938,
     "criteria": [
       {
         "id": "XB01-C007-AC01",
@@ -6568,10 +6568,6 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "8204b932fb1d657bcf51"
-      },
-      {
-        "code": "MISSING_CALLER_REVIEW",
         "id": "227a815ae8e2c760bd61"
       },
       {
@@ -10404,10 +10400,6 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "8204b932fb1d657bcf51"
-      },
-      {
-        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "227a815ae8e2c760bd61"
       },
       {
@@ -10437,11 +10429,11 @@
     ]
   },
   "reviewAgreement": {
-    "currentCallers": 1019,
+    "currentCallers": 1018,
     "structuredVerified": 80,
-    "structuredUnproven": 939,
+    "structuredUnproven": 938,
     "manualUnresolved": 210,
-    "manualUnsupported": 729,
+    "manualUnsupported": 728,
     "agreedVerified": 80,
     "proofAwaitingManualReconciliation": 0
   },
@@ -32285,27 +32277,6 @@
           {
             "path": "frontend/src/components/terminal/ImageStudioCard.tsx",
             "marker": "const slots = Array.from({ length: VARIANT_SLOTS }, (_, i) => liveAttempts[i] ?? null);"
-          }
-        ]
-      }
-    },
-    {
-      "id": "8204b932fb1d657bcf51",
-      "path": "frontend/src/components/terminal/IntegrationsModal.tsx",
-      "line": 107,
-      "enclosing": "IntegrationsModal",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "<dynamic>",
-      "ownerPredicateCandidate": false,
-      "review": "NOT_PERSISTENCE",
-      "sourceSha256": "b9690880a80670c7b533e7701c2de4ab0493d7fc8821563b1faa06dea52c472b",
-      "semanticReview": {
-        "authority": "Native Array.from copies a local Map iterator into React state for rendering validated plugin search results. This disposition covers only that conversion, not adjacent connector search or any consequential integration action.",
-        "reason": "Exact current-source receiver and surrounding data flow were inspected. Only the native in-memory conversion is excluded. No adjacent authority, persistence or provider boundary is certified.",
-        "evidence": [
-          {
-            "path": "frontend/src/components/terminal/IntegrationsModal.tsx",
-            "marker": "setApps(Array.from(available.values()));"
           }
         ]
       }

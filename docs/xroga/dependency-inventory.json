@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "5c1ff07c19e07488d8c4243d7d9329e6f17e10b2",
+  "source_sha": "81f453cd8c5979662fd7516d280b906f67935ba1",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -4490,6 +4490,7 @@
         "frontend/src/components/response-experience-v2/entityRegistry.ts",
         "frontend/src/components/terminal/ChatIntegrationsBar.tsx",
         "frontend/src/components/terminal/GithubRepoModal.tsx",
+        "frontend/src/components/terminal/ProjectsQuickPopover.tsx",
         "frontend/src/components/terminal/WorkspaceIdentityMenu.tsx",
         "frontend/src/components/terminal/WorkspacePeopleControls.tsx",
         "frontend/src/context/TerminalChatContext.tsx",
@@ -4550,6 +4551,7 @@
         "frontend/src/components/response-experience-v2/entityRegistry.ts",
         "frontend/src/components/terminal/ChatIntegrationsBar.tsx",
         "frontend/src/components/terminal/GithubRepoModal.tsx",
+        "frontend/src/components/terminal/ProjectsQuickPopover.tsx",
         "frontend/src/components/terminal/WorkspaceIdentityMenu.tsx",
         "frontend/src/components/terminal/WorkspacePeopleControls.tsx",
         "frontend/src/context/TerminalChatContext.tsx",
@@ -20188,7 +20190,7 @@
     },
     {
       "path": "frontend/src/app/(shell)/dashboard/projects/page.tsx",
-      "sha256": "e643e1733f69d23c8811043a9ecdde59f91039259112213f1629308d707f8291"
+      "sha256": "a4a6433193e478693e56015a09b22e608caed3d7a4e90f74021de9f58b6e25bf"
     },
     {
       "path": "frontend/src/app/(shell)/dashboard/publish/cws/callback/page.tsx",
@@ -22848,7 +22850,7 @@
     },
     {
       "path": "frontend/src/components/terminal/IntegrationsModal.tsx",
-      "sha256": "b9690880a80670c7b533e7701c2de4ab0493d7fc8821563b1faa06dea52c472b"
+      "sha256": "0d364d2758cc8871f42f4b371a0fcbde31f90a84f7d6286ca0924a7dbd42b310"
     },
     {
       "path": "frontend/src/components/terminal/LegacyLandingOutputView.tsx",
@@ -22892,7 +22894,7 @@
     },
     {
       "path": "frontend/src/components/terminal/ProjectsQuickPopover.tsx",
-      "sha256": "10d4e6cd3adde3a423e709e70add1cd2a6cd296cd38170dcbacdae926beef05c"
+      "sha256": "a40707f8a0cac604978ee51ad921e4ff28620dcbb41528d5f241f219641111d6"
     },
     {
       "path": "frontend/src/components/terminal/ReasoningAndFollowUps.tsx",
@@ -30243,6 +30245,20 @@
       "protocol": "https:",
       "path": "frontend/src/components/terminal/GithubRepoModal.tsx",
       "line": 109,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "github.com",
+      "protocol": "https:",
+      "path": "frontend/src/components/terminal/ProjectsQuickPopover.tsx",
+      "line": 124,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "github.com",
+      "protocol": "https:",
+      "path": "frontend/src/components/terminal/ProjectsQuickPopover.tsx",
+      "line": 188,
       "credentialsInUrl": false
     },
     {
@@ -38236,7 +38252,7 @@
     },
     {
       "path": "frontend/src/app/(shell)/dashboard/projects/page.tsx",
-      "line": 133,
+      "line": 120,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -39034,14 +39050,14 @@
     },
     {
       "path": "frontend/src/components/terminal/IntegrationsModal.tsx",
-      "line": 101,
+      "line": 120,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/terminal/IntegrationsModal.tsx",
-      "line": 156,
+      "line": 132,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

@@ -1,253 +1,216 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useMemo, useState, type RefObject } from 'react';
+import { useEffect, useMemo, useRef, useState, type KeyboardEvent, type RefObject } from 'react';
+import { ArrowLeft, ArrowRight, Check, ChevronDown, Loader2, Search, X } from 'lucide-react';
 import { AnchoredPortalPopover } from '@/components/ui/AnchoredPortalPopover';
-import compactStyles from './PluginsMenu.module.css';
-import { ArrowUpRight, Check, Loader2, Plus, Search, X } from 'lucide-react';
-
-import { IntegrationLogo } from '@/components/integrations/IntegrationLogo';
+import { PluginBrandLogo } from '@/components/integrations/PluginBrandLogo';
 import { api } from '@/lib/api';
-import { canonicalPluginId, POPULAR_HYDRATION_QUERY } from '@/lib/pluginCatalog';
-import { xrogaConnect } from '@/lib/xrogaConnect';
+import { canonicalPluginId } from '@/lib/pluginCatalog';
+import { xrogaConnect, type XrogaConnectCatalogToolkit, type XrogaConnectToolkit } from '@/lib/xrogaConnect';
+import styles from './PluginsMenu.module.css';
 
-type ModalPlugin = {
-  id: string;
-  name: string;
-  connected: boolean;
-  checking?: boolean;
-};
+type NativeApp = { slug: string; name: string; connected: boolean; checking: boolean; warning?: string };
+type AppRow = { slug: string; name: string; logo?: string; description?: string; connected: boolean; source: 'native' | 'catalog'; noAuth?: boolean };
+type View = 'explore' | 'connected';
 
+const nativeNames = ['GitHub', 'Vercel', 'Supabase'] as const;
+const nativeSlugs = ['github', 'vercel', 'supabase'] as const;
+const keyFor = (value: string) => canonicalPluginId(value);
 
-export function IntegrationsModal({
-  open,
-  onClose,
-  anchorRef,
-  onSelect,
-}: {
+function nativeApp(name: typeof nativeNames[number], slug: typeof nativeSlugs[number], connected: boolean, checking = false, warning?: string): NativeApp {
+  return { slug, name, connected, checking, warning };
+}
+
+/** Real catalog and real owner-scoped connection status, inside one anchored menu. */
+export function IntegrationsModal({ open, onClose, anchorRef, onSelect }: {
   open: boolean;
   onClose: () => void;
   anchorRef: RefObject<HTMLElement | null>;
-  onSelect?: (plugin: { id: string; name: string }) => void;
+  onSelect?: (app: { id: string; name: string }) => void;
 }) {
-  const [native, setNative] = useState<ModalPlugin[]>([]);
-  const [apps, setApps] = useState<ModalPlugin[]>([]);
-  const [catalogMatches, setCatalogMatches] = useState<ModalPlugin[]>([]);
-  const [catalogSearching, setCatalogSearching] = useState(false);
-  const [catalogError, setCatalogError] = useState(false);
-  const [loadingApps, setLoadingApps] = useState(false);
+  const [view, setView] = useState<View>('explore');
   const [query, setQuery] = useState('');
-  const [connecting, setConnecting] = useState(false);
+  const [native, setNative] = useState<NativeApp[]>([]);
+  const [connected, setConnected] = useState<XrogaConnectToolkit[]>([]);
+  const [catalog, setCatalog] = useState<XrogaConnectCatalogToolkit[]>([]);
+  const [available, setAvailable] = useState<boolean | null>(null);
+  const [loadingStatus, setLoadingStatus] = useState(false);
+  const [loadingCatalog, setLoadingCatalog] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [catalogError, setCatalogError] = useState('');
+  const [connectionError, setConnectionError] = useState('');
+  const [cursor, setCursor] = useState<string | undefined>();
+  const requestRef = useRef(0);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const listRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!open) return;
-
-    setQuery('');
-    setConnecting(false);
-
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') onClose();
-    };
-
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [open, onClose]);
-
-  useEffect(() => {
-    if (!open) return;
-
     let active = true;
-
-    setNative([
-      { id: 'github', name: 'GitHub', connected: false, checking: true },
-      { id: 'vercel', name: 'Vercel', connected: false, checking: true },
-      { id: 'supabase', name: 'Supabase', connected: false, checking: true },
-    ]);
-
-    void Promise.allSettled([
-      api.github.status(),
-      api.vercel.status(),
-      api.supabase.status(),
-    ]).then((results) => {
-      if (!active) return;
-      setNative([
-        {
-          id: 'github',
-          name: 'GitHub',
-          connected: results[0].status === 'fulfilled' && Boolean(results[0].value.connected),
-        },
-        {
-          id: 'vercel',
-          name: 'Vercel',
-          connected: results[1].status === 'fulfilled' && Boolean(results[1].value.connected),
-        },
-        {
-          id: 'supabase',
-          name: 'Supabase',
-          connected: results[2].status === 'fulfilled' && Boolean(results[2].value.connected),
-        },
-      ]);
-    });
-
-    setApps([]);
-    setLoadingApps(true);
-    void xrogaConnect
-      .status()
-      .then(async (status) => {
-        if (!active || !status.configured) return;
-        const result = await xrogaConnect.search(POPULAR_HYDRATION_QUERY);
+    setView('explore');
+    setQuery('');
+    setAvailable(null);
+    setLoadingStatus(true);
+    setConnected([]);
+    setConnectionError('');
+    setNative([nativeApp('GitHub','github',false,true),nativeApp('Vercel','vercel',false,true),nativeApp('Supabase','supabase',false,true)]);
+    void Promise.allSettled([api.github.status(), api.vercel.status(), api.supabase.status(), xrogaConnect.status()])
+      .then(async (results) => {
         if (!active) return;
-
-        const available = new Map<string, ModalPlugin>();
-        for (const toolkit of result.toolkits ?? []) {
-          const id = canonicalPluginId(`${toolkit.name ?? ''} ${toolkit.toolkit}`);
-          if (!id || ['github', 'vercel', 'supabase'].includes(id)) continue;
-          available.set(id, { id, name: toolkit.name || toolkit.toolkit, connected: Boolean(toolkit.connected) });
+        setNative([
+          nativeApp('GitHub', 'github', results[0].status === 'fulfilled' && Boolean(results[0].value.connected), false, results[0].status === 'rejected' ? 'Status unavailable' : undefined),
+          nativeApp('Vercel', 'vercel', results[1].status === 'fulfilled' && Boolean(results[1].value.connected) && results[1].value.tokenValid !== false, false, results[1].status === 'rejected' ? 'Status unavailable' : results[1].status === 'fulfilled' && results[1].value.tokenValid === false ? 'Needs reconnection' : undefined),
+          nativeApp('Supabase', 'supabase', results[2].status === 'fulfilled' && Boolean(results[2].value.connected), false, results[2].status === 'rejected' ? 'Status unavailable' : undefined),
+        ]);
+        if (results[3].status !== 'fulfilled' || !results[3].value.configured) {
+          setAvailable(false);
+          setConnectionError('Connected-app service is unavailable. Native connections still work.');
+          return;
         }
-        setApps(Array.from(available.values()));
+        setAvailable(true);
+        try {
+          const session = await xrogaConnect.session();
+          const result = await xrogaConnect.toolkits(session.sessionId, { connectedOnly: true });
+          if (active) setConnected((result.toolkits ?? []).filter(item => item.connected));
+        } catch {
+          if (active) setConnectionError('Could not check connected apps. Retry by reopening this menu.');
+        }
       })
-      .catch(() => {
-        if (active) setApps([]);
-      })
-      .finally(() => {
-        if (active) setLoadingApps(false);
-      });
-
-    return () => {
-      active = false;
-    };
+      .finally(() => { if (active) setLoadingStatus(false); });
+    return () => { active = false; };
   }, [open]);
 
-  // Search the complete supported catalog, not only the few hydrated popular apps.
-  // Debounced and abort-safe: a slow previous query cannot replace a newer result.
+  // Search is server-backed, not restricted to the initial popular apps.
   useEffect(() => {
-    if (!open || query.trim().length < 2) {
-      setCatalogMatches([]);
-      setCatalogSearching(false);
-      setCatalogError(false);
-      return;
-    }
-    let cancelled = false;
-    setCatalogSearching(true);
-    setCatalogError(false);
+    if (!open || view === 'connected') return;
+    const requestId = ++requestRef.current;
+    let active = true;
+    setCatalog([]);
+    setCursor(undefined);
+    setCatalogError('');
+    setLoadingCatalog(true);
     const timer = window.setTimeout(() => {
-      void xrogaConnect.catalog({ search: query.trim(), limit: 25 })
-        .then(result => {
-          if (cancelled) return;
-          const matches = (result.items ?? []).map(item => ({
-            id: canonicalPluginId(item.slug) || item.slug,
-            name: item.name || item.slug,
-            connected: false,
-          }));
-          setCatalogMatches(matches);
+      void xrogaConnect.catalog({ search: query.trim() || undefined, sortBy: 'usage', limit: 50 })
+        .then(page => {
+          if (!active || requestRef.current !== requestId) return;
+          setCatalog(page.items ?? []);
+          setCursor(page.nextCursor);
         })
         .catch(() => {
-          if (cancelled) return;
-          setCatalogMatches([]);
-          setCatalogError(true);
+          if (!active || requestRef.current !== requestId) return;
+          setCatalogError('Catalog search is unavailable. Try again or open the app directory.');
         })
-        .finally(() => { if (!cancelled) setCatalogSearching(false); });
-    }, 240);
-    return () => { cancelled = true; window.clearTimeout(timer); };
-  }, [open, query]);
+        .finally(() => {
+          if (active && requestRef.current === requestId) setLoadingCatalog(false);
+        });
+    }, query.trim() ? 260 : 0);
+    return () => { active = false; window.clearTimeout(timer); };
+  }, [open, query, view]);
 
-  const plugins = useMemo(() => {
-    const normalized = query.trim().toLowerCase();
-    const byId = new Map<string, ModalPlugin>();
-    // Known connected state always wins over discovery-only catalog metadata.
-    for (const item of catalogMatches) byId.set(item.id, item);
-    for (const item of apps) byId.set(item.id, item);
-    for (const item of native) byId.set(item.id, item);
-    const all = [...byId.values()];
-    return normalized
-      ? all.filter((plugin) => plugin.name.toLowerCase().includes(normalized))
-      : [...native, ...apps];
-  }, [native, apps, catalogMatches, query]);
+  async function loadMore() {
+    if (!cursor || loadingMore) return;
+    const requestId = requestRef.current;
+    const next = cursor;
+    setLoadingMore(true);
+    try {
+      const result = await xrogaConnect.catalog({ search: query.trim() || undefined, sortBy: 'usage', limit: 50, cursor: next });
+      if (requestId !== requestRef.current) return;
+      setCatalog(previous => {
+        const seen = new Set(previous.map(item => item.slug));
+        return [...previous, ...(result.items ?? []).filter(item => !seen.has(item.slug))];
+      });
+      setCursor(result.nextCursor);
+    } catch {
+      if (requestId === requestRef.current) setCatalogError('Additional apps could not be loaded. Try again.');
+    } finally {
+      setLoadingMore(false);
+    }
+  }
+
+  const rows = useMemo(() => {
+    const byKey = new Map<string, AppRow>();
+    for (const item of catalog) byKey.set(keyFor(item.slug), {
+      slug: item.slug, name: item.name || item.slug, logo: item.logo,
+      description: item.description, connected: false, source: 'catalog', noAuth: item.noAuth,
+    });
+    // Show connected apps even when not present in the first catalog page.
+    for (const item of connected) {
+      const key = keyFor(item.toolkit);
+      if (nativeSlugs.some(slug => slug === key)) continue;
+      const current = byKey.get(key);
+      byKey.set(key, {
+        slug: item.toolkit, name: item.name || current?.name || item.toolkit,
+        logo: item.logo || current?.logo, description: item.description || current?.description,
+        connected: item.connected, source: 'catalog', noAuth: item.noAuth,
+      });
+    }
+    for (const item of native) byKey.set(item.slug, {
+      slug: item.slug, name: item.name, connected: item.connected, source: 'native',
+      description: item.warning,
+    });
+    const term = query.trim().toLowerCase();
+    const tokens = term.split(/\s+/).filter(Boolean);
+    return [...byKey.values()].filter(item => view === 'connected' ? item.connected : true)
+      .filter(item => !tokens.length || (view === 'explore' && item.source === 'catalog' && catalog.some(result => result.slug === item.slug)) || tokens.every(token => (item.name + ' ' + item.slug + ' ' + (item.description || '')).toLowerCase().includes(token)))
+      .sort((a,b) => (a.connected === b.connected ? a.name.localeCompare(b.name) : a.connected ? -1 : 1));
+  }, [catalog, connected, native, query, view]);
+
+  const connectedCount = native.filter(item => item.connected).length + connected.filter(item => item.connected && !nativeSlugs.some(slug => keyFor(item.toolkit) === slug)).length;
+  const isSearching = Boolean(query.trim());
+  const showResults = rows.filter(item => view === 'connected' || isSearching || item.source === 'native' || catalog.some(c => c.slug === item.slug));
+
+  function handleKeyDown(event: KeyboardEvent<HTMLElement>) {
+    const items = [...(listRef.current?.querySelectorAll<HTMLElement>('[data-app-item]') ?? [])];
+    if (event.key === 'Escape') { if (view === 'connected') { event.preventDefault(); setView('explore'); } else onClose(); return; }
+    if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+      if (!items.length) return;
+      event.preventDefault();
+      const index = items.indexOf(document.activeElement as HTMLElement);
+      const next = event.key === 'ArrowDown' ? (index + 1) % items.length : (index < 0 ? items.length - 1 : (index - 1 + items.length) % items.length);
+      items[next].focus();
+      items[next].scrollIntoView({block:'nearest'});
+    }
+  }
 
   if (!open) return null;
-
-  return (
-    <AnchoredPortalPopover open={open} onClose={onClose} anchorRef={anchorRef} placement="top-start" width={260} className={compactStyles.menu} ariaLabel="Connect Apps">
-      <section
-        role="dialog"
-        aria-labelledby="workspace-plugins-title"
-        className="xv-plugins-popover"
-      >
-        <h2 id="workspace-plugins-title" className="sr-only">Connect Apps</h2>
-        <header className="xv-plugins-popover__header">
-          <label className="xv-plugins-popover__search">
-            <Search aria-hidden="true" />
-            <span className="sr-only">Search apps</span>
-            <input
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              placeholder="Search apps…"
-            />
-          </label>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Close Connect Apps"
-            className="xv-plugins-popover__close"
-          >
-            <X className="h-4 w-4" aria-hidden="true" />
-          </button>
-        </header>
-
-        <div className="xv-plugins-popover__body">
-          <div className="xv-plugins-popover__primary">
-            <p className="xv-plugins-popover__eyebrow">Connect Apps</p>
-            {plugins.map((plugin) => {
-              const entry = <>
-                <span className="xv-plugins-popover__logo"><IntegrationLogo id={plugin.id} name={plugin.name} size={17} /></span>
-                <span className="xv-plugins-popover__name">
-                  <strong>{plugin.name}</strong>
-                  <small>{plugin.checking ? <><Loader2 className="h-3 w-3 animate-spin" aria-hidden="true" />Checking</>
-                    : plugin.connected ? <><Check className="h-3 w-3" aria-hidden="true" />Connected · select</>
-                    : 'Connect to use'}</small>
-                </span>
-                {plugin.connected && onSelect ? <Check className="xv-plugins-popover__plus" aria-hidden="true" /> : <Plus className="xv-plugins-popover__plus" aria-hidden="true" />}
-              </>;
-              return plugin.connected && onSelect
-                ? <button type="button" key={plugin.id} onClick={() => { onSelect(plugin); onClose(); }}
-                    className="xv-plugins-popover__item" aria-label={'Select ' + plugin.name + ' app'}>{entry}</button>
-                : <Link key={plugin.id} href={`/dashboard/integrations/${plugin.id}`} onClick={onClose}
-                    className="xv-plugins-popover__item">{entry}</Link>;
-            })}
-
-            {loadingApps && !apps.length ? (
-              <div className="xv-plugins-popover__loading">
-                <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" />
-                Checking connected apps…
-              </div>
-            ) : null}
-            {catalogSearching && query.trim().length >= 2 ? (
-              <div className="xv-plugins-popover__loading" role="status">
-                <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" /> Searching supported apps…
-              </div>
-            ) : null}
-            {catalogError && query.trim().length >= 2 ? (
-              <p className="xv-plugins-popover__empty">Live app search is unavailable. Browse the full catalog below.</p>
-            ) : null}
-            {!loadingApps && !catalogSearching && !catalogError && plugins.length === 0 ? (
-              <p className="xv-plugins-popover__empty">No matching apps found.</p>
-            ) : null}
-          </div>
-
-          <aside className="xv-plugins-popover__aside">
-            <button type="button" className={compactStyles.connect} onClick={() => setConnecting(value => !value)} aria-expanded={connecting}>Connect more apps <Plus size={14} /></button>
-            {connecting ? <div className={compactStyles.connectList}>{[...native, ...apps].filter(plugin => !plugin.connected).map(plugin => <Link key={plugin.id} href={`/dashboard/integrations/${plugin.id}`} onClick={onClose}><IntegrationLogo id={plugin.id} name={plugin.name} size={16} />{plugin.name}<Plus size={12} /></Link>)}</div> : null}
-            <Link
-              href="/dashboard/integrations"
-              onClick={onClose}
-              className="xv-plugins-popover__browse"
-            >
-              Browse all apps
-              <ArrowUpRight aria-hidden="true" />
-            </Link>
-          </aside>
-        </div>
-      </section>
-    </AnchoredPortalPopover>
-  );
+  return <AnchoredPortalPopover open={open} onClose={onClose} anchorRef={anchorRef}
+    placement="top-start" width={350} className={styles.menu} ariaLabel="Connect Apps">
+    <section className={styles.panel} role="dialog" aria-label="Connect Apps" onKeyDown={handleKeyDown}>
+      <header className={styles.header}>
+        <span>{view === 'connected' ? <button type="button" className={styles.iconButton} onClick={() => setView('explore')} aria-label="Back to app directory"><ArrowLeft size={16}/></button> : null}<strong>{view === 'connected' ? 'Connected Apps' : 'Connect Apps'}</strong></span>
+        <button type="button" className={styles.iconButton} aria-label="Close Connect Apps" onClick={onClose}><X size={15}/></button>
+      </header>
+      <div className={styles.tabs}>
+        <button type="button" aria-pressed={view === 'explore'} onClick={() => {setView('explore'); inputRef.current?.focus();}}>Discover apps</button>
+        <button type="button" aria-pressed={view === 'connected'} onClick={() => {setView('connected'); setQuery('');}}>Connected {loadingStatus ? '…' : connectedCount}</button>
+      </div>
+      <label className={styles.search}><Search size={15} aria-hidden="true"/>
+        <input ref={inputRef} value={query} onChange={event => setQuery(event.target.value)} placeholder={view === 'connected' ? 'Search your connected apps…' : 'Search all supported apps…'} aria-label={view === 'connected' ? 'Search connected apps' : 'Search supported apps'} />
+        {query ? <button className={styles.iconButton} type="button" onClick={() => {setQuery(''); inputRef.current?.focus();}} aria-label="Clear search"><X size={13}/></button> : null}
+      </label>
+      <div className={styles.items} ref={listRef} aria-label={view === 'connected' ? 'Your connected apps' : 'Available apps'}>
+        {showResults.map(app => {
+          const content = <>
+            <PluginBrandLogo id={keyFor(app.slug)} name={app.name} toolkit={app.slug} logo={app.logo} size="micro"/>
+            <span className={styles.appText}><strong>{app.name}</strong><small>{app.connected ? 'Connected' : app.noAuth ? 'No connection required' : app.description || 'Connect to use Xroga tools'}</small></span>
+            {app.connected ? <Check size={14} className={styles.checked} aria-hidden="true"/> : <ArrowRight size={14} aria-hidden="true"/>}
+          </>;
+          const selectConnected = app.connected && onSelect;
+          return selectConnected
+            ? <button data-app-item key={app.slug} type="button" className={styles.item} onClick={() => {onSelect({id:keyFor(app.slug),name:app.name});onClose();}} aria-label={'Use '+app.name}>{content}</button>
+            : <Link data-app-item key={app.slug} className={styles.item} href={'/dashboard/integrations/'+encodeURIComponent(app.slug)} onClick={onClose} aria-label={(app.connected ? 'Manage ' : 'Connect ')+app.name}>{content}</Link>;
+        })}
+        {(loadingCatalog && view === 'explore' || loadingStatus) && <p className={styles.note}><Loader2 size={14} className="animate-spin"/> {view === 'connected' ? 'Checking your connections…' : 'Searching the live app directory…'}</p>}
+        {!loadingCatalog && !loadingStatus && showResults.length === 0 && <p className={styles.note}>{view === 'connected' ? 'No connected apps found.' : isSearching ? 'No matching apps found.' : 'No apps available.'}</p>}
+        {catalogError && view === 'explore' && <p role="status" className={styles.error}>{catalogError}</p>}
+        {available === false && view === 'explore' && <p role="status" className={styles.note}>The connected-app service is unavailable. Native apps are still shown.</p>}
+        {connectionError && view === 'connected' && <p role="status" className={styles.error}>{connectionError}</p>}
+        {view === 'explore' && cursor && !loadingCatalog && <button type="button" className={styles.loadMore} disabled={loadingMore} onClick={() => void loadMore()}>{loadingMore ? <Loader2 size={13} className="animate-spin"/> : <ChevronDown size={14}/>} Load more apps</button>}
+      </div>
+      <footer className={styles.footer}>
+        <Link href="/dashboard/integrations" onClick={onClose}>Browse all apps <ArrowRight size={14}/></Link>
+      </footer>
+    </section>
+  </AnchoredPortalPopover>;
 }

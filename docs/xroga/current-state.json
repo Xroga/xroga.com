@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/openui-production-integration-20261114",
-    "sha": "5c1ff07c19e07488d8c4243d7d9329e6f17e10b2",
-    "sourceTimestampUtc": "2026-11-14T13:50:01+05:00",
-    "auditStartedUtc": "2026-11-14T10:10:47.039Z",
+    "sha": "81f453cd8c5979662fd7516d280b906f67935ba1",
+    "sourceTimestampUtc": "2026-11-14T15:12:20+05:00",
+    "auditStartedUtc": "2026-11-14T10:17:47.284Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -59210,7 +59210,7 @@
       "id": "surface:6e231e49e8ddf76524ce",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/app/(shell)/dashboard/projects/page.tsx",
-      "sha256": "e643e1733f69d23c8811043a9ecdde59f91039259112213f1629308d707f8291",
+      "sha256": "a4a6433193e478693e56015a09b22e608caed3d7a4e90f74021de9f58b6e25bf",
       "symbols": [
         "ProjectsHubInner",
         "ProjectsPage",
@@ -59225,14 +59225,13 @@
         "filteredRemote",
         "full",
         "h",
-        "hasGithubProjects",
         "hasLocalInConversations",
+        "hasRemoteProjects",
         "items",
         "loadRemote",
         "match",
         "messages",
         "normalizeGithubProject",
-        "normalized",
         "onSaved",
         "openConversation",
         "openLocalProject",
@@ -59240,13 +59239,15 @@
         "otherRepoProjects",
         "promptText",
         "q",
+        "repoProjects",
         "repoScoped",
         "router",
         "searchParams",
         "seen",
         "session",
         "syncRepo",
-        "url"
+        "url",
+        "withoutRepoProjects"
       ],
       "imports": [
         "@/components/dashboard/SectionCompactCard",
@@ -82355,7 +82356,6 @@
         "frontend/src/components/integrations/PluginBrandLogo.tsx:4",
         "frontend/src/components/projects/GitHubProjectCard.tsx:8",
         "frontend/src/components/terminal/HomepageChatBar.tsx:10",
-        "frontend/src/components/terminal/IntegrationsModal.tsx:9",
         "frontend/src/components/terminal/WorkspaceConnectionsStrip.tsx:8"
       ],
       "reachable": true,
@@ -82484,9 +82484,13 @@
         "frontend/src/app/(shell)/dashboard/automations/page.tsx",
         "frontend/src/app/(shell)/dashboard/integrations/[plugin]/page.tsx",
         "frontend/src/app/(shell)/dashboard/integrations/page.tsx",
+        "frontend/src/app/(shell)/layout.tsx",
+        "frontend/src/app/(workspace)/layout.tsx",
         "frontend/src/app/(workspace)/workspace/page.tsx",
+        "frontend/src/app/ai-app-builder/page.tsx",
         "frontend/src/app/os-preview/rich-results/page.tsx",
-        "frontend/src/app/share/[token]/page.tsx"
+        "frontend/src/app/share/[token]/page.tsx",
+        "frontend/src/app/software/page.tsx"
       ],
       "callers": [
         "frontend/src/components/automations/WorkPacksGallery.tsx:5",
@@ -82494,6 +82498,7 @@
         "frontend/src/components/integrations/InstalledPluginsShelf.tsx:10",
         "frontend/src/components/integrations/PluginDetail.tsx:21",
         "frontend/src/components/integrations/PluginMarketplace.tsx:30",
+        "frontend/src/components/terminal/IntegrationsModal.tsx:7",
         "frontend/src/lib/formatAiMarkdown.tsx:10"
       ],
       "reachable": true,
@@ -97172,29 +97177,46 @@
       "id": "surface:0d42f6431011b29940e9",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/IntegrationsModal.tsx",
-      "sha256": "b9690880a80670c7b533e7701c2de4ab0493d7fc8821563b1faa06dea52c472b",
+      "sha256": "0d364d2758cc8871f42f4b371a0fcbde31f90a84f7d6286ca0924a7dbd42b310",
       "symbols": [
+        "AppRow",
         "IntegrationsModal",
-        "ModalPlugin",
+        "NativeApp",
+        "View",
         "active",
-        "all",
-        "available",
-        "byId",
-        "cancelled",
-        "entry",
-        "id",
+        "byKey",
+        "connectedCount",
+        "content",
+        "current",
+        "handleKeyDown",
+        "index",
+        "inputRef",
+        "isSearching",
         "item",
-        "matches",
-        "normalized",
-        "onKey",
-        "plugins",
+        "items",
+        "key",
+        "keyFor",
+        "listRef",
+        "loadMore",
+        "nativeApp",
+        "nativeNames",
+        "nativeSlugs",
+        "next",
+        "requestId",
+        "requestRef",
         "result",
+        "rows",
+        "seen",
+        "selectConnected",
+        "session",
+        "showResults",
+        "term",
         "timer",
-        "toolkit"
+        "tokens"
       ],
       "imports": [
         "./PluginsMenu.module.css",
-        "@/components/integrations/IntegrationLogo",
+        "@/components/integrations/PluginBrandLogo",
         "@/components/ui/AnchoredPortalPopover",
         "@/lib/api",
         "@/lib/pluginCatalog",
@@ -97204,7 +97226,7 @@
         "react"
       ],
       "runtimeImports": [
-        "frontend/src/components/integrations/IntegrationLogo.tsx",
+        "frontend/src/components/integrations/PluginBrandLogo.tsx",
         "frontend/src/components/terminal/PluginsMenu.module.css",
         "frontend/src/components/ui/AnchoredPortalPopover.tsx",
         "frontend/src/lib/api.ts",
@@ -97787,22 +97809,34 @@
       "id": "surface:3484d8fe9d2b6b8e0125",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/ProjectsQuickPopover.tsx",
-      "sha256": "10d4e6cd3adde3a423e709e70add1cd2a6cd296cd38170dcbacdae926beef05c",
+      "sha256": "a40707f8a0cac604978ee51ad921e4ff28620dcbb41528d5f241f219641111d6",
       "symbols": [
+        "ProjectOption",
+        "ProjectType",
         "ProjectsQuickPopover",
         "active",
+        "createProject",
+        "created",
+        "e",
+        "eligibleRepos",
         "items",
         "matches",
         "openProject",
+        "q",
+        "result",
         "router",
-        "term"
+        "selected",
+        "term",
+        "trimmed"
       ],
       "imports": [
         "./ProjectsQuickPopover.module.css",
         "@/components/ui/AnchoredPortalPopover",
         "@/lib/api",
+        "@/lib/githubProjectEvents",
         "@/lib/projectArchive",
         "@/lib/projectResume",
+        "@/lib/repoContext",
         "@/lib/workspacePersistence",
         "lucide-react",
         "next/link",
@@ -97813,8 +97847,10 @@
         "frontend/src/components/terminal/ProjectsQuickPopover.module.css",
         "frontend/src/components/ui/AnchoredPortalPopover.tsx",
         "frontend/src/lib/api.ts",
+        "frontend/src/lib/githubProjectEvents.ts",
         "frontend/src/lib/projectArchive.ts",
         "frontend/src/lib/projectResume.ts",
+        "frontend/src/lib/repoContext.ts",
         "frontend/src/lib/workspacePersistence.ts"
       ],
       "entryPoints": [
@@ -97827,6 +97863,7 @@
       "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
+        "declared-host:github.com",
         "lucide-react",
         "next/link",
         "next/navigation",
@@ -101521,8 +101558,8 @@
       "callers": [
         "frontend/src/components/dashboard/WorkspaceNewTerminal.tsx:7",
         "frontend/src/components/terminal/ComposerToolChip.tsx:5",
-        "frontend/src/components/terminal/IntegrationsModal.tsx:5",
-        "frontend/src/components/terminal/ProjectsQuickPopover.tsx:7",
+        "frontend/src/components/terminal/IntegrationsModal.tsx:6",
+        "frontend/src/components/terminal/ProjectsQuickPopover.tsx:8",
         "frontend/src/components/terminal/WorkspaceConversationMenu.tsx:10",
         "frontend/src/components/terminal/WorkspaceIdentityMenu.tsx:19",
         "frontend/src/components/ui/ChatBarPortalPopover.tsx:3",
@@ -105169,10 +105206,10 @@
         "frontend/src/components/terminal/ChatIntegrationsBar.tsx:13",
         "frontend/src/components/terminal/GitHubBuildGateModal.tsx:5",
         "frontend/src/components/terminal/GithubRepoModal.tsx:5",
-        "frontend/src/components/terminal/IntegrationsModal.tsx:10",
+        "frontend/src/components/terminal/IntegrationsModal.tsx:8",
         "frontend/src/components/terminal/MessageShareModal.tsx:7",
         "frontend/src/components/terminal/ProjectPreviewDock.tsx:7",
-        "frontend/src/components/terminal/ProjectsQuickPopover.tsx:8",
+        "frontend/src/components/terminal/ProjectsQuickPopover.tsx:9",
         "frontend/src/components/terminal/RepoContextBar.tsx:6",
         "frontend/src/components/terminal/RepoWorkspaceGateModal.tsx:5",
         "frontend/src/components/terminal/TerminalChatBar.tsx:12",
@@ -108723,6 +108760,7 @@
         "frontend/src/app/(shell)/dashboard/projects/page.tsx:23",
         "frontend/src/components/dashboard/WorkspaceResumeList.tsx:10",
         "frontend/src/components/layout/SidebarProjectHistory.tsx:36",
+        "frontend/src/components/terminal/ProjectsQuickPopover.tsx:13",
         "frontend/src/components/terminal/RepoContextBar.tsx:21",
         "frontend/src/components/terminal/RepoWorkspaceGateModal.tsx:8",
         "frontend/src/context/TerminalChatContext.tsx:1917",
@@ -111753,7 +111791,7 @@
         "frontend/src/components/integrations/PluginBrandLogo.tsx:5",
         "frontend/src/components/integrations/PluginDetail.tsx:24",
         "frontend/src/components/integrations/PluginMarketplace.tsx:34",
-        "frontend/src/components/terminal/IntegrationsModal.tsx:11",
+        "frontend/src/components/terminal/IntegrationsModal.tsx:9",
         "frontend/src/lib/pluginCategoryUx.test.ts:6",
         "frontend/src/lib/pluginMarketplacePolish.test.ts:6",
         "frontend/src/lib/pluginStep2.test.ts:6",
@@ -111905,7 +111943,7 @@
       ],
       "callers": [
         "frontend/src/app/(shell)/dashboard/projects/page.tsx:26",
-        "frontend/src/components/terminal/ProjectsQuickPopover.tsx:9",
+        "frontend/src/components/terminal/ProjectsQuickPopover.tsx:10",
         "frontend/src/lib/exportUserData.ts:2"
       ],
       "reachable": true,
@@ -112123,7 +112161,7 @@
       ],
       "callers": [
         "frontend/src/app/(shell)/dashboard/projects/page.tsx:22",
-        "frontend/src/components/terminal/ProjectsQuickPopover.tsx:10",
+        "frontend/src/components/terminal/ProjectsQuickPopover.tsx:11",
         "frontend/src/lib/projectResume.test.ts:5"
       ],
       "reachable": true,
@@ -112915,6 +112953,7 @@
         "frontend/src/components/dashboard/WorkspaceResumeList.tsx:7",
         "frontend/src/components/layout/SidebarProjectHistory.tsx:35",
         "frontend/src/components/layout/SidebarProjectHistory.tsx:8",
+        "frontend/src/components/terminal/ProjectsQuickPopover.tsx:12",
         "frontend/src/components/terminal/RepoContextBar.tsx:10",
         "frontend/src/components/terminal/RepoContextBar.tsx:216",
         "frontend/src/components/terminal/RepoWorkspaceGateModal.tsx:7",
@@ -117588,7 +117627,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/app/(shell)/dashboard/projects/page.tsx:193",
+        "frontend/src/app/(shell)/dashboard/projects/page.tsx:180",
         "frontend/src/components/dashboard/TerminalHistoryView.tsx:182",
         "frontend/src/components/dashboard/WorkspaceResumeList.tsx:9",
         "frontend/src/components/dashboard/WorkspaceShowcaseStarts.tsx:305",
@@ -119039,7 +119078,7 @@
         "frontend/src/components/dashboard/SwarmRunHistory.tsx:15",
         "frontend/src/components/layout/SidebarProjectHistory.tsx:59",
         "frontend/src/components/notifications/NotificationBell.tsx:10",
-        "frontend/src/components/terminal/ProjectsQuickPopover.tsx:11",
+        "frontend/src/components/terminal/ProjectsQuickPopover.tsx:14",
         "frontend/src/components/terminal/SwarmMessageLog.tsx:39",
         "frontend/src/context/TerminalChatContext.tsx:32",
         "frontend/src/lib/projectResume.ts:5",
@@ -119701,7 +119740,7 @@
         "frontend/src/components/integrations/PluginMarketplace.tsx:52",
         "frontend/src/components/integrations/PluginPermissionControl.tsx:13",
         "frontend/src/components/integrations/XrogaConnectPanel.tsx:20",
-        "frontend/src/components/terminal/IntegrationsModal.tsx:12",
+        "frontend/src/components/terminal/IntegrationsModal.tsx:10",
         "frontend/src/components/terminal/ModelAppPermissions.tsx:4",
         "frontend/src/lib/connectReview.security.test.ts:3",
         "frontend/src/lib/formatAiMarkdown.tsx:32"
@@ -142440,9 +142479,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:708d51fc985cf67b877a",
+      "id": "finding:bd5e9e5194653078e747",
       "sourcePath": "frontend/src/app/(shell)/dashboard/projects/page.tsx",
-      "line": 321,
+      "line": 306,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -144640,9 +144679,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:31b013f460f73b96df5a",
+      "id": "finding:8e6c241b49564a426868",
       "sourcePath": "frontend/src/components/terminal/IntegrationsModal.tsx",
-      "line": 184,
+      "line": 189,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -144650,9 +144689,39 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:8e9511abf6a6e65a1cc7",
+      "id": "finding:ec6df75c1e6fd40693f2",
       "sourcePath": "frontend/src/components/terminal/ProjectsQuickPopover.tsx",
-      "line": 91,
+      "line": 152,
+      "kind": "PLACEHOLDER",
+      "reachable": true,
+      "state": "PARTIAL",
+      "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
+      "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
+    },
+    {
+      "id": "finding:d6db302a2c1a61deb41a",
+      "sourcePath": "frontend/src/components/terminal/ProjectsQuickPopover.tsx",
+      "line": 163,
+      "kind": "PLACEHOLDER",
+      "reachable": true,
+      "state": "PARTIAL",
+      "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
+      "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
+    },
+    {
+      "id": "finding:2e5ffdebe7b0fc5574cd",
+      "sourcePath": "frontend/src/components/terminal/ProjectsQuickPopover.tsx",
+      "line": 170,
+      "kind": "PLACEHOLDER",
+      "reachable": true,
+      "state": "PARTIAL",
+      "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
+      "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
+    },
+    {
+      "id": "finding:0c22755f89dff2ba18d3",
+      "sourcePath": "frontend/src/components/terminal/ProjectsQuickPopover.tsx",
+      "line": 180,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -145893,70 +145962,70 @@
       "reachable": false
     },
     {
-      "id": "frontend-call:80012c50c115d2ca63a3",
+      "id": "frontend-call:08bf6549e07a1b2d7035",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 1489,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:8b4a7a92b885251e0403",
+      "id": "frontend-call:7baaf83ba5c4c8dc7ae6",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 1490,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:1d55b586487e83369c78",
+      "id": "frontend-call:1ed2128966e1e6387e00",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 1495,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:6efeccc21146651715c9",
+      "id": "frontend-call:9a2d187d4bc83d75e88b",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 1496,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:88994dd5756a2f847008",
+      "id": "frontend-call:cde245b34faad214d9c2",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 1502,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:7cf9c80b937c9686e269",
+      "id": "frontend-call:87495a3ef24473977d7e",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 1507,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:75fff477766a3dfb6b84",
+      "id": "frontend-call:647e25c02a01f6dfde61",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 1564,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:f50e3803e1e29c0a13f4",
+      "id": "frontend-call:840e439f362799b3025d",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 1565,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:f7b038e5674eb14e366b",
+      "id": "frontend-call:f437e581f1353ad0139e",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 1572,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:85e553188d336a339d42",
+      "id": "frontend-call:7cd6eb358498c6fea037",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 1586,
       "callee": "fetch",
@@ -146250,51 +146319,37 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:f2fee8944457a564d3fa",
+      "id": "frontend-call:f194a29a0b07b5bf5b36",
       "sourcePath": "frontend/src/app/(shell)/dashboard/projects/page.tsx",
       "line": 86,
-      "callee": "api.projects.listGithub().then().catch().finally",
+      "callee": "api.projects.list().then().catch().finally",
       "reachable": true
     },
     {
-      "id": "frontend-call:c5e7508bf7514b594e0e",
+      "id": "frontend-call:5fca7afd9a3222e65421",
       "sourcePath": "frontend/src/app/(shell)/dashboard/projects/page.tsx",
       "line": 86,
-      "callee": "api.projects.listGithub().then().catch",
+      "callee": "api.projects.list().then().catch",
       "reachable": true
     },
     {
-      "id": "frontend-call:d710b6bf9eb18e65b0c0",
+      "id": "frontend-call:c0a698ac2fce8457d919",
       "sourcePath": "frontend/src/app/(shell)/dashboard/projects/page.tsx",
       "line": 86,
-      "callee": "api.projects.listGithub().then",
-      "reachable": true
-    },
-    {
-      "id": "frontend-call:6888cc1ce5830f28330f",
-      "sourcePath": "frontend/src/app/(shell)/dashboard/projects/page.tsx",
-      "line": 86,
-      "callee": "api.projects.listGithub",
-      "reachable": true
-    },
-    {
-      "id": "frontend-call:a90c00dd2111efd2ca58",
-      "sourcePath": "frontend/src/app/(shell)/dashboard/projects/page.tsx",
-      "line": 94,
       "callee": "api.projects.list().then",
       "reachable": true
     },
     {
-      "id": "frontend-call:19521b93bd622a09e5c9",
+      "id": "frontend-call:96240cdd4957ec134c75",
       "sourcePath": "frontend/src/app/(shell)/dashboard/projects/page.tsx",
-      "line": 94,
+      "line": 86,
       "callee": "api.projects.list",
       "reachable": true
     },
     {
-      "id": "frontend-call:8cf1a8897b02b02910b2",
+      "id": "frontend-call:d20e490f0606a981a603",
       "sourcePath": "frontend/src/app/(shell)/dashboard/projects/page.tsx",
-      "line": 261,
+      "line": 248,
       "callee": "api.projects.delete",
       "reachable": true
     },
@@ -147986,23 +148041,23 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:d457af138f788fdf0fd6",
+      "id": "frontend-call:2a295c5959c7a47d46d8",
       "sourcePath": "frontend/src/components/terminal/IntegrationsModal.tsx",
-      "line": 68,
+      "line": 58,
       "callee": "api.github.status",
       "reachable": true
     },
     {
-      "id": "frontend-call:44d0dd9ac35c871f00e7",
+      "id": "frontend-call:eef6f2f7239465b42554",
       "sourcePath": "frontend/src/components/terminal/IntegrationsModal.tsx",
-      "line": 69,
+      "line": 58,
       "callee": "api.vercel.status",
       "reachable": true
     },
     {
-      "id": "frontend-call:dd5e61cc8e15559df273",
+      "id": "frontend-call:7daed20eff4a73f4885c",
       "sourcePath": "frontend/src/components/terminal/IntegrationsModal.tsx",
-      "line": 70,
+      "line": 58,
       "callee": "api.supabase.status",
       "reachable": true
     },
@@ -148028,31 +148083,73 @@
       "reachable": false
     },
     {
-      "id": "frontend-call:47be2498f766325909c0",
+      "id": "frontend-call:242097862ac2b4ae7694",
       "sourcePath": "frontend/src/components/terminal/ProjectsQuickPopover.tsx",
-      "line": 36,
+      "line": 56,
       "callee": "api.projects.list().then().catch().finally",
       "reachable": true
     },
     {
-      "id": "frontend-call:7c9ef45913d25bb39097",
+      "id": "frontend-call:2da4c594c651ead333bb",
       "sourcePath": "frontend/src/components/terminal/ProjectsQuickPopover.tsx",
-      "line": 36,
+      "line": 56,
       "callee": "api.projects.list().then().catch",
       "reachable": true
     },
     {
-      "id": "frontend-call:c76f36d23a0b283d0e75",
+      "id": "frontend-call:e0c3714274f1b02ade6b",
       "sourcePath": "frontend/src/components/terminal/ProjectsQuickPopover.tsx",
-      "line": 36,
+      "line": 56,
       "callee": "api.projects.list().then",
       "reachable": true
     },
     {
-      "id": "frontend-call:92b8c4d2c672e2d4a006",
+      "id": "frontend-call:7f2f5da9d59b8c483f36",
       "sourcePath": "frontend/src/components/terminal/ProjectsQuickPopover.tsx",
-      "line": 36,
+      "line": 56,
       "callee": "api.projects.list",
+      "reachable": true
+    },
+    {
+      "id": "frontend-call:824efdf417f5284e4084",
+      "sourcePath": "frontend/src/components/terminal/ProjectsQuickPopover.tsx",
+      "line": 68,
+      "callee": "api.github.status().then().catch().finally",
+      "reachable": true
+    },
+    {
+      "id": "frontend-call:3cdb3909776aa397ad07",
+      "sourcePath": "frontend/src/components/terminal/ProjectsQuickPopover.tsx",
+      "line": 68,
+      "callee": "api.github.status().then().catch",
+      "reachable": true
+    },
+    {
+      "id": "frontend-call:314ea3ae55cfe0bddb5f",
+      "sourcePath": "frontend/src/components/terminal/ProjectsQuickPopover.tsx",
+      "line": 68,
+      "callee": "api.github.status().then",
+      "reachable": true
+    },
+    {
+      "id": "frontend-call:7953697a7cdf77c7197c",
+      "sourcePath": "frontend/src/components/terminal/ProjectsQuickPopover.tsx",
+      "line": 68,
+      "callee": "api.github.status",
+      "reachable": true
+    },
+    {
+      "id": "frontend-call:fabda6bb4021294639b5",
+      "sourcePath": "frontend/src/components/terminal/ProjectsQuickPopover.tsx",
+      "line": 73,
+      "callee": "api.github.listRepos",
+      "reachable": true
+    },
+    {
+      "id": "frontend-call:b2bc06f0989dc6c69844",
+      "sourcePath": "frontend/src/components/terminal/ProjectsQuickPopover.tsx",
+      "line": 120,
+      "callee": "api.projects.create",
       "reachable": true
     },
     {
@@ -155158,7 +155255,7 @@
     {
       "id": "test-suite:688ff1e1f0e7b0269f11",
       "sourcePath": "frontend/src/lib/chatbarCompactMenus.test.ts",
-      "declaredTests": 4,
+      "declaredTests": 5,
       "skipLocations": [],
       "focusLocations": []
     },
