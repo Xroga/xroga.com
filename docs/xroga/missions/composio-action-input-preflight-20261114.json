@@ -1,0 +1,49 @@
+{
+  "version": "1.0",
+  "missionId": "COMPOSIO-ACTION-INPUT-PREFLIGHT-20261114",
+  "baseSha": "2983e059f1312f7b7b7a3bdba28a1fabe152a823",
+  "requirementIds": ["XR-FAMILY-composio-dynamic-tools", "XR-ORIGINAL-F041"],
+  "state": "CODE_COMPLETE",
+  "risk": "medium",
+  "scope": "Reject incomplete Composio writes before creating a confirmation and recheck current input constraints before dispatch. Google Sheets append requires an explicit spreadsheet and range and cannot substitute for creating tables.",
+  "changedFiles": [
+    "backend/src/routes/phase1.ts",
+    "backend/src/services/integrations/businessAction.ts",
+    "backend/src/services/integrations/businessModelEgress.test.ts",
+    "backend/src/services/integrations/businessWorkflowRuns.ts",
+    "backend/src/services/integrations/composioActionPreflight.ts",
+    "backend/src/services/integrations/composioActionPreflight.test.ts",
+    "backend/src/e2e/xrogaGoldenJourneys.test.ts",
+    "docs/xroga/missions/composio-action-input-preflight-20261114.json"
+  ],
+  "decisions": {
+    "keep": ["Existing provider discovery, tenant and account binding, immutable approval and one-attempt dispatch"],
+    "extend": ["Check bounded common constraints from the selected tool's current input schema and ask for clarification without generating an invalid approval"],
+    "replace": [],
+    "deprecate": []
+  },
+  "schemaImpact": {"changed": false, "migrations": [], "rollout": "No database migration.", "rollback": "No schema rollback."},
+  "securityImpact": {
+    "auth": {"changed": false, "description": "Existing authenticated routes only."},
+    "tenant": {"changed": false, "description": "No changes to account or tenant selection."},
+    "approval": {"changed": true, "description": "Incomplete writes cannot reach approval or dispatch; no approval is bypassed."},
+    "credentials": {"changed": false, "description": "No credential handling changes."},
+    "egress": {"changed": true, "description": "Reduces write egress by rejecting incomplete plans before dispatch; no new destinations or requests."},
+    "cost": {"changed": false, "description": "No additional planner call, provider reservation or new pricing rules."},
+    "billing": {"changed": false, "description": "No billing change."}
+  },
+  "tests": [
+    {"command": "tsx --test backend/src/services/integrations/composioActionPreflight.test.ts", "scope": "Blank spreadsheet destination, incompatible table operation, nested required fields, schema bounds and valid positive controls.", "negative": true, "reference": "backend/src/services/integrations/composioActionPreflight.test.ts"},
+    {"command": "tsx --test backend/src/services/integrations/businessModelEgress.test.ts", "scope": "Runtime planner returns clarification and no plan when provider metadata requires a missing input.", "negative": true, "reference": "backend/src/services/integrations/businessModelEgress.test.ts"},
+    {"command": "tsx --test backend/src/e2e/xrogaGoldenJourneys.test.ts", "scope": "An approved plan missing a field required by the current tool schema does not reach the provider effect.", "negative": true, "reference": "backend/src/e2e/xrogaGoldenJourneys.test.ts"}
+  ],
+  "architecture": {"change": "extends_canonical", "reason": "Extends existing preparation and execution paths without adding an orchestrator or a provider.", "rfc": null},
+  "rollout": "Run mandatory CI and isolated Workspace checks before any live promotion. Verify ambiguous Sheets writes ask for destination and a fully specified test write still requires approval.",
+  "rollback": "Revert the commit or restore the preceding approved Cloud Run revision; no database change.",
+  "knownGaps": ["Only common bounded schema constraints are enforced; this does not certify all JSON Schema keywords, all tool-selection semantics or provider operations.", "A workflow with missing action details must be explicitly reissued; the response warns about previously completed steps."],
+  "placeholderClaimsRemaining": [],
+  "evidenceRefs": ["backend/src/services/integrations/composioActionPreflight.test.ts", "backend/src/services/integrations/businessModelEgress.test.ts", "backend/src/e2e/xrogaGoldenJourneys.test.ts"],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {"state": "BLOCKED", "blockers": ["Exact-source CI, isolated authenticated staging and live verification are outstanding."], "authenticatedE2e": "BLOCKED", "stagedSecurity": "BLOCKED", "liveUrl": null, "deployedSha": null}
+}

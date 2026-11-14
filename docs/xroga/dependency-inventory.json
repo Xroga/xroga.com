@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "b1c084fe1c1867c2c347b6bad75715b6735483ec",
+  "source_sha": "2983e059f1312f7b7b7a3bdba28a1fabe152a823",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -18572,7 +18572,7 @@
     },
     {
       "path": "backend/src/routes/phase1.ts",
-      "sha256": "768d23551b96e4e803da3767e3b4cb99b6d28cb2d97f84d9a6c8c300fbdfc845"
+      "sha256": "f8165d4c8cb4da073056f0e5371e01e70b4fc0df9a51a893b8beb5e488433493"
     },
     {
       "path": "backend/src/routes/phase1BusinessPreflight.ts",
@@ -19068,7 +19068,7 @@
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "sha256": "e7b2d58206f77b539954bd123f6deac582cdb61cff40e81c3b71608ec3b7004f"
+      "sha256": "2d299d2e4b2354edba463df23ad338b58cc3077232219934d59a21fd2d348802"
     },
     {
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
@@ -19100,7 +19100,11 @@
     },
     {
       "path": "backend/src/services/integrations/businessWorkflowRuns.ts",
-      "sha256": "c08a1d8f472f45de1b8eb6bee080f29e7419c4b8be919e0f4e1dff9e898ab70a"
+      "sha256": "11b8a6c84f00c3d6b2e825dded915ad554090d39eada07b7390ebf7fecdaa4fa"
+    },
+    {
+      "path": "backend/src/services/integrations/composioActionPreflight.ts",
+      "sha256": "a5d6d28a802c7036128caaff20c922f0b9919f8c8018e1104bfd9e225d0c006a"
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
@@ -36101,21 +36105,21 @@
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "line": 659,
+      "line": 664,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "line": 1171,
+      "line": 1176,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "line": 1197,
+      "line": 1202,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -36172,6 +36176,13 @@
     {
       "path": "backend/src/services/integrations/businessRead.ts",
       "line": 1017,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/services/integrations/composioActionPreflight.ts",
+      "line": 94,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

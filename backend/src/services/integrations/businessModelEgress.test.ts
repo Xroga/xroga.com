@@ -42,7 +42,7 @@ function fixture(t: TestContext) {
       if(url.pathname.endsWith('/search'))return Response.json({tool_schemas:{fixture:{tool_slug:slug(),toolkit:'slack',
         description:state.mode==='descriptor'?env.ZURELAY_API_KEY:'Synthetic owned tool metadata',input_schema:{type:'object',properties:{}}}}});
       if(url.pathname.endsWith('/toolkits'))return Response.json({items:[{slug:'slack',name:'Slack',connected_account:{id:'ca_synthetic_owner',status:'ACTIVE'}}]});
-      if(url.pathname.includes('/tools/'))return Response.json({slug:slug(),toolkit:{slug:'slack'},tags:[state.lane==='read'?'readOnlyHint':'destructiveHint'],input_parameters:{type:'object'},scopes:['fixture.message']});
+      if(url.pathname.includes('/tools/'))return Response.json({slug:slug(),toolkit:{slug:'slack'},tags:[state.lane==='read'?'readOnlyHint':'destructiveHint'],input_parameters:state.mode==='missing-action-input'?{type:'object',required:['messageId'],properties:{messageId:{type:'string'}}}:{type:'object'},scopes:['fixture.message']});
       if(url.pathname.endsWith('/execute')){assert.equal(state.lane,'read','Preparation must never execute an external action');state.readExecutions++;return Response.json({data:{messages:['SYNTHETIC_READ_RESULT']},error:null});}
       assert.fail('Unexpected Composio operation: '+url.pathname);
     }
@@ -91,6 +91,17 @@ test('explicitly reviewed dependent action keeps confirmation and a snapshot of 
   assert.equal(result.status,'ready');
   if(result.status==='ready'){assert.equal(result.plan.requiresConfirmation,true);assert.equal(result.plan.forceConfirmation,true);}
   assert.equal(f.state.effects,1);assert.equal(f.state.readExecutions,0);
+});
+
+test('the actual action planner asks for missing inputs from current tool metadata before any write', async t => {
+  const f = fixture(t);
+  f.state.lane = 'action';
+  f.state.mode = 'missing-action-input';
+  const result = await prepareBusinessAction(f.request());
+  assert.equal(result.status, 'input_required');
+  if (result.status === 'input_required') assert.match(result.message, /messageId/);
+  assert.equal('plan' in result, false);
+  assert.equal(f.state.readExecutions, 0);
 });
 
 test('actual business selectors preserve invalid reservation denial before trying another model',async t=>{
