@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "branch": "research/composio-five-upstreams-20261114",
+  "basePr": 985,
+  "baseCommit": "6c9aaa5dc14552c6766b99478447a3bd5741c053",
+  "evaluationOnly": true,
+  "importedIntoApplication": false,
+  "upstreams": [
+    {
+      "name": "composio-sdk",
+      "repository": "ComposioHQ/composio",
+      "ref": "next",
+      "sha": "fdee7595166f8b5dcff026dc609760d1ce82b2e2",
+      "license": "MIT",
+      "copyPolicy": "Reuse supported official SDK, not whole monorepo",
+      "power": "SDK sessions, tool search, connected user auth, execution, triggers, supported API proxy",
+      "url": "https://github.com/ComposioHQ/composio",
+      "submodulePath": "research/upstreams/composio-five/composio-sdk"
+    },
+    {
+      "name": "composio-mcp-plugin",
+      "repository": "ComposioHQ/composio-mcp-plugin",
+      "ref": "master",
+      "sha": "bbcb9ccce59090642ca6dad5d6f0fa485c303539",
+      "license": "MIT",
+      "copyPolicy": "Two exact skills already vendored by PR #985; compare before further copying",
+      "power": "Seven meta-tools, tool discovery skill, connected-app activity summary skill",
+      "url": "https://github.com/ComposioHQ/composio-mcp-plugin",
+      "submodulePath": "research/upstreams/composio-five/composio-mcp-plugin"
+    },
+    {
+      "name": "ownpilot",
+      "repository": "ownpilot/OwnPilot",
+      "ref": "main",
+      "sha": "eb4c27f29d4d12778621a83e49cd673cd8b62239",
+      "license": "MIT",
+      "copyPolicy": "Extract only reviewed, compatible code; no default single-user identity",
+      "power": "Tool discovery, help, aliases, dispatcher, batch actions, plugin and workflow patterns",
+      "url": "https://github.com/ownpilot/OwnPilot",
+      "submodulePath": "research/upstreams/composio-five/ownpilot"
+    },
+    {
+      "name": "codev-agent",
+      "repository": "shricodev/all-in-one-agent",
+      "ref": "main",
+      "sha": "f6c12d1bf3d1e861a5216b844b1ab1d35a0f0b33",
+      "license": "UNVERIFIED",
+      "copyPolicy": "Reference only; do not copy or distribute source without permission",
+      "power": "In-chat OAuth, streaming tool activity, Next.js UI examples; in-memory conversation storage",
+      "url": "https://github.com/shricodev/all-in-one-agent",
+      "submodulePath": "research/upstreams/composio-five/codev-agent"
+    },
+    {
+      "name": "tool-router-agents",
+      "repository": "composio-temp/tool-router-agents",
+      "ref": "master",
+      "sha": "f76b98f325c2a4134089c49d8ddd373bbcc39364",
+      "license": "UNVERIFIED; ARCHIVED",
+      "copyPolicy": "Historical reference only; do not copy or ship source without permission",
+      "power": "Multi-app agent examples using older experimental Composio tool router",
+      "url": "https://github.com/composio-temp/tool-router-agents",
+      "submodulePath": "research/upstreams/composio-five/tool-router-agents"
+    }
+  ]
+}

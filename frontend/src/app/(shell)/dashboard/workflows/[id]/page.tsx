@@ -30,6 +30,7 @@ export default function BusinessWorkflowPage() {
   const [workflow, setWorkflow] = useState<Workflow | null>(null);
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
+  const [missingDetails, setMissingDetails] = useState('');
 
   const load = useCallback(async () => {
     if (!id) return;
@@ -50,9 +51,11 @@ export default function BusinessWorkflowPage() {
     setError('');
     try {
       const result = await apiFetch<{ workflow: Workflow }>(`/api/phase1/business-workflows/${encodeURIComponent(id)}/${action}`, {
-        method: 'POST', body: JSON.stringify({}),
+        method: 'POST', body: JSON.stringify(action === 'resume' && workflow?.failureCode === 'ACTION_INPUT_REQUIRED'
+          ? { missingDetails: missingDetails.trim() } : {}),
       });
       setWorkflow(result.workflow);
+      if (action === 'resume') setMissingDetails('');
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : `Workflow could not ${action}.`);
       await load();
@@ -71,7 +74,19 @@ export default function BusinessWorkflowPage() {
       {workflow.outcomes.map((outcome) => <div key={outcome.stepIndex} className="rounded-xl border border-[var(--border-subtle)] p-4"><p className="text-sm font-medium text-[var(--text-primary)]">{outcome.request}</p><p className="mt-1 text-xs text-[var(--text-secondary)]">{outcome.kind === 'read' ? 'Read' : 'Completed'} in {outcome.toolkit} · {outcome.toolSlug}</p><pre className="mt-3 max-h-48 overflow-auto whitespace-pre-wrap break-all text-xs text-[var(--text-secondary)]">{outcome.data.slice(0, 3_000)}</pre></div>)}
       {workflow.failureCode ? <p className="text-sm text-amber-500">This workflow needs attention: {workflow.failureCode}</p> : null}
       {workflow.confirmationId ? <a className="inline-flex rounded-xl bg-[var(--accent)] px-4 py-2.5 text-sm font-semibold text-white" href={`/dashboard/actions/confirm/${encodeURIComponent(workflow.confirmationId)}`}>Review next action</a> : null}
-      {workflow.status === 'setup_required' && workflow.failureCode !== 'READ_RESULT_TOO_LARGE' ? <button type="button" disabled={busy} onClick={() => { void change('resume'); }} className="rounded-xl bg-[var(--accent)] px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-50">Resume after connecting app</button> : null}
+      {workflow.status === 'setup_required' && workflow.failureCode === 'ACTION_INPUT_REQUIRED'
+        ? <div className="space-y-3 rounded-xl border border-[var(--border-subtle)] p-4">
+            <label htmlFor="workflow-missing-details" className="block text-sm font-medium text-[var(--text-primary)]">Provide the missing information for the current action</label>
+            <textarea id="workflow-missing-details" rows={3} maxLength={350} value={missingDetails} onChange={(event) => setMissingDetails(event.target.value)}
+              placeholder="Specify the exact account, destination, range, recipient, or other missing details"
+              className="w-full rounded-xl border border-[var(--border-subtle)] bg-[var(--surface-raised)] p-3 text-sm text-[var(--text-primary)]" />
+            <button type="button" disabled={busy || missingDetails.trim().length < 3}
+              onClick={() => { void change('resume'); }}
+              className="rounded-xl bg-[var(--accent)] px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-50">Continue saved workflow</button>
+            <p className="text-xs text-[var(--text-secondary)]">Completed steps will not be repeated. Any new write still requires review and confirmation.</p>
+          </div>
+        : null}
+      {workflow.status === 'setup_required' && !['READ_RESULT_TOO_LARGE', 'ACTION_INPUT_REQUIRED'].includes(workflow.failureCode ?? '') ? <button type="button" disabled={busy} onClick={() => { void change('resume'); }} className="rounded-xl bg-[var(--accent)] px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-50">Resume after connecting app</button> : null}
       {workflow.status !== 'completed' && workflow.status !== 'cancelled' ? <button type="button" disabled={busy} onClick={() => { void change('cancel'); }} className="ml-3 rounded-xl border border-[var(--border-subtle)] px-4 py-2.5 text-sm font-medium text-[var(--text-primary)] disabled:opacity-50">Cancel remaining steps</button> : null}
       <p className="text-xs text-[var(--text-secondary)]">Only completed steps changed external apps. A cancelled workflow does not undo them.</p>
     </div> : null}

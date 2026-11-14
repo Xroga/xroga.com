@@ -90,7 +90,7 @@ export function projectStableArrayConversionReviews(registry,{readFeature,readIn
     const current=readIntegrated(record.path);
     if(typeof current!=='string'||hash(current.replace(/\r\n/g,'\n'))===record.sourceSha256)return record;
     const original=readFeature(record.path);
-    if(typeof original!=='string'||hash(original.replace(/\r\n/g,'\n'))!==record.sourceSha256)throw new Error('Unbound original conversion review');
+    if(typeof original!=='string'||hash(original.replace(/\r\n/g,'\n'))!==record.sourceSha256)throw new Error(`Unbound original conversion review: ${record.path}; original review SHA ${record.sourceSha256}; feature SHA ${hash(original.replace(/\\r\\n/g,'\\n'))}`);
     const before=inspect(record.path,original),after=inspect(record.path,current);
     const explicit=reviewedFunctionChanges.find(review=>review.path===record.path
       &&review.featureSourceSha256===record.sourceSha256&&review.integratedSourceSha256===hash(current.replace(/\r\n/g,'\n')));
