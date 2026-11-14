@@ -209,7 +209,7 @@ export function IntegrationsModal({ open, onClose, anchorRef, onSelect }: {
         {view === 'explore' && cursor && !loadingCatalog && <button type="button" className={styles.loadMore} disabled={loadingMore} onClick={() => void loadMore()}>{loadingMore ? <Loader2 size={13} className="animate-spin"/> : <ChevronDown size={14}/>} Load more apps</button>}
       </div>
       <footer className={styles.footer}>
-        <Link href="/dashboard/integrations" onClick={onClose}>Open full app directory <ArrowRight size={14}/></Link>
+        <Link href="/dashboard/integrations" onClick={onClose}>Browse all apps <ArrowRight size={14}/></Link>
       </footer>
     </section>
   </AnchoredPortalPopover>;
