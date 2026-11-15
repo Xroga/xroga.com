@@ -206,3 +206,9 @@ Both mixed-theme mobile screenshots were visually reviewed. Frontend type
 checking passed in e0542dc4-c93b-4464-b0a3-b026a1d012b3. Source inventory, mission,
 runtime and audit-integrity checks passed in ef08ba0e-c638-42f0-9549-048153d50e34.
 These checks are local verification, not fresh hosted-model acceptance.
+
+The 44008c2f CI ledger check caught an operator ordering mistake: the preceding
+test-evidence paragraph was appended after source-manifest generation. Its hash
+was therefore stale. Regenerate the manifests after this final report edit,
+validate them, and commit only the corrected evidence. No application change or
+weakened source check is needed.
