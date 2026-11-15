@@ -1,6 +1,6 @@
 /* Public Xroga Connect marketplace. Completely scoped: the canonical marketing
    header/footer and private dashboard are not modified by this page. */
-.xi-root{--xi-blue:#86baff;--xi-blue-strong:#5e9cff;--xi-border:rgba(149,178,228,.15);--xi-muted:#a0aec4;position:relative;isolation:isolate;overflow:hidden;min-height:100vh;background:#050505;color:#f5f7fc;font-family:var(--font-goga),var(--font-inter),system-ui,sans-serif}
+.xi-root{--xi-blue:#86baff;--xi-blue-strong:#5e9cff;--xi-border:rgba(149,178,228,.15);--xi-muted:#a0aec4;position:relative;isolation:isolate;overflow:clip;min-height:100vh;background:#050505;color:#f5f7fc;font-family:var(--font-goga),var(--font-inter),system-ui,sans-serif}
 .xi-root *,.xi-root *::before,.xi-root *::after{box-sizing:border-box}
 .xi-root :is(h1,h2,h3,p){color:inherit}
 .xi-root :is(a,button,select,input):focus-visible{outline:2px solid #8fc6ff;outline-offset:3px}
@@ -215,3 +215,125 @@
 @media(max-width:900px){.xi-agent-layout{grid-template-columns:1fr}.xi-agent-list{grid-template-columns:repeat(2,minmax(0,1fr))}.xi-agent-option{min-width:0}}
 @media(max-width:620px){.xi-agents{padding-top:62px;padding-bottom:74px}.xi-agent-list{grid-template-columns:1fr}.xi-agent-detail{padding:23px 18px}.xi-agent-detail h3{font-size:26px}.xi-agent-detail-top{gap:11px}.xi-agent-actions{align-items:stretch;flex-direction:column}.xi-agent-actions a{width:100%}}
 @media(prefers-reduced-motion:reduce){.xi-agent-option{transition:none}}
+
+
+
+/* V3: compact viewport-sized hero, explicit real provider logo rail, compact
+   search-first discovery, and genuinely sticky categories until the last row.
+   Clip does not establish the scrolling container that overflow:hidden did. */
+.xi-hero{
+  min-height:min(570px,calc(100svh - 138px));
+  padding:55px 24px 48px;
+  background:radial-gradient(ellipse 50% 48% at 50% 42%,#111 0%,#080808 60%,#050505 95%);
+}
+.xi-hero-content{max-width:850px}
+.xi-hero h1{font-size:clamp(47px,5.1vw,75px);line-height:1.03;letter-spacing:-.046em;margin:0 auto 19px}
+.xi-hero-content>p{max-width:670px;font-size:13px;line-height:1.7}
+.xi-hero-actions{margin:23px 0 22px}
+.xi-hero-logos{opacity:.5}
+.xi-orbit-logo{width:57px;height:57px;border-radius:15px}
+.xi-orbit-logo .h-10{width:40px;height:40px}
+.xi-orbit-logo-1{top:17%;left:5%}.xi-orbit-logo-2{top:45%;left:2%}
+.xi-orbit-logo-3{bottom:13%;left:9%}.xi-orbit-logo-4{top:16%;right:6%}
+.xi-orbit-logo-5{top:46%;right:2%}.xi-orbit-logo-6{bottom:13%;right:9%}
+.xi-orbit-logo-7,.xi-orbit-logo-8{display:none}
+.xi-hero-app-strip{display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:8px;max-width:770px;margin:0 auto}
+.xi-hero-app{display:inline-flex;align-items:center;gap:8px;padding:6px 11px 6px 7px;border:1px solid rgba(255,255,255,.13);border-radius:99px;background:#161616;color:#dbe4f0;font-size:10px;font-weight:660;transition:border-color .18s,background .18s}
+.xi-hero-app:hover{border-color:rgba(130,187,255,.5);background:#222}
+.xi-hero-app .h-6{width:26px;height:26px}
+.xi-hero-app img{object-fit:contain}
+.xi-directory{padding-top:52px}
+.xi-directory-title{max-width:780px;margin-bottom:21px}
+.xi-directory-title h2{font-size:clamp(43px,4.7vw,62px);line-height:1.02;margin:0 0 12px}
+.xi-directory-title p{max-width:760px;font-size:12px;line-height:1.7;color:#a6afbb}
+.xi-directory-search{margin-bottom:24px}
+.xi-library{align-items:start}
+.xi-library-sidebar{
+  position:sticky;
+  top:92px;
+  max-height:calc(100dvh - 110px);
+  overscroll-behavior:contain;
+  overflow-y:auto;
+  scrollbar-width:thin;
+  scrollbar-color:#414141 transparent;
+}
+.xi-catalog-footnote{align-items:center;flex-wrap:wrap}
+.xi-catalog-footnote a{display:inline-flex;align-items:center;gap:5px;margin-left:auto;color:#9dcaff;text-decoration:underline;text-underline-offset:3px}
+.xi-result-status{font-variant-numeric:tabular-nums}
+.xi-app-card .xi-card-top img,.xi-app-card .xi-card-top>span{filter:none}
+.xi-card-link{min-height:286px}
+
+/* Open, borderless MCP editorial layout — no isolated panel/card. */
+.xi-mcp.xi-mcp-open{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  align-items:center;
+  gap:60px;
+  max-width:1250px;
+  margin:0 auto 70px;
+  padding:73px 32px 78px;
+  border:0;
+  border-top:1px solid rgba(255,255,255,.11);
+  border-radius:0;
+  background:transparent!important;
+  box-shadow:none;
+}
+.xi-mcp-open h2{font-size:clamp(50px,5.7vw,78px);margin:0 0 16px}
+.xi-mcp-open .xi-mcp-cta{margin-top:16px}
+.xi-mcp-flow{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:nowrap;color:#8c99aa}
+.xi-mcp-flow>svg{flex-shrink:0;color:#6989ad}
+.xi-mcp-flow-unit,.xi-mcp-flow-core{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-width:109px;white-space:nowrap;padding:14px 15px;border-radius:10px;font-size:12px;font-weight:720}
+.xi-mcp-flow-unit{color:#ced7e1;background:#171717;border:1px solid rgba(255,255,255,.13)}
+.xi-mcp-flow-core{color:#cce3ff;background:#162234;border:1px solid rgba(135,189,249,.39)}
+.xi-cta{margin-top:0;padding:78px 24px 95px}
+.xi-cta h2{font-size:clamp(55px,6vw,81px)}
+
+/* Workspace and extension are distinct surfaces with real, scoped links. */
+.xi-channels{padding-top:70px;padding-bottom:92px}
+.xi-channel-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.xi-channel{padding:27px 28px 26px;border-top:1px solid rgba(147,193,251,.35);background:linear-gradient(180deg,#111,#070707);border-radius:0 0 15px 15px;min-height:260px;display:flex;flex-direction:column;align-items:flex-start}
+.xi-channel-icon{width:47px;height:47px;display:grid;place-items:center;border-radius:12px;border:1px solid rgba(125,185,255,.22);background:#1b1b1b;color:#a0cbff}
+.xi-channel h3{font-size:20px;letter-spacing:-.03em;margin:20px 0 9px}
+.xi-channel p{font-size:12px;line-height:1.76;color:#acb7c6;margin:0 0 22px;max-width:510px}
+.xi-channel-link{display:inline-flex;align-items:center;gap:9px;color:#a9d1ff;font-size:12px;font-weight:780;margin-top:auto;padding:8px 0}
+.xi-channel-link:hover{color:#e7f1ff}
+.xi-channel-disclosure{font-size:10px;line-height:1.65;color:#818e9f;margin:14px 0 0}
+@media(max-width:1100px){
+  .xi-hero-logos{opacity:.25}
+  .xi-hero h1{font-size:clamp(48px,6.2vw,68px)}
+  .xi-mcp-flow{gap:8px}
+  .xi-mcp-flow-unit,.xi-mcp-flow-core{min-width:90px;padding:12px 9px;font-size:10px}
+}
+@media(max-width:900px){
+  .xi-hero{min-height:min(580px,calc(100svh - 110px));padding:64px 21px 52px}
+  .xi-directory{padding-top:45px}
+  .xi-library-sidebar{position:static;top:auto;max-height:none;overflow:visible}
+  .xi-mcp.xi-mcp-open{gap:30px;padding:65px 25px}
+}
+@media(max-width:700px){
+  .xi-hero{min-height:0;padding:58px 18px 52px}
+  .xi-hero h1{font-size:clamp(44px,9.4vw,58px);line-height:1.06;margin-bottom:18px}
+  .xi-hero-content>p{font-size:12px;line-height:1.7}
+  .xi-hero-actions{margin:20px auto 20px}
+  .xi-hero-logos{opacity:.12}
+  .xi-hero-app-strip{gap:6px}
+  .xi-hero-app{font-size:9px;padding:5px 7px 5px 5px}
+  .xi-hero-app .h-6{width:23px;height:23px}
+  .xi-directory{padding-top:42px}
+  .xi-directory-title h2{font-size:clamp(37px,8.2vw,48px)}
+  .xi-directory-search{margin-bottom:17px}
+  .xi-channel-grid{grid-template-columns:1fr}
+  .xi-channel{min-height:225px}
+  .xi-mcp.xi-mcp-open{grid-template-columns:1fr;gap:24px;padding:55px 19px;margin:0 15px 55px}
+  .xi-mcp-flow{justify-content:flex-start}
+  .xi-mcp-open h2{font-size:clamp(47px,11vw,66px)}
+}
+@media(max-width:480px){
+  .xi-hero{padding-top:51px}
+  .xi-hero h1{font-size:clamp(41px,10vw,49px)}
+  .xi-mcp-flow{gap:5px}
+  .xi-mcp-flow-unit,.xi-mcp-flow-core{min-width:0;padding:11px 8px;gap:4px;font-size:9px}
+  .xi-mcp-flow>svg{width:15px;height:15px}
+  .xi-channel{padding:25px 21px}
+}
+@media(prefers-reduced-motion:reduce){.xi-hero-app{transition:none}}
