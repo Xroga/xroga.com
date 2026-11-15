@@ -6,7 +6,7 @@ import {
   enforceExplicitBusinessWorkflowControls,
   enforceExplicitExecutionControls,
   enforceExplicitPublicResearchControls,
-  enforceInlineCalculatorIntent,
+  enforceInlineAnswerIntent,
   executeHedgedPlannerFallback,
   interpreterModelOrder,
   planExplicitProjectBuild,
@@ -198,12 +198,12 @@ describe('semantic request dispatch', () => {
     const planned = goal({ semanticIntent: 'MODIFY', requiredCapabilities: ['software.implement', 'validation.run'] });
     const attachments = [{ name: 'workshop-notes.txt', mediaType: 'text/plain' }];
     const message = 'Use my attached workshop notes to build an interactive gross revenue calculator with a reset. Chart and tabulate all attendance scenarios in the notes. Label the slider Attendees and let it change by one attendee at a time. Start at the initial attendance in the notes. No web search.';
-    const corrected = enforceInlineCalculatorIntent(planned, { message, attachments });
+    const corrected = enforceInlineAnswerIntent(planned, { message, attachments });
     assert.equal(corrected.semanticIntent, 'ANSWER');
     assert.deepEqual(corrected.requiredCapabilities, ['conversation.respond', 'attachment.analyze']);
     assert.equal(dispatchForGoal(corrected, corrected.requiredCapabilities), 'chat');
 
-    const inline = enforceInlineCalculatorIntent(planned, {
+    const inline = enforceInlineAnswerIntent(planned, {
       message: 'Make a calculator in this answer with a slider for quantity.', attachments: [],
     });
     assert.deepEqual(inline.requiredCapabilities, ['conversation.respond']);
@@ -217,7 +217,7 @@ describe('semantic request dispatch', () => {
       'Build a calculator with a slider and chart from the notes, then deploy it.',
       'Build a calculator with a slider and chart from the notes and send the result.',
       'Build a calculator with a slider.',
-    ]) assert.equal(enforceInlineCalculatorIntent(planned, { message, attachments }), planned);
+    ]) assert.equal(enforceInlineAnswerIntent(planned, { message, attachments }), planned);
 
     const message = 'Make a calculator in this answer with a slider.';
     for (const other of [
@@ -225,7 +225,28 @@ describe('semantic request dispatch', () => {
       { ...planned, projectContext: { repo: 'owner/repository', branch: 'main', projectRoot: '/' } },
       { ...planned, requiredCapabilities: [...planned.requiredCapabilities, 'business.action'] },
       { ...planned, blockers: ['An input is missing.'] },
-    ]) assert.equal(enforceInlineCalculatorIntent(other, { message, attachments }), other);
+    ]) assert.equal(enforceInlineAnswerIntent(other, { message, attachments }), other);
+  });
+
+  it('delivers standalone code and sample tests in chat without converting project work', () => {
+    const planned = goal({ semanticIntent: 'MODIFY', requiredCapabilities: ['software.implement', 'validation.run'] });
+    for (const message of [
+      'Write a TypeScript function that groups a list of items by status, preserving first appearance. Include a test.',
+      'Show a Python snippet that converts a list of pairs to a dictionary.',
+      'Provide an example of a JavaScript function and explain its output.',
+    ]) {
+      const answer = enforceInlineAnswerIntent(planned, { message, attachments: [] });
+      assert.equal(answer.semanticIntent, 'ANSWER');
+      assert.deepEqual(answer.requiredCapabilities, ['conversation.respond']);
+      assert.equal(dispatchForGoal(answer, answer.requiredCapabilities), 'chat');
+    }
+    for (const message of [
+      'Write a TypeScript function in the repository and include a test.',
+      'Generate a function in a file in the project.',
+      'Write a grouping function and run tests.',
+      'Generate a complete downloadable app with a grouping function.',
+      'Write a function and deploy the changes.',
+    ]) assert.equal(enforceInlineAnswerIntent(planned, { message, attachments: [] }), planned);
   });
 
   it('rejects a connected-app action that claims it can produce a software Preview', () => {

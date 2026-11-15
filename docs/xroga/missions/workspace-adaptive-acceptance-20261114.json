@@ -48,6 +48,7 @@
       "Keep the registered presentation components available for mixed requests and preserve validated visuals after a provider output limit, including closed declarations and root children before a cut-off tail.",
       "Strip transport-only closing markers. Review incorrect claims about Next.js environment variables and Server Functions before publishing a completed answer.",
       "Sort numeric table values by their displayed magnitude and make wide comparison labels readable on phones.",
+      "Keep standalone code and sample tests in the answer when project execution was not requested. Withhold a chart that contradicts the answer's unresolved-data notice and normalize the observed alternate closing marker.",
       "Distinguish Stripe timestamp logging and explicit rejection of timestamp ordering from recommendations to order events by timestamp."
     ],
     "keep": [

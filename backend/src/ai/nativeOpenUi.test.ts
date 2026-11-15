@@ -23,10 +23,12 @@ test('the model gets instructions from the native registry and may answer in tex
 
 test('a stray closing presentation marker is removed before the program is validated or stored', () => {
   const program = 'root = Col([Text("The comparison is ready.")])';
-  const payload = 'Here are the results.' + NATIVE_UI_MARKER + program + '\n</Col>\n</XROGA_OPENUI_V1>>>';
-  assert.equal(completeNativeWorkspaceAnswer(payload, 'stop').responseSource.text, program);
-  const quoted = 'root = Col([Code("</XROGA_OPENUI_V1>>>", "text")])';
-  assert.equal(splitNativeOpenUiAnswer('Example syntax.' + NATIVE_UI_MARKER + quoted).program, quoted);
+  for (const close of ['</XROGA_OPENUI_V1>>>', '</<XROGA_OPENUI_V1>>>']) {
+    const payload = 'Here are the results.' + NATIVE_UI_MARKER + program + '\n</Col>\n' + close;
+    assert.equal(completeNativeWorkspaceAnswer(payload, 'stop').responseSource.text, program);
+    const quoted = 'root = Col([Code("' + close + '", "text")])';
+    assert.equal(splitNativeOpenUiAnswer('Example syntax.' + NATIVE_UI_MARKER + quoted).program, quoted);
+  }
 });
 
 test('incorrect Next.js deployment guidance cannot be published as a complete answer', () => {
@@ -57,6 +59,19 @@ test('Next.js context survives removal of an invalid native claim', () => {
   assert.match(result.responseSource.text, /Table\(/);
   assert.doesNotMatch(result.responseSource.text, /exposed unless/);
   assert.match(result.response, /environment variables are server-only by default/);
+});
+
+test('a chart cannot silently choose one of two inputs the answer leaves unresolved', () => {
+  const prose = 'The table reports $1,000 and the chart reports $1,200. I have not presented a chart yet because the source values conflict.';
+  const chart = 'Chart("bar", [{month:"January", revenue:1000}], "month", ["revenue"])';
+  const program = 'root = Col([Text("Table: $1,000. Chart: $1,200."), ' + chart + '])';
+  const answer = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + program, 'stop');
+  assert.deepEqual(answer.completion, { status: 'partial', reason: 'factual_review' });
+  assert.match(answer.response, /chart is withheld/);
+  assert.match(answer.responseSource.text, /Table: \$1,000/);
+  assert.doesNotMatch(answer.responseSource.text, /Chart\(/);
+  const accepted = completeNativeWorkspaceAnswer('The confirmed January revenue is $1,000.' + NATIVE_UI_MARKER + program, 'stop');
+  assert.equal(accepted.completion.status, 'complete');
 });
 
 test('native layout, data and reactive arithmetic are accepted without a V2 translation', () => {

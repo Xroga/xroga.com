@@ -1,7 +1,7 @@
 import { requiresAuthorizationReview } from './answerAuthorizationReview.js';
 
 type FactualRule = 'stripe_event_order' | 'stripe_retry_window' | 'tenant_key_immutability' | 'earth_axial_tilt_reference'
-  | 'nextjs_env_visibility' | 'nextjs_server_invocation';
+  | 'nextjs_env_visibility' | 'nextjs_server_invocation' | 'unconfirmed_conflicting_input';
 export const nativeFactualGuidance: Record<FactualRule, string> = {
   stripe_event_order: 'Stripe event timestamps can tie and do not establish delivery order. Verify the signature, deduplicate by event ID, and reconcile the current subscription state with Stripe before applying a durable update.',
   stripe_retry_window: 'Stripe automatic webhook retries have a finite delivery window. Reconcile missed events separately and make processing idempotent.',
@@ -9,7 +9,13 @@ export const nativeFactualGuidance: Record<FactualRule, string> = {
   earth_axial_tilt_reference: 'Earth’s rotation axis is tilted about 23.4° from the perpendicular to its orbital plane. That tilt changes the angle of sunlight and the length of the day in each hemisphere as Earth orbits the Sun, causing the seasons.',
   nextjs_env_visibility: 'Next.js environment variables are server-only by default. NEXT_PUBLIC_ makes a value eligible for inlining into the browser bundle. Never send secrets to the client through props, public environment variables or explicit bundler configuration.',
   nextjs_server_invocation: 'Next.js Server Functions run on the server and can be called from server code. Client Components can invoke exposed Server Functions, including through form actions. Authenticate, authorize and validate every exposed invocation.',
+  unconfirmed_conflicting_input: 'The chart is withheld until the conflicting inputs are reconciled.',
 };
+
+export function claimsChartIsDeferred(prose: string): boolean {
+  return /\b(?:conflict\w*|discrepanc\w*|inconsisten\w*)\b/i.test(prose) &&
+    /\b(?:not (?:presented|shown|provided) (?:a|the|any) (?:final )?(?:chart|visualization) yet|no (?:final )?(?:chart|visualization) (?:is |has been )?(?:shown|presented|provided) until)\b/i.test(prose);
+}
 type TechnicalCorrection = { reason: 'authorization_review' | 'factual_review'; guidance: string; rule?: FactualRule };
 const isNextJs = /\b(?:Next(?:\.js|js)|App Router|NEXT_PUBLIC_)\b/i;
 

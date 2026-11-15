@@ -102,9 +102,9 @@ export interface SemanticRequestPlan {
     string;
 }
 
-/** A calculator composed in the answer uses local presentation state. A
- * software deliverable, project control or external action keeps its own route. */
-export function enforceInlineCalculatorIntent(
+/** Examples and local calculator controls can be delivered in chat. Explicit
+ * project work, execution and external actions keep their own route. */
+export function enforceInlineAnswerIntent(
   goal: GoalContract,
   { message, attachments }: Pick<GoalInterpretationInput, 'message' | 'attachments'>,
 ): GoalContract {
@@ -120,9 +120,11 @@ export function enforceInlineCalculatorIntent(
   const inAnswer = /\b(?:in|within)\s+(?:this |the |your )?(?:answer|chat|response)\b/i.test(message);
   const adjustable = /\b(?:sliders?|adjustable inputs?)\b/i.test(message);
   const structuredData = /\b(?:charts?|tables?|tabulate)\b/i.test(message);
-  const softwareOrAction = /\b(?:apps?|websites?|webpages?|repos?|repositor(?:y|ies)|pull requests?|code|react|next\.js|html|css|javascript|typescript|preview|deploy\w*|publish\w*|install\w*|integrate\w*|save|send|email|upload|delete|commit)\b/i.test(message);
-  if (softwareOrAction || !/\bcalculator\b/i.test(message) || !adjustable ||
-      (!inAnswer && !(attachments.length && structuredData))) return goal;
+  const projectOrAction = /\b(?:apps?|websites?|webpages?|repos?|repositor(?:y|ies)|projects?|codebases?|files?|pull requests?|preview|deploy\w*|publish\w*|install\w*|integrate\w*|save|send|email|upload|delete|commit|run\s+(?:the\s+)?tests?|execute)\b/i;
+  const snippet = /\b(?:write|show|provide|give|draft|generate)\b[^.!?\n]{0,55}\b(?:functions?|snippets?|examples?|queries|regex|regular expressions?)\b/i;
+  const calculator = /\bcalculator\b/i.test(message) && adjustable && (inAnswer || (attachments.length > 0 && structuredData)) &&
+    !/\b(?:code|react|next\.js|html|css|javascript|typescript|apps?|websites?|webpages?|repos?|repositor(?:y|ies)|pull requests?|preview|deploy\w*|publish\w*|install\w*|integrate\w*|save|send|email|upload|delete|commit)\b/i.test(message);
+  if (!calculator && (projectOrAction.test(message) || !snippet.test(message))) return goal;
 
   return {
     ...goal,
@@ -1333,7 +1335,7 @@ export async function planSemanticRequest(
     );
 
   const system =
-    `Understand the user's current goal from the full conversation and context. Return one strict JSON semantic decision, not the full internal contract. Do not use product modes, keyword categories, framework guesses, or a default website/build route. Choose the smallest READY capability set that can genuinely produce the requested outcome. Read-only analysis must remain read-only. Use research.public-web for public websites, flight schedules, fares, prices, travel planning, and other information that does not live inside a user's connected app. Do not select business.read merely because the user says search or research. Select business.action only when the user explicitly asks Xroga to change external business-app state; use business.read for retrieval, search, inspection, listing, or summarization inside the user's connected applications without mutation. A request to create or change software requires software.implement even when the software models concepts that also exist in connected apps, such as records, schedules, messages, payments, or files. Xroga Connect acts on an existing external account; it does not create a requested software product, project Preview, source publication, or deployment. Never upgrade a read request into an action, and never treat a request for an external action as answer-only. If the user requests several independent external actions, preserve every requested outcome; do not imply a single tool call completed them all. A project being present is context, not evidence of modification intent. The server owns project identity and authorities; do not return or invent either. Use blockers only for essential missing user input, AUTH_REQUIRED, PROVIDER_UNAVAILABLE, TEMPORARILY_UNAVAILABLE, or UNSUPPORTED capability. Never call information current unless freshnessRequirement is PREFERRED or CURRENT_REQUIRED.\n\n${currentProductTruth(
+    `Understand the user's current goal from the full conversation and context. Return one strict JSON semantic decision, not the full internal contract. Do not use product modes, keyword categories, framework guesses, or a default website/build route. Choose the smallest READY capability set that can genuinely produce the requested outcome. Read-only analysis must remain read-only. Use research.public-web for public websites, flight schedules, fares, prices, travel planning, and other information that does not live inside a user's connected app. Do not select business.read merely because the user says search or research. Select business.action only when the user explicitly asks Xroga to change external business-app state; use business.read for retrieval, search, inspection, listing, or summarization inside the user's connected applications without mutation. A standalone code snippet, function, example or sample test shown in the answer uses conversation.respond. Select software.implement when the user asks to create or modify a project or files, or to produce a runnable software deliverable. A request to create or change software requires software.implement even when the software models concepts that also exist in connected apps, such as records, schedules, messages, payments, or files. Xroga Connect acts on an existing external account; it does not create a requested software product, project Preview, source publication, or deployment. Never upgrade a read request into an action, and never treat a request for an external action as answer-only. If the user requests several independent external actions, preserve every requested outcome; do not imply a single tool call completed them all. A project being present is context, not evidence of modification intent. The server owns project identity and authorities; do not return or invent either. Use blockers only for essential missing user input, AUTH_REQUIRED, PROVIDER_UNAVAILABLE, TEMPORARILY_UNAVAILABLE, or UNSUPPORTED capability. Never call information current unless freshnessRequirement is PREFERRED or CURRENT_REQUIRED.\n\n${currentProductTruth(
       authorities,
     )}\n\nRequired JSON fields: semanticIntent=ANSWER|INVESTIGATE|PROPOSE|MODIFY|EXTERNAL_ACTION|MIXED; requiredCapabilities=[registered ids]; freshnessRequirement=NONE|PREFERRED|CURRENT_REQUIRED. Optional fields: goal; desiredOutcome; constraints[]; acceptance[]; sourcePolicy={mode:any|official_only,scope:public_web|x,officialDomains:[]}; previewRequirement=NONE|PREFERRED|REQUIRED; publicationRequirement=NONE|REQUESTED; deploymentRequirement=NONE|REQUESTED; risks[]; confidence=0..1; blockers[]; contextComplexity=low|medium|high|unknown.\n\nRegistered capabilities and request-time readiness:\n${JSON.stringify(
       availableSummary,
@@ -1570,7 +1572,7 @@ export async function planSemanticRequest(
         },
       );
 
-    const interpretedGoal = enforceInlineCalculatorIntent(planned.value, interpretationInput);
+    const interpretedGoal = enforceInlineAnswerIntent(planned.value, interpretationInput);
     const goalContract =
       goalContractSchema.parse(
         {

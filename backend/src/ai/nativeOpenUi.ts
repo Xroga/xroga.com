@@ -1,5 +1,5 @@
 import { createParser, evaluate, parseExpression, split, tokenize, walkAST, type ASTNode, type LibraryJSONSchema } from '@openuidev/lang-core';
-import { contradictsMonthlyChart, monthlyChartDataFallback, nativeTechnicalReviewContext, reviewNativeAnswer, suppliedMonthlyComparison } from './nativeOpenUiAccuracy.js';
+import { claimsChartIsDeferred, contradictsMonthlyChart, monthlyChartDataFallback, nativeTechnicalReviewContext, reviewNativeAnswer, suppliedMonthlyComparison } from './nativeOpenUiAccuracy.js';
 import { DIAGRAM_NODE_TONES, hasRenderableDiagramTopology } from './nativeDiagramTopology.js';
 import catalog from './nativeOpenUiCatalog.json' with { type: 'json' };
 
@@ -18,7 +18,7 @@ const safeKey = (key: string) => !['__proto__', 'prototype', 'constructor'].incl
 // envelope to an otherwise valid native answer. Keep transport syntax out of
 // the persisted program. A quoted example or an embedded tag is not a suffix.
 const deepSeekToolClosingSuffix = /[ \t]*<\/｜DSML｜ parameter>[ \t]*\n[ \t]*<\/｜DSML｜ invoke>[ \t]*\n[ \t]*<\/｜DSML｜ calls>[ \t]*$/u;
-const strayPresentationClosingLines = /(?:\n[ \t]*<\/(?:Col>|XROGA_OPENUI_V1>>>)[ \t]*)+$/u;
+const strayPresentationClosingLines = /(?:\n[ \t]*<\/(?:Col>|<?XROGA_OPENUI_V1>>>)[ \t]*)+$/u;
 
 export function splitNativeOpenUiAnswer(raw: string, streaming = false) {
   return scanNativeOpenUiAnswer(raw, streaming, true);
@@ -406,7 +406,12 @@ export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<s
     if (!result.root || result.root.typeName !== 'Col' || result.meta.incomplete || result.meta.unresolved.length || result.meta.errors.length) return fail('schema', result.meta.errors);
     if (!Array.isArray(result.root.props.children) || !result.root.props.children.length) return fail('schema');
     if (workspaceContract) {
+      const deferChart = claimsChartIsDeferred(prose);
       for (const { typeName, props } of nativeElements(result.root)) {
+        if (deferChart && typeName === 'Chart') {
+          factualRule = 'unconfirmed_conflicting_input';
+          return fail('factual_review');
+        }
         if (typeName === 'Diagram' && !hasRenderableDiagramTopology(props?.nodes, props?.links)) {
           diagramTopology = 'invalid';
           return fail('schema');
