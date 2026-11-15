@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "9863eb57d2ba13214b088b821b2f614fa7b0cd35",
+  "source_sha": "c5fff0afb1122102447c3b28f19c55ec3ba9147d",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -16726,7 +16726,7 @@
     },
     {
       "path": ".github/workflows/command3-auth-browser.yml",
-      "sha256": "474a071bb8b36dc348aac9fada01af6b85c20b7309b94f77084ec3063303ed02"
+      "sha256": "64e8dd3b2a5ed4d1329f7d3d3ea4de8f33b193167fb8962d59d8c923397ce792"
     },
     {
       "path": ".github/workflows/command4-authority.yml",
@@ -22214,7 +22214,7 @@
     },
     {
       "path": "frontend/src/components/native-openui/Diagram.tsx",
-      "sha256": "0a0ab511a3b780a0d05e11abecad9f2f8030dd87ff057c56715100e98ef7968a"
+      "sha256": "428b51922109c22de24d7a370c4e0957904823026997d9bb0d4daf093c779f3e"
     },
     {
       "path": "frontend/src/components/native-openui/Editorial.tsx",

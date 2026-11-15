@@ -291,3 +291,30 @@ or falls every month against every consecutive observation. It preserves overall
 growth claims and recovers the accurate chart on a conflict. The staging harness
 now requires an answer-hash-bound semantic review after every automated pass and
 before another prompt. A failed automated or semantic check stops dispatch.
+
+## Share diagram lifecycle recovery
+
+Authenticated CI on c5fff0af captured a Share diagram whose nodes had valid
+geometry but retained `visibility: hidden`. Its relationship text remained
+readable. The preceding application-identical run had passed, so this was treated
+as an intermittent rendering defect rather than dismissed as CI noise.
+
+The read-only diagram supplied newly created controlled node objects on parent
+renders, without retaining React Flow's measured node state. The installed
+upstream `adoptUserNodes` implementation clears dimensions for replacement user
+nodes. A focused Chrome test reproduced the hidden nodes after a parent update
+when unchanged elements did not receive another measurement notification.
+
+Use React Flow's [uncontrolled graph state](https://reactflow.dev/learn/advanced-use/uncontrolled-flow)
+with default nodes and edges. Reinitialize on actual graph or responsive-layout
+changes. No CSS override forces unmeasured nodes visible. The focused regression
+also checks updated labels and nonempty edges across mobile and desktop widths.
+It is included in authenticated CI. Failed reproduction job:
+`acf2ce94-c3c6-4244-ae7f-552e4eac0dd6`. Passing correction job:
+`ceda75ea-d279-4ac0-8d18-07620e1a7d33`.
+
+The earlier 9863eb57 CI failure was a stale published-text assertion after the
+readable-copy change. The 1624e2a5 failure was its stale source-bound proof hash.
+Both were corrected without weakening tenant, single-dispatch, ledger settlement
+or historical-evidence checks. No paid staging window started from those sources
+or c5fff0af. Production remains unchanged pending exact-source acceptance.

@@ -87558,7 +87558,7 @@
       "id": "surface:92ce2788e7a639e6a608",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/Diagram.tsx",
-      "sha256": "0a0ab511a3b780a0d05e11abecad9f2f8030dd87ff057c56715100e98ef7968a",
+      "sha256": "428b51922109c22de24d7a370c4e0957904823026997d9bb0d4daf093c779f3e",
       "symbols": [
         "AnswerDiagramNode",
         "AnswerNode",
@@ -87573,6 +87573,7 @@
         "edges",
         "element",
         "from",
+        "graphKey",
         "groups",
         "lateral",
         "layout",
@@ -142205,7 +142206,7 @@
     {
       "id": "workflow:a7962a7c78b10b796636",
       "sourcePath": ".github/workflows/command3-auth-browser.yml",
-      "sha256": "474a071bb8b36dc348aac9fada01af6b85c20b7309b94f77084ec3063303ed02",
+      "sha256": "64e8dd3b2a5ed4d1329f7d3d3ea4de8f33b193167fb8962d59d8c923397ce792",
       "sourceEntrypoints": [
         "frontend/e2e/phase4-admin-share.security.mjs",
         "frontend/e2e/phase4-api-clients.security.mjs",

@@ -98,6 +98,10 @@ export const Diagram = defineComponent({
     const diagram = useRef<HTMLElement>(null);
     const [compact, setCompact] = useState<boolean>();
     const result = layout(props, compact === true);
+    // This read-only graph lets React Flow own its measured node state. Replacing
+    // controlled nodes on an unrelated parent render discards those measurements.
+    // Reinitialize only when the actual graph or responsive layout changes.
+    const graphKey = JSON.stringify([compact, props.nodes, props.links]);
     const renderable = result !== null;
     useLayoutEffect(() => {
       const element = diagram.current;
@@ -119,14 +123,14 @@ export const Diagram = defineComponent({
           <strong id={title}>{props.title}</strong>
           <p>{props.description}</p>
         </figcaption>
-        {compact !== undefined && <ReactFlowProvider key={compact ? 'compact' : 'wide'}>
+        {compact !== undefined && <ReactFlowProvider key={graphKey}>
         <div className="native-diagram-canvas"
           style={{ height: compact ? Math.min(900, Math.max(260, result.rowCount * 145 + 24)) : Math.min(540, Math.max(260, result.rowCount * 96 + 44)) }}>
           <ReactFlow
             id={diagramId}
             nodeTypes={nodeTypes}
-            nodes={result.nodes}
-            edges={result.edges}
+            defaultNodes={result.nodes}
+            defaultEdges={result.edges}
             fitView
             fitViewOptions={{ padding: compact ? 0.08 : 0.14, maxZoom: 1.1 }}
             minZoom={0.2}
