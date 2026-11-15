@@ -3,9 +3,9 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import {
-  ArrowRight, ArrowUpRight, Check, CheckCircle2, ChevronDown, Command,
-  KeyRound, Layers3, Link2, LockKeyhole, Network, Play, PlugZap,
-  Search, Server, ShieldCheck, SlidersHorizontal, Sparkles, Workflow, X, Zap,
+  ArrowRight, ArrowUpRight, Check, CheckCircle2, ChevronDown,
+  KeyRound, LockKeyhole, Network, Search, Server, ShieldCheck,
+  SlidersHorizontal, Sparkles, Workflow, X, Zap,
 } from 'lucide-react';
 import { PluginBrandLogo } from '@/components/integrations/PluginBrandLogo';
 import type {
@@ -35,12 +35,13 @@ const modeText: Record<PublicIntegrationMode, string> = {
 };
 
 function useTypingPlaceholder(active: boolean) {
-  const [text, setText] = useState(SEARCH_SUGGESTIONS[0]);
+  const [text, setText] = useState('');
   useEffect(() => {
     if (!active || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       setText('Search apps, technologies, or workflows...');
       return;
     }
+    setText('');
     let phrase = 0;
     let length = 0;
     let backwards = false;
