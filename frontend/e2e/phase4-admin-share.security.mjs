@@ -19,6 +19,8 @@ const pureSources={
   './nativeOpenUi.js':'../../backend/src/ai/nativeOpenUi.ts',
   './nativeDiagramTopology.js':'../../backend/src/ai/nativeDiagramTopology.ts',
   './nativeOpenUiAccuracy.js':'../../backend/src/ai/nativeOpenUiAccuracy.ts',
+  './nativeOpenUiValues.js':'../../backend/src/ai/nativeOpenUiValues.ts',
+  './nativeOpenUiFunctions.generated.js':'../../backend/src/ai/nativeOpenUiFunctions.generated.ts',
   './answerAuthorizationReview.js':'../../backend/src/ai/answerAuthorizationReview.ts',
   '@/components/response-experience-v2/shareSnapshot':'components/response-experience-v2/shareSnapshot.ts',
   '@/components/response-experience-v2/access':'components/response-experience-v2/access.ts',
@@ -33,7 +35,7 @@ const pureSources={
 const pureCache=new Map();
 const pureContext=vm.createContext({URL,TextDecoder,console});
 function pureModule(id){
-  if(id==='zod')return require(id);
+  if(id==='zod'||id==='zod/v4')return require(id);
   if(id==='@openuidev/lang-core')return openUiLang;
   if(id==='./nativeOpenUiCatalog.json')return {default:JSON.parse(readFileSync(new URL('../../backend/src/ai/nativeOpenUiCatalog.json',import.meta.url),'utf8'))};
   const path=pureSources[id];assert.ok(path,'Unexpected pure fixture dependency '+id);
