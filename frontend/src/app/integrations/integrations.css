@@ -337,3 +337,13 @@
   .xi-channel{padding:25px 21px}
 }
 @media(prefers-reduced-motion:reduce){.xi-hero-app{transition:none}}
+
+
+
+/* The shared site header already occupies document flow. Its generic
+   marketing-page 96px top offset is not needed on this route; keep the
+   canonical header, remove only duplicated spacing for /integrations. */
+.xv-public-marketing-content > main.xi-main:first-child:not(.xv-homepage):not([data-crypto-page]){
+  padding-top:0!important;
+}
+.xi-main{margin:0;padding:0}
