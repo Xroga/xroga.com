@@ -20,6 +20,11 @@ export type PublicIntegrationCard = {
   authHint: string;
   capabilityHint: string;
   searchTerms: string;
+  /** Real logo URL provided by the Xroga Connect catalog when available. */
+  logoUrl?: string;
+  toolsCount?: number;
+  triggersCount?: number;
+  fromLiveCatalog?: boolean;
 };
 
 export type IntegrationCategory = {
