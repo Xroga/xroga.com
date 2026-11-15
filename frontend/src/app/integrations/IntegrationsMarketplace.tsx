@@ -203,6 +203,7 @@ export function IntegrationsMarketplace({
             <Link className="xi-secondary-button" href="/dashboard/integrations?view=custom">Bring your own MCP <ArrowRight size={16}/></Link>
           </div>
           <div className="xi-hero-proof"><span><CheckCircle2 size={15}/> Inspect access</span><span><CheckCircle2 size={15}/> Own your connections</span><span><CheckCircle2 size={15}/> Approve sensitive actions</span></div>
+          <p className="xi-small-note">Available tools, triggers and account access are confirmed in the workspace, not by this public directory.</p>
         </div>
       </section>
 
