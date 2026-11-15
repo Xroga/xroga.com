@@ -330,7 +330,7 @@ export function staticChartTable(props: unknown) {
   // OpenUI uses null for omitted positional arguments.
   const parsed = chartProps.safeParse(Object.fromEntries(Object.entries(props).filter(([, value]) => value !== null)));
   const spec = parsed.success && toSpec(parsed.data);
-  return spec ? chartTable(spec) : undefined;
+  return spec ? { ...chartTable(spec), title: spec.presentation?.title, note: spec.presentation?.note } : undefined;
 }
 
 export const Chart = defineComponent({
@@ -343,11 +343,12 @@ export const Chart = defineComponent({
     if (!spec) return <p>Chart data is incomplete or unsuitable for this chart.</p>;
     const pie = spec.type === "pie" || spec.type === "donut";
     const labels = spec.presentation;
+    const captionUnit = labels?.yLabel?.trim().toLowerCase() === labels?.title?.trim().toLowerCase() ? undefined : labels?.yLabel;
     const table = chartTable(spec);
     return (
       <figure className="iui-chart">
         {(labels?.title || labels?.yLabel) && <figcaption className="native-chart-caption">
-          {labels.title && <strong>{labels.title}</strong>}{labels.yLabel && <span>{labels.yLabel}</span>}
+          {labels.title && <strong>{labels.title}</strong>}{captionUnit && <span>{captionUnit}</span>}
         </figcaption>}
         <div className="native-chart-frame" ref={ref}>
           {width > 0 ? pie ? <Pie spec={spec} width={width} /> : spec.type === "scatter" ? <Scatter spec={spec} width={width} /> : <Cartesian spec={spec} width={width} /> : <div style={{ height: spec.height }} />}

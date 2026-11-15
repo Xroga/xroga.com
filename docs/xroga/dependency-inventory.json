@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "3dcefddcfef64d69e8eceeda9439dc7a3b544510",
+  "source_sha": "12d3af612288547aeb611002be7c85864e5cdcdb",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -22242,7 +22242,7 @@
     },
     {
       "path": "frontend/src/components/native-openui/upstream/components/chart.tsx",
-      "sha256": "1164e9d507ce2031e1beb3fb2d9f470e68dd03f1a810c1b5de0db3344c223d45"
+      "sha256": "25ceac828c94f0071456d79f2cf9b258f55c390804422a04f64c8835f417c1c3"
     },
     {
       "path": "frontend/src/components/native-openui/upstream/components/controls.tsx",
@@ -22262,7 +22262,7 @@
     },
     {
       "path": "frontend/src/components/native-openui/upstream/components/markdown.tsx",
-      "sha256": "54eeb3aac1ffdb2f2677ffe9da9352a23f28c3001ce81aca42614f70fc785ea1"
+      "sha256": "3c956994bd526ad2490f6a4ca58de60cc3e723b9743fa3373f0b74c4c4cdb311"
     },
     {
       "path": "frontend/src/components/native-openui/upstream/components/style.ts",
@@ -38869,7 +38869,7 @@
     },
     {
       "path": "frontend/src/components/native-openui/upstream/components/markdown.tsx",
-      "line": 265,
+      "line": 267,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

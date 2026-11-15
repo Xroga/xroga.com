@@ -213,6 +213,7 @@ try {
       await signedTable.getByRole('cell', { name: '-800', exact: true }).waitFor();
       for (const value of ['0', '500']) assert.equal(await signedTable.getByRole('cell', { name: value, exact: true }).count(), 1);
       assert.equal(await page.getByRole('table').count(), 1);
+      assert.equal(await page.getByText('Cash flow in dollars', { exact: true }).count(), 1);
       if (viewport.width === 390) {
         await page.getByRole('region', { name: 'Answer', exact: true }).screenshot({ path: resolve(output, 'signed-chart-390-' + theme + '.png') });
       }

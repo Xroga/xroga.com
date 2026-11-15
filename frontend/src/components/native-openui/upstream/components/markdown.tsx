@@ -168,6 +168,8 @@ export function nativeMarkdownMatches(root: unknown): MarkdownMatches {
       const table = staticChartTable(props);
       const key = table && tableContentKey(table.headings, table.rows);
       if (key) tables.add(key);
+      if (table?.title) paragraphs.add(citationTextKey(table.title));
+      if (table?.note) paragraphs.add(citationTextKey(table.note));
     }
     if ((typeName === "Col" || typeName === "Section") && Array.isArray(props.children)) {
       const items = props.children.filter(child => child?.typeName === "Checkbox");
