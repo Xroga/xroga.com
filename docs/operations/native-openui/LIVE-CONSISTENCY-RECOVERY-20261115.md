@@ -173,3 +173,12 @@ The remaining case found hidden diagram nodes on the private Share page. Existin
 artifacts did not retain that secondary page before it closed. The test now saves
 its synthetic screenshot and bounded geometry before cleanup while retaining the
 original assertion. The cause is not yet confirmed and the check is not weakened.
+
+The d59 authenticated browser workflow passed, including the previously failing
+Share diagram. Manual review of its Workspace light-theme screenshot found an
+invalid test setup: html was changed to white while body retained theme-black.
+The equivalent Share test already updated both and was readable. The Workspace
+fixture now follows that same theme contract and asserts color contrast on the
+actual answer turns before saving screenshots. No production theme bug is claimed
+from the invalid fixture. The pending d59 hosted launcher was stopped before KMS,
+build submission or model calls. Final source CI must cover the corrected test.

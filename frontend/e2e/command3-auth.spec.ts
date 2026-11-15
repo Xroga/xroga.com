@@ -2,6 +2,7 @@ import { test, expect } from '@playwright/test';
 import { createClient } from '@supabase/supabase-js';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { randomUUID } from 'node:crypto';
+import AxeBuilder from '@axe-core/playwright';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
@@ -390,10 +391,18 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   for (const width of [320, 390, 768, 1280, 1440]) {
     await page.setViewportSize({ width, height: 900 });
     for (const theme of ['black', 'white'] as const) {
-      await page.locator('html').evaluate((root, value) => root.setAttribute('data-theme', value), theme);
+      // Match the real theme bootstrap contract. Changing only html leaves the
+      // Workspace shell on its old body theme and produces invalid evidence.
+      await page.evaluate(value => {
+        document.documentElement.dataset.theme = value;
+        document.body.classList.remove('theme-black', 'theme-gray', 'theme-white', 'theme-beige');
+        document.body.classList.add('theme-' + value);
+      }, theme);
       await expect(answer).toBeVisible();
       expect(await answer.evaluate(el => el.scrollWidth - el.clientWidth)).toBeLessThanOrEqual(1);
       expect(await answer.evaluate(el => getComputedStyle(el).colorScheme)).toBe(theme === 'black' ? 'dark' : 'light');
+      const contrast = await new AxeBuilder({ page }).include('[data-turn-id]').withRules(['color-contrast']).analyze();
+      expect(contrast.violations.map(({ id, nodes }) => ({ id, targets: nodes.map(node => node.target) }))).toEqual([]);
       await answer.screenshot({ path: `test-results/native-workspace/composer-${width}-${theme}.png` });
       if (width === 390 || width === 1440) {
         await page.screenshot({ path: `test-results/native-workspace/workspace-${width}-${theme}.png` });
