@@ -7,7 +7,7 @@
   ],
   "state": "CODE_COMPLETE",
   "risk": "medium",
-  "scope": "Expand the preview-only original Xroga Connect public /integrations redesign: use full black/charcoal (blue accents only), no duplicate header (retain one shared PublicMarketingChrome); put the complete searchable 711-entry integration directory with filters directly below the hero; refresh headline to connect favorite apps with Xroga AI and conditional around-the-clock automation language. Add branded third-party coding assistant cards (Codex, Claude Code, Cursor, GitHub Copilot, Gemini CLI, Cline), each with a working GitHub handoff guide into existing /dashboard/integrations/github. No false native inbound MCP or third-party account-connection claims.",
+  "scope": "Preview-only Xroga Connect /integrations marketing revision: fit hero content into one viewport beneath shared PublicMarketingChrome; remove hero badge and excess trust-strip copy; show source-backed real brand icons in the hero and directory; prefer the existing tenant-filtered Composio/Xroga Connect provider catalog and runtime logo/count metadata (workspace reported 1,743), while explicitly labelling the separate 711-entry static technology list as fallback public examples. Place search/category filters immediately under hero, keep category sidebar sticky only until the end of the app grid, remove numbered marketing overlines, present custom MCP as an open editorial section, and end with an accurate start-in-minutes/free CTA. Include workspace and conditional browser extension entry points with no unauthorized action claims. Remain in isolated design branch.",
   "changedFiles": [
     "frontend/src/app/integrations/page.tsx",
     "frontend/src/app/integrations/IntegrationsMarketplace.tsx",
@@ -17,6 +17,8 @@
     "frontend/src/lib/publicIntegrationsDirectory.test.ts",
     "frontend/src/lib/externalAgentWorkflows.ts",
     "frontend/src/lib/externalAgentWorkflows.test.ts",
+    "frontend/src/lib/liveIntegrationDiscovery.ts",
+    "frontend/src/lib/liveIntegrationDiscovery.test.ts",
     "docs/xroga/missions/public-integrations-hybrid-20261115.json"
   ],
   "decisions": {
@@ -32,7 +34,13 @@
       "Add selected external coding-agent brand cards and real source-owned GitHub handoff instructions; Xroga MCP support is outbound client-only, not an inbound Xroga MCP server for third-party assistants.",
       "Reorder page to put all-apps search, category sidebar, type filters and results directly after hero; keep explanatory sections below the directory.",
       "Apply near-black page, section and card backgrounds, with restrained existing blue accent text/buttons; remove large blue-tinted panels.",
-      "Keep only root PublicMarketingChrome navigation (no second page-level header); do not touch global header implementation."
+      "Keep only root PublicMarketingChrome navigation (no second page-level header); do not touch global header implementation.",
+      "Fetch only read-only Xroga Connect catalog metadata through the existing client; prefer provider-reported totalItems and logos over 711-entry generated legacy marketing list when authorized; do not expose tenant-specific connection state or tools without runtime authorization.",
+      "Clear distinction: 1,743 currently reported in authenticated workspace versus 711 static public technology examples; catalog can change, and visitors without API access see the fallback with an accurate label.",
+      "Fit hero headline, real brand logo rail and buttons within a single normal desktop viewport, preserving the shared site header.",
+      "Set the /integrations outer overflow to clip so the category sidebar can stick within the grid until the last app card; disable sticky layout on smaller devices.",
+      "Use borderless custom MCP explanation rather than a floating dark card; show single-click navigation to Xroga workspace and browser automations area without asserting browser extension production availability.",
+      "End with Start in minutes / Try Xroga for free, noting that provider setup and approval can take longer."
     ],
     "replace": [
       "Former local header, static 24 small text cards, and minimal /integrations SEO presentation."
@@ -64,7 +72,7 @@
     },
     "egress": {
       "changed": true,
-      "description": "Public app logos reuse PluginBrandLogo's existing approved mapping and Simple Icons fallback, now rendered for displayed cards; no new endpoints or auth-carrying requests."
+      "description": "The public client may attempt the existing read-only tenant-filtered Xroga Connect catalog metadata route after checking provider status. No new endpoint and no auth scopes, account linking, credential access, execution or external action. Guests and unavailable sessions fall back to static examples."
     },
     "cost": {
       "changed": false,
@@ -111,6 +119,18 @@
       "scope": "At desktop and mobile, verify one shared header, updated conditional hero claim, black theme, search/sidebar immediately below hero, agent selection and authentic deep links, reduced motion, focus controls.",
       "negative": true,
       "reference": "frontend/src/app/integrations/IntegrationsMarketplace.tsx"
+    },
+    {
+      "command": "npx tsx --tsconfig frontend/tsconfig.json --test frontend/src/lib/liveIntegrationDiscovery.test.ts",
+      "scope": "Runtime provider logo, live action/trigger counts, category mapping, no claimed connected state.",
+      "negative": true,
+      "reference": "frontend/src/lib/liveIntegrationDiscovery.test.ts"
+    },
+    {
+      "command": "Manual viewport, sticky sidebar and icon inspection",
+      "scope": "Verify hero fits at common 1366x768 and 1440x900 with canonical header/banner, real logos including error fallback; scroll sidebar sticks until last results then releases; mobile sidebar is static; workspace and browser extension copy meets verified availability.",
+      "negative": true,
+      "reference": "frontend/src/app/integrations/integrations.css"
     }
   ],
   "architecture": {
@@ -129,7 +149,10 @@
     "Repository-wide CI contains historical mission-policy and inventory checks unrelated to this scoped UI; must not bypass.",
     "Full interactive search/keyboard/breakpoint checks require actual browser preview.",
     "External agents are not directly integrated into Xroga as connected providers. Their visible 'GitHub handoff' workflow reuses the separately authorized repo, with each provider's independent access.",
-    "24/7 automation is a potential supported workflow category, not a claim that every integration runs continuously; scheduler support and provider availability require validation per task."
+    "24/7 automation is a potential supported workflow category, not a claim that every integration runs continuously; scheduler support and provider availability require validation per task.",
+    "The workspace currently reports 1,743 available, but exact provider inventory and count are runtime metadata. Anonymous visitors may not be allowed to fetch the tenant-filtered API; fallback intentionally displays 711 static examples while the workspace link exposes the full authorized plugin list.",
+    "The reused PluginBrandLogo combines Xroga's known icon mappings, provider-supplied logo URLs, Simple Icons fallback and honest initials when no supported logo is available; not every listed technology has a guaranteed first-party image.",
+    "The browser extension is reported by owner but not verifiably connected to /dashboard/automations in this branch. One-click calls to action only navigate to workspace/automations and do not claim automatic browser execution."
   ],
   "placeholderClaimsRemaining": [],
   "evidenceRefs": [
@@ -140,16 +163,18 @@
     "frontend/src/lib/publicIntegrationsDirectory.test.ts",
     "frontend/src/lib/integrationDiscoveryFilters.ts",
     "frontend/src/lib/externalAgentWorkflows.ts",
-    "frontend/src/lib/externalAgentWorkflows.test.ts"
+    "frontend/src/lib/externalAgentWorkflows.test.ts",
+    "frontend/src/lib/liveIntegrationDiscovery.ts",
+    "frontend/src/lib/liveIntegrationDiscovery.test.ts"
   ],
   "claimsFullProductCompletion": false,
   "claimsAllBatchCommandsComplete": false,
   "release": {
     "state": "BLOCKED",
     "blockers": [
-      "Exact latest frontend build and non-production Vercel READY deployment are required for visual review.",
-      "Existing repository-wide failing policy/inventory checks are not passed or bypassed.",
-      "No merge or production release without separate owner approval."
+      "Exact latest-commit GitHub frontend build and Vercel preview READY required.",
+      "Manual desktop/mobile hero height, sticky sidebar, search and real-logo checks required before merge.",
+      "Production release needs explicit separate authorization; repository-wide failing mission/inventory checks not bypassed."
     ],
     "authenticatedE2e": "NOT_APPLICABLE",
     "stagedSecurity": "NOT_APPLICABLE",
