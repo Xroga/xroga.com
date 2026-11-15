@@ -9,8 +9,8 @@ import { IntegrationsMarketplace } from './IntegrationsMarketplace';
 import './integrations.css';
 
 export const metadata: Metadata = buildMetadata({
-  title: 'Xroga Connect — Integrations, Apps & Custom MCP',
-  description: 'Discover Xroga integration guides, browse the software technology catalog, and explore authorized app actions, triggers, and custom MCP connections.',
+  title: 'Xroga Integrations — Apps, AI Agents & MCP',
+  description: 'Discover available apps in Xroga Connect, explore real provider logos and integration details, and learn how Xroga can work with AI agents, your workspace and compatible MCP servers.',
   path: '/integrations',
   keywords: [
     'Xroga integrations',
@@ -27,8 +27,8 @@ export default function IntegrationsPage() {
     <main>
       <PageJsonLd
         path="/integrations"
-        name="Xroga Connect — Apps and Integrations"
-        description="Browse Xroga's technology catalog and supported app setup guides. Authorized connections, tool actions and triggers are verified in the workspace."
+        name="Xroga Connect — Apps, AI Agents and MCP"
+        description="Explore app integrations and technology examples, review provider details in your workspace, and learn GitHub-based handoffs with external AI agents."
         type="CollectionPage"
       />
       {/* The existing PublicMarketingChrome renders the site header and footer.
