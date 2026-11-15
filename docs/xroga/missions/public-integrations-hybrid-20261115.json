@@ -1,0 +1,133 @@
+{
+  "version": "1.0",
+  "missionId": "PUBLIC-INTEGRATIONS-HYBRID-20261115",
+  "baseSha": "67dac20c98e9f208b9785c271b1f221b3bce4759",
+  "requirementIds": [
+    "XR-FAMILY-rich-ai-ui"
+  ],
+  "state": "CODE_COMPLETE",
+  "risk": "medium",
+  "scope": "Rebuild public /integrations as an original dark-blue Xroga Connect marketplace informed by Activepieces hero structure, Lindy explanatory sections, and Pipedream-style metadata. Preserve shared PublicMarketingChrome, use canonical 711-entry static technology catalog plus actual PluginDefinition guides, link every card to existing authenticated /dashboard/integrations/[plugin] detail, add truthful badges for connector vs technology status, filters, search, show-more pagination, custom MCP path. Preview branch only. No production deployment.",
+  "changedFiles": [
+    "frontend/src/app/integrations/page.tsx",
+    "frontend/src/app/integrations/IntegrationsMarketplace.tsx",
+    "frontend/src/app/integrations/integrations.css",
+    "frontend/src/lib/publicIntegrationsDirectory.ts",
+    "frontend/src/lib/publicIntegrationsDirectory.test.ts",
+    "docs/xroga/missions/public-integrations-hybrid-20261115.json"
+  ],
+  "decisions": {
+    "keep": [
+      "Canonical PublicMarketingChrome header/footer, existing marketing pages and workspace routes, /dashboard/integrations/[plugin] detail route.",
+      "INTEGRATIONS static technology catalog, PLUGIN_DEFINITIONS as qualified app guide descriptions, CONNECTABLE_INTEGRATION_IDS for intentionally constrained provider setup; do not modify runtime controls."
+    ],
+    "extend": [
+      "Dark-blue responsive public marketing interface with hero, featured app logos, three-step explanation, remote MCP callout and 711-entry directory with searchable filters and paging.",
+      "Source-grounded native/app-guide/technology categorization with exact source industry filters and curated topic filters.",
+      "Public cards link to the authorized dashboard, where live action/trigger details and account connection state can actually be checked."
+    ],
+    "replace": [
+      "Former local header, static 24 small text cards, and minimal /integrations SEO presentation."
+    ],
+    "deprecate": []
+  },
+  "schemaImpact": {
+    "changed": false,
+    "migrations": [],
+    "rollout": "UI-only. Draft PR and preview; no database changes.",
+    "rollback": "Revert this route and its new companion UI/data/test/stylesheet files."
+  },
+  "securityImpact": {
+    "auth": {
+      "changed": false,
+      "description": "No connection/auth flows changed. Public links navigate to existing protected workspace detail routes."
+    },
+    "tenant": {
+      "changed": false,
+      "description": "No workspace tenant or user-specific connection state is queried from the public page."
+    },
+    "approval": {
+      "changed": false,
+      "description": "No new external tool actions or approvals; only discoverability and navigation."
+    },
+    "credentials": {
+      "changed": false,
+      "description": "No tokens are accepted, stored, revealed or sent by the public page."
+    },
+    "egress": {
+      "changed": true,
+      "description": "Public app logos reuse PluginBrandLogo's existing approved mapping and Simple Icons fallback, now rendered for displayed cards; no new endpoints or auth-carrying requests."
+    },
+    "cost": {
+      "changed": false,
+      "description": "No inference charges, provider calls, or new dependencies."
+    },
+    "billing": {
+      "changed": false,
+      "description": "Links to existing free signup; no billing changes."
+    }
+  },
+  "tests": [
+    {
+      "command": "npm run lint --prefix frontend --workspaces=false",
+      "scope": "Lint the new public route and catalog client under Next 15.",
+      "negative": false,
+      "reference": "frontend/src/app/integrations/IntegrationsMarketplace.tsx"
+    },
+    {
+      "command": "npm run build --prefix frontend --workspaces=false",
+      "scope": "Compile Next 15, route and public client, metadata and CSS.",
+      "negative": false,
+      "reference": "frontend/src/app/integrations/page.tsx"
+    },
+    {
+      "command": "npx tsx --tsconfig frontend/tsconfig.json --test frontend/src/lib/publicIntegrationsDirectory.test.ts",
+      "scope": "Canonical 711-entry list, category fidelity, Shopify route, no static user connection claims.",
+      "negative": true,
+      "reference": "frontend/src/lib/publicIntegrationsDirectory.test.ts"
+    },
+    {
+      "command": "Manual responsive, keyboard and action smoke test",
+      "scope": "Actual desktop/mobile preview at 390/768/1440 px: single global header, input typing and reduced-motion, search, filter, load more, card navigation to login-protected detail, custom MCP link.",
+      "negative": true,
+      "reference": "frontend/src/app/integrations/integrations.css"
+    }
+  ],
+  "architecture": {
+    "change": "extends_canonical",
+    "reason": "Existing public marketing layer and authenticated Xroga Connect plugin marketplace are preserved, without a second integration runtime or credential path.",
+    "rfc": null
+  },
+  "rollout": "Preview environment only after checks. Never merge, promote, or reassign xroga.com domain without a separate explicit production approval.",
+  "rollback": "Discard the branch or revert its /integrations UI/data/stylesheet/test/manifest files; production main unaffected.",
+  "knownGaps": [
+    "711 is the static build technology catalog count as of this branch; it is NOT 711 authorized, live provider connectors, 2,000+ live connectors, 3,000+, or unlimited integrations.",
+    "Auth scheme and real tools/triggers are discovered on authenticated detail; public cards never claim an exact count or an already-connected account.",
+    "Custom MCP links to existing /dashboard/integrations?view=custom and depends on runtime configuration, security checks and supported server compatibility.",
+    "Brand images use existing external Simple Icons mappings and fall back to letters where unsupported.",
+    "No real browser screenshot or deployment is claimed until a verified exact-commit preview exists.",
+    "Repository-wide CI contains historical mission-policy and inventory checks unrelated to this scoped UI; must not bypass.",
+    "Full interactive search/keyboard/breakpoint checks require actual browser preview."
+  ],
+  "placeholderClaimsRemaining": [],
+  "evidenceRefs": [
+    "frontend/src/app/integrations/page.tsx",
+    "frontend/src/app/integrations/IntegrationsMarketplace.tsx",
+    "frontend/src/app/integrations/integrations.css",
+    "frontend/src/lib/publicIntegrationsDirectory.ts",
+    "frontend/src/lib/publicIntegrationsDirectory.test.ts"
+  ],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "BLOCKED",
+    "blockers": [
+      "Pass exact-head frontend build, catalog tests, responsive/accessibility review and obtain actual preview before merging.",
+      "Separate owner production approval required; Vercel free quota may prevent preview creation."
+    ],
+    "authenticatedE2e": "NOT_APPLICABLE",
+    "stagedSecurity": "NOT_APPLICABLE",
+    "liveUrl": null,
+    "deployedSha": null
+  }
+}
