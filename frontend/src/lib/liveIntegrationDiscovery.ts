@@ -3,7 +3,7 @@
  * This does not authorize, connect, execute or expose user-specific account data.
  * The authenticated plugin-detail route is still the place to inspect real access.
  */
-import type { XrogaConnectCatalogToolkit } from '@/lib/xrogaConnect';
+import type { PublicCatalogToolkit } from '@/lib/publicConnectCatalog';
 import type { PublicIntegrationCard, IntegrationCategory } from '@/lib/publicIntegrationsDirectory';
 
 const labels: Record<string, string> = {
@@ -46,14 +46,14 @@ const labels: Record<string, string> = {
   other: 'Other',
 };
 
-export function normalizeLiveIntegration(item: XrogaConnectCatalogToolkit): PublicIntegrationCard {
+export function normalizeLiveIntegration(item: PublicCatalogToolkit): PublicIntegrationCard {
   const name = item.name?.trim() || item.slug;
   const group = item.xrogaGroup || 'other';
   return {
     id: item.slug,
     name,
     sourceCategory: group,
-    description: item.description?.trim() || 'See the app details, supported actions and authorization options in Xroga.',
+    description: item.description?.trim() || '',
     href: '/dashboard/integrations/' + encodeURIComponent(item.slug),
     mode: 'app-guide',
     authHint: item.noAuth ? 'No account auth listed' :
