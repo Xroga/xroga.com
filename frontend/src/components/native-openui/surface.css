@@ -173,6 +173,7 @@
 @media (max-width: 540px) {
   .native-answer-controls-grid { grid-template-columns: minmax(0, 1fr); }
   .xroga-native-openui .iui-table :is(td,th) { padding: .6rem .65rem; }
+  .xroga-native-openui .iui-table:has(> thead > tr > th:nth-child(4)) tr > :first-child { min-inline-size: 6rem; }
   .native-diagram .react-flow__controls-button { min-width: 28px; min-height: 28px; }
 }
 

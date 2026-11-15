@@ -17,6 +17,10 @@ const cases = {
     raw: 'Check current tenant membership before reading rows.\n<<<XROGA_OPENUI_V1>>>\nroot = Col([table, unavailableDetails])\ntable = Table(["Check", "Where"], [["Membership", "API"]])',
   },
   compare: { text: 'Team costs $25 and Basic costs $10.', program: 'root = Col([Title("Plan comparison"), Text("Pick Basic for an individual or Team for collaboration."), Table(["Plan", "USD/month"], [["Team", 25], ["Basic", 10]])])' },
+  wideComparison: {
+    text: 'Compare documentation rows and sort the supplied measurements.',
+    program: 'root = Col([Table(["Aspect", "Server Components", "Client Components", "Seconds"], [["Directive", "Default", "Opt-in", "1.5"], ["Environment", "Server-side", "Browser", "1.15"], ["Code path", "Server-side", "Hydrates", "12.8"], ["Missing", "Server-side", "Browser", "N/A"]])])',
+  },
   largeTable: {
     text: 'Review the detailed results in the table.',
     program: 'root = Col([Table(["Item", "Details"], ' +
@@ -202,6 +206,23 @@ try {
       await table.getByRole('button', { name: 'USD/month' }).click();
       assert.match(await table.getByRole('row').nth(1).innerText(), /Basic/);
       assert.equal(await page.getByRole('region', { name: 'Answer table' }).evaluate(el => el.scrollHeight - el.clientHeight), 0);
+      await open('wideComparison');
+      const wideRegion = page.getByRole('region', { name: 'Answer table' });
+      const seconds = wideRegion.getByRole('button', { name: 'Seconds' });
+      await seconds.click();
+      const labels = () => wideRegion.locator('tbody td:first-child').allTextContents();
+      assert.deepEqual(await labels(), ['Environment', 'Directive', 'Code path', 'Missing']);
+      await seconds.click();
+      assert.deepEqual(await labels(), ['Code path', 'Directive', 'Environment', 'Missing']);
+      if (viewport.width <= 390) {
+        const directive = wideRegion.getByRole('cell', { name: 'Directive', exact: true });
+        assert.equal(await directive.evaluate(cell => {
+          const range = document.createRange();
+          range.selectNodeContents(cell);
+          return range.getClientRects().length;
+        }), 1, 'A wide comparison scrolls inside its region and keeps row labels readable');
+        assert.ok(await wideRegion.evaluate(el => el.scrollWidth > el.clientWidth));
+      }
       if (viewport.width === 390) {
         await open('largeTable');
         const region = page.getByRole('region', { name: 'Answer table' });

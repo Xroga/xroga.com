@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "6a8761219404dfb16ede34f8573a8c56a0d87cf9",
+  "source_sha": "0159bfa1d5242bed603ec2644d5163c932e95913",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -22270,7 +22270,7 @@
     },
     {
       "path": "frontend/src/components/native-openui/upstream/components/table.tsx",
-      "sha256": "282525a15685cc9396a8cc95f26273158eb6b74705c89f0e1d7af39ab451ce42"
+      "sha256": "d1016645df6296dbbb00471ff5f040f7660da2c17f77e1d1ab4474bca84f4be5"
     },
     {
       "path": "frontend/src/components/native-openui/upstream/components/text.tsx",

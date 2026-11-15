@@ -36,6 +36,7 @@
     "frontend/src/components/native-openui/upstream/components/extra.tsx",
     "frontend/src/components/native-openui/upstream/components/markdown.test.ts",
     "frontend/src/components/native-openui/upstream/components/markdown.tsx",
+    "frontend/src/components/native-openui/upstream/components/table.tsx",
     "frontend/src/components/native-openui/upstream/components/text.tsx",
     "frontend/src/lib/publicAnswerText.ts",
     "scripts/verify-native-openui-browser.mjs"
@@ -46,6 +47,7 @@
       "Render safe inline citations, preserve readable slider value units, and protect native controls at narrow widths and zoom.",
       "Keep the registered presentation components available for mixed requests and preserve validated visuals after a provider output limit, including closed declarations and root children before a cut-off tail.",
       "Strip transport-only closing markers. Review incorrect claims about Next.js environment variables and Server Functions before publishing a completed answer.",
+      "Sort numeric table values by their displayed magnitude and make wide comparison labels readable on phones.",
       "Distinguish Stripe timestamp logging and explicit rejection of timestamp ordering from recommendations to order events by timestamp."
     ],
     "keep": [
