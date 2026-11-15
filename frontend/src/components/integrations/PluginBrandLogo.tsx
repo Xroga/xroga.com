@@ -104,7 +104,7 @@ export function PluginBrandLogo({
 
   useEffect(() => {
     setIndex(0);
-  }, [id, logo, fallbackLogo, toolkit, name]);
+  }, [id, logo, fallbackLogo, toolkit, name, verifiedOnly]);
 
   const dimension =
     size === 'detail'
