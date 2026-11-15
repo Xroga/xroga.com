@@ -5219,7 +5219,7 @@
       "id": "surface:456e62cb099b42e5c2a2",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUi.ts",
-      "sha256": "a39d9a210fe0baa611f9b60c5b8290c567d1105574046c5874cbc0c99f360bba",
+      "sha256": "69bd300a6e1fa179ee14c2add649e3e181bb8bdc85ac1cd35a7d603f90c51c3d",
       "symbols": [
         "MAX_PROGRAM_CHARS",
         "NATIVE_UI_FORMAT",
@@ -5276,6 +5276,7 @@
         "hasReactiveCalculator",
         "included",
         "index",
+        "initial",
         "inputs",
         "inspect",
         "invalidBlock",
@@ -5284,6 +5285,7 @@
         "kept",
         "key",
         "keys",
+        "label",
         "language",
         "last",
         "layout",
@@ -5331,6 +5333,7 @@
         "reachable",
         "readable",
         "readout",
+        "readouts",
         "reads",
         "reason",
         "record",
@@ -5397,12 +5400,14 @@
         "./nativeDiagramTopology.js",
         "./nativeOpenUiAccuracy.js",
         "./nativeOpenUiCatalog.json",
+        "./nativeOpenUiValues.js",
         "@openuidev/lang-core"
       ],
       "runtimeImports": [
         "backend/src/ai/nativeDiagramTopology.ts",
         "backend/src/ai/nativeOpenUiAccuracy.ts",
-        "backend/src/ai/nativeOpenUiCatalog.json"
+        "backend/src/ai/nativeOpenUiCatalog.json",
+        "backend/src/ai/nativeOpenUiValues.ts"
       ],
       "entryPoints": [
         "backend/src/index.ts",
@@ -5414,6 +5419,7 @@
       "callers": [
         "backend/src/ai/nativeOpenUi.test.ts:3",
         "backend/src/ai/nativeOpenUiShare.ts:2",
+        "backend/src/ai/nativeOpenUiValues.test.ts:5",
         "backend/src/ai/nativeOpenUiWorkspace.ts:2",
         "backend/src/ai/pipeline.ts:25",
         "backend/src/routes/nativeOpenUiEvaluation.ts:13",
@@ -5436,7 +5442,8 @@
       ],
       "evidenceBoundary": [],
       "testCoverage": [
-        "backend/src/ai/nativeOpenUi.test.ts"
+        "backend/src/ai/nativeOpenUi.test.ts",
+        "backend/src/ai/nativeOpenUiValues.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -5449,7 +5456,7 @@
       "id": "surface:f8a39bc555632894e7fb",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiAccuracy.ts",
-      "sha256": "93a7419930971ae0819ffbb1631921c663cb047a3191382b708b7d861537ee30",
+      "sha256": "ebcdd92bb2afcf7deb188efdb71d4f3040b6eca42a76865b3c0e75a97f492a4d",
       "symbols": [
         "FactualRule",
         "MonthlyPoint",
@@ -5478,14 +5485,18 @@
         "dataMismatch",
         "deletionClaim",
         "direction",
+        "examples",
+        "expected",
         "expectedRank",
         "explicitMonthlyChanges",
         "explicitPrevious",
+        "extrema",
         "facts",
         "format",
         "formatValue",
         "fraction",
         "higher",
+        "introduction",
         "isNextJs",
         "jointClaim",
         "label",
@@ -5566,6 +5577,7 @@
       ],
       "callers": [
         "backend/src/ai/nativeOpenUi.ts:2",
+        "backend/src/ai/nativeOpenUiValues.test.ts:6",
         "backend/src/ai/nativeOpenUiWorkspace.ts:3",
         "backend/src/routes/nativeOpenUiEvaluation.ts:11"
       ],
@@ -5583,6 +5595,183 @@
       ],
       "costBoundary": [],
       "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/ai/nativeOpenUiValues.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:1f75013440702d094c2c",
+      "subsystem": "ai_execution",
+      "sourcePath": "backend/src/ai/nativeOpenUiFunctions.generated.ts",
+      "sha256": "08d1e4e77107e79094088d98d3d8305275f0e4ab2a5b70190f5cbc6b49a5a004",
+      "symbols": [
+        "AddDays",
+        "AddMonths",
+        "Allocate",
+        "Between",
+        "Capitalize",
+        "Change",
+        "Chunk",
+        "Clamp",
+        "Convert",
+        "Cumulative",
+        "DAY",
+        "DaysBetween",
+        "Default",
+        "Duration",
+        "Find",
+        "Format",
+        "GroupBy",
+        "Histogram",
+        "Includes",
+        "Join",
+        "LOCALE",
+        "Lerp",
+        "Lower",
+        "MAX_ITEMS",
+        "MixColor",
+        "MovingAvg",
+        "Pad",
+        "Payment",
+        "Percent",
+        "Plural",
+        "Pow",
+        "Random",
+        "Replace",
+        "Reverse",
+        "Slice",
+        "Split",
+        "Sqrt",
+        "StartOf",
+        "Stats",
+        "TEMPS",
+        "Take",
+        "Top",
+        "Trim",
+        "UNITS",
+        "Upper",
+        "a",
+        "agg",
+        "aggregate",
+        "averages",
+        "b",
+        "bucket",
+        "calendarParts",
+        "channels",
+        "compare",
+        "count",
+        "counts",
+        "cur",
+        "currencyCode",
+        "d",
+        "date",
+        "day",
+        "defaultAgg",
+        "digits",
+        "end",
+        "exact",
+        "finite",
+        "finiteOnly",
+        "format",
+        "fromCelsius",
+        "full",
+        "groups",
+        "hex",
+        "hi",
+        "high",
+        "instant",
+        "iso",
+        "isoDay",
+        "items",
+        "k",
+        "ka",
+        "kb",
+        "key",
+        "keyValue",
+        "last",
+        "left",
+        "list",
+        "literal",
+        "lo",
+        "low",
+        "mapField",
+        "mean",
+        "median",
+        "mid",
+        "mixed",
+        "n",
+        "nativeFunctions",
+        "numbers",
+        "order",
+        "out",
+        "parts",
+        "r",
+        "ranked",
+        "raw",
+        "read",
+        "result",
+        "row",
+        "s",
+        "same",
+        "scale",
+        "sequence",
+        "sign",
+        "sorted",
+        "span",
+        "start",
+        "stdev",
+        "sum",
+        "t",
+        "target",
+        "targetYear",
+        "text",
+        "toCelsius",
+        "toDay",
+        "toNum",
+        "total",
+        "two",
+        "units",
+        "upper",
+        "v",
+        "value",
+        "values",
+        "w",
+        "width",
+        "x",
+        "y"
+      ],
+      "imports": [
+        "@openuidev/lang-core",
+        "zod/v4"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [
+        "backend/src/index.ts",
+        "frontend/src/app/(workspace)/workspace/page.tsx",
+        "frontend/src/app/native-answer-evaluation/page.tsx",
+        "frontend/src/app/share/[token]/page.tsx",
+        "scripts/security/verify-oci-federation.ts"
+      ],
+      "callers": [
+        "backend/src/ai/nativeOpenUiValues.ts:3"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "@openuidev/lang-core",
+        "zod/v4"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
       "testCoverage": [],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -5595,15 +5784,17 @@
       "id": "surface:a67f0b1fa2dd0f11a67f",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiPrompt.ts",
-      "sha256": "6b6f1cfb5becaa0ce86c52bff44b46ea7aa5aeeceac78f4171ae27891226d440",
+      "sha256": "e0061286aa6ae2a98dadef0141c67e2757da7d74ffff3ff022f85cd658d7ca0b",
       "symbols": [
         "buildNativeOpenUiPrompt",
+        "comparisonConsistencyRule",
         "dataConsistencyRule",
         "general",
         "library",
         "nativeOpenUiPlainPrompt",
         "nativeOpenUiPrompt",
         "numericPrecisionRule",
+        "procedureConsistencyRule",
         "selected",
         "technicalPrecisionRule",
         "withoutSources",
@@ -5803,10 +5994,92 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:309e6a3c1f73a053bdef",
+      "subsystem": "ai_execution",
+      "sourcePath": "backend/src/ai/nativeOpenUiValues.ts",
+      "sha256": "84f2c56e45bc8643f924d13c642a61bb8bde49438b47167d070a411f968f5a6d",
+      "symbols": [
+        "active",
+        "at",
+        "budget",
+        "cache",
+        "candidates",
+        "conflictingNativeReadouts",
+        "context",
+        "current",
+        "decimals",
+        "expected",
+        "expression",
+        "functions",
+        "initialNativeReadouts",
+        "label",
+        "money",
+        "nearby",
+        "number",
+        "paragraph",
+        "params",
+        "pending",
+        "plain",
+        "resolve",
+        "result",
+        "returns",
+        "root",
+        "row",
+        "scalar",
+        "symbols",
+        "target",
+        "value",
+        "visited",
+        "words"
+      ],
+      "imports": [
+        "./nativeOpenUiCatalog.json",
+        "./nativeOpenUiFunctions.generated.js",
+        "@openuidev/lang-core"
+      ],
+      "runtimeImports": [
+        "backend/src/ai/nativeOpenUiCatalog.json",
+        "backend/src/ai/nativeOpenUiFunctions.generated.ts"
+      ],
+      "entryPoints": [
+        "backend/src/index.ts",
+        "frontend/src/app/(workspace)/workspace/page.tsx",
+        "frontend/src/app/native-answer-evaluation/page.tsx",
+        "frontend/src/app/share/[token]/page.tsx",
+        "scripts/security/verify-oci-federation.ts"
+      ],
+      "callers": [
+        "backend/src/ai/nativeOpenUi.ts:5",
+        "backend/src/ai/nativeOpenUiValues.test.ts:3",
+        "backend/src/ai/nativeOpenUiWorkspace.ts:5"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "@openuidev/lang-core"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [
+        "backend/src/ai/nativeOpenUiValues.ts#budget"
+      ],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/ai/nativeOpenUiValues.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:93911e9946fd4b21d50d",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiWorkspace.ts",
-      "sha256": "6e17db6be7e72cc4ce3dbb776eb2b49a2babca92c495089c5cfa934ec7998b92",
+      "sha256": "80f5f003c650e410572145809a641224260fc52c3d276d66cc7c3ff480d37ccc",
       "symbols": [
         "completeNativeWorkspaceAnswer",
         "completion",
@@ -5843,13 +6116,15 @@
         "./completionDiagnostics.js",
         "./nativeOpenUi.js",
         "./nativeOpenUiAccuracy.js",
-        "./nativeOpenUiRecovery.js"
+        "./nativeOpenUiRecovery.js",
+        "./nativeOpenUiValues.js"
       ],
       "runtimeImports": [
         "backend/src/ai/completionDiagnostics.ts",
         "backend/src/ai/nativeOpenUi.ts",
         "backend/src/ai/nativeOpenUiAccuracy.ts",
-        "backend/src/ai/nativeOpenUiRecovery.ts"
+        "backend/src/ai/nativeOpenUiRecovery.ts",
+        "backend/src/ai/nativeOpenUiValues.ts"
       ],
       "entryPoints": [
         "backend/src/index.ts",
@@ -5857,6 +6132,7 @@
       ],
       "callers": [
         "backend/src/ai/nativeOpenUi.test.ts:7",
+        "backend/src/ai/nativeOpenUiValues.test.ts:4",
         "backend/src/ai/pipeline.ts:26"
       ],
       "reachable": true,
@@ -5871,7 +6147,8 @@
         "backend/src/ai/nativeOpenUiWorkspace.ts#verifiedText"
       ],
       "testCoverage": [
-        "backend/src/ai/nativeOpenUi.test.ts"
+        "backend/src/ai/nativeOpenUi.test.ts",
+        "backend/src/ai/nativeOpenUiValues.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -87134,7 +87411,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/native-openui/library.tsx:17"
+        "frontend/src/components/native-openui/library.tsx:14"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -87215,7 +87492,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/native-openui/library.tsx:21"
+        "frontend/src/components/native-openui/library.tsx:16"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -87270,7 +87547,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/native-openui/library.tsx:25"
+        "frontend/src/components/native-openui/library.tsx:20"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -87551,7 +87828,7 @@
       ],
       "callers": [
         "frontend/src/components/native-openui/Diagram.tsx:8",
-        "frontend/src/components/native-openui/library.tsx:22"
+        "frontend/src/components/native-openui/library.tsx:17"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -87597,7 +87874,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/native-openui/library.tsx:20"
+        "frontend/src/components/native-openui/library.tsx:15"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -87649,7 +87926,7 @@
       "callers": [
         "frontend/src/components/native-openui/Editorial.tsx:9",
         "frontend/src/components/native-openui/NativeSurface.tsx:8",
-        "frontend/src/components/native-openui/library.tsx:23",
+        "frontend/src/components/native-openui/library.tsx:18",
         "frontend/src/components/native-openui/upstream/components/extra.tsx:12",
         "frontend/src/components/native-openui/upstream/components/text.tsx:9"
       ],
@@ -87677,10 +87954,56 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:8de58719362d2969910e",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/native-openui/functions.ts",
+      "sha256": "983d077904f2f514b829264428c72d86b565314bf5d99f27285270c056ef081a",
+      "symbols": [
+        "nativeFunctions"
+      ],
+      "imports": [
+        "./upstream/functions/calendar",
+        "./upstream/functions/collections",
+        "./upstream/functions/data",
+        "./upstream/functions/numbers",
+        "./upstream/functions/text"
+      ],
+      "runtimeImports": [
+        "frontend/src/components/native-openui/upstream/functions/calendar.ts",
+        "frontend/src/components/native-openui/upstream/functions/collections.ts",
+        "frontend/src/components/native-openui/upstream/functions/data.ts",
+        "frontend/src/components/native-openui/upstream/functions/numbers.ts",
+        "frontend/src/components/native-openui/upstream/functions/text.ts"
+      ],
+      "entryPoints": [
+        "frontend/src/app/(workspace)/workspace/page.tsx",
+        "frontend/src/app/native-answer-evaluation/page.tsx",
+        "frontend/src/app/share/[token]/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/native-openui/library.tsx:13"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:1bf86dec2f9f087bee07",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/library.tsx",
-      "sha256": "4e52c369c7abf53f0f5e8e0737c83ecba744d0876580b9e4d26b2ea681a96539",
+      "sha256": "20945c2f7233ce431968f1b8cc288e5d409d4f394ef794ebf55f32f2d61c0814",
       "symbols": [
         "Icon",
         "Source",
@@ -87695,6 +88018,7 @@
         "./Resources",
         "./Tabs",
         "./evidence",
+        "./functions",
         "./upstream/components/chart",
         "./upstream/components/controls",
         "./upstream/components/extra",
@@ -87704,11 +88028,6 @@
         "./upstream/components/svg",
         "./upstream/components/table",
         "./upstream/components/text",
-        "./upstream/functions/calendar",
-        "./upstream/functions/collections",
-        "./upstream/functions/data",
-        "./upstream/functions/numbers",
-        "./upstream/functions/text",
         "@openuidev/react-lang",
         "react",
         "zod/v4"
@@ -87720,6 +88039,7 @@
         "frontend/src/components/native-openui/Resources.tsx",
         "frontend/src/components/native-openui/Tabs.tsx",
         "frontend/src/components/native-openui/evidence.tsx",
+        "frontend/src/components/native-openui/functions.ts",
         "frontend/src/components/native-openui/upstream/components/chart.tsx",
         "frontend/src/components/native-openui/upstream/components/controls.tsx",
         "frontend/src/components/native-openui/upstream/components/extra.tsx",
@@ -87729,11 +88049,6 @@
         "frontend/src/components/native-openui/upstream/components/svg.tsx",
         "frontend/src/components/native-openui/upstream/components/table.tsx",
         "frontend/src/components/native-openui/upstream/components/text.tsx",
-        "frontend/src/components/native-openui/upstream/functions/calendar.ts",
-        "frontend/src/components/native-openui/upstream/functions/collections.ts",
-        "frontend/src/components/native-openui/upstream/functions/data.ts",
-        "frontend/src/components/native-openui/upstream/functions/numbers.ts",
-        "frontend/src/components/native-openui/upstream/functions/text.ts",
         "frontend/src/components/terminal/SourceCitation.tsx"
       ],
       "entryPoints": [
@@ -88678,7 +88993,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/native-openui/library.tsx:16"
+        "frontend/src/components/native-openui/functions.ts:4"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -88739,7 +89054,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/native-openui/library.tsx:19",
+        "frontend/src/components/native-openui/functions.ts:6",
         "frontend/src/components/native-openui/upstream/functions/collections.test.ts:3"
       ],
       "reachable": true,
@@ -88822,7 +89137,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/native-openui/library.tsx:18",
+        "frontend/src/components/native-openui/functions.ts:5",
         "frontend/src/components/native-openui/upstream/functions/collections.test.ts:4"
       ],
       "reachable": true,
@@ -88893,7 +89208,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/native-openui/library.tsx:13"
+        "frontend/src/components/native-openui/functions.ts:2"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -89022,7 +89337,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/native-openui/library.tsx:15"
+        "frontend/src/components/native-openui/functions.ts:3"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -98692,7 +99007,7 @@
       ],
       "callers": [
         "frontend/src/components/native-openui/evidence.tsx:4",
-        "frontend/src/components/native-openui/library.tsx:24",
+        "frontend/src/components/native-openui/library.tsx:19",
         "frontend/src/components/response-experience-v2/SourceV2.tsx:9",
         "frontend/src/components/terminal/ResponseSources.tsx:5",
         "frontend/src/lib/formatAiMarkdown.tsx:9"
@@ -123828,13 +124143,16 @@
       "id": "surface:d6a3392b98f9da6b6102",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/generate-native-openui-spec.mjs",
-      "sha256": "8f19f0bde93cde26d12bd0e1b67b2ebc29e4d2181c7b0ceffd4683c9344fbe68",
+      "sha256": "68131a1aefa31c463c1be7e5226e6a79d8e1bd8ebb3cd2afcb8c5bd449e8f6e7",
       "symbols": [
         "component",
         "coverage",
         "expected",
         "file",
         "fn",
+        "functionsBundle",
+        "functionsFile",
+        "functionsText",
         "module",
         "run",
         "spec"
@@ -141903,9 +142221,9 @@
   ],
   "findings": [
     {
-      "id": "finding:e408e64e8d7210b3d23f",
+      "id": "finding:77cea88d61179476e069",
       "sourcePath": "backend/src/ai/nativeOpenUiPrompt.ts",
-      "line": 45,
+      "line": 51,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -149891,6 +150209,13 @@
       "id": "test-suite:2e491f4d2fcbc11f974c",
       "sourcePath": "backend/src/ai/nativeOpenUi.test.ts",
       "declaredTests": 57,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:cf78e18abc3aa283d701",
+      "sourcePath": "backend/src/ai/nativeOpenUiValues.test.ts",
+      "declaredTests": 6,
       "skipLocations": [],
       "focusLocations": []
     },
