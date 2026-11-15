@@ -281,6 +281,17 @@ export function enhanceAiResponse(content: string, documentId: string, completio
       : partialReason === 'output_limit'
       ? 'This answer reached its output limit and is incomplete. The received content is preserved. No automatic retry was made.'
       : 'The provider did not confirm a complete answer. The received content is preserved. No automatic retry was made.' });
+  // Native answers already own their visual program. Legacy extraction can
+  // reject valid Markdown, such as comparison tables with an empty corner cell.
+  // Keep authoritative prose intact for persistence and renderer recovery.
+  if (responseSource?.format === 'xroga-openui-v1') {
+    if (source.trim()) blocks.push({ schemaVersion: 1, id: `${safeIdPart(documentId)}-prose`, type: 'narrative', text: source });
+    return { content: source.trim(), output: {
+      schemaVersion: 1, id: `response-${safeIdPart(documentId)}`,
+      status: rejected ? 'partial' : 'completed', sourceText: source,
+      responseSource, composition: 'source-order', blocks,
+    } };
+  }
   const appendText = (value: string) => blocks.push(...tableBlocksFromMarkdown(value, `${documentId}-${segment++}`).ordered);
   for (const match of source.matchAll(XROGA_UI_FENCE)) {
     appendText(source.slice(cursor, match.index));

@@ -2,7 +2,7 @@ import { createParser, evaluate, parseExpression, split, tokenize, walkAST, type
 import { claimsChartIsDeferred, contradictsMonthlyChart, monthlyChartDataFallback, nativeTechnicalReviewContext, reviewNativeAnswer, suppliedMonthlyComparison } from './nativeOpenUiAccuracy.js';
 import { DIAGRAM_NODE_TONES, hasRenderableDiagramTopology } from './nativeDiagramTopology.js';
 import catalog from './nativeOpenUiCatalog.json' with { type: 'json' };
-import { initialNativeReadouts, initialNativeValueReader } from './nativeOpenUiValues.js';
+import { conflictingNativeReadouts, initialNativeReadouts, initialNativeValueReader } from './nativeOpenUiValues.js';
 
 export const NATIVE_UI_FORMAT = 'xroga-openui-v1' as const;
 export const NATIVE_UI_LIBRARY = 'xroga-native-v1' as const;
@@ -505,6 +505,29 @@ function printRecoveryExpression(node: ASTNode): string {
     case 'Null': return 'null';
     default: throw new Error('Unsupported OpenUI recovery expression');
   }
+}
+
+/** Remove conflicting static explanatory paragraphs from the visual itself,
+ * before deriving saved prose. Calculations, inputs and unrelated text stay intact. */
+export function recoverNativeReadoutExplanations(program: string): string {
+  const readouts = initialNativeReadouts(program);
+  let changed = false;
+  const repaired = split(tokenize(program)).map(statement => {
+    const expression = parseExpression(statement.tokens);
+    walkAST(expression, node => {
+      if (node.k !== 'Comp' || !['Text', 'Caption', 'Markdown'].includes(node.name)) return;
+      const body = node.args[0];
+      if (body?.k !== 'Str') return;
+      const paragraphs = body.v.split(/\n\s*\n/);
+      const retained = paragraphs.filter(text => !conflictingNativeReadouts(text, readouts).length);
+      if (retained.length !== paragraphs.length) {
+        changed = true;
+        body.v = retained.join('\n\n');
+      }
+    });
+    return statement.id + ' = ' + printRecoveryExpression(expression);
+  }).join('\n');
+  return changed ? repaired : program;
 }
 
 function resolveRecoveryReference(node: ASTNode | undefined, symbols: ReadonlyMap<string, ASTNode>) {

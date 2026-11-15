@@ -116,10 +116,13 @@ export function conflictingNativeReadouts(prose: string, readouts: ReturnType<ty
     const words = label.toLowerCase().trim();
     for (const paragraph of plain.split(/\n\s*\n/)) {
       if (/\b(?:example|scenario|hypothetical|suppose|instead|if you|alternative)\b/i.test(paragraph)) continue;
-      const at = paragraph.toLowerCase().indexOf(words);
+      const lower = paragraph.toLowerCase();
+      const at = lower.indexOf(words) >= 0 ? lower.indexOf(words)
+        : words.startsWith('total ') ? lower.indexOf(words.slice(6)) : -1;
       if (at < 0) continue;
+      const matchedWords = lower.indexOf(words) >= 0 ? words : words.slice(6);
       const candidates = [...paragraph.matchAll(money)].filter(match => match[1] === expected[0][1]);
-      const nearby = candidates.map(match => ({ match, distance: Math.min(Math.abs(match.index! + match[0].length - at), Math.abs(match.index! - (at + words.length))) }))
+      const nearby = candidates.map(match => ({ match, distance: Math.min(Math.abs(match.index! + match[0].length - at), Math.abs(match.index! - (at + matchedWords.length))) }))
         .filter(item => item.distance <= 35).sort((a, b) => a.distance - b.distance)[0]?.match;
       if (!nearby) continue;
       const number = Number(nearby[2].replace(/,/g, ''));

@@ -324,10 +324,12 @@ export function MarkdownBlocks({ text, renderCitation, deduplicateTables = false
             if (tableKey && !tableHasLinks(b.head, b.rows) && (seenTables.has(tableKey) || matches?.tables.has(tableKey))) return null;
             if (tableKey) seenTables.add(tableKey);
             return (
-              <div key={k} className={cx("iui-table-scroll", isLongAnswerTable(b.rows.length) && "iui-table-bounded")} role="region" aria-label="Answer table" tabIndex={0}>
+              <div key={k} className={cx("iui-table-scroll", isLongAnswerTable(b.rows.length) && "iui-table-bounded")} role="group" aria-label="Answer table" tabIndex={0}>
                 <table className="iui-table">
                   <thead>
-                    <tr>{b.head.map((h, j) => <th key={j}>{inline(h, `${k}-h${j}`, renderCitation)}</th>)}</tr>
+                    <tr>{b.head.map((h, j) => h.trim()
+                      ? <th key={j} scope="col">{inline(h, `${k}-h${j}`, renderCitation)}</th>
+                      : <td key={j} />)}</tr>
                   </thead>
                   <tbody>
                     {b.rows.map((r, j) => (

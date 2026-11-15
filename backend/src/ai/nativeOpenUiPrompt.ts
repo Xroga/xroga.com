@@ -48,6 +48,7 @@ function buildNativeOpenUiPrompt(kinds: ReadonlySet<string>, hasSources: boolean
       procedureConsistencyRule,
       comparisonConsistencyRule,
       'Start with the answer or recommendation. Use one main Title and meaningful Sections for long answers; prose and lists can be enough. Keep data and its interpretation together. Reserve emphasis for the central result. Avoid duplicate headings, repeating tables, and excessive cards.',
+      'When a table occurs in both the readable answer and the OpenUI program, use identical headers and cell values in both, including the corner header. Do not paraphrase one copy: exact matching lets the interface show the table once while retaining its full content in saved answers and readable recovery.',
       'For a long answer, put a single root Col first, followed by the declarations it references. Inline small components. Reference names are case-sensitive. Declare each name used by the root and its descendants exactly once. Never reference root, an example placeholder, or an undeclared name. Use only listed components and functions. Use strings or ListItem(title, description) inside List. Escape line breaks and quotes inside Code strings.',
       'Keep the supplied values consistent in prose, expressions and chart rows. For comparisons, check that the recommendation holds at the boundaries and matches the worked examples. Label chart units and give a reset for a calculator.',
       ...(general || kinds.has('graph') || kinds.has('steps') ? [

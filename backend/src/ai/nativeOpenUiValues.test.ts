@@ -41,6 +41,20 @@ test('saved answer preserves calculator and readable computed values after a pro
   assert.doesNotMatch(result.response, /4,331\.83|@Payment/);
 });
 
+test('conflicting totals inside native explanatory text cannot return through recovery', () => {
+  const rich = program.replace('root = Col([', 'root = Col([intro, formula, ')
+    + '\nintro = Text("A $20,000 loan costs $405.53 per month, with about $4,331.93 of total interest.")'
+    + '\nformula = Text("At the initial values, payment is $405.53 and interest is $4,331.93.")';
+  const result = completeNativeWorkspaceAnswer('Total interest: $4,331.93.' + NATIVE_UI_MARKER + rich, 'stop');
+  assert.equal(result.completion.status, 'partial');
+  assert.match(result.response, /4,331\.67/);
+  assert.doesNotMatch(result.response + result.responseSource.text, /4,331\.93/);
+  assert.deepEqual(initialNativeReadouts(result.responseSource.text), initialNativeReadouts(program));
+  assert.match(result.responseSource.text, /@Payment/);
+  const accurateProse = completeNativeWorkspaceAnswer('Total interest: $4,331.67.' + NATIVE_UI_MARKER + rich, 'stop');
+  assert.doesNotMatch(accurateProse.response + accurateProse.responseSource.text, /4,331\.93/);
+});
+
 test('a false minimum is removed while retaining the monthly chart', () => {
   const chart = 'root = Col([Chart("line", [{month:"January",value:20},{month:"February",value:24},{month:"March",value:22}], "month", ["value"], "number")])';
   const wrong = completeNativeWorkspaceAnswer('March was the lowest month.' + NATIVE_UI_MARKER + chart, 'stop');

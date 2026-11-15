@@ -8,6 +8,15 @@ import { inline, MarkdownBlocks, nativeMarkdownMatches, preservedMarkdownTableKe
 
 const render = (source: string) => renderToStaticMarkup(createElement(Fragment, null, inline(source)));
 
+test('empty comparison corners are cells and scrolling tables do not duplicate landmarks', () => {
+  const html = renderToStaticMarkup(createElement(MarkdownBlocks, {
+    text: '| | Server | Client |\n|---|---|---|\n| Runs | Server | Browser |',
+  }));
+  assert.match(html, /<thead><tr><td><\/td><th scope="col">Server/);
+  assert.match(html, /role="group" aria-label="Answer table" tabindex="0"/);
+  assert.doesNotMatch(html, /<th[^>]*><\/th>/);
+});
+
 test('computed table snapshots collapse only exact resolved initial values', () => {
   const value = { k: 'Ref', n: 'amount' };
   const root = { type: 'element', typeName: 'Table', props: { columns: ['Payment'], rows: [[value]] } };

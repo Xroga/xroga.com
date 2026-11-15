@@ -14,6 +14,7 @@
 .xroga-native-sections > section + section { margin-block-start: 1rem; }
 .xroga-native-sections :is(h2,h3) { margin-block: 0 .5rem; font-size: 1em; font-weight: 650; }
 .xroga-native-openui > .iui-markdown:empty { display: none; }
+.xroga-native-openui :is(.iui-text, .iui-caption):empty { display: none; }
 .xroga-native-openui > .iui-col + .iui-markdown:not(:empty),
 .xroga-native-openui > .iui-markdown:not(:empty) + .iui-col { margin-block-start: 1rem; }
 @media (max-width: 540px) {

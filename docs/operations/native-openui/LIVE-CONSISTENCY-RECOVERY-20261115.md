@@ -219,3 +219,45 @@ correct light Workspace and readable main answer, but the chip inherited muted
 text on its tinted background. Citation chips now use the local primary ink.
 The mixed-skin regression includes caption citations and checks their actual
 computed color plus axe contrast. This preserves the compact inline design.
+
+## Live 34953d81 findings and deterministic recovery
+
+The hosted seven-case run returned fourteen settled canonical receipts totaling
+1,618 microUSD. Five cases passed automated checks. The React comparison failed
+native rendering and the loan failed numerical consistency. This is not a release
+pass. The harness incorrectly continued after the first collected failure.
+Its external acceptance runner and proxy now stop on a failed case or abort file,
+and the orchestration checks the completed receipt's acceptance result.
+
+The comparison's empty Markdown corner header produced an invalid legacy table.
+The persisted native program was present, but validating the derived legacy
+blocks prevented NativeWorkspaceAnswer from selecting it. A failing regression
+reproduced this. Native answers now persist prose directly, and saved native
+documents can discard invalid legacy projections while still validating their
+envelope, source limits and native program separately. Legacy answers keep their
+existing conversion.
+
+The calculator's recovery copied contradictory text out of its own OpenUI Text
+nodes. Recovery now removes matching conflicting currency explanations from the
+program before deriving saved prose, retaining pure calculations and controls.
+The regression covers contradictions in prose and in the visual alone. Empty
+recovered paragraphs do not occupy layout space. Markdown comparison tables now
+use ordinary cells for blank corners and named keyboard-focusable groups rather
+than duplicate landmarks.
+
+Local verification: 67 backend tests passed in
+46210467-7e6a-4628-ae75-4ef83d9f52e8. Frontend document and integration tests passed
+in a1ef5a79-95da-4972-91c9-0eb0d4d15def. Type checking passed in
+2755b971-e222-4bf0-a517-baf99daa0a66. Captured-answer Chrome replay passed eight
+combinations at 390/1440 pixels and light/dark themes in
+8d3fe377-766a-41a2-93e5-88930c25691b, including persistence decoding, zero-interest
+interaction and accessibility. These are local replay results, not new hosted
+inference or a full Workspace acceptance claim. Two differently worded comparison
+tables remain visible to avoid dropping distinct details. That composition still
+needs improvement. Further source changes require final checks.
+
+Cloud cleanup was independently verified at 2026-11-15T19:27:09Z, including
+services, service accounts, temporary secret grants and retained image tags.
+The test key is scheduled for destruction. Captured receipts remain for audit.
+Build/runtime usage is estimated at $0.085834964 for this window, not an invoice.
+Production traffic, canonical Job, SQL and browser automation were unchanged.

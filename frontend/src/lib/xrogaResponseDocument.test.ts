@@ -270,6 +270,21 @@ test('a native OpenUI program is stored alongside readable answer text', () => {
   assert.equal(enhanced.content, 'A readable answer.');
 });
 
+test('native answers persist independently of legacy table conversion', () => {
+  const source = '| | Server | Client |\n|---|---|---|\n| Runs | Server | Browser |';
+  const program = 'root = Col([Table(["Dimension", "Server", "Client"], [["Runs", "Server", "Browser"]])])';
+  const enhanced = enhanceAiResponse(source, 'native-empty-heading', { status: 'complete' },
+    { format: 'xroga-openui-v1', text: program });
+  const saved = parseXrogaOutput(JSON.parse(JSON.stringify(enhanced.output)));
+  assert.ok(saved, 'A valid native answer must not be rejected by legacy table schemas');
+  assert.equal(saved.sourceText, source);
+  assert.equal(saved.responseSource?.text, program);
+  assert.deepEqual(saved.blocks.map(block => block.type), ['narrative']);
+  const historical = { ...enhanced.output, blocks: [{ type: 'table', columns: [{ key: 'corner', label: '' }] }] };
+  assert.equal(parseXrogaOutput(historical)?.responseSource?.text, program);
+  assert.equal(parseXrogaOutput({ ...historical, responseSource: { format: 'xroga-openui-v1', text: 'x'.repeat(24_001) } }), null);
+});
+
 test('a factual-review warning and original answer survive the saved document round trip', () => {
   const source = 'The retry behavior needs review.\n\n| Mode | State |\n| --- | --- |\n| Live | Pending |';
   const enhanced = enhanceAiResponse(source, 'native-review', { status: 'partial', reason: 'factual_review' },

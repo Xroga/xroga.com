@@ -3,6 +3,7 @@ import { NATIVE_UI_FORMAT, PARTIAL_NATIVE_PRESENTATION_NOTE, missingNativeFormat
 import { nativeAnswerReviewReason, nativeFactualGuidance, nativeTechnicalCorrections, suppliedMonthlyComparison } from './nativeOpenUiAccuracy.js';
 import { checklistFromProse, requestsEditableChecklist, suppliedPeriodicSeries } from './nativeOpenUiRecovery.js';
 import { conflictingNativeReadouts, initialNativeReadouts } from './nativeOpenUiValues.js';
+import { recoverNativeReadoutExplanations } from './nativeOpenUi.js';
 
 const outputLimitNote = 'This answer reached the provider output limit. The available answer is shown below.';
 
@@ -110,14 +111,20 @@ export function completeNativeWorkspaceAnswer(
       '## Original draft for review', 'Use the corrections above when reviewing this draft.', text].join('\n\n')
     : response;
   const valid = validation?.ok === true && completion.status === 'complete';
-  if (valid && conflictingNativeReadouts(response, initialNativeReadouts(program)).length) {
+  const readouts = valid ? initialNativeReadouts(program) : [];
+  if (valid && (conflictingNativeReadouts(response, readouts).length ||
+      (readouts.length && conflictingNativeReadouts(supplementNativeProse('', program, true), readouts).length))) {
     // Preserve the working calculator and derive its readable snapshot from the
     // same pure upstream functions. Do not persist conflicting model totals.
+    const correctedProgram = recoverNativeReadoutExplanations(program);
+    const corrected = validateNativeWorkspaceProgram(correctedProgram, evidenceIds);
+    const readable = corrected.ok ? supplementNativeProse('', correctedProgram, true)
+      : initialNativeReadouts(program).map(row => row.label + ': ' + row.value).join('\n\n');
     return {
       response: 'The calculated results replace an inconsistent numerical explanation.\n\n'
-        + supplementNativeProse('', program, true),
+        + readable,
       completion: { status: 'partial' as const, reason: 'data_review' as const },
-      responseSource: { format: NATIVE_UI_FORMAT, text: program },
+      responseSource: { format: NATIVE_UI_FORMAT, text: corrected.ok ? correctedProgram : '' },
     };
   }
   const verifiedBeforeLimit = validation?.ok === true && completion.status === 'partial' && completion.reason === 'output_limit';

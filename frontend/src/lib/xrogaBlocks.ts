@@ -386,5 +386,13 @@ export function parseXrogaBlock(value: unknown): XrogaBlock | null {
 
 export function parseXrogaOutput(value: unknown): XrogaOutputDocument | null {
   const parsed = xrogaOutputSchema.safeParse(value);
-  return parsed.success ? parsed.data : null;
+  if (parsed.success) return parsed.data;
+  // Older native answers also stored derived legacy tables. Those optional
+  // projections must not invalidate the authoritative prose and native program.
+  if (value && typeof value === 'object' &&
+      (value as { responseSource?: { format?: unknown } }).responseSource?.format === 'xroga-openui-v1') {
+    const native = xrogaOutputSchema.safeParse({ ...value, blocks: [] });
+    if (native.success && native.data.sourceText) return native.data;
+  }
+  return null;
 }
