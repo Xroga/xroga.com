@@ -1,5 +1,5 @@
 import { createParser, evaluate, parseExpression, split, tokenize, walkAST, type ASTNode, type LibraryJSONSchema } from '@openuidev/lang-core';
-import { contradictsMonthlyChart, monthlyChartDataFallback, reviewNativeAnswer, suppliedMonthlyComparison } from './nativeOpenUiAccuracy.js';
+import { contradictsMonthlyChart, monthlyChartDataFallback, nativeTechnicalReviewContext, reviewNativeAnswer, suppliedMonthlyComparison } from './nativeOpenUiAccuracy.js';
 import { DIAGRAM_NODE_TONES, hasRenderableDiagramTopology } from './nativeDiagramTopology.js';
 import catalog from './nativeOpenUiCatalog.json' with { type: 'json' };
 
@@ -18,7 +18,7 @@ const safeKey = (key: string) => !['__proto__', 'prototype', 'constructor'].incl
 // envelope to an otherwise valid native answer. Keep transport syntax out of
 // the persisted program. A quoted example or an embedded tag is not a suffix.
 const deepSeekToolClosingSuffix = /[ \t]*<\/｜DSML｜ parameter>[ \t]*\n[ \t]*<\/｜DSML｜ invoke>[ \t]*\n[ \t]*<\/｜DSML｜ calls>[ \t]*$/u;
-const strayRootClosingLine = /\n[ \t]*<\/Col>[ \t]*$/u;
+const strayPresentationClosingLines = /(?:\n[ \t]*<\/(?:Col>|XROGA_OPENUI_V1>>>)[ \t]*)+$/u;
 
 export function splitNativeOpenUiAnswer(raw: string, streaming = false) {
   return scanNativeOpenUiAnswer(raw, streaming, true);
@@ -32,7 +32,7 @@ function scanNativeOpenUiAnswer(raw: string, streaming: boolean, allowJsonEnvelo
   let fence: string | undefined;
   let fencedProgram: string | undefined;
   const envelope = (text: string, source: string) => {
-    let program = source.trim().replace(deepSeekToolClosingSuffix, '').trimEnd().replace(strayRootClosingLine, '').trim();
+    let program = source.trim().replace(deepSeekToolClosingSuffix, '').trimEnd().replace(strayPresentationClosingLines, '').trim();
     const wrapper = /^(\x60{3,}|~{3,})[ \t]*(?:openui(?:lang|-lang)?|xroga-openui-v1)?[ \t]*\n/i.exec(program);
     if (wrapper) {
       program = program.slice(wrapper[0].length);
@@ -624,9 +624,8 @@ export function recoverNativeWorkspaceProgram(program: string, evidenceIds: Read
 
     // Cap repeated parser calls independently of the provider output limits.
     let probes = 48;
-    // The existing factual rules are Stripe-specific. Retain that context even
-    // if the only component naming Stripe is withheld during recovery.
-    const reviewContext = failure === 'factual_review' ? prose + '\nStripe' : prose;
+    // Keep the named platform in scope when its only mention was in a withheld component.
+    const reviewContext = failure === 'factual_review' ? prose + '\n' + nativeTechnicalReviewContext(narrative) : prose;
     const validate = (candidate: ASTNode) => probes-- > 0
       ? validateNativeWorkspaceProgram(render(candidate), evidenceIds, reviewContext) : undefined;
     if (failure === 'reference') {

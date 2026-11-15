@@ -1,13 +1,21 @@
 import { requiresAuthorizationReview } from './answerAuthorizationReview.js';
 
-type FactualRule = 'stripe_event_order' | 'stripe_retry_window' | 'tenant_key_immutability' | 'earth_axial_tilt_reference';
+type FactualRule = 'stripe_event_order' | 'stripe_retry_window' | 'tenant_key_immutability' | 'earth_axial_tilt_reference'
+  | 'nextjs_env_visibility' | 'nextjs_server_invocation';
 export const nativeFactualGuidance: Record<FactualRule, string> = {
   stripe_event_order: 'Stripe event timestamps can tie and do not establish delivery order. Verify the signature, deduplicate by event ID, and reconcile the current subscription state with Stripe before applying a durable update.',
   stripe_retry_window: 'Stripe automatic webhook retries have a finite delivery window. Reconcile missed events separately and make processing idempotent.',
   tenant_key_immutability: 'PostgreSQL WITH CHECK evaluates the proposed new row. Membership checks on the old and new rows can both pass for a user who belongs to both tenants. To keep tenant_id immutable, restrict UPDATE privileges to approved columns or reject tenant-key changes in a database trigger.',
   earth_axial_tilt_reference: 'Earth’s rotation axis is tilted about 23.4° from the perpendicular to its orbital plane. That tilt changes the angle of sunlight and the length of the day in each hemisphere as Earth orbits the Sun, causing the seasons.',
+  nextjs_env_visibility: 'Next.js environment variables are server-only by default. NEXT_PUBLIC_ makes a value eligible for inlining into the browser bundle. Never send secrets to the client through props, public environment variables or explicit bundler configuration.',
+  nextjs_server_invocation: 'Next.js Server Functions run on the server and can be called from server code. Client Components can invoke exposed Server Functions, including through form actions. Authenticate, authorize and validate every exposed invocation.',
 };
 type TechnicalCorrection = { reason: 'authorization_review' | 'factual_review'; guidance: string; rule?: FactualRule };
+const isNextJs = /\b(?:Next(?:\.js|js)|App Router|NEXT_PUBLIC_)\b/i;
+
+export function nativeTechnicalReviewContext(text: string) {
+  return [/\bStripe\b/i.test(text) ? 'Stripe' : '', isNextJs.test(text) ? 'Next.js' : ''].filter(Boolean).join('\n');
+}
 
 /** Catch documented factual errors in explanatory text and examples. */
 export function nativeTechnicalCorrections(answer: string): TechnicalCorrection[] {
@@ -16,6 +24,17 @@ export function nativeTechnicalCorrections(answer: string): TechnicalCorrection[
   const statements = text.split(/(?<=[.!?;])\s+|\n+/);
   const warnsAgainst = (statement: string) =>
     /\b(?:never|do not|does not|cannot|must not|should not|don't|doesn't|can't|mustn't|shouldn't|still subject to|incorrect|unsafe|unreliable)\b/i.test(statement);
+  if (isNextJs.test(answer)) {
+    const claims = statements.filter(statement => !warnsAgainst(statement) && !/\b(?:misconception|myth|false|wrong)\b/i.test(statement));
+    const wrongVisibility = /\b(?:env(?:ironment)?\s+(?:vars?|variables?))\s+(?:are\s+|as\s+)?(?:public|exposed)\s+unless\s+(?:explicitly\s+)?(?:prefixed|marked|configured)\s+(?:for\s+)?server[- ]only\b/i;
+    const clientOnlyInvocation = /\bmust\s+(?:only\s+)?be\s+(?:called|invoked)\s+from\s+(?:(?:a|the)\s+)?client(?:\s+components?)?\s+or\s+(?:(?:a|the)\s+)?forms?\b/i;
+    if (claims.some(statement => wrongVisibility.test(statement))) {
+      corrections.push({ reason: 'factual_review', rule: 'nextjs_env_visibility', guidance: nativeFactualGuidance.nextjs_env_visibility });
+    }
+    if (/\bserver\s+(?:actions?|functions?)\b/i.test(text) && claims.some(statement => clientOnlyInvocation.test(statement))) {
+      corrections.push({ reason: 'factual_review', rule: 'nextjs_server_invocation', guidance: nativeFactualGuidance.nextjs_server_invocation });
+    }
+  }
   // This applies to the spin axis. The equatorial plane can correctly be
   // described as inclined by this angle relative to the orbital plane.
   const wrongAxialReference = /\bEarth(?:['’]s)?\b[^.!?;\n]{0,64}\b(?:axis|axial tilt)\b[^.!?;\n]{0,30}\b23(?:[.,][45]\d*)?\s*(?:°|degrees?\b)\s*(?:relative to|with respect to|from|to)\s+(?:the\s+|its\s+|Earth['’]s\s+)?(?:orbital plane|plane of (?:its|Earth['’]s) orbit|ecliptic(?: plane)?)\b/i;

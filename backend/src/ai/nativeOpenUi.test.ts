@@ -10,6 +10,7 @@ import { requiredNativeFormats } from './answerCoverage.js';
 test('the model gets instructions from the native registry and may answer in text', () => {
   for (const prompt of [nativeOpenUiPlainPrompt, nativeOpenUiPrompt]) {
     assert.match(prompt, /Verify the value, unit, and reference point, baseline, or denominator together/);
+    assert.match(prompt, /NEXT_PUBLIC_ is for values exposed to the browser/);
   }
   for (const name of ['Col(', 'Chart(', 'Slider(', 'Svg(', 'Diagram(', 'Section(', 'Table(', 'Payment(', 'Source(']) assert.ok(nativeOpenUiPrompt.includes(name), name);
   assert.deepEqual(splitNativeOpenUiAnswer('Paris.'), { text: 'Paris.', program: '' });
@@ -18,6 +19,44 @@ test('the model gets instructions from the native registry and may answer in tex
   const program = 'root = Col([Text("Paris.")])';
   assert.deepEqual(splitNativeOpenUiAnswer('Paris.' + NATIVE_UI_MARKER + program), { text: 'Paris.', program });
   assert.deepEqual(validateNativeOpenUi(program), { ok: true });
+});
+
+test('a stray closing presentation marker is removed before the program is validated or stored', () => {
+  const program = 'root = Col([Text("The comparison is ready.")])';
+  const payload = 'Here are the results.' + NATIVE_UI_MARKER + program + '\n</Col>\n</XROGA_OPENUI_V1>>>';
+  assert.equal(completeNativeWorkspaceAnswer(payload, 'stop').responseSource.text, program);
+  const quoted = 'root = Col([Code("</XROGA_OPENUI_V1>>>", "text")])';
+  assert.equal(splitNativeOpenUiAnswer('Example syntax.' + NATIVE_UI_MARKER + quoted).program, quoted);
+});
+
+test('incorrect Next.js deployment guidance cannot be published as a complete answer', () => {
+  const inaccurate = [
+    'In the Next.js App Router, Server Actions run on the server.',
+    'Server Actions must be called from client or form.',
+    'Treat env vars as exposed unless prefixed for server only.',
+  ].join('\n');
+  const result = completeNativeWorkspaceAnswer(inaccurate, 'stop');
+  assert.deepEqual(result.completion, { status: 'partial', reason: 'factual_review' });
+  assert.match(result.response, /environment variables are server-only by default/);
+  assert.match(result.response, /can be called from server code/);
+  const correct = 'Next.js environment variables are server-only by default. Use NEXT_PUBLIC_ only for public values. A client or form can invoke an exposed Server Action, and server code can call the function on the server.';
+  for (const text of [correct, "Next.js docs: Don't treat env vars as exposed unless prefixed for server only. The default is private.", 'In this custom bundler, treat env vars as exposed unless prefixed for server only.']) {
+    assert.deepEqual(completeNativeWorkspaceAnswer(text, 'stop').completion, { status: 'complete' });
+  }
+});
+
+test('Next.js context survives removal of an invalid native claim', () => {
+  const program = [
+    'root = Col([title, note, warning, Table(["Boundary"], [["Authorize actions"]])])',
+    'title = Title("Next.js")',
+    'note = Text("Server Functions execute on the server.")',
+    'warning = Text("Treat env vars as exposed unless prefixed for server only.")',
+  ].join('\n');
+  const result = completeNativeWorkspaceAnswer('Check the caller before applying changes.' + NATIVE_UI_MARKER + program, 'stop');
+  assert.deepEqual(result.completion, { status: 'partial', reason: 'factual_review' });
+  assert.match(result.responseSource.text, /Table\(/);
+  assert.doesNotMatch(result.responseSource.text, /exposed unless/);
+  assert.match(result.response, /environment variables are server-only by default/);
 });
 
 test('native layout, data and reactive arithmetic are accepted without a V2 translation', () => {

@@ -5216,7 +5216,7 @@
       "id": "surface:456e62cb099b42e5c2a2",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUi.ts",
-      "sha256": "7e78a5b7f26d6f2308c50a31b411f706838ff7b6d08dd5dac3d5a547200aa135",
+      "sha256": "8ee8ca7eb24e45906fa492c0b67037ff219ae8e1b132d9445752de873ab3207a",
       "symbols": [
         "MAX_PROGRAM_CHARS",
         "NATIVE_UI_FORMAT",
@@ -5358,7 +5358,7 @@
         "start",
         "statement",
         "statements",
-        "strayRootClosingLine",
+        "strayPresentationClosingLines",
         "supplementNativeProse",
         "supported",
         "symbols",
@@ -5439,7 +5439,7 @@
       "id": "surface:f8a39bc555632894e7fb",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiAccuracy.ts",
-      "sha256": "c9a068a66ed47f538ca345ae311c8deca7baab83f0ff8081caeb7477eaa0c3e0",
+      "sha256": "37df0c73872e450a1729c09257c0a3ad59df39c1c4eacc57020b355d20a0b676",
       "symbols": [
         "FactualRule",
         "MonthlyPoint",
@@ -5455,6 +5455,7 @@
         "chart",
         "charts",
         "claims",
+        "clientOnlyInvocation",
         "columns",
         "compare",
         "compareBothGains",
@@ -5473,6 +5474,7 @@
         "formatValue",
         "fraction",
         "higher",
+        "isNextJs",
         "jointClaim",
         "label",
         "labelClaim",
@@ -5495,6 +5497,7 @@
         "nativeAnswerReviewReason",
         "nativeFactualGuidance",
         "nativeTechnicalCorrections",
+        "nativeTechnicalReviewContext",
         "node",
         "numeric",
         "opening",
@@ -5533,7 +5536,8 @@
         "value",
         "values",
         "warnsAgainst",
-        "wrongAxialReference"
+        "wrongAxialReference",
+        "wrongVisibility"
       ],
       "imports": [
         "./answerAuthorizationReview.js"
@@ -5579,7 +5583,7 @@
       "id": "surface:a67f0b1fa2dd0f11a67f",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiPrompt.ts",
-      "sha256": "7d8d69bad2c04eefd1acf8eff9455e8bd7e2c3feb9fb6068c5cd3b20008a94fa",
+      "sha256": "9ce6a2f2d74377d71679fba787cce3f63bfc58eb35ce874acf95cc59ca5c5066",
       "symbols": [
         "buildNativeOpenUiPrompt",
         "general",
@@ -5588,6 +5592,7 @@
         "nativeOpenUiPrompt",
         "numericPrecisionRule",
         "selected",
+        "technicalPrecisionRule",
         "withoutSources",
         "workspaceNativeOpenUiPrompt"
       ],
@@ -141800,9 +141805,9 @@
   ],
   "findings": [
     {
-      "id": "finding:72f277920f96b1ffd771",
+      "id": "finding:35ce1536cb60d9fbf11d",
       "sourcePath": "backend/src/ai/nativeOpenUiPrompt.ts",
-      "line": 39,
+      "line": 42,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -149787,7 +149792,7 @@
     {
       "id": "test-suite:2e491f4d2fcbc11f974c",
       "sourcePath": "backend/src/ai/nativeOpenUi.test.ts",
-      "declaredTests": 49,
+      "declaredTests": 52,
       "skipLocations": [],
       "focusLocations": []
     },
