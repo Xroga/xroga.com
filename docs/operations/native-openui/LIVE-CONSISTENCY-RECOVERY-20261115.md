@@ -3,7 +3,7 @@
 ## Release status
 
 Not ready for promotion. Production was unchanged. The hosted run verified the
-request/render/persist/ledger path, but content review found five material failures.
+request/render/persist/ledger path, but final review found seven failed cases.
 Passing browser assertions do not establish factual correctness.
 
 Hosted source: `c57efb2346b17ecc082d95a8c21cc841d3988675`, PR #989.
@@ -33,14 +33,22 @@ There were no formatting-only calls, retries or Search calls.
 
 | Case | Finding |
 | --- | --- |
+| parity/7 | React comparison overgeneralizes hook restrictions and Date serialization. |
 | parity/11 | Loan prose gives inconsistent totals. The upstream calculator computes $4,331.67 interest and $24,331.67 repayment. |
 | parity/13 | Keyboard example mixes two focus strategies and does not move actual focus. |
 | suite/how-to | Stain-removal procedure contradicts its heat precaution. |
 | suite/compare | Three seats are priced as two one-seat subscriptions, and subscription stacking is assumed. |
 | suite/line | March is called the lowest month even though January is lower. |
+| suite/checklist | The rich view has 25 items, but readable prose omits the launch announcement item. |
 
-Immutable answer-hashed failure reviews have been recorded. The other five
-automated successes have not been converted into blanket semantic approval.
+All ten immutable answer-hashed reviews have been recorded: three passed and seven
+failed. The three passes cover unresolved input conflicts, part-of-whole values,
+and negative/zero cash flows. They do not certify other prompts.
+
+The React prompt clarification follows the upstream documented hook exceptions
+and serializable types, including Date and Server Functions. See
+[React's client-boundary reference](https://react.dev/reference/rsc/use-client).
+Its effect on a fresh model answer remains an acceptance gate.
 
 ## Implemented recovery
 

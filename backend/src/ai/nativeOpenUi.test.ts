@@ -13,6 +13,7 @@ test('the model gets instructions from the native registry and may answer in tex
     assert.match(prompt, /NEXT_PUBLIC_ is for values exposed to the browser/);
     assert.match(prompt, /carry precautions into every step/);
     assert.match(prompt, /Required units must cover the whole requested quantity/);
+    assert.match(prompt, /React supports Date values and Server Functions/);
   }
   for (const name of ['Col(', 'Chart(', 'Slider(', 'Svg(', 'Diagram(', 'Section(', 'Table(', 'Payment(', 'Source(']) assert.ok(nativeOpenUiPrompt.includes(name), name);
   assert.deepEqual(splitNativeOpenUiAnswer('Paris.'), { text: 'Paris.', program: '' });
