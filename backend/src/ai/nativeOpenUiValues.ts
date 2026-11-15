@@ -23,34 +23,7 @@ const functions: NonNullable<EvaluationContext['functions']> = Object.fromEntrie
  * network, persisted-state writes or inferred inputs are available here. */
 export function initialNativeReadouts(program: string): Array<{ label: string; value: string }> {
   try {
-    const symbols = new Map(split(tokenize(program)).map(statement => [statement.id, parseExpression(statement.tokens)]));
-    const active = new Set<string>();
-    const cache = new Map<string, unknown>();
-    let budget = 6000;
-    const resolve = (name: string): unknown => {
-      if (--budget < 0 || active.has(name)) throw Error('Snapshot evaluation budget');
-      if (cache.has(name)) return cache.get(name);
-      const expression = symbols.get(name);
-      if (!expression) throw Error('Unresolved snapshot reference');
-      active.add(name);
-      try {
-        const result = scalar(expression);
-        cache.set(name, result);
-        return result;
-      } finally { active.delete(name); }
-    };
-    const context: EvaluationContext = {
-      getState: resolve, resolveRef: resolve, functions,
-      reportError: () => { throw Error('Invalid snapshot calculation'); },
-    };
-    function scalar(expression: ASTNode): unknown {
-      walkAST(expression, node => {
-        if (--budget < 0 || (node.k === 'Comp' && (!node.fn || !Object.hasOwn(functions, node.name)))) {
-          throw Error('Snapshot accepts registered pure functions only');
-        }
-      });
-      return evaluate(expression, context);
-    }
+    const { symbols, scalar, spend } = snapshotEvaluator(program);
     const root = symbols.get('root');
     if (!root) return [];
     const pending = [root];
@@ -61,7 +34,7 @@ export function initialNativeReadouts(program: string): Array<{ label: string; v
       if (visited.has(current)) continue;
       visited.add(current);
       walkAST(current, node => {
-        if (--budget < 0) throw Error('Snapshot traversal budget');
+        spend();
         if (node.k === 'Ref') {
           const target = symbols.get(node.n);
           if (target && !visited.has(target)) pending.push(target);
@@ -77,6 +50,58 @@ export function initialNativeReadouts(program: string): Array<{ label: string; v
     }
     return result;
   } catch { return []; }
+}
+
+/** Read initial scalar/array presentation values with the same pure registry.
+ * A failed expression remains unavailable, never a fabricated blank or zero. */
+function snapshotEvaluator(program: string) {
+  const symbols = new Map(split(tokenize(program)).map(statement => [statement.id, parseExpression(statement.tokens)]));
+  const active = new Set<string>();
+  const cache = new Map<string, unknown>();
+  let budget = 6000;
+  const spend = () => { if (--budget < 0) throw Error('Snapshot evaluation budget'); };
+  const resolve = (name: string): unknown => {
+    if (--budget < 0 || active.has(name)) throw Error('Snapshot evaluation budget');
+    if (cache.has(name)) return cache.get(name);
+    const expression = symbols.get(name);
+    if (!expression) throw Error('Unresolved snapshot reference');
+    active.add(name);
+    try {
+      const result = expressionValue(expression);
+      cache.set(name, result);
+      return result;
+    } finally { active.delete(name); }
+  };
+  const context: EvaluationContext = {
+    getState: resolve, resolveRef: resolve, functions,
+    reportError: () => { throw Error('Invalid snapshot calculation'); },
+  };
+  function expressionValue(expression: ASTNode): unknown {
+    walkAST(expression, node => {
+      if (--budget < 0 || (node.k === 'Comp' && (!node.fn || !Object.hasOwn(functions, node.name)))) {
+        throw Error('Snapshot accepts registered pure functions only');
+      }
+    });
+    return evaluate(expression, context);
+  }
+  function read(value: unknown): unknown {
+    if (--budget < 0) throw Error('Snapshot evaluation budget');
+    if (value === null || typeof value === 'string' || typeof value === 'boolean') return value;
+    if (typeof value === 'number') return Number.isFinite(value) ? value : undefined;
+    if (Array.isArray(value)) return value.map(read);
+    if (value && typeof value === 'object' && typeof (value as { k?: unknown }).k === 'string') {
+      return read(expressionValue(value as ASTNode));
+    }
+    return undefined;
+  }
+  return { symbols, scalar: expressionValue, spend, read };
+}
+
+export function initialNativeValueReader(program: string): (value: unknown) => unknown {
+  try {
+    const { read } = snapshotEvaluator(program);
+    return value => { try { return read(value); } catch { return undefined; } };
+  } catch { return () => undefined; }
 }
 
 /** Compare explicit currency claims to the corresponding labeled readout. An

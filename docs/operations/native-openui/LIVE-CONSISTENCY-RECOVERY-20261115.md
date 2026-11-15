@@ -71,12 +71,17 @@ guidance/pricing failures fixed.
 
 Readable projection no longer turns unresolved table expressions into blank data.
 The live rich table remains intact. Initial computed Metric values are retained in
-the readable snapshot. This does not yet provide complete expression-backed table
-export in every fallback case.
+the readable snapshot. The subsequent local recovery change also evaluates table
+cells through the same pure upstream functions, preserving computed values and
+booleans when a complete readable snapshot is needed. Failed expressions remain
+unavailable instead of becoming invented blanks or zeroes. This is an initial
+snapshot, not an export of later browser edits or proof of every fallback case.
 
 ## Verification of changes
 
-- 64 targeted native-answer and new snapshot tests passed.
+- 66 targeted native-answer and snapshot tests passed after the calculated-table
+  recovery change. The new cases cover payment values, zero APR, boolean cells,
+  rejected actions, cycles, missing references and non-finite scalar input.
 - Backend and frontend TypeScript checks passed.
 - Generated schema/function parity passed. The 55-component/30-function registry
   is unchanged.
@@ -88,6 +93,13 @@ export in every fallback case.
   answer, including when no prose was supplied. Existing labels are not duplicated.
 
 These local checks do not replace fresh hosted acceptance or final exact-source CI.
+
+The hosted run pinned to `5e18d374` is separate from the subsequent local table
+recovery change. Its first build timed out, and the corrected build's test harness
+stopped before inference because the reviewed case list omitted native-selection
+flags. Both attempts were cleaned up with zero model calls. The corrected harness
+now validates the complete case contract offline before cloud mutations. Detailed
+run records remain outside Git, and no failed attempt counts as live acceptance.
 
 The API Docker check on `993a483139508705908a9d554a6e552547eff28b` exposed a
 heterogeneous function-registry TypeScript inference error absent from the local

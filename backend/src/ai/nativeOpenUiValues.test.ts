@@ -1,8 +1,9 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { initialNativeReadouts, conflictingNativeReadouts } from './nativeOpenUiValues.js';
+import { initialNativeReadouts, initialNativeValueReader, conflictingNativeReadouts } from './nativeOpenUiValues.js';
+import { parseExpression, tokenize } from '@openuidev/lang-core';
 import { completeNativeWorkspaceAnswer } from './nativeOpenUiWorkspace.js';
-import { NATIVE_UI_MARKER } from './nativeOpenUi.js';
+import { NATIVE_UI_MARKER, supplementNativeProse } from './nativeOpenUi.js';
 import { nativeTechnicalCorrections } from './nativeOpenUiAccuracy.js';
 
 const program = `root = Col([Metric("Monthly payment", @Format(payment, "currency", 2, "USD")), Metric("Total interest", @Format(payment * 60 - $principal, "currency", 2, "USD"))])
@@ -65,4 +66,23 @@ test('checklist labels omitted from prose survive the saved readable answer', ()
   const recovered = completeNativeWorkspaceAnswer(NATIVE_UI_MARKER + checklist, 'stop');
   assert.match(recovered.response, /Check links/);
   assert.match(recovered.response, /Schedule announcement/);
+});
+
+test('readable recovery keeps calculated table cells and boolean values', () => {
+  const table = 'root = Col([Table(["Item", "Value"], [["Payment", @Format(@Payment($principal, $apr / 12, 60), "currency", 2, "USD")], ["Enabled", true]])])\n$principal = 20000\n$apr = 8';
+  const text = supplementNativeProse('', table, true);
+  assert.match(text, /\| Payment \| \$405\.53 \|/);
+  assert.match(text, /\| Enabled \| true \|/);
+  assert.doesNotMatch(text, /@Payment|\$principal|\"k\"/);
+  assert.match(supplementNativeProse('', table.replace('$apr = 8', '$apr = 0'), true), /\$333\.33/);
+});
+
+test('initial table evaluation rejects non-finite values, actions and cycles', () => {
+  for (const expression of ['@Set($amount, 10)', 'cycle', 'missing']) {
+    const read = initialNativeValueReader('root = Col([])\n$amount = 1\ncycle = cycle');
+    assert.equal(read(Infinity), undefined);
+    assert.equal(read(NaN), undefined);
+    assert.equal(read(parseExpression(tokenize(expression))), undefined);
+    assert.equal(read(parseExpression(tokenize('$amount'))), 1, 'An action must not modify initial state');
+  }
 });

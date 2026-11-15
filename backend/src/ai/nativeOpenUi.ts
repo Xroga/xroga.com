@@ -2,7 +2,7 @@ import { createParser, evaluate, parseExpression, split, tokenize, walkAST, type
 import { claimsChartIsDeferred, contradictsMonthlyChart, monthlyChartDataFallback, nativeTechnicalReviewContext, reviewNativeAnswer, suppliedMonthlyComparison } from './nativeOpenUiAccuracy.js';
 import { DIAGRAM_NODE_TONES, hasRenderableDiagramTopology } from './nativeDiagramTopology.js';
 import catalog from './nativeOpenUiCatalog.json' with { type: 'json' };
-import { initialNativeReadouts } from './nativeOpenUiValues.js';
+import { initialNativeReadouts, initialNativeValueReader } from './nativeOpenUiValues.js';
 
 export const NATIVE_UI_FORMAT = 'xroga-openui-v1' as const;
 export const NATIVE_UI_LIBRARY = 'xroga-native-v1' as const;
@@ -184,6 +184,7 @@ export function supplementNativeProse(prose: string, program: string, includeAll
   const array = (value: unknown) => Array.isArray(value) ? value as unknown[] : [];
   const scalar = (value: unknown): string => typeof value === 'string' || typeof value === 'number' ? String(value) : '';
   const readouts = initialNativeReadouts(program);
+  const initialValue = initialNativeValueReader(program);
   const children = array(root?.props.children);
   const firstBlock = includeAll || !prose ? 0 : children.findIndex(child => (
     unfinishedHeading ? !['Title', 'Text', 'Badge'].includes(scalar(record(child).typeName))
@@ -238,11 +239,12 @@ export function supplementNativeProse(prose: string, program: string, includeAll
       if (initial) add(initial.label + ': ' + initial.value);
       add(scalar(props.note));
     } else if (node.typeName === 'Table') {
-      const rows = array(props.rows).map(cells => array(cells));
-      // Expressions remain live in the rich table. Do not misrepresent them as
-      // blank data in a readable snapshot. Computed Metric readouts are above.
-      if (rows.every(row => row.every(cell => cell === null || ['string', 'number', 'boolean'].includes(typeof cell)))) {
-        addTable(array(props.columns).map(scalar), rows.map(row => row.map(scalar)));
+      const resolved = initialValue(props.rows);
+      // Keep the complete initial table or omit it as unavailable. Never turn an
+      // unresolved expression into an invented blank, zero or partial row.
+      if (Array.isArray(resolved) && resolved.every(row => Array.isArray(row) && row.every(cell =>
+        cell === null || ['string', 'number', 'boolean'].includes(typeof cell)))) {
+        addTable(array(props.columns).map(scalar), resolved.map(row => row.map((cell: unknown) => cell === null ? '' : String(cell))));
       }
     } else if (node.typeName === 'Chart' && Array.isArray(props.data)) {
       const presentation = record(props.presentation);

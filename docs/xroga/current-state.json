@@ -5219,7 +5219,7 @@
       "id": "surface:456e62cb099b42e5c2a2",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUi.ts",
-      "sha256": "822eb00e435e5a6e4fb62c4659838782ec8369265a7b5afc7169b6e94b45465e",
+      "sha256": "521844dff6d95eea40da8960f53a2626c3a455a139011149dfb62c60f9b3f12f",
       "symbols": [
         "MAX_PROGRAM_CHARS",
         "NATIVE_UI_FORMAT",
@@ -5278,6 +5278,7 @@
         "included",
         "index",
         "initial",
+        "initialValue",
         "inputs",
         "inspect",
         "invalidBlock",
@@ -5351,6 +5352,7 @@
         "render",
         "resolve",
         "resolveRecoveryReference",
+        "resolved",
         "restored",
         "result",
         "reviewContext",
@@ -5422,7 +5424,7 @@
       "callers": [
         "backend/src/ai/nativeOpenUi.test.ts:3",
         "backend/src/ai/nativeOpenUiShare.ts:2",
-        "backend/src/ai/nativeOpenUiValues.test.ts:5",
+        "backend/src/ai/nativeOpenUiValues.test.ts:6",
         "backend/src/ai/nativeOpenUiWorkspace.ts:2",
         "backend/src/ai/pipeline.ts:25",
         "backend/src/routes/nativeOpenUiEvaluation.ts:13",
@@ -5580,7 +5582,7 @@
       ],
       "callers": [
         "backend/src/ai/nativeOpenUi.ts:2",
-        "backend/src/ai/nativeOpenUiValues.test.ts:6",
+        "backend/src/ai/nativeOpenUiValues.test.ts:7",
         "backend/src/ai/nativeOpenUiWorkspace.ts:3",
         "backend/src/routes/nativeOpenUiEvaluation.ts:11"
       ],
@@ -6000,7 +6002,7 @@
       "id": "surface:309e6a3c1f73a053bdef",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiValues.ts",
-      "sha256": "66fbb56ed0094c24792c248f6f8bcfadfcdab627500ba2c5fd94a0308154b1ac",
+      "sha256": "b80a62ff90d0ad3e80f5b4c01cd013e0ea24084d1cf9097c101dc789742e352b",
       "symbols": [
         "active",
         "at",
@@ -6013,8 +6015,10 @@
         "decimals",
         "expected",
         "expression",
+        "expressionValue",
         "functions",
         "initialNativeReadouts",
+        "initialNativeValueReader",
         "invoke",
         "label",
         "money",
@@ -6024,12 +6028,14 @@
         "params",
         "pending",
         "plain",
+        "read",
         "resolve",
         "result",
         "returns",
         "root",
         "row",
-        "scalar",
+        "snapshotEvaluator",
+        "spend",
         "symbols",
         "target",
         "value",
@@ -6136,7 +6142,7 @@
       ],
       "callers": [
         "backend/src/ai/nativeOpenUi.test.ts:7",
-        "backend/src/ai/nativeOpenUiValues.test.ts:4",
+        "backend/src/ai/nativeOpenUiValues.test.ts:5",
         "backend/src/ai/pipeline.ts:26"
       ],
       "reachable": true,
@@ -150219,7 +150225,7 @@
     {
       "id": "test-suite:cf78e18abc3aa283d701",
       "sourcePath": "backend/src/ai/nativeOpenUiValues.test.ts",
-      "declaredTests": 7,
+      "declaredTests": 9,
       "skipLocations": [],
       "focusLocations": []
     },
