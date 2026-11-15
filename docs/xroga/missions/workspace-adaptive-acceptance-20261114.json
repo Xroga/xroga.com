@@ -18,6 +18,9 @@
     "backend/src/ai/nativeOpenUiPrompt.ts",
     "backend/src/ai/nativeOpenUiRecovery.ts",
     "backend/src/ai/nativeOpenUiWorkspace.ts",
+    "backend/src/ai/nativeOpenUiValues.ts",
+    "backend/src/ai/nativeOpenUiValues.test.ts",
+    "backend/src/ai/nativeOpenUiFunctions.generated.ts",
     "backend/src/ai/pipeline.ts",
     "backend/src/ai/responsePresentation.test.ts",
     "backend/src/ai/responsePresentation.ts",
@@ -31,6 +34,8 @@
     "frontend/src/components/native-openui/Diagram.tsx",
     "frontend/src/components/native-openui/Editorial.tsx",
     "frontend/src/components/native-openui/NativeSurface.tsx",
+    "frontend/src/components/native-openui/functions.ts",
+    "frontend/src/components/native-openui/library.tsx",
     "frontend/src/components/native-openui/Tabs.tsx",
     "frontend/src/components/native-openui/surface.css",
     "frontend/src/components/native-openui/upstream/components/controls.tsx",
@@ -41,10 +46,12 @@
     "frontend/src/components/native-openui/upstream/components/table.tsx",
     "frontend/src/components/native-openui/upstream/components/text.tsx",
     "frontend/src/lib/publicAnswerText.ts",
-    "scripts/verify-native-openui-browser.mjs"
+    "scripts/verify-native-openui-browser.mjs",
+    "scripts/generate-native-openui-spec.mjs"
   ],
   "decisions": {
     "extend": [
+      "Compute initial readouts with the same pure upstream functions as the renderer. Preserve validated interactive programs while withholding contradictory currency prose. Keep source-bound function parity, reject snapshot actions, cycles and unresolved references, and mark partial recovery honestly.",
       "Use the semantic plan to size the canonical native answer dispatch. Increase room for the single planner decision and bind that ceiling to the reservation. Recognize explicit requests phrased as presenting data in a particular format.",
       "Render safe inline citations, preserve readable slider value units, and protect native controls at narrow widths and zoom.",
       "Keep the registered presentation components available for mixed requests and preserve validated visuals after a provider output limit, including closed declarations and root children before a cut-off tail.",
@@ -99,6 +106,12 @@
     }
   },
   "tests": [
+    {
+      "scope": "Pure upstream calculation snapshots, currency conflicts, initial zero-rate values, reference and action rejection, and scoped factual recovery.",
+      "command": "node --import tsx --test backend/src/ai/nativeOpenUiValues.test.ts",
+      "reference": "backend/src/ai/nativeOpenUiValues.test.ts",
+      "negative": true
+    },
     {
       "scope": "Keep closed, validated native visuals across output cutoff without retaining incomplete syntax or unverified citations.",
       "command": "node --import tsx --test backend/src/ai/nativeOpenUi.test.ts",

@@ -2,6 +2,7 @@ import { publicCompletionState } from './completionDiagnostics.js';
 import { NATIVE_UI_FORMAT, PARTIAL_NATIVE_PRESENTATION_NOTE, missingNativeFormats, recoverNativeWorkspaceProgram, recoverNativeMonthlyChart, recoverTruncatedNativeWorkspaceProgram, splitNativeOpenUiAnswer, supplementNativeProse, validateNativeWorkspaceProgram, type NativeUiDiagnostic, type RequiredNativeFormat } from './nativeOpenUi.js';
 import { nativeAnswerReviewReason, nativeFactualGuidance, nativeTechnicalCorrections, suppliedMonthlyComparison } from './nativeOpenUiAccuracy.js';
 import { checklistFromProse, requestsEditableChecklist, suppliedPeriodicSeries } from './nativeOpenUiRecovery.js';
+import { conflictingNativeReadouts, initialNativeReadouts } from './nativeOpenUiValues.js';
 
 const outputLimitNote = 'This answer reached the provider output limit. The available answer is shown below.';
 
@@ -109,6 +110,16 @@ export function completeNativeWorkspaceAnswer(
       '## Original draft for review', 'Use the corrections above when reviewing this draft.', text].join('\n\n')
     : response;
   const valid = validation?.ok === true && completion.status === 'complete';
+  if (valid && conflictingNativeReadouts(response, initialNativeReadouts(program)).length) {
+    // Preserve the working calculator and derive its readable snapshot from the
+    // same pure upstream functions. Do not persist conflicting model totals.
+    return {
+      response: 'The generated numerical explanation disagreed with the calculator. The initial computed results and available assumptions are shown below.\n\n'
+        + supplementNativeProse('', program, true),
+      completion: { status: 'partial' as const, reason: 'data_review' as const },
+      responseSource: { format: NATIVE_UI_FORMAT, text: program },
+    };
+  }
   const verifiedBeforeLimit = validation?.ok === true && completion.status === 'partial' && completion.reason === 'output_limit';
   const recovered = completion.status === 'partial' && completion.reason === 'data_review' ? recoverNativeMonthlyChart(program) : undefined;
   if (completion.status === 'complete' && (validation?.ok === false || repair?.partial || missing.length)) {

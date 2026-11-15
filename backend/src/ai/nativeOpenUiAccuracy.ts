@@ -1,7 +1,7 @@
 import { requiresAuthorizationReview } from './answerAuthorizationReview.js';
 
 type FactualRule = 'stripe_event_order' | 'stripe_retry_window' | 'tenant_key_immutability' | 'earth_axial_tilt_reference'
-  | 'nextjs_env_visibility' | 'nextjs_server_invocation' | 'unconfirmed_conflicting_input';
+  | 'nextjs_env_visibility' | 'nextjs_server_invocation' | 'unconfirmed_conflicting_input' | 'keyboard_focus_pattern';
 export const nativeFactualGuidance: Record<FactualRule, string> = {
   stripe_event_order: 'Stripe event timestamps can tie and do not establish delivery order. Verify the signature, deduplicate by event ID, and reconcile the current subscription state with Stripe before applying a durable update.',
   stripe_retry_window: 'Stripe automatic webhook retries have a finite delivery window. Reconcile missed events separately and make processing idempotent.',
@@ -10,6 +10,7 @@ export const nativeFactualGuidance: Record<FactualRule, string> = {
   nextjs_env_visibility: 'Next.js environment variables are server-only by default. NEXT_PUBLIC_ makes a value eligible for inlining into the browser bundle. Never send secrets to the client through props, public environment variables or explicit bundler configuration.',
   nextjs_server_invocation: 'Next.js Server Functions run on the server and can be called from server code. Client Components can invoke exposed Server Functions, including through form actions. Authenticate, authorize and validate every exposed invocation.',
   unconfirmed_conflicting_input: 'The chart is withheld until the conflicting inputs are reconciled.',
+  keyboard_focus_pattern: 'Use one focus strategy. For roving tabindex, the container has no tab stop, exactly one item has tabindex="0", and arrow-key handling moves focus to that item. For aria-activedescendant, keep focus on the container, give items no tab stops, and update aria-activedescendant to the active item ID. Keep the equivalent data table visible.',
 };
 
 export function claimsChartIsDeferred(prose: string): boolean {
@@ -30,6 +31,16 @@ export function nativeTechnicalCorrections(answer: string): TechnicalCorrection[
   const statements = text.split(/(?<=[.!?;])\s+|\n+/);
   const warnsAgainst = (statement: string) =>
     /\b(?:never|do not|does not|cannot|must not|should not|don't|doesn't|can't|mustn't|shouldn't|still subject to|incorrect|unsafe|unreliable)\b/i.test(statement);
+  if (/\b(?:single|one)\s+(?:focusable|tab stop)\b/i.test(text) && /\broving\s+tabindex\b/i.test(text)) {
+    const examples = [...answer.matchAll(/```(?:html|jsx)\s*\n([\s\S]*?)```/gi)];
+    if (examples.some(example => {
+      const introduction = answer.slice(0, example.index).trimEnd().split(/\n\s*\n/).at(-1) ?? '';
+      if (warnsAgainst(introduction) || /\b(?:broken|wrong|bad|anti-pattern)\b/i.test(introduction)) return false;
+      return /<(?:div|section)[^>]*\btabindex\s*=\s*["']0["'][^>]*>[\s\S]*?<(?:li|button|circle|rect)[^>]*\btabindex\s*=\s*["']0["']/i.test(example[1]);
+    })) {
+      corrections.push({ reason: 'factual_review', rule: 'keyboard_focus_pattern', guidance: nativeFactualGuidance.keyboard_focus_pattern });
+    }
+  }
   if (isNextJs.test(answer)) {
     const claims = statements.filter(statement => !warnsAgainst(statement) && !/\b(?:misconception|myth|false|wrong)\b/i.test(statement));
     const wrongVisibility = /\b(?:env(?:ironment)?\s+(?:vars?|variables?))\s+(?:are\s+|as\s+)?(?:public|exposed)\s+unless\s+(?:explicitly\s+)?(?:prefixed|marked|configured)\s+(?:for\s+)?server[- ]only\b/i;
@@ -202,6 +213,12 @@ export function contradictsMonthlyChart(root: unknown, prose: string): boolean {
   if (!series) return false;
   const changes = new Map(monthlyChanges(series).map(change => [change.month, change]));
   const plain = prose.replace(/[\x60*_]/g, '');
+  const extrema = new RegExp('\\b(' + monthPattern + ')\\s+(?:is|was)\\s+(?:the\\s+)?(lowest|highest)\\s+(?:month|value|point)\\b(?!\\s+(?:since|before|after|among|within|excluding)\\b)', 'gi');
+  for (const [, label, direction] of plain.matchAll(extrema)) {
+    const value = series.points.find(point => point.month === months.get(label.toLowerCase()))?.value;
+    const expected = (direction.toLowerCase() === 'lowest' ? Math.min : Math.max)(...series.points.map(point => point.value));
+    if (value !== undefined && value !== expected) return true;
+  }
   const rank = 'second[- ]largest|largest|biggest|strongest|highest';
   const unit = 'percentage|percent|dollar|absolute';
   const scope = 'since|from|versus|vs\\.?|compared|relative|after|before|until|among|within|excluding|year[- ]over[- ]year|yoy|at that point';

@@ -10,13 +10,8 @@ import { Table } from './upstream/components/table';
 import { svgComponents } from './upstream/components/svg';
 import { Glyph } from './upstream/components/glyph';
 import { color, fg } from './upstream/components/style';
-import { Clamp, Convert, Lerp, Payment, Percent, Pow, Sqrt } from './upstream/functions/numbers';
-
-import { Default, Duration, Format, Plural } from './upstream/functions/text';
-import { AddDays, AddMonths, DaysBetween, StartOf } from './upstream/functions/calendar';
+import { nativeFunctions } from './functions';
 import { ChoicePicker } from './ChoicePicker';
-import { Between, Change, Cumulative, GroupBy, Histogram, MovingAvg, Stats, Top } from './upstream/functions/data';
-import { Chunk, Find, Includes, MixColor, Reverse, Slice, Take } from './upstream/functions/collections';
 import { Tabs } from './Tabs';
 import { Diagram } from './Diagram';
 import { Resource } from './Resources';
@@ -52,9 +47,7 @@ export const library = createLibrary({
     Section, Metric, Controls, Diagram, Form, Input, TextArea, Slider, Select, Checkbox, RadioGroup, SegmentedControl, DatePicker, ChoicePicker, Timer,
     Button, IconButton, Pressable, Flashcard, Source, Resource, Icon, Table, Chart, ...svgComponents,
   ],
-  functions: [Clamp, Convert, Lerp, Payment, Percent, Pow, Sqrt, Format, Plural, Default, Duration,
-    Between, Change, Cumulative, GroupBy, Histogram, MovingAvg, Stats, Top, AddDays, AddMonths, DaysBetween, StartOf,
-    Chunk, Find, Includes, MixColor, Reverse, Slice, Take],
+  functions: nativeFunctions,
   componentGroups: [
     { name: 'Editorial layout', components: ['Section', 'Metric', 'Col', 'Row', 'Grid', 'Title', 'Text', 'Caption', 'List', 'ListItem', 'Card', 'Quote', 'Badge', 'Source', 'Resource'] },
     { name: 'Data and technical answers', components: ['Table', 'Chart', 'Diagram', 'Math', 'Code', 'Svg', 'G', 'Circle', 'Ellipse', 'Rect', 'Line', 'Path', 'Polyline', 'Polygon', 'SvgText'] },

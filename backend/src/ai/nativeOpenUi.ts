@@ -2,6 +2,7 @@ import { createParser, evaluate, parseExpression, split, tokenize, walkAST, type
 import { claimsChartIsDeferred, contradictsMonthlyChart, monthlyChartDataFallback, nativeTechnicalReviewContext, reviewNativeAnswer, suppliedMonthlyComparison } from './nativeOpenUiAccuracy.js';
 import { DIAGRAM_NODE_TONES, hasRenderableDiagramTopology } from './nativeDiagramTopology.js';
 import catalog from './nativeOpenUiCatalog.json' with { type: 'json' };
+import { initialNativeReadouts } from './nativeOpenUiValues.js';
 
 export const NATIVE_UI_FORMAT = 'xroga-openui-v1' as const;
 export const NATIVE_UI_LIBRARY = 'xroga-native-v1' as const;
@@ -162,6 +163,7 @@ export function supplementNativeProse(prose: string, program: string, includeAll
   const array = (value: unknown) => Array.isArray(value) ? value as unknown[] : [];
   const scalar = (value: unknown): string => typeof value === 'string' || typeof value === 'number' ? String(value) : '';
   const { root, stateDeclarations } = parseProgram.parse(program);
+  const readouts = initialNativeReadouts(program);
   const children = array(root?.props.children);
   const firstBlock = includeAll || !prose ? 0 : children.findIndex(child => (
     unfinishedHeading ? !['Title', 'Text', 'Badge'].includes(scalar(record(child).typeName))
@@ -207,8 +209,18 @@ export function supplementNativeProse(prose: string, program: string, includeAll
         const language = scalar(props.language);
         add(fence + (/^[a-z0-9+#-]{1,30}$/i.test(language) ? language : '') + '\n' + code + '\n' + fence);
       }
+    } else if (node.typeName === 'Metric') {
+      const label = scalar(props.label);
+      const initial = readouts.find(row => row.label === label);
+      if (initial) add(initial.label + ': ' + initial.value);
+      add(scalar(props.note));
     } else if (node.typeName === 'Table') {
-      addTable(array(props.columns).map(scalar), array(props.rows).map(cells => array(cells).map(scalar)));
+      const rows = array(props.rows).map(cells => array(cells));
+      // Expressions remain live in the rich table. Do not misrepresent them as
+      // blank data in a readable snapshot. Computed Metric readouts are above.
+      if (rows.every(row => row.every(cell => cell === null || ['string', 'number', 'boolean'].includes(typeof cell)))) {
+        addTable(array(props.columns).map(scalar), rows.map(row => row.map(scalar)));
+      }
     } else if (node.typeName === 'Chart' && Array.isArray(props.data)) {
       const presentation = record(props.presentation);
       const columns = [scalar(props.x), ...array(props.series).map(scalar)].filter(Boolean);

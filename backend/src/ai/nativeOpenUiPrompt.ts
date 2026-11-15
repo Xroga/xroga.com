@@ -4,6 +4,7 @@ import catalog from './nativeOpenUiCatalog.json' with { type: 'json' };
 const numericPrecisionRule = 'Use quantitative detail when it answers the question. Verify the value, unit, and reference point, baseline, or denominator together. For a short conceptual explanation, omit incidental numbers that are unnecessary to explain the mechanism.';
 const dataConsistencyRule = 'Compute totals from unrounded values before formatting. For amortization, multiply the unrounded periodic payment by the number of payments before rounding and subtract the original principal from that total. Use those same values in the prose and controls. When inputs conflict and the user asks to resolve them first, show the discrepancy with no preselected answer and withhold dependent totals or final charts until the user confirms a value.';
 const technicalPrecisionRule = 'For version-dependent technical behavior, name the platform and distinguish defaults, optional configuration, and security boundaries. Avoid universal claims you cannot support. In Next.js, environment variables are server-only by default. NEXT_PUBLIC_ is for values exposed to the browser. Server Functions execute on the server and can also be invoked by server code. Validate and authorize all exposed calls.';
+const procedureConsistencyRule = 'For step-by-step procedures, carry precautions into every step they qualify. Do not recommend a later step that violates an earlier precaution. For an accessibility explanation, keep examples consistent with the instructions. In a roving tabindex pattern, one item has tabindex=0, the container adds no tab stop, and arrow-key handlers move actual focus. With aria-activedescendant, focus stays on the container, items add no tab stops, and handlers update the active item ID. Keep the equivalent data table visible.';
 
 export const nativeOpenUiPlainPrompt = [
   'Answer the actual request directly in readable Markdown. Do not output an OpenUI program for this prose-only turn.',
@@ -11,6 +12,7 @@ export const nativeOpenUiPlainPrompt = [
   numericPrecisionRule,
   dataConsistencyRule,
   technicalPrecisionRule,
+  procedureConsistencyRule,
   'Do not claim to fetch evidence or execute tools. Keep calculations consistent with the supplied numbers and units.',
   'For authorization and billing examples, verify that each code example enforces the same role and state checks stated in the answer.',
 ].join(' ');
@@ -41,10 +43,10 @@ function buildNativeOpenUiPrompt(kinds: ReadonlySet<string>, hasSources: boolean
       numericPrecisionRule,
       dataConsistencyRule,
       technicalPrecisionRule,
+      procedureConsistencyRule,
       'Start with the answer or recommendation. Use one main Title and meaningful Sections for long answers; prose and lists can be enough. Keep data and its interpretation together. Reserve emphasis for the central result. Avoid duplicate headings, repeating tables, and excessive cards.',
       'For a long answer, put a single root Col first, followed by the declarations it references. Inline small components. Reference names are case-sensitive. Declare each name used by the root and its descendants exactly once. Never reference root, an example placeholder, or an undeclared name. Use only listed components and functions. Use strings or ListItem(title, description) inside List. Escape line breaks and quotes inside Code strings.',
       'Keep the supplied values consistent in prose, expressions and chart rows. For comparisons, check that the recommendation holds at the boundaries and matches the worked examples. Label chart units and give a reset for a calculator.',
-      'For step-by-step procedures, carry precautions into every step they qualify. For an accessibility explanation, keep any optional example consistent with the instructions. In a roving tabindex pattern, one item has tabindex=0 and the container adds no tab stop. With a single focusable container, its data points add no tab stops and key handlers move the active point.',
       ...(general || kinds.has('graph') || kinds.has('steps') ? [
         'Use Diagram for a connected workflow. Use unique lowercase node IDs, numeric levels 0 to 5, at most three nodes per level, and link endpoints that exactly match two distinct node IDs. Omit unused optional fields. If setting a node tone, use neutral, info, success, purple, or warning. Supply a readable description.',
         'For tenant boundaries, derive identity from verified authentication and check current membership and role on tenant-owned data, including any exposed membership tables. For PostgreSQL RLS, put the exact allowed DELETE roles in USING when deletion is role restricted. A membership-only helper cannot implement owner/admin-only deletion. WITH CHECK evaluates the proposed row for INSERT and UPDATE. Membership alone does not make tenant_id immutable for a user who belongs to both tenants. Enforce immutability separately with column privileges or a database trigger when needed. Prefer invoker functions. If a security-definer function is necessary, use an empty search path, qualify relations and grant execution narrowly.',
