@@ -10,32 +10,26 @@ import {
 import { PluginBrandLogo } from '@/components/integrations/PluginBrandLogo';
 import { EXTERNAL_AGENTS, EXTERNAL_AGENT_DISCLOSURE } from '@/lib/externalAgentWorkflows';
 import { xrogaConnect } from '@/lib/xrogaConnect';
+import { publicConnectCatalogPage } from '@/lib/publicConnectCatalog';
 import { normalizeLiveIntegration, liveIntegrationCategories } from '@/lib/liveIntegrationDiscovery';
 import type {
   IntegrationCategory,
   PublicIntegrationCard,
-  PublicIntegrationMode,
 } from '@/lib/publicIntegrationsDirectory';
 import {
   matchesPublicIntegrationCategory,
   PUBLIC_INTEGRATION_FEATURED_IDS,
 } from '@/lib/integrationDiscoveryFilters';
 
-type DirectoryMode = 'all' | 'guides' | 'technology';
 type SortMode = 'featured' | 'alphabetical';
 const PAGE_SIZE = 24;
 const SEARCH_SUGGESTIONS = [
   'Search Shopify, GitHub, Slack...',
-  'Find a CRM or project tool...',
-  'Explore app actions and triggers...',
-  'Discover technologies for your build...',
+  'Find your next favorite app...',
+  'Explore providers, tools and triggers...',
+  'Search sales, finance and communication...',
 ];
 const featuredOrder = new Map<string, number>(PUBLIC_INTEGRATION_FEATURED_IDS.map((id, index) => [id, index]));
-const modeText: Record<PublicIntegrationMode, string> = {
-  native: 'Native setup',
-  'app-guide': 'App guide',
-  technology: 'Technology listing',
-};
 
 function useTypingPlaceholder(active: boolean) {
   const [text, setText] = useState('');
@@ -63,7 +57,7 @@ function useTypingPlaceholder(active: boolean) {
 }
 
 function AppLogo({ item, size = 'card' }: { item: PublicIntegrationCard; size?: 'micro' | 'card' | 'detail' }) {
-  return <PluginBrandLogo id={item.id} name={item.name} toolkit={item.mode === 'technology' ? undefined : item.id} logo={item.logoUrl} size={size} />;
+  return <PluginBrandLogo id={item.id} name={item.name} toolkit={item.id} logo={item.logoUrl} size={size} verifiedOnly />;
 }
 
 function HowItWorks() {
@@ -118,11 +112,11 @@ function IntegrationCard({ item }: { item: PublicIntegrationCard }) {
           <AppLogo item={item}/>
           <ArrowUpRight size={18} className="xi-card-go" aria-hidden="true"/>
         </div>
-        <div className="xi-card-kind">{modeText[item.mode]}</div>
+        <div className="xi-card-kind">{item.fromLiveCatalog ? 'Xroga Connect app' : 'Featured app'}</div>
         <h3>{item.name}</h3>
-        <p className="xi-card-description">{item.description}</p>
+        {item.description && <p className="xi-card-description">{item.description}</p>}
         <div className="xi-card-meta">
-          <div><Zap size={13} aria-hidden="true"/><span>Tools & triggers</span><strong>{item.fromLiveCatalog ? `${(item.toolsCount ?? 0).toLocaleString()} tools · ${(item.triggersCount ?? 0).toLocaleString()} triggers` : item.mode === 'technology' ? 'Not verified' : 'View details'}</strong></div>
+          {item.fromLiveCatalog && <div><Zap size={13} aria-hidden="true"/><span>Capabilities</span><strong>{(item.toolsCount ?? 0).toLocaleString()} actions · {(item.triggersCount ?? 0).toLocaleString()} triggers</strong></div>}
           <div><KeyRound size={13} aria-hidden="true"/><span>Authorization</span><strong>{item.authHint}</strong></div>
         </div>
         <span className="xi-card-bottom">Explore app <ArrowRight size={15} aria-hidden="true"/></span>
@@ -187,7 +181,6 @@ export function IntegrationsMarketplace({
   const [query, setQuery] = useState('');
   const [focused, setFocused] = useState(false);
   const [category, setCategory] = useState('all');
-  const [mode, setMode] = useState<DirectoryMode>('all');
   const [sort, setSort] = useState<SortMode>('featured');
   const [limit, setLimit] = useState(PAGE_SIZE);
   const searchInput = useRef<HTMLInputElement>(null);
@@ -197,42 +190,55 @@ export function IntegrationsMarketplace({
   const [catalogBusy, setCatalogBusy] = useState(true);
   const [catalogIncomplete, setCatalogIncomplete] = useState(false);
 
-  // Xroga's dashboard reads the full Composio-backed catalogue. Reuse its
-  // existing tenant-filtered, read-only metadata route; never call actions,
-  // connect providers, or show another user's connected-account status here.
-  // Guests / unavailable providers fall back to the clearly labelled public examples.
+  // Public metadata is served by a narrow, read-only catalog route that
+  // excludes custom/private MCP registrations and account connection state.
+  // On a preview where that backend route is not yet deployed, signed-in
+  // users can still use the existing authenticated catalogue. Anonymous
+  // visitors see only Xroga's real curated plugin summaries, never the
+  // unrelated 711-entry technology list or synthesized filler text.
   useEffect(() => {
     let active = true;
     void (async () => {
-      let loadedAny = false;
+      const seen = new Map<string, PublicIntegrationCard>();
+      let reportedTotal: number | null = null;
+      let nextCursor: string | undefined;
+      let usedPublic = true;
+      let incomplete = false;
       try {
-        const status = await xrogaConnect.status();
-        if (!active || !status.configured) return;
-        let page = await xrogaConnect.catalog({ sortBy: 'usage', limit: 250 });
-        if (!page.ok || !Array.isArray(page.items)) return;
-        const seen = new Map<string, PublicIntegrationCard>();
-        const publish = () => {
-          if (active) setLiveItems([...seen.values()]);
-        };
-        let pages = 0;
-        while (active && pages < 12) {
-          for (const entry of page.items) {
-            if (entry.slug && !seen.has(entry.slug)) seen.set(entry.slug, normalizeLiveIntegration(entry));
-          }
-          loadedAny = true;
-          if (active) {
-            setLiveTotal(page.totalItems);
-            publish();
-          }
-          pages++;
-          if (!page.nextCursor) break;
-          page = await xrogaConnect.catalog({ sortBy: 'usage', limit: 250, cursor: page.nextCursor });
+        let page;
+        try {
+          page = await publicConnectCatalogPage();
+        } catch {
+          usedPublic = false;
+          const status = await xrogaConnect.status();
+          if (!status.configured) return;
+          page = await xrogaConnect.catalog({ sortBy: 'usage', limit: 250 });
         }
-        if (active && seen.size < (page.totalItems ?? seen.size)) setCatalogIncomplete(true);
+        if (!active || !page.ok || !Array.isArray(page.items)) return;
+
+        // Full read-only catalog is paginated server side and hydrated without
+        // blocking the first cards; avoid both fictitious counts and bulk DOM.
+        for (let pages = 0; active && pages < 12; pages++) {
+          for (const entry of page.items) {
+            if (entry.slug && !seen.has(entry.slug)) {
+              seen.set(entry.slug, normalizeLiveIntegration(entry));
+            }
+          }
+          reportedTotal = page.totalItems;
+          nextCursor = page.nextCursor;
+          if (active) {
+            setLiveItems([...seen.values()]);
+            setLiveTotal(reportedTotal);
+          }
+          if (!nextCursor) break;
+          page = usedPublic
+            ? await publicConnectCatalogPage(nextCursor)
+            : await xrogaConnect.catalog({ sortBy: 'usage', limit: 250, cursor: nextCursor });
+        }
+        incomplete = Boolean(nextCursor) || (reportedTotal !== null && seen.size < reportedTotal);
+        if (active) setCatalogIncomplete(incomplete);
       } catch {
-        // Authenticated workspace providers are not guaranteed on a public
-        // marketing page. Keep only actual loaded results or public examples.
-        if (active && loadedAny) setCatalogIncomplete(true);
+        if (active && seen.size > 0) setCatalogIncomplete(true);
       } finally {
         if (active) setCatalogBusy(false);
       }
@@ -262,8 +268,6 @@ export function IntegrationsMarketplace({
     const terms = query.trim().toLowerCase().split(/\s+/).filter(Boolean);
     const filtered = directoryItems.filter(item => {
       if (!matchesPublicIntegrationCategory(item, category)) return false;
-      if (mode === 'guides' && item.mode === 'technology') return false;
-      if (mode === 'technology' && item.mode !== 'technology') return false;
       if (terms.length && !terms.every(term => (item.searchTerms + ' ' + item.name.toLowerCase()).includes(term))) return false;
       return true;
     });
@@ -279,7 +283,7 @@ export function IntegrationsMarketplace({
       return a.name.localeCompare(b.name);
     });
     return filtered;
-  }, [directoryItems, category, mode, query, sort]);
+  }, [directoryItems, category, query, sort]);
 
   const shown = matches.slice(0, limit);
   const selectedCategoryLabel = directoryCategories.find(value => value.id === category)?.label || 'All apps';
@@ -288,8 +292,7 @@ export function IntegrationsMarketplace({
 
   const pickCategory = (id: string) => { setCategory(id); setLimit(PAGE_SIZE); };
   const usingLiveCatalog = liveItems !== null;
-  useEffect(() => { setCategory('all'); setMode('all'); setLimit(PAGE_SIZE); }, [usingLiveCatalog]);
-  const pickMode = (value: DirectoryMode) => { setMode(value); setLimit(PAGE_SIZE); };
+  useEffect(() => { setCategory('all'); setLimit(PAGE_SIZE); }, [usingLiveCatalog]);
   const typeSearch = (value: string) => { setQuery(value); setLimit(PAGE_SIZE); };
 
   return (
@@ -320,8 +323,10 @@ export function IntegrationsMarketplace({
         <div className="xi-directory-title">
           <h2 id="xi-directory-heading">Find the apps you need.</h2>
           <p>{liveTotal !== null
-            ? `${liveTotal.toLocaleString()} provider listings reported by Xroga Connect. ${catalogBusy ? 'Loading the full directory…' : catalogIncomplete ? 'Some listings could not be loaded.' : 'Browse the available listings below.'}`
-            : 'Xroga Connect reports 1,743 available in the workspace catalog. Below are public examples while the live directory is unavailable; open the workspace for the latest provider list.'}</p>
+            ? `${liveTotal.toLocaleString()} provider apps listed by Xroga Connect.${catalogBusy ? ' Loading more...' : catalogIncomplete ? ' Some results could not be loaded.' : ''}`
+            : catalogBusy
+              ? 'Loading the Xroga Connect app directory...'
+              : 'Explore featured Xroga integrations below. The full, up-to-date app directory is in your workspace.'}</p>
         </div>
         <div className="xi-directory-search" id="xi-search">
           <Search size={23} aria-hidden="true"/>
@@ -368,15 +373,10 @@ export function IntegrationsMarketplace({
           <div className="xi-library-main">
             <div className="xi-library-toolbar">
               <div className="xi-result-status" role="status" aria-live="polite">
-                <strong>{matches.length.toLocaleString()}</strong> {liveItems ? 'loaded providers' : 'public examples'} {liveTotal !== null ? `of ${liveTotal.toLocaleString()} reported` : ''}
+                <strong>{matches.length.toLocaleString()}</strong> {liveItems ? 'matching apps loaded' : 'featured integrations'} {liveTotal !== null ? `from ${liveTotal.toLocaleString()} listed` : ''}
                 <span> / {selectedCategoryLabel}</span>
               </div>
               <div className="xi-sort-control"><label htmlFor="xi-sort">Sort</label><select id="xi-sort" value={sort} onChange={event => setSort(event.target.value as SortMode)}><option value="featured">Recommended first</option><option value="alphabetical">A to Z</option></select></div>
-            </div>
-            <div className="xi-mode-filters" role="group" aria-label="Integration listing type">
-              <button className={mode === 'all' ? 'xi-mode-active' : ''} type="button" aria-pressed={mode === 'all'} onClick={() => pickMode('all')}>All entries</button>
-              <button className={mode === 'guides' ? 'xi-mode-active' : ''} type="button" aria-pressed={mode === 'guides'} onClick={() => pickMode('guides')}>App setup guides</button>
-              {liveItems === null && <button className={mode === 'technology' ? 'xi-mode-active' : ''} type="button" aria-pressed={mode === 'technology'} onClick={() => pickMode('technology')}>Build technologies</button>}
             </div>
             {shown.length ? (
               <div className="xi-app-grid">{shown.map(item => <IntegrationCard key={item.id} item={item}/>)}</div>
@@ -384,7 +384,7 @@ export function IntegrationsMarketplace({
               <div className="xi-no-results">
                 <Search size={30}/><h3>No matching apps found.</h3>
                 <p>Try a broader search or remove the current filters.</p>
-                <button type="button" onClick={() => { setQuery(''); setCategory('all'); setMode('all'); setLimit(PAGE_SIZE); }}>Show all apps</button>
+                <button type="button" onClick={() => { setQuery(''); setCategory('all'); setLimit(PAGE_SIZE); }}>Show all apps</button>
               </div>
             )}
             {shown.length > 0 && <div className="xi-pagination">
@@ -393,7 +393,7 @@ export function IntegrationsMarketplace({
             </div>}
             <p className="xi-catalog-footnote"><ShieldCheck size={16}/> {liveItems
               ? 'Provider listings and logos come from Xroga Connect. A listing is not a connected account; confirm access inside your workspace.'
-              : 'These are public technology examples, not the full live provider catalog. Sign in to Xroga Connect to browse all available apps and verify authorization.'} <Link href="/dashboard/integrations">Open the full plugin marketplace <ArrowUpRight size={14}/></Link></p>
+              : 'These examples come from Xroga’s maintained plugin definitions. The full live provider directory and connection setup are available in your workspace.'} <Link href="/dashboard/integrations">Open the full plugin marketplace <ArrowUpRight size={14}/></Link></p>
           </div>
         </div>
       </section>
