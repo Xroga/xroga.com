@@ -287,7 +287,8 @@ export function IntegrationsMarketplace({
   const additional = directoryCategories.filter(item => item.group === 'additional');
 
   const pickCategory = (id: string) => { setCategory(id); setLimit(PAGE_SIZE); };
-  useEffect(() => { setCategory('all'); setMode('all'); setLimit(PAGE_SIZE); }, [liveItems !== null]);
+  const usingLiveCatalog = liveItems !== null;
+  useEffect(() => { setCategory('all'); setMode('all'); setLimit(PAGE_SIZE); }, [usingLiveCatalog]);
   const pickMode = (value: DirectoryMode) => { setMode(value); setLimit(PAGE_SIZE); };
   const typeSearch = (value: string) => { setQuery(value); setLimit(PAGE_SIZE); };
 
@@ -412,6 +413,28 @@ export function IntegrationsMarketplace({
       </section>
 
       <HowItWorks />
+
+      <section className="xi-section xi-channels" aria-labelledby="xi-channels-heading">
+        <div className="xi-section-heading">
+          <div><h2 id="xi-channels-heading">Your apps, right where<br/><em>you work.</em></h2></div>
+          <p>Open your workspace in one click, or use browser automation where the Xroga extension is installed and a compatible workflow is available.</p>
+        </div>
+        <div className="xi-channel-grid">
+          <div className="xi-channel">
+            <div className="xi-channel-icon"><Workflow size={25}/></div>
+            <h3>Inside your Xroga workspace</h3>
+            <p>Find the integration, authorize the account and ask Xroga to perform supported work without leaving your workspace.</p>
+            <Link href="/workspace" className="xi-channel-link">Open your workspace <ArrowUpRight size={16}/></Link>
+          </div>
+          <div className="xi-channel">
+            <div className="xi-channel-icon"><Network size={25}/></div>
+            <h3>In your browser, with Xroga</h3>
+            <p>For installed, authorized extension workflows, interact with supported browser pages through Xroga. Availability and approvals depend on the actual extension setup.</p>
+            <Link href="/dashboard/automations" className="xi-channel-link">Explore browser workflows <ArrowUpRight size={16}/></Link>
+          </div>
+        </div>
+        <p className="xi-channel-disclosure">One click opens the workspace or workflow area; it does not grant permissions or guarantee that a browser task runs without setup.</p>
+      </section>
 
       <section className="xi-mcp xi-mcp-open" aria-labelledby="xi-mcp-heading">
         <div className="xi-mcp-copy">
