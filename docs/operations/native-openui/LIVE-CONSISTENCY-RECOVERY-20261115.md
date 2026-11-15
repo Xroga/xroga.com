@@ -68,7 +68,7 @@ export in every fallback case.
 
 ## Verification of changes
 
-- 63 targeted native-answer and new snapshot tests passed.
+- 64 targeted native-answer and new snapshot tests passed.
 - Backend and frontend TypeScript checks passed.
 - Generated schema/function parity passed. The 55-component/30-function registry
   is unchanged.
@@ -76,6 +76,8 @@ export in every fallback case.
 - Local replay of captured loan and monthly answers preserves their visuals and
   replaces contradictory numerical prose with verified computed readouts.
 - Keyboard replay is honestly marked partial for factual review.
+- Checklist labels missing from the model's prose are retained in the readable
+  answer, including when no prose was supplied. Existing labels are not duplicated.
 
 These local checks do not replace fresh hosted acceptance or final exact-source CI.
 

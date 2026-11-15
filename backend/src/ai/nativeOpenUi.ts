@@ -157,12 +157,32 @@ export function missingNativeFormats(program: string, formats: readonly Required
  * omitted its prose, returned an overview or left a heading without its body. */
 export function supplementNativeProse(prose: string, program: string, includeAll = false): string {
   const unfinishedHeading = /(?:^|\n)#{1,6}[^\S\n]+[^\n]+$/.test(prose.trimEnd());
-  if (!includeAll && !unfinishedHeading && (prose.length > 600 || prose.includes('\n'))) return prose;
+  const { root, stateDeclarations } = parseProgram.parse(program);
+  if (!includeAll && !unfinishedHeading && (prose.length > 600 || prose.includes('\n'))) {
+    // A generated local checklist can contain a deliverable missing from the
+    // prose. Preserve those labels for Copy, Share and readable recovery too.
+    const labels: string[] = [];
+    const normalize = (text: string) => text.replace(/[*_`]/g, '').replace(/\s+/g, ' ').trim().toLowerCase();
+    const existing = normalize(prose);
+    let remaining = 6000;
+    const visit = (value: unknown): void => {
+      if (--remaining < 0 || !value || typeof value !== 'object') return;
+      if (Array.isArray(value)) { value.forEach(visit); return; }
+      const item = value as Record<string, unknown>;
+      const props = item.props as Record<string, unknown> | undefined;
+      if (item.type === 'element' && item.typeName === 'Checkbox' && typeof props?.label === 'string') {
+        const label = props.label;
+        if (!existing.includes(normalize(label)) && !labels.includes(label)) labels.push(label);
+      }
+      Object.values(item).forEach(visit);
+    };
+    visit(root);
+    return labels.length ? prose + '\n\n' + labels.map(label => '- ' + label).join('\n') : prose;
+  }
   const record = (value: unknown): Record<string, unknown> =>
     value && typeof value === 'object' && !Array.isArray(value) ? value as Record<string, unknown> : {};
   const array = (value: unknown) => Array.isArray(value) ? value as unknown[] : [];
   const scalar = (value: unknown): string => typeof value === 'string' || typeof value === 'number' ? String(value) : '';
-  const { root, stateDeclarations } = parseProgram.parse(program);
   const readouts = initialNativeReadouts(program);
   const children = array(root?.props.children);
   const firstBlock = includeAll || !prose ? 0 : children.findIndex(child => (
@@ -197,6 +217,9 @@ export function supplementNativeProse(prose: string, program: string, includeAll
     const props = record(node.props);
     if (node.typeName === 'ListItem') {
       add('- ' + [scalar(props.title), scalar(props.description)].filter(Boolean).join(': '));
+    } else if (node.typeName === 'Checkbox') {
+      const label = scalar(props.label);
+      if (label) add('- ' + label);
     } else if (node.typeName === 'Section') {
       const title = scalar(props.title);
       if (title) add('## ' + title);

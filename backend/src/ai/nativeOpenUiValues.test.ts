@@ -56,3 +56,13 @@ test('a roving tabindex example cannot add a second tab stop on its container', 
   assert.equal(nativeTechnicalCorrections(text.replace('<div tabindex="0">', '<div>')).length, 0);
   assert.equal(nativeTechnicalCorrections(text.replace('\n```html', '\n\nDo not use this broken example:\n```html')).length, 0);
 });
+
+test('checklist labels omitted from prose survive the saved readable answer', () => {
+  const checklist = 'root = Col([Checkbox($first, "Check links"), Checkbox($second, "Schedule announcement")])\n$first = false\n$second = false';
+  const result = completeNativeWorkspaceAnswer('Prepare the blog.\n\n- Check links' + NATIVE_UI_MARKER + checklist, 'stop');
+  assert.match(result.response, /Schedule announcement/);
+  assert.equal(result.response.match(/Check links/g)?.length, 1);
+  const recovered = completeNativeWorkspaceAnswer(NATIVE_UI_MARKER + checklist, 'stop');
+  assert.match(recovered.response, /Check links/);
+  assert.match(recovered.response, /Schedule announcement/);
+});

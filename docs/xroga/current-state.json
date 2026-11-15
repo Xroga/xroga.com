@@ -5219,7 +5219,7 @@
       "id": "surface:456e62cb099b42e5c2a2",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUi.ts",
-      "sha256": "69bd300a6e1fa179ee14c2add649e3e181bb8bdc85ac1cd35a7d603f90c51c3d",
+      "sha256": "822eb00e435e5a6e4fb62c4659838782ec8369265a7b5afc7169b6e94b45465e",
       "symbols": [
         "MAX_PROGRAM_CHARS",
         "NATIVE_UI_FORMAT",
@@ -5260,6 +5260,7 @@
         "els",
         "entries",
         "envelope",
+        "existing",
         "expression",
         "factualRule",
         "fail",
@@ -5286,6 +5287,7 @@
         "key",
         "keys",
         "label",
+        "labels",
         "language",
         "last",
         "layout",
@@ -5306,6 +5308,7 @@
         "nesting",
         "next",
         "node",
+        "normalize",
         "normalizeDiagramRows",
         "normalizeWorkspaceComponents",
         "normalized",
@@ -150215,7 +150218,7 @@
     {
       "id": "test-suite:cf78e18abc3aa283d701",
       "sourcePath": "backend/src/ai/nativeOpenUiValues.test.ts",
-      "declaredTests": 6,
+      "declaredTests": 7,
       "skipLocations": [],
       "focusLocations": []
     },
