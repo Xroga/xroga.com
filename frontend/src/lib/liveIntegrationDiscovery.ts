@@ -6,6 +6,7 @@
 import type { PublicCatalogToolkit } from '@/lib/publicConnectCatalog';
 import type { PublicIntegrationCard, IntegrationCategory } from '@/lib/publicIntegrationsDirectory';
 import { PLUGIN_DEFINITIONS } from '@/lib/pluginCatalog';
+import { getPublicIntegrationLogo } from '@/lib/publicIntegrationLogo';
 
 const trustedDescription = new Map(PLUGIN_DEFINITIONS.map(p => [p.id.toLowerCase(), p.description.trim()]));
 
@@ -64,7 +65,7 @@ export function normalizeLiveIntegration(item: PublicCatalogToolkit): PublicInte
         ? 'OAuth option listed' : 'Review setup requirements',
     capabilityHint: 'Check live provider details',
     searchTerms: [item.slug, name, item.description || '', trustedDescription.get(item.slug.toLowerCase()) || '', group, ...item.categories.map(c => c.name)].join(' ').toLowerCase(),
-    logoUrl: item.logo || undefined,
+    logoUrl: getPublicIntegrationLogo(item.slug, item.logo),
     toolsCount: item.toolsCount,
     triggersCount: item.triggersCount,
     fromLiveCatalog: true,
