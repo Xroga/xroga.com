@@ -108,7 +108,7 @@ type MarkdownMatches = {
 const listKey = (items: readonly string[]) => JSON.stringify(items.map(textKey));
 
 /** Match literal content only. Distinct wording and citation markers stay visible. */
-export function nativeMarkdownMatches(root: unknown): MarkdownMatches {
+export function nativeMarkdownMatches(root: unknown, readInitial: (value: unknown) => unknown = value => value): MarkdownMatches {
   const paragraphs = new Set<string>();
   const titles = new Set<string>();
   const code = new Set<string>();
@@ -137,7 +137,18 @@ export function nativeMarkdownMatches(root: unknown): MarkdownMatches {
       });
       if (parts.every(part => part !== undefined)) paragraphs.add(citationTextKey(parts.join("")));
     }
-    if (typeName === "Title" && typeof props.text === "string") titles.add(textKey(props.text));
+    if (typeName === "Title" && typeof props.text === "string") {
+      titles.add(textKey(props.text));
+      paragraphs.add(citationTextKey(props.text));
+    }
+    if (typeName === "Metric") {
+      const label = readInitial(props.label), value = readInitial(props.value), note = readInitial(props.note);
+      if (typeof label === "string" && (typeof value === "string" || typeof value === "number")) paragraphs.add(citationTextKey(label + ': ' + value));
+      if (typeof note === "string") paragraphs.add(citationTextKey(note));
+    }
+    if (typeName === "List" && Array.isArray(props.items)) {
+      props.items.forEach(item => { if (typeof item === "string") paragraphs.add(citationTextKey(item)); });
+    }
     if (["Section", "Diagram", "Card"].includes(typeName ?? "") && typeof props.title === "string") titles.add(textKey(props.title));
     if (typeName === "Section" && typeof props.introduction === "string") paragraphs.add(citationTextKey(props.introduction));
     if (typeName === "Diagram" && Array.isArray(props.nodes) && Array.isArray(props.links)) {
@@ -158,11 +169,15 @@ export function nativeMarkdownMatches(root: unknown): MarkdownMatches {
         if (block.kind === "p") paragraphs.add(citationTextKey(block.text));
         if (block.kind === "h") titles.add(textKey(block.text));
         if (block.kind === "code") code.add(block.text.trimEnd());
+        if (block.kind === "list") block.items.forEach(item => paragraphs.add(citationTextKey(item)));
       }
     }
-    if (typeName === "Table" && Array.isArray(props.columns) && Array.isArray(props.rows) && props.rows.every(Array.isArray)) {
-      const key = tableContentKey(props.columns, props.rows);
-      if (key) tables.add(key);
+    if (typeName === "Table") {
+      const columns = readInitial(props.columns), rows = readInitial(props.rows);
+      if (Array.isArray(columns) && columns.every(column => typeof column === "string") && Array.isArray(rows) && rows.every(Array.isArray)) {
+        const key = tableContentKey(columns, rows);
+        if (key) tables.add(key);
+      }
     }
     if (typeName === "Chart" && !node.hasDynamicProps) {
       const table = staticChartTable(props);
@@ -285,7 +300,7 @@ export function MarkdownBlocks({ text, renderCitation, deduplicateTables = false
           case "code":
             if (matches?.code.has(b.text.trimEnd())) return null;
             return (
-              <pre key={k} className="iui-code-block">
+              <pre key={k} className="iui-code-block" tabIndex={0} role="group" aria-label="Code block">
                 <code>{b.text}</code>
               </pre>
             );

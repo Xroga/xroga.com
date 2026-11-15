@@ -114,7 +114,7 @@ export function completeNativeWorkspaceAnswer(
     // Preserve the working calculator and derive its readable snapshot from the
     // same pure upstream functions. Do not persist conflicting model totals.
     return {
-      response: 'The generated numerical explanation disagreed with the calculator. The initial computed results and available assumptions are shown below.\n\n'
+      response: 'The calculated results replace an inconsistent numerical explanation.\n\n'
         + supplementNativeProse('', program, true),
       completion: { status: 'partial' as const, reason: 'data_review' as const },
       responseSource: { format: NATIVE_UI_FORMAT, text: program },

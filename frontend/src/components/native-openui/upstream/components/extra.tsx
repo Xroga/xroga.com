@@ -78,7 +78,7 @@ export const Code = defineComponent({
             {copied ? "Copied" : "Copy"}
           </button>
         </div>
-        <pre>
+        <pre tabIndex={0} role="group" aria-label="Code block">
           <code>{colored ? colored.map((line, i) => (
             <span key={i}>{line.map((token, j) => <span key={j} className="iui-code-token" style={{
               "--iui-code-light": token.light, "--iui-code-dark": token.dark,

@@ -1629,7 +1629,7 @@ const components:
     pre: ({
       children,
     }) => (
-      <pre className="overflow-x-auto rounded-xl border border-[var(--card-border)]/60 bg-[var(--foreground)]/[0.035]">
+      <pre tabIndex={0} role="group" aria-label="Code block" className="overflow-x-auto rounded-xl border border-[var(--card-border)]/60 bg-[var(--foreground)]/[0.035] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--accent)]">
         {children}
       </pre>
     ),

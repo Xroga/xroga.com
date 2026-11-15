@@ -3,9 +3,34 @@ import { test } from 'node:test';
 import { createElement, Fragment } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { publicAnswerText } from '@/lib/publicAnswerText';
+import { initialNativeValueReader } from '../../../../../../backend/src/ai/nativeOpenUiValues';
 import { inline, MarkdownBlocks, nativeMarkdownMatches, preservedMarkdownTableKeys, tableContentKey } from './markdown';
 
 const render = (source: string) => renderToStaticMarkup(createElement(Fragment, null, inline(source)));
+
+test('computed table snapshots collapse only exact resolved initial values', () => {
+  const value = { k: 'Ref', n: 'amount' };
+  const root = { type: 'element', typeName: 'Table', props: { columns: ['Payment'], rows: [[value]] } };
+  const matches = nativeMarkdownMatches(root, initialNativeValueReader('amount = 405.53'));
+  const duplicate = '| Payment |\n| --- |\n| 405.53 |';
+  const distinct = '| Payment |\n| --- |\n| 333.33 |';
+  const html = renderToStaticMarkup(createElement(MarkdownBlocks, { text: duplicate + '\n\n' + distinct, matches }));
+  assert.equal((html.match(/<table/g) ?? []).length, 1);
+  assert.match(html, /333.33/);
+  const failed = nativeMarkdownMatches(root, initialNativeValueReader('other = 1'));
+  assert.match(renderToStaticMarkup(createElement(MarkdownBlocks, { text: duplicate, matches: failed })), /405.53/);
+  assert.match(renderToStaticMarkup(createElement(MarkdownBlocks, { text: duplicate.replace('405.53 |', '405.53 [1] |'), matches })), /<table/);
+});
+
+test('interactive metrics suppress stale initial snapshots while fallback preserves them', () => {
+  const root = { type: 'element', typeName: 'Metric', props: { label: 'Monthly payment', value: { k: 'Ref', n: 'amount' }, note: '60 equal payments' } };
+  const text = 'Monthly payment: $405.53\n\n60 equal payments\n\nFees are excluded.';
+  const matches = nativeMarkdownMatches(root, initialNativeValueReader('amount = "$405.53"'));
+  const html = renderToStaticMarkup(createElement(MarkdownBlocks, { text, matches }));
+  assert.doesNotMatch(html, /405.53|60 equal payments/);
+  assert.match(html, /Fees are excluded/);
+  assert.match(renderToStaticMarkup(createElement(MarkdownBlocks, { text })), /405.53/);
+});
 
 test('inline Markdown preserves underscores inside identifiers', () => {
   const prose = 'Every tenant-owned table carries tenant_id, membership lives in tenant_members, and métrique__totale is a column.';

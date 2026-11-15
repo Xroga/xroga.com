@@ -7,6 +7,7 @@ import { useMemo, useState } from 'react';
 import { library } from './library';
 import { EvidenceContext, evidenceCitation, type AnswerSource } from './evidence';
 import { MAX_PROGRAM_CHARS, PARTIAL_NATIVE_PRESENTATION_NOTE, validateNativeOpenUi } from '../../../../backend/src/ai/nativeOpenUi';
+import { initialNativeValueReader } from '../../../../backend/src/ai/nativeOpenUiValues';
 import { MarkdownBlocks, nativeMarkdownMatches, preservedMarkdownTableKeys, VisibleMarkdownTables } from './upstream/components/markdown';
 import './upstream/components/theme.css';
 import './upstream/components/components.css';
@@ -41,7 +42,7 @@ export function NativeSurface({ answer, sources, isStreaming = false }: {
   }, [answer.library, answer.program, answer.text, verified, isStreaming]);
   const recovered = answer.text.startsWith(PARTIAL_NATIVE_PRESENTATION_NOTE + '\n\n');
   const matches = useMemo(() => accepted && !isStreaming && !recovered
-    ? nativeMarkdownMatches(parser.parse(accepted).root)
+    ? nativeMarkdownMatches(parser.parse(accepted).root, initialNativeValueReader(accepted))
     : undefined, [accepted, isStreaming, recovered]);
   const visibleTables = useMemo(() => preservedMarkdownTableKeys(answer.text), [answer.text]);
   const renderCitation = (number: number, href?: string) => evidenceCitation(verified, number, href);

@@ -291,6 +291,7 @@
 .iui-codeblock-head button { display: inline-flex; align-items: center; gap: 5px; padding: 4px 8px; border: 0; border-radius: 6px; background: none; color: inherit; font: inherit; cursor: pointer; }
 .iui-codeblock-head button:hover { background: var(--iui-hover); color: var(--iui-ink); }
 .iui-codeblock pre { margin: 0; padding: 14px 16px; overflow-x: auto; font: 13px/1.6 var(--iui-mono); }
+:is(.iui-codeblock pre, .iui-code-block):focus-visible { outline: 2px solid var(--iui-focus); outline-offset: -2px; }
 
 .iui-quote { display: flex; flex-direction: column; gap: 4px; margin: 0; padding: 14px 16px; border-left: 3px solid var(--iui-ink); border-radius: 0 12px 12px 0; background: var(--iui-surface); }
 .iui-quote > p { margin: 0; font-size: 16px; line-height: 1.6; }

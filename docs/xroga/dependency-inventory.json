@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "a7cb2ec0dec4abb030cd077ed1b519d95e25e97b",
+  "source_sha": "b5988202803f37184310142bc4355f7d553ae36a",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -17090,7 +17090,7 @@
     },
     {
       "path": "backend/src/ai/nativeOpenUiWorkspace.ts",
-      "sha256": "80f5f003c650e410572145809a641224260fc52c3d276d66cc7c3ff480d37ccc"
+      "sha256": "2193db5b771abbeb0912d462bed9af9d5f1206b0dcfce0024a051adabd389b10"
     },
     {
       "path": "backend/src/ai/openaiCompat.ts",
@@ -22226,7 +22226,7 @@
     },
     {
       "path": "frontend/src/components/native-openui/NativeSurface.tsx",
-      "sha256": "fdc3aebada01a682f62679bf6cae10749a75cc24de3ef66050d3004e2f0f17cd"
+      "sha256": "1d11b48caee771b2500a6f6ac1252757acd48b9dc01c030b6022d4ea6e18bfb5"
     },
     {
       "path": "frontend/src/components/native-openui/NativeWorkspaceAnswer.tsx",
@@ -22266,7 +22266,7 @@
     },
     {
       "path": "frontend/src/components/native-openui/upstream/components/extra.tsx",
-      "sha256": "34d26863b9c061598604f6376a34c2f9ac8f7e1fde80c6a2f04e2fe341bec76c"
+      "sha256": "ddf49ceff1abb280821ff66216314949b8a36828337240d71af693f9b491c0ba"
     },
     {
       "path": "frontend/src/components/native-openui/upstream/components/glyph.tsx",
@@ -22278,7 +22278,7 @@
     },
     {
       "path": "frontend/src/components/native-openui/upstream/components/markdown.tsx",
-      "sha256": "3c956994bd526ad2490f6a4ca58de60cc3e723b9743fa3373f0b74c4c4cdb311"
+      "sha256": "20059f052112a3703b474b237e23897dc2f1642e389243b09dd0b299c825f173"
     },
     {
       "path": "frontend/src/components/native-openui/upstream/components/style.ts",
@@ -23582,7 +23582,7 @@
     },
     {
       "path": "frontend/src/lib/formatAiMarkdown.tsx",
-      "sha256": "ec0e5e45eef5f5222d775c7e006fa805e741e24e77902ac77dc1a456b1d46f2f"
+      "sha256": "3ea4d5fbd5d5c0bb44afebb00c8a5e1012c94d2cb5781457c7aaf33d2265af88"
     },
     {
       "path": "frontend/src/lib/gameBuilderContent.ts",
@@ -38836,14 +38836,14 @@
     },
     {
       "path": "frontend/src/components/native-openui/NativeSurface.tsx",
-      "line": 24,
+      "line": 25,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/native-openui/NativeSurface.tsx",
-      "line": 30,
+      "line": 31,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -38913,14 +38913,14 @@
     },
     {
       "path": "frontend/src/components/native-openui/upstream/components/markdown.tsx",
-      "line": 144,
+      "line": 155,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/native-openui/upstream/components/markdown.tsx",
-      "line": 267,
+      "line": 282,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

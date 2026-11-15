@@ -8,6 +8,10 @@ import AxeBuilder from '@axe-core/playwright';
 import { tsImport } from 'tsx/esm/api';
 
 const cases = {
+  scrollingCode: {
+    text: 'Read the complete formula with a keyboard.',
+    program: 'root = Col([Code(' + JSON.stringify('monthlyPayment = principal * monthlyRate * (1 + monthlyRate) ** paymentCount / ((1 + monthlyRate) ** paymentCount - 1)') + ', "text"), Markdown(' + JSON.stringify('```text\nmonthlyPayment = principal * monthlyRate * (1 + monthlyRate) ** paymentCount / ((1 + monthlyRate) ** paymentCount - 1)\n```') + ')])',
+  },
   short: { text: 'Paris is the capital of France.' },
   recovered: {
     text: 'Some visuals could not be validated. The available explanation and verified visuals are shown below.\n\nThe API verifies organization membership before reading rows.',
@@ -229,6 +233,20 @@ try {
           await recoveredTable.screenshot({ path: resolve(output, channel + "-captured-search-" + viewport.width + "-" + theme + ".png") });
         }
       }
+      await open('scrollingCode');
+      const codeBlocks = page.getByRole('group', {name: 'Code block', exact: true});
+      assert.equal(await codeBlocks.count(), 2);
+      for (const code of await codeBlocks.all()) {
+        assert.equal(await code.getAttribute('tabindex'), '0');
+        await code.focus();
+        assert.equal(await code.evaluate(element => element === document.activeElement), true);
+        if (await code.evaluate(element => element.scrollWidth > element.clientWidth)) {
+          await code.press('ArrowRight');
+          await page.waitForFunction(element => element.scrollLeft > 0, await code.elementHandle());
+        }
+      }
+      const codeAccessibility = await new AxeBuilder({page}).analyze();
+      assert.deepEqual(codeAccessibility.violations.map(({id}) => id), []);
       await open('compare');
       const table = page.getByRole('table');
       await table.waitFor();

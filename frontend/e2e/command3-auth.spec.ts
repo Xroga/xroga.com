@@ -611,6 +611,18 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
     await architectureSharePage.reload();
     await expect(architectureSharePage.getByRole('heading', { name: 'Page not found', exact: true })).toBeVisible();
     await expect(sharedArchitecture).toHaveCount(0);
+  } catch (error) {
+    // Capture the synthetic diagram before this secondary page is closed. The
+    // default failure screenshot otherwise records the unrelated primary page.
+    await mkdir('test-results/native-workspace', { recursive: true });
+    await architectureSharePage.screenshot({ path: 'test-results/native-workspace/share-diagram-failure.png', fullPage: true });
+    const geometry = await architectureSharePage.locator('.native-diagram-canvas, .react-flow__viewport, .react-flow__node').evaluateAll(elements => elements.map(element => {
+      const bounds = element.getBoundingClientRect(), style = getComputedStyle(element);
+      return { className: element.className, width: bounds.width, height: bounds.height,
+        display: style.display, visibility: style.visibility, transform: style.transform };
+    }));
+    await writeFile('test-results/native-workspace/share-diagram-failure.json', JSON.stringify({ geometry }, null, 2));
+    throw error;
   } finally {
     await architectureSharePage.close();
     await dialog.getByRole('button', { name: 'Close share dialog' }).click();

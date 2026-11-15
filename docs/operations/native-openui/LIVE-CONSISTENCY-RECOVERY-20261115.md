@@ -101,6 +101,14 @@ flags. Both attempts were cleaned up with zero model calls. The corrected harnes
 now validates the complete case contract offline before cloud mutations. Detailed
 run records remain outside Git, and no failed attempt counts as live acceptance.
 
+The corrected hosted replay then caught a serious keyboard-accessibility issue:
+the loan's horizontally scrollable formula was not focusable. This happened with
+the provider disabled, after the recovered values survived Copy and Reopen. The
+follow-up fix makes native Code, native Markdown and readable fallback code blocks
+named, focusable groups with visible focus. It does not create duplicate region
+landmarks. Browser coverage now checks long code in both rendering paths, keyboard
+scrolling and axe at five widths in both themes. Hosted revalidation is pending.
+
 The API Docker check on `993a483139508705908a9d554a6e552547eff28b` exposed a
 heterogeneous function-registry TypeScript inference error absent from the local
 linked dependency setup. The validated dispatch boundary was corrected without
@@ -129,3 +137,39 @@ Whole-drive free space decreased from 66,369,650,688 to 65,826,045,952 bytes at 
 recorded checkpoint, about 518 MiB. This includes concurrent machine activity and
 is not attributed solely to this task. Bounded runner evidence and task cleanup
 were retained. No global pruning or unrelated artifact deletion was performed.
+
+## Captured-answer interaction follow-up
+
+The provider-disabled loan replay exposed a keyboard-inaccessible scrolling code
+block. Native Code, native Markdown and readable fallback code blocks now have
+keyboard focus and a visible focus outline. No permission or tenant check changed.
+The current-source caller review for formatAiMarkdown was refreshed after checking
+that its only persistence-scanner candidate is the unchanged Uint8Array conversion.
+
+Visual inspection then found a duplicate initial table and stale initial metric
+values alongside the live calculator after an APR edit. Native deduplication now
+uses the same bounded pure initial-value reader as readable recovery. Exact
+snapshots are omitted only while the native view renders. Distinct values, cited
+tables and readable fallback remain. The recovery message no longer implies that
+results are necessarily below the message.
+
+Local Chrome replay used the original captured loan and checklist, with capture
+hashes recorded, at 390 and 1440 pixels in both themes. Eight combinations passed,
+including APR zero, one table, absence of stale readouts after editing, 25 checklist
+items, keyboard controls, zero axe violations and zero external requests. Evidence
+is in local job ae7c35f2-7848-4a2e-b033-77cb6c138ced. These are captured model answers,
+not fresh hosted inference. The 75 focused tests passed in job
+3ebb21cb-9aaf-46a6-af74-03d91246c4ed. Frontend type checking passed in
+8f88813b-f427-46e5-b4bc-6728c4911361. Final-source hosted acceptance remains pending.
+
+The three closed 5e18 staging attempts made zero model calls. Their combined
+estimated build and runtime cost is $0.26682266927095056, excluding ancillary
+charges and invoice reconciliation. The last run's independent cleanup recorded
+zero remaining resources, and retained images were deleted after the application
+fix required a new build. No production changes were made.
+
+The prior b59882028 authenticated CI finished with 10/11 browser cases passing.
+The remaining case found hidden diagram nodes on the private Share page. Existing
+artifacts did not retain that secondary page before it closed. The test now saves
+its synthetic screenshot and bounded geometry before cleanup while retaining the
+original assertion. The cause is not yet confirmed and the check is not weakened.
