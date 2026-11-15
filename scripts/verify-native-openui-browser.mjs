@@ -515,7 +515,7 @@ try {
   assert.ok(skinCss, 'Workspace skin definitions must be present');
   for (const shellTheme of ['black', 'white']) {
     for (const skin of ['dark', 'amoled', 'light', 'light-grid', 'gray', 'midnight', 'forest', 'matrix', 'amber', 'solar']) {
-      await palettePage.goto(origin + '/?case=compare&theme=' + shellTheme);
+      await palettePage.goto(origin + '/?case=embeddedCitations&theme=' + shellTheme);
       await answerRegion.waitFor();
       await palettePage.addStyleTag({ content: skinCss });
       await palettePage.locator('#root').evaluate((el, skin) => {
@@ -542,6 +542,14 @@ try {
       assert.equal(colors.ink, colors.shellInk, shellTheme + '/' + skin + ' follows the local surface');
       assert.ok(colors.contrast >= 4.5, shellTheme + '/' + skin + ' text contrast: ' + colors.contrast);
       assert.equal(colors.scheme, ['light', 'light-grid', 'solar'].includes(skin) ? 'light' : 'dark');
+      for (const chip of await answerRegion.locator('[data-source-citation]').all()) {
+        assert.equal(await chip.evaluate(el => getComputedStyle(el).color), colors.ink,
+          'Caption citations use readable primary ink on ' + skin);
+      }
+      const citationContrast = await new AxeBuilder({ page: palettePage })
+        .include('.xroga-native-openui').withRules(['color-contrast']).analyze();
+      assert.deepEqual(citationContrast.violations.map(v => ({ id: v.id, nodes: v.nodes.map(n => n.target) })), [],
+        shellTheme + '/' + skin + ' caption and citation contrast');
       if ((shellTheme === 'white' && skin === 'dark') || (shellTheme === 'black' && skin === 'light')) {
         await palettePage.screenshot({ path: resolve(output, 'mixed-theme-' + shellTheme + '-' + skin + '.png'), fullPage: true });
       }

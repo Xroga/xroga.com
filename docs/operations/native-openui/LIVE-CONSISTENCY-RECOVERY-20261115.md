@@ -212,3 +212,10 @@ test-evidence paragraph was appended after source-manifest generation. Its hash
 was therefore stale. Regenerate the manifests after this final report edit,
 validate them, and commit only the corrected evidence. No application change or
 weakened source check is needed.
+
+The 44008c2f authenticated run then caught a real light-theme contrast failure
+in a SourceCitation label inside a muted Caption. The screenshot showed the
+correct light Workspace and readable main answer, but the chip inherited muted
+text on its tinted background. Citation chips now use the local primary ink.
+The mixed-skin regression includes caption citations and checks their actual
+computed color plus axe contrast. This preserves the compact inline design.

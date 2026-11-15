@@ -50,6 +50,7 @@
     "frontend/src/components/native-openui/upstream/components/text.tsx",
     "frontend/src/components/native-openui/upstream/components/theme.css",
     "frontend/src/lib/publicAnswerText.ts",
+    "frontend/src/components/terminal/SourceCitation.module.css",
     "scripts/verify-native-openui-browser.mjs",
     "scripts/generate-native-openui-spec.mjs"
   ],
