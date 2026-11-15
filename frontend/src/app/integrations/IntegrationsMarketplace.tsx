@@ -8,6 +8,7 @@ import {
   SlidersHorizontal, Sparkles, Workflow, X, Zap,
 } from 'lucide-react';
 import { PluginBrandLogo } from '@/components/integrations/PluginBrandLogo';
+import { EXTERNAL_AGENTS, EXTERNAL_AGENT_DISCLOSURE } from '@/lib/externalAgentWorkflows';
 import type {
   IntegrationCategory,
   PublicIntegrationCard,
@@ -67,7 +68,7 @@ function HowItWorks() {
   return (
     <section className="xi-section xi-how" aria-labelledby="xi-how-heading">
       <div className="xi-section-heading">
-        <div><span className="xi-overline">01 / GET CONNECTED</span><h2 id="xi-how-heading">A better way to<br/><em>work together.</em></h2></div>
+        <div><span className="xi-overline">04 / HOW IT WORKS</span><h2 id="xi-how-heading">A better way to<br/><em>work together.</em></h2></div>
         <p>Discover a service, understand the permissions it needs, and ask Xroga to perform supported work. Every external action remains subject to authorization and approval.</p>
       </div>
       <div className="xi-steps">
@@ -125,6 +126,52 @@ function IntegrationCard({ item }: { item: PublicIntegrationCard }) {
         <span className="xi-card-bottom">Explore app <ArrowRight size={15} aria-hidden="true"/></span>
       </Link>
     </article>
+  );
+}
+
+
+function AgentConnections() {
+  const [active, setActive] = useState(EXTERNAL_AGENTS[0].id);
+  const selected = EXTERNAL_AGENTS.find(agent => agent.id === active) ?? EXTERNAL_AGENTS[0];
+
+  return (
+    <section className="xi-section xi-agents" id="xi-agents" aria-labelledby="xi-agents-heading">
+      <div className="xi-section-heading">
+        <div>
+          <span className="xi-overline">03 / WORK WITH OTHER AGENTS</span>
+          <h2 id="xi-agents-heading">Your favorite AI agents.<br/><em>One shared project.</em></h2>
+        </div>
+        <p>Use Codex, Claude Code, Cursor and more alongside Xroga. The currently supported handoff is an authorized GitHub repository—not a direct agent-to-Xroga connection.</p>
+      </div>
+      <div className="xi-agent-layout">
+        <div className="xi-agent-list" role="group" aria-label="Choose a coding agent">
+          {EXTERNAL_AGENTS.map(agent => (
+            <button type="button" key={agent.id} className={'xi-agent-option' + (active === agent.id ? ' xi-agent-option-active' : '')}
+              aria-pressed={active === agent.id} onClick={() => setActive(agent.id)}>
+              <PluginBrandLogo id={agent.logoId} name={agent.maker} toolkit={agent.logoId} size="card"/>
+              <span className="xi-agent-option-text"><strong>{agent.name}</strong><small>{agent.maker}</small></span>
+              <span className="xi-agent-option-arrow"><ArrowRight size={16}/></span>
+            </button>
+          ))}
+        </div>
+        <div className="xi-agent-detail" aria-live="polite">
+          <div className="xi-agent-detail-top">
+            <PluginBrandLogo id={selected.logoId} name={selected.maker} toolkit={selected.logoId} size="detail"/>
+            <div><span className="xi-agent-pill">GitHub handoff</span><h3>{selected.name} + Xroga</h3><p>{selected.summary}</p></div>
+          </div>
+          <div className="xi-agent-how-heading"><Workflow size={16}/> How to work together</div>
+          <ol className="xi-agent-steps">
+            {selected.workflow.map((step, index) => <li key={step}><span>{String(index + 1).padStart(2, '0')}</span><p>{step}</p></li>)}
+          </ol>
+          <p className="xi-agent-detail-copy">{selected.detail}</p>
+          <div className="xi-agent-actions">
+            <Link href="/dashboard/integrations/github" className="xi-agent-primary">Set up GitHub handoff <ArrowUpRight size={16}/></Link>
+            <a href={selected.vendorDocumentation} target="_blank" rel="noopener noreferrer" className="xi-agent-doc">Official agent docs <ArrowUpRight size={15}/></a>
+          </div>
+        </div>
+      </div>
+      <p className="xi-agent-disclosure"><ShieldCheck size={16}/>{EXTERNAL_AGENT_DISCLOSURE}</p>
+    </section>
   );
 }
 
@@ -196,10 +243,10 @@ export function IntegrationsMarketplace({
         </div>
         <div className="xi-hero-content">
           <div className="xi-eyebrow"><span/> XROGA CONNECT <i/> INTEGRATIONS</div>
-          <h1 id="xi-hero-title">Connect all your tools.<br/><em>Make more possible.</em></h1>
-          <p>Power Xroga with the apps your team uses every day. Explore technologies, discover supported connections, and put your tools to work in an authorized AI workflow.</p>
+          <h1 id="xi-hero-title">Connect your favorite apps<br/><em>with Xroga AI.</em></h1>
+          <p>Save time with AI-powered app workflows and automation. Explore around-the-clock possibilities for supported, configured tasks—while keeping authorization and approval in your hands.</p>
           <div className="xi-hero-actions">
-            <a className="xi-primary-button" href="#xi-directory">Explore integrations <ArrowUpRight size={17}/></a>
+            <a className="xi-primary-button" href="#xi-directory">Browse apps <ArrowUpRight size={17}/></a>
             <Link className="xi-secondary-button" href="/dashboard/integrations?view=custom">Bring your own MCP <ArrowRight size={16}/></Link>
           </div>
           <div className="xi-hero-proof"><span><CheckCircle2 size={15}/> Inspect access</span><span><CheckCircle2 size={15}/> Own your connections</span><span><CheckCircle2 size={15}/> Approve sensitive actions</span></div>
@@ -207,41 +254,9 @@ export function IntegrationsMarketplace({
         </div>
       </section>
 
-      <section className="xi-spotlight" aria-labelledby="xi-spotlight-heading">
-        <div className="xi-spotlight-heading"><span className="xi-overline">THE TOOLS YOU ALREADY KNOW</span><h2 id="xi-spotlight-heading">Your stack, connected to<br/><em>your next idea.</em></h2></div>
-        <div className="xi-featured-list">
-          {featured.map(item =>
-            <Link href={item.href} key={item.id} className="xi-featured-item">
-              <AppLogo item={item}/><span>{item.name}</span><ArrowUpRight size={15} aria-hidden="true"/>
-            </Link>,
-          )}
-        </div>
-        <p className="xi-small-note">Featured names are discovery links—not a statement that the viewer&apos;s accounts are connected.</p>
-      </section>
-
-      <HowItWorks />
-
-      <section className="xi-mcp" aria-labelledby="xi-mcp-heading">
-        <div className="xi-mcp-copy">
-          <div className="xi-overline">OPEN TO MORE / CUSTOM MCP</div>
-          <h2 id="xi-mcp-heading">Your tools don&apos;t<br/>end at a list.</h2>
-          <p>Bring a compatible remote MCP server into your Xroga workspace. Supported authentication, server reachability, permissions and available actions are checked during setup.</p>
-          <Link href="/dashboard/integrations?view=custom" className="xi-mcp-cta">Explore custom MCP connections <ArrowUpRight size={17}/></Link>
-        </div>
-        <div className="xi-mcp-art" aria-hidden="true">
-          <div className="xi-mcp-centre"><Network size={34}/><strong>YOUR MCP</strong><small>Connection</small></div>
-          <span className="xi-mcp-line xi-mcp-line-a"/>
-          <span className="xi-mcp-line xi-mcp-line-b"/>
-          <span className="xi-mcp-line xi-mcp-line-c"/>
-          <span className="xi-mcp-node xi-mcp-node-a"><Server size={19}/></span>
-          <span className="xi-mcp-node xi-mcp-node-b"><KeyRound size={19}/></span>
-          <span className="xi-mcp-node xi-mcp-node-c"><Workflow size={19}/></span>
-        </div>
-      </section>
-
       <section className="xi-section xi-directory" id="xi-directory" aria-labelledby="xi-directory-heading">
         <div className="xi-directory-title">
-          <span className="xi-overline">02 / THE INTEGRATION LIBRARY</span>
+          <span className="xi-overline">01 / BROWSE YOUR APPS</span>
           <h2 id="xi-directory-heading">Automate the apps<br/><em>you already use.</em></h2>
           <p>Explore {items.length.toLocaleString()} catalog entries across software, work and business categories. App setup, actions, triggers and authorization are verified in each available integration detail view.</p>
         </div>
@@ -315,6 +330,40 @@ export function IntegrationsMarketplace({
             </div>}
             <p className="xi-catalog-footnote"><ShieldCheck size={16}/> Technology listings describe software Xroga may build with, not automatically connected accounts. Auth, actions and triggers are validated inside the authenticated workspace.</p>
           </div>
+        </div>
+      </section>
+
+      <AgentConnections />
+
+      <section className="xi-spotlight" aria-labelledby="xi-spotlight-heading">
+        <div className="xi-spotlight-heading"><span className="xi-overline">THE TOOLS YOU ALREADY KNOW</span><h2 id="xi-spotlight-heading">Your stack, connected to<br/><em>your next idea.</em></h2></div>
+        <div className="xi-featured-list">
+          {featured.map(item =>
+            <Link href={item.href} key={item.id} className="xi-featured-item">
+              <AppLogo item={item}/><span>{item.name}</span><ArrowUpRight size={15} aria-hidden="true"/>
+            </Link>,
+          )}
+        </div>
+        <p className="xi-small-note">Featured names are discovery links—not a statement that the viewer&apos;s accounts are connected.</p>
+      </section>
+
+      <HowItWorks />
+
+      <section className="xi-mcp" aria-labelledby="xi-mcp-heading">
+        <div className="xi-mcp-copy">
+          <div className="xi-overline">OPEN TO MORE / CUSTOM MCP</div>
+          <h2 id="xi-mcp-heading">Your tools don&apos;t<br/>end at a list.</h2>
+          <p>Bring a compatible remote MCP server into your Xroga workspace. Supported authentication, server reachability, permissions and available actions are checked during setup.</p>
+          <Link href="/dashboard/integrations?view=custom" className="xi-mcp-cta">Explore custom MCP connections <ArrowUpRight size={17}/></Link>
+        </div>
+        <div className="xi-mcp-art" aria-hidden="true">
+          <div className="xi-mcp-centre"><Network size={34}/><strong>YOUR MCP</strong><small>Connection</small></div>
+          <span className="xi-mcp-line xi-mcp-line-a"/>
+          <span className="xi-mcp-line xi-mcp-line-b"/>
+          <span className="xi-mcp-line xi-mcp-line-c"/>
+          <span className="xi-mcp-node xi-mcp-node-a"><Server size={19}/></span>
+          <span className="xi-mcp-node xi-mcp-node-b"><KeyRound size={19}/></span>
+          <span className="xi-mcp-node xi-mcp-node-c"><Workflow size={19}/></span>
         </div>
       </section>
 
