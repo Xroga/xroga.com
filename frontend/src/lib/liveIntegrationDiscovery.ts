@@ -5,6 +5,9 @@
  */
 import type { PublicCatalogToolkit } from '@/lib/publicConnectCatalog';
 import type { PublicIntegrationCard, IntegrationCategory } from '@/lib/publicIntegrationsDirectory';
+import { PLUGIN_DEFINITIONS } from '@/lib/pluginCatalog';
+
+const trustedDescription = new Map(PLUGIN_DEFINITIONS.map(p => [p.id.toLowerCase(), p.description.trim()]));
 
 const labels: Record<string, string> = {
   productivity: 'Productivity',
@@ -53,14 +56,14 @@ export function normalizeLiveIntegration(item: PublicCatalogToolkit): PublicInte
     id: item.slug,
     name,
     sourceCategory: group,
-    description: item.description?.trim() || '',
+    description: item.description?.trim() || trustedDescription.get(item.slug.toLowerCase()) || '',
     href: '/dashboard/integrations/' + encodeURIComponent(item.slug),
     mode: 'app-guide',
     authHint: item.noAuth ? 'No account auth listed' :
       item.managedAuthSchemes.includes('OAUTH2') || item.authSchemes.some(s => /oauth/i.test(s))
         ? 'OAuth option listed' : 'Review setup requirements',
     capabilityHint: 'Check live provider details',
-    searchTerms: [item.slug, name, item.description || '', group, ...item.categories.map(c => c.name)].join(' ').toLowerCase(),
+    searchTerms: [item.slug, name, item.description || '', trustedDescription.get(item.slug.toLowerCase()) || '', group, ...item.categories.map(c => c.name)].join(' ').toLowerCase(),
     logoUrl: item.logo || undefined,
     toolsCount: item.toolsCount,
     triggersCount: item.triggersCount,
