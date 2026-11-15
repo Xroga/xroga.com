@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "5e18d37472288daa8595f59af18e3ac22a53e925",
+  "source_sha": "a7cb2ec0dec4abb030cd077ed1b519d95e25e97b",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -20374,7 +20374,11 @@
     },
     {
       "path": "frontend/src/app/black-hole/BlackHoleExperience.tsx",
-      "sha256": "9c02441a9569f59201279dbc01444036817b5ea471354b97f257cf67ef7e8287"
+      "sha256": "dbc487d46c0ea71e0563229a6bc575d6d321a343ad44ea2ac5187df942c77243"
+    },
+    {
+      "path": "frontend/src/app/black-hole/BlackHoleVisual.tsx",
+      "sha256": "6ccc0c75a79ee3ce340cb23f2e1e2fc300f8d566f6e6604bfaca7a8dee29f54a"
     },
     {
       "path": "frontend/src/app/black-hole/page.tsx",
