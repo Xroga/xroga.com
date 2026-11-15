@@ -8,7 +8,7 @@
  * curated examples, never a fake "all integrations" directory.
  */
 import { PLUGIN_DEFINITIONS } from '@/lib/pluginCatalog';
-import { getIntegrationLogo } from '@/lib/integrationLogos';
+import { getPublicIntegrationLogo } from '@/lib/publicIntegrationLogo';
 
 export type PublicIntegrationMode = 'native' | 'app-guide' | 'technology';
 export type PublicIntegrationCard = {
@@ -56,7 +56,7 @@ export const PUBLIC_INTEGRATION_CARDS: PublicIntegrationCard[] = descriptions.ma
   mode: plugin.source === 'native' ? 'native' : 'app-guide',
   authHint: plugin.source === 'native' ? 'Workspace authorization' : 'View connection options',
   capabilityHint: 'See app details in workspace',
-  logoUrl: getIntegrationLogo(plugin.id),
+  logoUrl: getPublicIntegrationLogo(plugin.id),
   searchTerms: [plugin.name, plugin.id, plugin.category, plugin.description,
     plugin.provider, ...(plugin.keywords ?? [])].filter(Boolean).join(' ').toLowerCase(),
 }));
