@@ -244,7 +244,7 @@ export function IntegrationsMarketplace({
         <div className="xi-hero-content">
           <div className="xi-eyebrow"><span/> XROGA CONNECT <i/> INTEGRATIONS</div>
           <h1 id="xi-hero-title">Connect your favorite apps<br/><em>with Xroga AI.</em></h1>
-          <p>Save time with AI-powered app workflows and automation. Explore around-the-clock possibilities for supported, configured tasks—while keeping authorization and approval in your hands.</p>
+          <p>Save time by automating repetitive work. Explore 24/7 app workflows where scheduling and connected providers are supported and configured, with your approval for sensitive actions.</p>
           <div className="xi-hero-actions">
             <a className="xi-primary-button" href="#xi-directory">Browse apps <ArrowUpRight size={17}/></a>
             <Link className="xi-secondary-button" href="/dashboard/integrations?view=custom">Bring your own MCP <ArrowRight size={16}/></Link>
