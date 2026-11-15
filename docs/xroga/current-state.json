@@ -6101,7 +6101,7 @@
       "id": "surface:93911e9946fd4b21d50d",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiWorkspace.ts",
-      "sha256": "0a4225956175c22ae0b5bcecd373b66c36242f54db07c2ea85e1622a813e9d7a",
+      "sha256": "111bb80b4f1c029c6a83a12698ac1a9144e374ad9ca776fdc528169bed7c248d",
       "symbols": [
         "completeNativeWorkspaceAnswer",
         "completion",

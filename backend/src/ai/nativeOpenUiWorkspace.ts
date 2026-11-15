@@ -117,7 +117,7 @@ export function completeNativeWorkspaceAnswer(
     // Preserve the working calculator and derive its readable snapshot from the
     // same pure upstream functions. Do not persist conflicting model totals.
     const correctedProgram = recoverNativeReadoutExplanations(program);
-    const corrected = validateNativeWorkspaceProgram(correctedProgram, evidenceIds);
+    const corrected = validateNativeWorkspaceProgram(correctedProgram, evidenceIds, '');
     const readable = corrected.ok ? supplementNativeProse('', correctedProgram, true)
       : initialNativeReadouts(program).map(row => row.label + ': ' + row.value).join('\n\n');
     return {

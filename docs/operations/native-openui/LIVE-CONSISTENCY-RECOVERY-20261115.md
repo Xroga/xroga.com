@@ -261,3 +261,9 @@ services, service accounts, temporary secret grants and retained image tags.
 The test key is scheduled for destruction. Captured receipts remain for audit.
 Build/runtime usage is estimated at $0.085834964 for this window, not an invoice.
 Production traffic, canonical Job, SQL and browser automation were unchanged.
+
+The 85f91c8b API build caught a missing required prose argument in the recovery
+validator call. Pass an explicit empty prose string because the contradictory
+draft must not be used to validate the corrected visual. No staging build was
+started from that failed candidate. Backend type checking is required alongside
+the frontend check before advancing the corrected source.
