@@ -25,6 +25,7 @@
     "backend/src/services/integrations/publicCatalogProjection.test.ts",
     "frontend/src/lib/publicConnectCatalog.ts",
     "frontend/src/components/integrations/PluginBrandLogo.tsx",
+    ".github/workflows/public-integrations-catalog-check.yml",
     "docs/xroga/missions/public-integrations-hybrid-20261115.json"
   ],
   "decisions": {
@@ -52,7 +53,8 @@
       "Use an explicit Xroga-known logo mapping or upstream provider-supplied logo. Avoid guessing brand SVG URLs or initials for unknown app names. Missing image shows a neutral app symbol.",
       "Reuse real provider summary first, then real curated plugin description if matched, otherwise omit the summary text (never generative boilerplate).",
       "Read public provider catalog first, fall back to authenticated catalog if the public metadata backend has not been deployed and the user is signed in, then only curated verified plugin definitions. Do not show 711 or claim exact 1,743 without a live total.",
-      "Prevent unfounded capabilities: exact tool and trigger counts only when returned as provider metadata; in fallback omit tools/triggers rows instead of 'not verified' filler."
+      "Prevent unfounded capabilities: exact tool and trigger counts only when returned as provider metadata; in fallback omit tools/triggers rows instead of 'not verified' filler.",
+      "Add a narrowly scoped, permissions-read-only CI workflow to compile the backend public catalog boundary and run source-backed plugin and privacy projection tests independently of historical repository-wide inventory gates."
     ],
     "replace": [
       "Former local header, static 24 small text cards, and minimal /integrations SEO presentation."
@@ -161,6 +163,12 @@
       "scope": "No fake 711 fallback, real plugin descriptions, provider metadata mapping and existing deep links.",
       "negative": true,
       "reference": "frontend/src/lib/publicIntegrationsDirectory.test.ts"
+    },
+    {
+      "command": "GitHub workflow: Public Integrations Catalog Check",
+      "scope": "Dedicated backend TypeScript build and targeted security/source-truth regression tests on PR head.",
+      "negative": false,
+      "reference": ".github/workflows/public-integrations-catalog-check.yml"
     }
   ],
   "architecture": {
@@ -205,7 +213,8 @@
     "backend/src/services/integrations/publicCatalogProjection.ts",
     "backend/src/services/integrations/publicCatalogProjection.test.ts",
     "frontend/src/lib/publicConnectCatalog.ts",
-    "frontend/src/components/integrations/PluginBrandLogo.tsx"
+    "frontend/src/components/integrations/PluginBrandLogo.tsx",
+    ".github/workflows/public-integrations-catalog-check.yml"
   ],
   "claimsFullProductCompletion": false,
   "claimsAllBatchCommandsComplete": false,
@@ -216,7 +225,8 @@
       "Public backend metadata API needs isolated staging smoke tests and security/rate limit/license review before any prod API release.",
       "Visual QA preview real logo load, full list on approved backend, responsive sticky sidebar and filter search.",
       "Repository-wide unit/mission-policy/tenant-security existing failures not bypassed.",
-      "No production frontend or backend merge/deployment without separate user approval."
+      "No production frontend or backend merge/deployment without separate user approval.",
+      "New dedicated Public Integrations Catalog Check must pass at exact final commit."
     ],
     "authenticatedE2e": "NOT_APPLICABLE",
     "stagedSecurity": "NOT_APPLICABLE",
