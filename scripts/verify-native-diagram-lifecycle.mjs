@@ -2,24 +2,26 @@ import assert from 'node:assert/strict';
 import { build } from 'esbuild';
 import { chromium } from 'playwright';
 import { createServer } from 'node:http';
-import { basename } from 'node:path';
+import { basename, resolve } from 'node:path';
 
 const compiled = await build({
-  stdin: { resolveDir: process.cwd(), loader: 'tsx', contents: `
+  stdin: { resolveDir: resolve('frontend'), loader: 'tsx', contents: `
     import {createRoot} from 'react-dom/client';
-    import {Diagram} from './frontend/src/components/native-openui/Diagram';
-    import './frontend/src/components/native-openui/upstream/components/theme.css';
-    import './frontend/src/components/native-openui/surface.css';
+    import {Diagram} from './src/components/native-openui/Diagram';
+    import './src/components/native-openui/upstream/components/theme.css';
+    import './src/components/native-openui/surface.css';
     import '@xyflow/react/dist/style.css';
     const Component=Diagram.component, root=createRoot(document.getElementById('root'));
     window.renderDiagram=(label='Next.js')=>root.render(<Component props={{title:'Request path',
       nodes:[{id:'app',label,level:0},{id:'db',label:'PostgreSQL',level:1}],
       links:[{from:'app',to:'db',label:'User access token'}],description:'Authorized request flow.'}}/>);
     window.renderDiagram();` },
-  outdir: 'diagram-assets', entryNames: 'diagram', write: false, bundle: true,
+  outdir: 'diagram-assets', entryNames: 'diagram', write: false, bundle: true, metafile: true,
   format: 'esm', jsx: 'automatic', tsconfig: 'frontend/tsconfig.json',
   define: { 'process.env.NODE_ENV': '"production"' },
 });
+const reactCopies = Object.keys(compiled.metafile.inputs).filter(path => /(?:^|\/)react\/index\.js$/.test(path));
+assert.equal(reactCopies.length, 1, `Diagram harness must use one React instance: ${reactCopies.join(', ')}`);
 const assets = new Map(compiled.outputFiles.map(file => ['/' + basename(file.path), file.contents]));
 const server = createServer((req, res) => {
   if (req.url === '/') return res.end('<!doctype html><html><head><link rel="stylesheet" href="/diagram.css"></head><body><main class="xroga-native-openui" id="root"></main><script type="module" src="/diagram.js"></script></body></html>');
@@ -32,6 +34,8 @@ try {
   const channel = process.env.XROGA_NATIVE_BROWSER ?? 'chrome';
   browser = await chromium.launch(channel === 'chromium' ? {} : {channel});
   const page = await browser.newPage({viewport:{width:390,height:844}});
+  const pageErrors = [];
+  page.on('pageerror', error => pageErrors.push(error.message));
   await page.addInitScript(() => {
     const Observer = window.ResizeObserver;
     window.ResizeObserver = class extends Observer {
@@ -42,10 +46,12 @@ try {
     };
   });
   await page.goto('http://127.0.0.1:' + server.address().port);
-  const visible = () => page.waitForFunction(() => {
+  const visible = async () => { try { await page.waitForFunction(() => {
     const nodes = [...document.querySelectorAll('.react-flow__node')];
     return nodes.length === 2 && nodes.every(node => getComputedStyle(node).visibility === 'visible');
-  }, undefined, {timeout:3000});
+  }, undefined, {timeout:10000}); } catch (error) {
+    throw new Error(`Diagram visibility failed. Browser errors: ${JSON.stringify(pageErrors)}`, {cause:error});
+  } };
   await visible();
   await page.evaluate(() => { window.holdMeasurements=true; window.renderDiagram(); });
   await visible();

@@ -6,7 +6,7 @@ This inventory records static source and call-path evidence. A mounted endpoint 
 
 ## Counts
 
-- surfaces: 1932
+- surfaces: 1933
 - routeRegistrations: 395
 - routes: 331
 - reachableRoutes: 240

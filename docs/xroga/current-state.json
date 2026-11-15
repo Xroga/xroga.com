@@ -127698,6 +127698,62 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:c54ca7bd5629fb92c4ae",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "scripts/verify-native-diagram-lifecycle.mjs",
+      "sha256": "fdbfdfbc1acb87a4fd76b4cc1b7b936ab1b97f903590b2dc594179bf967097e7",
+      "symbols": [
+        "Observer",
+        "assets",
+        "browser",
+        "changed",
+        "channel",
+        "compiled",
+        "error",
+        "nodes",
+        "page",
+        "pageErrors",
+        "reactCopies",
+        "server",
+        "visible",
+        "width"
+      ],
+      "imports": [
+        "esbuild",
+        "node:assert/strict",
+        "node:http",
+        "node:path",
+        "playwright"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [
+        "scripts/verify-native-diagram-lifecycle.mjs"
+      ],
+      "callers": [],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "declared-host:127.0.0.1",
+        "esbuild",
+        "node:assert/strict",
+        "node:http",
+        "node:path",
+        "playwright"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:bd6af899f2dd9df930f6",
       "subsystem": "browser_sandbox",
       "sourcePath": "scripts/verify-native-openui-browser.mjs",
@@ -142218,7 +142274,8 @@
         "scripts/security/full-supabase-history.mjs",
         "scripts/security/proxy-origin-fixture.test.mjs",
         "scripts/security/verify-free-voice-ledger.ts",
-        "scripts/security/verify-oci-federation.ts"
+        "scripts/security/verify-oci-federation.ts",
+        "scripts/verify-native-diagram-lifecycle.mjs"
       ],
       "hasSchedule": false
     },
