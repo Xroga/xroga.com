@@ -325,11 +325,13 @@ test('actual pipeline, completion and SoftwareAgent calls bind tenant, account r
   ] as const) {
     reset('native');resetModelRuntimeHealth();
     receivedAnswer=readable+'\n<<<XROGA_OPENUI_V1>>>\n'+program;
+    const savedReadable = kind === 'file' ? readable+'\n\nTicket price (USD): 25'
+      : kind === 'research' ? readable+'\n\n[1]' : readable;
     const before:number=effects,receipts:number=atomicReceipts;
     const result=await runChatPipeline({userId:owner,tenantContext:context,modelScope:scope,prompt:'Explain the supplied workshop price. No external research.',
       ...(kind==='file'?{attachments:[{url:'data:text/plain;base64,'+Buffer.from(readable).toString('base64'),mimeType:'text/plain',name:'workshop.txt'}]}:{approvedResearch:research}),
-      onDelta:text=>{assert.equal(atomicReceipts,receipts+1,'Publication must follow canonical settlement');assert.equal(text,readable);}});
-    assert.equal(result.response,readable);
+      onDelta:text=>{assert.equal(atomicReceipts,receipts+1,'Publication must follow canonical settlement');assert.equal(text,savedReadable);}});
+    assert.equal(result.response,savedReadable);
     assert.equal(effects,before+1);
     assert.equal(atomicReceipts,receipts+1);
     assert.deepEqual(result.responseSource,{format:'xroga-openui-v1',text:kind==='invalid-source'?'':program});
