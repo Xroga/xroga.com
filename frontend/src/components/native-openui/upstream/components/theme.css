@@ -83,7 +83,8 @@
   --iui-photo-empty-icon: var(--iui-border-strong);
 }
 
-:is([data-theme="dark"], [data-theme="black"], [data-theme="gray"]) .xroga-native-openui:not(.native-evaluation[data-theme="light"] .xroga-native-openui),
+:where([data-theme="dark"], [data-theme="black"], [data-theme="gray"]) .xroga-native-openui:not(:where(.native-evaluation[data-theme="light"] .xroga-native-openui, :is(.terminal-skin-light, .terminal-skin-light-grid, .terminal-skin-solar) .xroga-native-openui)),
+:where(.terminal-skin-dark, .terminal-skin-amoled, .terminal-skin-gray, .terminal-skin-midnight, .terminal-skin-forest, .terminal-skin-matrix, .terminal-skin-amber) .xroga-native-openui,
 .native-evaluation[data-theme="dark"] {
   color-scheme: dark;
   --iui-ink: var(--openui-text-neutral-primary, #f4f4f5);

@@ -388,16 +388,16 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   expect(savedTitle).toContain(prompt);
 
   await mkdir('test-results/native-workspace', { recursive: true });
-  for (const width of [320, 390, 768, 1280, 1440]) {
-    await page.setViewportSize({ width, height: 900 });
-    for (const theme of ['black', 'white'] as const) {
-      // Match the real theme bootstrap contract. Changing only html leaves the
-      // Workspace shell on its old body theme and produces invalid evidence.
-      await page.evaluate(value => {
-        document.documentElement.dataset.theme = value;
-        document.body.classList.remove('theme-black', 'theme-gray', 'theme-white', 'theme-beige');
-        document.body.classList.add('theme-' + value);
-      }, theme);
+  for (const theme of ['black', 'white'] as const) {
+    // Use the actual control so React shell state, persistence and DOM tokens
+    // change together. Direct DOM attributes do not exercise the product.
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.getByRole('button', { name: 'Change theme', exact: true }).first().click();
+    await page.getByRole('menuitemradio', { name: new RegExp('^' + theme, 'i') }).click();
+    await expect(page.locator('body')).toHaveClass(new RegExp('theme-' + theme));
+    await expect(page.locator('html')).toHaveAttribute('data-theme', theme);
+    for (const width of [320, 390, 768, 1280, 1440]) {
+      await page.setViewportSize({ width, height: 900 });
       await expect(answer).toBeVisible();
       expect(await answer.evaluate(el => el.scrollWidth - el.clientWidth)).toBeLessThanOrEqual(1);
       expect(await answer.evaluate(el => getComputedStyle(el).colorScheme)).toBe(theme === 'black' ? 'dark' : 'light');

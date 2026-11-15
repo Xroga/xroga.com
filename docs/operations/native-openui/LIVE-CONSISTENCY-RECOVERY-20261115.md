@@ -182,3 +182,27 @@ fixture now follows that same theme contract and asserts color contrast on the
 actual answer turns before saving screenshots. No production theme bug is claimed
 from the invalid fixture. The pending d59 hosted launcher was stopped before KMS,
 build submission or model calls. Final source CI must cover the corrected test.
+
+Manual review of the 02b theme screenshot rejected the DOM-only correction too:
+the React-owned shell still used its previous saved theme. The acceptance test now
+uses the actual Change theme menu before resizing through all five widths, as the
+live-model harness already does. This checks the complete product state transition.
+Neither the d59 nor 02b light-theme fixture screenshot is accepted as visual proof.
+No hosted cloud build or inference started for either test-only source update.
+
+Further source inspection confirmed that terminalSkinAuto can be disabled, making
+a light page with a dark chat surface a supported user choice. Native answer
+colors previously followed the global page rather than that independently chosen
+surface. This is a product compatibility defect beyond the invalid test setup.
+Native ink, secondary text, canvas, panels and borders now inherit the existing
+Workspace surface tokens. Status colors and syntax highlighting select the local
+skin's light/dark palette. Standalone Share and evaluator themes stay independent.
+The browser regression checks all ten actual skin definitions against black and
+white page themes, including calculated foreground/background contrast.
+
+The complete local browser suite passed in job
+400800e3-1f60-4b51-be1f-2960cdc8814a, including all 20 mixed-skin combinations.
+Both mixed-theme mobile screenshots were visually reviewed. Frontend type
+checking passed in e0542dc4-c93b-4464-b0a3-b026a1d012b3. Source inventory, mission,
+runtime and audit-integrity checks passed in ef08ba0e-c638-42f0-9549-048153d50e34.
+These checks are local verification, not fresh hosted-model acceptance.

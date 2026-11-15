@@ -29,7 +29,8 @@
 .xroga-native-openui, .xroga-native-openui *, .xroga-native-openui *::before, .xroga-native-openui *::after { box-sizing: border-box; }
 
 .xroga-native-openui .iui-code-token { color: var(--iui-code-light, inherit); }
-:is([data-theme="dark"], [data-theme="black"], [data-theme="gray"]) .xroga-native-openui:not(.native-evaluation[data-theme="light"] .xroga-native-openui) .iui-code-token { color: var(--iui-code-dark, inherit); }
+:where([data-theme="dark"], [data-theme="black"], [data-theme="gray"]) .xroga-native-openui:not(:where(.native-evaluation[data-theme="light"] .xroga-native-openui, :is(.terminal-skin-light, .terminal-skin-light-grid, .terminal-skin-solar) .xroga-native-openui)) .iui-code-token,
+:where(.terminal-skin-dark, .terminal-skin-amoled, .terminal-skin-gray, .terminal-skin-midnight, .terminal-skin-forest, .terminal-skin-matrix, .terminal-skin-amber) .xroga-native-openui .iui-code-token { color: var(--iui-code-dark, inherit); }
 
 .xroga-native-openui {
   --native-accent: #195bd5;
@@ -45,12 +46,25 @@
   line-height: 1.65;
 }
 
-:is([data-theme="dark"], [data-theme="black"], [data-theme="gray"]) .xroga-native-openui:not(.native-evaluation[data-theme="light"] .xroga-native-openui) {
+:where([data-theme="dark"], [data-theme="black"], [data-theme="gray"]) .xroga-native-openui:not(:where(.native-evaluation[data-theme="light"] .xroga-native-openui, :is(.terminal-skin-light, .terminal-skin-light-grid, .terminal-skin-solar) .xroga-native-openui)),
+:where(.terminal-skin-dark, .terminal-skin-amoled, .terminal-skin-gray, .terminal-skin-midnight, .terminal-skin-forest, .terminal-skin-matrix, .terminal-skin-amber) .xroga-native-openui {
   --native-accent: #8bb8ff;
   --native-accent-soft: #202e48;
   --native-panel: #1e2128;
   --native-line: #3a404d;
   --iui-canvas: var(--openui-foreground, #181a20);
+}
+
+/* Workspace's independently selected surface owns its answer colors. Share
+   pages and the evaluator continue to use their own page theme. */
+:where(.xv-workspace-shell[class*="terminal-skin-"]) .xroga-native-openui {
+  --iui-ink: var(--foreground);
+  --iui-muted: var(--muted);
+  --iui-faint: var(--muted);
+  --iui-canvas: var(--terminal-ui-surface);
+  --iui-on-ink: var(--terminal-ui-surface);
+  --native-panel: var(--terminal-ui-raised);
+  --native-line: var(--terminal-ui-border);
 }
 
 .xroga-native-openui .iui-title {

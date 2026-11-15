@@ -508,6 +508,45 @@ try {
   await answerRegion.waitFor();
   assert.equal(await answerRegion.evaluate(el => getComputedStyle(el).colorScheme), 'light', 'Evaluator light mode remains readable inside a dark app shell');
   assert.equal(await palettePage.locator('.native-evaluation').evaluate(el => getComputedStyle(el).backgroundColor), 'rgb(255, 255, 255)');
+  // Use the actual independently selectable Workspace skin tokens. Axe alone
+  // cannot reliably infer a transparent answer's background through every shell.
+  const skinCss = (await readFile('frontend/src/app/globals.css', 'utf8'))
+    .match(/  \.terminal-skin-[a-z-]+ \{[^}]+\}/g)?.join('\n');
+  assert.ok(skinCss, 'Workspace skin definitions must be present');
+  for (const shellTheme of ['black', 'white']) {
+    for (const skin of ['dark', 'amoled', 'light', 'light-grid', 'gray', 'midnight', 'forest', 'matrix', 'amber', 'solar']) {
+      await palettePage.goto(origin + '/?case=compare&theme=' + shellTheme);
+      await answerRegion.waitFor();
+      await palettePage.addStyleTag({ content: skinCss });
+      await palettePage.locator('#root').evaluate((el, skin) => {
+        el.className = 'xv-workspace-shell terminal-skin-' + skin;
+      }, skin);
+      const colors = await answerRegion.evaluate(el => {
+        const shell = el.closest('.xv-workspace-shell');
+        const style = getComputedStyle(el);
+        const shellStyle = getComputedStyle(shell);
+        const luminance = color => {
+          const rgb = color.match(/[\d.]+/g).slice(0, 3).map(Number).map(value => {
+            const channel = value / 255;
+            return channel <= .04045 ? channel / 12.92 : ((channel + .055) / 1.055) ** 2.4;
+          });
+          return rgb[0] * .2126 + rgb[1] * .7152 + rgb[2] * .0722;
+        };
+        const ink = luminance(style.color);
+        const canvas = luminance(shellStyle.backgroundColor);
+        return {
+          ink: style.color, shellInk: shellStyle.color, scheme: style.colorScheme,
+          contrast: (Math.max(ink, canvas) + .05) / (Math.min(ink, canvas) + .05),
+        };
+      });
+      assert.equal(colors.ink, colors.shellInk, shellTheme + '/' + skin + ' follows the local surface');
+      assert.ok(colors.contrast >= 4.5, shellTheme + '/' + skin + ' text contrast: ' + colors.contrast);
+      assert.equal(colors.scheme, ['light', 'light-grid', 'solar'].includes(skin) ? 'light' : 'dark');
+      if ((shellTheme === 'white' && skin === 'dark') || (shellTheme === 'black' && skin === 'light')) {
+        await palettePage.screenshot({ path: resolve(output, 'mixed-theme-' + shellTheme + '-' + skin + '.png'), fullPage: true });
+      }
+    }
+  }
   await paletteContext.close();
   // Scale the actual answer and its container, as well as testing narrow widths.
   const zoomContext = await browser.newContext({ viewport: { width: 780, height: 1000 } });

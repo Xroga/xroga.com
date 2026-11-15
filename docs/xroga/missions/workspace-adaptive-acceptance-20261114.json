@@ -48,6 +48,7 @@
     "frontend/src/lib/formatAiMarkdown.tsx",
     "frontend/src/components/native-openui/upstream/components/table.tsx",
     "frontend/src/components/native-openui/upstream/components/text.tsx",
+    "frontend/src/components/native-openui/upstream/components/theme.css",
     "frontend/src/lib/publicAnswerText.ts",
     "scripts/verify-native-openui-browser.mjs",
     "scripts/generate-native-openui-spec.mjs"
