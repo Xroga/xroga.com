@@ -327,6 +327,11 @@ export function IntegrationsMarketplace({
             : catalogBusy
               ? 'Loading the Xroga Connect app directory...'
               : 'Explore featured Xroga integrations below. The full, up-to-date app directory is in your workspace.'}</p>
+          {!catalogBusy && liveItems === null && (
+            <Link href="/dashboard/integrations" className="xi-catalog-continue">
+              Browse all apps in your workspace <ArrowUpRight size={16} aria-hidden="true"/>
+            </Link>
+          )}
         </div>
         <div className="xi-directory-search" id="xi-search">
           <Search size={23} aria-hidden="true"/>
