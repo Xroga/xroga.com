@@ -623,7 +623,7 @@
     },
     {
       "path": "backend/src/ai/tenantModelDispatch.test.ts",
-      "sha256": "3d0d731f2cac3c2e2b9e6a77fcd150b47d1a19c1d0abefd523e3093ec39b573d",
+      "sha256": "39677cba049a8500bdf632c66aa93b85c396cdaa5fcabf075c26bba598919459",
       "previousGenericSdkBinding": {
         "sha256": "acb7d3ee286d862c38e386380a20a7632415cd454510076abedca054016f2959",
         "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
@@ -1033,5 +1033,14 @@
       "e88275f663bb87ce2556"
     ],
     "scope": "Four isolated staging transport call sites reviewed. Negative tests bind origin, issuer, image, owner confirmation, toolkit, and redirect restrictions. No proof of live provider or production acceptance."
+  },
+  "nativeReadableCopyTestContinuation": {
+    "previousProofSha256": "0f043314a811aec04573e64a9fffefc78690bf27b3932228169bf27cc4069fc0",
+    "path": "backend/src/ai/tenantModelDispatch.test.ts",
+    "previousSourceSha256": "3d0d731f2cac3c2e2b9e6a77fcd150b47d1a19c1d0abefd523e3093ec39b573d",
+    "currentSourceSha256": "39677cba049a8500bdf632c66aa93b85c396cdaa5fcabf075c26bba598919459",
+    "scope": "Test expected published and persisted text now includes validated native metrics and citations. Existing tenant binding, single provider effect, atomic receipt and settlement-before-publication assertions remain. No application transport change or new acceptance certification.",
+    "localTestJob": "093bb423-9ce2-41e2-9ada-db450aab8d40",
+    "currentSourceAcceptance": "NOT_VERIFIED"
   }
 }
