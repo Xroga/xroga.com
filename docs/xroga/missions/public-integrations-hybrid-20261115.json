@@ -26,6 +26,8 @@
     "frontend/src/lib/publicConnectCatalog.ts",
     "frontend/src/components/integrations/PluginBrandLogo.tsx",
     ".github/workflows/public-integrations-catalog-check.yml",
+    "frontend/src/lib/publicIntegrationLogo.ts",
+    "frontend/src/lib/publicIntegrationLogo.test.ts",
     "docs/xroga/missions/public-integrations-hybrid-20261115.json"
   ],
   "decisions": {
@@ -54,7 +56,9 @@
       "Reuse real provider summary first, then real curated plugin description if matched, otherwise omit the summary text (never generative boilerplate).",
       "Read public provider catalog first, fall back to authenticated catalog if the public metadata backend has not been deployed and the user is signed in, then only curated verified plugin definitions. Do not show 711 or claim exact 1,743 without a live total.",
       "Prevent unfounded capabilities: exact tool and trigger counts only when returned as provider metadata; in fallback omit tools/triggers rows instead of 'not verified' filler.",
-      "Add a narrowly scoped, permissions-read-only CI workflow to compile the backend public catalog boundary and run source-backed plugin and privacy projection tests independently of historical repository-wide inventory gates."
+      "Add a narrowly scoped, permissions-read-only CI workflow to compile the backend public catalog boundary and run source-backed plugin and privacy projection tests independently of historical repository-wide inventory gates.",
+      "Use the already-existing stable Vercel git branch alias https://xrogaaicom-git-design-integrations-hybri-9d03b5-xrogas-projects.vercel.app/integrations for all future preview reviews, instead of immutable per-commit URLs. All changes remain on design/integrations-hybrid-20261115 / draft PR #993.",
+      "Prefer the eight actual checked-in Xroga SVG logos, then original provider logo metadata, then explicitly maintained existing logo URL mappings. Render a neutral icon when none exists; never infer brand logo images from names."
     ],
     "replace": [
       "Former local header, static 24 small text cards, and minimal /integrations SEO presentation."
@@ -169,6 +173,12 @@
       "scope": "Dedicated backend TypeScript build and targeted security/source-truth regression tests on PR head.",
       "negative": false,
       "reference": ".github/workflows/public-integrations-catalog-check.yml"
+    },
+    {
+      "command": "npx tsx --tsconfig frontend/tsconfig.json --test frontend/src/lib/publicIntegrationLogo.test.ts",
+      "scope": "Assert eight real Xroga brand assets, legitimate fallback URL handling and absence of guessed logos.",
+      "negative": true,
+      "reference": "frontend/src/lib/publicIntegrationLogo.test.ts"
     }
   ],
   "architecture": {
@@ -194,7 +204,9 @@
     "Preview Vercel builds only the frontend. The new backend endpoint is not present on the production API until a separately authorized, vetted backend deployment. Preview anonymous sessions therefore show truthful curated app examples and sign-in instructions; the full provider catalog can load for an authenticated browser using existing auth route.",
     "Provider-reported totalItems can include catalog items filtered by platform policy; present as provider-reported, not a guarantee of each user having access or all tools working.",
     "Public republishing terms/license for Composio app names, logos and descriptions and egress-rate economics must be approved before production exposure.",
-    "Per-process anonymous request limiter is only a preview defense; production needs a shared edge/CDN enforcement policy before exposing catalog publicly at scale."
+    "Per-process anonymous request limiter is only a preview defense; production needs a shared edge/CDN enforcement policy before exposing catalog publicly at scale.",
+    "The repo contains only eight checked-in brand SVG files and 15 curated plugin definitions, not a static 1,743-app dataset. The authenticated Xroga Connect catalog is the source of the larger provider total and descriptions; an isolated preview backend is required to show the full anonymous directory without exposing private API credentials.",
+    "The Vercel git-branch alias auto-updates after successful preview deployments; immutable per-commit deployment hostnames are snapshots and should not be shared as the single continuing review URL."
   ],
   "placeholderClaimsRemaining": [],
   "evidenceRefs": [
@@ -214,7 +226,9 @@
     "backend/src/services/integrations/publicCatalogProjection.test.ts",
     "frontend/src/lib/publicConnectCatalog.ts",
     "frontend/src/components/integrations/PluginBrandLogo.tsx",
-    ".github/workflows/public-integrations-catalog-check.yml"
+    ".github/workflows/public-integrations-catalog-check.yml",
+    "frontend/src/lib/publicIntegrationLogo.ts",
+    "frontend/src/lib/publicIntegrationLogo.test.ts"
   ],
   "claimsFullProductCompletion": false,
   "claimsAllBatchCommandsComplete": false,
