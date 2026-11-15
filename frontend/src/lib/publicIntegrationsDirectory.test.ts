@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { PLUGIN_DEFINITIONS } from './pluginCatalog';
-import { getIntegrationLogo } from './integrationLogos';
+import { getPublicIntegrationLogo } from './publicIntegrationLogo';
 import {
   PUBLIC_INTEGRATION_CARDS,
   PUBLIC_INTEGRATION_CATEGORIES,
@@ -18,7 +18,7 @@ test('public fallback uses verified plugin definitions, not the unrelated genera
     const original = source.find(p => p.id === app.id);
     assert.ok(original);
     assert.equal(app.description, original.description.trim());
-    assert.equal(app.logoUrl, getIntegrationLogo(app.id));
+    assert.equal(app.logoUrl, getPublicIntegrationLogo(app.id));
     assert.ok(!/A listed technology for software and workflow projects/i.test(app.description));
     assert.equal(app.href, '/dashboard/integrations/' + encodeURIComponent(app.id));
     assert.ok(!Object.hasOwn(app,'connected'));
