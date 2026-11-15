@@ -5216,7 +5216,7 @@
       "id": "surface:456e62cb099b42e5c2a2",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUi.ts",
-      "sha256": "0065de4aecff0a01c93db31dd1328e655319648aae7e5d0627061f4f12ead7a9",
+      "sha256": "c553168c05d7ec1335dc227b7b7228cf52a8ad1d28b8604ad9a8cca343728fa4",
       "symbols": [
         "MAX_PROGRAM_CHARS",
         "NATIVE_UI_FORMAT",
@@ -5440,7 +5440,7 @@
       "id": "surface:f8a39bc555632894e7fb",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiAccuracy.ts",
-      "sha256": "cd8c33fd25ccd255c99627aa59d64785a745d2f4d87bfc86e860ea1bbfeb41ea",
+      "sha256": "93a7419930971ae0819ffbb1631921c663cb047a3191382b708b7d861537ee30",
       "symbols": [
         "FactualRule",
         "MonthlyPoint",
@@ -5471,6 +5471,7 @@
         "direction",
         "expectedRank",
         "explicitMonthlyChanges",
+        "explicitPrevious",
         "facts",
         "format",
         "formatValue",
@@ -5585,7 +5586,7 @@
       "id": "surface:a67f0b1fa2dd0f11a67f",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiPrompt.ts",
-      "sha256": "89d7fcb7e27b3cd594861e4766837c84559870b60d6fcaba6934756b3851ab6d",
+      "sha256": "b19d0b6881fd8abf136cd5f443ba186206b0777eb53ac61ec311eac9e64a8bb1",
       "symbols": [
         "buildNativeOpenUiPrompt",
         "dataConsistencyRule",
@@ -149808,7 +149809,7 @@
     {
       "id": "test-suite:2e491f4d2fcbc11f974c",
       "sourcePath": "backend/src/ai/nativeOpenUi.test.ts",
-      "declaredTests": 53,
+      "declaredTests": 54,
       "skipLocations": [],
       "focusLocations": []
     },

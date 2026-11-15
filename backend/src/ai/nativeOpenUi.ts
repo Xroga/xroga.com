@@ -18,7 +18,7 @@ const safeKey = (key: string) => !['__proto__', 'prototype', 'constructor'].incl
 // envelope to an otherwise valid native answer. Keep transport syntax out of
 // the persisted program. A quoted example or an embedded tag is not a suffix.
 const deepSeekToolClosingSuffix = /[ \t]*<\/｜DSML｜ parameter>[ \t]*\n[ \t]*<\/｜DSML｜ invoke>[ \t]*\n[ \t]*<\/｜DSML｜ calls>[ \t]*$/u;
-const strayPresentationClosingLines = /(?:\n[ \t]*<\/(?:Col>|<?XROGA_OPENUI_V1>>>)[ \t]*)+$/u;
+const strayPresentationClosingLines = /(?:\n[ \t]*(?:<\/(?:Col>|<?XROGA_OPENUI_V1>>>)|<<<XROGA_OPENUI_V1>>>)[ \t]*)+$/u;
 
 export function splitNativeOpenUiAnswer(raw: string, streaming = false) {
   return scanNativeOpenUiAnswer(raw, streaming, true);

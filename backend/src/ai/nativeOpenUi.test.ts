@@ -21,9 +21,9 @@ test('the model gets instructions from the native registry and may answer in tex
   assert.deepEqual(validateNativeOpenUi(program), { ok: true });
 });
 
-test('a stray closing presentation marker is removed before the program is validated or stored', () => {
+test('stray trailing presentation markers are removed before the program is validated or stored', () => {
   const program = 'root = Col([Text("The comparison is ready.")])';
-  for (const close of ['</XROGA_OPENUI_V1>>>', '</<XROGA_OPENUI_V1>>>']) {
+  for (const close of ['</XROGA_OPENUI_V1>>>', '</<XROGA_OPENUI_V1>>>', NATIVE_UI_MARKER.trim()]) {
     const payload = 'Here are the results.' + NATIVE_UI_MARKER + program + '\n</Col>\n' + close;
     assert.equal(completeNativeWorkspaceAnswer(payload, 'stop').responseSource.text, program);
     const quoted = 'root = Col([Code("' + close + '", "text")])';
@@ -743,6 +743,19 @@ test('an explicit monthly direction that conflicts with the displayed data is fl
   assert.doesNotMatch(result.responseSource.text, /ease back/);
   assert.deepEqual(result.completion, { status: 'partial', reason: 'data_review' });
   assert.deepEqual(validateNativeOpenUi(make('March increased from January.')), { ok: true });
+});
+
+test('the signed month-to-month summary cannot contradict the displayed series', () => {
+  const program = 'root = Col([Chart("line", [{month:"Jan", deliveries:20},{month:"Feb", deliveries:24},{month:"Mar", deliveries:22}], "month", ["deliveries"])])';
+  const contradictory = 'March is up 2 (+8.3%) on February.';
+  const checked = completeNativeWorkspaceAnswer(contradictory + NATIVE_UI_MARKER + program, 'stop');
+  assert.deepEqual(checked.completion, { status: 'partial', reason: 'data_review' });
+  assert.doesNotMatch(checked.response, /up 2/);
+  assert.match(checked.response, /\| March \| 22 \| -2 \|/);
+  assert.match(checked.responseSource.text, /Chart\("line"/);
+  for (const accurate of ['March is down 2 deliveries (-8.3%) on February.', 'March is up 2 from January.', 'March is up 2 on February last year.']) {
+    assert.deepEqual(validateNativeOpenUi(program, undefined, accurate), { ok: true }, accurate);
+  }
 });
 
 test('a monthly bar chart catches incorrect gain rankings and does not publish the contradictory prose', () => {

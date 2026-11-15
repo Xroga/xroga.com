@@ -225,6 +225,19 @@ export function contradictsMonthlyChart(root: unknown, prose: string): boolean {
     }
   }
 
+  const explicitPrevious = new RegExp(
+    '\\b(' + monthPattern + ')\\s+(?:is|was)\\s+(up|down)\\s+' +
+    '(?:by\\s+)?[$€£]?[0-9]+(?:[.,][0-9]+)*(?:%|\\s+[a-z]+)?(?:\\s*\\([+−-]?[0-9]+(?:\\.[0-9]+)?%\\))?' +
+    '\\s+(?:on|from|versus|vs\\.?|compared (?:with|to))\\s+(' + monthPattern + ')\\b' +
+    '(?!\\s+(?:[12][0-9]{3}|last year|of last year|of the prior year|year[- ]over[- ]year|yoy)\\b)', 'gi');
+  for (const [, subject, direction, baseline] of plain.matchAll(explicitPrevious)) {
+    const month = months.get(subject.toLowerCase())!;
+    const previous = months.get(baseline.toLowerCase())!;
+    const change = changes.get(month);
+    if (change && (previous + 1) % 12 === month &&
+        Math.sign(change.amount) !== (direction.toLowerCase() === 'up' ? 1 : -1)) return true;
+  }
+
   const rankClaim = new RegExp(
     '\\b(' + monthPattern + ')\\b(?:\\s+(?:is|was|has|had|adds|added|posts|posted|records|recorded|saw)|' +
     '[’\']s\\s+(?:gain|increase|rise|[+−-]?(?:[$€£]|USD\\s*)?[0-9,.]+(?:\\s*\\([+−-]?[0-9,.]+%\\))?)\\s+(?:is|was))' +
