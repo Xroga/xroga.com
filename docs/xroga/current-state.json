@@ -6000,7 +6000,7 @@
       "id": "surface:309e6a3c1f73a053bdef",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiValues.ts",
-      "sha256": "84f2c56e45bc8643f924d13c642a61bb8bde49438b47167d070a411f968f5a6d",
+      "sha256": "66fbb56ed0094c24792c248f6f8bcfadfcdab627500ba2c5fd94a0308154b1ac",
       "symbols": [
         "active",
         "at",
@@ -6015,6 +6015,7 @@
         "expression",
         "functions",
         "initialNativeReadouts",
+        "invoke",
         "label",
         "money",
         "nearby",

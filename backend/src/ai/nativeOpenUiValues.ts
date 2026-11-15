@@ -10,7 +10,10 @@ const functions: NonNullable<EvaluationContext['functions']> = Object.fromEntrie
     // validation does not mix the frontend and backend Zod installations.
     const params = fn.params as unknown as { parse(value: unknown): Record<string, unknown> };
     const returns = fn.returns as unknown as { parse(value: unknown): unknown } | undefined;
-    const result = fn.fn(params.parse(args));
+    // Each function receives the object parsed by its own schema. Erase the
+    // heterogeneous registry union only at this validated dispatch boundary.
+    const invoke = fn.fn as unknown as (value: Record<string, unknown>) => unknown;
+    const result = invoke(params.parse(args));
     return returns ? returns.parse(result) : result;
   },
 }]));

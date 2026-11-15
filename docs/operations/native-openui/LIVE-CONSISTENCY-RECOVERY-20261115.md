@@ -81,6 +81,12 @@ export in every fallback case.
 
 These local checks do not replace fresh hosted acceptance or final exact-source CI.
 
+The API Docker check on `993a483139508705908a9d554a6e552547eff28b` exposed a
+heterogeneous function-registry TypeScript inference error absent from the local
+linked dependency setup. The validated dispatch boundary was corrected without
+removing runtime schema checks. Its exact Docker check must pass before any new
+hosted window starts. Earlier CI inventory drift was regenerated from source.
+
 ## Remaining gates
 
 Resolve and verify the procedure and subscription-pricing failures. Complete the
