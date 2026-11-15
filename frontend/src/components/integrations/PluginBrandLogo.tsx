@@ -83,12 +83,13 @@ export function PluginBrandLogo({
       toolkit?.toLowerCase().startsWith('custom_') ?? false;
 
     return [
-      // Known Xroga brand mappings win for major providers, then use the live app
-      // metadata returned by the provider catalog. Simple Icons is a broad
-      // open-source fallback for recognizable brands. Custom MCP apps never
-      // borrow an unrelated mark and fall back to honest initials.
-      getIntegrationLogo(id),
-      !customToolkit ? logo : undefined,
+      // Public marketing cards explicitly pass repository SVGs or provider
+      // logos as "logo". Honor that trusted source first when verifiedOnly
+      // so outdated CDN mappings never hide real local assets. Existing
+      // dashboard behavior remains unchanged.
+      ...(verifiedOnly
+        ? [!customToolkit ? logo : undefined, getIntegrationLogo(id)]
+        : [getIntegrationLogo(id), !customToolkit ? logo : undefined]),
       ...(!customToolkit && !verifiedOnly ? simpleIconCandidates(toolkit, name) : []),
       toolkit && !customToolkit && !verifiedOnly ? composioLogoUrl(toolkit) : undefined,
       fallbackLogo,
