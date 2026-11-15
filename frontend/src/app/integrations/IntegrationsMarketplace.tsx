@@ -247,7 +247,7 @@ export function IntegrationsMarketplace({
           <p>Save time by automating repetitive work. Explore 24/7 app workflows where scheduling and connected providers are supported and configured, with your approval for sensitive actions.</p>
           <div className="xi-hero-actions">
             <a className="xi-primary-button" href="#xi-directory">Browse apps <ArrowUpRight size={17}/></a>
-            <Link className="xi-secondary-button" href="/dashboard/integrations?view=custom">Bring your own MCP <ArrowRight size={16}/></Link>
+            <a className="xi-secondary-button" href="#xi-agents">Work with AI agents <ArrowRight size={16}/></a>
           </div>
           <div className="xi-hero-proof"><span><CheckCircle2 size={15}/> Inspect access</span><span><CheckCircle2 size={15}/> Own your connections</span><span><CheckCircle2 size={15}/> Approve sensitive actions</span></div>
           <p className="xi-small-note">Available tools, triggers and account access are confirmed in the workspace, not by this public directory.</p>
