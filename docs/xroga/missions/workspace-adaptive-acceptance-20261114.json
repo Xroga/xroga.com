@@ -12,6 +12,7 @@
   "changedFiles": [
     "backend/src/ai/answerCoverage.ts",
     "backend/src/ai/nativeOpenUi.test.ts",
+    "backend/src/ai/nativeOpenUi.ts",
     "backend/src/ai/nativeOpenUiCatalog.json",
     "backend/src/ai/nativeOpenUiAccuracy.ts",
     "backend/src/ai/nativeOpenUiPrompt.ts",
@@ -43,7 +44,7 @@
     "extend": [
       "Use the semantic plan to size the canonical native answer dispatch. Increase room for the single planner decision and bind that ceiling to the reservation. Recognize explicit requests phrased as presenting data in a particular format.",
       "Render safe inline citations, preserve readable slider value units, and protect native controls at narrow widths and zoom.",
-      "Keep the registered presentation components available for mixed requests and preserve validated visuals after a provider output limit.",
+      "Keep the registered presentation components available for mixed requests and preserve validated visuals after a provider output limit, including closed declarations and root children before a cut-off tail.",
       "Distinguish Stripe timestamp logging and explicit rejection of timestamp ordering from recommendations to order events by timestamp."
     ],
     "keep": [
@@ -91,6 +92,12 @@
     }
   },
   "tests": [
+    {
+      "scope": "Keep closed, validated native visuals across output cutoff without retaining incomplete syntax or unverified citations.",
+      "command": "node --import tsx --test backend/src/ai/nativeOpenUi.test.ts",
+      "reference": "backend/src/ai/nativeOpenUi.test.ts",
+      "negative": true
+    },
     {
       "scope": "Native interaction, keyboard, layout, light/dark and reflow matrix. Captured answer replay and truthful controls.",
       "command": "node scripts/verify-native-openui-browser.mjs",

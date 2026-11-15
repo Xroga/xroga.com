@@ -525,6 +525,49 @@ function normalizeWorkspaceComponents(node: ASTNode, symbols: ReadonlyMap<string
   return node;
 }
 
+/** Retain closed declarations and root children before a provider-truncated tail. */
+export function recoverTruncatedNativeWorkspaceProgram(program: string, evidenceIds: ReadonlySet<string> | undefined, prose: string) {
+  if (program.length > MAX_PROGRAM_CHARS) return;
+  try {
+    const tokens = tokenize(program);
+    if (tokens.length > 4800) return;
+    const statements = split(tokens);
+    const tail = statements.at(-1);
+    if (tail?.start === undefined || tail.end !== program.length || statements.slice(0, -1).some(item => item.id === tail.id)) return;
+
+    // These delimiter token numbers are the same pinned lexer contract used by validation.
+    const closes: number[] = [];
+    let rootChildBoundary = 0;
+    const [component, paren, list] = tail.tokens;
+    let rootListOpen = tail.id === 'root' && component?.t === 17 && component.v === 'Col' && paren?.t === 1 && list?.t === 3;
+    for (const [index, token] of tail.tokens.entries()) {
+      if ([1, 3, 5].includes(token.t)) closes.push(token.t + 1);
+      if ([2, 4, 6].includes(token.t) && closes.pop() !== token.t) return;
+      if (rootListOpen && token.t === 7 && closes.length === 2) rootChildBoundary = index;
+      if (rootListOpen && token.t === 4 && closes.length === 1) {
+        rootChildBoundary = index;
+        rootListOpen = false;
+      }
+    }
+    if (!closes.length) return;
+
+    let prefix = program.slice(0, tail.start).trimEnd();
+    if (tail.id === 'root') {
+      if (rootChildBoundary <= 3) return;
+      // Retain only children terminated by a root-list comma or bracket.
+      const expression = parseExpression([...tail.tokens.slice(0, rootChildBoundary), { t: 4 }, { t: 2 }]);
+      const printed = printRecoveryExpression(expression);
+      if (JSON.stringify(parseExpression(tokenize(printed))) !== JSON.stringify(expression)) return;
+      prefix = [prefix, 'root = ' + printed].filter(Boolean).join('\n');
+    }
+    const validation = validateNativeWorkspaceProgram(prefix, evidenceIds, prose);
+    if (validation.ok) return { program: prefix, validation, partial: true };
+    if (validation.reason === 'reference') return recoverNativeWorkspaceProgram(prefix, evidenceIds, prose, 'reference');
+  } catch {
+    // A damaged token stream must not suppress the readable answer.
+  }
+}
+
 const layoutChildren = new Map([['Col', 0], ['Row', 0], ['Grid', 0], ['Card', 0], ['Box', 0], ['Section', 1]]);
 
 /** Every recovered candidate passes the full authority, schema and data checks.

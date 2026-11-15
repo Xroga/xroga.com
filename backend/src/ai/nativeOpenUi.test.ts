@@ -386,6 +386,36 @@ test('a provider output limit keeps verified visuals shareable and rejects unfin
   assert.doesNotMatch(cutProgram.response, /root =|Col\(/);
 });
 
+test('a truncated final declaration keeps earlier validated components and original prose', () => {
+  const prose = 'Team costs $25. Only the confirmed amount is available.';
+  const table = 'plans = Table(["Plan", "Price"], [["Team", 25]])';
+  const wire = prose + NATIVE_UI_MARKER + ['root = Col([plans, followup])', table, 'followup = Text("Unfinished'].join('\n');
+  const answer = completeNativeWorkspaceAnswer(wire, 'length');
+  assert.deepEqual(answer.completion, { status: 'partial', reason: 'output_limit' });
+  assert.equal(answer.responseSource.text, 'root = Col([plans])\n' + table);
+  assert.match(answer.response, /Team costs \$25/);
+  assert.doesNotMatch(answer.response, /Unfinished|root\s*=/);
+  assert.equal(completeNativeWorkspaceAnswer(wire, 'stop').responseSource.text, '');
+  assert.equal(completeNativeWorkspaceAnswer(wire.replace('root = Col([plans, followup])',
+    'root = Col([plans, Source("source-9"), followup])'), 'length').responseSource.text, '');
+  assert.equal(completeNativeWorkspaceAnswer(wire.replace('followup = Text(', 'plans = Text('), 'length').responseSource.text, '');
+});
+
+test('a truncated inline root keeps only children completed before the cutoff', () => {
+  const prose = 'The confirmed count is five.';
+  const table = 'Table(["Confirmed"], [[5]])';
+  const wire = prose + NATIVE_UI_MARKER + 'root = Col([' + table + ', Text("Unfinished';
+  const result = completeNativeWorkspaceAnswer(wire, 'length');
+  assert.deepEqual(result.completion, { status: 'partial', reason: 'output_limit' });
+  assert.equal(result.responseSource.text, 'root = Col([' + table + '])');
+  assert.match(result.response, /confirmed count is five/);
+  assert.doesNotMatch(result.response, /Unfinished|root\s*=/);
+  assert.equal(completeNativeWorkspaceAnswer(wire, 'stop').responseSource.text, '');
+  assert.equal(completeNativeWorkspaceAnswer(wire.replace(table, 'Source("source-9")'), 'length').responseSource.text, '');
+  const closedChildren = prose + NATIVE_UI_MARKER + 'root = Col([' + table + '], ["Unfinished';
+  assert.equal(completeNativeWorkspaceAnswer(closedChildren, 'length').responseSource.text, result.responseSource.text);
+});
+
 test('the saved prose and clipboard fallback retain the substantive native body after an unfinished heading', () => {
   const prose = 'Separate identity and authorization.\n\n## Request path';
   const program = 'root = Col([Title("Request path"), Text("Separate identity and authorization."), Diagram("Trust boundaries", [{id: "client", label: "Client", level: 0}, {id: "app", label: "App", level: 1}], [{from: "client", to: "app", label: "HTTPS"}], "The app authorizes the request."), Table(["Concern", "Guard"], [["Billing", "Verify the webhook"]])])';

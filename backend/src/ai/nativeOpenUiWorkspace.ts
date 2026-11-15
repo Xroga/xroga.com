@@ -1,5 +1,5 @@
 import { publicCompletionState } from './completionDiagnostics.js';
-import { NATIVE_UI_FORMAT, PARTIAL_NATIVE_PRESENTATION_NOTE, missingNativeFormats, recoverNativeWorkspaceProgram, recoverNativeMonthlyChart, splitNativeOpenUiAnswer, supplementNativeProse, validateNativeWorkspaceProgram, type NativeUiDiagnostic, type RequiredNativeFormat } from './nativeOpenUi.js';
+import { NATIVE_UI_FORMAT, PARTIAL_NATIVE_PRESENTATION_NOTE, missingNativeFormats, recoverNativeWorkspaceProgram, recoverNativeMonthlyChart, recoverTruncatedNativeWorkspaceProgram, splitNativeOpenUiAnswer, supplementNativeProse, validateNativeWorkspaceProgram, type NativeUiDiagnostic, type RequiredNativeFormat } from './nativeOpenUi.js';
 import { nativeAnswerReviewReason, nativeFactualGuidance, nativeTechnicalCorrections, suppliedMonthlyComparison } from './nativeOpenUiAccuracy.js';
 
 const outputLimitNote = 'This answer reached the provider output limit. The available answer is shown below.';
@@ -31,8 +31,14 @@ export function completeNativeWorkspaceAnswer(
     && factualRule && !nativeAnswerReviewReason(prose);
   const guidance = factualLayoutOnly && factualRule ? nativeFactualGuidance[factualRule] : '';
   const recoverable = original?.ok === false && (original.reason === 'schema' || original.reason === 'reference' || factualLayoutOnly);
-  const repair = finishReason === 'stop' && recoverable
-    ? recoverNativeWorkspaceProgram(originalProgram, evidenceIds, prose, factualLayoutOnly ? 'factual_review' : original.reason === 'reference' ? 'reference' : 'schema') : undefined;
+  const truncated = finishReason === 'length' && original?.ok === false && original.reason === 'syntax';
+  let repair;
+  if (finishReason === 'stop' && recoverable) {
+    repair = recoverNativeWorkspaceProgram(originalProgram, evidenceIds, prose,
+      factualLayoutOnly ? 'factual_review' : original.reason === 'reference' ? 'reference' : 'schema');
+  } else if (truncated) {
+    repair = recoverTruncatedNativeWorkspaceProgram(originalProgram, evidenceIds, prose);
+  }
   const program = repair?.program ?? originalProgram;
   const validation = repair?.validation ?? original;
   const missing = missingNativeFormats(validation?.ok ? program : '', requiredFormats);
