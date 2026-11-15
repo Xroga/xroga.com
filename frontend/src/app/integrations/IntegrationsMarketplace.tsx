@@ -9,6 +9,8 @@ import {
 } from 'lucide-react';
 import { PluginBrandLogo } from '@/components/integrations/PluginBrandLogo';
 import { EXTERNAL_AGENTS, EXTERNAL_AGENT_DISCLOSURE } from '@/lib/externalAgentWorkflows';
+import { xrogaConnect } from '@/lib/xrogaConnect';
+import { normalizeLiveIntegration, liveIntegrationCategories } from '@/lib/liveIntegrationDiscovery';
 import type {
   IntegrationCategory,
   PublicIntegrationCard,
@@ -61,19 +63,19 @@ function useTypingPlaceholder(active: boolean) {
 }
 
 function AppLogo({ item, size = 'card' }: { item: PublicIntegrationCard; size?: 'micro' | 'card' | 'detail' }) {
-  return <PluginBrandLogo id={item.id} name={item.name} toolkit={item.mode === 'technology' ? undefined : item.id} size={size} />;
+  return <PluginBrandLogo id={item.id} name={item.name} toolkit={item.mode === 'technology' ? undefined : item.id} logo={item.logoUrl} size={size} />;
 }
 
 function HowItWorks() {
   return (
     <section className="xi-section xi-how" aria-labelledby="xi-how-heading">
       <div className="xi-section-heading">
-        <div><span className="xi-overline">04 / HOW IT WORKS</span><h2 id="xi-how-heading">A better way to<br/><em>work together.</em></h2></div>
+        <div><span className="xi-overline">HOW IT WORKS</span><h2 id="xi-how-heading">A better way to<br/><em>work together.</em></h2></div>
         <p>Discover a service, understand the permissions it needs, and ask Xroga to perform supported work. Every external action remains subject to authorization and approval.</p>
       </div>
       <div className="xi-steps">
         <div className="xi-step">
-          <span className="xi-step-num">01 / DISCOVER</span>
+          <span className="xi-step-num">DISCOVER</span>
           <div className="xi-step-visual">
             <div className="xi-step-search"><Search size={15}/> Find an app</div>
             <div className="xi-step-search-row"><span className="xi-logo-stamp">G</span><span>GitHub<small>Repositories and code</small></span><CheckCircle2 size={16}/></div>
@@ -83,7 +85,7 @@ function HowItWorks() {
           <p>Search the catalog by name, category, or the work you want to do.</p>
         </div>
         <div className="xi-step">
-          <span className="xi-step-num">02 / AUTHORIZE</span>
+          <span className="xi-step-num">AUTHORIZE</span>
           <div className="xi-step-visual">
             <div className="xi-auth-title"><ShieldCheck size={17}/> Review access</div>
             <div className="xi-permission"><Check size={13}/> Inspect the account and scopes</div>
@@ -94,7 +96,7 @@ function HowItWorks() {
           <p>Use a supported OAuth or credential setup; review capabilities before granting access.</p>
         </div>
         <div className="xi-step">
-          <span className="xi-step-num">03 / WORK</span>
+          <span className="xi-step-num">WORK</span>
           <div className="xi-step-visual">
             <div className="xi-prompt-bubble">Summarize this week&apos;s orders.</div>
             <div className="xi-prompt-status"><Sparkles size={14}/> Xroga checks the available tools</div>
@@ -120,7 +122,7 @@ function IntegrationCard({ item }: { item: PublicIntegrationCard }) {
         <h3>{item.name}</h3>
         <p className="xi-card-description">{item.description}</p>
         <div className="xi-card-meta">
-          <div><Zap size={13} aria-hidden="true"/><span>Tools & triggers</span><strong>{item.mode === 'technology' ? 'Not verified' : 'View details'}</strong></div>
+          <div><Zap size={13} aria-hidden="true"/><span>Tools & triggers</span><strong>{item.fromLiveCatalog ? `${(item.toolsCount ?? 0).toLocaleString()} tools · ${(item.triggersCount ?? 0).toLocaleString()} triggers` : item.mode === 'technology' ? 'Not verified' : 'View details'}</strong></div>
           <div><KeyRound size={13} aria-hidden="true"/><span>Authorization</span><strong>{item.authHint}</strong></div>
         </div>
         <span className="xi-card-bottom">Explore app <ArrowRight size={15} aria-hidden="true"/></span>
@@ -138,7 +140,7 @@ function AgentConnections() {
     <section className="xi-section xi-agents" id="xi-agents" aria-labelledby="xi-agents-heading">
       <div className="xi-section-heading">
         <div>
-          <span className="xi-overline">03 / WORK WITH OTHER AGENTS</span>
+          <span className="xi-overline">WORK WITH OTHER AGENTS</span>
           <h2 id="xi-agents-heading">Your favorite AI agents.<br/><em>One shared project.</em></h2>
         </div>
         <p>Use Codex, Claude Code, Cursor and more alongside Xroga. The currently supported handoff is an authorized GitHub repository—not a direct agent-to-Xroga connection.</p>
@@ -190,6 +192,60 @@ export function IntegrationsMarketplace({
   const [limit, setLimit] = useState(PAGE_SIZE);
   const searchInput = useRef<HTMLInputElement>(null);
   const typing = useTypingPlaceholder(!focused && !query);
+  const [liveItems, setLiveItems] = useState<PublicIntegrationCard[] | null>(null);
+  const [liveTotal, setLiveTotal] = useState<number | null>(null);
+  const [catalogBusy, setCatalogBusy] = useState(true);
+  const [catalogIncomplete, setCatalogIncomplete] = useState(false);
+
+  // Xroga's dashboard reads the full Composio-backed catalogue. Reuse its
+  // existing tenant-filtered, read-only metadata route; never call actions,
+  // connect providers, or show another user's connected-account status here.
+  // Guests / unavailable providers fall back to the clearly labelled public examples.
+  useEffect(() => {
+    let active = true;
+    void (async () => {
+      let loadedAny = false;
+      try {
+        const status = await xrogaConnect.status();
+        if (!active || !status.configured) return;
+        let page = await xrogaConnect.catalog({ sortBy: 'usage', limit: 250 });
+        if (!page.ok || !Array.isArray(page.items)) return;
+        const seen = new Map<string, PublicIntegrationCard>();
+        const publish = () => {
+          if (active) setLiveItems([...seen.values()]);
+        };
+        let pages = 0;
+        while (active && pages < 12) {
+          for (const entry of page.items) {
+            if (entry.slug && !seen.has(entry.slug)) seen.set(entry.slug, normalizeLiveIntegration(entry));
+          }
+          loadedAny = true;
+          if (active) {
+            setLiveTotal(page.totalItems);
+            publish();
+          }
+          pages++;
+          if (!page.nextCursor) break;
+          page = await xrogaConnect.catalog({ sortBy: 'usage', limit: 250, cursor: page.nextCursor });
+        }
+        if (active && seen.size < (page.totalItems ?? seen.size)) setCatalogIncomplete(true);
+      } catch {
+        // Authenticated workspace providers are not guaranteed on a public
+        // marketing page. Keep only actual loaded results or public examples.
+        if (active && loadedAny) setCatalogIncomplete(true);
+      } finally {
+        if (active) setCatalogBusy(false);
+      }
+    })();
+    return () => { active = false; };
+  }, []);
+
+  const directoryItems = liveItems ?? items;
+  const directoryCategories = useMemo(
+    () => liveItems ? liveIntegrationCategories(liveItems) : categories,
+    [liveItems, categories],
+  );
+
 
   const featured = useMemo(() => {
     const lookup = new Map(items.map(item => [item.id, item]));
@@ -198,13 +254,13 @@ export function IntegrationsMarketplace({
     ).slice(0, 8);
   }, [items]);
 
-  const categoryCounts = useMemo(() => new Map(categories.map(option => [
-    option.id, items.filter(item => matchesPublicIntegrationCategory(item, option.id)).length,
-  ])), [items, categories]);
+  const categoryCounts = useMemo(() => new Map(directoryCategories.map(option => [
+    option.id, directoryItems.filter(item => matchesPublicIntegrationCategory(item, option.id)).length,
+  ])), [directoryItems, directoryCategories]);
 
   const matches = useMemo(() => {
     const terms = query.trim().toLowerCase().split(/\s+/).filter(Boolean);
-    const filtered = items.filter(item => {
+    const filtered = directoryItems.filter(item => {
       if (!matchesPublicIntegrationCategory(item, category)) return false;
       if (mode === 'guides' && item.mode === 'technology') return false;
       if (mode === 'technology' && item.mode !== 'technology') return false;
@@ -223,14 +279,15 @@ export function IntegrationsMarketplace({
       return a.name.localeCompare(b.name);
     });
     return filtered;
-  }, [items, category, mode, query, sort]);
+  }, [directoryItems, category, mode, query, sort]);
 
   const shown = matches.slice(0, limit);
-  const selectedCategoryLabel = categories.find(value => value.id === category)?.label || 'All apps';
-  const primary = categories.filter(item => item.group === 'primary');
-  const additional = categories.filter(item => item.group === 'additional');
+  const selectedCategoryLabel = directoryCategories.find(value => value.id === category)?.label || 'All apps';
+  const primary = directoryCategories.filter(item => item.group === 'primary');
+  const additional = directoryCategories.filter(item => item.group === 'additional');
 
   const pickCategory = (id: string) => { setCategory(id); setLimit(PAGE_SIZE); };
+  useEffect(() => { setCategory('all'); setMode('all'); setLimit(PAGE_SIZE); }, [liveItems !== null]);
   const pickMode = (value: DirectoryMode) => { setMode(value); setLimit(PAGE_SIZE); };
   const typeSearch = (value: string) => { setQuery(value); setLimit(PAGE_SIZE); };
 
@@ -242,23 +299,28 @@ export function IntegrationsMarketplace({
           {featured.slice(0, 8).map((item, i) => <div className={'xi-orbit-logo xi-orbit-logo-' + (i + 1)} key={item.id}><AppLogo item={item}/></div>)}
         </div>
         <div className="xi-hero-content">
-          <div className="xi-eyebrow"><span/> XROGA CONNECT <i/> INTEGRATIONS</div>
           <h1 id="xi-hero-title">Connect your favorite apps<br/><em>with Xroga AI.</em></h1>
-          <p>Save time by automating repetitive work. Explore 24/7 app workflows where scheduling and connected providers are supported and configured, with your approval for sensitive actions.</p>
+          <p>Save time with app automation inside your workspace. Set up supported tasks to run on a schedule, including around-the-clock workflows when configured and authorized.</p>
           <div className="xi-hero-actions">
             <a className="xi-primary-button" href="#xi-directory">Browse apps <ArrowUpRight size={17}/></a>
             <a className="xi-secondary-button" href="#xi-agents">Work with AI agents <ArrowRight size={16}/></a>
           </div>
-          <div className="xi-hero-proof"><span><CheckCircle2 size={15}/> Inspect access</span><span><CheckCircle2 size={15}/> Own your connections</span><span><CheckCircle2 size={15}/> Approve sensitive actions</span></div>
-          <p className="xi-small-note">Available tools, triggers and account access are confirmed in the workspace, not by this public directory.</p>
+          <div className="xi-hero-app-strip" aria-label="Explore popular applications">
+            {featured.slice(0, 6).map(item => (
+              <Link key={item.id} href={item.href} className="xi-hero-app" aria-label={`Explore ${item.name}`}>
+                <AppLogo item={item} size="micro" /><span>{item.name}</span>
+              </Link>
+            ))}
+          </div>
         </div>
       </section>
 
       <section className="xi-section xi-directory" id="xi-directory" aria-labelledby="xi-directory-heading">
         <div className="xi-directory-title">
-          <span className="xi-overline">01 / BROWSE YOUR APPS</span>
-          <h2 id="xi-directory-heading">Automate the apps<br/><em>you already use.</em></h2>
-          <p>Explore {items.length.toLocaleString()} catalog entries across software, work and business categories. App setup, actions, triggers and authorization are verified in each available integration detail view.</p>
+          <h2 id="xi-directory-heading">Find the apps you need.</h2>
+          <p>{liveTotal !== null
+            ? `${liveTotal.toLocaleString()} provider listings reported by Xroga Connect. ${catalogBusy ? 'Loading the full directory…' : catalogIncomplete ? 'Some listings could not be loaded.' : 'Browse the available listings below.'}`
+            : 'Xroga Connect reports 1,743 available in the workspace catalog. Below are public examples while the live directory is unavailable; open the workspace for the latest provider list.'}</p>
         </div>
         <div className="xi-directory-search" id="xi-search">
           <Search size={23} aria-hidden="true"/>
@@ -305,7 +367,7 @@ export function IntegrationsMarketplace({
           <div className="xi-library-main">
             <div className="xi-library-toolbar">
               <div className="xi-result-status" role="status" aria-live="polite">
-                <strong>{matches.length.toLocaleString()}</strong> matching {matches.length === 1 ? 'entry' : 'entries'}
+                <strong>{matches.length.toLocaleString()}</strong> {liveItems ? 'loaded providers' : 'public examples'} {liveTotal !== null ? `of ${liveTotal.toLocaleString()} reported` : ''}
                 <span> / {selectedCategoryLabel}</span>
               </div>
               <div className="xi-sort-control"><label htmlFor="xi-sort">Sort</label><select id="xi-sort" value={sort} onChange={event => setSort(event.target.value as SortMode)}><option value="featured">Recommended first</option><option value="alphabetical">A to Z</option></select></div>
@@ -313,7 +375,7 @@ export function IntegrationsMarketplace({
             <div className="xi-mode-filters" role="group" aria-label="Integration listing type">
               <button className={mode === 'all' ? 'xi-mode-active' : ''} type="button" aria-pressed={mode === 'all'} onClick={() => pickMode('all')}>All entries</button>
               <button className={mode === 'guides' ? 'xi-mode-active' : ''} type="button" aria-pressed={mode === 'guides'} onClick={() => pickMode('guides')}>App setup guides</button>
-              <button className={mode === 'technology' ? 'xi-mode-active' : ''} type="button" aria-pressed={mode === 'technology'} onClick={() => pickMode('technology')}>Build technologies</button>
+              {liveItems === null && <button className={mode === 'technology' ? 'xi-mode-active' : ''} type="button" aria-pressed={mode === 'technology'} onClick={() => pickMode('technology')}>Build technologies</button>}
             </div>
             {shown.length ? (
               <div className="xi-app-grid">{shown.map(item => <IntegrationCard key={item.id} item={item}/>)}</div>
@@ -328,7 +390,9 @@ export function IntegrationsMarketplace({
               <span>Showing {shown.length.toLocaleString()} of {matches.length.toLocaleString()} entries</span>
               {shown.length < matches.length && <button type="button" onClick={() => setLimit(value => value + PAGE_SIZE)}>Load more apps <ChevronDown size={17}/></button>}
             </div>}
-            <p className="xi-catalog-footnote"><ShieldCheck size={16}/> Technology listings describe software Xroga may build with, not automatically connected accounts. Auth, actions and triggers are validated inside the authenticated workspace.</p>
+            <p className="xi-catalog-footnote"><ShieldCheck size={16}/> {liveItems
+              ? 'Provider listings and logos come from Xroga Connect. A listing is not a connected account; confirm access inside your workspace.'
+              : 'These are public technology examples, not the full live provider catalog. Sign in to Xroga Connect to browse all available apps and verify authorization.'} <Link href="/dashboard/integrations">Open the full plugin marketplace <ArrowUpRight size={14}/></Link></p>
           </div>
         </div>
       </section>
@@ -349,30 +413,26 @@ export function IntegrationsMarketplace({
 
       <HowItWorks />
 
-      <section className="xi-mcp" aria-labelledby="xi-mcp-heading">
+      <section className="xi-mcp xi-mcp-open" aria-labelledby="xi-mcp-heading">
         <div className="xi-mcp-copy">
-          <div className="xi-overline">OPEN TO MORE / CUSTOM MCP</div>
-          <h2 id="xi-mcp-heading">Your tools don&apos;t<br/>end at a list.</h2>
-          <p>Bring a compatible remote MCP server into your Xroga workspace. Supported authentication, server reachability, permissions and available actions are checked during setup.</p>
-          <Link href="/dashboard/integrations?view=custom" className="xi-mcp-cta">Explore custom MCP connections <ArrowUpRight size={17}/></Link>
+          <h2 id="xi-mcp-heading">Bring your own<br/><em>MCP server.</em></h2>
+          <p>Connect compatible remote tools beyond the directory. Add a server in your workspace, review its authorization, then use its supported actions with Xroga.</p>
+          <Link href="/dashboard/integrations?view=custom" className="xi-mcp-cta">Explore custom MCP setup <ArrowUpRight size={17}/></Link>
         </div>
-        <div className="xi-mcp-art" aria-hidden="true">
-          <div className="xi-mcp-centre"><Network size={34}/><strong>YOUR MCP</strong><small>Connection</small></div>
-          <span className="xi-mcp-line xi-mcp-line-a"/>
-          <span className="xi-mcp-line xi-mcp-line-b"/>
-          <span className="xi-mcp-line xi-mcp-line-c"/>
-          <span className="xi-mcp-node xi-mcp-node-a"><Server size={19}/></span>
-          <span className="xi-mcp-node xi-mcp-node-b"><KeyRound size={19}/></span>
-          <span className="xi-mcp-node xi-mcp-node-c"><Workflow size={19}/></span>
+        <div className="xi-mcp-flow" aria-label="MCP server to Xroga workspace workflow">
+          <span className="xi-mcp-flow-unit"><Server size={20}/> Your MCP</span>
+          <ArrowRight size={22} aria-hidden="true"/>
+          <span className="xi-mcp-flow-core"><Network size={24}/> Xroga</span>
+          <ArrowRight size={22} aria-hidden="true"/>
+          <span className="xi-mcp-flow-unit"><Workflow size={20}/> Your tasks</span>
         </div>
       </section>
 
       <section className="xi-cta" aria-labelledby="xi-cta-heading">
         <div className="xi-cta-halo" aria-hidden="true"/>
-        <span className="xi-overline">START WITH XROGA FREE</span>
-        <h2 id="xi-cta-heading">Put Xroga to work<br/><em>with your tools.</em></h2>
-        <p>Find an app, review its capabilities and authorize connections when you need them.</p>
-        <Link href="/auth/signup" className="xi-primary-button">Get started for free <ArrowUpRight size={17}/></Link>
+        <h2 id="xi-cta-heading">Start in minutes.<br/><em>Try Xroga for free.</em></h2>
+        <p>Find your app, connect it in the workspace and describe what you need done. Some providers and automations need extra setup or approval.</p>
+        <Link href="/auth/signup" className="xi-primary-button">Start for free <ArrowUpRight size={17}/></Link>
       </section>
     </div>
   );
