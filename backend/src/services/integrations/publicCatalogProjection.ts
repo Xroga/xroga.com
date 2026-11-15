@@ -4,6 +4,7 @@
  * secret, custom MCP server, or user-specific data is exposed.
  */
 import type { XrogaConnectCatalogToolkit } from './composioClient.js';
+import { publicHttpsUrl } from '../../security/egress/urlPolicy.js';
 
 export type PublicCatalogItem = {
   slug: string;
@@ -26,15 +27,9 @@ const safeText = (v: unknown, max: number) =>
 export function publicCatalogLogoUrl(value: unknown): string | undefined {
   if (typeof value !== 'string' || value.length > 1024) return;
   try {
-    const url = new URL(value);
-    // Never emit provider-supplied javascript:, data:, HTTP, embedded credentials
-    // or private-network URLs into a public visitor's browser.
-    if (url.protocol !== 'https:' || url.username || url.password) return;
-    const host = url.hostname.toLowerCase();
-    if (host === 'localhost' || host.endsWith('.local') ||
-      /^(?:\d{1,3}\.){3}\d{1,3}$/.test(host) ||
-      host.includes(':') || !host.includes('.')) return;
-    return url.href;
+    // Reuse the existing centralized URL policy; it rejects numeric,
+    // loopback, private and ambiguous hosts, ports and embedded credentials.
+    return publicHttpsUrl(value).href;
   } catch { return; }
 }
 
