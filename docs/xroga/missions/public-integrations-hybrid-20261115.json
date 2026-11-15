@@ -13,6 +13,7 @@
     "frontend/src/app/integrations/IntegrationsMarketplace.tsx",
     "frontend/src/app/integrations/integrations.css",
     "frontend/src/lib/publicIntegrationsDirectory.ts",
+    "frontend/src/lib/integrationDiscoveryFilters.ts",
     "frontend/src/lib/publicIntegrationsDirectory.test.ts",
     "docs/xroga/missions/public-integrations-hybrid-20261115.json"
   ],
@@ -24,7 +25,8 @@
     "extend": [
       "Dark-blue responsive public marketing interface with hero, featured app logos, three-step explanation, remote MCP callout and 711-entry directory with searchable filters and paging.",
       "Source-grounded native/app-guide/technology categorization with exact source industry filters and curated topic filters.",
-      "Public cards link to the authorized dashboard, where live action/trigger details and account connection state can actually be checked."
+      "Public cards link to the authorized dashboard, where live action/trigger details and account connection state can actually be checked.",
+      "Move lightweight category filter and featured slug logic into a small client-safe module to avoid shipping the large static catalog twice."
     ],
     "replace": [
       "Former local header, static 24 small text cards, and minimal /integrations SEO presentation."
@@ -115,7 +117,8 @@
     "frontend/src/app/integrations/IntegrationsMarketplace.tsx",
     "frontend/src/app/integrations/integrations.css",
     "frontend/src/lib/publicIntegrationsDirectory.ts",
-    "frontend/src/lib/publicIntegrationsDirectory.test.ts"
+    "frontend/src/lib/publicIntegrationsDirectory.test.ts",
+    "frontend/src/lib/integrationDiscoveryFilters.ts"
   ],
   "claimsFullProductCompletion": false,
   "claimsAllBatchCommandsComplete": false,
