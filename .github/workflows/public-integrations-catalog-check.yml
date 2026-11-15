@@ -10,6 +10,7 @@ on:
       - 'backend/src/services/integrations/publicCatalogProjection*.ts'
       - 'frontend/src/app/integrations/**'
       - 'frontend/src/lib/publicIntegrationsDirectory*.ts'
+      - 'frontend/src/lib/publicIntegrationLogo*.ts'
       - 'frontend/src/lib/liveIntegrationDiscovery*.ts'
       - 'frontend/src/lib/publicConnectCatalog.ts'
       - 'frontend/src/components/integrations/PluginBrandLogo.tsx'
@@ -38,6 +39,6 @@ jobs:
       - name: Verify public projection does not expose private connections or fake descriptions
         run: npx tsx --test backend/src/services/integrations/publicCatalogProjection.test.ts
       - name: Verify source-backed plugin descriptions and public display mappings
-        run: npx tsx --tsconfig frontend/tsconfig.json --test frontend/src/lib/publicIntegrationsDirectory.test.ts frontend/src/lib/liveIntegrationDiscovery.test.ts
+        run: npx tsx --tsconfig frontend/tsconfig.json --test frontend/src/lib/publicIntegrationsDirectory.test.ts frontend/src/lib/liveIntegrationDiscovery.test.ts frontend/src/lib/publicIntegrationLogo.test.ts
       - name: Compile backend including public catalog route and data boundary
         run: npm run build --workspace=backend
