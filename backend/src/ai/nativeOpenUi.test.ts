@@ -74,6 +74,63 @@ test('a chart cannot silently choose one of two inputs the answer leaves unresol
   assert.equal(accepted.completion.status, 'complete');
 });
 
+test('a deferred chart leaves independent information and drops its preselected controls', () => {
+  const prose = 'The sources conflict. I have not presented a final chart yet. The panel below lets you pick which number to plot.';
+  const program = [
+    'root = Col([Text("Compare both values."), chart, stateControls, Text("Check the source."), Checkbox($reconciled, "Source checked")])',
+    'chart = Chart("bar", [{month:"Jan", revenue:amount}], "month", ["revenue"])',
+    'amount = $authoritative == "1200" ? 1200 : 1000',
+    'stateControls = Controls([RadioGroup($authoritative, ["1000", "1200"], "Select value")], "Plot one value")',
+    '$authoritative = "1000"',
+    '$reconciled = false',
+  ].join('\n');
+  const result = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + program, 'stop');
+  assert.deepEqual(result.completion, { status: 'partial', reason: 'factual_review' });
+  assert.match(result.responseSource.text, /Compare both values/);
+  assert.match(result.responseSource.text, /Checkbox/);
+  assert.doesNotMatch(result.responseSource.text, /authoritative|RadioGroup|Chart\(/);
+  assert.doesNotMatch(result.response, /panel below lets/);
+});
+
+test('closed numeric series recovers a signed chart after a failed native program', () => {
+  const prompt = 'Show actual monthly net cash flows in dollars: -800, 0, 500.';
+  const prose = 'Cash flows are −800, 0 and 500 dollars.';
+  const invalid = 'root = Col([Text("First")])\nroot = Col([Text("Second")])';
+  const formats = requiredNativeFormats(prompt);
+  const result = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + invalid, 'stop', undefined, prompt, undefined, formats);
+  assert.deepEqual(formats, ['chart']);
+  assert.deepEqual(result.completion, { status: 'complete' });
+  assert.match(result.responseSource.text, /"Month 1","value":-800\}.*"Month 2","value":0\}.*"Month 3","value":500\}/);
+  assert.doesNotMatch(result.responseSource.text, /First|Second/);
+  assert.deepEqual(requiredNativeFormats('What were last month’s actual cash flows?'), []);
+  const foreignSource = 'root = Col([Source("source-9")])';
+  const denied = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + foreignSource, 'stop', undefined, prompt, undefined, formats);
+  assert.deepEqual(denied.completion, { status: 'partial', reason: 'presentation_contract' });
+  assert.equal(denied.responseSource.text, '');
+  const truncated = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + invalid, 'length', undefined, prompt, undefined, formats);
+  assert.deepEqual(truncated.completion, { status: 'partial', reason: 'output_limit' });
+});
+
+test('a requested editable checklist recovers local controls from a complete prose answer', () => {
+  const prompt = 'Make a pre-launch checklist with editable local checkboxes.';
+  const sections = Array.from({length: 5}, (_, index) => '**Group ' + index + '**\n' +
+    Array.from({length: 8}, (_, item) => '- [ ] Review item ' + index + '.' + item).join('\n'));
+  const prose = ['Check before publishing.', ...sections, '~~~md\n- Copy this sample code as written\n~~~'].join('\n\n');
+  const invalid = ['root = Col([Text("Checklist")])', ...Array.from({length: 97}, (_, index) => '$label' + index + ' = false')].join('\n');
+  const formats = requiredNativeFormats(prompt);
+  const result = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + invalid, 'stop', undefined, prompt, undefined, formats);
+  assert.deepEqual(formats, ['checklist']);
+  assert.deepEqual(result.completion, { status: 'complete' });
+  assert.equal((result.responseSource.text.match(/Checkbox\(/g) ?? []).length, 40);
+  assert.match(result.response, /Copy this sample code as written/);
+  assert.doesNotMatch(result.responseSource.text, /Copy this sample code/);
+  assert.deepEqual(missingNativeFormats(result.responseSource.text, formats), []);
+  assert.deepEqual(requiredNativeFormats('Make a checklist without editable checkboxes.'), []);
+  const cited = completeNativeWorkspaceAnswer('- Find the evidence [1].', 'stop', new Set(['source-1']), prompt, undefined, formats);
+  assert.deepEqual(cited.completion, { status: 'partial', reason: 'presentation_contract' });
+  assert.match(cited.response, /evidence \[1\]/);
+});
+
 test('native layout, data and reactive arithmetic are accepted without a V2 translation', () => {
   const programs = [
     'root = Col([Title("Options"), Table(["Plan", "USD/month"], [["Basic", 10], ["Team", 25]])])',

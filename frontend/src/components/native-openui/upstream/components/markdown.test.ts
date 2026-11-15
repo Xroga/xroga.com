@@ -68,6 +68,29 @@ test('a hidden study-card face never suppresses the main answer', () => {
   assert.match(renderToStaticMarkup(createElement(MarkdownBlocks, { text, matches })), /A study card explains this later/);
 });
 
+test('a visible chart and checklist collapse only their exact readable duplicates', () => {
+  const element = (typeName: string, props: Record<string, unknown>) => ({ type: 'element', typeName, props });
+  const chart = element('Chart', {
+    type: 'donut', data: [{ category: 'Fit', count: 50 }, { category: 'Other', count: 20 }], x: 'category', series: ['count'], currency: null,
+  });
+  const checks = element('Section', { title: 'Publishing', children: [
+    element('Checkbox', { label: 'Test links' }), element('Checkbox', { label: 'Proofread' }),
+  ] });
+  const matches = nativeMarkdownMatches(element('Col', { children: [chart, checks] }));
+  const duplicate = '| category | count |\n| --- | --- |\n| Fit | 50 |\n| Other | 20 |';
+  const extended = '| category | count | Share |\n| --- | --- | --- |\n| Fit | 50 | 71% |\n| Other | 20 | 29% |';
+  const html = renderToStaticMarkup(createElement(MarkdownBlocks, {
+    text: [duplicate, extended, '**Publishing**\n- [ ] Test links\n- [x] Proofread', '- Test links [1]\n- Proofread'].join('\n\n'),
+    renderCitation: number => 'Source ' + number, matches,
+  }));
+  assert.equal((html.match(/<table/g) ?? []).length, 1);
+  assert.equal((html.match(/<ul>/g) ?? []).length, 1);
+  assert.match(html, /71%/);
+  assert.match(html, /Source 1/);
+  const coveredByHiddenSlide = nativeMarkdownMatches(element('Carousel', { items: [chart, checks] }));
+  assert.match(renderToStaticMarkup(createElement(MarkdownBlocks, { text: duplicate, matches: coveredByHiddenSlide })), /<table\b/);
+});
+
 test('Markdown tables preserve literal pipes and all columns', () => {
   const text = '| Expression | Expected |\n| --- | --- |\n| `number | null` | Use A \\| B |';
   const html = renderToStaticMarkup(createElement(MarkdownBlocks, { text }));

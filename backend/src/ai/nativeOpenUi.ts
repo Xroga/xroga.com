@@ -89,7 +89,7 @@ function scanNativeOpenUiAnswer(raw: string, streaming: boolean, allowJsonEnvelo
   return envelope(prose.join('\n'), fencedProgram ?? '');
 }
 
-export type RequiredNativeFormat = 'table' | 'chart' | 'graph' | 'calculator';
+export type RequiredNativeFormat = 'table' | 'chart' | 'graph' | 'calculator' | 'checklist';
 
 function hasReactiveCalculator(program: string) {
   const symbols = new Map(split(tokenize(program)).map(statement => [statement.id, parseExpression(statement.tokens)]));
@@ -147,6 +147,7 @@ export function missingNativeFormats(program: string, formats: readonly Required
   const available: Record<RequiredNativeFormat, boolean> = {
     table: names.has('Table'), chart: names.has('Chart'), graph: names.has('Diagram') || names.has('Svg'),
     calculator: Boolean(program && formats.includes('calculator') && hasReactiveCalculator(program)),
+    checklist: names.has('Checkbox'),
   };
   return [...new Set(formats)].filter(format => !available[format]);
 }
@@ -625,6 +626,40 @@ export function recoverNativeWorkspaceProgram(program: string, evidenceIds: Read
       collect(candidate);
       return [sourceFor('root', candidate), ...[...symbols].filter(([id]) => included.has(id))
         .map(([id, node]) => sourceFor(id, node))].join('\n');
+    }
+
+    if (failure === 'factual_review' && claimsChartIsDeferred(prose)) {
+      const children = resolveRecoveryReference(root.args[0], symbols);
+      if (children?.k !== 'Arr') return;
+      const chartState = new Set<string>();
+      function componentFacts(node: ASTNode, visit: (part: ASTNode) => void, seen = new Set<string>()) {
+        walkAST(node, part => {
+          visit(part);
+          if (part.k !== 'Ref' || seen.has(part.n)) return;
+          seen.add(part.n);
+          const target = symbols.get(part.n);
+          if (target) componentFacts(target, visit, seen);
+        });
+      }
+      const branches = children.els.map(child => {
+        let hasChart = false;
+        const reads = new Set<string>();
+        componentFacts(child, part => {
+          if (part.k === 'StateRef') reads.add(part.n);
+          if (part.k !== 'Comp' || part.name !== 'Chart') return;
+          hasChart = true;
+          componentFacts(part, value => { if (value.k === 'StateRef') chartState.add(value.n); });
+        });
+        return { child, hasChart, reads };
+      });
+      const kept = branches.filter(branch => !branch.hasChart && ![...branch.reads].some(state => chartState.has(state)));
+      if (!kept.length) return;
+      const recovered = render({ ...root, args: [{ k: 'Arr', els: kept.map(({ child }) => child) }, ...root.args.slice(1)] });
+      const validation = validateNativeWorkspaceProgram(recovered, evidenceIds, prose);
+      if (validation.ok && !contradictsMonthlyChart(parseProgram.parse(recovered).root, narrative)) {
+        return { program: recovered, validation, partial: true };
+      }
+      return;
     }
 
     // Cap repeated parser calls independently of the provider output limits.

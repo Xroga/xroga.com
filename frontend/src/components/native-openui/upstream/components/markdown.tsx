@@ -1,6 +1,7 @@
 import React, { createContext, Fragment, type ReactNode } from "react";
 import { isPresentationLanguage, publicAnswerText } from "@/lib/publicAnswerText";
 import { cx, isLongAnswerTable, webUrl } from "./style";
+import { staticChartTable } from "./chart";
 
 // A small Markdown renderer that builds React elements and never injects HTML.
 // Inline: **bold**, *italic*, ~~strike~~, `code`, [text](https://...).
@@ -101,7 +102,10 @@ type MarkdownMatches = {
   code: ReadonlySet<string>;
   relationships: ReadonlySet<string>;
   tables: ReadonlySet<string>;
+  checklists: ReadonlySet<string>;
 };
+
+const listKey = (items: readonly string[]) => JSON.stringify(items.map(textKey));
 
 /** Match literal content only. Distinct wording and citation markers stay visible. */
 export function nativeMarkdownMatches(root: unknown): MarkdownMatches {
@@ -110,10 +114,11 @@ export function nativeMarkdownMatches(root: unknown): MarkdownMatches {
   const code = new Set<string>();
   const relationships = new Set<string>();
   const tables = new Set<string>();
+  const checklists = new Set<string>();
   function visit(value: unknown): void {
     if (Array.isArray(value)) { value.forEach(visit); return; }
     if (!value || typeof value !== "object") return;
-    const node = value as { type?: string; typeName?: string; props?: Record<string, unknown> };
+    const node = value as { type?: string; typeName?: string; props?: Record<string, unknown>; hasDynamicProps?: boolean };
     if (node.type !== "element" || !node.props) {
       Object.values(value).forEach(visit);
       return;
@@ -121,7 +126,7 @@ export function nativeMarkdownMatches(root: unknown): MarkdownMatches {
     const { props, typeName } = node;
     // The reverse of a study card is deliberately hidden until the user flips
     // it. A matching paragraph in the main answer must stay visible.
-    if (typeName === "Flashcard") return;
+    if (typeName === "Flashcard" || typeName === "Carousel") return;
     if (["Text", "Caption", "Quote"].includes(typeName ?? "") && typeof props.text === "string") paragraphs.add(citationTextKey(props.text));
     if (typeName === "Text" && Array.isArray(props.text)) {
       const parts = props.text.map(part => {
@@ -159,10 +164,23 @@ export function nativeMarkdownMatches(root: unknown): MarkdownMatches {
       const key = tableContentKey(props.columns, props.rows);
       if (key) tables.add(key);
     }
+    if (typeName === "Chart" && !node.hasDynamicProps) {
+      const table = staticChartTable(props);
+      const key = table && tableContentKey(table.headings, table.rows);
+      if (key) tables.add(key);
+    }
+    if ((typeName === "Col" || typeName === "Section") && Array.isArray(props.children)) {
+      const items = props.children.filter(child => child?.typeName === "Checkbox");
+      const labels = items.map(child => child.props?.label);
+      if (labels.length && labels.every(label => typeof label === "string")) {
+        checklists.add(listKey(labels));
+        if (typeName === "Section" && typeof props.title === "string") paragraphs.add(citationTextKey("**" + props.title + "**"));
+      }
+    }
     Object.values(props).forEach(visit);
   }
   visit(root);
-  return { paragraphs, titles, code, tables, relationships };
+  return { paragraphs, titles, code, tables, relationships, checklists };
 }
 
 const LIST_ITEM = /^\s{0,3}([-*+]|(\d+)[.)])\s+(.*)$/;
@@ -272,6 +290,7 @@ export function MarkdownBlocks({ text, renderCitation, deduplicateTables = false
           case "hr":
             return <hr key={k} className="iui-divider" />;
           case "list": {
+            if (!b.ordered && matches?.checklists.has(listKey(b.items.map(item => item.replace(/^\[[ xX]\]\s+/, ""))))) return null;
             const entries = b.ordered ? b.items : b.items.filter(item => !matches?.relationships.has(textKey(item)));
             if (!entries.length) return null;
             const items = entries.map((item, j) => <li key={j}>{inline(item, `${k}-${j}`, renderCitation)}</li>);

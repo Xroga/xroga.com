@@ -317,6 +317,22 @@ function toSpec(props: z.infer<typeof chartProps>): Spec | null {
   };
 }
 
+function chartTable(spec: Spec) {
+  const { x, series, rows, presentation } = spec;
+  return {
+    headings: [presentation?.xLabel ?? x, ...(series.length === 1 && presentation?.yLabel ? [presentation.yLabel] : series)],
+    rows: rows.map(row => [x, ...series].map(key => String(row[key]))),
+  };
+}
+
+export function staticChartTable(props: unknown) {
+  if (!props || typeof props !== "object") return;
+  // OpenUI uses null for omitted positional arguments.
+  const parsed = chartProps.safeParse(Object.fromEntries(Object.entries(props).filter(([, value]) => value !== null)));
+  const spec = parsed.success && toSpec(parsed.data);
+  return spec ? chartTable(spec) : undefined;
+}
+
 export const Chart = defineComponent({
   name: "Chart",
   props: chartProps,
@@ -327,7 +343,7 @@ export const Chart = defineComponent({
     if (!spec) return <p>Chart data is incomplete or unsuitable for this chart.</p>;
     const pie = spec.type === "pie" || spec.type === "donut";
     const labels = spec.presentation;
-    const columns = [spec.x, ...spec.series];
+    const table = chartTable(spec);
     return (
       <figure className="iui-chart">
         {(labels?.title || labels?.yLabel) && <figcaption className="native-chart-caption">
@@ -340,8 +356,8 @@ export const Chart = defineComponent({
         {!pie && (spec.series.length > 1 || !labels?.yLabel) && <Legend series={spec.series} />}
         {labels?.note && <p className="native-chart-note">{labels.note}</p>}
         <div className="native-chart-data"><div className="iui-table-scroll" tabIndex={0} role="region" aria-label="Chart data table">
-          <table className="iui-table"><caption>Chart data</caption><thead><tr>{columns.map((key, index) => <th scope="col" key={key}>{index === 0 ? labels?.xLabel ?? key : spec.series.length === 1 ? labels?.yLabel ?? key : key}</th>)}</tr></thead>
-          <tbody>{spec.rows.map((row, index) => <tr key={index}>{columns.map(key => <td key={key}>{String(row[key])}</td>)}</tr>)}</tbody></table>
+          <table className="iui-table"><caption>Chart data</caption><thead><tr>{table.headings.map((heading, index) => <th scope="col" key={index}>{heading}</th>)}</tr></thead>
+          <tbody>{table.rows.map((row, index) => <tr key={index}>{row.map((cell, column) => <td key={column}>{cell}</td>)}</tr>)}</tbody></table>
         </div></div>
       </figure>
     );

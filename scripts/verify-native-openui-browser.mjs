@@ -16,6 +16,18 @@ const cases = {
   referenceRecovered: {
     raw: 'Check current tenant membership before reading rows.\n<<<XROGA_OPENUI_V1>>>\nroot = Col([table, unavailableDetails])\ntable = Table(["Check", "Where"], [["Membership", "API"]])',
   },
+  rebuiltChecklist: {
+    raw: 'Prepare the site before launch.\n\n**Publishing**\n- Check the links\n- Proofread the post\n<<<XROGA_OPENUI_V1>>>\nroot = Col([Text("First")])\nroot = Col([Text("Second")])',
+    prompt: 'Make a publishing checklist with editable local checkboxes.',
+    requiredFormats: ['checklist'],
+    completion: 'complete',
+  },
+  rebuiltSignedChart: {
+    raw: 'Use the supplied cash flows.\n<<<XROGA_OPENUI_V1>>>\nroot = Col([Text("First")])\nroot = Col([Text("Second")])',
+    prompt: 'Show actual monthly cash flow in dollars: -800, 0, 500.',
+    requiredFormats: ['chart'],
+    completion: 'complete',
+  },
   compare: { text: 'Team costs $25 and Basic costs $10.', program: 'root = Col([Title("Plan comparison"), Text("Pick Basic for an individual or Team for collaboration."), Table(["Plan", "USD/month"], [["Team", 25], ["Basic", 10]])])' },
   wideComparison: {
     text: 'Compare documentation rows and sort the supplied measurements.',
@@ -100,7 +112,7 @@ const cases = {
 const { completeNativeWorkspaceAnswer } = await tsImport('../backend/src/ai/nativeOpenUiWorkspace.ts', import.meta.url);
 for (const [name, fixture] of Object.entries(cases)) {
   if (!fixture.raw) continue;
-  const answer = completeNativeWorkspaceAnswer(fixture.raw, fixture.finish ?? 'stop');
+  const answer = completeNativeWorkspaceAnswer(fixture.raw, fixture.finish ?? 'stop', undefined, fixture.prompt, undefined, fixture.requiredFormats);
   assert.equal(answer.completion.status, fixture.completion ?? 'partial', name + ' completion status');
   cases[name] = { text: answer.response, program: answer.responseSource.text };
 }
@@ -188,6 +200,22 @@ try {
       await page.getByText('Check current tenant membership before reading rows.', { exact: true }).waitFor();
       await page.locator('.iui-col').getByRole('cell', { name: 'Membership', exact: true }).waitFor();
       assert.doesNotMatch(await page.getByRole('region', { name: 'Answer', exact: true }).innerText(), /unavailableDetails|root\s*=\s*Col/);
+      await open('rebuiltChecklist');
+      const firstCheck = page.getByRole('checkbox', { name: 'Check the links' });
+      const secondCheck = page.getByRole('checkbox', { name: 'Proofread the post' });
+      await firstCheck.focus();
+      await page.keyboard.press('Space');
+      assert.equal(await firstCheck.isChecked(), true);
+      assert.equal(await secondCheck.isChecked(), false);
+      assert.equal(await page.getByText('Check the links', { exact: true }).count(), 1);
+      await open('rebuiltSignedChart');
+      const signedTable = page.getByRole('table', { name: 'Chart data' });
+      await signedTable.getByRole('cell', { name: '-800', exact: true }).waitFor();
+      for (const value of ['0', '500']) assert.equal(await signedTable.getByRole('cell', { name: value, exact: true }).count(), 1);
+      assert.equal(await page.getByRole('table').count(), 1);
+      if (viewport.width === 390) {
+        await page.getByRole('region', { name: 'Answer', exact: true }).screenshot({ path: resolve(output, 'signed-chart-390-' + theme + '.png') });
+      }
       if (captured) {
         await open("capturedSearch");
         const recoveredTable = page.getByRole("table");

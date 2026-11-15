@@ -305,7 +305,7 @@
       "id": "surface:65cb0aba3b036f66089f",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/answerCoverage.ts",
-      "sha256": "b35bfc25ae6074291fa230812ba2a7916f32233abed93edead1f5906bfe45212",
+      "sha256": "f13f7f2988945ef03dd0b905e391b66ba8240f9e2121bc1c8bab2ab85d10cda0",
       "symbols": [
         "boundary",
         "branching",
@@ -336,6 +336,7 @@
         "relevance",
         "requestedAnswerObligations",
         "requests",
+        "required",
         "requiredAccessBoundarySupport",
         "requiredNativeFormats",
         "requirements",
@@ -350,10 +351,12 @@
       ],
       "imports": [
         "./nativeOpenUi.js",
+        "./nativeOpenUiRecovery.js",
         "./presentationRelevance.js",
         "./responsePresentation.js"
       ],
       "runtimeImports": [
+        "backend/src/ai/nativeOpenUiRecovery.ts",
         "backend/src/ai/presentationRelevance.ts",
         "backend/src/ai/responsePresentation.ts"
       ],
@@ -5216,7 +5219,7 @@
       "id": "surface:456e62cb099b42e5c2a2",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUi.ts",
-      "sha256": "c553168c05d7ec1335dc227b7b7228cf52a8ad1d28b8604ad9a8cca343728fa4",
+      "sha256": "a39d9a210fe0baa611f9b60c5b8290c567d1105574046c5874cbc0c99f360bba",
       "symbols": [
         "MAX_PROGRAM_CHARS",
         "NATIVE_UI_FORMAT",
@@ -5233,8 +5236,10 @@
         "array",
         "available",
         "binding",
+        "branches",
         "budget",
         "candidate",
+        "chartState",
         "check",
         "children",
         "close",
@@ -5244,6 +5249,7 @@
         "collect",
         "columns",
         "component",
+        "componentFacts",
         "components",
         "declarations",
         "deepSeekToolClosingSuffix",
@@ -5266,6 +5272,7 @@
         "from",
         "full",
         "group",
+        "hasChart",
         "hasReactiveCalculator",
         "included",
         "index",
@@ -5274,6 +5281,7 @@
         "invalidBlock",
         "item",
         "items",
+        "kept",
         "key",
         "keys",
         "language",
@@ -5323,6 +5331,7 @@
         "reachable",
         "readable",
         "readout",
+        "reads",
         "reason",
         "record",
         "recoverNativeMonthlyChart",
@@ -5586,7 +5595,7 @@
       "id": "surface:a67f0b1fa2dd0f11a67f",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiPrompt.ts",
-      "sha256": "b19d0b6881fd8abf136cd5f443ba186206b0777eb53ac61ec311eac9e64a8bb1",
+      "sha256": "6b6f1cfb5becaa0ce86c52bff44b46ea7aa5aeeceac78f4171ae27891226d440",
       "symbols": [
         "buildNativeOpenUiPrompt",
         "dataConsistencyRule",
@@ -5633,6 +5642,60 @@
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
       "knownRisk": "Production source contains annotated mock/TODO/placeholder/simulation markers; individual findings classified separately.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:6452e5d3f758d5c3dd67",
+      "subsystem": "ai_execution",
+      "sourcePath": "backend/src/ai/nativeOpenUiRecovery.ts",
+      "sha256": "9f95f632d038448d1f95ef6221f7e5ec7c8502af484d04664d522cf806b203a9",
+      "symbols": [
+        "axis",
+        "bullet",
+        "checklistFromProse",
+        "children",
+        "fence",
+        "flush",
+        "heading",
+        "items",
+        "label",
+        "labels",
+        "line",
+        "marker",
+        "number",
+        "parsed",
+        "requestsEditableChecklist",
+        "rows",
+        "state",
+        "states",
+        "suppliedPeriodicSeries",
+        "title",
+        "values"
+      ],
+      "imports": [],
+      "runtimeImports": [],
+      "entryPoints": [
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
+      ],
+      "callers": [
+        "backend/src/ai/answerCoverage.ts:4",
+        "backend/src/ai/nativeOpenUiWorkspace.ts:4"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
       "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
@@ -5743,7 +5806,7 @@
       "id": "surface:93911e9946fd4b21d50d",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiWorkspace.ts",
-      "sha256": "193cc45e1f19a3320c5ce93006f35c13483786d3181c98cc717bda042b5e25f5",
+      "sha256": "6e17db6be7e72cc4ce3dbb776eb2b49a2babca92c495089c5cfa934ec7998b92",
       "symbols": [
         "completeNativeWorkspaceAnswer",
         "completion",
@@ -5752,6 +5815,7 @@
         "factualRule",
         "guidance",
         "hasDataConflict",
+        "localProgram",
         "missing",
         "original",
         "outputLimitNote",
@@ -5765,6 +5829,7 @@
         "reviewReason",
         "reviewed",
         "reviewedProse",
+        "safeProse",
         "supplied",
         "text",
         "truncated",
@@ -5777,12 +5842,14 @@
       "imports": [
         "./completionDiagnostics.js",
         "./nativeOpenUi.js",
-        "./nativeOpenUiAccuracy.js"
+        "./nativeOpenUiAccuracy.js",
+        "./nativeOpenUiRecovery.js"
       ],
       "runtimeImports": [
         "backend/src/ai/completionDiagnostics.ts",
         "backend/src/ai/nativeOpenUi.ts",
-        "backend/src/ai/nativeOpenUiAccuracy.ts"
+        "backend/src/ai/nativeOpenUiAccuracy.ts",
+        "backend/src/ai/nativeOpenUiRecovery.ts"
       ],
       "entryPoints": [
         "backend/src/index.ts",
@@ -87735,7 +87802,7 @@
       "id": "surface:54b82e40fb048a969cb3",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/chart.tsx",
-      "sha256": "9325d074808912c08ec9d59c7c4b58b09b831a91ab07d9601e44d70b33bddbb8",
+      "sha256": "1164e9d507ce2031e1beb3fb2d9f470e68dd03f1a810c1b5de0db3344c223d45",
       "symbols": [
         "COLORS",
         "Cartesian",
@@ -87755,8 +87822,8 @@
         "big",
         "box",
         "chartProps",
+        "chartTable",
         "code",
-        "columns",
         "d",
         "each",
         "el",
@@ -87787,6 +87854,7 @@
         "onMove",
         "options",
         "pad",
+        "parsed",
         "pie",
         "point",
         "points",
@@ -87802,8 +87870,10 @@
         "size",
         "spec",
         "stacked",
+        "staticChartTable",
         "step",
         "sweep",
+        "table",
         "ticks",
         "tip",
         "toSpec",
@@ -87835,7 +87905,8 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/native-openui/library.tsx:8"
+        "frontend/src/components/native-openui/library.tsx:8",
+        "frontend/src/components/native-openui/upstream/components/markdown.tsx:4"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -88162,7 +88233,7 @@
       "id": "surface:0fef6875af5860e2f4b4",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/markdown.tsx",
-      "sha256": "677bc907edbfe7d023acc8cc5b9fd8fe1df12398e6902cfa93c0321a047419d9",
+      "sha256": "54eeb3aac1ffdb2f2677ffe9da9352a23f28c3001ce81aca42614f70fc785ea1",
       "symbols": [
         "Block",
         "INLINE",
@@ -88175,6 +88246,7 @@
         "blocks",
         "body",
         "cells",
+        "checklists",
         "citation",
         "citationTextKey",
         "close",
@@ -88198,6 +88270,7 @@
         "line",
         "lines",
         "link",
+        "listKey",
         "m",
         "n",
         "nativeMarkdownMatches",
@@ -88215,6 +88288,7 @@
         "rows",
         "seenTables",
         "source",
+        "table",
         "tableContentKey",
         "tableHasLinks",
         "tableKey",
@@ -88226,11 +88300,13 @@
         "visit"
       ],
       "imports": [
+        "./chart",
         "./style",
         "@/lib/publicAnswerText",
         "react"
       ],
       "runtimeImports": [
+        "frontend/src/components/native-openui/upstream/components/chart.tsx",
         "frontend/src/components/native-openui/upstream/components/style.ts",
         "frontend/src/lib/publicAnswerText.ts"
       ],
@@ -127176,7 +127252,7 @@
       "id": "surface:bd6af899f2dd9df930f6",
       "subsystem": "browser_sandbox",
       "sourcePath": "scripts/verify-native-openui-browser.mjs",
-      "sha256": "0ddb26d76d98f06540c0a10eea766888e932f9376d24871a0a91671145812ad7",
+      "sha256": "3d6bbab5c3a9d213b2ca706b9bf1f7472e83814bd4b8447db6d9aa0a40e60dcb",
       "symbols": [
         "accessibility",
         "answer",
@@ -127200,6 +127276,7 @@
         "fallback",
         "fallbackAnswer",
         "file",
+        "firstCheck",
         "fit",
         "gain",
         "geometry",
@@ -127228,8 +127305,10 @@
         "renderedEdge",
         "results",
         "scale",
+        "secondCheck",
         "seconds",
         "server",
+        "signedTable",
         "slider",
         "sourceList",
         "sourceUrl",
@@ -127242,6 +127321,7 @@
         "tooltip",
         "touch",
         "touchPage",
+        "value",
         "viewport",
         "wideRegion",
         "zoomContext",
@@ -141822,7 +141902,7 @@
   ],
   "findings": [
     {
-      "id": "finding:f01b9b76c2d23336ffe8",
+      "id": "finding:e408e64e8d7210b3d23f",
       "sourcePath": "backend/src/ai/nativeOpenUiPrompt.ts",
       "line": 45,
       "kind": "PLACEHOLDER",
@@ -149809,7 +149889,7 @@
     {
       "id": "test-suite:2e491f4d2fcbc11f974c",
       "sourcePath": "backend/src/ai/nativeOpenUi.test.ts",
-      "declaredTests": 54,
+      "declaredTests": 57,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -155073,7 +155153,7 @@
     {
       "id": "test-suite:4ce9d7bbf578638998f1",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/markdown.test.ts",
-      "declaredTests": 6,
+      "declaredTests": 7,
       "skipLocations": [],
       "focusLocations": []
     },

@@ -1,6 +1,7 @@
 import { assessPresentationRelevance } from './presentationRelevance.js';
 import { assessPresentationCoverage, type AnswerObligations, type PresentationPlan } from './responsePresentation.js';
 import type { RequiredNativeFormat } from './nativeOpenUi.js';
+import { requestsEditableChecklist, suppliedPeriodicSeries } from './nativeOpenUiRecovery.js';
 
 /** A lower bound on explicit output requests, supplementing the semantic
  * planner. No generated facts, brand templates, sources or second model call. */
@@ -41,8 +42,11 @@ export function requestedAnswerObligations(prompt: string): AnswerObligations {
 export function requiredNativeFormats(prompt: string): RequiredNativeFormat[] {
   const formats = requestedAnswerObligations(prompt).filter(item => !/^\s*(?:explain|describe)\b/i.test(item.sourceQuote ?? '')
     || /\b(?:with|include|show|draw|render)\b/i.test(item.sourceQuote ?? '')).flatMap(item => item.formats);
-  return [...new Set(formats.filter((kind): kind is RequiredNativeFormat =>
-    kind === 'table' || kind === 'chart' || kind === 'graph' || kind === 'calculator'))];
+  const required: RequiredNativeFormat[] = formats.filter((kind): kind is 'table' | 'chart' | 'graph' | 'calculator' =>
+    kind === 'table' || kind === 'chart' || kind === 'graph' || kind === 'calculator');
+  if (requestsEditableChecklist(prompt)) required.push('checklist');
+  if (suppliedPeriodicSeries(prompt)) required.push('chart');
+  return [...new Set(required)];
 }
 
 /** Access-boundary architecture needs an explanation of both the ownership

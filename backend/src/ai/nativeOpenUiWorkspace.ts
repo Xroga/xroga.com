@@ -1,6 +1,7 @@
 import { publicCompletionState } from './completionDiagnostics.js';
 import { NATIVE_UI_FORMAT, PARTIAL_NATIVE_PRESENTATION_NOTE, missingNativeFormats, recoverNativeWorkspaceProgram, recoverNativeMonthlyChart, recoverTruncatedNativeWorkspaceProgram, splitNativeOpenUiAnswer, supplementNativeProse, validateNativeWorkspaceProgram, type NativeUiDiagnostic, type RequiredNativeFormat } from './nativeOpenUi.js';
 import { nativeAnswerReviewReason, nativeFactualGuidance, nativeTechnicalCorrections, suppliedMonthlyComparison } from './nativeOpenUiAccuracy.js';
+import { checklistFromProse, requestsEditableChecklist, suppliedPeriodicSeries } from './nativeOpenUiRecovery.js';
 
 const outputLimitNote = 'This answer reached the provider output limit. The available answer is shown below.';
 
@@ -39,12 +40,26 @@ export function completeNativeWorkspaceAnswer(
   } else if (truncated) {
     repair = recoverTruncatedNativeWorkspaceProgram(originalProgram, evidenceIds, prose);
   }
+  // Rebuild only a single requested visual using readable prose or closed user data.
+  // Authority, factual, data-review and provider-limit failures retain their own handling.
+  if (finishReason === 'stop' && prompt && !evidenceIds?.size && !repair && requiredFormats.length === 1
+      && (!original || (!original.ok && ['syntax', 'budget', 'schema', 'reference'].includes(original.reason)))) {
+    const localProgram = requiredFormats[0] === 'checklist' && requestsEditableChecklist(prompt) ? checklistFromProse(prose)
+      : requiredFormats[0] === 'chart' ? suppliedPeriodicSeries(prompt) : undefined;
+    if (localProgram) {
+      const validation = validateNativeWorkspaceProgram(localProgram, evidenceIds, prose, diagnose);
+      if (validation.ok) repair = { program: localProgram, validation, partial: false };
+    }
+  }
   const program = repair?.program ?? originalProgram;
   const validation = repair?.validation ?? original;
   const missing = missingNativeFormats(validation?.ok ? program : '', requiredFormats);
   if (missing.length) diagnose?.({ stage: 'assembly', reason: 'missing_formats', formats: missing });
   if (guidance) {
-    const readable = repair?.validation.ok ? supplementNativeProse(prose, program, true) : prose;
+    const safeProse = factualRule === 'unconfirmed_conflicting_input'
+      ? prose.replace(/(^|[.!?]\s+|\n+)(?:The\s+)?(?:panel|chart|visualization|controls?)\s+(?:below|above)\s+[^.!?\n]+(?:[.!?]|$)/gi, '$1').trim()
+      : prose;
+    const readable = repair?.validation.ok ? supplementNativeProse(safeProse, program, true) : safeProse;
     return {
       response: [repair?.validation.ok ? PARTIAL_NATIVE_PRESENTATION_NOTE : '', guidance, readable].filter(Boolean).join('\n\n'),
       completion: { status: 'partial' as const, reason: 'factual_review' as const },

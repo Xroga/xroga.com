@@ -16,6 +16,7 @@
     "backend/src/ai/nativeOpenUiCatalog.json",
     "backend/src/ai/nativeOpenUiAccuracy.ts",
     "backend/src/ai/nativeOpenUiPrompt.ts",
+    "backend/src/ai/nativeOpenUiRecovery.ts",
     "backend/src/ai/nativeOpenUiWorkspace.ts",
     "backend/src/ai/pipeline.ts",
     "backend/src/ai/responsePresentation.test.ts",
@@ -33,6 +34,7 @@
     "frontend/src/components/native-openui/Tabs.tsx",
     "frontend/src/components/native-openui/surface.css",
     "frontend/src/components/native-openui/upstream/components/controls.tsx",
+    "frontend/src/components/native-openui/upstream/components/chart.tsx",
     "frontend/src/components/native-openui/upstream/components/extra.tsx",
     "frontend/src/components/native-openui/upstream/components/markdown.test.ts",
     "frontend/src/components/native-openui/upstream/components/markdown.tsx",
@@ -49,6 +51,7 @@
       "Strip transport-only closing markers. Review incorrect claims about Next.js environment variables and Server Functions before publishing a completed answer.",
       "Sort numeric table values by their displayed magnitude and make wide comparison labels readable on phones.",
       "Keep standalone code and sample tests in the answer when project execution was not requested. Withhold a chart that contradicts the answer's unresolved-data notice and normalize the observed alternate closing marker.",
+      "Recover explicitly requested local checkboxes and closed numeric series from available prose or supplied values after a presentation failure. Keep source and error boundaries, withhold controls that select an unresolved chart input, and avoid repeating a table whose full contents are already visible.",
       "Distinguish Stripe timestamp logging and explicit rejection of timestamp ordering from recommendations to order events by timestamp."
     ],
     "keep": [
