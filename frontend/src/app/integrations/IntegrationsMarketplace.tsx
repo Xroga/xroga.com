@@ -16,7 +16,7 @@ import type {
 import {
   matchesPublicIntegrationCategory,
   PUBLIC_INTEGRATION_FEATURED_IDS,
-} from '@/lib/publicIntegrationsDirectory';
+} from '@/lib/integrationDiscoveryFilters';
 
 type DirectoryMode = 'all' | 'guides' | 'technology';
 type SortMode = 'featured' | 'alphabetical';
