@@ -5219,7 +5219,7 @@
       "id": "surface:456e62cb099b42e5c2a2",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUi.ts",
-      "sha256": "e87cbbe189743d4a95ffaf8b1ac259d831fe2368a27dba01b0b627613ce9c9d9",
+      "sha256": "92013f1908992b0313285059ca3d9e710b548d1e6b2ced9c1dc6cab88abd8ef7",
       "symbols": [
         "MAX_PROGRAM_CHARS",
         "NATIVE_UI_FORMAT",
@@ -150420,7 +150420,7 @@
     {
       "id": "test-suite:2e491f4d2fcbc11f974c",
       "sourcePath": "backend/src/ai/nativeOpenUi.test.ts",
-      "declaredTests": 57,
+      "declaredTests": 59,
       "skipLocations": [],
       "focusLocations": []
     },

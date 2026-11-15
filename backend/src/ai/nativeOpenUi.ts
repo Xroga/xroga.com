@@ -568,6 +568,15 @@ function normalizeWorkspaceComponents(node: ASTNode, symbols: ReadonlyMap<string
   if (node.k === 'Comp') {
     const args = node.args.map((arg, index) => node.name === 'Diagram' && (index === 1 || index === 2)
       ? normalizeDiagramRows(arg, symbols, index === 1) : normalizeWorkspaceComponents(arg, symbols));
+    // Preserve a model-supplied table caption without widening Table's schema or
+    // discarding the requested data. The complete candidate is validated below.
+    if (node.name === 'Table' && args.length === 3
+        && resolveRecoveryReference(args[2], symbols)?.k === 'Str') {
+      return { k: 'Comp', name: 'Col', args: [{ k: 'Arr', els: [
+        { k: 'Comp', name: 'Table', args: args.slice(0, 2) },
+        { k: 'Comp', name: 'Caption', args: [args[2]] },
+      ] }] };
+    }
     if (items?.k === 'Arr') {
       const els = items.els.map(item => {
         const value = resolveRecoveryReference(item, symbols);

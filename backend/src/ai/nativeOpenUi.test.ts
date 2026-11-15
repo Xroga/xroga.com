@@ -244,6 +244,42 @@ test('an unsupported diagram color does not remove verified nodes, edges, or the
   assert.equal(share?.program, answer.responseSource.text);
 });
 
+test('table caption recovery preserves data, readable copy and Share without another model call', () => {
+  for (const caption of ['"Prices per month"', 'note']) {
+    const program = 'root = Col([Section("Comparison", [plans])])\n'
+      + 'plans = Table(["Plan", "Price"], [["Basic", 10], ["Team", 25]], ' + caption + ')\n'
+      + 'note = "Prices per month"';
+    const diagnostics: unknown[] = [];
+    const answer = completeNativeWorkspaceAnswer('Plan comparison.' + NATIVE_UI_MARKER + program,
+      'stop', undefined, undefined, event => diagnostics.push(event), ['table']);
+    assert.match(JSON.stringify(diagnostics), /excess-args/);
+    assert.deepEqual(answer.completion, { status: 'complete' });
+    assert.equal(validateNativeWorkspaceProgram(answer.responseSource.text, undefined, '').ok, true);
+    assert.deepEqual(missingNativeFormats(answer.responseSource.text, ['table']), []);
+    assert.match(answer.response, /Basic.*10/);
+    assert.match(answer.response, /Team.*25/);
+    assert.match(answer.response, /Prices per month/);
+    assert.match(answer.responseSource.text, /Caption\(/);
+    const share = readNativeOpenUiShare(buildNativeOpenUiShare(answer.response, answer.responseSource.text)!);
+    assert.equal(share?.program, answer.responseSource.text);
+  }
+});
+
+test('table recovery does not discard unknown arguments or admit invalid data and evidence', () => {
+  for (const table of [
+    'Table(["Plan"], [["Basic"]], {hidden: "data"})',
+    'Table(["Plan"], [["Basic"]], "Caption", "Extra data")',
+    'Table(["Plan", "Price"], [["Basic"]], "Caption")',
+    'Table(["Plan"], [[Source("unverified")]], "Caption")',
+  ]) {
+    const answer = completeNativeWorkspaceAnswer('Available explanation.' + NATIVE_UI_MARKER
+      + 'root = Col([Text("Available explanation."), ' + table + '])',
+    'stop', new Set(), undefined, undefined, ['table']);
+    assert.equal(answer.completion.status, 'partial');
+    assert.match(answer.response, /Available explanation/);
+  }
+});
+
 test('unrenderable diagram relationships cannot satisfy graph coverage', () => {
   const nodes = [{ id: 'web', label: 'Web', level: 0 }, { id: 'api', label: 'API', level: 1 }];
   const links = [{ from: 'web', to: 'api' }];

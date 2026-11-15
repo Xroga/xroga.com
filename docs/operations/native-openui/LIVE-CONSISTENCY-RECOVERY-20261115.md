@@ -318,3 +318,35 @@ readable-copy change. The 1624e2a5 failure was its stale source-bound proof hash
 Both were corrected without weakening tenant, single-dispatch, ledger settlement
 or historical-evidence checks. No paid staging window started from those sources
 or c5fff0af. Production remains unchanged pending exact-source acceptance.
+
+## Hosted continuation on d2fa9fbe, November 16
+
+All eleven exact-source workflows passed. The private provider-disabled browser
+gate passed transport denials, owner/outsider isolation, captured interactive
+answers, Share revocation, persistence, recovery and cancellation. The calculator
+oracle was corrected to validate all rendered tables without requiring a second
+standalone table that the prompt did not request. Sixteen local viewport/theme
+scenarios passed before that hosted correction.
+
+The first fresh React comparison failed the complete-answer gate. Two canonical
+DeepSeek dispatches settled at 479 micro-USD, with a 14,172 ms answer latency.
+The remaining three prompts were withheld. Diagnostic evidence identified one
+`Table` schema error, `excess-args`, at statement four. Its privacy-safe token
+shape showed columns, rows and one additional string. Existing recovery removed
+the requested comparison table, leaving readable prose and a diagram. This is
+a failed rich-answer acceptance, not a production-ready result.
+
+Normalize exactly this three-argument shape into the existing Table and Caption
+inside Col. Preserve the first two arguments and caption text unchanged, then
+run the full schema, evidence, factual and data validation. Unknown extra objects,
+fourth arguments, invalid rows and unverified sources remain rejected. No registry
+expansion, second model or inference retry is introduced. Regression tests cover
+literal and referenced captions, readable copy and Share round-trip. The original
+rejected table text was not retained, so this regression reproduces the observed
+structural failure rather than claiming a byte-identical raw-model replay.
+
+Hosted evidence is retained outside Git under
+`outputs/xroga-black-hole/workspace-universal-acceptance/candidate-d2fa9fbe-replay-correction`.
+Its runtime services, identities and secret grants were removed after failure.
+The bounded image retention record remains separate from runtime cleanup. This
+recovery change still requires exact-source CI and fresh hosted acceptance.
