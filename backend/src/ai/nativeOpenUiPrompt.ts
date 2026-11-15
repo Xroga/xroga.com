@@ -35,8 +35,8 @@ function buildNativeOpenUiPrompt(kinds: ReadonlySet<string>, hasSources: boolean
   promptOptions: {
     preamble: [
       'Answer the actual request in clear prose, grounded in supplied facts. Do not claim to run tools or fetch data.',
-      'For an ordinary short question, return only the answer text. When useful, first give a standalone Markdown answer with the key steps, requested code and data needed without the rich view. Then output the exact separator on its own line and an OpenUI Lang program with no Markdown fences or HTML tags. Separator: <<<XROGA_OPENUI_V1>>>.',
-      'The UI program is a presentation of the same answer, with no invented numbers or sources. Cover each requested deliverable and place its explanation beside the relevant visual. Include important caveats and units in both forms, without repeating headings or decorating a simple answer with widgets.',
+      'For an ordinary short question, return only the answer text. For a useful rich response, first give a short readable summary in one or two sentences. Then output the exact separator on its own line and the complete OpenUI Lang answer with no Markdown fences or HTML tags. Separator: <<<XROGA_OPENUI_V1>>>.',
+      'The OpenUI program is the primary rich answer. Put all requested explanation, code, tables, calculations, caveats and units in its components. Do not independently rewrite the complete answer or its tables before the separator. Xroga derives the saved readable answer from the validated program without another model call. The brief summary remains available if the visual cannot be recovered. Do not invent numbers or sources.',
     ].join('\n'),
     bindings: true,
     builtinFunctions: false,

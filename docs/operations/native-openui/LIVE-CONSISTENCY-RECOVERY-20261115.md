@@ -267,3 +267,27 @@ validator call. Pass an explicit empty prose string because the contradictory
 draft must not be used to validate the corrected visual. No staging build was
 started from that failed candidate. Backend type checking is required alongside
 the frontend check before advancing the corrected source.
+
+## Semantic review and the duplicated-answer contract
+
+Review of the remaining captured text found that automated browser passes were
+insufficient. The plan comparison recommended Team for more than one seat despite
+its own $20 versus $25 row at two seats. The line-chart prose claimed increases
+every month while its values dropped from 24 to 22. The checklist had 25 controls
+but 26 prose bullets and redundant headings. Source-hashed failure reviews were
+recorded for cases 1, 2, 5, 6 and 7. Cases 3 and 4 are not claimed as a semantic
+release pass. No further cloud build started from 85f91c8b or 20cd31c9.
+
+The rich-answer prompt required two independent complete answers, Markdown and
+OpenUI. Replace that with a brief readable summary and one complete native OpenUI
+answer. Existing deterministic projection now always includes the validated
+program's explanation, tables, code and citations in the saved readable answer.
+Ordinary short answers remain plain text. Invalid visuals retain the summary and
+existing recoverable content. No second model, formatting call or renderer was
+introduced. This change still needs fresh model acceptance, not just unit tests.
+
+The existing monthly data guard now checks unscoped claims that the series rises
+or falls every month against every consecutive observation. It preserves overall
+growth claims and recovers the accurate chart on a conflict. The staging harness
+now requires an answer-hash-bound semantic review after every automated pass and
+before another prompt. A failed automated or semantic check stops dispatch.

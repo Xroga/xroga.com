@@ -145,7 +145,7 @@ export function completeNativeWorkspaceAnswer(
     };
   }
   return {
-    response: valid ? supplementNativeProse(response, program, Boolean(repair))
+    response: valid ? supplementNativeProse(response, program, true)
       : completion.status === 'partial' && completion.reason === 'data_review'
         ? recovered?.text ?? 'Partial answer. The written summary disagreed with the plotted data, and the chart could not be recovered.'
         : reviewedProse,

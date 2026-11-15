@@ -5468,7 +5468,7 @@
       "id": "surface:f8a39bc555632894e7fb",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiAccuracy.ts",
-      "sha256": "ebcdd92bb2afcf7deb188efdb71d4f3040b6eca42a76865b3c0e75a97f492a4d",
+      "sha256": "937581eea45a7cc1a9d59214a62e40dfd3e89d3ab89f3a22b2b8504f9a6652cc",
       "symbols": [
         "FactualRule",
         "MonthlyPoint",
@@ -5497,6 +5497,7 @@
         "dataMismatch",
         "deletionClaim",
         "direction",
+        "everyPeriod",
         "examples",
         "expected",
         "expectedRank",
@@ -5504,6 +5505,7 @@
         "explicitPrevious",
         "extrema",
         "facts",
+        "falls",
         "format",
         "formatValue",
         "fraction",
@@ -5558,6 +5560,7 @@
         "requiresNativeAuthorizationReview",
         "reviewNativeAnswer",
         "rises",
+        "rising",
         "row",
         "rows",
         "scope",
@@ -5796,7 +5799,7 @@
       "id": "surface:a67f0b1fa2dd0f11a67f",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiPrompt.ts",
-      "sha256": "49e5ce2b1f2fecd94e29c29bd2284111b1a0d227adf795e10c37adf9ac490ebb",
+      "sha256": "261d23dd5948432dc9baf9b73824dc366e481cdb7fba662d7d6eaa839b3a0c08",
       "symbols": [
         "buildNativeOpenUiPrompt",
         "comparisonConsistencyRule",
@@ -6101,7 +6104,7 @@
       "id": "surface:93911e9946fd4b21d50d",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiWorkspace.ts",
-      "sha256": "111bb80b4f1c029c6a83a12698ac1a9144e374ad9ca776fdc528169bed7c248d",
+      "sha256": "9095d62b6fa7186ca80c48c1d268c541eb6c941bb4951d238fae0724495a7c87",
       "symbols": [
         "completeNativeWorkspaceAnswer",
         "completion",
@@ -142362,7 +142365,7 @@
   ],
   "findings": [
     {
-      "id": "finding:b83c4e234d4878e223dd",
+      "id": "finding:0c211be4cfb12f55dc4d",
       "sourcePath": "backend/src/ai/nativeOpenUiPrompt.ts",
       "line": 52,
       "kind": "PLACEHOLDER",
@@ -150366,7 +150369,7 @@
     {
       "id": "test-suite:cf78e18abc3aa283d701",
       "sourcePath": "backend/src/ai/nativeOpenUiValues.test.ts",
-      "declaredTests": 10,
+      "declaredTests": 11,
       "skipLocations": [],
       "focusLocations": []
     },

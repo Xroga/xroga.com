@@ -289,6 +289,16 @@ export function contradictsMonthlyChart(root: unknown, prose: string): boolean {
   const fraction = count + '\\s+of\\s+(?:the\\s+)?' + count + '\\s+months?\\b';
   const numeric = (value: string) => /^\d/.test(value) ? Number(value) : counts.indexOf(value.toLowerCase());
   const rises = [...changes.values()].filter(change => change.amount > 0).length;
+  const falls = [...changes.values()].filter(change => change.amount < 0).length;
+  // Universal direction claims must hold at every consecutive observation.
+  // Overall/net growth and scoped comparisons are different claims.
+  const everyPeriod = new RegExp('\\b(?:the\\s+)?series\\s+(' + higher + '|' + lower + ')\\s+(?:each|every)\\s+month\\b', 'gi');
+  for (const match of plain.matchAll(everyPeriod)) {
+    const prefix = precedingClause(match.index);
+    if (/\b(?:not|never|false|incorrect|if|suppose)\b/i.test(prefix)) continue;
+    const rising = new RegExp('^(?:' + higher + ')$', 'i').test(match[1]);
+    if ((rising ? rises : falls) !== changes.size) return true;
+  }
   for (const pattern of ['\\bthe series (?:rises|increases|grew) in\\s+' + fraction,
     '(?:^|[.!?;:\\n])\\s*' + fraction + '\\s+(?:rose|increased|grew)\\b(?!\\s+(?:from|versus|compared|since|year[- ]over[- ]year|yoy)\\b)']) {
     for (const [, numerator, denominator] of plain.matchAll(new RegExp(pattern, 'gi'))) {

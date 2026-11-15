@@ -16,6 +16,8 @@ test('the model gets instructions from the native registry and may answer in tex
     assert.match(prompt, /React supports Date values and Server Functions/);
   }
   for (const name of ['Col(', 'Chart(', 'Slider(', 'Svg(', 'Diagram(', 'Section(', 'Table(', 'Payment(', 'Source(']) assert.ok(nativeOpenUiPrompt.includes(name), name);
+  assert.match(nativeOpenUiPrompt, /The OpenUI program is the primary rich answer/);
+  assert.match(nativeOpenUiPrompt, /Do not independently rewrite the complete answer/);
   assert.deepEqual(splitNativeOpenUiAnswer('Paris.'), { text: 'Paris.', program: '' });
   assert.deepEqual(splitNativeOpenUiAnswer('Paris.\n<<<XROGA_OP', true), { text: 'Paris.', program: '' });
   assert.deepEqual(splitNativeOpenUiAnswer('<<<XROGA_OP', true), { text: '', program: '' });
@@ -414,7 +416,8 @@ test('Workspace strips only the trailing provider transport envelope from a nati
   const program = 'root = Col([Text("A quoted </｜DSML｜ parameter> example stays intact."), List([ListItem("Verify the signature")], "timeline")])';
   const wire = prose + NATIVE_UI_MARKER + program + '</｜DSML｜ parameter>\r\n</｜DSML｜ invoke>\r\n</｜DSML｜ calls>\n';
   assert.deepEqual(completeNativeWorkspaceAnswer(wire, 'stop'), {
-    response: prose, completion: { status: 'complete' }, responseSource: { format: 'xroga-openui-v1', text: program },
+    response: prose + '\n\nA quoted </｜DSML｜ parameter> example stays intact.\n\n- Verify the signature',
+    completion: { status: 'complete' }, responseSource: { format: 'xroga-openui-v1', text: program },
   });
   assert.equal(splitNativeOpenUiAnswer(prose + NATIVE_UI_MARKER + program).program, program);
 });
@@ -576,7 +579,7 @@ test('a settled document answer retains prose when presentation or evidence is i
   const program = 'root = Col([Text("The uploaded agreement expires in 30 days."), Source("source-1")])';
   const raw = prose + NATIVE_UI_MARKER + program;
   assert.deepEqual(completeNativeWorkspaceAnswer(raw, 'stop', new Set(['source-1'])), {
-    response: prose, completion: { status: 'complete' }, responseSource: { format: 'xroga-openui-v1', text: program },
+    response: prose + '\n\n[1]', completion: { status: 'complete' }, responseSource: { format: 'xroga-openui-v1', text: program },
   });
   assert.deepEqual(completeNativeWorkspaceAnswer(raw, 'stop'), {
     response: prose, completion: { status: 'partial', reason: 'presentation_contract' },

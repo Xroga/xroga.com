@@ -63,6 +63,12 @@ test('a false minimum is removed while retaining the monthly chart', () => {
   assert.doesNotMatch(wrong.response, /March was the lowest/);
   const scoped = completeNativeWorkspaceAnswer('March was the lowest month since February.' + NATIVE_UI_MARKER + chart, 'stop');
   assert.equal(scoped.completion.status, 'complete');
+  const monotonic = completeNativeWorkspaceAnswer('The series rises each month, up 4 and then down 2.' + NATIVE_UI_MARKER + chart, 'stop');
+  assert.equal(monotonic.completion.status, 'partial');
+  assert.doesNotMatch(monotonic.response, /rises each month/);
+  assert.ok(monotonic.responseSource.text);
+  const net = completeNativeWorkspaceAnswer('The series rises overall, but not every month.' + NATIVE_UI_MARKER + chart, 'stop');
+  assert.equal(net.completion.status, 'complete');
 });
 
 test('a roving tabindex example cannot add a second tab stop on its container', () => {
@@ -80,6 +86,18 @@ test('checklist labels omitted from prose survive the saved readable answer', ()
   const recovered = completeNativeWorkspaceAnswer(NATIVE_UI_MARKER + checklist, 'stop');
   assert.match(recovered.response, /Check links/);
   assert.match(recovered.response, /Schedule announcement/);
+});
+
+test('a rich answer derives its complete readable copy from the native program', () => {
+  const summary = 'Here is the comparison. The details and limitations are included below.';
+  const rich = 'root = Col([Table(["Plan", "Price"], [["Basic", "$10"], ["Team", "$25"]]), Section("Limitations", [Text("Feature availability has not been supplied.")]), Code("const seats = 5;", "javascript")])';
+  const result = completeNativeWorkspaceAnswer(summary + NATIVE_UI_MARKER + rich, 'stop');
+  assert.equal(result.completion.status, 'complete');
+  assert.match(result.response, /\| Basic \| \$10 \|/);
+  assert.match(result.response, /Feature availability has not been supplied/);
+  assert.match(result.response, /const seats = 5;/);
+  assert.doesNotMatch(result.response, /root = Col/);
+  assert.equal(result.responseSource.text, rich);
 });
 
 test('readable recovery keeps calculated table cells and boolean values', () => {
