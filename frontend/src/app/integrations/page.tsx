@@ -24,7 +24,7 @@ export const metadata: Metadata = buildMetadata({
 
 export default function IntegrationsPage() {
   return (
-    <main>
+    <main className="xi-main">
       <PageJsonLd
         path="/integrations"
         name="Xroga Connect — Apps, AI Agents and MCP"
