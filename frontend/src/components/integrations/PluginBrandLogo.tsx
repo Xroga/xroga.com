@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { IntegrationLogo } from '@/components/integrations/IntegrationLogo';
+import { Blocks } from 'lucide-react';
 import { composioLogoUrl } from '@/lib/pluginCatalog';
 import { getIntegrationLogo } from '@/lib/integrationLogos';
 
@@ -66,6 +67,7 @@ export function PluginBrandLogo({
   logo,
   fallbackLogo,
   size = 'card',
+  verifiedOnly = false,
 }: {
   id: string;
   name: string;
@@ -73,6 +75,8 @@ export function PluginBrandLogo({
   logo?: string;
   fallbackLogo?: string;
   size?: 'micro' | 'card' | 'detail';
+  /** Use only Xroga's explicit mapped logo or provider metadata, not slug guesses. */
+  verifiedOnly?: boolean;
 }) {
   const candidates = useMemo(() => {
     const customToolkit =
@@ -85,8 +89,8 @@ export function PluginBrandLogo({
       // borrow an unrelated mark and fall back to honest initials.
       getIntegrationLogo(id),
       !customToolkit ? logo : undefined,
-      ...(!customToolkit ? simpleIconCandidates(toolkit, name) : []),
-      toolkit && !customToolkit ? composioLogoUrl(toolkit) : undefined,
+      ...(!customToolkit && !verifiedOnly ? simpleIconCandidates(toolkit, name) : []),
+      toolkit && !customToolkit && !verifiedOnly ? composioLogoUrl(toolkit) : undefined,
       fallbackLogo,
     ].filter(
       (value, candidateIndex, all): value is string =>
@@ -94,7 +98,7 @@ export function PluginBrandLogo({
         value.length > 0 &&
         all.indexOf(value) === candidateIndex,
     );
-  }, [id, logo, fallbackLogo, toolkit, name]);
+  }, [id, logo, fallbackLogo, toolkit, name, verifiedOnly]);
 
   const [index, setIndex] = useState(0);
 
@@ -116,6 +120,7 @@ export function PluginBrandLogo({
         src={candidates[index]}
         alt={name}
         loading="lazy"
+        referrerPolicy="no-referrer"
         className={`${dimension} shrink-0 border border-[var(--border-subtle)] bg-white object-contain`}
         onError={() => setIndex((current) => current + 1)}
       />
@@ -126,7 +131,7 @@ export function PluginBrandLogo({
     <span
       className={`${dimension} flex shrink-0 items-center justify-center border border-[var(--border-subtle)] bg-[var(--surface-inset)]`}
     >
-      <IntegrationLogo id={id} name={name} size={iconSize} />
+      {verifiedOnly ? <Blocks size={iconSize} aria-label="App logo unavailable" /> : <IntegrationLogo id={id} name={name} size={iconSize} />}
     </span>
   );
 }
