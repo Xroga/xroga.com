@@ -347,3 +347,8 @@
   padding-top:0!important;
 }
 .xi-main{margin:0;padding:0}
+
+/* Explicit full-catalog path when anonymous preview API is not deployed. */
+.xi-catalog-continue{display:inline-flex;align-items:center;justify-content:center;gap:8px;margin:15px auto 0;color:#b8d9ff;font-size:12px;font-weight:760;border-bottom:1px solid rgba(166,205,255,.44);padding:4px 0 8px;transition:color .18s}
+.xi-catalog-continue:hover{color:#fff}
+@media (prefers-reduced-motion:reduce){.xi-catalog-continue{transition:none}}
