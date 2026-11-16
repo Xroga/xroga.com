@@ -379,6 +379,11 @@ export async function chatCompletion(
   }
 }
 
+/** The deadline must reflect the same transport selected for the request. */
+export function completionResponseMode(modelId: ModelId): 'stream' | 'buffered' {
+  return MODELS[modelId].provider === 'zurelay' && !zurelayStreamUsageVerified() ? 'buffered' : 'stream';
+}
+
 export async function chatCompletionStream(
   modelId: ModelId,
   messages: ChatMessage[],
@@ -400,7 +405,7 @@ export async function chatCompletionStream(
 ): Promise<ChatResult> {
   // Zurelay streams are not verified to carry a usage receipt (live finding 2026-11-05). Until ZURELAY_STREAM_USAGE_VERIFIED=1 the
   // answer is requested as one verified response; callers keep this contract, text arrives once after verification.
-  if (MODELS[modelId].provider === 'zurelay' && !zurelayStreamUsageVerified()) return chatCompletionSingleResponse(modelId, messages, opts);
+  if (completionResponseMode(modelId) === 'buffered') return chatCompletionSingleResponse(modelId, messages, opts);
   const started = Date.now();
   opts={...opts,...(opts.responseFormat ? {responseFormat:structuredClone(opts.responseFormat)} : {})};
   try {

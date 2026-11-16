@@ -32,6 +32,7 @@ import {
   buildVisionUserContent,
   chatCompletion,
   chatCompletionStream,
+  completionResponseMode,
   estimateMessageTokens,
   type ChatMessage,
   type ChatResult,
@@ -773,11 +774,9 @@ export async function callBuilderStream(
       }
       const provider = MODELS[modelId].provider;
       const execute = async (dispatch:BoundModelDispatch) => {
-        // Every attempt runs under a first-token and generation deadline. Without
-        // them a provider that accepts the connection and then goes silent held the
-        // whole run open until the socket timeout, once per model in the fallback
-        // order — which is how a run could stay active for many minutes and still
-        // deliver nothing.
+        // Streaming attempts have a silence deadline. Buffered, receipt-verified
+        // responses have no observable activity until completion, so only their
+        // total generation deadline applies. Cancellation and output bounds remain.
         const attempt = await runBuilderAttempt(
           async ({ signal, onActivity }) => {
             const completion = await chatCompletionStream(modelId, dispatch.payload.messages as ChatMessage[], {
@@ -796,7 +795,7 @@ export async function callBuilderStream(
             });
             return completion;
           },
-          { budget: opts.budget, signal: opts.signal },
+          { budget: opts.budget, signal: opts.signal, responseMode: completionResponseMode(modelId) },
         );
         return attempt.value;
       };

@@ -10,6 +10,10 @@
   "risk": "medium",
   "scope": "Improve native answer completeness and accessibility, and verify the final hosted Workspace pair.",
   "changedFiles": [
+    "backend/src/ai/builderAttempt.ts",
+    "backend/src/ai/builderAttempt.test.ts",
+    "backend/src/ai/openaiCompat.ts",
+    "backend/src/ai/openaiCompat.egress.test.ts",
     "backend/src/ai/answerCoverage.ts",
     "backend/src/ai/nativeOpenUi.test.ts",
     "backend/src/ai/nativeOpenUi.ts",
@@ -111,6 +115,12 @@
     }
   },
   "tests": [
+    {
+      "scope": "Buffered provider responses use the total generation deadline, preserve cancellation and require verified settlement before publication.",
+      "command": "node --import tsx --test backend/src/ai/builderAttempt.test.ts backend/src/ai/openaiCompat.egress.test.ts",
+      "reference": "backend/src/ai/openaiCompat.egress.test.ts",
+      "negative": true
+    },
     {
       "scope": "Pure upstream calculation snapshots, currency conflicts, initial zero-rate values, reference and action rejection, and scoped factual recovery.",
       "command": "node --import tsx --test backend/src/ai/nativeOpenUiValues.test.ts",

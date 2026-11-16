@@ -2,7 +2,8 @@ import test,{type TestContext} from 'node:test';
 import {randomUUID} from 'node:crypto';
 import assert from 'node:assert/strict';
 import OpenAI from 'openai';
-import {chatCompletion,chatCompletionStream,chatCompletionSingleResponse,snapshotModelEgressPayload} from './openaiCompat.js';
+import {chatCompletion,chatCompletionStream,chatCompletionSingleResponse,completionResponseMode,snapshotModelEgressPayload} from './openaiCompat.js';
+import {runBuilderAttempt} from './builderAttempt.js';
 import {MODELS,type ModelId} from './models.js';
 import {createTenantContext} from '../security/tenantContext.js';
 import {withTenantModelReservation} from './tenantModelDispatch.js';
@@ -239,6 +240,30 @@ test('single-response transport sends one non-streaming request, settles from th
   assert.equal(bodies.length, 1); assert.ok(!bodies[0].stream, 'must not stream');
   assert.equal(settlements.length, 1, 'exactly one settlement per provider request, never a duplicate');
   assert.deepEqual(shown, ['A complete answer.']);
+});
+
+test('the buffered SDK route survives the stream deadline and publishes only after verified settlement', async t => {
+  const previous=process.env.ZURELAY_STREAM_USAGE_VERIFIED;
+  delete process.env.ZURELAY_STREAM_USAGE_VERIFIED;
+  t.after(()=>{if(previous===undefined)delete process.env.ZURELAY_STREAM_USAGE_VERIFIED;else process.env.ZURELAY_STREAM_USAGE_VERIFIED=previous;});
+  const settlements:number[]=[],shown:string[]=[];
+  let calls=0;
+  t.mock.method(globalThis,'fetch',async()=>{
+    calls++;
+    await new Promise(resolve=>setTimeout(resolve,60));
+    assert.equal(shown.length,0);
+    return Response.json(answerBody(),{headers:HEADERS});
+  });
+  const run=admitted(t,'deepseek_v4_1_flash_1017',settlements);
+  assert.equal(completionResponseMode('deepseek_v4_1_flash_1017'),'buffered');
+  const result=await runBuilderAttempt(({signal,onActivity})=>run(chatCompletionStream,[{role:'user',content:'Ordinary question.'}],{
+    maxTokens:64,signal,onActivity,onDelta:(text:string)=>{assert.equal(settlements.length,1);shown.push(text);},
+  } as never),{responseMode:completionResponseMode('deepseek_v4_1_flash_1017'),budget:{firstTokenMs:10,generationMs:5000}});
+  assert.equal(result.value.text,'A complete answer.');
+  assert.equal(calls,1);
+  assert.deepEqual(shown,['A complete answer.']);
+  process.env.ZURELAY_STREAM_USAGE_VERIFIED='1';
+  assert.equal(completionResponseMode('deepseek_v4_1_flash_1017'),'stream');
 });
 
 test('a missing, inconsistent or non-numeric usage receipt is refused: nothing published, nothing settled from an estimate', async t => {

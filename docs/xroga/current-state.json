@@ -435,7 +435,7 @@
       ],
       "callers": [
         "backend/src/ai/compileValidate.test.ts:9",
-        "backend/src/ai/pipeline.ts:211",
+        "backend/src/ai/pipeline.ts:212",
         "backend/src/ai/tenantModelDispatch.test.ts:12"
       ],
       "reachable": true,
@@ -531,7 +531,7 @@
       "callers": [
         "backend/src/ai/attachments.docx.test.ts:6",
         "backend/src/ai/attachments.test.ts:7",
-        "backend/src/ai/pipeline.ts:64"
+        "backend/src/ai/pipeline.ts:65"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -2281,7 +2281,7 @@
       ],
       "callers": [
         "backend/src/ai/buildImprovementMemory.test.ts:12",
-        "backend/src/ai/pipeline.ts:237",
+        "backend/src/ai/pipeline.ts:238",
         "backend/src/security/learningOwnerReads.local.integration.ts:5",
         "backend/src/synthesis/reliability/step7cReliability.test.ts:34",
         "backend/src/synthesis/universalEntrypoint.ts:89"
@@ -2573,7 +2573,7 @@
       ],
       "callers": [
         "backend/src/ai/buildOutcomeRoutingMemory.test.ts:8",
-        "backend/src/ai/pipeline.ts:236",
+        "backend/src/ai/pipeline.ts:237",
         "backend/src/security/learningOwnerReads.local.integration.ts:6",
         "backend/src/synthesis/reliability/step7cReliability.test.ts:29",
         "backend/src/synthesis/universalEntrypoint.ts:84"
@@ -2627,7 +2627,7 @@
       ],
       "callers": [
         "backend/src/ai/buildOutputValidation.test.ts:3",
-        "backend/src/ai/pipeline.ts:39"
+        "backend/src/ai/pipeline.ts:40"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -2721,7 +2721,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:238",
+        "backend/src/ai/pipeline.ts:239",
         "backend/src/ai/step7LearningStrategy.test.ts:21",
         "backend/src/security/learningOwnerReads.local.integration.ts:7",
         "backend/src/synthesis/productIntelligence.ts:18",
@@ -2780,7 +2780,7 @@
       ],
       "callers": [
         "backend/src/ai/buildStreamNarrator.test.ts:3",
-        "backend/src/ai/pipeline.ts:109"
+        "backend/src/ai/pipeline.ts:110"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -2807,7 +2807,7 @@
       "id": "surface:b41568527e8861e4eb71",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/builderAttempt.ts",
-      "sha256": "8a31b2354b50b32fe202939ce967cc55d9264427de982256e752c82ef4e4a833",
+      "sha256": "c99d8b3c7977335ac3fceb195c1979c2f4b42a2f23932d1ea22ca7411c647ebf",
       "symbols": [
         "BUILDER_FAILURE_LABEL",
         "BuilderAttemptBudget",
@@ -2851,8 +2851,9 @@
       ],
       "callers": [
         "backend/src/ai/builderAttempt.test.ts:3",
+        "backend/src/ai/openaiCompat.egress.test.ts:6",
         "backend/src/ai/openaiCompat.ts:18",
-        "backend/src/ai/pipeline.ts:47",
+        "backend/src/ai/pipeline.ts:48",
         "backend/src/ai/tenantModelDispatch.test.ts:19",
         "backend/src/synthesis/coherentImplementation.ts:6"
       ],
@@ -2870,6 +2871,7 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/ai/builderAttempt.test.ts",
+        "backend/src/ai/openaiCompat.egress.test.ts",
         "backend/src/ai/tenantModelDispatch.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -3068,7 +3070,7 @@
       ],
       "callers": [
         "backend/src/ai/compileBlockerMessage.test.ts:4",
-        "backend/src/ai/pipeline.ts:40",
+        "backend/src/ai/pipeline.ts:41",
         "backend/src/ai/validationVerdict.ts:2"
       ],
       "reachable": true,
@@ -3227,7 +3229,7 @@
       "callers": [
         "backend/src/ai/compileBlockerMessage.ts:3",
         "backend/src/ai/compileValidate.test.ts:3",
-        "backend/src/ai/pipeline.ts:206",
+        "backend/src/ai/pipeline.ts:207",
         "backend/src/ai/validationVerdict.ts:3",
         "backend/src/sandbox/sandboxIsolation.test.ts:11"
       ],
@@ -3375,7 +3377,7 @@
       ],
       "callers": [
         "backend/src/ai/contextPreparation.test.ts:3",
-        "backend/src/ai/pipeline.ts:240",
+        "backend/src/ai/pipeline.ts:241",
         "backend/src/ai/repositoryTools.ts:23",
         "backend/src/existingSource/change/delivery.ts:15",
         "backend/src/existingSource/change/testRunner.ts:12",
@@ -3699,7 +3701,7 @@
       ],
       "callers": [
         "backend/src/ai/engineeringTasks.test.ts:3",
-        "backend/src/ai/pipeline.ts:253"
+        "backend/src/ai/pipeline.ts:254"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -3905,7 +3907,7 @@
         "backend/src/ai/executionRuntime.owner.test.ts:3",
         "backend/src/ai/executionRuntime.sandboxAdmission.test.ts:3",
         "backend/src/ai/executionRuntime.test.ts:3",
-        "backend/src/ai/pipeline.ts:241",
+        "backend/src/ai/pipeline.ts:242",
         "backend/src/ai/universal/resumeProjectContext.test.ts:5",
         "backend/src/existingSource/change/canonical.ts:51",
         "backend/src/existingSource/change/canonical.ts:67",
@@ -4029,7 +4031,7 @@
       ],
       "callers": [
         "backend/src/ai/fileSelector.test.ts:3",
-        "backend/src/ai/pipeline.ts:191"
+        "backend/src/ai/pipeline.ts:192"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -4070,7 +4072,7 @@
       ],
       "callers": [
         "backend/src/ai/githubShippingPlan.test.ts:3",
-        "backend/src/ai/pipeline.ts:221"
+        "backend/src/ai/pipeline.ts:222"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -4385,7 +4387,7 @@
         "backend/src/ai/executionRuntime.owner.test.ts:4",
         "backend/src/ai/executionRuntime.test.ts:13",
         "backend/src/ai/intelligentRouter.test.ts:3",
-        "backend/src/ai/pipeline.ts:227",
+        "backend/src/ai/pipeline.ts:228",
         "backend/src/routes/capabilities.ts:22"
       ],
       "reachable": true,
@@ -4637,7 +4639,7 @@
       ],
       "callers": [
         "backend/src/ai/legacyBuilderAdapter.test.ts:3",
-        "backend/src/ai/pipeline.ts:101"
+        "backend/src/ai/pipeline.ts:102"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -4936,7 +4938,7 @@
         "backend/src/ai/executionRuntime.test.ts:14",
         "backend/src/ai/intelligentRouter.test.ts:10",
         "backend/src/ai/intelligentRouter.ts:3",
-        "backend/src/ai/pipeline.ts:239",
+        "backend/src/ai/pipeline.ts:240",
         "backend/src/ai/providerPolicy.test.ts:6",
         "backend/src/routes/capabilities.ts:26",
         "backend/src/synthesis/universalEntrypoint.ts:67"
@@ -5098,7 +5100,7 @@
         "backend/src/ai/executionRuntime.ts:11",
         "backend/src/ai/intelligentRouter.ts:14",
         "backend/src/ai/modelCapabilityRegistry.ts:3",
-        "backend/src/ai/openaiCompat.egress.test.ts:6",
+        "backend/src/ai/openaiCompat.egress.test.ts:7",
         "backend/src/ai/openaiCompat.ts:4",
         "backend/src/ai/pipeline.ts:23",
         "backend/src/ai/postCompletionAccounting.ts:3",
@@ -6219,7 +6221,7 @@
       "id": "surface:29a1af5a79330a300ab2",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/openaiCompat.ts",
-      "sha256": "c159e3bd321637cc26214829ed36bca439a102e91983e6fd93fcbee36ef61544",
+      "sha256": "0bd01dc8ca4992f8bc61de75a2f6ff655e56326d563155ccfe24a9f0f91f503f",
       "symbols": [
         "ChatMessage",
         "ChatResult",
@@ -6244,6 +6246,7 @@
         "chunk",
         "client",
         "completion",
+        "completionResponseMode",
         "configuredApiModel",
         "contentTokenEstimate",
         "cooldown",
@@ -7010,7 +7013,7 @@
         "backend/src/ai/fileSelector.test.ts:4",
         "backend/src/ai/patchSafety.test.ts:3",
         "backend/src/ai/patches.test.ts:3",
-        "backend/src/ai/pipeline.ts:84",
+        "backend/src/ai/pipeline.ts:85",
         "backend/src/builder/canonical.ts:1",
         "backend/src/synthesis/universalExecution.ts:32"
       ],
@@ -7072,7 +7075,7 @@
       "id": "surface:90932fa247bf4ae28450",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/pipeline.ts",
-      "sha256": "cbf67edd08efef2f05de9690ad359cd5c92dd7802c453cfb5e5d2062a5876a79",
+      "sha256": "5c37c7d2bbc96fc8c4ddf1f294c9b1f2bde5385048847400a5bcbd69a3582e06",
       "symbols": [
         "ARCHITECT_MS",
         "BUILDER_FALLBACKS",
@@ -7878,7 +7881,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:114",
+        "backend/src/ai/pipeline.ts:115",
         "backend/src/ai/progressHeartbeat.test.ts:3"
       ],
       "reachable": true,
@@ -7970,7 +7973,7 @@
       "callers": [
         "backend/src/ai/memoryReadAuthority.test.ts:4",
         "backend/src/ai/modelContext.security.test.ts:6",
-        "backend/src/ai/pipeline.ts:192",
+        "backend/src/ai/pipeline.ts:193",
         "backend/src/ai/projectMemoryCommit.test.ts:4",
         "backend/src/ai/repoSummarize.ts:26",
         "backend/src/security/connectedMemoryConsumer.local.integration.ts:7",
@@ -8048,7 +8051,7 @@
       ],
       "callers": [
         "backend/src/ai/converter.ts:4",
-        "backend/src/ai/pipeline.ts:55",
+        "backend/src/ai/pipeline.ts:56",
         "backend/src/ai/prompts.test.ts:4",
         "backend/src/ai/richResponsePrompt.test.ts:4",
         "backend/src/routes/guestChat.ts:20"
@@ -8691,7 +8694,7 @@
         "backend/src/ai/modelRedirectFallback.security.test.ts:8",
         "backend/src/ai/openaiCompat.ts:12",
         "backend/src/ai/parallelWeb.security.test.ts:10",
-        "backend/src/ai/pipeline.ts:232",
+        "backend/src/ai/pipeline.ts:233",
         "backend/src/ai/postCompletionAccounting.test.ts:4",
         "backend/src/ai/providerBudget.settlement.test.ts:5",
         "backend/src/ai/providerBudget.ts:6",
@@ -8852,7 +8855,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:92",
+        "backend/src/ai/pipeline.ts:93",
         "backend/src/ai/qa.test.ts:3",
         "backend/src/ai/reviewerRouting.test.ts:3",
         "backend/src/synthesis/productionAdapters.ts:25"
@@ -8969,7 +8972,7 @@
       ],
       "callers": [
         "backend/src/ai/budgetOwnerBoundary.test.ts:5",
-        "backend/src/ai/pipeline.ts:70",
+        "backend/src/ai/pipeline.ts:71",
         "backend/src/ai/postCompletionAccounting.ts:2",
         "backend/src/ai/quota.failure.test.ts:3",
         "backend/src/ai/quota.test.ts:18",
@@ -9121,7 +9124,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:199",
+        "backend/src/ai/pipeline.ts:200",
         "backend/src/ai/repoSummarize.security.test.ts:5"
       ],
       "reachable": true,
@@ -9783,7 +9786,7 @@
       "callers": [
         "backend/src/ai/answerCoverage.test.ts:4",
         "backend/src/ai/answerCoverage.ts:2",
-        "backend/src/ai/openaiCompat.egress.test.ts:9",
+        "backend/src/ai/openaiCompat.egress.test.ts:10",
         "backend/src/ai/pipeline.ts:28",
         "backend/src/ai/responseCoverage.test.ts:3",
         "backend/src/ai/responsePresentation.limits.test.ts:3",
@@ -9861,7 +9864,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:78",
+        "backend/src/ai/pipeline.ts:79",
         "backend/src/ai/router.test.ts:7",
         "backend/src/lib/adaptiveOrchestrator.ts:10"
       ],
@@ -9998,7 +10001,7 @@
         "backend/src/ai/black-hole/router.ts:47",
         "backend/src/ai/buildOutcomeMemory.ts:5",
         "backend/src/ai/intelligentRouter.ts:11",
-        "backend/src/ai/pipeline.ts:235",
+        "backend/src/ai/pipeline.ts:236",
         "backend/src/ai/routingOutcomes.receipt.test.ts:5",
         "backend/src/ai/routingPersistence.test.ts:3",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts:9"
@@ -10251,7 +10254,7 @@
         "backend/src/ai/parallelApproval.ts:16",
         "backend/src/ai/parallelDispatch.ts:9",
         "backend/src/ai/parallelWeb.security.test.ts:20",
-        "backend/src/ai/pipeline.ts:93",
+        "backend/src/ai/pipeline.ts:94",
         "backend/src/ai/repoSummarize.security.test.ts:8",
         "backend/src/ai/runReconciler.test.ts:12",
         "backend/src/ai/runStore.authority.test.ts:5",
@@ -10415,7 +10418,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:217",
+        "backend/src/ai/pipeline.ts:218",
         "backend/src/ai/runTrace.attempt.test.ts:4",
         "backend/src/security/runTraceAttempt.local.integration.ts:8"
       ],
@@ -10467,7 +10470,7 @@
       ],
       "callers": [
         "backend/src/ai/benchmarkExecutor.ts:29",
-        "backend/src/ai/pipeline.ts:200",
+        "backend/src/ai/pipeline.ts:201",
         "backend/src/ai/securityScan.test.ts:3",
         "backend/src/existingSource/change/delivery.ts:16",
         "backend/src/synthesis/coherentImplementation.ts:12"
@@ -10531,7 +10534,7 @@
       "callers": [
         "backend/src/ai/memoryReadAuthority.test.ts:5",
         "backend/src/ai/modelContext.security.test.ts:7",
-        "backend/src/ai/pipeline.ts:212",
+        "backend/src/ai/pipeline.ts:213",
         "backend/src/security/connectedMemoryConsumer.local.integration.ts:8",
         "backend/src/security/recoveryMemoryRead.local.integration.ts:8"
       ],
@@ -10591,7 +10594,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:220",
+        "backend/src/ai/pipeline.ts:221",
         "backend/src/ai/shipOutcome.test.ts:3"
       ],
       "reachable": true,
@@ -10660,7 +10663,7 @@
         "backend/src/ai/buildOutputValidation.ts:5",
         "backend/src/ai/buildStreamNarrator.test.ts:8",
         "backend/src/ai/patches.test.ts:10",
-        "backend/src/ai/pipeline.ts:79"
+        "backend/src/ai/pipeline.ts:80"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -12157,7 +12160,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:262",
+        "backend/src/ai/pipeline.ts:263",
         "backend/src/ai/softwareAgent/swarmRunSoftwareEventSink.test.ts:19",
         "backend/src/synthesis/softwareAgentImplementationAdapter.ts:50"
       ],
@@ -12789,7 +12792,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:102",
+        "backend/src/ai/pipeline.ts:103",
         "backend/src/ai/startupProgress.test.ts:3"
       ],
       "reachable": true,
@@ -12859,7 +12862,7 @@
       ],
       "callers": [
         "backend/src/ai/htmlTruncation.test.ts:4",
-        "backend/src/ai/pipeline.ts:201",
+        "backend/src/ai/pipeline.ts:202",
         "backend/src/ai/qa.ts:5",
         "backend/src/ai/securityScan.test.ts:4"
       ],
@@ -13151,7 +13154,7 @@
         "backend/src/ai/converter.ts:2",
         "backend/src/ai/modelContext.security.test.ts:5",
         "backend/src/ai/modelRedirectFallback.security.test.ts:6",
-        "backend/src/ai/openaiCompat.egress.test.ts:8",
+        "backend/src/ai/openaiCompat.egress.test.ts:9",
         "backend/src/ai/parallelApproval.ts:15",
         "backend/src/ai/parallelDispatch.ts:10",
         "backend/src/ai/pipeline.ts:6",
@@ -13447,7 +13450,7 @@
       ],
       "callers": [
         "backend/src/ai/black-hole/webIntelligence.test.ts:6",
-        "backend/src/ai/pipeline.ts:165",
+        "backend/src/ai/pipeline.ts:166",
         "backend/src/ai/researchAnswer.test.ts:6",
         "backend/src/ai/researchAnswer.ts:2",
         "backend/src/ai/responseCoverage.test.ts:4",
@@ -13656,7 +13659,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:166",
+        "backend/src/ai/pipeline.ts:167",
         "backend/src/ai/universal/capabilityReadiness.test.ts:4",
         "backend/src/ai/universal/semanticRequestPlanner.ts:55",
         "backend/src/lib/xrogaCapabilities.ts:1"
@@ -13708,7 +13711,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:163",
+        "backend/src/ai/pipeline.ts:164",
         "backend/src/ai/universal/resumeProjectContext.test.ts:4",
         "backend/src/ai/universal/universalContracts.test.ts:7",
         "backend/src/synthesis/universalEntrypoint.ts:107"
@@ -13817,7 +13820,7 @@
       ],
       "callers": [
         "backend/src/ai/black-hole/gateway.test.ts:16",
-        "backend/src/ai/pipeline.ts:167",
+        "backend/src/ai/pipeline.ts:168",
         "backend/src/ai/providerRuntime.ts:12",
         "backend/src/ai/universal/runtimeFailure.test.ts:3",
         "backend/src/ai/universal/semanticRequestPlanner.test.ts:33",
@@ -14079,7 +14082,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:168",
+        "backend/src/ai/pipeline.ts:169",
         "backend/src/ai/postCompletionAccounting.test.ts:5",
         "backend/src/ai/sonnetApproval.test.ts:10",
         "backend/src/ai/universal/capabilityReadiness.test.ts:5",
@@ -14205,7 +14208,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:42",
+        "backend/src/ai/pipeline.ts:43",
         "backend/src/ai/validationVerdict.test.ts:4",
         "backend/src/sandbox/sandboxIsolation.test.ts:12"
       ],
@@ -14324,7 +14327,7 @@
       ],
       "callers": [
         "backend/src/ai/intentReasoning.ts:25",
-        "backend/src/ai/pipeline.ts:252",
+        "backend/src/ai/pipeline.ts:253",
         "backend/src/ai/previewNotVerified.test.ts:21",
         "backend/src/ai/verificationLifecycle.test.ts:12"
       ],
@@ -14614,7 +14617,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/openaiCompat.egress.test.ts:286",
+        "backend/src/ai/openaiCompat.egress.test.ts:311",
         "backend/src/ai/openaiCompat.test.ts:4",
         "backend/src/ai/openaiCompat.ts:21",
         "backend/src/ai/zurelayPolicy.test.ts:8"
@@ -19694,7 +19697,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:164",
+        "backend/src/ai/pipeline.ts:165",
         "backend/src/ai/softwareAgent/agentV2LaunchGate.test.ts:9",
         "backend/src/config/universalAgentFlags.test.ts:12",
         "backend/src/synthesis/browserGateVerification.test.ts:18",
@@ -25131,7 +25134,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:233",
+        "backend/src/ai/pipeline.ts:234",
         "backend/src/lib/adaptiveEngine.test.ts:7"
       ],
       "reachable": true,
@@ -25554,7 +25557,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:218"
+        "backend/src/ai/pipeline.ts:219"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -25817,7 +25820,7 @@
         "backend/src/ai/black-hole/webIntelligence.ts:2",
         "backend/src/ai/blackBoxExecution.test.ts:3",
         "backend/src/ai/intelligentRouter.ts:9",
-        "backend/src/ai/pipeline.ts:234",
+        "backend/src/ai/pipeline.ts:235",
         "backend/src/ai/router.ts:5",
         "backend/src/lib/adaptiveOrchestrator.ts:30",
         "backend/src/lib/taskClassifier.test.ts:3"
@@ -25881,7 +25884,7 @@
         "backend/src/ai/executionRuntime.ts:2",
         "backend/src/ai/parallelApproval.ts:18",
         "backend/src/ai/parallelWeb.ts:3",
-        "backend/src/ai/pipeline.ts:222",
+        "backend/src/ai/pipeline.ts:223",
         "backend/src/ai/research.ts:5",
         "backend/src/ai/runTrace.ts:7",
         "backend/src/ai/softwareAgent/softwareAgentProductionInfrastructure.ts:47",
@@ -26016,7 +26019,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:41",
+        "backend/src/ai/pipeline.ts:42",
         "backend/src/lib/vercelAuthError.test.ts:3"
       ],
       "reachable": true,
@@ -36161,7 +36164,7 @@
         "backend/src/ai/converter.ts:3",
         "backend/src/ai/executionRuntime.ts:6",
         "backend/src/ai/modelContext.security.test.ts:8",
-        "backend/src/ai/openaiCompat.egress.test.ts:7",
+        "backend/src/ai/openaiCompat.egress.test.ts:8",
         "backend/src/ai/parallelApproval.ts:3",
         "backend/src/ai/parallelDispatch.ts:3",
         "backend/src/ai/parallelWeb.security.test.ts:9",
@@ -39618,7 +39621,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:171",
+        "backend/src/ai/pipeline.ts:172",
         "backend/src/ai/softwareAgent/softwareAgentGitHubPersistence.ts:13",
         "backend/src/ai/universal/semanticRequestPlanner.ts:63",
         "backend/src/builder/providerTransports.ts:6",
@@ -40060,7 +40063,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:115",
+        "backend/src/ai/pipeline.ts:116",
         "backend/src/ai/softwareAgent/softwareAgentGitHubPersistence.ts:17",
         "backend/src/ai/softwareAgent/xrogaProductionAdapters.ts:2",
         "backend/src/builder/github/restPort.ts:7",
@@ -42016,8 +42019,8 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:3892",
-        "backend/src/ai/pipeline.ts:3895",
+        "backend/src/ai/pipeline.ts:3891",
+        "backend/src/ai/pipeline.ts:3894",
         "backend/src/ai/projectMemory.ts:7",
         "backend/src/ai/sessionMemory.ts:7",
         "backend/src/builder/providerTransports.ts:10",
@@ -42289,8 +42292,8 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:127",
-        "backend/src/ai/pipeline.ts:3891",
+        "backend/src/ai/pipeline.ts:128",
+        "backend/src/ai/pipeline.ts:3890",
         "backend/src/ai/tenantModelDispatch.ts:6",
         "backend/src/config/supabaseTransport.security.test.ts:6",
         "backend/src/routes/integrations.ts:19",
@@ -42521,7 +42524,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:126",
+        "backend/src/ai/pipeline.ts:127",
         "backend/src/builder/hosting/authority.ts:5",
         "backend/src/lib/platformReady.ts:7",
         "backend/src/routes/integrations.ts:30",
@@ -42940,7 +42943,7 @@
       ],
       "callers": [
         "backend/src/ai/builderScaffoldFallback.test.ts:3",
-        "backend/src/ai/pipeline.ts:132",
+        "backend/src/ai/pipeline.ts:133",
         "backend/src/builder/starters.ts:2",
         "backend/src/routes/github.ts:628",
         "backend/src/routes/swarm.ts:14",
@@ -43175,7 +43178,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:188",
+        "backend/src/ai/pipeline.ts:189",
         "backend/src/routes/publish.ts:224",
         "backend/src/routes/publish.ts:268",
         "backend/src/routes/publish.ts:305",
@@ -43663,7 +43666,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:183",
+        "backend/src/ai/pipeline.ts:184",
         "backend/src/routes/publish.ts:12",
         "backend/src/routes/publish.ts:70",
         "backend/src/services/integrations/businessAction.ts:1508",
@@ -43804,7 +43807,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:189",
+        "backend/src/ai/pipeline.ts:190",
         "backend/src/routes/publish.ts:382",
         "backend/src/services/integrations/businessAction.ts:1462",
         "backend/src/services/publish/electronSecrets.authority.test.ts:4",
@@ -44715,7 +44718,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:177",
+        "backend/src/ai/pipeline.ts:178",
         "backend/src/services/integrations/businessAction.ts:1477",
         "backend/src/services/publish/desktopWorkflow.security.test.ts:3",
         "backend/src/services/publish/desktopWorkflow.security.test.ts:4",
@@ -45049,7 +45052,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:172",
+        "backend/src/ai/pipeline.ts:173",
         "backend/src/builder/spec.ts:3",
         "backend/src/services/projectScaffold.ts:11",
         "backend/src/services/projectScaffold.ts:5",
@@ -45434,7 +45437,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:190",
+        "backend/src/ai/pipeline.ts:191",
         "backend/src/services/scaffolds/scaffoldIntegrity.test.ts:3"
       ],
       "reachable": true,
@@ -49475,7 +49478,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:156",
+        "backend/src/ai/pipeline.ts:157",
         "backend/src/routes/delivery.ts:17",
         "backend/src/synthesis/delivery/projectDelivery.test.ts:25",
         "backend/src/synthesis/delivery/projectDeliveryService.ts:27"
@@ -49874,7 +49877,7 @@
       ],
       "callers": [
         "backend/src/ai/executionRuntime.attempt.test.ts:6",
-        "backend/src/ai/pipeline.ts:254",
+        "backend/src/ai/pipeline.ts:255",
         "backend/src/synthesis/foundation.fixture.test.ts:4"
       ],
       "reachable": true,
@@ -50868,7 +50871,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:159",
+        "backend/src/ai/pipeline.ts:160",
         "backend/src/builder/canonical.ts:5",
         "backend/src/builder/phase2Bridge.ts:7",
         "backend/src/routes/projectRuntime.ts:18",
@@ -51597,7 +51600,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:103",
+        "backend/src/ai/pipeline.ts:104",
         "backend/src/synthesis/productBlueprints.test.ts:3"
       ],
       "reachable": true,
@@ -51990,7 +51993,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:144",
+        "backend/src/ai/pipeline.ts:145",
         "backend/src/builder/canonical.ts:4",
         "backend/src/security/deliveryEvidenceRead.local.integration.ts:7",
         "backend/src/synthesis/canonicalFoundation.test.ts:13",
@@ -52940,7 +52943,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:152",
+        "backend/src/ai/pipeline.ts:153",
         "backend/src/sandbox/google/googleSandbox.test.ts:4",
         "backend/src/sandbox/google/googleSandbox.ts:5",
         "backend/src/sandbox/registryNetwork.test.ts:9",
@@ -53158,7 +53161,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:248",
+        "backend/src/ai/pipeline.ts:249",
         "backend/src/synthesis/reliability/canonicalResume.test.ts:9",
         "backend/src/synthesis/universalCanonicalTasks.ts:47",
         "backend/src/workers/resumeRecovery.ts:14"
@@ -54581,7 +54584,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:149",
+        "backend/src/ai/pipeline.ts:150",
         "backend/src/builder/canonical.ts:3",
         "backend/src/builder/phase2Bridge.ts:9",
         "backend/src/security/deliveryEvidenceRead.local.integration.ts:8",
@@ -54820,7 +54823,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:169",
+        "backend/src/ai/pipeline.ts:170",
         "backend/src/synthesis/universalCommit.test.ts:3"
       ],
       "reachable": true,
@@ -54939,7 +54942,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:143",
+        "backend/src/ai/pipeline.ts:144",
         "backend/src/ai/providerPolicy.test.ts:5",
         "backend/src/builder/canonical.ts:2",
         "backend/src/existingSource/change/production.ts:41",
@@ -55481,7 +55484,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:139",
+        "backend/src/ai/pipeline.ts:140",
         "backend/src/synthesis/universalShadow.test.ts:13"
       ],
       "reachable": true,
@@ -150205,7 +150208,7 @@
     {
       "id": "test-suite:abc526f31202310bc2c6",
       "sourcePath": "backend/src/ai/builderAttempt.test.ts",
-      "declaredTests": 22,
+      "declaredTests": 25,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -150492,7 +150495,7 @@
     {
       "id": "test-suite:e560f40fdd60bae650a7",
       "sourcePath": "backend/src/ai/openaiCompat.egress.test.ts",
-      "declaredTests": 13,
+      "declaredTests": 14,
       "skipLocations": [],
       "focusLocations": []
     },
