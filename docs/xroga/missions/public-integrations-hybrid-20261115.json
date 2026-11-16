@@ -7,7 +7,7 @@
   ],
   "state": "CODE_COMPLETE",
   "risk": "medium",
-  "scope": "Preview-only Xroga Connect marketing redesign using canonical real Composio/Xroga Connect provider catalog for all public listings, names, brand logos, verified provider summaries, categories, and source-reported tool/trigger counts. The old 711-entry generated technology catalog must never be represented as a full plugin directory; unauthorized/preview backend scenarios use only curated real PLUGIN_DEFINITIONS examples and a link to the authenticated live dashboard. Add a narrowly projected, cacheable, rate-limited, anonymous GET metadata endpoint that explicitly excludes custom MCP, private account connections, credentials and actions. Preserve the single canonical marketing header, all prior black-theme/compact hero/sticky category/MCP/workspace/AI-agent design requirements. Preview only; no production changes.",
+  "scope": "Preview-only full-black Xroga Connect public /integrations redesign, now with one real homepage dot-field backdrop from hero through last CTA; use exact checked-in repo SVGs as hero orbit brand artwork, REMOVE row of round app-icon badges underneath the two hero CTA buttons; search/filter directory must eventually show the entire real Xroga Connect reported app inventory (owner reports around 1,743), each with verified brand image, original source-backed summary and actual available tools/trigger metadata. Never substitute the unrelated 711-entry technology catalog, guessed logos or repeated generic app summaries. Public browse mode requires separately deployed approved metadata API and provider content/logo republication rights clearance; absent a verified provider feed, keep production untouched. Retain single shared header, stable branch preview, search & sticky categories, original design and safety controls.",
   "changedFiles": [
     "frontend/src/app/integrations/page.tsx",
     "frontend/src/app/integrations/IntegrationsMarketplace.tsx",
@@ -61,7 +61,9 @@
       "Use the already-existing stable Vercel git branch alias https://xrogaaicom-git-design-integrations-hybri-9d03b5-xrogas-projects.vercel.app/integrations for all future preview reviews, instead of immutable per-commit URLs. All changes remain on design/integrations-hybrid-20261115 / draft PR #993.",
       "Prefer the eight actual checked-in Xroga SVG logos, then original provider logo metadata, then explicitly maintained existing logo URL mappings. Render a neutral icon when none exists; never infer brand logo images from names.",
       "Reuse exactly the existing homepage-next/backdrop/SharedDotBackdrop.tsx and its CSS module as a single first-child layer of .xi-root on /integrations, covering every section from hero through final CTA while stopping before the shared marketing footer. Do not copy or fork the animation.",
-      "Keep the original homepage 25px static gray-white dot grid, phase-locked eased pointer highlight, and reduced-motion/touch/no-fine-pointer fallbacks. Remove only the Integrations hero's redundant local CSS dot overlay; place all top-level Integrations sections above the shared dot background with transparent section backgrounds."
+      "Keep the original homepage 25px static gray-white dot grid, phase-locked eased pointer highlight, and reduced-motion/touch/no-fine-pointer fallbacks. Remove only the Integrations hero's redundant local CSS dot overlay; place all top-level Integrations sections above the shared dot background with transparent section backgrounds.",
+      "After the Browse apps and Work with AI agents CTAs, remove the entire xi-hero-app-strip pill/card row seen in user's 2026-11-16 screenshot; preserve only decorative floating logos in the hero, sourced from six real checked-in Xroga /brand/logos SVG files.",
+      "Production release is explicitly requested only after full live provider inventory, descriptions and genuine logos are verified for public access; do not ship a 15-example page as a 1,743-plugin directory."
     ],
     "replace": [
       "Former local header, static 24 small text cards, and minimal /integrations SEO presentation."
@@ -188,6 +190,12 @@
       "scope": "Verify homepage shared backdrop mounted once as the first Integrations child; extends through final CTA but not footer; shared CSS and motion preferences retained; section layering keeps grid visible.",
       "negative": false,
       "reference": "frontend/src/app/integrations/integrationsBackdrop.test.ts"
+    },
+    {
+      "command": "npx tsx --test frontend/src/app/integrations/integrationsBackdrop.test.ts",
+      "scope": "Latest source-backed hero shows six real checked-in logo SVGs, removes post-CTA pill badges, maintains exact homepage dot field; no duplicated nav.",
+      "negative": true,
+      "reference": "frontend/src/app/integrations/integrationsBackdrop.test.ts"
     }
   ],
   "architecture": {
@@ -216,7 +224,8 @@
     "Per-process anonymous request limiter is only a preview defense; production needs a shared edge/CDN enforcement policy before exposing catalog publicly at scale.",
     "The repo contains only eight checked-in brand SVG files and 15 curated plugin definitions, not a static 1,743-app dataset. The authenticated Xroga Connect catalog is the source of the larger provider total and descriptions; an isolated preview backend is required to show the full anonymous directory without exposing private API credentials.",
     "The Vercel git-branch alias auto-updates after successful preview deployments; immutable per-commit deployment hostnames are snapshots and should not be shared as the single continuing review URL.",
-    "Browser-level screenshot and hover/scroll inspection on the exact-head preview remains required; background is copied directly from the homepage source, but it will not be claimed visually verified before a successful new Vercel preview."
+    "Browser-level screenshot and hover/scroll inspection on the exact-head preview remains required; background is copied directly from the homepage source, but it will not be claimed visually verified before a successful new Vercel preview.",
+    "User screenshot on 2026-11-16 shows a row of GitHub/Slack/Shopify/Notion/Stripe/Supabase pill logos below hero CTAs. That row is removed; hero retains floating real SVG marks from repo and app cards rely on real provider logo metadata or explicit verified mapping."
   ],
   "placeholderClaimsRemaining": [],
   "evidenceRefs": [
@@ -251,7 +260,10 @@
       "Visual QA preview real logo load, full list on approved backend, responsive sticky sidebar and filter search.",
       "Repository-wide unit/mission-policy/tenant-security existing failures not bypassed.",
       "No production frontend or backend merge/deployment without separate user approval.",
-      "New dedicated Public Integrations Catalog Check must pass at exact final commit."
+      "New dedicated Public Integrations Catalog Check must pass at exact final commit.",
+      "Public catalog API /api/public/integrations/catalog has not been verified deployed on api.xroga.com with an exact accessible >=1,700 honest provider listing, source summaries and real logos; no fallback 15/711 promoted to production.",
+      "Composio API content/logo public commercial republishing rights are unverified under the effective 2026-10-17 terms. Do not publish the unauthorized metadata endpoint.",
+      "Exact preview build, end-to-end anonymous visual UI review, and the explicit staging-to-production backend + frontend release and rollback validation must pass before making xroga.com/integrations live."
     ],
     "authenticatedE2e": "NOT_APPLICABLE",
     "stagedSecurity": "NOT_APPLICABLE",
