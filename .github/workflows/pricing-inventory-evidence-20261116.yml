@@ -4,41 +4,52 @@ on:
     branches:
       - diagnostics/pricing-inventory-20261116
 permissions:
-  contents: read
+  contents: write
 jobs:
   source-audit:
+    if: ${{ !contains(github.event.head_commit.message, '[inventory-generated]') }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - name: Checkout exact pricing release source
+      - name: Checkout exact pricing release source without credentials
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           ref: 25acd4eaabcd422b7306b0fed437ec049cc9b8d7
+          path: source
           fetch-depth: 0
           persist-credentials: false
       - name: Set up reviewed Node toolchain
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version: '22.21.1'
-      - name: Install locked workspaces
+      - name: Install locked source workspaces
+        working-directory: source
         run: npm ci
-      - name: Generate exact-source inventory
-        run: node scripts/xroga/inventory.mjs --refresh
-      - name: Verify regenerated inventory
-        run: node scripts/xroga/inventory.mjs --check
-      - name: Generate exact-source egress caller inventory
-        run: node scripts/security/audit-egress-callers.mjs --write
-      - name: Verify regenerated egress caller inventory
-        run: node scripts/security/audit-egress-callers.mjs
-      - name: Record only non-secret generated inventory
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      - name: Regenerate bounded exact-source inventories
+        working-directory: source
+        run: |
+          node scripts/xroga/inventory.mjs --refresh
+          node scripts/xroga/inventory.mjs --check
+          node scripts/security/audit-egress-callers.mjs --write
+          node scripts/security/audit-egress-callers.mjs
+      - name: Checkout diagnostics branch only after untrusted code execution
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
-          name: pricing-source-inventory-25acd4eaabcd
-          retention-days: 3
-          if-no-files-found: error
-          path: |
-            docs/xroga/current-state.json
-            docs/xroga/current-state-schema.json
-            docs/xroga/current-state.md
-            docs/xroga/blockers.md
-            docs/xroga/security/egress-callers.json
+          ref: diagnostics/pricing-inventory-20261116
+          path: receipt
+          persist-credentials: true
+      - name: Commit generated evidence to diagnostics branch only
+        working-directory: receipt
+        run: |
+          set -euo pipefail
+          mkdir -p docs/xroga/security
+          cp ../source/docs/xroga/current-state.json docs/xroga/current-state.json
+          cp ../source/docs/xroga/current-state-schema.json docs/xroga/current-state-schema.json
+          cp ../source/docs/xroga/current-state.md docs/xroga/current-state.md
+          cp ../source/docs/xroga/blockers.md docs/xroga/blockers.md
+          cp ../source/docs/xroga/security/egress-callers.json docs/xroga/security/egress-callers.json
+          git add docs/xroga/current-state.json docs/xroga/current-state-schema.json docs/xroga/current-state.md docs/xroga/blockers.md docs/xroga/security/egress-callers.json
+          git config user.name "Xroga Evidence Bot"
+          git config user.email "evidence-bot@users.noreply.github.com"
+          git diff --cached --quiet || git commit -m "[inventory-generated] exact pricing-source derived evidence"
+          git push origin HEAD:diagnostics/pricing-inventory-20261116
