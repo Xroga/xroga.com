@@ -15,7 +15,9 @@ import { publicCatalogProjection } from '../services/integrations/publicCatalogP
 const router = Router();
 const inputs = z.object({
   limit: z.coerce.number().int().min(1).max(250).optional().default(250),
-  cursor: z.string().trim().min(1).max(1000).regex(/^[A-Za-z0-9_=-]+$/).optional(),
+  // Composio uses opaque Base64 cursors; standard Base64 may contain '+' and '/'.
+  // URLSearchParams encodes them when forwarding to the canonical client.
+  cursor: z.string().trim().min(1).max(1000).regex(/^[A-Za-z0-9+/_=-]+$/).optional(),
   sortBy: z.enum(['usage', 'alphabetically']).optional().default('usage'),
 }).strict();
 
