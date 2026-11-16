@@ -6,6 +6,12 @@ import { Blocks } from 'lucide-react';
 import { composioLogoUrl } from '@/lib/pluginCatalog';
 import { getIntegrationLogo } from '@/lib/integrationLogos';
 
+/** Locally bundled SVGs that use white foreground shapes. Public
+ * marketing cards must render these on a dark tile or the marks disappear.
+ * Keep the signed-in dashboard's logo presentation unchanged.
+ */
+const WHITE_FOREGROUND_LOCAL_SVGS = new Set(['github', 'vercel', 'openai', 'cursor']);
+
 const SIMPLE_ICON_ALIASES: Record<string, string> = {
   'google-calendar': 'googlecalendar',
   googlecalendar: 'googlecalendar',
@@ -114,6 +120,9 @@ export function PluginBrandLogo({
         ? 'h-6 w-6 rounded-lg p-0.5'
         : 'h-10 w-10 rounded-xl p-1.5';
   const iconSize = size === 'detail' ? 31 : size === 'micro' ? 15 : 22;
+  const darkLogoTile = verifiedOnly && WHITE_FOREGROUND_LOCAL_SVGS.has(id.toLowerCase()) &&
+    Boolean(candidates[index]?.startsWith('/brand/logos/'));
+
 
   if (index < candidates.length) {
     return (
@@ -122,7 +131,9 @@ export function PluginBrandLogo({
         alt={name}
         loading="lazy"
         referrerPolicy="no-referrer"
-        className={`${dimension} shrink-0 border border-[var(--border-subtle)] bg-white object-contain`}
+        className={`${dimension} shrink-0 border border-[var(--border-subtle)] object-contain`}
+        style={{ backgroundColor: darkLogoTile ? '#141414' : '#fff' }}
+        data-logo-tone={darkLogoTile ? 'dark' : 'light'}
         onError={() => setIndex((current) => current + 1)}
       />
     );
