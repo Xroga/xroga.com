@@ -6033,13 +6033,14 @@
       "id": "surface:309e6a3c1f73a053bdef",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiValues.ts",
-      "sha256": "ca9c5a56f0a62f951b724cad1f371a9aa3f49ab7f4881389aaf63d44fc4a0625",
+      "sha256": "160b2818b373be0b6cd0bfad98d9ac24e4f4058ef64ce8ada88e90ce68a9de67",
       "symbols": [
         "active",
         "at",
         "budget",
         "cache",
         "candidates",
+        "claimed",
         "conflictingNativeReadouts",
         "context",
         "contextual",
@@ -6048,6 +6049,7 @@
         "cursor",
         "decimals",
         "end",
+        "equation",
         "expected",
         "expression",
         "expressionValue",
@@ -150481,7 +150483,7 @@
     {
       "id": "test-suite:cf78e18abc3aa283d701",
       "sourcePath": "backend/src/ai/nativeOpenUiValues.test.ts",
-      "declaredTests": 14,
+      "declaredTests": 16,
       "skipLocations": [],
       "focusLocations": []
     },

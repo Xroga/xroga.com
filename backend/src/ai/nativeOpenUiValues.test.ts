@@ -36,6 +36,32 @@ test('snapshots fail closed on cycles, missing references and actions', () => {
   }
 });
 
+test('currency review compares a labeled equation result rather than its operand', () => {
+  const rows = [{ label: 'Team per seat', value: '$5.00' }];
+  for (const operator of ['÷', '/', 'divided by']) {
+    assert.deepEqual(conflictingNativeReadouts(`Team per-seat cost: $25 ${operator} 5 seats = $5.00 per seat-month.`, rows), []);
+    assert.deepEqual(conflictingNativeReadouts(`Team per-seat cost: $25 ${operator} 5 seats = $6.00 per seat-month.`, rows), rows);
+  }
+  for (const text of [
+    'Team per seat: $2; another price is $25 / 5 = $5.00.',
+    'Team per seat: $2\nAnother price is $25 / 5 = $5.00.',
+    'Team per seat: $2 and another price is $25 / 5 = $5.00.',
+    'Team per seat: $25 / 5 seats = €5.00.',
+  ]) assert.deepEqual(conflictingNativeReadouts(text, rows), rows, text);
+});
+
+test('correct per-seat calculation remains complete through native answer and Share', () => {
+  const prose = 'Team per-seat cost: $25 ÷ 5 seats = $5.00 per seat-month.';
+  const native = `root = Col([Markdown(answer), Metric("Team per seat", @Format(25 / 5, "currency", 2, "USD"))])\nanswer = ${JSON.stringify(prose)}`;
+  const result = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + native, 'stop');
+  assert.equal(result.completion.status, 'complete');
+  assert.ok(result.response.includes(prose));
+  assert.doesNotMatch(result.response, /inconsistent numerical explanation/);
+  const snapshot = buildNativeOpenUiShare(result.response, result.responseSource.text);
+  assert.ok(snapshot);
+  assert.equal(readNativeOpenUiShare(snapshot)?.text, result.response);
+});
+
 test('currency conflicts match corresponding labels without rewriting examples', () => {
   const rows = initialNativeReadouts(program);
   assert.equal(conflictingNativeReadouts('Total interest: $4,331.83.', rows).length, 1);

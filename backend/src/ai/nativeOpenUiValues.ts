@@ -159,8 +159,16 @@ export function conflictingNativeReadouts(prose: string, readouts: ReturnType<ty
       const nearby = candidates.map(match => ({ match, distance: Math.min(Math.abs(match.index! + match[0].length - at), Math.abs(match.index! - (at + matchedWords.length))) }))
         .filter(item => item.distance <= 35).sort((a, b) => a.distance - b.distance)[0]?.match;
       if (!nearby) continue;
-      const number = Number(nearby[2].replace(/,/g, ''));
-      const decimals = nearby[2].split('.')[1]?.length ?? 0;
+      // An explicitly labeled calculation claims its result, not its first
+      // operand. Stay within that equation so another clause cannot excuse an
+      // incorrect readout. The evaluated component remains authoritative.
+      const equation = nearby.index! >= at + matchedWords.length
+        ? paragraph.slice(nearby.index! + nearby[0].length).match(
+          /^[ \t]*(?:÷|\/|×|\+|−|-|divided by|times|plus|minus)[ \t]*[$€£]?[ \t]*[+-]?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?(?:[ \t]+[a-zA-Z]+){0,3}[ \t]*=[ \t]*([$€£])[ \t]*([+-]?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?)/i,
+        ) : null;
+      const claimed = equation?.[1] === expected[0][1] ? equation[2] : nearby[2];
+      const number = Number(claimed.replace(/,/g, ''));
+      const decimals = claimed.split('.')[1]?.length ?? 0;
       if (Math.abs(number - target) > 0.5 * 10 ** -decimals + 1e-8) return true;
     }
     return false;
