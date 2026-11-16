@@ -352,3 +352,28 @@
 .xi-catalog-continue{display:inline-flex;align-items:center;justify-content:center;gap:8px;margin:15px auto 0;color:#b8d9ff;font-size:12px;font-weight:760;border-bottom:1px solid rgba(166,205,255,.44);padding:4px 0 8px;transition:color .18s}
 .xi-catalog-continue:hover{color:#fff}
 @media (prefers-reduced-motion:reduce){.xi-catalog-continue{transition:none}}
+
+
+/* The same continuous dot field as the homepage after its hero.
+   SharedDotBackdrop is mounted once as the first child of .xi-root.
+   Its own 25px near-black grid + eased, phase-locked mouse highlight
+   runs from the integrations hero through the closing CTA. The site's
+   shared footer lives outside .xi-root and is deliberately untouched.
+   Text, inputs, cards and the sticky category sidebar remain clickable. */
+.xi-root > section {
+  position: relative;
+  z-index: 1;
+  background: transparent !important;
+}
+
+/* The hero's earlier decorative mini-grid would double up on the
+   canonical 25px homepage dots; keep only the shared component. */
+.xi-hero::after {
+  display: none !important;
+}
+
+/* No dark section paint over the backdrop: every marketing panel shares
+   the same base grid, while individual foreground cards keep their tint. */
+.xi-root > section.xi-mcp.xi-mcp-open {
+  background: transparent !important;
+}
