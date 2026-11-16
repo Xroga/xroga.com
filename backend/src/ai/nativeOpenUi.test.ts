@@ -60,6 +60,9 @@ test('the model gets instructions from the native registry and may answer in tex
   assert.match(nativeOpenUiPrompt, /first give the complete readable answer in Markdown/);
   assert.match(nativeOpenUiPrompt, /readable answer must stand on its own if the visual cannot be recovered/);
   assert.match(nativeOpenUiPrompt, /include the formula, initial inputs and initial result/);
+  assert.match(nativeOpenUiPrompt, /without writing a second, paraphrased explanation/);
+  assert.match(nativeOpenUiPrompt, /copy the corresponding readable paragraph verbatim/);
+  assert.match(nativeOpenUiPrompt, /do not present a bundle-based break-even point or recommendation as fact/);
   assert.deepEqual(splitNativeOpenUiAnswer('Paris.'), { text: 'Paris.', program: '' });
   assert.deepEqual(splitNativeOpenUiAnswer('Paris.\n<<<XROGA_OP', true), { text: 'Paris.', program: '' });
   assert.deepEqual(splitNativeOpenUiAnswer('<<<XROGA_OP', true), { text: '', program: '' });
@@ -469,6 +472,17 @@ test('a validated native-only response recovers readable code and table data wit
   assert.match(answer.response, /\| Item \| Amount \|\n\| --- \| --- \|\n\| Print \| 25 \|/);
   assert.match(answer.response, /total = 25/);
   assert.equal(readNativeOpenUiShare(buildNativeOpenUiShare(answer.response, program)!)?.text, answer.response);
+});
+
+test('saved readable comparison tables do not repeat solely because Markdown padding differs', () => {
+  const prose = 'Compare the published packages.\n\n| Plan | Price per month | Seats included | Cost per seat per month |\n|---|---|---|---|\n| Basic | $10 | 1 | $10.00 |\n| Team | $25 | 5 | $5.00 |';
+  const program = 'root = Col([Table(["Plan", "Price per month", "Seats included", "Cost per seat per month"], [["Basic", "$10", 1, "$10.00"], ["Team", "$25", 5, "$5.00"]])])';
+  const answer = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + program, 'stop');
+  assert.equal(answer.response, prose);
+  assert.equal(answer.responseSource.text, program);
+  const changed = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + program.replace('"$25"', '"$30"'), 'stop');
+  assert.match(changed.response, /\$25/);
+  assert.match(changed.response, /\$30/);
 });
 
 test('a rejected visual preserves the complete readable answer without leaking UI syntax', () => {

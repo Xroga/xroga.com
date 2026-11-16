@@ -193,9 +193,18 @@ export function supplementNativeProse(prose: string, program: string, includeAll
   if (firstBlock < 0) return prose;
   const lines: string[] = [];
   const seen = new Set<string>();
+  // Markdown allows different delimiter padding for the same plain table.
+  // Compare complete blocks only, and leave code/escaped cells untouched.
+  const tableKey = (text: string) => {
+    const rows = text.trim().split('\n');
+    if (rows.length < 3 || /[`\\]/.test(text) || !rows.every(row => /^\s*\|.*\|\s*$/.test(row))) return '';
+    if (!/^\s*\|(?:\s*:?-{3,}:?\s*\|)+\s*$/.test(rows[1])) return '';
+    return rows.map((row, index) => index === 1 ? '' : row.trim().replace(/[ \t]*\|[ \t]*/g, '|')).join('\n');
+  };
+  const existingTables = new Set(prose.split(/\n\s*\n/).map(tableKey).filter(Boolean));
   let remaining = 24_000;
   const add = (value: string) => {
-    if (!value || value.length > remaining || seen.has(value) || prose.includes(value)) return;
+    if (!value || value.length > remaining || seen.has(value) || prose.includes(value) || existingTables.has(tableKey(value))) return;
     lines.push(value);
     seen.add(value);
     remaining -= value.length;

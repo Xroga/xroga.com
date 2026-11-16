@@ -5219,7 +5219,7 @@
       "id": "surface:456e62cb099b42e5c2a2",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUi.ts",
-      "sha256": "6b03a9af8d266f9c3bc40364c5141af7e885898ca993d69a7789e849c73c5788",
+      "sha256": "d6360a490f7d9853ed8a833b12d28b39e5b0b9b9607b8ca5fd2f190c51ecb7d2",
       "symbols": [
         "MAX_PROGRAM_CHARS",
         "NATIVE_UI_FORMAT",
@@ -5265,6 +5265,7 @@
         "entry",
         "envelope",
         "existing",
+        "existingTables",
         "explicit",
         "expression",
         "factualRule",
@@ -5391,6 +5392,7 @@
         "supported",
         "symbols",
         "tab",
+        "tableKey",
         "tail",
         "target",
         "text",
@@ -5804,7 +5806,7 @@
       "id": "surface:a67f0b1fa2dd0f11a67f",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiPrompt.ts",
-      "sha256": "8a2e194e2694fd817db9e26e35d15f2af16f6124c2125c6ec0cda2393f0c33ec",
+      "sha256": "482186c23e52f653b91a3e23c5a84cef97651d7d0ca1df165853ccd0ddc5fef5",
       "symbols": [
         "buildNativeOpenUiPrompt",
         "comparisonConsistencyRule",
@@ -123711,9 +123713,10 @@
       "id": "surface:c41f496bb7729ac3f725",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/ci/ignore-vercel-build.mjs",
-      "sha256": "77f97674837391b5328be77006568e6931b852cba2900c60c1a6a4f4b3634298",
+      "sha256": "02716457a95fff276df91e5f0e9d73120fb299994a0288ca2e70a924f4a98e55",
       "symbols": [
         "blockedPreviewBranch",
+        "frontendBuildInputsChanged",
         "policy",
         "productionActivationHeld",
         "result",
@@ -123729,7 +123732,7 @@
       "runtimeImports": [],
       "entryPoints": [],
       "callers": [
-        "scripts/ci/ignore-vercel-build.test.mjs:4"
+        "scripts/ci/ignore-vercel-build.test.mjs:7"
       ],
       "reachable": false,
       "persistenceDependencies": [],
@@ -142451,7 +142454,7 @@
   ],
   "findings": [
     {
-      "id": "finding:45972baaac76258f58a3",
+      "id": "finding:ac89e9f6b64b1077301c",
       "sourcePath": "backend/src/ai/nativeOpenUiPrompt.ts",
       "line": 52,
       "kind": "PLACEHOLDER",
@@ -150448,7 +150451,7 @@
     {
       "id": "test-suite:2e491f4d2fcbc11f974c",
       "sourcePath": "backend/src/ai/nativeOpenUi.test.ts",
-      "declaredTests": 63,
+      "declaredTests": 64,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -157399,7 +157402,7 @@
     {
       "id": "test-suite:1e87111bc874a53b2bc3",
       "sourcePath": "scripts/ci/ignore-vercel-build.test.mjs",
-      "declaredTests": 1,
+      "declaredTests": 2,
       "skipLocations": [],
       "focusLocations": []
     },
