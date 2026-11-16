@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "eabf56ae113f313ddc9b256e103712eb058e031e47e7291dd01338c0527449a6",
+  "reviewRegistrySha256": "92423f59f7d696c99043969781a0e1ccf8cc5bfb6808880de0142d3d8199d8b0",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -6572,7 +6572,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "d208e8a6e23a515f414d"
+        "id": "dfeab99a2056964cb07d"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -10416,7 +10416,7 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "d208e8a6e23a515f414d"
+        "id": "dfeab99a2056964cb07d"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -32112,18 +32112,18 @@
       }
     },
     {
-      "id": "d208e8a6e23a515f414d",
+      "id": "dfeab99a2056964cb07d",
       "path": "frontend/src/components/pricing/PricingPageClient.tsx",
-      "line": 214,
+      "line": 213,
       "enclosing": "CtaParticles",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "dc5ddae0ed3f7e5fe98607b246b37e980426ac0c051fa0660ebcd2e31dc1dd12",
+      "sourceSha256": "56c892b7256d811e713c42536904efc195335df6707a3fa785e297fc64067867",
       "semanticReview": {
         "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in CtaParticles, with no database or Storage client receiver.",
-        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior. On 2026-11-16, independently re-reviewed the byte-identical native Array.from expression in CtaParticles after pricing-only layout relocation. The previous source hash 06dc256ae10249978f8b73114f455a3b4a518d39287cd08dd229810ab66875c5 and call ID e75e25572d006aea3011 were reproduced exactly from the live production base. The new source hash c847f163d80335d0382133cb32ad6e4fef9dbbe0914e937e32572966947fc995 and call ID 57613ffc9f4546d50dda were independently derived with the unchanged scanner position/hash rule. The Array.from call text and in-memory JSX rendering semantics are unchanged; this remains NOT_PERSISTENCE and does not certify surrounding authentication, provider actions, or other boundaries. On 2026-11-17, the unchanged native Array.from JSX particle generator was re-reviewed after pricing-only copy/FAQ updates. Previous reviewed source SHA c847f163d80335d0382133cb32ad6e4fef9dbbe0914e937e32572966947fc995 and candidate 57613ffc9f4546d50dda remain in this record's history. New source SHA dc5ddae0ed3f7e5fe98607b246b37e980426ac0c051fa0660ebcd2e31dc1dd12 and candidate d208e8a6e23a515f414d were independently derived from the exact source and scanner position/hash rule. The expression has no persistence receiver, no network access and no elevated permissions; no other candidate is waived.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior. On 2026-11-16, independently re-reviewed the byte-identical native Array.from expression in CtaParticles after pricing-only layout relocation. The previous source hash 06dc256ae10249978f8b73114f455a3b4a518d39287cd08dd229810ab66875c5 and call ID e75e25572d006aea3011 were reproduced exactly from the live production base. The new source hash c847f163d80335d0382133cb32ad6e4fef9dbbe0914e937e32572966947fc995 and call ID 57613ffc9f4546d50dda were independently derived with the unchanged scanner position/hash rule. The Array.from call text and in-memory JSX rendering semantics are unchanged; this remains NOT_PERSISTENCE and does not certify surrounding authentication, provider actions, or other boundaries. On 2026-11-17, the unchanged native Array.from JSX particle generator was re-reviewed after pricing-only copy/FAQ updates. Previous reviewed source SHA c847f163d80335d0382133cb32ad6e4fef9dbbe0914e937e32572966947fc995 and candidate 57613ffc9f4546d50dda remain in this record's history. New source SHA dc5ddae0ed3f7e5fe98607b246b37e980426ac0c051fa0660ebcd2e31dc1dd12 and candidate d208e8a6e23a515f414d were independently derived from the exact source and scanner position/hash rule. The expression has no persistence receiver, no network access and no elevated permissions; no other candidate is waived. On 2026-11-17, the unused pricing-only FullAccessInfo tooltip and Info import were removed. The candidate remains identical in text and semantics: native Array.from creates ten JSX presentation dots. New exact source SHA 56c892b7256d811e713c42536904efc195335df6707a3fa785e297fc64067867 and scanner ID dfeab99a2056964cb07d calculated under the unchanged scanner contract; no persistence/external action exemption is inferred.",
         "evidence": [
           {
             "path": "frontend/src/components/pricing/PricingPageClient.tsx",
