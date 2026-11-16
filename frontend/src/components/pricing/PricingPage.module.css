@@ -1767,54 +1767,372 @@
 }
 
 
-.artSection {
-  position: relative;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, .9fr);
-  gap: 28px;
-  align-items: center;
-  margin-top: 108px;
-  min-height: 340px;
-  padding: clamp(24px, 4vw, 48px);
-  border: 1px solid rgba(180,187,255,.18);
-  border-radius: 32px;
-  overflow: hidden;
-  background: #050608;
-  box-shadow: 0 26px 85px rgba(0,0,0,.25);
+
+/* 2026-11-16 pricing refinement: compact hero, left-aligned icons, editorial comparison. */
+.hero {
+  border-bottom: 0;
+  background: radial-gradient(ellipse 35% 86% at 50% 0%, rgba(99,91,202,.12), transparent 80%);
 }
-.artSection::before {
+.hero::before { opacity: .23; }
+.gridGlow { height: 240px; opacity: .38; }
+.heroInner {
+  width: min(900px, calc(100% - 32px));
+  padding: clamp(32px, 4vw, 60px) 0 25px;
+}
+.heroKicker {
+  display: block;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  backdrop-filter: none;
+  color: #b7bff4;
+  font-family: var(--font-xv-mono), ui-monospace, monospace;
+  font-size: .76rem;
+  font-weight: 720;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+.heroTitle {
+  max-width: 900px;
+  margin: 11px auto 0;
+  font-size: clamp(2.15rem, 4.8vw, 4.2rem);
+  font-weight: 650;
+  line-height: 1.1;
+  letter-spacing: -.052em;
+}
+.heroTitle span { color: #c7c7ff; text-shadow: none; }
+.plansSection { padding-top: 12px; }
+.planGrid { max-width: 1100px; gap: 20px; }
+.planCard {
+  min-height: 564px;
+  padding: clamp(22px, 2.7vw, 31px);
+  scroll-margin-top: 105px;
+}
+.planTop {
+  align-items: flex-start;
+  gap: 13px;
+  min-height: 0;
+}
+.planIdentity {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  min-width: 0;
+}
+.planIdentityText { min-width: 0; }
+.planIdentityText .planName { display: block; margin: 0; font-size: 1.48rem; line-height: 1.12; }
+.planIdentityText .planTagline { margin: 5px 0 0; font-size: .8rem; line-height: 1.45; }
+.proShowcase, .freeShowcase {
+  display: inline-grid;
+  flex: 0 0 64px;
+  width: 64px;
+  height: 64px;
+  margin: 0;
+  place-items: center;
+  isolation: isolate;
+}
+.showcaseOrb {
+  width: 62px;
+  height: 62px;
+  border-radius: 18px;
+  border-color: rgba(210,210,255,.3);
+  box-shadow: inset 0 1px rgba(255,255,255,.15), 0 10px 28px rgba(82,75,195,.17);
+}
+.proShowcase .showcaseOrb {
+  box-shadow: inset 0 1px rgba(255,255,255,.22), 0 10px 29px rgba(125,95,224,.28);
+}
+.orbCenter {
+  width: 35px;
+  height: 35px;
+  border-width: 2px;
+  border-radius: 10px;
+  box-shadow: 0 0 11px rgba(225,212,255,.43);
+}
+.showcaseSymbol {
+  width: 23px;
+  height: 23px;
+  filter: drop-shadow(0 0 5px rgba(215,195,255,.4));
+}
+.proCard:hover .showcaseOrb {
+  transform: translateY(-2px) rotate(-3deg) scale(1.045);
+  box-shadow: inset 0 1px rgba(255,255,255,.23), 0 13px 33px rgba(141,92,255,.38);
+}
+.priceRow { margin-top: 30px; }
+.planLead { min-height: 65px; }
+.proCard .featureList li:hover .check { transform: scale(1.1) rotate(-7deg); }
+
+/* The table follows the quiet dark-and-amber comparison visual reference.
+   Styles are scoped to comparison; checkout and brand plans remain Xroga. */
+.compareSection {
+  position: relative;
+  isolation: isolate;
+  margin-top: 82px;
+  padding: 64px 0 34px;
+  background: transparent;
+  color: #efc17b;
+}
+.compareSection::before {
   content: '';
   position: absolute;
-  inset: -20% -12%;
-  background: radial-gradient(ellipse at 73% 38%, rgba(127, 125, 170, .10), transparent 40%);
+  z-index: -1;
+  inset: 0 calc(50% - 50vw);
+  background: #151009;
   pointer-events: none;
 }
-.artCopy { position: relative; z-index: 1; }
-.artCopy h2 {
-  max-width: 470px;
-  margin: 14px 0;
-  font-size: clamp(2.2rem, 3.8vw, 3.8rem);
-  font-weight: 620;
-  line-height: 1.06;
-  letter-spacing: -.055em;
-  color: #fff;
+.compareHeading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  margin-bottom: 64px;
+  text-align: center;
 }
-.artCopy h2 em { color: #d7d3ff; font-family: var(--font-claude-serif), Georgia, serif; font-weight: 450; }
-.artCopy p { max-width: 430px; margin: 0; line-height: 1.6; color: #bbc0cb; }
-.artImage {
+.compareOrnament {
+  width: 38px;
+  height: 38px;
+  margin-bottom: 24px;
+  color: #eab567;
+  stroke-width: 1.3;
+}
+.compareHeading h2 {
+  max-width: 950px;
+  margin: 0;
+  color: #f3bf74;
+  font-family: var(--font-claude-serif), Georgia, Cambria, serif;
+  font-size: clamp(2.25rem, 4.3vw, 4.3rem);
+  font-weight: 550;
+  line-height: 1.12;
+  letter-spacing: -.035em;
+}
+.compareHeading p {
+  margin: 12px 0 0;
+  color: #cfa36b;
+  font-size: clamp(.96rem, 1.5vw, 1.15rem);
+  line-height: 1.6;
+}
+.compareScroll {
+  width: 100%;
+  max-width: 100%;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  overflow-x: auto;
+  scrollbar-color: #9e733f #1d150e;
+}
+.comparisonTable {
+  width: 100%;
+  min-width: 600px;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: .89rem;
+}
+.featureColumn { width: 54%; }
+.freeColumn, .proColumn { width: 23%; }
+.comparisonTable th,
+.comparisonTable td {
+  padding: 16px 14px;
+  border-bottom: 1px solid rgba(244, 185, 110, .14);
+  vertical-align: middle;
+  text-align: left;
+}
+.comparisonTable thead th {
   position: relative;
-  z-index: 1;
-  justify-self: center;
+  padding: 10px 12px 23px;
+  border-bottom: 1px solid rgba(244,185,110,.2);
+  background: transparent !important;
+  color: #f2bf75;
+  font-weight: 600;
+}
+.comparisonTable thead th:not(:first-child) {
+  border-left: 0;
+  text-align: center;
+}
+.comparisonTable thead th:nth-child(3) { background: transparent; }
+.comparePlanHeading {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 6px;
+  text-align: center;
+}
+.comparePlanHeading span {
+  color: #f5c180;
+  font-family: var(--font-claude-serif), Georgia, serif;
+  font-size: 1.55rem;
+  font-weight: 650;
+}
+.comparePlanHeading small {
+  color: #b8915f;
+  font-family: var(--font-xv-mono), ui-monospace, monospace;
+  font-size: .69rem;
+  font-weight: 500;
+}
+.comparePlanHeading a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 32px;
+  margin-top: 5px;
+  padding: 7px 14px;
+  border-radius: 8px;
+  background: #f1bd73;
+  color: #1d140c;
+  font-size: .72rem;
+  font-weight: 750;
+  text-decoration: none;
+  transition: background .16s ease, transform .16s ease;
+}
+.comparePlanHeading a:hover {
+  background: #ffd393;
+  transform: translateY(-2px);
+}
+.comparePlanHeading a:focus-visible, .groupToggle:focus-visible {
+  outline: 3px solid #ffd08b;
+  outline-offset: 3px;
+}
+.featureSearch {
+  display: flex;
+  width: min(320px, 100%);
+  max-width: 100%;
+  gap: 10px;
+  padding: 0 13px;
+  border: 1px solid #3b2c1b;
+  border-radius: 10px;
+  background: #241c12;
+  color: #d7a35c;
+}
+.featureSearch:focus-within { border-color: #e0ae68; box-shadow: 0 0 0 3px rgba(247,187,107,.10); }
+.featureSearch > svg { width: 18px; height: 18px; }
+.featureSearch input {
+  height: 45px;
+  min-width: 0;
+  background: transparent;
+  color: #f8d4a0;
+  font-size: .86rem;
+}
+.featureSearch input::placeholder { color: #a77b43; }
+.featureSearch button { color: #f1c68a; background: rgba(244,184,110,.1); }
+.groupRow th {
+  padding: 0;
+  background: transparent;
+  border-bottom: 1px solid rgba(244,185,110,.24);
+}
+.groupRow .groupToggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 18px;
+  min-height: 66px;
+  padding: 15px 10px;
+  border: 0;
+  background: transparent;
+  color: #f3bc71;
+  cursor: pointer;
+  text-align: left;
+  font: 640 clamp(1.05rem, 1.6vw, 1.35rem) var(--font-claude-serif), Georgia, serif;
+}
+.groupToggle > span { display: inline-flex; align-items: center; gap: 10px; }
+.groupToggle > span svg { width: 21px; height: 21px; margin: 0; color: #ebba78; }
+.groupToggle > svg {
+  width: 19px;
+  height: 19px;
+  flex: none;
+  color: #e2b06b;
+  transition: transform .18s ease;
+}
+.groupToggle > .groupExpanded { transform: rotate(180deg); }
+.featureName {
+  color: #dfb47a;
+  font-size: .89rem;
+  font-weight: 530;
+  line-height: 1.42;
+}
+.featureName small { color: #987c5c; font-size: .74rem; font-weight: 450; }
+.comparisonTable tbody tr:not(.groupRow):hover th,
+.comparisonTable tbody tr:not(.groupRow):hover td {
+  background: rgba(237,178,97,.045);
+}
+.comparisonTable td.valueCell,
+.comparisonTable td.proCell {
+  background: transparent;
+  border-left: 0;
+  color: #d5ad74;
+  text-align: center;
+  font-size: .8rem;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+.valueCell svg {
   display: block;
-  width: min(100%, 390px);
-  height: auto;
-  aspect-ratio: 220 / 210;
-  object-fit: contain;
-  image-rendering: auto;
-  mix-blend-mode: screen;
-  mask-image: radial-gradient(ellipse, #000 33%, rgba(0,0,0,.88) 64%, transparent 91%);
+  width: 18px;
+  height: 18px;
+  margin: 0 auto 6px;
+}
+.valueCell span { display: block; color: #d8ae72; }
+.includedIcon { color: #f1be74; stroke-width: 3; }
+.unavailableIcon { color: #886d4c; }
+.compareMeta {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px 22px;
+  margin: 19px 0 0;
+  color: #b08b60;
+  font-size: .78rem;
+}
+.compareMeta span { display: inline-flex; align-items: center; gap: 7px; }
+.compareMeta svg { width: 15px; height: 15px; }
+.compareFootnote {
+  max-width: 870px;
+  margin: 14px 0 0;
+  color: #a48259;
+  font-size: .77rem;
+  line-height: 1.65;
+}
+.emptySearch { color: #e5b878; }
+.emptySearch svg { color: #e5b878; }
+.emptySearch button { border-color: #9c7448; background: #40301d; color: #f6cc8e; }
+
+@media (max-width: 900px) {
+  .heroInner { padding: 34px 0 22px; }
+  .plansSection { padding-top: 8px; }
+  .planTop { min-height: 0; }
+  .compareSection { padding-top: 55px; margin-top: 70px; }
+  .compareHeading { margin-bottom: 44px; }
 }
 @media (max-width: 720px) {
-  .artSection { grid-template-columns: 1fr; margin-top: 74px; min-height: 0; padding: 28px 22px; }
-  .artImage { width: min(100%, 290px); }
+  .heroInner { width: calc(100% - 26px); padding: 30px 0 18px; }
+  .heroTitle { font-size: clamp(1.95rem, 8.4vw, 3rem); line-height: 1.12; }
+  .plansSection { padding-top: 6px; }
+  .planGrid { gap: 14px; }
+  .planCard { min-height: 0; padding: 22px 20px; }
+  .planIdentity { gap: 12px; }
+  .proShowcase, .freeShowcase { width: 55px; height: 55px; flex: 0 0 55px; margin: 0; }
+  .showcaseOrb { width: 54px; height: 54px; border-radius: 16px; }
+  .orbCenter { width: 32px; height: 32px; border-radius: 9px; }
+  .showcaseSymbol { width: 20px; height: 20px; }
+  .planIdentityText .planName { font-size: 1.32rem; }
+  .planLead { min-height: 0; }
+  .compareSection { padding-top: 49px; margin-top: 58px; }
+  .compareOrnament { width: 30px; height: 30px; margin-bottom: 14px; }
+  .compareHeading { margin-bottom: 35px; }
+  .compareHeading h2 { font-size: clamp(2.1rem, 8.8vw, 3rem); }
+  .comparisonTable { min-width: 575px; }
+  .comparisonTable th, .comparisonTable td { padding: 13px 10px; }
+  .comparePlanHeading span { font-size: 1.3rem; }
+  .comparePlanHeading a { padding: 7px 8px; font-size: .69rem; }
+  .featureSearch { width: 100%; }
+}
+@media (max-width: 420px) {
+  .planTop { gap: 7px; }
+  .planIdentityText .planName { font-size: 1.22rem; }
+  .popularBadge, .currentBadge { font-size: .56rem; padding: 6px 7px; }
+  .compareHeading h2 { font-size: 2rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .comparePlanHeading a, .groupToggle > svg, .proCard:hover .showcaseOrb { transition: none; transform: none; }
 }
