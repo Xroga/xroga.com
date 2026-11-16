@@ -1,0 +1,77 @@
+name: Pricing blue source-bound evidence regeneration
+on:
+  push:
+    branches: [diagnostics/pricing-blue-evidence-20261117]
+permissions:
+  contents: write
+jobs:
+  reproduce:
+    if: ${{ !contains(github.event.head_commit.message, '[generated-blue-evidence]') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout exact reviewed pricing source without credentials
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: 903229759cf86dd58dde6e890c691911c22df7e0
+          path: source
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Set up reviewed Node toolchain
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22.21.1'
+      - name: Install lockfile dependencies
+        working-directory: source
+        run: npm ci
+      - name: Generate and verify exact-source inventories
+        working-directory: source
+        run: |
+          set -euo pipefail
+          node scripts/xroga/inventory.mjs --refresh
+          node scripts/xroga/inventory.mjs --check
+          node scripts/security/audit-egress-callers.mjs --write
+          node scripts/security/audit-egress-callers.mjs
+          node scripts/xroga/reconcile-requirements.mjs
+          node scripts/xroga/validate-requirements-ledger.mjs
+          node scripts/xroga/runtime-inventory.mjs
+          node scripts/xroga/check-runtime-config.mjs
+          node scripts/security/audit-tenant-policies.mjs --write
+          node scripts/security/audit-tenant-policies.mjs
+      - name: Checkout diagnostic destination after source evaluation
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: diagnostics/pricing-blue-evidence-20261117
+          path: receipt
+          persist-credentials: true
+      - name: Store only generated nonsecret metadata on diagnostics branch
+        working-directory: receipt
+        run: |
+          set -euo pipefail
+          for p in \
+            docs/xroga/current-state.json \
+            docs/xroga/current-state.md \
+            docs/xroga/blockers.md \
+            docs/xroga/security/egress-callers.json \
+            docs/xroga/research/source-manifest.json \
+            docs/xroga/requirements-ledger.json \
+            docs/xroga/requirements-ledger.md \
+            docs/xroga/research/source-reconciliation.md \
+            docs/xroga/feature-coverage.csv \
+            docs/xroga/repository-candidate-register.md \
+            docs/xroga/dependency-inventory.json \
+            docs/xroga/deployment-topology.md \
+            docs/xroga/secret-inventory.md \
+            docs/xroga/runtime-contract.md \
+            docs/xroga/security/privileged-callers.json \
+            docs/xroga/security/rls-audit.md
+          do
+            test -f "../source/$p"
+            mkdir -p "$(dirname "$p")"
+            cp "../source/$p" "$p"
+            git add "$p"
+          done
+          git config user.name "Xroga Evidence Bot"
+          git config user.email "evidence-bot@users.noreply.github.com"
+          git diff --cached --quiet || git commit -m "[generated-blue-evidence] source-bound pricing inventory"
+          git push origin HEAD:diagnostics/pricing-blue-evidence-20261117
