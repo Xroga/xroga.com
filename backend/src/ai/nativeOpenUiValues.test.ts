@@ -5,6 +5,7 @@ import { parseExpression, tokenize } from '@openuidev/lang-core';
 import { completeNativeWorkspaceAnswer } from './nativeOpenUiWorkspace.js';
 import { NATIVE_UI_MARKER, supplementNativeProse } from './nativeOpenUi.js';
 import { nativeTechnicalCorrections } from './nativeOpenUiAccuracy.js';
+import { buildNativeOpenUiShare, readNativeOpenUiShare } from './nativeOpenUiShare.js';
 
 const program = `root = Col([Metric("Monthly payment", @Format(payment, "currency", 2, "USD")), Metric("Total interest", @Format(payment * 60 - $principal, "currency", 2, "USD"))])
 $principal = 20000
@@ -107,6 +108,29 @@ test('readable recovery keeps calculated table cells and boolean values', () => 
   assert.match(text, /\| Enabled \| true \|/);
   assert.doesNotMatch(text, /@Payment|\$principal|\"k\"/);
   assert.match(supplementNativeProse('', table.replace('$apr = 8', '$apr = 0'), true), /\$333\.33/);
+});
+
+test('readable history and Share retain nested alternative sections and supporting notes', () => {
+  const rich = `root = Col([Section("Practical guidance", [Tabs("Choosing an approach", options)])])
+options = [{title: "Server", content: [Text("Authorize next to the query."), Popover("Assumption", Text("Only verified members may read."))]}, {title: "Client", content: [Text("Keep tokens out of client modules."), Quote("Review each mutation.", "Review checklist")]}]`;
+  const result = completeNativeWorkspaceAnswer('Compare the approaches.' + NATIVE_UI_MARKER + rich, 'stop');
+  assert.equal(result.completion.status, 'complete');
+  for (const text of ['Choosing an approach', '### Server', 'Authorize next to the query.', 'Assumption', 'Only verified members may read.', '### Client', 'Keep tokens out of client modules.', 'Review each mutation.', 'Review checklist']) {
+    assert.ok(result.response.includes(text), text);
+  }
+  assert.doesNotMatch(result.response, /root =|Tabs\(|Popover\(/);
+  const snapshot = buildNativeOpenUiShare(result.response, result.responseSource.text);
+  assert.ok(snapshot);
+  const shared = readNativeOpenUiShare(snapshot);
+  assert.equal(shared?.text, result.response);
+});
+
+test('readable study content retains both faces and formulas without executing interactions', () => {
+  const rich = 'root = Col([Flashcard("Area?", [Math("A = pi r^2"), Text("Square the radius first.")])])';
+  const text = supplementNativeProse('', rich, true);
+  assert.match(text, /Area\?/);
+  assert.match(text, /A = pi r\^2/);
+  assert.match(text, /Square the radius first/);
 });
 
 test('initial table evaluation rejects non-finite values, actions and cycles', () => {

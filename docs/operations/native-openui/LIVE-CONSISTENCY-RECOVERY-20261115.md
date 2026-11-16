@@ -350,3 +350,31 @@ Hosted evidence is retained outside Git under
 Its runtime services, identities and secret grants were removed after failure.
 The bounded image retention record remains separate from runtime cleanup. This
 recovery change still requires exact-source CI and fresh hosted acceptance.
+
+## Complete alternative sections and avoid duplicate visible text
+
+The 227e304d hosted continuation reused the verified image pair without rebuilding.
+Its provider-disabled gate passed 21 recovery scenarios plus architecture,
+authorization and account-isolation checks. A fresh DeepSeek React comparison
+returned a valid native table in 12,023 ms. Two canonical receipts settled at
+433 micro-USD. Automated checks passed, but independent content review failed:
+readable exports omitted the three Tabs guidance sections and the mobile answer
+repeated native list items after the rich content. Remaining dispatches stopped.
+
+Project named alternatives, inline supporting notes, quotation attribution and
+study/formula content into readable history. Match exact visible list items and
+alternative headings when removing duplicate prose. Keep distinct caveats,
+ordered steps and citation-bearing variants. Place the short summary before the
+native answer with consistent spacing. No additional model call, schema change,
+new renderer or hidden content control is introduced.
+
+83 focused tests passed in local job 98fd8d9c-1aed-48a4-b387-3f8b88489d84.
+The actual captured program was preserved byte-for-byte while regenerating its
+readable snapshot, with Share round-trip verified. A local Chrome replay of the
+corrected and historical captures passed 16 width/theme combinations in job
+c0f5da5f-2276-46e1-b07b-7fd33bd2a915. This is captured-output verification, not a
+new hosted acceptance certificate. Final exact-source checks remain required.
+
+The hosted runtime, grants, identities, image artifacts and upload were removed.
+The task-owned KMS version is scheduled for destruction. Independent readback
+confirmed zero remaining runtime resources and no production change.

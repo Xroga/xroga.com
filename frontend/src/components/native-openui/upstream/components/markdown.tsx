@@ -103,6 +103,7 @@ type MarkdownMatches = {
   relationships: ReadonlySet<string>;
   tables: ReadonlySet<string>;
   checklists: ReadonlySet<string>;
+  listItems: ReadonlySet<string>;
 };
 
 const listKey = (items: readonly string[]) => JSON.stringify(items.map(textKey));
@@ -115,6 +116,7 @@ export function nativeMarkdownMatches(root: unknown, readInitial: (value: unknow
   const relationships = new Set<string>();
   const tables = new Set<string>();
   const checklists = new Set<string>();
+  const listItems = new Set<string>();
   function visit(value: unknown): void {
     if (Array.isArray(value)) { value.forEach(visit); return; }
     if (!value || typeof value !== "object") return;
@@ -126,8 +128,13 @@ export function nativeMarkdownMatches(root: unknown, readInitial: (value: unknow
     const { props, typeName } = node;
     // The reverse of a study card is deliberately hidden until the user flips
     // it. A matching paragraph in the main answer must stay visible.
-    if (typeName === "Flashcard" || typeName === "Carousel") return;
+    if (typeName === "Flashcard") return;
     if (["Text", "Caption", "Quote"].includes(typeName ?? "") && typeof props.text === "string") paragraphs.add(citationTextKey(props.text));
+    if (typeName === "Quote" && typeof props.cite === "string") paragraphs.add(citationTextKey(props.cite));
+    if (typeName === "Math" && typeof props.tex === "string") paragraphs.add(citationTextKey(props.tex));
+    if (typeName === "Popover") for (const value of [props.trigger, props.content]) {
+      if (typeof value === "string") paragraphs.add(citationTextKey(value));
+    }
     if (typeName === "Text" && Array.isArray(props.text)) {
       const parts = props.text.map(part => {
         if (typeof part === "string") return part;
@@ -147,7 +154,17 @@ export function nativeMarkdownMatches(root: unknown, readInitial: (value: unknow
       if (typeof note === "string") paragraphs.add(citationTextKey(note));
     }
     if (typeName === "List" && Array.isArray(props.items)) {
-      props.items.forEach(item => { if (typeof item === "string") paragraphs.add(citationTextKey(item)); });
+      props.items.forEach(item => { if (typeof item === "string") { paragraphs.add(citationTextKey(item)); listItems.add(citationTextKey(item)); } });
+    }
+    if (typeName === "ListItem") {
+      const text = [props.title, props.description].filter(value => typeof value === "string" && value).join(': ');
+      if (text) listItems.add(citationTextKey(text));
+    }
+    if (typeName === "Tabs") {
+      if (typeof props.label === "string") paragraphs.add(citationTextKey(props.label));
+      if (Array.isArray(props.tabs)) for (const tab of props.tabs) {
+        if (typeof tab?.title === "string") titles.add(textKey(tab.title));
+      }
     }
     if (["Section", "Diagram", "Card"].includes(typeName ?? "") && typeof props.title === "string") titles.add(textKey(props.title));
     if (typeName === "Section" && typeof props.introduction === "string") paragraphs.add(citationTextKey(props.introduction));
@@ -197,7 +214,7 @@ export function nativeMarkdownMatches(root: unknown, readInitial: (value: unknow
     Object.values(props).forEach(visit);
   }
   visit(root);
-  return { paragraphs, titles, code, tables, relationships, checklists };
+  return { paragraphs, titles, code, tables, relationships, checklists, listItems };
 }
 
 const LIST_ITEM = /^\s{0,3}([-*+]|(\d+)[.)])\s+(.*)$/;
@@ -289,6 +306,7 @@ export function MarkdownBlocks({ text, renderCitation, deduplicateTables = false
             if (matches?.paragraphs.has(citationTextKey(b.text))) return null;
             return <p key={k}>{inline(b.text, k, renderCitation)}</p>;
           case "quote":
+            if (matches?.paragraphs.has(citationTextKey(b.text))) return null;
             return <blockquote key={k}>{inline(b.text, k, renderCitation)}</blockquote>;
           case "h":
             if (matches?.titles.has(textKey(b.text))) return null;
@@ -308,7 +326,8 @@ export function MarkdownBlocks({ text, renderCitation, deduplicateTables = false
             return <hr key={k} className="iui-divider" />;
           case "list": {
             if (!b.ordered && matches?.checklists.has(listKey(b.items.map(item => item.replace(/^\[[ xX]\]\s+/, ""))))) return null;
-            const entries = b.ordered ? b.items : b.items.filter(item => !matches?.relationships.has(textKey(item)));
+            const entries = b.ordered ? b.items : b.items.filter(item =>
+              !matches?.relationships.has(textKey(item)) && !matches?.listItems.has(citationTextKey(item)));
             if (!entries.length) return null;
             const items = entries.map((item, j) => <li key={j}>{inline(item, `${k}-${j}`, renderCitation)}</li>);
             return b.ordered ? (

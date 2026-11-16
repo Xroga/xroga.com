@@ -121,8 +121,28 @@ test('a visible chart and checklist collapse only their exact readable duplicate
   assert.equal((html.match(/<ul>/g) ?? []).length, 1);
   assert.match(html, /71%/);
   assert.match(html, /Source 1/);
-  const coveredByHiddenSlide = nativeMarkdownMatches(element('Carousel', { items: [chart, checks] }));
-  assert.match(renderToStaticMarkup(createElement(MarkdownBlocks, { text: duplicate, matches: coveredByHiddenSlide })), /<table\b/);
+  const visibleCards = nativeMarkdownMatches(element('Carousel', { children: [chart, checks] }));
+  assert.doesNotMatch(renderToStaticMarkup(createElement(MarkdownBlocks, { text: duplicate, matches: visibleCards })), /<table\b/);
+});
+
+test('inline alternatives and native lists remove exact duplicates without dropping distinct or cited content', () => {
+  const element = (typeName: string, props: Record<string, unknown>) => ({ type: 'element', typeName, props });
+  const matches = nativeMarkdownMatches(element('Col', { children: [
+    element('Tabs', { label: 'Choosing an approach', tabs: [
+      { title: 'Server', content: [element('Text', { text: 'Authorize every query.' })] },
+      { title: 'Client', content: [element('Text', { text: 'Keep tokens private.' })] },
+    ] }),
+    element('List', { items: [element('ListItem', { title: 'Server Actions', description: 'Validate inputs.' }), 'Review permissions.'] }),
+  ] }));
+  const text = ['Choosing an approach', '### Server', 'Authorize every query.', '### Client', 'Keep tokens private.',
+    '- Server Actions: Validate inputs.\n- Review permissions.\n- Retain this distinct caveat.\n- Server Actions: Validate inputs. [1]',
+    '1. Review permissions.\n2. Continue in this order.'].join('\n\n');
+  const html = renderToStaticMarkup(createElement(MarkdownBlocks, { text, matches, renderCitation: () => 'Verified source' }));
+  assert.doesNotMatch(html, /Choosing an approach|Authorize every query|Keep tokens private/);
+  assert.equal((html.match(/Server Actions/g) ?? []).length, 1);
+  assert.match(html, /Retain this distinct caveat|Verified source/);
+  assert.match(html, /<ol/);
+  assert.match(html, /Continue in this order/);
 });
 
 test('Markdown tables preserve literal pipes and all columns', () => {

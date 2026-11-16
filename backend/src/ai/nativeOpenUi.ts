@@ -225,6 +225,25 @@ export function supplementNativeProse(prose: string, program: string, includeAll
       const title = scalar(props.title);
       if (title) add('## ' + title);
       add(scalar(props.introduction));
+    } else if (node.typeName === 'Tabs') {
+      add(scalar(props.label));
+      for (const tab of array(props.tabs)) {
+        const item = record(tab);
+        const title = scalar(item.title);
+        if (title) add('### ' + title);
+        project(item.content);
+      }
+    } else if (node.typeName === 'Popover') {
+      project(props.trigger);
+      project(props.content);
+    } else if (node.typeName === 'Flashcard') {
+      project(props.front);
+      project(props.back);
+    } else if (node.typeName === 'Math') {
+      add(scalar(props.tex));
+    } else if (node.typeName === 'Quote') {
+      add(scalar(props.text));
+      add(scalar(props.cite));
     } else if (node.typeName === 'Code') {
       const code = scalar(props.code);
       if (code && !prose.includes(code)) {

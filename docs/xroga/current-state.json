@@ -5219,7 +5219,7 @@
       "id": "surface:456e62cb099b42e5c2a2",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUi.ts",
-      "sha256": "92013f1908992b0313285059ca3d9e710b548d1e6b2ced9c1dc6cab88abd8ef7",
+      "sha256": "287abd4e548582133da986af31a7758f6d4c6131122d028244e646f064c05c62",
       "symbols": [
         "MAX_PROGRAM_CHARS",
         "NATIVE_UI_FORMAT",
@@ -5386,6 +5386,7 @@
         "supplementNativeProse",
         "supported",
         "symbols",
+        "tab",
         "tail",
         "target",
         "text",
@@ -5982,6 +5983,7 @@
       ],
       "callers": [
         "backend/src/ai/nativeOpenUi.test.ts:5",
+        "backend/src/ai/nativeOpenUiValues.test.ts:8",
         "backend/src/lib/richShareSnapshot.test.ts:4",
         "backend/src/lib/richShareSnapshot.ts:1",
         "frontend/src/app/share/[token]/page.tsx:1",
@@ -5999,6 +6001,7 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/ai/nativeOpenUi.test.ts",
+        "backend/src/ai/nativeOpenUiValues.test.ts",
         "backend/src/lib/richShareSnapshot.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -64356,8 +64359,11 @@
       "id": "surface:bc32312b6e0185cbc840",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/app/page.tsx",
-      "sha256": "8a5984a73ef38a3926a5feee112afccbbe1bb6e835f8aee6da8baaa59a1c8aa3",
+      "sha256": "462e349f4a696db57c3c15f4d352763aa159126568354c965b00869a3926edbe",
       "symbols": [
+        "HOMEPAGE_DESCRIPTION",
+        "HOMEPAGE_KEYWORDS",
+        "HOMEPAGE_TITLE",
         "HomePage",
         "homepageJsonLd",
         "homepageScrollBootstrap",
@@ -77187,7 +77193,7 @@
         "frontend/src/app/page.tsx"
       ],
       "callers": [
-        "frontend/src/app/page.tsx:2"
+        "frontend/src/app/page.tsx:3"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -87774,13 +87780,17 @@
       "id": "surface:169100c09d49c9650f7a",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/NativeSurface.tsx",
-      "sha256": "1d11b48caee771b2500a6f6ac1252757acd48b9dc01c030b6022d4ea6e18bfb5",
+      "sha256": "378fd03db8b24f116cbcba68d6c18fae1800717bf85ac548c3ddf9671a2a4f10",
       "symbols": [
         "NativeAnswer",
         "NativeSurface",
         "accepted",
         "attempts",
+        "boundary",
+        "details",
         "end",
+        "first",
+        "hasSummary",
         "ids",
         "matches",
         "parser",
@@ -87788,6 +87798,7 @@
         "prose",
         "recovered",
         "renderCitation",
+        "summary",
         "verified",
         "visibleTables"
       ],
@@ -88673,7 +88684,7 @@
       "id": "surface:0fef6875af5860e2f4b4",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/markdown.tsx",
-      "sha256": "ceba946ac25a22ccdb7eefa0889d3cc45dfe1681740ea204ca5ddc19bde42786",
+      "sha256": "ca3f549b8d43a82513e0a46c291313e99dc409066891ede905cd5b0e84bea3f8",
       "symbols": [
         "Block",
         "INLINE",
@@ -88711,6 +88722,7 @@
         "line",
         "lines",
         "link",
+        "listItems",
         "listKey",
         "m",
         "n",
@@ -88730,11 +88742,13 @@
         "rows",
         "seenTables",
         "source",
+        "tab",
         "table",
         "tableContentKey",
         "tableHasLinks",
         "tableKey",
         "tables",
+        "text",
         "textKey",
         "titles",
         "to",
@@ -114552,7 +114566,7 @@
         "frontend/src/app/llms.txt/route.ts:1",
         "frontend/src/app/migrate/[slug]/page.tsx:4",
         "frontend/src/app/migrate/page.tsx:3",
-        "frontend/src/app/page.tsx:3",
+        "frontend/src/app/page.tsx:4",
         "frontend/src/app/pricing/page.tsx:3",
         "frontend/src/app/privacy/page.tsx:3",
         "frontend/src/app/refund/page.tsx:3",
@@ -150427,7 +150441,7 @@
     {
       "id": "test-suite:cf78e18abc3aa283d701",
       "sourcePath": "backend/src/ai/nativeOpenUiValues.test.ts",
-      "declaredTests": 11,
+      "declaredTests": 13,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -155691,7 +155705,7 @@
     {
       "id": "test-suite:4ce9d7bbf578638998f1",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/markdown.test.ts",
-      "declaredTests": 10,
+      "declaredTests": 11,
       "skipLocations": [],
       "focusLocations": []
     },
