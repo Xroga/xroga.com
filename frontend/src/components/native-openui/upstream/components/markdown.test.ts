@@ -8,6 +8,21 @@ import { inline, MarkdownBlocks, nativeMarkdownMatches, preservedMarkdownTableKe
 
 const render = (source: string) => renderToStaticMarkup(createElement(Fragment, null, inline(source)));
 
+test('native paragraphs match emphasis-only prose and unordered items without hiding distinct content', () => {
+  const matches = nativeMarkdownMatches({ type: 'element', typeName: 'Col', props: { children: [
+    { type: 'element', typeName: 'Text', props: { text: 'Basic costs $10/month.' } },
+    { type: 'element', typeName: 'Text', props: { text: 'One person: Basic includes one seat.' } },
+  ] } });
+  const text = '**Basic** costs $10/month.\n\n- **One person:** Basic includes one seat.\n- Keep the unique limitation.\n- One person: Basic includes one seat. [1]\n\n1. One person: Basic includes one seat.\n\nBasic costs $11/month.';
+  const html = renderToStaticMarkup(createElement(MarkdownBlocks, { text, matches, renderCitation: () => 'Verified source' }));
+  assert.doesNotMatch(html, /costs \$10/);
+  assert.equal((html.match(/Basic includes one seat/g) ?? []).length, 2);
+  assert.match(html, /Keep the unique limitation/);
+  assert.match(html, /Verified source/);
+  assert.match(html, /<ol/);
+  assert.match(html, /costs \$11/);
+});
+
 test('empty comparison corners are cells and scrolling tables do not duplicate landmarks', () => {
   const html = renderToStaticMarkup(createElement(MarkdownBlocks, {
     text: '| | Server | Client |\n|---|---|---|\n| Runs | Server | Browser |',

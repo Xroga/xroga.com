@@ -1079,13 +1079,13 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "245f60b9f9b04e0a67226b5354a4fd13ccf584a475e2219a09472d2f5d57000c",
+      "sourceSha256": "cbf67edd08efef2f05de9690ad359cd5c92dd7802c453cfb5e5d2062a5876a79",
       "callIds": [
-        "93a3b008dcb4d37d39ce"
+        "f12308343cfd76d2ca43"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
-      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations. Native reasoning alignment changes only answer options and their canonical output reservation. These two in-memory conversion expressions remain byte-identical. No new persistence call, authority or security certification is inferred. The tenant dispatch test verifies reservation and wire maxima match.",
       "evidence": [
         {
           "path": "backend/src/ai/pipeline.ts",
@@ -2594,17 +2594,24 @@
           "5b543818a91ad0c16240"
         ],
         "scope": "Byte-identical runBuildPipeline body; only source positions moved after changing read-only native prompt selection."
+      },
+      "beforeNativeReasoningAlignment": {
+        "source": "677b111f52097654f47e92b6807b45200c2a89ee",
+        "sourceSha256": "245f60b9f9b04e0a67226b5354a4fd13ccf584a475e2219a09472d2f5d57000c",
+        "callIds": [
+          "93a3b008dcb4d37d39ce"
+        ]
       }
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "245f60b9f9b04e0a67226b5354a4fd13ccf584a475e2219a09472d2f5d57000c",
+      "sourceSha256": "cbf67edd08efef2f05de9690ad359cd5c92dd7802c453cfb5e5d2062a5876a79",
       "callIds": [
-        "b01a01f65052e1222fd2"
+        "889a5ae30117270911bf"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
-      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations. Native reasoning alignment changes only answer options and their canonical output reservation. These two in-memory conversion expressions remain byte-identical. No new persistence call, authority or security certification is inferred. The tenant dispatch test verifies reservation and wire maxima match.",
       "evidence": [
         {
           "path": "backend/src/ai/pipeline.ts",
@@ -4113,6 +4120,13 @@
           "9ed969847167feb788b9"
         ],
         "scope": "Byte-identical runBuildPipeline body; only source positions moved after changing read-only native prompt selection."
+      },
+      "beforeNativeReasoningAlignment": {
+        "source": "677b111f52097654f47e92b6807b45200c2a89ee",
+        "sourceSha256": "245f60b9f9b04e0a67226b5354a4fd13ccf584a475e2219a09472d2f5d57000c",
+        "callIds": [
+          "b01a01f65052e1222fd2"
+        ]
       }
     },
     {

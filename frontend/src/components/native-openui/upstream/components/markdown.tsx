@@ -2,6 +2,7 @@ import React, { createContext, Fragment, type ReactNode } from "react";
 import { isPresentationLanguage, publicAnswerText } from "@/lib/publicAnswerText";
 import { cx, isLongAnswerTable, webUrl } from "./style";
 import { staticChartTable } from "./chart";
+import { nativeReadableTextKey } from "../../../../../../backend/src/ai/nativeOpenUi";
 
 // A small Markdown renderer that builds React elements and never injects HTML.
 // Inline: **bold**, *italic*, ~~strike~~, `code`, [text](https://...).
@@ -88,7 +89,7 @@ export function preservedMarkdownTableKeys(text: string): ReadonlySet<string> {
 }
 
 function textKey(text: string): string {
-  return text.replace(/\s+/g, " ").trim();
+  return nativeReadableTextKey(text);
 }
 
 /** A sentence-final citation can sit immediately before or after its period. */
@@ -327,7 +328,8 @@ export function MarkdownBlocks({ text, renderCitation, deduplicateTables = false
           case "list": {
             if (!b.ordered && matches?.checklists.has(listKey(b.items.map(item => item.replace(/^\[[ xX]\]\s+/, ""))))) return null;
             const entries = b.ordered ? b.items : b.items.filter(item =>
-              !matches?.relationships.has(textKey(item)) && !matches?.listItems.has(citationTextKey(item)));
+              !matches?.relationships.has(textKey(item)) && !matches?.listItems.has(citationTextKey(item))
+              && !matches?.paragraphs.has(citationTextKey(item)));
             if (!entries.length) return null;
             const items = entries.map((item, j) => <li key={j}>{inline(item, `${k}-${j}`, renderCitation)}</li>);
             return b.ordered ? (

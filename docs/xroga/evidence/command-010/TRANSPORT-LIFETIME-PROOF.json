@@ -291,7 +291,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "245f60b9f9b04e0a67226b5354a4fd13ccf584a475e2219a09472d2f5d57000c",
+      "sha256": "cbf67edd08efef2f05de9690ad359cd5c92dd7802c453cfb5e5d2062a5876a79",
       "previousGenericSdkBinding": {
         "sha256": "e5b3b4a3dc538e708fa8c005a8da6584db01b3dd425833373d59decbd2bfcb93",
         "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
@@ -582,7 +582,12 @@
         "method": "Exact source diff and two byte-identical enclosing-function caller comparisons. No change to dispatch, accounting, persistence, authorization or worker execution.",
         "liveAcceptance": false
       },
-      "beforeWorkspaceResponseQualitySha256": "d981253fc491c75b4d2b90c6e080509aa541fd04d840276e133e81b39fe3eac6"
+      "beforeWorkspaceResponseQualitySha256": "d981253fc491c75b4d2b90c6e080509aa541fd04d840276e133e81b39fe3eac6",
+      "beforeNativeReasoningAlignment": {
+        "source": "677b111f52097654f47e92b6807b45200c2a89ee",
+        "sha256": "245f60b9f9b04e0a67226b5354a4fd13ccf584a475e2219a09472d2f5d57000c",
+        "scope": "Historical binding retained, no new security acceptance"
+      }
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
@@ -623,7 +628,7 @@
     },
     {
       "path": "backend/src/ai/tenantModelDispatch.test.ts",
-      "sha256": "39677cba049a8500bdf632c66aa93b85c396cdaa5fcabf075c26bba598919459",
+      "sha256": "f8ea3b8ffce5badaa1ce4e8fc9535c19cae2fdb5b32243e0a333ea34cce69d10",
       "previousGenericSdkBinding": {
         "sha256": "acb7d3ee286d862c38e386380a20a7632415cd454510076abedca054016f2959",
         "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
@@ -642,6 +647,10 @@
         "reference": "3266b788188ca23518e4d03213ac125114ae92f6",
         "archive": "docs/xroga/evidence/command-010/integration-20261029/tenantModelDispatch.test.ts-AT-3266b788.txt",
         "scope": "Original regression snapshot retained. Current test adds opt-in native file, research, malformed source and plain response cases; historical evidence is not promoted."
+      },
+      "beforeNativeReasoningAlignment": {
+        "sha256": "39677cba049a8500bdf632c66aa93b85c396cdaa5fcabf075c26bba598919459",
+        "scope": "Prior test binding retained. Current test verifies default reasoning and matched ledger reservation, no acceptance promotion."
       }
     },
     {

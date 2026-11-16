@@ -153,6 +153,18 @@ export function missingNativeFormats(program: string, formats: readonly Required
   return [...new Set(formats)].filter(format => !available[format]);
 }
 
+/** Compare the same readable content despite Markdown emphasis. */
+export function nativeReadableTextKey(text: string): string {
+  // Ignore emphasis only. Keep code, links, citations, strike-through and
+  // identifier punctuation, which can change the meaning of an answer.
+  return text.split(/(`[^`\n]+`|\[[^\]\n]+\]\([^)\s]+\))/g).map((part, index) => index % 2 ? part : part
+    .replace(/\*\*([^*\n]+)\*\*/g, '$1')
+    .replace(/(?<![\p{L}\p{N}_])__([^_\n]+)__(?![\p{L}\p{N}_])/gu, '$1')
+    .replace(/(?<!\*)\*([^*\s][^*\n]*?)\*(?!\*)/g, '$1')
+    .replace(/(?<![\p{L}\p{N}_])_([^_\s][^_\n]*?)_(?![\p{L}\p{N}_])/gu, '$1'))
+    .join('').replace(/\s+/g, ' ').trim();
+}
+
 /** Recover readable details from an already validated program when the model
  * omitted its prose, returned an overview or left a heading without its body. */
 export function supplementNativeProse(prose: string, program: string, includeAll = false): string {
@@ -199,14 +211,17 @@ export function supplementNativeProse(prose: string, program: string, includeAll
     const rows = text.trim().split('\n');
     if (rows.length < 3 || /[`\\]/.test(text) || !rows.every(row => /^\s*\|.*\|\s*$/.test(row))) return '';
     if (!/^\s*\|(?:\s*:?-{3,}:?\s*\|)+\s*$/.test(rows[1])) return '';
-    return rows.map((row, index) => index === 1 ? '' : row.trim().replace(/[ \t]*\|[ \t]*/g, '|')).join('\n');
+    return rows.map((row, index) => index === 1 ? '' : row.trim().split('|').map(cell => cell.trim()).join('|')).join('\n');
   };
   const existingTables = new Set(prose.split(/\n\s*\n/).map(tableKey).filter(Boolean));
+  const existingText = new Set(prose.split(/\n\s*\n|\n(?=\s*[-*+]\s)/).map(value =>
+    nativeReadableTextKey(value.replace(/^\s*(?:#{1,6}\s+|[-*+]\s+)/, ''))));
   let remaining = 24_000;
   const add = (value: string) => {
-    if (!value || value.length > remaining || seen.has(value) || prose.includes(value) || existingTables.has(tableKey(value))) return;
+    const key = nativeReadableTextKey(value.replace(/^\s*(?:#{1,6}\s+|[-*+]\s+)/, ''));
+    if (!value || value.length > remaining || seen.has(key) || existingText.has(key) || prose.includes(value) || existingTables.has(tableKey(value))) return;
     lines.push(value);
-    seen.add(value);
+    seen.add(key);
     remaining -= value.length;
   };
   const addTable = (headings: string[], rows: string[][]) => {

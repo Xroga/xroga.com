@@ -6,6 +6,23 @@ import { buildNativeOpenUiShare, readNativeOpenUiShare } from './nativeOpenUiSha
 import { readNativeOpenUiRun } from './nativeOpenUiRun.js';
 import { completeNativeWorkspaceAnswer, usesNativeWorkspacePresentation } from './nativeOpenUiWorkspace.js';
 import { requiredNativeFormats } from './answerCoverage.js';
+import { nativeReadableTextKey } from './nativeOpenUi.js';
+
+test('readable snapshots do not repeat native text because emphasis differs', () => {
+  const prose = '**Basic** costs $10/month.\n\nKey points:\n- **One person:** Basic includes one seat.\n- Keep this distinct caveat.\n\nPrice is $10 [1].';
+  const program = 'root = Col([Text("Basic costs $10/month."), Text("One person: Basic includes one seat."), Text("Price is $10."), Text("Native-only detail stays readable.")])';
+  const answer = completeNativeWorkspaceAnswer(prose + '\n' + NATIVE_UI_MARKER + '\n' + program, 'stop');
+  assert.equal(answer.completion.status, 'complete');
+  assert.equal((answer.response.match(/costs \$10\/month/g) ?? []).length, 1);
+  assert.equal((answer.response.match(/Basic includes one seat/g) ?? []).length, 1);
+  assert.match(answer.response, /Keep this distinct caveat/);
+  assert.match(answer.response, /Native-only detail stays readable/);
+  assert.match(answer.response, /Price is \$10 \[1\]/);
+  assert.notEqual(nativeReadableTextKey('`a_b`'), nativeReadableTextKey('a_b'));
+  assert.notEqual(nativeReadableTextKey('~~allowed~~'), nativeReadableTextKey('allowed'));
+  assert.notEqual(nativeReadableTextKey('[Docs](https://a.test)'), nativeReadableTextKey('[Docs](https://b.test)'));
+  assert.equal(nativeReadableTextKey('user_id and tenant_id'), 'user_id and tenant_id');
+});
 
 test('upstream entry selection and identifiers preserve complete readable content', () => {
   const name = '_privateComparisonDetailsWithAnIdentifierLongerThanFortyCharacters';
