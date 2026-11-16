@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com",
     "branch": "",
-    "sha": "25acd4eaabcd422b7306b0fed437ec049cc9b8d7",
-    "sourceTimestampUtc": "2026-11-16T18:00:38+05:00",
-    "auditStartedUtc": "2026-11-16T13:07:51.885Z",
+    "sha": "903229759cf86dd58dde6e890c691911c22df7e0",
+    "sourceTimestampUtc": "2026-11-17T00:48:52+05:00",
+    "auditStartedUtc": "2026-11-16T19:52:23.527Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -90555,7 +90555,7 @@
       "id": "surface:823eca0a2b4c2d02d961",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/pricing/PricingPageClient.tsx",
-      "sha256": "c847f163d80335d0382133cb32ad6e4fef9dbbe0914e937e32572966947fc995",
+      "sha256": "dc5ddae0ed3f7e5fe98607b246b37e980426ac0c051fa0660ebcd2e31dc1dd12",
       "symbols": [
         "Active",
         "BillingStatus",
@@ -90584,8 +90584,6 @@
         "router",
         "scene",
         "sync",
-        "totalFeatureCount",
-        "visibleFeatureCount",
         "visibleGroups"
       ],
       "imports": [
@@ -144974,9 +144972,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:721f9086b2a740a8c9ce",
+      "id": "finding:204f66cb9296fa87369d",
       "sourcePath": "frontend/src/components/pricing/PricingPageClient.tsx",
-      "line": 456,
+      "line": 443,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -148424,9 +148422,9 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:b463b49d225c4b04e523",
+      "id": "frontend-call:339cf89d8043b518846f",
       "sourcePath": "frontend/src/components/pricing/PricingPageClient.tsx",
-      "line": 266,
+      "line": 255,
       "callee": "api.billing.status",
       "reachable": true
     },

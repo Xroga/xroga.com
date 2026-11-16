@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "25acd4eaabcd422b7306b0fed437ec049cc9b8d7",
+  "source_sha": "903229759cf86dd58dde6e890c691911c22df7e0",
   "hash_policy": "Exact preserved attachment bytes; repository text uses Git-canonical LF bytes for portable hashes and byte counts",
   "sources": [
     {
@@ -6364,9 +6364,9 @@
       "source_id": "SRC-3d3190a1571aa705",
       "filename": "current-state.json",
       "path_or_url": "docs/xroga/current-state.json",
-      "sha256": "574587d8e55b33ddbba190751399974dd231f21b3ab9a83b8017a3dc6812e8e0",
-      "byte_size": 5748447,
-      "modified_timestamp": "2026-11-16T14:11:12.001Z",
+      "sha256": "3c6640b135ea1e573aa9e2c2eb2799c8e12f6122a457c9251dc57db716e5608e",
+      "byte_size": 5748387,
+      "modified_timestamp": "2026-11-16T19:52:23.646Z",
       "parse_status": "PARSED_JSON",
       "category": "REPOSITORY_DOCUMENT",
       "authority": "ADVISORY",
@@ -23524,9 +23524,9 @@
       "source_id": "SRC-823eca0a2b4c2d02",
       "filename": "PricingPageClient.tsx",
       "path_or_url": "frontend/src/components/pricing/PricingPageClient.tsx",
-      "sha256": "c847f163d80335d0382133cb32ad6e4fef9dbbe0914e937e32572966947fc995",
-      "byte_size": 25545,
-      "modified_timestamp": "2026-11-16T14:11:12.433Z",
+      "sha256": "dc5ddae0ed3f7e5fe98607b246b37e980426ac0c051fa0660ebcd2e31dc1dd12",
+      "byte_size": 27807,
+      "modified_timestamp": "2026-11-16T19:51:24.352Z",
       "parse_status": "AST_METADATA",
       "category": "SOURCE_CODE",
       "authority": "CURRENT_CODE",

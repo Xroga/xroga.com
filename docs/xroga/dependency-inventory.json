@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "a11a03dea897cbd449020639714936f6bad0ff34",
+  "source_sha": "903229759cf86dd58dde6e890c691911c22df7e0",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -22390,7 +22390,7 @@
     },
     {
       "path": "frontend/src/components/pricing/PricingPageClient.tsx",
-      "sha256": "c847f163d80335d0382133cb32ad6e4fef9dbbe0914e937e32572966947fc995"
+      "sha256": "dc5ddae0ed3f7e5fe98607b246b37e980426ac0c051fa0660ebcd2e31dc1dd12"
     },
     {
       "path": "frontend/src/components/profile/AvatarPickerModal.tsx",
