@@ -8,6 +8,7 @@ import {
   SlidersHorizontal, Sparkles, Workflow, X, Zap,
 } from 'lucide-react';
 import { PluginBrandLogo } from '@/components/integrations/PluginBrandLogo';
+import { LOCAL_PUBLIC_INTEGRATION_LOGOS } from '@/lib/publicIntegrationLogo';
 import { SharedDotBackdrop } from '@/components/homepage-next/backdrop/SharedDotBackdrop';
 import { EXTERNAL_AGENTS, EXTERNAL_AGENT_DISCLOSURE } from '@/lib/externalAgentWorkflows';
 import { xrogaConnect } from '@/lib/xrogaConnect';
@@ -31,6 +32,19 @@ const SEARCH_SUGGESTIONS = [
   'Search sales, finance and communication...',
 ];
 const featuredOrder = new Map<string, number>(PUBLIC_INTEGRATION_FEATURED_IDS.map((id, index) => [id, index]));
+
+/** Only checked-in, authentic logo assets for floating hero artwork.
+ * These are visual brand examples, not a claim of connected accounts.
+ * Keep the searchable app directory distinct from decorative hero artwork.
+ */
+const HERO_BRAND_MARKS = [
+  { id: 'github', name: 'GitHub' },
+  { id: 'supabase', name: 'Supabase' },
+  { id: 'vercel', name: 'Vercel' },
+  { id: 'openai', name: 'OpenAI' },
+  { id: 'gitlab', name: 'GitLab' },
+  { id: 'anthropic', name: 'Anthropic' },
+] as const;
 
 function useTypingPlaceholder(active: boolean) {
   const [text, setText] = useState('');
@@ -254,13 +268,6 @@ export function IntegrationsMarketplace({
   );
 
 
-  const featured = useMemo(() => {
-    const lookup = new Map(items.map(item => [item.id, item]));
-    return PUBLIC_INTEGRATION_FEATURED_IDS.map(id => lookup.get(id)).filter(
-      (item): item is PublicIntegrationCard => Boolean(item),
-    ).slice(0, 8);
-  }, [items]);
-
   const categoryCounts = useMemo(() => new Map(directoryCategories.map(option => [
     option.id, directoryItems.filter(item => matchesPublicIntegrationCategory(item, option.id)).length,
   ])), [directoryItems, directoryCategories]);
@@ -305,7 +312,11 @@ export function IntegrationsMarketplace({
       <section className="xi-hero" aria-labelledby="xi-hero-title">
         <div className="xi-hero-halo" aria-hidden="true" />
         <div className="xi-hero-logos" aria-hidden="true">
-          {featured.slice(0, 8).map((item, i) => <div className={'xi-orbit-logo xi-orbit-logo-' + (i + 1)} key={item.id}><AppLogo item={item}/></div>)}
+          {HERO_BRAND_MARKS.map((app, i) => (
+            <div className={'xi-orbit-logo xi-orbit-logo-' + (i + 1)} key={app.id}>
+              <PluginBrandLogo id={app.id} name={app.name} logo={LOCAL_PUBLIC_INTEGRATION_LOGOS[app.id]} verifiedOnly />
+            </div>
+          ))}
         </div>
         <div className="xi-hero-content">
           <h1 id="xi-hero-title">Connect your favorite apps<br/><em>with Xroga AI.</em></h1>
@@ -313,13 +324,6 @@ export function IntegrationsMarketplace({
           <div className="xi-hero-actions">
             <a className="xi-primary-button" href="#xi-directory">Browse apps <ArrowUpRight size={17}/></a>
             <a className="xi-secondary-button" href="#xi-agents">Work with AI agents <ArrowRight size={16}/></a>
-          </div>
-          <div className="xi-hero-app-strip" aria-label="Explore popular applications">
-            {featured.slice(0, 6).map(item => (
-              <Link key={item.id} href={item.href} className="xi-hero-app" aria-label={`Explore ${item.name}`}>
-                <AppLogo item={item} size="micro" /><span>{item.name}</span>
-              </Link>
-            ))}
           </div>
         </div>
       </section>
