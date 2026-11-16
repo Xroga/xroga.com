@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "e7a075ecba6ec802e460617aaddbc69bd7f38c5b5aab575bc247a9b2af0b9bee",
+  "reviewRegistrySha256": "d71394b1171fd5209373ab9c21ad5af9f230fde29466512d018ebfeef479e21c",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -28,8 +28,8 @@
     "result": "BLOCKED",
     "scope": "COMMAND_007_CRITERION_EVIDENCE_NOT_BATCH_OR_PRODUCTION_ACCEPTANCE",
     "certifiedScopedPrivilegedCallers": 0,
-    "verifiedCandidateBoundaries": 80,
-    "unresolvedCandidateBoundaries": 938,
+    "verifiedCandidateBoundaries": 79,
+    "unresolvedCandidateBoundaries": 939,
     "criteria": [
       {
         "id": "XB01-C007-AC01",
@@ -1557,6 +1557,18 @@
       {
         "code": "STALE_NON_PERSISTENCE_REVIEW",
         "id": "OB-e941e79b117a9b65"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-797d0149b7f511eb"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-797d0149b7f511eb"
+      },
+      {
+        "code": "STALE_NON_PERSISTENCE_REVIEW",
+        "id": "OB-797d0149b7f511eb"
       },
       {
         "code": "STALE_CALLER_BINDING",
@@ -6560,6 +6572,10 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
+        "id": "57613ffc9f4546d50dda"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
         "id": "d46198ffaba4be6f765f"
       },
       {
@@ -10400,6 +10416,10 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "57613ffc9f4546d50dda"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "227a815ae8e2c760bd61"
       },
       {
@@ -10430,11 +10450,11 @@
   },
   "reviewAgreement": {
     "currentCallers": 1018,
-    "structuredVerified": 80,
-    "structuredUnproven": 938,
+    "structuredVerified": 79,
+    "structuredUnproven": 939,
     "manualUnresolved": 210,
-    "manualUnsupported": 728,
-    "agreedVerified": 80,
+    "manualUnsupported": 729,
+    "agreedVerified": 79,
     "proofAwaitingManualReconciliation": 0
   },
   "callers": [
@@ -32092,18 +32112,18 @@
       }
     },
     {
-      "id": "e75e25572d006aea3011",
+      "id": "57613ffc9f4546d50dda",
       "path": "frontend/src/components/pricing/PricingPageClient.tsx",
-      "line": 121,
+      "line": 225,
       "enclosing": "CtaParticles",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "06dc256ae10249978f8b73114f455a3b4a518d39287cd08dd229810ab66875c5",
+      "sourceSha256": "c847f163d80335d0382133cb32ad6e4fef9dbbe0914e937e32572966947fc995",
       "semanticReview": {
         "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in CtaParticles, with no database or Storage client receiver.",
-        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior. On 2026-11-16, independently re-reviewed the byte-identical native Array.from expression in CtaParticles after pricing-only layout relocation. The previous source hash 06dc256ae10249978f8b73114f455a3b4a518d39287cd08dd229810ab66875c5 and call ID e75e25572d006aea3011 were reproduced exactly from the live production base. The new source hash c847f163d80335d0382133cb32ad6e4fef9dbbe0914e937e32572966947fc995 and call ID 57613ffc9f4546d50dda were independently derived with the unchanged scanner position/hash rule. The Array.from call text and in-memory JSX rendering semantics are unchanged; this remains NOT_PERSISTENCE and does not certify surrounding authentication, provider actions, or other boundaries.",
         "evidence": [
           {
             "path": "frontend/src/components/pricing/PricingPageClient.tsx",

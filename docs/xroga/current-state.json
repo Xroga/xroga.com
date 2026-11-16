@@ -1,15 +1,15 @@
 {
   "version": "1.0",
   "identity": {
-    "repository": "https://github.com/Xroga/xroga.com.git",
-    "branch": "codex/workspace-adaptive-acceptance-20261114",
-    "sha": "d787f5b50974b9fc3e21b5b5851cbc1d633032a5",
-    "sourceTimestampUtc": "2026-11-15T00:26:04+05:00",
-    "auditStartedUtc": "2026-11-14T20:24:35.420Z",
+    "repository": "https://github.com/Xroga/xroga.com",
+    "branch": "",
+    "sha": "25acd4eaabcd422b7306b0fed437ec049cc9b8d7",
+    "sourceTimestampUtc": "2026-11-16T18:00:38+05:00",
+    "auditStartedUtc": "2026-11-16T13:07:51.885Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
-    "npm": "11.16.0",
+    "npm": "10.9.4",
     "lockfiles": [
       "backend/package-lock.json",
       "deploy/browser-worker/package-lock.json",
@@ -64471,7 +64471,7 @@
       "id": "surface:b130399551fb03a7eaca",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/app/pricing/page.tsx",
-      "sha256": "fa3d00678cd35f0f0caac636c1914e43b1ef5f300ac93813607cf4f37bc0f520",
+      "sha256": "112eb6d32235e971a44a4a85132fb3801b4ab8c6db3b2d49d356f7f556d1a012",
       "symbols": [
         "PricingPage",
         "metadata"
@@ -67358,14 +67358,12 @@
       "entryPoints": [
         "frontend/src/app/(shell)/dashboard/billing/page.tsx",
         "frontend/src/app/(shell)/dashboard/upgrade/page.tsx",
-        "frontend/src/app/(shell)/settings/page.tsx",
-        "frontend/src/app/pricing/page.tsx"
+        "frontend/src/app/(shell)/settings/page.tsx"
       ],
       "callers": [
         "frontend/src/app/(shell)/dashboard/upgrade/page.tsx:4",
         "frontend/src/components/billing/OutOfActionsModal.tsx:5",
-        "frontend/src/components/billing/SubscriptionManagePanel.tsx:7",
-        "frontend/src/components/pricing/PricingPageClient.tsx:21"
+        "frontend/src/components/billing/SubscriptionManagePanel.tsx:7"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -90535,32 +90533,108 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:5d690c3eb932d045a03d",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/pricing/PricingCheckoutButton.tsx",
+      "sha256": "e3f917180607d209cb18fa3b30da36fda050fbc4cf20de959243491c8022d566",
+      "symbols": [
+        "CheckoutButtonProps",
+        "PricingCheckoutButton",
+        "dialog",
+        "dialogRef",
+        "err",
+        "error",
+        "finishCheckout",
+        "handleCheckout",
+        "onEscape",
+        "result",
+        "selected"
+      ],
+      "imports": [
+        "./PricingCheckoutButton.module.css",
+        "@/components/ui/Uiverse",
+        "@/lib/api",
+        "@/lib/checkoutAdmission",
+        "lucide-react",
+        "react",
+        "react-dom",
+        "react-hot-toast"
+      ],
+      "runtimeImports": [
+        "frontend/src/components/pricing/PricingCheckoutButton.module.css",
+        "frontend/src/components/ui/Uiverse.tsx",
+        "frontend/src/lib/api.ts",
+        "frontend/src/lib/checkoutAdmission.ts"
+      ],
+      "entryPoints": [
+        "frontend/src/app/pricing/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/pricing/PricingPageClient.tsx:33"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "lucide-react",
+        "react",
+        "react-dom",
+        "react-hot-toast"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [
+        "frontend/src/components/pricing/PricingCheckoutButton.tsx#requireCheckoutConfirmation"
+      ],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:823eca0a2b4c2d02d961",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/pricing/PricingPageClient.tsx",
-      "sha256": "06dc256ae10249978f8b73114f455a3b4a518d39287cd08dd229810ab66875c5",
+      "sha256": "c847f163d80335d0382133cb32ad6e4fef9dbbe0914e937e32572966947fc995",
       "symbols": [
+        "Active",
         "BillingStatus",
-        "COMPARISON",
+        "COMPARISON_GROUPS",
         "CtaParticles",
         "FAQS",
+        "FeatureIcon",
         "FullAccessInfo",
-        "Icon",
-        "OUTCOMES",
+        "GroupIcon",
+        "Icons",
         "PLAN_FEATURES",
+        "PRO_SCENES",
+        "PlanShowcase",
         "PricingPageClient",
         "features",
         "freeCurrent",
         "hasSession",
+        "interval",
+        "isCollapsed",
         "isCurrent",
         "isFree",
+        "normalizedQuery",
         "openFree",
+        "preference",
         "proCurrent",
-        "router"
+        "router",
+        "scene",
+        "sync",
+        "totalFeatureCount",
+        "visibleFeatureCount",
+        "visibleGroups"
       ],
       "imports": [
+        "./PricingCheckoutButton",
         "./PricingPage.module.css",
-        "@/components/billing/CheckoutButton",
         "@/lib/api",
         "@/lib/plans",
         "@/lib/supabase/client",
@@ -90570,7 +90644,7 @@
         "react"
       ],
       "runtimeImports": [
-        "frontend/src/components/billing/CheckoutButton.tsx",
+        "frontend/src/components/pricing/PricingCheckoutButton.tsx",
         "frontend/src/components/pricing/PricingPage.module.css",
         "frontend/src/lib/api.ts",
         "frontend/src/lib/plans.ts",
@@ -90601,7 +90675,7 @@
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
-      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "knownRisk": "Production source contains annotated mock/TODO/placeholder/simulation markers; individual findings classified separately.",
       "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
@@ -103871,6 +103945,7 @@
       ],
       "callers": [
         "frontend/src/components/billing/CheckoutButton.tsx:6",
+        "frontend/src/components/pricing/PricingCheckoutButton.tsx:8",
         "frontend/src/components/terminal/HomepageChatBar.tsx:9",
         "frontend/src/components/terminal/ProductStartChips.tsx:5",
         "frontend/src/components/terminal/TerminalChatBar.tsx:15"
@@ -105833,7 +105908,8 @@
         "frontend/src/components/notifications/NotificationExperience.tsx:6",
         "frontend/src/components/notifications/SidebarNotificationCenter.tsx:10",
         "frontend/src/components/onboarding/OnboardingFlow.tsx:6",
-        "frontend/src/components/pricing/PricingPageClient.tsx:22",
+        "frontend/src/components/pricing/PricingCheckoutButton.tsx:7",
+        "frontend/src/components/pricing/PricingPageClient.tsx:34",
         "frontend/src/components/projects/FilePreview.tsx:4",
         "frontend/src/components/projects/ProjectDetailView.tsx:8",
         "frontend/src/components/providers/AppProviders.tsx:4",
@@ -107217,6 +107293,7 @@
       ],
       "callers": [
         "frontend/src/components/billing/CheckoutButton.tsx:7",
+        "frontend/src/components/pricing/PricingCheckoutButton.tsx:9",
         "frontend/src/lib/checkoutAdmission.test.ts:2"
       ],
       "reachable": true,
@@ -112295,7 +112372,7 @@
         "frontend/src/app/(shell)/dashboard/upgrade/page.tsx:3",
         "frontend/src/components/billing/XrogaPricingCard.tsx:7",
         "frontend/src/components/homepage/HomepagePricingPreview.tsx:3",
-        "frontend/src/components/pricing/PricingPageClient.tsx:23"
+        "frontend/src/components/pricing/PricingPageClient.tsx:35"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -116525,7 +116602,7 @@
         "frontend/src/components/layout/PublicMarketingHeader.tsx:20",
         "frontend/src/components/layout/Sidebar.tsx:68",
         "frontend/src/components/layout/SidebarProjectHistory.tsx:23",
-        "frontend/src/components/pricing/PricingPageClient.tsx:24",
+        "frontend/src/components/pricing/PricingPageClient.tsx:36",
         "frontend/src/components/settings/DataAiSettingsPanel.tsx:6",
         "frontend/src/components/settings/SecuritySettingsPanel.tsx:6",
         "frontend/src/components/showcase/ShowcaseDialogs.tsx:24",
@@ -144945,6 +145022,16 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
+      "id": "finding:721f9086b2a740a8c9ce",
+      "sourcePath": "frontend/src/components/pricing/PricingPageClient.tsx",
+      "line": 456,
+      "kind": "PLACEHOLDER",
+      "reachable": true,
+      "state": "PARTIAL",
+      "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
+      "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
+    },
+    {
       "id": "finding:f8e2b9be3bf279e0067d",
       "sourcePath": "frontend/src/components/publish/ChromePublishPanel.tsx",
       "line": 170,
@@ -148371,9 +148458,23 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:5c8b7b05df1b3b2011bc",
+      "id": "frontend-call:7f16a84a30a7ee1e704a",
+      "sourcePath": "frontend/src/components/pricing/PricingCheckoutButton.tsx",
+      "line": 34,
+      "callee": "api.billing.createCheckout",
+      "reachable": true
+    },
+    {
+      "id": "frontend-call:64b6ec976d2c670a6fb0",
+      "sourcePath": "frontend/src/components/pricing/PricingCheckoutButton.tsx",
+      "line": 54,
+      "callee": "api.billing.confirmCheckout",
+      "reachable": true
+    },
+    {
+      "id": "frontend-call:b463b49d225c4b04e523",
       "sourcePath": "frontend/src/components/pricing/PricingPageClient.tsx",
-      "line": 160,
+      "line": 266,
       "callee": "api.billing.status",
       "reachable": true
     },

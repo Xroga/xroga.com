@@ -28029,13 +28029,13 @@
     },
     {
       "path": "frontend/src/components/pricing/PricingPageClient.tsx",
-      "sourceSha256": "06dc256ae10249978f8b73114f455a3b4a518d39287cd08dd229810ab66875c5",
+      "sourceSha256": "c847f163d80335d0382133cb32ad6e4fef9dbbe0914e937e32572966947fc995",
       "callIds": [
-        "e75e25572d006aea3011"
+        "57613ffc9f4546d50dda"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in CtaParticles, with no database or Storage client receiver.",
-      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior. On 2026-11-16, independently re-reviewed the byte-identical native Array.from expression in CtaParticles after pricing-only layout relocation. The previous source hash 06dc256ae10249978f8b73114f455a3b4a518d39287cd08dd229810ab66875c5 and call ID e75e25572d006aea3011 were reproduced exactly from the live production base. The new source hash c847f163d80335d0382133cb32ad6e4fef9dbbe0914e937e32572966947fc995 and call ID 57613ffc9f4546d50dda were independently derived with the unchanged scanner position/hash rule. The Array.from call text and in-memory JSX rendering semantics are unchanged; this remains NOT_PERSISTENCE and does not certify surrounding authentication, provider actions, or other boundaries.",
       "evidence": [
         {
           "path": "frontend/src/components/pricing/PricingPageClient.tsx",
