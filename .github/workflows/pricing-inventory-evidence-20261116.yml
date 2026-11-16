@@ -1,0 +1,39 @@
+name: Pricing source-bound inventory diagnostic
+on:
+  push:
+    branches:
+      - diagnostics/pricing-inventory-20261116
+permissions:
+  contents: read
+jobs:
+  source-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout exact pricing release source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: 25acd4eaabcd422b7306b0fed437ec049cc9b8d7
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Set up reviewed Node toolchain
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22.21.1'
+      - name: Install locked workspaces
+        run: npm ci
+      - name: Generate exact-source inventory
+        run: node scripts/xroga/inventory.mjs --refresh
+      - name: Verify regenerated inventory
+        run: node scripts/xroga/inventory.mjs --check
+      - name: Record only non-secret generated inventory
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: pricing-source-inventory-25acd4eaabcd
+          retention-days: 3
+          if-no-files-found: error
+          path: |
+            docs/xroga/current-state.json
+            docs/xroga/current-state-schema.json
+            docs/xroga/current-state.md
+            docs/xroga/blockers.md
