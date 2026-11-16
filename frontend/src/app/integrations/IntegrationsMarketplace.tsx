@@ -268,6 +268,15 @@ export function IntegrationsMarketplace({
   );
 
 
+  // The independent featured-app section below the directory still uses
+  // genuine repository definitions; the row below hero CTAs stays removed.
+  const featured = useMemo(() => {
+    const lookup = new Map(items.map(item => [item.id, item]));
+    return PUBLIC_INTEGRATION_FEATURED_IDS.map(id => lookup.get(id)).filter(
+      (item): item is PublicIntegrationCard => Boolean(item),
+    ).slice(0, 8);
+  }, [items]);
+
   const categoryCounts = useMemo(() => new Map(directoryCategories.map(option => [
     option.id, directoryItems.filter(item => matchesPublicIntegrationCategory(item, option.id)).length,
   ])), [directoryItems, directoryCategories]);
