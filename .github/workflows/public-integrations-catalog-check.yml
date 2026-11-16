@@ -1,0 +1,46 @@
+name: Public Integrations Catalog Check
+
+# Isolated validation for the new anonymous metadata surface, avoiding the
+# unrelated historical inventory baseline failures in the full unit workflow.
+on:
+  pull_request:
+    paths:
+      - 'backend/src/index.ts'
+      - 'backend/src/routes/publicIntegrationsCatalog.ts'
+      - 'backend/src/services/integrations/publicCatalogProjection*.ts'
+      - 'frontend/src/app/integrations/**'
+      - 'frontend/src/lib/publicIntegrationsDirectory*.ts'
+      - 'frontend/src/lib/publicIntegrationLogo*.ts'
+      - 'frontend/src/lib/liveIntegrationDiscovery*.ts'
+      - 'frontend/src/lib/publicConnectCatalog.ts'
+      - 'frontend/src/components/integrations/PluginBrandLogo.tsx'
+      - '.github/workflows/public-integrations-catalog-check.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: public-integrations-check-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  catalog:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: '.node-version'
+          cache: npm
+      - run: npm ci
+      - name: Verify public projection does not expose private connections or fake descriptions
+        run: npx tsx --test backend/src/services/integrations/publicCatalogProjection.test.ts
+      - name: Verify source-backed plugin descriptions and public display mappings
+        run: npx tsx --tsconfig frontend/tsconfig.json --test frontend/src/lib/publicIntegrationsDirectory.test.ts frontend/src/lib/liveIntegrationDiscovery.test.ts frontend/src/lib/publicIntegrationLogo.test.ts
+      - name: Homepage dots background reuse verification
+        run: npx tsx --test frontend/src/app/integrations/integrationsBackdrop.test.ts
+      - name: Compile backend including public catalog route and data boundary
+        run: npm run build --workspace=backend

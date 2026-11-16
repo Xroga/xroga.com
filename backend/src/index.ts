@@ -23,6 +23,7 @@ import githubRouter from './routes/github.js';
 import existingSourceRouter from './routes/existingSource.js';
 import vercelRouter from './routes/vercel.js';
 import integrationsRouter from './routes/integrations.js';
+import publicIntegrationsCatalogRouter from './routes/publicIntegrationsCatalog.js';
 import supabaseOAuthRouter from './routes/supabaseOAuth.js';
 import publishRouter from './routes/publish.js';
 import notificationsRouter from './routes/notifications.js';
@@ -263,6 +264,8 @@ app.use('/api/wellbeing', authMiddleware, wellbeingRouter);
 app.use('/api/github', authMiddleware, githubRouter);
 app.use('/api/existing-source', authMiddleware, existingSourceRouter);
 app.use('/api/vercel', authMiddleware, vercelRouter);
+// Public catalogue is sanitised metadata only; account connection routes remain authenticated.
+app.use('/api/public/integrations', publicIntegrationsCatalogRouter);
 app.use('/api/integrations', authMiddleware, integrationsRouter);
 app.use('/api/supabase', authMiddleware, supabaseOAuthRouter);
 app.use('/api/publish', authMiddleware, publishRouter);

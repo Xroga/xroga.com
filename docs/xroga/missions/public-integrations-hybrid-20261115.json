@@ -1,0 +1,277 @@
+{
+  "version": "1.0",
+  "missionId": "PUBLIC-INTEGRATIONS-HYBRID-20261115",
+  "baseSha": "67dac20c98e9f208b9785c271b1f221b3bce4759",
+  "requirementIds": [
+    "XR-FAMILY-rich-ai-ui"
+  ],
+  "state": "CODE_COMPLETE",
+  "risk": "medium",
+  "scope": "Preview-only full-black Xroga Connect public /integrations redesign, now with one real homepage dot-field backdrop from hero through last CTA; use exact checked-in repo SVGs as hero orbit brand artwork, REMOVE row of round app-icon badges underneath the two hero CTA buttons; search/filter directory must eventually show the entire real Xroga Connect reported app inventory (owner reports around 1,743), each with verified brand image, original source-backed summary and actual available tools/trigger metadata. Never substitute the unrelated 711-entry technology catalog, guessed logos or repeated generic app summaries. Public browse mode requires separately deployed approved metadata API and provider content/logo republication rights clearance; absent a verified provider feed, keep production untouched. Retain single shared header, stable branch preview, search & sticky categories, original design and safety controls.",
+  "changedFiles": [
+    "frontend/src/app/integrations/page.tsx",
+    "frontend/src/app/integrations/IntegrationsMarketplace.tsx",
+    "frontend/src/app/integrations/integrations.css",
+    "frontend/src/lib/publicIntegrationsDirectory.ts",
+    "frontend/src/lib/integrationDiscoveryFilters.ts",
+    "frontend/src/lib/publicIntegrationsDirectory.test.ts",
+    "frontend/src/lib/externalAgentWorkflows.ts",
+    "frontend/src/lib/externalAgentWorkflows.test.ts",
+    "frontend/src/lib/liveIntegrationDiscovery.ts",
+    "frontend/src/lib/liveIntegrationDiscovery.test.ts",
+    "backend/src/index.ts",
+    "backend/src/routes/publicIntegrationsCatalog.ts",
+    "backend/src/services/integrations/publicCatalogProjection.ts",
+    "backend/src/services/integrations/publicCatalogProjection.test.ts",
+    "frontend/src/lib/publicConnectCatalog.ts",
+    "frontend/src/components/integrations/PluginBrandLogo.tsx",
+    ".github/workflows/public-integrations-catalog-check.yml",
+    "frontend/src/lib/publicIntegrationLogo.ts",
+    "frontend/src/lib/publicIntegrationLogo.test.ts",
+    "frontend/src/app/integrations/integrationsBackdrop.test.ts",
+    "docs/xroga/missions/public-integrations-hybrid-20261115.json"
+  ],
+  "decisions": {
+    "keep": [
+      "Canonical PublicMarketingChrome header/footer, existing marketing pages and workspace routes, /dashboard/integrations/[plugin] detail route.",
+      "INTEGRATIONS static technology catalog, PLUGIN_DEFINITIONS as qualified app guide descriptions, CONNECTABLE_INTEGRATION_IDS for intentionally constrained provider setup; do not modify runtime controls."
+    ],
+    "extend": [
+      "Dark-blue responsive public marketing interface with hero, featured app logos, three-step explanation, remote MCP callout and 711-entry directory with searchable filters and paging.",
+      "Source-grounded native/app-guide/technology categorization with exact source industry filters and curated topic filters.",
+      "Public cards link to the authorized dashboard, where live action/trigger details and account connection state can actually be checked.",
+      "Move lightweight category filter and featured slug logic into a small client-safe module to avoid shipping the large static catalog twice.",
+      "Add selected external coding-agent brand cards and real source-owned GitHub handoff instructions; Xroga MCP support is outbound client-only, not an inbound Xroga MCP server for third-party assistants.",
+      "Reorder page to put all-apps search, category sidebar, type filters and results directly after hero; keep explanatory sections below the directory.",
+      "Apply near-black page, section and card backgrounds, with restrained existing blue accent text/buttons; remove large blue-tinted panels.",
+      "Keep only root PublicMarketingChrome navigation (no second page-level header); do not touch global header implementation.",
+      "Fetch only read-only Xroga Connect catalog metadata through the existing client; prefer provider-reported totalItems and logos over 711-entry generated legacy marketing list when authorized; do not expose tenant-specific connection state or tools without runtime authorization.",
+      "Clear distinction: 1,743 currently reported in authenticated workspace versus 711 static public technology examples; catalog can change, and visitors without API access see the fallback with an accurate label.",
+      "Fit hero headline, real brand logo rail and buttons within a single normal desktop viewport, preserving the shared site header.",
+      "Set the /integrations outer overflow to clip so the category sidebar can stick within the grid until the last app card; disable sticky layout on smaller devices.",
+      "Use borderless custom MCP explanation rather than a floating dark card; show single-click navigation to Xroga workspace and browser automations area without asserting browser extension production availability.",
+      "End with Start in minutes / Try Xroga for free, noting that provider setup and approval can take longer.",
+      "Add anonymous GET /api/public/integrations/catalog with server-side projected/validated provider metadata from existing listComposioCatalog(undefined actor); no new integration scheduler, OAuth or account connection.",
+      "Expose provider name, summary, logo, categories, capability counts and coarse auth types only; filter custom_ and deprecated toolkit metadata, redact all account-level user/tenant and API fields.",
+      "Use an explicit Xroga-known logo mapping or upstream provider-supplied logo. Avoid guessing brand SVG URLs or initials for unknown app names. Missing image shows a neutral app symbol.",
+      "Reuse real provider summary first, then real curated plugin description if matched, otherwise omit the summary text (never generative boilerplate).",
+      "Read public provider catalog first, fall back to authenticated catalog if the public metadata backend has not been deployed and the user is signed in, then only curated verified plugin definitions. Do not show 711 or claim exact 1,743 without a live total.",
+      "Prevent unfounded capabilities: exact tool and trigger counts only when returned as provider metadata; in fallback omit tools/triggers rows instead of 'not verified' filler.",
+      "Add a narrowly scoped, permissions-read-only CI workflow to compile the backend public catalog boundary and run source-backed plugin and privacy projection tests independently of historical repository-wide inventory gates.",
+      "Use the already-existing stable Vercel git branch alias https://xrogaaicom-git-design-integrations-hybri-9d03b5-xrogas-projects.vercel.app/integrations for all future preview reviews, instead of immutable per-commit URLs. All changes remain on design/integrations-hybrid-20261115 / draft PR #993.",
+      "Prefer the eight actual checked-in Xroga SVG logos, then original provider logo metadata, then explicitly maintained existing logo URL mappings. Render a neutral icon when none exists; never infer brand logo images from names.",
+      "Reuse exactly the existing homepage-next/backdrop/SharedDotBackdrop.tsx and its CSS module as a single first-child layer of .xi-root on /integrations, covering every section from hero through final CTA while stopping before the shared marketing footer. Do not copy or fork the animation.",
+      "Keep the original homepage 25px static gray-white dot grid, phase-locked eased pointer highlight, and reduced-motion/touch/no-fine-pointer fallbacks. Remove only the Integrations hero's redundant local CSS dot overlay; place all top-level Integrations sections above the shared dot background with transparent section backgrounds.",
+      "After the Browse apps and Work with AI agents CTAs, remove the entire xi-hero-app-strip pill/card row seen in user's 2026-11-16 screenshot; preserve only decorative floating logos in the hero, sourced from six real checked-in Xroga /brand/logos SVG files.",
+      "Production release is explicitly requested only after full live provider inventory, descriptions and genuine logos are verified for public access; do not ship a 15-example page as a 1,743-plugin directory.",
+      "Canonical Composio toolkit list uses opaque Base64 paging cursors, which may contain '+' and '/'; accept both in bounded public cursor validation and percent-encode them when forwarding via URLSearchParams.",
+      "Allow the public read-only catalog client to honor metadata route Cache-Control instead of forcing per-visitor no-store requests, reducing upstream platform requests when the service is actually deployed."
+    ],
+    "replace": [
+      "Former local header, static 24 small text cards, and minimal /integrations SEO presentation."
+    ],
+    "deprecate": []
+  },
+  "schemaImpact": {
+    "changed": false,
+    "migrations": [],
+    "rollout": "UI-only. Draft PR and preview; no database changes.",
+    "rollback": "Revert this route and its new companion UI/data/test/stylesheet files."
+  },
+  "securityImpact": {
+    "auth": {
+      "changed": true,
+      "description": "A new public GET-only metadata route is explicitly added before authMiddleware; it is read-only and guarded by query validation, projection, per-IP best-effort throttle and caching. Existing authenticated connections/actions/OAuth remain unchanged."
+    },
+    "tenant": {
+      "changed": true,
+      "description": "Anonymous public catalog has no tenant context by design and never returns user-scoped content. The canonical service's public metadata mode is used, with custom/deprecated filtering. Tenant-bearing integration endpoints remain authenticated and unchanged."
+    },
+    "approval": {
+      "changed": false,
+      "description": "No new external tool actions or approvals; only discoverability and navigation."
+    },
+    "credentials": {
+      "changed": false,
+      "description": "No tokens are accepted, stored, revealed or sent by the public page."
+    },
+    "egress": {
+      "changed": true,
+      "description": "Public request may cause bounded, cached provider metadata GET requests to Composio using the existing platform API key held server-side; the provider key is never sent to browsers. Provider logos remain HTTPS browser assets, referrer suppressed; usage and republishing permissions require production review."
+    },
+    "cost": {
+      "changed": true,
+      "description": "Anonymous public metadata GET may use metered Composio API requests. 5-minute upstream metadata cache, CDN cache and in-process rate limit are used; production still requires verified rate/credit budgets and edge abuse protection."
+    },
+    "billing": {
+      "changed": false,
+      "description": "Links to existing free signup; no billing changes."
+    }
+  },
+  "tests": [
+    {
+      "command": "npm run lint --prefix frontend --workspaces=false",
+      "scope": "Lint the new public route and catalog client under Next 15.",
+      "negative": false,
+      "reference": "frontend/src/app/integrations/IntegrationsMarketplace.tsx"
+    },
+    {
+      "command": "npm run build --prefix frontend --workspaces=false",
+      "scope": "Compile Next 15, route and public client, metadata and CSS.",
+      "negative": false,
+      "reference": "frontend/src/app/integrations/page.tsx"
+    },
+    {
+      "command": "npx tsx --tsconfig frontend/tsconfig.json --test frontend/src/lib/publicIntegrationsDirectory.test.ts",
+      "scope": "Canonical 711-entry list, category fidelity, Shopify route, no static user connection claims.",
+      "negative": true,
+      "reference": "frontend/src/lib/publicIntegrationsDirectory.test.ts"
+    },
+    {
+      "command": "Manual responsive, keyboard and action smoke test",
+      "scope": "Actual desktop/mobile preview at 390/768/1440 px: single global header, input typing and reduced-motion, search, filter, load more, card navigation to login-protected detail, custom MCP link.",
+      "negative": true,
+      "reference": "frontend/src/app/integrations/integrations.css"
+    },
+    {
+      "command": "npx tsx --tsconfig frontend/tsconfig.json --test frontend/src/lib/externalAgentWorkflows.test.ts",
+      "scope": "Six agent workflow guides and accuracy boundaries; direct MCP connection is not promised.",
+      "negative": true,
+      "reference": "frontend/src/lib/externalAgentWorkflows.test.ts"
+    },
+    {
+      "command": "Responsive /integrations browser smoke check",
+      "scope": "At desktop and mobile, verify one shared header, updated conditional hero claim, black theme, search/sidebar immediately below hero, agent selection and authentic deep links, reduced motion, focus controls.",
+      "negative": true,
+      "reference": "frontend/src/app/integrations/IntegrationsMarketplace.tsx"
+    },
+    {
+      "command": "npx tsx --tsconfig frontend/tsconfig.json --test frontend/src/lib/liveIntegrationDiscovery.test.ts",
+      "scope": "Runtime provider logo, live action/trigger counts, category mapping, no claimed connected state.",
+      "negative": true,
+      "reference": "frontend/src/lib/liveIntegrationDiscovery.test.ts"
+    },
+    {
+      "command": "Manual viewport, sticky sidebar and icon inspection",
+      "scope": "Verify hero fits at common 1366x768 and 1440x900 with canonical header/banner, real logos including error fallback; scroll sidebar sticks until last results then releases; mobile sidebar is static; workspace and browser extension copy meets verified availability.",
+      "negative": true,
+      "reference": "frontend/src/app/integrations/integrations.css"
+    },
+    {
+      "command": "npm run build --prefix backend",
+      "scope": "Compile new public metadata route and projection in backend TypeScript.",
+      "negative": false,
+      "reference": "backend/src/routes/publicIntegrationsCatalog.ts"
+    },
+    {
+      "command": "npx tsx --test backend/src/services/integrations/publicCatalogProjection.test.ts",
+      "scope": "Ensure custom MCP/privacy stripping, genuine descriptions and safe HTTPS image URLs.",
+      "negative": true,
+      "reference": "backend/src/services/integrations/publicCatalogProjection.test.ts"
+    },
+    {
+      "command": "npx tsx --tsconfig frontend/tsconfig.json --test frontend/src/lib/publicIntegrationsDirectory.test.ts frontend/src/lib/liveIntegrationDiscovery.test.ts",
+      "scope": "No fake 711 fallback, real plugin descriptions, provider metadata mapping and existing deep links.",
+      "negative": true,
+      "reference": "frontend/src/lib/publicIntegrationsDirectory.test.ts"
+    },
+    {
+      "command": "GitHub workflow: Public Integrations Catalog Check",
+      "scope": "Dedicated backend TypeScript build and targeted security/source-truth regression tests on PR head.",
+      "negative": false,
+      "reference": ".github/workflows/public-integrations-catalog-check.yml"
+    },
+    {
+      "command": "npx tsx --tsconfig frontend/tsconfig.json --test frontend/src/lib/publicIntegrationLogo.test.ts",
+      "scope": "Assert eight real Xroga brand assets, legitimate fallback URL handling and absence of guessed logos.",
+      "negative": true,
+      "reference": "frontend/src/lib/publicIntegrationLogo.test.ts"
+    },
+    {
+      "command": "npx tsx --test frontend/src/app/integrations/integrationsBackdrop.test.ts",
+      "scope": "Verify homepage shared backdrop mounted once as the first Integrations child; extends through final CTA but not footer; shared CSS and motion preferences retained; section layering keeps grid visible.",
+      "negative": false,
+      "reference": "frontend/src/app/integrations/integrationsBackdrop.test.ts"
+    },
+    {
+      "command": "npx tsx --test frontend/src/app/integrations/integrationsBackdrop.test.ts",
+      "scope": "Latest source-backed hero shows six real checked-in logo SVGs, removes post-CTA pill badges, maintains exact homepage dot field; no duplicated nav.",
+      "negative": true,
+      "reference": "frontend/src/app/integrations/integrationsBackdrop.test.ts"
+    }
+  ],
+  "architecture": {
+    "change": "extends_canonical",
+    "reason": "Existing public marketing layer and authenticated Xroga Connect plugin marketplace are preserved, without a second integration runtime or credential path.",
+    "rfc": null
+  },
+  "rollout": "Preview environment only after checks. Never merge, promote, or reassign xroga.com domain without a separate explicit production approval.",
+  "rollback": "Discard the branch or revert its /integrations UI/data/stylesheet/test/manifest files; production main unaffected.",
+  "knownGaps": [
+    "711 is the static build technology catalog count as of this branch; it is NOT 711 authorized, live provider connectors, 2,000+ live connectors, 3,000+, or unlimited integrations.",
+    "Auth scheme and real tools/triggers are discovered on authenticated detail; public cards never claim an exact count or an already-connected account.",
+    "Custom MCP links to existing /dashboard/integrations?view=custom and depends on runtime configuration, security checks and supported server compatibility.",
+    "Brand images use existing external Simple Icons mappings and fall back to letters where unsupported.",
+    "No real browser screenshot or deployment is claimed until a verified exact-commit preview exists.",
+    "Repository-wide CI contains historical mission-policy and inventory checks unrelated to this scoped UI; must not bypass.",
+    "Full interactive search/keyboard/breakpoint checks require actual browser preview.",
+    "External agents are not directly integrated into Xroga as connected providers. Their visible 'GitHub handoff' workflow reuses the separately authorized repo, with each provider's independent access.",
+    "24/7 automation is a potential supported workflow category, not a claim that every integration runs continuously; scheduler support and provider availability require validation per task.",
+    "The workspace currently reports 1,743 available, but exact provider inventory and count are runtime metadata. Anonymous visitors may not be allowed to fetch the tenant-filtered API; fallback intentionally displays 711 static examples while the workspace link exposes the full authorized plugin list.",
+    "The reused PluginBrandLogo combines Xroga's known icon mappings, provider-supplied logo URLs, Simple Icons fallback and honest initials when no supported logo is available; not every listed technology has a guaranteed first-party image.",
+    "The browser extension is reported by owner but not verifiably connected to /dashboard/automations in this branch. One-click calls to action only navigate to workspace/automations and do not claim automatic browser execution.",
+    "Preview Vercel builds only the frontend. The new backend endpoint is not present on the production API until a separately authorized, vetted backend deployment. Preview anonymous sessions therefore show truthful curated app examples and sign-in instructions; the full provider catalog can load for an authenticated browser using existing auth route.",
+    "Provider-reported totalItems can include catalog items filtered by platform policy; present as provider-reported, not a guarantee of each user having access or all tools working.",
+    "Public republishing terms/license for Composio app names, logos and descriptions and egress-rate economics must be approved before production exposure.",
+    "Per-process anonymous request limiter is only a preview defense; production needs a shared edge/CDN enforcement policy before exposing catalog publicly at scale.",
+    "The repo contains only eight checked-in brand SVG files and 15 curated plugin definitions, not a static 1,743-app dataset. The authenticated Xroga Connect catalog is the source of the larger provider total and descriptions; an isolated preview backend is required to show the full anonymous directory without exposing private API credentials.",
+    "The Vercel git-branch alias auto-updates after successful preview deployments; immutable per-commit deployment hostnames are snapshots and should not be shared as the single continuing review URL.",
+    "Browser-level screenshot and hover/scroll inspection on the exact-head preview remains required; background is copied directly from the homepage source, but it will not be claimed visually verified before a successful new Vercel preview.",
+    "User screenshot on 2026-11-16 shows a row of GitHub/Slack/Shopify/Notion/Stripe/Supabase pill logos below hero CTAs. That row is removed; hero retains floating real SVG marks from repo and app cards rely on real provider logo metadata or explicit verified mapping.",
+    "This design branch does not have authenticated Google Cloud Run deployment access. The existing Google API release process requires native image, identity, secret-version and rollback verification. Do not infer a GCP deployment from merging the frontend PR."
+  ],
+  "placeholderClaimsRemaining": [],
+  "evidenceRefs": [
+    "frontend/src/app/integrations/page.tsx",
+    "frontend/src/app/integrations/IntegrationsMarketplace.tsx",
+    "frontend/src/app/integrations/integrations.css",
+    "frontend/src/lib/publicIntegrationsDirectory.ts",
+    "frontend/src/lib/publicIntegrationsDirectory.test.ts",
+    "frontend/src/lib/integrationDiscoveryFilters.ts",
+    "frontend/src/lib/externalAgentWorkflows.ts",
+    "frontend/src/lib/externalAgentWorkflows.test.ts",
+    "frontend/src/lib/liveIntegrationDiscovery.ts",
+    "frontend/src/lib/liveIntegrationDiscovery.test.ts",
+    "backend/src/index.ts",
+    "backend/src/routes/publicIntegrationsCatalog.ts",
+    "backend/src/services/integrations/publicCatalogProjection.ts",
+    "backend/src/services/integrations/publicCatalogProjection.test.ts",
+    "frontend/src/lib/publicConnectCatalog.ts",
+    "frontend/src/components/integrations/PluginBrandLogo.tsx",
+    ".github/workflows/public-integrations-catalog-check.yml",
+    "frontend/src/lib/publicIntegrationLogo.ts",
+    "frontend/src/lib/publicIntegrationLogo.test.ts",
+    "frontend/src/app/integrations/integrationsBackdrop.test.ts"
+  ],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "BLOCKED",
+    "blockers": [
+      "Frontend exact-head build and backend exact-head TypeScript/tests must pass.",
+      "Public backend metadata API needs isolated staging smoke tests and security/rate limit/license review before any prod API release.",
+      "Visual QA preview real logo load, full list on approved backend, responsive sticky sidebar and filter search.",
+      "Repository-wide unit/mission-policy/tenant-security existing failures not bypassed.",
+      "No production frontend or backend merge/deployment without separate user approval.",
+      "New dedicated Public Integrations Catalog Check must pass at exact final commit.",
+      "Public catalog API /api/public/integrations/catalog has not been verified deployed on api.xroga.com with an exact accessible >=1,700 honest provider listing, source summaries and real logos; no fallback 15/711 promoted to production.",
+      "Composio API content/logo public commercial republishing rights are unverified under the effective 2026-10-17 terms. Do not publish the unauthorized metadata endpoint.",
+      "Exact preview build, end-to-end anonymous visual UI review, and the explicit staging-to-production backend + frontend release and rollback validation must pass before making xroga.com/integrations live.",
+      "Composio's 2026-10-17 Terms restrict commercial reuse of platform contents; full public descriptions and logo republication need confirmed rights and 1,700+ runtime API evidence before release."
+    ],
+    "authenticatedE2e": "NOT_APPLICABLE",
+    "stagedSecurity": "NOT_APPLICABLE",
+    "liveUrl": null,
+    "deployedSha": null
+  }
+}
