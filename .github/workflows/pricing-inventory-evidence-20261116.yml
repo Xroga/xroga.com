@@ -26,6 +26,10 @@ jobs:
         run: node scripts/xroga/inventory.mjs --refresh
       - name: Verify regenerated inventory
         run: node scripts/xroga/inventory.mjs --check
+      - name: Generate exact-source egress caller inventory
+        run: node scripts/security/audit-egress-callers.mjs --write
+      - name: Verify regenerated egress caller inventory
+        run: node scripts/security/audit-egress-callers.mjs
       - name: Record only non-secret generated inventory
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
@@ -37,3 +41,4 @@ jobs:
             docs/xroga/current-state-schema.json
             docs/xroga/current-state.md
             docs/xroga/blockers.md
+            docs/xroga/security/egress-callers.json
