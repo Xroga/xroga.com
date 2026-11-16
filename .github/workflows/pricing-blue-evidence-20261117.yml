@@ -13,7 +13,7 @@ jobs:
       - name: Checkout exact reviewed pricing source without credentials
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
-          ref: 903229759cf86dd58dde6e890c691911c22df7e0
+          ref: d8ab7ef2651901e7ce433a7f6626279457154dbf
           path: source
           fetch-depth: 0
           persist-credentials: false
