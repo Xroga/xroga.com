@@ -14,7 +14,7 @@ jobs:
       - name: Checkout exact pricing release source without credentials
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
-          ref: 21aa69299f3001d5750866bce4691aed39bfb2f4
+          ref: a11a03dea897cbd449020639714936f6bad0ff34
           path: source
           fetch-depth: 0
           persist-credentials: false
@@ -25,13 +25,11 @@ jobs:
       - name: Install locked source workspaces
         working-directory: source
         run: npm ci
-      - name: Validate bounded inventories and regenerate provenance-linked requirements
+      - name: Generate source-bound runtime inventory without changing application code
         working-directory: source
         run: |
-          node scripts/xroga/inventory.mjs --check
-          node scripts/security/audit-egress-callers.mjs
-          node scripts/xroga/reconcile-requirements.mjs
-          node scripts/xroga/validate-requirements-ledger.mjs
+          node scripts/xroga/runtime-inventory.mjs
+          node scripts/xroga/check-runtime-config.mjs
       - name: Checkout diagnostics branch only after untrusted code execution
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
@@ -42,16 +40,12 @@ jobs:
         working-directory: receipt
         run: |
           set -euo pipefail
-          mkdir -p docs/xroga/research
-          cp ../source/docs/xroga/research/source-manifest.json docs/xroga/research/source-manifest.json
-          cp ../source/docs/xroga/requirements-ledger.json docs/xroga/requirements-ledger.json
-          cp ../source/docs/xroga/requirements-ledger.schema.json docs/xroga/requirements-ledger.schema.json
-          cp ../source/docs/xroga/requirements-ledger.md docs/xroga/requirements-ledger.md
-          cp ../source/docs/xroga/feature-coverage.csv docs/xroga/feature-coverage.csv
-          cp ../source/docs/xroga/research/source-reconciliation.md docs/xroga/research/source-reconciliation.md
-          cp ../source/docs/xroga/repository-candidate-register.md docs/xroga/repository-candidate-register.md
-          git add docs/xroga/research/source-manifest.json docs/xroga/requirements-ledger.json docs/xroga/requirements-ledger.schema.json docs/xroga/requirements-ledger.md docs/xroga/feature-coverage.csv docs/xroga/research/source-reconciliation.md docs/xroga/repository-candidate-register.md
+          mkdir -p docs/xroga
+          for name in dependency-inventory.json dependency-inventory.schema.json deployment-topology.md deployment-topology.mmd secret-inventory.md runtime-contract.md; do
+            cp "../source/docs/xroga/$name" "docs/xroga/$name"
+            git add "docs/xroga/$name"
+          done
           git config user.name "Xroga Evidence Bot"
           git config user.email "evidence-bot@users.noreply.github.com"
-          git diff --cached --quiet || git commit -m "[inventory-generated] exact pricing requirements integrity reconciliation"
+          git diff --cached --quiet || git commit -m "[inventory-generated] exact pricing runtime inventory provenance"
           git push origin HEAD:diagnostics/pricing-inventory-20261116
