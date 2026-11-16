@@ -2149,3 +2149,5 @@
 @media (prefers-reduced-motion: reduce) {
   .comparePlanHeading a, .groupToggle > svg, .proCard:hover .showcaseOrb { transition: none; transform: none; }
 }
+
+/* Pricing-only release: plan cards and comparison styling are isolated from other site routes. */
