@@ -3,10 +3,40 @@ import { test } from 'node:test';
 import { createElement, Fragment } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { publicAnswerText } from '@/lib/publicAnswerText';
+import { createParser, type LibraryJSONSchema } from '@openuidev/lang-core';
+import catalog from '../../../../../../backend/src/ai/nativeOpenUiCatalog.json';
+import { bindNativeAnswerText } from '../../../../../../backend/src/ai/nativeOpenUi';
 import { initialNativeValueReader } from '../../../../../../backend/src/ai/nativeOpenUiValues';
-import { inline, MarkdownBlocks, nativeMarkdownMatches, preservedMarkdownTableKeys, tableContentKey } from './markdown';
+import { inline, MarkdownBlocks, nativeMarkdownMatches, preservedMarkdownTableKeys, proseOutsideNativeDocuments, tableContentKey } from './markdown';
 
 const render = (source: string) => renderToStaticMarkup(createElement(Fragment, null, inline(source)));
+
+test('one complete native Markdown document replaces only its exact readable copy', () => {
+  const text = '## Terms\n\n1. Read [1].\n2. Compare.\n\n| Plan | Price |\n|---|---|\n| Basic | $10 |';
+  const matches = nativeMarkdownMatches({type: 'element', typeName: 'Markdown', props: {text}});
+  assert.equal(proseOutsideNativeDocuments(text, matches), '');
+  assert.equal(proseOutsideNativeDocuments(text + '\n\nUnique native detail.', matches), 'Unique native detail.');
+  assert.equal(proseOutsideNativeDocuments(text.replace('$10', '$11'), matches), text.replace('$10', '$11'));
+  assert.equal(proseOutsideNativeDocuments(text, undefined), text);
+  const hidden = nativeMarkdownMatches({type: 'element', typeName: 'Flashcard', props: {back: {type: 'element', typeName: 'Markdown', props: {text}}}});
+  assert.equal(proseOutsideNativeDocuments(text, hidden), text);
+});
+
+test('upstream parser resolves the canonical answer and rich table without duplicating either', () => {
+  const text = 'Basic includes one seat.\n\n1. Read the terms.\n2. Compare.\n\n| Plan | Seats |\n|---|---|\n| Basic | 1 |';
+  const program = bindNativeAnswerText('root = Col([Markdown(_xroga_answer), Table(["Plan", "Seats"], [["Basic", 1]])])', text);
+  const root = createParser(catalog.schema as LibraryJSONSchema, 'Col').parse(program).root;
+  const matches = nativeMarkdownMatches(root, initialNativeValueReader(program));
+  assert.ok(matches.documents.has(text));
+  assert.equal(proseOutsideNativeDocuments(text, matches), '');
+  const html = renderToStaticMarkup(createElement(MarkdownBlocks, {text, nativeTables: matches.tables}));
+  assert.match(html, /Basic includes one seat/);
+  assert.match(html, /<ol/);
+  assert.doesNotMatch(html, /<table/);
+  const fallback = renderToStaticMarkup(createElement(MarkdownBlocks, {text}));
+  assert.match(fallback, /<table/);
+  assert.match(fallback, /Read the terms/);
+});
 
 test('native paragraphs match emphasis-only prose and unordered items without hiding distinct content', () => {
   const matches = nativeMarkdownMatches({ type: 'element', typeName: 'Col', props: { children: [

@@ -25,6 +25,33 @@ export function splitNativeOpenUiAnswer(raw: string, streaming = false) {
   return scanNativeOpenUiAnswer(raw, streaming, true);
 }
 
+/** Bind the existing Markdown component to the same complete readable answer.
+ * The saved program stays self-contained. No model call or client-only state. */
+export function bindNativeAnswerText(program: string, prose: string): string {
+  if (!prose || program.length > MAX_PROGRAM_CHARS) return program;
+  try {
+    const tokens = tokenize(program);
+    if (tokens.length > 4800) return program;
+    let depth = 0;
+    for (const token of tokens) {
+      if ([1, 3, 5].includes(token.t)) depth++;
+      if ([2, 4, 6].includes(token.t)) depth--;
+      if (depth < 0 || depth > 18) return program;
+    }
+    if (depth) return program;
+    const statements = split(tokens);
+    if (statements.length > 96 || statements.some(statement => statement.tokens.length > 1200)) return program;
+    if (statements.some(statement => statement.id === '_xroga_answer')) return program;
+    let referenced = false;
+    for (const statement of statements) walkAST(parseExpression(statement.tokens), node => {
+      if (node.k === 'Ref' && node.n === '_xroga_answer') referenced = true;
+    });
+    return referenced ? program + '\n_xroga_answer = ' + JSON.stringify(prose) : program;
+  } catch {
+    return program; // Existing validation and readable recovery remain authoritative.
+  }
+}
+
 function scanNativeOpenUiAnswer(raw: string, streaming: boolean, allowJsonEnvelope: boolean): { text: string; program: string } {
   const normalized = raw.replace(/\r\n/g, '\n');
   const marker = NATIVE_UI_MARKER.trim();

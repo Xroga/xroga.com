@@ -4,6 +4,7 @@ import { nativeAnswerReviewReason, nativeFactualGuidance, nativeTechnicalCorrect
 import { checklistFromProse, requestsEditableChecklist, suppliedPeriodicSeries } from './nativeOpenUiRecovery.js';
 import { conflictingNativeReadouts, initialNativeReadouts } from './nativeOpenUiValues.js';
 import { recoverNativeReadoutExplanations } from './nativeOpenUi.js';
+import { bindNativeAnswerText } from './nativeOpenUi.js';
 
 const outputLimitNote = 'This answer reached the provider output limit. The available answer is shown below.';
 
@@ -24,7 +25,8 @@ export function completeNativeWorkspaceAnswer(
     | { stage: 'assembly'; reason: 'missing_formats'; formats: RequiredNativeFormat[] }) => void,
   requiredFormats: readonly RequiredNativeFormat[] = [],
 ) {
-  const { text: prose, program: originalProgram } = splitNativeOpenUiAnswer(raw);
+  const { text: prose, program: generatedProgram } = splitNativeOpenUiAnswer(raw);
+  const originalProgram = bindNativeAnswerText(generatedProgram, prose);
   let factualRule: NativeUiDiagnostic['factualRule'];
   const original = originalProgram ? validateNativeWorkspaceProgram(originalProgram, evidenceIds, prose, event => {
     factualRule = event.factualRule;

@@ -62,6 +62,7 @@ type Block =
   | { kind: "table"; head: string[]; rows: string[][] };
 
 export const VisibleMarkdownTables = createContext<ReadonlySet<string> | null>(null);
+export const NativeVisualTables = createContext<ReadonlySet<string> | undefined>(undefined);
 
 // Only compare scalar cells. Retain distinct data and cells with components.
 export function tableContentKey(head: readonly string[], rows: readonly unknown[][]): string | undefined {
@@ -98,6 +99,7 @@ function citationTextKey(text: string): string {
 }
 
 type MarkdownMatches = {
+  documents: ReadonlySet<string>;
   paragraphs: ReadonlySet<string>;
   titles: ReadonlySet<string>;
   code: ReadonlySet<string>;
@@ -111,6 +113,7 @@ const listKey = (items: readonly string[]) => JSON.stringify(items.map(textKey))
 
 /** Match literal content only. Distinct wording and citation markers stay visible. */
 export function nativeMarkdownMatches(root: unknown, readInitial: (value: unknown) => unknown = value => value): MarkdownMatches {
+  const documents = new Set<string>();
   const paragraphs = new Set<string>();
   const titles = new Set<string>();
   const code = new Set<string>();
@@ -182,8 +185,10 @@ export function nativeMarkdownMatches(root: unknown, readInitial: (value: unknow
     if (typeName === "Code" && typeof props.code === "string" && !isPresentationLanguage(typeof props.language === "string" ? props.language : undefined)) {
       code.add(props.code.trimEnd());
     }
-    if (typeName === "Markdown" && typeof props.text === "string") {
-      for (const block of blocks(props.text)) {
+    const markdown = typeName === "Markdown" ? readInitial(props.text) : undefined;
+    if (typeof markdown === "string") {
+      documents.add(markdown);
+      for (const block of blocks(markdown)) {
         if (block.kind === "p") paragraphs.add(citationTextKey(block.text));
         if (block.kind === "h") titles.add(textKey(block.text));
         if (block.kind === "code") code.add(block.text.trimEnd());
@@ -215,7 +220,17 @@ export function nativeMarkdownMatches(root: unknown, readInitial: (value: unknow
     Object.values(props).forEach(visit);
   }
   visit(root);
-  return { paragraphs, titles, code, tables, relationships, checklists, listItems };
+  return { documents, paragraphs, titles, code, tables, relationships, checklists, listItems };
+}
+
+/** Only remove a complete verbatim document already visible in native Markdown.
+ * Do not infer semantic equivalence or drop distinct trailing information. */
+export function proseOutsideNativeDocuments(text: string, matches?: MarkdownMatches): string {
+  for (const document of [...(matches?.documents ?? [])].sort((a, b) => b.length - a.length)) {
+    if (text === document) return '';
+    if (document && text.startsWith(document + '\n\n')) return text.slice(document.length + 2);
+  }
+  return text;
 }
 
 const LIST_ITEM = /^\s{0,3}([-*+]|(\d+)[.)])\s+(.*)$/;
@@ -296,7 +311,7 @@ function blocks(source: string): Block[] {
   return out;
 }
 
-export function MarkdownBlocks({ text, renderCitation, deduplicateTables = false, matches }: { text: string; renderCitation?: RenderCitation; deduplicateTables?: boolean; matches?: MarkdownMatches }) {
+export function MarkdownBlocks({ text, renderCitation, deduplicateTables = false, matches, nativeTables }: { text: string; renderCitation?: RenderCitation; deduplicateTables?: boolean; matches?: MarkdownMatches; nativeTables?: ReadonlySet<string> }) {
   const seenTables = new Set<string>();
   return (
     <>
@@ -341,8 +356,8 @@ export function MarkdownBlocks({ text, renderCitation, deduplicateTables = false
             );
           }
           case "table": {
-            const tableKey = deduplicateTables || matches ? tableContentKey(b.head, b.rows) : undefined;
-            if (tableKey && !tableHasLinks(b.head, b.rows) && (seenTables.has(tableKey) || matches?.tables.has(tableKey))) return null;
+            const tableKey = deduplicateTables || matches || nativeTables ? tableContentKey(b.head, b.rows) : undefined;
+            if (tableKey && !tableHasLinks(b.head, b.rows) && (seenTables.has(tableKey) || matches?.tables.has(tableKey) || nativeTables?.has(tableKey))) return null;
             if (tableKey) seenTables.add(tableKey);
             return (
               <div key={k} className={cx("iui-table-scroll", isLongAnswerTable(b.rows.length) && "iui-table-bounded")} role="group" aria-label="Answer table" tabIndex={0}>

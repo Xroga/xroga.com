@@ -6,7 +6,21 @@ import { buildNativeOpenUiShare, readNativeOpenUiShare } from './nativeOpenUiSha
 import { readNativeOpenUiRun } from './nativeOpenUiRun.js';
 import { completeNativeWorkspaceAnswer, usesNativeWorkspacePresentation } from './nativeOpenUiWorkspace.js';
 import { requiredNativeFormats } from './answerCoverage.js';
-import { nativeReadableTextKey } from './nativeOpenUi.js';
+import { bindNativeAnswerText, nativeReadableTextKey } from './nativeOpenUi.js';
+
+test('native Markdown references the complete readable answer without generating a second explanation', () => {
+  const prose = '## Answer\n\nUse **Basic** for one seat.\n\n1. Read the terms.\n2. Compare the total.\n\nLiteral example: `_xroga_answer = "example"`.';
+  const program = 'root = Col([Markdown(_xroga_answer), Table(["Plan", "Seats"], [["Basic", 1], ["Team", 5]])])';
+  const answer = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + program, 'stop');
+  assert.equal(answer.completion.status, 'complete');
+  assert.ok(answer.response.startsWith(prose));
+  assert.match(answer.responseSource.text, /_xroga_answer = /);
+  assert.equal(validateNativeOpenUi(answer.responseSource.text).ok, true);
+  assert.equal(bindNativeAnswerText('root = Col([Text("_xroga_answer")])', prose), 'root = Col([Text("_xroga_answer")])');
+  assert.equal(bindNativeAnswerText(program + '\n_xroga_answer = "Existing saved content"', prose), program + '\n_xroga_answer = "Existing saved content"');
+  const invalid = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + 'root = Unknown(_xroga_answer)', 'stop');
+  assert.ok(invalid.response.includes(prose), 'Invalid visuals retain every readable paragraph');
+});
 
 test('readable snapshots do not repeat native text because emphasis differs', () => {
   const prose = '**Basic** costs $10/month.\n\nKey points:\n- **One person:** Basic includes one seat.\n- Keep this distinct caveat.\n\nPrice is $10 [1].';
@@ -75,10 +89,10 @@ test('the model gets instructions from the native registry and may answer in tex
   for (const name of ['Col(', 'Chart(', 'Slider(', 'Svg(', 'Diagram(', 'Section(', 'Table(', 'Payment(', 'Source(']) assert.ok(nativeOpenUiPrompt.includes(name), name);
   assert.match(nativeOpenUiPrompt, /The OpenUI program is the primary rich answer/);
   assert.match(nativeOpenUiPrompt, /first give the complete readable answer in Markdown/);
-  assert.match(nativeOpenUiPrompt, /readable answer must stand on its own if the visual cannot be recovered/);
-  assert.match(nativeOpenUiPrompt, /include the formula, initial inputs and initial result/);
-  assert.match(nativeOpenUiPrompt, /without writing a second, paraphrased explanation/);
-  assert.match(nativeOpenUiPrompt, /copy the corresponding readable paragraph verbatim/);
+  assert.match(nativeOpenUiPrompt, /readable answer must stand on its own if a visual fails/);
+  assert.match(nativeOpenUiPrompt, /formulas, initial inputs and initial results/);
+  assert.match(nativeOpenUiPrompt, /do not copy or paraphrase the explanation/);
+  assert.match(nativeOpenUiPrompt, /Use Markdown\(_xroga_answer\) once in your visible layout/);
   assert.match(nativeOpenUiPrompt, /do not present a bundle-based break-even point or recommendation as fact/);
   assert.deepEqual(splitNativeOpenUiAnswer('Paris.'), { text: 'Paris.', program: '' });
   assert.deepEqual(splitNativeOpenUiAnswer('Paris.\n<<<XROGA_OP', true), { text: 'Paris.', program: '' });

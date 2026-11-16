@@ -8,6 +8,10 @@ import AxeBuilder from '@axe-core/playwright';
 import { tsImport } from 'tsx/esm/api';
 
 const cases = {
+  sharedAnswer: {
+    raw: 'Basic includes one seat.\n\n1. Read the terms.\n2. Compare the total.\n\n| Plan | Seats |\n|---|---|\n| Basic | 1 |\n<<<XROGA_OPENUI_V1>>>\nroot = Col([Markdown(_xroga_answer), Table(["Plan", "Seats"], [["Basic", 1]])])',
+    completion: 'complete',
+  },
   scrollingCode: {
     text: 'Read the complete formula with a keyboard.',
     program: 'root = Col([Code(' + JSON.stringify('monthlyPayment = principal * monthlyRate * (1 + monthlyRate) ** paymentCount / ((1 + monthlyRate) ** paymentCount - 1)') + ', "text"), Markdown(' + JSON.stringify('```text\nmonthlyPayment = principal * monthlyRate * (1 + monthlyRate) ** paymentCount / ((1 + monthlyRate) ** paymentCount - 1)\n```') + ')])',
@@ -193,6 +197,16 @@ try {
       await open('short');
       await page.getByText(cases.short.text, { exact: true }).waitFor();
       assert.equal(await page.getByRole('slider').count(), 0);
+      await open('sharedAnswer');
+      await page.getByText('Basic includes one seat.', { exact: true }).waitFor();
+      assert.equal(await page.getByText('Basic includes one seat.', { exact: true }).count(), 1);
+      assert.equal(await page.locator('ol li').count(), 2);
+      assert.equal(await page.getByRole('table').count(), 1);
+      await page.getByRole('cell', { name: 'Basic', exact: true }).waitFor();
+      assert.doesNotMatch(await page.getByRole('region', { name: 'Answer', exact: true }).innerText(), /_xroga_answer|root\s*=/);
+      if ([390, 1440].includes(viewport.width)) {
+        await page.screenshot({ path: resolve(output, channel + '-shared-answer-' + viewport.width + '-' + theme + '.png'), fullPage: true });
+      }
       await open('recovered');
       await page.getByText(/Some visuals could not be validated/).waitFor();
       await page.getByText('The API verifies organization membership before reading rows.', { exact: true }).waitFor();

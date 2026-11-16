@@ -5219,7 +5219,7 @@
       "id": "surface:456e62cb099b42e5c2a2",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUi.ts",
-      "sha256": "ec70157ab89742dccb42d7321ebe146010d81fc5fa871262f05c3b4d9784b67b",
+      "sha256": "ddec4c650c03c4afa5600fad85daf80ad2ba5e39b56d12f34dc16690d31ac110",
       "symbols": [
         "MAX_PROGRAM_CHARS",
         "NATIVE_UI_FORMAT",
@@ -5235,6 +5235,7 @@
         "args",
         "array",
         "available",
+        "bindNativeAnswerText",
         "binding",
         "body",
         "branches",
@@ -5257,6 +5258,7 @@
         "declarations",
         "deepSeekToolClosingSuffix",
         "deferChart",
+        "depth",
         "diagramField",
         "diagramTopology",
         "element",
@@ -5357,6 +5359,7 @@
         "recovered",
         "reference",
         "referenceIssue",
+        "referenced",
         "reject",
         "remaining",
         "render",
@@ -5443,12 +5446,14 @@
         "backend/src/ai/nativeOpenUiValues.test.ts:6",
         "backend/src/ai/nativeOpenUiWorkspace.ts:2",
         "backend/src/ai/nativeOpenUiWorkspace.ts:6",
+        "backend/src/ai/nativeOpenUiWorkspace.ts:7",
         "backend/src/ai/pipeline.ts:25",
         "backend/src/routes/nativeOpenUiEvaluation.ts:13",
         "backend/src/services/integrations/researchResult.ts:8",
         "frontend/src/app/share/[token]/page.tsx:2",
         "frontend/src/components/native-openui/NativeSurface.tsx:9",
         "frontend/src/components/native-openui/NativeWorkspaceAnswer.tsx:12",
+        "frontend/src/components/native-openui/upstream/components/markdown.test.ts:8",
         "frontend/src/components/native-openui/upstream/components/markdown.tsx:5",
         "frontend/src/lib/publicAnswerText.ts:1"
       ],
@@ -5466,7 +5471,8 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/ai/nativeOpenUi.test.ts",
-        "backend/src/ai/nativeOpenUiValues.test.ts"
+        "backend/src/ai/nativeOpenUiValues.test.ts",
+        "frontend/src/components/native-openui/upstream/components/markdown.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -5810,7 +5816,7 @@
       "id": "surface:a67f0b1fa2dd0f11a67f",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiPrompt.ts",
-      "sha256": "be36dd8967f55face57fea44fe05fe3a2ee55cf2b17dcc623ca3c2d0ec97d816",
+      "sha256": "99d4677f594eb7195ee9349a919edc2c781205c23461098e594ac3a2a74d6a98",
       "symbols": [
         "buildNativeOpenUiPrompt",
         "comparisonConsistencyRule",
@@ -6098,7 +6104,7 @@
         "backend/src/ai/nativeOpenUiValues.test.ts:3",
         "backend/src/ai/nativeOpenUiWorkspace.ts:5",
         "frontend/src/components/native-openui/NativeSurface.tsx:10",
-        "frontend/src/components/native-openui/upstream/components/markdown.test.ts:6"
+        "frontend/src/components/native-openui/upstream/components/markdown.test.ts:9"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -6127,7 +6133,7 @@
       "id": "surface:93911e9946fd4b21d50d",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiWorkspace.ts",
-      "sha256": "9095d62b6fa7186ca80c48c1d268c541eb6c941bb4951d238fae0724495a7c87",
+      "sha256": "16806f08b8af42cbe067644162f3cb533ac8a07866b699208d3286bdd8fe981b",
       "symbols": [
         "completeNativeWorkspaceAnswer",
         "completion",
@@ -6141,6 +6147,7 @@
         "localProgram",
         "missing",
         "original",
+        "originalProgram",
         "outputLimitNote",
         "program",
         "readable",
@@ -87800,7 +87807,7 @@
       "id": "surface:169100c09d49c9650f7a",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/NativeSurface.tsx",
-      "sha256": "378fd03db8b24f116cbcba68d6c18fae1800717bf85ac548c3ddf9671a2a4f10",
+      "sha256": "7435061393f4d29b92214a925562376a12ac964ebcafe3b334207adcc1a6961c",
       "symbols": [
         "NativeAnswer",
         "NativeSurface",
@@ -87813,6 +87820,7 @@
         "hasSummary",
         "ids",
         "matches",
+        "outside",
         "parser",
         "prefix",
         "prose",
@@ -88704,13 +88712,14 @@
       "id": "surface:0fef6875af5860e2f4b4",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/markdown.tsx",
-      "sha256": "e5f039380cb5250d635ce7dda81956db2789becc7533ad105a6d6fc682d14712",
+      "sha256": "510d273a9a30cd98f21f4e2c7ef861204f23fc7700cbadbedcc0ac6bae66e6eb",
       "symbols": [
         "Block",
         "INLINE",
         "LIST_ITEM",
         "MarkdownBlocks",
         "MarkdownMatches",
+        "NativeVisualTables",
         "RenderCitation",
         "VisibleMarkdownTables",
         "block",
@@ -88724,6 +88733,8 @@
         "code",
         "columns",
         "destination",
+        "document",
+        "documents",
         "entries",
         "fence",
         "from",
@@ -88745,6 +88756,7 @@
         "listItems",
         "listKey",
         "m",
+        "markdown",
         "n",
         "nativeMarkdownMatches",
         "next",
@@ -88757,6 +88769,7 @@
         "parts",
         "plain",
         "preservedMarkdownTableKeys",
+        "proseOutsideNativeDocuments",
         "relationships",
         "rest",
         "rows",
@@ -88799,7 +88812,7 @@
         "frontend/src/components/native-openui/Evaluation.tsx:7",
         "frontend/src/components/native-openui/NativeSurface.tsx:11",
         "frontend/src/components/native-openui/upstream/components/extra.tsx:9",
-        "frontend/src/components/native-openui/upstream/components/markdown.test.ts:7",
+        "frontend/src/components/native-openui/upstream/components/markdown.test.ts:10",
         "frontend/src/components/native-openui/upstream/components/table.tsx:6",
         "frontend/src/components/native-openui/upstream/components/text.tsx:8"
       ],
@@ -89046,7 +89059,7 @@
       "id": "surface:c0e107e03bc08dc07fad",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/text.tsx",
-      "sha256": "73e646222f5da35075a1b2752e3c2891565c6e7a2c5f1cb3164b8ff3bfcb3713",
+      "sha256": "3697e11b9303e48d532c18987b7b9839ed8bbe933bae9f42c0657253a0cf2d20",
       "symbols": [
         "Badge",
         "Caption",
@@ -89065,6 +89078,7 @@
         "isNode",
         "items",
         "marker",
+        "nativeTables",
         "renderCitation",
         "rich",
         "richText",
@@ -127794,7 +127808,7 @@
       "id": "surface:bd6af899f2dd9df930f6",
       "subsystem": "browser_sandbox",
       "sourcePath": "scripts/verify-native-openui-browser.mjs",
-      "sha256": "6087bd0515344f87801c36b244aa0427413307460a7c9a6ce3e175680ae6c1a1",
+      "sha256": "4472f4fe141576d61cb31d7f4748189dace9c2d75d26cbdd80c03a8e50a731b7",
       "symbols": [
         "accessibility",
         "answer",
@@ -142460,7 +142474,7 @@
   ],
   "findings": [
     {
-      "id": "finding:340cea21055541da78bc",
+      "id": "finding:09b1ae6506871579e728",
       "sourcePath": "backend/src/ai/nativeOpenUiPrompt.ts",
       "line": 52,
       "kind": "PLACEHOLDER",
@@ -150457,7 +150471,7 @@
     {
       "id": "test-suite:2e491f4d2fcbc11f974c",
       "sourcePath": "backend/src/ai/nativeOpenUi.test.ts",
-      "declaredTests": 65,
+      "declaredTests": 66,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -155728,7 +155742,7 @@
     {
       "id": "test-suite:4ce9d7bbf578638998f1",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/markdown.test.ts",
-      "declaredTests": 12,
+      "declaredTests": 14,
       "skipLocations": [],
       "focusLocations": []
     },
