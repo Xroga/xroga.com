@@ -276,7 +276,11 @@ export function IntegrationsMarketplace({
 
   const directoryItems = liveItems ?? items;
   const directoryCategories = useMemo(
-    () => liveItems ? liveIntegrationCategories(liveItems) : categories,
+    () => liveItems
+      ? liveIntegrationCategories(liveItems)
+      : categories.map(option => option.id === 'all'
+        ? { ...option, label: 'Featured apps' }
+        : option),
     [liveItems, categories],
   );
 
@@ -357,7 +361,7 @@ export function IntegrationsMarketplace({
             ? `${liveTotal.toLocaleString()} provider apps listed by Xroga Connect.${catalogBusy ? ' Loading more...' : catalogIncomplete ? ' Some results could not be loaded.' : ''}`
             : catalogBusy
               ? 'Loading the Xroga Connect app directory...'
-              : 'Explore featured Xroga integrations below. The full, up-to-date app directory is in your workspace.'}</p>
+              : `Showing ${items.length} source-backed featured apps. The full provider directory is not available on this preview yet; browse it in your workspace.`}</p>
           {!catalogBusy && liveItems === null && (
             <Link href="/dashboard/integrations" className="xi-catalog-continue">
               Browse all apps in your workspace <ArrowUpRight size={16} aria-hidden="true"/>
