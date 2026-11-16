@@ -4281,6 +4281,19 @@
       "notes": "Git-canonical LF text bytes ingested; historical completion claims are not current verification"
     },
     {
+      "source_id": "SRC-553e68cf457d301f",
+      "filename": "CHECKBOX-LABEL-RECOVERY-20261117.md",
+      "path_or_url": "docs/operations/native-openui/CHECKBOX-LABEL-RECOVERY-20261117.md",
+      "sha256": "63fda8598bc6e410e17fa829bc2a6ca11a1464075f5c96065b23809c7220b585",
+      "byte_size": 2688,
+      "modified_timestamp": "2026-11-16T19:57:48.741Z",
+      "parse_status": "TEXT_READ",
+      "category": "REPOSITORY_DOCUMENT",
+      "authority": "ADVISORY",
+      "analyzed": true,
+      "notes": "Git-canonical LF text bytes ingested; historical completion claims are not current verification"
+    },
+    {
       "source_id": "SRC-50f87a8b4e39d11d",
       "filename": "FINAL-REAL-WORKSPACE-RELEASE.md",
       "path_or_url": "docs/operations/native-openui/FINAL-REAL-WORKSPACE-RELEASE.md",
