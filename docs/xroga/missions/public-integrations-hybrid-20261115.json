@@ -28,6 +28,7 @@
     ".github/workflows/public-integrations-catalog-check.yml",
     "frontend/src/lib/publicIntegrationLogo.ts",
     "frontend/src/lib/publicIntegrationLogo.test.ts",
+    "frontend/src/app/integrations/integrationsBackdrop.test.ts",
     "docs/xroga/missions/public-integrations-hybrid-20261115.json"
   ],
   "decisions": {
@@ -58,7 +59,9 @@
       "Prevent unfounded capabilities: exact tool and trigger counts only when returned as provider metadata; in fallback omit tools/triggers rows instead of 'not verified' filler.",
       "Add a narrowly scoped, permissions-read-only CI workflow to compile the backend public catalog boundary and run source-backed plugin and privacy projection tests independently of historical repository-wide inventory gates.",
       "Use the already-existing stable Vercel git branch alias https://xrogaaicom-git-design-integrations-hybri-9d03b5-xrogas-projects.vercel.app/integrations for all future preview reviews, instead of immutable per-commit URLs. All changes remain on design/integrations-hybrid-20261115 / draft PR #993.",
-      "Prefer the eight actual checked-in Xroga SVG logos, then original provider logo metadata, then explicitly maintained existing logo URL mappings. Render a neutral icon when none exists; never infer brand logo images from names."
+      "Prefer the eight actual checked-in Xroga SVG logos, then original provider logo metadata, then explicitly maintained existing logo URL mappings. Render a neutral icon when none exists; never infer brand logo images from names.",
+      "Reuse exactly the existing homepage-next/backdrop/SharedDotBackdrop.tsx and its CSS module as a single first-child layer of .xi-root on /integrations, covering every section from hero through final CTA while stopping before the shared marketing footer. Do not copy or fork the animation.",
+      "Keep the original homepage 25px static gray-white dot grid, phase-locked eased pointer highlight, and reduced-motion/touch/no-fine-pointer fallbacks. Remove only the Integrations hero's redundant local CSS dot overlay; place all top-level Integrations sections above the shared dot background with transparent section backgrounds."
     ],
     "replace": [
       "Former local header, static 24 small text cards, and minimal /integrations SEO presentation."
@@ -179,6 +182,12 @@
       "scope": "Assert eight real Xroga brand assets, legitimate fallback URL handling and absence of guessed logos.",
       "negative": true,
       "reference": "frontend/src/lib/publicIntegrationLogo.test.ts"
+    },
+    {
+      "command": "npx tsx --test frontend/src/app/integrations/integrationsBackdrop.test.ts",
+      "scope": "Verify homepage shared backdrop mounted once as the first Integrations child; extends through final CTA but not footer; shared CSS and motion preferences retained; section layering keeps grid visible.",
+      "negative": false,
+      "reference": "frontend/src/app/integrations/integrationsBackdrop.test.ts"
     }
   ],
   "architecture": {
@@ -206,7 +215,8 @@
     "Public republishing terms/license for Composio app names, logos and descriptions and egress-rate economics must be approved before production exposure.",
     "Per-process anonymous request limiter is only a preview defense; production needs a shared edge/CDN enforcement policy before exposing catalog publicly at scale.",
     "The repo contains only eight checked-in brand SVG files and 15 curated plugin definitions, not a static 1,743-app dataset. The authenticated Xroga Connect catalog is the source of the larger provider total and descriptions; an isolated preview backend is required to show the full anonymous directory without exposing private API credentials.",
-    "The Vercel git-branch alias auto-updates after successful preview deployments; immutable per-commit deployment hostnames are snapshots and should not be shared as the single continuing review URL."
+    "The Vercel git-branch alias auto-updates after successful preview deployments; immutable per-commit deployment hostnames are snapshots and should not be shared as the single continuing review URL.",
+    "Browser-level screenshot and hover/scroll inspection on the exact-head preview remains required; background is copied directly from the homepage source, but it will not be claimed visually verified before a successful new Vercel preview."
   ],
   "placeholderClaimsRemaining": [],
   "evidenceRefs": [
@@ -228,7 +238,8 @@
     "frontend/src/components/integrations/PluginBrandLogo.tsx",
     ".github/workflows/public-integrations-catalog-check.yml",
     "frontend/src/lib/publicIntegrationLogo.ts",
-    "frontend/src/lib/publicIntegrationLogo.test.ts"
+    "frontend/src/lib/publicIntegrationLogo.test.ts",
+    "frontend/src/app/integrations/integrationsBackdrop.test.ts"
   ],
   "claimsFullProductCompletion": false,
   "claimsAllBatchCommandsComplete": false,
