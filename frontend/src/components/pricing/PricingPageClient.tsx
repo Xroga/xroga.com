@@ -18,7 +18,6 @@ import {
   CreditCard,
   FileStack,
   GitBranch,
-  Info,
   Orbit,
   Rocket,
   Search,
@@ -219,24 +218,6 @@ function CtaParticles() {
   );
 }
 
-function FullAccessInfo() {
-  return (
-    <span className={styles.tooltipWrap}>
-      <button
-        type="button"
-        className={styles.infoButton}
-        aria-label="What is Full Access pacing?"
-      >
-        <Info aria-hidden="true" />
-      </button>
-      <span className={styles.tooltip} role="tooltip">
-        Where enabled, pacing can make existing work capacity available sooner.
-        It does not increase the overall allowance.
-      </span>
-    </span>
-  );
-}
-
 export function PricingPageClient() {
   const router = useRouter();
   const [loggedIn, setLoggedIn] = useState(false);
@@ -357,7 +338,7 @@ export function PricingPageClient() {
                         </span>
                         <span>
                           {feature}
-                          {feature === 'Full Access pacing' ? <FullAccessInfo /> : null}
+                          
                         </span>
                       </li>
                     ))}
