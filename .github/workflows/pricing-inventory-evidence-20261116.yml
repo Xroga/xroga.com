@@ -1,51 +1,43 @@
-name: Pricing source-bound inventory diagnostic
+name: Pricing release downstream integrity check
 on:
   push:
     branches:
       - diagnostics/pricing-inventory-20261116
 permissions:
-  contents: write
+  contents: read
 jobs:
-  source-audit:
-    if: ${{ !contains(github.event.head_commit.message, '[inventory-generated]') }}
+  downstream:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - name: Checkout exact pricing release source without credentials
+      - name: Checkout exact pricing release without credentials
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
-          ref: a11a03dea897cbd449020639714936f6bad0ff34
-          path: source
+          ref: 1d016fcedf6894c3097a90469d19ac791f8bd21b
           fetch-depth: 0
           persist-credentials: false
       - name: Set up reviewed Node toolchain
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version: '22.21.1'
-      - name: Install locked source workspaces
-        working-directory: source
+      - name: Install frozen dependencies
         run: npm ci
-      - name: Generate source-bound runtime inventory without changing application code
-        working-directory: source
-        run: |
-          node scripts/xroga/runtime-inventory.mjs
-          node scripts/xroga/check-runtime-config.mjs
-      - name: Checkout diagnostics branch only after untrusted code execution
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
-        with:
-          ref: diagnostics/pricing-inventory-20261116
-          path: receipt
-          persist-credentials: true
-      - name: Commit generated evidence to diagnostics branch only
-        working-directory: receipt
+      - name: Verify remaining deterministic baseline gates
+        env:
+          CI: 'true'
+          NODE_ENV: test
+          NEXT_PUBLIC_API_URL: http://127.0.0.1:8080
+          NEXT_PUBLIC_SUPABASE_URL: https://batch-one-test.invalid
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: sb_publishable_batch_one_fixture_only
         run: |
           set -euo pipefail
-          mkdir -p docs/xroga
-          for name in dependency-inventory.json dependency-inventory.schema.json deployment-topology.md deployment-topology.mmd secret-inventory.md runtime-contract.md; do
-            cp "../source/docs/xroga/$name" "docs/xroga/$name"
-            git add "docs/xroga/$name"
-          done
-          git config user.name "Xroga Evidence Bot"
-          git config user.email "evidence-bot@users.noreply.github.com"
-          git diff --cached --quiet || git commit -m "[inventory-generated] exact pricing runtime inventory provenance"
-          git push origin HEAD:diagnostics/pricing-inventory-20261116
+          node scripts/xroga/inventory.mjs --check
+          node scripts/xroga/validate-requirements-ledger.mjs
+          node scripts/xroga/check-runtime-config.mjs
+          node scripts/xroga/validate-golden-journeys.mjs
+          node scripts/xroga/mission-check.mjs
+          node scripts/security/audit-tenant-policies.mjs
+          node --test scripts/ci/baseline.test.mjs scripts/ci/prepare-pr-integration.test.mjs scripts/ci/ignore-vercel-build.test.mjs scripts/ci/postcss-resolution.test.mjs scripts/ci/cline-compat.test.mjs scripts/security/dependency-advisories.test.mjs scripts/security/dependency-patches.test.mjs scripts/xroga/phase-two-proof-bindings.test.mjs scripts/security/source-lifetime-bindings.test.mjs
+          node --test scripts/xroga/inventory.test.mjs scripts/xroga/requirements.test.mjs scripts/xroga/private-research.test.mjs scripts/xroga/supplemental-owners.test.mjs scripts/xroga/phase-one.test.mjs scripts/xroga/phase-two.test.mjs scripts/xroga/verify-phase-one.test.mjs scripts/xroga/runtime-discovery.test.mjs scripts/xroga/runtime-config.test.mjs scripts/xroga/golden-journeys.test.mjs tests/mission-policy/mission-policy.test.mjs scripts/security/audit-tenant-policies.test.mjs scripts/security/caller-reviews.closure.test.mjs scripts/security/tenant-acceptance.test.mjs scripts/security/disposable-supabase.test.mjs scripts/security/schema-catalog.test.mjs scripts/security/staging-preflight.test.mjs
+          node scripts/ci/check-agent-dependencies.mjs
+          git diff --check
