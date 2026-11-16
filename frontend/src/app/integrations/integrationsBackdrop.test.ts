@@ -34,3 +34,18 @@ test('all landing sections sit above one continuous 25px dot field', () => {
   assert.match(backdrop, /pointermove/);
   assert.match(backdrop, /prefers-reduced-motion: reduce/);
 });
+
+
+test('hero shows checked-in brand logos but no row of pill badges below the buttons', () => {
+  const hero = integration.slice(integration.indexOf('<section className="xi-hero"'), integration.indexOf('<section className="xi-section xi-directory"'));
+  assert.match(hero, /HERO_BRAND_MARKS\.map/);
+  assert.match(integration, /logo=\{LOCAL_PUBLIC_INTEGRATION_LOGOS\[app\.id\]\}/);
+  assert.doesNotMatch(hero, /xi-hero-app-strip|xi-hero-app"/);
+  assert.match(hero, /xi-hero-actions/);
+  const actual = [
+    'github', 'supabase', 'vercel', 'openai', 'gitlab', 'anthropic',
+  ];
+  for (const id of actual) {
+    assert.match(integration, new RegExp("\\{ id: '" + id + "', name:"));
+  }
+});
