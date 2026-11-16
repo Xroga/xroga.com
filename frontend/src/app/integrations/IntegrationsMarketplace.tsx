@@ -8,6 +8,7 @@ import {
   SlidersHorizontal, Sparkles, Workflow, X, Zap,
 } from 'lucide-react';
 import { PluginBrandLogo } from '@/components/integrations/PluginBrandLogo';
+import { SharedDotBackdrop } from '@/components/homepage-next/backdrop/SharedDotBackdrop';
 import { EXTERNAL_AGENTS, EXTERNAL_AGENT_DISCLOSURE } from '@/lib/externalAgentWorkflows';
 import { xrogaConnect } from '@/lib/xrogaConnect';
 import { publicConnectCatalogPage } from '@/lib/publicConnectCatalog';
@@ -297,6 +298,10 @@ export function IntegrationsMarketplace({
 
   return (
     <div className="xi-root">
+      {/* Reuse the exact homepage S01–S05 dot grid, mounted only once
+          behind every Integrations section. The shared footer is outside
+          xi-root, so dots end at the page boundary. */}
+      <SharedDotBackdrop />
       <section className="xi-hero" aria-labelledby="xi-hero-title">
         <div className="xi-hero-halo" aria-hidden="true" />
         <div className="xi-hero-logos" aria-hidden="true">
