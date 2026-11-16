@@ -20,6 +20,16 @@ test('initial calculator snapshots reuse upstream payment and formatting functio
   assert.equal(initialNativeReadouts(program.replace('$apr = 8', '$apr = 0'))[1].value, '$0.00');
 });
 
+test('calculated rates retain their exact denominator through root references and recovery', () => {
+  const native = 'root = answer\nanswer = Col([Metric("Team per seat", @Format(25 / 5, "currency", 2, "USD")), Text("Five seats are included per month.")])';
+  assert.deepEqual(initialNativeReadouts(native), [{ label: 'Team per seat', value: '$5.00' }]);
+  const result = completeNativeWorkspaceAnswer('Basic is cheaper per month, but Team is far cheaper per seat: $2.00 per seat versus $10.00. Team only makes sense if you actually need more than one seat.' + NATIVE_UI_MARKER + native, 'stop');
+  assert.deepEqual(result.completion, { status: 'partial', reason: 'data_review' });
+  assert.match(result.response, /\$5\.00/);
+  assert.doesNotMatch(result.response, /\$2\.00/);
+  assert.match(result.response, /Five seats are included per month/);
+});
+
 test('snapshots fail closed on cycles, missing references and actions', () => {
   for (const expression of ['missing', '@Set($amount, 10)', 'cycle']) {
     assert.deepEqual(initialNativeReadouts(`root = Col([Metric("Total", ${expression})])\n$amount = 1\ncycle = cycle`), []);
@@ -31,7 +41,13 @@ test('currency conflicts match corresponding labels without rewriting examples',
   assert.equal(conflictingNativeReadouts('Total interest: $4,331.83.', rows).length, 1);
   assert.equal(conflictingNativeReadouts('Total interest: $4,331.67.', rows).length, 0);
   assert.equal(conflictingNativeReadouts('For example, total interest: $1,000.', rows).length, 0);
+  assert.equal(conflictingNativeReadouts('For example. Total interest: $1,000.', rows).length, 0);
   assert.equal(conflictingNativeReadouts('Principal: $20,000.', rows).length, 0);
+  assert.equal(conflictingNativeReadouts('Total interest: $4,331.83. If you refinance, the total will change.', rows).length, 1);
+  assert.equal(conflictingNativeReadouts('If you refinance, total interest could be $1,000.', rows).length, 0);
+  assert.deepEqual(conflictingNativeReadouts('word '.repeat(1000) + '$2.', [
+    { label: 'word '.repeat(100) + 'absent', value: '$5.00' },
+  ]), []);
 });
 
 test('saved answer preserves calculator and readable computed values after a prose conflict', () => {

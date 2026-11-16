@@ -24,7 +24,8 @@ const functions: NonNullable<EvaluationContext['functions']> = Object.fromEntrie
 export function initialNativeReadouts(program: string): Array<{ label: string; value: string }> {
   try {
     const { symbols, scalar, spend } = snapshotEvaluator(program);
-    const root = symbols.get('root');
+    const root = symbols.has('root') ? symbols.get('root')
+      : [...symbols.values()].find(node => node.k === 'Comp' && node.name === 'Col');
     if (!root) return [];
     const pending = [root];
     const visited = new Set<ASTNode>();
@@ -104,6 +105,35 @@ export function initialNativeValueReader(program: string): (value: unknown) => u
   } catch { return () => undefined; }
 }
 
+// Match a label within normal prose without a backtracking regular expression.
+// A bounded number of intervening words permits "Team is cheaper per seat".
+function contextualReadoutLabel(text: string, label: string) {
+  const words = [...text.toLowerCase().matchAll(/[a-z0-9]+/g)];
+  const target = label.toLowerCase().match(/[a-z0-9]+/g) ?? [];
+  if (target.length < 2) return;
+  let budget = 8000;
+  for (let start = 0; start < words.length; start++) {
+    if (--budget < 0) return;
+    if (words[start][0] !== target[0]) continue;
+    let cursor = start, matched = true;
+    for (const word of target.slice(1)) {
+      if (--budget < 0) return;
+      const end = Math.min(cursor + 6, words.length);
+      let next = cursor + 1;
+      while (next < end && words[next][0] !== word) {
+        if (--budget < 0) return;
+        next++;
+      }
+      if (next === end) { matched = false; break; }
+      cursor = next;
+    }
+    if (matched) {
+      const index = words[start].index!;
+      return { index, text: text.slice(index, words[cursor].index! + words[cursor][0].length) };
+    }
+  }
+}
+
 /** Compare explicit currency claims to the corresponding labeled readout. An
  * unrelated example, input amount or uncategorized number is never rewritten. */
 export function conflictingNativeReadouts(prose: string, readouts: ReturnType<typeof initialNativeReadouts>) {
@@ -114,13 +144,17 @@ export function conflictingNativeReadouts(prose: string, readouts: ReturnType<ty
     if (expected.length !== 1) return false;
     const target = Number(expected[0][2].replace(/,/g, ''));
     const words = label.toLowerCase().trim();
-    for (const paragraph of plain.split(/\n\s*\n/)) {
+    const statements = plain.split(/\n\s*\n/).flatMap(paragraph =>
+      /^\s*(?:for example|example|scenario|hypothetical|suppose|alternative)\b/i.test(paragraph)
+        ? [] : paragraph.split(/(?<=[.!?])\s+/));
+    for (const paragraph of statements) {
       if (/\b(?:example|scenario|hypothetical|suppose|instead|if you|alternative)\b/i.test(paragraph)) continue;
       const lower = paragraph.toLowerCase();
+      const contextual = lower.includes(words) ? undefined : contextualReadoutLabel(paragraph, words);
       const at = lower.indexOf(words) >= 0 ? lower.indexOf(words)
-        : words.startsWith('total ') ? lower.indexOf(words.slice(6)) : -1;
+        : contextual ? contextual.index : words.startsWith('total ') ? lower.indexOf(words.slice(6)) : -1;
       if (at < 0) continue;
-      const matchedWords = lower.indexOf(words) >= 0 ? words : words.slice(6);
+      const matchedWords = lower.indexOf(words) >= 0 ? words : contextual?.text ?? words.slice(6);
       const candidates = [...paragraph.matchAll(money)].filter(match => match[1] === expected[0][1]);
       const nearby = candidates.map(match => ({ match, distance: Math.min(Math.abs(match.index! + match[0].length - at), Math.abs(match.index! - (at + matchedWords.length))) }))
         .filter(item => item.distance <= 35).sort((a, b) => a.distance - b.distance)[0]?.match;

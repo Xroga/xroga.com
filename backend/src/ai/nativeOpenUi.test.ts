@@ -7,6 +7,46 @@ import { readNativeOpenUiRun } from './nativeOpenUiRun.js';
 import { completeNativeWorkspaceAnswer, usesNativeWorkspacePresentation } from './nativeOpenUiWorkspace.js';
 import { requiredNativeFormats } from './answerCoverage.js';
 
+test('upstream entry selection and identifiers preserve complete readable content', () => {
+  const name = '_privateComparisonDetailsWithAnIdentifierLongerThanFortyCharacters';
+  for (const program of [
+    `root = Col([${name}])\n${name} = Text("All comparison details remain readable.")`,
+    'root = answer\nanswer = Col([Text("All comparison details remain readable.")])',
+  ]) {
+    const diagnostics: NativeUiDiagnostic[] = [];
+    assert.deepEqual(validateNativeWorkspaceProgram(program, undefined, '', event => diagnostics.push(event)), { ok: true }, JSON.stringify(diagnostics));
+    const result = completeNativeWorkspaceAnswer(NATIVE_UI_MARKER + program, 'stop');
+    assert.equal(result.completion.status, 'complete');
+    assert.match(result.response, /All comparison details remain readable/);
+    assert.equal(result.responseSource.text, program);
+  }
+});
+
+test('an upstream fallback entry becomes explicit without losing any answer content', () => {
+  const program = 'answer = Col([details])\ndetails = Text("All comparison details remain readable.")';
+  const result = completeNativeWorkspaceAnswer(NATIVE_UI_MARKER + program, 'stop');
+  assert.equal(result.completion.status, 'complete');
+  assert.equal(result.responseSource.text, 'root = answer\n' + program);
+  assert.match(result.response, /All comparison details remain readable/);
+});
+
+test('statement diagnostics identify ambiguity without exposing private names or values', () => {
+  const cases = [
+    ['root = Col([privateCustomerName])\nprivateCustomerName = Text("confidential")\nprivateCustomerName = Text("different")', 'duplicate', 3],
+    ['root = Col([Text("confidential")])\nconstructor = 1', 'unsafe_name', 2],
+    ['root = Col([Text("confidential")])\n$__proto__ = 1', 'unsafe_name', 2],
+    ['privateCustomerName = Text("confidential")', 'missing_root', undefined],
+    ['root = 2', 'invalid_root', undefined],
+  ] as const;
+  for (const [program, issue, statement] of cases) {
+    const diagnostics: NativeUiDiagnostic[] = [];
+    assert.deepEqual(validateNativeWorkspaceProgram(program, undefined, '', event => diagnostics.push(event)), { ok: false, reason: 'syntax' });
+    assert.equal(diagnostics[0]?.declarationIssue, issue);
+    assert.equal(diagnostics[0]?.statement, statement);
+    assert.doesNotMatch(JSON.stringify(diagnostics), /privateCustomerName|confidential|different|constructor|__proto__/);
+  }
+});
+
 test('the model gets instructions from the native registry and may answer in text', () => {
   for (const prompt of [nativeOpenUiPlainPrompt, nativeOpenUiPrompt]) {
     assert.match(prompt, /Verify the value, unit, and reference point, baseline, or denominator together/);

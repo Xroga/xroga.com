@@ -378,3 +378,39 @@ new hosted acceptance certificate. Final exact-source checks remain required.
 The hosted runtime, grants, identities, image artifacts and upload were removed.
 The task-owned KMS version is scheduled for destruction. Independent readback
 confirmed zero remaining runtime resources and no production change.
+
+## November 16 contract alignment, release still blocked
+
+All eleven exact-source workflows passed on 36c2826bb. Hosted provider-disabled
+acceptance passed 22 captured cases, complete guidance through Copy, owner-only
+Share, revocation and Reopen, and cross-account denial. The first fresh plan
+comparison failed independent acceptance: the answer said USD 2 per seat for a
+USD 25 five-seat plan. Its native program failed statements/syntax validation.
+Two dispatches settled at 396 micro-USD. The remaining two prompts were withheld.
+The private runtime, identities and grants closed. Production was unchanged.
+
+The diagnostic did not identify the declaration or retain the rejected program,
+so the precise live syntax defect is not proven. Inspection of the installed
+OpenUI parser did establish compatibility defects: Xroga rejected supported
+leading-underscore and longer identifiers, ordinary root references and the
+upstream fallback entry. Align these cases with upstream, while preserving
+authority, schema, cycle, evidence, duplicate-name and whole-program checks.
+The fallback entry is made explicit only after a fresh full validation. Unsafe
+state names are rejected along with unsafe ordinary names.
+
+Statement diagnostics now report a bounded issue enum and statement index,
+without private names or literals. The existing model contract instructs derived
+values to use registered arithmetic/functions and labeled readouts. A regression
+checks that a calculated unit price remains USD 5 and cannot be overwritten by a
+USD 2 prose claim through a referenced root. This is not a universal factual
+verifier or proof that the failed live program is repaired.
+
+Numeric claim matching now checks individual factual sentences, so a later
+conditional sentence cannot exempt an earlier incorrect claim. Bounded token
+matching recognizes readout labels within ordinary prose without backtracking
+regexes. Explicit hypothetical examples remain exempt. The regression uses the
+actual failed comparison prose against a registered, calculated readout.
+
+76 focused backend tests passed in job 8422c67f-0d29-418d-8ca2-ec046b7628c8.
+Fresh exact-source CI and genuine hosted acceptance remain required before
+release. No additional engine, model, orchestrator, component or schema is added.

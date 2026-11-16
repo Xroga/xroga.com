@@ -326,6 +326,7 @@ export type NativeUiDiagnostic = {
   shape: Array<{ tokens: number; skeleton: string }>;
   factualRule?: NonNullable<ReturnType<typeof reviewNativeAnswer>>['rule'];
   referenceIssue?: 'missing' | 'cycle';
+  declarationIssue?: 'invalid_name' | 'unsafe_name' | 'duplicate' | 'missing_root' | 'invalid_root' | 'expression';
   diagramTopology?: 'invalid';
   schemaState?: { hasRoot: boolean; incomplete: boolean; unresolved: number; errors: number };
   schema?: Array<{ code: string; statement?: number; component?: string; pathDepth: number; diagramField?: string }>;
@@ -348,6 +349,7 @@ export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<s
   let schemaState: NativeUiDiagnostic['schemaState'];
   let factualRule: NativeUiDiagnostic['factualRule'];
   let referenceIssue: NativeUiDiagnostic['referenceIssue'];
+  let declarationIssue: NativeUiDiagnostic['declarationIssue'];
   let diagramTopology: NativeUiDiagnostic['diagramTopology'];
   const fail = (reason: NativeUiDiagnostic['reason'], errors?: ReturnType<typeof parseProgram.parse>['meta']['errors']) => {
     if (diagnose) diagnose({
@@ -363,6 +365,7 @@ export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<s
       ...(schemaState ? { schemaState } : {}),
       ...(factualRule ? { factualRule } : {}),
       ...(referenceIssue ? { referenceIssue } : {}),
+      ...(declarationIssue ? { declarationIssue } : {}),
       ...(diagramTopology ? { diagramTopology } : {}),
       ...(errors?.length ? { schema: errors.slice(0, 8).map(error => {
         const index = statements.findIndex(item => item.id === error.statementId);
@@ -396,12 +399,26 @@ export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<s
     statements = split(tokens);
     if (!statements.length || statements.length > 96) return fail('budget');
     const symbols = new Map<string, ASTNode>();
-    for (const statement of statements) {
-      if (!/^\$?[a-zA-Z][a-zA-Z0-9_]{0,39}$/.test(statement.id) || !safeKey(statement.id) || symbols.has(statement.id)) return fail('syntax');
-      if (statement.tokens.length > 1200) return fail('budget');
-      symbols.set(statement.id, parseExpression(statement.tokens));
+    for (const [index, declaration] of statements.entries()) {
+      statement = index + 1;
+      // Match the installed OpenUI lexer. The whole-program budget already
+      // bounds identifier size, so a separate 40-character limit loses valid UI.
+      if (!/^\$?[a-zA-Z_][a-zA-Z0-9_]*$/.test(declaration.id)) declarationIssue = 'invalid_name';
+      else if (!safeKey(declaration.id.replace(/^\$/, ''))) declarationIssue = 'unsafe_name';
+      else if (symbols.has(declaration.id)) declarationIssue = 'duplicate';
+      if (declarationIssue) return fail('syntax');
+      if (declaration.tokens.length > 1200) return fail('budget');
+      try { symbols.set(declaration.id, parseExpression(declaration.tokens)); }
+      catch { declarationIssue = 'expression'; return fail('syntax'); }
     }
-    if (symbols.get('root')?.k !== 'Comp') return fail('syntax');
+    statement = undefined;
+    // Upstream selects `root`, or the first Col declaration when root is absent.
+    // It also follows ordinary references to the entry component.
+    const entry = symbols.has('root') ? symbols.get('root')
+      : [...symbols.values()].find(node => node.k === 'Comp' && node.name === 'Col');
+    if (!entry) { declarationIssue = 'missing_root'; return fail('syntax'); }
+    const resolvedEntry = resolveRecoveryReference(entry, symbols);
+    if (resolvedEntry && resolvedEntry.k !== 'Comp') { declarationIssue = 'invalid_root'; return fail('syntax'); }
     stage = 'authority';
     let budget = 6000;
     const reviewStrings = new Set<string>();
@@ -678,8 +695,19 @@ export function recoverNativeWorkspaceProgram(program: string, evidenceIds: Read
     const narrative = [...reviewStrings].join('\n');
     if (failure === 'reference' && reviewNativeAnswer(narrative)) return;
     const symbols = new Map([...originals].map(([id, node]) => [id, normalizeWorkspaceComponents(node, originals)]));
-    const root = symbols.get('root');
+    const root = resolveRecoveryReference(symbols.has('root') ? symbols.get('root')
+      : [...symbols.values()].find(node => node.k === 'Comp' && node.name === 'Col'), symbols);
     if (root?.k !== 'Comp' || root.name !== 'Col') return;
+    if (failure === 'schema' && !symbols.has('root')) {
+      // Make upstream's selected fallback entry explicit. Preserve every original
+      // declaration and require a fresh full validation before publishing it.
+      const entry = [...originals].find(([, node]) => node.k === 'Comp' && node.name === 'Col');
+      if (entry) {
+        const explicit = 'root = ' + entry[0] + '\n' + program;
+        const validation = validateNativeWorkspaceProgram(explicit, evidenceIds, prose);
+        if (validation.ok) return { program: explicit, validation, partial: false };
+      }
+    }
     const sourceFor = (id: string, node: ASTNode) => {
       const item = declarations.get(id);
       if (item && originals.get(id) === node && item.start !== undefined && item.end !== undefined) {
