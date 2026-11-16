@@ -110966,7 +110966,7 @@
       "id": "surface:8c3cd48b2512bdeeff28",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/messageHelpers.ts",
-      "sha256": "e13ba4eaca4d720c3c3bdd195ae60e2a5d97965198ca53c745078a5112197bf5",
+      "sha256": "b627f48b81c2960e62948321316f15799998b846456c46f6ae7175e2d4bcefb2",
       "symbols": [
         "MessageSuggestions",
         "analysis",
@@ -156410,7 +156410,7 @@
     {
       "id": "test-suite:94d04da642998f3a8d7d",
       "sourcePath": "frontend/src/lib/messageHelpers.test.ts",
-      "declaredTests": 1,
+      "declaredTests": 2,
       "skipLocations": [],
       "focusLocations": []
     },

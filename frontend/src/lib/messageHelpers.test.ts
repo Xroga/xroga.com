@@ -2,6 +2,17 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { generateMessageSuggestions } from './messageHelpers';
 
+test('an empty failed turn does not suggest explaining or acting on a nonexistent answer', () => {
+  for (const answer of ['', ' \n\t']) {
+    for (const prompt of ['Compare two plans', 'Build a website', 'Research solar energy']) {
+      const suggestions = generateMessageSuggestions(prompt, answer);
+      assert.deepEqual(suggestions.followUps, []);
+      assert.deepEqual(suggestions.refine, []);
+      assert.deepEqual(suggestions.deploy, []);
+    }
+  }
+});
+
 test('suggestions give two answer follow-ups and two relevant Xroga actions', () => {
   const code = generateMessageSuggestions('Build a landing page', 'I built a responsive landing page.');
   assert.equal(code.followUps.length, 2);

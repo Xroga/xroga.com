@@ -10,6 +10,8 @@
   "risk": "medium",
   "scope": "Improve native answer completeness and accessibility, and verify the final hosted Workspace pair.",
   "changedFiles": [
+    "frontend/src/lib/messageHelpers.ts",
+    "frontend/src/lib/messageHelpers.test.ts",
     "backend/src/ai/builderAttempt.ts",
     "backend/src/ai/builderAttempt.test.ts",
     "backend/src/ai/openaiCompat.ts",

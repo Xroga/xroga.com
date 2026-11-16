@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "ef0e4d75461da143d5b738b3a77024f1a57a0b5b",
+  "source_sha": "cf936fdd8fb63a1d8ee850ee9c67f67bb65f8009",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -16926,7 +16926,7 @@
     },
     {
       "path": "backend/src/ai/builderAttempt.ts",
-      "sha256": "8a31b2354b50b32fe202939ce967cc55d9264427de982256e752c82ef4e4a833"
+      "sha256": "c99d8b3c7977335ac3fceb195c1979c2f4b42a2f23932d1ea22ca7411c647ebf"
     },
     {
       "path": "backend/src/ai/capabilityMaturity.ts",
@@ -17094,7 +17094,7 @@
     },
     {
       "path": "backend/src/ai/openaiCompat.ts",
-      "sha256": "c159e3bd321637cc26214829ed36bca439a102e91983e6fd93fcbee36ef61544"
+      "sha256": "0bd01dc8ca4992f8bc61de75a2f6ff655e56326d563155ccfe24a9f0f91f503f"
     },
     {
       "path": "backend/src/ai/parallelApproval.ts",
@@ -17122,7 +17122,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "cbf67edd08efef2f05de9690ad359cd5c92dd7802c453cfb5e5d2062a5876a79"
+      "sha256": "5c37c7d2bbc96fc8c4ddf1f294c9b1f2bde5385048847400a5bcbd69a3582e06"
     },
     {
       "path": "backend/src/ai/postCompletionAccounting.ts",
@@ -23726,7 +23726,7 @@
     },
     {
       "path": "frontend/src/lib/messageHelpers.ts",
-      "sha256": "e13ba4eaca4d720c3c3bdd195ae60e2a5d97965198ca53c745078a5112197bf5"
+      "sha256": "b627f48b81c2960e62948321316f15799998b846456c46f6ae7175e2d4bcefb2"
     },
     {
       "path": "frontend/src/lib/messageRehydration.ts",
@@ -25599,7 +25599,7 @@
       "hostname": "github.com",
       "protocol": "https:",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4115,
+      "line": 4114,
       "credentialsInUrl": false
     },
     {
@@ -32935,70 +32935,70 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 533,
+      "line": 534,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 563,
+      "line": 564,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 757,
+      "line": 758,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 1134,
+      "line": 1133,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 1141,
+      "line": 1140,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 1570,
+      "line": 1569,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 2322,
+      "line": 2321,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3881,
+      "line": 3880,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4065,
+      "line": 4064,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4844,
+      "line": 4843,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
