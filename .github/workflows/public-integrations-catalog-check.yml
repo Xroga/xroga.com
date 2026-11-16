@@ -40,5 +40,7 @@ jobs:
         run: npx tsx --test backend/src/services/integrations/publicCatalogProjection.test.ts
       - name: Verify source-backed plugin descriptions and public display mappings
         run: npx tsx --tsconfig frontend/tsconfig.json --test frontend/src/lib/publicIntegrationsDirectory.test.ts frontend/src/lib/liveIntegrationDiscovery.test.ts frontend/src/lib/publicIntegrationLogo.test.ts
+      - name: Homepage dots background reuse verification
+        run: npx tsx --test frontend/src/app/integrations/integrationsBackdrop.test.ts
       - name: Compile backend including public catalog route and data boundary
         run: npm run build --workspace=backend
