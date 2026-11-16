@@ -9,7 +9,7 @@
     {
       "path": "backend/src/ai/pipeline.ts",
       "historicalSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
-      "currentSha256": "cbf67edd08efef2f05de9690ad359cd5c92dd7802c453cfb5e5d2062a5876a79",
+      "currentSha256": "5c37c7d2bbc96fc8c4ddf1f294c9b1f2bde5385048847400a5bcbd69a3582e06",
       "genericSdkPreviousCurrentBinding": {
         "reference": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
         "sha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
@@ -24,8 +24,8 @@
         "944a58bb15dca85b3ddd"
       ],
       "afterIds": [
-        "f12308343cfd76d2ca43",
-        "889a5ae30117270911bf"
+        "e5fc46a4de6acdba6654",
+        "9a60c892b04c3d76e56b"
       ],
       "unchangedNearestBlockSha256": [
         "121ecd46287fd271b61cc97e84d2b17dce2570e8b82f7a6bdf77a6e4b7133436",
@@ -4286,7 +4286,8 @@
           "b01a01f65052e1222fd2"
         ],
         "scope": "Historical binding retained, no new security acceptance"
-      }
+      },
+      "beforeBufferedDeadlineSha256": "cbf67edd08efef2f05de9690ad359cd5c92dd7802c453cfb5e5d2062a5876a79"
     },
     {
       "path": "backend/src/routes/phase1.ts",

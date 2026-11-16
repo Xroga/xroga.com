@@ -265,16 +265,17 @@
     },
     {
       "path": "backend/src/ai/openaiCompat.egress.test.ts",
-      "sha256": "8a686f065bbd6b45bd94a332466dcd77799ed7d125947b9ec1b23296ceeb6c35",
+      "sha256": "5670a75c3441731c06d9431979d040f9fb1585b88c784cab0528bbbb740e8dc3",
       "beforeCurrentMetadataReconciliation": {
         "path": "backend/src/ai/openaiCompat.egress.test.ts",
         "sha256": "649092d8bd97b3fed5a12305399a7d577b2c1b4a35ac3e952149cf6a5f834e0a"
       },
-      "previousSha256": "c013b4bb607cf023790daec71ad5e7d43e5326403bff05e5f1f295fabfede9de"
+      "previousSha256": "c013b4bb607cf023790daec71ad5e7d43e5326403bff05e5f1f295fabfede9de",
+      "beforeBufferedDeadlineSha256": "8a686f065bbd6b45bd94a332466dcd77799ed7d125947b9ec1b23296ceeb6c35"
     },
     {
       "path": "backend/src/ai/openaiCompat.ts",
-      "sha256": "c159e3bd321637cc26214829ed36bca439a102e91983e6fd93fcbee36ef61544",
+      "sha256": "0bd01dc8ca4992f8bc61de75a2f6ff655e56326d563155ccfe24a9f0f91f503f",
       "previousGenericSdkBinding": {
         "sha256": "0a418cef1bdbdadb77f14288c4298990900a111fbc0def0050756a9b146914ca",
         "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
@@ -287,11 +288,12 @@
           "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
         }
       },
-      "previousSha256": "9b89fbbca10b4a53804a92b4c254998ebe87e9e03b2325a5c709837fca8fcaf8"
+      "previousSha256": "9b89fbbca10b4a53804a92b4c254998ebe87e9e03b2325a5c709837fca8fcaf8",
+      "beforeBufferedDeadlineSha256": "c159e3bd321637cc26214829ed36bca439a102e91983e6fd93fcbee36ef61544"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "cbf67edd08efef2f05de9690ad359cd5c92dd7802c453cfb5e5d2062a5876a79",
+      "sha256": "5c37c7d2bbc96fc8c4ddf1f294c9b1f2bde5385048847400a5bcbd69a3582e06",
       "previousGenericSdkBinding": {
         "sha256": "e5b3b4a3dc538e708fa8c005a8da6584db01b3dd425833373d59decbd2bfcb93",
         "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
@@ -587,7 +589,8 @@
         "source": "677b111f52097654f47e92b6807b45200c2a89ee",
         "sha256": "245f60b9f9b04e0a67226b5354a4fd13ccf584a475e2219a09472d2f5d57000c",
         "scope": "Historical binding retained, no new security acceptance"
-      }
+      },
+      "beforeBufferedDeadlineSha256": "cbf67edd08efef2f05de9690ad359cd5c92dd7802c453cfb5e5d2062a5876a79"
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
@@ -869,7 +872,8 @@
     },
     {
       "path": "backend/src/ai/builderAttempt.ts",
-      "sha256": "8a31b2354b50b32fe202939ce967cc55d9264427de982256e752c82ef4e4a833"
+      "sha256": "c99d8b3c7977335ac3fceb195c1979c2f4b42a2f23932d1ea22ca7411c647ebf",
+      "beforeBufferedDeadlineSha256": "8a31b2354b50b32fe202939ce967cc55d9264427de982256e752c82ef4e4a833"
     },
     {
       "path": "deploy/browser-worker/runJob.mjs",
