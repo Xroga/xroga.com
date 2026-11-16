@@ -229,7 +229,7 @@
 .xi-hero-content{max-width:850px}
 .xi-hero h1{font-size:clamp(47px,5.1vw,75px);line-height:1.03;letter-spacing:-.046em;margin:0 auto 19px}
 .xi-hero-content>p{max-width:670px;font-size:13px;line-height:1.7}
-.xi-hero-actions{margin:23px 0 22px}
+.xi-hero-actions{margin:23px 0 0}
 .xi-hero-logos{opacity:.5}
 .xi-orbit-logo{width:57px;height:57px;border-radius:15px}
 .xi-orbit-logo .h-10{width:40px;height:40px}
@@ -377,3 +377,8 @@
 .xi-root > section.xi-mcp.xi-mcp-open {
   background: transparent !important;
 }
+
+/* Intentional compact hero after removal of post-action app badge row.
+   Keep verified repo brand marks as quiet orbital artwork only. */
+.xi-hero-logos .xi-orbit-logo img {object-fit:contain}
+.xi-hero-content .xi-hero-actions {margin-bottom:0}
