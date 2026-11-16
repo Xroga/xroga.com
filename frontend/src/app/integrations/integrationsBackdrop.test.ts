@@ -49,3 +49,22 @@ test('hero shows checked-in brand logos but no row of pill badges below the butt
     assert.match(integration, new RegExp("\\{ id: '" + id + "', name:"));
   }
 });
+
+
+test('public app cards use original logo sources and the dashboard canonical logo fallback', () => {
+  const brand = read('components/integrations/PluginBrandLogo.tsx');
+  assert.match(integration, /fallbackLogo=\{composioLogoUrl\(item\.id\)\}/);
+  assert.match(integration, /logo=\{item\.logoUrl\}/);
+  assert.match(brand, /WHITE_FOREGROUND_LOCAL_SVGS/);
+  assert.match(brand, /github.*vercel.*openai.*cursor/);
+  assert.match(brand, /backgroundColor: darkLogoTile \? '#141414' : '#fff'/);
+  assert.match(brand, /verifiedOnly \&\& WHITE_FOREGROUND_LOCAL_SVGS/);
+  assert.match(brand, /onError=\{\(\) => setIndex\(\(current\) => current \+ 1\)\}/);
+});
+
+test('unavailable public catalog cannot be misrepresented as the full marketplace', () => {
+  assert.match(integration, /label: 'Featured apps'/);
+  assert.match(integration, /The full provider directory is not available on this preview yet/);
+  assert.match(integration, /const directoryItems = liveItems \?\? items;/);
+  assert.match(integration, /liveIntegrationCategories\(liveItems\)/);
+});
