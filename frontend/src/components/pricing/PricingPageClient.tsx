@@ -20,14 +20,13 @@ import {
   GitBranch,
   Info,
   LockKeyhole,
-  Minus,
-  Orbit,
   Rocket,
   Search,
   ShieldCheck,
   Sparkles,
   Workflow,
   X,
+  ChevronDown,
   Zap,
 } from 'lucide-react';
 
@@ -203,18 +202,18 @@ function PlanShowcase({ paid }: { paid: boolean }) {
   const scene = PRO_SCENES[index];
   const Active = paid ? scene.icon : Compass;
   return (
-    <div className={paid ? styles.proShowcase : styles.freeShowcase} aria-label={paid ? 'Xroga Pro: Research, Think, Work, Plan, Fix, Code, Game, Publish, Earn' : 'Xroga Free'}>
-      <div className={styles.showcaseOrb}>
-        <span className={styles.orbLines} aria-hidden="true" />
-        <span className={styles.orbCenter} aria-hidden="true">
-          <Active key={paid ? scene.name : 'free'} className={styles.showcaseSymbol} strokeWidth={1.65}/>
+    <span
+      className={paid ? styles.proShowcase : styles.freeShowcase}
+      role="img"
+      aria-label={paid ? 'Xroga Pro: continuously changing research, thinking, work, planning, coding, games, publishing and earning icons' : 'Xroga Free: explore icon'}
+    >
+      <span className={styles.showcaseOrb} aria-hidden="true">
+        <span className={styles.orbLines} />
+        <span className={styles.orbCenter}>
+          <Active key={paid ? scene.name : 'free'} className={styles.showcaseSymbol} strokeWidth={1.65} />
         </span>
-        {paid && <span className={styles.orbHalo} aria-hidden="true" />}
-      </div>
-      <span className={styles.showcaseCaption} aria-hidden="true">
-        {paid ? (reducedMotion ? 'Build beyond' : scene.name) : 'Explore Xroga'}
       </span>
-    </div>
+    </span>
   );
 }
 
@@ -254,6 +253,7 @@ export function PricingPageClient() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [status, setStatus] = useState<BillingStatus | null>(null);
   const [featureQuery, setFeatureQuery] = useState('');
+  const [collapsedGroups, setCollapsedGroups] = useState<string[]>([]);
 
   useEffect(() => {
     void (async () => {
@@ -300,42 +300,15 @@ export function PricingPageClient() {
         </div>
 
         <div className={styles.heroInner}>
-          <div className={styles.heroIcon} aria-hidden="true"><Orbit /></div>
-          <div className={styles.heroKicker}>
-            <Sparkles aria-hidden="true" /> XROGA PRICING
-          </div>
+          <p className={styles.heroKicker}>Pricing</p>
           <h1 id="pricing-title" className={styles.heroTitle}>
-            Build beyond
-            <span> the ordinary.</span>
+            Build beyond <span>the ordinary.</span>
           </h1>
-          <p className={styles.heroCopy}>
-            One AI workspace for research, software building, connected work and real verification.
-            Start free, or go further with Xroga Pro for $25/month.
-          </p>
-          <div className={styles.heroFacts} aria-label="Pricing highlights">
-            <span><strong>$0</strong> to start</span>
-            <i aria-hidden="true" />
-            <span><strong>$25</strong> per month for Pro</span>
-            <i aria-hidden="true" />
-            <span><strong>No card</strong> for Free</span>
-          </div>
         </div>
       </section>
 
       <div className={styles.shell}>
-        <section className={styles.plansSection} aria-labelledby="plans-title">
-          <div className={styles.sectionHead}>
-            <span className={styles.eyebrow}>TWO PLANS. ONE WORKFLOW.</span>
-            <h2 id="plans-title">
-              Two plans.
-              <em> One powerful workspace.</em>
-            </h2>
-            <p>
-              The same powerful Xroga workspace, with more available capacity for
-              ambitious projects on Pro.
-            </p>
-          </div>
-
+        <section className={styles.plansSection} aria-label="Xroga Free and Pro pricing plans">
           <div className={styles.planGrid}>
             {GALACTIC_PLANS.map((plan) => {
               const isFree = plan.tier === 'free';
@@ -345,6 +318,7 @@ export function PricingPageClient() {
               return (
                 <article
                   key={plan.tier}
+                  id={isFree ? 'free-plan-card' : 'pro-plan-card'}
                   className={`${styles.planCard} ${
                     isFree ? styles.freeCard : styles.proCard
                   }`}
@@ -354,8 +328,10 @@ export function PricingPageClient() {
                   <div className={styles.planTop}>
                     <div className={styles.planIdentity}>
                       <PlanShowcase paid={!isFree} />
-                      <span className={styles.planName}>{plan.name}</span>
-                      <p className={styles.planTagline}>{plan.tagline}</p>
+                      <div className={styles.planIdentityText}>
+                        <h2 className={styles.planName}>{plan.name}</h2>
+                        <p className={styles.planTagline}>{plan.tagline}</p>
+                      </div>
                     </div>
 
                     {isCurrent ? (
@@ -450,73 +426,90 @@ export function PricingPageClient() {
           </div>
         </section>
 
-        <section className={styles.artSection} aria-label="Xroga creative possibilities">
-          <div className={styles.artCopy}>
-            <span className={styles.eyebrow}>XROGA IN MOTION</span>
-            <h2>Go from a thought <em>to something real.</em></h2>
-            <p>Research an idea, build what matters, iterate with evidence, and keep moving.</p>
-          </div>
-          <img className={styles.artImage} src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANwAAADSAQAAAAAJK5NcAAAD2UlEQVR42u1YT2gcVRj/vZnZP8aQjEHMgiuZaEtSFa2NIErNThSkFJFcPHixrV70JHqQiKU7eNDoqSdRPJibJ1EPXrw4oGIPhXjoIdjAPrVgFOtuMdjZzWR+HnY2u7PzzUgDEYr7nWbmx++9733v+773ewPczObtl+gk3owk2N63P8fyQJ14M5NgcDGbqLZyvB3byJnS1HnrRA5YzmMe8nPAo3mTLObNuZjHDDOZClCZILHEnFFVJ8ehMWaCBqrZYGQfzXKogmem5mWHlgDj3WlecSWmfx7Hrp/GuC8xpzY922yyBTHBThrf3fe7+5stUWd3F+sfk5fk4Dz40TrJb+VsmWSb5KZcgQWSZEZKl+skh73tRUj58ZaKTJJkkLGXNZKkI4NNkszKhEkB3Nuy7nTLecy8coCPogTaAAAXFQnsBWc2t3h9aViv295cMUJ3kaQGtcBsvAYAVXnYKxYAbCca5x6oHAAo99Y0tGczdZItRS2At1ZJsqMGs8HqPTx/CGjZBWBbYD6pyKjBWTEb7lnhTrTEL4aTrBuEn0l++dcvjISlbDwKBJc4ASlVpne48aN5bVxkli18/onX3PGUl+7CNXZWp45oDCZZzLQqGkb79a3kYRaD5SJgqlVDwx+AYzBUpxEuYxvQeCnlbJ2M/lwoeJjkH+nYAurvVy973W0bWsoFAFfvBRBgLDVsaY5sX4yAklBNJZNsPhQBJvvb3Rs2jAD7hXNAJPVhr042AkAxSjEJDTgBQKhymjsTd5NXGKZ2xe1V0w/9+PULqQVgDQBwNq0QCnFLqIU6XZ/jwC4A6P6ce7FtqThlHeubdJoAON/17H4hDvzMB2CSYQqyECkNoESmC6KImu0AuJPcSjnUgW7FH+5IF6/XwkS3wQVCqwm8axqwB77tPdANgWo8Q4rpAcFhVNckJnygU3wYa8AtXgp0CPX47VtuHKik2cozGy+f+prNbflAf3vhFMnddMaXA7D9/gMALsuKsNYmSUFOWXGSDcTWSOgSWgCwIh8RE4pklHHyWEo4C/uLefEcG2Gmdnl6Zp2uLCeBzckjn97tZ1FN76qfda6QqOoczWQflJp3MLKRjex/YMcBF8YJGXwK8LsyRBC/j/16fG78vbl31j1JGf908swby8/xQ1E2f18pYUXWt3iivdp+K+uvwFeFDw6/6TsoSd5WDNv418v1f2kbysv2xYVjZ1/8y7c5gxoxca4suM+e6Ew3ZGYpgH6kmDWs3sXQsAOgwwH9MAQG2nKGbv59cHXe1hfmR7U0sgO0s9jvH7QbAYfU26w+iF96NwKO7KazfwA3iXg3EwG/bAAAAABJRU5ErkJggg==" width="220" height="210" alt="Monochrome halftone particle artwork supplied as a pricing page visual reference" loading="lazy" />
-        </section>
-
         <section className={styles.compareSection} aria-labelledby="compare-title">
           <div className={styles.compareHeading}>
-            <div className={styles.sectionHeadCompact}>
-              <span className={styles.eyebrow}><BadgeCheck aria-hidden="true" /> EXPLORE WHAT&apos;S INCLUDED</span>
-              <h2 id="compare-title">Compare Xroga <em>Free & Pro.</em></h2>
-              <p>Explore the full feature categories, not just an eight-row summary.
-                Both plans use the same core capabilities; some operations require a supported connected service.</p>
-            </div>
-            <div className={styles.featureSearch}>
-              <Search aria-hidden="true" />
-              <label htmlFor="pricing-feature-search" className={styles.visuallyHidden}>Search plan features</label>
-              <input
-                id="pricing-feature-search"
-                type="search"
-                value={featureQuery}
-                onChange={(event) => setFeatureQuery(event.target.value)}
-                placeholder="Search all features..."
-              />
-              {featureQuery && (
-                <button type="button" aria-label="Clear feature search" onClick={() => setFeatureQuery('')}>
-                  <X aria-hidden="true" />
-                </button>
-              )}
-            </div>
+            <BadgeCheck className={styles.compareOrnament} aria-hidden="true" />
+            <h2 id="compare-title">Compare features across plans</h2>
+            <p>Create with no limits.</p>
           </div>
-          <div className={styles.tableMeta}>
-            <span>{visibleFeatureCount} of {totalFeatureCount} features</span>
-            <span><LockKeyhole aria-hidden="true" /> Connected actions require your authorization</span>
-          </div>
-          <div className={styles.compareScroll} tabIndex={0} role="region" aria-label="Scrollable Free and Pro feature comparison">
+          <div className={styles.compareScroll} tabIndex={0} role="region" aria-label="Free and Pro feature comparison; scroll horizontally on narrow screens">
             <table className={styles.comparisonTable}>
-              <colgroup><col className={styles.featureColumn} /><col className={styles.freeColumn} /><col className={styles.proColumn} /></colgroup>
+              <caption className={styles.visuallyHidden}>
+                Compare Xroga Free and Pro feature availability across six categories.
+              </caption>
+              <colgroup>
+                <col className={styles.featureColumn} />
+                <col className={styles.freeColumn} />
+                <col className={styles.proColumn} />
+              </colgroup>
               <thead>
                 <tr>
-                  <th scope="col">Features and capabilities</th>
-                  <th scope="col"><span>Free <small>$0 / month</small></span></th>
-                  <th scope="col"><span className={styles.proHeader}><Sparkles aria-hidden="true" /> Xroga Pro <small>$25 / month</small></span></th>
+                  <th scope="col">
+                    <div className={styles.featureSearch}>
+                      <Search aria-hidden="true" />
+                      <label htmlFor="pricing-feature-search" className={styles.visuallyHidden}>Search Xroga plan features</label>
+                      <input
+                        id="pricing-feature-search"
+                        type="search"
+                        value={featureQuery}
+                        onChange={(event) => setFeatureQuery(event.target.value)}
+                        placeholder="Search features..."
+                      />
+                      {featureQuery && (
+                        <button type="button" aria-label="Clear feature search" onClick={() => setFeatureQuery('')}>
+                          <X aria-hidden="true" />
+                        </button>
+                      )}
+                    </div>
+                  </th>
+                  <th scope="col">
+                    <div className={styles.comparePlanHeading}>
+                      <span>Free</span>
+                      <small>$0/month</small>
+                      <a href="#free-plan-card">Try Free</a>
+                    </div>
+                  </th>
+                  <th scope="col">
+                    <div className={styles.comparePlanHeading}>
+                      <span>Pro</span>
+                      <small>$25/month</small>
+                      <a href="#pro-plan-card">Try Xroga Pro</a>
+                    </div>
+                  </th>
                 </tr>
               </thead>
               {visibleGroups.map((group) => {
                 const GroupIcon = group.icon;
+                const isCollapsed = !normalizedQuery && collapsedGroups.includes(group.title);
                 return (
                   <tbody key={group.title}>
                     <tr className={styles.groupRow}>
-                      <th scope="rowgroup" colSpan={3}><GroupIcon aria-hidden="true" /> {group.title}</th>
+                      <th scope="rowgroup" colSpan={3}>
+                        <button
+                          type="button"
+                          className={styles.groupToggle}
+                          aria-expanded={!isCollapsed}
+                          onClick={() => setCollapsedGroups(current =>
+                            current.includes(group.title) ? current.filter(title => title !== group.title) : [...current, group.title]
+                          )}
+                        >
+                          <span><GroupIcon aria-hidden="true" /> {group.title}</span>
+                          <ChevronDown className={isCollapsed ? undefined : styles.groupExpanded} aria-hidden="true" />
+                        </button>
+                      </th>
                     </tr>
-                    {group.rows.map((row) => (
+                    {!isCollapsed && group.rows.map((row) => (
                       <tr key={row.name}>
                         <th scope="row" className={styles.featureName}>
                           <span>{row.name}</span>
                           {'detail' in row && <small>{row.detail}</small>}
                         </th>
                         <td className={styles.valueCell}>
-                          {row.free === '—' ? <Minus className={styles.unavailableIcon} aria-label="Not included" /> : <Check className={styles.includedIcon} aria-hidden="true" />}
+                          {row.free === '—' ? <X className={styles.unavailableIcon} aria-label="Not included" /> : <Check className={styles.includedIcon} aria-hidden="true" />}
                           <span>{row.free}</span>
                         </td>
                         <td className={`${styles.valueCell} ${styles.proCell}`}>
-                          {String(row.pro) === '—' ? <Minus className={styles.unavailableIcon} aria-label="Not included" /> : <Check className={styles.includedIcon} aria-hidden="true" />}
+                          {String(row.pro) === '—' ? <X className={styles.unavailableIcon} aria-label="Not included" /> : <Check className={styles.includedIcon} aria-hidden="true" />}
                           <span>{row.pro}</span>
                         </td>
                       </tr>
@@ -528,15 +521,18 @@ export function PricingPageClient() {
             {visibleGroups.length === 0 && (
               <div className={styles.emptySearch}>
                 <Search aria-hidden="true" />
-                <p>No matching features. Try a different term.</p>
+                <p>No matching features. Try a different search.</p>
                 <button type="button" onClick={() => setFeatureQuery('')}>Show all features</button>
               </div>
             )}
           </div>
+          <div className={styles.compareMeta}>
+            <span>{visibleFeatureCount} of {totalFeatureCount} features</span>
+            <span><LockKeyhole aria-hidden="true" /> Connected actions require your authorization</span>
+          </div>
           <p className={styles.compareFootnote}>
-            Feature availability depends on your plan&apos;s current capacity, connected accounts,
-            provider support and permissions. This comparison does not promise universal support
-            for every external integration or automatic publishing.
+            Plans have finite monthly capacity. Availability also depends on connected accounts,
+            provider support and permissions; publishing and external actions are not automatic.
           </p>
         </section>
 
