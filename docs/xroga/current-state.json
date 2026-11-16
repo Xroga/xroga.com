@@ -5818,7 +5818,7 @@
       "id": "surface:a67f0b1fa2dd0f11a67f",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiPrompt.ts",
-      "sha256": "99d4677f594eb7195ee9349a919edc2c781205c23461098e594ac3a2a74d6a98",
+      "sha256": "22adadbba9a2b13a09519a433b1cc9ef0838202fd1afc1e3484324ce168bfe1f",
       "symbols": [
         "buildNativeOpenUiPrompt",
         "comparisonConsistencyRule",
@@ -142562,7 +142562,7 @@
   ],
   "findings": [
     {
-      "id": "finding:09b1ae6506871579e728",
+      "id": "finding:78ba54acfbdce8257a5b",
       "sourcePath": "backend/src/ai/nativeOpenUiPrompt.ts",
       "line": 52,
       "kind": "PLACEHOLDER",
