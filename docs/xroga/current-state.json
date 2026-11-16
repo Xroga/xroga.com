@@ -88416,7 +88416,7 @@
       "id": "surface:a849bd03e85ab44f9cab",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/controls.tsx",
-      "sha256": "20ff0bef2b534a9b718ed246ee34b93591f7ce34c39bd380efc6cb22e3ccf350",
+      "sha256": "ac0e9d10c17b2bf02731413e6b59b865b9d1a88eb432cdfb91f304a7c19c210a",
       "symbols": [
         "Button",
         "Checkbox",
@@ -88487,6 +88487,7 @@
       ],
       "imports": [
         "./glyph",
+        "./markdown",
         "./style",
         "@openuidev/react-lang",
         "react",
@@ -88494,6 +88495,7 @@
       ],
       "runtimeImports": [
         "frontend/src/components/native-openui/upstream/components/glyph.tsx",
+        "frontend/src/components/native-openui/upstream/components/markdown.tsx",
         "frontend/src/components/native-openui/upstream/components/style.ts"
       ],
       "entryPoints": [
@@ -88816,6 +88818,7 @@
         "frontend/src/components/native-openui/Editorial.tsx:8",
         "frontend/src/components/native-openui/Evaluation.tsx:7",
         "frontend/src/components/native-openui/NativeSurface.tsx:11",
+        "frontend/src/components/native-openui/upstream/components/controls.tsx:15",
         "frontend/src/components/native-openui/upstream/components/extra.tsx:9",
         "frontend/src/components/native-openui/upstream/components/markdown.test.ts:10",
         "frontend/src/components/native-openui/upstream/components/table.tsx:6",
@@ -88897,7 +88900,7 @@
         "frontend/src/components/native-openui/Editorial.tsx:6",
         "frontend/src/components/native-openui/Tabs.tsx:7",
         "frontend/src/components/native-openui/library.tsx:12",
-        "frontend/src/components/native-openui/upstream/components/controls.tsx:15",
+        "frontend/src/components/native-openui/upstream/components/controls.tsx:16",
         "frontend/src/components/native-openui/upstream/components/extra.tsx:13",
         "frontend/src/components/native-openui/upstream/components/layout.tsx:6",
         "frontend/src/components/native-openui/upstream/components/markdown.tsx:3",
@@ -127813,7 +127816,7 @@
       "id": "surface:bd6af899f2dd9df930f6",
       "subsystem": "browser_sandbox",
       "sourcePath": "scripts/verify-native-openui-browser.mjs",
-      "sha256": "4472f4fe141576d61cb31d7f4748189dace9c2d75d26cbdd80c03a8e50a731b7",
+      "sha256": "81ab80c3c7d1292d00e76ca8fe31d2d829e5c1e2a3cd1335cf112b85a776ee02",
       "symbols": [
         "accessibility",
         "answer",
@@ -127845,6 +127848,7 @@
         "file",
         "firstCheck",
         "fit",
+        "formattedCheck",
         "gain",
         "geometry",
         "google",
@@ -127855,6 +127859,7 @@
         "ink",
         "inlineLinks",
         "label",
+        "labelAudit",
         "labels",
         "luminance",
         "metrics",
@@ -127867,6 +127872,7 @@
         "paletteContext",
         "palettePage",
         "popupBounds",
+        "positions",
         "range",
         "recoveredEdge",
         "recoveredTable",
@@ -140975,9 +140981,9 @@
       "state": "IMPLEMENTED_BUT_UNVERIFIED"
     },
     {
-      "id": "schedule:24332e074eda33ccc959",
+      "id": "schedule:93c2c9e97f623238b7fc",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/controls.tsx",
-      "line": 467,
+      "line": 468,
       "kind": "setInterval",
       "symbol": "<module>",
       "reachable": true,
@@ -144479,9 +144485,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:e7734d4b42a57d662d36",
+      "id": "finding:8dd708d9e1e54feb06d5",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/controls.tsx",
-      "line": 172,
+      "line": 173,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -144489,27 +144495,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:37ceae2deb15dabd5e91",
-      "sourcePath": "frontend/src/components/native-openui/upstream/components/controls.tsx",
-      "line": 188,
-      "kind": "PLACEHOLDER",
-      "reachable": true,
-      "state": "PARTIAL",
-      "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
-      "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
-    },
-    {
-      "id": "finding:0073ad271480c3943da0",
-      "sourcePath": "frontend/src/components/native-openui/upstream/components/controls.tsx",
-      "line": 188,
-      "kind": "PLACEHOLDER",
-      "reachable": true,
-      "state": "PARTIAL",
-      "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
-      "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
-    },
-    {
-      "id": "finding:6c426eec1074c0d5d274",
+      "id": "finding:778e4c3ae4649d03f37c",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/controls.tsx",
       "line": 189,
       "kind": "PLACEHOLDER",
@@ -144519,9 +144505,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:cb41fa67ab166217970f",
+      "id": "finding:5024a10d233a3f85e2ac",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/controls.tsx",
-      "line": 210,
+      "line": 189,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -144529,9 +144515,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:096255e772e83f9bef4f",
+      "id": "finding:8dbae6af7dc01cfeb2ca",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/controls.tsx",
-      "line": 222,
+      "line": 190,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -144539,9 +144525,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:4353c480a31e3085915e",
+      "id": "finding:00497426030708b8dd14",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/controls.tsx",
-      "line": 222,
+      "line": 211,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -144549,7 +144535,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:60fa20876242ddff79a5",
+      "id": "finding:fd436322df39f782a289",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/controls.tsx",
       "line": 223,
       "kind": "PLACEHOLDER",
@@ -144559,9 +144545,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:b4ec13738b297d235e1a",
+      "id": "finding:5c6c03339c664724672e",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/controls.tsx",
-      "line": 240,
+      "line": 223,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -144569,9 +144555,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:8befb1a344c53d3fd3ba",
+      "id": "finding:5dfa9fe87af67072456e",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/controls.tsx",
-      "line": 249,
+      "line": 224,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -144579,7 +144565,17 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:0e6a3dd1baf9c90d72b7",
+      "id": "finding:73b56cf78bdb48d6348e",
+      "sourcePath": "frontend/src/components/native-openui/upstream/components/controls.tsx",
+      "line": 241,
+      "kind": "PLACEHOLDER",
+      "reachable": true,
+      "state": "PARTIAL",
+      "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
+      "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
+    },
+    {
+      "id": "finding:66368aa91831fb3911f4",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/controls.tsx",
       "line": 250,
       "kind": "PLACEHOLDER",
@@ -144589,9 +144585,19 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:3f9b9c9d014409384afc",
+      "id": "finding:076088e74341788c6bd9",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/controls.tsx",
-      "line": 252,
+      "line": 251,
+      "kind": "PLACEHOLDER",
+      "reachable": true,
+      "state": "PARTIAL",
+      "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
+      "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
+    },
+    {
+      "id": "finding:13771b89a0a410633171",
+      "sourcePath": "frontend/src/components/native-openui/upstream/components/controls.tsx",
+      "line": 253,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",

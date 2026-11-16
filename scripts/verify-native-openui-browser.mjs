@@ -8,6 +8,10 @@ import AxeBuilder from '@axe-core/playwright';
 import { tsImport } from 'tsx/esm/api';
 
 const cases = {
+  formattedChecklist: {
+    text: 'These checkboxes update this view only.',
+    program: 'root = Col([Checkbox($first, "**Goal and audience.** Write one sentence naming who the blog is for and what it helps them do."), Checkbox($second, "Check `www` redirects and <img src=x onerror=alert(1)> literally.")])\n$first = false\n$second = false',
+  },
   sharedAnswer: {
     raw: 'Basic includes one seat.\n\n1. Read the terms.\n2. Compare the total.\n\n| Plan | Seats |\n|---|---|\n| Basic | 1 |\n<<<XROGA_OPENUI_V1>>>\nroot = Col([Markdown(_xroga_answer), Table(["Plan", "Seats"], [["Basic", 1]])])',
     completion: 'complete',
@@ -226,6 +230,21 @@ try {
       assert.equal(await firstCheck.isChecked(), true);
       assert.equal(await secondCheck.isChecked(), false);
       assert.equal(await page.getByText('Check the links', { exact: true }).count(), 1);
+      await open('formattedChecklist');
+      const formattedCheck = page.getByRole('checkbox', { name: 'Goal and audience. Write one sentence naming who the blog is for and what it helps them do.', exact: true });
+      await formattedCheck.focus();
+      await page.keyboard.press('Space');
+      assert.equal(await formattedCheck.isChecked(), true);
+      await page.locator('.iui-check strong').click();
+      assert.equal(await formattedCheck.isChecked(), false);
+      assert.equal(await page.locator('.iui-check code').innerText(), 'www');
+      assert.equal(await page.locator('.iui-check img').count(), 0);
+      assert.doesNotMatch(await page.locator('.iui-check').first().innerText(), /\*\*/);
+      const positions = await formattedCheck.evaluate(input => ({ input: input.getBoundingClientRect().top, label: input.nextElementSibling.getBoundingClientRect().top }));
+      assert.ok(Math.abs(positions.input - positions.label) < 8, 'Multiline checkbox aligns with its first line');
+      const labelAudit = await new AxeBuilder({ page }).include('.iui-check').analyze();
+      assert.deepEqual(labelAudit.violations.map(({ id }) => id), []);
+      if ([390, 1440].includes(viewport.width)) await page.screenshot({ path: resolve(output, 'formatted-checklist-' + viewport.width + '-' + theme + '.png'), fullPage: true });
       await open('rebuiltSignedChart');
       const signedTable = page.getByRole('table', { name: 'Chart data' });
       await signedTable.getByRole('cell', { name: '-800', exact: true }).waitFor();
