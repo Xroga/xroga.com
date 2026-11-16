@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { PluginBrandLogo } from '@/components/integrations/PluginBrandLogo';
 import { LOCAL_PUBLIC_INTEGRATION_LOGOS } from '@/lib/publicIntegrationLogo';
+import { composioLogoUrl } from '@/lib/pluginCatalog';
 import { SharedDotBackdrop } from '@/components/homepage-next/backdrop/SharedDotBackdrop';
 import { EXTERNAL_AGENTS, EXTERNAL_AGENT_DISCLOSURE } from '@/lib/externalAgentWorkflows';
 import { xrogaConnect } from '@/lib/xrogaConnect';
@@ -72,7 +73,19 @@ function useTypingPlaceholder(active: boolean) {
 }
 
 function AppLogo({ item, size = 'card' }: { item: PublicIntegrationCard; size?: 'micro' | 'card' | 'detail' }) {
-  return <PluginBrandLogo id={item.id} name={item.name} toolkit={item.id} logo={item.logoUrl} size={size} verifiedOnly />;
+  // The authenticated dashboard already uses the canonical Composio logo CDN.
+  // Use it as a REAL provider-logo fallback when an older mapped SVG or a
+  // source-provided URL fails (the third-party toolkit logo issue is known).
+  // Do not synthesize brand marks or use unrelated generic technology images.
+  return <PluginBrandLogo
+    id={item.id}
+    name={item.name}
+    toolkit={item.id}
+    logo={item.logoUrl}
+    fallbackLogo={composioLogoUrl(item.id)}
+    size={size}
+    verifiedOnly
+  />;
 }
 
 function HowItWorks() {
