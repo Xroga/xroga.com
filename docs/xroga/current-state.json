@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com",
     "branch": "",
-    "sha": "25acd4eaabcd422b7306b0fed437ec049cc9b8d7",
-    "sourceTimestampUtc": "2026-11-16T18:00:38+05:00",
-    "auditStartedUtc": "2026-11-16T13:07:51.885Z",
+    "sha": "d8ab7ef2651901e7ce433a7f6626279457154dbf",
+    "sourceTimestampUtc": "2026-11-17T00:53:50+05:00",
+    "auditStartedUtc": "2026-11-16T19:55:54.641Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -90526,7 +90526,7 @@
         "frontend/src/app/pricing/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/pricing/PricingPageClient.tsx:33"
+        "frontend/src/components/pricing/PricingPageClient.tsx:32"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -90555,7 +90555,7 @@
       "id": "surface:823eca0a2b4c2d02d961",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/pricing/PricingPageClient.tsx",
-      "sha256": "c847f163d80335d0382133cb32ad6e4fef9dbbe0914e937e32572966947fc995",
+      "sha256": "56c892b7256d811e713c42536904efc195335df6707a3fa785e297fc64067867",
       "symbols": [
         "Active",
         "BillingStatus",
@@ -90563,7 +90563,6 @@
         "CtaParticles",
         "FAQS",
         "FeatureIcon",
-        "FullAccessInfo",
         "GroupIcon",
         "Icons",
         "PLAN_FEATURES",
@@ -90584,8 +90583,6 @@
         "router",
         "scene",
         "sync",
-        "totalFeatureCount",
-        "visibleFeatureCount",
         "visibleGroups"
       ],
       "imports": [
@@ -105865,7 +105862,7 @@
         "frontend/src/components/notifications/SidebarNotificationCenter.tsx:10",
         "frontend/src/components/onboarding/OnboardingFlow.tsx:6",
         "frontend/src/components/pricing/PricingCheckoutButton.tsx:7",
-        "frontend/src/components/pricing/PricingPageClient.tsx:34",
+        "frontend/src/components/pricing/PricingPageClient.tsx:33",
         "frontend/src/components/projects/FilePreview.tsx:4",
         "frontend/src/components/projects/ProjectDetailView.tsx:8",
         "frontend/src/components/providers/AppProviders.tsx:4",
@@ -112328,7 +112325,7 @@
         "frontend/src/app/(shell)/dashboard/upgrade/page.tsx:3",
         "frontend/src/components/billing/XrogaPricingCard.tsx:7",
         "frontend/src/components/homepage/HomepagePricingPreview.tsx:3",
-        "frontend/src/components/pricing/PricingPageClient.tsx:35"
+        "frontend/src/components/pricing/PricingPageClient.tsx:34"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -116558,7 +116555,7 @@
         "frontend/src/components/layout/PublicMarketingHeader.tsx:20",
         "frontend/src/components/layout/Sidebar.tsx:68",
         "frontend/src/components/layout/SidebarProjectHistory.tsx:23",
-        "frontend/src/components/pricing/PricingPageClient.tsx:36",
+        "frontend/src/components/pricing/PricingPageClient.tsx:35",
         "frontend/src/components/settings/DataAiSettingsPanel.tsx:6",
         "frontend/src/components/settings/SecuritySettingsPanel.tsx:6",
         "frontend/src/components/showcase/ShowcaseDialogs.tsx:24",
@@ -144974,9 +144971,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:721f9086b2a740a8c9ce",
+      "id": "finding:583a12a3821219a3bae0",
       "sourcePath": "frontend/src/components/pricing/PricingPageClient.tsx",
-      "line": 456,
+      "line": 424,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -148424,9 +148421,9 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:b463b49d225c4b04e523",
+      "id": "frontend-call:44725ee31593280d9a08",
       "sourcePath": "frontend/src/components/pricing/PricingPageClient.tsx",
-      "line": 266,
+      "line": 236,
       "callee": "api.billing.status",
       "reachable": true
     },

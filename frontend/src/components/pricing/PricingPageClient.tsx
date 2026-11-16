@@ -18,8 +18,7 @@ import {
   CreditCard,
   FileStack,
   GitBranch,
-  Info,
-  LockKeyhole,
+  Orbit,
   Rocket,
   Search,
   ShieldCheck,
@@ -41,20 +40,20 @@ type BillingStatus = Awaited<ReturnType<typeof api.billing.status>>;
 
 const PLAN_FEATURES = {
   free: [
-    'AI app builder + coding agent',
-    'New or existing GitHub repositories',
-    'Repository-aware edits and debugging',
-    'Browser preview + verification',
-    'Live web research, files and documents',
-    'Included monthly AI capacity',
+    'Xroga Black Hole V∞ — starter experience',
+    'Limited included starter usage',
+    'AI chat, research and project context',
+    'Edit code and preview your projects',
+    'Connect eligible plugins and MCP services',
+    'No credit card required',
   ],
   spark: [
-    'Everything in Free',
-    'Higher monthly AI capacity',
-    'Full Access pacing',
-    'Longer end-to-end builds and multi-file changes',
-    'More build → test → repair cycles',
-    'Production-focused GitHub, Vercel and Supabase workflows',
+    'Expanded Black Hole V∞ workflows',
+    'More available capacity for bigger tasks',
+    'Longer research, coding and repair sessions',
+    'Code edits, live previews and verification',
+    'Supported plugins, apps and MCP tools',
+    'Connected publishing and browser workflows',
   ],
 } as const;
 
@@ -63,13 +62,14 @@ const COMPARISON_GROUPS = [
     title: 'AI chat & research',
     icon: Sparkles,
     rows: [
+      { name: 'Xroga Black Hole V∞ AI experience', free: 'Starter access', pro: 'Expanded work capacity', detail: 'The public AI identity; underlying routing depends on the active system and task.' },
       { name: 'AI chat workspace', free: 'Included', pro: 'Included' },
       { name: 'Plain-language requests and follow-up work', free: 'Included', pro: 'Included' },
       { name: 'Web search and source-based research', free: 'Included', pro: 'Included', detail: 'Subject to supported search tools and available usage.' },
       { name: 'Analyze documents, files and screenshots', free: 'Included', pro: 'Included', detail: 'Supported input formats and processing limits apply.' },
       { name: 'Work with project context', free: 'Included', pro: 'Included' },
-      { name: 'AI capacity per billing cycle', free: 'Included', pro: 'Higher' },
-      { name: 'Full Access capacity pacing', free: '—', pro: 'Included', detail: 'Makes remaining capacity available sooner; does not increase the cycle allowance.' },
+      { name: 'AI usage access', free: 'Limited starter use', pro: 'Expanded capacity', detail: 'No daily message-count promise; available usage depends on your plan allowance.' },
+      { name: 'Advanced work capacity', free: 'Starter scope', pro: 'More room', detail: 'Not a guarantee of unlimited model usage or a separate provider checkpoint.' },
     ],
   },
   {
@@ -102,11 +102,13 @@ const COMPARISON_GROUPS = [
     title: 'Connected apps & delivery',
     icon: Workflow,
     rows: [
-      { name: 'Connect supported external services', free: 'Included', pro: 'Included', detail: 'Availability depends on each connector and account authorization.' },
+      { name: 'Connect supported plugins and apps', free: 'Where supported', pro: 'Where supported', detail: 'App availability, authentication and provider limits apply.' },
+      { name: 'Custom MCP server connections', free: 'When enabled', pro: 'When enabled', detail: 'Requires a compatible MCP server and reviewed permissions.' },
       { name: 'GitHub integration', free: 'With connection', pro: 'With connection' },
       { name: 'Vercel deployment workflows', free: 'With connection', pro: 'With connection', detail: 'Deployment requires provider access and passing build checks.' },
       { name: 'Supabase-backed application workflows', free: 'Supported', pro: 'Supported' },
       { name: 'Connected business-app tasks', free: 'Where enabled', pro: 'Where enabled', detail: 'Only supported operations with the permissions you grant.' },
+      { name: 'Chrome extension and browser automation', free: 'When available', pro: 'When available', detail: 'Supported extension or worker must be installed and enabled; some deployments disable this feature.' },
       { name: 'Prepare production-ready project changes', free: 'Capacity-limited', pro: 'More room' },
       { name: 'Use your own code and provider accounts', free: 'Yes', pro: 'Yes' },
     ],
@@ -129,44 +131,30 @@ const COMPARISON_GROUPS = [
     rows: [
       { name: 'Subscription price', free: '$0', pro: '$25/month' },
       { name: 'Credit card to get started', free: 'Not required', pro: 'Required to subscribe' },
-      { name: 'Monthly AI capacity', free: 'Included', pro: 'Higher capacity' },
-      { name: 'Cycle and capacity status in workspace', free: 'Included', pro: 'Included' },
+      { name: 'Included AI usage', free: 'Limited starter use', pro: 'Higher capacity' },
+      { name: 'Available-usage status in workspace', free: 'When available', pro: 'When available' },
       { name: 'Monthly Pro subscription', free: '—', pro: 'Cancel anytime' },
     ],
   },
 ] as const;
 
 const FAQS = [
-  {
-    question: 'Does Free require a credit card?',
-    answer:
-      'No. Free is $0 and does not require a card. It includes the core Xroga building workflow with included monthly AI capacity.',
-  },
-  {
-    question: 'What changes when I upgrade to Xroga Pro?',
-    answer:
-      'The core workflow stays familiar. Pro adds higher monthly AI capacity, Full Access pacing and more room for long research, coding, verification, repair and production workflows.',
-  },
-  {
-    question: 'What is Full Access pacing?',
-    answer:
-      'Full Access is a Pro pacing option that can make remaining working capacity for the current billing cycle available earlier instead of waiting for later progressive unlocks. It changes timing, not the total monthly capacity.',
-  },
-  {
-    question: 'What happens when my currently available capacity is used?',
-    answer:
-      'Your project state and completed work remain preserved. New AI work can continue when more capacity unlocks or when the next billing cycle begins.',
-  },
-  {
-    question: 'Can I use an existing GitHub repository?',
-    answer:
-      'Yes. Xroga supports workflows that start from new projects or repositories you already own, subject to the repository access you authorize.',
-  },
-  {
-    question: 'Does Xroga own my code?',
-    answer:
-      'Xroga is designed around repositories and provider accounts you authorize, so your source and deployment workflow are not trapped inside a closed generated preview.',
-  },
+  { question: 'Does Free require a credit card?', answer: 'No. Free is $0 and provides limited starter usage without requiring payment details.' },
+  { question: 'How is usage different between Free and Pro?', answer: 'Free supports lighter tasks with a smaller starter allowance. Pro offers more available working capacity for bigger projects. Neither plan promises unlimited requests or a fixed number of daily messages.' },
+  { question: 'Is Xroga Black Hole V∞ included in both plans?', answer: 'Black Hole V∞ is Xroga’s public AI identity. Free provides starter access, while Pro gives more room for involved work. The active system and task determine routing; an exclusive premium model checkpoint is not promised.' },
+  { question: 'What changes when I upgrade to Xroga Pro?', answer: 'Pro increases available working capacity for sustained research, coding, debugging, previews and verification. Supported integrations still require access and authorization.' },
+  { question: 'What is Full Access pacing?', answer: 'Where offered, Full Access can make existing working capacity available earlier. It does not create extra or unlimited usage.' },
+  { question: 'What happens when my available usage is exhausted?', answer: 'New AI work may pause until more access becomes available under your plan. Completed work and existing files are not automatically erased because usage is exhausted.' },
+  { question: 'Can I connect plugins, apps and MCP servers?', answer: 'Xroga supports connected applications and compatible custom MCP integrations. Available services, provider limits, authentication and permission checks apply.' },
+  { question: 'Are app connections or MCP operations unlimited?', answer: 'There is no unlimited-use guarantee. You can connect eligible services where supported, subject to account capabilities, provider restrictions, usage capacity and any external fees.' },
+  { question: 'Can I install a Chrome extension for browser automation?', answer: 'Browser automation requires a supported extension or browser worker that is installed, authorized and enabled. It is not available on every deployment; check the workspace before relying on it.' },
+  { question: 'Can Xroga edit code and preview a project?', answer: 'Yes. Compatible projects can use repository-aware editing, builds, browser previews and verification according to the available tools and workspace permissions.' },
+  { question: 'Can I use an existing GitHub repository?', answer: 'Yes. Connect a repository you own or have permission to edit. Git operations use the access you explicitly grant.' },
+  { question: 'Does Xroga own my code?', answer: 'Your project can remain in repositories and provider accounts you control. Refer to the applicable Xroga terms for the legal details of ownership and generated output.' },
+  { question: 'Can I cancel Xroga Pro?', answer: 'Subscription and cancellation controls are handled through your billing account. Pro costs $25 per month; review the checkout terms before subscribing.' },
+  { question: 'What happens to projects if I return to Free?', answer: 'Your available usage returns to Free-level limits. Existing work is not automatically deleted solely because you changed plans, though account and provider policies still apply.' },
+  { question: 'Do both plans use the same workspace?', answer: 'Yes. Both plans use the Xroga workspace, with different available usage and supported connected-service access.' },
+  { question: 'Where can I read technical documentation?', answer: 'Open Docs for deeper information about available features, connectors, projects and technical workflows.' },
 ] as const;
 
 const PRO_SCENES = [
@@ -230,24 +218,6 @@ function CtaParticles() {
   );
 }
 
-function FullAccessInfo() {
-  return (
-    <span className={styles.tooltipWrap}>
-      <button
-        type="button"
-        className={styles.infoButton}
-        aria-label="What is Full Access pacing?"
-      >
-        <Info aria-hidden="true" />
-      </button>
-      <span className={styles.tooltip} role="tooltip">
-        Makes remaining working capacity for the current cycle available earlier.
-        It does not add extra monthly capacity.
-      </span>
-    </span>
-  );
-}
-
 export function PricingPageClient() {
   const router = useRouter();
   const [loggedIn, setLoggedIn] = useState(false);
@@ -281,8 +251,6 @@ export function PricingPageClient() {
         .some((value) => String(value ?? '').toLowerCase().includes(normalizedQuery)),
     ),
   })).filter((group) => group.rows.length > 0);
-  const totalFeatureCount = COMPARISON_GROUPS.reduce((count, group) => count + group.rows.length, 0);
-  const visibleFeatureCount = visibleGroups.reduce((count, group) => count + group.rows.length, 0);
 
   function openFree() {
     if (freeCurrent) return;
@@ -300,9 +268,9 @@ export function PricingPageClient() {
         </div>
 
         <div className={styles.heroInner}>
-          <p className={styles.heroKicker}>Pricing</p>
           <h1 id="pricing-title" className={styles.heroTitle}>
-            Build beyond <span>the ordinary.</span>
+            <Orbit className={styles.heroTitleIcon} aria-hidden="true" />
+            <span className={styles.heroTitleCopy}>Pricing build beyond the ordinary</span>
           </h1>
         </div>
       </section>
@@ -354,8 +322,8 @@ export function PricingPageClient() {
 
                   <p className={styles.planLead}>
                     {isFree
-                      ? 'Explore the real Xroga workflow, work on real code and finish a smaller build with included capacity.'
-                      : 'For active builders who need more room for sustained research, implementation, verification and shipping.'}
+                      ? 'Start with Black Hole V∞, explore your ideas and build with limited starter access.'
+                      : 'Go further with expanded AI capacity, code editing, previews and connected workflows.'}
                   </p>
 
                   <ul className={styles.featureList}>
@@ -370,7 +338,7 @@ export function PricingPageClient() {
                         </span>
                         <span>
                           {feature}
-                          {feature === 'Full Access pacing' ? <FullAccessInfo /> : null}
+                          
                         </span>
                       </li>
                     ))}
@@ -430,7 +398,7 @@ export function PricingPageClient() {
           <div className={styles.compareHeading}>
             <BadgeCheck className={styles.compareOrnament} aria-hidden="true" />
             <h2 id="compare-title">Compare features across plans</h2>
-            <p>Create with no limits.</p>
+            <p>One workspace. A plan that fits your next idea.</p>
           </div>
           <div className={styles.compareScroll} tabIndex={0} role="region" aria-label="Free and Pro feature comparison; scroll horizontally on narrow screens">
             <table className={styles.comparisonTable}>
@@ -526,14 +494,6 @@ export function PricingPageClient() {
               </div>
             )}
           </div>
-          <div className={styles.compareMeta}>
-            <span>{visibleFeatureCount} of {totalFeatureCount} features</span>
-            <span><LockKeyhole aria-hidden="true" /> Connected actions require your authorization</span>
-          </div>
-          <p className={styles.compareFootnote}>
-            Plans have finite monthly capacity. Availability also depends on connected accounts,
-            provider support and permissions; publishing and external actions are not automatic.
-          </p>
         </section>
 
         <section className={styles.faqSection} aria-labelledby="faq-title">
@@ -592,7 +552,7 @@ export function PricingPageClient() {
 
             <div className={styles.trustLine}>
               <ShieldCheck aria-hidden="true" />
-              No card on Free
+              No credit card required on Free
             </div>
           </div>
         </section>
