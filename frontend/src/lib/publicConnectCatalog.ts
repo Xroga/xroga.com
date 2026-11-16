@@ -19,7 +19,9 @@ export async function publicConnectCatalogPage(cursor?: string): Promise<PublicC
   const params = new URLSearchParams({ limit: '250', sortBy: 'usage' });
   if (cursor) params.set('cursor', cursor);
   const response = await fetch(`${API_URL}/api/public/integrations/catalog?${params}`, {
-    method: 'GET', credentials: 'omit', cache: 'no-store',
+    // This endpoint returns shared catalog metadata with a short CDN TTL;
+    // avoid forcing a provider request for every anonymous page view.
+    method: 'GET', credentials: 'omit', cache: 'default',
     headers: { Accept: 'application/json' },
     signal: AbortSignal.timeout(12_000),
   });
