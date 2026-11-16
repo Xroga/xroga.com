@@ -30,7 +30,7 @@ import {
   Zap,
 } from 'lucide-react';
 
-import { CheckoutButton } from '@/components/billing/CheckoutButton';
+import { PricingCheckoutButton as CheckoutButton } from './PricingCheckoutButton';
 import { api } from '@/lib/api';
 import { GALACTIC_PLANS } from '@/lib/plans';
 import { createClient } from '@/lib/supabase/client';
