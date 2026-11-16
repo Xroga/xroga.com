@@ -1812,11 +1812,13 @@
 }
 .planTop {
   align-items: flex-start;
+  flex-wrap: wrap;
   gap: 13px;
   min-height: 0;
 }
 .planIdentity {
   display: flex;
+  flex: 1 1 225px;
   align-items: center;
   gap: 15px;
   min-width: 0;
