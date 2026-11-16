@@ -2069,13 +2069,24 @@
   overflow-wrap: anywhere;
 }
 .valueCell svg {
-  display: block;
+  display: inline-block;
   width: 18px;
   height: 18px;
-  margin: 0 auto 6px;
+  margin: 0 7px 0 0;
+  vertical-align: middle;
 }
-.valueCell span { display: block; color: #d8ae72; }
-.includedIcon { color: #f1be74; stroke-width: 3; }
+.valueCell span {
+  display: inline;
+  color: #d8ae72;
+  vertical-align: middle;
+}
+.includedIcon {
+  padding: 3px;
+  border-radius: 50%;
+  background: #f1be74;
+  color: #281d0e;
+  stroke-width: 3.4;
+}
 .unavailableIcon { color: #886d4c; }
 .compareMeta {
   display: flex;
