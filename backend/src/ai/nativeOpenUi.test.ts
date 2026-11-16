@@ -57,7 +57,9 @@ test('the model gets instructions from the native registry and may answer in tex
   }
   for (const name of ['Col(', 'Chart(', 'Slider(', 'Svg(', 'Diagram(', 'Section(', 'Table(', 'Payment(', 'Source(']) assert.ok(nativeOpenUiPrompt.includes(name), name);
   assert.match(nativeOpenUiPrompt, /The OpenUI program is the primary rich answer/);
-  assert.match(nativeOpenUiPrompt, /Do not independently rewrite the complete answer/);
+  assert.match(nativeOpenUiPrompt, /first give the complete readable answer in Markdown/);
+  assert.match(nativeOpenUiPrompt, /readable answer must stand on its own if the visual cannot be recovered/);
+  assert.match(nativeOpenUiPrompt, /include the formula, initial inputs and initial result/);
   assert.deepEqual(splitNativeOpenUiAnswer('Paris.'), { text: 'Paris.', program: '' });
   assert.deepEqual(splitNativeOpenUiAnswer('Paris.\n<<<XROGA_OP', true), { text: 'Paris.', program: '' });
   assert.deepEqual(splitNativeOpenUiAnswer('<<<XROGA_OP', true), { text: '', program: '' });
@@ -467,6 +469,25 @@ test('a validated native-only response recovers readable code and table data wit
   assert.match(answer.response, /\| Item \| Amount \|\n\| --- \| --- \|\n\| Print \| 25 \|/);
   assert.match(answer.response, /total = 25/);
   assert.equal(readNativeOpenUiShare(buildNativeOpenUiShare(answer.response, program)!)?.text, answer.response);
+});
+
+test('a rejected visual preserves the complete readable answer without leaking UI syntax', () => {
+  const prose = [
+    'Team costs $25 per month for five seats, or $5 per included seat.',
+    '| Plan | USD/month | Seats | USD/seat |',
+    '| --- | --- | --- | --- |',
+    '| Basic | 10 | 1 | 10 |',
+    '| Team | 25 | 5 | 5 |',
+    'Formula: monthly price divided by included seats. Basic has the lower total monthly price.',
+    'Requested Python example:',
+    '```python\nper_seat = 25 / 5\n```',
+    'Assumption: the supplied prices exclude tax. Unused seats still count toward the subscription price.',
+  ].join('\n\n');
+  const answer = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + 'root = Col([', 'stop');
+  assert.ok(answer.response.includes(prose));
+  assert.equal(answer.responseSource.text, '');
+  assert.doesNotMatch(answer.response, /root =|XROGA_OPENUI/);
+  assert.deepEqual(answer.completion, { status: 'partial', reason: 'presentation_contract' });
 });
 
 test('an invalid program without readable prose explicitly asks the user to retry', () => {

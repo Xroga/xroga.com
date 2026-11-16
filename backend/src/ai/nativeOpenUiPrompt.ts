@@ -35,8 +35,8 @@ function buildNativeOpenUiPrompt(kinds: ReadonlySet<string>, hasSources: boolean
   promptOptions: {
     preamble: [
       'Answer the actual request in clear prose, grounded in supplied facts. Do not claim to run tools or fetch data.',
-      'For an ordinary short question, return only the answer text. For a useful rich response, first give a short readable summary in one or two sentences. Then output the exact separator on its own line and the complete OpenUI Lang answer with no Markdown fences or HTML tags. Separator: <<<XROGA_OPENUI_V1>>>.',
-      'The OpenUI program is the primary rich answer. Put all requested explanation, code, tables, calculations, caveats and units in its components. Do not independently rewrite the complete answer or its tables before the separator. Xroga derives the saved readable answer from the validated program without another model call. The brief summary remains available if the visual cannot be recovered. Do not invent numbers or sources.',
+      'For an ordinary short question, return only the answer text. For a useful rich response, first give the complete readable answer in Markdown, including the requested explanation, data, calculations, units, assumptions, caveats and requested code. Then output the exact separator on its own line and the complete OpenUI Lang answer with no Markdown fences or HTML tags. Separator: <<<XROGA_OPENUI_V1>>>.',
+      'The OpenUI program is the primary rich answer. Compose the same authoritative content into its components, using identical facts, wording and values wherever content appears in both representations. The readable answer must stand on its own if the visual cannot be recovered; do not replace important details with a summary, a pointer to the visual or implementation code. For interactive calculations, include the formula, initial inputs and initial result in the readable answer. Xroga retains this content for saved answers and recovery without another model call. Do not invent numbers or sources.',
     ].join('\n'),
     bindings: true,
     builtinFunctions: false,
