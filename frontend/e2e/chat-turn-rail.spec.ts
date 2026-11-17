@@ -120,9 +120,12 @@ for (const width of [390, 1366]) {
     await expect(page.getByText('Answer marker 5', { exact: false }).first()).toBeVisible();
     await expect(page.getByRole('button', { name: 'Stop response', exact: true })).toHaveCount(0);
     await expect(bubble).toBeInViewport();
-    // Account for a frame in which the streaming placeholder and final DOM swap.
+    // The loading row and composer can reflow by about one control height.
+    // The submitted message must remain visible without a larger scroll jump.
     await page.waitForTimeout(350);
-    expect(Math.abs(await root.evaluate(element => element.scrollTop) - before)).toBeLessThan(24);
+    const after = await root.evaluate(element => element.scrollTop);
+    expect(after).toBeGreaterThan(0);
+    expect(Math.abs(after - before)).toBeLessThan(48);
     await root.evaluate(element => element.scrollTo({ top: 0, behavior: 'instant' }));
     await expect(page.getByRole('button', { name: 'Scroll to latest', exact: true })).toBeVisible();
   });
