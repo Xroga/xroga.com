@@ -37,7 +37,7 @@ export const HTTP_GET_TOOL: AgentTool = {
   parameters: { type: 'object', properties: { url: { type: 'string', maxLength: 2000 } }, required: ['url'], additionalProperties: false },
 };
 
-export async function runPublicGet(runId: string, input: unknown, signal: AbortSignal, wrap: (text: string, source: string) => string): Promise<{ text: string; isError: boolean }> {
+async function runPublicGetNow(runId: string, input: unknown, signal: AbortSignal, wrap: (text: string, source: string) => string): Promise<{ text: string; isError: boolean }> {
   try {
     const value = await workspaceRequest('public-get', { runId, body: input }, signal) as
       { status?: number; contentType?: string; finalUrl?: string; body?: string; truncated?: boolean; totalChars?: number; note?: string };
@@ -212,6 +212,15 @@ export function runPluginTool(
 ): ReturnType<typeof runPluginToolNow> {
   const previous = pluginQueues.get(runId) ?? Promise.resolve();
   const next = previous.catch(() => undefined).then(() => (signal.aborted ? Promise.reject(signal.reason) : runPluginToolNow(name, runId, input, signal, approve, wrap)));
+  pluginQueues.set(runId, next);
+  void next.catch(() => undefined).finally(() => { if (pluginQueues.get(runId) === next) pluginQueues.delete(runId); });
+  return next;
+}
+
+/** Direct reads share the per-run queue with connected-app calls: the server takes one call per run at a time. */
+export function runPublicGet(runId: string, input: unknown, signal: AbortSignal, wrap: (text: string, source: string) => string): Promise<{ text: string; isError: boolean }> {
+  const previous = pluginQueues.get(runId) ?? Promise.resolve();
+  const next = previous.catch(() => undefined).then(() => (signal.aborted ? Promise.reject(signal.reason) : runPublicGetNow(runId, input, signal, wrap)));
   pluginQueues.set(runId, next);
   void next.catch(() => undefined).finally(() => { if (pluginQueues.get(runId) === next) pluginQueues.delete(runId); });
   return next;
