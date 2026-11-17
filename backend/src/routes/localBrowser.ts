@@ -7,7 +7,7 @@ import { actualProviderCostMicroUsd } from '../ai/providerBudget.js';
 import { resolveModelSpec } from '../ai/models.js';
 import { DIRECT_READ_MAX_AGE_MS, isPlainOpenAndRead, namesSite } from './localBrowserDirectRead.js';
 import { browserDeviceExtension, localBrowserAccountAllowed, type BrowserDeviceRequest } from './localBrowserDevice.js';
-import { publicHttpsUrl } from '../security/boundedPublicGet.js';
+import { boundedPublicGet, publicHttpsUrl } from '../security/boundedPublicGet.js';
 import { classifyOutboundData } from '../security/egress/dataClassification.js';
 import { requireTenantContext } from '../security/tenantContext.js';
 import { createPool } from '../storage/runtime.js';
@@ -477,6 +477,27 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
     }
     return requireTenantContext(req.tenantContext);
   };
+
+  // A direct read of a public web address (an official free API, a documentation page, a data file) for the browser agent. Credential-free:
+  // nothing of the user's is attached, the address must be public HTTPS (no private network, no ports, no embedded logins), the answer is
+  // size- and time-bounded and returned as untrusted text. It reads only; a change to a service goes through its own authorised tool.
+  router.post('/runs/:runId/public-get', withLease(async (req, res, _rt, row) => {
+    active(row);
+    if (!req.revalidateBrowserDevice || !await req.revalidateBrowserDevice()) throw new BrowserRequestError(403, 'BROWSER_DEVICE_REVOKED');
+    requireTenantContext(req.tenantContext);
+    const { url } = z.object({ url: z.string().trim().min(10).max(2_000) }).strict().parse(req.body);
+    checkData(url);
+    try { publicHttpsUrl(url); } catch { throw new BrowserRequestError(403, 'BROWSER_POLICY_DENIED', { reason: ['public_https_only'] }); }
+    const got = await boundedPublicGet(url, { maxBytes: 400_000, timeoutMs: 15_000, maxRedirects: 3, allowHttpErrors: true, signal: AbortSignal.timeout(20_000) })
+      .catch(() => { throw new BrowserRequestError(502, 'BROWSER_PUBLIC_GET_FAILED'); });
+    const type = got.contentType.toLowerCase();
+    if (!/^(?:text\/|application\/(?:json|xml|[a-z.+-]*\+(?:json|xml)|csv|javascript|x-ndjson))/.test(type)) {
+      return res.json({ status: got.statusCode, contentType: got.contentType.slice(0, 80), finalUrl: got.finalUrl, body: '', note: 'Not a text or data response; open it in the browser instead.' });
+    }
+    const text = got.bytes.toString('utf8');
+    return res.json({ status: got.statusCode, contentType: got.contentType.slice(0, 80), finalUrl: got.finalUrl,
+      body: text.slice(0, 40_000), ...(text.length > 40_000 ? { truncated: true, totalChars: text.length } : {}) });
+  }));
 
   router.post('/runs/:runId/plugin-search', withLease(async (req, res, { runs }, row, lease) => {
     const actor = await assertPluginRun(req, row);

@@ -22,7 +22,7 @@ interface WorkspaceMessage {
 }
 
 type Operation = 'start' | 'resume' | 'extend' | 'turn' | 'finish' | 'document' | 'voice' | 'authorize-device'
-  | 'plugin-search' | 'plugin-read' | 'plugin-review' | 'plugin-action-search' | 'plugin-act' | 'plugin-act-review';
+  | 'plugin-search' | 'plugin-read' | 'plugin-review' | 'plugin-action-search' | 'plugin-act' | 'plugin-act-review' | 'public-get';
 type Pending = { succeed: (value: unknown) => void; fail: (error: Error) => void };
 type PairFailure = 'sign-in' | 'unavailable' | 'extension-id' | 'account' | 'failed';
 let pairing: { nonce: string; tabId: number; expires: number; started: number } | undefined;

@@ -75,10 +75,10 @@ describe('the endpoint marketplace playbook', () => {
 describe('choosing where data comes from', () => {
   it('sends a plain data question to free sources first, not to a paid marketplace', () => {
     const request = 'What is the current TVL of the aave protocol on DefiLlama?';
-    expect(ids(request)).toContain('free-sources');
+    expect(ids(request)).toContain('choose-method');
     expect(ids(request)).not.toContain('endpoint-marketplace');
     expect(skillsSection(request)).toContain('https://api.llama.fi/tvl/aave');
-    expect(skillsSection(request)).toContain('Do not loop');
+    expect(skillsSection(request)).toContain('http_get');
   });
 
   it('uses the marketplace playbook when one is named', () => {

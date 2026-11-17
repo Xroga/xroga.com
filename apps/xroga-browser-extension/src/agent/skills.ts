@@ -17,14 +17,15 @@ const stepWords = (request: string) =>
 /** Domain playbooks come first, so a four-playbook limit keeps the most specific ones. */
 export const SKILLS: Skill[] = [
   {
-    id: 'free-sources',
-    when: has(/\b(?:tvl|price|prices|market cap|volume|rates?|exchange rate|stats?|statistics|data|dataset|api|endpoint|defi|crypto|token|stocks?|weather|latest|current|lookup|look up|find out|how much|how many)\b/i),
+    id: 'choose-method',
+    when: has(/\b(?:tvl|price|prices|market cap|volume|rates?|exchange rate|stats?|statistics|data|dataset|api|endpoint|defi|crypto|token|stocks?|weather|latest|current|lookup|look up|find out|how much|how many|fetch|pull|get me)\b/i),
     body: [
-      'Where to get information or data (any lookup: prices, TVL, rates, statistics, records, documents):',
-      '- Choose the cheapest source that can really answer, in this order, and say which one you used. 1) A tool of a connected app (search once for it). 2) The service’s own official public API or page, which is usually free and needs no key: open its URL in the browser and read the JSON or the page (for example https://api.llama.fi/tvl/aave returns the current TVL of the aave protocol as a number; most services document a plain GET address). 3) A web search, then the page it finds. 4) Only then a paid data marketplace (Monid, Apify and the like), and only when the user asked for it by name or nothing free has the data.',
-      '- Do not go to a paid provider for something a free official source gives. Never spend the user’s credits unless the user asked for that work.',
-      '- Do not loop. Give one route at most two tries, changing what you send each time; if it still fails, move to the next route. If every route fails, say what each one returned and ask the user for the one thing that would unblock you (connect an app, sign in, authorize a page, add credits), then continue when they say done.',
-      '- Know the service: you already know the official docs of most well-known APIs, so go straight to the right address instead of exploring. Read exactly what comes back and answer with the value, its source address and the time you read it.',
+      'Choosing how to do a task. You decide, from what the task actually needs; there is no fixed order of providers to try. The ways you have: a free official public API (read directly with http_get), the user’s own API key or connected account, an MCP server, a connected app (plugin_search / plugin_action_search), a paid data marketplace such as Monid or Apify, the browser, and combinations of these.',
+      '- Ask yourself: is the answer a plain public fact or dataset (prices, TVL, rates, weather, public records, documentation)? Then a service that publishes a free official API is usually the shortest path: use http_get on the exact endpoint (read its documentation page first when you are not sure of the address), check the response against the documentation (units, fields, time), and answer with the value, the address and when you read it. Do not search connected apps or marketplaces for something an official free endpoint already gives. Example: https://api.llama.fi/tvl/aave returns the current TVL of the aave protocol.',
+      '- Does the task need the user’s own data or a change in their account (mail, sheets, CRM, ads, files)? Use the connected app or the API key the user connected. Does it need a rendered page, a login the user already has, clicking or filling forms? Use the browser. Does a paid marketplace add data nothing free has, and the user authorised paid use? Then use it, small first.',
+      '- Mix methods when that is faster: read data directly, save it to the user’s sheet through the connected app, check a page in the browser. Run independent reads together.',
+      '- If the right tool is not registered, find the official documentation (http_get or a search), work out the endpoint and its parameters, try one small read to test it, then use it. Credentials never go into http_get or a URL: anything that needs a login goes through a connected app or the browser.',
+      '- Keep simple requests simple: one or two calls and a clear answer. If a method fails twice, change the method or the input instead of repeating it; if all fail, say what each returned and what would unblock you.',
     ].join('\n'),
   },
   {

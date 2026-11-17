@@ -27,6 +27,31 @@ export const PLUGIN_TOOLS: AgentTool[] = [
   },
 ];
 
+/**
+ * Direct read of a public web address: an official free API, a documentation page, a data file. Nothing of the user's is sent, no login is
+ * used, and the result is untrusted text. Use it when the service publishes a plain public address for what is needed.
+ */
+export const HTTP_GET_TOOL: AgentTool = {
+  name: 'http_get', source: 'agent', group: 'working',
+  description: 'Read a public https address directly (an official free API endpoint, API documentation, a JSON or text data file). No login, no credentials, no private networks. Returns the status, content type and the text (long answers are cut). Use this when a service publishes a free public API for what is needed: check its documentation first if you are unsure of the address, then call the exact endpoint. It only reads; changes to a service need its own connected tool.',
+  parameters: { type: 'object', properties: { url: { type: 'string', maxLength: 2000 } }, required: ['url'], additionalProperties: false },
+};
+
+export async function runPublicGet(runId: string, input: unknown, signal: AbortSignal, wrap: (text: string, source: string) => string): Promise<{ text: string; isError: boolean }> {
+  try {
+    const value = await workspaceRequest('public-get', { runId, body: input }, signal) as
+      { status?: number; contentType?: string; finalUrl?: string; body?: string; truncated?: boolean; totalChars?: number; note?: string };
+    const head = `HTTP ${value.status ?? '?'} ${value.contentType ?? ''} ${value.finalUrl ?? ''}${value.truncated ? ` (cut: ${value.totalChars} characters in total)` : ''}${value.note ? '\n' + value.note : ''}`;
+    const failed = typeof value.status === 'number' && value.status >= 400;
+    return { text: head + '\n' + wrap(String(value.body ?? ''), 'public web address'), isError: failed };
+  } catch (error) {
+    const code = (error as { code?: unknown } | null)?.code;
+    if (code === 'BROWSER_POLICY_DENIED') return { text: 'That address is not allowed: only public https addresses without ports or logins can be read directly. Use the browser for anything else.', isError: true };
+    if (code === 'BROWSER_PUBLIC_GET_FAILED') return { text: 'The address did not answer in time or could not be reached. Check the address in the service documentation, or open it in the browser.', isError: true };
+    return { text: 'The direct read could not be completed. Try the browser for this address.', isError: true };
+  }
+}
+
 type Approval = { id: string; summary: string; account: string; argumentsPreview?: string; risk?: string };
 type PluginToolName = 'plugin_search' | 'plugin_read' | 'plugin_action_search' | 'plugin_act';
 
