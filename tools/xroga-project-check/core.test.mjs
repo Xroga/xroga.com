@@ -1,8 +1,10 @@
 import assert from 'node:assert/strict';
+import { execFileSync } from 'node:child_process';
 import { mkdtemp, mkdir, rm, writeFile } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
+import { fileURLToPath } from 'node:url';
 import { inspectRepository, renderBadgeSvg, renderHuman, safeOutputPath } from './core.mjs';
 
 async function fixture(overrides = {}) {
@@ -82,4 +84,17 @@ test('static result names the important limitation and avoids certification clai
   const result = await inspectRepository(root);
   assert.ok(result.limitations.some((item) => item.includes('not a security certification')));
   assert.ok(result.limitations.some((item) => item.includes('were not executed')));
+});
+
+test('CLI flags may precede the repository path or use the working directory', async (t) => {
+  const root = await fixture();
+  t.after(() => rm(root, { recursive: true, force: true }));
+  const cli = fileURLToPath(new URL('./cli.mjs', import.meta.url));
+
+  for (const positionals of [[root], []]) {
+    const output = execFileSync(process.execPath, [cli, '--minimum-score', '80', '--json', ...positionals], {
+      cwd: root, encoding: 'utf8',
+    });
+    assert.equal(JSON.parse(output).score, 100);
+  }
 });

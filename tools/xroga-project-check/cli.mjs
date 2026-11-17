@@ -1,14 +1,32 @@
 #!/usr/bin/env node
 import { mkdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
+import { parseArgs } from 'node:util';
 import { inspectRepository, renderBadgeSvg, renderHuman, safeOutputPath } from './core.mjs';
 
 function parse(argv) {
-  const value = (name, fallback = null) => { const index = argv.indexOf(name); return index >= 0 ? argv[index + 1] ?? fallback : fallback; };
-  const root = argv.find((item) => !item.startsWith('-')) ?? '.';
-  const minimum = Number(value('--minimum-score', '0'));
+  const { values, positionals } = parseArgs({
+    args: argv,
+    allowPositionals: true,
+    options: {
+      json: { type: 'boolean' },
+      output: { type: 'string' },
+      badge: { type: 'string' },
+      'minimum-score': { type: 'string', default: '0' },
+      'fail-on-critical': { type: 'boolean' },
+    },
+  });
+  if (positionals.length > 1) throw new Error('INVALID_PATH: specify at most one repository path.');
+  const minimum = Number(values['minimum-score']);
   if (!Number.isInteger(minimum) || minimum < 0 || minimum > 100) throw new Error('INVALID_THRESHOLD: --minimum-score must be an integer from 0 to 100.');
-  return { root, json: argv.includes('--json'), output: value('--output'), badge: value('--badge'), minimum, failOnCritical: argv.includes('--fail-on-critical') };
+  return {
+    root: positionals[0] ?? '.',
+    json: values.json,
+    output: values.output,
+    badge: values.badge,
+    minimum,
+    failOnCritical: values['fail-on-critical'],
+  };
 }
 
 async function main() {
