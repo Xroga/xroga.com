@@ -319,7 +319,7 @@ ${gathered.slice(0, 40000)}
 Requirements:
 - Follow the user's requested length, format, and number of items exactly.
 - Synthesize (do not merely list links)
-- Cite sources inline where claims come from the research
+- Cite sources inline where claims come from the research. Use one authoritative supplied source when it fully supports the claim. Cite additional sources when they add independent evidence or cover a different fact. Prefer the requested language and relevant version of equivalent documentation.
 - Use the supplied source numbers exactly, with citations next to the supported sentence; do not invent a source number or bury all sources at the end.
 ${brief
     ? `- Lead with the answer. Omit generic report sections, tables, and takeaways unless necessary.

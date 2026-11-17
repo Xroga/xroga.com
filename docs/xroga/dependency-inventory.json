@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "6b7226a1386abef0ac8f603ce59b6aa7af56e568",
+  "source_sha": "7d2b8c9ba666ec82f73377f4b18bc2ad89b81861",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -17070,7 +17070,7 @@
     },
     {
       "path": "backend/src/ai/nativeOpenUiPrompt.ts",
-      "sha256": "22adadbba9a2b13a09519a433b1cc9ef0838202fd1afc1e3484324ce168bfe1f"
+      "sha256": "a5b3e3123bcb4428256426d188f437e9d99674e6261dc3af404201e96d29eb23"
     },
     {
       "path": "backend/src/ai/nativeOpenUiRecovery.ts",
@@ -17142,7 +17142,7 @@
     },
     {
       "path": "backend/src/ai/prompts.ts",
-      "sha256": "b0211bef3c4fc5840b7f3a1fb69ba9e24d828b95a5673a16f7c8e87ea10da44f"
+      "sha256": "54e47ca663b60cead257c42041f5e7544b956cac469570fb20abf048581495fd"
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
