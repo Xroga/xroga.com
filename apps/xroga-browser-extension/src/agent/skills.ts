@@ -118,6 +118,20 @@ export const SKILLS: Skill[] = [
     ].join('\n'),
   },
   {
+    id: 'endpoint-marketplace',
+    when: has(/\b(?:monid|endpoints?|data api|apify|scrap(?:e|er|ing)|defi ?llama|tvl|twitter posts|enrich(?:ment)?)\b/i),
+    body: [
+      'Data and API marketplaces (a connected app whose tools are discover, inspect, run and get run, such as Monid):',
+      '- Order: discover (short noun phrases such as "defi protocol tvl") to find an endpoint, then inspect it to learn its exact input and its price, then run it, then read the run.',
+      '- Copy the provider and the endpoint exactly as discover returned them, including a leading slash (for example /apidojo/tweet-scraper). Never retype or shorten an endpoint, and never invent one.',
+      '- Build the input only from the fields inspect lists (body, query and path values, each under the name it gives). Start with small limits (5 to 10 items) and one search term or URL per call.',
+      '- Price: read it from inspect. A free endpoint is fine to run. For a paid one, run it when the user asked for that work and the price is small next to the task; say what it cost afterwards. Do not loop over paid calls.',
+      '- A run may finish at once or return a run id with the status RUNNING: read the run (get run) every few seconds until it is COMPLETED or FAILED, and do not start the same run again while it is RUNNING.',
+      '- COMPLETED only means the provider answered: check the provider response status and the output. A 4xx or 5xx is a failed call: read the message, correct the input once, and tell the user what failed if it fails again.',
+      '- Report the data itself, the endpoint used and its cost.',
+    ].join('\n'),
+  },
+  {
     id: 'work-split',
     when: has(/\b(?:in parallel|at the same time|simultaneously|workers?|sub-?agents?|each (?:competitor|site|page|product|source)|several (?:sites|pages|competitors|sources)|(?:three|four|five|six|\d+) (?:competitors|sites|pages|sources|websites)|then assemble|prepare .{0,60}(?:then|and then) )\b/i),
     body: [

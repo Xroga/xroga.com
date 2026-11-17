@@ -59,3 +59,15 @@ describe('the design, video, records and work-split playbooks', () => {
     for (const skill of SKILLS) expect(skill.body.length).toBeLessThan(2_600);
   });
 });
+
+describe('the endpoint marketplace playbook', () => {
+  it('is offered for a request about running a data endpoint and carries the rules that matter', () => {
+    const ids = skillsFor('Using Monid, run the free DefiLlama TVL endpoint for aave').map(s => s.id);
+    expect(ids).toContain('endpoint-marketplace');
+    const body = SKILLS.find(s => s.id === 'endpoint-marketplace')!.body;
+    for (const rule of ['leading slash', 'inspect', 'RUNNING', 'COMPLETED only means', 'small limits']) expect(body).toContain(rule);
+  });
+  it('stays out of the way of an ordinary browsing request', () => {
+    expect(skillsFor('Open example.com and tell me the heading').map(s => s.id)).not.toContain('endpoint-marketplace');
+  });
+});
