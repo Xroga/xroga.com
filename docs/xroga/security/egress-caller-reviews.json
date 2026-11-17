@@ -4806,31 +4806,6 @@
         }
       ],
       "reviewedOnBranch": "Sends a run ID only to the paired Chrome extension. The session token, page content and the provider key are excluded. No network transport, provider request or external side effect follows from requesting the existing local receipt summary."
-    },
-    {
-      "id": "5b19b5ab231e0280efc7",
-      "callSha256": "65e08ee42f856fcd72b4dd58d04aec77dd1fadcae354cd26d35a2faa43737364",
-      "sourceFileSha256": "82983bf0a836d2e284ffe35ddea6b182b42dcb64304a2a394e6becc9a46213c1",
-      "disposition": "VERIFIED_GUARD",
-      "trust": "PAIRED_EXACT_EXTENSION_PORT_WITH_EXISTING_XROGA_ORIGIN_AND_BROWSER_RUN_READ_CHECK",
-      "tenantAuthority": "SAME_ACCOUNT_AUTHENTICATED_API_VERIFIES_RUN_BEFORE_REQUESTING_LOCAL_ACTIVITY",
-      "evidence": [
-        {
-          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
-          "marker": "const loadRun = () => apiFetch<RunResult>",
-          "sha256": "82983bf0a836d2e284ffe35ddea6b182b42dcb64304a2a394e6becc9a46213c1"
-        },
-        {
-          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
-          "marker": "checkingRun !== run",
-          "sha256": "82983bf0a836d2e284ffe35ddea6b182b42dcb64304a2a394e6becc9a46213c1"
-        },
-        {
-          "path": "backend/src/routes/localBrowser.ts",
-          "marker": "localRecord(await runs.load(ctx.userId, id.parse(req.params.runId)), ctx.userId)",
-          "sha256": "f77d53a8717e5bfc1011c4f108bc3fbe77f9951cb266380a480aafb6a59e24d5"
-        }
-      ]
     }
   ]
 }
