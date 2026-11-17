@@ -47,3 +47,15 @@ Nothing here is merged to main. Release remains blocked on review and approval.
 - The model provider key is paced at roughly 120 requests per minute; larger scale needs more provider capacity.
 - A site that needs a login, CAPTCHA or consent the agent cannot pass is handed to the user.
 - Public APIs that require a custom User-Agent or key are not callable through `http_get`.
+
+## Update, 18 November 2026 (real Chrome, real DeepSeek, staging, build `4eb74265f` plus earlier fixes)
+
+| Area | Class | Evidence |
+| --- | --- | --- |
+| Find 10 qualified leads, table plus CSV | V (one run) | Run reached "verified 10 of 10", saved `us-automation-leads.csv` (2,393 B). Rows read: small, local US businesses (for example an independent insurance agency in Hood River, OR; an Amish-owned hardware shop in Farmington, OH), each with website, location, contact and source page. Contact details were not independently re-checked by us |
+| Leads saved to a Google Sheet from the same conversation | V (visual) | A sheet "US Automation Leads" with the header row and 10 data rows including source URLs was open in Chrome after the owner asked for it; no provider receipt was inspected |
+| Long task past the old turn limit | V | The turn-renewal fix: one renewal at turn 48, run continued to completion. Earlier build stopped at "turn limit" with 2 of 10 verified |
+| One dead page ends the task | V (after fix) | A certificate-warning page earlier ended a run as partial; navigation failures are now failed reads. The later run completed |
+| Five concurrent workers, measured | V (one run) | Server run records: parent started 19:19:14 UTC, five worker runs started 19:19:22 to 19:19:27 (within 5 s), finishes at 19:19:34, :36, :38, :48 and one later; at least five workers active at the same time with the parent (six runs). The final table covered all five sites. One worker (NYT) never returned a result; the coordinator said so in the answer and read that page itself. Worker ownership of tabs was not inspected beyond this |
+| Tab wall of `about:blank` in parallel reading | U | Bounded page pool (8 at a time) committed and built; the five-worker run did not show it, but tab behaviour during `delegate` reading was not observed |
+| Gap: five-worker run duration | B | Total about 2 minutes for five single-fact lookups; a worker that never returned held the parent. Per-worker deadline and replace-on-stall is not implemented |
