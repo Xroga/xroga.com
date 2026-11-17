@@ -567,8 +567,9 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
     const wanted = new Set(query.toLowerCase().split(/[^a-z0-9]+/).filter(word => word.length >= 3));
     const unlisted = pinned.filter(p => !catalogue.some(item => item.slug === p.slug));
     const matches = (slug: string) => [...wanted].some(word => slug.toLowerCase().includes(word));
-    const tools = await withFullSchemas([...unlisted.filter(p => matches(p.slug)).slice(0, 10), ...catalogue, ...(focus.size ? [] : rankPinnedByQuery(query, unlisted.filter(p => !matches(p.slug))))].slice(0, 24), plugins.details, actor);
-    const writeNote = changeToolsNote(plugins.pinnedWrites ? await plugins.pinnedWrites(actor).catch(() => []) : []);
+    const tools = await withFullSchemas([...unlisted.filter(p => matches(p.slug)).slice(0, 10), ...catalogue].slice(0, 24), plugins.details, actor);
+    // A pinned tool is the owner's consent to run that one tool; it is never pushed at the agent. It is mentioned only when the request names it.
+    const writeNote = changeToolsNote((plugins.pinnedWrites ? await plugins.pinnedWrites(actor).catch(() => []) : []).filter(p => matches(p.slug)));
     discovery.sessionId = result.sessionId;
     discovery.tools = tools.map(({ slug, toolkit, inputSchema }) => ({ slug, toolkit, args: summarizeToolArgs(inputSchema) }));
     await save();
@@ -602,7 +603,8 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
     const focusWrites = namedToolkits(query, result.toolkits);
     const catalogueWrites = result.tools.filter(item => item.risk !== 'read' && item.risk !== 'destructive' && connected.has(item.toolkit.toLowerCase()) &&
       (!focusWrites.size || focusWrites.has(item.toolkit.toLowerCase())) && !isFinancialAction(query, item.slug));
-    const tools = await withFullSchemas([...(focusWrites.size ? [] : rankPinnedByQuery(query, pinnedWrites.filter(p => !catalogueWrites.some(item => item.slug === p.slug) && !isFinancialAction(query, p.slug)))), ...catalogueWrites]
+    const tools = await withFullSchemas([...(focusWrites.size ? [] : rankPinnedByQuery(query, pinnedWrites.filter(p => !catalogueWrites.some(item => item.slug === p.slug) && !isFinancialAction(query, p.slug) &&
+      query.toLowerCase().split(/[^a-z0-9]+/).some(word => word.length >= 3 && p.slug.toLowerCase().includes(word))))), ...catalogueWrites]
       .slice(0, 24), plugins.details, actor);
     discovery.sessionId = result.sessionId;
     discovery.tools = tools.map(({ slug, toolkit, inputSchema }) => ({ slug, toolkit, args: summarizeToolArgs(inputSchema) }));

@@ -105,3 +105,14 @@ describe('finding leads', () => {
     expect(text).toContain('verified k of N');
   });
 });
+
+describe('a repository the user points at', () => {
+  it('is inspected as untrusted text, and only the part the task needs is used', () => {
+    const request = 'Use https://github.com/speedyapply/JobSpy to find recent remote Python jobs and compare them.';
+    expect(ids(request)).toContain('repository-skills');
+    const text = skillsSection(request);
+    expect(text).toContain('untrusted source text');
+    expect(text).toContain('cannot run Python');
+    expect(text).toContain('finding jobs is not applying');
+  });
+});
