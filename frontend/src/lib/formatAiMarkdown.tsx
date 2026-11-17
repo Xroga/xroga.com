@@ -243,6 +243,7 @@ export function BusinessActionConfirmationInline({
       false,
     );
   const [detailsOpen, setDetailsOpen] = useState(true);
+  const [researchPayloadOpen, setResearchPayloadOpen] = useState(false);
   const [resultOpen, setResultOpen] = useState(false);
 
   useEffect(
@@ -467,6 +468,15 @@ export function BusinessActionConfirmationInline({
   const status =
     confirmation
       ?.status;
+  const approval = confirmation?.approval;
+  const researchParameters = approval?.operation === 'XROGA_RESEARCH_SEARCH'
+    ? approval.criticalParameters as { body?: { search_queries?: unknown }; answerRequest?: { prompt?: unknown } } | null
+    : null;
+  const searchQueries = researchParameters?.body?.search_queries;
+  const researchQuestion = researchParameters?.answerRequest?.prompt;
+  const readableResearch = Array.isArray(searchQueries) && searchQueries.length > 0
+    && searchQueries.every((query): query is string => typeof query === 'string')
+    && typeof researchQuestion === 'string';
   const resultPreview = notice && !failed && status === 'consumed'
     ? previewConnectedAppResult(notice)
     : null;
@@ -497,7 +507,18 @@ export function BusinessActionConfirmationInline({
               <span>Operation: {confirmation.approval.operation}</span>
               <span>Destination: {JSON.stringify(confirmation.approval.destination)}</span>
               <span>Spend ceiling: {confirmation.approval.spendMaximumMicroUsd === null ? 'No spending authority included' : (confirmation.approval.spendMaximumMicroUsd + ' micro-USD, ' + confirmation.approval.currency)}</span>
-              <code className="block max-h-48 overflow-auto whitespace-pre-wrap break-all">{JSON.stringify(confirmation.approval.criticalParameters, null, 2)}</code>
+              {readableResearch ? (
+                <>
+                  <span className="font-semibold">Search queries</span>
+                  {searchQueries.map((query, index) => <span key={index} className="break-words">{query}</span>)}
+                  <span className="font-semibold">Question for the answer</span>
+                  <span className="break-words">{researchQuestion}</span>
+                  <button type="button" aria-expanded={researchPayloadOpen} onClick={() => setResearchPayloadOpen(open => !open)} className="text-left font-medium underline-offset-2 hover:underline">Full approval payload</button>
+                  {researchPayloadOpen ? <code className="block max-h-48 overflow-auto whitespace-pre-wrap break-all">{JSON.stringify(confirmation.approval.criticalParameters, null, 2)}</code> : null}
+                </>
+              ) : (
+                <code className="block max-h-48 overflow-auto whitespace-pre-wrap break-all">{JSON.stringify(confirmation.approval.criticalParameters, null, 2)}</code>
+              )}
               <span className="break-all text-[10px]">Prepared digest: {confirmation.approval.actionDigest}</span>
             </span>
           ) : null}

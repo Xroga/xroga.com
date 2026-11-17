@@ -128,6 +128,14 @@ test('long workflow guidance distinguishes reading order, handoffs, responsibili
   assert.match(answer.response, /incomplete brief returns to intake/);
 });
 
+test('format guidance puts the requested artifact first and keeps extra analysis conditional', () => {
+  const prompt = workspaceNativeOpenUiPrompt(['table'], false);
+  assert.match(prompt, /make it the main answer/);
+  assert.match(prompt, /sortable table, provide the data, units and working sort/);
+  assert.match(prompt, /omit charts and aggregate metrics unless the request calls for analysis/);
+  assert.match(prompt, /Chart\(/, 'explicit analysis still has access to chart components');
+});
+
 test('stray trailing presentation markers are removed before the program is validated or stored', () => {
   const program = 'root = Col([Text("The comparison is ready.")])';
   for (const close of ['</XROGA_OPENUI_V1>>>', '</<XROGA_OPENUI_V1>>>', NATIVE_UI_MARKER.trim()]) {

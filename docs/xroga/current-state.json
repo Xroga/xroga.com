@@ -5818,7 +5818,7 @@
       "id": "surface:a67f0b1fa2dd0f11a67f",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiPrompt.ts",
-      "sha256": "7abc9dc4dca5573b50ac7ad896824a266976b4acafcb735a4f2a9626131b4624",
+      "sha256": "ff0a00c92aaf5dbf310828ce8902dc95e8ede6506a261d7fcd56af26444e4c5f",
       "symbols": [
         "buildNativeOpenUiPrompt",
         "comparisonConsistencyRule",
@@ -109102,7 +109102,7 @@
       "id": "surface:015cc267f70323e72e46",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/formatAiMarkdown.tsx",
-      "sha256": "3ea4d5fbd5d5c0bb44afebb00c8a5e1012c94d2cb5781457c7aaf33d2265af88",
+      "sha256": "a5cc9f69ee2acb380eead7c6653ab2341029277d46676fbfc1d87a1a81b3ef0f",
       "symbols": [
         "AppMark",
         "BusinessActionConfirmationInline",
@@ -109114,6 +109114,7 @@
         "ToolUiDescriptor",
         "XrogaConnectionCard",
         "active",
+        "approval",
         "availableSources",
         "binary",
         "bytes",
@@ -109161,10 +109162,14 @@
         "prose",
         "providerBoundTask",
         "query",
+        "readableResearch",
         "remaining",
+        "researchParameters",
+        "researchQuestion",
         "result",
         "resultPreview",
         "safeMarkdownUrl",
+        "searchQueries",
         "selectedCandidate",
         "sentence",
         "sentences",
@@ -109237,6 +109242,7 @@
         "frontend/src/lib/formatAiMarkdown.tsx#ConfirmationStatus",
         "frontend/src/lib/formatAiMarkdown.tsx#PluginPermissionControl",
         "frontend/src/lib/formatAiMarkdown.tsx#SafeConfirmation",
+        "frontend/src/lib/formatAiMarkdown.tsx#approval",
         "frontend/src/lib/formatAiMarkdown.tsx#compactConnectedAppConfirmationMarkdown",
         "frontend/src/lib/formatAiMarkdown.tsx#confirm",
         "frontend/src/lib/formatAiMarkdown.tsx#confirmationId",
@@ -142623,7 +142629,7 @@
   ],
   "findings": [
     {
-      "id": "finding:4607f83e34fc26785658",
+      "id": "finding:2021d762945ca654c6a0",
       "sourcePath": "backend/src/ai/nativeOpenUiPrompt.ts",
       "line": 62,
       "kind": "PLACEHOLDER",
@@ -145993,9 +145999,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:dcb09660e31da06b2ad4",
+      "id": "finding:3577d3e2b8eba44f551b",
       "sourcePath": "frontend/src/lib/formatAiMarkdown.tsx",
-      "line": 1352,
+      "line": 1373,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -146003,9 +146009,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:f81158d1d10287bc0ddf",
+      "id": "finding:ae4c0cb20e852d43b43a",
       "sourcePath": "frontend/src/lib/formatAiMarkdown.tsx",
-      "line": 1353,
+      "line": 1374,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -149744,16 +149750,16 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:1ebe6f9b9a3c4c79ae19",
+      "id": "frontend-call:85a9bfe1aa0522e660a7",
       "sourcePath": "frontend/src/lib/formatAiMarkdown.tsx",
-      "line": 1022,
+      "line": 1043,
       "callee": "api.phase1.plan",
       "reachable": true
     },
     {
-      "id": "frontend-call:b3ba88aa37095ab64b4a",
+      "id": "frontend-call:28ff975aa028abadc72e",
       "sourcePath": "frontend/src/lib/formatAiMarkdown.tsx",
-      "line": 1058,
+      "line": 1079,
       "callee": "api.phase1.chat",
       "reachable": true
     },
@@ -150644,7 +150650,7 @@
     {
       "id": "test-suite:2e491f4d2fcbc11f974c",
       "sourcePath": "backend/src/ai/nativeOpenUi.test.ts",
-      "declaredTests": 67,
+      "declaredTests": 68,
       "skipLocations": [],
       "focusLocations": []
     },
