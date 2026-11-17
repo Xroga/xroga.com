@@ -2762,7 +2762,11 @@
       "relatedSourceBindings": [
         {
           "path": "backend/src/ai/pipeline.ts",
-          "sha256": "5c37c7d2bbc96fc8c4ddf1f294c9b1f2bde5385048847400a5bcbd69a3582e06",
+          "sha256": "85c08952d3469ffaff203a91df6d79e3d554478278e9244317929d7d5de73780",
+          "plainReasoningSourceBinding": {
+            "previousSha256": "5c37c7d2bbc96fc8c4ddf1f294c9b1f2bde5385048847400a5bcbd69a3582e06",
+            "finding": "Verified the full runBuildPipeline function and subsequent source are byte-identical. The chat change retains default model reasoning and uses the existing native output reservation. Worker admission evidence and acceptance state are unchanged."
+          },
           "nativeOpenUiSourceReview": {
             "previousSha256": "d3742ca4dccc50daf99aa71d9896449957dde73798dc6d7c2a9c5ca5536cff32",
             "finding": "The staging-only native OpenUI branch changes chat presentation and validates output after the same model dispatch and usage accounting. The full runBuildPipeline function and following worker source are byte-identical to the previously bound source. No admission, project ownership, checkpoint or worker proof changes.",
