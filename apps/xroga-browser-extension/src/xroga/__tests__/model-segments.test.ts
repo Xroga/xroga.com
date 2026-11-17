@@ -137,3 +137,16 @@ describe('a model request that stalls', () => {
     }
   });
 });
+
+describe('turn renewal', () => {
+  it('credits the agent loop with turns the model path already renewed on the server, so a long task is not stopped at "turn limit"', async () => {
+    const run = await startXrogaModelRun('goal', 'https://example.com', new AbortController().signal, 0);
+    const ask = () => streamTurn({ chat: run.model.chat, system: 's', messages: [{ role: 'user', content: 'hi' }], tools: {}, signal: new AbortController().signal } as never);
+    for (let i = 0; i < 49; i++) await ask(); // the 49th request renews the segment inside the model path
+    expect(requests.filter(r => r.op === 'extend')).toHaveLength(1);
+    // The loop reaches its own cap of 48 and asks: the server answers 96 again, which is 48 more turns than the loop was given.
+    expect(await run.extend()).toEqual({ turns: 48, remainingMs: 4_800_000 });
+    // A further ask with nothing new from the server is correctly zero.
+    expect((await run.extend()).turns).toBe(0);
+  });
+});

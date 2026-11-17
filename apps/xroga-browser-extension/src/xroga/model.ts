@@ -86,7 +86,7 @@ export async function startXrogaModelRun(
         try {
           // Compaction's summary call is a model request too, and the server counts it. The loop's own turn count does not, so a
           // request can reach the end of the segment before the loop asks for the next one: renew it here, before it is refused.
-          if (turn + 1 > maxTurns) await extend();
+          if (turn + 1 > maxTurns) await renew(false);
           // Many people share the model: when its gate is full the server says so before any provider call, charges nothing and
           // the task simply waits its turn. Up to 20 minutes of waiting, with a growing pause, instead of an error for the person.
           const deadline = Date.now() + 20 * 60_000;
@@ -119,7 +119,7 @@ export async function startXrogaModelRun(
                 const timer = setTimeout(resolve, wait);
                 signal.addEventListener('abort', () => { clearTimeout(timer); reject(signal.reason); }, { once: true });
               });
-              if (turn + 1 > maxTurns) await extend();
+              if (turn + 1 > maxTurns) await renew(false);
             }
           }
         } catch (error) {
@@ -179,16 +179,27 @@ export async function startXrogaModelRun(
    * only while settled spend and its ceilings allow; anything else (or a Workspace relay, which has no such route) is 0 and the
    * caller stops with its saved progress as before.
    */
-  const extend = async (): Promise<{ turns: number; remainingMs: number }> => {
+  // The turns the agent loop has been told it may use. The model path below also renews the server's segment early (a compaction summary
+  // is a model request the loop does not count), so the server may already be ahead of what the loop was given: the loop is credited with
+  // the difference, never with "0 new turns" just because the server had already granted them. (That mistake ended long tasks at
+  // "turn limit" with work left.)
+  let loopMax = start.maxTurns ?? 12;
+  const renew = async (forLoop: boolean): Promise<{ turns: number; remainingMs: number }> => {
     try {
       const next = (await workspaceRequest('extend', { runId, body: {} }, signal)) as { maxTurns?: number; remainingMs?: number };
-      const turns = Number.isSafeInteger(next?.maxTurns) ? Math.max(0, (next.maxTurns as number) - maxTurns) : 0;
-      if (Number.isSafeInteger(next?.maxTurns)) maxTurns = Math.max(maxTurns, next.maxTurns as number);
+      const granted = Number.isSafeInteger(next?.maxTurns) ? (next.maxTurns as number) : 0;
+      if (granted) maxTurns = Math.max(maxTurns, granted);
+      let turns = 0;
+      if (forLoop && granted) {
+        turns = Math.max(0, granted - loopMax);
+        loopMax = Math.max(loopMax, granted);
+      }
       return { turns, remainingMs: Number.isSafeInteger(next?.remainingMs) ? Math.max(0, next.remainingMs as number) : 0 };
     } catch {
       return { turns: 0, remainingMs: 0 };
     }
   };
+  const extend = () => renew(true);
   return {
     runId,
     model,
