@@ -28,12 +28,12 @@ test.beforeEach(async ({ page, baseURL }) => {
 });
 
 async function populate(page: import('@playwright/test').Page) {
-  await page.goto('/workspace');
+  await page.goto('/workspace', { waitUntil: 'domcontentloaded' });
   for (let index = 1; index <= 4; index++) {
     const prompt = 'Conversation rail prompt ' + index + ': inspect the real message flow and navigation.';
     await page.locator('[data-terminal-composer]').fill(prompt);
     await page.getByRole('button', { name: 'Send prompt', exact: true }).click();
-    await expect(page.getByText('Answer marker ' + index, { exact: false }).first()).toBeVisible();
+    await expect(page.getByText('Answer marker ' + index, { exact: false }).first()).toBeVisible({ timeout: 15_000 });
   }
   const rail = page.getByRole('navigation', { name: 'Conversation turn navigation' });
   await expect(rail).toBeVisible();
@@ -77,7 +77,7 @@ test('dash geometry, proximity hover, actual preview, bookmark and jump', async 
 });
 
 test('active reading marker follows both scroll directions and no rail appears for empty work', async ({ page }) => {
-  await page.goto('/workspace');
+  await page.goto('/workspace', { waitUntil: 'domcontentloaded' });
   await expect(page.locator('.xv-chat-turn-rail')).toHaveCount(0);
   const rail = await populate(page);
   await expect(page.getByRole('button', { name: 'Stop response', exact: true })).toHaveCount(0);

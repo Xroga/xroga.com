@@ -9962,6 +9962,9 @@ body.xv-workspace-expanded-active .xv-terminal-dock {
 
 /* THE scrolling element. Not the body, not the shell, not the panel. */
 .xv-terminal-scroll {
+  /* The transcript anchors explicitly on submit. Browsers can otherwise anchor
+     to a loading or answer child that moves when the final response replaces it. */
+  overflow-anchor: none;
   flex: 1 1 auto;
   height: 100%;
   min-height: 0;
