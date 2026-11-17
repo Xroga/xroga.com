@@ -20,6 +20,15 @@ test('only a public github.com owner/repo address is accepted', () => {
   }
 });
 
+test('the exact commit is read from the archive global header', () => {
+  const sha = 'a'.repeat(40);
+  const pax = `52 comment=${sha}\n`;
+  const meta: { commit?: string } = {};
+  const files = readTarball(archive(tarEntry('pax_global_header', pax, 'g'), tarEntry('repo-abc/main.py', 'print(1)\n')), meta);
+  assert.equal(meta.commit, sha);
+  assert.deepEqual(files.map(f => f.path), ['main.py']);
+});
+
 test('the archive reader keeps regular files, drops the top directory, and never extracts directories, links or .git', () => {
   const files = readTarball(archive(
     tarEntry('repo-abc/', null, '5'), tarEntry('repo-abc/main.py', 'print(1)\n'), tarEntry('repo-abc/sub/util.py', 'x = 2\n'),

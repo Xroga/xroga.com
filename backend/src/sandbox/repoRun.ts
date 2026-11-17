@@ -30,7 +30,7 @@ export function parseRepositoryUrl(raw: string): { owner: string; repo: string }
 }
 
 /** A minimal tar reader: regular files only, with pax long-path support (GitHub archives use it). Never follows links. */
-export function readTarball(tar: Buffer): Array<{ path: string; data: Buffer }> {
+export function readTarball(tar: Buffer, meta: { commit?: string } = {}): Array<{ path: string; data: Buffer }> {
   const files: Array<{ path: string; data: Buffer }> = [];
   let offset = 0;
   let paxPath: string | undefined;
@@ -47,7 +47,12 @@ export function readTarball(tar: Buffer): Array<{ path: string; data: Buffer }> 
       paxPath = /(?:^|\n)\d+ path=([^\n]*)\n/.exec(body.toString('utf8'))?.[1];
       continue;
     }
-    if (type === 'g') continue;
+    if (type === 'g') {
+      // GitHub puts the exact commit of the archive in its global header: that is the version, with no API call.
+      const sha = /(?:^|\n)\d+ comment=([0-9a-f]{40})\n/.exec(body.toString('utf8'))?.[1];
+      if (sha) meta.commit = sha;
+      continue;
+    }
     const prefix = text(start + 345, 155);
     const name = paxPath ?? (prefix ? `${prefix}/${text(start, 100)}` : text(start, 100));
     paxPath = undefined;
@@ -69,12 +74,6 @@ export function textFiles(entries: Array<{ path: string; data: Buffer }>): { fil
     files.push({ path: entry.path, content: entry.data.toString('utf8') });
   }
   return { files, omitted };
-}
-
-async function getJson(url: string): Promise<unknown> {
-  const got = await boundedPublicGet(url, { maxBytes: 200_000, timeoutMs: 15_000, maxRedirects: 2, allowHttpErrors: true });
-  if (got.statusCode !== 200) throw new RepoRunError('REPO_NOT_FOUND', `GitHub answered ${got.statusCode} for that repository or version.`);
-  return JSON.parse(got.bytes.toString('utf8'));
 }
 
 export interface RepoRunInput {
@@ -104,18 +103,19 @@ export async function runRepository(input: RepoRunInput): Promise<RepoRunResult>
   const { owner, repo } = parseRepositoryUrl(input.url);
   if (!COMMANDS.has(input.command)) throw new RepoRunError('REPO_COMMAND_UNSUPPORTED', 'The command must be python3, node or sh.');
   const ref = (input.ref ?? 'HEAD').trim();
-  if (!/^[A-Za-z0-9._/-]{1,200}$/.test(ref) || ref.includes('..')) throw new RepoRunError('REPO_REF_INVALID', 'The version is not valid.');
+  if (!/^[A-Za-z0-9._-]{1,100}$/.test(ref) || ref.includes('..')) throw new RepoRunError('REPO_REF_INVALID', 'The version must be a branch, tag or commit name without slashes.');
 
   // The isolation must be available before anything is fetched or sent.
   const selected = await selectSandboxProvider();
   if (!selected.runtime) throw new RepoRunError('SANDBOX_UNAVAILABLE', selected.availability.detail ?? 'No isolated execution worker is available.');
 
-  const commit = String((await getJson(`https://api.github.com/repos/${owner}/${repo}/commits/${encodeURIComponent(ref)}`) as { sha?: unknown })?.sha ?? '');
-  if (!/^[0-9a-f]{40}$/.test(commit)) throw new RepoRunError('REPO_VERSION_UNRESOLVED', 'The exact version could not be determined.');
-
-  const archive = await boundedPublicGet(`https://codeload.github.com/${owner}/${repo}/tar.gz/${commit}`, { maxBytes: MAX_TARBALL_BYTES, timeoutMs: 30_000, maxRedirects: 2, allowHttpErrors: true });
+  const archive = await boundedPublicGet(`https://codeload.github.com/${owner}/${repo}/tar.gz/${encodeURIComponent(ref)}`, { maxBytes: MAX_TARBALL_BYTES, timeoutMs: 30_000, maxRedirects: 2, allowHttpErrors: true });
+  if (archive.statusCode === 404) throw new RepoRunError('REPO_NOT_FOUND', 'That public repository or version was not found.');
   if (archive.statusCode !== 200) throw new RepoRunError('REPO_ARCHIVE_UNAVAILABLE', `The repository archive could not be fetched (${archive.statusCode}).`);
-  const { files, omitted } = textFiles(readTarball(gunzipSync(archive.bytes, { maxOutputLength: 64 * 1024 * 1024 })));
+  const meta: { commit?: string } = {};
+  const { files, omitted } = textFiles(readTarball(gunzipSync(archive.bytes, { maxOutputLength: 64 * 1024 * 1024 }), meta));
+  const commit = meta.commit ?? '';
+  if (!/^[0-9a-f]{40}$/.test(commit)) throw new RepoRunError('REPO_VERSION_UNRESOLVED', 'The exact version could not be determined from the archive.');
 
   const own = (input.files ?? []).filter(file => /^[A-Za-z0-9_./-]{1,200}$/.test(file.path) && !file.path.split('/').includes('..') && !file.path.startsWith('/') && !file.path.startsWith('xroga-out'));
   const byPath = new Map<string, ProjectFile>(files.map(file => [file.path, file]));

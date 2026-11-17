@@ -542,11 +542,11 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
       const result = await runRepository({ url: data.url, ref: data.ref, command: data.command, args: data.args, files: data.files, timeoutMs: (data.timeoutSeconds ?? 120) * 1_000 });
       return res.json({ ...result, stdout: result.stdout.slice(-20_000), stderr: result.stderr.slice(-8_000) });
     } catch (error) {
-      if (error instanceof RepoRunError) {
-        const status = error.code === 'SANDBOX_UNAVAILABLE' ? 503 : error.code.startsWith('REPO_') ? 422 : 400;
-        throw new BrowserRequestError(status, 'BROWSER_REPO_RUN_FAILED', { reason: [error.code, error.message.slice(0, 300)] });
-      }
-      throw new BrowserRequestError(502, 'BROWSER_REPO_RUN_FAILED', { reason: ['RUN_FAILED'] });
+      // The extension keeps a reason only as a plain code string and a short provider message, so both are sent in that form.
+      const known = error instanceof RepoRunError;
+      console.error('[repo-run] failed:', known ? { code: error.code, message: error.message.slice(0, 200) } : { name: (error as Error)?.name, message: String((error as Error)?.message).slice(0, 200) });
+      const status = known ? (error.code === 'SANDBOX_UNAVAILABLE' ? 503 : error.code.startsWith('REPO_') ? 422 : 400) : 502;
+      return res.status(status).json({ error: 'BROWSER_REPO_RUN_FAILED', reason: known ? error.code : 'RUN_FAILED', providerMessage: known ? error.message.slice(0, 300) : 'The run did not complete.' });
     }
   }));
 

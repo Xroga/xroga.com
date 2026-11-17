@@ -105,7 +105,7 @@ export async function runRepositoryTool(runId: string, input: unknown, signal: A
     return { text: head + '\n' + wrap(text, 'repository execution output'), isError: v.exitCode !== 0 || !!v.timedOut };
   } catch (error) {
     const failure = error as { code?: unknown; detail?: Record<string, string[]> };
-    const reason = failure?.detail?.reason?.[1] ?? failure?.detail?.reason?.[0];
+    const reason = failure?.detail?.providerMessage?.[0] ?? failure?.detail?.reason?.[0];
     if (failure?.code === 'BROWSER_REPO_RUN_FAILED') return { text: `The repository could not be run: ${reason ?? 'unknown reason'}. Do not repeat the same call; change the command or use another method.`, isError: true };
     return { text: 'The isolated sandbox is not available right now. Use another method for this part of the task.', isError: true };
   }
