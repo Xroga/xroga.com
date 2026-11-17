@@ -29,6 +29,7 @@ import { usePrivacyStore } from '@/store/usePrivacyStore';
 import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
 import { useLiveBuildStore } from '@/store/useLiveBuildStore';
 import { PENDING_PROMPT_KEY } from '@/lib/constants';
+import { draftForConversationRestore } from '@/lib/composerDraft';
 import {
   clearWorkspaceSession,
   loadWorkspaceSessionHydrated,
@@ -1268,6 +1269,14 @@ const stopRequestedRunIdRef =
       githubRepoName?: string;
     }) => {
       if (incognito) return;
+      const snapshots = typeof document === 'undefined' ? [] : [...document.querySelectorAll<HTMLTextAreaElement>('[data-terminal-composer]')].map(input => ({
+        owner: input.dataset.draftOwner ?? '', session: input.dataset.draftSession ?? '',
+        project: input.dataset.draftProject ?? '', restoring: input.dataset.draftRestoring !== 'false', value: input.value,
+      }));
+      const composerDraft = draftForConversationRestore(snapshots, {
+        owner: workspaceIdentity.status === 'guest' ? 'guest' : workspaceIdentity.userId ?? '',
+        session: sessionIdRef.current, project: projectId ?? '',
+      }, opts.sessionId, sessionRestoring, prompt);
       restoringRef.current = true;
       setSessionRestoring(true);
       abortRef.current?.abort();
@@ -1298,11 +1307,11 @@ const stopRequestedRunIdRef =
       const hydrated = await rehydratePersistedMessages(opts.messages, opts.githubRepoName);
       setMessages(hydrated);
       await restoreProjectWorkspaceFromMessages(hydrated, opts.githubRepoName);
-      setPrompt(opts.prompt);
+      setPrompt(composerDraft);
       completedWebsiteBuildRef.current = threadHasCompletedWebsite(hydrated);
 
       saveWorkspaceSession({
-        prompt: opts.prompt,
+        prompt: composerDraft,
         messages: hydrated,
         sessionId: opts.sessionId,
         selectedId: opts.selectedId ?? opts.sessionId,
@@ -1316,7 +1325,7 @@ const stopRequestedRunIdRef =
       restoringRef.current = false;
       setSessionRestoring(false);
     },
-    [incognito, setSwarmRunning, setSessionId]
+    [incognito, setSwarmRunning, setSessionId, prompt, projectId, sessionRestoring, workspaceIdentity.status, workspaceIdentity.userId]
   );
 
   useEffect(() => {

@@ -2,7 +2,7 @@ import { publicCompletionState } from './completionDiagnostics.js';
 import { NATIVE_UI_FORMAT, PARTIAL_NATIVE_PRESENTATION_NOTE, missingNativeFormats, recoverNativeWorkspaceProgram, recoverNativeMonthlyChart, recoverTruncatedNativeWorkspaceProgram, splitNativeOpenUiAnswer, supplementNativeProse, validateNativeWorkspaceProgram, type NativeUiDiagnostic, type RequiredNativeFormat } from './nativeOpenUi.js';
 import { nativeAnswerReviewReason, nativeFactualGuidance, nativeTechnicalCorrections, suppliedMonthlyComparison } from './nativeOpenUiAccuracy.js';
 import { checklistFromProse, requestsEditableChecklist, suppliedPeriodicSeries } from './nativeOpenUiRecovery.js';
-import { conflictingNativeReadouts, initialNativeReadouts } from './nativeOpenUiValues.js';
+import { conflictingNativeReadouts, initialNativeReadouts, nativePrincipalMultipleReview } from './nativeOpenUiValues.js';
 import { recoverNativeReadoutExplanations } from './nativeOpenUi.js';
 import { bindNativeAnswerText } from './nativeOpenUi.js';
 
@@ -114,8 +114,10 @@ export function completeNativeWorkspaceAnswer(
     : response;
   const valid = validation?.ok === true && completion.status === 'complete';
   const readouts = valid ? initialNativeReadouts(program) : [];
+  const multiples = valid ? nativePrincipalMultipleReview(program) : undefined;
+  const multipleConflict = multiples && (multiples.conflictingNotes.size > 0 || multiples.repairProse(response) !== response);
   if (valid && (conflictingNativeReadouts(response, readouts).length ||
-      (readouts.length && conflictingNativeReadouts(supplementNativeProse('', program, true), readouts).length))) {
+      multipleConflict || (readouts.length && conflictingNativeReadouts(supplementNativeProse('', program, true), readouts).length))) {
     // Preserve the working calculator and derive its readable snapshot from the
     // same pure upstream functions. Do not persist conflicting model totals.
     const correctedProgram = recoverNativeReadoutExplanations(program);

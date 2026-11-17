@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { initialNativeReadouts, initialNativeValueReader, conflictingNativeReadouts } from './nativeOpenUiValues.js';
+import { initialNativeReadouts, initialNativeValueReader, conflictingNativeReadouts, nativePrincipalMultipleReview } from './nativeOpenUiValues.js';
 import { parseExpression, tokenize } from '@openuidev/lang-core';
 import { completeNativeWorkspaceAnswer } from './nativeOpenUiWorkspace.js';
 import { NATIVE_UI_MARKER, supplementNativeProse } from './nativeOpenUi.js';
@@ -11,6 +11,40 @@ const program = `root = Col([Metric("Monthly payment", @Format(payment, "currenc
 $principal = 20000
 $apr = 8
 payment = @Payment($principal, $apr / 12, 60)`;
+
+test('readable table snapshots evaluate dynamic column headings without fabricating blank cells', () => {
+  const source = 'root = Col([Table(["Compounding", "Balance after " + @Plural($years, "year")], [["Monthly", @Format(18193.96734, "currency", 2, "USD")]])])\n$years = 10';
+  const prose = supplementNativeProse('Initial calculation.', source, true);
+  assert.match(prose, /\| Compounding \| Balance after 10 years \|/);
+  assert.match(prose, /\| Monthly \| \$18,193\.97 \|/);
+  assert.doesNotMatch(prose, /\| Compounding \|  \|/);
+});
+
+test('a principal multiple stays tied to the currency metric it describes', () => {
+  const prose = 'Interest: $8,193.97 (1.82× the principal)\n\nThe balance is $18,193.97.';
+  const source = 'root = Col([Markdown(body), Slider($principal, 1000, 100000, 500, "Principal", "$"), Metric("Interest earned", @Format(8193.96734, "currency", 2, "USD"), "About 1.82x the principal you started with")])\n$principal = 10000\nbody = '+JSON.stringify(prose);
+  const review = nativePrincipalMultipleReview(source);
+  assert.deepEqual([...(review?.conflictingNotes ?? [])], ['Interest earned']);
+  assert.equal(review?.repairProse(prose), 'Interest: $8,193.97\n\nThe balance is $18,193.97.');
+  assert.equal(review?.repairProse('Interest: $200 (2× the principal)'), 'Interest: $200 (2× the principal)', 'A distinct worked example must stay intact');
+  const corrected = completeNativeWorkspaceAnswer(prose+NATIVE_UI_MARKER+source,'stop');
+  assert.equal(corrected.completion.status,'partial');
+  assert.match(corrected.response,/\$8,193\.97/);
+  assert.match(corrected.response,/The balance is \$18,193\.97/);
+  assert.doesNotMatch(corrected.response,/1\.82[x×]/);
+  assert.ok(corrected.responseSource.text.includes('Slider('));
+  const correct=source.replaceAll('1.82','0.82');
+  assert.equal(nativePrincipalMultipleReview(correct)?.conflictingNotes.size,0);
+  assert.equal(nativePrincipalMultipleReview(correct)?.repairProse(prose.replace('1.82','0.82')),prose.replace('1.82','0.82'));
+  const explicit=source.replace('About 1.82x','Final balance is 1.82x');
+  assert.equal(nativePrincipalMultipleReview(explicit)?.conflictingNotes.size,0);
+  const precise='root = Col([Slider($principal,1,10,1,"Principal","$"), Metric("Interest earned", "$0.12", "About 0.123456x the principal")])\n$principal = 1';
+  assert.equal(nativePrincipalMultipleReview(precise)?.conflictingNotes.size,0,'Displayed currency rounding must not reject a more precise correct ratio');
+  assert.equal(nativePrincipalMultipleReview(source.replace('"Principal", "$"','"Principal", "EUR"')),undefined,'Never infer a currency conversion');
+  const earlyBody=source.split('\n').reverse().join('\n');
+  const reordered=completeNativeWorkspaceAnswer(prose+NATIVE_UI_MARKER+earlyBody,'stop');
+  assert.doesNotMatch(reordered.response,/1\.82[x×] the principal/);
+});
 
 test('initial calculator snapshots reuse upstream payment and formatting functions', () => {
   assert.deepEqual(initialNativeReadouts(program), [

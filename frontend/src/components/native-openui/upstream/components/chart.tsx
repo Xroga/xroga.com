@@ -1,8 +1,9 @@
 "use client";
 
 import { defineComponent } from "@openuidev/react-lang";
-import { useId, useLayoutEffect, useRef, useState, type PointerEvent } from "react";
+import React, { useId, useLayoutEffect, useRef, useState, type PointerEvent } from "react";
 import { z } from "zod/v4";
+import { Format as NumberFormat } from "../functions/text";
 
 type Row = Record<string, unknown>;
 type Format = (value: number, compact?: boolean) => string;
@@ -14,6 +15,7 @@ type Spec = {
   stacked: boolean;
   height: number;
   format: Format;
+  currency?: string;
   presentation?: { title?: string; xLabel?: string; yLabel?: string; note?: string };
 };
 
@@ -313,15 +315,17 @@ function toSpec(props: z.infer<typeof chartProps>): Spec | null {
     stacked: !!props.stacked,
     height: Math.min(480, Math.max(140, props.height ?? 240)),
     format: makeFormat(props.format, props.currency),
+    currency: props.format === 'currency' ? props.currency ?? 'USD' : undefined,
     presentation: props.presentation,
   };
 }
 
-function chartTable(spec: Spec) {
+function chartTable(spec: Spec, display = false) {
   const { x, series, rows, presentation } = spec;
   return {
     headings: [presentation?.xLabel ?? x, ...(series.length === 1 && presentation?.yLabel ? [presentation.yLabel] : series)],
-    rows: rows.map(row => [x, ...series].map(key => String(row[key]))),
+    rows: rows.map(row => [String(row[x]), ...series.map(key => display && spec.currency
+      ? NumberFormat.fn({value: num(row[key]), kind:'currency', currency:spec.currency}) : String(row[key]))]),
   };
 }
 
@@ -344,7 +348,7 @@ export const Chart = defineComponent({
     const pie = spec.type === "pie" || spec.type === "donut";
     const labels = spec.presentation;
     const captionUnit = labels?.yLabel?.trim().toLowerCase() === labels?.title?.trim().toLowerCase() ? undefined : labels?.yLabel;
-    const table = chartTable(spec);
+    const table = chartTable(spec, true);
     return (
       <figure className="iui-chart">
         {(labels?.title || labels?.yLabel) && <figcaption className="native-chart-caption">

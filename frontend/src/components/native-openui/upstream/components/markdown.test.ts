@@ -5,11 +5,24 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { publicAnswerText } from '@/lib/publicAnswerText';
 import { createParser, type LibraryJSONSchema } from '@openuidev/lang-core';
 import catalog from '../../../../../../backend/src/ai/nativeOpenUiCatalog.json';
-import { bindNativeAnswerText } from '../../../../../../backend/src/ai/nativeOpenUi';
+import { bindNativeAnswerText, supplementNativeProse } from '../../../../../../backend/src/ai/nativeOpenUi';
 import { initialNativeValueReader } from '../../../../../../backend/src/ai/nativeOpenUiValues';
 import { inline, MarkdownBlocks, nativeMarkdownMatches, preservedMarkdownTableKeys, proseOutsideNativeDocuments, tableContentKey } from './markdown';
 
 const render = (source: string) => renderToStaticMarkup(createElement(Fragment, null, inline(source)));
+
+test('a calculated table with a dynamic header replaces its initial fallback table', () => {
+  const program='root = Col([Table(["Compounding", "Balance after " + @Plural($years,"year")], [["Monthly", @Format(18193.96734,"currency",2,"USD")]])])\n$years = 10';
+  const text=supplementNativeProse('Initial calculation.',program,true);
+  const root=createParser(catalog.schema as LibraryJSONSchema,'Col').parse(program).root;
+  const matches=nativeMarkdownMatches(root,initialNativeValueReader(program));
+  const visible=renderToStaticMarkup(createElement(MarkdownBlocks,{text,matches}));
+  assert.doesNotMatch(visible,/<table/);
+  assert.match(visible,/Initial calculation/);
+  const fallback=renderToStaticMarkup(createElement(MarkdownBlocks,{text}));
+  assert.equal((fallback.match(/<table/g)??[]).length,1);
+  assert.match(fallback,/Balance after 10 years/);
+});
 
 test('an opening Markdown title does not repeat its native display heading', () => {
   const matches = nativeMarkdownMatches({type:'element',typeName:'Title',props:{text:'Sortable table: time by color'}});
@@ -34,6 +47,9 @@ test('one complete native Markdown document replaces only its exact readable cop
   const matches = nativeMarkdownMatches({type: 'element', typeName: 'Markdown', props: {text}});
   assert.equal(proseOutsideNativeDocuments(text, matches), '');
   assert.equal(proseOutsideNativeDocuments(text + '\n\nUnique native detail.', matches), 'Unique native detail.');
+  assert.equal(proseOutsideNativeDocuments('Calculated results were corrected.\n\n'+text+'\n\nUnique native detail.',matches),
+    'Calculated results were corrected.\n\nUnique native detail.');
+  assert.equal(proseOutsideNativeDocuments('A different sentence containing '+text,matches),'A different sentence containing '+text);
   assert.equal(proseOutsideNativeDocuments(text.replace('$10', '$11'), matches), text.replace('$10', '$11'));
   assert.equal(proseOutsideNativeDocuments(text, undefined), text);
   const hidden = nativeMarkdownMatches({type: 'element', typeName: 'Flashcard', props: {back: {type: 'element', typeName: 'Markdown', props: {text}}}});

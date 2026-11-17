@@ -248,11 +248,20 @@ export function nativeMarkdownMatches(root: unknown, readInitial: (value: unknow
 /** Only remove a complete verbatim document already visible in native Markdown.
  * Do not infer semantic equivalence or drop distinct trailing information. */
 export function proseOutsideNativeDocuments(text: string, matches?: MarkdownMatches): string {
+  let remaining = text;
   for (const document of [...(matches?.documents ?? [])].sort((a, b) => b.length - a.length)) {
-    if (text === document) return '';
-    if (document && text.startsWith(document + '\n\n')) return text.slice(document.length + 2);
+    if (!document) continue;
+    let from = 0;
+    for (let at = remaining.indexOf(document, from); at >= 0; at = remaining.indexOf(document, from)) {
+      const before = remaining.slice(0, at), after = remaining.slice(at + document.length);
+      if ((!before || before.endsWith('\n\n')) && (!after || after.startsWith('\n\n'))) {
+        remaining = [before.trimEnd(), after.trimStart()].filter(Boolean).join('\n\n');
+        break;
+      }
+      from = at + document.length;
+    }
   }
-  return text;
+  return remaining;
 }
 
 const LIST_ITEM = /^\s{0,3}([-*+]|(\d+)[.)])\s+(.*)$/;

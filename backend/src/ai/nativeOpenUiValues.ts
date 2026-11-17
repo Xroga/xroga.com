@@ -1,4 +1,4 @@
-import { evaluate, parseExpression, split, tokenize, walkAST, type ASTNode, type EvaluationContext } from '@openuidev/lang-core';
+import { createParser, evaluate, parseExpression, split, tokenize, walkAST, type ASTNode, type EvaluationContext, type LibraryJSONSchema } from '@openuidev/lang-core';
 import catalog from './nativeOpenUiCatalog.json' with { type: 'json' };
 import { nativeFunctions } from './nativeOpenUiFunctions.generated.js';
 
@@ -103,6 +103,65 @@ export function initialNativeValueReader(program: string): (value: unknown) => u
     const { read } = snapshotEvaluator(program);
     return value => { try { return read(value); } catch { return undefined; } };
   } catch { return () => undefined; }
+}
+
+const readoutParser = createParser(catalog.schema as LibraryJSONSchema, 'Col');
+const metricLabelKey = (text: string) => text.toLowerCase().replace(/^total\s+|\s+earned$/g, '').trim();
+
+/** Review only an explicit currency multiple of a visible principal input.
+ * No guessed denominator, conversion rate or unrelated example is inferred. */
+export function nativePrincipalMultipleReview(program: string) {
+  try {
+    const read = initialNativeValueReader(program);
+    const principals = new Set<number>();
+    const metrics: Array<{label:string;value:number;rounding:number;note:string}> = [];
+    const seen = new Set<object>();
+    let budget = 6000;
+    const visit = (value: unknown): void => {
+      if (--budget < 0) throw Error('Readout review budget');
+      if (!value || typeof value !== 'object' || seen.has(value)) return;
+      seen.add(value);
+      const node = value as {type?:string;typeName?:string;props?:Record<string,unknown>};
+      if (node.type === 'element' && node.props) {
+        const label = read(node.props.label), amount = read(node.props.value);
+        if (['Slider','Input'].includes(node.typeName ?? '') && typeof label === 'string' && /^(?:(?:initial|starting)\s+)?principal$/i.test(label.trim())
+            && ['$', 'USD'].includes(String(read(node.props.unit) ?? ''))
+            && typeof amount === 'number' && Number.isFinite(amount) && amount > 0) principals.add(amount);
+        if (node.typeName === 'Metric' && typeof label === 'string' && typeof amount === 'string') {
+          const money = /^\$([+-]?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?)$/.exec(amount);
+          if (money) metrics.push({label,value:Number(money[1].replace(/,/g,'')),
+            rounding:0.5*10**-(money[1].split('.')[1]?.length ?? 0),note:String(read(node.props.note) ?? '')});
+        }
+        Object.values(node.props).forEach(visit);
+      } else Object.values(value).forEach(visit);
+    };
+    visit(readoutParser.parse(program).root);
+    if (principals.size !== 1 || !metrics.length) return;
+    const principal = [...principals][0];
+    const ratio = /(?:^|[^\d.])([+-]?\d{1,12}(?:\.\d{1,10})?)[ \t]{0,8}(?:x|×|times)[ \t]{0,8}(?:the[ \t]+)?(?:(?:initial|starting)[ \t]+)?principal\b/i;
+    const disagrees = (text:string, metric:typeof metrics[number]) => {
+      const claim=ratio.exec(text);
+      return Boolean(claim && Math.abs(Number(claim[1])-metric.value/principal) >
+        0.5*10**-(claim[1].split('.')[1]?.length ?? 0)+metric.rounding/principal+1e-6);
+    };
+    const conflictingNotes = new Set(metrics.filter(metric =>
+      /^(?:about\s+|approximately\s+|roughly\s+|around\s+)?[+-]?\d/i.test(metric.note) && disagrees(metric.note,metric)
+    ).map(metric => metric.label));
+    const repairProse = (text:string) => text.split('\n').map(line => {
+      const plain=line.replace(/[*_`]/g,'').replace(/^\s*[-+]\s*/,'');
+      const label=/^([^:]{1,80}):/.exec(plain)?.[1];
+      if(!label)return line;
+      const matches=metrics.filter(metric=>metricLabelKey(metric.label)===metricLabelKey(label));
+      if(matches.length!==1)return line;
+      const amount=/^[^:]{1,80}:[ \t]*\$([+-]?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?)/.exec(plain);
+      if(!amount || Number(amount[1].replace(/,/g,'')) !== matches[0].value)return line;
+      // Only an unqualified parenthesis tied to this labeled result is removed.
+      // Explicitly described balance ratios and distinct examples stay intact.
+      return line.replace(/[ \t]{0,8}\((?:about[ \t]+|approximately[ \t]+)?[+-]?\d{1,12}(?:\.\d{1,10})?[ \t]{0,8}(?:x|×|times)[ \t]{0,8}(?:the[ \t]+)?(?:(?:initial|starting)[ \t]+)?principal\)/gi,
+        claim=>disagrees(claim,matches[0])?'':claim);
+    }).join('\n');
+    return {conflictingNotes,repairProse};
+  } catch { return; }
 }
 
 // Match a label within normal prose without a backtracking regular expression.

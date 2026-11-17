@@ -12,6 +12,8 @@ const readingOrderRule = 'Match the structure to what the reader needs to do. An
 const componentSelectionRule = 'Choose a visual for the question it answers. Use a Diagram for dependencies, branching decisions or handoffs. Use a Table when the reader needs to compare roles, ownership, permissions, options or values across shared columns. In a workflow, a responsibility table can show what is automated and what needs human review, while the diagram shows where the work goes next. Use ordered steps for a straightforward sequence and a Chart for measured trends or comparisons. When the user asks for a specific artifact, make it the main answer and include only supporting content needed to use or understand it. For a sortable table, provide the data, units and working sort; omit charts and aggregate metrics unless the request calls for analysis or those views answer a distinct user question. Include multiple components only when each adds distinct information. Use concise labels and keep essential details visible in reading order.';
 
 const iconSelectionRule = 'Use an optional Lucide icon on a section or diagram node when it helps distinguish roles, actions or states, such as inbox for intake and shield-check for an approval boundary. Use valid kebab-case icon names and keep the visible text label. Omit icons from paragraphs, repeated table cells and headings where they add no meaning. Use real product identity only through a supported Resource or verified source.';
+const readoutMeaningRule = 'Every metric description must refer to that metric\'s own value. Interest earned divided by principal is an interest multiple; final balance divided by principal is a balance multiple. Do not describe earned interest using the total balance multiple. Label worked examples as initial values and keep live comparisons derived from the same controls. For calculators, support meaningful boundary values such as zero interest or zero duration when the formula permits them. Use editable numeric inputs when slider bounds would unnecessarily exclude valid values, and handle zero denominators explicitly.';
+const artifactPriorityRule = 'When the user requests an interactive artifact, put its working controls and primary results before a long background explanation unless the user asks for another reading order. Keep the explanation, assumptions and complete readable fallback available; avoid making the user scroll through an essay before using the requested artifact.';
 
 export const nativeOpenUiPlainPrompt = [
   'Answer the actual request directly in readable Markdown. Do not output an OpenUI program for this prose-only turn.',
@@ -19,6 +21,8 @@ export const nativeOpenUiPlainPrompt = [
   readingOrderRule,
   numericPrecisionRule,
   dataConsistencyRule,
+  readoutMeaningRule,
+  artifactPriorityRule,
   technicalPrecisionRule,
   procedureConsistencyRule,
   comparisonConsistencyRule,
@@ -51,6 +55,8 @@ function buildNativeOpenUiPrompt(kinds: ReadonlySet<string>, hasSources: boolean
     additionalRules: [
       numericPrecisionRule,
       dataConsistencyRule,
+      readoutMeaningRule,
+      artifactPriorityRule,
       technicalPrecisionRule,
       procedureConsistencyRule,
       comparisonConsistencyRule,

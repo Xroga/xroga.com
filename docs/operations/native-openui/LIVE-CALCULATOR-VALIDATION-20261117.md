@@ -44,3 +44,22 @@ Private-run review also found a separate deadline mismatch. Both the SDK and wir
 - Guest admission remains independently blocked by unavailable shared Redis configuration. No in-memory accounting bypass or disabled credential was enabled.
 
 The recovery pair is available. Completion for every user or every possible prompt has not been verified.
+
+## November 18 hosted follow-up and focused repairs
+
+All eleven workflows passed for `0d5a5e9345db4017dff023badb1cd6c668bf3495`. The exact preview was Ready. The private authenticated Workspace passed IAM invocation, owner/outsider/guest isolation, and provider-disabled persistence, Copy, Share, revocation and Reopen of the labeled synthetic forecast. Two earlier harness interruptions consumed no model calls. All three private windows were closed with runtime resources and grants removed and dedicated keys scheduled for destruction. No production promotion occurred.
+
+The one fresh compound-interest prompt completed in 89.293 seconds. Planner `req_eivrEjriMBqrNSqbTKqIF4fm` settled 108 micro-USD. Answer `req_P8RP7PyyCanF7X4uhHdwJtZ0` settled 1,922 micro-USD, including 7,599 input and 14,113 output tokens. The existing model produced a valid interactive program without a second formatting model. Controls, calculated totals, chart and comparison updated correctly in four independently checked states. Total settled usage was $0.002030. The second planned prompt was withheld after quality review failed.
+
+The actual answer revealed these defects:
+
+- The fallback projection resolved table rows but not a calculated column heading, preventing duplicate reconciliation. Headings now use the same pure initial evaluator as rows. Failed evaluation cannot fabricate blank headings.
+- An interest metric incorrectly described total balance as a principal multiple. A bounded deterministic review removes an explicitly contradictory ratio only when its USD principal, labeled result and amount are unambiguous. It retains the valid calculator and complete corrected readable answer. Distinct examples, qualified balance claims and currency conversions are not inferred. Model instructions also explain the distinction.
+- A review notice before the native Markdown document prevented exact duplicate reconciliation. Complete verbatim documents can now be reconciled at paragraph boundaries while preserving the notice and distinct surrounding content.
+- Financial chart data displayed long binary floating-point values. The existing registered currency formatter now formats display cells. Raw values, matching keys and calculations retain their precision.
+- Reopening history inserted its historical sent prompt into the composer. Restoration now keeps only a current, owner/session/project-scoped unsent draft when restoring the active chat. Opening another conversation starts with an empty composer.
+- The calculator appeared after a long explanation. Existing prompt guidance now asks for requested interactive controls and primary results before lengthy background, subject to the user's requested order.
+
+The captured provider answer was preserved and replayed after correction without new inference. This is a controlled replay of a genuine response, not fresh generation acceptance. Chrome passed 44 scenarios at five widths in both themes, with zero reported accessibility violations and representative 200% reflow checks. All 1,575 frontend regressions and 98 focused backend regressions passed. Fresh exact-source CI, hosted generation and production acceptance remain required.
+
+The fresh answer's first Copy assertion stopped on Windows CRLF versus LF. Content loss was not established. Fresh-answer Share and Reopen were therefore not completed in that window, despite passing on the separate synthetic replay. The harness must normalize clipboard line endings and must not treat copied historical receipt files as current evidence.

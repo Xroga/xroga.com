@@ -147,6 +147,12 @@ if (captured) {
   assert.ok(captured.sources.length && captured.sources.every(source => new URL(source.url).hostname === "docs.python.org"));
   cases.capturedSearch = { ...captured, sources: captured.sources.map((source, index) => ({ ...source, id: "source-" + (index + 1) })) };
 }
+const capturedCalculator = process.argv[4] ? JSON.parse(await readFile(resolve(process.argv[4]),'utf8')) : null;
+if(capturedCalculator){
+  assert.equal(capturedCalculator.answer.responseSource.format,'xroga-openui-v1');
+  assert.ok(capturedCalculator.answer.responseSource.text);
+  cases.capturedCalculator={text:capturedCalculator.answer.response,program:capturedCalculator.answer.responseSource.text};
+}
 const compiled = await build({
   stdin: {
     resolveDir: process.cwd(),
@@ -219,6 +225,22 @@ try {
       assert.equal(await page.getByRole('table').count(),1);
       await page.getByText('Three recorded times in seconds.',{exact:true}).waitFor();
       if ([390,1440].includes(viewport.width)) await page.screenshot({path:resolve(output,channel+'-opening-title-'+viewport.width+'-'+theme+'.png'),fullPage:true});
+      if(capturedCalculator){
+        await open('capturedCalculator');
+        const comparison=page.getByRole('region',{name:'Answer table'}).filter({has:page.getByRole('columnheader',{name:'Compounding',exact:true})});
+        await comparison.waitFor();
+        assert.equal(await comparison.count(),1,'A changing comparison must not retain a second static copy');
+        assert.equal(await page.getByRole('table').count(),3,'Milestones, chart data and one live comparison');
+        await comparison.getByRole('columnheader',{name:'Balance after 10 years',exact:true}).waitFor();
+        await page.getByRole('slider',{name:'Years',exact:true}).press('ArrowRight');
+        await comparison.getByRole('columnheader',{name:'Balance after 11 years',exact:true}).waitFor();
+        const expected=(10000*Math.pow(1+0.06/12,12*11)).toLocaleString('en-US',{style:'currency',currency:'USD'});
+        const monthly=comparison.getByRole('row').filter({has:page.getByRole('cell',{name:'Monthly',exact:true})});
+        assert.ok((await monthly.innerText()).includes(expected));
+        assert.equal(await page.getByRole('table').count(),3);
+        assert.ok(!(await page.locator('.xroga-native-openui').innerText()).includes('1.82x the principal'));
+        if([390,1440].includes(viewport.width))await page.screenshot({path:resolve(output,channel+'-captured-calculator-'+viewport.width+'-'+theme+'.png'),fullPage:true});
+      }
       await open('workflowOwnership');
       const ownershipHeading = page.getByRole('heading', { name: 'Manual versus automated', exact: true });
       await ownershipHeading.waitFor();
@@ -375,7 +397,7 @@ try {
       await page.getByText('$2,000', { exact: true }).waitFor();
       await page.getByRole('button', { name: 'Reset' }).click();
       await page.getByText('$1,000', { exact: true }).waitFor();
-      await page.getByRole('cell', { name: '1500', exact: true }).waitFor();
+      await page.getByRole('cell', { name: '$1,500.00', exact: true }).waitFor();
       const accessibility = await new AxeBuilder({ page }).analyze();
       assert.deepEqual(accessibility.violations.map(({id}) => id), []);
       assert.equal(await page.getByRole('columnheader', { name: 'Gross revenue (USD)' }).count(), 1);

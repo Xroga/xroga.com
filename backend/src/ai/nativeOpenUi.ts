@@ -2,7 +2,7 @@ import { createParser, evaluate, parseExpression, split, tokenize, walkAST, type
 import { claimsChartIsDeferred, contradictsMonthlyChart, monthlyChartDataFallback, nativeTechnicalReviewContext, reviewNativeAnswer, suppliedMonthlyComparison } from './nativeOpenUiAccuracy.js';
 import { DIAGRAM_NODE_TONES, hasRenderableDiagramTopology } from './nativeDiagramTopology.js';
 import catalog from './nativeOpenUiCatalog.json' with { type: 'json' };
-import { conflictingNativeReadouts, initialNativeReadouts, initialNativeValueReader } from './nativeOpenUiValues.js';
+import { conflictingNativeReadouts, initialNativeReadouts, initialNativeValueReader, nativePrincipalMultipleReview } from './nativeOpenUiValues.js';
 
 export const NATIVE_UI_FORMAT = 'xroga-openui-v1' as const;
 export const NATIVE_UI_LIBRARY = 'xroga-native-v1' as const;
@@ -309,12 +309,14 @@ export function supplementNativeProse(prose: string, program: string, includeAll
       if (initial) add(initial.label + ': ' + initial.value);
       add(scalar(props.note));
     } else if (node.typeName === 'Table') {
+      const headings = initialValue(props.columns);
       const resolved = initialValue(props.rows);
       // Keep the complete initial table or omit it as unavailable. Never turn an
       // unresolved expression into an invented blank, zero or partial row.
-      if (Array.isArray(resolved) && resolved.every(row => Array.isArray(row) && row.every(cell =>
+      if (Array.isArray(headings) && headings.every(heading => typeof heading === 'string') &&
+          Array.isArray(resolved) && resolved.every(row => Array.isArray(row) && row.every(cell =>
         cell === null || ['string', 'number', 'boolean'].includes(typeof cell)))) {
-        addTable(array(props.columns).map(scalar), resolved.map(row => row.map((cell: unknown) => cell === null ? '' : String(cell))));
+        addTable(headings, resolved.map(row => row.map((cell: unknown) => cell === null ? '' : String(cell))));
       }
     } else if (node.typeName === 'Chart' && Array.isArray(props.data)) {
       const presentation = record(props.presentation);
@@ -612,22 +614,30 @@ function printRecoveryExpression(node: ASTNode): string {
  * before deriving saved prose. Calculations, inputs and unrelated text stay intact. */
 export function recoverNativeReadoutExplanations(program: string): string {
   const readouts = initialNativeReadouts(program);
+  const multiples = nativePrincipalMultipleReview(program);
+  const initial = initialNativeValueReader(program);
+  const statements = split(tokenize(program)).map(statement=>({id:statement.id,expression:parseExpression(statement.tokens)}));
+  const symbols = new Map(statements.map(statement=>[statement.id,statement.expression]));
   let changed = false;
-  const repaired = split(tokenize(program)).map(statement => {
-    const expression = parseExpression(statement.tokens);
+  for (const {expression} of statements) {
     walkAST(expression, node => {
+      if(node.k==='Comp' && node.name==='Metric' && multiples?.conflictingNotes.has(String(initial(node.args[0])))){
+        node.args[2]={k:'Str',v:''};changed=true;
+      }
       if (node.k !== 'Comp' || !['Text', 'Caption', 'Markdown'].includes(node.name)) return;
-      const body = node.args[0];
+      const body = resolveRecoveryReference(node.args[0],symbols);
       if (body?.k !== 'Str') return;
-      const paragraphs = body.v.split(/\n\s*\n/);
+      const corrected = multiples?.repairProse(body.v) ?? body.v;
+      if(corrected!==body.v){body.v=corrected;changed=true;}
+      const paragraphs = corrected.split(/\n\s*\n/);
       const retained = paragraphs.filter(text => !conflictingNativeReadouts(text, readouts).length);
       if (retained.length !== paragraphs.length) {
         changed = true;
         body.v = retained.join('\n\n');
       }
     });
-    return statement.id + ' = ' + printRecoveryExpression(expression);
-  }).join('\n');
+  }
+  const repaired = statements.map(({id,expression})=>id + ' = ' + printRecoveryExpression(expression)).join('\n');
   return changed ? repaired : program;
 }
 
