@@ -235,3 +235,35 @@ describe('worker capacity follows the account limit the server reports', () => {
     expect(jobs.filter(j => j.resource === 'doc:timeline' && j.state === 'running')).toHaveLength(1);
   });
 });
+
+describe('a worker that goes silent', () => {
+  it('is failed alone after the deadline: its window is closed, the others keep their results, and the parent is told why', async () => {
+    const h = harness({ deadlineMs: 10 * 60_000 });
+    await h.workers.start('parent', { tasks: [task(1), task(2)] });
+    const [first] = Object.values(h.stored.jobs);
+    await h.workers.ended(first.conversationId!, { status: 'done', outcome: 'success', result: 'Found it.' });
+    h.tick(11 * 60_000);
+    const r = parse(await h.workers.status('parent', 0));
+    const states = Object.fromEntries(r.workers.map((w: { id: string; state: string }) => [w.id, w.state]));
+    expect(states).toEqual({ t1: 'completed', t2: 'failed' });
+    expect(r.workers.find((w: { id: string }) => w.id === 't2').result).toContain('no result within 10 minutes');
+    expect(h.stopped).toContain(Object.values(h.stored.jobs)[1].conversationId);
+    expect(h.closed).toContain(Object.values(h.stored.jobs)[1].windowId);
+  });
+
+  it('lets a worker that is still inside the deadline keep running', async () => {
+    const h = harness({ deadlineMs: 10 * 60_000 });
+    await h.workers.start('parent', { tasks: [task(1)] });
+    h.tick(9 * 60_000);
+    expect(parse(await h.workers.status('parent', 0)).workers[0].state).toBe('running');
+  });
+
+  it('frees its slot so a queued task starts', async () => {
+    const h = harness({ deadlineMs: 5 * 60_000, activeLimit: () => 2 });
+    await h.workers.start('parent', { tasks: [task(1), task(2), task(3)] });
+    expect(h.opened).toHaveLength(1 + 0 + 0 + 1);
+    h.tick(6 * 60_000);
+    await h.workers.status('parent', 0);
+    expect(h.opened.length).toBeGreaterThanOrEqual(3);
+  });
+});

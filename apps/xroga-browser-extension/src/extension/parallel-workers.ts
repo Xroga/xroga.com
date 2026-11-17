@@ -31,6 +31,12 @@ const HANDOFF_EACH = 2_000;
 const HANDOFF_ALL = 6_000;
 const MAX_WAIT_SECONDS = 15;
 const KEEP_ENDED_MS = 24 * 3_600_000;
+/**
+ * How long one worker may run before the coordinator stops waiting for it. Generous on purpose (a real research worker takes minutes), it
+ * only exists so a worker that went silent (a stuck page, a lost tab) cannot hold the whole task: that worker alone is failed with a
+ * clear reason, its window is closed, and the others and the queue carry on. An operator can change it with `deadlineMs`.
+ */
+const WORKER_DEADLINE_MS = 15 * 60_000;
 const LABEL = /^[a-z][a-z0-9_-]{0,23}$/i;
 const RESOURCE = /^[a-z0-9][a-z0-9:_./-]{0,59}$/i;
 
@@ -56,6 +62,8 @@ export interface WorkerJob {
   outcome?: 'success' | 'partial' | 'failed';
   result?: string;
   createdAt: number;
+  /** When the worker's run began (not when it was queued). */
+  startedAt?: number;
   endedAt?: number;
 }
 
@@ -73,6 +81,8 @@ export interface WorkerDeps {
   open: (parentId: string, task: WorkerTask) => Promise<{ conversationId: string; windowId?: number }>;
   /** How many workers this parent may run at once (from the account limit the server reported). Three when absent. */
   activeLimit?: (parentId: string) => number;
+  /** How long a worker may run before the coordinator stops waiting for it (default 15 minutes). */
+  deadlineMs?: number;
   stop: (conversationId: string) => void;
   closeWindow: (windowId: number) => Promise<void>;
   /** The reason a start page is not allowed (not HTTPS, a blocked site), or null. */
@@ -262,7 +272,10 @@ export class ParallelWorkers {
           const opened = await this.deps.open(parentId, { instruction: this.#handoff(job, jobs), url: job.url });
           job.conversationId = opened.conversationId;
           job.windowId = opened.windowId;
-          if (!isEnded(job.state)) job.state = 'running';
+          if (!isEnded(job.state)) {
+            job.state = 'running';
+            job.startedAt = this.deps.now();
+          }
         } catch (error) {
           job.state = 'failed';
           job.endedAt = this.deps.now();
@@ -307,7 +320,34 @@ export class ParallelWorkers {
     });
   }
 
+  /** Fails the workers of a parent that have run past the deadline, so one silent worker never holds the others or the answer. */
+  async #expire(parentId: string): Promise<void> {
+    const toStop: string[] = [];
+    await this.#locked(async () => {
+      const jobs = await this.#jobs();
+      const limit = this.deps.deadlineMs ?? WORKER_DEADLINE_MS;
+      let changed = false;
+      for (const job of Object.values(jobs)) {
+        if (job.parentId !== parentId || !isActive(job.state)) continue;
+        if (this.deps.now() - (job.startedAt ?? job.createdAt) <= limit) continue;
+        job.state = 'failed';
+        job.outcome = 'failed';
+        job.endedAt = this.deps.now();
+        job.result = `This worker produced no result within ${Math.round(limit / 60_000)} minutes and was stopped. Do the part it was given yourself, or start it again with a narrower task.`;
+        if (job.conversationId) toStop.push(job.conversationId);
+        if (job.windowId !== undefined) await this.deps.closeWindow(job.windowId).catch(() => undefined);
+        changed = true;
+      }
+      if (changed) {
+        await this.deps.save(jobs);
+        await this.#dispatch(parentId, jobs);
+      }
+    });
+    for (const id of toStop) this.deps.stop(id);
+  }
+
   async status(parentId: string, waitSeconds: unknown, signal?: AbortSignal): Promise<{ text: string; isError: boolean }> {
+    await this.#expire(parentId);
     const limit = Math.min(MAX_WAIT_SECONDS, Math.max(0, Number(waitSeconds) || 0));
     const deadline = this.deps.now() + limit * 1000;
     const mine = async () => Object.values(await this.#jobs()).filter(j => j.parentId === parentId);
@@ -317,6 +357,7 @@ export class ParallelWorkers {
     // Waits for a change, not for everything: the parent reads what is ready and asks again.
     while (!signal?.aborted && this.deps.now() < deadline && jobs.some(j => !isEnded(j.state)) && snapshot(jobs) === first) {
       await this.deps.wait(500, signal);
+      await this.#expire(parentId);
       jobs = await mine();
     }
     return {
