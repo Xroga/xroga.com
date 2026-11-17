@@ -2,6 +2,7 @@ import React, { createContext, Fragment, type ReactNode } from "react";
 import { isPresentationLanguage, publicAnswerText } from "@/lib/publicAnswerText";
 import { cx, isLongAnswerTable, webUrl } from "./style";
 import { staticChartTable } from "./chart";
+import { CodePanel } from "./code-panel";
 import { nativeReadableTextKey } from "../../../../../../backend/src/ai/nativeOpenUi";
 
 // A small Markdown renderer that builds React elements and never injects HTML.
@@ -57,7 +58,7 @@ type Block =
   | { kind: "p" | "quote"; text: string }
   | { kind: "h"; level: number; text: string }
   | { kind: "list"; ordered: boolean; start: number; items: string[] }
-  | { kind: "code"; text: string }
+  | { kind: "code"; text: string; language?: string }
   | { kind: "hr" }
   | { kind: "table"; head: string[]; rows: string[][] };
 
@@ -255,15 +256,16 @@ function blocks(source: string): Block[] {
       i++;
       continue;
     }
-    const fence = /^ {0,3}(\x60{3,}|~{3,})/.exec(line)?.[1];
-    if (fence) {
+    const opening = /^ {0,3}(\x60{3,}|~{3,})[ \t]*([^\s]*)/.exec(line);
+    if (opening) {
+      const [, fence, language] = opening;
       const body: string[] = [];
       for (i++; i < lines.length; i++) {
         const close = /^ {0,3}(\x60{3,}|~{3,})[ \t]*$/.exec(lines[i])?.[1];
         if (close && close[0] === fence[0] && close.length >= fence.length) break;
         body.push(lines[i]);
       }
-      out.push({ kind: "code", text: body.join("\n") });
+      out.push({ kind: "code", text: body.join("\n"), language });
       i++;
       continue;
     }
@@ -333,11 +335,7 @@ export function MarkdownBlocks({ text, renderCitation, deduplicateTables = false
             );
           case "code":
             if (matches?.code.has(b.text.trimEnd())) return null;
-            return (
-              <pre key={k} className="iui-code-block" tabIndex={0} role="group" aria-label="Code block">
-                <code>{b.text}</code>
-              </pre>
-            );
+            return <CodePanel key={k} code={b.text} language={b.language} />;
           case "hr":
             return <hr key={k} className="iui-divider" />;
           case "list": {

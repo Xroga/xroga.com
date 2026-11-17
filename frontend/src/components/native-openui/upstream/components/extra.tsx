@@ -3,12 +3,10 @@
 import { defineComponent } from "@openuidev/react-lang";
 import katex from "katex";
 
-import { Check, Copy } from "lucide-react";
-import { useEffect, useState, type CSSProperties, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { z } from "zod/v4";
 import { inline } from "./markdown";
-import type { HighlightedToken } from "@/lib/codeHighlight";
-import { isPresentationLanguage } from "@/lib/publicAnswerText";
+import { CodePanel } from "./code-panel";
 import { useRenderEvidenceCitation } from "../../evidence";
 import { children, cx } from "./style";
 
@@ -49,45 +47,7 @@ export const Code = defineComponent({
   name: "Code",
   props: z.object({ code: z.string(), language: z.string().optional() }),
   description: "Code block with a copy button.",
-  component: function CodeView({ props }) {
-    const [copied, setCopied] = useState(false);
-    const code = str(props.code);
-    const internal = isPresentationLanguage(props.language);
-    const [highlight, setHighlight] = useState<{ code: string; lines: HighlightedToken[][] }>();
-    useEffect(() => {
-      if (!props.language || internal) return;
-      let current = true;
-      void import("@/lib/codeHighlight").then(module => module.highlightCode(code, props.language)).then(lines => {
-        if (current && lines) setHighlight({ code, lines });
-      }).catch(() => {});
-      return () => { current = false; };
-    }, [code, internal, props.language]);
-    if (internal) return null;
-    const colored = highlight?.code === code ? highlight.lines : undefined;
-    const copy = () =>
-      void navigator.clipboard?.writeText(code).then(() => {
-        setCopied(true);
-        setTimeout(() => setCopied(false), 1500);
-      }).catch(() => {});
-    return (
-      <div className="iui-codeblock">
-        <div className="iui-codeblock-head">
-          <span>{str(props.language) || "code"}</span>
-          <button type="button" onClick={copy} aria-label="Copy code">
-            {copied ? <Check size={14} /> : <Copy size={14} />}
-            {copied ? "Copied" : "Copy"}
-          </button>
-        </div>
-        <pre tabIndex={0} role="group" aria-label="Code block">
-          <code>{colored ? colored.map((line, i) => (
-            <span key={i}>{line.map((token, j) => <span key={j} className="iui-code-token" style={{
-              "--iui-code-light": token.light, "--iui-code-dark": token.dark,
-            } as CSSProperties}>{token.content}</span>)}{i < colored.length - 1 ? "\n" : null}</span>
-          )) : code}</code>
-        </pre>
-      </div>
-    );
-  },
+  component: ({ props }) => <CodePanel code={props.code} language={props.language} />,
 });
 
 export const Quote = defineComponent({

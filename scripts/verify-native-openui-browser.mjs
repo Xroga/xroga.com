@@ -22,7 +22,7 @@ const cases = {
   },
   scrollingCode: {
     text: 'Read the complete formula with a keyboard.',
-    program: 'root = Col([Code(' + JSON.stringify('monthlyPayment = principal * monthlyRate * (1 + monthlyRate) ** paymentCount / ((1 + monthlyRate) ** paymentCount - 1)') + ', "text"), Markdown(' + JSON.stringify('```text\nmonthlyPayment = principal * monthlyRate * (1 + monthlyRate) ** paymentCount / ((1 + monthlyRate) ** paymentCount - 1)\n```') + ')])',
+    program: 'root = Col([Code(' + JSON.stringify('monthlyPayment = principal * monthlyRate * (1 + monthlyRate) ** paymentCount / ((1 + monthlyRate) ** paymentCount - 1)') + ', "text"), Markdown(' + JSON.stringify('```python\nmonthlyPayment = principal * monthlyRate * (1 + monthlyRate) ** paymentCount / ((1 + monthlyRate) ** paymentCount - 1)\n```') + ')])',
   },
   short: { text: 'Paris is the capital of France.' },
   recovered: {
@@ -184,7 +184,7 @@ try {
   browser = await chromium.launch({ channel });
   for (const viewport of [{ width: 1440, height: 900 }, { width: 1280, height: 900 }, { width: 768, height: 960 }, { width: 390, height: 844 }, { width: 320, height: 800 }]) {
     for (const theme of ['light', 'dark']) {
-      const context = await browser.newContext({ viewport, reducedMotion: 'reduce' });
+      const context = await browser.newContext({ viewport, reducedMotion: 'reduce', permissions: ['clipboard-read', 'clipboard-write'] });
       const page = await context.newPage();
       const errors = [], external = [];
       const checked = new Set();
@@ -288,6 +288,14 @@ try {
       await open('scrollingCode');
       const codeBlocks = page.getByRole('group', {name: 'Code block', exact: true});
       assert.equal(await codeBlocks.count(), 2);
+      const panels = page.locator('.iui-codeblock');
+      assert.deepEqual(await panels.locator('.iui-codeblock-language').allTextContents(), ['Plain text', 'Python']);
+      for (const panel of await panels.all()) {
+        const expected = await panel.locator('pre code').textContent();
+        await panel.getByRole('button', { name: 'Copy code', exact: true }).click();
+        await panel.getByText('Copied', { exact: true }).waitFor();
+        assert.equal(await page.evaluate(() => navigator.clipboard.readText()), expected);
+      }
       for (const code of await codeBlocks.all()) {
         assert.equal(await code.getAttribute('tabindex'), '0');
         await code.focus();

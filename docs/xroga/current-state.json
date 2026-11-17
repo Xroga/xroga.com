@@ -5456,7 +5456,7 @@
         "frontend/src/components/native-openui/NativeSurface.tsx:9",
         "frontend/src/components/native-openui/NativeWorkspaceAnswer.tsx:12",
         "frontend/src/components/native-openui/upstream/components/markdown.test.ts:8",
-        "frontend/src/components/native-openui/upstream/components/markdown.tsx:5",
+        "frontend/src/components/native-openui/upstream/components/markdown.tsx:6",
         "frontend/src/lib/publicAnswerText.ts:1"
       ],
       "reachable": true,
@@ -88093,7 +88093,7 @@
         "frontend/src/components/native-openui/Editorial.tsx:9",
         "frontend/src/components/native-openui/NativeSurface.tsx:8",
         "frontend/src/components/native-openui/library.tsx:18",
-        "frontend/src/components/native-openui/upstream/components/extra.tsx:12",
+        "frontend/src/components/native-openui/upstream/components/extra.tsx:10",
         "frontend/src/components/native-openui/upstream/components/text.tsx:9"
       ],
       "reachable": true,
@@ -88411,6 +88411,59 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:bcecd3dfe5eeca969aaf",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/native-openui/upstream/components/code-panel.tsx",
+      "sha256": "ec8d9d4e4926521694f107f15e072751ae2a802ec11b9367c91007d670b52797",
+      "symbols": [
+        "CodePanel",
+        "colored",
+        "copy",
+        "current",
+        "internal",
+        "key",
+        "label",
+        "languageLabels"
+      ],
+      "imports": [
+        "@/lib/codeHighlight",
+        "@/lib/publicAnswerText",
+        "lucide-react",
+        "react"
+      ],
+      "runtimeImports": [
+        "frontend/src/lib/codeHighlight.ts",
+        "frontend/src/lib/publicAnswerText.ts"
+      ],
+      "entryPoints": [
+        "frontend/src/app/(workspace)/workspace/page.tsx",
+        "frontend/src/app/native-answer-evaluation/page.tsx",
+        "frontend/src/app/share/[token]/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/native-openui/upstream/components/extra.tsx:9",
+        "frontend/src/components/native-openui/upstream/components/markdown.tsx:5"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "lucide-react",
+        "react"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:a849bd03e85ab44f9cab",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/controls.tsx",
@@ -88528,7 +88581,7 @@
       "id": "surface:3cd2636e7dcb8164b6aa",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/extra.tsx",
-      "sha256": "ddf49ceff1abb280821ff66216314949b8a36828337240d71af693f9b491c0ba",
+      "sha256": "385855e5182e06ed281ac497a0fee7a94ba01cbfcfaf543cc3219eb590e2b4da",
       "symbols": [
         "Carousel",
         "Code",
@@ -88537,13 +88590,8 @@
         "Popover",
         "Quote",
         "Render",
-        "code",
-        "colored",
-        "copy",
-        "current",
         "face",
         "html",
-        "internal",
         "items",
         "renderCitation",
         "renderSlot",
@@ -88553,22 +88601,19 @@
       ],
       "imports": [
         "../../evidence",
+        "./code-panel",
         "./markdown",
         "./style",
-        "@/lib/codeHighlight",
-        "@/lib/publicAnswerText",
         "@openuidev/react-lang",
         "katex",
-        "lucide-react",
         "react",
         "zod/v4"
       ],
       "runtimeImports": [
         "frontend/src/components/native-openui/evidence.tsx",
+        "frontend/src/components/native-openui/upstream/components/code-panel.tsx",
         "frontend/src/components/native-openui/upstream/components/markdown.tsx",
-        "frontend/src/components/native-openui/upstream/components/style.ts",
-        "frontend/src/lib/codeHighlight.ts",
-        "frontend/src/lib/publicAnswerText.ts"
+        "frontend/src/components/native-openui/upstream/components/style.ts"
       ],
       "entryPoints": [
         "frontend/src/app/(workspace)/workspace/page.tsx",
@@ -88583,7 +88628,6 @@
       "externalProviderDependencies": [
         "@openuidev/react-lang",
         "katex",
-        "lucide-react",
         "react",
         "zod/v4"
       ],
@@ -88717,7 +88761,7 @@
       "id": "surface:0fef6875af5860e2f4b4",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/markdown.tsx",
-      "sha256": "510d273a9a30cd98f21f4e2c7ef861204f23fc7700cbadbedcc0ac6bae66e6eb",
+      "sha256": "c96526c9cbe92e9ab37f94058be5c56383f2f2cabefb6a00e131b998a02983e6",
       "symbols": [
         "Block",
         "INLINE",
@@ -88741,7 +88785,6 @@
         "document",
         "documents",
         "entries",
-        "fence",
         "from",
         "head",
         "heading",
@@ -88768,6 +88811,7 @@
         "node",
         "note",
         "number",
+        "opening",
         "ordered",
         "out",
         "paragraphs",
@@ -88797,6 +88841,7 @@
       "imports": [
         "../../../../../../backend/src/ai/nativeOpenUi",
         "./chart",
+        "./code-panel",
         "./style",
         "@/lib/publicAnswerText",
         "react"
@@ -88804,6 +88849,7 @@
       "runtimeImports": [
         "backend/src/ai/nativeOpenUi.ts",
         "frontend/src/components/native-openui/upstream/components/chart.tsx",
+        "frontend/src/components/native-openui/upstream/components/code-panel.tsx",
         "frontend/src/components/native-openui/upstream/components/style.ts",
         "frontend/src/lib/publicAnswerText.ts"
       ],
@@ -88817,7 +88863,7 @@
         "frontend/src/components/native-openui/Evaluation.tsx:7",
         "frontend/src/components/native-openui/NativeSurface.tsx:11",
         "frontend/src/components/native-openui/upstream/components/controls.tsx:15",
-        "frontend/src/components/native-openui/upstream/components/extra.tsx:9",
+        "frontend/src/components/native-openui/upstream/components/extra.tsx:8",
         "frontend/src/components/native-openui/upstream/components/markdown.test.ts:10",
         "frontend/src/components/native-openui/upstream/components/table.tsx:6",
         "frontend/src/components/native-openui/upstream/components/text.tsx:8"
@@ -88899,7 +88945,7 @@
         "frontend/src/components/native-openui/Tabs.tsx:7",
         "frontend/src/components/native-openui/library.tsx:12",
         "frontend/src/components/native-openui/upstream/components/controls.tsx:16",
-        "frontend/src/components/native-openui/upstream/components/extra.tsx:13",
+        "frontend/src/components/native-openui/upstream/components/extra.tsx:11",
         "frontend/src/components/native-openui/upstream/components/layout.tsx:6",
         "frontend/src/components/native-openui/upstream/components/markdown.tsx:3",
         "frontend/src/components/native-openui/upstream/components/svg.tsx:5",
@@ -107498,7 +107544,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/native-openui/upstream/components/extra.tsx:60",
+        "frontend/src/components/native-openui/upstream/components/code-panel.tsx:27",
         "frontend/src/components/response-experience-v2/ProseV2.tsx:9",
         "frontend/src/lib/codeHighlight.test.ts:3"
       ],
@@ -113126,7 +113172,7 @@
       ],
       "callers": [
         "frontend/src/app/share/[token]/page.tsx:4",
-        "frontend/src/components/native-openui/upstream/components/extra.tsx:11",
+        "frontend/src/components/native-openui/upstream/components/code-panel.tsx:6",
         "frontend/src/components/native-openui/upstream/components/markdown.test.ts:5",
         "frontend/src/components/native-openui/upstream/components/markdown.tsx:2",
         "frontend/src/components/terminal/ReasoningAndFollowUps.tsx:17",
@@ -127893,7 +127939,7 @@
       "id": "surface:bd6af899f2dd9df930f6",
       "subsystem": "browser_sandbox",
       "sourcePath": "scripts/verify-native-openui-browser.mjs",
-      "sha256": "a941c1a2efb7e51f2d79ce667228023a97375c971764777dbfb0f048c1f020de",
+      "sha256": "9a61c45670c1a349b2a39836f088efad1f036465e5c6b17dc9ebc137947a5049",
       "symbols": [
         "accessibility",
         "answer",
@@ -127920,6 +127966,7 @@
         "directive",
         "errors",
         "evidence",
+        "expected",
         "external",
         "fallback",
         "fallbackAnswer",
@@ -127949,6 +127996,8 @@
         "page",
         "paletteContext",
         "palettePage",
+        "panel",
+        "panels",
         "popupBounds",
         "positions",
         "range",

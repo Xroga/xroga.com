@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "31db9f69d27998460ceb506cbdebd5972a2121a3",
+  "source_sha": "0f170fdd4d9e0d5addc529f44ec0cd2f43a7612a",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -22261,12 +22261,16 @@
       "sha256": "25ceac828c94f0071456d79f2cf9b258f55c390804422a04f64c8835f417c1c3"
     },
     {
+      "path": "frontend/src/components/native-openui/upstream/components/code-panel.tsx",
+      "sha256": "ec8d9d4e4926521694f107f15e072751ae2a802ec11b9367c91007d670b52797"
+    },
+    {
       "path": "frontend/src/components/native-openui/upstream/components/controls.tsx",
       "sha256": "ac0e9d10c17b2bf02731413e6b59b865b9d1a88eb432cdfb91f304a7c19c210a"
     },
     {
       "path": "frontend/src/components/native-openui/upstream/components/extra.tsx",
-      "sha256": "ddf49ceff1abb280821ff66216314949b8a36828337240d71af693f9b491c0ba"
+      "sha256": "385855e5182e06ed281ac497a0fee7a94ba01cbfcfaf543cc3219eb590e2b4da"
     },
     {
       "path": "frontend/src/components/native-openui/upstream/components/glyph.tsx",
@@ -22278,7 +22282,7 @@
     },
     {
       "path": "frontend/src/components/native-openui/upstream/components/markdown.tsx",
-      "sha256": "510d273a9a30cd98f21f4e2c7ef861204f23fc7700cbadbedcc0ac6bae66e6eb"
+      "sha256": "c96526c9cbe92e9ab37f94058be5c56383f2f2cabefb6a00e131b998a02983e6"
     },
     {
       "path": "frontend/src/components/native-openui/upstream/components/style.ts",
@@ -38882,14 +38886,7 @@
     },
     {
       "path": "frontend/src/components/native-openui/upstream/components/markdown.tsx",
-      "line": 83,
-      "scope": "FUNCTION_LOCAL",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "frontend/src/components/native-openui/upstream/components/markdown.tsx",
-      "line": 116,
+      "line": 84,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -38945,14 +38942,21 @@
     },
     {
       "path": "frontend/src/components/native-openui/upstream/components/markdown.tsx",
-      "line": 176,
+      "line": 124,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/native-openui/upstream/components/markdown.tsx",
-      "line": 315,
+      "line": 177,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/components/native-openui/upstream/components/markdown.tsx",
+      "line": 317,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
