@@ -7,6 +7,7 @@ import {
   getComposioCatalogToolkit, isComposioConfigured, listComposioCatalog, listComposioCatalogTools, listConnectedComposioToolkits,
 } from '../services/integrations/composioClient.js';
 import { canUserAccessComposioToolkit } from '../services/integrations/composioNamespace.js';
+import { getUserPluginPermissionMode, setUserPluginPermissionMode } from '../services/integrations/pluginPermissionPolicy.js';
 
 // Only Composio's own logo host, over https, is passed on; anything else is dropped.
 export function safePluginLogo(value: unknown): string | undefined {
@@ -72,6 +73,37 @@ export function createLocalBrowserPluginCatalog() {
       return res.json({ tools: page.items.map(tool => ({ slug: tool.slug, name: tool.name, risk: tool.risk, scopes: tool.scopes })) });
     } catch {
       return res.status(503).json({ error: 'BROWSER_PLUGIN_DETAILS_UNAVAILABLE' });
+    }
+  });
+  // The owner's permission for one connected app (always ask, read only, low risk, full access). It is read and changed only by the
+  // owner's own click in the extension's Plugins panel; nothing the agent says can change it. Sending, publishing, deleting and paying
+  // keep their approval card in every mode.
+  router.get('/permission/:toolkit', async (req: BrowserDeviceRequest, res) => {
+    try {
+      const actor = requireTenantContext(req.tenantContext);
+      const toolkit = browserPluginToolkit.parse(req.params.toolkit);
+      if (!canUserAccessComposioToolkit(actor.userId, toolkit)) return res.sendStatus(404);
+      const mode = await getUserPluginPermissionMode(actor.userId, toolkit);
+      if (!await req.revalidateBrowserDevice!()) return res.sendStatus(403);
+      return res.json({ toolkit, mode });
+    } catch {
+      return res.status(503).json({ error: 'BROWSER_PLUGIN_PERMISSION_UNAVAILABLE' });
+    }
+  });
+  router.post('/permission', async (req: BrowserDeviceRequest, res) => {
+    try {
+      const actor = requireTenantContext(req.tenantContext);
+      const { toolkit, mode } = z.object({ toolkit: browserPluginToolkit, mode: z.enum(['always_ask', 'read_only', 'low_risk', 'full_access']) }).strict().parse(req.body);
+      if (!canUserAccessComposioToolkit(actor.userId, toolkit)) return res.sendStatus(404);
+      // Only an app that is really connected can be given a permission.
+      const session = await createReadOnlyComposioSession(actor.userId, actor);
+      const connections = await listConnectedComposioToolkits(actor.userId, { sessionId: session.session_id, toolkits: [toolkit] }, actor);
+      if (!connections.some(item => item.connected && item.toolkit === toolkit)) return res.status(409).json({ error: 'BROWSER_PLUGIN_NOT_CONNECTED' });
+      if (!await req.revalidateBrowserDevice!()) return res.sendStatus(403);
+      const saved = await setUserPluginPermissionMode(actor, mode, toolkit);
+      return res.json({ toolkit, mode: saved });
+    } catch (error) {
+      return res.status(error instanceof z.ZodError ? 400 : 503).json({ error: 'BROWSER_PLUGIN_PERMISSION_UNAVAILABLE' });
     }
   });
   router.post('/link', async (req: BrowserDeviceRequest, res) => {

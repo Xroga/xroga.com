@@ -8,6 +8,7 @@ import { resolveModelSpec } from '../ai/models.js';
 import { DIRECT_READ_MAX_AGE_MS, isPlainOpenAndRead, namesSite } from './localBrowserDirectRead.js';
 import { browserDeviceExtension, localBrowserAccountAllowed, type BrowserDeviceRequest } from './localBrowserDevice.js';
 import { boundedPublicGet, publicHttpsUrl } from '../security/boundedPublicGet.js';
+import { getUserPluginPermissionMode, type PluginPermissionMode } from '../services/integrations/pluginPermissionPolicy.js';
 import { classifyOutboundData } from '../security/egress/dataClassification.js';
 import { requireTenantContext } from '../security/tenantContext.js';
 import { createPool } from '../storage/runtime.js';
@@ -50,8 +51,12 @@ const MAX_PLUGIN_READS = 400;
  * An operator can turn automatic approval off for a deployment with XROGA_LOCAL_BROWSER_AUTO_APPROVE=off.
  */
 const OUTBOUND_TOKENS = new Set(['SEND', 'POST', 'PUBLISH', 'TWEET', 'TWEETS', 'INVITE', 'SHARE', 'REPLY', 'FORWARD', 'CALL', 'NOTIFY', 'BROADCAST', 'SMS', 'DM', 'TEXT', 'EMAIL', 'EMAILS', 'MESSAGE', 'MESSAGES', 'COMMENT', 'ANNOUNCE', 'SCHEDULE']);
-export function autoApprovesCall(kind: 'read' | 'change', slug: string, env: NodeJS.ProcessEnv = process.env): boolean {
+export function autoApprovesCall(kind: 'read' | 'change', slug: string, env: NodeJS.ProcessEnv = process.env, mode: PluginPermissionMode = 'low_risk'): boolean {
   if (env.XROGA_LOCAL_BROWSER_AUTO_APPROVE === 'off') return false;
+  // The owner's own choice for the app wins: "always ask" asks for everything, and "read only" never lets a change through (it is refused
+  // before this point). "Low risk" and "full access" run reads and changes inside the owner's own app; sending, publishing, deleting and
+  // paying keep their card in every mode.
+  if (mode === 'always_ask') return false;
   if (kind === 'read') return true;
   const tokens = slug.toUpperCase().split(/[^A-Z0-9]+/);
   // "Draft" and "create draft" stay on the owner's side; any outbound word makes it a card.
@@ -124,6 +129,23 @@ export function rankPinnedByQuery<T extends { slug: string }>(query: string, too
   const words = [...new Set(query.toLowerCase().split(/[^a-z0-9]+/).filter(word => word.length >= 3))];
   const score = (slug: string) => words.filter(word => slug.toLowerCase().includes(word)).length;
   return tools.map((tool, index) => ({ tool, index, score: score(tool.slug) })).sort((a, b) => b.score - a.score || a.index - b.index).map(item => item.tool);
+}
+
+/**
+ * The connected apps a request names ("create a page in Notion", "read my Google Sheets"). When it names one, the search is about that app
+ * and only its tools are offered: tools of other connected apps do not crowd the answer, and the agent is not led to call them. A request
+ * that names no connected app (a general data question) is not narrowed.
+ */
+export function namedToolkits(query: string, toolkits: Array<{ toolkit: string; name?: string; connected?: boolean; noAuth?: boolean }>): Set<string> {
+  const flat = (text: string) => text.toLowerCase().replace(/[^a-z0-9]+/g, '');
+  const asked = flat(query);
+  const found = new Set<string>();
+  for (const item of toolkits) {
+    if (!item.connected || item.noAuth) continue;
+    const names = [item.toolkit, item.name ?? ''].map(flat).filter(name => name.length >= 4);
+    if (names.some(name => asked.includes(name))) found.add(item.toolkit.toLowerCase());
+  }
+  return found;
 }
 
 /** Names of an owner's pinned change tools for a note to the agent (slugs only, never definitions). */
@@ -536,7 +558,8 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
     const connected = new Set(result.toolkits.filter(item => item.connected && !item.noAuth).map(item => item.toolkit.toLowerCase()));
     // Owner-pinned custom MCP read tools (flag XROGA_CUSTOM_MCP_EXECUTION) join the catalogue tools; each was re-verified against the live definition.
     const pinned = plugins.pinnedReads ? await plugins.pinnedReads(actor).catch(() => []) : [];
-    const catalogue = result.tools.filter(item => item.risk === 'read' && connected.has(item.toolkit.toLowerCase()));
+    const focus = namedToolkits(query, result.toolkits);
+    const catalogue = result.tools.filter(item => item.risk === 'read' && connected.has(item.toolkit.toLowerCase()) && (!focus.size || focus.has(item.toolkit.toLowerCase())));
     // An owner's pinned tools are few and are the ones they chose, so more of them are shown than catalogue matches (a connected service
     // with a discover / inspect / run / get-run set must show the whole set, not the six whose names happen to match the words).
     // Pinned tools whose names match what was asked for come first; then the connected apps' own tools; the rest of the pinned set comes last,
@@ -544,7 +567,7 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
     const wanted = new Set(query.toLowerCase().split(/[^a-z0-9]+/).filter(word => word.length >= 3));
     const unlisted = pinned.filter(p => !catalogue.some(item => item.slug === p.slug));
     const matches = (slug: string) => [...wanted].some(word => slug.toLowerCase().includes(word));
-    const tools = await withFullSchemas([...unlisted.filter(p => matches(p.slug)).slice(0, 10), ...catalogue, ...rankPinnedByQuery(query, unlisted.filter(p => !matches(p.slug)))].slice(0, 24), plugins.details, actor);
+    const tools = await withFullSchemas([...unlisted.filter(p => matches(p.slug)).slice(0, 10), ...catalogue, ...(focus.size ? [] : rankPinnedByQuery(query, unlisted.filter(p => !matches(p.slug))))].slice(0, 24), plugins.details, actor);
     const writeNote = changeToolsNote(plugins.pinnedWrites ? await plugins.pinnedWrites(actor).catch(() => []) : []);
     discovery.sessionId = result.sessionId;
     discovery.tools = tools.map(({ slug, toolkit, inputSchema }) => ({ slug, toolkit, args: summarizeToolArgs(inputSchema) }));
@@ -576,9 +599,10 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
     const connected = new Set(result.toolkits.filter(item => item.connected && !item.noAuth).map(item => item.toolkit.toLowerCase()));
     // Owner-pinned custom MCP tools that change data (flag XROGA_CUSTOM_MCP_EXECUTION) join the catalogue tools; each was re-verified live.
     const pinnedWrites = plugins.pinnedWrites ? await plugins.pinnedWrites(actor).catch(() => []) : [];
+    const focusWrites = namedToolkits(query, result.toolkits);
     const catalogueWrites = result.tools.filter(item => item.risk !== 'read' && item.risk !== 'destructive' && connected.has(item.toolkit.toLowerCase()) &&
-      !isFinancialAction(query, item.slug));
-    const tools = await withFullSchemas([...rankPinnedByQuery(query, pinnedWrites.filter(p => !catalogueWrites.some(item => item.slug === p.slug) && !isFinancialAction(query, p.slug))), ...catalogueWrites]
+      (!focusWrites.size || focusWrites.has(item.toolkit.toLowerCase())) && !isFinancialAction(query, item.slug));
+    const tools = await withFullSchemas([...(focusWrites.size ? [] : rankPinnedByQuery(query, pinnedWrites.filter(p => !catalogueWrites.some(item => item.slug === p.slug) && !isFinancialAction(query, p.slug)))), ...catalogueWrites]
       .slice(0, 24), plugins.details, actor);
     discovery.sessionId = result.sessionId;
     discovery.tools = tools.map(({ slug, toolkit, inputSchema }) => ({ slug, toolkit, args: summarizeToolArgs(inputSchema) }));
@@ -606,6 +630,9 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
       throw new BrowserRequestError(409, 'BROWSER_PLUGIN_ACTION_ALREADY_REQUESTED');
     }
     if (state.actions.some(item => item.approvalId && !item.used)) throw new BrowserRequestError(409, 'BROWSER_PLUGIN_APPROVAL_PENDING');
+    // The owner's permission for this app: with "read only" a change is not made at all.
+    const mode = await getUserPluginPermissionMode(actor.userId, tool.toolkit).catch((): PluginPermissionMode => 'always_ask');
+    if (mode === 'read_only') throw new BrowserRequestError(403, 'BROWSER_POLICY_DENIED', { reason: ['read_only_permission'] });
     const action: typeof state.actions[number] = { digest, slug: data.slug, toolkit: tool.toolkit, used: false };
     state.actions.push(action);
     row.state.productManifest.localBrowserPlugins = state;
@@ -626,7 +653,7 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
     try {
       await assertPluginRun(req, localRecord(await runs.load(actor.userId, row.runId), actor.userId));
       action.approvalId = confirmation.id;
-      if (autoApprovesCall('change', data.slug)) action.used = true;
+      if (autoApprovesCall('change', data.slug, process.env, mode)) action.used = true;
       await save();
     } catch (error) {
       await plugins.cancel(actor.userId, confirmation.id).catch(() => undefined);
@@ -709,7 +736,7 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
     try {
       await assertPluginRun(req, localRecord(await runs.load(actor.userId, row.runId), actor.userId));
       read.approvalId = approval.id;
-      if (autoApprovesCall('read', data.slug)) read.used = true;
+      if (autoApprovesCall('read', data.slug, process.env, await getUserPluginPermissionMode(actor.userId, tool.toolkit).catch((): PluginPermissionMode => 'always_ask'))) read.used = true;
       await save();
     } catch (error) {
       await plugins.cancel(actor.userId, approval.id).catch(() => undefined);

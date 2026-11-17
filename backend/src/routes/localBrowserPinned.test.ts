@@ -32,3 +32,32 @@ test('reads and changes inside the owner own app run without a card; outbound, p
   for(const slug of ['GMAIL_SEND_EMAIL','SLACK_SEND_MESSAGE','TWITTER_CREATE_POST','CALENDAR_INVITE_ATTENDEES','FACEBOOK_PUBLISH_PAGE_POST'])assert.equal(autoApprovesCall('change',slug),false,slug);
   assert.equal(autoApprovesCall('read','X_LIST',{XROGA_LOCAL_BROWSER_AUTO_APPROVE:'off'}),false);
 });
+
+test('a request that names a connected app is narrowed to that app; a general request is not',async()=>{
+  const {namedToolkits}=await import('./localBrowser.js');
+  const toolkits=[
+    {toolkit:'notion',name:'Notion',connected:true},
+    {toolkit:'gmail',name:'Gmail',connected:true},
+    {toolkit:'googlesheets',name:'Google Sheets',connected:true},
+    {toolkit:'slack',name:'Slack',connected:false},
+  ];
+  assert.deepEqual([...namedToolkits('list my recent pages in Notion',toolkits)],['notion']);
+  assert.deepEqual([...namedToolkits('read rows from my google sheets spreadsheet',toolkits)],['googlesheets']);
+  assert.deepEqual([...namedToolkits('notion and gmail',toolkits)].sort(),['gmail','notion']);
+  // Not connected, or no app named: nothing narrows the search.
+  assert.deepEqual([...namedToolkits('post to slack',toolkits)],[]);
+  assert.deepEqual([...namedToolkits('what is the TVL of aave',toolkits)],[]);
+});
+
+test('the owner permission for an app decides what runs without a card',async()=>{
+  const {autoApprovesCall}=await import('./localBrowser.js');
+  assert.equal(autoApprovesCall('read','NOTION_FETCH_PAGE',{},'always_ask'),false);
+  assert.equal(autoApprovesCall('change','NOTION_CREATE_PAGE',{},'always_ask'),false);
+  for(const mode of ['low_risk','full_access'] as const){
+    assert.equal(autoApprovesCall('read','NOTION_FETCH_PAGE',{},mode),true,mode);
+    assert.equal(autoApprovesCall('change','NOTION_CREATE_PAGE',{},mode),true,mode);
+    // Sending, publishing and the like keep their card even with full access.
+    assert.equal(autoApprovesCall('change','GMAIL_SEND_EMAIL',{},mode),false,mode);
+  }
+  assert.equal(autoApprovesCall('read','NOTION_FETCH_PAGE',{},'read_only'),true);
+});

@@ -19,7 +19,8 @@ function PluginIcon({ plugin, size = 28 }: { plugin: { slug: string; name?: stri
 }
 
 type Tool = { slug: string; name?: string; risk?: string; scopes?: string[] };
-type Reply = { error?: string; items?: Plugin[]; nextCursor?: string; tools?: Tool[]; redirectUrl?: string };
+type Mode = 'always_ask' | 'read_only' | 'low_risk' | 'full_access';
+type Reply = { error?: string; items?: Plugin[]; nextCursor?: string; tools?: Tool[]; redirectUrl?: string; mode?: Mode };
 
 async function request(op: string, data: Record<string, string> = {}): Promise<Reply> {
   const value = await chrome.runtime.sendMessage({ type: 'xroga.browser.plugins.v1', op, ...data }) as Reply | undefined;
@@ -44,6 +45,9 @@ export function Plugins({ open, onOpenChange }: { open: boolean; onOpenChange: (
   const [version, setVersion] = useState(0);
   const generation = useRef(0);
   const linkBusy = useRef(false);
+  const [mode, setMode] = useState<Mode>();
+  const [modeError, setModeError] = useState('');
+  const [modeSaving, setModeSaving] = useState(false);
 
   useEffect(() => {
     if (!open) return;
@@ -105,6 +109,33 @@ export function Plugins({ open, onOpenChange }: { open: boolean; onOpenChange: (
     );
     return () => { current = false; };
   }, [open, selected]);
+
+  // The owner's permission for the open app. It is read when a connected app is opened and changed only by the owner's own click below.
+  useEffect(() => {
+    if (!open || !selected || !isConnected(selected)) { setMode(undefined); return; }
+    let current = true;
+    setModeError('');
+    void request('permission', { toolkit: selected.slug }).then(
+      data => { if (current) setMode(data.mode); },
+      (failure: Error) => { if (current) setModeError(failure.message); },
+    );
+    return () => { current = false; };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, selected, connected, connectionsChecked]);
+
+  async function choose(next: Mode) {
+    if (!selected || modeSaving) return;
+    setModeSaving(true);
+    setModeError('');
+    try {
+      const data = await request('setPermission', { toolkit: selected.slug, mode: next });
+      setMode(data.mode ?? next);
+    } catch (failure) {
+      setModeError((failure as Error).message);
+    } finally {
+      setModeSaving(false);
+    }
+  }
 
   async function loadMore() {
     const current = generation.current;
@@ -170,6 +201,26 @@ export function Plugins({ open, onOpenChange }: { open: boolean; onOpenChange: (
                 </button>
               ) : <p className="text-xs text-nb-muted">{selected.noAuth ? 'No account is required for this toolkit.' : connectionsChecked ? 'Managed connection unavailable.' : 'Connection status unavailable.'}</p>}
               {linkState === 'pending' && !isConnected(selected) ? <p className="text-xs text-nb-muted">Finish authorization in Chrome, then return here to check the connection.</p> : null}
+              {isConnected(selected) ? (
+                <section aria-label="Permissions" className="space-y-2 rounded-lg border border-nb-border p-3">
+                  <h4 className="text-sm font-medium">What Xroga may do in {selected.name ?? selected.slug}</h4>
+                  {mode && mode !== 'full_access' ? (
+                    <div className="space-y-2 rounded-lg bg-nb-surface p-2.5">
+                      <p className="text-xs">Give Xroga full access so it can read and change your {selected.name ?? selected.slug} data for your tasks without asking at every step. Sending messages, publishing, deleting and payments still ask you first.</p>
+                      <button type="button" className={button} disabled={modeSaving} onClick={() => void choose('full_access')}>
+                        {modeSaving ? 'Saving…' : 'Allow full access'}
+                      </button>
+                    </div>
+                  ) : null}
+                  {mode === 'full_access' ? <p role="status" className="text-xs text-nb-muted">Full access is on. Sending, publishing, deleting and payments still ask you first.</p> : null}
+                  <div className="flex flex-wrap gap-2" role="group" aria-label="Permission level">
+                    {([['always_ask', 'Always ask'], ['read_only', 'Read only'], ['low_risk', 'Low risk'], ['full_access', 'Full access']] as const).map(([value, label]) => (
+                      <button key={value} type="button" className={button} aria-pressed={mode === value} disabled={!mode || modeSaving} onClick={() => void choose(value)}>{label}</button>
+                    ))}
+                  </div>
+                  {modeError ? <p role="alert" className="text-xs text-nb-muted">{modeError}</p> : null}
+                </section>
+              ) : null}
               {detailsError ? <p role="alert" className="text-xs text-nb-muted">{detailsError}</p> : null}
               <h4 className="text-sm font-medium">Available tool metadata</h4>
               {!details && !detailsError ? <p role="status" className="text-xs text-nb-muted">Loading tools…</p> : null}

@@ -146,7 +146,7 @@ export function listenForWorkspace(
       if (!panelSender(sender)) return;
       if (message?.type === STATUS) reply(workspacePaired());
       if (message?.type === 'xroga.browser.plugins.v1') {
-        const input = message as typeof message & { op?: string; toolkit?: unknown; search?: unknown; cursor?: unknown };
+        const input = message as typeof message & { op?: string; toolkit?: unknown; search?: unknown; cursor?: unknown; mode?: unknown };
         void (async () => {
           const device = await savedDevice();
           if (!device || signingOut) return reply({ error: 'Sign in to Xroga to use plugins.' });
@@ -160,6 +160,10 @@ export function listenForWorkspace(
           if (typeof input.toolkit === 'string' && /^[a-z0-9_-]{2,80}$/i.test(input.toolkit)) {
             if (input.op === 'details') return reply(await deviceRequest(device, '/plugins/details/' + input.toolkit, 'GET'));
             if (input.op === 'link') return reply(await deviceRequest(device, '/plugins/link', 'POST', { toolkit: input.toolkit }));
+            if (input.op === 'permission') return reply(await deviceRequest(device, '/plugins/permission/' + input.toolkit, 'GET'));
+            if (input.op === 'setPermission' && (input.mode === 'always_ask' || input.mode === 'read_only' || input.mode === 'low_risk' || input.mode === 'full_access')) {
+              return reply(await deviceRequest(device, '/plugins/permission', 'POST', { toolkit: input.toolkit, mode: input.mode }));
+            }
           }
           return reply({ error: 'Invalid plugin request.' });
         })().catch(error => reply({ error: error?.code === 'BROWSER_PLUGIN_NOT_CONFIGURED'
