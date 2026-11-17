@@ -57,6 +57,32 @@ export interface RemoteSandboxOptions {
   token?: string;
   name?: string;
   fetchImpl?: typeof fetch;
+  /**
+   * When set, the worker is a private Cloud Run service: each request carries a Google identity token minted for this audience by the
+   * metadata server (so only this API's service account, granted invoker on the worker, can call it). The shared token then travels in
+   * its own header instead of Authorization.
+   */
+  audience?: string;
+}
+
+const ID_TOKEN_TTL_MS = 45 * 60_000;
+let cachedIdToken: { audience: string; value: string; expires: number } | undefined;
+
+async function googleIdToken(audience: string, fetchImpl: typeof fetch): Promise<string | null> {
+  if (cachedIdToken && cachedIdToken.audience === audience && cachedIdToken.expires > Date.now()) return cachedIdToken.value;
+  try {
+    const response = await fetchImpl(
+      `http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/identity?audience=${encodeURIComponent(audience)}&format=full`,
+      { headers: { 'Metadata-Flavor': 'Google' }, signal: AbortSignal.timeout(3_000) },
+    );
+    if (!response.ok) return null;
+    const value = (await response.text()).trim();
+    if (!/^[A-Za-z0-9._-]{20,4000}$/.test(value)) return null;
+    cachedIdToken = { audience, value, expires: Date.now() + ID_TOKEN_TTL_MS };
+    return value;
+  } catch {
+    return null;
+  }
 }
 
 /**
@@ -118,6 +144,8 @@ export function readWorkerResult(body: unknown): SandboxExecutionResult | null {
   if (typeof b.killedForLimit !== 'boolean') return null;
   if (typeof b.durationMs !== 'number' || !Number.isFinite(b.durationMs)) return null;
 
+  const artifacts = readArtifacts(b.artifacts);
+  if (artifacts === null) return null;
   return {
     exitCode,
     stdout: capture(b.stdout),
@@ -125,7 +153,30 @@ export function readWorkerResult(body: unknown): SandboxExecutionResult | null {
     timedOut: b.timedOut,
     killedForLimit: b.killedForLimit,
     durationMs: b.durationMs,
+    ...(artifacts.length ? { artifacts } : {}),
   };
+}
+
+const MAX_ARTIFACTS = 20;
+const MAX_ARTIFACT_BASE64 = 3 * 1024 * 1024;
+const MAX_ARTIFACTS_TOTAL_BASE64 = 8 * 1024 * 1024;
+
+/** Files a worker returns, re-checked here: a reply that is not exactly this shape is not trusted at all (null). */
+export function readArtifacts(value: unknown): Array<{ path: string; contentBase64: string }> | null {
+  if (value === undefined) return [];
+  if (!Array.isArray(value) || value.length > MAX_ARTIFACTS) return null;
+  const out: Array<{ path: string; contentBase64: string }> = [];
+  let total = 0;
+  for (const item of value) {
+    const path = (item as { path?: unknown })?.path;
+    const data = (item as { contentBase64?: unknown })?.contentBase64;
+    if (typeof path !== 'string' || !path || path.length > 400 || path.startsWith('/') || path.includes('\\') || path.includes('\0') || path.split('/').includes('..')) return null;
+    if (typeof data !== 'string' || data.length > MAX_ARTIFACT_BASE64 || !/^[A-Za-z0-9+/]*={0,2}$/.test(data)) return null;
+    total += data.length;
+    if (total > MAX_ARTIFACTS_TOTAL_BASE64) return null;
+    out.push({ path, contentBase64: data });
+  }
+  return out;
 }
 
 /** Bound on a worker-supplied explanation before it reaches a log or a refusal message. */
@@ -183,18 +234,26 @@ export class RemoteSandboxRuntime implements SandboxRuntime {
   private readonly url: string;
   private readonly token?: string;
   private readonly fetchImpl: typeof fetch;
+  private readonly audience?: string;
 
   constructor(options: RemoteSandboxOptions) {
     this.name = options.name ?? 'remote-worker';
     this.url = options.url.replace(/\/+$/, '');
     this.token = options.token;
     this.fetchImpl = options.fetchImpl ?? fetch;
+    this.audience = options.audience;
   }
 
-  private headers(): Record<string, string> {
+  private async headers(): Promise<Record<string, string>> {
     const headers: Record<string, string> = { 'content-type': 'application/json' };
     // Header, not query string: query strings are written to access logs.
-    if (this.token) headers.authorization = `Bearer ${this.token}`;
+    if (this.audience) {
+      const identity = await googleIdToken(this.audience, this.fetchImpl);
+      if (identity) headers.authorization = `Bearer ${identity}`;
+      if (this.token) headers['x-xroga-worker-token'] = this.token;
+    } else if (this.token) {
+      headers.authorization = `Bearer ${this.token}`;
+    }
     return headers;
   }
 
@@ -213,7 +272,7 @@ export class RemoteSandboxRuntime implements SandboxRuntime {
     try {
       const response = await this.fetchImpl(`${this.url}/health`, {
         method: 'GET',
-        headers: this.headers(),
+        headers: await this.headers(),
         signal: controller.signal,
       });
       if (!response.ok) {
@@ -247,7 +306,7 @@ export class RemoteSandboxRuntime implements SandboxRuntime {
     try {
       const response = await this.fetchImpl(`${this.url}/execute`, {
         method: 'POST',
-        headers: this.headers(),
+        headers: await this.headers(),
         signal: controller.signal,
         // Exactly the caller's environment. `process.env` is never read here, so a secret
         // can only reach the worker if a caller explicitly put it in the request.
@@ -324,5 +383,6 @@ export function remoteSandboxFromEnvironment(
     url,
     token: env.XROGA_SANDBOX_WORKER_TOKEN?.trim() || undefined,
     name: env.XROGA_SANDBOX_WORKER_NAME?.trim() || 'remote-worker',
+    audience: env.XROGA_SANDBOX_WORKER_AUDIENCE?.trim() || undefined,
   });
 }

@@ -8,6 +8,7 @@ import { resolveModelSpec } from '../ai/models.js';
 import { DIRECT_READ_MAX_AGE_MS, isPlainOpenAndRead, namesSite } from './localBrowserDirectRead.js';
 import { browserDeviceExtension, localBrowserAccountAllowed, type BrowserDeviceRequest } from './localBrowserDevice.js';
 import { boundedPublicGet, publicHttpsUrl } from '../security/boundedPublicGet.js';
+import { RepoRunError, runRepository } from '../sandbox/repoRun.js';
 import { getUserPluginPermissionMode, type PluginPermissionMode } from '../services/integrations/pluginPermissionPolicy.js';
 import { classifyOutboundData } from '../security/egress/dataClassification.js';
 import { requireTenantContext } from '../security/tenantContext.js';
@@ -520,6 +521,33 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
     const text = got.bytes.toString('utf8');
     return res.json({ status: got.statusCode, contentType: got.contentType.slice(0, 80), finalUrl: got.finalUrl,
       body: text.slice(0, 40_000), ...(text.length > 40_000 ? { truncated: true, totalChars: text.length } : {}) });
+  }));
+
+  // Runs a pinned public GitHub repository's code in the isolated sandbox worker (no network, no secrets, nothing kept) and returns the real
+  // output and any files it wrote. The agent may add its own small script. Nothing here reaches the user's accounts or browser.
+  router.post('/runs/:runId/repo-run', withLease(async (req, res, _rt, row) => {
+    active(row);
+    if (!req.revalidateBrowserDevice || !await req.revalidateBrowserDevice()) throw new BrowserRequestError(403, 'BROWSER_DEVICE_REVOKED');
+    requireTenantContext(req.tenantContext);
+    const data = z.object({
+      url: z.string().trim().min(10).max(300),
+      ref: z.string().trim().max(200).optional(),
+      command: z.enum(['python3', 'node', 'sh']),
+      args: z.array(z.string().max(4_000)).max(40).default([]),
+      files: z.array(z.object({ path: z.string().min(1).max(200), content: z.string().max(400_000) }).strict()).max(20).default([]),
+      timeoutSeconds: z.number().int().min(5).max(300).optional(),
+    }).strict().parse(req.body);
+    checkData(data);
+    try {
+      const result = await runRepository({ url: data.url, ref: data.ref, command: data.command, args: data.args, files: data.files, timeoutMs: (data.timeoutSeconds ?? 120) * 1_000 });
+      return res.json({ ...result, stdout: result.stdout.slice(-20_000), stderr: result.stderr.slice(-8_000) });
+    } catch (error) {
+      if (error instanceof RepoRunError) {
+        const status = error.code === 'SANDBOX_UNAVAILABLE' ? 503 : error.code.startsWith('REPO_') ? 422 : 400;
+        throw new BrowserRequestError(status, 'BROWSER_REPO_RUN_FAILED', { reason: [error.code, error.message.slice(0, 300)] });
+      }
+      throw new BrowserRequestError(502, 'BROWSER_REPO_RUN_FAILED', { reason: ['RUN_FAILED'] });
+    }
   }));
 
   // An authorization link for an app the user has not connected yet. The person opens it and approves access with the app itself; Xroga never

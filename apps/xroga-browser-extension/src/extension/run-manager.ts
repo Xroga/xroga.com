@@ -88,7 +88,7 @@ import { endOf } from './analytics-payload';
 import { onWorkspaceDisconnect, postWorkspace, workspacePaired, workspaceRequest } from '@src/xroga/bridge';
 import { ACTIVITY_LIMIT, browserActivity } from '@src/xroga/activity';
 import { startXrogaModelRun } from '@src/xroga/model';
-import { HTTP_GET_TOOL, PLUGIN_CONNECT_TOOL, nativeAppCall, nativeAppTool, runPluginConnect, runPluginTool, runPublicGet, PLUGIN_TOOLS, type AppToolInfo } from '@src/xroga/plugins';
+import { HTTP_GET_TOOL, PLUGIN_CONNECT_TOOL, REPO_RUN_TOOL, runRepositoryTool, nativeAppCall, nativeAppTool, runPluginConnect, runPluginTool, runPublicGet, PLUGIN_TOOLS, type AppToolInfo } from '@src/xroga/plugins';
 import { repairingPluginCaller, type PluginToolName } from '@src/xroga/plugin-repair';
 import { SEARCH_HOME, browserTarget } from '@src/xroga/navigation';
 import { XROGA_PRODUCT } from '@src/xroga/product';
@@ -1738,7 +1738,7 @@ export class RunManager {
           vision: model.profile.vision, localScreenshots: !!canonical,
           agentTools: isWorker
             ? [DELEGATE_TOOL, BATCH_TOOL, CONFIRM_DOWNLOAD_TOOL, ...(canonical ? [HTTP_GET_TOOL] : [])]
-            : [DELEGATE_TOOL, BATCH_TOOL, CONFIRM_DOWNLOAD_TOOL, ...(canonical ? [HTTP_GET_TOOL] : []), ...(canonical?.plugins ? [...PLUGIN_TOOLS, PLUGIN_CONNECT_TOOL] : []), ...(decision.offerWorkers ? PARALLEL_TOOLS : [])],
+            : [DELEGATE_TOOL, BATCH_TOOL, CONFIRM_DOWNLOAD_TOOL, ...(canonical ? [HTTP_GET_TOOL, REPO_RUN_TOOL] : []), ...(canonical?.plugins ? [...PLUGIN_TOOLS, PLUGIN_CONNECT_TOOL] : []), ...(decision.offerWorkers ? PARALLEL_TOOLS : [])],
         });
         // A request that only reads starts with the small tool list; the model switches to the full one if it needs to act.
         const { tools, full: fullTools } = startingTools(
@@ -1812,6 +1812,7 @@ export class RunManager {
             // A call refused only because this task's own search did not list the tool is repaired once without a model turn (see plugin-repair.ts).
             const callPlugin = pluginCaller;
             if (call.toolName === 'http_get' && canonical) return runPublicGet(canonical.runId, call.input, signal, wrapApp);
+            if (call.toolName === 'run_repository' && canonical) return runRepositoryTool(canonical.runId, call.input, signal, wrapApp);
             if (call.toolName === 'plugin_connect' && canonical?.plugins) return runPluginConnect(canonical.runId, call.input, signal);
             if (canonical?.plugins) {
               // A tool a search found, called by its own name: the same guarded read or change route as plugin_read / plugin_act.

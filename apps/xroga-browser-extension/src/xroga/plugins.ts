@@ -74,6 +74,43 @@ async function runPluginConnectNow(runId: string, input: unknown, signal: AbortS
   }
 }
 
+/**
+ * Runs code from a public GitHub repository, at an exact version, in an isolated Xroga sandbox: no network, no secrets, nothing kept.
+ * It cannot install packages or fetch data. Use it for repositories whose code works offline (their own modules and the standard library),
+ * usually with a short script you write that imports them. The result is the real output and any files written to xroga-out/.
+ */
+export const REPO_RUN_TOOL: AgentTool = {
+  name: 'run_repository', source: 'agent', group: 'working',
+  description: 'Run code from a public GitHub repository in an isolated sandbox: it is fetched at an exact commit, your command runs inside it (python3, node or sh), and you get the real stdout, stderr and any files written to xroga-out/. The sandbox has no internet, no secrets and installs nothing, so it works for a repository\u2019s own code and the standard library. You may add small files of your own (for example a script that imports the repository). Read the repository first (README, entry points) so the command is right. Do not use it for anything that needs the network or extra packages.',
+  parameters: { type: 'object', properties: {
+    url: { type: 'string', maxLength: 300 }, ref: { type: 'string', maxLength: 200 },
+    command: { type: 'string', enum: ['python3', 'node', 'sh'] }, args: { type: 'array', items: { type: 'string', maxLength: 4000 }, maxItems: 40 },
+    files: { type: 'array', maxItems: 20, items: { type: 'object', properties: { path: { type: 'string', maxLength: 200 }, content: { type: 'string', maxLength: 400000 } }, required: ['path', 'content'], additionalProperties: false } },
+    timeoutSeconds: { type: 'integer', minimum: 5, maximum: 300 },
+  }, required: ['url', 'command'], additionalProperties: false },
+};
+
+export async function runRepositoryTool(runId: string, input: unknown, signal: AbortSignal, wrap: (text: string, source: string) => string): Promise<{ text: string; isError: boolean }> {
+  try {
+    const v = await workspaceRequest('repo-run', { runId, body: input }, signal) as {
+      repository?: string; commit?: string; filesSent?: number; omittedFiles?: number; exitCode?: number | null; stdout?: string; stderr?: string;
+      timedOut?: boolean; durationMs?: number; artifacts?: Array<{ path: string; contentBase64: string }>; runtime?: string };
+    const files = (v.artifacts ?? []).map(file => {
+      let body = '';
+      try { body = new TextDecoder('utf-8', { fatal: true }).decode(Uint8Array.from(atob(file.contentBase64), c => c.charCodeAt(0))); } catch { body = '(binary file)'; }
+      return `--- ${file.path} ---\n${body.slice(0, 20_000)}`;
+    });
+    const head = `repository ${v.repository}@${(v.commit ?? '').slice(0, 12)} · ${v.filesSent} files sent (${v.omittedFiles ?? 0} skipped) · exit ${v.exitCode ?? 'none'}${v.timedOut ? ' · TIMED OUT' : ''} · ${v.durationMs} ms · isolated sandbox, no network`;
+    const text = [head, 'stdout:', v.stdout ?? '', 'stderr:', v.stderr ?? '', ...(files.length ? ['files written:', ...files] : [])].join('\n');
+    return { text: head + '\n' + wrap(text, 'repository execution output'), isError: v.exitCode !== 0 || !!v.timedOut };
+  } catch (error) {
+    const failure = error as { code?: unknown; detail?: Record<string, string[]> };
+    const reason = failure?.detail?.reason?.[1] ?? failure?.detail?.reason?.[0];
+    if (failure?.code === 'BROWSER_REPO_RUN_FAILED') return { text: `The repository could not be run: ${reason ?? 'unknown reason'}. Do not repeat the same call; change the command or use another method.`, isError: true };
+    return { text: 'The isolated sandbox is not available right now. Use another method for this part of the task.', isError: true };
+  }
+}
+
 type Approval = { id: string; summary: string; account: string; argumentsPreview?: string; risk?: string };
 type PluginToolName = 'plugin_search' | 'plugin_read' | 'plugin_action_search' | 'plugin_act';
 

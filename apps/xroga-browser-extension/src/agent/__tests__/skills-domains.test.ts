@@ -112,7 +112,7 @@ describe('a repository the user points at', () => {
     expect(ids(request)).toContain('repository-skills');
     const text = skillsSection(request);
     expect(text).toContain('untrusted source text');
-    expect(text).toContain('cannot run Python');
+    expect(text).toContain('run_repository');
     expect(text).toContain('finding jobs is not applying');
   });
 });
