@@ -4616,36 +4616,6 @@
       "reviewedOnBranch": "2026-11-05: GET /api/site-icon connects only to the fixed https://cdn.deepseek.com/site-icons/ host with a hostname that must match a plain public-domain pattern (no IP literals, ports, paths or credentials), through the governed boundedPublicGet with no redirects, a 96 KiB cap and a 6 s timeout. It sends no cookies, user text or identifiers, accepts a reply only when its bytes are a PNG, JPEG, GIF, WebP or ICO (never SVG or HTML), and caches the public logo."
     },
     {
-      "id": "d8500d7e40e05a539e15",
-      "callSha256": "80ce304010538de36141c81697b2e04d5d62fe4ba24211324eb807875a83b163",
-      "sourceFileSha256": "82983bf0a836d2e284ffe35ddea6b182b42dcb64304a2a394e6becc9a46213c1",
-      "disposition": "VERIFIED_GUARD",
-      "trust": "BOUNDED_CHROME_EXTENSION_PORT_NO_HTTP_TRANSPORT_OR_SESSION_TOKEN_IN_RESPONSE",
-      "tenantAuthority": "Verified API account and one-time extension challenge. Exact Chrome port; no bearer or provider credential is sent. Turn requests remain bound to admission. Reconnected finalization uses the existing API owner and current lease checks.",
-      "evidence": [
-        {
-          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
-          "marker": "const connected = runtime.connect(extensionId, { name: 'xroga-browser-v1' })",
-          "sha256": "82983bf0a836d2e284ffe35ddea6b182b42dcb64304a2a394e6becc9a46213c1"
-        },
-        {
-          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
-          "marker": "preparedPcm: true, expectedToken: pairedToken.current",
-          "sha256": "82983bf0a836d2e284ffe35ddea6b182b42dcb64304a2a394e6becc9a46213c1"
-        },
-        {
-          "path": "backend/src/routes/localBrowser.ts",
-          "marker": "localRecord(await rt.runs.load(ctx.userId, runId), ctx.userId)",
-          "sha256": "f77d53a8717e5bfc1011c4f108bc3fbe77f9951cb266380a480aafb6a59e24d5"
-        }
-      ],
-      "browserCheckpointRebind": {
-        "priorSource": "da483f922a0b28e0405446425860f821f84e11df",
-        "previousSourceFileSha256": "2500a1f07a78f43f9ebee385642fac97743777253c045bce71eed6bf51002d9a",
-        "scope": "Five identical local-port sends; GET owner verification and fenced finish added for reconnected runs."
-      }
-    },
-    {
       "id": "5ad5a74f852db7524d8a",
       "callSha256": "26c50fda42001535cb70aac98a0d29a407fa8ea44ab454f87cbf7772b31fff4e",
       "sourceFileSha256": "82983bf0a836d2e284ffe35ddea6b182b42dcb64304a2a394e6becc9a46213c1",
