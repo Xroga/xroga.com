@@ -373,6 +373,8 @@ export type NativeUiDiagnostic = {
   stage: ValidationStage;
   reason: Extract<NativeUiValidation, { ok: false }>['reason'];
   statement?: number;
+  workLimit?: 'statement_nodes' | 'expression_depth';
+  failingShape?: { tokens: number; skeleton: string };
   programLength: number;
   shape: Array<{ tokens: number; skeleton: string }>;
   factualRule?: NonNullable<ReturnType<typeof reviewNativeAnswer>>['rule'];
@@ -402,17 +404,21 @@ export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<s
   let referenceIssue: NativeUiDiagnostic['referenceIssue'];
   let declarationIssue: NativeUiDiagnostic['declarationIssue'];
   let diagramTopology: NativeUiDiagnostic['diagramTopology'];
+  let workLimit: NativeUiDiagnostic['workLimit'];
+  const statementShape = ({ tokens }: ReturnType<typeof split>[number]) => ({
+    tokens: tokens.length,
+    skeleton: tokens.slice(0, 100).map((token, index) => {
+      const name = token.v;
+      return token.t !== 14 && tokens[index + 1]?.t === 1 && typeof name === 'string'
+        && (components.has(name) || pureFunctions.has(name) || localActions.has(name)) ? name : String(token.t);
+    }).join(' '),
+  });
   const fail = (reason: NativeUiDiagnostic['reason'], errors?: ReturnType<typeof parseProgram.parse>['meta']['errors']) => {
     if (diagnose) diagnose({
       stage, reason, statement, programLength: program.length,
-      shape: statements.slice(0, 12).map(({ tokens }) => ({
-        tokens: tokens.length,
-        skeleton: tokens.slice(0, 100).map((token, index) => {
-          const name = token.v;
-          return token.t !== 14 && tokens[index + 1]?.t === 1 && typeof name === 'string'
-            && (components.has(name) || pureFunctions.has(name) || localActions.has(name)) ? name : String(token.t);
-        }).join(' '),
-      })),
+      shape: statements.slice(0, 12).map(statementShape),
+      ...(workLimit ? { workLimit } : {}),
+      ...(statement && statements[statement - 1] ? { failingShape: statementShape(statements[statement - 1]) } : {}),
       ...(schemaState ? { schemaState } : {}),
       ...(factualRule ? { factualRule } : {}),
       ...(referenceIssue ? { referenceIssue } : {}),
@@ -475,7 +481,10 @@ export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<s
     const reviewStrings = new Set<string>();
     let reason: Extract<NativeUiValidation, { ok: false }>['reason'] = 'authority';
     function visit(node: ASTNode, active: Set<string>, depth = 0): boolean {
-      if (--budget < 0 || depth > 28) { reason = 'budget'; return false; }
+      if (--budget < 0 || depth > 28) {
+        workLimit = depth > 28 ? 'expression_depth' : 'statement_nodes';
+        reason = 'budget'; return false;
+      }
       const next = (value: ASTNode) => visit(value, active, depth + 1);
       switch (node.k) {
         case 'Comp':
@@ -510,6 +519,11 @@ export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<s
     }
     for (const [key, node] of symbols) {
       statement = (statement ?? 0) + 1;
+      // Each declaration can be evaluated independently. Keep the same bound
+      // on every expanded expression, including root and unreachable entries.
+      // Re-auditing a shared dependency must not consume another declaration's
+      // allowance. The statement count still bounds the total audit work.
+      budget = 6000;
       if (key.startsWith('$') && !['Num', 'Str', 'Bool', 'Null'].includes(node.k)) return fail('authority');
       if (!visit(node, new Set([key]))) return fail(reason);
     }

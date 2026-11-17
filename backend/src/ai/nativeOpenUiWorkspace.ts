@@ -133,7 +133,10 @@ export function completeNativeWorkspaceAnswer(
   const recovered = completion.status === 'partial' && completion.reason === 'data_review' ? recoverNativeMonthlyChart(program) : undefined;
   if (completion.status === 'complete' && (validation?.ok === false || repair?.partial || missing.length)) {
     return {
-      response: valid ? PARTIAL_NATIVE_PRESENTATION_NOTE + '\n\n' + supplementNativeProse(response, program, true) : response,
+      response: valid ? PARTIAL_NATIVE_PRESENTATION_NOTE + '\n\n' + supplementNativeProse(response, program, true)
+        : missing.includes('calculator')
+          ? "The interactive calculator couldn't be displayed. The available calculation and explanation are preserved below.\n\n" + response
+          : response,
       completion: { status: 'partial' as const, reason: 'presentation_contract' as const },
       responseSource: { format: NATIVE_UI_FORMAT, text: valid ? program : '' },
     };

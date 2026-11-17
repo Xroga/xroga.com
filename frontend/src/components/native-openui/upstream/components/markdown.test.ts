@@ -11,6 +11,24 @@ import { inline, MarkdownBlocks, nativeMarkdownMatches, preservedMarkdownTableKe
 
 const render = (source: string) => renderToStaticMarkup(createElement(Fragment, null, inline(source)));
 
+test('an opening Markdown title does not repeat its native display heading', () => {
+  const matches = nativeMarkdownMatches({type:'element',typeName:'Title',props:{text:'Sortable table: time by color'}});
+  const render = (text: string, withNativeTitle = true) => renderToStaticMarkup(createElement(MarkdownBlocks, {
+    text, nativeHeadingTitles: withNativeTitle ? matches.headingTitles : undefined,
+  }));
+  const text = '**Sortable table — time by color**\n\nThree recorded times remain available.';
+  assert.equal(render(text), '<p>Three recorded times remain available.</p>');
+  assert.match(render(text, false), /Sortable table/);
+  assert.match(render(text.replace('color**', 'color [1]**')), /Sortable table.*\[1\]/);
+  assert.match(render(text.replace('color**', 'different color**')), /different color/);
+  assert.match(render('An introduction.\n\n' + text), /Sortable table/);
+  assert.equal(render(text.replace(/^\*\*(.*?)\*\*/, '## $1')), '<p>Three recorded times remain available.</p>');
+  const code = nativeMarkdownMatches({type:'element',typeName:'Title',props:{text:'Use `a:b`'}});
+  assert.match(renderToStaticMarkup(createElement(MarkdownBlocks, {
+    text:'**Use `a — b`**',nativeHeadingTitles:code.headingTitles,
+  })), /a — b/);
+});
+
 test('one complete native Markdown document replaces only its exact readable copy', () => {
   const text = '## Terms\n\n1. Read [1].\n2. Compare.\n\n| Plan | Price |\n|---|---|\n| Basic | $10 |';
   const matches = nativeMarkdownMatches({type: 'element', typeName: 'Markdown', props: {text}});

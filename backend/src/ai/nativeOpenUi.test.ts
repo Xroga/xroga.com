@@ -78,6 +78,44 @@ test('statement diagnostics identify ambiguity without exposing private names or
   }
 });
 
+test('shared calculator forecasts retain the bound on each expanded declaration', () => {
+  const points = Array.from({length: 31}, (_, year) => `{year:${year},balance:$principal * Pow(1 + periodicRate, periods * ${year})}`);
+  const rows = Array.from({length: 31}, (_, year) => `[${year},$principal * Pow(1 + periodicRate, periods * ${year})]`);
+  const program = [
+    'root = Col([shell, values])',
+    '$principal = 10000', '$rate = 5', 'periods = 12', 'periodicRate = $rate / 100 / periods',
+    'shell = Box([panel])', 'panel = Card([frame])', 'frame = Col([forecast])',
+    'forecast = Section("Forecast", [chart])',
+    'chart = Chart("line", points, "year", ["balance"], "currency", "USD")',
+    'values = Table(["Year", "Balance"], rows)',
+    'points = [' + points.join(',') + ']', 'rows = [' + rows.join(',') + ']',
+  ].join('\n');
+  const diagnostics: NativeUiDiagnostic[] = [];
+  assert.deepEqual(validateNativeWorkspaceProgram(program, undefined, '', event => diagnostics.push(event)), {ok:true}, JSON.stringify(diagnostics));
+
+  // An individually excessive expansion is still rejected. This also checks
+  // declarations outside the rendered root, rather than bypassing their audit.
+  const unsafe = ['root = Col([Text("Readable")])', 'a0 = [1,2,3,4]',
+    ...Array.from({length: 7}, (_, i) => `a${i + 1} = [a${i},a${i},a${i},a${i}]`)].join('\n');
+  const rejected: NativeUiDiagnostic[] = [];
+  assert.deepEqual(validateNativeOpenUi(unsafe, undefined, '', event => rejected.push(event)), {ok:false,reason:'budget'});
+  assert.equal(rejected[0]?.workLimit, 'statement_nodes');
+  assert.ok(rejected[0]?.failingShape);
+  assert.doesNotMatch(JSON.stringify(rejected), /Readable|a[0-7]/);
+  assert.deepEqual(validateNativeOpenUi('root = Col([Text("Safe")])\ncycle = cycle'), {ok:false,reason:'reference'});
+});
+
+test('a missing calculator is clearly identified without erasing its readable calculation', () => {
+  const prose = 'Starting with $100 at 5% annually, the balance after one year is $105.\n\nThe calculator below uses these initial values.';
+  const result = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + 'root = Unknown()', 'stop', undefined, undefined, undefined, ['calculator']);
+  assert.equal(result.completion.status, 'partial');
+  assert.ok(result.response.startsWith("The interactive calculator couldn't be displayed."));
+  assert.ok(result.response.endsWith(prose));
+  assert.equal(result.responseSource.text, '');
+  const shared = buildNativeOpenUiShare(result.response, result.responseSource.text);
+  assert.equal(shared, undefined);
+});
+
 test('the model gets instructions from the native registry and may answer in text', () => {
   for (const prompt of [nativeOpenUiPlainPrompt, nativeOpenUiPrompt]) {
     assert.match(prompt, /Verify the value, unit, and reference point, baseline, or denominator together/);
@@ -642,7 +680,8 @@ test('required visuals must render and cannot be satisfied by unused declaration
   const checked: unknown[] = [];
   const prose = 'The fixed ticket price is $25.';
   const reply = completeNativeWorkspaceAnswer(prose, 'stop', undefined, undefined, event => checked.push(event), formats);
-  assert.equal(reply.response, prose);
+  assert.ok(reply.response.startsWith("The interactive calculator couldn't be displayed."));
+  assert.ok(reply.response.endsWith(prose));
   assert.deepEqual(reply.completion, { status: 'partial', reason: 'presentation_contract' });
   assert.deepEqual(checked, [{ stage: 'assembly', reason: 'missing_formats', formats }]);
   const table = 'Table(["Attendance", "Revenue"], [[40, 1000]])';

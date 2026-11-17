@@ -185,6 +185,6 @@ export const Markdown = defineComponent({
   component: function NativeMarkdown({ props }) {
     const renderCitation = useRenderEvidenceCitation();
     const nativeVisuals = useContext(NativeVisualContent);
-    return <div className="iui-markdown"><MarkdownBlocks text={str(props.text)} renderCitation={renderCitation} nativeTables={nativeVisuals?.tables} nativeSectionTables={nativeVisuals?.sectionTables} /></div>;
+    return <div className="iui-markdown"><MarkdownBlocks text={str(props.text)} renderCitation={renderCitation} nativeTables={nativeVisuals?.tables} nativeSectionTables={nativeVisuals?.sectionTables} nativeHeadingTitles={nativeVisuals?.headingTitles} /></div>;
   },
 });

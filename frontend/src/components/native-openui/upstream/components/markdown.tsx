@@ -63,7 +63,7 @@ type Block =
   | { kind: "table"; head: string[]; rows: string[][] };
 
 export const VisibleMarkdownTables = createContext<ReadonlySet<string> | null>(null);
-export const NativeVisualContent = createContext<Pick<MarkdownMatches, "tables" | "sectionTables"> | undefined>(undefined);
+export const NativeVisualContent = createContext<Pick<MarkdownMatches, "tables" | "sectionTables" | "headingTitles"> | undefined>(undefined);
 
 // Only compare scalar cells. Retain distinct data and cells with components.
 export function tableContentKey(head: readonly string[], rows: readonly unknown[][]): string | undefined {
@@ -94,6 +94,14 @@ function textKey(text: string): string {
   return nativeReadableTextKey(text);
 }
 
+// A display Title and the opening Markdown heading may use different heading
+// separators. Preserve code, URLs, citations and every other character.
+function headingKey(text: string): string {
+  return textKey(text).split(/(`[^`\n]+`|\[[^\]\n]+\]\([^)\s]+\))/g)
+    .map((part, index) => index % 2 ? part : part.replace(/\s+[–—]\s+|\s*:\s*/g, ':'))
+    .join('');
+}
+
 /** A sentence-final citation can sit immediately before or after its period. */
 function citationTextKey(text: string): string {
   return textKey(text).replace(/\s*(\[\d{1,2}\](?:\s*\[\d{1,2}\])*)\.$/, (_, citations: string) => ". " + citations);
@@ -103,6 +111,7 @@ type MarkdownMatches = {
   documents: ReadonlySet<string>;
   paragraphs: ReadonlySet<string>;
   titles: ReadonlySet<string>;
+  headingTitles: ReadonlySet<string>;
   sectionTables: ReadonlyMap<string, ReadonlySet<string>>;
   code: ReadonlySet<string>;
   relationships: ReadonlySet<string>;
@@ -118,6 +127,7 @@ export function nativeMarkdownMatches(root: unknown, readInitial: (value: unknow
   const documents = new Set<string>();
   const paragraphs = new Set<string>();
   const titles = new Set<string>();
+  const headingTitles = new Set<string>();
   const sectionTables = new Map<string, Set<string>>();
   const code = new Set<string>();
   const relationships = new Set<string>();
@@ -153,6 +163,7 @@ export function nativeMarkdownMatches(root: unknown, readInitial: (value: unknow
     }
     if (typeName === "Title" && typeof props.text === "string") {
       titles.add(textKey(props.text));
+      headingTitles.add(headingKey(props.text));
       paragraphs.add(citationTextKey(props.text));
     }
     if (typeName === "Metric") {
@@ -231,7 +242,7 @@ export function nativeMarkdownMatches(root: unknown, readInitial: (value: unknow
     Object.values(props).forEach(child => visit(child, sectionTitle));
   }
   visit(root);
-  return { documents, paragraphs, titles, sectionTables, code, tables, relationships, checklists, listItems };
+  return { documents, paragraphs, titles, headingTitles, sectionTables, code, tables, relationships, checklists, listItems };
 }
 
 /** Only remove a complete verbatim document already visible in native Markdown.
@@ -323,7 +334,7 @@ function blocks(source: string): Block[] {
   return out;
 }
 
-export function MarkdownBlocks({ text, renderCitation, deduplicateTables = false, matches, nativeTables, nativeSectionTables }: { text: string; renderCitation?: RenderCitation; deduplicateTables?: boolean; matches?: MarkdownMatches; nativeTables?: ReadonlySet<string>; nativeSectionTables?: ReadonlyMap<string, ReadonlySet<string>> }) {
+export function MarkdownBlocks({ text, renderCitation, deduplicateTables = false, matches, nativeTables, nativeSectionTables, nativeHeadingTitles }: { text: string; renderCitation?: RenderCitation; deduplicateTables?: boolean; matches?: MarkdownMatches; nativeTables?: ReadonlySet<string>; nativeSectionTables?: ReadonlyMap<string, ReadonlySet<string>>; nativeHeadingTitles?: ReadonlySet<string> }) {
   const seenTables = new Set<string>();
   const items = blocks(text);
   return (
@@ -332,6 +343,8 @@ export function MarkdownBlocks({ text, renderCitation, deduplicateTables = false
         const k = `b${i}`;
         switch (b.kind) {
           case "p":
+            if (i === 0 && /^(?:\*\*[^*\n]+\*\*|__[^_\n]+__)$/.test(b.text)
+              && nativeHeadingTitles?.has(headingKey(b.text))) return null;
             if (matches?.paragraphs.has(citationTextKey(b.text))) return null;
             return <p key={k}>{inline(b.text, k, renderCitation)}</p>;
           case "quote":
@@ -339,6 +352,7 @@ export function MarkdownBlocks({ text, renderCitation, deduplicateTables = false
             return <blockquote key={k}>{inline(b.text, k, renderCitation)}</blockquote>;
           case "h": {
             const title = textKey(b.text);
+            if (i === 0 && nativeHeadingTitles?.has(headingKey(b.text))) return null;
             if (matches?.titles.has(title)) return null;
             const next = items[i + 1];
             const following = items[i + 2];

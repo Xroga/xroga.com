@@ -8,6 +8,10 @@ import AxeBuilder from '@axe-core/playwright';
 import { tsImport } from 'tsx/esm/api';
 
 const cases = {
+  openingTitle: {
+    raw: '**Sortable table — time by color**\n\nThree recorded times in seconds.\n\n| Color | Time (s) |\n| --- | --- |\n| Green | 1.15 |\n| Red | 9.2 |\n| Blue | 12.8 |\n<<<XROGA_OPENUI_V1>>>\nroot = Col([Title("Sortable table: time by color", "lg"), Markdown(_xroga_answer), Table(["Color", "Time (s)"], [["Green",1.15],["Red",9.2],["Blue",12.8]])])',
+    completion: 'complete',
+  },
   articleSpacing: {
     text: 'Compare the two documented sorting options.',
     program: 'root = Col([Title("Sorted versus list.sort", "lg"), Text("Choose based on whether the original list should change."), Title("Which call fits your case?", "md"), Text("Use sorted when you need a new list."), Title("Return values", "md"), Text("The in-place method returns None.")], 24)',
@@ -209,6 +213,12 @@ try {
       await open('short');
       await page.getByText(cases.short.text, { exact: true }).waitFor();
       assert.equal(await page.getByRole('slider').count(), 0);
+      await open('openingTitle');
+      await page.getByRole('heading', {name:'Sortable table: time by color',exact:true}).waitFor();
+      assert.equal(await page.getByText('Sortable table — time by color',{exact:true}).count(),0);
+      assert.equal(await page.getByRole('table').count(),1);
+      await page.getByText('Three recorded times in seconds.',{exact:true}).waitFor();
+      if ([390,1440].includes(viewport.width)) await page.screenshot({path:resolve(output,channel+'-opening-title-'+viewport.width+'-'+theme+'.png'),fullPage:true});
       await open('workflowOwnership');
       const ownershipHeading = page.getByRole('heading', { name: 'Manual versus automated', exact: true });
       await ownershipHeading.waitFor();

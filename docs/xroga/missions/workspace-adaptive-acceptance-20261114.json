@@ -35,6 +35,7 @@
     "backend/src/ai/universal/semanticRequestPlanner.test.ts",
     "backend/src/ai/universal/semanticRequestPlanner.ts",
     "docs/operations/native-openui/CAPABILITY_AUDIT.md",
+    "docs/operations/native-openui/LIVE-CALCULATOR-VALIDATION-20261117.md",
     "docs/operations/native-openui/prompt-suite.json",
     "frontend/e2e/command3-auth.spec.ts",
     "frontend/e2e/phase4-admin-share.security.mjs",
@@ -70,7 +71,8 @@
       "Sort numeric table values by their displayed magnitude and make wide comparison labels readable on phones.",
       "Keep standalone code and sample tests in the answer when project execution was not requested. Withhold a chart that contradicts the answer's unresolved-data notice and normalize the observed alternate closing marker.",
       "Recover explicitly requested local checkboxes and closed numeric series from available prose or supplied values after a presentation failure. Keep source and error boundaries, withhold controls that select an unresolved chart input, and avoid repeating a table whose full contents are already visible.",
-      "Distinguish Stripe timestamp logging and explicit rejection of timestamp ordering from recommendations to order events by timestamp."
+      "Distinguish Stripe timestamp logging and explicit rejection of timestamp ordering from recommendations to order events by timestamp.",
+      "Bound each expanded presentation declaration independently while continuing to audit unreachable declarations. Record redacted failing statement shapes, preserve explicit calculator fallback status, and avoid a repeated opening display heading."
     ],
     "keep": [
       "One planner, one canonical DeepSeek answer dispatch, existing registry and authorization, saved answers, owner-only Share and decoder compatibility."
@@ -153,24 +155,25 @@
     "reason": "Extend the existing OpenUI prompt, validated component library, model reservation and Workspace presentation.",
     "rfc": null
   },
-  "rollout": "Require exact-source CI, private hosted ordinary-user acceptance and separate production authorization.",
+  "rollout": "Require exact-source CI and private hosted ordinary-user acceptance. Standing owner rollout and canary authority is recorded in the November 17 canary report. Restore the compatible recovery pair after a material acceptance failure.",
   "rollback": "Restore the current frontend and serving API and canonical Job pair through the existing release procedure. No schema or saved format changes.",
   "knownGaps": [
-    "Fresh model acceptance, provider-backed media/maps and production promotion need independent evidence. Closed staging budgets cannot be reused."
+    "The November 17 production calculator canary failed its interactive requirement and the release was rolled back. The repaired validator requires exact-source CI and hosted retesting. Provider-backed media/maps and the full ordinary-user matrix still require independent evidence."
   ],
   "placeholderClaimsRemaining": [],
   "evidenceRefs": [
     "backend/src/ai/tenantModelDispatch.test.ts",
     "scripts/verify-native-openui-browser.mjs",
     "frontend/e2e/command3-auth.spec.ts",
-    "docs/operations/native-openui/prompt-suite.json"
+    "docs/operations/native-openui/prompt-suite.json",
+    "docs/operations/native-openui/LIVE-CALCULATOR-VALIDATION-20261117.md"
   ],
   "claimsFullProductCompletion": false,
   "claimsAllBatchCommandsComplete": false,
   "release": {
     "state": "BLOCKED",
     "blockers": [
-      "Exact-source hosted ordinary-user acceptance and source-bound production authorization are pending."
+      "The failed production calculator canary is under repair. Exact-source CI, private hosted verification and successful model/production acceptance of the corrected candidate remain pending."
     ],
     "authenticatedE2e": "BLOCKED",
     "stagedSecurity": "BLOCKED",
