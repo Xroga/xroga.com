@@ -77,7 +77,8 @@ test('actual pipeline, completion and SoftwareAgent calls bind tenant, account r
         assert.ok(body.max_tokens >= 16384, 'Reasoning and complete output share the reserved token allowance');
       }
       if(mode==='native-plain') {
-        assert.equal(body.reasoning_effort, 'none');
+        assert.equal(body.reasoning_effort, undefined, 'Plain presentation preserves the provider reasoning default');
+        assert.ok(body.max_tokens >= 16384, 'The request reserves room for reasoning and the answer');
         assert.match(body.messages[0].content,/readable Markdown/);
         assert.doesNotMatch(body.messages[0].content,/<<<XROGA_OPENUI_V1>>>|Chart\(/);
       }

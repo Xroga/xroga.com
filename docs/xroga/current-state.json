@@ -7077,7 +7077,7 @@
       "id": "surface:90932fa247bf4ae28450",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/pipeline.ts",
-      "sha256": "5c37c7d2bbc96fc8c4ddf1f294c9b1f2bde5385048847400a5bcbd69a3582e06",
+      "sha256": "85c08952d3469ffaff203a91df6d79e3d554478278e9244317929d7d5de73780",
       "symbols": [
         "ARCHITECT_MS",
         "BUILDER_FALLBACKS",

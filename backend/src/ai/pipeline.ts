@@ -1162,13 +1162,13 @@ export async function runChatPipeline(opts: {
     [{ role: 'system', content: system }, ...historyMsgs, { role: 'user', content: userContent }],
     {
       userId: opts.userId,
-      // Native composition needs room for both reasoning and the complete
-      // readable/program representations. Reserve the same maximum sent on wire.
-      maxTokens: native && !plainNative ? Math.max(16384, presentedAnswerMaxTokens(answerContract.plan))
+      // The plain-answer route changes presentation only. Keep the provider's
+      // reasoning default and reserve room for reasoning and the full answer.
+      maxTokens: native ? Math.max(16384, presentedAnswerMaxTokens(answerContract.plan))
         : opts.approvedResearch ? 4096 : route.kind === 'research'
         ? researchAnswerMaxTokens(opts.prompt)
         : presentedAnswerMaxTokens(answerContract.plan),
-      reasoningMode: native && !plainNative ? 'default' : 'none',
+      reasoningMode: native ? 'default' : 'none',
       responseFormat: format,
       tenantContext:opts.tenantContext,
       databaseProjectId:opts.modelScope?.projectId,modelRunAttempt:opts.modelScope?.runAttempt,modelRepository:opts.modelScope?.repository,
