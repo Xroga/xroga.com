@@ -183,3 +183,25 @@ Directives read: `Xroga_Browser_Operator_Universal_5Plus_Agents_Final_Claude_Man
 Package: `C:\xr-review-builds\xroga-browser-operator-staging-0.2.8-5b22b4846.zip`, SHA-256 `1405d4a0f7417716a71a7521b5fec80a4a3871aeb0bab3243500922fa0d5f400`; install folder updated (Reload needed). Left over: throwaway staging user `cap-night-1113@example.test` (delete was declined; it is not on the allowlist).
 
 Open against the mandate (not started or not proven): the capability matrix in section 10 of the mandate; multi-agent dashboard; no-login MCP and mixed MCP plus browser task; missing-connection pause and resume of the same task; async provider jobs; 1/2/3/5/6 CPU and memory benchmark; Resume control after a real worker kill; open-source register; independent security review.
+
+## 16. 17 November 2026: limits, approvals, direct APIs, self-healing (staging only)
+
+Source: branch `claude/ops-integrated-20261112`. Staging only; nothing is in production. Evidence class is stated per line.
+
+**Changes**
+- Caps lifted: workers up to 12 at once, 24 tasks, about 13 active runs per account (operator override `XROGA_LOCAL_BROWSER_MAX_ACTIVE_RUNS`, 4 to 24); plugin discoveries 100, reads 400, changes 200 per run; the same read may repeat (polling). Pinned MCP tools: up to 60 listed, verified in parallel (the read list used to stop at 6 and hid `inspect`).
+- Approvals: reads and changes inside the owner's own connected app run without a card (same confirmation and receipt on the server; `autoApprovesCall`, off with `XROGA_LOCAL_BROWSER_AUTO_APPROVE=off`). Outbound or public actions (send, post, publish, invite, share...) and deletions keep the card; destructive, financial and credential tools are still refused. Product extension mode defaults to Auto; payments, access grants and secret fields remain hand-overs (USER_STEP).
+- Model gate full: server answers `BROWSER_MODEL_BUSY` (turn's reserved spend restored, nothing charged) and the extension waits up to 20 minutes and asks again. A stalled model request (`BROWSER_GATEWAY_UNAVAILABLE`) is retried up to three times under the next turn number; a real outage still pauses.
+- Database gate bounds widened on STAGING only (`docs/operations/zurelay-product-pacing-20261104/provider-request-capacity-v3-wider-bounds.sql`): in flight 512, per user 64. Production needs approval and the provider's confirmed requests-per-minute for the key. The Zurelay key rate (about 120 requests per minute in the pilot) remains the real scale limit.
+- Failed app changes are forgotten so the agent can correct and retry; connected-app calls and direct reads are queued per run (the server takes one call per run at a time).
+- New `http_get` tool and route `/runs/:runId/public-get`: credential-free public HTTPS read through the existing `boundedPublicGet` (no private networks, ports or logins; 400 KB and 15 s bound; text only; result treated as untrusted).
+- Agent guidance: task-aware method choice (free official API, user key or connected app, MCP, Composio, paid marketplace, browser, mixes) instead of a fixed provider order; a self-healing connected-apps playbook; Monid only when named or when nothing free has the data.
+
+**Evidence (real Chrome, real DeepSeek, staging)**
+- Monid DefiLlama TVL for aave, free endpoint, discover to inspect to run, $0.00, receipt `9c3d3c72-1676-404e-86c9-08811f67d6d0`, no cards.
+- DefiLlama TVL without naming Monid: answered in 18 to 20 s from the free official page.
+- Bitcoin price: direct public APIs (CoinGecko 403, Kraken, cross-checked with Coinbase), 22 s, five `public-get` calls.
+- Not shown live: self-healing from a provider error, busy-queue under load, Sheets/Notion/Ahrefs, custom MCP authenticated test, two-user isolation, expired authorization and resume, six workers at once.
+
+**Governance**
+- The egress-review and tenant-policy records that were pinned to files changed after review (`composioClient.ts`, `businessActionConfirmations.ts`, `localBrowser.ts` and similar) were DROPPED so those callers show as needing re-review. They were not re-approved. The independent security review of the Composio egress path, the custom MCP pin gate and the direct `public-get` route is still outstanding.
