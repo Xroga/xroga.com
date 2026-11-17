@@ -19,6 +19,8 @@ export function deliveryUnknown(result: DispatchEvidence | undefined): boolean {
 /** Whether a page action's result leaves its outcome unseen. */
 export function createsDebt(tool: string, result: Result | undefined): boolean {
   if (!PAGE_ACTIONS.has(tool) || !result) return false;
+  // A page that would not open (certificate warning, block page, timeout) is a failed read: nothing was changed, so nothing is owed.
+  if ((tool === 'navigate' || tool === 'tabs') && (!result.ok || result.pageError || deliveryUnknown(result))) return false;
   if (deliveryUnknown(result)) return true;
   if (!result.ok) return result.error?.delivered === true;
   const r = result.receipt;

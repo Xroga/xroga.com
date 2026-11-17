@@ -676,9 +676,13 @@ ${ledger}` : ''),
   /** After a call: hand-overs, guards, verification debt and the result cap. */
   async afterToolCall(given: CallOutcome): Promise<CallOutcome> {
     let outcome = given;
+    // Opening or switching to a page changes nothing a second attempt could duplicate: a navigation that fails (a certificate warning,
+    // a block page, a timeout) is a failed read, not an uncertain write, so it never puts the run into read-only recovery.
+    const navigation = given.call.toolName === 'navigate' || given.call.toolName === 'tabs';
     const enteredRecovery =
       this.options.protectUncertainWrites &&
       !this.#recoveryReadOnly &&
+      !navigation &&
       (given.kind === 'mutate' || given.kind === 'state') &&
       deliveryUnknown(given.result);
     if (enteredRecovery) {
