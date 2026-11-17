@@ -205,3 +205,17 @@ Source: branch `claude/ops-integrated-20261112`. Staging only; nothing is in pro
 
 **Governance**
 - The egress-review and tenant-policy records that were pinned to files changed after review (`composioClient.ts`, `businessActionConfirmations.ts`, `localBrowser.ts` and similar) were DROPPED so those callers show as needing re-review. They were not re-approved. The independent security review of the Composio egress path, the custom MCP pin gate and the direct `public-get` route is still outstanding.
+
+## 17. 18 November 2026: package, deployment references and what is and is not proven
+
+**Source and package (private, staging only)**
+- Branch `claude/ops-integrated-20261112`, extension build `a6c85437c` (the same commit as the source; later documentation-only commits do not change the extension).
+- Zip: `C:\xr-review-builds\xroga-browser-operator-staging-0.2.8-a6c85437c.zip`, SHA-256 `c7f4aa70b5a403eaf2fd30ed5f467c6a0379ed231a1802d662631ba1eafe0282`. Extension ID `ogebkgkppocnjeojdbkiokcpeaenonop`, version 0.2.8, staging Workspace preview origin and staging API tag baked in.
+- Backend: Cloud Run `xroga-api-universal-staging`, tag `browser-op-1110` at 0% traffic, revision `xroga-api-universal-staging-00114-dac` (image `xroga-api-release:lim6-1117`). The extension requires this backend for `public-get`, `plugin-connect`, `BROWSER_MODEL_BUSY`, auto-approval of own-app calls and the widened run limits. Production has none of this.
+- Not done: Chrome Web Store, production deployment, production database changes, independent security review, exact-source CI run. The staging Workspace preview used for pairing returned 410 at one point; the extension pairs through the staging API directly.
+
+**Rollback**: remove or disable the extension; for the backend, route the tag to the previous revision (`xroga-api-universal-staging-00113-vaf` is the image before connect links; earlier images are `lim5-1117`, `lim4-1117`...) or disable with `XROGA_CUSTOM_MCP_EXECUTION=off` and `XROGA_LOCAL_BROWSER_AUTO_APPROVE=off`. The staging gate bounds migration is reversible with the earlier constraint values (in-flight 16, per user 4).
+
+**Proven in real Chrome with real DeepSeek on staging (one run each unless stated)**: 10 verified leads with table, CSV and a Google Sheet; long task across a turn renewal; five concurrent workers with a measured overlap (one worker stalled, the coordinator handled it honestly); free public API reads without detours; Gmail read and draft; Google Sheets read, create, write, read-back with receipts; Monid free endpoint run; GitHub repository analysis; connect-by-link handover with Notion; page-changed-under-agent recovery; interrupt and resume (after a fix).
+
+**Not proven**: see the gap register (`GAP-REGISTER-20261117.md`). In particular: Ahrefs, SEO work, Notion API execution, custom MCP write, two-user isolation, wrong-extension-ID denial, vision probe, graphical canvas edit, Cloud Run and ads tasks, PDF and XLSX provenance, video, resume from early progress, the multi-cursor board, the Experience Engine, multi-browser testing, p50/p95 benchmarks, 320/390/480 px layout checks, and any production behaviour.
