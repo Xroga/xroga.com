@@ -94,3 +94,36 @@ test('active reading marker follows both scroll directions and no rail appears f
   await root.evaluate(element => element.scrollTo({ top: 0, behavior: 'instant' }));
   await expect(active).toHaveAttribute('aria-label', topActive!);
 });
+
+for (const width of [390, 1366]) {
+  test(`Enter keeps the newest prompt in view as its answer arrives at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 768 });
+    await populate(page);
+    const root = page.getByTestId('terminal-scroll');
+    await root.evaluate(element => element.scrollTo({ top: element.scrollHeight, behavior: 'instant' }));
+    let releaseReply = () => {};
+    const replyReady = new Promise<void>(resolve => { releaseReply = resolve; });
+    await page.route('**/api/guest/chat', async route => {
+      await replyReady;
+      await route.fallback();
+    });
+
+    const prompt = 'Check that this follow-up stays onscreen.';
+    const composer = page.locator('[data-terminal-composer]');
+    await composer.fill(prompt);
+    await composer.press('Enter');
+    const bubble = page.locator('[data-turn-id]').filter({ hasText: prompt });
+    await expect(bubble).toBeInViewport();
+    const before = await root.evaluate(element => element.scrollTop);
+    expect(before).toBeGreaterThan(0);
+    releaseReply();
+    await expect(page.getByText('Answer marker 5', { exact: false }).first()).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Stop response', exact: true })).toHaveCount(0);
+    await expect(bubble).toBeInViewport();
+    // Account for a frame in which the streaming placeholder and final DOM swap.
+    await page.waitForTimeout(350);
+    expect(Math.abs(await root.evaluate(element => element.scrollTop) - before)).toBeLessThan(24);
+    await root.evaluate(element => element.scrollTo({ top: 0, behavior: 'instant' }));
+    await expect(page.getByRole('button', { name: 'Scroll to latest', exact: true })).toBeVisible();
+  });
+}

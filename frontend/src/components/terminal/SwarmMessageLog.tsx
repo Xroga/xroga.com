@@ -1,6 +1,6 @@
 'use client';
 
-import { useDeferredValue, useEffect, useRef, useState, useMemo, useCallback, lazy, Suspense } from 'react';
+import { useDeferredValue, useEffect, useLayoutEffect, useRef, useState, useMemo, useCallback, lazy, Suspense } from 'react';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { useTerminalScroll } from '@/context/TerminalScrollContext';
 import { useThemeStore } from '@/store/useThemeStore';
@@ -89,12 +89,14 @@ interface SwarmMessageLogProps {
  * it silently disables "jump to latest" and the read-position tracking, so it is worth
  * naming in one place.
  */
-function transcriptScrollRoot(): HTMLElement {
-  return (
-    document.querySelector<HTMLElement>('.xv-terminal-scroll') ??
-    document.querySelector<HTMLElement>('main.flex-1.overflow-y-auto') ??
-    document.documentElement
-  );
+function transcriptScrollRoot(transcript: HTMLElement | null): HTMLElement {
+  return transcript?.closest<HTMLElement>('.xv-terminal-scroll, main.flex-1.overflow-y-auto')
+    ?? document.documentElement;
+}
+
+function scrollToMessage(root: HTMLElement, message: HTMLElement, behavior: ScrollBehavior, offset = 18) {
+  const top = root === document.documentElement ? 0 : root.getBoundingClientRect().top + root.clientTop;
+  root.scrollTo({ top: root.scrollTop + message.getBoundingClientRect().top - top - offset, behavior });
 }
 
 export function SwarmMessageLog({ compact, incognito = false, chromeless = false }: SwarmMessageLogProps) {
@@ -116,100 +118,41 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
   const storeIncognito = hydrated && storeIncognitoRaw;
   const isIncognito = incognito || storeIncognito;
   const { setShowJumpToLatest, registerScrollToFirst, registerScrollToLatest } = useTerminalScroll();
-  const bottomRef = useRef<HTMLDivElement>(null);
+  const transcriptRef = useRef<HTMLDivElement>(null);
   const messageRefs = useRef<Record<string, HTMLDivElement | null>>({});
-  const stickToBottomRef = useRef(true);
-  const userScrolledUpRef = useRef(false);
-  const prevLoadingRef = useRef(false);
+  const pendingPromptId = useRef<string | null>(null);
+  const anchoredPromptId = useRef<string | null>(null);
   const jumpHandledRef = useRef<string | null>(null);
   const [searchHit, setSearchHit] = useState<string | null>(null);
   const [activeTurnId, setActiveTurnId] = useState<string | null>(null);
 
   const scrollToBottom = useCallback((behavior: ScrollBehavior = 'smooth') => {
-    stickToBottomRef.current = true;
-    userScrolledUpRef.current = false;
-    setShowJumpToLatest(false);
-    bottomRef.current?.scrollIntoView({ behavior, block: 'end' });
-  }, [setShowJumpToLatest]);
+    const root = transcriptScrollRoot(transcriptRef.current);
+    root.scrollTo({ top: root.scrollHeight, behavior });
+  }, []);
 
   useEffect(() => {
     registerScrollToLatest(scrollToBottom);
   }, [registerScrollToLatest, scrollToBottom]);
 
   useEffect(() => {
-    const el = bottomRef.current;
-    if (!el) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        const atBottom = entry.isIntersecting;
-        if (atBottom) {
-          stickToBottomRef.current = true;
-          userScrolledUpRef.current = false;
-          setShowJumpToLatest(false);
-        } else if (userScrolledUpRef.current) {
-          setShowJumpToLatest(true);
-        }
-      },
-      { threshold: 0, rootMargin: '0px 0px 140px 0px' },
-    );
-
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [messages.length, setShowJumpToLatest]);
-
-  useEffect(() => {
-    const scrollEl = transcriptScrollRoot();
-
-    const onScroll = () => {
-      const atBottom = scrollEl.scrollHeight - scrollEl.scrollTop - scrollEl.clientHeight < 140;
-      if (atBottom) {
-        stickToBottomRef.current = true;
-        if (!loading) userScrolledUpRef.current = false;
-        setShowJumpToLatest(false);
-      } else {
-        userScrolledUpRef.current = true;
-        stickToBottomRef.current = false;
-        setShowJumpToLatest(true);
-      }
+    const body = transcriptRef.current;
+    if (!body) return;
+    const root = transcriptScrollRoot(body);
+    const scrollTarget = root === document.documentElement ? document : root;
+    const sync = () => {
+      setShowJumpToLatest(root.scrollHeight - root.scrollTop - root.clientHeight >= 140);
     };
-
-    scrollEl.addEventListener('scroll', onScroll, { passive: true });
-    return () => scrollEl.removeEventListener('scroll', onScroll);
-  }, [loading, setShowJumpToLatest]);
-
-  useEffect(() => {
-    const started = loading && !prevLoadingRef.current;
-    const finished = !loading && prevLoadingRef.current;
-    prevLoadingRef.current = loading;
-
-    if (started) {
-      userScrolledUpRef.current = false;
-      stickToBottomRef.current = true;
-      scrollToBottom('auto');
-      return;
-    }
-
-    // While actively streaming, don't repeatedly yank the view to the bottom on every
-    // token — let the user read/scroll freely. Only snap once, when the response finishes.
-    if (finished && stickToBottomRef.current && !userScrolledUpRef.current) {
-      scrollToBottom('smooth');
-    }
-  }, [loading, scrollToBottom]);
-
-  useEffect(() => {
-    const session = loadWorkspaceSession();
-    const jumpId = session?.jumpMessageId;
-    if (!jumpId || jumpHandledRef.current === jumpId) return;
-    jumpHandledRef.current = jumpId;
-    const t = setTimeout(() => {
-      messageRefs.current[jumpId]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      setSearchHit(jumpId);
-      userScrolledUpRef.current = true;
-      setShowJumpToLatest(true);
-    }, 450);
-    return () => clearTimeout(t);
-  }, [messages.length, setShowJumpToLatest]);
+    const observer = new ResizeObserver(sync);
+    observer.observe(body);
+    if (root !== document.documentElement) observer.observe(root);
+    scrollTarget.addEventListener('scroll', sync, { passive: true });
+    sync();
+    return () => {
+      observer.disconnect();
+      scrollTarget.removeEventListener('scroll', sync);
+    };
+  }, [setShowJumpToLatest]);
 
   const displayInitial = profile?.display_name?.charAt(0)?.toUpperCase() ?? 'U';
 
@@ -220,6 +163,34 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
   // Streaming updates arrive in small batches. Transcript paint is intentionally
   // non-urgent so typing, stop controls, menus, and scrolling remain responsive.
   const renderedMessages = useDeferredValue(visibleMessages);
+
+  const latestPromptId = visibleMessages[visibleMessages.findLastIndex(message => message.role === 'user')]?.id;
+  const renderedPromptId = renderedMessages[renderedMessages.findLastIndex(message => message.role === 'user')]?.id;
+  useLayoutEffect(() => {
+    // Loading can commit before the deferred transcript. Wait until its user
+    // bubble is mounted, and anchor once even if the reply arrives in one chunk.
+    if (loading && !sessionRestoring && latestPromptId && latestPromptId !== anchoredPromptId.current) {
+      pendingPromptId.current = latestPromptId;
+    }
+    if (!renderedPromptId || pendingPromptId.current !== renderedPromptId || latestPromptId !== renderedPromptId) return;
+    const prompt = messageRefs.current[renderedPromptId];
+    if (!prompt) return;
+    const root = transcriptScrollRoot(transcriptRef.current);
+    scrollToMessage(root, prompt, 'auto');
+    anchoredPromptId.current = renderedPromptId;
+    pendingPromptId.current = null;
+  }, [loading, sessionRestoring, latestPromptId, renderedPromptId]);
+
+  useEffect(() => {
+    const jumpId = loadWorkspaceSession()?.jumpMessageId;
+    const target = jumpId && messageRefs.current[jumpId];
+    if (!jumpId || !target || jumpHandledRef.current === jumpId) return;
+    jumpHandledRef.current = jumpId;
+    const root = transcriptScrollRoot(transcriptRef.current);
+    scrollToMessage(root, target, 'smooth', Math.max(18, (root.clientHeight - target.offsetHeight) / 2));
+    setSearchHit(jumpId);
+  }, [renderedMessages.length, sessionId]);
+
 
   const promptByAssistantId = useMemo(() => {
     const prompts = new Map<string, string>();
@@ -237,12 +208,11 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
   const firstTurnId = chatTurnIds[0] ?? null;
 
   const scrollToFirst = useCallback((behavior: ScrollBehavior = 'smooth') => {
-    if (firstTurnId) messageRefs.current[firstTurnId]?.scrollIntoView({ behavior, block: 'start' });
-    else transcriptScrollRoot().scrollTo({ top: 0, behavior });
-    stickToBottomRef.current = false;
-    userScrolledUpRef.current = true;
-    setShowJumpToLatest(true);
-  }, [firstTurnId, setShowJumpToLatest]);
+    const root = transcriptScrollRoot(transcriptRef.current);
+    const first = firstTurnId && messageRefs.current[firstTurnId];
+    if (first) scrollToMessage(root, first, behavior);
+    else root.scrollTo({ top: 0, behavior });
+  }, [firstTurnId]);
 
   useEffect(() => {
     registerScrollToFirst(scrollToFirst);
@@ -256,7 +226,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
       setActiveTurnId(null);
       return;
     }
-    const root = transcriptScrollRoot();
+    const root = transcriptScrollRoot(transcriptRef.current);
     let frame = 0;
     const sync = () => {
       frame = 0;
@@ -286,10 +256,11 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
       if (!frame) frame = requestAnimationFrame(sync);
     };
     requestSync();
-    root.addEventListener('scroll', requestSync, { passive: true });
+    const scrollTarget = root === document.documentElement ? document : root;
+    scrollTarget.addEventListener('scroll', requestSync, { passive: true });
     window.addEventListener('resize', requestSync);
     return () => {
-      root.removeEventListener('scroll', requestSync);
+      scrollTarget.removeEventListener('scroll', requestSync);
       window.removeEventListener('resize', requestSync);
       if (frame) cancelAnimationFrame(frame);
     };
@@ -298,11 +269,10 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
   }, [chatTurnIdsKey, sessionId]);
 
   function jumpToTurn(turnId: string) {
-    messageRefs.current[turnId]?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    const turn = messageRefs.current[turnId];
+    if (turn) scrollToMessage(transcriptScrollRoot(transcriptRef.current), turn, 'smooth');
     setSearchHit(turnId);
     setActiveTurnId(turnId);
-    userScrolledUpRef.current = true;
-    setShowJumpToLatest(true);
   }
 
   const lastAssistantId = useMemo(() => {
@@ -402,6 +372,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
         )}
 
         <div
+          ref={transcriptRef}
           className={cn(
             'xv-terminal-body space-y-3 font-coding text-[13px]',
             conversationV2 && conversationStyles.scope,
@@ -705,7 +676,6 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
               </div>
             );
           })}
-          <div ref={bottomRef} />
         </div>
 
       </div>
