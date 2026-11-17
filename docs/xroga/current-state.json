@@ -29973,7 +29973,7 @@
       "id": "surface:ebe50bb7a8e41b472951",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "sha256": "13f1adedf65567479b59e5fd5d2397b6539eb55c74ea28f89378746a8d2eb64e",
+      "sha256": "a378faf1bcf3b87d7dcf82620855fc2bfb9847ff04121fd784f25c06bd4c65b8",
       "symbols": [
         "ActionMembers",
         "BrowserRequestError",
@@ -30015,6 +30015,7 @@
         "catalogue",
         "catalogueWrites",
         "ceiling",
+        "change",
         "changeTools",
         "changeToolsNote",
         "checkData",
@@ -30041,6 +30042,7 @@
         "extended",
         "failure",
         "finished",
+        "frontend",
         "full",
         "got",
         "grantSegment",
@@ -30053,6 +30055,7 @@
         "known",
         "lease",
         "limits",
+        "link",
         "list",
         "localRecord",
         "manifest",
@@ -30099,6 +30102,7 @@
         "score",
         "searchGuidance",
         "sendError",
+        "session",
         "settled",
         "small",
         "source",
@@ -30194,6 +30198,7 @@
       "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
+        "declared-host:xroga.com",
         "express",
         "node:crypto",
         "zod"
@@ -30233,7 +30238,7 @@
       "id": "surface:a5bc9e855cb4673694bc",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/localBrowserDevice.ts",
-      "sha256": "355a765f92cc426cf81cea00198cb3dee91039aa3abacee58696d86b809a503b",
+      "sha256": "94ffe69a8a5b2a58504ee8deebf7e7e6f2029b387ede5fd1d08c7127f85d9616",
       "symbols": [
         "BrowserDeviceRequest",
         "CredentialRow",
@@ -128890,9 +128895,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:59b495ea80c62e39f7a0",
+      "id": "registration:3c4601afada33333a383",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 378,
+      "line": 379,
       "receiver": "router",
       "method": "use",
       "path": "/plugins",
@@ -128904,9 +128909,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:08a34e495bc5719278a6",
+      "id": "registration:6faac0749288175cb8b6",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 392,
+      "line": 393,
       "receiver": "router",
       "method": "post",
       "path": "/runs",
@@ -128918,9 +128923,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:382c7b9a00b1c2f34836",
+      "id": "registration:2aecdbb732c448561823",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 418,
+      "line": 419,
       "receiver": "router",
       "method": "get",
       "path": "/session",
@@ -128932,9 +128937,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:b7351951a03ff9b458a2",
+      "id": "registration:59989b1496145d2e9be4",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 423,
+      "line": 424,
       "receiver": "router",
       "method": "post",
       "path": "/documents",
@@ -128946,9 +128951,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:07ad6f43a6f4c5d1819b",
+      "id": "registration:8d1fce4495099b3ad30e",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 444,
+      "line": 445,
       "receiver": "router",
       "method": "get",
       "path": "/runs/:runId",
@@ -128960,9 +128965,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:704f51400a6bca67eed1",
+      "id": "registration:142e630ee2c78acf34bf",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 453,
+      "line": 454,
       "receiver": "router",
       "method": "delete",
       "path": "/runs/:runId",
@@ -128974,9 +128979,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:5bacd84ea30f9b89fe85",
+      "id": "registration:029af6c1841649f711bd",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 484,
+      "line": 485,
       "receiver": "router",
       "method": "post",
       "path": "/runs/:runId/public-get",
@@ -128988,9 +128993,23 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:c62879c1c2a8d166d7d0",
+      "id": "registration:6a545dbf25c47952295c",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 502,
+      "line": 505,
+      "receiver": "router",
+      "method": "post",
+      "path": "/runs/:runId/plugin-connect",
+      "handlers": [
+        "withLease()"
+      ],
+      "scope": "function",
+      "functionName": "createLocalBrowserRouter",
+      "inlineResponse": false
+    },
+    {
+      "id": "registration:d65b1de7cb2383327c78",
+      "sourcePath": "backend/src/routes/localBrowser.ts",
+      "line": 521,
       "receiver": "router",
       "method": "post",
       "path": "/runs/:runId/plugin-search",
@@ -129002,9 +129021,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:dce8f9087c1ccc0cdd16",
+      "id": "registration:5a286aa4dd06328d8502",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 537,
+      "line": 556,
       "receiver": "router",
       "method": "post",
       "path": "/runs/:runId/plugin-action-search",
@@ -129016,9 +129035,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:a73e01f1667e65fc5a08",
+      "id": "registration:b6f5b1d20861e36c9894",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 566,
+      "line": 585,
       "receiver": "router",
       "method": "post",
       "path": "/runs/:runId/plugin-act",
@@ -129030,9 +129049,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:a2f1ca9b7ad0173c56f1",
+      "id": "registration:2c6523158f6bd801c785",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 633,
+      "line": 652,
       "receiver": "router",
       "method": "post",
       "path": "/runs/:runId/plugin-act-review",
@@ -129044,9 +129063,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:a2bc03036ef06446b4e4",
+      "id": "registration:bf81f4839764921c96a5",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 653,
+      "line": 672,
       "receiver": "router",
       "method": "post",
       "path": "/runs/:runId/plugin-read",
@@ -129058,9 +129077,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:15fb5863eb4e2148cc30",
+      "id": "registration:bef5d7ec3209b148a68d",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 706,
+      "line": 725,
       "receiver": "router",
       "method": "post",
       "path": "/runs/:runId/plugin-review",
@@ -129072,9 +129091,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:106e8a70455fb1d97a90",
+      "id": "registration:681702fce7699fcaf6c9",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 727,
+      "line": 746,
       "receiver": "router",
       "method": "post",
       "path": "/runs/:runId/turn",
@@ -129086,9 +129105,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:0c74167a0b38e05fb956",
+      "id": "registration:ce96ae76862687fbd454",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 841,
+      "line": 860,
       "receiver": "router",
       "method": "post",
       "path": "/runs/:runId/extend",
@@ -129100,9 +129119,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:73b3aefc33f673a87caa",
+      "id": "registration:04d87eafaef035cfc843",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 846,
+      "line": 865,
       "receiver": "router",
       "method": "post",
       "path": "/runs/:runId/resume",
@@ -129114,9 +129133,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:6754f5960e38b02227eb",
+      "id": "registration:687acf67d11bfe68c17d",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 853,
+      "line": 872,
       "receiver": "router",
       "method": "post",
       "path": "/runs/:runId/finish",
@@ -133309,10 +133328,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:c850ee124e2885c2724e",
-      "registrationId": "registration:08a34e495bc5719278a6",
+      "id": "route:05cc52b3bba81bd09f54",
+      "registrationId": "registration:6faac0749288175cb8b6",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 392,
+      "line": 393,
       "method": "POST",
       "path": "/api/browser/local/runs",
       "mountChain": [
@@ -133326,10 +133345,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:dbf3dea6060d7f344312",
-      "registrationId": "registration:382c7b9a00b1c2f34836",
+      "id": "route:a88626e46abd7e74c42e",
+      "registrationId": "registration:2aecdbb732c448561823",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 418,
+      "line": 419,
       "method": "GET",
       "path": "/api/browser/local/session",
       "mountChain": [
@@ -133343,10 +133362,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:da3feb6ad2624ce1ac50",
-      "registrationId": "registration:b7351951a03ff9b458a2",
+      "id": "route:027ec0a69b30882c4263",
+      "registrationId": "registration:59989b1496145d2e9be4",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 423,
+      "line": 424,
       "method": "POST",
       "path": "/api/browser/local/documents",
       "mountChain": [
@@ -133360,10 +133379,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:fa7a148bef9bc8fd2c37",
-      "registrationId": "registration:07ad6f43a6f4c5d1819b",
+      "id": "route:cdb7fca9c059a0cc284d",
+      "registrationId": "registration:8d1fce4495099b3ad30e",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 444,
+      "line": 445,
       "method": "GET",
       "path": "/api/browser/local/runs/:runId",
       "mountChain": [
@@ -133377,10 +133396,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:ee4b7ea6e0d2a2edea80",
-      "registrationId": "registration:704f51400a6bca67eed1",
+      "id": "route:725e91ea97c5e134c31e",
+      "registrationId": "registration:142e630ee2c78acf34bf",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 453,
+      "line": 454,
       "method": "DELETE",
       "path": "/api/browser/local/runs/:runId",
       "mountChain": [
@@ -133394,10 +133413,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:468d21cdabd11af67ccc",
-      "registrationId": "registration:5bacd84ea30f9b89fe85",
+      "id": "route:96c02680a18e508058f1",
+      "registrationId": "registration:029af6c1841649f711bd",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 484,
+      "line": 485,
       "method": "POST",
       "path": "/api/browser/local/runs/:runId/public-get",
       "mountChain": [
@@ -133411,10 +133430,27 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:b25fb3fdf0e4652acef9",
-      "registrationId": "registration:c62879c1c2a8d166d7d0",
+      "id": "route:b71b91c64a34df14060b",
+      "registrationId": "registration:6a545dbf25c47952295c",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 502,
+      "line": 505,
+      "method": "POST",
+      "path": "/api/browser/local/runs/:runId/plugin-connect",
+      "mountChain": [
+        "backend/src/index.ts:269"
+      ],
+      "authBoundary": [
+        "createLocalBrowserAuth()"
+      ],
+      "reachable": false,
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "reason": "Registration is conditional or inside a function; execution must be verified."
+    },
+    {
+      "id": "route:0679b30599de7eeb88e9",
+      "registrationId": "registration:d65b1de7cb2383327c78",
+      "sourcePath": "backend/src/routes/localBrowser.ts",
+      "line": 521,
       "method": "POST",
       "path": "/api/browser/local/runs/:runId/plugin-search",
       "mountChain": [
@@ -133428,10 +133464,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:6b80a1f6f2fd9e9f2ae4",
-      "registrationId": "registration:dce8f9087c1ccc0cdd16",
+      "id": "route:d9abcd26398e40c597c5",
+      "registrationId": "registration:5a286aa4dd06328d8502",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 537,
+      "line": 556,
       "method": "POST",
       "path": "/api/browser/local/runs/:runId/plugin-action-search",
       "mountChain": [
@@ -133445,10 +133481,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:0109fe5f7994ca13c9a6",
-      "registrationId": "registration:a73e01f1667e65fc5a08",
+      "id": "route:cf8a0fd1f7d09e587275",
+      "registrationId": "registration:b6f5b1d20861e36c9894",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 566,
+      "line": 585,
       "method": "POST",
       "path": "/api/browser/local/runs/:runId/plugin-act",
       "mountChain": [
@@ -133462,10 +133498,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:f0fc6863ae3a0eb80faf",
-      "registrationId": "registration:a2f1ca9b7ad0173c56f1",
+      "id": "route:31ef15b5798db2bb0a91",
+      "registrationId": "registration:2c6523158f6bd801c785",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 633,
+      "line": 652,
       "method": "POST",
       "path": "/api/browser/local/runs/:runId/plugin-act-review",
       "mountChain": [
@@ -133479,10 +133515,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:7bdb3a200b1789d28cd0",
-      "registrationId": "registration:a2bc03036ef06446b4e4",
+      "id": "route:e2fad97991c0286ce108",
+      "registrationId": "registration:bf81f4839764921c96a5",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 653,
+      "line": 672,
       "method": "POST",
       "path": "/api/browser/local/runs/:runId/plugin-read",
       "mountChain": [
@@ -133496,10 +133532,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:f470ea8d5e04c3fd8aa5",
-      "registrationId": "registration:15fb5863eb4e2148cc30",
+      "id": "route:a1a43860f8ce42a45d6d",
+      "registrationId": "registration:bef5d7ec3209b148a68d",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 706,
+      "line": 725,
       "method": "POST",
       "path": "/api/browser/local/runs/:runId/plugin-review",
       "mountChain": [
@@ -133513,10 +133549,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:8025b3507bdcde059942",
-      "registrationId": "registration:106e8a70455fb1d97a90",
+      "id": "route:2a29f83321ebd9425f4f",
+      "registrationId": "registration:681702fce7699fcaf6c9",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 727,
+      "line": 746,
       "method": "POST",
       "path": "/api/browser/local/runs/:runId/turn",
       "mountChain": [
@@ -133530,10 +133566,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:c0d162d8fa458b91dc21",
-      "registrationId": "registration:0c74167a0b38e05fb956",
+      "id": "route:dcd41707d144bd3b0fa1",
+      "registrationId": "registration:ce96ae76862687fbd454",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 841,
+      "line": 860,
       "method": "POST",
       "path": "/api/browser/local/runs/:runId/extend",
       "mountChain": [
@@ -133547,10 +133583,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:59404bf99565282e506f",
-      "registrationId": "registration:73b3aefc33f673a87caa",
+      "id": "route:5bfd6061d1d8808b41d2",
+      "registrationId": "registration:04d87eafaef035cfc843",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 846,
+      "line": 865,
       "method": "POST",
       "path": "/api/browser/local/runs/:runId/resume",
       "mountChain": [
@@ -133564,10 +133600,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:93916be0ac16fbbaa71c",
-      "registrationId": "registration:6754f5960e38b02227eb",
+      "id": "route:f9c25f7b4c519d969e4f",
+      "registrationId": "registration:687acf67d11bfe68c17d",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 853,
+      "line": 872,
       "method": "POST",
       "path": "/api/browser/local/runs/:runId/finish",
       "mountChain": [
@@ -136464,9 +136500,9 @@
       "state": "IMPLEMENTED_BUT_UNVERIFIED"
     },
     {
-      "id": "schedule:a732dc4d246c31149200",
+      "id": "schedule:89146be9ce60d4565a59",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 774,
+      "line": 793,
       "kind": "setInterval",
       "symbol": "createLocalBrowserRouter",
       "reachable": true,
@@ -145353,6 +145389,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:b13cd7b8e9c089287691",
+      "sourcePath": "apps/xroga-browser-extension/src/agent/__tests__/navigation-failure.test.ts",
+      "declaredTests": 3,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:afd50e9873e9d848f9fb",
       "sourcePath": "apps/xroga-browser-extension/src/agent/__tests__/overflow-recovery.test.ts",
       "declaredTests": 8,
@@ -145397,7 +145440,7 @@
     {
       "id": "test-suite:bf2be368539e2f9fa10b",
       "sourcePath": "apps/xroga-browser-extension/src/agent/__tests__/restore.test.ts",
-      "declaredTests": 10,
+      "declaredTests": 11,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -145446,7 +145489,7 @@
     {
       "id": "test-suite:120e25ea5ac5f8427750",
       "sourcePath": "apps/xroga-browser-extension/src/agent/__tests__/skills-domains.test.ts",
-      "declaredTests": 13,
+      "declaredTests": 17,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -145460,7 +145503,7 @@
     {
       "id": "test-suite:3a0a773e8eb5fa4230bd",
       "sourcePath": "apps/xroga-browser-extension/src/agent/__tests__/subagents.test.ts",
-      "declaredTests": 14,
+      "declaredTests": 17,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -145626,6 +145669,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:fd93c4298af8d7b64aa9",
+      "sourcePath": "apps/xroga-browser-extension/src/browser-control/core/tools/__tests__/parse-url.test.ts",
+      "declaredTests": 3,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:76d89fa9efb31037144d",
       "sourcePath": "apps/xroga-browser-extension/src/browser-control/host/__tests__/puppeteer.test.ts",
       "declaredTests": 5,
@@ -145712,7 +145762,7 @@
     {
       "id": "test-suite:a497702a7555d658079b",
       "sourcePath": "apps/xroga-browser-extension/src/extension/__tests__/parallel-workers.test.ts",
-      "declaredTests": 29,
+      "declaredTests": 33,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -145971,7 +146021,14 @@
     {
       "id": "test-suite:e6bbe975e1c3d88cc95e",
       "sourcePath": "apps/xroga-browser-extension/src/xroga/__tests__/model-segments.test.ts",
-      "declaredTests": 11,
+      "declaredTests": 13,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:826e88e2bd5e85d6152f",
+      "sourcePath": "apps/xroga-browser-extension/src/xroga/__tests__/plugin-connect.test.ts",
+      "declaredTests": 4,
       "skipLocations": [],
       "focusLocations": []
     },

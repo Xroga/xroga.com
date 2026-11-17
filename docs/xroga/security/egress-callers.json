@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "3072380e5ce213aa9aee0976312507b9192126d42068b8f85ae09e16bb1be959",
+  "sourceTreeDigest": "719b19f10e3c930f3fbd0b6228850d52f0c5ab3874dca1c217548e78c4b46c49",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -2153,7 +2153,7 @@
     {
       "id": "27bc04b09f554f8a04b0",
       "file": "backend/src/routes/localBrowser.ts",
-      "line": 491,
+      "line": 492,
       "entryPoint": "createLocalBrowserRouter",
       "transport": "boundedPublicGet",
       "callee": "boundedPublicGet",

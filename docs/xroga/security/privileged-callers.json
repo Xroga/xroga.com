@@ -4748,11 +4748,11 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "c57a1a22c792ae7fb809"
+        "id": "1432d961dd6efd6d466f"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "d4b05e8ebe2dcce04996"
+        "id": "b3f20ea28966bc9457bc"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -6664,11 +6664,11 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "c57a1a22c792ae7fb809"
+        "id": "1432d961dd6efd6d466f"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "d4b05e8ebe2dcce04996"
+        "id": "b3f20ea28966bc9457bc"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -19463,7 +19463,7 @@
       }
     },
     {
-      "id": "c57a1a22c792ae7fb809",
+      "id": "1432d961dd6efd6d466f",
       "path": "backend/src/routes/localBrowser.ts",
       "line": 340,
       "enclosing": "visionProbe",
@@ -19471,18 +19471,18 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "13f1adedf65567479b59e5fd5d2397b6539eb55c74ea28f89378746a8d2eb64e"
+      "sourceSha256": "a378faf1bcf3b87d7dcf82620855fc2bfb9847ff04121fd784f25c06bd4c65b8"
     },
     {
-      "id": "d4b05e8ebe2dcce04996",
+      "id": "b3f20ea28966bc9457bc",
       "path": "backend/src/routes/localBrowser.ts",
-      "line": 427,
+      "line": 428,
       "enclosing": "createLocalBrowserRouter",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "13f1adedf65567479b59e5fd5d2397b6539eb55c74ea28f89378746a8d2eb64e"
+      "sourceSha256": "a378faf1bcf3b87d7dcf82620855fc2bfb9847ff04121fd784f25c06bd4c65b8"
     },
     {
       "id": "c9a009f6baa9e3a3bbad",
