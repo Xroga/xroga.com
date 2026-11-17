@@ -3847,7 +3847,7 @@
         "backend/src/existingSource/change/canonical.ts:51",
         "backend/src/existingSource/change/canonical.ts:67",
         "backend/src/hardening/launchHardening.test.ts:47",
-        "backend/src/routes/localBrowser.ts:4",
+        "backend/src/routes/localBrowser.ts:5",
         "backend/src/sandbox/google/executionBinding.test.ts:5",
         "backend/src/sandbox/google/executionBinding.ts:3",
         "backend/src/security/executionCheckpointAttempt.local.integration.ts:7",
@@ -5060,7 +5060,7 @@
         "backend/src/operations/benchmarkAdapter.ts:20",
         "backend/src/routes/browserRuns.ts:29",
         "backend/src/routes/guestChat.ts:14",
-        "backend/src/routes/localBrowser.ts:6",
+        "backend/src/routes/localBrowser.ts:7",
         "backend/src/routes/phase1.ts:27",
         "backend/src/synthesis/coherentImplementation.ts:7",
         "backend/src/synthesis/universalEntrypoint.ts:98",
@@ -5422,7 +5422,7 @@
       ],
       "callers": [
         "backend/src/ai/parallelDispatch.ts:6",
-        "backend/src/services/integrations/businessAction.ts:1503"
+        "backend/src/services/integrations/businessAction.ts:1513"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -7096,7 +7096,7 @@
         "backend/src/operations/operationsProviderBudget.local.integration.ts:6",
         "backend/src/routes/billing.ts:7",
         "backend/src/routes/dashboard.ts:4",
-        "backend/src/routes/localBrowser.ts:5",
+        "backend/src/routes/localBrowser.ts:6",
         "backend/src/routes/phase1.ts:31",
         "backend/src/security/budgetOwner.local.integration.ts:7",
         "backend/src/security/confirmationMetadata.local.integration.ts:8",
@@ -11583,7 +11583,7 @@
         "backend/src/ai/pipeline.ts:27",
         "backend/src/ai/sonnetApproval.test.ts:4",
         "backend/src/ai/universal/semanticRequestPlanner.ts:14",
-        "backend/src/services/integrations/businessAction.ts:1455"
+        "backend/src/services/integrations/businessAction.ts:1465"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -28288,7 +28288,7 @@
       ],
       "callers": [
         "backend/src/routes/browserDocuments.test.ts:5",
-        "backend/src/routes/localBrowser.ts:19"
+        "backend/src/routes/localBrowser.ts:20"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -29863,7 +29863,7 @@
       "id": "surface:e651ec704dda3ac3aa42",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "sha256": "e6aab8dfd7f534aeb38932151f6ef807eb71447e4bc2b538e6d01b0585905a21",
+      "sha256": "293d69a3b07158683f81a04df3f069b9e37489e6dd1e592a61e63cdf119b6326",
       "symbols": [
         "bundle",
         "callbackUrl",
@@ -29884,6 +29884,7 @@
         "page",
         "parsed",
         "pat",
+        "pins",
         "project",
         "projects",
         "provision",
@@ -29908,6 +29909,7 @@
         "../security/egress/egressPolicy.js",
         "../security/tenantContext.js",
         "../services/integrations/composioClient.js",
+        "../services/integrations/customMcpPins.js",
         "../services/integrations/githubDeploy.js",
         "../services/integrations/pluginPermissionPolicy.js",
         "../services/integrations/supabaseProvision.js",
@@ -29923,6 +29925,7 @@
         "backend/src/security/egress/egressPolicy.ts",
         "backend/src/security/tenantContext.ts",
         "backend/src/services/integrations/composioClient.ts",
+        "backend/src/services/integrations/customMcpPins.ts",
         "backend/src/services/integrations/githubDeploy.ts",
         "backend/src/services/integrations/pluginPermissionPolicy.ts",
         "backend/src/services/integrations/supabaseProvision.ts",
@@ -29970,7 +29973,7 @@
       "id": "surface:ebe50bb7a8e41b472951",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "sha256": "8b297d61d56e78b263a80222a496e4b50207c4e08ef99e0c7bfd798bdbabe6cd",
+      "sha256": "13f1adedf65567479b59e5fd5d2397b6539eb55c74ea28f89378746a8d2eb64e",
       "symbols": [
         "ActionMembers",
         "BrowserRequestError",
@@ -29983,6 +29986,7 @@
         "MAX_TURNS",
         "MINUTE",
         "MODEL",
+        "OUTBOUND_TOKENS",
         "PER_TURN_JOB_COST_MICROS",
         "PluginAdapter",
         "RENEW_BEFORE_MS",
@@ -29995,6 +29999,7 @@
         "action",
         "actionPlugins",
         "active",
+        "activeRunLimit",
         "actor",
         "admitted",
         "allowance",
@@ -30002,10 +30007,16 @@
         "apps",
         "assertPluginRun",
         "assertToolArguments",
+        "at",
+        "autoApprovesCall",
         "before",
         "browserTask",
         "bytes",
+        "catalogue",
+        "catalogueWrites",
         "ceiling",
+        "changeTools",
+        "changeToolsNote",
         "checkData",
         "choice",
         "clip",
@@ -30029,7 +30040,9 @@
         "expired",
         "extended",
         "failure",
+        "finished",
         "full",
+        "got",
         "grantSegment",
         "guidance",
         "hasProperties",
@@ -30052,6 +30065,8 @@
         "needTurns",
         "next",
         "outcome",
+        "pinned",
+        "pinnedWrites",
         "pitfalls",
         "plan",
         "pluginState",
@@ -30062,7 +30077,9 @@
         "props",
         "providerMessage",
         "publicStart",
+        "rankPinnedByQuery",
         "read",
+        "readGuidance",
         "receipt",
         "remainingMs",
         "requestBytes",
@@ -30079,6 +30096,7 @@
         "runtime",
         "s",
         "save",
+        "score",
         "searchGuidance",
         "sendError",
         "settled",
@@ -30095,17 +30113,21 @@
         "text",
         "timer",
         "timings",
+        "tokens",
         "tool",
         "toolArgs",
         "toolCall",
         "tools",
         "turnBody",
         "turns",
+        "type",
         "unknown",
         "url",
         "visionProbe",
         "withFullSchemas",
-        "withLease"
+        "withLease",
+        "words",
+        "writeNote"
       ],
       "imports": [
         "../ai/executionRuntime.js",
@@ -30114,6 +30136,7 @@
         "../security/authority/digest.js",
         "../security/boundedPublicGet.js",
         "../security/egress/dataClassification.js",
+        "../security/egress/egressPolicy.js",
         "../security/tenantContext.js",
         "../services/integrations/businessAction.js",
         "../services/integrations/businessActionConfirmations.js",
@@ -30144,6 +30167,7 @@
         "backend/src/security/authority/digest.ts",
         "backend/src/security/boundedPublicGet.ts",
         "backend/src/security/egress/dataClassification.ts",
+        "backend/src/security/egress/egressPolicy.ts",
         "backend/src/security/tenantContext.ts",
         "backend/src/services/integrations/businessAction.ts",
         "backend/src/services/integrations/businessActionConfirmations.ts",
@@ -30161,6 +30185,9 @@
       "callers": [
         "backend/src/index.ts:57",
         "backend/src/routes/localBrowser.test.ts:10",
+        "backend/src/routes/localBrowserPinned.test.ts:23",
+        "backend/src/routes/localBrowserPinned.test.ts:29",
+        "backend/src/routes/localBrowserPinned.test.ts:3",
         "backend/src/routes/localBrowserPluginActions.test.ts:9",
         "backend/src/routes/localBrowserPluginBrief.test.ts:3"
       ],
@@ -30191,6 +30218,7 @@
       ],
       "testCoverage": [
         "backend/src/routes/localBrowser.test.ts",
+        "backend/src/routes/localBrowserPinned.test.ts",
         "backend/src/routes/localBrowserPluginActions.test.ts",
         "backend/src/routes/localBrowserPluginBrief.test.ts"
       ],
@@ -30205,7 +30233,7 @@
       "id": "surface:a5bc9e855cb4673694bc",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/localBrowserDevice.ts",
-      "sha256": "e9ba5fd68611f4ec4b04d20afadbe6dc20e3c081c44dafb059341773a6410ad5",
+      "sha256": "355a765f92cc426cf81cea00198cb3dee91039aa3abacee58696d86b809a503b",
       "symbols": [
         "BrowserDeviceRequest",
         "CredentialRow",
@@ -30261,7 +30289,7 @@
       ],
       "callers": [
         "backend/src/index.ts:58",
-        "backend/src/routes/localBrowser.ts:8",
+        "backend/src/routes/localBrowser.ts:9",
         "backend/src/routes/localBrowserDeviceActions.test.ts:3"
       ],
       "reachable": true,
@@ -30321,7 +30349,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/routes/localBrowser.ts:7",
+        "backend/src/routes/localBrowser.ts:8",
         "backend/src/routes/localBrowserDirectRead.test.ts:3"
       ],
       "reachable": true,
@@ -30384,7 +30412,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/routes/localBrowser.ts:20",
+        "backend/src/routes/localBrowser.ts:21",
         "backend/src/routes/localBrowserPluginLogo.test.ts:3"
       ],
       "reachable": true,
@@ -31368,7 +31396,7 @@
         "backend/src/routes/chat.ts:1",
         "backend/src/routes/debug.ts:1",
         "backend/src/routes/influencer.ts:1",
-        "backend/src/routes/integrations.ts:15",
+        "backend/src/routes/integrations.ts:16",
         "backend/src/routes/marketplace.ts:1",
         "backend/src/routes/media.ts:1",
         "backend/src/routes/simpleChat.ts:1",
@@ -33848,7 +33876,7 @@
         "backend/src/builder/providerAuthority.ts:5",
         "backend/src/e2e/xrogaGoldenJourneys.test.ts:14",
         "backend/src/operations/operationsEngine.ts:2",
-        "backend/src/routes/localBrowser.ts:24",
+        "backend/src/routes/localBrowser.ts:25",
         "backend/src/security/authority/digest.test.ts:4",
         "backend/src/security/authority/enforce.test.ts:4",
         "backend/src/security/authority/enforce.ts:2",
@@ -33862,6 +33890,7 @@
         "backend/src/services/integrations/composioClient.ts:5",
         "backend/src/services/integrations/composioControl.ts:10",
         "backend/src/services/integrations/credentialVault.ts:3",
+        "backend/src/services/integrations/customMcpPins.ts:9",
         "backend/src/services/integrations/githubApproval.ts:5",
         "backend/src/services/integrations/modelResult.ts:2",
         "backend/src/services/integrations/researchResult.test.ts:7",
@@ -33980,7 +34009,7 @@
         "backend/src/builder/providerTransports.ts:4",
         "backend/src/e2e/xrogaGoldenJourneys.test.ts:13",
         "backend/src/lib/netlify.ts:4",
-        "backend/src/routes/integrations.ts:1",
+        "backend/src/routes/integrations.ts:2",
         "backend/src/routes/publish.ts:5",
         "backend/src/routes/supabaseOAuth.ts:41",
         "backend/src/routes/voice.ts:5",
@@ -34244,7 +34273,7 @@
       ],
       "callers": [
         "backend/src/builder/phase2Bridge.ts:3",
-        "backend/src/routes/localBrowser.ts:9",
+        "backend/src/routes/localBrowser.ts:10",
         "backend/src/security/boundedPublicGet.test.ts:6",
         "backend/src/security/egress/urlPolicy.ts:2",
         "backend/src/workers/browserJob.ts:14",
@@ -34325,7 +34354,7 @@
         "backend/src/builder/providerTransports.ts:14",
         "backend/src/builder/qa/playwrightQaDriver.ts:2",
         "backend/src/lib/publishingProviderRequest.ts:3",
-        "backend/src/routes/localBrowser.ts:10",
+        "backend/src/routes/localBrowser.ts:11",
         "backend/src/routes/voice.ts:4",
         "backend/src/routes/voiceFree.ts:4",
         "backend/src/sandbox/sandboxProviders.ts:24",
@@ -34433,7 +34462,8 @@
         "backend/src/lib/publishingProviderRequest.ts:2",
         "backend/src/lib/publishingTransport.security.test.ts:10",
         "backend/src/lib/vercelEnv.ts:2",
-        "backend/src/routes/integrations.ts:2",
+        "backend/src/routes/integrations.ts:3",
+        "backend/src/routes/localBrowser.ts:1",
         "backend/src/routes/supabaseOAuth.ts:42",
         "backend/src/security/egress/egress.integration.test.ts:9",
         "backend/src/security/egress/fileEgress.ts:6",
@@ -35110,6 +35140,7 @@
         "backend/src/services/integrations/businessWorkflowRuns.ts:2",
         "backend/src/services/integrations/composioControl.ts:4",
         "backend/src/services/integrations/credentialStorageBucket.ts:2",
+        "backend/src/services/integrations/customMcpPins.ts:8",
         "backend/src/services/integrations/githubApproval.ts:3",
         "backend/src/services/integrations/oauthPkceStore.ts:9",
         "backend/src/services/integrations/supabaseAccess.ts:5",
@@ -35274,8 +35305,8 @@
         "backend/src/routes/github.ts:5",
         "backend/src/routes/githubPublication.pending.test.ts:1",
         "backend/src/routes/githubTransport.security.test.ts:9",
-        "backend/src/routes/integrations.ts:3",
-        "backend/src/routes/localBrowser.ts:11",
+        "backend/src/routes/integrations.ts:4",
+        "backend/src/routes/localBrowser.ts:12",
         "backend/src/routes/localBrowserDevice.ts:5",
         "backend/src/routes/localBrowserPlugins.ts:4",
         "backend/src/routes/messageShares.ts:5",
@@ -35367,6 +35398,10 @@
         "backend/src/services/integrations/credentialVault.test.ts:4",
         "backend/src/services/integrations/credentialVault.ts:2",
         "backend/src/services/integrations/credentialVaultRuntime.ts:5",
+        "backend/src/services/integrations/customMcpPinClasses.test.ts:5",
+        "backend/src/services/integrations/customMcpPinControl.security.test.ts:4",
+        "backend/src/services/integrations/customMcpPins.test.ts:4",
+        "backend/src/services/integrations/customMcpPins.ts:7",
         "backend/src/services/integrations/githubApproval.ts:2",
         "backend/src/services/integrations/githubDeploy.ts:4",
         "backend/src/services/integrations/githubPublication.security.test.ts:2",
@@ -35600,6 +35635,9 @@
         "backend/src/services/integrations/composioProvenance.security.test.ts",
         "backend/src/services/integrations/credentialUploadBoundary.test.ts",
         "backend/src/services/integrations/credentialVault.test.ts",
+        "backend/src/services/integrations/customMcpPinClasses.test.ts",
+        "backend/src/services/integrations/customMcpPinControl.security.test.ts",
+        "backend/src/services/integrations/customMcpPins.test.ts",
         "backend/src/services/integrations/githubPublication.security.test.ts",
         "backend/src/services/integrations/githubRequest.security.test.ts",
         "backend/src/services/integrations/githubSourceRead.test.ts",
@@ -35922,7 +35960,7 @@
         "backend/src/services/BillingService.test.ts:5",
         "backend/src/services/billingBudget.local.integration.ts:5",
         "backend/src/services/fixtures/checkoutApproval.ts:2",
-        "backend/src/services/integrations/businessAction.ts:1462"
+        "backend/src/services/integrations/businessAction.ts:1472"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -36171,7 +36209,7 @@
       "id": "surface:5a05332cd3011b3aa919",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/businessAction.ts",
-      "sha256": "874ec9b2059fa33e7a56ae7c16d434f7c456d7df06d89ee928a4f1d023585449",
+      "sha256": "fd98fc97a59bde3b6c8cfbb1622965c2fefa91d9ab9168da7e6168706e327fcb",
       "symbols": [
         "ActionToolChoice",
         "BusinessActionAuthorization",
@@ -36216,6 +36254,7 @@
         "executePreparedBusinessAction",
         "execution",
         "explicit",
+        "fetchedDetails",
         "haystack",
         "isFinancialAction",
         "isPlainRecord",
@@ -36230,6 +36269,9 @@
         "orderedToolkits",
         "orderedTools",
         "permissionMode",
+        "pinned",
+        "pinnedClass",
+        "pinnedMatch",
         "prepareBusinessAction",
         "raw",
         "requiresBusinessActionConfirmation",
@@ -36331,7 +36373,7 @@
         "backend/src/e2e/xrogaGoldenJourneys.test.ts:11",
         "backend/src/routes/billingCheckout.security.test.ts:5",
         "backend/src/routes/electronSigning.security.test.ts:3",
-        "backend/src/routes/localBrowser.ts:25",
+        "backend/src/routes/localBrowser.ts:26",
         "backend/src/routes/phase1.ts:69",
         "backend/src/security/authority/digest.test.ts:5",
         "backend/src/security/businessAuthority.local.integration.ts:9",
@@ -36344,7 +36386,7 @@
         "backend/src/services/integrations/businessActionRisk.test.ts:3",
         "backend/src/services/integrations/businessModelEgress.test.ts:7",
         "backend/src/services/integrations/businessWorkflowRuns.ts:3",
-        "backend/src/services/integrations/composioClient.ts:2672",
+        "backend/src/services/integrations/composioClient.ts:2770",
         "backend/src/services/integrations/composioControl.ts:13",
         "backend/src/services/integrations/githubApproval.ts:6",
         "backend/src/services/integrations/supabaseApproval.ts:12",
@@ -36426,7 +36468,7 @@
       "id": "surface:0315124fb31feefa3fcb",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "sha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec",
+      "sha256": "15d2c7f112c1eceab5d5ebf718f92791609f547721500180fa81143bb14da0f8",
       "symbols": [
         "CONFIRMATION_TTL_MS",
         "ConfirmationRow",
@@ -36502,8 +36544,8 @@
         "backend/src/routes/billing.ts:6",
         "backend/src/routes/billingCheckout.security.test.ts:4",
         "backend/src/routes/electronSigning.security.test.ts:3",
-        "backend/src/routes/localBrowser.ts:23",
-        "backend/src/routes/localBrowser.ts:26",
+        "backend/src/routes/localBrowser.ts:24",
+        "backend/src/routes/localBrowser.ts:27",
         "backend/src/routes/phase1.ts:96",
         "backend/src/routes/publish.ts:7",
         "backend/src/security/businessAuthority.local.integration.ts:8",
@@ -36512,10 +36554,11 @@
         "backend/src/services/integrations/businessActionConfirmations.claim.test.ts:4",
         "backend/src/services/integrations/businessActionConfirmationsPreview.test.ts:3",
         "backend/src/services/integrations/businessWorkflowRuns.ts:4",
-        "backend/src/services/integrations/composioClient.ts:2672",
+        "backend/src/services/integrations/composioClient.ts:2770",
         "backend/src/services/integrations/composioControl.security.test.ts:8",
         "backend/src/services/integrations/composioControl.ts:12",
         "backend/src/services/integrations/composioProvenance.security.test.ts:5",
+        "backend/src/services/integrations/customMcpPinControl.security.test.ts:7",
         "backend/src/services/integrations/githubApproval.ts:6",
         "backend/src/services/integrations/githubPublication.security.test.ts:5",
         "backend/src/services/integrations/supabaseApproval.ts:13",
@@ -36588,6 +36631,7 @@
         "backend/src/services/integrations/businessActionConfirmationsPreview.test.ts",
         "backend/src/services/integrations/composioControl.security.test.ts",
         "backend/src/services/integrations/composioProvenance.security.test.ts",
+        "backend/src/services/integrations/customMcpPinControl.security.test.ts",
         "backend/src/services/integrations/githubPublication.security.test.ts",
         "backend/src/services/integrations/researchResult.test.ts",
         "backend/src/services/integrations/supabaseProjectCreation.security.test.ts",
@@ -36671,7 +36715,7 @@
         "backend/src/routes/businessAutomationWebhook.ts:3",
         "backend/src/routes/businessAutomations.ts:5",
         "backend/src/services/integrations/composioControl.security.test.ts:6",
-        "backend/src/services/integrations/composioControl.ts:55"
+        "backend/src/services/integrations/composioControl.ts:56"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -37079,10 +37123,12 @@
       "id": "surface:8c25c7e0b5b0dd66676d",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/composioClient.ts",
-      "sha256": "420fa103e898918054e175ef86823322470c071aec58ed40834f741b09f6f3c2",
+      "sha256": "e34acb6ce100b87a447cb0ec33f648d0e9100151c29bccd74ee88ed822515d7d",
       "symbols": [
+        "BLOCKED_CUSTOM_CLASSES",
         "COMPOSIO_API_BASE",
         "COMPOSIO_CACHE_TTL_MS",
+        "CUSTOM_BLOCKED_TOKENS",
         "CanonicalXrogaCatalogGroup",
         "ComposioCatalogCategory",
         "ComposioCatalogCategoryListResponse",
@@ -37145,6 +37191,7 @@
         "actorCredentialEpochs",
         "actualBinding",
         "allowed",
+        "allowedClass",
         "allowedTool",
         "approval",
         "apps",
@@ -37163,7 +37210,9 @@
         "canonicalXrogaCatalogGroup",
         "catalogCache",
         "categories",
+        "changes",
         "check",
+        "checked",
         "chunks",
         "classifyComposioToolRisk",
         "clean",
@@ -37193,6 +37242,8 @@
         "currentComposioCredential",
         "currentConfig",
         "cursor",
+        "customPin",
+        "customPinClassFor",
         "declaredLength",
         "deleteUserCustomMcpToolkit",
         "details",
@@ -37212,7 +37263,9 @@
         "expected",
         "expectedSlug",
         "expectedUserId",
+        "failed",
         "failure",
+        "fetchCustomMcpDefinition",
         "filterComposioCatalogForUser",
         "final",
         "finalAccountId",
@@ -37225,6 +37278,7 @@
         "headerName",
         "history",
         "isComposioConfigured",
+        "isPinnedCustomReadSlug",
         "issuedAt",
         "item",
         "items",
@@ -37237,8 +37291,11 @@
         "listComposioToolkits",
         "listComposioTriggerTypes",
         "listConnectedComposioToolkits",
+        "listPinnedCustomReadTools",
+        "listPinnedCustomWriteTools",
         "listSessionComposioToolkits",
         "listUserCustomMcpToolkits",
+        "live",
         "localHttp",
         "looksMutatingToolSlug",
         "mapCatalogToolkit",
@@ -37262,34 +37319,50 @@
         "parameters",
         "params",
         "payload",
+        "pin",
+        "pinClass",
+        "pinUserCustomMcpTool",
+        "pinned",
+        "pinnedCustomReadTrust",
+        "pinnedCustomSlugClass",
+        "pinnedCustomTrust",
+        "pins",
         "prefix",
         "prior",
+        "properties",
         "providerCode",
         "publicMetadata",
         "publicQuery",
         "query",
+        "rawReason",
         "reader",
         "reason",
         "registrationSlug",
         "relative",
+        "requested",
+        "requestedPinSlugs",
         "requireComposioActor",
         "resetComposioAccountSelectionMemory",
         "resolveComposioTriggerTarget",
         "resolvedSlug",
         "response",
         "result",
+        "reviewed",
         "risk",
         "sandbox",
         "schedule",
         "searchComposioActionTools",
         "searchComposioTools",
         "searchResult",
+        "server",
         "serverUrl",
         "session",
         "sessionId",
         "signal",
         "size",
+        "skipped",
         "slug",
+        "store",
         "syncUserCustomMcpToolkit",
         "tags",
         "target",
@@ -37298,6 +37371,7 @@
         "timeout",
         "timer",
         "tokens",
+        "tool",
         "toolSlug",
         "toolTokens",
         "toolkit",
@@ -37316,6 +37390,7 @@
         "validateSafeRuntimeConfig",
         "value",
         "vocabulary",
+        "wanted",
         "words",
         "xrogaCatalogGroupFor",
         "xrogaCustomToolkitRegistrationSlug"
@@ -37335,6 +37410,7 @@
         "./businessActionConfirmations.js",
         "./composioControl.js",
         "./composioNamespace.js",
+        "./customMcpPins.js",
         "node:crypto"
       ],
       "runtimeImports": [
@@ -37350,7 +37426,8 @@
         "backend/src/services/integrations/businessAction.ts",
         "backend/src/services/integrations/businessActionConfirmations.ts",
         "backend/src/services/integrations/composioControl.ts",
-        "backend/src/services/integrations/composioNamespace.ts"
+        "backend/src/services/integrations/composioNamespace.ts",
+        "backend/src/services/integrations/customMcpPins.ts"
       ],
       "entryPoints": [
         "backend/src/index.ts",
@@ -37361,8 +37438,8 @@
         "backend/src/capabilities/modules/businessRead.ts:6",
         "backend/src/e2e/xrogaGoldenJourneys.test.ts:15",
         "backend/src/routes/businessAutomations.ts:4",
-        "backend/src/routes/integrations.ts:43",
-        "backend/src/routes/localBrowser.ts:21",
+        "backend/src/routes/integrations.ts:44",
+        "backend/src/routes/localBrowser.ts:22",
         "backend/src/routes/localBrowserPlugins.ts:5",
         "backend/src/routes/phase1.ts:90",
         "backend/src/routes/phase1BusinessPreflight.ts:9",
@@ -37379,6 +37456,8 @@
         "backend/src/services/integrations/composioControl.security.test.ts:5",
         "backend/src/services/integrations/composioControl.ts:50",
         "backend/src/services/integrations/composioProvenance.security.test.ts:3",
+        "backend/src/services/integrations/customMcpPinClasses.test.ts:3",
+        "backend/src/services/integrations/customMcpPinControl.security.test.ts:5",
         "scripts/browser/composio-connect.mts:20",
         "scripts/browser/run-workflows.mts:386"
       ],
@@ -37405,11 +37484,14 @@
       "approvalBoundary": [
         "backend/src/services/integrations/composioClient.ts#approval",
         "backend/src/services/integrations/composioClient.ts#confirmation",
+        "backend/src/services/integrations/composioClient.ts#customMcpDefinitionDigest",
         "backend/src/services/integrations/composioClient.ts#digest",
         "backend/src/services/integrations/composioClient.ts#preparedActionDigest"
       ],
       "costBoundary": [],
-      "evidenceBoundary": [],
+      "evidenceBoundary": [
+        "backend/src/services/integrations/composioClient.ts#verifyCustomMcpPin"
+      ],
       "testCoverage": [
         "backend/src/e2e/xrogaGoldenJourneys.test.ts",
         "backend/src/services/integrations/composioActorBoundary.security.test.ts",
@@ -37418,7 +37500,9 @@
         "backend/src/services/integrations/composioClient.rejection.test.ts",
         "backend/src/services/integrations/composioClient.security.test.ts",
         "backend/src/services/integrations/composioControl.security.test.ts",
-        "backend/src/services/integrations/composioProvenance.security.test.ts"
+        "backend/src/services/integrations/composioProvenance.security.test.ts",
+        "backend/src/services/integrations/customMcpPinClasses.test.ts",
+        "backend/src/services/integrations/customMcpPinControl.security.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -37431,7 +37515,7 @@
       "id": "surface:aa1ae037535e1a972403",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/composioControl.ts",
-      "sha256": "f8ad0d65a5f8e70a636a57161db93e25ce68e77a9fa873980e593ccbd8dc1e74",
+      "sha256": "06e8b400c89771c9cef3002a505cd565c53c9a59c6aabde89bb263cc8455e8cf",
       "symbols": [
         "ComposioControlAdmission",
         "ComposioControlOperation",
@@ -37502,9 +37586,9 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/services/integrations/businessAction.ts:1508",
+        "backend/src/services/integrations/businessAction.ts:1518",
         "backend/src/services/integrations/businessAutomations.ts:5",
-        "backend/src/services/integrations/composioClient.ts:14"
+        "backend/src/services/integrations/composioClient.ts:15"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -37611,7 +37695,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/services/integrations/businessAction.ts:41",
+        "backend/src/services/integrations/businessAction.ts:42",
         "backend/src/services/integrations/businessRead.ts:30",
         "backend/src/services/integrations/composioSkillGuidance.test.ts:3"
       ],
@@ -37890,6 +37974,7 @@
         "backend/src/services/integrations/composioControl.ts:11",
         "backend/src/services/integrations/credentialVaultRuntime.test.ts:6",
         "backend/src/services/integrations/credentialVaultStartup.ts:8",
+        "backend/src/services/integrations/customMcpPinControl.security.test.ts:8",
         "backend/src/services/integrations/githubApproval.ts:6",
         "backend/src/services/integrations/githubAuth.ts:6",
         "backend/src/services/integrations/githubPublication.security.test.ts:7",
@@ -37947,6 +38032,7 @@
         "backend/src/security/vercelRefreshAccount.local.integration.ts",
         "backend/src/services/integrations/composioControl.security.test.ts",
         "backend/src/services/integrations/credentialVaultRuntime.test.ts",
+        "backend/src/services/integrations/customMcpPinControl.security.test.ts",
         "backend/src/services/integrations/githubPublication.security.test.ts",
         "backend/src/services/integrations/githubSourceRead.test.ts",
         "backend/src/services/integrations/githubSourceRead.transport.security.test.ts",
@@ -38108,6 +38194,83 @@
         "backend/src/services/integrations/credentialVault.test.ts",
         "backend/src/services/integrations/credentialVaultStartup.test.ts",
         "backend/src/synthesis/projectRuntime/secretRead.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:8958ee3d5549f9eaad15",
+      "subsystem": "integrations_actions_credentials",
+      "sourcePath": "backend/src/services/integrations/customMcpPins.ts",
+      "sha256": "e5de2ee6a0bf38bb043f0f54990f778d99e47d81a2ad6a0920e559d7ea85a042",
+      "symbols": [
+        "CustomMcpDefinition",
+        "CustomMcpPin",
+        "CustomMcpPinStore",
+        "CustomPinClass",
+        "CustomPinDenial",
+        "context",
+        "customMcpDefinitionDigest",
+        "customMcpExecutionEnabled",
+        "db",
+        "live",
+        "pin",
+        "query",
+        "rowToPin",
+        "supabaseCustomMcpPinStore",
+        "value",
+        "verifyCustomMcpPin"
+      ],
+      "imports": [
+        "../../security/authority/digest.js",
+        "../../security/serviceRoleGuard.js",
+        "../../security/tenantContext.js",
+        "node:crypto"
+      ],
+      "runtimeImports": [
+        "backend/src/security/authority/digest.ts",
+        "backend/src/security/serviceRoleGuard.ts",
+        "backend/src/security/tenantContext.ts"
+      ],
+      "entryPoints": [
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
+      ],
+      "callers": [
+        "backend/src/routes/integrations.ts:1",
+        "backend/src/services/integrations/composioClient.ts:14",
+        "backend/src/services/integrations/customMcpPinClasses.test.ts:4",
+        "backend/src/services/integrations/customMcpPins.test.ts:3"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [
+        "custom_mcp_tool_pins"
+      ],
+      "externalProviderDependencies": [
+        "node:crypto"
+      ],
+      "authBoundary": [
+        "backend/src/services/integrations/customMcpPins.ts#canonicalAuthorityJson"
+      ],
+      "tenantBoundary": [
+        "backend/src/services/integrations/customMcpPins.ts:52 (user_id)",
+        "backend/src/services/integrations/customMcpPins.ts:65 (user_id)",
+        "backend/src/services/integrations/customMcpPins.ts:72 (user_id)"
+      ],
+      "approvalBoundary": [
+        "backend/src/services/integrations/customMcpPins.ts#customMcpDefinitionDigest"
+      ],
+      "costBoundary": [],
+      "evidenceBoundary": [
+        "backend/src/services/integrations/customMcpPins.ts#verifyCustomMcpPin"
+      ],
+      "testCoverage": [
+        "backend/src/services/integrations/customMcpPinClasses.test.ts",
+        "backend/src/services/integrations/customMcpPins.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -38291,7 +38454,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/services/integrations/businessAction.ts:1472",
+        "backend/src/services/integrations/businessAction.ts:1482",
         "backend/src/services/integrations/githubPublication.ts:11",
         "backend/src/services/showcase/templateExport.ts:4"
       ],
@@ -38991,7 +39154,7 @@
         "backend/src/routes/github.ts:541",
         "backend/src/routes/github.ts:627",
         "backend/src/routes/github.ts:697",
-        "backend/src/routes/integrations.ts:39",
+        "backend/src/routes/integrations.ts:40",
         "backend/src/routes/phase1.ts:47",
         "backend/src/routes/supabaseOAuth.ts:39",
         "backend/src/routes/vercel.ts:25",
@@ -40177,9 +40340,9 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/routes/integrations.ts:34",
+        "backend/src/routes/integrations.ts:35",
         "backend/src/security/tenantIsolation.local.integration.ts:935",
-        "backend/src/services/integrations/businessAction.ts:43",
+        "backend/src/services/integrations/businessAction.ts:44",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:6"
       ],
       "reachable": true,
@@ -40707,7 +40870,7 @@
       ],
       "callers": [
         "backend/src/routes/supabaseOAuth.ts:1",
-        "backend/src/services/integrations/businessAction.ts:1492",
+        "backend/src/services/integrations/businessAction.ts:1502",
         "backend/src/services/integrations/supabaseProjectCreation.security.test.ts:4"
       ],
       "reachable": true,
@@ -40925,16 +41088,16 @@
         "backend/src/ai/projectMemory.ts:7",
         "backend/src/ai/sessionMemory.ts:7",
         "backend/src/builder/providerTransports.ts:10",
-        "backend/src/routes/integrations.ts:231",
-        "backend/src/routes/integrations.ts:319",
-        "backend/src/routes/integrations.ts:657",
-        "backend/src/routes/integrations.ts:666",
+        "backend/src/routes/integrations.ts:233",
+        "backend/src/routes/integrations.ts:321",
+        "backend/src/routes/integrations.ts:659",
+        "backend/src/routes/integrations.ts:668",
         "backend/src/routes/supabaseOAuth.ts:21",
         "backend/src/routes/supabaseOAuth.ts:43",
         "backend/src/security/connectedMemoryConsumer.local.integration.ts:6",
         "backend/src/security/providerKeyRevision.local.integration.ts:5",
         "backend/src/security/tenantIsolation.local.integration.ts:56",
-        "backend/src/services/integrations/businessAction.ts:1497",
+        "backend/src/services/integrations/businessAction.ts:1507",
         "backend/src/services/integrations/supabaseActorBoundary.security.test.ts:5",
         "backend/src/services/integrations/supabaseManagement.security.test.ts:13",
         "backend/src/services/integrations/supabaseProvision.authority.test.ts:5",
@@ -41197,8 +41360,8 @@
         "backend/src/ai/pipeline.ts:3840",
         "backend/src/ai/tenantModelDispatch.ts:6",
         "backend/src/config/supabaseTransport.security.test.ts:6",
-        "backend/src/routes/integrations.ts:19",
-        "backend/src/routes/integrations.ts:651",
+        "backend/src/routes/integrations.ts:20",
+        "backend/src/routes/integrations.ts:653",
         "backend/src/routes/publish.ts:18",
         "backend/src/routes/supabaseOAuth.ts:28",
         "backend/src/security/connectedMemoryConsumer.local.integration.ts:5",
@@ -41428,7 +41591,7 @@
         "backend/src/ai/pipeline.ts:123",
         "backend/src/builder/hosting/authority.ts:5",
         "backend/src/lib/platformReady.ts:7",
-        "backend/src/routes/integrations.ts:30",
+        "backend/src/routes/integrations.ts:31",
         "backend/src/routes/supabaseOAuth.ts:35",
         "backend/src/routes/vercel.ts:6",
         "backend/src/routes/vercelTransport.security.test.ts:9",
@@ -41903,6 +42066,7 @@
         "backend/src/services/integrations/businessModelEgress.test.ts:5",
         "backend/src/services/integrations/composioControl.security.test.ts:7",
         "backend/src/services/integrations/composioProvenance.security.test.ts:4",
+        "backend/src/services/integrations/customMcpPinControl.security.test.ts:6",
         "backend/src/services/integrations/githubPublication.security.test.ts:6",
         "backend/src/services/integrations/supabaseProjectCreation.security.test.ts:7",
         "backend/src/services/integrations/supabaseProvision.authority.test.ts:10",
@@ -41937,6 +42101,7 @@
         "backend/src/services/integrations/businessModelEgress.test.ts",
         "backend/src/services/integrations/composioControl.security.test.ts",
         "backend/src/services/integrations/composioProvenance.security.test.ts",
+        "backend/src/services/integrations/customMcpPinControl.security.test.ts",
         "backend/src/services/integrations/githubPublication.security.test.ts",
         "backend/src/services/integrations/supabaseProjectCreation.security.test.ts",
         "backend/src/services/integrations/supabaseProvision.authority.test.ts",
@@ -42080,7 +42245,7 @@
         "backend/src/routes/publish.ts:268",
         "backend/src/routes/publish.ts:305",
         "backend/src/routes/publish.ts:321",
-        "backend/src/services/integrations/businessAction.ts:1487",
+        "backend/src/services/integrations/businessAction.ts:1497",
         "backend/src/services/integrations/oauthAuthorizationEpoch.test.ts:7",
         "backend/src/services/integrations/oauthPkceStore.consume.test.ts:8",
         "backend/src/services/publish/chromeWebStore.authority.test.ts:4",
@@ -42340,7 +42505,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/services/integrations/businessAction.ts:1477",
+        "backend/src/services/integrations/businessAction.ts:1487",
         "backend/src/services/publish/nonWebShip.ts:2"
       ],
       "reachable": true,
@@ -42566,7 +42731,7 @@
         "backend/src/ai/pipeline.ts:180",
         "backend/src/routes/publish.ts:12",
         "backend/src/routes/publish.ts:70",
-        "backend/src/services/integrations/businessAction.ts:1513",
+        "backend/src/services/integrations/businessAction.ts:1523",
         "backend/src/services/integrations/userProviderKeys.revision.test.ts:9",
         "backend/src/services/publish/expoCanonicalAdmission.security.test.ts:4",
         "backend/src/services/publish/expoWorkflow.authority.test.ts:3",
@@ -42706,7 +42871,7 @@
       "callers": [
         "backend/src/ai/pipeline.ts:186",
         "backend/src/routes/publish.ts:382",
-        "backend/src/services/integrations/businessAction.ts:1467",
+        "backend/src/services/integrations/businessAction.ts:1477",
         "backend/src/services/publish/electronSecrets.authority.test.ts:4",
         "backend/src/services/publish/electronSigningAdmission.security.test.ts:3"
       ],
@@ -43616,7 +43781,7 @@
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:174",
-        "backend/src/services/integrations/businessAction.ts:1482",
+        "backend/src/services/integrations/businessAction.ts:1492",
         "backend/src/services/publish/desktopWorkflow.security.test.ts:3",
         "backend/src/services/publish/desktopWorkflow.security.test.ts:4",
         "backend/src/services/publish/desktopWorkflow.ts:68",
@@ -46526,7 +46691,7 @@
         "backend/src/index.ts:60",
         "backend/src/routes/browserRuns.ts:20",
         "backend/src/routes/drive.ts:4",
-        "backend/src/routes/localBrowser.ts:12",
+        "backend/src/routes/localBrowser.ts:13",
         "backend/src/routes/localBrowserDevice.ts:6",
         "backend/src/routes/storageReconcileScheduler.ts:3",
         "backend/src/runtime/readiness.ts:13",
@@ -54894,7 +55059,7 @@
         "backend/src/routes/browserRunInternal.ts:4",
         "backend/src/routes/browserRuns.test.ts:13",
         "backend/src/routes/browserRuns.ts:23",
-        "backend/src/routes/localBrowser.ts:13",
+        "backend/src/routes/localBrowser.ts:14",
         "backend/src/workers/browserInputSecret.security.test.ts:2",
         "backend/src/workers/browserInputSecret.security.test.ts:3",
         "backend/src/workers/browserRunDurability.test.ts:10",
@@ -55163,7 +55328,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/routes/localBrowser.ts:14",
+        "backend/src/routes/localBrowser.ts:15",
         "backend/src/workers/browserCapability.ts:24",
         "backend/src/workers/browserCoordinator.test.ts:5",
         "backend/src/workers/browserCoordinator.ts:18",
@@ -55275,7 +55440,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/routes/localBrowser.ts:16",
+        "backend/src/routes/localBrowser.ts:17",
         "backend/src/workers/browserModelGateway.ts:17",
         "backend/src/workers/browserPlanner.ts:12"
       ],
@@ -55709,7 +55874,7 @@
         "backend/src/routes/browserRuns.test.ts:15",
         "backend/src/routes/browserRuns.ts:27",
         "backend/src/routes/localBrowser.test.ts:9",
-        "backend/src/routes/localBrowser.ts:17",
+        "backend/src/routes/localBrowser.ts:18",
         "backend/src/routes/localBrowserPluginActions.test.ts:8",
         "backend/src/workers/browserCapability.ts:28",
         "backend/src/workers/browserInputSecret.security.test.ts:4",
@@ -56867,7 +57032,7 @@
       ],
       "callers": [
         "backend/src/routes/browserRuns.ts:28",
-        "backend/src/routes/localBrowser.ts:18",
+        "backend/src/routes/localBrowser.ts:19",
         "backend/src/workers/browserRunStore.integration.test.ts:10",
         "backend/src/workers/postgresLeaseStore.integration.test.ts:12"
       ],
@@ -57259,7 +57424,7 @@
       "id": "surface:0f84037d5cb2f55a93d1",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/app/(shell)/dashboard/actions/confirm/[id]/page.tsx",
-      "sha256": "6482073070ffb51c6258a6fd7e0a3e8d5d744b34d612bc62d7f6b73e7b42a066",
+      "sha256": "c2c05250da54d078c74e6482ec8003d51e0f13d795aca1f28bc496364ba758f3",
       "symbols": [
         "BusinessActionConfirmationPage",
         "ConfirmationStatus",
@@ -81090,10 +81255,12 @@
       "id": "surface:6cd21a42c1ef09dc9ee9",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "frontend/src/components/integrations/CustomMcpManager.tsx",
-      "sha256": "47340753ec6349b09b1da846fe02628fee0af5f8b37eebfaa59cd9bc585f76a7",
+      "sha256": "dd00e4ac29c783104f6e185edbcca19d8be279a370ca0761c5c5e4f1ab719d87",
       "symbols": [
         "CustomMcpCreateForm",
         "CustomMcpManager",
+        "CustomMcpToolsPanel",
+        "PinInfo",
         "activeSession",
         "authPopup",
         "cleanName",
@@ -81107,6 +81274,8 @@
         "error",
         "link",
         "load",
+        "pin",
+        "pinned",
         "popup",
         "remove",
         "removeBusy",
@@ -81115,7 +81284,8 @@
         "sorted",
         "state",
         "sync",
-        "syncBusy"
+        "syncBusy",
+        "unpin"
       ],
       "imports": [
         "@/components/integrations/PluginBrandLogo",
@@ -115739,7 +115909,7 @@
       "id": "surface:b706c46ac319bb606f7e",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/xrogaConnect.ts",
-      "sha256": "f21dc8a91d626123ecda91340d33738b9b95f3a6aa0df80fa231c7a1540c835b",
+      "sha256": "cdd72ad178b7de76d0bcf4ad0b16e77a9f070f146b18902a778dcd2543d72d5a",
       "symbols": [
         "XrogaConnectAvailabilityMode",
         "XrogaConnectCatalogCategory",
@@ -128312,9 +128482,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:526145b97b0d843c288e",
+      "id": "registration:2dcbf93957fce66dbd21",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 75,
+      "line": 77,
       "receiver": "router",
       "method": "get",
       "path": "/ai-catalog",
@@ -128324,9 +128494,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:4c30156d398512480249",
+      "id": "registration:4593c4e4f96ee0684680",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 143,
+      "line": 145,
       "receiver": "router",
       "method": "get",
       "path": "/supabase/status",
@@ -128336,9 +128506,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:3c422c1b5b0199925d8f",
+      "id": "registration:128c472a5d0bbf97d9c6",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 198,
+      "line": 200,
       "receiver": "router",
       "method": "post",
       "path": "/supabase/list-projects",
@@ -128348,9 +128518,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:d55b61eb0075401bf918",
+      "id": "registration:f1fd3323d750051f63db",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 269,
+      "line": 271,
       "receiver": "router",
       "method": "post",
       "path": "/supabase/one-click",
@@ -128360,9 +128530,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:4fbd8077ce88a09fe124",
+      "id": "registration:dda0a64ce85eeb02314e",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 430,
+      "line": 432,
       "receiver": "router",
       "method": "post",
       "path": "/supabase/connect",
@@ -128372,9 +128542,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:625f68f1606745f4eefc",
+      "id": "registration:44e47eaedba0b20f21aa",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 617,
+      "line": 619,
       "receiver": "router",
       "method": "post",
       "path": "/supabase/provision",
@@ -128384,9 +128554,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:a56a651752607dcb2373",
+      "id": "registration:69f411763b0e96d286e8",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 729,
+      "line": 731,
       "receiver": "router",
       "method": "get",
       "path": "/provider-keys",
@@ -128396,9 +128566,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:566a3bcc687d90b0c889",
+      "id": "registration:f51b9e916c79c2a31c2d",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 753,
+      "line": 755,
       "receiver": "router",
       "method": "post",
       "path": "/provider-keys",
@@ -128408,9 +128578,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:13877e15b2ee0bb1f879",
+      "id": "registration:0413ad36c8dec063ab5c",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 911,
+      "line": 913,
       "receiver": "router",
       "method": "delete",
       "path": "/provider-keys/:provider",
@@ -128420,9 +128590,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:edc1ff3d5b4e5944221d",
+      "id": "registration:1a29257808ac6e5a3f4e",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 944,
+      "line": 946,
       "receiver": "router",
       "method": "post",
       "path": "/sync-vercel-env",
@@ -128432,9 +128602,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:31f3c899a59c64c5b19a",
+      "id": "registration:fb448851899a65cb953d",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1072,
+      "line": 1074,
       "receiver": "router",
       "method": "get",
       "path": "/xroga-connect/permission-policy",
@@ -128444,9 +128614,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:2880c17e803932add7e3",
+      "id": "registration:b7ec34bbeed417e9cec2",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1124,
+      "line": 1126,
       "receiver": "router",
       "method": "patch",
       "path": "/xroga-connect/permission-policy",
@@ -128456,9 +128626,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:7a14bd5567a940331316",
+      "id": "registration:6efd34f8b9de04fa0e39",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1183,
+      "line": 1185,
       "receiver": "router",
       "method": "get",
       "path": "/xroga-connect/status",
@@ -128468,9 +128638,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:b8167e06a115fa6f0b72",
+      "id": "registration:4cef5983de1cfe31e7f9",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1201,
+      "line": 1203,
       "receiver": "router",
       "method": "get",
       "path": "/xroga-connect/catalog",
@@ -128480,9 +128650,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:536b68e9d628328fdcd8",
+      "id": "registration:4cab30a0fa468083451b",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1307,
+      "line": 1309,
       "receiver": "router",
       "method": "get",
       "path": "/xroga-connect/catalog-categories",
@@ -128492,9 +128662,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:20225f17474973481acf",
+      "id": "registration:bd7795a96a0af65cf1e8",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1326,
+      "line": 1328,
       "receiver": "router",
       "method": "get",
       "path": "/xroga-connect/catalog/:toolkit/tools",
@@ -128504,9 +128674,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:1c75f01f321783254fc1",
+      "id": "registration:301297fd77dd48aabbf3",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1387,
+      "line": 1389,
       "receiver": "router",
       "method": "get",
       "path": "/xroga-connect/catalog/:toolkit/triggers",
@@ -128516,9 +128686,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:7ee8ba62a5bd12b352fd",
+      "id": "registration:e301a90fb1fa7ed6a056",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1448,
+      "line": 1450,
       "receiver": "router",
       "method": "get",
       "path": "/xroga-connect/catalog/:toolkit",
@@ -128528,9 +128698,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:b8b425a8c7307c1e7a1c",
+      "id": "registration:c685ea0c32e135217fd2",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1510,
+      "line": 1512,
       "receiver": "router",
       "method": "get",
       "path": "/xroga-connect/tool-details/:toolSlug",
@@ -128540,9 +128710,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:f0a6f1fb1fe30cd132ed",
+      "id": "registration:8061af919e6e0b3df966",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1567,
+      "line": 1569,
       "receiver": "router",
       "method": "post",
       "path": "/xroga-connect/session",
@@ -128552,9 +128722,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:858a6dccf871bc5039fa",
+      "id": "registration:c38fff7f987d3bd4adc3",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1604,
+      "line": 1606,
       "receiver": "router",
       "method": "post",
       "path": "/xroga-connect/search",
@@ -128564,9 +128734,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:cf9bd4f90ed163e75e89",
+      "id": "registration:6133a6852183ce4f3d4a",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1690,
+      "line": 1692,
       "receiver": "router",
       "method": "post",
       "path": "/xroga-connect/action-search",
@@ -128576,9 +128746,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:0613d8cca0a0cd0ae805",
+      "id": "registration:f95a4b57d765d86104e4",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1758,
+      "line": 1760,
       "receiver": "router",
       "method": "post",
       "path": "/xroga-connect/toolkits",
@@ -128588,9 +128758,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:c9d2378ad6c74e328a52",
+      "id": "registration:cfb907af2e0daeb89256",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1823,
+      "line": 1825,
       "receiver": "router",
       "method": "get",
       "path": "/xroga-connect/custom-mcp",
@@ -128600,9 +128770,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:f3a3c202f68d33453fd5",
+      "id": "registration:1515b11b25e16ae45c54",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1842,
+      "line": 1844,
       "receiver": "router",
       "method": "post",
       "path": "/xroga-connect/custom-mcp",
@@ -128612,9 +128782,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:9d6f353aa32bfab9bc5a",
+      "id": "registration:cd7a39019df22ce7adad",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1883,
+      "line": 1885,
       "receiver": "router",
       "method": "post",
       "path": "/xroga-connect/custom-mcp/:toolkit/sync",
@@ -128624,9 +128794,45 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:8d3be084c7c9fab116ee",
+      "id": "registration:e9a38151a82c94d675f3",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1938,
+      "line": 1941,
+      "receiver": "router",
+      "method": "post",
+      "path": "/xroga-connect/custom-mcp/:toolkit/pin",
+      "handlers": [],
+      "scope": "module",
+      "functionName": "<module>",
+      "inlineResponse": true
+    },
+    {
+      "id": "registration:03141f1562223cc9a3aa",
+      "sourcePath": "backend/src/routes/integrations.ts",
+      "line": 1956,
+      "receiver": "router",
+      "method": "get",
+      "path": "/xroga-connect/custom-mcp/pins",
+      "handlers": [],
+      "scope": "module",
+      "functionName": "<module>",
+      "inlineResponse": true
+    },
+    {
+      "id": "registration:643447dd855afbc7a2e3",
+      "sourcePath": "backend/src/routes/integrations.ts",
+      "line": 1967,
+      "receiver": "router",
+      "method": "delete",
+      "path": "/xroga-connect/custom-mcp/:toolkit/pin/:toolSlug",
+      "handlers": [],
+      "scope": "module",
+      "functionName": "<module>",
+      "inlineResponse": true
+    },
+    {
+      "id": "registration:dc72a13e22f295aaddd2",
+      "sourcePath": "backend/src/routes/integrations.ts",
+      "line": 1982,
       "receiver": "router",
       "method": "delete",
       "path": "/xroga-connect/custom-mcp/:toolkit",
@@ -128636,9 +128842,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:90d3135fd6b2a7e3e48a",
+      "id": "registration:29821a551b5d893eb5ce",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1985,
+      "line": 2029,
       "receiver": "router",
       "method": "post",
       "path": "/xroga-connect/link",
@@ -128648,9 +128854,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:f965eef00543347ee125",
+      "id": "registration:1705216e11c29113842d",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 2082,
+      "line": 2126,
       "receiver": "router",
       "method": "post",
       "path": "/xroga-connect/execute",
@@ -128660,9 +128866,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:fe2fbf8af677321fa12f",
+      "id": "registration:b30f9cda1760167c2b04",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 2162,
+      "line": 2206,
       "receiver": "router",
       "method": "use",
       "path": "/live-ai",
@@ -128672,9 +128878,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:7dda7c2710c747893e21",
+      "id": "registration:accd620446a634706ba2",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 2168,
+      "line": 2212,
       "receiver": "router",
       "method": "use",
       "path": "/search",
@@ -128684,9 +128890,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:b026ee827de731b69713",
+      "id": "registration:59b495ea80c62e39f7a0",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 331,
+      "line": 378,
       "receiver": "router",
       "method": "use",
       "path": "/plugins",
@@ -128698,9 +128904,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:15a73b775482ed4e1c66",
+      "id": "registration:08a34e495bc5719278a6",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 345,
+      "line": 392,
       "receiver": "router",
       "method": "post",
       "path": "/runs",
@@ -128712,9 +128918,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:5e2f31f04b3798ae6746",
+      "id": "registration:382c7b9a00b1c2f34836",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 371,
+      "line": 418,
       "receiver": "router",
       "method": "get",
       "path": "/session",
@@ -128726,9 +128932,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:f689fc0646f493c556c2",
+      "id": "registration:b7351951a03ff9b458a2",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 376,
+      "line": 423,
       "receiver": "router",
       "method": "post",
       "path": "/documents",
@@ -128740,9 +128946,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:815e87598015c6e64281",
+      "id": "registration:07ad6f43a6f4c5d1819b",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 397,
+      "line": 444,
       "receiver": "router",
       "method": "get",
       "path": "/runs/:runId",
@@ -128754,9 +128960,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:58d59aad8a92dea9bc35",
+      "id": "registration:704f51400a6bca67eed1",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 406,
+      "line": 453,
       "receiver": "router",
       "method": "delete",
       "path": "/runs/:runId",
@@ -128768,9 +128974,23 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:9f0d9a81bfce7fa438e3",
+      "id": "registration:5bacd84ea30f9b89fe85",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 434,
+      "line": 484,
+      "receiver": "router",
+      "method": "post",
+      "path": "/runs/:runId/public-get",
+      "handlers": [
+        "withLease()"
+      ],
+      "scope": "function",
+      "functionName": "createLocalBrowserRouter",
+      "inlineResponse": false
+    },
+    {
+      "id": "registration:c62879c1c2a8d166d7d0",
+      "sourcePath": "backend/src/routes/localBrowser.ts",
+      "line": 502,
       "receiver": "router",
       "method": "post",
       "path": "/runs/:runId/plugin-search",
@@ -128782,9 +129002,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:ee924565631a38369d90",
+      "id": "registration:dce8f9087c1ccc0cdd16",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 461,
+      "line": 537,
       "receiver": "router",
       "method": "post",
       "path": "/runs/:runId/plugin-action-search",
@@ -128796,9 +129016,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:555382144876fe910da6",
+      "id": "registration:a73e01f1667e65fc5a08",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 488,
+      "line": 566,
       "receiver": "router",
       "method": "post",
       "path": "/runs/:runId/plugin-act",
@@ -128810,9 +129030,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:01668f9777c6860f490e",
+      "id": "registration:a2f1ca9b7ad0173c56f1",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 536,
+      "line": 633,
       "receiver": "router",
       "method": "post",
       "path": "/runs/:runId/plugin-act-review",
@@ -128824,9 +129044,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:921a0203fd51fe1f5901",
+      "id": "registration:a2bc03036ef06446b4e4",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 556,
+      "line": 653,
       "receiver": "router",
       "method": "post",
       "path": "/runs/:runId/plugin-read",
@@ -128838,9 +129058,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:4d123ff2ec46b45c7d59",
+      "id": "registration:15fb5863eb4e2148cc30",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 596,
+      "line": 706,
       "receiver": "router",
       "method": "post",
       "path": "/runs/:runId/plugin-review",
@@ -128852,9 +129072,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:ac828c0e465b9255c8c3",
+      "id": "registration:106e8a70455fb1d97a90",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 617,
+      "line": 727,
       "receiver": "router",
       "method": "post",
       "path": "/runs/:runId/turn",
@@ -128866,9 +129086,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:b7e409614e06d7a5d0c0",
+      "id": "registration:0c74167a0b38e05fb956",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 720,
+      "line": 841,
       "receiver": "router",
       "method": "post",
       "path": "/runs/:runId/extend",
@@ -128880,9 +129100,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:95b7e439e1d450b7a35f",
+      "id": "registration:73b3aefc33f673a87caa",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 725,
+      "line": 846,
       "receiver": "router",
       "method": "post",
       "path": "/runs/:runId/resume",
@@ -128894,9 +129114,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:fcc20997caead69a4af5",
+      "id": "registration:6754f5960e38b02227eb",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 732,
+      "line": 853,
       "receiver": "router",
       "method": "post",
       "path": "/runs/:runId/finish",
@@ -133089,10 +133309,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:a5b0e7c4841bea042ef2",
-      "registrationId": "registration:15a73b775482ed4e1c66",
+      "id": "route:c850ee124e2885c2724e",
+      "registrationId": "registration:08a34e495bc5719278a6",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 345,
+      "line": 392,
       "method": "POST",
       "path": "/api/browser/local/runs",
       "mountChain": [
@@ -133106,10 +133326,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:4f58b4de9b2c884bf517",
-      "registrationId": "registration:5e2f31f04b3798ae6746",
+      "id": "route:dbf3dea6060d7f344312",
+      "registrationId": "registration:382c7b9a00b1c2f34836",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 371,
+      "line": 418,
       "method": "GET",
       "path": "/api/browser/local/session",
       "mountChain": [
@@ -133123,10 +133343,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:4127366da451364475bf",
-      "registrationId": "registration:f689fc0646f493c556c2",
+      "id": "route:da3feb6ad2624ce1ac50",
+      "registrationId": "registration:b7351951a03ff9b458a2",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 376,
+      "line": 423,
       "method": "POST",
       "path": "/api/browser/local/documents",
       "mountChain": [
@@ -133140,10 +133360,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:70266a6e99a673af6e78",
-      "registrationId": "registration:815e87598015c6e64281",
+      "id": "route:fa7a148bef9bc8fd2c37",
+      "registrationId": "registration:07ad6f43a6f4c5d1819b",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 397,
+      "line": 444,
       "method": "GET",
       "path": "/api/browser/local/runs/:runId",
       "mountChain": [
@@ -133157,10 +133377,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:cb7d08fcab3f9aefa6fc",
-      "registrationId": "registration:58d59aad8a92dea9bc35",
+      "id": "route:ee4b7ea6e0d2a2edea80",
+      "registrationId": "registration:704f51400a6bca67eed1",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 406,
+      "line": 453,
       "method": "DELETE",
       "path": "/api/browser/local/runs/:runId",
       "mountChain": [
@@ -133174,10 +133394,27 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:34139200a4abe379d816",
-      "registrationId": "registration:9f0d9a81bfce7fa438e3",
+      "id": "route:468d21cdabd11af67ccc",
+      "registrationId": "registration:5bacd84ea30f9b89fe85",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 434,
+      "line": 484,
+      "method": "POST",
+      "path": "/api/browser/local/runs/:runId/public-get",
+      "mountChain": [
+        "backend/src/index.ts:269"
+      ],
+      "authBoundary": [
+        "createLocalBrowserAuth()"
+      ],
+      "reachable": false,
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "reason": "Registration is conditional or inside a function; execution must be verified."
+    },
+    {
+      "id": "route:b25fb3fdf0e4652acef9",
+      "registrationId": "registration:c62879c1c2a8d166d7d0",
+      "sourcePath": "backend/src/routes/localBrowser.ts",
+      "line": 502,
       "method": "POST",
       "path": "/api/browser/local/runs/:runId/plugin-search",
       "mountChain": [
@@ -133191,10 +133428,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:2e1c8578bc5b18c80c14",
-      "registrationId": "registration:ee924565631a38369d90",
+      "id": "route:6b80a1f6f2fd9e9f2ae4",
+      "registrationId": "registration:dce8f9087c1ccc0cdd16",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 461,
+      "line": 537,
       "method": "POST",
       "path": "/api/browser/local/runs/:runId/plugin-action-search",
       "mountChain": [
@@ -133208,10 +133445,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:a5bb6add9508c80b0228",
-      "registrationId": "registration:555382144876fe910da6",
+      "id": "route:0109fe5f7994ca13c9a6",
+      "registrationId": "registration:a73e01f1667e65fc5a08",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 488,
+      "line": 566,
       "method": "POST",
       "path": "/api/browser/local/runs/:runId/plugin-act",
       "mountChain": [
@@ -133225,10 +133462,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:ec62bda2af134a35cecd",
-      "registrationId": "registration:01668f9777c6860f490e",
+      "id": "route:f0fc6863ae3a0eb80faf",
+      "registrationId": "registration:a2f1ca9b7ad0173c56f1",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 536,
+      "line": 633,
       "method": "POST",
       "path": "/api/browser/local/runs/:runId/plugin-act-review",
       "mountChain": [
@@ -133242,10 +133479,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:47b92209323b6519a25a",
-      "registrationId": "registration:921a0203fd51fe1f5901",
+      "id": "route:7bdb3a200b1789d28cd0",
+      "registrationId": "registration:a2bc03036ef06446b4e4",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 556,
+      "line": 653,
       "method": "POST",
       "path": "/api/browser/local/runs/:runId/plugin-read",
       "mountChain": [
@@ -133259,10 +133496,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:cba6c9ad9f43e6a6d01c",
-      "registrationId": "registration:4d123ff2ec46b45c7d59",
+      "id": "route:f470ea8d5e04c3fd8aa5",
+      "registrationId": "registration:15fb5863eb4e2148cc30",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 596,
+      "line": 706,
       "method": "POST",
       "path": "/api/browser/local/runs/:runId/plugin-review",
       "mountChain": [
@@ -133276,10 +133513,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:afd18d37d7de49c5fd0c",
-      "registrationId": "registration:ac828c0e465b9255c8c3",
+      "id": "route:8025b3507bdcde059942",
+      "registrationId": "registration:106e8a70455fb1d97a90",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 617,
+      "line": 727,
       "method": "POST",
       "path": "/api/browser/local/runs/:runId/turn",
       "mountChain": [
@@ -133293,10 +133530,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:988e9cb4f445ac7c5277",
-      "registrationId": "registration:b7e409614e06d7a5d0c0",
+      "id": "route:c0d162d8fa458b91dc21",
+      "registrationId": "registration:0c74167a0b38e05fb956",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 720,
+      "line": 841,
       "method": "POST",
       "path": "/api/browser/local/runs/:runId/extend",
       "mountChain": [
@@ -133310,10 +133547,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:dc054c6466d27baaaf09",
-      "registrationId": "registration:95b7e439e1d450b7a35f",
+      "id": "route:59404bf99565282e506f",
+      "registrationId": "registration:73b3aefc33f673a87caa",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 725,
+      "line": 846,
       "method": "POST",
       "path": "/api/browser/local/runs/:runId/resume",
       "mountChain": [
@@ -133327,10 +133564,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:8a11dbf0dbfe0cbf1ad8",
-      "registrationId": "registration:fcc20997caead69a4af5",
+      "id": "route:93916be0ac16fbbaa71c",
+      "registrationId": "registration:6754f5960e38b02227eb",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 732,
+      "line": 853,
       "method": "POST",
       "path": "/api/browser/local/runs/:runId/finish",
       "mountChain": [
@@ -134332,10 +134569,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:cd1236c1acf30290b43a",
-      "registrationId": "registration:526145b97b0d843c288e",
+      "id": "route:2c1972709ca0fa8fe084",
+      "registrationId": "registration:2dcbf93957fce66dbd21",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 75,
+      "line": 77,
       "method": "GET",
       "path": "/api/integrations/ai-catalog",
       "mountChain": [
@@ -134349,10 +134586,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:f17b78f4a9236595f718",
-      "registrationId": "registration:4c30156d398512480249",
+      "id": "route:d2434069ec9cfe157bf2",
+      "registrationId": "registration:4593c4e4f96ee0684680",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 143,
+      "line": 145,
       "method": "GET",
       "path": "/api/integrations/supabase/status",
       "mountChain": [
@@ -134366,10 +134603,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:3a1c911a557479940c4d",
-      "registrationId": "registration:3c422c1b5b0199925d8f",
+      "id": "route:ed7b168b9d22c611ae69",
+      "registrationId": "registration:128c472a5d0bbf97d9c6",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 198,
+      "line": 200,
       "method": "POST",
       "path": "/api/integrations/supabase/list-projects",
       "mountChain": [
@@ -134383,10 +134620,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:c50a1d9366f782b0a0a1",
-      "registrationId": "registration:d55b61eb0075401bf918",
+      "id": "route:7e55970300d134a89ce4",
+      "registrationId": "registration:f1fd3323d750051f63db",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 269,
+      "line": 271,
       "method": "POST",
       "path": "/api/integrations/supabase/one-click",
       "mountChain": [
@@ -134400,10 +134637,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:e103d3b6cffea64d693b",
-      "registrationId": "registration:4fbd8077ce88a09fe124",
+      "id": "route:31d935c99eea2a53b65c",
+      "registrationId": "registration:dda0a64ce85eeb02314e",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 430,
+      "line": 432,
       "method": "POST",
       "path": "/api/integrations/supabase/connect",
       "mountChain": [
@@ -134417,10 +134654,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:55b8c4853514e7fa42b0",
-      "registrationId": "registration:625f68f1606745f4eefc",
+      "id": "route:5642a663673d9d67cf9f",
+      "registrationId": "registration:44e47eaedba0b20f21aa",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 617,
+      "line": 619,
       "method": "POST",
       "path": "/api/integrations/supabase/provision",
       "mountChain": [
@@ -134434,10 +134671,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:de80cd3c3e2fc89645d2",
-      "registrationId": "registration:a56a651752607dcb2373",
+      "id": "route:3f1f140eb8ead0407e6f",
+      "registrationId": "registration:69f411763b0e96d286e8",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 729,
+      "line": 731,
       "method": "GET",
       "path": "/api/integrations/provider-keys",
       "mountChain": [
@@ -134451,10 +134688,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:1b594784966a2fe2a6c2",
-      "registrationId": "registration:566a3bcc687d90b0c889",
+      "id": "route:b1e31bad70458a0230e3",
+      "registrationId": "registration:f51b9e916c79c2a31c2d",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 753,
+      "line": 755,
       "method": "POST",
       "path": "/api/integrations/provider-keys",
       "mountChain": [
@@ -134468,10 +134705,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:b4fc7d9ba1ee45591210",
-      "registrationId": "registration:13877e15b2ee0bb1f879",
+      "id": "route:cbe4416ca7e8e1bbdbee",
+      "registrationId": "registration:0413ad36c8dec063ab5c",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 911,
+      "line": 913,
       "method": "DELETE",
       "path": "/api/integrations/provider-keys/:provider",
       "mountChain": [
@@ -134485,10 +134722,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:0404927890f68b63408d",
-      "registrationId": "registration:edc1ff3d5b4e5944221d",
+      "id": "route:4de5911c18ff75011dcd",
+      "registrationId": "registration:1a29257808ac6e5a3f4e",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 944,
+      "line": 946,
       "method": "POST",
       "path": "/api/integrations/sync-vercel-env",
       "mountChain": [
@@ -134502,10 +134739,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:fe76bf490a8a700164a3",
-      "registrationId": "registration:31f3c899a59c64c5b19a",
+      "id": "route:43db3a77aa665f98933d",
+      "registrationId": "registration:fb448851899a65cb953d",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1072,
+      "line": 1074,
       "method": "GET",
       "path": "/api/integrations/xroga-connect/permission-policy",
       "mountChain": [
@@ -134519,10 +134756,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:635f700d520d6c33bd1a",
-      "registrationId": "registration:2880c17e803932add7e3",
+      "id": "route:f8c2f170724670ceb404",
+      "registrationId": "registration:b7ec34bbeed417e9cec2",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1124,
+      "line": 1126,
       "method": "PATCH",
       "path": "/api/integrations/xroga-connect/permission-policy",
       "mountChain": [
@@ -134536,10 +134773,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:a4307ffa12ed7b36df85",
-      "registrationId": "registration:7a14bd5567a940331316",
+      "id": "route:d3b98d4ec1e7b5c44115",
+      "registrationId": "registration:6efd34f8b9de04fa0e39",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1183,
+      "line": 1185,
       "method": "GET",
       "path": "/api/integrations/xroga-connect/status",
       "mountChain": [
@@ -134553,10 +134790,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:1d452abb65ee950d4a9d",
-      "registrationId": "registration:b8167e06a115fa6f0b72",
+      "id": "route:7ad7f02918d2a19eded2",
+      "registrationId": "registration:4cef5983de1cfe31e7f9",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1201,
+      "line": 1203,
       "method": "GET",
       "path": "/api/integrations/xroga-connect/catalog",
       "mountChain": [
@@ -134570,10 +134807,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:bcec998bc682e634bf7d",
-      "registrationId": "registration:536b68e9d628328fdcd8",
+      "id": "route:77724b97aeae764f78e3",
+      "registrationId": "registration:4cab30a0fa468083451b",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1307,
+      "line": 1309,
       "method": "GET",
       "path": "/api/integrations/xroga-connect/catalog-categories",
       "mountChain": [
@@ -134587,10 +134824,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:7274c61395e8e17754c9",
-      "registrationId": "registration:20225f17474973481acf",
+      "id": "route:5968abaa4f4205cf2f8c",
+      "registrationId": "registration:bd7795a96a0af65cf1e8",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1326,
+      "line": 1328,
       "method": "GET",
       "path": "/api/integrations/xroga-connect/catalog/:toolkit/tools",
       "mountChain": [
@@ -134604,10 +134841,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:100dce7df13b23a767b4",
-      "registrationId": "registration:1c75f01f321783254fc1",
+      "id": "route:69009334ede42e81e96c",
+      "registrationId": "registration:301297fd77dd48aabbf3",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1387,
+      "line": 1389,
       "method": "GET",
       "path": "/api/integrations/xroga-connect/catalog/:toolkit/triggers",
       "mountChain": [
@@ -134621,10 +134858,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:c057515d49424a79af37",
-      "registrationId": "registration:7ee8ba62a5bd12b352fd",
+      "id": "route:b745b9a0529004262fe0",
+      "registrationId": "registration:e301a90fb1fa7ed6a056",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1448,
+      "line": 1450,
       "method": "GET",
       "path": "/api/integrations/xroga-connect/catalog/:toolkit",
       "mountChain": [
@@ -134638,10 +134875,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:1d2c2b5c3ae491a58ebb",
-      "registrationId": "registration:b8b425a8c7307c1e7a1c",
+      "id": "route:a18ad7a515813e19b40e",
+      "registrationId": "registration:c685ea0c32e135217fd2",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1510,
+      "line": 1512,
       "method": "GET",
       "path": "/api/integrations/xroga-connect/tool-details/:toolSlug",
       "mountChain": [
@@ -134655,10 +134892,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:250d73164f06c6e218a3",
-      "registrationId": "registration:f0a6f1fb1fe30cd132ed",
+      "id": "route:2b16a595d2335ad68ca0",
+      "registrationId": "registration:8061af919e6e0b3df966",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1567,
+      "line": 1569,
       "method": "POST",
       "path": "/api/integrations/xroga-connect/session",
       "mountChain": [
@@ -134672,10 +134909,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:7f206860dcfeb31fcdd9",
-      "registrationId": "registration:858a6dccf871bc5039fa",
+      "id": "route:371923d769b30d59fa50",
+      "registrationId": "registration:c38fff7f987d3bd4adc3",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1604,
+      "line": 1606,
       "method": "POST",
       "path": "/api/integrations/xroga-connect/search",
       "mountChain": [
@@ -134689,10 +134926,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:eeb83c290cec4bc4fd42",
-      "registrationId": "registration:cf9bd4f90ed163e75e89",
+      "id": "route:a05b3d0e4eaf54c007f9",
+      "registrationId": "registration:6133a6852183ce4f3d4a",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1690,
+      "line": 1692,
       "method": "POST",
       "path": "/api/integrations/xroga-connect/action-search",
       "mountChain": [
@@ -134706,10 +134943,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:e334b5937e37e8959c6e",
-      "registrationId": "registration:0613d8cca0a0cd0ae805",
+      "id": "route:8612d5f98b5e5832a37f",
+      "registrationId": "registration:f95a4b57d765d86104e4",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1758,
+      "line": 1760,
       "method": "POST",
       "path": "/api/integrations/xroga-connect/toolkits",
       "mountChain": [
@@ -134723,10 +134960,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:b20d19c245a65807b3ad",
-      "registrationId": "registration:c9d2378ad6c74e328a52",
+      "id": "route:3e6ad54c0c335c76fe48",
+      "registrationId": "registration:cfb907af2e0daeb89256",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1823,
+      "line": 1825,
       "method": "GET",
       "path": "/api/integrations/xroga-connect/custom-mcp",
       "mountChain": [
@@ -134740,10 +134977,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:6a75c2128bf92ddd0eee",
-      "registrationId": "registration:f3a3c202f68d33453fd5",
+      "id": "route:22e2162ea2c93428f89e",
+      "registrationId": "registration:1515b11b25e16ae45c54",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1842,
+      "line": 1844,
       "method": "POST",
       "path": "/api/integrations/xroga-connect/custom-mcp",
       "mountChain": [
@@ -134757,10 +134994,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:8f9dbb493c84f03a2805",
-      "registrationId": "registration:9d6f353aa32bfab9bc5a",
+      "id": "route:4242c56ae27aa22996c2",
+      "registrationId": "registration:cd7a39019df22ce7adad",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1883,
+      "line": 1885,
       "method": "POST",
       "path": "/api/integrations/xroga-connect/custom-mcp/:toolkit/sync",
       "mountChain": [
@@ -134774,10 +135011,61 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:58371b2539a925b4ed2f",
-      "registrationId": "registration:8d3be084c7c9fab116ee",
+      "id": "route:5953d8b2cd336201c88b",
+      "registrationId": "registration:e9a38151a82c94d675f3",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1938,
+      "line": 1941,
+      "method": "POST",
+      "path": "/api/integrations/xroga-connect/custom-mcp/:toolkit/pin",
+      "mountChain": [
+        "backend/src/index.ts:277"
+      ],
+      "authBoundary": [
+        "authMiddleware"
+      ],
+      "reachable": true,
+      "state": "IMPLEMENTED_AND_REACHABLE",
+      "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
+    },
+    {
+      "id": "route:319b94fe6e9f18ba878e",
+      "registrationId": "registration:03141f1562223cc9a3aa",
+      "sourcePath": "backend/src/routes/integrations.ts",
+      "line": 1956,
+      "method": "GET",
+      "path": "/api/integrations/xroga-connect/custom-mcp/pins",
+      "mountChain": [
+        "backend/src/index.ts:277"
+      ],
+      "authBoundary": [
+        "authMiddleware"
+      ],
+      "reachable": true,
+      "state": "IMPLEMENTED_AND_REACHABLE",
+      "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
+    },
+    {
+      "id": "route:fb098ee8603d6821f073",
+      "registrationId": "registration:643447dd855afbc7a2e3",
+      "sourcePath": "backend/src/routes/integrations.ts",
+      "line": 1967,
+      "method": "DELETE",
+      "path": "/api/integrations/xroga-connect/custom-mcp/:toolkit/pin/:toolSlug",
+      "mountChain": [
+        "backend/src/index.ts:277"
+      ],
+      "authBoundary": [
+        "authMiddleware"
+      ],
+      "reachable": true,
+      "state": "IMPLEMENTED_AND_REACHABLE",
+      "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
+    },
+    {
+      "id": "route:0d9beb0aef724d0f4ca9",
+      "registrationId": "registration:dc72a13e22f295aaddd2",
+      "sourcePath": "backend/src/routes/integrations.ts",
+      "line": 1982,
       "method": "DELETE",
       "path": "/api/integrations/xroga-connect/custom-mcp/:toolkit",
       "mountChain": [
@@ -134791,10 +135079,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:850f61474c494bd38912",
-      "registrationId": "registration:90d3135fd6b2a7e3e48a",
+      "id": "route:aec436c04c0a78629b92",
+      "registrationId": "registration:29821a551b5d893eb5ce",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1985,
+      "line": 2029,
       "method": "POST",
       "path": "/api/integrations/xroga-connect/link",
       "mountChain": [
@@ -134808,10 +135096,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:ad1352f4bb77a3efd2c8",
-      "registrationId": "registration:f965eef00543347ee125",
+      "id": "route:89e2a257f49cd2e83f07",
+      "registrationId": "registration:1705216e11c29113842d",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 2082,
+      "line": 2126,
       "method": "POST",
       "path": "/api/integrations/xroga-connect/execute",
       "mountChain": [
@@ -136176,9 +136464,9 @@
       "state": "IMPLEMENTED_BUT_UNVERIFIED"
     },
     {
-      "id": "schedule:91b8ee1877e5336f991f",
+      "id": "schedule:a732dc4d246c31149200",
       "sourcePath": "backend/src/routes/localBrowser.ts",
-      "line": 664,
+      "line": 774,
       "kind": "setInterval",
       "symbol": "createLocalBrowserRouter",
       "reachable": true,
@@ -137580,6 +137868,20 @@
       "version": "20261108181114",
       "order": 162,
       "sha256": "cecc94fa90df95543974fad939bd3a23a526f2bf4933369fc28e9e09abbb0bf3"
+    },
+    {
+      "id": "migration:e8fe1b1de1637b067d83",
+      "sourcePath": "supabase/migrations/20261113130000_custom_mcp_tool_pins.sql",
+      "version": "20261113130000",
+      "order": 163,
+      "sha256": "63d0a9c44f18e5e09426c2592e5bde84daff0d82d23fc96705ebb12669c02bca"
+    },
+    {
+      "id": "migration:a2a53e4b7ca589bb24c2",
+      "sourcePath": "supabase/migrations/20261113180000_custom_mcp_tool_pins_write.sql",
+      "version": "20261113180000",
+      "order": 164,
+      "sha256": "0e848f6614d5627ac87af37fcf73f6a691eb94a8db62ecf23ba3cb231317787d"
     }
   ],
   "workflows": [
@@ -139393,9 +139695,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:7dd1bfaaae7f8ae20a04",
+      "id": "finding:11be9f714a665b30f5dc",
       "sourcePath": "frontend/src/components/integrations/CustomMcpManager.tsx",
-      "line": 167,
+      "line": 248,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -139403,9 +139705,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:dbe50096c939c7daf44b",
+      "id": "finding:7a7dd6b82ae66dcf09ea",
       "sourcePath": "frontend/src/components/integrations/CustomMcpManager.tsx",
-      "line": 178,
+      "line": 259,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -139413,9 +139715,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:4baf4ff0e6c21a3981ae",
+      "id": "finding:ad2723f11fc637d1fcc1",
       "sourcePath": "frontend/src/components/integrations/CustomMcpManager.tsx",
-      "line": 203,
+      "line": 284,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -139423,9 +139725,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:0a687be5dd57b66807af",
+      "id": "finding:fd3aa6347ed0faa56038",
       "sourcePath": "frontend/src/components/integrations/CustomMcpManager.tsx",
-      "line": 212,
+      "line": 293,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -139433,9 +139735,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:dd9145c1f53d0b9187fd",
+      "id": "finding:5ee7618d55cc0f6fec00",
       "sourcePath": "frontend/src/components/integrations/CustomMcpManager.tsx",
-      "line": 225,
+      "line": 306,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -144892,7 +145194,7 @@
     {
       "id": "test-suite:2dbc884d7ccd8b9dbec8",
       "sourcePath": "apps/xroga-browser-extension/src/agent/__tests__/app-tools.test.ts",
-      "declaredTests": 8,
+      "declaredTests": 11,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -145144,7 +145446,7 @@
     {
       "id": "test-suite:120e25ea5ac5f8427750",
       "sourcePath": "apps/xroga-browser-extension/src/agent/__tests__/skills-domains.test.ts",
-      "declaredTests": 7,
+      "declaredTests": 13,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -145410,7 +145712,7 @@
     {
       "id": "test-suite:a497702a7555d658079b",
       "sourcePath": "apps/xroga-browser-extension/src/extension/__tests__/parallel-workers.test.ts",
-      "declaredTests": 22,
+      "declaredTests": 29,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -145669,14 +145971,42 @@
     {
       "id": "test-suite:e6bbe975e1c3d88cc95e",
       "sourcePath": "apps/xroga-browser-extension/src/xroga/__tests__/model-segments.test.ts",
-      "declaredTests": 7,
+      "declaredTests": 11,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:7c2e45d14e69e0a97a78",
+      "sourcePath": "apps/xroga-browser-extension/src/xroga/__tests__/plugin-failures.test.ts",
+      "declaredTests": 6,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:df2e13823913be48b417",
+      "sourcePath": "apps/xroga-browser-extension/src/xroga/__tests__/plugin-queue.test.ts",
+      "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:399fee90558c65b1efc1",
+      "sourcePath": "apps/xroga-browser-extension/src/xroga/__tests__/plugin-repair.test.ts",
+      "declaredTests": 8,
       "skipLocations": [],
       "focusLocations": []
     },
     {
       "id": "test-suite:6ec2efd8788f1beff0d3",
       "sourcePath": "apps/xroga-browser-extension/src/xroga/__tests__/plugins-act.test.ts",
-      "declaredTests": 14,
+      "declaredTests": 16,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:fc8a3890b4e322d08dec",
+      "sourcePath": "apps/xroga-browser-extension/src/xroga/__tests__/public-get.test.ts",
+      "declaredTests": 4,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -148315,6 +148645,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:bc087c34c28678b381ca",
+      "sourcePath": "backend/src/routes/localBrowserPinned.test.ts",
+      "declaredTests": 4,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:d741952fbf350efcc279",
       "sourcePath": "backend/src/routes/localBrowserPluginActions.test.ts",
       "declaredTests": 2,
@@ -149486,6 +149823,27 @@
     {
       "id": "test-suite:25c3a43091242c1f5406",
       "sourcePath": "backend/src/services/integrations/credentialVaultStartup.test.ts",
+      "declaredTests": 9,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:02ae8fca35296ebef160",
+      "sourcePath": "backend/src/services/integrations/customMcpPinClasses.test.ts",
+      "declaredTests": 5,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:7dac8d5e71971f9547bc",
+      "sourcePath": "backend/src/services/integrations/customMcpPinControl.security.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:6d752bcea2768200cf4c",
+      "sourcePath": "backend/src/services/integrations/customMcpPins.test.ts",
       "declaredTests": 9,
       "skipLocations": [],
       "focusLocations": []

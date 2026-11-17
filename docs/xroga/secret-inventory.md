@@ -1,6 +1,6 @@
 # Secret and environment name inventory
 
-Values are forbidden. Source SHA: `96d10b80c1a28a14aa2f073c7ffb2cd14a9e24bc`. Names and source discovery do not prove that a capability is configured or accepted.
+Values are forbidden. Source SHA: `34af621e9e84771a4e20710831b869a37ce7f34d`. Names and source discovery do not prove that a capability is configured or accepted.
 
 | Name | Classification | Requirement | Dependency |
 | --- | --- | --- | --- |
@@ -302,8 +302,10 @@ Values are forbidden. Source SHA: `96d10b80c1a28a14aa2f073c7ffb2cd14a9e24bc`. Na
 | XROGA_LEARNING_ENABLED | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-127-0-0-1 |
 | XROGA_LEGACY_CREDENTIAL_MIGRATION | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_LOCAL_BROWSER_ALLOWED_USER_IDS | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
+| XROGA_LOCAL_BROWSER_AUTO_APPROVE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_LOCAL_BROWSER_DEVICE_EXTENSION_ID | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_LOCAL_BROWSER_ENABLED | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
+| XROGA_LOCAL_BROWSER_MAX_ACTIVE_RUNS | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_LOCAL_BROWSER_MAX_TURNS | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_LOCAL_BROWSER_VISION_PROBE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_MAX_REPAIR_ATTEMPTS | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
