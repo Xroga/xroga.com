@@ -92,6 +92,15 @@ describe('the restore plan', () => {
     expect(hasUncertainBrowserWrite('different-run', entries)).toBe(false);
   });
 
+  it('an interrupted navigation is a read to repeat, not an uncertain write, so a run can continue after an interruption mid-navigation', () => {
+    const interrupted = (tool: string) =>
+      ({ ...result('n', tool), meta: { runId: 'r' }, result: { ok: false, error: { delivered: 'unknown' } } }) as Entry;
+    expect(hasUncertainBrowserWrite('r', [intent('n', 'navigate'), interrupted('navigate')])).toBe(false);
+    expect(hasUncertainBrowserWrite('r', [intent('n', 'tabs'), interrupted('tabs')])).toBe(false);
+    // A click whose delivery is unknown is still protected.
+    expect(hasUncertainBrowserWrite('r', [intent('n', 'click'), interrupted('click')])).toBe(true);
+  });
+
   it('rejects unknown dispatch even if the tool envelope says ok', () => {
     const entry = {
       ...result('x', 'click'),

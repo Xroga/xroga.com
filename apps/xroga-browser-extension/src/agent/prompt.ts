@@ -70,7 +70,7 @@ function toolGuide(tools: string[]): string {
   const lines = ['## Tools', '', `You have: ${tools.join(', ')}.`];
   if (has('find'))
     lines.push('- find locates elements by role, name or text in the latest observation, without a full outline.');
-  if (has('read')) lines.push('- read returns a page or an element as Markdown, for reading text.');
+  if (has('read')) lines.push('- read returns a page or an element as Markdown, for reading text. Headings come back as # lines, so when you are asked for a heading, title or exact wording, read the page and quote it instead of inferring it from an outline.');
   if (has('delegate'))
     lines.push(
       '- delegate reads several web pages at once in background tabs, instantly and read-only: jobs are a url, or a query with follow:N to also read the top N result pages. Use it first for research, comparisons and "open N sites" tasks; one call replaces searching, choosing and opening the sites one by one. Answer from what it returns; do not re-read pages it already gave you.',

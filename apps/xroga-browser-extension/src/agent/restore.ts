@@ -48,8 +48,12 @@ export function completedBrowserTools(runId: string, branch: Entry[]): string[] 
 export function hasUncertainBrowserWrite(runId: string, branch: Entry[]): boolean {
   const mutations = new Set(
     branch.flatMap(entry => {
+      // Opening a page changes nothing a second attempt could duplicate, so an interrupted navigation is a read to repeat, not an
+      // uncertain write (the same rule the running loop applies); without it a run could not continue after any interruption mid-navigation.
       if (
         entry.type !== 'intent' ||
+        entry.tool === 'navigate' ||
+        entry.tool === 'tabs' ||
         !['mutate', 'state'].includes(kindOf(entry.tool, (entry.args ?? {}) as Record<string, unknown>))
       )
         return [];
