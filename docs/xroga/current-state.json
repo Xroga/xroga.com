@@ -5818,17 +5818,20 @@
       "id": "surface:a67f0b1fa2dd0f11a67f",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiPrompt.ts",
-      "sha256": "a5b3e3123bcb4428256426d188f437e9d99674e6261dc3af404201e96d29eb23",
+      "sha256": "7abc9dc4dca5573b50ac7ad896824a266976b4acafcb735a4f2a9626131b4624",
       "symbols": [
         "buildNativeOpenUiPrompt",
         "comparisonConsistencyRule",
+        "componentSelectionRule",
         "dataConsistencyRule",
         "general",
+        "iconSelectionRule",
         "library",
         "nativeOpenUiPlainPrompt",
         "nativeOpenUiPrompt",
         "numericPrecisionRule",
         "procedureConsistencyRule",
+        "readingOrderRule",
         "selected",
         "technicalPrecisionRule",
         "withoutSources",
@@ -142614,9 +142617,9 @@
   ],
   "findings": [
     {
-      "id": "finding:78ba54acfbdce8257a5b",
+      "id": "finding:4607f83e34fc26785658",
       "sourcePath": "backend/src/ai/nativeOpenUiPrompt.ts",
-      "line": 52,
+      "line": 62,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -150635,7 +150638,7 @@
     {
       "id": "test-suite:2e491f4d2fcbc11f974c",
       "sourcePath": "backend/src/ai/nativeOpenUi.test.ts",
-      "declaredTests": 66,
+      "declaredTests": 67,
       "skipLocations": [],
       "focusLocations": []
     },

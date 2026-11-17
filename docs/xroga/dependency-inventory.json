@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "021d55851d02a65b9d5da1199bb126df779c9341",
+  "source_sha": "98c6e4253fb7765d75400ec8218ce9343a72e172",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -17070,7 +17070,7 @@
     },
     {
       "path": "backend/src/ai/nativeOpenUiPrompt.ts",
-      "sha256": "a5b3e3123bcb4428256426d188f437e9d99674e6261dc3af404201e96d29eb23"
+      "sha256": "7abc9dc4dca5573b50ac7ad896824a266976b4acafcb735a4f2a9626131b4624"
     },
     {
       "path": "backend/src/ai/nativeOpenUiRecovery.ts",
@@ -32719,21 +32719,21 @@
     },
     {
       "path": "backend/src/ai/nativeOpenUiPrompt.ts",
-      "line": 82,
+      "line": 91,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/nativeOpenUiPrompt.ts",
-      "line": 83,
+      "line": 92,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/nativeOpenUiPrompt.ts",
-      "line": 86,
+      "line": 95,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

@@ -7,9 +7,16 @@ const technicalPrecisionRule = 'For version-dependent technical behavior, name t
 const procedureConsistencyRule = 'For step-by-step procedures, carry precautions into every step they qualify. Do not recommend a later step that violates an earlier precaution. For an accessibility explanation, keep examples consistent with the instructions. In a roving tabindex pattern, one item has tabindex=0, the container adds no tab stop, and arrow-key handlers move actual focus. With aria-activedescendant, focus stays on the container, items add no tab stops, and handlers update the active item ID. Keep the equivalent data table visible.';
 const comparisonConsistencyRule = 'For price and capacity comparisons, check every worked example against the stated capacity and unit price. Required units must cover the whole requested quantity. Do not assume that subscriptions, licenses, quotas or bundles can be combined unless the supplied terms say so. When those terms are absent, compare the stated package totals and included capacity; do not present a bundle-based break-even point or recommendation as fact. If the user requests a hypothetical scenario, state its assumptions beside every dependent table or recommendation, before the conclusion. Keep recommendations within the stated capacity. Distinguish unit-price savings from the total price the user would actually pay.';
 
+const readingOrderRule = 'Match the structure to what the reader needs to do. Answer simple questions directly. In a longer answer, lead with the result, use short task-specific headings, and group related details. Use numbered steps for a sequence and a compact table when the reader needs to scan comparable items. Explain the consequence or tradeoff beside the data. For an abstract plan, include a brief, clearly labeled worked example when it makes the recommendation easier to apply.';
+
+const componentSelectionRule = 'Choose a visual for the question it answers. Use a Diagram for dependencies, branching decisions or handoffs. Use a Table when the reader needs to compare roles, ownership, permissions, options or values across shared columns. In a workflow, a responsibility table can show what is automated and what needs human review, while the diagram shows where the work goes next. Use ordered steps for a straightforward sequence and a Chart for measured trends or comparisons. Include multiple components only when each adds distinct information. Use concise labels and keep essential details visible in reading order.';
+
+const iconSelectionRule = 'Use an optional Lucide icon on a section or diagram node when it helps distinguish roles, actions or states, such as inbox for intake and shield-check for an approval boundary. Use valid kebab-case icon names and keep the visible text label. Omit icons from paragraphs, repeated table cells and headings where they add no meaning. Use real product identity only through a supported Resource or verified source.';
+
 export const nativeOpenUiPlainPrompt = [
   'Answer the actual request directly in readable Markdown. Do not output an OpenUI program for this prose-only turn.',
   'Use only facts you can support. Qualify uncertain claims and distinguish supplied facts from examples.',
+  readingOrderRule,
   numericPrecisionRule,
   dataConsistencyRule,
   technicalPrecisionRule,
@@ -47,6 +54,9 @@ function buildNativeOpenUiPrompt(kinds: ReadonlySet<string>, hasSources: boolean
       technicalPrecisionRule,
       procedureConsistencyRule,
       comparisonConsistencyRule,
+      readingOrderRule,
+      componentSelectionRule,
+      iconSelectionRule,
       'Start with the supported answer. Give a recommendation only when the supplied facts support it, and place any necessary assumption before the dependent conclusion. Use one main Title and meaningful Sections for long answers; prose and lists can be enough. Keep data and its interpretation together. Reserve emphasis for the central result. Avoid duplicate headings, repeating tables, and excessive cards. When a table or chart already compares values, use the visible surrounding prose for the takeaway, assumptions, or caveats. Skip extra cards or a second visual that merely restate the same comparison. Keep the complete fallback and the accessible chart data.',
       'When a table occurs in both the readable answer and the OpenUI program, use identical headers and cell values in both, including the corner header. Do not paraphrase one copy: exact matching lets the interface show the table once while retaining its full content in saved answers and readable recovery.',
       'For a long answer, put a single root Col first, followed by the declarations it references. Inline small components. Reference names are case-sensitive. Declare each name used by the root and its descendants exactly once, except the supplied immutable _xroga_answer. Never reference root, an example placeholder, or another undeclared name. Use only listed components and functions. Use strings or ListItem(title, description) inside List. Escape line breaks and quotes inside Code strings.',
@@ -66,7 +76,6 @@ function buildNativeOpenUiPrompt(kinds: ReadonlySet<string>, hasSources: boolean
       'Distinguish a browser Supabase SSR client that must read session tokens from a server-only or backend-for-frontend design that owns an HTTP-only session. Do not claim browser Supabase SSR uses HTTP-only access or refresh tokens by default. Requests carrying a user access token remain subject to that user’s RLS, including from server-only clients. Keep service-role credentials separate.',
       'Prefer wrapping Row or responsive Grid and avoid fixed-width text. Charts need readable titles, axis labels and units. Use short labels and concise chart notes. Put assumptions before the calculation, diagram or recommendation they qualify. A later caveat cannot undo an earlier unsupported claim.',
       'Keep the main answer visible in reading order. Cite a supported claim in a Text or Markdown block beside that claim. Use Section for supporting details and Code only for code the user wants to read.',
-      'Use Lucide icon names in kebab case, such as plane or database. Keep a readable label.',
     ],
     examples: [
       'root = Col([Title("Options"), Table(["Plan", "USD/month"], [["Basic", 10], ["Team", 25]])])',

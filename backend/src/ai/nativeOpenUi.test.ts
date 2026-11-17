@@ -102,6 +102,32 @@ test('the model gets instructions from the native registry and may answer in tex
   assert.deepEqual(validateNativeOpenUi(program), { ok: true });
 });
 
+test('long workflow guidance distinguishes reading order, handoffs, responsibilities and semantic icons', () => {
+  const prompt = workspaceNativeOpenUiPrompt(['prose', 'steps', 'graph'], false);
+  assert.match(nativeOpenUiPlainPrompt, /Answer simple questions directly/);
+  assert.match(nativeOpenUiPlainPrompt, /clearly labeled worked example/);
+  assert.match(prompt, /responsibility table can show what is automated and what needs human review/);
+  assert.match(prompt, /diagram shows where the work goes next/);
+  assert.match(prompt, /Lucide icon on a section or diagram node when it helps distinguish roles/);
+
+  const prose = [
+    'A coordinator reviews new work before delivery starts.',
+    '## Example',
+    'A new brief goes to the coordinator. An incomplete brief returns to intake for clarification.',
+    ['| Stage | Automated | Human review |', '| --- | --- | --- |', '| Intake | Record the brief | Confirm the scope |'].join('\n'),
+  ].join('\n\n');
+  const program = [
+    'root = Col([Markdown(_xroga_answer), ownership, flow])',
+    'ownership = Table(["Stage", "Automated", "Human review"], [["Intake", "Record the brief", "Confirm the scope"]])',
+    'flow = Diagram("Review handoff", [{id: "intake", label: "Intake", level: 0, icon: "inbox"}, {id: "review", label: "Review", level: 1, icon: "shield-check"}], [{from: "intake", to: "review", label: "Brief received"}], "The coordinator reviews the brief before delivery.")',
+  ].join('\n');
+  const answer = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + program, 'stop');
+  assert.equal(answer.completion.status, 'complete');
+  assert.equal(validateNativeOpenUi(answer.responseSource.text).ok, true);
+  assert.equal((answer.response.match(/Record the brief/g) ?? []).length, 1);
+  assert.match(answer.response, /incomplete brief returns to intake/);
+});
+
 test('stray trailing presentation markers are removed before the program is validated or stored', () => {
   const program = 'root = Col([Text("The comparison is ready.")])';
   for (const close of ['</XROGA_OPENUI_V1>>>', '</<XROGA_OPENUI_V1>>>', NATIVE_UI_MARKER.trim()]) {
