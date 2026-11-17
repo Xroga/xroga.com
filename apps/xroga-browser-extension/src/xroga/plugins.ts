@@ -101,7 +101,7 @@ export function missingConnectionNote(apps: unknown, name: PluginToolName): stri
   return `No usable tool was found because ${list} ${missing.length > 1 ? 'are' : 'is'} not connected to this Xroga account. If the task needs ${missing.length > 1 ? 'them' : 'it'}, call ask_user with kind "takeover" and a short message such as "Connect ${missing[0]} in Xroga (Plugins), then press Done." When the user is done, call ${name} again with the same description and continue from where you were; do not start over. Do not try to sign in to the app in the browser unless the task can only be done there.`;
 }
 
-export async function runPluginTool(
+async function runPluginToolNow(
   name: PluginToolName,
   runId: string,
   input: unknown,
@@ -170,4 +170,24 @@ export async function runPluginTool(
       : 'Connected app operation unavailable or interrupted. Continue with authorized browser tools if appropriate.',
       isError: true };
   }
+}
+
+/**
+ * The server handles one connected-app call per run at a time (a second one arriving together is refused with a conflict). The agent may
+ * ask for several independent lookups in one turn, so they are queued per run here and run one after another instead of failing.
+ */
+const pluginQueues = new Map<string, Promise<unknown>>();
+export function runPluginTool(
+  name: PluginToolName,
+  runId: string,
+  input: unknown,
+  signal: AbortSignal,
+  approve: (approval: Approval) => Promise<unknown>,
+  wrap: (text: string, source: string) => string,
+): ReturnType<typeof runPluginToolNow> {
+  const previous = pluginQueues.get(runId) ?? Promise.resolve();
+  const next = previous.catch(() => undefined).then(() => (signal.aborted ? Promise.reject(signal.reason) : runPluginToolNow(name, runId, input, signal, approve, wrap)));
+  pluginQueues.set(runId, next);
+  void next.catch(() => undefined).finally(() => { if (pluginQueues.get(runId) === next) pluginQueues.delete(runId); });
+  return next;
 }
