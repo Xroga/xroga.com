@@ -5221,7 +5221,7 @@
       "id": "surface:456e62cb099b42e5c2a2",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUi.ts",
-      "sha256": "ddec4c650c03c4afa5600fad85daf80ad2ba5e39b56d12f34dc16690d31ac110",
+      "sha256": "ab64db928c2faa3c0dbf4eed45413672beb9f8e98d17e4cc76b5478f9807fbb0",
       "symbols": [
         "MAX_PROGRAM_CHARS",
         "NATIVE_UI_FORMAT",
@@ -5393,6 +5393,7 @@
         "stage",
         "start",
         "statement",
+        "statementShape",
         "statements",
         "strayPresentationClosingLines",
         "supplementNativeProse",
@@ -5418,6 +5419,7 @@
         "visible",
         "visit",
         "visited",
+        "workLimit",
         "wrapper",
         "yLabel"
       ],
@@ -6140,7 +6142,7 @@
       "id": "surface:93911e9946fd4b21d50d",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiWorkspace.ts",
-      "sha256": "16806f08b8af42cbe067644162f3cb533ac8a07866b699208d3286bdd8fe981b",
+      "sha256": "458c4e40d19d6ef5797ae361ba774f345927e7677952f747dc096d8d13e113d5",
       "symbols": [
         "completeNativeWorkspaceAnswer",
         "completion",
@@ -88764,7 +88766,7 @@
       "id": "surface:0fef6875af5860e2f4b4",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/markdown.tsx",
-      "sha256": "7c1aceb32f1a3631f9526f31da9864d706fc4b36596c3a5e538e5c781da7cdc6",
+      "sha256": "ceb1c1acb9098b765c999caac5dd745637de8f76d85afcb2c5e062392dd132cc",
       "symbols": [
         "Block",
         "INLINE",
@@ -88792,6 +88794,8 @@
         "from",
         "head",
         "heading",
+        "headingKey",
+        "headingTitles",
         "href",
         "i",
         "inline",
@@ -89117,7 +89121,7 @@
       "id": "surface:c0e107e03bc08dc07fad",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/text.tsx",
-      "sha256": "445805d4f089b401b8b6f1d714ea87b2f74a9d361c3f59a0ba239452659f4ae5",
+      "sha256": "8cefcde8789cfd6e6c55f6b73cee227dd4ac7c09a335f1159ff002547cf9c671",
       "symbols": [
         "Badge",
         "Caption",
@@ -127954,7 +127958,7 @@
       "id": "surface:bd6af899f2dd9df930f6",
       "subsystem": "browser_sandbox",
       "sourcePath": "scripts/verify-native-openui-browser.mjs",
-      "sha256": "3f474e477321c0c7630e03c81be9c2e96708e76f8910550f91110ba76d6c6451",
+      "sha256": "52c5c0a5e32c464b116c4f960f7cf955a2d482db9f4c4aa1473d92051cfcffa7",
       "symbols": [
         "accessibility",
         "answer",
@@ -150650,7 +150654,7 @@
     {
       "id": "test-suite:2e491f4d2fcbc11f974c",
       "sourcePath": "backend/src/ai/nativeOpenUi.test.ts",
-      "declaredTests": 68,
+      "declaredTests": 70,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -155921,7 +155925,7 @@
     {
       "id": "test-suite:4ce9d7bbf578638998f1",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/markdown.test.ts",
-      "declaredTests": 15,
+      "declaredTests": 16,
       "skipLocations": [],
       "focusLocations": []
     },
