@@ -63,7 +63,7 @@ describe('connected apps and SEO', () => {
   it('points the agent at plugin_search when the task names an app or a tool category', () => {
     expect(ids('Pull my keyword rankings from Ahrefs and update the Notion page')).toContain('connected-apps');
     expect(skillsSection('Use my connected apps to find the lead list')).toContain('plugin_search');
-    expect(skillsSection('Use my connected apps to find the lead list')).toContain('not available in this run');
+    expect(skillsSection('Use my connected apps to find the lead list')).toContain('whatever the app is');
   });
 
   it('gives SEO work an audit-first playbook that keeps publishing behind approval', () => {

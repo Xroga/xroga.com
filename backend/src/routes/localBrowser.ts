@@ -589,7 +589,18 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
     }
     if (action.used) {
       // A change that stays in the owner's own connected app runs on its own, with the same confirmation, receipt and scope.
-      const { confirmation: done, execution } = await plugins.confirm(actor, confirmation.id, { toolkit: action.toolkit.toLowerCase(), toolSlug: action.slug });
+      let finished;
+      try {
+        finished = await plugins.confirm(actor, confirmation.id, { toolkit: action.toolkit.toLowerCase(), toolSlug: action.slug });
+      } catch (error) {
+        // The app refused or failed the call, so nothing was changed: forget it so the agent can correct the arguments and try again.
+        const at = state.actions.indexOf(action);
+        if (at >= 0) state.actions.splice(at, 1);
+        row.state.productManifest.localBrowserPlugins = state;
+        await save().catch(() => undefined);
+        throw error;
+      }
+      const { confirmation: done, execution } = finished;
       const receipt = done.receipt;
       if (execution.toolSlug !== action.slug || !receipt) throw new BrowserRequestError(503, 'BROWSER_PLUGIN_RECEIPT_UNAVAILABLE');
       return res.json({ receiptId: receipt.id, result: execution.resultText.slice(0, 12_000) });

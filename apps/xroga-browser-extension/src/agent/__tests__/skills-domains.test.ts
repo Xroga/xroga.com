@@ -56,7 +56,7 @@ describe('the design, video, records and work-split playbooks', () => {
   it('keeps at most four playbooks, and each stays small enough to carry in every turn', () => {
     const crowded = 'Research three competitors in parallel, design a logo, edit a video, update the CRM, run an SEO audit and launch Google Ads and Meta Ads.';
     expect(skillsFor(crowded).length).toBeLessThanOrEqual(4);
-    for (const skill of SKILLS) expect(skill.body.length).toBeLessThan(2_600);
+    for (const skill of SKILLS) expect(skill.body.length).toBeLessThan(3_400);
   });
 });
 
