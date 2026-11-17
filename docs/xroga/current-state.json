@@ -88420,6 +88420,7 @@
       ],
       "callers": [
         "frontend/src/components/native-openui/library.tsx:8",
+        "frontend/src/components/native-openui/upstream/components/chart.test.ts:5",
         "frontend/src/components/native-openui/upstream/components/markdown.tsx:4"
       ],
       "reachable": true,
@@ -88434,7 +88435,9 @@
       "approvalBoundary": [],
       "costBoundary": [],
       "evidenceBoundary": [],
-      "testCoverage": [],
+      "testCoverage": [
+        "frontend/src/components/native-openui/upstream/components/chart.test.ts"
+      ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -155966,6 +155969,13 @@
       "id": "test-suite:07b7947e9acd174081b4",
       "sourcePath": "frontend/src/components/library/libraryFilePreview.test.ts",
       "declaredTests": 3,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:d9113c461272059ef334",
+      "sourcePath": "frontend/src/components/native-openui/upstream/components/chart.test.ts",
+      "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
     },
