@@ -6228,11 +6228,12 @@
       "id": "surface:29a1af5a79330a300ab2",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/openaiCompat.ts",
-      "sha256": "0bd01dc8ca4992f8bc61de75a2f6ff655e56326d563155ccfe24a9f0f91f503f",
+      "sha256": "b8edce2909f7c883edbd2275edf2e946bdefc92c6adc93b2744e758b60224df4",
       "symbols": [
         "ChatMessage",
         "ChatResult",
         "ContentPart",
+        "MODEL_PROVIDER_TIMEOUT_MS",
         "ModelNotConfiguredError",
         "ReasoningMode",
         "ResolvedEndpoint",
@@ -14624,7 +14625,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/openaiCompat.egress.test.ts:311",
+        "backend/src/ai/openaiCompat.egress.test.ts:328",
         "backend/src/ai/openaiCompat.test.ts:4",
         "backend/src/ai/openaiCompat.ts:21",
         "backend/src/ai/zurelayPolicy.test.ts:8"
@@ -109842,7 +109843,7 @@
       "id": "surface:0b212ee01191fe2ebdde",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/hostedWorkspaceBridge.mjs",
-      "sha256": "562de9c1291a88600f00940fa7235b3d45ceb069194507f4b8e44e447588fbfa",
+      "sha256": "ed0c0165506693d18de5fe89e7f592798da5002ecf3b236be34b5d089a269a17",
       "symbols": [
         "abort",
         "authorization",
@@ -109910,7 +109911,7 @@
         "frontend/src/app/api/private-files/[projectId]/[fileId]/route.ts:3",
         "frontend/src/app/share/[token]/page.tsx:13",
         "frontend/src/app/workspace-staging-transport/[...segments]/route.ts:1",
-        "scripts/security/hosted-workspace-staging.test.mjs:8"
+        "scripts/security/hosted-workspace-staging.test.mjs:9"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -116280,7 +116281,7 @@
         "frontend/next.config.mjs:4",
         "frontend/src/lib/supabase/authBuildRealm.test.ts:3",
         "frontend/src/lib/supabase/stagingAuthBuild.test.ts:3",
-        "scripts/security/hosted-workspace-staging.test.mjs:9"
+        "scripts/security/hosted-workspace-staging.test.mjs:10"
       ],
       "reachable": false,
       "persistenceDependencies": [],
@@ -126340,7 +126341,7 @@
       "id": "surface:bd447efc6f4a92271280",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/security/hosted-workspace-staging.mjs",
-      "sha256": "15d46b6faa21da2a0841b224ba43b682456bcb05bbf351fd3b02f8414214d15e",
+      "sha256": "8e084d32135dfe44a5d4817f2269383f5552644cece899975c61aa2776e42d10",
       "symbols": [
         "actualSource",
         "apiDigest",
@@ -126368,6 +126369,7 @@
         "stagingOperatorOrigin",
         "stagingProject",
         "stagingRegion",
+        "stagingRequestTimeoutMs",
         "stagingWebIdentity",
         "stagingWebOrigin",
         "stagingWebService",
@@ -149775,28 +149777,28 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:e782fbc48716e3d18240",
+      "id": "frontend-call:2ee11d33bc11d0b3e055",
       "sourcePath": "frontend/src/lib/hostedWorkspaceBridge.mjs",
       "line": 55,
       "callee": "fetch",
       "reachable": true
     },
     {
-      "id": "frontend-call:01da404b8798dbd60728",
+      "id": "frontend-call:cb31f202fedbf673c77d",
       "sourcePath": "frontend/src/lib/hostedWorkspaceBridge.mjs",
       "line": 137,
       "callee": "fetch",
       "reachable": true
     },
     {
-      "id": "frontend-call:846bcdc95fb0ddf2f59e",
+      "id": "frontend-call:28c1133aaddfcd7a027f",
       "sourcePath": "frontend/src/lib/hostedWorkspaceBridge.mjs",
       "line": 152,
       "callee": "fetch",
       "reachable": true
     },
     {
-      "id": "frontend-call:8a20e82ccbf4e3e2f59a",
+      "id": "frontend-call:f1727053746f6740169d",
       "sourcePath": "frontend/src/lib/hostedWorkspaceBridge.mjs",
       "line": 167,
       "callee": "fetch",
@@ -150675,7 +150677,7 @@
     {
       "id": "test-suite:e560f40fdd60bae650a7",
       "sourcePath": "backend/src/ai/openaiCompat.egress.test.ts",
-      "declaredTests": 14,
+      "declaredTests": 15,
       "skipLocations": [],
       "focusLocations": []
     },

@@ -53,13 +53,16 @@
     "frontend/src/components/native-openui/upstream/components/markdown.test.ts",
     "frontend/src/components/native-openui/upstream/components/markdown.tsx",
     "frontend/src/lib/formatAiMarkdown.tsx",
+    "frontend/src/lib/hostedWorkspaceBridge.mjs",
     "frontend/src/components/native-openui/upstream/components/table.tsx",
     "frontend/src/components/native-openui/upstream/components/text.tsx",
     "frontend/src/components/native-openui/upstream/components/theme.css",
     "frontend/src/lib/publicAnswerText.ts",
     "frontend/src/components/terminal/SourceCitation.module.css",
     "scripts/verify-native-openui-browser.mjs",
-    "scripts/generate-native-openui-spec.mjs"
+    "scripts/generate-native-openui-spec.mjs",
+    "scripts/security/hosted-workspace-staging.mjs",
+    "scripts/security/hosted-workspace-staging.test.mjs"
   ],
   "decisions": {
     "extend": [
@@ -72,7 +75,8 @@
       "Keep standalone code and sample tests in the answer when project execution was not requested. Withhold a chart that contradicts the answer's unresolved-data notice and normalize the observed alternate closing marker.",
       "Recover explicitly requested local checkboxes and closed numeric series from available prose or supplied values after a presentation failure. Keep source and error boundaries, withhold controls that select an unresolved chart input, and avoid repeating a table whose full contents are already visible.",
       "Distinguish Stripe timestamp logging and explicit rejection of timestamp ordering from recommendations to order events by timestamp.",
-      "Bound each expanded presentation declaration independently while continuing to audit unreachable declarations. Record redacted failing statement shapes, preserve explicit calculator fallback status, and avoid a repeated opening display heading."
+      "Bound each expanded presentation declaration independently while continuing to audit unreachable declarations. Record redacted failing statement shapes, preserve explicit calculator fallback status, and avoid a repeated opening display heading.",
+      "Let the existing canonical generation deadline govern buffered answers. Keep SDK and wire timeouts beyond that deadline and allow sufficient private bridge time for confirmed retrieval and settlement. Preserve cancellation, zero retries and the existing authority and accounting checks."
     ],
     "keep": [
       "One planner, one canonical DeepSeek answer dispatch, existing registry and authorization, saved answers, owner-only Share and decoder compatibility."

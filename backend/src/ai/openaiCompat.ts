@@ -23,6 +23,10 @@ import { validateZurelayRequest, verifyZurelayResponse, zurelayStreamUsageVerifi
 // No compatibility retry can replay a possibly charged request.
 const withProviderTemperature = <T>(temperature: number | undefined, execute: (value: number | undefined) => Promise<T>) => execute(temperature);
 
+// The canonical attempt owns the generation deadline. Neither SDK nor fetch
+// should cancel a buffered answer before that deadline has elapsed.
+export const MODEL_PROVIDER_TIMEOUT_MS = DEFAULT_BUILDER_BUDGET.generationMs + 10_000;
+
 export type ContentPart =
   | { type: 'text'; text: string }
   | { type: 'image_url'; image_url: { url: string; detail?: 'auto' | 'low' | 'high' } };
@@ -193,7 +197,7 @@ export function createModelProviderClient(endpoint: ResolvedEndpoint,beforeDispa
   return new OpenAI({
     apiKey: endpoint.apiKey,
     baseURL: endpoint.baseUrl,
-    timeout: 180_000,
+    timeout: MODEL_PROVIDER_TIMEOUT_MS,
     maxRetries: 0,
     defaultHeaders: { ...endpoint.defaultHeaders, 'x-zurelay-fallback': 'off' },
     fetch:async (input,init)=>{
@@ -230,7 +234,7 @@ export function createModelProviderClient(endpoint: ResolvedEndpoint,beforeDispa
       headers.set('x-zurelay-fallback', 'off');
       let response:Response;
       try{
-        const signal=AbortSignal.any([...(init.signal?[init.signal as AbortSignal]:[]),AbortSignal.timeout(180_000)]);
+        const signal=AbortSignal.any([...(init.signal?[init.signal as AbortSignal]:[]),AbortSignal.timeout(MODEL_PROVIDER_TIMEOUT_MS)]);
         response=await globalThis.fetch(url,{method:'POST',body:init.body,headers,signal,redirect:'manual'});
       }catch(error){await release();throw error;}
       if(response.status===429){cooldown=providerCooldownSeconds(response.headers.get('retry-after'));await release();}

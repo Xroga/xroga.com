@@ -2,8 +2,8 @@ import test,{type TestContext} from 'node:test';
 import {randomUUID} from 'node:crypto';
 import assert from 'node:assert/strict';
 import OpenAI from 'openai';
-import {chatCompletion,chatCompletionStream,chatCompletionSingleResponse,completionResponseMode,snapshotModelEgressPayload} from './openaiCompat.js';
-import {runBuilderAttempt} from './builderAttempt.js';
+import {chatCompletion,chatCompletionStream,chatCompletionSingleResponse,completionResponseMode,snapshotModelEgressPayload,createModelProviderClient,MODEL_PROVIDER_TIMEOUT_MS} from './openaiCompat.js';
+import {runBuilderAttempt,DEFAULT_BUILDER_BUDGET} from './builderAttempt.js';
 import {MODELS,type ModelId} from './models.js';
 import {createTenantContext} from '../security/tenantContext.js';
 import {withTenantModelReservation} from './tenantModelDispatch.js';
@@ -223,6 +223,23 @@ const answerBody = (usage?: Record<string, unknown> | null, extra: Record<string
   ...(usage === null ? {} : { usage: usage ?? { prompt_tokens: 120, completion_tokens: 30, total_tokens: 150 } }), ...extra,
 });
 const single = chatCompletionSingleResponse as unknown as typeof chatCompletion;
+
+test('SDK and wire deadlines preserve the canonical buffered generation window without enabling retries', async t => {
+  const settlements:number[]=[];
+  const timeouts:number[]=[];
+  t.mock.method(AbortSignal,'timeout',(ms:number)=>{timeouts.push(ms);return new AbortController().signal;});
+  t.mock.method(globalThis,'fetch',async()=>Response.json(answerBody(),{headers:HEADERS}));
+  const run=admitted(t,'deepseek_v4_1_flash_1017',settlements);
+  const client=createModelProviderClient({apiKey:'synthetic-provider-key',baseUrl:'https://api.zurelay.com/v1',apiModel:'deepseek-v4.1-flash-1017',provider:'zurelay'});
+  assert.ok(client.timeout>DEFAULT_BUILDER_BUDGET.generationMs);
+  assert.equal(client.timeout,MODEL_PROVIDER_TIMEOUT_MS);
+  assert.equal(client.maxRetries,0);
+  const result=await run(single,[{role:'user',content:'A complete buffered answer.'}],{maxTokens:64});
+  assert.equal(result.text,'A complete answer.');
+  assert.ok(timeouts.includes(MODEL_PROVIDER_TIMEOUT_MS));
+  assert.ok(!timeouts.includes(180_000));
+  assert.equal(settlements.length,1);
+});
 
 test('single-response transport sends one non-streaming request, settles from the provider receipt and publishes text once', async t => {
   const settlements: number[] = []; const bodies: Record<string, unknown>[] = [];

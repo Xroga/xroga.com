@@ -1,5 +1,5 @@
 import { readFileSync } from 'node:fs';
-import { hostedResearchConfirmation, isHostedWorkspaceRoute, requireHostedWorkspaceBuild } from '../../../scripts/security/hosted-workspace-staging.mjs';
+import { hostedResearchConfirmation, isHostedWorkspaceRoute, requireHostedWorkspaceBuild, stagingRequestTimeoutMs } from '../../../scripts/security/hosted-workspace-staging.mjs';
 const guestShare = /^\/api\/message-shares\/[A-Za-z0-9_-]{20,80}$/;
 const requestHeaders = ['authorization', 'content-type', 'accept', 'range', 'x-xroga-language'];
 const responseHeaders = ['content-type', 'content-disposition', 'content-range', 'accept-ranges', 'content-security-policy'];
@@ -95,7 +95,7 @@ export async function forwardHostedWorkspace(request, path, manifest, fetch = gl
   const bodylessRevoke = method === 'DELETE' && guestShare.test(path);
   if (request.body && !bodylessRevoke && !/^application\/json(?:\s*;|$)/i.test(request.headers.get('content-type') ?? '')) return denied(415);
   const headers = copyHeaders(request.headers, requestHeaders);
-  const abort = AbortSignal.any([request.signal, AbortSignal.timeout(180000)]);
+  const abort = AbortSignal.any([request.signal, AbortSignal.timeout(stagingRequestTimeoutMs)]);
   const probe = method === 'GET' && path === usagePath && !search ? diagnostics : undefined;
   let phase = 'platform_identity';
   let bindingMatches = false;

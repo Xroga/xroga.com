@@ -31,6 +31,8 @@ The new diagnostic identifies node exhaustion versus depth exhaustion and includ
 
 A missing requested calculator now produces a specific readable notice while preserving the complete available answer. A leading Markdown heading that repeats a visible native Title is collapsed only when its content matches, allowing colon versus spaced dash heading separators. Distinct text, code, links and citations remain visible. The plain-text fallback retains its heading.
 
+Private-run review also found a separate deadline mismatch. Both the SDK and wire used 180 seconds despite the existing canonical generation budget allowing 300 seconds. Their timeout now derives from that budget with a ten-second margin. The private staging bridge allows 420 seconds for generation, confirmed retrieval and settlement. The prepared temporary services allow 600 seconds. The current production API already allows 3,600 seconds, so it needs no timeout configuration change. Caller cancellation still applies immediately, retries remain disabled, and text still requires a verified receipt and canonical settlement before publication. Forty model transport/builder regressions and the hosted bridge regressions passed after this change. This static mismatch was found before another hosted build or inference, not inferred from a new paid timeout.
+
 ## Verification and remaining gates
 
 - A baseline comparison reproduced the cumulative-audit rejection and verified the corrected validator on the same synthetic program. Oversized individual expansions and cyclic references still fail.

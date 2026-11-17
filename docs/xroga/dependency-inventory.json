@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "befd07078cbc748577bff99a30e5cd75ce10ccb6",
+  "source_sha": "a681f1019eb901c2e3f845b60cc041f5d6ae5066",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -17094,7 +17094,7 @@
     },
     {
       "path": "backend/src/ai/openaiCompat.ts",
-      "sha256": "0bd01dc8ca4992f8bc61de75a2f6ff655e56326d563155ccfe24a9f0f91f503f"
+      "sha256": "b8edce2909f7c883edbd2275edf2e946bdefc92c6adc93b2744e758b60224df4"
     },
     {
       "path": "backend/src/ai/parallelApproval.ts",
@@ -23642,7 +23642,7 @@
     },
     {
       "path": "frontend/src/lib/hostedWorkspaceBridge.mjs",
-      "sha256": "562de9c1291a88600f00940fa7235b3d45ceb069194507f4b8e44e447588fbfa"
+      "sha256": "ed0c0165506693d18de5fe89e7f592798da5002ecf3b236be34b5d089a269a17"
     },
     {
       "path": "frontend/src/lib/hydrateLandingOutput.ts",
@@ -24980,7 +24980,7 @@
     },
     {
       "path": "backend/src/ai/openaiCompat.ts",
-      "line": 173,
+      "line": 177,
       "expression": "def.secretKey",
       "status": "RESOLVED_FINITE_CATALOG",
       "names": [
@@ -32782,7 +32782,7 @@
     },
     {
       "path": "backend/src/ai/openaiCompat.ts",
-      "line": 269,
+      "line": 273,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

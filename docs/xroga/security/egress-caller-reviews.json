@@ -195,7 +195,7 @@
     {
       "id": "038ced12b0f74e8d5e0f",
       "callSha256": "bbbf26a58be8e30ace8fcfaac921075adab2a85ca44b5d5b7c9f48a7ec48c8f3",
-      "sourceFileSha256": "0bd01dc8ca4992f8bc61de75a2f6ff655e56326d563155ccfe24a9f0f91f503f",
+      "sourceFileSha256": "b8edce2909f7c883edbd2275edf2e946bdefc92c6adc93b2744e758b60224df4",
       "disposition": "REVIEWED_FIXED_DEPENDENCY",
       "trust": "FIXED_PROVIDER_ENDPOINT_AND_NO_REDIRECT_ONLY_NOT_DNS_OR_FULL_EGRESS_CERTIFICATION",
       "tenantAuthority": "THREE_UPSTREAM_SDK_TENANT_ACCOUNT_AUTHORITY_AND_DATA_OBLIGATIONS_REMAIN_PENDING",
@@ -211,7 +211,7 @@
         {
           "path": "backend/src/ai/openaiCompat.egress.test.ts",
           "marker": "real SDK completion and streaming use only the approved endpoint and refuse redirects",
-          "sha256": "5670a75c3441731c06d9431979d040f9fb1585b88c784cab0528bbbb740e8dc3",
+          "sha256": "c336a8fed92047169a538bdc82c8c8067374fa0851b56c06ffed9c66fd843185",
           "reboundOnBranch": {
             "previousSha256": "0622d56b1885aad11d4f284da5aa055690e20d3661533aa59d0c9dd1c78cd499",
             "note": "Re-bound 2026-11-05: the file gained single-response transport regression tests and a streaming-verified guard in the existing redirect test; the reviewed redirect-refusal assertions are unchanged."
@@ -299,6 +299,10 @@
       "sourceFileReboundOnBranch": {
         "previousSha256": "daae1d83b060a6c98262b5c598dcbc07af2767f31b332e2dde4b9c57bec84021",
         "note": "Re-bound 2026-11-05: openaiCompat.ts gained chatCompletionSingleResponse and a three-line delegation at the top of chatCompletionStream for Zurelay until streamed usage receipts are verified. The reviewed SDK call expressions (callSha256), caller identities, endpoint admission, redirect refusal and reservation guards are unchanged; no new network caller was added."
+      },
+      "deadlineAlignmentReview": {
+        "previousSourceFileSha256": "0bd01dc8ca4992f8bc61de75a2f6ff655e56326d563155ccfe24a9f0f91f503f",
+        "scope": "Existing transport deadlines only. SDK and wire timeout outlast the canonical five-minute generation budget. Private staging bridge outlasts model and confirmed retrieval. Caller cancellation, fixed destinations, redirect refusal, JWT/IAM separation, maxRetries=0, reservation admission and verified settlement are unchanged. No new egress caller or security acceptance is granted."
       }
     },
     {
@@ -635,7 +639,7 @@
     {
       "id": "31380a8d5b9454a98a98",
       "callSha256": "8e82b633686ef353d4c6db063a70a5772fcf9350245bec5da9d8d86dc9cc769a",
-      "sourceFileSha256": "0bd01dc8ca4992f8bc61de75a2f6ff655e56326d563155ccfe24a9f0f91f503f",
+      "sourceFileSha256": "b8edce2909f7c883edbd2275edf2e946bdefc92c6adc93b2744e758b60224df4",
       "disposition": "VERIFIED_GUARD",
       "trust": "SHARED_JSON_SDK_DISPATCH_AND_ACCOUNTING_ONLY_NOT_UPSTREAM_PROVENANCE_OR_TOOL_CERTIFICATION",
       "tenantAuthority": "PRIVATE_REQUEST_ADMISSION_FROM_CANONICAL_TENANT_OR_OPERATIONS_RESERVATION_OR_EXISTING_BOUNDED_ANONYMOUS_GUEST_LEASE_EACH_WIRE_RECHECKS_CURRENT_BINDING_COMPLETION_REQUIRES_SETTLEMENT_AND_ATOMIC_RECEIPT_OR_VERIFIED_CONSERVATIVE_GUEST_BUDGET_NO_RAW_ID_OR_CALLBACK_AUTHORITY",
@@ -719,12 +723,16 @@
       "sourceFileReboundOnBranch": {
         "previousSha256": "daae1d83b060a6c98262b5c598dcbc07af2767f31b332e2dde4b9c57bec84021",
         "note": "Re-bound 2026-11-05: openaiCompat.ts gained chatCompletionSingleResponse and a three-line delegation at the top of chatCompletionStream for Zurelay until streamed usage receipts are verified. The reviewed SDK call expressions (callSha256), caller identities, endpoint admission, redirect refusal and reservation guards are unchanged; no new network caller was added."
+      },
+      "deadlineAlignmentReview": {
+        "previousSourceFileSha256": "0bd01dc8ca4992f8bc61de75a2f6ff655e56326d563155ccfe24a9f0f91f503f",
+        "scope": "Existing transport deadlines only. SDK and wire timeout outlast the canonical five-minute generation budget. Private staging bridge outlasts model and confirmed retrieval. Caller cancellation, fixed destinations, redirect refusal, JWT/IAM separation, maxRetries=0, reservation admission and verified settlement are unchanged. No new egress caller or security acceptance is granted."
       }
     },
     {
       "id": "9c345e07b723c086440e",
       "callSha256": "6eb08ff947aaf655cbb9fac9f4af25c6e8fcb622517fc4343327edaf39a6eca9",
-      "sourceFileSha256": "0bd01dc8ca4992f8bc61de75a2f6ff655e56326d563155ccfe24a9f0f91f503f",
+      "sourceFileSha256": "b8edce2909f7c883edbd2275edf2e946bdefc92c6adc93b2744e758b60224df4",
       "disposition": "VERIFIED_GUARD",
       "trust": "SHARED_SSE_SDK_DISPATCH_AND_DEFERRED_ACCOUNTED_PUBLICATION_ONLY_NOT_UPSTREAM_PROVENANCE_OR_TOOL_CERTIFICATION",
       "tenantAuthority": "PRIVATE_REQUEST_ADMISSION_FROM_CANONICAL_TENANT_OR_OPERATIONS_RESERVATION_EACH_WIRE_RECHECKS_CURRENT_OWNER_PROJECT_RUN_CREDENTIAL_AUTHORITY_BINDING_NO_PUBLIC_DELTAS_UNTIL_SETTLEMENT_AND_EXACT_ATOMIC_RECEIPT_CANCELLATION_REVOCATION_AND_PUBLICATION_FAILURE_CANNOT_RETRY_MODEL",
@@ -808,6 +816,10 @@
       "sourceFileReboundOnBranch": {
         "previousSha256": "daae1d83b060a6c98262b5c598dcbc07af2767f31b332e2dde4b9c57bec84021",
         "note": "Re-bound 2026-11-05: openaiCompat.ts gained chatCompletionSingleResponse and a three-line delegation at the top of chatCompletionStream for Zurelay until streamed usage receipts are verified. The reviewed SDK call expressions (callSha256), caller identities, endpoint admission, redirect refusal and reservation guards are unchanged; no new network caller was added."
+      },
+      "deadlineAlignmentReview": {
+        "previousSourceFileSha256": "0bd01dc8ca4992f8bc61de75a2f6ff655e56326d563155ccfe24a9f0f91f503f",
+        "scope": "Existing transport deadlines only. SDK and wire timeout outlast the canonical five-minute generation budget. Private staging bridge outlasts model and confirmed retrieval. Caller cancellation, fixed destinations, redirect refusal, JWT/IAM separation, maxRetries=0, reservation admission and verified settlement are unchanged. No new egress caller or security acceptance is granted."
       }
     },
     {
@@ -4829,7 +4841,7 @@
     {
       "id": "9bcbd89af61af9d9c2e7",
       "callSha256": "69183a141ad19e783f685f9775253e45397ca21b8e45fbf36e8bda227880dfde",
-      "sourceFileSha256": "562de9c1291a88600f00940fa7235b3d45ceb069194507f4b8e44e447588fbfa",
+      "sourceFileSha256": "ed0c0165506693d18de5fe89e7f592798da5002ecf3b236be34b5d089a269a17",
       "disposition": "VERIFIED_GUARD",
       "trust": "GOOGLE_METADATA_ONLY_WITH_PINNED_STAGING_AUDIENCE",
       "tenantAuthority": "WORKLOAD_IDENTITY_ONLY_NO_USER_TOKEN",
@@ -4837,14 +4849,18 @@
         {
           "path": "scripts/security/hosted-workspace-staging.test.mjs",
           "marker": "Google IAM and original user token stay separate",
-          "sha256": "6a46d891ea391c0d299f350e5a87f3b964b34b8e67147448ec61c0a039728042"
+          "sha256": "1805f6c26e4f49612784dcd5fc3521d059109dd5afb3afc6cb024a0934f0e854"
         }
-      ]
+      ],
+      "deadlineAlignmentReview": {
+        "previousSourceFileSha256": "562de9c1291a88600f00940fa7235b3d45ceb069194507f4b8e44e447588fbfa",
+        "scope": "Existing transport deadlines only. SDK and wire timeout outlast the canonical five-minute generation budget. Private staging bridge outlasts model and confirmed retrieval. Caller cancellation, fixed destinations, redirect refusal, JWT/IAM separation, maxRetries=0, reservation admission and verified settlement are unchanged. No new egress caller or security acceptance is granted."
+      }
     },
     {
       "id": "49a49569b55d144f7a6d",
       "callSha256": "da6bfc623a007eed3e78f4f96bc3c5380edf422eaf335a62cad99ea667f02942",
-      "sourceFileSha256": "562de9c1291a88600f00940fa7235b3d45ceb069194507f4b8e44e447588fbfa",
+      "sourceFileSha256": "ed0c0165506693d18de5fe89e7f592798da5002ecf3b236be34b5d089a269a17",
       "disposition": "VERIFIED_GUARD",
       "trust": "PINNED_PRIVATE_STAGING_HEALTH_NO_REDIRECT",
       "tenantAuthority": "WORKLOAD_IDENTITY_ONLY_NO_USER_TOKEN",
@@ -4852,14 +4868,18 @@
         {
           "path": "scripts/security/hosted-workspace-staging.test.mjs",
           "marker": "Google IAM and original user token stay separate",
-          "sha256": "6a46d891ea391c0d299f350e5a87f3b964b34b8e67147448ec61c0a039728042"
+          "sha256": "1805f6c26e4f49612784dcd5fc3521d059109dd5afb3afc6cb024a0934f0e854"
         }
-      ]
+      ],
+      "deadlineAlignmentReview": {
+        "previousSourceFileSha256": "562de9c1291a88600f00940fa7235b3d45ceb069194507f4b8e44e447588fbfa",
+        "scope": "Existing transport deadlines only. SDK and wire timeout outlast the canonical five-minute generation budget. Private staging bridge outlasts model and confirmed retrieval. Caller cancellation, fixed destinations, redirect refusal, JWT/IAM separation, maxRetries=0, reservation admission and verified settlement are unchanged. No new egress caller or security acceptance is granted."
+      }
     },
     {
       "id": "e88275f663bb87ce2556",
       "callSha256": "76321677eab8b50bb630c570fefcde30d7972a323fb64ce6a832a1da1804486a",
-      "sourceFileSha256": "562de9c1291a88600f00940fa7235b3d45ceb069194507f4b8e44e447588fbfa",
+      "sourceFileSha256": "ed0c0165506693d18de5fe89e7f592798da5002ecf3b236be34b5d089a269a17",
       "disposition": "VERIFIED_GUARD",
       "trust": "PINNED_PRIVATE_STAGING_API_METHOD_PATH_AND_ISSUER_BOUND",
       "tenantAuthority": "ORIGINAL_USER_TOKEN_VERIFIED_BY_EXISTING_XROGA_AUTH_AND_TENANT_CHECKS",
@@ -4867,19 +4887,23 @@
         {
           "path": "scripts/security/hosted-workspace-staging.test.mjs",
           "marker": "Google IAM and original user token stay separate",
-          "sha256": "6a46d891ea391c0d299f350e5a87f3b964b34b8e67147448ec61c0a039728042"
+          "sha256": "1805f6c26e4f49612784dcd5fc3521d059109dd5afb3afc6cb024a0934f0e854"
         },
         {
           "path": "scripts/security/hosted-workspace-staging.test.mjs",
           "marker": "the staging bridge forwards an empty Share revoke and rejects nonempty revoke bodies",
-          "sha256": "6a46d891ea391c0d299f350e5a87f3b964b34b8e67147448ec61c0a039728042"
+          "sha256": "1805f6c26e4f49612784dcd5fc3521d059109dd5afb3afc6cb024a0934f0e854"
         }
-      ]
+      ],
+      "deadlineAlignmentReview": {
+        "previousSourceFileSha256": "562de9c1291a88600f00940fa7235b3d45ceb069194507f4b8e44e447588fbfa",
+        "scope": "Existing transport deadlines only. SDK and wire timeout outlast the canonical five-minute generation budget. Private staging bridge outlasts model and confirmed retrieval. Caller cancellation, fixed destinations, redirect refusal, JWT/IAM separation, maxRetries=0, reservation admission and verified settlement are unchanged. No new egress caller or security acceptance is granted."
+      }
     },
     {
       "id": "a609adccda5421076aa0",
       "callSha256": "0dada8e6784a5bce39fbf1fa531b03ba551a31948812672d0398b222d8fcef74",
-      "sourceFileSha256": "562de9c1291a88600f00940fa7235b3d45ceb069194507f4b8e44e447588fbfa",
+      "sourceFileSha256": "ed0c0165506693d18de5fe89e7f592798da5002ecf3b236be34b5d089a269a17",
       "disposition": "VERIFIED_GUARD",
       "trust": "PINNED_PRIVATE_STAGING_RESEARCH_CONFIRMATION_GET_NO_REDIRECT",
       "tenantAuthority": "ORIGINAL_OWNER_JWT_VERIFIED_BY_EXISTING_XROGA_AUTH_AND_TENANT_CHECKS",
@@ -4887,9 +4911,13 @@
         {
           "path": "scripts/security/hosted-workspace-staging.test.mjs",
           "marker": "hosted confirmation admits only the exact owner-visible DeepSeek research action",
-          "sha256": "6a46d891ea391c0d299f350e5a87f3b964b34b8e67147448ec61c0a039728042"
+          "sha256": "1805f6c26e4f49612784dcd5fc3521d059109dd5afb3afc6cb024a0934f0e854"
         }
-      ]
+      ],
+      "deadlineAlignmentReview": {
+        "previousSourceFileSha256": "562de9c1291a88600f00940fa7235b3d45ceb069194507f4b8e44e447588fbfa",
+        "scope": "Existing transport deadlines only. SDK and wire timeout outlast the canonical five-minute generation budget. Private staging bridge outlasts model and confirmed retrieval. Caller cancellation, fixed destinations, redirect refusal, JWT/IAM separation, maxRetries=0, reservation admission and verified settlement are unchanged. No new egress caller or security acceptance is granted."
+      }
     }
   ]
 }
