@@ -827,7 +827,7 @@ ${ledger}` : ''),
       isError: true,
       text: [
         outcome.text,
-        `hand-over: the user cancelled the step${dismissed ? " and the page's dialog was dismissed" : ''}. Do not try to do it another way: ask the user, or finish.`,
+        `hand-over: the user cancelled the step${dismissed ? " and the page's dialog was dismissed" : ''}. Never click that control again and do not do the step another way. Carry on with the rest of the task from what you can read on pages (leave this site's booking or payment as unknown); ask the user only if nothing else remains.`,
       ].join('\n'),
     };
   }

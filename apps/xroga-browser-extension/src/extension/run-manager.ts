@@ -612,7 +612,7 @@ export class RunManager {
       } else {
         text = [
           before,
-          'hand-over: the user cancelled the step. Do not try to do it another way: ask the user, or finish.',
+          'hand-over: the user cancelled the step. Never click that control again and do not do the step another way. Carry on with the rest of the task from what you can read on pages; ask the user only if nothing else remains.',
         ]
           .filter(Boolean)
           .join('\n');
