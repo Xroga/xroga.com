@@ -32,7 +32,7 @@ listenForWorkspace(
         conversationId: null,
         text: goal,
         startUrl: target,
-        mode: 'ask',
+        mode: 'auto',
         model: XROGA_REF,
         reasoning: 'none',
         attachments,

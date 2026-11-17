@@ -38,9 +38,25 @@ const SEGMENT_MS = 40 * MINUTE;
 /** A run's wall-clock segment is renewed when less than this is left. */
 const RENEW_BEFORE_MS = 10 * MINUTE;
 const MAX_GOAL = 16_000;
-const MAX_PLUGIN_ACTIONS = 10;
-const MAX_PLUGIN_DISCOVERIES = 10;
-const MAX_PLUGIN_READS = 20;
+// These bound the size of one run's saved state, not what a person may do: a long task makes many searches, reads and changes.
+const MAX_PLUGIN_ACTIONS = 200;
+const MAX_PLUGIN_DISCOVERIES = 100;
+const MAX_PLUGIN_READS = 400;
+
+/**
+ * Whether a connected-app call runs without a card. Reading never needs one, and neither does a change that only touches the owner's own
+ * data in their own connected app (create, update, run, add, draft...). A card is kept for what reaches other people or the public
+ * (send, post, publish, invite, share, reply, forward, call, notify...). Destructive and financial calls are refused outright, before this.
+ * An operator can turn automatic approval off for a deployment with XROGA_LOCAL_BROWSER_AUTO_APPROVE=off.
+ */
+const OUTBOUND_TOKENS = new Set(['SEND', 'POST', 'PUBLISH', 'TWEET', 'TWEETS', 'INVITE', 'SHARE', 'REPLY', 'FORWARD', 'CALL', 'NOTIFY', 'BROADCAST', 'SMS', 'DM', 'TEXT', 'EMAIL', 'EMAILS', 'MESSAGE', 'MESSAGES', 'COMMENT', 'ANNOUNCE', 'SCHEDULE']);
+export function autoApprovesCall(kind: 'read' | 'change', slug: string, env: NodeJS.ProcessEnv = process.env): boolean {
+  if (env.XROGA_LOCAL_BROWSER_AUTO_APPROVE === 'off') return false;
+  if (kind === 'read') return true;
+  const tokens = slug.toUpperCase().split(/[^A-Z0-9]+/);
+  // "Draft" and "create draft" stay on the owner's side; any outbound word makes it a card.
+  return !tokens.some(token => OUTBOUND_TOKENS.has(token)) || tokens.includes('DRAFT') && !tokens.includes('SEND');
+}
 // The job is built for each model turn, so this bounds ONE request (a safety bound, many times its reservation), not the run.
 const PER_TURN_JOB_COST_MICROS = 36_000;
 const limits = { ...BROWSER_RUN_DEFAULTS, maxModelCostMicros: PER_TURN_JOB_COST_MICROS };
@@ -121,7 +137,7 @@ const toolArgs = z.object({ props: z.array(z.string().max(80)).max(80), required
 type ToolArgs = z.infer<typeof toolArgs>;
 const pluginState = z.object({
   discoveries: z.array(z.object({
-    query: z.string(), sessionId: z.string().optional(), tools: z.array(z.object({ slug: z.string(), toolkit: z.string(), args: toolArgs.optional() })).max(6),
+    query: z.string(), sessionId: z.string().optional(), tools: z.array(z.object({ slug: z.string(), toolkit: z.string(), args: toolArgs.optional() })).max(12),
   })).max(MAX_PLUGIN_DISCOVERIES),
   reads: z.array(z.object({
     digest: z.string(), slug: z.string(), toolkit: z.string(), approvalId: z.string().uuid().optional(), used: z.boolean(),
@@ -131,7 +147,7 @@ const pluginState = z.object({
     digest: z.string(), slug: z.string(), toolkit: z.string(), approvalId: z.string().uuid().optional(), used: z.boolean(),
   })).max(MAX_PLUGIN_ACTIONS).default([]),
   actionDiscoveries: z.array(z.object({
-    query: z.string(), sessionId: z.string().optional(), tools: z.array(z.object({ slug: z.string(), toolkit: z.string(), args: toolArgs.optional() })).max(6),
+    query: z.string(), sessionId: z.string().optional(), tools: z.array(z.object({ slug: z.string(), toolkit: z.string(), args: toolArgs.optional() })).max(12),
   })).max(MAX_PLUGIN_DISCOVERIES).default([]),
 });
 function runPlugins(row: BrowserRunRecord) {
@@ -309,7 +325,7 @@ function remainingMs(record: BrowserRunRecord) {
  */
 export function activeRunLimit(env: NodeJS.ProcessEnv = process.env): number {
   const configured = Number(env.XROGA_LOCAL_BROWSER_MAX_ACTIVE_RUNS);
-  return Number.isInteger(configured) && configured >= 4 && configured <= 12 ? configured : 4;
+  return Number.isInteger(configured) && configured >= 4 && configured <= 24 ? configured : 13;
 }
 
 function allowance(record: BrowserRunRecord) {
@@ -481,7 +497,9 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
     // Owner-pinned custom MCP read tools (flag XROGA_CUSTOM_MCP_EXECUTION) join the catalogue tools; each was re-verified against the live definition.
     const pinned = plugins.pinnedReads ? await plugins.pinnedReads(actor).catch(() => []) : [];
     const catalogue = result.tools.filter(item => item.risk === 'read' && connected.has(item.toolkit.toLowerCase()));
-    const tools = await withFullSchemas([...rankPinnedByQuery(query, pinned.filter(p => !catalogue.some(item => item.slug === p.slug))), ...catalogue].slice(0, 6), plugins.details, actor);
+    // An owner's pinned tools are few and are the ones they chose, so more of them are shown than catalogue matches (a connected service
+    // with a discover / inspect / run / get-run set must show the whole set, not the six whose names happen to match the words).
+    const tools = await withFullSchemas([...rankPinnedByQuery(query, pinned.filter(p => !catalogue.some(item => item.slug === p.slug))).slice(0, 10), ...catalogue].slice(0, 12), plugins.details, actor);
     const writeNote = changeToolsNote(plugins.pinnedWrites ? await plugins.pinnedWrites(actor).catch(() => []) : []);
     discovery.sessionId = result.sessionId;
     discovery.tools = tools.map(({ slug, toolkit, inputSchema }) => ({ slug, toolkit, args: summarizeToolArgs(inputSchema) }));
@@ -516,7 +534,7 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
     const catalogueWrites = result.tools.filter(item => item.risk !== 'read' && item.risk !== 'destructive' && connected.has(item.toolkit.toLowerCase()) &&
       !isFinancialAction(query, item.slug));
     const tools = await withFullSchemas([...rankPinnedByQuery(query, pinnedWrites.filter(p => !catalogueWrites.some(item => item.slug === p.slug) && !isFinancialAction(query, p.slug))), ...catalogueWrites]
-      .slice(0, 6), plugins.details, actor);
+      .slice(0, 12), plugins.details, actor);
     discovery.sessionId = result.sessionId;
     discovery.tools = tools.map(({ slug, toolkit, inputSchema }) => ({ slug, toolkit, args: summarizeToolArgs(inputSchema) }));
     await save();
@@ -563,10 +581,18 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
     try {
       await assertPluginRun(req, localRecord(await runs.load(actor.userId, row.runId), actor.userId));
       action.approvalId = confirmation.id;
+      if (autoApprovesCall('change', data.slug)) action.used = true;
       await save();
     } catch (error) {
       await plugins.cancel(actor.userId, confirmation.id).catch(() => undefined);
       throw error;
+    }
+    if (action.used) {
+      // A change that stays in the owner's own connected app runs on its own, with the same confirmation, receipt and scope.
+      const { confirmation: done, execution } = await plugins.confirm(actor, confirmation.id, { toolkit: action.toolkit.toLowerCase(), toolSlug: action.slug });
+      const receipt = done.receipt;
+      if (execution.toolSlug !== action.slug || !receipt) throw new BrowserRequestError(503, 'BROWSER_PLUGIN_RECEIPT_UNAVAILABLE');
+      return res.json({ receiptId: receipt.id, result: execution.resultText.slice(0, 12_000) });
     }
     return res.json({ approval: { id: confirmation.id, summary: confirmation.summary, account: confirmation.approval.accountReference,
       argumentsPreview: confirmation.argumentsPreview, risk: outcome.plan.risk } });
@@ -609,9 +635,8 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
       throw new BrowserRequestError(403, 'BROWSER_PLUGIN_NOT_DISCOVERED');
     }
     assertToolArguments(data.arguments, tool.args);
-    if (state.reads.length >= MAX_PLUGIN_READS || state.reads.some(item => item.digest === digest)) {
-      throw new BrowserRequestError(409, 'BROWSER_PLUGIN_READ_ALREADY_REQUESTED');
-    }
+    // The same read may be repeated (polling a run, re-reading after a change); only the size of the saved state is bounded.
+    if (state.reads.length >= MAX_PLUGIN_READS) state.reads.splice(0, state.reads.length - MAX_PLUGIN_READS + 1);
     const read: typeof state.reads[number] = { digest, slug: data.slug, toolkit: tool.toolkit, used: false };
     state.reads.push(read);
     row.state.productManifest.localBrowserPlugins = state;
@@ -628,10 +653,19 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
     try {
       await assertPluginRun(req, localRecord(await runs.load(actor.userId, row.runId), actor.userId));
       read.approvalId = approval.id;
+      if (autoApprovesCall('read', data.slug)) read.used = true;
       await save();
     } catch (error) {
       await plugins.cancel(actor.userId, approval.id).catch(() => undefined);
       throw error;
+    }
+    if (read.used) {
+      // A read runs on its own: the same confirmation and receipt, recorded for the run, without asking the person.
+      const { confirmation, execution } = await plugins.confirm(actor, approval.id, { toolkit: read.toolkit.toLowerCase(), toolSlug: read.slug });
+      await assertPluginRun(req, localRecord(await runs.load(actor.userId, row.runId), actor.userId));
+      const receipt = confirmation.receipt;
+      if (execution.toolSlug !== read.slug || !receipt) throw new BrowserRequestError(503, 'BROWSER_PLUGIN_RECEIPT_UNAVAILABLE');
+      return res.json({ receiptId: receipt.id, result: execution.resultText.slice(0, 12_000) });
     }
     return res.json({ approval: { id: approval.id, summary: approval.summary,
       account: approval.approval.accountReference, argumentsPreview: approval.argumentsPreview } });

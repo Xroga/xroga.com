@@ -66,18 +66,18 @@ describe('starting workers', () => {
     expect((await h.workers.start('other', { tasks: [task(6)] })).isError).toBe(false);
   });
 
-  it('refuses a ninth task, counting those running and waiting', async () => {
+  it('refuses a task beyond the limit, counting those running and waiting', async () => {
     const h = harness();
     await h.workers.start('parent', { tasks: Array.from({ length: 3 }, (_, i) => task(i + 1)) });
-    const r = await h.workers.start('parent', { tasks: Array.from({ length: 6 }, (_, i) => task(i + 10)) });
+    const r = await h.workers.start('parent', { tasks: Array.from({ length: 22 }, (_, i) => task(i + 10)) });
     expect(r.isError).toBe(true);
-    expect(r.text).toContain('at most 8');
+    expect(r.text).toContain('at most 24');
     expect(h.opened).toHaveLength(MAX_ACTIVE_WORKERS);
   });
 
   it('refuses empty, missing and oversized input', async () => {
     const h = harness();
-    for (const input of [{}, { tasks: [] }, { tasks: [{ instruction: '', url: 'https://a.example' }] }, { tasks: [{ instruction: 'x'.repeat(4_001), url: 'https://a.example' }] }, { tasks: Array.from({ length: 9 }, (_, i) => task(i + 1)) }]) {
+    for (const input of [{}, { tasks: [] }, { tasks: [{ instruction: '', url: 'https://a.example' }] }, { tasks: [{ instruction: 'x'.repeat(4_001), url: 'https://a.example' }] }, { tasks: Array.from({ length: 25 }, (_, i) => task(i + 1)) }]) {
       expect((await h.workers.start('parent', input)).isError).toBe(true);
     }
     expect(h.opened).toHaveLength(0);
@@ -199,7 +199,7 @@ describe('worker capacity follows the account limit the server reports', () => {
   const six = [1, 2, 3, 4, 5, 6].map(task);
   it('maps an account limit to workers: the parent holds one slot, never more than six, three when unknown', async () => {
     const { workersFor } = await import('../parallel-workers');
-    expect([undefined, 0, 4, 6, 7, 8, 12].map(n => workersFor(n))).toEqual([3, 3, 3, 5, 6, 6, 6]);
+    expect([undefined, 0, 4, 6, 7, 8, 12, 13, 40].map(n => workersFor(n))).toEqual([3, 3, 3, 5, 6, 7, 11, 12, 12]);
   });
   it('with the default account (four runs) three of six tasks run and three wait; they start as slots free', async () => {
     const h = harness();

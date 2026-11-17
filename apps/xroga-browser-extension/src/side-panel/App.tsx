@@ -407,7 +407,7 @@ export function App() {
     if (!client) return;
     if (XROGA_PRODUCT) {
       if (!paired) return;
-      extra = { mode: 'ask', model: XROGA_REF };
+      extra = { mode: 'auto', model: XROGA_REF };
     }
     // `/compact` compacts the conversation now, or at the next turn boundary of a run.
     if (text.trim() === '/compact') {

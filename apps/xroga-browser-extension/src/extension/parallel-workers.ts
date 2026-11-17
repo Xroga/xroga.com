@@ -16,14 +16,14 @@ import type { AgentTool } from '@src/agent/tools';
 /** Workers running at the same time for one parent when the server says nothing else. More tasks than this wait their turn. */
 export const MAX_ACTIVE_WORKERS = 3;
 /** The most workers one parent runs at once, however much the account allows (each is a Chrome window and a model stream). */
-export const MAX_ACTIVE_WORKERS_CEILING = 6;
+export const MAX_ACTIVE_WORKERS_CEILING = 12;
 /** Workers that may run at once for an account limit of `activeRunLimit` runs: the parent holds one slot. */
 export function workersFor(activeRunLimit: number | undefined): number {
   if (!Number.isInteger(activeRunLimit) || (activeRunLimit as number) < 2) return MAX_ACTIVE_WORKERS;
   return Math.max(1, Math.min(MAX_ACTIVE_WORKERS_CEILING, (activeRunLimit as number) - 1));
 }
 /** Tasks one parent may have assigned (running or waiting). How many of them run at once depends on the account's limit; the rest wait. */
-export const MAX_TASKS = 8;
+export const MAX_TASKS = 24;
 export const MAX_INSTRUCTION = 4_000;
 const MAX_RESULT = 6_000;
 /** What one finished task hands to a task that comes after it, and the most all of them may hand over together. */

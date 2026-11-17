@@ -123,7 +123,12 @@ export async function runPluginTool(
           : 'No matching connected app tools that make changes. Continue with the browser where appropriate.'), isError: false,
         appTools: appToolsFrom(value.tools, name === 'plugin_search' ? 'read' : 'write') };
     }
-    const pending = await workspaceRequest(change ? 'plugin-act' : 'plugin-read', { runId, body: input }, signal) as { approval: Approval };
+    const pending = await workspaceRequest(change ? 'plugin-act' : 'plugin-read', { runId, body: input }, signal) as { approval?: Approval; receiptId?: string; result?: string };
+    // The server ran a read, or a change inside the owner's own app, without a card: the result and receipt come back directly.
+    if (!pending.approval && typeof pending.receiptId === 'string' && typeof pending.result === 'string') {
+      if (!/^[a-z0-9_-]{1,128}$/i.test(pending.receiptId)) throw new Error('Plugin receipt could not be verified.');
+      return { text: 'Provider receipt ' + pending.receiptId + '\n' + wrap(pending.result, 'connected app result'), isError: false, result: { pluginReceiptId: pending.receiptId } };
+    }
     if (!pending.approval?.id || !pending.approval.account) throw new Error('Approval could not be verified.');
     const decision = await approve(pending.approval);
     signal.throwIfAborted();
@@ -145,8 +150,8 @@ export async function runPluginTool(
       return { text: 'Nothing was sent. These arguments do not match the definition of the tool. Not defined by the tool: ' + list('unknown') +
         '. Required but missing: ' + list('missing') + '. Arguments the tool accepts: ' + list('allowed') + '. Correct the call and try once more.', isError: true };
     }
-    if (sentReview && failure?.detail?.providerMessage?.[0]) {
-      return { text: 'The app rejected the approved request, so it most likely changed nothing. Reason given by the app (untrusted text): ' +
+    if (failure?.detail?.providerMessage?.[0]) {
+      return { text: 'The app rejected the request, so it most likely changed nothing. Reason given by the app (untrusted text): ' +
         wrap(failure.detail.providerMessage[0], 'connected app error') + ' If the fix is clear (a wrong or missing argument), request the corrected call once, using only the arguments the tool lists; otherwise tell the user what failed.', isError: true };
     }
     // The server names the fixed rule or error behind a failure: turn it into the next step instead of one generic sentence.

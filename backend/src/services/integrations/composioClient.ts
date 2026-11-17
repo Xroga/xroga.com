@@ -1420,7 +1420,7 @@ const WRITE_TOKENS = new Set([
   'SUBMIT',
 ]);
 
-const READ_TOKENS = new Set(['GET','LIST','SEARCH','FETCH','FIND','READ','RETRIEVE','LOOKUP','QUERY','DESCRIBE','INSPECT','VIEW','CHECK','DOWNLOAD']);
+const READ_TOKENS = new Set(['GET','LIST','SEARCH','FETCH','FIND','READ','RETRIEVE','LOOKUP','QUERY','DESCRIBE','INSPECT','VIEW','CHECK','DOWNLOAD','DISCOVER','BROWSE']);
 
 export function classifyComposioToolRisk(
   toolSlug: string,

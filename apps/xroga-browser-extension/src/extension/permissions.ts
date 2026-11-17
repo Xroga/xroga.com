@@ -62,7 +62,9 @@ export class Permissions {
 
   /** The answer to the layer for a classified write. */
   decide(mode: PermissionMode, question: WriteQuestion): WriteDecision {
-    if (XROGA_PRODUCT) return { decision: 'ask', canRemember: false };
+    // Payments, access grants and secret fields are handed to the person by the gate itself (USER_STEP), whatever this says. Everything
+    // else the agent does on its own; only a deletion still asks.
+    if (XROGA_PRODUCT) return question.category === 'delete' ? { decision: 'ask', canRemember: false } : { decision: 'run', by: 'auto', canRemember: false };
     // A page with no host cannot hold a rule: a write there asks every time, in both modes.
     if (!question.site) return { decision: 'ask', canRemember: false };
     const entry = this.#rules[question.site];

@@ -19,6 +19,8 @@ test('local Chrome shares canonical ownership, turn fencing, cancellation and re
     XROGA_LOCAL_BROWSER_ALLOWED_USER_IDS: `${owner},${other}`,
     XROGA_LOCAL_BROWSER_VISION_PROBE: '',
     ZURELAY_DEEPSEEK_VISION_VERIFIED: '',
+    // This test covers the approval card itself; automatic approval has its own test.
+    XROGA_LOCAL_BROWSER_AUTO_APPROVE: 'off',
   };
   const before = Object.fromEntries(Object.keys(env).map(key => [key, process.env[key]]));
   Object.assign(process.env, env);
