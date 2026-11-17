@@ -2854,6 +2854,7 @@ async function executeDiscoveredComposioTool(
       : failed?.data && typeof failed.data === 'object' && typeof (failed.data as { message?: unknown }).message === 'string' ? (failed.data as { message: string }).message : undefined;
     if (failed?.result_type === 'failed' && rawReason) {
       const reason = String(redactOperationsValue(rawReason, 'tool_output')).replace(/[\t\n\r ]+/g, ' ').slice(0, 300);
+      console.error('[composio] tool reported failure:',{toolSlug:toolSlug.slice(0,80),reason:reason.slice(0,240)});
       throw Object.assign(new ComposioClientError('The connected tool reported a failure.', { status: 409, code: 'COMPOSIO_TOOL_REPORTED_FAILURE' }), { providerMessage: reason });
     }
     throw new ComposioClientError('The provider did not report a completed action. Review its state before preparing another attempt.', {
