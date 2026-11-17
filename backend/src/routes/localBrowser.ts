@@ -19,7 +19,7 @@ import { isTerminalRunStatus, PostgresBrowserRunStore, type BrowserRunRecord, ty
 import { PostgresLeaseStore } from '../workers/postgresLeaseStore.js';
 import { readBrowserDocument } from './browserDocuments.js';
 import { createLocalBrowserPluginCatalog } from './localBrowserPlugins.js';
-import { executeComposioReadTool, getComposioToolDetails, listPinnedCustomReadTools, listPinnedCustomWriteTools, isComposioConfigured, searchComposioActionTools, searchComposioTools } from '../services/integrations/composioClient.js';
+import { canUserAccessComposioToolkit, createComposioConnectionLink, executeComposioReadTool, getComposioToolDetails, listPinnedCustomReadTools, listPinnedCustomWriteTools, isComposioConfigured, searchComposioActionTools, searchComposioTools } from '../services/integrations/composioClient.js';
 import type { XrogaConnectSearchResult } from '../services/integrations/composioClient.js';
 import { cancelBusinessActionConfirmation, confirmBusinessAction } from '../services/integrations/businessActionConfirmations.js';
 import { preparedActionDigest } from '../security/authority/digest.js';
@@ -361,9 +361,10 @@ const defaultPlugins = {
   details: getComposioToolDetails,
   pinnedReads: listPinnedCustomReadTools,
   pinnedWrites: listPinnedCustomWriteTools,
+  connectLink: createComposioConnectionLink,
 };
 
-type ActionMembers = 'discoverActions' | 'prepareAction' | 'createActionConfirmation' | 'details' | 'pinnedReads' | 'pinnedWrites';
+type ActionMembers = 'discoverActions' | 'prepareAction' | 'createActionConfirmation' | 'details' | 'pinnedReads' | 'pinnedWrites' | 'connectLink';
 /** The read members are required; the action members are optional so a test or a release can run without them. */
 type PluginAdapter = Omit<typeof defaultPlugins, ActionMembers> & Partial<Pick<typeof defaultPlugins, ActionMembers>>;
 
@@ -497,6 +498,24 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
     const text = got.bytes.toString('utf8');
     return res.json({ status: got.statusCode, contentType: got.contentType.slice(0, 80), finalUrl: got.finalUrl,
       body: text.slice(0, 40_000), ...(text.length > 40_000 ? { truncated: true, totalChars: text.length } : {}) });
+  }));
+
+  // An authorization link for an app the user has not connected yet. The person opens it and approves access with the app itself; Xroga never
+  // sees their password and nothing is connected until the provider says so. The link belongs to this run's own search session.
+  router.post('/runs/:runId/plugin-connect', withLease(async (req, res, _rt, row) => {
+    const actor = await assertPluginRun(req, row);
+    if (!plugins.connectLink) throw new BrowserRequestError(403, 'BROWSER_PLUGIN_NOT_AVAILABLE');
+    const { toolkit } = z.object({ toolkit: z.string().trim().min(2).max(80).regex(/^[A-Za-z0-9_-]+$/) }).strict().parse(req.body);
+    if (!canUserAccessComposioToolkit(actor.userId, toolkit)) throw new BrowserRequestError(404, 'BROWSER_PLUGIN_NOT_FOUND');
+    const state = runPlugins(row);
+    const read = [...state.discoveries].reverse().find(item => item.sessionId);
+    const change = [...state.actionDiscoveries].reverse().find(item => item.sessionId);
+    const session = read?.sessionId ?? change?.sessionId;
+    if (!session) throw new BrowserRequestError(409, 'BROWSER_PLUGIN_SEARCH_FIRST');
+    const frontend = (process.env.FRONTEND_URL?.trim() || 'https://xroga.com').replace(/\/$/, '');
+    const link = await plugins.connectLink(actor.userId, { sessionId: session, toolkit,
+      callbackUrl: `${frontend}/dashboard/integrations/connect/callback`, mode: read?.sessionId ? 'read' : 'action' }, actor);
+    return res.json({ toolkit: link.toolkit, url: link.redirectUrl });
   }));
 
   router.post('/runs/:runId/plugin-search', withLease(async (req, res, { runs }, row, lease) => {

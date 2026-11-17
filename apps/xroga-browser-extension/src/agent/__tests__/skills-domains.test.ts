@@ -85,3 +85,12 @@ describe('choosing where data comes from', () => {
     expect(ids('Use my Monid app to scrape these pages')).toContain('endpoint-marketplace');
   });
 });
+
+describe('when an app cannot be reached through an API', () => {
+  it('works it in the user own signed-in browser, or hands sign-in and codes to the user', () => {
+    const text = skillsSection('Use Notion to create a project page');
+    expect(text).toContain('plugin_connect');
+    expect(text).toContain('already signed in');
+    expect(text).toContain('always the user');
+  });
+});

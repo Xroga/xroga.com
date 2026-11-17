@@ -52,6 +52,28 @@ async function runPublicGetNow(runId: string, input: unknown, signal: AbortSigna
   }
 }
 
+/**
+ * An authorization link for an app the user has not connected: open it in a tab, ask the person to approve access there (they sign in
+ * themselves; Xroga never types a password), then search for the app's tools again.
+ */
+export const PLUGIN_CONNECT_TOOL: AgentTool = {
+  name: 'plugin_connect', source: 'agent', group: 'working',
+  description: 'Get a Xroga authorization link for an app the user has not connected yet (the app name as the provider spells it, for example gmail or googlesheets). Search for the app first with plugin_search. Open the link in a tab, then ask the user (ask_user, kind "takeover") to sign in and approve access; passwords and codes are theirs to type. Afterwards search for the app again and continue the task. If the app cannot be connected this way, use the browser with the user\u2019s own signed-in session.',
+  parameters: { type: 'object', properties: { toolkit: { type: 'string', maxLength: 80 } }, required: ['toolkit'], additionalProperties: false },
+};
+
+async function runPluginConnectNow(runId: string, input: unknown, signal: AbortSignal): Promise<{ text: string; isError: boolean }> {
+  try {
+    const value = await workspaceRequest('plugin-connect', { runId, body: input }, signal) as { toolkit?: string; url?: string };
+    if (typeof value?.url !== 'string' || !/^https:\/\//.test(value.url)) throw new Error('no link');
+    return { text: `Authorization link for ${value.toolkit ?? 'the app'}: ${value.url}\nOpen it in a tab, then ask the user to sign in and approve access (ask_user, kind "takeover"). When they are done, search for the app again.`, isError: false };
+  } catch (error) {
+    const code = (error as { code?: unknown } | null)?.code;
+    if (code === 'BROWSER_PLUGIN_SEARCH_FIRST') return { text: 'Run plugin_search for this app first, then ask for the link again.', isError: true };
+    return { text: 'No authorization link could be made for this app. Use the browser with the user\u2019s own signed-in session, or ask the user to connect it under Plugins.', isError: true };
+  }
+}
+
 type Approval = { id: string; summary: string; account: string; argumentsPreview?: string; risk?: string };
 type PluginToolName = 'plugin_search' | 'plugin_read' | 'plugin_action_search' | 'plugin_act';
 
@@ -221,6 +243,14 @@ export function runPluginTool(
 export function runPublicGet(runId: string, input: unknown, signal: AbortSignal, wrap: (text: string, source: string) => string): Promise<{ text: string; isError: boolean }> {
   const previous = pluginQueues.get(runId) ?? Promise.resolve();
   const next = previous.catch(() => undefined).then(() => (signal.aborted ? Promise.reject(signal.reason) : runPublicGetNow(runId, input, signal, wrap)));
+  pluginQueues.set(runId, next);
+  void next.catch(() => undefined).finally(() => { if (pluginQueues.get(runId) === next) pluginQueues.delete(runId); });
+  return next;
+}
+
+export function runPluginConnect(runId: string, input: unknown, signal: AbortSignal): Promise<{ text: string; isError: boolean }> {
+  const previous = pluginQueues.get(runId) ?? Promise.resolve();
+  const next = previous.catch(() => undefined).then(() => (signal.aborted ? Promise.reject(signal.reason) : runPluginConnectNow(runId, input, signal)));
   pluginQueues.set(runId, next);
   void next.catch(() => undefined).finally(() => { if (pluginQueues.get(runId) === next) pluginQueues.delete(runId); });
   return next;
