@@ -94,3 +94,14 @@ describe('when an app cannot be reached through an API', () => {
     expect(text).toContain('always the user');
   });
 });
+
+describe('finding leads', () => {
+  it('asks for a verified table of real companies and never stops the task for one refused page', () => {
+    const request = 'Find 10 potential clients in the United States that may benefit from custom software or business automation.';
+    expect(ids(request)).toContain('lead-generation');
+    const text = skillsSection(request);
+    expect(text).toContain('Never invent a company');
+    expect(text).toContain('do not stop the task');
+    expect(text).toContain('verified k of N');
+  });
+});

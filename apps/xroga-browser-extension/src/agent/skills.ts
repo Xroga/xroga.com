@@ -121,6 +121,19 @@ export const SKILLS: Skill[] = [
     ].join('\n'),
   },
   {
+    id: 'lead-generation',
+    when: has(/\b(?:potential (?:clients?|customers?)|find (?:\d+ |some |me )?(?:new )?(?:clients?|customers?|leads?|prospects?)|(?:\d+|ten|twenty|fifty) (?:leads?|prospects?|clients?|companies|businesses)|lead (?:list|generation)|prospecting|b2b leads?|qualified leads?|client hunting)\b/i),
+    body: [
+      'Finding leads or clients: the finished result is a table of real companies, not a description of your browsing.',
+      '- Write the target first: how many (N), the market, what a good fit is. Say “verified k of N” in each reply.',
+      '- A company counts only after you opened its official website and read what it does. Record: company, official website, city and state, what it does, a public contact copied from that site (phone, email or contact-page address), why it fits (a specific manual process or gap you saw), and the source addresses. Write “not found” for a field you could not confirm. Never invent a company, a contact, a founder or a buying intent.',
+      '- Find candidates through searches and directories, then verify them. For more than about six, give start_parallel_tasks workers separate lists of domains (one list each) so two workers never research the same company. Remove duplicates by website domain before you report.',
+      '- If a page is refused or does not answer, do not stop the task: use the https address, the company’s other pages, a search result for it, or another candidate. Ask the user only after those fail, and then for one specific thing.',
+      '- Keep going until you have N verified companies or no reasonable candidates are left. If short, give the verified ones and say exactly what is missing.',
+      '- The final answer is the table (Company, Website, Location, What they do, Contact, Why a fit, Source) and a one-line status such as “10 of 10 verified”. Offer a CSV or a Google Sheet. Finding leads does not allow sending messages to them.',
+    ].join('\n'),
+  },
+  {
     id: 'business-records',
     when: has(/\b(?:crm|customer records?|contact records?|leads?|deals?|pipeline|product listings?|inventory|orders? (?:list|dashboard)|wordpress|shopify|webflow|woocommerce|cms|add (?:a )?customers?|update (?:the )?products?)\b/i),
     body: [

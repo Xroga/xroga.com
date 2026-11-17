@@ -24,12 +24,21 @@ const TRANSIENT_RETRY_MS = 800;
  * An absolute address. A site written the way people say it ("example.com", "www.example.com/pricing") is read as https, so the
  * agent never has to ask the user to open a site for it.
  */
-function parseUrl(url: string): string {
+export function parseUrl(url: string): string {
   const text = url.trim();
   const candidate =
     !/^[a-z][a-z0-9+.-]*:/i.test(text) && /^[^\s/?#]+\.[a-z]{2,}(?::\d+)?(?:[/?#]\S*)?$/i.test(text) ? `https://${text}` : text;
   try {
-    return new URL(candidate).href;
+    const parsed = new URL(candidate);
+    // A public site written with http:// (many small-business sites are still linked that way) is opened over https, as Chrome's own
+    // HTTPS-first mode does: more secure, and the navigation policy only accepts https. Local and numeric addresses, and any address
+    // with a port, are left exactly as written so they are judged by the policy as before.
+    const host = parsed.hostname;
+    if (parsed.protocol === 'http:' && !parsed.port && host.includes('.') && !/^[\d.]+$/.test(host) && !host.includes(':') &&
+      !/\.(?:local|localhost|internal|home\.arpa|test|invalid)$/i.test(host)) {
+      parsed.protocol = 'https:';
+    }
+    return parsed.href;
   } catch {
     throw new LayerError('INVALID_ARGUMENT', `Not an absolute URL: ${quote(url)}`);
   }
