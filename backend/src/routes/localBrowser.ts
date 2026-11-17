@@ -768,6 +768,17 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
         settledMicroUsd: settled });
       return res.json({ id: result.id, model: MODEL, choice: { finish_reason: choice.finish_reason,
         message: { content: choice.message.content, tool_calls: choice.message.tool_calls } }, usage: result.usage });
+    } catch (error) {
+      // The shared model gate was full and no provider call was made (nothing settled, nothing to retry on the provider's side). This is
+      // a queue, not a failure: the turn's reserved spend is given back and the extension asks again after a short wait.
+      const failure = error as { status?: unknown; code?: unknown; message?: unknown } | null;
+      if (failure?.status === 429 || failure?.code === 'MODEL_PROVIDER_BUSY' || /temporarily busy/i.test(String(failure?.message ?? ''))) {
+        row.state.productManifest.localBrowserSpendMicros = priorSpend;
+        await rt.runs.stateStore(ctx.userId, () => lease).save(row.state).catch(() => undefined);
+        res.setHeader('Retry-After', '3');
+        throw new BrowserRequestError(429, 'BROWSER_MODEL_BUSY', { retryAfterMs: ['3000'] });
+      }
+      throw error;
     } finally {
       clearInterval(timer);
       res.off('close', disconnect);

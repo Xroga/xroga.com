@@ -74,6 +74,26 @@ describe('a canonical run', () => {
     expect(turns.at(-1)).toBe(49);
   });
 
+  it('waits and asks again when the shared model gate is full (nothing was charged), instead of failing the task', async () => {
+    vi.useFakeTimers();
+    try {
+      const run = await startXrogaModelRun('goal', 'https://example.com', new AbortController().signal, 0);
+      turnFails = Object.assign(new Error('busy'), { code: 'BROWSER_MODEL_BUSY' });
+      const pending = streamTurn({ chat: run.model.chat, system: 's', messages: [{ role: 'user', content: 'hi' }], tools: {}, signal: new AbortController().signal } as never);
+      await vi.advanceTimersByTimeAsync(2_500);
+      turnFails = undefined;
+      await vi.advanceTimersByTimeAsync(5_000);
+      const reply = await pending;
+      expect(reply.error).toBeFalsy();
+      expect(run.requestInterrupted).toBe(false);
+      const turns = requests.filter(r => r.op === 'turn').map(r => (r.value as { body: { turn: number } }).body.turn);
+      expect(turns.length).toBeGreaterThanOrEqual(2);
+      expect(new Set(turns).size).toBe(turns.length);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it('still treats any other failed model request as unverified and never retries it', async () => {
     const run = await startXrogaModelRun('goal', 'https://example.com', new AbortController().signal, 0);
     turnFails = new Error('network');

@@ -87,21 +87,35 @@ export async function startXrogaModelRun(
           // Compaction's summary call is a model request too, and the server counts it. The loop's own turn count does not, so a
           // request can reach the end of the segment before the loop asks for the next one: renew it here, before it is refused.
           if (turn + 1 > maxTurns) await extend();
-          const value = await workspaceRequest(
-            'turn',
-            {
-              runId,
-              body: {
-                turn: ++turn,
-                messages: request.messages,
-                tools: request.tools,
-                tool_choice: request.tool_choice,
-                max_tokens: Math.min(2_048, request.max_tokens ?? request.max_completion_tokens ?? 2_048),
-              },
-            },
-            signal,
-          );
-          return completionStream(value as Completion);
+          // Many people share the model: when its gate is full the server says so before any provider call, charges nothing and
+          // the task simply waits its turn. Up to 20 minutes of waiting, with a growing pause, instead of an error for the person.
+          const deadline = Date.now() + 20 * 60_000;
+          for (let wait = 2_000; ; wait = Math.min(15_000, Math.round(wait * 1.5))) {
+            try {
+              const value = await workspaceRequest(
+                'turn',
+                {
+                  runId,
+                  body: {
+                    turn: ++turn,
+                    messages: request.messages,
+                    tools: request.tools,
+                    tool_choice: request.tool_choice,
+                    max_tokens: Math.min(2_048, request.max_tokens ?? request.max_completion_tokens ?? 2_048),
+                  },
+                },
+                signal,
+              );
+              return completionStream(value as Completion);
+            } catch (busy) {
+              if ((busy as { code?: unknown } | null)?.code !== 'BROWSER_MODEL_BUSY' || Date.now() + wait > deadline) throw busy;
+              await new Promise<void>((resolve, reject) => {
+                const timer = setTimeout(resolve, wait);
+                signal.addEventListener('abort', () => { clearTimeout(timer); reject(signal.reason); }, { once: true });
+              });
+              if (turn + 1 > maxTurns) await extend();
+            }
+          }
         } catch (error) {
           // The owner's entitlement ledger refused the turn: nothing was charged and the run's progress is kept, so it can resume.
           if ((error as { code?: unknown } | null)?.code === 'BROWSER_ALLOWANCE_EXHAUSTED') {
