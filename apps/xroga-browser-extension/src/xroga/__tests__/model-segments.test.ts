@@ -103,3 +103,37 @@ describe('a canonical run', () => {
     expect(requests.filter(r => r.op === 'turn')).toHaveLength(1);
   });
 });
+
+describe('a model request that stalls', () => {
+  it('is asked again under the next turn number (up to three times) instead of pausing the task', async () => {
+    vi.useFakeTimers();
+    try {
+      const run = await startXrogaModelRun('goal', 'https://example.com', new AbortController().signal, 0);
+      turnFails = Object.assign(new Error('x'), { code: 'BROWSER_GATEWAY_UNAVAILABLE' });
+      const pending = streamTurn({ chat: run.model.chat, system: 's', messages: [{ role: 'user', content: 'hi' }], tools: {}, signal: new AbortController().signal } as never);
+      await vi.advanceTimersByTimeAsync(2_500);
+      turnFails = undefined;
+      await vi.advanceTimersByTimeAsync(5_000);
+      const reply = await pending;
+      expect(reply.error).toBeFalsy();
+      expect(run.requestInterrupted).toBe(false);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('still pauses after three stalls in a row, so a real outage does not loop', async () => {
+    vi.useFakeTimers();
+    try {
+      const run = await startXrogaModelRun('goal', 'https://example.com', new AbortController().signal, 0);
+      turnFails = Object.assign(new Error('x'), { code: 'BROWSER_GATEWAY_UNAVAILABLE' });
+      const pending = streamTurn({ chat: run.model.chat, system: 's', messages: [{ role: 'user', content: 'hi' }], tools: {}, signal: new AbortController().signal } as never);
+      await vi.advanceTimersByTimeAsync(60_000);
+      const reply = await pending;
+      expect(reply.error).toBeTruthy();
+      expect(run.requestInterrupted).toBe(true);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+});

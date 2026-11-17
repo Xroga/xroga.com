@@ -90,6 +90,7 @@ export async function startXrogaModelRun(
           // Many people share the model: when its gate is full the server says so before any provider call, charges nothing and
           // the task simply waits its turn. Up to 20 minutes of waiting, with a growing pause, instead of an error for the person.
           const deadline = Date.now() + 20 * 60_000;
+          let stalls = 0;
           for (let wait = 2_000; ; wait = Math.min(15_000, Math.round(wait * 1.5))) {
             try {
               const value = await workspaceRequest(
@@ -108,7 +109,12 @@ export async function startXrogaModelRun(
               );
               return completionStream(value as Completion);
             } catch (busy) {
-              if ((busy as { code?: unknown } | null)?.code !== 'BROWSER_MODEL_BUSY' || Date.now() + wait > deadline) throw busy;
+              // A model request that stalled or got a temporary server error (the provider did not answer in time) is asked again, up to
+              // three times, under the next turn number: it is a model call only, so no browser action or app change is ever repeated.
+              const code = (busy as { code?: unknown } | null)?.code;
+              const temporary = code === 'BROWSER_GATEWAY_UNAVAILABLE' || code === 'BROWSER_MODEL_EMPTY';
+              if (temporary && !signal.aborted && stalls < 3) stalls++;
+              else if (code !== 'BROWSER_MODEL_BUSY' || Date.now() + wait > deadline) throw busy;
               await new Promise<void>((resolve, reject) => {
                 const timer = setTimeout(resolve, wait);
                 signal.addEventListener('abort', () => { clearTimeout(timer); reject(signal.reason); }, { once: true });
