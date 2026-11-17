@@ -22,3 +22,14 @@ Status: audit only. Nothing in this file is implemented or tested. Cloud Run (or
 ## Source-use caveats recorded for the examples
 - JobSpy (MIT) scrapes LinkedIn, Indeed and others and offers proxy rotation to bypass blocking; those sources' terms and access controls apply regardless of the licence. Permitted sources (official or public job APIs) should be preferred.
 - Google Maps scraping likewise needs its terms checked; an authorised source is the fallback.
+
+## Update, 18 November 2026: the offline worker is built and verified (staging only)
+
+Built: `deploy/sandbox-worker/` (Cloud Run gen2 service `xroga-sandbox-worker`, scale to zero, max 2 instances, concurrency 1, a service account with no roles, not publicly invokable, one request per container: the process ends after every run so Cloud Run starts a fresh container), `backend/src/sandbox/repoRun.ts` (public GitHub repo fetched at an exact commit into memory, files sent to the worker, one command run, real output and files returned), a `repo-run` route and the extension tool `run_repository`. The existing remote-sandbox adapter gained a Google identity token and an artifacts channel.
+
+Evidence from the deployed worker (real Cloud Run, not a fixture):
+- Self-test with a positive control: the same connection attempt reaches the internet outside the namespace and is blocked inside it.
+- A Python 3.11 program ran, wrote a CSV that came back as an artifact, could not reach the internet or the metadata server, and saw an environment of only HOME, LC_CTYPE and PATH.
+- After the automated security review: PID, mount, IPC and UTS namespaces added, `--kill-child`, the token deleted from the process environment, fresh container per run. Adversarial probe: the sandbox sees only its own 1 to 2 processes, the worker's token is not readable from any `/proc/*/environ`, and a process detached in run A did not exist in run B.
+
+Residual risks (not closed): the job still sees the worker container's filesystem (no private root; it contains no secrets, the code is public) and runs as the worker's own kernel user; a private root filesystem or a second layer such as nsjail or bubblewrap would narrow this. Resource limits are prlimit and a wall-clock timeout, not cgroups. The shared token travels as an environment variable on the Cloud Run service (a Secret Manager reference is the better home). The metering ledger is not yet wired to sandbox compute. Network is `none` only: dependency installs and any data fetch still need a separately verified restricted-network stage, so a repository that needs packages or the internet cannot run. Independent security review of all of this is still required before untrusted repositories are enabled for users.
