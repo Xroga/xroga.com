@@ -23,7 +23,8 @@ test('stream rendering is deferred while completed markdown and offscreen turns 
   assert.match(CSS, /\.xv-terminal-turn\s*\{[\s\S]*?content-visibility:\s*auto;/);
 });
 
-test('loading transition effects are not keyed to every message delta', () => {
-  assert.match(LOG, /\}, \[loading, scrollToBottom\]\);/);
+test('submit anchoring depends on the prompt identity instead of streamed message content', () => {
+  assert.match(LOG, /\}, \[loading, sessionRestoring, latestPromptId, renderedPromptId\]\);/);
+  assert.match(LOG, /anchoredPromptId\.current = renderedPromptId;\s*pendingPromptId\.current = null;/);
   assert.doesNotMatch(LOG, /\}, \[messages, loading, scrollToBottom\]\);/);
 });
