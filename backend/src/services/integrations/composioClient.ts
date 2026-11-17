@@ -1945,9 +1945,15 @@ export async function searchComposioTools(
   // existing selector. Metadata never supplies execution authority.
   const connected=await listSessionComposioToolkits(userId,{sessionId:session.session_id,mode,connectedOnly:true},actor);
   const apps=connected.filter(item=>item.connected&&!item.toolkit.toLowerCase().startsWith('custom_')&&/^[a-z0-9_-]{1,80}$/i.test(item.toolkit)).map(item=>item.toolkit.toLowerCase()).slice(0,20);
-  const vocabulary=['get','list','find','search','read','send','create','update','delete','archive','upload','download','publish','message','email','task','issue','file','event','contact','row','record','invoice','calendar','channel','document','spreadsheet'];
+  const vocabulary=['get','list','find','search','read','send','create','update','delete','archive','upload','download','publish','message','email','task','issue','file','event','contact','row','record','invoice','calendar','channel','document','spreadsheet',
+    'add','append','insert','write','retrieve','fetch','query','page','database','block','heading','table','sheet','draft','comment','folder','label','note','value','cell','column','append'];
   const words=new Set(query.toLowerCase().match(/[a-z]+/g)??[]),terms=vocabulary.filter(word=>words.has(word));
-  const publicQuery=`Find ${mode} tools for ${apps.join(', ')||'available applications'}: ${terms.join(' ')||'available operations'}.`;
+  // When the request names a connected app, the search is for that app alone: a search that lists every connected app returns a mixed set and
+  // buries the one app the user asked about. The app list is the provider's own app IDs, never text from the request.
+  const flat=(text:string)=>text.toLowerCase().replace(/[^a-z0-9]+/g,'');
+  const asked=flat(query);
+  const named=apps.filter(app=>flat(app).length>=4&&asked.includes(flat(app)));
+  const publicQuery=`Find ${mode} tools for ${(named.length?named:apps).join(', ')||'available applications'}: ${terms.join(' ')||'available operations'}.`;
   const payload={queries:[{use_case:publicQuery}],search_strategy:'tool_search'};
   const digest=preparedActionDigest(payload);
   await enforceEgress({context:actor,actionClass:'READ',destination:COMPOSIO_API_BASE,recipient:'composio-owned-session-metadata',purpose:'finite-tool-discovery',payload,declaredClass:'PUBLIC',toolTrust:'SERVER_REGISTERED',binding:{userId,provider:'composio',connectedAccountId:'catalog',operation:'DISCOVER_TOOL_METADATA',targetDigest:digest,planDigest:digest}},receipt=>persistSecurityDecision(actor,receipt));
