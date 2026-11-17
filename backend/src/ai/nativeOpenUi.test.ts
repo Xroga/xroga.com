@@ -116,6 +116,36 @@ test('a missing calculator is clearly identified without erasing its readable ca
   assert.equal(shared, undefined);
 });
 
+test('shared calculation references remain usable inside a native layout without bypassing expanded-work checks', () => {
+  const calculator = (references: number, tail = '') => [
+    'root = Col([controls, Metric("Final balance", @Format(value' + (references - 1) + ', "currency", 2, "USD"))])',
+    '$principal = 10000', '$rate = 7', '$years = 10',
+    'controls = Col([Slider($principal, 0, 100000, 100, "Principal", "USD"), Slider($rate, 0, 20, 0.1, "Annual rate", "%"), Slider($years, 0, 30, 1, "Years", "years")])',
+    'value0 = $principal * Pow(1 + $rate / 100 / 12, 12 * $years)',
+    ...Array.from({ length: references - 1 }, (_, index) => `value${index + 1} = value${index} + 0`),
+    tail,
+  ].filter(Boolean).join('\n');
+  const program = calculator(30);
+  const prose = 'The starting balance is $20,096.61 at $10,000 principal, 7% nominal annual interest compounded monthly for 10 years.';
+  const diagnostics: NativeUiDiagnostic[] = [];
+  assert.deepEqual(validateNativeWorkspaceProgram(program, undefined, prose, event => diagnostics.push(event)), { ok: true }, JSON.stringify(diagnostics));
+  const answer = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + program, 'stop', undefined,
+    'Build an interactive compound-interest calculator.', undefined, ['calculator']);
+  assert.equal(answer.completion.status, 'complete');
+  assert.equal(answer.responseSource.text, program);
+  assert.ok(answer.response.startsWith(prose));
+  assert.equal(readNativeOpenUiShare(buildNativeOpenUiShare(answer.response, program)!)?.program, program);
+
+  const rejected: NativeUiDiagnostic[] = [];
+  assert.deepEqual(validateNativeWorkspaceProgram(calculator(50), undefined, '', event => rejected.push(event)), { ok: false, reason: 'budget' });
+  assert.equal(rejected[0]?.workLimit, 'expression_depth');
+  assert.ok((rejected[0]?.expandedDepth ?? 0) > 96);
+  assert.doesNotMatch(JSON.stringify(rejected), /principal|value\d|10000|20096/);
+  assert.deepEqual(validateNativeWorkspaceProgram(calculator(30, 'unreachable = Fetch("https://private.example")'), undefined, ''), { ok: false, reason: 'authority' });
+  assert.deepEqual(validateNativeWorkspaceProgram(calculator(30, 'unreachable = Source("unverified")'), undefined, ''), { ok: false, reason: 'authority' });
+  assert.deepEqual(validateNativeWorkspaceProgram(calculator(30, 'cycle = cycle'), undefined, ''), { ok: false, reason: 'reference' });
+});
+
 test('the model gets instructions from the native registry and may answer in text', () => {
   for (const prompt of [nativeOpenUiPlainPrompt, nativeOpenUiPrompt]) {
     assert.match(prompt, /Verify the value, unit, and reference point, baseline, or denominator together/);

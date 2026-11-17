@@ -33,6 +33,16 @@ const cases = {
     program: 'root = Col([Code(' + JSON.stringify('monthlyPayment = principal * monthlyRate * (1 + monthlyRate) ** paymentCount / ((1 + monthlyRate) ** paymentCount - 1)') + ', "text"), Markdown(' + JSON.stringify('```python\nmonthlyPayment = principal * monthlyRate * (1 + monthlyRate) ** paymentCount / ((1 + monthlyRate) ** paymentCount - 1)\n```') + ')])',
   },
   short: { text: 'Paris is the capital of France.' },
+  sharedFormula: {
+    text: 'Starting example: $10,000 at 7% nominal annual interest compounded monthly for 10 years.',
+    program: [
+      'root = Col([controls, Metric("Final balance", @Format(value29, "currency", 2, "USD"))])',
+      '$principal = 10000', '$rate = 7', '$years = 10',
+      'controls = Col([Slider($principal, 0, 100000, 100, "Principal", "USD"), Slider($rate, 0, 20, 0.1, "Annual rate", "%"), Slider($years, 0, 30, 1, "Years", "years")])',
+      'value0 = $principal * Pow(1 + $rate / 100 / 12, 12 * $years)',
+      ...Array.from({length:29},(_,index)=>`value${index+1} = value${index} + 0`),
+    ].join('\n'),
+  },
   recovered: {
     text: 'Some visuals could not be validated. The available explanation and verified visuals are shown below.\n\nThe API verifies organization membership before reading rows.',
     program: 'root = Col([table])\ntable = Table(["Check", "Where"], [["Membership", "API"]])',
@@ -219,6 +229,14 @@ try {
       await open('short');
       await page.getByText(cases.short.text, { exact: true }).waitFor();
       assert.equal(await page.getByRole('slider').count(), 0);
+      await open('sharedFormula');
+      assert.equal(await page.getByRole('slider').count(), 3);
+      const sharedMetric=page.locator('.native-answer-metric');
+      assert.ok((await sharedMetric.innerText()).includes('$20,096.61'));
+      await page.getByRole('slider',{name:'Years',exact:true}).press('ArrowRight');
+      const nextBalance=(10000*Math.pow(1+0.07/12,12*11)).toLocaleString('en-US',{style:'currency',currency:'USD'});
+      await page.getByText(nextBalance,{exact:true}).waitFor();
+      if([390,1440].includes(viewport.width))await page.screenshot({path:resolve(output,channel+'-shared-formula-'+viewport.width+'-'+theme+'.png'),fullPage:true});
       await open('openingTitle');
       await page.getByRole('heading', {name:'Sortable table: time by color',exact:true}).waitFor();
       assert.equal(await page.getByText('Sortable table — time by color',{exact:true}).count(),0);

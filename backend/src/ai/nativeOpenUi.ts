@@ -9,6 +9,10 @@ export const NATIVE_UI_LIBRARY = 'xroga-native-v1' as const;
 export const NATIVE_UI_MARKER = '\n<<<XROGA_OPENUI_V1>>>\n';
 export const PARTIAL_NATIVE_PRESENTATION_NOTE = 'Some visuals could not be validated. The available explanation and verified visuals are shown below.';
 export const MAX_PROGRAM_CHARS = 24000;
+// Expanded depth includes both layout nesting and shared formula references.
+// Keep it bounded for evaluation, without rejecting ordinary composed calculators
+// at the former 28-level limit. Node work, source size and cycles stay independent.
+const MAX_EXPANDED_EXPRESSION_DEPTH = 96;
 const parseProgram = createParser(catalog.schema as LibraryJSONSchema, 'Col');
 const components = new Set(Object.keys(catalog.spec.components));
 const pureFunctions = new Set(Object.keys(catalog.spec.functions));
@@ -376,6 +380,7 @@ export type NativeUiDiagnostic = {
   reason: Extract<NativeUiValidation, { ok: false }>['reason'];
   statement?: number;
   workLimit?: 'statement_nodes' | 'expression_depth';
+  expandedDepth?: number;
   failingShape?: { tokens: number; skeleton: string };
   programLength: number;
   shape: Array<{ tokens: number; skeleton: string }>;
@@ -407,6 +412,7 @@ export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<s
   let declarationIssue: NativeUiDiagnostic['declarationIssue'];
   let diagramTopology: NativeUiDiagnostic['diagramTopology'];
   let workLimit: NativeUiDiagnostic['workLimit'];
+  let expandedDepth = 0;
   const statementShape = ({ tokens }: ReturnType<typeof split>[number]) => ({
     tokens: tokens.length,
     skeleton: tokens.slice(0, 100).map((token, index) => {
@@ -419,7 +425,7 @@ export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<s
     if (diagnose) diagnose({
       stage, reason, statement, programLength: program.length,
       shape: statements.slice(0, 12).map(statementShape),
-      ...(workLimit ? { workLimit } : {}),
+      ...(workLimit ? { workLimit, expandedDepth } : {}),
       ...(statement && statements[statement - 1] ? { failingShape: statementShape(statements[statement - 1]) } : {}),
       ...(schemaState ? { schemaState } : {}),
       ...(factualRule ? { factualRule } : {}),
@@ -483,8 +489,9 @@ export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<s
     const reviewStrings = new Set<string>();
     let reason: Extract<NativeUiValidation, { ok: false }>['reason'] = 'authority';
     function visit(node: ASTNode, active: Set<string>, depth = 0): boolean {
-      if (--budget < 0 || depth > 28) {
-        workLimit = depth > 28 ? 'expression_depth' : 'statement_nodes';
+      expandedDepth = Math.max(expandedDepth, depth);
+      if (--budget < 0 || depth > MAX_EXPANDED_EXPRESSION_DEPTH) {
+        workLimit = depth > MAX_EXPANDED_EXPRESSION_DEPTH ? 'expression_depth' : 'statement_nodes';
         reason = 'budget'; return false;
       }
       const next = (value: ASTNode) => visit(value, active, depth + 1);

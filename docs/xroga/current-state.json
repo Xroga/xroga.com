@@ -5221,8 +5221,9 @@
       "id": "surface:456e62cb099b42e5c2a2",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUi.ts",
-      "sha256": "86df6bbfbd440a203f6271cbc7ba177ae3816dc2a41d873b61978061e9227f1c",
+      "sha256": "eb80528eeb27d54a9350febb58b929b13d8ae66273e2590b24c98c196528701d",
       "symbols": [
+        "MAX_EXPANDED_EXPRESSION_DEPTH",
         "MAX_PROGRAM_CHARS",
         "NATIVE_UI_FORMAT",
         "NATIVE_UI_LIBRARY",
@@ -5272,6 +5273,7 @@
         "existing",
         "existingTables",
         "existingText",
+        "expandedDepth",
         "explicit",
         "expression",
         "factualRule",
@@ -128005,7 +128007,7 @@
       "id": "surface:bd6af899f2dd9df930f6",
       "subsystem": "browser_sandbox",
       "sourcePath": "scripts/verify-native-openui-browser.mjs",
-      "sha256": "a842ea155cd62729867dfbaa6bcff1c5128e08b51b5d5630a4b43c36160e5952",
+      "sha256": "608f3f866d38116aeb02a6a197fca81b6c6bc2b18b92d3e0b7b573f05eb26019",
       "symbols": [
         "accessibility",
         "answer",
@@ -128058,6 +128060,7 @@
         "metrics",
         "monthly",
         "name",
+        "nextBalance",
         "nodes",
         "open",
         "origin",
@@ -128082,6 +128085,7 @@
         "secondCheck",
         "seconds",
         "server",
+        "sharedMetric",
         "shell",
         "shellStyle",
         "shellTheme",
@@ -150704,7 +150708,7 @@
     {
       "id": "test-suite:2e491f4d2fcbc11f974c",
       "sourcePath": "backend/src/ai/nativeOpenUi.test.ts",
-      "declaredTests": 70,
+      "declaredTests": 71,
       "skipLocations": [],
       "focusLocations": []
     },

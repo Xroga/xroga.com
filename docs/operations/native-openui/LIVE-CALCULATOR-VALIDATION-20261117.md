@@ -63,3 +63,15 @@ The actual answer revealed these defects:
 The captured provider answer was preserved and replayed after correction without new inference. This is a controlled replay of a genuine response, not fresh generation acceptance. Chrome passed 44 scenarios at five widths in both themes, with zero reported accessibility violations and representative 200% reflow checks. All 1,575 frontend regressions and 98 focused backend regressions passed. Fresh exact-source CI, hosted generation and production acceptance remain required.
 
 The fresh answer's first Copy assertion stopped on Windows CRLF versus LF. Content loss was not established. Fresh-answer Share and Reopen were therefore not completed in that window, despite passing on the separate synthetic replay. The harness must normalize clipboard line endings and must not treat copied historical receipt files as current evidence.
+
+## November 18 composed-expression rejection
+
+All eleven workflows passed for `cd71eac345f175c02b1455fc4b8e2fcb237b4f79`. Its private provider-disabled replay passed captured calculator controls, Copy, owner-only Share, outsider denial, revocation, Reopen and accessibility. The latest prompt and reply remained visible on mobile, and a manual 200px history scroll remained unchanged after the answer mounted.
+
+One fresh compound-interest answer then completed in 95.356 seconds. Planner `req_9Nr0ahmXN0Ju4ILYcYuiLeiC` settled 107 micro-USD and answer `req_iMNHHXVOa8Csvx0oCgM4hYpS` settled 2,041 micro-USD. The canonical ledger settled both calls, totaling $0.002148. The next prompt was withheld. The calculator was not accepted and production was not changed.
+
+The privacy-safe rejection diagnostic identifies `authority / budget / expression_depth` in root statement 1 of an 8,332-character program. The previous depth limit of 28 counted both component layout and shared formula references. Workspace retained the complete readable calculation with an explicit partial status, but withheld the requested interactive controls. The original rejected program was not retained, so this evidence establishes the rejection class rather than a byte-for-byte replay of that program.
+
+A deterministic calculator with shared formula references reproduced the same rejection without inference. The existing shared backend/frontend validator now permits up to 96 expanded levels while retaining its separate 6,000-node limit per declaration, source/token limits, cycle detection, registered-function allowlist and verified-source checks. Diagnostics include only the observed numeric depth, without private identifiers or values. Regression cases cover accepted composed calculations, excessive depth, repeated expansion, cycles, unknown functions, unverified sources and Share serialization. All 91 focused backend tests passed. Chrome interaction checks exercise the same composed calculation at five widths in both themes.
+
+The correction still requires its own exact-source CI, browser result, fresh hosted generation and production canary. It does not change model, renderer, registry, authentication, accounting or external-action permissions.
