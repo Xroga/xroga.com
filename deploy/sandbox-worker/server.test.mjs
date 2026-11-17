@@ -4,7 +4,9 @@ import { readdir } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 
 process.env.XROGA_WORKER_NO_NETNS = '1';
+process.env.XROGA_WORKER_EXIT_AFTER_RUN = '0';
 process.env.WORKER_TOKEN = 'test-token-0123456789abcdef0123456789abcdef';
+const TEST_TOKEN = process.env.WORKER_TOKEN;
 const { authorised, safeRelative, readRequest, execute, createServer } = await import('./server.mjs');
 
 const base = (over = {}) => ({
@@ -13,8 +15,8 @@ const base = (over = {}) => ({
 });
 
 test('only the shared token is accepted, in either header', () => {
-  assert.equal(authorised({ headers: { 'x-xroga-worker-token': process.env.WORKER_TOKEN } }), true);
-  assert.equal(authorised({ headers: { authorization: `Bearer ${process.env.WORKER_TOKEN}` } }), true);
+  assert.equal(authorised({ headers: { 'x-xroga-worker-token': TEST_TOKEN } }), true);
+  assert.equal(authorised({ headers: { authorization: `Bearer ${TEST_TOKEN}` } }), true);
   assert.equal(authorised({ headers: { authorization: 'Bearer wrong' } }), false);
   assert.equal(authorised({ headers: {} }), false);
 });
@@ -64,7 +66,7 @@ test('an unauthenticated call is refused, and an unsupported network policy gets
   const url = `http://127.0.0.1:${server.address().port}`;
   try {
     assert.equal((await fetch(`${url}/health`)).status, 401);
-    const headers = { 'content-type': 'application/json', 'x-xroga-worker-token': process.env.WORKER_TOKEN };
+    const headers = { 'content-type': 'application/json', 'x-xroga-worker-token': TEST_TOKEN };
     const refused = await fetch(`${url}/execute`, { method: 'POST', headers, body: JSON.stringify(base({ networkPolicy: 'registry-only' })) });
     assert.equal(refused.status, 400);
     const ok = await fetch(`${url}/execute`, { method: 'POST', headers, body: JSON.stringify(base()) });

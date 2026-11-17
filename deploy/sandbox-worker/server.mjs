@@ -26,6 +26,11 @@ const MAX_ARTIFACT_BYTES = 2 * 1024 * 1024;
 const MAX_ARTIFACT_TOTAL = 6 * 1024 * 1024;
 const OUT_DIR = 'xroga-out';
 const TOKEN = process.env.WORKER_TOKEN ?? '';
+// The token lives only in this module's memory from here on; it is not left in the process environment for a child to inherit or list.
+delete process.env.WORKER_TOKEN;
+// After every execution the process ends, so Cloud Run starts a fresh container for the next request: nothing a run left behind (a file, a
+// process that detached itself) can be seen by a later caller. Tests turn this off.
+const EXIT_AFTER_RUN = process.env.XROGA_WORKER_EXIT_AFTER_RUN !== '0';
 const NO_NETNS = process.env.XROGA_WORKER_NO_NETNS === '1'; // tests only: runs without a namespace and reports networkIsolation:false
 
 let busy = false;
@@ -92,7 +97,11 @@ export function readRequest(body) {
 function wrap(request) {
   const prlimit = ['prlimit', `--as=${request.limits.memoryMb * 1024 * 1024}`, `--cpu=${request.limits.cpuSeconds}`,
     `--nproc=${request.limits.maxProcesses}`, `--fsize=${request.limits.diskMb * 1024 * 1024}`, '--', request.command, ...request.args];
-  return NO_NETNS ? [request.command, ...request.args] : ['unshare', '-Urn', '--', ...prlimit];
+  // New user, network, PID, mount, IPC and UTS namespaces: no network; the job sees only its own processes (so it cannot read the worker's
+  // /proc entries, including its environment); /proc is remounted for that namespace; and when the namespace's first process ends the kernel
+  // kills everything inside it, including anything that tried to detach.
+  return NO_NETNS ? [request.command, ...request.args]
+    : ['unshare', '-Urn', '--pid', '--fork', '--kill-child=SIGKILL', '--mount', '--mount-proc', '--ipc', '--uts', '--', ...prlimit];
 }
 
 function tail(text) {
@@ -158,29 +167,38 @@ export async function execute(request) {
 /** Proves, before the worker will say it is ready, that a process inside the namespace really cannot open a connection. */
 export async function selfTest() {
   if (NO_NETNS) return { checked: true, ok: false, detail: 'running without a network namespace (tests only)' };
-  const probe = `import socket,sys
+  const probe = `import os,socket,sys
 s=socket.socket(); s.settimeout(2)
 try:
-    s.connect(("1.1.1.1",53)); print("REACHED")
+    s.connect(("1.1.1.1",53)); net="REACHED"
 except Exception:
-    print("BLOCKED")`;
+    net="BLOCKED"
+pids=[d for d in os.listdir("/proc") if d.isdigit()]
+leak=False
+for d in pids:
+    try:
+        if b"WORKER_TOKEN" in open("/proc/"+d+"/environ","rb").read(): leak=True
+    except Exception:
+        pass
+print(net, len(pids), "LEAK" if leak else "CLEAN")`;
   const result = await execute({
     files: [{ relative: 'probe.py', content: probe }], command: 'python3', args: ['probe.py'], timeoutMs: 15_000, environment: {},
     limits: { memoryMb: 256, cpuSeconds: 10, diskMb: 8, maxProcesses: 32 },
   });
-  // Positive control: the same attempt OUTSIDE the namespace. A blocked attempt only means something if an attempt can normally succeed from
-  // this container; the result is recorded either way so a reviewer can tell which case was proved.
+  const [net, count, leak] = result.stdout.trim().split(/\s+/);
+  // Positive control: the same connection attempt OUTSIDE the namespace. A blocked attempt only means something if an attempt can normally
+  // succeed from this container; the result is recorded either way so a reviewer can tell which case was proved.
   const control = await new Promise(resolve => {
     const child = spawn('python3', ['-c', probe], { env: { PATH: process.env.PATH ?? '/usr/bin:/bin' }, stdio: ['ignore', 'pipe', 'ignore'] });
     let out = '';
     child.stdout.on('data', chunk => { out += chunk; });
     const timer = setTimeout(() => child.kill('SIGKILL'), 10_000);
-    child.on('close', () => { clearTimeout(timer); resolve(out.trim()); });
+    child.on('close', () => { clearTimeout(timer); resolve(out.trim().split(/\s+/)[0] ?? ''); });
     child.on('error', () => { clearTimeout(timer); resolve('ERROR'); });
   });
-  const ok = result.exitCode === 0 && result.stdout.trim() === 'BLOCKED';
+  const ok = result.exitCode === 0 && net === 'BLOCKED' && Number(count) <= 6 && leak === 'CLEAN';
   const how = control === 'REACHED' ? 'the same attempt outside the namespace reached the internet (positive control)' : `the positive control did not reach the internet (${control || 'no output'}), so the platform may already deny egress`;
-  return { checked: true, ok, detail: ok ? `a connection attempt from inside the sandbox namespace failed as required; ${how}` : `network isolation self-test failed (exit ${result.exitCode}): ${result.stderr.slice(-200) || result.stdout.slice(-100)}` };
+  return { checked: true, ok, detail: ok ? `inside the sandbox: no network, ${count} visible processes, the worker environment is not readable; ${how}` : `sandbox self-test failed (exit ${result.exitCode}): ${result.stderr.slice(-200) || result.stdout.slice(-100)}` };
 }
 
 function send(res, status, body) {
@@ -188,8 +206,9 @@ function send(res, status, body) {
   res.end(JSON.stringify(body));
 }
 
+let server;
 export function createServer() {
-  return http.createServer(async (req, res) => {
+  server = http.createServer(async (req, res) => {
     if (!authorised(req)) return send(res, 401, { error: 'unauthorised' });
     if (req.method === 'GET' && req.url === '/health') {
       if (!isolation.checked) isolation = await selfTest();
@@ -210,7 +229,9 @@ export function createServer() {
         const parsed = readRequest(JSON.parse(Buffer.concat(chunks).toString('utf8')));
         if (parsed.error) return send(res, 400, { error: parsed.error });
         busy = true;
-        return send(res, 200, await execute(parsed.request));
+        const done = await execute(parsed.request);
+        if (EXIT_AFTER_RUN) res.once('finish', () => { server.close(); setTimeout(() => process.exit(0), 200); });
+        return send(res, 200, done);
       } catch {
         return send(res, 400, { error: 'bad request' });
       } finally {
@@ -219,6 +240,7 @@ export function createServer() {
     }
     return send(res, 404, { error: 'not found' });
   });
+  return server;
 }
 
 if (process.argv[1] && import.meta.url === new URL(`file://${path.resolve(process.argv[1]).replace(/\\/g, '/')}`).href) {
