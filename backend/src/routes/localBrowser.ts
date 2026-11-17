@@ -539,7 +539,12 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
     const catalogue = result.tools.filter(item => item.risk === 'read' && connected.has(item.toolkit.toLowerCase()));
     // An owner's pinned tools are few and are the ones they chose, so more of them are shown than catalogue matches (a connected service
     // with a discover / inspect / run / get-run set must show the whole set, not the six whose names happen to match the words).
-    const tools = await withFullSchemas([...rankPinnedByQuery(query, pinned.filter(p => !catalogue.some(item => item.slug === p.slug))).slice(0, 20), ...catalogue].slice(0, 24), plugins.details, actor);
+    // Pinned tools whose names match what was asked for come first; then the connected apps' own tools; the rest of the pinned set comes last,
+    // so a long pinned set (a marketplace's whole tool list) can never push another connected app's tools out of the answer.
+    const wanted = new Set(query.toLowerCase().split(/[^a-z0-9]+/).filter(word => word.length >= 3));
+    const unlisted = pinned.filter(p => !catalogue.some(item => item.slug === p.slug));
+    const matches = (slug: string) => [...wanted].some(word => slug.toLowerCase().includes(word));
+    const tools = await withFullSchemas([...unlisted.filter(p => matches(p.slug)).slice(0, 10), ...catalogue, ...rankPinnedByQuery(query, unlisted.filter(p => !matches(p.slug)))].slice(0, 24), plugins.details, actor);
     const writeNote = changeToolsNote(plugins.pinnedWrites ? await plugins.pinnedWrites(actor).catch(() => []) : []);
     discovery.sessionId = result.sessionId;
     discovery.tools = tools.map(({ slug, toolkit, inputSchema }) => ({ slug, toolkit, args: summarizeToolArgs(inputSchema) }));
