@@ -265,17 +265,19 @@
     },
     {
       "path": "backend/src/ai/openaiCompat.egress.test.ts",
-      "sha256": "5670a75c3441731c06d9431979d040f9fb1585b88c784cab0528bbbb740e8dc3",
+      "sha256": "c336a8fed92047169a538bdc82c8c8067374fa0851b56c06ffed9c66fd843185",
       "beforeCurrentMetadataReconciliation": {
         "path": "backend/src/ai/openaiCompat.egress.test.ts",
         "sha256": "649092d8bd97b3fed5a12305399a7d577b2c1b4a35ac3e952149cf6a5f834e0a"
       },
       "previousSha256": "c013b4bb607cf023790daec71ad5e7d43e5326403bff05e5f1f295fabfede9de",
-      "beforeBufferedDeadlineSha256": "8a686f065bbd6b45bd94a332466dcd77799ed7d125947b9ec1b23296ceeb6c35"
+      "beforeBufferedDeadlineSha256": "8a686f065bbd6b45bd94a332466dcd77799ed7d125947b9ec1b23296ceeb6c35",
+      "beforeDeadlineAlignmentSha256": "5670a75c3441731c06d9431979d040f9fb1585b88c784cab0528bbbb740e8dc3",
+      "deadlineAlignmentScope": "Existing canonical generation timeout alignment and its regression tests. No new transport, destination, caller authorization or security acceptance."
     },
     {
       "path": "backend/src/ai/openaiCompat.ts",
-      "sha256": "0bd01dc8ca4992f8bc61de75a2f6ff655e56326d563155ccfe24a9f0f91f503f",
+      "sha256": "b8edce2909f7c883edbd2275edf2e946bdefc92c6adc93b2744e758b60224df4",
       "previousGenericSdkBinding": {
         "sha256": "0a418cef1bdbdadb77f14288c4298990900a111fbc0def0050756a9b146914ca",
         "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
@@ -289,7 +291,9 @@
         }
       },
       "previousSha256": "9b89fbbca10b4a53804a92b4c254998ebe87e9e03b2325a5c709837fca8fcaf8",
-      "beforeBufferedDeadlineSha256": "c159e3bd321637cc26214829ed36bca439a102e91983e6fd93fcbee36ef61544"
+      "beforeBufferedDeadlineSha256": "c159e3bd321637cc26214829ed36bca439a102e91983e6fd93fcbee36ef61544",
+      "beforeDeadlineAlignmentSha256": "0bd01dc8ca4992f8bc61de75a2f6ff655e56326d563155ccfe24a9f0f91f503f",
+      "deadlineAlignmentScope": "Existing canonical generation timeout alignment and its regression tests. No new transport, destination, caller authorization or security acceptance."
     },
     {
       "path": "backend/src/ai/pipeline.ts",
@@ -903,15 +907,21 @@
     },
     {
       "path": "frontend/src/lib/hostedWorkspaceBridge.mjs",
-      "sha256": "562de9c1291a88600f00940fa7235b3d45ceb069194507f4b8e44e447588fbfa"
+      "sha256": "ed0c0165506693d18de5fe89e7f592798da5002ecf3b236be34b5d089a269a17",
+      "beforeDeadlineAlignmentSha256": "562de9c1291a88600f00940fa7235b3d45ceb069194507f4b8e44e447588fbfa",
+      "deadlineAlignmentScope": "Existing canonical generation timeout alignment and its regression tests. No new transport, destination, caller authorization or security acceptance."
     },
     {
       "path": "scripts/security/hosted-workspace-staging.mjs",
-      "sha256": "15d46b6faa21da2a0841b224ba43b682456bcb05bbf351fd3b02f8414214d15e"
+      "sha256": "8e084d32135dfe44a5d4817f2269383f5552644cece899975c61aa2776e42d10",
+      "beforeDeadlineAlignmentSha256": "15d46b6faa21da2a0841b224ba43b682456bcb05bbf351fd3b02f8414214d15e",
+      "deadlineAlignmentScope": "Existing canonical generation timeout alignment and its regression tests. No new transport, destination, caller authorization or security acceptance."
     },
     {
       "path": "scripts/security/hosted-workspace-staging.test.mjs",
-      "sha256": "6a46d891ea391c0d299f350e5a87f3b964b34b8e67147448ec61c0a039728042"
+      "sha256": "1805f6c26e4f49612784dcd5fc3521d059109dd5afb3afc6cb024a0934f0e854",
+      "beforeDeadlineAlignmentSha256": "6a46d891ea391c0d299f350e5a87f3b964b34b8e67147448ec61c0a039728042",
+      "deadlineAlignmentScope": "Existing canonical generation timeout alignment and its regression tests. No new transport, destination, caller authorization or security acceptance."
     }
   ],
   "previousCallerCounts": {
