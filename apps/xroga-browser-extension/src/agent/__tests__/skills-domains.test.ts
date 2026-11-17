@@ -71,3 +71,17 @@ describe('the endpoint marketplace playbook', () => {
     expect(skillsFor('Open example.com and tell me the heading').map(s => s.id)).not.toContain('endpoint-marketplace');
   });
 });
+
+describe('choosing where data comes from', () => {
+  it('sends a plain data question to free sources first, not to a paid marketplace', () => {
+    const request = 'What is the current TVL of the aave protocol on DefiLlama?';
+    expect(ids(request)).toContain('free-sources');
+    expect(ids(request)).not.toContain('endpoint-marketplace');
+    expect(skillsSection(request)).toContain('https://api.llama.fi/tvl/aave');
+    expect(skillsSection(request)).toContain('Do not loop');
+  });
+
+  it('uses the marketplace playbook when one is named', () => {
+    expect(ids('Use my Monid app to scrape these pages')).toContain('endpoint-marketplace');
+  });
+});

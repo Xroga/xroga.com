@@ -17,6 +17,17 @@ const stepWords = (request: string) =>
 /** Domain playbooks come first, so a four-playbook limit keeps the most specific ones. */
 export const SKILLS: Skill[] = [
   {
+    id: 'free-sources',
+    when: has(/\b(?:tvl|price|prices|market cap|volume|rates?|exchange rate|stats?|statistics|data|dataset|api|endpoint|defi|crypto|token|stocks?|weather|latest|current|lookup|look up|find out|how much|how many)\b/i),
+    body: [
+      'Where to get information or data (any lookup: prices, TVL, rates, statistics, records, documents):',
+      '- Choose the cheapest source that can really answer, in this order, and say which one you used. 1) A tool of a connected app (search once for it). 2) The service’s own official public API or page, which is usually free and needs no key: open its URL in the browser and read the JSON or the page (for example https://api.llama.fi/tvl/aave returns the current TVL of the aave protocol as a number; most services document a plain GET address). 3) A web search, then the page it finds. 4) Only then a paid data marketplace (Monid, Apify and the like), and only when the user asked for it by name or nothing free has the data.',
+      '- Do not go to a paid provider for something a free official source gives. Never spend the user’s credits unless the user asked for that work.',
+      '- Do not loop. Give one route at most two tries, changing what you send each time; if it still fails, move to the next route. If every route fails, say what each one returned and ask the user for the one thing that would unblock you (connect an app, sign in, authorize a page, add credits), then continue when they say done.',
+      '- Know the service: you already know the official docs of most well-known APIs, so go straight to the right address instead of exploring. Read exactly what comes back and answer with the value, its source address and the time you read it.',
+    ].join('\n'),
+  },
+  {
     id: 'connected-apps',
     // Any of the user's connected apps (there are well over a thousand), so the playbook applies whenever the request is about getting or
     // changing information in some service, not only for a short list of names.
@@ -122,9 +133,9 @@ export const SKILLS: Skill[] = [
   },
   {
     id: 'endpoint-marketplace',
-    when: has(/\b(?:monid|endpoints?|data api|apify|scrap(?:e|er|ing)|defi ?llama|tvl|twitter posts|enrich(?:ment)?)\b/i),
+    when: has(/\b(?:monid|apify|data marketplace|scrap(?:e|er|ing)|enrich(?:ment)?)\b/i),
     body: [
-      'Data and API marketplaces (a connected app whose tools are discover, inspect, run and get run, such as Monid):',
+      'Data and API marketplaces (a connected app whose tools are discover, inspect, run and get run, such as Monid). These are the LAST choice for data that is free elsewhere: use them only when the user names one, or when no free official source has what is needed:',
       '- Order: discover (short noun phrases such as "defi protocol tvl") to find an endpoint, then inspect it to learn its exact input and its price, then run it, then read the run.',
       '- Copy the provider and the endpoint exactly as discover returned them, including a leading slash (for example /apidojo/tweet-scraper). Never retype or shorten an endpoint, and never invent one.',
       '- Build the input only from the fields inspect lists (body, query and path values, each under the name it gives). Start with small limits (5 to 10 items) and one search term or URL per call.',
