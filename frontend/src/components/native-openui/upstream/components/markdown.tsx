@@ -63,7 +63,7 @@ type Block =
   | { kind: "table"; head: string[]; rows: string[][] };
 
 export const VisibleMarkdownTables = createContext<ReadonlySet<string> | null>(null);
-export const NativeVisualTables = createContext<ReadonlySet<string> | undefined>(undefined);
+export const NativeVisualContent = createContext<Pick<MarkdownMatches, "tables" | "sectionTables"> | undefined>(undefined);
 
 // Only compare scalar cells. Retain distinct data and cells with components.
 export function tableContentKey(head: readonly string[], rows: readonly unknown[][]): string | undefined {
@@ -103,6 +103,7 @@ type MarkdownMatches = {
   documents: ReadonlySet<string>;
   paragraphs: ReadonlySet<string>;
   titles: ReadonlySet<string>;
+  sectionTables: ReadonlyMap<string, ReadonlySet<string>>;
   code: ReadonlySet<string>;
   relationships: ReadonlySet<string>;
   tables: ReadonlySet<string>;
@@ -117,17 +118,18 @@ export function nativeMarkdownMatches(root: unknown, readInitial: (value: unknow
   const documents = new Set<string>();
   const paragraphs = new Set<string>();
   const titles = new Set<string>();
+  const sectionTables = new Map<string, Set<string>>();
   const code = new Set<string>();
   const relationships = new Set<string>();
   const tables = new Set<string>();
   const checklists = new Set<string>();
   const listItems = new Set<string>();
-  function visit(value: unknown): void {
-    if (Array.isArray(value)) { value.forEach(visit); return; }
+  function visit(value: unknown, sectionTitle?: string): void {
+    if (Array.isArray(value)) { value.forEach(child => visit(child, sectionTitle)); return; }
     if (!value || typeof value !== "object") return;
     const node = value as { type?: string; typeName?: string; props?: Record<string, unknown>; hasDynamicProps?: boolean };
     if (node.type !== "element" || !node.props) {
-      Object.values(value).forEach(visit);
+      Object.values(value).forEach(child => visit(child, sectionTitle));
       return;
     }
     const { props, typeName } = node;
@@ -172,6 +174,7 @@ export function nativeMarkdownMatches(root: unknown, readInitial: (value: unknow
       }
     }
     if (["Section", "Diagram", "Card"].includes(typeName ?? "") && typeof props.title === "string") titles.add(textKey(props.title));
+    if (typeName === "Section") sectionTitle = typeof props.title === "string" ? textKey(props.title) : undefined;
     if (typeName === "Section" && typeof props.introduction === "string") paragraphs.add(citationTextKey(props.introduction));
     if (typeName === "Diagram" && Array.isArray(props.nodes) && Array.isArray(props.links)) {
       const labels = new Map(props.nodes.map(node => [node?.id, node?.label]));
@@ -200,7 +203,14 @@ export function nativeMarkdownMatches(root: unknown, readInitial: (value: unknow
       const columns = readInitial(props.columns), rows = readInitial(props.rows);
       if (Array.isArray(columns) && columns.every(column => typeof column === "string") && Array.isArray(rows) && rows.every(Array.isArray)) {
         const key = tableContentKey(columns, rows);
-        if (key) tables.add(key);
+        if (key) {
+          tables.add(key);
+          if (sectionTitle !== undefined) {
+            const keys = sectionTables.get(sectionTitle) ?? new Set<string>();
+            keys.add(key);
+            sectionTables.set(sectionTitle, keys);
+          }
+        }
       }
     }
     if (typeName === "Chart" && !node.hasDynamicProps) {
@@ -218,10 +228,10 @@ export function nativeMarkdownMatches(root: unknown, readInitial: (value: unknow
         if (typeName === "Section" && typeof props.title === "string") paragraphs.add(citationTextKey("**" + props.title + "**"));
       }
     }
-    Object.values(props).forEach(visit);
+    Object.values(props).forEach(child => visit(child, sectionTitle));
   }
   visit(root);
-  return { documents, paragraphs, titles, code, tables, relationships, checklists, listItems };
+  return { documents, paragraphs, titles, sectionTables, code, tables, relationships, checklists, listItems };
 }
 
 /** Only remove a complete verbatim document already visible in native Markdown.
@@ -313,11 +323,12 @@ function blocks(source: string): Block[] {
   return out;
 }
 
-export function MarkdownBlocks({ text, renderCitation, deduplicateTables = false, matches, nativeTables }: { text: string; renderCitation?: RenderCitation; deduplicateTables?: boolean; matches?: MarkdownMatches; nativeTables?: ReadonlySet<string> }) {
+export function MarkdownBlocks({ text, renderCitation, deduplicateTables = false, matches, nativeTables, nativeSectionTables }: { text: string; renderCitation?: RenderCitation; deduplicateTables?: boolean; matches?: MarkdownMatches; nativeTables?: ReadonlySet<string>; nativeSectionTables?: ReadonlyMap<string, ReadonlySet<string>> }) {
   const seenTables = new Set<string>();
+  const items = blocks(text);
   return (
     <>
-      {blocks(text).map((b, i) => {
+      {items.map((b, i) => {
         const k = `b${i}`;
         switch (b.kind) {
           case "p":
@@ -326,13 +337,25 @@ export function MarkdownBlocks({ text, renderCitation, deduplicateTables = false
           case "quote":
             if (matches?.paragraphs.has(citationTextKey(b.text))) return null;
             return <blockquote key={k}>{inline(b.text, k, renderCitation)}</blockquote>;
-          case "h":
-            if (matches?.titles.has(textKey(b.text))) return null;
+          case "h": {
+            const title = textKey(b.text);
+            if (matches?.titles.has(title)) return null;
+            const next = items[i + 1];
+            const following = items[i + 2];
+            // When a matching native Section owns the equivalent table, its
+            // heading remains visible. Keep Markdown headings with unique prose.
+            if (next?.kind === "table"
+              && (!following || (following.kind === "h" && following.level <= b.level))
+              && !tableHasLinks(next.head, next.rows)) {
+              const key = tableContentKey(next.head, next.rows);
+              if (key && nativeTables?.has(key) && nativeSectionTables?.get(title)?.has(key)) return null;
+            }
             return (
               <div key={k} role="heading" aria-level={b.level + 1} className={`iui-md-h iui-md-h${b.level}`}>
                 {inline(b.text, k, renderCitation)}
               </div>
             );
+          }
           case "code":
             if (matches?.code.has(b.text.trimEnd())) return null;
             return <CodePanel key={k} code={b.text} language={b.language} />;

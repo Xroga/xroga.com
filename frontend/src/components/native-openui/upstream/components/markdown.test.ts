@@ -197,3 +197,20 @@ test('Markdown tables preserve literal pipes and all columns', () => {
   assert.match(html, /<code class="iui-code">number \| null<\/code>/);
   assert.match(html, /<td>Use A \| B<\/td>/);
 });
+
+test('native table sections replace empty repeated headings while unique content and cited tables remain', () => {
+  const title = 'Manual versus automated';
+  const table = '| Stage | Owner |\n| --- | --- |\n| Intake | Coordinator |';
+  const nativeTable = { type: 'element', typeName: 'Table', props: { columns: ['Stage', 'Owner'], rows: [['Intake', 'Coordinator']] } };
+  const markdown = { type: 'element', typeName: 'Markdown', props: { text: '## ' + title + '\n\n' + table } };
+  const section = { type: 'element', typeName: 'Section', props: { title, children: [nativeTable] } };
+  const matches = nativeMarkdownMatches([markdown, section]);
+  const render = (text: string) => renderToStaticMarkup(createElement(MarkdownBlocks, {
+    text, nativeTables: matches.tables, nativeSectionTables: matches.sectionTables,
+  }));
+
+  assert.doesNotMatch(render(markdown.props.text), /Manual versus automated|<table/);
+  assert.match(render(markdown.props.text + '\n\nManual approval remains required.'), /Manual versus automated.*Manual approval remains required/);
+  assert.match(render(markdown.props.text.replace('Coordinator |', 'Coordinator [1] |')), /Manual versus automated.*<table/);
+  assert.match(render(markdown.props.text.replace(title, 'Intake ownership')), /Intake ownership/);
+});

@@ -17,10 +17,16 @@ test('streaming does not rebuild every historical turn observer for every text b
 });
 
 test('stream rendering is deferred while completed markdown and offscreen turns are reusable', () => {
-  assert.match(LOG, /useDeferredValue\(visibleMessages\)/);
+  assert.match(LOG, /useDeferredValue\(transcript\)/);
   assert.match(LOG, /renderedMessages\.map/);
   assert.match(RESPONSE, /memo\(function ModernResponseText/);
   assert.match(CSS, /\.xv-terminal-turn\s*\{[\s\S]*?content-visibility:\s*auto;/);
+});
+
+test('a conversation reset or switch paints the current messages before deferred streaming catches up', () => {
+  assert.match(LOG, /deferredTranscript\.sessionId === sessionId/);
+  assert.match(LOG, /deferredTranscript\.messages\[0\]\?\.id === visibleMessages\[0\]\?\.id/);
+  assert.match(LOG, /\? deferredTranscript\.messages\s*:\s*visibleMessages/);
 });
 
 test('submit anchoring depends on the prompt identity instead of streamed message content', () => {

@@ -8,7 +8,7 @@ import { library } from './library';
 import { EvidenceContext, evidenceCitation, type AnswerSource } from './evidence';
 import { MAX_PROGRAM_CHARS, PARTIAL_NATIVE_PRESENTATION_NOTE, validateNativeOpenUi } from '../../../../backend/src/ai/nativeOpenUi';
 import { initialNativeValueReader } from '../../../../backend/src/ai/nativeOpenUiValues';
-import { MarkdownBlocks, nativeMarkdownMatches, NativeVisualTables, preservedMarkdownTableKeys, proseOutsideNativeDocuments, VisibleMarkdownTables } from './upstream/components/markdown';
+import { MarkdownBlocks, nativeMarkdownMatches, NativeVisualContent, preservedMarkdownTableKeys, proseOutsideNativeDocuments, VisibleMarkdownTables } from './upstream/components/markdown';
 import './upstream/components/theme.css';
 import './upstream/components/components.css';
 import '@xyflow/react/dist/style.css';
@@ -62,10 +62,10 @@ export function NativeSurface({ answer, sources, isStreaming = false }: {
             {recovered ? prose : null}
             {!recovered && summary && <div className="iui-markdown native-answer-summary" dir="auto"><MarkdownBlocks text={summary} matches={matches} renderCitation={renderCitation} /></div>}
             <VisibleMarkdownTables.Provider value={visibleTables}>
-              <NativeVisualTables.Provider value={matches?.tables}>
+              <NativeVisualContent.Provider value={matches}>
               <Renderer response={accepted} isStreaming={isStreaming} library={library} publishObservability={false}
                 onError={errors => { if (errors.some(error => error.severity !== 'warning')) setFailedProgram(accepted); }} />
-              </NativeVisualTables.Provider>
+              </NativeVisualContent.Provider>
             </VisibleMarkdownTables.Provider>
             {!recovered && details && <div className="iui-markdown" dir="auto"><MarkdownBlocks text={details} matches={matches} renderCitation={renderCitation} /></div>}
           </EvidenceContext.Provider>

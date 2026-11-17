@@ -16,6 +16,10 @@ const cases = {
     text: 'These checkboxes update this view only.',
     program: 'root = Col([Checkbox($first, "**Goal and audience.** Write one sentence naming who the blog is for and what it helps them do."), Checkbox($second, "Check `www` redirects and <img src=x onerror=alert(1)> literally.")])\n$first = false\n$second = false',
   },
+  workflowOwnership: {
+    raw: 'Review the work before delivery.\n\n## Manual versus automated\n\n| Stage | Owner |\n| --- | --- |\n| Intake | Coordinator |\n<<<XROGA_OPENUI_V1>>>\nroot = Col([Markdown(_xroga_answer), Section("Manual versus automated", [Table(["Stage", "Owner"], [["Intake", "Coordinator"]])])])',
+    completion: 'complete',
+  },
   sharedAnswer: {
     raw: 'Basic includes one seat.\n\n1. Read the terms.\n2. Compare the total.\n\n| Plan | Seats |\n|---|---|\n| Basic | 1 |\n<<<XROGA_OPENUI_V1>>>\nroot = Col([Markdown(_xroga_answer), Table(["Plan", "Seats"], [["Basic", 1]])])',
     completion: 'complete',
@@ -205,6 +209,13 @@ try {
       await open('short');
       await page.getByText(cases.short.text, { exact: true }).waitFor();
       assert.equal(await page.getByRole('slider').count(), 0);
+      await open('workflowOwnership');
+      const ownershipHeading = page.getByRole('heading', { name: 'Manual versus automated', exact: true });
+      await ownershipHeading.waitFor();
+      assert.equal(await ownershipHeading.count(), 1);
+      assert.equal(await page.getByRole('table').count(), 1);
+      await page.getByRole('cell', { name: 'Coordinator', exact: true }).waitFor();
+      await page.getByText('Review the work before delivery.', { exact: true }).waitFor();
       await open('sharedAnswer');
       await page.getByText('Basic includes one seat.', { exact: true }).waitFor();
       assert.equal(await page.getByText('Basic includes one seat.', { exact: true }).count(), 1);

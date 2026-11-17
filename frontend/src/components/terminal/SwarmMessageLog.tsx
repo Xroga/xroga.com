@@ -162,7 +162,13 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
   );
   // Streaming updates arrive in small batches. Transcript paint is intentionally
   // non-urgent so typing, stop controls, menus, and scrolling remain responsive.
-  const renderedMessages = useDeferredValue(visibleMessages);
+  const transcript = useMemo(() => ({ sessionId, messages: visibleMessages }), [sessionId, visibleMessages]);
+  const deferredTranscript = useDeferredValue(transcript);
+  // A conversation reset or switch must clear the previous transcript immediately.
+  const renderedMessages = deferredTranscript.sessionId === sessionId
+    && deferredTranscript.messages[0]?.id === visibleMessages[0]?.id
+    ? deferredTranscript.messages
+    : visibleMessages;
 
   const latestPromptId = visibleMessages[visibleMessages.findLastIndex(message => message.role === 'user')]?.id;
   const renderedPromptId = renderedMessages[renderedMessages.findLastIndex(message => message.role === 'user')]?.id;
