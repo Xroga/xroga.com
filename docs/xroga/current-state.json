@@ -88414,7 +88414,7 @@
       "id": "surface:bcecd3dfe5eeca969aaf",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/code-panel.tsx",
-      "sha256": "ec8d9d4e4926521694f107f15e072751ae2a802ec11b9367c91007d670b52797",
+      "sha256": "5b1a776dc1e4a5bdc22fd1161475ebe5fd24a7c82a7b5e9fa98cfbe447821fa7",
       "symbols": [
         "CodePanel",
         "colored",

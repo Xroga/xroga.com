@@ -1,7 +1,7 @@
 "use client";
 
 import { Check, Code2, Copy } from "lucide-react";
-import { useEffect, useState, type CSSProperties } from "react";
+import React, { useEffect, useState, type CSSProperties } from "react";
 import type { HighlightedToken } from "@/lib/codeHighlight";
 import { isPresentationLanguage } from "@/lib/publicAnswerText";
 
