@@ -2920,11 +2920,9 @@ export async function fetchCustomMcpDefinition(actor:TenantContext,toolkit:strin
 export async function listPinnedCustomReadTools(context:TenantContext):Promise<Array<{slug:string;toolkit:string;risk:'read';description?:string;inputSchema?:Record<string,unknown>}>>{
   const actor=requireTenantContext(context);
   if(process.env.XROGA_CUSTOM_MCP_EXECUTION!=='on')return[];
-  const pins=(await supabaseCustomMcpPinStore(actor).listActive(actor.userId)).slice(0,6),out:Array<{slug:string;toolkit:string;risk:'read';description?:string;inputSchema?:Record<string,unknown>}>=[];
-  for(const pin of pins){
-    if((await pinnedCustomReadTrust(actor,actor.userId,pin.toolkit,pin.toolSlug)).ok)out.push({slug:pin.toolSlug,toolkit:pin.toolkit,risk:'read'});
-  }
-  return out;
+  const pins=(await supabaseCustomMcpPinStore(actor).listActive(actor.userId)).filter(pin=>pin.riskClass==='read').slice(0,60);
+  const checked=await Promise.all(pins.map(async pin=>(await pinnedCustomReadTrust(actor,actor.userId,pin.toolkit,pin.toolSlug)).ok?pin:undefined));
+  return checked.filter((pin):pin is NonNullable<typeof pin>=>!!pin).map(pin=>({slug:pin.toolSlug,toolkit:pin.toolkit,risk:'read' as const}));
 }
 
 /** The class of an owner pin for this slug that still verifies (flag on, definition unchanged), or undefined. */
@@ -2946,11 +2944,9 @@ export async function isPinnedCustomReadSlug(userId:string,toolSlug:string,conte
 export async function listPinnedCustomWriteTools(context:TenantContext):Promise<Array<{slug:string;toolkit:string;risk:'write';description?:string;inputSchema?:Record<string,unknown>}>>{
   const actor=requireTenantContext(context);
   if(process.env.XROGA_CUSTOM_MCP_EXECUTION!=='on')return[];
-  const pins=(await supabaseCustomMcpPinStore(actor).listActive(actor.userId)).filter(pin=>pin.riskClass==='write').slice(0,12),out:Array<{slug:string;toolkit:string;risk:'write';description?:string;inputSchema?:Record<string,unknown>}>=[];
-  for(const pin of pins){
-    if((await pinnedCustomTrust(actor,actor.userId,pin.toolkit,pin.toolSlug,'write')).ok)out.push({slug:pin.toolSlug,toolkit:pin.toolkit,risk:'write'});
-  }
-  return out;
+  const pins=(await supabaseCustomMcpPinStore(actor).listActive(actor.userId)).filter(pin=>pin.riskClass==='write').slice(0,60);
+  const checked=await Promise.all(pins.map(async pin=>(await pinnedCustomTrust(actor,actor.userId,pin.toolkit,pin.toolSlug,'write')).ok?pin:undefined));
+  return checked.filter((pin):pin is NonNullable<typeof pin>=>!!pin).map(pin=>({slug:pin.toolSlug,toolkit:pin.toolkit,risk:'write' as const}));
 }
 
 export async function executeComposioReadTool(

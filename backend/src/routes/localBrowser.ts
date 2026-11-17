@@ -137,7 +137,7 @@ const toolArgs = z.object({ props: z.array(z.string().max(80)).max(80), required
 type ToolArgs = z.infer<typeof toolArgs>;
 const pluginState = z.object({
   discoveries: z.array(z.object({
-    query: z.string(), sessionId: z.string().optional(), tools: z.array(z.object({ slug: z.string(), toolkit: z.string(), args: toolArgs.optional() })).max(12),
+    query: z.string(), sessionId: z.string().optional(), tools: z.array(z.object({ slug: z.string(), toolkit: z.string(), args: toolArgs.optional() })).max(24),
   })).max(MAX_PLUGIN_DISCOVERIES),
   reads: z.array(z.object({
     digest: z.string(), slug: z.string(), toolkit: z.string(), approvalId: z.string().uuid().optional(), used: z.boolean(),
@@ -147,7 +147,7 @@ const pluginState = z.object({
     digest: z.string(), slug: z.string(), toolkit: z.string(), approvalId: z.string().uuid().optional(), used: z.boolean(),
   })).max(MAX_PLUGIN_ACTIONS).default([]),
   actionDiscoveries: z.array(z.object({
-    query: z.string(), sessionId: z.string().optional(), tools: z.array(z.object({ slug: z.string(), toolkit: z.string(), args: toolArgs.optional() })).max(12),
+    query: z.string(), sessionId: z.string().optional(), tools: z.array(z.object({ slug: z.string(), toolkit: z.string(), args: toolArgs.optional() })).max(24),
   })).max(MAX_PLUGIN_DISCOVERIES).default([]),
 });
 function runPlugins(row: BrowserRunRecord) {
@@ -499,7 +499,7 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
     const catalogue = result.tools.filter(item => item.risk === 'read' && connected.has(item.toolkit.toLowerCase()));
     // An owner's pinned tools are few and are the ones they chose, so more of them are shown than catalogue matches (a connected service
     // with a discover / inspect / run / get-run set must show the whole set, not the six whose names happen to match the words).
-    const tools = await withFullSchemas([...rankPinnedByQuery(query, pinned.filter(p => !catalogue.some(item => item.slug === p.slug))).slice(0, 10), ...catalogue].slice(0, 12), plugins.details, actor);
+    const tools = await withFullSchemas([...rankPinnedByQuery(query, pinned.filter(p => !catalogue.some(item => item.slug === p.slug))).slice(0, 20), ...catalogue].slice(0, 24), plugins.details, actor);
     const writeNote = changeToolsNote(plugins.pinnedWrites ? await plugins.pinnedWrites(actor).catch(() => []) : []);
     discovery.sessionId = result.sessionId;
     discovery.tools = tools.map(({ slug, toolkit, inputSchema }) => ({ slug, toolkit, args: summarizeToolArgs(inputSchema) }));
@@ -534,7 +534,7 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
     const catalogueWrites = result.tools.filter(item => item.risk !== 'read' && item.risk !== 'destructive' && connected.has(item.toolkit.toLowerCase()) &&
       !isFinancialAction(query, item.slug));
     const tools = await withFullSchemas([...rankPinnedByQuery(query, pinnedWrites.filter(p => !catalogueWrites.some(item => item.slug === p.slug) && !isFinancialAction(query, p.slug))), ...catalogueWrites]
-      .slice(0, 12), plugins.details, actor);
+      .slice(0, 24), plugins.details, actor);
     discovery.sessionId = result.sessionId;
     discovery.tools = tools.map(({ slug, toolkit, inputSchema }) => ({ slug, toolkit, args: summarizeToolArgs(inputSchema) }));
     await save();
