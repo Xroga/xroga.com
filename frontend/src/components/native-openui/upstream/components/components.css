@@ -7,6 +7,7 @@
 
 /* Layout */
 .iui-col, .iui-box { display: flex; flex-direction: column; min-width: 0; }
+.iui-col { --iui-column-gap: 0px; gap: var(--iui-column-gap); }
 .iui-row { display: flex; flex-direction: row; align-items: center; gap: 8px; min-width: 0; }
 .iui-row > * { min-width: 0; }
 .iui-grid { display: grid; min-width: 0; }

@@ -11,7 +11,7 @@ const FLEX: Record<string, string> = { start: "flex-start", end: "flex-end", cen
 
 type FlexProps = { gap?: number; align?: string; justify?: string; wrap?: boolean };
 const flexStyle = (p: FlexProps, column = false): CSSProperties => ({
-  gap: space(p.gap),
+  ...(column ? { "--iui-column-gap": space(p.gap) } as CSSProperties : { gap: space(p.gap) }),
   alignItems: p.align ? FLEX[p.align] : undefined,
   justifyContent: p.justify ? FLEX[p.justify] : undefined,
   flexWrap: p.wrap ? "wrap" : undefined,

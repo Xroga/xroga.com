@@ -8,6 +8,10 @@ import AxeBuilder from '@axe-core/playwright';
 import { tsImport } from 'tsx/esm/api';
 
 const cases = {
+  articleSpacing: {
+    text: 'Compare the two documented sorting options.',
+    program: 'root = Col([Title("Sorted versus list.sort", "lg"), Text("Choose based on whether the original list should change."), Title("Which call fits your case?", "md"), Text("Use sorted when you need a new list."), Title("Return values", "md"), Text("The in-place method returns None.")], 24)',
+  },
   formattedChecklist: {
     text: 'These checkboxes update this view only.',
     program: 'root = Col([Checkbox($first, "**Goal and audience.** Write one sentence naming who the blog is for and what it helps them do."), Checkbox($second, "Check `www` redirects and <img src=x onerror=alert(1)> literally.")])\n$first = false\n$second = false',
@@ -208,6 +212,21 @@ try {
       assert.equal(await page.getByRole('table').count(), 1);
       await page.getByRole('cell', { name: 'Basic', exact: true }).waitFor();
       assert.doesNotMatch(await page.getByRole('region', { name: 'Answer', exact: true }).innerText(), /_xroga_answer|root\s*=/);
+      await open('articleSpacing');
+      await page.getByText('The in-place method returns None.', { exact: true }).waitFor();
+      const rhythm = await page.locator('.iui-col:has(> .iui-title)').evaluate(column => {
+        const boxes = [...column.children].map(child => child.getBoundingClientRect());
+        return {
+          headingToText: boxes[3].top - boxes[2].bottom,
+          textToHeading: boxes[2].top - boxes[1].bottom,
+        };
+      });
+      assert.ok(rhythm.headingToText >= 4 && rhythm.headingToText <= 12);
+      assert.ok(rhythm.textToHeading >= 18 && rhythm.textToHeading <= 28);
+      if ([390, 1440].includes(viewport.width)) {
+        await page.screenshot({ path: resolve(output, channel + '-article-spacing-' + viewport.width + '-' + theme + '.png'), fullPage: true });
+      }
+      await open('sharedAnswer');
       if ([390, 1440].includes(viewport.width)) {
         await page.screenshot({ path: resolve(output, channel + '-shared-answer-' + viewport.width + '-' + theme + '.png'), fullPage: true });
       }

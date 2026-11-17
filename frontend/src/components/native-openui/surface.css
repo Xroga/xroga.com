@@ -79,6 +79,24 @@
 .xroga-native-openui .iui-title-sm { font-size: .9375rem; }
 .xroga-native-openui .iui-title-md { font-size: 1.25rem; }
 .xroga-native-openui .iui-title-lg { font-size: clamp(1.5rem, 1.18rem + 1.2vw, 1.875rem); }
+.xroga-native-openui .iui-col:has(> .iui-title):not(.iui-flow) {
+  row-gap: 0;
+}
+.xroga-native-openui .iui-col:has(> .iui-title):not(.iui-flow) > * + * {
+  margin-block-start: min(var(--iui-column-gap, var(--iui-space-group)), var(--iui-space-section));
+}
+.xroga-native-openui .iui-col:has(> .iui-title):not(.iui-flow) > * + .iui-title {
+  margin-block-start: var(--iui-space-section);
+}
+.xroga-native-openui .iui-col:has(> .iui-title) > .iui-title + :is(.iui-text, .iui-caption, .iui-markdown, .iui-table-scroll) {
+  margin-block-start: .45rem;
+}
+.xroga-native-openui .iui-markdown > * + .iui-md-h {
+  margin-block-start: 1.35rem;
+}
+.xroga-native-openui .iui-markdown > .iui-md-h + * {
+  margin-block-start: .4rem;
+}
 .xroga-native-openui .iui-text:not(.iui-text-xs, .iui-text-sm) { font-size: 1rem; line-height: 1.65; }
 .xroga-native-openui .iui-caption { font-size: .875rem; line-height: 1.55; }
 .xroga-native-openui .iui-check { align-items: flex-start; }
