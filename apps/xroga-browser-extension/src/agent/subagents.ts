@@ -16,6 +16,12 @@ import { challengeNote, detectChallenge } from './challenge';
 export const MAX_JOBS = 10;
 export const MAX_FOLLOW = 10;
 const PAGE_TIMEOUT_MS = 40_000;
+/**
+ * Pages loading in background tabs at the same moment. Chrome loads and renders only so many background tabs at once; opening dozens
+ * together left most of them on about:blank and the rest "empty". More pages than this wait their turn in a queue, so every tab that is
+ * open is a tab that is loading, and nothing is dropped.
+ */
+const READ_CONCURRENCY = 8;
 const TOTAL_CHARS = 28_000;
 
 export interface SubagentJob {
@@ -23,6 +29,8 @@ export interface SubagentJob {
   query?: string;
   /** Also read the top N pages the page links to (one per site): for a search page or a list. */
   follow?: number;
+  /** Two-letter country the search should answer for (for example "us"): the browser's own location is not the task's. */
+  region?: string;
 }
 
 export const DELEGATE_TOOL: AgentTool = {
@@ -48,6 +56,7 @@ export const DELEGATE_TOOL: AgentTool = {
             url: { type: 'string', description: 'The https address to read' },
             query: { type: 'string', description: 'A web search to run when you have no address' },
             follow: { type: 'integer', minimum: 1, maximum: MAX_FOLLOW, description: 'Also read the top N pages this search or page links to' },
+            region: { type: 'string', pattern: '^[a-zA-Z]{2}$', description: 'Country the search is about, as a two-letter code (us, gb, ae...). Set it whenever the task is about a country, so results are not tied to where the browser is' },
           },
           additionalProperties: false,
         },
@@ -71,14 +80,18 @@ export function parseJobs(input: unknown): { jobs: SubagentJob[]; problems: stri
     const follow = Number.isInteger(j.follow) ? Math.max(1, Math.min(MAX_FOLLOW, Number(j.follow))) : undefined;
     if (!url && !query) return void problems.push(`job ${i + 1}: give a url or a query`);
     if (url && !/^https?:\/\//i.test(url)) return void problems.push(`job ${i + 1}: the url must start with http:// or https://`);
-    jobs.push(url ? { url, ...(follow ? { follow } : {}) } : { query, ...(follow ? { follow } : {}) });
+    const region = typeof j.region === 'string' && /^[a-zA-Z]{2}$/.test(j.region.trim()) ? j.region.trim().toLowerCase() : undefined;
+    jobs.push(url ? { url, ...(follow ? { follow } : {}) } : { query, ...(follow ? { follow } : {}), ...(region ? { region } : {}) });
   });
   if (raw.length > MAX_JOBS) problems.push(`only the first ${MAX_JOBS} jobs were run`);
   return { jobs, problems };
 }
 
 export function addressOf(job: SubagentJob): string {
-  return job.url ?? `https://www.google.com/search?q=${encodeURIComponent(job.query ?? '')}`;
+  if (job.url) return job.url;
+  // gl and cr pin the results to the country, hl to English; pws=0 turns off personalised ordering.
+  const where = job.region ? `&gl=${job.region}&cr=country${job.region.toUpperCase()}&hl=en&pws=0` : '';
+  return `https://www.google.com/search?q=${encodeURIComponent(job.query ?? '')}${where}`;
 }
 
 const SEARCH_HOSTS = /(^|\.)(google|googleusercontent|gstatic|bing|duckduckgo|yahoo|baidu|youtube|facebook|instagram|twitter|x|tiktok|pinterest|linkedin|reddit)\.[a-z.]+$|^(webcache|translate|accounts|support|maps|policies)\./i;
@@ -118,6 +131,28 @@ export function resultLinks(markdown: string, n: number): Array<{ url: string; t
 export interface SubagentDeps {
   layer: LayerPort;
   signal: AbortSignal;
+  /** Admits a read when a slot is free (set by runSubagents). */
+  gate?: <T>(work: () => Promise<T>) => Promise<T>;
+}
+
+/** A queue that lets at most `limit` pieces of work run at once; the rest wait their turn, in order. */
+export function createGate(limit: number): <T>(work: () => Promise<T>) => Promise<T> {
+  let active = 0;
+  const waiting: Array<() => void> = [];
+  const next = () => {
+    const run = waiting.shift();
+    if (run) run();
+  };
+  return async <T>(work: () => Promise<T>) => {
+    if (active >= limit) await new Promise<void>(resolve => waiting.push(resolve));
+    active++;
+    try {
+      return await work();
+    } finally {
+      active--;
+      next();
+    }
+  };
 }
 
 function clip(text: string, max: number): string {
@@ -135,6 +170,10 @@ function pageBody(text: string): string {
 
 /** Opens one page in its own tab, reads it, and closes the tab. A failure is text, never a throw. */
 async function readPage(deps: SubagentDeps, url: string, maxChars: number): Promise<{ ok: boolean; text: string }> {
+  return deps.gate ? deps.gate(() => readPageNow(deps, url, maxChars)) : readPageNow(deps, url, maxChars);
+}
+
+async function readPageNow(deps: SubagentDeps, url: string, maxChars: number): Promise<{ ok: boolean; text: string }> {
   const controller = new AbortController();
   const stop = () => controller.abort();
   deps.signal.addEventListener('abort', stop, { once: true });
@@ -144,7 +183,13 @@ async function readPage(deps: SubagentDeps, url: string, maxChars: number): Prom
     const opened = await deps.layer.call('tabs', { action: 'open', url }, controller.signal);
     tabId = (opened.data as { opened?: number } | undefined)?.opened;
     if (!opened.ok || tabId === undefined) return { ok: false, text: `could not open the page: ${opened.text.split('\n')[0] || 'refused'}` };
-    const page = await deps.layer.call('read', { tabId, format: 'markdown', maxChars }, controller.signal);
+    let page = await deps.layer.call('read', { tabId, format: 'markdown', maxChars }, controller.signal);
+    // A page that rendered nothing yet (a script-built page in a background tab) is read once more after a short wait.
+    if (page.ok && page.text.includes('<<<page-content') && pageBody(page.text).length < 20 && !controller.signal.aborted) {
+      await new Promise(resolve => setTimeout(resolve, 2_500));
+      const again = await deps.layer.call('read', { tabId, format: 'markdown', maxChars }, controller.signal).catch(() => undefined);
+      if (again?.ok && pageBody(again.text).length > pageBody(page.text).length) page = again;
+    }
     if (!page.ok) return { ok: false, text: `could not read the page: ${page.text.split('\n')[0]}` };
     // A page that is a bot check or a refusal is reported as one, not as content.
     const challenge = detectChallenge({ title: /«([^»]{0,120})»/.exec(page.text)?.[1], text: pageBody(page.text) });
@@ -191,6 +236,7 @@ export async function runSubagents(
   jobs: SubagentJob[],
   problems: string[] = [],
 ): Promise<{ text: string; isError: boolean }> {
+  deps = { ...deps, gate: deps.gate ?? createGate(READ_CONCURRENCY) };
   const before = await deps.layer.tabs().catch(() => null);
   const pagesWanted = jobs.reduce((n, j) => n + (j.follow ?? 1), 0);
   const budget = Math.max(2_500, Math.min(12_000, Math.floor(TOTAL_CHARS / Math.max(1, pagesWanted))));

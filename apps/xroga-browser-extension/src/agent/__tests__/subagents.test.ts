@@ -149,3 +149,29 @@ describe('a research request', () => {
     expect(researchPlan('Research the best CRM tools for small agencies').query).toBe('the best CRM tools for small agencies');
   });
 });
+
+describe('delegate: many pages at once', () => {
+  it('never has more than eight pages loading at the same time, and still reads all of them', async () => {
+    const { createGate } = await import('../subagents');
+    const gate = createGate(8);
+    let live = 0;
+    let peak = 0;
+    const results = await Promise.all(Array.from({ length: 40 }, (_, i) => gate(async () => {
+      live++;
+      peak = Math.max(peak, live);
+      await new Promise(resolve => setTimeout(resolve, 5));
+      live--;
+      return i;
+    })));
+    expect(results).toHaveLength(40);
+    expect(peak).toBeLessThanOrEqual(8);
+  });
+
+  it('pins a search to the country the task is about', async () => {
+    const { addressOf, parseJobs } = await import('../subagents');
+    const { jobs } = parseJobs({ jobs: [{ query: 'plumbing companies Ohio', region: 'US' }, { query: 'x' }] });
+    expect(addressOf(jobs[0])).toContain('gl=us');
+    expect(addressOf(jobs[0])).toContain('cr=countryUS');
+    expect(addressOf(jobs[1])).toBe('https://www.google.com/search?q=x');
+  });
+});
