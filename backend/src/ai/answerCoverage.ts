@@ -12,7 +12,7 @@ export function requestedAnswerObligations(prompt: string): AnswerObligations {
     ['diagram', /\b(?:diagram|flowchart|architecture\s+(?:map|graph))\b/i, 'graph'],
     ['schema', /\b(?:database\s+(?:schema|structure)|data\s+model)\b/i, 'table'],
     ['table', /\b(?:table|tabular|tabulate)\b/i, 'table'],
-    ['calculator', /\b(?:interactive\s+(?:calculation|scenario)|calculator|editable\s+inputs|let\s+me\s+(?:change|adjust|tweak|vary)\s+(?:the\s+)?(?:numbers|inputs|values|assumptions)|adjustable\s+(?:inputs|numbers|assumptions)|sliders?)\b/i, 'calculator'],
+    ['calculator', /\b(?:interactive\s+(?:calculation|scenario)|calculat(?:or|[ \t]+or)|editable\s+inputs|let\s+me\s+(?:change|adjust|tweak|vary)\s+(?:the\s+)?(?:numbers|inputs|values|assumptions)|adjustable\s+(?:inputs|numbers|assumptions)|sliders?)\b/i, 'calculator'],
     ['chart', /\b(?:chart|plot|histogram)\b/i, 'chart'],
     ['workflow', /\b(?:step.by.step|workflow|lifecycle)\b/i, 'steps'],
     ['comparison', /\b(?:comparison\s+cards|compare\s+.{0,60}\b(?:access|permissions|isolation))\b/i, 'cards'],

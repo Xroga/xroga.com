@@ -305,7 +305,7 @@
       "id": "surface:65cb0aba3b036f66089f",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/answerCoverage.ts",
-      "sha256": "f13f7f2988945ef03dd0b905e391b66ba8240f9e2121bc1c8bab2ab85d10cda0",
+      "sha256": "10c2d26f6794533243f1214f8e5ebb7e97da344ff13cac67adea874058e3ebeb",
       "symbols": [
         "boundary",
         "branching",
@@ -5221,7 +5221,7 @@
       "id": "surface:456e62cb099b42e5c2a2",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUi.ts",
-      "sha256": "eb80528eeb27d54a9350febb58b929b13d8ae66273e2590b24c98c196528701d",
+      "sha256": "f157ad981d3827a27e04fff9d52f0c568b3c49187184d46b09ac1eb8c41fc7f6",
       "symbols": [
         "MAX_EXPANDED_EXPRESSION_DEPTH",
         "MAX_PROGRAM_CHARS",
@@ -5237,9 +5237,11 @@
         "addTable",
         "args",
         "array",
+        "authorityIssue",
         "available",
         "bindNativeAnswerText",
         "binding",
+        "blockedAuthority",
         "body",
         "branches",
         "budget",
@@ -5414,6 +5416,7 @@
         "token",
         "tokens",
         "unfinishedHeading",
+        "unsafeBinding",
         "usable",
         "validate",
         "validateNativeOpenUi",
@@ -5472,7 +5475,10 @@
       "externalProviderDependencies": [
         "@openuidev/lang-core"
       ],
-      "authBoundary": [],
+      "authBoundary": [
+        "backend/src/ai/nativeOpenUi.ts#authorityIssue",
+        "backend/src/ai/nativeOpenUi.ts#blockedAuthority"
+      ],
       "tenantBoundary": [],
       "approvalBoundary": [],
       "costBoundary": [
@@ -5826,7 +5832,7 @@
       "id": "surface:a67f0b1fa2dd0f11a67f",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiPrompt.ts",
-      "sha256": "cba8fe927300209a26cd29f92b0098b64b339baa4fd28001d40d57703470687e",
+      "sha256": "cde9865a81a7ada9e14da1424e001aa52ce5f6fc87d36a213c9b12867c536d61",
       "symbols": [
         "artifactPriorityRule",
         "buildNativeOpenUiPrompt",
@@ -6166,8 +6172,10 @@
       "id": "surface:93911e9946fd4b21d50d",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiWorkspace.ts",
-      "sha256": "49ff8e13c47f36a0718954ff16401b63acd68cd59d9c710a83fbb8334dda0f7e",
+      "sha256": "c18eb12c55781902c497d0fef62363b98193a927ac4d9f789c57c7ec24f2a465",
       "symbols": [
+        "authorityIssue",
+        "calculatorUnavailable",
         "completeNativeWorkspaceAnswer",
         "completion",
         "corrected",
@@ -6185,6 +6193,8 @@
         "originalProgram",
         "outputLimitNote",
         "program",
+        "promisesControls",
+        "promisesInlineControls",
         "readable",
         "readouts",
         "reason",
@@ -6199,11 +6209,13 @@
         "supplied",
         "text",
         "truncated",
+        "unknownCapability",
         "usesNativeWorkspacePresentation",
         "valid",
         "validation",
         "verifiedBeforeLimit",
-        "verifiedText"
+        "verifiedText",
+        "withoutControlClaims"
       ],
       "imports": [
         "./completionDiagnostics.js",
@@ -6231,7 +6243,9 @@
       "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [],
-      "authBoundary": [],
+      "authBoundary": [
+        "backend/src/ai/nativeOpenUiWorkspace.ts#authorityIssue"
+      ],
       "tenantBoundary": [],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -151157,7 +151171,7 @@
     {
       "id": "test-suite:2e491f4d2fcbc11f974c",
       "sourcePath": "backend/src/ai/nativeOpenUi.test.ts",
-      "declaredTests": 71,
+      "declaredTests": 73,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -156323,7 +156337,7 @@
     {
       "id": "test-suite:d5ea1335ec5cc2eca9c4",
       "sourcePath": "frontend/src/app/integrations/integrationsBackdrop.test.ts",
-      "declaredTests": 7,
+      "declaredTests": 9,
       "skipLocations": [],
       "focusLocations": []
     },

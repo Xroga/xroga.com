@@ -109,7 +109,7 @@ test('a missing calculator is clearly identified without erasing its readable ca
   const prose = 'Starting with $100 at 5% annually, the balance after one year is $105.\n\nThe calculator below uses these initial values.';
   const result = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + 'root = Unknown()', 'stop', undefined, undefined, undefined, ['calculator']);
   assert.equal(result.completion.status, 'partial');
-  assert.ok(result.response.startsWith("The interactive calculator couldn't be displayed."));
+  assert.ok(result.response.startsWith("The interactive controls couldn't be displayed."));
   assert.ok(result.response.endsWith(prose));
   assert.equal(result.responseSource.text, '');
   const shared = buildNativeOpenUiShare(result.response, result.responseSource.text);
@@ -710,7 +710,7 @@ test('required visuals must render and cannot be satisfied by unused declaration
   const checked: unknown[] = [];
   const prose = 'The fixed ticket price is $25.';
   const reply = completeNativeWorkspaceAnswer(prose, 'stop', undefined, undefined, event => checked.push(event), formats);
-  assert.ok(reply.response.startsWith("The interactive calculator couldn't be displayed."));
+  assert.ok(reply.response.startsWith("The interactive controls couldn't be displayed."));
   assert.ok(reply.response.endsWith(prose));
   assert.deepEqual(reply.completion, { status: 'partial', reason: 'presentation_contract' });
   assert.deepEqual(checked, [{ stage: 'assembly', reason: 'missing_formats', formats }]);
@@ -728,6 +728,40 @@ test('required visuals must render and cannot be satisfied by unused declaration
   const reactiveControl = staticControl.replace('"$1,000"', '@Format($attendees * 25, "currency", 0, "USD")');
   assert.equal(completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + staticControl, 'stop', undefined, undefined, undefined, ['calculator']).completion.status, 'partial');
   assert.equal(completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + reactiveControl, 'stop', undefined, undefined, undefined, ['calculator']).completion.status, 'complete');
+});
+
+test('a rejected calculator keeps the worked example and removes the promise of invisible controls', () => {
+  const example = 'With 100 units at 5% for one year, the result is 105 units.';
+  const prose = example + '\n\n- The controls above let you change the inputs.';
+  const program = 'root = Col([UnknownControl()])';
+  const diagnostics: unknown[] = [];
+  const reply = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + program, 'stop', undefined, undefined,
+    event => diagnostics.push(event));
+
+  assert.deepEqual(reply.completion, { status: 'partial', reason: 'presentation_contract' });
+  assert.equal(reply.responseSource.text, '');
+  assert.equal(reply.response, "The interactive controls couldn't be displayed. Treat the calculation below as a worked example.\n\n" + example);
+  assert.match(JSON.stringify(diagnostics), /"authorityIssue":"unknown_capability"/);
+  assert.doesNotMatch(JSON.stringify(diagnostics), /UnknownControl/);
+});
+
+test('a rejected decorative branch can be omitted while verified calculator controls survive', () => {
+  const program = [
+    'root = Col([estimate, UnknownDecoration()])',
+    '$units = 4',
+    'estimate = Card([Slider($units, 1, 10, 1, "Units"), Metric("Total", @Format($units * 8, "number", 0))])',
+  ].join('\n');
+  const prose = 'Four units at 8 each cost 32.';
+  const complete = (source: string) => completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + source,
+    'stop', undefined, undefined, undefined, ['calculator']);
+  const answer = complete(program);
+  assert.equal(answer.completion.status, 'partial');
+  assert.deepEqual(validateNativeWorkspaceProgram(answer.responseSource.text, undefined, prose), { ok: true });
+  assert.match(answer.responseSource.text, /Slider\(/);
+  assert.doesNotMatch(answer.responseSource.text, /UnknownDecoration/);
+
+  const withUnverifiedSource = program.replace('UnknownDecoration()', 'UnknownDecoration(), Source("unverified")');
+  assert.equal(complete(withUnverifiedSource).responseSource.text, '');
 });
 
 test('a provider output limit keeps verified visuals shareable and rejects unfinished syntax', () => {

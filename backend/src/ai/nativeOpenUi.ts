@@ -386,6 +386,7 @@ export type NativeUiDiagnostic = {
   shape: Array<{ tokens: number; skeleton: string }>;
   factualRule?: NonNullable<ReturnType<typeof reviewNativeAnswer>>['rule'];
   referenceIssue?: 'missing' | 'cycle';
+  authorityIssue?: 'unknown_capability' | 'invalid_action_binding' | 'unverified_source' | 'unsafe_expression' | 'non_scalar_state' | 'external_statement';
   declarationIssue?: 'invalid_name' | 'unsafe_name' | 'duplicate' | 'missing_root' | 'invalid_root' | 'expression';
   diagramTopology?: 'invalid';
   schemaState?: { hasRoot: boolean; incomplete: boolean; unresolved: number; errors: number };
@@ -409,6 +410,7 @@ export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<s
   let schemaState: NativeUiDiagnostic['schemaState'];
   let factualRule: NativeUiDiagnostic['factualRule'];
   let referenceIssue: NativeUiDiagnostic['referenceIssue'];
+  let authorityIssue: NativeUiDiagnostic['authorityIssue'];
   let declarationIssue: NativeUiDiagnostic['declarationIssue'];
   let diagramTopology: NativeUiDiagnostic['diagramTopology'];
   let workLimit: NativeUiDiagnostic['workLimit'];
@@ -430,6 +432,7 @@ export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<s
       ...(schemaState ? { schemaState } : {}),
       ...(factualRule ? { factualRule } : {}),
       ...(referenceIssue ? { referenceIssue } : {}),
+      ...(authorityIssue ? { authorityIssue } : {}),
       ...(declarationIssue ? { declarationIssue } : {}),
       ...(diagramTopology ? { diagramTopology } : {}),
       ...(errors?.length ? { schema: errors.slice(0, 8).map(error => {
@@ -497,9 +500,18 @@ export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<s
       const next = (value: ASTNode) => visit(value, active, depth + 1);
       switch (node.k) {
         case 'Comp':
-          if (localActions.has(node.name) && node.args[0]?.k !== 'StateRef') return false;
-          if (node.name === 'Source' && (node.args[0]?.k !== 'Str' || !evidenceIds.has(node.args[0].v))) return false;
-          if (!components.has(node.name) && !pureFunctions.has(node.name) && !localActions.has(node.name)) return false;
+          if (localActions.has(node.name) && node.args[0]?.k !== 'StateRef') {
+            authorityIssue = 'invalid_action_binding';
+            return false;
+          }
+          if (node.name === 'Source' && (node.args[0]?.k !== 'Str' || !evidenceIds.has(node.args[0].v))) {
+            authorityIssue = 'unverified_source';
+            return false;
+          }
+          if (!components.has(node.name) && !pureFunctions.has(node.name) && !localActions.has(node.name)) {
+            authorityIssue = 'unknown_capability';
+            return false;
+          }
           return node.args.every(next);
         case 'Ref':
         case 'StateRef': {
@@ -533,8 +545,14 @@ export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<s
       // Re-auditing a shared dependency must not consume another declaration's
       // allowance. The statement count still bounds the total audit work.
       budget = 6000;
-      if (key.startsWith('$') && !['Num', 'Str', 'Bool', 'Null'].includes(node.k)) return fail('authority');
-      if (!visit(node, new Set([key]))) return fail(reason);
+      if (key.startsWith('$') && !['Num', 'Str', 'Bool', 'Null'].includes(node.k)) {
+        authorityIssue = 'non_scalar_state';
+        return fail('authority');
+      }
+      if (!visit(node, new Set([key]))) {
+        if (reason === 'authority') authorityIssue ??= 'unsafe_expression';
+        return fail(reason);
+      }
     }
     statement = undefined;
     stage = 'accuracy';
@@ -546,7 +564,10 @@ export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<s
     }
     stage = 'schema';
     const result = parseProgram.parse(program);
-    if (result.queryStatements.length || result.mutationStatements.length) return fail('authority');
+    if (result.queryStatements.length || result.mutationStatements.length) {
+      authorityIssue = 'external_statement';
+      return fail('authority');
+    }
     schemaState = {
       hasRoot: Boolean(result.root), incomplete: result.meta.incomplete,
       unresolved: result.meta.unresolved.length, errors: result.meta.errors.length,
@@ -765,7 +786,7 @@ const layoutChildren = new Map([['Col', 0], ['Row', 0], ['Grid', 0], ['Card', 0]
 
 /** Every recovered candidate passes the full authority, schema and data checks.
  * Reachable branches with unresolved references may be omitted from the view. */
-export function recoverNativeWorkspaceProgram(program: string, evidenceIds: ReadonlySet<string> | undefined, prose: string, failure: 'schema' | 'factual_review' | 'reference' = 'schema') {
+export function recoverNativeWorkspaceProgram(program: string, evidenceIds: ReadonlySet<string> | undefined, prose: string, failure: 'schema' | 'factual_review' | 'reference' | 'authority' = 'schema') {
   try {
     const statements = split(tokenize(program));
     const declarations = new Map(statements.map(item => [item.id, item]));
@@ -776,6 +797,18 @@ export function recoverNativeWorkspaceProgram(program: string, evidenceIds: Read
     });
     const narrative = [...reviewStrings].join('\n');
     if (failure === 'reference' && reviewNativeAnswer(narrative)) return;
+    if (failure === 'authority') {
+      let unsafeBinding = false;
+      for (const [id, expression] of originals) {
+        if (id.startsWith('$') && !['Num', 'Str', 'Bool', 'Null'].includes(expression.k)) return;
+        walkAST(expression, node => {
+          if (node.k !== 'Comp') return;
+          if (localActions.has(node.name) && node.args[0]?.k !== 'StateRef') unsafeBinding = true;
+          if (node.name === 'Source' && (node.args[0]?.k !== 'Str' || !evidenceIds?.has(node.args[0].v))) unsafeBinding = true;
+        });
+      }
+      if (unsafeBinding) return;
+    }
     const symbols = new Map([...originals].map(([id, node]) => [id, normalizeWorkspaceComponents(node, originals)]));
     const root = resolveRecoveryReference(symbols.has('root') ? symbols.get('root')
       : [...symbols.values()].find(node => node.k === 'Comp' && node.name === 'Col'), symbols);
@@ -862,10 +895,22 @@ export function recoverNativeWorkspaceProgram(program: string, evidenceIds: Read
 
     // Cap repeated parser calls independently of the provider output limits.
     let probes = 48;
+    let blockedAuthority = false;
     // Keep the named platform in scope when its only mention was in a withheld component.
     const reviewContext = failure === 'factual_review' ? prose + '\n' + nativeTechnicalReviewContext(narrative) : prose;
-    const validate = (candidate: ASTNode) => probes-- > 0
-      ? validateNativeWorkspaceProgram(render(candidate), evidenceIds, reviewContext) : undefined;
+    const validate = (candidate: ASTNode) => {
+      if (blockedAuthority || probes-- <= 0) return;
+      let authorityIssue: NativeUiDiagnostic['authorityIssue'];
+      const validation = validateNativeWorkspaceProgram(render(candidate), evidenceIds, reviewContext,
+        event => { authorityIssue = event.authorityIssue; });
+      // Only an unregistered capability can be discarded as a visual branch.
+      // An invalid action, source or expression still rejects the projection.
+      if (validation.ok === false && validation.reason === 'authority' && authorityIssue !== 'unknown_capability') {
+        blockedAuthority = true;
+        return;
+      }
+      return validation;
+    };
     if (failure === 'reference') {
       // The displayed root may already be intact. Drop only unreachable
       // declarations in that case and retain the complete layout.
@@ -903,7 +948,7 @@ export function recoverNativeWorkspaceProgram(program: string, evidenceIds: Read
     }
     const layout = salvageLayout(root, 0);
     const recovered = layout && (usable(validate(layout.container)) ? layout.container : group(layout.children));
-    if (!recovered) return;
+    if (!recovered || blockedAuthority) return;
     const restored = render(recovered);
     const validation = validateNativeWorkspaceProgram(restored, evidenceIds, failure === 'factual_review' ? reviewContext : narrative);
     if (failure === 'factual_review') {

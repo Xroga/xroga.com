@@ -103,6 +103,10 @@ test('a planner-generated ID collision cannot erase an explicit requirement or c
 test('natural calculator phrasing and branching workflows select the right presentation without padding simple questions', () => {
   const calc = requestedAnswerObligations('If I invest $5,000 at 7% for 10 years, show me what I end up with and let me change the numbers.');
   assert.deepEqual(calc.map(o => [o.id, o.formats[0]]), [['requested-calculator', 'calculator']]);
+  const splitWordPrompt = 'Build an interactive compound-interest calculat or with principal, interest rate and years.';
+  const [splitWord] = requestedAnswerObligations(splitWordPrompt);
+  assert.deepEqual(splitWord?.formats, ['calculator']);
+  assert.equal(splitWord?.sourceQuote, splitWordPrompt);
   const flow = requestedAnswerObligations('Show me a lead-capture automation workflow, including what happens on failure.');
   assert.deepEqual(flow.map(o => [o.id, o.formats]), [['requested-workflow', ['graph']]]);
   const plain = requestedAnswerObligations('Show me a step-by-step workflow for onboarding a new employee.');

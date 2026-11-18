@@ -224,7 +224,7 @@
   "rollout": "Require exact-source CI and private hosted ordinary-user acceptance. Standing owner rollout and canary authority is recorded in the November 17 canary report. Restore the compatible recovery pair after a material acceptance failure.",
   "rollback": "Restore the current frontend and serving API and canonical Job pair through the existing release procedure. No schema or saved format changes.",
   "knownGaps": [
-    "The November 17 production calculator canary failed its interactive requirement and the release was rolled back. The repaired validator requires exact-source CI and hosted retesting. Provider-backed media/maps and the full ordinary-user matrix still require independent evidence."
+    "The November 18 production calculator canary reached DeepSeek and settled usage, but the capability validator rejected the generated program and the visible answer omitted the controls. Production serves the same-source decoder. Recovery of compatible branches and honesty of the worked-example fallback require exact-source CI and hosted retesting. Provider-backed media/maps and the full ordinary-user matrix still require independent evidence."
   ],
   "placeholderClaimsRemaining": [],
   "evidenceRefs": [
@@ -239,7 +239,7 @@
   "release": {
     "state": "BLOCKED",
     "blockers": [
-      "The failed production calculator canary is under repair. Exact-source CI, private hosted verification and successful model/production acceptance of the corrected candidate remain pending."
+      "Production uses the verified decoder after the calculator canary failed. Reopening generation requires refreshed exact-source CI, verified release artifacts and successful live Workspace acceptance."
     ],
     "authenticatedE2e": "BLOCKED",
     "stagedSecurity": "BLOCKED",

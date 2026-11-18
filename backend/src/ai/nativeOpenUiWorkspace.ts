@@ -7,6 +7,7 @@ import { recoverNativeReadoutExplanations } from './nativeOpenUi.js';
 import { bindNativeAnswerText } from './nativeOpenUi.js';
 
 const outputLimitNote = 'This answer reached the provider output limit. The available answer is shown below.';
+const promisesControls = (text: string) => /\b(?:controls?|sliders?|input fields?)\s+(?:above|below)\b|\b(?:above|below)\s+(?:calculator|controls?)\b/i.test(text);
 
 /** Deployment-owned presentation choice; never reads a user role or client flag.
  * The paid founder evaluator has its own independent staging-only guard. */
@@ -28,19 +29,28 @@ export function completeNativeWorkspaceAnswer(
   const { text: prose, program: generatedProgram } = splitNativeOpenUiAnswer(raw);
   const originalProgram = bindNativeAnswerText(generatedProgram, prose);
   let factualRule: NativeUiDiagnostic['factualRule'];
+  let authorityIssue: NativeUiDiagnostic['authorityIssue'];
   const original = originalProgram ? validateNativeWorkspaceProgram(originalProgram, evidenceIds, prose, event => {
     factualRule = event.factualRule;
+    authorityIssue = event.authorityIssue;
     diagnose?.(event);
   }) : undefined;
   const factualLayoutOnly = original?.ok === false && original.reason === 'factual_review'
     && factualRule && !nativeAnswerReviewReason(prose);
   const guidance = factualLayoutOnly && factualRule ? nativeFactualGuidance[factualRule] : '';
-  const recoverable = original?.ok === false && (original.reason === 'schema' || original.reason === 'reference' || factualLayoutOnly);
+  const unknownCapability = original?.ok === false && original.reason === 'authority' && authorityIssue === 'unknown_capability';
+  const recoverable = original?.ok === false && (original.reason === 'schema' || original.reason === 'reference' || factualLayoutOnly || unknownCapability);
   const truncated = finishReason === 'length' && original?.ok === false && original.reason === 'syntax';
   let repair;
   if (finishReason === 'stop' && recoverable) {
     repair = recoverNativeWorkspaceProgram(originalProgram, evidenceIds, prose,
-      factualLayoutOnly ? 'factual_review' : original.reason === 'reference' ? 'reference' : 'schema');
+      factualLayoutOnly ? 'factual_review' : original.reason === 'reference' ? 'reference' : unknownCapability ? 'authority' : 'schema');
+    // A projection that loses the requested controls can only be a worked
+    // example. Never publish its bound Markdown as a working calculator.
+    if (unknownCapability && repair && (requiredFormats.includes('calculator') || promisesControls(prose))
+      && missingNativeFormats(repair.validation.ok ? repair.program : '', ['calculator']).length) {
+      repair = undefined;
+    }
   } else if (truncated) {
     repair = recoverTruncatedNativeWorkspaceProgram(originalProgram, evidenceIds, prose);
   }
@@ -58,6 +68,15 @@ export function completeNativeWorkspaceAnswer(
   const program = repair?.program ?? originalProgram;
   const validation = repair?.validation ?? original;
   const missing = missingNativeFormats(validation?.ok ? program : '', requiredFormats);
+  // The model can promise controls even when its program was rejected and
+  // the original wording did not match an explicit calculator obligation.
+  const promisesInlineControls = promisesControls(prose);
+  const calculatorUnavailable = missing.includes('calculator')
+    || (validation?.ok === false && promisesInlineControls);
+  const withoutControlClaims = (text: string) => text.replace(
+    /(^|\n)([ \t]*(?:[-*]\s+)?(?:The\s+)?(?:controls?|sliders?|input fields?)\s+(?:above|below)\s+[^\n]+)(?=\n|$)/gi,
+    '$1',
+  ).trim();
   if (missing.length) diagnose?.({ stage: 'assembly', reason: 'missing_formats', formats: missing });
   if (guidance) {
     const safeProse = factualRule === 'unconfirmed_conflicting_input'
@@ -136,8 +155,8 @@ export function completeNativeWorkspaceAnswer(
   if (completion.status === 'complete' && (validation?.ok === false || repair?.partial || missing.length)) {
     return {
       response: valid ? PARTIAL_NATIVE_PRESENTATION_NOTE + '\n\n' + supplementNativeProse(response, program, true)
-        : missing.includes('calculator')
-          ? "The interactive calculator couldn't be displayed. The available calculation and explanation are preserved below.\n\n" + response
+        : calculatorUnavailable
+          ? "The interactive controls couldn't be displayed. Treat the calculation below as a worked example.\n\n" + withoutControlClaims(response)
           : response,
       completion: { status: 'partial' as const, reason: 'presentation_contract' as const },
       responseSource: { format: NATIVE_UI_FORMAT, text: valid ? program : '' },
