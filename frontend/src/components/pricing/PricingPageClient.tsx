@@ -434,7 +434,7 @@ export function PricingPageClient() {
           <div className={styles.usageHeader}>
             <Gauge className={styles.usageTopIcon} aria-hidden="true" />
             <h2 id="usage-heading">How usage works.</h2>
-            <p>Free and Pro share core tools. The amount of available work—and when it unlocks—depends on your plan.</p>
+            <p>Your available capacity depends on your plan and the work you run. Here&apos;s what to expect.</p>
           </div>
           <div className={styles.usageAccordion}>
             <details className={styles.usageDisclosure}>
@@ -479,11 +479,11 @@ export function PricingPageClient() {
           <aside className={styles.browserPromo} aria-labelledby="browser-promo-title">
             <div className={styles.browserPromoTop}>
               <span className={styles.browserPromoSymbol} aria-hidden="true"><Globe /></span>
-              <span className={styles.browserPromoLabel}>IN YOUR OWN CHROME BROWSER</span>
+              <span className={styles.browserPromoLabel}>CHROME EXTENSION · BROWSER AUTOMATION</span>
             </div>
-            <h2 id="browser-promo-title">Your browser.<br /><em>Ready for action.</em></h2>
+            <h2 id="browser-promo-title">Your Chrome.<br /><em>Ready to work.</em></h2>
             <p className={styles.browserPromoLead}>
-              Install the Xroga Chrome extension to run supported browser workflows in your own session.
+              Run supported browser workflows directly in your Chrome session with Xroga’s authorized extension.
             </p>
             <div className={styles.browserPreview} aria-hidden="true">
               <div className={styles.browserPreviewBar}>
@@ -500,14 +500,14 @@ export function PricingPageClient() {
               </div>
             </div>
             <div className={styles.browserPromoBenefits}>
-              <span><Check aria-hidden="true" /> Use it with or without other connected apps, where supported</span>
-              <span><Check aria-hidden="true" /> Work in Chrome without switching tools for every step</span>
+              <span><Check aria-hidden="true" /> No extra app connections needed for supported in-browser actions</span>
+              <span><Check aria-hidden="true" /> Navigate, interact and complete supported multi-step work in Chrome</span>
             </div>
             <Link href="/dashboard/automations" className={styles.browserPromoLink}>
               Explore browser workflows <ArrowRight aria-hidden="true" />
             </Link>
             <p className={styles.browserPromoNote}>
-              Requires the installed, authorized extension and compatible workflows. AI usage and session limits still apply; unlimited hours are not guaranteed.
+              Install and authorize the extension first. Availability depends on your plan, compatible websites and browser session; unlimited hours or completion speed are not guaranteed.
             </p>
           </aside>
         </div>
