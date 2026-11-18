@@ -319,3 +319,8 @@ Staging cleanup, second pass: user C deleted from the staging database, its stal
 | Sheets: create, write and read back (owner-sent, run 82575619) | PASS on time and read-back; turn target not met | Server log: first call 20:12:42 to finish 20:13:37 UTC = 55 s. Create, write and a separate read-back call (write receipt 34bd3232..., read-back receipt 17c77ca1...), 15 cells in Sheet1!A1:C5, header plus 4 rows shown. Two `plugin_act` calls were refused (403) and one read 422 on the way, so more than 3 model turns |
 | HubSpot: "list my 5 most recent contacts with name and email" (run 12218b1c) | PASS, correct and fast | First call 20:15:30 to finish 20:16:04 UTC = 34 s, 5 model turns (one read returned 503 once, then succeeded). Used HUBSPOT_SEARCH_CRM_OBJECTS_BY_CRITERIA sorted by createdate descending, receipt 1c05ba17...; five contacts shown newest first with creation times. It repeated the read search twice after the up-front one |
 | Still open | | A separate-profile Sheets run is no longer needed for the read-back (it is now an independent call). Remaining waste: refused calls (403/422) and repeated searches; model-turn delay (3 s to 79 s) |
+
+## Refused-call diagnostics (19 November 2026)
+| Item | Result | Evidence |
+| --- | --- | --- |
+| Local record of failed connected-app calls | Code-complete, tests pass (1255), not run live | `xroga_plugin_fail_v1` in extension storage (newest 50): time, tool, slug or query (80 chars), failure kind, first 160 characters of the result. No arguments, no page text, nothing sent anywhere. Read it in the service worker console: `chrome.storage.local.get('xroga_plugin_fail_v1')`. Purpose: find which tool names cause the 403/422 refusals, which the server log cannot show |
