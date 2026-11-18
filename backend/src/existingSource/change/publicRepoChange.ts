@@ -78,7 +78,10 @@ export async function runPublicRepoChange(input: PublicRepoChangeInput): Promise
     workspace.workspace.writeFile(edit.path, next, 'modify');
   }
   const set = workspace.changeSet();
-  const after = await runTests({ port: input.port, files: workspace.files(), changedPaths: set.files.map((f) => f.path), plan, signal: input.signal });
+  const editedFiles = workspace.files();
+  const editedPaths = set.files.map((f) => f.path);
+  // an edit can add or change a manifest (a new requirements file), so the edited copy is planned from its own files, not the base's
+  const after = await runTests({ port: input.port, files: editedFiles, changedPaths: editedPaths, plan: planTests(editedFiles, editedPaths), signal: input.signal });
 
   let verdict: PublicRepoChangeResult['verdict'] = 'unverified';
   let verdictReason = after.summary;
