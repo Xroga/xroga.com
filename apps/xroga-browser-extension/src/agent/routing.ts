@@ -90,3 +90,63 @@ export function researchPlan(request: string): { query: string; follow: number }
 export const RESEARCH_FIRST_NOTE =
   'this request is about information on the web, so the web search was already run and the top result pages were read, in parallel (below). ' +
   'Answer from them now, with the exact links. Search or open a page yourself only if a fact you need is missing.';
+
+// ---- Requests that change something in a connected app --------------------------------------------------------------------
+// plugin_search finds only tools that READ. A request to create or add data needs plugin_action_search, so the first search a run makes
+// for it must be that one; otherwise the model's first turn sees read tools only, never finds the create/append tools and falls back to
+// typing into the page. Both searches are deterministic and are run before the first model turn.
+
+const CHANGE_WORDS = /\b(?:create|add|append|insert|write|put|save|log|record|update|fill|make|build|new|set up|enter|store)\b/i;
+const READ_WORDS = /\b(?:read|read ?back|list|find|check|verify|show|fetch|get|look|confirm|tell me|whether)\b/i;
+
+/** The request asks for data to be created or changed in an app. */
+export function isChangeRequest(request: string): boolean {
+  return CHANGE_WORDS.test(request);
+}
+
+/** The request also asks to read something (a read-back, a check), so the read tools are needed as well. */
+export function needsReadTools(request: string): boolean {
+  return READ_WORDS.test(request);
+}
+
+// The provider re-runs the search with the same words before it lets a change run, and a whole sentence (names, quotes, "then read it
+// back") finds a different tool set the second time: the first create call was refused as "not discovered" (measured on staging, 18 Nov:
+// 8 model turns, about 2 minutes). Short words, the app plus what is done to what, find the same tools every time.
+const APP_WORDS: Array<[RegExp, string]> = [
+  [/\b(?:google\s+)?(?:sheets?|spreadsheets?)\b/i, 'Google Sheets'],
+  [/\bnotion\b/i, 'Notion'],
+  [/\bgmail|inbox\b/i, 'Gmail'],
+  [/\b(?:google\s+)?calendar\b/i, 'Google Calendar'],
+  [/\b(?:google\s+)?(?:docs?|documents?)\b/i, 'Google Docs'],
+  [/\b(?:google\s+)?drive\b/i, 'Google Drive'],
+  [/\bairtable\b/i, 'Airtable'],
+  [/\bhubspot\b/i, 'HubSpot'],
+  [/\bslack\b/i, 'Slack'],
+  [/\btrello\b/i, 'Trello'],
+  [/\basana\b/i, 'Asana'],
+  [/\bjira\b/i, 'Jira'],
+  [/\blinear\b/i, 'Linear'],
+  [/\bgithub\b/i, 'GitHub'],
+];
+const OBJECT_WORDS = /\b(?:spreadsheet|sheet|rows?|cells?|page|database|document|doc|event|contact|contacts|email|message|issue|ticket|card|task|record)s?\b/i;
+
+const FILLER = /\b(?:please|using|use|my|our|the|a|an|connected|app|apps|named|called|titled|with|and|to|in|on|for|me|it|then|also|all)\b/gi;
+
+/**
+ * A short, stable search phrase for any app. A recognised app gives "<app> <verb> <object>" (plus "append rows" when the request is
+ * about table data); an unrecognised one gives the request cut to its first clause with names, quotes, brackets and filler removed,
+ * at most eight words. undefined when nothing is left, so the caller falls back to the plain sentence.
+ */
+export function appActionQuery(request: string, kind: 'change' | 'read'): string | undefined {
+  const app = APP_WORDS.find(([re]) => re.test(request))?.[1];
+  if (!app) {
+    const clause = request.replace(/"[^"]*"|'[^']*'|\([^)]*\)/g, ' ').split(/[.;!?]|,?\s+(?:and\s+)?then\b/i)[0] ?? '';
+    const words = clause.replace(FILLER, ' ').replace(/[^\p{L}\p{N} -]+/gu, ' ').replace(/\b\d+\b/g, ' ').split(/\s+/).filter(w => w.length > 1).slice(0, 8);
+    return words.length >= 2 ? words.join(' ') : undefined;
+  }
+  const object = /\bspreadsheets?\b/i.test(request) ? 'spreadsheet' : OBJECT_WORDS.exec(request.replace(/google sheets?/gi, ''))?.[0].toLowerCase().replace(/s$/, '') ?? '';
+  if (kind === 'read') return `${app} read ${object || 'data'} values`.slice(0, 120);
+  const verb = /\b(?:append|add|insert)\b/i.test(request) ? 'append' : /\b(?:update|edit)\b/i.test(request) ? 'update' : 'create';
+  const rows = /\b(?:rows?|header|records?|entries)\b|\b\d+\s+contacts?\b/i.test(request) && /sheet|airtable|notion|database|table/i.test(app + ' ' + request);
+  return `${app} ${verb} ${object || 'item'}${rows ? ' append rows' : ''}`.replace(/\bappend (?:item|row) append rows\b/, 'append rows').slice(0, 120);
+}
