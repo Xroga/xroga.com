@@ -8,8 +8,8 @@
     {
       "name": "focus-competing",
       "ok": true,
-      "startedAt": "2026-11-18T14:25:27.223Z",
-      "durationMs": 10733,
+      "startedAt": "2026-11-18T19:23:33.341Z",
+      "durationMs": 14711,
       "result": {
         "focusedWindowDuringRun": true,
         "phase1": {
@@ -28,6 +28,11 @@
               "error": true
             }
           ]
+        },
+        "phase3": {
+          "foreignTabClickRefused": true,
+          "ownRows": 1,
+          "rivalRows": 0
         }
       }
     }

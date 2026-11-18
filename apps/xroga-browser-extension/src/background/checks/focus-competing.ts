@@ -77,6 +77,31 @@ defineCheck({
       report.phase2 = { status: conversation?.status, rivalRows: await rows(rival2.tabId), clickResults: clicks.map(c => ({ error: (c as { isError?: boolean }).isError === true })) };
       await chrome.windows.remove(rival2.windowId).catch(() => undefined);
 
+      // ---- Phase 3: the model names a tab that is not the run's own (the focused competing window's tab): refused, then its own tab is used.
+      page = await chrome.tabs.create({ windowId: home, url: `${FIXTURE_ORIGIN}/c-effects.html`, active: false });
+      await waitForLoad(page.id!);
+      view = await chrome.tabs.create({ windowId: home, url: chrome.runtime.getURL(`/sidepanel.html#tab=${page.id}`), active: false });
+      await waitForLoad(view.id!);
+      opened.push(page.id!, view.id!);
+      await sleep(600);
+      const rival3 = await competing();
+      await scriptReplies([
+        { when: 'FOCUS-THREE', toolCalls: [{ name: 'click', input: { tabId: rival3.tabId, target: { role: 'button', name: 'Add a row' } } }] },
+        { when: 'FOCUS-THREE', ...click },
+        { when: 'FOCUS-THREE', ...done },
+      ]);
+      const known3 = new Set((await listConversations()).map(c => c.id));
+      await panel(page.id!, 'type-send', { text: 'FOCUS-THREE: add a row' });
+      for (let i = 0; i < 100 && (await panel(page.id!, 'read')).status !== 'Done'; i++) await sleep(200);
+      const c3 = (await listConversations()).find(c => !known3.has(c.id) && /FOCUS-THREE/.test(c.title));
+      const results3 = c3
+        ? (await activeBranch(c3.id)).flatMap(e => (e.type === 'message' && e.message.role === 'tool' ? e.message.parts.filter(p => p.type === 'tool-result' && p.toolName === 'click') : []))
+        : [];
+      report.phase3 = { foreignTabClickRefused: (results3[0] as { isError?: boolean } | undefined)?.isError === true, ownRows: await rows(page.id!), rivalRows: await rows(rival3.tabId) };
+      await chrome.windows.remove(rival3.windowId).catch(() => undefined);
+      const p3 = report.phase3 as { foreignTabClickRefused: boolean; ownRows: number; rivalRows: number };
+      if (!p3.foreignTabClickRefused || p3.rivalRows !== 0 || p3.ownRows !== 1) throw new Error(JSON.stringify(report));
+
       const p1 = report.phase1 as { ownRows: number; rivalRows: number; status: string };
       const p2 = report.phase2 as { rivalRows: number; clickResults: Array<{ error: boolean }> };
       if (p1.ownRows !== 2 || p1.rivalRows !== 0 || report.focusedWindowDuringRun !== true) throw new Error(JSON.stringify(report));
