@@ -15,7 +15,7 @@ function fakeRuntime(over: Record<string, Partial<SandboxExecutionResult>> = {},
     execute: async (r: SandboxExecutionRequest): Promise<SandboxExecutionResult> => {
       calls.push(r);
       if (handler) return handler(r);
-      const stages: NonNullable<SandboxExecutionResult['stages']> = [];
+      const stages: Array<NonNullable<SandboxExecutionResult['stages']>[number]> = [];
       for (const s of r.stages ?? []) { const result = { ...ok(`ran ${s.id}`), ...(over[s.id] ?? {}), id: s.id, networkPolicy: s.networkPolicy }; stages.push(result); if (result.exitCode !== 0) break; }
       return { ...stages[stages.length - 1]!, stages };
     },
