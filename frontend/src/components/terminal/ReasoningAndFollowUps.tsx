@@ -7,7 +7,6 @@ import {
   extractImagesFromContent,
   stripImageMarkdown,
   parseProviderFromContent,
-  isFailedImageContent,
 } from '@/lib/parseImageContent';
 import { FormattedAiMarkdown } from '@/lib/formatAiMarkdown';
 import type { CitationSource } from '@/lib/xrogaCitations';
@@ -44,16 +43,6 @@ export const ModernResponseText = memo(function ModernResponseText({
   const images = extractImagesFromContent(safeContent);
   const textOnly = stripImageMarkdown(safeContent);
   const provider = parseProviderFromContent(safeContent);
-
-  if (isFailedImageContent(safeContent) && images.length === 0) {
-    return (
-      <ResponseBody streaming={streaming}>
-        <p className="whitespace-pre-wrap text-[13px] text-red-300/90">
-          {textOnly || safeContent}
-        </p>
-      </ResponseBody>
-    );
-  }
 
   if (images.length > 0) {
     return (

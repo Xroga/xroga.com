@@ -247,8 +247,14 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   const reply = 'The workshop earns $25 per attendee. At 40 attendees, revenue is $1,000.';
   const detail = 'The estimate excludes venue costs and payment processing fees.';
   const fullReply = reply + '\n\n' + detail;
-  const followUp = 'What was the ticket price again?';
-  const followUpReply = 'The ticket price was $25.';
+  const followUp = 'What was the ticket price again? Draft an email and RSVP form with the venue left blank.';
+  const followUpIntro = 'The ticket price was $25. Replace each placeholder before sending.';
+  const followUpReply = [
+    followUpIntro,
+    '## Email draft\n\n**Subject:** [Workshop title]',
+    '| Item | Detail |\n| --- | --- |\n| Venue | [Venue name] |',
+    '## RSVP form\n\n- Accessibility needs: __________',
+  ].join('\n\n');
   const cancellation = 'Stop this pending fixture reply.';
   const malformed = 'Show the invalid-program fallback.';
   // Genuine captured DeepSeek prose from the private acceptance run. Replay it
@@ -482,7 +488,17 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   await expect(answer.getByText('$1,000', { exact: true })).toBeVisible();
   await expect(answer.getByText(detail, { exact: true })).toBeVisible();
   await send(followUp);
-  await expect(page.getByRole('region', { name: 'Answer', exact: true }).getByText(followUpReply, { exact: true })).toBeVisible();
+  const followUpAnswer = page.getByRole('region', { name: 'Answer', exact: true }).filter({ hasText: followUpIntro });
+  const expectFormattedDraft = async () => {
+    await expect(followUpAnswer.getByRole('heading', { name: 'Email draft', exact: true })).toBeVisible();
+    await expect(followUpAnswer.locator('strong').getByText('Subject:', { exact: true })).toBeVisible();
+    await expect(followUpAnswer.getByRole('cell', { name: '[Venue name]', exact: true })).toBeVisible();
+    await expect(followUpAnswer.getByRole('heading', { name: 'RSVP form', exact: true })).toBeVisible();
+    await expect(followUpAnswer.getByText(/Accessibility needs:/)).toBeVisible();
+  };
+  await expectFormattedDraft();
+  await page.locator('[data-turn-id]').filter({ has: followUpAnswer }).getByRole('button', { name: 'Copy', exact: true }).click();
+  await expect.poll(() => page.evaluate(async () => (await navigator.clipboard.readText()).replace(/\r\n/g, '\n'))).toBe(followUpReply);
   try {
     await send(cancellation);
     await expect.poll(() => chatCalls).toBe(3);
@@ -543,6 +559,7 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   await page.reload();
   await openPersistedConversation(page, { id: sessionId, title: savedTitle!, reply: fallback });
   await expect(fallbackTurn.getByText(fallback, { exact: true })).toBeVisible();
+  await expectFormattedDraft();
   await expect(page.getByText('Cancelled fixture must never appear.', { exact: true })).toHaveCount(0);
   await expect(page.getByText('should never render', { exact: true })).toHaveCount(0);
   await send(recovery);
