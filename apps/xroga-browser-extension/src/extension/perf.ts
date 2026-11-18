@@ -25,3 +25,14 @@ export async function recordPerf(entry: PerfEntry): Promise<void> {
     /* storage unavailable: the run does not depend on its measurements */
   }
 }
+
+/** Refused or failed connected-app calls, newest 50: which tool and what came back, so the cause of a refusal can be found and fixed. No arguments, no page text. */
+export const PLUGIN_FAIL_KEY = 'xroga_plugin_fail_v1';
+export async function recordPluginFailure(entry: { at: string; tool: string; slug: string; kind: string; note: string }): Promise<void> {
+  try {
+    const stored = ((await chrome.storage.local.get(PLUGIN_FAIL_KEY))[PLUGIN_FAIL_KEY] as unknown[] | undefined) ?? [];
+    await chrome.storage.local.set({ [PLUGIN_FAIL_KEY]: [...stored, entry].slice(-50) });
+  } catch {
+    /* measuring never breaks the run */
+  }
+}

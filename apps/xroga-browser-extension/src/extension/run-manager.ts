@@ -62,7 +62,7 @@ import { createAgentSession, layerPort } from './agent-session';
 import { TabScope } from './bindings';
 import { PageBorder, injectBorder, listenForBorder, showActionPoint, toolLabel } from './border';
 import { RunTimings } from '@src/agent/timing';
-import { PERF_KEY, recordPerf } from './perf';
+import { PERF_KEY, recordPerf, recordPluginFailure } from './perf';
 import { addPromptRoute, controllerReady } from './layer';
 import { Permissions } from './permissions';
 import { PromptBroker } from './prompt-broker';
@@ -1858,6 +1858,10 @@ export class RunManager {
                   return { text: `The name ${wanted} was not offered by any search in this task, so it was not sent. Do not search again: call one of the tools already offered, by its name: ${offered}.`, isError: true };
                 }
                 const result = await callPlugin(call.toolName, call.input);
+                if (result.isError) {
+                  const asked = (call.input as { slug?: unknown; query?: unknown } | null);
+                  void recordPluginFailure({ at: new Date().toISOString(), tool: call.toolName, slug: String(asked?.slug ?? asked?.query ?? '').slice(0, 80), kind: String(result.failureKind ?? 'error'), note: result.text.replace(/\s+/g, ' ').slice(0, 160) });
+                }
                 // A tool name the model made up (not one this task's searches offered) is refused as "not discovered": say which tools ARE
                 // offered, so the next call is right instead of another search and another turn.
                 const asked = (call.toolName === 'plugin_read' || call.toolName === 'plugin_act') ? (call.input as { slug?: unknown } | null)?.slug : undefined;
