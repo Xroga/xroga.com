@@ -537,6 +537,7 @@ ${ledger}` : ''),
         const read = await this.#searchApps(text, 'plugin_search', change ? appActionQuery(text, 'read') : undefined);
         if (read) parts.push(read);
       }
+      this.options.timings?.mark(change ? 'kind:apps-change' : 'kind:apps-read');
       this.options.timings?.mark('presearch-done');
       const found = parts.join('\n');
       await this.writer.appNote(found ? APPS_FIRST_SEARCHED_NOTE + '\n' + found : APPS_FIRST_NOTE);
@@ -545,6 +546,7 @@ ${ledger}` : ''),
     // A request for information on the web starts with the search and its top pages already read, in parallel and without a model
     // call, so the first model turn already has the material. The browser tools stay in the list for when it is not enough.
     if (asked && !earlierResults && this.options.tools.some(t => t.name === 'delegate') && isResearchRequest(userText(asked))) {
+      this.options.timings?.mark('kind:research');
       const plan = researchPlan(userText(asked));
       const read = await runSubagents({ layer: this.options.layer, signal: this.options.signal }, [{ query: plan.query, follow: plan.follow }]).catch(() => null);
       if (read && !this.options.signal.aborted) {

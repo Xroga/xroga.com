@@ -130,13 +130,23 @@ const APP_WORDS: Array<[RegExp, string]> = [
 ];
 const OBJECT_WORDS = /\b(?:spreadsheet|sheet|rows?|cells?|page|database|document|doc|event|contact|contacts|email|message|issue|ticket|card|task|record)s?\b/i;
 
-/** A short, stable search phrase ("Google Sheets create spreadsheet append rows"); undefined when the app is not recognised. */
+const FILLER = /\b(?:please|using|use|my|our|the|a|an|connected|app|apps|named|called|titled|with|and|to|in|on|for|me|it|then|also|all)\b/gi;
+
+/**
+ * A short, stable search phrase for any app. A recognised app gives "<app> <verb> <object>" (plus "append rows" when the request is
+ * about table data); an unrecognised one gives the request cut to its first clause with names, quotes, brackets and filler removed,
+ * at most eight words. undefined when nothing is left, so the caller falls back to the plain sentence.
+ */
 export function appActionQuery(request: string, kind: 'change' | 'read'): string | undefined {
   const app = APP_WORDS.find(([re]) => re.test(request))?.[1];
-  if (!app) return undefined;
-  const object = /spreadsheets?/i.test(request) ? 'spreadsheet' : OBJECT_WORDS.exec(request.replace(/google sheets?/gi, ''))?.[0].toLowerCase().replace(/s$/, '') ?? '';
+  if (!app) {
+    const clause = request.replace(/"[^"]*"|'[^']*'|\([^)]*\)/g, ' ').split(/[.;!?]|,?\s+(?:and\s+)?then\b/i)[0] ?? '';
+    const words = clause.replace(FILLER, ' ').replace(/[^\p{L}\p{N} -]+/gu, ' ').replace(/\b\d+\b/g, ' ').split(/\s+/).filter(w => w.length > 1).slice(0, 8);
+    return words.length >= 2 ? words.join(' ') : undefined;
+  }
+  const object = /\bspreadsheets?\b/i.test(request) ? 'spreadsheet' : OBJECT_WORDS.exec(request.replace(/google sheets?/gi, ''))?.[0].toLowerCase().replace(/s$/, '') ?? '';
   if (kind === 'read') return `${app} read ${object || 'data'} values`.slice(0, 120);
-  const verb = /\b(?:append|add|insert)\b/i.test(request) ? 'append' : /\bupdate|edit\b/i.test(request) ? 'update' : 'create';
-  const made = /\bspreadsheet|sheet\b/i.test(request) && app === 'Google Sheets' ? 'create spreadsheet append rows' : `${verb} ${object || 'item'}`;
-  return `${app} ${made}`.slice(0, 120);
+  const verb = /\b(?:append|add|insert)\b/i.test(request) ? 'append' : /\b(?:update|edit)\b/i.test(request) ? 'update' : 'create';
+  const rows = /\b(?:rows?|header|records?|entries)\b|\b\d+\s+contacts?\b/i.test(request) && /sheet|airtable|notion|database|table/i.test(app + ' ' + request);
+  return `${app} ${verb} ${object || 'item'}${rows ? ' append rows' : ''}`.replace(/\bappend (?:item|row) append rows\b/, 'append rows').slice(0, 120);
 }

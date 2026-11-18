@@ -156,6 +156,14 @@ describe('short app search phrases', () => {
     const r = 'Using my connected Google Sheets, create a spreadsheet named "X" with a header row (Name, Email) and 4 contacts, then read it back';
     expect(appActionQuery(r, 'change')).toBe('Google Sheets create spreadsheet append rows');
     expect(appActionQuery(r, 'read')).toBe('Google Sheets read spreadsheet values');
-    expect(appActionQuery('create something', 'change')).toBeUndefined();
+    expect(appActionQuery('create something', 'change')).toBe('create something');
+  });
+});
+
+describe('search phrase for any app', () => {
+  it('shortens a request for an app that is not in the list', () => {
+    expect(appActionQuery('Please add a new deal called "Acme" (value 5000) to my Pipedrive, then tell me the ID', 'change')).toBe('add new deal Pipedrive');
+    expect(appActionQuery('ok', 'change')).toBeUndefined();
+    expect(appActionQuery('Add 3 rows to my Notion database', 'change')).toBe('Notion append rows');
   });
 });
