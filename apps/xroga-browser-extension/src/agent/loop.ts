@@ -12,7 +12,7 @@ import type { AgentEvent, ToolRow } from '@src/ui/protocol';
 import { contextChars, elideStaleObservations, toModelMessages } from './context';
 import { directNavigation, type DirectNavigation } from './direct-url';
 import { answerDirect, directRead } from './direct-read';
-import { APPS_FIRST_NOTE, APPS_FIRST_SEARCHED_NOTE, RESEARCH_FIRST_NOTE, appSearchQuery, isAppsFirstRequest, isChangeRequest, isResearchRequest, needsReadTools, researchPlan } from './routing';
+import { APPS_FIRST_NOTE, APPS_FIRST_SEARCHED_NOTE, RESEARCH_FIRST_NOTE, appActionQuery, appSearchQuery, isAppsFirstRequest, isChangeRequest, isResearchRequest, needsReadTools, researchPlan } from './routing';
 import { runSubagents } from './subagents';
 import { challengeNote, detectChallenge } from './challenge';
 import { BATCH_TOOLS, runPlan, type Condition, type Step } from './batch-plan';
@@ -442,10 +442,10 @@ export class AgentLoop {
    * Runs the connected-app search for a request before the first model turn. Its result (already inside the untrusted-data boundary)
    * is returned as text, and the tools it found join the tool list. Nothing is returned when the search is unavailable or fails.
    */
-  async #searchApps(request: string, toolName: 'plugin_search' | 'plugin_action_search' = 'plugin_search'): Promise<string | undefined> {
+  async #searchApps(request: string, toolName: 'plugin_search' | 'plugin_action_search' = 'plugin_search', query?: string): Promise<string | undefined> {
     if (!this.options.agentTool) return undefined;
     try {
-      const call: ToolCallRequest = { toolCallId: 'pre-search', toolName, input: { query: appSearchQuery(request) } };
+      const call: ToolCallRequest = { toolCallId: 'pre-search', toolName, input: { query: query ?? appSearchQuery(request) } };
       const r = await this.options.agentTool(call, this.options.signal);
       // Nothing found (or an error): the model searches itself, with its own wording.
       if (r.isError || !r.registerTools?.length) return undefined;
@@ -530,11 +530,11 @@ ${ledger}` : ''),
       const change = isChangeRequest(text) && this.options.tools.some(t => t.name === 'plugin_action_search');
       const parts: string[] = [];
       if (change) {
-        const made = await this.#searchApps(text, 'plugin_action_search');
+        const made = await this.#searchApps(text, 'plugin_action_search', appActionQuery(text, 'change'));
         if (made) parts.push(made);
       }
       if (!change || needsReadTools(text)) {
-        const read = await this.#searchApps(text, 'plugin_search');
+        const read = await this.#searchApps(text, 'plugin_search', change ? appActionQuery(text, 'read') : undefined);
         if (read) parts.push(read);
       }
       this.options.timings?.mark('presearch-done');

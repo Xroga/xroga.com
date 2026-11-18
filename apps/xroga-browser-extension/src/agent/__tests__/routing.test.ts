@@ -149,3 +149,13 @@ describe('change requests', () => {
     expect(needsReadTools('create a sheet with 4 contacts')).toBe(false);
   });
 });
+
+import { appActionQuery } from '../routing';
+describe('short app search phrases', () => {
+  it('names the app and the action, not the whole sentence', () => {
+    const r = 'Using my connected Google Sheets, create a spreadsheet named "X" with a header row (Name, Email) and 4 contacts, then read it back';
+    expect(appActionQuery(r, 'change')).toBe('Google Sheets create spreadsheet append rows');
+    expect(appActionQuery(r, 'read')).toBe('Google Sheets read spreadsheet values');
+    expect(appActionQuery('create something', 'change')).toBeUndefined();
+  });
+});

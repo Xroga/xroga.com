@@ -108,3 +108,35 @@ export function isChangeRequest(request: string): boolean {
 export function needsReadTools(request: string): boolean {
   return READ_WORDS.test(request);
 }
+
+// The provider re-runs the search with the same words before it lets a change run, and a whole sentence (names, quotes, "then read it
+// back") finds a different tool set the second time: the first create call was refused as "not discovered" (measured on staging, 18 Nov:
+// 8 model turns, about 2 minutes). Short words, the app plus what is done to what, find the same tools every time.
+const APP_WORDS: Array<[RegExp, string]> = [
+  [/\b(?:google\s+)?(?:sheets?|spreadsheets?)\b/i, 'Google Sheets'],
+  [/\bnotion\b/i, 'Notion'],
+  [/\bgmail|inbox\b/i, 'Gmail'],
+  [/\b(?:google\s+)?calendar\b/i, 'Google Calendar'],
+  [/\b(?:google\s+)?(?:docs?|documents?)\b/i, 'Google Docs'],
+  [/\b(?:google\s+)?drive\b/i, 'Google Drive'],
+  [/\bairtable\b/i, 'Airtable'],
+  [/\bhubspot\b/i, 'HubSpot'],
+  [/\bslack\b/i, 'Slack'],
+  [/\btrello\b/i, 'Trello'],
+  [/\basana\b/i, 'Asana'],
+  [/\bjira\b/i, 'Jira'],
+  [/\blinear\b/i, 'Linear'],
+  [/\bgithub\b/i, 'GitHub'],
+];
+const OBJECT_WORDS = /\b(?:spreadsheet|sheet|rows?|cells?|page|database|document|doc|event|contact|contacts|email|message|issue|ticket|card|task|record)s?\b/i;
+
+/** A short, stable search phrase ("Google Sheets create spreadsheet append rows"); undefined when the app is not recognised. */
+export function appActionQuery(request: string, kind: 'change' | 'read'): string | undefined {
+  const app = APP_WORDS.find(([re]) => re.test(request))?.[1];
+  if (!app) return undefined;
+  const object = /spreadsheets?/i.test(request) ? 'spreadsheet' : OBJECT_WORDS.exec(request.replace(/google sheets?/gi, ''))?.[0].toLowerCase().replace(/s$/, '') ?? '';
+  if (kind === 'read') return `${app} read ${object || 'data'} values`.slice(0, 120);
+  const verb = /\b(?:append|add|insert)\b/i.test(request) ? 'append' : /\bupdate|edit\b/i.test(request) ? 'update' : 'create';
+  const made = /\bspreadsheet|sheet\b/i.test(request) && app === 'Google Sheets' ? 'create spreadsheet append rows' : `${verb} ${object || 'item'}`;
+  return `${app} ${made}`.slice(0, 120);
+}
