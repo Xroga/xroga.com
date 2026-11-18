@@ -46,6 +46,23 @@ describe('starting workers', () => {
     expect(Object.values(h.stored.jobs).every(j => j.state === 'running' && j.parentId === 'parent')).toBe(true);
   });
 
+  it('refuses the same work twice: within a batch and against a running or finished task, but allows a failed one again', async () => {
+    const h = harness();
+    const twice = await h.workers.start('parent', { tasks: [task(1), { ...task(1), instruction: '  ' + task(1).instruction.toUpperCase() + ' ' }] });
+    expect(twice.isError).toBe(true);
+    expect(twice.text).toContain('repeats the work');
+    expect(h.opened).toHaveLength(0);
+    expect((await h.workers.start('parent', { tasks: [task(1)] })).isError).toBe(false);
+    const again = await h.workers.start('parent', { tasks: [{ ...task(1), id: 'again' }] });
+    expect(again.isError).toBe(true);
+    expect(h.opened).toHaveLength(1);
+    const first = Object.values(h.stored.jobs)[0]!;
+    first.state = 'failed';
+    expect((await h.workers.start('parent', { tasks: [{ ...task(1), id: 'retry' }] })).isError).toBe(false);
+    // Another parent may do the same work.
+    expect((await h.workers.start('other', { tasks: [task(1)] })).isError).toBe(false);
+  });
+
   it('checks the whole batch first: one bad task opens nothing', async () => {
     const h = harness();
     const r = await h.workers.start('parent', { tasks: [task(1), { instruction: 'x', url: 'https://blocked.example' }] });

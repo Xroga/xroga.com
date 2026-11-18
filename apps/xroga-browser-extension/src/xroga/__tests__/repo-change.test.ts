@@ -47,7 +47,7 @@ describe('changing a public repository in the isolated sandbox', () => {
 
   it('is a read-class tool (nothing is written anywhere), requires url and edits, and run_repository now accepts dependencies, more repositories and a skill directory', () => {
     expect(kindOf('change_repository', {})).toBe('read');
-    expect(CHANGE_REPO_TOOL.parameters.required).toEqual(['url', 'edits']);
+    expect((CHANGE_REPO_TOOL.parameters as { required: string[] }).required).toEqual(['url', 'edits']);
     const props = (REPO_RUN_TOOL.parameters as { properties: Record<string, unknown> }).properties;
     for (const name of ['dependencies', 'repositories', 'inspectSkill']) expect(props).toHaveProperty(name);
   });

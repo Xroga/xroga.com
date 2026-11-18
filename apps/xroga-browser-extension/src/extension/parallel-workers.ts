@@ -211,6 +211,19 @@ export class ParallelWorkers {
       if (resource !== undefined && !RESOURCE.test(resource)) return { error: `error INVALID_ARGUMENT (nothing started): task ${i + 1}: a resource is a short name such as design:front-kit.` };
       plans.push({ label, after: [...new Set(after)], ...(resource ? { resource } : {}), instruction, url });
     }
+    // The same work is not done twice: a task whose instruction and start page match another task of this batch, or one of this parent's tasks that
+    // is waiting, running or finished, is refused (a failed or cancelled task may be given again).
+    const sameWork = (instruction: string, url: string) => `${instruction.toLowerCase().replace(/\s+/g, ' ').trim()}|${url}`;
+    const seen = new Map<string, string>();
+    for (const job of Object.values(jobs)) {
+      if (job.parentId === parentId && job.state !== 'failed' && job.state !== 'cancelled') seen.set(sameWork(job.instruction, job.url), job.label);
+    }
+    for (const p of plans) {
+      const key = sameWork(p.instruction, p.url);
+      const first = seen.get(key);
+      if (first !== undefined) return { error: `error INVALID_ARGUMENT (nothing started): task "${p.label}" repeats the work of "${first}" (same instruction and page). Use its result with parallel_task_status, or give a different task.` };
+      seen.set(key, p.label);
+    }
     for (const p of plans) {
       for (const dep of p.after) {
         if (dep === p.label) return { error: `error INVALID_ARGUMENT (nothing started): task "${p.label}" cannot come after itself.` };

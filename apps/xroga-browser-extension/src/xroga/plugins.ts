@@ -128,14 +128,26 @@ export async function runRepositoryTool(runId: string, input: unknown, signal: A
   try {
     const v = await workspaceRequest('repo-run', { runId, body: input }, signal) as {
       repository?: string; commit?: string; filesSent?: number; omittedFiles?: number; exitCode?: number | null; stdout?: string; stderr?: string;
-      timedOut?: boolean; durationMs?: number; artifacts?: Array<{ path: string; contentBase64: string }>; runtime?: string };
+      timedOut?: boolean; durationMs?: number; artifacts?: Array<{ path: string; contentBase64: string }>; runtime?: string;
+      repositories?: Array<{ repository?: string; commit?: string; directory?: string }>;
+      skill?: { found?: boolean; directory?: string; name?: string | null; description?: string | null; risk?: string; problems?: string[]; scripts?: Array<{ path?: string; signals?: string[] }> };
+      licenceReport?: string; dependencies?: Array<{ name?: string; version?: string; licence?: string; licenceClass?: string }>;
+      stages?: Array<{ id?: string; exitCode?: number | null; durationMs?: number }> };
     const files = (v.artifacts ?? []).map(file => {
       let body = '';
       try { body = new TextDecoder('utf-8', { fatal: true }).decode(Uint8Array.from(atob(file.contentBase64), c => c.charCodeAt(0))); } catch { body = '(binary file)'; }
       return `--- ${file.path} ---\n${body.slice(0, 20_000)}`;
     });
     const head = `repository ${v.repository}@${(v.commit ?? '').slice(0, 12)} · ${v.filesSent} files sent (${v.omittedFiles ?? 0} skipped) · exit ${v.exitCode ?? 'none'}${v.timedOut ? ' · TIMED OUT' : ''} · ${v.durationMs} ms · isolated sandbox, no network`;
-    const text = [head, 'stdout:', v.stdout ?? '', 'stderr:', v.stderr ?? '', ...(files.length ? ['files written:', ...files] : [])].join('\n');
+    // Everything the run reports reaches the model, not only the main repository: the other repositories' exact commits, the Agent
+    // Skill inspection (what the skill declares and which scripts look risky), the installed packages and their licences.
+    const more = [
+      ...(v.repositories ?? []).map(r => `also ran ${r.repository}@${(r.commit ?? '').slice(0, 12)} in ${r.directory}/`),
+      ...(v.skill ? [`skill inspection of ${v.skill.directory}: ${v.skill.found ? `name ${v.skill.name ?? '(none)'}, ${v.skill.description ?? 'no description'}; risk ${v.skill.risk}; scripts ${(v.skill.scripts ?? []).map(s => `${s.path}${s.signals?.length ? ` [${s.signals.join(', ')}]` : ''}`).join(', ') || 'none'}${v.skill.problems?.length ? `; problems: ${v.skill.problems.join('; ')}` : ''}` : 'no SKILL.md found'}`] : []),
+      ...(v.dependencies?.length ? [`installed: ${v.dependencies.map(d => `${d.name}@${d.version} (${d.licence ?? 'licence unknown'})`).join(', ')}`] : []),
+      ...(v.licenceReport ? [`licence report: ${v.licenceReport.slice(0, 1500)}`] : []),
+    ];
+    const text = [head, ...more, 'stdout:', v.stdout ?? '', 'stderr:', v.stderr ?? '', ...(files.length ? ['files written:', ...files] : [])].join('\n');
     return { text: head + '\n' + wrap(text, 'repository execution output'), isError: v.exitCode !== 0 || !!v.timedOut };
   } catch (error) {
     const failure = error as { code?: unknown; detail?: Record<string, string[]> };
