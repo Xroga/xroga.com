@@ -26,9 +26,14 @@ test('paths that leave the working directory are refused', () => {
   assert.equal(safeRelative('src/main.py'), 'src/main.py');
 });
 
-test('a request must be exactly the supported shape, and only the "none" network policy is served', () => {
+test('a request must be exactly the supported shape, and only "none" and "registry-only" are network policies', () => {
   assert.ok(readRequest(base()).request);
-  for (const bad of [base({ networkPolicy: 'registry-only' }), base({ networkPolicy: 'restricted' }), base({ command: '' }),
+  assert.ok(readRequest(base({ networkPolicy: 'registry-only' })).request);
+  const staged = readRequest(base({ stages: [{ id: 'install:.', command: 'pip', args: ['install', 'x'], networkPolicy: 'registry-only', timeoutMs: 5_000, cwd: 'pkg' }, { id: 'test:.', command: 'python3', args: [], networkPolicy: 'none', timeoutMs: 5_000 }] }));
+  assert.deepEqual(staged.request.stages.map(s => [s.id, s.networkPolicy, s.cwd]), [['install:.', 'registry-only', 'pkg'], ['test:.', 'none', '']]);
+  for (const bad of [base({ stages: [{ id: 'a', command: 'x', args: [], networkPolicy: 'open', timeoutMs: 5_000 }] }), base({ stages: [{ id: 'a', command: 'x', args: [], networkPolicy: 'none', timeoutMs: 5_000, cwd: '../x' }] }),
+    base({ stages: 'x' }), base({ stages: Array.from({ length: 9 }, (_, i) => ({ id: `s${i}`, command: 'x', args: [], networkPolicy: 'none', timeoutMs: 5_000 })) })]) assert.ok(readRequest(bad).error);
+  for (const bad of [base({ networkPolicy: 'restricted' }), base({ networkPolicy: 'open' }), base({ command: '' }),
     base({ timeoutMs: 5 }), base({ environment: { 'bad key': 'x' } }), base({ files: [{ path: '../x', content: 'y' }] }),
     base({ files: [{ path: 'xroga-out/a', content: 'y' }] }), base({ args: [1] })]) assert.ok(readRequest(bad).error);
 });
@@ -67,8 +72,11 @@ test('an unauthenticated call is refused, and an unsupported network policy gets
   try {
     assert.equal((await fetch(`${url}/health`)).status, 401);
     const headers = { 'content-type': 'application/json', 'x-xroga-worker-token': TEST_TOKEN };
-    const refused = await fetch(`${url}/execute`, { method: 'POST', headers, body: JSON.stringify(base({ networkPolicy: 'registry-only' })) });
+    const refused = await fetch(`${url}/execute`, { method: 'POST', headers, body: JSON.stringify(base({ networkPolicy: 'open' })) });
     assert.equal(refused.status, 400);
+    // The restricted-network stage is refused, not downgraded, when it cannot be verified (here: no network namespace).
+    const unverified = await fetch(`${url}/execute`, { method: 'POST', headers, body: JSON.stringify(base({ networkPolicy: 'registry-only' })) });
+    assert.equal(unverified.status, 503);
     const ok = await fetch(`${url}/execute`, { method: 'POST', headers, body: JSON.stringify(base()) });
     assert.equal(ok.status, 200);
     assert.equal((await ok.json()).stdout.trim(), 'hi');

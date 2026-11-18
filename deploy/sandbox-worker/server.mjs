@@ -7,8 +7,11 @@
 //  - It never reads or forwards any Xroga secret: the child gets exactly the environment the API sent (plus PATH and HOME).
 //  - The child runs in a new, empty network namespace (`unshare -Urn`), so it has no route to anything, including the metadata server.
 //    The worker reports networkIsolation:true only after a startup self-test proved a connection attempt from inside that namespace fails.
-//    A request for any network policy other than "none" is refused: dependency installs and data fetches need a separately verified
-//    restricted-network stage, which this worker does not claim to provide.
+//    A "registry-only" stage (dependency installs from package registries, or a named data host) also has no interface but loopback: it can
+//    only reach an allowlisting proxy through a unix socket (see egress.mjs). That stage is offered only after restrictedSelfTest proved, from
+//    inside it, that an allowlisted host answers (positive control), off-list hosts and the metadata name are refused, and a direct connection
+//    is blocked. Otherwise it is refused, never downgraded to an open network.
+//  - A request may carry ordered stages that share one run directory and one container (install, then test offline).
 //  - Resource limits: wall-clock timeout, CPU seconds, address space, process count and file size (prlimit), output caps.
 import http from 'node:http';
 import { spawn } from 'node:child_process';
@@ -16,6 +19,7 @@ import { timingSafeEqual } from 'node:crypto';
 import { mkdtemp, mkdir, writeFile, rm, readdir, stat, readFile, realpath } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
+import { allowedHostsFromEnv, startEgressProxy, PROXY_PORT } from './egress.mjs';
 
 const MAX_BODY_BYTES = 25 * 1024 * 1024;
 const MAX_FILES = 2_000;
@@ -33,8 +37,13 @@ delete process.env.WORKER_TOKEN;
 const EXIT_AFTER_RUN = process.env.XROGA_WORKER_EXIT_AFTER_RUN !== '0';
 const NO_NETNS = process.env.XROGA_WORKER_NO_NETNS === '1'; // tests only: runs without a namespace and reports networkIsolation:false
 
+const ALLOWED_HOSTS = allowedHostsFromEnv();
+const MAX_STAGES = 8;
+const ENTRY_SCRIPT = process.env.XROGA_WORKER_ENTRY_SCRIPT ?? '/app/netns-entry.sh';
 let busy = false;
 let isolation = { checked: false, ok: false, detail: 'self-test has not run' };
+// The restricted-network stage is offered only after its own self-test proved the allowlist, the refusals and the isolation.
+let restricted = { checked: false, ok: false, detail: 'restricted-network self-test has not run' };
 
 function tokenOk(header) {
   if (!TOKEN) return false;
@@ -63,7 +72,7 @@ export function safeRelative(file) {
 export function readRequest(body) {
   if (!body || typeof body !== 'object') return { error: 'body must be an object' };
   const { files, command, args, timeoutMs, networkPolicy, environment, limits } = body;
-  if (networkPolicy !== 'none') return { error: 'only network policy "none" is supported by this worker' };
+  if (networkPolicy !== 'none' && networkPolicy !== 'registry-only') return { error: 'network policy must be "none" or "registry-only"' };
   if (typeof command !== 'string' || !command || command.length > 200 || /[\0\n]/.test(command)) return { error: 'invalid command' };
   if (!Array.isArray(args) || args.length > 200 || args.some(item => typeof item !== 'string' || item.length > 20_000 || item.includes('\0'))) return { error: 'invalid args' };
   if (!Number.isFinite(timeoutMs) || timeoutMs < 100 || timeoutMs > 600_000) return { error: 'invalid timeoutMs' };
@@ -74,6 +83,19 @@ export function readRequest(body) {
     const value = bounds[name];
     return Number.isFinite(value) ? Math.min(max, Math.max(min, Math.floor(value))) : fallback;
   };
+  const stages = [];
+  if (body.stages !== undefined) {
+    if (!Array.isArray(body.stages) || body.stages.length > MAX_STAGES) return { error: 'invalid stages' };
+    for (const stage of body.stages) {
+      const cwd = stage?.cwd === undefined || stage.cwd === '' ? '' : safeRelative(stage.cwd);
+      const badCommand = typeof stage?.command !== 'string' || !stage.command || stage.command.length > 200 || /[\0\n]/.test(stage.command);
+      const badArgs = !Array.isArray(stage?.args) || stage.args.length > 200 || stage.args.some(item => typeof item !== 'string' || item.length > 20_000 || item.includes('\0'));
+      const badPolicy = stage?.networkPolicy !== 'none' && stage?.networkPolicy !== 'registry-only';
+      const badTime = !Number.isFinite(stage?.timeoutMs) || stage.timeoutMs < 100 || stage.timeoutMs > 600_000;
+      if (typeof stage?.id !== 'string' || !/^[A-Za-z0-9:._/-]{1,120}$/.test(stage.id) || badCommand || badArgs || badPolicy || badTime || cwd === null) return { error: 'invalid stage' };
+      stages.push({ id: stage.id, command: stage.command, args: stage.args, networkPolicy: stage.networkPolicy, timeoutMs: Math.floor(stage.timeoutMs), cwd });
+    }
+  }
   if (!Array.isArray(files) || files.length > MAX_FILES) return { error: 'invalid files' };
   const parsed = [];
   for (const item of files) {
@@ -85,7 +107,7 @@ export function readRequest(body) {
   }
   return {
     request: {
-      files: parsed, command, args, timeoutMs: Math.floor(timeoutMs), environment,
+      files: parsed, command, args, timeoutMs: Math.floor(timeoutMs), environment, networkPolicy, stages,
       limits: {
         memoryMb: limit('memoryMb', 1024, 64, 3072), cpuSeconds: limit('cpuSeconds', 120, 1, 600),
         diskMb: limit('diskMb', 256, 1, 1024), maxProcesses: limit('maxProcesses', 128, 8, 512),
@@ -94,15 +116,21 @@ export function readRequest(body) {
   };
 }
 
-function wrap(request) {
-  const prlimit = ['prlimit', `--as=${request.limits.memoryMb * 1024 * 1024}`, `--cpu=${request.limits.cpuSeconds}`,
-    `--nproc=${request.limits.maxProcesses}`, `--fsize=${request.limits.diskMb * 1024 * 1024}`, '--', request.command, ...request.args];
+function wrap(spec, limits, socketPath) {
+  const prlimit = ['prlimit', `--as=${limits.memoryMb * 1024 * 1024}`, `--cpu=${limits.cpuSeconds}`,
+    `--nproc=${limits.maxProcesses}`, `--fsize=${limits.diskMb * 1024 * 1024}`, '--', spec.command, ...spec.args];
   // New user, network, PID, mount, IPC and UTS namespaces: no network; the job sees only its own processes (so it cannot read the worker's
   // /proc entries, including its environment); /proc is remounted for that namespace; and when the namespace's first process ends the kernel
   // kills everything inside it, including anything that tried to detach.
-  return NO_NETNS ? [request.command, ...request.args]
-    : ['unshare', '-Urn', '--pid', '--fork', '--kill-child=SIGKILL', '--mount', '--mount-proc', '--ipc', '--uts', '--', ...prlimit];
+  if (NO_NETNS) return [spec.command, ...spec.args];
+  const namespaces = ['unshare', '-Urn', '--pid', '--fork', '--kill-child=SIGKILL', '--mount', '--mount-proc', '--ipc', '--uts', '--'];
+  // A restricted-network stage still has NO interface but loopback: the entry script starts a bridge from 127.0.0.1:3128 to the worker's
+  // allowlisting proxy socket, which is the only thing outside the namespace the job can reach.
+  return spec.networkPolicy === 'registry-only' ? [...namespaces, 'sh', ENTRY_SCRIPT, socketPath, ...prlimit] : [...namespaces, ...prlimit];
 }
+
+const PROXY_URL = `http://127.0.0.1:${PROXY_PORT}`;
+const PROXY_ENV = { HTTPS_PROXY: PROXY_URL, https_proxy: PROXY_URL, HTTP_PROXY: PROXY_URL, http_proxy: PROXY_URL, npm_config_proxy: PROXY_URL, npm_config_https_proxy: PROXY_URL, NO_PROXY: '', no_proxy: '' };
 
 function tail(text) {
   return text.length > MAX_CAPTURE ? text.slice(-MAX_CAPTURE) : text;
@@ -128,19 +156,20 @@ async function collectArtifacts(root) {
   return artifacts;
 }
 
-export async function execute(request) {
-  const root = await mkdtemp(path.join(tmpdir(), 'xroga-run-'));
+/** One command in its own namespaces. A restricted-network stage gets a proxy that exists only for that stage and is closed after it. */
+async function runStage(root, spec, request) {
   const started = Date.now();
+  const socketPath = path.join(root, '.egress.sock');
+  let proxy = null;
   try {
-    await mkdir(path.join(root, OUT_DIR), { recursive: true });
-    for (const file of request.files) {
-      const target = path.join(root, file.relative);
-      await mkdir(path.dirname(target), { recursive: true });
-      await writeFile(target, file.content);
+    if (spec.networkPolicy === 'registry-only') {
+      proxy = startEgressProxy({ listen: socketPath, allowedHosts: ALLOWED_HOSTS });
+      await new Promise((resolve, reject) => { proxy.server.once('listening', resolve); proxy.server.once('error', reject); });
     }
-    const argv = wrap(request);
+    const argv = wrap(spec, request.limits, socketPath);
+    const environment = { ...request.environment, ...(spec.networkPolicy === 'registry-only' ? PROXY_ENV : {}) };
     const child = spawn(argv[0], argv.slice(1), {
-      cwd: root, env: { ...request.environment, PATH: process.env.PATH ?? '/usr/bin:/bin', HOME: root }, detached: true, stdio: ['ignore', 'pipe', 'pipe'],
+      cwd: spec.cwd ? path.join(root, spec.cwd) : root, env: { ...environment, PATH: process.env.PATH ?? '/usr/bin:/bin', HOME: root }, detached: true, stdio: ['ignore', 'pipe', 'pipe'],
     });
     let stdout = '';
     let stderr = '';
@@ -151,14 +180,43 @@ export async function execute(request) {
     const stop = () => {
       try { process.kill(-child.pid, 'SIGKILL'); } catch { try { child.kill('SIGKILL'); } catch { /* already gone */ } }
     };
-    const timer = setTimeout(() => { timedOut = true; stop(); }, request.timeoutMs);
+    const timer = setTimeout(() => { timedOut = true; stop(); }, spec.timeoutMs);
     const code = await new Promise(resolve => {
       child.on('error', error => { stderr = tail(`${stderr}\n${error.message}`); resolve(null); });
       child.on('close', (exit, signal) => { if (signal === 'SIGKILL' && !timedOut) killedForLimit = true; resolve(exit); });
     });
     clearTimeout(timer);
     stop();
-    return { exitCode: timedOut ? null : code, stdout, stderr, timedOut, killedForLimit, durationMs: Date.now() - started, artifacts: await collectArtifacts(root) };
+    return { exitCode: timedOut ? null : code, stdout, stderr, timedOut, killedForLimit, durationMs: Date.now() - started,
+      ...(proxy ? { egress: { hosts: proxy.stats.hosts, tunnels: proxy.stats.allowed, refused: proxy.stats.refused, bytes: proxy.stats.bytes } } : {}) };
+  } finally {
+    await proxy?.close().catch(() => undefined);
+  }
+}
+
+export async function execute(request) {
+  const root = await mkdtemp(path.join(tmpdir(), 'xroga-run-'));
+  const started = Date.now();
+  try {
+    await mkdir(path.join(root, OUT_DIR), { recursive: true });
+    for (const file of request.files) {
+      const target = path.join(root, file.relative);
+      await mkdir(path.dirname(target), { recursive: true });
+      await writeFile(target, file.content);
+    }
+    const specs = request.stages.length ? request.stages
+      : [{ id: 'main', command: request.command, args: request.args, networkPolicy: request.networkPolicy, timeoutMs: request.timeoutMs, cwd: '' }];
+    const results = [];
+    for (const spec of specs) {
+      const result = await runStage(root, spec, request);
+      results.push({ id: spec.id, networkPolicy: spec.networkPolicy, ...result });
+      if (result.exitCode !== 0 || result.timedOut) break; // a failed stage ends the run; later stages do not start
+    }
+    const last = results[results.length - 1];
+    return {
+      exitCode: last.exitCode, stdout: last.stdout, stderr: last.stderr, timedOut: last.timedOut, killedForLimit: last.killedForLimit,
+      durationMs: Date.now() - started, artifacts: await collectArtifacts(root), ...(request.stages.length ? { stages: results } : {}),
+    };
   } finally {
     await rm(root, { recursive: true, force: true }).catch(() => undefined);
   }
@@ -182,7 +240,7 @@ for d in pids:
         pass
 print(net, len(pids), "LEAK" if leak else "CLEAN")`;
   const result = await execute({
-    files: [{ relative: 'probe.py', content: probe }], command: 'python3', args: ['probe.py'], timeoutMs: 15_000, environment: {},
+    files: [{ relative: 'probe.py', content: probe }], command: 'python3', args: ['probe.py'], timeoutMs: 15_000, environment: {}, networkPolicy: 'none', stages: [],
     limits: { memoryMb: 256, cpuSeconds: 10, diskMb: 8, maxProcesses: 32 },
   });
   const [net, count, leak] = result.stdout.trim().split(/\s+/);
@@ -201,6 +259,62 @@ print(net, len(pids), "LEAK" if leak else "CLEAN")`;
   return { checked: true, ok, detail: ok ? `inside the sandbox: no network, ${count} visible processes, the worker environment is not readable; ${how}` : `sandbox self-test failed (exit ${result.exitCode}): ${result.stderr.slice(-200) || result.stdout.slice(-100)}` };
 }
 
+/**
+ * Proves the restricted-network stage before the worker will offer it. From INSIDE a restricted-stage sandbox:
+ *  - positive control: a real TLS request to an allowlisted host, through the proxy, succeeds (so the refusals below mean something);
+ *  - an off-list host, the metadata server's name, and an allowlisted host on a port other than 443 are all refused by the proxy;
+ *  - a direct connection (no proxy) to a public address still fails, so the proxy is the only way out;
+ *  - the sandbox sees only a handful of processes and the worker's environment is not readable.
+ */
+export async function restrictedSelfTest() {
+  if (NO_NETNS) return { checked: true, ok: false, detail: 'running without a network namespace (tests only)' };
+  const probe = `import os,socket,ssl
+def tunnel(host, port=443):
+    s = socket.create_connection(("127.0.0.1", 3128), timeout=10)
+    s.sendall(("CONNECT %s:%d HTTP/1.1\\r\\nHost: %s:%d\\r\\n\\r\\n" % (host, port, host, port)).encode())
+    line = s.recv(300).split(b"\\r\\n")[0].decode()
+    return s, line
+def status(host, port=443):
+    s, line = tunnel(host, port); s.close()
+    return line.split(" ")[1] if " " in line else "ERR"
+res = {}
+try:
+    s, line = tunnel("pypi.org")
+    t = ssl.create_default_context().wrap_socket(s, server_hostname="pypi.org")
+    t.sendall(b"GET /simple/pip/ HTTP/1.1\\r\\nHost: pypi.org\\r\\nConnection: close\\r\\n\\r\\n")
+    res["allowed"] = line.split(" ")[1] + "/" + t.recv(40).decode().split(" ")[1]
+except Exception as e:
+    res["allowed"] = "ERR:" + type(e).__name__
+for name, args in (("offlist", ("example.com",)), ("metadata", ("metadata.google.internal",)), ("port80", ("pypi.org", 80))):
+    try:
+        res[name] = status(*args)
+    except Exception as e:
+        res[name] = "ERR:" + type(e).__name__
+d = socket.socket(); d.settimeout(3)
+try:
+    d.connect(("1.1.1.1", 443)); res["direct"] = "REACHED"
+except Exception:
+    res["direct"] = "BLOCKED"
+pids = [x for x in os.listdir("/proc") if x.isdigit()]
+leak = False
+for x in pids:
+    try:
+        if b"WORKER_TOKEN" in open("/proc/" + x + "/environ", "rb").read(): leak = True
+    except Exception:
+        pass
+print("RESULT", res["allowed"], res["offlist"], res["metadata"], res["port80"], res["direct"], len(pids), "LEAK" if leak else "CLEAN")`;
+  const result = await execute({
+    files: [{ relative: 'probe.py', content: probe }], command: 'python3', args: ['probe.py'], timeoutMs: 40_000, environment: {}, networkPolicy: 'registry-only', stages: [],
+    limits: { memoryMb: 256, cpuSeconds: 20, diskMb: 8, maxProcesses: 32 },
+  });
+  const line = result.stdout.split('\n').find(row => row.startsWith('RESULT')) ?? '';
+  const [, allowed, offlist, metadata, port80, direct, count, leak] = line.split(/\s+/);
+  const ok = result.exitCode === 0 && allowed === '200/200' && offlist === '403' && metadata === '403' && port80 === '403' && direct === 'BLOCKED' && Number(count) <= 9 && leak === 'CLEAN';
+  return { checked: true, ok, detail: ok
+    ? `inside a restricted-network sandbox: an allowlisted host answered through the proxy (positive control ${allowed}); an off-list host, the metadata name and an allowlisted host on port 80 were refused (${offlist}, ${metadata}, ${port80}); a direct connection was blocked; ${count} visible processes; the worker environment is not readable`
+    : `restricted-network self-test failed (exit ${result.exitCode}): ${line || (result.stderr.slice(-200) || result.stdout.slice(-100))}` };
+}
+
 function send(res, status, body) {
   res.writeHead(status, { 'content-type': 'application/json', 'cache-control': 'no-store' });
   res.end(JSON.stringify(body));
@@ -212,7 +326,13 @@ export function createServer() {
     if (!authorised(req)) return send(res, 401, { error: 'unauthorised' });
     if (req.method === 'GET' && req.url === '/health') {
       if (!isolation.checked) isolation = await selfTest();
-      return send(res, 200, { ready: isolation.ok, networkIsolation: isolation.ok, detail: isolation.detail });
+      return send(res, 200, { ready: isolation.ok, networkIsolation: isolation.ok, detail: isolation.detail,
+        restrictedNetwork: restricted.checked ? restricted.ok : null, restrictedDetail: restricted.checked ? restricted.detail : undefined, allowedHosts: ALLOWED_HOSTS });
+    }
+    if (req.method === 'GET' && req.url === '/health?check=restricted') {
+      if (!isolation.checked) isolation = await selfTest();
+      if (isolation.ok && !restricted.checked) restricted = await restrictedSelfTest();
+      return send(res, 200, { ready: isolation.ok, networkIsolation: isolation.ok, detail: isolation.detail, restrictedNetwork: restricted.ok, restrictedDetail: restricted.detail, allowedHosts: ALLOWED_HOSTS });
     }
     if (req.method === 'POST' && req.url === '/execute') {
       if (!isolation.checked) isolation = await selfTest();
@@ -228,6 +348,12 @@ export function createServer() {
         }
         const parsed = readRequest(JSON.parse(Buffer.concat(chunks).toString('utf8')));
         if (parsed.error) return send(res, 400, { error: parsed.error });
+        const wantsNetwork = parsed.request.networkPolicy === 'registry-only' || parsed.request.stages.some(stage => stage.networkPolicy === 'registry-only');
+        if (wantsNetwork) {
+          // The restricted-network stage is verified on this container before it is used, and refused (never downgraded or opened up) otherwise.
+          if (!restricted.checked) restricted = await restrictedSelfTest();
+          if (!restricted.ok) return send(res, 503, { error: 'restricted network is not verified' });
+        }
         busy = true;
         const done = await execute(parsed.request);
         if (EXIT_AFTER_RUN) res.once('finish', () => { server.close(); setTimeout(() => process.exit(0), 200); });
