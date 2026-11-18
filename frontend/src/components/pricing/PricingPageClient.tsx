@@ -19,7 +19,7 @@ import {
   ShieldCheck,
   MessageCircle,
   Gauge,
-  Chrome,
+  Globe,
   MousePointer2,
   Orbit,
   Workflow,
@@ -478,7 +478,7 @@ export function PricingPageClient() {
 
           <aside className={styles.browserPromo} aria-labelledby="browser-promo-title">
             <div className={styles.browserPromoTop}>
-              <span className={styles.browserPromoSymbol} aria-hidden="true"><Chrome /></span>
+              <span className={styles.browserPromoSymbol} aria-hidden="true"><Globe /></span>
               <span className={styles.browserPromoLabel}>IN YOUR OWN CHROME BROWSER</span>
             </div>
             <h2 id="browser-promo-title">Your browser.<br /><em>Ready for action.</em></h2>
@@ -489,7 +489,7 @@ export function PricingPageClient() {
               <div className={styles.browserPreviewBar}>
                 <span className={styles.browserDots}><i /><i /><i /></span>
                 <span className={styles.browserAddress}><LockKeyhole /> your-workspace.com</span>
-                <Chrome className={styles.browserMiniIcon} />
+                <Globe className={styles.browserMiniIcon} />
               </div>
               <div className={styles.browserPreviewContent}>
                 <MousePointer2 className={styles.browserCursor} />
