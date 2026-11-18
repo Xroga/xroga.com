@@ -4314,3 +4314,219 @@
   .proCard:hover .proShowcase .showcaseSymbol,
   .proCard:focus-within .proShowcase .showcaseSymbol{animation:none;transform:none;}
 }
+
+
+/* ==============================================================
+   XROGA PRICING PREVIEW v8 / charcoal + graphite editorial palette
+   Scope: pricing route only. All existing plan, usage, browser and
+   checkout interactions remain intact. Free 3px / Pro 4px outlines.
+   ============================================================== */
+.root,
+:global(body.theme-white) .root,
+:global(body.theme-beige) .root,
+:global(body.theme-gray) .root,
+:global(body.theme-black) .root {
+  --pp-bg:#0d0d0f;
+  --pp-surface:#1c1c1f;
+  --pp-surface-2:#252528;
+  --pp-ink:#f5f5f5;
+  --pp-muted:#a9a9ad;
+  --pp-line:rgba(255,255,255,.13);
+  --pp-line-strong:rgba(255,255,255,.28);
+  --pp-accent:#e5e5e7;
+  --pp-accent-2:#bdbdc2;
+  --pp-accent-soft:rgba(255,255,255,.07);
+  --pp-button:#f5f5f6;
+  --pp-button-ink:#121214;
+  --pp-grid:rgba(255,255,255,.034);
+  background:radial-gradient(ellipse 56% 18% at 50% 0%,rgba(255,255,255,.058),transparent 84%),#0d0d0f;
+  color:#f3f3f4;
+}
+.root::before { background-image:linear-gradient(90deg,rgba(255,255,255,.023) 1px,transparent 1px); }
+.root :where(button,input,a):focus-visible { outline-color:#f4f4f6; }
+.hero { background:radial-gradient(ellipse 45% 30% at 50% 100%,rgba(255,255,255,.04),transparent 91%),transparent; }
+.hero::before { background-image:linear-gradient(rgba(255,255,255,.032) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.032) 1px,transparent 1px); }
+.hero::after { border-top-color:rgba(255,255,255,.12);box-shadow:0 -18px 56px -35px rgba(255,255,255,.11); }
+.gridGlow { background:radial-gradient(ellipse 36% 65% at 50% 55%,rgba(255,255,255,.049),transparent 74%); }
+.heroTitle,.heroTitle span { color:#f5f5f5; }
+.heroCopy { color:#b2b2b6; }
+
+.planCard,.planCard.freeCard,.planCard.proCard {
+  background:linear-gradient(153deg,#242427 0%,#19191c 62%,#151518 100%);
+  color:#f5f5f5;
+  border:1px solid rgba(255,255,255,.77);
+}
+.planCard.freeCard {
+  box-shadow:inset 0 0 0 3px #e9e9eb,0 22px 65px rgba(0,0,0,.29);
+}
+.planCard.proCard {
+  background:radial-gradient(ellipse 90% 78% at 91% -6%,rgba(255,255,255,.10),transparent 78%),linear-gradient(150deg,#303034,#202024 72%,#18181c);
+  box-shadow:inset 0 0 0 4px #f7f7f8,0 29px 76px rgba(0,0,0,.4),0 0 30px rgba(255,255,255,.045);
+}
+.planCard.freeCard:hover { border-color:#fff;box-shadow:inset 0 0 0 3px #fff,0 30px 73px rgba(0,0,0,.37); }
+.planCard.proCard:hover { border-color:#fff;box-shadow:inset 0 0 0 4px #fff,0 33px 78px rgba(0,0,0,.47),0 0 40px rgba(255,255,255,.085); }
+.proCard::after { background:linear-gradient(90deg,transparent,rgba(255,255,255,.62),transparent);box-shadow:0 0 15px rgba(255,255,255,.1); }
+.proHalo { background:radial-gradient(circle,rgba(255,255,255,.06),transparent 68%); }
+.planName,.planIdentityText .planName,.price { color:#fafafa; }
+.planTagline,.planIdentityText .planTagline,.planLead,.priceMeta,.priceMeta small { color:#b8b8bd; }
+.priceMeta b { color:#dedee0; }
+.featureList { border-color:rgba(255,255,255,.14); }
+.featureList li { color:#e7e7ea; }
+.check,.proCard .featureList .check { color:#f2f2f4; }
+.planNote,.sharedPlanNote,.sharedPlanNote span { color:#adadb3; }
+.freeShowcase,.proCard .proShowcase {
+  background:#303035;
+  border-color:rgba(255,255,255,.6);
+  box-shadow:inset 0 1px rgba(255,255,255,.11);
+}
+.freeShowcase .showcaseSymbol,.proCard .proShowcase .showcaseSymbol { color:#f5f5f7; }
+.proCard .proShowcase .showcaseSymbol { width:29px;height:29px;display:block; }
+.proCard:hover .proShowcase,.proCard:focus-within .proShowcase { background:#47474c;border-color:#fff; }
+.proCard:hover .proShowcase .showcaseSymbol,.proCard:focus-within .proShowcase .showcaseSymbol { color:#fff; }
+.popularBadge,.currentBadge { color:#f1f1f3;background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.38); }
+.freeCta { color:#fafafa;background:#303035;border-color:rgba(255,255,255,.48); }
+.freeCta:hover:not(:disabled) { background:#48484d;border-color:#f9f9fb; }
+.proCta,.proCard .proCta,.proCard .proUiverse {
+  background:#ebebed;
+  background-image:linear-gradient(130deg,#fafafa,#d8d8dc);
+  color:#19191b;
+  border-color:#f5f5f6;
+  box-shadow:0 7px 20px rgba(0,0,0,.2);
+}
+.proCta:hover:not(:disabled),.proCard .proUiverse:hover:not(:disabled) {
+  background:#fff;
+  background-image:linear-gradient(130deg,#fff,#e9e9ed);
+  color:#111113;
+  border-color:#fff;
+  box-shadow:0 11px 25px rgba(255,255,255,.10);
+}
+.paymentIcon { color:#28282d; }
+.infoButton { color:#e8e8ed;background:rgba(255,255,255,.1); }
+.tooltip { border-color:rgba(255,255,255,.28);background:#29292e;color:#f3f3f5; }
+
+.compareSection { color:#f0f0f2; }
+.compareHeading h2,.comparePlanHeading span { color:#f6f6f7; }
+.compareHeading p,.comparePlanHeading small,.compareMeta,.compareFootnote { color:#a9a9ae; }
+.compareOrnament,.groupToggle > span svg,.groupToggle > svg { color:#d7d7db; }
+.compareScroll { scrollbar-color:#626266 #18181b; }
+.comparisonTable thead th,.comparisonTable thead th:nth-child(3) { color:#f5f5f7;border-bottom-color:rgba(255,255,255,.24); }
+.comparisonTable th,.comparisonTable td { border-bottom-color:rgba(255,255,255,.14); }
+.comparePlanHeading a { background:#eeeef0;color:#1b1b1e; }
+.comparePlanHeading a:hover { background:#fff; }
+.featureSearch { color:#d0d0d3;background:#252529;border-color:rgba(255,255,255,.24); }
+.featureSearch:focus-within { border-color:#e5e5e7;box-shadow:0 0 0 3px rgba(255,255,255,.09); }
+.featureSearch input { color:#f4f4f6; }
+.featureSearch input::placeholder { color:#a2a2a8; }
+.featureSearch button { color:#dedee2;background:rgba(255,255,255,.1); }
+.groupRow th { border-top-color:rgba(255,255,255,.19);border-bottom-color:rgba(255,255,255,.16); }
+.groupRow .groupToggle { color:#f0f0f2; }
+.featureName,.comparisonTable td.valueCell,.comparisonTable td.proCell { color:#c5c5ca; }
+.featureName small { color:#99999e; }
+.comparisonTable tbody tr:not(.groupRow):hover th,.comparisonTable tbody tr:not(.groupRow):hover td { background:rgba(255,255,255,.045); }
+.comparisonTable td.valueCell .cellValueInline .cellValueText,
+.comparisonTable td.valueCell.proCell .cellValueText { color:#d4d4d8; }
+.comparisonTable td.valueCell .cellValueInline .includedIcon { background:rgba(255,255,255,.16);color:#f5f5f5; }
+.comparisonTable td.valueCell .cellValueInline .unavailableIcon { color:#88888d; }
+
+.usageBrowserLayout {
+  width:min(1100px,100%);
+  max-width:1100px;
+  grid-template-columns:minmax(0,1.12fr) minmax(0,.88fr);
+  gap:clamp(25px,3.4vw,43px);
+  margin:73px auto 0;
+}
+.usageBrowserLayout .usageSection { padding:12px 0 4px; }
+.usageBrowserLayout .usageHeader { margin-bottom:22px; }
+.usageBrowserLayout .usageTopIcon { color:#d9d9dc;width:32px;height:32px;margin-bottom:12px; }
+.usageBrowserLayout .usageHeader h2 { color:#f3f3f4;font-size:clamp(2.05rem,3vw,3rem); }
+.usageBrowserLayout .usageHeader p { color:#ababaf;font-size:.79rem;line-height:1.55; }
+.usageBrowserLayout .usageAccordion { border-top-color:rgba(255,255,255,.24); }
+.usageBrowserLayout .usageDisclosure { border-bottom-color:rgba(255,255,255,.19); }
+.usageBrowserLayout .usageDisclosure summary { min-height:55px;padding:10px 0;gap:10px; }
+.usageBrowserLayout .usageNumber { color:#c4c4c9;font-size:.63rem; }
+.usageBrowserLayout .usageQuestion { color:#f3f3f4;font-size:clamp(1.02rem,1.42vw,1.2rem); }
+.usageBrowserLayout .usagePlus { color:#c7c7cc; }
+.usageBrowserLayout .usageDisclosure summary:hover .usageQuestion { color:#fff; }
+.usageBrowserLayout .usageDisclosure summary:focus-visible { outline-color:#fff; }
+.usageBrowserLayout .usageDisclosure > p { color:#b6b6bb; }
+.usageBrowserLayout .usageNote,.usageBrowserLayout .usageNote svg { color:#aaaab0; }
+
+.browserPromo {
+  align-self:center;
+  padding:21px 23px 20px;
+  border:1px solid rgba(255,255,255,.3);
+  border-radius:20px;
+  background:linear-gradient(157deg,#252528,#19191c 89%);
+  box-shadow:inset 0 1px rgba(255,255,255,.055),0 18px 40px rgba(0,0,0,.18);
+}
+.browserPromoSymbol { background:#38383c;border-color:rgba(255,255,255,.28);color:#ededf0; }
+.browserPromoLabel { color:#c7c7cc; }
+.browserPromo h2 { margin-top:15px;color:#f2f2f3;font-size:clamp(1.8rem,2.6vw,2.4rem); }
+.browserPromo h2 em { color:#d4d4d7; }
+.browserPromoLead { color:#bebec3;font-size:.78rem; }
+.browserPreview { margin:15px 0 15px;border-color:rgba(255,255,255,.22);background:#171719; }
+.browserPreviewBar { min-height:31px;background:#303034;border-bottom-color:rgba(255,255,255,.15); }
+.browserDots i,.browserDots i:nth-child(2) { background:rgba(238,238,240,.5); }
+.browserAddress { background:rgba(0,0,0,.25);color:#c2c2c7; }
+.browserMiniIcon,.browserPreviewContent > svg,.browserPreviewContent .browserCursor,.browserPreviewContent .browserWorkflowCheck { color:#e1e1e5; }
+.browserPreviewContent { min-height:54px;padding:12px 13px;color:#e3e3e6; }
+.browserPromoBenefits { gap:8px; }
+.browserPromoBenefits span { color:#dadade;font-size:.74rem; }
+.browserPromoBenefits svg { color:#e6e6e9; }
+.browserPromoLink { margin-top:14px;color:#f3f3f5; }
+.browserPromoLink:hover { color:#fff; }
+.browserPromoNote { color:#a7a7ac;border-top-color:rgba(255,255,255,.14);font-size:.67rem;padding-top:12px; }
+
+.faqSection { color:#f0f0f2;border-top-color:rgba(255,255,255,.16);border-bottom-color:rgba(255,255,255,.16); }
+.faqTopIcon,.faqDocsLink { color:#d9d9dc; }
+.faqIntro h2,.faqCategoryTitle { color:#f3f3f5; }
+.faqTabs { background:#242427;border-color:rgba(255,255,255,.15); }
+.faqTabs button { color:#b8b8bd; }
+.faqTabs button:hover { color:#fff; }
+.faqTabs .faqTabActive,.faqTabs button[aria-selected="true"] { color:#fff;background:#414145;box-shadow:inset 0 0 0 1px rgba(255,255,255,.2); }
+.faqTabs button:focus-visible,.faqBody:focus-visible { outline-color:#f1f1f2; }
+.faqList { border-top-color:rgba(255,255,255,.18); }
+.faqItem { border-bottom-color:rgba(255,255,255,.17); }
+.faqItem summary { color:#ededf0; }
+.faqItem summary:hover { color:#fff; }
+.faqItem > p,.plus { color:#b5b5bb; }
+
+.finalCta {
+  width:min(1120px,100%);
+  max-width:1120px;
+  min-height:415px;
+  margin:96px auto 0;
+  padding:84px 18px 115px;
+}
+.finalCopy { max-width:970px; }
+.finalCopy .eyebrow { color:#c3c3c8;font-size:.86rem;letter-spacing:.18em; }
+.finalCopy h2 { color:#fff;font-size:clamp(3.2rem,5.9vw,5.5rem); }
+.finalCopy h2 em { color:#ededf0; }
+.finalCopy p { color:#b5b5bb;font-size:clamp(1.06rem,1.6vw,1.25rem);margin-top:23px; }
+.finalActions { margin-top:40px; }
+.finalPrimary { min-width:296px;min-height:64px;border-radius:13px;background:#f5f5f6;border-color:#f5f5f6;color:#141416;font-size:1rem; }
+.finalPrimary:hover:not(:disabled) { background:#fff;border-color:#fff;box-shadow:0 8px 23px rgba(255,255,255,.085); }
+.trustLine,.trustLine svg { color:#aaaab0; }
+@media(max-width:900px) {
+  .usageBrowserLayout { grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px; }
+  .browserPromo { padding:20px; }
+}
+@media(max-width:720px) {
+  .usageBrowserLayout { grid-template-columns:1fr;gap:25px;margin-top:63px; }
+  .usageBrowserLayout .usageSection { padding:0; }
+  .usageBrowserLayout .usageHeader h2 { font-size:clamp(2.25rem,7vw,3rem); }
+  .usageBrowserLayout .usageNumber { font-size:.6rem; }
+  .browserPromo { width:100%;max-width:570px;margin:0 auto; }
+  .finalCta { min-height:375px;margin-top:78px;padding:72px 8px 90px; }
+  .finalCopy h2 { font-size:clamp(2.75rem,10vw,4.3rem); }
+  .finalPrimary { min-width:255px;min-height:57px; }
+}
+@media(max-width:430px) {
+  .usageBrowserLayout .usageNumber { font-size:.56rem; }
+  .finalCta { padding:64px 0 80px; }
+  .finalCopy h2 { font-size:clamp(2.5rem,10vw,3.5rem); }
+}
+@media(prefers-reduced-motion:reduce) {
+  .proCard:hover .proShowcase .showcaseSymbol,
+  .proCard:focus-within .proShowcase .showcaseSymbol { animation:none; }
+}
