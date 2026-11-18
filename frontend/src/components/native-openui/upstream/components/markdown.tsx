@@ -17,8 +17,14 @@ type RenderCitation = (number: number, href?: string) => ReactNode;
 
 /** Reuse the registered Math component's bounded, untrusted KaTeX rendering. */
 export function MathExpression({ tex, inline = false }: { tex: string; inline?: boolean }) {
-  const html = katex.renderToString(tex, { displayMode: !inline, throwOnError: false, maxExpand: 100, maxSize: 12, trust: false, strict: "ignore", output: "htmlAndMathml" });
-  return inline ? <span className="iui-math" dangerouslySetInnerHTML={{ __html: html }} /> : <div className="iui-math is-block" role="group" aria-label="Equation" tabIndex={0} dangerouslySetInnerHTML={{ __html: html }} />;
+  try {
+    const html = katex.renderToString(tex, { displayMode: !inline, throwOnError: false, maxExpand: 100, maxSize: 12, trust: false, strict: "ignore", output: "htmlAndMathml" });
+    return inline ? <span className="iui-math" dangerouslySetInnerHTML={{ __html: html }} /> : <div className="iui-math is-block" role="group" aria-label="Equation" tabIndex={0} dangerouslySetInnerHTML={{ __html: html }} />;
+  } catch {
+    // Unexpected typesetter errors must preserve the equation as escaped text,
+    // including when this component is itself rendering the readable fallback.
+    return inline ? <span className="iui-math">{tex}</span> : <div className="iui-math is-block" role="group" aria-label="Equation" tabIndex={0}>{tex}</div>;
+  }
 }
 
 export function inline(text: string, key = "i", renderCitation?: RenderCitation): ReactNode {

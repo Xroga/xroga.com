@@ -147,6 +147,8 @@ const cases = {
   },
   unfinished: { raw: 'Keep the confirmed amount of $25.\n<<<XROGA_OPENUI_V1>>>\nroot = Col([Chart(', finish: 'length' },
 };
+const failedEquation='{'.repeat(3500)+'x'+'}'.repeat(3500)+'<img src=x onerror="window.__xrogaMathProbe=1">';
+cases.mathFailure={text:'$$'+failedEquation+'$$\n\nThe complete answer stays available.'};
 const { completeNativeWorkspaceAnswer } = await tsImport('../backend/src/ai/nativeOpenUiWorkspace.ts', import.meta.url);
 for (const [name, fixture] of Object.entries(cases)) {
   if (!fixture.raw) continue;
@@ -171,13 +173,14 @@ const compiled = await build({
   stdin: {
     resolveDir: process.cwd(),
     loader: 'tsx',
-    contents: 'import {createRoot} from "react-dom/client"; import {useEffect,useState} from "react"; import {Chart} from "./frontend/src/components/native-openui/upstream/components/chart"; import {NativeSurface} from "./frontend/src/components/native-openui/NativeSurface"; import {ResponseSources} from "./frontend/src/components/terminal/ResponseSources"; import {ResponseSourceScope} from "./frontend/src/components/terminal/ResponseSourceScope"; import "./frontend/src/components/native-openui/evaluation.css";'
+    contents: 'import {createRoot} from "react-dom/client"; import {useEffect,useState} from "react"; import MathEquationImpl from "./frontend/src/lib/mathRenderImpl"; import {Chart} from "./frontend/src/components/native-openui/upstream/components/chart"; import {NativeSurface} from "./frontend/src/components/native-openui/NativeSurface"; import {ResponseSources} from "./frontend/src/components/terminal/ResponseSources"; import {ResponseSourceScope} from "./frontend/src/components/terminal/ResponseSourceScope"; import "./frontend/src/components/native-openui/evaluation.css";'
       + 'const cases = ' + JSON.stringify(cases) + ';'
       + 'const q=new URL(location.href).searchParams; const name=q.get("case") || "short";'
       + 'document.body.dataset.theme=q.get("shellTheme") || q.get("theme") || "light"; document.querySelector("main").dataset.theme=q.get("theme") || "light";'
       + 'const sources=[{id:"source-1",title:"PostgreSQL: Row Security Policies",url:"https://www.postgresql.org/docs/current/ddl-rowsecurity.html"},{id:"source-2",title:"W3C Documentation",url:"https://www.w3.org/TR/"},{id:"source-3",title:"About keyword matching options",siteName:"Google Ads Help",url:"https://support.google.com/google-ads/answer/7478529"}];'
       + 'function DelayedChart(){const [data,setData]=useState(null);useEffect(()=>{setData([{year:0,balance:10000},{year:1,balance:10600}]);},[]);const View=Chart.component;return <section role="region" aria-label="Answer"><View props={{type:"line",data,x:"year",series:["balance"],format:"currency",currency:"USD"}} renderNode={()=>null}/></section>;}'
-      + 'const fixture=cases[name]; createRoot(document.getElementById("root")).render(name==="delayedChart"?<DelayedChart/>:<ResponseSourceScope>{fixture.prompt && <p className="native-evaluation-user">{fixture.prompt}</p>}<div className="native-evaluation-answer-label">Xroga</div><NativeSurface answer={{...fixture,format:"xroga-openui-v1",library:"xroga-native-v1"}} sources={fixture.sources ?? sources} isStreaming={name==="stream"} />{name==="numericEvidence" && <ResponseSources sources={[...sources, sources[0], ...[4,5,6].map(n => ({title:"Source "+n,url:"https://example.com/"+n})), {title:"Unsafe link",url:"javascript:alert(1)"}]} />}</ResponseSourceScope>);',
+      + 'function FailedMath(){return <section role="region" aria-label="Answer"><MathEquationImpl text={'+JSON.stringify(failedEquation)+'}/><p>The complete answer stays available.</p></section>;}'
+      + 'const fixture=cases[name]; createRoot(document.getElementById("root")).render(name==="delayedChart"?<DelayedChart/>:name==="legacyMathFailure"?<FailedMath/>:<ResponseSourceScope>{fixture.prompt && <p className="native-evaluation-user">{fixture.prompt}</p>}<div className="native-evaluation-answer-label">Xroga</div><NativeSurface answer={{...fixture,format:"xroga-openui-v1",library:"xroga-native-v1"}} sources={fixture.sources ?? sources} isStreaming={name==="stream"} />{name==="numericEvidence" && <ResponseSources sources={[...sources, sources[0], ...[4,5,6].map(n => ({title:"Source "+n,url:"https://example.com/"+n})), {title:"Unsafe link",url:"javascript:alert(1)"}]} />}</ResponseSourceScope>);',
   },
   outdir: 'native-assets', entryNames: 'native', chunkNames: 'native-chunk-[hash]', format: 'esm', splitting: true,
   write: false, bundle: true, jsx: 'automatic', minify: true,
@@ -242,6 +245,13 @@ try {
       await page.locator('.katex-display .katex').waitFor();
       assert.equal(await page.locator('.katex').count(),2);
       assert.ok((await page.locator('.xroga-native-openui').innerText()).includes('Basic costs $10 and Pro costs $25.'));
+      for(const name of ['mathFailure','legacyMathFailure']){
+        await open(name);
+        await page.getByText('The complete answer stays available.',{exact:true}).waitFor();
+        assert.equal(await page.locator('img, [onerror]').count(),0,'A typesetter failure must never inject the original formula as HTML');
+        assert.ok((await page.getByRole('region',{name:'Answer',exact:true}).innerText()).includes('<img src=x'));
+        assert.equal(await page.evaluate(()=>window.__xrogaMathProbe),undefined);
+      }
       await open('sharedFormula');
       assert.equal(await page.getByRole('slider').count(), 3);
       const sharedMetric=page.locator('.native-answer-metric');

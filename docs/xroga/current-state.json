@@ -88793,7 +88793,7 @@
       "id": "surface:0fef6875af5860e2f4b4",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/markdown.tsx",
-      "sha256": "0cce3220c23c6026770b0974fafe2182abf0b6dc048b8402c83bc9771bbbe347",
+      "sha256": "2d0f2b7317c7e4f07e4eb02b049ab419ef8d3f098a0015683fd59a723f055a2b",
       "symbols": [
         "Block",
         "INLINE",
@@ -110904,9 +110904,10 @@
       "id": "surface:0c12243cf08138c2620c",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/mathRenderImpl.tsx",
-      "sha256": "13af190b844d394abf888f8ac3ad4fd0704d485e9e8a082300fbd8360b1bea3a",
+      "sha256": "668364392b36421d05182090240304dc460d067ac8813ef3d38dedce42e147b2",
       "symbols": [
         "MathEquationImpl",
+        "content",
         "html"
       ],
       "imports": [
@@ -128008,7 +128009,7 @@
       "id": "surface:bd6af899f2dd9df930f6",
       "subsystem": "browser_sandbox",
       "sourcePath": "scripts/verify-native-openui-browser.mjs",
-      "sha256": "9a3b9484292636399516479952677c8e9bacdde0ad1f9c4986470b21b70e3f95",
+      "sha256": "48386c3a12043b8f65c16b56763c157690539fe87be43631adc629dc67eb381b",
       "symbols": [
         "accessibility",
         "answer",
@@ -128039,6 +128040,7 @@
         "evidence",
         "expected",
         "external",
+        "failedEquation",
         "fallback",
         "fallbackAnswer",
         "file",
@@ -155987,7 +155989,7 @@
     {
       "id": "test-suite:4ce9d7bbf578638998f1",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/markdown.test.ts",
-      "declaredTests": 18,
+      "declaredTests": 19,
       "skipLocations": [],
       "focusLocations": []
     },

@@ -7,9 +7,19 @@ import { createParser, type LibraryJSONSchema } from '@openuidev/lang-core';
 import catalog from '../../../../../../backend/src/ai/nativeOpenUiCatalog.json';
 import { bindNativeAnswerText, supplementNativeProse } from '../../../../../../backend/src/ai/nativeOpenUi';
 import { initialNativeValueReader } from '../../../../../../backend/src/ai/nativeOpenUiValues';
-import { inline, MarkdownBlocks, nativeMarkdownMatches, preservedMarkdownTableKeys, proseOutsideNativeDocuments, tableContentKey } from './markdown';
+import { inline, MathExpression, MarkdownBlocks, nativeMarkdownMatches, preservedMarkdownTableKeys, proseOutsideNativeDocuments, tableContentKey } from './markdown';
 
 const render = (source: string) => renderToStaticMarkup(createElement(Fragment, null, inline(source)));
+
+test('an unexpected typesetter exception preserves escaped formula text and the remaining answer', () => {
+  const tex='{'.repeat(3500)+'x'+'}'.repeat(3500)+'<img src=x onerror=alert(1)>';
+  const html=renderToStaticMarkup(createElement(MathExpression,{tex}));
+  assert.match(html,/&lt;img/);
+  assert.doesNotMatch(html,/<img|<script/);
+  const answer=renderToStaticMarkup(createElement(MarkdownBlocks,{text:'$$'+tex+'$$\n\nKeep the complete explanation.'}));
+  assert.match(answer,/Keep the complete explanation/);
+  assert.doesNotMatch(answer,/<img|<script/);
+});
 
 test('Markdown formulas use the existing safe math renderer without changing currency or code', () => {
   const block = (text: string) => renderToStaticMarkup(createElement(MarkdownBlocks, {text}));
