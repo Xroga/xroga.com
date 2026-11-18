@@ -467,7 +467,8 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
       const text = await readBrowserDocument(data.name, bytes);
       return res.json({ text });
     } catch (error) {
-      throw new BrowserRequestError(422, 'BROWSER_DOCUMENT_UNREADABLE', { reason: [error instanceof DocumentError ? error.reason : 'invalid'] });
+      // An uppercase string code: the extension's error filter keeps only that form (never free text).
+      return res.status(422).json({ error: 'BROWSER_DOCUMENT_UNREADABLE', reason: `DOC_${(error instanceof DocumentError ? error.reason : 'invalid').toUpperCase()}` });
     } finally {
       await leases.release(lease).catch(() => undefined);
     }

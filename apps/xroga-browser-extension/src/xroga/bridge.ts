@@ -238,8 +238,9 @@ export function listenForWorkspace(
           value => reply(value),
           // The reason (password-protected, no text, invalid) reaches the panel so it can say what is wrong with the file.
           (error: { detail?: { reason?: unknown } } | null) => {
-            const reason = Array.isArray(error?.detail?.reason) ? error.detail.reason[0] : undefined;
-            reply(typeof reason === 'string' && /^[a-z_]{1,20}$/.test(reason) ? { reason } : null);
+            const code = Array.isArray(error?.detail?.reason) ? error.detail.reason[0] : undefined;
+            const reason = typeof code === 'string' && /^DOC_[A-Z_]{1,20}$/.test(code) ? code.slice(4).toLowerCase() : undefined;
+            reply(reason ? { reason } : null);
           },
         );
         return true;
