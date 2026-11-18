@@ -1,0 +1,32 @@
+{
+ "steps": {
+  "enrolled": {
+   "configured": true,
+   "saved": true,
+   "verified": true,
+   "ready": true
+  },
+  "mode": "stop",
+  "workStarted": true,
+  "pressedStop": "2026-11-18T15:03:22.041Z",
+  "workerBack": true,
+  "resumeOffered": false,
+  "settledAfterInterruption": true,
+  "titlesAfterResume": [],
+  "followUpSent": true,
+  "followUpTimedOut": true,
+  "titlesFinal": [
+   "James Gosling",
+   "Ritchie",
+   "Matsumoto",
+   "Larry Wall",
+   "Griesemer"
+  ],
+  "answerTail": "ed). Python's infobox data is captured. Now Java. Java: 1995, James Gosling. Next, Rust. The Rust infobox shows no \"Designed by\" row visible so far. Let me check the designer field on the page. Rust: first appeared January 20, 2012; the infobox has no designer row. Next, Go. Go: November 10, 2009; designed by Robert Griesemer, Rob Pike, Ken Thompson. Next, C. C: 1972; Dennis Ritchie. Next, Ruby. Ruby: 1995; Yukihiro Matsumoto. Next, Perl. Perl confirmed: December 18, 1987; Larry Wall. Next, PHP."
+ },
+ "ok": false,
+ "failures": [
+  "the follow-up run did not settle",
+  "the final answer lacks some sites: [\"James Gosling\",\"Ritchie\",\"Matsumoto\",\"Larry Wall\",\"Griesemer\"]"
+ ]
+}

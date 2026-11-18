@@ -1,0 +1,28 @@
+{
+ "steps": {
+  "enrolled": {
+   "configured": true,
+   "saved": true,
+   "verified": true,
+   "ready": true
+  },
+  "mode": "stop",
+  "workStarted": true,
+  "pressedStop": "2026-11-18T15:30:12.689Z",
+  "workerBack": true,
+  "resumeOffered": true,
+  "pressedResume": true,
+  "settledAfterInterruption": true,
+  "titlesAfterResume": [],
+  "followUpSent": true,
+  "titlesFinal": [
+   "Guido van Rossum",
+   "James Gosling",
+   "Hoare",
+   "Griesemer"
+  ],
+  "answerTail": "infoboxes also give the developer, not the designer: Python Software Foundation, Oracle (Java), the Rust Project Developers (Rust), and Google (Go). The Rust infobox has no designer row; the article text says software developer Graydon Hoare created Rust in 2006, but that is not an infobox field, so I left the cell empty rather than put a body-text fact in it. For each page I read the infobox region of the article as rendered; I did not page through every section of each article's full text. now"
+ },
+ "ok": true,
+ "failures": []
+}

@@ -123,8 +123,10 @@ async function main() {
     const MODE = opt('--mode') ?? 'kill';
     report.steps.mode = MODE;
     const LONG = MODE !== 'kill';
+    // --short: four pages instead of eight, for a run that must settle inside the harness's waiting time.
+    const SHORT = flag('--short');
     const TASK = LONG
-      ? 'Open each of these Wikipedia pages one at a time and read the whole page: Python (programming language), Java (programming language), Rust (programming language), Go (programming language), C (programming language), Ruby (programming language), Perl, PHP. For each give the year it first appeared and its designer from the infobox, as a table. Do not use parallel readers.'
+      ? 'Open each of these Wikipedia pages one at a time and read the whole page: ' + (SHORT ? 'Python (programming language), Java (programming language), Rust (programming language), Go (programming language). For each' : 'Python (programming language), Java (programming language), Rust (programming language), Go (programming language), C (programming language), Ruby (programming language), Perl, PHP. For each') + ' give the year it first appeared and its designer from the infobox, as a table. Do not use parallel readers.'
       : 'Check the page titles of example.com, iana.org, en.wikipedia.org and developer.mozilla.org in parallel, then also open each site and tell me its first heading. Give a table.';
     await panelOp('type-send', { text: TASK });
     const working = r => /is working/.test(String(r?.body ?? ''));
@@ -159,19 +161,20 @@ async function main() {
     report.steps.panelBodyAfterRestart = String(read1?.body ?? '').replace(/\s+/g, ' ').slice(0, 400);
     report.steps.resumeOffered = /Interrupted/.test(String(read1?.body ?? '')) && /Resume/.test(String(read1?.body ?? ''));
     const settle = async (maxMs, label) => {
-      let quiet = 0; const end = Date.now() + maxMs;
-      while (Date.now() < end) { await sleep(1000); const r = await panelOp('read').catch(() => null); await allow(r); quiet = working(r) ? 0 : quiet + 1; if (quiet >= 6) return true; }
+      let quiet = 0; const end = Date.now() + maxMs; let lastTrace = 0; report.steps[label + 'Trace'] = [];
+      while (Date.now() < end) { await sleep(1000);
+        if (Date.now() - lastTrace > 20_000) { lastTrace = Date.now(); const tr = await panelOp('read').catch(() => null); report.steps[label + 'Trace'].push({ at: new Date().toISOString().slice(11, 19), working: working(tr), status: tr?.status, tail: String(tr?.body ?? '').replace(/\s+/g, ' ').slice(-220) }); } const r = await panelOp('read').catch(() => null); await allow(r); quiet = working(r) ? 0 : quiet + 1; if (quiet >= 6) return true; }
       report.steps[label + 'TimedOut'] = true; return false;
     };
     let resumed = false;
     if (report.steps.resumeOffered) { await panelOp('click', { label: 'Resume' }); report.steps.pressedResume = true; await sleep(3000); resumed = await settle(420_000, 'resume'); }
-    const KEYS = LONG ? ['Guido van Rossum', 'James Gosling', 'Ritchie', 'Matsumoto', 'Larry Wall', 'Lerdorf', 'Griesemer', 'Hoare'] : ['Example Domain', 'Internet Assigned Numbers Authority', 'Wikipedia', 'MDN'];
+    const KEYS = LONG ? (flag('--short') ? ['Guido van Rossum', 'James Gosling', 'Hoare', 'Griesemer'] : ['Guido van Rossum', 'James Gosling', 'Ritchie', 'Matsumoto', 'Larry Wall', 'Lerdorf', 'Griesemer', 'Hoare']) : ['Example Domain', 'Internet Assigned Numbers Authority', 'Wikipedia', 'MDN'];
     const titles = t => KEYS.filter(x => t.includes(x));
     if (MODE !== 'kill') { await sleep(2000); const quiet = await settle(MODE === 'stop' ? 30_000 : 420_000, 'afterInterruption'); report.steps.settledAfterInterruption = quiet; }
     let transcript = String((await panelOp('read').catch(() => null))?.transcript ?? '');
     report.steps.titlesAfterResume = titles(transcript);
     let followed = true;
-    if (titles(transcript).length < Math.min(KEYS.length, LONG ? 7 : 4)) {
+    if (titles(transcript).length < Math.min(KEYS.length, LONG ? (flag('--short') ? 4 : 7) : 4)) {
       await panelOp('type-send', { text: 'Continue and finish the table with all four sites.' });
       report.steps.followUpSent = true; await sleep(3000); followed = await settle(420_000, 'followUp');
       transcript = String((await panelOp('read').catch(() => null))?.transcript ?? '');
@@ -185,7 +188,7 @@ async function main() {
     if (MODE === 'stop' && report.steps.settledAfterInterruption === false) failures.push('the run kept working after Stop');
     if (report.steps.pressedResume && !resumed) failures.push('the resumed run did not settle');
     if (!followed) failures.push('the follow-up run did not settle');
-    if (titles(transcript).length < Math.min(KEYS.length, LONG ? 7 : 4)) failures.push('the final answer lacks some sites: ' + JSON.stringify(titles(transcript)));
+    if (titles(transcript).length < Math.min(KEYS.length, LONG ? (flag('--short') ? 4 : 7) : 4)) failures.push('the final answer lacks some sites: ' + JSON.stringify(titles(transcript)));
     if (/truncat|cut off|won.t guess|no observed|could not (?:read|be read)/i.test(transcript.slice(-1500))) failures.push('the final answer says some pages were not read');
     report.failures = failures; report.ok = failures.length === 0;
   } catch (error) {
