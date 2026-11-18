@@ -34,9 +34,9 @@ defineCheck({
     const view = await chrome.tabs.create({ windowId: window, url: chrome.runtime.getURL(`/sidepanel.html#tab=${page.id}`), active: false });
     await waitForLoad(view.id!);
     await sleep(600);
-    const phases: Array<{ name: string; workers: number; ms: number; start: number; end: number; status: string; done: number; maxActive: number }> = [];
+    const phases: Array<{ name: string; workers: number; ms: number; start: number; end: number; status: string; done: number; failed: number; closedWorker: boolean; maxActive: number }> = [];
     try {
-      for (const [name, count] of [['one', 1], ['three', 3], ['five', 5], ['six', 6]] as const) {
+      for (const [name, count] of [['one', 1], ['three', 3], ['five', 5], ['six', 6], ['closed', 6]] as const) {
         // The panel continues one conversation, and the fixture model matches on its first message: one parent tag for all phases.
         const parent = 'BENCH-PARENT';
         const tags = Array.from({ length: count }, (_, i) => `BW-${name.toUpperCase()}-${i + 1}`);
@@ -62,6 +62,14 @@ defineCheck({
         const known = new Set((await listConversations()).map(c => c.id));
         const start = Date.now();
         await panel(page.id!, 'type-send', { text: `${parent}: run ${count} worker(s) in parallel with several agents` });
+        // One worker's window is closed while all of them work: only that worker may fail.
+        let closedWorker = false;
+        if (name === 'closed') {
+          await sleep(1500);
+          const jobs = Object.values(((await chrome.storage.local.get('xroga_parallel_jobs_v1')).xroga_parallel_jobs_v1 ?? {}) as Record<string, { state: string; windowId?: number; conversationId?: string }>);
+          const victim = jobs.find(j => j.state === 'running' && j.windowId && j.conversationId && !known.has(j.conversationId));
+          if (victim) { await chrome.windows.remove(victim.windowId!).catch(() => undefined); closedWorker = true; }
+        }
         let last = '';
         // Sample the job table: the most workers seen active (starting or running) at the same instant is the overlap that really happened.
         let maxActive = 0;
@@ -80,10 +88,11 @@ defineCheck({
         const end = Date.now();
         clearInterval(sampler);
         const workers = (await listConversations()).filter(c => !known.has(c.id) && c.title.startsWith('Worker: '));
-        phases.push({ name, workers: count, ms: end - start, start, end, status: last, done: workers.filter(w => w.status === 'done').length, maxActive });
+        phases.push({ name, workers: count, ms: end - start, start, end, status: last, done: workers.filter(w => w.status === 'done').length, failed: workers.filter(w => w.status !== 'done').length, closedWorker, maxActive });
         await sleep(2500);
       }
       const [one, three, five, six] = phases;
+      const closed = phases[4];
       const report = {
         workerModelMs: WORKER_MS,
         activeRunLimit: PRODUCT_ACTIVE_RUN_LIMIT,
@@ -95,10 +104,12 @@ defineCheck({
         serialThreeWouldBe: Math.round(one.ms + 2 * (WORKER_MS + 400)),
         serialSixWouldBe: Math.round(one.ms + 5 * (WORKER_MS + 400)),
       };
-      const allDone = phases.every(p => p.status === 'Done' && p.done === p.workers);
+      const allDone = phases.every(p => p.status === 'Done' && p.done === (p.name === 'closed' ? p.workers - 1 : p.workers));
+      // The closed window fails exactly one worker and the other five finish.
+      if (!closed.closedWorker || closed.failed !== 1) throw new Error(JSON.stringify({ closedWindowPhase: closed }));
       // Three together must be clearly faster than three one after another.
       // With the product's limit, every worker of a phase must have been active at the same instant.
-      const overlapped = phases.every(p => p.maxActive >= p.workers);
+      const overlapped = phases.every(p => p.maxActive >= (p.name === 'closed' ? p.workers - 1 : p.workers));
       if (!allDone || !overlapped || three.ms > report.serialThreeWouldBe * 0.8) throw new Error(JSON.stringify(report));
       return report;
     } finally {
