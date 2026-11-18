@@ -9,9 +9,6 @@ import {
   BrainCircuit,
   BriefcaseBusiness,
   ClipboardList,
-  CircleAlert,
-  Gamepad2,
-  BadgeDollarSign,
   Check,
   Code2,
   Compass,
@@ -169,64 +166,13 @@ const FAQS = [
   },
 ] as const;
 
-const PRO_SCENES = [
-  { name: 'Research', icon: Search },
-  { name: 'Think', icon: BrainCircuit },
-  { name: 'Work', icon: BriefcaseBusiness },
-  { name: 'Plan', icon: ClipboardList },
-  { name: 'Fix', icon: CircleAlert },
-  { name: 'Code', icon: Code2 },
-  { name: 'Game', icon: Gamepad2 },
-  { name: 'Publish', icon: Rocket },
-  { name: 'Earn', icon: BadgeDollarSign },
-] as const;
-
+/* Quiet pricing marks: the plan icons are intentionally static. */
 function PlanShowcase({ paid }: { paid: boolean }) {
-  const [index, setIndex] = useState(0);
-  const [reducedMotion, setReducedMotion] = useState(false);
-  useEffect(() => {
-    if (!paid) return;
-    const preference = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const sync = () => setReducedMotion(preference.matches);
-    sync();
-    preference.addEventListener('change', sync);
-    return () => preference.removeEventListener('change', sync);
-  }, [paid]);
-  useEffect(() => {
-    if (!paid || reducedMotion) return;
-    const interval = window.setInterval(() => {
-      if (document.visibilityState === 'visible') setIndex((previous) => (previous + 1) % PRO_SCENES.length);
-    }, 2100);
-    return () => window.clearInterval(interval);
-  }, [paid, reducedMotion]);
-  const scene = PRO_SCENES[index];
-  const Active = paid ? scene.icon : Compass;
+  const Icon = paid ? Sparkles : Compass;
   return (
-    <span
-      className={paid ? styles.proShowcase : styles.freeShowcase}
-      role="img"
-      aria-label={paid ? 'Xroga Pro: continuously changing research, thinking, work, planning, coding, games, publishing and earning icons' : 'Xroga Free: explore icon'}
-    >
-      <span className={styles.showcaseOrb} aria-hidden="true">
-        <span className={styles.orbLines} />
-        <span className={styles.orbCenter}>
-          <Active key={paid ? scene.name : 'free'} className={styles.showcaseSymbol} strokeWidth={1.65} />
-        </span>
-      </span>
+    <span className={paid ? styles.proShowcase : styles.freeShowcase} aria-hidden="true">
+      <Icon className={styles.showcaseSymbol} strokeWidth={1.65} />
     </span>
-  );
-}
-
-function CtaParticles() {
-  return (
-    <>
-      <span className={styles.fold} aria-hidden="true" />
-      <span className={styles.pointsWrapper} aria-hidden="true">
-        {Array.from({ length: 10 }, (_, index) => (
-          <i key={index} className={styles.point} />
-        ))}
-      </span>
-    </>
   );
 }
 
@@ -302,8 +248,9 @@ export function PricingPageClient() {
         <div className={styles.heroInner}>
           <p className={styles.heroKicker}>Pricing</p>
           <h1 id="pricing-title" className={styles.heroTitle}>
-            Build beyond <span>the ordinary.</span>
+            Simple plans. <span>Serious work.</span>
           </h1>
+          <p className={styles.heroCopy}>Start free. Build with your own tools and projects. Upgrade when you need more AI capacity.</p>
         </div>
       </section>
 
@@ -338,8 +285,7 @@ export function PricingPageClient() {
                       <span className={styles.currentBadge}>Current plan</span>
                     ) : !isFree ? (
                       <span className={styles.popularBadge}>
-                        <Zap aria-hidden="true" />
-                        FOR ACTIVE BUILDERS
+                        MORE CAPACITY
                       </span>
                     ) : null}
                   </div>
@@ -390,27 +336,25 @@ export function PricingPageClient() {
                     ) : isCurrent ? (
                       <button
                         type="button"
-                        className={`${styles.ctaButton} ${styles.proCta} ${styles.proUiverse}`}
+                        className={`${styles.ctaButton} ${styles.proCta}`}
                         disabled
                       >
                         Current plan
                       </button>
                     ) : loggedIn ? (
                       <div className={styles.proCtaWrap}>
-                        <CheckoutButton planTier="spark" label="Try Xroga Pro" className={`${styles.ctaButton} ${styles.proCta} ${styles.proUiverse}`} />
-                        <CtaParticles />
+                        <CheckoutButton planTier="spark" label="Try Xroga Pro" className={`${styles.ctaButton} ${styles.proCta}`} />
                       </div>
                     ) : (
                       <div className={styles.proCtaWrap}>
                         <button
                           type="button"
-                          className={`${styles.ctaButton} ${styles.proCta} ${styles.proUiverse}`}
+                          className={`${styles.ctaButton} ${styles.proCta}`}
                           onClick={() => router.push('/auth/signup')}
                         >
                           Try Xroga Pro
                           <ArrowRight aria-hidden="true" />
                         </button>
-                        <CtaParticles />
                       </div>
                     )}
                   </div>
@@ -429,8 +373,8 @@ export function PricingPageClient() {
         <section className={styles.compareSection} aria-labelledby="compare-title">
           <div className={styles.compareHeading}>
             <BadgeCheck className={styles.compareOrnament} aria-hidden="true" />
-            <h2 id="compare-title">Compare features across plans</h2>
-            <p>Create with no limits.</p>
+            <h2 id="compare-title">Compare features</h2>
+            <p>A clear side-by-side look at what is included in each plan.</p>
           </div>
           <div className={styles.compareScroll} tabIndex={0} role="region" aria-label="Free and Pro feature comparison; scroll horizontally on narrow screens">
             <table className={styles.comparisonTable}>
@@ -540,11 +484,11 @@ export function PricingPageClient() {
           <div className={styles.faqIntro}>
             <span className={styles.eyebrow}>PRICING FAQ</span>
             <h2 id="faq-title">
-              Clear enough to decide <em>in one read.</em>
+              Frequently asked <em>questions.</em>
             </h2>
             <p>
-              Need implementation details instead? The docs go deeper without
-              turning the pricing page into a manual.
+              The essentials, without the fine-print maze.
+              For technical details, explore our documentation.
             </p>
             <Link className={styles.textLink} href="/docs">
               Open docs <ArrowRight aria-hidden="true" />
