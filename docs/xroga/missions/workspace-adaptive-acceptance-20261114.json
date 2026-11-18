@@ -36,6 +36,8 @@
     "docs/operations/native-openui/CAPABILITY_AUDIT.md",
     "docs/operations/native-openui/LIVE-CALCULATOR-VALIDATION-20261117.md",
     "docs/operations/native-openui/prompt-suite.json",
+    "docs/xroga/evidence/command-010/CURRENT-PROOF-METADATA-CONTINUATION-20261028.json",
+    "docs/xroga/evidence/command-010/TRANSPORT-LIFETIME-PROOF.json",
     "docs/xroga/security/caller-reviews.json",
     "docs/xroga/security/egress-caller-reviews.json",
     "frontend/.npmrc",
@@ -120,7 +122,8 @@
     "keep": [
       "One planner, one canonical DeepSeek answer dispatch, existing registry and authorization, saved answers, owner-only Share and decoder compatibility.",
       "Preserve the independently serving Connect frontend from 758bce0b420354b09fa5ec9f50252ded508df13c in the release candidate. Its public catalog read is reviewed and credential-free, with truthful existing featured-app fallback. No backend, environment, browser pairing or model changes.",
-      "Reconcile the old integration marketing launch-claim test with the already-serving Connect discovery page. Assert that listings are not connected accounts, external actions require authorization and approval, and agent handoffs do not promise a direct native connection. Keep the negative automatic-routing assertion."
+      "Reconcile the old integration marketing launch-claim test with the already-serving Connect discovery page. Assert that listings are not connected accounts, external actions require authorization and approval, and agent handoffs do not promise a direct native connection. Keep the negative automatic-routing assertion.",
+      "Reconcile the current transport proof count from 159 to 160 for the explicitly reviewed inherited public catalog GET, bind its source and negative test, and preserve all historical archives, SDK guard dispositions and non-acceptance flags. The strict equality check remains unchanged."
     ],
     "deprecate": [],
     "replace": [

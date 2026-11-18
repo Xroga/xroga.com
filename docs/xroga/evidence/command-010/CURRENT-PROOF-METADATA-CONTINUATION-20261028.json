@@ -6,7 +6,7 @@
       "path": "docs/xroga/evidence/command-010/TRANSPORT-LIFETIME-PROOF.json",
       "archive": "docs/xroga/evidence/command-010/historical/TRANSPORT-LIFETIME-PROOF-87e33b94.json",
       "historicalSha256": "9950d43b6acdd1c5ad4e4bf784ef5115d47af775141905e918525f4ac3cfb4a0",
-      "currentSha256": "0f9c4e687480410bc71e5fafe8ad5eb2fc05360ad3b14c71effeae731f3d9912",
+      "currentSha256": "184273936f8c18571942cac4c9aceed788448ceb5363ecdff76b2c99ad13bcf5",
       "beforeInlineCalculatorRoutingSha256": "a9fcd233225d8a1e243b3a9c26a787b532e5db6e31a8be6c0e6ded490879fbaf",
       "beforePlannerCompletionDiagnosticsSha256": "0b2b44c1e6c6c2f3f186e540669e78464ff8c9b71a3bec72c19ad5d0f59c63df",
       "beforeNativeOpenUiBenchmarkSha256": "f7c19d49f9d3433032b7f5bc8a1489acbaab698e6e9b05953527cae38f4e1024",
@@ -38,7 +38,8 @@
       "beforeNativeReasoningAlignmentSha256": "73b13f4edb75d5c3d708a74457e085652ccc5ea2c4388964adb2f3c68a927363",
       "beforeBufferedDeadlineSha256": "4ae9e8734a9340e2b49541a87c1c059409846e95b129484c1fa5ca74242f336e",
       "beforePlainReasoningDefaultSha256": "212cfc486f9423fa5eb5ab6d06408e7eaf90970b726dab5640b1a02a3622f859",
-      "beforeDeadlineAlignmentSha256": "1d6ff451122294fb65167bf3cacad79191a96920da105d9a8502bf18abb14640"
+      "beforeDeadlineAlignmentSha256": "1d6ff451122294fb65167bf3cacad79191a96920da105d9a8502bf18abb14640",
+      "beforeConnectCatalogCountSha256": "0f9c4e687480410bc71e5fafe8ad5eb2fc05360ad3b14c71effeae731f3d9912"
     },
     {
       "path": "docs/xroga/evidence/command-010/SOURCE-LIFETIME-PROOF.json",

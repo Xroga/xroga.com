@@ -120,8 +120,8 @@
     }
   ],
   "counts": {
-    "total": 159,
-    "reviewed": 159,
+    "total": 160,
+    "reviewed": 160,
     "pending": 0,
     "unresolvedHighRiskReviewCandidates": 0
   },
@@ -922,6 +922,14 @@
       "sha256": "1805f6c26e4f49612784dcd5fc3521d059109dd5afb3afc6cb024a0934f0e854",
       "beforeDeadlineAlignmentSha256": "6a46d891ea391c0d299f350e5a87f3b964b34b8e67147448ec61c0a039728042",
       "deadlineAlignmentScope": "Existing canonical generation timeout alignment and its regression tests. No new transport, destination, caller authorization or security acceptance."
+    },
+    {
+      "path": "frontend/src/lib/publicConnectCatalog.ts",
+      "sha256": "e3bc7e2a3acb9adba5bb5c8506d1c7fadb5be3e3329d00dad3050d1bd7411240"
+    },
+    {
+      "path": "frontend/src/lib/publicConnectCatalog.test.ts",
+      "sha256": "1c5f1783b1005263c9ac7ba2be7e59d994a3c6d3efb76ba9740e9f2bf656dbb3"
     }
   ],
   "previousCallerCounts": {
@@ -1073,5 +1081,18 @@
     "scope": "Test expected published and persisted text now includes validated native metrics and citations. Existing tenant binding, single provider effect, atomic receipt and settlement-before-publication assertions remain. No application transport change or new acceptance certification.",
     "localTestJob": "093bb423-9ce2-41e2-9ada-db450aab8d40",
     "currentSourceAcceptance": "NOT_VERIFIED"
+  },
+  "connectCatalogCountContinuation": {
+    "servingSource": "758bce0b420354b09fa5ec9f50252ded508df13c",
+    "callerId": "e079c51ab00e88b88aa7",
+    "priorProofSha256": "0f9c4e687480410bc71e5fafe8ad5eb2fc05360ad3b14c71effeae731f3d9912",
+    "priorCounts": {
+      "total": 159,
+      "reviewed": 159,
+      "pending": 0
+    },
+    "review": "docs/xroga/security/egress-caller-reviews.json",
+    "scope": "CURRENT_METADATA_COUNT_AND_SOURCE_BINDING_ONLY_NOT_TRANSPORT_OR_TENANT_SECURITY_ACCEPTANCE",
+    "reason": "Preserve the already-serving credential-free public platform catalog GET. Its source-bound negative tests and manual review are recorded. Historical archives, SDK guard dispositions, unresolved caller obligations and acceptance flags remain unchanged."
   }
 }
