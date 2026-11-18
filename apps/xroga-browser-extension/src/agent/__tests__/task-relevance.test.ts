@@ -18,9 +18,9 @@ describe('only task-relevant app tools are offered', () => {
     const r = rankAppTools(many, 'append rows to a spreadsheet');
     expect(r[0].toolkit).toBe('googlesheets');
   });
-  it('keeps the provider order when nothing matches and never exceeds the limit', () => {
+  it('offers only three tools, in provider order, when nothing matches', () => {
     const r = rankAppTools(many, 'zzz qqq');
-    expect(r.map(t => t.slug)).toEqual(many.slice(0, 12).map(t => t.slug));
+    expect(r.map(t => t.slug)).toEqual(many.slice(0, 3).map(t => t.slug));
   });
 });
 
