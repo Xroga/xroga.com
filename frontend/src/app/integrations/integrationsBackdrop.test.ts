@@ -70,6 +70,29 @@ test('hero and closing CTA share dots and have no three full-width divider borde
   assert.match(css, /background:transparent!important/);
 });
 
+test('Claude occupies the right rail with the legacy left offset cleared', () => {
+  const correction = css.slice(css.indexOf('Follow-up polish:'));
+  assert.ok(integration.includes("id: 'claude', name: 'Claude'"));
+  assert.ok(correction.includes('.xi-hero-logos .xi-orbit-logo-7{'));
+  assert.ok(correction.includes('top:28%;'));
+  assert.ok(correction.includes('right:1.5%;'));
+  assert.ok(correction.includes('left:auto;'));
+  assert.ok(correction.includes('.xi-orbit-logo-10{'));
+});
+
+test('final signup section has opaque dot-free background and prominent bottom corners', () => {
+  const correction = css.slice(css.indexOf('Follow-up polish:'));
+  assert.ok(correction.includes('.xi-root > section.xi-cta{'));
+  assert.ok(correction.includes('background:linear-gradient(180deg,#101113 0%,#151516 100%)!important;'));
+  assert.ok(correction.includes('border-radius:0 0 52px 52px;'));
+  assert.ok(correction.includes('border-bottom-left-radius:32px;'));
+  assert.ok(correction.includes('border-bottom-right-radius:32px;'));
+  assert.ok(integration.includes('Start in minutes.'));
+  assert.ok(integration.includes('Try Xroga for free.'));
+  assert.ok(integration.includes('href="/auth/signup"'));
+  assert.ok(integration.includes('<SharedDotBackdrop />'));
+});
+
 test('public app cards use original logo sources and the dashboard canonical logo fallback', () => {
   const brand = read('components/integrations/PluginBrandLogo.tsx');
   assert.match(integration, /fallbackLogo=\{composioLogoUrl\(item\.id\)\}/);

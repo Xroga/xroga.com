@@ -474,3 +474,48 @@
   .xi-hero-word{opacity:0}
   .xi-hero-word--apps{opacity:1}
 }
+
+
+/* Follow-up polish: the old positional rule gave icon 7 (Claude) a
+   left:31% coordinate. Explicitly clear it so its right offset wins.
+   Keep all five AI/business icons in the right rail, clear of the headline. */
+.xi-hero-logos .xi-orbit-logo-6,
+.xi-hero-logos .xi-orbit-logo-7,
+.xi-hero-logos .xi-orbit-logo-8,
+.xi-hero-logos .xi-orbit-logo-9,
+.xi-hero-logos .xi-orbit-logo-10{
+  left:auto;
+}
+.xi-hero-logos .xi-orbit-logo-7{
+  top:28%;
+  right:1.5%;
+  display:grid;
+}
+@media(max-width:1100px){
+  .xi-hero-logos .xi-orbit-logo-7{right:1%}
+}
+@media(max-width:700px){
+  /* Narrow screens omit middle decorative logos, preserving headline clearance. */
+  .xi-hero-logos .xi-orbit-logo-7{display:none}
+}
+
+/* The final signup CTA alone is deliberately free of the shared dot field.
+   Override the transparent blanket applied to other page sections. Use a
+   slightly raised solid surface so both lower corner curves are visible. */
+.xi-root > section.xi-cta{
+  background:linear-gradient(180deg,#101113 0%,#151516 100%)!important;
+  border:0;
+  border-radius:0 0 52px 52px;
+  overflow:hidden;
+  isolation:isolate;
+}
+.xi-root{
+  border-radius:0 0 52px 52px;
+}
+@media(max-width:700px){
+  .xi-root,
+  .xi-root > section.xi-cta{
+    border-bottom-left-radius:32px;
+    border-bottom-right-radius:32px;
+  }
+}
