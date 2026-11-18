@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
@@ -161,6 +161,12 @@ const FAQS = [
   },
   {
     category: 'plans',
+    question: 'Does Xroga reset my usage every day?',
+    answer:
+      'AI capacity is tracked over your plan cycle. Working capacity may unlock progressively, but Xroga does not promise a fixed daily task count or a full daily reset. Check your workspace for your actual remaining allowance and next reset.',
+  },
+  {
+    category: 'plans',
     question: 'What happens when my currently available capacity is used?',
     answer:
       'Your project state and completed work remain preserved. New AI work can continue when more capacity unlocks or when the next billing cycle begins.',
@@ -235,6 +241,7 @@ function FullAccessInfo() {
 
 export function PricingPageClient() {
   const router = useRouter();
+  const finalCtaRef = useRef<HTMLElement>(null);
   const [loggedIn, setLoggedIn] = useState(false);
   const [status, setStatus] = useState<BillingStatus | null>(null);
   const [featureQuery, setFeatureQuery] = useState('');
@@ -255,6 +262,27 @@ export function PricingPageClient() {
         setStatus(null);
       }
     })();
+  }, []);
+
+  // Scroll reveal is progressively enhanced: with JS disabled, no observer,
+  // or reduced-motion preference, the CTA stays visible.
+  useEffect(() => {
+    const card = finalCtaRef.current;
+    if (!card || typeof IntersectionObserver === 'undefined'
+        || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (card.getBoundingClientRect().top <= window.innerHeight * .9) return;
+
+    card.classList.add(styles.finalCtaPending);
+    const observer = new IntersectionObserver(([entry]) => {
+      if (!entry?.isIntersecting) return;
+      card.classList.remove(styles.finalCtaPending);
+      observer.disconnect();
+    }, { threshold: .12, rootMargin: '0px 0px -6% 0px' });
+    observer.observe(card);
+    return () => {
+      observer.disconnect();
+      card.classList.remove(styles.finalCtaPending);
+    };
   }, []);
 
   const freeCurrent = status?.plan === 'free';
@@ -408,6 +436,41 @@ export function PricingPageClient() {
               );
             })}
           </div>
+        </section>
+
+
+        <section className={styles.usageSection} aria-labelledby="usage-heading">
+          <div className={styles.usageHeader}>
+            <span className={styles.usageEyebrow}>A CLEARER WAY TO PLAN YOUR WORK</span>
+            <h2 id="usage-heading">How usage works.</h2>
+            <p>Your available capacity depends on your plan and the work you run. Here's what to expect.</p>
+          </div>
+          <div className={styles.usageGrid}>
+            <div className={styles.usageItem}>
+              <span className={styles.usageNumber}>01 / FREE</span>
+              <h3>Start with included capacity</h3>
+              <p>Free includes a smaller monthly AI allowance to explore real tasks, research, and building.</p>
+            </div>
+            <div className={styles.usageItem}>
+              <span className={styles.usageNumber}>02 / PRO</span>
+              <h3>More room for bigger work</h3>
+              <p>Pro includes a higher monthly allowance for longer projects, with Full Access pacing available.</p>
+            </div>
+            <div className={styles.usageItem}>
+              <span className={styles.usageNumber}>03 / DURING THE DAY</span>
+              <h3>Capacity can become available</h3>
+              <p>Working capacity may unlock in stages. Daily availability isn't a guaranteed fixed number of tasks or a full daily reset.</p>
+            </div>
+            <div className={styles.usageItem}>
+              <span className={styles.usageNumber}>04 / CYCLE RESET</span>
+              <h3>Your allowance renews</h3>
+              <p>Your monthly allowance renews with your plan cycle. Check your signed-in workspace for remaining usage and reset timing.</p>
+            </div>
+          </div>
+          <p className={styles.usageNote}>
+            <Info aria-hidden="true" />
+            Usage depends on task complexity. Full Access changes when remaining capacity is available, not the plan's total monthly allowance.
+          </p>
         </section>
 
         <section className={styles.compareSection} aria-labelledby="compare-title">
@@ -568,7 +631,7 @@ export function PricingPageClient() {
           </div>
         </section>
 
-        <section className={styles.finalCta} aria-labelledby="final-title">
+        <section ref={finalCtaRef} className={styles.finalCta} aria-labelledby="final-title">
           <div className={styles.orbitDot} aria-hidden="true" />
           <div className={styles.finalGlow} aria-hidden="true" />
 
