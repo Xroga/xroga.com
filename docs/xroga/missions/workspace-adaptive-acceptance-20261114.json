@@ -78,6 +78,7 @@
     "frontend/src/lib/formatAiMarkdown.tsx",
     "frontend/src/lib/hostedWorkspaceBridge.mjs",
     "frontend/src/lib/integrationDiscoveryFilters.ts",
+    "frontend/src/lib/launchClaims.test.ts",
     "frontend/src/lib/liveIntegrationDiscovery.test.ts",
     "frontend/src/lib/liveIntegrationDiscovery.ts",
     "frontend/src/lib/mathRenderImpl.tsx",
@@ -118,7 +119,8 @@
     ],
     "keep": [
       "One planner, one canonical DeepSeek answer dispatch, existing registry and authorization, saved answers, owner-only Share and decoder compatibility.",
-      "Preserve the independently serving Connect frontend from 758bce0b420354b09fa5ec9f50252ded508df13c in the release candidate. Its public catalog read is reviewed and credential-free, with truthful existing featured-app fallback. No backend, environment, browser pairing or model changes."
+      "Preserve the independently serving Connect frontend from 758bce0b420354b09fa5ec9f50252ded508df13c in the release candidate. Its public catalog read is reviewed and credential-free, with truthful existing featured-app fallback. No backend, environment, browser pairing or model changes.",
+      "Reconcile the old integration marketing launch-claim test with the already-serving Connect discovery page. Assert that listings are not connected accounts, external actions require authorization and approval, and agent handoffs do not promise a direct native connection. Keep the negative automatic-routing assertion."
     ],
     "deprecate": [],
     "replace": [
