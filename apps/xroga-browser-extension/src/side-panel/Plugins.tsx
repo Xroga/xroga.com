@@ -45,9 +45,6 @@ export function Plugins({ open, onOpenChange }: { open: boolean; onOpenChange: (
   const [version, setVersion] = useState(0);
   const generation = useRef(0);
   const linkBusy = useRef(false);
-  const [mode, setMode] = useState<Mode>();
-  const [modeError, setModeError] = useState('');
-  const [modeSaving, setModeSaving] = useState(false);
 
   useEffect(() => {
     if (!open) return;
@@ -110,52 +107,6 @@ export function Plugins({ open, onOpenChange }: { open: boolean; onOpenChange: (
     return () => { current = false; };
   }, [open, selected]);
 
-  // The owner's permission for the open app. It is read when a connected app is opened and changed only by the owner's own click below.
-  useEffect(() => {
-    if (!open || !selected || !isConnected(selected)) { setMode(undefined); return; }
-    let current = true;
-    setModeError('');
-    void request('permission', { toolkit: selected.slug }).then(
-      data => { if (current) setMode(data.mode); },
-      (failure: Error) => { if (current) setModeError(failure.message); },
-    );
-    return () => { current = false; };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open, selected, connected, connectionsChecked]);
-
-  async function choose(next: Mode) {
-    if (!selected || modeSaving) return;
-    setModeSaving(true);
-    setModeError('');
-    try {
-      const data = await request('setPermission', { toolkit: selected.slug, mode: next });
-      setMode(data.mode ?? next);
-    } catch (failure) {
-      setModeError((failure as Error).message);
-    } finally {
-      setModeSaving(false);
-    }
-  }
-
-  // Full access for every app, chosen by the owner's own click: no "allow this read" or "allow this change" card for a connected app while
-  // the owner is away. Sending, publishing, deleting and payments still ask (the server keeps that in every mode).
-  const [accountMode, setAccountMode] = useState<Mode | undefined>();
-  const [accountSaving, setAccountSaving] = useState(false);
-  useEffect(() => {
-    if (!open) return;
-    let current = true;
-    void request('permission').then(data => { if (current) setAccountMode(data.mode); }, () => { /* the switch simply stays off */ });
-    return () => { current = false; };
-  }, [open]);
-  async function toggleAccountAccess() {
-    if (accountSaving) return;
-    setAccountSaving(true);
-    try {
-      const data = await request('setPermission', { mode: accountMode === 'full_access' ? 'low_risk' : 'full_access' });
-      setAccountMode(data.mode);
-    } catch { /* unchanged */ } finally { setAccountSaving(false); }
-  }
-
   async function loadMore() {
     const current = generation.current;
     setLoading(true);
@@ -205,13 +156,6 @@ export function Plugins({ open, onOpenChange }: { open: boolean; onOpenChange: (
             <Dialog.Close aria-label="Close plugins" className="rounded-lg p-2 hover:bg-nb-surface"><CloseIcon size={18} /></Dialog.Close>
           </div>
           <Dialog.Description className="text-xs text-nb-muted">Connect and use apps from your Xroga account.</Dialog.Description>
-          <div className="flex items-start justify-between gap-3 rounded-lg border border-nb-border p-2.5">
-            <div className="min-w-0">
-              <p className="text-sm font-medium">Full access for all apps</p>
-              <p className="text-xs text-nb-muted">{accountMode === 'full_access' ? 'On: Xroga will not ask before reading or changing your connected apps, so a task can finish while you are away. Sending, publishing, deleting and payments still ask.' : 'Off: Xroga asks before using your connected apps. Turn on to let tasks finish while you are away.'}</p>
-            </div>
-            <button type="button" role="switch" aria-checked={accountMode === 'full_access'} aria-label="Full access for all apps" disabled={accountSaving || accountMode === undefined} onClick={() => void toggleAccountAccess()} className={button}>{accountSaving ? 'Saving…' : accountMode === 'full_access' ? 'On' : 'Off'}</button>
-          </div>
           {selected ? (
             <div className="min-h-0 flex-1 space-y-3 overflow-y-auto break-words">
               <button type="button" className={button} onClick={() => setSelected(undefined)}>Back to plugins</button>
@@ -227,26 +171,6 @@ export function Plugins({ open, onOpenChange }: { open: boolean; onOpenChange: (
                 </button>
               ) : <p className="text-xs text-nb-muted">{selected.noAuth ? 'No account is required for this toolkit.' : connectionsChecked ? 'Managed connection unavailable.' : 'Connection status unavailable.'}</p>}
               {linkState === 'pending' && !isConnected(selected) ? <p className="text-xs text-nb-muted">Finish authorization in Chrome, then return here to check the connection.</p> : null}
-              {isConnected(selected) ? (
-                <section aria-label="Permissions" className="space-y-2 rounded-lg border border-nb-border p-3">
-                  <h4 className="text-sm font-medium">What Xroga may do in {selected.name ?? selected.slug}</h4>
-                  {mode && mode !== 'full_access' ? (
-                    <div className="space-y-2 rounded-lg bg-nb-surface p-2.5">
-                      <p className="text-xs">Give Xroga full access so it can read and change your {selected.name ?? selected.slug} data for your tasks without asking at every step. Sending messages, publishing, deleting and payments still ask you first.</p>
-                      <button type="button" className={button} disabled={modeSaving} onClick={() => void choose('full_access')}>
-                        {modeSaving ? 'Saving…' : 'Allow full access'}
-                      </button>
-                    </div>
-                  ) : null}
-                  {mode === 'full_access' ? <p role="status" className="text-xs text-nb-muted">Full access is on. Sending, publishing, deleting and payments still ask you first.</p> : null}
-                  <div className="flex flex-wrap gap-2" role="group" aria-label="Permission level">
-                    {([['always_ask', 'Always ask'], ['read_only', 'Read only'], ['low_risk', 'Low risk'], ['full_access', 'Full access']] as const).map(([value, label]) => (
-                      <button key={value} type="button" className={button} aria-pressed={mode === value} disabled={!mode || modeSaving} onClick={() => void choose(value)}>{label}</button>
-                    ))}
-                  </div>
-                  {modeError ? <p role="alert" className="text-xs text-nb-muted">{modeError}</p> : null}
-                </section>
-              ) : null}
               {detailsError ? <p role="alert" className="text-xs text-nb-muted">{detailsError}</p> : null}
               <h4 className="text-sm font-medium">Available tool metadata</h4>
               {!details && !detailsError ? <p role="status" className="text-xs text-nb-muted">Loading tools…</p> : null}

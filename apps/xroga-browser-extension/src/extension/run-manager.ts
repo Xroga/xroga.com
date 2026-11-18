@@ -88,7 +88,7 @@ import { endOf } from './analytics-payload';
 import { onWorkspaceDisconnect, postWorkspace, workspacePaired, workspaceRequest } from '@src/xroga/bridge';
 import { ACTIVITY_LIMIT, browserActivity } from '@src/xroga/activity';
 import { startXrogaModelRun } from '@src/xroga/model';
-import { HTTP_GET_TOOL, PLUGIN_CONNECT_TOOL, REPO_RUN_TOOL, CHANGE_REPO_TOOL, runRepositoryTool, changeRepositoryTool, nativeAppCall, nativeAppTool, rankAppTools, runPluginConnect, runPluginTool, runPublicGet, PLUGIN_TOOLS, type AppToolInfo } from '@src/xroga/plugins';
+import { HTTP_GET_TOOL, PLUGIN_CONNECT_TOOL, REPO_RUN_TOOL, CHANGE_REPO_TOOL, runRepositoryTool, changeRepositoryTool, nativeAppCall, nativeAppTool, rankAppTools, runPluginConnect, runPluginTool, runPublicGet, PLUGIN_TOOLS, PLUGIN_CHAIN_TOOL, runPluginChain, type AppToolInfo } from '@src/xroga/plugins';
 import { repairingPluginCaller, type PluginToolName } from '@src/xroga/plugin-repair';
 import { SEARCH_HOME, browserTarget } from '@src/xroga/navigation';
 import { XROGA_PRODUCT } from '@src/xroga/product';
@@ -1745,7 +1745,7 @@ export class RunManager {
           vision: model.profile.vision, localScreenshots: !!canonical,
           agentTools: isWorker
             ? [DELEGATE_TOOL, BATCH_TOOL, CONFIRM_DOWNLOAD_TOOL, ...(canonical ? [HTTP_GET_TOOL] : [])]
-            : [DELEGATE_TOOL, BATCH_TOOL, CONFIRM_DOWNLOAD_TOOL, ...(canonical ? [HTTP_GET_TOOL, REPO_RUN_TOOL, CHANGE_REPO_TOOL] : []), ...(canonical?.plugins ? [...PLUGIN_TOOLS, PLUGIN_CONNECT_TOOL] : []), ...(decision.offerWorkers ? PARALLEL_TOOLS : [])],
+            : [DELEGATE_TOOL, BATCH_TOOL, CONFIRM_DOWNLOAD_TOOL, ...(canonical ? [HTTP_GET_TOOL, REPO_RUN_TOOL, CHANGE_REPO_TOOL] : []), ...(canonical?.plugins ? [...PLUGIN_TOOLS, PLUGIN_CHAIN_TOOL, PLUGIN_CONNECT_TOOL] : []), ...(decision.offerWorkers ? PARALLEL_TOOLS : [])],
         });
         // A request that only reads starts with the small tool list; the model switches to the full one if it needs to act.
         const { tools, full: fullTools } = startingTools(
@@ -1824,6 +1824,18 @@ export class RunManager {
             if (call.toolName === 'plugin_connect' && canonical?.plugins) return runPluginConnect(canonical.runId, call.input, signal);
             if (canonical?.plugins) {
               // A tool a search found, called by its own name: the same guarded read or change route as plugin_read / plugin_act.
+              if (call.toolName === 'plugin_chain') {
+                return runPluginChain((call.input as { steps?: unknown } | null)?.steps, {
+                  call: (name, body) => callPlugin(name, body),
+                  resolve: (tool, args, request) => {
+                    if (tool === 'plugin_search' || tool === 'plugin_action_search') return { name: tool, body: args };
+                    const info = appTools.get(tool) ?? [...appTools.values()].find(i => i.slug === tool);
+                    if (!info) return undefined;
+                    const mapped = nativeAppCall(info, args);
+                    return request && mapped.name === 'plugin_act' ? { name: mapped.name, body: { ...(mapped.body as object), request: request.slice(0, 200) } } : mapped;
+                  },
+                });
+              }
               const app = appTools.get(call.toolName);
               if (app) {
                 const mapped = nativeAppCall(app, call.input);
@@ -1844,7 +1856,7 @@ The name ${asked} was not offered in this task. Do not search again: call one of
                 const { appTools: found, ...rest } = result;
                 if (!found?.length) return rest;
                 // The tools the search found become callable by their own names, with their real parameter schemas.
-                const taken = new Set([...fullToolList.map(t => t.name), ...PLUGIN_TOOLS.map(t => t.name), PLUGIN_CONNECT_TOOL.name, HTTP_GET_TOOL.name, ...appTools.keys()]);
+                const taken = new Set([...fullToolList.map(t => t.name), ...PLUGIN_TOOLS.map(t => t.name), PLUGIN_CHAIN_TOOL.name, PLUGIN_CONNECT_TOOL.name, HTTP_GET_TOOL.name, ...appTools.keys()]);
                 const alreadyOffered = new Set([...appTools.values()].map(info => info.slug));
                 // At most 32 tools may be listed in a model request, built-in tools included; the rest stay reachable by plugin_read / plugin_act.
                 let room = Math.max(0, 32 - fullToolList.length - appTools.size);
