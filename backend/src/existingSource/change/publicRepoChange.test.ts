@@ -56,3 +56,22 @@ test('a pin that does not match, a missing or ambiguous target, and a denied pat
   await assert.rejects(run([{ path: '.github/workflows/ci.yml', replace: 'x' }]));
   await assert.rejects(run([]), (e: RepoRunError) => e.code === 'CHANGE_EMPTY');
 });
+
+test('the untouched commit and the edited copy are tested at the same time, so a change costs one run, and a deadline that has passed stops both', async () => {
+  let active = 0; let peak = 0;
+  const slow: ExecutionPort = {
+    async execute(request) {
+      active++; peak = Math.max(peak, active);
+      await new Promise((resolve) => setTimeout(resolve, 40));
+      active--;
+      const result = { exitCode: 0, stdout: '', stderr: 'OK', timedOut: false, killedForLimit: false, durationMs: 40 };
+      return { ...result, stages: [{ ...result, id: request.stages![0]!.id }] };
+    },
+  };
+  const out = await runPublicRepoChange({ url: URL, ref: COMMIT, edits: [{ path: 'lib/calc.py', find: 'return a + b', replace: 'return b + a' }], port: slow, fetchFiles: fetcher(fixed) });
+  assert.equal(peak, 2, 'both runs were in flight together');
+  assert.equal(out.verdict, 'verified');
+  const aborted = new AbortController(); aborted.abort();
+  const late = await runPublicRepoChange({ url: URL, ref: COMMIT, edits: [{ path: 'lib/calc.py', find: 'return a + b', replace: 'return b + a' }], port: slow, fetchFiles: fetcher(fixed), signal: aborted.signal });
+  assert.notEqual(late.verdict, 'verified', 'a run stopped at its deadline is never reported as verified');
+});

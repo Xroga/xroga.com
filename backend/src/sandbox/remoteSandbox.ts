@@ -355,6 +355,8 @@ export class RemoteSandboxRuntime implements SandboxRuntime {
     }
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), request.timeoutMs + TRANSPORT_GRACE_MS);
+    // the caller's own deadline or cancellation ends the wait too (the worker still enforces its own limits on what it already started)
+    if (request.signal) { if (request.signal.aborted) controller.abort(); else request.signal.addEventListener('abort', () => controller.abort(), { once: true }); }
 
     try {
       const response = await this.fetchImpl(`${this.url}/execute`, {

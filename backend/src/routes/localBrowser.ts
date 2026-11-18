@@ -396,6 +396,9 @@ type ActionMembers = 'discoverActions' | 'prepareAction' | 'createActionConfirma
 /** The read members are required; the action members are optional so a test or a release can run without them. */
 type PluginAdapter = Omit<typeof defaultPlugins, ActionMembers> & Partial<Pick<typeof defaultPlugins, ActionMembers>>;
 
+/** How long a repository change check may run before it answers with what it has (the extension's call limit is 85 s). */
+const REPO_CHANGE_BUDGET_MS = 70_000;
+
 export function createLocalBrowserRouter(resolve = configured, dispatch = dispatchBrowserModel, plugins: PluginAdapter = defaultPlugins) {
   const actionPlugins = () => {
     if (!plugins.discoverActions || !plugins.prepareAction || !plugins.createActionConfirmation) {
@@ -583,11 +586,15 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
       if (!selected.runtime) throw new RepoRunError('SANDBOX_UNAVAILABLE', selected.availability.detail ?? 'No isolated execution worker is available.');
       const runtime = selected.runtime;
       const port = createWorkerExecutionPort({ runtime: async () => runtime, owner: async () => ({ userId: tenant.userId, runId: row.runId }) });
-      const result = await runPublicRepoChange({ url: data.url, ref: data.ref, edits: data.edits, port });
+      // The caller (the extension) gives up on a request after 85 s and the service after 90 s, so the check stops at its own deadline and reports what it has.
+      const deadline = AbortSignal.timeout(REPO_CHANGE_BUDGET_MS);
+      const result = await runPublicRepoChange({ url: data.url, ref: data.ref, edits: data.edits, port, signal: deadline });
+      const stoppedAtDeadline = deadline.aborted;
       const brief = (t: typeof result.baseline) => ({ status: t.status, summary: t.summary, durationMs: t.durationMs, stages: t.stages.map((s) => ({ id: s.id, exitCode: s.exitCode, durationMs: s.durationMs })), evidence: t.evidence.slice(0, 3_000) });
       const patch = result.diff;
       return res.json({
-        repository: result.repository, commit: result.commit, verdict: result.verdict, verdictReason: result.verdictReason, files: result.files,
+        repository: result.repository, commit: result.commit, verdict: stoppedAtDeadline && result.verdict === 'verified' ? 'unverified' : result.verdict,
+        verdictReason: stoppedAtDeadline ? `Stopped at the ${REPO_CHANGE_BUDGET_MS / 1000} second limit, so the tests were not all run. ${result.verdictReason}` : result.verdictReason, files: result.files,
         baseline: brief(result.baseline), after: brief(result.after), diff: patch.slice(0, 60_000), diffTruncated: patch.length > 60_000,
         artifacts: patch ? [{ path: 'change.patch', contentBase64: Buffer.from(patch.slice(0, 400_000), 'utf8').toString('base64') }] : [],
       });

@@ -61,7 +61,10 @@ export async function runPublicRepoChange(input: PublicRepoChangeInput): Promise
   const workspace = new ChangeWorkspace(snapshot, POLICY);
 
   const plan = planTests(files, input.edits.map((e) => e.path));
-  const baseline = await runTests({ port: input.port, files, changedPaths: input.edits.map((e) => e.path), plan, signal: input.signal });
+  // the untouched commit's tests start now and run while the edits are applied and the edited copy is tested (two isolated containers), so a change
+  // costs one run's time, not two; an edit that is refused below leaves this run to finish unobserved
+  const baselineRun = runTests({ port: input.port, files, changedPaths: input.edits.map((e) => e.path), plan, signal: input.signal });
+  baselineRun.catch(() => undefined);
 
   for (const edit of input.edits) {
     if (edit.find === undefined) {
@@ -81,7 +84,7 @@ export async function runPublicRepoChange(input: PublicRepoChangeInput): Promise
   const editedFiles = workspace.files();
   const editedPaths = set.files.map((f) => f.path);
   // an edit can add or change a manifest (a new requirements file), so the edited copy is planned from its own files, not the base's
-  const after = await runTests({ port: input.port, files: editedFiles, changedPaths: editedPaths, plan: planTests(editedFiles, editedPaths), signal: input.signal });
+  const [baseline, after] = await Promise.all([baselineRun, runTests({ port: input.port, files: editedFiles, changedPaths: editedPaths, plan: planTests(editedFiles, editedPaths), signal: input.signal })]);
 
   let verdict: PublicRepoChangeResult['verdict'] = 'unverified';
   let verdictReason = after.summary;
