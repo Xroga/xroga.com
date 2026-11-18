@@ -6,15 +6,15 @@ Status: **review-ready, not production-certified.** Staging only. Nothing was pu
 | Item | Value |
 | --- | --- |
 | Source branch | `claude/ops-integrated-20261112` (draft PR #976, not merged) |
-| Extension code | last extension source change `8a4a2222a`; branch head when built `b42499fb0` |
-| Private package | `C:\xr-review-builds\xroga-browser-operator-staging-0.2.8-8a4a2222a.zip` |
-| ZIP SHA-256 | `4e3cf9a41638972e7fcf2057a96f3a31c30f8d1b2c833a9935f7e377aeca0ab6` |
+| Extension code | last extension source change `9f23e8c73`; branch head when built `d499425a5` |
+| Private package | `C:\xr-review-builds\xroga-browser-operator-staging-0.2.8-9f23e8c73.zip` |
+| ZIP SHA-256 | `d732d28e2d1c15561e2043500ef3ba9df6e6fb8201579346a90bc6b5c93efe40` |
 | Extension | "Xroga Browser Automation (Staging)" 0.2.8, ID `ogebkgkppocnjeojdbkiokcpeaenonop` (fixed by the baked public key) |
 | Installed copy | `C:\xr-review-builds\xroga-extension-staging-0ff582593`, manifest identical to the ZIP; press Reload on `chrome://extensions` to load it |
-| Compatible backend | Cloud Run `xroga-api-universal-staging` (project `project-c40d4821-e647-4fa2-92d`, us-east4), revision `xroga-api-universal-staging-00128-doy`, image `xroga-api-release:lim18-1118`, tag `browser-op-1110`, 0 percent of traffic. Its `/health` "release" field is a stale environment value, not the image |
+| Compatible backend | Cloud Run `xroga-api-universal-staging` (project `project-c40d4821-e647-4fa2-92d`, us-east4), revision `xroga-api-universal-staging-00133-xup`, image `xroga-api-release:lim19-1118` (commit `d1552e9a2`; later commits on the branch touch only the extension and the sandbox worker), tag `browser-op-1110`, 0 percent of traffic. Its `/health` "release" field is a stale environment value, not the image |
 | Sandbox worker | Cloud Run `xroga-sandbox-worker` (offline stage, restricted-network stage and dependency acquisition were added by the sandbox session; see the audit file) |
 | Model | DeepSeek V4.1 Flash 1017 through the existing route only |
-| Tests at build time | extension typecheck clean, 1241 tests pass, 4 skipped (run in a clean worktree of the branch head); backend typecheck clean after commit `92d2913e1` (the sandbox merge had broken it); backend tests run: local browser (2 files), sandbox (3 files) all pass |
+| Tests at build time | extension typecheck clean, 1249 tests pass, 4 skipped (run in a clean worktree of the branch head); backend typecheck clean after commit `92d2913e1` (the sandbox merge had broken it); backend tests run: local browser (2 files), sandbox (3 files) all pass |
 | Chrome version | the owner's own Chrome was used for the live runs; its version number was not captured. The automated benchmarks used Chrome for Testing 1234 (playwright) |
 
 ## Verified live (installed extension, real DeepSeek, staging backend; each one run unless stated)
@@ -35,7 +35,7 @@ Status: **review-ready, not production-certified.** Staging only. Nothing was pu
 
 ## Known limits (not done, not verified, or blocked)
 - Security review: not signed. Must cover the Composio and sandbox egress, the permission and Full access changes, the controlled dependency stage, and the desktop bridge RFC.
-- Full access switch (Plugins panel and chat bar): built and saved on staging; the per-app setting is verified; the account-wide switch's effect was not re-run live. Sending, publishing, deleting and payments keep their approval.
+- Full access: ONE control, in the chat bar (green "Full access: ON" or plain "OFF"); the duplicate switch and the per-app buttons were removed from the Plugins panel, and turning the account-wide choice clears older per-app choices. Built and tested in code only; its click and effect were not re-run live after this change, and the xroga.com Workspace plugins page was not changed or checked. Sending, publishing, deleting and payments keep their approval.
 - Speed: the 4-contact Sheets task took 52.5 to 62.6 s and 3 to 4 turns, so the 60 s and 3-turn target is not met together.
 - Two-account isolation, a PDF reader, repos needing CLI tools or Agent Skills or multi-repo plans, patch and artifact delivery in Workspace, media and video work, rich-editor writing cases, upload acceptance on a real site, and the desktop bridge (design only, `security/rfcs/RFC-DESKTOP-BRIDGE.md`) are not built or not verified.
 - The test sessions trashed seven "Xroga speed test N" Google Sheets in two Drives (moved to Trash, recoverable about 30 days). Test users and an allowlist change made by the reliability session must be removed by that session; confirm `XROGA_LOCAL_BROWSER_ALLOWED_USER_IDS` is the owner's accounts only.
