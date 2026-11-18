@@ -1,6 +1,7 @@
 import { createModel, resolveProfile } from '@src/llm';
 import type { ResolvedModel } from '@src/agent/run';
 import { workspaceRequest } from './bridge';
+import { fitRequest } from './fit-request';
 
 export const XROGA_MODEL = 'deepseek_v4_1_flash_1017';
 export const XROGA_REF = { providerId: 'xroga-workspace', model: XROGA_MODEL };
@@ -82,7 +83,7 @@ export async function startXrogaModelRun(
         if (String(url) !== `${MODEL_URL}/chat/completions` || typeof init?.body !== 'string') {
           throw new Error('Unexpected browser model request.');
         }
-        const request = JSON.parse(init.body);
+        const request = fitRequest(JSON.parse(init.body));
         try {
           // Compaction's summary call is a model request too, and the server counts it. The loop's own turn count does not, so a
           // request can reach the end of the segment before the loop asks for the next one: renew it here, before it is refused.
