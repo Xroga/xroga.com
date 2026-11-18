@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "1d16c8fb0e5aa9f90fae19857151b911645c0ff0",
+  "source_sha": "c8bf94f3d695126df9e6da01dde27419fc6f939c",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -20600,7 +20600,7 @@
     },
     {
       "path": "frontend/src/app/integrations/IntegrationsMarketplace.tsx",
-      "sha256": "dbd295f311829a3fdbcc65906aa80686a612e6c368fc96a3f23e78d70cbc2909"
+      "sha256": "8b580f61099e58b0b129e1d061e8a821f63a07816fcdb2f8b9a9a498ab008a8d"
     },
     {
       "path": "frontend/src/app/integrations/page.tsx",
@@ -38526,28 +38526,28 @@
     },
     {
       "path": "frontend/src/app/integrations/IntegrationsMarketplace.tsx",
-      "line": 35,
+      "line": 34,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/app/integrations/IntegrationsMarketplace.tsx",
-      "line": 230,
+      "line": 235,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/app/integrations/IntegrationsMarketplace.tsx",
-      "line": 291,
+      "line": 296,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/app/integrations/IntegrationsMarketplace.tsx",
-      "line": 297,
+      "line": 302,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
