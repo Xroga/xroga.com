@@ -6560,11 +6560,11 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "f05a6ab39a8eff35891c"
+        "id": "be2b0f42632a1bf09a9a"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "795a2de096c5c1df45f2"
+        "id": "fbf0077ec3a3b06c626d"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -7424,11 +7424,11 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "f05a6ab39a8eff35891c"
+        "id": "be2b0f42632a1bf09a9a"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "795a2de096c5c1df45f2"
+        "id": "fbf0077ec3a3b06c626d"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -32037,26 +32037,26 @@
       }
     },
     {
-      "id": "f05a6ab39a8eff35891c",
+      "id": "be2b0f42632a1bf09a9a",
       "path": "frontend/src/components/native-openui/upstream/components/chart.tsx",
-      "line": 87,
+      "line": 88,
       "enclosing": "Cartesian",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "2f906a323004254ee4d9df68663c4513280315d2ce67116d85b1da5553c8f3d7"
+      "sourceSha256": "6d898986f89887da73989c2e866ced4a8a8102e737a2cf3b06dbb18e50553333"
     },
     {
-      "id": "795a2de096c5c1df45f2",
+      "id": "fbf0077ec3a3b06c626d",
       "path": "frontend/src/components/native-openui/upstream/components/chart.tsx",
-      "line": 186,
+      "line": 187,
       "enclosing": "axis",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "2f906a323004254ee4d9df68663c4513280315d2ce67116d85b1da5553c8f3d7"
+      "sourceSha256": "6d898986f89887da73989c2e866ced4a8a8102e737a2cf3b06dbb18e50553333"
     },
     {
       "id": "c1f57b8225d79c77eef9",
