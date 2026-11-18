@@ -25,7 +25,6 @@ import {
   Workflow,
   X,
   ChevronDown,
-  Zap,
 } from 'lucide-react';
 
 import { PricingCheckoutButton as CheckoutButton } from './PricingCheckoutButton';
@@ -443,7 +442,7 @@ export function PricingPageClient() {
           <div className={styles.usageHeader}>
             <span className={styles.usageEyebrow}>A CLEARER WAY TO PLAN YOUR WORK</span>
             <h2 id="usage-heading">How usage works.</h2>
-            <p>Your available capacity depends on your plan and the work you run. Here's what to expect.</p>
+            <p>Your available capacity depends on your plan and the work you run. Here&apos;s what to expect.</p>
           </div>
           <div className={styles.usageGrid}>
             <div className={styles.usageItem}>
@@ -459,7 +458,7 @@ export function PricingPageClient() {
             <div className={styles.usageItem}>
               <span className={styles.usageNumber}>03 / DURING THE DAY</span>
               <h3>Capacity can become available</h3>
-              <p>Working capacity may unlock in stages. Daily availability isn't a guaranteed fixed number of tasks or a full daily reset.</p>
+              <p>Working capacity may unlock in stages. Daily availability isn&apos;t a guaranteed fixed number of tasks or a full daily reset.</p>
             </div>
             <div className={styles.usageItem}>
               <span className={styles.usageNumber}>04 / CYCLE RESET</span>
@@ -469,7 +468,7 @@ export function PricingPageClient() {
           </div>
           <p className={styles.usageNote}>
             <Info aria-hidden="true" />
-            Usage depends on task complexity. Full Access changes when remaining capacity is available, not the plan's total monthly allowance.
+            Usage depends on task complexity. Full Access changes when remaining capacity is available, not the plan&apos;s total monthly allowance.
           </p>
         </section>
 
