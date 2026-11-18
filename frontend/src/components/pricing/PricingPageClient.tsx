@@ -7,9 +7,6 @@ import {
   ArrowRight,
   ScanSearch,
   CircleHelp,
-  BrainCircuit,
-  BriefcaseBusiness,
-  ClipboardList,
   Check,
   Code2,
   Compass,
@@ -18,7 +15,6 @@ import {
   GitBranch,
   Info,
   LockKeyhole,
-  Rocket,
   Search,
   ShieldCheck,
   Sparkles,
@@ -38,20 +34,18 @@ type BillingStatus = Awaited<ReturnType<typeof api.billing.status>>;
 
 const PLAN_FEATURES = {
   free: [
-    'AI app builder + coding agent',
-    'New or existing GitHub repositories',
-    'Repository-aware edits and debugging',
-    'Browser preview + verification',
-    'Live web research, files and documents',
+    'Chat, research, and work with files',
+    'Build websites, apps, and tools with AI',
+    'Edit and debug code, including GitHub projects',
+    'Connect supported apps and services',
     'Included monthly AI capacity',
   ],
   spark: [
     'Everything in Free',
     'Higher monthly AI capacity',
-    'Full Access pacing',
-    'Longer end-to-end builds and multi-file changes',
-    'More build → test → repair cycles',
-    'Production-focused GitHub, Vercel and Supabase workflows',
+    'More room for longer, multi-step tasks',
+    'More build, test, and repair iterations',
+    'Full Access — earlier capacity availability',
   ],
 } as const;
 
@@ -367,23 +361,19 @@ export function PricingPageClient() {
 
                   <p className={styles.planLead}>
                     {isFree
-                      ? 'Explore the real Xroga workflow, work on real code and finish a smaller build with included capacity.'
-                      : 'For active builders who need more room for sustained research, implementation, verification and shipping.'}
+                      ? 'Explore what Xroga can do with included monthly AI capacity.'
+                      : 'More room for bigger, sustained work.'}
                   </p>
 
                   <ul className={styles.featureList}>
-                    {features.map((feature, featureIndex) => (
+                    {features.map((feature) => (
                       <li key={feature}>
                         <span className={styles.check}>
-                          {isFree ? <Check aria-hidden="true" /> : (() => {
-                            const Icons = [Search, BrainCircuit, BriefcaseBusiness, ClipboardList, Code2, Rocket];
-                            const FeatureIcon = Icons[featureIndex] ?? Sparkles;
-                            return <FeatureIcon aria-hidden="true" />;
-                          })()}
+                          <Check aria-hidden="true" />
                         </span>
                         <span>
                           {feature}
-                          {feature === 'Full Access pacing' ? <FullAccessInfo /> : null}
+                          {feature.startsWith('Full Access') ? <FullAccessInfo /> : null}
                         </span>
                       </li>
                     ))}

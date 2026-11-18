@@ -3772,3 +3772,29 @@
   .finalPrimary{min-width:220px;}
   .usageItem{border-bottom-color:rgba(160,189,231,.14);}
 }
+
+
+/* Pricing card highlights: five decisive benefits, technical detail below. */
+.planCard{min-height:525px;}
+.planLead{
+  min-height:0;
+  margin-top:15px;
+  line-height:1.62;
+}
+.featureList{
+  margin-top:22px;
+  padding-top:21px;
+  gap:14px;
+}
+.featureList li{
+  font-size:.86rem;
+  line-height:1.48;
+  align-items:flex-start;
+}
+.planCta{padding-top:25px;}
+@media(max-width:720px){
+  .planCard{min-height:0;}
+  .planLead{margin-top:12px;}
+  .featureList{margin-top:18px;padding-top:18px;gap:12px;}
+  .planCta{padding-top:23px;}
+}
