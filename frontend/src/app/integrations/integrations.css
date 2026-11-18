@@ -502,20 +502,78 @@
 /* The final signup CTA alone is deliberately free of the shared dot field.
    Override the transparent blanket applied to other page sections. Use a
    slightly raised solid surface so both lower corner curves are visible. */
+/* Final signup CTA: mostly white with slim animated black diagonal lines.
+   Keep the remaining Integrations sections' shared interactive dot backdrop.
+   The moving stripe treatment derives from Uiverse.io by jeremyssocial. */
 .xi-root > section.xi-cta{
-  background:linear-gradient(180deg,#101113 0%,#151516 100%)!important;
+  background:#fff!important;
+  background:repeating-linear-gradient(
+    135deg,
+    #fff 0px,
+    #fff 25px,
+    #171717 25px,
+    #171717 27px,
+    #fff 27px,
+    #fff 40px
+  )!important;
+  background-size:40px 40px!important;
+  animation:xi-cta-diagonal-move 4s linear infinite;
+  margin:30px 24px 38px;
   border:0;
-  border-radius:0 0 52px 52px;
+  border-radius:44px;
   overflow:hidden;
   isolation:isolate;
+  transition:opacity .85s cubic-bezier(.2,.7,.2,1),transform .85s cubic-bezier(.2,.7,.2,1);
+}
+.xi-root > section.xi-cta::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+  /* Very light, stationary white wash behind copy; no heavy dark shadow. */
+  background:radial-gradient(
+    ellipse 55% 77% at 50% 48%,
+    rgba(255,255,255,.72) 0%,
+    rgba(255,255,255,.53) 55%,
+    rgba(255,255,255,.07) 100%
+  );
+}
+.xi-root > section.xi-cta > :is(h2,p,a){
+  position:relative;
+  z-index:1;
+}
+.xi-root > section.xi-cta h2{color:#121212!important;text-shadow:none}
+.xi-root > section.xi-cta h2 em{color:#292929!important}
+.xi-root > section.xi-cta p{color:#333!important}
+.xi-root > section.xi-cta > .xi-cta-halo{display:none}
+/* IntersectionObserver adds the pending state only below the fold.
+   No JavaScript or unsupported observers leave the card visible. */
+.xi-root > section.xi-cta.xi-cta--pending{
+  opacity:0;
+  transform:translate3d(0,32px,0) scale(.987);
+}
+@keyframes xi-cta-diagonal-move{
+  0%{background-position:0 0}
+  100%{background-position:40px 40px}
+}
+@media(max-width:700px){
+  .xi-root > section.xi-cta{
+    margin:22px 13px 28px;
+    border-radius:27px;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  .xi-root > section.xi-cta{
+    animation:none;
+    transition:none;
+    opacity:1;
+    transform:none;
+  }
 }
 .xi-root{
   border-radius:0 0 52px 52px;
 }
 @media(max-width:700px){
-  .xi-root,
-  .xi-root > section.xi-cta{
-    border-bottom-left-radius:32px;
-    border-bottom-right-radius:32px;
-  }
+  .xi-root{border-bottom-left-radius:32px;border-bottom-right-radius:32px}
 }
