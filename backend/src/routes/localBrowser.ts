@@ -19,7 +19,7 @@ import type { Lease, LeaseStore } from '../workers/leaseStore.js';
 import { dispatchBrowserModel } from '../workers/browserModelDispatch.js';
 import { isTerminalRunStatus, PostgresBrowserRunStore, type BrowserRunRecord, type BrowserRunStore } from '../workers/browserRunStore.js';
 import { PostgresLeaseStore } from '../workers/postgresLeaseStore.js';
-import { readBrowserDocument } from './browserDocuments.js';
+import { DocumentError, readBrowserDocument } from './browserDocuments.js';
 import { createLocalBrowserPluginCatalog } from './localBrowserPlugins.js';
 import { canUserAccessComposioToolkit, createComposioConnectionLink, executeComposioReadTool, getComposioToolDetails, listPinnedCustomReadTools, listPinnedCustomWriteTools, isComposioConfigured, searchComposioActionTools, searchComposioTools } from '../services/integrations/composioClient.js';
 import type { XrogaConnectSearchResult } from '../services/integrations/composioClient.js';
@@ -463,8 +463,8 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
     try {
       const text = await readBrowserDocument(data.name, bytes);
       return res.json({ text });
-    } catch {
-      throw new BrowserRequestError(422, 'BROWSER_DOCUMENT_UNREADABLE');
+    } catch (error) {
+      throw new BrowserRequestError(422, 'BROWSER_DOCUMENT_UNREADABLE', { reason: [error instanceof DocumentError ? error.reason : 'invalid'] });
     } finally {
       await leases.release(lease).catch(() => undefined);
     }

@@ -227,6 +227,15 @@ export function App() {
             name: file.name,
             base64: btoa(bytes),
           });
+          if (prepared && typeof prepared.reason === 'string') {
+            const why: Record<string, string> = {
+              encrypted: 'is password-protected. Remove the password and attach it again.',
+              no_text: 'has no readable text (it looks scanned or image-only; text is not recognised from pictures).',
+              invalid: 'could not be read as a valid file.',
+            };
+            setAttachError(`${file.name} ${why[prepared.reason] ?? why.invalid}`);
+            continue;
+          }
           if (!prepared || typeof prepared.text !== 'string' || !prepared.text.trim())
             throw new Error('Empty document');
           file = new File([prepared.text], `${file.name}.txt`, { type: 'text/plain' });

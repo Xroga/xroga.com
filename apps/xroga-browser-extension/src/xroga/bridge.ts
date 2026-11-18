@@ -236,7 +236,11 @@ export function listenForWorkspace(
       ) {
         void workspaceRequest('document', { body: { name: message.name, base64: message.base64 } }).then(
           value => reply(value),
-          () => reply(null),
+          // The reason (password-protected, no text, invalid) reaches the panel so it can say what is wrong with the file.
+          (error: { detail?: { reason?: unknown } } | null) => {
+            const reason = Array.isArray(error?.detail?.reason) ? error.detail.reason[0] : undefined;
+            reply(typeof reason === 'string' && /^[a-z_]{1,20}$/.test(reason) ? { reason } : null);
+          },
         );
         return true;
       }

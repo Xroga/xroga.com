@@ -1,0 +1,31 @@
+{
+ "steps": {
+  "enrolled": {
+   "configured": true,
+   "saved": true,
+   "verified": true,
+   "ready": true
+  },
+  "mode": "kill",
+  "workStarted": true,
+  "killedAt": "2026-11-18T15:11:03.425Z",
+  "workerBack": true,
+  "resumeOffered": true,
+  "pressedResume": true,
+  "titlesAfterResume": [
+   "Example Domain",
+   "Internet Assigned Numbers Authority",
+   "Wikipedia",
+   "MDN"
+  ],
+  "titlesFinal": [
+   "Example Domain",
+   "Internet Assigned Numbers Authority",
+   "Wikipedia",
+   "MDN"
+  ],
+  "answerTail": "ry succeeded and I read the h1 directly. Verified. en.wikipedia.org: the page loaded, but its text was trimmed before the heading markup came through, so \"Wikipedia\" is what that page's h1 normally says rather than something I confirmed here. This is the one unverified cell. Status: 3 of 4 headings verified, 1 title set verified (all four tab titles). One temporary timeout on MDN, nothing blocked, no logins or prompts. Say the word if you want the Wikipedia h1 confirmed from the page itself. now"
+ },
+ "ok": true,
+ "failures": []
+}

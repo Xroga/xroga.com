@@ -1762,6 +1762,10 @@ export class RunManager {
         const timings = new RunTimings();
         // The connected-app tools this run's searches found, by name, so a call to one reaches the guarded routes.
         const appTools = new Map<string, AppToolInfo>();
+        // What this task's searches already asked and listed, so a repeated search or a made-up tool name is answered here, at once,
+        // without a server call and without a wasted model turn.
+        const searched = new Map<string, string>();
+        const seenSlugs = new Set<string>();
         // wrapApp and ask are defined below with the tool dispatch; the caller reads them lazily.
         let pluginRun: (name: PluginToolName, body: unknown) => ReturnType<typeof runPluginTool> = () => Promise.reject(new Error('Connected apps are not ready.'));
         const pluginCaller = repairingPluginCaller((name, body) => pluginRun(name, body), slug => [...appTools.values()].some(info => info.slug === slug && info.kind === 'write'));
@@ -1843,6 +1847,16 @@ export class RunManager {
               }
               if (call.toolName === 'plugin_search' || call.toolName === 'plugin_read' ||
                   call.toolName === 'plugin_action_search' || call.toolName === 'plugin_act') {
+                const q = (call.toolName === 'plugin_search' || call.toolName === 'plugin_action_search') ? String((call.input as { query?: unknown } | null)?.query ?? '').trim().toLowerCase() : '';
+                if (q && searched.has(call.toolName + '|' + q)) {
+                  const offered = [...appTools.keys()].slice(0, 20).join(', ');
+                  return { text: `This search was already run in this task (${searched.get(call.toolName + '|' + q)}). Do not search again with the same words. Call one of the tools already offered, by its name: ${offered || 'none were found: use another method'}.`, isError: false };
+                }
+                const wanted = (call.toolName === 'plugin_read' || call.toolName === 'plugin_act') ? (call.input as { slug?: unknown } | null)?.slug : undefined;
+                if (typeof wanted === 'string' && seenSlugs.size && !seenSlugs.has(wanted) && ![...appTools.values()].some(i => i.slug === wanted)) {
+                  const offered = [...appTools.entries()].slice(0, 20).map(([alias, info]) => `${alias} (${info.kind === 'write' ? 'changes data' : 'reads'})`).join(', ');
+                  return { text: `The name ${wanted} was not offered by any search in this task, so it was not sent. Do not search again: call one of the tools already offered, by its name: ${offered}.`, isError: true };
+                }
                 const result = await callPlugin(call.toolName, call.input);
                 // A tool name the model made up (not one this task's searches offered) is refused as "not discovered": say which tools ARE
                 // offered, so the next call is right instead of another search and another turn.
@@ -1854,6 +1868,8 @@ export class RunManager {
 The name ${asked} was not offered in this task. Do not search again: call one of the tools already offered, by its name: ${offered}.` };
                 }
                 const { appTools: found, ...rest } = result;
+                if (q) searched.set(call.toolName + '|' + q, `${found?.length ?? 0} tools found`);
+                for (const info of found ?? []) seenSlugs.add(info.slug);
                 if (!found?.length) return rest;
                 // The tools the search found become callable by their own names, with their real parameter schemas.
                 const taken = new Set([...fullToolList.map(t => t.name), ...PLUGIN_TOOLS.map(t => t.name), PLUGIN_CHAIN_TOOL.name, PLUGIN_CONNECT_TOOL.name, HTTP_GET_TOOL.name, ...appTools.keys()]);
