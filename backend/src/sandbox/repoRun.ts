@@ -77,6 +77,19 @@ export function textFiles(entries: Array<{ path: string; data: Buffer }>): { fil
   return { files, omitted };
 }
 
+/** Fetches a public repository at a branch, tag or commit into memory; returns its text files and the exact 40-character commit. */
+export async function fetchRepositoryFiles(owner: string, repo: string, ref: string): Promise<{ files: ProjectFile[]; omitted: number; commit: string }> {
+  const archive = await boundedPublicGet(`https://codeload.github.com/${owner}/${repo}/tar.gz/${encodeURIComponent(ref)}`, { maxBytes: MAX_TARBALL_BYTES, timeoutMs: 30_000, maxRedirects: 2, allowHttpErrors: true });
+  if (archive.statusCode === 404) throw new RepoRunError('REPO_NOT_FOUND', 'That public repository or version was not found.');
+  if (archive.statusCode !== 200) throw new RepoRunError('REPO_ARCHIVE_UNAVAILABLE', `The repository archive could not be fetched (${archive.statusCode}).`);
+  const meta: { commit?: string } = {};
+  const { files, omitted } = textFiles(readTarball(gunzipSync(archive.bytes, { maxOutputLength: 64 * 1024 * 1024 }), meta));
+  const commit = meta.commit ?? '';
+  if (!/^[0-9a-f]{40}$/.test(commit)) throw new RepoRunError('REPO_VERSION_UNRESOLVED', 'The exact version could not be determined from the archive.');
+
+  return { files, omitted, commit };
+}
+
 export interface RepoRunInput {
   url: string;
   ref?: string;
@@ -112,13 +125,7 @@ export async function runRepository(input: RepoRunInput): Promise<RepoRunResult>
   const selected = await selectSandboxProvider();
   if (!selected.runtime) throw new RepoRunError('SANDBOX_UNAVAILABLE', selected.availability.detail ?? 'No isolated execution worker is available.');
 
-  const archive = await boundedPublicGet(`https://codeload.github.com/${owner}/${repo}/tar.gz/${encodeURIComponent(ref)}`, { maxBytes: MAX_TARBALL_BYTES, timeoutMs: 30_000, maxRedirects: 2, allowHttpErrors: true });
-  if (archive.statusCode === 404) throw new RepoRunError('REPO_NOT_FOUND', 'That public repository or version was not found.');
-  if (archive.statusCode !== 200) throw new RepoRunError('REPO_ARCHIVE_UNAVAILABLE', `The repository archive could not be fetched (${archive.statusCode}).`);
-  const meta: { commit?: string } = {};
-  const { files, omitted } = textFiles(readTarball(gunzipSync(archive.bytes, { maxOutputLength: 64 * 1024 * 1024 }), meta));
-  const commit = meta.commit ?? '';
-  if (!/^[0-9a-f]{40}$/.test(commit)) throw new RepoRunError('REPO_VERSION_UNRESOLVED', 'The exact version could not be determined from the archive.');
+  const { files, omitted, commit } = await fetchRepositoryFiles(owner, repo, ref);
 
   const own = (input.files ?? []).filter(file => /^[A-Za-z0-9_./-]{1,200}$/.test(file.path) && !file.path.split('/').includes('..') && !file.path.startsWith('/') && !file.path.startsWith('xroga-out'));
   const byPath = new Map<string, ProjectFile>(files.map(file => [file.path, file]));
