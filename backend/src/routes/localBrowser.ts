@@ -29,14 +29,14 @@ import { isFinancialAction, prepareBusinessAction } from '../services/integratio
 import { createBusinessActionConfirmation } from '../services/integrations/businessActionConfirmations.js';
 
 const MODEL = 'deepseek_v4_1_flash_1017';
-const MAX_TURNS = 120;
+const MAX_TURNS = 400;
 // A run is admitted in segments: when it reaches the end of one, `extend` grants the next, so a task is bounded by its outcome, not by a
 // turn or time count. Money is bounded where it is spent: every model turn reserves and settles against the owner's canonical
 // entitlement ledger, and a refused reservation stops the run with its progress saved (BROWSER_ALLOWANCE_EXHAUSTED).
-const SEGMENT_TURNS = 48;
+const SEGMENT_TURNS = 96;
 const TURN_CEILING_MICROS = 3_000;
 const MINUTE = 60_000;
-const SEGMENT_MS = 40 * MINUTE;
+const SEGMENT_MS = 90 * MINUTE;
 /** A run's wall-clock segment is renewed when less than this is left. */
 const RENEW_BEFORE_MS = 10 * MINUTE;
 const MAX_GOAL = 16_000;
@@ -187,7 +187,7 @@ function runAllowance(goal: string, attachmentCount: number) {
   const configuredTurns = Number(process.env.XROGA_LOCAL_BROWSER_MAX_TURNS);
   const ceiling = Number.isInteger(configuredTurns) && configuredTurns >= 16
     ? Math.min(configuredTurns, MAX_TURNS) : MAX_TURNS;
-  return { turns: Math.min(extended ? 100 : 48, ceiling), durationMs: (extended ? 90 : 40) * MINUTE };
+  return { turns: Math.min(extended ? 200 : 96, ceiling), durationMs: (extended ? 180 : 90) * MINUTE };
 }
 const tool = z.object({
   type: z.literal('function'),

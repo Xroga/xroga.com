@@ -181,7 +181,7 @@ test('local Chrome shares canonical ownership, turn fencing, cancellation and re
     const extended = await send('/runs', 'POST', { goal: 'Read the attached specification', startUrl: 'https://example.com/', attachmentCount: 1 });
     const accepted = await extended.json() as { runId: string; maxTurns: number; remainingMs: number };
     assert.ok(accepted.maxTurns > 12);
-    assert.equal(accepted.remainingMs, 90 * 60_000);
+    assert.equal(accepted.remainingMs, 180 * 60_000);
     const longPath = `/runs/${accepted.runId}`;
     for (let turn = 1; turn <= 15; turn++) {
       assert.equal((await send(`${longPath}/turn`, 'POST', { ...request, turn })).status, 200);
@@ -203,8 +203,8 @@ test('local Chrome shares canonical ownership, turn fencing, cancellation and re
     }
     assert.equal((await send(`${segPath}/extend`, 'POST', {}, true)).status, 404);
     const grant = await (await send(`${segPath}/extend`, 'POST', {})).json() as { maxTurns: number; granted: number; remainingMs: number; turns: number };
-    assert.equal(grant.granted, 48);
-    assert.equal(grant.maxTurns, firstMax + 48);
+    assert.equal(grant.granted, 96);
+    assert.equal(grant.maxTurns, firstMax + 96);
     assert.equal(grant.turns, firstMax - 3);
     assert.ok(grant.remainingMs > 30 * 60_000);
     assert.equal((await send(`${segPath}/turn`, 'POST', { ...request, turn: firstMax - 2 })).status, 200);
@@ -215,7 +215,7 @@ test('local Chrome shares canonical ownership, turn fencing, cancellation and re
     while (turn <= 450) {
       if (turn - 1 >= max - 3) {
         const next = await (await send(`${segPath}/extend`, 'POST', {})).json() as { maxTurns: number; granted: number };
-        assert.equal(next.granted, 48);
+        assert.equal(next.granted, 96);
         max = next.maxTurns;
       }
       assert.equal((await send(`${segPath}/turn`, 'POST', { ...request, turn })).status, 200);

@@ -1,6 +1,7 @@
 // The composer: a growing input where Enter sends and Shift+Enter adds a line (IME composition handled), ↑ recalls
 // earlier prompts, the mode menu and the model picker beside it, and Send (an arrow) turning into Stop while a run is
 // active.
+import { FullAccessToggle } from './FullAccessToggle';
 import { useEffect, useRef, useState } from 'react';
 import type { ModelRef, PermissionMode } from '@src/store/types';
 import type { AttachmentRef } from '@src/ui/protocol';
@@ -613,6 +614,7 @@ export function Composer({
               <span className="max-[279px]:sr-only">Plugins</span>
             </button>
           ) : null}
+          {onPlugins ? <FullAccessToggle /> : null}
           {!XROGA_PRODUCT && (
             <ModeMenu
               mode={mode}
