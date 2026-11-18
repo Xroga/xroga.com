@@ -2,6 +2,7 @@
 // once, and four (the fourth waits for a free slot). If the workers really run together, three take about as long as one, and four
 // about twice as long. It reports each phase's wall-clock time and its start and end (epoch ms), so an outside sampler of Chrome's
 // processes can say what the phase cost in CPU and memory. It asserts only that three are not serialised.
+import { runManager } from '@src/extension/index';
 import { listConversations } from '@src/store/conversations';
 import { FIXTURE_ORIGIN } from '../fixtures-config';
 import { defineCheck } from './registry';
@@ -9,6 +10,8 @@ import { sleep, waitForLoad } from './helpers';
 import { FIXTURE_PROVIDER, panel, scriptReplies, seedFixtureModel } from './panel-chat';
 
 const WORKER_MS = 3000;
+// The product backend's activeRunLimit() is 13 (parent + up to 12 workers); a fixture model has no server to say so, so the check supplies it.
+const PRODUCT_ACTIVE_RUN_LIMIT = 13;
 const status = (tag: string) => ({ when: tag, toolCalls: [{ name: 'parallel_task_status', input: { waitSeconds: 20 } }] });
 const worker = (tag: string) => [
   { when: tag, delayMs: WORKER_MS, toolCalls: [{ name: 'read', input: {} }] },
@@ -22,6 +25,7 @@ defineCheck({
   description: 'One, three and four independent workers: wall-clock time per phase, for CPU and memory sampling.',
   async run() {
     await seedFixtureModel();
+    runManager.setFallbackActiveRunLimit(PRODUCT_ACTIVE_RUN_LIMIT);
     await chrome.storage.local.set({ 'nb.providers': [FIXTURE_PROVIDER] });
     await chrome.storage.local.remove('xroga_parallel_jobs_v1');
     const window = (await chrome.windows.getCurrent()).id!;
@@ -30,7 +34,7 @@ defineCheck({
     const view = await chrome.tabs.create({ windowId: window, url: chrome.runtime.getURL(`/sidepanel.html#tab=${page.id}`), active: false });
     await waitForLoad(view.id!);
     await sleep(600);
-    const phases: Array<{ name: string; workers: number; ms: number; start: number; end: number; status: string; done: number }> = [];
+    const phases: Array<{ name: string; workers: number; ms: number; start: number; end: number; status: string; done: number; maxActive: number }> = [];
     try {
       for (const [name, count] of [['one', 1], ['three', 3], ['five', 5], ['six', 6]] as const) {
         // The panel continues one conversation, and the fixture model matches on its first message: one parent tag for all phases.
@@ -59,6 +63,13 @@ defineCheck({
         const start = Date.now();
         await panel(page.id!, 'type-send', { text: `${parent}: run ${count} worker(s) in parallel with several agents` });
         let last = '';
+        // Sample the job table: the most workers seen active (starting or running) at the same instant is the overlap that really happened.
+        let maxActive = 0;
+        const sampler = setInterval(async () => {
+          const jobs = Object.values(((await chrome.storage.local.get('xroga_parallel_jobs_v1')).xroga_parallel_jobs_v1 ?? {}) as Record<string, { state: string; conversationId?: string }>);
+          const active = jobs.filter(j => (j.state === 'starting' || j.state === 'running') && j.conversationId && !known.has(j.conversationId)).length;
+          if (active > maxActive) maxActive = active;
+        }, 100);
         // The panel still says "Done" from the phase before: wait until this run has started.
         for (let i = 0; i < 60 && (await panel(page.id!, 'read')).status === 'Done'; i++) await sleep(50);
         for (let i = 0; i < 400; i++) {
@@ -67,13 +78,16 @@ defineCheck({
           await sleep(150);
         }
         const end = Date.now();
+        clearInterval(sampler);
         const workers = (await listConversations()).filter(c => !known.has(c.id) && c.title.startsWith('Worker: '));
-        phases.push({ name, workers: count, ms: end - start, start, end, status: last, done: workers.filter(w => w.status === 'done').length });
+        phases.push({ name, workers: count, ms: end - start, start, end, status: last, done: workers.filter(w => w.status === 'done').length, maxActive });
         await sleep(2500);
       }
       const [one, three, five, six] = phases;
       const report = {
         workerModelMs: WORKER_MS,
+        activeRunLimit: PRODUCT_ACTIVE_RUN_LIMIT,
+        maxActiveWorkers: Object.fromEntries(phases.map(p => [p.name, p.maxActive])),
         phases,
         threeVsOne: Number((three.ms / one.ms).toFixed(2)),
         fiveVsOne: Number((five.ms / one.ms).toFixed(2)),
@@ -83,10 +97,13 @@ defineCheck({
       };
       const allDone = phases.every(p => p.status === 'Done' && p.done === p.workers);
       // Three together must be clearly faster than three one after another.
-      if (!allDone || three.ms > report.serialThreeWouldBe * 0.8) throw new Error(JSON.stringify(report));
+      // With the product's limit, every worker of a phase must have been active at the same instant.
+      const overlapped = phases.every(p => p.maxActive >= p.workers);
+      if (!allDone || !overlapped || three.ms > report.serialThreeWouldBe * 0.8) throw new Error(JSON.stringify(report));
       return report;
     } finally {
       for (const t of [view, page]) await chrome.tabs.remove(t.id!).catch(() => undefined);
+      runManager.setFallbackActiveRunLimit(undefined);
       await chrome.storage.local.remove('xroga_parallel_jobs_v1');
       await chrome.storage.local.set({ 'nb.providers': [FIXTURE_PROVIDER] });
     }

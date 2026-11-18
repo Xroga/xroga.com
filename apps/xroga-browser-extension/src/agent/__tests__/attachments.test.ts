@@ -26,15 +26,19 @@ async function file(conversationId: string, name: string, mimeType: string, cont
 }
 
 describe('what can be attached', () => {
-  it('takes images and text files, and refuses PDF, Office and other files with the reason', () => {
+  it('takes images and text files, and reads Word and Excel files as text, and refuses PDF and other files with the reason', () => {
     expect(attachmentKind('a.png', 'image/png')).toEqual({ kind: 'image' });
     expect(attachmentKind('notes.md', '')).toEqual({ kind: 'text' });
     expect(attachmentKind('data.csv', 'text/csv')).toEqual({ kind: 'text' });
     expect(attachmentKind('cfg.json', 'application/json')).toEqual({ kind: 'text' });
     expect(attachmentKind('report.pdf', 'application/pdf')).toMatchObject({
-      refused: expect.stringContaining('PDF and Office'),
+      refused: expect.stringContaining('PDF'),
     });
-    expect(attachmentKind('plan.docx', '')).toMatchObject({ refused: expect.stringContaining('PDF and Office') });
+    // Word documents and spreadsheets are read into text (store/office.ts); old binary formats and presentations are not.
+    expect(attachmentKind('plan.docx', '')).toEqual({ kind: 'text' });
+    expect(attachmentKind('leads.xlsx', '')).toEqual({ kind: 'text' });
+    expect(attachmentKind('old.xls', '')).toMatchObject({ refused: expect.stringContaining('cannot be read') });
+    expect(attachmentKind('deck.pptx', '')).toMatchObject({ refused: expect.stringContaining('cannot be read') });
     expect(attachmentKind('app.zip', 'application/zip')).toMatchObject({
       refused: expect.stringContaining('Only images'),
     });

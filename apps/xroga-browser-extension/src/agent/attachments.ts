@@ -4,6 +4,7 @@
 import { quote, siteOf } from '@src/browser-control';
 import { getBlob } from '@src/store/conversations';
 import { attachmentKind } from '@src/store/attachments';
+import { isOfficeText, officeText } from '@src/store/office';
 import type { MessagePart, StoredBlob } from '@src/store/types';
 import { note } from './records';
 import type { AgentTool } from './tools';
@@ -24,6 +25,14 @@ async function base64(blob: Blob): Promise<string> {
   let binary = '';
   for (let i = 0; i < bytes.length; i += 0x8000) binary += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
   return btoa(binary);
+}
+
+/** The text of an attached file: an .xlsx or .docx is read into text, anything else is already text. A file that cannot be read says why. */
+export async function attachmentText(name: string, data: Blob): Promise<string> {
+  if (!isOfficeText(name)) return data.text();
+  try { return await officeText(name, data); } catch (error) {
+    return `[The file «${name}» could not be read: ${error instanceof Error ? error.message : 'unknown error'}]`;
+  }
 }
 
 export type Wrap = (text: string, source: { attachment: string }) => string;
@@ -73,7 +82,7 @@ export async function attachmentParts(
         out.push({ type: 'image', data: await base64(blob.data), mediaType: blob.mimeType, note: ATTACHED_IMAGE_LINE });
       continue;
     }
-    const text = await blob.data.text();
+    const text = await attachmentText(blob.name, blob.data);
     const windowBudget = inlineBudget(options.contextWindow);
     const budget =
       options.maxInlineChars === undefined
@@ -151,7 +160,7 @@ export async function readAttachment(
       isError: true,
     };
   }
-  const text = await blob.data.text();
+  const text = await attachmentText(blob.name, blob.data);
   const offset = Math.max(0, Math.min(Number(args.offset ?? 0) || 0, text.length));
   const max = Math.max(500, Math.min(Number(args.maxChars ?? 6_000) || 6_000, 7_000));
   const slice = text.slice(offset, offset + max);

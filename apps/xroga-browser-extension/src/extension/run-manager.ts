@@ -144,6 +144,13 @@ export class RunManager {
   readonly #workers: ParallelWorkers;
   /** The account's active-run limit the server reported when each conversation's run started. */
   readonly #activeRunLimits = new Map<string, number>();
+  /** Used when a conversation's run reported no limit (a fixture model has no server to ask). Only the real-Chrome checks set it. */
+  #fallbackActiveRunLimit: number | undefined;
+
+  /** For the real-Chrome checks: the account limit a fixture server would have reported (the product backend reports 13). */
+  setFallbackActiveRunLimit(limit: number | undefined): void {
+    this.#fallbackActiveRunLimit = limit;
+  }
 
   constructor() {
     this.#workers = new ParallelWorkers({
@@ -152,7 +159,7 @@ export class RunManager {
       load: async () => ((await chrome.storage.local.get(WORKER_JOBS_KEY))[WORKER_JOBS_KEY] as Record<string, WorkerJob> | undefined) ?? {},
       save: jobs => chrome.storage.local.set({ [WORKER_JOBS_KEY]: jobs }),
       open: (parentId, task) => this.#openWorker(parentId, task),
-      activeLimit: parentId => workersFor(this.#activeRunLimits.get(parentId)),
+      activeLimit: parentId => workersFor(this.#activeRunLimits.get(parentId) ?? this.#fallbackActiveRunLimit),
       defaultUrl: SEARCH_HOME,
       stop: conversationId => this.#stop(conversationId),
       closeWindow: windowId => chrome.windows.remove(windowId),

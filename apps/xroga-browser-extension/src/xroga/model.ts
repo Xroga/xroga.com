@@ -39,6 +39,28 @@ function completionStream(value: Completion) {
   return new Response(body, { headers: { 'Content-Type': 'text/event-stream' } });
 }
 
+/**
+ * Resuming right after the extension was killed (a service-worker stop, a Chrome restart) meets the server still finishing the request the
+ * killed worker had in flight: it holds the run's lease until that request ends or the lease runs out (100 s). The server answers
+ * BROWSER_RUN_BUSY and keeps the run intact, so the resume asks again for up to two minutes instead of failing the run. Only that code is
+ * retried, and it is a lease check, so nothing is ever repeated.
+ */
+export const RESUME_BUSY_WINDOW_MS = 120_000;
+export async function resumeRun(runId: string, signal: AbortSignal, request: typeof workspaceRequest = workspaceRequest, wait = 2_500): Promise<unknown> {
+  const give = Date.now() + RESUME_BUSY_WINDOW_MS;
+  for (;;) {
+    try {
+      return await request('resume', { runId }, signal);
+    } catch (error) {
+      if ((error as { code?: unknown } | null)?.code !== 'BROWSER_RUN_BUSY' || signal.aborted || Date.now() + wait > give) throw error;
+      await new Promise<void>((resolve, reject) => {
+        const timer = setTimeout(resolve, wait);
+        signal.addEventListener('abort', () => { clearTimeout(timer); reject(signal.reason); }, { once: true });
+      });
+    }
+  }
+}
+
 export async function startXrogaModelRun(
   goal: string,
   startUrl: string,
@@ -47,7 +69,7 @@ export async function startXrogaModelRun(
   resumeId?: string,
 ) {
   const start = (await (resumeId
-    ? workspaceRequest('resume', { runId: resumeId }, signal)
+    ? resumeRun(resumeId, signal)
     : workspaceRequest('start', { goal, startUrl, attachmentCount }, signal))) as {
     runId?: string;
     turns?: number;
