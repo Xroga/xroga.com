@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "178c74119fc154e624f1309f13970f9e5fd1661d",
+  "source_sha": "e4ac98cafc7bd40ef64eb24f55ddf73d1a6f5a7f",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -22340,7 +22340,7 @@
     },
     {
       "path": "frontend/src/components/native-openui/upstream/components/code-panel.tsx",
-      "sha256": "5b1a776dc1e4a5bdc22fd1161475ebe5fd24a7c82a7b5e9fa98cfbe447821fa7"
+      "sha256": "8da391c425beb98c19b7688514cf06dbc70b727fe9e3017616538b16effb4c5f"
     },
     {
       "path": "frontend/src/components/native-openui/upstream/components/controls.tsx",
@@ -22360,7 +22360,7 @@
     },
     {
       "path": "frontend/src/components/native-openui/upstream/components/markdown.tsx",
-      "sha256": "a9ac3fbe08f01d064dee70c323bd65884feec3057dba144974f75cd29eb775bb"
+      "sha256": "7c17a7b4c3f4c21426f3726b1df05aaf1737919a50df437c75b459caaefbe55c"
     },
     {
       "path": "frontend/src/components/native-openui/upstream/components/style.ts",
@@ -23672,7 +23672,7 @@
     },
     {
       "path": "frontend/src/lib/formatAiMarkdown.tsx",
-      "sha256": "199d9f6f334a6a9ea1bfaa6906fec6583970c18815343eb84ef273f2e1cd0603"
+      "sha256": "b7d062bda6d42d4adac11104da7b83f8cc9a7b0821377c68f02c3f00ddeb2226"
     },
     {
       "path": "frontend/src/lib/gameBuilderContent.ts",
@@ -30728,7 +30728,7 @@
       "hostname": "xroga.local",
       "protocol": "https:",
       "path": "frontend/src/lib/formatAiMarkdown.tsx",
-      "line": 132,
+      "line": 133,
       "credentialsInUrl": false
     },
     {
@@ -39100,27 +39100,6 @@
     },
     {
       "path": "frontend/src/components/native-openui/upstream/components/markdown.tsx",
-      "line": 142,
-      "scope": "FUNCTION_LOCAL",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "frontend/src/components/native-openui/upstream/components/markdown.tsx",
-      "line": 143,
-      "scope": "FUNCTION_LOCAL",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "frontend/src/components/native-openui/upstream/components/markdown.tsx",
-      "line": 144,
-      "scope": "FUNCTION_LOCAL",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "frontend/src/components/native-openui/upstream/components/markdown.tsx",
       "line": 145,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
@@ -39170,21 +39149,42 @@
     },
     {
       "path": "frontend/src/components/native-openui/upstream/components/markdown.tsx",
-      "line": 208,
+      "line": 152,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/native-openui/upstream/components/markdown.tsx",
-      "line": 237,
+      "line": 153,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/native-openui/upstream/components/markdown.tsx",
-      "line": 382,
+      "line": 154,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/components/native-openui/upstream/components/markdown.tsx",
+      "line": 218,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/components/native-openui/upstream/components/markdown.tsx",
+      "line": 247,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/components/native-openui/upstream/components/markdown.tsx",
+      "line": 392,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

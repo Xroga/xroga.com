@@ -30,9 +30,6 @@
 
 .xroga-native-openui, .xroga-native-openui *, .xroga-native-openui *::before, .xroga-native-openui *::after { box-sizing: border-box; }
 
-.xroga-native-openui .iui-code-token { color: var(--iui-code-light, inherit); }
-:where([data-theme="dark"], [data-theme="black"], [data-theme="gray"]) .xroga-native-openui:not(:where(.native-evaluation[data-theme="light"] .xroga-native-openui, :is(.terminal-skin-light, .terminal-skin-light-grid, .terminal-skin-solar) .xroga-native-openui)) .iui-code-token,
-:where(.terminal-skin-dark, .terminal-skin-amoled, .terminal-skin-gray, .terminal-skin-midnight, .terminal-skin-forest, .terminal-skin-matrix, .terminal-skin-amber) .xroga-native-openui .iui-code-token { color: var(--iui-code-dark, inherit); }
 
 .xroga-native-openui {
   --native-accent: #195bd5;

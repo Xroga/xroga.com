@@ -42,6 +42,8 @@ test('CommonMark content renders links, emphasis, fenced code, and tables with e
   assert.match(html, /href="https:\/\/example\.com\/source\?utm_source=xroga\.com"/);
   assert.match(html, /language-ts/);
   assert.match(html, /const ready = true;/);
+  assert.match(html, /TypeScript/);
+  assert.match(html, /aria-label="Copy code"/);
   assert.match(html, /<td[^>]*><\/td>/, 'the empty GFM cell must remain in the table');
   assert.doesNotMatch(html, /onerror|src="x"/i);
   assert.match(html, /src="\/api\/site-icon\?d=example\.com"/);

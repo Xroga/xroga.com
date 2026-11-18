@@ -189,6 +189,7 @@ const compiled = await build({
     resolveDir: process.cwd(),
     loader: 'tsx',
     contents: 'import {createRoot} from "react-dom/client"; import {useEffect,useState} from "react"; import {ThemeToggle} from "./frontend/src/components/layout/ThemeToggle"; import {useThemeStore} from "./frontend/src/store/useThemeStore"; import MathEquationImpl from "./frontend/src/lib/mathRenderImpl"; import {Chart} from "./frontend/src/components/native-openui/upstream/components/chart"; import {NativeSurface} from "./frontend/src/components/native-openui/NativeSurface"; import {ResponseSources} from "./frontend/src/components/terminal/ResponseSources"; import {ResponseSourceScope} from "./frontend/src/components/terminal/ResponseSourceScope"; import "./frontend/src/components/native-openui/evaluation.css";'
+      + 'import "./frontend/src/styles/answerExperience.css";'
       + 'const cases = ' + JSON.stringify(cases) + ';'
       + 'const q=new URL(location.href).searchParams; const name=q.get("case") || "short";'
       + 'document.body.dataset.theme=q.get("shellTheme") || q.get("theme") || "light"; document.querySelector("main").dataset.theme=q.get("theme") || "light";'
@@ -432,9 +433,9 @@ try {
       assert.equal(await codeBlocks.count(), 2);
       const panels = page.locator('.iui-codeblock');
       assert.deepEqual(await panels.locator('.iui-codeblock-language').allTextContents(), ['Plain text', 'Python']);
-      for (const panel of await panels.all()) {
+      for (const [index, panel] of (await panels.all()).entries()) {
         const expected = await panel.locator('pre code').textContent();
-        await panel.getByRole('button', { name: 'Copy code', exact: true }).click();
+        await panel.getByRole('button', { name: index === 0 ? 'Copy text' : 'Copy code', exact: true }).click();
         await panel.getByText('Copied', { exact: true }).waitFor();
         assert.equal(await page.evaluate(() => navigator.clipboard.readText()), expected);
       }

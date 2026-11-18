@@ -109,11 +109,14 @@ function textKey(text: string): string {
   return nativeReadableTextKey(text);
 }
 
-// A display Title and the opening Markdown heading may use different heading
-// separators. Preserve code, URLs, citations and every other character.
+// A display Title and the opening Markdown heading may use different typography
+// and number-list punctuation. Preserve the numeric signs, code, URLs and citations.
 function headingKey(text: string): string {
   return textKey(text).split(/(`[^`\n]+`|\[[^\]\n]+\]\([^)\s]+\))/g)
-    .map((part, index) => index % 2 ? part : part.replace(/\s+[–—]\s+|\s*:\s*/g, ':'))
+    .map((part, index) => index % 2 ? part : part
+      .replace(/\s+[–—]\s+|\s*:\s*/g, ':')
+      .replace(/−(?=[\p{Sc}]?\d)/gu, "-")
+      .replace(/(?<=\d)(?:,\s+and\s+|\s+and\s+)(?=[+\-]?[\p{Sc}]?\d)/gu, ", "))
     .join('');
 }
 
@@ -162,6 +165,13 @@ export function nativeMarkdownMatches(root: unknown, readInitial: (value: unknow
     // it. A matching paragraph in the main answer must stay visible.
     if (typeName === "Flashcard") return;
     if (["Text", "Caption", "Quote"].includes(typeName ?? "") && typeof props.text === "string") paragraphs.add(citationTextKey(props.text));
+    if (typeName === "Badge" && typeof props.text === "string" && !/\[\d{1,3}\]|\]\(/.test(props.text)) {
+      paragraphs.add(citationTextKey(props.text));
+    }
+    if (typeName === "Checkbox" && typeof props.label === "string" && !/\[\d{1,3}\]/.test(props.label)) {
+      // Saved fallback can contain each checkbox as a separate list block.
+      listItems.add(citationTextKey(props.label));
+    }
     if (typeName === "Quote" && typeof props.cite === "string") paragraphs.add(citationTextKey(props.cite));
     if (typeName === "Math" && typeof props.tex === "string") paragraphs.add(citationTextKey(props.tex));
     if (typeName === "Popover") for (const value of [props.trigger, props.content]) {
@@ -355,7 +365,7 @@ function blocks(source: string): Block[] {
     if (/^\s*>/.test(line)) {
       const body: string[] = [];
       for (; i < lines.length && /^\s*>/.test(lines[i]); i++) body.push(lines[i].replace(/^\s*>\s?/, ""));
-      out.push({ kind: "quote", text: body.join(" ") });
+      out.push({ kind: "quote", text: body.join("\n") });
       continue;
     }
     const item = LIST_ITEM.exec(line);
@@ -393,7 +403,10 @@ export function MarkdownBlocks({ text, renderCitation, deduplicateTables = false
             return <p key={k}>{inline(b.text, k, renderCitation)}</p>;
           case "quote":
             if (matches?.paragraphs.has(citationTextKey(b.text))) return null;
-            return <blockquote key={k}>{inline(b.text, k, renderCitation)}</blockquote>;
+            return <blockquote key={k} className="iui-markdown-quote">
+              {b.text.split(/\n\s*\n/).filter(paragraph => paragraph.trim()).map((paragraph, index) =>
+                <p key={index}>{inline(paragraph, `${k}-${index}`, renderCitation)}</p>)}
+            </blockquote>;
           case "h": {
             const title = textKey(b.text);
             if (i === 0 && nativeHeadingTitles?.has(headingKey(b.text))) return null;

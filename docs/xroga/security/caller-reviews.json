@@ -28534,9 +28534,9 @@
     },
     {
       "path": "frontend/src/lib/formatAiMarkdown.tsx",
-      "sourceSha256": "199d9f6f334a6a9ea1bfaa6906fec6583970c18815343eb84ef273f2e1cd0603",
+      "sourceSha256": "b7d062bda6d42d4adac11104da7b83f8cc9a7b0821377c68f02c3f00ddeb2226",
       "callIds": [
-        "07e7e80f4c3c2b4a540b"
+        "268ea28d28fecea68c7e"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in decodeBase64UrlUtf8, with no database or Storage client receiver.",
@@ -28592,6 +28592,14 @@
           "07e7e80f4c3c2b4a540b"
         ],
         "reason": "Only the Markdown opening paragraph handling and artificial callout changed. The complete decodeBase64UrlUtf8 function, Uint8Array.from receiver, source positions and candidate IDs are byte-identical. This refresh does not grant a tenant proof or change the historical accepted evidence."
+      },
+      "codePanelReview": {
+        "sourceBefore": "e4ac98cafc7bd40ef64eb24f55ddf73d1a6f5a7f",
+        "sourceSha256Before": "199d9f6f334a6a9ea1bfaa6906fec6583970c18815343eb84ef273f2e1cd0603",
+        "callIdsBefore": [
+          "07e7e80f4c3c2b4a540b"
+        ],
+        "reason": "A new import shifts the source position. The entire reviewed decodeBase64UrlUtf8 function and Uint8Array.from call are byte-identical. The fenced Markdown changes only render and locally copy existing answer text."
       }
     },
     {

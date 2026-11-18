@@ -6,6 +6,7 @@ import React, {
   useState,
 } from 'react';
 import { Search } from 'lucide-react';
+import { CodePanel } from '@/components/native-openui/upstream/components/code-panel';
 import { SourceCitation } from '@/components/terminal/SourceCitation';
 import { PluginBrandLogo } from '@/components/integrations/PluginBrandLogo';
 import { PluginPermissionControl } from '@/components/integrations/PluginPermissionControl';
@@ -1647,13 +1648,15 @@ const components:
       );
     },
 
-    pre: ({
-      children,
-    }) => (
-      <pre tabIndex={0} role="group" aria-label="Code block" className="overflow-x-auto rounded-xl border border-[var(--card-border)]/60 bg-[var(--foreground)]/[0.035] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--accent)]">
-        {children}
-      </pre>
-    ),
+    pre: ({ node, children }) => {
+      const code = node?.children.length === 1 ? node.children[0] : undefined;
+      if (code?.type === 'element' && code.tagName === 'code' && code.children.length === 1 && code.children[0].type === 'text') {
+        const classes = code.properties.className;
+        const language = Array.isArray(classes) ? classes.find(value => typeof value === 'string' && value.startsWith('language-')) : undefined;
+        return <CodePanel code={code.children[0].value.replace(/\n$/, '')} language={typeof language === 'string' ? language.slice(9) : undefined} />;
+      }
+      return <pre tabIndex={0} role="group" aria-label="Code block" className="overflow-x-auto rounded-xl border border-[var(--card-border)]/60 bg-[var(--foreground)]/[0.035] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--accent)]">{children}</pre>;
+    },
 
     table: ({
       children,

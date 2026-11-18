@@ -270,6 +270,7 @@
         "backend/src/index.ts",
         "frontend/src/app/(workspace)/workspace/page.tsx",
         "frontend/src/app/native-answer-evaluation/page.tsx",
+        "frontend/src/app/os-preview/rich-results/page.tsx",
         "frontend/src/app/share/[token]/page.tsx",
         "scripts/security/verify-oci-federation.ts"
       ],
@@ -5194,6 +5195,7 @@
         "backend/src/index.ts",
         "frontend/src/app/(workspace)/workspace/page.tsx",
         "frontend/src/app/native-answer-evaluation/page.tsx",
+        "frontend/src/app/os-preview/rich-results/page.tsx",
         "frontend/src/app/share/[token]/page.tsx",
         "scripts/security/verify-oci-federation.ts"
       ],
@@ -5448,6 +5450,7 @@
         "backend/src/index.ts",
         "frontend/src/app/(workspace)/workspace/page.tsx",
         "frontend/src/app/native-answer-evaluation/page.tsx",
+        "frontend/src/app/os-preview/rich-results/page.tsx",
         "frontend/src/app/share/[token]/page.tsx",
         "scripts/security/verify-oci-federation.ts"
       ],
@@ -5620,6 +5623,7 @@
         "backend/src/index.ts",
         "frontend/src/app/(workspace)/workspace/page.tsx",
         "frontend/src/app/native-answer-evaluation/page.tsx",
+        "frontend/src/app/os-preview/rich-results/page.tsx",
         "frontend/src/app/share/[token]/page.tsx",
         "scripts/security/verify-oci-federation.ts"
       ],
@@ -5803,6 +5807,7 @@
         "backend/src/index.ts",
         "frontend/src/app/(workspace)/workspace/page.tsx",
         "frontend/src/app/native-answer-evaluation/page.tsx",
+        "frontend/src/app/os-preview/rich-results/page.tsx",
         "frontend/src/app/share/[token]/page.tsx",
         "scripts/security/verify-oci-federation.ts"
       ],
@@ -6135,6 +6140,7 @@
         "backend/src/index.ts",
         "frontend/src/app/(workspace)/workspace/page.tsx",
         "frontend/src/app/native-answer-evaluation/page.tsx",
+        "frontend/src/app/os-preview/rich-results/page.tsx",
         "frontend/src/app/share/[token]/page.tsx",
         "scripts/security/verify-oci-federation.ts"
       ],
@@ -83193,7 +83199,7 @@
         "frontend/src/components/integrations/PluginDetail.tsx:21",
         "frontend/src/components/integrations/PluginMarketplace.tsx:30",
         "frontend/src/components/terminal/IntegrationsModal.tsx:7",
-        "frontend/src/lib/formatAiMarkdown.tsx:10"
+        "frontend/src/lib/formatAiMarkdown.tsx:11"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -83597,7 +83603,7 @@
       ],
       "callers": [
         "frontend/src/components/integrations/PluginDetail.tsx:22",
-        "frontend/src/lib/formatAiMarkdown.tsx:11"
+        "frontend/src/lib/formatAiMarkdown.tsx:12"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -88593,11 +88599,12 @@
       "id": "surface:bcecd3dfe5eeca969aaf",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/code-panel.tsx",
-      "sha256": "5b1a776dc1e4a5bdc22fd1161475ebe5fd24a7c82a7b5e9fa98cfbe447821fa7",
+      "sha256": "8da391c425beb98c19b7688514cf06dbc70b727fe9e3017616538b16effb4c5f",
       "symbols": [
         "CodePanel",
         "colored",
         "copy",
+        "copyLabel",
         "current",
         "internal",
         "key",
@@ -88617,11 +88624,13 @@
       "entryPoints": [
         "frontend/src/app/(workspace)/workspace/page.tsx",
         "frontend/src/app/native-answer-evaluation/page.tsx",
+        "frontend/src/app/os-preview/rich-results/page.tsx",
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
         "frontend/src/components/native-openui/upstream/components/extra.tsx:8",
-        "frontend/src/components/native-openui/upstream/components/markdown.tsx:6"
+        "frontend/src/components/native-openui/upstream/components/markdown.tsx:6",
+        "frontend/src/lib/formatAiMarkdown.tsx:9"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -88937,7 +88946,7 @@
       "id": "surface:0fef6875af5860e2f4b4",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/markdown.tsx",
-      "sha256": "a9ac3fbe08f01d064dee70c323bd65884feec3057dba144974f75cd29eb775bb",
+      "sha256": "7c17a7b4c3f4c21426f3726b1df05aaf1737919a50df437c75b459caaefbe55c",
       "symbols": [
         "Block",
         "INLINE",
@@ -99510,7 +99519,7 @@
         "frontend/src/components/native-openui/library.tsx:19",
         "frontend/src/components/response-experience-v2/SourceV2.tsx:9",
         "frontend/src/components/terminal/ResponseSources.tsx:5",
-        "frontend/src/lib/formatAiMarkdown.tsx:9"
+        "frontend/src/lib/formatAiMarkdown.tsx:10"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -106204,7 +106213,7 @@
         "frontend/src/lib/community.ts:1",
         "frontend/src/lib/driveApi.ts:3",
         "frontend/src/lib/existingSourceApi.ts:3",
-        "frontend/src/lib/formatAiMarkdown.tsx:21",
+        "frontend/src/lib/formatAiMarkdown.tsx:22",
         "frontend/src/lib/githubConnect.ts:31",
         "frontend/src/lib/hydrateLandingOutput.ts:2",
         "frontend/src/lib/projectDeliveryApi.ts:3",
@@ -107749,10 +107758,11 @@
       "entryPoints": [
         "frontend/src/app/(workspace)/workspace/page.tsx",
         "frontend/src/app/native-answer-evaluation/page.tsx",
+        "frontend/src/app/os-preview/rich-results/page.tsx",
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/native-openui/upstream/components/code-panel.tsx:27",
+        "frontend/src/components/native-openui/upstream/components/code-panel.tsx:29",
         "frontend/src/components/response-experience-v2/ProseV2.tsx:9",
         "frontend/src/lib/codeHighlight.test.ts:3"
       ],
@@ -108143,7 +108153,7 @@
       ],
       "callers": [
         "frontend/src/lib/connectedAppResult.test.ts:3",
-        "frontend/src/lib/formatAiMarkdown.tsx:33"
+        "frontend/src/lib/formatAiMarkdown.tsx:34"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -109352,7 +109362,7 @@
       "id": "surface:015cc267f70323e72e46",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/formatAiMarkdown.tsx",
-      "sha256": "199d9f6f334a6a9ea1bfaa6906fec6583970c18815343eb84ef273f2e1cd0603",
+      "sha256": "b7d062bda6d42d4adac11104da7b83f8cc9a7b0821377c68f02c3f00ddeb2226",
       "symbols": [
         "AppMark",
         "BusinessActionConfirmationInline",
@@ -109372,6 +109382,8 @@
         "cancelled",
         "candidates",
         "citation",
+        "classes",
+        "code",
         "components",
         "confirm",
         "confirmationId",
@@ -109394,6 +109406,7 @@
         "joinClasses",
         "knownIndex",
         "label",
+        "language",
         "link",
         "match",
         "message",
@@ -109434,6 +109447,7 @@
         "./xrogaConnect",
         "@/components/integrations/PluginBrandLogo",
         "@/components/integrations/PluginPermissionControl",
+        "@/components/native-openui/upstream/components/code-panel",
         "@/components/terminal/SourceCitation",
         "lucide-react",
         "react",
@@ -109443,6 +109457,7 @@
       "runtimeImports": [
         "frontend/src/components/integrations/PluginBrandLogo.tsx",
         "frontend/src/components/integrations/PluginPermissionControl.tsx",
+        "frontend/src/components/native-openui/upstream/components/code-panel.tsx",
         "frontend/src/components/terminal/SourceCitation.tsx",
         "frontend/src/lib/api.ts",
         "frontend/src/lib/connectedAppResult.ts",
@@ -111858,7 +111873,7 @@
         "frontend/src/components/integrations/SupabaseConnectPanel.tsx:6",
         "frontend/src/components/integrations/XrogaConnectPanel.tsx:26",
         "frontend/src/components/onboarding/OnboardingFlow.tsx:10",
-        "frontend/src/lib/formatAiMarkdown.tsx:27",
+        "frontend/src/lib/formatAiMarkdown.tsx:28",
         "frontend/src/lib/githubConnect.ts:1",
         "frontend/src/lib/supabaseConnect.ts:4",
         "frontend/src/lib/vercelConnect.ts:3"
@@ -113519,6 +113534,7 @@
       "entryPoints": [
         "frontend/src/app/(workspace)/workspace/page.tsx",
         "frontend/src/app/native-answer-evaluation/page.tsx",
+        "frontend/src/app/os-preview/rich-results/page.tsx",
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
@@ -114459,7 +114475,7 @@
       ],
       "callers": [
         "frontend/src/context/TerminalChatContext.tsx:21",
-        "frontend/src/lib/formatAiMarkdown.tsx:34",
+        "frontend/src/lib/formatAiMarkdown.tsx:35",
         "frontend/src/lib/researchHandoff.test.ts:3"
       ],
       "reachable": true,
@@ -120984,7 +121000,7 @@
         "frontend/src/components/terminal/SourceCitation.tsx:6",
         "frontend/src/components/terminal/SwarmMessageLog.tsx:13",
         "frontend/src/components/terminal/WebSourcesPanel.tsx:6",
-        "frontend/src/lib/formatAiMarkdown.tsx:19",
+        "frontend/src/lib/formatAiMarkdown.tsx:20",
         "frontend/src/lib/sanitizeChatMessages.ts:6",
         "frontend/src/lib/xrogaCitations.test.ts:6"
       ],
@@ -121066,7 +121082,7 @@
         "frontend/src/components/terminal/IntegrationsModal.tsx:11",
         "frontend/src/components/terminal/ModelAppPermissions.tsx:4",
         "frontend/src/lib/connectReview.security.test.ts:3",
-        "frontend/src/lib/formatAiMarkdown.tsx:32"
+        "frontend/src/lib/formatAiMarkdown.tsx:33"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -128446,7 +128462,7 @@
       "id": "surface:bd6af899f2dd9df930f6",
       "subsystem": "browser_sandbox",
       "sourcePath": "scripts/verify-native-openui-browser.mjs",
-      "sha256": "1f8f6588dc82c444d3706a3089feacedbfb036d0614c241541d2268ef8a2aae4",
+      "sha256": "9eca2d9db61ab2e223c0cf5324319f479f2a59fae1d63e7e21cfbea3beaf4667",
       "symbols": [
         "accessibility",
         "answer",
@@ -128512,7 +128528,6 @@
         "paintedNumbers",
         "paletteContext",
         "palettePage",
-        "panel",
         "panels",
         "popupBounds",
         "positions",
@@ -146513,9 +146528,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:3577d3e2b8eba44f551b",
+      "id": "finding:34f039749c7151e63949",
       "sourcePath": "frontend/src/lib/formatAiMarkdown.tsx",
-      "line": 1373,
+      "line": 1374,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -146523,9 +146538,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:ae4c0cb20e852d43b43a",
+      "id": "finding:a92323f8d2de2797ce72",
       "sourcePath": "frontend/src/lib/formatAiMarkdown.tsx",
-      "line": 1374,
+      "line": 1375,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -150264,16 +150279,16 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:85a9bfe1aa0522e660a7",
+      "id": "frontend-call:87c11eff4eb9e8954c55",
       "sourcePath": "frontend/src/lib/formatAiMarkdown.tsx",
-      "line": 1043,
+      "line": 1044,
       "callee": "api.phase1.plan",
       "reachable": true
     },
     {
-      "id": "frontend-call:28ff975aa028abadc72e",
+      "id": "frontend-call:ebb7456e073e70391bef",
       "sourcePath": "frontend/src/lib/formatAiMarkdown.tsx",
-      "line": 1079,
+      "line": 1080,
       "callee": "api.phase1.chat",
       "reachable": true
     },
@@ -156456,7 +156471,7 @@
     {
       "id": "test-suite:4ce9d7bbf578638998f1",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/markdown.test.ts",
-      "declaredTests": 20,
+      "declaredTests": 22,
       "skipLocations": [],
       "focusLocations": []
     },

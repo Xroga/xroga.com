@@ -185,7 +185,7 @@ test('inline answer keeps additional prose and requested code but strips present
     '~~~python\nprint(25 * 40)\n~~~', 'The complete estimate follows.'].join('\n\n');
   const html = renderToStaticMarkup(createElement(MarkdownBlocks, { text, matches }));
   assert.match(html, /Fees are excluded/);
-  assert.match(html, /<code>print\(25 \* 40\)<\/code>/);
+  assert.match(html, /<code class="language-python">print\(25 \* 40\)<\/code>/);
   assert.match(html, /The complete estimate follows/);
   assert.match(html, /Another cited fact/);
   assert.doesNotMatch(html, /An exact summary|>A cited fact|INTERNAL|return 25 \* 40|root = Col/);
@@ -271,6 +271,44 @@ test('inline alternatives and native lists remove exact duplicates without dropp
   assert.match(html, /Retain this distinct caveat|Verified source/);
   assert.match(html, /<ol/);
   assert.match(html, /Continue in this order/);
+});
+
+test('draft fallback retains separated addresses and checklist details without repeating visible controls', () => {
+  const element = (typeName: string, props: Record<string, unknown>) => ({ type: 'element', typeName, props });
+  const matches = nativeMarkdownMatches(element('Col', { children: [
+    element('Row', { children: [element('Badge', { text: 'Venue unconfirmed' })] }),
+    element('Section', { title: 'Before sending', children: [
+      element('Col', { children: [
+        element('Checkbox', { label: 'Confirm the date' }),
+        element('Checkbox', { label: 'Confirm the location' }),
+      ] }),
+    ] }),
+  ] }));
+  const text = [
+    '> Hello,\n>\n> **Venue:** [Venue name]\n> City: [City]\n>\n> Regards,\n> [Name]',
+    'Venue unconfirmed', '- Confirm the date', '- Confirm the location',
+    '- Confirm the date [1]', '- Preserve this unique action',
+  ].join('\n\n');
+  const projected = renderToStaticMarkup(createElement(MarkdownBlocks, { text, matches, renderCitation: () => 'Verified source' }));
+  assert.match(projected, /<p>Hello,<\/p><p><strong>Venue:<\/strong> \[Venue name\]\nCity: \[City\]<\/p><p>Regards,\n\[Name\]<\/p>/);
+  assert.doesNotMatch(projected, /Venue unconfirmed|Confirm the location/);
+  assert.match(projected, /Confirm the date Verified source/);
+  assert.match(projected, /Preserve this unique action/);
+  const fallback = renderToStaticMarkup(createElement(MarkdownBlocks, { text }));
+  assert.match(fallback, /Venue unconfirmed/);
+  assert.match(fallback, /Confirm the location/);
+});
+
+test('opening numerical headings preserve the sign while ignoring typography', () => {
+  const title = { type: 'element', typeName: 'Title', props: { text: 'Cash flows: -$800, $0 and +$500' } };
+  const { headingTitles } = nativeMarkdownMatches(title);
+  const render = (heading: string) => renderToStaticMarkup(createElement(MarkdownBlocks, {
+    text: '## ' + heading + '\n\nThe first flow is an outlay.',
+    nativeHeadingTitles: headingTitles,
+  }));
+  assert.doesNotMatch(render('Cash flows: −$800, $0, +$500'), /role="heading"/);
+  assert.match(render('Cash flows: +$800, $0, +$500'), /role="heading"/);
+  assert.match(render('Cash flows: −$800, $0, +$500 [1]'), /role="heading"/);
 });
 
 test('Markdown tables preserve literal pipes and all columns', () => {
