@@ -297,7 +297,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "85c08952d3469ffaff203a91df6d79e3d554478278e9244317929d7d5de73780",
+      "sha256": "814b1ac7189f74142e4441796d200f11ee5f0f24eabc7f42face59d75a414add",
       "previousGenericSdkBinding": {
         "sha256": "e5b3b4a3dc538e708fa8c005a8da6584db01b3dd425833373d59decbd2bfcb93",
         "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
@@ -598,6 +598,10 @@
       "beforePlainReasoningDefault": {
         "source": "31db9f69d27998460ceb506cbdebd5972a2121a3",
         "sha256": "5c37c7d2bbc96fc8c4ddf1f294c9b1f2bde5385048847400a5bcbd69a3582e06"
+      },
+      "beforeDraftRouting": {
+        "sha256": "85c08952d3469ffaff203a91df6d79e3d554478278e9244317929d7d5de73780",
+        "scope": "Native prompt eligibility only. Dispatch, settlement and bound persistence calls remain byte-identical. Historical evidence and acceptance are unchanged."
       }
     },
     {
@@ -639,7 +643,7 @@
     },
     {
       "path": "backend/src/ai/tenantModelDispatch.test.ts",
-      "sha256": "f4ecba27a4ada17a30eec9b33d236cb1fb3ddc634b8e6a272968a2a08cbbeefb",
+      "sha256": "62d37e53a2d4abf418f9667341e4104672a712e9e9cc5dc0b7f8e35c25c632fb",
       "previousGenericSdkBinding": {
         "sha256": "acb7d3ee286d862c38e386380a20a7632415cd454510076abedca054016f2959",
         "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
@@ -666,6 +670,10 @@
       "beforePlainReasoningDefault": {
         "source": "31db9f69d27998460ceb506cbdebd5972a2121a3",
         "sha256": "f8ea3b8ffce5badaa1ce4e8fc9535c19cae2fdb5b32243e0a333ea34cce69d10"
+      },
+      "beforeDraftRouting": {
+        "sha256": "f4ecba27a4ada17a30eec9b33d236cb1fb3ddc634b8e6a272968a2a08cbbeefb",
+        "scope": "Only a synthetic in-chat form case is appended to prior pipeline and settlement assertions."
       }
     },
     {

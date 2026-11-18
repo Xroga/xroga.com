@@ -9,7 +9,7 @@
     {
       "path": "backend/src/ai/pipeline.ts",
       "historicalSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
-      "currentSha256": "85c08952d3469ffaff203a91df6d79e3d554478278e9244317929d7d5de73780",
+      "currentSha256": "814b1ac7189f74142e4441796d200f11ee5f0f24eabc7f42face59d75a414add",
       "genericSdkPreviousCurrentBinding": {
         "reference": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
         "sha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
@@ -24,8 +24,8 @@
         "944a58bb15dca85b3ddd"
       ],
       "afterIds": [
-        "dae25c9daa57213c1180",
-        "6239699ce63ed3c3adfc"
+        "dd07efebd27fb2ef7b30",
+        "73e39773b083010d176b"
       ],
       "unchangedNearestBlockSha256": [
         "121ecd46287fd271b61cc97e84d2b17dce2570e8b82f7a6bdf77a6e4b7133436",
@@ -4295,6 +4295,14 @@
           "e5fc46a4de6acdba6654",
           "9a60c892b04c3d76e56b"
         ]
+      },
+      "beforeDraftRouting": {
+        "sha256": "85c08952d3469ffaff203a91df6d79e3d554478278e9244317929d7d5de73780",
+        "ids": [
+          "dae25c9daa57213c1180",
+          "6239699ce63ed3c3adfc"
+        ],
+        "scope": "Native prompt eligibility only. Dispatch, settlement and bound persistence calls remain byte-identical. Historical evidence and acceptance are unchanged."
       }
     },
     {

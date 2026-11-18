@@ -47,12 +47,12 @@ test('CommonMark content renders links, emphasis, fenced code, and tables with e
   assert.match(html, /src="\/api\/site-icon\?d=example\.com"/);
 });
 
-test('long answers present the opening once as a brief lead while preserving sections', () => {
+test('long answers keep their authored opening and sections without adding a summary label', () => {
   const opening = 'The direct answer is to keep the existing connection and improve how its verified results are presented.';
   const html = renderToStaticMarkup(createElement(FormattedAiMarkdown, {
     content: `${opening}\n\n## Details\n\n${'Evidence belongs beside the claim, with clear limits and no invented prices. '.repeat(9)}\n\n## Takeaway\n\nKeep the verified result.`,
   }));
-  assert.match(html, /The short answer/);
+  assert.doesNotMatch(html, /xv-answer-lead|The short answer/);
   assert.match(html, /Details/);
   assert.match(html, /Takeaway/);
   assert.equal(html.split(opening).length - 1, 1, 'the lead must not be duplicated');

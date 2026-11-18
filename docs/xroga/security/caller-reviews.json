@@ -1079,9 +1079,9 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "85c08952d3469ffaff203a91df6d79e3d554478278e9244317929d7d5de73780",
+      "sourceSha256": "814b1ac7189f74142e4441796d200f11ee5f0f24eabc7f42face59d75a414add",
       "callIds": [
-        "dae25c9daa57213c1180"
+        "dd07efebd27fb2ef7b30"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -2613,13 +2613,21 @@
         "callIds": [
           "e5fc46a4de6acdba6654"
         ]
+      },
+      "beforeDraftRouting": {
+        "reference": "3d69ee21659d013d4d5fe39b514278f5b7875669",
+        "sha256": "85c08952d3469ffaff203a91df6d79e3d554478278e9244317929d7d5de73780",
+        "callIds": [
+          "dae25c9daa57213c1180"
+        ],
+        "finding": "Only the eligibility predicate for the compact prose prompt changed. The full dispatch, usage settlement, persistence conversions, and worker are unchanged. No security acceptance or live generation is certified here."
       }
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "85c08952d3469ffaff203a91df6d79e3d554478278e9244317929d7d5de73780",
+      "sourceSha256": "814b1ac7189f74142e4441796d200f11ee5f0f24eabc7f42face59d75a414add",
       "callIds": [
-        "6239699ce63ed3c3adfc"
+        "73e39773b083010d176b"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -4151,6 +4159,14 @@
         "callIds": [
           "9a60c892b04c3d76e56b"
         ]
+      },
+      "beforeDraftRouting": {
+        "reference": "3d69ee21659d013d4d5fe39b514278f5b7875669",
+        "sha256": "85c08952d3469ffaff203a91df6d79e3d554478278e9244317929d7d5de73780",
+        "callIds": [
+          "6239699ce63ed3c3adfc"
+        ],
+        "finding": "Only the eligibility predicate for the compact prose prompt changed. The full dispatch, usage settlement, persistence conversions, and worker are unchanged. No security acceptance or live generation is certified here."
       }
     },
     {
@@ -28518,13 +28534,13 @@
     },
     {
       "path": "frontend/src/lib/formatAiMarkdown.tsx",
-      "sourceSha256": "0d3afb74bf92302c4de434b18ea607a1291a1829df0054f937af2c7861773316",
+      "sourceSha256": "199d9f6f334a6a9ea1bfaa6906fec6583970c18815343eb84ef273f2e1cd0603",
       "callIds": [
         "07e7e80f4c3c2b4a540b"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in decodeBase64UrlUtf8, with no database or Storage client receiver.",
-      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh. Re-bound 2026-11-04: Diff from the reviewed source d80e1ce5489b is only `export` added to BusinessActionConfirmationInline so the V2 turn can render the existing confirmation review. The reviewed call (decodeBase64UrlUtf8 Array/Uint8Array conversion) is unchanged; no new call, receiver, persistence or egress was added. Re-bound 2026-11-15: reviewed diff adds keyboard focus, group semantics and focus outline only to the pre renderer. The Uint8Array.from call in decodeBase64UrlUtf8 and its source position are unchanged. No persistence, authentication or network behavior changed. This refresh does not certify production tenancy. Re-bound 2026-11-17: the research approval card presents the exact query and question as text and retains the full payload for inspection. The approval handler, network requests and the reviewed Uint8Array.from conversion are unchanged. The candidate ID moved because presentation lines precede that conversion. Re-bound 2026-11-18: removed the later automatic prose paragraph splitter. The entire reviewed in-memory Uint8Array conversion function and its call identity are unchanged, with no new persistence, authority or network operation.",
+      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh. Re-bound 2026-11-04: Diff from the reviewed source d80e1ce5489b is only `export` added to BusinessActionConfirmationInline so the V2 turn can render the existing confirmation review. The reviewed call (decodeBase64UrlUtf8 Array/Uint8Array conversion) is unchanged; no new call, receiver, persistence or egress was added. Re-bound 2026-11-15: reviewed diff adds keyboard focus, group semantics and focus outline only to the pre renderer. The Uint8Array.from call in decodeBase64UrlUtf8 and its source position are unchanged. No persistence, authentication or network behavior changed. This refresh does not certify production tenancy. Re-bound 2026-11-17: the research approval card presents the exact query and question as text and retains the full payload for inspection. The approval handler, network requests and the reviewed Uint8Array.from conversion are unchanged. The candidate ID moved because presentation lines precede that conversion. Re-bound 2026-11-18: removed the later automatic prose paragraph splitter. The entire reviewed in-memory Uint8Array conversion function and its call identity are unchanged, with no new persistence, authority or network operation. Re-bound 2026-11-18: removed the later synthesized introduction callout. The entire reviewed in-memory Uint8Array conversion function and its call identity are unchanged, with no new persistence, authority or network operation.",
       "evidence": [
         {
           "path": "frontend/src/lib/formatAiMarkdown.tsx",
@@ -28568,6 +28584,14 @@
           "07e7e80f4c3c2b4a540b"
         ],
         "reason": "Only the later legacy paragraph-splitting helper and its formatter call changed. The complete decodeBase64UrlUtf8 function, Uint8Array.from receiver, source positions and candidate IDs are byte-identical. This refresh does not grant a tenant proof or change the historical accepted evidence."
+      },
+      "draftIntroCalloutReview": {
+        "sourceBefore": "8b2ae54c5006a7b4946411d7ad722a385374c2f0",
+        "sourceSha256Before": "0d3afb74bf92302c4de434b18ea607a1291a1829df0054f937af2c7861773316",
+        "callIdsBefore": [
+          "07e7e80f4c3c2b4a540b"
+        ],
+        "reason": "Only the Markdown opening paragraph handling and artificial callout changed. The complete decodeBase64UrlUtf8 function, Uint8Array.from receiver, source positions and candidate IDs are byte-identical. This refresh does not grant a tenant proof or change the historical accepted evidence."
       }
     },
     {

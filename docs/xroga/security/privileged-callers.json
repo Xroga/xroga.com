@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "df6ccf1fdac96ff7de556b2a6cbe15bdaf173ae5fa4c51d1cbc963aa78882e33",
+  "reviewRegistrySha256": "dec2ae9d86a6e01560487104aa63de0bbe6fbe9a15ca4453a9136ff5dd059ec3",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -3924,11 +3924,11 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "dae25c9daa57213c1180"
+        "id": "dd07efebd27fb2ef7b30"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "6239699ce63ed3c3adfc"
+        "id": "73e39773b083010d176b"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -4084,7 +4084,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "a63399e235c516f3bb2c"
+        "id": "9852088dee45327bb0d1"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -6752,7 +6752,7 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "a63399e235c516f3bb2c"
+        "id": "9852088dee45327bb0d1"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -7660,11 +7660,11 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "dae25c9daa57213c1180"
+        "id": "dd07efebd27fb2ef7b30"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "6239699ce63ed3c3adfc"
+        "id": "73e39773b083010d176b"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -11409,15 +11409,15 @@
       }
     },
     {
-      "id": "dae25c9daa57213c1180",
+      "id": "dd07efebd27fb2ef7b30",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3882,
+      "line": 3881,
       "enclosing": "runBuildPipeline",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "85c08952d3469ffaff203a91df6d79e3d554478278e9244317929d7d5de73780",
+      "sourceSha256": "814b1ac7189f74142e4441796d200f11ee5f0f24eabc7f42face59d75a414add",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations. Native reasoning alignment changes only answer options and their canonical output reservation. These two in-memory conversion expressions remain byte-identical. No new persistence call, authority or security certification is inferred. The tenant dispatch test verifies reservation and wire maxima match.",
@@ -11430,15 +11430,15 @@
       }
     },
     {
-      "id": "6239699ce63ed3c3adfc",
+      "id": "73e39773b083010d176b",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4066,
+      "line": 4065,
       "enclosing": "runBuildPipeline",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "85c08952d3469ffaff203a91df6d79e3d554478278e9244317929d7d5de73780",
+      "sourceSha256": "814b1ac7189f74142e4441796d200f11ee5f0f24eabc7f42face59d75a414add",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations. Native reasoning alignment changes only answer options and their canonical output reservation. These two in-memory conversion expressions remain byte-identical. No new persistence call, authority or security certification is inferred. The tenant dispatch test verifies reservation and wire maxima match.",
@@ -12648,15 +12648,15 @@
       }
     },
     {
-      "id": "a63399e235c516f3bb2c",
+      "id": "9852088dee45327bb0d1",
       "path": "backend/src/ai/responsePresentation.ts",
-      "line": 141,
+      "line": 142,
       "enclosing": "normalizeSectionData",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "dbeb992ea88495bb6f0b42ae0e27ff7b30d55787f68abd88593a01dffdf68b0f"
+      "sourceSha256": "ea30a938716cfe11393e942d17188ca7a7bda4d84052792fc2ac3fab7534abb7"
     },
     {
       "id": "64b99cfd7d4a42c04576",
@@ -32555,10 +32555,10 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "0d3afb74bf92302c4de434b18ea607a1291a1829df0054f937af2c7861773316",
+      "sourceSha256": "199d9f6f334a6a9ea1bfaa6906fec6583970c18815343eb84ef273f2e1cd0603",
       "semanticReview": {
         "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in decodeBase64UrlUtf8, with no database or Storage client receiver.",
-        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh. Re-bound 2026-11-04: Diff from the reviewed source d80e1ce5489b is only `export` added to BusinessActionConfirmationInline so the V2 turn can render the existing confirmation review. The reviewed call (decodeBase64UrlUtf8 Array/Uint8Array conversion) is unchanged; no new call, receiver, persistence or egress was added. Re-bound 2026-11-15: reviewed diff adds keyboard focus, group semantics and focus outline only to the pre renderer. The Uint8Array.from call in decodeBase64UrlUtf8 and its source position are unchanged. No persistence, authentication or network behavior changed. This refresh does not certify production tenancy. Re-bound 2026-11-17: the research approval card presents the exact query and question as text and retains the full payload for inspection. The approval handler, network requests and the reviewed Uint8Array.from conversion are unchanged. The candidate ID moved because presentation lines precede that conversion. Re-bound 2026-11-18: removed the later automatic prose paragraph splitter. The entire reviewed in-memory Uint8Array conversion function and its call identity are unchanged, with no new persistence, authority or network operation.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh. Re-bound 2026-11-04: Diff from the reviewed source d80e1ce5489b is only `export` added to BusinessActionConfirmationInline so the V2 turn can render the existing confirmation review. The reviewed call (decodeBase64UrlUtf8 Array/Uint8Array conversion) is unchanged; no new call, receiver, persistence or egress was added. Re-bound 2026-11-15: reviewed diff adds keyboard focus, group semantics and focus outline only to the pre renderer. The Uint8Array.from call in decodeBase64UrlUtf8 and its source position are unchanged. No persistence, authentication or network behavior changed. This refresh does not certify production tenancy. Re-bound 2026-11-17: the research approval card presents the exact query and question as text and retains the full payload for inspection. The approval handler, network requests and the reviewed Uint8Array.from conversion are unchanged. The candidate ID moved because presentation lines precede that conversion. Re-bound 2026-11-18: removed the later automatic prose paragraph splitter. The entire reviewed in-memory Uint8Array conversion function and its call identity are unchanged, with no new persistence, authority or network operation. Re-bound 2026-11-18: removed the later synthesized introduction callout. The entire reviewed in-memory Uint8Array conversion function and its call identity are unchanged, with no new persistence, authority or network operation.",
         "evidence": [
           {
             "path": "frontend/src/lib/formatAiMarkdown.tsx",

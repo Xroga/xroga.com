@@ -1145,14 +1145,13 @@ export async function runChatPipeline(opts: {
   const presentation = native ? undefined : answerContract.plan;
   const projection = presentation?.length ? createPresentationProjection(presentation) : undefined;
   const format = presentation?.length ? presentationResponseFormat(presentation) : undefined;
-  // A confident prose-only answer does not need the full registry. Evidence,
-  // requested visual formats, or an uncertain plan keep the rich path available.
+  // Only brief turns without an outline or a specific deliverable can skip the
+  // registry. A prose obligation can still describe an artifact with controls.
   const plainNative = native && route.kind !== 'research' && !researchBlock && !opts.projectEvidence
     && !formats.length
     && opts.goalContract?.semanticIntent === 'ANSWER' && opts.goalContract.contextComplexity === 'low'
     && opts.goalContract.confidence >= 0.8 && !opts.goalContract.presentationIssue && answerContract.coverage.complete
-    && answerContract.plan.every(section => section.kind === 'prose')
-    && answerContract.requirements.every(item => item.formats.length > 0 && item.formats.every(kind => kind === 'prose'));
+    && answerContract.plan.length === 0 && answerContract.requirements.length === 0;
   const instructions = native
     ? plainNative ? nativeOpenUiPlainPrompt : workspaceNativeOpenUiPrompt([...answerContract.plan.map(section => section.kind), ...formats], Boolean(evidenceIds.size)) + sourceManifest
     : chatPresentationSystem(opts.prompt) + (presentation?.length ? '\n\n' + presentationRequestInstructions(presentation) : '');

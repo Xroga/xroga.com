@@ -203,6 +203,8 @@ export function nativeMarkdownMatches(root: unknown, readInitial: (value: unknow
     if (typeName === "Section") sectionTitle = typeof props.title === "string" ? textKey(props.title) : undefined;
     if (typeName === "Section" && typeof props.introduction === "string") paragraphs.add(citationTextKey(props.introduction));
     if (typeName === "Diagram" && Array.isArray(props.nodes) && Array.isArray(props.links)) {
+      if (typeof props.title === "string") paragraphs.add(citationTextKey(props.title));
+      if (typeof props.description === "string") paragraphs.add(citationTextKey(props.description));
       const labels = new Map(props.nodes.map(node => [node?.id, node?.label]));
       for (const link of props.links) {
         const from = labels.get(link?.from), to = labels.get(link?.to);

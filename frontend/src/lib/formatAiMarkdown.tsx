@@ -1708,14 +1708,12 @@ export function FormattedAiMarkdown({
 }) {
   const prepared = content.replace(/\r\n/g, '\n');
   // Preserve the model's paragraph boundaries, including a requested single
-  // paragraph. Splitting by character count can invent an introductory callout.
+  // paragraph. Only split blocks when placing an existing action after the intro.
   const normalized = streaming ? prepared : compactConnectedAppConfirmationMarkdown(prepared);
-  const opening = normalized.match(/^([^\n]+(?:\n(?!\n)[^\n]+)*)\n\s*\n/);
-  const lead = !streaming && (normalized.length > 500 || afterIntro) && opening && opening[1].length >= 25 && opening[1].length <= 500 && !/^\s*(?:[#>*`\-|\d+\.]|!\[)/.test(opening[1]) ? opening[1] : null;
-  const introParts = afterIntro && !lead && !streaming ? normalized.split(/\n\s*\n/) : [];
+  const introParts = afterIntro && !streaming ? normalized.split(/\n\s*\n/) : [];
   const introCount = introParts.length > 1 && /^#{1,2}\s/.test(introParts[0]) && !/^(?:[#>*`\-|\d+\.]|!\[)/.test(introParts[1]) ? 2 : introParts.length > 1 && !/^(?:[#>*`\-|\d+\.]|!\[)/.test(introParts[0]) ? 1 : 0;
   const introMarkdown = introCount ? introParts.slice(0, introCount).join('\n\n') : null;
-  const remaining = lead ? normalized.slice(opening![0].length) : introMarkdown ? introParts.slice(introCount).join('\n\n') : normalized;
+  const remaining = introMarkdown ? introParts.slice(introCount).join('\n\n') : normalized;
   const availableSources = sources ?? [];
   const sourceComponents: Components = {
     ...components,
@@ -1739,10 +1737,8 @@ export function FormattedAiMarkdown({
         className,
       )}
     >
-      {lead ? <div className="xv-answer-lead"><span className="xv-answer-lead__label">The short answer</span><ReactMarkdown remarkPlugins={[remarkGfm, ...(sources?.length ? [remarkSourceCitations(sources)] : [])]} skipHtml urlTransform={safeMarkdownUrl} components={sourceComponents}>{lead}</ReactMarkdown></div> : null}
       {introMarkdown ? <ReactMarkdown remarkPlugins={[remarkGfm, ...(sources?.length ? [remarkSourceCitations(sources)] : [])]} skipHtml urlTransform={safeMarkdownUrl} components={sourceComponents}>{introMarkdown}</ReactMarkdown> : null}
-      {afterIntro && lead ? afterIntro : null}
-      {afterIntro && !lead ? <div className="xv-answer-intro-card">{afterIntro}</div> : null}
+      {afterIntro ? <div className="xv-answer-intro-card">{afterIntro}</div> : null}
       <ReactMarkdown
         remarkPlugins={[
           remarkGfm,

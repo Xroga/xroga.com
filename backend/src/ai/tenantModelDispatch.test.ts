@@ -355,6 +355,39 @@ test('actual pipeline, completion and SoftwareAgent calls bind tenant, account r
   assert.equal(atomicReceipts,receiptsPlain+1);
 
   reset('native');resetModelRuntimeHealth();
+  const draftGoal = goalContractSchema.parse({
+    ...semantic,
+    goal: 'Draft an email and an RSVP form',
+    desiredOutcome: 'A copyable email and a local draft form',
+    contextComplexity: 'low',
+    presentation: [
+      { kind: 'prose', heading: 'Email', instruction: 'Draft the confirmation email.', covers: ['email'] },
+      { kind: 'prose', heading: 'RSVP form', instruction: 'Provide blank venue and accessibility fields.', covers: ['rsvp'] },
+    ],
+    answerObligations: [
+      { id: 'email', description: 'Draft the confirmation email.', origin: 'requested', formats: ['prose'] },
+      { id: 'rsvp', description: 'Provide a blank RSVP form.', origin: 'requested', formats: ['prose'] },
+    ],
+  });
+  const draftMarkdown = '## Email\n\nPlease confirm the event location.\n\n## RSVP form\n\nVenue: _____\n\nAccessibility needs: _____';
+  const draftProgram = [
+    'root = Col([Markdown(_xroga_answer), Controls([Input($venue, "Venue"), TextArea($access, "Accessibility needs")], "Fillable RSVP")])',
+    '$venue = ""',
+    '$access = ""',
+  ].join('\n');
+  receivedAnswer = draftMarkdown + '\n<<<XROGA_OPENUI_V1>>>\n' + draftProgram;
+  const beforeDraft = effects, receiptsDraft = atomicReceipts;
+  const draft = await runChatPipeline({ userId: owner, tenantContext: context, modelScope: scope,
+    prompt: 'Draft an email to confirm the event location and a blank RSVP form with venue and accessibility fields.',
+    goalContract: draftGoal });
+  assert.deepEqual(draft.completion, { status: 'complete' });
+  assert.equal(draft.responseSource?.format, 'xroga-openui-v1');
+  assert.match(draft.responseSource?.text ?? '', /TextArea\(\$access, "Accessibility needs"\)/);
+  assert.match(draft.response, /Please confirm the event location/);
+  assert.equal(effects, beforeDraft + 1);
+  assert.equal(atomicReceipts, receiptsDraft + 1);
+
+  reset('native');resetModelRuntimeHealth();
   const orderedPlan:PresentationPlan = ['Architecture', 'Ownership', 'Chart', 'Scenarios', 'Tradeoffs'].map((heading, index) => ({
     kind: (['graph', 'table', 'chart', 'calculator', 'prose'] as const)[index]!,
     heading, instruction: 'Preserve the supplied details.', covers: [`part-${index}`],

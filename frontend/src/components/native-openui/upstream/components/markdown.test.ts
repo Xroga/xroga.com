@@ -210,6 +210,26 @@ test('a hidden study-card face never suppresses the main answer', () => {
   assert.match(renderToStaticMarkup(createElement(MarkdownBlocks, { text, matches })), /A study card explains this later/);
 });
 
+test('a visible diagram suppresses its exact projected title and description while preserving distinct prose and the readable fallback', () => {
+  const title = 'Lead intake';
+  const description = 'Incomplete applications return to intake after the missing details arrive.';
+  const text = [title, description, 'If the lead does not respond, archive the case.', description + ' [1]'].join('\n\n');
+  const matches = nativeMarkdownMatches({ type: 'element', typeName: 'Diagram', props: {
+    title, description,
+    nodes: [{ id: 'intake', label: 'Intake' }, { id: 'missing', label: 'Missing details' }],
+    links: [{ from: 'missing', to: 'intake' }],
+  } });
+
+  const rich = renderToStaticMarkup(createElement(MarkdownBlocks, { text, matches, renderCitation: number => 'Source ' + number }));
+  assert.doesNotMatch(rich, /Lead intake|arrive\.<\/p>/);
+  assert.match(rich, /archive the case/);
+  assert.match(rich, /arrive\. Source 1/);
+
+  const fallback = renderToStaticMarkup(createElement(MarkdownBlocks, { text }));
+  assert.match(fallback, /Lead intake/);
+  assert.match(fallback, /arrive\.<\/p>/);
+});
+
 test('a visible chart and checklist collapse only their exact readable duplicates', () => {
   const element = (typeName: string, props: Record<string, unknown>) => ({ type: 'element', typeName, props });
   const chart = element('Chart', {

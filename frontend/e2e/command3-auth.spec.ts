@@ -270,8 +270,10 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   const reviewedReply = 'Partial answer. The written summary disagreed with the plotted data, so it was withheld.';
   const reviewedProgram = 'root = Col([Markdown(' + JSON.stringify(reviewedReply) + '), Chart("bar", [{Month:"January", Value:12000}, {Month:"February", Value:15500}], "Month", ["Value"], "currency", "USD")])';
   const architecture = 'Show the request architecture, component roles and example code.';
+  const architectureCaption = 'The app queries rows with the user access token.';
   const architectureReply = [
     '## Request architecture', 'The application checks tenant membership before reading rows.',
+    architectureCaption,
     '| Component | Role |\n| --- | --- |\n| Next.js | Application |\n| PostgreSQL | Data isolation |',
     '```typescript\nconst boundary = "tenant_id";\n```',
   ].join('\n\n');
@@ -631,6 +633,7 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   const renderedArchitecture = page.getByRole('region', { name: 'Answer', exact: true }).filter({ hasText: 'Component roles' }).last();
   await expect(renderedArchitecture.getByRole('region', { name: 'Answer table', exact: true })).toBeVisible({ timeout: 20_000 });
   await expect(renderedArchitecture.locator('.react-flow__edge')).toHaveCount(1);
+  await expect(renderedArchitecture.getByText(architectureCaption, { exact: true })).toHaveCount(1);
   await expect(renderedArchitecture.locator('pre code')).toHaveText('const boundary = "tenant_id";');
   await expect(renderedArchitecture).not.toContainText(/root\s*=\s*Col/);
   await expect.poll(async () => ((await readSaved(architectureSession))?.messages as Array<{ featureOutput?: { responseSource?: { text?: string } } }> | undefined)
@@ -653,6 +656,7 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
     await expect(sharedArchitecture.getByRole('region', { name: 'Answer table', exact: true })).toBeVisible();
     const sharedDiagram = sharedArchitecture.getByRole('figure', { name: 'Request path', exact: true });
     await expect(sharedDiagram.getByText('Next.js → PostgreSQL · User access token')).toBeVisible();
+    await expect(sharedArchitecture.getByText(architectureCaption, { exact: true })).toHaveCount(1);
     for (const name of ['Next.js', 'PostgreSQL']) {
       await expect(sharedDiagram.locator('.native-diagram-node-title').getByText(name, { exact: true })).toBeVisible();
     }
