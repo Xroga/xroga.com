@@ -28,6 +28,7 @@ import './upload-measure';
 import './save-file';
 import './confirm-download';
 import './parallel-bench';
+import './focus-competing';
 import './direct-read';
 import './click-bench';
 import './panel-shot';

@@ -1,4 +1,5 @@
 import { BROWSER_API_ORIGIN } from './workspace';
+import { switchAccountState } from './account-state';
 
 const DEVICE_KEY = 'xroga-browser-device-v1';
 export const PAIR_KEY = 'xroga-browser-account';
@@ -85,7 +86,9 @@ export async function enrollDevice(account: string, verifier: string, result: un
   if (!UUID.test(data.deviceId) || !KEY.test(data.deviceKey)) throw new Error('Xroga returned an invalid device credential.');
   const device: Device = { account, deviceId: data.deviceId, deviceKey: data.deviceKey };
   await chrome.storage.local.setAccessLevel({ accessLevel: 'TRUSTED_CONTEXTS' });
+  // Another account's mode, site rules, hints, timings and worker jobs are put aside before this account's work starts.
   const firstOwner = (await chrome.storage.local.get(DEVICE_PROFILE))[DEVICE_PROFILE];
+  await switchAccountState(account, chrome.storage.local, typeof firstOwner === 'string' ? firstOwner : undefined);
   await chrome.storage.local.set({ [DEVICE_KEY]: device, [PAIR_KEY]: account, [DEVICE_PROFILE]: firstOwner ?? account });
   access = token;
   valid = true;

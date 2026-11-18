@@ -45,6 +45,13 @@ function notRunIsUnavailable(runtime: string, result: SandboxExecutionResult): S
 /** A refusal that repeating cannot fix (a bad request, no permission) is not retried; a busy, starting or restarting container is. */
 const permanent = (error: unknown) => error instanceof SandboxUnavailableError && /HTTP (400|401|403|413)\b/.test(error.message);
 
+/** The worker runs only offline and registry-only stages; anything else (for example a preview) is not run.
+ */
+function workerPolicy(policy: string): 'none' | 'registry-only' {
+  if (policy !== 'none' && policy !== 'registry-only') throw new Error('The execution worker runs only offline and registry-only stages.');
+  return policy;
+}
+
 export function createWorkerExecutionPort(deps: WorkerPortDeps) {
   return {
     async execute(request: PortRequest): Promise<SandboxExecutionResult> {
@@ -52,9 +59,19 @@ export function createWorkerExecutionPort(deps: WorkerPortDeps) {
       const owner = await deps.owner?.();
       const limits = { ...DEFAULT_LIMITS, ...(request.limits ?? {}) };
       const files = request.files.map((file) => ({ path: file.path, content: file.content }));
+<<<<<<< HEAD
       const planned: ReadonlyArray<{ id: string; command: string; args: readonly string[]; networkPolicy: SandboxExecutionRequest['networkPolicy']; timeoutMs: number; cwd?: string }> = request.stages?.length
         ? request.stages
         : [{ id: 'main', command: request.command, args: request.args, networkPolicy: request.networkPolicy, timeoutMs: request.timeoutMs }];
+=======
+      const planned: ReadonlyArray<{ id: string; command: string; args: readonly string[]; networkPolicy: 'none' | 'registry-only'; timeoutMs: number; cwd?: string }> = request.stages?.length
+        ? request.stages.map((stage) => {
+          // The worker runs only offline and registry-only stages; anything else (for example a preview) is not run.
+          if (stage.networkPolicy !== 'none' && stage.networkPolicy !== 'registry-only') throw new Error('The execution worker runs only offline and registry-only stages.');
+          return { ...stage, networkPolicy: stage.networkPolicy };
+        })
+        : [{ id: 'main', command: request.command, args: request.args, networkPolicy: workerPolicy(request.networkPolicy), timeoutMs: request.timeoutMs }];
+>>>>>>> 2e444909c72fb93c019515276c33d4d0493a72cc
       const total = planned.reduce((n, s) => n + s.timeoutMs, 0);
       const scale = total > MAX_TOTAL_MS ? MAX_TOTAL_MS / total : 1;
       const stages = planned.map((s) => ({

@@ -74,3 +74,19 @@ describe('repairing a call the provider search did not list', () => {
     expect(s.calls).toHaveLength(1);
   });
 });
+
+describe('a read call for a tool the change search offered', () => {
+  it('goes through the guarded change route at once, without a useless search', async () => {
+    const s = scripted([notFound, ok('rows')]);
+    const call = repairingPluginCaller(s.run, slug => slug === 'GOOGLESHEETS_BATCH_GET');
+    const result = await call('plugin_read', { slug: 'GOOGLESHEETS_BATCH_GET', arguments: { spreadsheet_id: 'x' } });
+    expect(result.text).toBe('rows');
+    expect(s.calls.map(c => c.name)).toEqual(['plugin_read', 'plugin_act']);
+    expect(s.calls[1]!.body).toMatchObject({ slug: 'GOOGLESHEETS_BATCH_GET', arguments: { spreadsheet_id: 'x' } });
+  });
+  it('reports the first refusal when the change route fails too', async () => {
+    const s = scripted([notFound, { isError: true, text: 'denied' }]);
+    const call = repairingPluginCaller(s.run, () => true);
+    expect((await call('plugin_read', { slug: 'S', arguments: {} })).text).toBe('not found');
+  });
+});

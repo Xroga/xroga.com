@@ -333,7 +333,7 @@ const STOP_WORDS = new Set(['the', 'and', 'for', 'with', 'from', 'that', 'this',
  * The tools of a search that fit the task, best first, at most `limit`. The provider returns up to 24 tools from every connected app, and
  * the model should see only the ones that fit what it is doing (the words of its search plus the request), not every pinned or connected
  * app and not only an app the user named literally. A tool scores by the words its toolkit, name and description share with the intent;
- * with no match at all the provider's own order is kept. Slugs are never changed.
+ * with no match at all only the first three of the provider's order are kept. Slugs are never changed.
  */
 export function rankAppTools(found: AppToolInfo[], intent: string, limit = 12): AppToolInfo[] {
   const words = [...new Set(intent.toLowerCase().split(/[^a-z0-9]+/).filter(w => w.length >= 3 && !STOP_WORDS.has(w)))];
@@ -344,5 +344,6 @@ export function rankAppTools(found: AppToolInfo[], intent: string, limit = 12): 
   };
   const ranked = found.map((t, i) => ({ t, i, n: score(t) })).sort((a, b) => b.n - a.n || a.i - b.i);
   const hits = ranked.filter(r => r.n > 0);
-  return (hits.length ? hits : ranked).slice(0, limit).map(r => r.t);
+  // Nothing fits the words (the asked app is not connected, so the provider returned other apps' tools): offer only a few, not a dozen.
+  return (hits.length ? hits.slice(0, limit) : ranked.slice(0, 3)).map(r => r.t);
 }

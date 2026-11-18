@@ -1764,7 +1764,7 @@ export class RunManager {
         const appTools = new Map<string, AppToolInfo>();
         // wrapApp and ask are defined below with the tool dispatch; the caller reads them lazily.
         let pluginRun: (name: PluginToolName, body: unknown) => ReturnType<typeof runPluginTool> = () => Promise.reject(new Error('Connected apps are not ready.'));
-        const pluginCaller = repairingPluginCaller((name, body) => pluginRun(name, body));
+        const pluginCaller = repairingPluginCaller((name, body) => pluginRun(name, body), slug => [...appTools.values()].some(info => info.slug === slug && info.kind === 'write'));
         const loop = new AgentLoop({
           timings,
           conversationId,
@@ -1832,6 +1832,15 @@ export class RunManager {
               if (call.toolName === 'plugin_search' || call.toolName === 'plugin_read' ||
                   call.toolName === 'plugin_action_search' || call.toolName === 'plugin_act') {
                 const result = await callPlugin(call.toolName, call.input);
+                // A tool name the model made up (not one this task's searches offered) is refused as "not discovered": say which tools ARE
+                // offered, so the next call is right instead of another search and another turn.
+                const asked = (call.toolName === 'plugin_read' || call.toolName === 'plugin_act') ? (call.input as { slug?: unknown } | null)?.slug : undefined;
+                if (result.isError && result.failureKind === 'search_again' && typeof asked === 'string' && appTools.size &&
+                    ![...appTools.values()].some(info => info.slug === asked)) {
+                  const offered = [...appTools.entries()].slice(0, 20).map(([alias, info]) => `${alias} (${info.kind === 'write' ? 'changes data' : 'reads'})`).join(', ');
+                  return { ...result, text: `${result.text}
+The name ${asked} was not offered in this task. Do not search again: call one of the tools already offered, by its name: ${offered}.` };
+                }
                 const { appTools: found, ...rest } = result;
                 if (!found?.length) return rest;
                 // The tools the search found become callable by their own names, with their real parameter schemas.

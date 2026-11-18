@@ -165,3 +165,18 @@ describe('a request about connected apps', () => {
     expect(dispatched.map(d => d.name)).toEqual(['plugin_search', 'plugin_search']);
   });
 });
+
+describe('planning without executing', () => {
+  it('sends a first reply that only announces a plan back for one step, then lets the run finish', async () => {
+    const { end, scripted } = await appRun('Create a spreadsheet of four contacts in my Google Sheets', { text: 'none' }, [
+      { text: "I'll create the spreadsheet first and then add the rows.", toolCalls: [] } as never,
+      { toolCalls: [{ name: 'done', input: { outcome: 'success', summary: 'ok' }, id: 'd' }] },
+    ]);
+    expect(scripted.calls.length).toBe(2);
+    expect(end.status).toBe('done');
+  });
+  it('lets a plain answer with no plan words end the run at once', async () => {
+    const { scripted } = await appRun('What is two plus two?', { text: 'none' }, [{ text: 'Four.', toolCalls: [] } as never]);
+    expect(scripted.calls.length).toBe(1);
+  });
+});
