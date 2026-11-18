@@ -290,3 +290,10 @@ Raw: `raw/heavy-*-1118.json`, `raw/model-outage-1118.json`, `raw/restart-panel-t
 | No replay of an uncertain external write | Not shown live | The kill and restart runs add visible page items only; an uncertain write to a connected app was not exercised (no connected app) |
 
 Staging cleanup, second pass: user C deleted from the staging database, its stale runs marked failed first, allowlist is again the owner (`23e4050d`) and `f8bd1db0`, tag `browser-op-1110` on revision `00135-wot`, my extra revision `00130` deleted.
+
+## Repeated searches and made-up tool names answered locally (19 November 2026)
+| Item | Result | Evidence |
+| --- | --- | --- |
+| Run at 14:58 UTC (chain build, Sheets, `mabdullah.built` profile) | Not completed | First model turn about 40 s, then a repeated tool search (server answered 409 for the duplicate), two `plugin_read` calls refused (403, names never offered), then two model requests failed with 503 (staging model endpoint), so the run did not finish. The 503s are not an extension fault |
+| Local answer to a repeated search or a tool name no search offered | Code-complete; covered by the full extension suite (1252 pass), no dedicated test (the logic sits in the run manager's closure) and not run live | run-manager.ts: the run remembers each search it made (the up-front ones too) and every tool slug the searches listed. A second search with the same words, or a read/change call for a slug no search listed, is answered at once with the list of offered tool names, with no server call and no search. Slugs that a search listed but ranking did not register still go through. `tsc` reports one error in repo-change.test.ts (another session's file, not touched here) |
+| Still open | Listed | A live Sheets run on the newest build (the endpoint was returning 503s); proof that the model uses `plugin_chain`; a real HubSpot run (no account); an independent read call for the Sheets read-back; model-turn latency (4 s to 79 s per turn), which the extension cannot change |
