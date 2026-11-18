@@ -502,12 +502,33 @@
 /* The final signup CTA alone is deliberately free of the shared dot field.
    Override the transparent blanket applied to other page sections. Use a
    slightly raised solid surface so both lower corner curves are visible. */
+/* Animated dark diagonal stripes adapted from Uiverse.io by jeremyssocial.
+   Only the final signup card animates; the shared dot field stays elsewhere. */
 .xi-root > section.xi-cta{
-  background:linear-gradient(180deg,#101113 0%,#151516 100%)!important;
+  background:#121212!important;
+  background:linear-gradient(
+    135deg,
+    #121212 25%,
+    #1a1a1a 25%,
+    #1a1a1a 50%,
+    #121212 50%,
+    #121212 75%,
+    #1a1a1a 75%,
+    #1a1a1a
+  )!important;
+  background-size:40px 40px!important;
+  animation:xi-cta-diagonal-move 4s linear infinite;
   border:0;
   border-radius:0 0 52px 52px;
   overflow:hidden;
   isolation:isolate;
+}
+@keyframes xi-cta-diagonal-move{
+  0%{background-position:0 0}
+  100%{background-position:40px 40px}
+}
+@media(prefers-reduced-motion:reduce){
+  .xi-root > section.xi-cta{animation:none}
 }
 .xi-root{
   border-radius:0 0 52px 52px;
