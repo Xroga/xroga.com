@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "e4ac98cafc7bd40ef64eb24f55ddf73d1a6f5a7f",
+  "source_sha": "e102537a7bdff799216a8eb517c0c29145d3f9d0",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -22296,7 +22296,7 @@
     },
     {
       "path": "frontend/src/components/native-openui/Editorial.tsx",
-      "sha256": "95ca782cd9945bf036810f17ba5bf1b326eda1d7ad6c9549280d92258292bb1d"
+      "sha256": "3339117eb9f17199b4253e393c04fe448fd9871221bccc91678161f83a865341"
     },
     {
       "path": "frontend/src/components/native-openui/Evaluation.tsx",
@@ -24548,7 +24548,7 @@
     },
     {
       "path": "vercel.json",
-      "sha256": "fce3ccc3214b782bb78649cb50dc92b8e7fb509cbb6e177648ac0c067f1c659b"
+      "sha256": "4a0fb14ea49272cd85bf4f109bb6adeb5fa8d892155f3c14b5ef264c29ff8340"
     }
   ],
   "dynamic_bindings": [

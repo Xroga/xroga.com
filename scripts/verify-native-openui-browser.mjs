@@ -96,6 +96,19 @@ const cases = {
       'scenarios = Section("Revenue by attendance", [Chart("bar", [{attendees: "20", gross: 500}, {attendees: "40", gross: 1000}, {attendees: "60", gross: 1500}], "attendees", ["gross"], "currency", "USD", false, 215, {xLabel: "Attendees", yLabel: "Gross revenue (USD)", note: "Each bar uses the same $25 ticket price."})])',
     ].join('\n'),
   },
+  draftCopy: {
+    text: 'Edit the local RSVP draft.',
+    program: [
+      'root = Col([draft, simulator])',
+      '$guest = ""',
+      '$attendance = ""',
+      '$guests = 0',
+      '$needs = ""',
+      '$amount = 10',
+      'draft = Controls([Input($guest, "Name"), RadioGroup($attendance, [{value: "confirmed", label: "Confirmed attendance", description: "Option detail"}], "Attendance"), Input($guests, "Guests", "number"), TextArea($needs, "Accessibility needs"), Input("keep private", null, "text", "Unlabeled"), Input("keep hidden", "Hidden"), Input("keep disabled", "Disabled"), Input("keep password", "Password")], "RSVP draft", 2)',
+      'simulator = Controls([Input($amount, "Amount", "number"), Slider($amount, 0, 20, 1, "Calculator slider")], "Calculator")',
+    ].join('\n'),
+  },
   architecture: {
     text: 'Use separate request and verified billing flows. PostgreSQL enforces tenant isolation.',
     prompt: 'Design a multi-tenant Next.js + Supabase + Stripe web app architecture; distinguish auth, API, database RLS, billing webhook and audit log. Include a diagram and concise security notes.',
@@ -505,6 +518,25 @@ try {
       assert.deepEqual(accessibility.violations.map(({id}) => id), []);
       assert.equal(await page.getByRole('columnheader', { name: 'Gross revenue (USD)' }).count(), 1);
       await page.screenshot({ path: resolve(output, channel + '-revenue-' + viewport.width + '-' + theme + '.png'), fullPage: true });
+      await open('draftCopy');
+      const draft = page.getByRole('group', { name: 'RSVP draft', exact: true });
+      const copyDraft = draft.getByRole('button', { name: 'Copy filled fields' });
+      await draft.getByRole('textbox', { name: 'Hidden', exact: true }).evaluate(input => { input.closest('label').hidden = true; });
+      await draft.getByRole('textbox', { name: 'Disabled', exact: true }).evaluate(input => { input.disabled = true; });
+      await draft.getByRole('textbox', { name: 'Password', exact: true }).evaluate(input => { input.type = 'password'; });
+      await draft.getByRole('textbox', { name: 'Name', exact: true }).fill('Example guest');
+      await draft.getByRole('radio', { name: 'Confirmed attendance Option detail' }).check();
+      await draft.getByRole('textbox', { name: 'Accessibility needs' }).fill('Line one\nLine two');
+      const draftWrites = [];
+      const trackDraftWrites = request => { if (request.method() !== 'GET') draftWrites.push(request.method()); };
+      page.on('request', trackDraftWrites);
+      await copyDraft.press('Enter');
+      await draft.getByRole('status').getByText('Filled fields copied.').waitFor();
+      assert.equal(await page.evaluate(() => navigator.clipboard.readText().then(text => text.replace(/\r\n/g, '\n'))),
+        'Name: Example guest\nAttendance: Confirmed attendance\nGuests: 0\nAccessibility needs: Line one\nLine two');
+      assert.equal(await page.getByRole('group', { name: 'Calculator' }).getByRole('button', { name: 'Copy filled fields' }).count(), 0);
+      assert.deepEqual(draftWrites, []);
+      page.off('request', trackDraftWrites);
       await open('architecture');
       const graph = page.getByRole('figure', { name: 'Request and billing paths' });
       await graph.getByText('Billing webhook', { exact: true }).first().waitFor();

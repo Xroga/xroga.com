@@ -87852,18 +87852,31 @@
       "id": "surface:e67e2018c5fc720f5a55",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/Editorial.tsx",
-      "sha256": "95ca782cd9945bf036810f17ba5bf1b326eda1d7ad6c9549280d92258292bb1d",
+      "sha256": "3339117eb9f17199b4253e393c04fe448fd9871221bccc91678161f83a865341",
       "symbols": [
         "Controls",
         "Metric",
         "Section",
-        "renderCitation"
+        "copyDraft",
+        "draft",
+        "field",
+        "fieldLabel",
+        "fields",
+        "filledDraftText",
+        "group",
+        "label",
+        "lines",
+        "offersDraftCopy",
+        "renderCitation",
+        "streaming",
+        "value"
       ],
       "imports": [
         "./evidence",
         "./upstream/components/glyph",
         "./upstream/components/markdown",
         "./upstream/components/style",
+        "@openuidev/lang-core",
         "@openuidev/react-lang",
         "react",
         "zod/v4"
@@ -87885,6 +87898,7 @@
       "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
+        "@openuidev/lang-core",
         "@openuidev/react-lang",
         "react",
         "zod/v4"
@@ -88265,7 +88279,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/native-openui/Editorial.tsx:9",
+        "frontend/src/components/native-openui/Editorial.tsx:10",
         "frontend/src/components/native-openui/NativeSurface.tsx:8",
         "frontend/src/components/native-openui/library.tsx:18",
         "frontend/src/components/native-openui/upstream/components/extra.tsx:9",
@@ -88857,7 +88871,7 @@
       ],
       "callers": [
         "frontend/src/components/native-openui/Diagram.tsx:7",
-        "frontend/src/components/native-openui/Editorial.tsx:7",
+        "frontend/src/components/native-openui/Editorial.tsx:8",
         "frontend/src/components/native-openui/library.tsx:11",
         "frontend/src/components/native-openui/upstream/components/controls.tsx:14",
         "frontend/src/components/native-openui/upstream/components/text.tsx:7"
@@ -89058,7 +89072,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/native-openui/Editorial.tsx:8",
+        "frontend/src/components/native-openui/Editorial.tsx:9",
         "frontend/src/components/native-openui/Evaluation.tsx:7",
         "frontend/src/components/native-openui/NativeSurface.tsx:11",
         "frontend/src/components/native-openui/upstream/components/chart.test.ts:6",
@@ -89144,7 +89158,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/native-openui/Editorial.tsx:6",
+        "frontend/src/components/native-openui/Editorial.tsx:7",
         "frontend/src/components/native-openui/Tabs.tsx:7",
         "frontend/src/components/native-openui/library.tsx:12",
         "frontend/src/components/native-openui/upstream/components/controls.tsx:16",
@@ -128462,7 +128476,7 @@
       "id": "surface:bd6af899f2dd9df930f6",
       "subsystem": "browser_sandbox",
       "sourcePath": "scripts/verify-native-openui-browser.mjs",
-      "sha256": "9eca2d9db61ab2e223c0cf5324319f479f2a59fae1d63e7e21cfbea3beaf4667",
+      "sha256": "1468c4367b906f3d8fed6fb3cef6d1213d8c920f3c623e3f62547ff72b3b74fe",
       "symbols": [
         "accessibility",
         "answer",
@@ -128488,8 +128502,11 @@
         "comparison",
         "compiled",
         "context",
+        "copyDraft",
         "detail",
         "directive",
+        "draft",
+        "draftWrites",
         "errors",
         "evidence",
         "expected",
@@ -128563,6 +128580,7 @@
         "tooltip",
         "touch",
         "touchPage",
+        "trackDraftWrites",
         "trigger",
         "value",
         "verified",

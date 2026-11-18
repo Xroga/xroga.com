@@ -138,6 +138,8 @@
 .native-answer-controls legend { padding: 0; font-size: .875rem; font-weight: 650; }
 .native-answer-controls-grid { display: grid; grid-template-columns: repeat(var(--control-columns, 1), minmax(0, 1fr)); align-items: end; gap: .75rem; }
 .native-answer-controls-grid > :is(button, .iui-button) { justify-self: start; }
+.native-answer-draft-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; margin-block-start: .75rem; }
+.native-answer-draft-actions > [role="status"] { color: var(--iui-muted); font-size: .8125rem; }
 .xroga-native-openui .iui-flow > .native-answer-metric:has(+ .native-answer-controls) {
   padding: .875rem 1rem .625rem;
   border: 1px solid var(--native-line);
