@@ -38,6 +38,7 @@ export const RESULT_CAP = 8_000;
 export const MESSAGE_SOFT_LIMIT = 100;
 /** The most tools one model request may list: the Xroga server's turn schema allows 64 and refuses the request beyond that. */
 export const MAX_TOOLS_PER_REQUEST = 64;
+const PLAN_ONLY = /\b(?:i['’]ll|i will|i['’]m going to|let me|first,? i(?:['’]ll| will)?|here(?:['’]s| is) (?:my|the) plan|my plan)\b/i;
 /** The readers' combined result: a little over their own total (subagents.ts TOTAL_CHARS plus headings). */
 export const DELEGATE_RESULT_CAP = 30_000;
 
@@ -946,6 +947,8 @@ ${ledger}` : ''),
   }
 
   /** After a turn: whether the run ends. */
+  #planNudges = 0;
+
   async finishTurn(reply: TurnResult, outcomes: CallOutcome[]): Promise<LoopEnd | null> {
     const base = this.options.checkpointBase;
     await this.writer.run({
@@ -973,6 +976,13 @@ ${ledger}` : ''),
     }
     if (this.#guardStop) return this.salvage(this.#guardStop.reason, `guard_${this.#guardStop.guard}`);
     if (!reply.toolCalls.length) {
+      // Planning without executing: a first reply that only announces what it will do ("I'll create the sheet...") and calls nothing
+      // would end the run as a finished answer. One note sends it back to do the first step; progress already made is kept.
+      if (!this.#mutated && this.#planNudges < 1 && this.guards.state.recent.length < 2 && PLAN_ONLY.test(reply.text ?? '') && !/\?\s*$/.test((reply.text ?? '').trim())) {
+        this.#planNudges++;
+        await this.writer.appNote('your reply described what you will do but called no tool. Do the first step now with a tool call, or finish with `done` if nothing is needed. Do not end with a plan.');
+        return null;
+      }
       if (!this.#mutated)
         return {
           status: 'done',
