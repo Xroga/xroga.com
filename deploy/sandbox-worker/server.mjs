@@ -16,6 +16,7 @@
 import http from 'node:http';
 import { spawn } from 'node:child_process';
 import { timingSafeEqual } from 'node:crypto';
+import { statSync } from 'node:fs';
 import { mkdtemp, mkdir, writeFile, rm, readdir, stat, readFile, realpath } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
@@ -116,17 +117,32 @@ export function readRequest(body) {
   };
 }
 
+// The worker's own launchers are resolved ONCE, from the worker's own PATH, and spawned by absolute path. A directory the job can write to is never
+// consulted when the worker starts a process outside the sandbox (a job-planted `unshare` would otherwise run with the worker's privileges).
+const SYSTEM_PATH = process.env.PATH ?? '/usr/bin:/bin';
+function resolveBin(name) {
+  for (const dir of SYSTEM_PATH.split(path.delimiter)) {
+    if (!path.isAbsolute(dir)) continue;
+    const candidate = path.join(dir, name);
+    try { if (statSync(candidate).isFile()) return candidate; } catch { /* next */ }
+  }
+  return `/usr/bin/${name}`;
+}
+const UNSHARE = resolveBin('unshare');
+const PRLIMIT = resolveBin('prlimit');
+const SHELL = resolveBin('sh');
+
 function wrap(spec, limits, socketPath) {
-  const prlimit = ['prlimit', `--data=${limits.memoryMb * 1024 * 1024}`, `--cpu=${limits.cpuSeconds}`,
+  const prlimit = [PRLIMIT,`--data=${limits.memoryMb * 1024 * 1024}`, `--cpu=${limits.cpuSeconds}`,
     `--nproc=${limits.maxProcesses}`, `--fsize=${limits.diskMb * 1024 * 1024}`, '--', spec.command, ...spec.args];
   // New user, network, PID, mount, IPC and UTS namespaces: no network; the job sees only its own processes (so it cannot read the worker's
   // /proc entries, including its environment); /proc is remounted for that namespace; and when the namespace's first process ends the kernel
   // kills everything inside it, including anything that tried to detach.
   if (NO_NETNS) return [spec.command, ...spec.args];
-  const namespaces = ['unshare', '-Urn', '--pid', '--fork', '--kill-child=SIGKILL', '--mount', '--mount-proc', '--ipc', '--uts', '--'];
+  const namespaces = [UNSHARE, '-Urn', '--pid', '--fork', '--kill-child=SIGKILL', '--mount', '--mount-proc', '--ipc', '--uts', '--'];
   // A restricted-network stage still has NO interface but loopback: the entry script starts a bridge from 127.0.0.1:3128 to the worker's
   // allowlisting proxy socket, which is the only thing outside the namespace the job can reach.
-  return spec.networkPolicy === 'registry-only' ? [...namespaces, 'sh', ENTRY_SCRIPT, socketPath, ...prlimit] : [...namespaces, ...prlimit];
+  return spec.networkPolicy === 'registry-only' ? [...namespaces, SHELL, ENTRY_SCRIPT, socketPath, ...prlimit] : [...namespaces, ...prlimit];
 }
 
 const PROXY_URL = `http://127.0.0.1:${PROXY_PORT}`;
@@ -170,7 +186,7 @@ async function runStage(root, spec, request) {
     // pip may only write under HOME (the run directory, removed afterwards): the system site is read-only for this user.
     const environment = { ...request.environment, PIP_USER: '1', PIP_BREAK_SYSTEM_PACKAGES: '1', PIP_DISABLE_PIP_VERSION_CHECK: '1', ...(spec.networkPolicy === 'registry-only' ? PROXY_ENV : {}) };
     const child = spawn(argv[0], argv.slice(1), {
-      cwd: spec.cwd ? path.join(root, spec.cwd) : root, env: { ...environment, PATH: `${root}/.local/bin:${root}/.xroga-deps/node_modules/.bin:${root}/node_modules/.bin:${process.env.PATH ?? '/usr/bin:/bin'}`, HOME: root }, detached: true, stdio: ['ignore', 'pipe', 'pipe'],
+      cwd: spec.cwd ? path.join(root, spec.cwd) : root, env: { ...environment, PATH: [SYSTEM_PATH, `${root}/.local/bin`, `${root}/.xroga-deps/node_modules/.bin`, `${root}/node_modules/.bin`].join(path.delimiter), HOME: root }, detached: true, stdio: ['ignore', 'pipe', 'pipe'],
     });
     let stdout = '';
     let stderr = '';

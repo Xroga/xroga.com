@@ -88,3 +88,12 @@ test('an unauthenticated call is refused, and an unsupported network policy gets
     server.close();
   }
 });
+
+test('a file the job (or repository) plants in a run-local bin directory never shadows a system program', { skip: process.platform === 'win32' }, async () => {
+  const request = readRequest(base({
+    files: [{ path: '.local/bin/cat', content: '#!/bin/sh\necho PLANTED\n' }, { path: 'data.txt', content: 'real\n' }],
+    command: 'sh', args: ['-c', 'chmod +x .local/bin/cat; cat data.txt'],
+  })).request;
+  const result = await execute(request);
+  assert.equal(result.stdout.trim(), 'real');
+});
