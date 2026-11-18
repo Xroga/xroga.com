@@ -18,7 +18,7 @@ test('integrations mounts exactly the same homepage SharedDotBackdrop once acros
   const rootIndex = integration.indexOf('<div className="xi-root">');
   const backdropIndex = integration.indexOf('<SharedDotBackdrop />');
   const heroIndex = integration.indexOf('<section className="xi-hero"');
-  const closingIndex = integration.indexOf('<section className="xi-cta"');
+  const closingIndex = integration.search(/<section className="xi-cta(?:\s|")/);
   assert.ok(rootIndex >= 0 && rootIndex < backdropIndex);
   assert.ok(backdropIndex < heroIndex && heroIndex < closingIndex);
   assert.equal(integration.indexOf('<footer'), -1, 'existing marketing footer remains outside integration root');
