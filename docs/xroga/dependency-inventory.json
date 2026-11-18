@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "874da082473e3ae14c51e7a7cc4606b157431e73",
+  "source_sha": "6daffc12d445194288bf2ff2dc4085149c1a2b1c",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -20600,7 +20600,7 @@
     },
     {
       "path": "frontend/src/app/integrations/IntegrationsMarketplace.tsx",
-      "sha256": "8b580f61099e58b0b129e1d061e8a821f63a07816fcdb2f8b9a9a498ab008a8d"
+      "sha256": "47f23bb96781eee3e0474f191bd6c02d59ffa0e5a03ab7b28b1b87b08874a3ab"
     },
     {
       "path": "frontend/src/app/integrations/page.tsx",
@@ -23004,7 +23004,7 @@
     },
     {
       "path": "frontend/src/components/terminal/ReasoningAndFollowUps.tsx",
-      "sha256": "9125973089af16e29704dbcc40567ff3f897a195f0a7d20e4d061e7f8a3f59fa"
+      "sha256": "8479b2acfacc16c020df615ca04adfea6c5543ce6fe4bfac1137c6c29e2f104c"
     },
     {
       "path": "frontend/src/components/terminal/RepoContextBar.tsx",
@@ -23896,7 +23896,7 @@
     },
     {
       "path": "frontend/src/lib/parseImageContent.ts",
-      "sha256": "a8c821d25b1444e78250ceaecb375d0084bcf43aaa76b796b94d658648da9f51"
+      "sha256": "6ba4674fec8a8091d6e06af944076acfaff673f377e98eef62c321c51275c361"
     },
     {
       "path": "frontend/src/lib/passiveRepositorySelection.ts",
@@ -38533,21 +38533,21 @@
     },
     {
       "path": "frontend/src/app/integrations/IntegrationsMarketplace.tsx",
-      "line": 235,
+      "line": 236,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/app/integrations/IntegrationsMarketplace.tsx",
-      "line": 296,
+      "line": 297,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/app/integrations/IntegrationsMarketplace.tsx",
-      "line": 302,
+      "line": 303,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

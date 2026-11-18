@@ -63549,7 +63549,7 @@
       "id": "surface:1e9646e4df4683b22766",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "frontend/src/app/integrations/IntegrationsMarketplace.tsx",
-      "sha256": "8b580f61099e58b0b129e1d061e8a821f63a07816fcdb2f8b9a9a498ab008a8d",
+      "sha256": "47f23bb96781eee3e0474f191bd6c02d59ffa0e5a03ab7b28b1b87b08874a3ab",
       "symbols": [
         "AgentConnections",
         "AppLogo",
@@ -63565,7 +63565,9 @@
         "additional",
         "bOrder",
         "backwards",
+        "card",
         "categoryCounts",
+        "closingCtaRef",
         "current",
         "directoryCategories",
         "directoryItems",
@@ -63580,6 +63582,7 @@
         "lookup",
         "matches",
         "nextCursor",
+        "observer",
         "order",
         "page",
         "pages",
@@ -98039,7 +98042,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/ReasoningAndFollowUps.tsx:16"
+        "frontend/src/components/terminal/ReasoningAndFollowUps.tsx:15"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -98839,7 +98842,7 @@
       "id": "surface:1c7b16689dab18205e28",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/ReasoningAndFollowUps.tsx",
-      "sha256": "9125973089af16e29704dbcc40567ff3f897a195f0a7d20e4d061e7f8a3f59fa",
+      "sha256": "8479b2acfacc16c020df615ca04adfea6c5543ce6fe4bfac1137c6c29e2f104c",
       "symbols": [
         "ModernResponseText",
         "ResponseBody",
@@ -109456,7 +109459,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/ReasoningAndFollowUps.tsx:12",
+        "frontend/src/components/terminal/ReasoningAndFollowUps.tsx:11",
         "frontend/src/components/terminal/RequiredInteractionCards.tsx:4",
         "frontend/src/components/terminal/XrogaBlockView.tsx:14",
         "frontend/src/lib/plainAiText.tsx:4"
@@ -111109,7 +111112,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/ReasoningAndFollowUps.tsx:15",
+        "frontend/src/components/terminal/ReasoningAndFollowUps.tsx:14",
         "frontend/src/context/TerminalChatContext.tsx:25",
         "frontend/src/lib/mathDetect.test.ts:4"
       ],
@@ -112398,7 +112401,7 @@
       "id": "surface:3b280e999e2130249cfc",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/parseImageContent.ts",
-      "sha256": "a8c821d25b1444e78250ceaecb375d0084bcf43aaa76b796b94d658648da9f51",
+      "sha256": "6ba4674fec8a8091d6e06af944076acfaff673f377e98eef62c321c51275c361",
       "symbols": [
         "IMAGE_MARKDOWN",
         "ParsedImageBlock",
@@ -112409,7 +112412,6 @@
         "hasDoc",
         "hasImage",
         "images",
-        "isFailedImageContent",
         "isGifPrompt",
         "isImageGenerationPrompt",
         "isImageToVideoPrompt",
@@ -112670,7 +112672,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/ReasoningAndFollowUps.tsx:14"
+        "frontend/src/components/terminal/ReasoningAndFollowUps.tsx:13"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -113526,7 +113528,7 @@
         "frontend/src/components/native-openui/upstream/components/code-panel.tsx:6",
         "frontend/src/components/native-openui/upstream/components/markdown.test.ts:5",
         "frontend/src/components/native-openui/upstream/components/markdown.tsx:3",
-        "frontend/src/components/terminal/ReasoningAndFollowUps.tsx:17",
+        "frontend/src/components/terminal/ReasoningAndFollowUps.tsx:16",
         "frontend/src/components/terminal/SwarmMessageLog.tsx:31"
       ],
       "reachable": true,
@@ -143993,9 +143995,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:2d0695660494da3da38b",
+      "id": "finding:eef55fc0c57a545a1ca0",
       "sourcePath": "frontend/src/app/integrations/IntegrationsMarketplace.tsx",
-      "line": 392,
+      "line": 415,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -147422,86 +147424,86 @@
       "reachable": false
     },
     {
-      "id": "frontend-call:b9380d2be415f3e343da",
+      "id": "frontend-call:f608238f9b58e96457a1",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 764,
+      "line": 781,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:b0f9d13ece0be0297620",
+      "id": "frontend-call:c082d469c9cdf1a756a1",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 767,
+      "line": 784,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:c5ee2f3911196bafd555",
+      "id": "frontend-call:436ddede5e40bba9dd59",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1538,
+      "line": 1555,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:ef7154e69c1003e06c99",
-      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1539,
-      "callee": "fetch",
-      "reachable": false
-    },
-    {
-      "id": "frontend-call:75c6e99fdc45abb28b75",
-      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1544,
-      "callee": "fetch",
-      "reachable": false
-    },
-    {
-      "id": "frontend-call:ee495792632a237eab86",
-      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1545,
-      "callee": "fetch",
-      "reachable": false
-    },
-    {
-      "id": "frontend-call:937f2cbeec67646de9bd",
-      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1551,
-      "callee": "fetch",
-      "reachable": false
-    },
-    {
-      "id": "frontend-call:395369743d0a33b3d8ee",
+      "id": "frontend-call:c59531a00c00dcca11f1",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 1556,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:6fe386d73fb227981fe6",
+      "id": "frontend-call:13f652cd00f7102f1072",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1613,
+      "line": 1561,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:bc58cd5caf2b473a03ee",
+      "id": "frontend-call:de34360906f67f9f0703",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1614,
+      "line": 1562,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:63daa4584c4aae2cdedd",
+      "id": "frontend-call:9a1901fa001f552751a4",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1621,
+      "line": 1568,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:939cf82f274575394078",
+      "id": "frontend-call:522dced795cf4d45545d",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1635,
+      "line": 1573,
+      "callee": "fetch",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:f8f1ed5901be0015d68a",
+      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
+      "line": 1630,
+      "callee": "fetch",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:bb0b17a8ebbd7b9667a7",
+      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
+      "line": 1631,
+      "callee": "fetch",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:dc0ce0d9fe378223d655",
+      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
+      "line": 1638,
+      "callee": "fetch",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:bd6dd0598d8a94a693de",
+      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
+      "line": 1652,
       "callee": "fetch",
       "reachable": false
     },
@@ -156337,7 +156339,7 @@
     {
       "id": "test-suite:d5ea1335ec5cc2eca9c4",
       "sourcePath": "frontend/src/app/integrations/integrationsBackdrop.test.ts",
-      "declaredTests": 9,
+      "declaredTests": 10,
       "skipLocations": [],
       "focusLocations": []
     },
