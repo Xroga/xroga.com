@@ -36,20 +36,39 @@ test('all landing sections sit above one continuous 25px dot field', () => {
 });
 
 
-test('hero shows checked-in brand logos but no row of pill badges below the buttons', () => {
+test('hero uses ten bundled authentic brand marks, five per side, without badge pills', () => {
   const hero = integration.slice(integration.indexOf('<section className="xi-hero"'), integration.indexOf('<section className="xi-section xi-directory"'));
-  assert.match(hero, /HERO_BRAND_MARKS\.map/);
-  assert.match(integration, /logo=\{LOCAL_PUBLIC_INTEGRATION_LOGOS\[app\.id\]\}/);
+  assert.match(hero, /HERO_BRAND_MARKS\\.map/);
+  assert.match(hero, /src=\\{app\\.src\\}/);
   assert.doesNotMatch(hero, /xi-hero-app-strip|xi-hero-app"/);
   assert.match(hero, /xi-hero-actions/);
-  const actual = [
-    'github', 'supabase', 'vercel', 'openai', 'gitlab', 'anthropic',
+  const names = [
+    'Google Sheets', 'Gmail', 'Slack', 'Notion', 'Airtable',
+    'OpenAI', 'Claude', 'Vercel', 'HubSpot', 'GitHub',
   ];
-  for (const id of actual) {
-    assert.match(integration, new RegExp("\\{ id: '" + id + "', name:"));
-  }
+  for (const name of names) assert.match(integration, new RegExp("name: '" + name + "'"));
+  assert.equal((integration.match(/\\{ id: '[a-z]+', name: '[^']+', src: '\/brand\//g) || []).length, 10);
 });
 
+test('the fixed headline rotates only apps, agents and tools, with reduced-motion fallback', () => {
+  assert.match(integration, /Connect your favorite\\{' '\}/);
+  assert.match(integration, /with Xroga AI\\./);
+  assert.match(integration, /xi-hero-word--apps/);
+  assert.match(integration, /xi-hero-word--agents/);
+  assert.match(integration, /xi-hero-word--tools/);
+  assert.match(css, /@keyframes xi-hero-word-blur/);
+  assert.match(css, /\.xi-hero-rotating\\{display:inline-grid/);
+  assert.match(css, /prefers-reduced-motion:reduce/);
+});
+
+test('hero and closing CTA share dots and have no three full-width divider borders', () => {
+  assert.doesNotMatch(css, /border-bottom:1px solid rgba\\(144,178,227,\\.08\\)/);
+  assert.doesNotMatch(css, /border-top:1px solid rgba\\(255,255,255,\\.11\\)/);
+  assert.doesNotMatch(css, /border-top:1px solid rgba\\(128,171,240,\\.19\\)/);
+  assert.match(css, /\.xi-root\\{border-radius:0 0 34px 34px/);
+  assert.match(css, /\.xi-cta\\{[\\s\\S]*?border-radius:0 0 34px 34px/);
+  assert.match(css, /background:transparent!important/);
+});
 
 test('public app cards use original logo sources and the dashboard canonical logo fallback', () => {
   const brand = read('components/integrations/PluginBrandLogo.tsx');
