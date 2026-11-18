@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
 import { test } from 'node:test';
-import { categoryFor, estimatedSeconds, meterCanonicalSandbox, type MeteredCallDeps } from './meteredExecution.js';
+import { categoryFor, estimatedSeconds, meterCanonicalSandbox, meterRemoteWorkerRun, remoteWorkerResourceLabel, type MeteredCallDeps } from './meteredExecution.js';
 import { ResourceExhaustedError, ResourceMeter, type MeterConfig } from '../ai/resourceMeter.js';
 import type { ReserveOutcome, ResourceCategory, ResourceLedger, SettleOutcome } from '../ai/resourceLedger.js';
 
@@ -9,12 +9,12 @@ const owner = randomUUID();
 const run = randomUUID();
 
 class RecordingLedger implements ResourceLedger {
-  reserved: Array<{ category: ResourceCategory; units: number; runId: string }> = []; settled: number[] = []; used = 0;
+  reserved: Array<{ category: ResourceCategory; units: number; runId: string }> = []; settled: number[] = []; resources: Array<string | undefined> = []; used = 0;
   async reserve(i: { category: ResourceCategory; units: number; cap: number; runId: string }): Promise<ReserveOutcome> {
     if (this.used + i.units > i.cap) return { state: 'exhausted', used: this.used, cap: i.cap };
     this.used += i.units; this.reserved.push({ category: i.category, units: i.units, runId: i.runId }); return { state: 'reserved', reservationId: randomUUID() };
   }
-  async settle(_id: string, actual: number): Promise<SettleOutcome> { this.settled.push(actual); return { state: 'settled', settledUnits: actual }; }
+  async settle(_id: string, actual: number, resource?: string): Promise<SettleOutcome> { this.settled.push(actual); this.resources.push(resource); return { state: 'settled', settledUnits: actual }; }
   async release() { return { state: 'released' as const }; }
 }
 
@@ -68,4 +68,37 @@ test('no admitted attempt means the call is not metered to anyone', async () => 
   const { d, ledger } = deps({ attempt: null });
   assert.equal(await meterCanonicalSandbox('software-agent-command', { timeoutMs: 1000 }, async () => 'ok', d), 'ok');
   assert.equal(ledger.reserved.length, 0);
+});
+
+test('remote worker run: the verified owner and run are charged the worker-measured seconds, with worker and memory limit recorded', async () => {
+  const { d, ledger } = deps();
+  const out = await meterRemoteWorkerRun({ userId: owner, runId: run }, { timeoutMs: 120_000, memoryMb: 1024, worker: 'remote-worker' }, async () => ({ durationMs: 2_300, exitCode: 0 }), d);
+  assert.equal(out.exitCode, 0);
+  assert.deepEqual(ledger.reserved, [{ category: 'sandbox_compute_seconds', units: 120, runId: run }]);
+  assert.deepEqual(ledger.settled, [3], 'the worker reported 2.3 s, rounded up to whole seconds');
+  assert.deepEqual(ledger.resources, ['remote-worker;mem=1024MB']);
+});
+
+test('remote worker run: a missing duration falls back to elapsed time, and a throw is still settled once', async () => {
+  const { d, ledger } = deps();
+  await meterRemoteWorkerRun({ userId: owner, runId: run }, { timeoutMs: 5_000, memoryMb: 512, worker: 'w' }, async () => ({}), d);
+  await assert.rejects(meterRemoteWorkerRun({ userId: owner, runId: run }, { timeoutMs: 5_000, memoryMb: 512, worker: 'w' }, async () => { throw new Error('boom'); }, d), /boom/);
+  assert.equal(ledger.settled.length, 2);
+});
+
+test('remote worker run: no owner, or metering off, is a straight call; an exhausted allowance refuses before the worker is called', async () => {
+  const off = deps({ enabled: false });
+  assert.equal((await meterRemoteWorkerRun({ userId: owner, runId: run }, { timeoutMs: 1000, memoryMb: 64, worker: 'w' }, async () => ({ durationMs: 1 }), off.d)).durationMs, 1);
+  assert.equal(off.ledger.reserved.length, 0);
+  const on = deps();
+  await meterRemoteWorkerRun(undefined, { timeoutMs: 1000, memoryMb: 64, worker: 'w' }, async () => ({ durationMs: 1 }), on.d);
+  assert.equal(on.ledger.reserved.length, 0);
+  const capped = deps({ caps: { sandbox_compute_seconds: 10 } });
+  let called = false;
+  await assert.rejects(meterRemoteWorkerRun({ userId: owner, runId: run }, { timeoutMs: 60_000, memoryMb: 1024, worker: 'w' }, async () => { called = true; return {}; }, capped.d), ResourceExhaustedError);
+  assert.equal(called, false);
+});
+
+test('the resource label carries only safe characters and the memory limit', () => {
+  assert.equal(remoteWorkerResourceLabel('xroga sandbox/worker', 1024.7), 'xrogasandboxworker;mem=1024MB');
 });

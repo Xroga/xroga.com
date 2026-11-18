@@ -533,7 +533,7 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
   router.post('/runs/:runId/repo-run', withLease(async (req, res, _rt, row) => {
     active(row);
     if (!req.revalidateBrowserDevice || !await req.revalidateBrowserDevice()) throw new BrowserRequestError(403, 'BROWSER_DEVICE_REVOKED');
-    requireTenantContext(req.tenantContext);
+    const tenant = requireTenantContext(req.tenantContext);
     const data = z.object({
       url: z.string().trim().min(10).max(300),
       ref: z.string().trim().max(200).optional(),
@@ -544,7 +544,7 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
     }).strict().parse(req.body);
     checkData(data);
     try {
-      const result = await runRepository({ url: data.url, ref: data.ref, command: data.command, args: data.args, files: data.files, timeoutMs: (data.timeoutSeconds ?? 120) * 1_000 });
+      const result = await runRepository({ url: data.url, ref: data.ref, command: data.command, args: data.args, files: data.files, timeoutMs: (data.timeoutSeconds ?? 120) * 1_000, owner: { userId: tenant.userId, runId: row.runId } });
       return res.json({ ...result, stdout: result.stdout.slice(-20_000), stderr: result.stderr.slice(-8_000) });
     } catch (error) {
       // The extension keeps a reason only as a plain code string and a short provider message, so both are sent in that form.

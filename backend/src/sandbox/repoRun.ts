@@ -12,6 +12,7 @@ import { boundedPublicGet } from '../security/boundedPublicGet.js';
 import type { ProjectFile } from '../ai/patches.js';
 import { selectSandboxProvider } from './sandboxProviders.js';
 import type { SandboxArtifact } from './sandboxTypes.js';
+import { meterRemoteWorkerRun, type RemoteRunOwner } from './meteredExecution.js';
 
 export class RepoRunError extends Error {
   constructor(readonly code: string, message: string) { super(message); this.name = 'RepoRunError'; }
@@ -83,6 +84,8 @@ export interface RepoRunInput {
   args: string[];
   files?: ProjectFile[];
   timeoutMs?: number;
+  /** The verified owner and run the compute is recorded against (from the route's tenant context and leased run, never the body). */
+  owner?: RemoteRunOwner;
 }
 
 export interface RepoRunResult {
@@ -121,11 +124,13 @@ export async function runRepository(input: RepoRunInput): Promise<RepoRunResult>
   const byPath = new Map<string, ProjectFile>(files.map(file => [file.path, file]));
   for (const file of own) byPath.set(file.path, file); // the caller's own files win over a repository file of the same name
 
-  const result = await selected.runtime.execute({
-    files: [...byPath.values()], command: input.command, args: input.args, timeoutMs: Math.min(300_000, Math.max(1_000, input.timeoutMs ?? 120_000)),
-    networkPolicy: 'none', environment: { PYTHONDONTWRITEBYTECODE: '1', PYTHONPATH: '.' },
-    limits: { memoryMb: 1024, cpuSeconds: 120, diskMb: 256, maxProcesses: 128 },
-  });
+  const runtime = selected.runtime;
+  const timeoutMs = Math.min(300_000, Math.max(1_000, input.timeoutMs ?? 120_000));
+  const limits = { memoryMb: 1024, cpuSeconds: 120, diskMb: 256, maxProcesses: 128 };
+  const result = await meterRemoteWorkerRun(input.owner, { timeoutMs, memoryMb: limits.memoryMb, worker: runtime.name }, () => runtime.execute({
+    files: [...byPath.values()], command: input.command, args: input.args, timeoutMs,
+    networkPolicy: 'none', environment: { PYTHONDONTWRITEBYTECODE: '1', PYTHONPATH: '.' }, limits,
+  }));
   return {
     repository: `${owner}/${repo}`, commit, filesSent: byPath.size, omittedFiles: omitted,
     exitCode: result.exitCode, stdout: result.stdout, stderr: result.stderr, timedOut: result.timedOut, durationMs: result.durationMs,
