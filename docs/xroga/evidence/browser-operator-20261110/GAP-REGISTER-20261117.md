@@ -106,3 +106,11 @@ Nothing here is merged to main. Release remains blocked on review and approval.
 - **Pause and Resume:** PASS on a live run. While paused the active page did not change for 25 seconds; after Resume it moved to a new page.
 - **Stop then follow-up:** PASS. After Stop the controls reset and a follow-up message was answered.
 - **Durable reopen:** PASS. The lead-hunt conversation was found in Recent tasks and reopened with its table, 8 hours later, in a Chrome session that had restarted.
+
+## Lead hunt after the code fixes (18 November 2026, 13:37 to 13:54, installed extension, real DeepSeek, staging)
+| Scenario | Result | Evidence |
+| --- | --- | --- |
+| False "complete the payment yourself" card on a "Book Now" link during research (reported by the owner from a screenshot) | FIXED in code, re-verified live | Cause: `book now` was in the payment vocabulary (`classify.ts`); a prompt rule had not stopped the model clicking it. Fix `6fc6fed4c`: removed; `place order`, `complete booking`, `pay`, `checkout` stay gated; a unit test covers both. Live: the run reached Moore & More's "Book Now!" and "SCHEDULE SERVICE" and recorded them as a web form, with no hand-off card |
+| Lead hunt, 5 independent Austin plumbing companies, table with exactly the verified rows | PASS (staging, one run, about 16 minutes) | Final answer: a 5-row table with phone or contact, the automation gap seen and the source page for each, and "Count: 5 verified rows (exactly the five above)". Companies named in the notes as blocked or unverified (for example Abundant, Bradbury) were not counted. Flint Plumbing was marked as the weakest gap because it has an embedded Housecall Pro booking path |
+| CSV export of the result | PASS | The panel's Save as CSV wrote `Downloads\table.csv` (2122 bytes): a header row and the same 5 rows (Touchstone, Sidney Cox, Alberto, Moore & More, Flint). Google Sheets export not run |
+| Private build | Rebuilt | `xroga-browser-operator-staging-0.2.8-6fc6fed4c.zip`, SHA-256 `d156f77c253958373a375237a290b6042afb819d2282e6793c9dc29bd788313c`; built from commit 6fc6fed4c (last extension source change); manifest identical to the installed copy; extension tests 1217 pass, 4 skipped. The earlier `-5428d1826` zip is superseded. Review-ready, not production-certified |
