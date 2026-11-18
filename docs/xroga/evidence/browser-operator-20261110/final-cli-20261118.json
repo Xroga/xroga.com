@@ -1,0 +1,59 @@
+{
+  "cli": {
+    "repository": "adrienverge/yamllint",
+    "commit": "81e9f98ffd059efe8aa9c1b1a42e5cce61b640c6",
+    "filesSent": 223,
+    "omittedFiles": 1,
+    "exitCode": 0,
+    "stdout": "yamllint 1.35.1\nexit=255\n/tmp/dup.yaml\n  1:1       warning  missing document start \"---\"  (document-start)\n  2:1       error    duplication of key \"a\" in mapping  (key-duplicates)\n\nexit=1\n",
+    "stderr": "[Errno 2] No such file or directory: 'tests/yaml-1.2-spec-details/example-2.1.yml'\n",
+    "timedOut": false,
+    "durationMs": 2513,
+    "artifacts": 0,
+    "runtime": "cloud-run-sandbox",
+    "stages": [
+      {
+        "id": "acquire:pip",
+        "exitCode": 0,
+        "durationMs": 1928,
+        "timedOut": false
+      },
+      {
+        "id": "licences:pip",
+        "exitCode": 0,
+        "durationMs": 89,
+        "timedOut": false
+      },
+      {
+        "id": "run",
+        "exitCode": 0,
+        "durationMs": 399,
+        "timedOut": false
+      }
+    ],
+    "licenceReport": "{\"packages\": 6, \"licences\": {\"MIT\": 3, \"Mozilla Public License 2.0 (MPL 2.0)\": 1, \"GPL-3.0-or-later\": 1, \"MIT License\": 1}, \"needReview\": [\"pathspec==0.12.1 (Mozilla Public License 2.0 (MPL 2.0))\", \"yamllint==1.35.1 (GPL-3.0-or-later)\"], \"needReviewCount\": 2}",
+    "dependencies": [
+      {
+        "name": "yamllint",
+        "version": "1.35.1",
+        "licence": "GPL-3.0-or-later",
+        "licenceClass": "review",
+        "hashes": 1
+      },
+      {
+        "name": "pyyaml",
+        "version": "6.0.2",
+        "licence": "MIT",
+        "licenceClass": "permissive",
+        "hashes": 52
+      },
+      {
+        "name": "pathspec",
+        "version": "0.12.1",
+        "licence": "Mozilla Public License 2.0 (MPL 2.0)",
+        "licenceClass": "permissive",
+        "hashes": 1
+      }
+    ]
+  }
+}

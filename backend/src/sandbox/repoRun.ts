@@ -13,6 +13,10 @@ import type { ProjectFile } from '../ai/patches.js';
 import { selectSandboxProvider } from './sandboxProviders.js';
 import type { SandboxArtifact } from './sandboxTypes.js';
 import { meterRemoteWorkerRun, type RemoteRunOwner } from './meteredExecution.js';
+import { buildAcquisitionPlan, AcquisitionError, type Ecosystem, type PinnedPackage, type ResolvedPackage } from './dependencyAcquisition.js';
+import { createWorkerExecutionPort } from './workerExecutionPort.js';
+import { inspectAgentSkill, type SkillReport } from './agentSkill.js';
+import { SandboxUnavailableError } from './sandboxTypes.js';
 
 export class RepoRunError extends Error {
   constructor(readonly code: string, message: string) { super(message); this.name = 'RepoRunError'; }
@@ -99,6 +103,12 @@ export interface RepoRunInput {
   timeoutMs?: number;
   /** The verified owner and run the compute is recorded against (from the route's tenant context and leased run, never the body). */
   owner?: RemoteRunOwner;
+  /** Exact-pinned packages to install first, hash-checked and licence-reviewed, behind the egress allowlist (see dependencyAcquisition.ts). */
+  dependencies?: { ecosystem: Ecosystem; packages: PinnedPackage[]; acknowledgedLicences?: string[] };
+  /** Further public repositories placed in their own subdirectories of the same run (at most 3), each at its own exact version. */
+  repositories?: Array<{ url: string; ref?: string; directory: string }>;
+  /** A directory (in the main repository, or a listed one) whose SKILL.md and scripts are inspected, never executed by the inspection. */
+  inspectSkill?: string;
 }
 
 export interface RepoRunResult {
@@ -113,6 +123,12 @@ export interface RepoRunResult {
   durationMs: number;
   artifacts: readonly SandboxArtifact[];
   runtime: string;
+  stages?: ReadonlyArray<{ id: string; exitCode: number | null; durationMs: number; timedOut: boolean }>;
+  repositories?: ReadonlyArray<{ repository: string; commit: string; directory: string }>;
+  skill?: SkillReport;
+  /** What the installed packages (transitive ones included) declare as licences, from an offline report stage. */
+  licenceReport?: string;
+  dependencies?: ReadonlyArray<Pick<ResolvedPackage, 'name' | 'version' | 'licence' | 'licenceClass'> & { hashes: number }>;
 }
 
 export async function runRepository(input: RepoRunInput): Promise<RepoRunResult> {
@@ -127,20 +143,63 @@ export async function runRepository(input: RepoRunInput): Promise<RepoRunResult>
 
   const { files, omitted, commit } = await fetchRepositoryFiles(owner, repo, ref);
 
+  const extra: Array<{ repository: string; commit: string; directory: string }> = [];
+  for (const more of (input.repositories ?? []).slice(0, 3)) {
+    const dir = more.directory.replace(/^\/+|\/+$/g, '');
+    if (!/^[A-Za-z0-9_.-]{1,60}(?:\/[A-Za-z0-9_.-]{1,60}){0,2}$/.test(dir) || dir.split('/').some(part => part === '..' || part === '.') || dir.startsWith('xroga-out')) throw new RepoRunError('REPO_DIRECTORY_INVALID', 'A repository directory must be a short relative path.');
+    const parsed = parseRepositoryUrl(more.url);
+    const moreRef = (more.ref ?? 'HEAD').trim();
+    if (!/^[A-Za-z0-9._-]{1,100}$/.test(moreRef) || moreRef.includes('..')) throw new RepoRunError('REPO_REF_INVALID', 'The version must be a branch, tag or commit name without slashes.');
+    const got = await fetchRepositoryFiles(parsed.owner, parsed.repo, moreRef);
+    for (const file of got.files) files.push({ path: `${dir}/${file.path}`, content: file.content });
+    extra.push({ repository: `${parsed.owner}/${parsed.repo}`, commit: got.commit, directory: dir });
+  }
+  const skill = input.inspectSkill === undefined ? undefined : inspectAgentSkill(files, input.inspectSkill);
   const own = (input.files ?? []).filter(file => /^[A-Za-z0-9_./-]{1,200}$/.test(file.path) && !file.path.split('/').includes('..') && !file.path.startsWith('/') && !file.path.startsWith('xroga-out'));
   const byPath = new Map<string, ProjectFile>(files.map(file => [file.path, file]));
   for (const file of own) byPath.set(file.path, file); // the caller's own files win over a repository file of the same name
 
   const runtime = selected.runtime;
   const timeoutMs = Math.min(300_000, Math.max(1_000, input.timeoutMs ?? 120_000));
-  const limits = { memoryMb: 1024, cpuSeconds: 120, diskMb: 256, maxProcesses: 128 };
+  // Node's engine reserves address space it never touches, so its data-segment allowance is larger; the cap still bounds the process.
+  const limits = { memoryMb: input.dependencies?.ecosystem === 'npm' || input.command === 'node' ? 2048 : 1024, cpuSeconds: 120, diskMb: 256, maxProcesses: 128 };
+  const environment: Record<string, string> = { PYTHONDONTWRITEBYTECODE: '1', PYTHONPATH: '.', ...(input.dependencies?.ecosystem === 'npm' ? { NODE_PATH: '.xroga-deps/node_modules' } : {}) };
+
+  if (input.dependencies) {
+    let plan;
+    try { plan = await buildAcquisitionPlan({ ...input.dependencies }); }
+    catch (error) { if (error instanceof AcquisitionError) throw new RepoRunError(`DEPENDENCY_${error.code}`, error.message); throw error; }
+    if (!plan.ready) throw new RepoRunError('DEPENDENCY_LICENCE_REVIEW', `These packages need a licence review before they can be installed: ${plan.needsReview.map(p => `${p.name} (${p.licence})`).join('; ')}. Acknowledge them by name to proceed.`);
+    for (const file of plan.files) byPath.set(file.path, { path: file.path, content: file.content });
+    const port = createWorkerExecutionPort({ runtime: async () => runtime, owner: async () => input.owner });
+    let result;
+    try {
+      result = await port.execute({
+        files: [...byPath.values()], command: input.command, args: input.args, timeoutMs, networkPolicy: 'registry-only', environment, limits,
+        stages: [...plan.stages, { id: 'run', command: input.command, args: input.args, networkPolicy: 'none', timeoutMs }],
+      });
+    } catch (error) {
+      if (error instanceof SandboxUnavailableError) throw new RepoRunError('SANDBOX_UNAVAILABLE', error.message);
+      throw error;
+    }
+    const stages = result.stages ?? [];
+    return {
+      repository: `${owner}/${repo}`, commit, filesSent: byPath.size, omittedFiles: omitted,
+      exitCode: result.exitCode, stdout: result.stdout, stderr: result.stderr, timedOut: result.timedOut, durationMs: result.durationMs,
+      artifacts: result.artifacts ?? [], runtime: runtime.name, ...(extra.length ? { repositories: extra } : {}), ...(skill ? { skill } : {}),
+      stages: stages.map(st => ({ id: st.id, exitCode: st.exitCode, durationMs: st.durationMs, timedOut: st.timedOut })),
+      licenceReport: stages.find(st => st.id.startsWith('licences:'))?.stdout.trim().slice(0, 4000),
+      dependencies: plan.packages.map(p => ({ name: p.name, version: p.version, licence: p.licence, licenceClass: p.licenceClass, hashes: p.hashes.length })),
+    };
+  }
+
   const result = await meterRemoteWorkerRun(input.owner, { timeoutMs, memoryMb: limits.memoryMb, worker: runtime.name }, () => runtime.execute({
     files: [...byPath.values()], command: input.command, args: input.args, timeoutMs,
-    networkPolicy: 'none', environment: { PYTHONDONTWRITEBYTECODE: '1', PYTHONPATH: '.' }, limits,
+    networkPolicy: 'none', environment, limits,
   }));
   return {
     repository: `${owner}/${repo}`, commit, filesSent: byPath.size, omittedFiles: omitted,
     exitCode: result.exitCode, stdout: result.stdout, stderr: result.stderr, timedOut: result.timedOut, durationMs: result.durationMs,
-    artifacts: result.artifacts ?? [], runtime: selected.runtime.name,
+    artifacts: result.artifacts ?? [], runtime: selected.runtime.name, ...(extra.length ? { repositories: extra } : {}), ...(skill ? { skill } : {}),
   };
 }

@@ -541,10 +541,18 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
       args: z.array(z.string().max(4_000)).max(40).default([]),
       files: z.array(z.object({ path: z.string().min(1).max(200), content: z.string().max(400_000) }).strict()).max(20).default([]),
       timeoutSeconds: z.number().int().min(5).max(300).optional(),
+      dependencies: z.object({
+        ecosystem: z.enum(['pip', 'npm']),
+        packages: z.array(z.object({ name: z.string().min(1).max(120), version: z.string().min(1).max(40) }).strict()).min(1).max(40),
+        acknowledgedLicences: z.array(z.string().max(120)).max(40).optional(),
+      }).strict().optional(),
+      repositories: z.array(z.object({ url: z.string().trim().min(10).max(300), ref: z.string().trim().max(200).optional(), directory: z.string().min(1).max(200) }).strict()).max(3).optional(),
+      inspectSkill: z.string().max(200).optional(),
     }).strict().parse(req.body);
     checkData(data);
     try {
-      const result = await runRepository({ url: data.url, ref: data.ref, command: data.command, args: data.args, files: data.files, timeoutMs: (data.timeoutSeconds ?? 120) * 1_000, owner: { userId: tenant.userId, runId: row.runId } });
+      const result = await runRepository({ url: data.url, ref: data.ref, command: data.command, args: data.args, files: data.files, timeoutMs: (data.timeoutSeconds ?? 120) * 1_000, owner: { userId: tenant.userId, runId: row.runId },
+        dependencies: data.dependencies, repositories: data.repositories, inspectSkill: data.inspectSkill });
       return res.json({ ...result, stdout: result.stdout.slice(-20_000), stderr: result.stderr.slice(-8_000) });
     } catch (error) {
       // The extension keeps a reason only as a plain code string and a short provider message, so both are sent in that form.
@@ -552,6 +560,42 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
       console.error('[repo-run] failed:', known ? { code: error.code, message: error.message.slice(0, 200) } : { name: (error as Error)?.name, message: String((error as Error)?.message).slice(0, 200) });
       const status = known ? (error.code === 'SANDBOX_UNAVAILABLE' ? 503 : error.code.startsWith('REPO_') ? 422 : 400) : 502;
       return res.status(status).json({ error: 'BROWSER_REPO_RUN_FAILED', reason: known ? error.code : 'RUN_FAILED', providerMessage: known ? error.message.slice(0, 300) : 'The run did not complete.' });
+    }
+  }));
+
+  // A change to a public GitHub repository at an exact version: the edits are applied through the change workflow's write policy, the project's own
+  // tests run before and after in the isolated sandbox, and the result is a diff and a patch file the person can apply. Nothing is written to GitHub.
+  router.post('/runs/:runId/repo-change', withLease(async (req, res, _rt, row) => {
+    active(row);
+    if (!req.revalidateBrowserDevice || !await req.revalidateBrowserDevice()) throw new BrowserRequestError(403, 'BROWSER_DEVICE_REVOKED');
+    const tenant = requireTenantContext(req.tenantContext);
+    const data = z.object({
+      url: z.string().trim().min(10).max(300),
+      ref: z.string().trim().max(200).optional(),
+      edits: z.array(z.object({ path: z.string().min(1).max(300), find: z.string().max(100_000).optional(), replace: z.string().max(200_000) }).strict()).min(1).max(10),
+    }).strict().parse(req.body);
+    checkData(data);
+    try {
+      const [{ selectSandboxProvider }, { createWorkerExecutionPort }, { runPublicRepoChange }] = await Promise.all([
+        import('../sandbox/sandboxProviders.js'), import('../sandbox/workerExecutionPort.js'), import('../existingSource/change/publicRepoChange.js'),
+      ]);
+      const selected = await selectSandboxProvider();
+      if (!selected.runtime) throw new RepoRunError('SANDBOX_UNAVAILABLE', selected.availability.detail ?? 'No isolated execution worker is available.');
+      const runtime = selected.runtime;
+      const port = createWorkerExecutionPort({ runtime: async () => runtime, owner: async () => ({ userId: tenant.userId, runId: row.runId }) });
+      const result = await runPublicRepoChange({ url: data.url, ref: data.ref, edits: data.edits, port });
+      const brief = (t: typeof result.baseline) => ({ status: t.status, summary: t.summary, durationMs: t.durationMs, stages: t.stages.map((s) => ({ id: s.id, exitCode: s.exitCode, durationMs: s.durationMs })), evidence: t.evidence.slice(0, 3_000) });
+      const patch = result.diff;
+      return res.json({
+        repository: result.repository, commit: result.commit, verdict: result.verdict, verdictReason: result.verdictReason, files: result.files,
+        baseline: brief(result.baseline), after: brief(result.after), diff: patch.slice(0, 60_000), diffTruncated: patch.length > 60_000,
+        artifacts: patch ? [{ path: 'change.patch', contentBase64: Buffer.from(patch.slice(0, 400_000), 'utf8').toString('base64') }] : [],
+      });
+    } catch (error) {
+      const known = error instanceof RepoRunError;
+      console.error('[repo-change] failed:', known ? { code: error.code, message: error.message.slice(0, 200) } : { name: (error as Error)?.name, message: String((error as Error)?.message).slice(0, 200) });
+      const status = known ? (error.code === 'SANDBOX_UNAVAILABLE' ? 503 : 422) : 502;
+      return res.status(status).json({ error: 'BROWSER_REPO_RUN_FAILED', reason: known ? error.code : 'RUN_FAILED', providerMessage: known ? error.message.slice(0, 300) : 'The change could not be verified.' });
     }
   }));
 

@@ -169,7 +169,7 @@ export function readWorkerResult(body: unknown): SandboxExecutionResult | null {
 function readStages(value: unknown): NonNullable<SandboxExecutionResult['stages']> | null | undefined {
   if (value === undefined) return undefined;
   if (!Array.isArray(value) || value.length > 8) return null;
-  const out: NonNullable<SandboxExecutionResult['stages']> = [];
+  const out: Array<NonNullable<SandboxExecutionResult['stages']>[number]> = [];
   for (const item of value) {
     const s = item as Record<string, unknown> | null;
     if (!s || typeof s.id !== 'string' || !/^[A-Za-z0-9:._/-]{1,120}$/.test(s.id) || typeof s.timedOut !== 'boolean' || typeof s.killedForLimit !== 'boolean'

@@ -24,8 +24,8 @@ export class AcquisitionError extends Error {
   constructor(readonly code: 'UNPINNED' | 'NOT_FOUND' | 'NO_DIGEST' | 'REGISTRY_UNAVAILABLE' | 'INVALID', message: string) { super(message); this.name = 'AcquisitionError'; }
 }
 
-const PERMISSIVE = /^(?:MIT|MIT-0|ISC|BSD(?:-[0-9]-Clause)?(?:-Clear)?|Apache-2\.0|0BSD|Unlicense|CC0-1\.0|Python-2\.0|PSF-2\.0|BlueOak-1\.0\.0|Zlib|HPND|MPL-2\.0)$/i;
-const PERMISSIVE_WORDS = /\b(?:mit|isc|bsd|apache|python software foundation|psf|unlicense|public domain|zlib|mozilla public license 2)/i;
+const PERMISSIVE = /^(?:MIT|MIT-0|ISC|BSD(?:-[0-9]-Clause)?(?:-Clear)?|Apache-2\.0|0BSD|Unlicense|CC0-1\.0|Python-2\.0|PSF-2\.0|BlueOak-1\.0\.0|Zlib|HPND)$/i;
+const PERMISSIVE_WORDS = /\b(?:mit|isc|bsd|apache|python software foundation|psf|unlicense|public domain|zlib)/i;
 const COPYLEFT = /\b(?:gpl|agpl|lgpl|sspl|busl|commons clause|proprietary|non-?commercial)\b/i;
 
 /** Classifies a declared licence string or SPDX expression. Anything not clearly permissive needs a human; an empty one is unknown. */
@@ -85,6 +85,31 @@ export interface AcquisitionPlan {
   readonly stages: readonly AcquisitionStage[];
 }
 
+/**
+ * Offline reports of the licences of EVERYTHING that ended up installed, transitive packages included (a lock file does not carry them; each
+ * installed package's own metadata does). They print one JSON line: counts per licence and the names whose licence is not clearly permissive.
+ * They only read files; the classification mirrors `classifyLicence` in a deliberately simple form and is a pointer for a human, not a verdict.
+ */
+export const NPM_LICENCE_REPORT = `const fs=require('fs'),path=require('path');const seen={};const review=[];
+const ok=/^(?:MIT|MIT-0|ISC|BSD(?:-[0-9]-Clause)?|Apache-2\\.0|0BSD|Unlicense|CC0-1\\.0|BlueOak-1\\.0\\.0|Zlib|Python-2\\.0|CC-BY-4\\.0)$/;
+function walk(dir){let names=[];try{names=fs.readdirSync(dir)}catch{return}for(const n of names){if(n.startsWith('.'))continue;const p=path.join(dir,n);if(n.startsWith('@')){walk(p);continue}
+let j;try{j=JSON.parse(fs.readFileSync(path.join(p,'package.json'),'utf8'))}catch{continue}
+let l=typeof j.license==='string'?j.license:(j.license&&j.license.type)||(Array.isArray(j.licenses)?j.licenses.map(x=>x.type).join(' OR '):'')||'undeclared';
+seen[l]=(seen[l]||0)+1;const parts=l.replace(/[()]/g,' ').split(/\\s+(?:OR|AND)\\s+/).map(s=>s.trim());if(!parts.every(s=>ok.test(s)))review.push(j.name+'@'+j.version+' ('+l+')');
+walk(path.join(p,'node_modules'))}}
+walk('node_modules');console.log(JSON.stringify({packages:Object.values(seen).reduce((a,b)=>a+b,0),licences:seen,needReview:review.slice(0,60),needReviewCount:review.length}));`;
+export const PIP_LICENCE_REPORT = `import json,importlib.metadata as m,re
+ok=re.compile(r"^(MIT|MIT-0|ISC|BSD.*|Apache.*|0BSD|Unlicense|CC0-1.0|Python-2.0|PSF.*|Zlib)$",re.I)
+seen={};review=[]
+for d in m.distributions():
+    md=d.metadata;l=(md.get("License-Expression") or md.get("License") or "").strip().replace("\\n"," ")
+    if not l or len(l)>80:
+        c=[x.split("::")[-1].strip() for x in (md.get_all("Classifier") or []) if x.startswith("License ::")];l=" OR ".join(c) or (l[:80] if l else "undeclared")
+    seen[l]=seen.get(l,0)+1
+    parts=[p.strip() for p in re.split(r"\\s+(?:OR|AND)\\s+",l.replace("(","").replace(")",""))]
+    if not all(ok.match(p) or "License" in p and re.search(r"MIT|BSD|Apache|ISC|Python Software",p) for p in parts):review.append("%s==%s (%s)"%(md["Name"],md["Version"],l))
+print(json.dumps({"packages":sum(seen.values()),"licences":seen,"needReview":review[:60],"needReviewCount":len(review)}))`;
+
 export interface PlanInput { readonly ecosystem: Ecosystem; readonly packages: readonly PinnedPackage[]; readonly acknowledgedLicences?: readonly string[]; readonly get?: RegistryGet; readonly directory?: string }
 
 export async function buildAcquisitionPlan(input: PlanInput): Promise<AcquisitionPlan> {
@@ -101,7 +126,8 @@ export async function buildAcquisitionPlan(input: PlanInput): Promise<Acquisitio
       ecosystem: 'pip', ready: needsReview.length === 0, packages: resolved, needsReview,
       files: [{ path: `${dir}/requirements.lock.txt`, content: `${lines.join('\n')}\n` }],
       // --require-hashes makes pip reject any requirement without a matching hash (including every transitive one), --only-binary refuses source builds
-      stages: [{ id: 'acquire:pip', command: 'python3', args: ['-m', 'pip', 'install', '--require-hashes', '--only-binary=:all:', '--no-input', '-q', '-r', `${dir}/requirements.lock.txt`], networkPolicy: 'registry-only', timeoutMs: 240_000 }],
+      stages: [{ id: 'acquire:pip', command: 'python3', args: ['-m', 'pip', 'install', '--require-hashes', '--only-binary=:all:', '--no-input', '-q', '-r', `${dir}/requirements.lock.txt`], networkPolicy: 'registry-only', timeoutMs: 240_000 },
+        { id: 'licences:pip', command: 'python3', args: ['-c', PIP_LICENCE_REPORT], networkPolicy: 'none', timeoutMs: 30_000 }],
     };
   }
   const dependencies = Object.fromEntries(resolved.map((p) => [p.name, p.version]));
@@ -114,6 +140,7 @@ export async function buildAcquisitionPlan(input: PlanInput): Promise<Acquisitio
     stages: [
       { id: 'acquire:npm', command: 'npm', args: ['install', '--ignore-scripts', '--no-audit', '--no-fund', '--package-lock=true'], networkPolicy: 'registry-only', timeoutMs: 240_000, cwd: dir },
       { id: 'verify:npm', command: 'node', args: ['verify-integrity.cjs'], networkPolicy: 'none', timeoutMs: 30_000, cwd: dir },
+      { id: 'licences:npm', command: 'node', args: ['-e', NPM_LICENCE_REPORT], networkPolicy: 'none', timeoutMs: 30_000, cwd: dir },
     ],
   };
 }

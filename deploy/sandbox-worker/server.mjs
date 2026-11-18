@@ -117,7 +117,7 @@ export function readRequest(body) {
 }
 
 function wrap(spec, limits, socketPath) {
-  const prlimit = ['prlimit', `--as=${limits.memoryMb * 1024 * 1024}`, `--cpu=${limits.cpuSeconds}`,
+  const prlimit = ['prlimit', `--data=${limits.memoryMb * 1024 * 1024}`, `--cpu=${limits.cpuSeconds}`,
     `--nproc=${limits.maxProcesses}`, `--fsize=${limits.diskMb * 1024 * 1024}`, '--', spec.command, ...spec.args];
   // New user, network, PID, mount, IPC and UTS namespaces: no network; the job sees only its own processes (so it cannot read the worker's
   // /proc entries, including its environment); /proc is remounted for that namespace; and when the namespace's first process ends the kernel
@@ -170,7 +170,7 @@ async function runStage(root, spec, request) {
     // pip may only write under HOME (the run directory, removed afterwards): the system site is read-only for this user.
     const environment = { ...request.environment, PIP_USER: '1', PIP_BREAK_SYSTEM_PACKAGES: '1', PIP_DISABLE_PIP_VERSION_CHECK: '1', ...(spec.networkPolicy === 'registry-only' ? PROXY_ENV : {}) };
     const child = spawn(argv[0], argv.slice(1), {
-      cwd: spec.cwd ? path.join(root, spec.cwd) : root, env: { ...environment, PATH: process.env.PATH ?? '/usr/bin:/bin', HOME: root }, detached: true, stdio: ['ignore', 'pipe', 'pipe'],
+      cwd: spec.cwd ? path.join(root, spec.cwd) : root, env: { ...environment, PATH: `${root}/.local/bin:${root}/.xroga-deps/node_modules/.bin:${root}/node_modules/.bin:${process.env.PATH ?? '/usr/bin:/bin'}`, HOME: root }, detached: true, stdio: ['ignore', 'pipe', 'pipe'],
     });
     let stdout = '';
     let stderr = '';

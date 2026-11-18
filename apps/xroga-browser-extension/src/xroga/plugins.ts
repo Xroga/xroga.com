@@ -87,8 +87,42 @@ export const REPO_RUN_TOOL: AgentTool = {
     command: { type: 'string', enum: ['python3', 'node', 'sh'] }, args: { type: 'array', items: { type: 'string', maxLength: 4000 }, maxItems: 40 },
     files: { type: 'array', maxItems: 20, items: { type: 'object', properties: { path: { type: 'string', maxLength: 200 }, content: { type: 'string', maxLength: 400000 } }, required: ['path', 'content'], additionalProperties: false } },
     timeoutSeconds: { type: 'integer', minimum: 5, maximum: 300 },
+    dependencies: { type: 'object', description: 'Packages to install first: exact versions only (for example 2.32.3), every pip wheel hash-checked, npm integrity verified, scripts never run, only from the package registries. A package with a licence that is not clearly permissive is refused until you list its name in acknowledgedLicences after telling the user. Console scripts it installs are on PATH (use command "sh" with args ["-c", "yourcli ..."]).', properties: {
+      ecosystem: { type: 'string', enum: ['pip', 'npm'] },
+      packages: { type: 'array', maxItems: 40, items: { type: 'object', properties: { name: { type: 'string', maxLength: 120 }, version: { type: 'string', maxLength: 40 } }, required: ['name', 'version'], additionalProperties: false } },
+      acknowledgedLicences: { type: 'array', maxItems: 40, items: { type: 'string', maxLength: 120 } },
+    }, required: ['ecosystem', 'packages'], additionalProperties: false },
+    repositories: { type: 'array', maxItems: 3, description: 'More public repositories placed in their own subdirectories of the same run, each at its own exact version.', items: { type: 'object', properties: { url: { type: 'string', maxLength: 300 }, ref: { type: 'string', maxLength: 200 }, directory: { type: 'string', maxLength: 200 } }, required: ['url', 'directory'], additionalProperties: false } },
+    inspectSkill: { type: 'string', maxLength: 200, description: 'A directory containing an Agent Skill (SKILL.md): its declared name, description, bundled scripts and what they appear to do are reported without running anything.' },
   }, required: ['url', 'command'], additionalProperties: false },
 };
+
+/** A change to a public repository at an exact version: edits applied, the project’s own tests run before and after in the isolated sandbox, a diff and a patch file returned. */
+export const CHANGE_REPO_TOOL: AgentTool = {
+  name: 'change_repository', source: 'agent', group: 'working',
+  description: 'Make a code change to a public GitHub repository at an exact commit and have it checked: your edits (find the exact text once, replace it; or create a file by giving only replace) are applied, the repository’s own tests run in the isolated sandbox on the untouched commit and again on the edited copy, and you get a diff, a change.patch file and a verdict (verified only when the tests passed both times). Nothing is written to GitHub; the person applies the patch. Read the files first so the text you replace is exact. A project whose tests need packages is only checked if the offline tests can run; otherwise the verdict says it is not verified.',
+  parameters: { type: 'object', properties: {
+    url: { type: 'string', maxLength: 300 }, ref: { type: 'string', maxLength: 200 },
+    edits: { type: 'array', minItems: 1, maxItems: 10, items: { type: 'object', properties: { path: { type: 'string', maxLength: 300 }, find: { type: 'string', maxLength: 100000 }, replace: { type: 'string', maxLength: 200000 } }, required: ['path', 'replace'], additionalProperties: false } },
+  }, required: ['url', 'edits'], additionalProperties: false },
+};
+
+export async function changeRepositoryTool(runId: string, input: unknown, signal: AbortSignal, wrap: (text: string, source: string) => string): Promise<{ text: string; isError: boolean }> {
+  try {
+    const v = await workspaceRequest('repo-change', { runId, body: input }, signal) as {
+      repository?: string; commit?: string; verdict?: string; verdictReason?: string; files?: Array<{ path: string; kind: string; additions: number; deletions: number }>;
+      baseline?: { status: string; summary: string }; after?: { status: string; summary: string; evidence?: string }; diff?: string; diffTruncated?: boolean };
+    const head = `repository ${v.repository}@${(v.commit ?? '').slice(0, 12)} · verdict ${v.verdict} · tests before: ${v.baseline?.status}, after: ${v.after?.status} · ${(v.files ?? []).length} file(s) changed · isolated sandbox`;
+    const text = [head, `reason: ${v.verdictReason ?? ''}`, 'tests before:', v.baseline?.summary ?? '', 'tests after:', v.after?.summary ?? '', ...(v.after?.evidence ? ['failure evidence:', v.after.evidence] : []),
+      'diff (also returned as change.patch):', v.diff ?? '', ...(v.diffTruncated ? ['(diff shortened)'] : [])].join('\n');
+    return { text: head + '\n' + wrap(text, 'repository change check'), isError: v.verdict === 'failed' };
+  } catch (error) {
+    const failure = error as { code?: unknown; detail?: Record<string, string[]> };
+    const reason = failure?.detail?.providerMessage?.[0] ?? failure?.detail?.reason?.[0];
+    if (failure?.code === 'BROWSER_REPO_RUN_FAILED') return { text: `The change could not be checked: ${reason ?? 'unknown reason'}. Fix the cause named here; do not repeat the same call unchanged.`, isError: true };
+    return { text: 'The isolated sandbox is not available right now. Use another method for this part of the task.', isError: true };
+  }
+}
 
 export async function runRepositoryTool(runId: string, input: unknown, signal: AbortSignal, wrap: (text: string, source: string) => string): Promise<{ text: string; isError: boolean }> {
   try {

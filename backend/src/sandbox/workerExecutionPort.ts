@@ -52,7 +52,7 @@ export function createWorkerExecutionPort(deps: WorkerPortDeps) {
       const owner = await deps.owner?.();
       const limits = { ...DEFAULT_LIMITS, ...(request.limits ?? {}) };
       const files = request.files.map((file) => ({ path: file.path, content: file.content }));
-      const planned: ReadonlyArray<{ id: string; command: string; args: readonly string[]; networkPolicy: 'none' | 'registry-only'; timeoutMs: number; cwd?: string }> = request.stages?.length
+      const planned: ReadonlyArray<{ id: string; command: string; args: readonly string[]; networkPolicy: SandboxExecutionRequest['networkPolicy']; timeoutMs: number; cwd?: string }> = request.stages?.length
         ? request.stages
         : [{ id: 'main', command: request.command, args: request.args, networkPolicy: request.networkPolicy, timeoutMs: request.timeoutMs }];
       const total = planned.reduce((n, s) => n + s.timeoutMs, 0);

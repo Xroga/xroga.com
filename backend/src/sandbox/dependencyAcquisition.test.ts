@@ -46,7 +46,7 @@ test('npm: exact versions, registry integrity recorded, scripts never run, and a
   assert.deepEqual(plan.needsReview.map((p) => p.name), ['@scope/mcp-thing']);
   assert.deepEqual(JSON.parse(plan.files[0].content).dependencies, { 'left-pad': '1.3.0', '@scope/mcp-thing': '2.2.1' });
   assert.ok(plan.stages[0].args.includes('--ignore-scripts'));
-  assert.deepEqual(plan.stages.map((s) => [s.id, s.networkPolicy]), [['acquire:npm', 'registry-only'], ['verify:npm', 'none']]);
+  assert.deepEqual(plan.stages.map((s) => [s.id, s.networkPolicy]), [['acquire:npm', 'registry-only'], ['verify:npm', 'none'], ['licences:npm', 'none']]);
   assert.ok(plan.files[1].content.includes(INTEGRITY));
   for (const bad of ['^1.3.0', '1.3', 'latest', '~1.0.0']) await assert.rejects(buildAcquisitionPlan({ ecosystem: 'npm', packages: [{ name: 'left-pad', version: bad }], get: registry }), (e: AcquisitionError) => e.code === 'UNPINNED', bad);
 });
@@ -54,4 +54,9 @@ test('npm: exact versions, registry integrity recorded, scripts never run, and a
 test('a version the registry does not list is refused, and the package count is bounded', async () => {
   await assert.rejects(buildAcquisitionPlan({ ecosystem: 'npm', packages: [{ name: 'left-pad', version: '9.9.9' }], get: async () => { throw new AcquisitionError('NOT_FOUND', 'x'); } }), (e: AcquisitionError) => e.code === 'NOT_FOUND');
   await assert.rejects(buildAcquisitionPlan({ ecosystem: 'npm', packages: [], get: registry }), (e: AcquisitionError) => e.code === 'INVALID');
+});
+
+test('weak copyleft (MPL) is a review item, not a silent pass', () => {
+  assert.equal(classifyLicence('MPL-2.0'), 'review');
+  assert.equal(classifyLicence('Mozilla Public License 2.0 (MPL 2.0)'), 'review');
 });
