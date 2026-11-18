@@ -90,3 +90,21 @@ export function researchPlan(request: string): { query: string; follow: number }
 export const RESEARCH_FIRST_NOTE =
   'this request is about information on the web, so the web search was already run and the top result pages were read, in parallel (below). ' +
   'Answer from them now, with the exact links. Search or open a page yourself only if a fact you need is missing.';
+
+// ---- Requests that change something in a connected app --------------------------------------------------------------------
+// plugin_search finds only tools that READ. A request to create or add data needs plugin_action_search, so the first search a run makes
+// for it must be that one; otherwise the model's first turn sees read tools only, never finds the create/append tools and falls back to
+// typing into the page. Both searches are deterministic and are run before the first model turn.
+
+const CHANGE_WORDS = /\b(?:create|add|append|insert|write|put|save|log|record|update|fill|make|build|new|set up|enter|store)\b/i;
+const READ_WORDS = /\b(?:read|read ?back|list|find|check|verify|show|fetch|get|look|confirm|tell me|whether)\b/i;
+
+/** The request asks for data to be created or changed in an app. */
+export function isChangeRequest(request: string): boolean {
+  return CHANGE_WORDS.test(request);
+}
+
+/** The request also asks to read something (a read-back, a check), so the read tools are needed as well. */
+export function needsReadTools(request: string): boolean {
+  return READ_WORDS.test(request);
+}

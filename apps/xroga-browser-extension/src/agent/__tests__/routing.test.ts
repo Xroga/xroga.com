@@ -139,3 +139,13 @@ describe('the first turn of a research request', () => {
     expect((await firstTurnOf('What is the heading of the page?', false, true)).layer.calls.map(c => c.tool)).toContain('snapshot');
   });
 });
+
+import { isChangeRequest, needsReadTools } from '../routing';
+describe('change requests', () => {
+  it('detects create/add requests and read-backs', () => {
+    expect(isChangeRequest('Using my connected Google Sheets, create a spreadsheet with a header and 4 contacts')).toBe(true);
+    expect(isChangeRequest('List my spreadsheets')).toBe(false);
+    expect(needsReadTools('create a sheet then read it back to verify')).toBe(true);
+    expect(needsReadTools('create a sheet with 4 contacts')).toBe(false);
+  });
+});
