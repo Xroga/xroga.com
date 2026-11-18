@@ -137,11 +137,6 @@
 .native-answer-metric[data-tone="warning"] dd:first-of-type { color: var(--iui-warning); }
 .native-answer-metric[data-tone="danger"] dd:first-of-type { color: var(--iui-danger); }
 .native-answer-metric .native-answer-metric-note { margin-top: .25rem; color: var(--iui-muted); font-size: .8125rem; font-weight: 400; line-height: 1.4; letter-spacing: normal; }
-/* Two short results fit side by side even when a general-purpose Grid asks to stack.
-   Other grids retain their model-specified minimum column widths. */
-.xroga-native-openui .iui-grid:has(> .native-answer-metric:first-child + .native-answer-metric:last-child) {
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 7rem), 1fr)) !important;
-}
 .native-answer-controls { min-width: 0; margin: 0; padding: .5rem 0 0; border: 0; }
 .native-answer-controls legend { padding: 0; font-size: .875rem; font-weight: 650; }
 .native-answer-controls-grid { display: grid; grid-template-columns: repeat(var(--control-columns, 1), minmax(0, 1fr)); align-items: end; gap: .75rem; }

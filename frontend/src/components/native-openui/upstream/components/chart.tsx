@@ -1,9 +1,11 @@
 "use client";
 
 import { defineComponent } from "@openuidev/react-lang";
-import React, { useId, useLayoutEffect, useState, type PointerEvent } from "react";
+import React, { useContext, useId, useLayoutEffect, useState, type PointerEvent } from "react";
 import { z } from "zod/v4";
 import { Format as NumberFormat } from "../functions/text";
+import { NativeVisualContent } from "./markdown";
+import { nativeReadableTextKey } from "../../../../../../backend/src/ai/nativeOpenUi";
 
 type Row = Record<string, unknown>;
 type Format = (value: number, compact?: boolean) => string;
@@ -344,16 +346,18 @@ export const Chart = defineComponent({
   description: 'Chart from exact numeric rows. Set x, series, and presentation labels with units. Scatter x is numeric. Percent values are like 45; use a currency code like "USD".',
   component: function ChartView({ props }) {
     const [ref, width] = useWidth();
+    const visible = useContext(NativeVisualContent);
     const spec = toSpec(props);
     if (!spec) return <p>Chart data is incomplete or unsuitable for this chart.</p>;
     const pie = spec.type === "pie" || spec.type === "donut";
     const labels = spec.presentation;
+    const captionTitle = labels?.title && !visible?.titles.has(nativeReadableTextKey(labels.title)) ? labels.title : undefined;
     const captionUnit = labels?.yLabel?.trim().toLowerCase() === labels?.title?.trim().toLowerCase() ? undefined : labels?.yLabel;
     const table = chartTable(spec, true);
     return (
       <figure className="iui-chart">
-        {(labels?.title || labels?.yLabel) && <figcaption className="native-chart-caption">
-          {labels.title && <strong>{labels.title}</strong>}{captionUnit && <span>{captionUnit}</span>}
+        {(captionTitle || captionUnit) && <figcaption className="native-chart-caption">
+          {captionTitle && <strong>{captionTitle}</strong>}{captionUnit && <span>{captionUnit}</span>}
         </figcaption>}
         <div className="native-chart-frame" ref={ref}>
           {width > 0 ? pie ? <Pie spec={spec} width={width} /> : spec.type === "scatter" ? <Scatter spec={spec} width={width} /> : <Cartesian spec={spec} width={width} /> : <div style={{ height: spec.height }} />}

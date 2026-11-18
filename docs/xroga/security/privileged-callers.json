@@ -8,16 +8,16 @@
     "observedTables": 118,
     "rlsEnabled": 118,
     "privilegedFactorySites": 229,
-    "persistenceCandidates": 1018,
+    "persistenceCandidates": 1019,
     "ownerPredicateCandidates": 267,
-    "reviewRequired": 160,
+    "reviewRequired": 161,
     "reviewedCandidates": 858,
-    "unresolvedSafetyCandidates": 210,
+    "unresolvedSafetyCandidates": 211,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 23
   },
   "outcomes": {
-    "REVIEW_REQUIRED": 160,
+    "REVIEW_REQUIRED": 161,
     "SCOPED_BOUNDARY": 547,
     "NARROW_EXCEPTION": 52,
     "NOT_PERSISTENCE": 209,
@@ -29,7 +29,7 @@
     "scope": "COMMAND_007_CRITERION_EVIDENCE_NOT_BATCH_OR_PRODUCTION_ACCEPTANCE",
     "certifiedScopedPrivilegedCallers": 0,
     "verifiedCandidateBoundaries": 79,
-    "unresolvedCandidateBoundaries": 939,
+    "unresolvedCandidateBoundaries": 940,
     "criteria": [
       {
         "id": "XB01-C007-AC01",
@@ -6560,11 +6560,15 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "be2b0f42632a1bf09a9a"
+        "id": "dd1d78ed7de602caed33"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "fbf0077ec3a3b06c626d"
+        "id": "8b6c8db2475fb88d9db1"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "eb59e0ef82bbce82aa9f"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -7424,11 +7428,15 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "be2b0f42632a1bf09a9a"
+        "id": "dd1d78ed7de602caed33"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "fbf0077ec3a3b06c626d"
+        "id": "8b6c8db2475fb88d9db1"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "eb59e0ef82bbce82aa9f"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -10449,10 +10457,10 @@
     ]
   },
   "reviewAgreement": {
-    "currentCallers": 1018,
+    "currentCallers": 1019,
     "structuredVerified": 79,
-    "structuredUnproven": 939,
-    "manualUnresolved": 210,
+    "structuredUnproven": 940,
+    "manualUnresolved": 211,
     "manualUnsupported": 729,
     "agreedVerified": 79,
     "proofAwaitingManualReconciliation": 0
@@ -31995,6 +32003,17 @@
       "sourceSha256": "2b1ee96959439cef8b692222e04dd4d178f84fb52d5cdac6ca4c853e281ecd6c"
     },
     {
+      "id": "dd1d78ed7de602caed33",
+      "path": "frontend/src/components/layout/ThemeToggle.tsx",
+      "line": 37,
+      "enclosing": "ThemeToggle",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "74edc6638d8f972b4743fbf22f84353e03580fcaf6e5d52d1a2c972e527a223b"
+    },
+    {
       "id": "92e2f9e84b8b9d7515b1",
       "path": "frontend/src/components/marketing/AiWebsiteBuilderAtmosphere.tsx",
       "line": 109,
@@ -32037,26 +32056,26 @@
       }
     },
     {
-      "id": "be2b0f42632a1bf09a9a",
+      "id": "8b6c8db2475fb88d9db1",
       "path": "frontend/src/components/native-openui/upstream/components/chart.tsx",
-      "line": 88,
+      "line": 90,
       "enclosing": "Cartesian",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "6d898986f89887da73989c2e866ced4a8a8102e737a2cf3b06dbb18e50553333"
+      "sourceSha256": "874ac345f1ffd85f5291ac5ced0dec31d82cee0fbeaca443c5b5c2f29edce91c"
     },
     {
-      "id": "fbf0077ec3a3b06c626d",
+      "id": "eb59e0ef82bbce82aa9f",
       "path": "frontend/src/components/native-openui/upstream/components/chart.tsx",
-      "line": 187,
+      "line": 189,
       "enclosing": "axis",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "6d898986f89887da73989c2e866ced4a8a8102e737a2cf3b06dbb18e50553333"
+      "sourceSha256": "874ac345f1ffd85f5291ac5ced0dec31d82cee0fbeaca443c5b5c2f29edce91c"
     },
     {
       "id": "c1f57b8225d79c77eef9",

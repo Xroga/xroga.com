@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "b07d111792004d442664e0b0ed3e27fb801f43a5",
+  "source_sha": "97a8c601d5ccd5f0a77d1ca5742df212700511be",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -22086,7 +22086,7 @@
     },
     {
       "path": "frontend/src/components/layout/ThemeToggle.tsx",
-      "sha256": "c99e3410d96d3ae1e757b9dea9396e5b28d9c6afb83fbb8c059428e45bff1825"
+      "sha256": "74edc6638d8f972b4743fbf22f84353e03580fcaf6e5d52d1a2c972e527a223b"
     },
     {
       "path": "frontend/src/components/layout/WorkspaceIdentityContext.tsx",
@@ -22258,7 +22258,7 @@
     },
     {
       "path": "frontend/src/components/native-openui/upstream/components/chart.tsx",
-      "sha256": "6d898986f89887da73989c2e866ced4a8a8102e737a2cf3b06dbb18e50553333"
+      "sha256": "874ac345f1ffd85f5291ac5ced0dec31d82cee0fbeaca443c5b5c2f29edce91c"
     },
     {
       "path": "frontend/src/components/native-openui/upstream/components/code-panel.tsx",
@@ -22278,11 +22278,11 @@
     },
     {
       "path": "frontend/src/components/native-openui/upstream/components/layout.tsx",
-      "sha256": "042baedbff829714c89472ffa6ff7df33f40a1ff75b45ac9a3cd701c4ff4759d"
+      "sha256": "626d3c655f565a224ba3ae3919f4496acb404806f0a356ecc7ace967c1aa7033"
     },
     {
       "path": "frontend/src/components/native-openui/upstream/components/markdown.tsx",
-      "sha256": "2d0f2b7317c7e4f07e4eb02b049ab419ef8d3f098a0015683fd59a723f055a2b"
+      "sha256": "09b309cd14c76d8d2bb9d9f9bdf46fd90497066e67ea4ab589f6d5279d700cd2"
     },
     {
       "path": "frontend/src/components/native-openui/upstream/components/style.ts",
@@ -23134,7 +23134,7 @@
     },
     {
       "path": "frontend/src/components/ui/AnchoredPortalPopover.tsx",
-      "sha256": "bbf912e427695bb228ed93f236710a94ea7bda6ac66172b5197cdb85941f7ab3"
+      "sha256": "e044fd183587fc52246c8eb51f8b9d57a839931ea0c6a5b7e50fe777fe28835f"
     },
     {
       "path": "frontend/src/components/ui/AnimatedIcon.tsx",
@@ -38907,7 +38907,7 @@
     },
     {
       "path": "frontend/src/components/native-openui/upstream/components/chart.tsx",
-      "line": 303,
+      "line": 305,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

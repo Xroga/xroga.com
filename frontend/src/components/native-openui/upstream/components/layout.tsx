@@ -103,14 +103,15 @@ export const Grid = defineComponent({
   component: ({ props, renderNode }) => {
     const columns = Math.min(12, Math.max(1, Math.round(props.columns ?? 2)));
     const gap = space(props.gap) ?? "12px";
-    // At most `columns` columns, each at least minChildWidth wide.
-    const min = props.minChildWidth ? `max(${Math.max(0, props.minChildWidth)}px, (100% - ${columns - 1} * ${gap}) / ${columns})` : null;
+    // The requested count is an upper bound, including inside narrow chat cards.
+    // Preserve explicit minimums and give unspecified children readable space.
+    const min = `max(${Math.max(0, props.minChildWidth ?? 180)}px, (100% - ${columns - 1} * ${gap}) / ${columns})`;
     return (
       <div
         className="iui-grid"
         style={{
           gap,
-          gridTemplateColumns: min ? `repeat(auto-fill, minmax(min(100%, ${min}), 1fr))` : `repeat(${columns}, minmax(0, 1fr))`,
+          gridTemplateColumns: `repeat(auto-fill, minmax(min(100%, ${min}), 1fr))`,
         }}
       >
         {renderNode(props.children)}

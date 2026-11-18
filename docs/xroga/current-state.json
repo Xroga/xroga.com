@@ -5462,6 +5462,7 @@
         "frontend/src/app/share/[token]/page.tsx:2",
         "frontend/src/components/native-openui/NativeSurface.tsx:9",
         "frontend/src/components/native-openui/NativeWorkspaceAnswer.tsx:12",
+        "frontend/src/components/native-openui/upstream/components/chart.tsx:8",
         "frontend/src/components/native-openui/upstream/components/markdown.test.ts:8",
         "frontend/src/components/native-openui/upstream/components/markdown.tsx:7",
         "frontend/src/lib/publicAnswerText.ts:1"
@@ -85456,7 +85457,7 @@
       "id": "surface:d9e30726708aee7599be",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/layout/ThemeToggle.tsx",
-      "sha256": "c99e3410d96d3ae1e757b9dea9396e5b28d9c6afb83fbb8c059428e45bff1825",
+      "sha256": "74edc6638d8f972b4743fbf22f84353e03580fcaf6e5d52d1a2c972e527a223b",
       "symbols": [
         "ThemeToggle",
         "ThemeToggleProps",
@@ -85464,24 +85465,27 @@
         "buttonRef",
         "close",
         "current",
-        "positionMenu",
-        "rect",
-        "reposition",
+        "index",
+        "items",
+        "navigate",
+        "next",
+        "optionsRef",
         "setTheme",
         "theme"
       ],
       "imports": [
         "@/components/icons/animated/AnimatedIcon",
         "@/components/icons/animated/PaletteIcon",
+        "@/components/ui/AnchoredPortalPopover",
         "@/lib/theme",
         "@/lib/utils",
         "@/store/useThemeStore",
-        "react",
-        "react-dom"
+        "react"
       ],
       "runtimeImports": [
         "frontend/src/components/icons/animated/AnimatedIcon.tsx",
         "frontend/src/components/icons/animated/PaletteIcon.tsx",
+        "frontend/src/components/ui/AnchoredPortalPopover.tsx",
         "frontend/src/lib/theme.ts",
         "frontend/src/lib/utils.ts",
         "frontend/src/store/useThemeStore.ts"
@@ -85499,8 +85503,7 @@
       "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
-        "react",
-        "react-dom"
+        "react"
       ],
       "authBoundary": [],
       "tenantBoundary": [],
@@ -88314,7 +88317,7 @@
       "id": "surface:54b82e40fb048a969cb3",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/chart.tsx",
-      "sha256": "6d898986f89887da73989c2e866ced4a8a8102e737a2cf3b06dbb18e50553333",
+      "sha256": "874ac345f1ffd85f5291ac5ced0dec31d82cee0fbeaca443c5b5c2f29edce91c",
       "symbols": [
         "COLORS",
         "Cartesian",
@@ -88333,6 +88336,7 @@
         "base",
         "big",
         "box",
+        "captionTitle",
         "captionUnit",
         "chartProps",
         "chartTable",
@@ -88397,6 +88401,7 @@
         "v",
         "validNumber",
         "values",
+        "visible",
         "w",
         "x",
         "xAt",
@@ -88405,12 +88410,16 @@
         "ya"
       ],
       "imports": [
+        "../../../../../../backend/src/ai/nativeOpenUi",
         "../functions/text",
+        "./markdown",
         "@openuidev/react-lang",
         "react",
         "zod/v4"
       ],
       "runtimeImports": [
+        "backend/src/ai/nativeOpenUi.ts",
+        "frontend/src/components/native-openui/upstream/components/markdown.tsx",
         "frontend/src/components/native-openui/upstream/functions/text.ts"
       ],
       "entryPoints": [
@@ -88731,7 +88740,7 @@
       "id": "surface:f60271f3a570336ef22f",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/layout.tsx",
-      "sha256": "042baedbff829714c89472ffa6ff7df33f40a1ff75b45ac9a3cd701c4ff4759d",
+      "sha256": "626d3c655f565a224ba3ae3919f4496acb404806f0a356ecc7ace967c1aa7033",
       "symbols": [
         "Box",
         "Card",
@@ -88793,7 +88802,7 @@
       "id": "surface:0fef6875af5860e2f4b4",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/markdown.tsx",
-      "sha256": "2d0f2b7317c7e4f07e4eb02b049ab419ef8d3f098a0015683fd59a723f055a2b",
+      "sha256": "09b309cd14c76d8d2bb9d9f9bdf46fd90497066e67ea4ab589f6d5279d700cd2",
       "symbols": [
         "Block",
         "INLINE",
@@ -88908,6 +88917,8 @@
         "frontend/src/components/native-openui/Editorial.tsx:8",
         "frontend/src/components/native-openui/Evaluation.tsx:7",
         "frontend/src/components/native-openui/NativeSurface.tsx:11",
+        "frontend/src/components/native-openui/upstream/components/chart.test.ts:6",
+        "frontend/src/components/native-openui/upstream/components/chart.tsx:7",
         "frontend/src/components/native-openui/upstream/components/controls.tsx:15",
         "frontend/src/components/native-openui/upstream/components/extra.tsx:7",
         "frontend/src/components/native-openui/upstream/components/markdown.test.ts:10",
@@ -88926,6 +88937,7 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "frontend/src/components/native-openui/upstream/components/chart.test.ts",
         "frontend/src/components/native-openui/upstream/components/markdown.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -102335,7 +102347,7 @@
       "id": "surface:c8ff52357b76eb8bcf96",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/ui/AnchoredPortalPopover.tsx",
-      "sha256": "bbf912e427695bb228ed93f236710a94ea7bda6ac66172b5197cdb85941f7ab3",
+      "sha256": "e044fd183587fc52246c8eb51f8b9d57a839931ea0c6a5b7e50fe777fe28835f",
       "symbols": [
         "AnchoredPlacement",
         "AnchoredPortalPopover",
@@ -102372,6 +102384,7 @@
       ],
       "callers": [
         "frontend/src/components/dashboard/WorkspaceNewTerminal.tsx:7",
+        "frontend/src/components/layout/ThemeToggle.tsx:4",
         "frontend/src/components/terminal/ComposerToolChip.tsx:5",
         "frontend/src/components/terminal/IntegrationsModal.tsx:6",
         "frontend/src/components/terminal/ProjectsQuickPopover.tsx:8",
@@ -128009,12 +128022,13 @@
       "id": "surface:bd6af899f2dd9df930f6",
       "subsystem": "browser_sandbox",
       "sourcePath": "scripts/verify-native-openui-browser.mjs",
-      "sha256": "48386c3a12043b8f65c16b56763c157690539fe87be43631adc629dc67eb381b",
+      "sha256": "1f8f6588dc82c444d3706a3089feacedbfb036d0614c241541d2268ef8a2aae4",
       "symbols": [
         "accessibility",
         "answer",
         "answerRegion",
         "assets",
+        "bounds",
         "boxes",
         "browser",
         "canvas",
@@ -128059,8 +128073,9 @@
         "label",
         "labelAudit",
         "labels",
+        "lines",
         "luminance",
-        "metrics",
+        "menu",
         "monthly",
         "name",
         "nextBalance",
@@ -128070,6 +128085,7 @@
         "output",
         "ownershipHeading",
         "page",
+        "paintedNumbers",
         "paletteContext",
         "palettePage",
         "panel",
@@ -128108,7 +128124,9 @@
         "tooltip",
         "touch",
         "touchPage",
+        "trigger",
         "value",
+        "verified",
         "viewport",
         "wideRegion",
         "zoomContext",
@@ -128153,7 +128171,8 @@
       "approvalBoundary": [],
       "costBoundary": [],
       "evidenceBoundary": [
-        "scripts/verify-native-openui-browser.mjs#evidence"
+        "scripts/verify-native-openui-browser.mjs#evidence",
+        "scripts/verify-native-openui-browser.mjs#verified"
       ],
       "testCoverage": [],
       "state": "DEAD_OR_UNREACHABLE",
@@ -155982,7 +156001,7 @@
     {
       "id": "test-suite:d9113c461272059ef334",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/chart.test.ts",
-      "declaredTests": 1,
+      "declaredTests": 2,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -156178,7 +156197,7 @@
     {
       "id": "test-suite:504089ecce72eabfcc81",
       "sourcePath": "frontend/src/lib/anchoredPortalPopover.test.ts",
-      "declaredTests": 3,
+      "declaredTests": 4,
       "skipLocations": [],
       "focusLocations": []
     },

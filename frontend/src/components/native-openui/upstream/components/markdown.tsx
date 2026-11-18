@@ -78,7 +78,7 @@ type Block =
   | { kind: "table"; head: string[]; rows: string[][] };
 
 export const VisibleMarkdownTables = createContext<ReadonlySet<string> | null>(null);
-export const NativeVisualContent = createContext<Pick<MarkdownMatches, "tables" | "sectionTables" | "headingTitles"> | undefined>(undefined);
+export const NativeVisualContent = createContext<Pick<MarkdownMatches, "tables" | "sectionTables" | "headingTitles" | "titles"> | undefined>(undefined);
 
 // Only compare scalar cells. Retain distinct data and cells with components.
 export function tableContentKey(head: readonly string[], rows: readonly unknown[][]): string | undefined {

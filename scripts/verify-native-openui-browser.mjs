@@ -33,6 +33,16 @@ const cases = {
     program: 'root = Col([Code(' + JSON.stringify('monthlyPayment = principal * monthlyRate * (1 + monthlyRate) ** paymentCount / ((1 + monthlyRate) ** paymentCount - 1)') + ', "text"), Markdown(' + JSON.stringify('```python\nmonthlyPayment = principal * monthlyRate * (1 + monthlyRate) ** paymentCount / ((1 + monthlyRate) ** paymentCount - 1)\n```') + ')])',
   },
   short: { text: 'Paris is the capital of France.' },
+  metricGrid: {
+    text: 'These supplied loan results stay readable inside a narrow answer.',
+    program: 'root = Col([Grid([Metric("Monthly payment", "$405.53"), Metric("Total interest", "$4,331.67"), Metric("Total paid", "$24,331.67")], 3)])',
+  },
+  chartHeading: {
+    text: 'The supplied annual balances are shown below.',
+    program: 'root = Col([Section("Balance by year", [Chart("line", [{year:0,balance:10000},{year:1,balance:10600}], "year", ["balance"], "currency", "USD", false, 240, {title:"Balance by year",yLabel:"Balance (USD)",note:"Annual compounding."})])])',
+  },
+  themeControl: { text: 'Theme control at the left viewport edge.' },
+  themeControlRight: { text: 'Theme control near the right viewport edge.' },
   markdownMath: {
     text: 'The formula stays readable with its original explanation.',
     program: 'root = Col([Markdown("## Growth formula\\n\\n$$A = P\\\\left(1 + \\\\frac{r}{n}\\\\right)^{nt}$$\\n\\nUse \\\\(r = 0.06\\\\) for six percent. Basic costs $10 and Pro costs $25.")])',
@@ -150,6 +160,11 @@ const cases = {
 const failedEquation='{'.repeat(3500)+'x'+'}'.repeat(3500)+'<img src=x onerror="window.__xrogaMathProbe=1">';
 cases.mathFailure={text:'$$'+failedEquation+'$$\n\nThe complete answer stays available.'};
 const { completeNativeWorkspaceAnswer } = await tsImport('../backend/src/ai/nativeOpenUiWorkspace.ts', import.meta.url);
+const { validateNativeOpenUi } = await tsImport('../backend/src/ai/nativeOpenUi.ts', import.meta.url);
+for (const name of ['metricGrid','chartHeading']) {
+  const verified=validateNativeOpenUi(cases[name].program,new Set(),cases[name].text);
+  assert.ok(verified.ok,name+' fixture must satisfy the actual presentation contract: '+JSON.stringify(verified));
+}
 for (const [name, fixture] of Object.entries(cases)) {
   if (!fixture.raw) continue;
   const answer = completeNativeWorkspaceAnswer(fixture.raw, fixture.finish ?? 'stop', undefined, fixture.prompt, undefined, fixture.requiredFormats);
@@ -173,18 +188,19 @@ const compiled = await build({
   stdin: {
     resolveDir: process.cwd(),
     loader: 'tsx',
-    contents: 'import {createRoot} from "react-dom/client"; import {useEffect,useState} from "react"; import MathEquationImpl from "./frontend/src/lib/mathRenderImpl"; import {Chart} from "./frontend/src/components/native-openui/upstream/components/chart"; import {NativeSurface} from "./frontend/src/components/native-openui/NativeSurface"; import {ResponseSources} from "./frontend/src/components/terminal/ResponseSources"; import {ResponseSourceScope} from "./frontend/src/components/terminal/ResponseSourceScope"; import "./frontend/src/components/native-openui/evaluation.css";'
+    contents: 'import {createRoot} from "react-dom/client"; import {useEffect,useState} from "react"; import {ThemeToggle} from "./frontend/src/components/layout/ThemeToggle"; import {useThemeStore} from "./frontend/src/store/useThemeStore"; import MathEquationImpl from "./frontend/src/lib/mathRenderImpl"; import {Chart} from "./frontend/src/components/native-openui/upstream/components/chart"; import {NativeSurface} from "./frontend/src/components/native-openui/NativeSurface"; import {ResponseSources} from "./frontend/src/components/terminal/ResponseSources"; import {ResponseSourceScope} from "./frontend/src/components/terminal/ResponseSourceScope"; import "./frontend/src/components/native-openui/evaluation.css";'
       + 'const cases = ' + JSON.stringify(cases) + ';'
       + 'const q=new URL(location.href).searchParams; const name=q.get("case") || "short";'
       + 'document.body.dataset.theme=q.get("shellTheme") || q.get("theme") || "light"; document.querySelector("main").dataset.theme=q.get("theme") || "light";'
       + 'const sources=[{id:"source-1",title:"PostgreSQL: Row Security Policies",url:"https://www.postgresql.org/docs/current/ddl-rowsecurity.html"},{id:"source-2",title:"W3C Documentation",url:"https://www.w3.org/TR/"},{id:"source-3",title:"About keyword matching options",siteName:"Google Ads Help",url:"https://support.google.com/google-ads/answer/7478529"}];'
       + 'function DelayedChart(){const [data,setData]=useState(null);useEffect(()=>{setData([{year:0,balance:10000},{year:1,balance:10600}]);},[]);const View=Chart.component;return <section role="region" aria-label="Answer"><View props={{type:"line",data,x:"year",series:["balance"],format:"currency",currency:"USD"}} renderNode={()=>null}/></section>;}'
       + 'function FailedMath(){return <section role="region" aria-label="Answer"><MathEquationImpl text={'+JSON.stringify(failedEquation)+'}/><p>The complete answer stays available.</p></section>;}'
-      + 'const fixture=cases[name]; createRoot(document.getElementById("root")).render(name==="delayedChart"?<DelayedChart/>:name==="legacyMathFailure"?<FailedMath/>:<ResponseSourceScope>{fixture.prompt && <p className="native-evaluation-user">{fixture.prompt}</p>}<div className="native-evaluation-answer-label">Xroga</div><NativeSurface answer={{...fixture,format:"xroga-openui-v1",library:"xroga-native-v1"}} sources={fixture.sources ?? sources} isStreaming={name==="stream"} />{name==="numericEvidence" && <ResponseSources sources={[...sources, sources[0], ...[4,5,6].map(n => ({title:"Source "+n,url:"https://example.com/"+n})), {title:"Unsafe link",url:"javascript:alert(1)"}]} />}</ResponseSourceScope>);',
+      + 'function ThemeProbe(){const theme=useThemeStore(s=>s.theme);useEffect(()=>{useThemeStore.getState().setTheme(q.get("theme")==="dark"?"black":"white");},[]);return <section role="region" aria-label="Answer" style={{position:"fixed",top:8,...(name==="themeControl"?{left:8}:{right:8})}}><ThemeToggle placement={name==="themeControl"?"bottom-end":"right-start"}/><output aria-label="Selected theme">{theme}</output></section>;}'
+      + 'const fixture=cases[name]; createRoot(document.getElementById("root")).render(name.startsWith("themeControl")?<ThemeProbe/>:name==="delayedChart"?<DelayedChart/>:name==="legacyMathFailure"?<FailedMath/>:<ResponseSourceScope>{fixture.prompt && <p className="native-evaluation-user">{fixture.prompt}</p>}<div className="native-evaluation-answer-label">Xroga</div><NativeSurface answer={{...fixture,format:"xroga-openui-v1",library:"xroga-native-v1"}} sources={fixture.sources ?? sources} isStreaming={name==="stream"} />{name==="numericEvidence" && <ResponseSources sources={[...sources, sources[0], ...[4,5,6].map(n => ({title:"Source "+n,url:"https://example.com/"+n})), {title:"Unsafe link",url:"javascript:alert(1)"}]} />}</ResponseSourceScope>);',
   },
   outdir: 'native-assets', entryNames: 'native', chunkNames: 'native-chunk-[hash]', format: 'esm', splitting: true,
   write: false, bundle: true, jsx: 'automatic', minify: true,
-  tsconfig: 'frontend/tsconfig.json', define: { 'process.env.NODE_ENV': '"production"' },
+  tsconfig: 'frontend/tsconfig.json', define: { 'process.env': '{}', 'process.env.NODE_ENV': '"production"' },
   loader: { '.woff2': 'dataurl', '.woff': 'dataurl', '.ttf': 'dataurl' },
 });
 const assets = new Map(compiled.outputFiles.map(file => ['/' + basename(file.path), file.contents]));
@@ -230,7 +246,10 @@ try {
       });
       const open = async name => {
         await page.goto(origin + '/?case=' + name + '&theme=' + theme);
-        await page.getByRole('region', { name: 'Answer', exact: true }).waitFor();
+        await page.getByRole('region', { name: 'Answer', exact: true }).waitFor().catch(error => {
+          console.error(JSON.stringify({scenario:name,browserErrors:errors}));
+          throw error;
+        });
         const fit = await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth);
         assert.ok(fit, name + ' must fit the viewport');
         checked.add(name);
@@ -238,6 +257,45 @@ try {
       await open('short');
       await page.getByText(cases.short.text, { exact: true }).waitFor();
       assert.equal(await page.getByRole('slider').count(), 0);
+      for (const name of ['themeControl','themeControlRight']) {
+        await open(name);
+        await page.waitForFunction(expected=>document.querySelector('output')?.textContent===expected,theme==='dark'?'black':'white');
+        const trigger=page.getByRole('button',{name:'Change theme',exact:true});
+        await trigger.click();
+        const menu=page.getByRole('menu',{name:'Theme',exact:true});
+        await menu.waitFor();
+        assert.equal(await menu.getByRole('menuitemradio').count(),4);
+        const bounds=await menu.boundingBox();
+        assert.ok(bounds&&bounds.x>=0&&bounds.y>=0&&bounds.x+bounds.width<=viewport.width&&bounds.y+bounds.height<=viewport.height,'Theme choices must stay inside the viewport');
+        await page.waitForFunction(()=>document.activeElement?.getAttribute('aria-checked')==='true');
+        if([320,1440].includes(viewport.width))await page.screenshot({path:resolve(output,name+'-'+viewport.width+'-'+theme+'.png')});
+        await page.keyboard.press('Home');
+        await page.keyboard.press('ArrowDown');
+        await page.keyboard.press('Enter');
+        await page.waitForFunction(()=>document.querySelector('output')?.textContent==='white');
+        assert.equal(await menu.count(),0);
+        await trigger.press('ArrowDown');
+        await menu.waitFor();
+        await page.keyboard.press('End');
+        await page.waitForFunction(()=>document.activeElement?.textContent?.startsWith('Black'));
+        await page.keyboard.press('Escape');
+        assert.equal(await menu.count(),0);
+        assert.equal(await trigger.evaluate(element=>element===document.activeElement),true);
+      }
+      await open('metricGrid');
+      if(viewport.width<=390)await page.locator('#root').evaluate((element,width)=>{element.style.width=width+'px';element.style.maxWidth='100%';},viewport.width-100);
+      const paintedNumbers=await page.locator('.native-answer-metric > dd:first-of-type').evaluateAll(elements=>elements.map(element=>{
+        const range=document.createRange();range.selectNodeContents(element);
+        return {value:element.textContent,lines:new Set(Array.from(range.getClientRects(),rect=>Math.round(rect.top))).size};
+      }));
+      assert.deepEqual(paintedNumbers.map(item=>item.value),['$405.53','$4,331.67','$24,331.67']);
+      assert.ok(paintedNumbers.every(item=>item.lines===1),'Metrics must adapt to their container without splitting decimal values');
+      if([390,1440].includes(viewport.width))await page.screenshot({path:resolve(output,'metric-grid-'+viewport.width+'-'+theme+'.png'),fullPage:true});
+      await open('chartHeading');
+      await page.getByRole('img',{name:'line chart of balance by year',exact:true}).waitFor();
+      assert.equal(await page.getByText('Balance by year',{exact:true}).count(),1);
+      await page.locator('figcaption').getByText('Balance (USD)',{exact:true}).waitFor();
+      await page.getByText('Annual compounding.',{exact:true}).waitFor();
       await open('delayedChart');
       await page.getByRole('img',{name:'line chart of balance by year',exact:true}).waitFor();
       assert.ok(await page.locator('svg path[stroke]').evaluateAll(paths=>paths.length===1&&paths.every(path=>path.getTotalLength()>0)));
@@ -431,8 +489,11 @@ try {
       await slider.waitFor();
       assert.equal(await slider.getAttribute('aria-valuetext'), '40 people');
       if (viewport.width === 390) {
-        const metrics = await page.locator('.native-answer-metric').evaluateAll(nodes => nodes.map(node => node.getBoundingClientRect().top));
-        assert.equal(metrics[0], metrics[1], 'Both calculator values should fit on one row at 390px');
+        const lines = await page.locator('.native-answer-metric > dd:first-of-type').evaluateAll(nodes => nodes.map(node => {
+          const range=document.createRange();range.selectNodeContents(node);
+          return new Set(Array.from(range.getClientRects(),rect=>Math.round(rect.top))).size;
+        }));
+        assert.ok(lines.every(count=>count===1),'Calculator values stay readable while preserving the model-specified minimum widths');
       }
       await slider.press('End');
       await page.getByText('$2,000', { exact: true }).waitFor();
