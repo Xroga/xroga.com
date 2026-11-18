@@ -17,7 +17,8 @@ import {
   LockKeyhole,
   Search,
   ShieldCheck,
-  Sparkles,
+  MessageCircle,
+  Gauge,
   Workflow,
   X,
   ChevronDown,
@@ -37,7 +38,7 @@ const PLAN_FEATURES = {
     'Chat, research, and work with files',
     'Build websites, apps, and tools with AI',
     'Edit and debug code, including GitHub projects',
-    'Connect supported apps and services',
+    'Connected apps and Chrome-extension browser workflows',
     'Included monthly AI capacity',
   ],
   spark: [
@@ -52,7 +53,7 @@ const PLAN_FEATURES = {
 const COMPARISON_GROUPS = [
   {
     title: 'AI chat & research',
-    icon: Sparkles,
+    icon: MessageCircle,
     rows: [
       { name: 'AI chat workspace', free: 'Included', pro: 'Included' },
       { name: 'Plain-language requests and follow-up work', free: 'Included', pro: 'Included' },
@@ -94,6 +95,7 @@ const COMPARISON_GROUPS = [
     icon: Workflow,
     rows: [
       { name: 'Connect supported external services', free: 'Included', pro: 'Included', detail: 'Availability depends on each connector and account authorization.' },
+      { name: 'Chrome-extension browser workflows', free: 'When set up', pro: 'When set up', detail: 'Requires installing and authorizing a compatible Xroga Chrome extension. Browser actions depend on workflow support, permissions and available usage.' },
       { name: 'GitHub integration', free: 'With connection', pro: 'With connection' },
       { name: 'Vercel deployment workflows', free: 'With connection', pro: 'With connection', detail: 'Deployment requires provider access and passing build checks.' },
       { name: 'Supabase-backed application workflows', free: 'Supported', pro: 'Supported' },
@@ -192,7 +194,7 @@ const FAQS = [
 
 /* Quiet pricing marks: the plan icons are intentionally static. */
 function PlanShowcase({ paid }: { paid: boolean }) {
-  const Icon = paid ? Sparkles : Compass;
+  const Icon = paid ? Workflow : Compass;
   return (
     <span className={paid ? styles.proShowcase : styles.freeShowcase} aria-hidden="true">
       <Icon className={styles.showcaseSymbol} strokeWidth={1.65} />
@@ -300,14 +302,7 @@ export function PricingPageClient() {
     <main className={styles.root}>
       <section className={styles.hero} aria-labelledby="pricing-title">
         <div className={styles.gridGlow} aria-hidden="true" />
-        <div className={styles.starField} aria-hidden="true">
-          <span />
-          <span />
-          <span />
-        </div>
-
         <div className={styles.heroInner}>
-          <p className={styles.heroKicker}>Pricing</p>
           <h1 id="pricing-title" className={styles.heroTitle}>
             Simple plans. <span>Serious work.</span>
           </h1>
@@ -355,7 +350,7 @@ export function PricingPageClient() {
                     <strong className={styles.price}>{plan.priceLabel}</strong>
                     <span className={styles.priceMeta}>
                       <b>per month</b>
-                      <small>{isFree ? 'no card required' : 'billed monthly'}</small>
+                      <small>{isFree ? 'no credit card required' : 'billed monthly'}</small>
                     </span>
                   </div>
 
@@ -426,35 +421,50 @@ export function PricingPageClient() {
             })}
           </div>
         </section>
-
+        <p className={styles.sharedPlanNote}>
+          Both plans offer access to Xroga&apos;s core tools. Free has a smaller monthly work allowance; Pro provides more capacity and Full Access pacing.
+          <span> Browser workflows require an installed, authorized Chrome extension and compatible setup.</span>
+        </p>
 
         <section className={styles.usageSection} aria-labelledby="usage-heading">
           <div className={styles.usageHeader}>
-            <span className={styles.usageEyebrow}>A CLEARER WAY TO PLAN YOUR WORK</span>
+            <Gauge className={styles.usageTopIcon} aria-hidden="true" />
             <h2 id="usage-heading">How usage works.</h2>
             <p>Your available capacity depends on your plan and the work you run. Here&apos;s what to expect.</p>
           </div>
-          <div className={styles.usageGrid}>
-            <div className={styles.usageItem}>
-              <span className={styles.usageNumber}>01 / FREE</span>
-              <h3>Start with included capacity</h3>
-              <p>Free includes a smaller monthly AI allowance to explore real tasks, research, and building.</p>
-            </div>
-            <div className={styles.usageItem}>
-              <span className={styles.usageNumber}>02 / PRO</span>
-              <h3>More room for bigger work</h3>
-              <p>Pro includes a higher monthly allowance for longer projects, with Full Access pacing available.</p>
-            </div>
-            <div className={styles.usageItem}>
-              <span className={styles.usageNumber}>03 / DURING THE DAY</span>
-              <h3>Capacity can become available</h3>
+          <div className={styles.usageAccordion}>
+            <details className={styles.usageDisclosure}>
+              <summary>
+                <span className={styles.usageNumber}>01 / FREE</span>
+                <span className={styles.usageQuestion}>Start with included capacity</span>
+                <span className={styles.usagePlus} aria-hidden="true">+</span>
+              </summary>
+              <p>Free includes access to Xroga&apos;s core tools with a smaller monthly AI allowance to explore real tasks, research, automation and building.</p>
+            </details>
+            <details className={styles.usageDisclosure}>
+              <summary>
+                <span className={styles.usageNumber}>02 / PRO</span>
+                <span className={styles.usageQuestion}>More room for bigger work</span>
+                <span className={styles.usagePlus} aria-hidden="true">+</span>
+              </summary>
+              <p>Pro includes the core Xroga tools with a higher monthly allowance for longer projects and Full Access pacing.</p>
+            </details>
+            <details className={styles.usageDisclosure}>
+              <summary>
+                <span className={styles.usageNumber}>03 / DURING THE DAY</span>
+                <span className={styles.usageQuestion}>Capacity can become available</span>
+                <span className={styles.usagePlus} aria-hidden="true">+</span>
+              </summary>
               <p>Working capacity may unlock in stages. Daily availability isn&apos;t a guaranteed fixed number of tasks or a full daily reset.</p>
-            </div>
-            <div className={styles.usageItem}>
-              <span className={styles.usageNumber}>04 / CYCLE RESET</span>
-              <h3>Your allowance renews</h3>
+            </details>
+            <details className={styles.usageDisclosure}>
+              <summary>
+                <span className={styles.usageNumber}>04 / CYCLE RESET</span>
+                <span className={styles.usageQuestion}>Your allowance renews</span>
+                <span className={styles.usagePlus} aria-hidden="true">+</span>
+              </summary>
               <p>Your monthly allowance renews with your plan cycle. Check your signed-in workspace for remaining usage and reset timing.</p>
-            </div>
+            </details>
           </div>
           <p className={styles.usageNote}>
             <Info aria-hidden="true" />
@@ -541,12 +551,16 @@ export function PricingPageClient() {
                           {'detail' in row && <small>{row.detail}</small>}
                         </th>
                         <td className={styles.valueCell}>
-                          {row.free === '—' ? <X className={styles.unavailableIcon} aria-label="Not included" /> : <Check className={styles.includedIcon} aria-hidden="true" />}
-                          <span>{row.free}</span>
+                          <span className={styles.cellValueInline}>
+                            {row.free === '—' ? <X className={styles.unavailableIcon} aria-label="Not included" /> : <Check className={styles.includedIcon} aria-hidden="true" />}
+                            <span className={styles.cellValueText}>{row.free}</span>
+                          </span>
                         </td>
                         <td className={`${styles.valueCell} ${styles.proCell}`}>
-                          {String(row.pro) === '—' ? <X className={styles.unavailableIcon} aria-label="Not included" /> : <Check className={styles.includedIcon} aria-hidden="true" />}
-                          <span>{row.pro}</span>
+                          <span className={styles.cellValueInline}>
+                            {String(row.pro) === '—' ? <X className={styles.unavailableIcon} aria-label="Not included" /> : <Check className={styles.includedIcon} aria-hidden="true" />}
+                            <span className={styles.cellValueText}>{row.pro}</span>
+                          </span>
                         </td>
                       </tr>
                     ))}
@@ -567,8 +581,8 @@ export function PricingPageClient() {
             <span><LockKeyhole aria-hidden="true" /> Connected actions require your authorization</span>
           </div>
           <p className={styles.compareFootnote}>
-            Plans have finite monthly capacity. Availability also depends on connected accounts,
-            provider support and permissions; publishing and external actions are not automatic.
+            Both plans include core Xroga features with different work capacity. Connected apps and browser workflows require compatible setup and authorization.
+            Publishing and external actions are not automatic.
           </p>
         </section>
 
@@ -646,7 +660,7 @@ export function PricingPageClient() {
 
             <div className={styles.trustLine}>
               <ShieldCheck aria-hidden="true" />
-              No card on Free
+              No credit card required
             </div>
           </div>
         </section>

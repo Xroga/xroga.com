@@ -3798,3 +3798,205 @@
   .featureList{margin-top:18px;padding-top:18px;gap:12px;}
   .planCta{padding-top:23px;}
 }
+
+
+/* =============================================================
+   XROGA PRICING PREVIEW v6 / screenshot-driven refinements
+   Fixed icon-column alignment, centered usage accordions, shared
+   plan access, and zero star/sparkle imagery in pricing markup.
+   ============================================================= */
+/* Unified value cells: same left edge for every check and label,
+   not individually centered based on varying text length. */
+.comparisonTable td.valueCell,
+.comparisonTable td.proCell{
+  text-align:center;
+  vertical-align:middle;
+}
+.comparisonTable td.valueCell .cellValueInline{
+  display:flex;
+  width:min(100%,184px);
+  min-width:0;
+  margin:0 auto;
+  justify-content:flex-start;
+  align-items:center;
+  gap:9px;
+  text-align:left;
+  white-space:normal;
+}
+.comparisonTable td.valueCell .cellValueInline svg{
+  display:block;
+  flex:0 0 19px;
+  width:19px;height:19px;
+  margin:0;
+  vertical-align:initial;
+}
+.comparisonTable td.valueCell .cellValueInline .cellValueText{
+  display:block;
+  min-width:0;
+  flex:1;
+  margin:0;
+  text-align:left;
+  font-size:.8rem;
+  line-height:1.45;
+  font-weight:520;
+  color:#c1cfe2;
+  overflow-wrap:normal;
+  word-break:normal;
+}
+.comparisonTable td.valueCell.proCell .cellValueText{color:#d2e2f6;}
+.comparisonTable td.valueCell .cellValueInline .includedIcon{
+  padding:3px;
+  border-radius:50%;
+  background:rgba(104,164,244,.20);
+  color:#dbeeff;
+}
+.comparisonTable td.valueCell .cellValueInline .unavailableIcon{
+  border-radius:50%;
+  color:#7889a3;
+}
+.sharedPlanNote{
+  width:min(945px,100%);
+  max-width:945px;
+  margin:21px auto 0;
+  color:#a7b6cc;
+  text-align:center;
+  font-size:.82rem;
+  line-height:1.75;
+}
+.sharedPlanNote span{color:#879bb6;}
+/* Usage works like the FAQ: headline and icon centered, then a
+   single restrained group of line-based accordions. No cards. */
+.usageSection{
+  width:min(960px,100%);
+  max-width:960px;
+  margin:95px auto 0;
+  padding:32px 0 28px;
+}
+.usageHeader{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  max-width:850px;
+  margin:0 auto 52px;
+  text-align:center;
+}
+.usageTopIcon{
+  display:block;
+  width:49px;height:49px;
+  margin:0 auto 22px;
+  color:#a7cbff;
+  stroke-width:1.45;
+}
+.usageHeader h2{
+  margin:0;
+  font-family:var(--font-claude-serif),Newsreader,Georgia,serif;
+  font-size:clamp(2.6rem,5vw,3.8rem);
+  font-weight:460;
+  letter-spacing:-.045em;
+  line-height:1.11;
+  color:#f1f6ff;
+}
+.usageHeader p{
+  max-width:610px;
+  margin:16px auto 0;
+  color:#a4b3c8;
+  font-size:.89rem;
+  line-height:1.65;
+}
+.usageAccordion{
+  width:min(850px,100%);
+  margin:0 auto;
+  border-top:1px solid rgba(158,186,229,.21);
+}
+.usageDisclosure{
+  border:0;
+  border-bottom:1px solid rgba(158,186,229,.17);
+  background:transparent;
+  box-shadow:none;
+}
+.usageDisclosure summary{
+  display:flex;
+  align-items:center;
+  gap:20px;
+  min-height:78px;
+  padding:19px 0;
+  cursor:pointer;
+  list-style:none;
+  color:#edf4ff;
+}
+.usageDisclosure summary::-webkit-details-marker{display:none;}
+.usageDisclosure summary::marker{content:"";}
+.usageNumber{
+  flex:0 0 150px;
+  width:150px;
+  margin:0;
+  font-family:var(--font-goga),var(--font-inter),system-ui,sans-serif;
+  font-size:.69rem;
+  font-weight:720;
+  letter-spacing:.11em;
+  color:#8fbbff;
+}
+.usageQuestion{
+  flex:1;
+  font-family:var(--font-claude-serif),Newsreader,Georgia,serif;
+  font-size:clamp(1.15rem,1.7vw,1.4rem);
+  line-height:1.3;
+  font-weight:470;
+  color:#edf3ff;
+  letter-spacing:-.018em;
+}
+.usagePlus{
+  display:grid;
+  flex:0 0 24px;
+  place-items:center;
+  width:24px;height:24px;
+  color:#a0b6d5;
+  font:300 1.5rem/1 var(--font-inter),system-ui,sans-serif;
+  transition:transform .18s ease;
+}
+.usageDisclosure[open] .usagePlus{transform:rotate(45deg);}
+.usageDisclosure summary:hover .usageQuestion{color:#bcdaff;}
+.usageDisclosure summary:focus-visible{outline:2px solid #94c2ff;outline-offset:3px;border-radius:5px;}
+.usageDisclosure > p{
+  max-width:720px;
+  margin:0;
+  padding:0 50px 24px 170px;
+  color:#a8b6c9;
+  font-size:.88rem;
+  line-height:1.75;
+}
+.usageNote{
+  align-items:flex-start;
+  justify-content:center;
+  max-width:830px;
+  margin:26px auto 0;
+  font-size:.76rem;
+  color:#98a7be;
+}
+.usageNote svg{color:#96c1ff;}
+/* No star field; no tiny hero eyebrow; modern editorial hierarchy */
+.heroInner{padding-top:68px;}
+@media(max-width:720px){
+  .heroInner{padding-top:59px;}
+  .sharedPlanNote{margin-top:17px;font-size:.76rem;line-height:1.65;}
+  .usageSection{margin-top:70px;padding:20px 0 23px;}
+  .usageHeader{margin-bottom:34px;}
+  .usageTopIcon{width:42px;height:42px;margin-bottom:17px;}
+  .usageHeader h2{font-size:clamp(2.45rem,8vw,3.25rem);}
+  .usageHeader p{font-size:.84rem;}
+  .usageDisclosure summary{gap:10px;min-height:69px;padding:16px 0;}
+  .usageNumber{flex-basis:106px;width:106px;font-size:.59rem;letter-spacing:.045em;}
+  .usageQuestion{font-size:1.13rem;}
+  .usageDisclosure > p{padding:0 22px 23px 116px;font-size:.83rem;}
+  .comparisonTable td.valueCell .cellValueInline{width:100%;gap:7px;}
+  .comparisonTable td.valueCell .cellValueInline .cellValueText{font-size:.75rem;}
+}
+@media(max-width:430px){
+  .usageNumber{flex-basis:81px;width:81px;font-size:.54rem;}
+  .usageQuestion{font-size:1.03rem;}
+  .usageDisclosure summary{gap:9px;}
+  .usageDisclosure > p{padding-left:90px;padding-right:10px;}
+}
+@media(prefers-reduced-motion:reduce){
+  .usagePlus{transition:none;}
+}
