@@ -9,36 +9,41 @@ async function request(op: string, data: Record<string, string> = {}): Promise<R
 }
 
 /**
- * Full access for every connected app, reachable from the chat bar. It is the same account-wide choice as the one in the Plugins panel
- * (the owner's own click, saved on the server): while it is on, Xroga does not ask before reading or changing a connected app, so a task
- * can finish while the owner is away. Sending, publishing, deleting and payments keep their own approval; the server enforces that.
+ * The one Full access control, in the chat bar. It is a single account-wide choice saved on the server: while it is on, Xroga does not
+ * ask before reading or changing any connected app, in every tab and in the Plugins list, so a task can finish while the owner is away.
+ * Sending, publishing, deleting and payments keep their own approval; the server enforces that. The state is shown in words and colour
+ * (On: filled green with a tick; Off: plain), so it is never unclear whether it is on.
  */
 export function FullAccessToggle() {
   const [mode, setMode] = useState<string | undefined>();
   const [saving, setSaving] = useState(false);
+  const [failed, setFailed] = useState(false);
   useEffect(() => {
     let current = true;
-    void request('permission').then(data => { if (current) setMode(data.mode); }, () => { /* stays unknown; the switch is disabled */ });
+    void request('permission').then(data => { if (current) setMode(data.mode); }, () => { if (current) setFailed(true); });
     return () => { current = false; };
   }, []);
   const on = mode === 'full_access';
   async function toggle() {
     if (saving || mode === undefined) return;
     setSaving(true);
+    setFailed(false);
     try {
       const data = await request('setPermission', { mode: on ? 'low_risk' : 'full_access' });
       setMode(data.mode);
-    } catch { /* unchanged */ } finally { setSaving(false); }
+    } catch { setFailed(true); } finally { setSaving(false); }
   }
+  const label = saving ? 'Saving…' : mode === undefined ? (failed ? 'Full access: unavailable' : 'Full access…') : on ? 'Full access: ON' : 'Full access: OFF';
   return (
     <button type="button" role="switch" aria-checked={on} disabled={saving || mode === undefined} onClick={() => void toggle()}
-      title={on ? 'Full access is on: Xroga will not ask before using your connected apps. Click to turn off.' : 'Turn on Full access so Xroga does not ask before using your connected apps.'}
-      className={'flex h-7 items-center gap-1 rounded-lg px-1.5 text-xs hover:bg-nb-surface disabled:opacity-50 ' + (on ? 'text-nb-accent' : 'text-nb-muted hover:text-nb-fg')}>
-      <svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M12 3 4 6v6c0 4.4 3.2 7.6 8 9 4.8-1.4 8-4.6 8-9V6l-8-3Z" />
-        {on ? <path d="m9 12 2 2 4-4" /> : null}
-      </svg>
-      <span className="max-[279px]:sr-only">{saving ? 'Saving…' : on ? 'Full access on' : 'Full access'}</span>
+      title={on
+        ? 'Full access is ON for all your connected apps: Xroga will not ask before reading or changing them. Sending, publishing, deleting and payments still ask. Click to turn off.'
+        : 'Full access is OFF: Xroga asks before using your connected apps. Click to turn it on for all apps.'}
+      className={'flex h-7 items-center gap-1.5 rounded-full border px-2 text-xs font-medium disabled:opacity-60 ' +
+        (on ? 'border-green-600 bg-green-600 text-white hover:bg-green-700' : 'border-nb-border text-nb-muted hover:bg-nb-surface hover:text-nb-fg')}>
+      <span aria-hidden="true" className={'inline-block size-2 rounded-full ' + (on ? 'bg-white' : 'bg-nb-muted')} />
+      <span className="max-[279px]:sr-only">{label}</span>
+      {on ? <span aria-hidden="true" className="min-[280px]:hidden">✓</span> : null}
     </button>
   );
 }

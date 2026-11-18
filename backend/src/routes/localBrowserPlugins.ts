@@ -8,6 +8,7 @@ import {
 } from '../services/integrations/composioClient.js';
 import { canUserAccessComposioToolkit } from '../services/integrations/composioNamespace.js';
 import { getUserPluginPermissionMode, setUserPluginPermissionMode } from '../services/integrations/pluginPermissionPolicy.js';
+import { getSupabaseAdmin } from '../config/supabase.js';
 
 // Only Composio's own logo host, over https, is passed on; anything else is dropped.
 export function safePluginLogo(value: unknown): string | undefined {
@@ -108,7 +109,12 @@ export function createLocalBrowserPluginCatalog() {
       if (!toolkit) {
         // No app named: this is the account-wide choice.
         if (!await req.revalidateBrowserDevice!()) return res.sendStatus(403);
-        return res.json({ mode: await setUserPluginPermissionMode(actor, mode) });
+        const saved = await setUserPluginPermissionMode(actor, mode);
+        // One switch controls every app: older per-app choices are cleared so that "off" is really off for all of them.
+        const { error } = await getSupabaseAdmin().from('user_integrations').delete()
+          .eq('user_id', actor.userId).like('provider', 'xroga_plugin_permission_policy__%');
+        if (error) return res.status(503).json({ error: 'BROWSER_PLUGIN_PERMISSION_UNAVAILABLE' });
+        return res.json({ mode: saved });
       }
       if (!canUserAccessComposioToolkit(actor.userId, toolkit)) return res.sendStatus(404);
       // Only an app that is really connected can be given a permission.
