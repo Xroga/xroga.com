@@ -80,30 +80,39 @@ test('Claude occupies the right rail with the legacy left offset cleared', () =>
   assert.ok(correction.includes('.xi-orbit-logo-10{'));
 });
 
-test('final signup section has opaque dot-free background and prominent bottom corners', () => {
+test('final signup CTA has a white surface, fine black moving lines and four rounded corners', () => {
   const correction = css.slice(css.indexOf('Follow-up polish:'));
   assert.ok(correction.includes('.xi-root > section.xi-cta{'));
-  assert.ok(correction.includes('background:#0a0a0a!important;'));
-  assert.ok(correction.includes('135deg,'));
-  assert.ok(correction.includes('#f7f7f7 25%,'));
-  assert.ok(correction.includes('#080808 50%,'));
-  assert.ok(correction.includes('.xi-root > section.xi-cta::before{'));
-  assert.ok(correction.includes('background:radial-gradient('));
-  assert.ok(correction.includes('.xi-root > section.xi-cta > :is(h2,p,a){'));
-  assert.ok(correction.includes('z-index:1;'));
+  assert.ok(correction.includes('background:#fff!important;'));
+  assert.ok(correction.includes('background:repeating-linear-gradient('));
+  assert.ok(correction.includes('#171717 25px,'));
+  assert.ok(correction.includes('#171717 27px,'));
   assert.ok(correction.includes('background-size:40px 40px!important;'));
   assert.ok(correction.includes('animation:xi-cta-diagonal-move 4s linear infinite;'));
-  assert.ok(correction.includes('@keyframes xi-cta-diagonal-move'));
+  assert.ok(correction.includes('border-radius:44px;'));
+  assert.ok(correction.includes('border-radius:27px;'));
+  assert.ok(correction.includes('rgba(255,255,255,.72) 0%'));
+  assert.ok(correction.includes('.xi-root > section.xi-cta h2{color:#121212!important'));
+  assert.ok(correction.includes('.xi-root > section.xi-cta p{color:#333!important}'));
   assert.ok(correction.includes('100%{background-position:40px 40px}'));
   assert.ok(correction.includes('@media(prefers-reduced-motion:reduce)'));
-  assert.ok(correction.includes('.xi-root > section.xi-cta{animation:none}'));
-  assert.ok(correction.includes('border-radius:0 0 52px 52px;'));
-  assert.ok(correction.includes('border-bottom-left-radius:32px;'));
-  assert.ok(correction.includes('border-bottom-right-radius:32px;'));
   assert.ok(integration.includes('Start in minutes.'));
   assert.ok(integration.includes('Try Xroga for free.'));
   assert.ok(integration.includes('href="/auth/signup"'));
   assert.ok(integration.includes('<SharedDotBackdrop />'));
+});
+
+test('closing CTA reveals once on scroll and remains accessible without motion support', () => {
+  assert.ok(integration.includes('const closingCtaRef = useRef<HTMLElement>(null);'));
+  assert.ok(integration.includes('<section ref={closingCtaRef} className="xi-cta"'));
+  assert.ok(integration.includes("typeof IntersectionObserver === 'undefined'"));
+  assert.ok(integration.includes("window.matchMedia('(prefers-reduced-motion: reduce)').matches"));
+  assert.ok(integration.includes("card.classList.add('xi-cta--pending')"));
+  assert.ok(integration.includes("card.classList.remove('xi-cta--pending')"));
+  assert.ok(integration.includes('observer.disconnect()'));
+  assert.ok(css.includes('.xi-root > section.xi-cta.xi-cta--pending{'));
+  assert.ok(css.includes('transform:translate3d(0,32px,0) scale(.987);'));
+  assert.ok(css.includes('transition:none;'));
 });
 
 test('public app cards use original logo sources and the dashboard canonical logo fallback', () => {
