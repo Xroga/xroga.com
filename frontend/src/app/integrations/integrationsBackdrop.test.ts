@@ -83,10 +83,14 @@ test('Claude occupies the right rail with the legacy left offset cleared', () =>
 test('final signup section has opaque dot-free background and prominent bottom corners', () => {
   const correction = css.slice(css.indexOf('Follow-up polish:'));
   assert.ok(correction.includes('.xi-root > section.xi-cta{'));
-  assert.ok(correction.includes('background:#121212!important;'));
+  assert.ok(correction.includes('background:#0a0a0a!important;'));
   assert.ok(correction.includes('135deg,'));
-  assert.ok(correction.includes('#121212 25%,'));
-  assert.ok(correction.includes('#1a1a1a 50%,'));
+  assert.ok(correction.includes('#f7f7f7 25%,'));
+  assert.ok(correction.includes('#080808 50%,'));
+  assert.ok(correction.includes('.xi-root > section.xi-cta::before{'));
+  assert.ok(correction.includes('background:radial-gradient('));
+  assert.ok(correction.includes('.xi-root > section.xi-cta > :is(h2,p,a){'));
+  assert.ok(correction.includes('z-index:1;'));
   assert.ok(correction.includes('background-size:40px 40px!important;'));
   assert.ok(correction.includes('animation:xi-cta-diagonal-move 4s linear infinite;'));
   assert.ok(correction.includes('@keyframes xi-cta-diagonal-move'));
