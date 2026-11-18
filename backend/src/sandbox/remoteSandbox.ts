@@ -63,6 +63,11 @@ export interface RemoteSandboxOptions {
    * its own header instead of Authorization.
    */
   audience?: string;
+  /**
+   * Allows `registry-only` stages to be sent to this worker. Off by default: only a worker that answers `restrictedNetwork: true` to its own
+   * restricted-network self-test (checked before every first use) may receive one, and a worker that does not is treated as unable to run it.
+   */
+  allowRestricted?: boolean;
 }
 
 const ID_TOKEN_TTL_MS = 45 * 60_000;
@@ -146,6 +151,8 @@ export function readWorkerResult(body: unknown): SandboxExecutionResult | null {
 
   const artifacts = readArtifacts(b.artifacts);
   if (artifacts === null) return null;
+  const stages = readStages(b.stages);
+  if (stages === null) return null;
   return {
     exitCode,
     stdout: capture(b.stdout),
@@ -154,7 +161,23 @@ export function readWorkerResult(body: unknown): SandboxExecutionResult | null {
     killedForLimit: b.killedForLimit,
     durationMs: b.durationMs,
     ...(artifacts.length ? { artifacts } : {}),
+    ...(stages ? { stages } : {}),
   };
+}
+
+/** Per-stage results of a multi-stage request, re-checked: a reply that is not exactly this shape is not trusted at all (null). */
+function readStages(value: unknown): NonNullable<SandboxExecutionResult['stages']> | null | undefined {
+  if (value === undefined) return undefined;
+  if (!Array.isArray(value) || value.length > 8) return null;
+  const out: NonNullable<SandboxExecutionResult['stages']> = [];
+  for (const item of value) {
+    const s = item as Record<string, unknown> | null;
+    if (!s || typeof s.id !== 'string' || !/^[A-Za-z0-9:._/-]{1,120}$/.test(s.id) || typeof s.timedOut !== 'boolean' || typeof s.killedForLimit !== 'boolean'
+      || typeof s.durationMs !== 'number' || !Number.isFinite(s.durationMs) || (s.exitCode !== null && s.exitCode !== undefined && typeof s.exitCode !== 'number')) return null;
+    out.push({ id: s.id, exitCode: (s.exitCode ?? null) as number | null, stdout: capture(s.stdout), stderr: capture(s.stderr), timedOut: s.timedOut, killedForLimit: s.killedForLimit, durationMs: s.durationMs,
+      ...(s.networkPolicy === 'none' || s.networkPolicy === 'registry-only' ? { networkPolicy: s.networkPolicy } : {}) });
+  }
+  return out;
 }
 
 const MAX_ARTIFACTS = 20;
@@ -235,8 +258,11 @@ export class RemoteSandboxRuntime implements SandboxRuntime {
   private readonly token?: string;
   private readonly fetchImpl: typeof fetch;
   private readonly audience?: string;
+  private readonly allowRestricted: boolean;
+  private restrictedVerifiedUntil = 0;
 
   constructor(options: RemoteSandboxOptions) {
+    this.allowRestricted = options.allowRestricted === true;
     this.name = options.name ?? 'remote-worker';
     this.url = options.url.replace(/\/+$/, '');
     this.token = options.token;
@@ -297,9 +323,36 @@ export class RemoteSandboxRuntime implements SandboxRuntime {
     }
   }
 
+  /** Asks the worker to run its restricted-network self-test; only an explicit `restrictedNetwork === true` counts, and it is remembered briefly. */
+  private async restrictedVerified(): Promise<boolean> {
+    if (this.restrictedVerifiedUntil > Date.now()) return true;
+    if (!isAcceptableWorkerUrl(this.url)) return false;
+    try {
+      const response = await this.fetchImpl(`${this.url}/health?check=restricted`, { method: 'GET', headers: await this.headers(), signal: AbortSignal.timeout(60_000) });
+      if (!response.ok) return false;
+      const body = (await response.json()) as { restrictedNetwork?: unknown; networkIsolation?: unknown };
+      if (body.restrictedNetwork !== true || body.networkIsolation !== true) return false;
+      this.restrictedVerifiedUntil = Date.now() + 5 * 60_000;
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
   async execute(request: SandboxExecutionRequest): Promise<SandboxExecutionResult> {
-    requireEnforcedSandboxNetworkPolicy(request.networkPolicy, this.name);
+    const wantsNetwork = request.networkPolicy === 'registry-only' || (request.stages ?? []).some((stage) => stage.networkPolicy === 'registry-only');
+    // Without the explicit option a restricted-network request is refused here exactly as before; with it, the worker must prove the restriction.
+    if (!this.allowRestricted) {
+      requireEnforcedSandboxNetworkPolicy(request.networkPolicy, this.name);
+      if (wantsNetwork) requireEnforcedSandboxNetworkPolicy('registry-only', this.name);
+    }
     const started = Date.now();
+    if (wantsNetwork && !(await this.restrictedVerified())) {
+      return {
+        exitCode: null, stdout: '', stderr: 'Isolation worker could not verify its restricted-network stage; generated code was not run.',
+        timedOut: false, killedForLimit: false, durationMs: Date.now() - started,
+      };
+    }
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), request.timeoutMs + TRANSPORT_GRACE_MS);
 
@@ -318,6 +371,7 @@ export class RemoteSandboxRuntime implements SandboxRuntime {
           networkPolicy: request.networkPolicy,
           environment: request.environment,
           limits: request.limits,
+          ...(request.stages?.length ? { stages: request.stages.map((s) => ({ id: s.id, command: s.command, args: s.args, networkPolicy: s.networkPolicy, timeoutMs: s.timeoutMs, ...(s.cwd ? { cwd: s.cwd } : {}) })) } : {}),
           // Forwarded so a worker that supports per-execution images can honour it. A worker
           // that ignores the field is safe: the collector reports `browser_unavailable`.
           ...(request.image ? { image: request.image } : {}),
@@ -384,5 +438,6 @@ export function remoteSandboxFromEnvironment(
     token: env.XROGA_SANDBOX_WORKER_TOKEN?.trim() || undefined,
     name: env.XROGA_SANDBOX_WORKER_NAME?.trim() || 'remote-worker',
     audience: env.XROGA_SANDBOX_WORKER_AUDIENCE?.trim() || undefined,
+    allowRestricted: env.XROGA_SANDBOX_WORKER_RESTRICTED === '1',
   });
 }

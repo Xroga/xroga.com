@@ -167,7 +167,8 @@ async function runStage(root, spec, request) {
       await new Promise((resolve, reject) => { proxy.server.once('listening', resolve); proxy.server.once('error', reject); });
     }
     const argv = wrap(spec, request.limits, socketPath);
-    const environment = { ...request.environment, ...(spec.networkPolicy === 'registry-only' ? PROXY_ENV : {}) };
+    // pip may only write under HOME (the run directory, removed afterwards): the system site is read-only for this user.
+    const environment = { ...request.environment, PIP_USER: '1', PIP_BREAK_SYSTEM_PACKAGES: '1', PIP_DISABLE_PIP_VERSION_CHECK: '1', ...(spec.networkPolicy === 'registry-only' ? PROXY_ENV : {}) };
     const child = spawn(argv[0], argv.slice(1), {
       cwd: spec.cwd ? path.join(root, spec.cwd) : root, env: { ...environment, PATH: process.env.PATH ?? '/usr/bin:/bin', HOME: root }, detached: true, stdio: ['ignore', 'pipe', 'pipe'],
     });
