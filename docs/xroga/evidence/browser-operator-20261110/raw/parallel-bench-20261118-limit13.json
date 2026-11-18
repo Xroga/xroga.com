@@ -1,0 +1,73 @@
+{
+  "names": [
+    "parallel-bench"
+  ],
+  "args": {},
+  "timedOut": false,
+  "reports": [
+    {
+      "name": "parallel-bench",
+      "ok": true,
+      "startedAt": "2026-11-18T10:53:12.727Z",
+      "durationMs": 75073,
+      "result": {
+        "workerModelMs": 3000,
+        "activeRunLimit": 13,
+        "maxActiveWorkers": {
+          "one": 1,
+          "three": 3,
+          "five": 5,
+          "six": 6
+        },
+        "phases": [
+          {
+            "name": "one",
+            "workers": 1,
+            "ms": 28968,
+            "start": 1794999201205,
+            "end": 1794999230173,
+            "status": "Done",
+            "done": 1,
+            "maxActive": 1
+          },
+          {
+            "name": "three",
+            "workers": 3,
+            "ms": 9124,
+            "start": 1794999233207,
+            "end": 1794999242331,
+            "status": "Done",
+            "done": 3,
+            "maxActive": 3
+          },
+          {
+            "name": "five",
+            "workers": 5,
+            "ms": 7585,
+            "start": 1794999245365,
+            "end": 1794999252950,
+            "status": "Done",
+            "done": 5,
+            "maxActive": 5
+          },
+          {
+            "name": "six",
+            "workers": 6,
+            "ms": 9284,
+            "start": 1794999255972,
+            "end": 1794999265256,
+            "status": "Done",
+            "done": 6,
+            "maxActive": 6
+          }
+        ],
+        "threeVsOne": 0.31,
+        "fiveVsOne": 0.26,
+        "sixVsOne": 0.32,
+        "serialThreeWouldBe": 35768,
+        "serialSixWouldBe": 45968
+      }
+    }
+  ],
+  "console": []
+}
