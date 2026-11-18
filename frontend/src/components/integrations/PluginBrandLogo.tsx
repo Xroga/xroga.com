@@ -2,8 +2,15 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { IntegrationLogo } from '@/components/integrations/IntegrationLogo';
+import { Blocks } from 'lucide-react';
 import { composioLogoUrl } from '@/lib/pluginCatalog';
 import { getIntegrationLogo } from '@/lib/integrationLogos';
+
+/** Locally bundled SVGs that use white foreground shapes. Public
+ * marketing cards must render these on a dark tile or the marks disappear.
+ * Keep the signed-in dashboard's logo presentation unchanged.
+ */
+const WHITE_FOREGROUND_LOCAL_SVGS = new Set(['github', 'vercel', 'openai', 'cursor']);
 
 const SIMPLE_ICON_ALIASES: Record<string, string> = {
   'google-calendar': 'googlecalendar',
@@ -66,6 +73,7 @@ export function PluginBrandLogo({
   logo,
   fallbackLogo,
   size = 'card',
+  verifiedOnly = false,
 }: {
   id: string;
   name: string;
@@ -73,20 +81,23 @@ export function PluginBrandLogo({
   logo?: string;
   fallbackLogo?: string;
   size?: 'micro' | 'card' | 'detail';
+  /** Use only Xroga's explicit mapped logo or provider metadata, not slug guesses. */
+  verifiedOnly?: boolean;
 }) {
   const candidates = useMemo(() => {
     const customToolkit =
       toolkit?.toLowerCase().startsWith('custom_') ?? false;
 
     return [
-      // Known Xroga brand mappings win for major providers, then use the live app
-      // metadata returned by the provider catalog. Simple Icons is a broad
-      // open-source fallback for recognizable brands. Custom MCP apps never
-      // borrow an unrelated mark and fall back to honest initials.
-      getIntegrationLogo(id),
-      !customToolkit ? logo : undefined,
-      ...(!customToolkit ? simpleIconCandidates(toolkit, name) : []),
-      toolkit && !customToolkit ? composioLogoUrl(toolkit) : undefined,
+      // Public marketing cards explicitly pass repository SVGs or provider
+      // logos as "logo". Honor that trusted source first when verifiedOnly
+      // so outdated CDN mappings never hide real local assets. Existing
+      // dashboard behavior remains unchanged.
+      ...(verifiedOnly
+        ? [!customToolkit ? logo : undefined, getIntegrationLogo(id)]
+        : [getIntegrationLogo(id), !customToolkit ? logo : undefined]),
+      ...(!customToolkit && !verifiedOnly ? simpleIconCandidates(toolkit, name) : []),
+      toolkit && !customToolkit && !verifiedOnly ? composioLogoUrl(toolkit) : undefined,
       fallbackLogo,
     ].filter(
       (value, candidateIndex, all): value is string =>
@@ -94,13 +105,13 @@ export function PluginBrandLogo({
         value.length > 0 &&
         all.indexOf(value) === candidateIndex,
     );
-  }, [id, logo, fallbackLogo, toolkit, name]);
+  }, [id, logo, fallbackLogo, toolkit, name, verifiedOnly]);
 
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
     setIndex(0);
-  }, [id, logo, fallbackLogo, toolkit, name]);
+  }, [id, logo, fallbackLogo, toolkit, name, verifiedOnly]);
 
   const dimension =
     size === 'detail'
@@ -109,6 +120,9 @@ export function PluginBrandLogo({
         ? 'h-6 w-6 rounded-lg p-0.5'
         : 'h-10 w-10 rounded-xl p-1.5';
   const iconSize = size === 'detail' ? 31 : size === 'micro' ? 15 : 22;
+  const darkLogoTile = verifiedOnly && WHITE_FOREGROUND_LOCAL_SVGS.has(id.toLowerCase()) &&
+    Boolean(candidates[index]?.startsWith('/brand/logos/'));
+
 
   if (index < candidates.length) {
     return (
@@ -116,7 +130,10 @@ export function PluginBrandLogo({
         src={candidates[index]}
         alt={name}
         loading="lazy"
-        className={`${dimension} shrink-0 border border-[var(--border-subtle)] bg-white object-contain`}
+        referrerPolicy="no-referrer"
+        className={`${dimension} shrink-0 border border-[var(--border-subtle)] object-contain`}
+        style={{ backgroundColor: darkLogoTile ? '#141414' : '#fff' }}
+        data-logo-tone={darkLogoTile ? 'dark' : 'light'}
         onError={() => setIndex((current) => current + 1)}
       />
     );
@@ -126,7 +143,7 @@ export function PluginBrandLogo({
     <span
       className={`${dimension} flex shrink-0 items-center justify-center border border-[var(--border-subtle)] bg-[var(--surface-inset)]`}
     >
-      <IntegrationLogo id={id} name={name} size={iconSize} />
+      {verifiedOnly ? <Blocks size={iconSize} aria-label="App logo unavailable" /> : <IntegrationLogo id={id} name={name} size={iconSize} />}
     </span>
   );
 }
