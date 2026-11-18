@@ -228,7 +228,7 @@ export function kindOf(tool: string, args: Record<string, unknown>): ToolKind {
   if (tool === 'save_file') return 'state';
   if (tool === 'read_attachment' || tool === 'confirm_download' || tool === 'plugin_search' || tool === 'plugin_action_search' || tool === 'http_get' || tool === 'plugin_connect' || tool === 'run_repository' || tool === 'change_repository') return 'read';
   // An approved connected read can transmit private arguments. Fence it like a dispatched effect on recovery.
-  if (tool === 'plugin_read') return 'mutate';
+  if (tool === 'plugin_read' || tool === 'plugin_chain') return 'mutate';
   if (tool === 'tabs') return args.action === 'list' ? 'read' : 'mutate';
   const spec = TOOL_SPECS.find(s => s.name === tool);
   if (!spec) return 'mutate';

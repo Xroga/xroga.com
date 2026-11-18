@@ -347,3 +347,83 @@ export function rankAppTools(found: AppToolInfo[], intent: string, limit = 12): 
   // Nothing fits the words (the asked app is not connected, so the provider returned other apps' tools): offer only a few, not a dozen.
   return (hits.length ? hits.slice(0, limit) : ranked.slice(0, 3)).map(r => r.t);
 }
+
+// ---- One call for a known sequence ----------------------------------------------------------------------------------------------
+// A task such as "create a sheet, write the rows, read them back" or "find a parent page, create the page, add the bullets" is a fixed
+// sequence of connected-app calls. Run one by one it costs a model turn per call (about 5 s each, and sometimes 40 s or more). Here the model
+// sends the whole sequence in ONE call: the steps run in order, each is the same guarded call as on its own (the owner's approval rules,
+// receipts, uncertain-write fencing), a later step can take a value from an earlier result, and the run stops at the first failure.
+
+export const PLUGIN_CHAIN_TOOL: AgentTool = {
+  name: 'plugin_chain', source: 'agent', group: 'working',
+  description: 'Run up to 6 connected-app calls in order in ONE call, with no model turn between them, when you already know the whole sequence (for example: create a file, write all rows, read them back; find a parent page, create the page, add the content). Each step is {tool, arguments, request?}: tool is a name offered by a search (or plugin_search / plugin_action_search with {query}). A later step can use a value from an earlier result: {"$from": 1, "key": "spreadsheetId"} (step number, field name). Each step is guarded exactly like a single call (approvals, receipts) and the chain stops at the first failure. Use it instead of one call per turn.',
+  parameters: { type: 'object', properties: { steps: { type: 'array', maxItems: 6, items: { type: 'object', properties: {
+    tool: { type: 'string' }, arguments: { type: 'object', additionalProperties: true }, request: { type: 'string', maxLength: 200 } }, required: ['tool'] } } },
+    required: ['steps'], additionalProperties: false },
+};
+
+export interface ChainStep { tool?: unknown; arguments?: unknown; request?: unknown }
+export interface ChainCallResult { text: string; isError: boolean; result?: unknown }
+export interface ChainDeps {
+  /** The plugin_* call (and its body) a step's tool name stands for; undefined when the name was not offered. */
+  resolve(tool: string, args: Record<string, unknown>, request: string | undefined): { name: PluginToolName; body: unknown } | undefined;
+  call(name: PluginToolName, body: unknown): Promise<ChainCallResult>;
+}
+
+/** A value of `key` (or its snake / camel spelling) from a step's result text: a quoted or numeric JSON field. */
+export function pickFromResult(text: string, key: string): string | undefined {
+  const snake = key.replace(/([A-Z])/g, '_$1').toLowerCase();
+  const camel = key.replace(/_([a-z])/g, (_m, c: string) => c.toUpperCase());
+  for (const k of [...new Set([key, camel, snake])]) {
+    const m = new RegExp('"' + k.replace(/[^\w]/g, '') + '"\\s*:\\s*(?:"([^"\\\\]*)"|(-?\\d+(?:\\.\\d+)?))', 'i').exec(text);
+    if (m) return m[1] ?? m[2];
+  }
+  return undefined;
+}
+
+function substitute(value: unknown, results: string[], errors: string[]): unknown {
+  if (Array.isArray(value)) return value.map(v => substitute(v, results, errors));
+  if (value && typeof value === 'object') {
+    const o = value as Record<string, unknown>;
+    if (typeof o.$from === 'number' && typeof o.key === 'string') {
+      const text = results[o.$from - 1];
+      const found = text === undefined ? undefined : pickFromResult(text, o.key);
+      if (found === undefined) errors.push(`step ${o.$from} has no "${o.key}" in its result`);
+      return found;
+    }
+    return Object.fromEntries(Object.entries(o).map(([k, v]) => [k, substitute(v, results, errors)]));
+  }
+  return value;
+}
+
+const CHAIN_STOP = '\nThe chain stopped here; earlier steps are done and are not repeated.';
+
+export async function runPluginChain(steps: unknown, deps: ChainDeps): Promise<{ text: string; isError: boolean; result?: unknown }> {
+  if (!Array.isArray(steps) || !steps.length || steps.length > 6) return { text: 'plugin_chain needs 1 to 6 steps.', isError: true };
+  const results: string[] = [];
+  const lines: string[] = [];
+  let last: unknown;
+  for (let i = 0; i < steps.length; i++) {
+    const step = steps[i] as ChainStep | null;
+    const n = i + 1;
+    const tool = typeof step?.tool === 'string' ? step.tool : '';
+    const rawArgs = step?.arguments && typeof step.arguments === 'object' && !Array.isArray(step.arguments) ? step.arguments as Record<string, unknown> : {};
+    const errors: string[] = [];
+    const args = substitute(rawArgs, results, errors) as Record<string, unknown>;
+    if (errors.length) {
+      lines.push(`Step ${n} (${tool}) not run: ${errors.join('; ')}.`);
+      return { text: lines.join('\n') + CHAIN_STOP, isError: true, result: last };
+    }
+    const call = deps.resolve(tool, args, typeof step?.request === 'string' ? step.request : undefined);
+    if (!call) {
+      lines.push(`Step ${n}: the tool "${tool}" was not offered in this task.`);
+      return { text: lines.join('\n') + CHAIN_STOP, isError: true, result: last };
+    }
+    const r = await deps.call(call.name, call.body);
+    results.push(r.text);
+    if (!r.isError && r.result) last = r.result;
+    lines.push(`Step ${n} (${tool}) ${r.isError ? 'FAILED' : 'ok'}:\n${r.text.slice(0, 3500)}`);
+    if (r.isError) return { text: lines.join('\n') + CHAIN_STOP, isError: true, result: last };
+  }
+  return { text: lines.join('\n'), isError: false, result: last };
+}
