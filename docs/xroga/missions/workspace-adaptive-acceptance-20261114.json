@@ -36,9 +36,11 @@
     "docs/operations/native-openui/CAPABILITY_AUDIT.md",
     "docs/operations/native-openui/LIVE-CALCULATOR-VALIDATION-20261117.md",
     "docs/operations/native-openui/prompt-suite.json",
+    "docs/xroga/security/caller-reviews.json",
     "frontend/.npmrc",
     "frontend/e2e/command3-auth.spec.ts",
     "frontend/e2e/phase4-admin-share.security.mjs",
+    "frontend/src/app/globals.css",
     "frontend/src/components/layout/ThemeToggle.tsx",
     "frontend/src/components/native-openui/Diagram.tsx",
     "frontend/src/components/native-openui/Editorial.tsx",
@@ -65,6 +67,7 @@
     "frontend/src/lib/composerDraft.test.ts",
     "frontend/src/lib/composerDraft.ts",
     "frontend/src/lib/formatAiMarkdown.tsx",
+    "frontend/src/lib/formatAiMarkdown.test.ts",
     "frontend/src/lib/hostedWorkspaceBridge.mjs",
     "frontend/src/lib/mathRenderImpl.tsx",
     "frontend/src/lib/messageHelpers.test.ts",
@@ -93,7 +96,8 @@
       "Use the pinned ONNX installer's supported CUDA opt-out for CPU builds in root and standalone frontend installs. Keep bundled CPU inference and an explicit GPU environment override, instead of failing mandatory CI on the optional CUDA archive's upstream 404.",
       "Attach the existing chart width observer when its actual DOM frame becomes available after deferred data binding. Render explicitly delimited Markdown equations with the registered Math component's existing bounded, untrusted KaTeX configuration. Preserve ordinary currency, code literals, canonical text, security controls and saved-answer formats.",
       "Keep unexpectedly failing equations as escaped React text in both existing math renderers. Reproduce the actual KaTeX RangeError with deeply nested input and verify that embedded HTML stays literal while the remainder of the answer remains visible.",
-      "Adapt native Grid defaults to the available container and preserve explicit minimum widths instead of forcing financial metrics into narrow columns. Reconcile a matching visible chart heading while retaining its units, data and notes. Reuse the existing bounded portal for theme selection and verify keyboard focus, dismissal and viewport edges."
+      "Adapt native Grid defaults to the available container and preserve explicit minimum widths instead of forcing financial metrics into narrow columns. Reconcile a matching visible chart heading while retaining its units, data and notes. Reuse the existing bounded portal for theme selection and verify keyboard focus, dismissal and viewport edges.",
+      "Preserve authored paragraph boundaries instead of splitting a single paragraph by character count and inventing a summary card. Keep a visible answer timestamp at full theme-token contrast for hover, keyboard focus and touch. Replay the actual captured ordinary answer and test the focused footer in both themes and all five viewports without new inference."
     ],
     "keep": [
       "One planner, one canonical DeepSeek answer dispatch, existing registry and authorization, saved answers, owner-only Share and decoder compatibility."

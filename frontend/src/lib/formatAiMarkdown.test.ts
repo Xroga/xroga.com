@@ -6,7 +6,7 @@ import { createRequire } from 'node:module';
 
 const requireStyle = createRequire(__filename);
 requireStyle.extensions['.css'] = (module) => { module.exports = { __esModule: true, default: {} }; };
-const { FormattedAiMarkdown, safeMarkdownUrl, structureLongProse } = requireStyle('./formatAiMarkdown.tsx') as typeof import('./formatAiMarkdown');
+const { FormattedAiMarkdown, safeMarkdownUrl } = requireStyle('./formatAiMarkdown.tsx') as typeof import('./formatAiMarkdown');
 
 test('markdown URL policy permits ordinary links and rejects executable protocols', () => {
   assert.equal(safeMarkdownUrl('https://standards.example/spec', 'href', {} as never), 'https://standards.example/spec');
@@ -58,13 +58,24 @@ test('long answers present the opening once as a brief lead while preserving sec
   assert.equal(html.split(opening).length - 1, 1, 'the lead must not be duplicated');
 });
 
-test('dense legacy prose is divided into readable paragraphs without changing words or code', () => {
-  const prose = 'This first supported point explains the context and includes an exact citation [1]. This second sentence explains the practical consequence for the reader. This third sentence gives another distinct consideration before the next section. '.repeat(3);
-  const input = `${prose}\n\n\`\`\`text\n${prose}\n\`\`\``;
-  const result = structureLongProse(input);
-  assert.ok(result.split('\n\n').length > input.split('\n\n').length);
-  assert.equal(result.replace(/\s+/g, ' ').trim(), input.replace(/\s+/g, ' ').trim());
-  assert.match(result, /```text\n/);
+test('a complete single paragraph stays intact instead of becoming a synthetic summary and body', () => {
+  const content = 'This first supported point explains the context. This second sentence explains the practical consequence for the reader. This third sentence gives another distinct consideration. '.repeat(4).trim();
+  const html = renderToStaticMarkup(createElement(FormattedAiMarkdown, { content }));
+  assert.equal((html.match(/<p[ >]/g) ?? []).length, 1);
+  assert.ok(html.includes(content));
+  assert.doesNotMatch(html, /xv-answer-lead|The short answer/);
+});
+
+test('authored paragraph boundaries and code remain separate and complete', () => {
+  const first = 'The supplied prose keeps its own paragraph boundaries. '.repeat(12).trim();
+  const second = 'A distinct paragraph remains distinct.';
+  const code = 'const literal = "Sentence. Next sentence.";';
+  const html = renderToStaticMarkup(createElement(FormattedAiMarkdown, { content: `${first}\n\n${second}\n\n\`\`\`ts\n${code}\n\`\`\`` }));
+  assert.equal((html.match(/<p[ >]/g) ?? []).length, 2);
+  assert.ok(html.includes(first));
+  assert.ok(html.includes(second));
+  assert.match(html, /language-ts/);
+  assert.match(html, /const literal/);
 });
 
 test('ordinary external links also get the compact resource-preview affordance', () => {

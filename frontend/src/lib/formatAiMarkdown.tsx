@@ -1690,31 +1690,6 @@ const components:
     ),
   };
 
-/** Add breathing room to legacy wall-of-text answers without rewriting their wording. */
-export function structureLongProse(markdown: string): string {
-  const formatBlock = (block: string) => {
-    const prose = block.trim();
-    if (prose.length < 440 || prose.includes('\n') || /^(?:[#>*+`~|-]|\d+[.)]\s|!\[|<)/.test(prose)) return block;
-    const sentences = prose.split(/(?<=[.!?])\s+(?=(?:\*\*)?[A-Z(])/);
-    if (sentences.length < 3) return block;
-    const paragraphs: string[] = [];
-    let current = '';
-    for (const sentence of sentences) {
-      if (current.length >= 260 && current.length + sentence.length > 370) {
-        paragraphs.push(current);
-        current = sentence;
-      } else {
-        current += `${current ? ' ' : ''}${sentence}`;
-      }
-    }
-    if (current) paragraphs.push(current);
-    return paragraphs.join('\n\n');
-  };
-  return markdown.split(/(```[\s\S]*?```|~~~[\s\S]*?~~~)/g).map((segment, index) => index % 2
-    ? segment
-    : segment.split(/(\n\s*\n)/).map(formatBlock).join('')).join('');
-}
-
 export function FormattedAiMarkdown({
   content,
   className,
@@ -1732,7 +1707,9 @@ export function FormattedAiMarkdown({
   afterIntro?: React.ReactNode;
 }) {
   const prepared = content.replace(/\r\n/g, '\n');
-  const normalized = streaming ? prepared : structureLongProse(compactConnectedAppConfirmationMarkdown(prepared));
+  // Preserve the model's paragraph boundaries, including a requested single
+  // paragraph. Splitting by character count can invent an introductory callout.
+  const normalized = streaming ? prepared : compactConnectedAppConfirmationMarkdown(prepared);
   const opening = normalized.match(/^([^\n]+(?:\n(?!\n)[^\n]+)*)\n\s*\n/);
   const lead = !streaming && (normalized.length > 500 || afterIntro) && opening && opening[1].length >= 25 && opening[1].length <= 500 && !/^\s*(?:[#>*`\-|\d+\.]|!\[)/.test(opening[1]) ? opening[1] : null;
   const introParts = afterIntro && !lead && !streaming ? normalized.split(/\n\s*\n/) : [];

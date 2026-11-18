@@ -251,7 +251,9 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   const followUpReply = 'The ticket price was $25.';
   const cancellation = 'Stop this pending fixture reply.';
   const malformed = 'Show the invalid-program fallback.';
-  const fallback = 'This readable answer remains available.';
+  // Genuine captured DeepSeek prose from the private acceptance run. Replay it
+  // without inference to cover the complete paragraph and its visible footer.
+  const fallback = 'Pre-print or stamp a small label on each packet with common name, variety, year harvested, and a short batch code (e.g., "TOM-CHK-24-03"), then keep a three-ring binder as the ledger with one row per transaction: date, borrower name and phone or email, batch code, number of packets taken, and a checkbox for any seed returned later. Have borrowers write their own rows (or staff write them and borrowers initial) so the handwriting matches the person, and note the growing-season return expectation at the top of each page. Number the pages, keep a second binder copy as backup, and do a monthly spot-count of a few batches against the ledger to catch drift.';
   const recovery = 'Show a partially recovered estimate.';
   const recoveryNote = 'Some visuals could not be validated. The available explanation and verified visuals are shown below.';
   const recoveryProse = 'The estimate covers the print charge.';
@@ -497,6 +499,25 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   await send(malformed);
   const fallbackTurn = page.locator('[data-turn-id]').filter({ hasText: fallback }).last();
   await expect(fallbackTurn.getByText(fallback, { exact: true })).toBeVisible();
+  await expect(fallbackTurn.locator('.xv-formatted-response > p')).toHaveCount(1);
+  await expect(fallbackTurn.locator('.xv-answer-lead')).toHaveCount(0);
+  for (const theme of ['black', 'white'] as const) {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.getByRole('button', { name: 'Change theme', exact: true }).first().click();
+    await page.getByRole('menuitemradio', { name: new RegExp('^' + theme, 'i') }).click();
+    await expect(page.locator('body')).toHaveClass(new RegExp('theme-' + theme));
+    for (const width of [320, 390, 768, 1280, 1440]) {
+      await page.setViewportSize({ width, height: 900 });
+      await fallbackTurn.getByRole('link', { name: 'Report a bug', exact: true }).focus();
+      const timestamp = fallbackTurn.locator('.xv-response-meta time');
+      await timestamp.scrollIntoViewIfNeeded();
+      await expect(timestamp).toHaveCSS('opacity', '1');
+      const contrast = await new AxeBuilder({ page }).include('[data-turn-id]').withRules(['color-contrast']).analyze();
+      expect(contrast.violations.map(({ id, nodes }) => ({ id, targets: nodes.map(node => node.target) }))).toEqual([]);
+      await page.screenshot({ path: `test-results/native-workspace/plain-footer-${width}-${theme}.png` });
+    }
+  }
+  await page.setViewportSize({ width: 1440, height: 900 });
   await fallbackTurn.getByRole('button', { name: 'Copy', exact: true }).click();
   await expect.poll(() => page.evaluate(() => navigator.clipboard.readText())).toBe(fallback);
   await fallbackTurn.getByRole('button', { name: 'Share', exact: true }).click();
