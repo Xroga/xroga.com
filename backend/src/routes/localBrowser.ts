@@ -272,7 +272,12 @@ function checkData(value: unknown) {
 
 function sendError(res: Response, error: unknown) {
   if (error instanceof BrowserRequestError) return res.status(error.status).json({ error: error.code, ...(error.detail ?? {}) });
-  if (error instanceof z.ZodError) return res.status(400).json({ error: 'BROWSER_REQUEST_INVALID' });
+  if (error instanceof z.ZodError) {
+    // Only where the request failed and why (field path and rule code), never a value: enough to find a limit or shape mismatch.
+    const fields = error.issues.slice(0, 5).map(issue => `${issue.path.slice(0, 6).join('.')}:${issue.code}`);
+    console.warn(`[local-browser] request invalid: ${fields.join(', ')}`);
+    return res.status(400).json({ error: 'BROWSER_REQUEST_INVALID', fields });
+  }
   // No user payload, raw provider error, or credential is returned. Only Xroga's own fixed business-action
   // codes are surfaced (and logged), so a failed approval is diagnosable without exposing anything private.
   const code = (error as { code?: unknown } | null)?.code;
