@@ -498,7 +498,15 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   };
   await expectFormattedDraft();
   await page.locator('[data-turn-id]').filter({ has: followUpAnswer }).getByRole('button', { name: 'Copy', exact: true }).click();
-  await expect.poll(() => page.evaluate(async () => (await navigator.clipboard.readText()).replace(/\r\n/g, '\n'))).toBe(followUpReply);
+  const followUpClipboard = [
+    followUpIntro,
+    'Email draft',
+    'Subject: [Workshop title]',
+    'Item\tDetail\nVenue\t[Venue name]',
+    'RSVP form',
+    '- Accessibility needs: __________',
+  ].join('\n\n');
+  await expect.poll(() => page.evaluate(async () => (await navigator.clipboard.readText()).replace(/\r\n/g, '\n'))).toBe(followUpClipboard);
   try {
     await send(cancellation);
     await expect.poll(() => chatCalls).toBe(3);
