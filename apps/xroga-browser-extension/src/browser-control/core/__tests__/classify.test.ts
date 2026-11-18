@@ -204,3 +204,11 @@ describe('enrichments', () => {
     expect(enter({ form: form({ defaultButton: { name: 'Create', disabled: false } }) })).toBe('submit');
   });
 });
+
+describe('a booking link is not a payment', () => {
+  it('does not treat "Book Now" on a company site as payment, but still gates real payments', () => {
+    expect(activate('Book Now!')).not.toBe('pay');
+    expect(activate('Place order')).toBe('pay');
+    expect(activate('Complete booking')).toBe('pay');
+  });
+});

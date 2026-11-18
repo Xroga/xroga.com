@@ -30,7 +30,6 @@ export const PAY_WORDS = vocabulary(
     'complete order',
     'complete purchase',
     'complete booking',
-    'book now',
     'subscribe',
     'donate',
     'confirm and pay',
