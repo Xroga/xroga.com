@@ -5,7 +5,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
   ArrowRight,
-  BadgeCheck,
+  ScanSearch,
+  CircleHelp,
   BrainCircuit,
   BriefcaseBusiness,
   ClipboardList,
@@ -133,36 +134,60 @@ const COMPARISON_GROUPS = [
   },
 ] as const;
 
+const FAQ_SECTIONS = [
+  { id: 'plans', label: 'Plans and usage' },
+  { id: 'billing', label: 'Billing and payments' },
+  { id: 'managing', label: 'Managing your plan' },
+] as const;
+
 const FAQS = [
   {
+    category: 'billing',
     question: 'Does Free require a credit card?',
     answer:
       'No. Free is $0 and does not require a card. It includes the core Xroga building workflow with included monthly AI capacity.',
   },
   {
+    category: 'plans',
     question: 'What changes when I upgrade to Xroga Pro?',
     answer:
       'The core workflow stays familiar. Pro adds higher monthly AI capacity, Full Access pacing and more room for long research, coding, verification, repair and production workflows.',
   },
   {
+    category: 'plans',
     question: 'What is Full Access pacing?',
     answer:
       'Full Access is a Pro pacing option that can make remaining working capacity for the current billing cycle available earlier instead of waiting for later progressive unlocks. It changes timing, not the total monthly capacity.',
   },
   {
+    category: 'plans',
     question: 'What happens when my currently available capacity is used?',
     answer:
       'Your project state and completed work remain preserved. New AI work can continue when more capacity unlocks or when the next billing cycle begins.',
   },
   {
+    category: 'managing',
     question: 'Can I use an existing GitHub repository?',
     answer:
       'Yes. Xroga supports workflows that start from new projects or repositories you already own, subject to the repository access you authorize.',
   },
   {
+    category: 'managing',
     question: 'Does Xroga own my code?',
     answer:
       'Xroga is designed around repositories and provider accounts you authorize, so your source and deployment workflow are not trapped inside a closed generated preview.',
+  },
+  {
+    category: 'billing',
+    question: 'How are Pro payments handled?',
+    answer:
+      'After you select Pro, Xroga requests confirmation of the selected plan and then sends you to Whop for secure payment. Pro access depends on verified payment confirmation.',
+  },
+  {
+    category: 'billing',
+    question: 'Can I cancel my Pro subscription?',
+    answer:
+      'Xroga Pro is a monthly subscription advertised as cancel anytime. Review your account billing settings for available subscription-management options.',
   },
 ] as const;
 
@@ -172,6 +197,20 @@ function PlanShowcase({ paid }: { paid: boolean }) {
   return (
     <span className={paid ? styles.proShowcase : styles.freeShowcase} aria-hidden="true">
       <Icon className={styles.showcaseSymbol} strokeWidth={1.65} />
+    </span>
+  );
+}
+
+/* Payment hover icons adapted from user-supplied Uiverse.io by fthisilak.
+   These decorative icons never indicate completed payment. */
+function PaymentIconSequence() {
+  return (
+    <span className={styles.paymentIconContainer} aria-hidden="true">
+      <svg viewBox="0 0 24 24" className={[styles.paymentIcon, styles.cardIcon].join(' ')}><path d="M20,8H4V6H20M20,18H4V12H20M20,4H4C2.89,4 2,4.89 2,6V18C2,19.11 2.89,20 4,20H20C21.11,20 22,19.11 22,18V6C22,4.89 21.11,4 20,4Z" fill="currentColor" /></svg>
+      <svg viewBox="0 0 24 24" className={[styles.paymentIcon, styles.receiptIcon].join(' ')}><path d="M2,17H22V21H2V17M6.25,7H9V6H6V3H18V6H15V7H17.75L19,17H5L6.25,7M9,10H15V8H9V10M9,13H15V11H9V13Z" fill="currentColor" /></svg>
+      <svg viewBox="0 0 24 24" className={[styles.paymentIcon, styles.dollarIcon].join(' ')}><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z" fill="currentColor" /></svg>
+      <svg viewBox="0 0 24 24" className={[styles.paymentIcon, styles.checkIcon].join(' ')}><path d="M9,16.17L4.83,12L3.41,13.41L9,19L21,7L19.59,5.59L9,16.17Z" fill="currentColor" /></svg>
+      <svg viewBox="0 0 24 24" className={[styles.paymentIcon, styles.walletIcon].join(' ')}><path d="M21,18V19A2,2 0 0,1 19,21H5C3.89,21 3,20.1 3,19V5A2,2 0 0,1 5,3H19A2,2 0 0,1 21,5V6H12C10.89,6 10,6.9 10,8V16A2,2 0 0,0 12,18M12,16H22V8H12M16,13.5A1.5,1.5 0 0,1 14.5,12A1.5,1.5 0 0,1 16,10.5A1.5,1.5 0 0,1 17.5,12A1.5,1.5 0 0,1 16,13.5Z" fill="currentColor" /></svg>
     </span>
   );
 }
@@ -200,6 +239,7 @@ export function PricingPageClient() {
   const [status, setStatus] = useState<BillingStatus | null>(null);
   const [featureQuery, setFeatureQuery] = useState('');
   const [collapsedGroups, setCollapsedGroups] = useState<string[]>([]);
+  const [faqCategory, setFaqCategory] = useState<(typeof FAQ_SECTIONS)[number]['id']>('plans');
 
   useEffect(() => {
     void (async () => {
@@ -343,7 +383,7 @@ export function PricingPageClient() {
                       </button>
                     ) : loggedIn ? (
                       <div className={styles.proCtaWrap}>
-                        <CheckoutButton planTier="spark" label="Try Xroga Pro" className={`${styles.ctaButton} ${styles.proCta}`} />
+                        <CheckoutButton planTier="spark" label="Try Xroga Pro" trailingContent={<PaymentIconSequence />} className={`${styles.ctaButton} ${styles.proCta}`} />
                       </div>
                     ) : (
                       <div className={styles.proCtaWrap}>
@@ -352,8 +392,8 @@ export function PricingPageClient() {
                           className={`${styles.ctaButton} ${styles.proCta}`}
                           onClick={() => router.push('/auth/signup')}
                         >
-                          Try Xroga Pro
-                          <ArrowRight aria-hidden="true" />
+                          <span>Try Xroga Pro</span>
+                          <PaymentIconSequence />
                         </button>
                       </div>
                     )}
@@ -372,8 +412,8 @@ export function PricingPageClient() {
 
         <section className={styles.compareSection} aria-labelledby="compare-title">
           <div className={styles.compareHeading}>
-            <BadgeCheck className={styles.compareOrnament} aria-hidden="true" />
-            <h2 id="compare-title">Compare features</h2>
+            <ScanSearch className={styles.compareOrnament} aria-hidden="true" />
+            <h2 id="compare-title">Compare features across plans</h2>
             <p>A clear side-by-side look at what is included in each plan.</p>
           </div>
           <div className={styles.compareScroll} tabIndex={0} role="region" aria-label="Free and Pro feature comparison; scroll horizontally on narrow screens">
@@ -482,31 +522,49 @@ export function PricingPageClient() {
 
         <section className={styles.faqSection} aria-labelledby="faq-title">
           <div className={styles.faqIntro}>
-            <span className={styles.eyebrow}>PRICING FAQ</span>
-            <h2 id="faq-title">
-              Frequently asked <em>questions.</em>
-            </h2>
-            <p>
-              The essentials, without the fine-print maze.
-              For technical details, explore our documentation.
-            </p>
-            <Link className={styles.textLink} href="/docs">
-              Open docs <ArrowRight aria-hidden="true" />
-            </Link>
+            <CircleHelp className={styles.faqTopIcon} aria-hidden="true" />
+            <h2 id="faq-title">FAQ</h2>
           </div>
-
-          <div className={styles.faqList}>
-            {FAQS.map((faq) => (
-              <details key={faq.question} className={styles.faqItem}>
-                <summary>
-                  <span>{faq.question}</span>
-                  <span className={styles.plus} aria-hidden="true">
-                    +
-                  </span>
-                </summary>
-                <p>{faq.answer}</p>
-              </details>
+          <div className={styles.faqTabs} role="tablist" aria-label="FAQ categories">
+            {FAQ_SECTIONS.map((section) => (
+              <button
+                key={section.id}
+                id={'faq-tab-'+section.id}
+                type="button"
+                role="tab"
+                aria-controls="faq-panel"
+                aria-selected={faqCategory === section.id}
+                className={faqCategory === section.id ? styles.faqTabActive : undefined}
+                onClick={() => setFaqCategory(section.id)}
+              >
+                {section.label}
+              </button>
             ))}
+          </div>
+          <div
+            id="faq-panel"
+            className={styles.faqBody}
+            role="tabpanel"
+            aria-labelledby={'faq-tab-'+faqCategory}
+            tabIndex={0}
+          >
+            <h3 className={styles.faqCategoryTitle}>
+              {FAQ_SECTIONS.find((section) => section.id === faqCategory)?.label}
+            </h3>
+            <div className={styles.faqList} key={faqCategory}>
+              {FAQS.filter((faq) => faq.category === faqCategory).map((faq) => (
+                <details key={faq.question} className={styles.faqItem}>
+                  <summary>
+                    <span>{faq.question}</span>
+                    <span className={styles.plus} aria-hidden="true">+</span>
+                  </summary>
+                  <p>{faq.answer}</p>
+                </details>
+              ))}
+            </div>
+            <Link className={styles.faqDocsLink} href="/docs">
+              Explore documentation <ArrowRight aria-hidden="true" />
+            </Link>
           </div>
         </section>
 

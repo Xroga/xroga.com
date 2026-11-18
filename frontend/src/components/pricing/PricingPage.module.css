@@ -2689,3 +2689,510 @@
 @media(prefers-reduced-motion:reduce){
   .root *, .root *::before,.root *::after{animation-duration:.01ms!important;transition-duration:.01ms!important;}
 }
+
+
+/* ===========================================================
+   XROGA PRICING PREVIEW v2 — Blue × editorial
+   Claude-inspired full-bleed comparison/FAQ layout, original
+   Xroga Free/Pro data, and Uiverse-inspired checkout hover art.
+   Blue rather than amber; no production or billing logic edits.
+   =========================================================== */
+.root,
+:global(body.theme-white) .root,
+:global(body.theme-beige) .root,
+:global(body.theme-gray) .root,
+:global(body.theme-black) .root {
+  --pp-bg:#0b0d12;
+  --pp-surface:#151922;
+  --pp-surface-2:#1a202a;
+  --pp-ink:#f2f4f8;
+  --pp-muted:#a4acba;
+  --pp-line:rgba(176,198,232,.13);
+  --pp-line-strong:rgba(171,201,246,.26);
+  --pp-accent:#87baff;
+  --pp-accent-2:#4f90ed;
+  --pp-accent-soft:rgba(84,146,241,.12);
+  --pp-button:#8ec3ff;
+  --pp-button-ink:#0b1425;
+  --pp-grid:rgba(128,165,235,.07);
+  background:radial-gradient(ellipse 62% 20% at 50% 3%,rgba(48,100,187,.15),transparent 80%),#0b0d12;
+  color:#eef3fc;
+}
+.root::before{background-image:linear-gradient(90deg,rgba(114,164,240,.055) 1px,transparent 1px);}
+.root :where(button,input,a):focus-visible{outline:2px solid #92c0ff;outline-offset:4px;}
+.hero{
+  background:radial-gradient(ellipse 46% 26% at 50% 100%,rgba(48,111,209,.13),transparent 84%),transparent;
+}
+.hero::before{
+  background-image:linear-gradient(rgba(127,171,245,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(127,171,245,.08) 1px,transparent 1px);
+}
+.hero::after{
+  border-top-color:rgba(105,170,255,.38);
+  box-shadow:0 -21px 72px -31px rgba(73,144,250,.38);
+}
+.gridGlow{background:radial-gradient(ellipse 36% 66% at 50% 55%,rgba(70,125,230,.17),transparent 74%);}
+.heroKicker{color:#93bdff;}
+.heroTitle,.heroTitle span{color:#f0f3fa;}
+.heroCopy{color:#aebbd0;}
+/* Equal-height cards, but Pro gets a distinctly Xroga-blue identity. */
+.planCard,.freeCard,.proCard{
+  border-color:rgba(174,196,232,.23);
+  background:linear-gradient(158deg,#191c24,#101218 88%);
+  box-shadow:0 24px 65px rgba(0,0,0,.22),inset 0 1px rgba(255,255,255,.028);
+}
+.planCard:hover{border-color:rgba(141,184,248,.48);}
+.proCard{
+  isolation:isolate;
+  border-color:rgba(116,177,255,.82);
+  background:
+    radial-gradient(ellipse 85% 75% at 86% -5%,rgba(50,116,238,.20),transparent 75%),
+    radial-gradient(ellipse 48% 55% at 100% 87%,rgba(43,99,202,.10),transparent 82%),
+    linear-gradient(158deg,#192237,#101723 86%);
+  box-shadow:0 0 0 1px rgba(113,168,255,.17),0 30px 75px rgba(0,0,0,.35),0 0 48px rgba(50,110,239,.14);
+}
+.proCard::after{
+  content:"";
+  position:absolute;
+  pointer-events:none;
+  inset:0 19% auto;
+  height:2px;
+  border-radius:999px;
+  background:linear-gradient(90deg,transparent,#75b4ff,transparent);
+  box-shadow:0 0 23px 2px rgba(80,156,255,.36);
+}
+.proCard:hover{
+  border-color:rgba(143,198,255,.96);
+  box-shadow:0 0 0 1px rgba(120,174,255,.25),0 33px 77px rgba(0,0,0,.37),0 0 54px rgba(74,143,255,.20);
+}
+.planIdentityText .planName,.planName{color:#f2f6ff;}
+.planIdentityText .planTagline,.planTagline{color:#aab6c9;}
+.proShowcase,.freeShowcase{
+  border-color:rgba(160,192,239,.24);
+  background:#202938;
+}
+.proShowcase{
+  background:linear-gradient(130deg,rgba(77,150,255,.27),rgba(69,106,181,.12));
+  border-color:rgba(132,185,255,.60);
+  box-shadow:inset 0 1px rgba(231,242,255,.09),0 0 15px rgba(64,140,242,.15);
+}
+.proShowcase .showcaseSymbol,.freeShowcase .showcaseSymbol,.showcaseSymbol{color:#9ccaff;}
+.popularBadge,.currentBadge{
+  background:rgba(103,163,252,.15);
+  border-color:rgba(116,177,255,.55);
+  color:#cde3ff;
+}
+.currentBadge{background:#242c39;color:#d5e5fc;}
+.price{color:#f6f8ff;}
+.priceMeta,.priceMeta small{color:#a6b2c5;}
+.priceMeta b{color:#c8d8ef;}
+.planLead{color:#afbacc;}
+.featureList{border-color:rgba(173,199,239,.14);}
+.featureList li{color:#dee8f8;}
+.check,.proCard .featureList .check{color:#92c2ff;}
+.planNote{color:#8e9bb1;}
+.freeCta{
+  color:#f0f6ff;
+  background:rgba(235,244,255,.045);
+  border-color:rgba(190,213,246,.32);
+}
+.freeCta:hover:not(:disabled){
+  background:rgba(151,194,251,.12);
+  border-color:rgba(164,202,255,.70);
+}
+.proCtaWrap{position:relative;border-radius:11px;overflow:visible;}
+.proCta,.proCard .proCta,.proCard .proUiverse{
+  min-height:53px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:13px;
+  position:relative;
+  overflow:hidden;
+  padding:12px 20px;
+  border-radius:11px;
+  border:1px solid rgba(108,173,255,.70);
+  background:#111c2e;
+  background-image:linear-gradient(130deg,#122039,#0d1829);
+  color:#e7f2ff;
+  font-weight:650;
+  box-shadow:inset 0 1px rgba(205,230,255,.06),0 6px 22px rgba(0,0,0,.18);
+  transition:transform .25s ease,border-color .25s ease,box-shadow .25s ease,background .25s ease;
+}
+.proCta:hover:not(:disabled),.proCard .proUiverse:hover:not(:disabled){
+  transform:translateY(-2px);
+  background:#152742;
+  border-color:#8dbdff;
+  box-shadow:0 9px 28px rgba(26,89,190,.29),inset 0 1px rgba(204,230,255,.10);
+}
+.proCta:disabled{transform:none;opacity:.65;box-shadow:none;}
+/* Payment sequence: wallet at rest, then card/payment/dollar/check on hover.
+   Never display an "approved payment" state on click. */
+.paymentIconContainer{
+  position:relative;
+  display:block;
+  flex:0 0 24px;
+  width:24px;
+  height:24px;
+  pointer-events:none;
+}
+.paymentIcon{
+  position:absolute;
+  top:0;left:0;
+  width:24px;height:24px;
+  color:#8dbdff;
+  opacity:0;
+  visibility:hidden;
+  transform:translateY(8px) scale(.6);
+}
+.walletIcon{opacity:1;visibility:visible;transform:none;}
+.proCtaWrap:is(:hover,:focus-within) .walletIcon{opacity:0;visibility:hidden;}
+.proCtaWrap:is(:hover,:focus-within) .cardIcon{animation:pricingPaymentIconFlow 2.5s infinite 0s;}
+.proCtaWrap:is(:hover,:focus-within) .receiptIcon{animation:pricingPaymentIconFlow 2.5s infinite .5s;}
+.proCtaWrap:is(:hover,:focus-within) .dollarIcon{animation:pricingPaymentIconFlow 2.5s infinite 1s;}
+.proCtaWrap:is(:hover,:focus-within) .checkIcon{animation:pricingPaymentIconFlow 2.5s infinite 1.5s;}
+@keyframes pricingPaymentIconFlow{
+  0%{opacity:0;visibility:hidden;transform:translateY(10px) scale(.5)}
+  5%,15%{opacity:1;visibility:visible;transform:translateY(0) scale(1)}
+  20%,100%{opacity:0;visibility:hidden;transform:translateY(-10px) scale(.5)}
+}
+.infoButton{
+  color:#95c2ff;
+  background:rgba(108,170,252,.14);
+}
+.tooltip{border-color:rgba(132,189,255,.26);background:#131c2c;color:#daeaff;}
+
+/* Full-width comparison like the reference: editorial heading, unboxed table. */
+.compareSection{
+  position:relative;
+  isolation:isolate;
+  width:calc(100vw - 48px);
+  max-width:none;
+  margin:115px 0 0 calc(50% - 50vw + 24px);
+  padding:42px 0 40px;
+  color:#ecf2fc;
+  background:transparent;
+}
+.compareSection::before{display:none;}
+.compareHeading{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:0;
+  margin:0 auto 75px;
+  text-align:center;
+}
+.compareOrnament{
+  display:block;
+  width:51px;height:51px;
+  margin:0 0 23px;
+  color:#e7edf8;
+  stroke-width:1.2;
+}
+.compareHeading h2{
+  max-width:100%;
+  font-family:var(--font-claude-serif),Newsreader,Georgia,serif;
+  font-size:clamp(2.6rem,5vw,4rem);
+  line-height:1.12;
+  font-weight:460;
+  letter-spacing:-.043em;
+  color:#f0f4fc;
+}
+.compareHeading p{margin-top:12px;color:#9caabd;font-size:.86rem;}
+.compareScroll{
+  border:0;
+  border-radius:0;
+  background:transparent;
+  box-shadow:none;
+  overflow-x:auto;
+  scrollbar-color:#506383 #121721;
+}
+.comparisonTable{
+  width:100%;
+  min-width:600px;
+  border-collapse:collapse;
+  background:transparent;
+  table-layout:fixed;
+  font-size:.84rem;
+}
+.comparisonTable thead th,.comparisonTable thead th:nth-child(3){
+  background:transparent!important;
+  padding:15px 14px 21px;
+  border-bottom:1px solid rgba(208,225,253,.22);
+  color:#e6efff;
+}
+.comparisonTable thead th:not(:first-child){border-left:0;text-align:center;}
+.comparisonTable th,.comparisonTable td{
+  padding:14px 14px;
+  border-bottom:1px solid rgba(207,222,248,.12);
+}
+.comparePlanHeading span{
+  font-family:var(--font-claude-serif),Newsreader,Georgia,serif;
+  font-size:1.55rem;
+  font-weight:510;
+  color:#f0f4fd;
+}
+.comparePlanHeading small{color:#9eafc8;font-size:.73rem;}
+.comparePlanHeading a{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:31px;
+  margin-top:7px;
+  padding:6px 15px;
+  border-radius:7px;
+  background:#e5efff;
+  border:0;
+  color:#13233b;
+  font-size:.74rem;
+  font-weight:690;
+}
+.comparePlanHeading a:hover{background:#bddcff;transform:none;}
+.featureSearch{
+  background:#1d2026;
+  border:1px solid rgba(202,215,236,.15);
+  color:#aabbd3;
+  border-radius:10px;
+  width:min(290px,100%);
+}
+.featureSearch:focus-within{border-color:#8abaff;box-shadow:0 0 0 3px rgba(100,157,240,.12);}
+.featureSearch input{color:#ecf3fe;}
+.featureSearch input::placeholder{color:#9ba8bb;}
+.featureSearch button{color:#d6e9ff;background:rgba(115,167,240,.13);}
+.groupRow th{
+  padding:0;
+  background:transparent;
+  border-top:1px solid rgba(210,225,250,.19);
+  border-bottom:1px solid rgba(210,225,250,.14);
+}
+.groupRow .groupToggle{
+  min-height:64px;
+  padding:17px 16px;
+  color:#f0f3fd;
+  font:480 clamp(1.13rem,1.9vw,1.55rem) var(--font-claude-serif),Newsreader,Georgia,serif;
+}
+.groupToggle > span svg{width:20px;height:20px;color:#9dbde8;}
+.groupToggle > svg{color:#a9b7cb;}
+.groupToggle > .groupExpanded{transform:rotate(180deg);}
+.featureName{color:#b6c1d1;font-size:.82rem;font-weight:440;}
+.featureName small{color:#8594a9;font-size:.73rem;}
+.comparisonTable td.valueCell,.comparisonTable td.proCell{
+  text-align:center;
+  background:transparent;
+  border-left:0;
+  color:#c3d0e4;
+}
+.comparisonTable tbody tr:not(.groupRow):hover th,
+.comparisonTable tbody tr:not(.groupRow):hover td{background:rgba(115,160,229,.05);}
+.valueCell span{color:#b9c6da;}
+.includedIcon{
+  color:#e8f1ff;
+  background:rgba(180,205,240,.16);
+  border-radius:50%;
+}
+.unavailableIcon{color:#63718a;}
+.compareMeta{margin-top:17px;color:#8292a9;}
+.compareFootnote{color:#8492a6;}
+
+/* Full-bleed FAQ section inspired by user's screenshot:
+   centered icon, editorial title, 3 functional tabs, line accordions.
+   No outer card, no fixed viewport overlay. */
+.faqSection{
+  position:relative;
+  isolation:isolate;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  width:calc(100vw - 48px);
+  max-width:none;
+  min-height:590px;
+  gap:0;
+  margin:105px 0 0 calc(50% - 50vw + 24px);
+  padding:84px 0 100px;
+  color:#f0f4fc;
+}
+.faqSection::before{
+  content:"";
+  position:absolute;
+  inset:0 calc(50% - 50vw);
+  z-index:-1;
+  pointer-events:none;
+  background:#191b20;
+}
+.faqIntro{
+  position:static;
+  text-align:center;
+  width:100%;
+  margin:0;
+}
+.faqTopIcon{
+  display:block;
+  width:49px;
+  height:49px;
+  margin:0 auto 23px;
+  stroke-width:1.2;
+  color:#edf2fb;
+}
+.faqIntro h2{
+  margin:0;
+  font-family:var(--font-claude-serif),Newsreader,Georgia,serif;
+  font-size:clamp(3.1rem,5.7vw,4.45rem);
+  line-height:1.06;
+  font-weight:470;
+  letter-spacing:-.035em;
+  color:#f5f6fb;
+}
+.faqTabs{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+  margin:68px auto 0;
+  padding:4px;
+  border:1px solid rgba(203,217,237,.09);
+  border-radius:14px;
+  background:#292c33;
+}
+.faqTabs button{
+  border:0;
+  border-radius:10px;
+  min-height:36px;
+  padding:9px 15px;
+  background:transparent;
+  font:500 .75rem var(--font-goga),var(--font-inter),sans-serif;
+  color:#a8afbc;
+  cursor:pointer;
+  transition:background .18s ease,color .18s ease;
+}
+.faqTabs button:hover{color:#e8effd;}
+.faqTabs .faqTabActive,
+.faqTabs button[aria-selected="true"]{
+  color:#f0f5ff;
+  background:#343b4a;
+  box-shadow:inset 0 0 0 1px rgba(142,188,255,.15);
+}
+.faqTabs button:focus-visible{outline:2px solid #8ab9ff;outline-offset:2px;}
+.faqBody{
+  width:min(930px,100%);
+  margin:62px auto 0;
+  outline:none;
+}
+.faqBody:focus-visible{outline:2px solid #a4c9ff;outline-offset:6px;}
+.faqCategoryTitle{
+  margin:0 0 21px;
+  color:#f1f5ff;
+  font-family:var(--font-claude-serif),Newsreader,Georgia,serif;
+  font-weight:480;
+  font-size:clamp(1.55rem,2.5vw,2.2rem);
+  line-height:1.18;
+}
+.faqList{
+  border-top:1px solid rgba(210,220,236,.15);
+  background:transparent;
+}
+.faqItem{
+  border:0;
+  border-bottom:1px solid rgba(210,220,236,.14);
+  background:transparent;
+  box-shadow:none;
+}
+.faqItem summary{
+  display:flex;
+  align-items:center;
+  gap:20px;
+  min-height:73px;
+  padding:14px 0;
+  color:#edf2fb;
+  font-family:var(--font-claude-serif),Newsreader,Georgia,serif;
+  font-size:clamp(1.08rem,1.4vw,1.32rem);
+  font-weight:480;
+  line-height:1.33;
+}
+.faqItem summary:hover{color:#bcd8ff;}
+.faqItem > p{
+  padding:0 30px 22px 0;
+  margin:0;
+  max-width:760px;
+  color:#a6b2c6;
+  font-size:.9rem;
+  line-height:1.7;
+}
+.plus{
+  flex:0 0 22px;
+  width:22px;height:22px;
+  border:0;
+  background:transparent;
+  box-shadow:none;
+  color:#9dadc4;
+  font:300 1.3rem/1 var(--font-inter),sans-serif;
+}
+.faqDocsLink{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  margin-top:24px;
+  color:#a7cfff;
+  font-size:.82rem;
+  text-decoration:none;
+}
+.faqDocsLink:hover{text-decoration:underline;}
+.faqDocsLink svg{width:15px;height:15px;}
+.finalCta{
+  margin-top:85px;
+  border-color:rgba(151,183,230,.24);
+  background:linear-gradient(135deg,#202838,#141820);
+}
+.finalCopy h2{color:#eff4ff;}
+.finalCopy h2 em{color:#a8cbff;}
+.finalCopy p{color:#a8b5c8;}
+.finalPrimary{
+  color:#111b2b;
+  background:#a3c8ff;
+  box-shadow:none;
+}
+.finalPrimary:hover:not(:disabled){background:#c0dcff;}
+.trustLine{color:#96a5bb;}
+@media(max-width:900px){
+  .compareSection,.faqSection{
+    width:calc(100vw - 34px);
+    margin-left:calc(50% - 50vw + 17px);
+  }
+  .compareHeading{margin-bottom:56px;}
+  .faqBody{width:min(100% - 36px,840px);}
+  .faqSection{padding:73px 0 82px;}
+}
+@media(max-width:720px){
+  .compareSection,.faqSection{
+    width:calc(100vw - 28px);
+    margin-left:calc(50% - 50vw + 14px);
+  }
+  .compareSection{margin-top:65px;padding-top:26px;}
+  .compareHeading{margin-bottom:36px;}
+  .compareOrnament{width:39px;height:39px;margin-bottom:13px;}
+  .compareHeading h2{font-size:clamp(2rem,7.9vw,2.9rem);}
+  .compareHeading p{font-size:.79rem;}
+  .comparisonTable{min-width:590px;}
+  .comparisonTable th,.comparisonTable td{padding:12px;}
+  .faqSection{margin-top:75px;min-height:0;padding:59px 0 76px;}
+  .faqIntro h2{font-size:3.25rem;}
+  .faqTopIcon{width:42px;height:42px;}
+  .faqTabs{gap:2px;margin-top:44px;max-width:calc(100% - 20px);}
+  .faqTabs button{font-size:.68rem;padding:8px 10px;}
+  .faqBody{width:calc(100% - 22px);margin-top:46px;}
+  .faqCategoryTitle{font-size:1.8rem;}
+  .faqItem summary{min-height:63px;font-size:1.05rem;padding:12px 0;}
+}
+@media(max-width:420px){
+  .faqTabs button{padding:8px 8px;font-size:.64rem;}
+  .compareHeading h2{font-size:2.06rem;}
+  .faqBody{width:calc(100% - 10px);}
+}
+@media(hover:none),(prefers-reduced-motion:reduce){
+  .proCtaWrap .walletIcon{opacity:1!important;visibility:visible!important;transform:none!important;}
+  .proCtaWrap .cardIcon,.proCtaWrap .receiptIcon,.proCtaWrap .dollarIcon,.proCtaWrap .checkIcon{animation:none!important;opacity:0!important;visibility:hidden!important;}
+}
+@media(prefers-reduced-motion:reduce){
+  .proCta:hover:not(:disabled){transform:none;}
+  .faqTabs button{transition:none;}
+}
