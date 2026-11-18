@@ -8,7 +8,6 @@ import {
   SlidersHorizontal, Sparkles, Workflow, X, Zap,
 } from 'lucide-react';
 import { PluginBrandLogo } from '@/components/integrations/PluginBrandLogo';
-import { LOCAL_PUBLIC_INTEGRATION_LOGOS } from '@/lib/publicIntegrationLogo';
 import { composioLogoUrl } from '@/lib/pluginCatalog';
 import { SharedDotBackdrop } from '@/components/homepage-next/backdrop/SharedDotBackdrop';
 import { EXTERNAL_AGENTS, EXTERNAL_AGENT_DISCLOSURE } from '@/lib/externalAgentWorkflows';
@@ -39,12 +38,18 @@ const featuredOrder = new Map<string, number>(PUBLIC_INTEGRATION_FEATURED_IDS.ma
  * Keep the searchable app directory distinct from decorative hero artwork.
  */
 const HERO_BRAND_MARKS = [
-  { id: 'github', name: 'GitHub' },
-  { id: 'supabase', name: 'Supabase' },
-  { id: 'vercel', name: 'Vercel' },
-  { id: 'openai', name: 'OpenAI' },
-  { id: 'gitlab', name: 'GitLab' },
-  { id: 'anthropic', name: 'Anthropic' },
+  // Left side: business and productivity integrations.
+  { id: 'googlesheets', name: 'Google Sheets', src: '/brand/hero-icons/googlesheets.svg' },
+  { id: 'gmail', name: 'Gmail', src: '/brand/hero-icons/gmail.svg' },
+  { id: 'slack', name: 'Slack', src: '/brand/hero-icons/slack.svg' },
+  { id: 'notion', name: 'Notion', src: '/brand/hero-icons/notion.svg' },
+  { id: 'airtable', name: 'Airtable', src: '/brand/hero-icons/airtable.svg' },
+  // Right side: AI, development, and business software.
+  { id: 'openai', name: 'OpenAI', src: '/brand/logos/openai.svg' },
+  { id: 'claude', name: 'Claude', src: '/brand/hero-icons/claude.svg' },
+  { id: 'vercel', name: 'Vercel', src: '/brand/logos/vercel.svg' },
+  { id: 'hubspot', name: 'HubSpot', src: '/brand/hero-icons/hubspot.svg' },
+  { id: 'github', name: 'GitHub', src: '/brand/logos/github.svg' },
 ] as const;
 
 function useTypingPlaceholder(active: boolean) {
@@ -339,13 +344,21 @@ export function IntegrationsMarketplace({
         <div className="xi-hero-halo" aria-hidden="true" />
         <div className="xi-hero-logos" aria-hidden="true">
           {HERO_BRAND_MARKS.map((app, i) => (
-            <div className={'xi-orbit-logo xi-orbit-logo-' + (i + 1)} key={app.id}>
-              <PluginBrandLogo id={app.id} name={app.name} logo={LOCAL_PUBLIC_INTEGRATION_LOGOS[app.id]} verifiedOnly />
+            <div className={'xi-orbit-logo xi-orbit-logo-' + (i + 1)} key={app.id} title={app.name}>
+              <img src={app.src} alt="" className="xi-orbit-brandmark" width={39} height={39} decoding="async" />
             </div>
           ))}
         </div>
         <div className="xi-hero-content">
-          <h1 id="xi-hero-title">Connect your favorite apps<br/><em>with Xroga AI.</em></h1>
+          <h1 id="xi-hero-title" aria-label="Connect your favorite apps, agents, and tools with Xroga AI.">
+            Connect your favorite{' '}
+            <span className="xi-hero-rotating" aria-hidden="true">
+              <span className="xi-hero-word xi-hero-word--apps">apps</span>
+              <span className="xi-hero-word xi-hero-word--agents">agents</span>
+              <span className="xi-hero-word xi-hero-word--tools">tools</span>
+            </span>
+            <br/><em>with Xroga AI.</em>
+          </h1>
           <p>Save time with app automation inside your workspace. Set up supported tasks to run on a schedule, including around-the-clock workflows when configured and authorized.</p>
           <div className="xi-hero-actions">
             <a className="xi-primary-button" href="#xi-directory">Browse apps <ArrowUpRight size={17}/></a>

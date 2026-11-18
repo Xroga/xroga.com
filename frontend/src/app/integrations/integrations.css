@@ -12,7 +12,7 @@
 .xi-root ::selection{background:#3677cb;color:#fff}
 .xi-root .xi-visually-hidden{position:absolute!important;width:1px!important;height:1px!important;clip:rect(0,0,0,0)!important;overflow:hidden!important;white-space:nowrap!important}
 .xi-root .xi-overline{display:block;font-family:var(--font-goga),system-ui,sans-serif;letter-spacing:.17em;color:#87baf7;font-size:10px;font-weight:790;text-transform:uppercase}
-.xi-hero{position:relative;text-align:center;min-height:610px;display:flex;align-items:center;justify-content:center;padding:129px 26px 112px;background:radial-gradient(ellipse 45% 62% at 50% 38%,#111111 0%,#060606 54%,#050505 90%);border-bottom:1px solid rgba(144,178,227,.08)}
+.xi-hero{position:relative;text-align:center;min-height:610px;display:flex;align-items:center;justify-content:center;padding:129px 26px 112px;background:radial-gradient(ellipse 45% 62% at 50% 38%,#111111 0%,#060606 54%,#050505 90%);}
 .xi-hero-halo{position:absolute;pointer-events:none;top:-285px;left:50%;transform:translateX(-50%);width:780px;height:540px;border-radius:100%;filter:blur(38px);background:radial-gradient(ellipse,rgba(96,150,237,.065),transparent 66%)}
 .xi-hero::after{content:'';pointer-events:none;position:absolute;inset:0;background-image:radial-gradient(rgba(203,224,255,.13) .6px,transparent .6px);background-size:19px 19px;opacity:.25;mask-image:radial-gradient(ellipse at 50% 45%,#000,transparent 85%)}
 .xi-hero-content{position:relative;z-index:2;max-width:930px;margin:auto}
@@ -147,7 +147,7 @@
 .xi-no-results{min-height:290px;padding:45px 20px;display:flex;flex-direction:column;align-items:center;justify-content:center;border:1px dashed rgba(151,188,234,.29);border-radius:17px;background:#101010;color:#a5c1e1;text-align:center}
 .xi-no-results h3{font-size:19px;margin:13px 0 5px}.xi-no-results p{font-size:12px;margin:0 0 17px;color:#8ba5c4}
 .xi-no-results button{background:#91c5ff;border:0;border-radius:9px;color:#0c0c0c;font-size:12px;font-weight:750;padding:11px 17px}
-.xi-cta{position:relative;text-align:center;margin:30px auto 0;overflow:hidden;max-width:none;padding:86px 24px 108px;background:radial-gradient(ellipse at 50% 84%,rgba(71,128,222,.055),transparent 53%),linear-gradient(180deg,#101010,#070707);border-top:1px solid rgba(128,171,240,.19)}
+.xi-cta{position:relative;text-align:center;margin:30px auto 0;overflow:hidden;max-width:none;padding:86px 24px 108px;background:radial-gradient(ellipse at 50% 84%,rgba(71,128,222,.055),transparent 53%),linear-gradient(180deg,#101010,#070707);}
 .xi-cta-halo{position:absolute;left:50%;top:-145px;transform:translateX(-50%);width:600px;height:250px;background:radial-gradient(ellipse,rgba(117,180,255,.25),transparent 70%);pointer-events:none}
 .xi-cta h2{position:relative;font-size:clamp(50px,6vw,80px);line-height:1.02;margin:15px auto}
 .xi-cta p{color:#a3b7d0;max-width:530px;font-size:13px;line-height:1.8;margin:0 auto 28px}
@@ -273,7 +273,7 @@
   margin:0 auto 70px;
   padding:73px 32px 78px;
   border:0;
-  border-top:1px solid rgba(255,255,255,.11);
+  ;
   border-radius:0;
   background:transparent!important;
   box-shadow:none;
@@ -382,3 +382,95 @@
    Keep verified repo brand marks as quiet orbital artwork only. */
 .xi-hero-logos .xi-orbit-logo img {object-fit:contain}
 .xi-hero-content .xi-hero-actions {margin-bottom:0}
+
+
+/* Integrations hero polish: ten authentic, bundled provider marks.
+   Five left and five right, outside the hero's text column on wide screens. */
+.xi-hero-logos{opacity:1;max-width:1510px}
+.xi-orbit-logo{
+  --xi-tilt:-7deg;
+  display:grid;
+  width:57px;height:57px;
+  border-radius:16px;
+  border:1px solid rgba(217,197,156,.17);
+  background:linear-gradient(150deg,rgba(20,19,18,.94),rgba(9,10,11,.95));
+  box-shadow:0 10px 30px rgba(0,0,0,.27),inset 0 1px rgba(255,255,255,.045);
+  transform:rotate(var(--xi-tilt));
+  animation:xi-logo-drift 6.8s ease-in-out infinite;
+}
+.xi-orbit-brandmark{display:block;width:39px;height:39px;object-fit:contain}
+.xi-orbit-logo-1{top:8%;left:7%;--xi-tilt:-11deg;animation-delay:-.2s}
+.xi-orbit-logo-2{top:28%;left:1.5%;--xi-tilt:8deg;animation-delay:-1.8s}
+.xi-orbit-logo-3{top:48%;left:7.5%;--xi-tilt:-5deg;animation-delay:-2.9s}
+.xi-orbit-logo-4{top:67%;left:2.5%;--xi-tilt:11deg;animation-delay:-4.1s}
+.xi-orbit-logo-5{top:81%;left:11%;--xi-tilt:-8deg;animation-delay:-5.3s}
+.xi-orbit-logo-6{top:8%;right:7%;--xi-tilt:10deg;animation-delay:-1.3s}
+.xi-orbit-logo-7{top:28%;right:1.5%;--xi-tilt:-8deg;animation-delay:-3.2s;opacity:1}
+.xi-orbit-logo-8{top:48%;right:7.5%;--xi-tilt:6deg;animation-delay:-4.7s;opacity:1}
+.xi-orbit-logo-9{top:67%;right:2.5%;--xi-tilt:-10deg;animation-delay:-.9s}
+.xi-orbit-logo-10{top:81%;right:11%;--xi-tilt:7deg;animation-delay:-2.5s}
+.xi-orbit-logo-7,.xi-orbit-logo-8{display:grid}
+@keyframes xi-logo-drift{
+  0%,100%{transform:translate3d(0,0,0) rotate(var(--xi-tilt))}
+  50%{transform:translate3d(0,-6px,0) rotate(var(--xi-tilt))}
+}
+
+/* The only headline text that changes is apps / agents / tools.
+   Three words share one grid cell so the headline never reflows. */
+.xi-hero-rotating{display:inline-grid;vertical-align:baseline;white-space:nowrap}
+.xi-hero-word{
+  grid-area:1/1;
+  display:block;
+  line-height:inherit;
+  text-align:left;
+  opacity:0;
+  animation:xi-hero-word-blur 9s ease-in-out infinite both;
+}
+.xi-hero-word--apps{animation-delay:0s}
+.xi-hero-word--agents{animation-delay:-6s}
+.xi-hero-word--tools{animation-delay:-3s}
+@keyframes xi-hero-word-blur{
+  0%,25%{opacity:1;filter:blur(0);transform:translateY(0)}
+  33.333%,96%{opacity:0;filter:blur(8px);transform:translateY(-6px)}
+  100%{opacity:1;filter:blur(0);transform:translateY(0)}
+}
+
+/* Continuous shared homepage dots extend to the footer, including both
+   rounded lower corners. No page-level horizontal section separators. */
+.xi-root{border-radius:0 0 34px 34px;background:#050607}
+.xi-hero{border-bottom:0}
+.xi-mcp.xi-mcp-open{border-top:0}
+.xi-cta{
+  border-top:0;
+  border-radius:0 0 34px 34px;
+  background:transparent!important;
+  margin-bottom:0;
+}
+
+/* Icons remain full-size and legible on desktop; decorative marks yield
+   space to the headline on tablet/mobile. */
+@media(max-width:1100px){
+  .xi-hero-logos{opacity:.55}
+  .xi-orbit-logo-1,.xi-orbit-logo-2,.xi-orbit-logo-3,.xi-orbit-logo-4,.xi-orbit-logo-5{left:1%}
+  .xi-orbit-logo-6,.xi-orbit-logo-7,.xi-orbit-logo-8,.xi-orbit-logo-9,.xi-orbit-logo-10{right:1%}
+}
+@media(max-width:900px){
+  .xi-hero-logos{opacity:.38}
+  .xi-orbit-logo{width:45px;height:45px;border-radius:13px}
+  .xi-orbit-brandmark{width:30px;height:30px}
+}
+@media(max-width:700px){
+  .xi-hero-logos{opacity:.3}
+  .xi-orbit-logo{width:39px;height:39px}
+  .xi-orbit-brandmark{width:26px;height:26px}
+  .xi-orbit-logo-2,.xi-orbit-logo-3,.xi-orbit-logo-4,
+  .xi-orbit-logo-7,.xi-orbit-logo-8,.xi-orbit-logo-9{display:none}
+  .xi-orbit-logo-1,.xi-orbit-logo-6{top:3%}
+  .xi-orbit-logo-5,.xi-orbit-logo-10{top:auto;bottom:5%}
+  .xi-root,.xi-cta{border-bottom-left-radius:24px;border-bottom-right-radius:24px}
+}
+@media(prefers-reduced-motion:reduce){
+  .xi-orbit-logo,.xi-hero-word{animation:none!important;transform:none!important;filter:none!important}
+  .xi-hero-word{opacity:0}
+  .xi-hero-word--apps{opacity:1}
+}
