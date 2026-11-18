@@ -1,18 +1,25 @@
 import React, { createContext, Fragment, type ReactNode } from "react";
+import katex from "katex";
 import { isPresentationLanguage, publicAnswerText } from "@/lib/publicAnswerText";
 import { cx, isLongAnswerTable, webUrl } from "./style";
 import { staticChartTable } from "./chart";
 import { CodePanel } from "./code-panel";
 import { nativeReadableTextKey } from "../../../../../../backend/src/ai/nativeOpenUi";
 
-// A small Markdown renderer that builds React elements and never injects HTML.
+// Markdown builds React elements. Formula HTML comes only from untrusted KaTeX.
 // Inline: **bold**, *italic*, ~~strike~~, `code`, [text](https://...).
 // Blocks: paragraphs, # headings, - and 1. lists, > quotes, ``` code, ---, | tables |.
 
 // An underscore inside an identifier is literal, even when another identifier
 // later in the same paragraph also contains an underscore.
-const INLINE = /(`[^`\n]+`)|(\*\*[^*\n]+?\*\*|(?<![\p{L}\p{N}_])__[^_\n]+?__(?![\p{L}\p{N}_]))|(~~[^~\n]+?~~)|(\*[^*\s][^*\n]*?\*|(?<![\p{L}\p{N}_])_[^_\s][^_\n]*?_(?![\p{L}\p{N}_]))|(\[[^\]\n]+\]\([^)\s]+\))|(\[(\d{1,2})\])/u;
+const INLINE = /(`[^`\n]+`)|(\*\*[^*\n]+?\*\*|(?<![\p{L}\p{N}_])__[^_\n]+?__(?![\p{L}\p{N}_]))|(~~[^~\n]+?~~)|(\*[^*\s][^*\n]*?\*|(?<![\p{L}\p{N}_])_[^_\s][^_\n]*?_(?![\p{L}\p{N}_]))|(\[[^\]\n]+\]\([^)\s]+\))|(\[(\d{1,2})\])|(\\\([^\n]+?\\\))/u;
 type RenderCitation = (number: number, href?: string) => ReactNode;
+
+/** Reuse the registered Math component's bounded, untrusted KaTeX rendering. */
+export function MathExpression({ tex, inline = false }: { tex: string; inline?: boolean }) {
+  const html = katex.renderToString(tex, { displayMode: !inline, throwOnError: false, maxExpand: 100, maxSize: 12, trust: false, strict: "ignore", output: "htmlAndMathml" });
+  return inline ? <span className="iui-math" dangerouslySetInnerHTML={{ __html: html }} /> : <div className="iui-math is-block" role="group" aria-label="Equation" tabIndex={0} dangerouslySetInnerHTML={{ __html: html }} />;
+}
 
 export function inline(text: string, key = "i", renderCitation?: RenderCitation): ReactNode {
   const out: ReactNode[] = [];
@@ -32,6 +39,7 @@ export function inline(text: string, key = "i", renderCitation?: RenderCitation)
     else if (m[3]) out.push(<s key={k}>{inline(token.slice(2, -2), k, renderCitation)}</s>);
     else if (m[4]) out.push(<em key={k}>{inline(token.slice(1, -1), k, renderCitation)}</em>);
     else if (m[6]) out.push(<Fragment key={k}>{renderCitation?.(Number(m[7])) ?? token}</Fragment>);
+    else if (m[8]) out.push(<MathExpression key={k} tex={token.slice(2, -2)} inline />);
     else {
       const close = token.indexOf("](");
       const label = token.slice(1, close);
@@ -59,6 +67,7 @@ type Block =
   | { kind: "h"; level: number; text: string }
   | { kind: "list"; ordered: boolean; start: number; items: string[] }
   | { kind: "code"; text: string; language?: string }
+  | { kind: "math"; text: string }
   | { kind: "hr" }
   | { kind: "table"; head: string[]; rows: string[][] };
 
@@ -299,6 +308,24 @@ function blocks(source: string): Block[] {
       i++;
       continue;
     }
+    const math = /^ {0,3}(\$\$|\\\[)(.*)$/.exec(line);
+    if (math) {
+      const close = math[1] === "$$" ? "$$" : "\\]";
+      const body: string[] = [];
+      let end = i;
+      let rest = math[2];
+      while (!rest.includes(close) && end + 1 < lines.length) {
+        body.push(rest);
+        rest = lines[++end];
+      }
+      const at = rest.indexOf(close);
+      if (at >= 0 && !rest.slice(at + close.length).trim()) {
+        body.push(rest.slice(0, at));
+        out.push({ kind: "math", text: body.join("\n").trim() });
+        i = end + 1;
+        continue;
+      }
+    }
     const heading = /^(#{1,4})\s+(.*)$/.exec(line);
     if (heading) {
       out.push({ kind: "h", level: heading[1].length, text: heading[2] });
@@ -382,6 +409,9 @@ export function MarkdownBlocks({ text, renderCitation, deduplicateTables = false
           case "code":
             if (matches?.code.has(b.text.trimEnd())) return null;
             return <CodePanel key={k} code={b.text} language={b.language} />;
+          case "math":
+            if (matches?.paragraphs.has(citationTextKey(b.text))) return null;
+            return <MathExpression key={k} tex={b.text} />;
           case "hr":
             return <hr key={k} className="iui-divider" />;
           case "list": {

@@ -11,6 +11,25 @@ import { inline, MarkdownBlocks, nativeMarkdownMatches, preservedMarkdownTableKe
 
 const render = (source: string) => renderToStaticMarkup(createElement(Fragment, null, inline(source)));
 
+test('Markdown formulas use the existing safe math renderer without changing currency or code', () => {
+  const block = (text: string) => renderToStaticMarkup(createElement(MarkdownBlocks, {text}));
+  for (const text of ['$$A = P\\left(1 + \\frac{r}{n}\\right)^{nt}$$', '$$\nx^2 + y^2\n$$', '\\[\nx^2\n\\]']) {
+    const html = block(text);
+    assert.match(html, /class="katex"/);
+    assert.match(html, /<math/);
+    assert.match(html, /tabindex="0"/);
+    assert.doesNotMatch(html, /\$\$/);
+  }
+  assert.match(render('Use \\(x^2\\) here.'), /class="katex"/);
+  const prices = 'Basic costs $10 and Pro costs $25 per month.';
+  assert.equal(block(prices), '<p>' + prices + '</p>');
+  assert.doesNotMatch(render('`\\(x^2\\)`'), /class="katex"/);
+  assert.doesNotMatch(block('```latex\n$$x^2$$\n```'), /class="katex"/);
+  assert.match(block('$$unfinished\n\nKeep the complete explanation.'), /Keep the complete explanation/);
+  const unsafe = block('$$\\href{javascript:alert(1)}{click} + \\includegraphics{https://example.com/track}$$');
+  assert.doesNotMatch(unsafe, /href="javascript:|<img|<script|onerror=/);
+});
+
 test('a calculated table with a dynamic header replaces its initial fallback table', () => {
   const program='root = Col([Table(["Compounding", "Balance after " + @Plural($years,"year")], [["Monthly", @Format(18193.96734,"currency",2,"USD")]])])\n$years = 10';
   const text=supplementNativeProse('Initial calculation.',program,true);

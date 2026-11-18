@@ -1,11 +1,10 @@
 "use client";
 
 import { defineComponent } from "@openuidev/react-lang";
-import katex from "katex";
 
 import { useState, type ReactNode } from "react";
 import { z } from "zod/v4";
-import { inline } from "./markdown";
+import { inline, MathExpression } from "./markdown";
 import { CodePanel } from "./code-panel";
 import { useRenderEvidenceCitation } from "../../evidence";
 import { children, cx } from "./style";
@@ -67,11 +66,7 @@ export const MathBlock = defineComponent({
   name: "Math",
   props: z.object({ tex: z.string(), inline: z.boolean().optional() }),
   description: 'LaTeX formula, e.g. Math("E = mc^2"); inline true to sit in a Text list.',
-  component: ({ props }) => {
-    const html = katex.renderToString(str(props.tex), { displayMode: !props.inline, throwOnError: false, maxExpand: 100, maxSize: 12, trust: false, strict: "ignore", output: "htmlAndMathml" });
-    // KaTeX escapes its input and is configured without \href or \includegraphics.
-    return props.inline ? <span className="iui-math" dangerouslySetInnerHTML={{ __html: html }} /> : <div className="iui-math is-block" dangerouslySetInnerHTML={{ __html: html }} />;
-  },
+  component: ({ props }) => <MathExpression tex={str(props.tex)} inline={props.inline} />,
 });
 
 // Play

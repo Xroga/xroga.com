@@ -1,7 +1,7 @@
 "use client";
 
 import { defineComponent } from "@openuidev/react-lang";
-import React, { useId, useLayoutEffect, useRef, useState, type PointerEvent } from "react";
+import React, { useId, useLayoutEffect, useState, type PointerEvent } from "react";
 import { z } from "zod/v4";
 import { Format as NumberFormat } from "../functions/text";
 
@@ -43,17 +43,18 @@ function niceStep(span: number) {
 }
 
 function useWidth() {
-  const ref = useRef<HTMLDivElement>(null);
+  // Forward bindings can become valid after the first render. Observe the
+  // frame when it mounts, including after an initially unavailable chart.
+  const [element, ref] = useState<HTMLDivElement | null>(null);
   const [width, setWidth] = useState(0);
   useLayoutEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const measure = () => setWidth(el.clientWidth);
+    if (!element) return;
+    const measure = () => setWidth(element.clientWidth);
     measure();
     const observer = new ResizeObserver(measure);
-    observer.observe(el);
+    observer.observe(element);
     return () => observer.disconnect();
-  }, []);
+  }, [element]);
   return [ref, width] as const;
 }
 
