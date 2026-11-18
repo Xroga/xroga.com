@@ -63535,7 +63535,7 @@
       "id": "surface:1e9646e4df4683b22766",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "frontend/src/app/integrations/IntegrationsMarketplace.tsx",
-      "sha256": "dbd295f311829a3fdbcc65906aa80686a612e6c368fc96a3f23e78d70cbc2909",
+      "sha256": "8b580f61099e58b0b129e1d061e8a821f63a07816fcdb2f8b9a9a498ab008a8d",
       "symbols": [
         "AgentConnections",
         "AppLogo",
@@ -63594,7 +63594,6 @@
         "@/lib/liveIntegrationDiscovery",
         "@/lib/pluginCatalog",
         "@/lib/publicConnectCatalog",
-        "@/lib/publicIntegrationLogo",
         "@/lib/publicIntegrationsDirectory",
         "@/lib/xrogaConnect",
         "lucide-react",
@@ -63609,7 +63608,6 @@
         "frontend/src/lib/liveIntegrationDiscovery.ts",
         "frontend/src/lib/pluginCatalog.ts",
         "frontend/src/lib/publicConnectCatalog.ts",
-        "frontend/src/lib/publicIntegrationLogo.ts",
         "frontend/src/lib/xrogaConnect.ts"
       ],
       "entryPoints": [
@@ -72167,7 +72165,7 @@
         "frontend/src/app/page.tsx"
       ],
       "callers": [
-        "frontend/src/app/integrations/IntegrationsMarketplace.tsx:13",
+        "frontend/src/app/integrations/IntegrationsMarketplace.tsx:12",
         "frontend/src/components/homepage/HomepageClient.tsx:18"
       ],
       "reachable": true,
@@ -109142,7 +109140,7 @@
         "frontend/src/app/integrations/page.tsx"
       ],
       "callers": [
-        "frontend/src/app/integrations/IntegrationsMarketplace.tsx:14",
+        "frontend/src/app/integrations/IntegrationsMarketplace.tsx:13",
         "frontend/src/lib/externalAgentWorkflows.test.ts:3"
       ],
       "reachable": true,
@@ -110428,7 +110426,7 @@
         "frontend/src/app/integrations/page.tsx"
       ],
       "callers": [
-        "frontend/src/app/integrations/IntegrationsMarketplace.tsx:22",
+        "frontend/src/app/integrations/IntegrationsMarketplace.tsx:21",
         "frontend/src/lib/publicIntegrationsDirectory.ts:48"
       ],
       "reachable": true,
@@ -111054,7 +111052,7 @@
         "frontend/src/app/integrations/page.tsx"
       ],
       "callers": [
-        "frontend/src/app/integrations/IntegrationsMarketplace.tsx:17",
+        "frontend/src/app/integrations/IntegrationsMarketplace.tsx:16",
         "frontend/src/lib/liveIntegrationDiscovery.test.ts:3"
       ],
       "reachable": true,
@@ -112890,7 +112888,7 @@
         "frontend/src/app/software/page.tsx"
       ],
       "callers": [
-        "frontend/src/app/integrations/IntegrationsMarketplace.tsx:12",
+        "frontend/src/app/integrations/IntegrationsMarketplace.tsx:11",
         "frontend/src/components/integrations/InstalledPluginsShelf.tsx:11",
         "frontend/src/components/integrations/PluginBrandLogo.tsx:6",
         "frontend/src/components/integrations/PluginDetail.tsx:24",
@@ -113559,7 +113557,7 @@
         "frontend/src/app/integrations/page.tsx"
       ],
       "callers": [
-        "frontend/src/app/integrations/IntegrationsMarketplace.tsx:16",
+        "frontend/src/app/integrations/IntegrationsMarketplace.tsx:15",
         "frontend/src/lib/publicConnectCatalog.test.ts:4"
       ],
       "reachable": true,
@@ -113602,7 +113600,6 @@
         "frontend/src/app/integrations/page.tsx"
       ],
       "callers": [
-        "frontend/src/app/integrations/IntegrationsMarketplace.tsx:11",
         "frontend/src/lib/liveIntegrationDiscovery.ts:9",
         "frontend/src/lib/publicIntegrationLogo.test.ts:4",
         "frontend/src/lib/publicIntegrationsDirectory.test.ts:4",
@@ -121044,7 +121041,7 @@
         "frontend/src/app/software/page.tsx"
       ],
       "callers": [
-        "frontend/src/app/integrations/IntegrationsMarketplace.tsx:15",
+        "frontend/src/app/integrations/IntegrationsMarketplace.tsx:14",
         "frontend/src/components/automations/ConnectedAppAutomations.tsx:4",
         "frontend/src/components/automations/Connections.tsx:5",
         "frontend/src/components/integrations/CustomMcpManager.tsx:22",
@@ -143982,9 +143979,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:20bbf2520b38e103b858",
+      "id": "finding:2d0695660494da3da38b",
       "sourcePath": "frontend/src/app/integrations/IntegrationsMarketplace.tsx",
-      "line": 379,
+      "line": 392,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -156326,7 +156323,7 @@
     {
       "id": "test-suite:d5ea1335ec5cc2eca9c4",
       "sourcePath": "frontend/src/app/integrations/integrationsBackdrop.test.ts",
-      "declaredTests": 5,
+      "declaredTests": 7,
       "skipLocations": [],
       "focusLocations": []
     },

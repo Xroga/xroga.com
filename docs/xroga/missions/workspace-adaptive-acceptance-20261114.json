@@ -43,6 +43,13 @@
     "frontend/.npmrc",
     "frontend/e2e/command3-auth.spec.ts",
     "frontend/e2e/phase4-admin-share.security.mjs",
+    "frontend/public/brand/hero-icons/airtable.svg",
+    "frontend/public/brand/hero-icons/claude.svg",
+    "frontend/public/brand/hero-icons/gmail.svg",
+    "frontend/public/brand/hero-icons/googlesheets.svg",
+    "frontend/public/brand/hero-icons/hubspot.svg",
+    "frontend/public/brand/hero-icons/notion.svg",
+    "frontend/public/brand/hero-icons/slack.svg",
     "frontend/src/app/globals.css",
     "frontend/src/app/integrations/IntegrationsMarketplace.tsx",
     "frontend/src/app/integrations/integrations.css",
@@ -123,7 +130,8 @@
       "One planner, one canonical DeepSeek answer dispatch, existing registry and authorization, saved answers, owner-only Share and decoder compatibility.",
       "Preserve the independently serving Connect frontend from 758bce0b420354b09fa5ec9f50252ded508df13c in the release candidate. Its public catalog read is reviewed and credential-free, with truthful existing featured-app fallback. No backend, environment, browser pairing or model changes.",
       "Reconcile the old integration marketing launch-claim test with the already-serving Connect discovery page. Assert that listings are not connected accounts, external actions require authorization and approval, and agent handoffs do not promise a direct native connection. Keep the negative automatic-routing assertion.",
-      "Reconcile the current transport proof count from 159 to 160 for the explicitly reviewed inherited public catalog GET, bind its source and negative test, and preserve all historical archives, SDK guard dispositions and non-acceptance flags. The strict equality check remains unchanged."
+      "Reconcile the current transport proof count from 159 to 160 for the explicitly reviewed inherited public catalog GET, bind its source and negative test, and preserve all historical archives, SDK guard dispositions and non-acceptance flags. The strict equality check remains unchanged.",
+      "Preserve the already-serving 2605a3b9915e32d10a77532f760c4f726912ec04 Connect hero update. Its ten frontend files do not alter Workspace, backend, registered capabilities, accounting, environment settings or browser pairing. Repair only overescaped inherited source-test regexes. Verify the final frontend source independently and explicitly bind the unchanged verified backend artifact."
     ],
     "deprecate": [],
     "replace": [
