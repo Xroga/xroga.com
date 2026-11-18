@@ -42,3 +42,24 @@ test('a failing stage ends the run and later stages do not start', async () => {
   assert.deepEqual(out.stages?.map((s) => s.id), ['a']);
   assert.equal(out.exitCode, 1);
 });
+
+test('a worker that could not be reached or refused the request reads as "not run", never as a failing test', async () => {
+  const { runtime } = fakeRuntime(() => ({ exitCode: null, stdout: '', stderr: 'Isolation worker transport failed: fetch failed', timedOut: false, killedForLimit: false, durationMs: 3 }));
+  const port = createWorkerExecutionPort({ runtime: async () => runtime, retryDelayMs: 1 });
+  const result = await runTests({ port, files: [{ path: 'a.py', content: '' }, { path: 'pyproject.toml', content: '' }], changedPaths: ['a.py'] });
+  assert.equal(result.status, 'unavailable');
+});
+
+test('a request refused before any code ran is repeated on a fresh container; one that ran is never repeated', async () => {
+  let n = 0;
+  const flaky = fakeRuntime(() => (++n < 3 ? { exitCode: null, stdout: '', stderr: 'Isolation worker returned HTTP 503; generated code was not run.', timedOut: false, killedForLimit: false, durationMs: 1 } : ok('fine')));
+  const port = createWorkerExecutionPort({ runtime: async () => flaky.runtime, retryDelayMs: 1 });
+  assert.equal((await port.execute({ files: [], command: 'node', args: [], timeoutMs: 1000, networkPolicy: 'none', environment: {} })).stdout, 'fine');
+  assert.equal(flaky.calls.length, 3);
+  const failing = fakeRuntime(() => ({ ...ok(), exitCode: 1, stderr: 'AssertionError' }));
+  await createWorkerExecutionPort({ runtime: async () => failing.runtime, retryDelayMs: 1 }).execute({ files: [], command: 'node', args: [], timeoutMs: 1000, networkPolicy: 'none', environment: {} });
+  assert.equal(failing.calls.length, 1, 'a failing test run is a result, not a retry');
+  const down = fakeRuntime(() => ({ exitCode: null, stdout: '', stderr: 'Isolation worker transport failed: x', timedOut: false, killedForLimit: false, durationMs: 1 }));
+  await assert.rejects(createWorkerExecutionPort({ runtime: async () => down.runtime, retryDelayMs: 1, attempts: 2 }).execute({ files: [], command: 'node', args: [], timeoutMs: 1000, networkPolicy: 'none', environment: {} }), SandboxUnavailableError);
+  assert.equal(down.calls.length, 2);
+});

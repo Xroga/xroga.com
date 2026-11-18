@@ -8,7 +8,7 @@
  */
 import type { SandboxExecutionRequest, SandboxExecutionResult, SandboxRuntime } from './sandboxTypes.js';
 import { SandboxUnavailableError } from './sandboxTypes.js';
-import { meterRemoteWorkerRun, type RemoteRunOwner } from './meteredExecution.js';
+import { meterRemoteWorkerRun, type MeteredCallDeps, type RemoteRunOwner } from './meteredExecution.js';
 
 type PortRequest = Omit<SandboxExecutionRequest, 'limits'> & { limits?: Partial<SandboxExecutionRequest['limits']> };
 
@@ -19,6 +19,11 @@ const COMMAND_ALIASES: Record<string, string> = { python: 'python3' };
 export interface WorkerPortDeps {
   readonly runtime: () => Promise<SandboxRuntime>;
   readonly owner?: () => Promise<RemoteRunOwner | undefined>;
+  /** How many times a request refused before any code ran is tried (default 4), and the base delay between tries. */
+  readonly attempts?: number;
+  readonly retryDelayMs?: number;
+  /** Test seam for the ledger. */
+  readonly meterDeps?: Pick<MeteredCallDeps, 'config' | 'meterFor'>;
 }
 
 function restricted(runtime: string): SandboxUnavailableError {
@@ -26,6 +31,17 @@ function restricted(runtime: string): SandboxUnavailableError {
     available: false, runtime, reason: 'policy_disabled',
     detail: 'This stage needs network access to a package registry, which requires a verified restricted-network worker that is not available. Nothing was run.',
   });
+}
+
+/**
+ * The remote runtime reports a worker that could not be reached, refused the request or answered off-contract as a null exit code with an
+ * "Isolation worker ..." message. That means the project's code never ran, so it must read as "not run", never as a failing test.
+ */
+function notRunIsUnavailable(runtime: string, result: SandboxExecutionResult): SandboxExecutionResult {
+  if (result.exitCode === null && !result.timedOut && /^Isolation worker/.test(result.stderr)) {
+    throw new SandboxUnavailableError({ available: false, runtime, reason: 'runtime_unavailable', detail: result.stderr.slice(0, 300) });
+  }
+  return result;
 }
 
 export function createWorkerExecutionPort(deps: WorkerPortDeps) {
@@ -39,10 +55,21 @@ export function createWorkerExecutionPort(deps: WorkerPortDeps) {
         const mapped = COMMAND_ALIASES[command] ?? command;
         // a stage's directory is entered by the shell inside the sandbox; the arguments are passed as data, never interpolated into the script
         const wrapped = cwd ? { command: 'sh', args: ['-c', 'cd "$0" && exec "$@"', cwd, mapped, ...args] } : { command: mapped, args: [...args] };
-        return meterRemoteWorkerRun(owner, { timeoutMs, memoryMb: limits.memoryMb, worker: runtime.name }, () => runtime.execute({
-          files, command: wrapped.command, args: wrapped.args, timeoutMs: Math.min(300_000, Math.max(1_000, timeoutMs)), networkPolicy: 'none',
+        const request1 = {
+          files, command: wrapped.command, args: wrapped.args, timeoutMs: Math.min(300_000, Math.max(1_000, timeoutMs)), networkPolicy: 'none' as const,
           environment: request.environment, limits, ...(request.signal ? { signal: request.signal } : {}),
-        }));
+        };
+        return meterRemoteWorkerRun(owner, { timeoutMs, memoryMb: limits.memoryMb, worker: runtime.name }, async () => {
+          // The worker ends its process after every run so the next request gets a fresh container, so a request can land on a container that is
+          // still shutting down or just starting. A request that was refused before any code ran is safe to repeat; a run that started never is.
+          for (let attempt = 1; ; attempt++) {
+            try { return notRunIsUnavailable(runtime.name, await runtime.execute(request1)); }
+            catch (error) {
+              if (!(error instanceof SandboxUnavailableError) || attempt >= (deps.attempts ?? 4) || request.signal?.aborted) throw error;
+              await new Promise((resolve) => setTimeout(resolve, (deps.retryDelayMs ?? 3_000) * attempt));
+            }
+          }
+        }, deps.meterDeps);
       };
       if (!request.stages?.length) {
         if (request.networkPolicy !== 'none') throw restricted(runtime.name);
