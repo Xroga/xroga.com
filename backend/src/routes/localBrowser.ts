@@ -211,7 +211,7 @@ const message = z.object({
 const turnBody = z.object({
   turn: z.number().int().min(1),
   messages: z.array(message).min(1).max(140),
-  tools: z.array(tool).max(32).optional(),
+  tools: z.array(tool).max(64).optional(),
   tool_choice: z.enum(['auto', 'none', 'required']).optional(),
   max_tokens: z.number().int().min(1).max(4_096).optional(),
   vision_probe_png: z.string().min(32).max(24_000).regex(/^[A-Za-z0-9+/]+={0,2}$/).optional(),

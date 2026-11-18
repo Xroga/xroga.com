@@ -36,8 +36,8 @@ import type { AgentTool, ToolKind } from './tools';
 export const RESULT_CAP = 8_000;
 /** A request with more messages than this is compacted first; the server refuses 140. */
 export const MESSAGE_SOFT_LIMIT = 100;
-/** The most tools one model request may list: the Xroga server's turn schema allows 32 and refuses the request beyond that. */
-export const MAX_TOOLS_PER_REQUEST = 32;
+/** The most tools one model request may list: the Xroga server's turn schema allows 64 and refuses the request beyond that. */
+export const MAX_TOOLS_PER_REQUEST = 64;
 /** The readers' combined result: a little over their own total (subagents.ts TOTAL_CHARS plus headings). */
 export const DELEGATE_RESULT_CAP = 30_000;
 
