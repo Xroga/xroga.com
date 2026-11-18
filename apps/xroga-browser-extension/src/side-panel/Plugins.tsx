@@ -137,6 +137,25 @@ export function Plugins({ open, onOpenChange }: { open: boolean; onOpenChange: (
     }
   }
 
+  // Full access for every app, chosen by the owner's own click: no "allow this read" or "allow this change" card for a connected app while
+  // the owner is away. Sending, publishing, deleting and payments still ask (the server keeps that in every mode).
+  const [accountMode, setAccountMode] = useState<Mode | undefined>();
+  const [accountSaving, setAccountSaving] = useState(false);
+  useEffect(() => {
+    if (!open) return;
+    let current = true;
+    void request('permission').then(data => { if (current) setAccountMode(data.mode); }, () => { /* the switch simply stays off */ });
+    return () => { current = false; };
+  }, [open]);
+  async function toggleAccountAccess() {
+    if (accountSaving) return;
+    setAccountSaving(true);
+    try {
+      const data = await request('setPermission', { mode: accountMode === 'full_access' ? 'low_risk' : 'full_access' });
+      setAccountMode(data.mode);
+    } catch { /* unchanged */ } finally { setAccountSaving(false); }
+  }
+
   async function loadMore() {
     const current = generation.current;
     setLoading(true);
@@ -186,6 +205,13 @@ export function Plugins({ open, onOpenChange }: { open: boolean; onOpenChange: (
             <Dialog.Close aria-label="Close plugins" className="rounded-lg p-2 hover:bg-nb-surface"><CloseIcon size={18} /></Dialog.Close>
           </div>
           <Dialog.Description className="text-xs text-nb-muted">Connect and use apps from your Xroga account.</Dialog.Description>
+          <div className="flex items-start justify-between gap-3 rounded-lg border border-nb-border p-2.5">
+            <div className="min-w-0">
+              <p className="text-sm font-medium">Full access for all apps</p>
+              <p className="text-xs text-nb-muted">{accountMode === 'full_access' ? 'On: Xroga will not ask before reading or changing your connected apps, so a task can finish while you are away. Sending, publishing, deleting and payments still ask.' : 'Off: Xroga asks before using your connected apps. Turn on to let tasks finish while you are away.'}</p>
+            </div>
+            <button type="button" role="switch" aria-checked={accountMode === 'full_access'} aria-label="Full access for all apps" disabled={accountSaving || accountMode === undefined} onClick={() => void toggleAccountAccess()} className={button}>{accountSaving ? 'Saving…' : accountMode === 'full_access' ? 'On' : 'Off'}</button>
+          </div>
           {selected ? (
             <div className="min-h-0 flex-1 space-y-3 overflow-y-auto break-words">
               <button type="button" className={button} onClick={() => setSelected(undefined)}>Back to plugins</button>

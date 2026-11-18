@@ -78,6 +78,17 @@ export function createLocalBrowserPluginCatalog() {
   // The owner's permission for one connected app (always ask, read only, low risk, full access). It is read and changed only by the
   // owner's own click in the extension's Plugins panel; nothing the agent says can change it. Sending, publishing, deleting and paying
   // keep their approval card in every mode.
+  // The account-wide choice (Full access for every app): read here, changed only by the owner's own click.
+  router.get('/permission', async (req: BrowserDeviceRequest, res) => {
+    try {
+      const actor = requireTenantContext(req.tenantContext);
+      const mode = await getUserPluginPermissionMode(actor.userId);
+      if (!await req.revalidateBrowserDevice!()) return res.sendStatus(403);
+      return res.json({ mode });
+    } catch {
+      return res.status(503).json({ error: 'BROWSER_PLUGIN_PERMISSION_UNAVAILABLE' });
+    }
+  });
   router.get('/permission/:toolkit', async (req: BrowserDeviceRequest, res) => {
     try {
       const actor = requireTenantContext(req.tenantContext);
@@ -93,7 +104,12 @@ export function createLocalBrowserPluginCatalog() {
   router.post('/permission', async (req: BrowserDeviceRequest, res) => {
     try {
       const actor = requireTenantContext(req.tenantContext);
-      const { toolkit, mode } = z.object({ toolkit: browserPluginToolkit, mode: z.enum(['always_ask', 'read_only', 'low_risk', 'full_access']) }).strict().parse(req.body);
+      const { toolkit, mode } = z.object({ toolkit: browserPluginToolkit.optional(), mode: z.enum(['always_ask', 'read_only', 'low_risk', 'full_access']) }).strict().parse(req.body);
+      if (!toolkit) {
+        // No app named: this is the account-wide choice.
+        if (!await req.revalidateBrowserDevice!()) return res.sendStatus(403);
+        return res.json({ mode: await setUserPluginPermissionMode(actor, mode) });
+      }
       if (!canUserAccessComposioToolkit(actor.userId, toolkit)) return res.sendStatus(404);
       // Only an app that is really connected can be given a permission.
       const session = await createReadOnlyComposioSession(actor.userId, actor);

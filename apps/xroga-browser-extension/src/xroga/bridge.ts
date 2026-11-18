@@ -157,6 +157,11 @@ export function listenForWorkspace(
             return reply(await deviceRequest(device, '/plugins/catalog?' + query.toString(), 'GET'));
           }
           if (input.op === 'connected') return reply(await deviceRequest(device, '/plugins/connected', 'GET'));
+          // The account-wide choice has no app: Full access for every app.
+          if (input.op === 'permission' && !input.toolkit) return reply(await deviceRequest(device, '/plugins/permission', 'GET'));
+          if (input.op === 'setPermission' && !input.toolkit && (input.mode === 'always_ask' || input.mode === 'full_access' || input.mode === 'low_risk')) {
+            return reply(await deviceRequest(device, '/plugins/permission', 'POST', { mode: input.mode }));
+          }
           if (typeof input.toolkit === 'string' && /^[a-z0-9_-]{2,80}$/i.test(input.toolkit)) {
             if (input.op === 'details') return reply(await deviceRequest(device, '/plugins/details/' + input.toolkit, 'GET'));
             if (input.op === 'link') return reply(await deviceRequest(device, '/plugins/link', 'POST', { toolkit: input.toolkit }));

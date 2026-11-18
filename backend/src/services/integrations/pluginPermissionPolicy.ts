@@ -92,6 +92,13 @@ export async function getUserPluginPermissionMode(
 ): Promise<PluginPermissionMode> {
   const cleanToolkit = cleanToolkitPermissionKey(toolkit);
 
+  // Full access chosen for the whole account covers every app, so an unattended run is not stopped by a card for each one. Sending,
+  // publishing, deleting and payments keep their card in every mode (autoApprovesCall).
+  if (cleanToolkit) {
+    const accountWide = await loadMode(userId, PROVIDER);
+    if (accountWide === 'full_access') return accountWide;
+  }
+
   if (cleanToolkit) {
     const specific = await loadMode(
       userId,

@@ -131,7 +131,7 @@ export function createLocalBrowserAuth(db = database, configured = browserDevice
     const extensionId = configured();
     const taskPath = /^\/runs\/[0-9a-f-]{36}$/i;
     const taskAction = /^\/runs\/[0-9a-f-]{36}\/(?:turn|resume|extend|finish|plugin-search|plugin-read|plugin-review|plugin-action-search|plugin-act|plugin-act-review|public-get|plugin-connect|repo-run)$/i;
-    const pluginGet = /^\/plugins\/(?:catalog|connected|details\/[a-z0-9_-]{2,80}|permission\/[a-z0-9_-]{2,80})$/i;
+    const pluginGet = /^\/plugins\/(?:catalog|connected|details\/[a-z0-9_-]{2,80}|permission(?:\/[a-z0-9_-]{2,80})?)$/i;
     const permitted = (req.method === 'GET' && (req.path === '/session' || taskPath.test(req.path) || pluginGet.test(req.path)))
       || (req.method === 'DELETE' && taskPath.test(req.path))
       || (req.method === 'POST' && (req.path === '/runs' || req.path === '/documents' || req.path === '/plugins/link' || req.path === '/plugins/permission' || taskAction.test(req.path)));
