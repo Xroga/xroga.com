@@ -84,7 +84,7 @@ export function textFiles(entries: Array<{ path: string; data: Buffer }>): { fil
 /** Fetches a public repository at a branch, tag or commit into memory; returns its text files and the exact 40-character commit. */
 export async function fetchRepositoryFiles(owner: string, repo: string, ref: string): Promise<{ files: ProjectFile[]; omitted: number; commit: string }> {
   const archive = await boundedPublicGet(`https://codeload.github.com/${owner}/${repo}/tar.gz/${encodeURIComponent(ref)}`, { maxBytes: MAX_TARBALL_BYTES, timeoutMs: 30_000, maxRedirects: 2, allowHttpErrors: true });
-  if (archive.statusCode === 404) throw new RepoRunError('REPO_NOT_FOUND', 'That public repository or version was not found.');
+  if (archive.statusCode === 404) throw new RepoRunError('REPO_NOT_FOUND', `That public repository or version (${ref}) was not found. Check the owner and name; leave the version out to use the repository's default branch, or give an existing branch, tag or full commit.`);
   if (archive.statusCode !== 200) throw new RepoRunError('REPO_ARCHIVE_UNAVAILABLE', `The repository archive could not be fetched (${archive.statusCode}).`);
   const meta: { commit?: string } = {};
   const { files, omitted } = textFiles(readTarball(gunzipSync(archive.bytes, { maxOutputLength: 64 * 1024 * 1024 }), meta));
