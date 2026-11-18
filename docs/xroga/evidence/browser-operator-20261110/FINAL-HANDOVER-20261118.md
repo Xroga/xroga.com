@@ -6,12 +6,12 @@ Status: **review-ready, not production-certified.** Staging only. Nothing was pu
 | Item | Value |
 | --- | --- |
 | Source branch | `claude/ops-integrated-20261112` (draft PR #976, not merged) |
-| Extension code | last extension source change `963035941`; branch head when built `d499425a5` |
-| Private package | `C:\xr-review-builds\xroga-browser-operator-staging-0.2.8-963035941.zip` |
-| ZIP SHA-256 | `33a492ab691a0c0d95935fa435aba827b829b47adfde890a62f758eb4a9a6722` |
+| Extension code | last extension source change `9c344cdcb`; branch head when built `d499425a5` |
+| Private package | `C:\xr-review-builds\xroga-browser-operator-staging-0.2.8-9c344cdcb.zip` |
+| ZIP SHA-256 | `31f92ed3a91904e7cd9c300d517404480a45beeba034ae26ec21801037d03654` |
 | Extension | "Xroga Browser Automation (Staging)" 0.2.8, ID `ogebkgkppocnjeojdbkiokcpeaenonop` (fixed by the baked public key) |
 | Installed copy | `C:\xr-review-builds\xroga-extension-staging-0ff582593`, manifest identical to the ZIP; press Reload on `chrome://extensions` to load it |
-| Compatible backend | Cloud Run `xroga-api-universal-staging` (project `project-c40d4821-e647-4fa2-92d`, us-east4), revision `xroga-api-universal-staging-00136-six`, image `xroga-api-release:lim20-1118` (commit `963035941`; earlier `00133-xup` was lim19, commit `d1552e9a2`; later commits on the branch touch only the extension and the sandbox worker), tag `browser-op-1110`, 0 percent of traffic. Its `/health` "release" field is a stale environment value, not the image |
+| Compatible backend | Cloud Run `xroga-api-universal-staging` (project `project-c40d4821-e647-4fa2-92d`, us-east4), revision `xroga-api-universal-staging-00137-zab`, image `xroga-api-release:lim21-1118` (commit `9c344cdcb`; earlier `00133-xup` was lim19, commit `d1552e9a2`; later commits on the branch touch only the extension and the sandbox worker), tag `browser-op-1110`, 0 percent of traffic. Its `/health` "release" field is a stale environment value, not the image |
 | Sandbox worker | Cloud Run `xroga-sandbox-worker` (offline stage, restricted-network stage and dependency acquisition were added by the sandbox session; see the audit file) |
 | Model | DeepSeek V4.1 Flash 1017 through the existing route only |
 | Tests at build time | extension typecheck clean, 1249 tests pass, 4 skipped (run in a clean worktree of the branch head); backend typecheck clean after commit `92d2913e1` (the sandbox merge had broken it); backend tests run: local browser (2 files), sandbox (3 files) all pass |
@@ -49,3 +49,4 @@ Status: **review-ready, not production-certified.** Staging only. Nothing was pu
 ## Update 19 November 2026
 - PDF, Word and Excel attachments (up to 2 MB) go through the backend document reader in the product build; fixed this pass: PDF tables keep rows and columns, long PDFs are read up to 400 pages or 500,000 characters with a stop note, encrypted and image-only PDFs report a specific reason. Deployed to staging revision `00136-six`; not yet tried through a real file picker in the installed extension. No OCR.
 - Agent Skills and multi-repo: the backend and the `run_repository` tool already supported `repositories`, `inspectSkill` and `dependencies`; the playbook now tells the agent about them. Dependency installs are not enabled on staging (the restricted-network setting is off), by design pending the independent security review. A live multi-repo run was not done: the Xroga test Chrome window was closed and the remaining windows are the owner's.
+- Live (19 November, a new Chrome window in the owner's profile): two repositories in one sandbox run and an Agent Skill inspection both passed; details and the gap they exposed (the tool text did not show extra repositories' commits; fixed) are in `GAP-REGISTER-20261117.md`.
