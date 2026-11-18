@@ -4000,3 +4000,317 @@
 @media(prefers-reduced-motion:reduce){
   .usagePlus{transition:none;}
 }
+
+
+/* ==============================================================
+   XROGA PRICING PREVIEW v7 / compact usage + Chrome, premium cards
+   Split usage left / browser right. Promises scoped to supported
+   workflows; no unverified unlimited-hour or speed claims.
+   ============================================================== */
+.usageBrowserLayout{
+  display:grid;
+  grid-template-columns:minmax(0,1.06fr) minmax(0,.94fr);
+  align-items:stretch;
+  gap:clamp(28px,4vw,56px);
+  width:min(1080px,100%);
+  max-width:1080px;
+  margin:80px auto 0;
+}
+.usageBrowserLayout .usageSection{
+  width:100%;
+  max-width:none;
+  min-width:0;
+  margin:0;
+  padding:20px 0 12px;
+}
+.usageBrowserLayout .usageHeader{
+  align-items:flex-start;
+  text-align:left;
+  margin:0 0 25px;
+  max-width:none;
+}
+.usageBrowserLayout .usageTopIcon{
+  width:37px;height:37px;
+  margin:0 0 15px;
+  color:#9ac5ff;
+}
+.usageBrowserLayout .usageHeader h2{
+  font-size:clamp(2.3rem,3.3vw,3.3rem);
+  font-weight:480;
+  line-height:1.08;
+}
+.usageBrowserLayout .usageHeader p{
+  margin:11px 0 0;
+  max-width:430px;
+  font-size:.78rem;
+  line-height:1.6;
+  color:#a8b5c7;
+}
+.usageBrowserLayout .usageAccordion{
+  width:100%;
+  max-width:none;
+}
+.usageBrowserLayout .usageDisclosure summary{
+  min-height:58px;
+  padding:11px 0;
+  gap:10px;
+}
+.usageBrowserLayout .usageNumber{
+  flex:0 0 88px;
+  width:88px;
+  font-size:.62rem;
+  letter-spacing:.04em;
+}
+.usageBrowserLayout .usageQuestion{
+  font-size:clamp(.98rem,1.4vw,1.17rem);
+  line-height:1.24;
+}
+.usageBrowserLayout .usagePlus{
+  width:19px;height:19px;
+  flex-basis:19px;
+  font-size:1.25rem;
+}
+.usageBrowserLayout .usageDisclosure > p{
+  padding:0 24px 15px 98px;
+  font-size:.76rem;
+  line-height:1.66;
+}
+.usageBrowserLayout .usageNote{
+  justify-content:flex-start;
+  max-width:none;
+  margin:18px 0 0;
+  font-size:.71rem;
+  line-height:1.6;
+}
+.browserPromo{
+  display:flex;
+  flex-direction:column;
+  width:100%;
+  min-width:0;
+  align-self:stretch;
+  padding:25px clamp(23px,2.7vw,34px) 24px;
+  border:1px solid rgba(115,170,255,.43);
+  border-radius:22px;
+  background:
+    radial-gradient(ellipse 85% 58% at 93% -11%,rgba(63,119,228,.19),transparent 78%),
+    linear-gradient(155deg,#161e2d 0%,#10151f 100%);
+  box-shadow:inset 0 1px rgba(222,237,255,.05),0 22px 60px rgba(0,0,0,.12);
+}
+.browserPromoTop{display:flex;align-items:center;gap:10px;}
+.browserPromoSymbol{
+  width:33px;height:33px;
+  display:grid;place-items:center;
+  border:1px solid rgba(143,189,255,.34);
+  border-radius:10px;
+  background:rgba(84,144,237,.15);
+  color:#aad0ff;
+}
+.browserPromoSymbol svg{width:18px;height:18px;stroke-width:1.75;}
+.browserPromoLabel{
+  font-size:.63rem;
+  line-height:1.4;
+  letter-spacing:.12em;
+  font-weight:730;
+  color:#9bbff3;
+}
+.browserPromo h2{
+  margin:18px 0 0;
+  font:470 clamp(1.9rem,2.8vw,2.65rem)/1.08 var(--font-claude-serif),Newsreader,Georgia,serif;
+  letter-spacing:-.045em;
+  color:#f3f7ff;
+}
+.browserPromo h2 em{font-style:italic;color:#b4d5ff;}
+.browserPromoLead{
+  margin:11px 0 0;
+  color:#acbad0;
+  font-size:.78rem;
+  line-height:1.6;
+}
+.browserPreview{
+  margin:21px 0 16px;
+  overflow:hidden;
+  border:1px solid rgba(144,184,245,.25);
+  border-radius:11px;
+  background:#101824;
+}
+.browserPreviewBar{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  min-height:35px;
+  padding:5px 10px;
+  border-bottom:1px solid rgba(154,184,230,.13);
+  background:#202b3b;
+}
+.browserDots{display:flex;gap:4px;}
+.browserDots i{
+  display:block;width:6px;height:6px;border-radius:50%;
+  background:rgba(190,208,236,.45);
+}
+.browserDots i:nth-child(2){background:rgba(134,179,247,.72);}
+.browserAddress{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  flex:1;
+  min-width:0;
+  padding:5px 9px;
+  border-radius:5px;
+  background:rgba(10,18,32,.48);
+  color:#8fabc9;
+  font-size:.62rem;
+}
+.browserAddress svg{width:11px;height:11px;flex:0 0 11px;}
+.browserMiniIcon{width:15px;height:15px;color:#9cbef0;}
+.browserPreviewContent{
+  display:flex;align-items:center;
+  gap:9px;
+  flex-wrap:wrap;
+  min-height:75px;
+  padding:18px 13px;
+  color:#c8dcf7;
+  font-size:.71rem;
+  font-weight:550;
+}
+.browserPreviewContent > svg{width:14px;height:14px;flex:0 0 14px;color:#86b7ff;}
+.browserPreviewContent .browserCursor{
+  width:23px;height:23px;flex:0 0 23px;
+  transform:rotate(-14deg);
+  color:#9ccbff;
+}
+.browserPreviewContent .browserWorkflowCheck{color:#a4d8ff;}
+.browserPromoBenefits{display:grid;gap:9px;margin-top:0;}
+.browserPromoBenefits span{
+  display:flex;align-items:flex-start;gap:9px;
+  color:#d0dbee;
+  font-size:.74rem;
+  line-height:1.45;
+}
+.browserPromoBenefits svg{width:14px;height:14px;flex:0 0 14px;margin-top:2px;color:#8ec0ff;}
+.browserPromoLink{
+  display:inline-flex;align-items:center;gap:9px;
+  align-self:flex-start;
+  margin-top:20px;
+  padding:9px 0;
+  color:#a8cfff;
+  font-size:.76rem;
+  font-weight:650;
+  text-decoration:none;
+}
+.browserPromoLink:hover{text-decoration:underline;color:#d5e8ff;}
+.browserPromoLink svg{width:15px;height:15px;}
+.browserPromoNote{
+  margin:auto 0 0;
+  padding-top:12px;
+  border-top:1px solid rgba(151,190,243,.17);
+  color:#8396b0;
+  font-size:.66rem;
+  line-height:1.6;
+}
+/* White inset outlines in the plan-card area: Free 3px, Pro 4px.
+   Xroga blue remains the ambient/CTA accent. */
+.planCard.freeCard{
+  border:1px solid rgba(246,250,255,.53);
+  box-shadow:inset 0 0 0 3px #eff5ff,0 22px 64px rgba(0,0,0,.26);
+}
+.planCard.proCard{
+  border:1px solid rgba(246,250,255,.70);
+  box-shadow:inset 0 0 0 4px #f7fbff,0 0 0 1px rgba(97,157,247,.18),0 26px 66px rgba(0,0,0,.34),0 0 40px rgba(64,133,253,.17);
+}
+.planCard.freeCard:hover{box-shadow:inset 0 0 0 3px #fff,0 26px 68px rgba(0,0,0,.32);}
+.planCard.proCard:hover{box-shadow:inset 0 0 0 4px #fff,0 0 0 1px rgba(97,157,247,.23),0 32px 73px rgba(0,0,0,.37),0 0 57px rgba(64,133,253,.23);}
+.proCard .proShowcase{
+  width:54px;
+  height:54px;
+  flex:0 0 54px;
+  border:1px solid rgba(145,194,255,.75);
+  border-radius:15px;
+  box-shadow:inset 0 1px rgba(213,230,255,.10),0 0 23px rgba(84,149,245,.13);
+}
+.proCard .proShowcase .showcaseSymbol{
+  width:29px;height:29px;
+  color:#c4ddff;
+  stroke-width:1.6;
+  transform-origin:center;
+  transition:transform .65s cubic-bezier(.18,.65,.25,1),color .25s ease;
+}
+.proCard:hover .proShowcase .showcaseSymbol,
+.proCard:focus-within .proShowcase .showcaseSymbol{
+  animation:xrogaProOrbitHover 2.7s cubic-bezier(.3,.1,.3,.9) infinite;
+  color:#eff7ff;
+}
+@keyframes xrogaProOrbitHover{
+  0%{transform:rotate(0deg) scale(1)}
+  40%{transform:rotate(145deg) scale(1.13)}
+  78%{transform:rotate(310deg) scale(1.05)}
+  100%{transform:rotate(360deg) scale(1)}
+}
+.proCard:hover .proShowcase,
+.proCard:focus-within .proShowcase{
+  background:rgba(78,150,255,.22);
+  border-color:rgba(177,215,255,.95);
+}
+/* The closing CTA has more editorial scale, but remains cardless. */
+.finalCta{
+  width:min(1060px,100%);
+  max-width:1060px;
+  min-height:390px;
+  margin:93px auto 0;
+  padding:74px 14px 112px;
+  background:none;
+  border:0;
+  border-radius:0;
+  box-shadow:none;
+}
+.finalCopy{max-width:940px;}
+.finalCopy .eyebrow{
+  font-size:.81rem;
+  letter-spacing:.18em;
+}
+.finalCopy h2{
+  margin:25px 0 0;
+  font-size:clamp(3.1rem,5.5vw,5.05rem);
+  line-height:1.05;
+  letter-spacing:-.051em;
+}
+.finalCopy p{font-size:clamp(1rem,1.48vw,1.2rem);margin-top:19px;}
+.finalActions{margin-top:38px;}
+.finalPrimary{
+  min-width:270px;
+  min-height:58px;
+  border-radius:13px;
+  font-size:.96rem;
+}
+.trustLine{font-size:.81rem;margin-top:17px;}
+@media(max-width:900px){
+  .usageBrowserLayout{gap:25px;grid-template-columns:minmax(0,1fr) minmax(0,1fr);}
+  .usageBrowserLayout .usageNumber{flex-basis:76px;width:76px;font-size:.56rem;}
+  .usageBrowserLayout .usageDisclosure > p{padding-left:86px;}
+  .browserPromo{padding:23px 21px;}
+}
+@media(max-width:720px){
+  .usageBrowserLayout{grid-template-columns:1fr;gap:29px;margin-top:68px;width:100%;}
+  .usageBrowserLayout .usageSection{padding:0;}
+  .usageBrowserLayout .usageHeader{margin-bottom:22px;}
+  .usageBrowserLayout .usageHeader h2{font-size:clamp(2.3rem,7vw,3rem);}
+  .usageBrowserLayout .usageDisclosure summary{min-height:56px;}
+  .usageBrowserLayout .usageNumber{flex-basis:94px;width:94px;font-size:.62rem;}
+  .usageBrowserLayout .usageDisclosure > p{padding-left:104px;}
+  .browserPromo{max-width:560px;width:100%;margin:0 auto;border-radius:18px;}
+  .finalCta{min-height:340px;margin-top:80px;padding:68px 8px 95px;}
+  .finalCopy h2{font-size:clamp(2.65rem,9.5vw,4.2rem);}
+  .finalCopy p{font-size:.97rem;}
+  .finalActions{margin-top:29px;}
+}
+@media(max-width:430px){
+  .usageBrowserLayout .usageNumber{flex-basis:78px;width:78px;font-size:.55rem;}
+  .usageBrowserLayout .usageDisclosure > p{padding-left:88px;}
+  .browserPreviewContent{gap:7px;font-size:.66rem;}
+  .finalCta{padding:55px 0 85px;}
+  .finalCopy h2{font-size:clamp(2.5rem,10vw,3.5rem);}
+  .finalPrimary{min-width:245px;min-height:55px;}
+}
+@media(prefers-reduced-motion:reduce){
+  .proCard:hover .proShowcase .showcaseSymbol,
+  .proCard:focus-within .proShowcase .showcaseSymbol{animation:none;transform:none;}
+}

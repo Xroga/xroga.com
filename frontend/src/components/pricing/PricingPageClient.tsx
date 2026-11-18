@@ -19,6 +19,9 @@ import {
   ShieldCheck,
   MessageCircle,
   Gauge,
+  Chrome,
+  MousePointer2,
+  Orbit,
   Workflow,
   X,
   ChevronDown,
@@ -192,9 +195,9 @@ const FAQS = [
   },
 ] as const;
 
-/* Quiet pricing marks: the plan icons are intentionally static. */
+/* Pricing plan marks: Pro uses a clear Lucide Orbit with a subtle hover animation. */
 function PlanShowcase({ paid }: { paid: boolean }) {
-  const Icon = paid ? Workflow : Compass;
+  const Icon = paid ? Orbit : Compass;
   return (
     <span className={paid ? styles.proShowcase : styles.freeShowcase} aria-hidden="true">
       <Icon className={styles.showcaseSymbol} strokeWidth={1.65} />
@@ -426,11 +429,12 @@ export function PricingPageClient() {
           <span> Browser workflows require an installed, authorized Chrome extension and compatible setup.</span>
         </p>
 
+        <div className={styles.usageBrowserLayout}>
         <section className={styles.usageSection} aria-labelledby="usage-heading">
           <div className={styles.usageHeader}>
             <Gauge className={styles.usageTopIcon} aria-hidden="true" />
             <h2 id="usage-heading">How usage works.</h2>
-            <p>Your available capacity depends on your plan and the work you run. Here&apos;s what to expect.</p>
+            <p>Free and Pro share core tools. The amount of available work—and when it unlocks—depends on your plan.</p>
           </div>
           <div className={styles.usageAccordion}>
             <details className={styles.usageDisclosure}>
@@ -471,6 +475,42 @@ export function PricingPageClient() {
             Usage depends on task complexity. Full Access changes when remaining capacity is available, not the plan&apos;s total monthly allowance.
           </p>
         </section>
+
+          <aside className={styles.browserPromo} aria-labelledby="browser-promo-title">
+            <div className={styles.browserPromoTop}>
+              <span className={styles.browserPromoSymbol} aria-hidden="true"><Chrome /></span>
+              <span className={styles.browserPromoLabel}>IN YOUR OWN CHROME BROWSER</span>
+            </div>
+            <h2 id="browser-promo-title">Your browser.<br /><em>Ready for action.</em></h2>
+            <p className={styles.browserPromoLead}>
+              Install the Xroga Chrome extension to run supported browser workflows in your own session.
+            </p>
+            <div className={styles.browserPreview} aria-hidden="true">
+              <div className={styles.browserPreviewBar}>
+                <span className={styles.browserDots}><i /><i /><i /></span>
+                <span className={styles.browserAddress}><LockKeyhole /> your-workspace.com</span>
+                <Chrome className={styles.browserMiniIcon} />
+              </div>
+              <div className={styles.browserPreviewContent}>
+                <MousePointer2 className={styles.browserCursor} />
+                <span>Open pages</span>
+                <ArrowRight />
+                <span>Work with content</span>
+                <Check className={styles.browserWorkflowCheck} />
+              </div>
+            </div>
+            <div className={styles.browserPromoBenefits}>
+              <span><Check aria-hidden="true" /> Use it with or without other connected apps, where supported</span>
+              <span><Check aria-hidden="true" /> Work in Chrome without switching tools for every step</span>
+            </div>
+            <Link href="/dashboard/automations" className={styles.browserPromoLink}>
+              Explore browser workflows <ArrowRight aria-hidden="true" />
+            </Link>
+            <p className={styles.browserPromoNote}>
+              Requires the installed, authorized extension and compatible workflows. AI usage and session limits still apply; unlimited hours are not guaranteed.
+            </p>
+          </aside>
+        </div>
 
         <section className={styles.compareSection} aria-labelledby="compare-title">
           <div className={styles.compareHeading}>
