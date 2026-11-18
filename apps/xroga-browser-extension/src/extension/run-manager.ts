@@ -88,7 +88,7 @@ import { endOf } from './analytics-payload';
 import { onWorkspaceDisconnect, postWorkspace, workspacePaired, workspaceRequest } from '@src/xroga/bridge';
 import { ACTIVITY_LIMIT, browserActivity } from '@src/xroga/activity';
 import { startXrogaModelRun } from '@src/xroga/model';
-import { HTTP_GET_TOOL, PLUGIN_CONNECT_TOOL, REPO_RUN_TOOL, runRepositoryTool, nativeAppCall, nativeAppTool, runPluginConnect, runPluginTool, runPublicGet, PLUGIN_TOOLS, type AppToolInfo } from '@src/xroga/plugins';
+import { HTTP_GET_TOOL, PLUGIN_CONNECT_TOOL, REPO_RUN_TOOL, runRepositoryTool, nativeAppCall, nativeAppTool, rankAppTools, runPluginConnect, runPluginTool, runPublicGet, PLUGIN_TOOLS, type AppToolInfo } from '@src/xroga/plugins';
 import { repairingPluginCaller, type PluginToolName } from '@src/xroga/plugin-repair';
 import { SEARCH_HOME, browserTarget } from '@src/xroga/navigation';
 import { XROGA_PRODUCT } from '@src/xroga/product';
@@ -144,6 +144,13 @@ export class RunManager {
   readonly #workers: ParallelWorkers;
   /** The account's active-run limit the server reported when each conversation's run started. */
   readonly #activeRunLimits = new Map<string, number>();
+  /** Used when a conversation's run reported no limit (a fixture model has no server to ask). Only the real-Chrome checks set it. */
+  #fallbackActiveRunLimit: number | undefined;
+
+  /** For the real-Chrome checks: the account limit a fixture server would have reported (the product backend reports 13). */
+  setFallbackActiveRunLimit(limit: number | undefined): void {
+    this.#fallbackActiveRunLimit = limit;
+  }
 
   constructor() {
     this.#workers = new ParallelWorkers({
@@ -152,7 +159,7 @@ export class RunManager {
       load: async () => ((await chrome.storage.local.get(WORKER_JOBS_KEY))[WORKER_JOBS_KEY] as Record<string, WorkerJob> | undefined) ?? {},
       save: jobs => chrome.storage.local.set({ [WORKER_JOBS_KEY]: jobs }),
       open: (parentId, task) => this.#openWorker(parentId, task),
-      activeLimit: parentId => workersFor(this.#activeRunLimits.get(parentId)),
+      activeLimit: parentId => workersFor(this.#activeRunLimits.get(parentId) ?? this.#fallbackActiveRunLimit),
       defaultUrl: SEARCH_HOME,
       stop: conversationId => this.#stop(conversationId),
       closeWindow: windowId => chrome.windows.remove(windowId),
@@ -1831,7 +1838,8 @@ export class RunManager {
                 const alreadyOffered = new Set([...appTools.values()].map(info => info.slug));
                 // At most 32 tools may be listed in a model request, built-in tools included; the rest stay reachable by plugin_read / plugin_act.
                 let room = Math.max(0, 32 - fullToolList.length - appTools.size);
-                const registered = found.flatMap(info => {
+                const intent = String((call.input as { query?: unknown } | null)?.query ?? '');
+                const registered = rankAppTools(found, intent).flatMap(info => {
                   if (alreadyOffered.has(info.slug) || room <= 0) return [];
                   room--;
                   const tool = nativeAppTool(info, taken);

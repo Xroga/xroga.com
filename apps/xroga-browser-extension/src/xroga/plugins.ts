@@ -292,3 +292,23 @@ export function runPluginConnect(runId: string, input: unknown, signal: AbortSig
   void next.catch(() => undefined).finally(() => { if (pluginQueues.get(runId) === next) pluginQueues.delete(runId); });
   return next;
 }
+
+const STOP_WORDS = new Set(['the', 'and', 'for', 'with', 'from', 'that', 'this', 'into', 'then', 'app', 'apps', 'tool', 'tools', 'using', 'create', 'new', 'get', 'all']);
+
+/**
+ * The tools of a search that fit the task, best first, at most `limit`. The provider returns up to 24 tools from every connected app, and
+ * the model should see only the ones that fit what it is doing (the words of its search plus the request), not every pinned or connected
+ * app and not only an app the user named literally. A tool scores by the words its toolkit, name and description share with the intent;
+ * with no match at all the provider's own order is kept. Slugs are never changed.
+ */
+export function rankAppTools(found: AppToolInfo[], intent: string, limit = 12): AppToolInfo[] {
+  const words = [...new Set(intent.toLowerCase().split(/[^a-z0-9]+/).filter(w => w.length >= 3 && !STOP_WORDS.has(w)))];
+  if (!words.length) return found.slice(0, limit);
+  const score = (t: AppToolInfo) => {
+    const slug = t.slug.toLowerCase().split(/[^a-z0-9]+/), desc = t.description.toLowerCase(), kit = t.toolkit.toLowerCase();
+    return words.reduce((n, w) => n + (kit.includes(w) || w.includes(kit) ? 4 : 0) + (slug.some(p => p === w || p === w + 's' || p + 's' === w) ? 3 : 0) + (desc.includes(w) ? 1 : 0), 0);
+  };
+  const ranked = found.map((t, i) => ({ t, i, n: score(t) })).sort((a, b) => b.n - a.n || a.i - b.i);
+  const hits = ranked.filter(r => r.n > 0);
+  return (hits.length ? hits : ranked).slice(0, limit).map(r => r.t);
+}

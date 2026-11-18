@@ -74,15 +74,47 @@ export function signature(
   return `${tool} ${JSON.stringify(rest)} → ${outcome}`;
 }
 
+/**
+ * Repeats that are not the same click again but the same kind of wasted work: the same tool search, the same page opened again, the
+ * same repository file read again, the same worker research started twice. Each gets a note that names the changed approach and keeps
+ * what is already done. Counted for the run in memory (a restart starts counting again, which only makes the note come later).
+ */
+const WASTE_LIMITS: Array<{ tools: string[]; key: (a: Record<string, unknown>) => string | null; limit: number; note: string }> = [
+  { tools: ['plugin_search', 'plugin_action_search'], limit: 2, key: a => (typeof a.query === 'string' ? a.query.trim().toLowerCase() : null),
+    note: 'this tool search was already run in this task and its tools are listed above. Call one of those tools now, or change the method (a free public API, the browser, another connected app). Do not search with the same words again.' },
+  { tools: ['navigate', 'tabs'], limit: 3, key: a => (typeof a.url === 'string' ? a.url.replace(/#.*$/, '') : null),
+    note: 'you opened this same page 3 times. Use what you already read from it, or take a different route (another page, a search, a connected app). Keep the progress so far.' },
+  { tools: ['http_get'], limit: 4, key: a => (typeof a.url === 'string' ? (/github(?:usercontent)?\.com\/([^/]+\/[^/]+)/i.exec(a.url)?.[1]?.toLowerCase() ?? null) : null),
+    note: 'you have read this repository 4 times. You know enough to decide: use it, or say what is missing and finish the outcome another way.' },
+  { tools: ['delegate', 'start_parallel_tasks'], limit: 2, key: a => JSON.stringify(a).slice(0, 300),
+    note: 'this same research was already handed to workers in this task. Use their results, do not start it again.' },
+];
+
 export class Guards {
   state: GuardState;
+  readonly #waste = new Map<string, number>();
 
   constructor(state: GuardState = EMPTY_GUARDS) {
     this.state = structuredClone(state);
   }
 
-  /** Records one call's outcome and says whether to nudge or stop. */
+  /** Records one call's outcome and says whether to nudge or stop. A stop or an older note wins over the wasted-work note. */
   record(tool: string, args: Record<string, unknown>, result: Result | undefined, isError: boolean): GuardVerdict {
+    let waste: string | undefined;
+    for (const rule of WASTE_LIMITS) {
+      if (!rule.tools.includes(tool)) continue;
+      const k = rule.key(args);
+      if (!k) continue;
+      const id = rule.tools[0] + '|' + k;
+      const count = (this.#waste.get(id) ?? 0) + 1;
+      this.#waste.set(id, count);
+      if (count >= rule.limit) waste = rule.note;
+    }
+    const verdict = this.#check(tool, args, result, isError);
+    return waste && !verdict.stop && !verdict.nudge ? { ...verdict, nudge: waste } : verdict;
+  }
+
+  #check(tool: string, args: Record<string, unknown>, result: Result | undefined, isError: boolean): GuardVerdict {
     const s = this.state;
     const sig = signature(tool, args, result, isError);
     s.recent = [...s.recent, sig].slice(-REPEAT_WINDOW);

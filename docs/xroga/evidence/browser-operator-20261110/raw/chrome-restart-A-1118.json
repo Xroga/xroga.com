@@ -1,0 +1,125 @@
+{
+ "steps": {
+  "enrolled": {
+   "configured": true,
+   "saved": true,
+   "verified": true,
+   "ready": true
+  },
+  "itemsBeforeKill": [
+   "alpha"
+  ],
+  "mode": "sw-kill then chrome restart",
+  "runsBeforeKill": [
+   {
+    "db": "nanobrowser",
+    "runs": [
+     {
+      "status": "running",
+      "hasFinish": false,
+      "run": "902ef264"
+     }
+    ]
+   },
+   {
+    "db": "nanobrowser-signed-out",
+    "runs": []
+   }
+  ],
+  "serverSessionBefore": {
+   "account": "e8d60408-7a6f-437f-a96a-822f4325966e",
+   "deviceExtension": "ogebkgkppocnjeojdbkiokcpeaenonop"
+  },
+  "killedAt": "2026-11-18T11:16:25.559Z",
+  "openedHistoryCard": true,
+  "workerBack": true,
+  "itemsRightAfterRestart": [],
+  "runsRightAfterRestart": [
+   {
+    "db": "nanobrowser",
+    "runs": [
+     {
+      "status": "interrupted",
+      "reason": "The extension restarted during this run.",
+      "hasFinish": false,
+      "run": "902ef264"
+     }
+    ]
+   },
+   {
+    "db": "nanobrowser-signed-out",
+    "runs": []
+   }
+  ],
+  "runsFifteenSecondsLater": [
+   {
+    "db": "nanobrowser",
+    "runs": [
+     {
+      "status": "interrupted",
+      "reason": "The extension restarted during this run.",
+      "hasFinish": false,
+      "run": "902ef264"
+     }
+    ]
+   },
+   {
+    "db": "nanobrowser-signed-out",
+    "runs": []
+   }
+  ],
+  "itemsFifteenSecondsLater": [],
+  "panelBodyAfterRestart": "Xroga On this page add three todo items named alpha, beta and gam… Staging Preview · v0.3.0 Signed in to Xroga Sign out On this page add three todo items named alpha, beta and gamma, then tell me the list. now Worked for 5s I'll add the three items one at a time. now Interrupted The extension restarted during this run. Resume Stop Plugins Full access",
+  "statusAfterRestart": "Signed in to Xroga",
+  "buttonsAfterRestart": [
+   "New chat",
+   "Send"
+  ],
+  "resumeOffered": true,
+  "pressedResume": true,
+  "itemsAfterResume": [
+   "alpha",
+   "beta",
+   "gamma"
+  ],
+  "answerAfterResume": "the list contains, in order: alpha beta gamma All three are unchecked (active). Note: the list was empty in the tab I started adding to (tab [352578173]) — an \"alpha\" added there earlier no longer appears — so I added all three items in the active tab [352578243], where the list above now lives. now",
+  "pausedForUncertainWrite": false,
+  "itemsFinal": [
+   "alpha",
+   "beta",
+   "gamma"
+  ],
+  "runsFinal": [
+   {
+    "db": "nanobrowser",
+    "runs": [
+     {
+      "status": "done",
+      "reason": "Syncing the saved result with Workspace.",
+      "outcome": "success",
+      "hasFinish": false,
+      "run": "902ef264"
+     }
+    ]
+   },
+   {
+    "db": "nanobrowser-signed-out",
+    "runs": []
+   }
+  ],
+  "serverSessionAfter": {
+   "account": "e8d60408-7a6f-437f-a96a-822f4325966e",
+   "deviceExtension": "ogebkgkppocnjeojdbkiokcpeaenonop"
+  },
+  "answerTail": "gamma All three are unchecked (active). Note: the list was empty in the tab I started adding to (tab [352578173]) — an \"alpha\" added there earlier no longer appears — so I added all three items in the active tab [352578243], where the list above now lives. now",
+  "sameServerRun": true,
+  "runIdsBefore": [
+   "902ef264"
+  ],
+  "runIdsAfter": [
+   "902ef264"
+  ]
+ },
+ "ok": true,
+ "failures": []
+}

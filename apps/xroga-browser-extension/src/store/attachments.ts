@@ -30,13 +30,15 @@ export function attachmentKind(
   mimeType: string,
 ): { kind: AttachmentKind } | { refused: string; reason: 'document' | 'type' } {
   if (IMAGE_TYPES.has(mimeType)) return { kind: 'image' };
+  // Spreadsheets and Word documents are read into text by store/office.ts (no library; PDF is not).
+  if (/\.(xlsx|docx)$/i.test(name)) return { kind: 'text' };
   if (
     DOCUMENT_EXTENSIONS.test(name) ||
     mimeType === 'application/pdf' ||
     /officedocument|msword|ms-excel|ms-powerpoint|opendocument/.test(mimeType)
   ) {
     return {
-      refused: 'PDF and Office files cannot be read in this version. Copy the text into a text file, or paste it.',
+      refused: 'This file type cannot be read in this version (PDF, old .xls and .doc, and PowerPoint need a reader that is not built in). .xlsx, .docx, CSV and text files can be attached; or paste the text.',
       reason: 'document',
     };
   }
