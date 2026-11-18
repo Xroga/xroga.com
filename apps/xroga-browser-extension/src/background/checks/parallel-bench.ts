@@ -14,7 +14,7 @@ const worker = (tag: string) => [
   { when: tag, delayMs: WORKER_MS, toolCalls: [{ name: 'read', input: {} }] },
   { when: tag, toolCalls: [{ name: 'done', input: { outcome: 'success', summary: `${tag} finished.` } }] },
 ];
-const PAGES = ['c-text.html', 'c-states.html', 'c-login.html', 'c-effects.html'];
+const PAGES = ['c-text.html', 'c-states.html', 'c-login.html', 'c-effects.html', 'c-text.html', 'c-states.html'];
 
 defineCheck({
   name: 'parallel-bench',
@@ -32,7 +32,7 @@ defineCheck({
     await sleep(600);
     const phases: Array<{ name: string; workers: number; ms: number; start: number; end: number; status: string; done: number }> = [];
     try {
-      for (const [name, count] of [['one', 1], ['three', 3], ['four', 4]] as const) {
+      for (const [name, count] of [['one', 1], ['three', 3], ['five', 5], ['six', 6]] as const) {
         // The panel continues one conversation, and the fixture model matches on its first message: one parent tag for all phases.
         const parent = 'BENCH-PARENT';
         const tags = Array.from({ length: count }, (_, i) => `BW-${name.toUpperCase()}-${i + 1}`);
@@ -71,13 +71,15 @@ defineCheck({
         phases.push({ name, workers: count, ms: end - start, start, end, status: last, done: workers.filter(w => w.status === 'done').length });
         await sleep(2500);
       }
-      const [one, three, four] = phases;
+      const [one, three, five, six] = phases;
       const report = {
         workerModelMs: WORKER_MS,
         phases,
         threeVsOne: Number((three.ms / one.ms).toFixed(2)),
-        fourVsOne: Number((four.ms / one.ms).toFixed(2)),
+        fiveVsOne: Number((five.ms / one.ms).toFixed(2)),
+        sixVsOne: Number((six.ms / one.ms).toFixed(2)),
         serialThreeWouldBe: Math.round(one.ms + 2 * (WORKER_MS + 400)),
+        serialSixWouldBe: Math.round(one.ms + 5 * (WORKER_MS + 400)),
       };
       const allDone = phases.every(p => p.status === 'Done' && p.done === p.workers);
       // Three together must be clearly faster than three one after another.
