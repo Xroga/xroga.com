@@ -66,6 +66,7 @@ flowchart LR
   endpoint_cloud_google_com["Source-defined endpoint cloud.google.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_cloudflare_com["Source-defined endpoint cloudflare.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_coordinator["Source-defined endpoint coordinator - CONFIGURED_BUT_UNVERIFIED"]
+  endpoint_cursor_com["Source-defined endpoint cursor.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_design_intuit_com["Source-defined endpoint design.intuit.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_dev_whop_com["Source-defined endpoint dev.whop.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_developer_android_com["Source-defined endpoint developer.android.com - CONFIGURED_BUT_UNVERIFIED"]
@@ -109,6 +110,7 @@ flowchart LR
   endpoint_gemini_google_com["Source-defined endpoint gemini.google.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_getfoundry_sh["Source-defined endpoint getfoundry.sh - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_github_com["Source-defined endpoint github.com - CONFIGURED_BUT_UNVERIFIED"]
+  endpoint_google_gemini_github_io["Source-defined endpoint google-gemini.github.io - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_hardhat_org["Source-defined endpoint hardhat.org - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_huggingface_co["Source-defined endpoint huggingface.co - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_i_postimg_cc["Source-defined endpoint i.postimg.cc - CONFIGURED_BUT_UNVERIFIED"]
@@ -263,6 +265,7 @@ flowchart LR
   frontend -. "source host/reference; unverified" .-> endpoint_cloud_google_com
   frontend -. "source host/reference; unverified" .-> endpoint_cloudflare_com
   api -. "source host/reference; unverified" .-> endpoint_coordinator
+  frontend -. "source host/reference; unverified" .-> endpoint_cursor_com
   frontend -. "source host/reference; unverified" .-> endpoint_design_intuit_com
   frontend -. "source host/reference; unverified" .-> endpoint_dev_whop_com
   frontend -. "source host/reference; unverified" .-> endpoint_developer_android_com
@@ -306,6 +309,7 @@ flowchart LR
   frontend -. "source host/reference; unverified" .-> endpoint_gemini_google_com
   api -. "source host/reference; unverified" .-> endpoint_getfoundry_sh
   api -. "source host/reference; unverified" .-> endpoint_github_com
+  frontend -. "source host/reference; unverified" .-> endpoint_google_gemini_github_io
   api -. "source host/reference; unverified" .-> endpoint_hardhat_org
   frontend -. "source host/reference; unverified" .-> endpoint_huggingface_co
   frontend -. "source host/reference; unverified" .-> endpoint_i_postimg_cc

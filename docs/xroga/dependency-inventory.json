@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "e9555c725f86ccd0cdbf6bf899654baa689fe5c8",
+  "source_sha": "c94796d69a618675290763512efe157e89d43911",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -2945,6 +2945,40 @@
       "evidence_ids": []
     },
     {
+      "dependency_id": "endpoint-cursor-com",
+      "provider": "Source-defined endpoint cursor.com",
+      "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
+      "environment": "PRODUCTION",
+      "state": "CONFIGURED_BUT_UNVERIFIED",
+      "runtime_owner": "backend/API or explicitly proposed component",
+      "config_sources": [
+        "frontend/src/lib/externalAgentWorkflows.ts"
+      ],
+      "hostnames": [
+        "cursor.com"
+      ],
+      "resource_id": null,
+      "region": "Not verified",
+      "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
+      "secret_names": [],
+      "inbound_callers": [
+        "api or named source callers; operational reachability not inferred"
+      ],
+      "outbound_dependencies": [],
+      "health_readiness": "Reference/asset hosts may need no service health check; adapter admission/liveness is unverified. No external action or paid health probe performed",
+      "timeout": "Adapter-specific; no fabricated central timeout",
+      "retry_policy": "Source-specific; no live retry test claimed",
+      "idempotency_expectation": "Required for consequential writes; verify canonical authority in Command 008",
+      "data_classification": "User data may be involved; tenant scope requires independent checks",
+      "failure_mode": "Safe user-facing failure required; internal details restricted",
+      "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
+      "observability_source": [
+        "frontend/src/lib/externalAgentWorkflows.ts"
+      ],
+      "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
+      "evidence_ids": []
+    },
+    {
       "dependency_id": "endpoint-design-intuit-com",
       "provider": "Source-defined endpoint design.intuit.com",
       "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
@@ -3398,6 +3432,7 @@
       "state": "CONFIGURED_BUT_UNVERIFIED",
       "runtime_owner": "backend/API or explicitly proposed component",
       "config_sources": [
+        "frontend/src/lib/externalAgentWorkflows.ts",
         "frontend/src/lib/seoPhase2Content.ts"
       ],
       "hostnames": [
@@ -3419,6 +3454,7 @@
       "failure_mode": "Safe user-facing failure required; internal details restricted",
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
+        "frontend/src/lib/externalAgentWorkflows.ts",
         "frontend/src/lib/seoPhase2Content.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
@@ -3570,6 +3606,7 @@
       "state": "CONFIGURED_BUT_UNVERIFIED",
       "runtime_owner": "backend/API or explicitly proposed component",
       "config_sources": [
+        "frontend/src/lib/externalAgentWorkflows.ts",
         "frontend/src/lib/pluginCatalog.ts",
         "frontend/src/lib/seoPhase2Content.ts"
       ],
@@ -3592,6 +3629,7 @@
       "failure_mode": "Safe user-facing failure required; internal details restricted",
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
+        "frontend/src/lib/externalAgentWorkflows.ts",
         "frontend/src/lib/pluginCatalog.ts",
         "frontend/src/lib/seoPhase2Content.ts"
       ],
@@ -4498,6 +4536,7 @@
         "frontend/src/lib/chatArchive.ts",
         "frontend/src/lib/cloudTerminalSessions.ts",
         "frontend/src/lib/engineeringArtifact.ts",
+        "frontend/src/lib/externalAgentWorkflows.ts",
         "frontend/src/lib/githubProjectsFromHistory.ts",
         "frontend/src/lib/pluginCatalog.ts",
         "frontend/src/lib/syncRepoTerminalSessions.ts",
@@ -4559,10 +4598,45 @@
         "frontend/src/lib/chatArchive.ts",
         "frontend/src/lib/cloudTerminalSessions.ts",
         "frontend/src/lib/engineeringArtifact.ts",
+        "frontend/src/lib/externalAgentWorkflows.ts",
         "frontend/src/lib/githubProjectsFromHistory.ts",
         "frontend/src/lib/pluginCatalog.ts",
         "frontend/src/lib/syncRepoTerminalSessions.ts",
         "frontend/src/lib/terminalHistory.ts"
+      ],
+      "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
+      "evidence_ids": []
+    },
+    {
+      "dependency_id": "endpoint-google-gemini-github-io",
+      "provider": "Source-defined endpoint google-gemini.github.io",
+      "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
+      "environment": "PRODUCTION",
+      "state": "CONFIGURED_BUT_UNVERIFIED",
+      "runtime_owner": "backend/API or explicitly proposed component",
+      "config_sources": [
+        "frontend/src/lib/externalAgentWorkflows.ts"
+      ],
+      "hostnames": [
+        "google-gemini.github.io"
+      ],
+      "resource_id": null,
+      "region": "Not verified",
+      "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
+      "secret_names": [],
+      "inbound_callers": [
+        "api or named source callers; operational reachability not inferred"
+      ],
+      "outbound_dependencies": [],
+      "health_readiness": "Reference/asset hosts may need no service health check; adapter admission/liveness is unverified. No external action or paid health probe performed",
+      "timeout": "Adapter-specific; no fabricated central timeout",
+      "retry_policy": "Source-specific; no live retry test claimed",
+      "idempotency_expectation": "Required for consequential writes; verify canonical authority in Command 008",
+      "data_classification": "User data may be involved; tenant scope requires independent checks",
+      "failure_mode": "Safe user-facing failure required; internal details restricted",
+      "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
+      "observability_source": [
+        "frontend/src/lib/externalAgentWorkflows.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
       "evidence_ids": []
@@ -20525,8 +20599,12 @@
       "sha256": "618d56589fb61eb5b252f1d9f7c46eed8bf933cd7a38034735281e15f8d7cbd7"
     },
     {
+      "path": "frontend/src/app/integrations/IntegrationsMarketplace.tsx",
+      "sha256": "dbd295f311829a3fdbcc65906aa80686a612e6c368fc96a3f23e78d70cbc2909"
+    },
+    {
       "path": "frontend/src/app/integrations/page.tsx",
-      "sha256": "1aaa012550be10314a212302a3e7d3b3c4bc6fc52b70e5276a74a94b27da3ef5"
+      "sha256": "fc75d7cdcb03ad409f7978b61b81cbcae587aa5954c3ea33a2b8270c222044e7"
     },
     {
       "path": "frontend/src/app/layout.tsx",
@@ -21958,7 +22036,7 @@
     },
     {
       "path": "frontend/src/components/integrations/PluginBrandLogo.tsx",
-      "sha256": "8e8832149f544dbf4299886318ccd381f1da0dc20c2460747004d7b0d87939df"
+      "sha256": "8a1b4797ebbc64162a388eb86ff3c5c01694266470ffaad500e5ae3cd6a02292"
     },
     {
       "path": "frontend/src/components/integrations/PluginDetail.tsx",
@@ -23573,6 +23651,10 @@
       "sha256": "840051367eb8a652f7aa8d5d6e7598f8eaccbf9f8c2d624cd89b1f520f8befb3"
     },
     {
+      "path": "frontend/src/lib/externalAgentWorkflows.ts",
+      "sha256": "b6d2664c66bc8d77d8e07147a557a89d7d728a305dd7cc4fc657a5560f60f2b3"
+    },
+    {
       "path": "frontend/src/lib/featureSeo.ts",
       "sha256": "627b9d37311cba5656702772fa1da4a843fb08f0327ecf601692bef6d2fce71f"
     },
@@ -23665,6 +23747,10 @@
       "sha256": "5006b5e6ba40f87933ef75c2ba044f49b56613ae15030bbb196e511be8bb7078"
     },
     {
+      "path": "frontend/src/lib/integrationDiscoveryFilters.ts",
+      "sha256": "d61ff34189519aca091736ea4d89d4bf2fa786a63e6a9479bbda881a4e093219"
+    },
+    {
       "path": "frontend/src/lib/integrationLogos.ts",
       "sha256": "784f334a41cd827b721058ea0fd51aa48f921d89d66a969462992023cfe3e1f2"
     },
@@ -23707,6 +23793,10 @@
     {
       "path": "frontend/src/lib/legacyLandingRunRecovery.ts",
       "sha256": "cc1077e8e8ed4e57cb2443caa032fdacf1396f084d504dfb6fd617c3fa5724a0"
+    },
+    {
+      "path": "frontend/src/lib/liveIntegrationDiscovery.ts",
+      "sha256": "fde037723c32672aa6e2e556f78d85cbc96a4bfc410986764eaa0737de49d1e6"
     },
     {
       "path": "frontend/src/lib/mathDetect.ts",
@@ -23887,6 +23977,18 @@
     {
       "path": "frontend/src/lib/publicAnswerText.ts",
       "sha256": "461344b72a6f757833949cddd3dc349880bf42e8402f36913f27509a5ee7b443"
+    },
+    {
+      "path": "frontend/src/lib/publicConnectCatalog.ts",
+      "sha256": "e3bc7e2a3acb9adba5bb5c8506d1c7fadb5be3e3329d00dad3050d1bd7411240"
+    },
+    {
+      "path": "frontend/src/lib/publicIntegrationLogo.ts",
+      "sha256": "a9df6561f2dba341f2c5deebd5fbe88aa2ae677d0a6c198979655d6e1027a0e0"
+    },
+    {
+      "path": "frontend/src/lib/publicIntegrationsDirectory.ts",
+      "sha256": "e00c00150889f0dbc5edfb926dce8d60af90c52e530dfc6780e0aef77fbd143b"
     },
     {
       "path": "frontend/src/lib/publicMarketing.ts",
@@ -29744,7 +29846,7 @@
       "hostname": "cdn.simpleicons.org",
       "protocol": "https:",
       "path": "frontend/src/components/integrations/PluginBrandLogo.tsx",
-      "line": 58,
+      "line": 65,
       "credentialsInUrl": false
     },
     {
@@ -30578,6 +30680,48 @@
       "protocol": "https:",
       "path": "frontend/src/lib/engineeringArtifact.ts",
       "line": 1446,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "github.com",
+      "protocol": "https:",
+      "path": "frontend/src/lib/externalAgentWorkflows.ts",
+      "line": 24,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "docs.anthropic.com",
+      "protocol": "https:",
+      "path": "frontend/src/lib/externalAgentWorkflows.ts",
+      "line": 31,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "cursor.com",
+      "protocol": "https:",
+      "path": "frontend/src/lib/externalAgentWorkflows.ts",
+      "line": 38,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "docs.github.com",
+      "protocol": "https:",
+      "path": "frontend/src/lib/externalAgentWorkflows.ts",
+      "line": 45,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "google-gemini.github.io",
+      "protocol": "https:",
+      "path": "frontend/src/lib/externalAgentWorkflows.ts",
+      "line": 52,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "github.com",
+      "protocol": "https:",
+      "path": "frontend/src/lib/externalAgentWorkflows.ts",
+      "line": 59,
       "credentialsInUrl": false
     },
     {
@@ -38381,6 +38525,34 @@
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
+      "path": "frontend/src/app/integrations/IntegrationsMarketplace.tsx",
+      "line": 35,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/app/integrations/IntegrationsMarketplace.tsx",
+      "line": 230,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/app/integrations/IntegrationsMarketplace.tsx",
+      "line": 291,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/app/integrations/IntegrationsMarketplace.tsx",
+      "line": 297,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
       "path": "frontend/src/app/showcase/page.tsx",
       "line": 43,
       "scope": "FUNCTION_LOCAL",
@@ -38578,7 +38750,14 @@
     },
     {
       "path": "frontend/src/components/integrations/PluginBrandLogo.tsx",
-      "line": 57,
+      "line": 13,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/components/integrations/PluginBrandLogo.tsx",
+      "line": 64,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -39571,6 +39750,20 @@
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
+      "path": "frontend/src/lib/liveIntegrationDiscovery.ts",
+      "line": 11,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/lib/liveIntegrationDiscovery.ts",
+      "line": 76,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
       "path": "frontend/src/lib/mediaHelpers.ts",
       "line": 17,
       "scope": "FUNCTION_LOCAL",
@@ -39714,6 +39907,13 @@
       "path": "frontend/src/lib/projectResume.ts",
       "line": 24,
       "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/lib/publicIntegrationsDirectory.ts",
+      "line": 37,
+      "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },

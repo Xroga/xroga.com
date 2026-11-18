@@ -63532,25 +63532,134 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:1e9646e4df4683b22766",
+      "subsystem": "integrations_actions_credentials",
+      "sourcePath": "frontend/src/app/integrations/IntegrationsMarketplace.tsx",
+      "sha256": "dbd295f311829a3fdbcc65906aa80686a612e6c368fc96a3f23e78d70cbc2909",
+      "symbols": [
+        "AgentConnections",
+        "AppLogo",
+        "HERO_BRAND_MARKS",
+        "HowItWorks",
+        "IntegrationCard",
+        "IntegrationsMarketplace",
+        "PAGE_SIZE",
+        "SEARCH_SUGGESTIONS",
+        "SortMode",
+        "aOrder",
+        "active",
+        "additional",
+        "bOrder",
+        "backwards",
+        "categoryCounts",
+        "current",
+        "directoryCategories",
+        "directoryItems",
+        "dwell",
+        "entry",
+        "featured",
+        "featuredOrder",
+        "filtered",
+        "incomplete",
+        "interval",
+        "length",
+        "lookup",
+        "matches",
+        "nextCursor",
+        "order",
+        "page",
+        "pages",
+        "phrase",
+        "pickCategory",
+        "primary",
+        "reportedTotal",
+        "searchInput",
+        "seen",
+        "selected",
+        "selectedCategoryLabel",
+        "shown",
+        "status",
+        "terms",
+        "typeSearch",
+        "typing",
+        "useTypingPlaceholder",
+        "usedPublic",
+        "usingLiveCatalog"
+      ],
+      "imports": [
+        "@/components/homepage-next/backdrop/SharedDotBackdrop",
+        "@/components/integrations/PluginBrandLogo",
+        "@/lib/externalAgentWorkflows",
+        "@/lib/integrationDiscoveryFilters",
+        "@/lib/liveIntegrationDiscovery",
+        "@/lib/pluginCatalog",
+        "@/lib/publicConnectCatalog",
+        "@/lib/publicIntegrationLogo",
+        "@/lib/publicIntegrationsDirectory",
+        "@/lib/xrogaConnect",
+        "lucide-react",
+        "next/link",
+        "react"
+      ],
+      "runtimeImports": [
+        "frontend/src/components/homepage-next/backdrop/SharedDotBackdrop.tsx",
+        "frontend/src/components/integrations/PluginBrandLogo.tsx",
+        "frontend/src/lib/externalAgentWorkflows.ts",
+        "frontend/src/lib/integrationDiscoveryFilters.ts",
+        "frontend/src/lib/liveIntegrationDiscovery.ts",
+        "frontend/src/lib/pluginCatalog.ts",
+        "frontend/src/lib/publicConnectCatalog.ts",
+        "frontend/src/lib/publicIntegrationLogo.ts",
+        "frontend/src/lib/xrogaConnect.ts"
+      ],
+      "entryPoints": [
+        "frontend/src/app/integrations/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/app/integrations/page.tsx:8"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "lucide-react",
+        "next/link",
+        "react"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Production source contains annotated mock/TODO/placeholder/simulation markers; individual findings classified separately.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:6cf294f71a2a97e9b30c",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "frontend/src/app/integrations/page.tsx",
-      "sha256": "1aaa012550be10314a212302a3e7d3b3c4bc6fc52b70e5276a74a94b27da3ef5",
+      "sha256": "fc75d7cdcb03ad409f7978b61b81cbcae587aa5954c3ea33a2b8270c222044e7",
       "symbols": [
-        "IntegrationsSeoPage",
-        "metadata",
-        "topIntegrations"
+        "IntegrationsPage",
+        "metadata"
       ],
       "imports": [
+        "./IntegrationsMarketplace",
+        "./integrations.css",
         "@/components/seo/PageJsonLd",
-        "@/lib/integrations",
+        "@/lib/publicIntegrationsDirectory",
         "@/lib/seo",
-        "next",
-        "next/link"
+        "next"
       ],
       "runtimeImports": [
+        "frontend/src/app/integrations/IntegrationsMarketplace.tsx",
+        "frontend/src/app/integrations/integrations.css",
         "frontend/src/components/seo/PageJsonLd.tsx",
-        "frontend/src/lib/integrations.ts",
+        "frontend/src/lib/publicIntegrationsDirectory.ts",
         "frontend/src/lib/seo.ts"
       ],
       "entryPoints": [
@@ -63560,8 +63669,7 @@
       "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
-        "next",
-        "next/link"
+        "next"
       ],
       "authBoundary": [],
       "tenantBoundary": [],
@@ -72055,9 +72163,11 @@
         "frontend/src/components/homepage-next/backdrop/SharedDotBackdrop.module.css"
       ],
       "entryPoints": [
+        "frontend/src/app/integrations/page.tsx",
         "frontend/src/app/page.tsx"
       ],
       "callers": [
+        "frontend/src/app/integrations/IntegrationsMarketplace.tsx:13",
         "frontend/src/components/homepage/HomepageClient.tsx:18"
       ],
       "reachable": true,
@@ -79914,6 +80024,7 @@
         "frontend/src/app/ai-app-builder/page.tsx",
         "frontend/src/app/ai-coding-agent/page.tsx",
         "frontend/src/app/game-builder/page.tsx",
+        "frontend/src/app/integrations/page.tsx",
         "frontend/src/app/layout.tsx",
         "frontend/src/app/os-preview/rich-results/page.tsx",
         "frontend/src/app/share/[token]/page.tsx",
@@ -80501,6 +80612,7 @@
         "frontend/src/app/ai-app-builder/page.tsx",
         "frontend/src/app/ai-coding-agent/page.tsx",
         "frontend/src/app/game-builder/page.tsx",
+        "frontend/src/app/integrations/page.tsx",
         "frontend/src/app/layout.tsx",
         "frontend/src/app/os-preview/rich-results/page.tsx",
         "frontend/src/app/pricing/page.tsx",
@@ -81580,6 +81692,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx",
         "frontend/src/app/ai-app-builder/page.tsx",
         "frontend/src/app/game-builder/page.tsx",
+        "frontend/src/app/integrations/page.tsx",
         "frontend/src/app/os-preview/rich-results/page.tsx",
         "frontend/src/app/share/[token]/page.tsx",
         "frontend/src/app/software/page.tsx"
@@ -82905,6 +83018,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx",
         "frontend/src/app/ai-app-builder/page.tsx",
         "frontend/src/app/game-builder/page.tsx",
+        "frontend/src/app/integrations/page.tsx",
         "frontend/src/app/os-preview/rich-results/page.tsx",
         "frontend/src/app/share/[token]/page.tsx",
         "frontend/src/app/software/page.tsx"
@@ -83016,13 +83130,15 @@
       "id": "surface:13c8144598905fe4b7fc",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "frontend/src/components/integrations/PluginBrandLogo.tsx",
-      "sha256": "8e8832149f544dbf4299886318ccd381f1da0dc20c2460747004d7b0d87939df",
+      "sha256": "8a1b4797ebbc64162a388eb86ff3c5c01694266470ffaad500e5ae3cd6a02292",
       "symbols": [
         "PluginBrandLogo",
         "SIMPLE_ICON_ALIASES",
+        "WHITE_FOREGROUND_LOCAL_SVGS",
         "candidates",
         "clean",
         "customToolkit",
+        "darkLogoTile",
         "dimension",
         "iconSize",
         "simpleIconCandidates",
@@ -83033,6 +83149,7 @@
         "@/components/integrations/IntegrationLogo",
         "@/lib/integrationLogos",
         "@/lib/pluginCatalog",
+        "lucide-react",
         "react"
       ],
       "runtimeImports": [
@@ -83048,11 +83165,13 @@
         "frontend/src/app/(workspace)/layout.tsx",
         "frontend/src/app/(workspace)/workspace/page.tsx",
         "frontend/src/app/ai-app-builder/page.tsx",
+        "frontend/src/app/integrations/page.tsx",
         "frontend/src/app/os-preview/rich-results/page.tsx",
         "frontend/src/app/share/[token]/page.tsx",
         "frontend/src/app/software/page.tsx"
       ],
       "callers": [
+        "frontend/src/app/integrations/IntegrationsMarketplace.tsx:10",
         "frontend/src/components/automations/WorkPacksGallery.tsx:5",
         "frontend/src/components/integrations/CustomMcpManager.tsx:17",
         "frontend/src/components/integrations/InstalledPluginsShelf.tsx:10",
@@ -83064,6 +83183,7 @@
       "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
+        "lucide-react",
         "react"
       ],
       "authBoundary": [],
@@ -94168,7 +94288,7 @@
         "frontend/src/app/contact/page.tsx:6",
         "frontend/src/app/docs/page.tsx:3",
         "frontend/src/app/features/page.tsx:5",
-        "frontend/src/app/integrations/page.tsx:5",
+        "frontend/src/app/integrations/page.tsx:3",
         "frontend/src/app/pricing/page.tsx:2",
         "frontend/src/app/tools/production-readiness-checker/page.tsx:2",
         "frontend/src/components/marketing/AiAppBuilderLanding.tsx:19",
@@ -105373,6 +105493,7 @@
         "frontend/src/app/ai-app-builder/page.tsx",
         "frontend/src/app/ai-coding-agent/page.tsx",
         "frontend/src/app/game-builder/page.tsx",
+        "frontend/src/app/integrations/page.tsx",
         "frontend/src/app/layout.tsx",
         "frontend/src/app/os-preview/rich-results/page.tsx",
         "frontend/src/app/pricing/page.tsx",
@@ -105956,6 +106077,7 @@
         "frontend/src/app/game-builder/page.tsx",
         "frontend/src/app/github-ai-coding-agent/page.tsx",
         "frontend/src/app/image/page.tsx",
+        "frontend/src/app/integrations/page.tsx",
         "frontend/src/app/layout.tsx",
         "frontend/src/app/native-answer-evaluation/page.tsx",
         "frontend/src/app/onboarding/page.tsx",
@@ -106073,6 +106195,7 @@
         "frontend/src/lib/projectDeliveryApi.ts:3",
         "frontend/src/lib/projectResume.ts:3",
         "frontend/src/lib/projectRuntimeApi.ts:7",
+        "frontend/src/lib/publicConnectCatalog.ts:1",
         "frontend/src/lib/rehydratePersistedMessages.ts:2",
         "frontend/src/lib/repoWorkspaceGate.ts:12",
         "frontend/src/lib/rollbackProjectUpdate.ts:1",
@@ -108796,6 +108919,7 @@
         "frontend/src/app/game-builder/page.tsx",
         "frontend/src/app/github-ai-coding-agent/page.tsx",
         "frontend/src/app/image/page.tsx",
+        "frontend/src/app/integrations/page.tsx",
         "frontend/src/app/layout.tsx",
         "frontend/src/app/native-answer-evaluation/page.tsx",
         "frontend/src/app/onboarding/page.tsx",
@@ -108993,6 +109117,49 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:baa3cb3212c0cd884089",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/lib/externalAgentWorkflows.ts",
+      "sha256": "b6d2664c66bc8d77d8e07147a557a89d7d728a305dd7cc4fc657a5560f60f2b3",
+      "symbols": [
+        "EXTERNAL_AGENTS",
+        "EXTERNAL_AGENT_DISCLOSURE",
+        "ExternalAgent"
+      ],
+      "imports": [],
+      "runtimeImports": [],
+      "entryPoints": [
+        "frontend/src/app/integrations/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/app/integrations/IntegrationsMarketplace.tsx:14",
+        "frontend/src/lib/externalAgentWorkflows.test.ts:3"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "declared-host:cursor.com",
+        "declared-host:docs.anthropic.com",
+        "declared-host:docs.github.com",
+        "declared-host:github.com",
+        "declared-host:google-gemini.github.io"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "frontend/src/lib/externalAgentWorkflows.test.ts"
+      ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -110240,6 +110407,45 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:134e16b88eb3270e8852",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/lib/integrationDiscoveryFilters.ts",
+      "sha256": "d61ff34189519aca091736ea4d89d4bf2fa786a63e6a9479bbda881a4e093219",
+      "symbols": [
+        "PUBLIC_INTEGRATION_FEATURED_IDS",
+        "crmMatch",
+        "humanResourcesMatch",
+        "languageMatch",
+        "matchesPublicIntegrationCategory"
+      ],
+      "imports": [
+        "./publicIntegrationsDirectory"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [
+        "frontend/src/app/integrations/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/app/integrations/IntegrationsMarketplace.tsx:22",
+        "frontend/src/lib/publicIntegrationsDirectory.ts:48"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:6355520436755d2893b0",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/integrationLogos.ts",
@@ -110260,6 +110466,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx",
         "frontend/src/app/ai-app-builder/page.tsx",
         "frontend/src/app/game-builder/page.tsx",
+        "frontend/src/app/integrations/page.tsx",
         "frontend/src/app/onboarding/page.tsx",
         "frontend/src/app/os-preview/rich-results/page.tsx",
         "frontend/src/app/share/[token]/page.tsx",
@@ -110267,8 +110474,10 @@
       ],
       "callers": [
         "frontend/src/components/integrations/IntegrationLogo.tsx:6",
-        "frontend/src/components/integrations/PluginBrandLogo.tsx:6",
-        "frontend/src/components/onboarding/OnboardingFlow.tsx:7"
+        "frontend/src/components/integrations/PluginBrandLogo.tsx:7",
+        "frontend/src/components/onboarding/OnboardingFlow.tsx:7",
+        "frontend/src/lib/publicIntegrationLogo.test.ts:3",
+        "frontend/src/lib/publicIntegrationLogo.ts:6"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -110280,7 +110489,9 @@
       "approvalBoundary": [],
       "costBoundary": [],
       "evidenceBoundary": [],
-      "testCoverage": [],
+      "testCoverage": [
+        "frontend/src/lib/publicIntegrationLogo.test.ts"
+      ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -110301,13 +110512,11 @@
         "./integrations"
       ],
       "runtimeImports": [],
-      "entryPoints": [
-        "frontend/src/app/integrations/page.tsx"
-      ],
+      "entryPoints": [],
       "callers": [
         "frontend/src/lib/integrations.ts:12"
       ],
-      "reachable": true,
+      "reachable": false,
       "persistenceDependencies": [],
       "externalProviderDependencies": [],
       "authBoundary": [],
@@ -110316,11 +110525,11 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [],
-      "state": "IMPLEMENTED_BUT_UNVERIFIED",
-      "confidence": "MEDIUM",
-      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
       "knownRisk": "Live provider state and full security behavior not established by static inventory.",
-      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
@@ -110338,14 +110547,11 @@
       "runtimeImports": [
         "frontend/src/lib/integrations-catalog.ts"
       ],
-      "entryPoints": [
-        "frontend/src/app/integrations/page.tsx"
-      ],
+      "entryPoints": [],
       "callers": [
-        "frontend/src/app/integrations/page.tsx:4",
         "frontend/src/components/terminal/ChatIntegrationsBar.tsx:14"
       ],
-      "reachable": true,
+      "reachable": false,
       "persistenceDependencies": [],
       "externalProviderDependencies": [],
       "authBoundary": [],
@@ -110354,11 +110560,11 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [],
-      "state": "IMPLEMENTED_BUT_UNVERIFIED",
-      "confidence": "MEDIUM",
-      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
       "knownRisk": "Live provider state and full security behavior not established by static inventory.",
-      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
@@ -110552,6 +110758,7 @@
         "frontend/src/app/game-builder/page.tsx",
         "frontend/src/app/github-ai-coding-agent/page.tsx",
         "frontend/src/app/image/page.tsx",
+        "frontend/src/app/integrations/page.tsx",
         "frontend/src/app/layout.tsx",
         "frontend/src/app/native-answer-evaluation/page.tsx",
         "frontend/src/app/onboarding/page.tsx",
@@ -110809,6 +111016,55 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "frontend/src/lib/legacyLandingRunRecovery.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:17325d375897e83adeaf",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/lib/liveIntegrationDiscovery.ts",
+      "sha256": "fde037723c32672aa6e2e556f78d85cbc96a4bfc410986764eaa0737de49d1e6",
+      "symbols": [
+        "group",
+        "groups",
+        "labels",
+        "liveIntegrationCategories",
+        "name",
+        "normalizeLiveIntegration",
+        "trustedDescription"
+      ],
+      "imports": [
+        "@/lib/pluginCatalog",
+        "@/lib/publicConnectCatalog",
+        "@/lib/publicIntegrationLogo",
+        "@/lib/publicIntegrationsDirectory"
+      ],
+      "runtimeImports": [
+        "frontend/src/lib/pluginCatalog.ts",
+        "frontend/src/lib/publicIntegrationLogo.ts"
+      ],
+      "entryPoints": [
+        "frontend/src/app/integrations/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/app/integrations/IntegrationsMarketplace.tsx:17",
+        "frontend/src/lib/liveIntegrationDiscovery.test.ts:3"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "frontend/src/lib/liveIntegrationDiscovery.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -112626,20 +112882,25 @@
         "frontend/src/app/(workspace)/layout.tsx",
         "frontend/src/app/(workspace)/workspace/page.tsx",
         "frontend/src/app/ai-app-builder/page.tsx",
+        "frontend/src/app/integrations/page.tsx",
         "frontend/src/app/os-preview/rich-results/page.tsx",
         "frontend/src/app/share/[token]/page.tsx",
         "frontend/src/app/software/page.tsx"
       ],
       "callers": [
+        "frontend/src/app/integrations/IntegrationsMarketplace.tsx:12",
         "frontend/src/components/integrations/InstalledPluginsShelf.tsx:11",
-        "frontend/src/components/integrations/PluginBrandLogo.tsx:5",
+        "frontend/src/components/integrations/PluginBrandLogo.tsx:6",
         "frontend/src/components/integrations/PluginDetail.tsx:24",
         "frontend/src/components/integrations/PluginMarketplace.tsx:34",
         "frontend/src/components/terminal/IntegrationsModal.tsx:10",
+        "frontend/src/lib/liveIntegrationDiscovery.ts:8",
         "frontend/src/lib/pluginCategoryUx.test.ts:6",
         "frontend/src/lib/pluginMarketplacePolish.test.ts:6",
         "frontend/src/lib/pluginStep2.test.ts:6",
-        "frontend/src/lib/pluginStep4.test.ts:6"
+        "frontend/src/lib/pluginStep4.test.ts:6",
+        "frontend/src/lib/publicIntegrationsDirectory.test.ts:3",
+        "frontend/src/lib/publicIntegrationsDirectory.ts:10"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -112659,7 +112920,8 @@
         "frontend/src/lib/pluginCategoryUx.test.ts",
         "frontend/src/lib/pluginMarketplacePolish.test.ts",
         "frontend/src/lib/pluginStep2.test.ts",
-        "frontend/src/lib/pluginStep4.test.ts"
+        "frontend/src/lib/pluginStep4.test.ts",
+        "frontend/src/lib/publicIntegrationsDirectory.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -113272,6 +113534,145 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:f1984d12a23746938104",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/lib/publicConnectCatalog.ts",
+      "sha256": "e3bc7e2a3acb9adba5bb5c8506d1c7fadb5be3e3329d00dad3050d1bd7411240",
+      "symbols": [
+        "PublicCatalogPage",
+        "PublicCatalogToolkit",
+        "data",
+        "params",
+        "publicConnectCatalogPage",
+        "response"
+      ],
+      "imports": [
+        "@/lib/api",
+        "@/lib/xrogaConnect"
+      ],
+      "runtimeImports": [
+        "frontend/src/lib/api.ts"
+      ],
+      "entryPoints": [
+        "frontend/src/app/integrations/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/app/integrations/IntegrationsMarketplace.tsx:16"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:5d0edd3a2a1cd45aa323",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/lib/publicIntegrationLogo.ts",
+      "sha256": "a9df6561f2dba341f2c5deebd5fbe88aa2ae677d0a6c198979655d6e1027a0e0",
+      "symbols": [
+        "LOCAL_PUBLIC_INTEGRATION_LOGOS",
+        "getPublicIntegrationLogo",
+        "key",
+        "url",
+        "validProviderLogo"
+      ],
+      "imports": [
+        "@/lib/integrationLogos"
+      ],
+      "runtimeImports": [
+        "frontend/src/lib/integrationLogos.ts"
+      ],
+      "entryPoints": [
+        "frontend/src/app/integrations/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/app/integrations/IntegrationsMarketplace.tsx:11",
+        "frontend/src/lib/liveIntegrationDiscovery.ts:9",
+        "frontend/src/lib/publicIntegrationLogo.test.ts:4",
+        "frontend/src/lib/publicIntegrationsDirectory.test.ts:4",
+        "frontend/src/lib/publicIntegrationsDirectory.ts:11"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "frontend/src/lib/publicIntegrationLogo.test.ts",
+        "frontend/src/lib/publicIntegrationsDirectory.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:5495112071d7c7201dcb",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/lib/publicIntegrationsDirectory.ts",
+      "sha256": "e00c00150889f0dbc5edfb926dce8d60af90c52e530dfc6780e0aef77fbd143b",
+      "symbols": [
+        "IntegrationCategory",
+        "PUBLIC_INTEGRATION_CARDS",
+        "PUBLIC_INTEGRATION_CATEGORIES",
+        "PUBLIC_INTEGRATION_COUNT",
+        "PublicIntegrationCard",
+        "PublicIntegrationMode",
+        "descriptions",
+        "groups"
+      ],
+      "imports": [
+        "./integrationDiscoveryFilters",
+        "@/lib/pluginCatalog",
+        "@/lib/publicIntegrationLogo"
+      ],
+      "runtimeImports": [
+        "frontend/src/lib/integrationDiscoveryFilters.ts",
+        "frontend/src/lib/pluginCatalog.ts",
+        "frontend/src/lib/publicIntegrationLogo.ts"
+      ],
+      "entryPoints": [
+        "frontend/src/app/integrations/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/app/integrations/page.tsx:4",
+        "frontend/src/lib/publicIntegrationsDirectory.test.ts:5"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "frontend/src/lib/publicIntegrationsDirectory.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:756700cae3b8fde0ce44",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/publicMarketing.ts",
@@ -113565,6 +113966,7 @@
         "frontend/src/app/game-builder/page.tsx",
         "frontend/src/app/github-ai-coding-agent/page.tsx",
         "frontend/src/app/image/page.tsx",
+        "frontend/src/app/integrations/page.tsx",
         "frontend/src/app/layout.tsx",
         "frontend/src/app/native-answer-evaluation/page.tsx",
         "frontend/src/app/onboarding/page.tsx",
@@ -114801,7 +115203,7 @@
         "frontend/src/app/game-builder/page.tsx:16",
         "frontend/src/app/github-ai-coding-agent/page.tsx:1",
         "frontend/src/app/image/page.tsx:2",
-        "frontend/src/app/integrations/page.tsx:3",
+        "frontend/src/app/integrations/page.tsx:2",
         "frontend/src/app/layout.tsx:8",
         "frontend/src/app/learn/page.tsx:1",
         "frontend/src/app/learn/production-readiness-checklist/page.tsx:1",
@@ -116107,6 +116509,7 @@
         "frontend/src/app/auth/login/page.tsx",
         "frontend/src/app/auth/signup/page.tsx",
         "frontend/src/app/game-builder/page.tsx",
+        "frontend/src/app/integrations/page.tsx",
         "frontend/src/app/layout.tsx",
         "frontend/src/app/os-preview/rich-results/page.tsx",
         "frontend/src/app/pricing/page.tsx",
@@ -116267,6 +116670,7 @@
         "frontend/src/app/game-builder/page.tsx",
         "frontend/src/app/github-ai-coding-agent/page.tsx",
         "frontend/src/app/image/page.tsx",
+        "frontend/src/app/integrations/page.tsx",
         "frontend/src/app/layout.tsx",
         "frontend/src/app/native-answer-evaluation/page.tsx",
         "frontend/src/app/onboarding/page.tsx",
@@ -116434,6 +116838,7 @@
         "frontend/src/app/game-builder/page.tsx",
         "frontend/src/app/github-ai-coding-agent/page.tsx",
         "frontend/src/app/image/page.tsx",
+        "frontend/src/app/integrations/page.tsx",
         "frontend/src/app/layout.tsx",
         "frontend/src/app/native-answer-evaluation/page.tsx",
         "frontend/src/app/onboarding/page.tsx",
@@ -116693,6 +117098,7 @@
         "frontend/src/app/game-builder/page.tsx",
         "frontend/src/app/github-ai-coding-agent/page.tsx",
         "frontend/src/app/image/page.tsx",
+        "frontend/src/app/integrations/page.tsx",
         "frontend/src/app/layout.tsx",
         "frontend/src/app/native-answer-evaluation/page.tsx",
         "frontend/src/app/onboarding/page.tsx",
@@ -116840,6 +117246,7 @@
         "frontend/src/app/game-builder/page.tsx",
         "frontend/src/app/github-ai-coding-agent/page.tsx",
         "frontend/src/app/image/page.tsx",
+        "frontend/src/app/integrations/page.tsx",
         "frontend/src/app/layout.tsx",
         "frontend/src/app/native-answer-evaluation/page.tsx",
         "frontend/src/app/onboarding/page.tsx",
@@ -117317,6 +117724,7 @@
         "frontend/src/app/game-builder/page.tsx",
         "frontend/src/app/github-ai-coding-agent/page.tsx",
         "frontend/src/app/image/page.tsx",
+        "frontend/src/app/integrations/page.tsx",
         "frontend/src/app/layout.tsx",
         "frontend/src/app/native-answer-evaluation/page.tsx",
         "frontend/src/app/onboarding/page.tsx",
@@ -118177,6 +118585,7 @@
         "frontend/src/app/game-builder/page.tsx",
         "frontend/src/app/github-ai-coding-agent/page.tsx",
         "frontend/src/app/image/page.tsx",
+        "frontend/src/app/integrations/page.tsx",
         "frontend/src/app/layout.tsx",
         "frontend/src/app/native-answer-evaluation/page.tsx",
         "frontend/src/app/onboarding/page.tsx",
@@ -118620,6 +119029,7 @@
         "frontend/src/app/game-builder/page.tsx",
         "frontend/src/app/github-ai-coding-agent/page.tsx",
         "frontend/src/app/image/page.tsx",
+        "frontend/src/app/integrations/page.tsx",
         "frontend/src/app/layout.tsx",
         "frontend/src/app/onboarding/page.tsx",
         "frontend/src/app/os-preview/rich-results/page.tsx",
@@ -119045,6 +119455,7 @@
         "frontend/src/app/game-builder/page.tsx",
         "frontend/src/app/github-ai-coding-agent/page.tsx",
         "frontend/src/app/image/page.tsx",
+        "frontend/src/app/integrations/page.tsx",
         "frontend/src/app/layout.tsx",
         "frontend/src/app/onboarding/page.tsx",
         "frontend/src/app/os-preview/rich-results/page.tsx",
@@ -120622,11 +121033,13 @@
         "frontend/src/app/(workspace)/layout.tsx",
         "frontend/src/app/(workspace)/workspace/page.tsx",
         "frontend/src/app/ai-app-builder/page.tsx",
+        "frontend/src/app/integrations/page.tsx",
         "frontend/src/app/os-preview/rich-results/page.tsx",
         "frontend/src/app/share/[token]/page.tsx",
         "frontend/src/app/software/page.tsx"
       ],
       "callers": [
+        "frontend/src/app/integrations/IntegrationsMarketplace.tsx:15",
         "frontend/src/components/automations/ConnectedAppAutomations.tsx:4",
         "frontend/src/components/automations/Connections.tsx:5",
         "frontend/src/components/integrations/CustomMcpManager.tsx:22",
@@ -120654,6 +121067,7 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "frontend/src/lib/connectReview.security.test.ts",
+        "frontend/src/lib/liveIntegrationDiscovery.test.ts",
         "frontend/src/lib/pluginCategoryUx.test.ts",
         "frontend/src/lib/pluginMarketplacePolish.test.ts",
         "frontend/src/lib/pluginStep2.test.ts"
@@ -122145,6 +122559,7 @@
         "frontend/src/app/auth/login/page.tsx",
         "frontend/src/app/auth/signup/page.tsx",
         "frontend/src/app/game-builder/page.tsx",
+        "frontend/src/app/integrations/page.tsx",
         "frontend/src/app/layout.tsx",
         "frontend/src/app/os-preview/rich-results/page.tsx",
         "frontend/src/app/pricing/page.tsx",
@@ -143562,6 +143977,16 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
+      "id": "finding:20bbf2520b38e103b858",
+      "sourcePath": "frontend/src/app/integrations/IntegrationsMarketplace.tsx",
+      "line": 379,
+      "kind": "PLACEHOLDER",
+      "reachable": true,
+      "state": "PARTIAL",
+      "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
+      "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
+    },
+    {
       "id": "finding:286810a3229336979537",
       "sourcePath": "frontend/src/app/os-preview/page.tsx",
       "line": 32,
@@ -149928,6 +150353,13 @@
       "reachable": true
     },
     {
+      "id": "frontend-call:d5e5d5c928792e969546",
+      "sourcePath": "frontend/src/lib/publicConnectCatalog.ts",
+      "line": 21,
+      "callee": "fetch",
+      "reachable": true
+    },
+    {
       "id": "frontend-call:99aac29a712638340766",
       "sourcePath": "frontend/src/lib/rehydratePersistedMessages.ts",
       "line": 47,
@@ -155887,6 +156319,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:d5ea1335ec5cc2eca9c4",
+      "sourcePath": "frontend/src/app/integrations/integrationsBackdrop.test.ts",
+      "declaredTests": 5,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:8cfe34b7093fcd88b1cc",
       "sourcePath": "frontend/src/components/auth/authSignupLayout.test.ts",
       "declaredTests": 5,
@@ -156454,6 +156893,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:e985b144b466b59a2ff8",
+      "sourcePath": "frontend/src/lib/externalAgentWorkflows.test.ts",
+      "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:0e3460e2b1994bb55b61",
       "sourcePath": "frontend/src/lib/feedbackAdminAccess.test.ts",
       "declaredTests": 5,
@@ -156617,6 +157063,13 @@
     {
       "id": "test-suite:2b5eb20e119aefa49b45",
       "sourcePath": "frontend/src/lib/legacyLandingRunRecovery.test.ts",
+      "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:1223df1b9043c7b64eef",
+      "sourcePath": "frontend/src/lib/liveIntegrationDiscovery.test.ts",
       "declaredTests": 2,
       "skipLocations": [],
       "focusLocations": []
@@ -156842,6 +157295,20 @@
       "id": "test-suite:1bbc8798d3122bf9cc67",
       "sourcePath": "frontend/src/lib/projectWorkspaceStorage.test.ts",
       "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:2ed2152d8b2a5648e2af",
+      "sourcePath": "frontend/src/lib/publicIntegrationLogo.test.ts",
+      "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:05358658fb79805a33bb",
+      "sourcePath": "frontend/src/lib/publicIntegrationsDirectory.test.ts",
+      "declaredTests": 3,
       "skipLocations": [],
       "focusLocations": []
     },
