@@ -6,15 +6,15 @@ Status: **review-ready, not production-certified.** Staging only. Nothing was pu
 | Item | Value |
 | --- | --- |
 | Source branch | `claude/ops-integrated-20261112` (draft PR #976, not merged) |
-| Extension code | last extension source change `f78614bf2`; branch head when built `92d2913e1` |
-| Private package | `C:\xr-review-builds\xroga-browser-operator-staging-0.2.8-f78614bf2.zip` |
-| ZIP SHA-256 | `bd6a68a7e7e8e4bd504866eebb45ad2099d1d1a29d207608b54d133d88f9d145` |
+| Extension code | last extension source change `8a4a2222a`; branch head when built `b42499fb0` |
+| Private package | `C:\xr-review-builds\xroga-browser-operator-staging-0.2.8-8a4a2222a.zip` |
+| ZIP SHA-256 | `4e3cf9a41638972e7fcf2057a96f3a31c30f8d1b2c833a9935f7e377aeca0ab6` |
 | Extension | "Xroga Browser Automation (Staging)" 0.2.8, ID `ogebkgkppocnjeojdbkiokcpeaenonop` (fixed by the baked public key) |
 | Installed copy | `C:\xr-review-builds\xroga-extension-staging-0ff582593`, manifest identical to the ZIP; press Reload on `chrome://extensions` to load it |
 | Compatible backend | Cloud Run `xroga-api-universal-staging` (project `project-c40d4821-e647-4fa2-92d`, us-east4), revision `xroga-api-universal-staging-00128-doy`, image `xroga-api-release:lim18-1118`, tag `browser-op-1110`, 0 percent of traffic. Its `/health` "release" field is a stale environment value, not the image |
 | Sandbox worker | Cloud Run `xroga-sandbox-worker` (offline stage, restricted-network stage and dependency acquisition were added by the sandbox session; see the audit file) |
 | Model | DeepSeek V4.1 Flash 1017 through the existing route only |
-| Tests at build time | extension typecheck clean, 1239 tests pass, 4 skipped; backend typecheck clean after commit `92d2913e1` (the sandbox merge had broken it); backend tests run: local browser (2 files), sandbox (3 files) all pass |
+| Tests at build time | extension typecheck clean, 1241 tests pass, 4 skipped (run in a clean worktree of the branch head); backend typecheck clean after commit `92d2913e1` (the sandbox merge had broken it); backend tests run: local browser (2 files), sandbox (3 files) all pass |
 | Chrome version | the owner's own Chrome was used for the live runs; its version number was not captured. The automated benchmarks used Chrome for Testing 1234 (playwright) |
 
 ## Verified live (installed extension, real DeepSeek, staging backend; each one run unless stated)
