@@ -173,7 +173,7 @@ test('actual semantic planner carries issued actor, platform reservation and exa
     { projectState: { hasExistingPreview: false, isUpdate: false, unrelatedContext: 'fixture' } },
   ]) {
     contextualLiteral = { ...literalRequest, ...context };
-    const before = effects;
+    const before: number = effects;
     await planSemanticRequest(contextualLiteral);
     assert.equal(effects, before + 1, 'Context and mixed requests still go through the semantic planner');
   }
