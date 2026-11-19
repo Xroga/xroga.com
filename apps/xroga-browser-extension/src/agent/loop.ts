@@ -30,6 +30,7 @@ import { runCompaction, runShorten } from './compaction';
 import { attachmentBytes, attachmentParts, readAttachment } from './attachments';
 import { decodeImage, describeHits, FIND_COLOR_TOOL, scanColor } from './pixels';
 import { learnFrom, turnEffort } from './run';
+import { PaintedInputDeliveryGuard } from './painted-input-delivery';
 import type { ResolvedModel } from './run';
 import { allTools, DONE_TOOL, kindOf, PAGE_ACTIONS } from './tools';
 import type { AgentTool, ToolKind } from './tools';
@@ -721,10 +722,9 @@ ${ledger}` : ''),
     const args = (call.input ?? {}) as Record<string, unknown>;
     // The same text typed twice into a painted editor, or typed without replace after an error, is the splice failure: stop it in code.
     if (call.toolName === 'canvas' && args.action === 'type' && typeof args.text === 'string' && args.text.length > 40) {
-      const key = args.text.slice(0, 200);
+      const tabId = typeof args.tabId === 'number' ? args.tabId : this.#boundTab ?? this.#activeTab;
       if (!args.replace) return { call, kind, isError: true, text: 'refused: a long text typed into a painted editor must use replace: true (select all first). The editor opens with example text and a click puts the caret inside it, so without replace your program is spliced into the example and fails with TypeError. Nothing was typed.' };
-      if (this.#typedTexts.has(key)) return { call, kind, isError: true, text: 'refused: this exact text was already typed and run. Read the Output area and change only what the error names, or finish with the blocker. Do not retype it, and do not create another document.' };
-      this.#typedTexts.add(key);
+      if (this.#paintedInputDelivered.wasDelivered(tabId, args.text)) return { call, kind, isError: true, text: 'refused: this exact text was already dispatched to this tab. Inspect the app Output before trying a revised script; do not repeat the same code or create another document.' };
     }
     // The first script typed into a painted editor must come from the app's own documentation: guessing an API costs dozens of turns.
     if (call.toolName === 'canvas' && args.action === 'type' && typeof args.text === 'string' && args.text.length > 60 && /[;{}]|\w\.\w+\(/.test(args.text) &&
@@ -767,6 +767,13 @@ ${ledger}` : ''),
   /** After a call: hand-overs, guards, verification debt and the result cap. */
   async afterToolCall(given: CallOutcome): Promise<CallOutcome> {
     let outcome = given;
+    // Register only real, successful Chrome dispatch. A documentation gate or failed
+    // editor-focus check must not mark code as typed; otherwise the valid retry loops.
+    const input = (given.call.input ?? {}) as Record<string, unknown>;
+    if (given.call.toolName === 'canvas' && input.action === 'type' && typeof input.text === 'string' && input.text.length > 40) {
+      const tabId = given.result?.page?.tabId ?? (typeof input.tabId === 'number' ? input.tabId : this.#boundTab ?? this.#activeTab);
+      this.#paintedInputDelivered.record(tabId, input.text, given.result);
+    }
     if (given.call.toolName === 'http_get' && !given.isError) this.#docsRead = true;
     this.#toolCounts.set(given.call.toolName, (this.#toolCounts.get(given.call.toolName) ?? 0) + 1);
     // Opening or switching to a page changes nothing a second attempt could duplicate: a navigation that fails (a certificate warning,
@@ -1448,7 +1455,7 @@ ${ledger}` : ''),
   #toolCounts = new Map<string, number>();
   #adoptedOrigin = '';
   #boundTab: number | null = null;
-  #typedTexts = new Set<string>();
+  #paintedInputDelivered = new PaintedInputDeliveryGuard();
   #docsRead = false;
   #scriptGateShown = false;
   #canvasOffered = false;
