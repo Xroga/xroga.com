@@ -309,7 +309,7 @@ If text extraction looks empty (scanned PDF), say so and ask for a text export o
 
 export function researchSynthesisPrompt(query: string, gathered: string): string {
   const brief = researchAnswerMaxTokens(query) === 800;
-  return `Use this research to answer the user's question directly. Let the question determine the depth and format:
+  return `Use this research to answer the user directly. Let the question determine the depth and format:
 
 ${query}
 
