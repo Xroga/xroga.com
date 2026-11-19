@@ -95,18 +95,18 @@ export function SourceCitation({ source, number, label, showTitle = false, refer
 
   if (!url) return <>{label ?? (number ? `[${number}]` : source.title)}</>;
   const { domain, site, title } = citationMetadata(source, url);
-  const shortLabel = compact && number !== undefined;
+  const compactChip = compact && number !== undefined;
   return <>
-    <a ref={link} data-source-citation className={`${styles.chip} ${label || showTitle ? styles.named : ''} ${shortLabel ? styles.compact : ''}`}
+    <a ref={link} data-source-citation className={`${styles.chip} ${label || showTitle ? styles.named : ''} ${compactChip ? styles.compact : ''}`}
       href={(referral ? sourceClickUrl(url) : url) ?? url} target="_blank" rel="noopener noreferrer"
       aria-label={number ? `Open source ${number}: ${title}` : `${label ? 'Open link' : 'Open source'}: ${title}`}
       aria-describedby={open ? id : undefined}
       onPointerEnter={event => { if (event.pointerType !== 'touch') { keepOpen(); setOpen(true); } }}
       onPointerLeave={() => { if (document.activeElement !== link.current) dismiss(); }}
       onFocus={event => { if (event.currentTarget.matches(':focus-visible')) { keepOpen(); setOpen(true); } }}
-      onBlur={dismiss}>
+      onBlur={() => { keepOpen(); setOpen(false); }}>
       <CitationIcon domain={domain} size={13} />
-      <span className={styles.label}>{label ?? (shortLabel ? number : showTitle ? title : site)}</span>
+      <span className={styles.label}>{label ?? (showTitle ? title : site)}</span>
     </a>
     {open && createPortal(
       <span className={styles.preview} id={id} ref={preview} role="tooltip"

@@ -143,7 +143,7 @@ test('native headings, lists, and tables keep citations beside the supported tex
   assert.doesNotMatch(html, /href="https:\/\/elsewhere\.test/);
 });
 
-test('native citation clusters keep every distinct source and preserve links for separate claims', t => {
+test('native citation clusters keep publisher names, distinct sources and links for separate claims', t => {
   const previousReact = Object.getOwnPropertyDescriptor(globalThis, 'React');
   Object.defineProperty(globalThis, 'React', { configurable: true, value: React });
   t.after(() => {
@@ -153,9 +153,9 @@ test('native citation clusters keep every distinct source and preserve links for
   const report = 'https://example.org/report?revision=2#results';
   const methods = 'https://example.org/report?revision=2#methods';
   const evidence = [
-    { id: 'source-1', title: 'Results', url: report },
-    { id: 'source-2', title: 'Duplicate result', url: report },
-    { id: 'source-3', title: 'Methodology', url: methods },
+    { id: 'source-1', title: 'Results', siteName: 'NASA Science', url: report },
+    { id: 'source-2', title: 'Duplicate result', siteName: 'NASA Science', url: report },
+    { id: 'source-3', title: 'Methodology', siteName: 'NASA Science', url: methods },
   ];
   const answer = {
     format: 'xroga-openui-v1',
@@ -165,7 +165,12 @@ test('native citation clusters keep every distinct source and preserve links for
   } as const;
   const html = renderToStaticMarkup(createElement(NativeSurface, { answer, sources: evidence }));
   assert.equal((html.match(/data-source-citation/g) ?? []).length, 6);
-  assert.equal((html.match(/class="[^"]*\bcompact\b[^"]*"/g) ?? []).length, 2);
+  const compact = [...html.matchAll(/<a [^>]*class="[^"]*\bcompact\b[^"]*"[^>]*>.*?<\/a>/g)];
+  assert.equal(compact.length, 2);
+  for (const [chip] of compact) {
+    assert.match(chip, /aria-label="Open source 3: Methodology"/);
+    assert.match(chip, /<span class="label">NASA Science<\/span>/);
+  }
   assert.equal((html.match(/href="https:\/\/example\.org\/report\?revision=2#results"/g) ?? []).length, 4);
   assert.equal((html.match(/href="https:\/\/example\.org\/report\?revision=2#methods"/g) ?? []).length, 2);
   assert.match(html, /Measured result .*aria-label="Open source 1: Results"/);

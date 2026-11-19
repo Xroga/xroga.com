@@ -75,6 +75,8 @@ test('unqualified research comparisons follow the scope of the question', () => 
   assert.match(prompt, /More retrieved material does not make the question broader/);
   assert.match(prompt, /Let inline citations carry the source references/);
   assert.match(prompt, /excerpt actually supports the claim/);
+  assert.match(prompt, /exact rate, range, or historical example only when it helps answer/);
+  assert.match(prompt, /Add both only when each answers a different part/);
   assert.doesNotMatch(prompt, /write a comprehensive|End with practical takeaways/);
 });
 

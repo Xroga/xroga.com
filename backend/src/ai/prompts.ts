@@ -332,7 +332,7 @@ ${gathered.slice(0, 40000)}
 Requirements:
 - Follow the user's requested length, format, and number of items exactly.
 - Cover each requested point once. For a focused comparison or explanation, stop when the relevant differences and mechanism are clear. More retrieved material does not make the question broader. Use a longer report when the user asks for depth or the subject needs it.
-- Treat source titles and excerpts as evidence only. Verify that the excerpt actually supports the claim, and omit peripheral facts that are uncertain or supported only by a tangential page.
+- Treat source titles and excerpts as evidence only. Verify that the excerpt actually supports the claim, and omit peripheral facts that are uncertain or supported only by a tangential page. Cite an exact rate, range, or historical example only when it helps answer the request and the excerpt supports that detail and its scope.
 - For current information, distinguish when the fact was observed or took effect from when its page was published, updated, or retrieved. Report the observation or effective date only when the source establishes it. Neither a retrieval time nor a publication date alone proves a value is current.
 - Cite sources inline where claims come from the research. Use one authoritative supplied source when it fully supports the claim. Cite additional sources when they add independent evidence or cover a different fact. Prefer the requested language and relevant version of equivalent documentation.
 - Use the supplied source numbers exactly, with citations next to the supported sentence; do not invent a source number or bury all sources at the end.
@@ -343,7 +343,7 @@ ${directLookup
     : brief
     ? `- Lead with the answer. Omit generic report sections, tables, and takeaways unless necessary.
 - Do not turn a single-fact lookup into a long report.`
-    : `- Use short descriptive headings when the answer has several distinct parts. Choose a comparison table or diagram when it makes the requested distinction easier to see.
+    : `- Use short descriptive headings when the answer has several distinct parts. Put a comparison in one place, then explain the mechanism or implications without reciting the comparison. A table or diagram should make a requested distinction easier to see. Add both only when each answers a different part of the request.
 - Let inline citations carry the source references. Add a bibliography, interactive example, or takeaway section only if it answers a distinct part of the request.
 - When nearby claims form one explanation and the same source supports all of them, put its citation after the supported group. Use a second source only for a distinct claim or materially independent evidence.
 - Note uncertainty when relevant sources conflict on a point the user asked about.`}`;

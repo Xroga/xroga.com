@@ -165,6 +165,11 @@ test('the model gets instructions from the native registry and may answer in tex
   assert.match(nativeOpenUiPrompt, /formulas, initial inputs and initial results/);
   assert.match(nativeOpenUiPrompt, /do not copy or paraphrase the explanation/);
   assert.match(nativeOpenUiPrompt, /Use Markdown\(_xroga_answer\) once in your visible layout/);
+  const exampleRoots = nativeOpenUiPrompt.match(/^root = Col\(\[.*$/gm) ?? [];
+  assert.equal(exampleRoots.length, 5);
+  for (const example of exampleRoots) {
+    assert.equal(example.match(/Markdown\(_xroga_answer\)/g)?.length, 1, example);
+  }
   assert.match(nativeOpenUiPrompt, /do not present a bundle-based break-even point or recommendation as fact/);
   assert.deepEqual(splitNativeOpenUiAnswer('Paris.'), { text: 'Paris.', program: '' });
   assert.deepEqual(splitNativeOpenUiAnswer('Paris.\n<<<XROGA_OP', true), { text: 'Paris.', program: '' });

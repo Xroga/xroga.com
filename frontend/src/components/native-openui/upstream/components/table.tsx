@@ -63,6 +63,7 @@ export const Table = defineComponent({
           <thead>
             <tr>
               {columns.map((column, i) => {
+                if (!column.trim()) return <td key={i} />;
                 // Verified links get separate focus targets beside the sort button.
                 const citations: ReactNode[] = [];
                 const label = inline(column, "table-heading", (number, href) => {

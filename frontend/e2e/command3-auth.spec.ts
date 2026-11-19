@@ -274,14 +274,14 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   const architectureReply = [
     '## Request architecture', 'The application checks tenant membership before reading rows.',
     architectureCaption,
-    '| Component | Role |\n| --- | --- |\n| Next.js | Application |\n| PostgreSQL | Data isolation |',
+    '| | Role |\n| --- | --- |\n| Next.js | Application |\n| PostgreSQL | Data isolation |',
     '```typescript\nconst boundary = "tenant_id";\n```',
   ].join('\n\n');
   const architectureProgram = [
     'root = Col([Section("Request architecture", [diagram]), roles, sample])',
     'diagram = Diagram("Request path", [{id: "app", label: "Next.js", level: 0}, {id: "database", label: "PostgreSQL", level: 1}], [{from: "app", to: "database", label: "User access token"}], "The app queries rows with the user access token.")',
     'roles = Section("Component roles", [table], "What each component does")',
-    'table = Table(["Component", "Role"], [["Next.js", "Application"], ["PostgreSQL", "Data isolation"]])',
+    'table = Table(["", "Role"], [["Next.js", "Application"], ["PostgreSQL", "Data isolation"]])',
     'sample = Code("const boundary = \\"tenant_id\\";", "typescript")',
   ].join('\n');
   const research = 'Research the official evidence and cite it.';
@@ -704,7 +704,12 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   await send(architecture);
   expect((await architectureHttp).ok()).toBe(true);
   const renderedArchitecture = page.getByRole('region', { name: 'Answer', exact: true }).filter({ hasText: 'Component roles' }).last();
-  await expect(renderedArchitecture.getByRole('region', { name: 'Answer table', exact: true })).toBeVisible({ timeout: 20_000 });
+  const architectureTable = renderedArchitecture.getByRole('region', { name: 'Answer table', exact: true });
+  await expect(architectureTable).toBeVisible({ timeout: 20_000 });
+  await expect(architectureTable.locator('thead td').first()).toBeEmpty();
+  await expect(architectureTable.getByRole('button')).toHaveCount(1);
+  await architectureTable.getByRole('button', { name: 'Role', exact: true }).press('Enter');
+  await expect(architectureTable.getByRole('columnheader', { name: 'Role' })).toHaveAttribute('aria-sort', 'ascending');
   await expect(renderedArchitecture.locator('.react-flow__edge')).toHaveCount(1);
   await expect(renderedArchitecture.getByText(architectureCaption, { exact: true })).toHaveCount(1);
   await expect(renderedArchitecture.locator('pre code')).toHaveText('const boundary = "tenant_id";');
