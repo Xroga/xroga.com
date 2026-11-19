@@ -41,3 +41,15 @@ Side tests with an emulated viewport mis-mapped clicks (a coordinate artifact of
 
 ## 4. Not done in this pass (stated, not hidden)
 Per-run structured timing waterfall with p50/p95 over a 20-run suite; the five- and six-worker overlap re-test; the other task classes (S0 to S5) before and after; a second unfamiliar editor; compact visual deltas instead of resending full screenshots (the token cache already absorbs most of the image cost, 84% cached); a side-panel main-thread profile. The extension already keeps a per-run phase timing summary on the device (`RunTimings`); it has not yet been exported for these runs.
+
+
+## 5. Runs F to I, 19 to 20 November (all real Chrome, real DeepSeek, staging 00146-wod; none produced a new SVG)
+| Run | Build change | Turns | Time | Result |
+| --- | --- | --- | --- | --- |
+| F | hidden-input fix | 84 | about 12 min | scripts typed into the painted editor; the agent then guessed API names (TypeError: not a callable function); no SVG |
+| G | + docs gate | 55+ | about 10 min | invented names again (CreateTextRange, RGBAssign); stopped |
+| H | + app-script-console skill | 44 | about 7 min | **the skill never matched**: its pattern contained backspace characters; no effect; the active tab also fell back to the first tab |
+| I | + tab refreshed each turn, progress checks at 20/35/50 turns | 51 | about 7.5 min | same invented names; skill still not selected |
+| J | + skill pattern fixed (test proves it is now selected) and a complete copy-and-run template using the documented API | 40+ | about 5 min | the agent left TraceDraw and searched Google for the API; stopped |
+Root cause found this round: the playbook meant to stop API guessing had never been selected (corrupted regex), so runs F to I tested nothing about it. After the fix (run J) the agent still wandered to a web search; the next lever must be code, not text: when a TraceDraw-like script error repeats, load the app docs page for the model automatically, and refuse web searches while a task tab is bound and its app is open.
+Reference sources (outside the repo): nanobrowser/nanobrowser 291d5f3927ee (Apache-2.0), alibaba/page-agent d8dd334487cb (MIT), derpx06/webgenie 56b5d8bccff3 (Apache-2.0), openbrowse-ai/openbrowse 9c1bec9d9278 (MIT). Read so far: WebGenie's replan decision table (guard refusal, two unvalidated steps, stalled repeats trigger a replan); Xroga already has repeat, no-effect and cycle guards (src/agent/guards.ts) and now a progress check at 20/35/50 turns. No upstream code was copied.
