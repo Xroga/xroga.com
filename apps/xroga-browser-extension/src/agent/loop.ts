@@ -522,6 +522,7 @@ ${ledger}` : ''),
     await this.#inlineAttachments();
     // A request that names its site starts there: the address is in the words, so no model turn is spent on deciding it.
     const asked = [...branch].reverse().find((e): e is EntryOf<'message'> => e.type === 'message' && e.message.role === 'user' && !e.appOwned);
+    if (asked) this.#askedText = userText(asked);
     // A request about the user's connected apps starts with the app tools: no page is opened or read for it, and the debugger is not
     // attached until a browser tool is actually used. The browser tools stay in the list for when no app tool fits.
     if (asked && this.options.tools.some(t => t.name === 'plugin_search') && isAppsFirstRequest(userText(asked))) {
@@ -681,6 +682,13 @@ ${ledger}` : ''),
       };
     }
     const args = (call.input ?? {}) as Record<string, unknown>;
+    if (call.toolName === 'tabs' && args.action === 'adopt') {
+      // Only a tab the user named: the words of the request must contain the match. A guess at one of the user's other tabs is refused.
+      const wanted = String(args.url ?? '').trim().toLowerCase();
+      if (wanted.length < 3 || !this.#askedText.toLowerCase().includes(wanted)) {
+        return { call, kind, isError: true, text: 'refused: an open tab can be used only when the user named it, and the request does not contain that text. Work in the current tab, or open the site with tabs open or navigate.' };
+      }
+    }
     if (call.toolName === 'tabs' && args.action === 'close') {
       const tabId = (args.tabId as number | undefined) ?? this.#activeTab;
       if (this.#debt.some(d => d.state === 'open' && d.tabId === tabId)) {
@@ -1367,6 +1375,7 @@ ${ledger}` : ''),
    * Tools found during the run (the connected-app tools a search returned) join the tool list for the next turn, under their own names.
    * A tool already in the list is never replaced, and the run holds at most 40 of them.
    */
+  #askedText = '';
   #canvasOffered = false;
   /** Offers `find_color` once, when an observation shows a canvas with little else. Returns true the first time. */
   #offerCanvasTools(text: string | undefined): boolean {

@@ -38,6 +38,32 @@ export async function tabs(ctx: ToolContext, args: TabsArgs): Promise<ToolOutcom
       if (await ctx.session.shouldReveal(args.tabId)) await ctx.controller.host.tabs.activate(args.tabId);
       break;
     }
+    case 'adopt': {
+      // Uses a tab the user already has open, when the user named it. Only tabs of the session's window whose title or address
+      // contains the text are considered, and only those are ever named in a reply: other tabs of the user stay unseen.
+      const needle = (args.url ?? '').trim().toLowerCase();
+      if (needle.length < 3) throw new LayerError('INVALID_ARGUMENT', 'tabs adopt needs url: part of the title or address of the tab the user named');
+      const home = ctx.session.activeTabId === null ? null : await ctx.controller.host.tabs.get(ctx.session.activeTabId);
+      const open = (await ctx.controller.host.tabs.list()).filter(
+        t => (!home || t.windowId === home.windowId) && /^https?:/i.test(t.url) && (t.title.toLowerCase().includes(needle) || t.url.toLowerCase().includes(needle)),
+      );
+      const inSession = open.filter(t => ctx.session.hasTab(t.tabId));
+      const fresh = open.filter(t => !ctx.session.hasTab(t.tabId));
+      if (fresh.length === 0) {
+        if (inSession.length === 1) {
+          ctx.session.setActive(inSession[0].tabId);
+          if (await ctx.session.shouldReveal(inSession[0].tabId)) await ctx.controller.host.tabs.activate(inSession[0].tabId);
+          break;
+        }
+        throw new LayerError('NO_MATCH', `No tab of this window has ${quote(args.url ?? '', 40)} in its title or address. Open it with tabs open or navigate.`);
+      }
+      if (fresh.length > 1) {
+        throw new LayerError('AMBIGUOUS_TARGET', `${fresh.length} open tabs match ${quote(args.url ?? '', 40)}: ${fresh.slice(0, 5).map(t => `tab ${t.tabId} ${quote(t.title || '(untitled)', 50)}`).join('; ')}. Repeat with a more specific match.`);
+      }
+      ctx.session.shareTab(fresh[0].tabId, 'shared');
+      if (await ctx.session.shouldReveal(fresh[0].tabId)) await ctx.controller.host.tabs.activate(fresh[0].tabId);
+      break;
+    }
     case 'open':
       return openTab(ctx, args);
     case 'close':

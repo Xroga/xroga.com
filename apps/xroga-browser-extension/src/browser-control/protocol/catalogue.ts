@@ -125,7 +125,7 @@ export const TOOL_SPECS: ToolSpec[] = [
   },
   {
     name: 'drag',
-    description: 'Press on one element, move to another and release: sortable lists, sliders, boards, drop zones.',
+    description: 'Press on one element, move to another and release (lists, sliders, boards).',
     args: DragArgsSchema,
     readOnly: false,
     capability: 'core',
@@ -133,7 +133,7 @@ export const TOOL_SPECS: ToolSpec[] = [
   },
   {
     name: 'canvas',
-    description: 'Click, double-click, right-click, hover or drag at a place on a canvas the page paints itself (an editor, a map), given as fractions of the screenshot. Works only on a canvas; use click for page elements.',
+    description: 'Click, hover or drag at a place on a page-painted canvas (editor, map), as fractions of the screenshot. Canvas only; use click for elements.',
     args: CanvasArgsSchema,
     readOnly: false,
     capability: 'core',

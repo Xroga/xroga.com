@@ -68,6 +68,12 @@ const PERMISSIONS = `## What the user decides
 function toolGuide(tools: string[]): string {
   const has = (t: string) => tools.includes(t);
   const lines = ['## Tools', '', `You have: ${tools.join(', ')}.`];
+  // Measured on 159 real turns: the provider wait is 91% of a turn and the slow tail is long prose, not tool calls.
+  lines.push('- Between tool calls write nothing, or one short sentence. Do not narrate coordinates, re-derive a layout or restate the plan in prose: put what matters in the tool arguments.');
+  if (has('canvas') && has('batch'))
+    lines.push('- On a canvas, put the steps you already know in ONE batch call (for example select the tool, then drag, then pick the colour) and take a screenshot afterwards to check, instead of one screenshot and one step per turn.');
+  if (has('tabs'))
+    lines.push('- tabs adopt (url = part of the title or address) uses a tab the user already has open in this window and named, such as "use my TraceDraw tab". Use it instead of opening a second copy; it refuses a tab the user did not name.');
   if (has('find'))
     lines.push('- find locates elements by role, name or text in the latest observation, without a full outline.');
   if (has('read')) lines.push('- read returns a page or an element as Markdown, for reading text. Headings come back as # lines, so when you are asked for a heading, title or exact wording, read the page and quote it instead of inferring it from an outline.');

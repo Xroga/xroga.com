@@ -257,7 +257,7 @@ export async function runPlan(steps: Step[], opts: PlanOptions): Promise<{ text:
 
 /** The tools a batch step may name: the page tools of the layer. Everything else (agent tools, `upload`, `done`) runs as an ordinary call. */
 export const BATCH_TOOLS: ReadonlySet<string> = new Set([
-  'snapshot', 'find', 'read', 'wait', 'click', 'set', 'type', 'press', 'navigate', 'fill_form', 'scroll', 'hover', 'drag', 'tabs', 'handle_dialog',
+  'snapshot', 'find', 'read', 'wait', 'click', 'set', 'type', 'press', 'navigate', 'fill_form', 'scroll', 'hover', 'drag', 'canvas', 'tabs', 'handle_dialog',
 ]);
 
 export const BATCH_TOOL = {

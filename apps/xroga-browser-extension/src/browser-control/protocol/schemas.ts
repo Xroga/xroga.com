@@ -154,9 +154,9 @@ const placeOnPage = z.tuple([z.number().min(0).max(1), z.number().min(0).max(1)]
 export const CanvasArgsSchema = z.strictObject({
   ...actionCommon,
   action: z.enum(['click', 'double_click', 'right_click', 'hover', 'drag']),
-  at: placeOnPage.describe('Where, as fractions [x, y] of the page as the last screenshot shows it'),
-  to: placeOnPage.optional().describe('For drag: where it ends'),
-  intent: z.string().min(3).max(120).describe('What this does, for example "select the rectangle tool"'),
+  at: placeOnPage.describe('[x, y] fractions of the screenshot'),
+  to: placeOnPage.optional().describe('drag end'),
+  intent: z.string().min(3).max(120).describe('what this does'),
 });
 
 export const ScrollArgsSchema = z.strictObject({
@@ -185,7 +185,7 @@ export const NavigateArgsSchema = z.strictObject({
 
 export const TabsArgsSchema = z.strictObject({
   intent: readCommon.intent,
-  action: z.enum(['list', 'open', 'select', 'close']),
+  action: z.enum(['list', 'open', 'select', 'close', 'adopt']),
   url: z.string().optional(),
   tabId: z.number().int().optional(),
 });
