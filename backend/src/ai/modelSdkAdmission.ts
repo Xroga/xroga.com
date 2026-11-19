@@ -13,6 +13,7 @@ interface Admission {
   used:boolean;
   reservation?: {userId:string;reservationId:string};
   completion?:{result:SdkCompletion;publish:()=>void;checkCancellation:()=>void};
+  emptyCompletion?: { result: SdkCompletion; error: Error; checkCancellation: () => void };
 }
 const issued=new WeakMap<ModelWireGuard,Admission>();
 export function modelAdmissionDenied():never {
@@ -29,6 +30,7 @@ export function registerModelSdkAdmission(guard:ModelWireGuard,modelId:ModelId,c
   return {
     revoke(){issued.delete(guard);},
     completion(){return admission.completion;},
+    emptyCompletion(){return admission.emptyCompletion;},
   };
 }
 
@@ -44,14 +46,24 @@ export function requireModelSdkAdmission(guard:ModelWireGuard|undefined,modelId:
   const admission=guard?issued.get(guard):undefined;
   if(!admission||admission.used||admission.modelId!==modelId||admission.credentialOverride!==credentialOverride)modelAdmissionDenied();
   admission.used=true;
-  return {complete(result:SdkCompletion,publish:()=>void,checkCancellation:()=>void){
-    if(!guard||issued.get(guard)!==admission||admission.completion||result.modelId!==modelId)modelAdmissionDenied();
-    let published=false;
-    admission.completion={result:{...result},checkCancellation,publish:()=>{
-      if(published)modelAdmissionDenied();published=true;
-      try{publish();}
-      catch{throw Object.assign(Error('The model completed, but output delivery failed. Another provider attempt was not authorized.'),
-        {code:'MODEL_PUBLICATION_FAILED',status:503,providerCompleted:true,retryable:false});}
-    }};
-  }};
+  function assertCurrent(result: SdkCompletion) {
+    if (!guard || issued.get(guard) !== admission || admission?.completion ||
+        admission?.emptyCompletion || result.modelId !== modelId) modelAdmissionDenied();
+  }
+  return {
+    complete(result:SdkCompletion,publish:()=>void,checkCancellation:()=>void){
+      assertCurrent(result);
+      let published=false;
+      admission.completion={result:{...result},checkCancellation,publish:()=>{
+        if(published)modelAdmissionDenied();published=true;
+        try{publish();}
+        catch{throw Object.assign(Error('The model completed, but output delivery failed. Another provider attempt was not authorized.'),
+          {code:'MODEL_PUBLICATION_FAILED',status:503,providerCompleted:true,retryable:false});}
+      }};
+    },
+    recordEmptyCompletion(result: SdkCompletion, error: Error & { code: 'EMPTY_PROVIDER_RESPONSE' }, checkCancellation: () => void) {
+      assertCurrent(result);
+      admission.emptyCompletion = { result: { ...result }, error, checkCancellation };
+    },
+  };
 }

@@ -336,3 +336,10 @@ export function presentedAnswerMaxTokens(plan: PresentationPlan | undefined): nu
   const wanted = 1536 + 700 * plan.length + 500 * dense;
   return Math.max(4096, Math.ceil(wanted / 512) * 512);
 }
+
+/** DeepSeek bills reasoning and the visible answer against one wire limit. */
+export const NATIVE_WORKSPACE_REASONING_RESERVE_TOKENS = 16_384;
+
+export function nativePresentedAnswerMaxTokens(plan: PresentationPlan | undefined): number {
+  return NATIVE_WORKSPACE_REASONING_RESERVE_TOKENS + presentedAnswerMaxTokens(plan);
+}

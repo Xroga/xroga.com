@@ -67,14 +67,15 @@ test('one exact research approval completes its original rich answer, saves evid
     assert.doesNotMatch(JSON.stringify(body.messages),/MUST_NOT_LEAVE|substituted planner context/);
     assert.match(JSON.stringify(body.messages),/UNRELATED_PRIOR_NASA_TURN/);
     assert.equal(body.messages.length,3);
-    assert.equal(body.max_tokens,16384);
     assert.equal(body.reasoning_effort,undefined);
     if(mode==='automatic'){
+     assert.equal(body.max_tokens,16_384);
      assert.match(body.messages[0].content,/Return only the answer, without an OpenUI program/);
      assert.doesNotMatch(body.messages[0].content,/<<<XROGA_OPENUI_V1>>>/);
      assert.match(body.messages[2].content,/Page publication \(source metadata\): 2023-01-01T12:00:00\.000Z/);
      assert.match(body.messages[2].content,/Never average or combine stale/);
     }else{
+     assert.equal(body.max_tokens,20_480);
      assert.match(body.messages[0].content,/<<<XROGA_OPENUI_V1>>>/);
      assert.doesNotMatch(body.messages[2].content,/one or two short paragraphs/);
     }

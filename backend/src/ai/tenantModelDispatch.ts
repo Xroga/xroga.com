@@ -148,7 +148,9 @@ export async function withTenantModelReservation<T extends ProviderUsageResult>(
   };
   checkAuthority();
   let sdk:ReturnType<typeof registerModelSdkAdmission>|undefined;
-  const result=await withProviderReservation({userId:context.userId,modelId,
+  const accounted = await withProviderReservation<ProviderUsageResult & (
+    { accepted: true; value: T } | { accepted: false; error: unknown }
+  )>({userId:context.userId,modelId,
     escalation: scope.escalation,
     estimatedInputTokens,maximumOutputTokens,purpose,idempotencyKey:input.idempotencyKey,
     execute:async(reservation)=>{
@@ -183,23 +185,45 @@ export async function withTenantModelReservation<T extends ProviderUsageResult>(
           if(!active)denied();
         };
         sdk=registerModelSdkAdmission(beforeDispatch,modelId,credential??undefined,{userId:context.userId,reservationId:reservation.id});
-        const result=await execute({payload:structuredClone(payload),credentialOverride:credential??undefined,beforeDispatch});
+        const attempt = await execute({payload:structuredClone(payload),credentialOverride:credential??undefined,beforeDispatch}).then(
+          value => ({ accepted: true as const, value }),
+          error => ({ accepted: false as const, error }),
+        );
+        // Only the admitted, verified SDK result can settle an empty answer.
+        // Keep the original delivery failure separate from the accounting data.
+        const empty = sdk.emptyCompletion();
+        if (empty) return { ...empty.result, accepted: false, error: attempt.accepted ? empty.error : attempt.error };
+        if (!attempt.accepted) throw attempt.error;
+        const result = attempt.value;
         const completed=sdk.completion()?.result;
         if(completed&&['inputTokens','outputTokens','cachedInputTokens','reasoningTokens','providerRequestId','providerCostMicroUsd'].some(key=>
           result[key as keyof ProviderUsageResult]!==completed[key as keyof ProviderUsageResult]))throw new PostCompletionAccountingError();
-        return result;
+        return { ...result, accepted: true, value: result };
       }finally{active=false;sdk?.revoke();}
     }});
   const completion=sdk?.completion();
-  if(completion){
-    try {
+  try {
+    if (accounted.accepted && completion) {
+      const result = accounted.value;
       if(result.inputTokens!==completion.result.inputTokens||result.outputTokens!==completion.result.outputTokens
         ||result.providerCostMicroUsd!==completion.result.providerCostMicroUsd
         ||('modelId' in result&&result.modelId!==modelId))throw Error('Changed completion usage');
+    }
+    const usage = accounted.accepted ? completion?.result : accounted;
+    if (usage) {
       await persistUsageAccounting(context,{receiptId:randomUUID(),modelId,poolRole:poolRoleFor(modelId),
-        inputTokens:completion.result.inputTokens,outputTokens:completion.result.outputTokens,
-        costUsd:actualProviderCostMicroUsd(completion.result)/1_000_000});
-    }catch{throw new PostCompletionAccountingError();}
+        inputTokens:usage.inputTokens,outputTokens:usage.outputTokens,
+        costUsd:actualProviderCostMicroUsd({ ...usage, modelId })/1_000_000});
+    }
+  } catch { throw new PostCompletionAccountingError(); }
+  if (!accounted.accepted) {
+    const empty = sdk?.emptyCompletion();
+    // Preserve a caller's timeout or cancellation when it already won.
+    if (empty && accounted.error === empty.error) empty.checkCancellation();
+    throw accounted.error;
+  }
+  const result = accounted.value;
+  if (completion) {
     completion.checkCancellation();validateResponse?.(result);completion.publish();
   }
   return result;

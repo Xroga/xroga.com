@@ -77,7 +77,7 @@ test('actual pipeline, completion and SoftwareAgent calls bind tenant, account r
         assert.equal(body.response_format,undefined,'Native OpenUI uses the same request, without the old JSON schema');
         assert.match(body.messages[0].content,/<<<XROGA_OPENUI_V1>>>/);
         assert.equal(body.reasoning_effort, undefined, 'Rich native answers retain the model reasoning default');
-        assert.ok(body.max_tokens >= 16384, 'Reasoning and complete output share the reserved token allowance');
+        assert.ok(body.max_tokens >= 20_480, 'Rich native answers reserve output beyond the reasoning allowance');
       }
       if(mode==='native-plain') {
         assert.equal(body.reasoning_effort, undefined, 'Plain presentation preserves the provider reasoning default');
@@ -466,8 +466,8 @@ test('actual pipeline, completion and SoftwareAgent calls bind tenant, account r
     prompt: richPrompt, goalContract: richGoal });
   const plannedBudget = presentedAnswerMaxTokens(prepareAnswerCoverage(richPrompt, richGoal.presentation, richGoal.answerObligations).plan);
   assert.ok(plannedBudget > 8192);
-  assert.equal(lastReservedOutput, Math.max(16384, plannedBudget));
-  assert.equal(lastProviderMaxTokens, Math.max(16384, plannedBudget));
+  assert.equal(lastReservedOutput, 16_384 + plannedBudget);
+  assert.equal(lastProviderMaxTokens, lastReservedOutput);
   assert.equal(effects, beforeRich + 1);
   assert.equal(atomicReceipts, receiptsRich + 1);
 });

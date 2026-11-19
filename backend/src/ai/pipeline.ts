@@ -28,7 +28,7 @@ import { nativeDocumentDelivery, nativeDocumentPrompt, nativeDocumentRequiresAtt
 import { completeNativeWorkspaceAnswer, usesNativeWorkspacePresentation } from './nativeOpenUiWorkspace.js';
 import { bindCitationLinks, researchCitationIssues, RESEARCH_ANSWER_MAXIMUM_MICRO_USD } from './researchAnswer.js';
 import { nativeOpenUiPlainPrompt, workspaceNativeOpenUiPrompt } from './nativeOpenUiPrompt.js';
-import { assessPresentationCoverage, createPresentationProjection, presentationRequestInstructions, presentationResponseFormat, presentedAnswerMaxTokens, type PresentationResponseFormat } from './responsePresentation.js';
+import { assessPresentationCoverage, createPresentationProjection, nativePresentedAnswerMaxTokens, NATIVE_WORKSPACE_REASONING_RESERVE_TOKENS, presentationRequestInstructions, presentationResponseFormat, presentedAnswerMaxTokens, type PresentationResponseFormat } from './responsePresentation.js';
 import { prepareAnswerCoverage, requiredNativeFormats } from './answerCoverage.js';
 import {prepareSonnetConversation,requestedSonnetReason} from './sonnetApproval.js';
 import {
@@ -1029,7 +1029,7 @@ export async function runChatPipeline(opts: {
       [{ role: 'system', content: system }, ...historyMsgs, userMessage],
       {
         userId: opts.userId,
-        maxTokens: native ? Math.max(16384, presentedAnswerMaxTokens(attachmentPlan)) : 6144,
+        maxTokens: native ? nativePresentedAnswerMaxTokens(attachmentPlan) : 6144,
         tenantContext:opts.tenantContext,
         databaseProjectId:opts.modelScope?.projectId,modelRunAttempt:opts.modelScope?.runAttempt,modelRepository:opts.modelScope?.repository,
         temperature: 0.35,
@@ -1168,7 +1168,7 @@ export async function runChatPipeline(opts: {
   const native = usesNativeWorkspacePresentation(route.builder);
   const formats = native ? requiredNativeFormats(opts.prompt) : [];
   // An already authorized, single-fact public lookup needs only citation-ready
-  // prose. Keep the model, reasoning and token budget used by rich answers.
+  // prose. Keep the same model and its default reasoning mode.
   const directPublicLookup = native && publicWebRetrieved === true
     && opts.goalContract?.freshnessRequirement === 'CURRENT_REQUIRED'
     && !opts.goalContract.deliverables.length && !formats.length
@@ -1205,14 +1205,16 @@ export async function runChatPipeline(opts: {
     : chatPresentationSystem(opts.prompt) + (presentation?.length ? '\n\n' + presentationRequestInstructions(presentation) : '');
   const system = currentPublicProductTruth(truthAuthorities) + '\n\n' + instructions
     + (native ? downloadInstruction : '');
+  const nativeAnswerBudget = plainNative || directPublicLookup
+    ? Math.max(NATIVE_WORKSPACE_REASONING_RESERVE_TOKENS, presentedAnswerMaxTokens(answerContract.plan))
+    : nativePresentedAnswerMaxTokens(answerContract.plan);
   const result = await callBuilderStream(
     route.builder,
     [{ role: 'system', content: system }, ...historyMsgs, { role: 'user', content: userContent }],
     {
       userId: opts.userId,
-      // The plain-answer route changes presentation only. Keep the provider's
-      // reasoning default and reserve room for reasoning and the full answer.
-      maxTokens: native ? Math.max(16384, presentedAnswerMaxTokens(answerContract.plan))
+      // Detailed Workspace answers need room for both reasoning and finished content.
+      maxTokens: native ? nativeAnswerBudget
         : opts.approvedResearch ? 4096 : route.kind === 'research'
         ? researchAnswerMaxTokens(opts.prompt)
         : presentedAnswerMaxTokens(answerContract.plan),
