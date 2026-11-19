@@ -22,6 +22,36 @@ test('native Markdown references the complete readable answer without generating
   assert.ok(invalid.response.includes(prose), 'Invalid visuals retain every readable paragraph');
 });
 
+test('long bound Markdown survives validation and Share without expanding other widget strings', () => {
+  const prose = Array.from({ length: 58 }, (_, index) =>
+    '## Section ' + (index + 1) + '\n\n'
+    + 'Describe the handoff, document decisions, record unresolved questions and identify the next owner. '
+    + 'This explanation is saved with the answer so it stays readable when the conversation is reopened.').join('\n\n');
+  assert.ok(prose.length > 8000);
+  const program = 'root = Col([Markdown(_xroga_answer), Text("Keep the handoff note.")])';
+  const answer = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + program, 'stop');
+  assert.deepEqual(answer.completion, { status: 'complete' });
+  assert.ok(answer.response.startsWith(prose + '\n\n'));
+  const share = buildNativeOpenUiShare(answer.response, answer.responseSource.text);
+  assert.ok(share);
+  assert.equal(readNativeOpenUiShare(share)?.text, answer.response);
+  assert.equal(readNativeOpenUiShare(share)?.program, answer.responseSource.text);
+  assert.deepEqual(validateNativeOpenUi(answer.responseSource.text), { ok: true });
+
+  for (const longerWidget of [
+    'root = Col([Text(_xroga_answer)])',
+    'root = Col([Markdown(alias)])\nalias = _xroga_answer',
+    'root = Col([Markdown(' + JSON.stringify(prose) + ')])',
+  ]) {
+    assert.deepEqual(validateNativeOpenUi(bindNativeAnswerText(longerWidget, prose)),
+      { ok: false, reason: 'authority' });
+  }
+  const unsafe = bindNativeAnswerText(program + '\nunreachable = Fetch("https://example.invalid")', prose);
+  assert.deepEqual(validateNativeOpenUi(unsafe), { ok: false, reason: 'authority' });
+  assert.deepEqual(validateNativeOpenUi(bindNativeAnswerText(program, prose.repeat(2))),
+    { ok: false, reason: 'budget' });
+});
+
 test('readable snapshots do not repeat native text because emphasis differs', () => {
   const prose = '**Basic** costs $10/month.\n\nKey points:\n- **One person:** Basic includes one seat.\n- Keep this distinct caveat.\n\nPrice is $10 [1].';
   const program = 'root = Col([Text("Basic costs $10/month."), Text("One person: Basic includes one seat."), Text("Price is $10."), Text("Native-only detail stays readable.")])';
@@ -155,6 +185,7 @@ test('the model gets instructions from the native registry and may answer in tex
     assert.match(prompt, /Verify the value, unit, and reference point, baseline, or denominator together/);
     assert.match(prompt, /NEXT_PUBLIC_ is for values exposed to the browser/);
     assert.match(prompt, /carry precautions into every step/);
+    assert.match(prompt, /Put required reassembly, guards, and safety checks before each powered test/);
     assert.match(prompt, /Required units must cover the whole requested quantity/);
     assert.match(prompt, /React supports Date values and Server Functions/);
   }
@@ -185,6 +216,7 @@ test('long workflow guidance distinguishes reading order, handoffs, responsibili
   assert.match(nativeOpenUiPlainPrompt, /clearly labeled worked example/);
   assert.match(prompt, /responsibility table can show what is automated and what needs human review/);
   assert.match(prompt, /diagram shows where the work goes next/);
+  assert.match(prompt, /Keep that order in the steps, examples, and checklist/);
   assert.match(prompt, /Lucide icon on a section or diagram node when it helps distinguish roles/);
 
   const prose = [

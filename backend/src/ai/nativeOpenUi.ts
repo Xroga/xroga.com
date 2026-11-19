@@ -506,8 +506,9 @@ export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<s
     stage = 'authority';
     let budget = 6000;
     const reviewStrings = new Set<string>();
+    const boundAnswer = symbols.get('_xroga_answer');
     let reason: Extract<NativeUiValidation, { ok: false }>['reason'] = 'authority';
-    function visit(node: ASTNode, active: Set<string>, depth = 0): boolean {
+    function visit(node: ASTNode, active: Set<string>, depth = 0, allowBoundAnswer = false): boolean {
       expandedDepth = Math.max(expandedDepth, depth);
       if (--budget < 0 || depth > MAX_EXPANDED_EXPRESSION_DEPTH) {
         workLimit = depth > MAX_EXPANDED_EXPRESSION_DEPTH ? 'expression_depth' : 'statement_nodes';
@@ -528,7 +529,8 @@ export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<s
             authorityIssue = 'unknown_capability';
             return false;
           }
-          return node.args.every(next);
+          return node.args.every((arg, index) =>
+            visit(arg, active, depth + 1, node.name === 'Markdown' && index === 0));
         case 'Ref':
         case 'StateRef': {
           const target = symbols.get(node.n);
@@ -537,7 +539,8 @@ export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<s
             referenceIssue = target ? 'cycle' : 'missing';
             return false;
           }
-          return visit(target, new Set([...active, node.n]), depth + 1);
+          return visit(target, new Set([...active, node.n]), depth + 1,
+            allowBoundAnswer && node.k === 'Ref' && target === boundAnswer);
         }
         case 'Obj': return node.entries.length <= 120 && node.entries.every(([key, value]) => safeKey(key) && next(value));
         case 'Arr': return node.els.length <= 160 && node.els.every(next);
@@ -549,7 +552,9 @@ export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<s
         case 'Num': return Number.isFinite(node.v) && Math.abs(node.v) <= 1e15;
         case 'Str':
           reviewStrings.add(node.v);
-          return node.v.length <= 8000;
+          // The full Markdown answer is already bounded by the program size.
+          // Other widget strings and alternate uses keep the smaller limit.
+          return node.v.length <= 8000 || allowBoundAnswer && node === boundAnswer;
         case 'Bool': case 'Null': return true;
         default: return false;
       }
@@ -565,7 +570,7 @@ export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<s
         authorityIssue = 'non_scalar_state';
         return fail('authority');
       }
-      if (!visit(node, new Set([key]))) {
+      if (!visit(node, new Set([key]), 0, node === boundAnswer)) {
         if (reason === 'authority') authorityIssue ??= 'unsafe_expression';
         return fail(reason);
       }
