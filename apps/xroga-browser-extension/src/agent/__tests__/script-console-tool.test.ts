@@ -37,11 +37,11 @@ async function run(layer: FakeLayer, replies: Array<{ toolCalls: Array<{ name: s
   return { end, scripted, results: results as Array<{ toolName: string; text: string; isError?: boolean }> };
 }
 
-const layerWith = (output: string) => new FakeLayer({
+const layerWith = (output: string) => { let reads = 0; return new FakeLayer({
   wait: () => ok('wait · met'),
   canvas: args => ({ ok: true, text: `canvas ${String(args.action)} · changed`, receipt: receipt('canvas') }),
-  read: () => ok(`Output: ${output}`),
-});
+  read: () => ok(reads++ === 0 ? 'Output: (empty)' : `Output: ${output}`),
+}); };
 
 describe('run_script_console in a run', () => {
   it('can be selected and runs every phase through the layer in one model turn', async () => {

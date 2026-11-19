@@ -604,8 +604,10 @@ ${ledger}` : ''),
     // of this window and refuses ambiguity, and nothing is opened or navigated when it is found.
     let adopted = false;
     if (asked && !earlierResults) {
+      const tried: string[] = [];
       for (const name of namedTabCandidates(userText(asked))) {
         const r = await this.options.layer.call('tabs', { action: 'adopt', url: name, intent: `Use the open ${name} tab` }, this.options.signal).catch(() => undefined);
+        if (!r?.ok) tried.push(`${name}: ${(r?.error?.message ?? r?.text ?? 'no answer').split('\n')[0].slice(0, 160)}`);
         if (r?.ok) {
           adopted = true;
           this.preActions.push('tabs');
@@ -617,6 +619,8 @@ ${ledger}` : ''),
           break;
         }
       }
+      // A named tab that could not be adopted is said once, with the reason, so the model neither guesses nor starts over on a blank tab.
+      if (!adopted && tried.length) await this.writer.appNote(`The request names an open tab, but it could not be adopted (${tried.join('; ')}). Call tabs list to see the session's tabs before deciding.`);
     }
     const direct = asked && !earlierResults && !adopted ? directNavigation(userText(asked)) : null;
     if (direct) {
