@@ -1554,6 +1554,14 @@ router.post(
             )
           : message.trim();
 
+      const automaticSearch = !businessEvidence && !businessToolkit && !projectEvidence
+        ? new AbortController()
+        : undefined;
+      const onClientClose = () => automaticSearch?.abort();
+      if (automaticSearch) {
+        if (res.destroyed) onClientClose();
+        else res.once('close', onClientClose);
+      }
       const result =
         await runChatPipeline(
           {
@@ -1576,8 +1584,9 @@ router.post(
                   projectEvidence,
                 }
               : {}),
+            ...(automaticSearch ? { autoPublicSearch: true, autoPublicSearchSignal: automaticSearch.signal } : {}),
           },
-        );
+        ).finally(() => res.off('close', onClientClose));
 
       return res.json(
         {
@@ -1598,6 +1607,7 @@ router.post(
           webSources:
             result.webSources,
 
+          ...(result.publicWebRetrieved ? { publicWebRetrieved: true } : {}),
           engine:
             'xroga',
 

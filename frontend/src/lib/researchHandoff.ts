@@ -16,6 +16,7 @@ interface Message {
   role: string;
   content: string;
   researchReceiptId?: string;
+  publicWebRetrieved?: true;
   featureOutput?: unknown;
   webSources?: Array<{ title: string; url: string; snippet: string }>;
 }
@@ -25,12 +26,12 @@ export function isResearchReceiptId(value: unknown): value is string {
 }
 
 /** Only a settled research handoff can distinguish retrieved evidence from ordinary links. */
-export function retrievedWebSourceCount(message: Pick<Message, 'role' | 'researchReceiptId' | 'webSources'>): number {
-  if (message.role !== 'assistant' || !isResearchReceiptId(message.researchReceiptId)) return 0;
+export function retrievedWebSourceCount(message: Pick<Message, 'role' | 'researchReceiptId' | 'publicWebRetrieved' | 'webSources'>): number {
+  if (message.role !== 'assistant' || (message.publicWebRetrieved !== true && !isResearchReceiptId(message.researchReceiptId))) return 0;
   return new Set((message.webSources ?? []).flatMap(source => safeSourceUrl(source.url) ?? [])).size;
 }
 
-const UNAVAILABLE_NOTICE = '\n\nThe approved research result is currently unavailable. Xroga has not repeated the search or charged for another request.';
+const UNAVAILABLE_NOTICE = '\n\nThe saved research result is currently unavailable.';
 export function markResearchUnavailable<T extends Message>(message: T, confirmationId: string): T {
   if (pendingResearchConfirmation(message) !== confirmationId || message.content.endsWith(UNAVAILABLE_NOTICE)) return message;
   return withContent(message, message.content + UNAVAILABLE_NOTICE);
@@ -55,6 +56,25 @@ function withContent<T extends Message>(message: T, content: string): T {
   return { ...message, content };
 }
 
+function withoutSettledResearchReview<T extends Message>(message: T, confirmationId: string): T {
+  const reviewUrl = '/dashboard/actions/confirm/' + confirmationId;
+  const strip = (text: string) => text.split(/\n\s*\n/).filter(block => !(
+    block.includes(reviewUrl) && /^\s*(?:Review the (?:exact (?:external )?research request|request before Xroga searches the web)|Research requires approval\.)/i.test(block)
+  )).join('\n\n');
+  const content = strip(message.content);
+  if (message.content === content) return message;
+  const output = parseXrogaOutput(message.featureOutput);
+  if (output?.composition === 'source-order') {
+    const blocks = output.blocks.flatMap((block): typeof output.blocks => {
+      if (block.type !== 'narrative') return [block];
+      const text = strip(block.text);
+      return text ? [{ ...block, text }] : [];
+    });
+    return { ...message, content, featureOutput: { ...output, blocks } };
+  }
+  return withContent(message, content);
+}
+
 export function pendingResearchConfirmation(message: Message): string | null {
   if (message.role !== 'assistant' || message.researchReceiptId || !/research|web search|live evidence/i.test(message.content)) return null;
   const links = [...message.content.matchAll(/\/dashboard\/actions\/confirm\/([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})(?![a-f0-9-])/gi)];
@@ -69,19 +89,20 @@ export function attachResearchResult<T extends Message>(message: T, result: Rese
     return {...message,content:answer.content,featureOutput:answer.output??{type:'chat',content:answer.content},webSources:result.answer.webSources,researchReceiptId:result.receiptId};
   }
   if (result.answerFailure === 'NO_QUALIFYING_SOURCES' && !result.sources.length) {
-    const content = 'The approved search found no sources that met your request. Xroga could not produce a verified answer. No second search was made.';
+    const content = 'I found no sources that met your request, so I couldn’t verify an answer.';
     return { ...message, content, featureOutput: { type: 'chat', content }, webSources: [], researchReceiptId: result.receiptId };
   }
   const escape = (s: string) => s.replace(/([\\`*_[\]<>])/g, '\\$1');
   const evidence = result.sources.map(source => `### ${escape(source.title)}\n\n${source.snippet.split('\n').map(line => `> ${line}`).join('\n')}\n\n[${escape(source.title)}](<${source.url}>)`).join('\n\n');
-  const original = message.content.endsWith(UNAVAILABLE_NOTICE) ? message.content.slice(0, -UNAVAILABLE_NOTICE.length) : message.content;
-  const content = [original, '## Approved research results',
-    'The approved request has completed. The following source excerpts are quoted third-party material. No additional search was made.',
-    result.text, evidence || (!result.text ? 'The provider returned no usable public sources.' : ''),
-    result.answerFailure?'The source retrieval completed, but the full answer could not be completed safely. Its evidence and accounting are preserved. No search or model request was repeated.':'',
-    result.omittedSourceCount ? `${result.omittedSourceCount} source entries were not displayed because their URLs failed validation.` : '',
+  const settledMessage = withoutSettledResearchReview(message, result.confirmationId);
+  const original = settledMessage.content.endsWith(UNAVAILABLE_NOTICE)
+    ? settledMessage.content.slice(0, -UNAVAILABLE_NOTICE.length)
+    : settledMessage.content === UNAVAILABLE_NOTICE.trim() ? '' : settledMessage.content;
+  const content = [original, '## Web sources',
+    result.answerFailure ? 'I found sources, but couldn’t finish the answer.' : '',
+    result.text, evidence || (!result.text ? 'I couldn’t find usable public sources.' : ''),
   ].filter(Boolean).join('\n\n');
   const sources = new Map((message.webSources ?? []).map(source => [source.url, source]));
   for (const source of result.sources) if (!sources.has(source.url)) sources.set(source.url, source);
-  return { ...withContent(message, content), webSources: [...sources.values()], researchReceiptId: result.receiptId };
+  return { ...withContent(settledMessage, content), webSources: [...sources.values()], researchReceiptId: result.receiptId };
 }

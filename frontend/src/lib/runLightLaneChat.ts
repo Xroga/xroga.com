@@ -11,14 +11,8 @@ export interface LightLaneChatResult {
   completion?: import('./api').Phase1ChatResult['completion'];
   responseSource?: import('./api').Phase1ChatResult['responseSource'];
   response: string;
-  webSources?: Array<{
-    title: string;
-    url: string;
-    snippet: string;
-    source: string;
-    thumbnailUrl?: string;
-    siteDomain?: string;
-  }>;
+  webSources?: import('./api').Phase1ChatResult['webSources'];
+  publicWebRetrieved?: true;
   hackathonBrief?: unknown;
   usage?: {
     inputTokensUsed: number;

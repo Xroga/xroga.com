@@ -11,7 +11,7 @@ const result = { confirmationId: id, receiptId: 'receipt', text: '', omittedSour
 test('attaches evidence only to the exact originating approval and keeps original context', () => {
   assert.equal(pendingResearchConfirmation(message), id);
   const updated = attachResearchResult(message, result);
-  assert.ok(updated.content.startsWith(message.content));
+  assert.doesNotMatch(updated.content, /requires approval|actions\/confirm/);
   assert.ok(updated.content.includes('Actual returned excerpt.'));
   assert.deepEqual(attachResearchResult(updated, result), updated);
   assert.deepEqual(attachResearchResult(JSON.parse(JSON.stringify(updated)), result), updated);
@@ -30,7 +30,7 @@ test('the original research turn receives its saved structured answer once, incl
   completion:{status:'complete'},responseSource:{format:'xroga-response-json-v1',text:raw},webSources:[{...result.sources[0]}]};
  const delivered=attachResearchResult(message,{...result,receiptId:id,answer});
  assert.equal(delivered.id,message.id);assert.equal(delivered.researchReceiptId,id);assert.equal(delivered.webSources.length,1);
- assert.doesNotMatch(delivered.content,/Approved research results|Review.*confirm|Actual returned excerpt/);
+ assert.doesNotMatch(delivered.content,/Web sources|Review.*confirm|Actual returned excerpt/);
  assert.equal(delivered.featureOutput.responseSource.text,raw);
  assert.deepEqual(attachResearchResult(JSON.parse(JSON.stringify(delivered)),{...result,receiptId:id,answer}),delivered);
  assert.equal(retrievedWebSourceCount(sanitizeChatMessages([delivered])[0]!),1);
@@ -40,22 +40,37 @@ test('the original research turn receives its saved structured answer once, incl
  assert.match(copied,/Option/);assert.match(copied,/Supplied source/);
  assert.ok(richShareSnapshot({id:delivered.id,content:delivered.content,featureOutput:delivered.featureOutput,webSources:delivered.webSources},copied));
  const partial=attachResearchResult(message,{...result,answerFailure:'SYNTHESIS_UNAVAILABLE'});
- assert.match(partial.content,/full answer could not be completed safely/);assert.match(partial.content,/Actual returned excerpt/);
+ assert.match(partial.content,/couldn’t finish the answer/);assert.match(partial.content,/Actual returned excerpt/);
 });
 
-test('retains ordered rich blocks, source evidence and old citations through unavailable and recovered states', () => {
+test('retains ordered content and sources while removing settled review instructions', () => {
   const graph = { schemaVersion: 1, id: 'architecture', type: 'graph', nodes: [{ id: 'api', label: 'API' }], edges: [] };
-  const original = { ...message, webSources: [{ title: 'Earlier evidence', url: 'https://example.com/earlier', snippet: 'Original excerpt.' }], featureOutput: {
+  const introduction = 'This explanation preserves the earlier context.';
+  const content = introduction + '\n\n' + message.content;
+  const original = { ...message, content, webSources: [{ title: 'Earlier evidence', url: 'https://example.com/earlier', snippet: 'Original excerpt.' }], featureOutput: {
     schemaVersion: 1, id: 'answer', status: 'completed', composition: 'source-order', sourceText: 'Original model protocol',
-    blocks: [{ schemaVersion: 1, id: 'intro', type: 'narrative', text: message.content }, graph],
+    blocks: [{ schemaVersion: 1, id: 'intro', type: 'narrative', text: content }, graph],
   } };
   const updated = attachResearchResult(markResearchUnavailable(original, id), result);
-  assert.deepEqual(updated.featureOutput.blocks.slice(0, 2), original.featureOutput.blocks);
+  assert.deepEqual(updated.featureOutput.blocks.slice(0, 2), [{ ...original.featureOutput.blocks[0], text: introduction }, graph]);
   assert.equal(updated.featureOutput.blocks.length, 3);
   assert.equal(updated.featureOutput.sourceText, original.featureOutput.sourceText);
   assert.equal(updated.featureOutput.blocks.filter(b => b.type === 'narrative').map(b => 'text' in b ? b.text : '').join('\n\n'), updated.content);
   assert.equal(updated.webSources.length, 2);
+  assert.doesNotMatch(updated.content, /requires approval|actions\/confirm|currently unavailable/);
   assert.deepEqual(attachResearchResult(JSON.parse(JSON.stringify(updated)), result), updated);
+});
+
+test('automatic web evidence survives Reopen without fabricating an approval receipt', () => {
+  const completed = { role: 'assistant', id: 'settled-research', content: 'Public finding [1].',
+    webSources: [result.sources[0], result.sources[0], { ...result.sources[0], url: 'javascript:alert(1)' }],
+    publicWebRetrieved: true };
+  const restored = sanitizeChatMessages([completed])[0]!;
+  assert.equal(restored.researchReceiptId, undefined);
+  assert.equal(restored.publicWebRetrieved, true);
+  assert.equal(retrievedWebSourceCount(restored), 1);
+  assert.equal(retrievedWebSourceCount(sanitizeChatMessages([{ ...completed, role: 'user' }])[0]!), 0);
+  assert.equal(retrievedWebSourceCount(sanitizeChatMessages([{ ...completed, publicWebRetrieved: 'true' }])[0]!), 0);
 });
 
 test('an empty qualifying-source receipt replaces the stale approval prompt and survives reopening', () => {

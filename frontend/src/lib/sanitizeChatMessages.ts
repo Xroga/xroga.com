@@ -153,6 +153,7 @@ export function sanitizeChatMessages(messages: unknown): ChatMessage[] {
         thoughtMs: typeof m.thoughtMs === 'number' ? m.thoughtMs : undefined,
         executionActivity: sanitizeExecutionActivity(m.executionActivity),
         webSources: sanitizeWebSources(m.webSources),
+        ...(role === 'assistant' && m.publicWebRetrieved === true ? { publicWebRetrieved: true as const } : {}),
         researchReceiptId: safeRole === 'assistant' && isResearchReceiptId(m.researchReceiptId) ? m.researchReceiptId : undefined,
         hackathonBrief: sanitizeHackathonBrief(m.hackathonBrief),
       };

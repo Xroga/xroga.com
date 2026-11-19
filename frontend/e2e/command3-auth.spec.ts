@@ -288,6 +288,10 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   const confirmationId = '221fe7f9-f0dd-4b12-b03a-bcb57a13f655';
   const researchReply = 'The retrieved source describes the official policy [1].';
   const researchSource = { title: 'Official policy fixture', siteName: 'Example publisher', url: 'https://example.com/policy', snippet: 'Documented policy.', source: 'web' };
+  const publicLookup = 'price of btc currently';
+  const publicLookupProse = 'The test quote includes a timestamp and a price in USD.';
+  const publicLookupSource = { title: 'Timestamped market quote fixture', siteName: 'Example Market', url: 'https://example.com/market-quote', snippet: 'Synthetic market data for this test.', source: 'web' };
+  const publicLookupReply = publicLookupProse + ' [1]';
   const confirmation = { id: confirmationId, status: 'pending', summary: 'Retrieve one set of public results.', toolkit: 'xroga-native-research', risk: 'read',
     approval: { accountReference: 'controlled fixture', operation: 'Search', actionDigest: 'a'.repeat(64), destination: 'official search', criticalParameters: {}, spendMaximumMicroUsd: '750', currency: 'USD' } };
   const source = { title: 'Workshop source fixture', url: 'https://example.com/workshop', snippet: 'USD 25 per attendee.', source: 'fixture' };
@@ -314,11 +318,15 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
     const request = route.request();
     if (request.method() === 'OPTIONS') return route.fulfill({ status: 204, headers: cors });
     expect(request.method()).toBe('POST');
+    const body = request.postDataJSON();
     if (new URL(request.url()).pathname.endsWith('/plan')) {
-      return route.fulfill({ headers: cors, json: { goalContract, dispatch: 'chat', capabilityIds: ['conversation.respond'], rationale: 'no-cost fixture', blockers: [] } });
+      const contract = body.message === publicLookup
+        ? { ...goalContract, semanticIntent: 'INVESTIGATE', freshnessRequirement: 'CURRENT_REQUIRED',
+          requiredCapabilities: ['research.public-web', 'conversation.respond'], requiredAuthorities: ['network:public-read'] }
+        : goalContract;
+      return route.fulfill({ headers: cors, json: { goalContract: contract, dispatch: 'chat', capabilityIds: contract.requiredCapabilities, rationale: 'no-cost fixture', blockers: [] } });
     }
     chatCalls += 1;
-    const body = request.postDataJSON();
     if (body.message === prompt) {
       expect(body.attachments).toEqual([{
         url: `data:text/plain;base64,${Buffer.from('Ticket: $25. Attendees: 40.').toString('base64')}`,
@@ -349,6 +357,11 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
     }
     if (body.message === research) {
       return route.fulfill({ headers: cors, json: { response: 'Research requires approval. [Review](/dashboard/actions/confirm/' + confirmationId + ')' } });
+    }
+    if (body.message === publicLookup) {
+      return route.fulfill({ headers: cors, json: { response: publicLookupReply, completion: { status: 'complete' },
+        responseSource: { format: 'xroga-openui-v1', text: 'root = Col([Markdown(_xroga_answer)])' },
+        webSources: [publicLookupSource], publicWebRetrieved: true, intent: 'research' } });
     }
     expect(body.message).toBe(malformed);
     return route.fulfill({ headers: cors, json: { response: fallback, completion: { status: 'partial', reason: 'presentation_contract' }, responseSource: { format: 'xroga-openui-v1', text: '' } } });
@@ -614,13 +627,37 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
           responseSource: { format: 'xroga-openui-v1', text: 'root = Col([Text(["The retrieved source describes the official policy. ", Source("source-1")])])' } } } } });
   });
   await send(research);
-  await page.getByRole('button', { name: 'Confirm action', exact: true }).click();
+  const legacyConfirm = page.getByRole('button', { name: 'Confirm action', exact: true });
+  await expect(legacyConfirm).toBeVisible();
+  await expect(page.getByText(/Full approval payload|Prepared digest|micro-USD|controlled fixture/)).toHaveCount(0);
+  await legacyConfirm.click();
   const researched = page.getByRole('region', { name: 'Answer', exact: true }).filter({ hasText: 'The retrieved source describes the official policy.' });
   await expect(researched.getByRole('link', { name: /Official policy fixture/ })).toHaveAttribute('href', researchSource.url);
   expect(confirmations).toBe(1);
   expect(receiptReads).toBeGreaterThanOrEqual(1);
   expect(receiptReads).toBeLessThanOrEqual(2);
   expect(chatCalls).toBe(7);
+  await send(publicLookup);
+  const publicAnswer = page.getByRole('region', { name: 'Answer', exact: true }).filter({ hasText: publicLookupProse });
+  const publicTurn = page.locator('[data-turn-id]', { has: publicAnswer });
+  const checkPublicAnswer = async () => {
+    await expect(publicAnswer.getByRole('link', { name: /Timestamped market quote fixture/ })).toHaveAttribute('href', publicLookupSource.url);
+    await expect(publicTurn.getByText('Web evidence · 1 source retrieved', { exact: true })).toBeVisible();
+    await expect(publicTurn.getByRole('button', { name: 'Confirm action', exact: true })).toHaveCount(0);
+    await expect(publicTurn.getByText(/approval payload|prepared digest|micro-USD|no live evidence/i)).toHaveCount(0);
+  };
+  await checkPublicAnswer();
+  await publicTurn.getByRole('button', { name: 'Copy', exact: true }).click();
+  await expect.poll(() => page.evaluate(async () => (await navigator.clipboard.readText()).replace(/\r\n/g, '\n')))
+    .toBe(`${publicLookupReply}\n\nSources\n[1] ${publicLookupSource.title} (${publicLookupSource.url})`);
+  await expect.poll(async () => ((await readSaved())?.messages as Array<{ content?: string; publicWebRetrieved?: true; researchReceiptId?: string }> | undefined)
+    ?.some(message => message.content?.includes(publicLookupProse) && message.publicWebRetrieved === true && !message.researchReceiptId),
+  { timeout: 20_000 }).toBe(true);
+  await page.reload();
+  await openPersistedConversation(page, { id: sessionId, title: savedTitle!, reply: publicLookupProse });
+  await checkPublicAnswer();
+  expect(confirmations).toBe(1);
+  expect(chatCalls).toBe(8);
   await page.getByRole('button', { name: 'New Work', exact: true }).click();
   await expect(composer).not.toHaveAttribute('data-draft-session', sessionId);
   await expect(composer).toHaveAttribute('data-draft-restoring', 'false');
@@ -711,10 +748,10 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
     expect(collapsed.y + collapsed.height).toBeLessThanOrEqual((await transcript.boundingBox())!.y + 1);
     await browserOperator.click();
   }
-  expect(chatCalls).toBe(8);
+  expect(chatCalls).toBe(9);
   await writeFile('test-results/native-workspace/evidence.json', JSON.stringify({
     source: expectedRelease, route: '/workspace', auth: 'isolated Supabase ordinary accounts',
-    model: 'deterministic transport fixtures, zero provider calls', nativeActions: ['file handoff', 'citation link', 'keyboard calculator', 'copy readback', 'database save and reopen', 'private share owner/guest/other account', 'continuation', 'browser cancellation', 'client validation fallback', 'partial native recovery, copy and reopen', 'reviewed partial chart', 'inline research receipt without refocus or redispatch', 'connected diagram, nested table and code in one persisted answer'],
+    model: 'deterministic transport fixtures, zero provider calls', nativeActions: ['file handoff', 'citation link', 'keyboard calculator', 'copy readback', 'database save and reopen', 'private share owner/guest/other account', 'continuation', 'browser cancellation', 'client validation fallback', 'partial native recovery, copy and reopen', 'reviewed partial chart', 'legacy research receipt without refocus or redispatch', 'automatic public lookup, citation and source count after Copy and Reopen', 'connected diagram, nested table and code in one persisted answer'],
     viewports: [320, 390, 768, 1280, 1440], themes: ['black', 'white'], browserOperator: 'one in-flow panel, expanded and collapsed above the saved architecture answer',
   }, null, 2));
 });

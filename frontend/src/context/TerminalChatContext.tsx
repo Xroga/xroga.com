@@ -463,7 +463,11 @@ export interface ChatMessage {
     source: string;
     thumbnailUrl?: string;
     siteDomain?: string;
+    siteName?: string;
+    siteIconDomain?: string;
+    publishedAt?: string;
   }>;
+  publicWebRetrieved?: true;
   researchReceiptId?: string;
   modelReceiptId?: string;
   hackathonBrief?: import('@/lib/hackathonBrief').HackathonBriefCardData;
@@ -2454,6 +2458,7 @@ const stopRequestedRunIdRef =
                 ? {
                     ...msg,
                     webSources: result.webSources,
+                    publicWebRetrieved: result.publicWebRetrieved,
                     hackathonBrief: result.hackathonBrief as ChatMessage['hackathonBrief'],
                   }
                 : msg
@@ -2990,7 +2995,7 @@ if (
           setSwarmNegotiationPhase(null);
           const mathPrompt = isMathQueryPrompt(displayPrompt);
           const needsCurrentSources = semanticPlan.goalContract.freshnessRequirement !== 'NONE';
-          setPipelineMessage(mathPrompt ? 'Solving the requested calculation' : needsCurrentSources ? 'Retrieving current sources' : null);
+          setPipelineMessage(mathPrompt ? 'Solving the requested calculation' : needsCurrentSources ? 'Preparing a source-backed answer' : null);
           setSwarmStatusLabel('XROGA AI');
           setSwarmActiveAgent('architect');
           thinkingStepsRef.current = [];
@@ -3019,6 +3024,7 @@ if (
                       featureOutput: enhanced.output,
                       agent: 'Xroga AI Brain',
                       webSources: result.webSources,
+                      publicWebRetrieved: result.publicWebRetrieved,
                       hackathonBrief: result.hackathonBrief,
                     }
                   : message
