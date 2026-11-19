@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "56071439f4f80c25188a644ac811046c5c5423ea",
+  "source_sha": "483976a92f5a19ef92b3b1522b24ea830a959c3b",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -17106,7 +17106,7 @@
     },
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
-      "sha256": "45ca5fc59ec23442c79782deb5def58b5817aa88ccb6b349a3a7d030d28ea0a7"
+      "sha256": "fcac6bf7ddc39f609fbeaa60fe97312da6825f5a67ec8963dabb15a0696e6b10"
     },
     {
       "path": "backend/src/ai/nativeOpenUiAccuracy.ts",
@@ -17118,7 +17118,7 @@
     },
     {
       "path": "backend/src/ai/nativeOpenUiPrompt.ts",
-      "sha256": "d1e6c5168e81abe0a8be5cf8469a54fc57d405295253c653a12cf4e41741fc6c"
+      "sha256": "43807ed2cf4cb4fca13fcf8937287ec38d5fed9351fb7db0d60516a771291ae2"
     },
     {
       "path": "backend/src/ai/nativeOpenUiRecovery.ts",
@@ -32729,98 +32729,98 @@
     },
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
-      "line": 540,
+      "line": 542,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
-      "line": 568,
+      "line": 573,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
-      "line": 664,
+      "line": 669,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
-      "line": 686,
+      "line": 691,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
-      "line": 736,
+      "line": 741,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
-      "line": 798,
+      "line": 803,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
-      "line": 805,
+      "line": 810,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
-      "line": 806,
+      "line": 811,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
-      "line": 807,
+      "line": 812,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
-      "line": 825,
+      "line": 830,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
-      "line": 860,
+      "line": 865,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
-      "line": 878,
+      "line": 883,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
-      "line": 879,
+      "line": 884,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
-      "line": 890,
+      "line": 895,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

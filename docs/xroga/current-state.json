@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/workspace-openui-final-recovery-20261115",
-    "sha": "56071439f4f80c25188a644ac811046c5c5423ea",
-    "sourceTimestampUtc": "2026-11-20T00:06:13+05:00",
-    "auditStartedUtc": "2026-11-19T19:08:36.509Z",
+    "sha": "483976a92f5a19ef92b3b1522b24ea830a959c3b",
+    "sourceTimestampUtc": "2026-11-20T01:20:46+05:00",
+    "auditStartedUtc": "2026-11-19T20:23:52.382Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -5415,7 +5415,7 @@
       "id": "surface:456e62cb099b42e5c2a2",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUi.ts",
-      "sha256": "45ca5fc59ec23442c79782deb5def58b5817aa88ccb6b349a3a7d030d28ea0a7",
+      "sha256": "fcac6bf7ddc39f609fbeaa60fe97312da6825f5a67ec8963dabb15a0696e6b10",
       "symbols": [
         "MAX_EXPANDED_EXPRESSION_DEPTH",
         "MAX_PROGRAM_CHARS",
@@ -5438,6 +5438,7 @@
         "binding",
         "blockedAuthority",
         "body",
+        "boundAnswer",
         "branches",
         "budget",
         "candidate",
@@ -6031,7 +6032,7 @@
       "id": "surface:a67f0b1fa2dd0f11a67f",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiPrompt.ts",
-      "sha256": "d1e6c5168e81abe0a8be5cf8469a54fc57d405295253c653a12cf4e41741fc6c",
+      "sha256": "43807ed2cf4cb4fca13fcf8937287ec38d5fed9351fb7db0d60516a771291ae2",
       "symbols": [
         "answerScopeRule",
         "artifactPriorityRule",
@@ -143708,7 +143709,7 @@
   ],
   "findings": [
     {
-      "id": "finding:3ac4c617b774316639e6",
+      "id": "finding:fd0b817e0e11d11b030a",
       "sourcePath": "backend/src/ai/nativeOpenUiPrompt.ts",
       "line": 72,
       "kind": "PLACEHOLDER",
@@ -151760,7 +151761,7 @@
     {
       "id": "test-suite:2e491f4d2fcbc11f974c",
       "sourcePath": "backend/src/ai/nativeOpenUi.test.ts",
-      "declaredTests": 75,
+      "declaredTests": 76,
       "skipLocations": [],
       "focusLocations": []
     },
