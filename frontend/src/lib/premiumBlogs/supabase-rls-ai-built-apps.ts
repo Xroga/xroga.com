@@ -181,6 +181,46 @@ export const premiumSupabaseRlsAiBuiltApps: GuidePage = {
       "note": "The SQL above is an illustrative policy pattern and has not been executed against your database. Review existing grants, schema, policy interactions and negative tests before production changes."
     },
     {
+      "heading": "Design write policies, not only read policies",
+      "paragraphs": [
+        "A SELECT policy can prevent users from reading one another's records, but it does not automatically define safe inserts and updates. If a user can create a row with another person's owner ID, the application may still be vulnerable. Define INSERT WITH CHECK rules that constrain new rows, and review UPDATE rules for both the existing row and the proposed new values.",
+        "Consider a task table where owner_id identifies the account that owns a task. A new task should normally be created only with the current user's ID, and a user should not be able to change owner_id to a different account without an explicitly authorized transfer workflow. A suitable UPDATE policy and any supporting constraints should reflect those requirements.",
+        "Test writes with two sessions. Attempt to create a task for someone else, alter another user's record ID, or update a row through an API instead of the normal UI. A successful negative test is one where the operation is denied without revealing private data."
+      ]
+    },
+    {
+      "heading": "An example of owner-scoped inserts and updates",
+      "paragraphs": [
+        "The following SQL extends the idea of the earlier SELECT example. It assumes a public.tasks table with owner_id uuid and the right grants for the authenticated role. Adjust schema names, policy names, operations and actual business rules before use. A production multi-tenant application may need a membership lookup instead of personal ownership.",
+        "Using auth.uid() as a trusted identity source is different from accepting an arbitrary owner_id from the browser. Policies provide one layer of enforcement, but server-side functions and privileged integrations must still validate their callers. Keep the final policy set in reviewed migrations rather than scattered manual dashboard changes.",
+        "Run tests as ordinary users after applying any policy. The SQL editor or service-role connection may bypass protections and is therefore not a substitute for customer-session verification."
+      ]
+    },
+    {
+      "heading": "Choose organization membership as the source of truth",
+      "paragraphs": [
+        "For a team application, multiple people may legitimately access the same project. Model organizations, memberships and roles explicitly instead of giving every record a loose owner email. The database policy should verify membership in the trusted organization relation and, where necessary, the role permitted for that operation.",
+        "Think through revocation. If a consultant leaves an organization, removing that membership should prevent subsequent reads and writes. Test the effect on active sessions, cached client data and already issued file links according to the behavior of your stack. Authentication remaining valid does not mean organization authorization remains valid.",
+        "Keep policy complexity manageable. Deeply nested membership checks can affect query performance. Evaluate the actual queries, indexes and policy design on a representative test dataset before scaling. Security and performance both matter for usability."
+      ]
+    },
+    {
+      "heading": "Storage access and signed links need their own review",
+      "paragraphs": [
+        "A document row may be protected by RLS while the file itself is stored in a bucket with a different access rule. Make sure storage policies and signed-link issuance consult the same project or organization authorization decisions. A file path should not be accepted as proof that the caller may download the file.",
+        "Review expiration and revocation semantics. Short-lived links can reduce exposure, but the exact behavior depends on the storage provider. Do not promise that every previously issued link becomes unusable immediately after removing membership unless the implementation verifies that.",
+        "Run negative tests for file listing, download, upload and deletion. For a client portal, user A should not be able to obtain a valid link to user B's private document simply by guessing an object key."
+      ]
+    },
+    {
+      "heading": "Monitor policy drift when AI changes the schema",
+      "paragraphs": [
+        "AI-assisted development can create new tables or columns quickly. Every new user-facing table is a potential access-control boundary. Include a schema review in the pull-request process: does the table have RLS enabled, does it need policies, what roles have grants, and are its foreign keys consistent with organization ownership?",
+        "After a migration, run the negative tests again. A renamed column may cause a policy to fail unexpectedly, and a new server endpoint may bypass intended boundaries. Keep authorization acceptance criteria alongside functional tests so these regressions are visible before release.",
+        "If a privileged key is accidentally exposed, rotate it and evaluate the impact rather than only removing it from source. Protecting real customer data requires incident response and evidence of containment, not a cosmetic patch."
+      ]
+    },
+    {
       "heading": "Frequently asked questions about Supabase RLS",
       "paragraphs": [
         "These answers clarify what RLS protects and what it does not."
