@@ -356,7 +356,7 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
       return route.fulfill({ headers: cors, json: { response: architectureReply, completion: { status: 'complete' }, responseSource: { format: 'xroga-openui-v1', text: architectureProgram } } });
     }
     if (body.message === research) {
-      return route.fulfill({ headers: cors, json: { response: 'Research requires approval. [Review](/dashboard/actions/confirm/' + confirmationId + ')' } });
+      return route.fulfill({ headers: cors, json: { response: 'Review the exact research request before it is sent: [Review action](/dashboard/actions/confirm/' + confirmationId + '). No live evidence has been retrieved.' } });
     }
     if (body.message === publicLookup) {
       return route.fulfill({ headers: cors, json: { response: publicLookupReply, completion: { status: 'complete' },
@@ -629,7 +629,7 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   await send(research);
   const legacyConfirm = page.getByRole('button', { name: 'Confirm action', exact: true });
   await expect(legacyConfirm).toBeVisible();
-  await expect(page.getByText(/Full approval payload|Prepared digest|micro-USD|controlled fixture/)).toHaveCount(0);
+  await expect(page.getByText(/Full approval payload|Prepared digest|micro-USD|controlled fixture|No live evidence has been retrieved/)).toHaveCount(0);
   await legacyConfirm.click();
   const researched = page.getByRole('region', { name: 'Answer', exact: true }).filter({ hasText: 'The retrieved source describes the official policy.' });
   await expect(researched.getByRole('link', { name: /Official policy fixture/ })).toHaveAttribute('href', researchSource.url);
@@ -650,12 +650,27 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   await publicTurn.getByRole('button', { name: 'Copy', exact: true }).click();
   await expect.poll(() => page.evaluate(async () => (await navigator.clipboard.readText()).replace(/\r\n/g, '\n')))
     .toBe(`${publicLookupReply}\n\nSources\n[1] ${publicLookupSource.title} (${publicLookupSource.url})`);
+  await publicTurn.getByRole('button', { name: 'Share', exact: true }).click();
+  const publicShareCreated = page.waitForResponse(response => new URL(response.url()).pathname === '/api/message-shares'
+    && response.request().method() === 'POST');
+  await dialog.getByRole('button', { name: 'Create owner-only link' }).click();
+  const publicShare = await publicShareCreated;
+  expect(publicShare.status()).toBe(201);
+  const { share: publicSnapshot } = await publicShare.json();
+  expect(publicSnapshot.richResponse).toContain(publicLookupSource.url);
+  expect(publicSnapshot.richResponse).not.toMatch(/\/dashboard\/actions\/confirm|micro-USD|approval payload/i);
+  const publicShareRevoked = page.waitForResponse(response => response.request().method() === 'DELETE'
+    && new URL(response.url()).pathname === '/api/message-shares/' + publicSnapshot.token);
+  await dialog.getByRole('button', { name: 'Revoke', exact: true }).click();
+  expect((await publicShareRevoked).ok()).toBe(true);
+  await dialog.getByRole('button', { name: 'Close share dialog', exact: true }).click();
   await expect.poll(async () => ((await readSaved())?.messages as Array<{ content?: string; publicWebRetrieved?: true; researchReceiptId?: string }> | undefined)
     ?.some(message => message.content?.includes(publicLookupProse) && message.publicWebRetrieved === true && !message.researchReceiptId),
   { timeout: 20_000 }).toBe(true);
   await page.reload();
   await openPersistedConversation(page, { id: sessionId, title: savedTitle!, reply: fallback });
   await checkPublicAnswer();
+  await publicTurn.screenshot({ path: 'test-results/native-workspace/public-search-without-approval.png' });
   expect(confirmations).toBe(1);
   expect(chatCalls).toBe(8);
   await page.getByRole('button', { name: 'New Work', exact: true }).click();
@@ -751,7 +766,7 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   expect(chatCalls).toBe(9);
   await writeFile('test-results/native-workspace/evidence.json', JSON.stringify({
     source: expectedRelease, route: '/workspace', auth: 'isolated Supabase ordinary accounts',
-    model: 'deterministic transport fixtures, zero provider calls', nativeActions: ['file handoff', 'citation link', 'keyboard calculator', 'copy readback', 'database save and reopen', 'private share owner/guest/other account', 'continuation', 'browser cancellation', 'client validation fallback', 'partial native recovery, copy and reopen', 'reviewed partial chart', 'legacy research receipt without refocus or redispatch', 'automatic public lookup, citation and source count after Copy and Reopen', 'connected diagram, nested table and code in one persisted answer'],
+    model: 'deterministic transport fixtures, zero provider calls', nativeActions: ['file handoff', 'citation link', 'keyboard calculator', 'copy readback', 'database save and reopen', 'private share owner/guest/other account', 'continuation', 'browser cancellation', 'client validation fallback', 'partial native recovery, copy and reopen', 'reviewed partial chart', 'legacy research receipt without refocus or redispatch', 'automatic public lookup, citation and source count after Copy, Share and Reopen', 'connected diagram, nested table and code in one persisted answer'],
     viewports: [320, 390, 768, 1280, 1440], themes: ['black', 'white'], browserOperator: 'one in-flow panel, expanded and collapsed above the saved architecture answer',
   }, null, 2));
 });
