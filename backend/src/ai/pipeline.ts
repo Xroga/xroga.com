@@ -1,5 +1,6 @@
 import {AuthorityError} from '../security/authority/enforce.js';
 import {EgressDenied} from '../security/egress/egressPolicy.js';
+import { containsCredentialSecretText } from '../security/egress/dataClassification.js';
 import { randomUUID } from 'crypto';
 import {requireTenantContext,requireResourceOwner,type TenantContext} from '../security/tenantContext.js';
 import {requireOptionalOwnedDatabaseProject} from '../security/ownership.js';
@@ -24,6 +25,7 @@ import { MODELS, type ModelId } from './models.js';
 import { publicCompletionState } from './completionDiagnostics.js';
 import { NATIVE_UI_FORMAT } from './nativeOpenUi.js';
 import { completeNativeWorkspaceAnswer, usesNativeWorkspacePresentation } from './nativeOpenUiWorkspace.js';
+import { bindCitationLinks, researchCitationIssues, RESEARCH_ANSWER_MAXIMUM_MICRO_USD } from './researchAnswer.js';
 import { nativeOpenUiPlainPrompt, workspaceNativeOpenUiPrompt } from './nativeOpenUiPrompt.js';
 import { assessPresentationCoverage, createPresentationProjection, presentationRequestInstructions, presentationResponseFormat, presentedAnswerMaxTokens, type PresentationResponseFormat } from './responsePresentation.js';
 import { prepareAnswerCoverage, requiredNativeFormats } from './answerCoverage.js';
@@ -397,6 +399,7 @@ export interface ChatPipelineResult {
   intent: string;
   usage: ReturnType<typeof usageToTokenUsage>;
   webSources?: ResearchBundle['sources'];
+  publicWebRetrieved?: true;
   modelId: ModelId;
   route: RouteDecision;
 }
@@ -965,6 +968,9 @@ export async function runChatPipeline(opts: {
   onDelta?: DeltaFn;
   goalContract?: GoalContract;
   projectEvidence?: string;
+  /** Set only by the authenticated ordinary chat route for the original turn. */
+  autoPublicSearch?: true;
+  autoPublicSearchSignal?: AbortSignal;
   /** Private server continuation, populated only by the exact native research adapter. */
   approvedResearch?:{bundle:ResearchBundle;evidence:string};
 }): Promise<ChatPipelineResult> {
@@ -1068,8 +1074,15 @@ export async function runChatPipeline(opts: {
   let research: ResearchBundle | null = opts.approvedResearch?.bundle??null;
   let researchBlock = opts.approvedResearch?.evidence??'';
   let researchProviderFailed = false;
+  let publicWebRetrieved: true | undefined;
 
   if (!opts.approvedResearch&&route.useResearch && !explicitlyDisablesResearch(opts.prompt)) {
+    const goal = opts.goalContract;
+    const autoPublicSearch = opts.autoPublicSearch && goal && !goal.projectContext
+      && !opts.attachments?.length && !opts.projectEvidence && !opts.modelScope
+      && (goal.semanticIntent === 'ANSWER' || goal.semanticIntent === 'INVESTIGATE')
+      && (goal.requiredCapabilities.includes('research.public-web') || goal.freshnessRequirement !== 'NONE')
+      && goal.requiredCapabilities.every(capability => capability === 'research.public-web' || capability === 'conversation.respond');
     try {
       const web = await runWebIntelligence({
         userId: opts.userId,
@@ -1077,6 +1090,7 @@ export async function runChatPipeline(opts: {
           researchAnswer:{prompt:opts.prompt,...(opts.history?{history:opts.history.slice(-12).map(h=>({role:h.role,content:h.content.slice(0,8000)}))}:{}),
             ...(opts.goalContract?{goalContract:opts.goalContract}:{}),...(opts.projectEvidence?{projectEvidence:opts.projectEvidence}:{} )}},
         prompt: opts.prompt,
+        ...(autoPublicSearch ? { autoPublicSearch: true, autoPublicSearchSignal: opts.autoPublicSearchSignal } : {}),
         ...(opts.goalContract
           ? { decision: webDecisionFromGoalContract(opts.goalContract) ?? undefined }
           : {}),
@@ -1084,6 +1098,7 @@ export async function runChatPipeline(opts: {
 
       research = web.bundle;
       researchBlock = web.evidence;
+      publicWebRetrieved = web.publicWebRetrieved;
       if(web.needsConfirmation)return{
         response:`Review the request before Xroga searches the web: [Review action](${web.reviewUrl})`,
         intent:'confirmation_required',usage:usageToTokenUsage(await checkQuotaBeforePreparation()),webSources:[],modelId:route.builder,route,
@@ -1128,6 +1143,7 @@ export async function runChatPipeline(opts: {
 
   const historyMsgs: ChatMessage[] = (opts.history ?? [])
     .slice(-12)
+    .filter(message => !publicWebRetrieved || !containsCredentialSecretText(message.content))
     .map((h) => ({ role: h.role, content: h.content.slice(0, 8000) }));
 
   const promptWithProjectEvidence = opts.projectEvidence
@@ -1181,11 +1197,13 @@ export async function runChatPipeline(opts: {
       responseFormat: format,
       tenantContext:opts.tenantContext,
       databaseProjectId:opts.modelScope?.projectId,modelRunAttempt:opts.modelScope?.runAttempt,modelRepository:opts.modelScope?.repository,
-      modelConnectedAccountId:opts.modelScope?.connectedAccountId,modelMaximumCostMicroUsd:opts.modelScope?.maximumCostMicroUsd,
+      modelConnectedAccountId:publicWebRetrieved ? 'platform' : opts.modelScope?.connectedAccountId,
+      modelMaximumCostMicroUsd:publicWebRetrieved ? RESEARCH_ANSWER_MAXIMUM_MICRO_USD : opts.modelScope?.maximumCostMicroUsd,
       modelRevalidateBeforeDispatch:opts.modelScope?.revalidateBeforeDispatch,
+      signal: publicWebRetrieved ? opts.autoPublicSearchSignal : undefined,
       temperature: 0.5,
       // The provider adapter publishes only after canonical usage settlement.
-      onDelta: native ? undefined
+      onDelta: native || publicWebRetrieved ? undefined
         : projection ? delta => { const visible = projection.append(delta); if (visible) opts.onDelta?.(visible); } : opts.onDelta,
     },
   );
@@ -1196,17 +1214,26 @@ export async function runChatPipeline(opts: {
     const answer = completeNativeWorkspaceAnswer(result.text, result.finishReason, evidenceIds,
       route.kind !== 'research' && !researchBlock && !opts.projectEvidence ? opts.prompt : undefined,
       diagnostic => console.warn('[native-openui-validation]', diagnostic), formats);
-    opts.onDelta?.(answer.response);
+    const response = publicWebRetrieved ? bindCitationLinks(answer.response, sources) : answer.response;
+    const completion = publicWebRetrieved && answer.completion.status === 'complete' && researchCitationIssues(response, sources).length
+      ? { status: 'partial' as const, reason: 'source_attribution' as const } : answer.completion;
+    opts.onDelta?.(response);
     return {
       ...answer,
+      response, completion,
       intent: route.kind, usage: usageToTokenUsage(usage), webSources: research?.sources,
+      ...(publicWebRetrieved ? { publicWebRetrieved } : {}),
       modelId: result.modelId, route,
     };
   }
 
   const document = projection?.finish(result.text);
-  const response = document ? document.response || "Xroga couldn't finish the requested structured answer." : result.text;
-  const completion = publicCompletionState(result.finishReason, document?.reviewText ?? response);
+  const prose = document ? document.response || "Xroga couldn't finish the requested structured answer." : result.text;
+  const response = publicWebRetrieved ? bindCitationLinks(prose, sources) : prose;
+  const reportedCompletion = publicCompletionState(result.finishReason, document?.reviewText ?? response);
+  const completion = publicWebRetrieved && reportedCompletion.status === 'complete' && researchCitationIssues(response, sources).length
+    ? { status: 'partial' as const, reason: 'source_attribution' as const } : reportedCompletion;
+  if (publicWebRetrieved) opts.onDelta?.(response);
   // A valid semantic decision with invalid display metadata, or an incomplete
   // document, is preserved as partial. Never repair it with another model call.
   const presentationIncomplete = (document && !document.ok) || opts.goalContract?.presentationIssue === 'invalid'
@@ -1220,6 +1247,7 @@ export async function runChatPipeline(opts: {
     intent: route.kind,
     usage: usageToTokenUsage(usage),
     webSources: research?.sources,
+    ...(publicWebRetrieved ? { publicWebRetrieved } : {}),
     modelId: result.modelId,
     route,
   };

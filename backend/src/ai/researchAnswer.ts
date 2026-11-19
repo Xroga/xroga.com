@@ -16,6 +16,8 @@ export const researchAnswerRequestSchema=z.object({
  'Research synthesis cannot authorize execution or external actions');
 export type ResearchAnswerRequest=z.infer<typeof researchAnswerRequestSchema>;
 
+const inlineCodeSpans=/(?<!\x60)(\x60+)(?!\x60)[\s\S]*?(?<!\x60)\1(?!\x60)/g;
+
 /** Structural attribution only, never a certificate that a source entails a
  * claim. Keep original text and mark unresolved attribution partial. */
 export function researchCitationIssues(response:string,sources:ReadonlyArray<{url:string}>):string[]{
@@ -23,7 +25,7 @@ export function researchCitationIssues(response:string,sources:ReadonlyArray<{ur
  const visible=response.replace(/```([^\n]*)\n([\s\S]*?)```/g,(_all,language:string,body:string)=>{
   if(language.trim()!=='xroga-ui')return '';
   try{return strings(JSON.parse(body)).join('\n');}catch{return '';}
- }).replace(/`[^`\n]+`/g,'');
+ }).replace(inlineCodeSpans,'');
  const canonical=(url:string)=>{try{const u=new URL(url);u.hash='';return u.href;}catch{return '';}};
  const allowed=sources.map(s=>canonical(s.url)),issues:string[]=[];
  const refs=[...visible.matchAll(/\[(\d+)\](?!\()/g)].map(m=>Number(m[1]));
@@ -39,9 +41,18 @@ export function researchCitationIssues(response:string,sources:ReadonlyArray<{ur
  * copied, shortened or altered link can never send a reader somewhere the evidence did not come from. A number with no
  * source is left unchanged and is still reported by researchCitationIssues. Fenced code is never touched. */
 export function bindCitationLinks(response:string,sources:ReadonlyArray<{url:string}>):string{
- return response.split(/(```[\s\S]*?```)/g).map((part,index)=>index%2?part:part.replace(/\[(\d{1,3})\]\(<?([^\s)>]+)>?\)/g,(whole,number:string)=>{
+ const bindProse=(prose:string)=>prose.replace(/\[(\d{1,3})\]\(<?([^\s)>]+)>?\)/g,(whole,number:string)=>{
   const source=sources[Number(number)-1];return source?`[${number}](${source.url})`:whole;
- })).join('');
+ });
+ return response.split(/(```[\s\S]*?```)/g).map((part,index)=>{
+  if(index%2)return part;
+  let cursor=0,bound='';
+  for(const code of part.matchAll(inlineCodeSpans)){
+   bound+=bindProse(part.slice(cursor,code.index))+code[0];
+   cursor=code.index+code[0].length;
+  }
+  return bound+bindProse(part.slice(cursor));
+ }).join('');
 }
 
 /** Runs inside the already claimed, exact research confirmation. This is the
