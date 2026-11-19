@@ -77,6 +77,8 @@ export async function startXrogaModelRun(
     remainingMs?: number;
     plugins?: boolean;
     activeRunLimit?: number;
+    /** The model route accepts page images (verified on the server); otherwise screenshots stay local. */
+    vision?: boolean;
   };
   if (typeof start?.runId !== 'string' || !/^[0-9a-f-]{36}$/i.test(start.runId)) {
     throw new Error('Xroga did not admit the browser task.');
@@ -194,7 +196,7 @@ export async function startXrogaModelRun(
     modelName: XROGA_MODEL,
     // The server refuses requests over 96,000 bytes. A smaller window here made compaction (itself a model call) fire on almost every turn
     // of a long task, so the window stays at 32,000 and a refused request is recovered through the overflow path above instead.
-    overrides: { contextWindow: 32_000, maxOutput: 2_048, vision: false },
+    overrides: { contextWindow: 32_000, maxOutput: 2_048, vision: start.vision === true },
   });
   const model: ResolvedModel = { ref: XROGA_REF, chat, profile, reasoning: 'none', reasoningDropped: true };
   /**

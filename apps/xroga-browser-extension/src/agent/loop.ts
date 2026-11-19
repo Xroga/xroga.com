@@ -27,7 +27,7 @@ import { Guards } from './guards';
 import { contextThreshold, elisionChunk, hardLimit, planElision } from './elision';
 import { runCompaction, runShorten } from './compaction';
 import { attachmentBytes, attachmentParts, readAttachment } from './attachments';
-import { decodeImage, describeHits, scanColor } from './pixels';
+import { decodeImage, describeHits, FIND_COLOR_TOOL, scanColor } from './pixels';
 import { learnFrom, turnEffort } from './run';
 import type { ResolvedModel } from './run';
 import { allTools, DONE_TOOL, kindOf, PAGE_ACTIONS } from './tools';
@@ -737,6 +737,12 @@ ${ledger}` : ''),
         }
       }
     }
+    // A page whose outline is a canvas and very little else paints its own interface: offer the pixel search and say how to see it.
+    if (this.#offerCanvasTools(observation ?? outcome.text)) {
+      notes.push(note(this.options.model.profile.vision
+        ? 'This page paints its interface on a canvas, so its outline shows little. Use screenshot to see it, click or drag with at fractions of the canvas, and check the result with another screenshot. find_color locates a colour.'
+        : 'This page paints its interface on a canvas, so its outline shows little. find_color locates a colour on the page; use at fractions of the canvas with click or drag, and check the result.'));
+    }
     const capture = await this.#withThumb(this.#screenshotImage(outcome));
     const image = this.options.model.profile.vision ? capture : undefined;
     const evidence = capture ? undefined : await this.#evidenceShot(outcome);
@@ -1361,6 +1367,15 @@ ${ledger}` : ''),
    * Tools found during the run (the connected-app tools a search returned) join the tool list for the next turn, under their own names.
    * A tool already in the list is never replaced, and the run holds at most 40 of them.
    */
+  #canvasOffered = false;
+  /** Offers `find_color` once, when an observation shows a canvas with little else. Returns true the first time. */
+  #offerCanvasTools(text: string | undefined): boolean {
+    if (this.#canvasOffered || !text || !/\bcanvas\b/i.test(text) || text.split('\n').length > 40) return false;
+    this.#canvasOffered = true;
+    this.#registerTools([FIND_COLOR_TOOL]);
+    return true;
+  }
+
   #registerTools(found: AgentTool[]): void {
     const have = new Set(this.options.tools.map(t => t.name));
     // The Xroga server refuses a model request that lists more than 32 tools (BROWSER_REQUEST_INVALID), so the whole list, the
@@ -1482,20 +1497,25 @@ ${ledger}` : ''),
       outcome = { call, kind, text: r.text, isError: r.isError };
     } else if (call.toolName === 'find_color') {
       const tabId = typeof args.tabId === 'number' ? args.tabId : this.#activeTab;
-      const shot = await this.options.layer.call('screenshot', typeof tabId === 'number' ? { tabId } : {}, signal).catch(() => undefined);
-      const data = shot?.ok ? (shot.data as { base64?: string; mimeType?: string } | undefined) : undefined;
-      const picture = data?.base64 ? await decodeImage(data.base64, data.mimeType ?? 'image/png').catch(() => undefined) : undefined;
-      if (!picture) {
-        outcome = { call, kind, text: 'error: find_color could not capture or read the page image here. Use snapshot or read, or ask the user.', isError: true };
+      const shot = await this.options.layer.call('screenshot', typeof tabId === 'number' ? { tabId } : {}, signal).catch((error: unknown) => ({ ok: false as const, text: error instanceof Error ? error.message : String(error), data: undefined }));
+      const data = shot.ok ? (shot.data as { base64?: string; mimeType?: string; width?: number; height?: number } | undefined) : undefined;
+      if (!shot.ok || !data?.base64) {
+        outcome = { call, kind, text: `error: find_color could not capture the page (${String(shot.text ?? 'no image returned').slice(0, 200)}). Capture failed, so nothing was scanned.`, isError: true };
+      } else if (!data.width || !data.height) {
+        outcome = { call, kind, text: `error: the capture came back with no size (${data.width ?? 0}×${data.height ?? 0}); this is a capture failure, not an empty page. Check that the tab is the right one and visible, then retry.`, isError: true };
       } else {
-        const color = String(args.color ?? '');
-        const hits = scanColor(picture.data, picture.width, picture.height, {
-          color,
-          tolerance: typeof args.tolerance === 'number' ? args.tolerance : undefined,
-          limit: typeof args.limit === 'number' ? args.limit : undefined,
-          region: Array.isArray(args.region) && args.region.length === 4 ? (args.region as [number, number, number, number]) : undefined,
-        });
-        outcome = { call, kind, text: describeHits(hits, picture, color), isError: false };
+        try {
+          const picture = await decodeImage(data.base64, data.mimeType ?? 'image/png');
+          const color = String(args.color ?? '');
+          const hits = scanColor(picture.data, picture.width, picture.height, {
+            color,
+            tolerance: typeof args.tolerance === 'number' ? args.tolerance : undefined,
+            region: Array.isArray(args.region) && args.region.length === 4 ? (args.region as [number, number, number, number]) : undefined,
+          });
+          outcome = { call, kind, text: describeHits(hits, picture, color), isError: false };
+        } catch (error) {
+          outcome = { call, kind, text: `error: the page was captured (${data.width}×${data.height}) but could not be decoded here: ${error instanceof Error ? error.message : String(error)}`, isError: true };
+        }
       }
     } else if (call.toolName === 'batch') {
       outcome = await this.#runBatchTool(call, kind, args);

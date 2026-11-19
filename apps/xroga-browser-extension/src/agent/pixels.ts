@@ -90,18 +90,39 @@ export function scanColor(data: Uint8ClampedArray, width: number, height: number
   return hits.sort((a, b) => b.pixels - a.pixels).slice(0, Math.max(1, Math.min(20, search.limit ?? 5)));
 }
 
-/** Decodes a PNG or JPEG to RGBA in the service worker (OffscreenCanvas); undefined where it is not available. */
-export async function decodeImage(base64: string, mediaType = 'image/png'): Promise<{ data: Uint8ClampedArray; width: number; height: number } | undefined> {
-  if (typeof createImageBitmap !== 'function' || typeof OffscreenCanvas === 'undefined') return undefined;
-  const bytes = Uint8Array.from(atob(base64), c => c.charCodeAt(0));
-  const bitmap = await createImageBitmap(new Blob([bytes], { type: mediaType }));
-  const canvas = new OffscreenCanvas(bitmap.width, bitmap.height);
-  const ctx = canvas.getContext('2d', { willReadFrequently: true });
-  if (!ctx) return undefined;
-  ctx.drawImage(bitmap, 0, 0);
-  const image = ctx.getImageData(0, 0, bitmap.width, bitmap.height);
-  bitmap.close?.();
-  return { data: image.data, width: bitmap.width, height: bitmap.height };
+export class ImageDecodeError extends Error {
+  constructor(readonly reason: 'no-offscreen-canvas' | 'invalid-image' | 'empty-image', message: string) {
+    super(message);
+  }
+}
+
+/**
+ * Decodes a PNG or JPEG to RGBA in the service worker (OffscreenCanvas). It throws a typed error instead of returning nothing,
+ * and never returns an image with no size: the size is read BEFORE the bitmap is closed, because a closed bitmap reports 0×0.
+ */
+export async function decodeImage(base64: string, mediaType = 'image/png'): Promise<{ data: Uint8ClampedArray; width: number; height: number }> {
+  if (typeof createImageBitmap !== 'function' || typeof OffscreenCanvas === 'undefined') {
+    throw new ImageDecodeError('no-offscreen-canvas', 'This extension context cannot decode images (no OffscreenCanvas).');
+  }
+  let bitmap: ImageBitmap;
+  try {
+    const bytes = Uint8Array.from(atob(base64), c => c.charCodeAt(0));
+    bitmap = await createImageBitmap(new Blob([bytes], { type: mediaType }));
+  } catch (error) {
+    throw new ImageDecodeError('invalid-image', `The captured image could not be decoded: ${error instanceof Error ? error.message : String(error)}`);
+  }
+  const width = bitmap.width;
+  const height = bitmap.height;
+  try {
+    if (!width || !height) throw new ImageDecodeError('empty-image', `The captured image has no size (${width}×${height}).`);
+    const canvas = new OffscreenCanvas(width, height);
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+    if (!ctx) throw new ImageDecodeError('no-offscreen-canvas', 'A 2D drawing context is not available for the captured image.');
+    ctx.drawImage(bitmap, 0, 0);
+    return { data: ctx.getImageData(0, 0, width, height).data, width, height };
+  } finally {
+    bitmap.close?.();
+  }
 }
 
 export function describeHits(hits: PixelHit[], size: { width: number; height: number }, color: string): string {

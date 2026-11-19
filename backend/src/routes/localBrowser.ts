@@ -214,9 +214,16 @@ const toolCall = z.object({
   id: z.string().max(200), type: z.literal('function'),
   function: z.object({ name: z.string().max(50), arguments: z.string().max(16_000) }).strict(),
 }).strict();
+const textPart = z.object({ type: z.literal('text'), text: z.string().max(48_000) }).strict();
+// A page or file image from the user's own browser, as a PNG data URI. It is data, never an instruction, and only a model whose spec
+// says it accepts images receives one (see vetTurnImages).
+const imagePart = z.object({
+  type: z.literal('image_url'),
+  image_url: z.object({ url: z.string().max(1_800_000).regex(/^data:image\/png;base64,[A-Za-z0-9+/]+={0,2}$/), detail: z.enum(['low', 'high', 'auto']).optional() }).strict(),
+}).strict();
 const message = z.object({
   role: z.enum(['system', 'user', 'assistant', 'tool']),
-  content: z.union([z.string().max(48_000), z.array(z.object({ type: z.literal('text'), text: z.string().max(48_000) }).strict()).max(24), z.null()]).optional(),
+  content: z.union([z.string().max(48_000), z.array(z.union([textPart, imagePart])).max(24), z.null()]).optional(),
   tool_calls: z.array(toolCall).max(20).optional(),
   tool_call_id: z.string().max(200).optional(),
 }).strict();
@@ -374,6 +381,36 @@ function allowance(record: BrowserRunRecord) {
   return { runId: record.runId, turns, maxTurns, remainingMs: Math.max(0, remainingMs(record)), activeRunLimit: activeRunLimit() };
 }
 
+const MAX_IMAGES_PER_TURN = 3;
+const MAX_IMAGE_BYTES = 1_200_000;
+const MAX_IMAGE_SIDE = 4_096;
+const PNG_MAGIC = '89504e470d0a1a0a0000000d49484452';
+
+/**
+ * Checks the images of a turn before anything is forwarded to the model and returns the same messages with each image replaced by a
+ * placeholder, for the secret check and the text-size cap. An image is accepted only when the model's spec supports images, is a real
+ * PNG of a bounded size and dimensions, and there are at most three per turn.
+ */
+export function vetTurnImages(messages: Array<{ content?: unknown }>, supportsImages: boolean): { textOnly: unknown[]; images: number } {
+  let images = 0;
+  const textOnly = messages.map(message => {
+    if (!Array.isArray(message.content)) return message;
+    return { ...message, content: message.content.map((part: { type?: string; image_url?: { url: string } }) => {
+      if (part.type !== 'image_url' || !part.image_url) return part;
+      if (!supportsImages) throw new BrowserRequestError(400, 'BROWSER_IMAGES_NOT_SUPPORTED');
+      images++;
+      if (images > MAX_IMAGES_PER_TURN) throw new BrowserRequestError(400, 'BROWSER_IMAGES_TOO_MANY');
+      const bytes = Buffer.from(part.image_url.url.slice(part.image_url.url.indexOf(',') + 1), 'base64');
+      if (bytes.length < 33 || bytes.length > MAX_IMAGE_BYTES || bytes.subarray(0, 16).toString('hex') !== PNG_MAGIC ||
+          ![bytes.readUInt32BE(16), bytes.readUInt32BE(20)].every(side => side > 0 && side <= MAX_IMAGE_SIDE)) {
+        throw new BrowserRequestError(400, 'BROWSER_IMAGE_INVALID');
+      }
+      return { type: 'text', text: '[image]' };
+    }) };
+  });
+  return { textOnly, images };
+}
+
 // The operator pins one sanitized test capture to one already admitted run.
 // Ordinary browser turns cannot attach arbitrary pixel data or remote image URLs.
 function visionProbe(runId: string, turn: number, encoded: string) {
@@ -453,6 +490,7 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
         limits, plan: null, driveProject: null,
       } });
       return res.status(201).json({ runId: state.runId, turns: 0, maxTurns: admitted.turns, remainingMs: admitted.durationMs, activeRunLimit: activeRunLimit(),
+        ...(resolveModelSpec(MODEL)?.supportsImages ? { vision: true } : {}),
         ...(req.revalidateBrowserDevice && plugins.configured() ? { plugins: true } : {}) });
     } finally {
       await leases.release(lease).catch(() => undefined);
@@ -878,7 +916,8 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
     active(row);
     const ctx = requireTenantContext(req.tenantContext);
     const { turn, vision_probe_png: probe, ...body } = turnBody.parse(req.body);
-    checkData(body.messages);
+    const vetted = vetTurnImages(body.messages, !!resolveModelSpec(MODEL)?.supportsImages);
+    checkData(vetted.textOnly);
     const image = probe ? visionProbe(row.runId, turn, probe) : undefined;
     const prompt = body.messages.at(-1);
     if (image && (!body.tools?.length || prompt?.role !== 'user' || !prompt.content || (body.max_tokens ?? 0) > 512)) {
@@ -890,7 +929,8 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
       ] }]
       : body.messages;
     const maxTokens = image ? body.max_tokens ?? 512 : body.max_tokens ?? 2_048;
-    const requestBytes = Buffer.byteLength(JSON.stringify({ ...body, messages }));
+    // Images are bounded on their own (count, size and dimensions above); the text cap counts everything else.
+    const requestBytes = Buffer.byteLength(JSON.stringify({ ...body, messages }).replace(/data:image\/png;base64,[A-Za-z0-9+/=]+/g, 'data:image/png;base64,'));
     if (requestBytes > 96_000) throw new BrowserRequestError(400, 'BROWSER_CONTEXT_TOO_LARGE');
     const admitted = allowance(row);
     if (turn !== admitted.turns + 1) {
@@ -997,7 +1037,7 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
     // Resuming is the owner's own continuation of the same run: an ended segment is renewed, a cancelled or finished run is not.
     if (row.cancelRequested || isTerminalRunStatus(row.status)) throw new BrowserRequestError(409, 'BROWSER_RUN_INACTIVE');
     const next = await grantSegment(runs, row, lease);
-    return res.json({ ...next, ...(req.revalidateBrowserDevice && plugins.configured() ? { plugins: true } : {}) });
+    return res.json({ ...next, ...(resolveModelSpec(MODEL)?.supportsImages ? { vision: true } : {}), ...(req.revalidateBrowserDevice && plugins.configured() ? { plugins: true } : {}) });
   }));
 
   router.post('/runs/:runId/finish', withLease(async (req, res, { runs }, row, lease) => {
