@@ -292,6 +292,7 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   const publicLookupProse = 'The test quote includes a timestamp and a price in USD.';
   const publicLookupSource = { title: 'Timestamped market quote fixture', siteName: 'Example Market', url: 'https://example.com/market-quote', snippet: 'Synthetic market data for this test.', source: 'web' };
   const publicLookupReply = publicLookupProse + ' [1]';
+  const publicLookupProgram = 'root = Col([Text([' + JSON.stringify(publicLookupProse + ' ') + ', Source("source-1")])])';
   const confirmation = { id: confirmationId, status: 'pending', summary: 'Retrieve one set of public results.', toolkit: 'xroga-native-research', risk: 'read',
     approval: { accountReference: 'controlled fixture', operation: 'Search', actionDigest: 'a'.repeat(64), destination: 'official search', criticalParameters: {}, spendMaximumMicroUsd: '750', currency: 'USD' } };
   const source = { title: 'Workshop source fixture', url: 'https://example.com/workshop', snippet: 'USD 25 per attendee.', source: 'fixture' };
@@ -360,7 +361,7 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
     }
     if (body.message === publicLookup) {
       return route.fulfill({ headers: cors, json: { response: publicLookupReply, completion: { status: 'complete' },
-        responseSource: { format: 'xroga-openui-v1', text: 'root = Col([Markdown(_xroga_answer)])' },
+        responseSource: { format: 'xroga-openui-v1', text: publicLookupProgram },
         webSources: [publicLookupSource], publicWebRetrieved: true, intent: 'research' } });
     }
     expect(body.message).toBe(malformed);
@@ -642,6 +643,8 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   const publicTurn = page.locator('[data-turn-id]', { has: publicAnswer });
   const checkPublicAnswer = async () => {
     await expect(publicAnswer.getByRole('link', { name: /Timestamped market quote fixture/ })).toHaveAttribute('href', publicLookupSource.url);
+    await expect(publicAnswer).toHaveClass(/xroga-native-openui/);
+    await expect(publicAnswer.locator('[data-source-citation]')).toHaveCount(1);
     await expect(publicTurn.getByText('Web evidence · 1 source retrieved', { exact: true })).toBeVisible();
     await expect(publicTurn.getByRole('button', { name: 'Confirm action', exact: true })).toHaveCount(0);
     await expect(publicTurn.getByText(/approval payload|prepared digest|micro-USD|no live evidence/i)).toHaveCount(0);
@@ -657,7 +660,10 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   const publicShare = await publicShareCreated;
   expect(publicShare.status()).toBe(201);
   const { share: publicSnapshot } = await publicShare.json();
-  expect(publicSnapshot.richResponse).toContain(publicLookupSource.url);
+  expect(publicSnapshot.richResponse).toMatch(/^XROGA_OPENUI_SHARE_V1\n/);
+  expect(JSON.parse(publicSnapshot.richResponse.slice('XROGA_OPENUI_SHARE_V1\n'.length))).toMatchObject({
+    program: publicLookupProgram, sources: [expect.objectContaining({ url: publicLookupSource.url })],
+  });
   expect(publicSnapshot.richResponse).not.toMatch(/\/dashboard\/actions\/confirm|micro-USD|approval payload/i);
   const publicShareRevoked = page.waitForResponse(response => response.request().method() === 'DELETE'
     && new URL(response.url()).pathname === '/api/message-shares/' + publicSnapshot.token);
