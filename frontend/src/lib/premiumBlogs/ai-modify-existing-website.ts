@@ -201,6 +201,46 @@ export const premiumAiModifyExistingWebsite: GuidePage = {
       ]
     },
     {
+      "heading": "Preserve the page contracts people already depend on",
+      "paragraphs": [
+        "Before changing a website, list its public routes, inbound links and important form endpoints. A visual redesign can accidentally break deep links, UTM attribution, accessibility labels or redirects. The agent should not delete or rename public routes unless the change request explicitly includes that work and the team has a migration plan.",
+        "Create a small route inventory with current page title, canonical URL, intended purpose and primary action. That helps distinguish a content-only change from an application change. If the request alters copy, check whether search snippets and structured data still describe the page accurately. If it alters an interactive form, verify the API contract as well as appearance.",
+        "Use a before-and-after screenshot as one piece of evidence, not the whole acceptance test. A page can look identical while an analytics event or backend submission has stopped working. The better proof combines visual comparison, user journey checks and known good metrics."
+      ]
+    },
+    {
+      "heading": "Use the current design system rather than introducing another",
+      "paragraphs": [
+        "A repository may already contain layout tokens, shared buttons, typography rules, breakpoints and accessibility conventions. A tool that creates a separate styling system for one section can make the site harder to maintain and produce inconsistent mobile layouts. Ask it to search existing components before inventing new ones.",
+        "When requesting a new section, specify its purpose in the surrounding page: does it follow a testimonial block, appear before pricing, or support a conversion form? The agent should use appropriate hierarchy and spacing for that context. A self-contained landing page inserted inside a homepage is often the wrong solution.",
+        "Test more than one screen width. The real page may have navigation, sidebars, consent banners or a sticky header that affects the component. Check responsive behavior, keyboard focus and visible error states in its normal application shell."
+      ]
+    },
+    {
+      "heading": "Keep forms, analytics and privacy intact",
+      "paragraphs": [
+        "Many websites are valuable because they collect leads, bookings or support requests. A new field must reach the backend and be stored or forwarded correctly. If an AI changes only the React component, the form may appear complete while the submitted data is silently discarded. Trace the request through validation and server handling.",
+        "Preserve consent requirements and privacy boundaries. Do not begin sending personal information to a new analytics provider just because a generated component includes a tracking script. Review event names and data types so existing reporting does not break.",
+        "For a production form, test invalid inputs, network failure, duplicate submissions and success messages. A graceful response when the backend is unavailable is more valuable than a beautiful button that appears to work only in a static preview."
+      ]
+    },
+    {
+      "heading": "Plan releases around reversibility",
+      "paragraphs": [
+        "A working branch provides isolation, but it does not by itself create a rollback strategy. Before merging, know which commit represented the last approved behavior and whether the database schema or external integrations changed. Reverting a text edit is different from reversing a destructive data migration.",
+        "Use a preview environment when available and run the same key actions there. Verify that the preview uses safe test credentials and data. Then deploy during a period when someone can monitor it and respond. For a high-traffic site, keep the ability to roll back quickly if conversions or error rates deteriorate.",
+        "Write down the exit criteria for declaring a task complete: the intended change is visible, existing critical user journeys work, checks passed, the production revision is known and any remaining uncertainty is documented. An AI statement of completion should never replace this evidence."
+      ]
+    },
+    {
+      "heading": "When a more substantial rewrite might be justified",
+      "paragraphs": [
+        "Some sites genuinely need a new architecture: the framework is unsupported, security upgrades cannot be applied safely, or the existing code is too brittle to extend. In those cases, incremental editing may become more expensive than a deliberate migration. The key word is deliberate: the team should compare costs and failure modes rather than reaching for a full rebuild because one section is difficult.",
+        "An architecture migration deserves its own project plan with a route inventory, data migration, redirect strategy, performance baseline, security review and side-by-side acceptance tests. Avoid performing it as an incidental side effect of a marketing page request.",
+        "For most ordinary improvements, begin with a narrow patch. If repeated attempts reveal systemic issues, collect evidence and escalate the scope explicitly. That makes the transition from repair to rewrite an informed decision rather than an AI hallucination."
+      ]
+    },
+    {
       "heading": "Frequently asked questions",
       "paragraphs": [
         "These answers summarize what to expect from a repository-aware AI editing workflow."
