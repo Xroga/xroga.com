@@ -206,6 +206,46 @@ export const premiumReplitAlternatives: GuidePage = {
       "note": "Editorial methodology: documentation comparison current to November 20, 2026. No firsthand cross-product benchmark, identical-task scores or current price ranking is claimed."
     },
     {
+      "heading": "A migration worksheet for existing projects",
+      "paragraphs": [
+        "Start by writing down what the existing Replit project actually does. Identify its start command, exposed ports, database engine, scheduled tasks, deployment domain, uploaded files, third-party APIs, and secrets. Categorize each as source-controlled, platform-managed, or external. This simple exercise often reveals the real migration scope before a team spends money on a different tool. If the project contains a demo with no persistent records, relocation may be easy. A customer-facing application with sessions and background jobs needs more careful coordination.",
+        "Create a dependency table with five columns: component, current owner, candidate replacement, verification method, and rollback action. For example, a support portal might use Replit for code and deployment, a separate hosted PostgreSQL database, and an email API. Moving only code changes one component, not the complete service. Assign an owner to each line so nothing falls between the application developer and the person paying the bills.",
+        "Do not migrate live users first. Rehearse with a copy that contains synthetic records and test the ordinary sign-in, create-record, read-record and update-record flows. If you cannot reproduce the behavior from a documented repository checkout, stop and fix the missing instructions. A successful new deployment is only a step toward continuity; it is not proof that customer data, permissions and history survived the move."
+      ]
+    },
+    {
+      "heading": "Four reader profiles, four different winning tools",
+      "paragraphs": [
+        "A first-time founder who wants to launch an appointment booking prototype may value a guided browser builder more than a powerful local editor. Their main evaluation should be whether they can create a real booking, reject an invalid time, and publish a usable demonstration. An experienced developer repairing a production API needs the opposite emphasis: repository context, tests, branch isolation and integration with the team's existing review process.",
+        "A school or small nonprofit running an online course project may prefer a cloud environment that avoids local installation. That is a legitimate reason to retain Replit rather than replace it. A software consultancy maintaining several client repositories should instead test how an agent respects repository boundaries and whether its connected accounts permit access to the correct projects without exposing unrelated customer code.",
+        "A growing SaaS team should consider the long-term ownership of user accounts, database migrations, logs, backups and domains. For them, the cheapest subscription may be a poor optimization if it makes incident recovery difficult. In your comparison notes, give each option a clear 'best for' and 'not recommended when' statement, because one global winner would hide those differences."
+      ]
+    },
+    {
+      "heading": "How to verify a candidate's promise of GitHub support",
+      "paragraphs": [
+        "Begin with a repository you control. Create an issue branch and a tiny test change, such as updating one form label. Confirm which account owns the repository, whether branches are visible, and whether the builder copies files into its own hosting environment. Check if a changed line pushed from GitHub appears back in the tool and whether updates from the tool can reach the correct branch.",
+        "Two-way synchronization is useful but does not eliminate conflicts. Make two conflicting changes in separate working copies and observe how the platform reports the problem. A reliable product should make conflict resolution visible instead of quietly discarding one version. You do not need to manufacture a dangerous production conflict; use an isolated test file and disposable repository.",
+        "Review the connected app's permissions after the evaluation. Remove access to test repositories you no longer need, and do not grant organization-wide write access merely because an onboarding screen suggests it. When a tool is connected to production code, authorization boundaries become part of the engineering risk, even if the tool's generation quality is excellent."
+      ]
+    },
+    {
+      "heading": "Deployment parity and operational independence",
+      "paragraphs": [
+        "A GitHub clone may build on your machine while failing on a new cloud host. Differences in Node.js versions, environment variables, native dependencies and network permissions can all change the result. Save the package manager lockfile, identify the expected runtime, and use the same build command in testing and deployment. If the original platform runs services automatically, reproduce those responsibilities intentionally rather than assuming another host provides them.",
+        "Define health checks and logs before cutover. A dashboard that loads at the root URL does not prove that background jobs, webhook processing or private routes function. Run a small smoke test after publishing: open the home page, sign in, create a test item, fetch it back and verify the expected user boundaries. Record the exact deployment revision used for this test.",
+        "Keep the old production service available during a controlled transition where contractual and operational constraints permit it. Test DNS and callback URLs, then shift traffic deliberately. Document the rollback trigger—for instance, repeated authentication failures or missing record writes—and who has permission to enact it. The ability to reverse a change is part of ownership, not a last-minute luxury."
+      ]
+    },
+    {
+      "heading": "Score the alternatives without fabricated benchmarks",
+      "paragraphs": [
+        "Use five dimensions that you can actually observe: time to complete your representative task, number of blocking errors, percentage of acceptance criteria met, clarity of code ownership, and effort required to operate the result. Add optional considerations for supported languages, collaboration and monthly cost. Keep raw observations separate from your judgment so your team can disagree about priorities without disputing facts.",
+        "Do not invent a numerical rating for a candidate you have never run. For documentation-only evaluations, label the item 'not tested' and link to the official feature description. A matrix of unknowns is more valuable than a misleading 9.8 out of 10. If the task failed because the trial plan does not support a required feature, report that constraint explicitly rather than suggesting the underlying model is incapable.",
+        "Finally, compare the options with the actual cost of switching. A tool may appear more productive for one demonstration but introduce weeks of retraining or data migration. The best decision balances the developer experience, the ability to maintain the software, and the business's tolerance for downtime and manual intervention."
+      ]
+    },
+    {
       "heading": "Replit alternatives: frequently asked questions",
       "paragraphs": [
         "The best option depends on the job-to-be-done rather than an absolute ranking. These short answers help narrow the decision before you commit time to a migration."
@@ -233,7 +273,7 @@ export const premiumReplitAlternatives: GuidePage = {
   "authorName": "Xroga Editorial",
   "publishedAt": "2026-11-20",
   "updated": "2026-11-20",
-  "readingMinutes": 9,
+  "readingMinutes": 10,
   "visual": {
     "src": "/blog-visuals/replit-alternatives.svg",
     "alt": "Original editorial diagram illustrating best replit alternatives in 2026: choose by github, hosting and code ownership",
