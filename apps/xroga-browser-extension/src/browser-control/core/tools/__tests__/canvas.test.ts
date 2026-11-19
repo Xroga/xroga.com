@@ -17,13 +17,17 @@ function fakeCtx(nodeName: string, pending: Array<{ kind: string; detail: string
       return {};
     }),
   };
+  const hostTabs: Array<{ tabId: number; url: string }> = [{ tabId: 1, url: 'https://app.example/' }];
+  const closed: number[] = [];
   const tab = { pending, actionSeq: 0, probe: { callGlobal: vi.fn(async () => ({ width: 1000, height: 500 })) } };
   const ctx = {
     attach: async () => ({ cdp, topology: { frames: async () => [{ frameId: 'main' }] } }),
     tab: () => tab,
+    session: { forgetTab: vi.fn() },
+    controller: { host: { tabs: { list: async () => [...hostTabs], close: async (id: number) => { closed.push(id); } } } },
     signal: undefined,
   };
-  return { ctx: ctx as never, sent, tab };
+  return { ctx: ctx as never, sent, tab, hostTabs, closed };
 }
 
 const base = { action: 'click' as const, at: [0.5, 0.4] as [number, number], intent: 'select the rectangle tool' };
@@ -87,5 +91,15 @@ describe('canvas pointer actions', () => {
     await expect(canvas(ctx, { action: 'type', text: 'my password is hunter2', intent: 'fill the dialog' } as never)).rejects.toMatchObject({ code: 'USER_STEP' });
     await expect(canvas(ctx, { action: 'type', text: 'abc', intent: 'enter the password' } as never)).rejects.toMatchObject({ code: 'USER_STEP' });
     expect(sent.some(s => s.method === 'Input.insertText')).toBe(false);
+  });
+
+  it('closes a page that the click opened, so the run does not wander to another site', async () => {
+    const { ctx, hostTabs, closed } = fakeCtx('CANVAS');
+    const original = hostTabs.slice();
+    let calls = 0;
+    (ctx as { controller: { host: { tabs: { list: () => Promise<unknown[]> } } } }).controller.host.tabs.list = async () => (++calls === 1 ? original : [...original, { tabId: 9, url: 'https://apps.microsoft.com/store' }]);
+    const out = await canvas(ctx, base as never) as { receipt?: { effect: { signals: string[] } } };
+    expect(closed).toEqual([9]);
+    expect(JSON.stringify(out)).toMatch(/closed again/);
   });
 });

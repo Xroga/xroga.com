@@ -131,6 +131,7 @@ export async function canvas(ctx: ToolContext, args: CanvasArgs): Promise<ToolOu
   const viewport = await viewportOf(ctx);
   const at = { x: args.at[0] * viewport.width, y: args.at[1] * viewport.height };
   await assertCanvasAt(ctx, at.x, at.y);
+  const tabsBefore = new Set((await ctx.controller.host.tabs.list().catch(() => [])).map(t => t.tabId));
   const end = args.to ? { x: args.to[0] * viewport.width, y: args.to[1] * viewport.height } : undefined;
   if (end) await assertCanvasAt(ctx, end.x, end.y);
   if (args.action === 'click') await rawClick(ctx, at.x, at.y, 'left', 1);
@@ -138,12 +139,22 @@ export async function canvas(ctx: ToolContext, args: CanvasArgs): Promise<ToolOu
   else if (args.action === 'right_click') await rawClick(ctx, at.x, at.y, 'right', 1);
   else if (args.action === 'hover') await dispatchHover(ctx, at);
   else await dispatchDrag(ctx, at, end!);
+  // A mis-aimed click on a painted button can open a store or help page. A tab that this action opened is the run's own and is closed at once,
+  // so the run never wanders off to a site nobody asked for; the receipt says so.
+  const stray: string[] = [];
+  await new Promise(resolve => setTimeout(resolve, 350));
+  for (const t of await ctx.controller.host.tabs.list().catch(() => [])) {
+    if (tabsBefore.has(t.tabId)) continue;
+    await ctx.controller.host.tabs.close(t.tabId).catch(() => undefined);
+    ctx.session.forgetTab(t.tabId);
+    stray.push(t.url);
+  }
   const receipt: ActionReceipt = {
     action: `canvas ${args.action}`,
     target: `canvas ${quote(args.intent, 80)} at [${args.at!.map(n => n.toFixed(3)).join(', ')}]${args.to ? ` to [${args.to.map(n => n.toFixed(3)).join(', ')}]` : ''}`,
     mechanism: 'pointer',
     dispatched: true,
-    effect: { verdict: 'unattributable', signals: ['A canvas paints its own result; take a screenshot to see whether the action did what was meant.'] },
+    effect: { verdict: 'unattributable', signals: stray.length ? [`The click opened another page (${stray[0].slice(0, 60)}), which was closed again: aim at the control you meant.`] : ['A canvas paints its own result; take a screenshot to see whether the action did what was meant.'] },
   };
   return withPageState(ctx, args.observe, { receipt, data: { point: at, ...(end ? { to: end } : {}) } });
 }
