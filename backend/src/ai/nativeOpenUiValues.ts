@@ -193,6 +193,8 @@ function contextualReadoutLabel(text: string, label: string) {
   }
 }
 
+const readoutSentenceBreak = /(?<=[.!?])\s+/;
+
 /** Compare explicit currency claims to the corresponding labeled readout. An
  * unrelated example, input amount or uncategorized number is never rewritten. */
 export function conflictingNativeReadouts(prose: string, readouts: ReturnType<typeof initialNativeReadouts>) {
@@ -205,7 +207,7 @@ export function conflictingNativeReadouts(prose: string, readouts: ReturnType<ty
     const words = label.toLowerCase().trim();
     const statements = plain.split(/\n\s*\n/).flatMap(paragraph =>
       /^\s*(?:for example|example|scenario|hypothetical|suppose|alternative)\b/i.test(paragraph)
-        ? [] : paragraph.split(/(?<=[.!?])\s+/));
+        ? [] : paragraph.split(readoutSentenceBreak));
     for (const paragraph of statements) {
       if (/\b(?:example|scenario|hypothetical|suppose|instead|if you|alternative)\b/i.test(paragraph)) continue;
       const lower = paragraph.toLowerCase();
@@ -232,4 +234,43 @@ export function conflictingNativeReadouts(prose: string, readouts: ReturnType<ty
     }
     return false;
   });
+}
+
+/** Withhold conflicting readout claims while preserving independent prose. */
+export function recoverNativeReadoutProse(
+  prose: string,
+  readouts: ReturnType<typeof initialNativeReadouts>,
+  multiples: ReturnType<typeof nativePrincipalMultipleReview>,
+) {
+  const corrected = multiples?.repairProse(prose) ?? prose;
+  const hasConflict = (text: string) => conflictingNativeReadouts(text, readouts).length > 0;
+  if (!hasConflict(corrected)) return corrected;
+
+  const blocks = corrected.split(/(\n\s*\n)/);
+  const retained: string[] = [];
+  for (let index = 0; index < blocks.length; index += 2) {
+    const separator = blocks[index - 1];
+    let block = blocks[index];
+    let fence: string | undefined;
+    // Keep a fenced block together, including any blank lines in its body.
+    for (;;) {
+      for (const [, marker, suffix] of blocks[index].matchAll(/^ {0,3}(\x60{3,}|~{3,})([^\n]*)/gm)) {
+        if (!fence) fence = marker;
+        else if (marker[0] === fence[0] && marker.length >= fence.length && !suffix.trim()) fence = undefined;
+      }
+      if (!fence || index + 2 >= blocks.length) break;
+      block += blocks[index + 1] + blocks[index + 2];
+      index += 2;
+    }
+    if (hasConflict(block)) {
+      // Edit individual sentences only in ordinary paragraphs. Keep Markdown
+      // structure intact by withholding a conflicting structured block whole.
+      if (/\n|^\s*(?:#{1,6}\s|(?:[-*+>]|\d+[.)])\s|\||\x60{3}|~{3})/.test(block)) continue;
+      block = block.split(readoutSentenceBreak).filter(sentence => !hasConflict(sentence)).join(' ');
+      if (!block || hasConflict(block)) continue;
+    }
+    if (retained.length) retained.push(separator);
+    retained.push(block);
+  }
+  return retained.join('').trim();
 }

@@ -2,7 +2,7 @@ import { createParser, evaluate, parseExpression, split, tokenize, walkAST, type
 import { claimsChartIsDeferred, contradictsMonthlyChart, monthlyChartDataFallback, nativeTechnicalReviewContext, reviewNativeAnswer, suppliedMonthlyComparison } from './nativeOpenUiAccuracy.js';
 import { DIAGRAM_NODE_TONES, hasRenderableDiagramTopology } from './nativeDiagramTopology.js';
 import catalog from './nativeOpenUiCatalog.json' with { type: 'json' };
-import { conflictingNativeReadouts, initialNativeReadouts, initialNativeValueReader, nativePrincipalMultipleReview } from './nativeOpenUiValues.js';
+import { initialNativeReadouts, initialNativeValueReader, nativePrincipalMultipleReview, recoverNativeReadoutProse } from './nativeOpenUiValues.js';
 
 export const NATIVE_UI_FORMAT = 'xroga-openui-v1' as const;
 export const NATIVE_UI_LIBRARY = 'xroga-native-v1' as const;
@@ -655,13 +655,10 @@ export function recoverNativeReadoutExplanations(program: string): string {
       if (node.k !== 'Comp' || !['Text', 'Caption', 'Markdown'].includes(node.name)) return;
       const body = resolveRecoveryReference(node.args[0],symbols);
       if (body?.k !== 'Str') return;
-      const corrected = multiples?.repairProse(body.v) ?? body.v;
-      if(corrected!==body.v){body.v=corrected;changed=true;}
-      const paragraphs = corrected.split(/\n\s*\n/);
-      const retained = paragraphs.filter(text => !conflictingNativeReadouts(text, readouts).length);
-      if (retained.length !== paragraphs.length) {
+      const corrected = recoverNativeReadoutProse(body.v, readouts, multiples);
+      if (corrected !== body.v) {
+        body.v = corrected;
         changed = true;
-        body.v = retained.join('\n\n');
       }
     });
   }

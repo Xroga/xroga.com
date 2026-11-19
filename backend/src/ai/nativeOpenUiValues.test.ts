@@ -111,11 +111,34 @@ test('currency conflicts match corresponding labels without rewriting examples',
 });
 
 test('saved answer preserves calculator and readable computed values after a prose conflict', () => {
-  const result = completeNativeWorkspaceAnswer('Total interest: $4,331.83.' + NATIVE_UI_MARKER + program, 'stop');
+  const prose = [
+    'This example assumes a fixed rate and excludes fees.',
+    'Total interest: $4,331.83. Check whether your lender charges a fee for paying early.',
+    '```text\nTotal interest: $4,331.83\n\nThis entire conflicting example block is withheld.\n```',
+    'The schedule uses 60 monthly payments.',
+  ].join('\n\n');
+  const result = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + program, 'stop');
   assert.deepEqual(result.completion, { status: 'partial', reason: 'data_review' });
   assert.equal(result.responseSource.text, program);
   assert.match(result.response, /4,331\.67/);
-  assert.doesNotMatch(result.response, /4,331\.83|@Payment/);
+  assert.match(result.response, /This example assumes a fixed rate and excludes fees/);
+  assert.match(result.response, /Check whether your lender charges a fee for paying early/);
+  assert.match(result.response, /The schedule uses 60 monthly payments/);
+  assert.doesNotMatch(result.response, /4,331\.83|@Payment|\x60{3}|entire conflicting example block/);
+  const snapshot = buildNativeOpenUiShare(result.response, result.responseSource.text);
+  assert.ok(snapshot);
+  assert.equal(readNativeOpenUiShare(snapshot)?.text, result.response);
+});
+
+test('an unrepaired visual cannot restore the conflicting readout', () => {
+  const native = program.replace('root = Col([', 'root = Col([Quote("Total interest: $4,331.83"), Text("Payments are monthly."), ');
+  const result = completeNativeWorkspaceAnswer('The calculation excludes fees.' + NATIVE_UI_MARKER + native, 'stop');
+  assert.deepEqual(result.completion, { status: 'partial', reason: 'data_review' });
+  assert.equal(result.responseSource.text, '');
+  assert.match(result.response, /The calculation excludes fees/);
+  assert.match(result.response, /Payments are monthly/);
+  assert.match(result.response, /4,331\.67/);
+  assert.doesNotMatch(result.response, /4,331\.83/);
 });
 
 test('conflicting totals inside native explanatory text cannot return through recovery', () => {

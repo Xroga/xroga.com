@@ -2,7 +2,7 @@ import { publicCompletionState } from './completionDiagnostics.js';
 import { NATIVE_UI_FORMAT, PARTIAL_NATIVE_PRESENTATION_NOTE, missingNativeFormats, recoverNativeWorkspaceProgram, recoverNativeMonthlyChart, recoverTruncatedNativeWorkspaceProgram, splitNativeOpenUiAnswer, supplementNativeProse, validateNativeWorkspaceProgram, type NativeUiDiagnostic, type RequiredNativeFormat } from './nativeOpenUi.js';
 import { nativeAnswerReviewReason, nativeFactualGuidance, nativeTechnicalCorrections, suppliedMonthlyComparison } from './nativeOpenUiAccuracy.js';
 import { checklistFromProse, requestsEditableChecklist, suppliedPeriodicSeries } from './nativeOpenUiRecovery.js';
-import { conflictingNativeReadouts, initialNativeReadouts, nativePrincipalMultipleReview } from './nativeOpenUiValues.js';
+import { conflictingNativeReadouts, initialNativeReadouts, nativePrincipalMultipleReview, recoverNativeReadoutProse } from './nativeOpenUiValues.js';
 import { recoverNativeReadoutExplanations } from './nativeOpenUi.js';
 import { bindNativeAnswerText } from './nativeOpenUi.js';
 
@@ -137,17 +137,20 @@ export function completeNativeWorkspaceAnswer(
   const multipleConflict = multiples && (multiples.conflictingNotes.size > 0 || multiples.repairProse(response) !== response);
   if (valid && (conflictingNativeReadouts(response, readouts).length ||
       multipleConflict || (readouts.length && conflictingNativeReadouts(supplementNativeProse('', program, true), readouts).length))) {
-    // Preserve the working calculator and derive its readable snapshot from the
-    // same pure upstream functions. Do not persist conflicting model totals.
+    // Preserve independent prose and the calculator when its corrected
+    // presentation agrees with the evaluated readouts.
+    const safeProse = recoverNativeReadoutProse(response, readouts, multiples);
     const correctedProgram = recoverNativeReadoutExplanations(program);
     const corrected = validateNativeWorkspaceProgram(correctedProgram, evidenceIds, '');
-    const readable = corrected.ok ? supplementNativeProse('', correctedProgram, true)
-      : initialNativeReadouts(program).map(row => row.label + ': ' + row.value).join('\n\n');
+    const projected = corrected.ok ? supplementNativeProse(safeProse, correctedProgram, true) : '';
+    const readable = corrected.ok ? recoverNativeReadoutProse(projected, readouts, multiples)
+      : [safeProse, ...readouts.map(row => row.label + ': ' + row.value)].filter(Boolean).join('\n\n');
+    const keepVisual = corrected.ok && readable === projected;
     return {
       response: 'The calculated results replace an inconsistent numerical explanation.\n\n'
         + readable,
       completion: { status: 'partial' as const, reason: 'data_review' as const },
-      responseSource: { format: NATIVE_UI_FORMAT, text: corrected.ok ? correctedProgram : '' },
+      responseSource: { format: NATIVE_UI_FORMAT, text: keepVisual ? correctedProgram : '' },
     };
   }
   const verifiedBeforeLimit = validation?.ok === true && completion.status === 'partial' && completion.reason === 'output_limit';
