@@ -219,6 +219,46 @@ export const premiumAiAppPreviewWorksProductionFails: GuidePage = {
       ]
     },
     {
+      "heading": "A reproducible incident report makes debugging faster",
+      "paragraphs": [
+        "An incident report should name the public URL, deployment ID, expected action, observed failure, first relevant log, and whether the problem affects everyone or a particular role. This information turns 'it is broken' into a testable problem. It also helps separate multiple simultaneous issues that may look similar in the browser.",
+        "Record what changed immediately before the failure: a new environment variable, dependency version, authentication provider, database migration or domain configuration. Correlation is not proof of cause, but a precise timeline helps prioritize experiments. Do not include raw access tokens, personal data or complete secret values in the report.",
+        "After resolving the incident, document the root cause and preventive check. For example, if Production lacked a required variable, add a safe deployment validation that checks for the variable's presence without printing it. This reduces the chance that the same configuration problem returns."
+      ]
+    },
+    {
+      "heading": "Understand the difference between build-time and runtime failures",
+      "paragraphs": [
+        "A build-time failure stops the application before it is ready. A runtime failure happens when a deployed application processes an actual request or browser interaction. Some configuration values are read while building, while others are read when a server function runs. The appropriate repair depends on which moment the value is consumed.",
+        "In Next.js, browser-exposed environment variables may be bundled during the build. Changing the hosting dashboard later does not necessarily update a previously built client bundle. A new deployment may be needed. Server-side values also depend on environment targeting, function configuration and the host's deployment behavior.",
+        "Use this distinction to avoid noisy fixes. If the production page loads but one API call fails, a full frontend reinstall is unlikely to be the first useful action. If the build fails due to an incompatible dependency, changing OAuth URLs will not help."
+      ]
+    },
+    {
+      "heading": "How caching and stale assets can confuse the investigation",
+      "paragraphs": [
+        "Sometimes a visitor receives an older page or JavaScript asset while the deployment dashboard shows a newer version. Confirm the actual response and deployment identifier before diagnosing source code. Use a fresh session or an appropriate cache-bypassing check, but avoid telling users to clear caches as the only fix for a reproducible server error.",
+        "Browsers and CDNs can cache different resources according to their configuration. A stale redirect, service worker or outdated client chunk can create symptoms that resemble runtime bugs. Compare affected and unaffected sessions, inspect response headers and use provider logs to determine which version served the request.",
+        "If the problem is tied to cached content, fix the caching or deployment strategy rather than repeatedly changing application code. Any cache purge should be deliberate because it can affect performance and traffic; do not use it as a default first step."
+      ]
+    },
+    {
+      "heading": "Database migrations and missing production schema",
+      "paragraphs": [
+        "A common class of failure occurs when code expects a column or table that exists locally but was never added to production. The frontend may render until it submits a record, then the database rejects the query. Confirm migration history in the correct database and inspect the actual server error before applying schema changes.",
+        "Never run an unreviewed destructive migration to silence an error. Compare the expected schema with the deployed database, check backups and plan whether existing records require transformation. For systems used by real customers, stage the migration and ensure the application is compatible throughout the release sequence.",
+        "After a migration, repeat the end-to-end task that failed. Validate both successful and unauthorized operations. A new schema that fixes a missing column but accidentally relaxes access controls is not a safe repair."
+      ]
+    },
+    {
+      "heading": "Create a production smoke-test habit",
+      "paragraphs": [
+        "A smoke test is a small set of essential actions after every deployment. For a customer portal, that might mean signing in, loading an authorized project, uploading a small test file and signing out. For a marketing site, it might mean loading key pages and submitting a test contact request. Choose tests that reveal business-impacting failures, not just whether the home page returns 200.",
+        "Keep the tests reproducible and use synthetic data when possible. Record the deployment identifier and test environment; a green smoke test against Preview does not confirm that Production is healthy. If a third-party integration cannot be exercised safely, label it unverified and monitor its first real uses closely.",
+        "An AI coding agent can help prepare or execute approved checks in supported environments. It should return observed evidence, explicit failures and missing permissions instead of reporting a deployment as successful because the code compiled."
+      ]
+    },
+    {
       "heading": "Frequently asked questions about broken deployments",
       "paragraphs": [
         "The fastest repair is usually the first verified cause, not the longest list of speculative fixes."
@@ -246,7 +286,7 @@ export const premiumAiAppPreviewWorksProductionFails: GuidePage = {
   "authorName": "Xroga Editorial",
   "publishedAt": "2026-11-20",
   "updated": "2026-11-20",
-  "readingMinutes": 9,
+  "readingMinutes": 8,
   "visual": {
     "src": "/blog-visuals/ai-app-preview-works-production-fails.svg",
     "alt": "Original editorial diagram explaining ai app works in preview but breaks in production? a complete troubleshooting guide",
