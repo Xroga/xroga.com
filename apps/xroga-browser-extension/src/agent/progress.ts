@@ -4,7 +4,7 @@
 import type { Entry } from '@src/store/types';
 
 /** Calls that change the page or the tabs: the ones whose completion matters for where to continue. */
-const CHANGING = new Set(['navigate', 'tabs', 'click', 'set', 'type', 'press', 'fill_form', 'upload', 'drag', 'scroll', 'handle_dialog', 'save_file']);
+const CHANGING = new Set(['navigate', 'tabs', 'click', 'set', 'type', 'press', 'fill_form', 'upload', 'drag', 'canvas', 'scroll', 'handle_dialog', 'save_file']);
 
 const oneLine = (text: string, limit: number) => text.replace(/\s+/g, ' ').trim().slice(0, limit);
 

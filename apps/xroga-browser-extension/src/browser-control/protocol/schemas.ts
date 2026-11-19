@@ -150,6 +150,15 @@ export const DragArgsSchema = z.strictObject({
   toAt: z.tuple([z.number().min(0).max(1), z.number().min(0).max(1)]).optional(),
 });
 
+const placeOnPage = z.tuple([z.number().min(0).max(1), z.number().min(0).max(1)]);
+export const CanvasArgsSchema = z.strictObject({
+  ...actionCommon,
+  action: z.enum(['click', 'double_click', 'right_click', 'hover', 'drag']),
+  at: placeOnPage.describe('Where, as fractions [x, y] of the page as the last screenshot shows it'),
+  to: placeOnPage.optional().describe('For drag: where it ends'),
+  intent: z.string().min(3).max(120).describe('What this does, for example "select the rectangle tool"'),
+});
+
 export const ScrollArgsSchema = z.strictObject({
   ...actionCommon,
   target: TargetSchema.optional().describe('The container to scroll; default: the page'),
@@ -232,6 +241,7 @@ export type TypeArgs = z.infer<typeof TypeArgsSchema>;
 export type PressArgs = z.infer<typeof PressArgsSchema>;
 export type HoverArgs = z.infer<typeof HoverArgsSchema>;
 export type DragArgs = z.infer<typeof DragArgsSchema>;
+export type CanvasArgs = z.infer<typeof CanvasArgsSchema>;
 export type ScrollArgs = z.infer<typeof ScrollArgsSchema>;
 export type WaitArgs = z.infer<typeof WaitArgsSchema>;
 export type NavigateArgs = z.infer<typeof NavigateArgsSchema>;

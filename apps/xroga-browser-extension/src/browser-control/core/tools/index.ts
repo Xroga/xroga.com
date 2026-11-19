@@ -3,6 +3,7 @@ import { find, read, screenshot, snapshot } from './observe';
 import { tabs } from './tabs';
 import { navigate } from './navigate';
 import { click, drag, hover, scroll } from './act';
+import { canvas } from './canvas';
 import { press, set, type } from './text';
 import { wait } from './wait';
 import { handleDialog } from './dialog';
@@ -22,6 +23,7 @@ export const TOOL_HANDLERS: Record<string, ToolHandler> = {
   hover: (ctx, args) => hover(ctx, args as never),
   drag: (ctx, args) => drag(ctx, args as never),
   scroll: (ctx, args) => scroll(ctx, args as never),
+  canvas: (ctx, args) => canvas(ctx, args as never),
   set: (ctx, args) => set(ctx, args as never),
   type: (ctx, args) => type(ctx, args as never),
   press: (ctx, args) => press(ctx, args as never),

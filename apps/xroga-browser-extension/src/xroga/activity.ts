@@ -15,6 +15,7 @@ const browserTools = new Set([
   'fill_form',
   'hover',
   'drag',
+  'canvas',
   'scroll',
   'tabs',
   'upload',

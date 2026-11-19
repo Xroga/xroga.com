@@ -35,6 +35,7 @@ const GROUPS: Record<string, AgentTool['group']> = {
   fill_form: 'acting',
   hover: 'acting',
   drag: 'acting',
+  canvas: 'acting',
   scroll: 'acting',
   tabs: 'acting',
   ask_user: 'working',
@@ -202,7 +203,9 @@ export function toolsForRun(options: {
     .filter(
       t =>
         (t.required || !options.disabled?.includes(t.name)) &&
-        (t.name !== 'screenshot' || options.vision || options.localScreenshots),
+        (t.name !== 'screenshot' || options.vision || options.localScreenshots) &&
+        // Pointer actions on a canvas are offered with the point options: to a model that can see, or to an editor-like task.
+        (t.name !== 'canvas' || options.pointAt),
     )
     .map(withAt)
     .map(t =>
@@ -245,6 +248,7 @@ export const PAGE_ACTIONS = new Set([
   'press',
   'hover',
   'drag',
+  'canvas',
   'scroll',
   'navigate',
   'handle_dialog',

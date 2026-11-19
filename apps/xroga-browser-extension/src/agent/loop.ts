@@ -740,7 +740,7 @@ ${ledger}` : ''),
     // A page whose outline is a canvas and very little else paints its own interface: offer the pixel search and say how to see it.
     if (this.#offerCanvasTools(observation ?? outcome.text)) {
       notes.push(note(this.options.model.profile.vision
-        ? 'This page paints its interface on a canvas, so its outline shows little. Use screenshot to see it, click or drag with at fractions of the canvas, and check the result with another screenshot. find_color locates a colour.'
+        ? 'This page paints its interface on a canvas, so its outline shows little. Use screenshot to see it, use canvas (click, drag, hover at fractions of the screenshot) to act on it, and check the result with another screenshot. find_color locates a colour.'
         : 'This page paints its interface on a canvas, so its outline shows little. find_color locates a colour on the page; use at fractions of the canvas with click or drag, and check the result.'));
     }
     const capture = await this.#withThumb(this.#screenshotImage(outcome));

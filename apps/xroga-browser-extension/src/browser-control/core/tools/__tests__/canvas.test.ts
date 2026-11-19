@@ -1,0 +1,64 @@
+import { describe, expect, it, vi } from 'vitest';
+
+vi.mock('../navigate', () => ({ withPageState: vi.fn(async (_ctx: unknown, _observe: unknown, outcome: unknown) => outcome) }));
+vi.mock('../../interaction/pointer', () => ({ dispatchDrag: vi.fn(async () => ({ dispatched: true })), dispatchHover: vi.fn(async () => ({ dispatched: true })) }));
+
+import { canvas } from '../canvas';
+import { dispatchDrag } from '../../interaction/pointer';
+
+function fakeCtx(nodeName: string, pending: Array<{ kind: string; detail: string }> = []) {
+  const sent: Array<{ method: string; params: Record<string, unknown> }> = [];
+  const cdp = {
+    send: vi.fn(async (_session: unknown, method: string, params: Record<string, unknown>) => {
+      sent.push({ method, params });
+      if (method === 'DOM.getNodeForLocation') return { backendNodeId: 7 };
+      if (method === 'DOM.describeNode') return { node: { nodeName } };
+      return {};
+    }),
+  };
+  const tab = { pending, actionSeq: 0, probe: { callGlobal: vi.fn(async () => ({ width: 1000, height: 500 })) } };
+  const ctx = {
+    attach: async () => ({ cdp, topology: { frames: async () => [{ frameId: 'main' }] } }),
+    tab: () => tab,
+    signal: undefined,
+  };
+  return { ctx: ctx as never, sent, tab };
+}
+
+const base = { action: 'click' as const, at: [0.5, 0.4] as [number, number], intent: 'select the rectangle tool' };
+
+describe('canvas pointer actions', () => {
+  it('clicks at the fraction of the viewport when the point is on a canvas', async () => {
+    const { ctx, sent } = fakeCtx('CANVAS');
+    await canvas(ctx, base as never);
+    const pressed = sent.find(s => s.method === 'Input.dispatchMouseEvent' && s.params.type === 'mousePressed');
+    expect(pressed?.params).toMatchObject({ x: 500, y: 200, button: 'left', clickCount: 1 });
+    expect(sent.some(s => s.params.type === 'mouseReleased')).toBe(true);
+  });
+
+  it('refuses a point on a real page element and sends no mouse event, so guarded controls stay guarded', async () => {
+    const { ctx, sent } = fakeCtx('BUTTON');
+    await expect(canvas(ctx, base as never)).rejects.toMatchObject({ code: 'TARGET_CHANGED' });
+    expect(sent.some(s => s.method === 'Input.dispatchMouseEvent')).toBe(false);
+  });
+
+  it('refuses an intent that names a consequential step', async () => {
+    const { ctx, sent } = fakeCtx('CANVAS');
+    await expect(canvas(ctx, { ...base, intent: 'click Pay now' } as never)).rejects.toMatchObject({ code: 'USER_STEP' });
+    await expect(canvas(ctx, { ...base, intent: 'delete the layer' } as never)).rejects.toMatchObject({ code: 'USER_STEP' });
+    expect(sent).toHaveLength(0);
+  });
+
+  it('stops while a dialog is open, and needs an end point for a drag', async () => {
+    const { ctx } = fakeCtx('CANVAS', [{ kind: 'dialog', detail: 'a prompt' }]);
+    await expect(canvas(ctx, base as never)).rejects.toMatchObject({ code: 'MODAL_PENDING' });
+    const second = fakeCtx('CANVAS');
+    await expect(canvas(second.ctx, { ...base, action: 'drag' } as never)).rejects.toMatchObject({ code: 'INVALID_ARGUMENT' });
+  });
+
+  it('drags between two canvas points in page pixels', async () => {
+    const { ctx } = fakeCtx('CANVAS');
+    await canvas(ctx, { ...base, action: 'drag', to: [0.8, 0.9] } as never);
+    expect(dispatchDrag).toHaveBeenCalledWith(expect.anything(), { x: 500, y: 200 }, { x: 800, y: 450 });
+  });
+});
