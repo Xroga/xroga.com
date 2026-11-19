@@ -20,11 +20,12 @@ export const Title = defineComponent({
     level: z.enum(["2", "3", "4"]).optional(),
   }),
   description: "Heading. Size is visual; level is 2 by default, 3 for subsections and 4 only within a subsection.",
-  component: ({ props }) => {
+  component: function NativeTitle({ props }) {
+    const renderCitation = useRenderEvidenceCitation();
     const sizeName = props.size ?? "md";
     return (
       <div role="heading" aria-level={Number(props.level ?? "2")} className={`iui-title iui-title-${sizeName}`} style={{ color: fg(props.color) }}>
-        {inline(str(props.text))}
+        {inline(str(props.text), "title", renderCitation)}
       </div>
     );
   },
@@ -134,13 +135,16 @@ export const ListItem = defineComponent({
   }),
   description: "marker replaces the bullet or number, e.g. a time or an emoji.",
   // Rendered by List; on its own it shows its content.
-  component: ({ props, renderNode }) => (
-    <div className="iui-list-body">
-      <div className="iui-list-title">{inline(str(props.title))}</div>
-      {props.description ? <div className="iui-list-description">{inline(str(props.description))}</div> : null}
-      {props.children ? <div className="iui-list-children">{renderNode(props.children)}</div> : null}
-    </div>
-  ),
+  component: function NativeListItem({ props, renderNode }) {
+    const renderCitation = useRenderEvidenceCitation();
+    return (
+      <div className="iui-list-body">
+        <div className="iui-list-title">{inline(str(props.title), "list-title", renderCitation)}</div>
+        {props.description ? <div className="iui-list-description">{inline(str(props.description), "list-description", renderCitation)}</div> : null}
+        {props.children ? <div className="iui-list-children">{renderNode(props.children)}</div> : null}
+      </div>
+    );
+  },
 });
 
 export const List = defineComponent({
@@ -151,7 +155,8 @@ export const List = defineComponent({
     timeline: z.boolean().optional(),
   }),
   description: "timeline joins the markers with a line. The timeline marker is shorthand for a numbered timeline.",
-  component: ({ props, renderNode }) => {
+  component: function NativeList({ props, renderNode }) {
+    const renderCitation = useRenderEvidenceCitation();
     const items = (Array.isArray(props.items) ? props.items.flat() : []) as unknown[];
     const marker = props.marker === "timeline" ? "number" : (props.marker ?? "bullet");
     const timeline = props.timeline || props.marker === "timeline";
@@ -169,7 +174,7 @@ export const List = defineComponent({
               <span className={cx("iui-list-marker", custom && (step ? "iui-list-marker-chip" : "iui-list-marker-text"))} aria-hidden={!custom}>
                 {step ? <span>{custom}</span> : custom ?? (marker === "number" ? i + 1 : null)}
               </span>
-              {isItem(item) ? renderNode(item) : <div className="iui-list-body">{inline(str(item))}</div>}
+              {isItem(item) ? renderNode(item) : <div className="iui-list-body">{inline(str(item), "list-text", renderCitation)}</div>}
             </li>
           );
         })}

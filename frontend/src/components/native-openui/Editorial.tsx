@@ -16,7 +16,7 @@ export const Section = defineComponent({
   component: function SectionView({ props, renderNode }) {
     const renderCitation = useRenderEvidenceCitation();
     return <section className="native-answer-section">
-      <h2>{props.icon && <Glyph name={props.icon} size={18} />}{inline(props.title)}</h2>
+      <h2>{props.icon && <Glyph name={props.icon} size={18} />}{inline(props.title, 'section-title', renderCitation)}</h2>
       {props.introduction && <p>{inline(props.introduction, 'section-introduction', renderCitation)}</p>}
       <div className="iui-col iui-flow">{renderNode(props.children)}</div>
     </section>;

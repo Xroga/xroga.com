@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { createElement } from 'react';
+import React, { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { createRequire } from 'node:module';
 import { remarkSourceCitations, safeSourceUrl, sourceClickUrl } from './xrogaCitations';
@@ -12,6 +12,7 @@ const { renderBlock } = nodeRequire('../components/terminal/XrogaBlockView.tsx')
 const { ProseV2 } = nodeRequire('../components/response-experience-v2/ProseV2.tsx') as typeof import('@/components/response-experience-v2/ProseV2');
 const { MarkdownBlocks } = nodeRequire('../components/native-openui/upstream/components/markdown.tsx') as typeof import('@/components/native-openui/upstream/components/markdown');
 const { evidenceCitation } = nodeRequire('../components/native-openui/evidence.tsx') as typeof import('@/components/native-openui/evidence');
+const { NativeSurface } = nodeRequire('../components/native-openui/NativeSurface.tsx') as typeof import('@/components/native-openui/NativeSurface');
 
 const sources = [
   { title: 'Official report', url: 'https://example.com/report', snippet: 'Evidence.' },
@@ -82,6 +83,37 @@ test('saved numbered Markdown links use a publisher chip only for matching evide
     renderCitation: (number, href) => evidenceCitation(evidence, number, href),
   }));
   assert.doesNotMatch(native, /<a /);
+});
+
+test('native headings, lists, and tables keep citations beside the supported text', t => {
+  // The repository's tsx runner uses classic JSX, while Next transforms it automatically.
+  const previousReact = Object.getOwnPropertyDescriptor(globalThis, 'React');
+  Object.defineProperty(globalThis, 'React', { configurable: true, value: React });
+  t.after(() => {
+    if (previousReact) Object.defineProperty(globalThis, 'React', previousReact);
+    else Reflect.deleteProperty(globalThis, 'React');
+  });
+  const source = { id: 'source-1', title: 'Verified setup guide', siteName: 'Example Press', url: 'https://example.org/guide' };
+  const answer = {
+    format: 'xroga-openui-v1',
+    library: 'xroga-native-v1',
+    text: '- Follow the supplied instructions [1].',
+    program: [
+      'root = Col([Title("Documented default [1]"), Section("Steps [1]", [instructions, values])])',
+      'instructions = List(["Follow the supplied instructions [1].", ListItem("Install the package [1]", "Use the approved version [1].")])',
+      'values = Table(["Documented value [1]"], [["Default: enabled [1]"], ["Missing: [9]"], ["Literal: `[1]`"], ["Unmatched: [1](https://elsewhere.test/guide)"]])',
+    ].join('\n'),
+  } as const;
+  const html = renderToStaticMarkup(createElement(NativeSurface, { answer, sources: [source] }));
+  assert.equal((html.match(/Follow the supplied instructions/g) ?? []).length, 1);
+  assert.match(html, /Follow the supplied instructions <a [^>]*data-source-citation/);
+  assert.match(html, /Default: enabled <a [^>]*data-source-citation/);
+  assert.equal((html.match(/href="https:\/\/example\.org\/guide"/g) ?? []).length, 7);
+  assert.equal((html.match(/aria-label="Open source 1: Verified setup guide"/g) ?? []).length, 7);
+  assert.match(html, /<th[^>]*><button[^>]*>Documented value\s*<\/button><a [^>]*data-source-citation/);
+  assert.match(html, /Missing: \[9\]/);
+  assert.match(html, /Literal: <code class="iui-code">\[1\]<\/code>/);
+  assert.doesNotMatch(html, /href="https:\/\/elsewhere\.test/);
 });
 
 test('source clicks carry Xroga attribution without altering the underlying evidence URLs', () => {

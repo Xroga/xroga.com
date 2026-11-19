@@ -2,7 +2,8 @@
 
 import { defineComponent } from "@openuidev/react-lang";
 import { z } from "zod/v4";
-import { useContext, useState } from "react";
+import { Fragment, useContext, useState, type ReactNode } from "react";
+import { useRenderEvidenceCitation } from "../../evidence";
 import { inline, tableContentKey, VisibleMarkdownTables } from "./markdown";
 import { cx, isLongAnswerTable } from "./style";
 
@@ -30,6 +31,7 @@ export const Table = defineComponent({
   component: function SortableTable({ props, renderNode }) {
     const [sort, setSort] = useState<{ column: number; descending: boolean }>();
     const proseTables = useContext(VisibleMarkdownTables);
+    const renderCitation = useRenderEvidenceCitation();
     const columns = Array.isArray(props.columns) ? props.columns.map((c) => String(c ?? "")) : [];
     const rows = (Array.isArray(props.rows) ? props.rows : []).filter(Array.isArray) as unknown[][];
     if (!columns.length || rows.some(row => row.length !== columns.length)) return <p>Table data is incomplete.</p>;
@@ -53,17 +55,30 @@ export const Table = defineComponent({
       return sort.descending ? -order : order;
     }) : rows;
     const cell = (value: unknown) =>
-      isElement(value) ? renderNode(value) : typeof value === "number" ? value.toLocaleString("en-US", { maximumSignificantDigits: 17 }) : inline(String(value ?? ""));
+      isElement(value) ? renderNode(value) : typeof value === "number" ? value.toLocaleString("en-US", { maximumSignificantDigits: 17 })
+        : inline(String(value ?? ""), "table-cell", renderCitation);
     return (
       <div className={cx("iui-table-scroll", isLongAnswerTable(rows.length) && "iui-table-bounded")} role="region" aria-label="Answer table" tabIndex={0}>
         <table className="iui-table">
           <thead>
             <tr>
-              {columns.map((c, i) => (
-                <th key={i} scope="col" className={cx(numeric[i] && "is-numeric")} aria-sort={sort?.column === i ? sort.descending ? "descending" : "ascending" : undefined}>
-                  <button type="button" onClick={() => setSort({ column: i, descending: sort?.column === i && !sort.descending })}>{c}</button>
-                </th>
-              ))}
+              {columns.map((column, i) => {
+                // Verified links get separate focus targets beside the sort button.
+                const citations: ReactNode[] = [];
+                const label = inline(column, "table-heading", (number, href) => {
+                  const citation = renderCitation(number, href);
+                  if (!citation) return null;
+                  citations.push(<Fragment key={citations.length}>{citation}</Fragment>);
+                  return <Fragment />;
+                });
+                return (
+                  <th key={i} scope="col" className={cx(numeric[i] && "is-numeric")} aria-sort={sort?.column === i ? sort.descending ? "descending" : "ascending" : undefined}>
+                    <button type="button" aria-label={citations.length ? `Sort by ${column}` : undefined}
+                      onClick={() => setSort({ column: i, descending: sort?.column === i && !sort.descending })}>{label}</button>
+                    {citations}
+                  </th>
+                );
+              })}
             </tr>
           </thead>
           <tbody>
