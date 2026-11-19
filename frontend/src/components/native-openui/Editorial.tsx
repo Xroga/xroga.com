@@ -2,12 +2,13 @@
 
 import { isElementNode } from '@openuidev/lang-core';
 import { defineComponent, useIsStreaming } from '@openuidev/react-lang';
-import { useRef, useState, type CSSProperties } from 'react';
+import { useContext, useRef, useState, type CSSProperties } from 'react';
 import { z } from 'zod/v4';
 import { children } from './upstream/components/style';
 import { Glyph } from './upstream/components/glyph';
-import { inline } from './upstream/components/markdown';
+import { inline, NativeVisualContent } from './upstream/components/markdown';
 import { useRenderEvidenceCitation } from './evidence';
+import { nativeReadableTextKey } from '../../../../backend/src/ai/nativeOpenUi';
 
 export const Section = defineComponent({
   name: 'Section',
@@ -15,8 +16,10 @@ export const Section = defineComponent({
   description: 'A meaningful subsection. Group its explanation and relevant components together. Use a short heading and optional orientation sentence.',
   component: function SectionView({ props, renderNode }) {
     const renderCitation = useRenderEvidenceCitation();
-    return <section className="native-answer-section">
-      <h2>{props.icon && <Glyph name={props.icon} size={18} />}{inline(props.title, 'section-title', renderCitation)}</h2>
+    const nativeVisuals = useContext(NativeVisualContent);
+    const hasHeadingInAnswer = nativeVisuals?.markdownSectionHeadings.has(nativeReadableTextKey(props.title));
+    return <section className="native-answer-section" aria-label={hasHeadingInAnswer ? props.title : undefined}>
+      {!hasHeadingInAnswer && <h2>{props.icon && <Glyph name={props.icon} size={18} />}{inline(props.title, 'section-title', renderCitation)}</h2>}
       {props.introduction && <p>{inline(props.introduction, 'section-introduction', renderCitation)}</p>}
       <div className="iui-col iui-flow">{renderNode(props.children)}</div>
     </section>;

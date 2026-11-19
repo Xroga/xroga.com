@@ -184,8 +184,11 @@ test('the model gets instructions from the native registry and may answer in tex
     assert.match(prompt, /If the user declines visuals or a specific component, honor that choice/);
     assert.match(prompt, /Verify the value, unit, and reference point, baseline, or denominator together/);
     assert.match(prompt, /NEXT_PUBLIC_ is for values exposed to the browser/);
-    assert.match(prompt, /carry precautions into every step/);
+    assert.match(prompt, /Carry precautions into every step/);
     assert.match(prompt, /Put required reassembly, guards, and safety checks before each powered test/);
+    assert.match(prompt, /If a prerequisite fails or there is an unresolved hazard, stop and refer it to a qualified person/);
+    assert.match(prompt, /steps, examples, diagrams, and checklists all follow the same safe order/);
+    assert.ok(prompt.indexOf('For safety-sensitive procedures') < prompt.indexOf('In a roving tabindex pattern'));
     assert.match(prompt, /Required units must cover the whole requested quantity/);
     assert.match(prompt, /React supports Date values and Server Functions/);
   }
@@ -216,7 +219,7 @@ test('long workflow guidance distinguishes reading order, handoffs, responsibili
   assert.match(nativeOpenUiPlainPrompt, /clearly labeled worked example/);
   assert.match(prompt, /responsibility table can show what is automated and what needs human review/);
   assert.match(prompt, /diagram shows where the work goes next/);
-  assert.match(prompt, /Keep that order in the steps, examples, and checklist/);
+  assert.match(prompt, /steps, examples, diagrams, and checklists all follow the same safe order/);
   assert.match(prompt, /Lucide icon on a section or diagram node when it helps distinguish roles/);
 
   const prose = [

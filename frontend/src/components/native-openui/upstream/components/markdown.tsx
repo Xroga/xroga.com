@@ -92,7 +92,7 @@ type Block =
   | { kind: "table"; head: string[]; rows: string[][] };
 
 export const VisibleMarkdownTables = createContext<ReadonlySet<string> | null>(null);
-export const NativeVisualContent = createContext<Pick<MarkdownMatches, "tables" | "sectionTables" | "headingTitles" | "titles"> | undefined>(undefined);
+export const NativeVisualContent = createContext<Pick<MarkdownMatches, "tables" | "sectionTables" | "headingTitles" | "titles" | "markdownSectionHeadings"> | undefined>(undefined);
 
 // Only compare scalar cells. Retain distinct data and cells with components.
 export function tableContentKey(head: readonly string[], rows: readonly unknown[][]): string | undefined {
@@ -144,6 +144,7 @@ type MarkdownMatches = {
   paragraphs: ReadonlySet<string>;
   titles: ReadonlySet<string>;
   headingTitles: ReadonlySet<string>;
+  markdownSectionHeadings: ReadonlySet<string>;
   sectionTables: ReadonlyMap<string, ReadonlySet<string>>;
   code: ReadonlySet<string>;
   relationships: ReadonlySet<string>;
@@ -154,12 +155,24 @@ type MarkdownMatches = {
 
 const listKey = (items: readonly string[]) => JSON.stringify(items.map(textKey));
 
+function replacesTableSection(
+  heading: Extract<Block, { kind: "h" }>, next: Block | undefined, following: Block | undefined,
+  tables?: ReadonlySet<string>, sectionTables?: ReadonlyMap<string, ReadonlySet<string>>,
+): boolean {
+  if (next?.kind !== "table" || (following && (following.kind !== "h" || following.level > heading.level))
+    || tableHasLinks(next.head, next.rows)) return false;
+  const key = tableContentKey(next.head, next.rows);
+  return !!(key && tables?.has(key) && sectionTables?.get(textKey(heading.text))?.has(key));
+}
+
 /** Match literal content only. Distinct wording and citation markers stay visible. */
 export function nativeMarkdownMatches(root: unknown, readInitial: (value: unknown) => unknown = value => value): MarkdownMatches {
   const documents = new Set<string>();
+  const staticMarkdownBlocks: Block[][] = [];
   const paragraphs = new Set<string>();
   const titles = new Set<string>();
   const headingTitles = new Set<string>();
+  const markdownSectionHeadings = new Set<string>();
   const sectionTables = new Map<string, Set<string>>();
   const code = new Set<string>();
   const relationships = new Set<string>();
@@ -244,7 +257,9 @@ export function nativeMarkdownMatches(root: unknown, readInitial: (value: unknow
     const markdown = typeName === "Markdown" ? readInitial(props.text) : undefined;
     if (typeof markdown === "string") {
       documents.add(markdown);
-      for (const block of blocks(markdown)) {
+      const items = blocks(markdown);
+      if (!node.hasDynamicProps) staticMarkdownBlocks.push(items);
+      for (const block of items) {
         if (block.kind === "p") paragraphs.add(citationTextKey(block.text));
         if (block.kind === "h") titles.add(textKey(block.text));
         if (block.kind === "code") code.add(block.text.trimEnd());
@@ -283,7 +298,16 @@ export function nativeMarkdownMatches(root: unknown, readInitial: (value: unknow
     Object.values(props).forEach(child => visit(child, sectionTitle));
   }
   visit(root);
-  return { documents, paragraphs, titles, headingTitles, sectionTables, code, tables, relationships, checklists, listItems };
+  // Keep the authoritative heading in reading order when an extra native
+  // section repeats it. An exact native table that owns its heading still wins.
+  for (const items of staticMarkdownBlocks) {
+    items.forEach((heading, index) => {
+      if (heading.kind !== "h" || (index === 0 && headingTitles.has(headingKey(heading.text)))) return;
+      if (replacesTableSection(heading, items[index + 1], items[index + 2], tables, sectionTables)) return;
+      markdownSectionHeadings.add(textKey(heading.text));
+    });
+  }
+  return { documents, paragraphs, titles, headingTitles, markdownSectionHeadings, sectionTables, code, tables, relationships, checklists, listItems };
 }
 
 /** Only remove a complete verbatim document already visible in native Markdown.
@@ -425,16 +449,9 @@ export function MarkdownBlocks({ text, renderCitation, deduplicateTables = false
             const title = textKey(b.text);
             if (i === 0 && nativeHeadingTitles?.has(headingKey(b.text))) return null;
             if (matches?.titles.has(title)) return null;
-            const next = items[i + 1];
-            const following = items[i + 2];
             // When a matching native Section owns the equivalent table, its
             // heading remains visible. Keep Markdown headings with unique prose.
-            if (next?.kind === "table"
-              && (!following || (following.kind === "h" && following.level <= b.level))
-              && !tableHasLinks(next.head, next.rows)) {
-              const key = tableContentKey(next.head, next.rows);
-              if (key && nativeTables?.has(key) && nativeSectionTables?.get(title)?.has(key)) return null;
-            }
+            if (replacesTableSection(b, items[i + 1], items[i + 2], nativeTables, nativeSectionTables)) return null;
             return (
               <div key={k} role="heading" aria-level={b.level + 1} className={`iui-md-h iui-md-h${b.level}`}>
                 {inline(b.text, k, renderCitation)}

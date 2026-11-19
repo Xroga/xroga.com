@@ -331,7 +331,43 @@ test('native table sections replace empty repeated headings while unique content
   }));
 
   assert.doesNotMatch(render(markdown.props.text), /Manual versus automated|<table/);
+  assert.equal(matches.markdownSectionHeadings.size, 0);
   assert.match(render(markdown.props.text + '\n\nManual approval remains required.'), /Manual versus automated.*Manual approval remains required/);
   assert.match(render(markdown.props.text.replace('Coordinator |', 'Coordinator [1] |')), /Manual versus automated.*<table/);
   assert.match(render(markdown.props.text.replace(title, 'Intake ownership')), /Intake ownership/);
+});
+
+test('a bound Markdown heading remains the heading for a supplemental native section', () => {
+  const text = [
+    '## Opening title', '', 'Use the handoff procedure.',
+    '', '## Closing checklist', '', 'Record who confirmed the handoff.',
+    '', '## References [1]', '', 'Consult the current guide.',
+  ].join('\n');
+  const program = bindNativeAnswerText([
+    'root = Col([Title("Opening title"), Markdown(_xroga_answer), checks, refs])',
+    'checks = Section("Closing checklist", [Checkbox($filed, "File the handoff record")])',
+    'refs = Section("References", [Text("Supporting notes")])',
+    '$filed = false',
+  ].join('\n'), text);
+  const root = createParser(catalog.schema as LibraryJSONSchema, 'Col').parse(program).root;
+  const matches = nativeMarkdownMatches(root, initialNativeValueReader(program));
+  assert.deepEqual([...matches.markdownSectionHeadings], ['Closing checklist', 'References [1]']);
+  const html = renderToStaticMarkup(createElement(MarkdownBlocks, {
+    text, nativeHeadingTitles: matches.headingTitles, renderCitation: () => 'Verified source',
+  }));
+  assert.doesNotMatch(html, /Opening title/);
+  assert.match(html, /Closing checklist<\/div><p>Record who confirmed the handoff\.<\/p>/);
+  assert.match(html, /References Verified source/);
+  assert.match(renderToStaticMarkup(createElement(MarkdownBlocks, { text })), /Opening title/);
+});
+
+test('state-dependent Markdown cannot suppress a native heading', () => {
+  const program = [
+    'root = Col([Markdown($open ? "## Checklist" : "Hidden"), Section("Checklist", [Text("Review the items")])])',
+    '$open = true',
+  ].join('\n');
+  const root = createParser(catalog.schema as LibraryJSONSchema, 'Col').parse(program).root;
+  const matches = nativeMarkdownMatches(root, initialNativeValueReader(program));
+  assert.ok(matches.documents.has('## Checklist'));
+  assert.equal(matches.markdownSectionHeadings.size, 0);
 });
