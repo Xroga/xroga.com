@@ -72,6 +72,8 @@ function toolGuide(tools: string[]): string {
   lines.push('- Between tool calls write nothing, or one short sentence. Do not narrate coordinates, re-derive a layout or restate the plan in prose: put what matters in the tool arguments.');
   if (has('canvas'))
     lines.push('- canvas also types into fields a canvas app paints (click the field, then canvas type with text, or canvas key with Enter, Tab, Control+A): the normal type refuses them.');
+  if (has('canvas'))
+    lines.push('- Choose the fastest method the app offers. A painted editor often has a scripting, macro or command panel (Tools > Scripts, a console, a command bar): for several objects, colours or texts, open it, click into its editor, paste ONE short script with canvas type, run it, then check with a screenshot. That is a handful of turns instead of dozens of clicks. If a visual step goes wrong twice, change method.');
   if (has('canvas') && has('batch'))
     lines.push('- On a canvas, put the steps you already know in ONE batch call (for example select the tool, then drag, then pick the colour) and take a screenshot afterwards to check, instead of one screenshot and one step per turn.');
   if (has('tabs'))

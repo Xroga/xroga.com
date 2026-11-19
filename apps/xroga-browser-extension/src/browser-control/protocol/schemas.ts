@@ -156,7 +156,7 @@ export const CanvasArgsSchema = z.strictObject({
   action: z.enum(['click', 'double_click', 'right_click', 'hover', 'drag', 'type', 'key']),
   at: placeOnPage.optional().describe('[x, y] fractions of the screenshot'),
   to: placeOnPage.optional().describe('drag end'),
-  text: z.string().max(200).optional().describe('type: text for a field the canvas paints'),
+  text: z.string().max(4000).optional().describe('type: text for a field the canvas paints'),
   key: z.string().max(40).optional().describe('key: Enter, Tab, Escape, Backspace, Control+A, F6'),
   intent: z.string().min(3).max(120).describe('what this does'),
 });

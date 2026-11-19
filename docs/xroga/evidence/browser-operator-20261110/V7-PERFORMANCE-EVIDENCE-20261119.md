@@ -1,0 +1,32 @@
+# Browser Operator performance repair: measured causes, changes and results, 19 November 2026
+
+All numbers are from the real staging path (installed extension in Chrome, DeepSeek V4.1 Flash 1017 through Zurelay, staging revision `00146-wod`). Server numbers come from the backend's own `[browser-turn]` log records; the sample sizes are stated. No production change.
+
+## 1. Where the time goes (baseline: 159 real turns, 13:15 to 14:05 UTC, TraceDraw runs)
+| Measure | Value |
+| --- | --- |
+| Model turn, end to end | p50 8.7 s, p95 33.1 s, max 67.5 s |
+| Provider wait (time to response headers) | p50 7.9 s, p95 31.8 s: **91% of a turn** |
+| Gateway queue / ledger reservation | p50 45 ms / 52 ms (negligible) |
+| Input tokens per turn | p50 21,043 (p95 23,432); 84% served from the provider cache |
+| Output tokens per turn | p50 109, p95 1,334, max 1,669 |
+| Request size | p50 75 KB of text plus a screenshot (185 to 218 KB on the wire in the first vision run, up to 289 KB later) |
+| Model share of wall-clock time per run | 93 to 95% |
+Conclusion: Xroga's own code (gateway, ledger, tool dispatch, UI) is not the bottleneck. The time is the provider call, and it is driven by (a) the number of turns and (b) the slow tail of long prose output, not by reasoning (the gateway already sends `reasoning_effort: none` on every turn).
+
+Controlled A/B on the real endpoint (2 calls per variant, so indicative only): default thinking 58.8 s and 7.3 s; `reasoning_effort` none 4.3 s and 2.7 s; `thinking` disabled 3.6 s and 3.6 s; `low` 3.9 s and 3.6 s. The production path already uses `none`.
+
+## 2. Changes made for speed and reliability
+1. `canvas` steps may be placed in a `batch`, with a prompt rule to batch known canvas sequences and screenshot afterwards, replacing the one-screenshot-one-click-per-turn pattern.
+2. A brevity rule in the system prompt: between tool calls write nothing or one short sentence; no coordinate narration in prose (it targets the output tail above).
+3. `tabs adopt`: use a tab the user already has open and named. It considers only tabs of the session's window with a matching title or address, never names a non-matching tab, needs the match text to appear in the user's own request (a guess is refused), and refuses non-web pages. This removes the duplicate-tab and wrong-tab loop.
+4. `canvas type` and `canvas key`: typing and key presses into fields a canvas paints, allowed only while the focused element is a canvas (the guarded `type` and `press` keep refusing real fields). Secrets (password, card number, code) and consequential words are refused.
+5. Vision, the canvas tool, point actions and `find_color` exposure fixed earlier (see V6-ROOT-CAUSES).
+Tests: 1279 extension tests pass (new: adoption scoping, canvas keys and typing, batch membership); typecheck clean.
+
+## 3. Same-task comparison (TraceDraw)
+Before (vision on, canvas tool, no batch, no brevity rule, no adoption): see section 1; the agent worked one screenshot and one step per turn for 35 minutes without finishing, and stopped because typing into canvas-painted fields was cancelled by the key guard.
+After: RESULTS_PLACEHOLDER
+
+## 4. Not done in this pass (stated, not hidden)
+Per-run structured timing waterfall with p50/p95 over a 20-run suite; the five- and six-worker overlap re-test; the other task classes (S0 to S5) before and after; a second unfamiliar editor; compact visual deltas instead of resending full screenshots (the token cache already absorbs most of the image cost, 84% cached); a side-panel main-thread profile. The extension already keeps a per-run phase timing summary on the device (`RunTimings`); it has not yet been exported for these runs.
