@@ -104,3 +104,16 @@ test('rendered evidence fences the untrusted region and states the constraints l
     assert.ok(rendered.includes(forbidden), `constraint missing: ${forbidden}`);
   }
 });
+
+test('research evidence distinguishes source publication metadata from retrieval or measured time', () => {
+  const bundle = normalizeResearch([
+    { url: 'https://example.com/archive', publishedAt: '2025-04-03T10:00:00Z', snippet: 'Historical observation.' },
+    { url: 'https://example.com/live', publishedAt: 'invalid source date', snippet: 'A source without a verified date.' },
+  ], { query: 'Current price', now: () => new Date('2026-11-19T11:09:28Z') });
+  const evidence = formatResearchAsEvidence(bundle);
+  assert.match(evidence, /Retrieved: 2026-11-19T11:09:28\.000Z/);
+  assert.match(evidence, /Page publication \(source metadata\): 2025-04-03T10:00:00\.000Z/);
+  assert.equal(evidence.match(/Page publication/g)?.length, 1);
+  assert.doesNotMatch(evidence, /invalid source date/);
+  assert.match(evidence, /Neither tells you when a quoted value was observed/);
+});

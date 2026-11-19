@@ -5,7 +5,7 @@ import { createParser } from '@openuidev/lang-core';
 import { Renderer } from '@openuidev/react-lang';
 import { useMemo, useState } from 'react';
 import { library } from './library';
-import { EvidenceContext, evidenceCitation, type AnswerSource } from './evidence';
+import { EvidenceContext, evidenceCitation, type AnswerSource, type RenderEvidenceCitation } from './evidence';
 import { MAX_PROGRAM_CHARS, PARTIAL_NATIVE_PRESENTATION_NOTE, validateNativeOpenUi } from '../../../../backend/src/ai/nativeOpenUi';
 import { initialNativeValueReader } from '../../../../backend/src/ai/nativeOpenUiValues';
 import { MarkdownBlocks, nativeMarkdownMatches, NativeVisualContent, preservedMarkdownTableKeys, proseOutsideNativeDocuments, VisibleMarkdownTables } from './upstream/components/markdown';
@@ -45,7 +45,7 @@ export function NativeSurface({ answer, sources, isStreaming = false }: {
     ? nativeMarkdownMatches(parser.parse(accepted).root, initialNativeValueReader(accepted))
     : undefined, [accepted, isStreaming, recovered]);
   const visibleTables = useMemo(() => preservedMarkdownTableKeys(answer.text), [answer.text]);
-  const renderCitation = (number: number, href?: string) => evidenceCitation(verified, number, href);
+  const renderCitation: RenderEvidenceCitation = (number, href, cluster) => evidenceCitation(verified, number, href, cluster);
   // Keep the model's short introduction before its native answer. Additional
   // historical prose stays available below, with only exact duplicates removed.
   const outside = proseOutsideNativeDocuments(answer.text, matches);

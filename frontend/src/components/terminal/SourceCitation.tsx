@@ -24,12 +24,13 @@ function CitationIcon({ domain, size }: { domain: string; size: number }) {
     : <SourceLogo domain={domain} size={size} />;
 }
 
-export function SourceCitation({ source, number, label, showTitle = false, referral = false }: {
+export function SourceCitation({ source, number, label, showTitle = false, referral = false, compact = false }: {
   source: CitationPage;
   number?: number;
   label?: ReactNode;
   showTitle?: boolean;
   referral?: boolean;
+  compact?: boolean;
 }) {
   const id = useId();
   const link = useRef<HTMLAnchorElement>(null);
@@ -94,8 +95,9 @@ export function SourceCitation({ source, number, label, showTitle = false, refer
 
   if (!url) return <>{label ?? (number ? `[${number}]` : source.title)}</>;
   const { domain, site, title } = citationMetadata(source, url);
+  const shortLabel = compact && number !== undefined;
   return <>
-    <a ref={link} data-source-citation className={`${styles.chip} ${label || showTitle ? styles.named : ''}`}
+    <a ref={link} data-source-citation className={`${styles.chip} ${label || showTitle ? styles.named : ''} ${shortLabel ? styles.compact : ''}`}
       href={(referral ? sourceClickUrl(url) : url) ?? url} target="_blank" rel="noopener noreferrer"
       aria-label={number ? `Open source ${number}: ${title}` : `${label ? 'Open link' : 'Open source'}: ${title}`}
       aria-describedby={open ? id : undefined}
@@ -104,7 +106,7 @@ export function SourceCitation({ source, number, label, showTitle = false, refer
       onFocus={event => { if (event.currentTarget.matches(':focus-visible')) { keepOpen(); setOpen(true); } }}
       onBlur={dismiss}>
       <CitationIcon domain={domain} size={13} />
-      <span className={styles.label}>{label ?? (showTitle ? title : site)}</span>
+      <span className={styles.label}>{label ?? (shortLabel ? number : showTitle ? title : site)}</span>
     </a>
     {open && createPortal(
       <span className={styles.preview} id={id} ref={preview} role="tooltip"

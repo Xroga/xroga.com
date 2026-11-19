@@ -17,7 +17,7 @@ import ReactMarkdown, {
 } from 'react-markdown';
 
 import remarkGfm from 'remark-gfm';
-import { numberedCitation, remarkSourceCitations, safeSourceUrl, type CitationSource } from './xrogaCitations';
+import { citationLabelNumber, numberedCitation, remarkSourceCitations, safeSourceUrl, type CitationSource } from './xrogaCitations';
 
 import {
   ApiError,
@@ -1643,6 +1643,8 @@ export function FormattedAiMarkdown({
       const label = Array.isArray(children) ? children.join('') : children;
       const citation = typeof label === 'string' && href ? numberedCitation(label, href, availableSources) : undefined;
       if (citation) return <SourceCitation number={citation.number} source={citation.source} referral />;
+      const number = typeof label === 'string' && availableSources.length ? citationLabelNumber(label) : undefined;
+      if (number !== undefined) return <>[{number}]</>;
       const external = href ? safeSourceUrl(href) : null;
       if (external) {
         const knownIndex = availableSources.findIndex((item) => safeSourceUrl(item.url) === external);

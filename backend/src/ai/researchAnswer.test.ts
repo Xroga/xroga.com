@@ -56,6 +56,7 @@ test('one exact research approval completes its original rich answer, saves evid
     {title:'Public documentation',url:'https://example.com/docs',summary:'Public source excerpt',
      site_name:'Example Exchange',site_icon:'https://cdn.deepseek.com/site-icons/example.com'},
     {title:'Same page',url:'https://example.com/docs#section',summary:'Public source excerpt'},
+    ...(mode==='automatic'?[{title:'Archived quote',url:'https://example.org/archive',summary:'Old valuation snapshot',date:'2023-01-01T12:00:00Z'}]:[]),
    ];
    return Response.json({results},{headers:{'x-ds-trace-id':'synthetic-search-'+searches}});
   }
@@ -66,7 +67,17 @@ test('one exact research approval completes its original rich answer, saves evid
     assert.doesNotMatch(JSON.stringify(body.messages),/MUST_NOT_LEAVE|substituted planner context/);
     assert.match(JSON.stringify(body.messages),/UNRELATED_PRIOR_NASA_TURN/);
     assert.equal(body.messages.length,3);
-    assert.match(body.messages[0].content,/<<<XROGA_OPENUI_V1>>>/);
+    assert.equal(body.max_tokens,16384);
+    assert.equal(body.reasoning_effort,undefined);
+    if(mode==='automatic'){
+     assert.match(body.messages[0].content,/Return only the answer, without an OpenUI program/);
+     assert.doesNotMatch(body.messages[0].content,/<<<XROGA_OPENUI_V1>>>/);
+     assert.match(body.messages[2].content,/Page publication \(source metadata\): 2023-01-01T12:00:00\.000Z/);
+     assert.match(body.messages[2].content,/Never average or combine stale/);
+    }else{
+     assert.match(body.messages[0].content,/<<<XROGA_OPENUI_V1>>>/);
+     assert.doesNotMatch(body.messages[2].content,/one or two short paragraphs/);
+    }
    }else{
     assert.equal(body.max_tokens,4096);
     assert.ok(['json_object','json_schema'].includes(body.response_format.type));
@@ -222,12 +233,23 @@ test('citation links always point at the retrieved source they number, never at 
  const out=bindCitationLinks('See [1](https://evil.example/x) and [2](<https://github.com/vercel/next.js/releases?x=1>), also [3](https://other.example/y).\n```\n[1](https://keep.example/code)\n```\n',sources);
  assert.match(out,/\[1\]\(https:\/\/nextjs\.org\/blog\/next-16\)/);
  assert.match(out,/\[2\]\(https:\/\/github\.com\/vercel\/next\.js\/releases\)/);
- assert.match(out,/\[3\]\(https:\/\/other\.example\/y\)/,'a number with no retrieved source is left alone');
+ assert.match(out,/also \[3\]\./,'a number with no retrieved source remains visible as text');
+ assert.doesNotMatch(out,/other\.example/,'an unresolved source cannot be opened from the answer');
  assert.match(out,/```\n\[1\]\(https:\/\/keep\.example\/code\)\n```/,'fenced code is never rewritten');
  assert.deepEqual(researchCitationIssues(bindCitationLinks('Claim [1](https://wrong.example) and [2].',sources),sources),[]);
  const code='Use `[1](https://keep.example/code)` and ``example `[77]` [1](https://keep.example/more)``.';
  const withInlineCode=bindCitationLinks('Claim [1](https://wrong.example). '+code,sources);
  assert.equal(withInlineCode,'Claim [1](https://nextjs.org/blog/next-16). '+code);
  assert.deepEqual(researchCitationIssues(withInlineCode,sources),[]);
- assert.ok(researchCitationIssues(bindCitationLinks('Claim [3](https://wrong.example).',sources),sources).includes('mismatched-source:3'),'an unmatched number is still reported');
+ const unresolved=bindCitationLinks('Claim [3](<https://wrong.example/path_(label)> "Model label").',sources);
+ assert.equal(unresolved,'Claim [3].');
+ assert.ok(researchCitationIssues(unresolved,sources).includes('unresolved-source:3'),'an unmatched number is still reported');
+ assert.equal(bindCitationLinks('Claim [2](https://wrong.example "Model label").',sources),
+  'Claim [2](https://github.com/vercel/next.js/releases).');
+ const parenthesizedSource=[{url:'https://example.com/docs/Feature_(product)'}];
+ const parenthesized=bindCitationLinks('Claim [1](https://wrong.example).',parenthesizedSource);
+ assert.equal(parenthesized,'Claim [1](<https://example.com/docs/Feature_(product)>).');
+ assert.deepEqual(researchCitationIssues(parenthesized,parenthesizedSource),[]);
+ assert.equal(bindCitationLinks('Use the [documentation](https://example.com/reference).',sources),
+  'Use the [documentation](https://example.com/reference).');
 });

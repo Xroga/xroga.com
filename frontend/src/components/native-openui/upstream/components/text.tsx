@@ -1,12 +1,13 @@
 "use client";
 
 import { defineComponent } from "@openuidev/react-lang";
+import { isElementNode } from "@openuidev/lang-core";
 import { ArrowUpRight } from "lucide-react";
 import { Fragment, useContext } from "react";
 import { z } from "zod/v4";
 import { Glyph } from "./glyph";
 import { inline, MarkdownBlocks, NativeVisualContent } from "./markdown";
-import { useRenderEvidenceCitation } from '../../evidence';
+import { EvidenceContext, evidenceSource, useRenderEvidenceCitation } from '../../evidence';
 import { children, color, cx, fg, webUrl } from "./style";
 
 const str = (value: unknown) => (value == null ? "" : String(value));
@@ -33,7 +34,6 @@ export const Title = defineComponent({
 
 /** Text, or a run of strings and inline components such as Icon, Badge, Link or Math. */
 const richText = z.union([z.string(), children]);
-const isNode = (value: unknown) => !!value && typeof value === "object" && (value as { type?: unknown }).type === "element";
 
 export const Text = defineComponent({
   name: "Text",
@@ -50,6 +50,8 @@ export const Text = defineComponent({
   description: "Paragraph with bold, italic and code. Inline components can include Source, Icon, or Badge. Only use verified Source IDs for links.",
   component: function NativeText({ props, renderNode }) {
     const renderCitation = useRenderEvidenceCitation();
+    const evidence = useContext(EvidenceContext);
+    const cluster = new Set<string>();
     return (
       <p
         className={cx("iui-text", props.size && `iui-text-${props.size}`, props.weight && `iui-weight-${props.weight}`)}
@@ -61,10 +63,17 @@ export const Text = defineComponent({
         }}
       >
         {Array.isArray(props.text)
-          ? (props.text as unknown[]).flat().map((part, i) =>
-              isNode(part) ? <span key={i} className="iui-inline">{renderNode(part)}</span> : <Fragment key={i}>{inline(str(part), `t${i}`, renderCitation)}</Fragment>,
-            )
-          : inline(str(props.text), 'text', renderCitation)}
+          ? (props.text as unknown[]).flat().map((part, i) => {
+              if (!isElementNode(part)) return <Fragment key={i}>{inline(str(part), `t${i}`, renderCitation, cluster)}</Fragment>;
+              if (part.typeName === 'Source' && typeof part.props.id === 'string') {
+                const citation = evidenceSource(evidence, part.props.id, cluster);
+                if (citation === null) cluster.clear();
+                return citation && <span key={i} className="iui-inline">{citation}</span>;
+              }
+              cluster.clear();
+              return <span key={i} className="iui-inline">{renderNode(part)}</span>;
+            })
+          : inline(str(props.text), 'text', renderCitation, cluster)}
       </p>
     );
   },

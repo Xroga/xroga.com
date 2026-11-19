@@ -76,13 +76,40 @@ test('saved numbered Markdown links use a publisher chip only for matching evide
     assert.match(html, /Open source 1: Connection settings/);
     assert.match(html, />PostgreSQL</);
     assert.match(html, /docs\.pdf\?id=123/);
-    assert.doesNotMatch(renderToStaticMarkup(render(different)), /Connection settings/);
+    assert.doesNotMatch(renderToStaticMarkup(render(different)), /Connection settings|href="https:\/\/example\.org\/unknown/);
   }
   const native = renderToStaticMarkup(createElement(MarkdownBlocks, {
     text: 'See [1](https://git.postgresql.org/docs.pdf?id=456).',
     renderCitation: (number, href) => evidenceCitation(evidence, number, href),
   }));
   assert.doesNotMatch(native, /<a /);
+});
+
+test('research fallbacks keep only fully bound numeric links and preserve prose links and code', () => {
+  const text = 'Incorrect [1](https://wrong.test/) and [7](/workspace). [Ordinary link](https://trusted.test/docs) Code: `[1](https://wrong.test/)`.';
+  for (const element of [
+    createElement(FormattedAiMarkdown, { content: text, sources }),
+    createElement(ProseV2, { text, sources }),
+  ]) {
+    const html = renderToStaticMarkup(element);
+    assert.match(html, /Incorrect \[1\] and \[7\]/);
+    assert.doesNotMatch(html, /href="(?:https:\/\/wrong\.test\/|\/workspace)/);
+    assert.match(html, /href="https:\/\/trusted\.test\/docs/);
+    assert.match(html, /<code[^>]*>\[1\]\(https:\/\/wrong\.test\/\)<\/code>/);
+  }
+  assert.match(renderToStaticMarkup(createElement(FormattedAiMarkdown, { content: '[7](https://trusted.test/list).' })), /href="https:\/\/trusted\.test\/list/);
+});
+
+test('native Markdown verifies angle-bracket citation destinations with literal parentheses', () => {
+  const url = 'https://example.org/Feature_(product)?edition=2';
+  const evidence = new Map([['source-1', { id: 'source-1', title: 'Feature documentation', url }]]);
+  const html = renderToStaticMarkup(createElement(MarkdownBlocks, {
+    text: `The feature is documented [1](<${url}>). Unmatched [1](<${url}&old=true>).`,
+    renderCitation: (number, href) => evidenceCitation(evidence, number, href),
+  }));
+  assert.match(html, /href="https:\/\/example\.org\/Feature_\(product\)\?edition=2"/);
+  assert.equal((html.match(/<a /g) ?? []).length, 1);
+  assert.doesNotMatch(html, /edition=2&amp;old|product\)&gt;/);
 });
 
 test('native headings, lists, and tables keep citations beside the supported text', t => {
@@ -114,6 +141,38 @@ test('native headings, lists, and tables keep citations beside the supported tex
   assert.match(html, /Missing: \[9\]/);
   assert.match(html, /Literal: <code class="iui-code">\[1\]<\/code>/);
   assert.doesNotMatch(html, /href="https:\/\/elsewhere\.test/);
+});
+
+test('native citation clusters keep every distinct source and preserve links for separate claims', t => {
+  const previousReact = Object.getOwnPropertyDescriptor(globalThis, 'React');
+  Object.defineProperty(globalThis, 'React', { configurable: true, value: React });
+  t.after(() => {
+    if (previousReact) Object.defineProperty(globalThis, 'React', previousReact);
+    else Reflect.deleteProperty(globalThis, 'React');
+  });
+  const report = 'https://example.org/report?revision=2#results';
+  const methods = 'https://example.org/report?revision=2#methods';
+  const evidence = [
+    { id: 'source-1', title: 'Results', url: report },
+    { id: 'source-2', title: 'Duplicate result', url: report },
+    { id: 'source-3', title: 'Methodology', url: methods },
+  ];
+  const answer = {
+    format: 'xroga-openui-v1',
+    library: 'xroga-native-v1',
+    text: `Supporting notes [1] [2](${report}) [3](${methods}). Independent check [2]. Code: \`[1]\`.`,
+    program: 'root = Col([Text(["Measured result [1] ", Source("source-2"), " ", Source("source-3"), ". Separate claim ", Source("source-2"), "."])])',
+  } as const;
+  const html = renderToStaticMarkup(createElement(NativeSurface, { answer, sources: evidence }));
+  assert.equal((html.match(/data-source-citation/g) ?? []).length, 6);
+  assert.equal((html.match(/class="[^"]*\bcompact\b[^"]*"/g) ?? []).length, 2);
+  assert.equal((html.match(/href="https:\/\/example\.org\/report\?revision=2#results"/g) ?? []).length, 4);
+  assert.equal((html.match(/href="https:\/\/example\.org\/report\?revision=2#methods"/g) ?? []).length, 2);
+  assert.match(html, /Measured result .*aria-label="Open source 1: Results"/);
+  assert.match(html, /Separate claim .*aria-label="Open source: Duplicate result"/);
+  assert.equal((html.match(/aria-label="Open source 3: Methodology"/g) ?? []).length, 2);
+  assert.match(html, /Independent check <a [^>]*data-source-citation[^>]*aria-label="Open source 2: Duplicate result"/);
+  assert.match(html, /Code: <code class="iui-code">\[1\]<\/code>/);
 });
 
 test('source clicks carry Xroga attribution without altering the underlying evidence URLs', () => {

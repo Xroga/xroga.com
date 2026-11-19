@@ -21,6 +21,14 @@
   border-color: color-mix(in srgb, currentColor 24%, transparent);
 }
 
+.compact.compact {
+  justify-content: center;
+  min-inline-size: 24px;
+  gap: .2rem;
+  padding-inline: .25rem;
+  font-variant-numeric: tabular-nums;
+}
+
 .chip.chip:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
 .label { min-inline-size: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .mark { display: inline-grid; place-items: center; flex: none; }

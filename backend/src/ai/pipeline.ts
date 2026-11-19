@@ -58,9 +58,11 @@ import {
 import {
   BUILDER_SYSTEM,
   chatPresentationSystem,
+  DIRECT_RESEARCH_SYSTEM,
   DOC_SYSTEM,
   VISION_SYSTEM,
   incrementalUpdateContext,
+  isDirectCurrentFactLookup,
   researchAnswerMaxTokens,
   researchSynthesisPrompt,
 } from './prompts.js';
@@ -1149,9 +1151,19 @@ export async function runChatPipeline(opts: {
   const promptWithProjectEvidence = opts.projectEvidence
     ? `${opts.prompt}\n\nAuthorized read-only repository evidence:\n${opts.projectEvidence}`
     : opts.prompt;
+  const answerContract = prepareAnswerCoverage(opts.prompt, opts.goalContract?.presentation, opts.goalContract?.answerObligations);
+  const native = usesNativeWorkspacePresentation(route.builder);
+  const formats = native ? requiredNativeFormats(opts.prompt) : [];
+  // An already authorized, single-fact public lookup needs only citation-ready
+  // prose. Keep the model, reasoning and token budget used by rich answers.
+  const directPublicLookup = native && publicWebRetrieved === true
+    && opts.goalContract?.freshnessRequirement === 'CURRENT_REQUIRED'
+    && !opts.goalContract.deliverables.length && !formats.length
+    && !answerContract.requirements.some(item => item.origin === 'requested' && item.formats.some(format => format !== 'prose'))
+    && isDirectCurrentFactLookup(opts.prompt);
   const userContent =
     route.kind === 'research' && researchBlock
-      ? researchSynthesisPrompt(promptWithProjectEvidence, researchBlock)
+      ? researchSynthesisPrompt(promptWithProjectEvidence, researchBlock, directPublicLookup)
       : researchBlock
         ? `${promptWithProjectEvidence}\n\n${researchBlock}`
         : promptWithProjectEvidence;
@@ -1159,9 +1171,6 @@ export async function runChatPipeline(opts: {
   const truthAuthorities = new Set<string>(['model:execute', 'sandbox:execute']);
   if (opts.projectEvidence) truthAuthorities.add('repository:read');
   if (research?.sources.length) truthAuthorities.add('network:public-read');
-  const answerContract = prepareAnswerCoverage(opts.prompt, opts.goalContract?.presentation, opts.goalContract?.answerObligations);
-  const native = usesNativeWorkspacePresentation(route.builder);
-  const formats = native ? requiredNativeFormats(opts.prompt) : [];
   const sources = research?.sources ?? [];
   const evidenceIds = new Set(sources.map((_, index) => 'source-' + (index + 1)));
   const sourceManifest = sources.length
@@ -1178,7 +1187,7 @@ export async function runChatPipeline(opts: {
     && opts.goalContract?.semanticIntent === 'ANSWER' && opts.goalContract.contextComplexity === 'low'
     && opts.goalContract.confidence >= 0.8 && !opts.goalContract.presentationIssue && answerContract.coverage.complete
     && answerContract.plan.length === 0 && answerContract.requirements.length === 0;
-  const instructions = native
+  const instructions = directPublicLookup ? DIRECT_RESEARCH_SYSTEM : native
     ? plainNative ? nativeOpenUiPlainPrompt : workspaceNativeOpenUiPrompt([...answerContract.plan.map(section => section.kind), ...formats], Boolean(evidenceIds.size)) + sourceManifest
     : chatPresentationSystem(opts.prompt) + (presentation?.length ? '\n\n' + presentationRequestInstructions(presentation) : '');
   const system = currentPublicProductTruth(truthAuthorities) + '\n\n' + instructions;

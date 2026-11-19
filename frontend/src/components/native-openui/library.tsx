@@ -15,8 +15,7 @@ import { ChoicePicker } from './ChoicePicker';
 import { Tabs } from './Tabs';
 import { Diagram } from './Diagram';
 import { Resource } from './Resources';
-import { EvidenceContext } from './evidence';
-import { SourceCitation } from '../terminal/SourceCitation';
+import { EvidenceContext, evidenceSource } from './evidence';
 import { Controls, Metric, Section } from './Editorial';
 
 export const Source = defineComponent({
@@ -24,8 +23,7 @@ export const Source = defineComponent({
   description: 'Link to one source by the exact evidence ID supplied by Xroga. Omit when no IDs were supplied.',
   props: z.object({ id: z.string().max(120) }),
   component: function EvidenceSource({ props }) {
-    const source = useContext(EvidenceContext).get(props.id);
-    return source ? <SourceCitation source={source} /> : null;
+    return evidenceSource(useContext(EvidenceContext), props.id);
   },
 });
 

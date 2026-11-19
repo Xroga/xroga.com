@@ -4,6 +4,7 @@ import { isPresentationLanguage, publicAnswerText } from "@/lib/publicAnswerText
 import { cx, isLongAnswerTable, webUrl } from "./style";
 import { staticChartTable } from "./chart";
 import { CodePanel } from "./code-panel";
+import type { RenderEvidenceCitation } from "../../evidence";
 import { nativeReadableTextKey } from "../../../../../../backend/src/ai/nativeOpenUi";
 
 // Markdown builds React elements. Formula HTML comes only from untrusted KaTeX.
@@ -12,8 +13,7 @@ import { nativeReadableTextKey } from "../../../../../../backend/src/ai/nativeOp
 
 // An underscore inside an identifier is literal, even when another identifier
 // later in the same paragraph also contains an underscore.
-const INLINE = /(`[^`\n]+`)|(\*\*[^*\n]+?\*\*|(?<![\p{L}\p{N}_])__[^_\n]+?__(?![\p{L}\p{N}_]))|(~~[^~\n]+?~~)|(\*[^*\s][^*\n]*?\*|(?<![\p{L}\p{N}_])_[^_\s][^_\n]*?_(?![\p{L}\p{N}_]))|(\[[^\]\n]+\]\([^)\s]+\))|(\[(\d{1,2})\])|(\\\([^\n]+?\\\))/u;
-type RenderCitation = (number: number, href?: string) => ReactNode;
+const INLINE = /(`[^`\n]+`)|(\*\*[^*\n]+?\*\*|(?<![\p{L}\p{N}_])__[^_\n]+?__(?![\p{L}\p{N}_]))|(~~[^~\n]+?~~)|(\*[^*\s][^*\n]*?\*|(?<![\p{L}\p{N}_])_[^_\s][^_\n]*?_(?![\p{L}\p{N}_]))|(\[[^\]\n]+\]\((?:<[^<>\r\n]+>|[^)\s]+)\))|(\[(\d{1,2})\])|(\\\([^\n]+?\\\))/u;
 
 /** Reuse the registered Math component's bounded, untrusted KaTeX rendering. */
 export function MathExpression({ tex, inline = false }: { tex: string; inline?: boolean }) {
@@ -27,34 +27,48 @@ export function MathExpression({ tex, inline = false }: { tex: string; inline?: 
   }
 }
 
-export function inline(text: string, key = "i", renderCitation?: RenderCitation): ReactNode {
+export function inline(text: string, key = "i", renderCitation?: RenderEvidenceCitation, cluster = new Set<string>()): ReactNode {
   const out: ReactNode[] = [];
   let rest = text;
   let n = 0;
   while (rest) {
     const m = INLINE.exec(rest);
     if (!m) {
+      if (rest.trim()) cluster.clear();
       out.push(rest);
       break;
     }
-    if (m.index) out.push(rest.slice(0, m.index));
+    if (m.index) {
+      const prose = rest.slice(0, m.index);
+      if (prose.trim()) cluster.clear();
+      out.push(prose);
+    }
     const token = m[0];
     const k = `${key}-${n++}`;
+    if (!m[5] && !m[6]) cluster.clear();
     if (m[1]) out.push(<code key={k} className="iui-code">{token.slice(1, -1)}</code>);
     else if (m[2]) out.push(<strong key={k}>{inline(token.slice(2, -2), k, renderCitation)}</strong>);
     else if (m[3]) out.push(<s key={k}>{inline(token.slice(2, -2), k, renderCitation)}</s>);
     else if (m[4]) out.push(<em key={k}>{inline(token.slice(1, -1), k, renderCitation)}</em>);
-    else if (m[6]) out.push(<Fragment key={k}>{renderCitation?.(Number(m[7])) ?? token}</Fragment>);
+    else if (m[6]) {
+      const citation = renderCitation?.(Number(m[7]), undefined, cluster);
+      if (citation == null) cluster.clear();
+      out.push(<Fragment key={k}>{citation ?? token}</Fragment>);
+    }
     else if (m[8]) out.push(<MathExpression key={k} tex={token.slice(2, -2)} inline />);
     else {
       const close = token.indexOf("](");
       const label = token.slice(1, close);
-      const destination = token.slice(close + 2, -1);
+      const rawDestination = token.slice(close + 2, -1);
+      const destination = rawDestination.startsWith("<") && rawDestination.endsWith(">")
+        ? rawDestination.slice(1, -1)
+        : rawDestination;
       const href = webUrl(destination);
       const number = /^(\d{1,3})$/.exec(label)?.[1];
-      const citation = number ? renderCitation?.(Number(number), destination) : null;
+      const citation = number ? renderCitation?.(Number(number), destination, cluster) : null;
+      if (citation == null) cluster.clear();
       out.push(
-        citation ? <Fragment key={k}>{citation}</Fragment> : href ? (
+        citation != null ? <Fragment key={k}>{citation}</Fragment> : href ? (
           <a key={k} className="iui-link" href={href} target="_blank" rel="noopener noreferrer">
             {inline(label, k)}
           </a>
@@ -388,7 +402,7 @@ function blocks(source: string): Block[] {
   return out;
 }
 
-export function MarkdownBlocks({ text, renderCitation, deduplicateTables = false, matches, nativeTables, nativeSectionTables, nativeHeadingTitles }: { text: string; renderCitation?: RenderCitation; deduplicateTables?: boolean; matches?: MarkdownMatches; nativeTables?: ReadonlySet<string>; nativeSectionTables?: ReadonlyMap<string, ReadonlySet<string>>; nativeHeadingTitles?: ReadonlySet<string> }) {
+export function MarkdownBlocks({ text, renderCitation, deduplicateTables = false, matches, nativeTables, nativeSectionTables, nativeHeadingTitles }: { text: string; renderCitation?: RenderEvidenceCitation; deduplicateTables?: boolean; matches?: MarkdownMatches; nativeTables?: ReadonlySet<string>; nativeSectionTables?: ReadonlyMap<string, ReadonlySet<string>>; nativeHeadingTitles?: ReadonlySet<string> }) {
   const seenTables = new Set<string>();
   const items = blocks(text);
   return (
