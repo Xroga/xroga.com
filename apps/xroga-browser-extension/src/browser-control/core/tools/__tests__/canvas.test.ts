@@ -113,4 +113,12 @@ describe('canvas pointer actions', () => {
     expect(focusAcceptsPaintedInput({ ...base, tag: 'TEXTAREA', bigCanvas: false })).toBe(false);
     expect(focusAcceptsPaintedInput({ ...base, tag: 'BUTTON' })).toBe(false);
   });
+
+  it('replace selects all before inserting, so the text does not splice into the example', async () => {
+    const { ctx, sent } = fakeCtx('CANVAS', [], 'HIDDENTEXT');
+    await canvas(ctx, { action: 'type', text: 'print(1)', replace: true, intent: 'enter the script' } as never);
+    const order = sent.map(s => s.method === 'Input.dispatchKeyEvent' ? `key:${s.params.key}:${s.params.modifiers}` : s.method).filter(m => m.startsWith('key:') || m === 'Input.insertText');
+    expect(order.indexOf('key:a:2')).toBeGreaterThanOrEqual(0);
+    expect(order.indexOf('key:a:2')).toBeLessThan(order.indexOf('Input.insertText'));
+  });
 });

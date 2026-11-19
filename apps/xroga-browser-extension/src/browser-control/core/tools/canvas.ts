@@ -131,6 +131,8 @@ export async function canvas(ctx: ToolContext, args: CanvasArgs): Promise<ToolOu
     if (args.action === 'type' && CONSEQUENTIAL.test(args.text!)) throw new LayerError('USER_STEP', 'That text looks like a secret or a consequential step; the user types it themselves.');
     await assertCanvasFocused(ctx);
     if (args.action === 'type') {
+      // An editor opens with example text and a click puts the caret inside it: without a select-all the new text is spliced into the old and the program breaks.
+      if (args.replace) await sendKey(ctx, 'Control+A');
       ctx.tab().actionSeq++;
       await (await ctx.attach()).cdp.send(undefined, 'Input.insertText', { text: args.text });
     } else await sendKey(ctx, args.key!);

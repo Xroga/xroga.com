@@ -719,6 +719,13 @@ ${ledger}` : ''),
       };
     }
     const args = (call.input ?? {}) as Record<string, unknown>;
+    // The same text typed twice into a painted editor, or typed without replace after an error, is the splice failure: stop it in code.
+    if (call.toolName === 'canvas' && args.action === 'type' && typeof args.text === 'string' && args.text.length > 40) {
+      const key = args.text.slice(0, 200);
+      if (!args.replace) return { call, kind, isError: true, text: 'refused: a long text typed into a painted editor must use replace: true (select all first). The editor opens with example text and a click puts the caret inside it, so without replace your program is spliced into the example and fails with TypeError. Nothing was typed.' };
+      if (this.#typedTexts.has(key)) return { call, kind, isError: true, text: 'refused: this exact text was already typed and run. Read the Output area and change only what the error names, or finish with the blocker. Do not retype it, and do not create another document.' };
+      this.#typedTexts.add(key);
+    }
     // The first script typed into a painted editor must come from the app's own documentation: guessing an API costs dozens of turns.
     if (call.toolName === 'canvas' && args.action === 'type' && typeof args.text === 'string' && args.text.length > 60 && /[;{}]|\w\.\w+\(/.test(args.text) &&
         !this.#docsRead && !this.#scriptGateShown) {
@@ -1441,6 +1448,7 @@ ${ledger}` : ''),
   #toolCounts = new Map<string, number>();
   #adoptedOrigin = '';
   #boundTab: number | null = null;
+  #typedTexts = new Set<string>();
   #docsRead = false;
   #scriptGateShown = false;
   #canvasOffered = false;

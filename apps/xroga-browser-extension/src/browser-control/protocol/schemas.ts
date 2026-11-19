@@ -158,6 +158,7 @@ export const CanvasArgsSchema = z.strictObject({
   to: placeOnPage.optional().describe('drag end'),
   text: z.string().max(4000).optional().describe('type: text for a field the canvas paints'),
   key: z.string().max(40).optional().describe('key: Enter, Tab, Escape, Backspace, Control+A, F6'),
+  replace: z.boolean().optional().describe('type: select all first'),
   intent: z.string().min(3).max(120).describe('what this does'),
 });
 

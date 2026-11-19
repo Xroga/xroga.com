@@ -140,7 +140,7 @@ export const SKILLS: Skill[] = [
     when: has(/\b(?:tracedraw|script(?:s|ing)? (?:panel|console)|macros?|vector (?:editor|drawing)|svg)\b/i),
     body: [
       'Apps with a built-in script console (verified on TraceDraw 0.49, where it is Tools > Scripts):',
-      '- One short script beats dozens of clicks. Open the console, click into its editor, canvas type the whole script, click Run, then read the Output line: it says Objects: N or an error. Fix an error from its message only.',
+      '- One short script beats dozens of clicks. Open the console, click into its editor, canvas type the whole script with replace: true, click Run, then read the Output line: it says Objects: N or an error. Fix an error from its message only.',
       '- Use only API names that are known to work. TraceDraw, verified by an exported SVG and its own scripting page. Copy this script and change only the numbers or texts, then run it: var l = ActiveLayer; var r = l.CreateRectangle(20, 90, 70, 50, 0); r.Fill.ApplyUniformFill(Color.RGB(0, 0, 255)); var c = l.CreateEllipse(110, 90, 70, 70); c.Fill.ApplyUniformFill(Color.RGB(255, 0, 0)); var t = l.CreateArtisticText(75, 60, "Xroga", "Arial", 28); print(ActivePage.Shapes.Count); Objects are created on ActiveLayer (not ActiveDocument). A script error means a name was invented: never rename calls by guessing, retype the template. Units are millimetres, origin bottom left, A4 is 210 by 297: keep every x + w and y + h inside the page.',
       '- A different app: read its scripting page once and copy names exactly; do not call a method you have not seen in its docs or Output.',
       '- Export through the app: File > Export or Save as SVG, then confirm_download and report the file name.',
