@@ -1,0 +1,212 @@
+import type { GuidePage } from '../seoGrowthContent';
+/** Source-reviewed editorial guide. Code and examples are illustrative; verify in real projects. */
+export const premiumSupabaseLoginFailsAfterDeployment: GuidePage = {
+  "slug": "supabase-login-fails-after-deployment",
+  "title": "Supabase Login Fails After Deployment? Fix OAuth Redirects, Cookies and Production URLs",
+  "description": "Diagnose Supabase authentication problems after deployment using exact redirect URL checks, OAuth provider configuration, session troubleshooting and safe verification.",
+  "eyebrow": "Supabase · authentication troubleshooting",
+  "intro": "If Supabase login works on localhost but fails on your public domain, the problem may be a redirect URL mismatch, OAuth provider callback, session cookie or environment configuration. These checks help you narrow the cause without weakening security.",
+  "explain": {
+    "quick": "First compare your deployed hostname, Supabase Auth SITE_URL and allowed redirect URLs. Then inspect the OAuth provider callback and session handling using a fresh browser login.",
+    "simple": "Login is like leaving your website to show an ID and then coming back. If the return address is wrong, the login journey gets lost—even when the password is correct.",
+    "steps": [
+      "Record the exact public domain and failed redirect.",
+      "Check Supabase Auth URL Configuration.",
+      "Check the provider's authorized callback URL.",
+      "Verify server and browser configuration in production.",
+      "Test sign-in, refresh and sign-out in a new session."
+    ]
+  },
+  "related": [
+    "/build-with/supabase",
+    "/blog/ai-app-preview-works-production-fails",
+    "/security",
+    "/docs"
+  ],
+  "sources": [
+    {
+      "label": "Supabase redirect URL guide",
+      "href": "https://supabase.com/docs/guides/auth/redirect-urls"
+    },
+    {
+      "label": "Supabase Auth general configuration",
+      "href": "https://supabase.com/docs/guides/auth/general-configuration"
+    },
+    {
+      "label": "Supabase Auth architecture",
+      "href": "https://supabase.com/docs/guides/auth/architecture"
+    },
+    {
+      "label": "Next.js environment variables",
+      "href": "https://nextjs.org/docs/app/guides/environment-variables"
+    }
+  ],
+  "sections": [
+    {
+      "heading": "Recognize the type of login failure",
+      "paragraphs": [
+        "Not all authentication failures are redirect failures. If a user cannot submit the form, inspect validation and network requests. If an OAuth provider rejects the request, inspect provider credentials and registered callback settings. If the provider returns successfully but your app shows the login page again, investigate session exchange, cookies and server-side rendering behavior.",
+        "Start with the exact failing URL and a redacted error message. Preserve only safe context: browser, environment, time, response status and the configured domain. Never paste access tokens, authorization codes or secrets into support conversations."
+      ],
+      "table": {
+        "caption": "Use observed symptoms to choose the diagnostic layer.",
+        "columns": [
+          "Symptom",
+          "Check first",
+          "Avoid"
+        ],
+        "rows": [
+          [
+            "Provider says redirect URI mismatch",
+            "Provider OAuth callback configuration",
+            "Changing random client code"
+          ],
+          [
+            "Returns to localhost",
+            "Supabase SITE_URL and redirectTo",
+            "Making all redirects unrestricted"
+          ],
+          [
+            "Returns to login page",
+            "Session exchange and cookies",
+            "Disabling session validation"
+          ],
+          [
+            "Only production fails",
+            "Environment variables and domain",
+            "Publishing secret keys"
+          ],
+          [
+            "Authenticated but no data",
+            "Database RLS and roles",
+            "Disabling authorization"
+          ]
+        ]
+      }
+    },
+    {
+      "heading": "Understand the three URLs involved",
+      "paragraphs": [
+        "Your application domain is where the user starts. The Supabase Auth service handles the authentication flow and can redirect back to an approved application URL. A third-party provider such as Google or GitHub also requires the correct callback address to the Supabase service. These are related but not interchangeable.",
+        "You may use an explicit redirectTo parameter in the app, a default SITE_URL in Supabase and a provider-specific callback URL in the OAuth provider dashboard. Keep a simple diagram of each hop. Changing just one URL when the flow has three different configuration points can leave the problem unresolved."
+      ]
+    },
+    {
+      "heading": "Check Supabase Auth SITE_URL and allowlist",
+      "paragraphs": [
+        "In the Supabase dashboard, open Authentication and URL Configuration. Set the Site URL to your real production site. Add only the additional redirect URLs you actually use, including local development or approved previews if needed. Supabase documents patterns for preview deployments, but broad wildcards should be understood and restricted appropriately.",
+        "Match the real route used by your application. If the code redirects to /auth/callback, that path must make sense in the allowlist. If you use different www and apex domains, choose a canonical origin and ensure both application navigation and auth settings are deliberate. Test rather than assuming redirects will normalize automatically."
+      ],
+      "steps": [
+        {
+          "title": "Copy the failing redirect",
+          "body": "Record its full hostname, protocol and path but redact any temporary auth code or token query parameters."
+        },
+        {
+          "title": "Open URL Configuration",
+          "body": "Confirm that Site URL is your intended production origin and additional URLs cover legitimate flows."
+        },
+        {
+          "title": "Compare the app's redirectTo",
+          "body": "Find the sign-in call or callback helper and verify the URL it constructs in production."
+        },
+        {
+          "title": "Review wildcard use",
+          "body": "Prefer narrow production URLs; follow Supabase guidance for preview-host patterns only where needed."
+        }
+      ]
+    },
+    {
+      "heading": "Check the OAuth provider's authorized callback",
+      "paragraphs": [
+        "When using Google or GitHub sign-in through Supabase, the OAuth application at that provider normally redirects into the Supabase Auth callback endpoint. The configured callback depends on the specific Supabase project, not simply on your Next.js page. Use the callback URL shown by Supabase or its official provider setup guidance.",
+        "If you created separate staging and production Supabase projects, their callback URLs may differ. Verify that the provider configuration is consistent with the project your production app actually uses. Avoid reusing credentials indiscriminately across environments if it complicates access control or incident response."
+      ]
+    },
+    {
+      "heading": "Inspect production variables without leaking secrets",
+      "paragraphs": [
+        "An authentication failure may be caused by a frontend configured for one Supabase project while server code uses another. Compare the project URL and the appropriate public key values across the deployment settings. Keep privileged service keys out of browser code. For Next.js, NEXT_PUBLIC_ values can be inlined into the client bundle at build time, so a redeployment may be required after changing them.",
+        "Make sure your public and server environments agree on the intended project. Do not log complete tokens or secrets. When necessary, log a non-sensitive project identifier or the hostname of the configured API so you can tell whether the correct environment loaded."
+      ]
+    },
+    {
+      "heading": "Understand session cookies and server-rendered routes",
+      "paragraphs": [
+        "After OAuth redirects the user back to the app, the application may need to exchange an authorization code for a session and store it using the expected cookie or storage mechanism. A successful provider sign-in does not guarantee that the Next.js server sees a valid session on subsequent requests.",
+        "Inspect the application's existing Supabase SSR integration and callback handler. Check whether cookies are set for the correct domain, whether HTTPS is in use, and whether the client and server read the same session state. Avoid replacing a working authentication architecture with unreviewed snippets copied from a different framework version."
+      ],
+      "note": "This is an illustrative troubleshooting guide, not a substitute for testing the precise Supabase SDK, Next.js version and auth callback implementation in your project."
+    },
+    {
+      "heading": "A safe debugging plan for an AI coding agent",
+      "paragraphs": [
+        "Give the agent the exact failure and constraints. Its first task should be to inspect URL handling and environment configuration, not to rewrite your login screens. Ask it to identify what remains unknown, which checks can be run without secrets and which changes require administrator approval."
+      ],
+      "code": {
+        "caption": "Safe Supabase login troubleshooting prompt",
+        "content": "Issue: OAuth login works locally but fails after deployment.\nStack: Next.js + Supabase Auth + [OAuth provider].\nPublic domain: https://example.com\nFailure symptom: [redacted URL/error]\nInspect:\n- Supabase SITE_URL and allowed redirect patterns\n- OAuth provider callback configuration\n- App redirectTo logic and callback route\n- Cookie/session exchange and production variables\nConstraints:\n- Do not print secrets, tokens or real user data.\n- Do not disable authorization or use broad redirect wildcards.\n- Propose the smallest correction and a safe validation plan.\nDeliver: likely cause, evidence, patch, tests and unresolved questions."
+      }
+    },
+    {
+      "heading": "Verify the complete sign-in lifecycle",
+      "paragraphs": [
+        "Test more than the first successful redirect. Open a private browser window, sign in from the production domain, navigate to a protected page, refresh the page, sign out, and confirm that the protected page becomes inaccessible. Repeat with an expired session if your app supports a reliable test.",
+        "Also verify error feedback when a login is canceled or rejected. If a production app uses several subdomains, check how sessions cross or do not cross those boundaries. Treat a missing session as an expected failure state requiring a clear user message, not an excuse to bypass the authentication check."
+      ],
+      "steps": [
+        {
+          "title": "Fresh sign-in",
+          "body": "Use a new browser session and the exact production domain."
+        },
+        {
+          "title": "Protected-route refresh",
+          "body": "Confirm the server recognizes the session after refreshing a protected page."
+        },
+        {
+          "title": "Sign-out and denial",
+          "body": "Sign out, then confirm a protected request no longer succeeds."
+        },
+        {
+          "title": "Second account test",
+          "body": "Verify that each user sees only authorized records, not merely that login works."
+        }
+      ]
+    },
+    {
+      "heading": "Frequently asked questions",
+      "paragraphs": [
+        "Authentication changes are consequential. A narrow diagnosis and test matrix is safer than broad configuration edits."
+      ],
+      "faqs": [
+        {
+          "question": "Why does Supabase redirect to localhost after deployment?",
+          "answer": "The Site URL or explicit redirectTo may still point to local development. Compare the actual configured values and allowlist."
+        },
+        {
+          "question": "Can I use a wildcard redirect for every domain?",
+          "answer": "That increases redirect risk. Follow official guidance and keep production allowlists as narrow as practical."
+        },
+        {
+          "question": "Why does login succeed but my protected page still fail?",
+          "answer": "Session exchange, cookies, server-side checks or database authorization may be incorrect. Distinguish them using logs and normal-user tests."
+        },
+        {
+          "question": "Do I need to put the service-role key in the browser?",
+          "answer": "No. Privileged keys bypass important security boundaries and must remain server-side."
+        }
+      ]
+    }
+  ],
+  "authorName": "Xroga Editorial",
+  "publishedAt": "2026-11-20",
+  "updated": "2026-11-20",
+  "readingMinutes": 8,
+  "visual": {
+    "src": "/blog-visuals/supabase-login-fails-after-deployment.svg",
+    "alt": "Original editorial diagram explaining supabase login fails after deployment? fix oauth redirects, cookies and production urls",
+    "caption": "Illustrative workflow for Supabase Login Fails After Deployment? Fix OAuth Redirects, Cookies and Production URLs; not a screenshot of a tested application.",
+    "width": 1400,
+    "height": 800
+  }
+};
