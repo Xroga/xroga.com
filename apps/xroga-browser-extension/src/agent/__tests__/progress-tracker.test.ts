@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { ProgressTracker } from './progress-tracker';
+import { ProgressTracker } from '../progress-tracker';
 
 const click = (text = 'ok') => ({ tool: 'click', args: { id: 3 }, isError: false, resultText: text, tabId: 1, url: 'https://a.test/' });
 const fail = (n: number) => ({ tool: 'canvas', action: 'type', isError: true, resultText: `err ${n}`, tabId: 1 });

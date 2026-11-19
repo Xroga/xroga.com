@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { PaintedInputDeliveryGuard } from './painted-input-delivery';
+import { PaintedInputDeliveryGuard } from '../painted-input-delivery';
 
 const SCRIPT = 'var layer = ActiveLayer;\n' + 'layer.CreateRectangle(10, 10, 20, 20, 0);\n'.repeat(8);
 const DISPATCHED = { ok: true, receipt: { dispatched: true } };
