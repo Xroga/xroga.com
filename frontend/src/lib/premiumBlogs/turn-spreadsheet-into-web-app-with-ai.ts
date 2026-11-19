@@ -171,6 +171,46 @@ export const premiumTurnSpreadsheetIntoWebAppWithAi: GuidePage = {
       ]
     },
     {
+      "heading": "Translate spreadsheet formulas into explicit business rules",
+      "paragraphs": [
+        "Spreadsheets frequently contain hidden business logic. A status column may be calculated from dates, an amount may rely on a lookup sheet, and a macro may send notifications when a cell changes. Copying visible columns into a new database does not automatically preserve those behaviors. Inventory formulas and scripts as part of the migration scope.",
+        "For every important formula, write a human-readable rule and example inputs. If a due date depends on business days, define the locale, holidays and timezone. If a total relies on currency conversions, identify the rate source and update cadence. These decisions belong in tested application logic rather than a prompt that says 'make it work like Excel'.",
+        "Test tricky cases: empty cells, invalid dates, negative values, duplicate names and references to deleted rows. Document where a calculation is performed—browser, server or database—so future changes do not produce inconsistent answers."
+      ]
+    },
+    {
+      "heading": "Make imports idempotent and recoverable",
+      "paragraphs": [
+        "A common failure occurs when a user clicks Import twice and creates duplicate records. Design an import job with a stable source identifier and a clear duplicate policy. Store import history: file name, checksum or batch identifier, row counts, rejected rows and the time the data was applied. A failed import should not leave half the dataset silently accepted.",
+        "Validate headers and values before writing to production. Show users a preview of the detected mapping and allow corrections. For large files, process in manageable batches, report progress and preserve an error report that contains only the data a user is authorized to see.",
+        "Create a dry-run mode or test environment whenever feasible. The acceptance criteria should include importing the same file twice, reordering rows and handling a changed email address. Those cases reveal whether the migration is stable rather than merely successful once."
+      ]
+    },
+    {
+      "heading": "Handle concurrent editing explicitly",
+      "paragraphs": [
+        "Two employees may open the same request and change it at nearly the same time. A shared spreadsheet often hides this conflict until someone notices a missing value. A web app should define what happens when edits conflict. Possible designs include version numbers, optimistic concurrency checks or explicitly serialized updates.",
+        "An accessible first solution may warn that the record changed since it was opened and ask the user to refresh. For inventory or finance workflows, you may need stronger transactional guarantees so a quantity is not decremented twice incorrectly. This is not a cosmetic choice: it determines whether the new application actually improves reliability.",
+        "Simulate conflicting updates with two test sessions. Record which change succeeds and how the other user is informed. Do not assume that a successful save button means the complete operation respected business constraints."
+      ]
+    },
+    {
+      "heading": "Search, filters and exports without data leaks",
+      "paragraphs": [
+        "Search is often the primary reason a team wants an application. Design filters for the questions people ask: which requests are overdue, who owns a task, or which customers have unresolved cases. Keep the filter logic clear and indexed appropriately as the dataset grows. Avoid showing a misleading dashboard number whose definition nobody can explain.",
+        "Export is another important permission boundary. If a staff user sees only assigned records, a CSV export should not reveal every row. Apply server-side authorization to download endpoints, limit sensitive columns and record important export events when business requirements justify it.",
+        "Use consistent date and number formats. A CSV may contain values that spreadsheet programs interpret as formulas when reopened; sanitize exports appropriately for the intended recipients and tools. A round-trip test should prove that the exported data can be understood and does not accidentally execute dangerous spreadsheet content."
+      ]
+    },
+    {
+      "heading": "Plan the cutover from the old sheet",
+      "paragraphs": [
+        "A migration is not complete the moment the new database contains rows. People may continue editing the original sheet, creating a split source of truth. Set a clear transition date or a controlled sync period. Decide which system accepts writes during the cutover and how late changes are reconciled.",
+        "Keep a read-only backup of the last validated source and a reconciliation summary. Confirm that important historical records, attachments and permissions survived. Provide staff with short training on the new workflow and a support contact for confusing cases.",
+        "After adoption, measure practical outcomes such as fewer lost requests or faster status updates. A web app is only an improvement if employees can complete the work reliably. If the extra complexity is not justified, a better-structured spreadsheet may still be the right answer."
+      ]
+    },
+    {
       "heading": "Common questions about spreadsheet-to-app migration",
       "paragraphs": [
         "A small pilot is the safest way to determine whether this change will help your team."
