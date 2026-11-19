@@ -136,6 +136,17 @@ export const SKILLS: Skill[] = [
     ].join('\n'),
   },
   {
+    id: 'app-script-console',
+    when: has(/(?:tracedraw|script(?:s|ing)? panel|macro)/i),
+    body: [
+      'Apps with a built-in script console (verified on TraceDraw 0.49, where it is Tools > Scripts):',
+      '- One short script beats dozens of clicks. Open the console, click into its editor, canvas type the whole script, click Run, then read the Output line: it says Objects: N or an error. Fix an error from its message only.',
+      '- Use only API names that are known to work. TraceDraw, verified by an exported SVG: ActiveLayer.CreateRectangle(x, y, w, h); ActiveLayer.CreateEllipse(x, y, w, h); ActiveLayer.CreateArtisticText(x, y, "text"); shape.Fill.ApplyUniformFill(Color.RGB(r, g, b)); print(ActivePage.Shapes.Count). Units are millimetres, the origin is the bottom left of the page, A4 is 210 by 297: keep every x + w and y + h inside the page. Other names are not safe to guess.',
+      '- A different app: read its scripting page once and copy names exactly; do not call a method you have not seen in its docs or Output.',
+      '- Export through the app: File > Export or Save as SVG, then confirm_download and report the file name.',
+    ].join(String.fromCharCode(10)),
+  },
+  {
     id: 'repository-skills',
     when: has(/(?:github\.com\/|\b(?:repositor(?:y|ies)|repo|skill\.md|open[- ]source|use the skills|pypi|npm package)\b)/i),
     body: [
