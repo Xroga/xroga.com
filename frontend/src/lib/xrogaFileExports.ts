@@ -80,8 +80,10 @@ export async function exportDocumentPdf(block: DocumentBlock): Promise<XrogaExpo
     const text = plainText(heading?.[1] ?? raw).replace(/\t/g, '    ');
     if (!text.trim()) { y -= 7; continue; }
     const characters = heading ? characterSets.heading : characterSets.body;
-    if (Array.from(text).some(character => !characters.has(character.codePointAt(0)!))) {
-      throw new PdfUnsupportedCharactersError('The PDF font does not support all characters in this answer. Download DOCX to preserve the text.');
+    for (const character of text) {
+      if (!characters.has(character.codePointAt(0)!)) {
+        throw new PdfUnsupportedCharactersError('The PDF font does not support all characters in this answer. Download DOCX to preserve the text.');
+      }
     }
     const activeFont = heading ? bold : font;
     const words = text.split(/\s+/);
