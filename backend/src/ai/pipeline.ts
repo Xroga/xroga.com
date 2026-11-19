@@ -969,7 +969,11 @@ export async function runChatPipeline(opts: {
   approvedResearch?:{bundle:ResearchBundle;evidence:string};
 }): Promise<ChatPipelineResult> {
   requireResourceOwner(requireTenantContext(opts.tenantContext),opts.userId);
-  const initialUsage = await assertHasQuota(opts.userId);
+  // Text-only answers use the fresh quota check at model dispatch. Check
+  // earlier when the pipeline can fetch data or prepare an approved action.
+  let preflightUsage: ReturnType<typeof assertHasQuota> | undefined;
+  const checkQuotaBeforePreparation = () => preflightUsage ??= assertHasQuota(opts.userId);
+  if (opts.attachments?.length) await checkQuotaBeforePreparation();
 
   const prepared = await prepareAttachments(opts.attachments);
   const hasAttachments = prepared.hasImages || prepared.hasDocuments;
@@ -1043,16 +1047,22 @@ export async function runChatPipeline(opts: {
 
   const route = routeReadOnlyConversation(opts.prompt, opts.goalContract);
   if(requestedSonnetReason(opts.prompt)){
+    const usage = await checkQuotaBeforePreparation();
     if(hasAttachments||route.kind==='research')throw new RuntimeFailure('CAPABILITY_UNSUPPORTED','The approved complex-model response supports text engineering work only. No alternate model or research request was made.');
     const response=await prepareSonnetConversation(opts.modelScope??{context:requireTenantContext(opts.tenantContext),userId:opts.userId},opts.prompt,opts.history);
     return {response,
-      intent:'model_approval',usage:usageToTokenUsage(initialUsage),webSources:[],modelId:route.builder,route};
+      intent:'model_approval',usage:usageToTokenUsage(usage),webSources:[],modelId:route.builder,route};
   }
 
   if (!opts.goalContract && isBuildPrompt(opts.prompt) && route.kind.startsWith('build')) {
+    await checkQuotaBeforePreparation();
     const err = new Error('USE_BUILD_PIPELINE');
     (err as Error & { code?: string }).code = 'USE_BUILD_PIPELINE';
     throw err;
+  }
+
+  if (route.useResearch || route.kind === 'research' || opts.approvedResearch || opts.projectEvidence) {
+    await checkQuotaBeforePreparation();
   }
 
   let research: ResearchBundle | null = opts.approvedResearch?.bundle??null;
@@ -1076,7 +1086,7 @@ export async function runChatPipeline(opts: {
       researchBlock = web.evidence;
       if(web.needsConfirmation)return{
         response:`Review the request before Xroga searches the web: [Review action](${web.reviewUrl})`,
-        intent:'confirmation_required',usage:usageToTokenUsage(initialUsage),webSources:[],modelId:route.builder,route,
+        intent:'confirmation_required',usage:usageToTokenUsage(await checkQuotaBeforePreparation()),webSources:[],modelId:route.builder,route,
       };
     } catch (error) {
       if(isTerminalModelFailure(error))throw error;
@@ -1109,7 +1119,7 @@ export async function runChatPipeline(opts: {
       response:
         'I couldn\'t complete the requested live-web research just now. No current-source answer was generated, so please try again shortly.',
       intent: 'research_unavailable',
-      usage: usageToTokenUsage(initialUsage),
+      usage: usageToTokenUsage(await checkQuotaBeforePreparation()),
       webSources: [],
       modelId: route.builder,
       route,
