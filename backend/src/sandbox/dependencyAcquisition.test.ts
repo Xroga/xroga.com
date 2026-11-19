@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { AcquisitionError, buildAcquisitionPlan, classifyLicence, type RegistryGet } from './dependencyAcquisition.js';
+import { AcquisitionError, buildAcquisitionPlan, classifyLicence, isWeakCopyleft, type RegistryGet } from './dependencyAcquisition.js';
 
 const H1 = 'a'.repeat(64);
 const H2 = 'b'.repeat(64);
@@ -9,6 +9,7 @@ const INTEGRITY = `sha512-${'A'.repeat(86)}==`;
 const registry: RegistryGet = async (url) => {
   if (url.includes('pypi.org/pypi/rich/')) return { info: { license: 'MIT License', classifiers: [] }, urls: [{ packagetype: 'bdist_wheel', digests: { sha256: H1 } }, { packagetype: 'sdist', digests: { sha256: H2 } }] };
   if (url.includes('pypi.org/pypi/gpl-thing/')) return { info: { license: 'GNU General Public License v3 (GPLv3)' }, urls: [{ packagetype: 'bdist_wheel', digests: { sha256: H2 } }] };
+  if (url.includes('pypi.org/pypi/mpl-thing/')) return { info: { license: 'Mozilla Public License 2.0 (MPL 2.0)' }, urls: [{ packagetype: 'bdist_wheel', digests: { sha256: H1 } }] };
   if (url.includes('pypi.org/pypi/sdist-only/')) return { info: { license: 'MIT' }, urls: [{ packagetype: 'sdist', digests: { sha256: H1 } }] };
   if (url.includes('registry.npmjs.org/@scope%2Fmcp-thing/')) return { dist: { integrity: INTEGRITY }, license: 'SEE LICENSE IN LICENSE' };
   if (url.includes('registry.npmjs.org/left-pad/')) return { dist: { integrity: INTEGRITY }, license: 'MIT' };
@@ -37,7 +38,16 @@ test('a copyleft or undeclared licence makes the plan not ready until it is ackn
   assert.equal(pending.ready, false);
   assert.deepEqual(pending.needsReview.map((p) => p.name), ['gpl-thing']);
   const accepted = await buildAcquisitionPlan({ ecosystem: 'pip', packages: [{ name: 'rich', version: '1.0.0' }, { name: 'gpl-thing', version: '1.0.0' }], acknowledgedLicences: ['gpl-thing'], get: registry });
-  assert.equal(accepted.ready, true);
+  // Model text cannot waive strong copyleft: the acknowledgement is ignored for GPL, so a human still has to decide.
+  assert.equal(accepted.ready, false);
+  assert.deepEqual(accepted.needsReview.map((p) => p.name), ['gpl-thing']);
+});
+
+test('a model acknowledgement is honoured only for weak copyleft, never for GPL, AGPL, commercial or undeclared licences', async () => {
+  for (const weak of ['MPL-2.0', 'Mozilla Public License 2.0 (MPL 2.0)', 'LGPL-3.0-or-later', 'EPL-2.0', 'CDDL-1.0']) assert.equal(isWeakCopyleft(weak), true, weak);
+  for (const strong of ['GPL-3.0-only', 'AGPL-3.0', 'LGPL-3.0 OR GPL-3.0', 'SSPL-1.0', 'Proprietary', 'MIT', '', 'SEE LICENSE IN LICENSE']) assert.equal(isWeakCopyleft(strong), false, strong);
+  const plan = await buildAcquisitionPlan({ ecosystem: 'pip', packages: [{ name: 'mpl-thing', version: '1.0.0' }], acknowledgedLicences: ['mpl-thing'], get: registry });
+  assert.equal(plan.ready, true);
 });
 
 test('npm: exact versions, registry integrity recorded, scripts never run, and an offline verify stage compares what npm installed', async () => {

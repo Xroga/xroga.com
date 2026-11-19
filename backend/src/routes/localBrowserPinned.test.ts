@@ -30,6 +30,9 @@ test('reads and changes inside the owner own app run without a card; outbound, p
   for(const slug of ['MONID_DISCOVER','MONID_RUN','GOOGLESHEETS_LIST_ROWS'])assert.equal(autoApprovesCall('read',slug),true,slug);
   for(const slug of ['GOOGLESHEETS_CREATE_ROW','NOTION_UPDATE_PAGE','GMAIL_CREATE_EMAIL_DRAFT','CUSTOM_X_MONID_MONID_RUN'])assert.equal(autoApprovesCall('change',slug),true,slug);
   for(const slug of ['GMAIL_SEND_EMAIL','SLACK_SEND_MESSAGE','TWITTER_CREATE_POST','CALENDAR_INVITE_ATTENDEES','FACEBOOK_PUBLISH_PAGE_POST'])assert.equal(autoApprovesCall('change',slug),false,slug);
+  // Other forms and less common outbound verbs keep their card too.
+  for(const slug of ['GMAIL_SENDS_EMAIL','SLACK_SENDING_A_NOTE','TWITTER_POSTED_UPDATE','DRIVE_GRANT_ACCESS','DRIVE_SET_PERMISSIONS','ASANA_ADD_COLLABORATORS','BANK_TRANSFER_FUNDS','HOOK_TRIGGER_WEBHOOK','DRIVE_MAKE_PUBLIC'])assert.equal(autoApprovesCall('change',slug),false,slug);
+  for(const slug of ['GOOGLESHEETS_BATCH_UPDATE_VALUES_BY_DATA_FILTER','GOOGLESHEETS_CREATE_GOOGLE_SHEET1','NOTION_APPEND_BLOCK_CHILDREN'])assert.equal(autoApprovesCall('change',slug),true,slug);
   assert.equal(autoApprovesCall('read','X_LIST',{XROGA_LOCAL_BROWSER_AUTO_APPROVE:'off'}),false);
 });
 

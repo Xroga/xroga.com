@@ -39,6 +39,15 @@ export function classifyLicence(declared: string): LicenceClass {
   return 'review';
 }
 
+/** Weak copyleft only: file- or library-level terms (MPL, LGPL, EPL, CDDL), never GPL, AGPL, SSPL, commercial or unknown. */
+export function isWeakCopyleft(declared: string): boolean {
+  const text = declared.trim();
+  if (!text || text.length > 200) return false;
+  const withoutLgpl = text.replace(/\blgpl\b/gi, ' ');
+  if (/\b(?:agpl|gpl|sspl|busl|commons clause|proprietary|non-?commercial|unknown|see license)\b/i.test(withoutLgpl)) return false;
+  return /\b(?:mpl|mozilla public|lgpl|epl|eclipse public|cddl)\b/i.test(text);
+}
+
 const EXACT_PIP = /^\d+(?:\.\d+){1,3}(?:(?:a|b|rc)\d+)?(?:\.post\d+)?$/;
 const EXACT_NPM = /^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/;
 const PIP_NAME = /^[A-Za-z0-9](?:[A-Za-z0-9._-]{0,98}[A-Za-z0-9])?$/;
@@ -118,7 +127,9 @@ export async function buildAcquisitionPlan(input: PlanInput): Promise<Acquisitio
   const resolved: ResolvedPackage[] = [];
   for (const pkg of input.packages) resolved.push(input.ecosystem === 'pip' ? await resolvePip(pkg, get) : await resolveNpm(pkg, get));
   const acknowledged = new Set((input.acknowledgedLicences ?? []).map((n) => n.toLowerCase()));
-  const needsReview = resolved.filter((p) => p.licenceClass !== 'permissive' && !acknowledged.has(p.name.toLowerCase()));
+  // A model's own acknowledgement is only honoured for weak copyleft (MPL, LGPL, EPL), which the isolated, no-network, nothing-kept run does not
+  // distribute. Strong copyleft, commercial or restricted terms and undeclared licences always wait for a human: model text cannot waive them.
+  const needsReview = resolved.filter((p) => p.licenceClass !== 'permissive' && !(acknowledged.has(p.name.toLowerCase()) && isWeakCopyleft(p.licence)));
   const dir = (input.directory ?? '.xroga-deps').replace(/^\/+|\/+$/g, '');
   if (input.ecosystem === 'pip') {
     const lines = resolved.map((p) => `${p.name}==${p.version} ${p.hashes.map((h) => `--hash=sha256:${h}`).join(' ')}`);

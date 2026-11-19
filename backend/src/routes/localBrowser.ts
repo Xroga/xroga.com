@@ -51,7 +51,13 @@ const MAX_PLUGIN_READS = 400;
  * (send, post, publish, invite, share, reply, forward, call, notify...). Destructive and financial calls are refused outright, before this.
  * An operator can turn automatic approval off for a deployment with XROGA_LOCAL_BROWSER_AUTO_APPROVE=off.
  */
-const OUTBOUND_TOKENS = new Set(['SEND', 'POST', 'PUBLISH', 'TWEET', 'TWEETS', 'INVITE', 'SHARE', 'REPLY', 'FORWARD', 'CALL', 'NOTIFY', 'BROADCAST', 'SMS', 'DM', 'TEXT', 'EMAIL', 'EMAILS', 'MESSAGE', 'MESSAGES', 'COMMENT', 'ANNOUNCE', 'SCHEDULE']);
+const OUTBOUND_TOKENS = new Set(['SEND', 'POST', 'PUBLISH', 'TWEET', 'TWEETS', 'INVITE', 'SHARE', 'REPLY', 'FORWARD', 'CALL', 'NOTIFY', 'BROADCAST', 'SMS', 'DM', 'TEXT', 'EMAIL', 'EMAILS', 'MESSAGE', 'MESSAGES', 'COMMENT', 'ANNOUNCE', 'SCHEDULE', 'GRANT', 'PERMISSION', 'COLLABORATOR', 'TRANSFER', 'DISPATCH', 'DELIVER', 'TRIGGER', 'WEBHOOK', 'PUBLIC', 'SUBSCRIBE', 'MENTION', 'ASSIGN']);
+/** An outbound word in any form: SEND, SENDS, SENDING, SENT, POSTED, REPLIES, SHARING. */
+function isOutboundToken(token: string): boolean {
+  if (OUTBOUND_TOKENS.has(token) || token === 'SENT') return true;
+  const stems = [token.replace(/(?:ING|ED|ES|S)$/, ''), token.replace(/IES$/, 'Y'), token.replace(/(?:ING|ED)$/, 'E'), token.replace(/ING$/, '')];
+  return stems.some(stem => stem.length >= 2 && OUTBOUND_TOKENS.has(stem));
+}
 export function autoApprovesCall(kind: 'read' | 'change', slug: string, env: NodeJS.ProcessEnv = process.env, mode: PluginPermissionMode = 'low_risk'): boolean {
   if (env.XROGA_LOCAL_BROWSER_AUTO_APPROVE === 'off') return false;
   // The owner's own choice for the app wins: "always ask" asks for everything, and "read only" never lets a change through (it is refused
@@ -61,7 +67,7 @@ export function autoApprovesCall(kind: 'read' | 'change', slug: string, env: Nod
   if (kind === 'read') return true;
   const tokens = slug.toUpperCase().split(/[^A-Z0-9]+/);
   // "Draft" and "create draft" stay on the owner's side; any outbound word makes it a card.
-  return !tokens.some(token => OUTBOUND_TOKENS.has(token)) || tokens.includes('DRAFT') && !tokens.includes('SEND');
+  return !tokens.some(isOutboundToken) || tokens.includes('DRAFT') && !tokens.includes('SEND');
 }
 // The job is built for each model turn, so this bounds ONE request (a safety bound, many times its reservation), not the run.
 const PER_TURN_JOB_COST_MICROS = 36_000;
