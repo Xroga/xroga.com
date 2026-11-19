@@ -39,6 +39,9 @@
   --iui-space-section: 25px;
   --iui-space-group: 13px;
   --iui-space-inner: 9px;
+  --iui-card-padding-limit: clamp(.875rem, 3vw, 1.5rem);
+  --iui-card-gap-limit: clamp(.75rem, 2.5vw, 1.25rem);
+  --iui-grid-gap-limit: clamp(.75rem, 2.5vw, 1rem);
   --iui-focus: var(--native-accent);
   font-family: var(--openui-font-body, system-ui, sans-serif);
   font-size: 1rem;
@@ -100,7 +103,7 @@
 .xroga-native-openui .iui-check > input { margin-block-start: .28em; }
 .xroga-native-openui :is(.iui-badge, .iui-button) { max-inline-size: 100%; white-space: normal; }
 .xroga-native-openui :is(.iui-badge, .iui-button) svg { flex-shrink: 0; }
-.xroga-native-openui .iui-card { border-color: var(--native-line); border-radius: 16px; padding: clamp(.875rem, 3vw, 1.5rem); }
+.xroga-native-openui .iui-card { border-color: var(--native-line); border-radius: 16px; padding: var(--iui-card-padding-limit); }
 .xroga-native-openui .iui-card-soft { background: var(--native-panel); }
 .xroga-native-openui .iui-card > .iui-text { font-size: .9375rem; }
 .xroga-native-openui .iui-table-scroll { border-color: var(--native-line); }

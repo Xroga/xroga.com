@@ -8,6 +8,7 @@ import { bg, children, color, onColor, cx, length, radius, radiusSchema, size, s
 const align = z.enum(["start", "center", "end", "stretch"]);
 const justify = z.enum(["start", "center", "end", "between"]);
 const FLEX: Record<string, string> = { start: "flex-start", end: "flex-end", center: "center", stretch: "stretch", between: "space-between" };
+const boundedSpace = (preferred: string, limit: string) => `min(${preferred}, var(${limit}, ${preferred}))`;
 
 type FlexProps = { gap?: number; align?: string; justify?: string; wrap?: boolean };
 const flexStyle = (p: FlexProps, column = false): CSSProperties => ({
@@ -102,7 +103,7 @@ export const Grid = defineComponent({
   description: "Equal columns (default 2). With minChildWidth (px), columns drop on narrow screens.",
   component: ({ props, renderNode }) => {
     const columns = Math.min(12, Math.max(1, Math.round(props.columns ?? 2)));
-    const gap = space(props.gap) ?? "12px";
+    const gap = boundedSpace(space(props.gap) ?? "12px", "--iui-grid-gap-limit");
     // The requested count is an upper bound, including inside narrow chat cards.
     // Preserve explicit minimums and give unspecified children readable space.
     const min = `max(${Math.max(0, props.minChildWidth ?? 180)}px, (100% - ${columns - 1} * ${gap}) / ${columns})`;
@@ -129,14 +130,21 @@ export const Card = defineComponent({
     gap: z.number().optional(),
   }),
   description: "Panel with a border; soft is a filled panel for summaries.",
-  component: ({ props, renderNode }) => (
-    <section
-      className={cx("iui-card", props.variant === "soft" && "iui-card-soft", props.gap == null && "iui-flow")}
-      style={{ padding: space(props.padding), gap: space(props.gap) }}
-    >
-      {renderNode(props.children)}
-    </section>
-  ),
+  component: ({ props, renderNode }) => {
+    const padding = space(props.padding);
+    const gap = space(props.gap);
+    return (
+      <section
+        className={cx("iui-card", props.variant === "soft" && "iui-card-soft", props.gap == null && "iui-flow")}
+        style={{
+          padding: padding && boundedSpace(padding, "--iui-card-padding-limit"),
+          gap: gap && boundedSpace(gap, "--iui-card-gap-limit"),
+        }}
+      >
+        {renderNode(props.children)}
+      </section>
+    );
+  },
 });
 
 export const Divider = defineComponent({
