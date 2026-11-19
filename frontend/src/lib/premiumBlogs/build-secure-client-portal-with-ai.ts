@@ -210,6 +210,46 @@ export const premiumBuildSecureClientPortalWithAi: GuidePage = {
       "note": "A real production portal handling sensitive client information requires an organization-specific security, privacy and compliance review. This article is an implementation guide, not a certification."
     },
     {
+      "heading": "Invitation and account recovery design",
+      "paragraphs": [
+        "Decide whether users can sign up publicly or whether an administrator invites them. Many service companies prefer invitation-only access because customer accounts are associated with contracts and existing organizations. If you choose that model, ensure an invitation is tied to the intended organization and cannot be repurposed to gain access to another customer's data.",
+        "Plan the whole account lifecycle. A user may lose access to their email, change jobs or leave a client organization. Define who can revoke access, how reset links expire, and how a transferred account is verified. The system should revoke membership promptly and keep a record of who performed administrative changes.",
+        "Test account recovery from a logged-out browser. A beautiful login page is of little use if password resets silently fail or redirect to the wrong hostname. Do not reveal whether arbitrary email addresses are registered in ways that enable unnecessary account enumeration."
+      ]
+    },
+    {
+      "heading": "Document access, expiration and auditability",
+      "paragraphs": [
+        "Document sharing is often the highest-risk feature in a client portal. A file may contain a contract, customer details or confidential drawings. Private storage and scoped download authorization must remain in force even if someone copies a file path. A signed URL, when supported by the storage provider, should only be issued after checking the requester's current permissions.",
+        "Define whether links expire and what happens when access is revoked. A person removed from a project should not receive fresh download links. Consider the effect of already issued links according to the provider's semantics. The user interface should never claim that a revoked link is immediately invalid unless the underlying mechanism guarantees it.",
+        "Keep an activity record for meaningful events: upload, removal, sharing permission changes and approvals. Avoid logging private document contents or full secrets. Staff should be able to answer a customer asking which version was shared and when without searching through emails."
+      ]
+    },
+    {
+      "heading": "Notifications and message workflow",
+      "paragraphs": [
+        "Email notifications can make a portal useful without turning it into an uncontrolled messaging system. Start with a few meaningful events: a document was approved, a project moved to a new stage, or a client requested clarification. Provide clear notification preferences and avoid emailing private data that should stay inside the protected portal.",
+        "Use a reliable server-side mechanism for sending notifications and record whether a message was attempted. External email services can fail or rate-limit; a task should not be marked delivered merely because a send request was queued. For important updates, the portal itself should show the authoritative state.",
+        "If clients can comment or reply, design visibility carefully. A staff-only note must not appear in the customer feed. Define whether attachments are allowed, who may edit or delete comments and how abuse reports are handled. A simple, predictable model is safer than a broad communications suite added before users request it."
+      ]
+    },
+    {
+      "heading": "Accessibility and mobile use in a secure portal",
+      "paragraphs": [
+        "Client portals are often used by people who do not work with software all day. Make the project status and next action immediately visible. Use readable labels, predictable navigation, clear error messages and a mobile layout that works without horizontal scrolling. Avoid relying only on color to distinguish pending and completed work.",
+        "Test keyboard navigation for login, upload controls, dialogs and forms. Ensure field errors are explained in words and remain associated with the field. If a document cannot be downloaded, say what the user can do next rather than exposing a technical stack trace.",
+        "A mobile experience does not mean shrinking a desktop dashboard. Prioritize a concise project summary, upcoming action and a short list of documents. Keep advanced administrative tables in screens designed for staff. The goal is to reduce customer support effort, not create a miniature spreadsheet."
+      ]
+    },
+    {
+      "heading": "Operational readiness before the first real customer",
+      "paragraphs": [
+        "Before production use, assign ownership for domain renewal, backups, user invitations, support and incident response. Decide where a failed upload is reported and how a staff member can determine whether a customer received an update. These tasks are easy to overlook because they are invisible in an AI-generated screenshot.",
+        "Create a staging environment with fictitious organizations and accounts. Verify common workflows and negative access tests after every significant release. Document the steps required to restore service if the database, file store or email integration becomes unavailable. If a dependency has no recovery plan, record that gap before inviting customers.",
+        "Keep privacy and retention policies appropriate to the types of documents stored. For sensitive industries, additional legal or compliance review may be necessary. A useful general tutorial cannot certify that one particular deployment meets every regulatory requirement."
+      ]
+    },
+    {
       "heading": "Launch checklist and what to do next",
       "paragraphs": [
         "Before inviting clients, check domain and TLS settings, password reset and sign-out, backups, document retention, access review, activity logs and responsive layouts. Confirm that the production environment uses the expected database and that emergency access procedures are documented.",
