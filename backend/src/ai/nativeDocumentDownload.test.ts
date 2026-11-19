@@ -18,6 +18,8 @@ test('recognizes direct Office and PDF deliverables', () => {
 test('does not turn file mentions, other formats, or negated requests into an export', () => {
   for (const prompt of [
     'What is a PDF report?',
+    'Write a word.',
+    'Write the summary as a word.',
     'Do not create a PDF. Show the report here.',
     'Create a PDF report, but do not export a file.',
     'Create a PDF report without a download.',

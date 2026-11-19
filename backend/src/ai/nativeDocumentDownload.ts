@@ -12,9 +12,13 @@ export function isNativeDocumentFormat(value: unknown): value is NativeDocumentF
 // attachments, and proposed software features must not add a file control.
 const request = /^(?:please\s+)?(?:(?:can|could|would)\s+you\s+)?(?:create|make|write|draft|generate|prepare|build|give\s+me)\s+/i;
 const document = '(?:document|report|proposal|brief|memo|letter|summary|guide|plan|handout|worksheet|invoice|statement|workbook|spreadsheet|slide deck|slides|deck|presentation|file)';
-const fileFormat = '(\\.?(?:docx|pdf|xlsx|pptx)|word|excel|powerpoint)';
-const beforeFormat = new RegExp('^(?:(?:a|an|the|my)\\s+)?(?:[\\p{L}]+\\s+){0,3}' + fileFormat
-  + '(?:\\s+(?:[\\p{L}]+\\s+){0,3}' + document + ')?(?=\\s*(?:[.,!?]|$)|\\s+(?:from|using|with|about|based on|on|for)\\b)', 'iu');
+const extensions = '\\.?(?:docx|pdf|xlsx|pptx)';
+const fileFormat = '(' + extensions + '|word|excel|powerpoint)';
+const optionalDescription = '(?:\\s+(?:[\\p{L}]+\\s+){0,3}' + document + ')';
+const beforePrefix = '^(?:(?:a|an|the|my)\\s+)?(?:[\\p{L}]+\\s+){0,3}';
+const beforeBoundary = '(?=\\s*(?:[.,!?]|$)|\\s+(?:from|using|with|about|based on|on|for)\\b)';
+const beforeFormat = new RegExp(beforePrefix + '(' + extensions + ')' + optionalDescription + '?' + beforeBoundary, 'iu');
+const beforeNamedFormat = new RegExp(beforePrefix + '(word|excel|powerpoint)' + optionalDescription + beforeBoundary, 'iu');
 const afterFormat = new RegExp('^(?:(?:a|an|the|my)\\s+)?(?:[\\p{L}]+\\s+){0,5}' + document
   + '\\s+(?:as|in)\\s+(?:(?:a|an)\\s+)?' + fileFormat + '\\b', 'iu');
 const exportFormat = new RegExp('^(?:please\\s+)?(?:(?:can|could|would)\\s+you\\s+)?(?:export|save|download|convert)\\s+'
@@ -24,9 +28,10 @@ export function requestedNativeDocumentFormat(prompt: string): NativeDocumentFor
   const text = prompt.trim();
   const direct = exportFormat.exec(text);
   const body = direct ? text : text.replace(request, '');
-  const selection = direct ?? (body !== text ? beforeFormat.exec(body) ?? afterFormat.exec(body) : null);
+  const selection = direct ?? (body !== text ? beforeFormat.exec(body) ?? beforeNamedFormat.exec(body) ?? afterFormat.exec(body) : null);
   if (!selection) return;
   const raw = selection[1]?.toLowerCase().replace(/^\./, '');
+  if (raw === 'word' && !direct && /\b(?:as|in)\s+(?:a|an)\s+word\s*$/i.test(selection[0])) return;
   const candidate = raw === 'word' ? 'docx' : raw === 'excel' ? 'xlsx' : raw === 'powerpoint' ? 'pptx' : raw;
   if (!isNativeDocumentFormat(candidate)) return;
   const trailing = body.slice(selection[0].length);
