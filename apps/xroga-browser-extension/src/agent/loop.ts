@@ -577,6 +577,9 @@ ${ledger}` : ''),
         if (r?.ok) {
           adopted = true;
           this.preActions.push('tabs');
+          const now = await this.options.layer.tabs().catch(() => null);
+          const here = now?.tabs.find(t => t.tabId === now.activeTabId);
+          try { if (here) this.#adoptedOrigin = new URL(here.url).origin; } catch { /* not a web address */ }
           await this.writer.appNote(`The tab you already have open (${name}) is now this run's tab. Work in it; do not open another copy.`);
           break;
         }
@@ -697,6 +700,14 @@ ${ledger}` : ''),
       };
     }
     const args = (call.input ?? {}) as Record<string, unknown>;
+    // The tab the user already had open holds their work: loading its own site again would discard it.
+    if (this.#adoptedOrigin && (call.toolName === 'navigate' || (call.toolName === 'tabs' && args.action === 'open'))) {
+      try {
+        if (new URL(String(args.url ?? '')).origin === this.#adoptedOrigin) {
+          return { call, kind, isError: true, text: 'refused: that site is already open in your tab, and loading it again would discard the open work in it. Work in the open tab.' };
+        }
+      } catch { /* not a web address: the ordinary checks apply */ }
+    }
     if (call.toolName === 'tabs' && args.action === 'adopt') {
       // Only a tab the user named: the words of the request must contain the match. A guess at one of the user's other tabs is refused.
       const wanted = String(args.url ?? '').trim().toLowerCase();
@@ -1391,6 +1402,7 @@ ${ledger}` : ''),
    * A tool already in the list is never replaced, and the run holds at most 40 of them.
    */
   #askedText = '';
+  #adoptedOrigin = '';
   #canvasOffered = false;
   /** Offers `find_color` once, when an observation shows a canvas with little else. Returns true the first time. */
   #offerCanvasTools(text: string | undefined): boolean {
