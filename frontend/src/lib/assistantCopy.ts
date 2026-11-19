@@ -60,12 +60,13 @@ function tableCells(line: string): string[] {
 }
 
 /** Export answer structure while preserving literal fenced content. */
-export function serializeAssistantCopy(markdown: string): string {
+export function serializeAssistantCopy(markdown: string, { collapseDuplicateTables = false } = {}): string {
   const normalized = publicAnswerExportText(markdown).replace(/\r\n/g, '\n');
   const output: string[] = [];
   const lines = normalized.split('\n');
   let fence: string | undefined;
   let lastLiteralLine = 0;
+  const seenTables = collapseDuplicateTables ? new Set<string>() : undefined;
 
   for (let index = 0; index < lines.length; index += 1) {
     const line = lines[index] ?? '';
@@ -85,12 +86,18 @@ export function serializeAssistantCopy(markdown: string): string {
 
     const next = lines[index + 1] ?? '';
     if (/^\s*\|?.+\|.+\|?\s*$/.test(line) && /^\s*\|?\s*:?-{3,}/.test(next)) {
-      output.push(tableCells(line).join('\t'));
+      const rows = [tableCells(line)];
       index += 1;
       while (index + 1 < lines.length && /\|/.test(lines[index + 1] ?? '')) {
-        output.push(tableCells(lines[index + 1] ?? '').join('\t'));
+        rows.push(tableCells(lines[index + 1] ?? ''));
         index += 1;
       }
+      if (seenTables) {
+        const key = JSON.stringify(rows);
+        if (seenTables.has(key)) continue;
+        seenTables.add(key);
+      }
+      for (const row of rows) output.push(row.join('\t'));
       continue;
     }
 

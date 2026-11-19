@@ -16,6 +16,7 @@ import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
 import { serializeAssistantCopy } from '@/lib/assistantCopy';
 import { publicAnswerExportText } from '@/lib/publicAnswerText';
+import { NATIVE_SHARE_PREFIX } from '../../../../backend/src/ai/nativeOpenUiShare';
 
 interface MessageBubbleActionsProps {
   role: 'user' | 'assistant';
@@ -44,7 +45,9 @@ export function MessageBubbleActions({
   async function handleCopy() {
     try {
       await navigator.clipboard.writeText(
-        role === 'assistant' ? serializeAssistantCopy(content) : content,
+        role === 'assistant' ? serializeAssistantCopy(content, {
+          collapseDuplicateTables: richResponse?.startsWith(NATIVE_SHARE_PREFIX),
+        }) : content,
       );
       setCopied(true);
       toast.success('Copied');

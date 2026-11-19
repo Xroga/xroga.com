@@ -32,6 +32,20 @@ test('assistant copy converts markdown tables into readable tab-separated text',
   );
 });
 
+test('native copy collapses equivalent tables but keeps unique figures and source URLs', () => {
+  const table = '| Plan | Cost | Evidence |\n|---|---:|---|\n| Basic | $10 | [Terms](https://example.org/current) |';
+  const duplicate = table.replace('|---|---:|---|', '| --- | --- | --- |');
+  const corrected = table.replace('$10', '$11').replace('/current', '/corrected');
+  const olderEvidence = table.replace('/current', '/prior');
+  const source = [table, 'Unused seats are possible.', duplicate, corrected, olderEvidence].join('\n\n');
+  const copy = serializeAssistantCopy(source, { collapseDuplicateTables: true });
+  assert.equal((copy.match(/Basic\t\$10\tTerms \(https:\/\/example\.org\/current\)/g) ?? []).length, 1);
+  assert.match(copy, /Unused seats are possible/);
+  assert.match(copy, /Basic\t\$11\tTerms \(https:\/\/example\.org\/corrected\)/);
+  assert.match(copy, /Basic\t\$10\tTerms \(https:\/\/example\.org\/prior\)/);
+  assert.equal((serializeAssistantCopy(source).match(/example\.org\/current/g) ?? []).length, 2);
+});
+
 test('copy keeps every alternative, nested list indentation, exact links and table cells', () => {
   const source = 'https://example.org/Feature_(product)/_release_?edition=2';
   const markdown = [
