@@ -32,6 +32,9 @@ import { decodeImage, describeHits, FIND_COLOR_TOOL, scanColor } from './pixels'
 import { learnFrom, turnEffort } from './run';
 import { PaintedInputDeliveryGuard } from './painted-input-delivery';
 import { ProgressTracker } from './progress-tracker';
+import { runSurface, RunLedger } from './command-surface';
+import { scriptConsoleSurface, validateConsoleArgs } from './command-surface-adapter';
+import type { ConsoleArgs } from './command-surface-adapter';
 import type { StallVerdict } from './progress-tracker';
 import type { ResolvedModel } from './run';
 import { allTools, DONE_TOOL, kindOf, PAGE_ACTIONS } from './tools';
@@ -1477,6 +1480,7 @@ ${ledger}` : ''),
   #boundTab: number | null = null;
   #paintedInputDelivered = new PaintedInputDeliveryGuard();
   #progress = new ProgressTracker();
+  #consoleRuns = new RunLedger();
   #pendingStall: StallVerdict | null = null;
   #docsRead = false;
   #scriptGateShown = false;
@@ -1567,6 +1571,34 @@ ${ledger}` : ''),
     }
   }
 
+  /** One fixed-phase program run in an app console. Every layer call still goes through the gate, the journal and the guards. */
+  async #runScriptConsole(call: ToolCallRequest, kind: ToolKind, args: Record<string, unknown>): Promise<CallOutcome> {
+    const { emit, signal, layer } = this.options;
+    const bad = validateConsoleArgs(args as Partial<ConsoleArgs>);
+    if (bad) return { call, kind, text: `error: ${bad}`, isError: true };
+    let n = 0;
+    const step = async (tool: string, input: Record<string, unknown>) => {
+      if (signal.aborted) throw new Error('Stopped');
+      const stepCall: ToolCallRequest = { toolCallId: `${call.toolCallId}#${++n}`, toolName: tool, input };
+      const stepKind = kindOf(tool, input);
+      emit({ type: 'tool_execution_start', messageId: this.#replyId, row: this.#row(stepCall, 'running') });
+      let outcome: CallOutcome | null = await this.beforeToolCall(stepCall);
+      if (!outcome) {
+        const result = await this.#time('tool.layer', () => layer.call(tool, input, signal));
+        outcome = { call: stepCall, kind: stepKind, text: result.text, isError: !result.ok, result };
+      }
+      outcome = await this.afterToolCall(outcome);
+      emit({ type: 'tool_execution_end', messageId: this.#replyId, row: this.#row(stepCall, outcome.isError ? 'failed' : 'done', outcome) });
+      return { ok: !outcome.isError, text: outcome.text };
+    };
+    const documentId = typeof args.documentId === 'string' && args.documentId ? args.documentId : `tab${this.#boundTab ?? this.#activeTab ?? 0}`;
+    const surface = scriptConsoleSurface(args as unknown as ConsoleArgs, step);
+    const res = await runSurface(surface, { text: String(args.text), exportResult: Array.isArray(args.exportSteps) && args.exportSteps.length > 0, maxCalls: 12 }, this.#consoleRuns, documentId);
+    const trail = res.receipts.map(r => `${r.ok && !r.unknown ? '✓' : '✗'} ${r.phase}: ${r.observed.replace(/\s+/g, ' ').slice(0, 120)}`).join('\n');
+    const text = res.ok ? `All phases passed.\n${trail}` : `Stopped at ${res.stoppedAt}: ${res.reason}\n${trail}`;
+    return { call, kind, text, isError: !res.ok };
+  }
+
   #execute(call: ToolCallRequest): Promise<CallOutcome> {
     return this.#time(`tool:${call.toolName}`, () => this.#executeCall(call));
   }
@@ -1632,6 +1664,8 @@ ${ledger}` : ''),
       }
     } else if (call.toolName === 'batch') {
       outcome = await this.#runBatchTool(call, kind, args);
+    } else if (call.toolName === 'run_script_console') {
+      outcome = await this.#runScriptConsole(call, kind, args);
     } else if (this.options.tools.find(t => t.name === call.toolName)?.source === 'agent') {
       const r = this.options.agentTool
         ? await this.options.agentTool(call, signal)
