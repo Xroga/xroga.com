@@ -92,7 +92,7 @@ type Block =
   | { kind: "table"; head: string[]; rows: string[][] };
 
 export const VisibleMarkdownTables = createContext<ReadonlySet<string> | null>(null);
-export const NativeVisualContent = createContext<Pick<MarkdownMatches, "tables" | "sectionTables" | "headingTitles" | "titles" | "markdownSectionHeadings"> | undefined>(undefined);
+export const NativeVisualContent = createContext<Pick<MarkdownMatches, "tables" | "sectionTables" | "headingTitles" | "titles" | "markdownSectionHeadings" | "checklists"> | undefined>(undefined);
 
 // Only compare scalar cells. Retain distinct data and cells with components.
 export function tableContentKey(head: readonly string[], rows: readonly unknown[][]): string | undefined {
@@ -153,7 +153,21 @@ type MarkdownMatches = {
   listItems: ReadonlySet<string>;
 };
 
-const listKey = (items: readonly string[]) => JSON.stringify(items.map(textKey));
+type ChecklistItem = { label: string; checked: boolean };
+
+function checklistKey(items: readonly ChecklistItem[]): string {
+  return JSON.stringify(items.map(({ label, checked }) => [textKey(label), checked]));
+}
+
+function markdownChecklistKey(items: readonly string[]): string | undefined {
+  const checkedItems: ChecklistItem[] = [];
+  for (const item of items) {
+    const marked = /^\[([ xX])\]\s+(.+)$/.exec(item);
+    if (!marked || /\[\d{1,3}\]|\]\(/.test(marked[2])) return;
+    checkedItems.push({ label: marked[2], checked: marked[1] !== " " });
+  }
+  return checkedItems.length ? checklistKey(checkedItems) : undefined;
+}
 
 function replacesTableSection(
   heading: Extract<Block, { kind: "h" }>, next: Block | undefined, following: Block | undefined,
@@ -287,12 +301,15 @@ export function nativeMarkdownMatches(root: unknown, readInitial: (value: unknow
       if (table?.title) paragraphs.add(citationTextKey(table.title));
       if (table?.note) paragraphs.add(citationTextKey(table.note));
     }
-    if ((typeName === "Col" || typeName === "Section") && Array.isArray(props.children)) {
+    if ((typeName === "Col" || typeName === "Section" || typeName === "Controls") && Array.isArray(props.children)) {
       const items = props.children.filter(child => child?.typeName === "Checkbox");
-      const labels = items.map(child => child.props?.label);
-      if (labels.length && labels.every(label => typeof label === "string")) {
-        checklists.add(listKey(labels));
+      const controls = items.map(child => ({ label: child.props?.label, checked: readInitial(child.props?.checked) }));
+      if (controls.length && controls.every(control => typeof control.label === "string")) {
         if (typeName === "Section" && typeof props.title === "string") paragraphs.add(citationTextKey("**" + props.title + "**"));
+      }
+      if (controls.length && controls.every((control): control is ChecklistItem =>
+        typeof control.label === "string" && typeof control.checked === "boolean")) {
+        checklists.add(checklistKey(controls));
       }
     }
     Object.values(props).forEach(child => visit(child, sectionTitle));
@@ -426,7 +443,7 @@ function blocks(source: string): Block[] {
   return out;
 }
 
-export function MarkdownBlocks({ text, renderCitation, deduplicateTables = false, matches, nativeTables, nativeSectionTables, nativeHeadingTitles }: { text: string; renderCitation?: RenderEvidenceCitation; deduplicateTables?: boolean; matches?: MarkdownMatches; nativeTables?: ReadonlySet<string>; nativeSectionTables?: ReadonlyMap<string, ReadonlySet<string>>; nativeHeadingTitles?: ReadonlySet<string> }) {
+export function MarkdownBlocks({ text, renderCitation, deduplicateTables = false, matches, nativeTables, nativeSectionTables, nativeHeadingTitles, nativeChecklists }: { text: string; renderCitation?: RenderEvidenceCitation; deduplicateTables?: boolean; matches?: MarkdownMatches; nativeTables?: ReadonlySet<string>; nativeSectionTables?: ReadonlyMap<string, ReadonlySet<string>>; nativeHeadingTitles?: ReadonlySet<string>; nativeChecklists?: ReadonlySet<string> }) {
   const seenTables = new Set<string>();
   const items = blocks(text);
   return (
@@ -467,18 +484,26 @@ export function MarkdownBlocks({ text, renderCitation, deduplicateTables = false
           case "hr":
             return <hr key={k} className="iui-divider" />;
           case "list": {
-            if (!b.ordered && matches?.checklists.has(listKey(b.items.map(item => item.replace(/^\[[ xX]\]\s+/, ""))))) return null;
+            if (!b.ordered && (nativeChecklists?.size || matches?.checklists.size)) {
+              const key = markdownChecklistKey(b.items);
+              const previous = items[i - 1];
+              const next = items[i + 1];
+              // Keep an otherwise empty Markdown section with its checklist.
+              const onlySectionContent = previous?.kind === "h" &&
+                (!next || (next.kind === "h" && next.level <= previous.level));
+              if (!onlySectionContent && key && (nativeChecklists?.has(key) || matches?.checklists.has(key))) return null;
+            }
             const entries = b.ordered ? b.items : b.items.filter(item =>
               !matches?.relationships.has(textKey(item)) && !matches?.listItems.has(citationTextKey(item))
               && !matches?.paragraphs.has(citationTextKey(item)));
             if (!entries.length) return null;
-            const items = entries.map((item, j) => <li key={j}>{inline(item, `${k}-${j}`, renderCitation)}</li>);
+            const elements = entries.map((item, j) => <li key={j}>{inline(item, `${k}-${j}`, renderCitation)}</li>);
             return b.ordered ? (
               <ol key={k} start={b.start}>
-                {items}
+                {elements}
               </ol>
             ) : (
-              <ul key={k}>{items}</ul>
+              <ul key={k}>{elements}</ul>
             );
           }
           case "table": {

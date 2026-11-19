@@ -236,7 +236,7 @@ test('a visible chart and checklist collapse only their exact readable duplicate
     type: 'donut', data: [{ category: 'Fit', count: 50 }, { category: 'Other', count: 20 }], x: 'category', series: ['count'], currency: null,
   });
   const checks = element('Section', { title: 'Publishing', children: [
-    element('Checkbox', { label: 'Test links' }), element('Checkbox', { label: 'Proofread' }),
+    element('Checkbox', { label: 'Test links', checked: false }), element('Checkbox', { label: 'Proofread', checked: true }),
   ] });
   const matches = nativeMarkdownMatches(element('Col', { children: [chart, checks] }));
   const duplicate = '| category | count |\n| --- | --- |\n| Fit | 50 |\n| Other | 20 |';
@@ -359,6 +359,36 @@ test('a bound Markdown heading remains the heading for a supplemental native sec
   assert.match(html, /Closing checklist<\/div><p>Record who confirmed the handoff\.<\/p>/);
   assert.match(html, /References Verified source/);
   assert.match(renderToStaticMarkup(createElement(MarkdownBlocks, { text })), /Opening title/);
+});
+
+test('bound Markdown retains the checklist heading and only hides an exact matching state and label sequence', () => {
+  const heading = '## Closing checks\n\nBefore handing over, check the equipment and records.\n\n';
+  const list = '- [ ] Turn off the tools.\n- [x] Record the handoff.';
+  const program = bindNativeAnswerText([
+    'root = Col([Markdown(_xroga_answer), checks])',
+    'checks = Section("Closing checks", [Controls([Checkbox($tools, "Turn off the tools."), Checkbox($handoff, "Record the handoff.")], "Close the shop")])',
+    '$tools = false',
+    '$handoff = true',
+  ].join('\n'), heading + list);
+  const root = createParser(catalog.schema as LibraryJSONSchema, 'Col').parse(program).root;
+  const matches = nativeMarkdownMatches(root, initialNativeValueReader(program));
+  const render = (value: string, native = true, opening = heading) => renderToStaticMarkup(createElement(MarkdownBlocks, {
+    text: opening + value,
+    nativeChecklists: native ? matches.checklists : undefined,
+    renderCitation: () => 'Verified source',
+  }));
+
+  const replaced = render(list);
+  assert.match(replaced, /Closing checks<\/div>/);
+  assert.match(replaced, /Before handing over, check the equipment and records/);
+  assert.doesNotMatch(replaced, /<ul>|Turn off|Record the handoff/);
+  assert.match(render(list, false), /Turn off the tools.*Record the handoff/);
+  assert.match(render(list, true, '## Closing checks\n\n'), /Closing checks.*Turn off the tools.*Record the handoff/);
+  assert.match(render(list.replace('[x]', '[ ]')), /Turn off the tools.*Record the handoff/);
+  assert.match(render(list.split('\n').reverse().join('\n')), /Record the handoff.*Turn off the tools/);
+  assert.match(render(list + '\n- [ ] Lock the door.'), /Turn off the tools.*Lock the door/);
+  assert.match(render(list.replace('tools.', 'tools. [1]')), /Turn off the tools.*Verified source/);
+  assert.match(render(list.replace('the handoff.', '[the handoff](https://example.com).')), /<ul>.*Turn off the tools.*Record the handoff/);
 });
 
 test('state-dependent Markdown cannot suppress a native heading', () => {

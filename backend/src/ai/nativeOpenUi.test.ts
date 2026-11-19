@@ -6,7 +6,7 @@ import { buildNativeOpenUiShare, readNativeOpenUiShare } from './nativeOpenUiSha
 import { readNativeOpenUiRun } from './nativeOpenUiRun.js';
 import { completeNativeWorkspaceAnswer, usesNativeWorkspacePresentation } from './nativeOpenUiWorkspace.js';
 import { requiredNativeFormats } from './answerCoverage.js';
-import { bindNativeAnswerText, nativeReadableTextKey } from './nativeOpenUi.js';
+import { bindNativeAnswerText, nativeReadableTextKey, supplementNativeProse } from './nativeOpenUi.js';
 
 test('native Markdown references the complete readable answer without generating a second explanation', () => {
   const prose = '## Answer\n\nUse **Basic** for one seat.\n\n1. Read the terms.\n2. Compare the total.\n\nLiteral example: `_xroga_answer = "example"`.';
@@ -187,6 +187,7 @@ test('the model gets instructions from the native registry and may answer in tex
     assert.match(prompt, /Carry precautions into every step/);
     assert.match(prompt, /Put required reassembly, guards, and safety checks before each powered test/);
     assert.match(prompt, /If a prerequisite fails or there is an unresolved hazard, stop and refer it to a qualified person/);
+    assert.match(prompt, /Apply the same stop or referral outcome to that condition in every example/);
     assert.match(prompt, /steps, examples, diagrams, and checklists all follow the same safe order/);
     assert.ok(prompt.indexOf('For safety-sensitive procedures') < prompt.indexOf('In a roving tabindex pattern'));
     assert.match(prompt, /Required units must cover the whole requested quantity/);
@@ -356,6 +357,23 @@ test('a requested editable checklist recovers local controls from a complete pro
   const cited = completeNativeWorkspaceAnswer('- Find the evidence [1].', 'stop', new Set(['source-1']), prompt, undefined, formats);
   assert.deepEqual(cited.completion, { status: 'partial', reason: 'presentation_contract' });
   assert.match(cited.response, /evidence \[1\]/);
+});
+
+test('supplemental checkbox labels do not repeat exact readable tasks with the same initial state', () => {
+  const prose = [
+    '## Handoff', '', '- [ ] **File** the report.',
+    '- [x] Assign an owner.', '- [ ] Notify the team.',
+    '- [ ] Check the guidance [1].', '',
+    '~~~markdown', '- [ ] Sample only.', '~~~',
+  ].join('\n');
+  const program = [
+    'root = Col([Markdown(_xroga_answer), Controls([Checkbox($pending, "File the report."), Checkbox($done, "Assign an owner."), Checkbox($done, "Notify the team."), Checkbox($pending, "Check the guidance."), Checkbox($pending, "Sample only.")], "Handoff")])',
+    '$pending = false',
+    '$done = true',
+  ].join('\n');
+  const complete = supplementNativeProse(prose, bindNativeAnswerText(program, prose), true);
+  assert.ok(complete.startsWith(prose));
+  assert.equal(complete.slice(prose.length), '\n\n- Notify the team.\n\n- Check the guidance.\n\n- Sample only.');
 });
 
 test('native layout, data and reactive arithmetic are accepted without a V2 translation', () => {

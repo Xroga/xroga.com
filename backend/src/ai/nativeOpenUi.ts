@@ -196,6 +196,25 @@ export function nativeReadableTextKey(text: string): string {
     .join('').replace(/\s+/g, ' ').trim();
 }
 
+function readableTaskKeys(prose: string): Set<string> {
+  const tasks = new Set<string>();
+  let fence: string | undefined;
+  for (const line of prose.split(/\r?\n/)) {
+    const marker = /^ {0,3}(\x60{3,}|~{3,})(.*)$/.exec(line);
+    if (fence) {
+      if (marker && marker[1][0] === fence[0] && marker[1].length >= fence.length && !marker[2].trim()) fence = undefined;
+      continue;
+    }
+    if (marker) {
+      fence = marker[1];
+      continue;
+    }
+    const task = /^ {0,3}[-*+][ \t]+\[([ xX])\][ \t]+(.+)$/.exec(line);
+    if (task) tasks.add(JSON.stringify([task[1] !== ' ', nativeReadableTextKey(task[2])]));
+  }
+  return tasks;
+}
+
 /** Recover readable details from an already validated program when the model
  * omitted its prose, returned an overview or left a heading without its body. */
 export function supplementNativeProse(prose: string, program: string, includeAll = false): string {
@@ -247,6 +266,7 @@ export function supplementNativeProse(prose: string, program: string, includeAll
   const existingTables = new Set(prose.split(/\n\s*\n/).map(tableKey).filter(Boolean));
   const existingText = new Set(prose.split(/\n\s*\n|\n(?=\s*[-*+]\s)/).map(value =>
     nativeReadableTextKey(value.replace(/^\s*(?:#{1,6}\s+|[-*+]\s+)/, ''))));
+  const existingTasks = readableTaskKeys(prose);
   let remaining = 24_000;
   const add = (value: string) => {
     const key = nativeReadableTextKey(value.replace(/^\s*(?:#{1,6}\s+|[-*+]\s+)/, ''));
@@ -275,7 +295,8 @@ export function supplementNativeProse(prose: string, program: string, includeAll
       add('- ' + [scalar(props.title), scalar(props.description)].filter(Boolean).join(': '));
     } else if (node.typeName === 'Checkbox') {
       const label = scalar(props.label);
-      if (label) add('- ' + label);
+      const checked = initialValue(props.checked);
+      if (label && !existingTasks.has(JSON.stringify([checked, nativeReadableTextKey(label)]))) add('- ' + label);
     } else if (node.typeName === 'Section') {
       const title = scalar(props.title);
       if (title) add('## ' + title);
