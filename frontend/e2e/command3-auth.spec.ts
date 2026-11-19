@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { createClient } from '@supabase/supabase-js';
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { randomUUID } from 'node:crypto';
 import AxeBuilder from '@axe-core/playwright';
 
@@ -270,6 +270,11 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   const reviewedReply = 'Partial answer. The written summary disagreed with the plotted data, so it was withheld.';
   const reviewedProgram = 'root = Col([Markdown(' + JSON.stringify(reviewedReply) + '), Chart("bar", [{Month:"January", Value:12000}, {Month:"February", Value:15500}], "Month", ["Value"], "currency", "USD")])';
   const architecture = 'Show the request architecture, component roles and example code.';
+  const docxPrompt = 'Create a DOCX proposal with editable sections.';
+  const pdfPrompt = 'Create a PDF executive report from this attached dataset.';
+  const docxResponse = '# Workshop Proposal\n\n## Scope\n\nDiscuss the workshop training plan.';
+  const pdfResponse = '# Workshop Executive Report\n\nRevenue from 40 attendees at $25 was $1,000.';
+  const documentDataset = 'ticket,attendees\n25,40';
   const architectureCaption = 'The app queries rows with the user access token.';
   const architectureReply = [
     '## Request architecture', 'The application checks tenant membership before reading rows.',
@@ -357,6 +362,16 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
     }
     if (body.message === architecture) {
       return route.fulfill({ headers: cors, json: { response: architectureReply, completion: { status: 'complete' }, responseSource: { format: 'xroga-openui-v1', text: architectureProgram } } });
+    }
+    if (body.message === docxPrompt || body.message === pdfPrompt) {
+      if (body.message === pdfPrompt) expect(body.attachments).toEqual([{
+        url: `data:text/csv;base64,${Buffer.from(documentDataset).toString('base64')}`,
+        name: 'workspace-report.csv', mimeType: 'text/csv',
+      }]);
+      const downloadFormat = body.message === docxPrompt ? 'docx' : 'pdf';
+      const response = downloadFormat === 'docx' ? docxResponse : pdfResponse;
+      return route.fulfill({ headers: cors, json: { response, completion: { status: 'complete' },
+        responseSource: { format: 'xroga-openui-v1', text: '', downloadFormat } } });
     }
     if (body.message === research) {
       return route.fulfill({ headers: cors, json: { response: 'Review the exact research request before it is sent: [Review action](/dashboard/actions/confirm/' + confirmationId + '). No live evidence has been retrieved.' } });
@@ -790,6 +805,36 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
     await browserOperator.click();
   }
   expect(chatCalls).toBe(9);
+  await page.goto('/workspace?conversation=' + architectureSession);
+  await expect(composer).toHaveAttribute('data-draft-restoring', 'false', { timeout: 20_000 });
+  await send(docxPrompt);
+  await expect(page.getByRole('button', { name: 'Download DOCX', exact: true })).toBeVisible({ timeout: 30_000 });
+  await page.locator('input[type=file][accept*="text/plain"]').setInputFiles({
+    name: 'workspace-report.csv', mimeType: 'text/csv', buffer: Buffer.from(documentDataset),
+  });
+  await send(pdfPrompt);
+  await expect(page.getByRole('button', { name: 'Download PDF', exact: true })).toBeVisible({ timeout: 30_000 });
+  await expect.poll(async () => {
+    const saved = await readSaved(architectureSession);
+    const messages = saved?.messages as Array<{ featureOutput?: { documentDownload?: string; sourceText?: string } }> | undefined;
+    return messages?.filter(message => message.featureOutput?.documentDownload)
+      .map(message => [message.featureOutput?.documentDownload, message.featureOutput?.sourceText]);
+  }, { timeout: 20_000 }).toEqual([['docx', docxResponse], ['pdf', pdfResponse]]);
+  await page.reload();
+  await expect(composer).toHaveAttribute('data-draft-session', architectureSession, { timeout: 20_000 });
+  for (const [format, filename, header] of [
+    ['DOCX', 'Workshop-Proposal.docx', '504b0304'],
+    ['PDF', 'Workshop-Executive-Report.pdf', '25504446'],
+  ]) {
+    const button = page.getByRole('button', { name: 'Download ' + format, exact: true });
+    await expect(button).toBeVisible({ timeout: 20_000 });
+    const pending = page.waitForEvent('download');
+    await button.press('Enter');
+    const download = await pending;
+    expect(download.suggestedFilename()).toBe(filename);
+    expect((await readFile((await download.path())!)).subarray(0, 4).toString('hex')).toBe(header);
+  }
+  expect(chatCalls).toBe(11);
   await writeFile('test-results/native-workspace/evidence.json', JSON.stringify({
     source: expectedRelease, route: '/workspace', auth: 'isolated Supabase ordinary accounts',
     model: 'deterministic transport fixtures, zero provider calls', nativeActions: ['file handoff', 'citation link', 'keyboard calculator', 'copy readback', 'database save and reopen', 'private share owner/guest/other account', 'continuation', 'browser cancellation', 'client validation fallback', 'partial native recovery, copy and reopen', 'reviewed partial chart', 'legacy research receipt without refocus or redispatch', 'automatic public lookup, citation and source count after Copy, Share and Reopen', 'connected diagram, nested table and code in one persisted answer'],

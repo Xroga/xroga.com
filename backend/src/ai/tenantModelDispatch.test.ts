@@ -85,13 +85,25 @@ test('actual pipeline, completion and SoftwareAgent calls bind tenant, account r
         assert.match(body.messages[0].content,/readable Markdown/);
         assert.doesNotMatch(body.messages[0].content,/<<<XROGA_OPENUI_V1>>>|Chart\(/);
       }
+      if (mode === 'native-document') {
+        const request = body.messages.at(-1).content;
+        if (request.includes('attached dataset') && !request.includes('Attached document text:')) {
+          assert.match(body.messages[0].content, /attachment is missing or unreadable/);
+        } else if (!request.includes('do not export')) {
+          assert.match(body.messages[0].content, /requested (?:DOCX|PDF) document as readable Markdown/);
+          assert.match(body.messages[0].content, /Do not invent a file URL/);
+        } else {
+          assert.doesNotMatch(body.messages[0].content, /requested (?:DOCX|PDF) document as readable Markdown/);
+        }
+        if (request.includes('Attached document text:')) assert.match(request, /ticket,attendees\n25,40/);
+      }
       if(mode==='missingUsage')return Response.json({model:body.model,choices:[{message:{content:'must remain unpublished'},finish_reason:'stop'}]},
         {headers:{'x-request-id':'synthetic-unknown-usage','x-zurelay-model':body.model}});
       if(mode==='wrongModel')return Response.json({model:'unapproved-model',usage:{prompt_tokens:2,completion_tokens:2,total_tokens:4},choices:[]},
         {headers:{'x-request-id':'synthetic-wrong-model','x-zurelay-model':body.model}});
       if(mode==='droppedStream')return new Response('data: '+JSON.stringify({model:body.model,choices:[{delta:{content:'unconfirmed bytes'},finish_reason:null}]})+'\n\n',
         {headers:{'content-type':'text/event-stream','x-request-id':'synthetic-drop','x-zurelay-model':body.model}});
-      if(body.stream)return new Response('data: '+JSON.stringify({id:'synthetic-provider-receipt',choices:[{delta:{content:['presentation','native','native-plain'].includes(mode)?receivedAnswer:'owned result'},finish_reason:'stop'}],model:'deepseek-v4.1-flash-1017',usage:{prompt_tokens:2,completion_tokens:2,total_tokens:4}})+'\n\ndata: [DONE]\n\n',{headers:{'content-type':'text/event-stream','x-request-id':'synthetic-provider-receipt','x-zurelay-model':'deepseek-v4.1-flash-1017'}});
+      if(body.stream)return new Response('data: '+JSON.stringify({id:'synthetic-provider-receipt',choices:[{delta:{content:['presentation','native','native-plain','native-document'].includes(mode)?receivedAnswer:'owned result'},finish_reason:'stop'}],model:'deepseek-v4.1-flash-1017',usage:{prompt_tokens:2,completion_tokens:2,total_tokens:4}})+'\n\ndata: [DONE]\n\n',{headers:{'content-type':'text/event-stream','x-request-id':'synthetic-provider-receipt','x-zurelay-model':'deepseek-v4.1-flash-1017'}});
       return Response.json({id:'synthetic-provider-receipt',choices:[{message:{content:'{"stack":"static","files":[],"notes":[]}'},finish_reason:'stop'}],model:'deepseek-v4.1-flash-1017',usage:{prompt_tokens:2,completion_tokens:2,total_tokens:4}},{headers:{'x-request-id':'synthetic-provider-receipt','x-zurelay-model':'deepseek-v4.1-flash-1017'}});
     }
     assert.equal(url.origin,env.SUPABASE_URL,'Unexpected transport is never allowed');
@@ -364,6 +376,26 @@ test('actual pipeline, completion and SoftwareAgent calls bind tenant, account r
   assert.equal(atomicReceipts,receiptsPlain+1);
   assert.equal(quotaReadsAtDispatch - beforePlainQuota, 1, 'Ordinary chat reads current quota only at model dispatch');
   assert.equal(quotaReads - beforePlainQuota, 2, 'Published chat retains the settled quota refresh');
+
+  const pdfPrompt = 'Create a PDF executive report from this attached dataset.';
+  const dataset = {url:'data:text/csv;base64,' + Buffer.from('ticket,attendees\n25,40').toString('base64'),
+    mimeType:'text/csv', name:'workshop.csv'};
+  for (const { prompt, attachments, expected } of [
+    { prompt: 'Create a DOCX proposal with editable sections.', expected: 'docx' },
+    { prompt: pdfPrompt, attachments: [dataset], expected: 'pdf' },
+    { prompt: pdfPrompt, expected: undefined },
+    { prompt: 'Create a PDF report, but do not export a file.', expected: undefined },
+  ]) {
+    reset('native-document');resetModelRuntimeHealth();
+    receivedAnswer='# Workshop report\n\nRevenue at 40 attendees: $1,000.';
+    const before: number = effects, settled: number = atomicReceipts;
+    const answer = await runChatPipeline({...plainRequest, prompt, attachments});
+    assert.equal(answer.response, receivedAnswer);
+    assert.equal(answer.responseSource?.format, 'xroga-openui-v1');
+    assert.equal(answer.responseSource?.downloadFormat, expected);
+    assert.equal(effects, before + 1, 'A download never requires a second model dispatch');
+    assert.equal(atomicReceipts, settled + 1);
+  }
 
   reset('out-of-credit');
   const beforeDeniedEffects = effects;

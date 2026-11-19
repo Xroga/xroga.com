@@ -6072,7 +6072,8 @@ import type {
 export interface Phase1ChatResult {
   publicWebRetrieved?: true;
   completion?: { status: 'complete' } | { status: 'partial'; reason: 'output_limit' | 'unconfirmed_stop' | 'authorization_review' | 'factual_review' | 'presentation_contract' | 'data_review' | 'source_attribution' };
-  responseSource?: { format: 'xroga-response-json-v1' | 'xroga-openui-v1'; text: string; contract?:import('./responseCoverageContract').ResponseCoverageContract };
+  responseSource?: { format: 'xroga-response-json-v1'; text: string; contract?:import('./responseCoverageContract').ResponseCoverageContract; downloadFormat?: never }
+    | { format: 'xroga-openui-v1'; text: string; contract?: never; downloadFormat?: 'docx' | 'pdf' };
   response:
     string;
 

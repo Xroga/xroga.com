@@ -15,7 +15,13 @@ import '@xyflow/react/dist/style.css';
 import './surface.css';
 import 'katex/dist/katex.min.css';
 
-export type NativeAnswer = { text: string; program?: string; library: 'xroga-native-v1'; format: 'xroga-openui-v1' };
+export type NativeAnswer = {
+  text: string;
+  program?: string;
+  library: 'xroga-native-v1';
+  format: 'xroga-openui-v1';
+  documentDownload?: 'docx' | 'pdf';
+};
 
 const parser = createParser(library.toJSONSchema(), 'Col');
 

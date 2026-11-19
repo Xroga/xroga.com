@@ -8,6 +8,8 @@ import type { CitationSource } from '@/lib/xrogaCitations';
 import { ResponseSources } from '@/components/terminal/ResponseSources';
 import { ResponseSourceScope } from '@/components/terminal/ResponseSourceScope';
 import { ChatErrorBoundary } from '@/components/terminal/ChatErrorBoundary';
+import { SharedAnswerDownloads } from '@/components/terminal/SharedAnswerDownloads';
+import { publicAnswerExportText } from '@/lib/publicAnswerText';
 import { loadPresentation } from '../response-experience-v2/loadPresentation';
 import { splitNativeOpenUiAnswer } from '../../../../backend/src/ai/nativeOpenUi';
 
@@ -26,6 +28,7 @@ export function readNativeWorkspaceAnswer(output: unknown): NativeAnswer | undef
     library: 'xroga-native-v1',
     text: text || 'The saved answer has no readable text.',
     ...(document.responseSource.text ? { program: document.responseSource.text } : {}),
+    ...(text && document.status === 'completed' ? { documentDownload: document.documentDownload } : {}),
   };
 }
 
@@ -45,6 +48,11 @@ export function NativeWorkspaceAnswer({ answer, sources, sourceReferral = true }
     {answer.program ? <ChatErrorBoundary fallback={fallback} logErrorDetails={false}>
       <Suspense fallback={fallback}><Surface answer={answer} sources={evidence} /></Suspense>
     </ChatErrorBoundary> : fallback}
+    {answer.documentDownload ? <SharedAnswerDownloads
+      response={publicAnswerExportText(answer.text)}
+      requestedFormat={answer.documentDownload}
+      verifiedLinks={sources?.map(source => source.url) ?? []}
+    /> : null}
     {sources?.length ? <ResponseSources sources={sources} referral={sourceReferral} /> : null}
   </ResponseSourceScope>;
 }

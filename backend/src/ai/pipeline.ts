@@ -24,6 +24,7 @@ import { assessBlackHoleComplexity } from './black-hole/complexity.js';
 import { MODELS, type ModelId } from './models.js';
 import { publicCompletionState } from './completionDiagnostics.js';
 import { NATIVE_UI_FORMAT } from './nativeOpenUi.js';
+import { nativeDocumentPrompt, nativeDocumentRequiresAttachment, requestedNativeDocumentFormat, type NativeDocumentFormat } from './nativeDocumentDownload.js';
 import { completeNativeWorkspaceAnswer, usesNativeWorkspacePresentation } from './nativeOpenUiWorkspace.js';
 import { bindCitationLinks, researchCitationIssues, RESEARCH_ANSWER_MAXIMUM_MICRO_USD } from './researchAnswer.js';
 import { nativeOpenUiPlainPrompt, workspaceNativeOpenUiPrompt } from './nativeOpenUiPrompt.js';
@@ -396,7 +397,8 @@ export interface BuildClientMeta {
 
 export interface ChatPipelineResult {
   completion?: ReturnType<typeof publicCompletionState>;
-  responseSource?: { format: 'xroga-response-json-v1' | typeof NATIVE_UI_FORMAT; text: string; contract?: ReturnType<typeof prepareAnswerCoverage> };
+  responseSource?: { format: 'xroga-response-json-v1'; text: string; contract?: ReturnType<typeof prepareAnswerCoverage>; downloadFormat?: never }
+    | { format: typeof NATIVE_UI_FORMAT; text: string; contract?: never; downloadFormat?: NativeDocumentFormat };
   response: string;
   intent: string;
   usage: ReturnType<typeof usageToTokenUsage>;
@@ -985,6 +987,11 @@ export async function runChatPipeline(opts: {
 
   const prepared = await prepareAttachments(opts.attachments);
   const hasAttachments = prepared.hasImages || prepared.hasDocuments;
+  const requestedDownload = opts.approvedResearch ? undefined : requestedNativeDocumentFormat(opts.prompt);
+  const missingDownloadAttachment = Boolean(requestedDownload && nativeDocumentRequiresAttachment(opts.prompt) &&
+    (!prepared.documents.length || !prepared.documents.every(document =>
+      document.chars > 0 && document.text.trim() && !document.text.startsWith('[DOCX received'))));
+  const downloadInstruction = requestedDownload ? nativeDocumentPrompt(requestedDownload, missingDownloadAttachment) : '';
 
   // Attachment analyze path — never force a website build
   if (hasAttachments) {
@@ -994,7 +1001,8 @@ export async function runChatPipeline(opts: {
     const attachmentSystem = prepared.hasImages ? VISION_SYSTEM : DOC_SYSTEM;
     const attachmentPlan = native ? prepareAnswerCoverage(opts.prompt, opts.goalContract?.presentation, opts.goalContract?.answerObligations).plan : [];
     const formats = native ? requiredNativeFormats(opts.prompt) : [];
-    const system = native ? attachmentSystem + '\n\n' + workspaceNativeOpenUiPrompt([...attachmentPlan.map(section => section.kind), ...formats], false) : attachmentSystem;
+    const system = native ? attachmentSystem + '\n\n' + workspaceNativeOpenUiPrompt([...attachmentPlan.map(section => section.kind), ...formats], false)
+      + downloadInstruction : attachmentSystem;
 
     let userText = prompt;
     if (prepared.documentBlock) {
@@ -1035,10 +1043,14 @@ export async function runChatPipeline(opts: {
     const usage = await getUsage(opts.userId);
 
     const answer = native ? completeNativeWorkspaceAnswer(result.text, result.finishReason, undefined, undefined, diagnostic =>
-      console.warn('[native-openui-validation]', diagnostic), formats) : { response: result.text };
-    if (native) opts.onDelta?.(answer.response);
+      console.warn('[native-openui-validation]', diagnostic), formats) : undefined;
+    const response = answer?.response ?? result.text;
+    if (native) opts.onDelta?.(response);
     return {
       ...answer,
+      response,
+      ...(requestedDownload && !missingDownloadAttachment && answer?.completion.status === 'complete'
+        ? { responseSource: { ...answer.responseSource, downloadFormat: requestedDownload } } : {}),
       intent: pick.kind === 'document' ? 'file_analysis' : 'vision_analysis',
       usage: usageToTokenUsage(usage),
       modelId: result.modelId,
@@ -1190,7 +1202,8 @@ export async function runChatPipeline(opts: {
   const instructions = directPublicLookup ? DIRECT_RESEARCH_SYSTEM : native
     ? plainNative ? nativeOpenUiPlainPrompt : workspaceNativeOpenUiPrompt([...answerContract.plan.map(section => section.kind), ...formats], Boolean(evidenceIds.size)) + sourceManifest
     : chatPresentationSystem(opts.prompt) + (presentation?.length ? '\n\n' + presentationRequestInstructions(presentation) : '');
-  const system = currentPublicProductTruth(truthAuthorities) + '\n\n' + instructions;
+  const system = currentPublicProductTruth(truthAuthorities) + '\n\n' + instructions
+    + (native ? downloadInstruction : '');
   const result = await callBuilderStream(
     route.builder,
     [{ role: 'system', content: system }, ...historyMsgs, { role: 'user', content: userContent }],
@@ -1230,6 +1243,8 @@ export async function runChatPipeline(opts: {
     return {
       ...answer,
       response, completion,
+      ...(requestedDownload && !missingDownloadAttachment && completion.status === 'complete'
+        ? { responseSource: { ...answer.responseSource, downloadFormat: requestedDownload } } : {}),
       intent: route.kind, usage: usageToTokenUsage(usage), webSources: research?.sources,
       ...(publicWebRetrieved ? { publicWebRetrieved } : {}),
       modelId: result.modelId, route,

@@ -228,6 +228,23 @@ describe('semantic request dispatch', () => {
     ]) assert.equal(enforceInlineAnswerIntent(other, { message, attachments }), other);
   });
 
+  it('keeps standalone DOCX and PDF deliverables in chat even when the model selects a build', () => {
+    const planned = goal({ semanticIntent: 'MODIFY', requiredCapabilities: ['software.implement', 'validation.run'] });
+    for (const [message, attachments] of [
+      ['Create a DOCX proposal with editable sections.', []],
+      ['Create a PDF executive report from this attached dataset.', [{ name: 'report.csv', mediaType: 'text/csv' }]],
+    ] as const) {
+      const answer = enforceInlineAnswerIntent(planned, { message, attachments: [...attachments] });
+      assert.equal(dispatchForGoal(answer, answer.requiredCapabilities), 'chat');
+      assert.deepEqual(answer.requiredCapabilities, ['conversation.respond', ...(attachments.length ? ['attachment.analyze'] : [])]);
+    }
+    for (const message of [
+      'Create a DOCX proposal, and send it to the client.',
+      'Create a PDF report and commit it to the repository.',
+      'Build an application with DOCX and PDF downloads.',
+    ]) assert.equal(enforceInlineAnswerIntent(planned, { message, attachments: [] }), planned);
+  });
+
   it('delivers standalone code and sample tests in chat without converting project work', () => {
     const planned = goal({ semanticIntent: 'MODIFY', requiredCapabilities: ['software.implement', 'validation.run'] });
     for (const message of [

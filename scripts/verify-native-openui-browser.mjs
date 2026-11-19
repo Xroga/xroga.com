@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { createServer } from 'node:http';
 import { basename, resolve } from 'node:path';
@@ -6,6 +7,8 @@ import { chromium } from 'playwright';
 import { build } from 'esbuild';
 import AxeBuilder from '@axe-core/playwright';
 import { tsImport } from 'tsx/esm/api';
+import JSZip from 'jszip';
+import { PDFDocument } from 'pdf-lib';
 
 const cases = {
   openingTitle: {
@@ -174,6 +177,16 @@ const failedEquation='{'.repeat(3500)+'x'+'}'.repeat(3500)+'<img src=x onerror="
 cases.mathFailure={text:'$$'+failedEquation+'$$\n\nThe complete answer stays available.'};
 const { completeNativeWorkspaceAnswer } = await tsImport('../backend/src/ai/nativeOpenUiWorkspace.ts', import.meta.url);
 const { validateNativeOpenUi } = await tsImport('../backend/src/ai/nativeOpenUi.ts', import.meta.url);
+const { requestedNativeDocumentFormat } = await tsImport('../backend/src/ai/nativeDocumentDownload.ts', import.meta.url);
+const documentFixtures = {
+  docx: { prompt: 'Create a DOCX proposal with editable sections.', text: '# Workshop Proposal\n\n## Scope\n\nDiscuss the training plan.\n\n[Unverified claim](https://fake.example/report)' },
+  pdf: { prompt: 'Create a PDF executive report from this attached dataset.', text: '# Executive Report\n\nTotal verified revenue: $1,000.' },
+  noExport: { prompt: 'Create a PDF report, but do not export a file.', text: 'Here is the report directly in chat.' },
+  partial: { prompt: 'Create a PDF report.', text: 'A readable part of the report survives.', partial: true },
+};
+for (const [name, fixture] of Object.entries(documentFixtures)) {
+  cases['download-' + name] = { ...fixture, downloadFormat: requestedNativeDocumentFormat(fixture.prompt) };
+}
 for (const name of ['metricGrid','chartHeading']) {
   const verified=validateNativeOpenUi(cases[name].program,new Set(),cases[name].text);
   assert.ok(verified.ok,name+' fixture must satisfy the actual presentation contract: '+JSON.stringify(verified));
@@ -203,6 +216,7 @@ const compiled = await build({
     loader: 'tsx',
     contents: 'import {createRoot} from "react-dom/client"; import {useEffect,useState} from "react"; import {ThemeToggle} from "./frontend/src/components/layout/ThemeToggle"; import {useThemeStore} from "./frontend/src/store/useThemeStore"; import MathEquationImpl from "./frontend/src/lib/mathRenderImpl"; import {Chart} from "./frontend/src/components/native-openui/upstream/components/chart"; import {NativeSurface} from "./frontend/src/components/native-openui/NativeSurface"; import {ResponseSources} from "./frontend/src/components/terminal/ResponseSources"; import {ResponseSourceScope} from "./frontend/src/components/terminal/ResponseSourceScope"; import "./frontend/src/components/native-openui/evaluation.css";'
       + 'import "./frontend/src/styles/answerExperience.css";'
+      + 'import {NativeWorkspaceAnswer, readNativeWorkspaceAnswer} from "./frontend/src/components/native-openui/NativeWorkspaceAnswer"; import {enhanceAiResponse} from "./frontend/src/lib/xrogaResponseDocument";'
       + 'const cases = ' + JSON.stringify(cases) + ';'
       + 'const q=new URL(location.href).searchParams; const name=q.get("case") || "short";'
       + 'document.body.dataset.theme=q.get("shellTheme") || q.get("theme") || "light"; document.querySelector("main").dataset.theme=q.get("theme") || "light";'
@@ -210,10 +224,12 @@ const compiled = await build({
       + 'function DelayedChart(){const [data,setData]=useState(null);useEffect(()=>{setData([{year:0,balance:10000},{year:1,balance:10600}]);},[]);const View=Chart.component;return <section role="region" aria-label="Answer"><View props={{type:"line",data,x:"year",series:["balance"],format:"currency",currency:"USD"}} renderNode={()=>null}/></section>;}'
       + 'function FailedMath(){return <section role="region" aria-label="Answer"><MathEquationImpl text={'+JSON.stringify(failedEquation)+'}/><p>The complete answer stays available.</p></section>;}'
       + 'function ThemeProbe(){const theme=useThemeStore(s=>s.theme);useEffect(()=>{useThemeStore.getState().setTheme(q.get("theme")==="dark"?"black":"white");},[]);return <section role="region" aria-label="Answer" style={{position:"fixed",top:8,...(name==="themeControl"?{left:8}:{right:8})}}><ThemeToggle placement={name==="themeControl"?"bottom-end":"right-start"}/><output aria-label="Selected theme">{theme}</output></section>;}'
-      + 'const fixture=cases[name]; createRoot(document.getElementById("root")).render(name.startsWith("themeControl")?<ThemeProbe/>:name==="delayedChart"?<DelayedChart/>:name==="legacyMathFailure"?<FailedMath/>:<ResponseSourceScope>{fixture.prompt && <p className="native-evaluation-user">{fixture.prompt}</p>}<div className="native-evaluation-answer-label">Xroga</div><NativeSurface answer={{...fixture,format:"xroga-openui-v1",library:"xroga-native-v1"}} sources={fixture.sources ?? sources} isStreaming={name==="stream"} />{name==="numericEvidence" && <ResponseSources sources={[...sources, sources[0], ...[4,5,6].map(n => ({title:"Source "+n,url:"https://example.com/"+n})), {title:"Unsafe link",url:"javascript:alert(1)"}]} />}</ResponseSourceScope>);',
+      + 'function DownloadProbe({fixture}){let saved=localStorage.getItem(name); if(!saved){const turn=enhanceAiResponse(fixture.text,"document",{status:fixture.partial?"partial":"complete"},{format:"xroga-openui-v1",text:"",downloadFormat:fixture.downloadFormat});saved=JSON.stringify(turn.output);localStorage.setItem(name,saved);} const answer=readNativeWorkspaceAnswer(JSON.parse(saved));return <NativeWorkspaceAnswer answer={answer}/>;}'
+      + 'const fixture=cases[name]; createRoot(document.getElementById("root")).render(name.startsWith("download-")?<DownloadProbe fixture={fixture}/>:name.startsWith("themeControl")?<ThemeProbe/>:name==="delayedChart"?<DelayedChart/>:name==="legacyMathFailure"?<FailedMath/>:<ResponseSourceScope>{fixture.prompt && <p className="native-evaluation-user">{fixture.prompt}</p>}<div className="native-evaluation-answer-label">Xroga</div><NativeSurface answer={{...fixture,format:"xroga-openui-v1",library:"xroga-native-v1"}} sources={fixture.sources ?? sources} isStreaming={name==="stream"} />{name==="numericEvidence" && <ResponseSources sources={[...sources, sources[0], ...[4,5,6].map(n => ({title:"Source "+n,url:"https://example.com/"+n})), {title:"Unsafe link",url:"javascript:alert(1)"}]} />}</ResponseSourceScope>);',
   },
   outdir: 'native-assets', entryNames: 'native', chunkNames: 'native-chunk-[hash]', format: 'esm', splitting: true,
   write: false, bundle: true, jsx: 'automatic', minify: true,
+  external: ['/black-hole-user-icon.svg'],
   tsconfig: 'frontend/tsconfig.json', define: { 'process.env': '{}', 'process.env.NODE_ENV': '"production"' },
   loader: { '.woff2': 'dataurl', '.woff': 'dataurl', '.ttf': 'dataurl' },
 });
@@ -224,7 +240,7 @@ const server = createServer(async (req, res) => {
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
     return res.end('<!doctype html><html lang="en"><head><title>Native OpenUI browser acceptance</title><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="stylesheet" href="/native.css"><style>body{margin:0} .native-evaluation-bar small{display:block;color:var(--iui-muted);font-size:13px}</style></head><body><main class="native-evaluation"><header class="native-evaluation-bar"><div><small>Xroga Workspace · Fixture</small><h1>Answer evaluation</h1></div></header><article class="native-evaluation-thread" id="root"></article></main><script type="module" src="/native.js"></script></body></html>');
   }
-  if (/^\/native-icons\/lucide-1\.21\.0-\d{1,2}\.svg$/.test(name)) {
+  if (name === '/black-hole-user-icon.svg' || /^\/native-icons\/lucide-1\.21\.0-\d{1,2}\.svg$/.test(name)) {
     const file = await readFile(resolve('frontend/public', '.' + name)).catch(() => null);
     if (file) {
       res.setHeader('Content-Type', 'image/svg+xml');
@@ -244,6 +260,45 @@ const results = [];
 try {
   const channel = process.env.XROGA_NATIVE_BROWSER ?? 'chrome';
   browser = await chromium.launch({ channel });
+  const documentDownloads = [];
+  const downloadContext = await browser.newContext({ acceptDownloads: true, viewport: { width: 390, height: 844 } });
+  const downloadPage = await downloadContext.newPage();
+  await downloadPage.addInitScript(() => {
+    const createObjectURL = URL.createObjectURL.bind(URL);
+    URL.createObjectURL = (blob) => { window.downloadMime = blob.type; return createObjectURL(blob); };
+  });
+  for (const format of ['docx', 'pdf']) {
+    const label = 'Download ' + format.toUpperCase();
+    await downloadPage.goto(origin + '/?case=download-' + format);
+    await downloadPage.getByRole('button', { name: label }).waitFor();
+    await downloadPage.reload();
+    const control = downloadPage.getByRole('button', { name: label });
+    await control.focus();
+    const expectedDownload = downloadPage.waitForEvent('download');
+    await control.press('Enter');
+    const download = await expectedDownload;
+    const bytes = await readFile(await download.path());
+    const mime = await downloadPage.evaluate(() => window.downloadMime);
+    assert.equal(download.suggestedFilename(), format === 'docx' ? 'Workshop-Proposal.docx' : 'Executive-Report.pdf');
+    if (format === 'docx') {
+      assert.equal(mime, 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+      const doc = await JSZip.loadAsync(bytes);
+      assert.match(await doc.file('word/document.xml').async('string'), /Heading2.*Scope.*Unverified claim/);
+      assert.doesNotMatch(await doc.file('word/_rels/document.xml.rels').async('string'), /fake\.example/);
+    } else {
+      assert.equal(mime, 'application/pdf');
+      assert.equal(bytes.subarray(0, 5).toString(), '%PDF-');
+      assert.equal((await PDFDocument.load(bytes)).getPageCount(), 1);
+    }
+    documentDownloads.push({ format, mime, bytes: bytes.length, savedPayloadReopened: true, sha256: createHash('sha256').update(bytes).digest('hex') });
+  }
+  for (const name of ['noExport', 'partial']) {
+    await downloadPage.goto(origin + '/?case=download-' + name);
+    await downloadPage.getByText(documentFixtures[name].text, { exact: true }).waitFor();
+    assert.equal(await downloadPage.getByRole('button', { name: /^Download (DOCX|PDF)$/ }).count(), 0);
+  }
+  await writeFile(resolve(output, channel + '-native-document-download-evidence.json'), JSON.stringify(documentDownloads, null, 2) + '\n');
+  await downloadContext.close();
   for (const viewport of [{ width: 1440, height: 900 }, { width: 1280, height: 900 }, { width: 768, height: 960 }, { width: 390, height: 844 }, { width: 320, height: 800 }]) {
     for (const theme of ['light', 'dark']) {
       const context = await browser.newContext({ viewport, reducedMotion: 'reduce', permissions: ['clipboard-read', 'clipboard-write'] });
@@ -814,7 +869,7 @@ try {
     zoomReflow.push({ theme, ...geometry });
   }
   await zoomContext.close();
-  const evidence = { mode: 'credential-free browser fixture', browser: browser.version(), entryBytes: Object.fromEntries(['/native.js','/native.css'].map(key => [key, assets.get(key).length])), lazyChunks: [...assets.keys()].filter(key => key.startsWith('/native-chunk-')).length, zoomReflow, results };
+  const evidence = { mode: 'credential-free browser fixture', browser: browser.version(), entryBytes: Object.fromEntries(['/native.js','/native.css'].map(key => [key, assets.get(key).length])), lazyChunks: [...assets.keys()].filter(key => key.startsWith('/native-chunk-')).length, zoomReflow, documentDownloads, results };
   await writeFile(resolve(output, channel + '-native-browser-evidence.json'), JSON.stringify(evidence, null, 2) + '\n');
   process.stdout.write(JSON.stringify(evidence, null, 2) + '\n');
 } finally {

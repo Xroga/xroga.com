@@ -22,6 +22,17 @@ test('DOCX export is a real Word package with headings and source hyperlink', as
   assert.match(relationships ?? '', /https:\/\/example.org\/report/);
 });
 
+test('requested DOCX keeps an unverified link label readable without making it clickable', async () => {
+  const block: DocumentBlock = { schemaVersion: 1, id: 'requested-doc', type: 'document', format: 'markdown',
+    content: '# Proposal\n[Verified](https://example.org/official) and [Unverified](https://bad.example/claim)' };
+  const file = await exportDocumentDocx(block, new Set(['https://example.org/official']));
+  const zip = await JSZip.loadAsync(await file.blob.arrayBuffer());
+  assert.match(await zip.file('word/document.xml')!.async('string'), /Unverified/);
+  const relationships = await zip.file('word/_rels/document.xml.rels')!.async('string');
+  assert.match(relationships, /https:\/\/example.org\/official/);
+  assert.doesNotMatch(relationships, /bad\.example/);
+});
+
 test('PDF export creates multiple parseable pages and rejects unsupported glyphs', async () => {
   const content = '# Report\n' + Array.from({ length: 180 }, (_, index) => `Paragraph ${index + 1}: This is verified sample content for pagination.`).join('\n');
   const file = await exportDocumentPdf({ schemaVersion: 1, id: 'pdf-1', type: 'document', content, format: 'markdown' } as DocumentBlock);

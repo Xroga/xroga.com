@@ -24,7 +24,7 @@ function safeWebUrl(url: string): boolean {
 }
 
 /** The canonical Markdown block is persisted in the chat; the file is regenerated on demand. */
-export async function exportDocumentDocx(block: DocumentBlock): Promise<XrogaExportFile> {
+export async function exportDocumentDocx(block: DocumentBlock, verifiedLinks?: ReadonlySet<string>): Promise<XrogaExportFile> {
   validateSize(block.content.length, 200_000, 'Document');
   const { Document, ExternalHyperlink, HeadingLevel, Packer, Paragraph, TextRun } = await import('docx');
   const children = block.content.split(/\r?\n/).map((raw) => {
@@ -39,7 +39,7 @@ export async function exportDocumentDocx(block: DocumentBlock): Promise<XrogaExp
     let cursor = 0;
     for (const match of line.matchAll(links)) {
       if (match.index > cursor) runs.push(new TextRun(plainText(line.slice(cursor, match.index))));
-      if (safeWebUrl(match[2]!)) runs.push(new ExternalHyperlink({ children: [new TextRun({ text: match[1]!, style: 'Hyperlink' })], link: match[2]! }));
+      if (safeWebUrl(match[2]!) && (!verifiedLinks || verifiedLinks.has(match[2]!))) runs.push(new ExternalHyperlink({ children: [new TextRun({ text: match[1]!, style: 'Hyperlink' })], link: match[2]! }));
       else runs.push(new TextRun(match[1]!));
       cursor = match.index + match[0].length;
     }
