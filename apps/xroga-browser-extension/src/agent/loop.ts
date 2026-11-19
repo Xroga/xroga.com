@@ -27,6 +27,7 @@ import { Guards } from './guards';
 import { contextThreshold, elisionChunk, hardLimit, planElision } from './elision';
 import { runCompaction, runShorten } from './compaction';
 import { attachmentBytes, attachmentParts, readAttachment } from './attachments';
+import { decodeImage, describeHits, scanColor } from './pixels';
 import { learnFrom, turnEffort } from './run';
 import type { ResolvedModel } from './run';
 import { allTools, DONE_TOOL, kindOf, PAGE_ACTIONS } from './tools';
@@ -1479,6 +1480,23 @@ ${ledger}` : ''),
         wrap: (text, source) => this.options.layer.wrap(text, source),
       });
       outcome = { call, kind, text: r.text, isError: r.isError };
+    } else if (call.toolName === 'find_color') {
+      const tabId = typeof args.tabId === 'number' ? args.tabId : this.#activeTab;
+      const shot = await this.options.layer.call('screenshot', typeof tabId === 'number' ? { tabId } : {}, signal).catch(() => undefined);
+      const data = shot?.ok ? (shot.data as { base64?: string; mimeType?: string } | undefined) : undefined;
+      const picture = data?.base64 ? await decodeImage(data.base64, data.mimeType ?? 'image/png').catch(() => undefined) : undefined;
+      if (!picture) {
+        outcome = { call, kind, text: 'error: find_color could not capture or read the page image here. Use snapshot or read, or ask the user.', isError: true };
+      } else {
+        const color = String(args.color ?? '');
+        const hits = scanColor(picture.data, picture.width, picture.height, {
+          color,
+          tolerance: typeof args.tolerance === 'number' ? args.tolerance : undefined,
+          limit: typeof args.limit === 'number' ? args.limit : undefined,
+          region: Array.isArray(args.region) && args.region.length === 4 ? (args.region as [number, number, number, number]) : undefined,
+        });
+        outcome = { call, kind, text: describeHits(hits, picture, color), isError: false };
+      }
     } else if (call.toolName === 'batch') {
       outcome = await this.#runBatchTool(call, kind, args);
     } else if (this.options.tools.find(t => t.name === call.toolName)?.source === 'agent') {

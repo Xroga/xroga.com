@@ -11,6 +11,7 @@ import { ParallelWorkers, PARALLEL_TOOLS, workersFor, type WorkerJob } from './p
 import { BATCH_TOOL } from '@src/agent/batch-plan';
 import { startingTools } from '@src/agent/tool-selection';
 import { skillsFor, skillsSection } from '@src/agent/skills';
+import { FIND_COLOR_TOOL } from '@src/agent/pixels';
 import { routeFor } from '@src/agent/router';
 import { HINTS_KEY, hintsForRun, learnFromRun } from './hints-store';
 import { userText } from '@src/agent/display';
@@ -1744,8 +1745,8 @@ export class RunManager {
           pointAt,
           vision: model.profile.vision, localScreenshots: !!canonical,
           agentTools: isWorker
-            ? [DELEGATE_TOOL, BATCH_TOOL, CONFIRM_DOWNLOAD_TOOL, ...(canonical ? [HTTP_GET_TOOL] : [])]
-            : [DELEGATE_TOOL, BATCH_TOOL, CONFIRM_DOWNLOAD_TOOL, ...(canonical ? [HTTP_GET_TOOL, REPO_RUN_TOOL, CHANGE_REPO_TOOL] : []), ...(canonical?.plugins ? [...PLUGIN_TOOLS, PLUGIN_CHAIN_TOOL, PLUGIN_CONNECT_TOOL] : []), ...(decision.offerWorkers ? PARALLEL_TOOLS : [])],
+            ? [DELEGATE_TOOL, BATCH_TOOL, CONFIRM_DOWNLOAD_TOOL, ...(pointAt ? [FIND_COLOR_TOOL] : []), ...(canonical ? [HTTP_GET_TOOL] : [])]
+            : [DELEGATE_TOOL, BATCH_TOOL, CONFIRM_DOWNLOAD_TOOL, ...(pointAt ? [FIND_COLOR_TOOL] : []), ...(canonical ? [HTTP_GET_TOOL, REPO_RUN_TOOL, CHANGE_REPO_TOOL] : []), ...(canonical?.plugins ? [...PLUGIN_TOOLS, PLUGIN_CHAIN_TOOL, PLUGIN_CONNECT_TOOL] : []), ...(decision.offerWorkers ? PARALLEL_TOOLS : [])],
         });
         // A request that only reads starts with the small tool list; the model switches to the full one if it needs to act.
         const { tools, full: fullTools } = startingTools(
