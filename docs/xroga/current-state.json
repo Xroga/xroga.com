@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/workspace-openui-final-recovery-20261115",
-    "sha": "ccdd172f605b1b4eb64d620c9bc613f5ade7f48f",
-    "sourceTimestampUtc": "2026-11-19T18:28:36+05:00",
-    "auditStartedUtc": "2026-11-19T13:28:54.987Z",
+    "sha": "ce074353be70ca1d4c95650a8893cf96155e32d6",
+    "sourceTimestampUtc": "2026-11-19T19:36:19+05:00",
+    "auditStartedUtc": "2026-11-19T14:37:41.215Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -5232,7 +5232,7 @@
       "id": "surface:456e62cb099b42e5c2a2",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUi.ts",
-      "sha256": "d3f07d43eefb432ecdf979dd4c0f491dcc935b6536968f80b51a8e6496f27aaf",
+      "sha256": "45ca5fc59ec23442c79782deb5def58b5817aa88ccb6b349a3a7d030d28ea0a7",
       "symbols": [
         "MAX_EXPANDED_EXPRESSION_DEPTH",
         "MAX_PROGRAM_CHARS",
@@ -5246,6 +5246,7 @@
         "ValidationStage",
         "add",
         "addTable",
+        "amounts",
         "args",
         "array",
         "authorityIssue",
@@ -5271,6 +5272,7 @@
         "componentFacts",
         "components",
         "corrected",
+        "currency",
         "declarationIssue",
         "declarations",
         "deepSeekToolClosingSuffix",
@@ -5310,6 +5312,7 @@
         "inputs",
         "inspect",
         "invalidBlock",
+        "isCurrency",
         "item",
         "items",
         "kept",
@@ -5438,6 +5441,7 @@
         "visited",
         "workLimit",
         "wrapper",
+        "x",
         "yLabel"
       ],
       "imports": [
@@ -6065,7 +6069,7 @@
       "id": "surface:309e6a3c1f73a053bdef",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiValues.ts",
-      "sha256": "6b880f73a215f4d296ab2f7053a6451bae8731dae3a9274644f1ed75a61339bd",
+      "sha256": "f6b29f9295ec1734d98e5de1a3fc56f96dde71d3540625489ca3bde507b30eaa",
       "symbols": [
         "active",
         "amount",
@@ -6093,6 +6097,8 @@
         "expression",
         "expressionValue",
         "fence",
+        "formatInitialNativeCurrency",
+        "formatted",
         "functions",
         "hasConflict",
         "index",
@@ -151482,7 +151488,7 @@
     {
       "id": "test-suite:2e491f4d2fcbc11f974c",
       "sourcePath": "backend/src/ai/nativeOpenUi.test.ts",
-      "declaredTests": 74,
+      "declaredTests": 75,
       "skipLocations": [],
       "focusLocations": []
     },
