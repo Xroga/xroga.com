@@ -54,3 +54,8 @@ Status: **review-ready, not production-certified.** Staging only. Nothing was pu
 - PDF through the real file picker passed live (table rows kept; encrypted and image-only PDFs give specific messages); details in the register.
 - Attachments: any file type up to 25 MB, ten per task; photo upload to a real site passed, a 5.6 MB PDF was read; details in the register.
 - A refused click on a covered control now suggests the working alternative; the same upload task went from about 2.5 minutes to 35 seconds (one run each).
+
+## Update 19 November 2026 (later): package installs live on staging
+- Staging revision `xroga-api-universal-staging-00142-net` (tag `browser-op-1110`, 0 percent of traffic) now sets `XROGA_SANDBOX_WORKER_RESTRICTED=1`. Staging only; production is unchanged and the independent security review is still unsigned.
+- Live run in the installed extension (real DeepSeek): `run_repository` on `mahmoud/boltons@d31d821d56c8` with `requests==2.32.3`. The hash-checked install needed its four dependencies pinned (the model did this itself), `certifi` (MPL-2.0) required a named licence acknowledgement, the run exited 0 in 3.3 s, and the output was `requests 2.32.3` with a licence report of 8 packages, 1 needing review. The sandbox had no network afterwards. Note: the model supplied the licence acknowledgement itself; whether a human should confirm it is a question for the security review.
+- PR #997 (production permission fix) stays a draft: its failing checks (unit, structured-mission-policy, integrated-candidate, disposable-policy-database) also fail on the base commit `2605a3b99` of `main` (governance registers), so they are not caused by the one-line change. It needs the normal review and gates before any merge.
