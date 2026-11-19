@@ -13,7 +13,7 @@ import { dispatchDrag, dispatchHover } from '../interaction/pointer';
 import { withPageState } from './navigate';
 import { quote } from '../text';
 
-const CONSEQUENTIAL = /\b(?:pay|payment|purchase|buy|checkout|place (?:the )?order|delete|remove|erase|send|publish|post|submit|transfer|subscribe)\b/i;
+const CONSEQUENTIAL = /\b(?:pay|payment|purchase|buy|checkout|place (?:the )?order|delete|remove|erase|send|publish|post|submit|transfer|subscribe|password|passcode|card number|cvv|one-time code|otp)\b/i;
 
 interface Viewport {
   width: number;
@@ -57,6 +57,49 @@ async function rawClick(ctx: ToolContext, x: number, y: number, button: 'left' |
   }
 }
 
+const KEYS: Record<string, { code: string; vk: number; text?: string }> = {
+  Enter: { code: 'Enter', vk: 13, text: '\r' }, Tab: { code: 'Tab', vk: 9 }, Escape: { code: 'Escape', vk: 27 }, Backspace: { code: 'Backspace', vk: 8 },
+  Delete: { code: 'Delete', vk: 46 }, ArrowLeft: { code: 'ArrowLeft', vk: 37 }, ArrowUp: { code: 'ArrowUp', vk: 38 }, ArrowRight: { code: 'ArrowRight', vk: 39 },
+  ArrowDown: { code: 'ArrowDown', vk: 40 }, Home: { code: 'Home', vk: 36 }, End: { code: 'End', vk: 35 }, ' ': { code: 'Space', vk: 32, text: ' ' },
+};
+for (let n = 1; n <= 12; n++) KEYS[`F${n}`] = { code: `F${n}`, vk: 111 + n };
+
+function keyInfo(name: string): { key: string; code: string; vk: number; text?: string } {
+  if (KEYS[name]) return { key: name, ...KEYS[name] };
+  if (/^[a-z]$/i.test(name)) return { key: name.toLowerCase(), code: `Key${name.toUpperCase()}`, vk: name.toUpperCase().charCodeAt(0) };
+  if (/^[0-9]$/.test(name)) return { key: name, code: `Digit${name}`, vk: name.charCodeAt(0) };
+  throw new LayerError('INVALID_ARGUMENT', `Unknown key ${quote(name, 20)}. Use Enter, Tab, Escape, Backspace, Delete, an arrow, F1 to F12, a letter or a digit, with Control, Shift or Alt.`);
+}
+
+/** The focused element must itself be a canvas: keys to a real field keep the guarded type and press. */
+async function assertCanvasFocused(ctx: ToolContext): Promise<void> {
+  const { cdp } = await ctx.attach();
+  const result = await cdp.send<{ result: { value?: string } }>(undefined, 'Runtime.evaluate', { expression: 'document.activeElement && document.activeElement.tagName', returnByValue: true });
+  const name = String(result.result?.value ?? '');
+  if (name.toUpperCase() !== 'CANVAS') {
+    throw new LayerError('TARGET_CHANGED', `Keyboard focus is on ${name ? `<${name.toLowerCase()}>` : 'nothing'}, not on a canvas. Nothing was sent. Click inside the canvas first (canvas click), or use type or press for page fields.`);
+  }
+}
+
+async function sendKey(ctx: ToolContext, chord: string): Promise<void> {
+  const { cdp } = await ctx.attach();
+  const parts = chord.split('+').map(p => p.trim()).filter(Boolean);
+  const name = parts.pop() ?? '';
+  let modifiers = 0;
+  for (const m of parts) {
+    if (/^alt$/i.test(m)) modifiers |= 1;
+    else if (/^(control|ctrl)$/i.test(m)) modifiers |= 2;
+    else if (/^(meta|cmd)$/i.test(m)) modifiers |= 4;
+    else if (/^shift$/i.test(m)) modifiers |= 8;
+    else throw new LayerError('INVALID_ARGUMENT', `Unknown modifier ${quote(m, 20)}`);
+  }
+  const info = keyInfo(name);
+  ctx.tab().actionSeq++;
+  const base = { modifiers, key: info.key, code: info.code, windowsVirtualKeyCode: info.vk, nativeVirtualKeyCode: info.vk };
+  await cdp.send(undefined, 'Input.dispatchKeyEvent', { type: info.text && !modifiers ? 'keyDown' : 'rawKeyDown', ...base, ...(info.text && !modifiers ? { text: info.text } : {}) });
+  await cdp.send(undefined, 'Input.dispatchKeyEvent', { type: 'keyUp', ...base });
+}
+
 export async function canvas(ctx: ToolContext, args: CanvasArgs): Promise<ToolOutcome> {
   checkCancelled(ctx);
   if (ctx.tab().pending.length) {
@@ -65,6 +108,25 @@ export async function canvas(ctx: ToolContext, args: CanvasArgs): Promise<ToolOu
   if (CONSEQUENTIAL.test(args.intent)) {
     throw new LayerError('USER_STEP', `The stated purpose (${quote(args.intent, 80)}) names a consequential step. Ask the user to do it, or use the guarded click on the real control.`);
   }
+  if (args.action === 'type' || args.action === 'key') {
+    if (args.action === 'type' && !args.text) throw new LayerError('INVALID_ARGUMENT', 'canvas type needs text.');
+    if (args.action === 'key' && !args.key) throw new LayerError('INVALID_ARGUMENT', 'canvas key needs key.');
+    if (args.action === 'type' && CONSEQUENTIAL.test(args.text!)) throw new LayerError('USER_STEP', 'That text looks like a secret or a consequential step; the user types it themselves.');
+    await assertCanvasFocused(ctx);
+    if (args.action === 'type') {
+      ctx.tab().actionSeq++;
+      await (await ctx.attach()).cdp.send(undefined, 'Input.insertText', { text: args.text });
+    } else await sendKey(ctx, args.key!);
+    const typed: ActionReceipt = {
+      action: `canvas ${args.action}`,
+      target: `canvas ${quote(args.intent, 80)}: ${args.action === 'type' ? `${args.text!.length} characters` : args.key}`,
+      mechanism: 'keyboard',
+      dispatched: true,
+      effect: { verdict: 'unattributable', signals: ['A canvas paints its own result; take a screenshot to see whether the input was taken.'] },
+    };
+    return withPageState(ctx, args.observe, { receipt: typed, data: {} });
+  }
+  if (!args.at) throw new LayerError('INVALID_ARGUMENT', `canvas ${args.action} needs at.`);
   if (args.action === 'drag' && !args.to) throw new LayerError('INVALID_ARGUMENT', 'A drag needs `to`, the place where it ends.');
   const viewport = await viewportOf(ctx);
   const at = { x: args.at[0] * viewport.width, y: args.at[1] * viewport.height };
@@ -78,7 +140,7 @@ export async function canvas(ctx: ToolContext, args: CanvasArgs): Promise<ToolOu
   else await dispatchDrag(ctx, at, end!);
   const receipt: ActionReceipt = {
     action: `canvas ${args.action}`,
-    target: `canvas ${quote(args.intent, 80)} at [${args.at.map(n => n.toFixed(3)).join(', ')}]${args.to ? ` to [${args.to.map(n => n.toFixed(3)).join(', ')}]` : ''}`,
+    target: `canvas ${quote(args.intent, 80)} at [${args.at!.map(n => n.toFixed(3)).join(', ')}]${args.to ? ` to [${args.to.map(n => n.toFixed(3)).join(', ')}]` : ''}`,
     mechanism: 'pointer',
     dispatched: true,
     effect: { verdict: 'unattributable', signals: ['A canvas paints its own result; take a screenshot to see whether the action did what was meant.'] },

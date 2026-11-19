@@ -6,13 +6,14 @@ vi.mock('../../interaction/pointer', () => ({ dispatchDrag: vi.fn(async () => ({
 import { canvas } from '../canvas';
 import { dispatchDrag } from '../../interaction/pointer';
 
-function fakeCtx(nodeName: string, pending: Array<{ kind: string; detail: string }> = []) {
+function fakeCtx(nodeName: string, pending: Array<{ kind: string; detail: string }> = [], focus = 'CANVAS') {
   const sent: Array<{ method: string; params: Record<string, unknown> }> = [];
   const cdp = {
     send: vi.fn(async (_session: unknown, method: string, params: Record<string, unknown>) => {
       sent.push({ method, params });
       if (method === 'DOM.getNodeForLocation') return { backendNodeId: 7 };
       if (method === 'DOM.describeNode') return { node: { nodeName } };
+      if (method === 'Runtime.evaluate') return { result: { value: focus } };
       return {};
     }),
   };
@@ -60,5 +61,31 @@ describe('canvas pointer actions', () => {
     const { ctx } = fakeCtx('CANVAS');
     await canvas(ctx, { ...base, action: 'drag', to: [0.8, 0.9] } as never);
     expect(dispatchDrag).toHaveBeenCalledWith(expect.anything(), { x: 500, y: 200 }, { x: 800, y: 450 });
+  });
+
+  it('types into a canvas-painted field only while a canvas has focus, with insertText', async () => {
+    const { ctx, sent } = fakeCtx('CANVAS', [], 'CANVAS');
+    await canvas(ctx, { action: 'type', text: '#0000FF', intent: 'set the fill colour' } as never);
+    expect(sent.find(s => s.method === 'Input.insertText')?.params).toEqual({ text: '#0000FF' });
+    const real = fakeCtx('CANVAS', [], 'INPUT');
+    await expect(canvas(real.ctx, { action: 'type', text: 'x', intent: 'type into a field' } as never)).rejects.toMatchObject({ code: 'TARGET_CHANGED' });
+    expect(real.sent.some(s => s.method === 'Input.insertText')).toBe(false);
+  });
+
+  it('presses named keys and chords with the right modifiers, and refuses unknown keys', async () => {
+    const { ctx, sent } = fakeCtx('CANVAS');
+    await canvas(ctx, { action: 'key', key: 'Control+A', intent: 'select all' } as never);
+    const down = sent.find(s => s.method === 'Input.dispatchKeyEvent');
+    expect(down?.params).toMatchObject({ modifiers: 2, key: 'a', code: 'KeyA' });
+    await canvas(ctx, { action: 'key', key: 'Enter', intent: 'confirm the dialog' } as never);
+    expect(sent.filter(s => s.method === 'Input.dispatchKeyEvent').some(s => s.params.type === 'keyDown' && s.params.key === 'Enter' && typeof s.params.text === 'string' && s.params.text.length === 1)).toBe(true);
+    await expect(canvas(ctx, { action: 'key', key: 'Hyper+Q', intent: 'x' } as never)).rejects.toMatchObject({ code: 'INVALID_ARGUMENT' });
+  });
+
+  it('never types a secret into a canvas', async () => {
+    const { ctx, sent } = fakeCtx('CANVAS');
+    await expect(canvas(ctx, { action: 'type', text: 'my password is hunter2', intent: 'fill the dialog' } as never)).rejects.toMatchObject({ code: 'USER_STEP' });
+    await expect(canvas(ctx, { action: 'type', text: 'abc', intent: 'enter the password' } as never)).rejects.toMatchObject({ code: 'USER_STEP' });
+    expect(sent.some(s => s.method === 'Input.insertText')).toBe(false);
   });
 });

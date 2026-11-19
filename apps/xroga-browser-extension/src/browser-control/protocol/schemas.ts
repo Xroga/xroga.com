@@ -153,9 +153,11 @@ export const DragArgsSchema = z.strictObject({
 const placeOnPage = z.tuple([z.number().min(0).max(1), z.number().min(0).max(1)]);
 export const CanvasArgsSchema = z.strictObject({
   ...actionCommon,
-  action: z.enum(['click', 'double_click', 'right_click', 'hover', 'drag']),
-  at: placeOnPage.describe('[x, y] fractions of the screenshot'),
+  action: z.enum(['click', 'double_click', 'right_click', 'hover', 'drag', 'type', 'key']),
+  at: placeOnPage.optional().describe('[x, y] fractions of the screenshot'),
   to: placeOnPage.optional().describe('drag end'),
+  text: z.string().max(200).optional().describe('type: text for a field the canvas paints'),
+  key: z.string().max(40).optional().describe('key: Enter, Tab, Escape, Backspace, Control+A, F6'),
   intent: z.string().min(3).max(120).describe('what this does'),
 });
 

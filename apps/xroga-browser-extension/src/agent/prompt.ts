@@ -70,6 +70,8 @@ function toolGuide(tools: string[]): string {
   const lines = ['## Tools', '', `You have: ${tools.join(', ')}.`];
   // Measured on 159 real turns: the provider wait is 91% of a turn and the slow tail is long prose, not tool calls.
   lines.push('- Between tool calls write nothing, or one short sentence. Do not narrate coordinates, re-derive a layout or restate the plan in prose: put what matters in the tool arguments.');
+  if (has('canvas'))
+    lines.push('- canvas also types into fields a canvas app paints (click the field, then canvas type with text, or canvas key with Enter, Tab, Control+A): the normal type refuses them.');
   if (has('canvas') && has('batch'))
     lines.push('- On a canvas, put the steps you already know in ONE batch call (for example select the tool, then drag, then pick the colour) and take a screenshot afterwards to check, instead of one screenshot and one step per turn.');
   if (has('tabs'))
