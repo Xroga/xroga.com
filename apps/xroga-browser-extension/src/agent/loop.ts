@@ -199,6 +199,9 @@ export function stopsBatch(call: ToolCallRequest, outcome: CallOutcome): boolean
   return false;
 }
 
+/** Model turns at which the loop checks that the run is still making progress and says so to the model. */
+const PROGRESS_REVIEW_TURNS = [20, 35, 50];
+
 export class AgentLoop {
   readonly writer: RunWriter;
   #usage: Usage = ZERO_USAGE;
@@ -257,6 +260,17 @@ export class AgentLoop {
    * request is built again and returned.
    */
   async prepareNextTurn(request: Request): Promise<{ stop?: string; request?: Request }> {
+    // The tab the run works in may have changed since the run began (an adopted tab, a tab the page opened): every capture and every
+    // check of this turn must target the session's current tab, not the one the run started on.
+    const current = await this.options.layer.tabs().catch(() => null);
+    if (current && current.activeTabId !== null) this.#activeTab = current.activeTabId;
+    if (PROGRESS_REVIEW_TURNS.includes(this.#turns) && this.#reviewedAt !== this.#turns) {
+      this.#reviewedAt = this.#turns;
+      const spent = [...this.#toolCounts].sort((a, b) => b[1] - a[1]).slice(0, 5).map(([name, n]) => `${name} x${n}`).join(', ');
+      await this.writer.appNote(
+        `Progress check: ${this.#turns} model turns have been used and the task is not finished. The calls so far: ${spent || 'none'}. Do not continue the same way: change the method (for example a different tool, an app command or script instead of clicks, or a plain read instead of another click), or finish with the exact blocker and what is already done.`,
+      );
+    }
     const { profile } = this.options.model;
     const window = this.window;
     const limit = hardLimit(profile, window);
@@ -734,6 +748,7 @@ ${ledger}` : ''),
   async afterToolCall(given: CallOutcome): Promise<CallOutcome> {
     let outcome = given;
     if (given.call.toolName === 'http_get' && !given.isError) this.#docsRead = true;
+    this.#toolCounts.set(given.call.toolName, (this.#toolCounts.get(given.call.toolName) ?? 0) + 1);
     // Opening or switching to a page changes nothing a second attempt could duplicate: a navigation that fails (a certificate warning,
     // a block page, a timeout) is a failed read, not an uncertain write, so it never puts the run into read-only recovery.
     const navigation = given.call.toolName === 'navigate' || given.call.toolName === 'tabs';
@@ -1409,6 +1424,8 @@ ${ledger}` : ''),
    * A tool already in the list is never replaced, and the run holds at most 40 of them.
    */
   #askedText = '';
+  #reviewedAt = -1;
+  #toolCounts = new Map<string, number>();
   #adoptedOrigin = '';
   #docsRead = false;
   #scriptGateShown = false;
