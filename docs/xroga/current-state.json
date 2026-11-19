@@ -3,13 +3,13 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/workspace-openui-final-recovery-20261115",
-    "sha": "debcd15f9bc92c87e76ca288ac84b37eac6287f1",
-    "sourceTimestampUtc": "2026-11-19T14:38:24+05:00",
-    "auditStartedUtc": "2026-11-19T09:42:30.175Z",
+    "sha": "80751409f1037c7f3f3c13b912789a5c23c66c39",
+    "sourceTimestampUtc": "2026-11-19T16:56:59+05:00",
+    "auditStartedUtc": "2026-11-19T12:02:01.085Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
-    "npm": "10.9.4",
+    "npm": "11.16.0",
     "lockfiles": [
       "backend/package-lock.json",
       "deploy/browser-worker/package-lock.json",
@@ -436,7 +436,7 @@
       ],
       "callers": [
         "backend/src/ai/compileValidate.test.ts:9",
-        "backend/src/ai/pipeline.ts:214",
+        "backend/src/ai/pipeline.ts:216",
         "backend/src/ai/tenantModelDispatch.test.ts:12"
       ],
       "reachable": true,
@@ -532,7 +532,7 @@
       "callers": [
         "backend/src/ai/attachments.docx.test.ts:6",
         "backend/src/ai/attachments.test.ts:7",
-        "backend/src/ai/pipeline.ts:67"
+        "backend/src/ai/pipeline.ts:69"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -1585,7 +1585,7 @@
       "id": "surface:f18ef073f3fd23b8a6c0",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/black-hole/researchRouter.ts",
-      "sha256": "36c39f77c3eba1fc185b4728d2fd4c220413e95856885b8bd49e05e13b6cb967",
+      "sha256": "cc1d245e917161cc8bf86ad70f0c6c27fa8d311af17abaef7ade55acdc297362",
       "symbols": [
         "INJECTION_PATTERNS",
         "NormalizeOptions",
@@ -1609,6 +1609,7 @@
         "normalizeResearch",
         "now",
         "official",
+        "publicationTime",
         "rank",
         "result",
         "retrievedAt",
@@ -2290,7 +2291,7 @@
       ],
       "callers": [
         "backend/src/ai/buildImprovementMemory.test.ts:12",
-        "backend/src/ai/pipeline.ts:240",
+        "backend/src/ai/pipeline.ts:242",
         "backend/src/security/learningOwnerReads.local.integration.ts:5",
         "backend/src/synthesis/reliability/step7cReliability.test.ts:34",
         "backend/src/synthesis/universalEntrypoint.ts:89"
@@ -2582,7 +2583,7 @@
       ],
       "callers": [
         "backend/src/ai/buildOutcomeRoutingMemory.test.ts:8",
-        "backend/src/ai/pipeline.ts:239",
+        "backend/src/ai/pipeline.ts:241",
         "backend/src/security/learningOwnerReads.local.integration.ts:6",
         "backend/src/synthesis/reliability/step7cReliability.test.ts:29",
         "backend/src/synthesis/universalEntrypoint.ts:84"
@@ -2730,7 +2731,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:241",
+        "backend/src/ai/pipeline.ts:243",
         "backend/src/ai/step7LearningStrategy.test.ts:21",
         "backend/src/security/learningOwnerReads.local.integration.ts:7",
         "backend/src/synthesis/productIntelligence.ts:18",
@@ -2789,7 +2790,7 @@
       ],
       "callers": [
         "backend/src/ai/buildStreamNarrator.test.ts:3",
-        "backend/src/ai/pipeline.ts:112"
+        "backend/src/ai/pipeline.ts:114"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -3238,7 +3239,7 @@
       "callers": [
         "backend/src/ai/compileBlockerMessage.ts:3",
         "backend/src/ai/compileValidate.test.ts:3",
-        "backend/src/ai/pipeline.ts:209",
+        "backend/src/ai/pipeline.ts:211",
         "backend/src/ai/validationVerdict.ts:3",
         "backend/src/sandbox/sandboxIsolation.test.ts:11"
       ],
@@ -3386,7 +3387,7 @@
       ],
       "callers": [
         "backend/src/ai/contextPreparation.test.ts:3",
-        "backend/src/ai/pipeline.ts:243",
+        "backend/src/ai/pipeline.ts:245",
         "backend/src/ai/repositoryTools.ts:23",
         "backend/src/existingSource/change/delivery.ts:15",
         "backend/src/existingSource/change/testRunner.ts:12",
@@ -3710,7 +3711,7 @@
       ],
       "callers": [
         "backend/src/ai/engineeringTasks.test.ts:3",
-        "backend/src/ai/pipeline.ts:256"
+        "backend/src/ai/pipeline.ts:258"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -3916,7 +3917,7 @@
         "backend/src/ai/executionRuntime.owner.test.ts:3",
         "backend/src/ai/executionRuntime.sandboxAdmission.test.ts:3",
         "backend/src/ai/executionRuntime.test.ts:3",
-        "backend/src/ai/pipeline.ts:244",
+        "backend/src/ai/pipeline.ts:246",
         "backend/src/ai/universal/resumeProjectContext.test.ts:5",
         "backend/src/existingSource/change/canonical.ts:51",
         "backend/src/existingSource/change/canonical.ts:67",
@@ -4040,7 +4041,7 @@
       ],
       "callers": [
         "backend/src/ai/fileSelector.test.ts:3",
-        "backend/src/ai/pipeline.ts:194"
+        "backend/src/ai/pipeline.ts:196"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -4081,7 +4082,7 @@
       ],
       "callers": [
         "backend/src/ai/githubShippingPlan.test.ts:3",
-        "backend/src/ai/pipeline.ts:224"
+        "backend/src/ai/pipeline.ts:226"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -4396,7 +4397,7 @@
         "backend/src/ai/executionRuntime.owner.test.ts:4",
         "backend/src/ai/executionRuntime.test.ts:13",
         "backend/src/ai/intelligentRouter.test.ts:3",
-        "backend/src/ai/pipeline.ts:230",
+        "backend/src/ai/pipeline.ts:232",
         "backend/src/routes/capabilities.ts:22"
       ],
       "reachable": true,
@@ -4648,7 +4649,7 @@
       ],
       "callers": [
         "backend/src/ai/legacyBuilderAdapter.test.ts:3",
-        "backend/src/ai/pipeline.ts:104"
+        "backend/src/ai/pipeline.ts:106"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -4947,7 +4948,7 @@
         "backend/src/ai/executionRuntime.test.ts:14",
         "backend/src/ai/intelligentRouter.test.ts:10",
         "backend/src/ai/intelligentRouter.ts:3",
-        "backend/src/ai/pipeline.ts:242",
+        "backend/src/ai/pipeline.ts:244",
         "backend/src/ai/providerPolicy.test.ts:6",
         "backend/src/routes/capabilities.ts:26",
         "backend/src/synthesis/universalEntrypoint.ts:67"
@@ -5476,7 +5477,7 @@
         "frontend/src/components/native-openui/NativeWorkspaceAnswer.tsx:12",
         "frontend/src/components/native-openui/upstream/components/chart.tsx:8",
         "frontend/src/components/native-openui/upstream/components/markdown.test.ts:8",
-        "frontend/src/components/native-openui/upstream/components/markdown.tsx:7",
+        "frontend/src/components/native-openui/upstream/components/markdown.tsx:8",
         "frontend/src/lib/publicAnswerText.ts:1"
       ],
       "reachable": true,
@@ -7093,7 +7094,7 @@
         "backend/src/ai/fileSelector.test.ts:4",
         "backend/src/ai/patchSafety.test.ts:3",
         "backend/src/ai/patches.test.ts:3",
-        "backend/src/ai/pipeline.ts:87",
+        "backend/src/ai/pipeline.ts:89",
         "backend/src/builder/canonical.ts:1",
         "backend/src/synthesis/universalExecution.ts:32"
       ],
@@ -7155,7 +7156,7 @@
       "id": "surface:90932fa247bf4ae28450",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/pipeline.ts",
-      "sha256": "fe09c5a83e52bc3c1659d7146f40a6bafa6a4d399d6f581d30039bb161642579",
+      "sha256": "ca589d6209f8f3ae4c9d18395cc249c64eb5ebe8de2d19d1f16e3e592e8c3b61",
       "symbols": [
         "ARCHITECT_MS",
         "BUILDER_FALLBACKS",
@@ -7257,6 +7258,7 @@
         "detail",
         "deterministicFiles",
         "deterministicStaticUpdate",
+        "directPublicLookup",
         "disabled",
         "docs",
         "document",
@@ -7751,7 +7753,7 @@
         "backend/src/ai/repositoryHydrationAuthority.test.ts:3",
         "backend/src/ai/repositoryReadFailure.test.ts:3",
         "backend/src/ai/researchAnswer.test.ts:5",
-        "backend/src/ai/researchAnswer.ts:70",
+        "backend/src/ai/researchAnswer.ts:75",
         "backend/src/ai/tenantModelDispatch.test.ts:8",
         "backend/src/ai/universal/resumeProjectContext.test.ts:54",
         "backend/src/builder/phase2Bridge.ts:5",
@@ -7972,7 +7974,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:117",
+        "backend/src/ai/pipeline.ts:119",
         "backend/src/ai/progressHeartbeat.test.ts:3"
       ],
       "reachable": true,
@@ -8064,7 +8066,7 @@
       "callers": [
         "backend/src/ai/memoryReadAuthority.test.ts:4",
         "backend/src/ai/modelContext.security.test.ts:6",
-        "backend/src/ai/pipeline.ts:195",
+        "backend/src/ai/pipeline.ts:197",
         "backend/src/ai/projectMemoryCommit.test.ts:4",
         "backend/src/ai/repoSummarize.ts:26",
         "backend/src/security/connectedMemoryConsumer.local.integration.ts:7",
@@ -8101,13 +8103,17 @@
       "id": "surface:087b17b9e17fc86ddade",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/prompts.ts",
-      "sha256": "5b5d2b3f1a4394a4d52005384a5652cccc32f00a186ab830c08f51049356fca4",
+      "sha256": "e1fc1b8169c98cbb93e5bad272375920740a62cb474ac32d6df5346df63e235b",
       "symbols": [
         "BRIEF_RESEARCH_RESPONSE_RE",
         "BUILDER_SYSTEM",
         "CHAT_SYSTEM",
         "CONVERTER_SYSTEM",
+        "CURRENT_LOOKUP_SUBJECT_RE",
+        "CURRENT_LOOKUP_TIME_RE",
+        "DIRECT_RESEARCH_SYSTEM",
         "DOC_SYSTEM",
+        "EXPANDED_LOOKUP_RE",
         "GUEST_RICH_OUTPUT_GUIDE",
         "SAFE_RICH_OUTPUT_GUIDE",
         "VISION_SYSTEM",
@@ -8119,9 +8125,11 @@
         "deleteHint",
         "example",
         "incrementalUpdateContext",
+        "isDirectCurrentFactLookup",
         "lines",
         "listing",
         "remaining",
+        "request",
         "requested",
         "research",
         "researchAnswerMaxTokens",
@@ -8785,7 +8793,7 @@
         "backend/src/ai/modelRedirectFallback.security.test.ts:8",
         "backend/src/ai/openaiCompat.ts:12",
         "backend/src/ai/parallelWeb.security.test.ts:10",
-        "backend/src/ai/pipeline.ts:235",
+        "backend/src/ai/pipeline.ts:237",
         "backend/src/ai/postCompletionAccounting.test.ts:4",
         "backend/src/ai/providerBudget.settlement.test.ts:5",
         "backend/src/ai/providerBudget.ts:6",
@@ -8946,7 +8954,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:95",
+        "backend/src/ai/pipeline.ts:97",
         "backend/src/ai/qa.test.ts:3",
         "backend/src/ai/reviewerRouting.test.ts:3",
         "backend/src/synthesis/productionAdapters.ts:25"
@@ -9063,7 +9071,7 @@
       ],
       "callers": [
         "backend/src/ai/budgetOwnerBoundary.test.ts:5",
-        "backend/src/ai/pipeline.ts:73",
+        "backend/src/ai/pipeline.ts:75",
         "backend/src/ai/postCompletionAccounting.ts:2",
         "backend/src/ai/quota.failure.test.ts:3",
         "backend/src/ai/quota.test.ts:18",
@@ -9215,7 +9223,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:202",
+        "backend/src/ai/pipeline.ts:204",
         "backend/src/ai/repoSummarize.security.test.ts:5"
       ],
       "reachable": true,
@@ -9424,7 +9432,7 @@
       "id": "surface:794bcc5ea45ebaad109e",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/researchAnswer.ts",
-      "sha256": "4337c3966525f62702de0ebffe40473ea67ed8564eac41f99fee65e1d943f26a",
+      "sha256": "3e0c6d317b96bf8fe3c38d706caecfeb1b0bc0e3a8fbc0e57fa6a9e577cbafd9",
       "symbols": [
         "RESEARCH_ANSWER_MAXIMUM_MICRO_USD",
         "ResearchAnswerRequest",
@@ -9437,14 +9445,15 @@
         "code",
         "completeApprovedResearchAnswer",
         "cursor",
+        "destination",
         "error",
         "evidence",
         "filtered",
         "goal",
         "inlineCodeSpans",
+        "inlineMarkdownLinks",
         "input",
         "issues",
-        "link",
         "links",
         "normalized",
         "officialOnly",
@@ -9961,7 +9970,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:81",
+        "backend/src/ai/pipeline.ts:83",
         "backend/src/ai/router.test.ts:7",
         "backend/src/lib/adaptiveOrchestrator.ts:10"
       ],
@@ -10098,7 +10107,7 @@
         "backend/src/ai/black-hole/router.ts:47",
         "backend/src/ai/buildOutcomeMemory.ts:5",
         "backend/src/ai/intelligentRouter.ts:11",
-        "backend/src/ai/pipeline.ts:238",
+        "backend/src/ai/pipeline.ts:240",
         "backend/src/ai/routingOutcomes.receipt.test.ts:5",
         "backend/src/ai/routingPersistence.test.ts:3",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts:9"
@@ -10351,7 +10360,7 @@
         "backend/src/ai/parallelApproval.ts:16",
         "backend/src/ai/parallelDispatch.ts:9",
         "backend/src/ai/parallelWeb.security.test.ts:20",
-        "backend/src/ai/pipeline.ts:96",
+        "backend/src/ai/pipeline.ts:98",
         "backend/src/ai/repoSummarize.security.test.ts:8",
         "backend/src/ai/runReconciler.test.ts:12",
         "backend/src/ai/runStore.authority.test.ts:5",
@@ -10515,7 +10524,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:220",
+        "backend/src/ai/pipeline.ts:222",
         "backend/src/ai/runTrace.attempt.test.ts:4",
         "backend/src/security/runTraceAttempt.local.integration.ts:8"
       ],
@@ -10567,7 +10576,7 @@
       ],
       "callers": [
         "backend/src/ai/benchmarkExecutor.ts:29",
-        "backend/src/ai/pipeline.ts:203",
+        "backend/src/ai/pipeline.ts:205",
         "backend/src/ai/securityScan.test.ts:3",
         "backend/src/existingSource/change/delivery.ts:16",
         "backend/src/synthesis/coherentImplementation.ts:12"
@@ -10631,7 +10640,7 @@
       "callers": [
         "backend/src/ai/memoryReadAuthority.test.ts:5",
         "backend/src/ai/modelContext.security.test.ts:7",
-        "backend/src/ai/pipeline.ts:215",
+        "backend/src/ai/pipeline.ts:217",
         "backend/src/security/connectedMemoryConsumer.local.integration.ts:8",
         "backend/src/security/recoveryMemoryRead.local.integration.ts:8"
       ],
@@ -10691,7 +10700,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:223",
+        "backend/src/ai/pipeline.ts:225",
         "backend/src/ai/shipOutcome.test.ts:3"
       ],
       "reachable": true,
@@ -10760,7 +10769,7 @@
         "backend/src/ai/buildOutputValidation.ts:5",
         "backend/src/ai/buildStreamNarrator.test.ts:8",
         "backend/src/ai/patches.test.ts:10",
-        "backend/src/ai/pipeline.ts:82"
+        "backend/src/ai/pipeline.ts:84"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -12257,7 +12266,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:265",
+        "backend/src/ai/pipeline.ts:267",
         "backend/src/ai/softwareAgent/swarmRunSoftwareEventSink.test.ts:19",
         "backend/src/synthesis/softwareAgentImplementationAdapter.ts:50"
       ],
@@ -12889,7 +12898,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:105",
+        "backend/src/ai/pipeline.ts:107",
         "backend/src/ai/startupProgress.test.ts:3"
       ],
       "reachable": true,
@@ -12959,7 +12968,7 @@
       ],
       "callers": [
         "backend/src/ai/htmlTruncation.test.ts:4",
-        "backend/src/ai/pipeline.ts:204",
+        "backend/src/ai/pipeline.ts:206",
         "backend/src/ai/qa.ts:5",
         "backend/src/ai/securityScan.test.ts:4"
       ],
@@ -13547,7 +13556,7 @@
       ],
       "callers": [
         "backend/src/ai/black-hole/webIntelligence.test.ts:6",
-        "backend/src/ai/pipeline.ts:168",
+        "backend/src/ai/pipeline.ts:170",
         "backend/src/ai/researchAnswer.test.ts:6",
         "backend/src/ai/researchAnswer.ts:2",
         "backend/src/ai/responseCoverage.test.ts:4",
@@ -13756,7 +13765,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:169",
+        "backend/src/ai/pipeline.ts:171",
         "backend/src/ai/universal/capabilityReadiness.test.ts:4",
         "backend/src/ai/universal/semanticRequestPlanner.ts:55",
         "backend/src/lib/xrogaCapabilities.ts:1"
@@ -13808,7 +13817,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:166",
+        "backend/src/ai/pipeline.ts:168",
         "backend/src/ai/universal/resumeProjectContext.test.ts:4",
         "backend/src/ai/universal/universalContracts.test.ts:7",
         "backend/src/synthesis/universalEntrypoint.ts:107"
@@ -13917,7 +13926,7 @@
       ],
       "callers": [
         "backend/src/ai/black-hole/gateway.test.ts:16",
-        "backend/src/ai/pipeline.ts:170",
+        "backend/src/ai/pipeline.ts:172",
         "backend/src/ai/providerRuntime.ts:12",
         "backend/src/ai/universal/runtimeFailure.test.ts:3",
         "backend/src/ai/universal/semanticRequestPlanner.test.ts:33",
@@ -14179,7 +14188,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:171",
+        "backend/src/ai/pipeline.ts:173",
         "backend/src/ai/postCompletionAccounting.test.ts:5",
         "backend/src/ai/sonnetApproval.test.ts:10",
         "backend/src/ai/universal/capabilityReadiness.test.ts:5",
@@ -14424,7 +14433,7 @@
       ],
       "callers": [
         "backend/src/ai/intentReasoning.ts:25",
-        "backend/src/ai/pipeline.ts:255",
+        "backend/src/ai/pipeline.ts:257",
         "backend/src/ai/previewNotVerified.test.ts:21",
         "backend/src/ai/verificationLifecycle.test.ts:12"
       ],
@@ -19860,7 +19869,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:167",
+        "backend/src/ai/pipeline.ts:169",
         "backend/src/ai/softwareAgent/agentV2LaunchGate.test.ts:9",
         "backend/src/config/universalAgentFlags.test.ts:12",
         "backend/src/synthesis/browserGateVerification.test.ts:18",
@@ -25297,7 +25306,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:236",
+        "backend/src/ai/pipeline.ts:238",
         "backend/src/lib/adaptiveEngine.test.ts:7"
       ],
       "reachable": true,
@@ -25720,7 +25729,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:221"
+        "backend/src/ai/pipeline.ts:223"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -25983,7 +25992,7 @@
         "backend/src/ai/black-hole/webIntelligence.ts:2",
         "backend/src/ai/blackBoxExecution.test.ts:3",
         "backend/src/ai/intelligentRouter.ts:9",
-        "backend/src/ai/pipeline.ts:237",
+        "backend/src/ai/pipeline.ts:239",
         "backend/src/ai/router.ts:5",
         "backend/src/ai/workspacePublicSearch.ts:1",
         "backend/src/lib/adaptiveOrchestrator.ts:30",
@@ -26048,7 +26057,7 @@
         "backend/src/ai/executionRuntime.ts:2",
         "backend/src/ai/parallelApproval.ts:18",
         "backend/src/ai/parallelWeb.ts:3",
-        "backend/src/ai/pipeline.ts:225",
+        "backend/src/ai/pipeline.ts:227",
         "backend/src/ai/research.ts:5",
         "backend/src/ai/runTrace.ts:7",
         "backend/src/ai/softwareAgent/softwareAgentProductionInfrastructure.ts:47",
@@ -39790,7 +39799,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:174",
+        "backend/src/ai/pipeline.ts:176",
         "backend/src/ai/softwareAgent/softwareAgentGitHubPersistence.ts:13",
         "backend/src/ai/universal/semanticRequestPlanner.ts:63",
         "backend/src/builder/providerTransports.ts:6",
@@ -40232,7 +40241,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:118",
+        "backend/src/ai/pipeline.ts:120",
         "backend/src/ai/softwareAgent/softwareAgentGitHubPersistence.ts:17",
         "backend/src/ai/softwareAgent/xrogaProductionAdapters.ts:2",
         "backend/src/builder/github/restPort.ts:7",
@@ -42189,8 +42198,8 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:3928",
-        "backend/src/ai/pipeline.ts:3931",
+        "backend/src/ai/pipeline.ts:3937",
+        "backend/src/ai/pipeline.ts:3940",
         "backend/src/ai/projectMemory.ts:7",
         "backend/src/ai/sessionMemory.ts:7",
         "backend/src/builder/providerTransports.ts:10",
@@ -42462,8 +42471,8 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:130",
-        "backend/src/ai/pipeline.ts:3927",
+        "backend/src/ai/pipeline.ts:132",
+        "backend/src/ai/pipeline.ts:3936",
         "backend/src/ai/tenantModelDispatch.ts:6",
         "backend/src/config/supabaseTransport.security.test.ts:6",
         "backend/src/routes/integrations.ts:19",
@@ -42694,7 +42703,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:129",
+        "backend/src/ai/pipeline.ts:131",
         "backend/src/builder/hosting/authority.ts:5",
         "backend/src/lib/platformReady.ts:7",
         "backend/src/routes/integrations.ts:30",
@@ -43113,7 +43122,7 @@
       ],
       "callers": [
         "backend/src/ai/builderScaffoldFallback.test.ts:3",
-        "backend/src/ai/pipeline.ts:135",
+        "backend/src/ai/pipeline.ts:137",
         "backend/src/builder/starters.ts:2",
         "backend/src/routes/github.ts:628",
         "backend/src/routes/swarm.ts:14",
@@ -43348,7 +43357,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:191",
+        "backend/src/ai/pipeline.ts:193",
         "backend/src/routes/publish.ts:224",
         "backend/src/routes/publish.ts:268",
         "backend/src/routes/publish.ts:305",
@@ -43836,7 +43845,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:186",
+        "backend/src/ai/pipeline.ts:188",
         "backend/src/routes/publish.ts:12",
         "backend/src/routes/publish.ts:70",
         "backend/src/services/integrations/businessAction.ts:1508",
@@ -43977,7 +43986,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:192",
+        "backend/src/ai/pipeline.ts:194",
         "backend/src/routes/publish.ts:382",
         "backend/src/services/integrations/businessAction.ts:1462",
         "backend/src/services/publish/electronSecrets.authority.test.ts:4",
@@ -44888,7 +44897,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:180",
+        "backend/src/ai/pipeline.ts:182",
         "backend/src/services/integrations/businessAction.ts:1477",
         "backend/src/services/publish/desktopWorkflow.security.test.ts:3",
         "backend/src/services/publish/desktopWorkflow.security.test.ts:4",
@@ -45222,7 +45231,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:175",
+        "backend/src/ai/pipeline.ts:177",
         "backend/src/builder/spec.ts:3",
         "backend/src/services/projectScaffold.ts:11",
         "backend/src/services/projectScaffold.ts:5",
@@ -45607,7 +45616,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:193",
+        "backend/src/ai/pipeline.ts:195",
         "backend/src/services/scaffolds/scaffoldIntegrity.test.ts:3"
       ],
       "reachable": true,
@@ -49648,7 +49657,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:159",
+        "backend/src/ai/pipeline.ts:161",
         "backend/src/routes/delivery.ts:17",
         "backend/src/synthesis/delivery/projectDelivery.test.ts:25",
         "backend/src/synthesis/delivery/projectDeliveryService.ts:27"
@@ -50047,7 +50056,7 @@
       ],
       "callers": [
         "backend/src/ai/executionRuntime.attempt.test.ts:6",
-        "backend/src/ai/pipeline.ts:257",
+        "backend/src/ai/pipeline.ts:259",
         "backend/src/synthesis/foundation.fixture.test.ts:4"
       ],
       "reachable": true,
@@ -51041,7 +51050,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:162",
+        "backend/src/ai/pipeline.ts:164",
         "backend/src/builder/canonical.ts:5",
         "backend/src/builder/phase2Bridge.ts:7",
         "backend/src/routes/projectRuntime.ts:18",
@@ -51770,7 +51779,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:106",
+        "backend/src/ai/pipeline.ts:108",
         "backend/src/synthesis/productBlueprints.test.ts:3"
       ],
       "reachable": true,
@@ -52163,7 +52172,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:147",
+        "backend/src/ai/pipeline.ts:149",
         "backend/src/builder/canonical.ts:4",
         "backend/src/security/deliveryEvidenceRead.local.integration.ts:7",
         "backend/src/synthesis/canonicalFoundation.test.ts:13",
@@ -53113,7 +53122,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:155",
+        "backend/src/ai/pipeline.ts:157",
         "backend/src/sandbox/google/googleSandbox.test.ts:4",
         "backend/src/sandbox/google/googleSandbox.ts:5",
         "backend/src/sandbox/registryNetwork.test.ts:9",
@@ -53331,7 +53340,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:251",
+        "backend/src/ai/pipeline.ts:253",
         "backend/src/synthesis/reliability/canonicalResume.test.ts:9",
         "backend/src/synthesis/universalCanonicalTasks.ts:47",
         "backend/src/workers/resumeRecovery.ts:14"
@@ -54754,7 +54763,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:152",
+        "backend/src/ai/pipeline.ts:154",
         "backend/src/builder/canonical.ts:3",
         "backend/src/builder/phase2Bridge.ts:9",
         "backend/src/security/deliveryEvidenceRead.local.integration.ts:8",
@@ -54993,7 +55002,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:172",
+        "backend/src/ai/pipeline.ts:174",
         "backend/src/synthesis/universalCommit.test.ts:3"
       ],
       "reachable": true,
@@ -55112,7 +55121,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:146",
+        "backend/src/ai/pipeline.ts:148",
         "backend/src/ai/providerPolicy.test.ts:5",
         "backend/src/builder/canonical.ts:2",
         "backend/src/existingSource/change/production.ts:41",
@@ -55654,7 +55663,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:142",
+        "backend/src/ai/pipeline.ts:144",
         "backend/src/synthesis/universalShadow.test.ts:13"
       ],
       "reachable": true,
@@ -85822,7 +85831,7 @@
         "frontend/src/components/terminal/WorkspaceLauncher.tsx:10",
         "frontend/src/components/terminal/WorkspacePeopleControls.tsx:7",
         "frontend/src/components/workspace/WorkspaceAuthGate.tsx:23",
-        "frontend/src/context/TerminalChatContext.tsx:75"
+        "frontend/src/context/TerminalChatContext.tsx:76"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -88011,7 +88020,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/native-openui/library.tsx:20"
+        "frontend/src/components/native-openui/library.tsx:19"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -88117,7 +88126,7 @@
       "id": "surface:169100c09d49c9650f7a",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/NativeSurface.tsx",
-      "sha256": "babe5db1a602ddbe5ef8df687079ef3e8b4ee5b565b4b6cf0eea755c1b088a0f",
+      "sha256": "937e9d0117b92b6c9a8a531f10e05267e86713d48c1062fc92cc1986be9f1673",
       "symbols": [
         "NativeAnswer",
         "NativeSurface",
@@ -88372,12 +88381,17 @@
       "id": "surface:285a7a97242d7bc442b0",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/evidence.tsx",
-      "sha256": "0478fee0e918f9db2a3323d760e9bda900825e41476532298b22943c5603f594",
+      "sha256": "bd2f7b6f28443812ea73573a35a07fa4d0dcd9c12da2875d6be2b79d4088d503",
       "symbols": [
         "AnswerSource",
         "EvidenceContext",
+        "RenderEvidenceCitation",
+        "compact",
         "evidence",
+        "evidenceChip",
         "evidenceCitation",
+        "evidenceSource",
+        "number",
         "source",
         "url",
         "useRenderEvidenceCitation"
@@ -88402,7 +88416,7 @@
         "frontend/src/components/native-openui/library.tsx:18",
         "frontend/src/components/native-openui/upstream/components/extra.tsx:9",
         "frontend/src/components/native-openui/upstream/components/table.tsx:6",
-        "frontend/src/components/native-openui/upstream/components/text.tsx:9"
+        "frontend/src/components/native-openui/upstream/components/text.tsx:10"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -88415,8 +88429,11 @@
       "costBoundary": [],
       "evidenceBoundary": [
         "frontend/src/components/native-openui/evidence.tsx#EvidenceContext",
+        "frontend/src/components/native-openui/evidence.tsx#RenderEvidenceCitation",
         "frontend/src/components/native-openui/evidence.tsx#evidence",
+        "frontend/src/components/native-openui/evidence.tsx#evidenceChip",
         "frontend/src/components/native-openui/evidence.tsx#evidenceCitation",
+        "frontend/src/components/native-openui/evidence.tsx#evidenceSource",
         "frontend/src/components/native-openui/evidence.tsx#useRenderEvidenceCitation"
       ],
       "testCoverage": [],
@@ -88477,15 +88494,13 @@
       "id": "surface:1bf86dec2f9f087bee07",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/library.tsx",
-      "sha256": "20945c2f7233ce431968f1b8cc288e5d409d4f394ef794ebf55f32f2d61c0814",
+      "sha256": "60e41bf9ccda9ca60234aa25cf5404a070739401026fa4a1b395990c5c2a2c87",
       "symbols": [
         "Icon",
         "Source",
-        "library",
-        "source"
+        "library"
       ],
       "imports": [
-        "../terminal/SourceCitation",
         "./ChoicePicker",
         "./Diagram",
         "./Editorial",
@@ -88522,8 +88537,7 @@
         "frontend/src/components/native-openui/upstream/components/style.ts",
         "frontend/src/components/native-openui/upstream/components/svg.tsx",
         "frontend/src/components/native-openui/upstream/components/table.tsx",
-        "frontend/src/components/native-openui/upstream/components/text.tsx",
-        "frontend/src/components/terminal/SourceCitation.tsx"
+        "frontend/src/components/native-openui/upstream/components/text.tsx"
       ],
       "entryPoints": [
         "frontend/src/app/(workspace)/workspace/page.tsx",
@@ -88545,7 +88559,8 @@
       "approvalBoundary": [],
       "costBoundary": [],
       "evidenceBoundary": [
-        "frontend/src/components/native-openui/library.tsx#EvidenceContext"
+        "frontend/src/components/native-openui/library.tsx#EvidenceContext",
+        "frontend/src/components/native-openui/library.tsx#evidenceSource"
       ],
       "testCoverage": [],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -88993,7 +89008,7 @@
         "frontend/src/components/native-openui/Editorial.tsx:8",
         "frontend/src/components/native-openui/library.tsx:11",
         "frontend/src/components/native-openui/upstream/components/controls.tsx:14",
-        "frontend/src/components/native-openui/upstream/components/text.tsx:7"
+        "frontend/src/components/native-openui/upstream/components/text.tsx:8"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -89079,7 +89094,7 @@
       "id": "surface:0fef6875af5860e2f4b4",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/markdown.tsx",
-      "sha256": "7c17a7b4c3f4c21426f3726b1df05aaf1737919a50df437c75b459caaefbe55c",
+      "sha256": "6d29c83289924c3590a1f8dda4379f3c9842512e9bd49717e9474f37694af773",
       "symbols": [
         "Block",
         "INLINE",
@@ -89088,7 +89103,6 @@
         "MarkdownMatches",
         "MathExpression",
         "NativeVisualContent",
-        "RenderCitation",
         "VisibleMarkdownTables",
         "after",
         "at",
@@ -89146,7 +89160,9 @@
         "parts",
         "plain",
         "preservedMarkdownTableKeys",
+        "prose",
         "proseOutsideNativeDocuments",
+        "rawDestination",
         "relationships",
         "remaining",
         "rest",
@@ -89171,6 +89187,7 @@
       ],
       "imports": [
         "../../../../../../backend/src/ai/nativeOpenUi",
+        "../../evidence",
         "./chart",
         "./code-panel",
         "./style",
@@ -89200,7 +89217,7 @@
         "frontend/src/components/native-openui/upstream/components/extra.tsx:7",
         "frontend/src/components/native-openui/upstream/components/markdown.test.ts:10",
         "frontend/src/components/native-openui/upstream/components/table.tsx:7",
-        "frontend/src/components/native-openui/upstream/components/text.tsx:8"
+        "frontend/src/components/native-openui/upstream/components/text.tsx:9"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -89212,7 +89229,9 @@
       "tenantBoundary": [],
       "approvalBoundary": [],
       "costBoundary": [],
-      "evidenceBoundary": [],
+      "evidenceBoundary": [
+        "frontend/src/components/native-openui/upstream/components/markdown.tsx#RenderEvidenceCitation"
+      ],
       "testCoverage": [
         "frontend/src/components/native-openui/upstream/components/chart.test.ts",
         "frontend/src/components/native-openui/upstream/components/markdown.test.ts"
@@ -89286,7 +89305,7 @@
         "frontend/src/components/native-openui/upstream/components/markdown.tsx:4",
         "frontend/src/components/native-openui/upstream/components/svg.tsx:5",
         "frontend/src/components/native-openui/upstream/components/table.tsx:8",
-        "frontend/src/components/native-openui/upstream/components/text.tsx:10"
+        "frontend/src/components/native-openui/upstream/components/text.tsx:11"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -89455,7 +89474,7 @@
       "id": "surface:c0e107e03bc08dc07fad",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/text.tsx",
-      "sha256": "52ea09eb3f0b953c1cf393417c73c2642bd2c45d2ea04699c81ecbbecd0092c1",
+      "sha256": "7fdaffba4a22c16a12d5b208579212444823066240701fc6db0a68d2da4597ed",
       "symbols": [
         "Badge",
         "Caption",
@@ -89468,10 +89487,12 @@
         "Tag",
         "Text",
         "Title",
+        "citation",
+        "cluster",
         "custom",
+        "evidence",
         "href",
         "isItem",
-        "isNode",
         "items",
         "marker",
         "nativeVisuals",
@@ -89489,6 +89510,7 @@
         "./glyph",
         "./markdown",
         "./style",
+        "@openuidev/lang-core",
         "@openuidev/react-lang",
         "lucide-react",
         "react",
@@ -89511,6 +89533,7 @@
       "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
+        "@openuidev/lang-core",
         "@openuidev/react-lang",
         "lucide-react",
         "react",
@@ -89521,6 +89544,9 @@
       "approvalBoundary": [],
       "costBoundary": [],
       "evidenceBoundary": [
+        "frontend/src/components/native-openui/upstream/components/text.tsx#EvidenceContext",
+        "frontend/src/components/native-openui/upstream/components/text.tsx#evidence",
+        "frontend/src/components/native-openui/upstream/components/text.tsx#evidenceSource",
         "frontend/src/components/native-openui/upstream/components/text.tsx#useRenderEvidenceCitation"
       ],
       "testCoverage": [],
@@ -92668,7 +92694,7 @@
       "id": "surface:c37a54594bd9bc390b5b",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/ProseV2.tsx",
-      "sha256": "345e1df09f5262d430f97701ba32083865e3fc2f5dfb9621ea0cce1eaf245caf",
+      "sha256": "bcd4d4319c43a9e19b4614be5f46ce6069b6f712e9b8d206b058c214687993e8",
       "symbols": [
         "ArchitectureV2",
         "CodeV2",
@@ -92681,7 +92707,8 @@
         "diagram",
         "figure",
         "id",
-        "label"
+        "label",
+        "number"
       ],
       "imports": [
         "./ArchitectureV2",
@@ -97826,7 +97853,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/context/TerminalChatContext.tsx:79"
+        "frontend/src/context/TerminalChatContext.tsx:80"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -97883,7 +97910,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/context/TerminalChatContext.tsx:77"
+        "frontend/src/context/TerminalChatContext.tsx:78"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -99606,7 +99633,7 @@
       "id": "surface:9364a65f93f37c69b67d",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/SourceCitation.tsx",
-      "sha256": "101fdcd34f05eafca34933cd76410b3af5dcc7a387605c144def359a4aa17254",
+      "sha256": "a4e7c797d8872f4f6da835de6d7ed67373d4f42d1c9c27c173d9830d46786961",
       "symbols": [
         "CitationIcon",
         "CitationPage",
@@ -99629,6 +99656,7 @@
         "onScroll",
         "position",
         "preview",
+        "shortLabel",
         "theme",
         "top",
         "url",
@@ -99663,7 +99691,6 @@
       ],
       "callers": [
         "frontend/src/components/native-openui/evidence.tsx:4",
-        "frontend/src/components/native-openui/library.tsx:19",
         "frontend/src/components/response-experience-v2/SourceV2.tsx:9",
         "frontend/src/components/terminal/ResponseSources.tsx:5",
         "frontend/src/lib/formatAiMarkdown.tsx:10"
@@ -99785,7 +99812,7 @@
       "id": "surface:9c57a6290c71522141f5",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/SwarmMessageLog.tsx",
-      "sha256": "cf7643bf0ed00bf2ce12839383d1a51810e8a7a745a527c085f5117799f1e54d",
+      "sha256": "4f6dad323f94f9df6934ddbb378ee66847790be05fb04cbaba73c04344601e59",
       "symbols": [
         "AGENT_STYLES",
         "SwarmMessageLog",
@@ -100353,7 +100380,7 @@
       "id": "surface:d57670e245a2278fa94d",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/TerminalLiveActivity.tsx",
-      "sha256": "646e86bccdaeae747888c02c04c22b2b31f46bdee43ef4c5ea4b34bee5aed5eb",
+      "sha256": "3e5dd7535d5a54d02c201d7a72199d415083664d089f718020f58dca8a685a47",
       "symbols": [
         "STALLED_AFTER_MS",
         "TerminalLiveActivity",
@@ -100739,7 +100766,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/context/TerminalChatContext.tsx:78"
+        "frontend/src/context/TerminalChatContext.tsx:79"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -104795,7 +104822,7 @@
         "frontend/src/components/layout/SidebarProjectHistory.tsx:62",
         "frontend/src/components/terminal/TerminalChatBar.tsx:31",
         "frontend/src/components/terminal/WorkspacePeopleControls.tsx:8",
-        "frontend/src/context/TerminalChatContext.tsx:76"
+        "frontend/src/context/TerminalChatContext.tsx:77"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -104835,7 +104862,7 @@
       "id": "surface:c5f31b4c34d87af3ac75",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "sha256": "4242e7a244983f8a1634c390384350c47f33e708c77bc4f9d762da62a1aeb046",
+      "sha256": "8a62572fc79a742030f589875ae85bf734ac7baac0f6f1d7f58bff0ecb35e2d7",
       "symbols": [
         "ChatMessage",
         "GENERIC_SWARM_FALLBACK",
@@ -105220,6 +105247,7 @@
         "@/lib/swarm",
         "@/lib/syncRepoTerminalSessions",
         "@/lib/terminal/activityPresentation",
+        "@/lib/terminal/activityTimeline",
         "@/lib/terminal/terminalEvent",
         "@/lib/terminal/terminalEventAdapter",
         "@/lib/terminal/terminalRunReducer",
@@ -105549,7 +105577,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/context/TerminalChatContext.tsx:97"
+        "frontend/src/context/TerminalChatContext.tsx:98"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -106046,7 +106074,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/context/TerminalChatContext.tsx:50"
+        "frontend/src/context/TerminalChatContext.tsx:51"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -106357,7 +106385,7 @@
         "frontend/src/components/terminal/WorkspaceIdentityMenu.tsx:16",
         "frontend/src/components/terminal/XrogaVoiceControl.tsx:6",
         "frontend/src/components/workspace/WorkspaceAuthGate.tsx:30",
-        "frontend/src/context/TerminalChatContext.tsx:19",
+        "frontend/src/context/TerminalChatContext.tsx:20",
         "frontend/src/hooks/useAvatarUpdate.ts:4",
         "frontend/src/hooks/useBackgroundBuildJobs.ts:4",
         "frontend/src/hooks/useBuildCompletionAlerts.ts:4",
@@ -106773,7 +106801,7 @@
         "frontend/src/components/notifications/NotificationExperience.tsx:9",
         "frontend/src/components/notifications/SidebarNotificationCenter.tsx:5",
         "frontend/src/components/settings/NotificationsSettingsPanel.tsx:10",
-        "frontend/src/context/TerminalChatContext.tsx:98",
+        "frontend/src/context/TerminalChatContext.tsx:99",
         "frontend/src/hooks/useBuildCompletionAlerts.ts:5"
       ],
       "reachable": true,
@@ -106864,7 +106892,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/context/TerminalChatContext.tsx:60"
+        "frontend/src/context/TerminalChatContext.tsx:61"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -106906,7 +106934,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/context/TerminalChatContext.tsx:49"
+        "frontend/src/context/TerminalChatContext.tsx:50"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -107191,7 +107219,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/context/TerminalChatContext.tsx:20"
+        "frontend/src/context/TerminalChatContext.tsx:21"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -107333,7 +107361,7 @@
       ],
       "callers": [
         "frontend/src/components/terminal/CapacityUnavailableCard.tsx:6",
-        "frontend/src/context/TerminalChatContext.tsx:23",
+        "frontend/src/context/TerminalChatContext.tsx:24",
         "frontend/src/lib/capacityMessage.test.ts:3",
         "frontend/src/lib/terminal/terminalEventAdapter.ts:28"
       ],
@@ -107440,7 +107468,7 @@
         "frontend/src/components/dashboard/ChatArchiveList.tsx:7",
         "frontend/src/components/dashboard/MediaPageClient.tsx:19",
         "frontend/src/components/dashboard/TerminalHistoryView.tsx:21",
-        "frontend/src/context/TerminalChatContext.tsx:41",
+        "frontend/src/context/TerminalChatContext.tsx:42",
         "frontend/src/lib/exportUserData.ts:1"
       ],
       "reachable": true,
@@ -107520,7 +107548,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/context/TerminalChatContext.tsx:24",
+        "frontend/src/context/TerminalChatContext.tsx:25",
         "frontend/src/lib/chatHistory.test.ts:3"
       ],
       "reachable": true,
@@ -107602,7 +107630,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/context/TerminalChatContext.tsx:46",
+        "frontend/src/context/TerminalChatContext.tsx:47",
         "frontend/src/lib/codeBuildProcessing.ts:2",
         "frontend/src/lib/phase1Routing.ts:4",
         "frontend/src/lib/workLanes.ts:4"
@@ -107809,7 +107837,7 @@
       "callers": [
         "frontend/src/components/layout/SidebarProjectHistory.tsx:46",
         "frontend/src/components/terminal/WorkspaceConversationMenu.tsx:13",
-        "frontend/src/context/TerminalChatContext.tsx:2081",
+        "frontend/src/context/TerminalChatContext.tsx:2084",
         "frontend/src/lib/restoreRepoTerminal.ts:10",
         "frontend/src/lib/syncRepoTerminalSessions.ts:17",
         "frontend/src/lib/terminalHistory.ts:14",
@@ -107862,7 +107890,7 @@
       ],
       "callers": [
         "frontend/src/components/terminal/SwarmMessageLog.tsx:28",
-        "frontend/src/context/TerminalChatContext.tsx:47",
+        "frontend/src/context/TerminalChatContext.tsx:48",
         "frontend/src/lib/workLanes.ts:11"
       ],
       "reachable": true,
@@ -108066,7 +108094,7 @@
         "frontend/src/components/companion/CompanionCustomizer.tsx:6",
         "frontend/src/components/terminal/HomepageChatBar.tsx:15",
         "frontend/src/components/terminal/TerminalChatBar.tsx:25",
-        "frontend/src/context/TerminalChatContext.tsx:95",
+        "frontend/src/context/TerminalChatContext.tsx:96",
         "frontend/src/lib/companion.costumes.test.ts:4",
         "frontend/src/lib/companionCrown.test.ts:4",
         "frontend/src/store/useCompanionStore.ts:5"
@@ -108234,7 +108262,7 @@
       ],
       "callers": [
         "frontend/src/components/terminal/WorkspaceLauncher.tsx:11",
-        "frontend/src/context/TerminalChatContext.tsx:32",
+        "frontend/src/context/TerminalChatContext.tsx:33",
         "frontend/src/lib/composerDraft.test.ts:4"
       ],
       "reachable": true,
@@ -108376,7 +108404,7 @@
         "frontend/src/components/homepage-next/phase1/CommandBar.tsx:13",
         "frontend/src/components/homepage-next/s01/CapabilityFocus.tsx:19",
         "frontend/src/components/terminal/HomepageChatBar.tsx:5",
-        "frontend/src/context/TerminalChatContext.tsx:31"
+        "frontend/src/context/TerminalChatContext.tsx:32"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -109132,7 +109160,7 @@
       "callers": [
         "frontend/src/components/terminal/EngineeringArtifactView.tsx:3",
         "frontend/src/components/terminal/XrogaBlockView.tsx:9",
-        "frontend/src/context/TerminalChatContext.tsx:106",
+        "frontend/src/context/TerminalChatContext.tsx:107",
         "frontend/src/lib/api.ts:10",
         "frontend/src/lib/artifactRecovery.test.ts:4",
         "frontend/src/lib/engineeringArtifact.test.ts:4",
@@ -109531,7 +109559,7 @@
       "id": "surface:015cc267f70323e72e46",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/formatAiMarkdown.tsx",
-      "sha256": "c775072c94c0ad87aaa2974cad70d0d331d85f396749f20b7cca4c2ac93a7716",
+      "sha256": "ac85659abacbe07fd10432e0cedec17bcb87ec011dbe52e234acdc7981e70720",
       "symbols": [
         "AppMark",
         "BusinessActionConfirmationInline",
@@ -109579,6 +109607,7 @@
         "maximumSpend",
         "message",
         "normalized",
+        "number",
         "orderedCandidates",
         "padded",
         "parsed",
@@ -109915,7 +109944,7 @@
         "frontend/src/app/auth/github/callback/page.tsx:6",
         "frontend/src/components/integrations/GitHubConnect.tsx:11",
         "frontend/src/components/terminal/RepoContextBar.tsx:9",
-        "frontend/src/context/TerminalChatContext.tsx:80"
+        "frontend/src/context/TerminalChatContext.tsx:81"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -109967,10 +109996,10 @@
         "frontend/src/components/terminal/ProjectsQuickPopover.tsx:13",
         "frontend/src/components/terminal/RepoContextBar.tsx:21",
         "frontend/src/components/terminal/RepoWorkspaceGateModal.tsx:8",
-        "frontend/src/context/TerminalChatContext.tsx:1930",
-        "frontend/src/context/TerminalChatContext.tsx:3354",
-        "frontend/src/context/TerminalChatContext.tsx:62",
-        "frontend/src/context/TerminalChatContext.tsx:979",
+        "frontend/src/context/TerminalChatContext.tsx:1933",
+        "frontend/src/context/TerminalChatContext.tsx:3363",
+        "frontend/src/context/TerminalChatContext.tsx:63",
+        "frontend/src/context/TerminalChatContext.tsx:982",
         "frontend/src/lib/projectResume.ts:6"
       ],
       "reachable": true,
@@ -110849,8 +110878,8 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/context/TerminalChatContext.tsx:1380",
-        "frontend/src/context/TerminalChatContext.tsx:3990",
+        "frontend/src/context/TerminalChatContext.tsx:1383",
+        "frontend/src/context/TerminalChatContext.tsx:3999",
         "frontend/src/lib/rehydratePersistedMessages.ts:3"
       ],
       "reachable": true,
@@ -110968,7 +110997,7 @@
       ],
       "callers": [
         "frontend/src/components/terminal/LegacyLandingOutputView.tsx:5",
-        "frontend/src/context/TerminalChatContext.tsx:99",
+        "frontend/src/context/TerminalChatContext.tsx:100",
         "frontend/src/lib/landingOutcome.test.ts:3",
         "frontend/src/lib/recoveredBuildOutput.ts:2",
         "frontend/src/lib/rehydratePersistedMessages.ts:5",
@@ -111290,7 +111319,7 @@
       ],
       "callers": [
         "frontend/src/components/terminal/ReasoningAndFollowUps.tsx:14",
-        "frontend/src/context/TerminalChatContext.tsx:25",
+        "frontend/src/context/TerminalChatContext.tsx:26",
         "frontend/src/lib/mathDetect.test.ts:4"
       ],
       "reachable": true,
@@ -111446,7 +111475,7 @@
       ],
       "callers": [
         "frontend/src/components/dashboard/MediaPageClient.tsx:18",
-        "frontend/src/context/TerminalChatContext.tsx:40"
+        "frontend/src/context/TerminalChatContext.tsx:41"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -111524,7 +111553,7 @@
       "callers": [
         "frontend/src/components/dashboard/MediaPageClient.tsx:8",
         "frontend/src/components/layout/MediaGalleryModal.tsx:6",
-        "frontend/src/context/TerminalChatContext.tsx:39",
+        "frontend/src/context/TerminalChatContext.tsx:40",
         "frontend/src/lib/exportUserData.ts:3",
         "frontend/src/lib/messageRehydration.ts:2"
       ],
@@ -111594,7 +111623,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/context/TerminalChatContext.tsx:48",
+        "frontend/src/context/TerminalChatContext.tsx:49",
         "frontend/src/lib/mergeBuildTodos.test.ts:3"
       ],
       "reachable": true,
@@ -111658,7 +111687,7 @@
       ],
       "callers": [
         "frontend/src/components/terminal/SwarmMessageLog.tsx:35",
-        "frontend/src/context/TerminalChatContext.tsx:68",
+        "frontend/src/context/TerminalChatContext.tsx:69",
         "frontend/src/lib/codeBuildProcessing.ts:3",
         "frontend/src/lib/messageHelpers.test.ts:3",
         "frontend/src/lib/phase1Routing.ts:3",
@@ -111821,7 +111850,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/context/TerminalChatContext.tsx:22",
+        "frontend/src/context/TerminalChatContext.tsx:23",
         "frontend/src/lib/modelHandoff.test.ts:3"
       ],
       "reachable": true,
@@ -112614,7 +112643,7 @@
         "frontend/src/components/terminal/ImageStudioCard.tsx:26",
         "frontend/src/components/terminal/ReasoningAndFollowUps.tsx:6",
         "frontend/src/components/terminal/TerminalChatBar.tsx:325",
-        "frontend/src/context/TerminalChatContext.tsx:61",
+        "frontend/src/context/TerminalChatContext.tsx:62",
         "frontend/src/lib/phase1Routing.ts:2",
         "frontend/src/lib/workLanes.ts:2"
       ],
@@ -112746,7 +112775,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/context/TerminalChatContext.tsx:87",
+        "frontend/src/context/TerminalChatContext.tsx:88",
         "frontend/src/hooks/useBackgroundBuildJobs.ts:5",
         "frontend/src/hooks/useBuildCompletionAlerts.ts:7",
         "frontend/src/lib/pendingBuildJobs.test.ts:3"
@@ -113313,7 +113342,7 @@
       "callers": [
         "frontend/src/components/layout/SidebarProjectHistory.tsx:60",
         "frontend/src/components/terminal/RepoContextBar.tsx:31",
-        "frontend/src/context/TerminalChatContext.tsx:111",
+        "frontend/src/context/TerminalChatContext.tsx:112",
         "frontend/src/lib/projectContext.test.ts:3",
         "frontend/src/lib/projectResume.ts:9",
         "frontend/src/lib/terminal/freshProductIsolation.test.ts:4",
@@ -113655,7 +113684,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/context/TerminalChatContext.tsx:67",
+        "frontend/src/context/TerminalChatContext.tsx:68",
         "frontend/src/lib/chatMemory.ts:2",
         "frontend/src/lib/messageHelpers.ts:1",
         "frontend/src/lib/phase1Routing.ts:11",
@@ -114200,7 +114229,7 @@
         "frontend/src/app/vercel-ai-deployment/page.tsx"
       ],
       "callers": [
-        "frontend/src/context/TerminalChatContext.tsx:101",
+        "frontend/src/context/TerminalChatContext.tsx:102",
         "frontend/src/hooks/useBackgroundBuildJobs.ts:12",
         "frontend/src/lib/api.ts:14",
         "frontend/src/lib/artifactRecovery.test.ts:10",
@@ -114320,7 +114349,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/context/TerminalChatContext.tsx:1310",
+        "frontend/src/context/TerminalChatContext.tsx:1313",
         "frontend/src/lib/workspacePersistence.ts:148"
       ],
       "reachable": true,
@@ -114472,8 +114501,8 @@
         "frontend/src/components/terminal/RepoContextBar.tsx:216",
         "frontend/src/components/terminal/RepoWorkspaceGateModal.tsx:7",
         "frontend/src/components/terminal/TerminalChatBar.tsx:37",
-        "frontend/src/context/TerminalChatContext.tsx:1923",
-        "frontend/src/context/TerminalChatContext.tsx:51",
+        "frontend/src/context/TerminalChatContext.tsx:1926",
+        "frontend/src/context/TerminalChatContext.tsx:52",
         "frontend/src/lib/buildDefaultTodos.ts:2",
         "frontend/src/lib/chatArchive.ts:2",
         "frontend/src/lib/projectArchive.ts:1",
@@ -114553,7 +114582,7 @@
         "frontend/src/components/layout/SidebarProjectHistory.tsx:55",
         "frontend/src/components/terminal/RepoWorkspaceGateModal.tsx:9",
         "frontend/src/components/terminal/TerminalChatBar.tsx:28",
-        "frontend/src/context/TerminalChatContext.tsx:44",
+        "frontend/src/context/TerminalChatContext.tsx:45",
         "frontend/src/lib/restoreRepoTerminal.ts:7",
         "frontend/src/lib/syncRepoTerminalSessions.ts:14",
         "frontend/src/lib/terminalHistory.ts:9"
@@ -114674,7 +114703,7 @@
       ],
       "callers": [
         "frontend/src/components/terminal/SwarmMessageLog.tsx:29",
-        "frontend/src/context/TerminalChatContext.tsx:21",
+        "frontend/src/context/TerminalChatContext.tsx:22",
         "frontend/src/lib/formatAiMarkdown.tsx:35",
         "frontend/src/lib/researchHandoff.test.ts:3",
         "frontend/src/lib/sanitizeChatMessages.ts:7"
@@ -115002,7 +115031,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/context/TerminalChatContext.tsx:74"
+        "frontend/src/context/TerminalChatContext.tsx:75"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -115057,7 +115086,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/context/TerminalChatContext.tsx:73"
+        "frontend/src/context/TerminalChatContext.tsx:74"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -115274,7 +115303,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/context/TerminalChatContext.tsx:96",
+        "frontend/src/context/TerminalChatContext.tsx:97",
         "frontend/src/lib/semanticExecution.test.ts:5"
       ],
       "reachable": true,
@@ -116439,7 +116468,7 @@
         "frontend/src/components/layout/SidebarProjectHistory.tsx:7",
         "frontend/src/components/terminal/RepoContextBar.tsx:34",
         "frontend/src/components/terminal/WorkspaceConversationMenu.tsx:9",
-        "frontend/src/context/TerminalChatContext.tsx:43",
+        "frontend/src/context/TerminalChatContext.tsx:44",
         "frontend/src/lib/sidebarOrganization.ts:5",
         "frontend/src/lib/sidebarProjectTask.test.ts:3",
         "frontend/src/lib/terminalHistory.ts:4"
@@ -117380,7 +117409,7 @@
         "frontend/src/components/terminal/HomepageChatBar.tsx:14",
         "frontend/src/components/ui/ProfileQuickMenu.tsx:20",
         "frontend/src/components/workspace/WorkspaceAuthGate.tsx:24",
-        "frontend/src/context/TerminalChatContext.tsx:18",
+        "frontend/src/context/TerminalChatContext.tsx:19",
         "frontend/src/hooks/useAvatarUpdate.ts:3",
         "frontend/src/lib/api.ts:3",
         "frontend/src/lib/builderApi.ts:3",
@@ -117984,7 +118013,7 @@
       ],
       "callers": [
         "frontend/src/components/dashboard/SwarmRunHistory.tsx:7",
-        "frontend/src/context/TerminalChatContext.tsx:105",
+        "frontend/src/context/TerminalChatContext.tsx:106",
         "frontend/src/lib/api.ts:5",
         "frontend/src/lib/artifactRecovery.test.ts:9",
         "frontend/src/lib/engineeringArtifact.test.ts:15"
@@ -118124,10 +118153,10 @@
       "callers": [
         "frontend/src/components/layout/SidebarProjectHistory.tsx:41",
         "frontend/src/components/terminal/RepoContextBar.tsx:356",
-        "frontend/src/context/TerminalChatContext.tsx:1084",
-        "frontend/src/context/TerminalChatContext.tsx:1478",
-        "frontend/src/context/TerminalChatContext.tsx:2501",
-        "frontend/src/context/TerminalChatContext.tsx:4000"
+        "frontend/src/context/TerminalChatContext.tsx:1087",
+        "frontend/src/context/TerminalChatContext.tsx:1481",
+        "frontend/src/context/TerminalChatContext.tsx:2504",
+        "frontend/src/context/TerminalChatContext.tsx:4009"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -118279,7 +118308,7 @@
         "frontend/src/components/response-experience-v2/conversation.ts:1",
         "frontend/src/components/terminal/SwarmMessageLog.tsx:17",
         "frontend/src/components/terminal/TerminalLiveActivity.tsx:6",
-        "frontend/src/context/TerminalChatContext.tsx:14",
+        "frontend/src/context/TerminalChatContext.tsx:15",
         "frontend/src/lib/terminal/activityPresentation.test.ts:4",
         "frontend/src/lib/terminal/softwareAgentEvents.test.ts:3"
       ],
@@ -118314,11 +118343,12 @@
       "id": "surface:b31ecdb496288a440eea",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/terminal/activityTimeline.ts",
-      "sha256": "f34b738df3e75f3bc44163270ac91920eb1314b9f6dcedba06723cf89ab5c8fc",
+      "sha256": "273c96318b7ac38f395f7f723618bca38a4062500aedf88b2b69ca75a340cb0a",
       "symbols": [
         "ActivityTimelineModel",
         "BuildTimelineOptions",
         "FAMILY_BY_KIND",
+        "PendingReplyKind",
         "TimelineFamily",
         "TimelineItem",
         "TimelineState",
@@ -118712,7 +118742,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/context/TerminalChatContext.tsx:15",
+        "frontend/src/context/TerminalChatContext.tsx:16",
         "frontend/src/lib/goldenJourneyRendering.test.ts:3",
         "frontend/src/lib/terminal/liveActivity.test.ts:8",
         "frontend/src/lib/terminal/requiredInteractions.test.ts:79",
@@ -118899,7 +118929,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/context/TerminalChatContext.tsx:16",
+        "frontend/src/context/TerminalChatContext.tsx:17",
         "frontend/src/lib/goldenJourneyRendering.test.ts:5",
         "frontend/src/lib/terminal/liveActivity.test.ts:4",
         "frontend/src/lib/terminal/terminalEventModel.test.ts:6"
@@ -119070,9 +119100,9 @@
         "frontend/src/components/layout/SidebarProjectHistory.tsx:24",
         "frontend/src/components/layout/SidebarProjectHistory.tsx:30",
         "frontend/src/components/terminal/WorkspaceConversationMenu.tsx:14",
-        "frontend/src/context/TerminalChatContext.tsx:1936",
-        "frontend/src/context/TerminalChatContext.tsx:2082",
-        "frontend/src/context/TerminalChatContext.tsx:42",
+        "frontend/src/context/TerminalChatContext.tsx:1939",
+        "frontend/src/context/TerminalChatContext.tsx:2085",
+        "frontend/src/context/TerminalChatContext.tsx:43",
         "frontend/src/lib/restoreRepoTerminal.ts:6",
         "frontend/src/lib/syncRepoTerminalSessions.ts:9",
         "frontend/src/lib/terminalSessionStorage.ts:87"
@@ -119354,7 +119384,7 @@
       ],
       "callers": [
         "frontend/src/components/providers/AppProviders.tsx:7",
-        "frontend/src/context/TerminalChatContext.tsx:45"
+        "frontend/src/context/TerminalChatContext.tsx:46"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -120523,7 +120553,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/context/TerminalChatContext.tsx:69"
+        "frontend/src/context/TerminalChatContext.tsx:70"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -120628,7 +120658,7 @@
         "frontend/src/components/notifications/NotificationBell.tsx:10",
         "frontend/src/components/terminal/ProjectsQuickPopover.tsx:14",
         "frontend/src/components/terminal/SwarmMessageLog.tsx:41",
-        "frontend/src/context/TerminalChatContext.tsx:33",
+        "frontend/src/context/TerminalChatContext.tsx:34",
         "frontend/src/lib/projectResume.ts:5",
         "frontend/src/lib/restoreRepoTerminal.ts:9",
         "frontend/src/lib/syncRepoTerminalSessions.ts:8"
@@ -121056,7 +121086,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/context/TerminalChatContext.tsx:81",
+        "frontend/src/context/TerminalChatContext.tsx:82",
         "frontend/src/lib/agentProcessingFormat.ts:3",
         "frontend/src/lib/repoWorkspaceGate.ts:13"
       ],
@@ -121165,12 +121195,13 @@
       "id": "surface:f6ec62cf29831de59ad0",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/xrogaCitations.ts",
-      "sha256": "7f295c307f79969c469987b4d57ca77dc1f49f7746349c5ecb3cf577c3c52d3c",
+      "sha256": "1ea1218aeba75eb4e7d38d24cb9c23d07bfd7b611ceb028133d67e649232dff3",
       "symbols": [
         "CitationSource",
         "MarkdownNode",
         "appendCitationReferences",
         "child",
+        "citationLabelNumber",
         "citationMetadata",
         "cursor",
         "destination",
@@ -121898,7 +121929,7 @@
         "frontend/src/components/response-experience-v2/document.test.ts:8",
         "frontend/src/components/response-experience-v2/exportText.test.ts:4",
         "frontend/src/components/response-experience-v2/shareSnapshot.test.ts:3",
-        "frontend/src/context/TerminalChatContext.tsx:100",
+        "frontend/src/context/TerminalChatContext.tsx:101",
         "frontend/src/lib/modelHandoff.ts:1",
         "frontend/src/lib/researchHandoff.ts:2",
         "frontend/src/lib/responseCoverageContract.test.ts:3",
@@ -122217,7 +122248,7 @@
         "frontend/src/components/settings/GeneralSettingsPanel.tsx:8",
         "frontend/src/components/settings/SecuritySettingsPanel.tsx:11",
         "frontend/src/components/terminal/SwarmMessageLog.tsx:7",
-        "frontend/src/context/TerminalChatContext.tsx:27",
+        "frontend/src/context/TerminalChatContext.tsx:28",
         "frontend/src/hooks/useAvatarUpdate.ts:5",
         "frontend/src/hooks/useBackgroundBuildJobs.ts:11",
         "frontend/src/hooks/useBuildCompletionAlerts.ts:6"
@@ -122499,7 +122530,7 @@
         "frontend/src/components/terminal/ProjectWorkspaceRail.tsx:7",
         "frontend/src/components/terminal/RuntimeLogsButton.tsx:16",
         "frontend/src/components/terminal/RuntimePreviewControls.tsx:22",
-        "frontend/src/context/TerminalChatContext.tsx:30",
+        "frontend/src/context/TerminalChatContext.tsx:31",
         "frontend/src/hooks/useRuntimePreviewHydration.ts:12"
       ],
       "reachable": true,
@@ -122615,7 +122646,7 @@
         "frontend/src/components/terminal/SwarmMessageLog.tsx:39",
         "frontend/src/components/terminal/TerminalChatBar.tsx:10",
         "frontend/src/components/terminal/TerminalDock.tsx:12",
-        "frontend/src/context/TerminalChatContext.tsx:28"
+        "frontend/src/context/TerminalChatContext.tsx:29"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -122723,14 +122754,14 @@
         "frontend/src/components/terminal/WorkspaceIdentityMenu.tsx:18",
         "frontend/src/components/terminal/WorkspaceLauncher.tsx:6",
         "frontend/src/components/terminal/WorkspacePeopleControls.tsx:9",
-        "frontend/src/context/TerminalChatContext.tsx:166",
-        "frontend/src/context/TerminalChatContext.tsx:205",
-        "frontend/src/context/TerminalChatContext.tsx:2793",
-        "frontend/src/context/TerminalChatContext.tsx:29",
-        "frontend/src/context/TerminalChatContext.tsx:3436",
-        "frontend/src/context/TerminalChatContext.tsx:345",
-        "frontend/src/context/TerminalChatContext.tsx:3801",
-        "frontend/src/context/TerminalChatContext.tsx:854",
+        "frontend/src/context/TerminalChatContext.tsx:167",
+        "frontend/src/context/TerminalChatContext.tsx:206",
+        "frontend/src/context/TerminalChatContext.tsx:2796",
+        "frontend/src/context/TerminalChatContext.tsx:30",
+        "frontend/src/context/TerminalChatContext.tsx:3445",
+        "frontend/src/context/TerminalChatContext.tsx:346",
+        "frontend/src/context/TerminalChatContext.tsx:3810",
+        "frontend/src/context/TerminalChatContext.tsx:857",
         "frontend/src/hooks/useRuntimePreviewHydration.ts:16",
         "frontend/src/lib/projectResume.ts:8",
         "frontend/src/lib/repoContext.ts:1",
@@ -146450,7 +146481,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:a3dcc262a60a4d56416d",
+      "id": "finding:b1773b6e96adf024e232",
       "sourcePath": "frontend/src/components/terminal/SwarmMessageLog.tsx",
       "line": 405,
       "kind": "PLACEHOLDER",
@@ -146610,9 +146641,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:bda2825e1fd5c1cb1581",
+      "id": "finding:e5cf486914be8a347291",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 540,
+      "line": 541,
       "kind": "TODO",
       "reachable": true,
       "state": "PARTIAL",
@@ -146620,9 +146651,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:932f2d2c35c8269538d5",
+      "id": "finding:1f49aa56ca101a452049",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 798,
+      "line": 801,
       "kind": "TODO",
       "reachable": true,
       "state": "PARTIAL",
@@ -146630,9 +146661,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:f98c26b3092273592a92",
+      "id": "finding:f5a68ec29a49ae96c50c",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 1996,
+      "line": 1999,
       "kind": "TODO",
       "reachable": true,
       "state": "PARTIAL",
@@ -146640,9 +146671,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:192423afcc1f36364b62",
+      "id": "finding:939e3f341d21eea6ee54",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 1998,
+      "line": 2001,
       "kind": "TODO",
       "reachable": true,
       "state": "PARTIAL",
@@ -146650,9 +146681,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:960e67ef0831f7d4c681",
+      "id": "finding:79f664a673a1cc443e0e",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 1998,
+      "line": 2001,
       "kind": "TODO",
       "reachable": true,
       "state": "PARTIAL",
@@ -146660,9 +146691,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:b498ff6a7f9fdc9a1c21",
+      "id": "finding:718b972504c4935dc7c5",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 3326,
+      "line": 3335,
       "kind": "TODO",
       "reachable": true,
       "state": "PARTIAL",
@@ -146760,7 +146791,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:c38c86db32709d20e00d",
+      "id": "finding:fc63927875ca621f7adb",
       "sourcePath": "frontend/src/lib/formatAiMarkdown.tsx",
       "line": 1293,
       "kind": "PLACEHOLDER",
@@ -146770,7 +146801,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:433b26dcfa1df105b900",
+      "id": "finding:5697f652432fa8993b63",
       "sourcePath": "frontend/src/lib/formatAiMarkdown.tsx",
       "line": 1294,
       "kind": "PLACEHOLDER",
@@ -147669,86 +147700,86 @@
       "reachable": false
     },
     {
-      "id": "frontend-call:9d1f4992ae83ca3e514f",
+      "id": "frontend-call:b2f7e496dfe17e032add",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 851,
+      "line": 866,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:b7f3bb539a7dc64c6a7d",
+      "id": "frontend-call:511ccfb9ce781822dd7f",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 854,
+      "line": 869,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:fd843773b6204d391e44",
+      "id": "frontend-call:96775cd821410543594f",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1625,
+      "line": 1640,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:5872f34f9724d1a5e7b5",
+      "id": "frontend-call:e7063f2dee5ef8e9ec90",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1626,
+      "line": 1641,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:c20ef1c95a5ad98a9f76",
+      "id": "frontend-call:e66b530cf8f5f4764ae2",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1631,
+      "line": 1646,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:9ed30bea45e1fd795439",
+      "id": "frontend-call:5dbb27e99e358b829d61",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1632,
+      "line": 1647,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:8baf148eb62b8fc49ef3",
+      "id": "frontend-call:59ed681e27bdf2f99abc",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1638,
+      "line": 1653,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:bcc5ce6d2f7140d1dc1b",
+      "id": "frontend-call:0d2b6ed61eab8302a5ba",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1643,
+      "line": 1658,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:a3f0dcbfddfc8f739bf0",
+      "id": "frontend-call:bb99648727e9a47dea28",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1700,
+      "line": 1715,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:7bac3cb842814b632794",
+      "id": "frontend-call:651efe2383118daecc49",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1701,
+      "line": 1716,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:f4c16412e1529afef675",
+      "id": "frontend-call:01589088d62682f8481b",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1708,
+      "line": 1723,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:12f4bf501637f70e45c6",
+      "id": "frontend-call:9afc30abbc0747905cc7",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1722,
+      "line": 1737,
       "callee": "fetch",
       "reachable": false
     },
@@ -150098,247 +150129,254 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:cf50afe89de2f2b7b0ec",
+      "id": "frontend-call:6944f53cc9992dfecee1",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 751,
+      "line": 754,
       "callee": "api.dashboard.summary().then().catch",
       "reachable": true
     },
     {
-      "id": "frontend-call:dff3d3080481635ad118",
+      "id": "frontend-call:b6d7d942df5e1e8bfe5b",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 751,
+      "line": 754,
       "callee": "api.dashboard.summary().then",
       "reachable": true
     },
     {
-      "id": "frontend-call:adecf9b78c236749798f",
+      "id": "frontend-call:99cb7abf60f1506c19dd",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 751,
+      "line": 754,
       "callee": "api.dashboard.summary",
       "reachable": true
     },
     {
-      "id": "frontend-call:96dd6d53bda0bef2113e",
+      "id": "frontend-call:285709c3a2dfb200a51f",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 1112,
+      "line": 1115,
       "callee": "api.github.status().then",
       "reachable": true
     },
     {
-      "id": "frontend-call:03abb581468977920e70",
+      "id": "frontend-call:9317fed4e3704433de09",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 1112,
+      "line": 1115,
       "callee": "api.github.status",
       "reachable": true
     },
     {
-      "id": "frontend-call:79c0e4350e1f80d47d00",
+      "id": "frontend-call:1e61c30906283a52f962",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 1131,
+      "line": 1134,
       "callee": "api.github.status().then",
       "reachable": true
     },
     {
-      "id": "frontend-call:0c5d354ceb67e4dcbc8d",
+      "id": "frontend-call:8c75eece448c3973de8c",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 1131,
+      "line": 1134,
       "callee": "api.github.status",
       "reachable": true
     },
     {
-      "id": "frontend-call:ad468eebf2349300dfca",
+      "id": "frontend-call:719700123411791d0bc7",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 1172,
+      "line": 1175,
       "callee": "api.vercel.status().then().catch",
       "reachable": true
     },
     {
-      "id": "frontend-call:637b0966748b02c7dd35",
+      "id": "frontend-call:b4769ab6f0df66242e6d",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 1172,
+      "line": 1175,
       "callee": "api.vercel.status().then",
       "reachable": true
     },
     {
-      "id": "frontend-call:9a2fa57c7d9d673ecd28",
+      "id": "frontend-call:3b98e8c674fa9f7b3cab",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 1172,
+      "line": 1175,
       "callee": "api.vercel.status",
       "reachable": true
     },
     {
-      "id": "frontend-call:a1da1f912b1cedcc25f7",
+      "id": "frontend-call:43b67e734459dde97429",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 1185,
+      "line": 1188,
       "callee": "api.github.status().then().catch",
       "reachable": true
     },
     {
-      "id": "frontend-call:38d63151ce0f1543c281",
+      "id": "frontend-call:4817925250b7620831c5",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 1185,
+      "line": 1188,
       "callee": "api.github.status().then",
       "reachable": true
     },
     {
-      "id": "frontend-call:973aa8d54aa81b27410a",
+      "id": "frontend-call:20f996d7b5114f587bb0",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 1185,
+      "line": 1188,
       "callee": "api.github.status",
       "reachable": true
     },
     {
-      "id": "frontend-call:2d8d88554624249f748a",
+      "id": "frontend-call:19cc64d6f10b7d70ea6e",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 1766,
+      "line": 1769,
       "callee": "api.swarm.cancelRun().then().catch",
       "reachable": true
     },
     {
-      "id": "frontend-call:b42202db2fefc203aaef",
+      "id": "frontend-call:df803910c76730881765",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 1766,
+      "line": 1769,
       "callee": "api.swarm.cancelRun().then",
       "reachable": true
     },
     {
-      "id": "frontend-call:6b9d0ef646acba16a7ee",
+      "id": "frontend-call:cc1305628a7ec401c018",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 1766,
+      "line": 1769,
       "callee": "api.swarm.cancelRun",
       "reachable": true
     },
     {
-      "id": "frontend-call:f3267d93a4269108215d",
+      "id": "frontend-call:d8d6a75c33a2778ac46d",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 2049,
+      "line": 2052,
       "callee": "api.billing.setPacing",
       "reachable": true
     },
     {
-      "id": "frontend-call:6ea91430a760847c0cbe",
+      "id": "frontend-call:2c271782c2233eac97f6",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 2871,
+      "line": 2874,
       "callee": "api.phase1.plan",
       "reachable": true
     },
     {
-      "id": "frontend-call:872c235cd19e6d24cc1b",
+      "id": "frontend-call:d72055915bc1d8339089",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 2926,
+      "line": 2929,
       "callee": "api.github.status().then().catch",
       "reachable": true
     },
     {
-      "id": "frontend-call:ebfbbf65efd77bf66751",
+      "id": "frontend-call:b49f02c299bf5006b242",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 2926,
+      "line": 2929,
       "callee": "api.github.status().then",
       "reachable": true
     },
     {
-      "id": "frontend-call:ee565c2ea5bfbcd1ecfb",
+      "id": "frontend-call:15f358ebf0560507341e",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 2926,
+      "line": 2929,
       "callee": "api.github.status",
       "reachable": true
     },
     {
-      "id": "frontend-call:fd64dfde218b4750174b",
+      "id": "frontend-call:864987bee0cbbfe457e4",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 3005,
+      "line": 3013,
+      "callee": "api.phase1.chat().finally",
+      "reachable": true
+    },
+    {
+      "id": "frontend-call:321ae93a2b98b579f76f",
+      "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
+      "line": 3013,
       "callee": "api.phase1.chat",
       "reachable": true
     },
     {
-      "id": "frontend-call:8be790a5d63bd87afdde",
+      "id": "frontend-call:6ac3c1a2261358685ce4",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 3352,
+      "line": 3361,
       "callee": "api.github.status().then",
       "reachable": true
     },
     {
-      "id": "frontend-call:dccac6ce4dc376015319",
+      "id": "frontend-call:5c0c4ed9d7385b0b942e",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 3352,
+      "line": 3361,
       "callee": "api.github.status",
       "reachable": true
     },
     {
-      "id": "frontend-call:1ad82d3751b8b8631c6f",
+      "id": "frontend-call:cc282297b260a62b388b",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 3963,
+      "line": 3972,
       "callee": "api.swarm.saveConversation().catch",
       "reachable": true
     },
     {
-      "id": "frontend-call:8359fe33065c68a02743",
+      "id": "frontend-call:e1dcfc6a17cb5d22e04b",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 3963,
+      "line": 3972,
       "callee": "api.swarm.saveConversation",
       "reachable": true
     },
     {
-      "id": "frontend-call:d463e4bc00f5b259dae2",
+      "id": "frontend-call:f28edcb0cb960f5d5e9c",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 4049,
+      "line": 4058,
       "callee": "api.swarm.saveConversation().catch",
       "reachable": true
     },
     {
-      "id": "frontend-call:c4a2c9662ea7ff1dc5ce",
+      "id": "frontend-call:d2d79581f265cffaa0d2",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 4049,
+      "line": 4058,
       "callee": "api.swarm.saveConversation",
       "reachable": true
     },
     {
-      "id": "frontend-call:dca6f5451ef2ebbe8978",
+      "id": "frontend-call:3da934e4d6f765c84982",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 4070,
+      "line": 4079,
       "callee": "api.github.updateSettings().catch",
       "reachable": true
     },
     {
-      "id": "frontend-call:33f4995df4c2b35cdfac",
+      "id": "frontend-call:bc8fce0bfab1c6e15623",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 4070,
+      "line": 4079,
       "callee": "api.github.updateSettings",
       "reachable": true
     },
     {
-      "id": "frontend-call:0fd8a5a0990702ab89e4",
+      "id": "frontend-call:090c9137145b2738a8be",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 4072,
+      "line": 4081,
       "callee": "api.projects.create().then().catch",
       "reachable": true
     },
     {
-      "id": "frontend-call:13862f611c6af37a0202",
+      "id": "frontend-call:7606d6add49ceea21b59",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 4072,
+      "line": 4081,
       "callee": "api.projects.create().then",
       "reachable": true
     },
     {
-      "id": "frontend-call:aa5dd7e39f77681ee5af",
+      "id": "frontend-call:0c8b43b0e11d5644f1d4",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 4072,
+      "line": 4081,
       "callee": "api.projects.create",
       "reachable": true
     },
     {
-      "id": "frontend-call:0846df0dd8f67df3d2e3",
+      "id": "frontend-call:0441ceff5bd3d04c0c73",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 4792,
+      "line": 4802,
       "callee": "api.github.status().then",
       "reachable": true
     },
     {
-      "id": "frontend-call:5afec86513c0e05a45ed",
+      "id": "frontend-call:b84e283d06815562a33e",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 4792,
+      "line": 4802,
       "callee": "api.github.status",
       "reachable": true
     },
@@ -150511,14 +150549,14 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:253273b8bf6e0ddedc9c",
+      "id": "frontend-call:e0554d0a94ade0e09865",
       "sourcePath": "frontend/src/lib/formatAiMarkdown.tsx",
       "line": 963,
       "callee": "api.phase1.plan",
       "reachable": true
     },
     {
-      "id": "frontend-call:866d6c0a59074ce5df71",
+      "id": "frontend-call:3e0e602b6ffb1f6e2aa4",
       "sourcePath": "frontend/src/lib/formatAiMarkdown.tsx",
       "line": 999,
       "callee": "api.phase1.chat",
@@ -151033,7 +151071,7 @@
     {
       "id": "test-suite:77b6115578d9250ffa19",
       "sourcePath": "backend/src/ai/black-hole/researchRouter.test.ts",
-      "declaredTests": 7,
+      "declaredTests": 8,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -151558,7 +151596,7 @@
     {
       "id": "test-suite:dd88a5c540273ff6039e",
       "sourcePath": "backend/src/ai/prompts.test.ts",
-      "declaredTests": 7,
+      "declaredTests": 8,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -157942,7 +157980,7 @@
     {
       "id": "test-suite:cd9d2501a4f9b3e7c770",
       "sourcePath": "frontend/src/lib/terminal/activityTimeline.test.ts",
-      "declaredTests": 11,
+      "declaredTests": 12,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -158320,7 +158358,7 @@
     {
       "id": "test-suite:1b04327f877eb86409b4",
       "sourcePath": "frontend/src/lib/xrogaCitations.test.ts",
-      "declaredTests": 7,
+      "declaredTests": 10,
       "skipLocations": [],
       "focusLocations": []
     },
