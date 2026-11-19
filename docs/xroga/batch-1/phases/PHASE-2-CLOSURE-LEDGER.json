@@ -6892,7 +6892,7 @@
         {
           "path": "backend/src/ai/pipeline.ts",
           "marker": "loadSessionHistory(opts.userId",
-          "sourceSha256": "3eb2040d95ed469292f430d5e7b47f5a7d8bf1be2bf1a7b7fc617817141d1b56",
+          "sourceSha256": "fe09c5a83e52bc3c1659d7146f40a6bafa6a4d399d6f581d30039bb161642579",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -7019,7 +7019,7 @@
         {
           "path": "backend/src/ai/pipeline.ts",
           "marker": "const saved = await setProjectMemoryDurable({",
-          "sourceSha256": "3eb2040d95ed469292f430d5e7b47f5a7d8bf1be2bf1a7b7fc617817141d1b56",
+          "sourceSha256": "fe09c5a83e52bc3c1659d7146f40a6bafa6a4d399d6f581d30039bb161642579",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -8555,7 +8555,7 @@
         "relatedSourceBindings": [
           {
             "path": "backend/src/ai/pipeline.ts",
-            "sha256": "3eb2040d95ed469292f430d5e7b47f5a7d8bf1be2bf1a7b7fc617817141d1b56",
+            "sha256": "fe09c5a83e52bc3c1659d7146f40a6bafa6a4d399d6f581d30039bb161642579",
             "plainReasoningSourceBinding": {
               "previousSha256": "5c37c7d2bbc96fc8c4ddf1f294c9b1f2bde5385048847400a5bcbd69a3582e06",
               "finding": "Verified the full runBuildPipeline function and subsequent source are byte-identical. The chat change retains default model reasoning and uses the existing native output reservation. Worker admission evidence and acceptance state are unchanged."
@@ -8624,6 +8624,11 @@
               "previousSha256": "814b1ac7189f74142e4441796d200f11ee5f0f24eabc7f42face59d75a414add",
               "finding": "Ordinary text now relies on the existing just-in-time quota check. Attachment extraction, Search and approved continuations, repository evidence and Sonnet review retain the early gate. The complete callBuilderStream and runBuildPipeline functions and every runWebIntelligence request expression match the audited base. The current Search confirmation wording does not affect authority.",
               "liveAcceptance": false
+            },
+            "workspacePublicSearchPosition": {
+              "baseline": "da334bea3f2170d52ab6a97202edb36eecea07bf",
+              "candidate": "debcd15f9bc92c87e76ca288ac84b37eac6287f1",
+              "scope": "Source binding only. Prior proof, authority and acceptance remain historical."
             }
           },
           {

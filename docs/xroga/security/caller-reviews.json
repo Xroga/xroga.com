@@ -886,11 +886,11 @@
     },
     {
       "path": "backend/src/ai/parallelApproval.ts",
-      "sourceSha256": "3ae113999caad00037882cbe3f1cc72a7536a13b53e74403bf849dbda77cfeca",
+      "sourceSha256": "7a203849ef6dc442e817eff7ebced5772c349b4f4151daa3d4dfe9de517d6aa6",
       "callIds": [
-        "18bd459313ae6dbebaab",
-        "14acbd3141fc7fc1aedc",
-        "6b064445c855504350b1"
+        "5aa7f94412fbfc5da325",
+        "7292ab3be3261281c42f",
+        "05bf100f6c7e0c6065a1"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "The original context comes only from the canonical native permit. Exact user_id predicates scope the executing grant and current run/worker generation. Grant, owner, immutable digest, expiry and effect receipt are rechecked before and after provider waits and immediately after DNS before any public connection.",
@@ -927,6 +927,16 @@
           "8c17e0596e9108831a35"
         ],
         "verification": "Reviewed call chains are byte-identical to the reviewed main version. The enclosing function changed, and the change was reviewed by diff: Manual diff review: additive research-answer chain after the existing permit/owner/digest check(); check() still runs before saveResearchResult and before the model answer; retrieval-only guard added; the one new scanner candidate is Uint8Array.from(page.bytes), a native byte conversion. The reviewed calls and their predicates are unchanged."
+      },
+      "workspacePublicSearchRebinding": {
+        "baseline": "da334bea3f2170d52ab6a97202edb36eecea07bf",
+        "candidate": "debcd15f9bc92c87e76ca288ac84b37eac6287f1",
+        "previousIds": [
+          "18bd459313ae6dbebaab",
+          "14acbd3141fc7fc1aedc",
+          "6b064445c855504350b1"
+        ],
+        "scope": "Exact existing call chains and owner predicates only. The prior review grants no automatic public Search authority."
       }
     },
     {
@@ -1079,9 +1089,9 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "3eb2040d95ed469292f430d5e7b47f5a7d8bf1be2bf1a7b7fc617817141d1b56",
+      "sourceSha256": "fe09c5a83e52bc3c1659d7146f40a6bafa6a4d399d6f581d30039bb161642579",
       "callIds": [
-        "eb8532242b9c169bae0b"
+        "d18db79a25a63281ef6b"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -2631,13 +2641,21 @@
         ],
         "finding": "Ordinary text now relies on the existing just-in-time quota check. Attachment extraction, Search and approved continuations, repository evidence and Sonnet review retain the early gate. The complete callBuilderStream and runBuildPipeline functions and every runWebIntelligence request expression match the audited base. The current Search confirmation wording does not affect authority.",
         "liveAcceptance": false
+      },
+      "workspacePublicSearchRebinding": {
+        "baseline": "da334bea3f2170d52ab6a97202edb36eecea07bf",
+        "candidate": "debcd15f9bc92c87e76ca288ac84b37eac6287f1",
+        "previousIds": [
+          "eb8532242b9c169bae0b"
+        ],
+        "scope": "Exact existing call chains and owner predicates only. The prior review grants no automatic public Search authority."
       }
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "3eb2040d95ed469292f430d5e7b47f5a7d8bf1be2bf1a7b7fc617817141d1b56",
+      "sourceSha256": "fe09c5a83e52bc3c1659d7146f40a6bafa6a4d399d6f581d30039bb161642579",
       "callIds": [
-        "9372bc4c2d95f5c088d0"
+        "7e65fb922445e4589ef3"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -4187,6 +4205,14 @@
         ],
         "finding": "Ordinary text now relies on the existing just-in-time quota check. Attachment extraction, Search and approved continuations, repository evidence and Sonnet review retain the early gate. The complete callBuilderStream and runBuildPipeline functions and every runWebIntelligence request expression match the audited base. The current Search confirmation wording does not affect authority.",
         "liveAcceptance": false
+      },
+      "workspacePublicSearchRebinding": {
+        "baseline": "da334bea3f2170d52ab6a97202edb36eecea07bf",
+        "candidate": "debcd15f9bc92c87e76ca288ac84b37eac6287f1",
+        "previousIds": [
+          "9372bc4c2d95f5c088d0"
+        ],
+        "scope": "Exact existing call chains and owner predicates only. The prior review grants no automatic public Search authority."
       }
     },
     {
@@ -15767,7 +15793,7 @@
     },
     {
       "path": "backend/src/routes/phase1.ts",
-      "sourceSha256": "768d23551b96e4e803da3767e3b4cb99b6d28cb2d97f84d9a6c8c300fbdfc845",
+      "sourceSha256": "8e116ae5296634e5a493aea0cee9434255186deaced4ce27754f92d05e760f43",
       "callIds": [
         "006420f2256a9d86cc5a"
       ],
@@ -15914,6 +15940,14 @@
           "fb2bffffc91cc072976a"
         ],
         "verification": "Each reviewed call chain and its whole enclosing function are byte-identical to the reviewed main version; only code outside the reviewed calls changed."
+      },
+      "workspacePublicSearchRebinding": {
+        "baseline": "da334bea3f2170d52ab6a97202edb36eecea07bf",
+        "candidate": "debcd15f9bc92c87e76ca288ac84b37eac6287f1",
+        "previousIds": [
+          "006420f2256a9d86cc5a"
+        ],
+        "scope": "Exact existing call chains and owner predicates only. The prior review grants no automatic public Search authority."
       }
     },
     {
@@ -28554,9 +28588,9 @@
     },
     {
       "path": "frontend/src/lib/formatAiMarkdown.tsx",
-      "sourceSha256": "e8e2db2ef4e7f0a6bec271a183568affdc481d0c8bfb037475c38613abc9366f",
+      "sourceSha256": "c775072c94c0ad87aaa2974cad70d0d331d85f396749f20b7cca4c2ac93a7716",
       "callIds": [
-        "e75c4ea163671f8df19f"
+        "19924dd44f4d9f67f004"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in decodeBase64UrlUtf8, with no database or Storage client receiver.",
@@ -28630,6 +28664,14 @@
         ],
         "finding": "Only local approval-card labels, destination display and busy state changed. The complete decodeBase64UrlUtf8 function and confirmation load, confirm and cancel callbacks match the audited base.",
         "liveAcceptance": false
+      },
+      "workspacePublicSearchRebinding": {
+        "baseline": "da334bea3f2170d52ab6a97202edb36eecea07bf",
+        "candidate": "debcd15f9bc92c87e76ca288ac84b37eac6287f1",
+        "previousIds": [
+          "e75c4ea163671f8df19f"
+        ],
+        "scope": "Exact existing call chains and owner predicates only. The prior review grants no automatic public Search authority."
       }
     },
     {
@@ -29275,9 +29317,9 @@
     },
     {
       "path": "backend/src/ai/parallelApproval.ts",
-      "sourceSha256": "3ae113999caad00037882cbe3f1cc72a7536a13b53e74403bf849dbda77cfeca",
+      "sourceSha256": "7a203849ef6dc442e817eff7ebced5772c349b4f4151daa3d4dfe9de517d6aa6",
       "callIds": [
-        "2560cf2908b41e1b590f"
+        "379d330fc0e972f494da"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in executeParallelNativeAction. This specific call uses the built-in Uint8Array.from conversion of already fetched public document bytes for the PDF parser, not the adjacent database, object storage or provider transport.",
@@ -29292,6 +29334,14 @@
         "prNumber": 922,
         "baseRef": "origin/main",
         "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374"
+      },
+      "workspacePublicSearchRebinding": {
+        "baseline": "da334bea3f2170d52ab6a97202edb36eecea07bf",
+        "candidate": "debcd15f9bc92c87e76ca288ac84b37eac6287f1",
+        "previousIds": [
+          "2560cf2908b41e1b590f"
+        ],
+        "scope": "Exact existing call chains and owner predicates only. The prior review grants no automatic public Search authority."
       }
     },
     {

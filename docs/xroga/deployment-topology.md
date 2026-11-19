@@ -1,6 +1,6 @@
 # Deployment topology, source and dated evidence
 
-Source SHA: `076baddc41aa7ae5453cfebced18b20975ef3d0e`; exact current source/config hashes are in the JSON. Uncommitted source is not an accepted release.
+Source SHA: `debcd15f9bc92c87e76ca288ac84b37eac6287f1`; exact current source/config hashes are in the JSON. Uncommitted source is not an accepted release.
 
 | Dependency | Provider | State | Host/resource | Verification |
 | --- | --- | --- | --- | --- |
@@ -207,7 +207,6 @@ Source SHA: `076baddc41aa7ae5453cfebced18b20975ef3d0e`; exact current source/con
 | endpoint-www-youtube-com | Source-defined endpoint www.youtube.com | CONFIGURED_BUT_UNVERIFIED | www.youtube.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-x-com | Source-defined endpoint x.com | CONFIGURED_BUT_UNVERIFIED | x.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-xroga-api-fly-dev | Source-defined endpoint xroga-api.fly.dev | CONFIGURED_BUT_UNVERIFIED | xroga-api.fly.dev | NOT_INDEPENDENTLY_VERIFIED |
-| endpoint-xroga-local | Source-defined endpoint xroga.local | LOCAL_ONLY | xroga.local | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-xrogaaicom-vercel-app | Source-defined endpoint xrogaaicom.vercel.app | CONFIGURED_BUT_UNVERIFIED | xrogaaicom.vercel.app | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-your-website-com | Source-defined endpoint your-website.com | CONFIGURED_BUT_UNVERIFIED | your-website.com | NOT_INDEPENDENTLY_VERIFIED |
 | runtime-controls-and-conditional-aliases | Existing operator/system configuration | CONFIGURED_BUT_UNVERIFIED | Unknown/not applicable | NOT_INDEPENDENTLY_VERIFIED |
@@ -245,4 +244,4 @@ Historical findings below remain as review obligations, not fresh observations. 
 - P1 RELEASE_CONTROLS_UNENFORCED: Observed main and Production/Preview lack platform protection/restrictions; mandatory user release gates still apply. Owner command: 010; RECORDED_PRE_EXISTING_RISK_NOT_WAIVED.
 - P2 HOST_TOOLCHAIN_DRIFT: Vercel project configured Node 24.x; canonical CI/API image is 22.21.1; Fly host test workflow has no explicit setup-node. Owner command: 006; RECORDED_PRE_EXISTING_RISK_NOT_WAIVED.
 
-1176 memory/filesystem candidates require semantic review. Static collections and scratch writes are not blanket durability defects or certificates. Source-defined optional hosts do not establish runtime reachability. No secrets, production rows, IAM, DNS, deployment or provider operation were changed by this inventory generation.
+1177 memory/filesystem candidates require semantic review. Static collections and scratch writes are not blanket durability defects or certificates. Source-defined optional hosts do not establish runtime reachability. No secrets, production rows, IAM, DNS, deployment or provider operation were changed by this inventory generation.

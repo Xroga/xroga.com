@@ -203,7 +203,6 @@ flowchart LR
   endpoint_www_youtube_com["Source-defined endpoint www.youtube.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_x_com["Source-defined endpoint x.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_xroga_api_fly_dev["Source-defined endpoint xroga-api.fly.dev - CONFIGURED_BUT_UNVERIFIED"]
-  endpoint_xroga_local["Source-defined endpoint xroga.local - LOCAL_ONLY"]
   endpoint_xrogaaicom_vercel_app["Source-defined endpoint xrogaaicom.vercel.app - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_your_website_com["Source-defined endpoint your-website.com - CONFIGURED_BUT_UNVERIFIED"]
   runtime_controls_and_conditional_aliases["Existing operator/system configuration - CONFIGURED_BUT_UNVERIFIED"]
@@ -402,6 +401,5 @@ flowchart LR
   api -. "source host/reference; unverified" .-> endpoint_www_youtube_com
   frontend -. "source host/reference; unverified" .-> endpoint_x_com
   api -. "source host/reference; unverified" .-> endpoint_xroga_api_fly_dev
-  frontend -. "source host/reference; unverified" .-> endpoint_xroga_local
   api -. "source host/reference; unverified" .-> endpoint_xrogaaicom_vercel_app
   frontend -. "source host/reference; unverified" .-> endpoint_your_website_com

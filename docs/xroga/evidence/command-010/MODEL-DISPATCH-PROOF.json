@@ -9,7 +9,7 @@
     {
       "path": "backend/src/ai/pipeline.ts",
       "historicalSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
-      "currentSha256": "3eb2040d95ed469292f430d5e7b47f5a7d8bf1be2bf1a7b7fc617817141d1b56",
+      "currentSha256": "fe09c5a83e52bc3c1659d7146f40a6bafa6a4d399d6f581d30039bb161642579",
       "genericSdkPreviousCurrentBinding": {
         "reference": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
         "sha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
@@ -24,8 +24,8 @@
         "944a58bb15dca85b3ddd"
       ],
       "afterIds": [
-        "eb8532242b9c169bae0b",
-        "9372bc4c2d95f5c088d0"
+        "d18db79a25a63281ef6b",
+        "7e65fb922445e4589ef3"
       ],
       "unchangedNearestBlockSha256": [
         "121ecd46287fd271b61cc97e84d2b17dce2570e8b82f7a6bdf77a6e4b7133436",
@@ -4314,12 +4314,23 @@
         ],
         "finding": "Ordinary text now relies on the existing just-in-time quota check. Attachment extraction, Search and approved continuations, repository evidence and Sonnet review retain the early gate. The complete callBuilderStream and runBuildPipeline functions and every runWebIntelligence request expression match the audited base. The current Search confirmation wording does not affect authority.",
         "liveAcceptance": false
+      },
+      "workspaceAutomaticSearch": {
+        "baseline": "da334bea3f2170d52ab6a97202edb36eecea07bf",
+        "candidate": "debcd15f9bc92c87e76ca288ac84b37eac6287f1",
+        "previousSha256": "3eb2040d95ed469292f430d5e7b47f5a7d8bf1be2bf1a7b7fc617817141d1b56",
+        "previousCallerIds": [
+          "eb8532242b9c169bae0b",
+          "9372bc4c2d95f5c088d0"
+        ],
+        "evidencePath": "docs/xroga/evidence/command-010/WORKSPACE-AUTOMATIC-PUBLIC-SEARCH-20261119.json",
+        "liveAcceptance": false
       }
     },
     {
       "path": "backend/src/routes/phase1.ts",
       "historicalSha256": "ff58f5c490ec150132c684e66ff60cfb2e63196cfc7144ce6938a8705f9b196b",
-      "currentSha256": "768d23551b96e4e803da3767e3b4cb99b6d28cb2d97f84d9a6c8c300fbdfc845",
+      "currentSha256": "8e116ae5296634e5a493aea0cee9434255186deaced4ce27754f92d05e760f43",
       "businessModelContinuationBinding": {
         "reference": "b183079ec8a00cb4d7a29a95e8cdfb517da81acb",
         "previousCurrentSha256": "7ad7b1f7dde453a4065e15ba260998fe5841c6992724d03ee299b71c8380c0f5",
@@ -4540,6 +4551,16 @@
           "78696e27dd5c1ca37c3a"
         ],
         "basis": "Current hash and the current review ids were re-bound after the strict call-and-function comparison in REBIND-REPORT.json. The nearest-block hashes and every historical record are unchanged."
+      },
+      "workspaceAutomaticSearch": {
+        "baseline": "da334bea3f2170d52ab6a97202edb36eecea07bf",
+        "candidate": "debcd15f9bc92c87e76ca288ac84b37eac6287f1",
+        "previousSha256": "768d23551b96e4e803da3767e3b4cb99b6d28cb2d97f84d9a6c8c300fbdfc845",
+        "previousCallerIds": [
+          "006420f2256a9d86cc5a"
+        ],
+        "evidencePath": "docs/xroga/evidence/command-010/WORKSPACE-AUTOMATIC-PUBLIC-SEARCH-20261119.json",
+        "liveAcceptance": false
       }
     },
     {

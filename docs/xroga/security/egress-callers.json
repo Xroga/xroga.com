@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "8ca80372c22be3d7792ac171b6ecde9dd08782fc15801916ee907397379a9603",
+  "sourceTreeDigest": "824575a0bd36992c005b56a637f924a78952fd809299c865fdfe0703537188c2",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -197,7 +197,7 @@
     {
       "id": "90c62dd04b83e45e1c68",
       "file": "backend/src/ai/parallelApproval.ts",
-      "line": 108,
+      "line": 146,
       "entryPoint": "executeParallelNativeAction",
       "transport": "boundedPublicGet",
       "callee": "boundedPublicGet",
@@ -233,8 +233,8 @@
       "callee": "fetch",
       "callSha256": "8a4cf1df25bdb5d59e6f01020cc5be67cec679c8815a93cc5b5b594cc7a7fe28",
       "destination": "DYNAMIC_OR_SDK_INTERNAL",
-      "trust": "FIXED_PARALLEL_API_WITH_PRODUCER_ATTESTED_EXACT_PRIVATE_EGRESS_APPROVAL",
-      "tenantAuthority": "ORIGINAL_ACTOR_PROJECT_RUN_GENERATION_CURRENT_ONE_USE_CLAIM_SECRET_FLOOR_AND_CANONICAL_BUDGET_SETTLEMENT_NO_DENIAL_FALLBACK",
+      "trust": "FIXED_OFFICIAL_DEEPSEEK_SEARCH_WITH_BOUND_PUBLIC_READ_OR_EXACT_PRIVATE_SEARCH_APPROVAL",
+      "tenantAuthority": "TENANT_ACTOR_AND_ONE_USE_REQUEST_ADMISSION_PUBLIC_READ_RECEIPT_OR_LEGACY_EXACT_AUTHORITY_CANONICAL_BUDGET_SETTLEMENT",
       "currentProtection": "NOT_CERTIFIED",
       "risk": "HIGH_RISK_PENDING_REVIEW",
       "disposition": "VERIFIED_GUARD",
@@ -251,6 +251,11 @@
           "reboundOnBranch": {
             "previousSha256": "40a9c47c0f61e5894bcc787e72738b44e1ec1b23dcdf652b44e6708b8ff706f2"
           }
+        },
+        {
+          "path": "docs/xroga/evidence/command-010/WORKSPACE-AUTOMATIC-PUBLIC-SEARCH-20261119.json",
+          "marker": "EXACT_SOURCE_AUTOMATIC_PUBLIC_READ_LOCAL_CONTROLLED_EVIDENCE",
+          "sha256": "db737bc630e4b76dc80e212fcf0b92d4ac1f089c687c19395e84f1391b2be939"
         }
       ]
     },

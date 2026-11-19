@@ -251,12 +251,19 @@
     },
     {
       "path": "backend/src/ai/black-hole/webIntelligence.ts",
-      "sha256": "aee3096360ef1c20f437acf8e5e6354c4cc17137f00bb97aadbd3c2357f04c24",
+      "sha256": "bacebb92d3c69637716c4fb8c9af2e96f3e154ae8d717be9a19d02a267db7bdf",
       "beforeCurrentMetadataReconciliation": {
         "path": "backend/src/ai/black-hole/webIntelligence.ts",
         "sha256": "f7ee10618d7993cc8e827b7f77d23eec06e663232d26a44c598a48825fbb6b7d"
       },
-      "previousSha256": "caa40dd466ffccf48080888702e0de482301dbfcec9ecb9d13ffe82536e19c8e"
+      "previousSha256": "caa40dd466ffccf48080888702e0de482301dbfcec9ecb9d13ffe82536e19c8e",
+      "workspaceAutomaticSearch": {
+        "baseline": "da334bea3f2170d52ab6a97202edb36eecea07bf",
+        "candidate": "debcd15f9bc92c87e76ca288ac84b37eac6287f1",
+        "previousSha256": "aee3096360ef1c20f437acf8e5e6354c4cc17137f00bb97aadbd3c2357f04c24",
+        "evidencePath": "docs/xroga/evidence/command-010/WORKSPACE-AUTOMATIC-PUBLIC-SEARCH-20261119.json",
+        "liveAcceptance": false
+      }
     },
     {
       "path": "backend/src/ai/converter.ts",
@@ -297,7 +304,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "3eb2040d95ed469292f430d5e7b47f5a7d8bf1be2bf1a7b7fc617817141d1b56",
+      "sha256": "fe09c5a83e52bc3c1659d7146f40a6bafa6a4d399d6f581d30039bb161642579",
       "previousGenericSdkBinding": {
         "sha256": "e5b3b4a3dc538e708fa8c005a8da6584db01b3dd425833373d59decbd2bfcb93",
         "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
@@ -608,6 +615,13 @@
         "candidateSource": "eea565cc2377cd5d66fcf06cc6bd4da83cfc5681",
         "previousSha256": "814b1ac7189f74142e4441796d200f11ee5f0f24eabc7f42face59d75a414add",
         "finding": "Ordinary text now relies on the existing just-in-time quota check. Attachment extraction, Search and approved continuations, repository evidence and Sonnet review retain the early gate. The complete callBuilderStream and runBuildPipeline functions and every runWebIntelligence request expression match the audited base. The current Search confirmation wording does not affect authority.",
+        "liveAcceptance": false
+      },
+      "workspaceAutomaticSearch": {
+        "baseline": "da334bea3f2170d52ab6a97202edb36eecea07bf",
+        "candidate": "debcd15f9bc92c87e76ca288ac84b37eac6287f1",
+        "previousSha256": "3eb2040d95ed469292f430d5e7b47f5a7d8bf1be2bf1a7b7fc617817141d1b56",
+        "evidencePath": "docs/xroga/evidence/command-010/WORKSPACE-AUTOMATIC-PUBLIC-SEARCH-20261119.json",
         "liveAcceptance": false
       }
     },
