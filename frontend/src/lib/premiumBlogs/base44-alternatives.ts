@@ -185,6 +185,46 @@ export const premiumBase44Alternatives: GuidePage = {
       ]
     },
     {
+      "heading": "Evaluate backend portability separately from frontend export",
+      "paragraphs": [
+        "A modern app can have three independent layers: the user interface, the backend behavior and the persistent data. Exporting React components gives you a meaningful piece of the first layer, but it does not guarantee you have replaced the service that stores records and authenticates users. When evaluating Base44 or another platform, trace an actual button click from the browser through its API request to the data store.",
+        "Ask for a repeatable demonstration: clone the exported repository, install dependencies in a clean environment, run the app, and perform a create/read/update action without using privileged demo credentials. If the action still calls the original platform's backend, the code is portable for development but the operational dependency remains. That is not necessarily a defect; it is a material ownership detail.",
+        "For a planned migration, define the destination backend before changing the frontend. Database schema, user identity, access policies, file storage and scheduled functions must have new owners. A migration plan should show which components remain with the original provider for a temporary period and which already run independently."
+      ]
+    },
+    {
+      "heading": "Use a practical test app instead of an aesthetic comparison",
+      "paragraphs": [
+        "Build a small client-request tracker in the candidates you are considering. The requirements are deliberately ordinary: customers submit a request; employees update its status; customers see only their requests; administrators can review activity. Each platform must demonstrate the same user journeys, including denial of an unauthorized request. A clean visual theme cannot compensate for a missing authorization rule.",
+        "Give every candidate an identical acceptance checklist. For each requirement, record a screenshot or a test result, the exact environment used, and whether the step required manual code. The goal is to learn how much of the workflow the platform can perform with your available skills—not to produce an artificial race between different prompt styles.",
+        "Include a failure scenario: make the database unavailable or request a non-existent record in a controlled test. Does the app provide a useful error? Can the developer identify the failing code path? Does the tool preserve the state needed to continue the investigation? Failure recovery is often where lightweight demos diverge from real services."
+      ]
+    },
+    {
+      "heading": "Price the full service rather than the builder subscription",
+      "paragraphs": [
+        "An advertised AI-building subscription may cover prompts or agent usage, while a live app also consumes hosting, data storage, file transfer, identity management and external APIs. Draw an architecture map with the provider responsible for each recurring charge. Keep variable usage separate from fixed plan fees and measure what your users actually do.",
+        "A beginner-friendly product can still be an economical choice even if its monthly subscription is not the lowest. It may reduce the human effort needed to deploy, maintain and update an application. Conversely, a lower subscription can become expensive when every missing feature requires custom integration. Do not claim either result universally: estimate it for the intended app.",
+        "Check official pricing and export feature requirements immediately before purchase. Plan pages evolve, and tests performed on a paid account might not represent the free tier. If a document or comparison does not specify the plan used, record that as an uncertainty rather than filling it with assumptions."
+      ]
+    },
+    {
+      "heading": "A safe pilot migration checklist",
+      "paragraphs": [
+        "Before changing vendors, export what the existing system allows and record the limitations in a migration inventory. Make a backup of original source and a separate inventory of database records, uploaded files, user accounts, webhooks and environment variables. For privacy-sensitive applications, verify that exports and test copies comply with your retention and access policies.",
+        "Choose a narrow pilot. Move a feature that can run alongside the existing service, such as an internal reporting screen or a read-only customer dashboard, before migrating login and financial records. The pilot should verify network access, permissions, reliability and the ability to reverse the deployment. Record how long maintenance actually takes for a week, not only how quickly the first screenshot was produced.",
+        "Do not disconnect or delete the old service until relevant data has been reconciled and a customer-impact review is complete. Keep a written list of outstanding dependencies. If the candidate platform cannot reproduce a critical feature, either retain a hybrid architecture temporarily or choose a different tool."
+      ]
+    },
+    {
+      "heading": "What non-developers should ask a provider before choosing",
+      "paragraphs": [
+        "A non-technical owner does not need to understand every line of code, but should ask concrete questions: Who controls the domain? Can we download our records? What happens if we cancel the plan? Can another developer maintain the app? How do we reset an employee's access? Who receives failure notifications? These are operational questions, not advanced programming trivia.",
+        "Ask the provider or tool to show a complete failure and recovery path. For example, an employee uploads an incorrect file: can it be replaced safely and is there a record of who changed it? A customer reports that a payment is missing: where would a support person look? This helps reveal whether the product is suitable for actual operations rather than a demonstration.",
+        "Keep the first scope small. A real product that handles one workflow reliably is more valuable than a broad dashboard with disconnected controls. Expand only after the target users complete the core journey and can describe what is missing."
+      ]
+    },
+    {
       "heading": "Frequently asked questions about Base44 alternatives",
       "paragraphs": [
         "The questions below address common differences between owning files, running a backend and changing an application platform."
