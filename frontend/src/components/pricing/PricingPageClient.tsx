@@ -23,6 +23,10 @@ import {
   MousePointer2,
   Orbit,
   Workflow,
+  BrainCircuit,
+  Rocket,
+  Layers3,
+  Zap,
   X,
   ChevronDown,
 } from 'lucide-react';
@@ -195,12 +199,21 @@ const FAQS = [
   },
 ] as const;
 
-/* Pricing plan marks: Pro uses a clear Lucide Orbit with a subtle hover animation. */
+/* Rotate the Pro mark on a timer, never on hover. Decorative-only and reduced-motion safe. */
+const PRO_SHOWCASE_ICONS = [Orbit, BrainCircuit, Workflow, Rocket, Zap] as const;
+const PRO_FEATURE_ICONS = [Layers3, Gauge, Workflow, Code2, Zap] as const;
+
 function PlanShowcase({ paid }: { paid: boolean }) {
-  const Icon = paid ? Orbit : Compass;
+  const [iconIndex, setIconIndex] = useState(0);
+  useEffect(() => {
+    if (!paid || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const timer = window.setInterval(() => setIconIndex(index => (index + 1) % PRO_SHOWCASE_ICONS.length), 3400);
+    return () => window.clearInterval(timer);
+  }, [paid]);
+  const Icon = paid ? PRO_SHOWCASE_ICONS[iconIndex] : Compass;
   return (
     <span className={paid ? styles.proShowcase : styles.freeShowcase} aria-hidden="true">
-      <Icon className={styles.showcaseSymbol} strokeWidth={1.65} />
+      <Icon className={styles.showcaseSymbol} strokeWidth={1.7} />
     </span>
   );
 }
@@ -364,17 +377,20 @@ export function PricingPageClient() {
                   </p>
 
                   <ul className={styles.featureList}>
-                    {features.map((feature) => (
-                      <li key={feature}>
-                        <span className={styles.check}>
-                          <Check aria-hidden="true" />
-                        </span>
-                        <span>
-                          {feature}
-                          {feature.startsWith('Full Access') ? <FullAccessInfo /> : null}
-                        </span>
-                      </li>
-                    ))}
+                    {features.map((feature, index) => {
+                      const FeatureIcon = isFree ? Check : PRO_FEATURE_ICONS[index] ?? Check;
+                      return (
+                        <li key={feature}>
+                          <span className={isFree ? styles.check : styles.proFeatureMark}>
+                            <FeatureIcon aria-hidden="true" />
+                          </span>
+                          <span>
+                            {feature}
+                            {feature.startsWith('Full Access') ? <FullAccessInfo /> : null}
+                          </span>
+                        </li>
+                      );
+                    })}
                   </ul>
 
                   <div className={styles.planCta}>
