@@ -654,7 +654,7 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
     ?.some(message => message.content?.includes(publicLookupProse) && message.publicWebRetrieved === true && !message.researchReceiptId),
   { timeout: 20_000 }).toBe(true);
   await page.reload();
-  await openPersistedConversation(page, { id: sessionId, title: savedTitle!, reply: publicLookupProse });
+  await openPersistedConversation(page, { id: sessionId, title: savedTitle!, reply: fallback });
   await checkPublicAnswer();
   expect(confirmations).toBe(1);
   expect(chatCalls).toBe(8);
