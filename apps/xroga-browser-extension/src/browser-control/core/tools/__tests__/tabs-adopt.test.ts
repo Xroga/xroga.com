@@ -12,7 +12,7 @@ function fakeCtx(all: T[], inSession: number[], activeTabId: number) {
     hasTab: (id: number) => inSession.includes(id),
     shareTab: vi.fn((id: number) => { inSession.push(id); }),
     setActive: vi.fn(),
-    shouldReveal: vi.fn(async () => true),
+    shouldReveal: vi.fn(async () => false),
     forgetTab: vi.fn(),
   };
   const host = { tabs: { get: async (id: number) => all.find(t => t.tabId === id) ?? null, list: async () => all, activate: vi.fn(async () => undefined) } };

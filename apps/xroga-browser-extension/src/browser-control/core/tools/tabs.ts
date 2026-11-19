@@ -52,7 +52,7 @@ export async function tabs(ctx: ToolContext, args: TabsArgs): Promise<ToolOutcom
       if (fresh.length === 0) {
         if (inSession.length === 1) {
           ctx.session.setActive(inSession[0].tabId);
-          if (await ctx.session.shouldReveal(inSession[0].tabId)) await ctx.controller.host.tabs.activate(inSession[0].tabId);
+          await ctx.controller.host.tabs.activate(inSession[0].tabId); // a tab the user named must be visible: Chrome cannot capture a hidden tab
           break;
         }
         throw new LayerError('NO_MATCH', `No tab of this window has ${quote(args.url ?? '', 40)} in its title or address. Open it with tabs open or navigate.`);
@@ -61,7 +61,7 @@ export async function tabs(ctx: ToolContext, args: TabsArgs): Promise<ToolOutcom
         throw new LayerError('AMBIGUOUS_TARGET', `${fresh.length} open tabs match ${quote(args.url ?? '', 40)}: ${fresh.slice(0, 5).map(t => `tab ${t.tabId} ${quote(t.title || '(untitled)', 50)}`).join('; ')}. Repeat with a more specific match.`);
       }
       ctx.session.shareTab(fresh[0].tabId, 'shared');
-      if (await ctx.session.shouldReveal(fresh[0].tabId)) await ctx.controller.host.tabs.activate(fresh[0].tabId);
+      await ctx.controller.host.tabs.activate(fresh[0].tabId); // a tab the user named must be visible: Chrome cannot capture a hidden tab
       break;
     }
     case 'open':
