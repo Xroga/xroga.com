@@ -121,4 +121,12 @@ describe('canvas pointer actions', () => {
     expect(order.indexOf('key:a:2')).toBeGreaterThanOrEqual(0);
     expect(order.indexOf('key:a:2')).toBeLessThan(order.indexOf('Input.insertText'));
   });
+  it('lets a key press reach the document on a big-canvas page (timeline shortcuts), but never typed text, and not without a big canvas', () => {
+    const body = { tag: 'BODY', w: 1000, h: 800, opacity: 1, offscreen: false, editable: false, bigCanvas: true };
+    expect(focusAcceptsPaintedInput(body, 'key')).toBe(true);
+    expect(focusAcceptsPaintedInput(body, 'type')).toBe(false);
+    expect(focusAcceptsPaintedInput(body)).toBe(false);
+    expect(focusAcceptsPaintedInput({ ...body, bigCanvas: false }, 'key')).toBe(false);
+    expect(focusAcceptsPaintedInput({ ...body, tag: 'INPUT', w: 300, h: 30 }, 'key')).toBe(false);
+  });
 });

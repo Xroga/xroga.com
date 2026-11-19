@@ -21,7 +21,7 @@ different capability. "Evidence" names a file or test, not a claim.
 | Code-owned progress fingerprints and strategy switching | yes: `progress-tracker.ts` | yes | | not yet observed live | | replaces prompt warnings as primary control |
 | Evidence-based strategy choice | yes: `strategy-selector.ts`, wired at the first outline | 11 tests (layout shuffles, noise, no-vision) | | not yet observed live | | scores are design estimates, not measurements |
 | Resumable / interrupted runs | existing (`sw-kill*` fixtures) | | existing fixtures | | | not re-run this stretch |
-| Timeline-based media editor | NOT DONE | | NOT DONE | | NOT DONE | no fixture, no provider decision |
+| Timeline-style painted editor (playhead click, key split, drag move) | yes (generic canvas primitives) | `canvas.test.ts` | TL-1 passes (split 100-400 at 250, move second part +100) | | NOT DONE (no real video editor run) | found and fixed: `canvas key` was refused when focus was `<body>`; now allowed on big-canvas pages for keys only, never typed text |
 | Generated layout variations (field order, moved button, delayed render, blocking overlay, duplicate label, zoom 0.75-1.5) | yes | | VAR-1 passes 8 of 8 seeds in Chromium (`variants-form.ts`, `var-form.html`) | | | form class only; slow network and stale refs not yet generated |
 
 ## 2. Findings this stretch
@@ -32,6 +32,8 @@ different capability. "Evidence" names a file or test, not a claim.
   UNVERIFIED.
 * Three test files sat outside `__tests__` (the config only includes that folder) and never ran, including the #1001 test. Moved; they pass.
 * `run_script_console` now fails fast if `canvas` or `read` is not in the run's tool list, instead of failing at the focus phase.
+
+* Timeline fixture TL-1 exposed a generic gap: shortcut keys were refused when the document body had focus, which is how most timeline editors listen. Fixed in `canvas.ts` with a unit test; typed text still requires the canvas or a hidden text box.
 
 ## 3. What a live run does and does not prove
 

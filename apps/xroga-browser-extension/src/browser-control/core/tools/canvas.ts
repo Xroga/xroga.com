@@ -76,23 +76,25 @@ function keyInfo(name: string): { key: string; code: string; vk: number; text?: 
  * keyboard (zero-size, transparent or off-screen); both are the application's own input path. A visible field, a password field, a
  * link or a button is a page element: it keeps the guarded type and press, with their checks.
  */
-export function focusAcceptsPaintedInput(f: { tag: string; type?: string; w: number; h: number; opacity: number; offscreen: boolean; editable: boolean; bigCanvas: boolean }): boolean {
+export function focusAcceptsPaintedInput(f: { tag: string; type?: string; w: number; h: number; opacity: number; offscreen: boolean; editable: boolean; bigCanvas: boolean }, mode: 'key' | 'type' = 'type'): boolean {
   const tag = f.tag.toUpperCase();
   if (tag === 'CANVAS') return true;
+  // Editors such as timelines handle shortcuts on the document, so focus is the body after a canvas click. A key press to the body cannot enter text into a field, so it is allowed on a big-canvas page; typed text is not.
+  if (mode === 'key' && f.bigCanvas && (tag === 'BODY' || tag === 'HTML')) return true;
   if (!f.bigCanvas || f.type === 'password') return false;
   const textTarget = tag === 'TEXTAREA' || tag === 'INPUT' || f.editable;
   const hidden = f.w * f.h < 16 || f.opacity < 0.1 || f.offscreen;
   return textTarget && hidden;
 }
 
-async function assertCanvasFocused(ctx: ToolContext): Promise<void> {
+async function assertCanvasFocused(ctx: ToolContext, mode: 'key' | 'type' = 'type'): Promise<void> {
   const { cdp } = await ctx.attach();
   const expression = `(() => { const e = document.activeElement; if (!e) return null; const r = e.getBoundingClientRect(); const cs = getComputedStyle(e);
     const big = [...document.querySelectorAll('canvas')].some(c => { const q = c.getBoundingClientRect(); return q.width * q.height > 0.25 * innerWidth * innerHeight; });
     return { tag: e.tagName, type: e.type || '', w: r.width, h: r.height, opacity: parseFloat(cs.opacity), offscreen: r.right < 0 || r.bottom < 0 || r.left > innerWidth || r.top > innerHeight, editable: !!e.isContentEditable, bigCanvas: big }; })()`;
   const result = await cdp.send<{ result: { value?: Parameters<typeof focusAcceptsPaintedInput>[0] | null } }>(undefined, 'Runtime.evaluate', { expression, returnByValue: true });
   const focus = result.result?.value;
-  if (!focus || !focusAcceptsPaintedInput(focus)) {
+  if (!focus || !focusAcceptsPaintedInput(focus, mode)) {
     const name = focus?.tag ? `<${focus.tag.toLowerCase()}>` : 'nothing';
     throw new LayerError('TARGET_CHANGED', `Keyboard focus is on ${name}, which is a page element or nothing, not the painted editor's own input. Nothing was sent. Click inside the editor first (canvas click), then retry; use type or press for page fields.`);
   }
@@ -129,7 +131,7 @@ export async function canvas(ctx: ToolContext, args: CanvasArgs): Promise<ToolOu
     if (args.action === 'type' && !args.text) throw new LayerError('INVALID_ARGUMENT', 'canvas type needs text.');
     if (args.action === 'key' && !args.key) throw new LayerError('INVALID_ARGUMENT', 'canvas key needs key.');
     if (args.action === 'type' && CONSEQUENTIAL.test(args.text!)) throw new LayerError('USER_STEP', 'That text looks like a secret or a consequential step; the user types it themselves.');
-    await assertCanvasFocused(ctx);
+    await assertCanvasFocused(ctx, args.action === 'key' ? 'key' : 'type');
     if (args.action === 'type') {
       // An editor opens with example text and a click puts the caret inside it: without a select-all the new text is spliced into the old and the program breaks.
       if (args.replace) await sendKey(ctx, 'Control+A');
