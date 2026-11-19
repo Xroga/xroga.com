@@ -6,12 +6,12 @@ Status: **review-ready, not production-certified.** Staging only. Nothing was pu
 | Item | Value |
 | --- | --- |
 | Source branch | `claude/ops-integrated-20261112` (draft PR #976, not merged) |
-| Extension code | last extension source change `04ed8ebb4`; branch head when built `d499425a5` |
-| Private package | `C:\xr-review-builds\xroga-browser-operator-staging-0.2.8-04ed8ebb4.zip` |
-| ZIP SHA-256 | `d670a56894b631e3ceac22326b205c03c73a21435f3cb48df4068bf6ce4b772b` |
+| Extension code | last extension source change `73a1b32f6`; branch head when built `d499425a5` |
+| Private package | `C:\xr-review-builds\xroga-browser-operator-staging-0.2.8-73a1b32f6.zip` |
+| ZIP SHA-256 | `37ac9a12e69cf00c0871cf0d6d2dc1222cb644f9b564e5d37b4012d2ecdce677` |
 | Extension | "Xroga Browser Automation (Staging)" 0.2.8, ID `ogebkgkppocnjeojdbkiokcpeaenonop` (fixed by the baked public key) |
 | Installed copy | `C:\xr-review-builds\xroga-extension-staging-0ff582593`, manifest identical to the ZIP; press Reload on `chrome://extensions` to load it |
-| Compatible backend | Cloud Run `xroga-api-universal-staging` (project `project-c40d4821-e647-4fa2-92d`, us-east4), revision `xroga-api-universal-staging-00140-buz`, image `xroga-api-release:lim23-1118` (commit `04ed8ebb4`, including the repo-change deadline fix; earlier `00133-xup` was lim19, commit `d1552e9a2`; later commits on the branch touch only the extension and the sandbox worker), tag `browser-op-1110`, 0 percent of traffic. Its `/health` "release" field is a stale environment value, not the image |
+| Compatible backend | Cloud Run `xroga-api-universal-staging` (project `project-c40d4821-e647-4fa2-92d`, us-east4), revision `xroga-api-universal-staging-00141-mas`, image `xroga-api-release:lim24-1118` (commit `73a1b32f6`, including the repo-change deadline fix; earlier `00133-xup` was lim19, commit `d1552e9a2`; later commits on the branch touch only the extension and the sandbox worker), tag `browser-op-1110`, 0 percent of traffic. Its `/health` "release" field is a stale environment value, not the image |
 | Sandbox worker | Cloud Run `xroga-sandbox-worker` (offline stage, restricted-network stage and dependency acquisition were added by the sandbox session; see the audit file) |
 | Model | DeepSeek V4.1 Flash 1017 through the existing route only |
 | Tests at build time | extension typecheck clean, 1249 tests pass, 4 skipped (run in a clean worktree of the branch head); backend typecheck clean after commit `92d2913e1` (the sandbox merge had broken it); backend tests run: local browser (2 files), sandbox (3 files) all pass |
@@ -52,3 +52,4 @@ Status: **review-ready, not production-certified.** Staging only. Nothing was pu
 - Live (19 November, a new Chrome window in the owner's profile): two repositories in one sandbox run and an Agent Skill inspection both passed; details and the gap they exposed (the tool text did not show extra repositories' commits; fixed) are in `GAP-REGISTER-20261117.md`.
 - change_repository passed live on this build (patch returned, verdict unverified because dotenv's own tests need a fixture, three durable ledger rows); see the register.
 - PDF through the real file picker passed live (table rows kept; encrypted and image-only PDFs give specific messages); details in the register.
+- Attachments: any file type up to 25 MB, ten per task; photo upload to a real site passed, a 5.6 MB PDF was read; details in the register.
