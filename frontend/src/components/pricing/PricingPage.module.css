@@ -4530,3 +4530,204 @@
   .proCard:hover .proShowcase .showcaseSymbol,
   .proCard:focus-within .proShowcase .showcaseSymbol { animation:none; }
 }
+
+
+/* ================================================================
+   XROGA PRICING PREVIEW v9 — graphite canvas / cobalt Pro
+   - Page-wide gray with restrained blue atmospheric light
+   - Pro has blue contrast and individually illustrated benefits
+   - Header icon cycles in React on time, never on hover
+   - Prior checkout and plan capacity remain unchanged
+   ================================================================ */
+.root,
+:global(body.theme-white) .root,
+:global(body.theme-beige) .root,
+:global(body.theme-gray) .root,
+:global(body.theme-black) .root {
+  --pp-bg:#20232a;
+  --pp-surface:#292d36;
+  --pp-surface-2:#343942;
+  --pp-ink:#f1f3f8;
+  --pp-muted:#b1b8c4;
+  --pp-line:rgba(224,232,249,.17);
+  --pp-line-strong:rgba(224,234,250,.35);
+  --pp-accent:#9bc7ff;
+  --pp-accent-2:#74aaf5;
+  --pp-accent-soft:rgba(94,151,238,.11);
+  --pp-button:#c4deff;
+  --pp-button-ink:#17273d;
+  --pp-grid:rgba(186,200,221,.035);
+  background:
+    radial-gradient(ellipse 39% 18% at 89% 2%,rgba(51,118,230,.16),transparent 90%),
+    radial-gradient(ellipse 39% 25% at -13% 48%,rgba(66,111,189,.11),transparent 93%),
+    radial-gradient(ellipse 46% 15% at 102% 79%,rgba(91,139,219,.105),transparent 90%),
+    linear-gradient(180deg,#22262e 0%,#1e2128 40%,#24272f 78%,#20232a 100%);
+  color:var(--pp-ink);
+}
+.root::before { background-image:linear-gradient(90deg,rgba(198,213,245,.03) 1px,transparent 1px); }
+.root :where(button,input,a):focus-visible { outline-color:#9dc8ff; }
+.hero {
+  background:radial-gradient(ellipse 45% 42% at 51% 97%,rgba(70,123,213,.115),transparent 89%),transparent;
+  border-bottom-color:rgba(196,215,246,.14);
+}
+.hero::before {
+  background-image:linear-gradient(rgba(163,186,225,.047) 1px,transparent 1px),linear-gradient(90deg,rgba(163,186,225,.047) 1px,transparent 1px);
+}
+.hero::after {
+  border-top-color:rgba(115,176,255,.36);
+  box-shadow:0 -16px 55px -30px rgba(58,119,223,.22);
+}
+.gridGlow { background:radial-gradient(ellipse 36% 65% at 50% 55%,rgba(74,133,224,.13),transparent 75%); }
+.heroTitle,.heroTitle span { color:#f4f7fd; }
+.heroCopy { color:#b7c0cd; }
+
+/* Free stays calm and gray. Pro owns the recognizable vivid blue. */
+.planCard.freeCard {
+  background:linear-gradient(151deg,#363941 0%,#2a2d35 54%,#242830 100%);
+  color:#f3f4f6;
+  border:1px solid rgba(241,244,252,.73);
+  box-shadow:inset 0 0 0 3px #e5e9f0,0 23px 60px rgba(3,6,13,.22);
+}
+.planCard.freeCard:hover {
+  border-color:#fff;
+  box-shadow:inset 0 0 0 3px #f5f7fc,0 27px 65px rgba(4,8,17,.28);
+}
+.planCard.proCard {
+  background:
+    radial-gradient(ellipse 105% 65% at 103% -18%,rgba(115,183,255,.34),transparent 75%),
+    radial-gradient(ellipse 90% 72% at -10% 96%,rgba(28,90,185,.27),transparent 83%),
+    linear-gradient(145deg,#244e82 0%,#1b385d 41%,#142a47 77%,#101e33 100%);
+  border:1px solid rgba(236,246,255,.86);
+  color:#f4f8ff;
+  box-shadow:
+    inset 0 0 0 4px #eef6ff,
+    0 24px 72px rgba(9,26,56,.34),
+    0 0 47px rgba(55,119,223,.18);
+}
+.planCard.proCard:hover {
+  border-color:#fff;
+  box-shadow:inset 0 0 0 4px #fff,0 29px 76px rgba(6,23,54,.39),0 0 51px rgba(63,138,241,.22);
+}
+.proCard::after {
+  background:linear-gradient(90deg,transparent,rgba(148,205,255,.96),transparent);
+  box-shadow:0 0 22px rgba(70,154,255,.30);
+}
+.proCard .proHalo {
+  background:radial-gradient(ellipse,rgba(74,139,245,.16),transparent 72%);
+}
+.planCard.proCard .planName { color:#e9f3ff; }
+.planCard.proCard .planTagline { color:#c0dafa; }
+.planCard.proCard .price { color:#fff; }
+.planCard.proCard .priceMeta,.planCard.proCard .priceMeta small { color:#bfcee5; }
+.planCard.proCard .priceMeta b { color:#e2eefe; }
+.planCard.proCard .planLead { color:#c6d8f3; }
+.planCard.proCard .featureList {
+  border-color:rgba(195,221,255,.23);
+}
+.planCard.proCard .featureList li {
+  color:#f1f6ff;
+}
+.planCard.proCard .planNote {
+  color:#bed2ef;
+}
+.proCard .proShowcase,.proCard:hover .proShowcase,.proCard:focus-within .proShowcase {
+  background:linear-gradient(150deg,rgba(105,170,255,.35),rgba(28,66,115,.32));
+  border:1px solid rgba(184,219,255,.83);
+  box-shadow:inset 0 1px rgba(255,255,255,.13),0 0 23px rgba(102,168,250,.15);
+}
+.planCard.proCard .proShowcase .showcaseSymbol {
+  width:29px;height:29px;
+  display:block;
+  color:#f2f8ff;
+}
+
+/* Absolutely no hover-triggered motion on either plan's header icon.
+   Pro glyph changes by timed component state, with reduced-motion respected. */
+.planCard .freeShowcase .showcaseSymbol,
+.planCard .proShowcase .showcaseSymbol,
+.planCard:hover .freeShowcase .showcaseSymbol,
+.planCard:hover .proShowcase .showcaseSymbol,
+.planCard:focus-within .freeShowcase .showcaseSymbol,
+.planCard:focus-within .proShowcase .showcaseSymbol {
+  animation:none !important;
+  transform:none !important;
+  transition:none !important;
+}
+.planCard .freeShowcase,.planCard .proShowcase {
+  transition:none;
+}
+.proFeatureMark {
+  flex:0 0 25px;
+  width:25px;height:25px;
+  display:inline-grid;
+  place-items:center;
+  border:1px solid rgba(181,215,255,.37);
+  border-radius:8px;
+  background:rgba(157,204,255,.13);
+  color:#cde6ff;
+}
+.proFeatureMark svg {
+  width:15px;height:15px;
+  display:block;
+  stroke-width:1.8;
+  flex:none;
+}
+.proCard .popularBadge,.proCard .currentBadge {
+  background:rgba(120,175,246,.16);
+  border-color:rgba(172,216,255,.49);
+  color:#e2f0ff;
+}
+.proCard .proCta,.proCard .proUiverse {
+  background:#b9dbff;
+  background-image:linear-gradient(134deg,#d9ebff 0%,#9bccff 100%);
+  color:#102640;
+  border:1px solid #cde4ff;
+  box-shadow:0 8px 22px rgba(8,36,75,.2);
+}
+.proCard .proCta:hover:not(:disabled),.proCard .proUiverse:hover:not(:disabled) {
+  background:#e7f3ff;
+  background-image:linear-gradient(134deg,#eff8ff,#bfdeff);
+  color:#0a1a30;
+  border-color:#eff7ff;
+  box-shadow:0 9px 25px rgba(75,145,234,.18);
+}
+.proCard .paymentIcon { color:#18395d; }
+.proCard .infoButton { color:#e8f4ff;background:rgba(125,189,255,.17); }
+.proCard .tooltip { background:#1b334f;color:#f2f7ff;border-color:rgba(174,213,255,.36); }
+
+/* Subtle blue thread through supporting sections; keep their gray surfaces. */
+.compareOrnament,.usageBrowserLayout .usageTopIcon,.faqTopIcon { color:#a5ccff; }
+.usageBrowserLayout .usageNumber,.usageBrowserLayout .usageNote svg { color:#a4cbff; }
+.usageBrowserLayout .usageAccordion { border-top-color:rgba(174,202,242,.29); }
+.usageBrowserLayout .usageDisclosure { border-bottom-color:rgba(174,202,242,.18); }
+.usageBrowserLayout .usageDisclosure summary:hover .usageQuestion { color:#c9e3ff; }
+.usageBrowserLayout .usageDisclosure summary:focus-visible { outline-color:#a7cfff; }
+.browserPromo {
+  border-color:rgba(145,183,240,.38);
+  background:radial-gradient(ellipse at 100% 0%,rgba(61,118,206,.15),transparent 75%),linear-gradient(153deg,#303640,#252a33 91%);
+}
+.browserPromoSymbol { color:#cee6ff;background:rgba(98,158,246,.16);border-color:rgba(155,196,251,.42); }
+.browserPromoLabel,.browserPromoLink { color:#bad9ff; }
+.browserPromo h2 em { color:#b8d9ff; }
+.browserPreview { background:#222a36;border-color:rgba(159,198,249,.26); }
+.browserPreviewBar { background:#323d4d;border-bottom-color:rgba(175,210,255,.2); }
+.browserMiniIcon,.browserPreviewContent > svg,.browserPreviewContent .browserCursor,
+.browserPreviewContent .browserWorkflowCheck,.browserPromoBenefits svg { color:#b3d8ff; }
+.comparePlanHeading a { color:#142842;background:#c5e2ff; }
+.comparePlanHeading a:hover { background:#e2f2ff; }
+.featureSearch:focus-within { border-color:#a3caff;box-shadow:0 0 0 3px rgba(118,177,255,.13); }
+.groupToggle > span svg,.groupToggle > svg { color:#a8c9f7; }
+.comparisonTable td.valueCell .cellValueInline .includedIcon {
+  background:rgba(107,159,232,.2);
+  color:#d4e9ff;
+}
+.faqTabs .faqTabActive,.faqTabs button[aria-selected="true"] {
+  color:#e5f1ff;background:#38485d;box-shadow:inset 0 0 0 1px rgba(159,203,255,.24);
+}
+.faqDocsLink { color:#b8d6ff; }
+.finalCopy .eyebrow { color:#a9cfff; }
+.finalPrimary { color:#112541;background:#c3e0ff;border-color:#cde7ff; }
+.finalPrimary:hover:not(:disabled) { background:#e1f0ff;border-color:#eff8ff;box-shadow:0 9px 25px rgba(74,138,220,.17); }
+@media(prefers-reduced-motion:reduce) {
+  .planCard .showcaseSymbol { animation:none !important;transition:none !important; }
+}
