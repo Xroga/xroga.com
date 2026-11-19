@@ -18,3 +18,6 @@ Backend decides the mode per call; sending, publishing, deleting and payments ke
 
 ## Not covered (needs an independent reviewer)
 Composio and sandbox egress, the worker image and its isolation, the desktop bridge RFC, tenant isolation with a second account, the supply-chain of the dependency stage, and production readiness.
+
+## Deployed and re-checked
+Both fixes are on staging revision `xroga-api-universal-staging-00143-fuh` (image `lim25-1119`, commit `d07eba59b`, tag `browser-op-1110`, 0 percent of traffic). Live in the installed extension: the pinned `requests==2.32.3` run still works, and the weak-copyleft package `certifi` (MPL-2.0) is still acknowledged by the model as intended (8 packages, 1 flagged). The GPL refusal and the extra outbound verbs are covered by unit tests only; a live GPL install was not run.
