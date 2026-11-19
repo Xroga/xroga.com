@@ -297,7 +297,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "814b1ac7189f74142e4441796d200f11ee5f0f24eabc7f42face59d75a414add",
+      "sha256": "3eb2040d95ed469292f430d5e7b47f5a7d8bf1be2bf1a7b7fc617817141d1b56",
       "previousGenericSdkBinding": {
         "sha256": "e5b3b4a3dc538e708fa8c005a8da6584db01b3dd425833373d59decbd2bfcb93",
         "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
@@ -602,6 +602,13 @@
       "beforeDraftRouting": {
         "sha256": "85c08952d3469ffaff203a91df6d79e3d554478278e9244317929d7d5de73780",
         "scope": "Native prompt eligibility only. Dispatch, settlement and bound persistence calls remain byte-identical. Historical evidence and acceptance are unchanged."
+      },
+      "workspaceReview20261119": {
+        "auditedBase": "5898449fad9adb60c6eaa98653f2ddec8d7d6e82",
+        "candidateSource": "eea565cc2377cd5d66fcf06cc6bd4da83cfc5681",
+        "previousSha256": "814b1ac7189f74142e4441796d200f11ee5f0f24eabc7f42face59d75a414add",
+        "finding": "Ordinary text now relies on the existing just-in-time quota check. Attachment extraction, Search and approved continuations, repository evidence and Sonnet review retain the early gate. The complete callBuilderStream and runBuildPipeline functions and every runWebIntelligence request expression match the audited base. The current Search confirmation wording does not affect authority.",
+        "liveAcceptance": false
       }
     },
     {
@@ -643,7 +650,7 @@
     },
     {
       "path": "backend/src/ai/tenantModelDispatch.test.ts",
-      "sha256": "62d37e53a2d4abf418f9667341e4104672a712e9e9cc5dc0b7f8e35c25c632fb",
+      "sha256": "312d0338ebb8163b6b4649183a44c850a8d5ac83a4b3d67b1f9579218ed154bc",
       "previousGenericSdkBinding": {
         "sha256": "acb7d3ee286d862c38e386380a20a7632415cd454510076abedca054016f2959",
         "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
@@ -674,6 +681,13 @@
       "beforeDraftRouting": {
         "sha256": "f4ecba27a4ada17a30eec9b33d236cb1fb3ddc634b8e6a272968a2a08cbbeefb",
         "scope": "Only a synthetic in-chat form case is appended to prior pipeline and settlement assertions."
+      },
+      "workspaceReview20261119": {
+        "auditedBase": "5898449fad9adb60c6eaa98653f2ddec8d7d6e82",
+        "candidateSource": "eea565cc2377cd5d66fcf06cc6bd4da83cfc5681",
+        "previousSha256": "62d37e53a2d4abf418f9667341e4104672a712e9e9cc5dc0b7f8e35c25c632fb",
+        "finding": "The controlled fixture now counts quota reads for ordinary plain and rich answers and for file and approved Search turns. It verifies the single post-settlement refresh and exhausted-account denial before model reservation or attachment processing. Existing receipt and persistence checks still run. This source binding carries no new hosted, CI or production acceptance.",
+        "liveAcceptance": false
       }
     },
     {

@@ -1079,9 +1079,9 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "814b1ac7189f74142e4441796d200f11ee5f0f24eabc7f42face59d75a414add",
+      "sourceSha256": "3eb2040d95ed469292f430d5e7b47f5a7d8bf1be2bf1a7b7fc617817141d1b56",
       "callIds": [
-        "dd07efebd27fb2ef7b30"
+        "eb8532242b9c169bae0b"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -2621,13 +2621,23 @@
           "dae25c9daa57213c1180"
         ],
         "finding": "Only the eligibility predicate for the compact prose prompt changed. The full dispatch, usage settlement, persistence conversions, and worker are unchanged. No security acceptance or live generation is certified here."
+      },
+      "workspaceReview20261119": {
+        "auditedBase": "5898449fad9adb60c6eaa98653f2ddec8d7d6e82",
+        "candidateSource": "eea565cc2377cd5d66fcf06cc6bd4da83cfc5681",
+        "previousSha256": "814b1ac7189f74142e4441796d200f11ee5f0f24eabc7f42face59d75a414add",
+        "previousCallIds": [
+          "dd07efebd27fb2ef7b30"
+        ],
+        "finding": "Ordinary text now relies on the existing just-in-time quota check. Attachment extraction, Search and approved continuations, repository evidence and Sonnet review retain the early gate. The complete callBuilderStream and runBuildPipeline functions and every runWebIntelligence request expression match the audited base. The current Search confirmation wording does not affect authority.",
+        "liveAcceptance": false
       }
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "814b1ac7189f74142e4441796d200f11ee5f0f24eabc7f42face59d75a414add",
+      "sourceSha256": "3eb2040d95ed469292f430d5e7b47f5a7d8bf1be2bf1a7b7fc617817141d1b56",
       "callIds": [
-        "73e39773b083010d176b"
+        "9372bc4c2d95f5c088d0"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -4167,6 +4177,16 @@
           "6239699ce63ed3c3adfc"
         ],
         "finding": "Only the eligibility predicate for the compact prose prompt changed. The full dispatch, usage settlement, persistence conversions, and worker are unchanged. No security acceptance or live generation is certified here."
+      },
+      "workspaceReview20261119": {
+        "auditedBase": "5898449fad9adb60c6eaa98653f2ddec8d7d6e82",
+        "candidateSource": "eea565cc2377cd5d66fcf06cc6bd4da83cfc5681",
+        "previousSha256": "814b1ac7189f74142e4441796d200f11ee5f0f24eabc7f42face59d75a414add",
+        "previousCallIds": [
+          "73e39773b083010d176b"
+        ],
+        "finding": "Ordinary text now relies on the existing just-in-time quota check. Attachment extraction, Search and approved continuations, repository evidence and Sonnet review retain the early gate. The complete callBuilderStream and runBuildPipeline functions and every runWebIntelligence request expression match the audited base. The current Search confirmation wording does not affect authority.",
+        "liveAcceptance": false
       }
     },
     {
@@ -28534,9 +28554,9 @@
     },
     {
       "path": "frontend/src/lib/formatAiMarkdown.tsx",
-      "sourceSha256": "b7d062bda6d42d4adac11104da7b83f8cc9a7b0821377c68f02c3f00ddeb2226",
+      "sourceSha256": "e8e2db2ef4e7f0a6bec271a183568affdc481d0c8bfb037475c38613abc9366f",
       "callIds": [
-        "268ea28d28fecea68c7e"
+        "e75c4ea163671f8df19f"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in decodeBase64UrlUtf8, with no database or Storage client receiver.",
@@ -28600,6 +28620,16 @@
           "07e7e80f4c3c2b4a540b"
         ],
         "reason": "A new import shifts the source position. The entire reviewed decodeBase64UrlUtf8 function and Uint8Array.from call are byte-identical. The fenced Markdown changes only render and locally copy existing answer text."
+      },
+      "workspaceReview20261119": {
+        "auditedBase": "5898449fad9adb60c6eaa98653f2ddec8d7d6e82",
+        "candidateSource": "eea565cc2377cd5d66fcf06cc6bd4da83cfc5681",
+        "previousSha256": "b7d062bda6d42d4adac11104da7b83f8cc9a7b0821377c68f02c3f00ddeb2226",
+        "previousCallIds": [
+          "268ea28d28fecea68c7e"
+        ],
+        "finding": "Only local approval-card labels, destination display and busy state changed. The complete decodeBase64UrlUtf8 function and confirmation load, confirm and cancel callbacks match the audited base.",
+        "liveAcceptance": false
       }
     },
     {

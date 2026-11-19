@@ -5223,7 +5223,7 @@
       "id": "surface:456e62cb099b42e5c2a2",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUi.ts",
-      "sha256": "f157ad981d3827a27e04fff9d52f0c568b3c49187184d46b09ac1eb8c41fc7f6",
+      "sha256": "d3f07d43eefb432ecdf979dd4c0f491dcc935b6536968f80b51a8e6496f27aaf",
       "symbols": [
         "MAX_EXPANDED_EXPRESSION_DEPTH",
         "MAX_PROGRAM_CHARS",
@@ -5341,7 +5341,6 @@
         "original",
         "originals",
         "outputs",
-        "paragraphs",
         "parseProgram",
         "pending",
         "prefix",
@@ -5381,7 +5380,6 @@
         "resolvedEntry",
         "restored",
         "result",
-        "retained",
         "reviewContext",
         "reviewStrings",
         "root",
@@ -6057,11 +6055,13 @@
       "id": "surface:309e6a3c1f73a053bdef",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiValues.ts",
-      "sha256": "747ae12dd4c1bc5028cc1cfe5b6195310ff56849451ed5a723fa70232fd2ccdf",
+      "sha256": "6b880f73a215f4d296ab2f7053a6451bae8731dae3a9274644f1ed75a61339bd",
       "symbols": [
         "active",
         "amount",
         "at",
+        "block",
+        "blocks",
         "budget",
         "cache",
         "candidates",
@@ -6072,6 +6072,7 @@
         "context",
         "contextual",
         "contextualReadoutLabel",
+        "corrected",
         "current",
         "cursor",
         "decimals",
@@ -6081,7 +6082,9 @@
         "expected",
         "expression",
         "expressionValue",
+        "fence",
         "functions",
+        "hasConflict",
         "index",
         "initialNativeReadouts",
         "initialNativeValueReader",
@@ -6108,13 +6111,17 @@
         "ratio",
         "read",
         "readoutParser",
+        "readoutSentenceBreak",
+        "recoverNativeReadoutProse",
         "repairProse",
         "resolve",
         "result",
+        "retained",
         "returns",
         "root",
         "row",
         "seen",
+        "separator",
         "snapshotEvaluator",
         "spend",
         "start",
@@ -6178,7 +6185,7 @@
       "id": "surface:93911e9946fd4b21d50d",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiWorkspace.ts",
-      "sha256": "c18eb12c55781902c497d0fef62363b98193a927ac4d9f789c57c7ec24f2a465",
+      "sha256": "9a335714be4afb346899df7ec8dd2c26edec4c6c678d61581bc4459f13d74d87",
       "symbols": [
         "authorityIssue",
         "calculatorUnavailable",
@@ -6191,6 +6198,7 @@
         "factualRule",
         "guidance",
         "hasDataConflict",
+        "keepVisual",
         "localProgram",
         "missing",
         "multipleConflict",
@@ -6199,6 +6207,7 @@
         "originalProgram",
         "outputLimitNote",
         "program",
+        "projected",
         "promisesControls",
         "promisesInlineControls",
         "readable",
@@ -7129,7 +7138,7 @@
       "id": "surface:90932fa247bf4ae28450",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/pipeline.ts",
-      "sha256": "814b1ac7189f74142e4441796d200f11ee5f0f24eabc7f42face59d75a414add",
+      "sha256": "3eb2040d95ed469292f430d5e7b47f5a7d8bf1be2bf1a7b7fc617817141d1b56",
       "symbols": [
         "ARCHITECT_MS",
         "BUILDER_FALLBACKS",
@@ -7187,6 +7196,7 @@
         "chat",
         "chatOut",
         "chatUsage",
+        "checkQuotaBeforePreparation",
         "chromeReleaseUrl",
         "chromeStoreError",
         "chromeStoreSubmitted",
@@ -7297,7 +7307,6 @@
         "idx",
         "implementationExecutionTask",
         "implementationTask",
-        "initialUsage",
         "instructions",
         "integrity",
         "intelligentPlan",
@@ -7354,6 +7363,7 @@
         "plan",
         "portable",
         "preferred",
+        "preflightUsage",
         "prepared",
         "preparedEarly",
         "presentation",
@@ -7743,6 +7753,7 @@
       ],
       "costBoundary": [
         "backend/src/ai/pipeline.ts#assertHasQuota",
+        "backend/src/ai/pipeline.ts#checkQuotaBeforePreparation",
         "backend/src/ai/pipeline.ts#withTenantModelReservation"
       ],
       "evidenceBoundary": [
@@ -8064,7 +8075,7 @@
       "id": "surface:087b17b9e17fc86ddade",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/prompts.ts",
-      "sha256": "54e47ca663b60cead257c42041f5e7544b956cac469570fb20abf048581495fd",
+      "sha256": "5b5d2b3f1a4394a4d52005384a5652cccc32f00a186ab830c08f51049356fca4",
       "symbols": [
         "BRIEF_RESEARCH_RESPONSE_RE",
         "BUILDER_SYSTEM",
@@ -42073,8 +42084,8 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:3890",
-        "backend/src/ai/pipeline.ts:3893",
+        "backend/src/ai/pipeline.ts:3900",
+        "backend/src/ai/pipeline.ts:3903",
         "backend/src/ai/projectMemory.ts:7",
         "backend/src/ai/sessionMemory.ts:7",
         "backend/src/builder/providerTransports.ts:10",
@@ -42347,7 +42358,7 @@
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:128",
-        "backend/src/ai/pipeline.ts:3889",
+        "backend/src/ai/pipeline.ts:3899",
         "backend/src/ai/tenantModelDispatch.ts:6",
         "backend/src/config/supabaseTransport.security.test.ts:6",
         "backend/src/routes/integrations.ts:19",
@@ -78560,7 +78571,7 @@
         "frontend/src/components/terminal/FullscreenPreviewModal.tsx:7",
         "frontend/src/components/terminal/MessageBubbleActions.tsx:9",
         "frontend/src/components/terminal/MessageShareModal.tsx:20",
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:56",
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:57",
         "frontend/src/components/terminal/TerminalSkinPicker.tsx:7",
         "frontend/src/components/terminal/WorkspaceLauncher.tsx:3",
         "frontend/src/components/terminal/WorkspacePeopleControls.tsx:12",
@@ -79597,7 +79608,7 @@
         "frontend/src/components/terminal/BuildCodeSandbox.tsx:10",
         "frontend/src/components/terminal/DevWorkspacePanel.tsx:35",
         "frontend/src/components/terminal/FullscreenPreviewModal.tsx:8",
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:57"
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:58"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -80575,7 +80586,7 @@
         "frontend/src/components/terminal/BuildCodeSandbox.tsx:11",
         "frontend/src/components/terminal/DevWorkspacePanel.tsx:36",
         "frontend/src/components/terminal/FullscreenPreviewModal.tsx:9",
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:58"
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:59"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -82516,7 +82527,7 @@
         "frontend/src/components/dashboard/IncognitoDashboard.tsx:4",
         "frontend/src/components/layout/IncognitoModeButton.tsx:10",
         "frontend/src/components/layout/Sidebar.tsx:76",
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:35"
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:36"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -87852,7 +87863,7 @@
       "id": "surface:e67e2018c5fc720f5a55",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/Editorial.tsx",
-      "sha256": "3339117eb9f17199b4253e393c04fe448fd9871221bccc91678161f83a865341",
+      "sha256": "5c269333cca700959662fef6385938f884e20cc463bb56f9fb9827630affff4d",
       "symbols": [
         "Controls",
         "Metric",
@@ -88283,6 +88294,7 @@
         "frontend/src/components/native-openui/NativeSurface.tsx:8",
         "frontend/src/components/native-openui/library.tsx:18",
         "frontend/src/components/native-openui/upstream/components/extra.tsx:9",
+        "frontend/src/components/native-openui/upstream/components/table.tsx:6",
         "frontend/src/components/native-openui/upstream/components/text.tsx:9"
       ],
       "reachable": true,
@@ -89080,7 +89092,7 @@
         "frontend/src/components/native-openui/upstream/components/controls.tsx:15",
         "frontend/src/components/native-openui/upstream/components/extra.tsx:7",
         "frontend/src/components/native-openui/upstream/components/markdown.test.ts:10",
-        "frontend/src/components/native-openui/upstream/components/table.tsx:6",
+        "frontend/src/components/native-openui/upstream/components/table.tsx:7",
         "frontend/src/components/native-openui/upstream/components/text.tsx:8"
       ],
       "reachable": true,
@@ -89166,7 +89178,7 @@
         "frontend/src/components/native-openui/upstream/components/layout.tsx:6",
         "frontend/src/components/native-openui/upstream/components/markdown.tsx:4",
         "frontend/src/components/native-openui/upstream/components/svg.tsx:5",
-        "frontend/src/components/native-openui/upstream/components/table.tsx:7",
+        "frontend/src/components/native-openui/upstream/components/table.tsx:8",
         "frontend/src/components/native-openui/upstream/components/text.tsx:10"
       ],
       "reachable": true,
@@ -89262,7 +89274,7 @@
       "id": "surface:3f7c2c965ea05381e7ac",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/table.tsx",
-      "sha256": "d1016645df6296dbbb00471ff5f040f7660da2c17f77e1d1ab4474bca84f4be5",
+      "sha256": "0443ae674989afc4cc15f0fdc8215f7f8341e6f425844383555e65e1ef8c6c08",
       "symbols": [
         "MAGNITUDE",
         "NUMERIC",
@@ -89272,20 +89284,25 @@
         "b",
         "cell",
         "cells",
+        "citation",
+        "citations",
         "columns",
         "isElement",
         "key",
+        "label",
         "leftNumber",
         "match",
         "numeric",
         "numericValue",
         "order",
         "proseTables",
+        "renderCitation",
         "rightNumber",
         "rows",
         "visibleRows"
       ],
       "imports": [
+        "../../evidence",
         "./markdown",
         "./style",
         "@openuidev/react-lang",
@@ -89293,6 +89310,7 @@
         "zod/v4"
       ],
       "runtimeImports": [
+        "frontend/src/components/native-openui/evidence.tsx",
         "frontend/src/components/native-openui/upstream/components/markdown.tsx",
         "frontend/src/components/native-openui/upstream/components/style.ts"
       ],
@@ -89315,7 +89333,9 @@
       "tenantBoundary": [],
       "approvalBoundary": [],
       "costBoundary": [],
-      "evidenceBoundary": [],
+      "evidenceBoundary": [
+        "frontend/src/components/native-openui/upstream/components/table.tsx#useRenderEvidenceCitation"
+      ],
       "testCoverage": [],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -89328,7 +89348,7 @@
       "id": "surface:c0e107e03bc08dc07fad",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/text.tsx",
-      "sha256": "8cefcde8789cfd6e6c55f6b73cee227dd4ac7c09a335f1159ff002547cf9c671",
+      "sha256": "52ea09eb3f0b953c1cf393417c73c2642bd2c45d2ea04699c81ecbbecd0092c1",
       "symbols": [
         "Badge",
         "Caption",
@@ -91032,7 +91052,7 @@
       ],
       "callers": [
         "frontend/src/components/layout/Sidebar.tsx:70",
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:36"
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:37"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -93517,7 +93537,7 @@
         "frontend/src/components/response-experience-v2/exportText.test.ts:3",
         "frontend/src/components/response-experience-v2/shareSnapshot.test.ts:5",
         "frontend/src/components/terminal/SwarmMessageLog.tsx:15",
-        "frontend/src/lib/researchHandoff.test.ts:4",
+        "frontend/src/lib/researchHandoff.test.ts:5",
         "frontend/src/lib/responseCoverageContract.test.ts:6",
         "frontend/src/lib/responsePresentation.integration.test.ts:8"
       ],
@@ -93870,7 +93890,7 @@
         "frontend/src/components/response-experience-v2/SharedResponseV2.tsx:4",
         "frontend/src/components/response-experience-v2/document.test.ts:11",
         "frontend/src/components/response-experience-v2/shareSnapshot.test.ts:4",
-        "frontend/src/lib/researchHandoff.test.ts:5",
+        "frontend/src/lib/researchHandoff.test.ts:6",
         "frontend/src/lib/responseCoverageContract.test.ts:5",
         "frontend/src/lib/responsePresentation.integration.test.ts:9"
       ],
@@ -94883,7 +94903,7 @@
       ],
       "callers": [
         "frontend/src/components/settings/SettingsView.tsx:11",
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:33"
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:34"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -97262,7 +97282,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:46",
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:47",
         "frontend/src/lib/chatTurnRail.test.ts:4",
         "frontend/src/lib/workspaceRouteIsolation20261021.test.ts:49"
       ],
@@ -99139,7 +99159,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:44"
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:45"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -99473,7 +99493,7 @@
       "id": "surface:9364a65f93f37c69b67d",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/SourceCitation.tsx",
-      "sha256": "6c5e2cc0a2e0f1627dde09b389d413636429beae1dfa032c0851ef3907272ad2",
+      "sha256": "101fdcd34f05eafca34933cd76410b3af5dcc7a387605c144def359a4aa17254",
       "symbols": [
         "CitationIcon",
         "CitationPage",
@@ -99652,7 +99672,7 @@
       "id": "surface:9c57a6290c71522141f5",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/SwarmMessageLog.tsx",
-      "sha256": "fad75fda4a1205a74b4ab4af1015ed2608418fee8444b7cf842f31bc3b9ce2e4",
+      "sha256": "cf7643bf0ed00bf2ce12839383d1a51810e8a7a745a527c085f5117799f1e54d",
       "symbols": [
         "AGENT_STYLES",
         "SwarmMessageLog",
@@ -99748,6 +99768,8 @@
         "turn",
         "updateAsk",
         "visibleMessages",
+        "webEvidence",
+        "webSourceCount",
         "work",
         "workspace",
         "workspaceCommitSha",
@@ -99791,6 +99813,7 @@
         "@/lib/codeBuildProcessing",
         "@/lib/messageHelpers",
         "@/lib/publicAnswerText",
+        "@/lib/researchHandoff",
         "@/lib/researchWait",
         "@/lib/rollbackProjectUpdate",
         "@/lib/terminal/activityPresentation",
@@ -99846,6 +99869,7 @@
         "frontend/src/lib/codeBuildProcessing.ts",
         "frontend/src/lib/messageHelpers.ts",
         "frontend/src/lib/publicAnswerText.ts",
+        "frontend/src/lib/researchHandoff.ts",
         "frontend/src/lib/researchWait.ts",
         "frontend/src/lib/rollbackProjectUpdate.ts",
         "frontend/src/lib/terminal/activityPresentation.ts",
@@ -99882,7 +99906,9 @@
       "tenantBoundary": [],
       "approvalBoundary": [],
       "costBoundary": [],
-      "evidenceBoundary": [],
+      "evidenceBoundary": [
+        "frontend/src/components/terminal/SwarmMessageLog.tsx#webEvidence"
+      ],
       "testCoverage": [],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -100245,7 +100271,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:43"
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:44"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -100366,7 +100392,7 @@
       ],
       "callers": [
         "frontend/src/components/dashboard/DashboardView.tsx:5",
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:42"
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:43"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -101031,7 +101057,7 @@
       ],
       "callers": [
         "frontend/src/components/dashboard/DashboardView.tsx:19",
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:55",
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:56",
         "frontend/src/components/terminal/WorkspaceConversationMenu.tsx:11"
       ],
       "reachable": true,
@@ -101102,7 +101128,7 @@
       ],
       "callers": [
         "frontend/src/components/dashboard/DashboardView.tsx:6",
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:52"
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:53"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -101172,7 +101198,7 @@
       ],
       "callers": [
         "frontend/src/components/dashboard/DashboardView.tsx:7",
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:37"
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:38"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -105553,7 +105579,7 @@
         "frontend/src/components/library/LibraryWorkspace.tsx:9",
         "frontend/src/components/terminal/DevWorkspacePanel.tsx:33",
         "frontend/src/components/terminal/ProjectWorkspaceRail.tsx:6",
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:39",
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:40",
         "frontend/src/components/terminal/TerminalChatBar.tsx:11",
         "frontend/src/components/terminal/TerminalDock.tsx:14",
         "frontend/src/components/ui/DownloadAppButton.tsx:8"
@@ -109376,7 +109402,7 @@
       "id": "surface:015cc267f70323e72e46",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/formatAiMarkdown.tsx",
-      "sha256": "b7d062bda6d42d4adac11104da7b83f8cc9a7b0821377c68f02c3f00ddeb2226",
+      "sha256": "e8e2db2ef4e7f0a6bec271a183568affdc481d0c8bfb037475c38613abc9366f",
       "symbols": [
         "AppMark",
         "BusinessActionConfirmationInline",
@@ -109417,6 +109443,7 @@
         "introCount",
         "introMarkdown",
         "introParts",
+        "isOfficialSearch",
         "joinClasses",
         "knownIndex",
         "label",
@@ -111507,7 +111534,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:34",
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:35",
         "frontend/src/context/TerminalChatContext.tsx:68",
         "frontend/src/lib/codeBuildProcessing.ts:3",
         "frontend/src/lib/messageHelpers.test.ts:3",
@@ -113557,7 +113584,7 @@
         "frontend/src/components/native-openui/upstream/components/markdown.test.ts:5",
         "frontend/src/components/native-openui/upstream/components/markdown.tsx:3",
         "frontend/src/components/terminal/ReasoningAndFollowUps.tsx:16",
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:31"
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:32"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -114446,7 +114473,7 @@
       "id": "surface:e29556c101092aa421b9",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/researchHandoff.ts",
-      "sha256": "a984aca6005ddcc8fe68bae36735832aa004b191b998b11e024cc0aa520108fb",
+      "sha256": "4a9d4e77b9ef0b8470727cb3fa4f618c1f6c74587aee190d23d318ea8d9ee1e8",
       "symbols": [
         "Message",
         "RESEARCH_RECEIPT_AVAILABLE",
@@ -114460,37 +114487,46 @@
         "escape",
         "evidence",
         "handoffId",
+        "isResearchReceiptId",
         "links",
         "markResearchUnavailable",
         "original",
         "output",
         "pendingResearchConfirmation",
         "raw",
+        "retrievedWebSourceCount",
         "source",
         "sources",
         "withContent"
       ],
       "imports": [
         "./xrogaBlocks",
+        "./xrogaCitations",
         "./xrogaResponseDocument"
       ],
       "runtimeImports": [
         "frontend/src/lib/xrogaBlocks.ts",
+        "frontend/src/lib/xrogaCitations.ts",
         "frontend/src/lib/xrogaResponseDocument.ts"
       ],
       "entryPoints": [
         "frontend/src/app/(shell)/dashboard/automations/page.tsx",
+        "frontend/src/app/(shell)/dashboard/error.tsx",
         "frontend/src/app/(shell)/dashboard/projects/page.tsx",
+        "frontend/src/app/(shell)/error.tsx",
         "frontend/src/app/(shell)/layout.tsx",
+        "frontend/src/app/(workspace)/dashboard/page.tsx",
         "frontend/src/app/(workspace)/layout.tsx",
         "frontend/src/app/(workspace)/workspace/page.tsx",
         "frontend/src/app/os-preview/rich-results/page.tsx",
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:29",
         "frontend/src/context/TerminalChatContext.tsx:21",
         "frontend/src/lib/formatAiMarkdown.tsx:35",
-        "frontend/src/lib/researchHandoff.test.ts:3"
+        "frontend/src/lib/researchHandoff.test.ts:3",
+        "frontend/src/lib/sanitizeChatMessages.ts:7"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -114503,7 +114539,8 @@
       "costBoundary": [],
       "evidenceBoundary": [
         "frontend/src/lib/researchHandoff.ts#RESEARCH_RECEIPT_AVAILABLE",
-        "frontend/src/lib/researchHandoff.ts#evidence"
+        "frontend/src/lib/researchHandoff.ts#evidence",
+        "frontend/src/lib/researchHandoff.ts#isResearchReceiptId"
       ],
       "testCoverage": [
         "frontend/src/lib/researchHandoff.test.ts"
@@ -114531,7 +114568,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:29"
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:30"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -114565,8 +114602,11 @@
       "runtimeImports": [],
       "entryPoints": [
         "frontend/src/app/(shell)/dashboard/automations/page.tsx",
+        "frontend/src/app/(shell)/dashboard/error.tsx",
         "frontend/src/app/(shell)/dashboard/projects/page.tsx",
+        "frontend/src/app/(shell)/error.tsx",
         "frontend/src/app/(shell)/layout.tsx",
+        "frontend/src/app/(workspace)/dashboard/page.tsx",
         "frontend/src/app/(workspace)/layout.tsx",
         "frontend/src/app/(workspace)/workspace/page.tsx",
         "frontend/src/app/os-preview/rich-results/page.tsx",
@@ -114758,7 +114798,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:47",
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:48",
         "frontend/src/components/terminal/WorkspaceIdentityMenu.tsx:17"
       ],
       "reachable": true,
@@ -114938,7 +114978,7 @@
       "id": "surface:1ef61e220a1d9316ca49",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/sanitizeChatMessages.ts",
-      "sha256": "9472c50e5932eacfc781a768529cc0ea1b846bc8a34679b8fb0d5fed52df2410",
+      "sha256": "2bf850413cd21262dee65f8bfd0cee763a1b87179ec26fc14bd4028325d53bdf",
       "symbols": [
         "b",
         "content",
@@ -114971,11 +115011,13 @@
       "imports": [
         "@/context/TerminalChatContext",
         "@/lib/hackathonBrief",
+        "@/lib/researchHandoff",
         "@/lib/terminal/activityPresentation",
         "@/lib/terminal/terminalRedaction",
         "@/lib/xrogaCitations"
       ],
       "runtimeImports": [
+        "frontend/src/lib/researchHandoff.ts",
         "frontend/src/lib/terminal/terminalRedaction.ts",
         "frontend/src/lib/xrogaCitations.ts"
       ],
@@ -114991,6 +115033,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
+        "frontend/src/lib/researchHandoff.test.ts:4",
         "frontend/src/lib/workspacePersistence.ts:3"
       ],
       "reachable": true,
@@ -115000,8 +115043,12 @@
       "tenantBoundary": [],
       "approvalBoundary": [],
       "costBoundary": [],
-      "evidenceBoundary": [],
-      "testCoverage": [],
+      "evidenceBoundary": [
+        "frontend/src/lib/sanitizeChatMessages.ts#isResearchReceiptId"
+      ],
+      "testCoverage": [
+        "frontend/src/lib/researchHandoff.test.ts"
+      ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -118305,7 +118352,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:32",
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:33",
         "frontend/src/lib/terminal/executionIntent.test.ts:3"
       ],
       "reachable": true,
@@ -118359,7 +118406,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:45",
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:46",
         "frontend/src/lib/terminal/requiredInteractions.test.ts:104",
         "frontend/src/lib/terminal/requiredInteractions.test.ts:4"
       ],
@@ -119689,7 +119736,7 @@
         "frontend/src/components/terminal/RepoWorkspaceGateModal.tsx:10",
         "frontend/src/components/terminal/SocialShareModal.tsx:6",
         "frontend/src/components/terminal/StoppedBuildResumeCard.tsx:4",
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:41",
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:42",
         "frontend/src/components/terminal/TerminalBuildReport.tsx:5",
         "frontend/src/components/terminal/TerminalChatBar.tsx:24",
         "frontend/src/components/terminal/TerminalDock.tsx:16",
@@ -120429,7 +120476,7 @@
         "frontend/src/components/layout/SidebarProjectHistory.tsx:59",
         "frontend/src/components/notifications/NotificationBell.tsx:10",
         "frontend/src/components/terminal/ProjectsQuickPopover.tsx:14",
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:40",
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:41",
         "frontend/src/context/TerminalChatContext.tsx:33",
         "frontend/src/lib/projectResume.ts:5",
         "frontend/src/lib/restoreRepoTerminal.ts:9",
@@ -120577,8 +120624,11 @@
       ],
       "entryPoints": [
         "frontend/src/app/(shell)/dashboard/automations/page.tsx",
+        "frontend/src/app/(shell)/dashboard/error.tsx",
         "frontend/src/app/(shell)/dashboard/projects/page.tsx",
+        "frontend/src/app/(shell)/error.tsx",
         "frontend/src/app/(shell)/layout.tsx",
+        "frontend/src/app/(workspace)/dashboard/page.tsx",
         "frontend/src/app/(workspace)/layout.tsx",
         "frontend/src/app/(workspace)/workspace/page.tsx",
         "frontend/src/app/os-preview/rich-results/page.tsx",
@@ -120759,8 +120809,11 @@
       ],
       "entryPoints": [
         "frontend/src/app/(shell)/dashboard/automations/page.tsx",
+        "frontend/src/app/(shell)/dashboard/error.tsx",
         "frontend/src/app/(shell)/dashboard/projects/page.tsx",
+        "frontend/src/app/(shell)/error.tsx",
         "frontend/src/app/(shell)/layout.tsx",
+        "frontend/src/app/(workspace)/dashboard/page.tsx",
         "frontend/src/app/(workspace)/layout.tsx",
         "frontend/src/app/(workspace)/workspace/page.tsx",
         "frontend/src/app/os-preview/rich-results/page.tsx",
@@ -120927,8 +120980,11 @@
       "runtimeImports": [],
       "entryPoints": [
         "frontend/src/app/(shell)/dashboard/automations/page.tsx",
+        "frontend/src/app/(shell)/dashboard/error.tsx",
         "frontend/src/app/(shell)/dashboard/projects/page.tsx",
+        "frontend/src/app/(shell)/error.tsx",
         "frontend/src/app/(shell)/layout.tsx",
+        "frontend/src/app/(workspace)/dashboard/page.tsx",
         "frontend/src/app/(workspace)/layout.tsx",
         "frontend/src/app/(workspace)/workspace/page.tsx",
         "frontend/src/app/os-preview/rich-results/page.tsx",
@@ -120958,7 +121014,7 @@
       "id": "surface:f6ec62cf29831de59ad0",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/xrogaCitations.ts",
-      "sha256": "3b0425245bb2983b80c1b261be39457e786e284c0fe7d83ee7f6565e641cfdb4",
+      "sha256": "7f295c307f79969c469987b4d57ca77dc1f49f7746349c5ecb3cf577c3c52d3c",
       "symbols": [
         "CitationSource",
         "MarkdownNode",
@@ -121015,6 +121071,7 @@
         "frontend/src/components/terminal/SwarmMessageLog.tsx:13",
         "frontend/src/components/terminal/WebSourcesPanel.tsx:6",
         "frontend/src/lib/formatAiMarkdown.tsx:20",
+        "frontend/src/lib/researchHandoff.ts:3",
         "frontend/src/lib/sanitizeChatMessages.ts:6",
         "frontend/src/lib/xrogaCitations.test.ts:6"
       ],
@@ -121675,8 +121732,11 @@
       ],
       "entryPoints": [
         "frontend/src/app/(shell)/dashboard/automations/page.tsx",
+        "frontend/src/app/(shell)/dashboard/error.tsx",
         "frontend/src/app/(shell)/dashboard/projects/page.tsx",
+        "frontend/src/app/(shell)/error.tsx",
         "frontend/src/app/(shell)/layout.tsx",
+        "frontend/src/app/(workspace)/dashboard/page.tsx",
         "frontend/src/app/(workspace)/layout.tsx",
         "frontend/src/app/(workspace)/workspace/page.tsx",
         "frontend/src/app/os-preview/rich-results/page.tsx",
@@ -121790,8 +121850,11 @@
       "runtimeImports": [],
       "entryPoints": [
         "frontend/src/app/(shell)/dashboard/automations/page.tsx",
+        "frontend/src/app/(shell)/dashboard/error.tsx",
         "frontend/src/app/(shell)/dashboard/projects/page.tsx",
+        "frontend/src/app/(shell)/error.tsx",
         "frontend/src/app/(shell)/layout.tsx",
+        "frontend/src/app/(workspace)/dashboard/page.tsx",
         "frontend/src/app/(workspace)/layout.tsx",
         "frontend/src/app/(workspace)/workspace/page.tsx",
         "frontend/src/app/os-preview/rich-results/page.tsx",
@@ -121845,7 +121908,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:30",
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:31",
         "frontend/src/lib/xrogaShareableOutput.test.ts:3"
       ],
       "reachable": true,
@@ -122398,7 +122461,7 @@
         "frontend/src/components/layout/Sidebar.tsx:74",
         "frontend/src/components/providers/AppProviders.tsx:6",
         "frontend/src/components/settings/PrivacySettingsPanel.tsx:5",
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:38",
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:39",
         "frontend/src/components/terminal/TerminalChatBar.tsx:10",
         "frontend/src/components/terminal/TerminalDock.tsx:12",
         "frontend/src/context/TerminalChatContext.tsx:28"
@@ -122502,7 +122565,7 @@
         "frontend/src/components/terminal/ProjectWorkspaceRail.tsx:4",
         "frontend/src/components/terminal/RepoContextBar.tsx:32",
         "frontend/src/components/terminal/RuntimeLogsButton.tsx:20",
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:51",
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:52",
         "frontend/src/components/terminal/TerminalDock.tsx:17",
         "frontend/src/components/terminal/VercelDeployButton.tsx:6",
         "frontend/src/components/terminal/WorkspaceConversationMenu.tsx:8",
@@ -146236,9 +146299,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:fb408cd1ef116ac36dbd",
+      "id": "finding:a3dcc262a60a4d56416d",
       "sourcePath": "frontend/src/components/terminal/SwarmMessageLog.tsx",
-      "line": 404,
+      "line": 405,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -146546,9 +146609,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:34f039749c7151e63949",
+      "id": "finding:1e0076a8a244535dd105",
       "sourcePath": "frontend/src/lib/formatAiMarkdown.tsx",
-      "line": 1374,
+      "line": 1380,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -146556,9 +146619,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:a92323f8d2de2797ce72",
+      "id": "finding:958993ea93767a150f8d",
       "sourcePath": "frontend/src/lib/formatAiMarkdown.tsx",
-      "line": 1375,
+      "line": 1381,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -150297,16 +150360,16 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:87c11eff4eb9e8954c55",
+      "id": "frontend-call:63b22ed2e4ca1ffd65f0",
       "sourcePath": "frontend/src/lib/formatAiMarkdown.tsx",
-      "line": 1044,
+      "line": 1050,
       "callee": "api.phase1.plan",
       "reachable": true
     },
     {
-      "id": "frontend-call:ebb7456e073e70391bef",
+      "id": "frontend-call:6fa7b372471ceddbe529",
       "sourcePath": "frontend/src/lib/formatAiMarkdown.tsx",
-      "line": 1080,
+      "line": 1086,
       "callee": "api.phase1.chat",
       "reachable": true
     },
@@ -151211,7 +151274,7 @@
     {
       "id": "test-suite:cf78e18abc3aa283d701",
       "sourcePath": "backend/src/ai/nativeOpenUiValues.test.ts",
-      "declaredTests": 18,
+      "declaredTests": 19,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -151344,7 +151407,7 @@
     {
       "id": "test-suite:dd88a5c540273ff6039e",
       "sourcePath": "backend/src/ai/prompts.test.ts",
-      "declaredTests": 6,
+      "declaredTests": 7,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -158106,7 +158169,7 @@
     {
       "id": "test-suite:1b04327f877eb86409b4",
       "sourcePath": "frontend/src/lib/xrogaCitations.test.ts",
-      "declaredTests": 6,
+      "declaredTests": 7,
       "skipLocations": [],
       "focusLocations": []
     },
