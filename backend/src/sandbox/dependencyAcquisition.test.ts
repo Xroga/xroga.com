@@ -26,7 +26,7 @@ test('pip: exact versions only; every wheel hash is pinned; the install refuses 
   const plan = await buildAcquisitionPlan({ ecosystem: 'pip', packages: [{ name: 'rich', version: '13.7.1' }], get: registry });
   assert.equal(plan.ready, true);
   assert.equal(plan.files[0].content, `rich==13.7.1 --hash=sha256:${H1}\n`, 'the sdist hash is not accepted: only wheels');
-  assert.deepEqual(plan.stages[0].args.slice(0, 5), ['-m', 'pip', 'install', '--require-hashes', '--only-binary=:all:']);
+  assert.deepEqual(plan.stages[0].args.slice(0, 6), ['-I', '-m', 'pip', 'install', '--require-hashes', '--only-binary=:all:']);
   assert.equal(plan.stages[0].networkPolicy, 'registry-only');
   for (const bad of ['13', '>=13.0', '13.*', 'latest', '13.7.1 ; evil', '']) await assert.rejects(buildAcquisitionPlan({ ecosystem: 'pip', packages: [{ name: 'rich', version: bad }], get: registry }), (e: AcquisitionError) => e.code === 'UNPINNED', bad);
   await assert.rejects(buildAcquisitionPlan({ ecosystem: 'pip', packages: [{ name: 'sdist-only', version: '1.0.0' }], get: registry }), (e: AcquisitionError) => e.code === 'NO_DIGEST');
@@ -69,4 +69,16 @@ test('a version the registry does not list is refused, and the package count is 
 test('weak copyleft (MPL) is a review item, not a silent pass', () => {
   assert.equal(classifyLicence('MPL-2.0'), 'review');
   assert.equal(classifyLicence('Mozilla Public License 2.0 (MPL 2.0)'), 'review');
+});
+
+test('common licence spellings cannot slip past the gate', () => {
+  for (const strong of ['GPLv3', 'GPLv2+', '(AGPLv3)', 'GNU General Public License v3', 'MPL-2.0 AND GPLv3', 'GPL-2.0-or-later']) assert.equal(isWeakCopyleft(strong), false, strong);
+  for (const review of ['GPLv3 AND MIT', 'GNU General Public License v2 or later', 'AGPLv3']) assert.equal(classifyLicence(review), 'review', review);
+  for (const weak of ['MPL-2.0', 'LGPL-2.1-or-later', 'GNU Lesser General Public License v3 (LGPLv3)', 'Mozilla Public License 2.0 (MPL 2.0)']) assert.equal(isWeakCopyleft(weak), true, weak);
+});
+
+test('the network stage runs pip in isolated mode so a repository file cannot run inside it', async () => {
+  const plan = await buildAcquisitionPlan({ ecosystem: 'pip', packages: [{ name: 'rich', version: '1.0.0' }], get: registry });
+  const acquire = plan.stages.find((st) => st.id === 'acquire:pip');
+  assert.ok(acquire && acquire.args[0] === '-I' && acquire.args[1] === '-m');
 });

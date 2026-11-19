@@ -170,10 +170,12 @@ if(googleBackgroundSelected()){
 }
 // Documents attached in the browser extension can be up to 25 MB (base64 in JSON). The larger body limit applies to that one route and only
 // to a request that carries a device bearer token in the expected shape; the token itself is verified by the route's own auth afterwards.
+const documentsAuth = createLocalBrowserAuth();
 app.use('/api/browser/local/documents', (req, res, next) => {
   if (req.method !== 'POST') return next();
   if (!/^Bearer xroga_browser_[A-Za-z0-9_-]{43}$/.test(String(req.headers.authorization ?? ''))) return res.status(401).json({ error: 'BROWSER_DEVICE_AUTH_REQUIRED' });
-  return express.json({ limit: '36mb' })(req, res, next);
+  // The device token is verified BEFORE the large body is read, so an unauthenticated caller cannot make the server parse 36 MB.
+  return documentsAuth(req, res, (error?: unknown) => (error ? next(error) : express.json({ limit: '36mb' })(req, res, next)));
 });
 app.use(express.json({ limit: '10mb' }));
 

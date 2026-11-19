@@ -109,11 +109,12 @@ export function createLocalBrowserPluginCatalog() {
       if (!toolkit) {
         // No app named: this is the account-wide choice.
         if (!await req.revalidateBrowserDevice!()) return res.sendStatus(403);
-        const saved = await setUserPluginPermissionMode(actor, mode);
-        // One switch controls every app: older per-app choices are cleared so that "off" is really off for all of them.
+        // One switch controls every app. Older per-app choices are cleared FIRST, so a failure in between can never leave a stale per-app
+        // "full access" overriding the new account-wide choice; the underscores are escaped so only the exact prefix matches.
         const { error } = await getSupabaseAdmin().from('user_integrations').delete()
-          .eq('user_id', actor.userId).like('provider', 'xroga_plugin_permission_policy__%');
+          .eq('user_id', actor.userId).like('provider', 'xroga\\_plugin\\_permission\\_policy\\_\\_%');
         if (error) return res.status(503).json({ error: 'BROWSER_PLUGIN_PERMISSION_UNAVAILABLE' });
+        const saved = await setUserPluginPermissionMode(actor, mode);
         return res.json({ mode: saved });
       }
       if (!canUserAccessComposioToolkit(actor.userId, toolkit)) return res.sendStatus(404);

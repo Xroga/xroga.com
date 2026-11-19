@@ -51,7 +51,11 @@ const MAX_PLUGIN_READS = 400;
  * (send, post, publish, invite, share, reply, forward, call, notify...). Destructive and financial calls are refused outright, before this.
  * An operator can turn automatic approval off for a deployment with XROGA_LOCAL_BROWSER_AUTO_APPROVE=off.
  */
-const OUTBOUND_TOKENS = new Set(['SEND', 'POST', 'PUBLISH', 'TWEET', 'TWEETS', 'INVITE', 'SHARE', 'REPLY', 'FORWARD', 'CALL', 'NOTIFY', 'BROADCAST', 'SMS', 'DM', 'TEXT', 'EMAIL', 'EMAILS', 'MESSAGE', 'MESSAGES', 'COMMENT', 'ANNOUNCE', 'SCHEDULE', 'GRANT', 'PERMISSION', 'COLLABORATOR', 'TRANSFER', 'DISPATCH', 'DELIVER', 'TRIGGER', 'WEBHOOK', 'PUBLIC', 'SUBSCRIBE', 'MENTION', 'ASSIGN']);
+const OUTBOUND_TOKENS = new Set(['SEND', 'POST', 'PUBLISH', 'TWEET', 'TWEETS', 'INVITE', 'SHARE', 'REPLY', 'FORWARD', 'CALL', 'NOTIFY', 'BROADCAST', 'SMS', 'DM', 'TEXT', 'EMAIL', 'EMAILS', 'MESSAGE', 'MESSAGES', 'COMMENT', 'ANNOUNCE', 'SCHEDULE', 'GRANT', 'PERMISSION', 'COLLABORATOR', 'TRANSFER', 'DISPATCH', 'DELIVER', 'TRIGGER', 'WEBHOOK', 'PUBLIC', 'SUBSCRIBE', 'MENTION', 'ASSIGN', 'INVOICE', 'PAYOUT', 'PAYMENT', 'SUBSCRIPTION', 'ORDER', 'CHARGE', 'REFUND', 'MERGE', 'DEPLOY', 'ATTENDEE', 'ATTENDEES', 'RECIPIENT', 'RECIPIENTS']);
+/** Tool names that run code, queries or commands: a name with such a word is never a plain read, whatever else it says. */
+const EXECUTES_TOKENS = new Set(['EXECUTE', 'EXEC', 'SQL', 'MUTATION', 'MUTATE', 'INVOKE', 'EVAL', 'SHELL', 'COMMAND', 'SCRIPT', 'RAW']);
+/** Outbound words that a draft may carry without becoming a send: the draft stays on the owner's side. */
+const DRAFT_SAFE_TOKENS = new Set(['EMAIL', 'EMAILS', 'MESSAGE', 'MESSAGES', 'TEXT', 'COMMENT']);
 /** An outbound word in any form: SEND, SENDS, SENDING, SENT, POSTED, REPLIES, SHARING. */
 function isOutboundToken(token: string): boolean {
   if (OUTBOUND_TOKENS.has(token) || token === 'SENT') return true;
@@ -64,10 +68,12 @@ export function autoApprovesCall(kind: 'read' | 'change', slug: string, env: Nod
   // before this point). "Low risk" and "full access" run reads and changes inside the owner's own app; sending, publishing, deleting and
   // paying keep their card in every mode.
   if (mode === 'always_ask') return false;
-  if (kind === 'read') return true;
   const tokens = slug.toUpperCase().split(/[^A-Z0-9]+/);
+  if (tokens.some(token => EXECUTES_TOKENS.has(token)) && !/^MONID_/.test(slug.toUpperCase())) return false;
+  if (kind === 'read') return true;
   // "Draft" and "create draft" stay on the owner's side; any outbound word makes it a card.
-  return !tokens.some(isOutboundToken) || tokens.includes('DRAFT') && !tokens.includes('SEND');
+  const outbound = tokens.filter(isOutboundToken);
+  return outbound.length === 0 || tokens.includes('DRAFT') && outbound.every(token => DRAFT_SAFE_TOKENS.has(token));
 }
 // The job is built for each model turn, so this bounds ONE request (a safety bound, many times its reservation), not the run.
 const PER_TURN_JOB_COST_MICROS = 36_000;

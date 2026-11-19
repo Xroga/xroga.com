@@ -26,7 +26,7 @@ export class AcquisitionError extends Error {
 
 const PERMISSIVE = /^(?:MIT|MIT-0|ISC|BSD(?:-[0-9]-Clause)?(?:-Clear)?|Apache-2\.0|0BSD|Unlicense|CC0-1\.0|Python-2\.0|PSF-2\.0|BlueOak-1\.0\.0|Zlib|HPND)$/i;
 const PERMISSIVE_WORDS = /\b(?:mit|isc|bsd|apache|python software foundation|psf|unlicense|public domain|zlib)/i;
-const COPYLEFT = /\b(?:gpl|agpl|lgpl|sspl|busl|commons clause|proprietary|non-?commercial)\b/i;
+const COPYLEFT = /\b(?:a?gpl(?:v?\d|\b)|lgpl|sspl|busl|commons clause|proprietary|non-?commercial|general public licen[cs]e)/i;
 
 /** Classifies a declared licence string or SPDX expression. Anything not clearly permissive needs a human; an empty one is unknown. */
 export function classifyLicence(declared: string): LicenceClass {
@@ -43,9 +43,13 @@ export function classifyLicence(declared: string): LicenceClass {
 export function isWeakCopyleft(declared: string): boolean {
   const text = declared.trim();
   if (!text || text.length > 200) return false;
-  const withoutLgpl = text.replace(/\blgpl\b/gi, ' ');
-  if (/\b(?:agpl|gpl|sspl|busl|commons clause|proprietary|non-?commercial|unknown|see license)\b/i.test(withoutLgpl)) return false;
-  return /\b(?:mpl|mozilla public|lgpl|epl|eclipse public|cddl)\b/i.test(text);
+  // Library, file or Lesser terms are weak; any other GPL form (GPLv3, GPL-2.0+, AGPLv3, General Public License) is strong.
+  const rest = text
+    .replace(/GNU Lesser General Public Licen[cs]e/gi, ' ')
+    .replace(/\blgpl[-a-z0-9.+]*/gi, ' ')
+    .replace(/mozilla public licen[cs]e/gi, ' ');
+  if (/(?:a?gpl|general public licen[cs]e|sspl|busl|commons clause|proprietary|non-?commercial|unknown|see license)/i.test(rest)) return false;
+  return /\b(?:mpl|mozilla public|lgpl|epl|eclipse public|cddl|lesser general public)\b/i.test(text);
 }
 
 const EXACT_PIP = /^\d+(?:\.\d+){1,3}(?:(?:a|b|rc)\d+)?(?:\.post\d+)?$/;
@@ -137,7 +141,7 @@ export async function buildAcquisitionPlan(input: PlanInput): Promise<Acquisitio
       ecosystem: 'pip', ready: needsReview.length === 0, packages: resolved, needsReview,
       files: [{ path: `${dir}/requirements.lock.txt`, content: `${lines.join('\n')}\n` }],
       // --require-hashes makes pip reject any requirement without a matching hash (including every transitive one), --only-binary refuses source builds
-      stages: [{ id: 'acquire:pip', command: 'python3', args: ['-m', 'pip', 'install', '--require-hashes', '--only-binary=:all:', '--no-input', '-q', '-r', `${dir}/requirements.lock.txt`], networkPolicy: 'registry-only', timeoutMs: 240_000 },
+      stages: [{ id: 'acquire:pip', command: 'python3', args: ['-I', '-m', 'pip', 'install', '--require-hashes', '--only-binary=:all:', '--no-input', '-q', '-r', `${dir}/requirements.lock.txt`], networkPolicy: 'registry-only', timeoutMs: 240_000 },
         { id: 'licences:pip', command: 'python3', args: ['-c', PIP_LICENCE_REPORT], networkPolicy: 'none', timeoutMs: 30_000 }],
     };
   }

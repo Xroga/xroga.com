@@ -33,6 +33,10 @@ test('reads and changes inside the owner own app run without a card; outbound, p
   // Other forms and less common outbound verbs keep their card too.
   for(const slug of ['GMAIL_SENDS_EMAIL','SLACK_SENDING_A_NOTE','TWITTER_POSTED_UPDATE','DRIVE_GRANT_ACCESS','DRIVE_SET_PERMISSIONS','ASANA_ADD_COLLABORATORS','BANK_TRANSFER_FUNDS','HOOK_TRIGGER_WEBHOOK','DRIVE_MAKE_PUBLIC'])assert.equal(autoApprovesCall('change',slug),false,slug);
   for(const slug of ['GOOGLESHEETS_BATCH_UPDATE_VALUES_BY_DATA_FILTER','GOOGLESHEETS_CREATE_GOOGLE_SHEET1','NOTION_APPEND_BLOCK_CHILDREN'])assert.equal(autoApprovesCall('change',slug),true,slug);
+  // Findings of the AI review: code-running names are not plain reads; money, attendee and merge words keep the card; a draft that publishes or replies is not a draft.
+  for(const slug of ['DB_RUN_SQL_QUERY','APP_EXECUTE_COMMAND','API_GRAPHQL_MUTATION'])assert.equal(autoApprovesCall('read',slug),false,slug);
+  for(const slug of ['GOOGLECALENDAR_CREATE_EVENT_WITH_ATTENDEES','STRIPE_CREATE_PAYOUT','STRIPE_CREATE_SUBSCRIPTION','SHOP_CREATE_ORDER','GITHUB_MERGE_A_PULL_REQUEST','X_PUBLISH_DRAFT','X_REPLY_DRAFT','BILLING_CREATE_INVOICE'])assert.equal(autoApprovesCall('change',slug),false,slug);
+  assert.equal(autoApprovesCall('change','GMAIL_CREATE_EMAIL_DRAFT'),true);
   assert.equal(autoApprovesCall('read','X_LIST',{XROGA_LOCAL_BROWSER_AUTO_APPROVE:'off'}),false);
 });
 
