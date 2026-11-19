@@ -36,7 +36,7 @@ export const blogFeedItems: FeedItem[] = BLOG_ARTICLES.map((article) => ({
   title: article.title,
   path: `/blog/${article.slug}`,
   description: article.description,
-  publishedAt: article.updated ?? '2026-09-09',
+  publishedAt: article.publishedAt ?? article.updated ?? '2026-09-09',
   updatedAt: article.updated ?? '2026-09-09',
 }));
 

@@ -271,7 +271,7 @@ export const premiumReplitAlternatives: GuidePage = {
     }
   ],
   "authorName": "Xroga Editorial",
-  "publishedAt": "2026-11-20",
+  "publishedAt": "2026-09-09",
   "updated": "2026-11-20",
   "readingMinutes": 10,
   "visual": {

@@ -10,9 +10,10 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const article = BLOG_ARTICLES.find((item) => item.slug === slug);
   if (!article) return {};
   const base = buildMetadata({ title: article.title, description: article.description, path: `/blog/${slug}` });
-  if (!article.visual) return base;
+  const attributed = { ...base, authors: [{ name: article.authorName || 'Xroga Editorial', url: `${SITE_URL}/about` }] };
+  if (!article.visual) return attributed;
   const image = `${SITE_URL}${article.visual.src}`;
-  return { ...base, openGraph: { type: 'article' as const, url: `${SITE_URL}/blog/${slug}`, title: article.title, description: article.description, images: [{ url: image, alt: article.visual.alt }] }, twitter: { card: 'summary_large_image' as const, title: article.title, description: article.description, images: [image] } };
+  return { ...attributed, openGraph: { type: 'article' as const, url: `${SITE_URL}/blog/${slug}`, title: article.title, description: article.description, images: [{ url: image, alt: article.visual.alt }] }, twitter: { card: 'summary_large_image' as const, title: article.title, description: article.description, images: [image] } };
 }
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;

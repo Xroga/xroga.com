@@ -59,14 +59,14 @@ export function EditorialPage({
           <header className="xv-seo-hero">
             <p className="xv-seo-eyebrow">{eyebrow}</p>
             <h1>{title}</h1>
-            {authorName && <p className="xv-seo-updated">By <Link href="/about">{authorName}</Link> · <time dateTime={updated}>{updated}</time>{readingMinutes ? ` · ${readingMinutes} min read` : ''}</p>}
+            {authorName && <p className="xv-seo-updated">By <Link href="/about">{authorName}</Link> · <time dateTime={updated ?? publishedAt}>{updated ?? publishedAt}</time>{readingMinutes ? ` · ${readingMinutes} min read` : ''}</p>}
             <p className="xv-seo-dek">{intro}</p>
             {readingMinutes && visuals.map((visual) => <EvidenceFigure key={`${visual.type}-${visual.src ?? visual.caption}`} visual={visual} />)}
             <div className="xv-seo-actions">
               <Link href={cta?.href ?? '/auth/signup'}>{cta?.label ?? 'Start building free'}</Link>
               <Link href="/showcase">See working examples</Link>
             </div>
-            {updated && <p className="xv-seo-updated">Reviewed against official sources · {updated}</p>}
+            {updated && <p className="xv-seo-updated">Editorially updated · {updated}</p>}
           </header>
 
           {explain && <ExplainWithXroga title={title} path={path} explanation={explain} />}
