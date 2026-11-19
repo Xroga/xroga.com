@@ -627,6 +627,8 @@ export function TerminalChatProvider({
   const projectId = projectIdProp ?? routeProjectId;
   const incognito = usePrivacyStore((s) => s.incognito);
   const [prompt, setPrompt] = useState('');
+  const latestPromptRef = useRef(prompt);
+  latestPromptRef.current = prompt;
   const [promptQueue, setPromptQueue] = useState<QueuedPrompt[]>([]);
   const [heavyLoading, setHeavyLoading] = useState(false);
   const [lightLoading, setLightLoading] = useState(false);
@@ -4639,6 +4641,12 @@ active.applyBuild({
         if (!incognito && turn?.assistantId === assistantId && sessionIdRef.current === originatingSessionId && !interruptRef.current) {
           setMessages((current) => {
             try {
+              // A completed answer can reach the cloud before the debounced device save.
+              // Save the same transcript first so an immediate reload restores the answer.
+              if (phase1AnswerSettled && sessionIdRef.current === originatingSessionId &&
+                  activityOwner.current === workspaceIdentity.userId && !usePrivacyStore.getState().incognito) {
+                saveWorkspaceSession({ prompt: latestPromptRef.current, messages: current, sessionId: originatingSessionId });
+              }
               archiveChatTurn({
                 prompt: turn.text,
                 messages: current,
