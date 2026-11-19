@@ -137,7 +137,7 @@ export const SKILLS: Skill[] = [
   },
   {
     id: 'app-script-console',
-    when: has(/(?:tracedraw|script(?:s|ing)? panel|macro)/i),
+    when: has(/\b(?:tracedraw|script(?:s|ing)? (?:panel|console)|macros?|vector (?:editor|drawing)|svg)\b/i),
     body: [
       'Apps with a built-in script console (verified on TraceDraw 0.49, where it is Tools > Scripts):',
       '- One short script beats dozens of clicks. Open the console, click into its editor, canvas type the whole script, click Run, then read the Output line: it says Objects: N or an error. Fix an error from its message only.',
