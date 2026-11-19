@@ -1089,9 +1089,9 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "ca589d6209f8f3ae4c9d18395cc249c64eb5ebe8de2d19d1f16e3e592e8c3b61",
+      "sourceSha256": "4bde01760d473067012813fb98080c6b3d45db5c7cd63674fee7917026385e85",
       "callIds": [
-        "04c3f4b5354897b9b524"
+        "f85a13946242fd10485a"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -2653,9 +2653,9 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "ca589d6209f8f3ae4c9d18395cc249c64eb5ebe8de2d19d1f16e3e592e8c3b61",
+      "sourceSha256": "4bde01760d473067012813fb98080c6b3d45db5c7cd63674fee7917026385e85",
       "callIds": [
-        "bdd1801435659fe05596"
+        "6296a781fc25e5bcf044"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -29035,9 +29035,9 @@
     },
     {
       "path": "frontend/src/lib/xrogaFileExports.ts",
-      "sourceSha256": "771f7f75bff7d39c9b05c230ae37cd6bb3fc287bcd09a187acb37e8337a89807",
+      "sourceSha256": "5c793ee8f243864e7966593efc9e2977661f5bab56d4712333dc20ede2c4f65d",
       "callIds": [
-        "53953a7522a9f4a6ec38"
+        "11b1fae25118734de35e"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in exportDocumentPdf, with no database or Storage client receiver.",

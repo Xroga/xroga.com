@@ -304,7 +304,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "ca589d6209f8f3ae4c9d18395cc249c64eb5ebe8de2d19d1f16e3e592e8c3b61",
+      "sha256": "4bde01760d473067012813fb98080c6b3d45db5c7cd63674fee7917026385e85",
       "previousGenericSdkBinding": {
         "sha256": "e5b3b4a3dc538e708fa8c005a8da6584db01b3dd425833373d59decbd2bfcb93",
         "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
@@ -664,7 +664,7 @@
     },
     {
       "path": "backend/src/ai/tenantModelDispatch.test.ts",
-      "sha256": "312d0338ebb8163b6b4649183a44c850a8d5ac83a4b3d67b1f9579218ed154bc",
+      "sha256": "aabbfa18a37c33b9090fd53b4593998f4a0d7e6e4bd14e097794e78ed2e5558a",
       "previousGenericSdkBinding": {
         "sha256": "acb7d3ee286d862c38e386380a20a7632415cd454510076abedca054016f2959",
         "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
@@ -715,7 +715,7 @@
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "sha256": "0b91a7f2262b94a5bb51eea74262b3b90d209efdea7af61562d2e88b85e3d08d",
+      "sha256": "406c14484910f41e05c10eea704bb3977c023fb2d3b5e9d68b5c4bb3dabf6457",
       "beforeInlineCalculatorRoutingSha256": "58e3fa0ea9ec46ed2aa0be0c7aa6ca0777c213059c12f3cd6ecf04a6a2ab6e29",
       "beforePlannerCompletionDiagnosticsSha256": "6ca81b0c9234195e6159d1e03735a21ce50d50cf1e8f71b53cb62199bf95cb26",
       "beforeCurrentMetadataReconciliation": {
