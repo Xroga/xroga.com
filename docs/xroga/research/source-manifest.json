@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "6260cca3bfb316cc7a108506f72bb8a41d6de7c7",
+  "source_sha": "9b336d9afc05c603be2ceb3982723933319a0a8d",
   "hash_policy": "Exact preserved attachment bytes; repository text uses Git-canonical LF bytes for portable hashes and byte counts",
   "sources": [
     {
@@ -6390,9 +6390,9 @@
       "source_id": "SRC-3d3190a1571aa705",
       "filename": "current-state.json",
       "path_or_url": "docs/xroga/current-state.json",
-      "sha256": "1648d36487ad7411b2bd2a838d9409a8a268c396f4a03c98e3b217ac4874f18d",
-      "byte_size": 5794696,
-      "modified_timestamp": "2026-11-19T16:24:38.097Z",
+      "sha256": "e98aaf1c688591a3b1750f328c54dbaabdb2c2406575fd5269142d800d0db1dc",
+      "byte_size": 5794723,
+      "modified_timestamp": "2026-11-19T16:45:36.243Z",
       "parse_status": "PARSED_JSON",
       "category": "REPOSITORY_DOCUMENT",
       "authority": "ADVISORY",
@@ -26605,9 +26605,9 @@
       "source_id": "SRC-c5f31b4c34d87af3",
       "filename": "TerminalChatContext.tsx",
       "path_or_url": "frontend/src/context/TerminalChatContext.tsx",
-      "sha256": "8a62572fc79a742030f589875ae85bf734ac7baac0f6f1d7f58bff0ecb35e2d7",
-      "byte_size": 177306,
-      "modified_timestamp": "2026-11-19T11:56:20.055Z",
+      "sha256": "41d7770dee6cab2807dc8af147c1b0118495948c82ae28e20a4c4560ba4a72c4",
+      "byte_size": 177912,
+      "modified_timestamp": "2026-11-19T16:43:45.363Z",
       "parse_status": "AST_METADATA",
       "category": "SOURCE_CODE",
       "authority": "CURRENT_CODE",
