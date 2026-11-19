@@ -1093,7 +1093,10 @@ export async function runChatPipeline(opts: {
 
   if (!opts.approvedResearch&&route.useResearch && !explicitlyDisablesResearch(opts.prompt)) {
     const goal = opts.goalContract;
-    const autoPublicSearch = opts.autoPublicSearch && goal && !goal.projectContext
+    // A selected project can be ambient metadata on an ordinary chat turn.
+    // Forward only the independently admitted public query. Actual project
+    // evidence, attachments and project/worker model scopes still require review.
+    const autoPublicSearch = opts.autoPublicSearch && goal
       && !opts.attachments?.length && !opts.projectEvidence && !opts.modelScope
       && (goal.semanticIntent === 'ANSWER' || goal.semanticIntent === 'INVESTIGATE')
       && (goal.requiredCapabilities.includes('research.public-web') || goal.freshnessRequirement !== 'NONE')

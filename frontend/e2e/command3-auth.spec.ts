@@ -659,7 +659,7 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
           responseSource: { format: 'xroga-openui-v1', text: 'root = Col([Text(["The retrieved source describes the official policy. ", Source("source-1")])])' } } } } });
   });
   await send(research);
-  const legacyConfirm = page.getByRole('button', { name: 'Confirm action', exact: true });
+  const legacyConfirm = page.getByRole('button', { name: 'Approve research request', exact: true });
   await expect(legacyConfirm).toBeVisible();
   await expect(page.getByText(/Full approval payload|Prepared digest|micro-USD|controlled fixture|No live evidence has been retrieved/)).toHaveCount(0);
   await legacyConfirm.click();
@@ -685,7 +685,7 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
     await expect(publicAnswer).toHaveClass(/xroga-native-openui/);
     await expect(publicAnswer.locator('[data-source-citation]')).toHaveCount(1);
     await expect(publicTurn.getByText('Web evidence · 1 source retrieved', { exact: true })).toBeVisible();
-    await expect(publicTurn.getByRole('button', { name: 'Confirm action', exact: true })).toHaveCount(0);
+    await expect(publicTurn.getByRole('button', { name: /^(Confirm action|Approve research request)$/ })).toHaveCount(0);
     await expect(publicTurn.getByText(/approval payload|prepared digest|micro-USD|no live evidence/i)).toHaveCount(0);
   };
   await checkPublicAnswer();

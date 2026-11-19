@@ -48,7 +48,7 @@ test('one exact research approval completes its original rich answer, saves evid
       assert.match(body.query,/ site:nasa\.gov$/);
       assert.ok([...body.query].length<=128);
     }else assert.deepEqual(body,{query:'price of btc currently',count:10});
-    assert.doesNotMatch(JSON.stringify(body),/UNRELATED_PRIOR|MUST_NOT_LEAVE|substituted planner context|evil.example/);
+    assert.doesNotMatch(JSON.stringify(body),/UNRELATED_PRIOR|MUST_NOT_LEAVE|substituted planner context|AMBIENT_PRIVATE_REPOSITORY|evil.example/);
    }
    const results=mode==='automatic-no-sources'?[]:[
     ...(mode==='automatic-official'?[{title:'NASA Eclipses',url:'https://science.nasa.gov/eclipses/',summary:'Public source excerpt',
@@ -163,7 +163,7 @@ test('one exact research approval completes its original rich answer, saves evid
 
  const currentPrompt='price of btc currently';
  const currentGoal=goalContractSchema.parse({...goal,goal:'substituted planner context',desiredOutcome:'substituted planner context',
-  requiredCapabilities:['conversation.respond']});
+  requiredCapabilities:['conversation.respond'],projectContext:{repo:'example/AMBIENT_PRIVATE_REPOSITORY',branch:'main'}});
  const automaticRequest={userId:owner,tenantContext:context,prompt:currentPrompt,goalContract:currentGoal,autoPublicSearch:true as const,
   history:[{role:'user' as const,content:unrelatedHistory},{role:'assistant' as const,content:'SYNTHETIC_CREDENTIAL_MUST_NOT_LEAVE'}]};
  const confirmedRow=confirmation.row;
@@ -198,7 +198,7 @@ test('one exact research approval completes its original rich answer, saves evid
  assert.equal(searches,5);assert.equal(models,3);assert.equal(reservations.size,beforeDeniedReservation);
 
  mode='automatic-official';
- const nasaPrompt='Search the web using only official NASA sources (nasa.gov). Explain the difference between solar and lunar eclipses, why they don’t happen every month, and cite the NASA pages inline beside the claims.';
+ const nasaPrompt='Search the web using only official NASA sources (nasa.gov). Explain the difference between solar and lunar eclipses, why they don’t happen every month, and cite your sources.';
  const nasaGoal=goalContractSchema.parse({...currentGoal,sourcePolicy:{mode:'official_only',scope:'public_web',officialDomains:['evil.example']}});
  const nasa=await runChatPipeline({...automaticRequest,prompt:nasaPrompt,goalContract:nasaGoal});
  assert.equal(nasa.publicWebRetrieved,true);assert.equal(nasa.webSources?.length,1);
@@ -212,12 +212,27 @@ test('one exact research approval completes its original rich answer, saves evid
  finally { setStorageServiceForTests(storage.svc); }
  assert.equal(searches,6);assert.equal(models,4);
  assert.equal(automaticAuditCount,auditsBeforeStorage);assert.equal(reservations.size,heldBeforeStorage);
+
+ mode='ok';
+ const projectPending=await runChatPipeline({...automaticRequest,history:[],projectEvidence:'Authorized repository evidence.'});
+ assert.equal(projectPending.intent,'confirmation_required');
+ assert.equal(projectPending.publicWebRetrieved,undefined);
+ assert.equal(confirmation.row?.plan.authority?.actionClass,'SENSITIVE_DATA_EXPORT');
+ assert.equal(searches,6);assert.equal(models,4);
 });
 
 test('automatic Search eligibility uses only the current public lookup with ambiguous inputs held for review',()=>{
  assert.deepEqual(workspacePublicSearchQuery('price of btc currently'),{query:'price of btc currently',officialDomains:[]});
  assert.deepEqual(workspacePublicSearchQuery('Research the latest NASA lunar mission schedule.'),
   {query:'the latest NASA lunar mission schedule',officialDomains:[]});
+ assert.deepEqual(workspacePublicSearchQuery('Find one-way fares from Lahore to Karachi.'),
+  {query:'Find one-way fares from Lahore to Karachi',officialDomains:[]});
+ assert.deepEqual(workspacePublicSearchQuery('Search the web for how lunar eclipses happen, and cite your sources.'),
+  {query:'how lunar eclipses happen',officialDomains:[]});
+ assert.deepEqual(workspacePublicSearchQuery('Please browse the public internet to explain how HTTP idempotency keys work. Include your citations.'),
+  {query:'explain how HTTP idempotency keys work',officialDomains:[]});
+ assert.deepEqual(workspacePublicSearchQuery('Search the web using only official NASA sources (nasa.gov). Explain how eclipses happen, and cite your sources.',true),
+  {query:'Explain how eclipses happen site:nasa.gov',officialDomains:['nasa.gov']});
  for(const prompt of ['Current notes in my inbox','What is the latest private customer list',
   'Search the web for John Smith','Who is Jane Doe currently working for',
   'Search for name associated with 123-45-6789','Search the latest details on https://example.org/query',
@@ -226,6 +241,12 @@ test('automatic Search eligibility uses only the current public lookup with ambi
   'Search latest NASA data from wikipedia.org',
   'Search realistic explanations of lunar phases and eclipses using orbital geometry and the distance to the moon throughout the year. Here is the customer account number 123-45-6789.',
   'Search earlier chat for confidential data','Do not search the web for the current exchange rate',
+  'Search the web for how my client account works, and cite your sources.',
+  'Find the latest release schedule for this project, and cite your sources.',
+  'Search the web for the current repository documentation.',
+  'Search the web for how to find Jane Doe’s phone number, and cite your sources.',
+  'Search the web for how the attached spreadsheet works. Include your citations.',
+  'Search the web to explain how 123-45-6789 is used and cite your sources.',
   'Explain photosynthesis','Search the web for'])assert.equal(workspacePublicSearchQuery(prompt),undefined,prompt);
 });
 

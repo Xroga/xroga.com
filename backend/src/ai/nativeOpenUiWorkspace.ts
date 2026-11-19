@@ -5,6 +5,7 @@ import { checklistFromProse, requestsEditableChecklist, suppliedPeriodicSeries }
 import { conflictingNativeReadouts, initialNativeReadouts, nativePrincipalMultipleReview, recoverNativeReadoutProse } from './nativeOpenUiValues.js';
 import { recoverNativeReadoutExplanations } from './nativeOpenUi.js';
 import { bindNativeAnswerText } from './nativeOpenUi.js';
+import { reviewEditorialProse } from './nativeOpenUiEditorial.js';
 
 const outputLimitNote = 'This answer reached the provider output limit. The available answer is shown below.';
 const promisesControls = (text: string) => /\b(?:controls?|sliders?|input fields?)\s+(?:above|below)\b|\b(?:above|below)\s+(?:calculator|controls?)\b/i.test(text);
@@ -27,14 +28,39 @@ export function completeNativeWorkspaceAnswer(
   requiredFormats: readonly RequiredNativeFormat[] = [],
 ) {
   const { text: prose, program: generatedProgram } = splitNativeOpenUiAnswer(raw);
+  const reviewedProcedure = reviewEditorialProse(prose, prompt);
+  if (reviewedProcedure !== undefined) {
+    diagnose?.({ stage: 'accuracy', reason: 'factual_review', editorialIssue: 'prose_conflict', programLength: generatedProgram.length, shape: [] });
+    return {
+      response: [
+        'This answer contained conflicting instructions. Xroga withheld the affected steps. Verify the remaining procedure before using it.',
+        reviewedProcedure,
+      ].filter(Boolean).join('\n\n'),
+      completion: { status: 'partial' as const, reason: 'factual_review' as const },
+      responseSource: { format: NATIVE_UI_FORMAT, text: '' },
+    };
+  }
   const originalProgram = bindNativeAnswerText(generatedProgram, prose);
   let factualRule: NativeUiDiagnostic['factualRule'];
+  let editorialIssue: NativeUiDiagnostic['editorialIssue'];
   let authorityIssue: NativeUiDiagnostic['authorityIssue'];
   const original = originalProgram ? validateNativeWorkspaceProgram(originalProgram, evidenceIds, prose, event => {
     factualRule = event.factualRule;
+    editorialIssue = event.editorialIssue;
     authorityIssue = event.authorityIssue;
     diagnose?.(event);
-  }) : undefined;
+  }, prompt) : undefined;
+  if (editorialIssue && original?.ok === false) {
+    const note = original.fallbackProse === undefined
+      ? 'Xroga withheld a visual that disagreed with the procedure. Review the written answer before using it.'
+      : 'Xroga withheld the visual and the written steps that disagreed with it. Verify the remaining procedure before using it.';
+    return {
+      response: [note, original.fallbackProse ?? prose]
+        .filter(Boolean).join('\n\n'),
+      completion: { status: 'partial' as const, reason: 'factual_review' as const },
+      responseSource: { format: NATIVE_UI_FORMAT, text: '' },
+    };
+  }
   const factualLayoutOnly = original?.ok === false && original.reason === 'factual_review'
     && factualRule && !nativeAnswerReviewReason(prose);
   const guidance = factualLayoutOnly && factualRule ? nativeFactualGuidance[factualRule] : '';

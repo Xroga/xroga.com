@@ -1,6 +1,7 @@
 import { createParser, evaluate, parseExpression, split, tokenize, walkAST, type ASTNode, type LibraryJSONSchema } from '@openuidev/lang-core';
 import { claimsChartIsDeferred, contradictsMonthlyChart, monthlyChartDataFallback, nativeTechnicalReviewContext, reviewNativeAnswer, suppliedMonthlyComparison } from './nativeOpenUiAccuracy.js';
 import { DIAGRAM_NODE_TONES, hasRenderableDiagramTopology } from './nativeDiagramTopology.js';
+import { reviewEditorialVisuals } from './nativeOpenUiEditorial.js';
 import catalog from './nativeOpenUiCatalog.json' with { type: 'json' };
 import { formatInitialNativeCurrency, initialNativeReadouts, initialNativeValueReader, nativePrincipalMultipleReview, recoverNativeReadoutProse } from './nativeOpenUiValues.js';
 
@@ -409,8 +410,12 @@ export function supplementNativeProse(prose: string, program: string, includeAll
   return [prose, ...lines].filter(Boolean).join('\n\n');
 }
 
-export type NativeUiValidation = { ok: true } | { ok: false; reason: 'budget' | 'syntax' | 'authority' | 'reference' | 'schema' | 'authorization_review' | 'factual_review' | 'data_review' };
-const reject = (reason: Extract<NativeUiValidation, { ok: false }>['reason']): NativeUiValidation => ({ ok: false, reason });
+export type NativeUiValidation = { ok: true } | {
+  ok: false;
+  reason: 'budget' | 'syntax' | 'authority' | 'reference' | 'schema' | 'authorization_review' | 'factual_review' | 'data_review';
+  fallbackProse?: string;
+};
+const reject = (reason: Extract<NativeUiValidation, { ok: false }>['reason']) => ({ ok: false as const, reason });
 type ValidationStage = 'limits' | 'lexer' | 'statements' | 'authority' | 'schema' | 'accuracy';
 export type NativeUiDiagnostic = {
   stage: ValidationStage;
@@ -422,6 +427,7 @@ export type NativeUiDiagnostic = {
   programLength: number;
   shape: Array<{ tokens: number; skeleton: string }>;
   factualRule?: NonNullable<ReturnType<typeof reviewNativeAnswer>>['rule'];
+  editorialIssue?: 'prose_conflict' | NonNullable<ReturnType<typeof reviewEditorialVisuals>>['issue'];
   referenceIssue?: 'missing' | 'cycle';
   authorityIssue?: 'unknown_capability' | 'invalid_action_binding' | 'unverified_source' | 'unsafe_expression' | 'non_scalar_state' | 'external_statement';
   declarationIssue?: 'invalid_name' | 'unsafe_name' | 'duplicate' | 'missing_root' | 'invalid_root' | 'expression';
@@ -440,12 +446,13 @@ export function recoverNativeMonthlyChart(program: string, supplied?: NonNullabl
 /** Audit all statements, including unreachable ones, before letting the upstream
  * parser resolve references or evaluate expressions. Limit expanded work as well
  * as input size, so repeated references cannot multiply the runtime budget. */
-export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<string> = new Set(), prose = '', diagnose?: (value: NativeUiDiagnostic) => void, workspaceContract = false): NativeUiValidation {
+export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<string> = new Set(), prose = '', diagnose?: (value: NativeUiDiagnostic) => void, workspaceContract = false, editorialRequest?: string): NativeUiValidation {
   let stage: ValidationStage = 'limits';
   let statement: number | undefined;
   let statements: ReturnType<typeof split> = [];
   let schemaState: NativeUiDiagnostic['schemaState'];
   let factualRule: NativeUiDiagnostic['factualRule'];
+  let editorialIssue: NativeUiDiagnostic['editorialIssue'];
   let referenceIssue: NativeUiDiagnostic['referenceIssue'];
   let authorityIssue: NativeUiDiagnostic['authorityIssue'];
   let declarationIssue: NativeUiDiagnostic['declarationIssue'];
@@ -468,6 +475,7 @@ export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<s
       ...(statement && statements[statement - 1] ? { failingShape: statementShape(statements[statement - 1]) } : {}),
       ...(schemaState ? { schemaState } : {}),
       ...(factualRule ? { factualRule } : {}),
+      ...(editorialIssue ? { editorialIssue } : {}),
       ...(referenceIssue ? { referenceIssue } : {}),
       ...(authorityIssue ? { authorityIssue } : {}),
       ...(declarationIssue ? { declarationIssue } : {}),
@@ -616,9 +624,10 @@ export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<s
     };
     if (!result.root || result.root.typeName !== 'Col' || result.meta.incomplete || result.meta.unresolved.length || result.meta.errors.length) return fail('schema', result.meta.errors);
     if (!Array.isArray(result.root.props.children) || !result.root.props.children.length) return fail('schema');
+    const renderedElements = workspaceContract ? [...nativeElements(result.root)] : [];
     if (workspaceContract) {
       const deferChart = claimsChartIsDeferred(prose);
-      for (const { typeName, props } of nativeElements(result.root)) {
+      for (const { typeName, props } of renderedElements) {
         if (deferChart && typeName === 'Chart') {
           factualRule = 'unconfirmed_conflicting_input';
           return fail('factual_review');
@@ -651,13 +660,21 @@ export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<s
       if (invalidBlock) return fail('schema');
     }
     stage = 'accuracy';
+    if (workspaceContract) {
+      const review = reviewEditorialVisuals(prose, renderedElements
+        .map(({ typeName, props }) => ({ typeName, props: props ?? {} })), editorialRequest);
+      if (review) {
+        editorialIssue = review.issue;
+        return { ...fail('factual_review'), ...(review.fallbackProse !== undefined ? { fallbackProse: review.fallbackProse } : {}) };
+      }
+    }
     if (contradictsMonthlyChart(result.root, narrative)) return fail('data_review');
     return { ok: true };
   } catch { return fail('syntax'); }
 }
 
-export function validateNativeWorkspaceProgram(program: string, evidenceIds: ReadonlySet<string> | undefined, prose: string, diagnose?: (value: NativeUiDiagnostic) => void) {
-  return validateNativeOpenUi(program, evidenceIds, prose, diagnose, true);
+export function validateNativeWorkspaceProgram(program: string, evidenceIds: ReadonlySet<string> | undefined, prose: string, diagnose?: (value: NativeUiDiagnostic) => void, editorialRequest?: string) {
+  return validateNativeOpenUi(program, evidenceIds, prose, diagnose, true, editorialRequest);
 }
 
 // Only reprint changed expressions. Keeping untouched declarations verbatim preserves

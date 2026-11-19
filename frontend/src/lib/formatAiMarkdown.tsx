@@ -453,7 +453,7 @@ export function BusinessActionConfirmationInline({
           <PluginBrandLogo id={confirmation.toolkit} name={toolkitLabel(confirmation.toolkit)} toolkit={confirmation.toolkit} size="micro" />
         ) : null}
         <span className="min-w-0 flex-1 text-[13px] leading-relaxed text-[var(--foreground)]">
-          {confirmation ? (savedSearch ? 'Search the public web' : confirmation.summary) : !failed ? 'Loading action…' : null}
+          {confirmation ? (savedSearch ? 'Share a web research request' : confirmation.summary) : !failed ? 'Loading action…' : null}
         </span>
         {status === 'pending' && confirmation && !confirmation.toolkit.startsWith('xroga-') ? (
           <PluginPermissionControl toolkit={confirmation.toolkit} pluginName={toolkitLabel(confirmation.toolkit)} buttonOnly compact />
@@ -485,7 +485,7 @@ export function BusinessActionConfirmationInline({
             {busy ===
             'confirm'
               ? savedSearch ? 'Searching the web…' : 'Confirming…'
-              : 'Confirm action'}
+              : savedSearch ? 'Approve research request' : 'Confirm action'}
           </button>}
 
           <button

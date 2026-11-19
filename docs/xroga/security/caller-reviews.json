@@ -1089,9 +1089,9 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "7c61ab37b072a8717df3e722ed1bb10c64c109bf1653d70f430a0497b7ae7a60",
+      "sourceSha256": "82cd3dc592bd6f4aeecbfbc5aab2a2750fd61c2f40523ee7c7fb8ff7164e117b",
       "callIds": [
-        "bf8c9e2c58946dd92220"
+        "8692119100c3c4623095"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -2653,9 +2653,9 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "7c61ab37b072a8717df3e722ed1bb10c64c109bf1653d70f430a0497b7ae7a60",
+      "sourceSha256": "82cd3dc592bd6f4aeecbfbc5aab2a2750fd61c2f40523ee7c7fb8ff7164e117b",
       "callIds": [
-        "03620868515ddc20b007"
+        "e36b62d393494a8737fe"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -28563,9 +28563,9 @@
     },
     {
       "path": "frontend/src/lib/formatAiMarkdown.tsx",
-      "sourceSha256": "ac85659abacbe07fd10432e0cedec17bcb87ec011dbe52e234acdc7981e70720",
+      "sourceSha256": "04326cf09e25e0d7daeabacfd62f169b3c3c6ee0653687201a0b9bdb60d9c145",
       "callIds": [
-        "cc22eb851592e1320904"
+        "a34869d5c2975f5bca99"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in decodeBase64UrlUtf8, with no database or Storage client receiver.",
