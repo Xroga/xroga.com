@@ -177,9 +177,9 @@ export async function hover(ctx: ToolContext, args: HoverArgs): Promise<ToolOutc
 export async function drag(ctx: ToolContext, args: DragArgs): Promise<ToolOutcome> {
   assertNoModal(ctx);
   return withTarget(ctx, args.from, async from => {
-    const start = await waitForActionable(ctx, from, { pointer: true, overControls: true, budgetMs: args.timeoutMs });
+    const start = await waitForActionable(ctx, from, { pointer: true, overControls: true, budgetMs: args.timeoutMs, at: args.fromAt ? { fx: args.fromAt[0], fy: args.fromAt[1] } : undefined });
     return withTarget(ctx, args.to, async to => {
-      const end = await waitForActionable(ctx, to, { pointer: true, overControls: true, budgetMs: args.timeoutMs });
+      const end = await waitForActionable(ctx, to, { pointer: true, overControls: true, budgetMs: args.timeoutMs, at: args.toAt ? { fx: args.toAt[0], fy: args.toAt[1] } : undefined });
       const { outcome, evidence } = await withEvidence(ctx, to, args.expect, {}, () =>
         dispatchDrag(ctx, start.point, end.point),
       );

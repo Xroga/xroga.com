@@ -49,6 +49,7 @@ const HIDDEN: Record<string, string[]> = {
   upload: ['paths', 'attachments'],
   // A point inside a known element is offered only to runs that need it (toolsForRun with pointAt), so the base catalogue stays small.
   click: ['at'],
+  drag: ['fromAt', 'toAt'],
 };
 
 /** What the model gives `upload` in place of paths or bytes: the ids of files the user attached. */
@@ -192,10 +193,10 @@ export function toolsForRun(options: {
   pointAt?: boolean;
 }): AgentTool[] {
   const withAt = (t: AgentTool): AgentTool => {
-    if (!options.pointAt || t.name !== 'click') return t;
-    const spec = TOOL_SPECS.find(s => s.name === 'click');
+    if (!options.pointAt || (t.name !== 'click' && t.name !== 'drag')) return t;
+    const spec = TOOL_SPECS.find(s => s.name === t.name);
     if (!spec) return t;
-    return { ...t, parameters: compactSchema(schemaWithout(argsJsonSchema(spec), [...HIDDEN['*']]), 'click') as AgentTool['parameters'] };
+    return { ...t, parameters: compactSchema(schemaWithout(argsJsonSchema(spec), [...HIDDEN['*']]), t.name) as AgentTool['parameters'] };
   };
   return allTools(options.agentTools)
     .filter(

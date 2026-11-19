@@ -145,6 +145,9 @@ export const DragArgsSchema = z.strictObject({
   ...actionCommon,
   from: TargetSchema.describe('The element to pick up'),
   to: TargetSchema.describe('The element to drop it on'),
+  // A point inside each element, as fractions of its box: how to draw or move inside a canvas.
+  fromAt: z.tuple([z.number().min(0).max(1), z.number().min(0).max(1)]).optional(),
+  toAt: z.tuple([z.number().min(0).max(1), z.number().min(0).max(1)]).optional(),
 });
 
 export const ScrollArgsSchema = z.strictObject({

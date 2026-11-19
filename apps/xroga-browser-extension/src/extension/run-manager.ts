@@ -1739,7 +1739,9 @@ export class RunManager {
         // Click's `at` (a point inside a known element) is offered only to editor-like tasks, where a canvas hides its objects.
         // The router decides what this run is offered: worker tools only when the request has independent parts (or workers already exist).
         const decision = routeFor(askedEntry?.type === 'message' ? userText(askedEntry) : '', { hasWorkers: await this.#workers.hasWorkers(conversationId).catch(() => false) });
-        const pointAt = skillsFor(askedEntry?.type === 'message' ? userText(askedEntry) : '').some(k => k.id === 'design-editor' || k.id === 'video-editor');
+        // A model that can see screenshots may always point at a place inside an element (a canvas hides its objects, and the task may not say so);
+        // a text-only model gets that option only for editor-like tasks.
+        const pointAt = model.profile.vision || skillsFor(askedEntry?.type === 'message' ? userText(askedEntry) : '').some(k => k.id === 'design-editor' || k.id === 'video-editor');
         const fullToolList = toolsForRun({
           pointAt,
           vision: model.profile.vision, localScreenshots: !!canonical,
