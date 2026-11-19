@@ -71,13 +71,30 @@ function keyInfo(name: string): { key: string; code: string; vk: number; text?: 
   throw new LayerError('INVALID_ARGUMENT', `Unknown key ${quote(name, 20)}. Use Enter, Tab, Escape, Backspace, Delete, an arrow, F1 to F12, a letter or a digit, with Control, Shift or Alt.`);
 }
 
-/** The focused element must itself be a canvas: keys to a real field keep the guarded type and press. */
+/**
+ * Where keyboard input may go. A painted editor takes text either on its canvas or through a hidden text box it keeps focused for the
+ * keyboard (zero-size, transparent or off-screen); both are the application's own input path. A visible field, a password field, a
+ * link or a button is a page element: it keeps the guarded type and press, with their checks.
+ */
+export function focusAcceptsPaintedInput(f: { tag: string; type?: string; w: number; h: number; opacity: number; offscreen: boolean; editable: boolean; bigCanvas: boolean }): boolean {
+  const tag = f.tag.toUpperCase();
+  if (tag === 'CANVAS') return true;
+  if (!f.bigCanvas || f.type === 'password') return false;
+  const textTarget = tag === 'TEXTAREA' || tag === 'INPUT' || f.editable;
+  const hidden = f.w * f.h < 16 || f.opacity < 0.1 || f.offscreen;
+  return textTarget && hidden;
+}
+
 async function assertCanvasFocused(ctx: ToolContext): Promise<void> {
   const { cdp } = await ctx.attach();
-  const result = await cdp.send<{ result: { value?: string } }>(undefined, 'Runtime.evaluate', { expression: 'document.activeElement && document.activeElement.tagName', returnByValue: true });
-  const name = String(result.result?.value ?? '');
-  if (name.toUpperCase() !== 'CANVAS') {
-    throw new LayerError('TARGET_CHANGED', `Keyboard focus is on ${name ? `<${name.toLowerCase()}>` : 'nothing'}, not on a canvas. Nothing was sent. Click inside the canvas first (canvas click), or use type or press for page fields.`);
+  const expression = `(() => { const e = document.activeElement; if (!e) return null; const r = e.getBoundingClientRect(); const cs = getComputedStyle(e);
+    const big = [...document.querySelectorAll('canvas')].some(c => { const q = c.getBoundingClientRect(); return q.width * q.height > 0.25 * innerWidth * innerHeight; });
+    return { tag: e.tagName, type: e.type || '', w: r.width, h: r.height, opacity: parseFloat(cs.opacity), offscreen: r.right < 0 || r.bottom < 0 || r.left > innerWidth || r.top > innerHeight, editable: !!e.isContentEditable, bigCanvas: big }; })()`;
+  const result = await cdp.send<{ result: { value?: Parameters<typeof focusAcceptsPaintedInput>[0] | null } }>(undefined, 'Runtime.evaluate', { expression, returnByValue: true });
+  const focus = result.result?.value;
+  if (!focus || !focusAcceptsPaintedInput(focus)) {
+    const name = focus?.tag ? `<${focus.tag.toLowerCase()}>` : 'nothing';
+    throw new LayerError('TARGET_CHANGED', `Keyboard focus is on ${name}, which is a page element or nothing, not the painted editor's own input. Nothing was sent. Click inside the editor first (canvas click), then retry; use type or press for page fields.`);
   }
 }
 

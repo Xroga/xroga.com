@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 vi.mock('../navigate', () => ({ withPageState: vi.fn(async (_ctx: unknown, _observe: unknown, outcome: unknown) => outcome) }));
 vi.mock('../../interaction/pointer', () => ({ dispatchDrag: vi.fn(async () => ({ dispatched: true })), dispatchHover: vi.fn(async () => ({ dispatched: true })) }));
 
-import { canvas } from '../canvas';
+import { canvas, focusAcceptsPaintedInput } from '../canvas';
 import { dispatchDrag } from '../../interaction/pointer';
 
 function fakeCtx(nodeName: string, pending: Array<{ kind: string; detail: string }> = [], focus = 'CANVAS') {
@@ -13,7 +13,7 @@ function fakeCtx(nodeName: string, pending: Array<{ kind: string; detail: string
       sent.push({ method, params });
       if (method === 'DOM.getNodeForLocation') return { backendNodeId: 7 };
       if (method === 'DOM.describeNode') return { node: { nodeName } };
-      if (method === 'Runtime.evaluate') return { result: { value: focus } };
+      if (method === 'Runtime.evaluate') return { result: { value: focus === 'CANVAS' ? { tag: 'CANVAS', w: 900, h: 700, opacity: 1, offscreen: false, editable: false, bigCanvas: true } : focus === 'HIDDENTEXT' ? { tag: 'TEXTAREA', w: 1, h: 1, opacity: 0, offscreen: false, editable: false, bigCanvas: true } : { tag: focus, w: 200, h: 24, opacity: 1, offscreen: false, editable: false, bigCanvas: true } } };
       return {};
     }),
   };
@@ -101,5 +101,16 @@ describe('canvas pointer actions', () => {
     const out = await canvas(ctx, base as never) as { receipt?: { effect: { signals: string[] } } };
     expect(closed).toEqual([9]);
     expect(JSON.stringify(out)).toMatch(/closed again/);
+  });
+
+  it('accepts a hidden text box that a painted editor keeps focused, and nothing a user can see or a password field', async () => {
+    const { ctx, sent } = fakeCtx('CANVAS', [], 'HIDDENTEXT');
+    await canvas(ctx, { action: 'type', text: 'ActiveLayer.CreateRectangle(1,1,2,2)', intent: 'enter the script' } as never);
+    expect(sent.some(s => s.method === 'Input.insertText')).toBe(true);
+    const base = { w: 1, h: 1, opacity: 0, offscreen: false, editable: false, bigCanvas: true };
+    expect(focusAcceptsPaintedInput({ ...base, tag: 'INPUT', type: 'password' })).toBe(false);
+    expect(focusAcceptsPaintedInput({ ...base, tag: 'INPUT', w: 300, h: 30, opacity: 1 })).toBe(false);
+    expect(focusAcceptsPaintedInput({ ...base, tag: 'TEXTAREA', bigCanvas: false })).toBe(false);
+    expect(focusAcceptsPaintedInput({ ...base, tag: 'BUTTON' })).toBe(false);
   });
 });
