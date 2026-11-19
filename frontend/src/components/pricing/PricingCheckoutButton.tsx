@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { ArrowUpRight, LockKeyhole, ShieldCheck, X } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -13,6 +13,7 @@ interface CheckoutButtonProps {
   planTier: 'spark';
   label?: string;
   className?: string;
+  trailingContent?: ReactNode;
   onSuccess?: () => void;
 }
 
@@ -20,6 +21,7 @@ export function PricingCheckoutButton({
   planTier,
   label = 'Subscribe',
   className,
+  trailingContent,
   onSuccess,
 }: CheckoutButtonProps) {
   const [loading, setLoading] = useState(false);
@@ -117,7 +119,8 @@ export function PricingCheckoutButton({
     <>
       {className ? (
         <button type="button" onClick={() => void handleCheckout()} disabled={loading || Boolean(confirmation)} className={className}>
-          {loading ? 'Opening secure checkout…' : label}
+          <span>{loading ? 'Opening secure checkout…' : label}</span>
+          {!loading && trailingContent}
         </button>
       ) : (
         <BuyNowButton
