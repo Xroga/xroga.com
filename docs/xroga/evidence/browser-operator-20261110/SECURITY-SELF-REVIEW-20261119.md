@@ -21,3 +21,10 @@ Composio and sandbox egress, the worker image and its isolation, the desktop bri
 
 ## Deployed and re-checked
 Both fixes are on staging revision `xroga-api-universal-staging-00143-fuh` (image `lim25-1119`, commit `d07eba59b`, tag `browser-op-1110`, 0 percent of traffic). Live in the installed extension: the pinned `requests==2.32.3` run still works, and the weak-copyleft package `certifi` (MPL-2.0) is still acknowledged by the model as intended (8 packages, 1 flagged). The GPL refusal and the extra outbound verbs are covered by unit tests only; a live GPL install was not run.
+
+## Second-account isolation, first live check (19 November 2026)
+Setup: a second staging user (`moeed.zio1315@gmail.com`, confirmed) was created on the staging workspace branch alias, added to `XROGA_LOCAL_BROWSER_ALLOWED_USER_IDS` (revision `00144-wew`), and its Chrome profile paired the extension (device authorize and exchange both 200).
+- **Read of A's private sheet through the connected-app path from account B:** B has no connected apps, so the agent did not read it; it started a connect flow for B's own Google account instead (a Composio consent screen, left unapproved: granting scopes on that Google account is the owner's decision). No data from A was returned.
+- **Database:** B has no `user_integrations` rows; A's two policy rows are unchanged. RLS is enabled on `user_integrations` (10 policies) and `engineering_resource_reservations`.
+- **Not yet done:** B with its own connected Sheets or Notion trying A's sheet id, the reverse direction, and B's Full access setting versus A's. These need B's Google (or Notion) connection approved.
+- **Observed:** B's panel shows "Full access: unavailable" until a connected app exists; not investigated further.
