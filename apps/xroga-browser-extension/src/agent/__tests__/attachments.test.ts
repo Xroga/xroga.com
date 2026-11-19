@@ -26,25 +26,18 @@ async function file(conversationId: string, name: string, mimeType: string, cont
 }
 
 describe('what can be attached', () => {
-  it('takes images and text files, and reads Word and Excel files as text, and refuses PDF and other files with the reason', () => {
+  it('reads images and text, reads Word and Excel files as text, and keeps every other file (video, audio, archive, PDF, photo formats) as bytes for upload', () => {
     expect(attachmentKind('a.png', 'image/png')).toEqual({ kind: 'image' });
     expect(attachmentKind('notes.md', '')).toEqual({ kind: 'text' });
     expect(attachmentKind('data.csv', 'text/csv')).toEqual({ kind: 'text' });
     expect(attachmentKind('cfg.json', 'application/json')).toEqual({ kind: 'text' });
-    expect(attachmentKind('report.pdf', 'application/pdf')).toMatchObject({
-      refused: expect.stringContaining('PDF'),
-    });
-    // Word documents and spreadsheets are read into text (store/office.ts); old binary formats and presentations are not.
+    // Word documents and spreadsheets are read into text (store/office.ts).
     expect(attachmentKind('plan.docx', '')).toEqual({ kind: 'text' });
     expect(attachmentKind('leads.xlsx', '')).toEqual({ kind: 'text' });
-    expect(attachmentKind('old.xls', '')).toMatchObject({ refused: expect.stringContaining('cannot be read') });
-    expect(attachmentKind('deck.pptx', '')).toMatchObject({ refused: expect.stringContaining('cannot be read') });
-    expect(attachmentKind('app.zip', 'application/zip')).toMatchObject({
-      refused: expect.stringContaining('Only images'),
-    });
-    expect(attachmentKind('photo.heic', 'image/heic')).toMatchObject({
-      refused: expect.stringContaining('Only images'),
-    });
+    // Nothing is refused for its type: the rest is attached as bytes and can be uploaded to a website.
+    for (const [name, type] of [['report.pdf', 'application/pdf'], ['old.xls', ''], ['deck.pptx', ''], ['app.zip', 'application/zip'], ['photo.heic', 'image/heic'], ['clip.mp4', 'video/mp4'], ['voice.mp3', 'audio/mpeg']] as const) {
+      expect(attachmentKind(name, type)).toEqual({ kind: 'file' });
+    }
   });
 });
 
@@ -74,6 +67,22 @@ describe('inlining at the start of a run', () => {
     );
     // The note is the extension's own line, after the boundary.
     expect(b.text.indexOf('<<<end-page-content N>>>')).toBeLessThan(b.text.indexOf('[Nanobrowser note:'));
+  });
+
+  it('tells the agent that a video or a photo it cannot see is a file it can upload, with its id', async () => {
+    const c = await createConversation({ mode: 'ask' });
+    const video = await file(c.id, 'clip.mp4', 'video/mp4', new Uint8Array([0, 0, 0, 24]));
+    const photo = await file(c.id, 'shot.png', 'image/png', new Uint8Array([137, 80, 78, 71]));
+    const parts = await attachmentParts([video, photo], { conversationId: c.id, wrap, contextWindow: 128_000, vision: false });
+    const text = parts.filter(p => p.type === 'text').map(p => p.text).join('\n');
+    expect(text).toContain('clip.mp4');
+    expect(text).toContain('id f-clip.mp4');
+    expect(text).toContain('id f-shot.png');
+    expect(text).toContain('use upload with attachmentIds');
+    expect(parts.filter(p => p.type === 'image')).toEqual([]);
+    const read = await readAttachment({ id: video.id }, { conversationId: c.id, wrap });
+    expect(read.isError).toBe(true);
+    expect(read.text).toContain('can be uploaded');
   });
 
   it('sends an image after its fixed line to a vision model, and nothing to another', async () => {

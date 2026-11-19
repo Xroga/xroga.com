@@ -82,6 +82,8 @@ export async function attachmentParts(
         out.push({ type: 'image', data: await base64(blob.data), mediaType: blob.mimeType, note: ATTACHED_IMAGE_LINE });
       continue;
     }
+    // A video, audio, archive, PDF or other binary file is not text: the note above names it, and it can be uploaded to a site.
+    if (kind.kind === 'file') continue;
     const text = await attachmentText(blob.name, blob.data);
     const windowBudget = inlineBudget(options.contextWindow);
     const budget =
@@ -101,6 +103,19 @@ export async function attachmentParts(
       type: 'text',
       text: lines.join('\n'),
       attached: { kind: 'file', label: `${quote(blob.name, 120)} · id ${blob.id}` },
+    });
+  }
+  const opaque = files.filter(b => {
+    const k = attachmentKind(b.name, b.mimeType);
+    return 'kind' in k && (k.kind === 'file' || (k.kind === 'image' && !options.vision));
+  });
+  if (opaque.length) {
+    out.push({
+      type: 'text',
+      text: note(
+        `these attached files are not read as text (${opaque.map(b => `${quote(b.name, 80)} id ${b.id}`).join('; ')}). To put one on a website, use upload with attachmentIds; do not say you cannot access it.`,
+      ),
+      attached: { kind: 'file', label: opaque.map(b => `${quote(b.name, 80)} · id ${b.id}`).join('; ') },
     });
   }
   // Selections: page text, inside the boundary with the page's site, after the extension's line.
@@ -156,7 +171,7 @@ export async function readAttachment(
   const kind = attachmentKind(blob.name, blob.mimeType);
   if (!('kind' in kind) || kind.kind !== 'text') {
     return {
-      text: `error INVALID_ARGUMENT (nothing dispatched)\n${quote(blob.name, 120)} is not a text file.`,
+      text: `error INVALID_ARGUMENT (nothing dispatched)\n${quote(blob.name, 120)} is not a text file; it can be uploaded to a website with upload and attachmentIds.`,
       isError: true,
     };
   }

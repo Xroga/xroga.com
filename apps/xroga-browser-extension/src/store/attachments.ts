@@ -3,8 +3,9 @@
 
 export const MAX_FILE = 25 * 1024 * 1024;
 export const MAX_CONVERSATION = 100 * 1024 * 1024;
-export const MAX_XROGA_FILES = 5;
-export const MAX_XROGA_FILE = 2 * 1024 * 1024;
+export const MAX_XROGA_FILES = 10;
+/** The Xroga product accepts files up to the general limit: photos, videos, audio, archives and documents can all be attached. */
+export const MAX_XROGA_FILE = MAX_FILE;
 
 const IMAGE_TYPES = new Set(['image/png', 'image/jpeg', 'image/webp', 'image/gif']);
 const TEXT_TYPES = new Set([
@@ -22,7 +23,8 @@ const TEXT_EXTENSIONS =
   /\.(txt|md|markdown|csv|tsv|json|jsonl|xml|html?|css|js|jsx|mjs|ts|tsx|py|rb|go|rs|java|kt|c|h|cc|cpp|hpp|cs|php|sh|bash|zsh|yaml|yml|toml|ini|cfg|conf|log|sql|swift|r|lua|pl|scala|vue|svelte)$/i;
 const DOCUMENT_EXTENSIONS = /\.(pdf|docx?|xlsx?|pptx?|odt|ods|odp|rtf|pages|numbers|key)$/i;
 
-export type AttachmentKind = 'image' | 'text';
+/** `file` is any other file (video, audio, archive, PDF, spreadsheet...): kept as bytes so it can be uploaded to a site; it is not read as text. */
+export type AttachmentKind = 'image' | 'text' | 'file';
 
 /** What a file is, or why it cannot be attached. */
 export function attachmentKind(
@@ -32,16 +34,10 @@ export function attachmentKind(
   if (IMAGE_TYPES.has(mimeType)) return { kind: 'image' };
   // Spreadsheets and Word documents are read into text by store/office.ts (no library; PDF is not).
   if (/\.(xlsx|docx)$/i.test(name)) return { kind: 'text' };
-  if (
-    DOCUMENT_EXTENSIONS.test(name) ||
-    mimeType === 'application/pdf' ||
-    /officedocument|msword|ms-excel|ms-powerpoint|opendocument/.test(mimeType)
-  ) {
-    return {
-      refused: 'This file type cannot be read in this version (PDF, old .xls and .doc, and PowerPoint need a reader that is not built in). .xlsx, .docx, CSV and text files can be attached; or paste the text.',
-      reason: 'document',
-    };
+  if (mimeType.startsWith('text/') || TEXT_TYPES.has(mimeType) || TEXT_EXTENSIONS.test(name)) {
+    // A spreadsheet or a Word file by another extension is still a document, not text.
+    if (!DOCUMENT_EXTENSIONS.test(name)) return { kind: 'text' };
   }
-  if (mimeType.startsWith('text/') || TEXT_TYPES.has(mimeType) || TEXT_EXTENSIONS.test(name)) return { kind: 'text' };
-  return { refused: 'Only images (PNG, JPEG, WebP, GIF) and text files can be attached.', reason: 'type' };
+  // Everything else is attached as bytes (video, audio, archives, PDFs, old Office files, other images): the agent can upload it.
+  return { kind: 'file' };
 }

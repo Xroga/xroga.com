@@ -455,9 +455,9 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
   router.post('/documents', route(async (req, res, { leases }) => {
     const ctx = requireTenantContext(req.tenantContext);
     const data = z.object({ name: z.string().max(200).regex(/\.(?:pdf|docx|xlsx)$/i),
-      base64: z.string().max(2_796_204).regex(/^[A-Za-z0-9+/]+={0,2}$/) }).strict().parse(req.body);
+      base64: z.string().max(34_952_536).regex(/^[A-Za-z0-9+/]+={0,2}$/) }).strict().parse(req.body);
     const bytes = Buffer.from(data.base64, 'base64');
-    if (bytes.length > 2 * 1024 * 1024 || bytes.toString('base64') !== data.base64) {
+    if (bytes.length > 25 * 1024 * 1024 || bytes.toString('base64') !== data.base64) {
       throw new BrowserRequestError(400, 'BROWSER_DOCUMENT_INVALID');
     }
     const lease = await leases.acquire({ tenantId: ctx.tenantId, runId: ctx.userId, taskId: 'local-chrome-document' },

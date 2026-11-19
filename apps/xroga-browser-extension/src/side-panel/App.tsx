@@ -215,7 +215,7 @@ export function App() {
   const attach = async (list: File[]) => {
     setAttachError(null);
     const available = MAX_XROGA_FILES - files.length;
-    if (XROGA_PRODUCT && list.length > available) setAttachError('Attach up to five files per task.');
+    if (XROGA_PRODUCT && list.length > available) setAttachError('Attach up to ten files per task.');
     for (let file of XROGA_PRODUCT ? list.slice(0, Math.max(0, available)) : list) {
       if (XROGA_PRODUCT && /\.(?:pdf|docx|xlsx)$/i.test(file.name) && file.size <= MAX_XROGA_FILE) {
         try {
@@ -238,7 +238,14 @@ export function App() {
           }
           if (!prepared || typeof prepared.text !== 'string' || !prepared.text.trim())
             throw new Error('Empty document');
-          file = new File([prepared.text], `${file.name}.txt`, { type: 'text/plain' });
+          // The original stays attached as bytes (so a PDF, Word or Excel file can still be uploaded to a site); the agent reads its text.
+          const original = file;
+          const originalRef = { id: newId(), name: original.name, mimeType: original.type, size: original.size };
+          try {
+            await putBlob({ ...originalRef, conversationId: '', data: original, createdAt: new Date().toISOString() });
+            setFiles(current => [...current, { ref: originalRef }]);
+          } catch { /* the text below is still attached */ }
+          file = new File([prepared.text], `${original.name}.txt`, { type: 'text/plain' });
         } catch {
           setAttachError(`Could not extract text from ${file.name}. Check Workspace pairing and file limits.`);
           continue;
@@ -249,8 +256,8 @@ export function App() {
         setAttachError(t(`attach.refused.${kind.reason}`, { name: file.name }));
         continue;
       }
-      if (XROGA_PRODUCT && (kind.kind !== 'text' || file.size > MAX_XROGA_FILE)) {
-        setAttachError('This connection accepts text files up to 2 MB, including CSV and TSV.');
+      if (XROGA_PRODUCT && file.size > MAX_XROGA_FILE) {
+        setAttachError(`${file.name} is larger than 25 MB. Attach a smaller file.`);
         continue;
       }
       if (file.size > MAX_FILE) {

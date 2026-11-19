@@ -1132,7 +1132,7 @@ export class RunManager {
         warnings.push(`${blob.name}: ${kind.refused}`);
         continue;
       }
-      if (XROGA_PRODUCT && (kind.kind !== 'text' || blob.size > 2 * 1024 * 1024 || blob.data.size !== blob.size)) {
+      if (XROGA_PRODUCT && blob.data.size !== blob.size) {
         warnings.push('An unsupported task attachment was rejected.');
         continue;
       }

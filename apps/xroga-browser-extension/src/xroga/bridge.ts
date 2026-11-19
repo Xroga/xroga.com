@@ -232,7 +232,7 @@ export function listenForWorkspace(
         typeof message.name === 'string' &&
         /\.(?:pdf|docx|xlsx)$/i.test(message.name) &&
         typeof message.base64 === 'string' &&
-        message.base64.length <= 2_796_204
+        message.base64.length <= 34_952_536
       ) {
         void workspaceRequest('document', { body: { name: message.name, base64: message.base64 } }).then(
           value => reply(value),
