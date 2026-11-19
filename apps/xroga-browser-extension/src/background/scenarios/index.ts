@@ -30,3 +30,4 @@ import './set-s-subagents';
 import './expect-count';
 import './canvas-point';
 import './canvas-script-editor';
+import './variants-form';

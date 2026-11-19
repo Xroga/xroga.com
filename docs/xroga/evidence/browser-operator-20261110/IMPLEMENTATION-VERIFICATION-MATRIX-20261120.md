@@ -22,7 +22,7 @@ different capability. "Evidence" names a file or test, not a claim.
 | Evidence-based strategy choice | yes: `strategy-selector.ts`, wired at the first outline | 11 tests (layout shuffles, noise, no-vision) | | not yet observed live | | scores are design estimates, not measurements |
 | Resumable / interrupted runs | existing (`sw-kill*` fixtures) | | existing fixtures | | | not re-run this stretch |
 | Timeline-based media editor | NOT DONE | | NOT DONE | | NOT DONE | no fixture, no provider decision |
-| Slow network, unexpected overlay, stale refs variations | partly (existing fixtures) | | NOT DONE as generated variations | | | next engineering item |
+| Generated layout variations (field order, moved button, delayed render, blocking overlay, duplicate label, zoom 0.75-1.5) | yes | | VAR-1 passes 8 of 8 seeds in Chromium (`variants-form.ts`, `var-form.html`) | | | form class only; slow network and stale refs not yet generated |
 
 ## 2. Findings this stretch
 
@@ -45,7 +45,7 @@ Independent security sign-off, PR #997 re-attestation by the original reviewer, 
 
 ## 5. Next engineering items (decided by engineering, in order)
 
-1. Generated fixture variations (moved controls, zoom, duplicate labels, delayed loading, stale refs, overlays) run through the autorun harness.
+1. More generated variation classes (stale refs, slow network, canvas zoom, hidden inputs) through the autorun harness. Form class done (VAR-1).
 2. A timeline-editor fixture class and a business-form fixture class, then one real unfamiliar site per class as a transfer check.
 3. A matched workload with enough runs for p50/p95 and cost, using `RunTimings`.
 4. Domain skill catalog with retrieval on demand, license and version audit of the supplied repositories.
