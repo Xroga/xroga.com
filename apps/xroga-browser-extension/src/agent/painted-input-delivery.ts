@@ -7,7 +7,7 @@
  */
 export interface PaintedTypeDispatch {
   ok: boolean;
-  receipt?: { dispatched?: boolean };
+  receipt?: { dispatched?: boolean | 'unknown' };
 }
 
 export class PaintedInputDeliveryGuard {

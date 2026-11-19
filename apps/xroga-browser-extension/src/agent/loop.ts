@@ -31,6 +31,8 @@ import { attachmentBytes, attachmentParts, readAttachment } from './attachments'
 import { decodeImage, describeHits, FIND_COLOR_TOOL, scanColor } from './pixels';
 import { learnFrom, turnEffort } from './run';
 import { PaintedInputDeliveryGuard } from './painted-input-delivery';
+import { ProgressTracker } from './progress-tracker';
+import type { StallVerdict } from './progress-tracker';
 import type { ResolvedModel } from './run';
 import { allTools, DONE_TOOL, kindOf, PAGE_ACTIONS } from './tools';
 import type { AgentTool, ToolKind } from './tools';
@@ -269,6 +271,12 @@ export class AgentLoop {
       if (current.activeTabId !== this.#boundTab) await this.options.layer.call('tabs', { action: 'select', tabId: this.#boundTab, intent: 'Return to the task tab' }, this.options.signal).catch(() => undefined);
       this.#activeTab = this.#boundTab;
     } else if (current && current.activeTabId !== null) this.#activeTab = current.activeTabId;
+    const stall = this.#pendingStall;
+    this.#pendingStall = null;
+    if (stall?.directive) {
+      await this.writer.appNote(stall.directive);
+      if (stall.exhausted) return { stop: `Stopped: ${stall.reason}. Every strategy was tried.` };
+    }
     if (PROGRESS_REVIEW_TURNS.includes(this.#turns) && this.#reviewedAt !== this.#turns) {
       this.#reviewedAt = this.#turns;
       const spent = [...this.#toolCounts].sort((a, b) => b[1] - a[1]).slice(0, 5).map(([name, n]) => `${name} x${n}`).join(', ');
@@ -775,6 +783,18 @@ ${ledger}` : ''),
       this.#paintedInputDelivered.record(tabId, input.text, given.result);
     }
     if (given.call.toolName === 'http_get' && !given.isError) this.#docsRead = true;
+    {
+      const verdict = this.#progress.record({
+        tool: given.call.toolName,
+        action: typeof input.action === 'string' ? input.action : undefined,
+        args: input,
+        isError: given.isError === true,
+        resultText: typeof given.text === 'string' ? given.text : undefined,
+        tabId: given.result?.page?.tabId ?? this.#boundTab ?? this.#activeTab,
+        url: given.result?.page?.url,
+      });
+      if (verdict.stalled) this.#pendingStall = verdict;
+    }
     this.#toolCounts.set(given.call.toolName, (this.#toolCounts.get(given.call.toolName) ?? 0) + 1);
     // Opening or switching to a page changes nothing a second attempt could duplicate: a navigation that fails (a certificate warning,
     // a block page, a timeout) is a failed read, not an uncertain write, so it never puts the run into read-only recovery.
@@ -1456,6 +1476,8 @@ ${ledger}` : ''),
   #adoptedOrigin = '';
   #boundTab: number | null = null;
   #paintedInputDelivered = new PaintedInputDeliveryGuard();
+  #progress = new ProgressTracker();
+  #pendingStall: StallVerdict | null = null;
   #docsRead = false;
   #scriptGateShown = false;
   #canvasOffered = false;
