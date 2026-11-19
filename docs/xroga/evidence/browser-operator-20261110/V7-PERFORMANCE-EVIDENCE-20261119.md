@@ -26,7 +26,16 @@ Tests: 1279 extension tests pass (new: adoption scoping, canvas keys and typing,
 
 ## 3. Same-task comparison (TraceDraw)
 Before (vision on, canvas tool, no batch, no brevity rule, no adoption): see section 1; the agent worked one screenshot and one step per turn for 35 minutes without finishing, and stopped because typing into canvas-painted fields was cancelled by the key guard.
-After: RESULTS_PLACEHOLDER
+Measured runs, same task family (TraceDraw, real Chrome, real DeepSeek, staging 00146-wod):
+| Run | Build | Turns | Wall time | Outcome |
+| --- | --- | --- | --- | --- |
+| A | vision + canvas tool | 55 | about 11 min | rectangle only, no export |
+| B | + batch, brevity rule, tab adoption (model-called) | 37 | about 10 min | no export; did not adopt the open tab; first model call 77 s |
+| C | + bind-named-tab before turn 1 (small task: read the rectangle size) | 3 | about 45 s model time (1 m 44 s on screen) | correct: 135.172 x 89.493 mm, no duplicate tab |
+| D | + adopted tab always visible, no reload of adopted site | 35+ (stopped by me) | 7+ min | document created, but the script never got into TraceDraw's painted code editor; no shapes, no export |
+| E | stray-tab guard (not yet run live end to end) | n/a | n/a | not run |
+Result: **the full drawing and SVG export is still not verified.** Run D shows the remaining blocker precisely: entering text into an application's painted code editor. Findings: (1) keys do reach the app (a new document was created with Ctrl+N and Enter in a disposable browser); (2) the model-driven path spends dozens of turns failing to focus and fill that editor; (3) no code-level deterministic "open the script panel, paste the script, run, verify the object count" path exists yet, which is what could bring this task near one minute.
+Side tests with an emulated viewport mis-mapped clicks (a coordinate artifact of that harness), so they are not evidence about the product.
 
 ## 4. Not done in this pass (stated, not hidden)
 Per-run structured timing waterfall with p50/p95 over a 20-run suite; the five- and six-worker overlap re-test; the other task classes (S0 to S5) before and after; a second unfamiliar editor; compact visual deltas instead of resending full screenshots (the token cache already absorbs most of the image cost, 84% cached); a side-panel main-thread profile. The extension already keeps a per-run phase timing summary on the device (`RunTimings`); it has not yet been exported for these runs.
