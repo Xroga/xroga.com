@@ -1,7 +1,7 @@
 import { NATIVE_SHARE_PREFIX, readNativeOpenUiShare, readNativeOpenUiShareText } from '../../../../../backend/src/ai/nativeOpenUiShare';
 import { splitNativeOpenUiAnswer } from '../../../../../backend/src/ai/nativeOpenUi';
 import { NativeWorkspaceAnswer } from '@/components/native-openui/NativeWorkspaceAnswer';
-import { publicAnswerText } from '@/lib/publicAnswerText';
+import { publicAnswerExportText, publicAnswerText } from '@/lib/publicAnswerText';
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -75,12 +75,13 @@ const loadShare = cache(async (token: string): Promise<ShareResult> => {
       const wrapped = !share.richResponse && share.response.startsWith(NATIVE_SHARE_PREFIX);
       const responseText = wrapped ? readNativeOpenUiShareText(snapshot) : splitNativeOpenUiAnswer(share.response).text;
       const matchingText = wrapped || native?.text === responseText;
+      const exportText = publicAnswerExportText(responseText ?? '');
       return {
         status: 'ok',
         // Pass the verified snapshot directly to the renderer.
-        native: matchingText ? native : undefined,
+        native: matchingText && exportText === responseText ? native : undefined,
         share: { ...share,
-          response: responseText || 'The shared answer has no readable text.',
+          response: exportText || 'The shared answer has no readable text.',
           richResponse: undefined,
           richUnavailable: !native || !matchingText,
         },
@@ -88,9 +89,13 @@ const loadShare = cache(async (token: string): Promise<ShareResult> => {
     }
     const presentation = readRichShareSnapshot(snapshot);
     const matchingText = !share.richResponse || presentation.text === share.response;
+    const responseText = publicAnswerText(share.response.startsWith(RICH_SHARE_PREFIX) ? presentation.text : share.response);
+    const exportText = publicAnswerExportText(responseText);
+    const originalText = presentation.document?.originalText ?? '';
     return { status: 'ok', share: { ...share,
-      response: publicAnswerText(share.response.startsWith(RICH_SHARE_PREFIX) ? presentation.text : share.response),
-      richResponse: presentation.document && matchingText ? snapshot : undefined,
+      response: exportText,
+      richResponse: presentation.document && matchingText && exportText === responseText &&
+        publicAnswerExportText(originalText) === originalText ? snapshot : undefined,
       richUnavailable: share.richUnavailable === true || snapshot.startsWith(RICH_SHARE_PREFIX) && (!presentation.document || !matchingText),
     } };
   } catch {

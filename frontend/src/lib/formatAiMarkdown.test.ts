@@ -86,3 +86,14 @@ test('ordinary external links also get the compact resource-preview affordance',
   assert.match(html, /Open link: original guide/);
   assert.match(html, /href="https:\/\/example\.com\/guide\?utm_source=xroga\.com"/);
 });
+
+test('saved Search renders its owner review without the obsolete progress copy', () => {
+  const path = '/dashboard/actions/confirm/a3bb8c99-cf0b-4d38-a759-8e391b37f40d';
+  const response = `Review the exact external research request: [Review action](${path}). No live evidence has been retrieved.`;
+  const render = (content: string) => renderToStaticMarkup(createElement(FormattedAiMarkdown, { content }));
+  assert.match(render(response), /Loading action/);
+  assert.doesNotMatch(render(response), /No live evidence|Full approval payload|Prepared digest|micro-USD/);
+  const foreign = render(`[External documentation](https://docs.example${path})`);
+  assert.match(foreign, /href="https:\/\/docs\.example/);
+  assert.doesNotMatch(foreign, /Loading action/);
+});

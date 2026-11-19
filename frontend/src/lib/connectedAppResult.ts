@@ -1,4 +1,18 @@
 const RESULT_MARKER = 'Connected app result (untrusted data):';
+const ACTION_REVIEW_PATH = /^\/dashboard\/actions\/confirm\/([\da-f]{8}-[\da-f]{4}-[1-5][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12})\/?$/i;
+const SAVED_SEARCH_REVIEW = /^(?:Review the request before Xroga searches the web|Review the exact (?:external )?research request(?: before it is sent)?):\s*(\[[^\]]+\]\(([^()\s]+)\))\.?\s*(?:No live evidence has been retrieved\.)?$/i;
+
+export function workspaceReviewId(href?: string): string | null {
+  return href?.match(ACTION_REVIEW_PATH)?.[1] ?? null;
+}
+
+export function readableActionSpend(microUsd: string | null, currency: string | null): string | null {
+  if (currency !== 'USD' || microUsd === null || !/^\d+$/.test(microUsd)) return null;
+  const amount = Number(microUsd);
+  return Number.isSafeInteger(amount) ? new Intl.NumberFormat('en-US', {
+    style: 'currency', currency, minimumFractionDigits: 2, maximumFractionDigits: 6,
+  }).format(amount / 1_000_000) : null;
+}
 
 type AppResultPreview = {
   summary: string;
@@ -49,10 +63,25 @@ export function previewConnectedAppResult(response: string): AppResultPreview {
 }
 
 export function compactConnectedAppConfirmationMarkdown(markdown: string): string {
+  const search = savedSearchReviewLink(markdown);
+  if (search) return search;
   const writeReview = markdown.match(/\n\nNothing has been changed yet\.\n\n(\[Review action\]\(\/dashboard\/actions\/confirm\/[0-9a-f-]{36}\))$/i);
   if (writeReview) return writeReview[1];
   return markdown.replace(
     /^Review this exact private connected-app read before its parameters are sent:\s*(\[[^\]]+\]\([^)]+\))\.\s*No application data has been retrieved\.$/,
     '$1',
+  );
+}
+
+export function savedSearchReviewLink(markdown: string): string | null {
+  const search = markdown.trim().match(SAVED_SEARCH_REVIEW);
+  return search && workspaceReviewId(search[2]) ? search[1] : null;
+}
+
+/** Keep the useful outcome while omitting the route's internal receipt identifier. */
+export function readableActionResult(response: string): string {
+  return previewConnectedAppResult(response).summary.replace(
+    /^The provider reported completion: ([^\r\n]*?)\. Receipt [\da-f-]{36}\./i,
+    'The provider reported completion: $1.',
   );
 }

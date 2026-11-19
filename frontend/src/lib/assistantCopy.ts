@@ -1,3 +1,5 @@
+import { publicAnswerExportText } from './publicAnswerText';
+
 function cleanInline(value: string): string {
   // Protect literal identifiers and operators before removing prose emphasis.
   const pieces = value.split(/(`+[^`\n]*`+)/g);
@@ -23,7 +25,7 @@ function tableCells(line: string): string[] {
 
 /** Convert a rendered assistant answer into useful clipboard text without UI chrome. */
 export function serializeAssistantCopy(markdown: string): string {
-  const normalized = markdown.replace(/\r\n/g, '\n');
+  const normalized = publicAnswerExportText(markdown).replace(/\r\n/g, '\n');
   const output: string[] = [];
   const lines = normalized.split('\n');
   let inFence = false;

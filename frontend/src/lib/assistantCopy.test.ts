@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
 import { serializeAssistantCopy } from './assistantCopy';
+import { publicAnswerExportText } from './publicAnswerText';
 
 test('copy keeps unquoted schema identifiers across prose and exported TSV', () => {
   const identifiers = 'user_id, tenant_id, role\nsubscriptions\tstripe_customer_id\tstripe_subscription_id';
@@ -29,4 +30,21 @@ test('assistant copy converts markdown tables into readable tab-separated text',
     serializeAssistantCopy('| Name | State |\n| --- | --- |\n| Build | **Passed** |'),
     'Name\tState\nBuild\tPassed',
   );
+});
+
+test('saved research exports omit the private action URL and keep the existing answer', () => {
+  const link = '[Review action](/dashboard/actions/confirm/9d2d8830-8daa-4d5e-9b52-6ba547a118b8)';
+  const legacy = `Review the exact research request before it is sent: ${link}. No live evidence has been retrieved.`;
+  const evidence = 'The official result is [documented](https://example.com/evidence).';
+  assert.equal(publicAnswerExportText(`${legacy}\n\n${evidence}`), `This search was awaiting review in Workspace.\n\n${evidence}`);
+  assert.equal(serializeAssistantCopy(legacy), 'This search was awaiting review in Workspace.');
+  assert.equal(publicAnswerExportText(`You:\nLook up the answer.\n\nXroga:\n${legacy}`),
+    'You:\nLook up the answer.\n\nXroga:\nThis search was awaiting review in Workspace.');
+  assert.equal(publicAnswerExportText(`Sensitive write requires review. ${link}`), 'Sensitive write requires review. Review in Workspace');
+});
+
+test('action export filtering preserves literal code and unrelated external sources', () => {
+  const example = '[Review action](/dashboard/actions/confirm/9d2d8830-8daa-4d5e-9b52-6ba547a118b8)';
+  const markdown = ['Routing example: `' + example + '`', '', '```md', example, '```', '', example.replace('(/dashboard/', '(https://docs.example/dashboard/')].join('\n');
+  assert.equal(publicAnswerExportText(markdown), markdown);
 });

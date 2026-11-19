@@ -31,7 +31,7 @@ import {
 } from './oauthPopupResult';
 
 import { xrogaConnect } from './xrogaConnect';
-import { compactConnectedAppConfirmationMarkdown, previewConnectedAppResult } from './connectedAppResult';
+import { compactConnectedAppConfirmationMarkdown, readableActionResult, readableActionSpend, workspaceReviewId } from './connectedAppResult';
 import { RESEARCH_RECEIPT_AVAILABLE } from './researchHandoff';
 
 function joinClasses(
@@ -112,38 +112,6 @@ export const safeMarkdownUrl:
     }
   };
 
-const CONFIRMATION_PATH =
-  /^\/dashboard\/actions\/confirm\/([0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})\/?$/i;
-
-function confirmationIdFromHref(
-  href:
-    string |
-    undefined,
-): string | null {
-  if (
-    !href
-  ) {
-    return null;
-  }
-
-  try {
-    const parsed =
-      new URL(
-        href,
-        'https://xroga.local',
-      );
-
-    return (
-      parsed.pathname.match(
-        CONFIRMATION_PATH,
-      )?.[1] ??
-      null
-    );
-  } catch {
-    return null;
-  }
-}
-
 type ConfirmationStatus =
   | 'pending'
   | 'executing'
@@ -170,8 +138,7 @@ interface SafeConfirmation {
     string;
   expiresAt:
     string;
-  approval?: { accountReference: string; operation: string; actionDigest: string; destination: unknown;
-    criticalParameters: unknown; spendMaximumMicroUsd: string | null; currency: string | null };
+  approval?: { spendMaximumMicroUsd: string | null; currency: string | null };
 }
 
 function toolkitLabel(
@@ -243,9 +210,6 @@ export function BusinessActionConfirmationInline({
     useState(
       false,
     );
-  const [detailsOpen, setDetailsOpen] = useState(true);
-  const [researchPayloadOpen, setResearchPayloadOpen] = useState(false);
-  const [resultOpen, setResultOpen] = useState(false);
 
   useEffect(
     () => {
@@ -349,7 +313,7 @@ export function BusinessActionConfirmationInline({
           );
 
           setNotice(
-            result.response,
+            result.toolkit === 'xroga-native-research' ? 'Web search finished.' : readableActionResult(result.response),
           );
           if (result.ok && result.toolkit === 'xroga-native-research' &&
               result.confirmation.status === 'consumed' && result.confirmation.id === confirmationId) {
@@ -470,65 +434,36 @@ export function BusinessActionConfirmationInline({
     confirmation
       ?.status;
   const approval = confirmation?.approval;
-  const isOfficialSearch = approval?.operation === 'XROGA_RESEARCH_SEARCH'
-    && approval.accountReference === 'deepseek-search:platform';
-  const researchParameters = approval?.operation === 'XROGA_RESEARCH_SEARCH'
-    ? approval.criticalParameters as { body?: { search_queries?: unknown }; answerRequest?: { prompt?: unknown } } | null
-    : null;
-  const searchQueries = researchParameters?.body?.search_queries;
-  const researchQuestion = researchParameters?.answerRequest?.prompt;
-  const readableResearch = Array.isArray(searchQueries) && searchQueries.length > 0
-    && searchQueries.every((query): query is string => typeof query === 'string')
-    && typeof researchQuestion === 'string';
-  const resultPreview = notice && !failed && status === 'consumed'
-    ? previewConnectedAppResult(notice)
-    : null;
+  const savedSearch = confirmation?.toolkit === 'xroga-native-research';
+  const privateRead = confirmation?.risk === 'read' && !savedSearch;
+  const maximumSpend = approval && readableActionSpend(approval.spendMaximumMicroUsd, approval.currency);
+  const reviewHref = `/dashboard/actions/confirm/${encodeURIComponent(confirmationId)}`;
+  const statusMessage = {
+    executing: savedSearch ? 'Searching the web…' : 'Action in progress…',
+    consumed: savedSearch ? 'Web search finished.' : 'The provider reported completion.',
+    cancelled: 'Cancelled.',
+    failed: 'The request could not be completed.',
+    expired: 'This request expired.',
+  };
 
   return (
     <span aria-busy={Boolean(busy)} className="my-2 flex w-full max-w-xl flex-col gap-2 rounded-xl border border-[var(--card-border)]/70 bg-[var(--foreground)]/[0.025] p-3 align-top">
       <span className="flex min-w-0 flex-wrap items-start gap-2">
-        {confirmation ? (
+        {confirmation && !savedSearch ? (
           <PluginBrandLogo id={confirmation.toolkit} name={toolkitLabel(confirmation.toolkit)} toolkit={confirmation.toolkit} size="micro" />
         ) : null}
         <span className="min-w-0 flex-1 text-[13px] leading-relaxed text-[var(--foreground)]">
-          {confirmation ? (confirmation.request || confirmation.summary) : !failed ? 'Loading action…' : null}
+          {confirmation ? (savedSearch ? 'Search the public web' : confirmation.summary) : !failed ? 'Loading action…' : null}
         </span>
         {status === 'pending' && confirmation && !confirmation.toolkit.startsWith('xroga-') ? (
           <PluginPermissionControl toolkit={confirmation.toolkit} pluginName={toolkitLabel(confirmation.toolkit)} buttonOnly compact />
         ) : null}
       </span>
 
-      {status === 'pending' && confirmation?.approval ? (
-        <span role="region" aria-label="Exact action approval" className="text-[11px] text-[var(--foreground)]/70">
-          <button type="button" aria-expanded={detailsOpen} onClick={() => setDetailsOpen((open) => !open)} className="font-medium underline-offset-2 hover:underline">
-            Review exact action
-          </button>
-          {detailsOpen ? (
-            <span className="mt-2 flex flex-col gap-1 rounded-lg border border-[var(--card-border)]/60 p-2">
-              <span>{confirmation.summary}</span>
-              <span>Account: {confirmation.approval.accountReference}</span>
-              <span>Operation: {confirmation.approval.operation}</span>
-              {isOfficialSearch ? (
-                <span>Destination: Official DeepSeek Search</span>
-              ) : confirmation.approval.destination != null ? (
-                <span>Destination: {JSON.stringify(confirmation.approval.destination)}</span>
-              ) : null}
-              <span>Spend ceiling: {confirmation.approval.spendMaximumMicroUsd === null ? 'No spending authority included' : (confirmation.approval.spendMaximumMicroUsd + ' micro-USD, ' + confirmation.approval.currency)}</span>
-              {readableResearch ? (
-                <>
-                  <span className="font-semibold">Search queries</span>
-                  {searchQueries.map((query, index) => <span key={index} className="break-words">{query}</span>)}
-                  <span className="font-semibold">Question for the answer</span>
-                  <span className="break-words">{researchQuestion}</span>
-                  <button type="button" aria-expanded={researchPayloadOpen} onClick={() => setResearchPayloadOpen(open => !open)} className="text-left font-medium underline-offset-2 hover:underline">Full approval payload</button>
-                  {researchPayloadOpen ? <code className="block max-h-48 overflow-auto whitespace-pre-wrap break-all">{JSON.stringify(confirmation.approval.criticalParameters, null, 2)}</code> : null}
-                </>
-              ) : (
-                <code className="block max-h-48 overflow-auto whitespace-pre-wrap break-all">{JSON.stringify(confirmation.approval.criticalParameters, null, 2)}</code>
-              )}
-              <span className="break-all text-[10px]">Prepared digest: {confirmation.approval.actionDigest}</span>
-            </span>
-          ) : null}
+      {status === 'pending' && approval ? (
+        <span className="flex flex-wrap items-center gap-2 text-[12px] text-[var(--foreground)]/70">
+          <a href={reviewHref} className="font-medium underline underline-offset-2">{privateRead ? 'Review and confirm' : 'Review details'}</a>
+          {maximumSpend ? <span>Up to {maximumSpend}</span> : null}
         </span>
       ) : status === 'pending' ? (
         <span className="text-[12px] text-[var(--foreground)]/70">This older action needs to be prepared again.</span>
@@ -537,7 +472,7 @@ export function BusinessActionConfirmationInline({
       {status ===
       'pending' ? (
         <span className="flex flex-wrap items-center gap-2 pt-1">
-          <button
+          {!privateRead && <button
             type="button"
             onClick={
               confirm
@@ -549,9 +484,9 @@ export function BusinessActionConfirmationInline({
           >
             {busy ===
             'confirm'
-              ? isOfficialSearch ? 'Running approved search…' : 'Confirming…'
+              ? savedSearch ? 'Searching the web…' : 'Confirming…'
               : 'Confirm action'}
-          </button>
+          </button>}
 
           <button
             type="button"
@@ -578,33 +513,14 @@ export function BusinessActionConfirmationInline({
       status !==
         'pending' &&
       !notice ? (
-        <span className="text-[12px] font-medium text-[var(--foreground)]/70">
-          Action status: {status}
+        <span role="status" className="text-[12px] font-medium text-[var(--foreground)]/70">
+          {statusMessage[status]}
         </span>
       ) : null}
 
       {notice ? (
-        <span className="flex min-w-0 flex-col gap-1">
-          <span className={joinClasses('text-[12px] font-medium', failed ? 'text-red-500' : 'text-[var(--foreground)]/75')}>
-            {resultPreview?.summary ?? notice}
-          </span>
-          {resultPreview?.details ? (
-            <>
-              <button
-                type="button"
-                aria-expanded={resultOpen}
-                onClick={() => setResultOpen((open) => !open)}
-                className="self-start text-[11px] text-[var(--foreground)]/65 underline-offset-2 hover:underline"
-              >
-                {resultOpen ? 'Hide provider result' : 'View provider result'}
-              </button>
-              {resultOpen ? (
-                <code className="block max-h-48 overflow-auto whitespace-pre-wrap break-all text-[10px] text-[var(--foreground)]/70">
-                  {resultPreview.details}
-                </code>
-              ) : null}
-            </>
-          ) : null}
+        <span role={failed ? 'alert' : 'status'} className={joinClasses('text-[12px] font-medium', failed ? 'text-red-500' : 'text-[var(--foreground)]/75')}>
+          {notice}
         </span>
       ) : null}
     </span>
@@ -706,10 +622,7 @@ function toolUiFromHref(
         window.location.origin,
       );
 
-    if (
-      parsed.pathname !==
-      '/xroga/tool-ui'
-    ) {
+    if (parsed.origin !== window.location.origin || parsed.pathname !== '/xroga/tool-ui') {
       return null;
     }
 
@@ -1544,7 +1457,7 @@ const components:
       }
 
       const confirmationId =
-        confirmationIdFromHref(
+        workspaceReviewId(
           href,
         );
 
