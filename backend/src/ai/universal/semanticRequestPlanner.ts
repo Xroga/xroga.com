@@ -1301,6 +1301,35 @@ export async function planSemanticRequest(
         ),
     );
 
+  // This protocol supplies the complete answer format without requiring an
+  // intent or source decision. The ordinary chat route still generates it.
+  if (input.message.length <= 128 && !input.history?.length && !input.attachments?.length && !input.projectContext
+    && !Array.isArray(input.projectState)
+    && Object.entries(input.projectState ?? {}).every(([key, value]) =>
+      (key === 'hasExistingPreview' || key === 'isUpdate') && value === false)
+    && /^(?:please[ \t]+)?(?:reply|respond|answer)[ \t]+with[ \t]+only[ \t]+the[ \t]+word[ \t]+\p{L}[\p{L}\p{M}]{0,39}[.!]?$/iu
+      .test(input.message.trim())
+    && readiness.get('conversation.respond')?.state === 'READY') {
+    const goalContract = goalContractSchema.parse({
+      version: '1.0',
+      goal: input.message,
+      desiredOutcome: 'Respond with exactly the requested word.',
+      semanticIntent: 'ANSWER',
+      requiredCapabilities: ['conversation.respond'],
+      requiredAuthorities: universalCapabilityRegistry.get('conversation.respond')?.requiredAuthorities,
+      confidence: 1,
+      contextComplexity: 'low',
+    });
+    return {
+      goalContract,
+      dispatch: 'chat',
+      capabilityIds: goalContract.requiredCapabilities,
+      rationale: 'The request specifies a single literal word for an ordinary conversation response.',
+      blockers: [],
+      usage: usageToTokenUsage(await getUsage(actor.userId)),
+    };
+  }
+
   // Keep a single capability catalog in the planner prompt.
   const availableSummary =
     available.map(
@@ -1698,7 +1727,7 @@ export async function planSemanticRequest(
       throw new RuntimeFailure(
         'PLANNER_TIMEOUT',
 
-        'Xroga could not understand this request before the planning deadline. Please retry.',
+        'The planning model timed out. Please retry this request.',
 
         {
           cause:
