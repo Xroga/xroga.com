@@ -197,7 +197,7 @@ async function hitTest(
         const message =
           verdict.kind === 'ancestor'
             ? `${target.description} does not take pointer events; its container ${covering} would receive the click.`
-            : `${target.description} is covered by ${covering} at its click point.`;
+            : `${target.description} is covered by ${covering} at its click point. Do not repeat the same click: close or move the covering element, scroll the control into view, or focus it and press Enter or Space.`;
         throw new LayerError('OBSCURED', message, { details: { covering, kind: verdict.kind } });
       }
     } finally {
@@ -207,7 +207,7 @@ async function hitTest(
     const covering = hitFrame
       ? await nameCovering(ctx, hitFrame, hit.backendNodeId)
       : `an element in frame ${hit.frameId}`;
-    throw new LayerError('OBSCURED', `${target.description} is covered by ${covering} at its click point.`, {
+    throw new LayerError('OBSCURED', `${target.description} is covered by ${covering} at its click point. Do not repeat the same click: close or move the covering element, scroll the control into view, or focus it and press Enter or Space.`, {
       details: { covering },
     });
   }
@@ -220,7 +220,7 @@ async function hitTest(
     const frame = up ? target.frames.find(f => f.frameId === up.frameId) : undefined;
     const covering = up && frame ? await nameCovering(ctx, frame, up.backendNodeId) : 'nothing (outside the page)';
     const where = frame && frame.parentFrameId ? ` in frame ${quote(frame.url)}` : ' in the page';
-    throw new LayerError('OBSCURED', `${target.description} is covered by ${covering}${where} at its click point.`, {
+    throw new LayerError('OBSCURED', `${target.description} is covered by ${covering}${where} at its click point. Do not repeat the same click: close or move the covering element, scroll the control into view, or focus it and press Enter or Space.`, {
       details: { covering, level: i + 1 },
     });
   }
