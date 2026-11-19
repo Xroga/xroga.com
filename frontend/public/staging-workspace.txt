@@ -1,1 +1,3 @@
 staging workspace for the Browser Operator live-run branch; not served as a page
+
+refreshed 2026-11-20 after Vercel retention removed the previous deployment
