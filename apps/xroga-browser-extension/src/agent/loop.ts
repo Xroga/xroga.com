@@ -32,6 +32,8 @@ import { decodeImage, describeHits, FIND_COLOR_TOOL, scanColor } from './pixels'
 import { learnFrom, turnEffort } from './run';
 import { PaintedInputDeliveryGuard } from './painted-input-delivery';
 import { ProgressTracker } from './progress-tracker';
+import { describeChoice, evidenceFromOutline, rankStrategies } from './strategy-selector';
+import { skillsFor } from './skills';
 import { runSurface, RunLedger } from './command-surface';
 import { scriptConsoleSurface, validateConsoleArgs } from './command-surface-adapter';
 import type { ConsoleArgs } from './command-surface-adapter';
@@ -632,6 +634,7 @@ ${ledger}` : ''),
     if (!result.ok) return;
     this.#seen.set(active.tabId, active.url);
     this.preActions.push('snapshot');
+    await this.#chooseStrategy(result.text, asked ? userText(asked) : '');
     // Kept within budget: a share of the window, at 4 characters a token.
     const budget = Math.max(2_000, Math.min(30_000, this.options.model.profile.contextWindow * 4 * 0.2));
     const outline = cutText(result.text, budget, '… the outline was cut; take a snapshot to see more.');
@@ -1481,6 +1484,7 @@ ${ledger}` : ''),
   #paintedInputDelivered = new PaintedInputDeliveryGuard();
   #progress = new ProgressTracker();
   #consoleRuns = new RunLedger();
+  #strategyChosen = false;
   #pendingStall: StallVerdict | null = null;
   #docsRead = false;
   #scriptGateShown = false;
@@ -1571,11 +1575,26 @@ ${ledger}` : ''),
     }
   }
 
+  /** Picks the starting method from what the page shows and tells the model once. Evidence, not request keywords, decides. */
+  async #chooseStrategy(outline: string, request: string): Promise<void> {
+    if (this.#strategyChosen) return;
+    const evidence = evidenceFromOutline(outline, {
+      connectedTool: [...this.#toolNames].some(n => n.startsWith('plugin_') && n !== 'plugin_search' && n !== 'plugin_action_search' && n !== 'plugin_connect'),
+      verifiedSkill: skillsFor(request).some(k => k.id === 'app-script-console'),
+      vision: !!this.options.model.profile.vision,
+    });
+    const ranked = rankStrategies(evidence);
+    if (!this.#progress.reorder(ranked.map(r => r.strategy))) return;
+    this.#strategyChosen = true;
+    await this.writer.appNote(describeChoice(ranked));
+  }
+
   /** One fixed-phase program run in an app console. Every layer call still goes through the gate, the journal and the guards. */
   async #runScriptConsole(call: ToolCallRequest, kind: ToolKind, args: Record<string, unknown>): Promise<CallOutcome> {
     const { emit, signal, layer } = this.options;
     const bad = validateConsoleArgs(args as Partial<ConsoleArgs>);
     if (bad) return { call, kind, text: `error: ${bad}`, isError: true };
+    if (!this.#toolNames.has('canvas') || !this.#toolNames.has('read')) return { call, kind, text: 'error: run_script_console needs the canvas and read tools, which are not available in this run. Nothing was done.', isError: true };
     let n = 0;
     const step = async (tool: string, input: Record<string, unknown>) => {
       if (signal.aborted) throw new Error('Stopped');

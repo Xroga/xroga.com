@@ -3,7 +3,7 @@
  * Then the code (not a prompt reminder at turn 20/35/50) moves the run down the strategy ladder and, when the ladder is spent, stops with a blocker.
  * In-memory run state only.
  */
-export type Strategy = 'DOM_A11Y' | 'DOM_BATCH' | 'VISUAL_GUI' | 'APP_NATIVE' | 'RECOVERY';
+export type Strategy = 'CONNECTED_TOOL' | 'DOM_A11Y' | 'DOM_BATCH' | 'VISUAL_GUI' | 'APP_NATIVE' | 'RECOVERY';
 export const STRATEGY_LADDER: readonly Strategy[] = ['DOM_A11Y', 'DOM_BATCH', 'VISUAL_GUI', 'APP_NATIVE', 'RECOVERY'];
 
 export interface ProgressObservation {
@@ -43,7 +43,8 @@ export function fingerprint(o: ProgressObservation): { call: string; state: stri
 }
 
 const DIRECTIVES: Record<Strategy, string> = {
-  DOM_A11Y: '',
+  CONNECTED_TOOL: 'Strategy changed to CONNECTED_TOOL: use the authorized connected tool or API for this work instead of the page.',
+  DOM_A11Y: 'Strategy changed to DOM_A11Y: take a fresh snapshot and use the named controls in it.',
   DOM_BATCH: 'Strategy changed to DOM_BATCH: stop single clicks. Group the remaining steps into one batch call with preconditions.',
   VISUAL_GUI: 'Strategy changed to VISUAL_GUI: take a fresh screenshot of the bound tab and act on what it shows, not on remembered coordinates or earlier element ids.',
   APP_NATIVE: 'Strategy changed to APP_NATIVE: use the app script console, command palette or keyboard commands instead of menus, and read its Output to verify.',
@@ -52,6 +53,7 @@ const DIRECTIVES: Record<Strategy, string> = {
 
 export class ProgressTracker {
   #strategyIndex = 0;
+  #order: readonly Strategy[] = STRATEGY_LADDER;
   #lastCall = '';
   #lastState = '';
   #repeat = 0;
@@ -59,7 +61,16 @@ export class ProgressTracker {
   #failureKey = '';
   #switches = 0;
 
-  get strategy(): Strategy { return STRATEGY_LADDER[this.#strategyIndex]!; }
+  get strategy(): Strategy { return this.#order[this.#strategyIndex]!; }
+  get order(): readonly Strategy[] { return this.#order; }
+
+  /** Starts a new order chosen from evidence about the page. Only before any method has stalled: a switch already made is never undone. */
+  reorder(order: readonly Strategy[]): boolean {
+    if (this.#switches > 0 || order.length === 0 || order[order.length - 1] !== 'RECOVERY') return false;
+    this.#order = order;
+    this.#strategyIndex = 0;
+    return true;
+  }
   get switches(): number { return this.#switches; }
 
   record(o: ProgressObservation): StallVerdict {
@@ -84,7 +95,7 @@ export class ProgressTracker {
     this.#failures = 0;
     this.#failureKey = '';
     this.#lastCall = '';
-    if (this.#strategyIndex >= STRATEGY_LADDER.length - 1) {
+    if (this.#strategyIndex >= this.#order.length - 1) {
       return { stalled: true, reason, strategy: this.strategy, switched: false, exhausted: true, directive: `No strategy is left (${reason}). Finish now with the exact blocker and what is already done; do not retry.` };
     }
     this.#strategyIndex++;
