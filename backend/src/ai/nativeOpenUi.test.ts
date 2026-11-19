@@ -148,6 +148,10 @@ test('shared calculation references remain usable inside a native layout without
 
 test('the model gets instructions from the native registry and may answer in text', () => {
   for (const prompt of [nativeOpenUiPlainPrompt, nativeOpenUiPrompt]) {
+    assert.match(prompt, /requested length and format before any default presentation guidance/);
+    assert.match(prompt, /Simple questions need just the answer and any essential context/);
+    assert.match(prompt, /For complex or detailed requests, preserve each distinct requirement/);
+    assert.match(prompt, /If the user declines visuals or a specific component, honor that choice/);
     assert.match(prompt, /Verify the value, unit, and reference point, baseline, or denominator together/);
     assert.match(prompt, /NEXT_PUBLIC_ is for values exposed to the browser/);
     assert.match(prompt, /carry precautions into every step/);
@@ -810,6 +814,20 @@ test('a truncated inline root keeps only children completed before the cutoff', 
   assert.equal(completeNativeWorkspaceAnswer(wire.replace(table, 'Source("source-9")'), 'length').responseSource.text, '');
   const closedChildren = prose + NATIVE_UI_MARKER + 'root = Col([' + table + '], ["Unfinished';
   assert.equal(completeNativeWorkspaceAnswer(closedChildren, 'length').responseSource.text, result.responseSource.text);
+});
+
+test('a truncated answer preserves completed tabs and list items in the saved text', () => {
+  const prose = 'Two supported approaches are available.\n\nChoose according to your team size.';
+  const tabs = 'choices = Tabs("Approaches", [{title: "Small team", content: [List(["Assign an owner", "Agree on a handoff"])]}, {title: "Large team", content: [Text("Define an escalation path.")]}])';
+  const program = ['root = Col([choices, unfinished])', tabs, 'unfinished = Text("Incomplete'].join('\n');
+  const answer = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + program, 'length');
+
+  assert.deepEqual(answer.completion, { status: 'partial', reason: 'output_limit' });
+  assert.equal(answer.responseSource.text, 'root = Col([choices])\n' + tabs);
+  assert.ok(answer.response.includes(prose));
+  assert.match(answer.response, /Small team[\s\S]*Assign an owner[\s\S]*Agree on a handoff/);
+  assert.match(answer.response, /Large team[\s\S]*Define an escalation path\./);
+  assert.doesNotMatch(answer.response, /Incomplete|root\s*=/);
 });
 
 test('the saved prose and clipboard fallback retain the substantive native body after an unfinished heading', () => {

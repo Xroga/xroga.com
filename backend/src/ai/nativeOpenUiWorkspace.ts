@@ -166,7 +166,7 @@ export function completeNativeWorkspaceAnswer(
     };
   }
   if (completion.status === 'partial' && completion.reason === 'output_limit') {
-    const verifiedText = verifiedBeforeLimit ? supplementNativeProse(response, program) : response;
+    const verifiedText = verifiedBeforeLimit ? supplementNativeProse(response, program, true) : response;
     return {
       response: outputLimitNote + '\n\n' + verifiedText,
       completion,

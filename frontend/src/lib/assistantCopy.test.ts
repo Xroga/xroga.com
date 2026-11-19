@@ -32,6 +32,30 @@ test('assistant copy converts markdown tables into readable tab-separated text',
   );
 });
 
+test('copy keeps every alternative, nested list indentation, exact links and table cells', () => {
+  const source = 'https://example.org/Feature_(product)/_release_?edition=2';
+  const markdown = [
+    '## Standard', '- Deploy the API', '  - Keep the tenant policy', '',
+    '## Recovery', '- Restore the previous image', '    - Save the `rollback_id`', '',
+    '| Label | Value | Evidence |', '| --- | --- | --- |',
+    '| Plan \\| Restore | 40 people | [Release notes](<' + source + '>) |',
+    '| Path C:\\\\ | 0 | [Other](https://example.org/Feature_(three(nested))?x=1) |',
+  ].join('\n');
+  assert.equal(serializeAssistantCopy(markdown), [
+    'Standard', '- Deploy the API', '  - Keep the tenant policy', '',
+    'Recovery', '- Restore the previous image', '    - Save the rollback_id', '',
+    'Label\tValue\tEvidence', 'Plan | Restore\t40 people\tRelease notes (' + source + ')',
+    'Path C:\\\t0\tOther (https://example.org/Feature_(three(nested))?x=1)',
+  ].join('\n'));
+});
+
+test('copy preserves indentation, embedded fences, and blank lines in literal code', () => {
+  const sample = ['    indented example', '', '', '```sh', 'echo "keep **literal**"', '```', '', ''];
+  const markdown = ['````md', ...sample, '````'].join('\n');
+  assert.equal(serializeAssistantCopy(markdown), sample.join('\n'));
+  assert.equal(serializeAssistantCopy('~~~text\n  nested\n\n\n  text\n~~~'), '  nested\n\n\n  text');
+});
+
 test('saved research exports omit the private action URL and keep the existing answer', () => {
   const link = '[Review action](/dashboard/actions/confirm/9d2d8830-8daa-4d5e-9b52-6ba547a118b8)';
   const legacy = `Review the exact research request before it is sent: ${link}. No live evidence has been retrieved.`;

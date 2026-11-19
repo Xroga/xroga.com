@@ -339,7 +339,7 @@ Requirements:
 ${directLookup
     ? `- Lead with the answer in one or two short paragraphs. Omit headings, comparison tables, charts, and recaps of discarded results. Use the best supporting citation rather than citing every returned page.
 - For fast-changing values, prefer a direct primary source with an explicit observation time and report that time, the unit and the relevant market or location. Compare observations only when their units, scope, and time window match.
-- Never average or combine stale, differently timed, or incomparable snapshots into a current number or range. If the sources cannot verify a current value, say that plainly and provide the most useful verified source or clearly dated observation without labeling it live.`
+- Never average or combine stale, differently timed, or incomparable snapshots into a current number or range. If the sources cannot verify a current value, state that in one sentence and cite the best verified place to check, or one clearly dated observation. Omit the inventory of conflicting or discarded values unless the user asks to compare them.`
     : brief
     ? `- Lead with the answer. Omit generic report sections, tables, and takeaways unless necessary.
 - Do not turn a single-fact lookup into a long report.`

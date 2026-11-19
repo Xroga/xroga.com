@@ -93,6 +93,7 @@ test('direct current lookup is compact without overriding a broader request or o
   assert.match(prompt, /explicit observation time/);
   assert.match(prompt, /Neither a retrieval time nor a publication date alone proves a value is current/);
   assert.match(prompt, /Never average or combine stale, differently timed, or incomparable snapshots/);
-  assert.match(prompt, /If the sources cannot verify a current value, say that plainly/);
+  assert.match(prompt, /If the sources cannot verify a current value, state that in one sentence/);
+  assert.match(prompt, /Omit the inventory of conflicting or discarded values unless the user asks to compare them/);
   assert.doesNotMatch(prompt, /Choose a comparison table or diagram/);
 });

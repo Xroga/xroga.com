@@ -15,6 +15,8 @@ test('actual semantic planner carries issued actor, platform reservation and exa
   t.after(() => { for (const key of Object.keys(env)) { if (prior[key] === undefined) delete process.env[key]; else process.env[key] = prior[key]; } });
   let effects = 0, reservations = 0, settlements = 0, receipts = 0;
   let mode = 'ok';
+  const suppliedHistory = ['user: Prior exchange snapshots', 'assistant: The prior quote was an estimate.'];
+  const suppliedProjectState = { hasExistingPreview: false, isUpdate: false };
   const warnings: unknown[][] = [];
   t.mock.method(console, 'warn', (...args: unknown[]) => { warnings.push(args); });
   const held = new Map<string, Record<string, unknown>>();
@@ -30,6 +32,14 @@ test('actual semantic planner carries issued actor, platform reservation and exa
       assert.equal(init?.redirect, 'manual');
       const expectedPrompt = mode === 'misrouted-calculator' ? 'build an interactive calculator' : 'Explain a safe local parser';
       assert.ok(body.messages.some((message: { content: string }) => message.content.includes(expectedPrompt)));
+      const system = body.messages[0].content as string;
+      assert.equal(system.split('Retrieve current public evidence through the configured provider adapter.').length, 2,
+        'The full capability descriptor belongs in one registry catalog');
+      assert.match(system, /Destructive, financial, permission-changing.*additional confirmation gate/);
+      assert.match(system, /"id":"research\.public-web"[^{}]*"readiness":"(?:READY|PROVIDER_UNAVAILABLE)"/);
+      const suppliedContext = JSON.parse(body.messages[1].content);
+      assert.deepEqual(suppliedContext.history, suppliedHistory);
+      assert.deepEqual(suppliedContext.projectState, suppliedProjectState);
       assert.doesNotMatch(JSON.stringify(body), /synthetic-platform-credential/);
       assert.equal(new Headers(init?.headers).get('x-zurelay-fallback'),'off');assert.equal(body.model,'deepseek-v4.1-flash-1017');assert.equal(body.reasoning_effort,'none');
       assert.equal(body.max_tokens, 2200);
@@ -79,7 +89,8 @@ test('actual semantic planner carries issued actor, platform reservation and exa
     }
     throw Error('Unexpected database operation: ' + url.pathname);
   });
-  const request = { userId: owner, tenantContext: context, message: 'Explain a safe local parser' };
+  const request = { userId: owner, tenantContext: context, message: 'Explain a safe local parser',
+    history: suppliedHistory, projectState: suppliedProjectState };
   const plan = await planSemanticRequest(request);
   assert.equal(plan.dispatch, 'chat');
   assert.deepEqual([effects, reservations, settlements, receipts], [1, 1, 1, 1]);

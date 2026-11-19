@@ -9,6 +9,8 @@ const comparisonConsistencyRule = 'For price and capacity comparisons, check eve
 
 const readingOrderRule = 'Match the structure to what the reader needs to do. Answer simple questions directly. In a longer answer, lead with the result, use short task-specific headings, and group related details. Use numbered steps for a sequence and a compact table when the reader needs to scan comparable items. Explain the consequence or tradeoff beside the data. For an abstract plan, include a brief, clearly labeled worked example when it makes the recommendation easier to apply.';
 
+const answerScopeRule = 'Follow the user\'s requested length and format before any default presentation guidance. For an exact word, one-line answer, fixed bullet count, or no-extra-text request, return only that format. Simple questions need just the answer and any essential context. For complex or detailed requests, preserve each distinct requirement, necessary evidence, and useful examples. Skip generic introductions and repeated conclusions. If the user declines visuals or a specific component, honor that choice.';
+
 const componentSelectionRule = 'Choose a visual for the question it answers. Use a Diagram for dependencies, branching decisions or handoffs. Use a Table when the reader needs to compare roles, ownership, permissions, options or values across shared columns. In a workflow, a responsibility table can show what is automated and what needs human review, while the diagram shows where the work goes next. Use ordered steps for a straightforward sequence and a Chart for measured trends or comparisons. When the user asks for a specific artifact, make it the main answer and include only supporting content needed to use or understand it. For a sortable table, provide the data, units and working sort; omit charts and aggregate metrics unless the request calls for analysis or those views answer a distinct user question. Include multiple components only when each adds distinct information. Use concise labels and keep essential details visible in reading order.';
 
 const iconSelectionRule = 'Use an optional Lucide icon on a section or diagram node when it helps distinguish roles, actions or states, such as inbox for intake and shield-check for an approval boundary. Use valid kebab-case icon names and keep the visible text label. Omit icons from paragraphs, repeated table cells and headings where they add no meaning. Use real product identity only through a supported Resource or verified source.';
@@ -17,6 +19,7 @@ const artifactPriorityRule = 'When the user requests an interactive artifact, pu
 
 export const nativeOpenUiPlainPrompt = [
   'Answer the actual request directly in readable Markdown. Do not output an OpenUI program for this prose-only turn.',
+  answerScopeRule,
   'Use only facts you can support. Qualify uncertain claims and distinguish supplied facts from examples.',
   readingOrderRule,
   numericPrecisionRule,
@@ -46,6 +49,7 @@ function buildNativeOpenUiPrompt(kinds: ReadonlySet<string>, hasSources: boolean
   promptOptions: {
     preamble: [
       'Answer the actual request in clear prose, grounded in supplied facts. Do not claim to run tools or fetch data.',
+      answerScopeRule,
       'For an ordinary short question, return only the answer text. For a useful rich response, first give the complete readable answer in Markdown, including the requested explanation, data, calculations, units, assumptions, caveats and requested code. Then output the exact separator on its own line and the complete OpenUI Lang answer with no Markdown fences or HTML tags. Separator: <<<XROGA_OPENUI_V1>>>.',
       'The OpenUI program is the primary rich answer. The immutable variable _xroga_answer is supplied by Xroga with the complete readable Markdown you wrote before the separator. Use Markdown(_xroga_answer) once in your visible layout. Do not declare or assign _xroga_answer and do not copy or paraphrase the explanation into additional Text, Section introductions or lists. Add useful visuals and interactions around that existing Markdown component. Labels, units and control instructions remain appropriate. Reuse identical table headers and cell values. The readable answer must stand on its own if a visual fails, including formulas, initial inputs and initial results for interactive calculations. Do not replace important details with a summary, a pointer to a visual or implementation code. This is one answer reused for rendering, saved history and recovery, without another model call. Do not invent numbers or sources.',
     ].join('\n'),
