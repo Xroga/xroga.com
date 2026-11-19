@@ -263,7 +263,11 @@ export class AgentLoop {
     // The tab the run works in may have changed since the run began (an adopted tab, a tab the page opened): every capture and every
     // check of this turn must target the session's current tab, not the one the run started on.
     const current = await this.options.layer.tabs().catch(() => null);
-    if (current && current.activeTabId !== null) this.#activeTab = current.activeTabId;
+    if (this.#boundTab !== null && current && current.tabs.some(t => t.tabId === this.#boundTab)) {
+      // The user's named tab stays the task tab: a focus change must not move the run. Only an explicit tabs select by the agent rebinds it.
+      if (current.activeTabId !== this.#boundTab) await this.options.layer.call('tabs', { action: 'select', tabId: this.#boundTab, intent: 'Return to the task tab' }, this.options.signal).catch(() => undefined);
+      this.#activeTab = this.#boundTab;
+    } else if (current && current.activeTabId !== null) this.#activeTab = current.activeTabId;
     if (PROGRESS_REVIEW_TURNS.includes(this.#turns) && this.#reviewedAt !== this.#turns) {
       this.#reviewedAt = this.#turns;
       const spent = [...this.#toolCounts].sort((a, b) => b[1] - a[1]).slice(0, 5).map(([name, n]) => `${name} x${n}`).join(', ');
@@ -593,6 +597,7 @@ ${ledger}` : ''),
           this.preActions.push('tabs');
           const now = await this.options.layer.tabs().catch(() => null);
           const here = now?.tabs.find(t => t.tabId === now.activeTabId);
+          if (here) this.#boundTab = here.tabId;
           try { if (here) this.#adoptedOrigin = new URL(here.url).origin; } catch { /* not a web address */ }
           await this.writer.appNote(`The tab you already have open (${name}) is now this run's tab. Work in it; do not open another copy.`);
           break;
@@ -719,6 +724,14 @@ ${ledger}` : ''),
         !this.#docsRead && !this.#scriptGateShown) {
       this.#scriptGateShown = true;
       return { call, kind, isError: true, text: 'refused once: you are about to type a script into the app without having read its scripting documentation. Read it first (http_get on the documentation page of the app, or its Help), copy exact names from its example, then type the script. Nothing was typed.' };
+    }
+    // With a task tab bound, a web search or a new site is drift: the app's docs are reached by http_get, the work stays in the bound tab.
+    if (this.#boundTab !== null && (call.toolName === 'navigate' || (call.toolName === 'tabs' && (args.action === 'open')))) {
+      let host = '';
+      try { host = new URL(String(args.url ?? '')).hostname; } catch { /* not a web address */ }
+      if (/(^|\.)(google|bing|duckduckgo)\.[a-z.]+$/.test(host)) {
+        return { call, kind, isError: true, text: 'refused: a web search is not needed. The task tab is bound; the script playbook gives the exact names. Use http_get for a documentation page and keep working in the task tab.' };
+      }
     }
     // The tab the user already had open holds their work: loading its own site again would discard it.
     if (this.#adoptedOrigin && (call.toolName === 'navigate' || (call.toolName === 'tabs' && args.action === 'open'))) {
@@ -1427,6 +1440,7 @@ ${ledger}` : ''),
   #reviewedAt = -1;
   #toolCounts = new Map<string, number>();
   #adoptedOrigin = '';
+  #boundTab: number | null = null;
   #docsRead = false;
   #scriptGateShown = false;
   #canvasOffered = false;
