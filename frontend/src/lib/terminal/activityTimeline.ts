@@ -168,11 +168,16 @@ export function buildActivityTimeline(rows: readonly XrogaActivityPresentation[]
   return { state, settled, active, otherActive, total: rows.length, completed, failed, unconfirmed };
 }
 
-/** A request can wait without an operation running. Writing requires an actual text delta. */
-export function pendingWorkLabel(events: readonly TerminalEvent[], hasWork: boolean): string {
+export type PendingReplyKind = 'standard' | 'source-backed';
+
+/** A dispatched reply can wait without any verified operation or text delta. */
+export function pendingWorkLabel(events: readonly TerminalEvent[], hasWork: boolean, pendingReply?: PendingReplyKind): string {
   const latest = events.findLast(event => event.kind !== 'session');
   if (latest?.kind === 'output' && latest.rawEvent === 'delta' && latest.text.trim()) return 'Writing response';
-  if (hasWork || events.length > 0) return 'Waiting for the next update';
+  if (hasWork || latest) return 'Waiting for the next update';
+  if (pendingReply === 'source-backed') return 'Waiting for a source-backed reply';
+  if (pendingReply === 'standard') return 'Waiting for a reply';
+  if (events.length > 0) return 'Waiting for the next update';
   return 'Starting request';
 }
 

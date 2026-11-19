@@ -11,6 +11,7 @@ import {
   type ReactNode,
 } from 'react';
 import { EMPTY_RUN_STATE, type TerminalEvent, type TerminalRunState } from '@/lib/terminal/terminalEvent';
+import type { PendingReplyKind } from '@/lib/terminal/activityTimeline';
 import { coalesceActivity, mergeActivitySnapshots, type XrogaActivityPresentation } from '@/lib/terminal/activityPresentation';
 import { adaptTerminalEvent } from '@/lib/terminal/terminalEventAdapter';
 import { terminalRunReducer } from '@/lib/terminal/terminalRunReducer';
@@ -544,6 +545,7 @@ interface TerminalChatContextValue {
   outOfActionsOpen: boolean;
   setOutOfActionsOpen: (v: boolean) => void;
   animatingId: string | null;
+  pendingReply: { messageId: string; kind: PendingReplyKind } | null;
   swarmActiveAgent: string | null;
   pipelineMessage: string | null;
   councilLayer: 'elite' | 'reserve' | 'blackhole' | null;
@@ -640,6 +642,7 @@ export function TerminalChatProvider({
   const [outOfActionsOpen, setOutOfActionsOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [animatingId, setAnimatingId] = useState<string | null>(null);
+  const [pendingReply, setPendingReply] = useState<TerminalChatContextValue['pendingReply']>(null);
   const [swarmActiveAgent, setSwarmActiveAgent] = useState<string | null>(null);
   const [pipelineMessage, setPipelineMessage] = useState<string | null>(null);
   const [councilLayer, setCouncilLayer] = useState<'elite' | 'reserve' | 'blackhole' | null>(null);
@@ -3002,7 +3005,13 @@ if (
           setThinkingSteps([]);
 
           try {
-            const result = await api.phase1.chat(displayPrompt, history, attachments, semanticPlan.goalContract, controller.signal);
+            setPendingReply({
+              messageId: assistantId,
+              kind: needsCurrentSources || semanticPlan.goalContract.requiredCapabilities.includes('research.public-web')
+                ? 'source-backed' : 'standard',
+            });
+            const result = await api.phase1.chat(displayPrompt, history, attachments, semanticPlan.goalContract, controller.signal)
+              .finally(() => setPendingReply((current) => current?.messageId === assistantId ? null : current));
             if (controller.signal.aborted || sessionIdRef.current !== originatingSessionId) return;
             const rawReply = (result.response || '').trim();
             fullReply = rawReply;
@@ -4742,6 +4751,7 @@ setTimeout(processNextInQueue, 50);
         outOfActionsOpen,
         setOutOfActionsOpen,
         animatingId,
+        pendingReply,
         swarmActiveAgent,
         pipelineMessage,
         councilLayer,

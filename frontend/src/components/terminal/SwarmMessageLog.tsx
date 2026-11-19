@@ -102,7 +102,7 @@ function scrollToMessage(root: HTMLElement, message: HTMLElement, behavior: Scro
 
 export function SwarmMessageLog({ compact, incognito = false, chromeless = false }: SwarmMessageLogProps) {
   const conversationV2 = useResponseExperienceEnabled();
-  const { messages, sessionId, sessionRestoring, loading, animatingId, swarmNegotiationPhase, swarmTodos, terminalRun, setPrompt, deleteTurn, updateFeatureOutput, retryStoppedBuild, retryWithFullPower, heavyBuildActive, heavyAssistantId } =
+  const { messages, sessionId, sessionRestoring, loading, animatingId, pendingReply, swarmNegotiationPhase, swarmTodos, terminalRun, setPrompt, deleteTurn, updateFeatureOutput, retryStoppedBuild, retryWithFullPower, heavyBuildActive, heavyAssistantId } =
     useTerminalChat();
   const [rollbackId, setRollbackId] = useState<string | null>(null);
   const workspaceRepo = useProjectWorkspaceStore((s) => s.repo);
@@ -593,7 +593,12 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
               : msg.executionActivity);
             const showPending = currentTurn && (!suppressGreetingActivity || operationRows.length > 0);
             const work = msg.role === 'assistant' && (showPending || operationRows.length > 0) ? (
-              <TerminalLiveActivity activity={operationRows} run={currentTurn ? terminalRun : undefined} pending={showPending} />
+              <TerminalLiveActivity
+                activity={operationRows}
+                run={currentTurn ? terminalRun : undefined}
+                pending={showPending}
+                pendingReply={currentTurn && pendingReply?.messageId === msg.id ? pendingReply.kind : undefined}
+              />
             ) : undefined;
 
             return (

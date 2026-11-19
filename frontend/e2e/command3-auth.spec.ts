@@ -310,6 +310,8 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   let chatCalls = 0;
   let releaseCancelled: () => void = () => {};
   const held = new Promise<void>(resolve => { releaseCancelled = resolve; });
+  let releasePublicLookup: () => void = () => {};
+  const heldPublicLookup = new Promise<void>(resolve => { releasePublicLookup = resolve; });
   const cors = {
     'access-control-allow-origin': workspaceOrigin,
     'access-control-allow-methods': 'POST, OPTIONS',
@@ -360,6 +362,7 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
       return route.fulfill({ headers: cors, json: { response: 'Review the exact research request before it is sent: [Review action](/dashboard/actions/confirm/' + confirmationId + '). No live evidence has been retrieved.' } });
     }
     if (body.message === publicLookup) {
+      await heldPublicLookup;
       return route.fulfill({ headers: cors, json: { response: publicLookupReply, completion: { status: 'complete' },
         responseSource: { format: 'xroga-openui-v1', text: publicLookupProgram },
         webSources: [publicLookupSource], publicWebRetrieved: true, intent: 'research' } });
@@ -526,6 +529,8 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   try {
     await send(cancellation);
     await expect.poll(() => chatCalls).toBe(3);
+    const waitingForReply = page.getByTestId('terminal-live-activity').getByRole('button', { name: /Black Hole is working.*Waiting for a reply/ });
+    await expect(waitingForReply).toBeVisible();
     const aborted = page.waitForEvent('requestfailed', {
       predicate: request => new URL(request.url()).pathname === '/api/phase1/chat' && request.postDataJSON()?.message === cancellation,
       timeout: 10_000,
@@ -533,6 +538,7 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
     await page.getByRole('button', { name: 'Stop response', exact: true }).click();
     expect((await aborted).failure()?.errorText).toContain('ERR_ABORTED');
     await expect(page.getByRole('button', { name: 'Stop response', exact: true })).toHaveCount(0);
+    await expect(waitingForReply).toHaveCount(0);
   } finally {
     releaseCancelled();
   }
@@ -639,6 +645,14 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   expect(receiptReads).toBeLessThanOrEqual(2);
   expect(chatCalls).toBe(7);
   await send(publicLookup);
+  const pendingLookup = page.getByTestId('terminal-live-activity').getByRole('button', { name: /Black Hole is working.*Waiting for a source-backed reply/ });
+  try {
+    await expect(pendingLookup).toBeVisible();
+    const pendingTurn = page.locator('[data-turn-id]', { has: pendingLookup });
+    await expect(pendingTurn.getByText(/Web evidence/)).toHaveCount(0);
+  } finally {
+    releasePublicLookup();
+  }
   const publicAnswer = page.getByRole('region', { name: 'Answer', exact: true }).filter({ hasText: publicLookupProse });
   const publicTurn = page.locator('[data-turn-id]', { has: publicAnswer });
   const checkPublicAnswer = async () => {
@@ -650,6 +664,7 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
     await expect(publicTurn.getByText(/approval payload|prepared digest|micro-USD|no live evidence/i)).toHaveCount(0);
   };
   await checkPublicAnswer();
+  await expect(pendingLookup).toHaveCount(0);
   await publicTurn.getByRole('button', { name: 'Copy', exact: true }).click();
   await expect.poll(() => page.evaluate(async () => (await navigator.clipboard.readText()).replace(/\r\n/g, '\n')))
     .toBe(`${publicLookupReply}\n\nSources\n[1] ${publicLookupSource.title} (${publicLookupSource.url})`);
