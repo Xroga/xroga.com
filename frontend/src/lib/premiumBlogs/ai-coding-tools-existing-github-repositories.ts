@@ -166,6 +166,46 @@ export const premiumAiCodingToolsExistingGithubRepositories: GuidePage = {
       ]
     },
     {
+      "heading": "How to give an agent just enough repository context",
+      "paragraphs": [
+        "Large repositories contain files irrelevant to the current request. Giving an agent every file can distract it, increase processing cost and expose unnecessary information. A better approach begins with the repository instructions, a folder map, the target route or service and the tests that describe the intended behavior. Let the agent search for specific symbols and follow their imports rather than pasting the entire codebase into a prompt.",
+        "Context should include architectural boundaries. If your codebase has a central authentication middleware, a shared design system or a migration framework, tell the agent to inspect those before writing. Include the package manager version and build command from the repository. The assistant should be able to explain which conventions it is preserving and why.",
+        "When the tool reports a plan, verify that it names relevant files and checks rather than guessing at arbitrary paths. If it misses a required integration, correct the scope before allowing changes. This brief review can prevent a small request from becoming a broad refactor."
+      ]
+    },
+    {
+      "heading": "Design tests that catch plausible regressions",
+      "paragraphs": [
+        "Tests should represent user behavior and dangerous edge cases, not merely the lines the agent happened to change. If it adds a role to an admin interface, verify both an allowed operation and an operation that must fail. If it changes search, confirm empty results, special characters and the relevant permissions. If it edits a form, test validation, persistence and error feedback.",
+        "Treat test execution as evidence only when you know the command, result and environment. A claim that 'all tests pass' without a command or log is not enough. Likewise, passing existing tests may leave the new feature untested. New acceptance criteria should become new tests or a documented manual verification.",
+        "Different layers need different checks. Type checking catches incompatible code; unit tests isolate functions; integration tests inspect services and the database; browser tests exercise user journeys. The correct blend depends on the repository. Asking an agent to run every possible test on every tiny change can waste resources, while skipping all checks creates avoidable risk."
+      ]
+    },
+    {
+      "heading": "What to do when the agent gets stuck",
+      "paragraphs": [
+        "An agent may repeatedly apply a fix that does not address the actual error. After one or two unsuccessful attempts, stop the loop and collect evidence. Record the original failure, latest error, files modified and the last known working commit. A new prompt should ask the agent to explain the discrepancy between the expected and observed behavior instead of trying another broad rewrite.",
+        "Keep the investigation hypothesis-driven. For instance, if the UI renders but the POST request returns 403, ask whether the failure comes from authentication, authorization or application logic. Verify each hypothesis with a specific log or test. If the agent cannot inspect the needed environment, mark the work blocked rather than interpreting silence as success.",
+        "Revert experimental changes that are unrelated to the diagnosis. Retaining every failed patch makes the next attempt harder to reason about. The ability to return to a clean branch is one of the reasons Git-based work is useful for AI-assisted engineering."
+      ]
+    },
+    {
+      "heading": "Measure human review effort, not just model speed",
+      "paragraphs": [
+        "A fast code generation result can consume hours of debugging afterward. In a fair trial, measure total time until acceptance criteria pass, including human intervention. Record whether a reviewer could understand the patch, whether tests were added, and whether a rollback would be straightforward. These measures are closer to actual team productivity than tokens per second.",
+        "Separate the task result from interface preferences. An experienced developer may be much faster in a terminal, while another teammate prefers a browser workspace. Both can be effective. What matters is whether the workflow produces a safe, maintainable change for the intended user.",
+        "Assign an explicit 'unknown' status to outcomes you did not verify. This prevents pressure to publish a grand ranking from turning missing information into flattering scores. A smaller honest comparison can earn more trust than a crowded benchmark chart based on unsupported estimates."
+      ]
+    },
+    {
+      "heading": "Approval and accountability across the release",
+      "paragraphs": [
+        "Different actions deserve different approval boundaries. Reading a repository and proposing a patch is not the same as modifying data, merging a pull request or deploying to production. Establish who may authorize each step and what evidence is required first. For a customer-facing application, tests and a review should normally precede the live release.",
+        "Check integration scopes carefully. A model that can call a GitHub tool should only access the repositories it is authorized to use. Credentials must stay in protected storage and should not appear in code samples, logs or final answers. If the tool needs access to a new provider, it should request a connection rather than pretending it already completed the step.",
+        "After deployment, retain a compact record of what changed: commit, release ID, checks, known limitations and an owner for follow-up. This makes the next maintenance request easier and helps the team identify where the AI workflow genuinely saved effort."
+      ]
+    },
+    {
       "heading": "Frequently asked questions",
       "paragraphs": [
         "These questions help distinguish existing-project development from greenfield app generation."
