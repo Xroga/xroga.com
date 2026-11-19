@@ -19,7 +19,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
   const article = BLOG_ARTICLES.find((item) => item.slug === slug);
   if (!article) notFound();
   return <EditorialPage path={`/blog/${slug}`} title={article.title} description={article.description}
-    eyebrow={article.eyebrow} intro={article.intro} article updated={article.updated ?? '2026-09-09'} authorName={article.authorName} readingMinutes={article.readingMinutes}
+    eyebrow={article.eyebrow} intro={article.intro} article updated={article.updated ?? '2026-09-09'} authorName={article.authorName} readingMinutes={article.readingMinutes} publishedAt={article.publishedAt} explain={article.explain}
     breadcrumbs={[{ label: 'Guides', href: '/blog' }, { label: article.title, href: `/blog/${slug}` }]}
     related={article.related} sources={article.sources} sections={article.sections}
     visuals={article.visual ? [{ type: 'EDITORIAL_IMAGE', ...article.visual, verified: article.updated ?? '' }] : []} />;
