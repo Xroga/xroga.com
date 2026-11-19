@@ -11,6 +11,7 @@ import { addUsage, ZERO_USAGE } from '@src/store/types';
 import type { AgentEvent, ToolRow } from '@src/ui/protocol';
 import { contextChars, elideStaleObservations, toModelMessages } from './context';
 import { directNavigation, type DirectNavigation } from './direct-url';
+import { namedTabCandidates } from './tab-intent';
 import { answerDirect, directRead } from './direct-read';
 import { APPS_FIRST_NOTE, APPS_FIRST_SEARCHED_NOTE, RESEARCH_FIRST_NOTE, appActionQuery, appSearchQuery, isAppsFirstRequest, isChangeRequest, isResearchRequest, needsReadTools, researchPlan } from './routing';
 import { runSubagents } from './subagents';
@@ -567,7 +568,21 @@ ${ledger}` : ''),
       if (fast.end) return fast.end;
       opened = fast.opened;
     }
-    const direct = asked && !earlierResults ? directNavigation(userText(asked)) : null;
+    // A request that says a tab is already open starts ON that tab: the name is the user's own word, the layer matches it only against tabs
+    // of this window and refuses ambiguity, and nothing is opened or navigated when it is found.
+    let adopted = false;
+    if (asked && !earlierResults) {
+      for (const name of namedTabCandidates(userText(asked))) {
+        const r = await this.options.layer.call('tabs', { action: 'adopt', url: name, intent: `Use the open ${name} tab` }, this.options.signal).catch(() => undefined);
+        if (r?.ok) {
+          adopted = true;
+          this.preActions.push('tabs');
+          await this.writer.appNote(`The tab you already have open (${name}) is now this run's tab. Work in it; do not open another copy.`);
+          break;
+        }
+      }
+    }
+    const direct = asked && !earlierResults && !adopted ? directNavigation(userText(asked)) : null;
     if (direct) {
       if (!opened) await this.#openDirect(direct);
       this.preActions.push('navigate');
