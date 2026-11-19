@@ -15,9 +15,11 @@ test('OAuth authority failure or existing rejected state never reads a stale Sto
     if (mode === 'outage') res.end(JSON.stringify({ message: 'SYNTHETIC_PRIVATE_ERROR', code: '42P01' }));
     else if (mode === 'empty') res.end(JSON.stringify([{ access_token: '', metadata: {} }]));
     else if (mode === 'revoked') res.end(JSON.stringify([{ access_token: 'old', metadata: { revoked: true } }]));
+    else if (mode === 'policy') res.end(JSON.stringify([{ user_id: 'fixture', provider: 'xroga_plugin_permission_policy', access_token: 'full_access', refresh_token: null, metadata: { mode: 'full_access', type: 'plugin_permission_policy', scope: 'global' }, credential_revision: null, provider_user_id: null }]));
+    else if (mode === 'legacy') res.end(JSON.stringify([{ user_id: 'fixture', provider: 'supabase_oauth', access_token: 'plaintext-token', refresh_token: null, metadata: {}, credential_revision: null, provider_user_id: null }]));
     else res.end(JSON.stringify([{ access_token: 'current', metadata: { state: 'new-state' } }]));
   });
-  const keys = ['SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY'];
+  const keys = ['SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY', 'VERCEL_ENV', 'XROGA_LEGACY_CREDENTIAL_MIGRATION'];
   const previous = new Map(keys.map(key => [key, process.env[key]]));
   await new Promise<void>(resolve => server.listen(0, '127.0.0.1', resolve));
   const address = server.address(); assert.ok(address && typeof address !== 'string');
@@ -31,6 +33,17 @@ test('OAuth authority failure or existing rejected state never reads a stale Sto
     assert.equal((await loadProviderToken('fixture', 'supabase_oauth'))?.access_token, 'current');
     assert.equal(paths.length, 4);
     assert.ok(paths.every(path => path.startsWith('/rest/v1/user_integrations')));
+
+    // On a production host without the legacy credential window, a saved plugin permission choice (a plain preference, not a credential)
+    // still loads: before, every choice failed closed to "always ask". A real credential stored as legacy plaintext is still refused.
+    process.env.VERCEL_ENV = 'production';
+    delete process.env.XROGA_LEGACY_CREDENTIAL_MIGRATION;
+    mode = 'policy';
+    const policy = await loadProviderToken('fixture', 'xroga_plugin_permission_policy', { authoritativeOnly: true });
+    assert.equal(policy?.access_token, 'full_access');
+    assert.equal(policy?.metadata?.mode, 'full_access');
+    mode = 'legacy';
+    await assert.rejects(loadProviderToken('fixture', 'supabase_oauth', { authoritativeOnly: true }), /Legacy credential reads are disabled/);
   } finally {
     for (const [key, value] of previous) {
       if (value === undefined) delete process.env[key]; else process.env[key] = value;
