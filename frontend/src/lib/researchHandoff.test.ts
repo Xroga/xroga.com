@@ -1,6 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { attachResearchResult, markResearchUnavailable, pendingResearchConfirmation } from './researchHandoff';
+import { attachResearchResult, markResearchUnavailable, pendingResearchConfirmation, retrievedWebSourceCount } from './researchHandoff';
+import { sanitizeChatMessages } from './sanitizeChatMessages';
 import {responseTextV2} from '../components/response-experience-v2/exportText';
 import {richShareSnapshot} from '../components/response-experience-v2/shareSnapshot';
 const id = '221fe7f9-f0dd-4b12-b03a-bcb57a13f655';
@@ -32,6 +33,9 @@ test('the original research turn receives its saved structured answer once, incl
  assert.doesNotMatch(delivered.content,/Approved research results|Review.*confirm|Actual returned excerpt/);
  assert.equal(delivered.featureOutput.responseSource.text,raw);
  assert.deepEqual(attachResearchResult(JSON.parse(JSON.stringify(delivered)),{...result,receiptId:id,answer}),delivered);
+ assert.equal(retrievedWebSourceCount(sanitizeChatMessages([delivered])[0]!),1);
+ assert.equal(retrievedWebSourceCount({...delivered,researchReceiptId:undefined}),0);
+ assert.equal(retrievedWebSourceCount({...delivered,webSources:[]}),0);
  const copied=responseTextV2({id:delivered.id,content:delivered.content,featureOutput:delivered.featureOutput,webSources:delivered.webSources})!;
  assert.match(copied,/Option/);assert.match(copied,/Supplied source/);
  assert.ok(richShareSnapshot({id:delivered.id,content:delivered.content,featureOutput:delivered.featureOutput,webSources:delivered.webSources},copied));

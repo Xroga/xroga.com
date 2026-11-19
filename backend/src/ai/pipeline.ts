@@ -1075,7 +1075,7 @@ export async function runChatPipeline(opts: {
       research = web.bundle;
       researchBlock = web.evidence;
       if(web.needsConfirmation)return{
-        response:`Review the exact research request before it is sent: [Review action](${web.reviewUrl}). No live evidence has been retrieved.`,
+        response:`Review the request before Xroga searches the web: [Review action](${web.reviewUrl})`,
         intent:'confirmation_required',usage:usageToTokenUsage(initialUsage),webSources:[],modelId:route.builder,route,
       };
     } catch (error) {

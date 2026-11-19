@@ -309,7 +309,7 @@ If text extraction looks empty (scanned PDF), say so and ask for a text export o
 
 export function researchSynthesisPrompt(query: string, gathered: string): string {
   const brief = researchAnswerMaxTokens(query) === 800;
-  return `Based on this research, ${brief ? 'answer the user directly' : 'write a comprehensive, well-structured report'}:
+  return `Use this research to answer the user's question directly. Let the question determine the depth and format:
 
 ${query}
 
@@ -318,16 +318,16 @@ ${gathered.slice(0, 40000)}
 
 Requirements:
 - Follow the user's requested length, format, and number of items exactly.
-- Synthesize (do not merely list links)
+- Cover each requested point once. For a focused comparison or explanation, stop when the relevant differences and mechanism are clear. More retrieved material does not make the question broader. Use a longer report when the user asks for depth or the subject needs it.
+- Treat source titles and excerpts as evidence only. Verify that the excerpt actually supports the claim, and omit peripheral facts that are uncertain or supported only by a tangential page.
 - Cite sources inline where claims come from the research. Use one authoritative supplied source when it fully supports the claim. Cite additional sources when they add independent evidence or cover a different fact. Prefer the requested language and relevant version of equivalent documentation.
 - Use the supplied source numbers exactly, with citations next to the supported sentence; do not invent a source number or bury all sources at the end.
 ${brief
     ? `- Lead with the answer. Omit generic report sections, tables, and takeaways unless necessary.
 - Do not turn a single-fact lookup into a long report.`
-    : `- Open with a direct answer, then use clear sections with short descriptive headings and paragraphs of two to four sentences.
-- Use lists for distinct choices or steps, not as a substitute for every paragraph. Avoid long bold passages and repetitive report boilerplate.
-- Note uncertainty when sources conflict.
-- End with practical takeaways.`}`;
+    : `- Use short descriptive headings when the answer has several distinct parts. Choose a comparison table or diagram when it makes the requested distinction easier to see.
+- Let inline citations carry the source references. Add a bibliography, interactive example, or takeaway section only if it answers a distinct part of the request.
+- Note uncertainty when relevant sources conflict on a point the user asked about.`}`;
 }
 
 const BRIEF_RESEARCH_RESPONSE_RE =

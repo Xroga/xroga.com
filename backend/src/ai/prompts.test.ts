@@ -68,3 +68,11 @@ test('research retains the full output budget when the user requests a report', 
     8192,
   );
 });
+
+test('unqualified research comparisons follow the scope of the question', () => {
+  const prompt = researchSynthesisPrompt('Compare two approaches using their official documentation.', 'Evidence excerpts.');
+  assert.match(prompt, /More retrieved material does not make the question broader/);
+  assert.match(prompt, /Let inline citations carry the source references/);
+  assert.match(prompt, /excerpt actually supports the claim/);
+  assert.doesNotMatch(prompt, /write a comprehensive|End with practical takeaways/);
+});

@@ -34,7 +34,7 @@ export function citationMetadata(source: Pick<CitationSource, 'title' | 'siteNam
     ? 'Google Ads Help' : domain === 'ads.google.com' ? 'Google Ads'
       : domain === 'postgresql.org' || domain === 'git.postgresql.org' ? 'PostgreSQL' : domain;
   const site = providedName && !generic.test(providedName) ? providedName : knownName;
-  const providedTitle = source.title.trim();
+  const providedTitle = source.title.trim().replace(/^[-–—|:]+\s*/, '');
   const path = destination.pathname === '/' ? '' : destination.pathname;
   const title = providedTitle && !generic.test(providedTitle) ? providedTitle : site === domain ? domain + path : site;
   return { domain, site, title };

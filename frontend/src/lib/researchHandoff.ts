@@ -1,5 +1,6 @@
 import { parseXrogaOutput } from './xrogaBlocks';
 import {enhanceAiResponse} from './xrogaResponseDocument';
+import { safeSourceUrl } from './xrogaCitations';
 export const RESEARCH_RECEIPT_AVAILABLE = 'xroga:research-receipt-available';
 export interface ResearchHandoff {
   confirmationId: string;
@@ -17,6 +18,16 @@ interface Message {
   researchReceiptId?: string;
   featureOutput?: unknown;
   webSources?: Array<{ title: string; url: string; snippet: string }>;
+}
+
+export function isResearchReceiptId(value: unknown): value is string {
+  return typeof value === 'string' && /^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(value);
+}
+
+/** Only a settled research handoff can distinguish retrieved evidence from ordinary links. */
+export function retrievedWebSourceCount(message: Pick<Message, 'role' | 'researchReceiptId' | 'webSources'>): number {
+  if (message.role !== 'assistant' || !isResearchReceiptId(message.researchReceiptId)) return 0;
+  return new Set((message.webSources ?? []).flatMap(source => safeSourceUrl(source.url) ?? [])).size;
 }
 
 const UNAVAILABLE_NOTICE = '\n\nThe approved research result is currently unavailable. Xroga has not repeated the search or charged for another request.';

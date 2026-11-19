@@ -26,6 +26,7 @@ import { ResponseSourceScope } from './ResponseSourceScope';
 import { webSourcesToRichResults } from '@/lib/xrogaWebResultAdapter';
 const XrogaRichResultsView = lazy(() => import('./XrogaRichResultsView').then((module) => ({ default: module.XrogaRichResultsView })));
 import { isCodeBuildProcessing } from '@/lib/codeBuildProcessing';
+import { retrievedWebSourceCount } from '@/lib/researchHandoff';
 import { promptWantsLiveResearch } from '@/lib/researchWait';
 import { shareableDocumentText } from '@/lib/xrogaShareableOutput';
 import { publicAnswerText } from '@/lib/publicAnswerText';
@@ -51,7 +52,7 @@ import {
 import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
 import { WorkspaceLauncher } from './WorkspaceLauncher';
 import toast from 'react-hot-toast';
-import { Lightbulb, TriangleAlert } from 'lucide-react';
+import { Lightbulb, Search, TriangleAlert } from 'lucide-react';
 import { WorkspaceIdentityMenu } from './WorkspaceIdentityMenu';
 import { AnimatedIcon } from '@/components/icons/animated/AnimatedIcon';
 import { ExpandIcon } from '@/components/icons/animated/ExpandIcon';
@@ -517,6 +518,13 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
             const nativeShare = nativeProse && (nativeAnswer?.program || msg.webSources?.length)
               ? buildNativeOpenUiShare(nativeProse, nativeAnswer?.program ?? '', msg.webSources) : undefined;
             const nativeCopy = nativeProse ? appendCitationReferences(nativeProse, msg.webSources) : undefined;
+            const webSourceCount = retrievedWebSourceCount(msg);
+            const webEvidence = webSourceCount > 0 ? (
+              <p className="mb-2 flex items-center gap-1.5 text-xs leading-normal text-[var(--foreground)]/70">
+                <Search size={13} aria-hidden="true" />
+                Web evidence · {webSourceCount} {webSourceCount === 1 ? 'source' : 'sources'} retrieved
+              </p>
+            ) : null;
             const answer = nativeAnswer ? (
               <ChatErrorBoundary>
                 <NativeWorkspaceAnswer answer={nativeAnswer} sources={msg.webSources} />
@@ -610,7 +618,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                     streaming={msg.id === animatingId && loading}
                     controls={msg.buildStopped || msg.capacityUnavailable || msg.updateTrail || (currentTurn && openInteractionsForTurn(terminalRun.events, msg.content).length) ? <>{msg.buildStopped || msg.capacityUnavailable || msg.updateTrail ? taskControls : null}{currentTurn ? <RequiredInteractionCards interactions={openInteractionsForTurn(terminalRun.events, msg.content)} /> : null}</> : undefined}
                     activity={work}>
-                    {msg.role === 'assistant' ? answer : null}
+                    {msg.role === 'assistant' ? <>{webEvidence}{answer}</> : null}
                   </ConversationTurnV2>
                 ) : <>
                 {msg.role === 'user' && (
@@ -647,6 +655,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                       <div className="py-1 text-left space-y-2">
                         {work}
                         {taskControls}
+                        {webEvidence}
                         {answer}
 
                       </div>

@@ -470,6 +470,8 @@ export function BusinessActionConfirmationInline({
     confirmation
       ?.status;
   const approval = confirmation?.approval;
+  const isOfficialSearch = approval?.operation === 'XROGA_RESEARCH_SEARCH'
+    && approval.accountReference === 'deepseek-search:platform';
   const researchParameters = approval?.operation === 'XROGA_RESEARCH_SEARCH'
     ? approval.criticalParameters as { body?: { search_queries?: unknown }; answerRequest?: { prompt?: unknown } } | null
     : null;
@@ -483,7 +485,7 @@ export function BusinessActionConfirmationInline({
     : null;
 
   return (
-    <span className="my-2 flex w-full max-w-xl flex-col gap-2 rounded-xl border border-[var(--card-border)]/70 bg-[var(--foreground)]/[0.025] p-3 align-top">
+    <span aria-busy={Boolean(busy)} className="my-2 flex w-full max-w-xl flex-col gap-2 rounded-xl border border-[var(--card-border)]/70 bg-[var(--foreground)]/[0.025] p-3 align-top">
       <span className="flex min-w-0 flex-wrap items-start gap-2">
         {confirmation ? (
           <PluginBrandLogo id={confirmation.toolkit} name={toolkitLabel(confirmation.toolkit)} toolkit={confirmation.toolkit} size="micro" />
@@ -506,7 +508,11 @@ export function BusinessActionConfirmationInline({
               <span>{confirmation.summary}</span>
               <span>Account: {confirmation.approval.accountReference}</span>
               <span>Operation: {confirmation.approval.operation}</span>
-              <span>Destination: {JSON.stringify(confirmation.approval.destination)}</span>
+              {isOfficialSearch ? (
+                <span>Destination: Official DeepSeek Search</span>
+              ) : confirmation.approval.destination != null ? (
+                <span>Destination: {JSON.stringify(confirmation.approval.destination)}</span>
+              ) : null}
               <span>Spend ceiling: {confirmation.approval.spendMaximumMicroUsd === null ? 'No spending authority included' : (confirmation.approval.spendMaximumMicroUsd + ' micro-USD, ' + confirmation.approval.currency)}</span>
               {readableResearch ? (
                 <>
@@ -543,7 +549,7 @@ export function BusinessActionConfirmationInline({
           >
             {busy ===
             'confirm'
-              ? 'Confirming…'
+              ? isOfficialSearch ? 'Running approved search…' : 'Confirming…'
               : 'Confirm action'}
           </button>
 
