@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/workspace-openui-final-recovery-20261115",
-    "sha": "b7f2aff7f4e0ec30e11dc394413b81a5943d8b5f",
-    "sourceTimestampUtc": "2026-11-19T21:08:54+05:00",
-    "auditStartedUtc": "2026-11-19T16:13:41.679Z",
+    "sha": "6260cca3bfb316cc7a108506f72bb8a41d6de7c7",
+    "sourceTimestampUtc": "2026-11-19T21:24:18+05:00",
+    "auditStartedUtc": "2026-11-19T16:24:37.355Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -148071,114 +148071,114 @@
       "reachable": false
     },
     {
-      "id": "frontend-call:3ba048f251e4773d6974",
+      "id": "frontend-call:9925ea8539a962547004",
       "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 95,
+      "line": 98,
       "callee": "api.listen",
       "reachable": false
     },
     {
-      "id": "frontend-call:933f3b17920b89d9089b",
+      "id": "frontend-call:e33bea20d0a0793bd7d3",
       "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 97,
+      "line": 100,
       "callee": "api.address",
       "reachable": false
     },
     {
-      "id": "frontend-call:8f39f1cbdeced2f05030",
+      "id": "frontend-call:1d433c2738561d19f935",
       "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 102,
+      "line": 105,
       "callee": "api.closeAllConnections",
       "reachable": false
     },
     {
-      "id": "frontend-call:d412d9a804914b2f73fc",
+      "id": "frontend-call:0049c6dde40761cd5ab4",
       "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 102,
+      "line": 105,
       "callee": "api.close",
       "reachable": false
     },
     {
-      "id": "frontend-call:7ff813fcd5bb19913324",
+      "id": "frontend-call:503e5e1aac06eae24f92",
       "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 114,
+      "line": 117,
       "callee": "api.listen",
       "reachable": false
     },
     {
-      "id": "frontend-call:25855fce5360f1033ea4",
+      "id": "frontend-call:a55df8de89c24d533a5b",
       "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 116,
+      "line": 119,
       "callee": "api.address",
       "reachable": false
     },
     {
-      "id": "frontend-call:9e24a0510dbeae16e6ff",
+      "id": "frontend-call:e6f8f4be94349c2f0c43",
       "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 124,
+      "line": 127,
       "callee": "api.closeAllConnections",
       "reachable": false
     },
     {
-      "id": "frontend-call:05d87700d1ec088547eb",
+      "id": "frontend-call:ecaf0a51ad20a3d637b6",
       "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 124,
+      "line": 127,
       "callee": "api.close",
       "reachable": false
     },
     {
-      "id": "frontend-call:9eef016231647fe090f9",
+      "id": "frontend-call:ddca098f585817708145",
       "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 133,
+      "line": 136,
       "callee": "api.listen",
       "reachable": false
     },
     {
-      "id": "frontend-call:a6f6a903a01a45a12448",
+      "id": "frontend-call:6c66180a274470206262",
       "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 135,
+      "line": 138,
       "callee": "api.address",
       "reachable": false
     },
     {
-      "id": "frontend-call:5ab67524a0a3fca89918",
+      "id": "frontend-call:24827ce2d4a04a077a50",
       "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 155,
+      "line": 158,
       "callee": "api.closeAllConnections",
       "reachable": false
     },
     {
-      "id": "frontend-call:24c33986239a2060d468",
+      "id": "frontend-call:0c270d503a4db721927a",
       "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 155,
+      "line": 158,
       "callee": "api.close",
       "reachable": false
     },
     {
-      "id": "frontend-call:2afb2ad8ff9bdaf000ab",
+      "id": "frontend-call:4aff2c08329fc5c9590e",
       "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 168,
+      "line": 171,
       "callee": "api.listen",
       "reachable": false
     },
     {
-      "id": "frontend-call:a6b88610c0b58a6cdbc0",
+      "id": "frontend-call:a14098b6ecef6972ff2b",
       "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 170,
+      "line": 173,
       "callee": "api.address",
       "reachable": false
     },
     {
-      "id": "frontend-call:638e20aaf27e70c0c0be",
+      "id": "frontend-call:4c7bd04a71f25f9896ab",
       "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 200,
+      "line": 203,
       "callee": "api.closeAllConnections",
       "reachable": false
     },
     {
-      "id": "frontend-call:ce2f76cf53c2136b0fcf",
+      "id": "frontend-call:d10eec7eaabc3e4928e6",
       "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 200,
+      "line": 203,
       "callee": "api.close",
       "reachable": false
     },
