@@ -272,8 +272,18 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   const architecture = 'Show the request architecture, component roles and example code.';
   const docxPrompt = 'Create a DOCX proposal with editable sections.';
   const pdfPrompt = 'Create a PDF executive report from this attached dataset.';
+  const xlsxPrompt = 'Create an XLSX workshop budget with formulas.';
+  const pptxPrompt = 'Create a PPTX slide deck about workshop logistics.';
   const docxResponse = '# Workshop Proposal\n\n## Scope\n\nDiscuss the workshop training plan.';
   const pdfResponse = '# Workshop Executive Report\n\nRevenue from 40 attendees at $25 was $1,000.';
+  const xlsxResponse = '# Workshop Budget\n\n| Item | Cost |\n| --- | --- |\n| Hosting | 25 |\n| Total | |\n\n## Formulas\n- B3: =SUM(B2:B2)';
+  const pptxResponse = '# Workshop Logistics\n\n## Location\nLeave the location open.\n\n## Duration\nAllow 90 minutes.';
+  const officeFixtures = new Map([
+    [docxPrompt, { downloadFormat: 'docx', response: docxResponse }],
+    [pdfPrompt, { downloadFormat: 'pdf', response: pdfResponse }],
+    [xlsxPrompt, { downloadFormat: 'xlsx', response: xlsxResponse }],
+    [pptxPrompt, { downloadFormat: 'pptx', response: pptxResponse }],
+  ]);
   const documentDataset = 'ticket,attendees\n25,40';
   const architectureCaption = 'The app queries rows with the user access token.';
   const architectureReply = [
@@ -363,13 +373,13 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
     if (body.message === architecture) {
       return route.fulfill({ headers: cors, json: { response: architectureReply, completion: { status: 'complete' }, responseSource: { format: 'xroga-openui-v1', text: architectureProgram } } });
     }
-    if (body.message === docxPrompt || body.message === pdfPrompt) {
+    const officeFixture = officeFixtures.get(body.message);
+    if (officeFixture) {
       if (body.message === pdfPrompt) expect(body.attachments).toEqual([{
         url: `data:text/csv;base64,${Buffer.from(documentDataset).toString('base64')}`,
         name: 'workspace-report.csv', mimeType: 'text/csv',
       }]);
-      const downloadFormat = body.message === docxPrompt ? 'docx' : 'pdf';
-      const response = downloadFormat === 'docx' ? docxResponse : pdfResponse;
+      const { downloadFormat, response } = officeFixture;
       return route.fulfill({ headers: cors, json: { response, completion: { status: 'complete' },
         responseSource: { format: 'xroga-openui-v1', text: '', downloadFormat } } });
     }
@@ -814,17 +824,23 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   });
   await send(pdfPrompt);
   await expect(page.getByRole('button', { name: 'Download PDF', exact: true })).toBeVisible({ timeout: 30_000 });
+  await send(xlsxPrompt);
+  await expect(page.getByRole('button', { name: 'Download XLSX', exact: true })).toBeVisible({ timeout: 30_000 });
+  await send(pptxPrompt);
+  await expect(page.getByRole('button', { name: 'Download PPTX', exact: true })).toBeVisible({ timeout: 30_000 });
   await expect.poll(async () => {
     const saved = await readSaved(architectureSession);
     const messages = saved?.messages as Array<{ featureOutput?: { documentDownload?: string; sourceText?: string } }> | undefined;
     return messages?.filter(message => message.featureOutput?.documentDownload)
       .map(message => [message.featureOutput?.documentDownload, message.featureOutput?.sourceText]);
-  }, { timeout: 20_000 }).toEqual([['docx', docxResponse], ['pdf', pdfResponse]]);
+  }, { timeout: 20_000 }).toEqual([...officeFixtures.values()].map(({downloadFormat, response}) => [downloadFormat, response]));
   await page.reload();
   await expect(composer).toHaveAttribute('data-draft-session', architectureSession, { timeout: 20_000 });
   for (const [format, filename, header] of [
     ['DOCX', 'Workshop-Proposal.docx', '504b0304'],
     ['PDF', 'Workshop-Executive-Report.pdf', '25504446'],
+    ['XLSX', 'Workshop-Budget.xlsx', '504b0304'],
+    ['PPTX', 'Workshop-Logistics.pptx', '504b0304'],
   ]) {
     const button = page.getByRole('button', { name: 'Download ' + format, exact: true });
     await expect(button).toBeVisible({ timeout: 20_000 });
@@ -834,7 +850,7 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
     expect(download.suggestedFilename()).toBe(filename);
     expect((await readFile((await download.path())!)).subarray(0, 4).toString('hex')).toBe(header);
   }
-  expect(chatCalls).toBe(11);
+  expect(chatCalls).toBe(13);
   await writeFile('test-results/native-workspace/evidence.json', JSON.stringify({
     source: expectedRelease, route: '/workspace', auth: 'isolated Supabase ordinary accounts',
     model: 'deterministic transport fixtures, zero provider calls', nativeActions: ['file handoff', 'citation link', 'keyboard calculator', 'copy readback', 'database save and reopen', 'private share owner/guest/other account', 'continuation', 'browser cancellation', 'client validation fallback', 'partial native recovery, copy and reopen', 'reviewed partial chart', 'legacy research receipt without refocus or redispatch', 'automatic public lookup, citation and source count after Copy, Share and Reopen', 'connected diagram, nested table and code in one persisted answer'],

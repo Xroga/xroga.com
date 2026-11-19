@@ -24,7 +24,7 @@ import { assessBlackHoleComplexity } from './black-hole/complexity.js';
 import { MODELS, type ModelId } from './models.js';
 import { publicCompletionState } from './completionDiagnostics.js';
 import { NATIVE_UI_FORMAT } from './nativeOpenUi.js';
-import { nativeDocumentPrompt, nativeDocumentRequiresAttachment, requestedNativeDocumentFormat, type NativeDocumentFormat } from './nativeDocumentDownload.js';
+import { nativeDocumentDelivery, nativeDocumentPrompt, nativeDocumentRequiresAttachment, requestedNativeDocumentFormat, type NativeDocumentFormat } from './nativeDocumentDownload.js';
 import { completeNativeWorkspaceAnswer, usesNativeWorkspacePresentation } from './nativeOpenUiWorkspace.js';
 import { bindCitationLinks, researchCitationIssues, RESEARCH_ANSWER_MAXIMUM_MICRO_USD } from './researchAnswer.js';
 import { nativeOpenUiPlainPrompt, workspaceNativeOpenUiPrompt } from './nativeOpenUiPrompt.js';
@@ -989,9 +989,9 @@ export async function runChatPipeline(opts: {
   const hasAttachments = prepared.hasImages || prepared.hasDocuments;
   const requestedDownload = opts.approvedResearch ? undefined : requestedNativeDocumentFormat(opts.prompt);
   const missingDownloadAttachment = Boolean(requestedDownload && nativeDocumentRequiresAttachment(opts.prompt) &&
-    (!prepared.documents.length || !prepared.documents.every(document =>
+    ((!prepared.images.length && !prepared.documents.length) || !prepared.documents.every(document =>
       document.chars > 0 && document.text.trim() && !document.text.startsWith('[DOCX received'))));
-  const downloadInstruction = requestedDownload ? nativeDocumentPrompt(requestedDownload, missingDownloadAttachment) : '';
+  const downloadInstruction = requestedDownload ? nativeDocumentPrompt(requestedDownload, missingDownloadAttachment, opts.prompt) : '';
 
   // Attachment analyze path — never force a website build
   if (hasAttachments) {
@@ -1045,12 +1045,13 @@ export async function runChatPipeline(opts: {
     const answer = native ? completeNativeWorkspaceAnswer(result.text, result.finishReason, undefined, undefined, diagnostic =>
       console.warn('[native-openui-validation]', diagnostic), formats) : undefined;
     const response = answer?.response ?? result.text;
+    const delivery = answer && nativeDocumentDelivery(requestedDownload, missingDownloadAttachment, opts.prompt, response, answer.completion);
     if (native) opts.onDelta?.(response);
     return {
       ...answer,
       response,
-      ...(requestedDownload && !missingDownloadAttachment && answer?.completion.status === 'complete'
-        ? { responseSource: { ...answer.responseSource, downloadFormat: requestedDownload } } : {}),
+      ...(delivery && answer ? { completion: delivery.completion,
+        responseSource: { ...answer.responseSource, ...(delivery.downloadFormat ? { downloadFormat: delivery.downloadFormat } : {}) } } : {}),
       intent: pick.kind === 'document' ? 'file_analysis' : 'vision_analysis',
       usage: usageToTokenUsage(usage),
       modelId: result.modelId,
@@ -1240,11 +1241,11 @@ export async function runChatPipeline(opts: {
     const completion = publicWebRetrieved && answer.completion.status === 'complete' && researchCitationIssues(response, sources).length
       ? { status: 'partial' as const, reason: 'source_attribution' as const } : answer.completion;
     opts.onDelta?.(response);
+    const delivery = nativeDocumentDelivery(requestedDownload, missingDownloadAttachment, opts.prompt, response, completion);
     return {
       ...answer,
-      response, completion,
-      ...(requestedDownload && !missingDownloadAttachment && completion.status === 'complete'
-        ? { responseSource: { ...answer.responseSource, downloadFormat: requestedDownload } } : {}),
+      response, completion: delivery.completion,
+      ...(delivery.downloadFormat ? { responseSource: { ...answer.responseSource, downloadFormat: delivery.downloadFormat } } : {}),
       intent: route.kind, usage: usageToTokenUsage(usage), webSources: research?.sources,
       ...(publicWebRetrieved ? { publicWebRetrieved } : {}),
       modelId: result.modelId, route,

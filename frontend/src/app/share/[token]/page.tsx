@@ -179,7 +179,7 @@ export default async function MessageSharePage({ params }: { params: Promise<{ t
             <p className="mb-3 text-[10px] font-semibold uppercase tracking-[.16em] text-[var(--text-secondary)]">Response</p>
             {share.richUnavailable && <p role="status" className="mb-3 text-sm">The interactive view is unavailable. The complete saved text follows.</p>}
             {native ? <NativeWorkspaceAnswer answer={{ ...native, library: 'xroga-native-v1' }} sources={native.sources} sourceReferral={false} /> : legacyRichAllowed && share.richResponse ? <SharedResponseV2 snapshot={share.richResponse} text={share.response} /> : <p className="whitespace-pre-wrap text-[15px] leading-7">{share.response}</p>}
-            <SharedAnswerDownloads response={share.response} verifiedLinks={native?.sources.map(source => source.url) ?? []} />
+            {!native?.documentDownload && <SharedAnswerDownloads response={share.response} verifiedLinks={native?.sources.map(source => source.url) ?? []} />}
           </section>
         </article>
 

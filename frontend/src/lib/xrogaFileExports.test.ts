@@ -4,7 +4,7 @@ import ExcelJS from 'exceljs';
 import JSZip from 'jszip';
 import { PDFDocument } from 'pdf-lib';
 import type { XrogaBlock } from './xrogaBlocks';
-import { exportDocumentDocx, exportDocumentPdf, exportPresentationPptx, exportTableXlsx } from './xrogaFileExports';
+import { exportAnswerFile, exportDocumentDocx, exportDocumentPdf, exportPresentationPptx, exportTableXlsx, PdfUnsupportedCharactersError } from './xrogaFileExports';
 
 type DocumentBlock = Extract<XrogaBlock, { type: 'document' }>;
 type TableBlock = Extract<XrogaBlock, { type: 'spreadsheet' }>;
@@ -39,7 +39,33 @@ test('PDF export creates multiple parseable pages and rejects unsupported glyphs
   assert.match(file.filename, /\.pdf$/);
   const parsed = await PDFDocument.load(await file.blob.arrayBuffer());
   assert.ok(parsed.getPageCount() >= 2);
-  await assert.rejects(() => exportDocumentPdf({ schemaVersion: 1, id: 'pdf-2', type: 'document', content: 'مرحبا', format: 'text' } as DocumentBlock), /Latin text only/);
+  await assert.rejects(() => exportDocumentPdf({ schemaVersion: 1, id: 'pdf-2', type: 'document', content: 'مرحبا', format: 'text' } as DocumentBlock), PdfUnsupportedCharactersError);
+  const latin = await exportAnswerFile('# Résumé\n\nCafé — €25.', 'pdf', new Set());
+  assert.equal((await PDFDocument.load(await latin.blob.arrayBuffer())).getTitle(), 'Résumé');
+});
+
+test('native Office requests create real slide and formula content', async () => {
+  const xlsx = await exportAnswerFile([
+    '# Budget', '| Item | Units | Price | Total |', '| --- | --- | --- | --- |',
+    '| =1+1 | 2 | 25 | |', '| Workshops | 3 | 30 | |', '| Sum | | | |',
+    '', '## Formulas', '- D2: =B2*C2', '- D3: =B3*C3', '- D4: =SUM(D2:D3)',
+  ].join('\n'), 'xlsx', new Set());
+  assert.equal(xlsx.filename, 'Budget.xlsx');
+  assert.equal(xlsx.blob.type, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+  const workbook = new ExcelJS.Workbook();
+  const workbookBytes = Buffer.from(await xlsx.blob.arrayBuffer()) as unknown as Parameters<typeof workbook.xlsx.load>[0];
+  await workbook.xlsx.load(workbookBytes);
+  const sheet = workbook.worksheets[0]!;
+  assert.equal(sheet.getCell('A2').value, '=1+1');
+  assert.deepEqual(sheet.getCell('D2').value, { formula: 'B2*C2', result: 50 });
+  assert.deepEqual(sheet.getCell('D4').value, { formula: 'SUM(D2:D3)', result: 140 });
+  const pptx = await exportAnswerFile('# Planning\n\n## Introduction\nProject goals\n\n## Results\n- 90-minute workshop', 'pptx', new Set());
+  assert.equal(pptx.filename, 'Planning.pptx');
+  assert.equal(pptx.blob.type, 'application/vnd.openxmlformats-officedocument.presentationml.presentation');
+  const zip = await JSZip.loadAsync(await pptx.blob.arrayBuffer());
+  assert.match(await zip.file('ppt/slides/slide1.xml')!.async('string'), /Project goals/);
+  assert.match(await zip.file('ppt/slides/slide2.xml')!.async('string'), /90-minute workshop/);
+  await assert.rejects(() => exportAnswerFile('# Talking points only', 'pptx', new Set()), /no complete slide deck/);
 });
 
 test('XLSX export retains typed cells without executing model-supplied formulas', async () => {

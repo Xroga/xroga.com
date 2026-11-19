@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { safeRichSourceUrl, xrogaRichResultSchema } from './xrogaRichResults';
 import { responseCoverageContractSchema } from './responseCoverageContract';
+import { nativeDocumentFormats } from '../../../backend/src/ai/nativeDocumentDownload';
 
 export const XROGA_BLOCK_SCHEMA_VERSION = 1 as const;
 
@@ -360,7 +361,7 @@ export const xrogaOutputSchema = z.object({
   }).strict().refine(source => source.format !== 'xroga-openui-v1' || (source.text.length <= 24_000 && !source.contract)).optional(),
   // Independent of the strict native program schema so older renderers can
   // still read the same answer and ignore the new download affordance.
-  documentDownload: z.enum(['docx', 'pdf']).optional().catch(undefined),
+  documentDownload: z.enum(nativeDocumentFormats).optional().catch(undefined),
   composition: z.literal('source-order').optional(),
   artifact: z.object({
     id: z.string().min(1), type: z.string().min(1), title: z.string().min(1), projectId: z.string().optional(),

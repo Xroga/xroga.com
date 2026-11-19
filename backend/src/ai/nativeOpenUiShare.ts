@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { MAX_PROGRAM_CHARS, NATIVE_UI_FORMAT, splitNativeOpenUiAnswer, validateNativeOpenUi } from './nativeOpenUi.js';
+import { nativeDocumentDelivery, nativeDocumentFormats, type NativeDocumentFormat } from './nativeDocumentDownload.js';
 
 export const NATIVE_SHARE_PREFIX = 'XROGA_OPENUI_SHARE_V1\n';
 const shareLimit = 100_000;
@@ -14,6 +15,7 @@ const snapshot = z.object({
   text: z.string().min(1).max(60_000),
   program: z.string().max(MAX_PROGRAM_CHARS),
   sources: z.array(shareSource).max(30),
+  documentDownload: z.enum(nativeDocumentFormats).optional(),
 }).strict();
 
 function decodeNativeOpenUiShare(value: string) {
@@ -34,7 +36,7 @@ export function readNativeOpenUiShare(value: string) {
   try {
     const parsed = snapshot.safeParse(decodeNativeOpenUiShare(value));
     if (!parsed.success) return;
-    const { sources, program } = parsed.data;
+    const { sources, program, documentDownload } = parsed.data;
     const { text } = splitNativeOpenUiAnswer(parsed.data.text);
     if (!text) return;
     if (sources.some(({ url }) => {
@@ -42,13 +44,17 @@ export function readNativeOpenUiShare(value: string) {
       return !['https:', 'http:'].includes(parsedUrl.protocol) || parsedUrl.username || parsedUrl.password;
     })) return;
     const ids = new Set(sources.map((_, index) => 'source-' + (index + 1)));
-    if (program ? validateNativeOpenUi(program, ids, text).ok : sources.length > 0) return { ...parsed.data, text };
+    const download = nativeDocumentDelivery(documentDownload, false, '', text, { status: 'complete' }).downloadFormat;
+    if (program ? validateNativeOpenUi(program, ids, text).ok : sources.length > 0 || download) {
+      return { format: NATIVE_UI_FORMAT, sources, program, text, ...(download ? { documentDownload: download } : {}) };
+    }
   } catch {
     // An invalid share is never executable UI.
   }
 }
 
-export function buildNativeOpenUiShare(text: string, program: string, sources: Array<z.input<typeof shareSource>> = []) {
+export function buildNativeOpenUiShare(text: string, program: string, sources: Array<z.input<typeof shareSource>> = [],
+  documentDownload?: NativeDocumentFormat) {
   const value = NATIVE_SHARE_PREFIX + JSON.stringify({
     format: NATIVE_UI_FORMAT, text: splitNativeOpenUiAnswer(text).text, program, sources: sources.map(({ title, url, siteName, publishedAt }) => ({
       title, url,
@@ -56,6 +62,8 @@ export function buildNativeOpenUiShare(text: string, program: string, sources: A
       publishedAt: publishedAt && Number.isFinite(Date.parse(publishedAt))
         ? new Date(publishedAt).toISOString().slice(0, 10) : undefined,
     })),
+    ...(documentDownload ? { documentDownload } : {}),
   });
-  return readNativeOpenUiShare(value) ? value : undefined;
+  const shared = readNativeOpenUiShare(value);
+  return shared ? NATIVE_SHARE_PREFIX + JSON.stringify(shared) : undefined;
 }

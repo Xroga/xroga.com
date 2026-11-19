@@ -1,10 +1,14 @@
 import type { XrogaBlock } from './xrogaBlocks';
+import type { NativeDocumentFormat } from '../../../backend/src/ai/nativeDocumentDownload';
+import { parseNativeSlideDeck, parseNativeWorkbook, type NativeWorkbookFormula } from '../../../backend/src/ai/nativeOfficeContent';
 
 type DocumentBlock = Extract<XrogaBlock, { type: 'document' }>;
 type TableBlock = Extract<XrogaBlock, { type: 'table' | 'spreadsheet' | 'database' }>;
 type PresentationBlock = Extract<XrogaBlock, { type: 'presentation' }>;
 
 export interface XrogaExportFile { filename: string; blob: Blob }
+
+export class PdfUnsupportedCharactersError extends Error {}
 
 function fileStem(title: string | undefined, fallback: string): string {
   const value = (title ?? fallback).replace(/\\/g, '/').split('/').pop() ?? fallback;
@@ -60,6 +64,7 @@ export async function exportDocumentPdf(block: DocumentBlock): Promise<XrogaExpo
   pdf.setCreator('Xroga');
   const font = await pdf.embedFont(StandardFonts.Helvetica);
   const bold = await pdf.embedFont(StandardFonts.HelveticaBold);
+  const characterSets = { body: new Set(font.getCharacterSet()), heading: new Set(bold.getCharacterSet()) };
   const pageSize: [number, number] = [595.28, 841.89];
   const margin = 48;
   let page = pdf.addPage(pageSize);
@@ -72,9 +77,12 @@ export async function exportDocumentPdf(block: DocumentBlock): Promise<XrogaExpo
   for (const raw of block.content.split(/\r?\n/)) {
     const heading = raw.match(/^#{1,3}\s+(.+)$/);
     const size = heading ? (heading[0].startsWith('# ') ? 19 : 15) : 10.5;
-    const text = plainText(heading?.[1] ?? raw).replace(/[\u2018\u2019]/g, "'").replace(/[\u2013\u2014]/g, '-').replace(/[\u201C\u201D]/g, '"');
+    const text = plainText(heading?.[1] ?? raw).replace(/\t/g, '    ');
     if (!text.trim()) { y -= 7; continue; }
-    if (/[^\x20-\x7E]/.test(text)) throw new Error('PDF export currently supports Latin text only. Download DOCX to preserve all characters.');
+    const characters = heading ? characterSets.heading : characterSets.body;
+    if (Array.from(text).some(character => !characters.has(character.codePointAt(0)!))) {
+      throw new PdfUnsupportedCharactersError('The PDF font does not support all characters in this answer. Download DOCX to preserve the text.');
+    }
     const activeFont = heading ? bold : font;
     const words = text.split(/\s+/);
     let line = '';
@@ -90,7 +98,11 @@ export async function exportDocumentPdf(block: DocumentBlock): Promise<XrogaExpo
   return { filename: `${fileStem(block.title, 'document')}.pdf`, blob: new Blob([Uint8Array.from(bytes)], { type: 'application/pdf' }) };
 }
 
-export async function exportTableXlsx(block: TableBlock): Promise<XrogaExportFile> {
+export function exportTableXlsx(block: TableBlock): Promise<XrogaExportFile> {
+  return writeTableXlsx(block);
+}
+
+async function writeTableXlsx(block: TableBlock, formulas: readonly NativeWorkbookFormula[] = []): Promise<XrogaExportFile> {
   validateSize(block.rows.length, 10_000, 'Table');
   validateSize(block.columns.length, 50, 'Table');
   const excelPackage = await import('exceljs');
@@ -109,6 +121,10 @@ export async function exportTableXlsx(block: TableBlock): Promise<XrogaExportFil
       values[column.key] = value;
     }
     sheet.addRow(values);
+  }
+  if (formulas.length) {
+    workbook.calcProperties.fullCalcOnLoad = true;
+    for (const { address, formula, result } of formulas) sheet.getCell(address).value = { formula, result };
   }
   if (block.rows.length) sheet.autoFilter = { from: 'A1', to: `${sheet.getRow(1).getCell(block.columns.length).address}` };
   const buffer = await workbook.xlsx.writeBuffer();
@@ -131,6 +147,27 @@ export async function exportPresentationPptx(block: PresentationBlock): Promise<
   }
   const output = await deck.write({ outputType: 'arraybuffer', compression: true });
   return { filename: `${fileStem(block.title, 'presentation')}.pptx`, blob: new Blob([output as ArrayBuffer], { type: 'application/vnd.openxmlformats-officedocument.presentationml.presentation' }) };
+}
+
+export async function exportAnswerFile(response: string, format: NativeDocumentFormat, verifiedLinks: ReadonlySet<string>,
+  shared = false): Promise<XrogaExportFile> {
+  if (format === 'xlsx') {
+    const data = parseNativeWorkbook(response);
+    if (!data) throw new Error('This answer has no complete spreadsheet to download.');
+    const columns = data.headers.map((label, index) => ({ label, key: 'column-' + index }));
+    const rows = data.rows.map(row => Object.fromEntries(row.map((value, index) => [columns[index]!.key, value])));
+    return writeTableXlsx({ schemaVersion: 1, id: 'answer-workbook', type: 'spreadsheet', title: data.title, columns, rows }, data.formulas);
+  }
+  if (format === 'pptx') {
+    const data = parseNativeSlideDeck(response);
+    if (!data) throw new Error('This answer has no complete slide deck to download.');
+    return exportPresentationPptx({ schemaVersion: 1, id: 'answer-slides', type: 'presentation', title: data.title,
+      slides: data.slides.map(slide => ({ ...slide, title: plainText(slide.title), body: plainText(slide.body) })) });
+  }
+  const heading = /^#{1,3}[ \t]+([^\r\n]+)/m.exec(response)?.[1]?.trim();
+  const document: DocumentBlock = { schemaVersion: 1, id: 'answer-document', type: 'document', content: response,
+    title: shared ? 'Shared Xroga answer' : heading?.slice(0, 100) || 'Xroga document', format: 'markdown' };
+  return format === 'docx' ? exportDocumentDocx(document, verifiedLinks) : exportDocumentPdf(document);
 }
 
 export function downloadExportedFile(file: XrogaExportFile): void {

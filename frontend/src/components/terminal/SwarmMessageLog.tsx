@@ -515,8 +515,8 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
             </>;
             const nativeAnswer = msg.role === 'assistant' ? readNativeWorkspaceAnswer(msg.featureOutput) : undefined;
             const nativeProse = nativeAnswer?.text ?? (msg.role === 'assistant' ? readNativeWorkspaceProse(msg.featureOutput) : undefined);
-            const nativeShare = nativeProse && (nativeAnswer?.program || msg.webSources?.length)
-              ? buildNativeOpenUiShare(nativeProse, nativeAnswer?.program ?? '', msg.webSources) : undefined;
+            const nativeShare = nativeProse && (nativeAnswer?.program || msg.webSources?.length || nativeAnswer?.documentDownload)
+              ? buildNativeOpenUiShare(nativeProse, nativeAnswer?.program ?? '', msg.webSources, nativeAnswer?.documentDownload) : undefined;
             const nativeCopy = nativeProse ? appendCitationReferences(nativeProse, msg.webSources) : undefined;
             const webSourceCount = retrievedWebSourceCount(msg);
             const webEvidence = webSourceCount > 0 ? (

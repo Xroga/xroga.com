@@ -177,15 +177,21 @@ const failedEquation='{'.repeat(3500)+'x'+'}'.repeat(3500)+'<img src=x onerror="
 cases.mathFailure={text:'$$'+failedEquation+'$$\n\nThe complete answer stays available.'};
 const { completeNativeWorkspaceAnswer } = await tsImport('../backend/src/ai/nativeOpenUiWorkspace.ts', import.meta.url);
 const { validateNativeOpenUi } = await tsImport('../backend/src/ai/nativeOpenUi.ts', import.meta.url);
-const { requestedNativeDocumentFormat } = await tsImport('../backend/src/ai/nativeDocumentDownload.ts', import.meta.url);
+const { nativeDocumentDelivery, requestedNativeDocumentFormat } = await tsImport('../backend/src/ai/nativeDocumentDownload.ts', import.meta.url);
 const documentFixtures = {
   docx: { prompt: 'Create a DOCX proposal with editable sections.', text: '# Workshop Proposal\n\n## Scope\n\nDiscuss the training plan.\n\n[Unverified claim](https://fake.example/report)' },
   pdf: { prompt: 'Create a PDF executive report from this attached dataset.', text: '# Executive Report\n\nTotal verified revenue: $1,000.' },
+  xlsx: { prompt: 'Create an XLSX budget spreadsheet with formulas.', text: '# Budget\n\n| Item | Quantity | Cost | Total |\n| --- | --- | --- | --- |\n| Workshop | 2 | 25 | |\n| Total | | | |\n\n## Formulas\n- D2: =B2*C2\n- D3: =SUM(D2:D2)' },
+  pptx: { prompt: 'Create a professional PPTX slide deck from these supplied notes.', text: '# Workshop Plans\n\n## Recommended timing\nThe workshop lasts 90 minutes.\n\n## Preparation\nBring the training guide.' },
+  unsupportedPdf: { prompt: 'Create a PDF report.', text: '# Report\n\nمرحبا' },
   noExport: { prompt: 'Create a PDF report, but do not export a file.', text: 'Here is the report directly in chat.' },
   partial: { prompt: 'Create a PDF report.', text: 'A readable part of the report survives.', partial: true },
+  unsafeFormula: { prompt: 'Create an XLSX budget spreadsheet with formulas.', text: '# Budget\n\n| Item | Cost |\n| --- | --- |\n| Workshop | |\n\n## Formulas\n- B2: =WEBSERVICE("https://blocked.example/")', suppressed: true },
 };
 for (const [name, fixture] of Object.entries(documentFixtures)) {
-  cases['download-' + name] = { ...fixture, downloadFormat: requestedNativeDocumentFormat(fixture.prompt) };
+  const delivery = nativeDocumentDelivery(requestedNativeDocumentFormat(fixture.prompt), false, fixture.prompt, fixture.text,
+    fixture.partial ? { status: 'partial', reason: 'output_limit' } : { status: 'complete' });
+  cases['download-' + name] = { ...fixture, partial: delivery.completion.status === 'partial', downloadFormat: delivery.downloadFormat };
 }
 for (const name of ['metricGrid','chartHeading']) {
   const verified=validateNativeOpenUi(cases[name].program,new Set(),cases[name].text);
@@ -267,7 +273,8 @@ try {
     const createObjectURL = URL.createObjectURL.bind(URL);
     URL.createObjectURL = (blob) => { window.downloadMime = blob.type; return createObjectURL(blob); };
   });
-  for (const format of ['docx', 'pdf']) {
+  const filenames = { docx: 'Workshop-Proposal.docx', pdf: 'Executive-Report.pdf', xlsx: 'Budget.xlsx', pptx: 'Workshop-Plans.pptx' };
+  for (const format of ['docx', 'pdf', 'xlsx', 'pptx']) {
     const label = 'Download ' + format.toUpperCase();
     await downloadPage.goto(origin + '/?case=download-' + format);
     await downloadPage.getByRole('button', { name: label }).waitFor();
@@ -279,24 +286,40 @@ try {
     const download = await expectedDownload;
     const bytes = await readFile(await download.path());
     const mime = await downloadPage.evaluate(() => window.downloadMime);
-    assert.equal(download.suggestedFilename(), format === 'docx' ? 'Workshop-Proposal.docx' : 'Executive-Report.pdf');
+    assert.equal(download.suggestedFilename(), filenames[format]);
     if (format === 'docx') {
       assert.equal(mime, 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
       const doc = await JSZip.loadAsync(bytes);
       assert.match(await doc.file('word/document.xml').async('string'), /Heading2.*Scope.*Unverified claim/);
       assert.doesNotMatch(await doc.file('word/_rels/document.xml.rels').async('string'), /fake\.example/);
-    } else {
+    } else if (format === 'pdf') {
       assert.equal(mime, 'application/pdf');
       assert.equal(bytes.subarray(0, 5).toString(), '%PDF-');
       assert.equal((await PDFDocument.load(bytes)).getPageCount(), 1);
+    } else if (format === 'xlsx') {
+      assert.equal(mime, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+      const xlsx = await JSZip.loadAsync(bytes);
+      const sheet = await xlsx.file('xl/worksheets/sheet1.xml').async('string');
+      assert.match(sheet, /<c r="D2"><f>B2\*C2<\/f><v>50<\/v><\/c>/);
+      assert.match(sheet, /<c r="D3"><f>SUM\(D2:D2\)<\/f><v>50<\/v><\/c>/);
+      assert.doesNotMatch(sheet, /externalLink|WEBSERVICE/);
+    } else {
+      assert.equal(mime, 'application/vnd.openxmlformats-officedocument.presentationml.presentation');
+      const pptx = await JSZip.loadAsync(bytes);
+      assert.match(await pptx.file('ppt/slides/slide1.xml').async('string'), /90 minutes/);
+      assert.match(await pptx.file('ppt/slides/slide2.xml').async('string'), /training guide/);
     }
     documentDownloads.push({ format, mime, bytes: bytes.length, savedPayloadReopened: true, sha256: createHash('sha256').update(bytes).digest('hex') });
   }
-  for (const name of ['noExport', 'partial']) {
+  for (const name of ['noExport', 'partial', 'unsafeFormula']) {
     await downloadPage.goto(origin + '/?case=download-' + name);
-    await downloadPage.getByText(documentFixtures[name].text, { exact: true }).waitFor();
-    assert.equal(await downloadPage.getByRole('button', { name: /^Download (DOCX|PDF)$/ }).count(), 0);
+    await downloadPage.getByRole('region', { name: 'Answer' }).waitFor();
+    assert.equal(await downloadPage.getByRole('button', { name: /^Download (DOCX|PDF|XLSX|PPTX)$/ }).count(), 0);
   }
+  await downloadPage.goto(origin + '/?case=download-unsupportedPdf');
+  await downloadPage.getByRole('button', { name: 'Download PDF', exact: true }).click();
+  await downloadPage.getByRole('alert').filter({ hasText: 'PDF font does not support' }).waitFor();
+  await downloadPage.getByRole('button', { name: 'Download DOCX', exact: true }).waitFor();
   await writeFile(resolve(output, channel + '-native-document-download-evidence.json'), JSON.stringify(documentDownloads, null, 2) + '\n');
   await downloadContext.close();
   for (const viewport of [{ width: 1440, height: 900 }, { width: 1280, height: 900 }, { width: 768, height: 960 }, { width: 390, height: 844 }, { width: 320, height: 800 }]) {

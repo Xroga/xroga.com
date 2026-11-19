@@ -90,10 +90,10 @@ test('actual pipeline, completion and SoftwareAgent calls bind tenant, account r
         if (request.includes('attached dataset') && !request.includes('Attached document text:')) {
           assert.match(body.messages[0].content, /attachment is missing or unreadable/);
         } else if (!request.includes('do not export')) {
-          assert.match(body.messages[0].content, /requested (?:DOCX|PDF) document as readable Markdown/);
+          assert.match(body.messages[0].content, /requested (?:DOCX|PDF|XLSX|PPTX) artifact as readable Markdown/);
           assert.match(body.messages[0].content, /Do not invent a file URL/);
         } else {
-          assert.doesNotMatch(body.messages[0].content, /requested (?:DOCX|PDF) document as readable Markdown/);
+          assert.doesNotMatch(body.messages[0].content, /requested (?:DOCX|PDF|XLSX|PPTX) artifact as readable Markdown/);
         }
         if (request.includes('Attached document text:')) assert.match(request, /ticket,attendees\n25,40/);
       }
@@ -380,14 +380,18 @@ test('actual pipeline, completion and SoftwareAgent calls bind tenant, account r
   const pdfPrompt = 'Create a PDF executive report from this attached dataset.';
   const dataset = {url:'data:text/csv;base64,' + Buffer.from('ticket,attendees\n25,40').toString('base64'),
     mimeType:'text/csv', name:'workshop.csv'};
-  for (const { prompt, attachments, expected } of [
+  for (const { prompt, attachments, expected, fixture } of [
     { prompt: 'Create a DOCX proposal with editable sections.', expected: 'docx' },
     { prompt: pdfPrompt, attachments: [dataset], expected: 'pdf' },
     { prompt: pdfPrompt, expected: undefined },
     { prompt: 'Create a PDF report, but do not export a file.', expected: undefined },
+    { prompt: 'Create an XLSX budget spreadsheet with formulas.', expected: 'xlsx',
+      fixture: '# Workshop budget\n\n| Item | Cost |\n| --- | --- |\n| Hosting | 25 |\n| Total | |\n\n## Formulas\n- B3: =SUM(B2:B2)' },
+    { prompt: 'Create a PPTX deck about workshop logistics.', expected: 'pptx',
+      fixture: '# Workshop\n\n## Logistics\nBring a projector.\n\n## Duration\nAllow 90 minutes.' },
   ]) {
     reset('native-document');resetModelRuntimeHealth();
-    receivedAnswer='# Workshop report\n\nRevenue at 40 attendees: $1,000.';
+    receivedAnswer=fixture ?? '# Workshop report\n\nRevenue at 40 attendees: $1,000.';
     const before: number = effects, settled: number = atomicReceipts;
     const answer = await runChatPipeline({...plainRequest, prompt, attachments});
     assert.equal(answer.response, receivedAnswer);
