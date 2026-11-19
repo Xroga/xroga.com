@@ -234,6 +234,46 @@ export const premiumAiAppHostingCosts: GuidePage = {
       ]
     },
     {
+      "heading": "Calculate with a unit-economics worksheet",
+      "paragraphs": [
+        "An estimate is useful only if another person can reproduce it. Use a worksheet with a row for each provider, a clearly named billing unit, a usage quantity, a unit rate from the official pricing page and a calculated subtotal. Add a separate row for any included credit or allowance. Keep the underlying numbers visible; do not hide them behind a single result labeled 'AI app cost'.",
+        "For example, estimate how many requests a typical active user makes in a week, how many of those run server code, how much database storage a new user adds, and whether every request calls an AI model. The same 500-user application can have very different costs if one feature makes frequent large model calls and another only displays existing records.",
+        "Include a sensitivity table showing which assumptions matter most. If doubling AI requests doubles most of your bill, concentrate on quotas and caching. If file transfer dominates, review media size and retention. This turns budgeting into an engineering decision instead of an anxious guess."
+      ]
+    },
+    {
+      "heading": "Distinguish development usage from production usage",
+      "paragraphs": [
+        "AI coding credits spent while building the software may be separate from costs incurred by the deployed application. A team can spend money generating features without the end users calling an AI model at all. Conversely, a low-cost development workflow can produce an app whose runtime makes large AI requests with every user interaction.",
+        "Create separate budgets for development, staging and production. Development should use synthetic data and controlled test traffic. Production should use only necessary integrations, with authorized limits and secure credentials. If a staging environment accidentally points to production APIs, its tests may generate real costs or modify data.",
+        "Document what resets monthly and what accumulates. Storage may grow over time even when new-user signups slow. Logs, backups and historical files may have retention policies that keep their totals growing. A cost model that only looks at current daily traffic can miss this."
+      ]
+    },
+    {
+      "heading": "Know when a free tier stops being appropriate",
+      "paragraphs": [
+        "Free tiers often use quotas intended for learning or evaluation, and they may have different service levels, team permissions or usage limitations. Review not just whether a service can technically run your app, but whether the usage is permitted and whether failures would be acceptable for the people relying on it.",
+        "Consider a small commercial app whose customers rely on nightly reports. If the underlying tier can suspend or restrict jobs after an allowance is reached, you need a plan for missed reports. For a hobby portfolio, that may be an acceptable tradeoff. For a paid business system, it may not be.",
+        "When moving to a paid plan, verify billing ownership, cancellation and refund terms, support, included usage and overage treatment. Budget for the actual production requirement; do not choose a plan purely because an article called it best for startups."
+      ]
+    },
+    {
+      "heading": "Build limits and alerts into application behavior",
+      "paragraphs": [
+        "A provider dashboard alert is helpful, but application-level controls reduce the chance of runaway workloads. Limit the maximum size of uploaded files, the number of expensive AI requests per account, the number of retries for failing tasks and the concurrency of heavy jobs. Define a graceful error message that explains when a quota has been reached.",
+        "Use idempotency for requests that should only charge or process once. A payment webhook can arrive more than once; an AI job can be retried after a timeout. If the application treats every delivery as a new instruction, both data and costs can multiply unexpectedly. Track job identifiers and outcomes to prevent duplicate effects.",
+        "Review which activities can be paused in an emergency without bringing down the main product. Optional report generation may be stoppable, while user authentication should remain available. This kind of prioritization makes capacity management a business decision rather than a blind shutdown."
+      ]
+    },
+    {
+      "heading": "What to measure after launch",
+      "paragraphs": [
+        "Replace assumptions with a short weekly operational report. It should show paid usage by provider, the features responsible, active-user counts, errors, and the difference between the forecast and reality. Do not treat the cloud invoice itself as the only measurement because it may not reveal which product behavior caused the change.",
+        "Watch for sudden changes after a release. A new dashboard that refetches on every keystroke can increase API and database calls without bringing new users. Performance and cost testing should therefore accompany feature testing, particularly when adding background refreshes and rich AI capabilities.",
+        "Keep records of billing-plan changes and rate updates with dates and links to official pricing pages. A model that uses last month's assumptions is useful only if its owner knows which inputs can become stale. The goal is reliable decision support, not an artificial promise of a fixed bill."
+      ]
+    },
+    {
       "heading": "Frequently asked questions about AI app hosting",
       "paragraphs": [
         "The exact answer depends on architecture and usage; the best way to manage uncertainty is to make each assumption explicit."
