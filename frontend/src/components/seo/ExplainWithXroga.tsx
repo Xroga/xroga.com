@@ -35,7 +35,7 @@ export function ExplainWithXroga({ title, path, explanation }: { title: string; 
   return (
     <section className="xv-explain" aria-labelledby="xv-explain-title">
       <div className="xv-explain-top">
-        <div><span className="xv-explain-kicker">✦ Explain with Xroga</span><h2 id="xv-explain-title">Don't want to read the whole guide?</h2><p>Get the idea in seconds, or continue with Xroga's AI assistant.</p></div>
+        <div><span className="xv-explain-kicker">✦ Explain with Xroga</span><h2 id="xv-explain-title">Don&apos;t want to read the whole guide?</h2><p>Get the idea in seconds, or continue with Xroga&apos;s AI assistant.</p></div>
         <div className="xv-explain-modes" role="group" aria-label="Explanation length">
           {(['quick','simple','steps'] as const).map((option) => <button type="button" key={option} aria-pressed={mode===option} onClick={() => setMode(option)}>{option === 'quick' ? 'Quick answer' : option === 'simple' ? 'Explain simply' : 'Steps'}</button>)}
         </div>
