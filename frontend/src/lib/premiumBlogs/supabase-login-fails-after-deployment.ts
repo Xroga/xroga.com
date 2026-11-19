@@ -174,6 +174,46 @@ export const premiumSupabaseLoginFailsAfterDeployment: GuidePage = {
       ]
     },
     {
+      "heading": "Why the callback route matters in server-rendered applications",
+      "paragraphs": [
+        "Many modern applications do not simply store an OAuth token in the page. The provider redirects back with an authorization result, and the server may exchange it for an authenticated session. If the callback route is missing, incorrectly configured or using the wrong Supabase project, the user may reach a page that never becomes signed in.",
+        "Read the actual callback implementation in the application. Determine whether it expects a code parameter, which domain its cookies belong to, and which route it sends the user to afterward. Do not copy a callback snippet from a different Next.js or Supabase version without comparing the session architecture.",
+        "Use test credentials in a staging environment and log only non-sensitive states such as 'callback received' and 'session established'. Avoid recording raw authorization codes, provider tokens or session cookies in a persistent debugging log."
+      ]
+    },
+    {
+      "heading": "Use a domain and redirect matrix",
+      "paragraphs": [
+        "A clear matrix helps prevent confusion among localhost, temporary preview domains, staging and production. For each environment, record the application origin, expected callback path, Supabase project and external OAuth provider. Treat the final custom domain as an exact configured address rather than assuming redirects will fix themselves.",
+        "If the application can be accessed through both www and apex hostnames, decide which one is canonical and ensure authentication flows do not unexpectedly switch between them. Cookies and redirect allowlists can behave differently across hosts. Test the exact domain users will type, not only the automatically generated deployment URL.",
+        "Temporary preview URLs are helpful for UI testing, but authentication against them should use documented provider patterns and appropriate restrictions. Avoid overbroad wildcards that could send sensitive login results to an unintended origin."
+      ]
+    },
+    {
+      "heading": "Distinguish cookie failure from RLS failure",
+      "paragraphs": [
+        "After login, two separate failures can look alike. The application may have no usable session, so an authenticated route redirects to sign-in. Or it may have a valid session but the database correctly refuses access to a record because of Row Level Security. Inspect the session state and network request before changing either layer.",
+        "A safe test creates two ordinary accounts with different records. Confirm that each can sign in, refresh a protected page and read only its own data. If the sign-in step succeeds but data is empty, inspect the policy and query. Do not disable RLS or use a privileged key to mask a configuration error.",
+        "Document whether the failure occurs only after a browser refresh, only in server-rendered routes or only for one provider. Those patterns help locate missing cookie synchronization, incorrect callback paths or an authorization issue in a specific API."
+      ]
+    },
+    {
+      "heading": "Common configuration mistakes during deployment",
+      "paragraphs": [
+        "One common mistake is configuring the production frontend with the URL of a development Supabase project while a server function connects elsewhere. Another is updating the provider dashboard but forgetting that the application bundle still contains an older public URL. A third is hardcoding localhost in an OAuth redirect rather than deriving it from a trusted, configured site origin.",
+        "Check the current deployed environment and revision. Record expected variable names without displaying private values. After changing environment settings, follow the hosting provider's guidance about when a new deployment is required and confirm that the new release is actually serving the public hostname.",
+        "Keep a rollback plan if a login fix affects all users. A mistaken redirect change can prevent access to the entire application. Make the smallest correction, test it in a safe environment and verify the end-to-end production sign-in immediately after release."
+      ]
+    },
+    {
+      "heading": "Account recovery and invitation links deserve the same checks",
+      "paragraphs": [
+        "Password resets, email verification and invitations often use redirect URLs too. They may work on localhost while failing after a custom domain is introduced. Treat each link type as its own user journey and verify that an expired or reused link produces a clear and secure message.",
+        "Test with a fresh account and a controlled email inbox. Confirm the link opens the intended domain, returns to the correct page and does not reveal information about another account. For invitation-only products, ensure that accepting an invite grants access to the intended organization and nothing else.",
+        "A good production readiness checklist includes sign-in, sign-out, session refresh, invitation acceptance, password reset and denied access. Authentication is a system, not a single successful login button."
+      ]
+    },
+    {
       "heading": "Frequently asked questions",
       "paragraphs": [
         "Authentication changes are consequential. A narrow diagnosis and test matrix is safer than broad configuration edits."
