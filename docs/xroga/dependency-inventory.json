@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "9b336d9afc05c603be2ceb3982723933319a0a8d",
+  "source_sha": "fdff8046b3a99a6ac53572748b7f2a88d9979e9b",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -22446,11 +22446,11 @@
     },
     {
       "path": "frontend/src/components/pricing/PricingCheckoutButton.tsx",
-      "sha256": "e3f917180607d209cb18fa3b30da36fda050fbc4cf20de959243491c8022d566"
+      "sha256": "4da20376bdbc9fa809c49ba89e16fc96e64169bef558b1119769afaa80f28993"
     },
     {
       "path": "frontend/src/components/pricing/PricingPageClient.tsx",
-      "sha256": "c847f163d80335d0382133cb32ad6e4fef9dbbe0914e937e32572966947fc995"
+      "sha256": "493b7af65040c4630664cfefef852f5016e82ad0a45d444d330c4733ef75cff7"
     },
     {
       "path": "frontend/src/components/profile/AvatarPickerModal.tsx",
