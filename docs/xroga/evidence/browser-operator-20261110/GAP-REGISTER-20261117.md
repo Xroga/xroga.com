@@ -355,3 +355,11 @@ Staging cleanup, second pass: user C deleted from the staging database, its stal
 | Item | Result | Evidence |
 | --- | --- | --- |
 | Upload when the Upload button is covered by the site's drag-and-drop overlay | IMPROVED 2 m 30 s to 35 s | Commit 2dfcb1321 appends to every "covered at its click point" refusal: do not repeat the same click; close or move the cover, scroll the control into view, or focus it and press Enter or Space. Before (extension 73a1b32f6): several refused clicks and retries, then Enter, about 2 m 30 s. After (extension 2dfcb1321): "The Upload button is covered; I'll focus it and press Enter", the page showed "File Uploaded! photo.png", 35 s of agent work. One run each, so a single comparison, not a benchmark |
+
+## Attachment edge cases and the production permission fix (19 November 2026, 13:00 to 13:20 local; extension 2dfcb1321, backend 00141-mas)
+| Item | Result | Evidence |
+| --- | --- | --- |
+| File over the limit | PASS | `big26.bin` (27,262,976 bytes): refused with "big26.bin is larger than 25 MB. Attach a smaller file." |
+| Archive near the limit and audio | PASS | `arch24.zip` (24.0 MB) and `voice.mp3` (300 KB) attached as chips |
+| More than ten files | PASS | Eleven text files selected at once in the file dialog (two chips were already attached from the earlier chat): the panel kept ten and showed "Attach up to ten files per task." (the chips carry over when a new chat is started; that is the existing behaviour) |
+| Production permission-store bug | PR OPENED, NOT MERGED | Draft PR #997 from `main` (`claude/fix-plugin-permission-load-20261119`, commit 93ccd174b): one-line exemption of permission-policy rows from the legacy-credential check, with a regression test in `oauthPkceStore.test.ts` that fails on main's code with "Legacy credential reads are disabled outside an explicit migration window" and passes with the fix (13 of 13). Its two CI checks passed. Production was not changed; a human review and the release pathway are still required |
