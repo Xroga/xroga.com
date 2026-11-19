@@ -830,6 +830,34 @@ test('a truncated answer preserves completed tabs and list items in the saved te
   assert.doesNotMatch(answer.response, /Incomplete|root\s*=/);
 });
 
+test('saved chart data evaluates the initial values from the same calculator bindings as the chart', () => {
+  const prose = 'Annual compounding from one deposit.\n\nThe calculator uses the supplied terms.';
+  const program = [
+    'root = Col([Chart("bar", data, "label", ["value"], "currency", "USD", false, 260, {xLabel:"Component", yLabel:"USD"})])',
+    '$principal = 8000',
+    '$rate = 5',
+    '$years = 4',
+    'interest = $principal * @Pow(1 + $rate / 100, $years) - $principal',
+    'data = [{label:"Principal", value:$principal}, {label:"Interest earned", value:interest}]',
+  ].join('\n');
+  const answer = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + program, 'stop');
+  assert.deepEqual(answer.completion, { status: 'complete' });
+  assert.ok(answer.response.startsWith(prose));
+  assert.match(answer.response, /\| Component \| USD \|[\s\S]*\| Principal \| \$8,000\.00 \|\n\| Interest earned \| \$1,724\.05 \|/);
+  const share = buildNativeOpenUiShare(answer.response, answer.responseSource.text);
+  assert.ok(share);
+  assert.equal(readNativeOpenUiShare(share)?.text, answer.response);
+
+  const zero = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + program.replace('$rate = 5', '$rate = 0'), 'stop');
+  assert.match(zero.response, /\| Interest earned \| \$0\.00 \|/);
+  for (const badRow of ['{label:"Interest earned"}', '{label:"Interest earned", value:"1724.05"}']) {
+    const invalid = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER +
+      program.replace('{label:"Interest earned", value:interest}', badRow), 'stop');
+    assert.ok(invalid.response.startsWith(prose));
+    assert.doesNotMatch(invalid.response, /\| Component \| USD \|/);
+  }
+});
+
 test('the saved prose and clipboard fallback retain the substantive native body after an unfinished heading', () => {
   const prose = 'Separate identity and authorization.\n\n## Request path';
   const program = 'root = Col([Title("Request path"), Text("Separate identity and authorization."), Diagram("Trust boundaries", [{id: "client", label: "Client", level: 0}, {id: "app", label: "App", level: 1}], [{from: "client", to: "app", label: "HTTPS"}], "The app authorizes the request."), Table(["Concern", "Guard"], [["Billing", "Verify the webhook"]])])';

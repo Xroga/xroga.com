@@ -105,6 +105,15 @@ export function initialNativeValueReader(program: string): (value: unknown) => u
   } catch { return () => undefined; }
 }
 
+export function formatInitialNativeCurrency(value: number, currency: unknown): string {
+  const formatted: unknown = functions.Format.fn({
+    value,
+    kind: 'currency',
+    currency: typeof currency === 'string' ? currency : undefined,
+  });
+  return typeof formatted === 'string' ? formatted : String(value);
+}
+
 const readoutParser = createParser(catalog.schema as LibraryJSONSchema, 'Col');
 const metricLabelKey = (text: string) => text.toLowerCase().replace(/^total\s+|\s+earned$/g, '').trim();
 

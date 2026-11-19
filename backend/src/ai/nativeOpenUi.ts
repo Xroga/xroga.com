@@ -2,7 +2,7 @@ import { createParser, evaluate, parseExpression, split, tokenize, walkAST, type
 import { claimsChartIsDeferred, contradictsMonthlyChart, monthlyChartDataFallback, nativeTechnicalReviewContext, reviewNativeAnswer, suppliedMonthlyComparison } from './nativeOpenUiAccuracy.js';
 import { DIAGRAM_NODE_TONES, hasRenderableDiagramTopology } from './nativeDiagramTopology.js';
 import catalog from './nativeOpenUiCatalog.json' with { type: 'json' };
-import { initialNativeReadouts, initialNativeValueReader, nativePrincipalMultipleReview, recoverNativeReadoutProse } from './nativeOpenUiValues.js';
+import { formatInitialNativeCurrency, initialNativeReadouts, initialNativeValueReader, nativePrincipalMultipleReview, recoverNativeReadoutProse } from './nativeOpenUiValues.js';
 
 export const NATIVE_UI_FORMAT = 'xroga-openui-v1' as const;
 export const NATIVE_UI_LIBRARY = 'xroga-native-v1' as const;
@@ -324,13 +324,29 @@ export function supplementNativeProse(prose: string, program: string, includeAll
       }
     } else if (node.typeName === 'Chart' && Array.isArray(props.data)) {
       const presentation = record(props.presentation);
-      const columns = [scalar(props.x), ...array(props.series).map(scalar)].filter(Boolean);
+      const x = scalar(initialValue(props.x));
+      const series = array(initialValue(props.series)).map(scalar).filter(Boolean);
       add(scalar(presentation.title));
-      if (columns.length > 1) {
-        const series = columns.slice(1);
+      if (x && series.length) {
+        const rows: string[][] = [];
+        const currency = initialValue(props.currency);
+        const isCurrency = props.format === 'currency';
+        for (const value of props.data) {
+          const row = record(value);
+          const label = initialValue(Object.hasOwn(row, x) ? row[x] : undefined);
+          const amounts = series.map(key => initialValue(Object.hasOwn(row, key) ? row[key] : undefined));
+          if ((typeof label !== 'number' && (typeof label !== 'string' || props.type === 'scatter')) ||
+              !amounts.every((amount): amount is number => typeof amount === 'number' && Math.abs(amount) <= 1e15)) {
+            // A visual requires a finite value for every series. Keep the
+            // explanation, and don't project fabricated blanks or partial rows.
+            rows.length = 0;
+            break;
+          }
+          rows.push([String(label), ...amounts.map(amount => isCurrency
+            ? formatInitialNativeCurrency(amount, currency) : String(amount))]);
+        }
         const yLabel = scalar(presentation.yLabel);
-        addTable([scalar(presentation.xLabel) || columns[0], ...(series.length === 1 && yLabel ? [yLabel] : series)],
-          props.data.map(row => columns.map(key => scalar(record(row)[key]))));
+        addTable([scalar(presentation.xLabel) || x, ...(series.length === 1 && yLabel ? [yLabel] : series)], rows);
       }
       add(scalar(presentation.note));
     } else if (node.typeName === 'Diagram') {
