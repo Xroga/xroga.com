@@ -5,6 +5,8 @@ import {readFileSync} from 'node:fs';
 import {createRequire} from 'node:module';
 import vm from 'node:vm';
 import * as openUiLang from '@openuidev/lang-core';
+import * as unified from 'unified';
+import * as remarkParse from 'remark-parse';
 import { hostedWorkspaceRequest } from '../src/lib/hostedWorkspaceBridge.mjs';
 const require=createRequire(new URL('../../package.json',import.meta.url)),ts=require('typescript');
 // Load the real pure presentation validators. The transport fixture continues
@@ -16,6 +18,7 @@ const pureSources={
   [nativePresentationId]:'../../backend/src/ai/nativeOpenUi.ts',
   '../../../backend/src/ai/nativeOpenUi':'../../backend/src/ai/nativeOpenUi.ts',
   '@/lib/publicAnswerText':'lib/publicAnswerText.ts',
+  './connectedAppResult':'lib/connectedAppResult.ts',
   './nativeOpenUi.js':'../../backend/src/ai/nativeOpenUi.ts',
   './nativeDiagramTopology.js':'../../backend/src/ai/nativeDiagramTopology.ts',
   './nativeOpenUiAccuracy.js':'../../backend/src/ai/nativeOpenUiAccuracy.ts',
@@ -37,6 +40,8 @@ const pureContext=vm.createContext({URL,TextDecoder,console});
 function pureModule(id){
   if(id==='zod'||id==='zod/v4')return require(id);
   if(id==='@openuidev/lang-core')return openUiLang;
+  if(id==='unified')return unified;
+  if(id==='remark-parse')return remarkParse;
   if(id==='./nativeOpenUiCatalog.json')return {default:JSON.parse(readFileSync(new URL('../../backend/src/ai/nativeOpenUiCatalog.json',import.meta.url),'utf8'))};
   const path=pureSources[id];assert.ok(path,'Unexpected pure fixture dependency '+id);
   if(pureCache.has(path))return pureCache.get(path);
@@ -141,6 +146,12 @@ test('real Share loader validates both snapshot API versions without changing te
     const plain=await f.loadShare(token);
     assert.equal(plain.status,'ok');
     assert.equal(plain.share.response,text+requestedCode);
+
+    const review='/dashboard/actions/confirm/221fe7f9-f0dd-4b12-b03a-bcb57a13f655';
+    payload={...payload,response:`Review the exact research request before it is sent: [Review action](${review}). No live evidence has been retrieved.`+requestedCode};
+    const savedReview=await f.loadShare(token);
+    assert.equal(savedReview.status,'ok');
+    assert.equal(savedReview.share.response,'This search was awaiting review in Workspace.'+requestedCode);
   }finally{api.closeAllConnections();await new Promise(r=>api.close(r));}
 });
 
