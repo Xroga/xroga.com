@@ -39,10 +39,10 @@ defineScenario({
   async run(ctx) {
     const tabId = await ctx.open(`${FIXTURE_ORIGIN}/canvas-script-editor.html`);
     await sleep(300);
-    // Menu bar is the top 30 px of a 500 px canvas; Tools is x 0-100 of 800, Effects 100-200. A drift of +0.15 in x lands on Effects.
-    const wrong = (await ctx.call('canvas', { action: 'click', at: [50 / 800 + 0.15, 0.02], intent: 'open the Tools menu' })) as Result;
+    // The canvas fills the viewport. Tools is x 0-12.5%, Effects 12.5-25% of the width, the bar is the top 6%. A drift of +0.1 in x lands on Effects.
+    const wrong = (await ctx.call('canvas', { action: 'click', at: [0.06 + 0.1, 0.02], intent: 'open the Tools menu' })) as Result;
     const seenWrong = await state(tabId);
-    const right = (await ctx.call('canvas', { action: 'click', at: [50 / 800, 0.02], intent: 'open the Tools menu' })) as Result;
+    const right = (await ctx.call('canvas', { action: 'click', at: [0.06, 0.02], intent: 'open the Tools menu' })) as Result;
     const seenRight = await state(tabId);
     return outcome(
       'the drifted click reports ok but the page says Effects (a state check rejects it); the corrected click opens Tools',
