@@ -700,6 +700,12 @@ ${ledger}` : ''),
       };
     }
     const args = (call.input ?? {}) as Record<string, unknown>;
+    // The first script typed into a painted editor must come from the app's own documentation: guessing an API costs dozens of turns.
+    if (call.toolName === 'canvas' && args.action === 'type' && typeof args.text === 'string' && args.text.length > 60 && /[;{}]|\w\.\w+\(/.test(args.text) &&
+        !this.#docsRead && !this.#scriptGateShown) {
+      this.#scriptGateShown = true;
+      return { call, kind, isError: true, text: 'refused once: you are about to type a script into the app without having read its scripting documentation. Read it first (http_get on the documentation page of the app, or its Help), copy exact names from its example, then type the script. Nothing was typed.' };
+    }
     // The tab the user already had open holds their work: loading its own site again would discard it.
     if (this.#adoptedOrigin && (call.toolName === 'navigate' || (call.toolName === 'tabs' && args.action === 'open'))) {
       try {
@@ -727,6 +733,7 @@ ${ledger}` : ''),
   /** After a call: hand-overs, guards, verification debt and the result cap. */
   async afterToolCall(given: CallOutcome): Promise<CallOutcome> {
     let outcome = given;
+    if (given.call.toolName === 'http_get' && !given.isError) this.#docsRead = true;
     // Opening or switching to a page changes nothing a second attempt could duplicate: a navigation that fails (a certificate warning,
     // a block page, a timeout) is a failed read, not an uncertain write, so it never puts the run into read-only recovery.
     const navigation = given.call.toolName === 'navigate' || given.call.toolName === 'tabs';
@@ -1403,6 +1410,8 @@ ${ledger}` : ''),
    */
   #askedText = '';
   #adoptedOrigin = '';
+  #docsRead = false;
+  #scriptGateShown = false;
   #canvasOffered = false;
   /** Offers `find_color` once, when an observation shows a canvas with little else. Returns true the first time. */
   #offerCanvasTools(text: string | undefined): boolean {
