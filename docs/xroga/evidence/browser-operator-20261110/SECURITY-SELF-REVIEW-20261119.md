@@ -28,3 +28,11 @@ Setup: a second staging user (`moeed.zio1315@gmail.com`, confirmed) was created 
 - **Database:** B has no `user_integrations` rows; A's two policy rows are unchanged. RLS is enabled on `user_integrations` (10 policies) and `engineering_resource_reservations`.
 - **Not yet done:** B with its own connected Sheets or Notion trying A's sheet id, the reverse direction, and B's Full access setting versus A's. These need B's Google (or Notion) connection approved.
 - **Observed:** B's panel shows "Full access: unavailable" until a connected app exists; not investigated further.
+
+### Second-account isolation, both directions (19 November 2026, live)
+Both accounts had their own Google Sheets connection (different Google logins) and each agent used the connected-app path, not the browser.
+- **B reads A's private sheet (`Xroga speed test D2`):** refused by Google with `403 PERMISSION_DENIED` ("The caller does not have permission"); later attempts returned 400 for the same id. No rows returned.
+- **A reads B's private sheet (`SECOND ACCOUNT PRIVATE`, cell A1 holds a marker value):** refused with `403 PERMISSION_DENIED`; one attempt also hit a Google `429` read-quota limit shared by the provider's project. The marker was not returned.
+- **Full access is per account:** A's panel showed "Full access: ON" while B's showed "unavailable" at the same time; B has no saved permission row.
+- **Caveat on what this proves:** the refusals come from Google, because the two connections belong to different Google logins. It proves the two accounts' connections are not shared. It does not by itself prove Xroga's own tenant checks, which still need an independent reviewer (for example a request from B's device naming A's run or connection id).
+- **Side observations:** (1) after the failed read, A's agent opened a Google sign-in page for an unrelated OAuth client ("Portfolio"); no sign-in was done and the run was stopped. The agent should not start a sign-in the user did not ask for. (2) The shared Google read-quota (429) is a likely extra cause of slow Sheets runs.
