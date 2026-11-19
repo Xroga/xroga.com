@@ -12,4 +12,14 @@ describe('which open tab a request names', () => {
     expect(namedTabCandidates('Open TraceDraw and draw a blue rectangle')).toEqual([]);
     expect(namedTabCandidates('Use my tab: draw a blue rectangle and export it')).toEqual([]);
   });
+  it('finds the tab in "On this open Variant contact form tab, fill ..."', () => {
+    const c = namedTabCandidates('On this open Variant contact form tab, fill Name Grace Hopper, Email grace@example.test, and save it once.');
+    expect(c).toContain('variant');
+    expect(c).toContain('contact');
+  });
+  it('finds the tab for "the open Orders dashboard page" and ignores unrelated requests', () => {
+    expect(namedTabCandidates('In the open Orders dashboard page, export the table')).toContain('orders');
+    expect(namedTabCandidates('Find me a contact form for a plumber')).toEqual([]);
+    expect(namedTabCandidates('Fill the form on example.com')).toEqual([]);
+  });
 });
