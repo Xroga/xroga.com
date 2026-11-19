@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "80751409f1037c7f3f3c13b912789a5c23c66c39",
+  "source_sha": "7e9d5f652e6adabb976acf3e7fc645dfdf084c3c",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -17110,7 +17110,7 @@
     },
     {
       "path": "backend/src/ai/nativeOpenUiPrompt.ts",
-      "sha256": "8d279dcfe7afa3fcd6922e933e18df5c2cde1348946a42914a13fd5d3c42431b"
+      "sha256": "7869adc9afe66120dd20f371744a9d1e50223e24a5683ecfcb77e310388cc516"
     },
     {
       "path": "backend/src/ai/nativeOpenUiRecovery.ts",
@@ -17130,7 +17130,7 @@
     },
     {
       "path": "backend/src/ai/nativeOpenUiWorkspace.ts",
-      "sha256": "9a335714be4afb346899df7ec8dd2c26edec4c6c678d61581bc4459f13d74d87"
+      "sha256": "7693af24f3e4e89ce08853d53b81f21d79f62177bc20d5eaead8a24e9673498e"
     },
     {
       "path": "backend/src/ai/openaiCompat.ts",
@@ -17182,7 +17182,7 @@
     },
     {
       "path": "backend/src/ai/prompts.ts",
-      "sha256": "e1fc1b8169c98cbb93e5bad272375920740a62cb474ac32d6df5346df63e235b"
+      "sha256": "6139c24142e0454641091f4e7a3c492af37bc5dab4c4b38bd4447a9b8c8e1e1a"
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
@@ -17470,7 +17470,7 @@
     },
     {
       "path": "backend/src/ai/universal/productTruth.ts",
-      "sha256": "f9bd408bcde092cd3a6fa2acd740ac2586cde93314f1b26d8bca83a55af46807"
+      "sha256": "5ea08407d97d02bf78224418c217184e90a7057f7938f01de977391117b58883"
     },
     {
       "path": "backend/src/ai/universal/projectContext.ts",
@@ -17494,7 +17494,7 @@
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "sha256": "0b82824cdab1fd085d9ac19223cc3c38ed40ab178c3e35166c9f595545248c53"
+      "sha256": "0b91a7f2262b94a5bb51eea74262b3b90d209efdea7af61562d2e88b85e3d08d"
     },
     {
       "path": "backend/src/ai/usageAccounting.ts",
@@ -23414,7 +23414,7 @@
     },
     {
       "path": "frontend/src/lib/assistantCopy.ts",
-      "sha256": "3c2c7eabd62bb86ffef639f4a99e1a1f8226d37049ddc95ca51e508d5be730e2"
+      "sha256": "b51c47111c0d816d400db53ebb9bdcfd2ee21bb4ce096175a75e356e9a37a829"
     },
     {
       "path": "frontend/src/lib/authQuotes.ts",
@@ -32833,21 +32833,21 @@
     },
     {
       "path": "backend/src/ai/nativeOpenUiPrompt.ts",
-      "line": 100,
-      "scope": "MODULE_LIFETIME",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "backend/src/ai/nativeOpenUiPrompt.ts",
-      "line": 101,
-      "scope": "MODULE_LIFETIME",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "backend/src/ai/nativeOpenUiPrompt.ts",
       "line": 104,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/nativeOpenUiPrompt.ts",
+      "line": 105,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/nativeOpenUiPrompt.ts",
+      "line": 108,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -33778,28 +33778,28 @@
     },
     {
       "path": "backend/src/ai/universal/productTruth.ts",
-      "line": 12,
+      "line": 26,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/universal/productTruth.ts",
-      "line": 18,
+      "line": 32,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/universal/productTruth.ts",
-      "line": 96,
+      "line": 90,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/universal/productTruth.ts",
-      "line": 98,
+      "line": 92,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -33862,7 +33862,7 @@
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "line": 1582,
+      "line": 1610,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

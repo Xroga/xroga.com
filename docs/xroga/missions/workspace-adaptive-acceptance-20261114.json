@@ -27,9 +27,12 @@
     "backend/src/ai/openaiCompat.egress.test.ts",
     "backend/src/ai/openaiCompat.ts",
     "backend/src/ai/pipeline.ts",
+    "backend/src/ai/prompts.test.ts",
+    "backend/src/ai/prompts.ts",
     "backend/src/ai/responsePresentation.test.ts",
     "backend/src/ai/responsePresentation.ts",
     "backend/src/ai/tenantModelDispatch.test.ts",
+    "backend/src/ai/universal/productTruth.ts",
     "backend/src/ai/universal/semanticRequestPlanner.egress.test.ts",
     "backend/src/ai/universal/semanticRequestPlanner.test.ts",
     "backend/src/ai/universal/semanticRequestPlanner.ts",
@@ -83,6 +86,8 @@
     "frontend/src/components/ui/AnchoredPortalPopover.tsx",
     "frontend/src/context/TerminalChatContext.tsx",
     "frontend/src/lib/anchoredPortalPopover.test.ts",
+    "frontend/src/lib/assistantCopy.test.ts",
+    "frontend/src/lib/assistantCopy.ts",
     "frontend/src/lib/composerDraft.test.ts",
     "frontend/src/lib/composerDraft.ts",
     "frontend/src/lib/externalAgentWorkflows.test.ts",
@@ -224,7 +229,7 @@
   "rollout": "Require exact-source CI and private hosted ordinary-user acceptance. Standing owner rollout and canary authority is recorded in the November 17 canary report. Restore the compatible recovery pair after a material acceptance failure.",
   "rollback": "Restore the current frontend and serving API and canonical Job pair through the existing release procedure. No schema or saved format changes.",
   "knownGaps": [
-    "The November 18 production calculator canary reached DeepSeek and settled usage, but the capability validator rejected the generated program and the visible answer omitted the controls. Production serves the same-source decoder. Recovery of compatible branches and honesty of the worked-example fallback require exact-source CI and hosted retesting. Provider-backed media/maps and the full ordinary-user matrix still require independent evidence."
+    "The current production generator, frontend and canonical Job are on 21bd723f0739a5590864b8d0ebdb8f23e1aebb3b. A public lookup completed. Two other signed-in acceptance requests timed out during planning before Search or answer generation. Both cancelled provider receipts settled at zero cost. The updated source requires exact-source CI, protected staging and genuine authenticated acceptance. Provider-backed media/maps and the full ordinary-user matrix still require independent evidence."
   ],
   "placeholderClaimsRemaining": [],
   "evidenceRefs": [
@@ -239,7 +244,7 @@
   "release": {
     "state": "BLOCKED",
     "blockers": [
-      "Production uses the verified decoder after the calculator canary failed. Reopening generation requires refreshed exact-source CI, verified release artifacts and successful live Workspace acceptance."
+      "The updated candidate requires exact-source CI, verified release artifacts and successful signed-in acceptance. The existing production generation revision remains active."
     ],
     "authenticatedE2e": "BLOCKED",
     "stagedSecurity": "BLOCKED",

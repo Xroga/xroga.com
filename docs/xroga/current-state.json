@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/workspace-openui-final-recovery-20261115",
-    "sha": "80751409f1037c7f3f3c13b912789a5c23c66c39",
-    "sourceTimestampUtc": "2026-11-19T16:56:59+05:00",
-    "auditStartedUtc": "2026-11-19T12:02:01.085Z",
+    "sha": "ccdd172f605b1b4eb64d620c9bc613f5ade7f48f",
+    "sourceTimestampUtc": "2026-11-19T18:28:36+05:00",
+    "auditStartedUtc": "2026-11-19T13:28:54.987Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -5844,8 +5844,9 @@
       "id": "surface:a67f0b1fa2dd0f11a67f",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiPrompt.ts",
-      "sha256": "8d279dcfe7afa3fcd6922e933e18df5c2cde1348946a42914a13fd5d3c42431b",
+      "sha256": "7869adc9afe66120dd20f371744a9d1e50223e24a5683ecfcb77e310388cc516",
       "symbols": [
+        "answerScopeRule",
         "artifactPriorityRule",
         "buildNativeOpenUiPrompt",
         "comparisonConsistencyRule",
@@ -6194,7 +6195,7 @@
       "id": "surface:93911e9946fd4b21d50d",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiWorkspace.ts",
-      "sha256": "9a335714be4afb346899df7ec8dd2c26edec4c6c678d61581bc4459f13d74d87",
+      "sha256": "7693af24f3e4e89ce08853d53b81f21d79f62177bc20d5eaead8a24e9673498e",
       "symbols": [
         "authorityIssue",
         "calculatorUnavailable",
@@ -7756,6 +7757,7 @@
         "backend/src/ai/researchAnswer.ts:75",
         "backend/src/ai/tenantModelDispatch.test.ts:8",
         "backend/src/ai/universal/resumeProjectContext.test.ts:54",
+        "backend/src/ai/universal/semanticRequestPlanner.egress.test.ts:5",
         "backend/src/builder/phase2Bridge.ts:5",
         "backend/src/routes/phase1.ts:17",
         "backend/src/routes/swarm.ts:7",
@@ -7811,6 +7813,7 @@
         "backend/src/ai/researchAnswer.test.ts",
         "backend/src/ai/tenantModelDispatch.test.ts",
         "backend/src/ai/universal/resumeProjectContext.test.ts",
+        "backend/src/ai/universal/semanticRequestPlanner.egress.test.ts",
         "backend/src/security/workerProjectAdmission.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -8103,7 +8106,7 @@
       "id": "surface:087b17b9e17fc86ddade",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/prompts.ts",
-      "sha256": "e1fc1b8169c98cbb93e5bad272375920740a62cb474ac32d6df5346df63e235b",
+      "sha256": "6139c24142e0454641091f4e7a3c492af37bc5dab4c4b38bd4447a9b8c8e1e1a",
       "symbols": [
         "BRIEF_RESEARCH_RESPONSE_RE",
         "BUILDER_SYSTEM",
@@ -13744,8 +13747,9 @@
       "id": "surface:8d690784f1b9a43cabcd",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/universal/productTruth.ts",
-      "sha256": "f9bd408bcde092cd3a6fa2acd740ac2586cde93314f1b26d8bca83a55af46807",
+      "sha256": "5ea08407d97d02bf78224418c217184e90a7057f7938f01de977391117b58883",
       "symbols": [
+        "PLANNER_PRODUCT_RULES",
         "availability",
         "currentProductTruth",
         "currentPublicProductTruth",
@@ -14049,7 +14053,7 @@
       "id": "surface:2caccad5e3c57290edad",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "sha256": "0b82824cdab1fd085d9ac19223cc3c38ed40ab178c3e35166c9f595545248c53",
+      "sha256": "0b91a7f2262b94a5bb51eea74262b3b90d209efdea7af61562d2e88b85e3d08d",
       "symbols": [
         "SEMANTIC_PLANNER_DEFAULT_TOTAL_TIMEOUT_MS",
         "SEMANTIC_PLANNER_HEDGE_DELAY_MS",
@@ -14192,7 +14196,7 @@
         "backend/src/ai/postCompletionAccounting.test.ts:5",
         "backend/src/ai/sonnetApproval.test.ts:10",
         "backend/src/ai/universal/capabilityReadiness.test.ts:5",
-        "backend/src/ai/universal/semanticRequestPlanner.egress.test.ts:5",
+        "backend/src/ai/universal/semanticRequestPlanner.egress.test.ts:6",
         "backend/src/ai/universal/semanticRequestPlanner.test.ts:4",
         "backend/src/e2e/xrogaGoldenJourneys.test.ts:17",
         "backend/src/routes/phase1.ts:35",
@@ -106460,23 +106464,41 @@
       "id": "surface:de28da0ba53d843fc648",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/assistantCopy.ts",
-      "sha256": "3c2c7eabd62bb86ffef639f4a99e1a1f8226d37049ddc95ca51e508d5be730e2",
+      "sha256": "b51c47111c0d816d400db53ebb9bdcfd2ee21bb4ce096175a75e356e9a37a829",
       "symbols": [
+        "cell",
+        "cells",
+        "character",
         "cleanInline",
-        "code",
-        "inFence",
+        "cursor",
+        "end",
+        "fence",
+        "indent",
         "index",
+        "inlineLabel",
+        "inlineMarkdown",
+        "label",
+        "lastLiteralLine",
         "line",
         "lines",
+        "match",
         "next",
         "normalized",
         "output",
-        "pieces",
+        "prose",
+        "removeEmphasis",
+        "row",
         "serializeAssistantCopy",
-        "tableCells"
+        "start",
+        "tableCells",
+        "text",
+        "visit"
       ],
       "imports": [
-        "./publicAnswerText"
+        "./publicAnswerText",
+        "mdast",
+        "remark-parse",
+        "unified"
       ],
       "runtimeImports": [
         "frontend/src/lib/publicAnswerText.ts"
@@ -106493,7 +106515,11 @@
       ],
       "reachable": true,
       "persistenceDependencies": [],
-      "externalProviderDependencies": [],
+      "externalProviderDependencies": [
+        "mdast",
+        "remark-parse",
+        "unified"
+      ],
       "authBoundary": [],
       "tenantBoundary": [],
       "approvalBoundary": [],
@@ -143411,9 +143437,9 @@
   ],
   "findings": [
     {
-      "id": "finding:03d9b7b215a89758a34f",
+      "id": "finding:30ee1cf6abd1064a830a",
       "sourcePath": "backend/src/ai/nativeOpenUiPrompt.ts",
-      "line": 68,
+      "line": 72,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -151456,7 +151482,7 @@
     {
       "id": "test-suite:2e491f4d2fcbc11f974c",
       "sourcePath": "backend/src/ai/nativeOpenUi.test.ts",
-      "declaredTests": 73,
+      "declaredTests": 74,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -156972,7 +156998,7 @@
     {
       "id": "test-suite:0d9655cb673ddb25aff3",
       "sourcePath": "frontend/src/lib/assistantCopy.test.ts",
-      "declaredTests": 6,
+      "declaredTests": 8,
       "skipLocations": [],
       "focusLocations": []
     },
