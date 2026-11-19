@@ -1089,9 +1089,9 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "4bde01760d473067012813fb98080c6b3d45db5c7cd63674fee7917026385e85",
+      "sourceSha256": "7c61ab37b072a8717df3e722ed1bb10c64c109bf1653d70f430a0497b7ae7a60",
       "callIds": [
-        "f85a13946242fd10485a"
+        "bf8c9e2c58946dd92220"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -2653,9 +2653,9 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "4bde01760d473067012813fb98080c6b3d45db5c7cd63674fee7917026385e85",
+      "sourceSha256": "7c61ab37b072a8717df3e722ed1bb10c64c109bf1653d70f430a0497b7ae7a60",
       "callIds": [
-        "6296a781fc25e5bcf044"
+        "03620868515ddc20b007"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",

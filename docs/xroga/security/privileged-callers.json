@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "504b2cbc3f862e90761a62982162244b7e8180160fa51ca3d7f0de5ce5053632",
+  "reviewRegistrySha256": "0768ebd19cf67b50230c2ef38009059d8183bdff53d3a3ba82c634512f720520",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -3936,11 +3936,11 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "f85a13946242fd10485a"
+        "id": "bf8c9e2c58946dd92220"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "6296a781fc25e5bcf044"
+        "id": "03620868515ddc20b007"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -7672,11 +7672,11 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "f85a13946242fd10485a"
+        "id": "bf8c9e2c58946dd92220"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "6296a781fc25e5bcf044"
+        "id": "03620868515ddc20b007"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -11421,15 +11421,15 @@
       }
     },
     {
-      "id": "f85a13946242fd10485a",
+      "id": "bf8c9e2c58946dd92220",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3944,
+      "line": 3946,
       "enclosing": "runBuildPipeline",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "4bde01760d473067012813fb98080c6b3d45db5c7cd63674fee7917026385e85",
+      "sourceSha256": "7c61ab37b072a8717df3e722ed1bb10c64c109bf1653d70f430a0497b7ae7a60",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations. Native reasoning alignment changes only answer options and their canonical output reservation. These two in-memory conversion expressions remain byte-identical. No new persistence call, authority or security certification is inferred. The tenant dispatch test verifies reservation and wire maxima match.",
@@ -11442,15 +11442,15 @@
       }
     },
     {
-      "id": "6296a781fc25e5bcf044",
+      "id": "03620868515ddc20b007",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4128,
+      "line": 4130,
       "enclosing": "runBuildPipeline",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "4bde01760d473067012813fb98080c6b3d45db5c7cd63674fee7917026385e85",
+      "sourceSha256": "7c61ab37b072a8717df3e722ed1bb10c64c109bf1653d70f430a0497b7ae7a60",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations. Native reasoning alignment changes only answer options and their canonical output reservation. These two in-memory conversion expressions remain byte-identical. No new persistence call, authority or security certification is inferred. The tenant dispatch test verifies reservation and wire maxima match.",
@@ -12668,7 +12668,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "ea30a938716cfe11393e942d17188ca7a7bda4d84052792fc2ac3fab7534abb7"
+      "sourceSha256": "3bc391b9a9bfc1aef62be437bcff7442c3d683635f754e874b587b4297894a10"
     },
     {
       "id": "64b99cfd7d4a42c04576",
@@ -13691,7 +13691,7 @@
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "adf4566f235d911750d8b682f2f3cfa77dc75c6ed7c91ab11e8a0c05cfcc02a0"
+      "sourceSha256": "8b4c625870f1fe79b19addfc39af13ed4cac86988d064280f1236c45eb0eec55"
     },
     {
       "id": "92acd75cb009a202b61c",
@@ -13702,7 +13702,7 @@
       "target": "projects",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "adf4566f235d911750d8b682f2f3cfa77dc75c6ed7c91ab11e8a0c05cfcc02a0"
+      "sourceSha256": "8b4c625870f1fe79b19addfc39af13ed4cac86988d064280f1236c45eb0eec55"
     },
     {
       "id": "3b78226da77b7e78f992",
@@ -13713,7 +13713,7 @@
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "adf4566f235d911750d8b682f2f3cfa77dc75c6ed7c91ab11e8a0c05cfcc02a0"
+      "sourceSha256": "8b4c625870f1fe79b19addfc39af13ed4cac86988d064280f1236c45eb0eec55"
     },
     {
       "id": "806c73ec27b8163a6313",
@@ -13724,7 +13724,7 @@
       "target": "swarm_runs",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "adf4566f235d911750d8b682f2f3cfa77dc75c6ed7c91ab11e8a0c05cfcc02a0"
+      "sourceSha256": "8b4c625870f1fe79b19addfc39af13ed4cac86988d064280f1236c45eb0eec55"
     },
     {
       "id": "1836c6f18b69f6a5d8f5",
@@ -13735,7 +13735,7 @@
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "adf4566f235d911750d8b682f2f3cfa77dc75c6ed7c91ab11e8a0c05cfcc02a0"
+      "sourceSha256": "8b4c625870f1fe79b19addfc39af13ed4cac86988d064280f1236c45eb0eec55"
     },
     {
       "id": "3fba7dbe0551574fe56b",

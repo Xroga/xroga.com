@@ -272,7 +272,7 @@
     },
     {
       "path": "backend/src/ai/openaiCompat.egress.test.ts",
-      "sha256": "c336a8fed92047169a538bdc82c8c8067374fa0851b56c06ffed9c66fd843185",
+      "sha256": "34bd84f5aacee796d3dfa2ff83cfd227a24c41d19fc50c4c51abf88fd6e80a46",
       "beforeCurrentMetadataReconciliation": {
         "path": "backend/src/ai/openaiCompat.egress.test.ts",
         "sha256": "649092d8bd97b3fed5a12305399a7d577b2c1b4a35ac3e952149cf6a5f834e0a"
@@ -284,7 +284,7 @@
     },
     {
       "path": "backend/src/ai/openaiCompat.ts",
-      "sha256": "b8edce2909f7c883edbd2275edf2e946bdefc92c6adc93b2744e758b60224df4",
+      "sha256": "c68442eb8d29d7aaa6d1ccbbfbff9c33e3d40701cd2254e689fee0d40fee2d4d",
       "previousGenericSdkBinding": {
         "sha256": "0a418cef1bdbdadb77f14288c4298990900a111fbc0def0050756a9b146914ca",
         "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
@@ -304,7 +304,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "4bde01760d473067012813fb98080c6b3d45db5c7cd63674fee7917026385e85",
+      "sha256": "7c61ab37b072a8717df3e722ed1bb10c64c109bf1653d70f430a0497b7ae7a60",
       "previousGenericSdkBinding": {
         "sha256": "e5b3b4a3dc538e708fa8c005a8da6584db01b3dd425833373d59decbd2bfcb93",
         "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
@@ -664,7 +664,7 @@
     },
     {
       "path": "backend/src/ai/tenantModelDispatch.test.ts",
-      "sha256": "aabbfa18a37c33b9090fd53b4593998f4a0d7e6e4bd14e097794e78ed2e5558a",
+      "sha256": "d084449ccd5fc7b88b0fa6b90611592d27f2e4477f362c1b65b50fc0bf036b30",
       "previousGenericSdkBinding": {
         "sha256": "acb7d3ee286d862c38e386380a20a7632415cd454510076abedca054016f2959",
         "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
@@ -706,7 +706,7 @@
     },
     {
       "path": "backend/src/ai/tenantModelDispatch.ts",
-      "sha256": "adf4566f235d911750d8b682f2f3cfa77dc75c6ed7c91ab11e8a0c05cfcc02a0",
+      "sha256": "8b4c625870f1fe79b19addfc39af13ed4cac86988d064280f1236c45eb0eec55",
       "beforeCurrentMetadataReconciliation": {
         "path": "backend/src/ai/tenantModelDispatch.ts",
         "sha256": "023fa43509d92dc08fb7f2e68c22c95626461669809c9388a6f54f4fee749690"
@@ -892,7 +892,7 @@
     },
     {
       "path": "backend/src/ai/modelSdkAdmission.ts",
-      "sha256": "3171e6bcbeb77b4570287c6675d32a10132d158658153b6301d1035222cdca40",
+      "sha256": "5adab35c256f7cbc9facd86bf23766dc09c847a6a92f9ecaabed03a56681f375",
       "beforeCurrentMetadataReconciliation": {
         "path": "backend/src/ai/modelSdkAdmission.ts",
         "sha256": "59b8660b5578b5fe58729eeb6164f007f751139bae4efac55948ec48dd9aac85"
