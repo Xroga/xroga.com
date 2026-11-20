@@ -254,7 +254,7 @@ defineCheck({
     if (args.kind !== 'ollama' && args.kind !== 'lmstudio') {
       const response = await fetch('http://localhost:8787/__live/keys');
       if (!response.ok) throw new Error('Run with NB_LIVE=1 so the fixture server can hand over the key');
-      apiKey = ((await response.json()) as Record<string, string | undefined>)[args.kind];
+      apiKey = ((await response.json()) as Record<string, string | undefined>)[args.kind === 'openai-compatible' ? 'openai' : args.kind];
     }
     const tasks = TASKS.filter(t => (!args.tasks || args.tasks.includes(t.id)) && !(args.offline && t.public));
     const runs = [];
