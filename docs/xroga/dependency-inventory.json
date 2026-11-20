@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "fbccb7efb2171c481b2584589192930fe0b09881",
+  "source_sha": "35777bada57afdf2d04b038199459434d9725302",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -23258,7 +23258,7 @@
     },
     {
       "path": "frontend/src/components/terminal/WorkspaceScrollNavigation.tsx",
-      "sha256": "e819e05770bffc67701a40193ca01fe2f1c4c548a2d5eddd3d8931afb02f8881"
+      "sha256": "99912f462fbdbcd7c4dea88952fef368aa88a1c1437b5481130ccd51d1f0ade6"
     },
     {
       "path": "frontend/src/components/terminal/WorkspaceSearchButton.tsx",
