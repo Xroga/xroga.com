@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "615b6cafd2cbd9f11b9a166f56f06da64c63677e",
+  "source_sha": "127b334bb4d0e75a0c9ec21eeb6da96a50aab84c",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -20756,7 +20756,7 @@
     },
     {
       "path": "frontend/src/app/llms.txt/route.ts",
-      "sha256": "2b89e2f0eb28ca125717769404a7c41a684e8c0075855e3669bd27dc414b0c86"
+      "sha256": "6d2d172624855a65940146ab4661fd59ea68811fab898986e99829823ac2c2a7"
     },
     {
       "path": "frontend/src/app/manifest.ts",
@@ -24180,7 +24180,7 @@
     },
     {
       "path": "frontend/src/lib/publicUrlInventory.ts",
-      "sha256": "70c81ead7499a79ba7b59320f3d3f2529559641bf319214a417ea10f1c6bf802"
+      "sha256": "47d0b3845a5b7bb06b89cf94bd91f0572dcfa9da2b909c664f2036f611adf483"
     },
     {
       "path": "frontend/src/lib/publish/types.ts",
@@ -24284,7 +24284,7 @@
     },
     {
       "path": "frontend/src/lib/seoGrowthContent.ts",
-      "sha256": "0394c60ea3ca8c92066e7bdb915d6849e04192819b1ee02153c824404f96d1ab"
+      "sha256": "5dca7b176ea455dacbee1f4753cd36707cc1491facc417b582f9a0974b3ca5b9"
     },
     {
       "path": "frontend/src/lib/seoPhase2Content.ts",
@@ -29033,6 +29033,13 @@
       "credentialsInUrl": false
     },
     {
+      "hostname": "xroga.com",
+      "protocol": "https:",
+      "path": "frontend/src/app/llms.txt/route.ts",
+      "line": 3,
+      "credentialsInUrl": false
+    },
+    {
       "hostname": "schema.org",
       "protocol": "https:",
       "path": "frontend/src/app/research/web3-hackathon-winning-patterns/page.tsx",
@@ -31843,7 +31850,7 @@
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "frontend/src/lib/publicUrlInventory.ts",
-      "line": 15,
+      "line": 16,
       "credentialsInUrl": false
     },
     {
@@ -40586,7 +40593,7 @@
     },
     {
       "path": "frontend/src/lib/publicUrlInventory.ts",
-      "line": 162,
+      "line": 168,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -40664,6 +40671,13 @@
     {
       "path": "frontend/src/lib/seoFeeds.ts",
       "line": 19,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/lib/seoGrowthContent.ts",
+      "line": 290,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

@@ -58905,7 +58905,7 @@
       "entryPoints": [],
       "callers": [
         "frontend/next.config.mjs:1",
-        "frontend/src/lib/publicUrlInventory.ts:13",
+        "frontend/src/lib/publicUrlInventory.ts:14",
         "scripts/growth-publishing/core.ts:7"
       ],
       "reachable": false,
@@ -64463,15 +64463,17 @@
       "id": "surface:2b0171bdbea3342cb29e",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/app/llms.txt/route.ts",
-      "sha256": "2b89e2f0eb28ca125717769404a7c41a684e8c0075855e3669bd27dc414b0c86",
+      "sha256": "6d2d172624855a65940146ab4661fd59ea68811fab898986e99829823ac2c2a7",
       "symbols": [
         "GET",
         "body"
       ],
       "imports": [
+        "@/lib/premiumBlogIndex",
         "@/lib/seo"
       ],
       "runtimeImports": [
+        "frontend/src/lib/premiumBlogIndex.ts",
         "frontend/src/lib/seo.ts"
       ],
       "entryPoints": [
@@ -64480,7 +64482,9 @@
       "callers": [],
       "reachable": true,
       "persistenceDependencies": [],
-      "externalProviderDependencies": [],
+      "externalProviderDependencies": [
+        "declared-host:xroga.com"
+      ],
       "authBoundary": [],
       "tenantBoundary": [],
       "approvalBoundary": [],
@@ -113842,11 +113846,15 @@
         "frontend/src/app/changelog/feed.xml/route.ts",
         "frontend/src/app/compare/[slug]/page.tsx",
         "frontend/src/app/compare/page.tsx",
+        "frontend/src/app/llms.txt/route.ts",
         "frontend/src/app/research/feed.xml/route.ts",
         "frontend/src/app/vibe-coding/page.tsx"
       ],
       "callers": [
-        "frontend/src/lib/seoGrowthContent.ts:16"
+        "frontend/src/app/llms.txt/route.ts:2",
+        "frontend/src/lib/publicUrlInventory.ts:3",
+        "frontend/src/lib/seoGrowthContent.ts:16",
+        "scripts/growth-publishing/premium-blog-discovery.test.ts:4"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -113858,7 +113866,9 @@
         "frontend/src/lib/premiumBlogIndex.ts#premiumAiAppHostingCosts"
       ],
       "evidenceBoundary": [],
-      "testCoverage": [],
+      "testCoverage": [
+        "scripts/growth-publishing/premium-blog-discovery.test.ts"
+      ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -113891,6 +113901,7 @@
         "frontend/src/app/changelog/feed.xml/route.ts",
         "frontend/src/app/compare/[slug]/page.tsx",
         "frontend/src/app/compare/page.tsx",
+        "frontend/src/app/llms.txt/route.ts",
         "frontend/src/app/research/feed.xml/route.ts",
         "frontend/src/app/vibe-coding/page.tsx"
       ],
@@ -113943,6 +113954,7 @@
         "frontend/src/app/changelog/feed.xml/route.ts",
         "frontend/src/app/compare/[slug]/page.tsx",
         "frontend/src/app/compare/page.tsx",
+        "frontend/src/app/llms.txt/route.ts",
         "frontend/src/app/research/feed.xml/route.ts",
         "frontend/src/app/vibe-coding/page.tsx"
       ],
@@ -113994,6 +114006,7 @@
         "frontend/src/app/changelog/feed.xml/route.ts",
         "frontend/src/app/compare/[slug]/page.tsx",
         "frontend/src/app/compare/page.tsx",
+        "frontend/src/app/llms.txt/route.ts",
         "frontend/src/app/research/feed.xml/route.ts",
         "frontend/src/app/vibe-coding/page.tsx"
       ],
@@ -114045,6 +114058,7 @@
         "frontend/src/app/changelog/feed.xml/route.ts",
         "frontend/src/app/compare/[slug]/page.tsx",
         "frontend/src/app/compare/page.tsx",
+        "frontend/src/app/llms.txt/route.ts",
         "frontend/src/app/research/feed.xml/route.ts",
         "frontend/src/app/vibe-coding/page.tsx"
       ],
@@ -114097,6 +114111,7 @@
         "frontend/src/app/changelog/feed.xml/route.ts",
         "frontend/src/app/compare/[slug]/page.tsx",
         "frontend/src/app/compare/page.tsx",
+        "frontend/src/app/llms.txt/route.ts",
         "frontend/src/app/research/feed.xml/route.ts",
         "frontend/src/app/vibe-coding/page.tsx"
       ],
@@ -114148,6 +114163,7 @@
         "frontend/src/app/changelog/feed.xml/route.ts",
         "frontend/src/app/compare/[slug]/page.tsx",
         "frontend/src/app/compare/page.tsx",
+        "frontend/src/app/llms.txt/route.ts",
         "frontend/src/app/research/feed.xml/route.ts",
         "frontend/src/app/vibe-coding/page.tsx"
       ],
@@ -114198,6 +114214,7 @@
         "frontend/src/app/changelog/feed.xml/route.ts",
         "frontend/src/app/compare/[slug]/page.tsx",
         "frontend/src/app/compare/page.tsx",
+        "frontend/src/app/llms.txt/route.ts",
         "frontend/src/app/research/feed.xml/route.ts",
         "frontend/src/app/vibe-coding/page.tsx"
       ],
@@ -114250,6 +114267,7 @@
         "frontend/src/app/changelog/feed.xml/route.ts",
         "frontend/src/app/compare/[slug]/page.tsx",
         "frontend/src/app/compare/page.tsx",
+        "frontend/src/app/llms.txt/route.ts",
         "frontend/src/app/research/feed.xml/route.ts",
         "frontend/src/app/vibe-coding/page.tsx"
       ],
@@ -114300,6 +114318,7 @@
         "frontend/src/app/changelog/feed.xml/route.ts",
         "frontend/src/app/compare/[slug]/page.tsx",
         "frontend/src/app/compare/page.tsx",
+        "frontend/src/app/llms.txt/route.ts",
         "frontend/src/app/research/feed.xml/route.ts",
         "frontend/src/app/vibe-coding/page.tsx"
       ],
@@ -114349,6 +114368,7 @@
         "frontend/src/app/changelog/feed.xml/route.ts",
         "frontend/src/app/compare/[slug]/page.tsx",
         "frontend/src/app/compare/page.tsx",
+        "frontend/src/app/llms.txt/route.ts",
         "frontend/src/app/research/feed.xml/route.ts",
         "frontend/src/app/vibe-coding/page.tsx"
       ],
@@ -115196,7 +115216,7 @@
       "id": "surface:4a1f5385bc6d8ba1e88e",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/publicUrlInventory.ts",
-      "sha256": "70c81ead7499a79ba7b59320f3d3f2529559641bf319214a417ea10f1c6bf802",
+      "sha256": "47d0b3845a5b7bb06b89cf94bd91f0572dcfa9da2b909c664f2036f611adf483",
       "symbols": [
         "INDEXABLE_PUBLIC_URLS",
         "PUBLIC_URL_INVENTORY",
@@ -115220,6 +115240,7 @@
         "../../redirects.mjs",
         "./capabilityPages",
         "./docsContent",
+        "./premiumBlogIndex",
         "./seoExpansionContent",
         "./seoGrowthContent",
         "./showcase/registry"
@@ -115228,6 +115249,7 @@
         "frontend/redirects.mjs",
         "frontend/src/lib/capabilityPages.ts",
         "frontend/src/lib/docsContent.ts",
+        "frontend/src/lib/premiumBlogIndex.ts",
         "frontend/src/lib/seoExpansionContent.ts",
         "frontend/src/lib/seoGrowthContent.ts",
         "frontend/src/lib/showcase/registry.ts"
@@ -115238,7 +115260,8 @@
         "frontend/src/lib/appBuildingEditorialContent.test.ts:5",
         "frontend/src/lib/publicUrlInventory.osPreview.test.ts:3",
         "scripts/growth-publishing/core.test.ts:4",
-        "scripts/growth-publishing/core.ts:6"
+        "scripts/growth-publishing/core.ts:6",
+        "scripts/growth-publishing/premium-blog-discovery.test.ts:5"
       ],
       "reachable": false,
       "persistenceDependencies": [],
@@ -115253,7 +115276,8 @@
       "testCoverage": [
         "frontend/src/lib/appBuildingEditorialContent.test.ts",
         "frontend/src/lib/publicUrlInventory.osPreview.test.ts",
-        "scripts/growth-publishing/core.test.ts"
+        "scripts/growth-publishing/core.test.ts",
+        "scripts/growth-publishing/premium-blog-discovery.test.ts"
       ],
       "state": "DEAD_OR_UNREACHABLE",
       "confidence": "LOW",
@@ -116789,7 +116813,7 @@
         "frontend/src/app/stack/[slug]/page.tsx:3",
         "frontend/src/app/stack/page.tsx:2",
         "frontend/src/components/seo/ProductionReadinessChecker.tsx:4",
-        "frontend/src/lib/publicUrlInventory.ts:11",
+        "frontend/src/lib/publicUrlInventory.ts:12",
         "frontend/src/lib/seoExpansionContent.test.ts:4"
       ],
       "reachable": true,
@@ -116888,10 +116912,11 @@
       "id": "surface:81ab1aaf9010967cea49",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/seoGrowthContent.ts",
-      "sha256": "0394c60ea3ca8c92066e7bdb915d6849e04192819b1ee02153c824404f96d1ab",
+      "sha256": "5dca7b176ea455dacbee1f4753cd36707cc1491facc417b582f9a0974b3ca5b9",
       "symbols": [
         "ALTERNATIVES",
         "BLOG_ARTICLES",
+        "BLOG_DISCOVERY_LINKS",
         "BUILD_GUIDES",
         "BUILD_GUIDE_ROWS",
         "COMPARISONS",
@@ -116903,7 +116928,10 @@
         "INTEGRATION_GUIDE_ROWS",
         "LEGACY_BLOG_ARTICLES",
         "SourceLink",
-        "verified"
+        "additions",
+        "existing",
+        "verified",
+        "withRelatedDiscoveryLinks"
       ],
       "imports": [
         "./appBuildingEditorialContent.json",
@@ -116946,9 +116974,10 @@
         "frontend/src/app/compare/page.tsx:2",
         "frontend/src/app/vibe-coding/page.tsx:1",
         "frontend/src/lib/appBuildingEditorialContent.test.ts:4",
-        "frontend/src/lib/publicUrlInventory.ts:4",
+        "frontend/src/lib/publicUrlInventory.ts:5",
         "frontend/src/lib/seoFeeds.ts:1",
-        "frontend/src/lib/seoGrowthContent.test.ts:4"
+        "frontend/src/lib/seoGrowthContent.test.ts:4",
+        "scripts/growth-publishing/premium-blog-discovery.test.ts:3"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -116971,7 +117000,8 @@
       ],
       "testCoverage": [
         "frontend/src/lib/appBuildingEditorialContent.test.ts",
-        "frontend/src/lib/seoGrowthContent.test.ts"
+        "frontend/src/lib/seoGrowthContent.test.ts",
+        "scripts/growth-publishing/premium-blog-discovery.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -117487,7 +117517,7 @@
         "frontend/src/components/showcase/ShowcaseGrid.tsx:14",
         "frontend/src/components/showcase/ShowcaseResumeBridge.tsx:16",
         "frontend/src/components/showcase/ShowcaseSpotlight.tsx:16",
-        "frontend/src/lib/publicUrlInventory.ts:3",
+        "frontend/src/lib/publicUrlInventory.ts:4",
         "frontend/src/lib/showcase/buildCommand.test.ts:9",
         "frontend/src/lib/showcase/pendingCustomization.test.ts:8",
         "frontend/src/lib/showcase/pendingCustomization.ts:10",
@@ -126841,7 +126871,8 @@
       "entryPoints": [],
       "callers": [
         "scripts/growth-publishing/cli.ts:4",
-        "scripts/growth-publishing/core.test.ts:5"
+        "scripts/growth-publishing/core.test.ts:5",
+        "scripts/growth-publishing/premium-blog-discovery.test.ts:6"
       ],
       "reachable": false,
       "persistenceDependencies": [],
@@ -126869,7 +126900,8 @@
         "scripts/growth-publishing/core.ts#verifyReleaseSha"
       ],
       "testCoverage": [
-        "scripts/growth-publishing/core.test.ts"
+        "scripts/growth-publishing/core.test.ts",
+        "scripts/growth-publishing/premium-blog-discovery.test.ts"
       ],
       "state": "DEAD_OR_UNREACHABLE",
       "confidence": "LOW",
@@ -159800,6 +159832,13 @@
       "id": "test-suite:884adee7482f8db08433",
       "sourcePath": "scripts/growth-publishing/core.test.ts",
       "declaredTests": 48,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:2272b1aed7f2b1ea8594",
+      "sourcePath": "scripts/growth-publishing/premium-blog-discovery.test.ts",
+      "declaredTests": 3,
       "skipLocations": [],
       "focusLocations": []
     },

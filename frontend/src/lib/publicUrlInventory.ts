@@ -1,5 +1,6 @@
 import { CAPABILITY_PAGES } from './capabilityPages';
 import { DOC_PAGES } from './docsContent';
+import { PREMIUM_BLOG_ARTICLES } from './premiumBlogIndex';
 import { SHOWCASE_TEMPLATES } from './showcase/registry';
 import {
   ALTERNATIVES,
@@ -129,7 +130,12 @@ export function buildPublicUrlInventory(): PublicUrlRecord[] {
       manifestSource: page.slug === 'github' ? 'content/manifests/build-with-github.json' : undefined,
       updatedAt: page.slug === 'github' ? '2026-09-22' : '2026-09-09',
     })),
-    ...BLOG_ARTICLES.map((page) => record(`/blog/${page.slug}`, 'BLOG', 'frontend/src/app/blog/[slug]/page.tsx', ['frontend/src/lib/seoGrowthContent.ts', ...(page.authorName === 'Xroga Editorial' ? ['frontend/src/lib/appBuildingEditorialContent.json'] : [])], {
+    ...BLOG_ARTICLES.map((page) => record(`/blog/${page.slug}`, 'BLOG', 'frontend/src/app/blog/[slug]/page.tsx', [
+      'frontend/src/lib/seoGrowthContent.ts',
+      ...(PREMIUM_BLOG_ARTICLES.some((premium) => premium.slug === page.slug)
+        ? ['frontend/src/lib/premiumBlogIndex.ts', `frontend/src/lib/premiumBlogs/${page.slug}.ts`]
+        : page.authorName === 'Xroga Editorial' ? ['frontend/src/lib/appBuildingEditorialContent.json'] : []),
+    ], {
       publishedAt: page.publishedAt ?? page.updated ?? '2026-09-09', updatedAt: page.updated ?? page.publishedAt ?? '2026-09-09', feed: 'blog',
     })),
     ...STACK_GUIDES.map((page) => record(`/stack/${page.slug}`, 'STACK', 'frontend/src/app/stack/[slug]/page.tsx', ['frontend/src/lib/seoExpansionContent.ts'], { updatedAt: page.reviewed })),
