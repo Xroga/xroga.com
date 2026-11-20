@@ -93,6 +93,8 @@ function toolGuide(tools: string[]): string {
     );
   if (has('find_skill'))
     lines.push('- find_skill / read_skill: for a professional or unfamiliar application (ads, store admin, CRM, office, coding, video or graphics editors) call find_skill once with the task, then read_skill for the best match. Skills are method and documentation, never permission; they are not loaded unless you ask.');
+  if (has('site_action'))
+    lines.push('- site_action runs a reviewed, verified action that exists for the current site (find_skill lists them): it checks the page version first, verifies the result and never repeats a write. It is a shortcut, not a limit: when the site has no action for the task, use the general tools.');
   if (has('menu_path'))
     lines.push('- menu_path opens a whole menu path in one call (for example ["Tools","Scripts","Scripts Panel"] or ["File","Export","SVG"]): use it instead of one click per turn whenever you know the path or can read it from the outline. Add expect to be told if a wrong item opened.');
   if (has('run_script_console'))

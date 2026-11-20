@@ -227,7 +227,7 @@ export function kindOf(tool: string, args: Record<string, unknown>): ToolKind {
   // Starting workers opens windows and runs: it is fenced like other effects. Reading their status is a read.
   if (tool === 'parallel_task_status') return 'read';
   // A batch may contain writes: it is fenced like one, and its steps are checked and recorded one by one.
-  if (tool === 'batch' || tool === 'run_script_console' || tool === 'menu_path') return 'mutate';
+  if (tool === 'batch' || tool === 'run_script_console' || tool === 'menu_path' || tool === 'site_action') return 'mutate';
   if (tool === 'start_parallel_tasks') return 'mutate';
   if (tool === 'save_file') return 'state';
   if (tool === 'read_attachment' || tool === 'find_color' || tool === 'find_skill' || tool === 'read_skill' || tool === 'confirm_download' || tool === 'plugin_search' || tool === 'plugin_action_search' || tool === 'http_get' || tool === 'plugin_connect' || tool === 'run_repository' || tool === 'change_repository') return 'read';

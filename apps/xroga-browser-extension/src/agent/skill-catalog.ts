@@ -4,6 +4,7 @@
 // action still goes through the run's tools, approvals and spending rules. `verified` says how far a skill has been exercised: curated (written from
 // official documentation, not yet run), fixture (a Chrome fixture class passes) or live (a real third-party run passed). Nothing is marked live without evidence.
 import { parseSkillMd, type SkillMd } from './skill-md';
+import { identify, matchSite } from './site-context';
 
 type Verified = 'curated' | 'fixture' | 'live';
 
@@ -324,9 +325,10 @@ export interface SkillHit {
 }
 
 /** Ranks cards for a task and the page the run is on. A host match is strong evidence; text matches are weighted by where they occur. */
-export function searchSkills(query: string, options: { host?: string; limit?: number } = {}): SkillHit[] {
+export function searchSkills(query: string, options: { host?: string; url?: string; limit?: number } = {}): SkillHit[] {
   const q = tokens(query);
-  const host = (options.host ?? '').toLowerCase().replace(/^www\./, '');
+  // The page identity is parsed, never matched by substring: a host rule matches on a label boundary only (see site-context.ts).
+  const id = options.url ? identify(options.url) : options.host ? identify('https://' + options.host) : null;
   const hits: SkillHit[] = [];
   for (const card of SKILL_CATALOG) {
     let score = 0;
@@ -338,7 +340,7 @@ export function searchSkills(query: string, options: { host?: string; limit?: nu
       if (kw.has(t)) score += 2;
       if (desc.has(t)) score += 1;
     }
-    if (host && card.hosts.some(h => host === h || host.endsWith(`.${h}`) || host.includes(h))) score += 6;
+    if (id && card.hosts.some(h => matchSite({ host: h }, id).matched)) score += 6;
     if (score > 0) hits.push({ card, score });
   }
   hits.sort((a, b) => b.score - a.score || a.card.id.localeCompare(b.card.id));

@@ -68,6 +68,21 @@ const SEED = [
   ['Mahanaicoach/google-maps-scraper-kit', 'F', 'P3', 'EVALUATE SOURCE PERMISSIONS', 'H'],
   ['speedyapply/JobSpy', 'F', 'P2', 'ON-DEMAND SANDBOX', 'H'],
   ['browser-use/workflow-use', 'F', 'P3', 'CONCEPTS ONLY UNTIL LEGAL REVIEW', 'H'],
+  // The 14 sources added by the 2026-11-20 site-intelligence order (class S = site awareness and skill discovery, class T = general capacity and professional skill packs).
+  ['alibaba/qz-browser-agent', 'S', 'P0', 'ADAPT SITE MATCHING AND SKILL ACTIVATION', 'N'],
+  ['browsing-skills/browsing-skills', 'S', 'P0', 'ADAPT REVIEWED ACTION CONTRACTS (NO ARBITRARY PAGE.EVALUATE)', 'N'],
+  ['ComeOnOliver/skillshub', 'S', 'P0', 'OPTIONAL ONLINE DISCOVERY PROVIDER WITH FALLBACK AND CACHE', 'N'],
+  ['vercel-labs/skills', 'S', 'P1', 'ADAPT REMOTE SKILL RESOLVER (NO NODE CLI IN EXTENSION)', 'N'],
+  ['browserbase/browse-plugin', 'S', 'P2', 'STUDY CATALOG AND DISCOVERY; NO CLOUD DEPENDENCY', 'N'],
+  ['ScottSyms/Browser-Agent', 'S', 'P1', 'IDEAS ONLY UNTIL CODE LICENSE CONFIRMED', 'N'],
+  ['cloudflare/agent-skills-discovery-rfc', 'S', 'P1', 'EXPERIMENTAL OPT-IN WELL-KNOWN RESOLVER', 'N'],
+  ['esterhuizen/opensidekick', 'T', 'P0', 'COMPARE CONTROL AND RECORDING FEATURES; ADAPT MISSING PRIMITIVES', 'N'],
+  ['fullselfbrowsing/FSB', 'T', 'P0', 'SELECTIVELY PORT MISSING PRIMITIVES', 'N'],
+  ['sickn33/agentic-awesome-skills', 'T', 'P1', 'TRUSTED SUBSET ON DEMAND; LICENCE PER SKILL', 'N'],
+  ['coreyhaines31/marketingskills', 'T', 'P1', 'TASK-SCOPED PROFESSIONAL EXPERTISE ON DEMAND', 'N'],
+  ['amzn/selling-partner-agentic-toolkit', 'T', 'P1', 'AUTHORIZED BACKEND WORKER; REAL SELLER SCOPES REQUIRED', 'N'],
+  ['remotion-dev/skills', 'T', 'P1', 'MEDIA WORKER GUIDANCE ON DEMAND', 'N'],
+  ['VelvetAbyss/browser-agent-recorder', 'T', 'P1', 'ADAPT CAPTURE TO SANITIZE TO VERIFY TO REPLAY IN EXPERIENCE ENGINE', 'N'],
 ];
 
 

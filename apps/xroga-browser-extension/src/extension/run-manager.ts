@@ -12,6 +12,7 @@ import { BATCH_TOOL } from '@src/agent/batch-plan';
 import { SCRIPT_CONSOLE_TOOL } from '@src/agent/command-surface-adapter';
 import { FIND_SKILL_TOOL, READ_SKILL_TOOL } from '@src/agent/skill-catalog';
 import { MENU_PATH_TOOL } from '@src/agent/menu-path';
+import { SITE_ACTION_TOOL } from '@src/agent/site-actions';
 import { startingTools } from '@src/agent/tool-selection';
 import { skillsFor, skillsSection } from '@src/agent/skills';
 import { routeFor } from '@src/agent/router';
@@ -1749,8 +1750,8 @@ export class RunManager {
           pointAt,
           vision: model.profile.vision, localScreenshots: !!canonical,
           agentTools: isWorker
-            ? [DELEGATE_TOOL, BATCH_TOOL, SCRIPT_CONSOLE_TOOL, MENU_PATH_TOOL, FIND_SKILL_TOOL, READ_SKILL_TOOL, CONFIRM_DOWNLOAD_TOOL, ...(canonical ? [HTTP_GET_TOOL] : [])]
-            : [DELEGATE_TOOL, BATCH_TOOL, SCRIPT_CONSOLE_TOOL, MENU_PATH_TOOL, FIND_SKILL_TOOL, READ_SKILL_TOOL, CONFIRM_DOWNLOAD_TOOL, ...(canonical ? [HTTP_GET_TOOL, REPO_RUN_TOOL, CHANGE_REPO_TOOL] : []), ...(canonical?.plugins ? [...PLUGIN_TOOLS, PLUGIN_CHAIN_TOOL, PLUGIN_CONNECT_TOOL] : []), ...(decision.offerWorkers ? PARALLEL_TOOLS : [])],
+            ? [DELEGATE_TOOL, BATCH_TOOL, SCRIPT_CONSOLE_TOOL, MENU_PATH_TOOL, SITE_ACTION_TOOL, FIND_SKILL_TOOL, READ_SKILL_TOOL, CONFIRM_DOWNLOAD_TOOL, ...(canonical ? [HTTP_GET_TOOL] : [])]
+            : [DELEGATE_TOOL, BATCH_TOOL, SCRIPT_CONSOLE_TOOL, MENU_PATH_TOOL, SITE_ACTION_TOOL, FIND_SKILL_TOOL, READ_SKILL_TOOL, CONFIRM_DOWNLOAD_TOOL, ...(canonical ? [HTTP_GET_TOOL, REPO_RUN_TOOL, CHANGE_REPO_TOOL] : []), ...(canonical?.plugins ? [...PLUGIN_TOOLS, PLUGIN_CHAIN_TOOL, PLUGIN_CONNECT_TOOL] : []), ...(decision.offerWorkers ? PARALLEL_TOOLS : [])],
         });
         // A request that only reads starts with the small tool list; the model switches to the full one if it needs to act.
         const { tools, full: fullTools } = startingTools(

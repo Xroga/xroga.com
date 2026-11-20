@@ -36,6 +36,11 @@ import { describeChoice, evidenceFromOutline, rankStrategies } from './strategy-
 import { skillsFor } from './skills';
 import { describeHit, renderSkill, searchSkills, skillById } from './skill-catalog';
 import { runMenuPath, validateMenuPath } from './menu-path';
+import { identify, matchSite, renderWhy } from './site-context';
+import { SKILL_CATALOG } from './skill-catalog';
+import { ActionLedger, SiteActionRegistry, describeAction, runSiteAction } from './site-actions';
+import { SAMPLE_ACTIONS } from './site-actions-sample';
+import { discoverSiteSkills, renderSiteSkill, type Discovery, type FetchLike } from './well-known-skills';
 import type { MenuPathArgs } from './menu-path';
 import { runSurface, RunLedger } from './command-surface';
 import { scriptConsoleSurface, validateConsoleArgs } from './command-surface-adapter';
@@ -123,6 +128,10 @@ export interface LoopOptions {
   /** Makes a small thumbnail of a screenshot for the activity block; none when absent. */
   thumbnail?: (base64: string, mimeType: string) => Promise<string | undefined>;
   localScreenshots?: boolean;
+  /** How site-published skills are fetched (tests inject a fake). Default: the worker's fetch. */
+  siteFetch?: FetchLike;
+  /** Extra reviewed site actions for this run, beyond the bundled ones. */
+  siteActions?: import('./site-actions').VerifiedSiteAction[];
   /** Runs an agent tool (read_attachment, save_file); `done` is the loop's own. */
   agentTool?: (
     call: ToolCallRequest,
@@ -642,6 +651,7 @@ ${ledger}` : ''),
     this.#seen.set(active.tabId, active.url);
     this.preActions.push('snapshot');
     await this.#chooseStrategy(result.text, asked ? userText(asked) : '');
+    await this.#announceSite(active.url, asked ? userText(asked) : '');
     // Kept within budget: a share of the window, at 4 characters a token.
     const budget = Math.max(2_000, Math.min(30_000, this.options.model.profile.contextWindow * 4 * 0.2));
     // Said once, in words the model acts on: this outline is the page as it is now, so a snapshot before the first action only costs a turn.
@@ -1499,6 +1509,7 @@ ${ledger}` : ''),
   #progress = new ProgressTracker();
   #consoleRuns = new RunLedger();
   #strategyChosen = false;
+  #announcedSites = new Set<string>();
   #pendingStall: StallVerdict | null = null;
   #docsRead = false;
   #scriptNote: string | null = null;
@@ -1614,25 +1625,113 @@ ${ledger}` : ''),
     return [...names].every(n => system.includes(`${n}(`));
   }
 
+  /** Site recognition: when the page matches a site-scoped skill (strict origin rule), say so in one short receipt. The skill body is NOT loaded; it stays optional. */
+  async #announceSite(url: string, request: string): Promise<void> {
+    const id = identify(url);
+    if (!id || this.#announcedSites.has(id.origin)) return;
+    const matches = SKILL_CATALOG.filter(c => c.hosts.some(h => matchSite({ host: h }, id).matched)).slice(0, 2);
+    if (!matches.length) return;
+    this.#announcedSites.add(id.origin);
+    const top = matches[0]!;
+    await this.writer.appNote(`${renderWhy({
+      user_goal: request, site: id.host, evidence: `the page origin matches the site rule of ${matches.map(m => m.id).join(', ')}`,
+      capability: `${top.id} (${top.verified})`, permissions: top.risk === 'read' ? 'read only' : `${top.risk} actions need the user's approval`,
+      expected_result: 'the outcome the user asked for', verification: 'read the resulting state back from the page',
+    })} Optional: read_skill ${top.id} for the method. It does not limit what you may do on this site.`);
+  }
+
+  #siteActionReg: SiteActionRegistry | null = null;
+  #actionLedger = new ActionLedger();
+  #siteDiscovery = new Map<string, Discovery>();
+
+  /** The reviewed actions of this run: the bundled ones plus any passed in. Registered once; every action carries its hash. */
+  #siteActionRegistry(): SiteActionRegistry {
+    if (!this.#siteActionReg) {
+      const reg = new SiteActionRegistry();
+      for (const a of [...SAMPLE_ACTIONS, ...(this.options.siteActions ?? [])]) reg.register(a).catch(() => undefined);
+      this.#siteActionReg = reg;
+    }
+    return this.#siteActionReg;
+  }
+
+  /** Skills the current https site publishes for itself, once per origin per run, bounded in time. Never fails the task. */
+  async #siteSkills(url: string): Promise<Discovery> {
+    const id = identify(url);
+    if (!id || id.scheme !== 'https') return { origin: id?.origin ?? '', status: 'none', skills: [] };
+    const cached = this.#siteDiscovery.get(id.origin);
+    if (cached) return cached;
+    const f: FetchLike | undefined = this.options.siteFetch ?? (typeof fetch === 'function' ? ((u, init) => fetch(u, init as RequestInit) as ReturnType<FetchLike>) : undefined);
+    const found: Discovery = f ? await discoverSiteSkills(id.origin, f, { loadText: true }).catch(() => ({ origin: id.origin, status: 'none' as const, skills: [] })) : { origin: id.origin, status: 'none', skills: [] };
+    this.#siteDiscovery.set(id.origin, found);
+    return found;
+  }
+
+  /** A reviewed site action: declarative steps through the run's own gates. A model can never approve a consequential one. */
+  async #runSiteAction(call: ToolCallRequest, kind: ToolKind, args: Record<string, unknown>): Promise<CallOutcome> {
+    const { emit, signal, layer } = this.options;
+    const id = typeof args.id === 'string' ? args.id : '';
+    const input = args.input && typeof args.input === 'object' ? (args.input as Record<string, unknown>) : {};
+    const reg = this.#siteActionRegistry();
+    await reg.ready();
+    const entry = reg.get(id);
+    if (!entry) return { call, kind, text: 'error: no verified action has that id. Call find_skill on the page to list the actions for this site, or use the general tools.', isError: true };
+    let url = '';
+    try {
+      const tabs = await layer.tabs();
+      const active = tabs?.tabs.find(t => t.tabId === (this.#boundTab ?? tabs.activeTabId));
+      if (active) url = active.url;
+    } catch { /* no page */ }
+    let n = 0;
+    const step = async (tool: string, stepInput: Record<string, unknown>) => {
+      if (signal.aborted) throw new Error('Stopped');
+      const stepCall: ToolCallRequest = { toolCallId: `${call.toolCallId}#${++n}`, toolName: tool, input: stepInput };
+      const stepKind = kindOf(tool, stepInput);
+      emit({ type: 'tool_execution_start', messageId: this.#replyId, row: this.#row(stepCall, 'running') });
+      let outcome: CallOutcome | null = await this.beforeToolCall(stepCall);
+      if (!outcome) {
+        const result = await this.#time('tool.layer', () => layer.call(tool, stepInput, signal));
+        outcome = { call: stepCall, kind: stepKind, text: result.text, isError: !result.ok, result };
+      }
+      outcome = await this.afterToolCall(outcome);
+      emit({ type: 'tool_execution_end', messageId: this.#replyId, row: this.#row(stepCall, outcome.isError ? 'failed' : 'done', outcome) });
+      return { ok: !outcome.isError, text: outcome.text };
+    };
+    const res = await runSiteAction(entry.action, entry.hash, input, { call: step, url, ledger: this.#actionLedger });
+    const receipts = res.receipts.map(r => `${r.ok ? '✓' : '✗'} step ${r.step} ${r.tool}: ${r.note}`).join('\n');
+    return { call, kind, text: `${res.status}: ${res.message}${res.output ? `\n${res.output}` : ''}${receipts ? `\n${receipts}` : ''}\n(action ${id} v${entry.action.version}, hash ${res.hash.slice(0, 12)})`, isError: res.status !== 'done' };
+  }
+
   /** On-demand expert skills: small ranked cards, then one skill body. Local, read only, no network. */
   async #skillTool(call: ToolCallRequest, kind: ToolKind, args: Record<string, unknown>): Promise<CallOutcome> {
     if (call.toolName === 'read_skill') {
+      if (typeof args.id === 'string' && args.id.startsWith('site:')) {
+        const found = [...this.#siteDiscovery.values()].flatMap(d => d.skills).find(x => x.id === args.id);
+        return found ? { call, kind, text: renderSiteSkill(found), isError: false } : { call, kind, text: 'error: no verified site skill has that id. Call find_skill on the page first.', isError: true };
+      }
       const card = typeof args.id === 'string' ? skillById(args.id) : undefined;
       return card
         ? { call, kind, text: renderSkill(card), isError: false }
         : { call, kind, text: 'error: no skill has that id. Call find_skill with the task to get valid ids.', isError: true };
     }
     const query = typeof args.query === 'string' ? args.query : '';
-    let host = '';
+    let url = '';
     try {
       const tabs = await this.options.layer.tabs();
       const active = tabs?.tabs.find(t => t.tabId === (this.#boundTab ?? tabs.activeTabId));
-      if (active) host = new URL(active.url).hostname;
+      if (active) url = active.url;
     } catch { /* no page yet */ }
-    const hits = searchSkills(`${query} ${this.#askedText}`, { host, limit: 3 });
+    const hits = searchSkills(`${query} ${this.#askedText}`, { url, limit: 3 });
+    const sections: string[] = [];
+    const reg = this.#siteActionRegistry();
+    await reg.ready();
+    const actions = reg.forUrl(url);
+    if (actions.length) sections.push(`Verified actions for this site (run with site_action; optional, the general tools always work):\n${actions.map(describeAction).join('\n')}`);
+    const published = await this.#siteSkills(url);
+    if (published.skills.length) sections.push(`Skills this site publishes for itself (digest verified, read with read_skill):\n${published.skills.map(x => `- ${x.id}: ${x.description}`).join('\n')}`);
+    if (hits.length) sections.push(`${hits.map(h => describeHit(h, this.#toolNames)).join('\n')}\nCall read_skill with an id for its method and documentation.`);
     return {
       call, kind, isError: false,
-      text: hits.length ? `${hits.map(h => describeHit(h, this.#toolNames)).join('\n')}\nCall read_skill with an id for its method and documentation.` : 'No catalog skill matches. That is fine: skills are help, not a limit. Inspect the application, use the universal tools and your own reasoning, and read the application documentation (http_get) if you need exact details.',
+      text: sections.length ? sections.join('\n\n') : 'No skill or verified action matches. That is fine: skills are help, not a limit. Inspect the application, use the universal tools and your own reasoning, and read the application documentation (http_get) if you need exact details.',
     };
   }
 
@@ -1757,6 +1856,8 @@ ${ledger}` : ''),
       outcome = await this.#runBatchTool(call, kind, args);
     } else if (call.toolName === 'find_skill' || call.toolName === 'read_skill') {
       outcome = await this.#skillTool(call, kind, args);
+    } else if (call.toolName === 'site_action') {
+      outcome = await this.#runSiteAction(call, kind, args);
     } else if (call.toolName === 'menu_path') {
       outcome = await this.#runMenuPath(call, kind, args);
     } else if (call.toolName === 'run_script_console') {
