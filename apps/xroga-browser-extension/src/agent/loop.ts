@@ -1632,7 +1632,7 @@ ${ledger}` : ''),
     const hits = searchSkills(`${query} ${this.#askedText}`, { host, limit: 3 });
     return {
       call, kind, isError: false,
-      text: hits.length ? `${hits.map(describeHit).join('\n')}\nCall read_skill with an id for its method and documentation.` : 'No catalog skill matches. That is fine: skills are help, not a limit. Inspect the application, use the universal tools and your own reasoning, and read the application documentation (http_get) if you need exact details.',
+      text: hits.length ? `${hits.map(h => describeHit(h, this.#toolNames)).join('\n')}\nCall read_skill with an id for its method and documentation.` : 'No catalog skill matches. That is fine: skills are help, not a limit. Inspect the application, use the universal tools and your own reasoning, and read the application documentation (http_get) if you need exact details.',
     };
   }
 

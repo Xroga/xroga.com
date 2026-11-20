@@ -350,9 +350,21 @@ export function skillById(id: string): SkillCard | undefined {
 }
 
 /** A card small enough to cost little in a model turn: what it is, how far it has been proven, what it needs and the risk. */
-export function describeHit(hit: SkillHit): string {
+/** What a skill relies on, checked against the tools this run actually has: a connected app (plugin tools), a backend worker (repository runner), the browser. */
+export function availability(card: SkillCard, toolNames: ReadonlySet<string>): string {
+  const parts: string[] = [];
+  for (const need of card.requires.length ? card.requires : ['browser']) {
+    if (need === 'connected_app') parts.push(`connected app ${[...toolNames].some(n => n.startsWith('plugin_')) ? 'available' : 'NOT available (use the browser)'}`);
+    else if (need === 'backend_worker') parts.push(`backend worker ${toolNames.has('run_repository') ? 'available' : 'NOT available'}`);
+    else parts.push('browser available');
+  }
+  return parts.join(', ');
+}
+
+export function describeHit(hit: SkillHit, toolNames?: ReadonlySet<string>): string {
   const c = hit.card;
-  return `- ${c.id} (${c.domain}, ${c.verified}, risk ${c.risk}, needs ${c.requires.join('+') || 'browser'}): ${c.summary}`;
+  const avail = toolNames ? `; ${availability(c, toolNames)}` : '';
+  return `- ${c.id} (${c.domain}, ${c.verified}, risk ${c.risk}, needs ${c.requires.join('+') || 'browser'}${avail}): ${c.summary}`;
 }
 
 export function renderSkill(card: SkillCard): string {

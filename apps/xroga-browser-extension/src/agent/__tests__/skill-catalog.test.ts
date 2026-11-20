@@ -6,7 +6,7 @@ import { appendEntry, createConversation, activeBranch } from '@src/store/conver
 import { closeDb } from '@src/store/db';
 import { AgentLoop } from '../loop';
 import { toolsForRun } from '../tools';
-import { FIND_SKILL_TOOL, READ_SKILL_TOOL, SKILL_CATALOG, renderSkill, searchSkills, skillById } from '../skill-catalog';
+import { FIND_SKILL_TOOL, READ_SKILL_TOOL, SKILL_CATALOG, availability, describeHit, renderSkill, searchSkills, skillById } from '../skill-catalog';
 import { parseSkillMd } from '../skill-md';
 import { FakeHost, FakeLayer } from '../testing/fake-layer';
 
@@ -111,5 +111,17 @@ describe('find_skill and read_skill in a run', () => {
     const read = results.filter(r => r.toolName === 'read_skill');
     expect(read[0]!.text).toContain('Never promise profit');
     expect(read[1]!.isError).toBe(true);
+  });
+});
+
+describe('availability against the run tools', () => {
+  it('says whether the connected app or backend worker a skill relies on exists in this run, so the model chooses between them and the browser', () => {
+    const sheets = skillById('spreadsheets-and-documents')!;
+    expect(availability(sheets, new Set(['click']))).toContain('NOT available (use the browser)');
+    expect(availability(sheets, new Set(['click', 'plugin_search']))).toContain('connected app available');
+    const coding = skillById('web-coding-workflow')!;
+    expect(availability(coding, new Set(['click']))).toContain('backend worker NOT available');
+    expect(availability(coding, new Set(['run_repository']))).toContain('backend worker available');
+    expect(describeHit({ card: sheets, score: 1 }, new Set(['click']))).toContain('use the browser');
   });
 });
