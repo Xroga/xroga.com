@@ -45,12 +45,6 @@ export function LegalPageShell({
               {COMPANY_CONTACT.email}
             </a>
           </p>
-          <p className="text-[var(--muted)]">
-            Phone:{' '}
-            <a href={`tel:${COMPANY_CONTACT.phoneTel}`} className="text-[var(--accent)] hover:underline">
-              {COMPANY_CONTACT.phoneDisplay}
-            </a>
-          </p>
           <p className="text-[var(--muted)]">Region: {COMPANY_CONTACT.region}</p>
           <p className="text-xs text-[var(--muted)] pt-1">
             Full contact page:{' '}
