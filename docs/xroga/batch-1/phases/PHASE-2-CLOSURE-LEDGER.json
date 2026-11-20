@@ -6892,7 +6892,7 @@
         {
           "path": "backend/src/ai/pipeline.ts",
           "marker": "loadSessionHistory(opts.userId",
-          "sourceSha256": "51a5247eb08839674283392dc12025c7b44711d7598448437b78764e50ca9f13",
+          "sourceSha256": "c12b8c82d6d82f28f8dea53d2924127e9d92f9ec6eecb417c818e60620a45310",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -7019,7 +7019,7 @@
         {
           "path": "backend/src/ai/pipeline.ts",
           "marker": "const saved = await setProjectMemoryDurable({",
-          "sourceSha256": "51a5247eb08839674283392dc12025c7b44711d7598448437b78764e50ca9f13",
+          "sourceSha256": "c12b8c82d6d82f28f8dea53d2924127e9d92f9ec6eecb417c818e60620a45310",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -8555,7 +8555,7 @@
         "relatedSourceBindings": [
           {
             "path": "backend/src/ai/pipeline.ts",
-            "sha256": "51a5247eb08839674283392dc12025c7b44711d7598448437b78764e50ca9f13",
+            "sha256": "c12b8c82d6d82f28f8dea53d2924127e9d92f9ec6eecb417c818e60620a45310",
             "plainReasoningSourceBinding": {
               "previousSha256": "5c37c7d2bbc96fc8c4ddf1f294c9b1f2bde5385048847400a5bcbd69a3582e06",
               "finding": "Verified the full runBuildPipeline function and subsequent source are byte-identical. The chat change retains default model reasoning and uses the existing native output reservation. Worker admission evidence and acceptance state are unchanged."
@@ -8629,6 +8629,12 @@
               "baseline": "da334bea3f2170d52ab6a97202edb36eecea07bf",
               "candidate": "debcd15f9bc92c87e76ca288ac84b37eac6287f1",
               "scope": "Source binding only. Prior proof, authority and acceptance remain historical."
+            },
+            "workspacePublicResearchP0": {
+              "parent": "8cf32b08df867acf359aaf6bbdfa0b7cce74325e",
+              "applicationSource": "a53217141172f08c820d24b48b73bca9952d6b66",
+              "previousSha256": "51a5247eb08839674283392dc12025c7b44711d7598448437b78764e50ca9f13",
+              "scope": "Only source positions moved for existing non-persistence conversions in the unchanged build pipeline. The chat change preserves the existing egress, model admission, tenant scopes and accounting."
             }
           },
           {

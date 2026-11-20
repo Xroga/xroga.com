@@ -1089,9 +1089,9 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "51a5247eb08839674283392dc12025c7b44711d7598448437b78764e50ca9f13",
+      "sourceSha256": "c12b8c82d6d82f28f8dea53d2924127e9d92f9ec6eecb417c818e60620a45310",
       "callIds": [
-        "1a8a4b584015dcca17d0"
+        "db8cfe93b82fb3c4b04f"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -2649,13 +2649,22 @@
           "eb8532242b9c169bae0b"
         ],
         "scope": "Exact existing call chains and owner predicates only. The prior review grants no automatic public Search authority."
+      },
+      "workspacePublicResearchP0": {
+        "parent": "8cf32b08df867acf359aaf6bbdfa0b7cce74325e",
+        "applicationSource": "a53217141172f08c820d24b48b73bca9952d6b66",
+        "previousSha256": "51a5247eb08839674283392dc12025c7b44711d7598448437b78764e50ca9f13",
+        "scope": "Only source positions moved for existing non-persistence conversions in the unchanged build pipeline. The chat change preserves the existing egress, model admission, tenant scopes and accounting.",
+        "previousCallIds": [
+          "1a8a4b584015dcca17d0"
+        ]
       }
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "51a5247eb08839674283392dc12025c7b44711d7598448437b78764e50ca9f13",
+      "sourceSha256": "c12b8c82d6d82f28f8dea53d2924127e9d92f9ec6eecb417c818e60620a45310",
       "callIds": [
-        "b4b12146d2de371c877b"
+        "a208147f40acfa66cc51"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -4213,6 +4222,15 @@
           "9372bc4c2d95f5c088d0"
         ],
         "scope": "Exact existing call chains and owner predicates only. The prior review grants no automatic public Search authority."
+      },
+      "workspacePublicResearchP0": {
+        "parent": "8cf32b08df867acf359aaf6bbdfa0b7cce74325e",
+        "applicationSource": "a53217141172f08c820d24b48b73bca9952d6b66",
+        "previousSha256": "51a5247eb08839674283392dc12025c7b44711d7598448437b78764e50ca9f13",
+        "scope": "Only source positions moved for existing non-persistence conversions in the unchanged build pipeline. The chat change preserves the existing egress, model admission, tenant scopes and accounting.",
+        "previousCallIds": [
+          "b4b12146d2de371c877b"
+        ]
       }
     },
     {
@@ -28563,9 +28581,9 @@
     },
     {
       "path": "frontend/src/lib/formatAiMarkdown.tsx",
-      "sourceSha256": "04326cf09e25e0d7daeabacfd62f169b3c3c6ee0653687201a0b9bdb60d9c145",
+      "sourceSha256": "80d7289b647a9db11e83766d5ad97fab981af52edec8982f5c5efd00ccad282a",
       "callIds": [
-        "a34869d5c2975f5bca99"
+        "fdfcea22f1ec0d0fb1b6"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in decodeBase64UrlUtf8, with no database or Storage client receiver.",
@@ -28647,6 +28665,15 @@
           "e75c4ea163671f8df19f"
         ],
         "scope": "Exact existing call chains and owner predicates only. The prior review grants no automatic public Search authority."
+      },
+      "workspacePublicResearchP0": {
+        "parent": "8cf32b08df867acf359aaf6bbdfa0b7cce74325e",
+        "source": "a53217141172f08c820d24b48b73bca9952d6b66",
+        "previousSha256": "04326cf09e25e0d7daeabacfd62f169b3c3c6ee0653687201a0b9bdb60d9c145",
+        "previousCallIds": [
+          "a34869d5c2975f5bca99"
+        ],
+        "scope": "Two progress labels changed. The reviewed effect call and confirmation authority are byte-identical."
       }
     },
     {
