@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styles from '@/components/dashboard/WorkspaceScrollPolish.module.css';
 
 type ScrollPosition = { scrollable: boolean; atTop: boolean; atBottom: boolean };
@@ -23,6 +23,13 @@ export function WorkspaceScrollNavigation({
   scrollToLatest: (behavior?: ScrollBehavior) => void;
 }) {
   const [position, setPosition] = useState<ScrollPosition>(INITIAL);
+  const [clicked, setClicked] = useState<'top' | 'bottom' | null>(null);
+  const clickTimer = useRef<number | null>(null);
+
+  // Keep a short filled feedback state after the click, not a permanent toggle.
+  useEffect(() => () => {
+    if (clickTimer.current !== null) window.clearTimeout(clickTimer.current);
+  }, []);
 
   useEffect(() => {
     // Never use the window scroll offset for the workspace transcript.
@@ -58,6 +65,12 @@ export function WorkspaceScrollNavigation({
   }, []);
 
   const navigate = (direction: 'top' | 'bottom') => {
+    if (clickTimer.current !== null) window.clearTimeout(clickTimer.current);
+    setClicked(direction);
+    clickTimer.current = window.setTimeout(() => {
+      setClicked(null);
+      clickTimer.current = null;
+    }, 650);
     const scroller = document.querySelector<HTMLElement>('.xv-terminal-scroll');
     const destination = direction === 'bottom'
       ? Math.max(0, (scroller?.scrollHeight ?? 0) - (scroller?.clientHeight ?? 0)) : 0;
@@ -74,12 +87,12 @@ export function WorkspaceScrollNavigation({
       aria-hidden={!visible} data-testid="workspace-scroll-navigation">
       {!position.atTop ? (
         <button type="button" className={styles.navButton} aria-label="Scroll to first response"
-          data-label="Top" tabIndex={visible ? 0 : -1} onClick={() => navigate('top')}>
+          data-label="Top" data-clicked={clicked === 'top' ? 'true' : 'false'} tabIndex={visible ? 0 : -1} onClick={() => navigate('top')}>
           <NavigationArrow />
         </button>
       ) : null}
       <button type="button" className={styles.navButton} aria-label="Scroll to last response"
-        data-label="Bottom" tabIndex={visible ? 0 : -1} onClick={() => navigate('bottom')}>
+        data-label="Bottom" data-clicked={clicked === 'bottom' ? 'true' : 'false'} tabIndex={visible ? 0 : -1} onClick={() => navigate('bottom')}>
         <NavigationArrow down />
       </button>
     </div>
