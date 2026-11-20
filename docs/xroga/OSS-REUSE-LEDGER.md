@@ -1,0 +1,86 @@
+# Open-Source Reuse Ledger
+
+Generated 2026-11-20T00:23:39.260Z from `docs/xroga/oss-capability-ledger.json` (58 repositories, the 2026-11-20 handoff catalog).
+
+SHA, licence, archived flag and activity were fetched from GitHub for each repository. A row is **INSPECTED (metadata only)** unless the Evidence columns show source study, code and tests. A repository link, clone or README read is not an integration.
+
+Classification: ALREADY IMPLEMENTED: 2, ADAPT CODE: 14, TEST REFERENCE: 14, REJECT: 9, INVOKE ON DEMAND: 19
+
+Status: ALREADY PRESENT: 2, INSPECTED: 52, ADAPTED IN CODE: 1, INTEGRATED/UNIT: 2, LIVE DEEPSEEK VERIFIED: 1
+
+| # | Repository | Pinned SHA | Licence | Classification | Status | Xroga code path | Tests | Reason / rights note |
+|--:|---|---|---|---|---|---|---|---|
+| 1 | [nanobrowser/nanobrowser](https://github.com/nanobrowser/nanobrowser) | 291d5f3927 | Apache-2.0 | ALREADY IMPLEMENTED | ALREADY PRESENT | apps/xroga-browser-extension/NOTICE | - | Local Chrome foundation; not replaced. Diff against upstream fixes not yet done. / handoff: MAINTAIN + DIFF |
+| 2 | [vercel-labs/agent-browser](https://github.com/vercel-labs/agent-browser) | a69c9190b4 | Apache-2.0 | ADAPT CODE | INSPECTED | - | - | handoff: ADAPT TARGETING |
+| 3 | [dylansantwani/openbrowser](https://github.com/dylansantwani/openbrowser) | 1f670809ca | MIT | ALREADY IMPLEMENTED | ADAPTED IN CODE | apps/xroga-browser-extension/src/agent/batch-plan.ts; apps/xroga-browser-extension/src/agent/loop.ts (#runBatchTool) | src/agent/__tests__/batch-plan.test.ts; src/agent/__tests__/batch-tool.test.ts | Kept: removes one model turn per known step. / handoff: EXTEND EXISTING PORT |
+| 4 | [Tencent/BrowserSkill](https://github.com/Tencent/BrowserSkill) | e186aa7239 | MIT | ADAPT CODE | INSPECTED | - | - | handoff: ADAPT TAB LENDING |
+| 5 | [browser-use/browser-harness](https://github.com/browser-use/browser-harness) | fe4a2cd3dd | MIT | ADAPT CODE | INSPECTED | - | - | handoff: ADAPT / FIXTURES |
+| 6 | [alibaba/page-agent](https://github.com/alibaba/page-agent) | d8dd334487 | MIT | ADAPT CODE | INSPECTED | - | - | handoff: BENCHMARK + PORT |
+| 7 | [derpx06/webgenie](https://github.com/derpx06/webgenie) | 56b5d8bccf | Apache-2.0 | ADAPT CODE | INSPECTED | - | - | handoff: ADAPT RECOVERY |
+| 8 | [openbrowse-ai/openbrowse](https://github.com/openbrowse-ai/openbrowse) | 9c1bec9d92 | MIT | ADAPT CODE | INSPECTED | - | - | handoff: SELECTIVE ADAPT |
+| 9 | [browserbase/stagehand](https://github.com/browserbase/stagehand) | 4d72a87ff7 | MIT | TEST REFERENCE | INSPECTED | - | - | handoff: BENCHMARK (NO PAID CLOUD) |
+| 10 | [browser-use/browser-use](https://github.com/browser-use/browser-use) | ccbdb8095f | MIT | ADAPT CODE | INSPECTED | - | - | handoff: ADAPT PRIMITIVES |
+| 11 | [ChromeDevTools/chrome-devtools-mcp](https://github.com/ChromeDevTools/chrome-devtools-mcp) | bdecb63549 | Apache-2.0 | TEST REFERENCE | INSPECTED | - | - | handoff: TEST + PROFILING |
+| 12 | [microsoft/playwright-mcp](https://github.com/microsoft/playwright-mcp) | 2337aff021 | Apache-2.0 | TEST REFERENCE | INSPECTED | - | - | handoff: TEST / OPTIONAL CAPABILITY |
+| 13 | [microsoft/playwright](https://github.com/microsoft/playwright) | 08d33c493b | Apache-2.0 | TEST REFERENCE | ALREADY PRESENT | - | - | No change. / handoff: TEST INFRASTRUCTURE |
+| 14 | [AliSharjeell/OpenBUA](https://github.com/AliSharjeell/OpenBUA) | 98d68ba43a | none found | REJECT | INSPECTED | - | - | handoff: REFERENCE ONLY UNTIL LICENSE |
+| 15 | [anomalyco/browse](https://github.com/anomalyco/browse) | 1880ad8913 | MIT | ADAPT CODE | INSPECTED | - | - | handoff: ADAPT SESSION POLICY |
+| 16 | [uiuing/browser-agent](https://github.com/uiuing/browser-agent) | a8517e2c5c | MIT | ADAPT CODE | INTEGRATED/UNIT | apps/xroga-browser-extension/src/agent/failure-diagnosis.ts; apps/xroga-browser-extension/src/agent/progress-tracker.ts; apps/xroga-browser-extension/src/agent/loop.ts (errorCode into the tracker) | src/agent/__tests__/failure-diagnosis.test.ts | Kept: terminal failures (needs a person) stop at once, others get a diagnosis-specific chain. Postcondition vocabulary (verify.ts) not yet ported. / handoff: ADAPT VERIFICATION |
+| 17 | [jeet-dhandha/agent-webbridge](https://github.com/jeet-dhandha/agent-webbridge) | a14cd1dcdf | MIT | REJECT | INSPECTED | - | - | handoff: REFERENCE ONLY |
+| 18 | [pinchtab/pinchtab](https://github.com/pinchtab/pinchtab) | a62662027f | MIT | TEST REFERENCE | INSPECTED | - | - | handoff: BENCHMARK IDEAS ONLY |
+| 19 | [motailab/open-browser-agent](https://github.com/motailab/open-browser-agent) | b0791b8c44 | Apache-2.0 | TEST REFERENCE | INSPECTED | - | - | handoff: REFERENCE / TEST |
+| 20 | [web-infra-dev/midscene](https://github.com/web-infra-dev/midscene) | f8000b2041 | MIT | ADAPT CODE | INSPECTED | - | - | handoff: BENCHMARK + PORT COMPATIBLE METHODS |
+| 21 | [microsoft/OmniParser](https://github.com/microsoft/OmniParser) | 3540212013 | CC-BY-4.0 | REJECT | INSPECTED | - | - | handoff: REFERENCE; LICENSE + MODEL REVIEW |
+| 22 | [bytedance/UI-TARS](https://github.com/bytedance/UI-TARS) | 582f3a7ea5 | Apache-2.0 | REJECT | INSPECTED | - | - | archived upstream / handoff: RESEARCH ONLY |
+| 23 | [bytedance/UI-TARS-desktop](https://github.com/bytedance/UI-TARS-desktop) | 3ac2cb8d94 | Apache-2.0 | REJECT | INSPECTED | - | - | archived upstream / handoff: ARCHIVED REFERENCE |
+| 24 | [A9T9/RPA](https://github.com/A9T9/RPA) | 17b6302f16 | NOASSERTION | REJECT | INSPECTED | - | - | handoff: REFERENCE; GPL/AGPL REVIEW |
+| 25 | [fabricjs/fabric.js](https://github.com/fabricjs/fabric.js) | ab604137e0 | MIT | TEST REFERENCE | INSPECTED | - | - | handoff: TEST FIXTURES |
+| 26 | [konvajs/konva](https://github.com/konvajs/konva) | 24ac227a84 | NOASSERTION | TEST REFERENCE | INSPECTED | - | - | handoff: TEST FIXTURES |
+| 27 | [tracedraw/tracedraw](https://github.com/tracedraw/tracedraw) | 3a2da4e888 | NOASSERTION | TEST REFERENCE | LIVE DEEPSEEK VERIFIED | - | scripts/verify-a4-svg.test.mjs | One regression case, not the product direction. / handoff: REGRESSION ONLY |
+| 28 | [agentskills/agentskills](https://github.com/agentskills/agentskills) | 83021e2be4 | Apache-2.0 | ADAPT CODE | INTEGRATED/UNIT | apps/xroga-browser-extension/src/agent/skill-md.ts; apps/xroga-browser-extension/src/agent/skill-catalog.ts (find_skill, read_skill) | src/agent/__tests__/skill-catalog.test.ts | Kept: on-demand discovery instead of prompt dumps. allowed-tools is recorded, never granted. / handoff: SKILL REGISTRY ADAPTER |
+| 29 | [anthropics/skills](https://github.com/anthropics/skills) | e4bb5d960d | none found | ADAPT CODE | INSPECTED | - | - | licence not machine-verified: read the LICENSE file before copying any code / handoff: ADAPT ELIGIBLE SKILLS |
+| 30 | [modelcontextprotocol/servers](https://github.com/modelcontextprotocol/servers) | c799c8552b | NOASSERTION | ADAPT CODE | INSPECTED | - | - | licence not machine-verified: read the LICENSE file before copying any code / handoff: COMPATIBLE MCP TOOL ADAPTER |
+| 31 | [Shopify/agent-skills](https://github.com/Shopify/agent-skills) | - | none found | INVOKE ON DEMAND | INSPECTED | - | - | handoff: DOMAIN SKILLS ON DEMAND |
+| 32 | [Shopify/Shopify-AI-Toolkit](https://github.com/Shopify/Shopify-AI-Toolkit) | 0388268a61 | MIT | INVOKE ON DEMAND | INSPECTED | - | - | handoff: DOMAIN SKILLS; REVIEW TELEMETRY |
+| 33 | [googleads/google-ads-api-developer-assistant](https://github.com/googleads/google-ads-api-developer-assistant) | dbb730a199 | Apache-2.0 | INVOKE ON DEMAND | INSPECTED | - | - | handoff: DOMAIN KNOWLEDGE / SANDBOX PLUGIN |
+| 34 | [googleads/google-ads-python](https://github.com/googleads/google-ads-python) | f253b400dc | Apache-2.0 | INVOKE ON DEMAND | INSPECTED | - | - | handoff: ON-DEMAND API WORKER |
+| 35 | [meta/facebook-python-business-sdk](https://github.com/meta/facebook-python-business-sdk) | 947c427b4a | NOASSERTION | INVOKE ON DEMAND | INSPECTED | - | - | handoff: ON-DEMAND API WORKER |
+| 36 | [mozilla/readability](https://github.com/mozilla/readability) | ab4027a8b3 | Apache-2.0 | ADAPT CODE | INSPECTED | - | - | handoff: EMBED / PORT READER |
+| 37 | [apify/crawlee](https://github.com/apify/crawlee) | 93fdd490d7 | Apache-2.0 | INVOKE ON DEMAND | INSPECTED | - | - | handoff: BACKEND SANDBOX ON DEMAND |
+| 38 | [microsoft/markitdown](https://github.com/microsoft/markitdown) | ed178952a6 | MIT | INVOKE ON DEMAND | INSPECTED | - | - | handoff: BACKEND PARSER |
+| 39 | [docling-project/docling](https://github.com/docling-project/docling) | 825c77458b | MIT | INVOKE ON DEMAND | INSPECTED | - | - | handoff: BACKEND PARSER |
+| 40 | [ServiceNow/BrowserGym](https://github.com/ServiceNow/BrowserGym) | 62a678feef | NOASSERTION | TEST REFERENCE | INSPECTED | - | - | handoff: EVALUATION HARNESS |
+| 41 | [ServiceNow/AgentLab](https://github.com/ServiceNow/AgentLab) | 8488c564ee | NOASSERTION | TEST REFERENCE | INSPECTED | - | - | handoff: EVALUATION HARNESS |
+| 42 | [Aepzie/cutline](https://github.com/Aepzie/cutline) | ab71520285 | MIT | INVOKE ON DEMAND | INSPECTED | - | - | handoff: ON-DEMAND / TEST |
+| 43 | [heychintan/openreel](https://github.com/heychintan/openreel) | 5f3c85e5fc | MIT | TEST REFERENCE | INSPECTED | - | - | handoff: TEST / REFERENCE |
+| 44 | [openfilm/openfilm](https://github.com/openfilm/openfilm) | - | MIT | TEST REFERENCE | INSPECTED | - | - | handoff: TEST / REFERENCE |
+| 45 | [opencutvideo/Opencut](https://github.com/opencutvideo/Opencut) | a7dc1f8fa9 | none found | TEST REFERENCE | INSPECTED | - | - | handoff: TEST / REFERENCE |
+| 46 | [Panoptik-Studio/Panoptik](https://github.com/Panoptik-Studio/Panoptik) | e16fcb0901 | AGPL-3.0 | REJECT | INSPECTED | - | - | AGPL-3.0: no code may be copied into the extension; concepts only / handoff: REVIEW / TEST |
+| 47 | [motion-canvas/motion-canvas](https://github.com/motion-canvas/motion-canvas) | 7b91435c30 | MIT | INVOKE ON DEMAND | INSPECTED | - | - | handoff: ON-DEMAND ARTIFACT WORKER |
+| 48 | [ffmpegwasm/ffmpeg.wasm](https://github.com/ffmpegwasm/ffmpeg.wasm) | f876f907c7 | MIT | INVOKE ON DEMAND | INSPECTED | - | - | handoff: ON-DEMAND / ISOLATED |
+| 49 | [Vanilagy/mediabunny](https://github.com/Vanilagy/mediabunny) | 6bb7c03241 | MPL-2.0 | INVOKE ON DEMAND | INSPECTED | - | - | handoff: ON-DEMAND (MPL REVIEW) |
+| 50 | [mifi/editly](https://github.com/mifi/editly) | dc46674052 | MIT | INVOKE ON DEMAND | INSPECTED | - | - | handoff: ON-DEMAND SANDBOX |
+| 51 | [lovell/sharp](https://github.com/lovell/sharp) | 9a34cfeda1 | Apache-2.0 | INVOKE ON DEMAND | INSPECTED | - | - | handoff: BACKEND ARTIFACT PRIMITIVE |
+| 52 | [visioncortex/vtracer](https://github.com/visioncortex/vtracer) | aede2c6197 | MIT | INVOKE ON DEMAND | INSPECTED | - | - | handoff: ON-DEMAND SANDBOX |
+| 53 | [xinntao/Real-ESRGAN](https://github.com/xinntao/Real-ESRGAN) | a4abfb2979 | BSD-3-Clause | INVOKE ON DEMAND | INSPECTED | - | - | handoff: ON-DEMAND AFTER LICENSE/COST REVIEW |
+| 54 | [manimCommunity/manim](https://github.com/ManimCommunity/manim) | ab7f9527fa | MIT | INVOKE ON DEMAND | INSPECTED | - | - | handoff: ON-DEMAND SANDBOX |
+| 55 | [eracle/OpenOutreach](https://github.com/eracle/OpenOutreach) | e3f6baf373 | Apache-2.0 | INVOKE ON DEMAND | INSPECTED | - | - | handoff: ON-DEMAND SCOPED READS |
+| 56 | [Mahanaicoach/google-maps-scraper-kit](https://github.com/Mahanaicoach/google-maps-scraper-kit) | c3e63f1934 | AGPL-3.0 | REJECT | INSPECTED | - | - | AGPL-3.0: no code may be copied into the extension; concepts only / handoff: EVALUATE SOURCE PERMISSIONS |
+| 57 | [speedyapply/JobSpy](https://github.com/speedyapply/JobSpy) | f28870e62b | MIT | INVOKE ON DEMAND | INSPECTED | - | - | handoff: ON-DEMAND SANDBOX |
+| 58 | [browser-use/workflow-use](https://github.com/browser-use/workflow-use) | f00e27edd7 | AGPL-3.0 | REJECT | INSPECTED | - | - | AGPL-3.0: no code may be copied into the extension; concepts only / handoff: CONCEPTS ONLY UNTIL LEGAL REVIEW |
+
+## Deliberately rejected or deferred for code reuse
+
+- **AliSharjeell/OpenBUA** (no licence found): REFERENCE ONLY UNTIL LICENSE.
+- **jeet-dhandha/agent-webbridge** (MIT): REFERENCE ONLY.
+- **microsoft/OmniParser** (CC-BY-4.0): REFERENCE; LICENSE + MODEL REVIEW.
+- **bytedance/UI-TARS** (Apache-2.0): archived upstream.
+- **bytedance/UI-TARS-desktop** (Apache-2.0): archived upstream.
+- **A9T9/RPA** (NOASSERTION): REFERENCE; GPL/AGPL REVIEW.
+- **Panoptik-Studio/Panoptik** (AGPL-3.0): AGPL-3.0: no code may be copied into the extension; concepts only.
+- **Mahanaicoach/google-maps-scraper-kit** (AGPL-3.0): AGPL-3.0: no code may be copied into the extension; concepts only.
+- **browser-use/workflow-use** (AGPL-3.0): AGPL-3.0: no code may be copied into the extension; concepts only.
+
+## Not yet measured
+
+No row has a before/after performance measurement. The only live DeepSeek evidence is in `LIVE-TRIAL-20261120.md` and `LIVE-RUNS-20261120-B.md` (one TraceDraw pass, one fail, one public form pass).
