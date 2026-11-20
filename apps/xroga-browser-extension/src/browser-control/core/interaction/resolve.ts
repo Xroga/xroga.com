@@ -135,7 +135,7 @@ export async function resolveTarget(
     const capability = 'selector' in target ? 'selector' : 'vision';
     throw new LayerError(
       'CAPABILITY_DISABLED',
-      `This target form needs the "${capability}" capability, which this version does not have`,
+      `This target form needs the "${capability}" capability, which this version does not have. To act at a point on a painted canvas, use the canvas tool, or click with a ref of the canvas plus \`at\` (a point inside it).`,
     );
   }
   return resolveRecord(ctx, record, via);

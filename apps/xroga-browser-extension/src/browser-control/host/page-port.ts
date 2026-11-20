@@ -46,7 +46,15 @@ export class PuppeteerPagePort implements PagePort {
       };
       params.captureBeyondViewport = true;
     }
-    const { data } = await this.cdp.send<{ data: string }>(undefined, 'Page.captureScreenshot', params, 20_000);
+    // A tab the user is not looking at often answers its FIRST capture only after a long wait (measured in real Chromium: a 20 s timeout on the first
+    // screenshot of every run, then success at once). A capture changes nothing, so a short first attempt followed by the long one is safe and saves ~16 s.
+    let data: string;
+    try {
+      ({ data } = await this.cdp.send<{ data: string }>(undefined, 'Page.captureScreenshot', params, 4_000));
+    } catch (error) {
+      if (!(error instanceof Error) || error.name !== 'CdpTimeoutError') throw error;
+      ({ data } = await this.cdp.send<{ data: string }>(undefined, 'Page.captureScreenshot', params, 20_000));
+    }
     return { base64: data, ...pngSize(data) };
   }
 

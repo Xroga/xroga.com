@@ -119,7 +119,7 @@ async function runOne(
     baseUrl: args.baseUrl,
     maxOutputTokens: profile.maxOutput,
   });
-  const tools = toolsForRun({ disabled: args.tools === 'short' ? SHORT_TOOLS_OFF : [], vision: profile.vision });
+  const tools = toolsForRun({ disabled: args.tools === 'short' ? SHORT_TOOLS_OFF : [], vision: profile.vision, pointAt: true });
   const abort = new AbortController();
   const timer = setTimeout(() => abort.abort(), 5 * 60_000);
   const loop = new MeasuredLoop({
@@ -239,7 +239,7 @@ async function runOne(
         }
       : undefined,
     answer: answer.slice(0, 600),
-    calls: calls.map(c => `${c.name} ${c.args}`.slice(0, 160)),
+    calls: calls.map((c, i) => `${c.name} ${c.args}`.slice(0, 160) + ` => ${String(results[i] ?? '').replace(/\s+/g, ' ').slice(0, 260)}`),
   };
 }
 

@@ -802,9 +802,9 @@ export function probeMain(): void {
       return (root as ShadowRoot).activeElement ?? null;
     },
 
-    /** Whether the page's visible text contains `text` (whitespace collapsed). */
+    /** Whether the page's visible text contains `text` (whitespace collapsed, case ignored: a model paraphrasing the capitalisation of a status must not read as a failed action). */
     hasText(text: string) {
-      const norm = (t: string) => t.replace(/\s+/g, ' ').trim();
+      const norm = (t: string) => t.replace(/\s+/g, ' ').trim().toLowerCase();
       return norm(document.body?.innerText ?? '').includes(norm(text));
     },
 

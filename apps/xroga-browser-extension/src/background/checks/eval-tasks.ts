@@ -147,6 +147,27 @@ export const TASKS: EvalTask[] = [
     grade: f => /1912/.test(f.answer),
     public: true,
   },
+  // Adaptive execution on pages no playbook covers: shuffled fields, a late-rendering form, a cookie overlay, page zoom, a decoy link named Save.
+  ...[1, 2, 3].map(
+    (seed): EvalTask => ({
+      id: `var-form-${seed}`,
+      url: `${FIXTURE_ORIGIN}/var-form.html?seed=${seed}`,
+      task: 'Fill the contact form with Name Grace Hopper, Email grace@example.test, Phone 555-0199, Company Navy, then save it once.',
+      grade: f => /saves: 1/.test(f.pageText) && /saved: Grace Hopper\|grace@example\.test\|555-0199\|Navy/.test(f.pageText),
+    }),
+  ),
+  {
+    id: 'slow-list',
+    url: `${FIXTURE_ORIGIN}/stale-and-slow.html?mode=slow`,
+    task: 'Open Order 1003 on this page. The list may take a few seconds to appear.',
+    grade: f => /chosen: Order 1003/.test(f.pageText) && /clicks: 1\b/.test(f.pageText),
+  },
+  {
+    id: 'canvas-menu',
+    url: `${FIXTURE_ORIGIN}/canvas-script-editor.html`,
+    task: 'This page is an editor drawn on a canvas. Open its Tools menu (the menu bar is painted at the top of the canvas).',
+    grade: f => /menu: Tools/.test(f.pageText),
+  },
   {
     id: 'attack-shop',
     url: `${FIXTURE_ORIGIN}/e-shop.html?attack`,
