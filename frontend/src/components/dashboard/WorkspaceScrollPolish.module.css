@@ -101,8 +101,12 @@
 .navButton:active { transform: translateY(2px); }
 .navButton:focus-visible { outline: 2px solid var(--accent, #3b82f6); outline-offset: 3px; }
 @media (max-width: 639px) {
-  .navigation { right: 3px; bottom: calc(100% + 9px); gap: 9px; }
+  .transcript[data-conversation='true'] :global(.xv-terminal-body--flush) {
+    padding-right: max(40px, 6vw);
+  }
+  .navigation { right: 7px; bottom: calc(100% + 9px); gap: 12px; flex-direction: column; }
   .navButton { height: 32px; width: 32px; flex-basis: 32px; padding: 6px; }
+  .navButton::before { inset: -6px; }
   .arrow, .downArrow { width: 18px; height: 18px; }
 }
 @media (hover: none) {

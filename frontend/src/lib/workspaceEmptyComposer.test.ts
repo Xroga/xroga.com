@@ -343,7 +343,7 @@ test('workspace navigation uses independent arrows and hides both at the bottom'
   assert.match(DASHBOARD, /data-scrolled=\{headerScrolled/);
 });
 
-test('workspace scroll navigation stays compact and horizontal with Uiverse motion', () => {
+test('workspace scroll navigation keeps compact buttons and reserves reading room on mobile', () => {
   const POLISH = read('../components/dashboard/WorkspaceScrollPolish.module.css');
   assert.match(POLISH, /\.navigation\s*\{[^}]*flex-direction:\s*row;/s);
   assert.match(POLISH, /\.navButton\s*\{[^}]*width:\s*34px;[^}]*height:\s*34px;/s);
@@ -351,7 +351,11 @@ test('workspace scroll navigation stays compact and horizontal with Uiverse moti
   assert.match(POLISH, /\.navButton:hover\s*\{[^}]*translateY\(-3px\)[^}]*background-color:\s*#0c0c0c;/s);
   assert.match(POLISH, /\.navButton:hover \.arrow[^}]*scale\(1\.2\)/s);
   assert.match(POLISH, /\.navButton:active\s*\{[^}]*translateY\(2px\)/s);
-  assert.match(POLISH, /@media \(max-width: 639px\)[^{]*\{[^}]*\}[^}]*\.navButton\s*\{[^}]*width:\s*32px;/s);
+  const mobile = POLISH.slice(POLISH.indexOf('@media (max-width: 639px)'), POLISH.indexOf('@media (hover: none)'));
+  assert.match(mobile, /\.navigation\s*\{[^}]*flex-direction:\s*column;/s);
+  assert.match(mobile, /\.navButton\s*\{[^}]*width:\s*32px;/s);
+  assert.match(mobile, /padding-right:\s*max\(40px, 6vw\)/);
+  assert.match(mobile, /\.navButton::before\s*\{\s*inset:\s*-6px;/);
   assert.match(POLISH, /@media \(prefers-reduced-motion: reduce\)/);
 });
 

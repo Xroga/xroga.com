@@ -262,6 +262,14 @@ test('automatic Search eligibility uses only the current public lookup with ambi
   {query:'Find one-way fares from Lahore to Karachi',officialDomains:[]});
  assert.deepEqual(workspacePublicSearchQuery('Search the web for how lunar eclipses happen, and cite your sources.'),
   {query:'how lunar eclipses happen',officialDomains:[]});
+ assert.deepEqual(workspacePublicSearchQuery('Weather in Karachi'),
+  {query:'Weather in Karachi',officialDomains:[]});
+ assert.deepEqual(workspacePublicSearchQuery('What is the weather in Karachi?'),
+  {query:'weather in Karachi',officialDomains:[]});
+ assert.deepEqual(workspacePublicSearchQuery('What are the public holidays in France this year?'),
+  {query:'public holidays in France this year',officialDomains:[]});
+ assert.deepEqual(workspacePublicSearchQuery('Search the web for the lifespan of a blue whale.'),
+  {query:'the lifespan of a blue whale',officialDomains:[]});
  assert.deepEqual(workspacePublicSearchQuery('Please browse the public internet to explain how HTTP idempotency keys work. Include your citations.'),
   {query:'explain how HTTP idempotency keys work',officialDomains:[]});
  assert.deepEqual(workspacePublicSearchQuery('Search the web using only official NASA sources (nasa.gov). Explain how eclipses happen, and cite your sources.',true),
@@ -280,7 +288,10 @@ test('automatic Search eligibility uses only the current public lookup with ambi
   'Search the web for how to find Jane Doe’s phone number, and cite your sources.',
   'Search the web for how the attached spreadsheet works. Include your citations.',
   'Search the web to explain how 123-45-6789 is used and cite your sources.',
-  'Explain photosynthesis','Search the web for'])assert.equal(workspacePublicSearchQuery(prompt),undefined,prompt);
+  'Weather in our unpublished client event location',
+  'Forecast for my daughter’s address',
+  'Search the web for the lifespan in the attached notes',
+  'Explain weather forecasts','Explain photosynthesis','Search the web for'])assert.equal(workspacePublicSearchQuery(prompt),undefined,prompt);
 });
 
 test('public discovery includes implicit rankings and comparisons without exporting private context',()=>{

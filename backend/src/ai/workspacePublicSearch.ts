@@ -3,8 +3,9 @@ import { containsCredentialSecretText } from '../security/egress/dataClassificat
 import { publicHttpsUrl } from '../security/egress/urlPolicy.js';
 import { DEEPSEEK_QUERY_MAX } from './researchSearchProvider.js';
 
-const publicLookup = /\b(?:search|browse|research|look up|find|compare|current(?:ly)?|latest|today(?:'s)?|now|recent(?:ly)?|live|up[- ]to[- ]date)\b/iu;
-const publicFactSubject = /\b(?:price[s]?|fares?|exchange rates?|stock quotes?|weather|forecast[s]?|official announcement[s]?|news|publication[s]?|press release[s]?|release[s]?|documentation|docs|version[s]?|changelog[s]?|schedule[s]?|timetable[s]?|current developments?|recent developments?|dates?|hours|airport[s]?|flights?|results?|public holidays?|regulation[s]?|standards?)\b/iu;
+const publicLookup = /\b(?:search|browse|research|look up|find|compare|current(?:ly)?|latest|today(?:'s)?|now|recent(?:ly)?|live|up[- ]to[- ]date|this (?:week|month|year|weekend))\b/iu;
+const publicFactSubject = /\b(?:price[s]?|fares?|exchange rates?|stock quotes?|weather|forecast[s]?|official announcement[s]?|news|publication[s]?|press release[s]?|release[s]?|documentation|docs|version[s]?|changelog[s]?|schedule[s]?|timetable[s]?|current developments?|recent developments?|dates?|hours|airport[s]?|flights?|results?|public holidays?|regulation[s]?|standards?|lifespans?|habitats?|populations?|historical timelines?)\b/iu;
+const weatherLookup = /^(?:what(?:['’]s| is)\s+(?:the\s+)?)?(?:weather(?: forecast)?|forecast)\s+(?:in|for|at)\s+\p{L}[\p{L}\p{M} .,'’-]{1,75}[?!]?$/iu;
 // Implicit discovery covers entities with public descriptions and observable
 // rankings. The semantic plan decides whether retrieval is useful. These
 // independent signals only admit a self-contained query from the current turn.
@@ -57,7 +58,7 @@ export function workspacePublicSearchQuery(prompt: string, officialOnly = false)
   const request = message.replace(citationFooter, '').trimEnd();
   const discovery = discoveryIntent.test(request) && (discoverySubject.test(request)
     || (request.toLowerCase().match(/\b[a-z]{7,}\b/g) ?? []).some(word => discoverySpellings.has(categorySpellingKey(word))));
-  if ((!publicLookup.test(request) && !discovery)
+  if ((!publicLookup.test(request) && !discovery && !weatherLookup.test(request))
     || explicitlyDisablesResearch(message)
     || workspaceSearchNeedsExactReview(message) || specificIdentityOrUrl.test(request)
     || !/^[\p{L}\p{M}\p{N}\p{Sc} ,.'’!?()&–،؟。？！、-]+$/u.test(request)) return;
