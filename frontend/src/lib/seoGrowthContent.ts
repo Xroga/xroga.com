@@ -237,11 +237,64 @@ const LEGACY_BLOG_ARTICLES: GuidePage[] = [
   {slug:'best-ai-website-builders',title:'How to choose an AI website builder without losing the fundamentals',description:'Compare AI website builders using accessibility, content ownership, technical SEO, performance, analytics, and maintainability.',eyebrow:'Buyer guide · updated September 9, 2026',intro:'A website builder should make publishing easier without hiding the fundamentals that determine whether people and search engines can understand the result.',sections:[{heading:'Make content crawlable',paragraphs:['Important copy, headings, links, and navigation should render as meaningful HTML. Every indexable page needs a distinct purpose, canonical URL, title, description, and internally linked place in the site.']},{heading:'Protect experience quality',paragraphs:['Verify keyboard navigation, contrast, form labels, responsive layout, image dimensions, and loading behaviour on realistic devices. Visual similarity on a wide desktop is not enough.']},{heading:'Keep measurement truthful',paragraphs:['Install analytics with consent where required, prevent personally identifiable information from entering event data, and define conversions before changing pages.']},{heading:'Retain the ability to improve',paragraphs:['Understand source ownership, redirects, metadata controls, deployment, and how future developers will work. SEO compounds only when the site can be maintained.']}],related:['/ai-website-builder','/build/landing-page','/learn/production-readiness-checklist']},
 ];
 
+/**
+ * Contextual reading paths from established articles to the ten new guides.
+ * These render as ordinary server-side HTML anchors, not JS-only recommendations.
+ * Linking is editorial (topic relevance), never a guarantee of crawling or rankings.
+ */
+const BLOG_DISCOVERY_LINKS: Record<string, string[]> = {
+  'best-vibe-coding-tools': [
+    '/blog/base44-alternatives', '/blog/replit-alternatives',
+    '/blog/ai-coding-tools-existing-github-repositories',
+  ],
+  'best-ai-app-builders': [
+    '/blog/base44-alternatives', '/blog/build-secure-client-portal-with-ai',
+    '/blog/turn-spreadsheet-into-web-app-with-ai', '/blog/ai-app-hosting-costs',
+  ],
+  'best-ai-website-builders': [
+    '/blog/ai-modify-existing-website', '/blog/ai-app-preview-works-production-fails',
+  ],
+  'what-is-vibe-coding': [
+    '/blog/replit-alternatives', '/blog/ai-coding-tools-existing-github-repositories',
+  ],
+  'build-an-app-with-ai': [
+    '/blog/build-secure-client-portal-with-ai', '/blog/turn-spreadsheet-into-web-app-with-ai',
+    '/blog/ai-app-preview-works-production-fails',
+  ],
+  'launch-an-ai-built-mvp': [
+    '/blog/ai-app-hosting-costs', '/blog/ai-app-preview-works-production-fails',
+    '/blog/supabase-login-fails-after-deployment', '/blog/supabase-rls-ai-built-apps',
+  ],
+  'ai-app-builder-prompts': [
+    '/blog/ai-coding-tools-existing-github-repositories', '/blog/ai-modify-existing-website',
+  ],
+  'free-ai-app-builder': [
+    '/blog/base44-alternatives', '/blog/ai-app-hosting-costs',
+  ],
+  'replit-alternatives': [
+    '/blog/base44-alternatives', '/blog/ai-coding-tools-existing-github-repositories',
+  ],
+  'build-secure-client-portal-with-ai': [
+    '/blog/supabase-login-fails-after-deployment', '/blog/supabase-rls-ai-built-apps',
+  ],
+  'supabase-login-fails-after-deployment': [
+    '/blog/ai-app-preview-works-production-fails', '/blog/supabase-rls-ai-built-apps',
+  ],
+  'supabase-rls-ai-built-apps': [
+    '/blog/build-secure-client-portal-with-ai', '/blog/supabase-login-fails-after-deployment',
+  ],
+};
+function withRelatedDiscoveryLinks(article: GuidePage): GuidePage {
+  const existing = article.related ?? [];
+  const additions = BLOG_DISCOVERY_LINKS[article.slug] ?? [];
+  return additions.length ? { ...article, related: [...new Set([...existing, ...additions])] } : article;
+}
+
 /** Premium upgrades replace their legacy record at exactly the same canonical URL. */
 export const BLOG_ARTICLES: GuidePage[] = [
   ...LEGACY_BLOG_ARTICLES.filter((article) => !PREMIUM_BLOG_ARTICLES.some((premium) => premium.slug === article.slug)),
   ...PREMIUM_BLOG_ARTICLES,
-];
+].map(withRelatedDiscoveryLinks);
 
 export const ALTERNATIVES = [
   { slug:'lovable-alternative', competitor:'Lovable', intro:'Teams evaluating a Lovable alternative may be looking for existing-repository support, editor-based control, a different supported stack, or a more explicit validation workflow.', choices:['Xroga for repository-centred product work and delivery evidence','Bolt for browser building with GitHub imports and built-in hosting','v0 for a Vercel-centred project and deployment workflow','Cursor or Windsurf for an agent inside a developer IDE'], compare:'/compare/xroga-vs-lovable' },
