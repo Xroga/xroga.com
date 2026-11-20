@@ -203,6 +203,8 @@ function contextualReadoutLabel(text: string, label: string) {
 }
 
 const readoutSentenceBreak = /(?<=[.!?])\s+/;
+const readoutClaimBreak = /(?<=[.!?])\s+|\n(?=[ \t]*(?:[-+*]|\d+[.)])\s)|[,;]\s*(?:but|whereas)\s+/i;
+const readoutScenario = /^[ \t]*(?:(?:[-+*]|\d+[.)])\s+)?(?:\b(?:boundary|edge) (?:cases?|values?)\b|(?:for\s+)?(?:each|every)\s+(?:additional\b|\d+(?:\.\d+)?\s+(?:percentage|basis)\s+points?\b)[^.!?\n]{0,110}\b(?:adds?|changes?|increases?|decreases?|reduces?|subtracts?)\b)/i;
 
 /** Compare explicit currency claims to the corresponding labeled readout. An
  * unrelated example, input amount or uncategorized number is never rewritten. */
@@ -216,8 +218,11 @@ export function conflictingNativeReadouts(prose: string, readouts: ReturnType<ty
     const words = label.toLowerCase().trim();
     const statements = plain.split(/\n\s*\n/).flatMap(paragraph =>
       /^\s*(?:for example|example|scenario|hypothetical|suppose|alternative)\b/i.test(paragraph)
-        ? [] : paragraph.split(readoutSentenceBreak));
+        ? [] : paragraph.split(readoutClaimBreak));
     for (const paragraph of statements) {
+      // Sensitivity and boundary examples describe other inputs and changes
+      // in value. Compare the labeled active readout in its own claim.
+      if (readoutScenario.test(paragraph)) continue;
       if (/\b(?:example|scenario|hypothetical|suppose|instead|if you|alternative)\b/i.test(paragraph)) continue;
       const lower = paragraph.toLowerCase();
       const contextual = lower.includes(words) ? undefined : contextualReadoutLabel(paragraph, words);

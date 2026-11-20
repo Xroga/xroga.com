@@ -18,6 +18,8 @@
     "backend/src/ai/nativeOpenUiEditorial.ts",
     "backend/src/ai/nativeOpenUiEditorial.test.ts",
     "backend/src/ai/nativeOpenUiPrompt.ts",
+    "backend/src/ai/nativeOpenUiValues.test.ts",
+    "backend/src/ai/nativeOpenUiValues.ts",
     "backend/src/ai/nativeOpenUiWorkspace.ts",
     "backend/src/ai/pipeline.ts",
     "backend/src/ai/researchAnswer.test.ts",
@@ -44,6 +46,7 @@
       "Distinguish public software names, normal currency units, and citation requests from actual destinations or official-only restrictions.",
       "Preserve a document's requested format when the format is specified after the creation brief, and keep its tables editable in Word.",
       "Remove directions to unavailable calculator inputs while retaining the worked calculation and unrelated content.",
+      "Keep calculator sensitivity and boundary examples distinct from the active result being checked.",
       "Reuse an unchanged native answer tree during unrelated Workspace updates."
     ],
     "replace": [],

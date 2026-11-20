@@ -110,6 +110,19 @@ test('currency conflicts match corresponding labels without rewriting examples',
   ]), []);
 });
 
+test('sensitivity and boundary examples do not conflict with the selected calculator result', () => {
+  const rows = [{ label: 'Interest', value: '$1,500.00' }, { label: 'Total balance', value: '$11,500.00' }];
+  const examples = [
+    '- Each 1 percentage point of annual rate changes total interest by 10,000 × 0.01 × 3 = $300 over three years.',
+    '- Each additional year at 5% adds $500 of interest.',
+    '- Boundary values work: a 0% rate gives $0 interest and a $10,000 total; a 0-year duration does the same.',
+  ].join('\n');
+  const correct = 'Interest: 10,000 × 0.05 × 3 = $1,500.00. Total balance: $11,500.00.';
+  assert.deepEqual(conflictingNativeReadouts(correct + '\n\n' + examples, rows), []);
+  assert.deepEqual(conflictingNativeReadouts('Interest: $1,800.00.\n' + examples, rows), [rows[0]]);
+  assert.deepEqual(conflictingNativeReadouts('Each additional year adds $500 of interest, but interest at the current settings is $1,800.00.', rows), [rows[0]]);
+});
+
 test('saved answer preserves calculator and readable computed values after a prose conflict', () => {
   const prose = [
     'This example assumes a fixed rate and excludes fees.',
