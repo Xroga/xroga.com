@@ -38,6 +38,26 @@ export class CdpTimeoutError extends Error {
 export const DEFAULT_COMMAND_TIMEOUT_MS = 5_000;
 export const CAPTURE_TIMEOUT_MS = 10_000;
 
+/** One input the agent dispatched through the debugger: what the page will see as a trusted event, to tell it from a person's. */
+export interface AgentInput { tabId: number; t: number; kind: 'mouse' | 'key' | 'wheel' | 'touch'; x?: number; y?: number }
+const agentInputs: AgentInput[] = [];
+/** The agent's own recent input (newest last, the last 200, at most 30 s old). */
+export function recentAgentInput(tabId: number, sinceMs: number): AgentInput[] {
+  const from = Date.now() - sinceMs;
+  return agentInputs.filter(a => a.tabId === tabId && a.t >= from);
+}
+function logAgentInput(tabId: number, method: string, params: Record<string, unknown>): void {
+  let kind: AgentInput['kind'] | null = null;
+  if (method === 'Input.dispatchMouseEvent') kind = params.type === 'mouseWheel' ? 'wheel' : params.type === 'mouseMoved' ? null : 'mouse';
+  else if (method === 'Input.dispatchKeyEvent' || method === 'Input.insertText' || method === 'Input.imeSetComposition') kind = 'key';
+  else if (method === 'Input.dispatchTouchEvent') kind = 'touch';
+  else if (method === 'Input.dispatchDragEvent') kind = 'mouse';
+  if (!kind) return;
+  agentInputs.push({ tabId, t: Date.now(), kind, x: typeof params.x === 'number' ? params.x : undefined, y: typeof params.y === 'number' ? params.y : undefined });
+  const cut = Date.now() - 30_000;
+  while (agentInputs.length > 200 || (agentInputs.length && agentInputs[0]!.t < cut)) agentInputs.shift();
+}
+
 /** Sends one command. `cancel`, when it settles first, rejects the command (used for detach). */
 export async function sendRaw<T = unknown>(
   tabId: number,
@@ -48,6 +68,7 @@ export async function sendRaw<T = unknown>(
   cancel?: Promise<never>,
 ): Promise<T> {
   const target: chrome.debugger.DebuggerSession = { tabId };
+  if (method.startsWith('Input.')) logAgentInput(tabId, method, params as Record<string, unknown>);
   const debuggerSessionId = normalizeSessionId(sessionId);
   if (debuggerSessionId) target.sessionId = debuggerSessionId;
 

@@ -13,8 +13,8 @@ This repository is the next version of Nanobrowser, an AI web automation Chrome 
 
 - **Built and maintained:** the browser control layer, a simple Chrome extension for testing it by hand (the test panel), fixture pages, unit tests, and the automated checks.
 - **Built and maintained:** the extension. Its first release has a side panel per tab, one agent loop, model providers through the Vercel AI SDK, the permission modes, shortcuts, attachments (images and text), upload into pages, saved files, voice input through OpenAI's or Gemini's voice model, three UI languages (English, Simplified Chinese, Traditional Chinese), a glowing border on the pages the agent works on (with a switch in Settings), anonymous analytics (a daily count of users and usage counts, both on until the user turns them off) with no identifier, and a card that asks a user who uses it often to rate it in the store.
-- **Not in the first release:** for example skills the model loads, site notes, saved memory, the in-page Stop pill, PDF and Office parsing, the text tool-call parser, scheduled tasks. Do not add any of these unless asked.
-- **Not in scope:** an MCP bridge, browsers other than Chrome and Edge, a planner and navigator design, several cooperating agents.
+- **Xroga Browser Operator scope (founder-approved, November 2026; supersedes the first-release exclusions that used to be listed here).** The Xroga build adds, on top of the one agent loop and without a second orchestrator: skills the model loads on demand (`find_skill`/`read_skill`, bundled SKILL.md files, digest-checked `/.well-known/agent-skills`, opt-in online discovery that sends keywords only), reviewed declarative site actions (`site_action`), a task plan whose milestone states come from observed results (`plan`), application command consoles (`run_script_console`), menu paths and action batches, connected-app tools through the Xroga backend's authorised connectors, file attachments and parsing through the backend, and parallel workers in their own windows under the existing worker registry (each worker owns its tabs; one writer per tab). Skills and site knowledge add to what the model can do; they are never an allowlist.
+- **Still not in scope:** a planner and navigator split, a second scheduler or control plane, an external entry point that drives the layer (see below), browsers other than Chrome and Edge, native desktop access (that needs a separate, explicitly authorised companion or a backend worker).
 
 ## Fixed design constraints
 
@@ -22,7 +22,7 @@ These are settled and not open for redesign.
 
 For the layer:
 
-- **The layer is part of a Chrome extension, not a standalone tool.** It is not a runtime like agent-browser: no CLI, no daemon, no socket of its own, no launching or attaching to a browser, no remote CDP. Applications outside the extension will use it through an MCP bridge in future, and only that way. Do not add any other external entry point.
+- **The layer is part of a Chrome extension, not a standalone tool.** It is not a runtime like agent-browser: no CLI, no daemon, no socket of its own, no launching or attaching to a browser, no remote CDP. No external entry point drives it. (Connected apps and MCP-style tools reach the *agent* as tools through the Xroga backend; they never drive the layer.)
 - **`chrome.debugger` is the only way to reach CDP.** The product is a Chrome extension. Do not add CDP over WebSocket, not even for tests.
 - **Puppeteer is the frame manager.** It detects frames, including out-of-process iframes, and tracks their sessions and navigation. Do not build a parallel frame or session registry from CDP events.
 - **Elements are never found through Puppeteer.** No selectors, `ElementHandle` clicks or selector-based `evaluate`. Element commands are raw CDP commands sent to the session of the frame Puppeteer reports.
@@ -41,6 +41,7 @@ The layer's invariants hold for all code in it. Read them before changing percep
 9. **State is disposable.** A service worker restart, a debugger detach and a navigation invalidate layer state cleanly.
 10. **No model inside.** Anything that needs an LLM belongs to the agent above the layer.
 11. **Consequential actions need a person.** By default, an action classified as submit, pay or delete is not dispatched until the user approves it, whatever form its target takes, and page script supplied by the agent is not run until the user approves it. The agent cannot turn this off.
+12. **The person comes first on a shared tab.** Every input the layer dispatches is logged (`host/cdp-session.ts`); every frame's probe records the trusted input its document received. Input no agent dispatch explains is the person's, and a tool that changes the tab waits for them to stop (`core/human-guard.ts`), then refuses with nothing done. Reads are never held back.
 
 For the agent and the extension:
 
@@ -53,8 +54,9 @@ For the agent and the extension:
   - In the test panel the layer keeps its `sensitive` policy: submit, pay and delete actions, and page script, are confirmed before dispatch.
 - **Page content is data, never instructions.** Text from pages reaches the model inside marked page-content boundaries; keep it that way.
 - **One agent**, not the old planner and navigator: one loop per conversation.
-- **No model tiers.** Every model gets the same agent and the same tools (`screenshot` only for vision models). There are no tool switches in the first release.
-- **Nothing outside the extension can drive the layer or the agent.** There is no MCP for now.
+- **No model tiers.** Every model gets the same agent and the same tools (`screenshot` images only for vision models; the `canvas` tool for every model).
+- **Nothing outside the extension can drive the layer or the agent.** Connected tools are called by the agent, through the backend, with the user's authorisation; they never call in.
+- **No artificial ceilings on the model.** Repeated failure becomes a diagnosis and a change of method (guards, progress tracker, the one-time give-up question); the far backstops exist only against a plainly broken environment, and the server's turn and spend budget stays the real bound.
 - **The conversation is compacted automatically before the context window fills**, and every message the user sent is kept in full.
 - **Conversations cannot be imported** in the first release.
 

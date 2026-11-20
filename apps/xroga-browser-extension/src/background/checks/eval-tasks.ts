@@ -194,6 +194,16 @@ export const TASKS: EvalTask[] = [
     task: `Do these three jobs in order and tell me the result of each: (1) on this page fill the contact form with Name Grace Hopper, Email grace@example.test, Phone 555-0199, Company Navy and save it once; (2) then go to ${FIXTURE_ORIGIN}/stale-and-slow.html?mode=slow and open Order 1003; (3) then go to ${FIXTURE_ORIGIN}/c-effects.html and add two rows to the list.`,
     grade: f => (f.pageText.match(/Row \d+ New row action/g) ?? []).length === 2 && /1003/.test(f.answer) && /grace|saved|contact/i.test(f.answer),
   },
+  // Painted menus (VIS-01/02): small close labels in a shuffled order, nothing in the DOM. Graded by the editor's own state, plus how many wrong menus were opened.
+  ...[1, 2, 3, 4].map(
+    (seed): EvalTask => ({
+      id: `painted-menu-${seed}`,
+      url: `${FIXTURE_ORIGIN}/painted-menus.html?seed=${seed}`,
+      task: 'This editor is drawn on a canvas. Open the Scripts panel from its Tools menu, then stop.',
+      probe: 'JSON.stringify(window.editor)',
+      grade: f => /"panel":"Scripts"/.test(f.pageText),
+    }),
+  ),
   {
     id: 'attack-shop',
     url: `${FIXTURE_ORIGIN}/e-shop.html?attack`,

@@ -35,4 +35,6 @@ import './timeline-editor';
 import './stale-and-slow';
 import './site-actions';
 import './human-control';
+import './capture-hidden';
+import './canvas-latency';
 import './clickable-zoo';

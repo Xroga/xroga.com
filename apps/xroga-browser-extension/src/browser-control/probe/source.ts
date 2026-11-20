@@ -173,8 +173,7 @@ export interface ProbeApi {
   watchBlock(el: Element): string;
   blockMutations(): number;
   hasText(text: string): boolean;
-  agentWindow(ms: number): boolean;
-  humanQuiet(): number;
+  recentInput(ms: number): Array<{ t: number; kind: 'mouse' | 'key' | 'wheel' | 'touch'; x?: number; y?: number }>;
   navigationTarget(el: Element, mode: 'activate' | 'enter'): NavigationTarget | null;
   focused(): Element | null;
   activeIn(root: Node): Element | null;
@@ -421,11 +420,14 @@ export function probeMain(): void {
 
   // Human control: a trusted input event outside the agent's own dispatch window is the person using this tab. The layer opens the window around each
   // of its tools (agentWindow) and asks humanQuiet before a mutating one. Frames other than this document are not watched.
-  let lastHuman = 0;
-  let agentUntil = 0;
-  for (const type of typeof g.addEventListener === 'function' ? ['pointerdown', 'mousedown', 'keydown', 'wheel', 'touchstart', 'contextmenu'] : []) {
+  const recent: Array<{ t: number; kind: 'mouse' | 'key' | 'wheel' | 'touch'; x?: number; y?: number }> = [];
+  const KIND: Record<string, 'mouse' | 'key' | 'wheel' | 'touch'> = { mousedown: 'mouse', contextmenu: 'mouse', keydown: 'key', beforeinput: 'key', wheel: 'wheel', touchstart: 'touch' };
+  for (const type of typeof g.addEventListener === 'function' ? Object.keys(KIND) : []) {
     g.addEventListener(type, (e: Event) => {
-      if (e.isTrusted && Date.now() >= agentUntil) lastHuman = Date.now();
+      if (!e.isTrusted) return;
+      const m = e as MouseEvent;
+      recent.push({ t: Date.now(), kind: KIND[type]!, ...(typeof m.clientX === 'number' ? { x: m.clientX, y: m.clientY } : {}) });
+      if (recent.length > 60) recent.shift();
     }, { capture: true, passive: true });
   }
 
@@ -1086,15 +1088,10 @@ export function probeMain(): void {
       };
     },
 
-    /** Marks the next `ms` as the agent's own input, so its events are not taken for the person's. */
-    agentWindow(ms: number) {
-      agentUntil = Date.now() + ms;
-      return true;
-    },
-
-    /** Milliseconds since the person last used this page (a large number when never). */
-    humanQuiet() {
-      return lastHuman ? Date.now() - lastHuman : 1e9;
+    /** Trusted input this document received in the last `ms`, with where pointer input landed (CSS pixels of this frame). */
+    recentInput(ms: number) {
+      const from = Date.now() - ms;
+      return recent.filter(r => r.t >= from);
     },
 
     /** A short description of an element for messages: tag, id, classes, role and text (`shownText`). */

@@ -9,6 +9,7 @@ import { AgentLoop } from '@src/agent/loop';
 import type { LoopEnd } from '@src/agent/loop';
 import { agentSystemPrompt } from '@src/agent/prompt';
 import { PLAN_TOOL } from '@src/agent/task-plan';
+import { RunTimings } from '@src/agent/timing';
 import { toolsForRun } from '@src/agent/tools';
 import { FakeHost } from '@src/agent/testing/fake-layer';
 import { createAgentSession, layerPort } from '@src/extension/agent-session';
@@ -142,7 +143,9 @@ async function runOne(
   const tools = toolsForRun({ disabled: args.tools === 'short' ? SHORT_TOOLS_OFF : [], vision: profile.vision, pointAt: true, agentTools: [PLAN_TOOL] });
   const abort = new AbortController();
   const timer = setTimeout(() => abort.abort(), 5 * 60_000);
+  const timings = new RunTimings();
   const loop = new MeasuredLoop({
+    timings,
     conversationId: conversation.id,
     runId: 'eval',
     model: {
@@ -262,6 +265,7 @@ async function runOne(
         }
       : undefined,
     answer: answer.slice(0, 600),
+    timing: Object.fromEntries(Object.entries(timings.summary().phases ?? {}).map(([k, v]) => [k, Math.round((v as { totalMs: number }).totalMs)])),
     plan: branch.flatMap(e => (e.type === 'message' && e.message.role === 'tool' ? e.message.parts : [])).filter(p => p.type === 'tool-result' && p.toolName === 'plan').map(p => (p.type === 'tool-result' ? p.text : '')).at(-1) ?? null,
     calls: calls.map((c, i) => `${c.name} ${c.args}`.slice(0, 160) + ` => ${String(results[i] ?? '').replace(/\s+/g, ' ').slice(0, 260)}`),
   };

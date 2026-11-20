@@ -30,7 +30,7 @@ export class PuppeteerPagePort implements PagePort {
   async screenshot(options: ScreenshotOptions) {
     const params: Record<string, unknown> = { format: 'png' };
     if (options.clip) {
-      params.clip = { ...options.clip, scale: 1 };
+      params.clip = { ...options.clip, scale: options.scale ?? 1 };
       params.captureBeyondViewport = true;
     } else if (options.fullPage) {
       const metrics = await this.cdp.send<{ cssContentSize: { width: number; height: number } }>(

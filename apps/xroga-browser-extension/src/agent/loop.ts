@@ -846,7 +846,7 @@ ${ledger}` : ''),
     }
     if (!this.#recoveryReadOnly && outcome.result?.error?.code === 'USER_STEP' && outcome.result.error.details)
       outcome = await this.#handOver(outcome);
-    else if (!this.#recoveryReadOnly && !outcome.skipped && !outcome.done) outcome = await this.#promptDialog(outcome);
+    else if (!this.#recoveryReadOnly && !outcome.skipped && !outcome.done) outcome = await this.#time('tool.dialog' as never, () => this.#promptDialog(outcome));
     const page = outcome.result?.page;
     if (page) this.#seen.set(page.tabId, page.url);
     const notes: string[] = [];
@@ -881,7 +881,24 @@ ${ledger}` : ''),
         ? 'This page paints its interface on a canvas, so its outline shows little. Use screenshot to see it, use canvas (click, drag, hover at fractions of the screenshot) to act on it, and check the result with another screenshot. find_color locates a colour.'
         : 'This page paints its interface on a canvas, so its outline shows little. find_color locates a colour on the page; use at fractions of the canvas with click or drag, and check the result.'));
     }
-    const capture = await this.#withThumb(this.#screenshotImage(outcome));
+    let capture = await this.#withThumb(this.#screenshotImage(outcome));
+    // A pointer action on a painted canvas is always followed by a look at the result. The look is taken here, with the coordinate grid, and
+    // goes back with the action: the model checks it (right menu? right object?) and aims its next action in the same turn instead of
+    // spending a turn on a screenshot.
+    if (!capture && this.options.model.profile.vision && outcome.call.toolName === 'canvas' && outcome.result?.ok) {
+      const a = (outcome.call.input ?? {}) as Record<string, unknown>;
+      if (a.action !== 'type' && a.action !== 'key') {
+        await new Promise(r => setTimeout(r, 250));
+        const tabId = outcome.result.page?.tabId ?? a.tabId ?? this.#activeTab;
+        const shot = await this.#time('tool.aftershot' as never, () => this.options.layer.call('screenshot', { ...(typeof tabId === 'number' ? { tabId } : {}), grid: true }, this.options.signal)).catch(() => undefined);
+        if (shot?.ok) {
+          capture = await this.#withThumb(this.#screenshotImage({ ...outcome, call: { ...outcome.call, toolName: 'screenshot' }, result: shot }));
+          // The model sees this action's result in the attached image: the action owes no further evidence.
+          if (capture) this.#debt = this.#debt.filter(d => d.toolCallId !== outcome.call.toolCallId);
+          if (capture) notes.push(note('The screenshot after this action, with the 0 to 1 coordinate grid, is attached. Check it: if the wrong menu or item opened, say which one and aim again from this image. No separate screenshot is needed.'));
+        }
+      }
+    }
     const image = this.options.model.profile.vision ? capture : undefined;
     const evidence = capture ? undefined : await this.#evidenceShot(outcome);
     const localThumbnail = this.options.localScreenshots && !image ? (capture ?? evidence)?.thumb : undefined;

@@ -45,6 +45,8 @@ export interface ScreenshotOptions {
   fullPage?: boolean;
   /** Page CSS pixels. */
   clip?: { x: number; y: number; width: number; height: number };
+  /** Enlargement of a clip (1 by default). */
+  scale?: number;
 }
 
 /** The jobs Puppeteer keeps besides frames: keyboard, navigation with load waits, screenshots. */

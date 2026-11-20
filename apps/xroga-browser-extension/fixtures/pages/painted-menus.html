@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Painted editor</title>
+<style>html,body{margin:0;height:100%;background:#2b2b2b}canvas{display:block;width:100vw;height:100vh}</style></head>
+<body>
+<!-- A desktop-style editor painted entirely on a canvas: a menu bar with small, close labels (order shuffled by ?seed), dropdowns that open under
+     the label, items that open panels. Nothing is in the DOM except the canvas. State for the grader only: window.editor (never drawn as text
+     the DOM can read). A wrong menu stays open until something else is clicked, as in real editors. -->
+<canvas id="c" role="img" aria-label="Editor"></canvas>
+<script>
+const seed = Number(new URLSearchParams(location.search).get('seed') || 1);
+let a = seed * 2654435761 >>> 0;
+const rnd = () => (a = (a * 1664525 + 1013904223) >>> 0) / 4294967296;
+const MENUS = {
+  File: ['New', 'Open', 'Save', 'Export'], Edit: ['Undo', 'Redo', 'Preferences'], Object: ['Group', 'Ungroup', 'Arrange'],
+  Text: ['Font', 'Size'], Effects: ['Blur', 'Shadow', 'Glow'], Page: ['Size', 'Margins'], Tools: ['Scripts', 'Measure', 'Grid'],
+  Window: ['Layers', 'Colors', 'Scripts Panel'], Help: ['About', 'Docs'],
+};
+const names = Object.keys(MENUS);
+for (let i = names.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [names[i], names[j]] = [names[j], names[i]]; }
+const c = document.getElementById('c'), g = c.getContext('2d');
+const dpr = window.devicePixelRatio || 1;
+window.editor = { open: null, panel: null, wrongMenus: [], clicks: 0 };
+let boxes = [];
+function layout() {
+  c.width = innerWidth * dpr; c.height = innerHeight * dpr; g.setTransform(dpr, 0, 0, dpr, 0, 0);
+  g.font = '12px sans-serif';
+  let x = 8; boxes = [];
+  for (const n of names) { const w = g.measureText(n).width + 12; boxes.push({ n, x, w }); x += w + 2; }
+}
+function draw() {
+  g.fillStyle = '#2b2b2b'; g.fillRect(0, 0, innerWidth, innerHeight);
+  g.fillStyle = '#3c3c3c'; g.fillRect(0, 0, innerWidth, 22);
+  g.font = '12px sans-serif'; g.textBaseline = 'middle';
+  for (const b of boxes) {
+    if (window.editor.open === b.n) { g.fillStyle = '#5a5a8a'; g.fillRect(b.x, 1, b.w, 20); }
+    g.fillStyle = '#ddd'; g.fillText(b.n, b.x + 6, 11);
+  }
+  if (window.editor.open) {
+    const b = boxes.find(x => x.n === window.editor.open), items = MENUS[b.n];
+    g.fillStyle = '#444'; g.fillRect(b.x, 22, 150, items.length * 22 + 4);
+    items.forEach((it, i) => { g.fillStyle = '#eee'; g.fillText(it, b.x + 8, 22 + 2 + i * 22 + 11); });
+  }
+  if (window.editor.panel) {
+    g.fillStyle = '#1e1e1e'; g.fillRect(innerWidth * 0.55, 60, innerWidth * 0.4, innerHeight * 0.6);
+    g.fillStyle = '#9cf'; g.font = '16px sans-serif'; g.fillText(window.editor.panel + ' panel', innerWidth * 0.57, 80);
+  }
+  g.fillStyle = '#888'; g.font = '13px sans-serif'; g.fillText('Untitled-1', 12, innerHeight - 14);
+}
+layout(); draw();
+addEventListener('resize', () => { layout(); draw(); });
+c.addEventListener('mousedown', e => {
+  window.editor.clicks++;
+  const x = e.clientX, y = e.clientY;
+  if (y < 22) {
+    const b = boxes.find(b => x >= b.x && x < b.x + b.w);
+    window.editor.open = b ? (window.editor.open === b.n ? null : b.n) : null;
+    if (b && b.n !== 'Tools' && b.n !== 'Window') window.editor.wrongMenus.push(b.n);
+  } else if (window.editor.open) {
+    const b = boxes.find(x => x.n === window.editor.open), items = MENUS[b.n];
+    const i = Math.floor((y - 24) / 22);
+    if (x >= b.x && x < b.x + 150 && i >= 0 && i < items.length) {
+      const it = items[i];
+      if (it === 'Scripts' || it === 'Scripts Panel' || it === 'Layers' || it === 'Colors') window.editor.panel = it === 'Scripts Panel' ? 'Scripts' : it;
+    }
+    window.editor.open = null;
+  }
+  draw();
+});
+</script>
+</body></html>

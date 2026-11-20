@@ -240,12 +240,20 @@ export async function screenshot(ctx: ToolContext, args: ScreenshotArgs): Promis
     // Page.captureScreenshot clips in document coordinates; quads are viewport coordinates.
     clip = { x: b.x + scroll.x, y: b.y + scroll.y, width: Math.max(1, b.width), height: Math.max(1, b.height) };
     origin = { x: clip.x, y: clip.y };
+  } else if (args.region) {
+    const [rx0, ry0, rx1, ry1] = args.region;
+    if (!(rx1 > rx0 && ry1 > ry0)) throw new LayerError('INVALID_ARGUMENT', 'region is [x0, y0, x1, y1] with x1 > x0 and y1 > y0');
+    const vp = await tab.probe!.callGlobal<{ width: number; height: number }>(frames[0], 'viewport');
+    clip = { x: rx0 * vp.width + scroll.x, y: ry0 * vp.height + scroll.y, width: Math.max(1, (rx1 - rx0) * vp.width), height: Math.max(1, (ry1 - ry0) * vp.height) };
+    origin = { x: clip.x, y: clip.y };
   } else if (args.fullPage) {
     origin = { x: 0, y: 0 };
   }
   // The outline says which field values are masked; the image hides the same ones.
   const observation = await recentObservation(ctx);
-  const shot = await attachment.page.screenshot({ fullPage: !args.ref && args.fullPage, clip });
+  // An enlarged region gives small painted labels enough pixels to be read and aimed at (at most 1600 px wide).
+  const zoom = args.region && clip ? Math.max(1, Math.min(4, 1600 / clip.width)) : 1;
+  const shot = await attachment.page.screenshot({ fullPage: !args.ref && !args.region && args.fullPage, clip, ...(zoom > 1 ? { scale: zoom } : {}) });
   // A clipped image is as wide as its clip. A viewport image is as wide as the viewport with its scrollbar, which
   // the layout viewport of Page.getLayoutMetrics leaves out, so that width is read in the page (the probe).
   let cssWidth = clip?.width;
@@ -268,7 +276,7 @@ export async function screenshot(ctx: ToolContext, args: ScreenshotArgs): Promis
     );
   }
   let labelled = 0;
-  if (args.grid) base64 = await drawGrid(base64);
+  if (args.grid || args.region) base64 = await drawGrid(base64, args.region ?? [0, 0, 1, 1]);
   if (args.labels) {
     // Only what the image shows is presented: a ref outside a cropped image keeps the baseline it had.
     const image = clip ?? { width: shot.width / scale, height: shot.height / scale };
@@ -286,7 +294,7 @@ export async function screenshot(ctx: ToolContext, args: ScreenshotArgs): Promis
   return {
     data: { mimeType: 'image/png', base64, width: shot.width, height: shot.height, scale, origin },
     lines: [
-      `screenshot · tab ${tab.tabId} · ${shot.width}×${shot.height} px · scale ${scale.toFixed(2)}${args.labels ? ` · ${labelled} labels` : ''}${args.grid ? ' · coordinate grid drawn (fractions 0 to 1 of the page)' : ''}`,
+      `screenshot · tab ${tab.tabId} · ${shot.width}×${shot.height} px · scale ${scale.toFixed(2)}${args.labels ? ` · ${labelled} labels` : ''}${args.region ? ` · region [${args.region.map(n => n.toFixed(3)).join(', ')}] enlarged ${zoom.toFixed(1)}x, grid labelled in whole-page fractions` : args.grid ? ' · coordinate grid drawn (fractions 0 to 1 of the page)' : ''}`,
     ],
   };
 }
