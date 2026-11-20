@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/workspace-openui-final-recovery-20261115",
-    "sha": "3157a0ee99cdcbb33fd08e783e797352c369ee93",
-    "sourceTimestampUtc": "2026-11-20T05:27:55+05:00",
-    "auditStartedUtc": "2026-11-20T00:31:47.689Z",
+    "sha": "4f22d851658c1d7cc42e13a3f035ea5a6751843f",
+    "sourceTimestampUtc": "2026-11-20T15:35:42+05:00",
+    "auditStartedUtc": "2026-11-20T10:39:00.971Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -5312,6 +5312,67 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:0684b28fde93e166c7de",
+      "subsystem": "ai_execution",
+      "sourcePath": "backend/src/ai/nativeMarkdown.ts",
+      "sha256": "b285f171f96c26ad3811a55f7519043b949632dfb7c9a9bb1bdf4a19e0eb3ca8",
+      "symbols": [
+        "NativeMarkdownTable",
+        "blockStart",
+        "cells",
+        "closing",
+        "delimiter",
+        "end",
+        "fence",
+        "fenceMarker",
+        "head",
+        "indentedCode",
+        "index",
+        "line",
+        "lines",
+        "marker",
+        "math",
+        "nativeMarkdownTables",
+        "opening",
+        "readNativeMarkdownTable",
+        "rows",
+        "source",
+        "startsNewBlock",
+        "table",
+        "tables"
+      ],
+      "imports": [],
+      "runtimeImports": [],
+      "entryPoints": [
+        "backend/src/index.ts",
+        "frontend/src/app/(workspace)/workspace/page.tsx",
+        "frontend/src/app/native-answer-evaluation/page.tsx",
+        "frontend/src/app/os-preview/rich-results/page.tsx",
+        "frontend/src/app/share/[token]/page.tsx",
+        "scripts/security/verify-oci-federation.ts"
+      ],
+      "callers": [
+        "backend/src/ai/nativeOpenUiEditorial.ts:1",
+        "backend/src/ai/nativeOpenUiWorkspace.ts:9",
+        "frontend/src/components/native-openui/upstream/components/markdown.tsx:9"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:5a4c7faa491e20eac75f",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOfficeContent.ts",
@@ -5872,7 +5933,7 @@
       "id": "surface:37e544f387f3291159b3",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiEditorial.ts",
-      "sha256": "88b760f4c340281b8cae9ef92bd0799a4c7ffed493079037f12f2fbabb5a0837",
+      "sha256": "bff2d2d140a8c6ee31cb76db7a7adb7bf7e409d63ce3c7096b556ab2ee0d7cc4",
       "symbols": [
         "Decision",
         "EditorialElement",
@@ -5883,7 +5944,6 @@
         "addDecision",
         "blocked",
         "blocks",
-        "cellLine",
         "condition",
         "conditional",
         "conflictRules",
@@ -5944,7 +6004,6 @@
         "reviewEditorialVisuals",
         "right",
         "row",
-        "rows",
         "rules",
         "sharedState",
         "statement",
@@ -5953,7 +6012,6 @@
         "stopOutcome",
         "supplied",
         "surface",
-        "table",
         "terms",
         "text",
         "to",
@@ -5964,8 +6022,12 @@
         "withholdBlocks",
         "wordKey"
       ],
-      "imports": [],
-      "runtimeImports": [],
+      "imports": [
+        "./nativeMarkdown.js"
+      ],
+      "runtimeImports": [
+        "backend/src/ai/nativeMarkdown.ts"
+      ],
       "entryPoints": [
         "backend/src/index.ts",
         "frontend/src/app/(workspace)/workspace/page.tsx",
@@ -6177,7 +6239,7 @@
       "id": "surface:a67f0b1fa2dd0f11a67f",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiPrompt.ts",
-      "sha256": "7262e9b5055f9d5b6836d7cd1a96f254217cf33aa8592254392c0c8b3ee98c57",
+      "sha256": "c86e18e5eedc60c8cea10872e7deddaf5b7f3c1edc5ae54455f3b20428959fce",
       "symbols": [
         "accessibilityRule",
         "answerScopeRule",
@@ -6540,7 +6602,7 @@
       "id": "surface:93911e9946fd4b21d50d",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiWorkspace.ts",
-      "sha256": "80a475497dde44c2dc21e53a905689547537a610fa9bc7b34aa144c700f4683d",
+      "sha256": "3d0bf4e003052d5b59b5ca36ee16e83a7f5c9c1978da35df07a11e19fca55767",
       "symbols": [
         "authorityIssue",
         "calculatorUnavailable",
@@ -6559,9 +6621,11 @@
         "hasDataConflict",
         "keepVisual",
         "localProgram",
+        "match",
         "missing",
         "multipleConflict",
         "multiples",
+        "negatedTableControl",
         "note",
         "original",
         "originalProgram",
@@ -6577,6 +6641,7 @@
         "recovered",
         "recoveryReview",
         "repair",
+        "requestsNativeTableControls",
         "response",
         "reviewReason",
         "reviewed",
@@ -6584,6 +6649,8 @@
         "reviewedProse",
         "safeProse",
         "supplied",
+        "tableControlRequests",
+        "tableRequestClauses",
         "text",
         "truncated",
         "unknownCapability",
@@ -6596,6 +6663,7 @@
       ],
       "imports": [
         "./completionDiagnostics.js",
+        "./nativeMarkdown.js",
         "./nativeOpenUi.js",
         "./nativeOpenUiAccuracy.js",
         "./nativeOpenUiEditorial.js",
@@ -6604,6 +6672,7 @@
       ],
       "runtimeImports": [
         "backend/src/ai/completionDiagnostics.ts",
+        "backend/src/ai/nativeMarkdown.ts",
         "backend/src/ai/nativeOpenUi.ts",
         "backend/src/ai/nativeOpenUiAccuracy.ts",
         "backend/src/ai/nativeOpenUiEditorial.ts",
@@ -89487,7 +89556,7 @@
       "id": "surface:0fef6875af5860e2f4b4",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/markdown.tsx",
-      "sha256": "2ef186365b32430c1cbdaca8cba9f549b4308fa5314c3abdfb07efdc534bc6e9",
+      "sha256": "fbc065507dd78ddec657c5ae5b29c26d92b46054ff4920f8797af63a3814014a",
       "symbols": [
         "Block",
         "ChecklistItem",
@@ -89504,7 +89573,6 @@
         "block",
         "blocks",
         "body",
-        "cells",
         "checkedItems",
         "checklistKey",
         "checklists",
@@ -89521,7 +89589,6 @@
         "end",
         "entries",
         "from",
-        "head",
         "heading",
         "headingKey",
         "headingTitles",
@@ -89571,7 +89638,6 @@
         "rows",
         "sectionTables",
         "seenTables",
-        "source",
         "staticMarkdownBlocks",
         "tab",
         "table",
@@ -89589,6 +89655,7 @@
         "visit"
       ],
       "imports": [
+        "../../../../../../backend/src/ai/nativeMarkdown",
         "../../../../../../backend/src/ai/nativeOpenUi",
         "../../evidence",
         "./chart",
@@ -89599,6 +89666,7 @@
         "react"
       ],
       "runtimeImports": [
+        "backend/src/ai/nativeMarkdown.ts",
         "backend/src/ai/nativeOpenUi.ts",
         "frontend/src/components/native-openui/upstream/components/chart.tsx",
         "frontend/src/components/native-openui/upstream/components/code-panel.tsx",
@@ -143889,9 +143957,9 @@
   ],
   "findings": [
     {
-      "id": "finding:e828698a19ffaab51a5c",
+      "id": "finding:5c5b6cfc690f2746b8e5",
       "sourcePath": "backend/src/ai/nativeOpenUiPrompt.ts",
-      "line": 78,
+      "line": 79,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -148262,114 +148330,114 @@
       "reachable": false
     },
     {
-      "id": "frontend-call:5fa0c6d695947443e965",
+      "id": "frontend-call:b92d4ec6794e9998d034",
       "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 99,
+      "line": 100,
       "callee": "api.listen",
       "reachable": false
     },
     {
-      "id": "frontend-call:5510435ca7e610359313",
+      "id": "frontend-call:6834c4ccfb3ed0ce309c",
       "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 101,
+      "line": 102,
       "callee": "api.address",
       "reachable": false
     },
     {
-      "id": "frontend-call:1fcbecdb81f16f7ff63c",
+      "id": "frontend-call:55a5716375daf10cc394",
       "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 106,
+      "line": 107,
       "callee": "api.closeAllConnections",
       "reachable": false
     },
     {
-      "id": "frontend-call:e011ba94e3120ed08984",
+      "id": "frontend-call:db136be32db6ab94b15f",
       "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 106,
+      "line": 107,
       "callee": "api.close",
       "reachable": false
     },
     {
-      "id": "frontend-call:8ae1384bb956fcce33e5",
+      "id": "frontend-call:7dd40b51e69b03ca768e",
       "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 118,
+      "line": 119,
       "callee": "api.listen",
       "reachable": false
     },
     {
-      "id": "frontend-call:a248bcf5e9470f5489a9",
+      "id": "frontend-call:7ab63630e455c3634d82",
       "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 120,
+      "line": 121,
       "callee": "api.address",
       "reachable": false
     },
     {
-      "id": "frontend-call:2f067bd3ec440cd876d4",
+      "id": "frontend-call:2d815bd041b32045e99b",
       "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 128,
+      "line": 129,
       "callee": "api.closeAllConnections",
       "reachable": false
     },
     {
-      "id": "frontend-call:7efa3a22f7823af1e817",
+      "id": "frontend-call:da9a139384876cb202fa",
       "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 128,
+      "line": 129,
       "callee": "api.close",
       "reachable": false
     },
     {
-      "id": "frontend-call:c0d1602c2ac9258b2720",
+      "id": "frontend-call:76668b842efea282d6da",
       "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 137,
+      "line": 138,
       "callee": "api.listen",
       "reachable": false
     },
     {
-      "id": "frontend-call:92b789344c74ab212734",
+      "id": "frontend-call:107f866d9417ce49b6fb",
       "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 139,
+      "line": 140,
       "callee": "api.address",
       "reachable": false
     },
     {
-      "id": "frontend-call:08307e232bbd28da7ea3",
+      "id": "frontend-call:5328e7d28d1e463e69ac",
       "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 159,
+      "line": 160,
       "callee": "api.closeAllConnections",
       "reachable": false
     },
     {
-      "id": "frontend-call:d1b7f900b78b0b15480c",
+      "id": "frontend-call:9e316975e9283ec18331",
       "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 159,
+      "line": 160,
       "callee": "api.close",
       "reachable": false
     },
     {
-      "id": "frontend-call:5137632cdbe59f0c5aca",
+      "id": "frontend-call:7b709d63b70d197ae48b",
       "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 172,
+      "line": 173,
       "callee": "api.listen",
       "reachable": false
     },
     {
-      "id": "frontend-call:fb53470767780f9c81de",
+      "id": "frontend-call:2bcb89266e33811ba282",
       "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 174,
+      "line": 175,
       "callee": "api.address",
       "reachable": false
     },
     {
-      "id": "frontend-call:04fb43221fb65ffeb709",
+      "id": "frontend-call:b8c603b3b5c90f841990",
       "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 204,
+      "line": 205,
       "callee": "api.closeAllConnections",
       "reachable": false
     },
     {
-      "id": "frontend-call:447fae106bfda717a350",
+      "id": "frontend-call:e89012a220a3350f6bb7",
       "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 204,
+      "line": 205,
       "callee": "api.close",
       "reachable": false
     },
@@ -151941,7 +152009,7 @@
     {
       "id": "test-suite:2e491f4d2fcbc11f974c",
       "sourcePath": "backend/src/ai/nativeOpenUi.test.ts",
-      "declaredTests": 77,
+      "declaredTests": 79,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -157233,7 +157301,7 @@
     {
       "id": "test-suite:4ce9d7bbf578638998f1",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/markdown.test.ts",
-      "declaredTests": 25,
+      "declaredTests": 26,
       "skipLocations": [],
       "focusLocations": []
     },
