@@ -6,6 +6,7 @@ import { DEEPSEEK_QUERY_MAX } from './researchSearchProvider.js';
 const publicLookup = /\b(?:search|browse|research|look up|find|compare|current(?:ly)?|latest|today(?:'s)?|now|recent(?:ly)?|live|up[- ]to[- ]date|this (?:week|month|year|weekend))\b/iu;
 const publicFactSubject = /\b(?:price[s]?|fares?|exchange rates?|stock quotes?|weather|forecast[s]?|official announcement[s]?|news|publication[s]?|press release[s]?|release[s]?|documentation|docs|version[s]?|changelog[s]?|schedule[s]?|timetable[s]?|current developments?|recent developments?|dates?|hours|airport[s]?|flights?|results?|public holidays?|regulation[s]?|standards?|lifespans?|habitats?|populations?|historical timelines?)\b/iu;
 const weatherLookup = /^(?:what(?:['’]s| is)\s+(?:the\s+)?)?(?:weather(?: forecast)?|forecast)\s+(?:in|for|at)\s+\p{L}[\p{L}\p{M} .,'’-]{1,75}[?!]?$/iu;
+const publicOfficeLookup = /^who\s+(?:is|was)\s+(?:the\s+)?(?:current\s+)?(?:president|prime minister|governor|mayor|chief executive officer|ceo)\s+of\s+\p{L}[\p{L}\p{M} .,'’-]{1,75}[?!]?$/iu;
 // Implicit discovery covers entities with public descriptions and observable
 // rankings. The semantic plan decides whether retrieval is useful. These
 // independent signals only admit a self-contained query from the current turn.
@@ -43,7 +44,7 @@ function isPublicSourceHost(domain: string): boolean {
 export function workspaceSearchNeedsExactReview(prompt: string): boolean {
   const request = prompt.trim().replace(citationFooter, '');
   return containsCredentialSecretText(prompt) || privateOrContextual.test(request)
-    || privateDiscoveryContext.test(request) || personalLookup.test(request);
+    || privateDiscoveryContext.test(request) || (personalLookup.test(request) && !publicOfficeLookup.test(request));
 }
 
 /** A public lookup sends only terms from this turn. The semantic planner can
@@ -56,9 +57,10 @@ export function workspacePublicSearchQuery(prompt: string, officialOnly = false)
   // A presentation-only footer such as "cite your sources" carries no search
   // terms. Leave everything else in the turn subject to the privacy checks.
   const request = message.replace(citationFooter, '').trimEnd();
+  const publicOffice = publicOfficeLookup.test(request);
   const discovery = discoveryIntent.test(request) && (discoverySubject.test(request)
     || (request.toLowerCase().match(/\b[a-z]{7,}\b/g) ?? []).some(word => discoverySpellings.has(categorySpellingKey(word))));
-  if ((!publicLookup.test(request) && !discovery && !weatherLookup.test(request))
+  if ((!publicLookup.test(request) && !discovery && !weatherLookup.test(request) && !publicOffice)
     || explicitlyDisablesResearch(message)
     || workspaceSearchNeedsExactReview(message) || specificIdentityOrUrl.test(request)
     || !/^[\p{L}\p{M}\p{N}\p{Sc} ,.'’!?()&–،؟。？！、-]+$/u.test(request)) return;
@@ -74,7 +76,7 @@ export function workspacePublicSearchQuery(prompt: string, officialOnly = false)
   if (!officialDomains.length && (exclusiveOfficialSource.test(request) || officialOnly && asksForOfficial)) return;
   const explicitExplanation = explicitWebLookup.test(request)
     && explanatoryLookup.test(request.replace(explicitWebLookup, ''));
-  if (!officialDomains.length && !publicFactSubject.test(request) && !explicitExplanation && !discovery) return;
+  if (!officialDomains.length && !publicFactSubject.test(request) && !explicitExplanation && !discovery && !publicOffice) return;
 
   const topic = request.replace(bareDomain, '').replace(/\(\s*\)/g, '')
     .replace(explicitWebLookup, '').replace(instructionStart, '').replace(sourcePreface, '')

@@ -270,6 +270,10 @@ test('automatic Search eligibility uses only the current public lookup with ambi
   {query:'public holidays in France this year',officialDomains:[]});
  assert.deepEqual(workspacePublicSearchQuery('Search the web for the lifespan of a blue whale.'),
   {query:'the lifespan of a blue whale',officialDomains:[]});
+ assert.deepEqual(workspacePublicSearchQuery('Who is the current president of France?'),
+  {query:'Who is the current president of France',officialDomains:[]});
+ assert.deepEqual(workspacePublicSearchQuery('Who is the CEO of Apple?'),
+  {query:'Who is the CEO of Apple',officialDomains:[]});
  assert.deepEqual(workspacePublicSearchQuery('Please browse the public internet to explain how HTTP idempotency keys work. Include your citations.'),
   {query:'explain how HTTP idempotency keys work',officialDomains:[]});
  assert.deepEqual(workspacePublicSearchQuery('Search the web using only official NASA sources (nasa.gov). Explain how eclipses happen, and cite your sources.',true),
@@ -290,6 +294,7 @@ test('automatic Search eligibility uses only the current public lookup with ambi
   'Search the web to explain how 123-45-6789 is used and cite your sources.',
   'Weather in our unpublished client event location',
   'Forecast for my daughter’s address',
+  'Who is the CEO of our confidential acquisition target?',
   'Search the web for the lifespan in the attached notes',
   'Explain weather forecasts','Explain photosynthesis','Search the web for'])assert.equal(workspacePublicSearchQuery(prompt),undefined,prompt);
 });
