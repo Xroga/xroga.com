@@ -1,3 +1,4 @@
+import { keepDownload, waitForDownload, type DownloadLike } from '@src/agent/confirm-download';
 // Fixture set U: uploads. The layer's `upload` on u-upload.html: bytes into a plain input, several into a multiple
 // input, the intercepted file chooser of a button and of a drop zone, the read-back, the write gate, and the sources a
 // session accepts.
@@ -462,3 +463,40 @@ for (const [label, pattern, name] of [
     },
   );
 }
+
+scenario(
+  'XFER-1-download-then-upload',
+  'A file one site exported is put into another site: the same bytes, once, checked at the destination',
+  'confirm_download keep (real Chrome download list, bytes fetched again, SHA-256) then upload with those bytes; read-back in the destination page',
+  async ctx => {
+    const stamp = Date.now();
+    const name = `xfer-${stamp}.txt`;
+    const made: number[] = [];
+    try {
+      const id = await chrome.downloads.download({ url: `${FIXTURE_ORIGIN}/download?name=${name}` });
+      made.push(id);
+      const verdict = await waitForDownload(async () => (await chrome.downloads.search({ orderBy: ['-startTime'], limit: 25 })) as DownloadLike[], { since: stamp - 1000, name: `xfer-${stamp}`, waitMs: 15_000 });
+      const kept = verdict.item ? await keepDownload(verdict.item as DownloadLike & { url?: string; finalUrl?: string }) : { reason: 'no download' };
+      if ('reason' in kept) return outcome('kept', `not kept: ${kept.reason} (${verdict.status})`, false);
+      const bytes = new Uint8Array(await kept.data.arrayBuffer());
+      const base64 = btoa(String.fromCharCode(...bytes));
+      const u = await uploadSession(ctx);
+      const r = await u.call('upload', { target: { ref: refOf(await u.call('snapshot'), /Document/) }, attachments: [{ name: kept.name, mimeType: kept.mimeType, base64 }] });
+      await sleep(200);
+      const landed = await evaluate<string>(u.tabId, undefined, `document.getElementById('doc').files[0] ? document.getElementById('doc').files[0].text() : ''`);
+      const expected = `A file the fixture server sent: ${name}
+`;
+      const count = await evaluate<number>(u.tabId, undefined, `document.getElementById('doc').files.length`);
+      return outcome(
+        'download verified and kept with its hash; upload ok; the destination holds exactly the downloaded text, one file',
+        JSON.stringify({ verdict: verdict.status, size: kept.size, sha: kept.sha256.slice(0, 12), upload: r.ok, post: r.receipt?.postcondition?.status, landedMatches: landed === expected, count }),
+        verdict.status === 'verified' && r.ok && landed === expected && count === 1,
+      );
+    } finally {
+      for (const id of made) {
+        await chrome.downloads.removeFile(id).catch(() => undefined);
+        await chrome.downloads.erase({ id }).catch(() => undefined);
+      }
+    }
+  },
+);

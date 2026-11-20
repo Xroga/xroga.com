@@ -19,6 +19,7 @@ export const CONFIRM_DOWNLOAD_TOOL: AgentTool = {
     properties: {
       name: { type: 'string', description: 'Part of the file name, such as ".mp4"' },
       waitSeconds: { type: 'integer', description: 'Seconds to wait, default 30' },
+      keep: { type: 'boolean', description: 'Keep the file for this task, to upload it elsewhere' },
     },
     additionalProperties: false,
   },
@@ -57,6 +58,8 @@ export function pickDownload(items: DownloadLike[], query: DownloadQuery): Downl
 }
 
 export interface DownloadVerdict {
+  /** The download item the verdict is about. */
+  item?: DownloadLike;
   /** `verified` only for a finished, existing, non-empty file. */
   status: 'verified' | 'empty' | 'missing' | 'interrupted' | 'in_progress' | 'not_seen';
   line: string;
@@ -107,7 +110,7 @@ export async function waitForDownload(
   for (;;) {
     const item = pickDownload(await search(), query);
     const ended = item && item.state !== 'in_progress';
-    if (ended || signal?.aborted || clock.now() >= deadline) return judgeDownload(item, query.name);
+    if (ended || signal?.aborted || clock.now() >= deadline) return { ...judgeDownload(item, query.name), ...(item ? { item } : {}) };
     await clock.sleep(400);
   }
 }
@@ -122,4 +125,35 @@ export function readQuery(args: Record<string, unknown>, now = Date.now()): Down
     since: now - num(args.withinSeconds, DEFAULT_WINDOW_S, MAX_WINDOW_S) * 1000,
     waitMs: num(args.waitSeconds, DEFAULT_WAIT_S, MAX_WAIT_S) * 1000,
   };
+}
+
+/** The largest download kept for a task (the same cap as a chat attachment). */
+export const KEEP_MAX_BYTES = 25 * 1024 * 1024;
+
+export interface KeptFile { data: Blob; name: string; mimeType: string; size: number; sha256: string }
+
+/**
+ * Reads a finished download's bytes so the task can put the same file into another site (upload with attachmentIds). Only an https address
+ * (fetched with the user's cookies, as the page itself did) or a data: address can be read again; a page's blob: address cannot be reached
+ * from the extension, and nothing on the user's disk is ever read.
+ */
+export async function keepDownload(item: DownloadLike & { url?: string; finalUrl?: string }, fetchImpl: typeof fetch = fetch): Promise<KeptFile | { reason: string }> {
+  const url = item.finalUrl || item.url || '';
+  // https, data:, and the loopback development host (fixtures, a local app the user runs); never plain http elsewhere, blob: or file:.
+  if (!/^(https:|data:|http:\/\/(localhost|127\.0\.0\.1)(:\d+)?\/)/i.test(url)) return { reason: `its address (${url.split(':')[0] || 'unknown'}) cannot be read again by the extension; ask the user to attach the file instead` };
+  if ((item.fileSize ?? 0) > KEEP_MAX_BYTES) return { reason: 'it is larger than 25 MB' };
+  let res: Response;
+  try {
+    res = await fetchImpl(url, { credentials: 'include' });
+  } catch (error) {
+    return { reason: `it could not be fetched again (${error instanceof Error ? error.message : String(error)})` };
+  }
+  if (!res.ok) return { reason: `the site answered ${res.status} when it was fetched again` };
+  const bytes = await res.arrayBuffer();
+  if (bytes.byteLength > KEEP_MAX_BYTES) return { reason: 'it is larger than 25 MB' };
+  if (item.fileSize && bytes.byteLength !== item.fileSize) return { reason: `the bytes fetched again (${bytes.byteLength}) differ from the downloaded file (${item.fileSize}); the site may serve a different file each time` };
+  const digest = await crypto.subtle.digest('SHA-256', bytes);
+  const sha256 = [...new Uint8Array(digest)].map(b => b.toString(16).padStart(2, '0')).join('');
+  const mimeType = item.mime || res.headers.get('content-type')?.split(';')[0] || 'application/octet-stream';
+  return { data: new Blob([bytes], { type: mimeType }), name: baseName(item.filename), mimeType, size: bytes.byteLength, sha256 };
 }

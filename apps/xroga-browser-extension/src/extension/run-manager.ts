@@ -74,7 +74,7 @@ import { PromptBroker } from './prompt-broker';
 import { notifyFinished, notifyNeeds } from './notify';
 import { thumbnail } from './thumbnail';
 import { isNumberedCopy, saveText } from './downloads';
-import { CONFIRM_DOWNLOAD_TOOL, readQuery, waitForDownload, type DownloadLike } from '../agent/confirm-download';
+import { CONFIRM_DOWNLOAD_TOOL, keepDownload, readQuery, waitForDownload, type DownloadLike } from '../agent/confirm-download';
 import { checkSave } from '@src/agent/save-file';
 import { conversationMarkdown, exportName } from '@src/agent/export';
 import { isBlockedSite, quote } from '@src/browser-control';
@@ -1258,6 +1258,17 @@ export class RunManager {
         undefined,
         signal,
       );
+      if (args.keep === true && verdict.status === 'verified' && verdict.item) {
+        // The same bytes, kept with the conversation's attachments: upload puts them into another site, and the hash lets the destination be checked.
+        const kept = await keepDownload(verdict.item as DownloadLike & { url?: string; finalUrl?: string });
+        if ('reason' in kept) return { text: `${verdict.line}\nNot kept for upload: ${kept.reason}.`, isError: false };
+        const id = crypto.randomUUID();
+        await putBlob({ id, conversationId, name: kept.name, mimeType: kept.mimeType, size: kept.size, data: kept.data, createdAt: new Date().toISOString() });
+        return {
+          text: `${verdict.line}\nKept for this task as attachment id ${id} (${kept.size} bytes, sha256 ${kept.sha256.slice(0, 16)}…). To put it into another site use upload with attachmentIds ["${id}"], then check the destination lists the file.`,
+          isError: false,
+        };
+      }
       return { text: verdict.line, isError: verdict.isError };
     }
     if (call.toolName !== 'save_file') return { text: `error: ${call.toolName} is not available.`, isError: true };
