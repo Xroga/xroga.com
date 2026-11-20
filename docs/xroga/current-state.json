@@ -5354,7 +5354,7 @@
       "callers": [
         "backend/src/ai/nativeOpenUiEditorial.ts:1",
         "backend/src/ai/nativeOpenUiWorkspace.ts:9",
-        "frontend/src/components/native-openui/upstream/components/markdown.tsx:9"
+        "frontend/src/components/native-openui/upstream/components/markdown.tsx:10"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -5741,7 +5741,7 @@
         "frontend/src/components/native-openui/NativeWorkspaceAnswer.tsx:14",
         "frontend/src/components/native-openui/upstream/components/chart.tsx:8",
         "frontend/src/components/native-openui/upstream/components/markdown.test.ts:8",
-        "frontend/src/components/native-openui/upstream/components/markdown.tsx:8",
+        "frontend/src/components/native-openui/upstream/components/markdown.tsx:9",
         "frontend/src/lib/publicAnswerText.ts:1"
       ],
       "reachable": true,
@@ -89179,7 +89179,7 @@
       "callers": [
         "frontend/src/components/native-openui/library.tsx:8",
         "frontend/src/components/native-openui/upstream/components/chart.test.ts:5",
-        "frontend/src/components/native-openui/upstream/components/markdown.tsx:5"
+        "frontend/src/components/native-openui/upstream/components/markdown.tsx:6"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -89237,7 +89237,7 @@
       ],
       "callers": [
         "frontend/src/components/native-openui/upstream/components/extra.tsx:8",
-        "frontend/src/components/native-openui/upstream/components/markdown.tsx:6",
+        "frontend/src/components/native-openui/upstream/components/markdown.tsx:7",
         "frontend/src/lib/formatAiMarkdown.tsx:9"
       ],
       "reachable": true,
@@ -89492,7 +89492,7 @@
       "id": "surface:f60271f3a570336ef22f",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/layout.tsx",
-      "sha256": "739be7344424b251cc70a57dde58a3c693e5f4d6cf0d1f4645cdf589b93120c3",
+      "sha256": "61f3d89980901ed5846bba9d9918f55a62f56754b44a05a09f0ab61f95b854c2",
       "symbols": [
         "Box",
         "Card",
@@ -89507,21 +89507,28 @@
         "align",
         "boundedSpace",
         "columns",
+        "contents",
         "flexStyle",
         "gap",
         "id",
+        "inline",
         "justify",
         "min",
+        "moved",
         "padding",
-        "row"
+        "row",
+        "sections",
+        "settled"
       ],
       "imports": [
+        "./markdown",
         "./style",
         "@openuidev/react-lang",
         "react",
         "zod/v4"
       ],
       "runtimeImports": [
+        "frontend/src/components/native-openui/upstream/components/markdown.tsx",
         "frontend/src/components/native-openui/upstream/components/style.ts"
       ],
       "entryPoints": [
@@ -89556,11 +89563,12 @@
       "id": "surface:0fef6875af5860e2f4b4",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/markdown.tsx",
-      "sha256": "fbc065507dd78ddec657c5ae5b29c26d92b46054ff4920f8797af63a3814014a",
+      "sha256": "2e686dc3706449b9c8422bca0f366e3f0f2255992e6540c488620be423a371a2",
       "symbols": [
         "Block",
         "ChecklistItem",
         "INLINE",
+        "InlineNativeSections",
         "LIST_ITEM",
         "MarkdownBlocks",
         "MarkdownMatches",
@@ -89576,6 +89584,7 @@
         "checkedItems",
         "checklistKey",
         "checklists",
+        "child",
         "citation",
         "citationTextKey",
         "close",
@@ -89610,6 +89619,7 @@
         "m",
         "markdown",
         "markdownChecklistKey",
+        "markdownIndex",
         "markdownSectionHeadings",
         "marked",
         "math",
@@ -89625,7 +89635,10 @@
         "out",
         "paragraphs",
         "parts",
+        "placeTitledNativeSections",
+        "placements",
         "plain",
+        "positions",
         "preservedMarkdownTableKeys",
         "previous",
         "prose",
@@ -89633,11 +89646,14 @@
         "rawDestination",
         "relationships",
         "remaining",
+        "rendered",
         "replacesTableSection",
         "rest",
         "rows",
         "sectionTables",
+        "sections",
         "seenTables",
+        "start",
         "staticMarkdownBlocks",
         "tab",
         "table",
@@ -89662,6 +89678,7 @@
         "./code-panel",
         "./style",
         "@/lib/publicAnswerText",
+        "@openuidev/lang-core",
         "katex",
         "react"
       ],
@@ -89686,6 +89703,7 @@
         "frontend/src/components/native-openui/upstream/components/chart.tsx:7",
         "frontend/src/components/native-openui/upstream/components/controls.tsx:15",
         "frontend/src/components/native-openui/upstream/components/extra.tsx:7",
+        "frontend/src/components/native-openui/upstream/components/layout.tsx:6",
         "frontend/src/components/native-openui/upstream/components/markdown.test.ts:10",
         "frontend/src/components/native-openui/upstream/components/table.tsx:7",
         "frontend/src/components/native-openui/upstream/components/text.tsx:9"
@@ -89693,6 +89711,7 @@
       "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
+        "@openuidev/lang-core",
         "katex",
         "react"
       ],
@@ -89772,8 +89791,8 @@
         "frontend/src/components/native-openui/library.tsx:12",
         "frontend/src/components/native-openui/upstream/components/controls.tsx:16",
         "frontend/src/components/native-openui/upstream/components/extra.tsx:10",
-        "frontend/src/components/native-openui/upstream/components/layout.tsx:6",
-        "frontend/src/components/native-openui/upstream/components/markdown.tsx:4",
+        "frontend/src/components/native-openui/upstream/components/layout.tsx:7",
+        "frontend/src/components/native-openui/upstream/components/markdown.tsx:5",
         "frontend/src/components/native-openui/upstream/components/svg.tsx:5",
         "frontend/src/components/native-openui/upstream/components/table.tsx:8",
         "frontend/src/components/native-openui/upstream/components/text.tsx:11"
@@ -89945,7 +89964,7 @@
       "id": "surface:c0e107e03bc08dc07fad",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/text.tsx",
-      "sha256": "e109fa2041c6f321843f989e42518742ffff46e802a880fa6fda31aee12e4932",
+      "sha256": "6b54eff24d410ce10a18d1ca8ff3a0ad8b010317a1effa65a2be77146b066c44",
       "symbols": [
         "Badge",
         "Caption",
@@ -89963,6 +89982,7 @@
         "custom",
         "evidence",
         "href",
+        "inlineSections",
         "isItem",
         "items",
         "marker",
@@ -114252,7 +114272,7 @@
         "frontend/src/components/native-openui/NativeWorkspaceAnswer.tsx:12",
         "frontend/src/components/native-openui/upstream/components/code-panel.tsx:6",
         "frontend/src/components/native-openui/upstream/components/markdown.test.ts:5",
-        "frontend/src/components/native-openui/upstream/components/markdown.tsx:3",
+        "frontend/src/components/native-openui/upstream/components/markdown.tsx:4",
         "frontend/src/components/response-experience-v2/ConversationTurnV2.tsx:6",
         "frontend/src/components/terminal/MessageBubbleActions.tsx:18",
         "frontend/src/components/terminal/ReasoningAndFollowUps.tsx:16",
@@ -157301,7 +157321,7 @@
     {
       "id": "test-suite:4ce9d7bbf578638998f1",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/markdown.test.ts",
-      "declaredTests": 26,
+      "declaredTests": 28,
       "skipLocations": [],
       "focusLocations": []
     },
