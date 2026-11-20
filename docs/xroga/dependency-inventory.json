@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "d836b60a99d28b7cfd979415a30d6475feea2b0a",
+  "source_sha": "8c24df0a1d9113cc808a962bafd1bcdb62573892",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -17230,7 +17230,7 @@
     },
     {
       "path": "backend/src/ai/nativeDocumentDownload.ts",
-      "sha256": "347d3c4c9fed714c50ad61b077fab23d6607470d986256ea7eb0f4d4e1e232a8"
+      "sha256": "b24fd95591422457a0211f740980b8c5fd8ca6ab19c563c9b26ab5a6b0ad6766"
     },
     {
       "path": "backend/src/ai/nativeMarkdown.ts",
@@ -17674,7 +17674,7 @@
     },
     {
       "path": "backend/src/ai/workspacePublicSearch.ts",
-      "sha256": "bd356a098f1f7ad1e6435cab44ee651c2eb6f55359f7db082a74c2a8e7596909"
+      "sha256": "39a753d32dfc1af009f0bf18a484574a0618fccfddffa6117935120852482020"
     },
     {
       "path": "backend/src/ai/zurelayWire.ts",
@@ -34489,7 +34489,14 @@
     },
     {
       "path": "backend/src/ai/workspacePublicSearch.ts",
-      "line": 71,
+      "line": 29,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/workspacePublicSearch.ts",
+      "line": 79,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
