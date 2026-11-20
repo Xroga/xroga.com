@@ -6892,7 +6892,7 @@
         {
           "path": "backend/src/ai/pipeline.ts",
           "marker": "loadSessionHistory(opts.userId",
-          "sourceSha256": "82cd3dc592bd6f4aeecbfbc5aab2a2750fd61c2f40523ee7c7fb8ff7164e117b",
+          "sourceSha256": "51a5247eb08839674283392dc12025c7b44711d7598448437b78764e50ca9f13",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -7019,7 +7019,7 @@
         {
           "path": "backend/src/ai/pipeline.ts",
           "marker": "const saved = await setProjectMemoryDurable({",
-          "sourceSha256": "82cd3dc592bd6f4aeecbfbc5aab2a2750fd61c2f40523ee7c7fb8ff7164e117b",
+          "sourceSha256": "51a5247eb08839674283392dc12025c7b44711d7598448437b78764e50ca9f13",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -8555,7 +8555,7 @@
         "relatedSourceBindings": [
           {
             "path": "backend/src/ai/pipeline.ts",
-            "sha256": "82cd3dc592bd6f4aeecbfbc5aab2a2750fd61c2f40523ee7c7fb8ff7164e117b",
+            "sha256": "51a5247eb08839674283392dc12025c7b44711d7598448437b78764e50ca9f13",
             "plainReasoningSourceBinding": {
               "previousSha256": "5c37c7d2bbc96fc8c4ddf1f294c9b1f2bde5385048847400a5bcbd69a3582e06",
               "finding": "Verified the full runBuildPipeline function and subsequent source are byte-identical. The chat change retains default model reasoning and uses the existing native output reservation. Worker admission evidence and acceptance state are unchanged."

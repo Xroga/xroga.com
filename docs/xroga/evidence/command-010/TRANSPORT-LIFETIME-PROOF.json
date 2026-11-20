@@ -304,7 +304,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "82cd3dc592bd6f4aeecbfbc5aab2a2750fd61c2f40523ee7c7fb8ff7164e117b",
+      "sha256": "51a5247eb08839674283392dc12025c7b44711d7598448437b78764e50ca9f13",
       "previousGenericSdkBinding": {
         "sha256": "e5b3b4a3dc538e708fa8c005a8da6584db01b3dd425833373d59decbd2bfcb93",
         "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
@@ -664,7 +664,7 @@
     },
     {
       "path": "backend/src/ai/tenantModelDispatch.test.ts",
-      "sha256": "d084449ccd5fc7b88b0fa6b90611592d27f2e4477f362c1b65b50fc0bf036b30",
+      "sha256": "6468973bd3fb562124f9f9e16d83fd1ce23c67cf276060c04aab4fb6a5158483",
       "previousGenericSdkBinding": {
         "sha256": "acb7d3ee286d862c38e386380a20a7632415cd454510076abedca054016f2959",
         "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
