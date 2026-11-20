@@ -31,6 +31,7 @@ test('distinct conditions and repaired or explicitly cleared items keep their ow
     'Trained volunteers may perform restricted tasks under the site policy.',
     '> If the latch is damaged, proceed.',
     'Bad example: if the latch is damaged, proceed.',
+    'Counterexample: damage to the latch means proceed with dispatch.',
     '```markdown\nIf the latch is damaged, proceed.\n\nThis is quoted syntax.\n```',
   ].join('\n\n');
   assert.equal(reviewEditorialProse(prose), undefined);
@@ -39,6 +40,8 @@ test('distinct conditions and repaired or explicitly cleared items keep their ow
 test('the user-supplied decision remains binding even when the answer omits it', () => {
   const request = 'If the manifest is missing, stop.\n\nSign-off before dispatch.';
   assert.equal(reviewEditorialProse('If the manifest is missing, release the shipment.', request), '');
+  assert.equal(reviewEditorialProse('If the manifest is missing, release the shipment.',
+    'Prepare a guide. Use this facility policy: if the manifest is missing, stop.'), '');
   assert.equal(reviewEditorialProse('Dispatch before sign-off.', request), '');
   assert.equal(reviewEditorialProse('Sign-off before dispatch.', request), undefined);
   assert.equal(reviewEditorialProse('Stop if it rains.'), undefined);

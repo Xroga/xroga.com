@@ -98,7 +98,9 @@ function proseRules(text: string, block?: number) {
   }
   for (const line of lines) {
     for (const raw of line.split(/(?<=[.!?])\s+/)) {
-      const text = surface(raw).replace(/^(?:[-#]+|\d+[.)])\s+/, '').replace(/^\[\s?[ xX]\]\s*/, '');
+      const statement = surface(raw).replace(/^(?:[-#]+|\d+[.)])\s+/, '').replace(/^\[\s?[ xX]\]\s*/, '');
+      if (/^(?:(?:bad|wrong|incorrect|unsafe)\s+example|counterexample)\s*:/i.test(statement)) continue;
+      const text = statement.replace(/^[^:!?]{0,58}\b(?:policy|rule|constraint|requirement|prerequisite)(?:\s+is)?\s*:\s*/i, '');
       if (hazardousDelegation.test(text)) unsafeDelegation = true;
       const conditional = /^(?:(?:action|decision|rule|outcome)\s*:\s*)?(?:if|when)\s+([^.!?]{4,235}?)\s*(?:,\s*|\bthen\s+)([^.!?]+)$/i.exec(text.replace(/[.!?]$/, ''));
       const consequence = /^(?:[^:]{1,28}:\s*)?([^.!?]{4,255}?)\s+means?\s+([^.!?]+)$/i.exec(text.replace(/[.!?]$/, ''));
