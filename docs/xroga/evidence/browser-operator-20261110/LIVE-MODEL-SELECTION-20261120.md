@@ -23,3 +23,13 @@ After success the model kept inspecting for 6 to 8 more turns and hit the cap; e
 * Two gates and a verification rule in Xroga itself were then blocking the tool's success; each is fixed with tests.
 * Not shown: that the real TraceDraw run succeeds, that wasted turns before the call are gone, or any rate beyond N=3.
 Raw results: `live-model/*.json`.
+
+## Matched A/B: attached-outline label (real DeepSeek, SIMULATED page, 10 runs each, same form task)
+| | before | after |
+|---|---|---|
+| first tool was fill_form | 3 of 10 | 10 of 10 |
+| model turns to the batched fill, p50 / p95 | 3 / 5 | 1 / 1 |
+| ms to the batched fill, p50 / p95 | 10,334 / 21,161 | 3,916 / 5,598 |
+| tool calls before the fill, p50 / p95 | 2 / 4 | 0 / 0 |
+
+Change: the outline that the run attaches to the user message is now prefixed with "[Current outline of the page, already captured for you. Act on it directly; do not take a snapshot first.]" (`loop.ts`). The system prompt already said so, and the model ignored it 7 times in 10; the label next to the data did not get ignored. Measures the model's choices only: the simulated page answers instantly, so end-to-end time on real pages is not measured here. Raw: `live-model/bench-form-before.json`, `live-model/bench-form.json`.

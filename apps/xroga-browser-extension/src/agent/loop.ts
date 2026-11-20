@@ -642,7 +642,9 @@ ${ledger}` : ''),
     await this.#chooseStrategy(result.text, asked ? userText(asked) : '');
     // Kept within budget: a share of the window, at 4 characters a token.
     const budget = Math.max(2_000, Math.min(30_000, this.options.model.profile.contextWindow * 4 * 0.2));
-    const outline = cutText(result.text, budget, '… the outline was cut; take a snapshot to see more.');
+    // Said once, in words the model acts on: this outline is the page as it is now, so a snapshot before the first action only costs a turn.
+    const outline = `[Current outline of the page, already captured for you. Act on it directly; do not take a snapshot first.]\n` +
+      cutText(result.text, budget, '… the outline was cut; take a snapshot to see more.');
     const user = [...(await activeBranch(this.options.conversationId))]
       .reverse()
       .find((e): e is EntryOf<'message'> => e.type === 'message' && e.message.role === 'user' && !e.appOwned);
