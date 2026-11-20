@@ -1,7 +1,7 @@
 'use client';
 
 import { defineComponent } from '@openuidev/react-lang';
-import { Background, Controls, Handle, MarkerType, Position, ReactFlow, ReactFlowProvider, type Edge, type Node, type NodeProps } from '@xyflow/react';
+import { Background, Controls, Handle, MarkerType, Position, ReactFlow, ReactFlowProvider, type BuiltInEdge, type Node, type NodeProps } from '@xyflow/react';
 import { useId, useLayoutEffect, useRef, useState } from 'react';
 import { z } from 'zod/v4';
 import { Glyph } from './upstream/components/glyph';
@@ -48,7 +48,7 @@ function AnswerDiagramNode({ data }: NodeProps<AnswerNode>) {
 
 const nodeTypes = { answer: AnswerDiagramNode };
 
-function layout(props: z.infer<typeof diagramProps>, compact: boolean) {
+export function layoutDiagram(props: z.infer<typeof diagramProps>, compact: boolean) {
   if (!hasRenderableDiagramTopology(props.nodes, props.links)) return null;
   const byId = new Map(props.nodes.map(node => [node.id, node]));
   const levels = [...new Set(props.nodes.map(node => node.level))].sort((a, b) => a - b);
@@ -59,33 +59,44 @@ function layout(props: z.infer<typeof diagramProps>, compact: boolean) {
   // move their labels into a readable key rather than painting overlapping text.
   const separateRelationships = compact || groups.some(group => group.length > 1) || props.links.length > rows.length - 1;
   const width = compact ? 138 : 190;
+  const rowSpacing = compact ? 145 : 132;
   const nodes: AnswerNode[] = rows.flatMap((group, y) => group.map((node, x) => ({
     id: node.id,
-    position: { x: (x - (group.length - 1) / 2) * (compact ? 156 : 234), y: y * (compact ? 145 : 132) },
+    position: { x: (x - (group.length - 1) / 2) * (compact ? 156 : 234), y: y * rowSpacing },
     style: { width },
     type: 'answer',
     className: 'native-diagram-node native-diagram-node-' + (node.tone ?? 'neutral'),
     data: { label: node.label, detail: node.detail, icon: node.icon },
   })));
   const positions = new Map(nodes.map(node => [node.id, node.position]));
-  const edges: Edge[] = props.links.map((link, index) => {
+  const rowSides = rows.map(row => ({ left: row[0].id, right: row[row.length - 1].id }));
+  const minX = Math.min(...nodes.map(node => node.position.x));
+  const maxX = Math.max(...nodes.map(node => node.position.x));
+  const edges = props.links.map((link, index) => {
     const from = positions.get(link.from)!;
     const to = positions.get(link.to)!;
     const lateral = from.y === to.y;
     const rightward = from.x < to.x;
     const upward = to.y < from.y;
+    // A bypass can leave a row horizontally only at its outermost node.
+    // Use an outside lane when both endpoints have a clear exit on that side.
+    const sides = upward ? ['right', 'left'] as const : ['left', 'right'] as const;
+    const lane = Math.abs(from.y - to.y) > rowSpacing ? sides.find(side =>
+      rowSides[from.y / rowSpacing][side] === link.from && rowSides[to.y / rowSpacing][side] === link.to) : undefined;
+    const offset = lane === 'left' ? Math.min(from.x, to.x) - minX + 18 : maxX - Math.max(from.x, to.x) + 18;
     return {
       id: 'edge-' + index,
       source: link.from,
       target: link.to,
-      sourceHandle: lateral ? (rightward ? 'right' : 'left') : upward ? 'top' : null,
-      targetHandle: lateral ? (rightward ? 'left' : 'right') : upward ? 'bottom' : null,
+      sourceHandle: lane ?? (lateral ? (rightward ? 'right' : 'left') : upward ? 'top' : null),
+      targetHandle: lane ?? (lateral ? (rightward ? 'left' : 'right') : upward ? 'bottom' : null),
+      ...(lane && { pathOptions: { offset } }),
       label: separateRelationships ? undefined : link.label,
       type: 'smoothstep',
       markerEnd: { type: MarkerType.ArrowClosed, width: 18, height: 18, color: 'var(--iui-muted)' },
-    };
+    } satisfies BuiltInEdge;
   });
-  return { nodes, edges, byId, rowCount: rows.length };
+  return { nodes, edges, byId, rowCount: rows.length, outsideLanes: edges.some(edge => edge.pathOptions) };
 }
 
 export const Diagram = defineComponent({
@@ -97,7 +108,7 @@ export const Diagram = defineComponent({
     const diagramId = 'diagram-' + title.replace(/[^a-zA-Z0-9-]/g, '');
     const diagram = useRef<HTMLElement>(null);
     const [compact, setCompact] = useState<boolean>();
-    const result = layout(props, compact === true);
+    const result = layoutDiagram(props, compact === true);
     // This read-only graph lets React Flow own its measured node state. Replacing
     // controlled nodes on an unrelated parent render discards those measurements.
     // Reinitialize only when the actual graph or responsive layout changes.
@@ -117,6 +128,7 @@ export const Diagram = defineComponent({
       return () => resize.disconnect();
     }, [renderable]);
     if (!result) return <p role="status">The diagram relationships could not be rendered. {props.description}</p>;
+    const fitViewOptions = { padding: result.outsideLanes ? 0.2 : compact ? 0.08 : 0.14, maxZoom: 1.1 };
     return (
       <figure ref={diagram} className="native-diagram" aria-labelledby={title}>
         <figcaption>
@@ -132,7 +144,7 @@ export const Diagram = defineComponent({
             defaultNodes={result.nodes}
             defaultEdges={result.edges}
             fitView
-            fitViewOptions={{ padding: compact ? 0.08 : 0.14, maxZoom: 1.1 }}
+            fitViewOptions={fitViewOptions}
             minZoom={0.2}
             maxZoom={1.65}
             nodesDraggable={false}
@@ -149,7 +161,8 @@ export const Diagram = defineComponent({
           </ReactFlow>
         </div>
         <div className="native-diagram-toolbar">
-          <Controls showInteractive={false} orientation="horizontal" aria-label="Diagram zoom controls" />
+          <Controls showInteractive={false} orientation="horizontal" aria-label="Diagram zoom controls"
+            fitViewOptions={result.outsideLanes ? fitViewOptions : undefined} />
         </div>
         </ReactFlowProvider>}
         <div className="native-diagram-relationships">
