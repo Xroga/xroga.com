@@ -15167,7 +15167,7 @@
       "id": "surface:82ff96c046038933cdb9",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/workspacePublicSearch.ts",
-      "sha256": "fe2ce9ba9cda9a82ca65c6fdaab858872fd7998fded61db1cc0905a5e7fae3d9",
+      "sha256": "bd356a098f1f7ad1e6435cab44ee651c2eb6f55359f7db082a74c2a8e7596909",
       "symbols": [
         "asksForOfficial",
         "bareDomain",
@@ -15191,6 +15191,8 @@
         "privateOrContextual",
         "publicFactSubject",
         "publicLookup",
+        "publicOffice",
+        "publicOfficeLookup",
         "request",
         "sites",
         "sourcePreface",
