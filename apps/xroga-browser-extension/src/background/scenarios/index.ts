@@ -33,4 +33,5 @@ import './canvas-script-editor';
 import './variants-form';
 import './timeline-editor';
 import './stale-and-slow';
+import './site-actions';
 import './clickable-zoo';
