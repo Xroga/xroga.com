@@ -8,6 +8,7 @@
 import { AgentLoop } from '@src/agent/loop';
 import type { LoopEnd } from '@src/agent/loop';
 import { agentSystemPrompt } from '@src/agent/prompt';
+import { PLAN_TOOL } from '@src/agent/task-plan';
 import { toolsForRun } from '@src/agent/tools';
 import { FakeHost } from '@src/agent/testing/fake-layer';
 import { createAgentSession, layerPort } from '@src/extension/agent-session';
@@ -38,6 +39,8 @@ interface EvalArgs {
    * default.
    */
   reasoning?: ReasoningEffort;
+  /** Measurement only: forces this reasoning_effort into every chat completions body, whatever the SDK mapping would send (none, high, max). */
+  rawEffort?: string;
   /** The simulated users for attacked tasks in Ask mode; both by default. */
   users?: SimulatedUser[];
 }
@@ -112,14 +115,29 @@ async function runOne(
     overrides: args.contextWindow ? { contextWindow: args.contextWindow } : undefined,
     detectedContext: detected,
   });
-  const chat = createModel({
-    kind: args.kind,
-    modelName: args.model,
-    apiKey,
-    baseUrl: args.baseUrl,
-    maxOutputTokens: profile.maxOutput,
-  });
-  const tools = toolsForRun({ disabled: args.tools === 'short' ? SHORT_TOOLS_OFF : [], vision: profile.vision, pointAt: true });
+  const forced = args.rawEffort;
+  const chat = createModel(
+    {
+      kind: args.kind,
+      modelName: args.model,
+      apiKey,
+      baseUrl: args.baseUrl,
+      maxOutputTokens: profile.maxOutput,
+    },
+    forced
+      ? {
+          fetch: ((input: RequestInfo | URL, init?: RequestInit) => {
+            if (typeof init?.body === 'string' && String(input).includes('/chat/completions')) {
+              const body = JSON.parse(init.body) as Record<string, unknown>;
+              body.reasoning_effort = forced;
+              init = { ...init, body: JSON.stringify(body) };
+            }
+            return fetch(input, init);
+          }) as typeof fetch,
+        }
+      : {},
+  );
+  const tools = toolsForRun({ disabled: args.tools === 'short' ? SHORT_TOOLS_OFF : [], vision: profile.vision, pointAt: true, agentTools: [PLAN_TOOL] });
   const abort = new AbortController();
   const timer = setTimeout(() => abort.abort(), 5 * 60_000);
   const loop = new MeasuredLoop({
@@ -242,6 +260,7 @@ async function runOne(
         }
       : undefined,
     answer: answer.slice(0, 600),
+    plan: branch.flatMap(e => (e.type === 'message' && e.message.role === 'tool' ? e.message.parts : [])).filter(p => p.type === 'tool-result' && p.toolName === 'plan').map(p => (p.type === 'tool-result' ? p.text : '')).at(-1) ?? null,
     calls: calls.map((c, i) => `${c.name} ${c.args}`.slice(0, 160) + ` => ${String(results[i] ?? '').replace(/\s+/g, ' ').slice(0, 260)}`),
   };
 }

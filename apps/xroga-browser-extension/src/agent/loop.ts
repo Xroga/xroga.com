@@ -38,6 +38,7 @@ import { describeHit, renderSkill, searchSkills, skillById } from './skill-catal
 import { runMenuPath, validateMenuPath } from './menu-path';
 import { identify, matchSite, renderWhy } from './site-context';
 import { SKILL_CATALOG } from './skill-catalog';
+import { TaskPlan, type PlanSnapshot } from './task-plan';
 import { ActionLedger, SiteActionRegistry, describeAction, runSiteAction } from './site-actions';
 import { SAMPLE_ACTIONS } from './site-actions-sample';
 import { SKILLSHUB, describeOnline, loadCandidate, renderOnline, safeKeywords, type OnlineCandidate } from './online-skills';
@@ -571,6 +572,7 @@ ${ledger}` : ''),
     // A request that names its site starts there: the address is in the words, so no model turn is spent on deciding it.
     const asked = [...branch].reverse().find((e): e is EntryOf<'message'> => e.type === 'message' && e.message.role === 'user' && !e.appOwned);
     if (asked) this.#askedText = userText(asked);
+    this.#restorePlan(branch as never);
     // A request about the user's connected apps starts with the app tools: no page is opened or read for it, and the debugger is not
     // attached until a browser tool is actually used. The browser tools stay in the list for when no app tool fits.
     if (asked && this.options.tools.some(t => t.name === 'plugin_search') && isAppsFirstRequest(userText(asked))) {
@@ -945,10 +947,12 @@ ${ledger}` : ''),
       messageId: this.#replyId,
       row: this.#row(outcome.call, 'waiting'),
     });
+    if (this.#plan.markWaiting(true)) this.#emitPlan();
     const answer = await this.options.host.handover(
       { toolCallId: outcome.call.toolCallId, tabId, details, partial },
       this.options.signal,
     );
+    if (this.#plan.markWaiting(false)) this.#emitPlan();
     await this.writer.run({ pendingPrompt: undefined });
     if (answer === 'given-back') {
       // The user did the step: the model gets a full observation of the page, as after ask_user takeover.
@@ -1409,6 +1413,7 @@ ${ledger}` : ''),
       outcome.image,
     );
     const status: ToolRow['status'] = outcome.skipped ? 'skipped' : outcome.isError ? 'failed' : 'done';
+    const planChanged = this.#plan.active && outcome.call.toolName !== 'plan' && outcome.call.toolName !== 'done' && !outcome.skipped && (outcome.isError ? this.#plan.markFailure() : this.#plan.markSuccess());
     this.options.emit(
       {
         type: 'tool_execution_end',
@@ -1417,6 +1422,7 @@ ${ledger}` : ''),
       },
       entry,
     );
+    if (planChanged) this.#emitPlan();
   }
 
   /** Runs a reply's calls under the execution policy; every call gets a result. */
@@ -1504,6 +1510,72 @@ ${ledger}` : ''),
    * A tool already in the list is never replaced, and the run holds at most 40 of them.
    */
   #askedText = '';
+  #plan = new TaskPlan();
+  #planSeq = 0;
+
+  /** The plan shown to the user: restored from the last plan result stored in this conversation, so a restarted worker or a reopened panel continues the same list. */
+  #restorePlan(branch: Array<{ type: string; message?: { role?: string; parts?: Array<{ type: string; toolName?: string; result?: unknown }> } }>): void {
+    for (const e of [...branch].reverse()) {
+      if (e.type !== 'message' || e.message?.role !== 'tool') continue;
+      for (const p of [...(e.message.parts ?? [])].reverse()) {
+        const snap = p.type === 'tool-result' && p.toolName === 'plan' ? ((p.result as { data?: { plan?: PlanSnapshot } } | undefined)?.data?.plan) : undefined;
+        if (snap) { this.#plan = TaskPlan.restore(snap); return; }
+      }
+    }
+  }
+
+  /** Shows the plan's current state in the panel (live only; the plan tool's own results are what is stored). */
+  #emitPlan(): void {
+    this.options.emit({
+      type: 'tool_execution_end',
+      messageId: this.#replyId,
+      row: { toolCallId: `plan-live:${++this.#planSeq}`, tool: 'plan', args: {}, status: 'done', result: { ok: true, data: { plan: this.#plan.snapshot() } }, text: '' },
+    });
+  }
+
+  async #milestoneSeen(check: { text?: string; url?: string }): Promise<boolean> {
+    const { layer, signal } = this.options;
+    if (check.text) {
+      const r = await layer.call('wait', { text: check.text, timeoutMs: 1500 }, signal).catch(() => ({ ok: false as const }));
+      if (!r.ok) return false;
+    }
+    if (check.url) {
+      const tabs = await layer.tabs().catch(() => undefined);
+      const active = tabs?.tabs.find(t => t.tabId === (this.#boundTab ?? tabs.activeTabId));
+      if (!active || !active.url.includes(check.url)) return false;
+    }
+    return true;
+  }
+
+  async #planTool(call: ToolCallRequest, kind: ToolKind, args: Record<string, unknown>): Promise<CallOutcome> {
+    const fail = (text: string): CallOutcome => ({ call, kind, text: `error: ${text}`, isError: true });
+    const done = (note = ''): CallOutcome => ({
+      call, kind, isError: false,
+      text: `${this.#plan.render()}${note ? `\n${note}` : ''}`,
+      result: { ok: true, data: { plan: this.#plan.snapshot() } } as unknown as Result,
+    });
+    if (args.action === 'set') {
+      const err = this.#plan.set(args.milestones as never);
+      return err ? fail(err) : done('Plan shown to the user. Work on the milestone marked [~]; update it when done.');
+    }
+    if (args.action === 'update') {
+      const bad = this.#plan.validateUpdate(args.id, args.status);
+      if (bad) return fail(bad);
+      const id = args.id as string;
+      const note = typeof args.note === 'string' ? args.note : undefined;
+      if (args.status !== 'done') { this.#plan.apply(id, args.status as 'pending' | 'working' | 'blocked' | 'waiting', note); return done(); }
+      const m = this.#plan.get(id)!;
+      if (m.check) {
+        if (!(await this.#milestoneSeen(m.check))) return fail(`milestone ${id} is NOT verified: its check (${m.check.text ? `text "${m.check.text}"` : ''}${m.check.url ? ` url containing "${m.check.url}"` : ''}) is not on the page now. It stays unfinished. Observe the page, fix what is missing, or revise the plan.`);
+        this.#plan.apply(id, 'verified', note);
+        return done();
+      }
+      this.#plan.apply(id, 'reported', note);
+      return done('This milestone has no check, so it shows as reported, not verified. Prefer a check the page can confirm.');
+    }
+    return fail('action is set or update');
+  }
+
   #reviewedAt = -1;
   #toolCounts = new Map<string, number>();
   #adoptedOrigin = '';
@@ -1892,6 +1964,8 @@ ${ledger}` : ''),
       outcome = await this.#skillTool(call, kind, args);
     } else if (call.toolName === 'site_action') {
       outcome = await this.#runSiteAction(call, kind, args);
+    } else if (call.toolName === 'plan') {
+      outcome = await this.#planTool(call, kind, args);
     } else if (call.toolName === 'menu_path') {
       outcome = await this.#runMenuPath(call, kind, args);
     } else if (call.toolName === 'run_script_console') {

@@ -12,6 +12,7 @@ import type { MessageKey } from '@src/ui/i18n';
 import en from '@src/ui/locales/en.json';
 import { Markdown } from './Markdown';
 import { Activity, phaseOf } from './Activity';
+import { PlanChecklist, latestPlan } from './PlanChecklist';
 import { messageTime, messageTimeFull } from './message-time';
 import { ArrowDownIcon, CheckIcon, CopyIcon, FileIcon, PencilIcon, RestartIcon } from '@src/ui/icons';
 import { useGrantedPermissions } from '@src/ui/optional-permissions';
@@ -417,8 +418,10 @@ function RunView({
   settled: boolean;
 }) {
   const { replies, opened, start } = item;
+  const allTools = replies.flatMap(r => r.tools);
+  const plan = latestPlan(allTools);
   const rows: ToolRow[] = runRows(
-    replies.flatMap(r => r.tools),
+    allTools.filter(r => r.tool !== 'plan'),
     opened,
   );
   const last = replies.at(-1)!;
@@ -429,6 +432,7 @@ function RunView({
   const activeText = Boolean(streaming?.text.trim());
   return (
     <div className="flex flex-col gap-2 text-sm" data-role="assistant">
+      {plan ? <PlanChecklist plan={plan} /> : null}
       <Activity
         rows={rows}
         phase={live ? phaseOf(rows, live.waiting, activeText, !!streaming) : undefined}
