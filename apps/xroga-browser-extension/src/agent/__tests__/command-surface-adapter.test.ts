@@ -67,6 +67,32 @@ describe('script console adapter', () => {
     expect(res.ok).toBe(true);
     expect(log.indexOf('click:')).toBeLessThan(log.indexOf('canvas:key'));
   });
+  it('works from element targets with no coordinates: click the editor, clear, type with replace, click Run', async () => {
+    const seen: Array<Record<string, unknown>> = [];
+    const a: ConsoleArgs = { editor: { ref: 'e12' }, run: { ref: 'e5' }, clear: { ref: 'e7' }, text: 'print(3)', expectOutput: 'objects 3' };
+    expect(validateConsoleArgs(a)).toBeNull();
+    const surface = scriptConsoleSurface(a, async (t, i) => { seen.push({ t, ...i }); return { ok: true, text: t === 'read' ? 'objects 3' : 'ok' }; });
+    const res = await runSurface(surface, { text: a.text });
+    expect(res.ok).toBe(true);
+    expect(seen.filter(x => x.t === 'click').map(x => (x.target as { ref: string }).ref)).toEqual(['e12', 'e7', 'e5']);
+    expect(seen.find(x => x.action === 'type')?.replace).toBe(true);
+  });
+  it('needs some way to find the editor and some way to run', () => {
+    expect(validateConsoleArgs({ text: 'x', expectOutput: 'y', executeKey: 'Control+Enter' })).toContain('editor');
+    expect(validateConsoleArgs({ text: 'x', expectOutput: 'y', editor: { ref: 'e1' } })).toContain('run');
+  });
+  it('matches an anchored pattern against the changed Output line, after its label, and shows the new lines when it does not match', async () => {
+    let n = 0;
+    const page = () => (n++ === 0 ? 'tab "Untitled-1"\ntext "Output: (nothing yet)"' : 'tab "Untitled-1"\ntext "Output: 3"');
+    const ok = scriptConsoleSurface({ ...args, expectOutput: '^3$', editorText: undefined }, tools({ read: () => ({ ok: true, text: page() }) }));
+    expect((await runSurface(ok, { text: args.text })).ok).toBe(true);
+    let m = 0;
+    const bad = scriptConsoleSurface({ ...args, expectOutput: '^4$', editorText: undefined }, tools({ read: () => ({ ok: true, text: m++ === 0 ? 'text "Output: -"' : 'text "Output: 3"' }) }));
+    const res = await runSurface(bad, { text: args.text });
+    expect(res.ok).toBe(false);
+    expect(res.reason).toContain('New lines');
+    expect(res.reason).toContain('Output: 3');
+  });
   it('validates arguments', () => {
     expect(validateConsoleArgs(args)).toBeNull();
     expect(validateConsoleArgs({ ...args, editorAt: [2, 0.5] })).toContain('fractions');

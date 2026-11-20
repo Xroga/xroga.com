@@ -747,7 +747,7 @@ ${ledger}` : ''),
     }
     // The first script typed into a painted editor must come from the app's own documentation: guessing an API costs dozens of turns.
     if (call.toolName === 'canvas' && args.action === 'type' && typeof args.text === 'string' && args.text.length > 60 && /[;{}]|\w\.\w+\(/.test(args.text) &&
-        !this.#docsRead && !this.#scriptGateShown) {
+        !this.#docsRead && !this.#scriptGateShown && !this.#methodsAreVerified(args.text)) {
       this.#scriptGateShown = true;
       return { call, kind, isError: true, text: 'refused once: you are about to type a script into the app without having read its scripting documentation. Read it first (http_get on the documentation page of the app, or its Help), copy exact names from its example, then type the script. Nothing was typed.' };
     }
@@ -1593,6 +1593,15 @@ ${ledger}` : ''),
     if (!this.#progress.reorder(ranked.map(r => r.strategy))) return;
     this.#strategyChosen = true;
     await this.writer.appNote(describeChoice(ranked));
+  }
+
+  /** A program is not guesswork when every method it calls appears, with its parentheses, in the verified guidance already in the system prompt (a playbook template). */
+  #methodsAreVerified(program: string): boolean {
+    const names = new Set<string>();
+    for (const m of program.matchAll(/\b[A-Za-z_]\w*\.([A-Za-z_]\w*)\s*\(/g)) names.add(m[1]!);
+    if (!names.size) return false;
+    const system = this.options.system;
+    return [...names].every(n => system.includes(`${n}(`));
   }
 
   /** On-demand expert skills: small ranked cards, then one skill body. Local, read only, no network. */

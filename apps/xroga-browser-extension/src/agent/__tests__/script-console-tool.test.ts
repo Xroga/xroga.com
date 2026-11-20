@@ -75,3 +75,27 @@ describe('run_script_console in a run', () => {
     expect(layer.calls.some(c => c.tool === 'canvas' && c.args.action === 'type')).toBe(false);
   });
 });
+
+describe('the documentation gate and verified playbook templates', () => {
+  it('lets a program through when every method it calls is in the verified guidance, and still refuses an invented API', async () => {
+    const make = async (program: string, system: string) => {
+      const c = await createConversation({ mode: 'ask' });
+      await appendEntry(c.id, { type: 'message', message: { role: 'user', parts: [{ type: 'text', text: 'Run the program' }] } });
+      const scripted = new ScriptedModel([
+        { toolCalls: [{ name: 'canvas', id: 't1', input: { action: 'type', text: program, replace: true, intent: 'enter the script' } }] },
+        { toolCalls: [{ name: 'done', input: { outcome: 'success', summary: 'ok' }, id: 'd' }] },
+      ]);
+      const layer = new FakeLayer({ canvas: () => ({ ok: true, text: 'canvas type', receipt: receipt('canvas') }) });
+      const loop = new AgentLoop({
+        conversationId: c.id, runId: 'r1',
+        model: { ref: { providerId: 'p', model: 'm' }, chat: scripted.chat(), profile: resolveProfile({ kind: 'openai-compatible', modelName: 'm' }), reasoning: 'none' },
+        system, tools: toolsForRun({ vision: true, pointAt: true }), layer, host: new FakeHost(), signal: new AbortController().signal, emit: () => undefined, turnCap: 4,
+      });
+      await loop.run();
+      return layer.calls.some(x => x.tool === 'canvas' && x.args.action === 'type');
+    };
+    const program = 'var l = ActiveLayer; var r = l.CreateRectangle(20, 90, 70, 50, 0); r.Fill.ApplyUniformFill(Color.RGB(0, 0, 255));';
+    expect(await make(program, 'Playbook: l.CreateRectangle(x, y, w, h, r) and r.Fill.ApplyUniformFill(Color.RGB(r, g, b)) are verified.')).toBe(true);
+    expect(await make(program.replace('CreateRectangle', 'MakeBox'), 'Playbook: l.CreateRectangle(x, y, w, h, r) and r.Fill.ApplyUniformFill(Color.RGB(r, g, b)) are verified.')).toBe(false);
+  });
+});

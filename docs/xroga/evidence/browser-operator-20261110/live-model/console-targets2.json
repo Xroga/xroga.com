@@ -1,0 +1,86 @@
+[
+  {
+    "tools": [
+      "1:click",
+      "1:snapshot",
+      "2:click",
+      "3:click",
+      "4:click",
+      "5:click",
+      "6:snapshot",
+      "7:screenshot",
+      "8:run_script_console",
+      "8:click",
+      "8:canvas",
+      "9:http_get",
+      "9:http_get",
+      "10:click",
+      "11:click",
+      "12:hover",
+      "13:snapshot",
+      "14:read",
+      "14:read"
+    ],
+    "turns": 15,
+    "wallMs": 57486,
+    "end": "partial",
+    "usedConsoleTool": true,
+    "usedFindSkill": false,
+    "documents": 1,
+    "scriptsRun": 0,
+    "shapes": 0,
+    "exported": false,
+    "simCalls": [
+      "click:New Document Alt+Shift+N",
+      "click:Tools",
+      "click:Scripts",
+      "click:Scripts Panel",
+      "click:Help",
+      "click:Script editor",
+      "click:Help",
+      "click:Load..."
+    ],
+    "consoleResults": [
+      "failed: Stopped at replaceText: refused once: you are about to type a script into the app without having read its scripting documentation. Read it first (http_get on the documentation page of the app, or its Help), copy exact names from its example, then type the script. Nothing was typed.\n✓ discover: nothing to do\n✓ targetEditor: no editor text to check\n✓ focus: click Script editor page unchanged\n✗ replaceText: refused once: you are about to type a script into the app without having read its scripting documentation. Read it first"
+    ]
+  },
+  {
+    "tools": [
+      "1:click",
+      "2:click",
+      "3:click",
+      "4:screenshot",
+      "5:click",
+      "6:snapshot",
+      "7:click",
+      "8:canvas",
+      "9:click",
+      "10:http_get",
+      "11:delegate",
+      "12:read",
+      "13:navigate",
+      "14:batch",
+      "14:click",
+      "14:snapshot"
+    ],
+    "turns": 15,
+    "wallMs": 67090,
+    "end": "partial",
+    "usedConsoleTool": false,
+    "usedFindSkill": false,
+    "documents": 0,
+    "scriptsRun": 0,
+    "shapes": 0,
+    "exported": false,
+    "simCalls": [
+      "click:Tools",
+      "click:Scripts",
+      "click:Scripts Panel",
+      "click:File",
+      "click:Script editor",
+      "click:Help",
+      "click:Help"
+    ],
+    "consoleResults": []
+  }
+]
