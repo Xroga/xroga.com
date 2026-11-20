@@ -17,6 +17,7 @@
     "backend/src/ai/nativeOpenUiWorkspace.ts",
     "backend/src/ai/pipeline.ts",
     "backend/src/ai/researchAnswer.test.ts",
+    "backend/src/ai/tenantModelDispatch.test.ts",
     "backend/src/ai/workspacePublicSearch.ts",
     "frontend/e2e/command3-auth.spec.ts",
     "frontend/src/components/native-openui/NativeWorkspaceAnswer.tsx",

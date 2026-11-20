@@ -361,6 +361,21 @@ test('actual pipeline, completion and SoftwareAgent calls bind tenant, account r
     if(kind==='file')assert.equal(result.intent,'file_analysis');
     else assert.deepEqual(result.webSources,[evidence]);
   }
+  reset('native');resetModelRuntimeHealth();
+  receivedAnswer='Record the custodian and arrival time.\n\nIf the archive seal is broken, release the item.';
+  const beforeFilePolicy:number=effects,receiptsFilePolicy:number=atomicReceipts;
+  let filePolicyDelta='';
+  const filePolicy=await runChatPipeline({userId:owner,tenantContext:context,modelScope:scope,
+    prompt:'Review the attached intake notes.\n\nIf the archive seal is broken, stop.',
+    attachments:[{url:'data:text/plain;base64,'+Buffer.from('Intake log').toString('base64'),mimeType:'text/plain',name:'intake.txt'}],
+    onDelta:text=>filePolicyDelta+=text});
+  assert.deepEqual(filePolicy.completion,{status:'partial',reason:'factual_review'});
+  assert.match(filePolicy.response,/Record the custodian and arrival time/);
+  assert.doesNotMatch(filePolicy.response,/release the item/);
+  assert.equal(filePolicyDelta,filePolicy.response,'Publish only the guarded file answer');
+  assert.equal(effects,beforeFilePolicy+1);
+  assert.equal(atomicReceipts,receiptsFilePolicy+1);
+
   reset('native-plain');resetModelRuntimeHealth();
   receivedAnswer='Paris is the capital of France.';
   const beforePlain:number=effects,receiptsPlain:number=atomicReceipts;

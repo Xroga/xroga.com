@@ -84,16 +84,44 @@ test('direct branches, inline notes and explicit decision records share the same
 });
 
 test('readable fallback withholds permissive prose contradicted by a visual stop', () => {
-  const answer = completeNativeWorkspaceAnswer([
+  const prose = [
     '## Check-in\n\nLog the custodian and arrival time.',
     '## Dispatch\n\nIf the archive seal is broken, release the item.',
-  ].join('\n\n') + NATIVE_UI_MARKER
-    + 'root = Col([Markdown(_xroga_answer), Table(["Condition", "Decision"], [["Archive seal broken", "Stop and refer"]])])',
-  'Show the intake procedure with a condition table.');
-  assert.deepEqual(answer.completion, { status: 'partial', reason: 'factual_review' });
-  assert.match(answer.response, /Log the custodian and arrival time/);
-  assert.doesNotMatch(answer.response, /## Dispatch|release the item/);
-  assert.equal(answer.responseSource.text, '');
+  ].join('\n\n');
+  const table = 'Table(["Condition", "Decision"], [["Archive seal broken", "Stop and refer"]])';
+  for (const [program, finish] of [
+    [`root = Col([Markdown(_xroga_answer), ${table}])`, 'stop'],
+    [`layout = Col([Markdown(_xroga_answer), ${table}])`, 'stop'],
+    [`root = Col([Markdown(_xroga_answer), ${table}, unavailableDetails])`, 'stop'],
+    [`root = Col([Markdown(_xroga_answer), ${table}, Text("`, 'length'],
+  ]) {
+    const answer = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + program, finish,
+      'Show the intake procedure with a condition table.');
+    assert.deepEqual(answer.completion, { status: 'partial', reason: 'factual_review' });
+    assert.match(answer.response, /Log the custodian and arrival time/);
+    assert.doesNotMatch(answer.response, /## Dispatch|release the item/);
+    assert.equal(answer.responseSource.text, '');
+  }
+});
+
+test('schema and reference repair preserve the original request as a publication constraint', () => {
+  const prose = '## Intake\n\nRecord the custodian and arrival time.';
+  const table = 'Table(["Condition", "Decision"], [["Archive seal broken", "Release the item"]])';
+  const programs = [
+    `layout = Col([Markdown(_xroga_answer), ${table}])`,
+    `root = Col([Markdown(_xroga_answer), ${table}, unavailableDetails])`,
+  ];
+  for (const program of programs) {
+    const diagnostics: string[] = [];
+    const answer = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + program, 'stop', undefined,
+      'If the archive seal is broken, stop.', record => {
+        if (record.stage === 'accuracy' && record.editorialIssue) diagnostics.push(record.editorialIssue);
+      });
+    assert.deepEqual(answer.completion, { status: 'partial', reason: 'factual_review' });
+    assert.equal(answer.responseSource.text, '');
+    assert.ok(answer.response.endsWith(prose));
+    assert.deepEqual(diagnostics, ['decision_conflict']);
+  }
 });
 
 test('an indirect reverse path conflicts while a documented retry loop does not', () => {

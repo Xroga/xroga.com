@@ -1042,7 +1042,7 @@ export async function runChatPipeline(opts: {
 
     const usage = await getUsage(opts.userId);
 
-    const answer = native ? completeNativeWorkspaceAnswer(result.text, result.finishReason, undefined, undefined, diagnostic =>
+    const answer = native ? completeNativeWorkspaceAnswer(result.text, result.finishReason, undefined, opts.prompt, diagnostic =>
       console.warn('[native-openui-validation]', diagnostic), formats) : undefined;
     const response = answer?.response ?? result.text;
     const delivery = answer && nativeDocumentDelivery(requestedDownload, missingDownloadAttachment, opts.prompt, response, answer.completion);

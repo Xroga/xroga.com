@@ -446,7 +446,9 @@ export function recoverNativeMonthlyChart(program: string, supplied?: NonNullabl
 /** Audit all statements, including unreachable ones, before letting the upstream
  * parser resolve references or evaluate expressions. Limit expanded work as well
  * as input size, so repeated references cannot multiply the runtime budget. */
-export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<string> = new Set(), prose = '', diagnose?: (value: NativeUiDiagnostic) => void, workspaceContract = false, editorialRequest?: string): NativeUiValidation {
+type EditorialContext = { request?: string; prose?: string };
+
+export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<string> = new Set(), prose = '', diagnose?: (value: NativeUiDiagnostic) => void, workspaceContract = false, editorial?: EditorialContext): NativeUiValidation {
   let stage: ValidationStage = 'limits';
   let statement: number | undefined;
   let statements: ReturnType<typeof split> = [];
@@ -626,6 +628,13 @@ export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<s
     if (!Array.isArray(result.root.props.children) || !result.root.props.children.length) return fail('schema');
     const renderedElements = workspaceContract ? [...nativeElements(result.root)] : [];
     if (workspaceContract) {
+      const review = reviewEditorialVisuals(editorial?.prose ?? prose, renderedElements
+        .map(({ typeName, props }) => ({ typeName, props: props ?? {} })), editorial?.request);
+      if (review) {
+        stage = 'accuracy';
+        editorialIssue = review.issue;
+        return { ...fail('factual_review'), ...(review.fallbackProse !== undefined ? { fallbackProse: review.fallbackProse } : {}) };
+      }
       const deferChart = claimsChartIsDeferred(prose);
       for (const { typeName, props } of renderedElements) {
         if (deferChart && typeName === 'Chart') {
@@ -660,21 +669,13 @@ export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<s
       if (invalidBlock) return fail('schema');
     }
     stage = 'accuracy';
-    if (workspaceContract) {
-      const review = reviewEditorialVisuals(prose, renderedElements
-        .map(({ typeName, props }) => ({ typeName, props: props ?? {} })), editorialRequest);
-      if (review) {
-        editorialIssue = review.issue;
-        return { ...fail('factual_review'), ...(review.fallbackProse !== undefined ? { fallbackProse: review.fallbackProse } : {}) };
-      }
-    }
     if (contradictsMonthlyChart(result.root, narrative)) return fail('data_review');
     return { ok: true };
   } catch { return fail('syntax'); }
 }
 
-export function validateNativeWorkspaceProgram(program: string, evidenceIds: ReadonlySet<string> | undefined, prose: string, diagnose?: (value: NativeUiDiagnostic) => void, editorialRequest?: string) {
-  return validateNativeOpenUi(program, evidenceIds, prose, diagnose, true, editorialRequest);
+export function validateNativeWorkspaceProgram(program: string, evidenceIds: ReadonlySet<string> | undefined, prose: string, diagnose?: (value: NativeUiDiagnostic) => void, editorial?: EditorialContext) {
+  return validateNativeOpenUi(program, evidenceIds, prose, diagnose, true, editorial);
 }
 
 // Only reprint changed expressions. Keeping untouched declarations verbatim preserves
@@ -796,7 +797,12 @@ function normalizeWorkspaceComponents(node: ASTNode, symbols: ReadonlyMap<string
 }
 
 /** Retain closed declarations and root children before a provider-truncated tail. */
-export function recoverTruncatedNativeWorkspaceProgram(program: string, evidenceIds: ReadonlySet<string> | undefined, prose: string) {
+type RecoveryValidator = (program: string, prose: string, diagnose?: (value: NativeUiDiagnostic) => void) => NativeUiValidation;
+const defaultRecoveryValidator = (evidenceIds: ReadonlySet<string> | undefined): RecoveryValidator =>
+  (program, prose, diagnose) => validateNativeWorkspaceProgram(program, evidenceIds, prose, diagnose);
+
+export function recoverTruncatedNativeWorkspaceProgram(program: string, evidenceIds: ReadonlySet<string> | undefined, prose: string,
+  check = defaultRecoveryValidator(evidenceIds)) {
   if (program.length > MAX_PROGRAM_CHARS) return;
   try {
     const tokens = tokenize(program);
@@ -830,9 +836,9 @@ export function recoverTruncatedNativeWorkspaceProgram(program: string, evidence
       if (JSON.stringify(parseExpression(tokenize(printed))) !== JSON.stringify(expression)) return;
       prefix = [prefix, 'root = ' + printed].filter(Boolean).join('\n');
     }
-    const validation = validateNativeWorkspaceProgram(prefix, evidenceIds, prose);
+    const validation = check(prefix, prose);
     if (validation.ok) return { program: prefix, validation, partial: true };
-    if (validation.reason === 'reference') return recoverNativeWorkspaceProgram(prefix, evidenceIds, prose, 'reference');
+    if (validation.reason === 'reference') return recoverNativeWorkspaceProgram(prefix, evidenceIds, prose, 'reference', check);
   } catch {
     // A damaged token stream must not suppress the readable answer.
   }
@@ -842,7 +848,8 @@ const layoutChildren = new Map([['Col', 0], ['Row', 0], ['Grid', 0], ['Card', 0]
 
 /** Every recovered candidate passes the full authority, schema and data checks.
  * Reachable branches with unresolved references may be omitted from the view. */
-export function recoverNativeWorkspaceProgram(program: string, evidenceIds: ReadonlySet<string> | undefined, prose: string, failure: 'schema' | 'factual_review' | 'reference' | 'authority' = 'schema') {
+export function recoverNativeWorkspaceProgram(program: string, evidenceIds: ReadonlySet<string> | undefined, prose: string,
+  failure: 'schema' | 'factual_review' | 'reference' | 'authority' = 'schema', check = defaultRecoveryValidator(evidenceIds)) {
   try {
     const statements = split(tokenize(program));
     const declarations = new Map(statements.map(item => [item.id, item]));
@@ -875,7 +882,7 @@ export function recoverNativeWorkspaceProgram(program: string, evidenceIds: Read
       const entry = [...originals].find(([, node]) => node.k === 'Comp' && node.name === 'Col');
       if (entry) {
         const explicit = 'root = ' + entry[0] + '\n' + program;
-        const validation = validateNativeWorkspaceProgram(explicit, evidenceIds, prose);
+        const validation = check(explicit, prose);
         if (validation.ok) return { program: explicit, validation, partial: false };
       }
     }
@@ -894,7 +901,7 @@ export function recoverNativeWorkspaceProgram(program: string, evidenceIds: Read
     const normalized = failure === 'schema' && [...symbols].some(([id, node]) => originals.get(id) !== node);
     if (normalized) {
       const full = [...symbols].map(([id, node]) => sourceFor(id, node)).join('\n');
-      const validation = validateNativeWorkspaceProgram(full, evidenceIds, narrative);
+      const validation = check(full, narrative);
       if (validation.ok || validation.reason === 'data_review') return { program: full, validation, partial: false };
       if (validation.reason !== 'schema') return;
     }
@@ -942,7 +949,7 @@ export function recoverNativeWorkspaceProgram(program: string, evidenceIds: Read
       const kept = branches.filter(branch => !branch.hasChart && ![...branch.reads].some(state => chartState.has(state)));
       if (!kept.length) return;
       const recovered = render({ ...root, args: [{ k: 'Arr', els: kept.map(({ child }) => child) }, ...root.args.slice(1)] });
-      const validation = validateNativeWorkspaceProgram(recovered, evidenceIds, prose);
+      const validation = check(recovered, prose);
       if (validation.ok && !contradictsMonthlyChart(parseProgram.parse(recovered).root, narrative)) {
         return { program: recovered, validation, partial: true };
       }
@@ -957,7 +964,7 @@ export function recoverNativeWorkspaceProgram(program: string, evidenceIds: Read
     const validate = (candidate: ASTNode) => {
       if (blockedAuthority || probes-- <= 0) return;
       let authorityIssue: NativeUiDiagnostic['authorityIssue'];
-      const validation = validateNativeWorkspaceProgram(render(candidate), evidenceIds, reviewContext,
+      const validation = check(render(candidate), reviewContext,
         event => { authorityIssue = event.authorityIssue; });
       // Only an unregistered capability can be discarded as a visual branch.
       // An invalid action, source or expression still rejects the projection.
@@ -971,7 +978,7 @@ export function recoverNativeWorkspaceProgram(program: string, evidenceIds: Read
       // The displayed root may already be intact. Drop only unreachable
       // declarations in that case and retain the complete layout.
       const reachable = render(root);
-      const validation = validateNativeWorkspaceProgram(reachable, evidenceIds, narrative);
+      const validation = check(reachable, narrative);
       if (validation.ok || validation.reason === 'data_review') return { program: reachable, validation, partial: false };
     }
     const group = (els: ASTNode[]): Extract<ASTNode, { k: 'Comp' }> => ({ k: 'Comp', name: 'Col', args: [{ k: 'Arr', els }] });
@@ -1006,7 +1013,7 @@ export function recoverNativeWorkspaceProgram(program: string, evidenceIds: Read
     const recovered = layout && (usable(validate(layout.container)) ? layout.container : group(layout.children));
     if (!recovered || blockedAuthority) return;
     const restored = render(recovered);
-    const validation = validateNativeWorkspaceProgram(restored, evidenceIds, failure === 'factual_review' ? reviewContext : narrative);
+    const validation = check(restored, failure === 'factual_review' ? reviewContext : narrative);
     if (failure === 'factual_review') {
       // Omitted components must not hide a contradiction with any surviving chart.
       if (!validation.ok || contradictsMonthlyChart(parseProgram.parse(restored).root, narrative)) return;

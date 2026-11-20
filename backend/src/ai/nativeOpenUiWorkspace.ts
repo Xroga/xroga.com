@@ -1,5 +1,5 @@
 import { publicCompletionState } from './completionDiagnostics.js';
-import { NATIVE_UI_FORMAT, PARTIAL_NATIVE_PRESENTATION_NOTE, missingNativeFormats, recoverNativeWorkspaceProgram, recoverNativeMonthlyChart, recoverTruncatedNativeWorkspaceProgram, splitNativeOpenUiAnswer, supplementNativeProse, validateNativeWorkspaceProgram, type NativeUiDiagnostic, type RequiredNativeFormat } from './nativeOpenUi.js';
+import { NATIVE_UI_FORMAT, PARTIAL_NATIVE_PRESENTATION_NOTE, missingNativeFormats, recoverNativeWorkspaceProgram, recoverNativeMonthlyChart, recoverTruncatedNativeWorkspaceProgram, splitNativeOpenUiAnswer, supplementNativeProse, validateNativeWorkspaceProgram, type NativeUiDiagnostic, type NativeUiValidation, type RequiredNativeFormat } from './nativeOpenUi.js';
 import { nativeAnswerReviewReason, nativeFactualGuidance, nativeTechnicalCorrections, suppliedMonthlyComparison } from './nativeOpenUiAccuracy.js';
 import { checklistFromProse, requestsEditableChecklist, suppliedPeriodicSeries } from './nativeOpenUiRecovery.js';
 import { conflictingNativeReadouts, initialNativeReadouts, nativePrincipalMultipleReview, recoverNativeReadoutProse } from './nativeOpenUiValues.js';
@@ -9,6 +9,17 @@ import { reviewEditorialProse } from './nativeOpenUiEditorial.js';
 
 const outputLimitNote = 'This answer reached the provider output limit. The available answer is shown below.';
 const promisesControls = (text: string) => /\b(?:controls?|sliders?|input fields?)\s+(?:above|below)\b|\b(?:above|below)\s+(?:calculator|controls?)\b/i.test(text);
+
+function editorialFallback(prose: string, validation: Extract<NativeUiValidation, { ok: false }>) {
+  const note = validation.fallbackProse === undefined
+    ? 'Xroga withheld a visual that disagreed with the procedure. Review the written answer before using it.'
+    : 'Xroga withheld the visual and the written steps that disagreed with it. Verify the remaining procedure before using it.';
+  return {
+    response: [note, validation.fallbackProse ?? prose].filter(Boolean).join('\n\n'),
+    completion: { status: 'partial' as const, reason: 'factual_review' as const },
+    responseSource: { format: NATIVE_UI_FORMAT, text: '' },
+  };
+}
 
 /** Deployment-owned presentation choice; never reads a user role or client flag.
  * The paid founder evaluator has its own independent staging-only guard. */
@@ -49,28 +60,32 @@ export function completeNativeWorkspaceAnswer(
     editorialIssue = event.editorialIssue;
     authorityIssue = event.authorityIssue;
     diagnose?.(event);
-  }, prompt) : undefined;
-  if (editorialIssue && original?.ok === false) {
-    const note = original.fallbackProse === undefined
-      ? 'Xroga withheld a visual that disagreed with the procedure. Review the written answer before using it.'
-      : 'Xroga withheld the visual and the written steps that disagreed with it. Verify the remaining procedure before using it.';
-    return {
-      response: [note, original.fallbackProse ?? prose]
-        .filter(Boolean).join('\n\n'),
-      completion: { status: 'partial' as const, reason: 'factual_review' as const },
-      responseSource: { format: NATIVE_UI_FORMAT, text: '' },
-    };
-  }
+  }, { request: prompt }) : undefined;
+  if (editorialIssue && original?.ok === false) return editorialFallback(prose, original);
   const factualLayoutOnly = original?.ok === false && original.reason === 'factual_review'
     && factualRule && !nativeAnswerReviewReason(prose);
   const guidance = factualLayoutOnly && factualRule ? nativeFactualGuidance[factualRule] : '';
   const unknownCapability = original?.ok === false && original.reason === 'authority' && authorityIssue === 'unknown_capability';
   const recoverable = original?.ok === false && (original.reason === 'schema' || original.reason === 'reference' || factualLayoutOnly || unknownCapability);
   const truncated = finishReason === 'length' && original?.ok === false && original.reason === 'syntax';
+  const recoveryReview: { conflict?: Extract<NativeUiValidation, { ok: false }> } = {};
+  const checkRecoveredProgram = (candidate: string, candidateProse: string, record?: (event: NativeUiDiagnostic) => void) => {
+    if (recoveryReview.conflict) return recoveryReview.conflict;
+    let conflict = false;
+    const validation = validateNativeWorkspaceProgram(candidate, evidenceIds, candidateProse, event => {
+      record?.(event);
+      if (event.editorialIssue) {
+        conflict = true;
+        diagnose?.(event);
+      }
+    }, { prose, request: prompt });
+    if (conflict && validation.ok === false) recoveryReview.conflict = validation;
+    return validation;
+  };
   let repair;
   if (finishReason === 'stop' && recoverable) {
     repair = recoverNativeWorkspaceProgram(originalProgram, evidenceIds, prose,
-      factualLayoutOnly ? 'factual_review' : original.reason === 'reference' ? 'reference' : unknownCapability ? 'authority' : 'schema');
+      factualLayoutOnly ? 'factual_review' : original.reason === 'reference' ? 'reference' : unknownCapability ? 'authority' : 'schema', checkRecoveredProgram);
     // A projection that loses the requested controls can only be a worked
     // example. Never publish its bound Markdown as a working calculator.
     if (unknownCapability && repair && (requiredFormats.includes('calculator') || promisesControls(prose))
@@ -78,7 +93,7 @@ export function completeNativeWorkspaceAnswer(
       repair = undefined;
     }
   } else if (truncated) {
-    repair = recoverTruncatedNativeWorkspaceProgram(originalProgram, evidenceIds, prose);
+    repair = recoverTruncatedNativeWorkspaceProgram(originalProgram, evidenceIds, prose, checkRecoveredProgram);
   }
   // Rebuild only a single requested visual using readable prose or closed user data.
   // Authority, factual, data-review and provider-limit failures retain their own handling.
@@ -87,10 +102,13 @@ export function completeNativeWorkspaceAnswer(
     const localProgram = requiredFormats[0] === 'checklist' && requestsEditableChecklist(prompt) ? checklistFromProse(prose)
       : requiredFormats[0] === 'chart' ? suppliedPeriodicSeries(prompt) : undefined;
     if (localProgram) {
-      const validation = validateNativeWorkspaceProgram(localProgram, evidenceIds, prose, diagnose);
+      const validation = checkRecoveredProgram(localProgram, prose, event => {
+        if (!event.editorialIssue) diagnose?.(event);
+      });
       if (validation.ok) repair = { program: localProgram, validation, partial: false };
     }
   }
+  if (recoveryReview.conflict) return editorialFallback(prose, recoveryReview.conflict);
   const program = repair?.program ?? originalProgram;
   const validation = repair?.validation ?? original;
   const missing = missingNativeFormats(validation?.ok ? program : '', requiredFormats);
