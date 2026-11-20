@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "127b334bb4d0e75a0c9ec21eeb6da96a50aab84c",
+  "source_sha": "94d3aa8f2b633237f1370aeb4a13d54b9fed54ea",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -8049,6 +8049,7 @@
         "frontend/src/components/icons/animated/lucide-animated/workflow.tsx",
         "frontend/src/components/layout/ProcessingLogo.tsx",
         "frontend/src/components/terminal/AudioLinesIcon.tsx",
+        "frontend/src/components/terminal/WorkspaceScrollNavigation.tsx",
         "frontend/src/components/ui/LoadingIcons.tsx",
         "frontend/src/components/ui/Uiverse.tsx",
         "frontend/src/components/ui/UploadAnimButton.tsx",
@@ -8150,6 +8151,7 @@
         "frontend/src/components/icons/animated/lucide-animated/workflow.tsx",
         "frontend/src/components/layout/ProcessingLogo.tsx",
         "frontend/src/components/terminal/AudioLinesIcon.tsx",
+        "frontend/src/components/terminal/WorkspaceScrollNavigation.tsx",
         "frontend/src/components/ui/LoadingIcons.tsx",
         "frontend/src/components/ui/Uiverse.tsx",
         "frontend/src/components/ui/UploadAnimButton.tsx",
@@ -21212,7 +21214,7 @@
     },
     {
       "path": "frontend/src/components/dashboard/DashboardView.tsx",
-      "sha256": "7369f4b829f341829ccc8ee4391148d7a6d29c38c7ee9306a02ad4d5d78c1e4b"
+      "sha256": "22dd6c7306230e700e809810541350ee263eb9b5bff8d4878a8b940f1c0b5832"
     },
     {
       "path": "frontend/src/components/dashboard/DashboardWelcome.tsx",
@@ -23208,7 +23210,7 @@
     },
     {
       "path": "frontend/src/components/terminal/TerminalDock.tsx",
-      "sha256": "70d7d276623bc00339b82feac14516ee23ea0ffc2fd1196002587eee798a452b"
+      "sha256": "fc9f28c4c5e167b136e459c98cc546507768bf170ddb25b5f050c4aaae8816ab"
     },
     {
       "path": "frontend/src/components/terminal/TerminalLiveActivity.tsx",
@@ -23273,6 +23275,10 @@
     {
       "path": "frontend/src/components/terminal/WorkspacePeopleControls.tsx",
       "sha256": "4e98e8014cbcbf55f78cede9343c2b2383fefd44c8002a6ed3c7365ddf873419"
+    },
+    {
+      "path": "frontend/src/components/terminal/WorkspaceScrollNavigation.tsx",
+      "sha256": "e819e05770bffc67701a40193ca01fe2f1c4c548a2d5eddd3d8931afb02f8881"
     },
     {
       "path": "frontend/src/components/terminal/WorkspaceSearchButton.tsx",
@@ -30598,6 +30604,13 @@
       "protocol": "https:",
       "path": "frontend/src/components/terminal/WorkspacePeopleControls.tsx",
       "line": 53,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "www.w3.org",
+      "protocol": "http:",
+      "path": "frontend/src/components/terminal/WorkspaceScrollNavigation.tsx",
+      "line": 12,
       "credentialsInUrl": false
     },
     {

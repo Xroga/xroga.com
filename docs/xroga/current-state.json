@@ -69954,7 +69954,7 @@
       "id": "surface:793b89822aa62ee49888",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/dashboard/DashboardView.tsx",
-      "sha256": "7369f4b829f341829ccc8ee4391148d7a6d29c38c7ee9306a02ad4d5d78c1e4b",
+      "sha256": "22dd6c7306230e700e809810541350ee263eb9b5bff8d4878a8b940f1c0b5832",
       "symbols": [
         "DashboardView",
         "activeProject",
@@ -69976,6 +69976,8 @@
         "paneRef",
         "rect",
         "root",
+        "scrolled",
+        "scroller",
         "setTerminalFullscreen",
         "setWorkspaceOpen",
         "setWorkspaceWidth",
@@ -69996,6 +69998,7 @@
       ],
       "imports": [
         "./WorkspaceNewTerminal.module.css",
+        "./WorkspaceScrollPolish.module.css",
         "@/components/billing/BillingSuccessExperience",
         "@/components/icons/animated/AnimatedIcon",
         "@/components/icons/animated/ExpandIcon",
@@ -70020,6 +70023,7 @@
       "runtimeImports": [
         "frontend/src/components/billing/BillingSuccessExperience.tsx",
         "frontend/src/components/dashboard/WorkspaceNewTerminal.module.css",
+        "frontend/src/components/dashboard/WorkspaceScrollPolish.module.css",
         "frontend/src/components/icons/animated/AnimatedIcon.tsx",
         "frontend/src/components/icons/animated/ExpandIcon.tsx",
         "frontend/src/components/icons/animated/MinimizeIcon.tsx",
@@ -98084,7 +98088,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/TerminalDock.tsx:8"
+        "frontend/src/components/terminal/TerminalDock.tsx:7"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -99810,7 +99814,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/dashboard/DashboardView.tsx:27"
+        "frontend/src/components/dashboard/DashboardView.tsx:28"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -100875,7 +100879,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/TerminalDock.tsx:7"
+        "frontend/src/components/terminal/TerminalDock.tsx:6"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -100907,7 +100911,7 @@
       "id": "surface:96c636bdc082da399e4c",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/TerminalDock.tsx",
-      "sha256": "70d7d276623bc00339b82feac14516ee23ea0ffc2fd1196002587eee798a452b",
+      "sha256": "fc9f28c4c5e167b136e459c98cc546507768bf170ddb25b5f050c4aaae8816ab",
       "symbols": [
         "TerminalDock",
         "chatbarHidden",
@@ -100940,6 +100944,7 @@
       "imports": [
         "./ChatbarQueueOutside",
         "./TerminalChatBar",
+        "./WorkspaceScrollNavigation",
         "@/components/dashboard/WorkspaceNewTerminal",
         "@/components/dashboard/WorkspaceNewTerminal.module.css",
         "@/context/TerminalChatContext",
@@ -100951,7 +100956,6 @@
         "@/store/usePrivacyStore",
         "@/store/useProjectWorkspaceStore",
         "@/store/useThemeStore",
-        "lucide-react",
         "next/navigation",
         "react"
       ],
@@ -100960,6 +100964,7 @@
         "frontend/src/components/dashboard/WorkspaceNewTerminal.tsx",
         "frontend/src/components/terminal/ChatbarQueueOutside.tsx",
         "frontend/src/components/terminal/TerminalChatBar.tsx",
+        "frontend/src/components/terminal/WorkspaceScrollNavigation.tsx",
         "frontend/src/context/TerminalChatContext.tsx",
         "frontend/src/context/TerminalScrollContext.tsx",
         "frontend/src/hooks/useHydrated.ts",
@@ -100980,7 +100985,6 @@
       "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
-        "lucide-react",
         "next/navigation",
         "react"
       ],
@@ -101975,6 +101979,63 @@
         "frontend/src/components/terminal/WorkspacePeopleControls.tsx#useWorkspaceAuthGate",
         "frontend/src/components/terminal/WorkspacePeopleControls.tsx#useWorkspaceIdentity"
       ],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:7a587015a109c5dd5e64",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/terminal/WorkspaceScrollNavigation.tsx",
+      "sha256": "e819e05770bffc67701a40193ca01fe2f1c4c548a2d5eddd3d8931afb02f8881",
+      "symbols": [
+        "INITIAL",
+        "NavigationArrow",
+        "ScrollPosition",
+        "WorkspaceScrollNavigation",
+        "behavior",
+        "content",
+        "destination",
+        "distance",
+        "frame",
+        "maxScroll",
+        "navigate",
+        "next",
+        "resize",
+        "schedule",
+        "scroller",
+        "sync",
+        "visible"
+      ],
+      "imports": [
+        "@/components/dashboard/WorkspaceScrollPolish.module.css",
+        "react"
+      ],
+      "runtimeImports": [
+        "frontend/src/components/dashboard/WorkspaceScrollPolish.module.css"
+      ],
+      "entryPoints": [
+        "frontend/src/app/(shell)/layout.tsx",
+        "frontend/src/app/(workspace)/layout.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/terminal/TerminalDock.tsx:8"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "declared-host:www.w3.org",
+        "react"
+      ],
+      "authBoundary": [],
       "tenantBoundary": [],
       "approvalBoundary": [],
       "costBoundary": [],
