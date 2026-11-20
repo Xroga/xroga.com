@@ -20,7 +20,10 @@ test('a titled native section follows the matching Markdown passage before the n
   assert.equal(placements.markdownIndex, 0);
   assert.equal(placements.placements.size, 1);
   assert.equal(placements.placements.values().next().value?.props.title, 'Review flow');
-  const inlineSections = new Map([...placements.placements.keys()].map(i => [i, createElement('span', null, 'The native diagram')]));
+  const inlineSections = {
+    nodes: new Map([...placements.placements.keys()].map(i => [i, createElement('span', null, 'The native diagram')])),
+    replacedBlocks: placements.replacedBlocks,
+  };
   const view = renderToStaticMarkup(createElement(MarkdownBlocks, {text,inlineSections}));
   assert.match(view, /Follow the two branches.*The native diagram.*Examples.*Preserve the full example/);
   assert.equal(view.match(/The native diagram/g)?.length, 1);
@@ -40,6 +43,58 @@ test('ambiguous, fenced, unanchored and earlier native sections keep their model
     [doc('## Review flow'), doc('## Examples'), section],
     [section, doc('## Review flow')],
   ]) assert.equal(placeTitledNativeSections(nodes), undefined);
+});
+
+test('a visible checklist replaces its exact same-section Markdown list only', () => {
+  const code = [
+    'root = Col([Markdown(_xroga_answer), checks])',
+    'checks = Section("Closing checklist", [Controls([Checkbox($tools, "Turn off the tools."), Checkbox($handoff, "Record the handoff.")], "Close the shop")])',
+    '$tools = false',
+    '$handoff = false',
+  ].join('\n');
+  const parser = createParser(catalog.schema as LibraryJSONSchema, 'Col');
+  const bullets = '- Turn off the tools.\n- Record the handoff.';
+  function render(sectionBody: string, source = code) {
+    const text = '## Closing checklist\n\n' + sectionBody + '\n\n## Notes\n\nKeep the owner’s instructions.';
+    const saved = bindNativeAnswerText(source, text);
+    const root = parser.parse(saved).root;
+    const matches = nativeMarkdownMatches(root, initialNativeValueReader(saved));
+    const nodes = new Map([...matches.inlineReplacements.values()].map(i => [i, createElement('span', null, 'The interactive checklist')]));
+    const rich = renderToStaticMarkup(createElement(MarkdownBlocks, {
+      text, inlineSections: { nodes, replacedBlocks: new Set(nodes.keys()) }, renderCitation: () => 'Verified source',
+    }));
+    const fallback = renderToStaticMarkup(createElement(MarkdownBlocks, { text, renderCitation: () => 'Verified source' }));
+    return { rich, fallback };
+  }
+  const { rich, fallback } = render(bullets);
+  assert.match(rich, /Closing checklist.*The interactive checklist.*Notes.*Keep the owner/);
+  assert.doesNotMatch(rich, /Turn off the tools|Record the handoff/);
+  assert.match(fallback, /Turn off the tools.*Record the handoff/);
+  assert.match(render(bullets + '\n\nConfirm the handoff in writing.').rich, /The interactive checklist.*Confirm the handoff in writing.*Notes/);
+  assert.doesNotMatch(render(bullets.replaceAll('- ', '- [ ] ')).rich, /Turn off the tools/);
+  for (const [different, source] of [
+    [bullets, code.replace('"Closing checklist"', '"Another checklist"')],
+    [bullets, code.replace('$handoff = false', '$handoff = true')],
+    [bullets.split('\n').reverse().join('\n'), code],
+    [bullets.replace('tools.', 'tools. [1]'), code],
+    [bullets + '\n- Lock the door.', code],
+    ['1. Turn off the tools.\n2. Record the handoff.', code],
+    ['- [ ] Turn off the tools.\n- Record the handoff.', code],
+    ['- Preserve this precondition.\n\nBefore closing.\n\n' + bullets, code],
+  ]) assert.match(render(different, source).rich, /Turn off the tools.*Record the handoff|Record the handoff.*Turn off the tools/);
+});
+
+test('a titled native introduction replaces a single equivalent Markdown paragraph and preserves distinct links', () => {
+  const program = 'root = Col([Markdown(_xroga_answer), Section("Handoff", [Caption("Keep this detail.")], "Pass the notes to the coordinator.")])';
+  for (const [paragraph, expected] of [
+    ['**Pass the notes to the coordinator.**', 1],
+    ['Pass the notes to the coordinator. [1]', 0],
+    ['Pass the notes to the coordinator.\n\nConfirm receipt.', 0],
+  ] as const) {
+    const code = bindNativeAnswerText(program, '## Handoff\n\n' + paragraph);
+    const root = createParser(catalog.schema as LibraryJSONSchema, 'Col').parse(code).root;
+    assert.equal(nativeMarkdownMatches(root, initialNativeValueReader(code)).inlineReplacements.size, expected);
+  }
 });
 
 const render = (source: string) => renderToStaticMarkup(createElement(Fragment, null, inline(source)));

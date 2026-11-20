@@ -1,4 +1,5 @@
-type NativeMarkdownTable = { head: string[]; rows: string[][] };
+export type NativeMarkdownTable = { head: string[]; rows: string[][] };
+type NativeMarkdownTableBlock = NativeMarkdownTable & { start: number; end: number; headings: string[] };
 
 const delimiter = /^\s*\|?\s*:?-+:?\s*(\|\s*:?-+:?\s*)*\|?\s*$/;
 const fenceMarker = /^ {0,3}(\x60{3,}|~{3,})(.*)$/;
@@ -25,11 +26,12 @@ export function readNativeMarkdownTable(lines: readonly string[], index: number)
   return { head, rows, end };
 }
 
-/** Count complete, visible tables. A fenced example or empty grid delivers no rows. */
-export function nativeMarkdownTables(text: string): NativeMarkdownTable[] {
-  if (!text.includes('|')) return [];
+/** Read visible headings and complete tables for readable fallback projection. */
+export function nativeMarkdownOutline(text: string) {
   const lines = text.replace(/\r\n?/g, '\n').split('\n');
-  const tables: NativeMarkdownTable[] = [];
+  const tables: NativeMarkdownTableBlock[] = [];
+  const paths: string[][] = [];
+  const headings: Array<{ level: number; text: string }> = [];
   let fence: string | undefined;
   let math: string | undefined;
   let blockStart = true;
@@ -54,6 +56,13 @@ export function nativeMarkdownTables(text: string): NativeMarkdownTable[] {
       fence = marker[1];
       continue;
     }
+    const heading = /^(#{1,4})[ \t]+(.+)$/.exec(line);
+    if (heading) {
+      const level = heading[1].length;
+      while (headings.length && headings[headings.length - 1].level >= level) headings.pop();
+      headings.push({ level, text: heading[2] });
+      paths.push(headings.map(item => item.text));
+    }
     if (blockStart) {
       const opening = /^ {0,3}(\$\$|\\\[)(.*)$/.exec(line);
       if (opening) {
@@ -67,7 +76,7 @@ export function nativeMarkdownTables(text: string): NativeMarkdownTable[] {
           const { head, rows, end } = table;
           if (head.some(Boolean) && !indentedCode.test(lines[index + 1]) && cells(lines[index + 1]).length === head.length
             && rows.some(row => row.some(Boolean)) && rows.every(row => row.length === head.length)) {
-            tables.push({ head, rows });
+            tables.push({ head, rows, start: index, end, headings: headings.map(item => item.text) });
           }
           index = end - 1;
           continue;
@@ -76,5 +85,10 @@ export function nativeMarkdownTables(text: string): NativeMarkdownTable[] {
     }
     blockStart = !line.trim() || startsNewBlock.test(line) || /^\s*([-*_])(\s*\1){2,}\s*$/.test(line);
   }
-  return tables;
+  return { tables, headings: paths };
+}
+
+/** A fenced example or empty grid delivers no rows. */
+export function nativeMarkdownTables(text: string): NativeMarkdownTableBlock[] {
+  return text.includes('|') ? nativeMarkdownOutline(text).tables : [];
 }

@@ -94,8 +94,12 @@ type Block =
   | { kind: "table"; head: string[]; rows: string[][] };
 
 export const VisibleMarkdownTables = createContext<ReadonlySet<string> | null>(null);
-export const NativeVisualContent = createContext<Pick<MarkdownMatches, "tables" | "sectionTables" | "headingTitles" | "titles" | "markdownSectionHeadings" | "checklists"> | undefined>(undefined);
-export const InlineNativeSections = createContext<ReadonlyMap<number, ReactNode> | undefined>(undefined);
+export const NativeVisualContent = createContext<Pick<MarkdownMatches, "tables" | "sectionTables" | "headingTitles" | "titles" | "markdownSectionHeadings" | "checklists" | "inlineReplacements"> | undefined>(undefined);
+type InlineSectionContent = {
+  nodes: ReadonlyMap<number, ReactNode>;
+  replacedBlocks: ReadonlySet<number>;
+};
+export const InlineNativeSections = createContext<InlineSectionContent | undefined>(undefined);
 
 // Only compare scalar cells. Retain distinct data and cells with components.
 export function tableContentKey(head: readonly string[], rows: readonly unknown[][]): string | undefined {
@@ -154,6 +158,7 @@ type MarkdownMatches = {
   tables: ReadonlySet<string>;
   checklists: ReadonlySet<string>;
   listItems: ReadonlySet<string>;
+  inlineReplacements: ReadonlyMap<string, number>;
 };
 
 type ChecklistItem = { label: string; checked: boolean };
@@ -327,7 +332,17 @@ export function nativeMarkdownMatches(root: unknown, readInitial: (value: unknow
       markdownSectionHeadings.add(textKey(heading.text));
     });
   }
-  return { documents, paragraphs, titles, headingTitles, markdownSectionHeadings, sectionTables, code, tables, relationships, checklists, listItems };
+  // Capture the original controls before the renderer evaluates them against
+  // live state. Toggling a checkbox must not bring its Markdown copy back.
+  const inlineReplacements = new Map<string, number>();
+  if (isElementNode(root) && root.typeName === "Col" && Array.isArray(root.props.children)) {
+    const plan = placeTitledNativeSections(root.props.children, readInitial);
+    if (plan) for (const index of plan.replacedBlocks) {
+      const title = plan.placements.get(index)?.props.title;
+      if (typeof title === "string") inlineReplacements.set(title, index);
+    }
+  }
+  return { documents, paragraphs, titles, headingTitles, markdownSectionHeadings, sectionTables, code, tables, relationships, checklists, listItems, inlineReplacements };
 }
 
 /** Only remove a complete verbatim document already visible in native Markdown.
@@ -435,8 +450,24 @@ function blocks(source: string): Block[] {
   return out;
 }
 
+function placedChecklistKey(section: ElementNode, readInitial: (value: unknown) => unknown): string | undefined {
+  if (!Array.isArray(section.props.children)) return;
+  const children = section.props.children.filter(isElementNode);
+  const checkboxes = (nodes: unknown[]) => nodes.filter(isElementNode).filter(node => node.typeName === "Checkbox");
+  const groups = [checkboxes(children)];
+  for (const child of children) {
+    if (child.typeName === "Controls" && Array.isArray(child.props.children)) groups.push(checkboxes(child.props.children));
+  }
+  const nonempty = groups.filter(group => group.length > 0);
+  if (nonempty.length !== 1) return;
+  const items = nonempty[0].map(node => ({ label: node.props.label, checked: readInitial(node.props.checked) }));
+  if (items.every((item): item is ChecklistItem => typeof item.label === "string" && typeof item.checked === "boolean")) {
+    return checklistKey(items);
+  }
+}
+
 /** Follow unambiguous Markdown headings without reordering unrelated native siblings. */
-export function placeTitledNativeSections(children: readonly unknown[]) {
+export function placeTitledNativeSections(children: readonly unknown[], readInitial?: (value: unknown) => unknown) {
   const markdown = children.filter(isElementNode).filter(node => node.typeName === "Markdown");
   if (markdown.length !== 1 || markdown[0].hasDynamicProps || typeof markdown[0].props.text !== "string") return;
   const markdownIndex = children.indexOf(markdown[0]);
@@ -457,20 +488,44 @@ export function placeTitledNativeSections(children: readonly unknown[]) {
     positions.set(title, positions.has(title) ? null : start);
   }
   const placements = new Map<number, ElementNode>();
+  const replacedBlocks = new Set<number>();
   for (const [title, section] of sections) {
     const start = positions.get(title);
     if (start == null || !section || children.indexOf(section) <= markdownIndex) continue;
     let end = start + 1;
     while (end < items.length && items[end].kind !== "h") end += 1;
-    placements.set(end - 1, section);
+    let at = end - 1;
+    if (!readInitial) {
+      placements.set(at, section);
+      continue;
+    }
+    const last = items[end - 1];
+    if (end === start + 2 && last.kind === "p" && typeof section.props.introduction === "string" &&
+      citationTextKey(last.text) === citationTextKey(section.props.introduction)) replacedBlocks.add(end - 1);
+    // The sole list in a matching section can be replaced in place. Keep
+    // trailing caveats and leave ambiguous groups or cited list items alone.
+    const listIndices: number[] = [];
+    for (let i = start + 1; i < end; i += 1) if (items[i].kind === "list") listIndices.push(i);
+    const list = items[listIndices[0]];
+    if (listIndices.length === 1 && list?.kind === "list" && !list.ordered) {
+      const key = markdownChecklistKey(list.items) ??
+        (list.items.every(item => !/^\[[ xX]\](?:\s|$)|\[\d{1,3}\]|\]\(/.test(item))
+          ? checklistKey(list.items.map(label => ({ label, checked: false }))) : undefined);
+      if (key && key === placedChecklistKey(section, readInitial)) {
+        at = listIndices[0];
+        replacedBlocks.add(at);
+      }
+    }
+    placements.set(at, section);
   }
-  if (placements.size) return { markdownIndex, placements };
+  if (placements.size) return { markdownIndex, placements, replacedBlocks };
 }
 
-export function MarkdownBlocks({ text, renderCitation, deduplicateTables = false, matches, nativeTables, nativeSectionTables, nativeHeadingTitles, nativeChecklists, inlineSections }: { text: string; renderCitation?: RenderEvidenceCitation; deduplicateTables?: boolean; matches?: MarkdownMatches; nativeTables?: ReadonlySet<string>; nativeSectionTables?: ReadonlyMap<string, ReadonlySet<string>>; nativeHeadingTitles?: ReadonlySet<string>; nativeChecklists?: ReadonlySet<string>; inlineSections?: ReadonlyMap<number, ReactNode> }) {
+export function MarkdownBlocks({ text, renderCitation, deduplicateTables = false, matches, nativeTables, nativeSectionTables, nativeHeadingTitles, nativeChecklists, inlineSections }: { text: string; renderCitation?: RenderEvidenceCitation; deduplicateTables?: boolean; matches?: MarkdownMatches; nativeTables?: ReadonlySet<string>; nativeSectionTables?: ReadonlyMap<string, ReadonlySet<string>>; nativeHeadingTitles?: ReadonlySet<string>; nativeChecklists?: ReadonlySet<string>; inlineSections?: InlineSectionContent }) {
   const seenTables = new Set<string>();
   const items = blocks(text);
   const rendered = items.map((b, i) => {
+        if (inlineSections?.replacedBlocks.has(i)) return null;
         const k = `b${i}`;
         switch (b.kind) {
           case "p":
@@ -551,7 +606,7 @@ export function MarkdownBlocks({ text, renderCitation, deduplicateTables = false
           }
         }
   });
-  return <>{inlineSections ? rendered.map((element, index) => inlineSections.has(index)
-    ? <Fragment key={`section-${index}`}>{element}{inlineSections.get(index)}</Fragment>
+  return <>{inlineSections ? rendered.map((element, index) => inlineSections.nodes.has(index)
+    ? <Fragment key={`section-${index}`}>{element}{inlineSections.nodes.get(index)}</Fragment>
     : element) : rendered}</>;
 }

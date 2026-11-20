@@ -376,6 +376,55 @@ test('supplemental checkbox labels do not repeat exact readable tasks with the s
   assert.equal(complete.slice(prose.length), '\n\n- Notify the team.\n\n- Check the guidance.\n\n- Sample only.');
 });
 
+test('the authoritative response preserves one matching scoped table with code, escapes and exact citations', () => {
+  const head = ['Example', 'Meaning'];
+  const rows = [
+    ['`left|right`', 'Alpha | Beta'],
+    ['[Guide](https://example.com/guide) [1]', '10'],
+  ];
+  const prose = [
+    '# Technical note', '', '## **Observed values**', '',
+    '| Example | Meaning |', '| :--- | ---: |',
+    '| `left|right` | Alpha \\| Beta |', '| [Guide](https://example.com/guide) [1] | 10 |',
+  ].join('\n');
+  const programFor = (entries: string[][]) => bindNativeAnswerText(
+    'root = Col([Markdown(_xroga_answer), Section("Observed values", [Table(' +
+      JSON.stringify(head) + ', ' + JSON.stringify(entries) + ')])])', prose,
+  );
+  assert.equal(supplementNativeProse(prose, programFor(rows), true), prose);
+  for (const entries of [
+    [rows[0], [rows[1][0], '11']],
+    [rows[0], ['[Guide](https://example.com/other) [1]', '10']],
+    [rows[0], ['[Guide](https://example.com/guide) [2]', '10']],
+    [rows[1], rows[0]],
+  ]) {
+    const exported = supplementNativeProse(prose, programFor(entries), true);
+    assert.ok(exported.startsWith(prose + '\n\n'));
+    assert.equal(exported.match(/^\| Example \| Meaning \|$/gm)?.length, 2);
+    assert.match(exported.slice(prose.length), /\x60left\|right\x60/);
+  }
+});
+
+test('a fenced table example cannot replace a real or separately titled native table', () => {
+  const table = '| Stage | Owner |\n| --- | --- |\n| Intake | Coordinator |';
+  const native = 'Table(["Stage","Owner"],[["Intake","Coordinator"]])';
+  const example = 'Example syntax:\n\n~~~markdown\n' + table + '\n~~~';
+  assert.equal(
+    supplementNativeProse(example, 'root = Col([' + native + '])', true),
+    example + '\n\n' + table,
+  );
+
+  const prose = '## Desktop\n\n### Handoff\n\n' + table;
+  const program = 'root = Col([Section("Mobile",[Section("Handoff",[' + native + '])])])';
+  const answer = supplementNativeProse(prose, program, true);
+  assert.equal(answer, prose + '\n\n## Mobile\n\n### Handoff\n\n' + table);
+  assert.equal(supplementNativeProse(answer, program, true), answer);
+  assert.equal(
+    completeNativeWorkspaceAnswer(NATIVE_UI_MARKER + program, 'stop').response,
+    '## Mobile\n\n### Handoff\n\n' + table,
+  );
+});
+
 test('native layout, data and reactive arithmetic are accepted without a V2 translation', () => {
   const programs = [
     'root = Col([Title("Options"), Table(["Plan", "USD/month"], [["Basic", 10], ["Team", 25]])])',

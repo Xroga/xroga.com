@@ -93,11 +93,15 @@ export const Col = defineComponent({
     if (inline) {
       const moved = new Set<unknown>(inline.placements.values());
       const sections = new Map<number, ReactNode>();
+      const replacedBlocks = new Set<number>();
       for (const [index, section] of inline.placements) {
-        sections.set(index, <InlineNativeSections.Provider value={undefined}>{renderNode(section)}</InlineNativeSections.Provider>);
+        const title = section.props.title;
+        const replacement = typeof title === "string" ? settled?.inlineReplacements.get(title) : undefined;
+        sections.set(replacement ?? index, <InlineNativeSections.Provider value={undefined}>{renderNode(section)}</InlineNativeSections.Provider>);
+        if (replacement !== undefined) replacedBlocks.add(replacement);
       }
       contents = props.children.map((child, index) => moved.has(child) ? null : (
-        <InlineNativeSections.Provider key={index} value={index === inline.markdownIndex ? sections : undefined}>
+        <InlineNativeSections.Provider key={index} value={index === inline.markdownIndex ? { nodes: sections, replacedBlocks } : undefined}>
           {renderNode(child)}
         </InlineNativeSections.Provider>
       ));

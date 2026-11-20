@@ -1,6 +1,7 @@
 import { createParser, evaluate, parseExpression, split, tokenize, walkAST, type ASTNode, type LibraryJSONSchema } from '@openuidev/lang-core';
 import { claimsChartIsDeferred, contradictsMonthlyChart, monthlyChartDataFallback, nativeTechnicalReviewContext, reviewNativeAnswer, suppliedMonthlyComparison } from './nativeOpenUiAccuracy.js';
 import { DIAGRAM_NODE_TONES, hasRenderableDiagramTopology } from './nativeDiagramTopology.js';
+import { nativeMarkdownOutline, nativeMarkdownTables, type NativeMarkdownTable } from './nativeMarkdown.js';
 import { reviewEditorialVisuals } from './nativeOpenUiEditorial.js';
 import catalog from './nativeOpenUiCatalog.json' with { type: 'json' };
 import { formatInitialNativeCurrency, initialNativeReadouts, initialNativeValueReader, nativePrincipalMultipleReview, recoverNativeReadoutProse } from './nativeOpenUiValues.js';
@@ -256,36 +257,90 @@ export function supplementNativeProse(prose: string, program: string, includeAll
   if (firstBlock < 0) return prose;
   const lines: string[] = [];
   const seen = new Set<string>();
-  // Markdown allows different delimiter padding for the same plain table.
-  // Compare complete blocks only, and leave code/escaped cells untouched.
-  const tableKey = (text: string) => {
-    const rows = text.trim().split('\n');
-    if (rows.length < 3 || /[`\\]/.test(text) || !rows.every(row => /^\s*\|.*\|\s*$/.test(row))) return '';
-    if (!/^\s*\|(?:\s*:?-{3,}:?\s*\|)+\s*$/.test(rows[1])) return '';
-    return rows.map((row, index) => index === 1 ? '' : row.trim().split('|').map(cell => cell.trim()).join('|')).join('\n');
+  // Compare parsed, complete tables instead of raw delimiter padding. Keep
+  // cell contents literal so links, citations, code and data differences survive.
+  const tableKey = ({ head, rows }: NativeMarkdownTable) => JSON.stringify([head, rows]);
+  const scopeLabel = (value: string) => /\x60|\]\(/.test(value) ? value.trim() : nativeReadableTextKey(value);
+  const outline = nativeMarkdownOutline(prose);
+  const authoredHeadings = new Map<string, string[]>();
+  for (const heading of outline.headings) {
+    const path = heading.map(scopeLabel);
+    authoredHeadings.set(JSON.stringify(path), path);
+  }
+  const authoredTables = new Map<string, Map<string, string[]>>();
+  for (const table of outline.tables) {
+    const key = tableKey(table);
+    const scopes = authoredTables.get(key) ?? new Map<string, string[]>();
+    const path = table.headings.map(scopeLabel);
+    scopes.set(JSON.stringify(path), path);
+    authoredTables.set(key, scopes);
+  }
+  const isSingleScope = (paths: Iterable<readonly string[]>, scope: readonly string[]) => {
+    let matched = false;
+    for (const path of paths) {
+      if (path.length < scope.length || !scope.every((heading, i) => path[path.length - scope.length + i] === heading)) continue;
+      if (matched) return false;
+      matched = true;
+    }
+    return matched;
   };
-  const existingTables = new Set(prose.split(/\n\s*\n/).map(tableKey).filter(Boolean));
+  const seenHeadings = new Set<string>();
+  const seenTables = new Set<string>();
   const existingText = new Set(prose.split(/\n\s*\n|\n(?=\s*[-*+]\s)/).map(value =>
     nativeReadableTextKey(value.replace(/^\s*(?:#{1,6}\s+|[-*+]\s+)/, ''))));
   const existingTasks = readableTaskKeys(prose);
   let remaining = 24_000;
-  const add = (value: string) => {
-    const key = nativeReadableTextKey(value.replace(/^\s*(?:#{1,6}\s+|[-*+]\s+)/, ''));
-    if (!value || value.length > remaining || seen.has(key) || existingText.has(key) || prose.includes(value) || existingTables.has(tableKey(value))) return;
+  const append = (value: string) => {
     lines.push(value);
-    seen.add(key);
     remaining -= value.length;
   };
-  const addTable = (headings: string[], rows: string[][]) => {
-    if (!headings.length || !rows.length) return;
-    const row = (cells: string[]) => '| ' + cells.map(cell =>
-      cell.replace(/\\/g, '\\\\').replace(/\|/g, '\\|').replace(/[\r\n]+/g, ' ')).join(' | ') + ' |';
-    add([row(headings), row(headings.map(() => '---')), ...rows.map(row)].join('\n'));
+  const addHeading = (title: string, scope: readonly string[], minimum = 2): readonly string[] => {
+    if (!title) return scope;
+    const level = Math.max(minimum, Math.min(4, scope.length + 2));
+    const path = [...scope.slice(0, level - 2), scopeLabel(title)];
+    const key = JSON.stringify(path);
+    const value = '#'.repeat(level) + ' ' + title;
+    if (value.length <= remaining && !seenHeadings.has(key) && !isSingleScope(authoredHeadings.values(), path)) {
+      append(value);
+    }
+    seenHeadings.add(key);
+    return path;
   };
-  function project(value: unknown): void {
+  const add = (value: string, scope: readonly string[] = [], projectedTable?: NativeMarkdownTable) => {
+    if (!value || value.length > remaining) return;
+    let table = projectedTable;
+    if (!table && value.includes('|') && value.includes('\n')) {
+      const trimmed = value.trim();
+      const [block] = nativeMarkdownTables(trimmed);
+      if (block?.start === 0 && block.end === trimmed.split(/\r\n?|\n/).length) table = block;
+    }
+    if (table) {
+      const key = tableKey(table);
+      const scopes = authoredTables.get(key);
+      const identity = JSON.stringify([scope, key]);
+      const authoredInScope = scopes && (!scope.length || isSingleScope(scopes.values(), scope));
+      if (seenTables.has(identity) || authoredInScope) return;
+      seenTables.add(identity);
+    } else {
+      const key = nativeReadableTextKey(value.replace(/^\s*(?:#{1,6}\s+|[-*+]\s+)/, ''));
+      if (seen.has(key) || existingText.has(key) || prose.includes(value)) return;
+      seen.add(key);
+    }
+    append(value);
+  };
+  const addTable = (headings: string[], rows: string[][], scope: readonly string[]) => {
+    if (!headings.length || !rows.length) return;
+    const cell = (value: string) => value.replace(/[\r\n]+/g, ' ').trim();
+    const head = headings.map(cell);
+    const data = rows.map(cells => cells.map(cell));
+    const row = (cells: string[]) => '| ' + cells.map(value => value.split(/(\x60[^\x60\n]+\x60)/g)
+      .map((part, index) => index % 2 ? part : part.replace(/\\/g, '\\\\').replace(/\|/g, '\\|')).join('')).join(' | ') + ' |';
+    add([row(head), row(head.map(() => '---')), ...data.map(row)].join('\n'), scope, { head, rows: data });
+  };
+  function project(value: unknown, scope: readonly string[] = []): void {
     if (remaining <= 0) return;
-    if (Array.isArray(value)) { value.forEach(project); return; }
-    if (typeof value === 'string' || typeof value === 'number') { add(String(value)); return; }
+    if (Array.isArray(value)) { value.forEach(item => project(item, scope)); return; }
+    if (typeof value === 'string' || typeof value === 'number') { add(String(value), scope); return; }
     const node = record(value);
     if (node.type !== 'element') {
       if (node.title || node.description) add('- ' + [scalar(node.title), scalar(node.description)].filter(Boolean).join(': '));
@@ -299,23 +354,23 @@ export function supplementNativeProse(prose: string, program: string, includeAll
       const checked = initialValue(props.checked);
       if (label && !existingTasks.has(JSON.stringify([checked, nativeReadableTextKey(label)]))) add('- ' + label);
     } else if (node.typeName === 'Section') {
-      const title = scalar(props.title);
-      if (title) add('## ' + title);
+      const path = addHeading(scalar(props.title), scope);
       add(scalar(props.introduction));
+      project(props.children, path);
+      return;
     } else if (node.typeName === 'Tabs') {
       add(scalar(props.label));
       for (const tab of array(props.tabs)) {
         const item = record(tab);
-        const title = scalar(item.title);
-        if (title) add('### ' + title);
-        project(item.content);
+        const path = addHeading(scalar(item.title), scope, 3);
+        project(item.content, path);
       }
     } else if (node.typeName === 'Popover') {
-      project(props.trigger);
-      project(props.content);
+      project(props.trigger, scope);
+      project(props.content, scope);
     } else if (node.typeName === 'Flashcard') {
-      project(props.front);
-      project(props.back);
+      project(props.front, scope);
+      project(props.back, scope);
     } else if (node.typeName === 'Math') {
       add(scalar(props.tex));
     } else if (node.typeName === 'Quote') {
@@ -342,7 +397,7 @@ export function supplementNativeProse(prose: string, program: string, includeAll
       if (Array.isArray(headings) && headings.every(heading => typeof heading === 'string') &&
           Array.isArray(resolved) && resolved.every(row => Array.isArray(row) && row.every(cell =>
         cell === null || ['string', 'number', 'boolean'].includes(typeof cell)))) {
-        addTable(headings, resolved.map(row => row.map((cell: unknown) => cell === null ? '' : String(cell))));
+        addTable(headings, resolved.map(row => row.map((cell: unknown) => cell === null ? '' : String(cell))), scope);
       }
     } else if (node.typeName === 'Chart' && Array.isArray(props.data)) {
       const presentation = record(props.presentation);
@@ -368,7 +423,7 @@ export function supplementNativeProse(prose: string, program: string, includeAll
             ? formatInitialNativeCurrency(amount, currency) : String(amount))]);
         }
         const yLabel = scalar(presentation.yLabel);
-        addTable([scalar(presentation.xLabel) || x, ...(series.length === 1 && yLabel ? [yLabel] : series)], rows);
+        addTable([scalar(presentation.xLabel) || x, ...(series.length === 1 && yLabel ? [yLabel] : series)], rows, scope);
       }
       add(scalar(presentation.note));
     } else if (node.typeName === 'Diagram') {
@@ -402,9 +457,9 @@ export function supplementNativeProse(prose: string, program: string, includeAll
       const index = /^source-(\d+)$/.exec(scalar(props.id))?.[1];
       if (index) add('[' + index + ']');
     } else {
-      for (const key of ['title', 'introduction', 'text', 'description', 'role', 'items'] as const) project(props[key]);
+      for (const key of ['title', 'introduction', 'text', 'description', 'role', 'items'] as const) project(props[key], scope);
     }
-    project(props.children);
+    project(props.children, scope);
   }
   project(children.slice(firstBlock));
   return [prose, ...lines].filter(Boolean).join('\n\n');

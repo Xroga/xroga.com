@@ -47,14 +47,16 @@ export function NativeSurface({ answer, sources, isStreaming = false }: {
     return '';
   }, [answer.library, answer.program, answer.text, verified, isStreaming]);
   const recovered = answer.text.startsWith(PARTIAL_NATIVE_PRESENTATION_NOTE + '\n\n');
-  const matches = useMemo(() => accepted && !isStreaming && !recovered
+  const matches = useMemo(() => accepted && !isStreaming
     ? nativeMarkdownMatches(parser.parse(accepted).root, initialNativeValueReader(accepted))
-    : undefined, [accepted, isStreaming, recovered]);
+    : undefined, [accepted, isStreaming]);
   const visibleTables = useMemo(() => preservedMarkdownTableKeys(answer.text), [answer.text]);
   const renderCitation: RenderEvidenceCitation = (number, href, cluster) => evidenceCitation(verified, number, href, cluster);
   // Keep the model's short introduction before its native answer. Additional
   // historical prose stays available below, with only exact duplicates removed.
-  const outside = proseOutsideNativeDocuments(answer.text, matches);
+  const outside = proseOutsideNativeDocuments(recovered
+    ? answer.text.slice(PARTIAL_NATIVE_PRESENTATION_NOTE.length + 2)
+    : answer.text, matches);
   const boundary = outside.indexOf('\n\n');
   const first = boundary < 0 ? outside : outside.slice(0, boundary);
   const hasSummary = !/^(?:\s*#{1,6}\s|\s*[-*>|]\s|\s*\d+[.)]\s|\s*`{3}|\s*~{3})/.test(first);
@@ -65,7 +67,10 @@ export function NativeSurface({ answer, sources, isStreaming = false }: {
     <section className="xroga-native-openui" aria-label="Answer" dir="auto" aria-busy={isStreaming}>
       {accepted && failedProgram !== accepted
         ? <EvidenceContext.Provider value={verified}>
-            {recovered ? prose : null}
+            {recovered && <div className="iui-markdown" dir="auto">
+              <p>{PARTIAL_NATIVE_PRESENTATION_NOTE}</p>
+              <MarkdownBlocks text={outside} deduplicateTables matches={matches} renderCitation={renderCitation} />
+            </div>}
             {!recovered && summary && <div className="iui-markdown native-answer-summary" dir="auto"><MarkdownBlocks text={summary} matches={matches} renderCitation={renderCitation} /></div>}
             <VisibleMarkdownTables.Provider value={visibleTables}>
               <NativeVisualContent.Provider value={matches}>
