@@ -10,6 +10,8 @@ export type CallTool = (tool: string, input: Record<string, unknown>) => Promise
 export interface ElementTarget { ref?: string; role?: string; name?: string }
 
 export interface ConsoleArgs {
+  /** Menu items to click in order to open the console, by name (for example Tools, Scripts, Scripts Panel). Simpler than open steps. */
+  openPath?: string[];
   /** Steps that open the console (menu clicks, keys), each {tool, args}; every one must succeed. */
   open?: Array<{ tool: string; args: Record<string, unknown> }>;
   /** Text that must be visible once the console is open (the target is the right editor). */
@@ -46,6 +48,7 @@ export function validateConsoleArgs(a: Partial<ConsoleArgs>): string | null {
   if (a.executeAt && (a.executeAt.length !== 2 || a.executeAt.some(n => typeof n !== 'number' || n < 0 || n > 1))) return 'executeAt must be [x, y] fractions';
   if (typeof a.expectOutput !== 'string' || !a.expectOutput) return 'expectOutput (a pattern the Output must match) is required';
   try { new RegExp(a.expectOutput); } catch { return 'expectOutput is not a valid pattern'; }
+  if (a.openPath !== undefined && (!Array.isArray(a.openPath) || a.openPath.length > 6 || a.openPath.some(n => typeof n !== 'string' || !n || n.length > 60))) return 'openPath is a list of at most 6 menu item names';
   for (const s of [...(a.open ?? []), ...(a.exportSteps ?? []), ...(a.clearSteps ?? [])]) if (!s || !ALLOWED.has(s.tool)) return `step tool ${String(s?.tool)} is not allowed here`;
   return null;
 }
@@ -63,7 +66,7 @@ export function scriptConsoleSurface(a: ConsoleArgs, call: CallTool): CommandSur
     return receipt(phase, last);
   };
   return {
-    discover: () => steps('discover', a.open),
+    discover: () => steps('discover', [...(a.openPath ?? []).map(name => ({ tool: 'click', args: { target: { role: 'menuitem', name } } })), ...(a.open ?? [])]),
     targetEditor: async () => {
       if (!a.editorText) return { phase: 'targetEditor', ok: true, observed: 'no editor text to check' };
       const r = await call('wait', { text: a.editorText, timeoutMs: 1500 });
@@ -115,12 +118,13 @@ export const SCRIPT_CONSOLE_TOOL = {
   group: 'acting' as const,
   description:
     'Run ONE program in an app scripting console (a painted editor with a Scripts, Macro or Console panel) as a fixed sequence with no model turn between phases: ' +
-    'open the console (open steps), check it is the right editor (editorText), click into it (editorAt), replace its text with the program, run it, read the Output, ' +
+    'open the console (openPath: the menu items to click in order, for example ["Tools","Scripts","Scripts Panel"]), check it is the right editor (editorText), click into it (editorAt), replace its text with the program, run it, read the Output, ' +
     'check the Output matches expectOutput, then optionally export (exportSteps). Pass clearSteps (the app Clear button) so the Output of an earlier run is never mistaken for this one; without it the Output must differ from a baseline read. It stops at the first phase that fails or shows an unexpected state and returns every receipt. ' +
     'Name the editor, Run and Clear controls by ref from the latest snapshot (editor: {ref}, run: {ref}, clear: {ref}); use viewport fractions (editorAt, executeAt) only for a painted editor the outline does not list. Read the app documentation first so the program uses real API names. The same program is never run twice on one document.',
   parameters: {
     type: 'object',
     properties: {
+      openPath: { type: 'array', maxItems: 6, items: { type: 'string', maxLength: 60 } },
       open: { type: 'array', maxItems: 8, items: { type: 'object', properties: { tool: { type: 'string' }, args: { type: 'object' } }, required: ['tool', 'args'], additionalProperties: false } },
       editorText: { type: 'string' },
       editor: { type: 'object', properties: { ref: { type: 'string' }, role: { type: 'string' }, name: { type: 'string' } }, additionalProperties: false },

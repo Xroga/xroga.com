@@ -93,6 +93,16 @@ describe('script console adapter', () => {
     expect(res.reason).toContain('New lines');
     expect(res.reason).toContain('Output: 3');
   });
+  it('opens the console from a list of menu names in one call', async () => {
+    const seen: string[] = [];
+    let reads = 0;
+    const a: ConsoleArgs = { openPath: ['Tools', 'Scripts', 'Scripts Panel'], editor: { ref: 'e12' }, run: { ref: 'e5' }, text: 'print(3)', expectOutput: '3' };
+    expect(validateConsoleArgs(a)).toBeNull();
+    const surface = scriptConsoleSurface(a, async (t, i) => { if (t === 'click') seen.push(String((i.target as { name?: string; ref?: string }).name ?? (i.target as { ref?: string }).ref)); return { ok: true, text: t === 'read' ? (reads++ === 0 ? 'Output: -' : 'Output: 3') : 'ok' }; });
+    expect((await runSurface(surface, { text: a.text })).ok).toBe(true);
+    expect(seen.slice(0, 3)).toEqual(['Tools', 'Scripts', 'Scripts Panel']);
+    expect(validateConsoleArgs({ ...a, openPath: new Array(7).fill('x') })).toContain('openPath');
+  });
   it('validates arguments', () => {
     expect(validateConsoleArgs(args)).toBeNull();
     expect(validateConsoleArgs({ ...args, editorAt: [2, 0.5] })).toContain('fractions');
