@@ -1,8 +1,9 @@
 "use client";
 
 import { defineComponent, FormNameContext } from "@openuidev/react-lang";
-import { useId, type CSSProperties } from "react";
+import { useContext, useId, type CSSProperties, type ReactNode } from "react";
 import { z } from "zod/v4";
+import { InlineNativeSections, NativeVisualContent, placeTitledNativeSections } from "./markdown";
 import { bg, children, color, onColor, cx, length, radius, radiusSchema, size, space } from "./style";
 
 const align = z.enum(["start", "center", "end", "stretch"]);
@@ -85,11 +86,24 @@ export const Col = defineComponent({
   name: "Col",
   props: z.object({ children, gap: z.number().optional(), align: align.optional() }),
   description: "Vertical layout. Without gap it spaces blocks like an article.",
-  component: ({ props, renderNode }) => (
-    <div className={cx("iui-col", props.gap == null && "iui-flow")} style={flexStyle(props, true)}>
-      {renderNode(props.children)}
-    </div>
-  ),
+  component: function NativeColumn({ props, renderNode, statementId }) {
+    const settled = useContext(NativeVisualContent);
+    const inline = settled && statementId === "root" ? placeTitledNativeSections(props.children) : undefined;
+    let contents: ReactNode;
+    if (inline) {
+      const moved = new Set<unknown>(inline.placements.values());
+      const sections = new Map<number, ReactNode>();
+      for (const [index, section] of inline.placements) {
+        sections.set(index, <InlineNativeSections.Provider value={undefined}>{renderNode(section)}</InlineNativeSections.Provider>);
+      }
+      contents = props.children.map((child, index) => moved.has(child) ? null : (
+        <InlineNativeSections.Provider key={index} value={index === inline.markdownIndex ? sections : undefined}>
+          {renderNode(child)}
+        </InlineNativeSections.Provider>
+      ));
+    } else contents = renderNode(props.children);
+    return <div className={cx("iui-col", props.gap == null && "iui-flow")} style={flexStyle(props, true)}>{contents}</div>;
+  },
 });
 
 export const Grid = defineComponent({

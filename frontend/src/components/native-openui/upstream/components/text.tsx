@@ -6,7 +6,7 @@ import { ArrowUpRight } from "lucide-react";
 import { Fragment, useContext } from "react";
 import { z } from "zod/v4";
 import { Glyph } from "./glyph";
-import { inline, MarkdownBlocks, NativeVisualContent } from "./markdown";
+import { inline, InlineNativeSections, MarkdownBlocks, NativeVisualContent } from "./markdown";
 import { EvidenceContext, evidenceSource, useRenderEvidenceCitation } from '../../evidence';
 import { children, color, cx, fg, webUrl } from "./style";
 
@@ -199,6 +199,7 @@ export const Markdown = defineComponent({
   component: function NativeMarkdown({ props }) {
     const renderCitation = useRenderEvidenceCitation();
     const nativeVisuals = useContext(NativeVisualContent);
-    return <div className="iui-markdown"><MarkdownBlocks text={str(props.text)} renderCitation={renderCitation} nativeTables={nativeVisuals?.tables} nativeSectionTables={nativeVisuals?.sectionTables} nativeHeadingTitles={nativeVisuals?.headingTitles} nativeChecklists={nativeVisuals?.checklists} /></div>;
+    const inlineSections = useContext(InlineNativeSections);
+    return <div className="iui-markdown"><MarkdownBlocks text={str(props.text)} renderCitation={renderCitation} nativeTables={nativeVisuals?.tables} nativeSectionTables={nativeVisuals?.sectionTables} nativeHeadingTitles={nativeVisuals?.headingTitles} nativeChecklists={nativeVisuals?.checklists} inlineSections={inlineSections} /></div>;
   },
 });

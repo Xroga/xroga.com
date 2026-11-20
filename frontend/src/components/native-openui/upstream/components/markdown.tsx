@@ -1,4 +1,5 @@
 import React, { createContext, Fragment, type ReactNode } from "react";
+import { isElementNode, type ElementNode } from "@openuidev/lang-core";
 import katex from "katex";
 import { isPresentationLanguage, publicAnswerText } from "@/lib/publicAnswerText";
 import { cx, isLongAnswerTable, webUrl } from "./style";
@@ -94,6 +95,7 @@ type Block =
 
 export const VisibleMarkdownTables = createContext<ReadonlySet<string> | null>(null);
 export const NativeVisualContent = createContext<Pick<MarkdownMatches, "tables" | "sectionTables" | "headingTitles" | "titles" | "markdownSectionHeadings" | "checklists"> | undefined>(undefined);
+export const InlineNativeSections = createContext<ReadonlyMap<number, ReactNode> | undefined>(undefined);
 
 // Only compare scalar cells. Retain distinct data and cells with components.
 export function tableContentKey(head: readonly string[], rows: readonly unknown[][]): string | undefined {
@@ -433,12 +435,42 @@ function blocks(source: string): Block[] {
   return out;
 }
 
-export function MarkdownBlocks({ text, renderCitation, deduplicateTables = false, matches, nativeTables, nativeSectionTables, nativeHeadingTitles, nativeChecklists }: { text: string; renderCitation?: RenderEvidenceCitation; deduplicateTables?: boolean; matches?: MarkdownMatches; nativeTables?: ReadonlySet<string>; nativeSectionTables?: ReadonlyMap<string, ReadonlySet<string>>; nativeHeadingTitles?: ReadonlySet<string>; nativeChecklists?: ReadonlySet<string> }) {
+/** Follow unambiguous Markdown headings without reordering unrelated native siblings. */
+export function placeTitledNativeSections(children: readonly unknown[]) {
+  const markdown = children.filter(isElementNode).filter(node => node.typeName === "Markdown");
+  if (markdown.length !== 1 || markdown[0].hasDynamicProps || typeof markdown[0].props.text !== "string") return;
+  const markdownIndex = children.indexOf(markdown[0]);
+  const sections = new Map<string, ElementNode | null>();
+  for (const child of children) {
+    if (!isElementNode(child) || child.typeName !== "Section" || typeof child.props.title !== "string") continue;
+    const title = textKey(child.props.title);
+    sections.set(title, sections.has(title) ? null : child);
+  }
+  if (!sections.size) return;
+
+  const items = blocks(markdown[0].props.text);
+  const positions = new Map<string, number | null>();
+  for (let start = 0; start < items.length; start += 1) {
+    const heading = items[start];
+    if (heading.kind !== "h") continue;
+    const title = textKey(heading.text);
+    positions.set(title, positions.has(title) ? null : start);
+  }
+  const placements = new Map<number, ElementNode>();
+  for (const [title, section] of sections) {
+    const start = positions.get(title);
+    if (start == null || !section || children.indexOf(section) <= markdownIndex) continue;
+    let end = start + 1;
+    while (end < items.length && items[end].kind !== "h") end += 1;
+    placements.set(end - 1, section);
+  }
+  if (placements.size) return { markdownIndex, placements };
+}
+
+export function MarkdownBlocks({ text, renderCitation, deduplicateTables = false, matches, nativeTables, nativeSectionTables, nativeHeadingTitles, nativeChecklists, inlineSections }: { text: string; renderCitation?: RenderEvidenceCitation; deduplicateTables?: boolean; matches?: MarkdownMatches; nativeTables?: ReadonlySet<string>; nativeSectionTables?: ReadonlyMap<string, ReadonlySet<string>>; nativeHeadingTitles?: ReadonlySet<string>; nativeChecklists?: ReadonlySet<string>; inlineSections?: ReadonlyMap<number, ReactNode> }) {
   const seenTables = new Set<string>();
   const items = blocks(text);
-  return (
-    <>
-      {items.map((b, i) => {
+  const rendered = items.map((b, i) => {
         const k = `b${i}`;
         switch (b.kind) {
           case "p":
@@ -518,7 +550,8 @@ export function MarkdownBlocks({ text, renderCitation, deduplicateTables = false
             );
           }
         }
-      })}
-    </>
-  );
+  });
+  return <>{inlineSections ? rendered.map((element, index) => inlineSections.has(index)
+    ? <Fragment key={`section-${index}`}>{element}{inlineSections.get(index)}</Fragment>
+    : element) : rendered}</>;
 }

@@ -7,7 +7,40 @@ import { createParser, type LibraryJSONSchema } from '@openuidev/lang-core';
 import catalog from '../../../../../../backend/src/ai/nativeOpenUiCatalog.json';
 import { bindNativeAnswerText, supplementNativeProse } from '../../../../../../backend/src/ai/nativeOpenUi';
 import { initialNativeValueReader } from '../../../../../../backend/src/ai/nativeOpenUiValues';
-import { inline, MathExpression, MarkdownBlocks, nativeMarkdownMatches, preservedMarkdownTableKeys, proseOutsideNativeDocuments, tableContentKey } from './markdown';
+import { inline, MathExpression, MarkdownBlocks, nativeMarkdownMatches, placeTitledNativeSections, preservedMarkdownTableKeys, proseOutsideNativeDocuments, tableContentKey } from './markdown';
+
+test('a titled native section follows the matching Markdown passage before the next heading', () => {
+  const text = '## Criteria\n\nRead this first.\n\n## Review flow\n\nFollow the two branches.\n\n## Examples\n\nPreserve the full example.';
+  const code = 'root = Col([Markdown(_xroga_answer), flow])\nflow = Section("Review flow", [Text("Draw the flow here.")])';
+  const saved = bindNativeAnswerText(code, text);
+  const layout = createParser(catalog.schema as LibraryJSONSchema, 'Col').parse(saved).root;
+  assert.ok(layout);
+  const placements = placeTitledNativeSections(layout.props.children as unknown[]);
+  assert.ok(placements);
+  assert.equal(placements.markdownIndex, 0);
+  assert.equal(placements.placements.size, 1);
+  assert.equal(placements.placements.values().next().value?.props.title, 'Review flow');
+  const inlineSections = new Map([...placements.placements.keys()].map(i => [i, createElement('span', null, 'The native diagram')]));
+  const view = renderToStaticMarkup(createElement(MarkdownBlocks, {text,inlineSections}));
+  assert.match(view, /Follow the two branches.*The native diagram.*Examples.*Preserve the full example/);
+  assert.equal(view.match(/The native diagram/g)?.length, 1);
+  assert.match(text, /## Examples/);
+  assert.equal(proseOutsideNativeDocuments(text, nativeMarkdownMatches(layout)), '');
+});
+
+test('ambiguous, fenced, unanchored and earlier native sections keep their model-authored order', () => {
+  const doc = (text: string, hasDynamicProps = false) => ({type: 'element',typeName: 'Markdown',props: {text},hasDynamicProps});
+  const section = {type: 'element',typeName: 'Section',props: {title: 'Review flow'}};
+  for (const nodes of [
+    [doc('## Review flow\n\nRead first.\n\n## Review flow'), section],
+    [doc('```md\n## Review flow\n```'), section],
+    [doc('## Examples'), section],
+    [doc('## Review flow', true), section],
+    [doc('## Review flow'), section, section],
+    [doc('## Review flow'), doc('## Examples'), section],
+    [section, doc('## Review flow')],
+  ]) assert.equal(placeTitledNativeSections(nodes), undefined);
+});
 
 const render = (source: string) => renderToStaticMarkup(createElement(Fragment, null, inline(source)));
 
