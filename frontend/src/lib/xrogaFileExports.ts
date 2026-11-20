@@ -1,5 +1,6 @@
 import type { XrogaBlock } from './xrogaBlocks';
 import type { NativeDocumentFormat } from '../../../backend/src/ai/nativeDocumentDownload';
+import { nativeMarkdownTables } from '../../../backend/src/ai/nativeMarkdown';
 import { parseNativeSlideDeck, parseNativeWorkbook, type NativeWorkbookFormula } from '../../../backend/src/ai/nativeOfficeContent';
 
 type DocumentBlock = Extract<XrogaBlock, { type: 'document' }>;
@@ -30,14 +31,8 @@ function safeWebUrl(url: string): boolean {
 /** The canonical Markdown block is persisted in the chat; the file is regenerated on demand. */
 export async function exportDocumentDocx(block: DocumentBlock, verifiedLinks?: ReadonlySet<string>): Promise<XrogaExportFile> {
   validateSize(block.content.length, 200_000, 'Document');
-  const { Document, ExternalHyperlink, HeadingLevel, Packer, Paragraph, TextRun } = await import('docx');
-  const children = block.content.split(/\r?\n/).map((raw) => {
-    const line = raw.trim();
-    if (!line) return new Paragraph('');
-    const heading = line.match(/^(#{1,3})\s+(.+)$/);
-    if (heading) return new Paragraph({ text: plainText(heading[2]!), heading: [HeadingLevel.HEADING_1, HeadingLevel.HEADING_2, HeadingLevel.HEADING_3][heading[1]!.length - 1] });
-    const bullet = line.match(/^[-*]\s+(.+)$/);
-    if (bullet) return new Paragraph({ text: plainText(bullet[1]!), bullet: { level: 0 } });
+  const { Document, ExternalHyperlink, HeadingLevel, Packer, Paragraph, Table, TableCell, TableRow, TextRun, WidthType } = await import('docx');
+  const inlineRuns = (line: string) => {
     const runs: Array<InstanceType<typeof TextRun> | InstanceType<typeof ExternalHyperlink>> = [];
     const links = /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g;
     let cursor = 0;
@@ -48,8 +43,32 @@ export async function exportDocumentDocx(block: DocumentBlock, verifiedLinks?: R
       cursor = match.index + match[0].length;
     }
     if (cursor < line.length) runs.push(new TextRun(plainText(line.slice(cursor))));
-    return new Paragraph({ children: runs });
-  });
+    return runs;
+  };
+  const lines = block.content.replace(/\r\n?/g, '\n').split('\n');
+  const tables = new Map((block.format === 'markdown' ? nativeMarkdownTables(block.content) : []).map(table => [table.start, table]));
+  const children: Array<InstanceType<typeof Paragraph> | InstanceType<typeof Table>> = [];
+  for (let index = 0; index < lines.length; index += 1) {
+    const table = tables.get(index);
+    if (table) {
+      const rows = [table.head, ...table.rows].map((row, rowIndex) => new TableRow({
+        tableHeader: rowIndex === 0,
+        cantSplit: true,
+        children: row.map(cell => new TableCell({ children: [new Paragraph({ children: inlineRuns(cell) })] })),
+      }));
+      children.push(new Table({ rows, width: { size: 100, type: WidthType.PERCENTAGE } }));
+      index = table.end - 1;
+      continue;
+    }
+    const line = lines[index]!.trim();
+    const heading = line.match(/^(#{1,3})\s+(.+)$/);
+    const bullet = line.match(/^[-*]\s+(.+)$/);
+    children.push(heading
+      ? new Paragraph({ text: plainText(heading[2]!), heading: [HeadingLevel.HEADING_1, HeadingLevel.HEADING_2, HeadingLevel.HEADING_3][heading[1]!.length - 1] })
+      : bullet
+        ? new Paragraph({ text: plainText(bullet[1]!), bullet: { level: 0 } })
+        : new Paragraph({ children: inlineRuns(line) }));
+  }
   const doc = new Document({ title: block.title ?? 'Xroga document', creator: 'Xroga', sections: [{ children }] });
   const blob = await Packer.toBlob(doc);
   return { filename: `${fileStem(block.title, 'document')}.docx`, blob };

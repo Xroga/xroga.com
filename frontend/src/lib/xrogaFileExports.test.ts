@@ -33,6 +33,25 @@ test('requested DOCX keeps an unverified link label readable without making it c
   assert.doesNotMatch(relationships, /bad\.example/);
 });
 
+test('DOCX renders Markdown data as a Word table with accessible row grouping and verified links', async () => {
+  const report = [
+    '# Release checks', '', '| Check | Evidence |', '| --- | --- |',
+    '| Navigation | [Verified](https://example.org/official) |',
+    '| Forms | [Unverified](https://bad.example/claim) |', '', 'Keep the reviewed evidence.',
+  ].join('\n');
+  const download = await exportAnswerFile(report, 'docx', new Set(['https://example.org/official']));
+  const zip = await JSZip.loadAsync(await download.blob.arrayBuffer());
+  const xml = await zip.file('word/document.xml')!.async('string');
+  const relationships = await zip.file('word/_rels/document.xml.rels')!.async('string');
+  assert.equal(download.filename, 'Release-checks.docx');
+  assert.equal((xml.match(/<w:tr(?:\s|>)/g) ?? []).length, 3);
+  assert.match(xml, /<w:tblHeader\b/);
+  assert.match(xml, /<w:tbl>[\s\S]*Navigation[\s\S]*Forms[\s\S]*Unverified[\s\S]*<\/w:tbl>[\s\S]*Keep the reviewed evidence/);
+  assert.doesNotMatch(xml, /\| Check \| Evidence \||\| --- \|/);
+  assert.match(relationships, /https:\/\/example\.org\/official/);
+  assert.doesNotMatch(relationships, /bad\.example/);
+});
+
 test('PDF export creates multiple parseable pages and rejects unsupported glyphs', async () => {
   const content = '# Report\n' + Array.from({ length: 180 }, (_, index) => `Paragraph ${index + 1}: This is verified sample content for pagination.`).join('\n');
   const file = await exportDocumentPdf({ schemaVersion: 1, id: 'pdf-1', type: 'document', content, format: 'markdown' } as DocumentBlock);

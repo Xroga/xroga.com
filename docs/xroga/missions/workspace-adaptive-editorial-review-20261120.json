@@ -29,6 +29,8 @@
     "frontend/src/components/native-openui/upstream/components/markdown.test.ts",
     "frontend/src/components/native-openui/upstream/components/markdown.tsx",
     "frontend/src/lib/formatAiMarkdown.tsx",
+    "frontend/src/lib/xrogaFileExports.test.ts",
+    "frontend/src/lib/xrogaFileExports.ts",
     "scripts/verify-native-openui-browser.mjs"
   ],
   "decisions": {
@@ -40,7 +42,8 @@
       "Count renderable static decision tables as delivered while preserving the existing native table requirement for requested interactions.",
       "Admit explicitly public raw-turn lookups through the current bounded Search broker even when an unrelated project is selected.",
       "Distinguish public software names, normal currency units, and citation requests from actual destinations or official-only restrictions.",
-      "Preserve a document's requested format when the format is specified after the creation brief.",
+      "Preserve a document's requested format when the format is specified after the creation brief, and keep its tables editable in Word.",
+      "Remove directions to unavailable calculator inputs while retaining the worked calculation and unrelated content.",
       "Reuse an unchanged native answer tree during unrelated Workspace updates."
     ],
     "replace": [],
