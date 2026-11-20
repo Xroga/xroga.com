@@ -149,7 +149,10 @@ async function runOne(
     clearTimeout(timer);
   }
   const ms = Date.now() - started;
-  const pageText = await evaluate<string>(tab.id!, undefined, 'document.body.innerText').catch(() => '');
+  const bodyText = await evaluate<string>(tab.id!, undefined, 'document.body.innerText').catch(() => '');
+  const probed = task.probe ? await evaluate<string>(tab.id!, undefined, task.probe).catch(() => '') : '';
+  const pageText = probed ? `${bodyText}
+[probe] ${probed}` : bodyText;
   const branch = await activeBranch(conversation.id);
   await controller.closeSession(session);
   setResponder(previous);

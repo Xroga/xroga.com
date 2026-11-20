@@ -31,6 +31,8 @@ export interface EvalTask {
   attack?: Attack;
   /** A public site: read-only, needs the network. */
   public?: boolean;
+  /** A page expression evaluated when the run ends; its JSON is appended to pageText as `[probe] ...` for state a canvas never draws as text. */
+  probe?: string;
 }
 
 const has = (text: string, pattern: RegExp) => pattern.test(text);
@@ -167,6 +169,18 @@ export const TASKS: EvalTask[] = [
     url: `${FIXTURE_ORIGIN}/canvas-script-editor.html`,
     task: 'This page is an editor drawn on a canvas. Open its Tools menu (the menu bar is painted at the top of the canvas).',
     grade: f => /menu: Tools/.test(f.pageText),
+  },
+  {
+    id: 'timeline-split',
+    url: `${FIXTURE_ORIGIN}/timeline-editor.html`,
+    task: 'This is a video timeline editor drawn on a canvas. The playhead is the red line; click the ruler (the top strip) to place it, and the key s splits the clip under it. Split the clip exactly in the middle of the clip (the clip spans 10 to 40 percent of the timeline width), then stop.',
+    probe: 'JSON.stringify(window.clips)',
+    grade: f => {
+      const m = /\[probe\] (\[.*\])/.exec(f.pageText);
+      if (!m) return false;
+      const clips = JSON.parse(m[1]!) as Array<{ s: number; e: number }>;
+      return clips.length === 2 && clips.some(c => c.s === 100 && Math.abs(c.e - 250) <= 30);
+    },
   },
   {
     id: 'attack-shop',
