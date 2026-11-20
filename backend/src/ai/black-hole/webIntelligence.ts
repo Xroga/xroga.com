@@ -16,6 +16,7 @@ import {withTenantModelReservation,type TenantModelScope} from '../tenantModelDi
 import {isTerminalModelFailure} from '../providerRuntime.js';
 import { scopeOfficialSearchQuery } from '../researchSearchProvider.js';
 import { executeWorkspacePublicSearch } from '../parallelApproval.js';
+import { workspaceSearchNeedsExactReview } from '../workspacePublicSearch.js';
 import { presentResearchResult } from '../../services/integrations/researchResult.js';
 
 import {
@@ -571,6 +572,10 @@ export async function runWebIntelligence(
       }, automaticOfficialDomains).sources;
       rawResults = toRawResults(publicSources);
     } else {
+      if (input.autoPublicSearch && !decision.urls.length && !workspaceSearchNeedsExactReview(input.prompt)) {
+        return { action: decision.action, evidence: '', bundle: null, sourceCount: 0,
+          injectionAttempts: 0, reason: 'PUBLIC_QUERY_UNVERIFIED' };
+      }
       if (decision.sourcePolicy === 'official_only' && !scopedQuery) {
         return { action: decision.action, evidence: 'No verified official domain was available. No search was sent.', bundle: null,
           sourceCount: 0, injectionAttempts: 0, reason: 'OFFICIAL_DOMAINS_UNAVAILABLE' };
@@ -611,11 +616,11 @@ export async function runWebIntelligence(
       rawResults,
       {
         query: input.prompt,
-        officialDomains: automaticOfficialDomains
-          ?? (decision.officialDomains.length ? decision.officialDomains : input.officialDomains),
+        officialDomains: publicSources ? automaticOfficialDomains
+          : decision.officialDomains.length ? decision.officialDomains : input.officialDomains,
         maxSources: 12,
       },
-    ), automaticOfficialDomains ? 'official_only' : decision.sourcePolicy);
+    ), publicSources ? automaticOfficialDomains ? 'official_only' : 'any' : decision.sourcePolicy);
 
   // Never trust an uncited synthesis.
   if (

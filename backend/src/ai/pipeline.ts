@@ -1089,6 +1089,7 @@ export async function runChatPipeline(opts: {
   let research: ResearchBundle | null = opts.approvedResearch?.bundle??null;
   let researchBlock = opts.approvedResearch?.evidence??'';
   let researchProviderFailed = false;
+  let publicQueryUnverified = false;
   let publicWebRetrieved: true | undefined;
 
   if (!opts.approvedResearch&&route.useResearch && !explicitlyDisablesResearch(opts.prompt)) {
@@ -1116,6 +1117,7 @@ export async function runChatPipeline(opts: {
 
       research = web.bundle;
       researchBlock = web.evidence;
+      publicQueryUnverified = web.reason === 'PUBLIC_QUERY_UNVERIFIED';
       publicWebRetrieved = web.publicWebRetrieved;
       if(web.needsConfirmation)return{
         response:`Review the request before Xroga searches the web: [Review action](${web.reviewUrl})`,
@@ -1140,17 +1142,19 @@ export async function runChatPipeline(opts: {
       research?.sources.length ?? 0,
     )
   ) {
+    const unavailableMessage = publicQueryUnverified
+      ? 'I couldn’t identify a self-contained public search query. Give me the public topic or a verified official domain to search.'
+      : researchProviderFailed
+        ? 'Current public-web evidence is temporarily unavailable. No unsourced current answer was generated.'
+        : 'No qualifying current sources were returned. No unsourced current answer was generated.';
     if (opts.goalContract?.freshnessRequirement === 'CURRENT_REQUIRED') {
       throw new RuntimeFailure(
         researchProviderFailed ? 'PROVIDER_UNAVAILABLE' : 'TOOL_UNAVAILABLE',
-        researchProviderFailed
-          ? 'Current public-web evidence is temporarily unavailable. No unsourced current answer was generated.'
-          : 'No qualifying current sources were returned. No unsourced current answer was generated.',
+        unavailableMessage,
       );
     }
     return {
-      response:
-        'I couldn\'t complete the requested live-web research just now. No current-source answer was generated, so please try again shortly.',
+      response: unavailableMessage,
       intent: 'research_unavailable',
       usage: usageToTokenUsage(await checkQuotaBeforePreparation()),
       webSources: [],
@@ -1234,9 +1238,30 @@ export async function runChatPipeline(opts: {
       onDelta: native || publicWebRetrieved ? undefined
         : projection ? delta => { const visible = projection.append(delta); if (visible) opts.onDelta?.(visible); } : opts.onDelta,
     },
-  );
+  ).catch(error => {
+    if (!publicWebRetrieved || isTerminalModelFailure(error)) throw error;
+    console.warn('[pipeline] public research answer unavailable:', normalizeProviderError(error).safeMessage);
+    return null;
+  });
 
   const usage = await getUsage(opts.userId);
+  if (!result || (publicWebRetrieved && (!result.text.trim()
+    || /^(?:web\s+)?(?:search|research|retrieval)\s+(?:is\s+)?(?:complete[d]?|finished|done)[.!]?$/iu.test(result.text.trim())))) {
+    // Retain real evidence if synthesis fails or returns only a tool status.
+    // Neither provider is called a second time and the answer stays partial.
+    const response = 'I found public sources, but couldn’t finish the answer. You can open the sources below or resend your question.';
+    opts.onDelta?.(response);
+    return {
+      response,
+      completion: { status: 'partial', reason: 'unconfirmed_stop' },
+      intent: route.kind,
+      usage: usageToTokenUsage(usage),
+      webSources: sources,
+      publicWebRetrieved: true,
+      modelId: result?.modelId ?? route.builder,
+      route,
+    };
+  }
 
   if (native) {
     const answer = completeNativeWorkspaceAnswer(result.text, result.finishReason, evidenceIds,

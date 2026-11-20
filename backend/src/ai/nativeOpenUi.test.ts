@@ -380,6 +380,20 @@ test('supplemental checkbox labels do not repeat exact readable tasks with the s
   assert.equal(complete.slice(prose.length), '\n\n- Notify the team.\n\n- Check the guidance.\n\n- Sample only.');
 });
 
+test('a native checklist does not duplicate the exact numbered steps in its own section', () => {
+  const prose = [
+    '## Closing checklist', '', '1. **Check** the tag.', '2. Record the handoff.', '',
+    '~~~markdown', '1. Example only.', '~~~', '', '## Opening checklist', '', '1. Notify the team.',
+  ].join('\n');
+  const program = [
+    'root = Col([Markdown(_xroga_answer), Section("Closing checklist", [Checkbox($todo, "Check the tag."), Checkbox($todo, "Record the handoff."), Checkbox($todo, "Example only."), Checkbox($todo, "Notify the team.")])])',
+    '$todo = false',
+  ].join('\n');
+  const complete = supplementNativeProse(prose, bindNativeAnswerText(program, prose), true);
+  assert.equal(complete, prose + '\n\n- Example only.\n\n- Notify the team.');
+  assert.equal(supplementNativeProse(complete, bindNativeAnswerText(program, prose), true), complete);
+});
+
 test('the authoritative response preserves one matching scoped table with code, escapes and exact citations', () => {
   const head = ['Example', 'Meaning'];
   const rows = [

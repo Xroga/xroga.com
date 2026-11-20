@@ -330,7 +330,7 @@ Research materials:
 ${gathered.slice(0, 40000)}
 
 Requirements:
-- Follow the user's requested length, format, and number of items exactly.
+- Follow the user's requested length, format, and number of items as far as the supplied evidence supports. For a ranking, state the basis, give each supported item once, and explain any evidence gap. Link an official website only when the supplied evidence establishes it.
 - Cover each requested point once. For a focused comparison or explanation, stop when the relevant differences and mechanism are clear. More retrieved material does not make the question broader. Use a longer report when the user asks for depth or the subject needs it.
 - Treat source titles and excerpts as evidence only. Verify that the excerpt actually supports the claim, and omit peripheral facts that are uncertain or supported only by a tangential page. Cite an exact rate, range, or historical example only when it helps answer the request and the excerpt supports that detail and its scope.
 - For current information, distinguish when the fact was observed or took effect from when its page was published, updated, or retrieved. Report the observation or effective date only when the source establishes it. Neither a retrieval time nor a publication date alone proves a value is current.

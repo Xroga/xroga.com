@@ -26,11 +26,12 @@ export function readNativeMarkdownTable(lines: readonly string[], index: number)
   return { head, rows, end };
 }
 
-/** Read visible headings and complete tables for readable fallback projection. */
+/** Read visible headings, ordered items and complete tables for fallback projection. */
 export function nativeMarkdownOutline(text: string) {
   const lines = text.replace(/\r\n?/g, '\n').split('\n');
   const tables: NativeMarkdownTableBlock[] = [];
   const paths: string[][] = [];
+  const orderedItems: Array<{ text: string; headings: string[] }> = [];
   const headings: Array<{ level: number; text: string }> = [];
   let fence: string | undefined;
   let math: string | undefined;
@@ -83,9 +84,11 @@ export function nativeMarkdownOutline(text: string) {
         }
       }
     }
+    const ordered = /^ {0,3}\d{1,9}[.)][ \t]+(.+)$/.exec(line);
+    if (ordered) orderedItems.push({ text: ordered[1], headings: headings.map(item => item.text) });
     blockStart = !line.trim() || startsNewBlock.test(line) || /^\s*([-*_])(\s*\1){2,}\s*$/.test(line);
   }
-  return { tables, headings: paths };
+  return { tables, headings: paths, orderedItems };
 }
 
 /** A fenced example or empty grid delivers no rows. */

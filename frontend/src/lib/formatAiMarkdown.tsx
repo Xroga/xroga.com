@@ -313,7 +313,7 @@ export function BusinessActionConfirmationInline({
           );
 
           setNotice(
-            result.toolkit === 'xroga-native-research' ? 'Web search finished.' : readableActionResult(result.response),
+            result.toolkit === 'xroga-native-research' ? null : readableActionResult(result.response),
           );
           if (result.ok && result.toolkit === 'xroga-native-research' &&
               result.confirmation.status === 'consumed' && result.confirmation.id === confirmationId) {
@@ -440,7 +440,7 @@ export function BusinessActionConfirmationInline({
   const reviewHref = `/dashboard/actions/confirm/${encodeURIComponent(confirmationId)}`;
   const statusMessage = {
     executing: savedSearch ? 'Searching the web…' : 'Action in progress…',
-    consumed: savedSearch ? 'Web search finished.' : 'The provider reported completion.',
+    consumed: savedSearch ? 'Loading the saved research answer…' : 'The provider reported completion.',
     cancelled: 'Cancelled.',
     failed: 'The request could not be completed.',
     expired: 'This request expired.',

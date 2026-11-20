@@ -268,6 +268,14 @@ export function supplementNativeProse(prose: string, program: string, includeAll
     authoredHeadings.set(JSON.stringify(path), path);
   }
   const authoredTables = new Map<string, Map<string, string[]>>();
+  const authoredOrderedItems = new Map<string, Map<string, string[]>>();
+  for (const item of outline.orderedItems) {
+    const key = nativeReadableTextKey(item.text);
+    const scopes = authoredOrderedItems.get(key) ?? new Map<string, string[]>();
+    const path = item.headings.map(scopeLabel);
+    scopes.set(JSON.stringify(path), path);
+    authoredOrderedItems.set(key, scopes);
+  }
   for (const table of outline.tables) {
     const key = tableKey(table);
     const scopes = authoredTables.get(key) ?? new Map<string, string[]>();
@@ -352,7 +360,11 @@ export function supplementNativeProse(prose: string, program: string, includeAll
     } else if (node.typeName === 'Checkbox') {
       const label = scalar(props.label);
       const checked = initialValue(props.checked);
-      if (label && !existingTasks.has(JSON.stringify([checked, nativeReadableTextKey(label)]))) add('- ' + label);
+      const key = nativeReadableTextKey(label);
+      const orderedScopes = authoredOrderedItems.get(key);
+      const alreadyOrdered = checked === false && orderedScopes && scope.length > 0
+        && isSingleScope(orderedScopes.values(), scope);
+      if (label && !alreadyOrdered && !existingTasks.has(JSON.stringify([checked, key]))) add('- ' + label);
     } else if (node.typeName === 'Section') {
       const path = addHeading(scalar(props.title), scope);
       add(scalar(props.introduction));

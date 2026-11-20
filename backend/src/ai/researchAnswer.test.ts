@@ -47,6 +47,8 @@ test('one exact research approval completes its original rich answer, saves evid
       assert.match(body.query,/difference between solar and lunar eclipses/);
       assert.match(body.query,/ site:nasa\.gov$/);
       assert.ok([...body.query].length<=128);
+    }else if(mode.startsWith('automatic-ranking')){
+      assert.deepEqual(body,{query:'top 10 best ai comapines of 2026',count:10});
     }else assert.deepEqual(body,{query:'price of btc currently',count:10});
     assert.doesNotMatch(JSON.stringify(body),/UNRELATED_PRIOR|MUST_NOT_LEAVE|substituted planner context|AMBIENT_PRIVATE_REPOSITORY|evil.example/);
    }
@@ -63,7 +65,7 @@ test('one exact research approval completes its original rich answer, saves evid
   if(url.origin==='https://api.zurelay.com'){
    models++;assert.equal(body.model,'deepseek-v4.1-flash-1017');assert.equal(new Headers(init?.headers).get('x-zurelay-fallback'),'off');
    assert.match(JSON.stringify(body.messages),/Public source excerpt/);assert.match(JSON.stringify(body.messages),/untrusted|external data/i);
-   if(mode==='automatic'||mode==='automatic-official'){
+   if(mode==='automatic'||mode==='automatic-official'||mode.startsWith('automatic-ranking')){
     assert.doesNotMatch(JSON.stringify(body.messages),/MUST_NOT_LEAVE|substituted planner context/);
     assert.match(JSON.stringify(body.messages),/UNRELATED_PRIOR_NASA_TURN/);
     assert.equal(body.messages.length,3);
@@ -84,8 +86,11 @@ test('one exact research approval completes its original rich answer, saves evid
     assert.ok(['json_object','json_schema'].includes(body.response_format.type));
    }
    if(mode==='drop')throw Object.assign(Error('Synthetic dispatch uncertainty'),{name:'AbortError'});
+   if(mode.startsWith('automatic-ranking'))assert.match(body.messages[2].content,/top 10 best ai comapines of 2026/);
+   const content=mode==='automatic-ranking-status'?'Web search finished.'
+     :mode.startsWith('automatic')?'The public page documents the answer [1](https://wrong.example/page).':raw;
    const sse='data: '+JSON.stringify({id:'synthetic-answer-'+models,model:body.model,
-    choices:[{index:0,delta:{content:mode.startsWith('automatic')?'The public page documents the answer [1](https://wrong.example/page).':raw},finish_reason:'stop'}],
+    choices:[{index:0,delta:{content},finish_reason:'stop'}],
     usage:{prompt_tokens:100,completion_tokens:40,total_tokens:140}})+'\n\ndata: [DONE]\n\n';
    return new Response(sse,{headers:{'content-type':'text/event-stream','x-request-id':'synthetic-answer-'+models,'x-zurelay-model':body.model}});
   }
@@ -219,6 +224,34 @@ test('one exact research approval completes its original rich answer, saves evid
  assert.equal(projectPending.publicWebRetrieved,undefined);
  assert.equal(confirmation.row?.plan.authority?.actionClass,'SENSITIVE_DATA_EXPORT');
  assert.equal(searches,6);assert.equal(models,4);
+
+ const lastConfirmation=confirmation.row;
+ const ranking={...automaticRequest,prompt:'top 10 best ai comapines of 2026',
+  goalContract:goalContractSchema.parse({...currentGoal,sourcePolicy:{mode:'official_only',scope:'public_web',officialDomains:['evil.example']}})};
+ mode='automatic-ranking';
+ const ranked=await runChatPipeline(ranking);
+ assert.equal(ranked.intent,'research');
+ assert.equal(ranked.publicWebRetrieved,true);
+ assert.match(ranked.response,/https:\/\/example.com\/docs/);
+ assert.doesNotMatch(ranked.response,/Review action|Web search finished/);
+ assert.equal(confirmation.row,lastConfirmation);
+ assert.equal(searches,7);assert.equal(models,5);
+ assert.equal([...reservations.values()].find(row=>row.provider_request_id==='synthetic-search-7')?.settled_micro_usd,750);
+
+ mode='automatic-ranking-status';
+ const partial=await runChatPipeline(ranking);
+ assert.equal(partial.completion?.status,'partial');
+ assert.match(partial.response,/couldn’t finish the answer/);
+ assert.doesNotMatch(partial.response,/Review action|Web search finished/);
+ assert.equal(partial.publicWebRetrieved,true);
+ assert.ok(partial.webSources?.length);
+ assert.equal(confirmation.row,lastConfirmation);
+ assert.equal(searches,8);assert.equal(models,6);
+
+ await assert.rejects(runChatPipeline({...automaticRequest,prompt:'What should I know about that?'}),
+  {code:'TOOL_UNAVAILABLE',message:/self-contained public search query/});
+ assert.equal(confirmation.row,lastConfirmation,'An unclassified public query must not manufacture a write approval');
+ assert.equal(searches,8);assert.equal(models,6);
 });
 
 test('automatic Search eligibility uses only the current public lookup with ambiguous inputs held for review',()=>{
@@ -248,6 +281,39 @@ test('automatic Search eligibility uses only the current public lookup with ambi
   'Search the web for how the attached spreadsheet works. Include your citations.',
   'Search the web to explain how 123-45-6789 is used and cite your sources.',
   'Explain photosynthesis','Search the web for'])assert.equal(workspacePublicSearchQuery(prompt),undefined,prompt);
+});
+
+test('public discovery includes implicit rankings and comparisons without exporting private context',()=>{
+ for(const prompt of [
+  'top 10 best ai companies of 2026',
+  'top 10 best ai comapines of 2026',
+  'Best payment providers 2026',
+  'Compare cloud hosting services',
+  'Leading cybersecurity companies',
+  'Top universities worldwide',
+  'Most recent AI models',
+  '2026 electric car market leaders',
+  'Las mejores universidades del mundo en 2026',
+  'أفضل شركات الذكاء الاصطناعي في 2026',
+  '2026 की सबसे अच्छी एआई कंपनियाँ कौन सी हैं?',
+  '2026 年最好的人工智能公司有哪些？',
+ ]) {
+  const result=workspacePublicSearchQuery(prompt);
+  assert.ok(result?.query,prompt);
+  assert.deepEqual(result.officialDomains,[]);
+ }
+ for(const prompt of [
+  'Top 10 customers using my CRM and attached spreadsheet',
+  'Compare cloud services with the prices in the current project',
+  'Rank payment providers using data from our CRM',
+  'Current industry leaders with contacts at mary@example.com',
+  'Top AI companies, include the confidential vendor list',
+  'Las mejores empresas según nuestro archivo privado',
+  'أفضل شركات الذكاء الاصطناعي بناء على بياناتنا الداخلية',
+  'Top AI companies, no web search',
+  'Explain why companies use AI',
+  'Rank these companies using the previous answer',
+ ]) assert.equal(workspacePublicSearchQuery(prompt),undefined,prompt);
 });
 
 test('citation links always point at the retrieved source they number, never at a model-written address',()=>{

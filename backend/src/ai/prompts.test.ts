@@ -44,7 +44,7 @@ test('research synthesis preserves an explicit concise response contract', () =>
     'Official source evidence.',
   );
 
-  assert.match(prompt, /requested length, format, and number of items exactly/);
+  assert.match(prompt, /requested length, format, and number of items as far as the supplied evidence supports/);
   assert.match(prompt, /Omit generic report sections, tables, and takeaways/);
   assert.doesNotMatch(prompt, /comprehensive, well-structured report/);
   assert.equal(
