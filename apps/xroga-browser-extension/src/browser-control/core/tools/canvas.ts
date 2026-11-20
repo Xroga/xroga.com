@@ -11,6 +11,7 @@ import type { ToolContext, ToolOutcome } from '../controller';
 import { checkCancelled } from '../controller';
 import { dispatchDrag, dispatchHover } from '../interaction/pointer';
 import { withPageState } from './navigate';
+import { checkExpectation } from '../interaction/evidence';
 import { quote } from '../text';
 
 const CONSEQUENTIAL = /\b(?:pay|payment|purchase|buy|checkout|place (?:the )?order|delete|remove|erase|send|publish|post|submit|transfer|subscribe|password|passcode|card number|cvv|one-time code|otp)\b/i;
@@ -119,6 +120,16 @@ async function sendKey(ctx: ToolContext, chord: string): Promise<void> {
   await cdp.send(undefined, 'Input.dispatchKeyEvent', { type: 'keyUp', ...base });
 }
 
+/** A painted app opens its menus a moment after the click: the expectation is rechecked briefly before it is called unmet. Without this a wrong menu looks like a success. */
+async function settledExpectation(ctx: ToolContext, expect: NonNullable<CanvasArgs['expect']>): Promise<ActionReceipt['postcondition']> {
+  const deadline = Date.now() + 1500;
+  for (;;) {
+    const result = await checkExpectation(ctx, null, expect);
+    if (result?.status === 'met' || Date.now() >= deadline) return result;
+    await new Promise(resolve => setTimeout(resolve, 150));
+  }
+}
+
 export async function canvas(ctx: ToolContext, args: CanvasArgs): Promise<ToolOutcome> {
   checkCancelled(ctx);
   if (ctx.tab().pending.length) {
@@ -145,6 +156,10 @@ export async function canvas(ctx: ToolContext, args: CanvasArgs): Promise<ToolOu
       dispatched: true,
       effect: { verdict: 'unattributable', signals: ['A canvas paints its own result; take a screenshot to see whether the input was taken.'] },
     };
+    if (args.expect) {
+      typed.postcondition = await settledExpectation(ctx, args.expect);
+      if (typed.postcondition?.status === 'unmet') typed.effect.signals.push(`Expected state not reached: ${typed.postcondition.detail}`);
+    }
     return withPageState(ctx, args.observe, { receipt: typed, data: {} });
   }
   if (!args.at) throw new LayerError('INVALID_ARGUMENT', `canvas ${args.action} needs at.`);
@@ -177,5 +192,9 @@ export async function canvas(ctx: ToolContext, args: CanvasArgs): Promise<ToolOu
     dispatched: true,
     effect: { verdict: 'unattributable', signals: stray.length ? [`The click opened another page (${stray[0].slice(0, 60)}), which was closed again: aim at the control you meant.`] : ['A canvas paints its own result; take a screenshot to see whether the action did what was meant.'] },
   };
+  if (args.expect) {
+    receipt.postcondition = await settledExpectation(ctx, args.expect);
+    if (receipt.postcondition?.status === 'unmet') receipt.effect.signals.push(`Expected state not reached: ${receipt.postcondition.detail}. The click may have hit another control or menu: look again before going on.`);
+  }
   return withPageState(ctx, args.observe, { receipt, data: { point: at, ...(end ? { to: end } : {}) } });
 }

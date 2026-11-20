@@ -73,6 +73,8 @@ function toolGuide(tools: string[]): string {
   if (has('canvas'))
     lines.push('- canvas also types into fields a canvas app paints (click the field, then canvas type with text, or canvas key with Enter, Tab, Control+A): the normal type refuses them.');
   if (has('canvas'))
+    lines.push('- A canvas click or key that should open a menu, panel or dialog can say what must appear: pass expect {text: "Scripts"}. A wrong menu is then reported at once instead of looking like a success.');
+  if (has('canvas'))
     lines.push('- Choose the fastest method the app offers. A painted editor often has a scripting, macro or command panel (Tools > Scripts, a console, a command bar): for several objects, colours or texts, open it, click into its editor, paste ONE short script with canvas type, run it, then check with a screenshot. That is a handful of turns instead of dozens of clicks. Never guess the script API: read the scripting page of the app once (Help, docs link, or http_get on its documentation) and copy exact names; after Run, read the Output area, and fix an error from its message. If a visual step goes wrong twice, change method.');
   if (has('canvas') && has('batch'))
     lines.push('- On a canvas, put the steps you already know in ONE batch call (for example select the tool, then drag, then pick the colour) and take a screenshot afterwards to check, instead of one screenshot and one step per turn.');
