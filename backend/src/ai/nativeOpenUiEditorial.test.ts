@@ -98,7 +98,7 @@ test('readable fallback withholds permissive prose contradicted by a visual stop
     [`root = Col([Markdown(_xroga_answer), ${table}, unavailableDetails])`, 'stop'],
     [`root = Col([Markdown(_xroga_answer), ${table}, Text("`, 'length'],
   ]) {
-    const answer = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + program, finish,
+    const answer = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + program, finish, undefined,
       'Show the intake procedure with a condition table.');
     assert.deepEqual(answer.completion, { status: 'partial', reason: 'factual_review' });
     assert.match(answer.response, /Log the custodian and arrival time/);
