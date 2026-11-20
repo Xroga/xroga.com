@@ -38,12 +38,13 @@ describe('diagnose (adapted from browser-agent healing.ts)', () => {
 
 describe('ProgressTracker with diagnosis', () => {
   const fail = (code: string, n = 1) => ({ tool: 'click', isError: true, errorCode: code, resultText: `err ${n}`, tabId: 1 });
-  it('stops at once when only a person can decide, without waiting for repeats', () => {
+  it('tells the model at once, without ending the run, when only a person can decide', () => {
     const t = new ProgressTracker();
-    const v = t.record(fail('USER_DECLINED'));
-    expect(v.exhausted).toBe(true);
+    const v = t.record(fail('USER_STEP'));
+    expect(v.exhausted).toBe(false);
+    expect(v.stalled).toBe(true);
     expect(v.diagnosis).toBe('needs_user');
-    expect(v.directive).toContain('exact blocker');
+    expect(v.directive).toContain('Do not repeat this call');
   });
   it('keeps going after a policy refusal and adds the diagnosis when the method stalls', () => {
     const t = new ProgressTracker();

@@ -89,8 +89,9 @@ export class ProgressTracker {
     if (o.isError) {
       const d = diagnose(o.errorCode, o.resultText ?? '');
       if (isTerminal(d)) {
-        // A decision for the user or a policy refusal: retrying cannot help, so the run stops with the exact blocker at once.
-        return { stalled: true, reason: `${key} needs a decision outside the run (${o.errorCode ?? d})`, strategy: this.strategy, switched: false, exhausted: true, diagnosis: d, directive: `${directiveFor(d)} Finish now with the exact blocker and what is already done.` };
+        // Only a person can decide this. The run is NOT stopped (a handover or an approval may be about to resolve it and the model may have another route):
+        // the model is told once, at once, not to retry the same call and to ask the user or report the exact blocker.
+        return { stalled: true, reason: `${key} needs a decision outside the run (${o.errorCode ?? d})`, strategy: this.strategy, switched: false, exhausted: false, diagnosis: d, directive: `${directiveFor(d)} Do not repeat this call.` };
       }
     }
     if (o.isError) {
