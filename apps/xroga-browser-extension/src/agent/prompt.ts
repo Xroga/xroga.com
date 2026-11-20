@@ -73,7 +73,7 @@ function toolGuide(tools: string[]): string {
   if (has('canvas'))
     lines.push('- canvas also types into fields a canvas app paints (click the field, then canvas type with text, or canvas key with Enter, Tab, Control+A): the normal type refuses them.');
   if (has('canvas'))
-    lines.push('- A canvas click or key that should open a menu, panel or dialog can say what must appear: pass expect {text: "Scripts"}. A wrong menu is then reported at once instead of looking like a success.');
+    lines.push('- To place a pointer action on a painted canvas, take screenshot with grid true: it draws a 0 to 1 coordinate grid, and you read the point from the nearest grid lines instead of guessing. For a menu the app draws as DOM text, canvas expect {text} reports a wrong menu at once; when the app paints its menus as pixels, expect text cannot see them (it will say unmet even when the menu is open), so verify with a screenshot instead.');
   if (has('canvas'))
     lines.push('- Choose the fastest method the app offers. A painted editor often has a scripting, macro or command panel (Tools > Scripts, a console, a command bar): for several objects, colours or texts, open it, click into its editor, paste ONE short script with canvas type, run it, then check with a screenshot. That is a handful of turns instead of dozens of clicks. Never guess the script API: read the scripting page of the app once (Help, docs link, or http_get on its documentation) and copy exact names; after Run, read the Output area, and fix an error from its message. If a visual step goes wrong twice, change method.');
   if (has('canvas') && has('batch'))

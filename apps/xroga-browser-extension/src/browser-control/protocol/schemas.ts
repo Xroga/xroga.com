@@ -100,6 +100,7 @@ export const ScreenshotArgsSchema = z.strictObject({
   ref: ref.optional().describe('Only this element'),
   fullPage: z.boolean().optional(),
   labels: z.boolean().optional().describe('Draw ref labels over actionable elements'),
+  grid: z.boolean().optional().describe('Draw a 0 to 1 coordinate grid, for placing pointer actions on a painted canvas'),
 });
 
 export const ClickArgsSchema = z.strictObject({

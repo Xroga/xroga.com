@@ -232,23 +232,23 @@ describe('guards', () => {
     expect(texts.c).toMatch(/\[Nanobrowser note: you made the same call with the same outcome 3 times/);
   });
 
-  it('nudges at two no-effect actions on a target, stops at three, and salvages with done', async () => {
+  it('nudges at two no-effect actions on a target, then more strongly at three, and only far later stops', async () => {
     const layer = new FakeLayer({ click: () => noEffect });
     const click = (id: string) => ({ toolCalls: [call('click', { target: { ref: 'a1' } }, id)] });
-    const { end, texts, scripted } = await run(
-      [click('a'), click('b'), click('c'), doneCall('partial', 's', 'The button did nothing.')],
-      layer,
-    );
+    const { texts } = await run([click('a'), click('b'), click('c'), click('d'), doneCall('partial', 's', 'The button did nothing.')], layer);
     expect(texts.b).toMatch(/had no effect 2 times/);
-    expect(scripted.calls.at(-1)!.tools.map(t => t.name)).toEqual(['done']);
-    expect(end).toMatchObject({ status: 'done', outcome: 'partial', summary: 'The button did nothing.' });
+    expect(texts.c).toMatch(/had no effect 3 times[\s\S]*different way/);
+    expect(texts.d).toBeDefined();
   });
 
-  it('stops after five errors in a row; a salvage call with no done fails the run', async () => {
+  it('nudges a change of method after five errors in a row and keeps running; only twenty in a row stop the run', async () => {
     const layer = new FakeLayer({ click: () => failed('NOT_VISIBLE') });
     const err = (id: string) => ({ toolCalls: [call('click', { target: { ref: id } }, id)] });
-    const { end } = await run([err('a'), err('b'), err('c'), err('d'), err('e'), { text: 'Giving up.' }], layer);
-    expect(end).toMatchObject({ status: 'failed', outcome: 'failed', reason: '5 calls in a row failed.' });
+    const five = await run([err('a'), err('b'), err('c'), err('d'), err('e'), doneCall('partial', 's', 'ok'), doneCall('partial', 's2', 'ok')], layer);
+    expect(five.texts.e).toMatch(/5 calls in a row failed[\s\S]*materially different method/);
+    expect(five.end.outcome).toBe('partial');
+    const many = await run([...Array.from({ length: 20 }, (_, i) => err(`x${i}`)), { text: 'Giving up.' }], new FakeLayer({ click: () => failed('NOT_VISIBLE') }));
+    expect(many.end).toMatchObject({ status: 'failed', outcome: 'failed', reason: '20 calls in a row failed.' });
   });
 
   it('rechecks the current tab after a stale control and leaves the next action to the model', async () => {

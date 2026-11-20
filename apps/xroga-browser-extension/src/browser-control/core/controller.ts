@@ -3,6 +3,7 @@
 import { isLayerError, LayerError } from '../protocol/errors';
 import type { ErrorCode, ProtocolError } from '../protocol/errors';
 import { isReadOnly, listTools, toolSpec } from '../protocol/catalogue';
+import { markAgentWindow, waitForHumanQuiet } from './human-guard';
 import type { Capability, ToolSpec } from '../protocol/catalogue';
 import type { Observe, Target } from '../protocol/schemas';
 import { resolveTarget } from './interaction/resolve';
@@ -741,9 +742,18 @@ export class Session {
         attach: () => this.controller.attach(tabId!),
         signal: options.signal,
       };
-      const run = () => {
+      const run = async () => {
         checkCancelled(ctx);
-        return handler(ctx, args);
+        // A person using the tab holds back a tool that changes it; the tool's own input is marked as the agent's so it is not mistaken for theirs.
+        if (!readOnly && tabId !== null) {
+          await waitForHumanQuiet(ctx);
+          await markAgentWindow(ctx, 20_000);
+        }
+        try {
+          return await handler(ctx, args);
+        } finally {
+          if (!readOnly && tabId !== null) await markAgentWindow(ctx, 400);
+        }
       };
       const outcome = tabId === null ? await run() : await this.controller.locks.run(tabId, run);
       result = this.#render(tool, outcome, tabId);

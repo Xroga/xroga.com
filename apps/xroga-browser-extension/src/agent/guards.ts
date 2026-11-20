@@ -7,8 +7,11 @@ import { EMPTY_GUARDS } from '@src/store/types';
 export const REPEAT_WINDOW = 6;
 export const REPEAT_LIMIT = 3;
 export const NO_EFFECT_NUDGE = 2;
-export const NO_EFFECT_STOP = 3;
-export const ERROR_STOP = 5;
+/** Repeated failure is first a change-of-method note (never a stop); the stops below are far-off backstops against an environment that is plainly broken. */
+export const NO_EFFECT_STRONG = 3;
+export const NO_EFFECT_STOP = 10;
+export const ERROR_NUDGE = 5;
+export const ERROR_STOP = 20;
 /** Calls in a row that only looked at pages before the agent is told to act or finish. */
 export const READ_STREAK_NUDGE = 5;
 /**
@@ -16,7 +19,8 @@ export const READ_STREAK_NUDGE = 5;
  * of recent calls has to be full, hold at most two distinct calls and none that changed anything; this many calls later in that state the run stops.
  * Polling (`wait`, `parallel_task_status`) and any call whose outcome was `changed` are not cycles.
  */
-export const CYCLE_STOP = 4;
+export const CYCLE_NUDGE = 4;
+export const CYCLE_STOP = 16;
 const POLLING_TOOLS = new Set(['wait', 'parallel_task_status']);
 
 export interface GuardVerdict {
@@ -120,6 +124,9 @@ export class Guards {
     s.recent = [...s.recent, sig].slice(-REPEAT_WINDOW);
     s.errorsInRow = isError ? s.errorsInRow + 1 : 0;
     if (s.errorsInRow >= ERROR_STOP) return { stop: `${ERROR_STOP} calls in a row failed.`, guard: 'errors' };
+    if (s.errorsInRow >= ERROR_NUDGE && s.errorsInRow % ERROR_NUDGE === 0) {
+      return { nudge: `${s.errorsInRow} calls in a row failed. Read the exact error of the last one, say what it means, and switch to a materially different method (a different tool, the screenshot and a pointer action, a keyboard shortcut, the application's own command or script console, a connected API). Keep the work already done.`, reobserve: true };
+    }
 
     const key = NO_EFFECT_TOOLS.has(tool) ? targetKey(args, result) : null;
     if (key && (result?.receipt?.postcondition?.status === 'met' || result?.receipt?.effect.verdict === 'changed')) {
@@ -135,6 +142,10 @@ export class Guards {
       s.noEffect[key] = count;
       if (count >= NO_EFFECT_STOP)
         return { stop: `${tool} on the same target had no effect ${count} times.`, guard: 'no_effect' };
+      if (count >= NO_EFFECT_STRONG) {
+        const signals = result.receipt.effect.signals.join(' · ') || 'no signal';
+        return { nudge: `${tool} on this target had no effect ${count} times (${signals}). Stop repeating it: observe the page again and use a different way to reach the goal (another element, a pointer action from a screenshot, a keyboard path, the application's command interface).`, reobserve: true };
+      }
       if (count >= NO_EFFECT_NUDGE) {
         const signals = result.receipt.effect.signals.join(' · ') || 'no signal';
         return {
@@ -148,6 +159,9 @@ export class Guards {
       new Set(s.recent).size <= 2 &&
       !s.recent.some(r => r.endsWith('→ changed') || POLLING_TOOLS.has(r.split(' ')[0]));
     s.cycle = cycling ? (s.cycle ?? 0) + 1 : 0;
+    if (s.cycle >= CYCLE_NUDGE && s.cycle < CYCLE_STOP && s.cycle % 2 === 0) {
+      return { nudge: 'You are repeating the same calls and nothing on the page changes. Diagnose why, then take a materially different approach; do not repeat these calls.', reobserve: true };
+    }
     if (s.cycle >= CYCLE_STOP) {
       return {
         stop: `the last ${REPEAT_WINDOW + s.cycle - 1} calls were only ${new Set(s.recent).size === 1 ? 'the same call' : 'two calls repeated'} and none changed the page.`,

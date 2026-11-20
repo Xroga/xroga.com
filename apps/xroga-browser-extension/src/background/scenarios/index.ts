@@ -34,4 +34,5 @@ import './variants-form';
 import './timeline-editor';
 import './stale-and-slow';
 import './site-actions';
+import './human-control';
 import './clickable-zoo';

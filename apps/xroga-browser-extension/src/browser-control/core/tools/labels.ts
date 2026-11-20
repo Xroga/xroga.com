@@ -81,3 +81,33 @@ export async function drawLabels(base64: string, boxes: LabelBox[], scale: numbe
   }
   return blobToBase64(await canvas.convertToBlob({ type: 'image/png' }));
 }
+
+/** A coordinate grid over the picture, for pointer actions on a painted canvas: faint lines every 5 percent, strong lines every 10, each labelled with the 0 to 1 fraction the canvas tool takes. */
+export async function drawGrid(base64: string): Promise<string> {
+  if (typeof OffscreenCanvas === 'undefined') return base64;
+  const bitmap = await createImageBitmap(new Blob([base64ToBytes(base64) as BlobPart], { type: 'image/png' }));
+  const w = bitmap.width;
+  const h = bitmap.height;
+  const canvas = new OffscreenCanvas(w, h);
+  const g = canvas.getContext('2d')!;
+  g.drawImage(bitmap, 0, 0);
+  const font = Math.max(9, Math.round(Math.min(w, h) / 70));
+  g.font = `bold ${font}px sans-serif`;
+  g.textBaseline = 'top';
+  for (let i = 1; i < 20; i++) {
+    const f = i / 20;
+    const strong = i % 2 === 0;
+    g.strokeStyle = strong ? 'rgba(255, 0, 255, 0.55)' : 'rgba(0, 160, 255, 0.35)';
+    g.lineWidth = strong ? 1.5 : 1;
+    g.beginPath(); g.moveTo(Math.round(f * w) + 0.5, 0); g.lineTo(Math.round(f * w) + 0.5, h); g.stroke();
+    g.beginPath(); g.moveTo(0, Math.round(f * h) + 0.5); g.lineTo(w, Math.round(f * h) + 0.5); g.stroke();
+    const text = f.toFixed(2);
+    g.fillStyle = 'rgba(255, 255, 255, 0.85)';
+    g.fillRect(Math.round(f * w) + 2, 0, g.measureText(text).width + 2, font + 2);
+    g.fillRect(0, Math.round(f * h) + 2, g.measureText(text).width + 2, font + 2);
+    g.fillStyle = strong ? '#a000a0' : '#0060b0';
+    g.fillText(text, Math.round(f * w) + 3, 1);
+    g.fillText(text, 1, Math.round(f * h) + 3);
+  }
+  return blobToBase64(await canvas.convertToBlob({ type: 'image/png' }));
+}

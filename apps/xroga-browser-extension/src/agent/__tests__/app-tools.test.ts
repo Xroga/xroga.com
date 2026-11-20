@@ -159,6 +159,7 @@ describe('a request about connected apps', () => {
     const { end, scripted, dispatched } = await appRun(request, { text: 'No matching connected app read tools.' }, [
       { toolCalls: [{ name: 'plugin_search', input: { query: 'find a Google Sheets spreadsheet by name' }, id: 'a' }] },
       { toolCalls: [{ name: 'done', input: { outcome: 'partial', summary: 'Nothing found.' }, id: 'd' }] },
+      { toolCalls: [{ name: 'done', input: { outcome: 'partial', summary: 'Nothing found; no other method applies.' }, id: 'd2' }] },
     ]);
     expect(end.status).toBe('done');
     expect(JSON.stringify(scripted.calls[0].prompt)).not.toContain('do not search again');

@@ -1044,6 +1044,22 @@ ${ledger}` : ''),
       return { call, kind, text: refusal(open), isError: true };
     }
     this.#doneRefusals = 0;
+    // Giving up is checked once: stopping after one or two failed attempts, with other methods untried, is the usual way a capable run ends early.
+    // The challenge never blocks a genuine stop (a login, a CAPTCHA, an approval, missing information): the second `done` is accepted as it is.
+    if (outcomeArg !== 'success' && !this.#giveUpChallenged && !this.#recoveryReadOnly) {
+      this.#giveUpChallenged = true;
+      const blocked = /log ?in|sign ?in|password|captcha|2fa|mfa|verification code|approv|authori[sz]|permission|credential|payment|declined|cancel|not allowed|blocked by/i.test(`${summary} ${String(args.summary ?? '')}`);
+      const untried = ['canvas', 'batch', 'press', 'menu_path', 'run_script_console', 'screenshot', 'find', 'scroll', 'drag', 'http_get', 'find_skill']
+        .filter(n => this.#toolNames.has(n) && !this.#toolsUsed.has(n));
+      if (!blocked && untried.length && this.#toolsUsed.size > 0) {
+        return {
+          call, kind, isError: true,
+          text: `Not accepted yet. You are stopping as "${outcomeArg}" but have used only: ${[...this.#toolsUsed].join(', ')}. Methods you have not tried here: ${untried.slice(0, 6).join(', ')}. ` +
+            'Unless something only the user can supply is blocking you (a login, a CAPTCHA, an approval, missing information, a payment), diagnose why the last method failed and continue with a materially different one, keeping the work already done. ' +
+            'If you are genuinely blocked, call done again with the exact blocker.',
+        };
+      }
+    }
     const lost = unverifiedLines(this.#debt);
     if (lost.length) summary = `${summary}\n\n${lost.map(l => `- ${l}`).join('\n')}`;
     return { call, kind, text: 'done: the run ends.', isError: false, done: { outcome: outcomeArg, summary } };
@@ -1412,6 +1428,7 @@ ${ledger}` : ''),
         : result,
       outcome.image,
     );
+    if (!outcome.skipped && outcome.call.toolName !== 'done') this.#toolsUsed.add(outcome.call.toolName);
     const status: ToolRow['status'] = outcome.skipped ? 'skipped' : outcome.isError ? 'failed' : 'done';
     const planChanged = this.#plan.active && outcome.call.toolName !== 'plan' && outcome.call.toolName !== 'done' && !outcome.skipped && (outcome.isError ? this.#plan.markFailure() : this.#plan.markSuccess());
     this.options.emit(
@@ -1510,6 +1527,8 @@ ${ledger}` : ''),
    * A tool already in the list is never replaced, and the run holds at most 40 of them.
    */
   #askedText = '';
+  #giveUpChallenged = false;
+  #toolsUsed = new Set<string>();
   #plan = new TaskPlan();
   #planSeq = 0;
 

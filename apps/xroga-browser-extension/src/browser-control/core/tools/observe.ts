@@ -13,7 +13,7 @@ import { renderLine } from '../perception/outline';
 import { renderContent, sliceContent } from '../perception/read';
 import { cleanText } from '../perception/ax';
 import { quadBounds, scrollOffset, topLevelQuad } from '../geometry';
-import { blankBoxes, drawLabels, presentedBoxes } from './labels';
+import { blankBoxes, drawGrid, drawLabels, presentedBoxes } from './labels';
 import { compactOps, diffLines, renderDiff } from '../perception/diff';
 import type { FrameRecord } from '../ports';
 import { rememberSecret } from '../redact';
@@ -268,6 +268,7 @@ export async function screenshot(ctx: ToolContext, args: ScreenshotArgs): Promis
     );
   }
   let labelled = 0;
+  if (args.grid) base64 = await drawGrid(base64);
   if (args.labels) {
     // Only what the image shows is presented: a ref outside a cropped image keeps the baseline it had.
     const image = clip ?? { width: shot.width / scale, height: shot.height / scale };
@@ -285,7 +286,7 @@ export async function screenshot(ctx: ToolContext, args: ScreenshotArgs): Promis
   return {
     data: { mimeType: 'image/png', base64, width: shot.width, height: shot.height, scale, origin },
     lines: [
-      `screenshot · tab ${tab.tabId} · ${shot.width}×${shot.height} px · scale ${scale.toFixed(2)}${args.labels ? ` · ${labelled} labels` : ''}`,
+      `screenshot · tab ${tab.tabId} · ${shot.width}×${shot.height} px · scale ${scale.toFixed(2)}${args.labels ? ` · ${labelled} labels` : ''}${args.grid ? ' · coordinate grid drawn (fractions 0 to 1 of the page)' : ''}`,
     ],
   };
 }

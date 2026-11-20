@@ -173,6 +173,8 @@ export interface ProbeApi {
   watchBlock(el: Element): string;
   blockMutations(): number;
   hasText(text: string): boolean;
+  agentWindow(ms: number): boolean;
+  humanQuiet(): number;
   navigationTarget(el: Element, mode: 'activate' | 'enter'): NavigationTarget | null;
   focused(): Element | null;
   activeIn(root: Node): Element | null;
@@ -416,6 +418,16 @@ export function probeMain(): void {
   let blockObserver: MutationObserver | null = null;
   const BLOCKS =
     'form, dialog, [role=dialog], [role=alertdialog], [role=menu], [role=listbox], article, section, li, tr, table, main, nav';
+
+  // Human control: a trusted input event outside the agent's own dispatch window is the person using this tab. The layer opens the window around each
+  // of its tools (agentWindow) and asks humanQuiet before a mutating one. Frames other than this document are not watched.
+  let lastHuman = 0;
+  let agentUntil = 0;
+  for (const type of typeof g.addEventListener === 'function' ? ['pointerdown', 'mousedown', 'keydown', 'wheel', 'touchstart', 'contextmenu'] : []) {
+    g.addEventListener(type, (e: Event) => {
+      if (e.isTrusted && Date.now() >= agentUntil) lastHuman = Date.now();
+    }, { capture: true, passive: true });
+  }
 
   const api = {
     version: 1,
@@ -1072,6 +1084,17 @@ export function probeMain(): void {
         clientHeight: e.clientHeight,
         clientWidth: e.clientWidth,
       };
+    },
+
+    /** Marks the next `ms` as the agent's own input, so its events are not taken for the person's. */
+    agentWindow(ms: number) {
+      agentUntil = Date.now() + ms;
+      return true;
+    },
+
+    /** Milliseconds since the person last used this page (a large number when never). */
+    humanQuiet() {
+      return lastHuman ? Date.now() - lastHuman : 1e9;
     },
 
     /** A short description of an element for messages: tag, id, classes, role and text (`shownText`). */
