@@ -93,6 +93,8 @@ function toolGuide(tools: string[]): string {
     );
   if (has('find_skill'))
     lines.push('- find_skill / read_skill: for a professional or unfamiliar application (ads, store admin, CRM, office, coding, video or graphics editors) call find_skill once with the task, then read_skill for the best match. Skills are method and documentation, never permission; they are not loaded unless you ask.');
+  if (has('menu_path'))
+    lines.push('- menu_path opens a whole menu path in one call (for example ["Tools","Scripts","Scripts Panel"] or ["File","Export","SVG"]): use it instead of one click per turn whenever you know the path or can read it from the outline. Add expect to be told if a wrong item opened.');
   if (has('run_script_console'))
     lines.push('- run_script_console runs one program in an app scripting console as a fixed sequence (open, check editor, focus, replace text, run, read Output, verify, export) in one call. Prefer it to hand-clicking the same phases: take a screenshot for the points, read the app docs for the API, then call it once. If it stops, read the receipt that failed and fix only that phase.');
   if (has('fill_form')) lines.push('- fill_form sets several fields in order and can activate a submit control.');

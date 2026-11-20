@@ -158,10 +158,23 @@ async function main() {
       // Stop every service worker, as Chrome does when it suspends or crashes one.
       await cdp.send('ServiceWorker.enable', {}, panelTarget.sid);
       await sleep(500);
-      await cdp.send('ServiceWorker.stopAllWorkers', {}, panelTarget.sid);
+      // A kill only counts when the worker's memory is really gone. Plant a marker in the worker now; after each stop, look for it in whatever worker is running.
+      // stopAllWorkers often does not take effect, and a run that was never interrupted proves nothing about recovery.
+      const workerNow = async () => (await targets()).find(t => t.type === 'service_worker' && t.url.includes(extId));
+      const probe = async () => { const w = await workerNow(); if (!w) return 'absent'; const sid = await attach(w.targetId); return evalIn(sid, "globalThis.__swMarker ?? 'lost'").catch(() => 'absent'); };
+      { const w = await workerNow(); const sid = await attach(w.targetId); await evalIn(sid, "globalThis.__swMarker = 'alive'; true"); }
+      let tries = 0;
+      let realRestart = false;
+      for (; tries < 12 && !realRestart; tries++) {
+        await cdp.send('ServiceWorker.stopAllWorkers', {}, panelTarget.sid);
+        await sleep(700);
+        const m = await probe();
+        realRestart = m === 'lost';
+      }
       report.steps.killedAt = new Date().toISOString();
-      await sleep(500);
-      report.steps.workerGoneAfterStop = !(await targets()).some(t => t.type === 'service_worker' && t.url.includes(extId));
+      report.steps.killTries = tries;
+      report.steps.realRestart = realRestart;
+      report.steps.workerGoneAfterStop = realRestart;
     } else if (MODE === 'offline') {
       // The extension worker loses its network while a model reply is pending, then gets it back.
       const sw = (await targets()).find(t => t.type === 'service_worker' && t.url.includes(extId));
@@ -212,6 +225,7 @@ async function main() {
     report.steps.rowsFinal = MODE === 'tabclose' ? null : await rows().catch(() => null);
     const last = await panelOp('read').catch(() => null);
     report.steps.finalStatus = last?.status;
+    report.steps.finalTranscript = String(last?.transcript ?? '').slice(-1500);
 
     const failures = [];
     if (!report.steps.workerBack) failures.push('the service worker did not come back');

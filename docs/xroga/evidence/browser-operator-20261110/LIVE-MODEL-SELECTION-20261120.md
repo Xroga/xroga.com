@@ -33,3 +33,8 @@ Raw results: `live-model/*.json`.
 | tool calls before the fill, p50 / p95 | 2 / 4 | 0 / 0 |
 
 Change: the outline that the run attaches to the user message is now prefixed with "[Current outline of the page, already captured for you. Act on it directly; do not take a snapshot first.]" (`loop.ts`). The system prompt already said so, and the model ignored it 7 times in 10; the label next to the data did not get ignored. Measures the model's choices only: the simulated page answers instantly, so end-to-end time on real pages is not measured here. Raw: `live-model/bench-form-before.json`, `live-model/bench-form.json`.
+
+## menu_path, strategy note, diagnosis (real DeepSeek, SIMULATED pages)
+* `menu_path` (open a whole menu path in one call): chosen by DeepSeek in 5 of 5 runs of the editor simulation, at turn 2 or 3 in four of them (turn 13 in one). The earlier `openPath` parameter inside the console tool was adopted 0 of 4 times: a separate tool with one obvious argument is what the model picks. `console-menupath.json`.
+* Strategy note ("Method chosen from what the page shows") was in the run context in 11 of 11 runs of the covered-dialog task. `diagnosis-*.json`.
+* Failure-diagnosis directive: fired 0 times in 11 runs. The model recovered from the layer's own error text (covered by dialog, then find, then Close, then Save) and never repeated the failing click three times. It is insurance for stalls, not something this class of failure needs from the model. With the overlay visible in the outline the task finished 5 of 5 with exactly one covered attempt avoided; with it hidden 4 of 6 finished within 10 turns, 2 of 6 did not.

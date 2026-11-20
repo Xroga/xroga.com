@@ -35,6 +35,8 @@ import { ProgressTracker } from './progress-tracker';
 import { describeChoice, evidenceFromOutline, rankStrategies } from './strategy-selector';
 import { skillsFor } from './skills';
 import { describeHit, renderSkill, searchSkills, skillById } from './skill-catalog';
+import { runMenuPath, validateMenuPath } from './menu-path';
+import type { MenuPathArgs } from './menu-path';
 import { runSurface, RunLedger } from './command-surface';
 import { scriptConsoleSurface, validateConsoleArgs } from './command-surface-adapter';
 import type { ConsoleArgs } from './command-surface-adapter';
@@ -1634,6 +1636,31 @@ ${ledger}` : ''),
     };
   }
 
+  /** One menu path in one call. Every click is an ordinary layer call through the gate, the journal and the guards. */
+  async #runMenuPath(call: ToolCallRequest, kind: ToolKind, args: Record<string, unknown>): Promise<CallOutcome> {
+    const { emit, signal, layer } = this.options;
+    const bad = validateMenuPath(args as Partial<MenuPathArgs>);
+    if (bad) return { call, kind, text: `error: ${bad}`, isError: true };
+    if (!this.#toolNames.has('click') || !this.#toolNames.has('wait')) return { call, kind, text: 'error: menu_path needs the click and wait tools, which are not available in this run. Nothing was done.', isError: true };
+    let n = 0;
+    const step = async (tool: string, input: Record<string, unknown>) => {
+      if (signal.aborted) throw new Error('Stopped');
+      const stepCall: ToolCallRequest = { toolCallId: `${call.toolCallId}#${++n}`, toolName: tool, input };
+      const stepKind = kindOf(tool, input);
+      emit({ type: 'tool_execution_start', messageId: this.#replyId, row: this.#row(stepCall, 'running') });
+      let outcome: CallOutcome | null = await this.beforeToolCall(stepCall);
+      if (!outcome) {
+        const result = await this.#time('tool.layer', () => layer.call(tool, tool === 'click' ? { ...input, observe: 'none' } : input, signal));
+        outcome = { call: stepCall, kind: stepKind, text: result.text, isError: !result.ok, result };
+      }
+      outcome = await this.afterToolCall(outcome);
+      emit({ type: 'tool_execution_end', messageId: this.#replyId, row: this.#row(stepCall, outcome.isError ? 'failed' : 'done', outcome) });
+      return { ok: !outcome.isError, text: outcome.text, errorCode: outcome.result?.error?.code };
+    };
+    const res = await runMenuPath(args as unknown as MenuPathArgs, step);
+    return { call, kind, text: res.text, isError: !res.ok };
+  }
+
   /** One fixed-phase program run in an app console. Every layer call still goes through the gate, the journal and the guards. */
   async #runScriptConsole(call: ToolCallRequest, kind: ToolKind, args: Record<string, unknown>): Promise<CallOutcome> {
     const { emit, signal, layer } = this.options;
@@ -1730,6 +1757,8 @@ ${ledger}` : ''),
       outcome = await this.#runBatchTool(call, kind, args);
     } else if (call.toolName === 'find_skill' || call.toolName === 'read_skill') {
       outcome = await this.#skillTool(call, kind, args);
+    } else if (call.toolName === 'menu_path') {
+      outcome = await this.#runMenuPath(call, kind, args);
     } else if (call.toolName === 'run_script_console') {
       outcome = await this.#runScriptConsole(call, kind, args);
     } else if (this.options.tools.find(t => t.name === call.toolName)?.source === 'agent') {

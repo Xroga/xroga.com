@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Stale references and slow network fixture</title>
+<style>body{font:14px sans-serif;padding:16px}li{margin:6px 0}button{margin-left:8px}</style></head>
+<body>
+<h1>Orders</h1>
+<!-- ?mode=stale : the list is rendered once; calling render() replaces every node with a fresh one (same names), so any ref taken before points at a detached node.
+     ?mode=slow  : the list arrives from /api/slow after 3 s; nothing is clickable before that. -->
+<ul id="list" aria-label="Order list"><li id="loading">Loading orders…</li></ul>
+<p id="chosen" role="status">chosen: none</p><p id="count" role="status">clicks: 0</p>
+<script>
+const mode = new URLSearchParams(location.search).get('mode') || 'stale';
+let clicks = 0;
+const names = ['Order 1001', 'Order 1002', 'Order 1003'];
+function render() {
+  const ul = document.getElementById('list');
+  ul.innerHTML = '';
+  for (const n of names) {
+    const li = document.createElement('li');
+    li.innerHTML = `<span>${n}</span><button type="button" aria-label="Open ${n}">Open</button>`;
+    li.querySelector('button').addEventListener('click', () => {
+      clicks++;
+      document.getElementById('chosen').textContent = 'chosen: ' + n;
+      document.getElementById('count').textContent = 'clicks: ' + clicks;
+    });
+    ul.appendChild(li);
+  }
+}
+if (mode === 'stale') { render(); } // the test swaps the list on demand with render(), so the moment a ref goes stale is not a race
+else { fetch('/api/slow?ms=3000').then(() => render()); }
+</script>
+</body></html>
