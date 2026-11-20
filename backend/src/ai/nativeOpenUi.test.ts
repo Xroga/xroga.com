@@ -930,6 +930,23 @@ test('a rejected calculator keeps the worked example and removes the promise of 
   assert.doesNotMatch(JSON.stringify(diagnostics), /UnknownControl/);
 });
 
+test('a live calculator fallback removes directions to unavailable inputs without losing the calculation', () => {
+  const example = 'Interest: 10,000 × 0.05 × 3 = $1,500.00.';
+  const instruction = 'Change the rate and duration in the controls and the interest, total, and principal/interest split update immediately.';
+  const independent = 'Interest is calculated on the principal.';
+  const fenced = ['~~~text', instruction, '~~~'].join('\n');
+  const prose = [example, instruction, instruction + ' ' + independent, fenced].join('\n\n');
+  const raw = prose + NATIVE_UI_MARKER + 'root = Col([UnknownControl()])';
+  const result = completeNativeWorkspaceAnswer(raw, 'stop', undefined, undefined, undefined, ['calculator']);
+
+  assert.equal(result.completion.status, 'partial');
+  assert.equal(result.responseSource.text, '');
+  assert.ok(result.response.includes(example));
+  assert.ok(result.response.includes(independent));
+  assert.ok(result.response.includes(fenced));
+  assert.equal(result.response.split(instruction).length - 1, 1, 'only the fenced example remains');
+});
+
 test('a rejected decorative branch can be omitted while verified calculator controls survive', () => {
   const program = [
     'root = Col([estimate, UnknownDecoration()])',

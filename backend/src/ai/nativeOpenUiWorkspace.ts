@@ -10,6 +10,23 @@ import { nativeMarkdownTables } from './nativeMarkdown.js';
 
 const outputLimitNote = 'This answer reached the provider output limit. The available answer is shown below.';
 const promisesControls = (text: string) => /\b(?:controls?|sliders?|input fields?)\s+(?:above|below)\b|\b(?:above|below)\s+(?:calculator|controls?)\b/i.test(text);
+const unavailableControlInstruction = /^ {0,3}(?:[-*+]\s+)?(?:(?:the\s+)?(?:controls?|sliders?|input fields?)\s+(?:above|below)\b|(?:change|adjust|edit|move|set|use|drag)\b[^.?!]*\b(?:in|with|via|using|on)\s+(?:the\s+)?(?:controls?|sliders?|input fields?)\b)/i;
+
+function withoutControlClaims(text: string): string {
+  let fence: string | undefined;
+  return text.split('\n').map(line => {
+    const marker = /^ {0,3}(\x60{3,}|~{3,})(.*)$/.exec(line);
+    if (marker) {
+      if (!fence) fence = marker[1];
+      else if (marker[1][0] === fence[0] && marker[1].length >= fence.length && !marker[2].trim()) fence = undefined;
+      return line;
+    }
+    if (fence || !unavailableControlInstruction.test(line)) return line;
+    // Keep an independent sentence following the unusable instructions.
+    const next = /[.!?][ \t]+(?=[\p{Lu}])/u.exec(line);
+    return next ? line.slice(next.index + next[0].length) : '';
+  }).join('\n').trim();
+}
 const tableControlRequests = [
   /(?<!non[- ])\b(?:interactive|sortable|filterable|searchable|editable|paginated|expandable)\s+(?:(?:data|decision|comparison|summary|results?)\s+){0,2}tables?\b/i,
   /\btables?\s+(?:with|supporting|that\s+(?:allows?|supports?))\s+(?:(?:column|row|local)\s+)?(?:sort\w*|filter\w*|search\w*|edit\w*|paginat\w*|controls?)\b/i,
@@ -135,10 +152,6 @@ export function completeNativeWorkspaceAnswer(
   const promisesInlineControls = promisesControls(prose);
   const calculatorUnavailable = missing.includes('calculator')
     || (validation?.ok === false && promisesInlineControls);
-  const withoutControlClaims = (text: string) => text.replace(
-    /(^|\n)([ \t]*(?:[-*]\s+)?(?:The\s+)?(?:controls?|sliders?|input fields?)\s+(?:above|below)\s+[^\n]+)(?=\n|$)/gi,
-    '$1',
-  ).trim();
   if (missing.length) diagnose?.({ stage: 'assembly', reason: 'missing_formats', formats: missing });
   if (guidance) {
     const safeProse = factualRule === 'unconfirmed_conflicting_input'
