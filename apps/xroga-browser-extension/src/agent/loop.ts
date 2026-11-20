@@ -1633,7 +1633,15 @@ ${ledger}` : ''),
     const id = identify(url);
     if (!id || this.#announcedSites.has(id.origin)) return;
     const matches = SKILL_CATALOG.filter(c => c.hosts.some(h => matchSite({ host: h }, id).matched)).slice(0, 2);
-    if (!matches.length) return;
+    if (!matches.length) {
+      const reg = this.#siteActionRegistry();
+      await reg.ready();
+      const acts = reg.forUrl(url);
+      if (!acts.length) return;
+      this.#announcedSites.add(id.origin);
+      await this.writer.appNote(`Site recognised: ${id.host}. ${acts.length} reviewed action(s) exist for it (${acts.map(a => a.id).join(', ')}). Optional: find_skill lists them and site_action runs one with a verified result; the general tools always work and nothing here limits what you may do.`);
+      return;
+    }
     this.#announcedSites.add(id.origin);
     const top = matches[0]!;
     await this.writer.appNote(`${renderWhy({

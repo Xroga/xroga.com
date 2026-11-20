@@ -17,6 +17,7 @@ import { FIND_SKILL_TOOL, READ_SKILL_TOOL } from '@src/agent/skill-catalog';
 import { MENU_PATH_TOOL } from '@src/agent/menu-path';
 import { DELEGATE_TOOL } from '@src/agent/subagents';
 import { CONFIRM_DOWNLOAD_TOOL } from '@src/agent/confirm-download';
+import { SITE_ACTION_TOOL } from '@src/agent/site-actions';
 import { HTTP_GET_TOOL } from '@src/xroga/plugins';
 import { FakeHost, FakeLayer } from '@src/agent/testing/fake-layer';
 import type { FakeHandler } from '@src/agent/testing/fake-layer';
@@ -34,6 +35,8 @@ export interface Scenario {
   outline: string;
   handlers?: Record<string, FakeHandler>;
   turnCap?: number;
+  siteFetch?: import('@src/agent/well-known-skills').FetchLike;
+  onlineSkills?: boolean;
 }
 
 export function apiKey(): string | undefined {
@@ -46,7 +49,7 @@ export async function runLive(s: Scenario): Promise<LiveResult> {
   if (!key) throw new Error('ZURELAY_API_KEY is not set');
   const chat = createModel({ kind: 'openai-compatible', baseUrl: 'https://api.zurelay.com/v1', modelName: MODEL, apiKey: key, maxOutputTokens: 2048 });
   const profile = resolveProfile({ kind: 'openai-compatible', modelName: MODEL, overrides: { contextWindow: 32_000, maxOutput: 2_048, vision: true } });
-  const full = toolsForRun({ pointAt: true, vision: true, localScreenshots: true, agentTools: [DELEGATE_TOOL, BATCH_TOOL, SCRIPT_CONSOLE_TOOL, MENU_PATH_TOOL, FIND_SKILL_TOOL, READ_SKILL_TOOL, CONFIRM_DOWNLOAD_TOOL, HTTP_GET_TOOL] });
+  const full = toolsForRun({ pointAt: true, vision: true, localScreenshots: true, agentTools: [DELEGATE_TOOL, BATCH_TOOL, SCRIPT_CONSOLE_TOOL, MENU_PATH_TOOL, FIND_SKILL_TOOL, READ_SKILL_TOOL, CONFIRM_DOWNLOAD_TOOL, HTTP_GET_TOOL, SITE_ACTION_TOOL] });
   const { tools, full: fullTools } = startingTools(full, s.request);
   const names = tools.map(t => t.name);
   const playbooks = skillsSection(s.request);
@@ -79,7 +82,7 @@ export async function runLive(s: Scenario): Promise<LiveResult> {
         last = Date.now();
       }
     },
-    turnCap: s.turnCap ?? 5,
+    turnCap: s.turnCap ?? 5, siteFetch: s.siteFetch, onlineSkills: s.onlineSkills,
   });
   const end = await loop.run();
   const branch = await activeBranch(c.id);
