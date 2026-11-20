@@ -7,7 +7,7 @@ New since v4: the task plan with real milestone states (plan tool, verified chec
 Measured (real Chromium, real loop, real DeepSeek): 25/25 earlier regression; plan used 5/5 on a multi-deliverable request and 0/5 on a simple question; a three-page task ended with 3 of 3 milestones verified from page state; 7 of 7 small tasks produced no plan.
 
 Needs your decision, not done:
-1. Vision for the product model. The provider reads images (probe passed) but the backend gate `ZURELAY_DEEPSEEK_VISION_VERIFIED` is off, so the product model receives `[image]`. With vision declared in the eval, the painted-timeline task fell from 25 turns / 146-290 s to 16 turns / 88 s (one run each). Enabling it is a backend config change plus a signed-in product run to test it end to end.
+1. Vision for the product model: CORRECTION to the earlier claim. Staging revision 00146-wod already has `ZURELAY_DEEPSEEK_VISION_VERIFIED=1`, so the staging product already sends screenshots; only my eval harness ran without vision. Nothing was changed. For production, confirm the variable at release. Not yet verified: a signed-in product run showing the model receiving an image.
 2. Reasoning escalation. The product sends `none`. Measured none equals high/max on these tasks and the independent benchmark shows 1.4 points between levels, so no change was made.
 
 Still not proven: owner-Chrome signed-in runs of this build, SkillsHub (HTTP 402), concurrent human-input guard, Ads/Meta/Shopify API workers, deliverable file-transfer workflows across authorised apps, and independent security review / PR #997 / production release gates.
