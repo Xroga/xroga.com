@@ -209,6 +209,9 @@
   .xroga-native-openui .iui-markdown > .iui-table-scroll > .iui-table:not(:has(> thead > tr > :nth-child(4))) th {
     white-space: normal;
   }
+  .xroga-native-openui .iui-markdown > .iui-table-scroll > .iui-table:has(> thead > tr > :nth-child(2):last-child) tr > :first-child {
+    min-inline-size: 5.5rem;
+  }
   .xroga-native-openui .iui-table:has(> thead > tr > th:nth-child(4)) tr > :first-child { min-inline-size: 6rem; }
   .native-diagram .react-flow__controls-button { min-width: 28px; min-height: 28px; }
 }
