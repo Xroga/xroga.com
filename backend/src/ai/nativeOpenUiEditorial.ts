@@ -1,3 +1,5 @@
+import { nativeMarkdownTables } from './nativeMarkdown.js';
+
 type Decision = 'stop' | 'proceed';
 type Rule = { terms: string[]; decision: Decision; block?: number };
 type Order = { first: string; second: string; block?: number };
@@ -55,7 +57,7 @@ function addDecision(rules: Rule[], condition: string, outcome: string, block?: 
 }
 
 function decisionTable(rules: Rule[], headings: unknown[], rows: unknown[], block?: number) {
-  const condition = headings.findIndex(value => /^(?:condition|trigger|when)$/i.test(surface(literal(value))));
+  const condition = headings.findIndex(value => /^(?:when|(?:[\p{L}\p{N}-]+\s+)*(?:condition|trigger))$/iu.test(surface(literal(value))));
   const outcome = headings.findIndex(value => /^(?:decision|outcome|disposition)$/i.test(surface(literal(value))));
   if (condition < 0 || outcome < 0) return;
   for (const row of rows) {
@@ -89,13 +91,7 @@ function proseRules(text: string, block?: number) {
     }
     if (!/^\s{0,3}>/.test(line)) lines.push(line);
   }
-  const cellLine = (line: string) => line.trim().replace(/^\||\|$/g, '').split('|');
-  const table = lines.findIndex(line => /^\s*\|?\s*:?-{3,}:?\s*\|(?:\s*:?-{3,}:?\s*\|?)+\s*$/.test(line));
-  if (table > 0 && lines[table - 1].includes('|')) {
-    const rows: string[][] = [];
-    for (let row = table + 1; lines[row]?.includes('|'); row++) rows.push(cellLine(lines[row]));
-    decisionTable(rules, cellLine(lines[table - 1]), rows, block);
-  }
+  for (const { head, rows } of nativeMarkdownTables(text)) decisionTable(rules, head, rows, block);
   for (const line of lines) {
     for (const raw of line.split(/(?<=[.!?])\s+/)) {
       const statement = surface(raw).replace(/^(?:[-#]+|\d+[.)])\s+/, '').replace(/^\[\s?[ xX]\]\s*/, '');

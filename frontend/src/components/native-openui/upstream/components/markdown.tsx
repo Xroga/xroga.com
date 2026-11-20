@@ -6,6 +6,7 @@ import { staticChartTable } from "./chart";
 import { CodePanel } from "./code-panel";
 import type { RenderEvidenceCitation } from "../../evidence";
 import { nativeReadableTextKey } from "../../../../../../backend/src/ai/nativeOpenUi";
+import { readNativeMarkdownTable } from "../../../../../../backend/src/ai/nativeMarkdown";
 
 // Markdown builds React elements. Formula HTML comes only from untrusted KaTeX.
 // Inline: **bold**, *italic*, ~~strike~~, `code`, [text](https://...).
@@ -347,16 +348,6 @@ export function proseOutsideNativeDocuments(text: string, matches?: MarkdownMatc
 }
 
 const LIST_ITEM = /^\s{0,3}([-*+]|(\d+)[.)])\s+(.*)$/;
-function cells(line: string): string[] {
-  const source = line.trim().replace(/^\|/, "").replace(/(?<!\\)\|$/, "");
-  // A literal pipe in a code span or escaped with a backslash belongs to the
-  // cell. Keep the Markdown that the inline renderer still needs to read.
-  return source.split(/(`[^`\n]+`|\\\||\|)/u).reduce<string[]>((row, part) => {
-    if (part === "|") row.push("");
-    else row[row.length - 1] += part === "\\|" ? "|" : part;
-    return row;
-  }, [""]).map(cell => cell.trim());
-}
 
 function blocks(source: string): Block[] {
   const lines = publicAnswerText(source).replace(/\r\n?/g, "\n").split("\n");
@@ -410,11 +401,10 @@ function blocks(source: string): Block[] {
       i++;
       continue;
     }
-    if (line.includes("|") && i + 1 < lines.length && /^\s*\|?\s*:?-+:?\s*(\|\s*:?-+:?\s*)*\|?\s*$/.test(lines[i + 1])) {
-      const head = cells(line);
-      const rows: string[][] = [];
-      for (i += 2; i < lines.length && lines[i].includes("|") && lines[i].trim(); i++) rows.push(cells(lines[i]));
-      out.push({ kind: "table", head, rows });
+    const table = readNativeMarkdownTable(lines, i);
+    if (table) {
+      out.push({ kind: "table", head: table.head, rows: table.rows });
+      i = table.end;
       continue;
     }
     if (/^\s*>/.test(line)) {

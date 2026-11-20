@@ -6,9 +6,26 @@ import { conflictingNativeReadouts, initialNativeReadouts, nativePrincipalMultip
 import { recoverNativeReadoutExplanations } from './nativeOpenUi.js';
 import { bindNativeAnswerText } from './nativeOpenUi.js';
 import { reviewEditorialProse } from './nativeOpenUiEditorial.js';
+import { nativeMarkdownTables } from './nativeMarkdown.js';
 
 const outputLimitNote = 'This answer reached the provider output limit. The available answer is shown below.';
 const promisesControls = (text: string) => /\b(?:controls?|sliders?|input fields?)\s+(?:above|below)\b|\b(?:above|below)\s+(?:calculator|controls?)\b/i.test(text);
+const tableControlRequests = [
+  /(?<!non[- ])\b(?:interactive|sortable|filterable|searchable|editable|paginated|expandable)\s+(?:(?:data|decision|comparison|summary|results?)\s+){0,2}tables?\b/i,
+  /\btables?\s+(?:with|supporting|that\s+(?:allows?|supports?))\s+(?:(?:column|row|local)\s+)?(?:sort\w*|filter\w*|search\w*|edit\w*|paginat\w*|controls?)\b/i,
+  /\b(?:sort|filter|search|edit|page through)\s+(?:the\s+)?(?:table|rows|columns)\b/i,
+  /\b(?:let|allow|enable)\s+(?:me|users?|readers?)\s+(?:to\s+)?(?:sort|filter|search|edit|page through)\b/i,
+  /\b(?:table|rows|columns)\b[^.!?\n]{0,35}\b(?:can|should)\s+(?:be\s+)?(?:sort(?:ed)?|filter(?:ed)?|search(?:ed)?|edit(?:ed)?)\b/i,
+];
+const tableRequestClauses = /[.!?;,\n]+|\b(?:but|instead)\b|\band\b(?=\s+(?:add|include|show|provide|make|let|allow|enable)\b)/i;
+const negatedTableControl = /\b(?:no|without|avoid|skip|omit|exclude|do\s+not|don['’]t)\s+(?:(?:add|include|show|provide|make|create|build|use|enable|allow|let|to|me|users?|readers?|a|an|the|any)\s+)*$/i;
+
+function requestsNativeTableControls(prompt: string): boolean {
+  return prompt.split(tableRequestClauses).some(clause => tableControlRequests.some(pattern => {
+    const match = pattern.exec(clause);
+    return match && !negatedTableControl.test(clause.slice(0, match.index));
+  }));
+}
 
 function editorialFallback(prose: string, validation: Extract<NativeUiValidation, { ok: false }>) {
   const note = validation.fallbackProse === undefined
@@ -111,7 +128,8 @@ export function completeNativeWorkspaceAnswer(
   if (recoveryReview.conflict) return editorialFallback(prose, recoveryReview.conflict);
   const program = repair?.program ?? originalProgram;
   const validation = repair?.validation ?? original;
-  const missing = missingNativeFormats(validation?.ok ? program : '', requiredFormats);
+  const missing = missingNativeFormats(validation?.ok ? program : '', requiredFormats).filter(format =>
+    format !== 'table' || requestsNativeTableControls(prompt ?? '') || !nativeMarkdownTables(prose).length);
   // The model can promise controls even when its program was rejected and
   // the original wording did not match an explicit calculator obligation.
   const promisesInlineControls = promisesControls(prose);

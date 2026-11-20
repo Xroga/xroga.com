@@ -505,6 +505,62 @@ test('table caption recovery preserves data, readable copy and Share without ano
   }
 });
 
+test('a readable decision table satisfies an ordinary table request beside native components', () => {
+  const prompt = 'Show a decision table and diagram for delivery intake.';
+  const prose = [
+    '## Decision table',
+    '| Seal condition | Decision |',
+    '| --- | :--- |',
+    '| Broken | Refer to the registrar |',
+    '| Intact | Accept for intake |',
+  ].join('\n');
+  const diagram = 'Diagram("Delivery intake", [{id:"seal",label:"Inspect seal",level:0},{id:"check",label:"Record status",level:1}], [{from:"seal",to:"check",label:"inspection"}], "Record the inspected seal condition.")';
+  const program = 'root = Col([Markdown(_xroga_answer), ' + diagram + '])';
+  const diagnostics: unknown[] = [];
+  const formats = requiredNativeFormats(prompt);
+  assert.deepEqual([...formats].sort(), ['graph', 'table']);
+  const result = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + program, 'stop', undefined, prompt,
+    event => diagnostics.push(event), formats);
+  assert.deepEqual(result.completion, { status: 'complete' });
+  assert.deepEqual(diagnostics, []);
+  assert.match(result.response, /Broken \| Refer to the registrar/);
+  assert.match(result.responseSource.text, /Markdown\(_xroga_answer\)/);
+  assert.match(result.responseSource.text, /Diagram\(/);
+  const share = readNativeOpenUiShare(buildNativeOpenUiShare(result.response, result.responseSource.text)!);
+  assert.equal(share?.program, result.responseSource.text);
+});
+
+test('a static or invalid Markdown table never claims missing interactive table controls', () => {
+  const table = 'Item | Value\n--- | ---\n`A|B` | 42';
+  const tableOnly = (prose: string, prompt: string) => completeNativeWorkspaceAnswer(
+    prose, 'stop', undefined, prompt, undefined, ['table'],
+  );
+  assert.deepEqual(tableOnly(table, 'Present a comparison table.').completion, { status: 'complete' });
+  assert.deepEqual(tableOnly(table, 'Show an interactive calculator and a table.').completion, { status: 'complete' });
+  assert.deepEqual(tableOnly(table, 'Provide the table. Do not add an interactive table.').completion, { status: 'complete' });
+  assert.deepEqual(tableOnly(table, 'Provide a comparison table without sorting controls.').completion, { status: 'complete' });
+  for (const prompt of [
+    'Present a sortable table.', 'Show an interactive data table.', 'Show a filterable table.',
+    'Present a table with row edit controls.', 'Show a table. Let me sort by amount.',
+    'Show a table readers can filter by type.',
+    'Do not add a filterable table, but include a sortable table.',
+  ]) {
+    assert.deepEqual(tableOnly(table, prompt).completion, { status: 'partial', reason: 'presentation_contract' });
+  }
+  const brokenNative = 'root = Col([Markdown(_xroga_answer), Table(["Item", "Value"], [["Missing value"]])])';
+  assert.deepEqual(tableOnly(table + NATIVE_UI_MARKER + brokenNative, 'Present a sortable table.').completion,
+    { status: 'partial', reason: 'presentation_contract' });
+  for (const invalid of [
+    '```markdown\n' + table + '\n```', table.split('\n').map(line => '> ' + line).join('\n'),
+    table.split('\n').map(line => '    ' + line).join('\n'), 'Item | Value\n--- | ---',
+    'Item | Value\n--- | --- | ---\nBook | 42', 'Item | Value\n--- | ---\nBook | 42 | Overflow',
+    'Summary directly above\n' + table,
+  ]) {
+    assert.deepEqual(tableOnly(invalid, 'Present a comparison table.').completion,
+      { status: 'partial', reason: 'presentation_contract' });
+  }
+});
+
 test('table recovery does not discard unknown arguments or admit invalid data and evidence', () => {
   for (const table of [
     'Table(["Plan"], [["Basic"]], {hidden: "data"})',

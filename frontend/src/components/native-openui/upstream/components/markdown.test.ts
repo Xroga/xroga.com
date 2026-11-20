@@ -319,6 +319,20 @@ test('Markdown tables preserve literal pipes and all columns', () => {
   assert.match(html, /<td>Use A \| B<\/td>/);
 });
 
+test('Markdown block order preserves quotes, list continuations, fenced table literals and verified links', () => {
+  const url = 'https://example.com/reference';
+  const table = '| Document | Link |\n| --- | --- |\n| Existing | [1](' + url + ') |';
+  const text = ['> Keep this quote.', '', '- Inspect the item.', '  Confirm the tag.', '', '~~~markdown', table, '~~~', '', '## Verified reference', table].join('\n');
+  const html = renderToStaticMarkup(createElement(MarkdownBlocks, {
+    text, renderCitation: (number, href) => number === 1 && href === url ? createElement('a', { href }, 'Source') : null,
+  }));
+  assert.match(html, /<blockquote[^>]*><p>Keep this quote\.<\/p><\/blockquote>/);
+  assert.match(html, /<ul><li>Inspect the item\. Confirm the tag\.<\/li><\/ul>/);
+  assert.equal((html.match(/<table\b/g) ?? []).length, 1);
+  assert.match(html, /<th scope="col">Document<\/th>/);
+  assert.match(html, /href="https:\/\/example.com\/reference"[^>]*>Source<\/a>/);
+});
+
 test('native table sections replace empty repeated headings while unique content and cited tables remain', () => {
   const title = 'Manual versus automated';
   const table = '| Stage | Owner |\n| --- | --- |\n| Intake | Coordinator |';

@@ -84,6 +84,9 @@ test('direct branches, inline notes and explicit decision records share the same
   assert.equal(reviewEditorialVisuals('### Intake', [{ typeName: 'Table', props: {
     columns: ['Trigger', 'Disposition'], rows: [['Archive seal broken', 'Refer to the collection manager']],
   } }], request), undefined);
+  assert.equal(reviewEditorialVisuals('### Intake', [{ typeName: 'Table', props: {
+    columns: ['Seal condition', 'Decision', 'Custodian'], rows: [['Archive seal broken', 'Release the item', 'Registrar']],
+  } }], request)?.issue, 'decision_conflict');
 });
 
 test('readable fallback withholds permissive prose contradicted by a visual stop', () => {

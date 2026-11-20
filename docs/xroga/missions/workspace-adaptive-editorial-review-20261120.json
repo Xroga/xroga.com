@@ -10,7 +10,9 @@
   "risk": "high",
   "scope": "Validate explicit procedure decisions across representations, admit independently public Workspace research, and keep native answers responsive without changing model routing or execution boundaries.",
   "changedFiles": [
+    "backend/src/ai/nativeMarkdown.ts",
     "backend/src/ai/nativeOpenUi.ts",
+    "backend/src/ai/nativeOpenUi.test.ts",
     "backend/src/ai/nativeOpenUiEditorial.ts",
     "backend/src/ai/nativeOpenUiEditorial.test.ts",
     "backend/src/ai/nativeOpenUiPrompt.ts",
@@ -20,7 +22,10 @@
     "backend/src/ai/tenantModelDispatch.test.ts",
     "backend/src/ai/workspacePublicSearch.ts",
     "frontend/e2e/command3-auth.spec.ts",
+    "frontend/e2e/phase4-admin-share.security.mjs",
     "frontend/src/components/native-openui/NativeWorkspaceAnswer.tsx",
+    "frontend/src/components/native-openui/upstream/components/markdown.test.ts",
+    "frontend/src/components/native-openui/upstream/components/markdown.tsx",
     "frontend/src/lib/formatAiMarkdown.tsx"
   ],
   "decisions": {
@@ -29,6 +34,7 @@
     ],
     "extend": [
       "Check explicit condition outcomes and prerequisite order at the existing answer assembly boundary.",
+      "Count renderable static decision tables as delivered while preserving the existing native table requirement for requested interactions.",
       "Admit explicitly public raw-turn lookups through the current bounded Search broker even when an unrelated project is selected.",
       "Reuse an unchanged native answer tree during unrelated Workspace updates."
     ],

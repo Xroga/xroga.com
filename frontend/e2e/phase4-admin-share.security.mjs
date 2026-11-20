@@ -26,6 +26,7 @@ const pureSources={
   './nativeDiagramTopology.js':'../../backend/src/ai/nativeDiagramTopology.ts',
   './nativeOpenUiAccuracy.js':'../../backend/src/ai/nativeOpenUiAccuracy.ts',
   './nativeOpenUiEditorial.js':'../../backend/src/ai/nativeOpenUiEditorial.ts',
+  './nativeMarkdown.js':'../../backend/src/ai/nativeMarkdown.ts',
   './nativeOpenUiValues.js':'../../backend/src/ai/nativeOpenUiValues.ts',
   './nativeOpenUiFunctions.generated.js':'../../backend/src/ai/nativeOpenUiFunctions.generated.ts',
   './answerAuthorizationReview.js':'../../backend/src/ai/answerAuthorizationReview.ts',
