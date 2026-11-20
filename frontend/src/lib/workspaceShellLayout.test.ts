@@ -157,13 +157,14 @@ test('the shell keeps one radius without a visible outline', () => {
 test('the title bar is outside the scrolling container', () => {
   // In the rendered tree the header is a sibling *before* the body that holds the
   // panes, so the transcript moves underneath it rather than carrying it along.
-  const header = VIEW.indexOf('<header className="xv-workspace-header"');
+  const header = VIEW.search(/<header\b[^>]*\bxv-workspace-header\b/);
+  const headerEnd = VIEW.indexOf('</header>', header);
   // Matched on the class rather than on `<div className="…"`: the body carries a ref
   // and a style for the resizable split now, so its attributes span several lines.
   const body = VIEW.indexOf('className="xv-workspace-body"');
   assert.ok(header > -1, 'the shell header is gone');
   assert.ok(body > -1, 'the shell body is gone');
-  assert.ok(header < body, 'the header moved inside the transcript and will scroll away');
+  assert.ok(headerEnd > header && headerEnd < body, 'the header overlapped the transcript or moved inside it');
   // And the scrolling container lives inside the body, under the header.
   assert.match(VIEW.slice(body), /xv-terminal-panel[\s\S]{0,200}xv-terminal-scroll|xv-terminal-panel[^>]*>\s*\n\s*\{terminalPane\}/);
   // It is a sibling of the body, not a sticky element compensating for page padding.

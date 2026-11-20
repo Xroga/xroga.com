@@ -11,6 +11,7 @@ const sidebar = read('../components/layout/Sidebar.tsx');
 const starter = read('../components/dashboard/WorkspaceNewTerminal.tsx');
 const plugin = read('../components/terminal/IntegrationsModal.tsx');
 const rail = read('../components/terminal/ChatTurnRail.tsx');
+const scrollNavigation = read('../components/terminal/WorkspaceScrollNavigation.tsx');
 const css = read('../app/globals.css');
 
 test('composer only mounts on /workspace; never paints above projects, plugins or dashboard routes', () => {
@@ -67,6 +68,7 @@ test('conversation navigation uses 1 marker per user request and reply with adap
 test('automatic intro replaces first line in the same position; scroll control has direct arrows', () => {
   assert.match(starter, /className=\{styles\.automaticFirst\} data-visible=\{!showDetail\}/);
   assert.match(starter, /className=\{styles\.automaticDetail\} data-visible=\{showDetail\}/);
-  assert.match(dock, /<ArrowDown size=\{19\}/);
-  assert.match(dock, /<ArrowUp size=\{19\}/);
+  assert.match(dock, /<WorkspaceScrollNavigation\b/);
+  assert.match(scrollNavigation, /aria-label="Scroll to first response"[^<]*>\s*<NavigationArrow \/>/);
+  assert.match(scrollNavigation, /aria-label="Scroll to last response"[^<]*>\s*<NavigationArrow down \/>/);
 });
