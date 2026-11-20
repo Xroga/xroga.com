@@ -119,7 +119,6 @@ export function buildOrganizationJsonLd() {
       '@type': 'ContactPoint',
       contactType: 'customer support',
       email: COMPANY_CONTACT.email,
-      telephone: COMPANY_CONTACT.phoneTel,
       availableLanguage: ['English'],
     },
   };

@@ -8,7 +8,7 @@ import { PageJsonLd } from '@/components/seo/PageJsonLd';
 export const metadata: Metadata = buildMetadata({
   title: 'Contact',
   description:
-    'Contact Xroga AI support — email and phone for billing, product, and Whop subscription questions.',
+    'Contact Xroga AI at hello@xroga.com for product, billing, account, refunds, privacy and partnership inquiries.',
   path: '/contact',
 });
 
@@ -16,8 +16,8 @@ export default function ContactPage() {
   return (
     <><PageJsonLd path="/contact" name="Contact XROGA AI" description="Official XROGA AI product, billing, account, and partnership contact information." type="ContactPage" /><LegalPageShell title="Contact">
       <p className="text-[var(--muted)]">
-        Reach the Xroga team for product questions, billing (Whop), account help, or partnership
-        inquiries. We respond during Pakistan business hours.
+        For product questions, billing, refunds, account help, privacy requests or partnerships,
+        contact Xroga by email. This is our single public contact channel.
       </p>
 
       <section className="space-y-3">
@@ -41,7 +41,7 @@ export default function ContactPage() {
       </section>
 
       <section className="space-y-3">
-        <h2 className="text-lg font-semibold">Email</h2>
+        <h2 className="text-lg font-semibold">Email for all inquiries</h2>
         <p>
           <a
             href={`mailto:${COMPANY_CONTACT.email}`}
@@ -52,21 +52,6 @@ export default function ContactPage() {
         </p>
         <p className="text-[var(--muted)] text-xs">
           Billing / refunds: include your Whop payment or membership ID. Product: include your account email.
-        </p>
-      </section>
-
-      <section className="space-y-3">
-        <h2 className="text-lg font-semibold">Phone</h2>
-        <p>
-          <a
-            href={`tel:${COMPANY_CONTACT.phoneTel}`}
-            className="text-[var(--accent)] font-medium hover:underline text-base"
-          >
-            {COMPANY_CONTACT.phoneDisplay}
-          </a>
-        </p>
-        <p className="text-[var(--muted)] text-xs">
-          Voice / WhatsApp-capable mobile for support. Prefer email for detailed billing cases.
         </p>
       </section>
 

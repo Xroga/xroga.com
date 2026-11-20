@@ -66,11 +66,6 @@ export default function RefundPage() {
             {COMPANY_CONTACT.email}
           </a>
           <br />
-          Phone:{' '}
-          <a href={`tel:${COMPANY_CONTACT.phoneTel}`} className="text-[var(--accent)] hover:underline">
-            {COMPANY_CONTACT.phoneDisplay}
-          </a>
-          <br />
           <Link href="/contact" className="text-[var(--accent)] hover:underline">
             Full contact page
           </Link>
