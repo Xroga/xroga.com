@@ -200,11 +200,15 @@ test('the model gets instructions from the native registry and may answer in tex
   assert.match(nativeOpenUiPrompt, /formulas, initial inputs and initial results/);
   assert.match(nativeOpenUiPrompt, /do not copy or paraphrase the explanation/);
   assert.match(nativeOpenUiPrompt, /Use Markdown\(_xroga_answer\) once in your visible layout/);
+  assert.match(nativeOpenUiPrompt, /native Section with exactly the same title/);
+  assert.match(nativeOpenUiPrompt, /Keep a complete Markdown decision or comparison table in its original section/);
   const exampleRoots = nativeOpenUiPrompt.match(/^root = Col\(\[.*$/gm) ?? [];
   assert.equal(exampleRoots.length, 5);
   for (const example of exampleRoots) {
     assert.equal(example.match(/Markdown\(_xroga_answer\)/g)?.length, 1, example);
   }
+  assert.ok(exampleRoots.some(example => example.includes('Section("Plan comparison", [Table(')));
+  assert.ok(exampleRoots.some(example => example.includes('Section("Request path", [flow])')));
   assert.match(nativeOpenUiPrompt, /do not present a bundle-based break-even point or recommendation as fact/);
   assert.deepEqual(splitNativeOpenUiAnswer('Paris.'), { text: 'Paris.', program: '' });
   assert.deepEqual(splitNativeOpenUiAnswer('Paris.\n<<<XROGA_OP', true), { text: 'Paris.', program: '' });
@@ -1049,6 +1053,18 @@ test('a one-paragraph overview retains later code and diagram details for saved 
   assert.match(answer.response, /stripe\.webhooks\.constructEvent/);
   assert.equal(answer.response.match(/Verify identity/g)?.length, 1);
   assert.equal(readNativeOpenUiShare(buildNativeOpenUiShare(answer.response, program)!)?.text, answer.response);
+});
+
+test('readable diagram fallback keeps unique relationships in one list', () => {
+  const prose = '## Decision diagram\n\nReview an intake before releasing it.';
+  const program = 'root = Col([Diagram("Decision diagram", [{id:"intake",label:"Intake",level:0},'
+    + '{id:"review",label:"Review",level:1},{id:"release",label:"Release",level:2}],'
+    + '[{from:"intake",to:"review",label:"Screen required"},{from:"review",to:"release",label:"When cleared"}],'
+    + '"A reviewer clears the completed intake.")])';
+  const readable = supplementNativeProse(prose, program, true);
+  assert.ok(readable.startsWith(prose));
+  assert.match(readable, /- Intake → Review: Screen required\n- Review → Release: When cleared/);
+  assert.equal(supplementNativeProse(readable, program, true), readable);
 });
 
 test('native chat is a deploy-time DeepSeek flag independent of founder evaluation', () => {

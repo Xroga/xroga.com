@@ -225,6 +225,12 @@ export function TerminalDock() {
       }
       data-testid="persistent-terminal-dock"
     >
+      {isDashboard && !dockSuppressed && messages.length > 0 && !incognito ? (
+        <WorkspaceScrollNavigation
+          scrollToFirst={scrollToFirst}
+          scrollToLatest={scrollToLatest}
+        />
+      ) : null}
       <div
         className={cn(
           'mx-auto px-2 sm:px-4 lg:px-6 pt-1.5 sm:pt-2 pb-0.5 sm:pb-1 xv-terminal-dock-inner',
@@ -257,14 +263,6 @@ export function TerminalDock() {
 
                 <div className="xv-chatbar-stack relative">
 
-
-                  {isDashboard && messages.length > 0 &&
-                  !incognito ? (
-                    <WorkspaceScrollNavigation
-                      scrollToFirst={scrollToFirst}
-                      scrollToLatest={scrollToLatest}
-                    />
-                  ) : null}
 
                  <TerminalChatBar starter={showStarterExperience && !incognito} />
 

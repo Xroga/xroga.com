@@ -433,11 +433,15 @@ export function supplementNativeProse(prose: string, program: string, includeAll
         const node = record(item);
         return [scalar(node.id), scalar(node.label)];
       }));
+      const firstRelationship = lines.length;
       array(props.links).forEach(item => {
         const link = record(item);
         const from = names.get(scalar(link.from)), to = names.get(scalar(link.to));
         if (from && to) add('- ' + from + ' → ' + to + (link.label ? ': ' + scalar(link.label) : ''));
       });
+      if (lines.length > firstRelationship + 1) {
+        lines.push(lines.splice(firstRelationship).join('\n'));
+      }
     } else if (node.typeName === 'Text' && node.hasDynamicProps && record(props.text).k) {
       // Use the initial local state for the readable snapshot. Projection has no
       // function or action dispatch and cannot mutate the saved controls.

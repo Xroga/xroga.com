@@ -101,24 +101,48 @@ type InlineSectionContent = {
 };
 export const InlineNativeSections = createContext<InlineSectionContent | undefined>(undefined);
 
+function scalarTableKey(head: readonly string[], rows: readonly unknown[][], format: (cell: unknown) => string): string | undefined {
+  if (!rows.length || rows.some(row => row.length !== head.length || row.some(cell => typeof cell !== "string" && typeof cell !== "number"))) return;
+  return JSON.stringify([head.map(format), rows.map(row => row.map(format))]);
+}
+
 // Only compare scalar cells. Retain distinct data and cells with components.
 export function tableContentKey(head: readonly string[], rows: readonly unknown[][]): string | undefined {
-  if (!rows.length || rows.some(row => row.length !== head.length || row.some(cell => typeof cell !== "string" && typeof cell !== "number"))) return;
   const plain = (cell: unknown) => String(cell).split(/(`[^`\n]+`)/g)
     .map((part, index) => index % 2 ? part.slice(1, -1) : part.replace(/\[(\d{1,3})\](?:\([^\s)]+\))?/g, ""))
     .join("").trim().replace(/\s+/g, " ")
     .replace(/^the (?=[a-z])/i, "")
     .replace(/^[A-Z](?=[a-z]+ )/, initial => initial.toLowerCase());
-  return JSON.stringify([head.map(plain), rows.map(row => row.map(plain))]);
+  return scalarTableKey(head, rows, plain);
 }
 
 function tableHasLinks(head: string[], rows: string[][]): boolean {
   return [head, ...rows].some(row => row.some(value => /\[\d{1,3}\]|\]\(/.test(value)));
 }
 
-export function preservedMarkdownTableKeys(text: string): ReadonlySet<string> {
+function contextualMarkdownTableKeys(items: readonly Block[]): Set<string> {
+  const contexts = new Map<string, number>();
   const keys = new Set<string>();
-  for (const block of blocks(text)) {
+  let heading = -1;
+  items.forEach((item, index) => {
+    if (item.kind === "h") heading = index;
+    if (item.kind !== "table" || heading < 0) return;
+    const literal = scalarTableKey(item.head, item.rows, String);
+    if (!literal) return;
+    const previous = contexts.get(literal);
+    if (previous === undefined) contexts.set(literal, heading);
+    else if (previous !== heading) {
+      const key = tableContentKey(item.head, item.rows);
+      if (key) keys.add(key);
+    }
+  });
+  return keys;
+}
+
+export function preservedMarkdownTableKeys(text: string): ReadonlySet<string> {
+  const items = blocks(text);
+  const keys = contextualMarkdownTableKeys(items);
+  for (const block of items) {
     if (block.kind !== "table" || !tableHasLinks(block.head, block.rows)) continue;
     const key = tableContentKey(block.head, block.rows);
     if (key) keys.add(key);
@@ -179,12 +203,12 @@ function markdownChecklistKey(items: readonly string[]): string | undefined {
 
 function replacesTableSection(
   heading: Extract<Block, { kind: "h" }>, next: Block | undefined, following: Block | undefined,
-  tables?: ReadonlySet<string>, sectionTables?: ReadonlyMap<string, ReadonlySet<string>>,
+  tables?: ReadonlySet<string>, sectionTables?: ReadonlyMap<string, ReadonlySet<string>>, contextualTables?: ReadonlySet<string>,
 ): boolean {
   if (next?.kind !== "table" || (following && (following.kind !== "h" || following.level > heading.level))
     || tableHasLinks(next.head, next.rows)) return false;
   const key = tableContentKey(next.head, next.rows);
-  return !!(key && tables?.has(key) && sectionTables?.get(textKey(heading.text))?.has(key));
+  return !!(key && !contextualTables?.has(key) && tables?.has(key) && sectionTables?.get(textKey(heading.text))?.has(key));
 }
 
 /** Match literal content only. Distinct wording and citation markers stay visible. */
@@ -326,9 +350,10 @@ export function nativeMarkdownMatches(root: unknown, readInitial: (value: unknow
   // Keep the authoritative heading in reading order when an extra native
   // section repeats it. An exact native table that owns its heading still wins.
   for (const items of staticMarkdownBlocks) {
+    const contextualTables = contextualMarkdownTableKeys(items);
     items.forEach((heading, index) => {
       if (heading.kind !== "h" || (index === 0 && headingTitles.has(headingKey(heading.text)))) return;
-      if (replacesTableSection(heading, items[index + 1], items[index + 2], tables, sectionTables)) return;
+      if (replacesTableSection(heading, items[index + 1], items[index + 2], tables, sectionTables, contextualTables)) return;
       markdownSectionHeadings.add(textKey(heading.text));
     });
   }
@@ -336,9 +361,10 @@ export function nativeMarkdownMatches(root: unknown, readInitial: (value: unknow
   // live state. Toggling a checkbox must not bring its Markdown copy back.
   const inlineReplacements = new Map<string, number>();
   if (isElementNode(root) && root.typeName === "Col" && Array.isArray(root.props.children)) {
-    const plan = placeTitledNativeSections(root.props.children, readInitial);
+    const plan = placeNativeSections(root.props.children, readInitial);
     if (plan) for (const index of plan.replacedBlocks) {
-      const title = plan.placements.get(index)?.props.title;
+      const node = plan.placements.get(index);
+      const title = node?.typeName === "Section" ? node.props.title : undefined;
       if (typeof title === "string") inlineReplacements.set(title, index);
     }
   }
@@ -466,35 +492,67 @@ function placedChecklistKey(section: ElementNode, readInitial: (value: unknown) 
   }
 }
 
-/** Follow unambiguous Markdown headings without reordering unrelated native siblings. */
-export function placeTitledNativeSections(children: readonly unknown[], readInitial?: (value: unknown) => unknown) {
-  const markdown = children.filter(isElementNode).filter(node => node.typeName === "Markdown");
+/** Restore directly authored placement without reordering unrelated native siblings. */
+export function placeNativeSections(children: readonly unknown[], readInitial?: (value: unknown) => unknown, preservedTables?: ReadonlySet<string>) {
+  const elements = children.filter(isElementNode);
+  const markdown = elements.filter(node => node.typeName === "Markdown");
   if (markdown.length !== 1 || markdown[0].hasDynamicProps || typeof markdown[0].props.text !== "string") return;
   const markdownIndex = children.indexOf(markdown[0]);
+  const siblings = children.slice(markdownIndex + 1).filter(isElementNode);
   const sections = new Map<string, ElementNode | null>();
   for (const child of children) {
     if (!isElementNode(child) || child.typeName !== "Section" || typeof child.props.title !== "string") continue;
     const title = textKey(child.props.title);
     sections.set(title, sections.has(title) ? null : child);
   }
-  if (!sections.size) return;
+  const tables = new Map<string, ElementNode | null>();
+  for (const child of elements) {
+    if (child.typeName !== "Table" || child.partial || child.hasDynamicProps) continue;
+    const { columns, rows } = child.props;
+    if (!Array.isArray(columns) || !columns.every(column => typeof column === "string") ||
+      !Array.isArray(rows) || !rows.every(Array.isArray)) continue;
+    const key = scalarTableKey(columns, rows, String);
+    if (!key) continue;
+    const visibleKey = preservedTables && tableContentKey(columns, rows);
+    if (!visibleKey || !preservedTables?.has(visibleKey)) tables.set(key, tables.has(key) ? null : child);
+  }
+  const diagrams = elements.filter(node => node.typeName === "Diagram");
+  if (!sections.size && !tables.size && !diagrams.length) return;
 
   const items = blocks(markdown[0].props.text);
   const positions = new Map<string, number | null>();
-  for (let start = 0; start < items.length; start += 1) {
-    const heading = items[start];
-    if (heading.kind !== "h") continue;
-    const title = textKey(heading.text);
-    positions.set(title, positions.has(title) ? null : start);
-  }
+  const tablePositions = new Map<string, number | null>();
+  const diagramHeadings: number[] = [];
+  items.forEach((item, index) => {
+    if (item.kind === "h") {
+      const title = textKey(item.text);
+      positions.set(title, positions.has(title) ? null : index);
+      if (/(?:^|\s)diagram$/iu.test(title)) diagramHeadings.push(index);
+    }
+    if (item.kind === "table" && !tableHasLinks(item.head, item.rows)) {
+      const key = scalarTableKey(item.head, item.rows, String);
+      if (key) tablePositions.set(key, tablePositions.has(key) ? null : index);
+    }
+  });
+  const sectionEnd = (start: number) => {
+    let end = start + 1;
+    while (end < items.length && items[end].kind !== "h") end += 1;
+    return end;
+  };
   const placements = new Map<number, ElementNode>();
   const replacedBlocks = new Set<number>();
+  for (const [key, table] of tables) {
+    const index = tablePositions.get(key);
+    if (index == null || !table || !siblings.includes(table)) continue;
+    placements.set(index, table);
+    replacedBlocks.add(index);
+  }
   for (const [title, section] of sections) {
     const start = positions.get(title);
     if (start == null || !section || children.indexOf(section) <= markdownIndex) continue;
-    let end = start + 1;
-    while (end < items.length && items[end].kind !== "h") end += 1;
+    const end = sectionEnd(start);
     let at = end - 1;
+    if (placements.has(at)) continue;
     if (!readInitial) {
       placements.set(at, section);
       continue;
@@ -518,12 +576,25 @@ export function placeTitledNativeSections(children: readonly unknown[], readInit
     }
     placements.set(at, section);
   }
+  for (const diagram of diagrams) {
+    if (!siblings.includes(diagram) || diagram.partial || diagram.hasDynamicProps || typeof diagram.props.title !== "string") continue;
+    const title = textKey(diagram.props.title);
+    const exact = positions.get(title);
+    if (exact === null) continue;
+    const uniqueTitle = diagrams.filter(node => typeof node.props.title === "string" && textKey(node.props.title) === title).length === 1;
+    const start = exact === undefined && diagrams.length === 1 && diagramHeadings.length === 1
+      ? diagramHeadings[0] : exact;
+    if (start === undefined || !uniqueTitle) continue;
+    const at = sectionEnd(start) - 1;
+    if (!placements.has(at)) placements.set(at, diagram);
+  }
   if (placements.size) return { markdownIndex, placements, replacedBlocks };
 }
 
 export function MarkdownBlocks({ text, renderCitation, deduplicateTables = false, matches, nativeTables, nativeSectionTables, nativeHeadingTitles, nativeChecklists, inlineSections }: { text: string; renderCitation?: RenderEvidenceCitation; deduplicateTables?: boolean; matches?: MarkdownMatches; nativeTables?: ReadonlySet<string>; nativeSectionTables?: ReadonlyMap<string, ReadonlySet<string>>; nativeHeadingTitles?: ReadonlySet<string>; nativeChecklists?: ReadonlySet<string>; inlineSections?: InlineSectionContent }) {
   const seenTables = new Set<string>();
   const items = blocks(text);
+  const contextualTables = contextualMarkdownTableKeys(items);
   const rendered = items.map((b, i) => {
         if (inlineSections?.replacedBlocks.has(i)) return null;
         const k = `b${i}`;
@@ -545,7 +616,7 @@ export function MarkdownBlocks({ text, renderCitation, deduplicateTables = false
             if (matches?.titles.has(title)) return null;
             // When a matching native Section owns the equivalent table, its
             // heading remains visible. Keep Markdown headings with unique prose.
-            if (replacesTableSection(b, items[i + 1], items[i + 2], nativeTables, nativeSectionTables)) return null;
+            if (replacesTableSection(b, items[i + 1], items[i + 2], nativeTables, nativeSectionTables, contextualTables)) return null;
             return (
               <div key={k} role="heading" aria-level={b.level + 1} className={`iui-md-h iui-md-h${b.level}`}>
                 {inline(b.text, k, renderCitation)}
@@ -585,7 +656,8 @@ export function MarkdownBlocks({ text, renderCitation, deduplicateTables = false
           }
           case "table": {
             const tableKey = deduplicateTables || matches || nativeTables ? tableContentKey(b.head, b.rows) : undefined;
-            if (tableKey && !tableHasLinks(b.head, b.rows) && (seenTables.has(tableKey) || matches?.tables.has(tableKey) || nativeTables?.has(tableKey))) return null;
+            if (tableKey && !contextualTables.has(tableKey) && !tableHasLinks(b.head, b.rows)
+              && (seenTables.has(tableKey) || matches?.tables.has(tableKey) || nativeTables?.has(tableKey))) return null;
             if (tableKey) seenTables.add(tableKey);
             return (
               <div key={k} className={cx("iui-table-scroll", isLongAnswerTable(b.rows.length) && "iui-table-bounded")} role="group" aria-label="Answer table" tabIndex={0}>

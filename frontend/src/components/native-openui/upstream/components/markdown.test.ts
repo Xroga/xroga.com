@@ -7,7 +7,7 @@ import { createParser, type LibraryJSONSchema } from '@openuidev/lang-core';
 import catalog from '../../../../../../backend/src/ai/nativeOpenUiCatalog.json';
 import { bindNativeAnswerText, supplementNativeProse } from '../../../../../../backend/src/ai/nativeOpenUi';
 import { initialNativeValueReader } from '../../../../../../backend/src/ai/nativeOpenUiValues';
-import { inline, MathExpression, MarkdownBlocks, nativeMarkdownMatches, placeTitledNativeSections, preservedMarkdownTableKeys, proseOutsideNativeDocuments, tableContentKey } from './markdown';
+import { inline, MathExpression, MarkdownBlocks, nativeMarkdownMatches, placeNativeSections, preservedMarkdownTableKeys, proseOutsideNativeDocuments, tableContentKey } from './markdown';
 
 test('a titled native section follows the matching Markdown passage before the next heading', () => {
   const text = '## Criteria\n\nRead this first.\n\n## Review flow\n\nFollow the two branches.\n\n## Examples\n\nPreserve the full example.';
@@ -15,7 +15,7 @@ test('a titled native section follows the matching Markdown passage before the n
   const saved = bindNativeAnswerText(code, text);
   const layout = createParser(catalog.schema as LibraryJSONSchema, 'Col').parse(saved).root;
   assert.ok(layout);
-  const placements = placeTitledNativeSections(layout.props.children as unknown[]);
+  const placements = placeNativeSections(layout.props.children as unknown[]);
   assert.ok(placements);
   assert.equal(placements.markdownIndex, 0);
   assert.equal(placements.placements.size, 1);
@@ -32,8 +32,8 @@ test('a titled native section follows the matching Markdown passage before the n
 });
 
 test('ambiguous, fenced, unanchored and earlier native sections keep their model-authored order', () => {
-  const doc = (text: string, hasDynamicProps = false) => ({type: 'element',typeName: 'Markdown',props: {text},hasDynamicProps});
-  const section = {type: 'element',typeName: 'Section',props: {title: 'Review flow'}};
+  const doc = (text: string, hasDynamicProps = false) => ({type: 'element',typeName: 'Markdown',partial: false,props: {text},hasDynamicProps});
+  const section = {type: 'element',typeName: 'Section',partial: false,props: {title: 'Review flow'}};
   for (const nodes of [
     [doc('## Review flow\n\nRead first.\n\n## Review flow'), section],
     [doc('```md\n## Review flow\n```'), section],
@@ -42,7 +42,88 @@ test('ambiguous, fenced, unanchored and earlier native sections keep their model
     [doc('## Review flow'), section, section],
     [doc('## Review flow'), doc('## Examples'), section],
     [section, doc('## Review flow')],
-  ]) assert.equal(placeTitledNativeSections(nodes), undefined);
+  ]) assert.equal(placeNativeSections(nodes), undefined);
+});
+
+test('a detached scalar table replaces its own block and a single diagram follows its designated heading', () => {
+  const text = [
+    '## Intake rules', 'Only release inspected equipment.',
+    '## Availability matrix', '| Tag | Decision |\n| --- | --- |\n| Current | Release |\n| Absent | Hold |',
+    'Check the condition in person.', '## Branch diagram', '1. Inspect the tag.\n2. Refer if missing.',
+    '## Example', 'A missing tag stays on hold.',
+  ].join('\n\n');
+  const program = 'root = Col([Markdown(_xroga_answer), table, flow])\n' +
+    'table = Table(["Tag", "Decision"], [["Current", "Release"], ["Absent", "Hold"]])\n' +
+    'flow = Diagram("Equipment handoff", [{id: "intake", label: "Intake", level: 0}, {id: "hold", label: "Hold", level: 1}], [{from: "intake", to: "hold"}], "Refer when the tag is missing.")';
+  const saved = bindNativeAnswerText(program, text);
+  const root = createParser(catalog.schema as LibraryJSONSchema, 'Col').parse(saved).root;
+  assert.ok(root);
+  const plan = placeNativeSections(root.props.children as unknown[]);
+  assert.ok(plan);
+  assert.deepEqual([...plan.replacedBlocks], [3]);
+  const nodes = new Map([...plan.placements].map(([index, node]) =>
+    [index, createElement('span', null, 'Native ' + node.typeName)]));
+  const rich = renderToStaticMarkup(createElement(MarkdownBlocks, {
+    text, inlineSections: { nodes, replacedBlocks: plan.replacedBlocks },
+  }));
+  assert.match(rich, /Availability matrix.*Native Table.*Check the condition.*Branch diagram.*Inspect the tag.*Refer if missing.*Native Diagram.*Example.*stays on hold/);
+  assert.doesNotMatch(rich, /<table/);
+  const fallback = renderToStaticMarkup(createElement(MarkdownBlocks, { text }));
+  assert.match(fallback, /Availability matrix.*<table.*Release.*Hold.*Branch diagram/);
+});
+
+test('table placement preserves cited, conflicting, fenced, repeated, and dynamic content', () => {
+  const matrix = '| Tag | Decision |\n| --- | --- |\n| Current | Release |';
+  const doc = (text: string) => ({type: 'element',typeName: 'Markdown',partial: false,props: {text}});
+  const table = {type: 'element',typeName: 'Table',partial: false,props: {columns: ['Tag', 'Decision'], rows: [['Current', 'Release']]}};
+  for (const [text, tables] of [
+    [matrix.replace('Release', 'Release [1]'), [table]],
+    [matrix.replace('Release', '[Release](https://example.com/original)'), [table]],
+    [matrix.replace('Release', 'Hold'), [table]],
+    [matrix.replace('Release', '`Release`'), [table]],
+    ['```md\n' + matrix + '\n```', [table]],
+    [matrix + '\n\n## Separately documented case\n\n' + matrix, [table]],
+    [matrix, [table, table]],
+    [matrix, [{ ...table, hasDynamicProps: true }]],
+    [matrix, [{ ...table, props: { ...table.props, rows: [['Current', { type: 'element', typeName: 'Badge', props: { text: 'Release' } }]] } }]],
+  ] as const) assert.equal(placeNativeSections([doc(text), ...tables]), undefined);
+  assert.equal(placeNativeSections([table, doc(matrix)]), undefined);
+  const citedCopy = preservedMarkdownTableKeys(matrix.replace('Release', 'Release [1]'));
+  assert.equal(placeNativeSections([doc(matrix), table], undefined, citedCopy), undefined);
+  assert.equal(placeNativeSections([doc('```md\n' + matrix + '\n```\n\n' + matrix), table])?.replacedBlocks.size, 1);
+});
+
+test('separately authored table contexts survive a matching detached native table', () => {
+  const matrix = '| Gate | Result |\n| --- | --- |\n| Inspection | Hold |';
+  const text = '## Equipment handoff\n\n' + matrix + '\n\n## First-time volunteers\n\n' + matrix;
+  const key = tableContentKey(['Gate', 'Result'], [['Inspection', 'Hold']])!;
+  assert.ok(preservedMarkdownTableKeys(text).has(key));
+  assert.ok(!preservedMarkdownTableKeys('## Equipment handoff\n\n' + matrix + '\n\n' + matrix).has(key));
+  const html = renderToStaticMarkup(createElement(MarkdownBlocks, {
+    text, nativeTables: new Set([key]),
+    nativeSectionTables: new Map([['Equipment handoff', new Set([key])]]), deduplicateTables: true,
+  }));
+  assert.match(html, /Equipment handoff.*<table.*First-time volunteers.*<table/);
+  assert.equal(html.match(/<table/g)?.length, 2);
+});
+
+test('diagram placement prefers one exact title and only infers a unique diagram heading', () => {
+  const doc = (text: string) => ({type: 'element',typeName: 'Markdown',partial: false,props: {text}});
+  const flow = {type: 'element',typeName: 'Diagram',partial: false,props: {title: 'Handoff overview'}};
+  const other = {type: 'element',typeName: 'Diagram',partial: false,props: {title: 'Inventory flow'}};
+  const twoSections = '## First diagram\n\nFirst note.\n\n## Second diagram\n\nSecond note.';
+  for (const children of [
+    [doc(twoSections), flow],
+    [doc('## Handoff overview\n\n## Handoff overview'), flow],
+    [doc('## Single diagram'), flow, other],
+    [doc('## Handoff overview'), flow, flow],
+    [doc('## Guidelines'), flow],
+    [doc('```md\n## Branch diagram\n```'), flow],
+    [flow, doc('## Branch diagram')],
+  ]) assert.equal(placeNativeSections(children), undefined);
+  const exact = placeNativeSections([doc(twoSections + '\n\n## Handoff overview\n\nKeep the description.'), flow, other]);
+  assert.deepEqual(exact && [...exact.placements], [[5, flow]]);
+  assert.equal(exact?.replacedBlocks.size, 0);
 });
 
 test('a visible checklist replaces its exact same-section Markdown list only', () => {

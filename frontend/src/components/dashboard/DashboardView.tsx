@@ -224,7 +224,7 @@ export function DashboardView({ browserOperator }: { browserOperator?: ReactNode
 
   const terminalPane = (
     <div
-      className="xv-terminal-scroll"
+      className={cn('xv-terminal-scroll', !incognito && scrollPolish.transcript)}
       data-testid="terminal-scroll"
       data-conversation={hasConversation ? 'true' : 'false'}
     >

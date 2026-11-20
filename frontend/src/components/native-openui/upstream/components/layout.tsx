@@ -3,7 +3,7 @@
 import { defineComponent, FormNameContext } from "@openuidev/react-lang";
 import { useContext, useId, type CSSProperties, type ReactNode } from "react";
 import { z } from "zod/v4";
-import { InlineNativeSections, NativeVisualContent, placeTitledNativeSections } from "./markdown";
+import { InlineNativeSections, NativeVisualContent, placeNativeSections, VisibleMarkdownTables } from "./markdown";
 import { bg, children, color, onColor, cx, length, radius, radiusSchema, size, space } from "./style";
 
 const align = z.enum(["start", "center", "end", "stretch"]);
@@ -88,14 +88,15 @@ export const Col = defineComponent({
   description: "Vertical layout. Without gap it spaces blocks like an article.",
   component: function NativeColumn({ props, renderNode, statementId }) {
     const settled = useContext(NativeVisualContent);
-    const inline = settled && statementId === "root" ? placeTitledNativeSections(props.children) : undefined;
+    const preservedTables = useContext(VisibleMarkdownTables);
+    const inline = settled && statementId === "root" ? placeNativeSections(props.children, undefined, preservedTables ?? undefined) : undefined;
     let contents: ReactNode;
     if (inline) {
       const moved = new Set<unknown>(inline.placements.values());
       const sections = new Map<number, ReactNode>();
-      const replacedBlocks = new Set<number>();
+      const replacedBlocks = new Set(inline.replacedBlocks);
       for (const [index, section] of inline.placements) {
-        const title = section.props.title;
+        const title = section.typeName === "Section" ? section.props.title : undefined;
         const replacement = typeof title === "string" ? settled?.inlineReplacements.get(title) : undefined;
         sections.set(replacement ?? index, <InlineNativeSections.Provider value={undefined}>{renderNode(section)}</InlineNativeSections.Provider>);
         if (replacement !== undefined) replacedBlocks.add(replacement);
