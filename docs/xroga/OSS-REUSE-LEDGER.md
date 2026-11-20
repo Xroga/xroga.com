@@ -1,12 +1,12 @@
 # Open-Source Reuse Ledger
 
-Generated 2026-11-20T13:32:11.116Z from `docs/xroga/oss-capability-ledger.json` (58 repositories, the 2026-11-20 handoff catalog).
+Generated 2026-11-20T15:34:08.283Z from `docs/xroga/oss-capability-ledger.json` (72 repositories, the 2026-11-20 handoff catalog).
 
 SHA, licence, archived flag and activity were fetched from GitHub for each repository. A row is **INSPECTED (metadata only)** unless the Evidence columns show source study, code and tests. A repository link, clone or README read is not an integration.
 
-Classification: ALREADY IMPLEMENTED: 5, ADAPT CODE: 10, REJECT: 10, TEST REFERENCE: 14, INVOKE ON DEMAND: 19
+Classification: ALREADY IMPLEMENTED: 5, ADAPT CODE: 16, REJECT: 17, TEST REFERENCE: 14, INVOKE ON DEMAND: 20
 
-Status: ALREADY PRESENT: 4, ADAPTED IN CODE: 1, INSPECTED: 49, BEHAVIOR-COMPARED: 1, INTEGRATED/UNIT: 2, LIVE DEEPSEEK VERIFIED: 1
+Status: ALREADY PRESENT: 4, ADAPTED IN CODE: 1, INSPECTED: 59, BEHAVIOR-COMPARED: 1, INTEGRATED/UNIT: 2, LIVE DEEPSEEK VERIFIED: 1, CODE INTEGRATED: 3, BLOCKED: 1
 
 | # | Repository | Pinned SHA | Licence | Classification | Status | Xroga code path | Tests | Reason / rights note |
 |--:|---|---|---|---|---|---|---|---|
@@ -36,7 +36,7 @@ Status: ALREADY PRESENT: 4, ADAPTED IN CODE: 1, INSPECTED: 49, BEHAVIOR-COMPARED
 | 24 | [A9T9/RPA](https://github.com/A9T9/RPA) | 17b6302f16 | NOASSERTION | REJECT | INSPECTED | - | - | handoff: REFERENCE; GPL/AGPL REVIEW |
 | 25 | [fabricjs/fabric.js](https://github.com/fabricjs/fabric.js) | ab604137e0 | MIT | TEST REFERENCE | INSPECTED | - | - | handoff: TEST FIXTURES |
 | 26 | [konvajs/konva](https://github.com/konvajs/konva) | bf1927c1cf | NOASSERTION | TEST REFERENCE | INSPECTED | - | - | handoff: TEST FIXTURES |
-| 27 | [tracedraw/tracedraw](https://github.com/tracedraw/tracedraw) | 5d6fade186 | NOASSERTION | TEST REFERENCE | LIVE DEEPSEEK VERIFIED | - | scripts/verify-a4-svg.test.mjs | One regression case, not the product direction. / handoff: REGRESSION ONLY |
+| 27 | [tracedraw/tracedraw](https://github.com/tracedraw/tracedraw) | bb962e7a94 | NOASSERTION | TEST REFERENCE | LIVE DEEPSEEK VERIFIED | - | scripts/verify-a4-svg.test.mjs | One regression case, not the product direction. / handoff: REGRESSION ONLY |
 | 28 | [agentskills/agentskills](https://github.com/agentskills/agentskills) | 83021e2be4 | Apache-2.0 | ADAPT CODE | INTEGRATED/UNIT | apps/xroga-browser-extension/src/agent/skill-md.ts; apps/xroga-browser-extension/src/agent/skill-catalog.ts (find_skill, read_skill) | src/agent/__tests__/skill-catalog.test.ts | Kept: on-demand discovery instead of prompt dumps. allowed-tools is recorded, never granted. / handoff: SKILL REGISTRY ADAPTER |
 | 29 | [anthropics/skills](https://github.com/anthropics/skills) | e4bb5d960d | none found | ADAPT CODE | INSPECTED | - | - | licence not machine-verified: read the LICENSE file before copying any code / handoff: ADAPT ELIGIBLE SKILLS |
 | 30 | [modelcontextprotocol/servers](https://github.com/modelcontextprotocol/servers) | c799c8552b | NOASSERTION | ADAPT CODE | INSPECTED | - | - | licence not machine-verified: read the LICENSE file before copying any code / handoff: COMPATIBLE MCP TOOL ADAPTER |
@@ -46,7 +46,7 @@ Status: ALREADY PRESENT: 4, ADAPTED IN CODE: 1, INSPECTED: 49, BEHAVIOR-COMPARED
 | 34 | [googleads/google-ads-python](https://github.com/googleads/google-ads-python) | f253b400dc | Apache-2.0 | INVOKE ON DEMAND | INSPECTED | - | - | handoff: ON-DEMAND API WORKER |
 | 35 | [meta/facebook-python-business-sdk](https://github.com/meta/facebook-python-business-sdk) | 947c427b4a | NOASSERTION | INVOKE ON DEMAND | INSPECTED | - | - | handoff: ON-DEMAND API WORKER |
 | 36 | [mozilla/readability](https://github.com/mozilla/readability) | ab4027a8b3 | Apache-2.0 | ADAPT CODE | INSPECTED | - | - | handoff: EMBED / PORT READER |
-| 37 | [apify/crawlee](https://github.com/apify/crawlee) | 6aed6f204a | Apache-2.0 | INVOKE ON DEMAND | INSPECTED | - | - | handoff: BACKEND SANDBOX ON DEMAND |
+| 37 | [apify/crawlee](https://github.com/apify/crawlee) | 0e8556f22f | Apache-2.0 | INVOKE ON DEMAND | INSPECTED | - | - | handoff: BACKEND SANDBOX ON DEMAND |
 | 38 | [microsoft/markitdown](https://github.com/microsoft/markitdown) | ed178952a6 | MIT | INVOKE ON DEMAND | INSPECTED | - | - | handoff: BACKEND PARSER |
 | 39 | [docling-project/docling](https://github.com/docling-project/docling) | f93ee6bc72 | MIT | INVOKE ON DEMAND | INSPECTED | - | - | handoff: BACKEND PARSER |
 | 40 | [ServiceNow/BrowserGym](https://github.com/ServiceNow/BrowserGym) | 62a678feef | NOASSERTION | TEST REFERENCE | INSPECTED | - | - | handoff: EVALUATION HARNESS |
@@ -63,11 +63,25 @@ Status: ALREADY PRESENT: 4, ADAPTED IN CODE: 1, INSPECTED: 49, BEHAVIOR-COMPARED
 | 51 | [lovell/sharp](https://github.com/lovell/sharp) | 9a34cfeda1 | Apache-2.0 | INVOKE ON DEMAND | INSPECTED | - | - | handoff: BACKEND ARTIFACT PRIMITIVE |
 | 52 | [visioncortex/vtracer](https://github.com/visioncortex/vtracer) | aede2c6197 | MIT | INVOKE ON DEMAND | INSPECTED | - | - | handoff: ON-DEMAND SANDBOX |
 | 53 | [xinntao/Real-ESRGAN](https://github.com/xinntao/Real-ESRGAN) | a4abfb2979 | BSD-3-Clause | INVOKE ON DEMAND | INSPECTED | - | - | handoff: ON-DEMAND AFTER LICENSE/COST REVIEW |
-| 54 | [manimCommunity/manim](https://github.com/ManimCommunity/manim) | ab7f9527fa | MIT | INVOKE ON DEMAND | INSPECTED | - | - | handoff: ON-DEMAND SANDBOX |
+| 54 | [manimCommunity/manim](https://github.com/ManimCommunity/manim) | 024898e4f7 | MIT | INVOKE ON DEMAND | INSPECTED | - | - | handoff: ON-DEMAND SANDBOX |
 | 55 | [eracle/OpenOutreach](https://github.com/eracle/OpenOutreach) | e3f6baf373 | Apache-2.0 | INVOKE ON DEMAND | INSPECTED | - | - | handoff: ON-DEMAND SCOPED READS |
 | 56 | [Mahanaicoach/google-maps-scraper-kit](https://github.com/Mahanaicoach/google-maps-scraper-kit) | c3e63f1934 | AGPL-3.0 | REJECT | INSPECTED | - | - | AGPL-3.0: no code may be copied into the extension; concepts only / handoff: EVALUATE SOURCE PERMISSIONS |
 | 57 | [speedyapply/JobSpy](https://github.com/speedyapply/JobSpy) | 241d541e1e | MIT | INVOKE ON DEMAND | INSPECTED | - | - | handoff: ON-DEMAND SANDBOX |
 | 58 | [browser-use/workflow-use](https://github.com/browser-use/workflow-use) | f00e27edd7 | AGPL-3.0 | REJECT | INSPECTED | - | - | AGPL-3.0: no code may be copied into the extension; concepts only / handoff: CONCEPTS ONLY UNTIL LEGAL REVIEW |
+| 59 | [alibaba/qz-browser-agent](https://github.com/alibaba/qz-browser-agent) | 96d1c8f66c | Apache-2.0 | ADAPT CODE | CODE INTEGRATED | apps/xroga-browser-extension/src/agent/site-context.ts; apps/xroga-browser-extension/src/agent/skill-catalog.ts | src/agent/__tests__/site-context.test.ts | Rule matching is dot-boundary strict (look-alike hosts never match); skills never limit the model. / handoff: ADAPT SITE MATCHING AND SKILL ACTIVATION |
+| 60 | [browsing-skills/browsing-skills](https://github.com/browsing-skills/browsing-skills) | 07855b500d | MIT | ADAPT CODE | CODE INTEGRATED | apps/xroga-browser-extension/src/agent/site-actions.ts | src/agent/__tests__/site-actions.test.ts; src/agent/__tests__/site-tools.test.ts | Steps are declarative data over an allowlist of page tools; no downloaded code runs in a page. / handoff: ADAPT REVIEWED ACTION CONTRACTS (NO ARBITRARY PAGE.EVALUATE) |
+| 61 | [ComeOnOliver/skillshub](https://github.com/ComeOnOliver/skillshub) | def8531e65 | MIT | REJECT | BLOCKED | apps/xroga-browser-extension/src/agent/online-skills.ts | src/agent/__tests__/online-skills.test.ts; src/agent/__tests__/site-tools.test.ts | THIRD-PARTY: the live endpoint answered HTTP 402 DEPLOYMENT_DISABLED on 2026-11-20, so the real contract could not be verified. The client fails closed to no candidates; nothing depends on it. / handoff: OPTIONAL ONLINE DISCOVERY PROVIDER WITH FALLBACK AND CACHE |
+| 62 | [vercel-labs/skills](https://github.com/vercel-labs/skills) | 57217cf86b | MIT | ADAPT CODE | INSPECTED | - | - | handoff: ADAPT REMOTE SKILL RESOLVER (NO NODE CLI IN EXTENSION) |
+| 63 | [browserbase/browse-plugin](https://github.com/browserbase/browse-plugin) | 5a538bd0d4 | none found | REJECT | INSPECTED | - | - | handoff: STUDY CATALOG AND DISCOVERY; NO CLOUD DEPENDENCY |
+| 64 | [ScottSyms/Browser-Agent](https://github.com/ScottSyms/Browser-Agent) | 6e5eea8736 | none found | REJECT | INSPECTED | - | - | handoff: IDEAS ONLY UNTIL CODE LICENSE CONFIRMED |
+| 65 | [cloudflare/agent-skills-discovery-rfc](https://github.com/cloudflare/agent-skills-discovery-rfc) | 1bd1167983 | Apache-2.0 | REJECT | CODE INTEGRATED | apps/xroga-browser-extension/src/agent/well-known-skills.ts | src/agent/__tests__/well-known-skills.test.ts; src/agent/__tests__/site-tools.test.ts | Same origin, no credentials, no redirects, size and time bounds, digest must match. / handoff: EXPERIMENTAL OPT-IN WELL-KNOWN RESOLVER |
+| 66 | [esterhuizen/opensidekick](https://github.com/esterhuizen/opensidekick) | 6f11eeea67 | MIT | ADAPT CODE | INSPECTED | - | - | handoff: COMPARE CONTROL AND RECORDING FEATURES; ADAPT MISSING PRIMITIVES |
+| 67 | [fullselfbrowsing/FSB](https://github.com/fullselfbrowsing/FSB) | 28284b8c4d | MIT | ADAPT CODE | INSPECTED | - | - | handoff: SELECTIVELY PORT MISSING PRIMITIVES |
+| 68 | [sickn33/agentic-awesome-skills](https://github.com/sickn33/agentic-awesome-skills) | 4a52ab5ef1 | MIT | REJECT | INSPECTED | - | - | handoff: TRUSTED SUBSET ON DEMAND; LICENCE PER SKILL |
+| 69 | [coreyhaines31/marketingskills](https://github.com/coreyhaines31/marketingskills) | 5b2b400eec | MIT | REJECT | INSPECTED | - | - | handoff: TASK-SCOPED PROFESSIONAL EXPERTISE ON DEMAND |
+| 70 | [amzn/selling-partner-agentic-toolkit](https://github.com/amzn/selling-partner-agentic-toolkit) | 4563bfcb17 | NOASSERTION | INVOKE ON DEMAND | INSPECTED | - | - | handoff: AUTHORIZED BACKEND WORKER; REAL SELLER SCOPES REQUIRED |
+| 71 | [remotion-dev/skills](https://github.com/remotion-dev/skills) | 6f55706d10 | none found | REJECT | INSPECTED | - | - | handoff: MEDIA WORKER GUIDANCE ON DEMAND |
+| 72 | [VelvetAbyss/browser-agent-recorder](https://github.com/VelvetAbyss/browser-agent-recorder) | 9e632a32ac | MIT | ADAPT CODE | INSPECTED | - | - | handoff: ADAPT CAPTURE TO SANITIZE TO VERIFY TO REPLAY IN EXPERIENCE ENGINE |
 
 ## Deliberately rejected or deferred for code reuse
 
@@ -81,6 +95,13 @@ Status: ALREADY PRESENT: 4, ADAPTED IN CODE: 1, INSPECTED: 49, BEHAVIOR-COMPARED
 - **Panoptik-Studio/Panoptik** (AGPL-3.0): AGPL-3.0: no code may be copied into the extension; concepts only.
 - **Mahanaicoach/google-maps-scraper-kit** (AGPL-3.0): AGPL-3.0: no code may be copied into the extension; concepts only.
 - **browser-use/workflow-use** (AGPL-3.0): AGPL-3.0: no code may be copied into the extension; concepts only.
+- **ComeOnOliver/skillshub** (MIT): OPTIONAL ONLINE DISCOVERY PROVIDER WITH FALLBACK AND CACHE.
+- **browserbase/browse-plugin** (no licence found): STUDY CATALOG AND DISCOVERY; NO CLOUD DEPENDENCY.
+- **ScottSyms/Browser-Agent** (no licence found): IDEAS ONLY UNTIL CODE LICENSE CONFIRMED.
+- **cloudflare/agent-skills-discovery-rfc** (Apache-2.0): EXPERIMENTAL OPT-IN WELL-KNOWN RESOLVER.
+- **sickn33/agentic-awesome-skills** (MIT): TRUSTED SUBSET ON DEMAND; LICENCE PER SKILL.
+- **coreyhaines31/marketingskills** (MIT): TASK-SCOPED PROFESSIONAL EXPERTISE ON DEMAND.
+- **remotion-dev/skills** (no licence found): MEDIA WORKER GUIDANCE ON DEMAND.
 
 ## Not yet measured
 
