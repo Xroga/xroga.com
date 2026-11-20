@@ -1,0 +1,62 @@
+/* Only the workspace header shadow and its conversation navigation controls. */
+.headerShadow { position: relative; z-index: 6; isolation: isolate; }
+.headerShadow::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; top: 100%; height: 25px; z-index: 0;
+  pointer-events: none;
+  background: linear-gradient(to bottom, rgba(0,0,0,.22), rgba(0,0,0,.09) 37%, transparent);
+  opacity: 0; transform: translateY(-3px);
+  transition: opacity 240ms ease, transform 240ms ease;
+}
+.headerShadow[data-scrolled='true']::after { opacity: 1; transform: translateY(0); }
+:global(.terminal-skin-light) .headerShadow::after,
+:global(.terminal-skin-light-grid) .headerShadow::after,
+:global(.terminal-skin-solar) .headerShadow::after {
+  background: linear-gradient(to bottom, rgba(15,23,42,.14), rgba(15,23,42,.045) 47%, transparent);
+}
+
+/* R5Program button: circular, inset shadow, scaling arrow and compact tooltip. */
+.navigation {
+  position: absolute; z-index: 28;
+  right: clamp(4px, 1.5vw, 18px); bottom: calc(100% + 12px);
+  display: flex; flex-direction: column; align-items: center; gap: 9px;
+  opacity: 0; pointer-events: none;
+  transform: translateY(5px) scale(.97);
+  transition: opacity 200ms ease, transform 200ms ease;
+}
+.navigation[data-visible='true'] { opacity: 1; pointer-events: auto; transform: translateY(0) scale(1); }
+.navButton {
+  height: 50px; width: 50px; flex: 0 0 50px; cursor: pointer; padding: 10px;
+  border-radius: 50%;
+  background-color: var(--app-panel, white); color: var(--foreground, #111);
+  border: 2px solid color-mix(in srgb, var(--foreground) 60%, transparent);
+  box-shadow: inset 0 0 10px rgba(0,0,0,.2), 0 5px 16px rgba(0,0,0,.13);
+  display: flex; position: relative; justify-content: center; align-items: center;
+  transition: transform 250ms ease, background-color 250ms ease, color 250ms ease;
+}
+.navButton::after {
+  content: attr(data-label); position: absolute;
+  right: calc(100% + 9px); top: 50%;
+  white-space: nowrap; background-color: var(--app-panel, white);
+  color: var(--foreground, #111); font-size: 12px;
+  box-sizing: border-box; padding: 7px 11px; border-radius: 25px;
+  box-shadow: 0 0 7px rgba(0,0,0,.14);
+  opacity: 0; transform: translateY(-50%) scale(0); transform-origin: right center;
+  transition: opacity 200ms ease, transform 200ms ease; pointer-events: none;
+}
+.arrow, .downArrow { transition: transform 250ms ease; }
+.downArrow { transform: rotate(180deg); }
+.navButton:hover { transform: translateY(-3px); background-color: #0c0c0c; color: white; }
+.navButton:hover .arrow, .navButton:focus-visible .arrow { transform: scale(1.2); }
+.navButton:hover .downArrow, .navButton:focus-visible .downArrow { transform: rotate(180deg) scale(1.2); }
+.navButton:hover::after, .navButton:focus-visible::after { opacity: 1; transform: translateY(-50%) scale(1); }
+.navButton:active { transform: translateY(2px); }
+.navButton:focus-visible { outline: 2px solid var(--accent, #3b82f6); outline-offset: 3px; }
+@media (max-width: 639px) {
+  .navigation { right: 3px; gap: 7px; }
+  .navButton { height: 42px; width: 42px; flex-basis: 42px; padding: 7px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .navigation, .headerShadow::after, .navButton, .navButton::after, .arrow, .downArrow { transition: none; }
+}

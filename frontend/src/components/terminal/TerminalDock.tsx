@@ -2,10 +2,10 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
-import { ArrowDown, ArrowUp } from 'lucide-react';
 
 import { TerminalChatBar } from './TerminalChatBar';
 import { ChatbarQueueOutside } from './ChatbarQueueOutside';
+import { WorkspaceScrollNavigation } from './WorkspaceScrollNavigation';
 
 import { useTerminalScroll } from '@/context/TerminalScrollContext';
 import { useThemeStore } from '@/store/useThemeStore';
@@ -54,11 +54,7 @@ export function TerminalDock() {
   const keyboardOffset =
     useVisualViewportBottom();
 
-  const {
-    showJumpToLatest,
-    scrollToFirst,
-    scrollToLatest,
-  } = useTerminalScroll();
+  const { scrollToFirst, scrollToLatest } = useTerminalScroll();
 
   const isDashboard =
     pathname === '/workspace' ||
@@ -262,22 +258,12 @@ export function TerminalDock() {
                 <div className="xv-chatbar-stack relative">
 
 
-                  {messages.length > 0 &&
+                  {isDashboard && messages.length > 0 &&
                   !incognito ? (
-                    <button
-                      type="button"
-                      className={cn(
-                        'xv-conversation-navigator',
-                        showJumpToLatest ? 'is-direction-down' : 'is-direction-up'
-                      )}
-                      onClick={() => {
-                        if (showJumpToLatest) scrollToLatest('smooth');
-                        else scrollToFirst('smooth');
-                      }}
-                      aria-label={showJumpToLatest ? 'Scroll to latest' : 'Scroll to top'}
-                    >
-                      {showJumpToLatest ? <ArrowDown size={19} strokeWidth={2.2} aria-hidden="true" /> : <ArrowUp size={19} strokeWidth={2.2} aria-hidden="true" />}
-                    </button>
+                    <WorkspaceScrollNavigation
+                      scrollToFirst={scrollToFirst}
+                      scrollToLatest={scrollToLatest}
+                    />
                   ) : null}
 
                  <TerminalChatBar starter={showStarterExperience && !incognito} />
