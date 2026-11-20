@@ -324,40 +324,23 @@ assert.match(
 });
 
 
-test('a conversation exposes one context-aware navigator that follows scroll position', () => {
-  assert.match(
-    DOCK,
-    /messages\.length\s*>\s*0\s*&&\s*!incognito/,
-  );
-
-  assert.match(
-    DOCK,
-    /'xv-conversation-navigator'/,
-  );
-
-  assert.match(
-    DOCK,
-    /showJumpToLatest \? 'Scroll to latest' : 'Scroll to top'/,
-  );
-
-  assert.match(
-    DOCK,
-    /if \(showJumpToLatest\) scrollToLatest\('smooth'\);\s*else scrollToFirst\('smooth'\);/,
-  );
-
-  assert.match(DOCK, /<ArrowDown size=\{19\}/);
-  assert.match(DOCK, /<ArrowUp size=\{19\}/);
-
-  assert.match(
-    CSS,
-    /\.xv-conversation-navigator\.is-direction-down\s*\{[^}]*--xv-navigator-rotation:\s*180deg/,
-  );
-
-  assert.match(DOCK, /aria-label=\{showJumpToLatest \? 'Scroll to latest' : 'Scroll to top'\}/);
-  assert.doesNotMatch(DOCK, /data-tooltip|data-short-tip/);
-  assert.match(CSS, /\.xv-conversation-navigator,\s*\.xv-conversation-navigator:hover,\s*\.xv-conversation-navigator:active\s*\{[\s\S]*?border:\s*0\s*!important/);
-  assert.doesNotMatch(DOCK, /data-tooltip=\{showJumpToLatest/);
-  assert.doesNotMatch(DOCK, /xv-conversation-navigator__label/);
+test('workspace navigation uses independent arrows and hides both at the bottom', () => {
+  const NAV = read('../components/terminal/WorkspaceScrollNavigation.tsx');
+  const POLISH = read('../components/dashboard/WorkspaceScrollPolish.module.css');
+  assert.match(DOCK, /<WorkspaceScrollNavigation/);
+  assert.match(DOCK, /messages\.length > 0/);
+  assert.match(NAV, /position\.scrollable && !position\.atBottom/);
+  assert.match(NAV, /!position\.atTop/);
+  assert.match(NAV, /aria-label="Scroll to first response"/);
+  assert.match(NAV, /aria-label="Scroll to last response"/);
+  assert.match(NAV, /scrollToFirst\(behavior\)/);
+  assert.match(NAV, /scrollToLatest\(behavior\)/);
+  assert.match(NAV, /new ResizeObserver\(schedule\)/);
+  assert.match(NAV, /prefers-reduced-motion: reduce/);
+  assert.match(NAV, /M440-160v-487L216-423/);
+  assert.match(POLISH, /\.headerShadow\[data-scrolled='true'\]::after/);
+  assert.match(POLISH, /\.navigation\[data-visible='true'\]/);
+  assert.match(DASHBOARD, /data-scrolled=\{headerScrolled/);
 });
 
 test('workspace transcript keeps balanced responsive gutters', () => {
