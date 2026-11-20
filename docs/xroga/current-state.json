@@ -5370,7 +5370,8 @@
         "backend/src/ai/nativeOpenUi.ts:4",
         "backend/src/ai/nativeOpenUiEditorial.ts:1",
         "backend/src/ai/nativeOpenUiWorkspace.ts:9",
-        "frontend/src/components/native-openui/upstream/components/markdown.tsx:10"
+        "frontend/src/components/native-openui/upstream/components/markdown.tsx:10",
+        "frontend/src/lib/xrogaFileExports.ts:3"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -5470,7 +5471,7 @@
       ],
       "callers": [
         "backend/src/ai/nativeDocumentDownload.ts:2",
-        "frontend/src/lib/xrogaFileExports.ts:3"
+        "frontend/src/lib/xrogaFileExports.ts:4"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -6653,7 +6654,7 @@
       "id": "surface:93911e9946fd4b21d50d",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiWorkspace.ts",
-      "sha256": "3d0bf4e003052d5b59b5ca36ee16e83a7f5c9c1978da35df07a11e19fca55767",
+      "sha256": "f95e275f0ace7e7cc19e3e82b8c0bbe7973541eef4b5c5ee9c0ae485a57a9251",
       "symbols": [
         "authorityIssue",
         "calculatorUnavailable",
@@ -6668,15 +6669,18 @@
         "editorialIssue",
         "factualLayoutOnly",
         "factualRule",
+        "fence",
         "guidance",
         "hasDataConflict",
         "keepVisual",
         "localProgram",
+        "marker",
         "match",
         "missing",
         "multipleConflict",
         "multiples",
         "negatedTableControl",
+        "next",
         "note",
         "original",
         "originalProgram",
@@ -6704,6 +6708,7 @@
         "tableRequestClauses",
         "text",
         "truncated",
+        "unavailableControlInstruction",
         "unknownCapability",
         "usesNativeWorkspacePresentation",
         "valid",
@@ -123015,7 +123020,7 @@
       "id": "surface:af830989f3d28a10af01",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/xrogaFileExports.ts",
-      "sha256": "5c793ee8f243864e7966593efc9e2977661f5bab56d4712333dc20ede2c4f65d",
+      "sha256": "206c3d1dd60a23470ef366f85ae58af72948ce36c22fe86d931eb67eb9264116",
       "symbols": [
         "DocumentBlock",
         "ExcelJS",
@@ -123054,8 +123059,11 @@
         "fileStem",
         "font",
         "heading",
+        "index",
+        "inlineRuns",
         "item",
         "line",
+        "lines",
         "links",
         "margin",
         "match",
@@ -123072,6 +123080,8 @@
         "sheet",
         "size",
         "slide",
+        "table",
+        "tables",
         "text",
         "url",
         "validateSize",
@@ -123085,6 +123095,7 @@
       ],
       "imports": [
         "../../../backend/src/ai/nativeDocumentDownload",
+        "../../../backend/src/ai/nativeMarkdown",
         "../../../backend/src/ai/nativeOfficeContent",
         "./xrogaBlocks",
         "docx",
@@ -123093,6 +123104,7 @@
         "pptxgenjs"
       ],
       "runtimeImports": [
+        "backend/src/ai/nativeMarkdown.ts",
         "backend/src/ai/nativeOfficeContent.ts"
       ],
       "entryPoints": [
@@ -130157,7 +130169,7 @@
       "id": "surface:bd6af899f2dd9df930f6",
       "subsystem": "browser_sandbox",
       "sourcePath": "scripts/verify-native-openui-browser.mjs",
-      "sha256": "df0a99867b89806adcfebe820a71e3ee5b79235660e67a68aae1a9e8ddcb6976",
+      "sha256": "9d8a3287b9c532efa8ee9b9a8ee627e3cde44c788a031e0eef79471326978234",
       "symbols": [
         "accessibility",
         "answer",
@@ -130191,6 +130203,7 @@
         "detail",
         "directive",
         "doc",
+        "document",
         "documentDownloads",
         "documentFixtures",
         "download",
@@ -152942,7 +152955,7 @@
     {
       "id": "test-suite:2e491f4d2fcbc11f974c",
       "sourcePath": "backend/src/ai/nativeOpenUi.test.ts",
-      "declaredTests": 84,
+      "declaredTests": 85,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -159900,7 +159913,7 @@
     {
       "id": "test-suite:5500ae34c3d41d033590",
       "sourcePath": "frontend/src/lib/xrogaFileExports.test.ts",
-      "declaredTests": 6,
+      "declaredTests": 7,
       "skipLocations": [],
       "focusLocations": []
     },

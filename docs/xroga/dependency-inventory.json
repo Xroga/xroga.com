@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "8c24df0a1d9113cc808a962bafd1bcdb62573892",
+  "source_sha": "78bc424741d26d549a12a61aa8d947e9b6f4560f",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -17278,7 +17278,7 @@
     },
     {
       "path": "backend/src/ai/nativeOpenUiWorkspace.ts",
-      "sha256": "3d0bf4e003052d5b59b5ca36ee16e83a7f5c9c1978da35df07a11e19fca55767"
+      "sha256": "f95e275f0ace7e7cc19e3e82b8c0bbe7973541eef4b5c5ee9c0ae485a57a9251"
     },
     {
       "path": "backend/src/ai/openaiCompat.ts",
@@ -24614,7 +24614,7 @@
     },
     {
       "path": "frontend/src/lib/xrogaFileExports.ts",
-      "sha256": "5c793ee8f243864e7966593efc9e2977661f5bab56d4712333dc20ede2c4f65d"
+      "sha256": "206c3d1dd60a23470ef366f85ae58af72948ce36c22fe86d931eb67eb9264116"
     },
     {
       "path": "frontend/src/lib/xrogaOutputAdapters.ts",
@@ -40929,14 +40929,21 @@
     },
     {
       "path": "frontend/src/lib/xrogaFileExports.ts",
-      "line": 67,
+      "line": 49,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/lib/xrogaFileExports.ts",
-      "line": 67,
+      "line": 86,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/lib/xrogaFileExports.ts",
+      "line": 86,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
