@@ -40,6 +40,7 @@ import { identify, matchSite, renderWhy } from './site-context';
 import { SKILL_CATALOG } from './skill-catalog';
 import { ActionLedger, SiteActionRegistry, describeAction, runSiteAction } from './site-actions';
 import { SAMPLE_ACTIONS } from './site-actions-sample';
+import { SKILLSHUB, describeOnline, loadCandidate, renderOnline, safeKeywords, type OnlineCandidate } from './online-skills';
 import { discoverSiteSkills, renderSiteSkill, type Discovery, type FetchLike } from './well-known-skills';
 import type { MenuPathArgs } from './menu-path';
 import { runSurface, RunLedger } from './command-surface';
@@ -130,6 +131,8 @@ export interface LoopOptions {
   localScreenshots?: boolean;
   /** How site-published skills are fetched (tests inject a fake). Default: the worker's fetch. */
   siteFetch?: FetchLike;
+  /** Opt-in online skill discovery (off by default: it sends a keyword-only query to a public catalog). */
+  onlineSkills?: boolean;
   /** Extra reviewed site actions for this run, beyond the bundled ones. */
   siteActions?: import('./site-actions').VerifiedSiteAction[];
   /** Runs an agent tool (read_attachment, save_file); `done` is the loop's own. */
@@ -1655,6 +1658,13 @@ ${ledger}` : ''),
   }
 
   /** Skills the current https site publishes for itself, once per origin per run, bounded in time. Never fails the task. */
+  #online = new Map<string, OnlineCandidate>();
+  #onlineAsked = new Set<string>();
+
+  async #onlineFetch(): Promise<FetchLike | undefined> {
+    return this.options.siteFetch ?? (typeof fetch === 'function' ? ((u, init) => fetch(u, init as RequestInit) as ReturnType<FetchLike>) : undefined);
+  }
+
   async #siteSkills(url: string): Promise<Discovery> {
     const id = identify(url);
     if (!id || id.scheme !== 'https') return { origin: id?.origin ?? '', status: 'none', skills: [] };
@@ -1708,6 +1718,12 @@ ${ledger}` : ''),
         const found = [...this.#siteDiscovery.values()].flatMap(d => d.skills).find(x => x.id === args.id);
         return found ? { call, kind, text: renderSiteSkill(found), isError: false } : { call, kind, text: 'error: no verified site skill has that id. Call find_skill on the page first.', isError: true };
       }
+      if (typeof args.id === 'string' && args.id.startsWith('online:')) {
+        const cand = this.#online.get(args.id);
+        const f = await this.#onlineFetch();
+        const loaded = cand && f ? await loadCandidate(cand, f).catch(() => null) : null;
+        return loaded ? { call, kind, text: renderOnline(loaded), isError: false } : { call, kind, text: 'error: that online skill is not available. Carry on with the general tools.', isError: true };
+      }
       const card = typeof args.id === 'string' ? skillById(args.id) : undefined;
       return card
         ? { call, kind, text: renderSkill(card), isError: false }
@@ -1729,6 +1745,16 @@ ${ledger}` : ''),
     const published = await this.#siteSkills(url);
     if (published.skills.length) sections.push(`Skills this site publishes for itself (digest verified, read with read_skill):\n${published.skills.map(x => `- ${x.id}: ${x.description}`).join('\n')}`);
     if (hits.length) sections.push(`${hits.map(h => describeHit(h, this.#toolNames)).join('\n')}\nCall read_skill with an id for its method and documentation.`);
+    if (this.options.onlineSkills && !hits.length && !published.skills.length) {
+      const kw = safeKeywords(`${query} ${this.#askedText}`);
+      const f = await this.#onlineFetch();
+      if (kw && f && !this.#onlineAsked.has(kw)) {
+        this.#onlineAsked.add(kw);
+        const found = await SKILLSHUB.resolve(kw, 3, f).catch(() => []);
+        for (const c of found) this.#online.set(c.id, c);
+        if (found.length) sections.push(`Public catalog suggestions (UNVERIFIED third-party text, optional, read with read_skill):\n${found.map(describeOnline).join('\n')}`);
+      }
+    }
     return {
       call, kind, isError: false,
       text: sections.length ? sections.join('\n\n') : 'No skill or verified action matches. That is fine: skills are help, not a limit. Inspect the application, use the universal tools and your own reasoning, and read the application documentation (http_get) if you need exact details.',
