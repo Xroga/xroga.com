@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "a53217141172f08c820d24b48b73bca9952d6b66",
+  "source_sha": "307208b11e921440b866f07f4d1c4c1d7a0ac75d",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -30,7 +30,6 @@
         "NEXT_PUBLIC_SITE_URL",
         "NEXT_PUBLIC_SUPABASE_ANON_KEY",
         "NEXT_PUBLIC_SUPABASE_URL",
-        "NEXT_PUBLIC_SUPPORT_PHONE",
         "NEXT_PUBLIC_VERCEL_ENV",
         "NEXT_PUBLIC_VOICE_ENGINE",
         "NEXT_PUBLIC_XROGA_AUTH_BASE_URL",
@@ -11436,25 +11435,6 @@
       ]
     },
     {
-      "name": "NEXT_PUBLIC_SUPPORT_PHONE",
-      "consuming_sources": [
-        "frontend/src/lib/companyContact.ts"
-      ],
-      "environments": [
-        "frontend build/browser/SSR"
-      ],
-      "secret_class": "RUNTIME_CONFIGURATION",
-      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
-      "requiredness": "OPTIONAL_OR_DEFAULTED",
-      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
-      "mechanisms": [
-        "STATIC_ENV_READER"
-      ],
-      "dependency_ids": [
-        "frontend"
-      ]
-    },
-    {
       "name": "NEXT_PUBLIC_VERCEL_ENV",
       "consuming_sources": [
         "frontend/src/components/homepage-next/s04/useScene.ts"
@@ -20658,7 +20638,7 @@
     },
     {
       "path": "frontend/src/app/contact/page.tsx",
-      "sha256": "b1022160834d67342a9a192803881d36a117b8dd975dc858e247b1e92eec91f5"
+      "sha256": "166f4764fc618c9aed6c438785c9fd29ad4a2135e18d8eea6f859bb17db7b8fd"
     },
     {
       "path": "frontend/src/app/crypto/CryptoExactVisuals.tsx",
@@ -20838,7 +20818,7 @@
     },
     {
       "path": "frontend/src/app/privacy/page.tsx",
-      "sha256": "cb88a5e3428c167f72092df175137f96e41a115b4ba4489372dd11d91e224cae"
+      "sha256": "5b7aa5f805e3f2672abdc015fef6da65c056ce8a6ac26714e1afa868bf1ee5b6"
     },
     {
       "path": "frontend/src/app/ref/[code]/page.tsx",
@@ -20846,7 +20826,7 @@
     },
     {
       "path": "frontend/src/app/refund/page.tsx",
-      "sha256": "be7fbc8f8f4e820c0990014e88f3b761802e66ac56f10460d620598afcdaadce"
+      "sha256": "34fd128653938ef117c1e495c7bf8ecb530b771809e418b7b82181577c97974a"
     },
     {
       "path": "frontend/src/app/research/feed.xml/route.ts",
@@ -20914,7 +20894,7 @@
     },
     {
       "path": "frontend/src/app/terms/page.tsx",
-      "sha256": "835dadcf4c6e18b70bd4cc1127604b8c1703bf966eafdfd592dc3b695c8f551d"
+      "sha256": "48d2b7b66bb7aa9b4cbae9aa5b9e3bba5d02c5c8935d634c0e095c2310edfc05"
     },
     {
       "path": "frontend/src/app/tools/page.tsx",
@@ -22326,7 +22306,7 @@
     },
     {
       "path": "frontend/src/components/legal/LegalPageShell.tsx",
-      "sha256": "74cd59f0a156b168c3f531f11a39000cb303f67b64adb94fdd069a90de80159f"
+      "sha256": "8f40b705acaa5a37c522574eedc580159be5d4337633e62e888fa3d1c2c06327"
     },
     {
       "path": "frontend/src/components/library/LibraryFilePreview.tsx",
@@ -23714,7 +23694,7 @@
     },
     {
       "path": "frontend/src/lib/companyContact.ts",
-      "sha256": "40689264bb18015dbf6974a061eea0125b1ae59bfb08549a5068c012fb9c8bad"
+      "sha256": "7a00de5a1cca5a8c9748eacc0f3830a32781030ec8543356d5dbf96b5aad166e"
     },
     {
       "path": "frontend/src/lib/composerDraft.ts",
@@ -24278,7 +24258,7 @@
     },
     {
       "path": "frontend/src/lib/seo.ts",
-      "sha256": "9212919ddf4d6d609c1c977a4242063609f16fc678a8b7057c235779e685f33d"
+      "sha256": "bc9cb88d55d9a1dd513ddfbac9a3838f7cd731347841c0c4c470472447e9d756"
     },
     {
       "path": "frontend/src/lib/seoExpansionContent.ts",
@@ -31891,28 +31871,28 @@
       "hostname": "schema.org",
       "protocol": "https:",
       "path": "frontend/src/lib/seo.ts",
-      "line": 129,
+      "line": 128,
       "credentialsInUrl": false
     },
     {
       "hostname": "schema.org",
       "protocol": "https:",
       "path": "frontend/src/lib/seo.ts",
-      "line": 141,
+      "line": 140,
       "credentialsInUrl": false
     },
     {
       "hostname": "schema.org",
       "protocol": "https:",
       "path": "frontend/src/lib/seo.ts",
-      "line": 186,
+      "line": 185,
       "credentialsInUrl": false
     },
     {
       "hostname": "schema.org",
       "protocol": "https:",
       "path": "frontend/src/lib/seo.ts",
-      "line": 210,
+      "line": 209,
       "credentialsInUrl": false
     },
     {

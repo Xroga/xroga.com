@@ -1,6 +1,6 @@
 # Secret and environment name inventory
 
-Values are forbidden. Source SHA: `a53217141172f08c820d24b48b73bca9952d6b66`. Names and source discovery do not prove that a capability is configured or accepted.
+Values are forbidden. Source SHA: `307208b11e921440b866f07f4d1c4c1d7a0ac75d`. Names and source discovery do not prove that a capability is configured or accepted.
 
 | Name | Classification | Requirement | Dependency |
 | --- | --- | --- | --- |
@@ -128,7 +128,6 @@ Values are forbidden. Source SHA: `a53217141172f08c820d24b48b73bca9952d6b66`. Na
 | NEXT_PUBLIC_SITE_URL | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | frontend, endpoint-localhost, endpoint-twitter-com, endpoint-wa-me, endpoint-www-facebook-com, endpoint-www-linkedin-com, endpoint-www-reddit-com |
 | NEXT_PUBLIC_SUPABASE_ANON_KEY | PUBLIC_CREDENTIAL | REQUIRED_FOR_CORE_AUTH | frontend, endpoint-127-0-0-1 |
 | NEXT_PUBLIC_SUPABASE_URL | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | frontend, endpoint-127-0-0-1 |
-| NEXT_PUBLIC_SUPPORT_PHONE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | frontend |
 | NEXT_PUBLIC_VERCEL_ENV | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | frontend |
 | NEXT_PUBLIC_VOICE_ENGINE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | frontend |
 | NEXT_PUBLIC_XROGA_AUTH_BASE_URL | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | frontend, endpoint-127-0-0-1 |

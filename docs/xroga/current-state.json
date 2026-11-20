@@ -63198,7 +63198,7 @@
       "id": "surface:dcdfd0c2fea9d4bc961f",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/app/contact/page.tsx",
-      "sha256": "b1022160834d67342a9a192803881d36a117b8dd975dc858e247b1e92eec91f5",
+      "sha256": "166f4764fc618c9aed6c438785c9fd29ad4a2135e18d8eea6f859bb17db7b8fd",
       "symbols": [
         "ContactPage",
         "metadata"
@@ -65303,7 +65303,7 @@
       "id": "surface:575632c7224c96ed7f86",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/app/privacy/page.tsx",
-      "sha256": "cb88a5e3428c167f72092df175137f96e41a115b4ba4489372dd11d91e224cae",
+      "sha256": "5b7aa5f805e3f2672abdc015fef6da65c056ce8a6ac26714e1afa868bf1ee5b6",
       "symbols": [
         "PrivacyPage",
         "metadata"
@@ -65382,7 +65382,7 @@
       "id": "surface:232cc91427a5c0b77f7a",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/app/refund/page.tsx",
-      "sha256": "be7fbc8f8f4e820c0990014e88f3b761802e66ac56f10460d620598afcdaadce",
+      "sha256": "34fd128653938ef117c1e495c7bf8ecb530b771809e418b7b82181577c97974a",
       "symbols": [
         "RefundPage",
         "metadata"
@@ -66122,7 +66122,7 @@
       "id": "surface:978b27c008db0ff0df76",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/app/terms/page.tsx",
-      "sha256": "835dadcf4c6e18b70bd4cc1127604b8c1703bf966eafdfd592dc3b695c8f551d",
+      "sha256": "48d2b7b66bb7aa9b4cbae9aa5b9e3bba5d02c5c8935d634c0e095c2310edfc05",
       "symbols": [
         "TermsPage",
         "metadata"
@@ -86721,7 +86721,7 @@
       "id": "surface:1a75ab4b5e74660d13d0",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/legal/LegalPageShell.tsx",
-      "sha256": "74cd59f0a156b168c3f531f11a39000cb303f67b64adb94fdd069a90de80159f",
+      "sha256": "8f40b705acaa5a37c522574eedc580159be5d4337633e62e888fa3d1c2c06327",
       "symbols": [
         "LEGAL_NAV",
         "LegalPageShell"
@@ -108886,10 +108886,9 @@
       "id": "surface:d18b18b9fd2f8f1624c8",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/companyContact.ts",
-      "sha256": "40689264bb18015dbf6974a061eea0125b1ae59bfb08549a5068c012fb9c8bad",
+      "sha256": "7a00de5a1cca5a8c9748eacc0f3830a32781030ec8543356d5dbf96b5aad166e",
       "symbols": [
-        "COMPANY_CONTACT",
-        "phoneDisplay"
+        "COMPANY_CONTACT"
       ],
       "imports": [],
       "runtimeImports": [],
@@ -108975,6 +108974,7 @@
         "frontend/src/app/refund/page.tsx:4",
         "frontend/src/app/terms/page.tsx:4",
         "frontend/src/components/legal/LegalPageShell.tsx:3",
+        "frontend/src/lib/companyContact.test.ts:4",
         "frontend/src/lib/seo.ts:3"
       ],
       "reachable": true,
@@ -108985,7 +108985,9 @@
       "approvalBoundary": [],
       "costBoundary": [],
       "evidenceBoundary": [],
-      "testCoverage": [],
+      "testCoverage": [
+        "frontend/src/lib/companyContact.test.ts"
+      ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -116684,7 +116686,7 @@
       "id": "surface:caa21d97cabc7ac71abc",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/seo.ts",
-      "sha256": "9212919ddf4d6d609c1c977a4242063609f16fc678a8b7057c235779e685f33d",
+      "sha256": "bc9cb88d55d9a1dd513ddfbac9a3838f7cd731347841c0c4c470472447e9d756",
       "symbols": [
         "BRAND_TYPO_KEYWORDS",
         "DEFAULT_DESCRIPTION",
@@ -116863,6 +116865,7 @@
         "frontend/src/components/seo/SiteJsonLd.tsx:1",
         "frontend/src/components/seo/XrogaVsBoltPage.tsx:5",
         "frontend/src/components/seo/XrogaVsLovablePage.tsx:5",
+        "frontend/src/lib/companyContact.test.ts:5",
         "frontend/src/lib/dashboard-metadata.ts:2"
       ],
       "reachable": true,
@@ -116877,7 +116880,9 @@
       "approvalBoundary": [],
       "costBoundary": [],
       "evidenceBoundary": [],
-      "testCoverage": [],
+      "testCoverage": [
+        "frontend/src/lib/companyContact.test.ts"
+      ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -158568,6 +158573,13 @@
       "id": "test-suite:23ba9324ea22319564f4",
       "sourcePath": "frontend/src/lib/companionCrown.test.ts",
       "declaredTests": 4,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:6d76759b075e1284ceea",
+      "sourcePath": "frontend/src/lib/companyContact.test.ts",
+      "declaredTests": 2,
       "skipLocations": [],
       "focusLocations": []
     },
