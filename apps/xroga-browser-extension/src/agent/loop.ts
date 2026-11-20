@@ -34,6 +34,7 @@ import { PaintedInputDeliveryGuard } from './painted-input-delivery';
 import { ProgressTracker } from './progress-tracker';
 import { describeChoice, evidenceFromOutline, rankStrategies } from './strategy-selector';
 import { skillsFor } from './skills';
+import { describeHit, renderSkill, searchSkills, skillById } from './skill-catalog';
 import { runSurface, RunLedger } from './command-surface';
 import { scriptConsoleSurface, validateConsoleArgs } from './command-surface-adapter';
 import type { ConsoleArgs } from './command-surface-adapter';
@@ -799,6 +800,7 @@ ${ledger}` : ''),
         action: typeof input.action === 'string' ? input.action : undefined,
         args: input,
         isError: given.isError === true,
+        errorCode: given.result?.error?.code,
         resultText: typeof given.text === 'string' ? given.text : undefined,
         tabId: given.result?.page?.tabId ?? this.#boundTab ?? this.#activeTab,
         url: given.result?.page?.url,
@@ -1593,6 +1595,28 @@ ${ledger}` : ''),
     await this.writer.appNote(describeChoice(ranked));
   }
 
+  /** On-demand expert skills: small ranked cards, then one skill body. Local, read only, no network. */
+  async #skillTool(call: ToolCallRequest, kind: ToolKind, args: Record<string, unknown>): Promise<CallOutcome> {
+    if (call.toolName === 'read_skill') {
+      const card = typeof args.id === 'string' ? skillById(args.id) : undefined;
+      return card
+        ? { call, kind, text: renderSkill(card), isError: false }
+        : { call, kind, text: 'error: no skill has that id. Call find_skill with the task to get valid ids.', isError: true };
+    }
+    const query = typeof args.query === 'string' ? args.query : '';
+    let host = '';
+    try {
+      const tabs = await this.options.layer.tabs();
+      const active = tabs?.tabs.find(t => t.tabId === (this.#boundTab ?? tabs.activeTabId));
+      if (active) host = new URL(active.url).hostname;
+    } catch { /* no page yet */ }
+    const hits = searchSkills(`${query} ${this.#askedText}`, { host, limit: 3 });
+    return {
+      call, kind, isError: false,
+      text: hits.length ? `${hits.map(describeHit).join('\n')}\nCall read_skill with an id for its method and documentation.` : 'No catalog skill matches. Use the page, the app own documentation (http_get) and the universal tools.',
+    };
+  }
+
   /** One fixed-phase program run in an app console. Every layer call still goes through the gate, the journal and the guards. */
   async #runScriptConsole(call: ToolCallRequest, kind: ToolKind, args: Record<string, unknown>): Promise<CallOutcome> {
     const { emit, signal, layer } = this.options;
@@ -1687,6 +1711,8 @@ ${ledger}` : ''),
       }
     } else if (call.toolName === 'batch') {
       outcome = await this.#runBatchTool(call, kind, args);
+    } else if (call.toolName === 'find_skill' || call.toolName === 'read_skill') {
+      outcome = await this.#skillTool(call, kind, args);
     } else if (call.toolName === 'run_script_console') {
       outcome = await this.#runScriptConsole(call, kind, args);
     } else if (this.options.tools.find(t => t.name === call.toolName)?.source === 'agent') {

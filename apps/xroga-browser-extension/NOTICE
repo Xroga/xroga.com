@@ -9,3 +9,8 @@ Xroga modified the package and build configuration, side panel, model
 transport, Workspace connection, and local navigation and write policies.
 The default build runs the upstream browser controller and agent in Chrome.
 The upstream fixture build remains available for engineering verification.
+
+Adapted ideas and code from other open-source projects (see docs/xroga/oss-capability-ledger.json for pinned commits):
+- OpenBrowser (https://github.com/dylansantwani/openbrowser), MIT: batch planner, src/agent/batch-plan.ts (attributed in the file header).
+- browser-agent (https://github.com/uiuing/browser-agent), MIT: failure diagnosis and recovery chain, adapted in src/agent/failure-diagnosis.ts from packages/extension/src/engine/orchestrator/healing.ts.
+- Agent Skills specification (https://github.com/agentskills/agentskills), Apache-2.0: the SKILL.md frontmatter format implemented in src/agent/skill-md.ts.

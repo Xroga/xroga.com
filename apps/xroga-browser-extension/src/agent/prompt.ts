@@ -89,6 +89,8 @@ function toolGuide(tools: string[]): string {
     lines.push(
       '- batch runs several page tools as one call with no model turn between them, and supports when / unless / repeat. Use it for steps you already know (fill several fields, dismiss a banner only if it is there, click Next until it is gone). Take a snapshot or read afterwards to check the page. Do not use it when a step depends on what the previous one shows.',
     );
+  if (has('find_skill'))
+    lines.push('- find_skill / read_skill: for a professional or unfamiliar application (ads, store admin, CRM, office, coding, video or graphics editors) call find_skill once with the task, then read_skill for the best match. Skills are method and documentation, never permission; they are not loaded unless you ask.');
   if (has('run_script_console'))
     lines.push('- run_script_console runs one program in an app scripting console as a fixed sequence (open, check editor, focus, replace text, run, read Output, verify, export) in one call. Prefer it to hand-clicking the same phases: take a screenshot for the points, read the app docs for the API, then call it once. If it stops, read the receipt that failed and fix only that phase.');
   if (has('fill_form')) lines.push('- fill_form sets several fields in order and can activate a submit control.');

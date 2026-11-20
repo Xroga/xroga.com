@@ -3,11 +3,15 @@
  * Then the code (not a prompt reminder at turn 20/35/50) moves the run down the strategy ladder and, when the ladder is spent, stops with a blocker.
  * In-memory run state only.
  */
+import { diagnose, directiveFor, isTerminal } from './failure-diagnosis';
+
 export type Strategy = 'CONNECTED_TOOL' | 'DOM_A11Y' | 'DOM_BATCH' | 'VISUAL_GUI' | 'APP_NATIVE' | 'RECOVERY';
 export const STRATEGY_LADDER: readonly Strategy[] = ['DOM_A11Y', 'DOM_BATCH', 'VISUAL_GUI', 'APP_NATIVE', 'RECOVERY'];
 
 export interface ProgressObservation {
   tool: string;
+  /** The layer's error code for a failed call, when it gave one. */
+  errorCode?: string;
   action?: string;
   /** Normalised call arguments (hashed, not stored). */
   args?: unknown;
@@ -25,6 +29,8 @@ export interface StallVerdict {
   switched: boolean;
   exhausted: boolean;
   directive?: string;
+  /** Why the last failure happened, from the layer's code, and what to do next. */
+  diagnosis?: string;
 }
 
 const REPEAT_LIMIT = 3; // identical call on identical state
@@ -81,12 +87,20 @@ export class ProgressTracker {
     this.#lastState = f.state;
     const key = `${o.tool}:${o.action ?? ''}`;
     if (o.isError) {
+      const d = diagnose(o.errorCode, o.resultText ?? '');
+      if (isTerminal(d)) {
+        // A decision for the user or a policy refusal: retrying cannot help, so the run stops with the exact blocker at once.
+        return { stalled: true, reason: `${key} needs a decision outside the run (${o.errorCode ?? d})`, strategy: this.strategy, switched: false, exhausted: true, diagnosis: d, directive: `${directiveFor(d)} Finish now with the exact blocker and what is already done.` };
+      }
+    }
+    if (o.isError) {
       this.#failures = key === this.#failureKey ? this.#failures + 1 : 1;
       this.#failureKey = key;
     } else {
       this.#failures = 0;
       this.#failureKey = '';
     }
+    const lastDiagnosis = o.isError ? diagnose(o.errorCode, o.resultText ?? '') : undefined;
     let reason: string | undefined;
     if (this.#repeat >= REPEAT_LIMIT) reason = `the same ${key} call produced the same page state ${this.#repeat} times`;
     else if (this.#failures >= FAILURE_LIMIT) reason = `${key} failed ${this.#failures} times in a row`;
@@ -100,6 +114,6 @@ export class ProgressTracker {
     }
     this.#strategyIndex++;
     this.#switches++;
-    return { stalled: true, reason, strategy: this.strategy, switched: true, exhausted: false, directive: `Stalled: ${reason}. ${DIRECTIVES[this.strategy]}` };
+    return { stalled: true, reason, strategy: this.strategy, switched: true, exhausted: false, directive: `Stalled: ${reason}. ${DIRECTIVES[this.strategy]}${lastDiagnosis ? ' ' + directiveFor(lastDiagnosis) : ''}`, ...(lastDiagnosis ? { diagnosis: lastDiagnosis } : {}) };
   }
 }
