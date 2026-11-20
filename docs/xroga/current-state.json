@@ -6522,7 +6522,7 @@
       "id": "surface:309e6a3c1f73a053bdef",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiValues.ts",
-      "sha256": "f6b29f9295ec1734d98e5de1a3fc56f96dde71d3540625489ca3bde507b30eaa",
+      "sha256": "09b126f13f82f787b658556e2e644c93f6877313dd3c08d7f698f71b1a4e2062",
       "symbols": [
         "active",
         "amount",
@@ -6579,7 +6579,9 @@
         "principals",
         "ratio",
         "read",
+        "readoutClaimBreak",
         "readoutParser",
+        "readoutScenario",
         "readoutSentenceBreak",
         "recoverNativeReadoutProse",
         "repairProse",
@@ -152969,7 +152971,7 @@
     {
       "id": "test-suite:cf78e18abc3aa283d701",
       "sourcePath": "backend/src/ai/nativeOpenUiValues.test.ts",
-      "declaredTests": 19,
+      "declaredTests": 20,
       "skipLocations": [],
       "focusLocations": []
     },
