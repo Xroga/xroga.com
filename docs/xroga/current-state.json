@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/workspace-openui-final-recovery-20261115",
-    "sha": "083c891ff5ce7e98d59460e27191adc7ac67f2e6",
-    "sourceTimestampUtc": "2026-11-20T05:05:22+05:00",
-    "auditStartedUtc": "2026-11-20T00:07:40.048Z",
+    "sha": "443f23a655b35974eb4d1384dd8be7dc3c5bf230",
+    "sourceTimestampUtc": "2026-11-20T05:13:31+05:00",
+    "auditStartedUtc": "2026-11-20T00:16:43.799Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
