@@ -15167,7 +15167,7 @@
       "id": "surface:82ff96c046038933cdb9",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/workspacePublicSearch.ts",
-      "sha256": "f1092d0b1c439705e9d2150375a462d0ac44d7ea5a6a8ba890d76664cd7f1a0f",
+      "sha256": "fe2ce9ba9cda9a82ca65c6fdaab858872fd7998fded61db1cc0905a5e7fae3d9",
       "symbols": [
         "asksForOfficial",
         "bareDomain",
@@ -15199,6 +15199,7 @@
         "topic",
         "topicLimit",
         "unavailableDomain",
+        "weatherLookup",
         "workspacePublicSearchQuery",
         "workspaceSearchNeedsExactReview"
       ],
@@ -159755,7 +159756,7 @@
     {
       "id": "test-suite:9bbc27bda2a16a87c8f8",
       "sourcePath": "frontend/src/lib/workspaceEmptyComposer.test.ts",
-      "declaredTests": 25,
+      "declaredTests": 26,
       "skipLocations": [],
       "focusLocations": []
     },

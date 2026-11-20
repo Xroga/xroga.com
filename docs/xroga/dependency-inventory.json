@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "307208b11e921440b866f07f4d1c4c1d7a0ac75d",
+  "source_sha": "e3c7f12a90fbb9b515d940fe312d49e4335e616c",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -17674,7 +17674,7 @@
     },
     {
       "path": "backend/src/ai/workspacePublicSearch.ts",
-      "sha256": "f1092d0b1c439705e9d2150375a462d0ac44d7ea5a6a8ba890d76664cd7f1a0f"
+      "sha256": "fe2ce9ba9cda9a82ca65c6fdaab858872fd7998fded61db1cc0905a5e7fae3d9"
     },
     {
       "path": "backend/src/ai/zurelayWire.ts",
@@ -34482,14 +34482,14 @@
     },
     {
       "path": "backend/src/ai/workspacePublicSearch.ts",
-      "line": 16,
+      "line": 17,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/workspacePublicSearch.ts",
-      "line": 68,
+      "line": 69,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
