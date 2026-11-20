@@ -750,15 +750,18 @@ ${ledger}` : ''),
     // The first script typed into a painted editor must come from the app's own documentation: guessing an API costs dozens of turns.
     if (call.toolName === 'canvas' && args.action === 'type' && typeof args.text === 'string' && args.text.length > 60 && /[;{}]|\w\.\w+\(/.test(args.text) &&
         !this.#docsRead && !this.#scriptGateShown && !this.#methodsAreVerified(args.text)) {
+      // Not a refusal: the model may know the API. One note, delivered with the result, so a TypeError is read as a hint to check the documentation.
       this.#scriptGateShown = true;
-      return { call, kind, isError: true, text: 'refused once: you are about to type a script into the app without having read its scripting documentation. Read it first (http_get on the documentation page of the app, or its Help), copy exact names from its example, then type the script. Nothing was typed.' };
+      this.#scriptNote = 'Note: this script was not checked against the app scripting documentation. If the Output reports an error about a name, read the documentation (http_get) and use its exact names instead of guessing again.';
     }
     // With a task tab bound, a web search or a new site is drift: the app's docs are reached by http_get, the work stays in the bound tab.
     if (this.#boundTab !== null && (call.toolName === 'navigate' || (call.toolName === 'tabs' && (args.action === 'open')))) {
       let host = '';
       try { host = new URL(String(args.url ?? '')).hostname; } catch { /* not a web address */ }
-      if (/(^|\.)(google|bing|duckduckgo)\.[a-z.]+$/.test(host)) {
-        return { call, kind, isError: true, text: 'refused: a web search is not needed. The task tab is bound; the script playbook gives the exact names. Use http_get for a documentation page and keep working in the task tab.' };
+      if (/(^|\.)(google|bing|duckduckgo)\.[a-z.]+$/.test(host) && !this.#searchAdvisory) {
+        // Advisory, once: a search is often drift from the bound task tab, but the model may have a real reason. The same call again is allowed.
+        this.#searchAdvisory = true;
+        return { call, kind, isError: true, text: 'Check first: the task tab is bound, and a web search usually means drifting from the task (http_get reads a documentation page without leaving it). If you do need to search, make the same call again and it will go ahead.' };
       }
     }
     // The tab the user already had open holds their work: loading its own site again would discard it.
@@ -796,6 +799,7 @@ ${ledger}` : ''),
       this.#paintedInputDelivered.record(tabId, input.text, given.result);
     }
     if (given.call.toolName === 'http_get' && !given.isError) this.#docsRead = true;
+    if (this.#scriptNote && given.call.toolName === 'canvas') { outcome = { ...outcome, text: `${outcome.text}\n${this.#scriptNote}` }; this.#scriptNote = null; }
     {
       const verdict = this.#progress.record({
         tool: given.call.toolName,
@@ -1495,6 +1499,8 @@ ${ledger}` : ''),
   #strategyChosen = false;
   #pendingStall: StallVerdict | null = null;
   #docsRead = false;
+  #scriptNote: string | null = null;
+  #searchAdvisory = false;
   #scriptGateShown = false;
   #canvasOffered = false;
   /** Offers `find_color` once, when an observation shows a canvas with little else. Returns true the first time. */
@@ -1624,7 +1630,7 @@ ${ledger}` : ''),
     const hits = searchSkills(`${query} ${this.#askedText}`, { host, limit: 3 });
     return {
       call, kind, isError: false,
-      text: hits.length ? `${hits.map(describeHit).join('\n')}\nCall read_skill with an id for its method and documentation.` : 'No catalog skill matches. Use the page, the app own documentation (http_get) and the universal tools.',
+      text: hits.length ? `${hits.map(describeHit).join('\n')}\nCall read_skill with an id for its method and documentation.` : 'No catalog skill matches. That is fine: skills are help, not a limit. Inspect the application, use the universal tools and your own reasoning, and read the application documentation (http_get) if you need exact details.',
     };
   }
 

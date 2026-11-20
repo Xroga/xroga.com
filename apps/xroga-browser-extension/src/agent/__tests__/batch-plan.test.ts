@@ -95,7 +95,7 @@ describe('a batch', () => {
     expect(p.calls).toHaveLength(5);
     // max is clamped, and a plan that could exceed the ceiling is refused before it starts.
     expect(worstCase([{ ...click('x'), repeat: 1000 }])).toBe(MAX_REPEAT);
-    await expect(runPlan(Array.from({ length: 5 }, () => ({ ...click('x'), repeat: MAX_REPEAT })), { run: p.run, test: p.test })).rejects.toThrow(`more than ${MAX_OPS}`);
+    await expect(runPlan(Array.from({ length: Math.ceil(MAX_OPS / MAX_REPEAT) + 1 }, () => ({ ...click('x'), repeat: MAX_REPEAT })), { run: p.run, test: p.test })).rejects.toThrow(`more than ${MAX_OPS}`);
   });
 
   it('refuses malformed steps and tools that may not run in a batch', async () => {

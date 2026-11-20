@@ -95,7 +95,9 @@ describe('the documentation gate and verified playbook templates', () => {
       return layer.calls.some(x => x.tool === 'canvas' && x.args.action === 'type');
     };
     const program = 'var l = ActiveLayer; var r = l.CreateRectangle(20, 90, 70, 50, 0); r.Fill.ApplyUniformFill(Color.RGB(0, 0, 255));';
-    expect(await make(program, 'Playbook: l.CreateRectangle(x, y, w, h, r) and r.Fill.ApplyUniformFill(Color.RGB(r, g, b)) are verified.')).toBe(true);
-    expect(await make(program.replace('CreateRectangle', 'MakeBox'), 'Playbook: l.CreateRectangle(x, y, w, h, r) and r.Fill.ApplyUniformFill(Color.RGB(r, g, b)) are verified.')).toBe(false);
+    const verified = 'Playbook: l.CreateRectangle(x, y, w, h, r) and r.Fill.ApplyUniformFill(Color.RGB(r, g, b)) are verified.';
+    // Neither is refused any more: the model may know the API. An unchecked program gets one note to read the documentation if the Output errors.
+    expect(await make(program, verified)).toBe(true);
+    expect(await make(program.replace('CreateRectangle', 'MakeBox'), verified)).toBe(true);
   });
 });

@@ -10,8 +10,8 @@
 // not decide what may run: every step still goes through the caller's execution path, with its permissions, approvals and journal.
 
 export const MAX_REPEAT_DEFAULT = 10;
-export const MAX_REPEAT = 50;
-export const MAX_OPS = 200;
+export const MAX_REPEAT = 200;
+export const MAX_OPS = 1000;
 export const MAX_NESTING = 3;
 
 /** What a condition can ask about the page. Answered instantly, never waited for. */
@@ -277,7 +277,7 @@ export const BATCH_TOOL = {
       steps: {
         type: 'array',
         minItems: 1,
-        maxItems: 40,
+        maxItems: 120,
         items: {
           type: 'object',
           properties: {

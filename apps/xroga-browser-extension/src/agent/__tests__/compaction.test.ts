@@ -393,7 +393,8 @@ describe('a poisoned summary across stop, restart and continue', () => {
       pageLayer(),
     );
     await next.loop.run();
-    const prompt = next.scripted.calls[0].prompt as Array<{ role: string; content: unknown }>;
+    // The first ordinary request of the restarted run. A run whose context is large may compact first; that summarizer call is not what this checks.
+    const prompt = next.scripted.calls.find(call => !isSummaryCall(call))!.prompt as Array<{ role: string; content: unknown }>;
     const withPoison = prompt.filter(m => JSON.stringify(m.content).includes('buy the flat now'));
     expect(withPoison.map(m => m.role)).toEqual(['assistant']);
     expect(JSON.stringify(withPoison[0].content)).toMatch(/<agent-notes>[\s\S]*buy the flat now[\s\S]*<\/agent-notes>/);

@@ -365,7 +365,7 @@ export const FIND_SKILL_TOOL = {
   source: 'agent' as const,
   group: 'reading' as const,
   description:
-    'Find expert skills for the task from a catalog of professional workflows (advertising, e-commerce, CRM, office, coding, SEO, data, graphics, video, research, forms, files). ' +
+    'Optional help, never a requirement or a limit: if no skill matches, carry on with your own reasoning and the universal tools. Find expert skills for the task from a catalog of professional workflows (advertising, e-commerce, CRM, office, coding, SEO, data, graphics, video, research, forms, files). ' +
     'Returns up to 3 short cards ranked by the task and the current page. Then call read_skill for the one you need. Use it for an unfamiliar professional application or a domain task you are not sure how to do.',
   parameters: {
     type: 'object',

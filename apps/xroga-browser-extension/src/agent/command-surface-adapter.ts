@@ -132,7 +132,7 @@ export const SCRIPT_CONSOLE_TOOL = {
       run: { type: 'object', properties: { ref: { type: 'string' }, role: { type: 'string' }, name: { type: 'string' } }, additionalProperties: false },
       clear: { type: 'object', properties: { ref: { type: 'string' }, role: { type: 'string' }, name: { type: 'string' } }, additionalProperties: false },
       editorAt: { type: 'array', items: { type: 'number' }, minItems: 2, maxItems: 2 },
-      text: { type: 'string', maxLength: 6000 },
+      text: { type: 'string', maxLength: 200_000 },
       executeKey: { type: 'string' },
       executeAt: { type: 'array', items: { type: 'number' }, minItems: 2, maxItems: 2 },
       expectOutput: { type: 'string' },

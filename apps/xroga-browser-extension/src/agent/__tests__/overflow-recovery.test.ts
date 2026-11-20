@@ -179,8 +179,8 @@ describe('the context set', () => {
       message: { role: 'user', parts: [{ type: 'text', text: 'Pay my bills.' }] },
     });
     let asked = false;
-    // The simulated server limit sits a little above the bare system prompt and tools, so a few words more in the prompt do not make recovery impossible.
-    const { fn, refused: refusedAsk } = provider(6_300, (_call, i) => {
+    // The simulated server limit sits a little above the bare system prompt and tools. It was 6,300 before the prompt gained one sentence (about 62 tokens); the smallest limit at which compaction and overflow recovery still work is 6,900.
+    const { fn, refused: refusedAsk } = provider(6_900, (_call, i) => {
       if (i === 0)
         return {
           toolCalls: [{ name: 'ask_user', input: { kind: 'input', message: 'Which account should I use?' }, id: 'q' }],

@@ -23,13 +23,19 @@ describe('ProgressTracker', () => {
     t.record(fail(1)); t.record(fail(2));
     expect(t.record(fail(3)).switched).toBe(true);
   });
-  it('walks the ladder and then stops with a blocker', () => {
+  it('never ends the run when every method has been tried: it starts a fresh round with a re-plan instruction', () => {
     const t = new ProgressTracker();
-    let last;
-    for (let round = 0; round < 6; round++) for (let i = 0; i < 3; i++) last = t.record(click());
-    expect(last!.exhausted).toBe(true);
-    expect(t.strategy).toBe('RECOVERY');
-    expect(last!.directive).toContain('blocker');
+    const verdicts = [];
+    for (let n = 0; n < 30; n++) verdicts.push(t.record(click()));
+    expect(verdicts.every(v => v.exhausted === false)).toBe(true);
+    expect(verdicts.some(v => v.directive?.includes('from scratch'))).toBe(true);
+  });
+  it('after three full rounds it asks whether something outside the run is the real blocker, still without stopping', () => {
+    const t = new ProgressTracker();
+    const verdicts = [];
+    for (let n = 0; n < 60; n++) verdicts.push(t.record(click()));
+    expect(verdicts.some(v => v.directive?.includes('third full round'))).toBe(true);
+    expect(verdicts.every(v => v.exhausted === false)).toBe(true);
   });
   it('a success resets the failure streak', () => {
     const t = new ProgressTracker();

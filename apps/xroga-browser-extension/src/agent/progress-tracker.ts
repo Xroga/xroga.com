@@ -66,6 +66,7 @@ export class ProgressTracker {
   #failures = 0;
   #failureKey = '';
   #switches = 0;
+  #cycles = 0;
 
   get strategy(): Strategy { return this.#order[this.#strategyIndex]!; }
   get order(): readonly Strategy[] { return this.#order; }
@@ -111,7 +112,15 @@ export class ProgressTracker {
     this.#failureKey = '';
     this.#lastCall = '';
     if (this.#strategyIndex >= this.#order.length - 1) {
-      return { stalled: true, reason, strategy: this.strategy, switched: false, exhausted: true, directive: `No strategy is left (${reason}). Finish now with the exact blocker and what is already done; do not retry.` };
+      // Every method has been tried without progress. This does NOT end the run: only real resource and authorization controls may do that.
+      // The order starts again with a different instruction: look at the application fresh and rethink, instead of repeating what failed.
+      this.#cycles++;
+      this.#strategyIndex = 0;
+      this.#switches++;
+      const advice = this.#cycles >= 3
+        ? 'This is the third full round without progress. Check whether something outside your control is the real blocker (a login, a missing permission, an input only the user has, a feature the application does not offer). If so, say exactly what and finish with done(partial); otherwise change the approach completely.'
+        : 'Look at the application again from scratch with a fresh snapshot or screenshot, reconsider the goal and what the evidence shows, and try an approach you have not used yet.';
+      return { stalled: true, reason, strategy: this.strategy, switched: true, exhausted: false, directive: `Every method has been tried without progress (${reason}). ${advice}` };
     }
     this.#strategyIndex++;
     this.#switches++;
