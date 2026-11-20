@@ -1,22 +1,22 @@
 # Open-Source Reuse Ledger
 
-Generated 2026-11-20T00:23:39.260Z from `docs/xroga/oss-capability-ledger.json` (58 repositories, the 2026-11-20 handoff catalog).
+Generated 2026-11-20T00:40:44.896Z from `docs/xroga/oss-capability-ledger.json` (58 repositories, the 2026-11-20 handoff catalog).
 
 SHA, licence, archived flag and activity were fetched from GitHub for each repository. A row is **INSPECTED (metadata only)** unless the Evidence columns show source study, code and tests. A repository link, clone or README read is not an integration.
 
-Classification: ALREADY IMPLEMENTED: 2, ADAPT CODE: 14, TEST REFERENCE: 14, REJECT: 9, INVOKE ON DEMAND: 19
+Classification: ALREADY IMPLEMENTED: 4, ADAPT CODE: 10, TEST REFERENCE: 15, REJECT: 10, INVOKE ON DEMAND: 19
 
-Status: ALREADY PRESENT: 2, INSPECTED: 52, ADAPTED IN CODE: 1, INTEGRATED/UNIT: 2, LIVE DEEPSEEK VERIFIED: 1
+Status: ALREADY PRESENT: 4, ADAPTED IN CODE: 1, INSPECTED: 50, INTEGRATED/UNIT: 2, LIVE DEEPSEEK VERIFIED: 1
 
 | # | Repository | Pinned SHA | Licence | Classification | Status | Xroga code path | Tests | Reason / rights note |
 |--:|---|---|---|---|---|---|---|---|
 | 1 | [nanobrowser/nanobrowser](https://github.com/nanobrowser/nanobrowser) | 291d5f3927 | Apache-2.0 | ALREADY IMPLEMENTED | ALREADY PRESENT | apps/xroga-browser-extension/NOTICE | - | Local Chrome foundation; not replaced. Diff against upstream fixes not yet done. / handoff: MAINTAIN + DIFF |
-| 2 | [vercel-labs/agent-browser](https://github.com/vercel-labs/agent-browser) | a69c9190b4 | Apache-2.0 | ADAPT CODE | INSPECTED | - | - | handoff: ADAPT TARGETING |
+| 2 | [vercel-labs/agent-browser](https://github.com/vercel-labs/agent-browser) | a69c9190b4 | Apache-2.0 | ALREADY IMPLEMENTED | ALREADY PRESENT | - | - | No code taken. Not an MV3-compatible component. / handoff: ADAPT TARGETING |
 | 3 | [dylansantwani/openbrowser](https://github.com/dylansantwani/openbrowser) | 1f670809ca | MIT | ALREADY IMPLEMENTED | ADAPTED IN CODE | apps/xroga-browser-extension/src/agent/batch-plan.ts; apps/xroga-browser-extension/src/agent/loop.ts (#runBatchTool) | src/agent/__tests__/batch-plan.test.ts; src/agent/__tests__/batch-tool.test.ts | Kept: removes one model turn per known step. / handoff: EXTEND EXISTING PORT |
 | 4 | [Tencent/BrowserSkill](https://github.com/Tencent/BrowserSkill) | e186aa7239 | MIT | ADAPT CODE | INSPECTED | - | - | handoff: ADAPT TAB LENDING |
 | 5 | [browser-use/browser-harness](https://github.com/browser-use/browser-harness) | fe4a2cd3dd | MIT | ADAPT CODE | INSPECTED | - | - | handoff: ADAPT / FIXTURES |
-| 6 | [alibaba/page-agent](https://github.com/alibaba/page-agent) | d8dd334487 | MIT | ADAPT CODE | INSPECTED | - | - | handoff: BENCHMARK + PORT |
-| 7 | [derpx06/webgenie](https://github.com/derpx06/webgenie) | 56b5d8bccf | Apache-2.0 | ADAPT CODE | INSPECTED | - | - | handoff: ADAPT RECOVERY |
+| 6 | [alibaba/page-agent](https://github.com/alibaba/page-agent) | d8dd334487 | MIT | TEST REFERENCE | INSPECTED | - | - | Runs inside the page as a library; Xroga controls pages over CDP from the extension. Semantic-targeting scoring is a candidate to benchmark against Xroga targeting; not done. / handoff: BENCHMARK + PORT |
+| 7 | [derpx06/webgenie](https://github.com/derpx06/webgenie) | 56b5d8bccf | Apache-2.0 | REJECT | INSPECTED | - | - | Same lineage as the existing foundation; its checkpoint and replan idea is covered by the run journal, resume and progress tracker. No unique module identified yet; deeper diff deferred. / handoff: ADAPT RECOVERY |
 | 8 | [openbrowse-ai/openbrowse](https://github.com/openbrowse-ai/openbrowse) | 9c1bec9d92 | MIT | ADAPT CODE | INSPECTED | - | - | handoff: SELECTIVE ADAPT |
 | 9 | [browserbase/stagehand](https://github.com/browserbase/stagehand) | 4d72a87ff7 | MIT | TEST REFERENCE | INSPECTED | - | - | handoff: BENCHMARK (NO PAID CLOUD) |
 | 10 | [browser-use/browser-use](https://github.com/browser-use/browser-use) | ccbdb8095f | MIT | ADAPT CODE | INSPECTED | - | - | handoff: ADAPT PRIMITIVES |
@@ -24,8 +24,8 @@ Status: ALREADY PRESENT: 2, INSPECTED: 52, ADAPTED IN CODE: 1, INTEGRATED/UNIT: 
 | 12 | [microsoft/playwright-mcp](https://github.com/microsoft/playwright-mcp) | 2337aff021 | Apache-2.0 | TEST REFERENCE | INSPECTED | - | - | handoff: TEST / OPTIONAL CAPABILITY |
 | 13 | [microsoft/playwright](https://github.com/microsoft/playwright) | 08d33c493b | Apache-2.0 | TEST REFERENCE | ALREADY PRESENT | - | - | No change. / handoff: TEST INFRASTRUCTURE |
 | 14 | [AliSharjeell/OpenBUA](https://github.com/AliSharjeell/OpenBUA) | 98d68ba43a | none found | REJECT | INSPECTED | - | - | handoff: REFERENCE ONLY UNTIL LICENSE |
-| 15 | [anomalyco/browse](https://github.com/anomalyco/browse) | 1880ad8913 | MIT | ADAPT CODE | INSPECTED | - | - | handoff: ADAPT SESSION POLICY |
-| 16 | [uiuing/browser-agent](https://github.com/uiuing/browser-agent) | a8517e2c5c | MIT | ADAPT CODE | INTEGRATED/UNIT | apps/xroga-browser-extension/src/agent/failure-diagnosis.ts; apps/xroga-browser-extension/src/agent/progress-tracker.ts; apps/xroga-browser-extension/src/agent/loop.ts (errorCode into the tracker) | src/agent/__tests__/failure-diagnosis.test.ts | Kept: terminal failures (needs a person) stop at once, others get a diagnosis-specific chain. Postcondition vocabulary (verify.ts) not yet ported. / handoff: ADAPT VERIFICATION |
+| 15 | [anomalyco/browse](https://github.com/anomalyco/browse) | 1880ad8913 | MIT | ALREADY IMPLEMENTED | ALREADY PRESENT | - | - | It is an MCP server plus extension for other agents; Xroga already hands a tab back to the user and continues. Flight-recorder and redaction ideas remain candidates, not done. / handoff: ADAPT SESSION POLICY |
+| 16 | [uiuing/browser-agent](https://github.com/uiuing/browser-agent) | a8517e2c5c | MIT | ADAPT CODE | INTEGRATED/UNIT | apps/xroga-browser-extension/src/agent/failure-diagnosis.ts; apps/xroga-browser-extension/src/agent/progress-tracker.ts; apps/xroga-browser-extension/src/agent/loop.ts (errorCode into the tracker) | src/agent/__tests__/failure-diagnosis.test.ts | Kept: terminal failures (needs a person) stop at once, others get a diagnosis-specific chain. Its postcondition vocabulary (verify.ts) is already covered by the expect schema in src/browser-control/protocol/schemas.ts (url, text, textGone, value, checked, gone, exists, count); element_state and attribute_equals are the only gaps. / handoff: ADAPT VERIFICATION |
 | 17 | [jeet-dhandha/agent-webbridge](https://github.com/jeet-dhandha/agent-webbridge) | a14cd1dcdf | MIT | REJECT | INSPECTED | - | - | handoff: REFERENCE ONLY |
 | 18 | [pinchtab/pinchtab](https://github.com/pinchtab/pinchtab) | a62662027f | MIT | TEST REFERENCE | INSPECTED | - | - | handoff: BENCHMARK IDEAS ONLY |
 | 19 | [motailab/open-browser-agent](https://github.com/motailab/open-browser-agent) | b0791b8c44 | Apache-2.0 | TEST REFERENCE | INSPECTED | - | - | handoff: REFERENCE / TEST |
@@ -36,7 +36,7 @@ Status: ALREADY PRESENT: 2, INSPECTED: 52, ADAPTED IN CODE: 1, INTEGRATED/UNIT: 
 | 24 | [A9T9/RPA](https://github.com/A9T9/RPA) | 17b6302f16 | NOASSERTION | REJECT | INSPECTED | - | - | handoff: REFERENCE; GPL/AGPL REVIEW |
 | 25 | [fabricjs/fabric.js](https://github.com/fabricjs/fabric.js) | ab604137e0 | MIT | TEST REFERENCE | INSPECTED | - | - | handoff: TEST FIXTURES |
 | 26 | [konvajs/konva](https://github.com/konvajs/konva) | 24ac227a84 | NOASSERTION | TEST REFERENCE | INSPECTED | - | - | handoff: TEST FIXTURES |
-| 27 | [tracedraw/tracedraw](https://github.com/tracedraw/tracedraw) | 3a2da4e888 | NOASSERTION | TEST REFERENCE | LIVE DEEPSEEK VERIFIED | - | scripts/verify-a4-svg.test.mjs | One regression case, not the product direction. / handoff: REGRESSION ONLY |
+| 27 | [tracedraw/tracedraw](https://github.com/tracedraw/tracedraw) | 83f79942ee | NOASSERTION | TEST REFERENCE | LIVE DEEPSEEK VERIFIED | - | scripts/verify-a4-svg.test.mjs | One regression case, not the product direction. / handoff: REGRESSION ONLY |
 | 28 | [agentskills/agentskills](https://github.com/agentskills/agentskills) | 83021e2be4 | Apache-2.0 | ADAPT CODE | INTEGRATED/UNIT | apps/xroga-browser-extension/src/agent/skill-md.ts; apps/xroga-browser-extension/src/agent/skill-catalog.ts (find_skill, read_skill) | src/agent/__tests__/skill-catalog.test.ts | Kept: on-demand discovery instead of prompt dumps. allowed-tools is recorded, never granted. / handoff: SKILL REGISTRY ADAPTER |
 | 29 | [anthropics/skills](https://github.com/anthropics/skills) | e4bb5d960d | none found | ADAPT CODE | INSPECTED | - | - | licence not machine-verified: read the LICENSE file before copying any code / handoff: ADAPT ELIGIBLE SKILLS |
 | 30 | [modelcontextprotocol/servers](https://github.com/modelcontextprotocol/servers) | c799c8552b | NOASSERTION | ADAPT CODE | INSPECTED | - | - | licence not machine-verified: read the LICENSE file before copying any code / handoff: COMPATIBLE MCP TOOL ADAPTER |
@@ -71,6 +71,7 @@ Status: ALREADY PRESENT: 2, INSPECTED: 52, ADAPTED IN CODE: 1, INTEGRATED/UNIT: 
 
 ## Deliberately rejected or deferred for code reuse
 
+- **derpx06/webgenie** (Apache-2.0): ADAPT RECOVERY.
 - **AliSharjeell/OpenBUA** (no licence found): REFERENCE ONLY UNTIL LICENSE.
 - **jeet-dhandha/agent-webbridge** (MIT): REFERENCE ONLY.
 - **microsoft/OmniParser** (CC-BY-4.0): REFERENCE; LICENSE + MODEL REVIEW.
