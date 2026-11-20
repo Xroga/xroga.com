@@ -105,3 +105,36 @@
   .xv-seo-dark-editorial .xv-seo-related a,
   .xv-seo-dark-editorial .xv-seo-toc a{transition:none}
 }
+
+
+/* Premium articles — additive, preserving the legacy editorial layout. */
+.xv-explain{margin:0 0 48px;border:1px solid rgba(170,190,255,.25);border-radius:22px;background:linear-gradient(140deg,#171b27,#0b0c10);padding:26px;color:#f6f7fc}
+.xv-explain-top{display:flex;gap:24px;justify-content:space-between;align-items:flex-start;flex-wrap:wrap}
+.xv-explain-kicker{color:#b0c4ff;font-size:11px;font-weight:750;letter-spacing:.12em;text-transform:uppercase}
+.xv-explain h2{font-size:clamp(21px,2.7vw,30px);letter-spacing:-.045em;line-height:1.2;margin:10px 0}
+.xv-explain-top p{color:#b6bdca;margin:0;font-size:14px;line-height:1.6}
+.xv-explain-modes{display:flex;flex-wrap:wrap;gap:6px}
+.xv-explain button{cursor:pointer}
+.xv-explain-modes button{border:1px solid #444b5d;background:transparent;color:#c3c8d4;padding:9px 11px;border-radius:100px;font-size:12px}
+.xv-explain-modes button[aria-pressed=true]{background:#dbe4ff;border-color:#dbe4ff;color:#111522;font-weight:750}
+.xv-explain-response{padding:20px 22px;margin:22px 0 18px;border:1px solid #363e50;border-radius:15px;background:#10141d}
+.xv-explain-response p,.xv-explain-response li{font-size:15px;color:#e1e5ef;line-height:1.7;margin:0}
+.xv-explain-response li+li{margin-top:7px}
+.xv-explain-actions{display:flex;flex-wrap:wrap;align-items:center;gap:9px}
+.xv-explain-actions button{padding:12px 18px;border-radius:100px;background:#dbe4ff;border:1px solid #dbe4ff;color:#121620;font-size:13px;font-weight:750}
+.xv-explain-actions button.xv-explain-copy{background:transparent;color:#e1e5ef;border-color:#576073}
+.xv-explain .xv-explain-disclaimer{font-size:11px;color:#aeb7ca;line-height:1.6;margin:14px 0 0}
+.xv-seo-steps{counter-reset:step;list-style:none;padding:0;margin:24px 0}
+.xv-seo-steps li{border-top:1px solid var(--seo-line);padding:18px 0 16px}
+.xv-seo-steps li strong{font-size:17px;color:var(--seo-ink);display:block}
+.xv-seo-steps li strong:before{counter-increment:step;content:counter(step,decimal-leading-zero);display:inline-block;font-size:12px;color:#9db7fa;margin-right:12px}
+.xv-seo-steps li p{margin:9px 0 0}
+.xv-seo-code{margin:22px 0;border:1px solid #39404d;border-radius:14px;background:#11151d;overflow:hidden;color:#d9e4f7}
+.xv-seo-code figcaption{border-bottom:1px solid #303a4a;background:#1b2130;color:#bccbf2;font-size:12px;padding:11px 16px}
+.xv-seo-code pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:13px;line-height:1.7;padding:20px;margin:0}
+.xv-seo-note-inline{border-left:3px solid #8aabf4;border-radius:0 12px 12px 0;padding:16px 20px;background:rgba(110,145,205,.13);margin:18px 0;color:var(--seo-ink);font-size:15px;line-height:1.6}
+.xv-seo-faq{margin:25px 0;border-top:1px solid var(--seo-line)}
+.xv-seo-faq details{border-bottom:1px solid var(--seo-line);padding:14px 0}
+.xv-seo-faq summary{cursor:pointer;font-size:16px;font-weight:700;line-height:1.5}
+.xv-seo-faq details p{margin:12px 0 2px}
+@media(max-width:700px){.xv-explain{padding:20px}.xv-explain-modes{width:100%}.xv-explain-modes button{flex:1}.xv-seo-code pre{font-size:11px}}

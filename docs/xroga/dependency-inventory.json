@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "4f22d851658c1d7cc42e13a3f035ea5a6751843f",
+  "source_sha": "e92af914485e7b51bb2af721eb5bcb120eddc49d",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -2445,6 +2445,40 @@
       "evidence_ids": []
     },
     {
+      "dependency_id": "endpoint-base44-com",
+      "provider": "Source-defined endpoint base44.com",
+      "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
+      "environment": "PRODUCTION",
+      "state": "CONFIGURED_BUT_UNVERIFIED",
+      "runtime_owner": "backend/API or explicitly proposed component",
+      "config_sources": [
+        "frontend/src/lib/premiumBlogs/base44-alternatives.ts"
+      ],
+      "hostnames": [
+        "base44.com"
+      ],
+      "resource_id": null,
+      "region": "Not verified",
+      "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
+      "secret_names": [],
+      "inbound_callers": [
+        "api or named source callers; operational reachability not inferred"
+      ],
+      "outbound_dependencies": [],
+      "health_readiness": "Reference/asset hosts may need no service health check; adapter admission/liveness is unverified. No external action or paid health probe performed",
+      "timeout": "Adapter-specific; no fabricated central timeout",
+      "retry_policy": "Source-specific; no live retry test claimed",
+      "idempotency_expectation": "Required for consequential writes; verify canonical authority in Command 008",
+      "data_classification": "User data may be involved; tenant scope requires independent checks",
+      "failure_mode": "Safe user-facing failure required; internal details restricted",
+      "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
+      "observability_source": [
+        "frontend/src/lib/premiumBlogs/base44-alternatives.ts"
+      ],
+      "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
+      "evidence_ids": []
+    },
+    {
       "dependency_id": "endpoint-bolt-new",
       "provider": "Source-defined endpoint bolt.new",
       "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
@@ -2453,6 +2487,8 @@
       "runtime_owner": "backend/API or explicitly proposed component",
       "config_sources": [
         "frontend/src/components/seo/XrogaVsBoltPage.tsx",
+        "frontend/src/lib/premiumBlogs/base44-alternatives.ts",
+        "frontend/src/lib/premiumBlogs/replit-alternatives.ts",
         "frontend/src/lib/seoGrowthContent.ts"
       ],
       "hostnames": [
@@ -2475,6 +2511,8 @@
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
         "frontend/src/components/seo/XrogaVsBoltPage.tsx",
+        "frontend/src/lib/premiumBlogs/base44-alternatives.ts",
+        "frontend/src/lib/premiumBlogs/replit-alternatives.ts",
         "frontend/src/lib/seoGrowthContent.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
@@ -3608,6 +3646,8 @@
       "config_sources": [
         "frontend/src/lib/externalAgentWorkflows.ts",
         "frontend/src/lib/pluginCatalog.ts",
+        "frontend/src/lib/premiumBlogs/ai-coding-tools-existing-github-repositories.ts",
+        "frontend/src/lib/premiumBlogs/ai-modify-existing-website.ts",
         "frontend/src/lib/seoPhase2Content.ts"
       ],
       "hostnames": [
@@ -3631,6 +3671,8 @@
       "observability_source": [
         "frontend/src/lib/externalAgentWorkflows.ts",
         "frontend/src/lib/pluginCatalog.ts",
+        "frontend/src/lib/premiumBlogs/ai-coding-tools-existing-github-repositories.ts",
+        "frontend/src/lib/premiumBlogs/ai-modify-existing-website.ts",
         "frontend/src/lib/seoPhase2Content.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
@@ -3645,6 +3687,8 @@
       "runtime_owner": "backend/API or explicitly proposed component",
       "config_sources": [
         "frontend/src/components/seo/XrogaVsLovablePage.tsx",
+        "frontend/src/lib/premiumBlogs/base44-alternatives.ts",
+        "frontend/src/lib/premiumBlogs/replit-alternatives.ts",
         "frontend/src/lib/seoExpansionContent.ts",
         "frontend/src/lib/seoGrowthContent.ts",
         "frontend/src/lib/seoPhase2Content.ts"
@@ -3669,6 +3713,8 @@
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
         "frontend/src/components/seo/XrogaVsLovablePage.tsx",
+        "frontend/src/lib/premiumBlogs/base44-alternatives.ts",
+        "frontend/src/lib/premiumBlogs/replit-alternatives.ts",
         "frontend/src/lib/seoExpansionContent.ts",
         "frontend/src/lib/seoGrowthContent.ts",
         "frontend/src/lib/seoPhase2Content.ts"
@@ -3718,6 +3764,9 @@
       "state": "CONFIGURED_BUT_UNVERIFIED",
       "runtime_owner": "backend/API or explicitly proposed component",
       "config_sources": [
+        "frontend/src/lib/premiumBlogs/ai-coding-tools-existing-github-repositories.ts",
+        "frontend/src/lib/premiumBlogs/ai-modify-existing-website.ts",
+        "frontend/src/lib/premiumBlogs/replit-alternatives.ts",
         "frontend/src/lib/seoExpansionContent.ts",
         "frontend/src/lib/seoGrowthContent.ts",
         "frontend/src/lib/seoPhase2Content.ts"
@@ -3741,6 +3790,9 @@
       "failure_mode": "Safe user-facing failure required; internal details restricted",
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
+        "frontend/src/lib/premiumBlogs/ai-coding-tools-existing-github-repositories.ts",
+        "frontend/src/lib/premiumBlogs/ai-modify-existing-website.ts",
+        "frontend/src/lib/premiumBlogs/replit-alternatives.ts",
         "frontend/src/lib/seoExpansionContent.ts",
         "frontend/src/lib/seoGrowthContent.ts",
         "frontend/src/lib/seoPhase2Content.ts"
@@ -5340,6 +5392,11 @@
       "runtime_owner": "backend/API or explicitly proposed component",
       "config_sources": [
         "frontend/src/components/response-experience-v2/entityRegistry.ts",
+        "frontend/src/lib/premiumBlogs/ai-app-preview-works-production-fails.ts",
+        "frontend/src/lib/premiumBlogs/ai-coding-tools-existing-github-repositories.ts",
+        "frontend/src/lib/premiumBlogs/ai-modify-existing-website.ts",
+        "frontend/src/lib/premiumBlogs/build-secure-client-portal-with-ai.ts",
+        "frontend/src/lib/premiumBlogs/supabase-login-fails-after-deployment.ts",
         "frontend/src/lib/seoExpansionContent.ts"
       ],
       "hostnames": [
@@ -5362,6 +5419,11 @@
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
         "frontend/src/components/response-experience-v2/entityRegistry.ts",
+        "frontend/src/lib/premiumBlogs/ai-app-preview-works-production-fails.ts",
+        "frontend/src/lib/premiumBlogs/ai-coding-tools-existing-github-repositories.ts",
+        "frontend/src/lib/premiumBlogs/ai-modify-existing-website.ts",
+        "frontend/src/lib/premiumBlogs/build-secure-client-portal-with-ai.ts",
+        "frontend/src/lib/premiumBlogs/supabase-login-fails-after-deployment.ts",
         "frontend/src/lib/seoExpansionContent.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
@@ -6183,6 +6245,12 @@
       "runtime_owner": "backend/API or explicitly proposed component",
       "config_sources": [
         "frontend/src/components/response-experience-v2/entityRegistry.ts",
+        "frontend/src/lib/premiumBlogs/ai-app-hosting-costs.ts",
+        "frontend/src/lib/premiumBlogs/ai-app-preview-works-production-fails.ts",
+        "frontend/src/lib/premiumBlogs/build-secure-client-portal-with-ai.ts",
+        "frontend/src/lib/premiumBlogs/supabase-login-fails-after-deployment.ts",
+        "frontend/src/lib/premiumBlogs/supabase-rls-ai-built-apps.ts",
+        "frontend/src/lib/premiumBlogs/turn-spreadsheet-into-web-app-with-ai.ts",
         "frontend/src/lib/seoPhase2Content.ts"
       ],
       "hostnames": [
@@ -6205,6 +6273,12 @@
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
         "frontend/src/components/response-experience-v2/entityRegistry.ts",
+        "frontend/src/lib/premiumBlogs/ai-app-hosting-costs.ts",
+        "frontend/src/lib/premiumBlogs/ai-app-preview-works-production-fails.ts",
+        "frontend/src/lib/premiumBlogs/build-secure-client-portal-with-ai.ts",
+        "frontend/src/lib/premiumBlogs/supabase-login-fails-after-deployment.ts",
+        "frontend/src/lib/premiumBlogs/supabase-rls-ai-built-apps.ts",
+        "frontend/src/lib/premiumBlogs/turn-spreadsheet-into-web-app-with-ai.ts",
         "frontend/src/lib/seoPhase2Content.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
@@ -6246,6 +6320,40 @@
         "frontend/src/lib/seoExpansionContent.ts",
         "frontend/src/lib/seoGrowthContent.ts",
         "frontend/src/lib/seoPhase2Content.ts"
+      ],
+      "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
+      "evidence_ids": []
+    },
+    {
+      "dependency_id": "endpoint-support-google-com",
+      "provider": "Source-defined endpoint support.google.com",
+      "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
+      "environment": "PRODUCTION",
+      "state": "CONFIGURED_BUT_UNVERIFIED",
+      "runtime_owner": "backend/API or explicitly proposed component",
+      "config_sources": [
+        "frontend/src/lib/premiumBlogs/turn-spreadsheet-into-web-app-with-ai.ts"
+      ],
+      "hostnames": [
+        "support.google.com"
+      ],
+      "resource_id": null,
+      "region": "Not verified",
+      "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
+      "secret_names": [],
+      "inbound_callers": [
+        "api or named source callers; operational reachability not inferred"
+      ],
+      "outbound_dependencies": [],
+      "health_readiness": "Reference/asset hosts may need no service health check; adapter admission/liveness is unverified. No external action or paid health probe performed",
+      "timeout": "Adapter-specific; no fabricated central timeout",
+      "retry_policy": "Source-specific; no live retry test claimed",
+      "idempotency_expectation": "Required for consequential writes; verify canonical authority in Command 008",
+      "data_classification": "User data may be involved; tenant scope requires independent checks",
+      "failure_mode": "Safe user-facing failure required; internal details restricted",
+      "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
+      "observability_source": [
+        "frontend/src/lib/premiumBlogs/turn-spreadsheet-into-web-app-with-ai.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
       "evidence_ids": []
@@ -6510,6 +6618,10 @@
         "backend/src/synthesis/integrations/domainAutopilot.ts",
         "frontend/src/components/homepage-next/phase1/providerMarks.ts",
         "frontend/src/components/response-experience-v2/entityRegistry.ts",
+        "frontend/src/lib/premiumBlogs/ai-app-hosting-costs.ts",
+        "frontend/src/lib/premiumBlogs/ai-app-preview-works-production-fails.ts",
+        "frontend/src/lib/premiumBlogs/ai-modify-existing-website.ts",
+        "frontend/src/lib/premiumBlogs/replit-alternatives.ts",
         "frontend/src/lib/seoPhase2Content.ts"
       ],
       "hostnames": [
@@ -6544,6 +6656,10 @@
         "backend/src/synthesis/integrations/domainAutopilot.ts",
         "frontend/src/components/homepage-next/phase1/providerMarks.ts",
         "frontend/src/components/response-experience-v2/entityRegistry.ts",
+        "frontend/src/lib/premiumBlogs/ai-app-hosting-costs.ts",
+        "frontend/src/lib/premiumBlogs/ai-app-preview-works-production-fails.ts",
+        "frontend/src/lib/premiumBlogs/ai-modify-existing-website.ts",
+        "frontend/src/lib/premiumBlogs/replit-alternatives.ts",
         "frontend/src/lib/seoPhase2Content.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
@@ -7502,6 +7618,40 @@
       "observability_source": [
         "frontend/src/lib/shareImage.ts",
         "frontend/src/lib/socialSharePack.ts"
+      ],
+      "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
+      "evidence_ids": []
+    },
+    {
+      "dependency_id": "endpoint-www-postgresql-org",
+      "provider": "Source-defined endpoint www.postgresql.org",
+      "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
+      "environment": "PRODUCTION",
+      "state": "CONFIGURED_BUT_UNVERIFIED",
+      "runtime_owner": "backend/API or explicitly proposed component",
+      "config_sources": [
+        "frontend/src/lib/premiumBlogs/turn-spreadsheet-into-web-app-with-ai.ts"
+      ],
+      "hostnames": [
+        "www.postgresql.org"
+      ],
+      "resource_id": null,
+      "region": "Not verified",
+      "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
+      "secret_names": [],
+      "inbound_callers": [
+        "api or named source callers; operational reachability not inferred"
+      ],
+      "outbound_dependencies": [],
+      "health_readiness": "Reference/asset hosts may need no service health check; adapter admission/liveness is unverified. No external action or paid health probe performed",
+      "timeout": "Adapter-specific; no fabricated central timeout",
+      "retry_policy": "Source-specific; no live retry test claimed",
+      "idempotency_expectation": "Required for consequential writes; verify canonical authority in Command 008",
+      "data_classification": "User data may be involved; tenant scope requires independent checks",
+      "failure_mode": "Safe user-facing failure required; internal details restricted",
+      "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
+      "observability_source": [
+        "frontend/src/lib/premiumBlogs/turn-spreadsheet-into-web-app-with-ai.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
       "evidence_ids": []
@@ -20446,7 +20596,7 @@
     },
     {
       "path": "frontend/src/app/blog/[slug]/page.tsx",
-      "sha256": "30884d7df978aeec36d5a08c0f1280c096fbdb19ff153ff6839ffd152efda0ee"
+      "sha256": "2378518b03a64f72c0286dabda4872fa6d35b0605c32bbe744bbe1e23a1e9172"
     },
     {
       "path": "frontend/src/app/blog/feed.xml/route.ts",
@@ -20454,7 +20604,7 @@
     },
     {
       "path": "frontend/src/app/blog/page.tsx",
-      "sha256": "fac176abc5b0981729ddc01577b4214ff9fba11b753a7a8883caaad314736d0c"
+      "sha256": "ce5fed6ea7450564b62eba197c098f98f0b5c4edb6bea429c744175aebf57b7f"
     },
     {
       "path": "frontend/src/app/build-saas-with-ai/page.tsx",
@@ -22342,11 +22492,11 @@
     },
     {
       "path": "frontend/src/components/native-openui/upstream/components/layout.tsx",
-      "sha256": "739be7344424b251cc70a57dde58a3c693e5f4d6cf0d1f4645cdf589b93120c3"
+      "sha256": "61f3d89980901ed5846bba9d9918f55a62f56754b44a05a09f0ab61f95b854c2"
     },
     {
       "path": "frontend/src/components/native-openui/upstream/components/markdown.tsx",
-      "sha256": "fbc065507dd78ddec657c5ae5b29c26d92b46054ff4920f8797af63a3814014a"
+      "sha256": "2e686dc3706449b9c8422bca0f366e3f0f2255992e6540c488620be423a371a2"
     },
     {
       "path": "frontend/src/components/native-openui/upstream/components/style.ts",
@@ -22362,7 +22512,7 @@
     },
     {
       "path": "frontend/src/components/native-openui/upstream/components/text.tsx",
-      "sha256": "e109fa2041c6f321843f989e42518742ffff46e802a880fa6fda31aee12e4932"
+      "sha256": "6b54eff24d410ce10a18d1ca8ff3a0ad8b010317a1effa65a2be77146b066c44"
     },
     {
       "path": "frontend/src/components/native-openui/upstream/functions/calendar.ts",
@@ -22674,7 +22824,11 @@
     },
     {
       "path": "frontend/src/components/seo/EditorialPage.tsx",
-      "sha256": "d3c0af9fed15653ada9e4f4676f3d8f97ba47ee19efcf75d6c97158396e786b4"
+      "sha256": "c85f2720f6b4c6a6df958533b15552723ca1d5c43617c65f05d31391437887ec"
+    },
+    {
+      "path": "frontend/src/components/seo/ExplainWithXroga.tsx",
+      "sha256": "813f0237276a18ceec259f64fa0919c52d7dde365e0cccd14011dac5703041dd"
     },
     {
       "path": "frontend/src/components/seo/FeatureJsonLd.tsx",
@@ -23921,6 +24075,50 @@
       "sha256": "a310c47892ab72097c38cd5892d2018a914b5008841971d360a67e67d9ca093e"
     },
     {
+      "path": "frontend/src/lib/premiumBlogIndex.ts",
+      "sha256": "f5d6201b1ae3d2862a093acfd254e95e45970c3e26bc4e96fb413544b33970f9"
+    },
+    {
+      "path": "frontend/src/lib/premiumBlogs/ai-app-hosting-costs.ts",
+      "sha256": "2374b5a133d3407eb131c3f2205e44a095af9d69e1c1b6459bf6d4f1c385c82d"
+    },
+    {
+      "path": "frontend/src/lib/premiumBlogs/ai-app-preview-works-production-fails.ts",
+      "sha256": "beaa55bdce1eeb37ff7df0f2af566a13ee3dcb31a87a5c300230862007425f79"
+    },
+    {
+      "path": "frontend/src/lib/premiumBlogs/ai-coding-tools-existing-github-repositories.ts",
+      "sha256": "a6631805a0fde4208631a5443e34dfafec5afeafd1061f5454a39a49222e552c"
+    },
+    {
+      "path": "frontend/src/lib/premiumBlogs/ai-modify-existing-website.ts",
+      "sha256": "78ae8880a97b1de3063518c154f4395143e25527cc18722ca249baafe14d5eee"
+    },
+    {
+      "path": "frontend/src/lib/premiumBlogs/base44-alternatives.ts",
+      "sha256": "7f3c6616b912d62d07e5960e03d1c928848d734b8c460e662bc1ae851c0bd94f"
+    },
+    {
+      "path": "frontend/src/lib/premiumBlogs/build-secure-client-portal-with-ai.ts",
+      "sha256": "182e42b9cdf39225bc481a5425284f280c3ce597d5a714c5b21e8fdbaa130e34"
+    },
+    {
+      "path": "frontend/src/lib/premiumBlogs/replit-alternatives.ts",
+      "sha256": "7954824ff9bc302809b1aa5ff822217880170e036feb368d0ceb3d27651bc4e1"
+    },
+    {
+      "path": "frontend/src/lib/premiumBlogs/supabase-login-fails-after-deployment.ts",
+      "sha256": "654822c67441898db390b0a0951cb0d7cc0a61bd1336db13a554e4c6df1aca8b"
+    },
+    {
+      "path": "frontend/src/lib/premiumBlogs/supabase-rls-ai-built-apps.ts",
+      "sha256": "970e34d1dedfe235911189353c836a635d4ad564a3c07d6d956114f15e4872a0"
+    },
+    {
+      "path": "frontend/src/lib/premiumBlogs/turn-spreadsheet-into-web-app-with-ai.ts",
+      "sha256": "f33e313514deeaebbbb5c75f92b24a61a91ed86da9c55c823412e19686ae94fa"
+    },
+    {
       "path": "frontend/src/lib/privateFileUrl.ts",
       "sha256": "e2e5233e9ed0bee1edbba324ebb4ccf7f99e49bb613649e20f83ce7f46a7c72a"
     },
@@ -23982,7 +24180,7 @@
     },
     {
       "path": "frontend/src/lib/publicUrlInventory.ts",
-      "sha256": "9d7fad975f495bc7047b5fb5d5091698833a7286e737e3064410ba18265193a9"
+      "sha256": "70c81ead7499a79ba7b59320f3d3f2529559641bf319214a417ea10f1c6bf802"
     },
     {
       "path": "frontend/src/lib/publish/types.ts",
@@ -24082,11 +24280,11 @@
     },
     {
       "path": "frontend/src/lib/seoFeeds.ts",
-      "sha256": "61297ce44966e89ae942dae12e0a0a08facf84f5da1493c93272d0155cb9c116"
+      "sha256": "1d6ef6884ae12a2ac99b18db0a479924b2582c2674749c9873d4088f5910f782"
     },
     {
       "path": "frontend/src/lib/seoGrowthContent.ts",
-      "sha256": "93c3327231328af16661937b1cc1f35baef8915d0e6815e93f2a9bca24bccbd2"
+      "sha256": "0394c60ea3ca8c92066e7bdb915d6849e04192819b1ee02153c824404f96d1ab"
     },
     {
       "path": "frontend/src/lib/seoPhase2Content.ts",
@@ -30112,14 +30310,14 @@
       "hostname": "schema.org",
       "protocol": "https:",
       "path": "frontend/src/components/seo/EditorialPage.tsx",
-      "line": 28,
+      "line": 32,
       "credentialsInUrl": false
     },
     {
       "hostname": "schema.org",
       "protocol": "https:",
       "path": "frontend/src/components/seo/EditorialPage.tsx",
-      "line": 39,
+      "line": 43,
       "credentialsInUrl": false
     },
     {
@@ -31355,6 +31553,293 @@
       "credentialsInUrl": false
     },
     {
+      "hostname": "vercel.com",
+      "protocol": "https:",
+      "path": "frontend/src/lib/premiumBlogs/ai-app-hosting-costs.ts",
+      "line": 29,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "vercel.com",
+      "protocol": "https:",
+      "path": "frontend/src/lib/premiumBlogs/ai-app-hosting-costs.ts",
+      "line": 33,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "supabase.com",
+      "protocol": "https:",
+      "path": "frontend/src/lib/premiumBlogs/ai-app-hosting-costs.ts",
+      "line": 37,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "supabase.com",
+      "protocol": "https:",
+      "path": "frontend/src/lib/premiumBlogs/ai-app-hosting-costs.ts",
+      "line": 41,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "vercel.com",
+      "protocol": "https:",
+      "path": "frontend/src/lib/premiumBlogs/ai-app-hosting-costs.ts",
+      "line": 45,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "vercel.com",
+      "protocol": "https:",
+      "path": "frontend/src/lib/premiumBlogs/ai-app-preview-works-production-fails.ts",
+      "line": 29,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "vercel.com",
+      "protocol": "https:",
+      "path": "frontend/src/lib/premiumBlogs/ai-app-preview-works-production-fails.ts",
+      "line": 33,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "nextjs.org",
+      "protocol": "https:",
+      "path": "frontend/src/lib/premiumBlogs/ai-app-preview-works-production-fails.ts",
+      "line": 37,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "supabase.com",
+      "protocol": "https:",
+      "path": "frontend/src/lib/premiumBlogs/ai-app-preview-works-production-fails.ts",
+      "line": 41,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "docs.github.com",
+      "protocol": "https:",
+      "path": "frontend/src/lib/premiumBlogs/ai-coding-tools-existing-github-repositories.ts",
+      "line": 29,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "docs.github.com",
+      "protocol": "https:",
+      "path": "frontend/src/lib/premiumBlogs/ai-coding-tools-existing-github-repositories.ts",
+      "line": 33,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "nextjs.org",
+      "protocol": "https:",
+      "path": "frontend/src/lib/premiumBlogs/ai-coding-tools-existing-github-repositories.ts",
+      "line": 37,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "docs.replit.com",
+      "protocol": "https:",
+      "path": "frontend/src/lib/premiumBlogs/ai-coding-tools-existing-github-repositories.ts",
+      "line": 41,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "docs.github.com",
+      "protocol": "https:",
+      "path": "frontend/src/lib/premiumBlogs/ai-modify-existing-website.ts",
+      "line": 29,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "nextjs.org",
+      "protocol": "https:",
+      "path": "frontend/src/lib/premiumBlogs/ai-modify-existing-website.ts",
+      "line": 33,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "vercel.com",
+      "protocol": "https:",
+      "path": "frontend/src/lib/premiumBlogs/ai-modify-existing-website.ts",
+      "line": 37,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "docs.replit.com",
+      "protocol": "https:",
+      "path": "frontend/src/lib/premiumBlogs/ai-modify-existing-website.ts",
+      "line": 41,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "base44.com",
+      "protocol": "https:",
+      "path": "frontend/src/lib/premiumBlogs/base44-alternatives.ts",
+      "line": 29,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "base44.com",
+      "protocol": "https:",
+      "path": "frontend/src/lib/premiumBlogs/base44-alternatives.ts",
+      "line": 33,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "docs.lovable.dev",
+      "protocol": "https:",
+      "path": "frontend/src/lib/premiumBlogs/base44-alternatives.ts",
+      "line": 37,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "bolt.new",
+      "protocol": "https:",
+      "path": "frontend/src/lib/premiumBlogs/base44-alternatives.ts",
+      "line": 41,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "supabase.com",
+      "protocol": "https:",
+      "path": "frontend/src/lib/premiumBlogs/build-secure-client-portal-with-ai.ts",
+      "line": 29,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "supabase.com",
+      "protocol": "https:",
+      "path": "frontend/src/lib/premiumBlogs/build-secure-client-portal-with-ai.ts",
+      "line": 33,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "supabase.com",
+      "protocol": "https:",
+      "path": "frontend/src/lib/premiumBlogs/build-secure-client-portal-with-ai.ts",
+      "line": 37,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "nextjs.org",
+      "protocol": "https:",
+      "path": "frontend/src/lib/premiumBlogs/build-secure-client-portal-with-ai.ts",
+      "line": 41,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "docs.replit.com",
+      "protocol": "https:",
+      "path": "frontend/src/lib/premiumBlogs/replit-alternatives.ts",
+      "line": 29,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "docs.lovable.dev",
+      "protocol": "https:",
+      "path": "frontend/src/lib/premiumBlogs/replit-alternatives.ts",
+      "line": 33,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "bolt.new",
+      "protocol": "https:",
+      "path": "frontend/src/lib/premiumBlogs/replit-alternatives.ts",
+      "line": 37,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "vercel.com",
+      "protocol": "https:",
+      "path": "frontend/src/lib/premiumBlogs/replit-alternatives.ts",
+      "line": 41,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "supabase.com",
+      "protocol": "https:",
+      "path": "frontend/src/lib/premiumBlogs/supabase-login-fails-after-deployment.ts",
+      "line": 29,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "supabase.com",
+      "protocol": "https:",
+      "path": "frontend/src/lib/premiumBlogs/supabase-login-fails-after-deployment.ts",
+      "line": 33,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "supabase.com",
+      "protocol": "https:",
+      "path": "frontend/src/lib/premiumBlogs/supabase-login-fails-after-deployment.ts",
+      "line": 37,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "nextjs.org",
+      "protocol": "https:",
+      "path": "frontend/src/lib/premiumBlogs/supabase-login-fails-after-deployment.ts",
+      "line": 41,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "supabase.com",
+      "protocol": "https:",
+      "path": "frontend/src/lib/premiumBlogs/supabase-rls-ai-built-apps.ts",
+      "line": 29,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "supabase.com",
+      "protocol": "https:",
+      "path": "frontend/src/lib/premiumBlogs/supabase-rls-ai-built-apps.ts",
+      "line": 33,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "supabase.com",
+      "protocol": "https:",
+      "path": "frontend/src/lib/premiumBlogs/supabase-rls-ai-built-apps.ts",
+      "line": 37,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "supabase.com",
+      "protocol": "https:",
+      "path": "frontend/src/lib/premiumBlogs/supabase-rls-ai-built-apps.ts",
+      "line": 41,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "support.google.com",
+      "protocol": "https:",
+      "path": "frontend/src/lib/premiumBlogs/turn-spreadsheet-into-web-app-with-ai.ts",
+      "line": 30,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "supabase.com",
+      "protocol": "https:",
+      "path": "frontend/src/lib/premiumBlogs/turn-spreadsheet-into-web-app-with-ai.ts",
+      "line": 34,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "supabase.com",
+      "protocol": "https:",
+      "path": "frontend/src/lib/premiumBlogs/turn-spreadsheet-into-web-app-with-ai.ts",
+      "line": 38,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "www.postgresql.org",
+      "protocol": "https:",
+      "path": "frontend/src/lib/premiumBlogs/turn-spreadsheet-into-web-app-with-ai.ts",
+      "line": 42,
+      "credentialsInUrl": false
+    },
+    {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "frontend/src/lib/publicUrlInventory.ts",
@@ -31533,154 +32018,154 @@
       "hostname": "docs.lovable.dev",
       "protocol": "https:",
       "path": "frontend/src/lib/seoGrowthContent.ts",
-      "line": 77,
+      "line": 84,
       "credentialsInUrl": false
     },
     {
       "hostname": "docs.lovable.dev",
       "protocol": "https:",
       "path": "frontend/src/lib/seoGrowthContent.ts",
-      "line": 81,
+      "line": 88,
       "credentialsInUrl": false
     },
     {
       "hostname": "docs.lovable.dev",
       "protocol": "https:",
       "path": "frontend/src/lib/seoGrowthContent.ts",
-      "line": 85,
+      "line": 92,
       "credentialsInUrl": false
     },
     {
       "hostname": "docs.lovable.dev",
       "protocol": "https:",
       "path": "frontend/src/lib/seoGrowthContent.ts",
-      "line": 89,
+      "line": 96,
       "credentialsInUrl": false
     },
     {
       "hostname": "lovable.dev",
       "protocol": "https:",
       "path": "frontend/src/lib/seoGrowthContent.ts",
-      "line": 93,
+      "line": 100,
       "credentialsInUrl": false
     },
     {
       "hostname": "bolt.new",
       "protocol": "https:",
       "path": "frontend/src/lib/seoGrowthContent.ts",
-      "line": 124,
+      "line": 131,
       "credentialsInUrl": false
     },
     {
       "hostname": "bolt.new",
       "protocol": "https:",
       "path": "frontend/src/lib/seoGrowthContent.ts",
-      "line": 128,
+      "line": 135,
       "credentialsInUrl": false
     },
     {
       "hostname": "bolt.new",
       "protocol": "https:",
       "path": "frontend/src/lib/seoGrowthContent.ts",
-      "line": 132,
+      "line": 139,
       "credentialsInUrl": false
     },
     {
       "hostname": "bolt.new",
       "protocol": "https:",
       "path": "frontend/src/lib/seoGrowthContent.ts",
-      "line": 136,
+      "line": 143,
       "credentialsInUrl": false
     },
     {
       "hostname": "support.bolt.new",
       "protocol": "https:",
       "path": "frontend/src/lib/seoGrowthContent.ts",
-      "line": 140,
+      "line": 147,
       "credentialsInUrl": false
     },
     {
       "hostname": "docs.replit.com",
       "protocol": "https:",
       "path": "frontend/src/lib/seoGrowthContent.ts",
-      "line": 154,
+      "line": 161,
       "credentialsInUrl": false
     },
     {
       "hostname": "docs.replit.com",
       "protocol": "https:",
       "path": "frontend/src/lib/seoGrowthContent.ts",
-      "line": 154,
+      "line": 161,
       "credentialsInUrl": false
     },
     {
       "hostname": "docs.replit.com",
       "protocol": "https:",
       "path": "frontend/src/lib/seoGrowthContent.ts",
-      "line": 154,
+      "line": 161,
       "credentialsInUrl": false
     },
     {
       "hostname": "docs.cursor.com",
       "protocol": "https:",
       "path": "frontend/src/lib/seoGrowthContent.ts",
-      "line": 165,
+      "line": 172,
       "credentialsInUrl": false
     },
     {
       "hostname": "docs.cursor.com",
       "protocol": "https:",
       "path": "frontend/src/lib/seoGrowthContent.ts",
-      "line": 165,
+      "line": 172,
       "credentialsInUrl": false
     },
     {
       "hostname": "docs.cursor.com",
       "protocol": "https:",
       "path": "frontend/src/lib/seoGrowthContent.ts",
-      "line": 165,
+      "line": 172,
       "credentialsInUrl": false
     },
     {
       "hostname": "v0.dev",
       "protocol": "https:",
       "path": "frontend/src/lib/seoGrowthContent.ts",
-      "line": 176,
+      "line": 183,
       "credentialsInUrl": false
     },
     {
       "hostname": "v0.dev",
       "protocol": "https:",
       "path": "frontend/src/lib/seoGrowthContent.ts",
-      "line": 176,
+      "line": 183,
       "credentialsInUrl": false
     },
     {
       "hostname": "v0.dev",
       "protocol": "https:",
       "path": "frontend/src/lib/seoGrowthContent.ts",
-      "line": 176,
+      "line": 183,
       "credentialsInUrl": false
     },
     {
       "hostname": "docs.windsurf.com",
       "protocol": "https:",
       "path": "frontend/src/lib/seoGrowthContent.ts",
-      "line": 187,
+      "line": 194,
       "credentialsInUrl": false
     },
     {
       "hostname": "docs.windsurf.com",
       "protocol": "https:",
       "path": "frontend/src/lib/seoGrowthContent.ts",
-      "line": 187,
+      "line": 194,
       "credentialsInUrl": false
     },
     {
       "hostname": "docs.windsurf.com",
       "protocol": "https:",
       "path": "frontend/src/lib/seoGrowthContent.ts",
-      "line": 187,
+      "line": 194,
       "credentialsInUrl": false
     },
     {
@@ -39148,22 +39633,29 @@
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
-      "path": "frontend/src/components/native-openui/upstream/components/markdown.tsx",
-      "line": 31,
+      "path": "frontend/src/components/native-openui/upstream/components/layout.tsx",
+      "line": 94,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/components/native-openui/upstream/components/layout.tsx",
+      "line": 95,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/native-openui/upstream/components/markdown.tsx",
-      "line": 114,
+      "line": 32,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/native-openui/upstream/components/markdown.tsx",
-      "line": 185,
+      "line": 116,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -39171,13 +39663,6 @@
     {
       "path": "frontend/src/components/native-openui/upstream/components/markdown.tsx",
       "line": 187,
-      "scope": "FUNCTION_LOCAL",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "frontend/src/components/native-openui/upstream/components/markdown.tsx",
-      "line": 188,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -39240,21 +39725,56 @@
     },
     {
       "path": "frontend/src/components/native-openui/upstream/components/markdown.tsx",
-      "line": 260,
+      "line": 197,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/native-openui/upstream/components/markdown.tsx",
-      "line": 291,
+      "line": 198,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/native-openui/upstream/components/markdown.tsx",
-      "line": 437,
+      "line": 262,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/components/native-openui/upstream/components/markdown.tsx",
+      "line": 293,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/components/native-openui/upstream/components/markdown.tsx",
+      "line": 443,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/components/native-openui/upstream/components/markdown.tsx",
+      "line": 452,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/components/native-openui/upstream/components/markdown.tsx",
+      "line": 459,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/components/native-openui/upstream/components/markdown.tsx",
+      "line": 471,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

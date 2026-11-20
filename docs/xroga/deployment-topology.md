@@ -1,6 +1,6 @@
 # Deployment topology, source and dated evidence
 
-Source SHA: `4f22d851658c1d7cc42e13a3f035ea5a6751843f`; exact current source/config hashes are in the JSON. Uncommitted source is not an accepted release.
+Source SHA: `e92af914485e7b51bb2af721eb5bcb120eddc49d`; exact current source/config hashes are in the JSON. Uncommitted source is not an accepted release.
 
 | Dependency | Provider | State | Host/resource | Verification |
 | --- | --- | --- | --- | --- |
@@ -56,6 +56,7 @@ Source SHA: `4f22d851658c1d7cc42e13a3f035ea5a6751843f`; exact current source/con
 | endpoint-aptos-dev | Source-defined endpoint aptos.dev | CONFIGURED_BUT_UNVERIFIED | aptos.dev | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-asana-com | Source-defined endpoint asana.com | CONFIGURED_BUT_UNVERIFIED | asana.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-backend-composio-dev | Source-defined endpoint backend.composio.dev | CONFIGURED_BUT_UNVERIFIED | backend.composio.dev | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-base44-com | Source-defined endpoint base44.com | CONFIGURED_BUT_UNVERIFIED | base44.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-bolt-new | Source-defined endpoint bolt.new | CONFIGURED_BUT_UNVERIFIED | bolt.new | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-brandland-zendesk-com | Source-defined endpoint brandland.zendesk.com | CONFIGURED_BUT_UNVERIFIED | brandland.zendesk.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-build-avax-network | Source-defined endpoint build.avax.network | CONFIGURED_BUT_UNVERIFIED | build.avax.network | NOT_INDEPENDENTLY_VERIFIED |
@@ -158,6 +159,7 @@ Source SHA: `4f22d851658c1d7cc42e13a3f035ea5a6751843f`; exact current source/con
 | endpoint-supabase-management-tests-invalid | Source-defined endpoint supabase-management-tests.invalid | CONFIGURED_BUT_UNVERIFIED | supabase-management-tests.invalid | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-supabase-com | Source-defined endpoint supabase.com | CONFIGURED_BUT_UNVERIFIED | supabase.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-support-bolt-new | Source-defined endpoint support.bolt.new | CONFIGURED_BUT_UNVERIFIED | support.bolt.new | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-support-google-com | Source-defined endpoint support.google.com | CONFIGURED_BUT_UNVERIFIED | support.google.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-temporal-io | Source-defined endpoint temporal.io | CONFIGURED_BUT_UNVERIFIED | temporal.io | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-token-actions-githubusercontent-com | Source-defined endpoint token.actions.githubusercontent.com | CONFIGURED_BUT_UNVERIFIED | token.actions.githubusercontent.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-twitter-com | Source-defined endpoint twitter.com | CONFIGURED_BUT_UNVERIFIED | twitter.com | NOT_INDEPENDENTLY_VERIFIED |
@@ -193,6 +195,7 @@ Source SHA: `4f22d851658c1d7cc42e13a3f035ea5a6751843f`; exact current source/con
 | endpoint-www-pcrf-net | Source-defined endpoint www.pcrf.net | CONFIGURED_BUT_UNVERIFIED | www.pcrf.net | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-www-perplexity-ai | Source-defined endpoint www.perplexity.ai | CONFIGURED_BUT_UNVERIFIED | www.perplexity.ai | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-www-pinterest-com | Source-defined endpoint www.pinterest.com | CONFIGURED_BUT_UNVERIFIED | www.pinterest.com | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-www-postgresql-org | Source-defined endpoint www.postgresql.org | CONFIGURED_BUT_UNVERIFIED | www.postgresql.org | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-www-reddit-com | Source-defined endpoint www.reddit.com | CONFIGURED_BUT_UNVERIFIED | www.reddit.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-www-redditinc-com | Source-defined endpoint www.redditinc.com | CONFIGURED_BUT_UNVERIFIED | www.redditinc.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-www-semrush-com | Source-defined endpoint www.semrush.com | CONFIGURED_BUT_UNVERIFIED | www.semrush.com | NOT_INDEPENDENTLY_VERIFIED |
@@ -244,4 +247,4 @@ Historical findings below remain as review obligations, not fresh observations. 
 - P1 RELEASE_CONTROLS_UNENFORCED: Observed main and Production/Preview lack platform protection/restrictions; mandatory user release gates still apply. Owner command: 010; RECORDED_PRE_EXISTING_RISK_NOT_WAIVED.
 - P2 HOST_TOOLCHAIN_DRIFT: Vercel project configured Node 24.x; canonical CI/API image is 22.21.1; Fly host test workflow has no explicit setup-node. Owner command: 006; RECORDED_PRE_EXISTING_RISK_NOT_WAIVED.
 
-1194 memory/filesystem candidates require semantic review. Static collections and scratch writes are not blanket durability defects or certificates. Source-defined optional hosts do not establish runtime reachability. No secrets, production rows, IAM, DNS, deployment or provider operation were changed by this inventory generation.
+1199 memory/filesystem candidates require semantic review. Static collections and scratch writes are not blanket durability defects or certificates. Source-defined optional hosts do not establish runtime reachability. No secrets, production rows, IAM, DNS, deployment or provider operation were changed by this inventory generation.

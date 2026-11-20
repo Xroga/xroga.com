@@ -62527,10 +62527,11 @@
       "id": "surface:e4740fd5f297485958dd",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/app/blog/[slug]/page.tsx",
-      "sha256": "30884d7df978aeec36d5a08c0f1280c096fbdb19ff153ff6839ffd152efda0ee",
+      "sha256": "2378518b03a64f72c0286dabda4872fa6d35b0605c32bbe744bbe1e23a1e9172",
       "symbols": [
         "Page",
         "article",
+        "attributed",
         "base",
         "generateMetadata",
         "generateStaticParams",
@@ -62607,7 +62608,7 @@
       "id": "surface:b8b210db970292995b41",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/app/blog/page.tsx",
-      "sha256": "fac176abc5b0981729ddc01577b4214ff9fba11b753a7a8883caaad314736d0c",
+      "sha256": "ce5fed6ea7450564b62eba197c098f98f0b5c4edb6bea429c744175aebf57b7f",
       "symbols": [
         "Page",
         "metadata"
@@ -94694,7 +94695,7 @@
       "id": "surface:1bb1312380cf3ecb47fa",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/seo/EditorialPage.tsx",
-      "sha256": "d3c0af9fed15653ada9e4f4676f3d8f97ba47ee19efcf75d6c97158396e786b4",
+      "sha256": "c85f2720f6b4c6a6df958533b15552723ca1d5c43617c65f05d31391437887ec",
       "symbols": [
         "Crumb",
         "EditorialHub",
@@ -94708,14 +94709,17 @@
         "url"
       ],
       "imports": [
+        "./ExplainWithXroga",
         "@/components/seo/GrowthEvidence",
         "@/lib/seo",
         "@/lib/seoGrowthContent",
         "@/styles/homepage-coding.css",
         "@/styles/seo-editorial.css",
+        "next/image",
         "next/link"
       ],
       "runtimeImports": [
+        "frontend/src/components/seo/ExplainWithXroga.tsx",
         "frontend/src/components/seo/GrowthEvidence.tsx",
         "frontend/src/lib/seo.ts",
         "frontend/src/styles/homepage-coding.css",
@@ -94767,6 +94771,7 @@
       "persistenceDependencies": [],
       "externalProviderDependencies": [
         "declared-host:schema.org",
+        "next/image",
         "next/link"
       ],
       "authBoundary": [],
@@ -94776,6 +94781,72 @@
       "evidenceBoundary": [
         "frontend/src/components/seo/EditorialPage.tsx#EvidenceFigure"
       ],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:9f4d0b23875b20486a84",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/seo/ExplainWithXroga.tsx",
+      "sha256": "813f0237276a18ceec259f64fa0919c52d7dde365e0cccd14011dac5703041dd",
+      "symbols": [
+        "ExplainData",
+        "ExplainWithXroga",
+        "Mode",
+        "copyPrompt",
+        "openWorkspace",
+        "prompt",
+        "router",
+        "setChatPrefill"
+      ],
+      "imports": [
+        "@/store/useAppStore",
+        "next/navigation",
+        "react"
+      ],
+      "runtimeImports": [
+        "frontend/src/store/useAppStore.ts"
+      ],
+      "entryPoints": [
+        "frontend/src/app/alternatives/[slug]/page.tsx",
+        "frontend/src/app/alternatives/page.tsx",
+        "frontend/src/app/blog/[slug]/page.tsx",
+        "frontend/src/app/blog/page.tsx",
+        "frontend/src/app/build-with/[slug]/page.tsx",
+        "frontend/src/app/build-with/page.tsx",
+        "frontend/src/app/build/[slug]/page.tsx",
+        "frontend/src/app/build/page.tsx",
+        "frontend/src/app/compare/[slug]/page.tsx",
+        "frontend/src/app/compare/page.tsx",
+        "frontend/src/app/learn/page.tsx",
+        "frontend/src/app/learn/production-readiness-checklist/page.tsx",
+        "frontend/src/app/migrate/[slug]/page.tsx",
+        "frontend/src/app/migrate/page.tsx",
+        "frontend/src/app/security/page.tsx",
+        "frontend/src/app/stack/[slug]/page.tsx",
+        "frontend/src/app/stack/page.tsx",
+        "frontend/src/app/tools/page.tsx",
+        "frontend/src/app/vibe-coding/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/seo/EditorialPage.tsx:3"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "next/navigation",
+        "react"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
       "testCoverage": [],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -94914,7 +94985,7 @@
       ],
       "callers": [
         "frontend/src/app/tools/production-readiness-checker/page.tsx:4",
-        "frontend/src/components/seo/EditorialPage.tsx:4"
+        "frontend/src/components/seo/EditorialPage.tsx:6"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -109158,7 +109229,7 @@
         "frontend/src/app/vibe-coding/page.tsx"
       ],
       "callers": [
-        "frontend/src/lib/seoGrowthContent.ts:10"
+        "frontend/src/lib/seoGrowthContent.ts:17"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -113677,6 +113748,586 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:0e31fdaf4692c2493eb7",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/lib/premiumBlogIndex.ts",
+      "sha256": "f5d6201b1ae3d2862a093acfd254e95e45970c3e26bc4e96fb413544b33970f9",
+      "symbols": [
+        "PREMIUM_BLOG_ARTICLES",
+        "sourceArticles"
+      ],
+      "imports": [
+        "./premiumBlogs/ai-app-hosting-costs",
+        "./premiumBlogs/ai-app-preview-works-production-fails",
+        "./premiumBlogs/ai-coding-tools-existing-github-repositories",
+        "./premiumBlogs/ai-modify-existing-website",
+        "./premiumBlogs/base44-alternatives",
+        "./premiumBlogs/build-secure-client-portal-with-ai",
+        "./premiumBlogs/replit-alternatives",
+        "./premiumBlogs/supabase-login-fails-after-deployment",
+        "./premiumBlogs/supabase-rls-ai-built-apps",
+        "./premiumBlogs/turn-spreadsheet-into-web-app-with-ai",
+        "./seoGrowthContent"
+      ],
+      "runtimeImports": [
+        "frontend/src/lib/premiumBlogs/ai-app-hosting-costs.ts",
+        "frontend/src/lib/premiumBlogs/ai-app-preview-works-production-fails.ts",
+        "frontend/src/lib/premiumBlogs/ai-coding-tools-existing-github-repositories.ts",
+        "frontend/src/lib/premiumBlogs/ai-modify-existing-website.ts",
+        "frontend/src/lib/premiumBlogs/base44-alternatives.ts",
+        "frontend/src/lib/premiumBlogs/build-secure-client-portal-with-ai.ts",
+        "frontend/src/lib/premiumBlogs/replit-alternatives.ts",
+        "frontend/src/lib/premiumBlogs/supabase-login-fails-after-deployment.ts",
+        "frontend/src/lib/premiumBlogs/supabase-rls-ai-built-apps.ts",
+        "frontend/src/lib/premiumBlogs/turn-spreadsheet-into-web-app-with-ai.ts"
+      ],
+      "entryPoints": [
+        "frontend/src/app/alternatives/[slug]/page.tsx",
+        "frontend/src/app/alternatives/page.tsx",
+        "frontend/src/app/blog/[slug]/page.tsx",
+        "frontend/src/app/blog/feed.xml/route.ts",
+        "frontend/src/app/blog/page.tsx",
+        "frontend/src/app/build-with/[slug]/page.tsx",
+        "frontend/src/app/build-with/page.tsx",
+        "frontend/src/app/build/[slug]/page.tsx",
+        "frontend/src/app/build/page.tsx",
+        "frontend/src/app/changelog/feed.xml/route.ts",
+        "frontend/src/app/compare/[slug]/page.tsx",
+        "frontend/src/app/compare/page.tsx",
+        "frontend/src/app/research/feed.xml/route.ts",
+        "frontend/src/app/vibe-coding/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/lib/seoGrowthContent.ts:16"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [
+        "frontend/src/lib/premiumBlogIndex.ts#premiumAiAppHostingCosts"
+      ],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:64ef06ee744b204bb386",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/lib/premiumBlogs/ai-app-hosting-costs.ts",
+      "sha256": "2374b5a133d3407eb131c3f2205e44a095af9d69e1c1b6459bf6d4f1c385c82d",
+      "symbols": [
+        "premiumAiAppHostingCosts"
+      ],
+      "imports": [
+        "../seoGrowthContent"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [
+        "frontend/src/app/alternatives/[slug]/page.tsx",
+        "frontend/src/app/alternatives/page.tsx",
+        "frontend/src/app/blog/[slug]/page.tsx",
+        "frontend/src/app/blog/feed.xml/route.ts",
+        "frontend/src/app/blog/page.tsx",
+        "frontend/src/app/build-with/[slug]/page.tsx",
+        "frontend/src/app/build-with/page.tsx",
+        "frontend/src/app/build/[slug]/page.tsx",
+        "frontend/src/app/build/page.tsx",
+        "frontend/src/app/changelog/feed.xml/route.ts",
+        "frontend/src/app/compare/[slug]/page.tsx",
+        "frontend/src/app/compare/page.tsx",
+        "frontend/src/app/research/feed.xml/route.ts",
+        "frontend/src/app/vibe-coding/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/lib/premiumBlogIndex.ts:7"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "declared-host:supabase.com",
+        "declared-host:vercel.com"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [
+        "frontend/src/lib/premiumBlogs/ai-app-hosting-costs.ts#premiumAiAppHostingCosts"
+      ],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:2b0d16827e9f2bc7867d",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/lib/premiumBlogs/ai-app-preview-works-production-fails.ts",
+      "sha256": "beaa55bdce1eeb37ff7df0f2af566a13ee3dcb31a87a5c300230862007425f79",
+      "symbols": [
+        "premiumAiAppPreviewWorksProductionFails"
+      ],
+      "imports": [
+        "../seoGrowthContent"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [
+        "frontend/src/app/alternatives/[slug]/page.tsx",
+        "frontend/src/app/alternatives/page.tsx",
+        "frontend/src/app/blog/[slug]/page.tsx",
+        "frontend/src/app/blog/feed.xml/route.ts",
+        "frontend/src/app/blog/page.tsx",
+        "frontend/src/app/build-with/[slug]/page.tsx",
+        "frontend/src/app/build-with/page.tsx",
+        "frontend/src/app/build/[slug]/page.tsx",
+        "frontend/src/app/build/page.tsx",
+        "frontend/src/app/changelog/feed.xml/route.ts",
+        "frontend/src/app/compare/[slug]/page.tsx",
+        "frontend/src/app/compare/page.tsx",
+        "frontend/src/app/research/feed.xml/route.ts",
+        "frontend/src/app/vibe-coding/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/lib/premiumBlogIndex.ts:9"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "declared-host:nextjs.org",
+        "declared-host:supabase.com",
+        "declared-host:vercel.com"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:df468ceba3dcc21316fe",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/lib/premiumBlogs/ai-coding-tools-existing-github-repositories.ts",
+      "sha256": "a6631805a0fde4208631a5443e34dfafec5afeafd1061f5454a39a49222e552c",
+      "symbols": [
+        "premiumAiCodingToolsExistingGithubRepositories"
+      ],
+      "imports": [
+        "../seoGrowthContent"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [
+        "frontend/src/app/alternatives/[slug]/page.tsx",
+        "frontend/src/app/alternatives/page.tsx",
+        "frontend/src/app/blog/[slug]/page.tsx",
+        "frontend/src/app/blog/feed.xml/route.ts",
+        "frontend/src/app/blog/page.tsx",
+        "frontend/src/app/build-with/[slug]/page.tsx",
+        "frontend/src/app/build-with/page.tsx",
+        "frontend/src/app/build/[slug]/page.tsx",
+        "frontend/src/app/build/page.tsx",
+        "frontend/src/app/changelog/feed.xml/route.ts",
+        "frontend/src/app/compare/[slug]/page.tsx",
+        "frontend/src/app/compare/page.tsx",
+        "frontend/src/app/research/feed.xml/route.ts",
+        "frontend/src/app/vibe-coding/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/lib/premiumBlogIndex.ts:4"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "declared-host:docs.github.com",
+        "declared-host:docs.replit.com",
+        "declared-host:nextjs.org"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:1e4b58e2667fa7c15fe8",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/lib/premiumBlogs/ai-modify-existing-website.ts",
+      "sha256": "78ae8880a97b1de3063518c154f4395143e25527cc18722ca249baafe14d5eee",
+      "symbols": [
+        "premiumAiModifyExistingWebsite"
+      ],
+      "imports": [
+        "../seoGrowthContent"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [
+        "frontend/src/app/alternatives/[slug]/page.tsx",
+        "frontend/src/app/alternatives/page.tsx",
+        "frontend/src/app/blog/[slug]/page.tsx",
+        "frontend/src/app/blog/feed.xml/route.ts",
+        "frontend/src/app/blog/page.tsx",
+        "frontend/src/app/build-with/[slug]/page.tsx",
+        "frontend/src/app/build-with/page.tsx",
+        "frontend/src/app/build/[slug]/page.tsx",
+        "frontend/src/app/build/page.tsx",
+        "frontend/src/app/changelog/feed.xml/route.ts",
+        "frontend/src/app/compare/[slug]/page.tsx",
+        "frontend/src/app/compare/page.tsx",
+        "frontend/src/app/research/feed.xml/route.ts",
+        "frontend/src/app/vibe-coding/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/lib/premiumBlogIndex.ts:8"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "declared-host:docs.github.com",
+        "declared-host:docs.replit.com",
+        "declared-host:nextjs.org",
+        "declared-host:vercel.com"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:702ca6ab0dc8d0e112a5",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/lib/premiumBlogs/base44-alternatives.ts",
+      "sha256": "7f3c6616b912d62d07e5960e03d1c928848d734b8c460e662bc1ae851c0bd94f",
+      "symbols": [
+        "premiumBase44Alternatives"
+      ],
+      "imports": [
+        "../seoGrowthContent"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [
+        "frontend/src/app/alternatives/[slug]/page.tsx",
+        "frontend/src/app/alternatives/page.tsx",
+        "frontend/src/app/blog/[slug]/page.tsx",
+        "frontend/src/app/blog/feed.xml/route.ts",
+        "frontend/src/app/blog/page.tsx",
+        "frontend/src/app/build-with/[slug]/page.tsx",
+        "frontend/src/app/build-with/page.tsx",
+        "frontend/src/app/build/[slug]/page.tsx",
+        "frontend/src/app/build/page.tsx",
+        "frontend/src/app/changelog/feed.xml/route.ts",
+        "frontend/src/app/compare/[slug]/page.tsx",
+        "frontend/src/app/compare/page.tsx",
+        "frontend/src/app/research/feed.xml/route.ts",
+        "frontend/src/app/vibe-coding/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/lib/premiumBlogIndex.ts:3"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "declared-host:base44.com",
+        "declared-host:bolt.new",
+        "declared-host:docs.lovable.dev"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:fb907d2405218104b3a4",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/lib/premiumBlogs/build-secure-client-portal-with-ai.ts",
+      "sha256": "182e42b9cdf39225bc481a5425284f280c3ce597d5a714c5b21e8fdbaa130e34",
+      "symbols": [
+        "premiumBuildSecureClientPortalWithAi"
+      ],
+      "imports": [
+        "../seoGrowthContent"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [
+        "frontend/src/app/alternatives/[slug]/page.tsx",
+        "frontend/src/app/alternatives/page.tsx",
+        "frontend/src/app/blog/[slug]/page.tsx",
+        "frontend/src/app/blog/feed.xml/route.ts",
+        "frontend/src/app/blog/page.tsx",
+        "frontend/src/app/build-with/[slug]/page.tsx",
+        "frontend/src/app/build-with/page.tsx",
+        "frontend/src/app/build/[slug]/page.tsx",
+        "frontend/src/app/build/page.tsx",
+        "frontend/src/app/changelog/feed.xml/route.ts",
+        "frontend/src/app/compare/[slug]/page.tsx",
+        "frontend/src/app/compare/page.tsx",
+        "frontend/src/app/research/feed.xml/route.ts",
+        "frontend/src/app/vibe-coding/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/lib/premiumBlogIndex.ts:5"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "declared-host:nextjs.org",
+        "declared-host:supabase.com"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Production source contains annotated mock/TODO/placeholder/simulation markers; individual findings classified separately.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:4cbd04826c77276bebad",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/lib/premiumBlogs/replit-alternatives.ts",
+      "sha256": "7954824ff9bc302809b1aa5ff822217880170e036feb368d0ceb3d27651bc4e1",
+      "symbols": [
+        "premiumReplitAlternatives"
+      ],
+      "imports": [
+        "../seoGrowthContent"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [
+        "frontend/src/app/alternatives/[slug]/page.tsx",
+        "frontend/src/app/alternatives/page.tsx",
+        "frontend/src/app/blog/[slug]/page.tsx",
+        "frontend/src/app/blog/feed.xml/route.ts",
+        "frontend/src/app/blog/page.tsx",
+        "frontend/src/app/build-with/[slug]/page.tsx",
+        "frontend/src/app/build-with/page.tsx",
+        "frontend/src/app/build/[slug]/page.tsx",
+        "frontend/src/app/build/page.tsx",
+        "frontend/src/app/changelog/feed.xml/route.ts",
+        "frontend/src/app/compare/[slug]/page.tsx",
+        "frontend/src/app/compare/page.tsx",
+        "frontend/src/app/research/feed.xml/route.ts",
+        "frontend/src/app/vibe-coding/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/lib/premiumBlogIndex.ts:2"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "declared-host:bolt.new",
+        "declared-host:docs.lovable.dev",
+        "declared-host:docs.replit.com",
+        "declared-host:vercel.com"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:6f53858b55cab5714a59",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/lib/premiumBlogs/supabase-login-fails-after-deployment.ts",
+      "sha256": "654822c67441898db390b0a0951cb0d7cc0a61bd1336db13a554e4c6df1aca8b",
+      "symbols": [
+        "premiumSupabaseLoginFailsAfterDeployment"
+      ],
+      "imports": [
+        "../seoGrowthContent"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [
+        "frontend/src/app/alternatives/[slug]/page.tsx",
+        "frontend/src/app/alternatives/page.tsx",
+        "frontend/src/app/blog/[slug]/page.tsx",
+        "frontend/src/app/blog/feed.xml/route.ts",
+        "frontend/src/app/blog/page.tsx",
+        "frontend/src/app/build-with/[slug]/page.tsx",
+        "frontend/src/app/build-with/page.tsx",
+        "frontend/src/app/build/[slug]/page.tsx",
+        "frontend/src/app/build/page.tsx",
+        "frontend/src/app/changelog/feed.xml/route.ts",
+        "frontend/src/app/compare/[slug]/page.tsx",
+        "frontend/src/app/compare/page.tsx",
+        "frontend/src/app/research/feed.xml/route.ts",
+        "frontend/src/app/vibe-coding/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/lib/premiumBlogIndex.ts:10"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "declared-host:nextjs.org",
+        "declared-host:supabase.com"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:1ec94025a2f76db53a04",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/lib/premiumBlogs/supabase-rls-ai-built-apps.ts",
+      "sha256": "970e34d1dedfe235911189353c836a635d4ad564a3c07d6d956114f15e4872a0",
+      "symbols": [
+        "premiumSupabaseRlsAiBuiltApps"
+      ],
+      "imports": [
+        "../seoGrowthContent"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [
+        "frontend/src/app/alternatives/[slug]/page.tsx",
+        "frontend/src/app/alternatives/page.tsx",
+        "frontend/src/app/blog/[slug]/page.tsx",
+        "frontend/src/app/blog/feed.xml/route.ts",
+        "frontend/src/app/blog/page.tsx",
+        "frontend/src/app/build-with/[slug]/page.tsx",
+        "frontend/src/app/build-with/page.tsx",
+        "frontend/src/app/build/[slug]/page.tsx",
+        "frontend/src/app/build/page.tsx",
+        "frontend/src/app/changelog/feed.xml/route.ts",
+        "frontend/src/app/compare/[slug]/page.tsx",
+        "frontend/src/app/compare/page.tsx",
+        "frontend/src/app/research/feed.xml/route.ts",
+        "frontend/src/app/vibe-coding/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/lib/premiumBlogIndex.ts:11"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "declared-host:supabase.com"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:6845c0b6a498186e029f",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/lib/premiumBlogs/turn-spreadsheet-into-web-app-with-ai.ts",
+      "sha256": "f33e313514deeaebbbb5c75f92b24a61a91ed86da9c55c823412e19686ae94fa",
+      "symbols": [
+        "premiumTurnSpreadsheetIntoWebAppWithAi"
+      ],
+      "imports": [
+        "../seoGrowthContent"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [
+        "frontend/src/app/alternatives/[slug]/page.tsx",
+        "frontend/src/app/alternatives/page.tsx",
+        "frontend/src/app/blog/[slug]/page.tsx",
+        "frontend/src/app/blog/feed.xml/route.ts",
+        "frontend/src/app/blog/page.tsx",
+        "frontend/src/app/build-with/[slug]/page.tsx",
+        "frontend/src/app/build-with/page.tsx",
+        "frontend/src/app/build/[slug]/page.tsx",
+        "frontend/src/app/build/page.tsx",
+        "frontend/src/app/changelog/feed.xml/route.ts",
+        "frontend/src/app/compare/[slug]/page.tsx",
+        "frontend/src/app/compare/page.tsx",
+        "frontend/src/app/research/feed.xml/route.ts",
+        "frontend/src/app/vibe-coding/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/lib/premiumBlogIndex.ts:6"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "declared-host:supabase.com",
+        "declared-host:support.google.com",
+        "declared-host:www.postgresql.org"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Production source contains annotated mock/TODO/placeholder/simulation markers; individual findings classified separately.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:4e721fff7a2a41681464",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/privateFileUrl.ts",
@@ -114497,7 +115148,7 @@
       "id": "surface:4a1f5385bc6d8ba1e88e",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/publicUrlInventory.ts",
-      "sha256": "9d7fad975f495bc7047b5fb5d5091698833a7286e737e3064410ba18265193a9",
+      "sha256": "70c81ead7499a79ba7b59320f3d3f2529559641bf319214a417ea10f1c6bf802",
       "symbols": [
         "INDEXABLE_PUBLIC_URLS",
         "PUBLIC_URL_INVENTORY",
@@ -116026,7 +116677,7 @@
         "frontend/src/app/tools/production-readiness-checker/page.tsx:5",
         "frontend/src/app/vercel-ai-deployment/page.tsx:1",
         "frontend/src/app/vibe-coding/page.tsx:1",
-        "frontend/src/components/seo/EditorialPage.tsx:2",
+        "frontend/src/components/seo/EditorialPage.tsx:4",
         "frontend/src/components/seo/FeatureJsonLd.tsx:2",
         "frontend/src/components/seo/PageJsonLd.tsx:1",
         "frontend/src/components/seo/SiteJsonLd.tsx:1",
@@ -116130,7 +116781,7 @@
       "id": "surface:4ae617c83f10b6b40b3f",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/seoFeeds.ts",
-      "sha256": "61297ce44966e89ae942dae12e0a0a08facf84f5da1493c93272d0155cb9c116",
+      "sha256": "1d6ef6884ae12a2ac99b18db0a479924b2582c2674749c9873d4088f5910f782",
       "symbols": [
         "FeedItem",
         "SITE_URL",
@@ -116189,7 +116840,7 @@
       "id": "surface:81ab1aaf9010967cea49",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/seoGrowthContent.ts",
-      "sha256": "93c3327231328af16661937b1cc1f35baef8915d0e6815e93f2a9bca24bccbd2",
+      "sha256": "0394c60ea3ca8c92066e7bdb915d6849e04192819b1ee02153c824404f96d1ab",
       "symbols": [
         "ALTERNATIVES",
         "BLOG_ARTICLES",
@@ -116202,17 +116853,20 @@
         "GuidePage",
         "INTEGRATION_GUIDES",
         "INTEGRATION_GUIDE_ROWS",
+        "LEGACY_BLOG_ARTICLES",
         "SourceLink",
         "verified"
       ],
       "imports": [
         "./appBuildingEditorialContent.json",
         "./cryptoEditorialContent",
+        "./premiumBlogIndex",
         "./seoPhase2Content"
       ],
       "runtimeImports": [
         "frontend/src/lib/appBuildingEditorialContent.json",
         "frontend/src/lib/cryptoEditorialContent.ts",
+        "frontend/src/lib/premiumBlogIndex.ts",
         "frontend/src/lib/seoPhase2Content.ts"
       ],
       "entryPoints": [
@@ -116312,7 +116966,7 @@
       "callers": [
         "frontend/src/app/build-with/[slug]/page.tsx:1",
         "frontend/src/app/build/[slug]/page.tsx:1",
-        "frontend/src/lib/seoGrowthContent.ts:9"
+        "frontend/src/lib/seoGrowthContent.ts:15"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -122770,8 +123424,27 @@
         "frontend/src/app/(shell)/settings/page.tsx",
         "frontend/src/app/(workspace)/layout.tsx",
         "frontend/src/app/(workspace)/workspace/page.tsx",
+        "frontend/src/app/alternatives/[slug]/page.tsx",
+        "frontend/src/app/alternatives/page.tsx",
+        "frontend/src/app/blog/[slug]/page.tsx",
+        "frontend/src/app/blog/page.tsx",
+        "frontend/src/app/build-with/[slug]/page.tsx",
+        "frontend/src/app/build-with/page.tsx",
+        "frontend/src/app/build/[slug]/page.tsx",
+        "frontend/src/app/build/page.tsx",
+        "frontend/src/app/compare/[slug]/page.tsx",
+        "frontend/src/app/compare/page.tsx",
         "frontend/src/app/layout.tsx",
-        "frontend/src/app/share/[token]/page.tsx"
+        "frontend/src/app/learn/page.tsx",
+        "frontend/src/app/learn/production-readiness-checklist/page.tsx",
+        "frontend/src/app/migrate/[slug]/page.tsx",
+        "frontend/src/app/migrate/page.tsx",
+        "frontend/src/app/security/page.tsx",
+        "frontend/src/app/share/[token]/page.tsx",
+        "frontend/src/app/stack/[slug]/page.tsx",
+        "frontend/src/app/stack/page.tsx",
+        "frontend/src/app/tools/page.tsx",
+        "frontend/src/app/vibe-coding/page.tsx"
       ],
       "callers": [
         "frontend/src/components/dashboard/ActionMeterLarge.tsx:6",
@@ -122788,6 +123461,7 @@
         "frontend/src/components/providers/LanguageProvider.tsx:4",
         "frontend/src/components/publish/PublishWorkspace.tsx:33",
         "frontend/src/components/response-experience-v2/ResponseExperienceGate.tsx:3",
+        "frontend/src/components/seo/ExplainWithXroga.tsx:5",
         "frontend/src/components/settings/GeneralSettingsPanel.tsx:8",
         "frontend/src/components/settings/SecuritySettingsPanel.tsx:11",
         "frontend/src/components/terminal/SwarmMessageLog.tsx:7",
@@ -147712,6 +148386,26 @@
       "line": 61,
       "kind": "COMING_SOON",
       "reachable": false,
+      "state": "PARTIAL",
+      "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
+      "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
+    },
+    {
+      "id": "finding:4aa0f6fa78295c1c44f9",
+      "sourcePath": "frontend/src/lib/premiumBlogs/build-secure-client-portal-with-ai.ts",
+      "line": 162,
+      "kind": "MOCK",
+      "reachable": true,
+      "state": "PARTIAL",
+      "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
+      "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
+    },
+    {
+      "id": "finding:d478584504663216b12d",
+      "sourcePath": "frontend/src/lib/premiumBlogs/turn-spreadsheet-into-web-app-with-ai.ts",
+      "line": 194,
+      "kind": "SIMULATE",
+      "reachable": true,
       "state": "PARTIAL",
       "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
